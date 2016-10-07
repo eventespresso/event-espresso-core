@@ -557,12 +557,14 @@ class EED_Ticket_Selector extends  EED_Module {
 			return '';
 		}
 		$html = EEH_HTML::div( '', '', 'ticket-selector-proceed-to-registration-dv' );
-		$tickets = '<br>';
+		$tickets = '';
 		foreach ( $tickets_added as $details ) {
 			$ticket = $details['ticket'];
 			/** @var EE_Ticket $ticket */
-			$tickets .= $details['qty'] > 1 ? "{$details['qty']} x " : '';
-			$tickets .= $ticket->name() . '<br>';
+			$tickets .= '<br><span class="sub-item-row-bullet dashicons dashicons-arrow-right"></span>' . $ticket->name();
+			$tickets .= " <span class=\"tkt-qty small-text lt-grey-text\">";
+			$tickets .= esc_html_x( 'qty: ', 'qty: (# of tickets)', 'event_espresso' );
+			$tickets .= "{$details['qty']} </span>";
 		}
 		$html .= apply_filters(
 			'FHEE__EED_Ticket_Selector__proceed_to_registration__items_in_cart_msg',
@@ -578,7 +580,8 @@ class EED_Ticket_Selector extends  EED_Module {
 			EE_Registry::instance()->CFG->core->reg_page_url(),
             self::$_event
 		);
-		$html .= '">';
+		$html .= '"';
+		$html .= self::$_in_iframe ? ' target="_blank">' : '>';
 		$html .= apply_filters(
 			'FHEE__EED_Ticket_Selector__proceed_to_registration_btn_txt',
 			__( 'Proceed to Registration', 'event_espresso' ),
@@ -587,17 +590,26 @@ class EED_Ticket_Selector extends  EED_Module {
 		$html .= ' <span class="dashicons dashicons-arrow-right-alt2"></span>';
 		$html .= '</a>';
 		$html .= '<div class="clear"></div>';
-		$cancel_url = EEH_Event_View::event_link_url( self::$_event->ID() );
+		$cancel_query_args = array(
+			'ee'       => 'cancel_ticket_selections',
+			'noheader' => true
+		);
+		if ( is_archive() ) {
+			$cancel_url = get_post_type_archive_link( 'espresso_events' );
+		} else {
+			$cancel_url = EEH_Event_View::event_link_url( self::$_event->ID() );
+			$cancel_query_args['event_id'] = self::$_event->ID();
+		}
+		$cancel_url = is_archive()
+			? get_post_type_archive_link( 'espresso_events' )
+			: EEH_Event_View::event_link_url( self::$_event->ID() );
 		$cancel_url = add_query_arg(
-			array(
-				'ee'       => 'cancel_ticket_selections',
-				'event_id' => self::$_event->ID(),
-				'noheader' => true
-			),
+			$cancel_query_args,
 			$cancel_url
 		);
 		$cancel_url = wp_nonce_url( $cancel_url, 'cancel_ticket_selections', 'cancel_ticket_selections_nonce' );
-		$html .= '<a class="ticket-selector-submit-btn small-text" href="' . $cancel_url . '">';
+		$html .= '<a class="ticket-selector-submit-btn small-text" href="' . $cancel_url . '"';
+		$html .= self::$_in_iframe ? ' target="_blank">' : '>';
 		$html .= apply_filters(
 			'FHEE__EED_Ticket_Selector__cancel_ticket_selections_txt',
 			__( 'cancel ticket selection', 'event_espresso' )
