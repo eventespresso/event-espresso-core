@@ -479,6 +479,9 @@ class EE_Email_messenger extends EE_messenger  {
 			$from_name =  $parsed_from[0];
 		}
 
+		//if from name is "WordPress" let's sub in the site name instead (more friendly!)
+		$from_name = $from_name == 'WordPress' ? get_bloginfo() : $from_name;
+
 		return stripslashes_deep( html_entity_decode($from_name,  ENT_QUOTES,"UTF-8" ) );
 	}
 
