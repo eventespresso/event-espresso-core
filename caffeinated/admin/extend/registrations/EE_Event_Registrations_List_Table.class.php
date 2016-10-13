@@ -212,10 +212,12 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 		$attendee = $item->attendee();
 		$attendee_name = $attendee instanceof EE_Attendee ? $attendee->full_name() : '';
 		$DTT_ID = isset( $this->_req_data['DTT_ID'] ) ? $this->_req_data['DTT_ID'] : 0;
-		$checkinstatus = $item->check_in_status_for_datetime($DTT_ID);
-		$nonce = wp_create_nonce('checkin_nonce');
-		$evt_id = isset( $this->_req_data['event_id'] ) ? $this->_req_data['event_id'] : NULL;
-		$toggle_active = !empty ( $evt_id ) && EE_Registry::instance()->CAP->current_user_can( 'ee_edit_checkin', 'espresso_registrations_toggle_checkin_status', $item->ID() ) ? ' clickable trigger-checkin' : '';
+		$checkinstatus = $item->check_in_status_for_datetime( $DTT_ID );
+		$nonce = wp_create_nonce( 'checkin_nonce' );
+		$evt_id = isset( $this->_req_data['event_id'] ) ? $this->_req_data['event_id'] : null;
+		$toggle_active = ! empty ( $evt_id ) && EE_Registry::instance()->CAP->current_user_can( 'ee_edit_checkin', 'espresso_registrations_toggle_checkin_status', $item->ID() )
+			? ' clickable trigger-checkin'
+			: '';
 
 		$mobile_view_content = ' <span class="show-on-mobile-view-only">' . $attendee_name . '</span>';
 
@@ -229,7 +231,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 	function column_ATT_name(EE_Registration $item) {
 		$attendee = $item->attendee();
 		if ( ! $attendee instanceof EE_Attendee ) {
-			return __('No contact record for this registration.', 'event_espresso');
+			return __( 'No contact record for this registration.', 'event_espresso' );
 		}
 
 		// edit attendee link
