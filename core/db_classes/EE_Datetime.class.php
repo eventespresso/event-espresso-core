@@ -116,7 +116,6 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	 *
 	 *        set the start date for an event
 	 *
-	 * @access        public
 	 * @param        string $date a string representation of the event's date ex:  Dec. 25, 2025 or 12-25-2025
 	 */
 	public function set_start_date( $date ) {
@@ -130,7 +129,6 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	 *
 	 *        set the start time for an event
 	 *
-	 * @access        public
 	 * @param        string $time a string representation of the event time ex:  9am  or  7:30 PM
 	 */
 	public function set_start_time( $time ) {
@@ -144,7 +142,6 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	 *
 	 *        set the end date for an event
 	 *
-	 * @access        public
 	 * @param        string $date a string representation of the event's date ex:  Dec. 25, 2025 or 12-25-2025
 	 */
 	public function set_end_date( $date ) {
@@ -158,7 +155,6 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	 *
 	 *        set the end time for an event
 	 *
-	 * @access        public
 	 * @param        string $time a string representation of the event time ex:  9am  or  7:30 PM
 	 */
 	public function set_end_time( $time ) {
@@ -172,7 +168,6 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	 *
 	 *        set the maximum number of attendees that can be registered for this datetime slot
 	 *
-	 * @access        public
 	 * @param        int $reg_limit
 	 */
 	public function set_reg_limit( $reg_limit ) {
@@ -184,7 +179,6 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	/**
 	 *    set_sold
 	 *
-	 * @access        public
 	 * @param        int $sold
 	 */
 	public function set_sold( $sold ) {
@@ -293,7 +287,6 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	 *        get event start date.  Provide either the date format, or NULL to re-use the
 	 * last-used format, or '' to use the default date format
 	 *
-	 * @access        public
 	 * @param null $dt_frmt - string representation of date format defaults to 'F j, Y'
 	 * @return        mixed        string on success, FALSE on fail
 	 */
@@ -317,7 +310,6 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	 *        get end date. Provide either the date format, or NULL to re-use the
 	 * last-used format, or '' to use the default date format
 	 *
-	 * @access        public
 	 * @param null $dt_frmt - string representation of date format defaults to 'F j, Y'
 	 * @return        mixed        string on success, FALSE on fail
 	 */
@@ -370,7 +362,6 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	/**
 	 *        get start time
 	 *
-	 * @access        public
 	 * @param        string $tm_format - string representation of time format defaults to 'g:i a'
 	 * @return        mixed        string on success, FALSE on fail
 	 */
@@ -392,7 +383,6 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	/**
 	 *        get end time
 	 *
-	 * @access        public
 	 * @param        string $tm_format - string representation of time format defaults to 'g:i a'
 	 * @return        mixed        string on success, FALSE on fail
 	 */
@@ -500,7 +490,6 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	/**
 	 * get start date and start time
 	 *
-	 * @access        public
 	 * @param 	string 	$dt_format - string representation of date format defaults to 'F j, Y'
 	 * @param 	string 	$tm_format - string representation of time format defaults to 'g:i a'
 	 * @return 	mixed 	string on success, FALSE on fail
@@ -560,7 +549,6 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	/**
 	 *        get end date and time
 	 *
-	 * @access        public
 	 * @param bool | string 	$dt_frmt- string representation of date format defaults to 'F j, Y'
 	 * @param bool | string 	$tm_format - string representation of time format defaults to 'g:i a'
 	 * @return 	mixed        		string on success, FALSE on fail
@@ -584,7 +572,6 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	/**
 	 *        get start timestamp
 	 *
-	 * @access        public
 	 * @return        int
 	 */
 	public function start() {
@@ -596,7 +583,6 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	/**
 	 *        get end timestamp
 	 *
-	 * @access        public
 	 * @return        int
 	 */
 	public function end() {
@@ -608,7 +594,6 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	/**
 	 *    get the registration limit for this datetime slot
 	 *
-	 * @access        public
 	 * @return        mixed        int on success, FALSE on fail
 	 */
 	public function reg_limit() {
@@ -620,7 +605,6 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	/**
 	 *    get the number of tickets sold for this datetime slot
 	 *
-	 * @access        public
 	 * @return        mixed        int on success, FALSE on fail
 	 */
 	public function sold() {
@@ -632,7 +616,6 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	/**
 	 *    have the tickets sold for this datetime, met or exceed the registration limit ?
 	 *
-	 * @access        public
 	 * @return        boolean
 	 */
 	public function sold_out() {

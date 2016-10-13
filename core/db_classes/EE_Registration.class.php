@@ -65,7 +65,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 	/**
 	 *        Set Event ID
 	 *
-	 * @access        public
 	 * @param        int $EVT_ID Event ID
 	 */
 	public function set_event( $EVT_ID = 0 ) {
@@ -103,7 +102,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 	 * calls reserve_registration_space() if the reg status changes TO approved from any other reg status
 	 * calls release_registration_space() if the reg status changes FROM approved to any other reg status
 	 *
-	 * @access        public
 	 * @param string  $new_STS_ID
 	 * @param boolean $use_default
 	 * @return bool
@@ -183,7 +181,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 	/**
 	 *        get Status ID
-	 * @access        public
 	 */
 	public function status_ID() {
 		return $this->get( 'STS_ID' );
@@ -265,9 +262,8 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 
 	/**
-	 *        Set Attendee ID
+	 * Set Attendee ID
 	 *
-	 * @access        public
 	 * @param        int $ATT_ID Attendee ID
 	 */
 	public function set_attendee_id( $ATT_ID = 0 ) {
@@ -279,7 +275,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 	/**
 	 *        Set Transaction ID
 	 *
-	 * @access        public
 	 * @param        int $TXN_ID Transaction ID
 	 */
 	public function set_transaction_id( $TXN_ID = 0 ) {
@@ -291,7 +286,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 	/**
 	 *        Set Session
 	 *
-	 * @access    public
 	 * @param    string $REG_session PHP Session ID
 	 */
 	public function set_session( $REG_session = '' ) {
@@ -303,7 +297,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 	/**
 	 *        Set Registration URL Link
 	 *
-	 * @access    public
 	 * @param    string $REG_url_link Registration URL Link
 	 */
 	public function set_reg_url_link( $REG_url_link = '' ) {
@@ -315,7 +308,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 	/**
 	 *        Set Attendee Counter
 	 *
-	 * @access        public
 	 * @param        int $REG_count Primary Attendee
 	 */
 	public function set_count( $REG_count = 1 ) {
@@ -327,7 +319,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 	/**
 	 *        Set Group Size
 	 *
-	 * @access        public
 	 * @param        boolean $REG_group_size Group Registration
 	 */
 	public function set_group_size( $REG_group_size = FALSE ) {
@@ -339,7 +330,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 	/**
 	 *    is_not_approved -  convenience method that returns TRUE if REG status ID == EEM_Registration::status_id_not_approved
 	 *
-	 * @access        public
 	 * @return        boolean
 	 */
 	public function is_not_approved() {
@@ -351,7 +341,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 	/**
 	 *    is_pending_payment -  convenience method that returns TRUE if REG status ID == EEM_Registration::status_id_pending_payment
 	 *
-	 * @access        public
 	 * @return        boolean
 	 */
 	public function is_pending_payment() {
@@ -363,7 +352,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 	/**
 	 *    is_approved -  convenience method that returns TRUE if REG status ID == EEM_Registration::status_id_approved
 	 *
-	 * @access        public
 	 * @return        boolean
 	 */
 	public function is_approved() {
@@ -375,7 +363,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 	/**
 	 *    is_cancelled -  convenience method that returns TRUE if REG status ID == EEM_Registration::status_id_cancelled
 	 *
-	 * @access        public
 	 * @return        boolean
 	 */
 	public function is_cancelled() {
@@ -387,7 +374,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 	/**
 	 *    is_declined -  convenience method that returns TRUE if REG status ID == EEM_Registration::status_id_declined
 	 *
-	 * @access        public
 	 * @return        boolean
 	 */
 	public function is_declined() {
@@ -399,7 +385,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 	/**
 	 *    is_incomplete -  convenience method that returns TRUE if REG status ID == EEM_Registration::status_id_incomplete
 	 *
-	 * @access        public
 	 * @return        boolean
 	 */
 	public function is_incomplete() {
@@ -411,7 +396,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 	/**
 	 *        Set Registration Date
 	 *
-	 * @access        public
 	 * @param        mixed ( int or string ) $REG_date Registration Date - Unix timestamp or string representation of Date
 	 */
 	public function set_reg_date( $REG_date = FALSE ) {
@@ -447,7 +431,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 	/**
 	 *        Attendee Is Going
 	 *
-	 * @access        public
 	 * @param        boolean $REG_att_is_going Attendee Is Going
 	 */
 	public function set_att_is_going( $REG_att_is_going = FALSE ) {
@@ -468,7 +451,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 	/**
 	 *        get Event ID
-	 * @access        public
 	 */
 	public function event_ID() {
 		return $this->get( 'EVT_ID' );
@@ -478,7 +460,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 	/**
 	 *        get Event ID
-	 * @access        public
 	 */
 	public function event_name() {
 		$event = $this->event_obj();
@@ -503,7 +484,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 	/**
 	 *        get Attendee ID
-	 * @access        public
 	 */
 	public function attendee_ID() {
 		return $this->get( 'ATT_ID' );
@@ -513,7 +493,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 	/**
 	 *        get PHP Session ID
-	 * @access        public
 	 */
 	public function session_ID() {
 		return $this->get( 'REG_session' );
@@ -643,7 +622,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 	/**
 	 *    is_primary_registrant?
-	 * @access        public
 	 */
 	public function is_primary_registrant() {
 		return $this->get( 'REG_count' ) == 1 ? TRUE : FALSE;
@@ -678,7 +656,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 	/**
 	 *        get Group Size
-	 * @access        public
 	 */
 	public function group_size() {
 		return $this->get( 'REG_group_size' );
@@ -688,7 +665,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 	/**
 	 *        get Registration Date
-	 * @access        public
 	 */
 	public function date() {
 		return $this->get( 'REG_date' );
@@ -712,7 +688,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 	 * final_price
 	 * the registration's share of the transaction total, so that the
 	 * sum of all the transaction's REG_final_prices equal the transaction's total
-	 * @access        public
 	 * @return    float
 	 */
 	public function final_price() {
@@ -734,7 +709,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 	/**
 	 * get paid (yeah)
-	 * @access        public
 	 * @return 	float
 	 */
 	public function paid() {
@@ -745,7 +719,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 	/**
 	 * pretty_paid
-	 * @access        public
 	 * @return 	float
 	 */
 	public function pretty_paid() {
@@ -757,7 +730,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 	/**
 	 * owes_monies_and_can_pay
 	 * whether or not this registration has monies owing and it's' status allows payment
-	 * @access        public
 	 * @param array $requires_payment
 	 * @return bool
 	 */
@@ -827,7 +799,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 	/**
 	 *        get Attendee Is Going
-	 * @access        public
 	 */
 	public function att_is_going() {
 		return $this->get( 'REG_att_is_going' );
@@ -1252,7 +1223,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 	/**
 	 *        get Registration Code
-	 * @access        public
 	 */
 	public function reg_code() {
 		return $this->get( 'REG_code' );
@@ -1262,7 +1232,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 	/**
 	 *        get Transaction ID
-	 * @access        public
 	 */
 	public function transaction_ID() {
 		return $this->get( 'TXN_ID' );
