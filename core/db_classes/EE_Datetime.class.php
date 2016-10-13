@@ -411,7 +411,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	 * @return mixed              string on success, FALSE on fail
 	 * @throws \EE_Error
 	 */
-	public function time_range( $tm_format = NULL, $conjunction = ' - ' ) {
+	public function time_range( $tm_format = null, $conjunction = ' - ' ) {
 		$tm_format = !empty( $tm_format ) ? $tm_format : $this->_tm_frmt;
 		$start = str_replace( ' ', '&nbsp;', $this->get_i18n_datetime( 'DTT_EVT_start', $tm_format ) );
 		$end = str_replace( ' ', '&nbsp;', $this->get_i18n_datetime( 'DTT_EVT_end',  $tm_format ) );
