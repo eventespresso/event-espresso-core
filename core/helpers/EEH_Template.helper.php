@@ -837,7 +837,7 @@ class EEH_Template {
 	 * @param string $wrap_id
 	 * @return string
 	 */
-	public static function powered_by_event_espresso( $wrap_class = '', $wrap_id = '' ) {
+	public static function powered_by_event_espresso( $wrap_class = '', $wrap_id = '', array $query_args = array() ) {
 		$admin = is_admin() && ! ( defined( 'DOING_AJAX' ) && DOING_AJAX );
 		if (
 			! $admin &&
@@ -854,11 +854,17 @@ class EEH_Template {
 		$attributes .= ! empty( $wrap_class )
 			? " class=\"{$wrap_class} powered-by-event-espresso-credit\""
 			: ' class="powered-by-event-espresso-credit"';
-		$powered_by = apply_filters( 'FHEE__EEH_Template__powered_by_event_espresso_text', $admin ? 'Event Espresso - ' . EVENT_ESPRESSO_VERSION : 'Event Espresso' );
-		$url = add_query_arg(
-			array( 'ap_id' => EE_Registry::instance()->CFG->admin->affiliate_id() ),
-			'https://eventespresso.com/'
+		$query_args = array_merge(
+			array(
+				'ap_id'        => EE_Registry::instance()->CFG->admin->affiliate_id(),
+				'utm_source'   => 'powered_by_event_espresso',
+				'utm_medium'   => 'link',
+				'utm_campaign' => 'powered_by',
+			),
+			$query_args
 		);
+		$powered_by = apply_filters( 'FHEE__EEH_Template__powered_by_event_espresso_text', $admin ? 'Event Espresso - ' . EVENT_ESPRESSO_VERSION : 'Event Espresso' );
+		$url = add_query_arg( $query_args, 'https://eventespresso.com/' );
 		$url = apply_filters( 'FHEE__EEH_Template__powered_by_event_espresso__url', $url );
 		return (string) apply_filters(
 			'FHEE__EEH_Template__powered_by_event_espresso__html',
