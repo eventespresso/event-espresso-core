@@ -1067,14 +1067,14 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 	 * checked out -> checked in
 	 *
 	 *
-	 * @param  int $DTT_ID include specific datetime to toggle Check-in for.  If not included or null, then it is assumed primary datetime is being toggled.
+	 * @param  int $DTT_ID include specific datetime to toggle Check-in for.  If not included or null, then it is assumed latest datetime is being toggled.
 	 * @param  bool $verify  If true then can_checkin() is used to verify whether the person can be checked in or not.  Otherwise this forces change in checkin status.
 	 * @return int|BOOL            the chk_in status toggled to OR false if nothing got changed.
 	 */
 	public function toggle_checkin_status( $DTT_ID = null, $verify = false ) {
 		if ( empty( $DTT_ID ) ) {
-			$datetime = $this->get_related_primary_datetime();
-			$DTT_ID = $datetime->ID();
+			$datetime = $this->get_latest_related_datetime();
+			$DTT_ID = $datetime instanceof EE_Datetime ? $datetime->ID() : 0;
 		// verify the registration can checkin for the given DTT_ID
 		} elseif ( ! $this->can_checkin( $DTT_ID, $verify ) ) {
 			EE_Error::add_error(
