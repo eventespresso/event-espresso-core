@@ -436,6 +436,59 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 
 
 
+
+	/**
+	 * This returns a range representation of the date and times.
+	 *
+	 * Output is dependent on the difference (or similarity) between DTT_EVT_start and DTT_EVT_end.  Also, the return value
+	 * is localized.
+	 *
+	 * @param string $dt_format
+	 * @param string $tm_format
+	 * @param string $conjunction
+	 *
+	 * @return string
+	 */
+	public function date_and_time_range( $dt_format = '', $tm_format = '', $conjunction = ' - '  ) {
+		$dt_format = ! empty( $dt_format ) ? $dt_format : $this->_dt_frmt;
+		$tm_format = ! empty( $tm_format ) ? $tm_format : $this->_tm_frmt;
+		$full_format = $dt_format . ' ' . $tm_format;
+
+		//the range output depends on various conditions
+		switch ( true ) {
+			//start date timestamp and end date timestamp are the same.
+			case ( $this->get_raw( 'DTT_EVT_start' ) == $this->get_raw( 'DTT_EVT_end' ) ) :
+				$output = $this->get_i18n_datetime( 'DTT_EVT_start', $full_format );
+				break;
+			//start and end date are the same but times are different
+			case ( $this->start_date() == $this->end_date() ) :
+				$output = $this->get_i18n_datetime( 'DTT_EVT_start', $full_format ) . $conjunction . $this->get_i18n_datetime( 'DTT_EVT_end', $tm_format );
+				break;
+			//all other conditions
+			default :
+				$output = $this->get_i18n_datetime( 'DTT_EVT_start', $full_format ) . $conjunction . $this->get_i18n_datetime( 'DTT_EVT_end', $full_format );
+				break;
+		}
+		return $output;
+	}
+
+
+	/**
+	 * This echos the results of date and time range.
+	 *
+	 * @see date_and_time_range() for more details on purpose.
+	 *
+	 * @param string   $dt_format
+	 * @param string   $tm_format
+	 * @param string $conjunction
+	 * @return string
+	 */
+	public function e_date_and_time_range( $dt_format = '', $tm_format = '', $conjunction = ' - ' ) {
+		echo $this->date_and_time_range( $dt_format, $tm_format, $conjunction );
+	}
+
+
+
 	/**
 	 *        get start date and start time
 	 *
