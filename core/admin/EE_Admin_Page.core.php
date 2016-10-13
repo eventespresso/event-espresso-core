@@ -26,7 +26,7 @@
  *
  * ------------------------------------------------------------------------
  */
-abstract class EE_Admin_Page extends EE_BASE {
+abstract class EE_Admin_Page extends EE_Base {
 
 
 	//set in _init_page_props()
@@ -61,7 +61,11 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 */
 	protected $_template_args = array();
 
-	//this will hold the list table object for a given view.
+	/**
+	 * this will hold the list table object for a given view.
+	 *
+	 * @var EE_Admin_List_Table $_list_table_object
+	 */
 	protected $_list_table_object;
 
 	//bools
@@ -1988,7 +1992,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 			// if there is then we go ahead and process the metabox loader.
 			foreach ( $this->_route_config['metaboxes'] as $metabox_callback ) {
 				// first check for Closures
-				if ( is_callable( $metabox_callback ) ) {
+				if ( $metabox_callback instanceof Closure ) {
 					$result = $metabox_callback();
 				} else if ( is_array( $metabox_callback ) && isset( $metabox_callback[0], $metabox_callback[1] ) ) {
 					$result = call_user_func( array( $metabox_callback[0], $metabox_callback[1] ) );
@@ -2023,9 +2027,13 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return void
 	 */
 	private function _add_screen_columns() {
-		if ( is_array($this->_route_config) && isset( $this->_route_config['columns'] ) && is_array($this->_route_config['columns']) && count( $this->_route_config['columns'] == 2 ) ) {
-
-			add_screen_option('layout_columns', array('max' => (int) $this->_route_config['columns'][0], 'default' => (int) $this->_route_config['columns'][1] ) );
+        if (
+		        is_array($this->_route_config)
+                && isset( $this->_route_config['columns'] )
+                && is_array($this->_route_config['columns'])
+                && count( $this->_route_config['columns'] ) === 2
+        ) {
+            add_screen_option('layout_columns', array('max' => (int) $this->_route_config['columns'][0], 'default' => (int) $this->_route_config['columns'][1] ) );
 			$this->_template_args['num_columns'] = $this->_route_config['columns'][0];
 			$screen_id = $this->_current_screen->id;
 			$screen_columns = (int) get_user_option("screen_layout_$screen_id");
@@ -2199,23 +2207,29 @@ abstract class EE_Admin_Page extends EE_BASE {
 	}
 
 
+
 	/**
 	 * Sets the _template_args arguments used by the _publish_post_box shortcut
-	 *
 	 * Note: currently there is no validation for this.  However if you want the delete button, the
 	 * save, and save and close buttons to work properly, then you will want to include a
 	 * values for the name and id arguments.
-	 *
-	 * @todo  Add in validation for name/id arguments.
-	 *
-	 * @param	string	$name		key used for the action ID (i.e. event_id)
-	 * @param	int		$id	id attached to the item published
-	 * @param	string	$delete	page route callback for the delete action
-	 * @param	string	$post_save_redirect_URL	custom URL to redirect to after Save & Close has been completed
-	 * @param	boolean	$both_btns	whether to display BOTH the "Save & Close" and "Save" buttons or just the Save button
-	 */
-	protected function _set_publish_post_box_vars( $name = NULL, $id = FALSE, $delete = FALSE, $save_close_redirect_URL = NULL, $both_btns = TRUE ) {
 
+	 *
+*@todo  Add in validation for name/id arguments.
+	 * @param    string  $name                    key used for the action ID (i.e. event_id)
+	 * @param    int     $id                      id attached to the item published
+	 * @param    string  $delete                  page route callback for the delete action
+	 * @param    string  $save_close_redirect_URL custom URL to redirect to after Save & Close has been completed
+	 * @param    boolean $both_btns               whether to display BOTH the "Save & Close" and "Save" buttons or just the Save button
+	 * @throws \EE_Error
+	 */
+	protected function _set_publish_post_box_vars(
+		$name = '',
+		$id = 0,
+		$delete = '',
+		$save_close_redirect_URL = '',
+		$both_btns = true
+	) {
 		// if Save & Close, use a custom redirect URL or default to the main page?
 		$save_close_redirect_URL = ! empty( $save_close_redirect_URL ) ? $save_close_redirect_URL : $this->_admin_base_url;
 		// create the Save & Close and Save buttons
@@ -2225,9 +2239,17 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 		if ( $delete && ! empty( $id )  ) {
-			$delete = is_bool($delete) ? 'delete' : $delete; //make sure we have a default if just true is sent.
+			//make sure we have a default if just true is sent.
+			$delete = ! empty($delete) ? $delete : 'delete';
 			$delete_link_args = array( $name => $id );
-			$delete = $this->get_action_link_or_button( $delete, $delete, $delete_link_args, 'submitdelete deletion');
+			$delete = $this->get_action_link_or_button(
+				$delete,
+				$delete,
+				$delete_link_args,
+				'submitdelete deletion',
+				'',
+				false
+			);
 		}
 
 		$this->_template_args['publish_delete_link'] = !empty( $id ) ? $delete : '';
@@ -2414,7 +2436,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @access private
 	 * @param  boolean $sidebar true with sidebar, false without
 	 * @param  boolean $about   use the about admin wrapper instead of the default.
-	 * @return html           admin_page
+	 * @return void
 	 */
 	private function _display_admin_page($sidebar = false, $about = FALSE) {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
@@ -2425,13 +2447,19 @@ abstract class EE_Admin_Page extends EE_BASE {
 		// set current wp page slug - looks like: event-espresso_page_event_categories
 		// keep in mind "event-espresso" COULD be something else if the top level menu label has been translated.
 		$this->_template_args['current_page'] = $this->_wp_page_slug;
+		$this->_template_args['admin_page_wrapper_div_id'] = $this->_cpt_route
+            ? 'poststuff'
+            : 'espresso-default-admin';
 
-		$template_path = $sidebar ?  EE_ADMIN_TEMPLATE . 'admin_details_wrapper.template.php' : EE_ADMIN_TEMPLATE . 'admin_details_wrapper_no_sidebar.template.php';
+        $template_path = $sidebar
+            ? EE_ADMIN_TEMPLATE . 'admin_details_wrapper.template.php'
+            : EE_ADMIN_TEMPLATE . 'admin_details_wrapper_no_sidebar.template.php';
 
-		if ( defined('DOING_AJAX' ) )
+		if ( defined('DOING_AJAX' ) && DOING_AJAX ){
 			$template_path = EE_ADMIN_TEMPLATE . 'admin_details_wrapper_no_sidebar_ajax.template.php';
+        }
 
-		$template_path = !empty($this->_column_template_path) ? $this->_column_template_path : $template_path;
+        $template_path = !empty($this->_column_template_path) ? $this->_column_template_path : $template_path;
 
 		$this->_template_args['post_body_content'] = isset( $this->_template_args['admin_page_content'] ) ? $this->_template_args['admin_page_content'] : '';
 		$this->_template_args['before_admin_page_content'] = isset($this->_template_args['before_admin_page_content']) ? $this->_template_args['before_admin_page_content'] : '';
@@ -2445,16 +2473,14 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
-
-
 	/**
 	 * This is used to display caf preview pages.
 	 *
 	 * @since 4.3.2
-	 *
 	 * @param string $utm_campaign_source what is the key used for google analytics link
-	 * @param bool   $display_sidebar whether to use the sidebar template or the full template for the page.  TRUE = SHOW sidebar, FALSE = no sidebar. Default no sidebar.
+	 * @param bool   $display_sidebar     whether to use the sidebar template or the full template for the page.  TRUE = SHOW sidebar, FALSE = no sidebar. Default no sidebar.
 	 * @return void
+	 * @throws \EE_Error
 	 */
 	public function display_admin_caf_preview_page( $utm_campaign_source = '', $display_sidebar = TRUE ) {
 		//let's generate a default preview action button if there isn't one already present.
@@ -2469,9 +2495,22 @@ abstract class EE_Admin_Page extends EE_BASE {
 			),
 		'http://eventespresso.com/pricing/'
 		);
-		$this->_template_args['preview_action_button'] = ! isset( $this->_template_args['preview_action_button'] ) ? $this->get_action_link_or_button( '', 'buy_now', array(), 'button-primary button-large', $buy_now_url, true ) : $this->_template_args['preview_action_button'];
+		$this->_template_args['preview_action_button'] = ! isset( $this->_template_args['preview_action_button'] )
+			? $this->get_action_link_or_button(
+				'',
+				'buy_now',
+				array(),
+				'button-primary button-large',
+				$buy_now_url,
+				true
+			)
+			: $this->_template_args['preview_action_button'];
 		$template_path = EE_ADMIN_TEMPLATE . 'admin_caf_full_page_preview.template.php';
-		$this->_template_args['admin_page_content'] = EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
+		$this->_template_args['admin_page_content'] = EEH_Template::display_template(
+			$template_path,
+			$this->_template_args,
+			true
+		);
 		$this->_display_admin_page( $display_sidebar );
 	}
 
@@ -2481,7 +2520,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * generates HTML wrapper for an admin_page with list_table
 	 *
 	 * @access public
-	 * @return html
+	 * @return void
 	 */
 	public function display_admin_list_table_page_with_sidebar() {
 		$this->_display_admin_list_table_page(TRUE);
@@ -2492,7 +2531,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * generates HTML wrapper for an admin_page with list_table (but with no sidebar)
 	 *
 	 * @access public
-	 * @return html
+	 * @return void
 	 */
 	public function display_admin_list_table_page_with_no_sidebar() {
 		$this->_display_admin_list_table_page();
@@ -2504,7 +2543,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * generates html wrapper for an admin_list_table page
 	 * @access private
 	 * @param boolean $sidebar whether to display with sidebar or not.
-	 * @return html
+	 * @return void
 	 */
 	private function _display_admin_list_table_page( $sidebar = false ) {
 		//setup search attributes
@@ -2608,7 +2647,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 *
 	 * The json object is populated by whatever is set in the $_template_args property.
 	 *
-	 * @return string json object
+	 * @return void
 	 */
 	protected function _return_json( $sticky_notices = false ) {
 
@@ -2645,7 +2684,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 	/**
 	 * Simply a wrapper for the protected method so we can call this outside the class (ONLY when doing ajax)
-	 * @return json_obj|EE_Error
+	 *
+	 * @return void
+	 * @throws EE_Error
 	 */
 	public function return_json() {
 		if ( defined('DOING_AJAX') && DOING_AJAX )
@@ -2658,14 +2699,12 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
-
 	/**
 	 * This provides a way for child hook classes to send along themselves by reference so methods/properties within them can be accessed by EE_Admin_child pages. This is assigned to the $_hook_obj property.
 	 *
-	 * @param EE_Admin_Hooks object $hook_obj This will be the object for the EE_Admin_Hooks child
+	 * @param EE_Admin_Hooks $hook_obj This will be the object for the EE_Admin_Hooks child
 	 *
-	 * @access public
-	 * @return void
+	 * @access   public
 	 */
 	public function set_hook_object( EE_Admin_Hooks $hook_obj ) {
 		$this->_hook_obj = $hook_obj;
@@ -2727,16 +2766,14 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
-
-
-
-
-
 	/**
-	*		sort nav tabs
-	*		@access public
-	*		@return void
-	*/
+	 *        sort nav tabs
+	 *
+	 * @access public
+	 * @param $a
+	 * @param $b
+	 * @return int
+	 */
 	private function _sort_nav_tabs( $a, $b ) {
 		if ($a['order'] == $b['order']) {
 	        return 0;
@@ -2752,7 +2789,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * 	generates HTML for the forms used on admin pages
 	 * 	@access protected
 	 * 	@param	array $input_vars - array of input field details
-	 * 	@param	array $id - used for defining unique identifiers for the form.
 	 * 	@param string $generator (options are 'string' or 'array', basically use this to indicate which generator to use)
 	 * 	@return string
 	 * 	@uses EEH_Form_Fields::get_form_fields (/helper/EEH_Form_Fields.helper.php)
@@ -2785,7 +2821,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$text = (array) $text;
 		$actions = (array) $actions;
 		$referrer_url = empty($referrer) ? '' : $referrer;
-		$referrer_url = !$referrer ? '<input type="hidden" id="save_and_close_referrer" name="save_and_close_referrer" value="' . $_SERVER['REQUEST_URI'] .'" />' : '<input type="hidden" id="save_and_close_referrer" name="save_and_close_referrer" value="' . $referrer .'" />';
+		$referrer_url = ! $referrer ? '<input type="hidden" id="save_and_close_referrer" name="save_and_close_referrer" value="' . $_SERVER['REQUEST_URI'] .'" />' : '<input type="hidden" id="save_and_close_referrer" name="save_and_close_referrer" value="' . $referrer .'" />';
 
 		$button_text = !empty($text) ? $text : array( __('Save', 'event_espresso'), __('Save and Close', 'event_espresso') );
 		$default_names = array( 'save', 'save_and_close' );
@@ -2804,12 +2840,14 @@ abstract class EE_Admin_Page extends EE_BASE {
 	}
 
 
+
 	/**
 	 * Wrapper for the protected function.  Allows plugins/addons to call this to set the form tags.
 	 *
-	 * @see $this->_set_add_edit_form_tags() for details on params
+	 * @see   $this->_set_add_edit_form_tags() for details on params
 	 * @since 4.6.0
-	 *
+	 * @param string $route
+	 * @param array  $additional_hidden_fields
 	 */
 	public function set_add_edit_form_tags( $route = '', $additional_hidden_fields = array() ) {
 		$this->_set_add_edit_form_tags( $route, $additional_hidden_fields );
@@ -2847,7 +2885,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		// generate form fields
 		$form_fields = $this->_generate_admin_form_fields( $hidden_fields, 'array' );
 		// add fields to form
-		foreach ( $form_fields as $field_name => $form_field ) {
+		foreach ( (array)$form_fields as $field_name => $form_field ) {
 			$this->_template_args['before_admin_page_content'] .= "\n\t" . $form_field['field'];
 		}
 
@@ -2897,15 +2935,30 @@ abstract class EE_Admin_Page extends EE_BASE {
 		if ( ! $override_overwrite || ! empty( $notices['errors'] )) {
 			EE_Error::overwrite_success();
 		}
-		// how many records affected ? more than one record ? or just one ?
-		if ( $success > 1 && empty( $notices['errors'] )) {
-			// set plural msg
-			EE_Error::add_success( sprintf( __('The "%s" have been successfully %s.', 'event_espresso'), $what, $action_desc ), __FILE__, __FUNCTION__, __LINE__);
-		} else if ( $success == 1 && empty( $notices['errors'] )) {
-			// set singular msg
-			EE_Error::add_success( sprintf( __('The "%s" has been successfully %s.', 'event_espresso'), $what, $action_desc), __FILE__, __FUNCTION__, __LINE__ );
+		if ( ! empty( $what ) && ! empty( $action_desc ) ) {
+			// how many records affected ? more than one record ? or just one ?
+			if ( $success > 1 && empty( $notices[ 'errors' ] ) ) {
+				// set plural msg
+				EE_Error::add_success(
+					sprintf(
+						__( 'The "%s" have been successfully %s.', 'event_espresso' ),
+						$what,
+						$action_desc
+					),
+					__FILE__, __FUNCTION__, __LINE__
+				);
+			} else if ( $success == 1 && empty( $notices[ 'errors' ] ) ) {
+				// set singular msg
+				EE_Error::add_success(
+					sprintf(
+						__( 'The "%s" has been successfully %s.', 'event_espresso' ),
+						$what,
+						$action_desc
+					),
+					__FILE__, __FUNCTION__, __LINE__
+				);
+			}
 		}
-
 		// check that $query_args isn't something crazy
 		if ( ! is_array( $query_args )) {
 			$query_args = array();
@@ -2926,7 +2979,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		if ( isset($this->_req_data['save_and_close'] ) && isset($this->_req_data['save_and_close_referrer'] ) ) {
 			// even though we have the save_and_close referrer, we need to parse the url for the action in order to generate a nonce
 			$parsed_url = parse_url( $this->_req_data['save_and_close_referrer'] );
-			// regenerate query args array from refferer URL
+			// regenerate query args array from referrer URL
 			parse_str( $parsed_url['query'], $query_args );
 			// correct page and action will be in the query args now
 			$redirect_url = admin_url( 'admin.php' );
@@ -3039,54 +3092,68 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
-
 	/**
 	 * get_action_link_or_button
 	 * returns the button html for adding, editing, or deleting an item (depending on given type)
 	 *
-	 * @param string $action use this to indicate which action the url is generated with.
-	 * @param string $type accepted strings must be defined in the $_labels['button'] array(as the key) property.
-	 * @param array $extra_request if the button requires extra params you can include them in $key=>$value pairs.
-	 * @param string $class Use this to give the class for the button. Defaults to 'button-primary'
-	 * @param string $base_url If this is not provided the _admin_base_url will be used as the default for the button base_url.  Otherwise this value will be used.
+	 * @param string $action        use this to indicate which action the url is generated with.
+	 * @param string $type          accepted strings must be defined in the $_labels['button'] array(as the key) property.
+	 * @param array  $extra_request if the button requires extra params you can include them in $key=>$value pairs.
+	 * @param string $class         Use this to give the class for the button. Defaults to 'button-primary'
+	 * @param string $base_url      If this is not provided
+	 *                              the _admin_base_url will be used as the default for the button base_url.
+	 *                              Otherwise this value will be used.
 	 * @param bool   $exclude_nonce If true then no nonce will be in the generated button link.
-	 *
-	 * @throws EE_Error
-	 *
-	 * @return string html for button
+	 * @return string
+	 * @throws \EE_Error
 	 */
-	public function get_action_link_or_button($action, $type = 'add', $extra_request = array(), $class = 'button-primary', $base_url = FALSE, $exclude_nonce = false ) {
+	public function get_action_link_or_button(
+		$action,
+		$type = 'add',
+		$extra_request = array(),
+		$class = 'button-primary',
+		$base_url = '',
+		$exclude_nonce = false
+	) {
 		//first let's validate the action (if $base_url is FALSE otherwise validation will happen further along)
-		if ( !isset($this->_page_routes[$action]) && !$base_url )
-			throw new EE_Error( sprintf( __('There is no page route for given action for the button.  This action was given: %s', 'event_espresso'), $action) );
-
-		if ( !isset( $this->_labels['buttons'][$type] ) )
-			throw new EE_Error( sprintf( __('There is no label for the given button type (%s). Labels are set in the <code>_page_config</code> property.', 'event_espresso'), $type) );
-
+		if ( empty( $base_url ) && ! isset( $this->_page_routes[ $action ] ) ) {
+			throw new EE_Error(
+				sprintf(
+					__(
+						'There is no page route for given action for the button.  This action was given: %s',
+						'event_espresso'
+					),
+					$action
+				)
+			);
+		}
+		if ( ! isset( $this->_labels['buttons'][ $type ] ) ) {
+			throw new EE_Error(
+				sprintf(
+					__(
+						'There is no label for the given button type (%s). Labels are set in the <code>_page_config</code> property.',
+						'event_espresso'
+					),
+					$type
+				)
+			);
+		}
 		//finally check user access for this button.
-		$has_access = $this->check_user_access( $action, TRUE );
+		$has_access = $this->check_user_access( $action, true );
 		if ( ! $has_access ) {
 			return '';
 		}
-
-		$_base_url = !$base_url ? $this->_admin_base_url : $base_url;
-
+		$_base_url = ! $base_url ? $this->_admin_base_url : $base_url;
 		$query_args = array(
-			'action' => $action  );
-
+			'action' => $action
+		);
 		//merge extra_request args but make sure our original action takes precedence and doesn't get overwritten.
-		if ( !empty($extra_request) )
+		if ( ! empty( $extra_request ) ) {
 			$query_args = array_merge( $extra_request, $query_args );
-
+		}
 		$url = self::add_query_args_and_nonce( $query_args, $_base_url, false, $exclude_nonce );
-
-		$button = EEH_Template::get_button_or_link( $url, $this->_labels['buttons'][$type], $class );
-
-		return $button;
+		return EEH_Template::get_button_or_link( $url, $this->_labels['buttons'][ $type ], $class );
 	}
-
-
-
 
 
 
@@ -3383,12 +3450,12 @@ abstract class EE_Admin_Page extends EE_BASE {
 	/**
 	 * updates  espresso configuration settings
 	 *
-	 * @access 	protected
-	 * @param string $tab
-	 * @param array $data
-	 * @param string $file	file where error occurred
-	 * @param string $func function  where error occurred
-	 * @param string $line	line no where error occurred
+	 * @access    protected
+	 * @param string                   $tab
+	 * @param EE_Config_Base|EE_Config $config
+	 * @param string                   $file file where error occurred
+	 * @param string                   $func function  where error occurred
+	 * @param string                   $line line no where error occurred
 	 * @return boolean
 	 */
 	protected function _update_espresso_configuration( $tab, $config, $file = '', $func = '', $line = '' ) {

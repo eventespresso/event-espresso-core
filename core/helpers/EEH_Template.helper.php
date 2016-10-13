@@ -831,7 +831,55 @@ class EEH_Template {
 	}
 
 
+
+	/**
+	 * @param string $wrap_class
+	 * @param string $wrap_id
+	 * @return string
+	 */
+	public static function powered_by_event_espresso( $wrap_class = '', $wrap_id = '' ) {
+		$admin = is_admin() && ! ( defined( 'DOING_AJAX' ) && DOING_AJAX );
+		if (
+			! $admin &&
+			! apply_filters(
+				'FHEE__EEH_Template__powered_by_event_espresso__show_reg_footer',
+				EE_Registry::instance()->CFG->admin->show_reg_footer
+			)
+		) {
+			return '';
+		}
+		$tag = $admin ? 'span' : 'div';
+		$attributes = ! empty( $wrap_id ) ? " id=\"{$wrap_id}\"" : '';
+		$wrap_class = $admin ? "{$wrap_class} float-left" : $wrap_class;
+		$attributes .= ! empty( $wrap_class )
+			? " class=\"{$wrap_class} powered-by-event-espresso-credit\""
+			: ' class="powered-by-event-espresso-credit"';
+		$powered_by = apply_filters( 'FHEE__EEH_Template__powered_by_event_espresso_text', $admin ? 'Event Espresso - ' . EVENT_ESPRESSO_VERSION : 'Event Espresso' );
+		$url = add_query_arg(
+			array( 'ap_id' => EE_Registry::instance()->CFG->admin->affiliate_id() ),
+			'https://eventespresso.com/'
+		);
+		$url = apply_filters( 'FHEE__EEH_Template__powered_by_event_espresso__url', $url );
+		return (string) apply_filters(
+			'FHEE__EEH_Template__powered_by_event_espresso__html',
+			sprintf(
+				esc_html_x(
+					'%1$sOnline event registration and ticketing powered by %2$s',
+					'Online event registration and ticketing powered by [link to eventespresso.com]',
+					'event_espresso'
+				),
+				"<{$tag}{$attributes}>",
+				"<a href=\"{$url}\" target=\"_blank\" rel=\"nofollow\">{$powered_by}</a></{$tag}>"
+			),
+			$wrap_class,
+			$wrap_id
+		);
+	}
+
+
+
 } //end EEH_Template class
+
 
 //function convert_zero_to_free( $amount, $return_raw ) {
 //	// we don't want to mess with requests for unformatted values because those may get used in calculations

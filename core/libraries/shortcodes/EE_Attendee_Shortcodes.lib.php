@@ -56,6 +56,7 @@ class EE_Attendee_Shortcodes extends EE_Shortcodes {
 			'[LNAME]' => esc_html__( 'Last Name of an attendee.', 'event_espresso' ),
 			'[ATTENDEE_EMAIL]' => esc_html__( 'Email address for the attendee.', 'event_espresso' ),
 			'[EDIT_ATTENDEE_LINK]' => esc_html__( 'Edit Registration Link (typically you\'d only use this for messages going to event administrators)', 'event_espresso' ),
+			'[REGISTRATION_ID]' => esc_html__( 'Unique Registration ID for the registration', 'event_espresso' ),
 			'[REGISTRATION_CODE]' => esc_html__( 'Unique Registration Code for the registration', 'event_espresso' ),
 			'[REGISTRATION_STATUS_ID]' => esc_html__( 'Parses to the registration status for the attendee', 'event_espresso' ),
 			'[REGISTRATION_STATUS_LABEL]' => esc_html__( 'Parses to the status label for the registrant', 'event_espresso' ),
@@ -140,6 +141,10 @@ class EE_Attendee_Shortcodes extends EE_Shortcodes {
 
 			case '[REGISTRATION_CODE]' :
 				return $registration->reg_code();
+				break;
+
+			case '[REGISTRATION_ID]' :
+				return $registration->ID();
 				break;
 
 			case '[FRONTEND_EDIT_REG_LINK]' :

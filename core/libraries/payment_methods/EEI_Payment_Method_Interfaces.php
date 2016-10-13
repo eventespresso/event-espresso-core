@@ -175,6 +175,13 @@ interface EEMI_Payment_Log {
 }
 
 
+/**
+ * Interface for an event being registered for
+ */
+interface EEI_Event {
+	public function name();
+}
+
 
 // End of file EEI_Payment_Method_Interfaces.php
 // Location: /EEI_Payment_Method_Interfaces.php

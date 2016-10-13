@@ -45,19 +45,27 @@ class EE_Addon_Test extends EE_UnitTestCase{
 		add_filter( 'FHEE__EEH_Activation__create_table__short_circuit', array( $this, 'dont_short_circuit_new_addon_table' ), 20, 3 );
 	}
 
+
+
 	/**
 	 * OK's the creation of the esp_new_addon table, because this hooks in AFTER EE_UNitTestCase's callback on this same hook
-	 * @global type $wpdb
-	 * @param array $whitelisted_tables
-	 * @return array
+	 *
+	 * @param bool $short_circuit
+	 * @param string $table_name
+	 * @param string $create_sql
+	 * @return boolean
 	 */
-	public function dont_short_circuit_new_addon_table( $short_circuit = FALSE, $table_name = '', $create_sql = '' ){
-		if( in_array( $table_name, array( 'esp_new_addon_thing', 'esp_new_addon_attendee_meta' ) ) && !EEH_Activation::table_exists( $table_name) ){
-//			echo "\r\n\r\nDONT shortcircuit $sql";
+	public function dont_short_circuit_new_addon_table( $short_circuit = false, $table_name = '', $create_sql = '' ){
+		$table_analysis = EE_Registry::instance()->create( 'TableAnalysis', array(), true );
+		if (
+			in_array( $table_name, array( 'esp_new_addon_thing', 'esp_new_addon_attendee_meta' ) )
+			&& ! $table_analysis->tableExists( $table_name )
+		) {
+//			echo "\r\n\r\nDONT short circuit $sql";
 			//it's not altering. it's ok to allow this
-			return FALSE;
+			return false;
 		}else{
-//			echo "3\r\n\r\nshort circuit:$sql";
+//			echo "3\r\n\r\n short circuit:$sql";
 			return $short_circuit;
 		}
 	}

@@ -131,7 +131,8 @@ class EE_Messages_Queue_Test extends EE_UnitTestCase {
 		//did it get removed?
 		$test_queue->rewind();
 		$this->assertFalse( $test_queue->valid() );
-
+		//ensure message gets removed from entity map
+		EEM_Message::instance()->clear_entity_map( $message->ID() );
 		//should not be in db either
 		$this->assertEmpty( EEM_Message::instance()->get_one_by_ID( $message->ID() ) );
 	}

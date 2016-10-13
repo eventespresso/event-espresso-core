@@ -6,7 +6,7 @@
  * @subpackage  /core/
  * @author      Brent Christensen
  */
-class EE_CPT_Strategy extends EE_BASE {
+class EE_CPT_Strategy extends EE_Base {
 
    /**
      * 	EE_CPT_Strategy Object
