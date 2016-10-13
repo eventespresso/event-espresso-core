@@ -8,11 +8,14 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 	 * @var EE_Datetime[]
 	 */
 	protected $_dtts_for_event = array();
+
+
+
 	/**
 	 * The event if one is specified in the request
 	 * @var EE_Event
 	 */
-	protected $_evt = NULL;
+	protected $_evt = null;
 
 
 
@@ -110,23 +113,32 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 		if ( empty( $this->_dtts_for_event ) ) {
 			//this means we don't have an event so let's setup a filter dropdown for all the events to select
 			//note possible capability restrictions
-			if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_private_events', 'get_events') ) {
-				$where['status**'] =  array( '!=', 'private' );
+			if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_private_events', 'get_events' ) ) {
+				$where['status**'] = array( '!=', 'private' );
 			}
 
 			if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_others_events', 'get_events' ) ) {
-				$where['EVT_wp_user'] =  get_current_user_id();
+				$where['EVT_wp_user'] = get_current_user_id();
 			}
 
-			$events = EEM_Event::instance()->get_all(array( $where, 'order_by' => array( 'Datetime.DTT_EVT_start' => 'DESC' ) ) );
-			$evts[] = array('id' => 0, 'text' => __('To toggle Check-in status, select an event', 'event_espresso') );
+			$events = EEM_Event::instance()->get_all( array(
+				$where,
+				'order_by' => array( 'Datetime.DTT_EVT_start' => 'DESC' )
+			) );
+			$evts[] = array(
+				'id'   => 0,
+				'text' => __( 'To toggle Check-in status, select an event', 'event_espresso' )
+			);
+			$checked = 'checked';
+			/** @var EE_Event $evt */
 			foreach ( $events as $evt ) {
 				//any registrations for this event?
-				if ( ! $evt->get_count_of_all_registrations() )
+				if ( ! $evt->get_count_of_all_registrations() ) {
 					continue;
+				}
 				$evts[] = array(
-					'id' => $evt->ID(),
-					'text' => $evt->get( 'EVT_name' ),
+					'id'    => $evt->ID(),
+					'text'  => $evt->get( 'EVT_name' ),
 					'class' => $evt->is_expired() ? 'ee-expired-event' : ''
 				);
 			}
@@ -135,6 +147,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 			$event_filter .= '<br><span class="ee-event-filter-toggle"><input type="checkbox" id="js-ee-hide-expired-events" checked>' . ' ' . __( 'Hide Expired Events', 'event_espresso' ) . '</span>';
 			$event_filter .= '</div>';
 			$filters[] = $event_filter;
+		}
 
 		} else {
 			//DTT datetimes filter
@@ -163,8 +176,8 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 
 
 	protected function _get_total_event_attendees() {
-		$EVT_ID = isset($this->_req_data['event_id']) ? absint( $this->_req_data['event_id'] ) : FALSE;
 		$DTT_ID = isset( $this->_req_data['DTT_ID'] ) ? $this->_req_data['DTT_ID'] : NULL;
+		$EVT_ID = isset( $this->_req_data['event_id'] ) ? absint( $this->_req_data['event_id'] ) : FALSE;
 		$query_params = array();
 		if ($EVT_ID){
 			$query_params[0]['EVT_ID']=$EVT_ID;
