@@ -1058,19 +1058,20 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 
 
-	/**
-	 * toggle Check-in status for this registration
-	 *
-	 * Check-ins are toggled in the following order:
-	 * never checked in -> checked in
-	 * checked in -> checked out
-	 * checked out -> checked in
-	 *
-	 *
-	 * @param  int $DTT_ID include specific datetime to toggle Check-in for.  If not included or null, then it is assumed latest datetime is being toggled.
-	 * @param  bool $verify  If true then can_checkin() is used to verify whether the person can be checked in or not.  Otherwise this forces change in checkin status.
-	 * @return int|BOOL            the chk_in status toggled to OR false if nothing got changed.
-	 */
+    /**
+     * toggle Check-in status for this registration
+     * Check-ins are toggled in the following order:
+     * never checked in -> checked in
+     * checked in -> checked out
+     * checked out -> checked in
+     *
+     * @param  int $DTT_ID  include specific datetime to toggle Check-in for.
+     *                      If not included or null, then it is assumed latest datetime is being toggled.
+     * @param bool $verify  If true then can_checkin() is used to verify whether the person
+     *                      can be checked in or not.  Otherwise this forces change in checkin status.
+     * @return bool|int     the chk_in status toggled to OR false if nothing got changed.
+     * @throws EE_Error
+     */
 	public function toggle_checkin_status( $DTT_ID = null, $verify = false ) {
 		if ( empty( $DTT_ID ) ) {
 			$datetime = $this->get_latest_related_datetime();
@@ -1097,7 +1098,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 		$status_to = $status_paths[ $cur_status ];
 		// database only records true for checked IN or false for checked OUT
 		// no record ( null ) means checked in NEVER, but we obviously don't save that
-		$new_status = $status_to == EE_Registration::checkin_status_in ? true : false;
+		$new_status = $status_to === EE_Registration::checkin_status_in ? true : false;
 		// add relation - note Check-ins are always creating new rows
 		// because we are keeping track of Check-ins over time.
 		// Eventually we'll probably want to show a list table
