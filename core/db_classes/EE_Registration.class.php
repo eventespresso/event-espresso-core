@@ -1179,21 +1179,25 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 	/**
 	 * This method simply returns the check-in status for this registration and the given datetime.
+	 *
+	 * If neither the datetime nor the checkin values are provided as arguments, then this will return the LATEST check-in
+	 * status for the registration across all datetimes it belongs to.
+	 *
 	 * @param  int          $DTT_ID  The ID of the datetime we're checking against (if empty we'll get the primary datetime for this registration (via event) and use it's ID);
 	 * @param EE_Checkin $checkin If present, we use the given checkin object rather than the dtt_id.
 	 * @return int            Integer representing Check-in status.
 	 */
 	public function check_in_status_for_datetime( $DTT_ID = 0, $checkin = NULL ) {
-		if ( empty( $DTT_ID ) && ! $checkin instanceof EE_Checkin ) {
-			$datetime = $this->get_related_primary_datetime();
-			if ( ! $datetime instanceof EE_Datetime ) {
-				return 0;
-			}
-			$DTT_ID = $datetime->ID();
-		//verify the registration can checkin for the given DTT_ID
+		$checkin_query_params = array(
+			'order_by' => array( 'CHK_timestamp' => 'DESC' )
+		);
+
+		if ( $DTT_ID > 0 ) {
+			$checkin_query_params[0] = array( 'DTT_ID' => $DTT_ID );
 		}
+
 		//get checkin object (if exists)
-		$checkin = $checkin instanceof EE_Checkin ? $checkin : $this->get_first_related( 'Checkin', array( array( 'DTT_ID' => $DTT_ID ), 'order_by' => array( 'CHK_timestamp' => 'DESC' ) ) );
+		$checkin = $checkin instanceof EE_Checkin ? $checkin : $this->get_first_related( 'Checkin', $checkin_query_params );
 		if ( $checkin instanceof EE_Checkin ) {
 			if ( $checkin->get( 'CHK_in' ) ) {
 				return EE_Registration::checkin_status_in; //checked in
