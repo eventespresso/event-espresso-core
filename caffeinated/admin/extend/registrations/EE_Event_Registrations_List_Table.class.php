@@ -247,16 +247,23 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 	function column__REG_att_checked_in(EE_Registration $item){
 		$attendee = $item->attendee();
 		$attendee_name = $attendee instanceof EE_Attendee ? $attendee->full_name() : '';
-		$DTT_ID = $this->_cur_dtt_id;
-		$checkinstatus = $item->check_in_status_for_datetime( $DTT_ID );
+
+		if ( $this->_cur_dtt_id === 0 && count( $this->_dtts_for_event ) === 1 ) {
+			$latest_related_datetime = $item->get_latest_related_datetime();
+			if ( $latest_related_datetime instanceof EE_Datetime ) {
+				$this->_cur_dtt_id = $latest_related_datetime->ID();
+			}
+		}
+
+		$checkinstatus = $item->check_in_status_for_datetime( $this->_cur_dtt_id );
 		$nonce = wp_create_nonce( 'checkin_nonce' );
-		$toggle_active = ! empty ( $DTT_ID ) && EE_Registry::instance()->CAP->current_user_can( 'ee_edit_checkin', 'espresso_registrations_toggle_checkin_status', $item->ID() )
+		$toggle_active = ! empty ( $this->_cur_dtt_id ) && EE_Registry::instance()->CAP->current_user_can( 'ee_edit_checkin', 'espresso_registrations_toggle_checkin_status', $item->ID() )
 			? ' clickable trigger-checkin'
 			: '';
 
 		$mobile_view_content = ' <span class="show-on-mobile-view-only">' . $attendee_name . '</span>';
 
-		 return '<span class="checkin-icons checkedin-status-' . $checkinstatus . $toggle_active . '" data-_regid="' . $item->ID() . '" data-dttid="' . $DTT_ID . '" data-nonce="' . $nonce . '"></span>' . $mobile_view_content;
+		 return '<span class="checkin-icons checkedin-status-' . $checkinstatus . $toggle_active . '" data-_regid="' . $item->ID() . '" data-dttid="' . $this->_cur_dtt_id . '" data-nonce="' . $nonce . '"></span>' . $mobile_view_content;
 	}
 
 

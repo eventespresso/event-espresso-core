@@ -930,8 +930,19 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 		$event_id = isset( $this->_req_data['event_id'] ) ? $this->_req_data['event_id'] : null;
 		$this->_template_args['before_list_table'] = !empty( $event_id ) ? '<h2>' . sprintf(__('Viewing Registrations for Event: %s', 'event_espresso'), EEM_Event::instance()->get_one_by_ID($event_id)->get('EVT_name') ) . '</h2>' : '';
 
+		//need to get the number of datetimes on the event and set default datetime_id if there is only one datetime on the event.
+		/** @var EE_Event $event */
+		$event = EEM_Event::instance()->get_one_by_ID( $event_id );
 		$DTT_ID = ! empty( $this->_req_data['DTT_ID'] ) ? absint( $this->_req_data['DTT_ID'] ) : 0;
-		$datetime = EEM_Datetime::instance()->get_one_by_ID( $DTT_ID );
+		$datetime = null;
+		if ( $event instanceof EE_Event ) {
+			$datetimes_on_event = $event->datetimes();
+			if ( count( $datetimes_on_event ) === 1 ) {
+				$datetime = reset( $datetimes_on_event );
+			}
+		}
+
+		$datetime = $datetime instanceof EE_Datetime ? $datetime : EEM_Datetime::instance()->get_one_by_ID( $DTT_ID );
 		if ( $datetime instanceof EE_Datetime && $this->_template_args['before_list_table'] !== '' ) {
 			$this->_template_args['before_list_table'] = substr( $this->_template_args['before_list_table'], 0, -5 );
 			$this->_template_args['before_list_table'] .= ' &nbsp;<span class="drk-grey-text">';
