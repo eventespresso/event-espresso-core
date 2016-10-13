@@ -12,11 +12,10 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 
 /**
  * Class EventsArchiveIframe
- * Description
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * @since         $VID:$
+ * @since         4.9
  */
 class EventsArchiveIframe {
 
