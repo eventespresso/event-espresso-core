@@ -24,7 +24,7 @@ do_action( 'AHEE_log', __FILE__, ' FILE LOADED', '' );
  * ------------------------------------------------------------------------
  */
 
-abstract class EE_Base_Class{
+abstract class EE_Base_Class {
 
 	/**
 	 * This is an array of the original properties and values provided during construction
