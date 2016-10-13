@@ -1129,9 +1129,16 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 	/**
 	 * Gets the primary datetime related to this registration via the related Event to this registration
+	 * @deprecated 4.9.17
 	 * @return EE_Datetime
 	 */
 	public function get_related_primary_datetime() {
+		EE_Error::doing_it_wrong(
+			__METHOD__,
+			esc_html__( 'Use EE_Registration::get_latest_related_datetime() or EE_Registration::get_earliest_related_datetime()', 'event_espresso' ),
+			'4.9.17',
+			'5.0.0'
+		);
 		return $this->event()->primary_datetime();
 	}
 
