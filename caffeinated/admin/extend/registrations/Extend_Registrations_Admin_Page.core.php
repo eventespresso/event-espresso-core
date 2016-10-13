@@ -501,10 +501,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 					);
 					break;
 				case 'contact' :
-					$registrations_used_for_contact_data = EEM_Registration::instance()
-					                                                       ->get_latest_registration_for_each_of_given_contacts(
-						                                                       $ids
-					                                                       );
+					$registrations_used_for_contact_data = EEM_Registration::instance()->get_latest_registration_for_each_of_given_contacts( $ids );
 					break;
 			}
 			do_action(
