@@ -32,9 +32,11 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 	 */
 	public function __construct( $routing = true ) {
 		parent::__construct( $routing );
-		define( 'REG_CAF_TEMPLATE_PATH', EE_CORE_CAF_ADMIN_EXTEND . 'registrations/templates/' );
-		define( 'REG_CAF_ASSETS', EE_CORE_CAF_ADMIN_EXTEND . 'registrations/assets/' );
-		define( 'REG_CAF_ASSETS_URL', EE_CORE_CAF_ADMIN_EXTEND_URL . 'registrations/assets/' );
+		if ( ! defined( 'REG_CAF_TEMPLATE_PATH' ) ) {
+			define( 'REG_CAF_TEMPLATE_PATH', EE_CORE_CAF_ADMIN_EXTEND . 'registrations/templates/' );
+			define( 'REG_CAF_ASSETS', EE_CORE_CAF_ADMIN_EXTEND . 'registrations/assets/' );
+			define( 'REG_CAF_ASSETS_URL', EE_CORE_CAF_ADMIN_EXTEND_URL . 'registrations/assets/' );
+		}
 	}
 
 
