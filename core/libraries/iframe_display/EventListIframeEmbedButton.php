@@ -7,11 +7,10 @@ defined('ABSPATH') || exit;
 
 /**
  * Class EventListIframeEmbedButton
- * Description
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * @since         $VID:$
+ * @since         4.9
  */
 class EventListIframeEmbedButton extends IframeEmbedButton
 {
@@ -30,27 +29,6 @@ class EventListIframeEmbedButton extends IframeEmbedButton
 
 
 
-	/**
-     * @return string
-     */
-    public function embedButton()
-    {
-        return $this->embedButtonHtml();
-    }
-
-
-
-    /**
-     * Adds an iframe embed code button to the Event editor.
-     */
-    public function addEventEditorIframeEmbedButton()
-    {
-        // add button for iframe code to event editor.
-        $this->addEventEditorIframeEmbedButtonFilter();
-    }
-
-
-
 
     /**
      * Adds an iframe embed code button to the Event editor.
@@ -59,7 +37,7 @@ class EventListIframeEmbedButton extends IframeEmbedButton
     public function addEventListIframeEmbedButtonSection()
     {
         return $this->addIframeEmbedButtonsSection(
-            array( 'event_list' => $this->embedButton() )
+            array( 'event_list' => $this->embedButtonHtml() )
         );
     }
 

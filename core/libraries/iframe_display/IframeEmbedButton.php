@@ -7,11 +7,10 @@ defined( 'ABSPATH' ) || exit;
 
 /**
  * Class IframeEmbedButton
- * Description
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * @since         $VID:$
+ * @since         4.9
  */
 abstract class IframeEmbedButton {
 
