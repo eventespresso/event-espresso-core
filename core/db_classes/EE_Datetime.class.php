@@ -199,7 +199,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	 * increments sold by amount passed by $qty
 	 * @param int $qty
 	 */
-	function increase_sold( $qty = 1 ) {
+	public function increase_sold( $qty = 1 ) {
 		$sold = $this->sold() + $qty;
 		$this->set_sold( $sold );
 	}
@@ -210,7 +210,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	 * decrements (subtracts) sold amount passed by $qty
 	 * @param int $qty
 	 */
-	function decrease_sold( $qty = 1 ) {
+	public function decrease_sold( $qty = 1 ) {
 		$sold = $this->sold() - $qty;
 		$this->set_sold( $sold );
 	}
@@ -338,18 +338,20 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 
 
 	/**
-	 *        get date_range - meaning the start AND end date
+	 * get date_range - meaning the start AND end date
 	 *
-	 * @access        public
-	 * @param null          $dt_frmt - string representation of date format defaults to WP settings
-	 * @param        string $conjunction - conjunction junction what's your function ? this string joins the start date with the end date ie: Jan 01 "to" Dec 31
-	 * @return        mixed        string on success, FALSE on fail
+	 * @access public
+	 * @param string $dt_frmt     - string representation of date format defaults to WP settings
+	 * @param string $conjunction - conjunction junction what's your function ? this string joins the start date with
+	 *                            the end date ie: Jan 01 "to" Dec 31
+	 * @return mixed        string on success, FALSE on fail
+	 * @throws \EE_Error
 	 */
 	public function date_range( $dt_frmt = NULL, $conjunction = ' - ' ) {
 		$dt_frmt = ! empty( $dt_frmt ) ? $dt_frmt : $this->_dt_frmt;
 		$start = str_replace( ' ', '&nbsp;', $this->get_i18n_datetime( 'DTT_EVT_start', $dt_frmt ) );
 		$end = str_replace( ' ', '&nbsp;', $this->get_i18n_datetime( 'DTT_EVT_end', $dt_frmt ) );
-		return $start != $end ? $start . $conjunction . $end : $start;
+		return $start !== $end ? $start . $conjunction . $end : $start;
 	}
 
 
@@ -357,6 +359,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	/**
 	 * @param null   $dt_frmt
 	 * @param string $conjunction
+	 * @throws \EE_Error
 	 */
 	public function e_date_range( $dt_frmt = NULL, $conjunction = ' - ' ) {
 		echo $this->date_range( $dt_frmt, $conjunction );
@@ -409,19 +412,20 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 
 
 	/**
-	 *        get time_range
+	 * get time_range
 	 *
-	 * @access        public
-	 * @param        string $tm_format   - string representation of time format defaults to 'g:i a'
-	 * @param        string $conjunction - conjunction junction what's your function ? this string joins the start date with the end date ie: Jan 01 "to" Dec 31
-	 * @return        mixed        string on success, FALSE on fail
+	 * @access public
+	 * @param string $tm_format   string representation of time format defaults to 'g:i a'
+	 * @param string $conjunction conjunction junction what's your function ?
+	 *                            this string joins the start date with the end date ie: Jan 01 "to" Dec 31
+	 * @return mixed              string on success, FALSE on fail
+	 * @throws \EE_Error
 	 */
 	public function time_range( $tm_format = NULL, $conjunction = ' - ' ) {
 		$tm_format = !empty( $tm_format ) ? $tm_format : $this->_tm_frmt;
-
 		$start = str_replace( ' ', '&nbsp;', $this->get_i18n_datetime( 'DTT_EVT_start', $tm_format ) );
 		$end = str_replace( ' ', '&nbsp;', $this->get_i18n_datetime( 'DTT_EVT_end',  $tm_format ) );
-		return $start != $end ? $start . $conjunction . $end : $start;
+		return $start !== $end ? $start . $conjunction . $end : $start;
 	}
 
 
@@ -429,6 +433,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	/**
 	 * @param null   $tm_format
 	 * @param string $conjunction
+	 * @throws \EE_Error
 	 */
 	public function e_time_range( $tm_format = NULL, $conjunction = ' - ' ) {
 		echo $this->time_range( $tm_format, $conjunction );
@@ -436,18 +441,16 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 
 
 
-
 	/**
 	 * This returns a range representation of the date and times.
-	 *
-	 * Output is dependent on the difference (or similarity) between DTT_EVT_start and DTT_EVT_end.  Also, the return value
-	 * is localized.
+	 * Output is dependent on the difference (or similarity) between DTT_EVT_start and DTT_EVT_end.
+	 * Also, the return value is localized.
 	 *
 	 * @param string $dt_format
 	 * @param string $tm_format
 	 * @param string $conjunction
-	 *
 	 * @return string
+	 * @throws \EE_Error
 	 */
 	public function date_and_time_range( $dt_format = '', $tm_format = '', $conjunction = ' - '  ) {
 		$dt_format = ! empty( $dt_format ) ? $dt_format : $this->_dt_frmt;
@@ -457,31 +460,36 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 		//the range output depends on various conditions
 		switch ( true ) {
 			//start date timestamp and end date timestamp are the same.
-			case ( $this->get_raw( 'DTT_EVT_start' ) == $this->get_raw( 'DTT_EVT_end' ) ) :
+			case ( $this->get_raw( 'DTT_EVT_start' ) === $this->get_raw( 'DTT_EVT_end' ) ) :
 				$output = $this->get_i18n_datetime( 'DTT_EVT_start', $full_format );
 				break;
 			//start and end date are the same but times are different
-			case ( $this->start_date() == $this->end_date() ) :
-				$output = $this->get_i18n_datetime( 'DTT_EVT_start', $full_format ) . $conjunction . $this->get_i18n_datetime( 'DTT_EVT_end', $tm_format );
+			case ( $this->start_date() === $this->end_date() ) :
+				$output = $this->get_i18n_datetime( 'DTT_EVT_start', $full_format )
+				          . $conjunction
+				          . $this->get_i18n_datetime( 'DTT_EVT_end', $tm_format );
 				break;
 			//all other conditions
 			default :
-				$output = $this->get_i18n_datetime( 'DTT_EVT_start', $full_format ) . $conjunction . $this->get_i18n_datetime( 'DTT_EVT_end', $full_format );
+				$output = $this->get_i18n_datetime( 'DTT_EVT_start', $full_format )
+				          . $conjunction
+				          . $this->get_i18n_datetime( 'DTT_EVT_end', $full_format );
 				break;
 		}
 		return $output;
 	}
 
 
+
 	/**
 	 * This echos the results of date and time range.
 	 *
 	 * @see date_and_time_range() for more details on purpose.
-	 *
-	 * @param string   $dt_format
-	 * @param string   $tm_format
+	 * @param string $dt_format
+	 * @param string $tm_format
 	 * @param string $conjunction
-	 * @return string
+	 * @return void
+	 * @throws \EE_Error
 	 */
 	public function e_date_and_time_range( $dt_format = '', $tm_format = '', $conjunction = ' - ' ) {
 		echo $this->date_and_time_range( $dt_format, $tm_format, $conjunction );
@@ -490,7 +498,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 
 
 	/**
-	 *        get start date and start time
+	 * get start date and start time
 	 *
 	 * @access        public
 	 * @param 	string 	$dt_format - string representation of date format defaults to 'F j, Y'

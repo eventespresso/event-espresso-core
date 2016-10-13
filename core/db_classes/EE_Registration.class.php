@@ -1058,19 +1058,20 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 
 
-	/**
-	 * toggle Check-in status for this registration
-	 *
-	 * Check-ins are toggled in the following order:
-	 * never checked in -> checked in
-	 * checked in -> checked out
-	 * checked out -> checked in
-	 *
-	 *
-	 * @param  int $DTT_ID include specific datetime to toggle Check-in for.  If not included or null, then it is assumed latest datetime is being toggled.
-	 * @param  bool $verify  If true then can_checkin() is used to verify whether the person can be checked in or not.  Otherwise this forces change in checkin status.
-	 * @return int|BOOL            the chk_in status toggled to OR false if nothing got changed.
-	 */
+    /**
+     * toggle Check-in status for this registration
+     * Check-ins are toggled in the following order:
+     * never checked in -> checked in
+     * checked in -> checked out
+     * checked out -> checked in
+     *
+     * @param  int $DTT_ID  include specific datetime to toggle Check-in for.
+     *                      If not included or null, then it is assumed latest datetime is being toggled.
+     * @param bool $verify  If true then can_checkin() is used to verify whether the person
+     *                      can be checked in or not.  Otherwise this forces change in checkin status.
+     * @return bool|int     the chk_in status toggled to OR false if nothing got changed.
+     * @throws EE_Error
+     */
 	public function toggle_checkin_status( $DTT_ID = null, $verify = false ) {
 		if ( empty( $DTT_ID ) ) {
 			$datetime = $this->get_latest_related_datetime();
@@ -1097,7 +1098,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 		$status_to = $status_paths[ $cur_status ];
 		// database only records true for checked IN or false for checked OUT
 		// no record ( null ) means checked in NEVER, but we obviously don't save that
-		$new_status = $status_to == EE_Registration::checkin_status_in ? true : false;
+		$new_status = $status_to === EE_Registration::checkin_status_in ? true : false;
 		// add relation - note Check-ins are always creating new rows
 		// because we are keeping track of Check-ins over time.
 		// Eventually we'll probably want to show a list table
@@ -1127,27 +1128,13 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 
 
-	/**
-	 * Gets the primary datetime related to this registration via the related Event to this registration
-	 * @deprecated 4.9.17
-	 * @return EE_Datetime
-	 */
-	public function get_related_primary_datetime() {
-		EE_Error::doing_it_wrong(
-			__METHOD__,
-			esc_html__( 'Use EE_Registration::get_latest_related_datetime() or EE_Registration::get_earliest_related_datetime()', 'event_espresso' ),
-			'4.9.17',
-			'5.0.0'
-		);
-		return $this->event()->primary_datetime();
-	}
-
-
-	/**
-	 * Returns the latest datetime related to this registration (via the ticket attached to the registration).
-	 * "Latest" is defined by the `DTT_EVT_start` column.
-	 * @return EE_Datetime|null
-	 */
+    /**
+     * Returns the latest datetime related to this registration (via the ticket attached to the registration).
+     * "Latest" is defined by the `DTT_EVT_start` column.
+     *
+     * @return EE_Datetime|null
+     * @throws \EE_Error
+     */
 	public function get_latest_related_datetime() {
 		return EEM_Datetime::instance()->get_one(
 			array(
@@ -1160,10 +1147,13 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 	}
 
 
-	/**
-	 * Returns the earliest datetime related to this registration (via the ticket attached to the registration).
-	 * "Earliest" is defined by the `DTT_EVT_start` column.
-	 */
+
+    /**
+     * Returns the earliest datetime related to this registration (via the ticket attached to the registration).
+     * "Earliest" is defined by the `DTT_EVT_start` column.
+     *
+     * @throws \EE_Error
+     */
 	public function get_earliest_related_datetime() {
 		return EEM_Datetime::instance()->get_one(
 			array(
@@ -1177,17 +1167,19 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 
 
-	/**
-	 * This method simply returns the check-in status for this registration and the given datetime.
-	 *
-	 * If neither the datetime nor the checkin values are provided as arguments, then this will return the LATEST check-in
-	 * status for the registration across all datetimes it belongs to.
-	 *
-	 * @param  int          $DTT_ID  The ID of the datetime we're checking against (if empty we'll get the primary datetime for this registration (via event) and use it's ID);
-	 * @param EE_Checkin $checkin If present, we use the given checkin object rather than the dtt_id.
-	 * @return int            Integer representing Check-in status.
-	 */
-	public function check_in_status_for_datetime( $DTT_ID = 0, $checkin = NULL ) {
+    /**
+     * This method simply returns the check-in status for this registration and the given datetime.
+     * If neither the datetime nor the checkin values are provided as arguments,
+     * then this will return the LATEST check-in status for the registration across all datetimes it belongs to.
+     *
+     * @param  int $DTT_ID        The ID of the datetime we're checking against
+     *                            (if empty we'll get the primary datetime for
+     *                            this registration (via event) and use it's ID);
+     * @param EE_Checkin $checkin If present, we use the given checkin object rather than the dtt_id.
+     * @return int                Integer representing Check-in status.
+     * @throws \EE_Error
+     */
+	public function check_in_status_for_datetime( $DTT_ID = 0, $checkin = null ) {
 		$checkin_query_params = array(
 			'order_by' => array( 'CHK_timestamp' => 'DESC' )
 		);
@@ -1197,16 +1189,16 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 		}
 
 		//get checkin object (if exists)
-		$checkin = $checkin instanceof EE_Checkin ? $checkin : $this->get_first_related( 'Checkin', $checkin_query_params );
+		$checkin = $checkin instanceof EE_Checkin
+            ? $checkin
+            : $this->get_first_related( 'Checkin', $checkin_query_params );
 		if ( $checkin instanceof EE_Checkin ) {
 			if ( $checkin->get( 'CHK_in' ) ) {
 				return EE_Registration::checkin_status_in; //checked in
-			} else {
-				return EE_Registration::checkin_status_out; //had checked in but is now checked out.
 			}
-		} else {
-			return EE_Registration::checkin_status_never; //never been checked in
+			return EE_Registration::checkin_status_out; //had checked in but is now checked out.
 		}
+		return EE_Registration::checkin_status_never; //never been checked in
 	}
 
 
@@ -1454,6 +1446,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 
 
+    /*************************** DEPRECATED ***************************/
+
+
+
 	/**
 	 * @deprecated
 	 * @since     4.7.0
@@ -1497,6 +1493,27 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 				'event_espresso'), '4.7.0');
 		return $this->pretty_final_price();
 	}
+
+
+
+    /**
+     * Gets the primary datetime related to this registration via the related Event to this registration
+     *
+     * @deprecated 4.9.17
+     * @return EE_Datetime
+     */
+    public function get_related_primary_datetime() {
+        EE_Error::doing_it_wrong(
+            __METHOD__,
+            esc_html__(
+                'Use EE_Registration::get_latest_related_datetime() or EE_Registration::get_earliest_related_datetime()',
+                'event_espresso'
+            ),
+            '4.9.17',
+            '5.0.0'
+        );
+        return $this->event()->primary_datetime();
+    }
 
 
 }
