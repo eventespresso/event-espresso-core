@@ -718,11 +718,12 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	protected function _create_new_cpt_item() {
 		$gmt_offset = get_option( 'gmt_offset' );
-		if( $gmt_offset === '0' ) {
+		//only nag them about setting their timezone if it's their first event, and they haven't already done it
+		if( $gmt_offset === '0' && ! EEM_Event::instance()->exists(array()) ) {
 			EE_Error::add_attention(
 				sprintf(
-					__( 'Your site\'s timezone is set to UTC+0, is that right? If not, please visit %1$sWordPress 
-					General Settings%2$s and set the right timezone for your area before you create your events.'),
+					__( 'Your website\'s timezone is currently set to UTC + 0. We recommend updating your timezone to a city
+			        or region near you before you create an event. Your timezone can be updated through the %1$sGeneral Settings%2$s page.'),
 					'<a href="' . admin_url( 'options-general.php' ) . '">',
 					'</a>'
 				),
