@@ -284,7 +284,9 @@ class Iframe
             foreach ( (array) $vars as $key => $value) {
 	            $this->localized_vars[ $var_name ] = $this->encodeJsonVars( $value );
             }
-	        $JSON .= "/* <![CDATA[ */ var {$var_name} = " . wp_json_encode( $this->localized_vars[ $var_name ] ) . '; /* ]]> */';
+	        $JSON .= "/* <![CDATA[ */ var {$var_name} = ";
+	        $JSON .= wp_json_encode( $this->localized_vars[ $var_name ] );
+	        $JSON .= '; /* ]]> */';
         }
         return $JSON;
     }
