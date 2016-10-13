@@ -1143,6 +1143,39 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 	}
 
 
+	/**
+	 * Returns the latest datetime related to this registration (via the ticket attached to the registration).
+	 * "Latest" is defined by the `DTT_EVT_start` column.
+	 * @return EE_Datetime|null
+	 */
+	public function get_latest_related_datetime() {
+		return EEM_Datetime::instance()->get_one(
+			array(
+				array(
+					'Ticket.Registration.REG_ID' => $this->ID()
+				),
+				'order_by' => array( 'DTT_EVT_start' => 'DESC' )
+			)
+		);
+	}
+
+
+	/**
+	 * Returns the earliest datetime related to this registration (via the ticket attached to the registration).
+	 * "Earliest" is defined by the `DTT_EVT_start` column.
+	 */
+	public function get_earliest_related_datetime() {
+		return EEM_Datetime::instance()->get_one(
+			array(
+				array(
+					'Ticket.Registration.REG_ID' => $this->ID()
+				),
+				'order_by' => array( 'DTT_EVT_start' => 'ASC' )
+			)
+		);
+	}
+
+
 
 	/**
 	 * This method simply returns the check-in status for this registration and the given datetime.
