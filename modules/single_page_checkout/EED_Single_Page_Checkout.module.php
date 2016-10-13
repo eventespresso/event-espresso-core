@@ -1326,7 +1326,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			);
 			echo apply_filters(
 				'FHEE__EE_Front_Controller__display_registration_footer',
-				\EEH_Template::powered_by_event_espresso( '', 'espresso-registration-footer-dv' )
+				\EEH_Template::powered_by_event_espresso(
+					'',
+					'espresso-registration-footer-dv',
+					array( 'utm_content' => 'registration_checkout' )
+				)
 			);
 		}
 		return '';
