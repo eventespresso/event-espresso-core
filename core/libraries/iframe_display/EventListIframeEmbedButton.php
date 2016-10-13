@@ -16,16 +16,26 @@ defined('ABSPATH') || exit;
 class EventListIframeEmbedButton extends IframeEmbedButton
 {
 
+	/**
+	 * EventListIframeEmbedButton constructor.
+	 */
+	public function __construct() {
+		parent::__construct(
+			esc_html__( 'Event List', 'event_espresso' ),
+			esc_html__( 'event_list', 'event_espresso' ),
+			esc_html__( 'Event', 'event_espresso' ),
+			esc_html__( 'event', 'event_espresso' )
+		);
+	}
 
-    /**
+
+
+	/**
      * @return string
      */
     public function embedButton()
     {
-        return $this->embedButtonHtml(
-            esc_html__('Event List', 'event_espresso'),
-            esc_html__('event_list', 'event_espresso')
-        );
+        return $this->embedButtonHtml();
     }
 
 
@@ -36,11 +46,7 @@ class EventListIframeEmbedButton extends IframeEmbedButton
     public function addEventEditorIframeEmbedButton()
     {
         // add button for iframe code to event editor.
-        $this->addEventEditorIframeEmbedButtonFilter(
-            'event_list',
-            esc_html__('Event', 'event_espresso'),
-            esc_html__('event', 'event_espresso')
-        );
+        $this->addEventEditorIframeEmbedButtonFilter();
     }
 
 
