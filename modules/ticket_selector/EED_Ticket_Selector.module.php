@@ -88,8 +88,11 @@ class EED_Ticket_Selector extends  EED_Module {
 	 *  @return 	void
 	 */
 	public static function set_hooks_admin() {
-        if (\EE_Registry::instance()->REQ->get('page') === 'espresso_events') {
-            $iframe_embed_button = \EED_Ticket_Selector::getIframeEmbedButton();
+		if (
+			\EE_Registry::instance()->REQ->get( 'page' ) === 'espresso_events'
+			&& \EE_Registry::instance()->REQ->get( 'action' ) === 'edit'
+		) {
+			$iframe_embed_button = \EED_Ticket_Selector::getIframeEmbedButton();
             $iframe_embed_button->addEventEditorIframeEmbedButton();
         }
     }
@@ -242,7 +245,10 @@ class EED_Ticket_Selector extends  EED_Module {
     public static function iframe_code_button($permalink_string, $id, $new_title = '', $new_slug = '')
     {
         // todo add doing_it_wrong() notice during next major version
-        if (\EE_Registry::instance()->REQ->get('page') === 'espresso_events') {
+        if (
+        	\EE_Registry::instance()->REQ->get('page') === 'espresso_events'
+        	&& \EE_Registry::instance()->REQ->get('action') === 'edit'
+        ) {
             $iframe_embed_button = \EED_Ticket_Selector::getIframeEmbedButton();
             $iframe_embed_button->addEventEditorIframeEmbedButton();
         }
@@ -295,8 +301,11 @@ class EED_Ticket_Selector extends  EED_Module {
     public static function load_tckt_slctr_assets_admin()
     {
         // todo add doing_it_wrong() notice during next major version
-        if (\EE_Registry::instance()->REQ->get('page') === 'espresso_events') {
-            $iframe_embed_button = \EED_Ticket_Selector::getIframeEmbedButton();
+	    if (
+		    \EE_Registry::instance()->REQ->get( 'page' ) === 'espresso_events'
+		    && \EE_Registry::instance()->REQ->get( 'action' ) === 'edit'
+	    ) {
+		    $iframe_embed_button = \EED_Ticket_Selector::getIframeEmbedButton();
             $iframe_embed_button->embedButtonAssets();
         }
     }
