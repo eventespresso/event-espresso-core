@@ -42,7 +42,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 	 *
 	 * @param \Registrations_Admin_Page $admin_page
 	 */
-	public function __construct( \Registrations_Admin_Page $admin_page ) {
+	public function __construct( $admin_page ) {
 		parent::__construct( $admin_page );
 		$this->_status = $this->_admin_page->get_registration_status_array();
 	}
