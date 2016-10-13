@@ -205,6 +205,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 		if ($EVT_ID){
 			$query_params[0]['EVT_ID']=$EVT_ID;
 		}
+		//if DTT is included we only show for that datetime.  Otherwise we're showing for all datetimes (the event).
 		if ( $DTT_ID ) {
 			$query_params[0]['Ticket.Datetime.DTT_ID'] = $DTT_ID;
 		}
