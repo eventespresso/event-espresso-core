@@ -711,6 +711,31 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 
 
+	/**
+	 * When a user is creating a new event, notify them if they haven't set their timezone.
+	 * Otherwise, do the normal logic
+	 * @return string
+	 */
+	protected function _create_new_cpt_item() {
+		$gmt_offset = get_option( 'gmt_offset' );
+		if( $gmt_offset === '0' ) {
+			EE_Error::add_attention(
+				sprintf(
+					__( 'Your site\'s timezone is set to UTC+0, is that right? If not, please visit %1$sWordPress 
+					General Settings%2$s and set the right timezone for your area before you create your events.'),
+					'<a href="' . admin_url( 'options-general.php' ) . '">',
+					'</a>'
+				),
+				__FILE__,
+				__FUNCTION__,
+				__LINE__
+			);
+		}
+		return parent::_create_new_cpt_item();
+	}
+
+
+
 	protected function _set_list_table_views_default() {
 		$this->_views = array(
 			'all'   => array(
