@@ -929,7 +929,17 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 
 		$event_id = isset( $this->_req_data['event_id'] ) ? $this->_req_data['event_id'] : null;
 		$this->_template_args['before_list_table'] = !empty( $event_id ) ? '<h2>' . sprintf(__('Viewing Registrations for Event: %s', 'event_espresso'), EEM_Event::instance()->get_one_by_ID($event_id)->get('EVT_name') ) . '</h2>' : '';
-		$this->_template_args['list_table_hidden_fields'] = !empty( $event_id ) ? '<input type="hidden" name="event_id" value="' . $event_id . '">' : '';
+
+		$DTT_ID = ! empty( $this->_req_data['DTT_ID'] ) ? absint( $this->_req_data['DTT_ID'] ) : 0;
+		$datetime = EEM_Datetime::instance()->get_one_by_ID( $DTT_ID );
+		if ( $datetime instanceof EE_Datetime && $this->_template_args['before_list_table'] !== '' ) {
+			$this->_template_args['before_list_table'] = substr( $this->_template_args['before_list_table'], 0, -5 );
+			$this->_template_args['before_list_table'] .= ' &nbsp;<span class="drk-grey-text">';
+			$this->_template_args['before_list_table'] .= '<span class="dashicons dashicons-calendar"></span>';
+			$this->_template_args['before_list_table'] .= $datetime->name();
+			$this->_template_args['before_list_table'] .= ' ( ' . $datetime->date_and_time_range() .' )';
+			$this->_template_args['before_list_table'] .= '</span></h2>';
+		}
 
 		$this->display_admin_list_table_page_with_no_sidebar();
 	}
