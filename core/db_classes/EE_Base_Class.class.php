@@ -48,8 +48,7 @@ abstract class EE_Base_Class {
 	 * date format
 	 * pattern or format for displaying dates
 	 *
-	 * @access protected
-	 * @type string $_dt_frmt
+	 * @var string $_dt_frmt
 	 */
 	protected $_dt_frmt;
 
@@ -59,8 +58,7 @@ abstract class EE_Base_Class {
 	 * time format
 	 * pattern or format for displaying time
 	 *
-	 * @access protected
-	 * @type string $_tm_frmt
+	 * @var string $_tm_frmt
 	 */
 	protected $_tm_frmt;
 
@@ -72,8 +70,8 @@ abstract class EE_Base_Class {
 	 * The purpose of this is for setting a cache on properties that may have calculated values after a prepare_for_get.  That way the cache can be checked first and the calculated property returned instead of having to recalculate.
 	 *
 	 * Used by _set_cached_property() and _get_cached_property() methods.
-	 * @access protected
-	 * @type array
+	 *
+	 * @var array
 	 */
 	protected $_cached_properties = array();
 
@@ -86,7 +84,7 @@ abstract class EE_Base_Class {
 	/**
 	 * Array where keys are field names (see the model's _fields property) and values are their values. To see what
 	 * their types should be, look at what that field object returns on its prepare_for_get and prepare_for_set methods)
-	 * @type array EE_Model_Field_Base[]
+	 * @var array EE_Model_Field_Base[]
 	 */
 	protected $_fields = array();
 
