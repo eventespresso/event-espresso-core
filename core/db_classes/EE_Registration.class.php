@@ -1127,27 +1127,13 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 
 
-	/**
-	 * Gets the primary datetime related to this registration via the related Event to this registration
-	 * @deprecated 4.9.17
-	 * @return EE_Datetime
-	 */
-	public function get_related_primary_datetime() {
-		EE_Error::doing_it_wrong(
-			__METHOD__,
-			esc_html__( 'Use EE_Registration::get_latest_related_datetime() or EE_Registration::get_earliest_related_datetime()', 'event_espresso' ),
-			'4.9.17',
-			'5.0.0'
-		);
-		return $this->event()->primary_datetime();
-	}
-
-
-	/**
-	 * Returns the latest datetime related to this registration (via the ticket attached to the registration).
-	 * "Latest" is defined by the `DTT_EVT_start` column.
-	 * @return EE_Datetime|null
-	 */
+    /**
+     * Returns the latest datetime related to this registration (via the ticket attached to the registration).
+     * "Latest" is defined by the `DTT_EVT_start` column.
+     *
+     * @return EE_Datetime|null
+     * @throws \EE_Error
+     */
 	public function get_latest_related_datetime() {
 		return EEM_Datetime::instance()->get_one(
 			array(
@@ -1160,10 +1146,13 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 	}
 
 
-	/**
-	 * Returns the earliest datetime related to this registration (via the ticket attached to the registration).
-	 * "Earliest" is defined by the `DTT_EVT_start` column.
-	 */
+
+    /**
+     * Returns the earliest datetime related to this registration (via the ticket attached to the registration).
+     * "Earliest" is defined by the `DTT_EVT_start` column.
+     *
+     * @throws \EE_Error
+     */
 	public function get_earliest_related_datetime() {
 		return EEM_Datetime::instance()->get_one(
 			array(
@@ -1454,6 +1443,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 
 
+    /*************************** DEPRECATED ***************************/
+
+
+
 	/**
 	 * @deprecated
 	 * @since     4.7.0
@@ -1497,6 +1490,27 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 				'event_espresso'), '4.7.0');
 		return $this->pretty_final_price();
 	}
+
+
+
+    /**
+     * Gets the primary datetime related to this registration via the related Event to this registration
+     *
+     * @deprecated 4.9.17
+     * @return EE_Datetime
+     */
+    public function get_related_primary_datetime() {
+        EE_Error::doing_it_wrong(
+            __METHOD__,
+            esc_html__(
+                'Use EE_Registration::get_latest_related_datetime() or EE_Registration::get_earliest_related_datetime()',
+                'event_espresso'
+            ),
+            '4.9.17',
+            '5.0.0'
+        );
+        return $this->event()->primary_datetime();
+    }
 
 
 }
