@@ -9,27 +9,35 @@ defined('ABSPATH') || exit;
 
 /**
  * Class TicketSelectorIframeEmbedButton
- * Description
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * @since         $VID:$
+ * @since         4.9
  */
 class TicketSelectorIframeEmbedButton extends IframeEmbedButton
 {
 
+	/**
+	 * TicketSelectorIframeEmbedButton constructor.
+	 */
+	public function __construct() {
+		parent::__construct(
+            esc_html__( 'Ticket Selector', 'event_espresso' ),
+            'ticket_selector',
+			esc_html__( 'Ticket Selector', 'event_espresso' ),
+			esc_html__( 'event', 'event_espresso' )
+		);
+	}
 
-    /**
+
+
+	/**
      * Adds an iframe embed code button to the Event editor.
      */
     public function addEventEditorIframeEmbedButton()
     {
         // add button for iframe code to event editor.
-        $this->addEventEditorIframeEmbedButtonFilter(
-            'ticket_selector',
-            esc_html__('Ticket Selector', 'event_espresso'),
-            'event'
-        );
+        $this->addEventEditorIframeEmbedButtonFilter();
     }
 
 
