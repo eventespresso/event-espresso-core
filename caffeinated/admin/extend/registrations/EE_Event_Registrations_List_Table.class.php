@@ -138,7 +138,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 	 */
 	protected function _get_table_filters() {
 		$filters = $where = array();
-		$current_EVT_ID = isset( $this->_req_data['event_id'] ) ? $this->_req_data['event_id'] : 0;
+		$current_EVT_ID = isset( $this->_req_data['event_id'] ) ? (int) $this->_req_data['event_id'] : 0;
 		if ( empty( $this->_dtts_for_event ) || count( $this->_dtts_for_event ) === 1 ) {
 			//this means we don't have an event so let's setup a filter dropdown for all the events to select
 			//note possible capability restrictions
