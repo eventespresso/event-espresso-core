@@ -1,7 +1,7 @@
 <?php
 namespace EventEspresso\core\libraries\iframe_display;
 
-defined('ABSPATH') || exit;
+defined( 'ABSPATH' ) || exit;
 
 
 
@@ -15,16 +15,16 @@ defined('ABSPATH') || exit;
 class EventListIframeEmbedButton extends IframeEmbedButton
 {
 
-	/**
-	 * EventListIframeEmbedButton constructor.
-	 */
-	public function __construct() {
+    /**
+     * EventListIframeEmbedButton constructor.
+     */
+    public function __construct()
+    {
         parent::__construct(
-			esc_html__( 'Event List', 'event_espresso' ),
+            esc_html__( 'Event List', 'event_espresso' ),
             'event_list'
-		);
-	}
-
+        );
+    }
 
 
 
@@ -38,7 +38,6 @@ class EventListIframeEmbedButton extends IframeEmbedButton
             array( 'event_list' => $this->embedButtonHtml() )
         );
     }
-
 
 
 
