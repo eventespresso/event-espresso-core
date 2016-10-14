@@ -3,7 +3,7 @@ namespace EventEspresso\modules\ticket_selector;
 
 use EventEspresso\core\libraries\iframe_display\IframeEmbedButton;
 
-defined('ABSPATH') || exit;
+defined( 'ABSPATH' ) || exit;
 
 
 
@@ -17,19 +17,20 @@ defined('ABSPATH') || exit;
 class TicketSelectorIframeEmbedButton extends IframeEmbedButton
 {
 
-	/**
-	 * TicketSelectorIframeEmbedButton constructor.
-	 */
-	public function __construct() {
-		parent::__construct(
+    /**
+     * TicketSelectorIframeEmbedButton constructor.
+     */
+    public function __construct()
+    {
+        parent::__construct(
             esc_html__( 'Ticket Selector', 'event_espresso' ),
             'ticket_selector'
-		);
-	}
+        );
+    }
 
 
 
-	/**
+    /**
      * Adds an iframe embed code button to the Event editor.
      */
     public function addEventEditorIframeEmbedButton()
