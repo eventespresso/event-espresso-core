@@ -18,11 +18,6 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  */
 class EventsArchiveIframe extends Iframe {
 
-	/**
-	 * @var \EED_Events_Archive $EED_Events_Archive
-	 */
-	// private $EED_Events_Archive = '';
-
 
 
 	/**
