@@ -1,6 +1,8 @@
 <?php
 namespace EventEspresso\core;
 
+use EventEspresso\core\libraries\iframe_display\Iframe;
+
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
 }
@@ -48,8 +50,7 @@ class Factory {
 			case 'Iframe' :
 				$title = isset( $arguments['title'] ) ? $arguments['title'] : null;
 				$content = isset( $arguments['content'] ) ? $arguments['content'] : null;
-				// $class_name = 'libraries\iframe_display\\' . $class_name;
-				$object = new libraries\iframe_display\Iframe( $title, $content );
+				$object = new Iframe( $title, $content );
 				break;
 
 			default :
