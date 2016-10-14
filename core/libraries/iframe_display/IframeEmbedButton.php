@@ -26,11 +26,6 @@ abstract class IframeEmbedButton {
     private $route_name;
 
     /**
-     * @var string $title
-     */
-    private $title;
-
-    /**
      * @var string $slug
      */
     private $slug;
@@ -43,18 +38,17 @@ abstract class IframeEmbedButton {
 
 
 	/**
-	 * IframeEmbedButton constructor.
-	 *
-	 * @param string $iframe_name
-	 * @param string $route_name
-	 * @param string $title
-	 * @param string $slug
+     * IframeEmbedButton constructor.
+     *
+     * @param string $iframe_name i18n name for the iframe. This will be used in HTML
+	 * @param string $route_name  the name of the registered route
+     * @param string $slug        URL slug used for the thing the iframe button is being embedded in.
+     *                            will most likely be "event" since that's the only usage atm
 	 */
-	public function __construct($iframe_name, $route_name, $title, $slug) {
-		$this->iframe_name = $iframe_name;
-		$this->route_name = $route_name;
-		$this->title = $title;
-		$this->slug = $slug;
+	public function __construct($iframe_name, $route_name, $slug) {
+        $this->iframe_name = $iframe_name;
+        $this->route_name = $route_name;
+        $this->slug = $slug;
 	}
 
 
@@ -193,7 +187,8 @@ abstract class IframeEmbedButton {
 	 * @return string
 	 */
 	public function embedButtonHtml($query_args = array(), $button_class = '' ) {
-        $query_args = array($this->route_name => 'iframe') + $query_args;
+        // incoming args will replace the defaults listed here in the second array (union preserves first array)
+        $query_args = (array)$query_args + array($this->route_name => 'iframe');
         $query_args = (array) apply_filters(
             'FHEE__EventEspresso_core_libraries_iframe_display_IframeEmbedButton__embedButtonHtml__query_args',
             $query_args
