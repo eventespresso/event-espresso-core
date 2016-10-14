@@ -218,7 +218,8 @@ class Iframe
      */
     public function display()
     {
-        echo $this->getTemplate();
+	    $this->content .= \EEH_HTML::br() . \EEH_Template::powered_by_event_espresso();
+	    echo $this->getTemplate();
         exit;
     }
 
