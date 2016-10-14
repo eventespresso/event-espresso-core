@@ -23,8 +23,7 @@ class TicketSelectorIframeEmbedButton extends IframeEmbedButton
 	public function __construct() {
 		parent::__construct(
             esc_html__( 'Ticket Selector', 'event_espresso' ),
-            'ticket_selector',
-            'event'
+            'ticket_selector'
 		);
 	}
 
