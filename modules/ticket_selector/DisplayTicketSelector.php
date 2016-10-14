@@ -328,7 +328,7 @@ class DisplayTicketSelector
                 $html .= ' type="submit" value="' . $btn_text . '" />';
                 $html .= apply_filters('FHEE__EE_Ticket_Selector__after_ticket_selector_submit', '', $this->event);
                 $html .= '<div class="clear"><br/></div></form>';
-	            if ( ! is_archive() ) {
+	            if ( ! $this->iframe  && ! is_archive() ) {
 	            	$html .= \EEH_Template::powered_by_event_espresso();
 	            }
 	            return $html;
