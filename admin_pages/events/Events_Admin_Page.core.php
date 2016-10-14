@@ -540,6 +540,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			EVENT_ESPRESSO_VERSION,
 			true
 		);
+        \EventEspresso\core\libraries\iframe_display\IframeEmbedButton::embedButtonAssets();
 	}
 
 
