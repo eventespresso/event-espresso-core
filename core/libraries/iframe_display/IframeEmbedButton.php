@@ -45,11 +45,11 @@ abstract class IframeEmbedButton {
      * @param string $slug        URL slug used for the thing the iframe button is being embedded in.
      *                            will most likely be "event" since that's the only usage atm
 	 */
-	public function __construct($iframe_name, $route_name, $slug) {
+	public function __construct($iframe_name, $route_name, $slug = 'event') {
         $this->iframe_name = $iframe_name;
         $this->route_name = $route_name;
         $this->slug = $slug;
-	}
+    }
 
 
 
@@ -67,7 +67,7 @@ abstract class IframeEmbedButton {
         );
         add_action(
             'admin_enqueue_scripts',
-            array($this, 'embedButtonAssets'),
+            array('EventEspresso\core\libraries\iframe_display\IframeEmbedButton', 'embedButtonAssets'),
             10
         );
     }
@@ -232,7 +232,7 @@ abstract class IframeEmbedButton {
 	/**
 	 * enqueue iframe button js
 	 */
-	public function embedButtonAssets() {
+	public static function embedButtonAssets() {
         \EE_Registry::$i18n_js_strings['iframe_embed_title'] = esc_html__(
             'copy and paste the following into any other site\'s content to display this event:',
             'event_espresso'
