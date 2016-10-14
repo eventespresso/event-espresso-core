@@ -12,7 +12,8 @@ defined( 'ABSPATH' ) || exit;
  * @author        Brent Christensen
  * @since         4.9
  */
-abstract class IframeEmbedButton {
+abstract class IframeEmbedButton
+{
 
 
     /**
@@ -37,15 +38,16 @@ abstract class IframeEmbedButton {
 
 
 
-	/**
+    /**
      * IframeEmbedButton constructor.
      *
      * @param string $iframe_name i18n name for the iframe. This will be used in HTML
-	 * @param string $route_name  the name of the registered route
+     * @param string $route_name  the name of the registered route
      * @param string $slug        URL slug used for the thing the iframe button is being embedded in.
      *                            will most likely be "event" since that's the only usage atm
-	 */
-	public function __construct($iframe_name, $route_name, $slug = 'event') {
+     */
+    public function __construct( $iframe_name, $route_name, $slug = 'event' )
+    {
         $this->iframe_name = $iframe_name;
         $this->route_name = $route_name;
         $this->slug = $slug;
@@ -53,7 +55,7 @@ abstract class IframeEmbedButton {
 
 
 
-	/**
+    /**
      * Adds an iframe embed code button to the Event editor.
      */
     public function addEventEditorIframeEmbedButtonFilter()
@@ -61,13 +63,13 @@ abstract class IframeEmbedButton {
         // add button for iframe code to event editor.
         add_filter(
             'get_sample_permalink_html',
-            array($this, 'appendIframeEmbedButtonToSamplePermalinkHtml'),
+            array( $this, 'appendIframeEmbedButtonToSamplePermalinkHtml' ),
             10,
             2
         );
         add_action(
             'admin_enqueue_scripts',
-            array('EventEspresso\core\libraries\iframe_display\IframeEmbedButton', 'embedButtonAssets'),
+            array( 'EventEspresso\core\libraries\iframe_display\IframeEmbedButton', 'embedButtonAssets' ),
             10
         );
     }
@@ -79,7 +81,8 @@ abstract class IframeEmbedButton {
      * @param $id
      * @return string
      */
-    public function appendIframeEmbedButtonToSamplePermalinkHtml( $permalink_string, $id ) {
+    public function appendIframeEmbedButtonToSamplePermalinkHtml( $permalink_string, $id )
+    {
         return $this->eventEditorIframeEmbedButton(
             $permalink_string,
             $id
@@ -100,14 +103,14 @@ abstract class IframeEmbedButton {
         $id
     ) {
         //make sure this is ONLY when editing and the event id has been set.
-        if ( ! empty($id)) {
-            $post = get_post($id);
+        if ( ! empty( $id ) ) {
+            $post = get_post( $id );
             //if NOT event then let's get out.
-            if ($post->post_type !== 'espresso_events') {
+            if ( $post->post_type !== 'espresso_events' ) {
                 return $permalink_string;
             }
             $permalink_string .= $this->embedButtonHtml(
-                array($this->slug => $id),
+                array( $this->slug => $id ),
                 'button-small'
             );
         }
@@ -115,19 +118,21 @@ abstract class IframeEmbedButton {
     }
 
 
-	/**
-	 * Adds an iframe embed code button via a WP do_action() as determined by the first parameter
-	 *
-	 * @param string $action     name of the WP do_action() to hook into
-	 */
-	public function addActionIframeEmbedButton($action) {
+
+    /**
+     * Adds an iframe embed code button via a WP do_action() as determined by the first parameter
+     *
+     * @param string $action name of the WP do_action() to hook into
+     */
+    public function addActionIframeEmbedButton( $action )
+    {
         // add button for iframe code to event editor.
-		add_action(
-			$action,
-			array($this, 'addActionIframeEmbedButtonCallback'),
-			10, 2
-		);
-	}
+        add_action(
+            $action,
+            array( $this, 'addActionIframeEmbedButtonCallback' ),
+            10, 2
+        );
+    }
 
 
 
@@ -141,22 +146,23 @@ abstract class IframeEmbedButton {
 
 
 
-	/**
-	 * Adds an iframe embed code button via a WP apply_filters() as determined by the first parameter
-	 *
-	 * @param string $filter     name of the WP apply_filters() to hook into
-	 * @param bool   $append     if true, will add iframe embed button to end of content,
-	 *                           else if false, will add to the beginning of the content
-	 */
-	public function addFilterIframeEmbedButton($filter, $append = true) {
+    /**
+     * Adds an iframe embed code button via a WP apply_filters() as determined by the first parameter
+     *
+     * @param string $filter     name of the WP apply_filters() to hook into
+     * @param bool   $append     if true, will add iframe embed button to end of content,
+     *                           else if false, will add to the beginning of the content
+     */
+    public function addFilterIframeEmbedButton( $filter, $append = true )
+    {
         $this->append_filterable_content = $append;
         // add button for iframe code to event editor.
-		add_filter(
-			$filter,
-			array($this, 'addFilterIframeEmbedButtonCallback'),
-			10
-		);
-	}
+        add_filter(
+            $filter,
+            array( $this, 'addFilterIframeEmbedButtonCallback' ),
+            10
+        );
+    }
 
 
 
@@ -164,13 +170,13 @@ abstract class IframeEmbedButton {
      * @param array|string $filterable_content
      * @return array|string
      */
-    public function addFilterIframeEmbedButtonCallback($filterable_content)
+    public function addFilterIframeEmbedButtonCallback( $filterable_content )
     {
         $embedButtonHtml = $this->embedButtonHtml();
-        if (is_array($filterable_content)) {
+        if ( is_array( $filterable_content ) ) {
             $filterable_content = $this->append_filterable_content
-                ? $filterable_content + array($this->route_name => $embedButtonHtml)
-                : array($this->route_name => $embedButtonHtml) + $filterable_content;
+                ? $filterable_content + array( $this->route_name => $embedButtonHtml )
+                : array( $this->route_name => $embedButtonHtml ) + $filterable_content;
         } else {
             $filterable_content = $this->append_filterable_content
                 ? $filterable_content . $embedButtonHtml
@@ -179,65 +185,70 @@ abstract class IframeEmbedButton {
         return $filterable_content;
     }
 
-	/**
-	 * iframe_embed_html
-	 *
-	 * @param array  $query_args
-	 * @param string $button_class
-	 * @return string
-	 */
-	public function embedButtonHtml($query_args = array(), $button_class = '' ) {
+
+
+    /**
+     * iframe_embed_html
+     *
+     * @param array  $query_args
+     * @param string $button_class
+     * @return string
+     */
+    public function embedButtonHtml( $query_args = array(), $button_class = '' )
+    {
         // incoming args will replace the defaults listed here in the second array (union preserves first array)
-        $query_args = (array)$query_args + array($this->route_name => 'iframe');
-        $query_args = (array) apply_filters(
+        $query_args = (array)$query_args + array( $this->route_name => 'iframe' );
+        $query_args = (array)apply_filters(
             'FHEE__EventEspresso_core_libraries_iframe_display_IframeEmbedButton__embedButtonHtml__query_args',
             $query_args
         );
-		// add this route to our localized vars
-		$iframe_module_routes = isset( \EE_Registry::$i18n_js_strings['iframe_module_routes'] )
-			? \EE_Registry::$i18n_js_strings['iframe_module_routes']
-			: array();
-		$iframe_module_routes[ $this->route_name ] = $this->route_name;
-		\EE_Registry::$i18n_js_strings['iframe_module_routes'] = $iframe_module_routes;
-		$iframe_embed_html = \EEH_HTML::link(
-			'#',
-			sprintf( esc_html__( 'Embed %1$s', 'event_espresso' ), $this->iframe_name ),
-			sprintf(
+        // add this route to our localized vars
+        $iframe_module_routes = isset( \EE_Registry::$i18n_js_strings[ 'iframe_module_routes' ] )
+            ? \EE_Registry::$i18n_js_strings[ 'iframe_module_routes' ]
+            : array();
+        $iframe_module_routes[ $this->route_name ] = $this->route_name;
+        \EE_Registry::$i18n_js_strings[ 'iframe_module_routes' ] = $iframe_module_routes;
+        $iframe_embed_html = \EEH_HTML::link(
+            '#',
+            sprintf( esc_html__( 'Embed %1$s', 'event_espresso' ), $this->iframe_name ),
+            sprintf(
                 esc_html__(
-					'click here to generate code for embedding %1$s iframe into another site.',
-					'event_espresso'
-				),
-                \EEH_Inflector::add_indefinite_article($this->iframe_name)
-			),
-			"{$this->route_name}-iframe-embed-trigger-js",
-			'iframe-embed-trigger-js button ' . $button_class,
-			'',
-			' data-iframe_embed_button="#' . $this->route_name . '-iframe-js" tabindex="-1"'
-		);
-		$iframe_embed_html .= \EEH_HTML::div( '', "{$this->route_name}-iframe-js", 'iframe-embed-wrapper-js', 'display:none;' );
-		$iframe_embed_html .= esc_html(
-			\EEH_HTML::div(
-				'<iframe src="' . add_query_arg( $query_args, site_url() ) . '" width="100%" height="100%"></iframe>',
-				'',
-				'',
-				'width:100%; height: 500px;'
-			)
-		);
-		$iframe_embed_html .= \EEH_HTML::divx();
+                    'click here to generate code for embedding %1$s iframe into another site.',
+                    'event_espresso'
+                ),
+                \EEH_Inflector::add_indefinite_article( $this->iframe_name )
+            ),
+            "{$this->route_name}-iframe-embed-trigger-js",
+            'iframe-embed-trigger-js button ' . $button_class,
+            '',
+            ' data-iframe_embed_button="#' . $this->route_name . '-iframe-js" tabindex="-1"'
+        );
+        $iframe_embed_html .= \EEH_HTML::div( '', "{$this->route_name}-iframe-js", 'iframe-embed-wrapper-js',
+                                              'display:none;' );
+        $iframe_embed_html .= esc_html(
+            \EEH_HTML::div(
+                '<iframe src="' . add_query_arg( $query_args, site_url() ) . '" width="100%" height="100%"></iframe>',
+                '',
+                '',
+                'width:100%; height: 500px;'
+            )
+        );
+        $iframe_embed_html .= \EEH_HTML::divx();
         return $iframe_embed_html;
-	}
+    }
 
 
 
-	/**
-	 * enqueue iframe button js
-	 */
-	public static function embedButtonAssets() {
-        \EE_Registry::$i18n_js_strings['iframe_embed_title'] = esc_html__(
+    /**
+     * enqueue iframe button js
+     */
+    public static function embedButtonAssets()
+    {
+        \EE_Registry::$i18n_js_strings[ 'iframe_embed_title' ] = esc_html__(
             'copy and paste the following into any other site\'s content to display this event:',
             'event_espresso'
         );
-        \EE_Registry::$i18n_js_strings['iframe_embed_close_msg'] = esc_html__(
+        \EE_Registry::$i18n_js_strings[ 'iframe_embed_close_msg' ] = esc_html__(
             'click anywhere outside of this window to close it.',
             'event_espresso'
         );
@@ -249,7 +260,7 @@ abstract class IframeEmbedButton {
             true
         );
         wp_enqueue_script( 'iframe_embed_button' );
-	}
+    }
 
 
 
@@ -259,23 +270,23 @@ abstract class IframeEmbedButton {
      * @param array $embed_buttons
      * @return string
      */
-    public function addIframeEmbedButtonsSection(array $embed_buttons)
+    public function addIframeEmbedButtonsSection( array $embed_buttons )
     {
         $embed_buttons = (array)apply_filters(
             'FHEE__EventEspresso_core_libraries_iframe_display_IframeEmbedButton__addIframeEmbedButtonsSection__embed_buttons',
             $embed_buttons
         );
         // add button for iframe code to event editor.
-        $html = \EEH_HTML::br(2);
-        $html .= \EEH_HTML::h3(esc_html__('iFrame Embed Code', 'event_espresso'));
+        $html = \EEH_HTML::br( 2 );
+        $html .= \EEH_HTML::h3( esc_html__( 'iFrame Embed Code', 'event_espresso' ) );
         $html .= \EEH_HTML::p(
             esc_html__(
                 'Click the following button(s) to generate iframe HTML that will allow you to embed your event content within the content of other websites.',
                 'event_espresso'
             )
         );
-        $html .= ' &nbsp; ' . implode(' &nbsp; ', $embed_buttons) . ' ';
-        $html .= \EEH_HTML::br(2);
+        $html .= ' &nbsp; ' . implode( ' &nbsp; ', $embed_buttons ) . ' ';
+        $html .= \EEH_HTML::br( 2 );
         return $html;
     }
 
