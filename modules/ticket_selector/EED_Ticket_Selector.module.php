@@ -180,7 +180,7 @@ class EED_Ticket_Selector extends  EED_Module {
 	 */
 	public function process_ticket_selections() {
 		$form = new ProcessTicketSelector();
-		return $form->process_ticket_selections();
+		return $form->processTicketSelections();
 	}
 
 
@@ -290,7 +290,29 @@ class EED_Ticket_Selector extends  EED_Module {
     public static function no_tkt_slctr_end_dv()
     {
         // todo add doing_it_wrong() notice during next major version
-        return EED_Ticket_Selector::ticketSelector()->noTicketSelectorEndDiv();
+        return EED_Ticket_Selector::ticketSelector()->ticketSelectorEndDiv();
+    }
+
+
+
+    /**
+     * @deprecated 4.9.13
+     * @return string
+     */
+    public static function tkt_slctr_end_dv()
+    {
+        return EED_Ticket_Selector::ticketSelector()->clearTicketSelector();
+    }
+
+
+
+    /**
+     * @deprecated
+     * @return string
+     */
+    public static function clear_tkt_slctr()
+    {
+        return EED_Ticket_Selector::ticketSelector()->clearTicketSelector();
     }
 
 
@@ -306,7 +328,7 @@ class EED_Ticket_Selector extends  EED_Module {
 		    && \EE_Registry::instance()->REQ->get( 'action' ) === 'edit'
 	    ) {
 		    $iframe_embed_button = \EED_Ticket_Selector::getIframeEmbedButton();
-            $iframe_embed_button->embedButtonAssets();
+            $iframe_embed_button::embedButtonAssets();
         }
     }
 

@@ -54,9 +54,8 @@ class DisplayTicketSelector
 
 
     /**
-     *    finds and sets the \EE_Event object for use throughout class
+     * finds and sets the \EE_Event object for use throughout class
      *
-     * @access    public
      * @param    mixed $event
      * @return    bool
      */
@@ -110,9 +109,8 @@ class DisplayTicketSelector
 
 
 	/**
-	 *    creates buttons for selecting number of attendees for an event
+	 * creates buttons for selecting number of attendees for an event
 	 *
-	 * @access    public
 	 * @param    \WP_Post|int $event
 	 * @param    bool         $view_details
 	 * @return    string
@@ -182,9 +180,7 @@ class DisplayTicketSelector
             //use the correct applicable time query depending on what version of core is being run.
             $current_time = method_exists('EEM_Datetime', 'current_time_for_query')
                 ? time()
-                : current_time(
-                    'timestamp'
-                );
+                : current_time('timestamp');
             $ticket_query_args[0]['TKT_end_date'] = array('>', $current_time);
         }
         // get all tickets for this event ordered by the datetime
@@ -209,6 +205,7 @@ class DisplayTicketSelector
                 'event_espresso'
             );
             if (current_user_can('edit_post', $this->event->ID())) {
+                $link = get_edit_post_link( $this->event->ID() );
                 $sales_closed_msg .= sprintf(
                     __(
                         '%sNote to Event Admin:%sThe "Maximum number of tickets allowed per order for this event" in the Event Registration Options has been set to "0". This effectively turns off ticket sales. %s(click to edit this event)%s',
@@ -216,9 +213,7 @@ class DisplayTicketSelector
                     ),
                     '<div class="ee-attention" style="text-align: left;"><b>',
                     '</b><br />',
-                    $link = '<span class="edit-link"><a class="post-edit-link" href="' . get_edit_post_link(
-                            $this->event->ID()
-                        ) . '">',
+                    $link = '<span class="edit-link"><a class="post-edit-link" href="' . $link . '">',
                     '</a></span></div>'
                 );
             }
@@ -232,29 +227,30 @@ class DisplayTicketSelector
         );
         // redirecting to another site for registration ??
         $external_url = $this->event->external_url() !== null || $this->event->external_url() !== ''
-            ? $this->event->external_url() : false;
-        // set up the form (but not for the admin)
-        $ticket_selector = ! is_admin() ? $this->formOpen(
-            $this->event->ID(),
-            $external_url
-        ) : '';
+            ? $this->event->external_url()
+            : '';
         // if not redirecting to another site for registration
         if ( ! $external_url) {
-            \EE_Registry::instance()->load_helper('Template');
-            \EE_Registry::instance()->load_helper('URL');
             // then display the ticket selector
-            $ticket_selector .= \EEH_Template::locate_template($templates['ticket_selector'], $template_args);
+            $ticket_selector = \EEH_Template::locate_template($templates['ticket_selector'], $template_args);
         } else {
             // if not we still need to trigger the display of the submit button
             add_filter('FHEE__EE_Ticket_Selector__display_ticket_selector_submit', '__return_true');
             //display notice to admin that registration is external
-            $ticket_selector .= ! is_admin()
+            $ticket_selector = ! is_admin()
                 ? ''
                 : __(
                     'Registration is at an external URL for this event.',
                     'event_espresso'
                 );
         }
+        $ticket_selector = ! is_admin()
+            ? $this->formOpen(
+                $this->event->ID(),
+                $external_url
+            ) . $ticket_selector
+            : $ticket_selector;
+        // now set up the form (but not for the admin)
         // submit button and form close tag
         $ticket_selector .= ! is_admin() ? $this->displaySubmitButton() : '';
         // set no cache headers and constants
@@ -265,9 +261,8 @@ class DisplayTicketSelector
 
 
     /**
-     *    formOpen
+     * formOpen
      *
-     * @access        public
      * @param        int    $ID
      * @param        string $external_url
      * @return        string
@@ -276,17 +271,20 @@ class DisplayTicketSelector
     {
         // if redirecting, we don't need any anything else
         if ($external_url) {
-            \EE_Registry::instance()->load_helper('URL');
             $html = '<form method="GET" action="' . \EEH_URL::refactor_url($external_url) . '">';
             $query_args = \EEH_URL::get_query_string($external_url);
-            foreach ((array) $query_args as $query_arg => $value) {
+            foreach ( (array) $query_args as $query_arg => $value) {
                 $html .= '<input type="hidden" name="' . $query_arg . '" value="' . $value . '">';
             }
             return $html;
         }
-        \EE_Registry::instance()->load_helper('Event_View');
+        // if there is no submit button, then don't start building a form
+        // because the "View Details" button will build its own form
+        if ( ! apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit', false ) ) {
+            return '';
+        }
         $checkout_url = \EEH_Event_View::event_link_url($ID);
-        if ( ! $checkout_url) {
+        if ( ! $checkout_url ) {
             \EE_Error::add_error(
                 __('The URL for the Event Details page could not be retrieved.', 'event_espresso'),
                 __FILE__,
@@ -305,103 +303,106 @@ class DisplayTicketSelector
 
 
 	/**
-	 *    displaySubmitButton
+	 * displaySubmitButton
 	 *
-	 * @access        public
 	 * @access        public
 	 * @return        string
 	 * @throws \EE_Error
 	 */
     public function displaySubmitButton()
     {
-        if ( ! is_admin()) {
-            if (apply_filters('FHEE__EE_Ticket_Selector__display_ticket_selector_submit', false)) {
+        $html = '';
+        if ( ! is_admin() ) {
+            // standard TS displayed with submit button, ie: "Register Now"
+            if ( apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit', false ) ) {
                 $btn_text = apply_filters(
                     'FHEE__EE_Ticket_Selector__display_ticket_selector_submit__btn_text',
-                    __('Register Now', 'event_espresso'),
+                    __( 'Register Now', 'event_espresso' ),
                     $this->event
                 );
                 $external_url = $this->event->external_url();
-                $html = '<input id="ticket-selector-submit-' . $this->event->ID() . '-btn"';
+                $html .= '<input id="ticket-selector-submit-' . $this->event->ID() . '-btn"';
                 $html .= ' class="ticket-selector-submit-btn ';
-                $html .= empty($external_url) ? 'ticket-selector-submit-ajax"' : '"';
+                $html .= empty( $external_url ) ? 'ticket-selector-submit-ajax"' : '"';
                 $html .= ' type="submit" value="' . $btn_text . '" />';
-                $html .= apply_filters('FHEE__EE_Ticket_Selector__after_ticket_selector_submit', '', $this->event);
-                $html .= '<div class="clear"><br/></div></form>';
-	            if ( ! $this->iframe  && ! is_archive() ) {
-	            	$html .= \EEH_Template::powered_by_event_espresso();
-	            }
-	            return $html;
-            } else if (is_archive()) {
-                return $this->formClose()
-                       . $this->displayViewDetailsButton();
+                $html .= apply_filters(
+                    'FHEE__EE_Ticket_Selector__after_ticket_selector_submit',
+                    '',
+                    $this->event
+                );
+                $html .= $this->ticketSelectorEndDiv();
+                $html .= '<br/>' . $this->formClose();
             } else if (
-		        // if $this->max_attendees === 1 (ie: a "Dude Where's my Ticket Selector?" type event)
+                // a "Dude Where's my Ticket Selector?" (DWMTS) type event (ie: $_max_atndz === 1)
                 $this->getMaxAttendees() === 1
-		        // and the event is sold out
-		        && $this->event->is_sold_out()
-	        ) {
-		        // then instead of a View Details or Submit button, just display a "Sold Out" message
-		        $html = apply_filters(
-			        'FHEE__EE_Ticket_Selector__no_ticket_selector_submit',
-			        sprintf(
-				        __(
-					        '%1$s"%2$s" is currently sold out. Please check back again later, as spots may become available.%3$s',
-					        'event_espresso'
-				        ),
-				        '<p class="no-ticket-selector-msg important-notice">',
-				        $this->event->name(),
-				        '</p>'
-			        ),
-			        $this->event
-		        );
-		        $html .= '<div class="clear"></div></form>';
-		        return $html;
-	        } else {
-		        return '<div class="clear"></div></form>';
-	        }
+                // and the event is sold out
+                && $this->event->is_sold_out()
+            ) {
+                // then instead of a View Details or Submit button, just display a "Sold Out" message
+                $html .= apply_filters(
+                    'FHEE__EE_Ticket_Selector__display_ticket_selector_submit__sold_out_msg',
+                    sprintf(
+                        __(
+                            '%1$s"%2$s" is currently sold out.%4$sPlease check back again later, as spots may become available.%3$s',
+                            'event_espresso'
+                        ),
+                        '<p class="no-ticket-selector-msg clear-float">',
+                        $this->event->name(),
+                        '</p>',
+                        '<br />'
+                    ),
+                    $this->event
+                );
+                // sold out DWMTS event, no TS, no submit or view details button, but has additional content
+                $html .= $this->ticketSelectorEndDiv();
+            } else if (
+                $this->getMaxAttendees() === 1
+                && apply_filters( 'FHEE__EE_Ticket_Selector__hide_ticket_selector', false )
+                && ! is_single()
+            ) {
+                // this is a "Dude Where's my Ticket Selector?" (DWMTS) type event,
+                // but no tickets are available, so display event's "View Details" button.
+                // it is being viewed via somewhere other than a single post
+                $html .= $this->displayViewDetailsButton( true );
+            } else if ( is_archive() ) {
+                // event list, no tickets available so display event's "View Details" button
+                $html .= $this->ticketSelectorEndDiv();
+                $html .= $this->displayViewDetailsButton();
+            } else {
+                // no submit or view details button, and no additional content
+                $html .= $this->ticketSelectorEndDiv();
+            }
+            if ( ! $this->iframe && ! is_archive() ) {
+                $html .= \EEH_Template::powered_by_event_espresso();
+            }
         }
-        return '';
+        return $html;
     }
 
 
 
     /**
-     *    formClose
+     * displayViewDetailsButton
      *
-     * @access        public
-     * @access        public
-     * @return        string
+     * @param bool $DWMTS indicates a "Dude Where's my Ticket Selector?" (DWMTS) type event
+     *                    (ie: $_max_atndz === 1) where there are no available tickets,
+     *                    either because they are sold out, expired, or not yet on sale.
+     *                    In this case, we need to close the form BEFORE adding any closing divs
+     * @return string
+     * @throws \EE_Error
      */
-    public function formClose()
+    public function displayViewDetailsButton( $DWMTS = false )
     {
-        return '</form>';
-    }
-
-
-
-	/**
-	 *    displayViewDetailsButton
-	 *
-	 * @access        public
-	 * @access        public
-	 * @return        string
-	 * @throws \EE_Error
-	 */
-    public function displayViewDetailsButton()
-    {
-        if ( ! $this->event->get_permalink()) {
+        if ( ! $this->event->get_permalink() ) {
             \EE_Error::add_error(
-                __('The URL for the Event Details page could not be retrieved.', 'event_espresso'),
-                __FILE__,
-                __FUNCTION__,
-                __LINE__
+                __( 'The URL for the Event Details page could not be retrieved.', 'event_espresso' ),
+                __FILE__, __FUNCTION__, __LINE__
             );
         }
         $view_details_btn = '<form method="POST" action="' . $this->event->get_permalink() . '">';
         $btn_text = apply_filters(
             'FHEE__EE_Ticket_Selector__display_view_details_btn__btn_text',
-            __('View Details', 'event_espresso'),
+            __( 'View Details', 'event_espresso' ),
             $this->event
         );
         $view_details_btn .= '<input id="ticket-selector-submit-'
@@ -409,9 +410,16 @@ class DisplayTicketSelector
                              . '-btn" class="ticket-selector-submit-btn view-details-btn" type="submit" value="'
                              . $btn_text
                              . '" />';
-        $view_details_btn .= apply_filters('FHEE__EE_Ticket_Selector__after_view_details_btn', '', $this->event);
-        $view_details_btn .= '<div class="clear"><br/></div>';
-        $view_details_btn .= '</form>';
+        $view_details_btn .= apply_filters( 'FHEE__EE_Ticket_Selector__after_view_details_btn', '', $this->event );
+        if ( $DWMTS ) {
+            $view_details_btn .= $this->formClose();
+            $view_details_btn .= $this->ticketSelectorEndDiv();
+            $view_details_btn .= '<br/>';
+        } else {
+            $view_details_btn .= $this->clearTicketSelector();
+            $view_details_btn .= '<br/>';
+            $view_details_btn .= $this->formClose();
+        }
         return $view_details_btn;
     }
 
@@ -420,10 +428,33 @@ class DisplayTicketSelector
     /**
      * @return string
      */
-    public static function noTicketSelectorEndDiv()
+    public function ticketSelectorEndDiv()
     {
         return '<div class="clear"></div></div>';
     }
+
+
+
+    /**
+     * @return string
+     */
+    public function clearTicketSelector()
+    {
+        // standard TS displayed, appears after a "Register Now" or "view Details" button
+        return '<div class="clear"></div>';
+    }
+
+
+
+    /**
+     * @access        public
+     * @return        string
+     */
+    public function formClose()
+    {
+        return '</form>';
+    }
+
 
 
 }

@@ -711,7 +711,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 		if ( $required ) {
 			$this->_add_validation_strategy( new EE_Required_Validation_Strategy( $required_text ) );
 		} else {
-			unset( $this->_validation_strategies[ 'EE_Required_Validation_Strategy' ] );
+			$this->remove_validation_strategy( 'EE_Required_Validation_Strategy' );
 		}
 		$this->_required = $required;
 	}

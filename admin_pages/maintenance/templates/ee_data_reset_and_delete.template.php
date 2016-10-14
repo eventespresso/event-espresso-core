@@ -1,11 +1,14 @@
 <?php
 /*
-* a template with options for reseting and/or deleting EE data
+* a template with options for resetting and/or deleting EE data
 */
+/** @var string $reset_capabilities_button */
+/** @var string $reset_db_url */
+/** @var string $delete_db_url */
 ?>
-<h3>
+<h2>
 	<?php _e( 'Reset/Delete Data for Event Espresso', 'event_espresso' );?>
-</h3>
+</h2>
 <br />
 
 <!-- reset DB url is here. Just need to make it look pretty and unhide it-->
