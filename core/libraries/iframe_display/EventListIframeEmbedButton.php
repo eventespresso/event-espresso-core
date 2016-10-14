@@ -19,10 +19,9 @@ class EventListIframeEmbedButton extends IframeEmbedButton
 	 * EventListIframeEmbedButton constructor.
 	 */
 	public function __construct() {
-		parent::__construct(
+        parent::__construct(
 			esc_html__( 'Event List', 'event_espresso' ),
-            'event_list',
-            'event'
+            'event_list'
 		);
 	}
 
