@@ -1,7 +1,6 @@
 <?php
 namespace EventEspresso\modules\events_archive;
 
-use EventEspresso\core\Factory;
 use EventEspresso\core\libraries\iframe_display\Iframe;
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
@@ -17,12 +16,12 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @author        Brent Christensen
  * @since         4.9
  */
-class EventsArchiveIframe {
+class EventsArchiveIframe extends Iframe {
 
 	/**
 	 * @var \EED_Events_Archive $EED_Events_Archive
 	 */
-	private $EED_Events_Archive = '';
+	// private $EED_Events_Archive = '';
 
 
 
@@ -30,44 +29,30 @@ class EventsArchiveIframe {
 	 * EventsArchiveIframe constructor.
 	 *
 	 * @param \EED_Events_Archive $EED_Events_Archive
-	 */
-	public function __construct( $EED_Events_Archive ) {
-		$this->EED_Events_Archive = $EED_Events_Archive;
-	}
-
-	/**
-	 * display
-	 *
-	 * @access    public
-	 * @return    void
 	 * @throws \EE_Error
 	 */
-	public function display() {
+	public function __construct( $EED_Events_Archive ) {
 		\EE_Registry::instance()->REQ->set_espresso_page( true );
-		$this->EED_Events_Archive->event_list();
+		$EED_Events_Archive->event_list();
 		$event_list = new \EES_Espresso_Events();
-		/** @var Iframe $iframe */
-		$iframe = Factory::create(
-			'Iframe',
-			array(
-				'title'   => esc_html__( 'Event List', 'event_espresso' ),
-				'content' => $event_list->process_shortcode(),
-			)
+		parent::__construct(
+			esc_html__( 'Event List', 'event_espresso' ),
+			$event_list->process_shortcode()
 		);
-		$iframe->addStylesheets(
+		$this->addStylesheets(
 			apply_filters(
 				'FHEE__EventEspresso_modules_events_archive_EventsArchiveIframe__display__css',
 				array(
 					'espresso_default' => is_readable( EVENT_ESPRESSO_UPLOAD_DIR . 'css/style.css' )
 						? EVENT_ESPRESSO_UPLOAD_DIR . 'css/espresso_default.css?ver=' . EVENT_ESPRESSO_VERSION
 						: EE_GLOBAL_ASSETS_URL . 'css/espresso_default.css?ver=' . EVENT_ESPRESSO_VERSION,
-					$this->EED_Events_Archive->theme() => get_stylesheet_directory_uri()
-					                                    . $this->EED_Events_Archive->theme() . DS
-					                                    . 'style.css?ver=' . EVENT_ESPRESSO_VERSION,
+					$EED_Events_Archive->theme() => get_stylesheet_directory_uri()
+					                                . $EED_Events_Archive->theme() . DS
+					                                . 'style.css?ver=' . EVENT_ESPRESSO_VERSION,
 				)
 			)
 		);
-		$iframe->addScripts(
+		$this->addScripts(
 			apply_filters(
 				'FHEE__EventEspresso_modules_events_archive_EventsArchiveIframe__display__js',
 				array(
@@ -78,18 +63,18 @@ class EventsArchiveIframe {
 							\EE_Registry::instance()->CFG->map_settings->google_map_api_key
 						)
 					),
-					'ee_gmap' => EE_HELPERS_ASSETS . 'ee_gmap.js?ver=1.0'
+					'ee_gmap'  => EE_HELPERS_ASSETS . 'ee_gmap.js?ver=1.0'
 				)
 			)
 		);
-		$iframe->addLocalizedVars(
+		$this->addLocalizedVars(
 			array(
 				'ee_gmap' => \EEH_Maps::$gmap_vars,
 			),
 			'ee_gmap_vars'
 		);
-		$iframe->display();
 	}
+
 
 
 }
