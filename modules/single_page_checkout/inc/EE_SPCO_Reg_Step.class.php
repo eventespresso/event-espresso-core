@@ -566,7 +566,7 @@ abstract class EE_SPCO_Reg_Step {
 	 * but we won't bother with the reg form, because if needed, it will be regenerated anyways
 	 * @return array
 	 */
-	function __sleep() {
+	public function __sleep() {
 		// remove the reg form and the checkout
 		return array_diff( array_keys( get_object_vars( $this )), array( 'reg_form', 'checkout' ));
 	}
