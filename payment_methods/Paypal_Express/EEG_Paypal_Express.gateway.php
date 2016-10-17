@@ -233,7 +233,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway {
 		// Request PayPal token.
 		$token_request_response = $this->_ppExpress_request( $token_request_dtls, 'Payment Token', $payment );
 		$token_rstatus = $this->_ppExpress_check_response( $token_request_response );
-		$response_args = ( isset($token_rstatus['args']) ) ? $token_rstatus['args'] : array();
+		$response_args = ( isset($token_rstatus['args']) && is_array($token_rstatus['args']) ) ? $token_rstatus['args'] : array();
 		if ( $token_rstatus['status'] ) {
 			// We got the Token so we may continue with the payment and redirect the client.
 			$payment->set_details( $response_args );
@@ -291,7 +291,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway {
 			// Request Customer Details.
 			$cdetails_request_response = $this->_ppExpress_request( $cdetails_request_dtls, 'Customer Details', $payment );
 			$cdetails_rstatus = $this->_ppExpress_check_response( $cdetails_request_response );
-			$cdata_response_args = ( isset($cdetails_rstatus['args']) ) ? $cdetails_rstatus['args'] : array();
+			$cdata_response_args = ( isset($cdetails_rstatus['args']) && is_array($cdetails_rstatus['args']) ) ? $cdetails_rstatus['args'] : array();
 			if ( $cdetails_rstatus['status'] ) {
 				// We got the PayerID so now we can Complete the transaction.
 				$docheckout_request_dtls = array(
@@ -305,7 +305,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway {
 				// Payment Checkout/Capture.
 				$docheckout_request_response = $this->_ppExpress_request( $docheckout_request_dtls, 'Do Payment', $payment );
 				$docheckout_rstatus = $this->_ppExpress_check_response( $docheckout_request_response );
-				$docheckout_response_args = ( isset($docheckout_rstatus['args']) ) ? $docheckout_rstatus['args'] : array();
+				$docheckout_response_args = ( isset($docheckout_rstatus['args']) && is_array($docheckout_rstatus['args']) ) ? $docheckout_rstatus['args'] : array();
 				if ( $docheckout_rstatus['status'] ) {
 					// All is well, payment approved.
 					$primary_registration_code = $primary_registrant instanceof EE_Registration ? $primary_registrant->reg_code() : '';
