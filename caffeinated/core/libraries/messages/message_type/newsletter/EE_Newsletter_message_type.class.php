@@ -22,7 +22,7 @@ class EE_Newsletter_message_type extends EE_message_type {
 
 	public function __construct() {
 		$this->name = 'newsletter';
-		$this->description = __( 'Batch message type messages are triggered manually by the admin for sending notifications to a selected group of recipients. This should only be used for more general notification type messages that contain information specific for the recipients. For "newsletter" type messages we recommend using an email list service like Mailchimp, because sending non-related mailouts to contacts increases the risk of your site domain getting added to spam lists, which will prevent messages getting to users.', 'event_espresso' );
+		$this->description = __( 'Batch message type messages are triggered manually by the admin for sending notifications to a selected group of recipients. This should only be used for more general notification type messages that contain information specific for the recipients. For "newsletter" type messages we recommend using an email list service like MailChimp, because sending non-related mail-outs to contacts increases the risk of your site domain getting added to spam lists, which will prevent messages getting to users.', 'event_espresso' );
 		$this->label = array(
 			'singular' => __( 'batch', 'event_espresso' ),
 			'plural' => __( 'batches', 'event_espresso' )
