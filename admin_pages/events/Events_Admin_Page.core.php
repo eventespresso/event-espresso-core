@@ -711,6 +711,32 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 
 
+	/**
+	 * When a user is creating a new event, notify them if they haven't set their timezone.
+	 * Otherwise, do the normal logic
+	 * @return string
+	 */
+	protected function _create_new_cpt_item() {
+		$gmt_offset = get_option( 'gmt_offset' );
+		//only nag them about setting their timezone if it's their first event, and they haven't already done it
+		if( $gmt_offset === '0' && ! EEM_Event::instance()->exists(array()) ) {
+			EE_Error::add_attention(
+				sprintf(
+					__( 'Your website\'s timezone is currently set to UTC + 0. We recommend updating your timezone to a city
+			        or region near you before you create an event. Your timezone can be updated through the %1$sGeneral Settings%2$s page.'),
+					'<a href="' . admin_url( 'options-general.php' ) . '">',
+					'</a>'
+				),
+				__FILE__,
+				__FUNCTION__,
+				__LINE__
+			);
+		}
+		return parent::_create_new_cpt_item();
+	}
+
+
+
 	protected function _set_list_table_views_default() {
 		$this->_views = array(
 			'all'   => array(
