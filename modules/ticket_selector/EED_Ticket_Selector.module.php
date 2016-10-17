@@ -51,19 +51,6 @@ class EED_Ticket_Selector extends  EED_Module {
 
 
 
-    /**
-     * @return \EventEspresso\modules\ticket_selector\TicketSelectorIframeEmbedButton
-     */
-    public static function getIframeEmbedButton()
-    {
-        if ( ! self::$iframe_embed_button instanceof TicketSelectorIframeEmbedButton) {
-            self::$iframe_embed_button = new TicketSelectorIframeEmbedButton();
-        }
-        return self::$iframe_embed_button;
-    }
-
-
-
 	/**
 	 * 	set_hooks - for hooking into EE Core, other modules, etc
 	 *
@@ -88,13 +75,13 @@ class EED_Ticket_Selector extends  EED_Module {
 	 *  @return 	void
 	 */
 	public static function set_hooks_admin() {
-		if (
-			\EE_Registry::instance()->REQ->get( 'page' ) === 'espresso_events'
-			&& \EE_Registry::instance()->REQ->get( 'action' ) === 'edit'
-		) {
-			$iframe_embed_button = \EED_Ticket_Selector::getIframeEmbedButton();
-            $iframe_embed_button->addEventEditorIframeEmbedButton();
-        }
+		// hook into the end of the \EE_Admin_Page::_load_page_dependencies()
+		// to load assets for "espresso_events" page on the "edit" route (action)
+		add_action(
+			'FHEE__EE_Admin_Page___load_page_dependencies__after_load__espresso_events__edit',
+			array( 'EED_Ticket_Selector', 'ticket_selector_iframe_embed_button' ),
+			10
+		);
     }
 
 
@@ -118,7 +105,7 @@ class EED_Ticket_Selector extends  EED_Module {
 
 
 
-    /**
+	/**
      * @return \EventEspresso\modules\ticket_selector\DisplayTicketSelector
      */
     public static function ticketSelector()
@@ -142,9 +129,33 @@ class EED_Ticket_Selector extends  EED_Module {
 
 
 	/**
+	 * @return \EventEspresso\modules\ticket_selector\TicketSelectorIframeEmbedButton
+	 */
+	public static function getIframeEmbedButton() {
+		if ( ! self::$iframe_embed_button instanceof TicketSelectorIframeEmbedButton ) {
+			self::$iframe_embed_button = new TicketSelectorIframeEmbedButton();
+		}
+		return self::$iframe_embed_button;
+	}
+
+
+
+	/**
+	 * ticket_selector_iframe_embed_button
+	 *
+	 * @return    void
+	 * @throws \EE_Error
+	 */
+	public static function ticket_selector_iframe_embed_button() {
+		$iframe_embed_button = \EED_Ticket_Selector::getIframeEmbedButton();
+		$iframe_embed_button->addEventEditorIframeEmbedButton();
+	}
+
+
+
+	/**
 	 * ticket_selector_iframe
 	 *
-	 * @access    public
 	 * @return    void
 	 * @throws \EE_Error
 	 */
