@@ -1,4 +1,7 @@
-<?php use EventEspresso\modules\events_archive\EventsArchiveIframe;
+<?php
+
+use EventEspresso\core\libraries\iframe_display\EventListIframeEmbedButton;
+use EventEspresso\modules\events_archive\EventsArchiveIframe;
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 /**
@@ -33,6 +36,11 @@ class EED_Events_Archive  extends EED_Module {
 	 * @type bool $using_get_the_excerpt
 	 */
 	protected static $using_get_the_excerpt = false;
+
+	/**
+	 * @var \EventEspresso\core\libraries\iframe_display\EventListIframeEmbedButton $_iframe_embed_button
+	 */
+	private static $_iframe_embed_button;
 
 	/**
 	 * @type EE_Template_Part_Manager $template_parts
@@ -71,6 +79,13 @@ class EED_Events_Archive  extends EED_Module {
 	 */
 	public static function set_hooks_admin() {
 		add_action( 'wp_loaded', array( 'EED_Events_Archive', 'set_definitions' ), 2 );
+		// hook into the end of the \EE_Admin_Page::_load_page_dependencies()
+		// to load assets for "espresso_events" page on the "default" route (action)
+		add_action(
+			'FHEE__EE_Admin_Page___load_page_dependencies__after_load__espresso_events__default',
+			array( 'EED_Events_Archive', 'event_list_iframe_embed_button' ),
+			10
+		);
 	}
 
 
@@ -90,9 +105,7 @@ class EED_Events_Archive  extends EED_Module {
 
 
 	/**
-	 *    set_config
-	 *
-	 * @return \EE_Events_Archive_Config
+	 * set up EE_Events_Archive_Config
 	 */
 	protected function set_config(){
 		$this->set_config_section( 'template_settings' );
@@ -101,6 +114,29 @@ class EED_Events_Archive  extends EED_Module {
 	}
 
 
+
+	/**
+	 * @return EventListIframeEmbedButton
+	 */
+	public static function get_iframe_embed_button() {
+		if ( ! self::$_iframe_embed_button instanceof EventListIframeEmbedButton ) {
+			self::$_iframe_embed_button = new EventListIframeEmbedButton();
+		}
+		return self::$_iframe_embed_button;
+	}
+
+
+
+	/**
+	 * event_list_iframe_embed_button
+	 *
+	 * @return    void
+	 * @throws \EE_Error
+	 */
+	public static function event_list_iframe_embed_button() {
+		$iframe_embed_button = \EED_Events_Archive::get_iframe_embed_button();
+		$iframe_embed_button->addEmbedButton();
+	}
 
 	/**
 	 *    initialize_template_parts
