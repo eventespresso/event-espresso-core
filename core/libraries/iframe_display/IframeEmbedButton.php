@@ -69,7 +69,7 @@ abstract class IframeEmbedButton
         );
         add_action(
             'admin_enqueue_scripts',
-            array( 'EventEspresso\core\libraries\iframe_display\IframeEmbedButton', 'embedButtonAssets' ),
+            array( $this, 'embedButtonAssets' ),
             10
         );
     }
@@ -242,7 +242,7 @@ abstract class IframeEmbedButton
     /**
      * enqueue iframe button js
      */
-    public static function embedButtonAssets()
+    public function embedButtonAssets()
     {
         \EE_Registry::$i18n_js_strings[ 'iframe_embed_title' ] = esc_html__(
             'copy and paste the following into any other site\'s content to display this event:',
