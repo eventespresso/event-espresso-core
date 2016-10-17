@@ -28,7 +28,21 @@ class EventListIframeEmbedButton extends IframeEmbedButton
 
 
 
-    /**
+	public function addEmbedButton() {
+		add_filter(
+			'FHEE__Events_Admin_Page___events_overview_list_table__after_list_table__before_legend',
+			array( $this, 'addEventListIframeEmbedButtonSection' )
+		);
+		add_action(
+			'admin_enqueue_scripts',
+			array( $this, 'embedButtonAssets' ),
+			10
+		);
+	}
+
+
+
+	/**
      * Adds an iframe embed code button to the Event editor.
      * return string
      */
