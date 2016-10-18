@@ -352,6 +352,12 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 
 
+     /**
+      * @return array
+      */
+     public function __sleep() {
+         return array( '_grand_total' );
+     }
 
 
 }

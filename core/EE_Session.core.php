@@ -656,14 +656,23 @@
 	 */
 	private function _save_session_to_db() {
 		if (
-			! EE_Registry::instance()->REQ instanceof EE_Request_Handler
-			|| ! (
-				EE_Registry::instance()->REQ->is_espresso_page()
+			// if the current request is NOT one of the following
+			! (
+				(
+					// an espresso page
+					EE_Registry::instance()->REQ instanceof EE_Request_Handler
+					&& EE_Registry::instance()->REQ->is_espresso_page()
+				)
+				// OR an an AJAX request from the frontend
 				|| EE_Registry::instance()->REQ->front_ajax
-				|| is_admin() && ! ( defined( 'DOING_AJAX' ) && DOING_AJAX )
+				// OR an admin request that is NOT AJAX
+				|| (
+					is_admin()
+					&& ! ( defined( 'DOING_AJAX' ) && DOING_AJAX )
+				)
 			)
 		) {
-			return FALSE;
+			return false;
 		}
 		// first serialize all of our session data
 		$session_data = serialize( $this->_session_data );
