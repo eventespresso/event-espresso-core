@@ -149,8 +149,29 @@
 															</ul>
 														</div>
 													</div>
-													
 												</div>
+
+												<div class="service-div-settings">
+													<div class="service-div-settings-top">
+														<div class="service-div-inner-content">
+															<div class="name column-name">
+																<h4>Event App Customization</h4>
+															</div>
+															<div class="desc column-description">
+																<p><a href="https://eventespresso.com/product/eea-event-app-customization/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=event_app_customization_add_on&ap_id=EEspresso" target="_blank"><img src="http://ee-screenshots.s3.amazonaws.com/ee4/event-app-customization-231x152.jpg"></a>Would you like to make the Event Espresso 4 event apps look like your own event app? Save tens of thousands of dollars building your own event apps. Using our Event App Customization add-on, you can make our event apps look like your app.</p>
+															</div>
+														</div>
+														<div class="action-links">
+															<ul class="plugin-action-buttons-custom">
+																<li>
+																	<a class="plugin-div-button button button-primary" href="https://eventespresso.com/product/eea-event-app-customization/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=event_app_customization_add_on&ap_id=EEspresso" target="_blank">Buy Now</a>
+																	<a class="plugin-div-button button button-secondary" href="https://eventespresso.com/wiki/event-app-customization-add-on/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=event_app_customization_add_on&ap_id=EEspresso" target="_blank">View Documentation</a>
+																</li>
+															</ul>
+														</div>
+													</div>
+												</div>
+
 												<div class="service-div-settings">
 													<div class="service-div-settings-top">
 														<div class="service-div-inner-content">
@@ -170,8 +191,9 @@
 															</ul>
 														</div>
 													</div>
-													
 												</div>
+
+												
 
 												<div class="service-div-settings">
 													<div class="service-div-settings-top">
@@ -280,6 +302,26 @@
 													
 												</div>
 												
+												<div class="service-div-settings">
+													<div class="service-div-settings-top">
+														<div class="service-div-inner-content">
+															<div class="name column-name">
+																<h4>Flexible Payment Methods</h4>
+															</div>
+															<div class="desc column-description">
+																<p><a href="https://eventespresso.com/product/eea-flexible-payment-method/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=flexible_payment_method_add_on&ap_id=EEspresso" target="_blank"><img src="http://ee-screenshots.s3.amazonaws.com/ee4/flexible-payment-methods-231x152.jpg"></a>With this payment method, you can provide instructions to your registrants/attendees on how to pay for their registrations</p>
+															</div>
+														</div>
+														<div class="action-links">
+															<ul class="plugin-action-buttons-custom">
+																<li>
+																	<a class="plugin-div-button button button-primary" href="https://eventespresso.com/product/eea-flexible-payment-method/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=flexible_payment_method_add_on&ap_id=EEspresso" target="_blank">Buy Now</a>
+																	<a class="plugin-div-button button button-secondary" href="https://eventespresso.com/wiki/flexible-payment-method/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=flexible_payment_method_add_on&ap_id=EEspresso" target="_blank">View Documentation</a>
+																</li>
+															</ul>
+														</div>
+													</div>
+												</div>
 												
 												<h3 class="service-settings-heading">Payment Gateways</h3>
 												
