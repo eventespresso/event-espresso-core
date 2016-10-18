@@ -1,8 +1,3 @@
 <div class="padding">
-	<dl id="additional">
-		<dt><a href="https://eventespresso.com/documentation/"><?php _e('Event Espresso docs', 'event_espresso'); ?></a></dt>
-			<dd><?php _e('Where you can get general Event Espresso documentation', 'event_espresso'); ?></dd>
-		<dt><a href="https://eventespresso.com/support/documentation/versioned-docs/?doc_ver=ee4"><?php _e('Event Espresso 4 docs', 'event_espresso'); ?></a> </dt>
-			<dd><?php _e('Where you can get Event Espresso 4-specific documentation', 'event_espresso'); ?></dd>
-	</dl>
+	<p><?php echo sprintf( __( 'Check out the <a href="%s" target="_blank">roadmap for Event Espresso</a>.', 'event_espresso' ), 'https://trello.com/b/zg9DCIpe/event-espresso-public-roadmap' ); ?></p>
 </div>
