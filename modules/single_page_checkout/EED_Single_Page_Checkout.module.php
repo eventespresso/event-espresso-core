@@ -399,6 +399,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			$this->checkout = apply_filters( 'FHEE__EED_Single_Page_Checkout___initialize__checkout', $this->checkout );
 			// get the $_GET
 			$this->_get_request_vars();
+			$this->_block_bots();
 			// filter continue_reg
 			$this->checkout->continue_reg = apply_filters( 'FHEE__EED_Single_Page_Checkout__init___continue_reg', TRUE, $this->checkout );
 			// load the reg steps array
@@ -512,6 +513,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$this->checkout->edit_step = EE_Registry::instance()->REQ->get( 'edit_step', '' );
 		// and what we're doing on the current step
 		$this->checkout->action = EE_Registry::instance()->REQ->get( 'action', 'display_spco_reg_step' );
+		// timestamp
+		$this->checkout->uts = EE_Registry::instance()->REQ->get( 'uts', 0 );
 		// returning to edit ?
 		$this->checkout->reg_url_link = EE_Registry::instance()->REQ->get( 'e_reg_url_link', '' );
 		// or some other kind of revisit ?
@@ -546,6 +549,37 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		EEH_Debug_Tools::printr( $this->checkout->revisit, '$this->checkout->revisit', __FILE__, __LINE__ );
 		EEH_Debug_Tools::printr( $this->checkout->generate_reg_form, '$this->checkout->generate_reg_form', __FILE__, __LINE__ );
 		EEH_Debug_Tools::printr( $this->checkout->process_form_submission, '$this->checkout->process_form_submission', __FILE__, __LINE__ );
+	}
+
+
+
+	/**
+	 * _block_bots
+	 * checks that the incoming request has either of the following set:
+	 *  a uts (unix timestamp) which indicates that the request was redirected from the Ticket Selector
+	 *  a REG URL Link, which indicates that the request is a return visit to SPCO for a valid TXN
+	 * so if you're not coming from the Ticket Selector nor returning for a valid IP...
+	 * then where you coming from man?
+	 */
+	private function _block_bots() {
+		if ( ! ( $this->checkout->uts || $this->checkout->reg_url_link ) ) {
+			/** @var EE_Request $request */
+			$request = EE_Registry::instance()->create( 'EE_Request' );
+			$ip_address = $request->ip_address();
+			$ee_bot_checkout = get_option('ee_bot_checkout');
+			if ( $ee_bot_checkout === false ) {
+				$ee_bot_checkout = array();
+				add_option( 'ee_bot_checkout', $ee_bot_checkout, '', false );
+			}
+			if ( ! isset( $ee_bot_checkout[ $ip_address ] )) {
+				$ee_bot_checkout[ $ip_address ] = 0;
+			}
+			$ee_bot_checkout[ $ip_address ]++;
+			update_option( 'ee_bot_checkout', $ee_bot_checkout );
+			$this->checkout->redirect = true;
+			$this->checkout->redirect_url = EE_Config::instance()->core->cancel_page_url();
+			$this->_handle_html_redirects();
+		}
 	}
 
 
