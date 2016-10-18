@@ -78,6 +78,12 @@ class EE_Checkout {
 	protected $reg_status_updated = array();
 
 	/**
+	 * timestamp when redirected from Ticket Selector to the checkout
+	 * @type int
+	 */
+	public $uts = 0;
+
+	/**
 	 * total number of tickets that were in the cart
 	 * @type int
 	 */
