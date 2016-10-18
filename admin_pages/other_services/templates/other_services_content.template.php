@@ -1,31 +1,31 @@
 												<h3 class="service-settings-heading">Add-ons</h3>
+												
 												<div class="service-div-settings">
 													<div class="service-div-settings-top">
 														<div class="service-div-inner-content">
 															<div class="name column-name">
-																<h4>Promotions & Discounts Add-on</h4>
+																<h4>Attendee Mover</h4>
 															</div>
 															<div class="desc column-description">
-																<p><a href="https://eventespresso.com/product/eea-promotions/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=promtions_addon_link&ap_id=EEspresso" target="_blank"><img class="alignright " alt="Promotions Add-on" src="https://ee-screenshots.s3.amazonaws.com/ee4/promotions-discounts-addon.jpg" width="230" height="151" /></a>
-																	The Promotions add-on for adds powerful and flexible promotional pricing features to your website. You can now create discount codes and promotions that can be applied when registering for an event. This gives the person registering the ability to apply a discount code, or receive an automated discount that reduces the price of a registration. </p>
+																<p><a href="https://eventespresso.com/product/eea-attendee-mover/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=attendee_mover_add_on&ap_id=EEspresso" target="_blank"><img src="http://ee-screenshots.s3.amazonaws.com/ee4/ee4-attendee-mover-231x152.jpg"></a>Whether the attendee signed up for the wrong event, or you just need to make room for more attendees. The Attendee Mover for Event Espresso 4 makes it easy as possible to move registrations between events and different ticket types.</p>
 															</div>
 														</div>
 														<div class="action-links">
 															<ul class="plugin-action-buttons-custom">
 																<li>
-																	<a class="plugin-div-button button button-primary" href="https://eventespresso.com/product/eea-promotions/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=promotions_addon_link&ap_id=EEspresso" target="_blank">Buy Now</a>
-																	<a class="plugin-div-button button button-secondary" href="https://eventespresso.com/wiki/ee4-promotions-add-on/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=promotions_addon_link&ap_id=EEspresso" target="_blank">View Documentation</a>
+																	<a class="plugin-div-button button button-primary" href="https://eventespresso.com/product/eea-attendee-mover/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=attendee_mover_add_on&ap_id=EEspresso" target="_blank">Buy Now</a>
+																	<a class="plugin-div-button button button-secondary" href="https://eventespresso.com/wiki/ee4-attendee-mover/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=attendee_mover_add_on&ap_id=EEspresso" target="_blank">View Documentation</a>
 																</li>
 															</ul>
 														</div>
 													</div>
-													
 												</div>
+
 												<div class="service-div-settings">
 													<div class="service-div-settings-top">
 														<div class="service-div-inner-content">
 															<div class="name column-name">
-																<h4>Events Calendar Add-on</h4>
+																<h4>Events Calendar</h4>
 															</div>
 															<div class="desc column-description">
 																<p><a href="https://eventespresso.com/product/ee4-events-calendar/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=events_calendar_add_on&ap_id=EEspresso" target="_blank"><img src="https://ee-screenshots.s3.amazonaws.com/ee4/calendar4-231x151.jpg"></a>Our WordPress events calendar displays events and categories of events in a nice graphical calendar. People often schedule themselves on a calendar, so make it easy for attendees to find your events and add them to their own schedule.</p>
@@ -42,6 +42,73 @@
 													</div>
 													
 												</div>
+
+												<div class="service-div-settings">
+													<div class="service-div-settings-top">
+														<div class="service-div-inner-content">
+															<div class="name column-name">
+																<h4>Multi Event Registration</h4>
+															</div>
+															<div class="desc column-description">
+																<p><a href="https://eventespresso.com/product/eea-multi-event-registration/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=multiple_event_registration_add_on&ap_id=EEspresso" target="_blank"><img src="http://ee-screenshots.s3.amazonaws.com/ee4/mutliple_231x151.jpg"></a>The premise behind this great add-on is that the easier it is for people to register for an event, the more events they are likely to attend. With the Multiple Event Registration add-on, attendees can register for several events at once, and even add additional attendees to any of the same events–in the same checkout process. Additional attendees also get the same customized registration form as the first/primary attendee, or a completely different registration form, it’s up to you.</p>
+															</div>
+														</div>
+														<div class="action-links">
+															<ul class="plugin-action-buttons-custom">
+																<li>
+																	<a class="plugin-div-button button button-primary" href="https://eventespresso.com/product/eea-multi-event-registration/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=multiple_event_registration_add_on&ap_id=EEspresso" target="_blank">Buy Now</a>
+																	<a class="plugin-div-button button button-secondary" href="https://eventespresso.com/wiki/ee4-multiple-event-registration-add-on/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=multiple_event_registration_add_on&ap_id=EEspresso" target="_blank">View Documentation</a>
+																</li>
+															</ul>
+														</div>
+													</div>
+													
+												</div>
+
+												<div class="service-div-settings">
+													<div class="service-div-settings-top">
+														<div class="service-div-inner-content">
+															<div class="name column-name">
+																<h4>Promotions & Discounts</h4>
+															</div>
+															<div class="desc column-description">
+																<p><a href="https://eventespresso.com/product/eea-promotions/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=promtions_addon_link&ap_id=EEspresso" target="_blank"><img class="alignright " alt="Promotions Add-on" src="https://ee-screenshots.s3.amazonaws.com/ee4/promotions-discounts-addon.jpg" width="230" height="151" /></a>
+																	The Promotions add-on for adds powerful and flexible promotional pricing features to your website. You can now create discount codes and promotions that can be applied when registering for an event. This gives the person registering the ability to apply a discount code, or receive an automated discount that reduces the price of a registration. </p>
+															</div>
+														</div>
+														<div class="action-links">
+															<ul class="plugin-action-buttons-custom">
+																<li>
+																	<a class="plugin-div-button button button-primary" href="https://eventespresso.com/product/eea-promotions/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=promotions_addon_link&ap_id=EEspresso" target="_blank">Buy Now</a>
+																	<a class="plugin-div-button button button-secondary" href="https://eventespresso.com/wiki/ee4-promotions-add-on/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=promotions_addon_link&ap_id=EEspresso" target="_blank">View Documentation</a>
+																</li>
+															</ul>
+														</div>
+													</div>
+												</div>
+
+												<div class="service-div-settings">
+													<div class="service-div-settings-top">
+														<div class="service-div-inner-content">
+															<div class="name column-name">
+																<h4>MailChimp Integration</h4>
+															</div>
+															<div class="desc column-description">
+																<p><a href="https://eventespresso.com/product/eea-mailchimp/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=mailchimp_integration&ap_id=EEspresso" target="_blank"><img src="https://ee-screenshots.s3.amazonaws.com/ee4/mailchimp-231x151.jpg"></a><a href="http://eepurl.com/OXgr" target="_blank">MailChimp</a> is an extremely popular tool among email marketers, businesses and bloggers. It is easy to use, powerful, and allows just about anyone to create amazing email campaigns quickly and easily. Once a visitor submits their information on your registration form, the attendee is instantly added to the MailChimp mailing LIST or GROUP that you have configured for that event.</p>
+															</div>
+														</div>
+														<div class="action-links">
+															<ul class="plugin-action-buttons-custom">
+																<li>
+																	<a class="plugin-div-button button button-primary" href="https://eventespresso.com/product/eea-mailchimp/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=mailchimp_integration&ap_id=EEspresso" target="_blank">Buy Now</a>
+																	<a class="plugin-div-button button button-secondary" href="https://eventespresso.com/wiki/mailchimp-integration/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=mailchimp_integration&ap_id=EEspresso" target="_blank">View Documentation</a>
+																</li>
+															</ul>
+														</div>
+													</div>
+													
+												</div>
+	
 												<div class="service-div-settings">
 													<div class="service-div-settings-top">
 														<div class="service-div-inner-content">
@@ -105,27 +172,7 @@
 													</div>
 													
 												</div>
-												<div class="service-div-settings">
-													<div class="service-div-settings-top">
-														<div class="service-div-inner-content">
-															<div class="name column-name">
-																<h4>MailChimp Integration</h4>
-															</div>
-															<div class="desc column-description">
-																<p><a href="https://eventespresso.com/product/eea-mailchimp/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=mailchimp_integration&ap_id=EEspresso" target="_blank"><img src="https://ee-screenshots.s3.amazonaws.com/ee4/mailchimp-231x151.jpg"></a><a href="http://eepurl.com/OXgr" target="_blank">MailChimp</a> is an extremely popular tool among email marketers, businesses and bloggers. It is easy to use, powerful, and allows just about anyone to create amazing email campaigns quickly and easily. Once a visitor submits their information on your registration form, the attendee is instantly added to the MailChimp mailing LIST or GROUP that you have configured for that event.</p>
-															</div>
-														</div>
-														<div class="action-links">
-															<ul class="plugin-action-buttons-custom">
-																<li>
-																	<a class="plugin-div-button button button-primary" href="https://eventespresso.com/product/eea-mailchimp/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=mailchimp_integration&ap_id=EEspresso" target="_blank">Buy Now</a>
-																	<a class="plugin-div-button button button-secondary" href="https://eventespresso.com/wiki/mailchimp-integration/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=mailchimp_integration&ap_id=EEspresso" target="_blank">View Documentation</a>
-																</li>
-															</ul>
-														</div>
-													</div>
-													
-												</div>
+												
 												<div class="service-div-settings">
 													<div class="service-div-settings-top">
 														<div class="service-div-inner-content">
@@ -233,6 +280,7 @@
 												
 												
 												<h3 class="service-settings-heading">Payment Gateways</h3>
+												
 												<div class="service-div-settings">
 													<div class="service-div-settings-top">
 														<div class="service-div-inner-content">
@@ -252,7 +300,27 @@
 															</ul>
 														</div>
 													</div>
-													
+												</div>
+
+												<div class="service-div-settings">
+													<div class="service-div-settings-top">
+														<div class="service-div-inner-content">
+															<div class="name column-name">
+																<h4>Authorize.Net SIM Payment Gateway</h4>
+															</div>
+															<div class="desc column-description">
+																<p><a href="https://eventespresso.com/product/eea-aim-echeck/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=aim_echeck_payment_gateway&ap_id=EEspresso" target="_blank"><img src="http://ee-screenshots.s3.amazonaws.com/authorize-net-echeck-231x152.jpg"></a><a href="https://eventespresso.com/go/authorizenetechecknet/">eCheck.Net</a> (eCheck Payment Gateway) is Authorize.Net’s exclusive electronic check processing solution. eCheck.Net enables event managers already processing credit card transactions through the Authorize.Net Payment Gateway to offer their customers an additional payment option.</p>
+															</div>
+														</div>
+														<div class="action-links">
+															<ul class="plugin-action-buttons-custom">
+																<li>
+																	<a class="plugin-div-button button button-primary" href="https://eventespresso.com/product/eea-aim-echeck/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=aim_echeck_payment_gateway&ap_id=EEspresso" target="_blank">Buy Now</a>
+																	<a class="plugin-div-button button button-secondary" href="https://eventespresso.com/wiki/authorizenet-aim-echeck-payment-gateway/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=aim_echeck_payment_gateway&ap_id=EEspresso" target="_blank">View Documentation</a>
+																</li>
+															</ul>
+														</div>
+													</div>
 												</div>
 
 												<div class="service-div-settings">
