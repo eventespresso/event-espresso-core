@@ -172,6 +172,28 @@
 													</div>
 													
 												</div>
+
+												<div class="service-div-settings">
+													<div class="service-div-settings-top">
+														<div class="service-div-inner-content">
+															<div class="name column-name">
+																<h4>AffiliateWP Integration</h4>
+															</div>
+															<div class="desc column-description">
+																<p><a href="https://eventespresso.com/product/eea-affiliatewp/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=affiliatewp_integration&ap_id=EEspresso" target="_blank"><img src="http://ee-screenshots.s3.amazonaws.com/ee4/affiliate-wp-integration-231x151.jpg"></a>AffiliateWP is an affiliate plugin for WordPress. With AffiliateWP, your affiliates can promote your products and services, which improves your website’s SEO rankings, drives more traffic to your site, and increases sales/revenue.</p>
+															</div>
+														</div>
+														<div class="action-links">
+															<ul class="plugin-action-buttons-custom">
+																<li>
+																	<a class="plugin-div-button button button-primary" href="https://eventespresso.com/product/eea-affiliatewp/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=affiliatewp_integration&ap_id=EEspresso" target="_blank">Buy Now</a>
+																	<a class="plugin-div-button button button-secondary" href="http://eventespresso.com/wiki/affiliatewp-add-on/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=affiliatewp_integration&ap_id=EEspresso" target="_blank">View Documentation</a>
+																</li>
+															</ul>
+														</div>
+													</div>
+													
+												</div>
 												
 												<div class="service-div-settings">
 													<div class="service-div-settings-top">
@@ -236,27 +258,7 @@
 													</div>
 													
 												</div>
-												<div class="service-div-settings">
-													<div class="service-div-settings-top">
-														<div class="service-div-inner-content">
-															<div class="name column-name">
-																<h4>AffiliateWP Integration</h4>
-															</div>
-															<div class="desc column-description">
-																<p><a href="https://eventespresso.com/product/eea-affiliatewp/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=affiliatewp_integration&ap_id=EEspresso" target="_blank"><img src="http://ee-screenshots.s3.amazonaws.com/ee4/affiliate-wp-integration-231x151.jpg"></a>AffiliateWP is an affiliate plugin for WordPress. With AffiliateWP, your affiliates can promote your products and services, which improves your website’s SEO rankings, drives more traffic to your site, and increases sales/revenue.</p>
-															</div>
-														</div>
-														<div class="action-links">
-															<ul class="plugin-action-buttons-custom">
-																<li>
-																	<a class="plugin-div-button button button-primary" href="https://eventespresso.com/product/eea-affiliatewp/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=affiliatewp_integration&ap_id=EEspresso" target="_blank">Buy Now</a>
-																	<a class="plugin-div-button button button-secondary" href="http://eventespresso.com/wiki/affiliatewp-add-on/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=affiliatewp_integration&ap_id=EEspresso" target="_blank">View Documentation</a>
-																</li>
-															</ul>
-														</div>
-													</div>
-													
-												</div>
+												
 												<div class="service-div-settings">
 													<div class="service-div-settings-top">
 														<div class="service-div-inner-content">
@@ -309,14 +311,14 @@
 																<h4>Authorize.Net SIM Payment Gateway</h4>
 															</div>
 															<div class="desc column-description">
-																<p><a href="https://eventespresso.com/product/eea-aim-echeck/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=aim_echeck_payment_gateway&ap_id=EEspresso" target="_blank"><img src="http://ee-screenshots.s3.amazonaws.com/authorize-net-echeck-231x152.jpg"></a><a href="https://eventespresso.com/go/authorizenetechecknet/">eCheck.Net</a> (eCheck Payment Gateway) is Authorize.Net’s exclusive electronic check processing solution. eCheck.Net enables event managers already processing credit card transactions through the Authorize.Net Payment Gateway to offer their customers an additional payment option.</p>
+																<p><a href="https://eventespresso.com/product/eea-authorizenet-sim/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=aim_sim_payment_gateway&ap_id=EEspresso" target="_blank"><img src="http://ee-screenshots.s3.amazonaws.com/ee4/authorize-net-sim-231x152.jpg"></a>Authorize.Net SIM is a hosted payment form ideal for handling the secure collection and transmission of customer data. The experience can be tailored to match the look and feel of your event ticketing website so that the customer doesn’t realize they are on a hosted page.</p>
 															</div>
 														</div>
 														<div class="action-links">
 															<ul class="plugin-action-buttons-custom">
 																<li>
-																	<a class="plugin-div-button button button-primary" href="https://eventespresso.com/product/eea-aim-echeck/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=aim_echeck_payment_gateway&ap_id=EEspresso" target="_blank">Buy Now</a>
-																	<a class="plugin-div-button button button-secondary" href="https://eventespresso.com/wiki/authorizenet-aim-echeck-payment-gateway/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=aim_echeck_payment_gateway&ap_id=EEspresso" target="_blank">View Documentation</a>
+																	<a class="plugin-div-button button button-primary" href="https://eventespresso.com/product/eea-authorizenet-sim/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=aim_sim_payment_gateway&ap_id=EEspresso" target="_blank">Buy Now</a>
+																	<a class="plugin-div-button button button-secondary" href="https://eventespresso.com/wiki/authorize-net-sim-payment-gateway/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=aim_sim_payment_gateway&ap_id=EEspresso" target="_blank">View Documentation</a>
 																</li>
 															</ul>
 														</div>
