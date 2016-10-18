@@ -77,21 +77,14 @@ class Support_Admin_Page extends EE_Admin_Page {
 	}
 
 
-
+	
 	protected function _set_page_config() {
 		$this->_page_config = array(
 			'default' => array(
 				'nav' => array(
-					'label' => __('Shortcodes', 'event_espresso'),
-					'order' => 30),
-				'metaboxes' => array_merge( $this->_default_espresso_metaboxes, array('_shortcodes_boxes' ) ),
-				'require_nonce' => FALSE
-				),
-			'contact_support' => array(
-				'nav' => array(
 					'label' => __('Support', 'event_espresso'),
-					'order' => 40),
-				'metaboxes' => array_merge( $this->_default_espresso_metaboxes, array( '_support_boxes' ) ),
+					'order' => 30),
+				'metaboxes' => array_merge( $this->_default_espresso_metaboxes, array('_support_boxes' ) ),
 				'require_nonce' => FALSE
 				),
 			'developers' => array(
@@ -99,6 +92,13 @@ class Support_Admin_Page extends EE_Admin_Page {
 					'label' => __('Developers', 'event_espresso'),
 					'order' => 50),
 				'metaboxes' => $this->_default_espresso_metaboxes,
+				'require_nonce' => FALSE
+				),
+			'shortcodes' => array(
+				'nav' => array(
+					'label' => __('Shortcodes', 'event_espresso'),
+					'order' => 60),
+				'metaboxes' => array_merge( $this->_default_espresso_metaboxes, array('_shortcodes_boxes' ) ),
 				'require_nonce' => FALSE
 				),
 			);
