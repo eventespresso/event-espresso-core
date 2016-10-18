@@ -1,10 +1,10 @@
 <div class="padding">
-	<p>If you want to integrate with&nbsp;Event Espresso or participate in building code, then you're in the right place. The following resources can help you get started.</p>
+	<p>If you want to integrate with Event Espresso or participate in building code, then you're in the right place. The following resources can help you get started.</p>
 	<h2><strong>Developer Resources</strong></h2>
 	<ul>
 		<li><a title="Event Espresso 4 Developer Documentation" href="http://developer.eventespresso.com/docs/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=ee_support_page&utm_content=developers_tab" target="_blank">Event Espresso 4 Developer Documentation</a></li>
 		<li><a title="Event Espresso 4 Developer News" href="http://developer.eventespresso.com/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=ee_support_page&utm_content=developers_tab" target="_blank">Event Espresso 4 Developer News </a></li>
-		<li><a title="Become an Event Espresso Pro" href="https://eventespresso.com/developers/event-espresso-pros-application/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=ee_support_page&utm_content=developers_tab" target="_blank">Apply</a> to be listed as a&nbsp;<a href="http://eventespresso.com/developers/event-espresso-pros/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=ee_support_page&utm_content=developers_tab">Event Espresso Pro</a></li>
+		<li><a title="Become an Event Espresso Pro" href="https://eventespresso.com/developers/event-espresso-pros-application/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=ee_support_page&utm_content=developers_tab" target="_blank">Apply</a> to be listed as a&nbsp;<a href="https://eventespresso.com/developers/event-espresso-pros/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=ee_support_page&utm_content=developers_tab">Event Espresso Pro</a></li>
 
 	</ul>
 
@@ -15,7 +15,7 @@
 		<li><a href="http://developer.eventespresso.com/docs/ee-capability-system-overview/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=ee_support_page&utm_content=developers_tab" target="_blank">Capability System</a></li>
 		<li><a href="http://developer.eventespresso.com/docs/ee4-payment-method-development/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=ee_support_page&utm_content=developers_tab" target="_blank">Payment Method Development</a></li>
 		<li><a href="https://eventespresso.com/2014/03/messages-systemyour-tool-getting-word/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=ee_support_page&utm_content=developers_tab" target="_blank">Messages System in Event Espresso 4</a></li>
-		<li><a href="http://developer.eventespresso.com/docs/using-ee4-model-objects/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=ee_support_page&utm_content=developers_tab" target="_blank">Database Model System</a> (used for intefacing with EE4 data via WordPress plugins and server side querying)</li>
+		<li><a href="http://developer.eventespresso.com/docs/using-ee4-model-objects/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=ee_support_page&utm_content=developers_tab" target="_blank">Database Model System</a> (used for interfacing with EE4 data via WordPress plugins and server side querying)</li>
 
 	</ul>
 	<h2>REST API Resources</h2>
