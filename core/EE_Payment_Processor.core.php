@@ -268,6 +268,17 @@ class EE_Payment_Processor extends EE_Processor_Base {
 			}
 			return $payment;
 
+		} catch( EventEspresso\core\exceptions\IPNException $e ) {
+			$log = EEM_Change_Log::instance()->log(
+				EEM_Change_Log::type_gateway,
+				array(
+					'message' => 'IPN Exception: ' . $e->getMessage(),
+					'current_url' => EEH_URL::current_url(),
+					'payment' => $e->getPaymentProperties(),
+					'IPN_data' => $e->getIpnData()
+				),
+				$obj_for_log
+			);
 		} catch( EE_Error $e ) {
 			do_action(
 				'AHEE__log', __FILE__, __FUNCTION__, sprintf(

@@ -1,5 +1,7 @@
 <?php
 if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
+
+use EventEspresso\core\exceptions\IPNException;
 /**
  * EEG_Paypal_Standard
  *
@@ -317,10 +319,16 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		if ( $payment instanceof EEI_Payment ) {
 			//payment exists. if this has the exact same status and amount, don't bother updating. just return
 			if ( $payment->status() === $status && (float)$payment->amount() === (float)$update_info[ 'mc_gross' ] ) {
-				// DUPLICATED IPN! dont bother updating transaction foo!;
-				$message_log = sprintf(
-					__( 'It appears we have received a duplicate IPN from PayPal for payment %d', 'event_espresso' ),
-					$payment->ID()
+				// DUPLICATED IPN! don't bother updating transaction
+				throw new IPNException(
+					sprintf(
+						__( 'It appears we have received a duplicate IPN from PayPal for payment %d', 'event_espresso' ),
+						$payment->ID()
+					),
+					IPNException::code_duplicate,
+					null,
+					$payment,
+					$update_info
 				);
 			} else {
 				// new payment yippee !!!
@@ -329,17 +337,17 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 				$payment->set_gateway_response( $gateway_response );
 				$payment->set_details( $update_info );
 				$payment->set_txn_id_chq_nmbr( $update_info[ 'txn_id' ] );
-				$message_log = __( 'Updated payment either from IPN or as part of POST from PayPal', 'event_espresso' );
+				$this->log(
+					array(
+						'message'  => __( 'Updated payment either from IPN or as part of POST from PayPal', 'event_espresso' ),
+						'url'      => $this->_process_response_url(),
+						'payment'  => $payment->model_field_array(),
+						'IPN_data' => $update_info
+					),
+					$payment
+				);
 			}
-			$this->log(
-				array(
-					'message'  => $message_log,
-					'url'      => $this->_process_response_url(),
-					'payment'  => $payment->model_field_array(),
-					'IPN_data' => $update_info
-				),
-				$payment
-			);
+
 		}
 		do_action( 'FHEE__EEG_Paypal_Standard__handle_payment_update__payment_processed', $payment, $this );
 		// kill request here if this is a refund
@@ -350,8 +358,16 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			)
 			&& apply_filters( 'FHEE__EEG_Paypal_Standard__handle_payment_update__kill_refund_request', true )
 		) {
-			status_header( 200 );
-			exit();
+			throw new EventEspresso\core\exceptions\IPNException(
+				sprintf(
+					__( 'Event Espresso does not yet support %1$s IPNs from PayPal', 'event_espresso'),
+					$update_info['payment_status']
+				),
+				EventEspresso\core\exceptions\IPNException::code_unsupported,
+				null,
+				$payment,
+				$update_info
+			);
 		}
 		return $payment;
 	}
