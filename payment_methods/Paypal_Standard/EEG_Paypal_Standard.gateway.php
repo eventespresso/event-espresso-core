@@ -285,7 +285,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
         ) {
             throw new EventEspresso\core\exceptions\IpnException(
                 sprintf(
-                    __( 'Event Espresso does not yet support %1$s IPNs from PayPal', 'event_espresso'),
+                    esc_html__( 'Event Espresso does not yet support %1$s IPNs from PayPal', 'event_espresso'),
                     $update_info['payment_status']
                 ),
                 EventEspresso\core\exceptions\IpnException::code_unsupported,
@@ -299,30 +299,30 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 
 			case 'Completed' :
 				$status = $this->_pay_model->approved_status();
-				$gateway_response = __( 'The payment is approved.', 'event_espresso' );
+				$gateway_response = esc_html__( 'The payment is approved.', 'event_espresso' );
 				break;
 
 			case 'Pending' :
 				$status = $this->_pay_model->pending_status();
-				$gateway_response = __( 'The payment is in progress. Another message will be sent when payment is approved.', 'event_espresso' );
+				$gateway_response = esc_html__( 'The payment is in progress. Another message will be sent when payment is approved.', 'event_espresso' );
 				break;
 
 			case 'Denied' :
 				$status = $this->_pay_model->declined_status();
-				$gateway_response = __( 'The payment has been declined.', 'event_espresso' );
+				$gateway_response = esc_html__( 'The payment has been declined.', 'event_espresso' );
 				break;
 
 			case 'Expired' :
 			case 'Failed' :
 				$status = $this->_pay_model->failed_status();
-				$gateway_response = __( 'The payment failed for technical reasons or expired.', 'event_espresso' );
+				$gateway_response = esc_html__( 'The payment failed for technical reasons or expired.', 'event_espresso' );
 				break;
 
 			case 'Refunded' :
 			case 'Partially_Refunded' :
 				// even though it's a refund, we consider the payment as approved, it just has a negative value
 				$status = $this->_pay_model->approved_status();
-				$gateway_response = __( 'The payment has been refunded. Please update registrations accordingly.', 'event_espresso' );
+				$gateway_response = esc_html__( 'The payment has been refunded. Please update registrations accordingly.', 'event_espresso' );
 				break;
 
 			case 'Voided' :
@@ -330,7 +330,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			case 'Canceled_Reversal' :
 			default :
 				$status = $this->_pay_model->cancelled_status();
-				$gateway_response = __( 'The payment was cancelled, reversed, or voided. Please update registrations accordingly.', 'event_espresso' );
+				$gateway_response = esc_html__( 'The payment was cancelled, reversed, or voided. Please update registrations accordingly.', 'event_espresso' );
 				break;
 
 		}
@@ -342,7 +342,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 				// DUPLICATED IPN! don't bother updating transaction
 				throw new IpnException(
 					sprintf(
-						__( 'It appears we have received a duplicate IPN from PayPal for payment %d', 'event_espresso' ),
+						esc_html__( 'It appears we have received a duplicate IPN from PayPal for payment %d', 'event_espresso' ),
 						$payment->ID()
 					),
 					IpnException::code_duplicate,
@@ -359,7 +359,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 				$payment->set_txn_id_chq_nmbr( $update_info[ 'txn_id' ] );
 				$this->log(
 					array(
-						'message'  => __( 'Updated payment either from IPN or as part of POST from PayPal', 'event_espresso' ),
+						'message'  => esc_html__( 'Updated payment either from IPN or as part of POST from PayPal', 'event_espresso' ),
 						'url'      => $this->_process_response_url(),
 						'payment'  => $payment->model_field_array(),
 						'IPN_data' => $update_info
@@ -437,7 +437,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		// or their API must have changed: http://www.paypalobjects.com/en_US/ebook/PP_OrderManagement_IntegrationGuide/ipn.html
 		if( $response instanceof WP_Error ) {
 			$error_msg = sprintf(
-				__( 'WP Error. Code: "%1$s", Message: "%2$s", Data: "%3$s"', 'event_espresso' ),
+				esc_html__( 'WP Error. Code: "%1$s", Message: "%2$s", Data: "%3$s"', 'event_espresso' ),
 				$response->get_error_code(),
 				$response->get_error_message(),
 				print_r( $response->get_error_data(), true )
@@ -447,7 +447,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		} else {
 			$error_msg = print_r( $response, true );
 		}
-		$payment->set_gateway_response( sprintf( __( "IPN Validation failed! Paypal responded with '%s'", "event_espresso" ), $error_msg ) );
+		$payment->set_gateway_response( sprintf( esc_html__( "IPN Validation failed! Paypal responded with '%s'", "event_espresso" ), $error_msg ) );
 		$payment->set_details( array( 'REQUEST' => $update_info, 'VALIDATION_RESPONSE' => $response ) );
 		$payment->set_status( EEM_Payment::status_id_failed );
 		// log the results
@@ -495,7 +495,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		$payment_was_itemized = $payment->get_extra_meta( EEG_Paypal_Standard::itemized_payment_option_name, true, false );
 		if( ! $transaction ){
 			$this->log(
-				__(
+				esc_html__(
 					'Payment with ID %d has no related transaction, and so update_txn_based_on_payment couldn\'t be executed properly',
 					'event_espresso'
 				),
@@ -510,7 +510,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		) {
 			$this->log(
 				array(
-					'message' => __(
+					'message' => esc_html__(
 						'Could not update transaction based on payment because the payment details have not yet been put on the payment. This normally happens during the IPN or returning from PayPal',
 						'event_espresso'
 					),
@@ -524,7 +524,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		if( $payment->status() !== $this->_pay_model->approved_status() ) {
 			$this->log(
 				array(
-					'message' => __(
+					'message' => esc_html__(
 						'We shouldn\'t update transactions taxes or shipping data from non-approved payments',
 						'event_espresso'
 					),
@@ -547,8 +547,8 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
             $this->_line_item->set_total_tax_to(
 	            $transaction_total_line_item,
                 (float)$update_info['tax'],
-                __( 'Taxes', 'event_espresso' ),
-                __( 'Calculated by Paypal', 'event_espresso' ),
+                esc_html__( 'Taxes', 'event_espresso' ),
+                esc_html__( 'Calculated by Paypal', 'event_espresso' ),
                 'paypal_tax'
             );
             $grand_total_needs_resaving = TRUE;
@@ -559,9 +559,9 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		if( $this->_paypal_shipping && $shipping_amount && $payment_was_itemized ){
 			$this->_line_item->add_unrelated_item(
 				$transaction_total_line_item,
-				sprintf( __('Shipping for transaction %1$s', 'event_espresso'), $transaction->ID() ),
+				sprintf( esc_html__('Shipping for transaction %1$s', 'event_espresso'), $transaction->ID() ),
 				$shipping_amount,
-				__('Shipping charges calculated by Paypal', 'event_espresso'),
+				esc_html__('Shipping charges calculated by Paypal', 'event_espresso'),
 				1,
 				false,
 				'paypal_shipping_' . $transaction->ID()
@@ -577,7 +577,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		}
 		$this->log(
 			array(
-				'message'                     => __( 'Updated transaction related to payment', 'event_espresso' ),
+				'message'                     => esc_html__( 'Updated transaction related to payment', 'event_espresso' ),
 				'url'                         => $this->_process_response_url(),
 				'transaction (updated)'       => $transaction->model_field_array(),
 				'payment (updated)'           => $payment->model_field_array(),
