@@ -1,7 +1,12 @@
 <?php use EventEspresso\core\domain\services\capabilities\PublicCapabilities;
 use EventEspresso\core\exceptions\InvalidEntityException;
 
-if ( ! defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed');}
+if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
+	exit( 'No direct script access allowed' );
+}
+
+
+
 /**
  * Single Page Checkout (SPCO)
  *
@@ -11,8 +16,6 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowe
  *
  */
 class EED_Single_Page_Checkout  extends EED_Module {
-
-	const ICA_OPTION_KEY = 'ee_invalid_checkout_access';
 
 	/**
 	 * $_initialized - has the SPCO controller already been initialized ?
@@ -565,32 +568,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * then where you coming from man?
 	 */
 	private function _block_bots() {
-		if (
-			EE_Config::instance()->registration->track_invalid_checkout_access()
-			&& ! ( $this->checkout->uts || $this->checkout->reg_url_link )
-			&& ! ( defined( 'DOING_AJAX' ) && DOING_AJAX )
-		) {
-			/** @var EE_Request $request */
-			$request = EE_Registry::instance()->create( 'EE_Request' );
-			$ip_address = $request->ip_address();
-			$ee_bot_checkout = get_option( EED_Single_Page_Checkout::ICA_OPTION_KEY );
-			if ( $ee_bot_checkout === false ) {
-				$ee_bot_checkout = array();
-				add_option( EED_Single_Page_Checkout::ICA_OPTION_KEY, $ee_bot_checkout, '', false );
-			}
-			if ( ! isset( $ee_bot_checkout[ $ip_address ] )) {
-				$ee_bot_checkout[ $ip_address ] = array();
-			}
-			$http_referer = ( isset( $_SERVER['HTTP_REFERER'] ) )
-				? esc_attr( $_SERVER['HTTP_REFERER'] )
-				: 0;
-			if ( ! isset( $ee_bot_checkout[ $ip_address ][ $http_referer ] ) ) {
-				$ee_bot_checkout[ $ip_address ][ $http_referer ] = 0;
-			}
-			$ee_bot_checkout[ $ip_address ][ $http_referer ]++;
-			update_option( EED_Single_Page_Checkout::ICA_OPTION_KEY, $ee_bot_checkout );
-			$this->checkout->redirect = true;
-			$this->checkout->redirect_url = EE_Config::instance()->core->cancel_page_url();
+		$invalid_checkout_access = \EED_Invalid_Checkout_Access::getInvalidCheckoutAccess();
+		if ( $invalid_checkout_access->checkoutAccessIsInvalid( $this->checkout ) ) {
 			$this->_handle_html_redirects();
 		}
 	}
