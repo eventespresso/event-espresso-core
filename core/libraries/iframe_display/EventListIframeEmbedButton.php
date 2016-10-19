@@ -30,7 +30,7 @@ class EventListIframeEmbedButton extends IframeEmbedButton
 
 	public function addEmbedButton() {
 		add_filter(
-			'FHEE__Events_Admin_Page___events_overview_list_table__after_list_table__before_legend',
+			'FHEE__EE_Admin_Page___display_admin_list_table_page__after_list_table__template_arg',
 			array( $this, 'addEventListIframeEmbedButtonSection' )
 		);
 		add_action(
@@ -43,14 +43,23 @@ class EventListIframeEmbedButton extends IframeEmbedButton
 
 
 	/**
-     * Adds an iframe embed code button to the Event editor.
-     * return string
-     */
-    public function addEventListIframeEmbedButtonSection()
+	 * Adds an iframe embed code button to the Event editor.
+	 * return string
+	 *
+	 * @param array $after_list_table
+	 * @return array
+	 */
+    public function addEventListIframeEmbedButtonSection( array $after_list_table )
     {
-        return $this->addIframeEmbedButtonsSection(
-            array( 'event_list' => $this->embedButtonHtml() )
-        );
+	    return \EEH_Array::insert_into_array(
+    		$after_list_table,
+		    array(
+			    'iframe_embed_buttons' => $this->addIframeEmbedButtonsSection(
+				    array( 'event_list' => $this->embedButtonHtml() )
+			    )
+		    ),
+		    'legend'
+	    );
     }
 
 
