@@ -7,7 +7,7 @@
 																<h4>Attendee Mover</h4>
 															</div>
 															<div class="desc column-description">
-																<p><a href="https://eventespresso.com/product/eea-attendee-mover/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=attendee_mover_add_on&ap_id=EEspresso" target="_blank"><img src="http://ee-screenshots.s3.amazonaws.com/ee4/ee4-attendee-mover-231x152.jpg"></a>Whether the attendee signed up for the wrong event, or you just need to make room for more attendees. The Attendee Mover for Event Espresso 4 makes it easy as possible to move registrations between events and different ticket types.</p>
+																<p><a href="https://eventespresso.com/product/eea-attendee-mover/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=attendee_mover_add_on&ap_id=EEspresso" target="_blank"><img src="https://ee-screenshots.s3.amazonaws.com/ee4/ee4-attendee-mover-231x152.jpg"></a>Whether the attendee signed up for the wrong event, or you just need to make room for more attendees. The Attendee Mover for Event Espresso 4 makes it easy as possible to move registrations between events and different ticket types.</p>
 															</div>
 														</div>
 														<div class="action-links">
@@ -49,7 +49,7 @@
 																<h4>Multi Event Registration</h4>
 															</div>
 															<div class="desc column-description">
-																<p><a href="https://eventespresso.com/product/eea-multi-event-registration/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=multiple_event_registration_add_on&ap_id=EEspresso" target="_blank"><img src="http://ee-screenshots.s3.amazonaws.com/ee4/mutliple_231x151.jpg"></a>The premise behind this great add-on is that the easier it is for people to register for an event, the more events they are likely to attend. With the Multiple Event Registration add-on, attendees can register for several events at once, and even add additional attendees to any of the same events–in the same checkout process. Additional attendees also get the same customized registration form as the first/primary attendee, or a completely different registration form, it’s up to you.</p>
+																<p><a href="https://eventespresso.com/product/eea-multi-event-registration/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=multiple_event_registration_add_on&ap_id=EEspresso" target="_blank"><img src="https://ee-screenshots.s3.amazonaws.com/ee4/mutliple_231x151.jpg"></a>The premise behind this great add-on is that the easier it is for people to register for an event, the more events they are likely to attend. With the Multiple Event Registration add-on, attendees can register for several events at once, and even add additional attendees to any of the same events–in the same checkout process. Additional attendees also get the same customized registration form as the first/primary attendee, or a completely different registration form, it’s up to you.</p>
 															</div>
 														</div>
 														<div class="action-links">
@@ -157,7 +157,7 @@
 																<h4>Event App Customization</h4>
 															</div>
 															<div class="desc column-description">
-																<p><a href="https://eventespresso.com/product/eea-event-app-customization/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=event_app_customization_add_on&ap_id=EEspresso" target="_blank"><img src="http://ee-screenshots.s3.amazonaws.com/ee4/event-app-customization-231x152.jpg"></a>Would you like to make the Event Espresso 4 event apps look like your own event app? Save tens of thousands of dollars building your own event apps. Using our Event App Customization add-on, you can make our event apps look like your app.</p>
+																<p><a href="https://eventespresso.com/product/eea-event-app-customization/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=event_app_customization_add_on&ap_id=EEspresso" target="_blank"><img src="https://ee-screenshots.s3.amazonaws.com/ee4/event-app-customization-231x152.jpg"></a>Would you like to make the Event Espresso 4 event apps look like your own event app? Save tens of thousands of dollars building your own event apps. Using our Event App Customization add-on, you can make our event apps look like your app.</p>
 															</div>
 														</div>
 														<div class="action-links">
@@ -201,7 +201,7 @@
 																<h4>AffiliateWP Integration</h4>
 															</div>
 															<div class="desc column-description">
-																<p><a href="https://eventespresso.com/product/eea-affiliatewp/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=affiliatewp_integration&ap_id=EEspresso" target="_blank"><img src="http://ee-screenshots.s3.amazonaws.com/ee4/affiliate-wp-integration-231x151.jpg"></a>AffiliateWP is an affiliate plugin for WordPress. With AffiliateWP, your affiliates can promote your products and services, which improves your website’s SEO rankings, drives more traffic to your site, and increases sales/revenue.</p>
+																<p><a href="https://eventespresso.com/product/eea-affiliatewp/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=affiliatewp_integration&ap_id=EEspresso" target="_blank"><img src="https://ee-screenshots.s3.amazonaws.com/ee4/affiliate-wp-integration-231x151.jpg"></a>AffiliateWP is an affiliate plugin for WordPress. With AffiliateWP, your affiliates can promote your products and services, which improves your website’s SEO rankings, drives more traffic to your site, and increases sales/revenue.</p>
 															</div>
 														</div>
 														<div class="action-links">
@@ -305,7 +305,7 @@
 																<h4>Flexible Payment Methods</h4>
 															</div>
 															<div class="desc column-description">
-																<p><a href="https://eventespresso.com/product/eea-flexible-payment-method/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=flexible_payment_method_add_on&ap_id=EEspresso" target="_blank"><img src="http://ee-screenshots.s3.amazonaws.com/ee4/flexible-payment-methods-231x152.jpg"></a>With this payment method, you can provide instructions to your registrants/attendees on how to pay for their registrations</p>
+																<p><a href="https://eventespresso.com/product/eea-flexible-payment-method/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=flexible_payment_method_add_on&ap_id=EEspresso" target="_blank"><img src="https://ee-screenshots.s3.amazonaws.com/ee4/flexible-payment-methods-231x152.jpg"></a>With this payment method, you can provide instructions to your registrants/attendees on how to pay for their registrations</p>
 															</div>
 														</div>
 														<div class="action-links">
@@ -328,7 +328,7 @@
 																<h4>Authorize.Net eCheck Payment Gateway</h4>
 															</div>
 															<div class="desc column-description">
-																<p><a href="https://eventespresso.com/product/eea-aim-echeck/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=aim_echeck_payment_gateway&ap_id=EEspresso" target="_blank"><img src="http://ee-screenshots.s3.amazonaws.com/authorize-net-echeck-231x152.jpg"></a><a href="https://eventespresso.com/go/authorizenetechecknet/">eCheck.Net</a> (eCheck Payment Gateway) is Authorize.Net’s exclusive electronic check processing solution. eCheck.Net enables event managers already processing credit card transactions through the Authorize.Net Payment Gateway to offer their customers an additional payment option.</p>
+																<p><a href="https://eventespresso.com/product/eea-aim-echeck/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=aim_echeck_payment_gateway&ap_id=EEspresso" target="_blank"><img src="https://ee-screenshots.s3.amazonaws.com/authorize-net-echeck-231x152.jpg"></a><a href="https://eventespresso.com/go/authorizenetechecknet/">eCheck.Net</a> (eCheck Payment Gateway) is Authorize.Net’s exclusive electronic check processing solution. eCheck.Net enables event managers already processing credit card transactions through the Authorize.Net Payment Gateway to offer their customers an additional payment option.</p>
 															</div>
 														</div>
 														<div class="action-links">
@@ -349,7 +349,7 @@
 																<h4>Authorize.Net SIM Payment Gateway</h4>
 															</div>
 															<div class="desc column-description">
-																<p><a href="https://eventespresso.com/product/eea-authorizenet-sim/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=aim_sim_payment_gateway&ap_id=EEspresso" target="_blank"><img src="http://ee-screenshots.s3.amazonaws.com/ee4/authorize-net-sim-231x152.jpg"></a>Authorize.Net SIM is a hosted payment form ideal for handling the secure collection and transmission of customer data. The experience can be tailored to match the look and feel of your event ticketing website so that the customer doesn’t realize they are on a hosted page.</p>
+																<p><a href="https://eventespresso.com/product/eea-authorizenet-sim/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=aim_sim_payment_gateway&ap_id=EEspresso" target="_blank"><img src="https://ee-screenshots.s3.amazonaws.com/ee4/authorize-net-sim-231x152.jpg"></a>Authorize.Net SIM is a hosted payment form ideal for handling the secure collection and transmission of customer data. The experience can be tailored to match the look and feel of your event ticketing website so that the customer doesn’t realize they are on a hosted page.</p>
 															</div>
 														</div>
 														<div class="action-links">
@@ -392,7 +392,7 @@
 																<h4>Cybersource Payment Gateway</h4>
 															</div>
 															<div class="desc column-description">
-																<p><a href="https://eventespresso.com/product/eea-cybersource-gateway/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=cybersource_payment_gateway&ap_id=EEspresso" target="_blank"><img src="http://ee-screenshots.s3.amazonaws.com/ee4/cyber-source-231x152.jpg"></a>CyberSource is a hosted payment method that lets you securely accept payments made on the web or on mobile browsers, worldwide, without handling payment data. Payment data is transmitted from customers directly to CyberSource, your PCI DSS scope may be significantly reduced.</p>
+																<p><a href="https://eventespresso.com/product/eea-cybersource-gateway/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=cybersource_payment_gateway&ap_id=EEspresso" target="_blank"><img src="https://ee-screenshots.s3.amazonaws.com/ee4/cyber-source-231x152.jpg"></a>CyberSource is a hosted payment method that lets you securely accept payments made on the web or on mobile browsers, worldwide, without handling payment data. Payment data is transmitted from customers directly to CyberSource, your PCI DSS scope may be significantly reduced.</p>
 															</div>
 														</div>
 														<div class="action-links">
@@ -434,7 +434,7 @@
 																<h4>ipay88 Payment Gateway</h4>
 															</div>
 															<div class="desc column-description">
-																<p><a href="https://eventespresso.com/product/eea-ipay88-gateway/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=ipay88_payment_gateway&ap_id=EEspresso" target="_blank"><img src="http://ee-screenshots.s3.amazonaws.com/ipay88-231x152.jpg"></a><a href="https://eventespresso.com/go/ipay88/">iPay88</a> is a leading payment provider in Malaysia.</p>
+																<p><a href="https://eventespresso.com/product/eea-ipay88-gateway/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=ipay88_payment_gateway&ap_id=EEspresso" target="_blank"><img src="https://ee-screenshots.s3.amazonaws.com/ipay88-231x152.jpg"></a><a href="https://eventespresso.com/go/ipay88/">iPay88</a> is a leading payment provider in Malaysia.</p>
 																<p>iPay88 Payment Gateway add-on provides an easy and seamless integration to the iPay88 system. It uses the redirect method of payment. Your customers will be sent to a secure iPay88page, where they will choose the payment method they would like to use and proceed with the payment. After they have paid for the order, they will be returned to your site and presented with a "Thank You/Receipt" page.</p>
 															</div>
 														</div>
@@ -564,7 +564,7 @@
 																<h4>QuickBooks Payment Gateway</h4>
 															</div>
 															<div class="desc column-description">
-																<p><a href="https://eventespresso.com/product/eea-quickbooks-gateway/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=quickbooks_payment_gateway&ap_id=EEspresso" target="_blank"><img src="http://ee-screenshots.s3.amazonaws.com/ee4/ee4-quickbooks-gateway-231x152.jpg"></a>QuickBooks is an on-site payment method for Event Espresso for accepting credit and debit cards and is available to event organizers in the United States.</p>
+																<p><a href="https://eventespresso.com/product/eea-quickbooks-gateway/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=quickbooks_payment_gateway&ap_id=EEspresso" target="_blank"><img src="https://ee-screenshots.s3.amazonaws.com/ee4/ee4-quickbooks-gateway-231x152.jpg"></a>QuickBooks is an on-site payment method for Event Espresso for accepting credit and debit cards and is available to event organizers in the United States.</p>
 															</div>
 														</div>
 														<div class="action-links">
