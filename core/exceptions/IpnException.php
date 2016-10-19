@@ -21,11 +21,11 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) {
 class IpnException extends \LogicException
 {
 
-    const code_duplicate = 1;
+    const DUPLICATE          = 1;
 
-    const code_unable_to_validate = 2;
+    const UNABLE_TO_VALIDATE = 2;
 
-    const code_unsupported = 3;
+    const UNSUPPORTED        = 3;
 
     /**
      * @var \EE_Payment

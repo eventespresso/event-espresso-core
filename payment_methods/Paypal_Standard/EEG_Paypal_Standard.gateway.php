@@ -242,7 +242,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 	 * @param array $update_info like $_POST
 	 * @param EEI_Transaction $transaction
 	 * @return \EEI_Payment updated
-	 * @throws \EE_Error
+	 * @throws \EE_Error, IpnException
 	 */
 	public function handle_payment_update( $update_info, $transaction ){
 		// verify there's payment data that's been sent
@@ -288,7 +288,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
                     esc_html__( 'Event Espresso does not yet support %1$s IPNs from PayPal', 'event_espresso'),
                     $update_info['payment_status']
                 ),
-                EventEspresso\core\exceptions\IpnException::code_unsupported,
+                EventEspresso\core\exceptions\IpnException::UNSUPPORTED,
                 null,
                 $payment,
                 $update_info
@@ -345,7 +345,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 						esc_html__( 'It appears we have received a duplicate IPN from PayPal for payment %d', 'event_espresso' ),
 						$payment->ID()
 					),
-					IpnException::code_duplicate,
+					IpnException::DUPLICATE,
 					null,
 					$payment,
 					$update_info
