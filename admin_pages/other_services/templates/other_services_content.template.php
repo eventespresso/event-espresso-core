@@ -389,6 +389,27 @@
 													<div class="service-div-settings-top">
 														<div class="service-div-inner-content">
 															<div class="name column-name">
+																<h4>Cybersource Payment Gateway</h4>
+															</div>
+															<div class="desc column-description">
+																<p><a href="https://eventespresso.com/product/eea-cybersource-gateway/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=cybersource_payment_gateway&ap_id=EEspresso" target="_blank"><img src="http://ee-screenshots.s3.amazonaws.com/ee4/cyber-source-231x152.jpg"></a>CyberSource is a hosted payment method that lets you securely accept payments made on the web or on mobile browsers, worldwide, without handling payment data. Payment data is transmitted from customers directly to CyberSource, your PCI DSS scope may be significantly reduced.</p>
+															</div>
+														</div>
+														<div class="action-links">
+															<ul class="plugin-action-buttons-custom">
+																<li>
+																	<a class="plugin-div-button button button-primary" href="https://eventespresso.com/product/eea-cybersource-gateway/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=cybersource_payment_gateway&ap_id=EEspresso" target="_blank">Buy Now</a>
+																	<a class="plugin-div-button button button-secondary" href="https://eventespresso.com/wiki/cybersource-payment-gateway/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=cybersource_payment_gateway&ap_id=EEspresso" target="_blank">View Documentation</a>
+																</li>
+															</ul>
+														</div>
+													</div>
+												</div>
+
+												<div class="service-div-settings">
+													<div class="service-div-settings-top">
+														<div class="service-div-inner-content">
+															<div class="name column-name">
 																<h4>iDeal Mollie Payment Gateway</h4>
 															</div>
 															<div class="desc column-description">
@@ -522,7 +543,7 @@
 																<h4>Vanco Payment Gateway</h4>
 															</div>
 															<div class="desc column-description">
-																<p><a href="https://eventespresso.com/product/eea-vanco-payment-method/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=vanco_payment_gateway&ap_id=EEspresso" target="_blank"><img src="https://ee-screenshots.s3.amazonaws.com/ee4/vanco_payment_gateway_231x151.jpg"></a><a href="http://vancopayments.com/" target="_blank">Vanco Payment Solutions</a> is focused on meeting the unique needs of clients that count on predictable, recurring revenue. <a href="http://vancopayments.com/organizations-we-serve/faith-based/" target="_blank">Faith-based</a>, <a href="http://vancopayments.com/organizations-we-serve/nonprofit/" target="_blank">nonprofits</a> and other <a href="http://vancopayments.com/organizations-we-serve/professional-services/" target="_blank">professional organizations</a>—and the software providers and professional associations that serve them—rely on Vanco’s specialized approach to adding electronic payment options and enhancing current capabilities. </p>
+																<p><a href="https://eventespresso.com/product/eea-vanco-payment-method/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=vanco_payment_gateway&ap_id=EEspresso" target="_blank"><img src="https://ee-screenshots.s3.amazonaws.com/ee4/vanco_payment_gateway_231x151.jpg"></a><a href="http://vancopayments.com/" target="_blank">Vanco Payment Solutions</a> is focused on meeting the unique needs of clients, such as <a href="http://vancopayments.com/organizations-we-serve/faith-based/" target="_blank">Faith-based</a>, <a href="http://vancopayments.com/organizations-we-serve/nonprofit/" target="_blank">nonprofits</a> and other <a href="http://vancopayments.com/organizations-we-serve/professional-services/" target="_blank">professional organizations</a> that need a specialized approach to adding electronic payment options and enhancing current capabilities. </p>
 															</div>
 														</div>
 														<div class="action-links">
@@ -534,7 +555,6 @@
 															</ul>
 														</div>
 													</div>
-													
 												</div>
 												
 												<div class="service-div-settings">
