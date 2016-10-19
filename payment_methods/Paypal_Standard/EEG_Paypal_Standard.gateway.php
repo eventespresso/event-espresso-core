@@ -274,6 +274,26 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		if ( ! $this->validate_ipn( $update_info, $payment ) ) {
 			return $payment;
 		}
+        // kill request here if this is a refund, we don't support them yet (we'd need to adjust the transaction,
+        // registrations, ticket counts, etc)
+        if (
+            (
+                $update_info[ 'payment_status' ] === 'Refunded'
+                || $update_info[ 'payment_status' ] === 'Partially_Refunded'
+            )
+            && apply_filters( 'FHEE__EEG_Paypal_Standard__handle_payment_update__kill_refund_request', true )
+        ) {
+            throw new EventEspresso\core\exceptions\IPNException(
+                sprintf(
+                    __( 'Event Espresso does not yet support %1$s IPNs from PayPal', 'event_espresso'),
+                    $update_info['payment_status']
+                ),
+                EventEspresso\core\exceptions\IPNException::code_unsupported,
+                null,
+                $payment,
+                $update_info
+            );
+        }
 		//ok, well let's process this payment then!
 		switch ( $update_info[ 'payment_status' ] ) {
 
@@ -350,25 +370,6 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 
 		}
 		do_action( 'FHEE__EEG_Paypal_Standard__handle_payment_update__payment_processed', $payment, $this );
-		// kill request here if this is a refund
-		if (
-			(
-				$update_info[ 'payment_status' ] === 'Refunded'
-				|| $update_info[ 'payment_status' ] === 'Partially_Refunded'
-			)
-			&& apply_filters( 'FHEE__EEG_Paypal_Standard__handle_payment_update__kill_refund_request', true )
-		) {
-			throw new EventEspresso\core\exceptions\IPNException(
-				sprintf(
-					__( 'Event Espresso does not yet support %1$s IPNs from PayPal', 'event_espresso'),
-					$update_info['payment_status']
-				),
-				EventEspresso\core\exceptions\IPNException::code_unsupported,
-				null,
-				$payment,
-				$update_info
-			);
-		}
 		return $payment;
 	}
 
