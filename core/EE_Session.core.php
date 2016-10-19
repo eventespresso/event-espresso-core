@@ -1,26 +1,13 @@
-<?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+<?php use EventEspresso\core\exceptions\InvalidSessionDataException;
+
+if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed');}
 /**
- *
- * Event Espresso
- *
- * Event Registration and Management Plugin for WordPress
- *
- * @ package			Event Espresso
- * @ author				Seth Shoultes
- * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link					http://www.eventespresso.com
- * @ version		 	4.0
- *
- * ------------------------------------------------------------------------
  *
  * EE_Session class
  *
- * @package				Event Espresso
- * @subpackage			includes/classes
- * @author					Brent Christensen
- *
- * ------------------------------------------------------------------------
+ * @package    Event Espresso
+ * @subpackage includes/classes
+ * @author     Brent Christensen
  */
  class EE_Session {
 
@@ -31,19 +18,19 @@
 	  * instance of the EE_Session object
 	  * @var EE_Session
 	  */
-	 private static $_instance = NULL;
+	 private static $_instance;
 
 	 /**
 	  * the session id
 	  * @var string
 	  */
-	 private $_sid = NULL;
+	 private $_sid;
 
 	 /**
 	  * session id salt
 	  * @var string
 	  */
-	 private $_sid_salt = NULL;
+	 private $_sid_salt;
 
 	 /**
 	  * session data
@@ -74,31 +61,31 @@
 	  * whether to encrypt session data
 	  * @var bool
 	  */
-	 private $_use_encryption = FALSE;
+	 private $_use_encryption = false;
 
 	 /**
 	  * EE_Encryption object
 	  * @var EE_Encryption
 	  */
-	 protected $encryption = NULL;
+	 protected $encryption;
 
 	 /**
 	  * well... according to the server...
 	  * @var null
 	  */
-	 private $_user_agent = NULL;
+	 private $_user_agent;
 
 	 /**
 	  * do you really trust the server ?
 	  * @var null
 	  */
-	 private $_ip_address = NULL;
+	 private $_ip_address;
 
 	 /**
 	  * current WP user_id
 	  * @var null
 	  */
-	 private $_wp_user_id = NULL;
+	 private $_wp_user_id;
 
 	 /**
 	  * array for defining default session vars
@@ -117,16 +104,13 @@
 
 
 
-
-
-
-
-	/**
-	 *	@singleton method used to instantiate class object
-	 *	@access public
-	 * @param \EE_Encryption $encryption
-	 *	@return EE_Session
-	 */
+	 /**
+	  * @singleton method used to instantiate class object
+	  * @param \EE_Encryption $encryption
+	  * @return EE_Session
+	  * @throws InvalidSessionDataException
+	  * @throws \EE_Error
+	  */
 	public static function instance( EE_Encryption $encryption = null ) {
 		// check if class object is instantiated
 		// session loading is turned ON by default, but prior to the init hook, can be turned back OFF via:
@@ -141,9 +125,12 @@
 
 	 /**
 	  * protected constructor to prevent direct creation
+	  *
 	  * @Constructor
 	  * @access protected
 	  * @param \EE_Encryption $encryption
+	  * @throws \EE_Error
+	  * @throws \EventEspresso\core\exceptions\InvalidSessionDataException
 	  */
 	 protected function __construct( EE_Encryption $encryption = null ) {
 
@@ -310,6 +297,7 @@
 	 /**
 	  * @param \EE_Transaction $transaction
 	  * @return bool
+	  * @throws \EE_Error
 	  */
 	 public function set_transaction( EE_Transaction $transaction ) {
 		 // first remove the session from the transaction before we save the transaction in the session
@@ -393,6 +381,7 @@
 	  * @initiate session
 	  * @access   private
 	  * @return TRUE on success, FALSE on fail
+	  * @throws \EventEspresso\core\exceptions\InvalidSessionDataException
 	  * @throws \EE_Error
 	  */
 	private function _espresso_session() {
@@ -424,30 +413,51 @@
 					);
 				}
 			}
-			// un-encrypt the data
+			// decode the data ?
+			$session_data = $this->valid_base_64( $session_data ) ? base64_decode( $session_data ) : $session_data;
+			// un-encrypt the data ?
 			$session_data = $this->_use_encryption ? $this->encryption->decrypt( $session_data ) : $session_data;
-			// unserialize
-			$session_data = maybe_unserialize( $session_data );
+			if ( ! is_array( $session_data ) ) {
+				try {
+					$session_data = maybe_unserialize( $session_data );
+				} catch ( Exception $e ) {
+					$msg = esc_html__(
+						'An error occurred while attempting to unserialize the session data.',
+						'event_espresso'
+					);
+					$msg .= WP_DEBUG ? '<br>' . $this->find_serialize_error( $session_data ) : '';
+					throw new InvalidSessionDataException( $msg, 0, $e );
+				}
+			}
 			// just a check to make sure the session array is indeed an array
 			if ( ! is_array( $session_data ) ) {
 				// no?!?! then something is wrong
-				return FALSE;
+				$msg = esc_html__(
+					'The session data is missing, invalid, or corrupted.',
+					'event_espresso'
+				);
+				$msg .= WP_DEBUG ? '<br>' . $this->find_serialize_error( $session_data ) : '';
+				throw new InvalidSessionDataException( $msg );
 			}
 			// get the current time in UTC
 			$this->_time = isset( $this->_time ) ? $this->_time : time();
 			// and reset the session expiration
-			$this->_expiration = isset( $session_data['expiration'] ) ? $session_data['expiration'] : $this->_time + $this->_lifespan;
+			$this->_expiration = isset( $session_data['expiration'] )
+				? $session_data['expiration']
+				: $this->_time + $this->_lifespan;
 
 		} else {
 			// set initial site access time and the session expiration
 			$this->_set_init_access_and_expiration();
 			// set referer
-			$this->_session_data[ 'pages_visited' ][ $this->_session_data['init_access'] ] = isset( $_SERVER['HTTP_REFERER'] ) ? esc_attr( $_SERVER['HTTP_REFERER'] ) : '';
+			$this->_session_data[ 'pages_visited' ][ $this->_session_data['init_access'] ] = isset( $_SERVER['HTTP_REFERER'] )
+				? esc_attr( $_SERVER['HTTP_REFERER'] )
+				: '';
 			// no previous session = go back and create one (on top of the data above)
 			return FALSE;
 		}
 		// now the user agent
-		if ( $session_data['user_agent'] != $this->_user_agent ) {
+		if ( $session_data['user_agent'] !== $this->_user_agent ) {
 			return FALSE;
 		}
 		// wait a minute... how old are you?
@@ -674,8 +684,8 @@
 		) {
 			return false;
 		}
-		// first serialize all of our session data
-		$session_data = serialize( $this->_session_data );
+		// then serialize all of our session data
+		$session_data = base64_encode( serialize( $this->_session_data ) );
 		// encrypt it if we are using encryption
 		$session_data = $this->_use_encryption ? $this->encryption->encrypt( $session_data ) : $session_data;
 		// maybe save hash check
@@ -731,47 +741,32 @@
 	 *			@return string
 	 */
 	public function _get_page_visit() {
-
-//		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 		$page_visit = home_url('/') . 'wp-admin/admin-ajax.php';
-
 		// check for request url
 		if ( isset( $_SERVER['REQUEST_URI'] )) {
-
+			$http_host = '';
+			$page_id = '?';
+			$e_reg = '';
 			$request_uri = esc_url( $_SERVER['REQUEST_URI'] );
-
 			$ru_bits = explode( '?', $request_uri );
 			$request_uri = $ru_bits[0];
-			//echo '<h1>$request_uri   ' . $request_uri . '</h1>';
-
 			// check for and grab host as well
 			if ( isset( $_SERVER['HTTP_HOST'] )) {
 				$http_host = esc_url( $_SERVER['HTTP_HOST'] );
-			} else {
-				$http_host = '';
 			}
-			//echo '<h1>$http_host   ' . $http_host . '</h1>';
-
 			// check for page_id in SERVER REQUEST
 			if ( isset( $_REQUEST['page_id'] )) {
 				// rebuild $e_reg without any of the extra parameters
 				$page_id = '?page_id=' . esc_attr( $_REQUEST['page_id'] ) . '&amp;';
-			} else {
-				$page_id = '?';
 			}
 			// check for $e_reg in SERVER REQUEST
 			if ( isset( $_REQUEST['ee'] )) {
 				// rebuild $e_reg without any of the extra parameters
 				$e_reg = 'ee=' . esc_attr( $_REQUEST['ee'] );
-			} else {
-				$e_reg = '';
 			}
-
 			$page_visit = rtrim( $http_host . $request_uri . $page_id . $e_reg, '?' );
-
 		}
-
-		return $page_visit != home_url( '/wp-admin/admin-ajax.php' ) ? $page_visit : '';
+		return $page_visit !== home_url( '/wp-admin/admin-ajax.php' ) ? $page_visit : '';
 
 	}
 
@@ -875,7 +870,6 @@
 	/**
 	 *   wp_loaded
 	 *   @access public
-	 *   @return	 string
 	 */
 	public function wp_loaded() {
 		if ( isset(  EE_Registry::instance()->REQ ) && EE_Registry::instance()->REQ->is_set( 'clear_session' )) {
@@ -952,14 +946,100 @@
 							 EE_Error::add_error( $results->get_error_message(), __FILE__, __FUNCTION__, __LINE__ );
 						 }
 					 }
-					 do_action( 'FHEE__EE_Session__garbage_collection___end', $expired_session_transient_delete_query_limit );
 				 }
+				 do_action(
+					 'FHEE__EE_Session__garbage_collection___end',
+					 $expired_session_transient_delete_query_limit
+				 );
 			 }
 		 }
+
 
 	 }
 
 
+
+	 /**
+	  * @see http://stackoverflow.com/questions/2556345/detect-base64-encoding-in-php#30231906
+	  * @param $string
+	  * @return bool
+	  */
+	 private function valid_base_64( $string ) {
+		 $decoded = base64_decode( $string, true );
+		 // Check if there is no invalid character in string
+		 if ( ! preg_match( '/^[a-zA-Z0-9\/\r\n+]*={0,2}$/', $string ) ) {
+			 return false;
+		 }
+		 // Decode the string in strict mode and send the response
+		 if ( ! base64_decode( $string, true ) ) {
+			 return false;
+		 }
+		 // Encode and compare it to original one
+		 return base64_encode( $decoded ) !== $string;
+	 }
+
+
+
+	 /**
+	  * @see http://stackoverflow.com/questions/10152904/unserialize-function-unserialize-error-at-offset/21389439#10152996
+	  * @param $data1
+	  * @return string
+	  */
+	 private function find_serialize_error( $data1 ) {
+		$error = "<pre>";
+		 $data2 = preg_replace_callback(
+			 '!s:(\d+):"(.*?)";!',
+			 function ( $match ) {
+				 return ( $match[1] === strlen( $match[2] ) )
+					 ? $match[0]
+					 : 's:'
+					   . strlen( $match[2] )
+					   . ':"'
+					   . $match[2]
+					   . '";';
+			 },
+			 $data1
+		 );
+		$max = ( strlen( $data1 ) > strlen( $data2 ) ) ? strlen( $data1 ) : strlen( $data2 );
+		$error .= $data1 . PHP_EOL;
+		$error .= $data2 . PHP_EOL;
+		for ( $i = 0; $i < $max; $i++ ) {
+			if ( @$data1[ $i ] !== @$data2[ $i ] ) {
+				$error .= "Difference " . @$data1[ $i ] . " != " . @$data2[ $i ] . PHP_EOL;
+				$error .= "\t-> ORD number " . ord( @$data1[ $i ] ) . " != " . ord( @$data2[ $i ] ) . PHP_EOL;
+				$error .= "\t-> Line Number = $i" . PHP_EOL;
+				$start = ( $i - 20 );
+				$start = ( $start < 0 ) ? 0 : $start;
+				$length = 40;
+				$point = $max - $i;
+				if ( $point < 20 ) {
+					$rlength = 1;
+					$rpoint = -$point;
+				} else {
+					$rpoint = $length - 20;
+					$rlength = 1;
+				}
+				$error .= "\t-> Section Data1  = ";
+				$error .= substr_replace(
+					substr( $data1, $start, $length ),
+					"<b style=\"color:green\">{$data1[ $i ]}</b>",
+					$rpoint,
+					$rlength
+				);
+				$error .= PHP_EOL;
+				$error .= "\t-> Section Data2  = ";
+				$error .= substr_replace(
+					substr( $data2, $start, $length ),
+					"<b style=\"color:red\">{$data2[ $i ]}</b>",
+					$rpoint,
+					$rlength
+				);
+				$error .= PHP_EOL;
+			}
+		}
+		$error .= "</pre>";
+		return $error;
+	}
 
  }
 /* End of file EE_Session.class.php */
