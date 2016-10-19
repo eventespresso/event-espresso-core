@@ -69,6 +69,7 @@ class IpnException extends \LogicException
      * Returns the payment's properties as an array (even if there is no payment, in which case it's an empty array)
      *
      * @return array
+     * @throws \EE_Error
      */
     public function getPaymentProperties()
     {
