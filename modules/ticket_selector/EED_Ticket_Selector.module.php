@@ -481,7 +481,7 @@ class EED_Ticket_Selector extends  EED_Module {
                 $html .= \EED_Ticket_Selector::no_tkt_slctr_end_dv();
 			}
             if ( ! is_archive()) {
-	            $html .= \EEH_Template::powered_by_event_espresso();
+	            $html .= \EEH_Template::powered_by_event_espresso('', '', array( 'utm_content' => 'ticket_selector' ));
             }
         }
         return $html;
