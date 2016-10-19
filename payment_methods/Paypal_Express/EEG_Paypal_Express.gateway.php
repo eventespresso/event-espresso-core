@@ -112,7 +112,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway {
 			$payment->set_status( $this->_pay_model->failed_status() );
 			return $payment;
 		}
-		$order_description = substr( sprintf( __('Event Registrations from %s', 'event_espresso'), get_bloginfo('name') ), 0, 127 );
+		$order_description = substr( $this->_format_order_description($payment), 0, 127 );
 		$primary_registration = $transaction->primary_registration();
 		$primary_attendee = $primary_registration instanceof EE_Registration ? $primary_registration->attendee() : false;
 		$locale = explode('-', get_bloginfo('language'));
