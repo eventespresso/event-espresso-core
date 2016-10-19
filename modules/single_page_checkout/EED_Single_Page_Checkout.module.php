@@ -12,6 +12,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowe
  */
 class EED_Single_Page_Checkout  extends EED_Module {
 
+	const ICA_OPTION_KEY = 'ee_invalid_checkout_access';
 
 	/**
 	 * $_initialized - has the SPCO controller already been initialized ?
@@ -96,7 +97,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 */
 	public static function set_hooks_admin() {
 		EED_Single_Page_Checkout::set_definitions();
-		if ( defined( 'DOING_AJAX' )) {
+		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
 			// going to start an output buffer in case anything gets accidentally output that might disrupt our JSON response
 			ob_start();
 			EED_Single_Page_Checkout::load_request_handler();
@@ -359,6 +360,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			$WP_Query instanceof WP_Query
 			&& $WP_Query->is_main_query()
 			&& apply_filters( 'FHEE__EED_Single_Page_Checkout__run', true )
+			&& isset( $WP_Query->query['pagename'] )
+			&& strpos( EE_Config::instance()->core->reg_page_url(), $WP_Query->query['pagename'] ) !== false
 		) {
 			$this->_initialize();
 		}
@@ -562,20 +565,30 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * then where you coming from man?
 	 */
 	private function _block_bots() {
-		if ( ! ( $this->checkout->uts || $this->checkout->reg_url_link ) ) {
+		if (
+			EE_Config::instance()->registration->track_invalid_checkout_access()
+			&& ! ( $this->checkout->uts || $this->checkout->reg_url_link )
+			&& ! ( defined( 'DOING_AJAX' ) && DOING_AJAX )
+		) {
 			/** @var EE_Request $request */
 			$request = EE_Registry::instance()->create( 'EE_Request' );
 			$ip_address = $request->ip_address();
-			$ee_bot_checkout = get_option('ee_bot_checkout');
+			$ee_bot_checkout = get_option( EED_Single_Page_Checkout::ICA_OPTION_KEY );
 			if ( $ee_bot_checkout === false ) {
 				$ee_bot_checkout = array();
-				add_option( 'ee_bot_checkout', $ee_bot_checkout, '', false );
+				add_option( EED_Single_Page_Checkout::ICA_OPTION_KEY, $ee_bot_checkout, '', false );
 			}
 			if ( ! isset( $ee_bot_checkout[ $ip_address ] )) {
-				$ee_bot_checkout[ $ip_address ] = 0;
+				$ee_bot_checkout[ $ip_address ] = array();
 			}
-			$ee_bot_checkout[ $ip_address ]++;
-			update_option( 'ee_bot_checkout', $ee_bot_checkout );
+			$http_referer = ( isset( $_SERVER['HTTP_REFERER'] ) )
+				? esc_attr( $_SERVER['HTTP_REFERER'] )
+				: 0;
+			if ( ! isset( $ee_bot_checkout[ $ip_address ][ $http_referer ] ) ) {
+				$ee_bot_checkout[ $ip_address ][ $http_referer ] = 0;
+			}
+			$ee_bot_checkout[ $ip_address ][ $http_referer ]++;
+			update_option( EED_Single_Page_Checkout::ICA_OPTION_KEY, $ee_bot_checkout );
 			$this->checkout->redirect = true;
 			$this->checkout->redirect_url = EE_Config::instance()->core->cancel_page_url();
 			$this->_handle_html_redirects();
