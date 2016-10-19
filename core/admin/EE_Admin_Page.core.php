@@ -2589,22 +2589,27 @@ abstract class EE_Admin_Page extends EE_Base {
             ) . '</p>'
             : '';
         // filter before_list_table template arg
-		$this->_template_args['before_list_table'] = apply_filters(
-            'FHEE__EE_Admin_Page___display_admin_list_table_page__before_list_table__template_arg',
-                $this->_template_args['before_list_table'],
+		$this->_template_args['before_list_table'] = implode(
+			' ',
+			(array) apply_filters(
+				'FHEE__EE_Admin_Page___display_admin_list_table_page__before_list_table__template_arg',
+				(array) $this->_template_args['before_list_table'],
                 $this->page_slug,
                 $this->_req_data,
                 $this->_req_action
-        );
-        // filter after_list_table template arg
-        $this->_template_args['after_list_table'] = apply_filters(
-            'FHEE__EE_Admin_Page___display_admin_list_table_page__after_list_table__template_arg',
-            $this->_template_args['after_list_table'],
-            $this->page_slug,
-            $this->_req_data,
-            $this->_req_action
-        );
-
+			)
+		);
+		// filter after_list_table template arg
+        $this->_template_args['after_list_table'] = implode(
+			' ',
+			(array) apply_filters(
+				'FHEE__EE_Admin_Page___display_admin_list_table_page__after_list_table__template_arg',
+				(array) $this->_template_args['after_list_table'],
+				$this->page_slug,
+				$this->_req_data,
+				$this->_req_action
+			)
+		);
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template(
 			$template_path,
 			$this->_template_args,
@@ -2612,10 +2617,11 @@ abstract class EE_Admin_Page extends EE_Base {
 		);
 
 		// the final template wrapper
-		if ( $sidebar )
+		if ( $sidebar ) {
 			$this->display_admin_page_with_sidebar();
-		else
+		} else {
 			$this->display_admin_page_with_no_sidebar();
+		}
 	}
 
 
