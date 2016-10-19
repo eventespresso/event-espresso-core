@@ -269,7 +269,7 @@ class EE_Payment_Processor extends EE_Processor_Base {
 			return $payment;
 
 		} catch( EventEspresso\core\exceptions\IpnException $e ) {
-			$log = EEM_Change_Log::instance()->log(
+			EEM_Change_Log::instance()->log(
 				EEM_Change_Log::type_gateway,
 				array(
 					'message' => 'IPN Exception: ' . $e->getMessage(),
