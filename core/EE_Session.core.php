@@ -975,7 +975,7 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
 			 return false;
 		 }
 		 // Encode and compare it to original one
-		 return base64_encode( $decoded ) !== $string;
+		 return base64_encode( $decoded ) === $string;
 	 }
 
 
