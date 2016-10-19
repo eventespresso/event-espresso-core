@@ -1,7 +1,7 @@
 <?php
 if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
 
-use EventEspresso\core\exceptions\IPNException;
+use EventEspresso\core\exceptions\IpnException;
 /**
  * EEG_Paypal_Standard
  *
@@ -283,12 +283,12 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
             )
             && apply_filters( 'FHEE__EEG_Paypal_Standard__handle_payment_update__kill_refund_request', true )
         ) {
-            throw new EventEspresso\core\exceptions\IPNException(
+            throw new EventEspresso\core\exceptions\IpnException(
                 sprintf(
                     __( 'Event Espresso does not yet support %1$s IPNs from PayPal', 'event_espresso'),
                     $update_info['payment_status']
                 ),
-                EventEspresso\core\exceptions\IPNException::code_unsupported,
+                EventEspresso\core\exceptions\IpnException::code_unsupported,
                 null,
                 $payment,
                 $update_info
@@ -340,12 +340,12 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			//payment exists. if this has the exact same status and amount, don't bother updating. just return
 			if ( $payment->status() === $status && (float)$payment->amount() === (float)$update_info[ 'mc_gross' ] ) {
 				// DUPLICATED IPN! don't bother updating transaction
-				throw new IPNException(
+				throw new IpnException(
 					sprintf(
 						__( 'It appears we have received a duplicate IPN from PayPal for payment %d', 'event_espresso' ),
 						$payment->ID()
 					),
-					IPNException::code_duplicate,
+					IpnException::code_duplicate,
 					null,
 					$payment,
 					$update_info

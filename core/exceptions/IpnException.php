@@ -18,7 +18,7 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) {
  * @author        Michael Nelson
  * @since         $VID:$
  */
-class IPNException extends \LogicException
+class IpnException extends \LogicException
 {
 
     const code_duplicate = 1;
