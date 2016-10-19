@@ -319,7 +319,10 @@ class EE_PMT_Mijireh_Test extends EE_UnitTestCase{
 		$rargs =  json_decode( $p->details() );
 		$mijireh_items = $rargs->items;
 		$first_mijireh_item = array_shift( $mijireh_items );
-		$this->assertEquals( $t->primary_registration()->ticket()->name(), $first_mijireh_item->name );
+		$this->assertEquals( 
+			$t->primary_registration()->ticket()->name() . ' for ' . $t->primary_registration()->event_name(), 
+			$first_mijireh_item->name 
+		);
 		$this->assertEquals( $t->primary_registration()->ticket()->price(), $first_mijireh_item->price );
 		$this->assertEquals( 1, $first_mijireh_item->quantity );
 		$this->assertEquals( $t->tax_total(), $rargs->tax );

@@ -106,7 +106,6 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 	) {
 		$redirect_args = array();
 		$transaction = $payment->transaction();
-		$primary_registrant = $transaction->primary_registration();
 		$item_num = 1;
 		/** @type EE_Line_Item $total_line_item */
 		$total_line_item = $transaction->total_line_item();
@@ -134,7 +133,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 						continue;
 					}
 					$redirect_args[ 'item_name_' . $item_num ] = substr(
-						sprintf( _x( '%1$s for %2$s', 'Ticket for Event', 'event_espresso' ), $line_item->name(), $line_item->ticket_event_name() ),
+						$this->_format_line_item_name( $line_item, $payment ),
 						0, 127
 					);
 					$redirect_args[ 'amount_' . $item_num ] = $line_item->unit_price();
@@ -179,7 +178,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			$payment->update_extra_meta( EEG_Paypal_Standard::itemized_payment_option_name, false );
 			//partial payment that's not for the remaining amount, so we can't send an itemized list
 			$redirect_args['item_name_' . $item_num] = substr(
-				sprintf( __('Payment of %1$s for %2$s', "event_espresso"), $payment->amount(), $primary_registrant->reg_code() ),
+				$this->_format_partial_payment_line_item_name( $payment ),
 				0, 127
 			);
 			$redirect_args['amount_' . $item_num] = $payment->amount();
