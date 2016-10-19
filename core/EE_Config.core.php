@@ -2355,6 +2355,13 @@ class EE_Registration_Config extends EE_Config_Base {
 	 */
 	public $recaptcha_width;
 
+	/**
+	 * Whether or not invalid attempts to directly access the registration checkout page should be tracked.
+	 *
+	 * @var boolean $track_invalid_checkout_access
+	 */
+	protected $track_invalid_checkout_access;
+
 
 
 	/**
@@ -2399,6 +2406,27 @@ class EE_Registration_Config extends EE_Config_Base {
 	 */
 	public function set_default_reg_status_on_EEM_Event() {
 		EEM_Event::set_default_reg_status( $this->default_STS_ID );
+	}
+
+
+
+	/**
+	 * @return boolean
+	 */
+	public function track_invalid_checkout_access() {
+		return $this->track_invalid_checkout_access;
+	}
+
+
+
+	/**
+	 * @param boolean $track_invalid_checkout_access
+	 */
+	public function set_track_invalid_checkout_access( $track_invalid_checkout_access ) {
+		$this->track_invalid_checkout_access = filter_var(
+			$track_invalid_checkout_access,
+			FILTER_VALIDATE_BOOLEAN
+		);
 	}
 
 
