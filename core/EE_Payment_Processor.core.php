@@ -279,6 +279,7 @@ class EE_Payment_Processor extends EE_Processor_Base {
 				),
 				$obj_for_log
 			);
+            return $e->getPayment();
 		} catch( EE_Error $e ) {
 			do_action(
 				'AHEE__log', __FILE__, __FUNCTION__, sprintf(
