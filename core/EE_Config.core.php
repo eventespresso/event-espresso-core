@@ -2360,7 +2360,7 @@ class EE_Registration_Config extends EE_Config_Base {
 	 *
 	 * @var boolean $track_invalid_checkout_access
 	 */
-	protected $track_invalid_checkout_access;
+	protected $track_invalid_checkout_access = true;
 
 
 
