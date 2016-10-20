@@ -21,10 +21,10 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed'
 class EE_Newsletter_Shortcodes extends EE_Shortcodes {
 
     protected function _init_props() {
-        $this->label = __("Newsletter Shortcodes", 'event_espresso');
-        $this->description = __('All shortcodes used for the newsletter message type', 'event_espresso');
+        $this->label = __("Batch Messages Shortcodes", 'event_espresso');
+        $this->description = __('All shortcodes used for the batch message type', 'event_espresso');
         $this->_shortcodes = array(
-            '[NEWSLETTER_CONTENT]' => __('This will parse to whatever is found in the related [newsletter_content] field.  Note that when triggering a newsletter message, whatever is added for the custom message will be inserted where this shortcode is placed', 'event_espresso')
+            '[NEWSLETTER_CONTENT]' => __('This will parse to whatever is found in the related [newsletter_content] field.  Note that when triggering a batch message, whatever is added for the custom message will be inserted where this shortcode is placed.', 'event_espresso')
             );
     }
 
