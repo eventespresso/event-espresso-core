@@ -36,6 +36,10 @@ class Payments_Admin_Page_Init extends EE_Admin_Page_Init {
 		//check that there are active gateways on all admin page loads. but dont do it just yet
 //		echo "constructing payments admin page";die;
 		add_action('admin_notices',array($this,'check_payment_gateway_setup'));
+
+		// Show/hide PP Standard along side PP Express.
+		add_filter( 'FHEE__Payments_Admin_Page___payment_methods_list__payment_methods', array( $this, 'unset_pp_standard' ) );
+
 		parent::__construct();
 	}
 
@@ -111,6 +115,30 @@ class Payments_Admin_Page_Init extends EE_Admin_Page_Init {
 				) 
 			);
 		}
+	}
+
+
+
+	/**
+	 * Hide PayPal Standard for "new" users.
+	 */
+	public static function unset_pp_standard( $payment_method_types ) {
+		$pps = EEM_Payment_Method::instance()->get_one_of_type( 'Paypal_Standard' );
+		$ppstandard_active = ( ! empty($pps) ) ? $pps->active() : false;
+		$ppstandard_active_before = false;
+		if ( $pps ) {
+			// PP Standard used before ?
+			$paypal_id = $pps->get_extra_meta( 'paypal_id', TRUE );
+			if ( $paypal_id && ! empty($paypal_id) ) {
+				$ppstandard_active_before = true;
+			}
+		}
+
+		// Not using PP Standard? Then display only PayPal Express, do not show PayPal Standard.
+		if ( apply_filters( 'FHEE__EE_PMT_Paypal_Express__register_payment_methods__hide_paypal_standard', ! $ppstandard_active && ! $ppstandard_active_before ) ) {
+			unset($payment_method_types['paypal_standard']);
+		}
+		return $payment_method_types;
 	}
 
 } //end class Payments_Admin_Page_Init
