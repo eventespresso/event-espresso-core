@@ -60,18 +60,16 @@ class Support_Admin_Page extends EE_Admin_Page {
 	protected function _set_page_routes() {
 		$this->_page_routes = array(
 			'default' => array(
-				'func' => '_shortcodes',
-				'capability' => 'ee_read_ee'
-				),
-			//'installation' => '_installation',
-			//'resources' => '_resources',
-			'contact_support' => array(
 				'func' => '_contact_support',
-				'capability' => 'ee_read_ee'
+				'capability' => 'ee_read_ee',
 				),
 			'developers' => array(
 				'func' => '_developers',
-				'capability' => 'ee_read_ee'
+				'capability' => 'ee_read_ee',
+				),
+			'shortcodes' => array(
+				'func' => '_shortcodes',
+				'capability' => 'ee_read_ee',
 				),
 			);
 	}
