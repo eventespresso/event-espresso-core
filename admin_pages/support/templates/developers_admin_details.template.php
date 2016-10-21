@@ -19,7 +19,6 @@
 	
 	<h2><?php esc_html_e( 'REST API Resources', 'event_espresso' ); ?></h2>
 	<ul>
-		<li><?php printf( esc_html__( '%1$sREST API: Now Included in Core!%2$s', 'event_espresso' ), '<a href="https://eventespresso.com/2016/01/rest-api-now-in-ee4-core/" target="_blank">','</a>' ); ?></li>
 		<li><?php printf( esc_html__( '%1$sREST API: Introduction%2$s', 'event_espresso' ), '<a href="http://developer.eventespresso.com/docs/ee4-rest-api-introduction/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=ee_support_page&utm_content=developers_tab" target="_blank">','</a>' ); ?></li>
 		<li><?php printf( esc_html__( '%1$sREST API: Reading Data%2$s', 'event_espresso' ), '<a href="http://developer.eventespresso.com/docs/ee4-rest-api-reading/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=ee_support_page&utm_content=developers_tab" target="_blank">','</a>' ); ?></li>
 		<li><?php esc_html_e( 'REST API: Writing Data (coming soon)', 'event_espresso' ); ?></li>
