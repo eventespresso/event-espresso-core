@@ -145,27 +145,22 @@ class DisplayTicketSelector
             return $this->expiredEventMessage();
         }
         // get all tickets for this event ordered by the datetime
-        $template_args['tickets'] = $this->getTickets();
-        $template_args['ticket_count'] = count($template_args['tickets']);
-        if ($template_args['ticket_count'] < 1) {
+        $tickets = $this->getTickets();
+        if (count($tickets) < 1) {
             return $this->noTicketAvailableMessage();
         }
         // redirecting to another site for registration ??
-        $external_url = $this->event->external_url() !== null || $this->event->external_url() !== ''
-            ? $this->event->external_url()
-            : '';
+        $external_url = (string) $this->event->external_url();
         // if redirecting to another site for registration, then we don't load the TS
         $ticket_selector = $external_url
             ? $this->externalEventRegistration()
-            : $this->loadTicketSelectorTemplate($template_args);
+            : $this->loadTicketSelector($tickets,$template_args);
         // now set up the form (but not for the admin)
         $ticket_selector = ! is_admin()
             ? $this->formOpen($this->event->ID(), $external_url) . $ticket_selector
             : $ticket_selector;
         // submit button and form close tag
         $ticket_selector .= ! is_admin() ? $this->displaySubmitButton() : '';
-        // set no cache headers and constants
-        \EE_System::do_not_cache();
         return $ticket_selector;
     }
 
@@ -309,6 +304,148 @@ class DisplayTicketSelector
     /**
      * loadTicketSelectorTemplate
      *
+     * @param \EE_Ticket[] $tickets
+     * @param array $template_args
+     * @return string
+     * @throws \EE_Error
+     */
+    protected function loadTicketSelector(array $tickets, array $template_args)
+    {
+        $template_args['event'] = $this->event;
+        $template_args['EVT_ID'] = $this->event->ID();
+        $template_args['event_is_expired'] = $this->event->is_expired();
+        $template_args['max_atndz'] = $this->getMaxAttendees();
+        $template_args['date_format'] = apply_filters(
+            'FHEE__EED_Ticket_Selector__display_ticket_selector__date_format',
+            get_option('date_format')
+        );
+        $template_args['time_format'] = apply_filters(
+            'FHEE__EED_Ticket_Selector__display_ticket_selector__time_format',
+            get_option('time_format')
+        );
+        /**
+         * Filters the anchor ID used when redirecting to the Ticket Selector if no quantity selected
+         *
+         * @since 4.9.13
+         * @param     string  '#tkt-slctr-tbl-' . $EVT_ID The html ID to anchor to
+         * @param int $EVT_ID The Event ID
+         */
+        $template_args['anchor_id'] = apply_filters(
+            'FHEE__EE_Ticket_Selector__redirect_anchor_id',
+            '#tkt-slctr-tbl-' . $this->event->ID(),
+            $this->event->ID()
+        );
+        $template_args['tickets'] = $tickets;
+        $template_args['ticket_count'] = count($tickets);
+        // if there is only ONE ticket with a max qty of ONE
+        if (count($tickets) === 1 && $this->getMaxAttendees() === 1 ) {
+            $ticket_selector = $this->dudeWheresMyTicketSelector($tickets, $template_args);
+        }
+        return ! empty($ticket_selector)
+            ? $ticket_selector
+            : $this->standardTicketSelector($tickets, $template_args);
+
+    }
+
+
+
+    /**
+     * dudeWheresMyTicketSelector
+     *
+     * @param \EE_Ticket[] $tickets
+     * @param array  $template_args
+     * @return string
+     * @throws \EE_Error
+     */
+    protected function dudeWheresMyTicketSelector($tickets, array $template_args)
+    {
+        /** @var \EE_Ticket $ticket */
+        $ticket = reset($tickets);
+        // if the ticket is free... then not much need for the ticket selector
+        if (
+            apply_filters(
+                'FHEE__ticket_selector_chart_template__hide_ticket_selector',
+                $ticket->is_free(),
+                $this->event->ID()
+            )
+        ) {
+            $ticket_selector_row = new TicketSelectorRowDwmts(
+                $ticket,
+                $this->getMaxAttendees(),
+                $template_args['date_format']
+            );
+            unset($template_args['tickets']);
+            $template_args['ticket'] = $ticket;
+            $template_args['ticket_status_display'] = $ticket_selector_row->getTicketStatusDisplay();
+            $template_args['template_path'] = TICKET_SELECTOR_TEMPLATES_PATH
+                                              . 'dude_wheres_my_ticket_selector.template.php';
+            return $this->loadTicketSelectorTemplate($template_args);
+        }
+        return '';
+    }
+
+
+
+    /**
+     * standardTicketSelector
+     *
+     * @param \EE_Ticket[] $tickets
+     * @param array        $template_args
+     * @return string
+     * @throws \EE_Error
+     */
+    protected function standardTicketSelector(array $tickets, array $template_args)
+    {
+        $row = 1;
+        $ticket_row_html = '';
+        $required_ticket_sold_out = false;
+        // flag to indicate that at least one taxable ticket has been encountered
+        $taxable_tickets = false;
+        // get EE_Ticket_Selector_Config and TicketDetails
+        $template_settings = isset (\EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector)
+            ? \EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector
+            : new \EE_Ticket_Selector_Config();
+        $tax_settings = isset (\EE_Registry::instance()->CFG->tax_settings)
+            ? \EE_Registry::instance()->CFG->tax_settings
+            : new \EE_Tax_Config();
+
+        // loop through tickets
+        foreach ($tickets as $TKT_ID => $ticket) {
+            if ($ticket instanceof \EE_Ticket) {
+                $cols = 2;
+                $taxable_tickets = $ticket->taxable() ? true : $taxable_tickets;
+
+                $ticket_selector_row = new TicketSelectorRowStandard(
+                    $ticket,
+                    new TicketDetails($ticket, $template_settings, $template_args),
+                    $template_settings,
+                    $this->getMaxAttendees(),
+                    $row,
+                    $cols,
+                    $required_ticket_sold_out,
+                    $tax_settings->prices_displayed_including_taxes,
+                    $template_args['event_status'],
+                    $template_args['date_format']
+                );
+                $ticket_row_html .= $ticket_selector_row->getHtml();
+                $required_ticket_sold_out = $ticket_selector_row->getRequiredTicketSoldOut();
+                $row++;
+            }
+        }
+        $template_args['row'] = $row;
+        $template_args['ticket_row_html'] = $ticket_row_html;
+        $template_args['taxable_tickets'] = $taxable_tickets;
+        $template_args['prices_displayed_including_taxes'] = $tax_settings->prices_displayed_including_taxes;
+        $template_args['template_path'] = TICKET_SELECTOR_TEMPLATES_PATH . 'standard_ticket_selector.template.php';
+        remove_all_filters('FHEE__EE_Ticket_Selector__hide_ticket_selector');
+        return $this->loadTicketSelectorTemplate($template_args);
+    }
+
+
+
+    /**
+     * loadTicketSelectorTemplate
+     *
      * @param array $template_args
      * @return string
      * @throws \EE_Error
@@ -318,30 +455,11 @@ class DisplayTicketSelector
         return \EEH_Template::locate_template(
             apply_filters(
                 'FHEE__EE_Ticket_Selector__display_ticket_selector__template_path',
-                TICKET_SELECTOR_TEMPLATES_PATH . 'ticket_selector_chart.template.php',
+                $template_args['template_path'],
                 $this->event
             ),
             array_merge(
                 array(
-                    'EVT_ID'            => $this->event->ID(),
-                    'event'             => $this->event,
-                    'event_is_expired'  => $this->event->is_expired(),
-                    'max_atndz'         => $this->getMaxAttendees(),
-                    'date_format'       => apply_filters(
-                        'FHEE__EED_Ticket_Selector__display_ticket_selector__date_format',
-                        get_option('date_format')
-                    ),
-                    'time_format'       => apply_filters(
-                        'FHEE__EED_Ticket_Selector__display_ticket_selector__time_format',
-                        get_option('time_format')
-                    ),
-                    'tax_settings'      => isset (\EE_Registry::instance()->CFG->tax_settings)
-                        ? \EE_Registry::instance()->CFG->tax_settings
-                        : new \EE_Tax_Config(),
-                    // get EE_Ticket_Selector_Config and TicketDetails
-                    'template_settings' => isset (\EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector)
-                        ? \EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector
-                        : new \EE_Ticket_Selector_Config(),
                 ),
                 $template_args
             )
@@ -402,9 +520,11 @@ class DisplayTicketSelector
                 __LINE__
             );
         }
+        // set no cache headers and constants
+        \EE_System::do_not_cache();
         $extra_params = $this->iframe ? ' target="_blank"' : '';
         $html = '<form method="POST" action="' . $checkout_url . '"' . $extra_params . '>';
-        $html .= wp_nonce_field( 'process_ticket_selections', 'process_ticket_selections_nonce', true, false );
+        $html .= wp_nonce_field( 'process_ticket_selections', 'process_ticket_selections_nonce_' . $ID, true, false );
         $html .= '<input type="hidden" name="ee" value="process_ticket_selections">';
         $html = apply_filters( 'FHEE__EE_Ticket_Selector__ticket_selector_form_open__html', $html, $this->event );
         return $html;
