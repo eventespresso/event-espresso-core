@@ -21,7 +21,6 @@
 	<ul>
 		<li><?php printf( esc_html__( '%1$sREST API: Introduction%2$s', 'event_espresso' ), '<a href="http://developer.eventespresso.com/docs/ee4-rest-api-introduction/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=ee_support_page&utm_content=developers_tab" target="_blank">','</a>' ); ?></li>
 		<li><?php printf( esc_html__( '%1$sREST API: Reading Data%2$s', 'event_espresso' ), '<a href="http://developer.eventespresso.com/docs/ee4-rest-api-reading/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=ee_support_page&utm_content=developers_tab" target="_blank">','</a>' ); ?></li>
-		<li><?php esc_html_e( 'REST API: Writing Data (coming soon)', 'event_espresso' ); ?></li>
 		<li><?php printf( esc_html__( '%1$sBuilding an EE4 Add-on Using the REST API%2$s', 'event_espresso' ), '<a href="https://eventespresso.com/2014/03/messages-systemyour-tool-getting-word/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=ee_support_page&utm_content=developers_tab" target="_blank">','</a>' ); ?></li>
 	</ul>
 </div>
