@@ -10,6 +10,7 @@
 /** @var string $time_format */
 /** @var string $ticket_row_html */
 /** @var string $anchor_id */
+/** @var string $datetime_selector */
 /** @var EE_Ticket[] $tickets */
 /** @var EE_Event $event */
 /** @var EE_Tax_Config $tax_settings */
@@ -19,6 +20,7 @@
 <div id="tkt-slctr-tbl-wrap-dv-<?php echo $EVT_ID; ?>" class="tkt-slctr-tbl-wrap-dv">
 
 	<?php do_action( 'AHEE__ticket_selector_chart__template__before_ticket_selector', $event ); ?>
+	<?php echo $datetime_selector; ?>
 
 	<table id="tkt-slctr-tbl-<?php echo $EVT_ID; ?>" class="tkt-slctr-tbl">
 		<thead>
