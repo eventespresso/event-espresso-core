@@ -651,7 +651,10 @@ class DisplayTicketSelector
             return '';
         }
         $html = \EEH_HTML::div( '', '', 'datetime_selector-dv' );
-        $html .= \EEH_HTML::label(esc_html__('Datetimes', 'event_espresso'), '', 'datetime_selector-dv' );
+        $html .= \EEH_HTML::label(
+            \EEH_HTML::span('', '', 'dashicons dashicons-calendar-alt') . esc_html__('Datetimes', 'event_espresso'),
+            '', 'datetime_selector-lbl'
+        ) . \EEH_HTML::br();
         $html .= "\n" . '<select name="datetime_selector-' . $this->event->ID() . '"';
         $html .= ' id="datetime-selector-' . $this->event->ID() . '"';
         $html .= ' class="ticket-selector-datetime-selector-slct"';
