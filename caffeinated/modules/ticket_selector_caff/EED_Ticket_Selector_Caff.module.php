@@ -99,9 +99,11 @@ class EED_Ticket_Selector_Caff  extends EED_Ticket_Selector {
 
 
 
-
-
-	public static function _ticket_selector_appearance_settings() {
+    /**
+     * @return \EE_Form_Section_Proper
+     * @throws \EE_Error
+     */
+    public static function _ticket_selector_appearance_settings() {
 		return new EE_Form_Section_Proper(
 			array(
 				'name' => 'ticket_selector_settings_tbl',
@@ -138,6 +140,37 @@ class EED_Ticket_Selector_Caff  extends EED_Ticket_Selector {
 									'default' => isset( EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector->show_expired_tickets )
 										? EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector->show_expired_tickets
 										: true,
+									'display_html_label_text' => false
+								)
+							),
+							'show_datetime_selector' => new EE_Select_Input(
+                                \EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector->getShowDatetimeSelectorOptions(false),
+								array(
+									'html_label_text' => __( 'Show Datetime Selector?', 'event_espresso' ),
+									'html_help_text' => sprintf(
+									    esc_html__(
+									        'Indicates whether or not to display a dropdown select box above each ticket selector that displays dates for the available tickets. Ticket options will then be hidden until a date is selected, and then only tickets for that date are shown.%1$sOptions include:%1$s &bull; do not show datetime selector%1$s &nbsp; this option will NEVER display a datetime selector, regardless of how many datetimes exist.%1$s &bull; always show datetime selector%1$s &nbsp; this option will ALWAYS display a datetime selector, even if there is only one datetime for the event.%1$s &bull; maybe show datetime selector%1$s &nbsp; this option will conditionally display a datetime selector when the number of datetimes for the event matches the value set for "Datetime Selector Threshold".',
+                                            'event_espresso'
+                                        ),
+                                        '<br>'
+                                    ),
+									'default' => isset( \EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector->show_datetime_selector )
+										? \EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector->show_datetime_selector
+										: \EE_Ticket_Selector_Config::MAYBE_SHOW_DATETIME_SELECTOR,
+									'display_html_label_text' => false
+								)
+							),
+							'datetime_selector_threshold' => new EE_Select_Input(
+                                array(0,1,2,3,4,5,6,7,8,9,10),
+								array(
+									'html_label_text' => __( 'Datetime Selector Threshold', 'event_espresso' ),
+									'html_help_text' => esc_html__(
+                                        'The number of datetimes an event has to have before conditionally displaying a datetime selector',
+                                        'event_espresso'
+                                    ),
+									'default' => isset( \EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector->datetime_selector_threshold )
+										? \EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector->datetime_selector_threshold
+										: 3,
 									'display_html_label_text' => false
 								)
 							),
@@ -181,6 +214,12 @@ class EED_Ticket_Selector_Caff  extends EED_Ticket_Selector {
 					$CFG->EED_Ticket_Selector->show_ticket_sale_columns = $valid_data['appearance_settings']['show_ticket_sale_columns'];
 					$CFG->EED_Ticket_Selector->show_ticket_details = $valid_data['appearance_settings']['show_ticket_details'];
 					$CFG->EED_Ticket_Selector->show_expired_tickets = $valid_data['appearance_settings']['show_expired_tickets'];
+					$CFG->EED_Ticket_Selector->setShowDatetimeSelector(
+					    $valid_data['appearance_settings']['show_datetime_selector']
+                    );
+					$CFG->EED_Ticket_Selector->setDatetimeSelectorThreshold(
+					    $valid_data['appearance_settings']['datetime_selector_threshold']
+                    );
 				} else {
 					if ( $ticket_selector_form->submission_error_message() !== '' ) {
 						EE_Error::add_error( $ticket_selector_form->submission_error_message(), __FILE__, __FUNCTION__, __LINE__ );
