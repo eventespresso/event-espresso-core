@@ -11,7 +11,7 @@
 							$default_theme = wp_get_theme( WP_DEFAULT_THEME );
 
 							if ( $default_theme->exists() ) {
-								 esc_html( printf( esc_html__( 'If your problem is not a known issue or caused by a plugin, then try activating %s (the default WordPress theme).', 'event_espresso' ), $default_theme->get( 'Name' ) ) );
+								 printf( esc_html__( 'If your problem is not a known issue or caused by a plugin, then try activating %s (the default WordPress theme).', 'event_espresso' ), $default_theme->get( 'Name' ) );
 							} else {
 								esc_html_e( 'If your problem is not a known issue or caused by a plugin, then try activating the default WordPress theme.', 'event_espresso' );
 							}
