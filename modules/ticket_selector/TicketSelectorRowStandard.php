@@ -27,6 +27,11 @@ class TicketSelectorRowStandard extends TicketSelectorRow
     protected $template_settings;
 
     /**
+     * @var \EE_Tax_Config $tax_settings
+     */
+    protected $tax_settings;
+
+    /**
      * @var boolean $required_ticket_sold_out
      */
     protected $required_ticket_sold_out;
@@ -56,6 +61,11 @@ class TicketSelectorRowStandard extends TicketSelectorRow
      */
     protected $hidden_input_qty;
 
+    /**
+     * @var string $ticket_datetime_classes
+     */
+    protected $ticket_datetime_classes;
+
 
 
     /**
@@ -64,36 +74,39 @@ class TicketSelectorRowStandard extends TicketSelectorRow
      * @param \EE_Ticket $ticket
      * @param TicketDetails              $ticket_details
      * @param \EE_Ticket_Selector_Config $template_settings
+     * @param \EE_Tax_Config             $tax_settings
      * @param int                        $max_atndz
      * @param int                        $row
      * @param int                        $cols
      * @param boolean                    $required_ticket_sold_out
-     * @param boolean                    $prices_displayed_including_taxes
      * @param string                     $event_status
      * @param string                     $date_format
+     * @param string                     $ticket_datetime_classes
      */
     public function __construct(
         \EE_Ticket $ticket,
         TicketDetails $ticket_details,
         \EE_Ticket_Selector_Config $template_settings,
+        \EE_Tax_Config $tax_settings,
         $max_atndz,
         $row,
         $cols,
         $required_ticket_sold_out,
-        $prices_displayed_including_taxes,
         $event_status,
-        $date_format
+        $date_format,
+        $ticket_datetime_classes
     ) {
         $this->ticket = $ticket;
         $this->ticket_details = $ticket_details;
         $this->template_settings = $template_settings;
+        $this->tax_settings = $tax_settings;
         $this->max_atndz = $max_atndz;
         $this->row = $row;
         $this->cols = $cols;
         $this->required_ticket_sold_out = $required_ticket_sold_out;
-        $this->prices_displayed_including_taxes = $prices_displayed_including_taxes;
         $this->event_status = $event_status;
         $this->date_format = $date_format;
+        $this->ticket_datetime_classes = $ticket_datetime_classes;
         parent::__construct($ticket, $max_atndz, $date_format);
     }
 
@@ -169,7 +182,7 @@ class TicketSelectorRowStandard extends TicketSelectorRow
         }
         $ticket_selector_row_html = \EEH_HTML::tr(
             '', '',
-            "tckt-slctr-tbl-tr {$status_class} " . espresso_get_object_css_class($this->ticket)
+            "tckt-slctr-tbl-tr {$status_class}{$this->ticket_datetime_classes} " . espresso_get_object_css_class($this->ticket)
         );
         /**
          * Allow plugins to hook in and abort the generation and display of the contents of this
@@ -250,7 +263,7 @@ class TicketSelectorRowStandard extends TicketSelectorRow
      */
     protected function getTicketPriceDetails()
     {
-        $ticket_price = $this->prices_displayed_including_taxes
+        $ticket_price = $this->tax_settings->prices_displayed_including_taxes
             ? $this->ticket->get_ticket_total_with_taxes()
             : $this->ticket->get_ticket_subtotal();
         $ticket_bundle = false;
@@ -336,7 +349,7 @@ class TicketSelectorRowStandard extends TicketSelectorRow
             $html .= \EEH_HTML::p(
                     apply_filters(
                             'FHEE__ticket_selector_chart_template__ticket_required_message',
-                            __('This ticket is required and must be purchased.', 'event_espresso')
+                            esc_html__('This ticket is required and must be purchased.', 'event_espresso')
                     ),
                     '', 'ticket-required-pg'
             );
@@ -419,7 +432,7 @@ class TicketSelectorRowStandard extends TicketSelectorRow
         $this->hidden_input_qty = false;
         $html = '<select name="tkt-slctr-qty-' . $this->EVT_ID . '[]"';
         $html .= ' id="ticket-selector-tbl-qty-slct-' . $this->EVT_ID . '-' . $this->row . '"';
-        $html .= ' class="ticket-selector-tbl-qty-slct" title="">';
+        $html .= ' class="ticket-selector-tbl-qty-slct">';
         // this ensures that non-required tickets with non-zero MIN QTYs don't HAVE to be purchased
         if ($min !== 0 && ! $this->ticket->required()) {
             $html .= '<option value="0">&nbsp;0&nbsp;</option>';
