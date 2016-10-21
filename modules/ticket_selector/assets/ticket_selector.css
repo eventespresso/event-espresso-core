@@ -351,6 +351,9 @@
 	top: 0;
 }
 
+.ee-ticket-datetimes-hide {
+    display: none;
+}
 
 @media (max-width: 600px) {
 
