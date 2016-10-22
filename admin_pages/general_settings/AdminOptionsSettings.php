@@ -30,7 +30,7 @@ defined('ABSPATH') || exit;
 class AdminOptionsSettings extends FormHandler
 {
 
-
+    protected $template_args = array();
 
     /**
      * Form constructor.
@@ -51,6 +51,16 @@ class AdminOptionsSettings extends FormHandler
 
 
     /**
+     * @param array $template_args
+     */
+    public function setTemplateArgs(array $template_args)
+    {
+        $this->template_args = $template_args;
+    }
+
+
+
+    /**
      * creates and returns the actual form
      *
      * @return EE_Form_Section_Proper
@@ -58,58 +68,12 @@ class AdminOptionsSettings extends FormHandler
      */
     public function generate()
     {
-        return new \EE_Form_Section_Proper(
+        $form = new \EE_Form_Section_Proper(
             array(
                 'name'            => 'admin_option_settings',
                 'html_id'         => 'admin_option_settings',
                 'layout_strategy' => new EE_Admin_Two_Column_Layout(),
                 'subsections'     => array(
-                    'promote_ee_hdr'   => new EE_Form_Section_HTML(
-                        EEH_HTML::h2(
-                            esc_html__('Promote Event Espresso', 'event_espresso')
-                            . ' '
-                            . EEH_HTML::span(
-                                EEH_Template::get_help_tab_link('affiliate_info'),
-                                'affiliate_info'
-                            ),
-                            '', 'ee-admin-settings-hdr'
-                        )
-                    ),
-                    'show_reg_footer' => new EE_Yes_No_Input(
-                        array(
-                            'html_label_text' => esc_html__(
-                                'Link to Event Espresso in your Registration Page?',
-                                'event_espresso'
-                            )
-                            . EEH_Template::get_help_tab_link('email_validation_info'),
-                            'html_help_text'  => esc_html__(
-                                'adds an unobtrusive link to Event Espresso\'s website in the footer of your registration form. Get an affiliate link (see below) and make money if people click the link and purchase Event Espresso.',
-                                'event_espresso'
-                            ),
-                            'default'         => isset($this->registry->CFG->admin->show_reg_footer)
-                                ? filter_var($this->registry->CFG->admin->show_reg_footer, FILTER_VALIDATE_BOOLEAN)
-                                : true,
-                            'required'        => false
-                        )
-                    ),
-                    'affiliate_id' => new EE_Text_Input(
-                        array(
-                            'html_label_text' => sprintf(
-                                esc_html__('Event Espresso %sAffiliate%s ID', 'event_espresso'),
-                                '<a href="http://eventespresso.com/affiliates/" target="_blank">',
-                                '</a>'
-                            ),
-                            'html_help_text'  => esc_html__(
-                                'Earn cash for promoting Event Espresso.',
-                                'event_espresso'
-                            ),
-                            'html_class' => 'regular-text',
-                            'default'         => isset($this->registry->CFG->admin->affiliate_id)
-                                ? $this->registry->CFG->admin->get_pretty('affiliate_id')
-                                : '',
-                            'required'        => false
-                        )
-                    ),
                     'help_tour_activation_hdr' => new EE_Form_Section_HTML(
                         EEH_HTML::h2(
                             esc_html__('Help Tour Global Activation', 'event_espresso')
@@ -137,6 +101,96 @@ class AdminOptionsSettings extends FormHandler
                 )
             )
         );
+        if (
+            $this->registry->CAP->current_user_can(
+                'manage_options',
+                'display_admin_settings_options_promote_and_affiliate'
+            )
+        ) {
+            $form->add_subsections(
+                array(
+                    'promote_ee_hdr'  => new EE_Form_Section_HTML(
+                        EEH_HTML::h2(
+                            esc_html__('Promote Event Espresso', 'event_espresso')
+                            . ' '
+                            . EEH_HTML::span(
+                                EEH_Template::get_help_tab_link('affiliate_info'),
+                                'affiliate_info'
+                            ),
+                            '', 'ee-admin-settings-hdr'
+                        )
+                    ),
+                    'show_reg_footer' => new EE_Yes_No_Input(
+                        array(
+                            'html_label_text' => esc_html__(
+                                                     'Link to Event Espresso in your Registration Page?',
+                                                     'event_espresso'
+                                                 )
+                                                 . EEH_Template::get_help_tab_link('email_validation_info'),
+                            'html_help_text'  => esc_html__(
+                                'adds an unobtrusive link to Event Espresso\'s website in the footer of your registration form. Get an affiliate link (see below) and make money if people click the link and purchase Event Espresso.',
+                                'event_espresso'
+                            ),
+                            'default'         => isset($this->registry->CFG->admin->show_reg_footer)
+                                ? filter_var($this->registry->CFG->admin->show_reg_footer, FILTER_VALIDATE_BOOLEAN)
+                                : true,
+                            'required'        => false
+                        )
+                    ),
+                    'affiliate_id'    => new EE_Text_Input(
+                        array(
+                            'html_label_text' => sprintf(
+                                esc_html__('Event Espresso %sAffiliate%s ID', 'event_espresso'),
+                                '<a href="http://eventespresso.com/affiliates/" target="_blank">',
+                                '</a>'
+                            ),
+                            'html_help_text'  => esc_html__(
+                                'Earn cash for promoting Event Espresso.',
+                                'event_espresso'
+                            ),
+                            'html_class'      => 'regular-text',
+                            'default'         => isset($this->registry->CFG->admin->affiliate_id)
+                                ? $this->registry->CFG->admin->get_pretty('affiliate_id')
+                                : '',
+                            'required'        => false
+                        )
+                    ),
+                ),
+                'help_tour_activation_hdr'
+            );
+        }
+        return $form;
+    }
+
+
+
+    /**
+     * takes the generated form and displays it along with ony other non-form HTML that may be required
+     * returns a string of HTML that can be directly echoed in a template
+     *
+     * @return string
+     * @throws LogicException
+     * @throws \EE_Error
+     */
+    public function display()
+    {
+        add_filter(
+            'FHEE__EventEspresso_core_libraries_form_sections_form_handlers_FormHandler__display__before_form',
+            array($this, 'handleOldAdminOptionsSettingsAction')
+        );
+        return parent::display();
+    }
+
+
+
+    /**
+     * @return string
+     */
+    public function handleOldAdminOptionsSettingsAction()
+    {
+        ob_start();
+        do_action('AHEE__admin_option_settings__template__before', $this->template_args);
+        return ob_get_clean();
     }
 
 
