@@ -2510,7 +2510,7 @@ class EE_Admin_Config extends EE_Config_Base {
      *
      * @var boolean $encode_session_data
 	 */
-	private $encode_session_data;
+	private $encode_session_data = false;
 
 
 
@@ -2578,7 +2578,7 @@ class EE_Admin_Config extends EE_Config_Base {
      */
     public function get_encode_session_data()
     {
-        return $this->encode_session_data;
+        return filter_var($this->encode_session_data, FILTER_VALIDATE_BOOLEAN);
     }
 
 
