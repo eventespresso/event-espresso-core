@@ -98,6 +98,26 @@ class AdminOptionsSettings extends FormHandler
                             'required'        => false
                         )
                     ),
+                    'compatibility_hdr'   => new EE_Form_Section_HTML(
+                        EEH_HTML::h2(
+                            esc_html__('Compatibility Settings', 'event_espresso'),
+                            '', 'ee-admin-settings-hdr'
+                        )
+                    ),
+                    'encode_session_data' => new EE_Yes_No_Input(
+                        array(
+                            'html_label_text' => esc_html__('Encode Session Data?', 'event_espresso'),
+                            'html_help_text'  => sprintf(
+                                esc_html__(
+                                    'Some servers and database configurations can cause problems when saving the Event Espresso session data. Setting this option to "Yes" adds an extra layer of encoding to session data to prevent serialization errors, but can be incompatible with some server configurations.%1$sIf you receive "500 internal server" type errors during registration, try turning this option on.%1$sIf you get fatal PHP errors regarding missing base 64 functions, then turn this option off.',
+                                    'event_espresso'
+                                ),
+                                '<br>'
+                            ),
+                            'default'         => $this->registry->CFG->admin->get_encode_session_data(),
+                            'required'        => false
+                        )
+                    ),
                 )
             )
         );
@@ -223,6 +243,9 @@ class AdminOptionsSettings extends FormHandler
         $this->registry->CFG->admin->help_tour_activation = isset( $form_data['help_tour_activation'] )
             ? absint( $form_data['help_tour_activation'])
             : $this->registry->CFG->admin->help_tour_activation;
+        if (isset($form_data['encode_session_data'])) {
+            $this->registry->CFG->admin->set_encode_session_data($form_data['encode_session_data']);
+        }
         return false;
     }
 
