@@ -2576,9 +2576,8 @@ class EE_Admin_Config extends EE_Config_Base {
     /**
      * @return boolean
      */
-    public function get_encode_session_data()
-    {
-        return filter_var($this->encode_session_data, FILTER_VALIDATE_BOOLEAN);
+    public function encode_session_data() {
+        return filter_var( $this->encode_session_data, FILTER_VALIDATE_BOOLEAN );
     }
 
 
@@ -2586,9 +2585,8 @@ class EE_Admin_Config extends EE_Config_Base {
     /**
      * @param boolean $encode_session_data
      */
-    public function set_encode_session_data( $encode_session_data)
-    {
-        $this->encode_session_data = filter_var($encode_session_data, FILTER_VALIDATE_BOOLEAN );
+    public function set_encode_session_data( $encode_session_data ) {
+        $this->encode_session_data = filter_var( $encode_session_data, FILTER_VALIDATE_BOOLEAN );
     }
 
 
