@@ -109,7 +109,7 @@ class AdminOptionsSettings extends FormHandler
                             'html_label_text' => esc_html__('Encode Session Data?', 'event_espresso'),
                             'html_help_text'  => sprintf(
                                 esc_html__(
-                                    'Some servers and database configurations can cause problems when saving the Event Espresso session data. Setting this option to "Yes" adds an extra layer of encoding to session data to prevent serialization errors, but can be incompatible with some server configurations.%1$sIf you receive "500 internal server" type errors during registration, try turning this option on.%1$sIf you get fatal PHP errors regarding missing base 64 functions, then turn this option off.',
+                                    'Some servers and database configurations can cause problems when saving the Event Espresso session data. Setting this option to "Yes" adds an extra layer of encoding to session data to prevent serialization errors, but can be incompatible with some server configurations.%1$sIf you receive "500 internal server" type errors during registration, try turning this option on.%1$sIf you get fatal PHP errors regarding missing base64 functions, then turn this option off.',
                                     'event_espresso'
                                 ),
                                 '<br>'
