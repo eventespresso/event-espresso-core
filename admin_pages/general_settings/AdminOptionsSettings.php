@@ -114,7 +114,7 @@ class AdminOptionsSettings extends FormHandler
                                 ),
                                 '<br>'
                             ),
-                            'default'         => $this->registry->CFG->admin->get_encode_session_data(),
+                            'default'         => $this->registry->CFG->admin->encode_session_data(),
                             'required'        => false
                         )
                     ),
