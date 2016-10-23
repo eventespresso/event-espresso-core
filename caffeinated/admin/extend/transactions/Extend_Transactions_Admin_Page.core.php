@@ -156,9 +156,7 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page {
 		if ( $results ) {
 			$revenue[] = array( __( 'Date (only shows dates that have a revenue greater than 1)', 'event_espresso' ), __( 'Total Revenue', 'event_espresso' ) );
 			foreach ( $results as $result ) {
-				if ( $result->revenue > 1 ) {
-					$revenue[] = array( $result->txnDate, (float) $result->revenue );
-				}
+				$revenue[] = array( $result->txnDate, (float) $result->revenue );
 			}
 
 			//setup the date range.
@@ -172,9 +170,9 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page {
 		$report_params = array(
 			'title' 		=> $report_title,
 			'subtitle' => $subtitle,
-			'id' 			=> $report_ID,
+			'id' => $report_ID,
 			'revenue' => $revenue,
-			'noResults' => empty( $revenue ),
+			'noResults' => empty( $revenue ) || count( $revenue ) === 1,
 			'noTxnMsg'	=> sprintf( __( '%sThere are currently no transaction records in the last month for this report.%s', 'event_espresso' ), '<h2>' . $report_title . '</h2><p>', '</p>' )
 		);
 		wp_localize_script( 'ee-txn-reports-js', 'txnRevPerDay', $report_params );
