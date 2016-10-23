@@ -718,7 +718,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 					$route,
 					$type,
 					$extra_request,
-					'',
+					'button button-secondary',
 					'',
 					false
 				);
