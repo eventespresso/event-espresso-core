@@ -29,19 +29,16 @@
  */
 /**
  * Event Espresso
- *
  * Event Registration and Management Plugin for WordPress
  *
- * @package 	Event Espresso
- * @author 		Seth Shoultes
- * @copyright 	(c) 2008-2014 Event Espresso  All Rights Reserved.
- * @license 	{@link http://eventespresso.com/support/terms-conditions/}
- * @see         Plugin Licensing
- * @link 		{@link http://www.eventespresso.com}
- * @since 		4.0
- *
+ * @package          Event Espresso
+ * @author           Seth Shoultes
+ * @copyright    (c) 2008-2014 Event Espresso  All Rights Reserved.
+ * @license          {@link http://eventespresso.com/support/terms-conditions/}
+ * @see              Plugin Licensing
+ * @link             {@link http://www.eventespresso.com}
+ * @since            4.0
  */
-
 if ( function_exists( 'espresso_version' ) ) {
 
 	/**
@@ -51,7 +48,10 @@ if ( function_exists( 'espresso_version' ) ) {
 	function espresso_duplicate_plugin_error() {
 		?>
 		<div class="error">
-			<p><?php _e( 'Can not run multiple versions of Event Espresso! One version has been automatically deactivated. Please verify that you have the correct version you want still active.', 'event_espresso' ); ?></p>
+			<p><?php _e(
+				'Can not run multiple versions of Event Espresso! One version has been automatically deactivated. Please verify that you have the correct version you want still active.',
+				'event_espresso'
+				); ?></p>
 		</div>
 		<?php
 		espresso_deactivate_plugin( plugin_basename( __FILE__ ) );
@@ -64,7 +64,6 @@ if ( function_exists( 'espresso_version' ) ) {
 
 	if ( ! version_compare( PHP_VERSION, EE_MIN_PHP_VER_REQUIRED, '>=' ) ) {
 
-
 		/**
 		 * espresso_minimum_php_version_error
 		 *
@@ -76,14 +75,14 @@ if ( function_exists( 'espresso_version' ) ) {
 				<p>
 					<?php
 					printf(
-						__(
-							'We\'re sorry, but Event Espresso requires PHP version %1$s or greater in order to operate. You are currently running version %2$s.%3$sIn order to update your version of PHP, you will need to contact your current hosting provider.%3$sFor information on stable PHP versions, please go to %4$s.',
-							'event_espresso'
-						),
-						EE_MIN_PHP_VER_REQUIRED,
-						PHP_VERSION,
-						'<br/>',
-						'<a href="http://php.net/downloads.php">http://php.net/downloads.php</a>'
+					__(
+					'We\'re sorry, but Event Espresso requires PHP version %1$s or greater in order to operate. You are currently running version %2$s.%3$sIn order to update your version of PHP, you will need to contact your current hosting provider.%3$sFor information on stable PHP versions, please go to %4$s.',
+					'event_espresso'
+					),
+					EE_MIN_PHP_VER_REQUIRED,
+					PHP_VERSION,
+					'<br/>',
+					'<a href="http://php.net/downloads.php">http://php.net/downloads.php</a>'
 					);
 					?>
 				</p>
@@ -195,6 +194,8 @@ if ( function_exists( 'espresso_version' ) ) {
 		define( 'EE_INF_IN_DB', -1 );
 		define( 'EE_INF', INF > (float) PHP_INT_MAX ? INF : PHP_INT_MAX );
 		define( 'EE_DEBUG', false );
+
+
 		/**
 		 *    espresso_plugin_activation
 		 *    adds a wp-option to indicate that EE has been activated via the WP admin plugins page
@@ -202,8 +203,9 @@ if ( function_exists( 'espresso_version' ) ) {
 		function espresso_plugin_activation() {
 			update_option( 'ee_espresso_activation', true );
 		}
-
 		register_activation_hook( EVENT_ESPRESSO_MAIN_FILE, 'espresso_plugin_activation' );
+
+
 		/**
 		 *    espresso_plugin_deactivation
 		 */
@@ -214,8 +216,9 @@ if ( function_exists( 'espresso_version' ) ) {
 			//	}
 			//
 		}
-
 		register_deactivation_hook( EVENT_ESPRESSO_MAIN_FILE, 'espresso_plugin_deactivation' );
+
+
 		/**
 		 *    espresso_load_error_handling
 		 *    this function loads EE's class for handling exceptions and errors
@@ -233,6 +236,7 @@ if ( function_exists( 'espresso_version' ) ) {
 				wp_die( __( 'The EE_Error core class could not be loaded.', 'event_espresso' ) );
 			}
 		}
+
 
 		/**
 		 *    espresso_load_required
@@ -269,25 +273,24 @@ if ( function_exists( 'espresso_version' ) ) {
 		new EE_Bootstrap();
 
 	}
-
 }
 
-
-
 if ( ! function_exists( 'espresso_deactivate_plugin' ) ) {
+
 	/**
-	*    deactivate_plugin
-	* usage:  espresso_deactivate_plugin( plugin_basename( __FILE__ ));
-	*
-	* @access public
-	* @param string $plugin_basename - the results of plugin_basename( __FILE__ ) for the plugin's main file
-	* @return    void
-	*/
+	 *    deactivate_plugin
+	 * usage:  espresso_deactivate_plugin( plugin_basename( __FILE__ ));
+	 *
+	 * @access public
+	 * @param string $plugin_basename - the results of plugin_basename( __FILE__ ) for the plugin's main file
+	 * @return    void
+	 */
 	function espresso_deactivate_plugin( $plugin_basename = '' ) {
 		if ( ! function_exists( 'deactivate_plugins' ) ) {
 			require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 		}
-		unset( $_GET[ 'activate' ], $_REQUEST[ 'activate' ] );
+		unset( $_GET['activate'], $_REQUEST['activate'] );
 		deactivate_plugins( $plugin_basename );
 	}
+
 }
