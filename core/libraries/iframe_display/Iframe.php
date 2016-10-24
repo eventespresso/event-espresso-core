@@ -221,6 +221,7 @@ class Iframe
 
     /**
      * @return void
+     * @throws \DomainException
      */
     public function display()
     {
