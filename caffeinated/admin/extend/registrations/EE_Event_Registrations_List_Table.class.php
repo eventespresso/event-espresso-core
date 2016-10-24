@@ -189,8 +189,9 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 			if ( count( $this->_dtts_for_event ) > 1 ) {
 				$dtts[0] = __( 'To toggle check-in status, select a datetime.', 'event_espresso' );
 				foreach ( $this->_dtts_for_event as $dtt ) {
-					$name = ! empty( $dtt->name() ) ? ' (' . $dtt->name() . ')' : '';
-					$datetime_string = $dtt->start_date_and_time() . ' - ' . $dtt->end_date_and_time() . $name;
+                    $datetime_string = $dtt->name();
+                    $datetime_string = ! empty($datetime_string ) ? ' (' . $datetime_string . ')' : '';
+					$datetime_string = $dtt->start_date_and_time() . ' - ' . $dtt->end_date_and_time() . $datetime_string;
 					$dtts[ $dtt->ID() ] = $datetime_string;
 				}
 				$input = new EE_Select_Input(
