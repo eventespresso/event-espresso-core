@@ -414,9 +414,7 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
 				}
 			}
 			// decode the data ?
-            if (EE_Registry::instance()->CFG->admin->encode_session_data()) {
-                $session_data = $this->valid_base_64($session_data) ? base64_decode($session_data) : $session_data;
-            }
+            $session_data = $this->valid_base_64($session_data) ? base64_decode($session_data) : $session_data;
 			// un-encrypt the data ?
 			$session_data = $this->_use_encryption ? $this->encryption->decrypt( $session_data ) : $session_data;
 			if ( ! is_array( $session_data ) ) {
