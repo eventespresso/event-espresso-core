@@ -350,8 +350,11 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 		$name_link .= '</span>';
 		$actions = array();
 		$DTT_ID = $this->_cur_dtt_id;
-		$DTT_ID = empty( $DTT_ID ) && ! empty( $this->_req_data['event_id'] ) && $item instanceof EE_Registration
-			? $item->get_latest_related_datetime()->ID()
+		$latest_related_datetime = empty( $DTT_ID ) && ! empty( $this->_req_data['event_id'] ) && $item instanceof EE_Registration
+			? $item->get_latest_related_datetime()
+			: null;
+		$DTT_ID = $latest_related_datetime instanceof EE_Datetime
+			? $latest_related_datetime->ID()
 			: $DTT_ID;
 		if ( ! empty( $DTT_ID )
 		     && EE_Registry::instance()->CAP->current_user_can(
