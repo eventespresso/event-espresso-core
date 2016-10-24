@@ -220,7 +220,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 *
 	 * @access    private
 	 * @throws EE_Error
-	 * @return    array
+	 * @return void
 	 */
 	public static function load_reg_steps() {
 		static $reg_steps_loaded = FALSE;
@@ -322,10 +322,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 	/**
-	 *    process_registration_from_admin
-	 *
-	 * @access    public
-	 * @return    int
+     * process_registration_from_admin
+     *
+     * @access public
+	 * @return \EE_Transaction
 	 * @throws \EE_Error
 	 */
 	public static function process_registration_from_admin() {
@@ -345,7 +345,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				}
 			}
 		}
-		return FALSE;
+		return null;
 	}
 
 
@@ -819,14 +819,15 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 
-	/**
-	 * _get_registrations
-	 *
-	 * @access private
-	 * @param EE_Transaction $transaction
-	 * @return EE_Cart
-	 * @throws \EE_Error
-	 */
+    /**
+     * _get_registrations
+     *
+     * @access private
+     * @param EE_Transaction $transaction
+     * @return void
+     * @throws \EventEspresso\core\exceptions\InvalidEntityException
+     * @throws \EE_Error
+     */
 	private function _get_registrations( EE_Transaction $transaction ) {
 		// first step: grab the registrants  { : o
 		$registrations = $transaction->registrations( $this->checkout->reg_cache_where_params, true );
@@ -865,14 +866,15 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 
-	/**
-	 *    adds related EE_Registration objects for each ticket in the cart to the current EE_Transaction object
-	 *
-	 * @access private
-	 * @param EE_Transaction $transaction
-	 * @return    array
-	 * @throws \EE_Error
-	 */
+    /**
+     *    adds related EE_Registration objects for each ticket in the cart to the current EE_Transaction object
+     *
+     * @access private
+     * @param EE_Transaction $transaction
+     * @return    array
+     * @throws \EventEspresso\core\exceptions\InvalidEntityException
+     * @throws \EE_Error
+     */
 	private function _initialize_registrations( EE_Transaction $transaction ) {
 		$att_nmbr = 0;
 		$registrations = array();
@@ -1309,7 +1311,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				)
 			);
 			// load template and add to output sent that gets filtered into the_content()
-			EE_Registry::instance()->REQ->add_output( $this->checkout->registration_form->get_html_and_js() );
+			EE_Registry::instance()->REQ->add_output( $this->checkout->registration_form->get_html() );
 		}
 	}
 
@@ -1321,7 +1323,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * @access    public
 	 * @param $next_step
 	 * @internal  param string $label
-	 * @return        string
+	 * @return void
 	 */
 	public function add_extra_finalize_registration_inputs( $next_step ) {
 		if ( $next_step === 'finalize_registration' ) {
@@ -1384,7 +1386,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 *        _setup_redirect
 	 *
 	 * @access 	private
-	 * @return 	array
+	 * @return void
 	 */
 	private function _setup_redirect() {
 		if ( $this->checkout->continue_reg && $this->checkout->next_step instanceof EE_SPCO_Reg_Step ) {
@@ -1392,7 +1394,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			if ( empty( $this->checkout->redirect_url )) {
 				$this->checkout->redirect_url = $this->checkout->next_step->reg_step_url();
 			}
-			$this->checkout->redirect_url = apply_filters( 'FHEE__EED_Single_Page_Checkout___setup_redirect__checkout_redirect_url', $this->checkout->redirect_url, $this->checkout );
+			$this->checkout->redirect_url = apply_filters(
+			    'FHEE__EED_Single_Page_Checkout___setup_redirect__checkout_redirect_url',
+                $this->checkout->redirect_url,
+                $this->checkout
+            );
 		}
 	}
 
@@ -1494,7 +1500,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 *   set_checkout_anchor
 	 *
 	 * @access public
-	 * @return string
+	 * @return void
 	 */
 	public function set_checkout_anchor() {
 		echo '<a id="checkout" style="float: left; margin-left: -999em;"></a>';
