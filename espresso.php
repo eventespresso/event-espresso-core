@@ -89,6 +89,7 @@ if ( function_exists( 'espresso_version' ) ) {
 				</p>
 			</div>
 			<?php
+			espresso_deactivate_plugin( plugin_basename( __FILE__ ) );
 		}
 		add_action( 'admin_notices', 'espresso_minimum_php_version_error', 1 );
 
