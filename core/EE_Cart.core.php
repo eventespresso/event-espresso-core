@@ -33,14 +33,14 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	 * 	@access 	private
 	 *	@var EE_Cart $_instance
 	 */
-	private static $_instance = NULL;
+	private static $_instance;
 
 	/**
 	 * 	instance of the EE_Session object
 	 * 	@access    protected
 	 *	@var EE_Session $_session
 	 */
-	protected $_session = NULL;
+	protected $_session;
 
 	/**
 	 * The total Line item which comprises all the children line-item subtotals,
@@ -56,7 +56,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	 * --tax2
 	 * @var EE_Line_Item
 	 */
-	private $_grand_total = NULL;
+	private $_grand_total;
 
 
 
@@ -96,7 +96,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	  * @access private
 	  * @param EE_Line_Item $grand_total
 	  * @param EE_Session $session
-	  * @return \EE_Cart
 	  */
 	 private function __construct( EE_Line_Item $grand_total = null, EE_Session $session = null ) {
 		 do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
@@ -357,6 +356,15 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
       */
      public function __sleep() {
          return array( '_grand_total' );
+     }
+
+
+
+     /**
+      * @return array
+      */
+     public function __wakeup() {
+         $this->set_session();
      }
 
 
