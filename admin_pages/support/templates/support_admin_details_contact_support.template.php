@@ -21,7 +21,7 @@
 				</ol>
 				
 	<p><?php esc_html_e( 'If none of the suggestions above help you find a solution, then feel free to reach out to the support team at Event Espresso.', 'event_espresso' ); ?></p>
-	<p><?php printf( esc_html__( 'Login to your account on EventEspresso.com and %1$screate a support post in our member support forums%2$s. Use a %3$sclear and descriptive title%4$s in your support post, %3$sdescribe the issue to the best of your knowledge%4$s, and %3$snever post any sensitive information such as login details%4$s. Be sure to also include %5$simportant information%2$s about your WordPress site.', 'event_espresso' ), '<a href="https://eventespresso.com/support/forums/" target="_blank">','</a>','<strong>','</strong>','<a href="#espresso_important_information_settings">' ); ?></p>
+	<p><?php printf( esc_html__( 'Login to your account on EventEspresso.com and %1$screate a support post in our member support forums%2$s. Use a %3$sclear and descriptive title%4$s in your support post, %3$sdescribe the issue to the best of your knowledge%4$s, and %3$snever post any sensitive information such as login details%4$s. Be sure to also include %5$simportant information in the section below%2$s about your WordPress site.', 'event_espresso' ), '<a href="https://eventespresso.com/support/forums/" target="_blank">','</a>','<strong>','</strong>','<a href="#espresso_important_information_settings">' ); ?></p>
 
 	<h4><?php esc_html_e( 'Have an emergency?', 'event_espresso' ); ?></h4>
 
