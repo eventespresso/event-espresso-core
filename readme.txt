@@ -61,7 +61,7 @@ Be the first to know when we ship new features ... [signup here](https://eventes
 = Community Chat =
 Join a real-time community chat group for professionals that are leading the way in events from event management, event technology and event marketing to work-life balance.
 
-[Join the Discussion →](https://eventsmart.com/contact/community-chat/?utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=community+chat)
+[Join the Discussion →](https://eventsmart.com/contact/community-chat/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_plugin_description_tab&utm_content=community+chat)
 
 = Testimonials & Reviews =
 > Your plugin saved our client nearly $9000 in development costs because it handled the majority of the functionality we were looking for at a much lower cost. Event Espresso's staff have been very responsive to our needs when we have them (which has been rare, because the plugin is so well coded). Great job on a great plugin!
@@ -154,16 +154,16 @@ Check out the advanced [installation](https://eventespresso.com/wiki/installing-
 = Documentation =
 Resources on Event Espresso 4 for a beginner to advanced users.
 
-[View Event Espresso 4 Documentation →](https://eventespresso.com/support/documentation/versioned-docs?doc_ver=ee4&utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=view+ee4+documentation)
+[View Event Espresso 4 Documentation →](https://eventespresso.com/support/documentation/versioned-docs?doc_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_plugin_description_tab&utm_content=view+ee4+documentation)
 
 = Mobile Event Apps =
-The Event Espresso 4 check-in & ticket scanning event app is available for [Android](http://evts.io/EE4_Android_App?utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=mobile+event+apps+android) and [Apple](http://evts.io/EE4_Apple_App?utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage
+The Event Espresso 4 check-in & ticket scanning event app is available for [Android](http://evts.io/EE4_Android_App?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_plugin_description_tab&utm_content=mobile+event+apps+android) and [Apple](http://evts.io/EE4_Apple_App?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_plugin_description_tab
 
 = Developers =
-**The full version can be [found on Github](http://evts.io/EE4_WP_Readme)** and provides everything that you need to [sell tickets](https://eventespresso.com/features/multiple-ticket-pricing-options/?utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=sell+tickets), [collect payments](https://eventespresso.com/features/payment-options/?utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=collect+payments), and [manage events](https://eventespresso.com/features/event-management/?utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=manage+events) all from within your WordPress dashboard.
+**The full version can be [found on Github](http://evts.io/EE4_WP_Readme)** and provides everything that you need to [sell tickets](https://eventespresso.com/features/multiple-ticket-pricing-options/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_plugin_description_tab&utm_content=sell+tickets), [collect payments](https://eventespresso.com/features/payment-options/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_plugin_description_tab&utm_content=collect+payments), and [manage events](https://eventespresso.com/features/event-management/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_plugin_description_tab&utm_content=manage+events) all from within your WordPress dashboard.
 
 
-Buy a **[Premium Support License](https://eventespresso.com/pricing/?ee_ver=ee4&utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=premium+support+license)** to get access to more features (including [one-click upgrades](https://eventespresso.com/features/one-click-upgrades/?utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=one+click+upgrades), [growing list of add-ons](https://eventespresso.com/add-ons/?ee_ver=ee4&utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=growing+list+of+addons)).
+Buy a **[Premium Support License](https://eventespresso.com/pricing/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_plugin_description_tab&utm_content=premium+support+license)** to get access to more features (including [one-click upgrades](https://eventespresso.com/features/one-click-upgrades/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_plugin_description_tab&utm_content=one+click+upgrades), [growing list of add-ons](https://eventespresso.com/add-ons/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_plugin_description_tab&utm_content=growing+list+of+addons)).
 
 == Frequently Asked Questions ==
 
