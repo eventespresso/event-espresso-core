@@ -522,19 +522,21 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
 	 * Gets the billing info array where keys match espresso_reg_page_billing_inputs(),
 	 * and keys are their cleaned values. @see EE_Attendee::save_and_clean_billing_info_for_payment_method() which was used to save the billing info
 	 * @param EE_Payment_Method $payment_method the _gateway_name property on the gateway class
-	 * @return EE_Form_Section_Proper
+	 * @return EE_Form_Section_Proper|null
 	 */
 	public function billing_info_for_payment_method($payment_method){
 		$pm_type = $payment_method->type_obj();
 		if( ! $pm_type instanceof EE_PMT_Base ){
-			return NULL;
+			return null;
 		}
 		$billing_info =  $this->get_post_meta( $this->get_billing_info_postmeta_name( $payment_method ), true );
 		if ( ! $billing_info){
-			return NULL;
+			return null;
 		}
 		$billing_form = $pm_type->billing_form();
-		$billing_form->receive_form_submission( array( $billing_form->name() => $billing_info ), FALSE );
+        if( $billing_form instanceof EE_Form_Section_Proper ) {
+            $billing_form->receive_form_submission(array($billing_form->name() => $billing_info), false);
+        }
 		return $billing_form;
 	}
 
