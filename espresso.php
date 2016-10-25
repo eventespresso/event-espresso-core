@@ -48,10 +48,12 @@ if ( function_exists( 'espresso_version' ) ) {
 	function espresso_duplicate_plugin_error() {
 		?>
 		<div class="error">
-			<p><?php _e(
+			<p>
+				<?php echo esc_html__(
 				'Can not run multiple versions of Event Espresso! One version has been automatically deactivated. Please verify that you have the correct version you want still active.',
 				'event_espresso'
-				); ?></p>
+				); ?>
+			</p>
 		</div>
 		<?php
 		espresso_deactivate_plugin( plugin_basename( __FILE__ ) );
@@ -181,12 +183,12 @@ if ( function_exists( 'espresso_version' ) ) {
 		}
 		//ajax constants
 		define(
-		'EE_FRONT_AJAX',
-		isset( $_REQUEST['ee_front_ajax'] ) || isset( $_REQUEST['data']['ee_front_ajax'] ) ? true : false
+			'EE_FRONT_AJAX',
+			isset( $_REQUEST['ee_front_ajax'] ) || isset( $_REQUEST['data']['ee_front_ajax'] ) ? true : false
 		);
 		define(
-		'EE_ADMIN_AJAX',
-		isset( $_REQUEST['ee_admin_ajax'] ) || isset( $_REQUEST['data']['ee_admin_ajax'] ) ? true : false
+			'EE_ADMIN_AJAX',
+			isset( $_REQUEST['ee_admin_ajax'] ) || isset( $_REQUEST['data']['ee_admin_ajax'] ) ? true : false
 		);
 		//just a handy constant occasionally needed for finding values representing infinity in the DB
 		//you're better to use this than its straight value (currently -1) in case you ever
@@ -206,18 +208,6 @@ if ( function_exists( 'espresso_version' ) ) {
 		register_activation_hook( EVENT_ESPRESSO_MAIN_FILE, 'espresso_plugin_activation' );
 
 
-		/**
-		 *    espresso_plugin_deactivation
-		 */
-		function espresso_plugin_deactivation() {
-			//	if ( EE_System::instance()->minimum_php_version_required() ) {
-			//		espresso_load_required( EE_HELPERS . 'EEH_Activation.helper.php' );
-			//		EEH_Activation::plugin_deactivation();
-			//	}
-			//
-		}
-		register_deactivation_hook( EVENT_ESPRESSO_MAIN_FILE, 'espresso_plugin_deactivation' );
-
 
 		/**
 		 *    espresso_load_error_handling
@@ -233,9 +223,10 @@ if ( function_exists( 'espresso_version' ) ) {
 			if ( is_readable( EE_CORE . 'EE_Error.core.php' ) ) {
 				require_once( EE_CORE . 'EE_Error.core.php' );
 			} else {
-				wp_die( __( 'The EE_Error core class could not be loaded.', 'event_espresso' ) );
+				wp_die( esc_html__( 'The EE_Error core class could not be loaded.', 'event_espresso' ) );
 			}
 		}
+
 
 
 		/**
@@ -256,13 +247,13 @@ if ( function_exists( 'espresso_version' ) ) {
 				require_once( $full_path_to_file );
 			} else {
 				throw new EE_Error (
-				sprintf(
-				__(
-				'The %s class file could not be located or is not readable due to file permissions.',
-				'event_espresso'
-				),
-				$classname
-				)
+					sprintf(
+						esc_html__(
+							'The %s class file could not be located or is not readable due to file permissions.',
+							'event_espresso'
+						),
+						$classname
+						)
 				);
 			}
 		}
