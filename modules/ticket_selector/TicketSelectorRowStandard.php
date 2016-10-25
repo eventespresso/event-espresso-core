@@ -1,7 +1,7 @@
 <?php
 namespace EventEspresso\modules\ticket_selector;
 
-defined('ABSPATH') || exit;
+defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
 
