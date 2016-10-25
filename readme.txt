@@ -56,7 +56,7 @@ Just in case you want some advanced features, you can purchase a **[Premium Supp
 * [Tax Administration](https://eventespresso.com/features/tax-administration/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_description_tab&utm_content=Tax+Administration)
 
 = Newsletter =
-Be the first to know when we ship new features ... [signup here](https://eventespresso.com/newsletter/).
+Be the first to know when we ship new features ... [signup here](https://eventespresso.com/newsletter/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_plugin_description_tab&utm_content=newsletter+signup).
 
 = Community Chat =
 Join a real-time community chat group for professionals that are leading the way in events from event management, event technology and event marketing to work-life balance.
