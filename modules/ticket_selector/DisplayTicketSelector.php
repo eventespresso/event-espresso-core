@@ -746,7 +746,7 @@ class DisplayTicketSelector
                 $html .= $this->ticketSelectorEndDiv();
             }
             if ( ! $this->iframe && ! is_archive() ) {
-                $html .= \EEH_Template::powered_by_event_espresso();
+                $html .= \EEH_Template::powered_by_event_espresso('', '', array('utm_content' => 'ticket_selector'));
             }
         }
         return $html;

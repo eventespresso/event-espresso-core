@@ -221,10 +221,12 @@ class Iframe
 
     /**
      * @return void
+     * @throws \DomainException
      */
     public function display()
     {
         $this->content .= \EEH_HTML::br() . \EEH_Template::powered_by_event_espresso();
+        \EE_System::do_not_cache();
         echo $this->getTemplate();
         exit;
     }
@@ -233,11 +235,21 @@ class Iframe
 
     /**
      * @return string
+     * @throws \DomainException
      */
     public function getTemplate()
     {
+        $template = __DIR__ . DIRECTORY_SEPARATOR . 'iframe_wrapper.template.php';
+        if ( ! is_readable($template)) {
+            throw new \DomainException(
+                esc_html__(
+                    'Invalid, unreadable, or missing file.',
+                    'event_espresso'
+                )
+            );
+        }
         return \EEH_Template::display_template(
-            __DIR__ . '\iframe_wrapper.template.php',
+            $template,
             array(
                 'title'             => apply_filters(
                     'FHEE___EventEspresso_core_libraries_iframe_display_Iframe__getTemplate__title',
