@@ -35,6 +35,10 @@ Class  EE_New_Addon extends EE_Addon {
 				'plugin_slug' 			=> 'espresso_new_addon',
 				'min_core_version' => EE_NEW_ADDON_CORE_VERSION_REQUIRED,
 				'main_file_path' 		=> EE_NEW_ADDON_PLUGIN_FILE,
+				'namespace' => array(
+					'FQNS' => 'EventEspresso\NewAddon',
+					'DIR'  => __DIR__
+				),
 				'admin_path' 			=> EE_NEW_ADDON_ADMIN,
 				'admin_callback'		=> '',
 				'config_class' 			=> 'EE_New_Addon_Config',
