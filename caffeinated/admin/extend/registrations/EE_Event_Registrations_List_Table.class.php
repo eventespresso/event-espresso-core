@@ -189,8 +189,9 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 			if ( count( $this->_dtts_for_event ) > 1 ) {
 				$dtts[0] = __( 'To toggle check-in status, select a datetime.', 'event_espresso' );
 				foreach ( $this->_dtts_for_event as $dtt ) {
-					$name = ! empty( $dtt->name() ) ? ' (' . $dtt->name() . ')' : '';
-					$datetime_string = $dtt->start_date_and_time() . ' - ' . $dtt->end_date_and_time() . $name;
+                    $datetime_string = $dtt->name();
+                    $datetime_string = ! empty($datetime_string ) ? ' (' . $datetime_string . ')' : '';
+					$datetime_string = $dtt->start_date_and_time() . ' - ' . $dtt->end_date_and_time() . $datetime_string;
 					$dtts[ $dtt->ID() ] = $datetime_string;
 				}
 				$input = new EE_Select_Input(
@@ -350,8 +351,11 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 		$name_link .= '</span>';
 		$actions = array();
 		$DTT_ID = $this->_cur_dtt_id;
-		$DTT_ID = empty( $DTT_ID ) && ! empty( $this->_req_data['event_id'] ) && $item instanceof EE_Registration
-			? $item->get_latest_related_datetime()->ID()
+		$latest_related_datetime = empty( $DTT_ID ) && ! empty( $this->_req_data['event_id'] ) && $item instanceof EE_Registration
+			? $item->get_latest_related_datetime()
+			: null;
+		$DTT_ID = $latest_related_datetime instanceof EE_Datetime
+			? $latest_related_datetime->ID()
 			: $DTT_ID;
 		if ( ! empty( $DTT_ID )
 		     && EE_Registry::instance()->CAP->current_user_can(
