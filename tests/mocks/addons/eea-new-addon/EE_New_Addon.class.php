@@ -45,7 +45,6 @@ Class  EE_New_Addon extends EE_Addon {
 				'config_class'          => 'EE_New_Addon_Config',
 				'config_name'           => 'EE_New_Addon',
 				'autoloader_paths'      => array(
-					'EE_New_Addon'              => EE_NEW_ADDON_PATH . 'EE_New_Addon.class.php',
 					'EE_New_Addon_Config'       => EE_NEW_ADDON_PATH . 'EE_New_Addon_Config.php',
 					'New_Addon_Admin_Page'      => EE_NEW_ADDON_ADMIN . 'New_Addon_Admin_Page.core.php',
 					'New_Addon_Admin_Page_Init' => EE_NEW_ADDON_ADMIN . 'New_Addon_Admin_Page_Init.core.php',
