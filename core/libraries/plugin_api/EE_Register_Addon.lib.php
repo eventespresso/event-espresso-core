@@ -237,7 +237,9 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			'default_terms' 					=> isset( $setup_args['default_terms'] ) ? (array) $setup_args['default_terms'] : array(),
 			// if not empty, inserts a new table row after this plugin's row on the WP Plugins page that can be used for adding upgrading/marketing info
 			'plugins_page_row' 			=> isset( $setup_args['plugins_page_row'] ) ? $setup_args['plugins_page_row'] : '',
-            'namespace'                 => isset( $setup_args['namespace'], $setup_args['namespace']['FQNS'], $setup_args['namespace']['DIR'] ) ? (array) $setup_args['namespace']: array()
+            'namespace'                 => isset( $setup_args['namespace'], $setup_args['namespace']['FQNS'], $setup_args['namespace']['DIR'] )
+	            ? (array) $setup_args['namespace']
+	            : array()
 		);
 
 		// if plugin_action_slug is NOT set, but an admin page path IS set, then let's just use the plugin_slug since that will be used for linking to the admin page
@@ -297,7 +299,13 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			return;
 		}
 		// register namespaces right away before any other files or classes get loaded, but AFTER the version checks
-		if ( isset( $addon_settings['namespace'] ) ) {
+		if (
+			isset(
+				$addon_settings['namespace'],
+				$addon_settings['namespace']['FQNS'],
+				$addon_settings['namespace']['DIR']
+			)
+		) {
 			EE_Psr4AutoloaderInit::psr4_loader()->addNamespace(
                 $addon_settings['namespace']['FQNS'],
                 $addon_settings['namespace']['DIR']
