@@ -105,8 +105,9 @@ class EE_Register_Addon implements EEI_Plugin_API {
 	 * If its called after 'activate_plugin', it registers the addon still, but its components are not registered
 	 * (they shouldn't be needed anyways, because it's just an activation request and they won't have a chance to do anything anyways). Instead, it just sets the newly-activated addon's activation indicator wp option and returns
 	 * (so that we can detect that the addon has activated on the subsequent request)
-	 *
-	 * @since    4.3.0
+
+*
+*@since    4.3.0
 	 * @param string $addon_name 		the EE_Addon's name. Required.
 	 * @param  array $setup_args { 			An array of arguments provided for registering the message type.
 	 * @type  string $class_name the addon's main file name. If left blank, generated from the addon name, changes something like "calendar" to "EE_Calendar"
@@ -150,9 +151,13 @@ class EE_Register_Addon implements EEI_Plugin_API {
 	 *				(eg, 'public_html/wp-content/plugins/my_plugin/Payomatic/' which contains the files
 	 *				EE_PMT_Payomatic.pm.php)
 	 *			@type array $default_terms
+     *          @type array $namespace {
+     *               An array with two items for registering the addon's namespace. (If, for some reason, you require
+     *               additional namespaces, use EventEspresso\core\Psr4Autoloader::addNamespace() directly)
+     *              @type string         $FQNS the namespace prefix
+     *              @type string $DIR a base directory for class files in the namespace. @see EventEspresso\core\Psr4Autoloader::addNamespace()         }
 	 * 	}
-	 *
-	 * @throws EE_Error
+ * @throws EE_Error
 	 * @return void
 	 */
 	public static function register( $addon_name = '', $setup_args = array()  ) {
