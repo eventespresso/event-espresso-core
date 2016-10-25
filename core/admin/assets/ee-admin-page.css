@@ -465,6 +465,11 @@ label.error { display : block; color : #FE2A00 !important; }
 	margin: inherit;
 }
 
+.ee-list-table-legend-container h4.status-legend-title {
+	margin-top: 5px;
+	font-size: 1.4em;
+}
+
 .qtip-content .ee-list-table-legend {
 	padding : 0 0 .5em;
 	margin  : 0;
