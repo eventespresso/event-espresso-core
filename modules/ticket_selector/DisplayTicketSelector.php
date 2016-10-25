@@ -360,7 +360,7 @@ class DisplayTicketSelector
         $template_args['ticket_count'] = count($tickets);
         // if there is only ONE ticket with a max qty of ONE
         if (count($tickets) === 1 && $this->getMaxAttendees() === 1 ) {
-            $ticket_selector = $this->dudeWheresMyTicketSelector($tickets, $template_args);
+            $ticket_selector = $this->simpleTicketSelector( $tickets, $template_args);
         }
         return ! empty($ticket_selector)
             ? $ticket_selector
@@ -371,14 +371,14 @@ class DisplayTicketSelector
 
 
     /**
-     * dudeWheresMyTicketSelector
+     * simpleTicketSelector
      *
      * @param \EE_Ticket[] $tickets
      * @param array  $template_args
      * @return string
      * @throws \EE_Error
      */
-    protected function dudeWheresMyTicketSelector($tickets, array $template_args)
+    protected function simpleTicketSelector( $tickets, array $template_args)
     {
         /** @var \EE_Ticket $ticket */
         $ticket = reset($tickets);
@@ -390,7 +390,7 @@ class DisplayTicketSelector
                 $this->event->ID()
             )
         ) {
-            $ticket_selector_row = new TicketSelectorRowDwmts(
+            $ticket_selector_row = new TicketSelectorRowSimple(
                 $ticket,
                 $this->getMaxAttendees(),
                 $template_args['date_format']
@@ -399,7 +399,7 @@ class DisplayTicketSelector
             $template_args['ticket'] = $ticket;
             $template_args['ticket_status_display'] = $ticket_selector_row->getTicketStatusDisplay();
             $template_args['template_path'] = TICKET_SELECTOR_TEMPLATES_PATH
-                                              . 'dude_wheres_my_ticket_selector.template.php';
+                                              . 'simple_ticket_selector.template.php';
             return $this->loadTicketSelectorTemplate($template_args);
         }
         return '';
