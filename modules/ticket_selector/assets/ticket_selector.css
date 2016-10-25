@@ -297,8 +297,19 @@
 	box-radius: 0 !important;
 }
 
-.ticket-selector-submit-btn {
+.ticket-selector-submit-btn,
+.ticket-selector-submit-btn-wrap {
 	float: right;
+}
+.ticket-selector-submit-btn-wrap {
+	display:inline-block;
+}
+.ticket-selector-disabled-submit-btn-msg {
+	display: none;
+	margin: .25em 1.5em;
+	font-size: .75em;
+	line-height: 1.4em;
+	letter-spacing: .25px;
 }
 
 .ee-event-expired-notice {
