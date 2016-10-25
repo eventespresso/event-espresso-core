@@ -2860,14 +2860,14 @@ class EE_Ticket_Selector_Config extends EE_Config_Base {
 	 *
 	 * @var string $show_datetime_selector
 	 */
-	public $show_datetime_selector = 'maybe_datetime_selector';
+	private $show_datetime_selector = 'maybe_datetime_selector';
 
 	/**
 	 * the number of datetimes an event has to have before conditionally displaying a datetime selector
 	 *
 	 * @var int $datetime_selector_threshold
 	 */
-	public $datetime_selector_threshold = 3;
+	private $datetime_selector_threshold = 3;
 
 
 
