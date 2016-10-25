@@ -195,6 +195,7 @@ class DisplayTicketSelector
 
     /**
      * displayTicketSelector
+     * examines the event properties and determines whether a Ticket Selector should be displayed
      *
      * @param \WP_Post|int $event
      * @param string       $_event_active_status
@@ -226,6 +227,7 @@ class DisplayTicketSelector
 
     /**
      * noTicketAvailableMessage
+     * notice displayed if event is expired
      *
      * @return string
      * @throws \EE_Error
@@ -242,6 +244,7 @@ class DisplayTicketSelector
 
     /**
      * noTicketAvailableMessage
+     * notice displayed if event has no more tickets available
      *
      * @return string
      * @throws \EE_Error
@@ -271,6 +274,7 @@ class DisplayTicketSelector
 
     /**
      * ticketSalesClosed
+     * notice displayed if event ticket sales are turned off
      *
      * @return string
      * @throws \EE_Error
@@ -330,6 +334,8 @@ class DisplayTicketSelector
 
     /**
      * loadTicketSelectorTemplate
+     * begins to assemble template arguments
+     * and decides whether to load a "simple" ticket selector, or the standard
      *
      * @param \EE_Ticket[] $tickets
      * @param array $template_args
@@ -372,6 +378,9 @@ class DisplayTicketSelector
 
     /**
      * simpleTicketSelector
+     * there's one ticket, and max attendees is set to one,
+     * so if the event is free, then this is a "simple" ticket selector
+     * a.k.a. "Dude Where's my Ticket Selector?"
      *
      * @param \EE_Ticket[] $tickets
      * @param array  $template_args
@@ -409,6 +418,8 @@ class DisplayTicketSelector
 
     /**
      * standardTicketSelector
+     * regular ticket selector that displays one row for each ticket
+     * with a dropdown for selecting the desired ticket quantity
      *
      * @param \EE_Ticket[] $tickets
      * @param array        $template_args
