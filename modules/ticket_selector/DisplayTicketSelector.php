@@ -669,7 +669,7 @@ class DisplayTicketSelector
         $html .= "\n" . '<select name="datetime_selector-' . $this->event->ID() . '"';
         $html .= ' id="datetime-selector-' . $this->event->ID() . '"';
         $html .= ' class="ticket-selector-datetime-selector-slct"';
-        $html .= ' data-tkt_slctr_tbl="tkt-slctr-tbl-' . $this->event->ID() . '">';
+        $html .= ' data-tkt_slctr_evt="' . $this->event->ID() . '">';
         $html .= "\n" . '<option value="0">' . esc_html__('- please select a datetime -', 'event_espresso')  . '</option>';
         // offer ticket quantities from the min to the max
         foreach ($datetimes as $datetime) {
@@ -705,10 +705,18 @@ class DisplayTicketSelector
                     $this->event
                 );
                 $external_url = $this->event->external_url();
-                $html .= '<input id="ticket-selector-submit-' . $this->event->ID() . '-btn"';
+                $html .= \EEH_HTML::div(
+                	'', 'ticket-selector-submit-' . $this->event->ID() . '-btn-wrap', 'ticket-selector-submit-btn-wrap'
+                );
+	            $html .= \EEH_HTML::span(
+		            esc_html__( 'please select a datetime', 'event_espresso' ),
+		            '', 'ticket-selector-disabled-submit-btn-msg important-notice'
+	            );
+	            $html .= '<input id="ticket-selector-submit-' . $this->event->ID() . '-btn"';
                 $html .= ' class="ticket-selector-submit-btn ';
                 $html .= empty( $external_url ) ? 'ticket-selector-submit-ajax"' : '"';
                 $html .= ' type="submit" value="' . $btn_text . '" />';
+                $html .= \EEH_HTML::divx();
                 $html .= apply_filters(
                     'FHEE__EE_Ticket_Selector__after_ticket_selector_submit',
                     '',
