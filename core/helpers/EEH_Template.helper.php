@@ -600,7 +600,7 @@ class EEH_Template {
 	 */
 	public static function status_legend( $status_array, $active_status = '' ) {
 		if ( !is_array( $status_array ) )
-			throw new EE_Error( __('The EEH_Template::status_legend helper required the incoming status_array argument to be an array!', 'event_espresso') );
+			throw new EE_Error( esc_html__('The EEH_Template::status_legend helper required the incoming status_array argument to be an array!', 'event_espresso') );
 
 		$setup_array = array();
 		foreach ( $status_array as $item => $status ) {
@@ -612,7 +612,7 @@ class EEH_Template {
 		}
 
 		$content = '<div class="ee-list-table-legend-container">' . "\n";
-		$content .= '<h4 class="status-legend-title">' . __('Status Legend', 'event_espresso') . '</h4>' . "\n";
+		$content .= '<h4 class="status-legend-title">' . esc_html__('Status Legend', 'event_espresso') . '</h4>' . "\n";
 		$content .= '<dl class="ee-list-table-legend">' . "\n\t";
 		foreach ( $setup_array as $item => $details ) {
 			$active_class = $active_status == $details['status'] ? ' class="ee-is-active-status"' : '';
