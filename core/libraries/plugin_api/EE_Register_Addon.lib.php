@@ -179,6 +179,13 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			$class_name = $setup_args['class_name'];
 		}
 		$class_name = strpos( $class_name, 'EE_' ) === 0 ? $class_name : 'EE_' . $class_name;
+		//register namespaces right away before any other files or classes get loaded
+		if ( isset( $setup_args['namespace'], $setup_args['namespace']['FQNS'], $setup_args['namespace']['DIR'] )) {
+			EE_Psr4AutoloaderInit::psr4_loader()->addNamespace(
+				$setup_args['namespace']['FQNS'],
+				$setup_args['namespace']['DIR']
+			);
+		}
 		//setup $_settings array from incoming values.
 		$addon_settings = array(
 			// generated from the addon name, changes something like "calendar" to "EE_Calendar"
