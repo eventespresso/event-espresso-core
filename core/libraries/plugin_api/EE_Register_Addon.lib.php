@@ -113,112 +113,106 @@ class EE_Register_Addon implements EEI_Plugin_API {
 	 * (so that we can detect that the addon has activated on the subsequent request)
 	 *
 	 * @since    4.3.0
-	 * @param string                  $addon_name                     the EE_Addon's name. Required.
-	 * @param  array                  $setup_args                     An array of arguments provided for registering
+	 * @param string $addon_name                                      the EE_Addon's name. Required.
+	 * @param  array $setup_args {                                    An array of arguments provided for registering
 	 *                                                                the message type.
-	 * @type  string                  $class_name                     the addon's main file name.
+	 *      @type  string             $class_name                     the addon's main file name.
 	 *                                                                If left blank, generated from the addon name,
 	 *                                                                changes something like "calendar" to
 	 *                                                                "EE_Calendar"
-	 * @type string                   $min_core_version               the minimum version of EE Core that the addon
-	 *       will
+	 *      @type string              $min_core_version               the minimum version of EE Core that the addon will
 	 *                                                                work with. eg "4.8.1.rc.084"
-	 * @type string                   $version                        the "software" version for the addon. eg
-	 *       "1.0.0.p"
+	 *      @type string              $version                        the "software" version for the addon. eg "1.0.0.p"
 	 *                                                                for a first stable release, or "1.0.0.rc.043"
 	 *                                                                for a version in progress
-	 * @type string                   $main_file_path                 the full server path to the main file loaded
+	 *      @type string              $main_file_path                 the full server path to the main file loaded
 	 *                                                                directly by WP
-	 * @type string                   $admin_path                     full server path to the folder where the addon\'s
+	 *      @type string              $admin_path                     full server path to the folder where the addon\'s
 	 *                                                                admin files reside
-	 * @type string                   $admin_callback                 a method to be called when the EE Admin is first
+	 *      @type string              $admin_callback                 a method to be called when the EE Admin is first
 	 *                                                                invoked, can be used for hooking into any admin
 	 *                                                                page
-	 * @type string                   $config_section                 the section name for this addon's configuration
+	 *      @type string              $config_section                 the section name for this addon's configuration
 	 *                                                                settings section (defaults to "addons")
-	 * @type string                   $config_class                   the class name for this addon's configuration
+	 *      @type string              $config_class                   the class name for this addon's configuration
 	 *                                                                settings object
-	 * @type string                   $config_name                    the class name for this addon's configuration
+	 *      @type string              $config_name                    the class name for this addon's configuration
 	 *                                                                settings object
-	 * @type string                   $autoloader_paths               an array of class names and the full server paths
-	 *       to those files. Required.
-	 * @type string                   $autoloader_folders             an array of  "full server paths" for any folders
+	 *      @type string              $autoloader_paths               an array of class names and the full server paths
+	 *                                                                to those files. Required.
+	 *      @type string              $autoloader_folders             an array of  "full server paths" for any folders
 	 *                                                                containing classes that might be invoked by the
 	 *                                                                addon
-	 * @type string                   $dms_paths                      an array of full server paths to folders that
+	 *      @type string              $dms_paths                      an array of full server paths to folders that
 	 *                                                                contain data migration scripts. Required.
-	 * @type string                   $module_paths                   an array of full server paths to any EED_Modules
+	 *      @type string              $module_paths                   an array of full server paths to any EED_Modules
 	 *                                                                used by the addon
-	 * @type string                   $shortcode_paths                an array of full server paths to folders that
+	 *      @type string              $shortcode_paths                an array of full server paths to folders that
 	 *                                                                contain EES_Shortcodes
-	 * @type string                   $widget_paths                   an array of full server paths to folders that
+	 *      @type string              $widget_paths                   an array of full server paths to folders that
 	 *                                                                contain WP_Widgets
-	 * @type string                   $pue_options
-	 * @type array                    $capabilities                   {
-	 *                                                                an array indexed by role name (i.e.
-	 *                                                                administrator,author ) and the values are an
-	 *                                                                array
-	 *                                                                of caps to add to the role.
-	 *                                                                'administrator' => array('read_addon',
-	 *                                                                'edit_addon' etc.).
-	 *                                                                }
-	 * @type EE_Meta_Capability_Map[] $capability_maps                an array of EE_Meta_Capability_Map object for any
+	 *      @type string              $pue_options
+	 *      @type array               $capabilities                   an array indexed by role name
+	 *                                                                (i.e administrator,author ) and the values are an
+	 *                                                                array of caps to add to the role.
+	 *                                                                'administrator' => array(
+	 *                                                                      'read_addon', 'edit_addon', etc.
+	 *                                                                ).
+	 *      @type EE_Meta_Capability_Map[] $capability_maps           an array of EE_Meta_Capability_Map object for any
 	 *                                                                addons that need to register any special meta
 	 *                                                                mapped capabilities.  Should be indexed where the
 	 *                                                                key is the EE_Meta_Capability_Map class name and
 	 *                                                                the values are the arguments sent to the class.
-	 * @type array                    $model_paths                    array of folders containing DB models
-	 * @see  EE_Register_Model
-	 * @type array                    $class_paths                    array of folders containing DB classes
-	 * @see  EE_Register_Model
-	 * @type array                    $model_extension_paths          array of folders containing DB model extensions
-	 * @see  EE_Register_Model_Extension
-	 * @type array                    $class_extension_paths          array of folders containing DB class extensions
-	 * @see  EE_Register_Model_Extension
-	 * @type array message_types {
+	 *      @type array               $model_paths                    array of folders containing DB models
+	 *                                                                  @see  EE_Register_Model
+	 *      @type array               $class_paths                    array of folders containing DB classes
+	 *                                                                  @see  EE_Register_Model
+	 *      @type array               $model_extension_paths          array of folders containing DB model extensions
+	 *                                                                  @see  EE_Register_Model_Extension
+	 *      @type array               $class_extension_paths          array of folders containing DB class extensions
+	 *                                                                  @see  EE_Register_Model_Extension
+	 *      @type array message_types {
 	 *                                                                An array of message types with the key as the
 	 *                                                                message type name and the values as below:
-	 * @type string                   $mtfilename                     The filename of the message type being
-	 *       registered.
+	 *          @type string            $mtfilename                   The filename of the message type being registered.
 	 *                                                                This will be the main
 	 *                                                                EE_{Messagetype_Name}_message_type class.
 	 *                                                                (eg.
 	 *                                                                EE_Declined_Registration_message_type.class.php)
 	 *                                                                Required.
-	 * @type array                    $autoloadpaths                  An array of paths to add to the messages
-	 *       autoloader for the new message type. Required.
-	 * @type array                    $messengers_to_activate_with    An array of messengers that this message
+	 *          @type array $autoloadpaths                            An array of paths to add to the messages
+	 *                                                                autoloader for the new message type. Required.
+	 *          @type array             $messengers_to_activate_with  An array of messengers that this message
 	 *                                                                type should activate with. Each value in the
 	 *                                                                array
 	 *                                                                should match the name property of a EE_messenger.
 	 *                                                                Optional.
-	 * @type array                    $messengers_to_validate_with    An array of messengers that this message
+	 *          @type array             $messengers_to_validate_with  An array of messengers that this message
 	 *                                                                type should validate with. Each value in the
 	 *                                                                array
 	 *                                                                should match the name property of an
 	 *                                                                EE_messenger.
 	 *                                                                Optional.
-	 *                                                                }
-	 * @type array                    $custom_post_types
-	 * @type array                    $custom_taxonomies
-	 * @type array                    $payment_method_paths           each element is the folder containing the
+	 *      }
+	 *      @type array               $custom_post_types
+	 *      @type array               $custom_taxonomies
+	 *      @type array               $payment_method_paths           each element is the folder containing the
 	 *                                                                EE_PMT_Base child class
 	 *                                                                (eg,
-	 *                                                                'public_html/wp-content/plugins/my_plugin/Payomatic/'
+	 *                                                                '/wp-content/plugins/my_plugin/Payomatic/'
 	 *                                                                which contains the files EE_PMT_Payomatic.pm.php)
-	 * @type array                    $default_terms
-	 * @type array                    $namespace                      {
+	 *      @type array               $default_terms
+	 *      @type array               $namespace {
 	 *                                                                An array with two items for registering the
 	 *                                                                addon's namespace. (If, for some reason, you
 	 *                                                                require additional namespaces, use
 	 *                                                                EventEspresso\core\Psr4Autoloader::addNamespace()
 	 *                                                                directly)
-	 * @type string                   $FQNS                           the namespace prefix
-	 * @type string                   $DIR                            a base directory for class files in the
-	 *       namespace.
-	 * @see  EventEspresso\core\Psr4Autoloader::addNamespace()
-	 *                                                                }
-	 *                                                                }
+	 *          @see  EventEspresso\core\Psr4Autoloader::addNamespace()
+	 *          @type string            $FQNS                         the namespace prefix
+	 *          @type string            $DIR                          a base directory for class files in the namespace.
+	 *      }
+	 * }
 	 * @throws EE_Error
 	 * @return void
 	 */
