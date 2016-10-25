@@ -157,6 +157,7 @@ class EED_Ticket_Selector extends  EED_Module {
 	 * ticket_selector_iframe
 	 *
 	 * @return    void
+	 * @throws \DomainException
 	 * @throws \EE_Error
 	 */
 	public function ticket_selector_iframe() {
@@ -339,7 +340,7 @@ class EED_Ticket_Selector extends  EED_Module {
 		    && \EE_Registry::instance()->REQ->get( 'action' ) === 'edit'
 	    ) {
 		    $iframe_embed_button = \EED_Ticket_Selector::getIframeEmbedButton();
-            $iframe_embed_button::embedButtonAssets();
+            $iframe_embed_button->embedButtonAssets();
         }
     }
 
