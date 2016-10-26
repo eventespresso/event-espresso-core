@@ -173,7 +173,7 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page {
 			'id' => $report_ID,
 			'revenue' => $revenue,
 			'noResults' => empty( $revenue ) || count( $revenue ) === 1,
-			'noTxnMsg'	=> sprintf( __( '%sThere are currently no transaction records in the last month for this report.%s', 'event_espresso' ), '<h2>' . $report_title . '</h2><p>', '</p>' )
+			'noTxnMsg'	=> sprintf( __( '%sThere is no revenue to report for the last 30 days.%s', 'event_espresso' ), '<h2>' . $report_title . '</h2><p>', '</p>' )
 		);
 		wp_localize_script( 'ee-txn-reports-js', 'txnRevPerDay', $report_params );
 
@@ -223,7 +223,7 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page {
 			'id' 			=> $report_ID,
 			'revenue' => $revenue,
 			'noResults' => empty( $revenue ),
-			'noTxnMsg'	=> sprintf( __( '%sThere are currently no transaction records in the last month for this report.%s', 'event_espresso' ), '<h2>' . $report_title . '</h2><p>', '</p>' )
+			'noTxnMsg'	=> sprintf( __( '%sThere is no revenue to report for the last 30 days.%s', 'event_espresso' ), '<h2>' . $report_title . '</h2><p>', '</p>' )
 		);
 		wp_localize_script( 'ee-txn-reports-js', 'txnRevPerEvent', $report_params );
 
