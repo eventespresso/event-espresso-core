@@ -292,7 +292,12 @@ class EED_Core_Rest_Api extends \EED_Module
                 $instance->_get_rpc_route_data_for_version($version, $hidden_endpoints)
             )
         );
-        update_option(self::saved_routes_option_names . $version, $routes, true);
+        $option_name = self::saved_routes_option_names . $version;
+        if (get_option($option_name)) {
+            update_option(self::saved_routes_option_names . $version, $routes, true);
+        } else {
+            add_option($option_name, $routes, null, 'no');
+        }
         return $routes;
     }
 
