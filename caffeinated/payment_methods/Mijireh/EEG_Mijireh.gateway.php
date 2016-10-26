@@ -44,7 +44,7 @@ class EEG_Mijireh extends EE_Offsite_Gateway{
 				$items[] = array(
 					'name'=>apply_filters(
 						'FHEE__EEG_Mijireh__set_redirection_info__full_amount_line_item_name',
-						$line_item->name(),
+						$this->_format_line_item_name( $line_item, $payment ),
 						$line_item,
 						$payment,
 						$primary_registrant
@@ -60,11 +60,7 @@ class EEG_Mijireh extends EE_Offsite_Gateway{
 			$items[] = array(
 				'name'=> apply_filters(
 					'FHEE__EEG_Mijireh__set_redirection_info__partial_amount_line_item_name',
-					sprintf(
-						__("Payment of %s for %s", 'event_espresso'),
-						$payment->get_pretty( 'PAY_amount', 'no_currency_code' ),
-						$primary_registrant->event_name()
-					),
+					$this->_format_partial_payment_line_item_name( $payment ),
 					$payment,
 					$primary_registrant
 				),

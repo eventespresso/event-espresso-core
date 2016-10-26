@@ -220,7 +220,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	public function _construct_finalize($parent_form_section, $name) {
 		parent::_construct_finalize($parent_form_section, $name);
 		$this->_set_default_html_name_if_empty();
-		if( ! $this->_html_label && ! $this->_html_label_text){
+		if( $this->_html_label === null && $this->_html_label_text === null ){
 			$this->_html_label_text = ucwords( str_replace("_"," ",$name));
 		}
 		do_action( 'AHEE__EE_Form_Input_Base___construct_finalize__end', $this, $parent_form_section, $name );
@@ -711,7 +711,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 		if ( $required ) {
 			$this->_add_validation_strategy( new EE_Required_Validation_Strategy( $required_text ) );
 		} else {
-			unset( $this->_validation_strategies[ 'EE_Required_Validation_Strategy' ] );
+			$this->remove_validation_strategy( 'EE_Required_Validation_Strategy' );
 		}
 		$this->_required = $required;
 	}

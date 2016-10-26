@@ -182,7 +182,7 @@ class Read extends Base {
 	 *
 	 * @param \EEM_Base $model
 	 * @param \WP_REST_Request $request
-	 * @return array
+	 * @return array|\WP_Error
 	 */
 	public function get_entities_from_model( $model, $request) {
 		$query_params = $this->create_model_query_params( $model, $request->get_params() );
@@ -215,27 +215,28 @@ class Read extends Base {
 	}
 
 	/**
-	 * Gets the collection for given relation object
-	 *
-	 * The same as Read::get_entities_from_model(), except if the relation
-	 * is a HABTM relation, in which case it merges any non-foreign-key fields from
-	 * the join-model-object into the results
-	 *
-	 * @param string $id the ID of the thing we are fetching related stuff from
+
+	 * @param array $primary_model_query_params query params for finding the item from which relations will be based
 	 * @param \EE_Model_Relation_Base $relation
 	 * @param \WP_REST_Request $request
-	 * @return array
+	 * @return \WP_Error|array
 	 */
-	public function get_entities_from_relation( $id,  $relation, $request ) {
+	protected function _get_entities_from_relation( $primary_model_query_params, $relation, $request ) {
 		$context = $this->validate_context( $request->get_param( 'caps' ));
 		$model = $relation->get_this_model();
 		$related_model = $relation->get_other_model();
-		//check if they can access the 1st model object
-		$query_params = array( array( $model->primary_key_name() => $id ),'limit' => 1 );
-		if( $model instanceof \EEM_Soft_Delete_Base ){
-			$query_params = $model->alter_query_params_so_deleted_and_undeleted_items_included($query_params);
+		if( ! isset( $primary_model_query_params[0]) ) {
+			$primary_model_query_params[0] = array();
 		}
-		$restricted_query_params = $query_params;
+		//check if they can access the 1st model object
+		$primary_model_query_params = array(
+			0 => $primary_model_query_params[0],
+			'limit' => 1
+		);
+		if( $model instanceof \EEM_Soft_Delete_Base ){
+			$primary_model_query_params = $model->alter_query_params_so_deleted_and_undeleted_items_included( $primary_model_query_params );
+		}
+		$restricted_query_params = $primary_model_query_params;
 		$restricted_query_params[ 'caps' ] = $context;
 		$this->_set_debug_info( 'main model query params', $restricted_query_params );
 		$this->_set_debug_info( 'missing caps', Capabilities::get_missing_permissions_string( $related_model, $context ) );
@@ -268,7 +269,9 @@ class Read extends Base {
 			);
 		}
 		$query_params = $this->create_model_query_params( $relation->get_other_model(), $request->get_params() );
-		$query_params[0][ $relation->get_this_model()->get_this_model_name() . '.' . $relation->get_this_model()->primary_key_name() ] = $id;
+		foreach( $primary_model_query_params[0] as $where_condition_key => $where_condition_value ) {
+			 $query_params[0][ $relation->get_this_model()->get_this_model_name() . '.' . $where_condition_key ] = $where_condition_value;
+		}
 		$query_params[ 'default_where_conditions' ] = 'none';
 		$query_params[ 'caps' ] = $context;
 		if( ! $request->get_header( 'no_rest_headers' ) ) {
@@ -305,6 +308,40 @@ class Read extends Base {
 		}else{
 			return $nice_results;
 		}
+	}
+
+
+
+	/**
+	 * Gets the collection for given relation object
+	 * The same as Read::get_entities_from_model(), except if the relation
+	 * is a HABTM relation, in which case it merges any non-foreign-key fields from
+	 * the join-model-object into the results
+	 *
+	 * @param string                  $id the ID of the thing we are fetching related stuff from
+	 * @param \EE_Model_Relation_Base $relation
+	 * @param \WP_REST_Request        $request
+	 * @return array|\WP_Error
+	 * @throws \EE_Error
+	 */
+	public function get_entities_from_relation( $id, $relation, $request ) {
+		if( ! $relation->get_this_model()->has_primary_key_field() ) {
+			throw new \EE_Error(
+				sprintf(
+					__( 'Read::get_entities_from_relation should only be called from a model with a primary key, it was called from %1$s', 'event_espresso'),
+					$relation->get_this_model()->get_this_model_name()
+				)
+			);
+		}
+		return $this->_get_entities_from_relation(
+			array(
+				array(
+					$relation->get_this_model()->primary_key_name() => $id
+				)
+			),
+			$relation,
+			$request
+		);
 	}
 
 	/**
@@ -368,7 +405,7 @@ class Read extends Base {
 		$entity_array = $this->_add_extra_fields( $model, $db_row, $entity_array );
 		$entity_array[ '_links' ] = $this->_get_entity_links( $model, $db_row, $entity_array );
 		$entity_array[ '_calculated_fields'] = $this->_get_entity_calculations( $model, $db_row, $rest_request );
-		$entity_array = $this->_include_requested_models( $model, $rest_request, $entity_array );
+		$entity_array = $this->_include_requested_models( $model, $rest_request, $entity_array, $db_row );
 		$entity_array = apply_filters(
 			'FHEE__Read__create_entity_from_wpdb_results__entity_before_inaccessible_field_removal',
 			$entity_array,
@@ -381,7 +418,10 @@ class Read extends Base {
 			$entity_array,
 			$model,
 			$rest_request->get_param( 'caps' ),
-			$this->get_model_version_info()
+			$this->get_model_version_info(),
+			$model->get_index_primary_key_string(
+				$model->deduce_fields_n_values_from_cols_n_values($db_row )
+			)
 		);
 		$this->_set_debug_info(
 			'inaccessible fields',
@@ -426,11 +466,22 @@ class Read extends Base {
 					'pretty' => $field_obj->prepare_for_pretty_echoing( $field_value )
 				);
 			} elseif ( $field_obj instanceof \EE_Datetime_Field ) {
-				$result[ $field_name ] = Model_Data_Translator::prepare_field_value_for_json(
-					$field_obj,
-					$field_value,
-					$this->get_model_version_info()->requested_version()
-				);
+				if( $field_value instanceof \DateTime ) {
+					$timezone = $field_value->getTimezone();
+					$field_value->setTimezone( new \DateTimeZone( 'UTC' ) );
+					$result[ $field_name . '_gmt' ] = Model_Data_Translator::prepare_field_value_for_json(
+						$field_obj,
+						$field_value,
+						$this->get_model_version_info()->requested_version()
+					);
+					$field_value->setTimezone( $timezone );
+					$result[ $field_name ] = Model_Data_Translator::prepare_field_value_for_json(
+						$field_obj,
+						$field_value,
+						$this->get_model_version_info()->requested_version()
+					);
+				}
+
 			} else {
 				$result[ $field_name ] = Model_Data_Translator::prepare_field_value_for_json(
 					$field_obj,
@@ -459,7 +510,7 @@ class Read extends Base {
 	/**
 	 * Gets links we want to add to the response
 	 *
-*@global \WP_REST_Server $wp_rest_server
+	 * @global \WP_REST_Server $wp_rest_server
 	 * @param \EEM_Base $model
 	 * @param array $db_row
 	 * @param array $entity_array
@@ -467,28 +518,30 @@ class Read extends Base {
 	 */
 	protected function _get_entity_links( $model, $db_row, $entity_array ) {
 		//add basic links
-		$links = array(
-			'self' => array(
+		$links = array();
+		if( $model->has_primary_key_field() ) {
+			$links['self'] = array(
 				array(
 					'href' => $this->get_versioned_link_to(
 						\EEH_Inflector::pluralize_and_lower( $model->get_this_model_name() ) . '/' . $entity_array[ $model->primary_key_name() ]
 					)
 				)
-			),
-			'collection' => array(
-				array(
-					'href' => $this->get_versioned_link_to(
-						\EEH_Inflector::pluralize_and_lower( $model->get_this_model_name() )
-					)
+			);
+		}
+		$links['collection'] = array(
+			array(
+				'href' => $this->get_versioned_link_to(
+					\EEH_Inflector::pluralize_and_lower( $model->get_this_model_name() )
 				)
-			),
+			)
 		);
 
 		//add link to the wp core endpoint, if wp api is active
 		global $wp_rest_server;
 		if( $model instanceof \EEM_CPT_Base &&
 			$wp_rest_server instanceof \WP_REST_Server &&
-			$wp_rest_server->get_route_options( '/wp/v2/posts' ) ) {
+			$wp_rest_server->get_route_options( '/wp/v2/posts' ) &&
+			$model->has_primary_key_field() ) {
 			$links[ \EED_Core_Rest_Api::ee_api_link_namespace . 'self_wp_post' ] = array(
 				array(
 					'href' => rest_url( '/wp/v2/posts/' . $db_row[ $model->get_primary_key_field()->get_qualified_column() ] ),
@@ -498,16 +551,18 @@ class Read extends Base {
 		}
 
 		//add links to related models
-		foreach( $this->get_model_version_info()->relation_settings( $model ) as $relation_name => $relation_obj ) {
-			$related_model_part = Read::get_related_entity_name( $relation_name, $relation_obj );
-			$links[ \EED_Core_Rest_Api::ee_api_link_namespace . $related_model_part ] = array(
-				array(
-					'href' => $this->get_versioned_link_to(
-						\EEH_Inflector::pluralize_and_lower( $model->get_this_model_name() ) . '/' . $entity_array[ $model->primary_key_name() ] . '/' . $related_model_part
-					),
-					'single' => $relation_obj instanceof \EE_Belongs_To_Relation ? true : false
-				)
-			);
+		if( $model->has_primary_key_field() ) {
+			foreach( $this->get_model_version_info()->relation_settings( $model ) as $relation_name => $relation_obj ) {
+				$related_model_part = Read::get_related_entity_name( $relation_name, $relation_obj );
+				$links[ \EED_Core_Rest_Api::ee_api_link_namespace . $related_model_part ] = array(
+					array(
+						'href' => $this->get_versioned_link_to(
+							\EEH_Inflector::pluralize_and_lower( $model->get_this_model_name() ) . '/' . $entity_array[ $model->primary_key_name() ] . '/' . $related_model_part
+						),
+						'single' => $relation_obj instanceof \EE_Belongs_To_Relation ? true : false
+					)
+				);
+			}
 		}
 		return $links;
 	}
@@ -517,9 +572,14 @@ class Read extends Base {
 	 * @param \EEM_Base $model
 	 * @param \WP_REST_Request $rest_request
 	 * @param array $entity_array
+	 * @param array $db_row
 	 * @return array the modified entity
 	 */
-	protected function _include_requested_models( \EEM_Base $model, \WP_REST_Request $rest_request, $entity_array ) {
+	protected function _include_requested_models( \EEM_Base $model, \WP_REST_Request $rest_request, $entity_array, $db_row = array() ) {
+		//if $db_row not included, hope the entity array has what we need
+		if( ! $db_row ) {
+			$db_row = $entity_array;
+		}
 		$includes_for_this_model = $this->explode_and_get_items_prefixed_with( $rest_request->get_param( 'include' ), '' );
 		$includes_for_this_model = $this->_remove_model_names_from_array( $includes_for_this_model );
 		//if they passed in * or didn't specify any includes, return everything
@@ -558,8 +618,13 @@ class Read extends Base {
 					)
 				);
 				$pretend_related_request->add_header( 'no_rest_headers', true );
-				$related_results = $this->get_entities_from_relation(
-					$entity_array[ $model->primary_key_name() ],
+				$primary_model_query_params = $model->alter_query_params_to_restrict_by_ID(
+					$model->get_index_primary_key_string(
+						$model->deduce_fields_n_values_from_cols_n_values( $db_row )
+					)
+				);
+				$related_results = $this->_get_entities_from_relation(
+					$primary_model_query_params,
 					$relation_obj,
 					$pretend_related_request
 				);
@@ -583,10 +648,10 @@ class Read extends Base {
 	/**
 	 * Gets the calculated fields for the response
 	 *
-	 * @param \EEM_Base        $model
+	 * @param \EEM_Base $model
 	 * @param array            $wpdb_row
 	 * @param \WP_REST_Request $rest_request
-	 * @return array the _calculations item in the entity
+	 * @return \stdClass the _calculations item in the entity
 	 */
 	protected function _get_entity_calculations( $model, $wpdb_row, $rest_request ) {
 		$calculated_fields = $this->explode_and_get_items_prefixed_with(
@@ -649,14 +714,14 @@ class Read extends Base {
 		}
 	}
 
-//	public function
 
 
 	/**
 	 * Gets the one model object with the specified id for the specified model
+	 *
 	 * @param \EEM_Base $model
 	 * @param \WP_REST_Request $request
-	 * @return array
+	 * @return array|\WP_Error
 	 */
 	public function get_entity_from_model( $model, $request ) {
 		$query_params = array( array( $model->primary_key_name() => $request->get_param( 'id' ) ),'limit' => 1);
@@ -750,6 +815,12 @@ class Read extends Base {
 			$order_by = null;
 		}
 		if( $order_by !== null ){
+			if( is_array( $order_by ) ) {
+				$order_by = Model_Data_Translator::prepare_field_names_in_array_keys_from_json( $order_by );
+			} else {
+				//it's a single item
+				$order_by = Model_Data_Translator::prepare_field_name_from_json( $order_by );
+			}
 			$model_query_params[ 'order_by' ] =  $order_by;
 		}
 		if ( isset( $query_parameters[ 'group_by' ] ) ) {
@@ -758,6 +829,10 @@ class Read extends Base {
 			$group_by = $query_parameters[ 'groupby' ];
 		}else{
 			$group_by = array_keys( $model->get_combined_primary_key_fields() );
+		}
+		//make sure they're all real names
+		if( is_array( $group_by ) ) {
+			$group_by = Model_Data_Translator::prepare_field_names_from_json( $group_by );
 		}
 		if( $group_by !== null ){
 			$model_query_params[ 'group_by' ] = $group_by;

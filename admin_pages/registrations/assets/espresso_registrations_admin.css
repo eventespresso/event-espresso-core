@@ -26,7 +26,7 @@
 .status-RCN, .status-RFL, .status-RNA,
 .reg-overview-no-payment-spn { color : #F00; font-weight : bold; }
 
-.status-RAP, .status-RPP, .status-RCN, .status-RFL, .status-RNA { font-size : .9em; }
+/*.status-RAP, .status-RPP, .status-RCN, .status-RFL, .status-RNA { font-size : .9em; }*/
 
 .wp-list-table .column-event_name { width : 10%; }
 

@@ -83,6 +83,13 @@ final class EE_Config {
 	public $map_settings;
 
 	/**
+	 * settings pertaining to Taxes
+	 *
+	 * @var EE_Tax_Config
+	 */
+	public $tax_settings;
+
+	/**
 	 * @deprecated
 	 * @var EE_Gateway_Config
 	 */
@@ -167,7 +174,6 @@ final class EE_Config {
 	 *    class constructor
 	 *
 	 * @access    private
-	 * @return \EE_Config
 	 */
 	private function __construct() {
 		do_action( 'AHEE__EE_Config__construct__begin', $this );
@@ -310,6 +316,10 @@ final class EE_Config {
 			? $this->environment
 			: new EE_Environment_Config();
 		$this->environment = apply_filters( 'FHEE__EE_Config___initialize_config__environment', $this->environment );
+		$this->tax_settings = $this->tax_settings instanceof EE_Tax_Config
+			? $this->tax_settings
+			: new EE_Tax_Config();
+		$this->tax_settings = apply_filters( 'FHEE__EE_Config___initialize_config__tax_settings', $this->tax_settings );
 		$this->gateway = $this->gateway instanceof EE_Gateway_Config
 			? $this->gateway
 			: new EE_Gateway_Config();
@@ -373,7 +383,6 @@ final class EE_Config {
 	 *    update_espresso_config
 	 *
 	 * @access   public
-	 * @return   bool
 	 */
 	protected function _reset_espresso_addon_config() {
 		$this->_addon_option_names = array();
@@ -751,7 +760,9 @@ final class EE_Config {
 		// check if config object has been added to db by seeing if config option name is in $this->_addon_option_names array
 		if ( ! isset( $this->_addon_option_names[ $config_option_name ] ) ) {
 			// save new config to db
-			return $this->set_config( $section, $name, $config_class, $config_obj );
+			if( $this->set_config( $section, $name, $config_class, $config_obj ) ) {
+				return true;
+			}
 		} else {
 			// first check if the record already exists
 			$existing_config = get_option( $config_option_name );
@@ -1726,7 +1737,6 @@ class EE_Core_Config extends EE_Config_Base {
 	 *    class constructor
 	 *
 	 * @access    public
-	 * @return \EE_Core_Config
 	 */
 	public function __construct() {
 		// set default organization settings
@@ -1795,7 +1805,10 @@ class EE_Core_Config extends EE_Config_Base {
 	 */
 	public function reg_page_url() {
 		if ( ! $this->reg_page_url ) {
-			$this->reg_page_url = get_permalink( $this->reg_page_id ) . '#checkout';
+			$this->reg_page_url = add_query_arg(
+				array( 'uts' => time() ),
+				get_permalink( $this->reg_page_id )
+			) . '#checkout';
 		}
 		return $this->reg_page_url;
 	}
@@ -2077,7 +2090,6 @@ class EE_Organization_Config extends EE_Config_Base {
 	 *    class constructor
 	 *
 	 * @access    public
-	 * @return \EE_Organization_Config
 	 */
 	public function __construct() {
 		// set default organization settings
@@ -2174,9 +2186,11 @@ class EE_Currency_Config extends EE_Config_Base {
 	 *
 	 * @access    public
 	 * @param string $CNT_ISO
-	 * @return \EE_Currency_Config
+	 * @throws \EE_Error
 	 */
 	public function __construct( $CNT_ISO = '' ) {
+		/** @var \EventEspresso\core\services\database\TableAnalysis $table_analysis */
+		$table_analysis = EE_Registry::instance()->create( 'TableAnalysis', array(), true );
 		// get country code from organization settings or use default
 		$ORG_CNT = isset( EE_Registry::instance()->CFG->organization )
 		           && EE_Registry::instance()->CFG->organization instanceof EE_Organization_Config
@@ -2188,7 +2202,7 @@ class EE_Currency_Config extends EE_Config_Base {
 		if (
 			! empty( $CNT_ISO )
 			&& EE_Maintenance_Mode::instance()->models_can_query()
-			&& EEH_Activation::table_exists( EE_Registry::instance()->load_model( 'Country' )->table() )
+			&& $table_analysis->tableExists( EE_Registry::instance()->load_model( 'Country' )->table() )
 		) {
 			// retrieve the country settings from the db, just in case they have been customized
 			$country = EE_Registry::instance()->load_model( 'Country' )->get_one_by_ID( $CNT_ISO );
@@ -2347,7 +2361,6 @@ class EE_Registration_Config extends EE_Config_Base {
 	 *    class constructor
 	 *
 	 * @access    public
-	 * @return \EE_Registration_Config
 	 */
 	public function __construct() {
 		// set default registration settings
@@ -2468,7 +2481,6 @@ class EE_Admin_Config extends EE_Config_Base {
 	 *    class constructor
 	 *
 	 * @access    public
-	 * @return \EE_Admin_Config
 	 */
 	public function __construct() {
 		// set default general admin settings
@@ -2510,6 +2522,15 @@ class EE_Admin_Config extends EE_Config_Base {
 			EE_Config::instance()->update_espresso_config( false, false );
 		}
 		return $this->debug_file_name;
+	}
+
+
+
+	/**
+	 * @return string
+	 */
+	public function affiliate_id() {
+		return ! empty( $this->affiliate_id ) ? $this->affiliate_id : 'default';
 	}
 
 
@@ -2563,13 +2584,17 @@ class EE_Template_Config extends EE_Config_Base {
 	 */
 	public $EED_Events_Archive;
 
+	/**
+	 * @var EE_Ticket_Selector_Config $EED_Ticket_Selector
+	 */
+	public $EED_Ticket_Selector;
+
 
 
 	/**
 	 *    class constructor
 	 *
 	 * @access    public
-	 * @return \EE_Template_Config
 	 */
 	public function __construct() {
 		// set default template settings
@@ -2581,6 +2606,7 @@ class EE_Template_Config extends EE_Config_Base {
 		$this->current_espresso_theme = 'Espresso_Arabica_2014';
 		$this->EED_Event_Single = null;
 		$this->EED_Events_Archive = null;
+		$this->EED_Ticket_Selector = null;
 	}
 
 }
@@ -2678,7 +2704,6 @@ class EE_Map_Config extends EE_Config_Base {
 	 *    class constructor
 	 *
 	 * @access    public
-	 * @return \EE_Map_Config
 	 */
 	public function __construct() {
 		// set default map settings
@@ -2797,10 +2822,19 @@ class EE_Event_Single_Config extends EE_Config_Base {
  */
 class EE_Ticket_Selector_Config extends EE_Config_Base {
 
+	/*
+	 * @var boolean $show_ticket_sale_columns
+	 */
 	public $show_ticket_sale_columns;
 
+	/*
+	 * @var boolean $show_ticket_details
+	 */
 	public $show_ticket_details;
 
+	/*
+	 * @var boolean $show_expired_tickets
+	 */
 	public $show_expired_tickets;
 
 
@@ -2809,9 +2843,9 @@ class EE_Ticket_Selector_Config extends EE_Config_Base {
 	 *    class constructor
 	 */
 	public function __construct() {
-		$this->show_ticket_sale_columns = 1;
-		$this->show_ticket_details = 1;
-		$this->show_expired_tickets = 1;
+		$this->show_ticket_sale_columns = true;
+		$this->show_ticket_details = true;
+		$this->show_expired_tickets = true;
 	}
 }
 
@@ -2904,6 +2938,36 @@ class EE_Environment_Config extends EE_Config_Base {
 
 
 
+}
+
+
+
+/**
+ * Stores any options pertaining to taxes
+ *
+ * @since       4.9.13
+ * @package     Event Espresso
+ * @subpackage  config
+ */
+class EE_Tax_Config extends EE_Config_Base
+{
+
+    /*
+     * flag to indicate whether or not to display ticket prices with the taxes included
+     *
+     * @var boolean $prices_displayed_including_taxes
+     */
+    public $prices_displayed_including_taxes;
+
+
+
+    /**
+     *    class constructor
+     */
+    public function __construct()
+    {
+        $this->prices_displayed_including_taxes = true;
+    }
 }
 
 

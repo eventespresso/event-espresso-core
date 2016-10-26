@@ -406,6 +406,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	    //get transaction object
 	    $this->_transaction = $TXN->get_one_by_ID($TXN_ID);
 	    $this->_session = !empty( $this->_transaction ) ? $this->_transaction->get('TXN_session_data') : NULL;
+		$this->_transaction->verify_abandoned_transaction_status();
 
 	 	if ( empty( $this->_transaction ) ) {
 	    	$error_msg = esc_html__('An error occurred and the details for Transaction ID #', 'event_espresso') . $TXN_ID .  esc_html__(' could not be retrieved.', 'event_espresso');
@@ -1028,13 +1029,19 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 						case 'Ticket' :
 							$ticket = $item->ticket();
-							if ( empty( $ticket )) {
-								continue; //right now we're only handling tickets here.  Cause its expected that only tickets will have attendees right?
+							//right now we're only handling tickets here.  Cause its expected that only tickets will have attendees right?
+							if ( ! $ticket instanceof EE_Ticket ) {
+								continue;
 							}
-							$ticket_price = EEH_Template::format_currency( $item->get( 'LIN_unit_price' ));
-							$event = $ticket->get_first_related('Registration')->get_first_related('Event');
-							$event_name = $event instanceof EE_Event ? $event->get('EVT_name') . ' - ' . $item->get('LIN_name') : '';
-
+							try {
+								$event_name = $ticket->get_event_name();
+							} catch ( Exception $e ) {
+								EE_Error::add_error( $e->getMessage(), __FILE__, __FUNCTION__, __LINE__ );
+								$event_name = esc_html__( 'Unknown Event', 'event_espresso' );
+							}
+							$event_name .= ' - ' . $item->get( 'LIN_name' );
+							$ticket_price = EEH_Template::format_currency( $item->get( 'LIN_unit_price' ) );
+							// now get all of the registrations for this transaction that use this ticket
 							$registrations = $ticket->get_many_related('Registration', array( array('TXN_ID' => $this->_transaction->ID() )));
 							foreach( $registrations as $registration ) {
 								if ( ! $registration instanceof EE_Registration ) {
@@ -1049,8 +1056,8 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 								if ( $attendee instanceof EE_Attendee ) {
 									$this->_template_args['event_attendees'][$registration->ID()]['att_id'] 	= $attendee->ID();
 									$this->_template_args['event_attendees'][$registration->ID()]['attendee'] 	= $attendee->full_name();
-									$this->_template_args['event_attendees'][$registration->ID()]['email']		= '<a href="mailto:' . $attendee->email() . '?subject=' . $event->get('EVT_name') . esc_html__(' Event', 'event_espresso') . '">' . $attendee->email() . '</a>';
-									$this->_template_args['event_attendees'][$registration->ID()]['address'] 	=  implode(',<br>', $attendee->full_address_as_array() );
+									$this->_template_args['event_attendees'][$registration->ID()]['email']		= '<a href="mailto:' . $attendee->email() . '?subject=' . $event_name . esc_html__(' Event', 'event_espresso') . '">' . $attendee->email() . '</a>';
+									$this->_template_args['event_attendees'][$registration->ID()]['address'] 	= EEH_Address::format( $attendee, 'inline', false, false );
 								} else {
 									$this->_template_args['event_attendees'][$registration->ID()]['att_id'] 	= '';
 									$this->_template_args['event_attendees'][$registration->ID()]['attendee'] 	= '';

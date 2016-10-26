@@ -109,31 +109,38 @@ class EED_Ticket_Selector_Caff  extends EED_Ticket_Selector {
 				'html_class' => 'form-table',
 				'layout_strategy' => new EE_Admin_Two_Column_Layout(),
 				'subsections' => apply_filters(
-					'FHEE__EED_Ticket_Selector_Caff___ticket_selector_appearance_settings__form_subsections', array(
-						'show_ticket_details' => new EE_Yes_No_Input(
-							array(
-								'html_label_text' => __('Show Ticket Details?', 'event_espresso' ),
-								'html_help_text' => __( 'This lets you choose whether the extra ticket details section is displayed with the ticket selector.', 'event_espresso'),
-								'default' => isset( EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector->show_ticket_details ) ? EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector->show_ticket_details : true,
-								'display_html_label_text' => false
+					'FHEE__EED_Ticket_Selector_Caff___ticket_selector_appearance_settings__form_subsections',
+						array(
+							'show_ticket_details' => new EE_Yes_No_Input(
+								array(
+									'html_label_text' => __('Show Ticket Details?', 'event_espresso' ),
+									'html_help_text' => __( 'This lets you choose whether the extra ticket details section is displayed with the ticket selector.', 'event_espresso'),
+									'default' => isset( EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector->show_ticket_details )
+										? EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector->show_ticket_details
+										: true,
+									'display_html_label_text' => false
 								)
 							),
-						'show_ticket_sale_columns' => new EE_Yes_No_Input(
-							array(
-								'html_label_text' => __('Show Ticket Sale Info?', 'event_espresso' ),
-								'html_help_text' => __( 'This lets you indicate whether information about ticket sales is shown with ticket details in the ticket selector.', 'event_espresso'),
-								'default' => isset( EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector->show_ticket_sale_columns ) ? EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector->show_ticket_sale_columns : true,
-								'display_html_label_text' => false
+							'show_ticket_sale_columns' => new EE_Yes_No_Input(
+								array(
+									'html_label_text' => __('Show Ticket Sale Info?', 'event_espresso' ),
+									'html_help_text' => __( 'This lets you indicate whether information about ticket sales is shown with ticket details in the ticket selector.', 'event_espresso'),
+									'default' => isset( EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector->show_ticket_sale_columns )
+										? EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector->show_ticket_sale_columns
+										: true,
+									'display_html_label_text' => false
 								)
 							),
-						'show_expired_tickets' => new EE_Yes_No_Input(
-							array(
-								'html_label_text' => __( 'Show Expired Tickets?', 'event_espresso' ),
-								'html_help_text' => __( 'Indicate whether to show expired tickets in the ticket selector', 'event_espresso' ),
-								'default' => isset( EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector->show_expired_tickets ) ? EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector->show_expired_tickets : true,
-								'display_html_label_text' => false
-							)
-						)
+							'show_expired_tickets' => new EE_Yes_No_Input(
+								array(
+									'html_label_text' => __( 'Show Expired Tickets?', 'event_espresso' ),
+									'html_help_text' => __( 'Indicate whether to show expired tickets in the ticket selector', 'event_espresso' ),
+									'default' => isset( EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector->show_expired_tickets )
+										? EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector->show_expired_tickets
+										: true,
+									'display_html_label_text' => false
+								)
+							),
 						)
 					)
 				)
@@ -147,11 +154,9 @@ class EED_Ticket_Selector_Caff  extends EED_Ticket_Selector {
 	 * callback for updating template settings
 	 *
 	 * @since 4.6.18.rc.006
-	 *
 	 * @param EE_Template_Config $CFG
-	 * @param array             $REQ incoming request
-	 *
-	 * @return void
+	 * @param array              $REQ incoming request
+	 * @return EE_Template_Config
 	 */
 	public static function update_template_settings( EE_Template_Config $CFG, $REQ ) {
 		if ( ! isset( $CFG->EED_Ticket_Selector ) ) {
@@ -177,7 +182,7 @@ class EED_Ticket_Selector_Caff  extends EED_Ticket_Selector {
 					$CFG->EED_Ticket_Selector->show_ticket_details = $valid_data['appearance_settings']['show_ticket_details'];
 					$CFG->EED_Ticket_Selector->show_expired_tickets = $valid_data['appearance_settings']['show_expired_tickets'];
 				} else {
-					if ( $ticket_selector_form->submission_error_message() != '' ) {
+					if ( $ticket_selector_form->submission_error_message() !== '' ) {
 						EE_Error::add_error( $ticket_selector_form->submission_error_message(), __FILE__, __FUNCTION__, __LINE__ );
 					}
 				}

@@ -190,7 +190,9 @@ class EED_Core_Rest_Api extends \EED_Module {
 	 */
 	public static function invalidate_cached_route_data() {
 		//delete the saved EE REST API routes
-		delete_option( EED_Core_Rest_Api::saved_routes_option_names );
+		foreach( EED_Core_Rest_Api::versions_served() as $version => $hidden ){
+			delete_option( EED_Core_Rest_Api::saved_routes_option_names . $version );
+		}
 	}
 
 	/**
@@ -516,6 +518,15 @@ class EED_Core_Rest_Api extends \EED_Module {
 					'methods' => WP_REST_Server::READABLE,
 					'hidden_endpoint' => $hidden_endpoint
 				),
+			),
+			'site_info' => array(
+				array(
+					'callback' => array(
+						'EventEspresso\core\libraries\rest_api\controllers\config\Read',
+						'handle_request_site_info' ),
+					'methods' => WP_REST_Server::READABLE,
+					'hidden_endpoint' => $hidden_endpoint,
+				)
 			)
 		);
 	}
@@ -562,10 +573,22 @@ class EED_Core_Rest_Api extends \EED_Module {
 	 * @return array
 	 */
 	public static function hide_old_endpoints( $route_data ) {
+		//allow API clients to override which endpoints get hidden, in case
+		//they want to discover particular endpoints
+		//also, we don't have access to the request so we have to just grab it from the superglobal
+		$force_show_ee_namespace = ltrim(
+			EEH_Array::is_set( $_REQUEST, 'force_show_ee_namespace', '' ),
+			'/'
+		);
+		
 		foreach( EED_Core_Rest_Api::get_ee_route_data() as $namespace => $relative_urls ) {
 			foreach( $relative_urls as $endpoint => $routes ) {
 				foreach( $routes as $route ) {
-					if( $route[ 'hidden_endpoint' ] ) {
+					//by default, hide "hidden_endpoint"s, unless the request indicates
+					//to $force_show_ee_namespace, in which case only show that one
+					//namespace's endpoints (and hide all others)
+					if( ( $route[ 'hidden_endpoint' ] && $force_show_ee_namespace === '' )
+						|| ( $force_show_ee_namespace !== '' && $force_show_ee_namespace !== $namespace ) ) {
 						$full_route = '/' . ltrim( $namespace, '/' ) . '/' . ltrim( $endpoint, '/' );
 						unset( $route_data[ $full_route ] );
 					}

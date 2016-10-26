@@ -138,4 +138,13 @@ abstract class EE_Table_Base{
 		$SQL = SP . '(SELECT * FROM ' . $this->_table_name . SP . $limit . ') AS ' . $this->_table_alias;
 		return $SQL;
 	}
+	
+	/**
+	 * Returns whether or not htis is a global table (ie, on multisite there's
+	 * only one of these tables, on the main blog)
+	 * @return boolean
+	 */
+	public function is_global() {
+		return $this->_global;
+	}
 }

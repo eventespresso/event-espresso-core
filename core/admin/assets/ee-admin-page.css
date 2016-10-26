@@ -1,3 +1,20 @@
+#espresso-default-admin {
+    padding-top: 10px;
+    min-width: 763px;
+}
+#espresso-default-admin .postbox-container {
+    width: 100%;
+}
+#espresso-default-admin #post-body.columns-2 {
+    margin-right: 300px;
+}
+
+@media only screen and (max-width: 850px) {
+    #espresso-default-admin #post-body.columns-2 {
+        margin: 0;
+    }
+}
+
 .espresso-admin .add-new-h2,
 .espresso-admin .add-new-h2:active { margin-left:20px; top:0; }
 
@@ -69,8 +86,17 @@
 }
 
 .ee-info-box {
-	padding    : 2em 1.5em; margin : 2em 0 1em;
-	background : #F0F8FB; border : 1px solid lightblue; border-radius : 3px;
+	background: #FFFFFF;
+	border: 1px solid lightblue;
+	margin: 0 0 1em;
+	padding: 1em 2em;
+}
+.ee-info-box h4 {
+	color: #0073AA;
+	margin: .5em 0 .25em;
+}
+.ee-info-box p {
+	margin: 0 0 1em;
 }
 
 .admin-state,
@@ -291,8 +317,6 @@ table .espresso-radio-btn-options-ul .big-lbl,
 .edited-input { border : 1px solid #D54E21 !important; }
 .reminder-spn { display : inline-block; color : #D54E21; line-height : 1em; }
 
-.hide-if-no-js { display : none; }
-
 /**override .hide-if-no-js for feature image boxes**/
 #postimagediv .hide-if-no-js {
 	display : inherit;
@@ -434,6 +458,16 @@ label.error { display : block; color : #FE2A00 !important; }
 
 .ee-list-table-legend-container h4 {
 	margin-bottom : 5px;
+}
+
+.list-table-bottom-buttons a.button-secondary, .list-table-bottom-buttons button.button-secondary {
+	display: inline-block;
+	margin: inherit;
+}
+
+.ee-list-table-legend-container h4.status-legend-title {
+	margin-top: 5px;
+	font-size: 1.4em;
 }
 
 .qtip-content .ee-list-table-legend {

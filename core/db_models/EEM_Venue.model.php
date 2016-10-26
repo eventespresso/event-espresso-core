@@ -41,9 +41,9 @@ class EEM_Venue extends EEM_CPT_Base {
 				'VNU_name'=>new EE_Plain_Text_Field('post_title', __("Venue Name", "event_espresso"), false, ''),
 				'VNU_desc'=>new EE_Post_Content_Field('post_content', __("Venue Description", "event_espresso"), false,''),
 				'VNU_identifier'=>new EE_Slug_Field('post_name', __("Venue Identifier", "event_espresso"), false,''),
-				'VNU_created'=>new EE_Datetime_Field('post_date', __("Date Venue Created", "event_espresso"), FALSE,time()),
+				'VNU_created'=>new EE_Datetime_Field('post_date', __("Date Venue Created", "event_espresso"), FALSE, EE_Datetime_Field::now ),
 				'VNU_short_desc'=>new EE_Plain_Text_Field('post_excerpt', __("Short Description of Venue", "event_espresso"), true,''),
-				'VNU_modified'=>new EE_Datetime_Field('post_modified', __("Venue Modified Date", "event_espresso"), FALSE,time()),
+				'VNU_modified'=>new EE_Datetime_Field('post_modified', __("Venue Modified Date", "event_espresso"), FALSE, EE_Datetime_Field::now ),
 				'VNU_wp_user'=>new EE_WP_User_Field('post_author', __("Venue Creator ID", "event_espresso"), false ),
 				'parent'=>new EE_Integer_Field('post_parent', __("Venue Parent ID", "event_espresso"), false,0),
 				'VNU_order'=>new EE_Integer_Field('menu_order', __("Venue order", "event_espresso"), false, 1),
@@ -72,7 +72,9 @@ class EEM_Venue extends EEM_CPT_Base {
 			'State'=>new EE_Belongs_To_Relation(),
 			'Country'=>new EE_Belongs_To_Relation(),
 			'Event_Venue'=>new EE_Has_Many_Relation(),
-			'WP_User' => new EE_Belongs_To_Relation()
+			'WP_User' => new EE_Belongs_To_Relation(),
+			'Term_Relationship' => new EE_Has_Many_Relation(),
+			'Term_Taxonomy'=>new EE_HABTM_Relation('Term_Relationship'),
 		);
 		//this model is generally available for reading
 		$this->_cap_restriction_generators[ EEM_Base::caps_read ] = new EE_Restriction_Generator_Public();

@@ -600,7 +600,7 @@ class EEH_Template {
 	 */
 	public static function status_legend( $status_array, $active_status = '' ) {
 		if ( !is_array( $status_array ) )
-			throw new EE_Error( __('The EEH_Template::status_legend helper required the incoming status_array argument to be an array!', 'event_espresso') );
+			throw new EE_Error( esc_html__('The EEH_Template::status_legend helper required the incoming status_array argument to be an array!', 'event_espresso') );
 
 		$setup_array = array();
 		foreach ( $status_array as $item => $status ) {
@@ -612,7 +612,7 @@ class EEH_Template {
 		}
 
 		$content = '<div class="ee-list-table-legend-container">' . "\n";
-		$content .= '<h3>' . __('Status Legend', 'event_espresso') . '</h3>' . "\n";
+		$content .= '<h4 class="status-legend-title">' . esc_html__('Status Legend', 'event_espresso') . '</h4>' . "\n";
 		$content .= '<dl class="ee-list-table-legend">' . "\n\t";
 		foreach ( $setup_array as $item => $details ) {
 			$active_class = $active_status == $details['status'] ? ' class="ee-is-active-status"' : '';
@@ -831,7 +831,61 @@ class EEH_Template {
 	}
 
 
+
+	/**
+	 * @param string $wrap_class
+	 * @param string $wrap_id
+	 * @return string
+	 */
+	public static function powered_by_event_espresso( $wrap_class = '', $wrap_id = '', array $query_args = array() ) {
+		$admin = is_admin() && ! ( defined( 'DOING_AJAX' ) && DOING_AJAX );
+		if (
+			! $admin &&
+			! apply_filters(
+				'FHEE__EEH_Template__powered_by_event_espresso__show_reg_footer',
+				EE_Registry::instance()->CFG->admin->show_reg_footer
+			)
+		) {
+			return '';
+		}
+		$tag = $admin ? 'span' : 'div';
+		$attributes = ! empty( $wrap_id ) ? " id=\"{$wrap_id}\"" : '';
+		$wrap_class = $admin ? "{$wrap_class} float-left" : $wrap_class;
+		$attributes .= ! empty( $wrap_class )
+			? " class=\"{$wrap_class} powered-by-event-espresso-credit\""
+			: ' class="powered-by-event-espresso-credit"';
+		$query_args = array_merge(
+			array(
+				'ap_id'        => EE_Registry::instance()->CFG->admin->affiliate_id(),
+				'utm_source'   => 'powered_by_event_espresso',
+				'utm_medium'   => 'link',
+				'utm_campaign' => 'powered_by',
+			),
+			$query_args
+		);
+		$powered_by = apply_filters( 'FHEE__EEH_Template__powered_by_event_espresso_text', $admin ? 'Event Espresso - ' . EVENT_ESPRESSO_VERSION : 'Event Espresso' );
+		$url = add_query_arg( $query_args, 'https://eventespresso.com/' );
+		$url = apply_filters( 'FHEE__EEH_Template__powered_by_event_espresso__url', $url );
+		return (string) apply_filters(
+			'FHEE__EEH_Template__powered_by_event_espresso__html',
+			sprintf(
+				esc_html_x(
+					'%1$sOnline event registration and ticketing powered by %2$s',
+					'Online event registration and ticketing powered by [link to eventespresso.com]',
+					'event_espresso'
+				),
+				"<{$tag}{$attributes}>",
+				"<a href=\"{$url}\" target=\"_blank\" rel=\"nofollow\">{$powered_by}</a></{$tag}>"
+			),
+			$wrap_class,
+			$wrap_id
+		);
+	}
+
+
+
 } //end EEH_Template class
+
 
 //function convert_zero_to_free( $amount, $return_raw ) {
 //	// we don't want to mess with requests for unformatted values because those may get used in calculations

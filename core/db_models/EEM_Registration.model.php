@@ -1,6 +1,7 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
-require_once ( EE_MODELS . 'EEM_Soft_Delete_Base.model.php' );
-require_once ( EE_CLASSES . 'EE_Registration.class.php' );
+<?php 
+use EventEspresso\core\services\database\TableAnalysis;
+
+if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 /**
  *
  * Registration Model
@@ -90,6 +91,11 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	 */
 	const status_id_declined = 'RDC';
 
+	/**
+	 * @var TableAnalysis $table_analysis
+	 */
+	protected $_table_analysis;
+
 
 
 	/**
@@ -99,9 +105,9 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	 * @access protected
 	 * @param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any incoming timezone data that gets saved).
 	 *    Note this just sends the timezone info to the date time model field objects.  Default is NULL (and will be assumed using the set timezone in the 'timezone_string' wp option)
-	 * @return \EEM_Registration
 	 */
 	protected function __construct( $timezone = null ) {
+		$this->_table_analysis = EE_Registry::instance()->create( 'TableAnalysis', array(), true );
 		$this->singular_item = __('Registration','event_espresso');
 		$this->plural_item = __('Registrations','event_espresso');
 
@@ -116,7 +122,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 				'TXN_ID'=>new EE_Foreign_Key_Int_Field('TXN_ID', __('Transaction ID','event_espresso'), false, 0, 'Transaction'),
 				'TKT_ID'=>new EE_Foreign_Key_Int_Field('TKT_ID', __('Ticket ID','event_espresso'), false, 0, 'Ticket'),
 				'STS_ID'=>new EE_Foreign_Key_String_Field('STS_ID', __('Status ID','event_espresso'), false, EEM_Registration::status_id_incomplete, 'Status'),
-				'REG_date'=>new EE_Datetime_Field('REG_date', __('Time registration occurred','event_espresso'), false, time(), $timezone ),
+				'REG_date'=>new EE_Datetime_Field('REG_date', __('Time registration occurred','event_espresso'), false, EE_Datetime_Field::now, $timezone ),
 				'REG_final_price'=>new EE_Money_Field('REG_final_price', __('Registration\'s share of the transaction total','event_espresso'), false, 0),
 				'REG_paid'=>new EE_Money_Field('REG_paid', __('Amount paid to date towards registration','event_espresso'), false, 0),
 				'REG_session'=>new EE_Plain_Text_Field('REG_session', __('Session ID of registration','event_espresso'), false, ''),
@@ -169,7 +175,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 
 	/**
 	 * inactive_reg_statuses
-	 * a filterable list of registration statuses that are not considered active
+	 * a filterable list of registration statuses that are considered active
 	 *
 	 * @access public
 	 * @return array
@@ -209,6 +215,26 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 
 
 	/**
+	 *    closed_reg_statuses
+	 * 	a filterable list of registration statuses that are considered "closed"
+	 * meaning they should not be considered in any calculations involving monies owing
+	 *
+	 *	@access public
+	 *	@return array
+	 */
+	public static function closed_reg_statuses() {
+		return apply_filters(
+			'FHEE__EEM_Registration__closed_reg_statuses',
+			array(
+				EEM_Registration::status_id_cancelled,
+				EEM_Registration::status_id_declined,
+			)
+		);
+	}
+
+
+
+	/**
 	 * 		get list of registration statuses
 	 *
 	 *
@@ -235,7 +261,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 		//and the table hasn't actually been created, this could have an error
 		/** @type WPDB $wpdb */
 		global $wpdb;
-		if( EEH_Activation::table_exists( $wpdb->prefix . 'esp_status' ) ){
+		if( $this->_get_table_analysis()->tableExists( $wpdb->prefix . 'esp_status' ) ){
 			$SQL = 'SELECT STS_ID, STS_code FROM '. $wpdb->prefix . 'esp_status WHERE STS_type = "registration"';
 			$results = $wpdb->get_results( $SQL );
 			self::$_reg_status = array();
@@ -247,14 +273,33 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 		}
 
 	}
-
+	
+	/**
+	 * Gets the injected table analyzer, or throws an exception
+	 * @return TableAnalysis
+	 * @throws \EE_Error
+	 */
+	protected function _get_table_analysis() {
+		if( $this->_table_analysis instanceof TableAnalysis ) {
+			return $this->_table_analysis;
+		} else {
+			throw new \EE_Error( 
+				sprintf( 
+					__( 'Table analysis class on class %1$s is not set properly.', 'event_espresso'), 
+					get_class( $this ) 
+				) 
+			);
+		}
+	}
 
 
 
 	/**
 	 * This returns a wpdb->results array of all registration date month and years matching the incoming query params and grouped by month and year.
-	 * @param  array  $where_params Array of query_params as described in the comments for EEM_Base::get_all()
-	 * @return wpdb results array
+	 *
+	 * @param  array $where_params Array of query_params as described in the comments for EEM_Base::get_all()
+	 * @return array
+	 * @throws \EE_Error
 	 */
 	public function get_reg_months_and_years( $where_params ) {
 		$query_params[0] = $where_params;

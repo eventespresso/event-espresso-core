@@ -39,6 +39,7 @@ class EE_Primary_Registration_Details_Shortcodes extends EE_Shortcodes {
 			'[PRIMARY_REGISTRANT_FNAME]' => __('Parses to the first name of the primary registration for the transaction.', 'event_espresso'),
 			'[PRIMARY_REGISTRANT_LNAME]' => __('Parses to the last name of the primary registration for the transaction.', 'event_espresso'),
 			'[PRIMARY_REGISTRANT_EMAIL]' => __('Parses to the email address of the primary registration for the transaction.', 'event_espresso'),
+			'[PRIMARY_REGISTRANT_REGISTRATION_ID]' => __('Parses to the registration ID of the primary registrant for the transaction.', 'event_espresso'),
 			'[PRIMARY_REGISTRANT_REGISTRATION_CODE]' => __('Parses to the registration code of the primary registrant for the transaction.', 'event_espresso'),
 			'[PRIMARY_REGISTRANT_PHONE_NUMBER]' => __('The Phone Number for the primary registrant for the transaction.', 'event_espresso'),
 			'[PRIMARY_REGISTRANT_ADDRESS]' => __('The Address for the primary registrant for the transaction.', 'event_espresso'),
@@ -81,6 +82,10 @@ class EE_Primary_Registration_Details_Shortcodes extends EE_Shortcodes {
 
 			case '[PRIMARY_REGISTRANT_EMAIL]' :
 				return $attendee->email();
+				break;
+
+			case '[PRIMARY_REGISTRANT_REGISTRATION_ID]' :
+				return $primary_reg->ID();
 				break;
 
 			case '[PRIMARY_REGISTRANT_REGISTRATION_CODE]' :

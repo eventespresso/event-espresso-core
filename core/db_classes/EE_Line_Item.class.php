@@ -107,7 +107,6 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 	/**
 	 * Sets TXN_ID
 	 * @param int $TXN_ID
-	 * @return boolean
 	 */
 	public function set_TXN_ID( $TXN_ID ) {
 		$this->set( 'TXN_ID', $TXN_ID );
@@ -132,7 +131,6 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 	/**
 	 * Sets name
 	 * @param string $name
-	 * @return boolean
 	 */
 	public function set_name( $name ) {
 		$this->set( 'LIN_name', $name );
@@ -153,7 +151,6 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 	/**
 	 * Sets desc
 	 * @param string $desc
-	 * @return boolean
 	 */
 	public function set_desc( $desc ) {
 		$this->set( 'LIN_desc', $desc );
@@ -174,11 +171,9 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 	/**
 	 * Sets quantity
 	 * @param int $quantity
-	 * @return boolean
 	 */
-	public function set_quantity( $quantity ) {
-		$quantity = max( $quantity, 0 );
-		$this->set( 'LIN_quantity', $quantity );
+	function set_quantity( $quantity ) {
+		$this->set( 'LIN_quantity', max( $quantity, 0 ) );
 	}
 
 
@@ -196,7 +191,6 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 	/**
 	 * Sets item_id
 	 * @param string $item_id
-	 * @return boolean
 	 */
 	public function set_OBJ_ID( $item_id ) {
 		$this->set( 'OBJ_ID', $item_id );
@@ -245,7 +239,6 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 	/**
 	 * Sets item_type
 	 * @param string $OBJ_type
-	 * @return boolean
 	 */
 	public function set_OBJ_type( $OBJ_type ) {
 		$this->set( 'OBJ_type', $OBJ_type );
@@ -265,8 +258,8 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 
 	/**
 	 * Sets unit_price
+	 *
 	 * @param float $unit_price
-	 * @return boolean
 	 */
 	public function set_unit_price( $unit_price ) {
 		$this->set( 'LIN_unit_price', $unit_price );
@@ -314,7 +307,6 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 	/**
 	 * Sets percent (between 100-0.01)
 	 * @param float $percent
-	 * @return boolean
 	 */
 	public function set_percent( $percent ) {
 		$this->set( 'LIN_percent', $percent );
@@ -335,7 +327,6 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 	/**
 	 * Sets total
 	 * @param float $total
-	 * @return boolean
 	 */
 	public function set_total( $total ) {
 		$this->set( 'LIN_total', $total );
@@ -376,7 +367,6 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 	/**
 	 * Sets parent
 	 * @param int $parent
-	 * @return boolean
 	 */
 	public function set_parent_ID( $parent ) {
 		$this->set( 'LIN_parent', $parent );
@@ -397,7 +387,6 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 	/**
 	 * Sets type
 	 * @param string $type
-	 * @return boolean
 	 */
 	public function set_type( $type ) {
 		$this->set( 'LIN_type', $type );
@@ -455,7 +444,6 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 	/**
 	 * Sets code
 	 * @param string $code
-	 * @return boolean
 	 */
 	public function set_code( $code ) {
 		$this->set( 'LIN_code', $code );
@@ -476,7 +464,6 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 	/**
 	 * Sets is_taxable
 	 * @param boolean $is_taxable
-	 * @return boolean
 	 */
 	public function set_is_taxable( $is_taxable ) {
 		$this->set( 'LIN_is_taxable', $is_taxable );
@@ -780,6 +767,16 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 
 
 	/**
+	 * Whether or not this line item is a cancellation line item
+	 * @return boolean
+	 */
+	function is_cancellation() {
+		return EEM_Line_Item::type_cancellation === $this->type();
+	}
+
+
+
+	/**
 	 * @return bool
 	 */
 	public function is_total() {
@@ -861,22 +858,26 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 	public function recalculate_pre_tax_total() {
 		$total = 0;
 		$my_children = $this->children();
-		// completely ignore tax totals, tax sub-totals, and cancelled line items, when calculating the pre-tax-total
-		if ( $this->is_tax_sub_total() || $this->is_tax() || $this->is_cancelled() ) {
-			return 0;
-		} elseif (
-			empty( $my_children )
-			&& ( $this->is_sub_line_item() || $this->is_line_item() )
-		) {
+		$has_children = ! empty( $my_children );
+		if ( $has_children && $this->is_line_item() ) {
+			$total = $this->_recalculate_pretax_total_for_line_item( $total, $my_children );
+		} elseif ( ! $has_children && ( $this->is_sub_line_item() || $this->is_line_item() ) ) {
 			$total = $this->unit_price() * $this->quantity();
 		} elseif( $this->is_sub_total() || $this->is_total() ) {
 			$total = $this->_recalculate_pretax_total_for_subtotal( $total, $my_children );
-		} elseif ( ! empty( $my_children ) && $this->is_line_item() ) {
-			$total = $this->_recalculate_pretax_total_for_line_item( $total, $my_children );
+		} elseif ( $this->is_tax_sub_total() || $this->is_tax() || $this->is_cancelled() ) {
+			// completely ignore tax totals, tax sub-totals, and cancelled line items, when calculating the pre-tax-total
+			return 0;
 		}
-		//ensure all non-line items and non-sub-line-items have a quantity of 1
-		if( ! $this->is_line_item() && ! $this->is_sub_line_item() ) {
-			$this->set_quantity( 1 );
+		// ensure all non-line items and non-sub-line-items have a quantity of 1 (except for Events)
+		if(
+			! $this->is_line_item() &&
+			! $this->is_sub_line_item() &&
+			! $this->is_cancellation()
+		) {
+			if ( $this->OBJ_type() !== 'Event' ) {
+				$this->set_quantity( 1 );
+			}
 			if( ! $this->is_percent() ) {
 				$this->set_unit_price( $this->total() );
 			}
@@ -888,7 +889,7 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 			$this->set_total( $total );
 			//if not a percent line item, make sure we keep the unit price in sync
 			if(
-				! empty( $my_children )
+				$has_children
 				&& $this->is_line_item()
 				&& ! $this->is_percent()
 			) {
@@ -923,7 +924,7 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 		}
 		//get the total of all its children
 		foreach ( $my_children as $child_line_item ) {
-			if ( $child_line_item instanceof EE_Line_Item ) {
+			if ( $child_line_item instanceof EE_Line_Item && ! $child_line_item->is_cancellation() ) {
 				// percentage line items are based on total so far
 				if ( $child_line_item->is_percent() ) {
 					//round as we go so that the line items add up ok
@@ -977,7 +978,8 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 		$quantity_for_total = 1;
 		//get the total of all its children
 		foreach ( $my_children as $child_line_item ) {
-			if ( $child_line_item instanceof EE_Line_Item ) {
+			if ( $child_line_item instanceof EE_Line_Item &&
+					! $child_line_item->is_cancellation()) {
 				if ( $child_line_item->is_percent() ) {
 					//it should be the unit-price-so-far multiplied by teh percent multiplied by the quantity
 					//not total multiplied by percent, because that ignores rounding along-the-way
@@ -1170,18 +1172,51 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 	 * @return int count of items saved
 	 */
 	public function save_this_and_descendants_to_txn( $txn_id = NULL ) {
+		$count = 0;
 		if ( ! $txn_id ) {
 			$txn_id = $this->TXN_ID();
 		}
 		$this->set_TXN_ID( $txn_id );
 		$children = $this->children();
-		$this->save();
+		$count += $this->save() ? 1 : 0;
 		foreach ( $children as $child_line_item ) {
 			if ( $child_line_item instanceof EE_Line_Item ) {
 				$child_line_item->set_parent_ID( $this->ID() );
-				$child_line_item->save_this_and_descendants_to_txn( $txn_id );
+				$count += $child_line_item->save_this_and_descendants_to_txn( $txn_id );
 			}
 		}
+		return $count;
+	}
+
+
+
+	/**
+	 * Saves this line item to the DB, and recursively saves its descendants.
+	 *
+	 * @return int count of items saved
+	 */
+	public function save_this_and_descendants() {
+		$count = 0;
+		$children = $this->children();
+		$count += $this->save() ? 1 : 0;
+		foreach ( $children as $child_line_item ) {
+			if ( $child_line_item instanceof EE_Line_Item ) {
+				$child_line_item->set_parent_ID( $this->ID() );
+				$count += $child_line_item->save_this_and_descendants();
+			}
+		}
+		return $count;
+	}
+
+
+
+	/**
+	 * returns the cancellation line item if this item was cancelled
+	 * @return EE_Line_Item[]
+	 */
+	function get_cancellations() {
+		EE_Registry::instance()->load_helper( 'Line_Item' );
+		return EEH_Line_Item::get_descendants_of_type( $this, EEM_Line_Item::type_cancellation );
 	}
 
 
