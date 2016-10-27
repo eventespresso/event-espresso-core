@@ -294,7 +294,7 @@ class EED_Core_Rest_Api extends \EED_Module
         );
         $option_name = self::saved_routes_option_names . $version;
         if (get_option($option_name)) {
-            update_option(self::saved_routes_option_names . $version, $routes, true);
+            update_option($option_name, $routes, true);
         } else {
             add_option($option_name, $routes, null, 'no');
         }
