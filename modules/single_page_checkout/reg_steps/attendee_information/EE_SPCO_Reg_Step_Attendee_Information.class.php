@@ -1194,19 +1194,28 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 //	private function _rename_form_input_if_attendee_property( $form_input = '' ) {
 //
 //	}
-
-
-
 	/**
 	 *    find_existing_attendee
 	 *
 	 * @param EE_Registration $registration
 	 * @param array           $attendee_data
 	 * @return boolean
+	 * @throws \EE_Error
 	 */
 	private function _find_existing_attendee( EE_Registration $registration, $attendee_data = array() ) {
 		$existing_attendee = null;
-		// does this attendee already exist in the db ? we're searching using a combination of first name, last name, AND email address
+		// if none of the critical properties are set in the incoming attendee data...
+		// then attempt to copy them from the primary attendee
+		if (
+			! isset( $attendee_data['ATT_fname'], $attendee_data['ATT_lname'], $attendee_data['ATT_email'] )
+			&& $this->checkout->primary_attendee_obj instanceof EE_Attendee
+		) {
+			$attendee_data = $this->_copy_critical_attendee_details_from_primary_registrant(
+				$attendee_data
+			);
+		}
+		// does this attendee already exist in the db ?
+		// we're searching using a combination of first name, last name, AND email address
 		$ATT_fname = isset( $attendee_data['ATT_fname'] ) && ! empty( $attendee_data['ATT_fname'] )
 			? $attendee_data['ATT_fname']
 			: '';
