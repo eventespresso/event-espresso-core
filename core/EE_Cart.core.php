@@ -124,6 +124,19 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 
 
+     /**
+      * @return \EE_Session
+      */
+     public function session()
+     {
+         if ( ! $this->_session instanceof EE_Session) {
+             $this->set_session();
+         }
+         return  $this->_session;
+     }
+
+
+
 	 /**
 	  * @param EE_Session $session
 	  */
@@ -342,8 +355,8 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 				$this->_grand_total->clear_cache( 'Transaction', null, true );
 			}
 		}
-		if ( $this->_session instanceof EE_Session ) {
-			return $this->_session->set_cart( $this );
+		if ( $this->session() instanceof EE_Session ) {
+			return $this->session()->set_cart( $this );
 		} else {
 			return false;
 		}
@@ -356,15 +369,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
       */
      public function __sleep() {
          return array( '_grand_total' );
-     }
-
-
-
-     /**
-      * @return array
-      */
-     public function __wakeup() {
-         $this->set_session();
      }
 
 
