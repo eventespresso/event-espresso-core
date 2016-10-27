@@ -568,12 +568,13 @@ class EEH_HTML {
 	 */
 	public static function link( $href = '', $link_text = '', $title = '', $id = '', $class = '', $style = '', $other_attributes = '' ) {
 		$link_text = ! empty( $link_text ) ? $link_text : $href;
-		$attributes = ! empty( $id ) ? ' id="' . EEH_HTML::sanitize_id( $id ) . '"' : '';
+		$attributes = ! empty($href ) ? ' href="' . $href . '"' : '';
+		$attributes .= ! empty( $id ) ? ' id="' . EEH_HTML::sanitize_id( $id ) . '"' : '';
 		$attributes .= ! empty( $class ) ? ' class="' . $class . '"' : '';
 		$attributes .= ! empty( $style ) ? ' style="' . $style . '"' : '';
 		$attributes .= ! empty( $title ) ? ' title="' . esc_attr( $title ) . '"' : '';
 		$attributes .= ! empty( $other_attributes ) ? ' ' . $other_attributes : '';
-		return '<a href="' . $href . '" ' . $attributes . '>'  . $link_text  . '</a>';
+		return "<a{$attributes}>{$link_text}</a>";
 	}
 
 
