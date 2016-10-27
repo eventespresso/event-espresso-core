@@ -13,7 +13,6 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) {
  * @package            Event Espresso
  * @subpackage         eea-rest-api
  * @author             Mike Nelson
- *                     ------------------------------------------------------------------------
  */
 class EED_Core_Rest_Api extends \EED_Module
 {
