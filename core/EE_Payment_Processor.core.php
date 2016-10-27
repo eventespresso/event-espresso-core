@@ -221,8 +221,22 @@ class EE_Payment_Processor extends EE_Processor_Base {
 				/** @type EE_Payment_Method $payment_method */
 				$payment_method = EEM_Payment_Method::instance()->ensure_is_obj($payment_method);
 				if ( $payment_method->type_obj() instanceof EE_PMT_Base ) {
-						$payment = $payment_method->type_obj()->handle_ipn( $_req_data, $transaction );
-						$log->set_object($payment);
+				    try {
+                        $payment = $payment_method->type_obj()->handle_ipn($_req_data, $transaction);
+                        $log->set_object($payment);
+                    } catch( EventEspresso\core\exceptions\IpnException $e ) {
+                        EEM_Change_Log::instance()->log(
+                            EEM_Change_Log::type_gateway,
+                            array(
+                                'message' => 'IPN Exception: ' . $e->getMessage(),
+                                'current_url' => EEH_URL::current_url(),
+                                'payment' => $e->getPaymentProperties(),
+                                'IPN_data' => $e->getIpnData()
+                            ),
+                            $obj_for_log
+                        );
+                        return $e->getPayment();
+                    }
 				} else {
 					// not a payment
 					EE_Error::add_error(
@@ -247,7 +261,19 @@ class EE_Payment_Processor extends EE_Processor_Base {
 							EEM_Change_Log::type_gateway, array('IPN data'=>$_req_data), $payment
 						);
 						break;
-					} catch( EE_Error $e ) {
+					} catch( EventEspresso\core\exceptions\IpnException $e ) {
+                        EEM_Change_Log::instance()->log(
+                            EEM_Change_Log::type_gateway,
+                            array(
+                                'message' => 'IPN Exception: ' . $e->getMessage(),
+                                'current_url' => EEH_URL::current_url(),
+                                'payment' => $e->getPaymentProperties(),
+                                'IPN_data' => $e->getIpnData()
+                            ),
+                            $obj_for_log
+                        );
+                        return $e->getPayment();
+                    } catch( EE_Error $e ) {
 						//that's fine- it apparently couldn't handle the IPN
 					}
 				}
