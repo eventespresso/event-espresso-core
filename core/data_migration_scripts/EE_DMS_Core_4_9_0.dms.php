@@ -605,7 +605,6 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
         $script_4_8_defaults = EE_Registry::instance()->load_dms('Core_4_8_0');
         $script_4_8_defaults->verify_new_countries();
         $script_4_8_defaults->verify_new_currencies();
-
         $this->verify_db_collations();
         return true;
     }
@@ -630,11 +629,12 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
 
     /**
      * Verify all EE4 models' tables use utf8mb4 collation
+     *
      * @return void
      */
     public function verify_db_collations()
     {
-        if( get_option( 'ee_verified_db_collations', false ) ) {
+        if (get_option('ee_verified_db_collations', false)) {
             return;
         }
         $tables = array();
@@ -661,6 +661,6 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
             }
         }
         //ok and now let's remember this was done (without needing to check the db schemas all over again)
-        add_option( 'ee_verified_db_collations', true, null, 'no' );
+        add_option('ee_verified_db_collations', true, null, 'no');
     }
 }
