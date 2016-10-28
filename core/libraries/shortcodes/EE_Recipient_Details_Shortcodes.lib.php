@@ -177,7 +177,7 @@ class EE_Recipient_Details_Shortcodes extends EE_Shortcodes {
 			foreach ( $this->_recipient->questions as $ansid => $question ) {
 				if (
 					$question instanceof EE_Question
-					&& $question->display_text() == $shortcode
+					&& trim( $question->display_text() ) == trim( $shortcode )
 					&& isset( $this->_recipient->registrations[ $this->_recipient->reg_obj->ID() ]['ans_objs'][ $ansid ] )
 				) {
 					return $this->_recipient->registrations[ $this->_recipient->reg_obj->ID() ]['ans_objs'][ $ansid ]->get_pretty( 'ANS_value', 'no_wpautop' );
