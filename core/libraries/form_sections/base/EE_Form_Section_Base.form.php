@@ -68,7 +68,7 @@ abstract class EE_Form_Section_Base {
 	 * @var boolean
 	 */
 	protected $_construction_finalized;
-	
+
 
 
 
@@ -181,7 +181,7 @@ abstract class EE_Form_Section_Base {
 
 	/**
 	 * Returns the HTML, JS, and CSS necessary to display this form section on a page.
-	 * Note however, it's recommended that you instead call enqueue_js on the "wp_enqueue_scripts" action, 
+	 * Note however, it's recommended that you instead call enqueue_js on the "wp_enqueue_scripts" action,
 	 * and call get_html when you want to output the html. Calling get_html_and_js after
 	 * "wp_enqueue_scripts" has already fired seems to work for now, but is contrary
 	 * to the instructions on https://developer.wordpress.org/reference/functions/wp_enqueue_script/
@@ -191,7 +191,7 @@ abstract class EE_Form_Section_Base {
 	public function get_html_and_js(){
 		return $this->get_html();
 	}
-	
+
 	/**
 	 * Gets the HTML for displaying this form section
 	 * @return string
@@ -312,7 +312,7 @@ abstract class EE_Form_Section_Base {
 			$this->set_method( $method );
 		}
 		$html = EEH_HTML::nl( 1, 'form' ) . '<form';
-		$html .= $this->html_id() !== '' ? ' id="' . $this->html_id() . '"' : '';
+		$html .= $this->html_id() !== '' ? ' id="' . $this->html_id() . '-frm"' : '';
 		$html .= ' action="' . $this->action() . '"';
 		$html .= ' method="' . $this->method() . '"';
 		$html .= $other_attributes . '>';
@@ -328,7 +328,7 @@ abstract class EE_Form_Section_Base {
 	public function form_close() {
 		return EEH_HTML::nl( -1, 'form' ) . '</form>' . EEH_HTML::nl() . '<!-- end of ee-' . $this->html_id() . '-form -->' . EEH_HTML::nl();
 	}
-	
+
 	/**
 	 * enqueues JS (and CSS) for the form (ie immediately call wp_enqueue_script and
 	 * wp_enqueue_style; the scripts could have optionally been registered earlier)
@@ -369,7 +369,7 @@ abstract class EE_Form_Section_Base {
 	 * @param string|false $form_section_path we accept false also because substr( '../', '../' ) = false
 	 * @return EE_Form_Section_Base
 	 */
-	public function find_section_from_path( $form_section_path ) {		
+	public function find_section_from_path( $form_section_path ) {
 		if( strpos( $form_section_path, '/' ) === 0 ) {
 			$form_section_path = substr( $form_section_path, strlen( '/' ) );
 		}
@@ -378,7 +378,7 @@ abstract class EE_Form_Section_Base {
 		}
 		if( strpos( $form_section_path, '../' ) === 0 ) {
 			$parent = $this->parent_section();
-			
+
 			$form_section_path = substr( $form_section_path, strlen( '../' ) );
 			if( $parent instanceof EE_Form_Section_Base ) {
 				return $parent->find_section_from_path( $form_section_path );
@@ -389,7 +389,7 @@ abstract class EE_Form_Section_Base {
 		//couldn't find it using simple parent following
 		return null;
 	}
-	
-	
+
+
 	}
 // End of file EE_Form_Section_Base.form.php
