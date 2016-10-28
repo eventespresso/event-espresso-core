@@ -605,6 +605,8 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
         $script_4_8_defaults = EE_Registry::instance()->load_dms('Core_4_8_0');
         $script_4_8_defaults->verify_new_countries();
         $script_4_8_defaults->verify_new_currencies();
+
+        $this->verify_db_collations();
         return true;
     }
 
@@ -622,5 +624,43 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
 
     public function migration_page_hooks()
     {
+    }
+
+
+
+    /**
+     * Verify all EE4 models' tables use utf8mb4 collation
+     * @return void
+     */
+    public function verify_db_collations()
+    {
+        if( get_option( 'ee_verified_db_collations', false ) ) {
+            return;
+        }
+        $tables = array();
+        // load registry
+        foreach (EE_Registry::instance()->non_abstract_db_models as $model_name) {
+            if (method_exists($model_name, 'instance')) {
+                $model_obj = call_user_func(array($model_name, 'instance'));
+                if ($model_obj instanceof EEM_Base) {
+                    foreach ($model_obj->get_tables() as $table) {
+                        if (strpos($table->get_table_name(), 'esp_')
+                            && (
+                                is_main_site()//for main tables, verify global tables
+                                || ! $table->is_global()//if not the main site, then only verify non-global tables (avoid doubling up)
+                            )
+                        ) {
+                            if ( ! apply_filters('FHEE__EE_DMS_Core_4_9_0__verify_db_collations__verified', false,
+                                $table)
+                            ) {
+                                maybe_convert_table_to_utf8mb4($table->get_table_name());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        //ok and now let's remember this was done (without needing to check the db schemas all over again)
+        add_option( 'ee_verified_db_collations', true, null, 'no' );
     }
 }
