@@ -196,9 +196,10 @@ class TableManager extends \EE_Base
         // does $sql contain valid column information? ( LPT: https://regex101.com/ is great for working out regex patterns )
         if (preg_match('((((.*?))(,\s))+)', $createSql, $valid_column_data)) {
             $table_name = $this->getTableAnalysis()->ensureTableNameHasPrefix($table_name);
-            $SQL = "CREATE TABLE $table_name ( $createSql ) ENGINE=$engine DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;";
             /** @var \wpdb $wpdb */
             global $wpdb;
+            $SQL = "CREATE TABLE $table_name ( $createSql ) ENGINE=$engine DEFAULT CHARSET={$wpdb->charset} COLLATE={$wpdb->collate};";
+
             //get $wpdb to echo errors, but buffer them. This way at least WE know an error
             //happened. And then we can choose to tell the end user
             $old_show_errors_policy = $wpdb->show_errors(true);
