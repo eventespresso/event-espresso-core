@@ -460,6 +460,16 @@ label.error { display : block; color : #FE2A00 !important; }
 	margin-bottom : 5px;
 }
 
+.list-table-bottom-buttons a.button-secondary, .list-table-bottom-buttons button.button-secondary {
+	display: inline-block;
+	margin: inherit;
+}
+
+.ee-list-table-legend-container h4.status-legend-title {
+	margin-top: 5px;
+	font-size: 1.4em;
+}
+
 .qtip-content .ee-list-table-legend {
 	padding : 0 0 .5em;
 	margin  : 0;

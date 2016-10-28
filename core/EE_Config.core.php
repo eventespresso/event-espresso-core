@@ -31,6 +31,11 @@ final class EE_Config {
 	private static $_instance;
 
 	/**
+	 * @var boolean $_logging_enabled
+	 */
+	private static $_logging_enabled = false;
+
+	/**
 	 * An StdClass whose property names are addon slugs,
 	 * and values are their config classes
 	 *
@@ -177,6 +182,7 @@ final class EE_Config {
 	 */
 	private function __construct() {
 		do_action( 'AHEE__EE_Config__construct__begin', $this );
+		EE_Config::$_logging_enabled = apply_filters( 'FHEE__EE_Config___construct__logging_enabled', false );
 		// setup empty config classes
 		$this->_initialize_config();
 		// load existing EE site settings
@@ -199,6 +205,15 @@ final class EE_Config {
 		do_action( 'AHEE__EE_Config__construct__end', $this );
 		// hardcoded hack
 		$this->template_settings->current_espresso_theme = 'Espresso_Arabica_2014';
+	}
+
+
+
+	/**
+	 * @return boolean
+	 */
+	public static function logging_enabled() {
+		return self::$_logging_enabled;
 	}
 
 
@@ -868,7 +883,7 @@ final class EE_Config {
 	 * @param string $config_option_name
 	 */
 	public static function log( $config_option_name = '' ) {
-		if ( ! empty( $config_option_name ) ) {
+		if ( EE_Config::logging_enabled() && ! empty( $config_option_name ) ) {
 			$config_log = get_option( EE_Config::LOG_NAME, array() );
 			//copy incoming $_REQUEST and sanitize it so we can save it
 			$_request = $_REQUEST;
@@ -888,7 +903,10 @@ final class EE_Config {
 	 * reduces the size of the config log to the length specified by EE_Config::LOG_LENGTH
 	 */
 	public static function trim_log() {
-		$config_log = get_option( EE_Config::LOG_NAME, array() );
+		if ( ! EE_Config::logging_enabled() ) {
+			return;
+		}
+		$config_log = maybe_unserialize( get_option( EE_Config::LOG_NAME, array() ) );
 		$log_length = count( $config_log );
 		if ( $log_length > EE_Config::LOG_LENGTH ) {
 			ksort( $config_log );

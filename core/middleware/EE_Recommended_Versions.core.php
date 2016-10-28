@@ -143,30 +143,6 @@ class EE_Recommended_Versions extends EE_Middleware {
 
 
 
-	/**
-	 *    minimum_php_version_error
-	 *
-	 * @return void
-	 */
-	public function minimum_php_version_error() {
-		?>
-		<div class="error">
-			<p>
-				<?php
-				printf(
-					__( 'We\'re sorry, but Event Espresso requires PHP version %1$s or greater in order to operate. You are currently running version %2$s.%3$sIn order to update your version of PHP, you will need to contact your current hosting provider.%3$sFor information on stable PHP versions, please go to %4$s.', 'event_espresso' ),
-					EE_MIN_PHP_VER_REQUIRED,
-					PHP_VERSION,
-					'<br/>',
-					'<a href="http://php.net/downloads.php">http://php.net/downloads.php</a>'
-				);
-				?>
-			</p>
-		</div>
-		<?php
-	}
-
-
 
 	/**
 	 *    _display_minimum_recommended_php_version_notice
