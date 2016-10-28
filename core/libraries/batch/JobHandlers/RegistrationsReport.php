@@ -335,11 +335,14 @@ class RegistrationsReport extends JobHandlerFile {
 							$answer_row[ 'Answer.ANS_value' ]
 						);
 					} else {
-						$reg_csv_array[ $question_label ] = \EEH_Export::prepare_value_from_db_for_display(
-							\EEM_Answer::instance(),
-							'ANS_value',
-							$answer_row[ 'Answer.ANS_value' ]
-						);
+					    //this isn't for html, so don't show html entities
+						$reg_csv_array[ $question_label ] =  html_entity_decode(
+                            \EEH_Export::prepare_value_from_db_for_display(
+                                \EEM_Answer::instance(),
+                                'ANS_value',
+                                $answer_row[ 'Answer.ANS_value' ]
+                            )
+                        );
 					}
 				}
 				$registrations_csv_ready_array[] = apply_filters(
