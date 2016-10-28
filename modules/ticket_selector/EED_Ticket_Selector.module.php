@@ -391,14 +391,9 @@ class EED_Ticket_Selector extends  EED_Module {
 			}
 			return $html;
 		}
-		// if this is a "Dude Where's my Ticket Selector?" ( DWMTS ) type event( ie: $_max_atndz === 1),
-		// and its the event list, and there is no submit button, then don't start building a form
+		// if there is no submit button, then don't start building a form
 		// because the "View Details" button will build its own form
-		if (
-			EED_Ticket_Selector::$_max_atndz === 1
-			&& is_archive()
-			&& ! apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit', false )
-		) {
+		if ( ! apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit', false ) ) {
 			return '';
 		}
 		$checkout_url = EEH_Event_View::event_link_url( $ID );
@@ -434,7 +429,7 @@ class EED_Ticket_Selector extends  EED_Module {
 					EED_Ticket_Selector::$_event
 				);
 				$external_url = EED_Ticket_Selector::$_event->external_url();
-				$html = '<input id="ticket-selector-submit-'. EED_Ticket_Selector::$_event->ID() .'-btn"';
+				$html .= '<input id="ticket-selector-submit-'. EED_Ticket_Selector::$_event->ID() .'-btn"';
 				$html .= ' class="ticket-selector-submit-btn ';
 				$html .= empty( $external_url ) ? 'ticket-selector-submit-ajax"' : '"';
 				$html .= ' type="submit" value="' . $btn_text . '" />';
@@ -443,33 +438,22 @@ class EED_Ticket_Selector extends  EED_Module {
 					'',
 					EED_Ticket_Selector::$_event
 				);
-				$html .= EED_Ticket_Selector::$_max_atndz === 1
-					? \EED_Ticket_Selector::no_tkt_slctr_end_dv()
-					: \EED_Ticket_Selector::clear_tkt_slctr();
+				$html .= \EED_Ticket_Selector::no_tkt_slctr_end_dv();
 				$html .= '<br/>' . \EED_Ticket_Selector::ticket_selector_form_close();
 			} else if (
-				is_archive()
-				&& EED_Ticket_Selector::$_max_atndz === 1
-			) {
-				// event list, no tickets available so display event's "View Details" button,
-				// but this is a "Dude Where's my Ticket Selector?" (DWMTS) type event
-				$html = EED_Ticket_Selector::display_view_details_btn( true );
-			} else if ( is_archive() ) {
-				// event list, no tickets available so display event's "View Details" button
-				$html = \EED_Ticket_Selector::ticket_selector_form_close();
-				$html .= EED_Ticket_Selector::display_view_details_btn();
-			} else if (
-				EED_Ticket_Selector::$_event instanceof EE_Event
 				// a "Dude Where's my Ticket Selector?" (DWMTS) type event (ie: $_max_atndz === 1)
-				&& EED_Ticket_Selector::$_max_atndz === 1
+				EED_Ticket_Selector::$_max_atndz === 1
 				// and the event is sold out
 				&& EED_Ticket_Selector::$_event->is_sold_out()
 			) {
 				// then instead of a View Details or Submit button, just display a "Sold Out" message
-				$html = apply_filters(
-					'FHEE__EE_Ticket_Selector__no_ticket_selector_submit',
+				$html .= apply_filters(
+					'FHEE__EE_Ticket_Selector__display_ticket_selector_submit__sold_out_msg',
 					sprintf(
-						__( '%1$s"%2$s" is currently sold out.%4$sPlease check back again later, as spots may become available.%3$s', 'event_espresso' ),
+						__(
+							'%1$s"%2$s" is currently sold out.%4$sPlease check back again later, as spots may become available.%3$s',
+							'event_espresso'
+						),
 						'<p class="no-ticket-selector-msg clear-float">',
 						EED_Ticket_Selector::$_event->name(),
 						'</p>',
@@ -479,16 +463,25 @@ class EED_Ticket_Selector extends  EED_Module {
 				);
 				// sold out DWMTS event, no TS, no submit or view details button, but has additional content
 				$html .= \EED_Ticket_Selector::no_tkt_slctr_end_dv();
-				$html .= \EED_Ticket_Selector::ticket_selector_form_close();
-			} else if ( apply_filters( 'FHEE__EE_Ticket_Selector__no_ticket_selector_submit', false ) ) {
-				// NOT a DWMTS event, TS displayed, BUT no tickets are available, so NO submit button
-                $html = \EED_Ticket_Selector::clear_tkt_slctr() . \EED_Ticket_Selector::ticket_selector_form_close();
+			} else if (
+				EED_Ticket_Selector::$_max_atndz === 1
+				&& apply_filters( 'FHEE__EE_Ticket_Selector__hide_ticket_selector', false )
+				&& ! is_single()
+			) {
+				// this is a "Dude Where's my Ticket Selector?" (DWMTS) type event,
+				// but no tickets are available, so display event's "View Details" button.
+				// it is being viewed via somewhere other than a single post
+				$html .= EED_Ticket_Selector::display_view_details_btn( true );
+			} else if ( is_archive() ) {
+				// event list, no tickets available so display event's "View Details" button
+				$html .= \EED_Ticket_Selector::no_tkt_slctr_end_dv();
+				$html .= EED_Ticket_Selector::display_view_details_btn();
 			} else {
-				// DWMTS event, no TS, no submit or view details button, and no additional content
-                $html = \EED_Ticket_Selector::no_tkt_slctr_end_dv() . \EED_Ticket_Selector::ticket_selector_form_close();
+				// no submit or view details button, and no additional content
+                $html .= \EED_Ticket_Selector::no_tkt_slctr_end_dv();
 			}
             if ( ! is_archive()) {
-                $html .= \EEH_Template::powered_by_event_espresso();
+	            $html .= \EEH_Template::powered_by_event_espresso('', '', array( 'utm_content' => 'ticket_selector' ));
             }
         }
         return $html;
@@ -552,7 +545,10 @@ class EED_Ticket_Selector extends  EED_Module {
 	 */
 	public static function display_view_details_btn( $DWMTS = false) {
 		if ( ! self::$_event->get_permalink() ) {
-			EE_Error::add_error( __('The URL for the Event Details page could not be retrieved.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error(
+				__('The URL for the Event Details page could not be retrieved.', 'event_espresso' ),
+				__FILE__, __FUNCTION__, __LINE__
+			);
 		}
 		$view_details_btn = '<form method="POST" action="' . self::$_event->get_permalink() . '">';
 		$btn_text = apply_filters(

@@ -2254,19 +2254,25 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$override = false;
 
 		//setup notices description
-		$messenger = ! empty( $this->_req_data['MTP_messenger'] )
-			? ucwords( str_replace( '_', ' ', $this->_req_data['MTP_messenger'] ) )
-			: false;
+		$messenger_slug = ! empty( $this->_req_data['MTP_messenger'] ) ? $this->_req_data['MTP_messenger'] : '';
 
-		$message_type = ! empty( $this->_req_data['MTP_message_type'] )
-			? ucwords( str_replace( '_', ' ', $this->_req_data['MTP_message_type'] ) )
-			: false;
+		//need the message type and messenger objects to be able to use the labels for the notices
+		$messenger_object = $this->_message_resource_manager->get_messenger( $messenger_slug );
+		$messenger_label = $messenger_object instanceof EE_messenger ? ucwords( $messenger_object->label['singular'] ) : '';
 
-		$context = ! empty( $this->_req_data['MTP_context'] )
-			? ucwords( str_replace( '_', ' ', $this->_req_data['MTP_context'] ) )
-			: false;
+		$message_type_slug = ! empty( $this->_req_data['MTP_message_type'] ) ? $this->_req_data['MTP_message_type'] : '';
+		$message_type_object = $this->_message_resource_manager->get_message_type( $message_type_slug );
 
-		$item_desc = $messenger ? $messenger . ' ' . $message_type . ' ' . $context . ' ' : '';
+		$message_type_label = $message_type_object instanceof EE_message_type
+			? ucwords( $message_type_object->label['singular'] )
+			: '';
+
+		$context_slug = ! empty( $this->_req_data['MTP_context'] )
+			? $this->_req_data['MTP_context']
+			: '';
+		$context = ucwords( str_replace( '_', ' ', $context_slug ) );
+
+		$item_desc = $messenger_label && $message_type_label ? $messenger_label. ' ' . $message_type_label . ' ' . $context . ' ' : '';
 		$item_desc .= 'Message Template';
 		$query_args = array();
 		$edit_array = array();
@@ -2275,7 +2281,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		//if this is "new" then we need to generate the default contexts for the selected messenger/message_type for user to edit.
 		if ( $new ) {
 			$GRP_ID = !empty( $this->_req_data['GRP_ID'] ) ? $this->_req_data['GRP_ID'] : 0;
-			if ( $edit_array = $this->_generate_new_templates($messenger, $message_type, $GRP_ID ) ) {
+			if ( $edit_array = $this->_generate_new_templates($messenger_slug, $message_type_slug, $GRP_ID ) ) {
 				if ( empty($edit_array) ) {
 					$success = 0;
 				} else {
@@ -2304,7 +2310,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 			} else {
 				//first validate all fields!
-				$validates = $MTPG->validate($this->_req_data['MTP_template_fields'], $this->_req_data['MTP_context'],  $this->_req_data['MTP_messenger'], $this->_req_data['MTP_message_type']);
+				$validates = $MTPG->validate($this->_req_data['MTP_template_fields'], $context_slug,  $messenger_slug, $message_type_slug);
 
 				//if $validate returned error messages (i.e. is_array()) then we need to process them and setup an appropriate response. HMM, dang this isn't correct, $validates will ALWAYS be an array.  WE need to make sure there is no actual error messages in validates.
 				if ( is_array($validates) && !empty($validates) ) {
@@ -2422,14 +2428,14 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		//was a test send triggered?
 		if ( isset( $this->_req_data['test_button'] ) ) {
 			EE_Error::overwrite_success();
-			$this->_do_test_send( $this->_req_data['MTP_context'],  $this->_req_data['MTP_messenger'], $this->_req_data['MTP_message_type'] );
+			$this->_do_test_send( $context,  $messenger_slug, $message_type_slug );
 			$override = true;
 		}
 
 		if ( empty( $query_args ) ) {
 			$query_args = array(
 				'id' => $this->_req_data['GRP_ID'],
-				'context' => $this->_req_data['MTP_context'],
+				'context' => $context_slug,
 				'action' => 'edit_message_template'
 				);
 		}
