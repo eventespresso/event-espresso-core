@@ -1276,7 +1276,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 									'cookies_not_set_msg' 		=> $cookies_not_set_msg,
 									'registration_time_limit' 	=> $this->checkout->get_registration_time_limit(),
 									'session_expiration' 			=>
-										gmdate( 'M d, Y H:i:s', EE_Registry::instance()->SSN->expiration() + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) )
+										date( 'M d, Y H:i:s', EE_Registry::instance()->SSN->expiration() + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) )
 							)
 						)
 					)
