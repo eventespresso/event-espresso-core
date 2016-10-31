@@ -473,8 +473,8 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 								: $content['newsletter_content'];
 							break;
 						default :
-							continue;
-							break;
+							//continue the foreach loop, we don't want to set $new_content nor save.
+							continue 2;
 					}
 					$Message_Template->set( 'MTP_content', $new_content );
 					$Message_Template->save();

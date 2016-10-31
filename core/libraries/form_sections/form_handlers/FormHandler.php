@@ -172,7 +172,7 @@ abstract class FormHandler implements FormHandlerInterface{
 	 * @throws \LogicException
 	 */
 	public function form( $for_display = false ) {
-		if ( ! $this->formIsValid() ) {
+        if ( ! $this->formIsValid() ) {
 			return null;
 		}
 		if ( $for_display ) {
@@ -195,11 +195,14 @@ abstract class FormHandler implements FormHandlerInterface{
 	 * @throws LogicException
 	 */
 	public function formIsValid() {
-		if ( ! $this->form instanceof \EE_Form_Section_Proper ) {
+        if ( ! $this->form instanceof \EE_Form_Section_Proper ) {
 			static $generated = false;
 			if ( ! $generated ) {
 				$generated = true;
-				$this->generate();
+				$form = $this->generate();
+                if ( $form instanceof \EE_Form_Section_Proper) {
+                    $this->setForm($form);
+                }
 			}
 			return $this->verifyForm();
 		}
@@ -571,7 +574,7 @@ abstract class FormHandler implements FormHandlerInterface{
 	 * @throws \EE_Error
 	 */
 	public function display() {
-		$form_html = apply_filters(
+        $form_html = apply_filters(
 			'FHEE__EventEspresso_core_libraries_form_sections_form_handlers_FormHandler__display__before_form',
 			''
 		);
@@ -610,11 +613,11 @@ abstract class FormHandler implements FormHandlerInterface{
 	 */
 	public function process( $submitted_form_data = array() ) {
 		if ( ! $this->form()->was_submitted( $submitted_form_data ) ) {
-			throw new InvalidFormSubmissionException( $this->form_name );
+            throw new InvalidFormSubmissionException( $this->form_name );
 		}
-		$this->form( true )->receive_form_submission( $submitted_form_data );
+        $this->form( true )->receive_form_submission( $submitted_form_data );
 		if ( ! $this->form()->is_valid() ) {
-			throw new InvalidFormSubmissionException(
+            throw new InvalidFormSubmissionException(
 				$this->form_name,
 				sprintf(
 					__(
