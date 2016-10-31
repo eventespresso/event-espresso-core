@@ -26,7 +26,13 @@
 		<thead>
 			<tr>
 				<th scope="col" class="ee-ticket-selector-ticket-details-th">
-					<?php echo esc_html( apply_filters( 'FHEE__ticket_selector_chart_template__table_header_available_tickets', '', $EVT_ID ) ); ?>
+					<?php
+                    echo apply_filters(
+                        'FHEE__ticket_selector_chart_template__table_header_available_tickets',
+                        esc_html__(''),
+                        $EVT_ID
+                    );
+                    ?>
 				</th>
 				<?php if ( apply_filters( 'FHEE__ticket_selector_chart_template__display_ticket_price_details', TRUE ) ) { ?>
 				<th scope="col" class="ee-ticket-selector-ticket-price-th cntr">
@@ -39,7 +45,11 @@
 						 * @param string 'Price' The translatable text to display in the table header for price
 						 * @param int $EVT_ID The Event ID
 						 */
-						echo esc_html( apply_filters( 'FHEE__ticket_selector_chart_template__table_header_price', __( 'Price', 'event_espresso' ), $EVT_ID ) );
+						echo apply_filters(
+                            'FHEE__ticket_selector_chart_template__table_header_price',
+                            esc_html__( 'Price', 'event_espresso' ),
+                            $EVT_ID
+                        );
 					?>
 				</th>
 				<?php } ?>
@@ -53,7 +63,11 @@
 						* @param string 'Qty*' The translatable text to display in the table header for the Quantity of tickets
 						* @param int $EVT_ID The Event ID
 						*/
-						echo esc_html( apply_filters( 'FHEE__ticket_selector_chart_template__table_header_qty', __( 'Qty*', 'event_espresso' ), $EVT_ID ) );
+						echo apply_filters(
+                            'FHEE__ticket_selector_chart_template__table_header_qty',
+                            esc_html__( 'Qty*', 'event_espresso' ),
+                            $EVT_ID
+                        );
 					?>
 				</th>
 			</tr>
@@ -65,9 +79,9 @@
 	<?php
 	if ( $taxable_tickets && apply_filters( 'FHEE__ticket_selector_chart_template__display_ticket_price_details', true ) ) {
 		if ( $prices_displayed_including_taxes ) {
-			$ticket_price_includes_taxes = __( '* price includes taxes', 'event_espresso' );
+			$ticket_price_includes_taxes = esc_html__( '* price includes taxes', 'event_espresso' );
 		} else {
-			$ticket_price_includes_taxes = __( '* price does not include taxes', 'event_espresso' );
+			$ticket_price_includes_taxes = esc_html__( '* price does not include taxes', 'event_espresso' );
 		}
 		echo '<p class="small-text lt-grey-text" style="text-align:right; margin: -1em 0 1em;">' . $ticket_price_includes_taxes . '</p>';
 	}
@@ -83,7 +97,7 @@
 if ( $max_atndz > 0 ) {
 	echo apply_filters(
 		'FHEE__ticket_selector_chart_template__maximum_tickets_purchased_footnote',
-		''
+        esc_html__('')
 	);
 }
 if ( ! apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit', false ) ) {
