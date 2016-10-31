@@ -147,7 +147,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 'edit'                => __('Edit Contact', 'event_espresso'),
                 'report'              => __("Event Registrations CSV Report", "event_espresso"),
                 'report_all'          => __('All Registrations CSV Report', 'event_espresso'),
-                'report_filtered'     => __( 'Filtered CSV Report', 'event_espresso' ),
+                'report_filtered'     => __('Filtered CSV Report', 'event_espresso'),
                 'contact_list_report' => __('Contact List Report', 'event_espresso'),
                 'contact_list_export' => __("Export Data", "event_espresso"),
             ),
