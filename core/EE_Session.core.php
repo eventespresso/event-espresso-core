@@ -688,7 +688,7 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
         $session_data = serialize($this->_session_data);
         // do we need to also encode it to avoid corrupted data when saved to the db?
         if (EE_Registry::instance()->CFG->admin->encode_session_data()) {
-            $session_data = base64_encode($this->_session_data);
+            $session_data = base64_encode($session_data);
         }
 		// encrypt it if we are using encryption
 		$session_data = $this->_use_encryption ? $this->encryption->encrypt( $session_data ) : $session_data;
