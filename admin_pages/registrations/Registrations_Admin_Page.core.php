@@ -2647,10 +2647,14 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     public function _registrations_report()
     {
         if ( ! defined('EE_USE_OLD_CSV_REPORT_CLASS')) {
+            $serialized = serialize( $this->_get_query_params_from_request( EEH_Array::is_set( $this->_req_data, 'filters', array() ) ) );
+            $encoded = urlencode( $serialized );
             wp_redirect(EE_Admin_Page::add_query_args_and_nonce(array(
                 'page'        => 'espresso_batch',
                 'batch'       => 'file',
                 'EVT_ID'      => isset($this->_req_data['EVT_ID']) ? $this->_req_data['EVT_ID'] : null,
+                'filters'     => $encoded,
+                'use_filters' => EEH_Array::is_set( $this->_req_data, 'use_filters', false ),
                 'job_handler' => urlencode('EventEspressoBatchRequest\JobHandlers\RegistrationsReport'),
                 'return_url'  => urlencode($this->_req_data['return_url']),
             )));
