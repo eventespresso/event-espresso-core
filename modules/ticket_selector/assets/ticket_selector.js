@@ -16,8 +16,8 @@ jQuery(document).ready(function ($) {
         var $ticket_selector = $(ticket_selector_id);
         if ( $ticket_selector.length ) {
             var selected_datetime = $(this).val();
-            $ticket_selector.find('.tckt-slctr-tbl-tr').hide();
-            $ticket_selector.find('.ee-ticket-datetimes-' + selected_datetime).show();
+            $ticket_selector.find('.tckt-slctr-tbl-tr').addClass('ee-hidden-ticket-tr');
+            $ticket_selector.find('.ee-ticket-datetimes-' + selected_datetime).removeClass('ee-hidden-ticket-tr');
 			$(submit_button_id).removeClass( 'ee-disabled-btn' );
 			$('.ticket-selector-disabled-submit-btn-msg').stop().hide();
 		}

@@ -371,7 +371,7 @@
     top: -2px;
 }
 
-.ee-ticket-datetimes-hide {
+.ee-hidden-ticket-tr {
     display: none;
 }
 
@@ -381,13 +381,13 @@
 	border: 1px solid #bbb;
 	border-radius: .3em;
 	box-shadow: 0 1px 0 1px rgba(0,0,0,.04);
-	background: #f3f3f3; 
-	background: #fff -moz-linear-gradient(top, #ffffff 0%, #e5e5e5 100%); 
-	background: #fff -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(100%,#e5e5e5)); 
-	background: #fff -webkit-linear-gradient(top, #ffffff 0%,#e5e5e5 100%); 
-	background: #fff -o-linear-gradient(top, #ffffff 0%,#e5e5e5 100%); 
-	background: #fff -ms-linear-gradient(top, #ffffff 0%,#e5e5e5 100%); 
-	background: #fff linear-gradient(to bottom, #ffffff 0%,#e5e5e5 100%); 
+	background: #f3f3f3;
+	background: #fff -moz-linear-gradient(top, #ffffff 0%, #e5e5e5 100%);
+	background: #fff -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(100%,#e5e5e5));
+	background: #fff -webkit-linear-gradient(top, #ffffff 0%,#e5e5e5 100%);
+	background: #fff -o-linear-gradient(top, #ffffff 0%,#e5e5e5 100%);
+	background: #fff -ms-linear-gradient(top, #ffffff 0%,#e5e5e5 100%);
+	background: #fff linear-gradient(to bottom, #ffffff 0%,#e5e5e5 100%);
 }
 
 .custom-select select {
@@ -407,11 +407,11 @@
 
 .custom-select::after {
 	content: "";
-	position: absolute; 
-	top: 50%; 
-	right: 1em; 
-	z-index: 2; 
-	pointer-events: none; 
+	position: absolute;
+	top: 50%;
+	right: 1em;
+	z-index: 2;
+	pointer-events: none;
 	display: none
 }
 
@@ -423,11 +423,11 @@
 	}
 
 	.custom-select select {
-		padding-right:2em; 
-		background:none; 
-		border:1px solid transparent; 
-		-webkit-appearance:none; 
-		-moz-appearance:none; 
+		padding-right:2em;
+		background:none;
+		border:1px solid transparent;
+		-webkit-appearance:none;
+		-moz-appearance:none;
 		appearance:none
 	}
 
