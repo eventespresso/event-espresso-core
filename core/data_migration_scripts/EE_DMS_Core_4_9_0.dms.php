@@ -637,24 +637,23 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
         if (get_option('ee_verified_db_collations', false)) {
             return;
         }
-        $tables = array();
-        // load registry
+        // grab tables from each model
         foreach (EE_Registry::instance()->non_abstract_db_models as $model_name) {
             if (method_exists($model_name, 'instance')) {
                 $model_obj = call_user_func(array($model_name, 'instance'));
                 if ($model_obj instanceof EEM_Base) {
                     foreach ($model_obj->get_tables() as $table) {
-                        if (strpos($table->get_table_name(), 'esp_')
-                            && (
-                                is_main_site()//for main tables, verify global tables
-                                || ! $table->is_global()//if not the main site, then only verify non-global tables (avoid doubling up)
+                        if (
+                            apply_filters('FHEE__EE_DMS_Core_4_9_0__verify_db_collations__table_should_be_verified',
+                                strpos($table->get_table_name(), 'esp_')
+                                && (
+                                    is_main_site()//for main tables, verify global tables
+                                    || ! $table->is_global()//if not the main site, then only verify non-global tables (avoid doubling up)
+                                ),
+                                $table
                             )
                         ) {
-                            if ( ! apply_filters('FHEE__EE_DMS_Core_4_9_0__verify_db_collations__verified', false,
-                                $table)
-                            ) {
-                                maybe_convert_table_to_utf8mb4($table->get_table_name());
-                            }
+                            maybe_convert_table_to_utf8mb4($table->get_table_name());
                         }
                     }
                 }
