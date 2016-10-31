@@ -198,7 +198,9 @@ class TableManager extends \EE_Base
             $table_name = $this->getTableAnalysis()->ensureTableNameHasPrefix($table_name);
             /** @var \wpdb $wpdb */
             global $wpdb;
-            $SQL = "CREATE TABLE $table_name ( $createSql ) ENGINE=$engine DEFAULT CHARSET={$wpdb->charset} COLLATE={$wpdb->collate};";
+            $collation = $wpdb->collate ? $wpdb->collate : 'utf8mb4_unicode_ci';
+            $charset = $wpdb->charset ? $wpdb->charset : 'utf8mb4';
+            $SQL = "CREATE TABLE $table_name ( $createSql ) ENGINE=$engine DEFAULT CHARSET=$charset COLLATE=$collation;";
 
             //get $wpdb to echo errors, but buffer them. This way at least WE know an error
             //happened. And then we can choose to tell the end user
