@@ -43,8 +43,6 @@ class RegistrationsReport extends JobHandlerFile
         $filepath = $this->create_file_from_job_with_name($job_parameters->job_id(),
             $this->get_filename_from_event($event_id));
         $job_parameters->add_extra_data('filepath', $filepath);
-        $question_data_for_columns = $this->_get_questions_for_report($event_id);
-        $job_parameters->add_extra_data('questions_data', $question_data_for_columns);
         if ($job_parameters->request_datum('use_filters', false)) {
             $raw = stripslashes( $job_parameters->request_datum( 'filters', array()) );
             $decoded = urldecode( $raw );
@@ -80,6 +78,8 @@ class RegistrationsReport extends JobHandlerFile
             $query_params['force_join'] = array( 'Event', 'Transaction', 'Ticket', 'Attendee' );
         }
         $job_parameters->add_extra_data('query_params', $query_params);
+        $question_data_for_columns = $this->_get_questions_for_report($query_params);
+        $job_parameters->add_extra_data('questions_data', $question_data_for_columns);
         $job_parameters->set_job_size( \EEM_Registration::instance()->count( $query_params ) );
         //we should also set the header columns
         $csv_data_for_row = $this->get_csv_data_for($event_id, 0, 1, $job_parameters->extra_datum('questions_data'),
@@ -120,19 +120,25 @@ class RegistrationsReport extends JobHandlerFile
      * Gets the questions which are to be used for this report, so they
      * can be remembered for later
      *
-     * @param int|null $event_id
+     * @param array $registration_query_params
      * @return array of wpdb results for questions which are to be used for this report
      */
-    protected function _get_questions_for_report($event_id)
+    protected function _get_questions_for_report( $registration_query_params )
     {
-        $question_query_params = array(
-            array(
-                'Answer.ANS_ID' => array('IS_NOT_NULL'),
-            ),
-            'group_by' => array('QST_ID'),
-        );
-        if ($event_id) {
-            $question_query_params[0]['Answer.Registration.EVT_ID'] = $event_id;
+        $where = isset( $registration_query_params[0] ) ? $registration_query_params[0] : null;
+        if( $where === null ) {
+            $question_query_params = array(
+                array(
+                    'Answer.ANS_ID' => array('IS_NOT_NULL'),
+                ),
+                'group_by' => array('QST_ID'),
+            );
+        } else {
+            $question_query_params = array( array() );
+            //convert the registration query params into question query params
+            foreach( $where as $key => $val ) {
+                $question_query_params[0][ 'Question_Group.Event.Registration.' . $key ] = $val;
+            }
         }
         return \EEM_Question::instance()->get_all_wpdb_results($question_query_params);
     }
