@@ -1642,6 +1642,7 @@ class EEH_Activation {
 			'ee_pers_admin_notices' => true,
 			'ee_job_parameters_' => false,
 			'ee_upload_directories_incomplete' => true,
+            'ee_verified_db_collations' => true,
 		);
 		if( is_main_site() ) {
 			$wp_options_to_delete[ 'ee_network_config' ] = true;
