@@ -333,7 +333,7 @@ class DisplayTicketSelector
 
 
     /**
-     * loadTicketSelectorTemplate
+     * loadTicketSelector
      * begins to assemble template arguments
      * and decides whether to load a "simple" ticket selector, or the standard
      *
@@ -364,14 +364,16 @@ class DisplayTicketSelector
         );
         $template_args['tickets'] = $tickets;
         $template_args['ticket_count'] = count($tickets);
-        // if there is only ONE ticket with a max qty of ONE
-        if (count($tickets) === 1 && $this->getMaxAttendees() === 1 ) {
-            $ticket_selector = $this->simpleTicketSelector( $tickets, $template_args);
-        }
-        return ! empty($ticket_selector)
+        $ticket_selector = $this->simpleTicketSelector( $tickets, $template_args);
+        return $ticket_selector instanceof TicketSelectorSimple
             ? $ticket_selector
-            : $this->standardTicketSelector($tickets, $template_args);
-
+            : new TicketSelectorStandard(
+                $this->event,
+                $tickets,
+                $this->getMaxAttendees(),
+                $template_args,
+                $this->date_format
+            );
     }
 
 
@@ -387,8 +389,12 @@ class DisplayTicketSelector
      * @return string
      * @throws \EE_Error
      */
-    protected function simpleTicketSelector( $tickets, array $template_args)
+    protected function simpleTicketSelector($tickets, array $template_args)
     {
+        // if there is only ONE ticket with a max qty of ONE
+        if (count($tickets) > 1 || $this->getMaxAttendees() !== 1) {
+            return '';
+        }
         /** @var \EE_Ticket $ticket */
         $ticket = reset($tickets);
         // if the ticket is free... then not much need for the ticket selector
@@ -399,109 +405,14 @@ class DisplayTicketSelector
                 $this->event->ID()
             )
         ) {
-            $ticket_selector_row = new TicketSelectorRowSimple(
+            return new TicketSelectorSimple(
+                $this->event,
                 $ticket,
                 $this->getMaxAttendees(),
-                $template_args['date_format']
+                $template_args
             );
-            unset($template_args['tickets']);
-            $template_args['ticket'] = $ticket;
-            $template_args['ticket_status_display'] = $ticket_selector_row->getTicketStatusDisplay();
-            $template_args['template_path'] = TICKET_SELECTOR_TEMPLATES_PATH
-                                              . 'simple_ticket_selector.template.php';
-            return $this->loadTicketSelectorTemplate($template_args);
         }
         return '';
-    }
-
-
-
-    /**
-     * standardTicketSelector
-     * regular ticket selector that displays one row for each ticket
-     * with a dropdown for selecting the desired ticket quantity
-     *
-     * @param \EE_Ticket[] $tickets
-     * @param array        $template_args
-     * @return string
-     * @throws \EE_Error
-     */
-    protected function standardTicketSelector(array $tickets, array $template_args)
-    {
-        $row = 1;
-        $ticket_row_html = '';
-        $required_ticket_sold_out = false;
-        // flag to indicate that at least one taxable ticket has been encountered
-        $taxable_tickets = false;
-        // get EE_Ticket_Selector_Config and TicketDetails
-        $template_settings = isset (\EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector)
-            ? \EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector
-            : new \EE_Ticket_Selector_Config();
-        // $template_settings->setShowDatetimeSelector(\EE_Ticket_Selector_Config::ALWAYS_SHOW_DATETIME_SELECTOR);
-        // $template_settings->setDatetimeSelectorThreshold(2);
-        // \EEH_Debug_Tools::printr($template_settings->getShowDatetimeSelector(), 'getShowDatetimeSelector', __FILE__, __LINE__);
-        // \EEH_Debug_Tools::printr($template_settings->getDatetimeSelectorThreshold(), 'getDatetimeSelectorThreshold', __FILE__, __LINE__);
-        $tax_settings = isset (\EE_Registry::instance()->CFG->tax_settings)
-            ? \EE_Registry::instance()->CFG->tax_settings
-            : new \EE_Tax_Config();
-        $datetimes = $this->getAllTicketDatetimes($tickets);
-        // loop through tickets
-        foreach ($tickets as $TKT_ID => $ticket) {
-            if ($ticket instanceof \EE_Ticket) {
-                $cols = 2;
-                $taxable_tickets = $ticket->taxable() ? true : $taxable_tickets;
-
-                $ticket_selector_row = new TicketSelectorRowStandard(
-                    $ticket,
-                    new TicketDetails($ticket, $template_settings, $template_args),
-                    $template_settings,
-                    $tax_settings,
-                    $this->getMaxAttendees(),
-                    $row,
-                    $cols,
-                    $required_ticket_sold_out,
-                    $template_args['event_status'],
-                    $template_args['date_format'],
-                    $this->getTicketDatetimeClasses($ticket, $datetimes, $template_settings)
-                );
-                $ticket_row_html .= $ticket_selector_row->getHtml();
-                $required_ticket_sold_out = $ticket_selector_row->getRequiredTicketSoldOut();
-                $row++;
-            }
-        }
-        $template_args['row'] = $row;
-        $template_args['ticket_row_html'] = $ticket_row_html;
-        $template_args['taxable_tickets'] = $taxable_tickets;
-        $template_args['datetime_selector'] = $this->getDatetimeSelector($datetimes, $template_settings);
-        $template_args['prices_displayed_including_taxes'] = $tax_settings->prices_displayed_including_taxes;
-        $template_args['template_path'] = TICKET_SELECTOR_TEMPLATES_PATH . 'standard_ticket_selector.template.php';
-        remove_all_filters('FHEE__EE_Ticket_Selector__hide_ticket_selector');
-        return $this->loadTicketSelectorTemplate($template_args);
-    }
-
-
-
-    /**
-     * loadTicketSelectorTemplate
-     *
-     * @param array $template_args
-     * @return string
-     * @throws \EE_Error
-     */
-    protected function loadTicketSelectorTemplate(array $template_args)
-    {
-        return \EEH_Template::locate_template(
-            apply_filters(
-                'FHEE__EE_Ticket_Selector__display_ticket_selector__template_path',
-                $template_args['template_path'],
-                $this->event
-            ),
-            array_merge(
-                array(
-                ),
-                $template_args
-            )
-        );
     }
 
 
@@ -569,124 +480,6 @@ class DisplayTicketSelector
     }
 
 
-
-    /**
-     * @param \EE_Ticket[] $tickets
-     * @return array
-     * @throws \EE_Error
-     */
-    protected function getAllTicketDatetimes($tickets = array())
-    {
-        $datetimes = array();
-        foreach ($tickets as $ticket) {
-            $datetimes = $this->getTicketDatetimes($ticket, $datetimes);
-        }
-        return $datetimes;
-    }
-
-
-
-    /**
-     * @param \EE_Ticket                 $ticket
-     * @param \EE_Datetime[]             $datetimes
-     * @param \EE_Ticket_Selector_Config $template_settings
-     * @return string
-     * @throws \EE_Error
-     */
-    protected function getTicketDatetimeClasses(
-        \EE_Ticket $ticket,
-        array $datetimes,
-        \EE_Ticket_Selector_Config $template_settings
-    ) {
-        if (
-            $template_settings->getShowDatetimeSelector() === \EE_Ticket_Selector_Config::DO_NOT_SHOW_DATETIME_SELECTOR
-            || (
-                $template_settings->getShowDatetimeSelector()
-                === \EE_Ticket_Selector_Config::MAYBE_SHOW_DATETIME_SELECTOR
-                && count($datetimes) < $template_settings->getDatetimeSelectorThreshold()
-            )
-        ) {
-            return '';
-        }
-        $ticket_datetimes = $this->getTicketDatetimes($ticket);
-        $classes = '';
-        foreach ($datetimes as $datetime) {
-            if ( ! $datetime instanceof \EE_Datetime || ! in_array($datetime, $ticket_datetimes)) {
-                continue;
-            }
-            $classes .= ' ee-ticket-datetimes-' . $datetime->date_range('Y_m_d', '-');
-        }
-        $classes .= ' ee-ticket-datetimes-hide';
-        return $classes;
-    }
-
-
-
-    /**
-     * @param \EE_Ticket     $ticket
-     * @param \EE_Datetime[] $datetimes
-     * @return \EE_Datetime[]
-     * @throws \EE_Error
-     */
-    protected function getTicketDatetimes(\EE_Ticket $ticket, $datetimes = array())
-    {
-        $ticket_datetimes = $ticket->datetimes();
-        foreach ($ticket_datetimes as $ticket_datetime) {
-            if ( ! $ticket_datetime instanceof \EE_Datetime) {
-                continue;
-            }
-            $datetimes[$ticket_datetime->ID()] = $ticket_datetime;
-        }
-        return $datetimes;
-    }
-
-
-
-    /**
-     * @param \EE_Datetime[]             $datetimes
-     * @param \EE_Ticket_Selector_Config $template_settings
-     * @return string
-     * @throws \EE_Error
-     */
-    protected function getDatetimeSelector(
-        array $datetimes,
-        \EE_Ticket_Selector_Config $template_settings
-    ) {
-        if(
-            $template_settings->getShowDatetimeSelector() === \EE_Ticket_Selector_Config::DO_NOT_SHOW_DATETIME_SELECTOR
-            || (
-                $template_settings->getShowDatetimeSelector() === \EE_Ticket_Selector_Config::MAYBE_SHOW_DATETIME_SELECTOR
-                && count($datetimes) < $template_settings->getDatetimeSelectorThreshold()
-            )
-        ){
-            return '';
-        }
-        $html = \EEH_HTML::div( '', '', 'datetime_selector-dv' );
-        $html .= \EEH_HTML::label(
-            \EEH_HTML::span('', '', 'dashicons dashicons-calendar-alt') . esc_html__('Datetimes', 'event_espresso'),
-            '', 'datetime_selector-lbl'
-        ) . \EEH_HTML::br();
-        $html .= \EEH_HTML::div( '', '', 'custom-select' );
-        $html .= "\n" . '<select name="datetime_selector-' . $this->event->ID() . '"';
-        $html .= ' id="datetime-selector-' . $this->event->ID() . '"';
-        $html .= ' class="ticket-selector-datetime-selector-slct"';
-        $html .= ' data-tkt_slctr_evt="' . $this->event->ID() . '">';
-        $html .= "\n" . '<option value="0">' . esc_html__('- please select a datetime -', 'event_espresso')  . '</option>';
-        // offer ticket quantities from the min to the max
-        foreach ($datetimes as $datetime) {
-            if ( ! $datetime instanceof \EE_Datetime) {
-                continue;
-            }
-            $html .= "\n" . '<option value="' . $datetime->date_range('Y_m_d', '-' ) . '">';
-            $html .= $datetime->date_range($this->date_format);
-            $html .= '</option>';
-        }
-        $html .= "\n</select>";
-        $html .= \EEH_HTML::divx();
-        $html .= \EEH_HTML::br(2);
-        $html .= \EEH_HTML::divx();
-        return $html;
-    }
 
     /**
      * displaySubmitButton
