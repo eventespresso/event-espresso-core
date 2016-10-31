@@ -1,4 +1,6 @@
 <?php
+use EventEspresso\admin_pages\general_settings\AdminOptionsSettings;
+
 if (!defined('EVENT_ESPRESSO_VERSION') )
 	exit('NO direct script access allowed');
 
@@ -450,42 +452,69 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	}
 
 
-	/*************		Admin Options 		*************/
+
+    /*************        Admin Options        *************/
 
 
-	protected function _admin_option_settings() {
 
-		$this->_template_args['values'] = $this->_yes_no_values;
-		$this->_template_args['use_personnel_manager'] = isset( EE_Registry::instance()->CFG->admin->use_personnel_manager ) ? absint( EE_Registry::instance()->CFG->admin->use_personnel_manager ) : FALSE;
-		$this->_template_args['use_dashboard_widget'] = isset( EE_Registry::instance()->CFG->admin->use_dashboard_widget ) ? absint( EE_Registry::instance()->CFG->admin->use_dashboard_widget ) : TRUE;
-		$this->_template_args['events_in_dashboard'] = isset( EE_Registry::instance()->CFG->admin->events_in_dashboard ) ? absint( EE_Registry::instance()->CFG->admin->events_in_dashboard ) : 30;
-		$this->_template_args['use_event_timezones'] = isset( EE_Registry::instance()->CFG->admin->use_event_timezones ) ? absint( EE_Registry::instance()->CFG->admin->use_event_timezones ) : FALSE;
-		$this->_template_args['show_reg_footer'] = isset( EE_Registry::instance()->CFG->admin->show_reg_footer ) ? absint( EE_Registry::instance()->CFG->admin->show_reg_footer ) : TRUE;
-		$this->_template_args['affiliate_id'] = isset( EE_Registry::instance()->CFG->admin->affiliate_id ) ? EE_Registry::instance()->CFG->admin->get_pretty('affiliate_id') : '';
-		$this->_template_args['help_tour_activation'] = isset( EE_Registry::instance()->CFG->admin->help_tour_activation ) ? absint( EE_Registry::instance()->CFG->admin->help_tour_activation ): 1;
+    /**
+     * _admin_option_settings
+     *
+     * @throws \EE_Error
+     * @throws \LogicException
+     */
+    protected function _admin_option_settings() {
+        $this->_template_args['admin_page_content'] = '';
+        try {
+            $admin_options_settings_form = new AdminOptionsSettings(EE_Registry::instance());
+            // still need this for the old school form in Extend_General_Settings_Admin_Page
+            $this->_template_args['values'] = $this->_yes_no_values;
+            // also need to account for the do_action that was in the old template
+            $admin_options_settings_form->setTemplateArgs($this->_template_args);
+            $this->_template_args['admin_page_content'] = $admin_options_settings_form->display();
+        } catch (Exception $e) {
+            EE_Error::add_error($e->getMessage(), __FILE__, __FUNCTION__, __LINE__);
+        }
+        $this->_set_add_edit_form_tags('update_admin_option_settings');
+        $this->_set_publish_post_box_vars(null, false, false, null, false);
+        $this->display_admin_page_with_sidebar();
+    }
 
-		$this->_set_add_edit_form_tags( 'update_admin_option_settings' );
-		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
-		$this->_template_args['template_args'] = $this->_template_args;
-		$this->_template_args['admin_page_content'] = EEH_Template::display_template( GEN_SET_TEMPLATE_PATH . 'admin_option_settings.template.php', $this->_template_args, TRUE );
-		$this->display_admin_page_with_sidebar();
-	}
 
-	protected function _update_admin_option_settings() {
-		EE_Registry::instance()->CFG->admin->use_personnel_manager = isset( $this->_req_data['use_personnel_manager'] ) ? absint( $this->_req_data['use_personnel_manager'] ) : EE_Registry::instance()->CFG->admin->use_personnel_manager;
-		EE_Registry::instance()->CFG->admin->use_dashboard_widget = isset( $this->_req_data['use_dashboard_widget'] ) ? absint( $this->_req_data['use_dashboard_widget'] ) : EE_Registry::instance()->CFG->admin->use_dashboard_widget;
-		EE_Registry::instance()->CFG->admin->events_in_dashboard = isset( $this->_req_data['events_in_dashboard'] ) ? absint( $this->_req_data['events_in_dashboard'] ) : EE_Registry::instance()->CFG->admin->events_in_dashboard;
-		EE_Registry::instance()->CFG->admin->use_event_timezones = isset( $this->_req_data['use_event_timezones'] ) ? absint( $this->_req_data['use_event_timezones'] ) : EE_Registry::instance()->CFG->admin->use_event_timezones;
-		EE_Registry::instance()->CFG->admin->show_reg_footer = isset( $this->_req_data['show_reg_footer'] ) ? absint( $this->_req_data['show_reg_footer'] ) : EE_Registry::instance()->CFG->admin->show_reg_footer;
-		EE_Registry::instance()->CFG->admin->affiliate_id = isset( $this->_req_data['affiliate_id'] ) ? sanitize_text_field( $this->_req_data['affiliate_id'] ) : EE_Registry::instance()->CFG->admin->affiliate_id;
-		EE_Registry::instance()->CFG->admin->help_tour_activation = isset( $this->_req_data['help_tour_activation'] ) ? absint( $this->_req_data['help_tour_activation'] ) : EE_Registry::instance()->CFG->admin->help_tour_activation;
 
-		EE_Registry::instance()->CFG->admin = apply_filters( 'FHEE__General_Settings_Admin_Page___update_admin_option_settings__CFG_admin', EE_Registry::instance()->CFG->admin );
-
-		$what = 'Admin Options';
-		$success = $this->_update_espresso_configuration( $what, EE_Registry::instance()->CFG->admin, __FILE__, __FUNCTION__, __LINE__ );
-		$success = apply_filters( 'FHEE__General_Settings_Admin_Page___update_admin_option_settings__success', $success );
-		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'admin_option_settings' ) );
+    /**
+     * _update_admin_option_settings
+     *
+     * @throws \EE_Error
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidFormSubmissionException
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
+     */
+    protected function _update_admin_option_settings() {
+        try {
+            $admin_options_settings_form = new AdminOptionsSettings(EE_Registry::instance());
+            $admin_options_settings_form->process($this->_req_data[$admin_options_settings_form->slug()]);
+            EE_Registry::instance()->CFG->admin = apply_filters(
+                'FHEE__General_Settings_Admin_Page___update_admin_option_settings__CFG_admin',
+                EE_Registry::instance()->CFG->admin
+            );
+        } catch (Exception $e) {
+            EE_Error::add_error($e->getMessage(), __FILE__, __FUNCTION__, __LINE__);
+        }
+		$this->_redirect_after_action(
+            apply_filters(
+                'FHEE__General_Settings_Admin_Page___update_admin_option_settings__success',
+                $this->_update_espresso_configuration(
+                    'Admin Options',
+                    EE_Registry::instance()->CFG->admin,
+                    __FILE__, __FUNCTION__, __LINE__
+                )
+            ),
+            'Admin Options',
+            'updated',
+            array( 'action' => 'admin_option_settings' )
+        );
 
 	}
 

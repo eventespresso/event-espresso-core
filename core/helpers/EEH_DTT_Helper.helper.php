@@ -268,7 +268,7 @@ class EEH_DTT_Helper {
 					__('%1$sUTC%2$s time is %3$s'),
 					'<abbr title="Coordinated Universal Time">',
 					'</abbr>',
-					'<code>' . date_i18n( $datetime_format , false, 'gmt') . '</code>'
+					'<code>' . date_i18n( $datetime_format , false, true ) . '</code>'
 				);
 				?></span>
 			<?php if ( ! empty( $timezone_string ) || ! empty( $gmt_offset )) : ?>

@@ -44,7 +44,6 @@ class Extend_General_Settings_Admin_Page extends General_Settings_Admin_Page {
 		$this->_admin_base_path = EE_CORE_CAF_ADMIN_EXTEND . 'general_settings';
 
 		//filters and action hooks here
-		add_action('AHEE__admin_option_settings__template__before', array( $this, 'use_venue_and_staff_manager_settings'), 10 );
 		add_action( 'AHEE__admin_option_settings__template__before', array( $this, 'debug_logging_options' ), 9 );
 		add_filter( 'FHEE__General_Settings_Admin_Page___update_admin_option_settings__CFG_admin', array( $this, 'update_debug_logging_options' ), 10, 1 );
 
@@ -52,15 +51,7 @@ class Extend_General_Settings_Admin_Page extends General_Settings_Admin_Page {
 
 
 
-	public function use_venue_and_staff_manager_settings( $template_args ) {
-		$_args['use_personnel_manager_select'] = EEH_Form_Fields::select_input('use_personnel_manager', $template_args['values'], $template_args['use_personnel_manager'] );
-		$template = GEN_SET_CAF_TEMPLATE_PATH . 'use_venue_and_staff_manager_settings.template.php';
-		EEH_Template::display_template( $template, $_args );
-	}
-
-
-
-		/*************		Logging Settings 		*************/
+	/*************		Logging Settings 		*************/
 
 	/**
 	 * debug_logging_options
@@ -87,7 +78,7 @@ class Extend_General_Settings_Admin_Page extends General_Settings_Admin_Page {
 	public function update_debug_logging_options( $admin_options = array() ) {
 		$use_full_logging = isset( $this->_req_data['use_full_logging'] ) ? (bool)absint( $this->_req_data['use_full_logging'] ) : $admin_options->use_full_logging;
 		$admin_options->use_full_logging = $use_full_logging;
-		
+
 		if ( $use_full_logging === FALSE ) {
 			EE_Error::get_notices( FALSE );
 			EE_Error::reset_notices();

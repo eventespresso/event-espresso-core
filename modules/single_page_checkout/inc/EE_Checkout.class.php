@@ -78,6 +78,12 @@ class EE_Checkout {
 	protected $reg_status_updated = array();
 
 	/**
+	 * timestamp when redirected from Ticket Selector to the checkout
+	 * @type int
+	 */
+	public $uts = 0;
+
+	/**
 	 * total number of tickets that were in the cart
 	 * @type int
 	 */
@@ -652,7 +658,7 @@ class EE_Checkout {
 
 		$registration_time_limit = (float)( EE_Registry::instance()	->SSN->expiration() - time() );
 		$time_limit_format = $registration_time_limit > 60 * MINUTE_IN_SECONDS ? 'H:i:s' : 'i:s';
-		$registration_time_limit = gmdate( $time_limit_format, $registration_time_limit );
+		$registration_time_limit = date( $time_limit_format, $registration_time_limit );
 		return apply_filters(
 			'FHEE__EE_Checkout__get_registration_time_limit__registration_time_limit',
 			$registration_time_limit
@@ -1182,6 +1188,21 @@ class EE_Checkout {
 		}
 	}
 
+
+
+    /**
+     *    __sleep
+     * to conserve db space, let's remove the reg_form and the EE_Checkout object from EE_SPCO_Reg_Step objects upon serialization
+     * EE_Checkout will handle the reimplementation of itself upon waking,
+     * but we won't bother with the reg form, because if needed, it will be regenerated anyways
+     *
+     * @return array
+     */
+    public function __sleep()
+    {
+        // remove the reg form and the checkout
+        return array_diff( array_keys( get_object_vars( $this ) ), array( 'billing_form', 'registration_form' ) );
+    }
 
 
 	/**
