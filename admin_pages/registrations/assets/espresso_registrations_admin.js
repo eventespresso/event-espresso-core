@@ -120,21 +120,25 @@ jQuery(document).ready(function($) {
 
 	/** Hide/unhide expired events in event dropdown **/
 	var non_expired_opts = '', full_opts = '';
+	var default_value = $('#event_id' ).val();
 	if ( full_opts === '' ) {
 		full_opts = $( '#event_id', '#post-body-content').children();
 		non_expired_opts = $( '#event_id', '#post-body-content' ).children().not( '.ee-expired-event' );
 
-		//on load let's just show non_expired
-		$('#event_id', '#post-body-content').html( non_expired_opts );
-		$('#event_id', '#post-body-content').find( 'option[value=0]').prop('selected',true);
+		//on load let's just show non_expired but ONLY if the hide expired events is checked.
+		if ( $('#js-ee-hide-expired-events').prop( 'checked' ) ) {
+			$('#event_id', '#post-body-content').html(non_expired_opts);
+			//always ensure our original default select is retained.
+			$('#event_id', '#post-body-content').find('option[value=' + default_value + ']').prop('selected', true);
+		}
 	}
 	$('#js-ee-hide-expired-events', '#post-body-content').click( function() {
 		if ( $(this).prop('checked') ) {
 			$('#event_id', '#post-body-content').html( non_expired_opts );
-			$('#event_id', '#post-body-content').find( 'option[value=0]').prop('selected',true);
+			$('#event_id', '#post-body-content').find( 'option[value='+default_value+']').prop('selected',true);
 		} else {
 			$('#event_id', '#post-body-content').html( full_opts );
-			$('#event_id', '#post-body-content').find( 'option[value=0]').prop('selected',true);
+			$('#event_id', '#post-body-content').find( 'option[value='+default_value+']').prop('selected',true);
 		}
 	});
 });
