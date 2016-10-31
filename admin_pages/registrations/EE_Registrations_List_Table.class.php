@@ -111,14 +111,14 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 				'actions' => __( 'Actions', 'event_espresso' )
 				);
 			$this->_bottom_buttons = array(
-					'report'=> array(
+                'report'=> array(
 					'route' => 'registrations_report',
 					'extra_request' =>
 						array(
 							'EVT_ID'=> isset( $this->_req_data['event_id'] ) ? $this->_req_data['event_id'] : null,
 							'return_url' => urlencode( "//{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}" )
 						)
-				),
+				)
 			);
 		} else {
 			$this->_columns = array(
@@ -140,6 +140,16 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 				),
 			);
 		}
+		$this->_bottom_buttons[ 'report_filtered' ] = array(
+            'route' => 'registrations_report',
+            'extra_request' =>
+                array_replace(
+                    $this->_req_data,
+                    array(
+                        'return_url' => urlencode( "//{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}" )
+                    )
+                )
+        );
 
 		$this->_primary_column = '_REG_ID';
 
