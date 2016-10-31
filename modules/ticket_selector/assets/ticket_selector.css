@@ -366,6 +366,10 @@
 	top: 0;
 }
 
+.datetime_selector-lbl {
+    display: block;
+}
+
 .datetime_selector-lbl .dashicons {
     position: relative;
     top: -2px;
@@ -373,67 +377,6 @@
 
 .ee-hidden-ticket-tr {
     display: none;
-}
-
-.custom-select {
-	position: relative;
-	display: block;
-	border: 1px solid #bbb;
-	border-radius: .3em;
-	box-shadow: 0 1px 0 1px rgba(0,0,0,.04);
-	background: #f3f3f3;
-	background: #fff -moz-linear-gradient(top, #ffffff 0%, #e5e5e5 100%);
-	background: #fff -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(100%,#e5e5e5));
-	background: #fff -webkit-linear-gradient(top, #ffffff 0%,#e5e5e5 100%);
-	background: #fff -o-linear-gradient(top, #ffffff 0%,#e5e5e5 100%);
-	background: #fff -ms-linear-gradient(top, #ffffff 0%,#e5e5e5 100%);
-	background: #fff linear-gradient(to bottom, #ffffff 0%,#e5e5e5 100%);
-}
-
-.custom-select select {
-	width: 100%;
-	margin: 0;
-	outline: none;
-	padding: .6em .8em .5em .8em;
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
-	box-sizing: border-box;
-	font-size: 16px;
-}
-
-.custom-select select:active {
-	width: 100%;
-}
-
-.custom-select::after {
-	content: "";
-	position: absolute;
-	top: 50%;
-	right: 1em;
-	z-index: 2;
-	pointer-events: none;
-	display: none
-}
-
-@supports ( -webkit-appearance: none ) or ( appearance: none )
-	or ( ( -moz-appearance:none ) and ( mask-type:alpha ) ) {
-
-	.custom-select::after {
-		display:block
-	}
-
-	.custom-select select {
-		padding-right:2em;
-		background:none;
-		border:1px solid transparent;
-		-webkit-appearance:none;
-		-moz-appearance:none;
-		appearance:none
-	}
-
-	.custom-select select:focus {
-		border-color:#aaa
-	}
 }
 
 
