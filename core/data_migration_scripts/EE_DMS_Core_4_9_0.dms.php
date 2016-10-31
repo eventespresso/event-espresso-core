@@ -62,14 +62,14 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
     {
         $version_string = $version_array['Core'];
         if (version_compare($version_string, '4.9.0', '<=') && version_compare($version_string, '4.8.0', '>=')) {
-//			echo "$version_string can be migrated from";
+            //			echo "$version_string can be migrated from";
             return true;
         } elseif ( ! $version_string) {
-//			echo "no version string provided: $version_string";
+            //			echo "no version string provided: $version_string";
             //no version string provided... this must be pre 4.3
             return false;//changed mind. dont want people thinking they should migrate yet because they cant
         } else {
-//			echo "$version_string doesnt apply";
+            //			echo "$version_string doesnt apply";
             return false;
         }
     }
@@ -643,16 +643,19 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
                 $model_obj = call_user_func(array($model_name, 'instance'));
                 if ($model_obj instanceof EEM_Base) {
                     foreach ($model_obj->get_tables() as $table) {
+                        //@formatter:off
                         if (
-                            apply_filters('FHEE__EE_DMS_Core_4_9_0__verify_db_collations__table_should_be_verified',
+                            apply_filters(
+                                'FHEE__EE_DMS_Core_4_9_0__verify_db_collations__table_should_be_verified',
                                 strpos($table->get_table_name(), 'esp_')
-                                && (
-                                    is_main_site()//for main tables, verify global tables
-                                    || ! $table->is_global()//if not the main site, then only verify non-global tables (avoid doubling up)
-                                ),
+                                    && (is_main_site()//for main tables, verify global tables
+                                        || ! $table->is_global()//if not the main site, then only verify non-global tables (avoid doubling up)
+                                    )
+                                    && method_exists('maybe_convert_table_to_utf8mb4'),
                                 $table
                             )
                         ) {
+                            //@formatter:on
                             maybe_convert_table_to_utf8mb4($table->get_table_name());
                         }
                     }
