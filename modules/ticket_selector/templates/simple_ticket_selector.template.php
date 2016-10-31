@@ -1,5 +1,8 @@
 <?php
+/** @var int $EVT_ID */
+/** @var int $TKT_ID */
 /** @var string $ticket_status_display */
+/** @var \EE_Event $event */
 ?>
 
 <input type="hidden" name="tkt-slctr-qty-<?php echo $EVT_ID; ?>[]" value="1"/>
