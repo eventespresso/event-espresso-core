@@ -946,173 +946,13 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      */
     public function get_registrations($per_page = 10, $count = false, $this_month = false, $today = false)
     {
-        $EVT_ID = ! empty($this->_req_data['event_id']) && $this->_req_data['event_id'] > 0
-            ? absint($this->_req_data['event_id']) : false;
-        $CAT_ID = ! empty($this->_req_data['EVT_CAT']) && (int)$this->_req_data['EVT_CAT'] > 0
-            ? absint($this->_req_data['EVT_CAT']) : false;
-        $DTT_ID = isset($this->_req_data['datetime_id']) ? absint($this->_req_data['datetime_id']) : null;
-        $reg_status = ! empty($this->_req_data['_reg_status']) ? sanitize_text_field($this->_req_data['_reg_status'])
-            : false;
-        $month_range = ! empty($this->_req_data['month_range']) ? sanitize_text_field($this->_req_data['month_range'])
-            : false;//should be like 2013-april
-        $today_a = ! empty($this->_req_data['status']) && $this->_req_data['status'] === 'today' ? true : false;
-        $this_month_a = ! empty($this->_req_data['status']) && $this->_req_data['status'] === 'month' ? true : false;
-        $start_date = false;
-        $end_date = false;
-        $_where = array();
-        $trash = ! empty($this->_req_data['status']) && $this->_req_data['status'] === 'trash' ? true : false;
-        $incomplete = ! empty($this->_req_data['status']) && $this->_req_data['status'] === 'incomplete' ? true : false;
-        //set orderby
-        $this->_req_data['orderby'] = ! empty($this->_req_data['orderby']) ? $this->_req_data['orderby'] : '';
-        switch ($this->_req_data['orderby']) {
-            case '_REG_ID':
-                $orderby = 'REG_ID';
-                break;
-            case '_Reg_status':
-                $orderby = 'STS_ID';
-                break;
-            case 'ATT_fname':
-                $orderby = 'Attendee.ATT_lname';
-                break;
-            case 'event_name':
-                $orderby = 'Event.EVT_name';
-                break;
-            case 'DTT_EVT_start':
-                $orderby = 'Event.Datetime.DTT_EVT_start';
-                break;
-            default: //'REG_date'
-                $orderby = 'REG_date';
-        }
-        $sort = (isset($this->_req_data['order']) && ! empty($this->_req_data['order'])) ? $this->_req_data['order']
-            : 'DESC';
-        $current_page = isset($this->_req_data['paged']) && ! empty($this->_req_data['paged'])
-            ? $this->_req_data['paged'] : 1;
-        $per_page = isset($this->_req_data['perpage']) && ! empty($this->_req_data['perpage'])
-            ? $this->_req_data['perpage'] : $per_page;
-        $offset = ($current_page - 1) * $per_page;
-        $limit = $count ? null : array($offset, $per_page);
-        if ($EVT_ID) {
-            $_where['EVT_ID'] = $EVT_ID;
-        }
-        if ($CAT_ID) {
-            $_where['Event.Term_Taxonomy.term_id'] = $CAT_ID;
-        }
-        //if DTT is included we filter by that datetime.
-        if ($DTT_ID) {
-            $_where['Ticket.Datetime.DTT_ID'] = $DTT_ID;
-        }
-        if ($incomplete) {
-            $_where['STS_ID'] = EEM_Registration::status_id_incomplete;
-        } else if ( ! $trash) {
-            $_where['STS_ID'] = array('!=', EEM_Registration::status_id_incomplete);
-        }
-        if ($reg_status) {
-            $_where['STS_ID'] = $reg_status;
-        }
-        $this_year_r = date('Y', current_time('timestamp'));
-        $time_start = ' 00:00:00';
-        $time_end = ' 23:59:59';
-        if ($today_a || $today) {
-            $curdate = date('Y-m-d', current_time('timestamp'));
-            $_where['REG_date'] = array(
-                'BETWEEN',
-                array(
-                    EEM_Registration::instance()
-                                    ->convert_datetime_for_query('REG_date', $curdate . $time_start, 'Y-m-d H:i:s'),
-                    EEM_Registration::instance()
-                                    ->convert_datetime_for_query('REG_date', $curdate . $time_end, 'Y-m-d H:i:s'),
-                ),
-            );
-        } elseif ($this_month_a || $this_month) {
-            $this_month_r = date('m', current_time('timestamp'));
-            $days_this_month = date('t', current_time('timestamp'));
-            $_where['REG_date'] = array(
-                'BETWEEN',
-                array(
-                    EEM_Registration::instance()
-                                    ->convert_datetime_for_query('REG_date',
-                                        $this_year_r . '-' . $this_month_r . '-01' . ' ' . $time_start, 'Y-m-d H:i:s'),
-                    EEM_Registration::instance()
-                                    ->convert_datetime_for_query('REG_date',
-                                        $this_year_r . '-' . $this_month_r . '-' . $days_this_month . ' ' . $time_end,
-                                        'Y-m-d H:i:s'),
-                ),
-            );
-        } elseif ($month_range) {
-            $pieces = explode(' ', $this->_req_data['month_range'], 3);
-            $month_r = ! empty($pieces[0]) ? date('m', strtotime($month_range)) : '';
-            $year_r = ! empty($pieces[1]) ? $pieces[1] : '';
-            $days_in_month = date('t', strtotime($year_r . '-' . $month_r . '-' . '01'));
-            $_where['REG_date'] = array(
-                'BETWEEN',
-                array(
-                    EEM_Registration::instance()
-                                    ->convert_datetime_for_query('REG_date', $year_r . '-' . $month_r . '-01 00:00:00',
-                                        'Y-m-d H:i:s'),
-                    EEM_Registration::instance()
-                                    ->convert_datetime_for_query('REG_date',
-                                        $year_r . '-' . $month_r . '-' . $days_in_month . ' 23:59:59', 'Y-m-d H:i:s'),
-                ),
-            );
-        } elseif ($start_date && $end_date) {
-            throw new EE_Error("not yet supported");
-        } elseif ($start_date) {
-            throw new EE_Error("not yet supported");
-        } elseif ($end_date) {
-            throw new EE_Error("not yet supported");
-        }
-        if ( ! empty($this->_req_data['s'])) {
-            $sstr = '%' . $this->_req_data['s'] . '%';
-            $_where['OR'] = array(
-                'Event.EVT_name'                          => array('LIKE', $sstr),
-                'Event.EVT_desc'                          => array('LIKE', $sstr),
-                'Event.EVT_short_desc'                    => array('LIKE', $sstr),
-                'Attendee.ATT_full_name'                  => array('LIKE', $sstr),
-                'Attendee.ATT_fname'                      => array('LIKE', $sstr),
-                'Attendee.ATT_lname'                      => array('LIKE', $sstr),
-                'Attendee.ATT_short_bio'                  => array('LIKE', $sstr),
-                'Attendee.ATT_email'                      => array('LIKE', $sstr),
-                'Attendee.ATT_address'                    => array('LIKE', $sstr),
-                'Attendee.ATT_address2'                   => array('LIKE', $sstr),
-                'Attendee.ATT_city'                       => array('LIKE', $sstr),
-                'REG_final_price'                         => array('LIKE', $sstr),
-                'REG_code'                                => array('LIKE', $sstr),
-                'REG_count'                               => array('LIKE', $sstr),
-                'REG_group_size'                          => array('LIKE', $sstr),
-                'Ticket.TKT_name'                         => array('LIKE', $sstr),
-                'Ticket.TKT_description'                  => array('LIKE', $sstr),
-                'Transaction.Payment.PAY_txn_id_chq_nmbr' => array('LIKE', $sstr),
-            );
-        }
-        //capability checks
-        if ( ! EE_Registry::instance()->CAP->current_user_can('ee_read_others_registrations', 'get_registrations')) {
-            $_where['AND'] = array(
-                'Event.EVT_wp_user' => get_current_user_id(),
-            );
-        }
+        $query_params = $this->_get_query_params_from_request( $this->_req_data, $per_page, $count,$this_month, $today );
         if ($count) {
-            if ($trash) {
-                return EEM_Registration::instance()->count_deleted(array($_where));
-            } else if ($incomplete) {
-                return EEM_Registration::instance()->count(array($_where));
-            } else {
-                return EEM_Registration::instance()->count(array(
-                    $_where,
-                    'default_where_conditions' => 'this_model_only',
-                ));
-            }
+           return EEM_Registration::instance()->count( $query_params );
         } else {
-            //make sure we remove default where conditions cause all registrations matching query are returned
-            $query_params = array(
-                $_where,
-                'order_by'                 => array($orderby => $sort),
-                'default_where_conditions' => 'this_model_only',
-            );
-            if ($per_page !== -1) {
-                $query_params['limit'] = $limit;
-            }
-            $registrations = $trash ? EEM_Registration::instance()->get_all_deleted($query_params)
-                : EEM_Registration::instance()->get_all($query_params);
+            $registrations =  EEM_Registration::instance()->get_all($query_params);
+            $EVT_ID = ! empty($request['event_id']) && $request['event_id'] > 0
+                ? absint($request['event_id']) : false;
             if ($EVT_ID
                 && isset($registrations[0])
                 && $registrations[0] instanceof EE_Registration
@@ -1152,6 +992,183 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             }
             return $registrations;
         }
+    }
+
+    /**
+     * Generates WHERE conditions for a query from a request that fits nicely into a querystring
+     * @param array $request
+     * @param int $per_page
+     * @param boolean $this_month
+     * @param boolean $today
+     * @return array
+     * @throws \EE_Error
+     */
+    protected function _get_query_params_from_request( $request, $per_page = 10, $count = false, $this_month = false, $today = false )
+    {
+        $EVT_ID = ! empty($request['event_id']) && $request['event_id'] > 0
+            ? absint($request['event_id']) : false;
+        $CAT_ID = ! empty($request['EVT_CAT']) && (int)$request['EVT_CAT'] > 0
+            ? absint($request['EVT_CAT']) : false;
+        $DTT_ID = isset($request['datetime_id']) ? absint($request['datetime_id']) : null;
+        $reg_status = ! empty($request['_reg_status']) ? sanitize_text_field($request['_reg_status'])
+            : false;
+        $month_range = ! empty($request['month_range']) ? sanitize_text_field($request['month_range'])
+            : false;//should be like 2013-april
+        $today_a = ! empty($request['status']) && $request['status'] === 'today' ? true : false;
+        $this_month_a = ! empty($request['status']) && $request['status'] === 'month' ? true : false;
+        $start_date = false;
+        $end_date = false;
+        $trash = ! empty($request['status']) && $request['status'] === 'trash' ? true : false;
+        $incomplete = ! empty($request['status']) && $request['status'] === 'incomplete' ? true : false;
+        $where = array();
+        //set orderby
+        $request['orderby'] = ! empty($request['orderby']) ? $request['orderby'] : '';
+        switch ($request['orderby']) {
+            case '_REG_ID':
+                $orderby = 'REG_ID';
+                break;
+            case '_Reg_status':
+                $orderby = 'STS_ID';
+                break;
+            case 'ATT_fname':
+                $orderby = 'Attendee.ATT_lname';
+                break;
+            case 'event_name':
+                $orderby = 'Event.EVT_name';
+                break;
+            case 'DTT_EVT_start':
+                $orderby = 'Event.Datetime.DTT_EVT_start';
+                break;
+            default: //'REG_date'
+                $orderby = 'REG_date';
+        }
+        $sort = (isset($request['order']) && ! empty($request['order'])) ? $request['order']
+            : 'DESC';
+
+        $current_page = isset($request['paged']) && ! empty($request['paged'])
+            ? $request['paged'] : 1;
+        $per_page = isset($request['perpage']) && ! empty($request['perpage'])
+            ? $request['perpage'] : $per_page;
+        $offset = ($current_page - 1) * $per_page;
+        $limit = $count ? null : array($offset, $per_page);
+        if ($EVT_ID) {
+            $where['EVT_ID'] = $EVT_ID;
+        }
+        if ($CAT_ID) {
+            $where['Event.Term_Taxonomy.term_id'] = $CAT_ID;
+        }
+        //if DTT is included we filter by that datetime.
+        if ($DTT_ID) {
+            $where['Ticket.Datetime.DTT_ID'] = $DTT_ID;
+        }
+        if ($incomplete) {
+            $where['STS_ID'] = EEM_Registration::status_id_incomplete;
+        } else if ( ! $trash) {
+            $where['STS_ID'] = array('!=', EEM_Registration::status_id_incomplete);
+        }
+        if ($reg_status) {
+            $where['STS_ID'] = $reg_status;
+        }
+        $this_year_r = date('Y', current_time('timestamp'));
+        $time_start = ' 00:00:00';
+        $time_end = ' 23:59:59';
+        if ($today_a || $today) {
+            $curdate = date('Y-m-d', current_time('timestamp'));
+            $where['REG_date'] = array(
+                'BETWEEN',
+                array(
+                    EEM_Registration::instance()
+                                    ->convert_datetime_for_query('REG_date', $curdate . $time_start, 'Y-m-d H:i:s'),
+                    EEM_Registration::instance()
+                                    ->convert_datetime_for_query('REG_date', $curdate . $time_end, 'Y-m-d H:i:s'),
+                ),
+            );
+        } elseif ($this_month_a || $this_month) {
+            $this_month_r = date('m', current_time('timestamp'));
+            $days_this_month = date('t', current_time('timestamp'));
+            $where['REG_date'] = array(
+                'BETWEEN',
+                array(
+                    EEM_Registration::instance()
+                                    ->convert_datetime_for_query('REG_date',
+                                        $this_year_r . '-' . $this_month_r . '-01' . ' ' . $time_start, 'Y-m-d H:i:s'),
+                    EEM_Registration::instance()
+                                    ->convert_datetime_for_query('REG_date',
+                                        $this_year_r . '-' . $this_month_r . '-' . $days_this_month . ' ' . $time_end,
+                                        'Y-m-d H:i:s'),
+                ),
+            );
+        } elseif ($month_range) {
+            $pieces = explode(' ', $request['month_range'], 3);
+            $month_r = ! empty($pieces[0]) ? date('m', strtotime($month_range)) : '';
+            $year_r = ! empty($pieces[1]) ? $pieces[1] : '';
+            $days_in_month = date('t', strtotime($year_r . '-' . $month_r . '-' . '01'));
+            $where['REG_date'] = array(
+                'BETWEEN',
+                array(
+                    EEM_Registration::instance()
+                                    ->convert_datetime_for_query('REG_date', $year_r . '-' . $month_r . '-01 00:00:00',
+                                        'Y-m-d H:i:s'),
+                    EEM_Registration::instance()
+                                    ->convert_datetime_for_query('REG_date',
+                                        $year_r . '-' . $month_r . '-' . $days_in_month . ' 23:59:59', 'Y-m-d H:i:s'),
+                ),
+            );
+        } elseif ($start_date && $end_date) {
+            throw new EE_Error("not yet supported");
+        } elseif ($start_date) {
+            throw new EE_Error("not yet supported");
+        } elseif ($end_date) {
+            throw new EE_Error("not yet supported");
+        }
+        if ( ! empty($request['s'])) {
+            $sstr = '%' . $request['s'] . '%';
+            $where['OR'] = array(
+                'Event.EVT_name'                          => array('LIKE', $sstr),
+                'Event.EVT_desc'                          => array('LIKE', $sstr),
+                'Event.EVT_short_desc'                    => array('LIKE', $sstr),
+                'Attendee.ATT_full_name'                  => array('LIKE', $sstr),
+                'Attendee.ATT_fname'                      => array('LIKE', $sstr),
+                'Attendee.ATT_lname'                      => array('LIKE', $sstr),
+                'Attendee.ATT_short_bio'                  => array('LIKE', $sstr),
+                'Attendee.ATT_email'                      => array('LIKE', $sstr),
+                'Attendee.ATT_address'                    => array('LIKE', $sstr),
+                'Attendee.ATT_address2'                   => array('LIKE', $sstr),
+                'Attendee.ATT_city'                       => array('LIKE', $sstr),
+                'REG_final_price'                         => array('LIKE', $sstr),
+                'REG_code'                                => array('LIKE', $sstr),
+                'REG_count'                               => array('LIKE', $sstr),
+                'REG_group_size'                          => array('LIKE', $sstr),
+                'Ticket.TKT_name'                         => array('LIKE', $sstr),
+                'Ticket.TKT_description'                  => array('LIKE', $sstr),
+                'Transaction.Payment.PAY_txn_id_chq_nmbr' => array('LIKE', $sstr),
+            );
+        }
+        //capability checks
+        if ( ! EE_Registry::instance()->CAP->current_user_can('ee_read_others_registrations', 'get_registrations')) {
+            $where['AND'] = array(
+                'Event.EVT_wp_user' => get_current_user_id(),
+            );
+        }
+
+        $query_params = array(
+            $where
+        );
+        if( ! $trash && ! $incomplete ) {
+            $query_params['default_where_conditions'] = 'this_model_only';
+        }
+        if( ! $count ) {
+            $query_params['order_by'] = array($orderby => $sort);
+            $query_params['default_where_conditions'] = 'this_model_only';
+            if ($per_page !== -1) {
+                $query_params['limit'] = $limit;
+            }
+        }
+
+        if( $trash ) {
+            $query_params = $this->_alter_query_params_so_only_trashed_items_included( $query_params );
+        }
+        return $query_params;
     }
 
 
