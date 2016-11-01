@@ -1078,10 +1078,15 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 	private function _find_available_country_iso($num_letters = 2){
 		global $wpdb;
 		$country_table = $wpdb->prefix."esp_country";
+		$attempts = 0;
 		do{
 			$current_iso = strtoupper(wp_generate_password($num_letters, false));
 			$country_with_that_iso = $wpdb->get_var($wpdb->prepare("SELECT count(CNT_ISO) FROM ".$country_table." WHERE CNT_ISO=%s",$current_iso));
-		}while(intval($country_with_that_iso));
+			$attempts++;
+		//keep going until we find an available country code, or we arbitrarily
+		//decide we've tried this enough. Somehow they have way too many countries
+		//(probably because they're mis-using the EE3 country_id like a custom question)
+		}while( intval($country_with_that_iso) && $attempts < 200 );
 		return $current_iso;
 	}
 
@@ -1362,7 +1367,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 			array(202, 'Taiwan', 'TW', 'TWN', 1),
 			array(203, 'Tanzania', 'TZ', 'TZA', 1),
 			array(204, 'Tajikistan', 'TJ', 'TJK', 1),
-			array(206, 'Timor Oriental', 'TP', 'TMP', 1),
+			array(206, 'Timor-Leste', 'TL', 'TLS', 1),
 			array(207, 'Togo', 'TG', 'TGO', 1),
 			array(208, 'Tokelau', 'TK', 'TKL', 1),
 			array(209, 'Tonga', 'TO', 'TON', 1),
