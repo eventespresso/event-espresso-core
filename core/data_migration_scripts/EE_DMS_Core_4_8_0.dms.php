@@ -681,7 +681,7 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 		//CNT_ISO, CNT_ISO3, RGN_ID, CNT_name, CNT_cur_code, CNT_cur_single, CNT_cur_plural, CNT_cur_sign, CNT_cur_sign_b4, CNT_cur_dec_plc, CNT_tel_code, CNT_is_EU, CNT_active
 		//('AD', 'AND', 0, 'Andorra', 'EUR', 'Euro', 'Euros', '€', 1, 2, '+376', 0, 0),
 		$newer_countries = array(
-			array( 'AX', 'ALA', 0, 'Alan Islands', 'EUR', 'Euro', 'Euros', '€', 1, 2, '+358', 1, 0 ),
+			array( 'AX', 'ALA', 0, '&#197;land Islands', 'EUR', 'Euro', 'Euros', '€', 1, 2, '+358', 1, 0 ),
 			array( 'BL', 'BLM', 0, 'Saint Barthelemy', 'EUR', 'Euro', 'Euros', '€', 1, 2, '+590', 1, 0 ),
 			array( 'CW', 'CUW', 0, 'Curacao', 'ANG', 'Guilder', 'Guilders', 'ƒ', 1, 2, '+599', 1, 0 ),
 			array( 'GG', 'GGY', 0, 'Guernsey', 'EUR', 'Euro', 'Euros', '€', 1, 2, '+44', 0, 0 ),
@@ -689,11 +689,23 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 			array( 'JE', 'JEY', 0, 'Jersey', 'GBP', 'Pound', 'Pounds', '£', 1, 2, '+44', 0, 0 ),
 			array( 'MF', 'MAF', 0, 'Saint Martin', 'EUR', 'Euro', 'Euros', '€', 1, 2, '+590', 1, 0 ),
 			array( 'ME', 'MNE', 0, 'Montenegro', 'EUR', 'Euro', 'Euros', '€', 1,  2, '+382', 0, 0 ),
-			array( 'RS', 'SRB', 0, 'Serbia', 'RSD', 'Dinar', 'Dinars', '', 0, 2, '+941', 1, 0 ),
+			array( 'RS', 'SRB', 0, 'Serbia', 'RSD', 'Dinar', 'Dinars', '', 0, 2, '+381', 1, 0 ),
 			array( 'SS', 'SSD', 0, 'South Sudan', 'SSP', 'Pound', 'Pounds', '£', 1, 2, '+211', 0, 0 ),
 			array( 'SX', 'SXM', 0, 'Sint Maarten', 'ANG', 'Guilder', 'Guilders', 'ƒ', 1, 2, '+1', 1, 0 ),
-			array( 'XK', 'XKX', 0, 'Kosovo', 'EUR', 'Euro', 'Euros', '€', 1, 2, '+381', 0, 0 ),
+			array( 'XK', 'XKX', 0, 'Kosovo', 'EUR', 'Euro', 'Euros', '€', 1, 2, '+383', 0, 0 ),
 			array( 'YT', 'MYT', 0, 'Mayotte', 'EUR', 'Euro', 'Euros', '€', 0, 2, '+262', 1, 0 ),
+			array( 'BQ', 'BES', 0, 'Bonaire, Saint Eustatius and Saba', 'USD', 'Dollar', 'Dollars', '$', 1,  2, '+599', 0, 0 ),
+			array( 'BV', 'BVT', 0, 'Bouvet Island', 'NOK', 'Krone', 'Krones', 'kr', 1,  2, '+47', 0, 0 ),
+			array( 'IO', 'IOT', 0, 'British Indian Ocean Territory', 'GBP', 'Pound', 'Pounds', '£', 1,  2, '+246', 0, 0 ),
+			array( 'CX', 'CXR', 0, 'Christmas Island', 'AUD', 'Dollar', 'Dollars', '$', 1,  2, '+61', 0, 0 ),
+			array( 'CC', 'CCK', 0, 'Cocos (Keeling) Islands', 'AUD', 'Dollar', 'Dollars', '$', 1,  2, '+891', 0, 0 ),
+			array( 'HM', 'HMD', 0, 'Heard Island and McDonald Islands', 'AUD', 'Dollar', 'Dollars', '$', 1,  2, '+891', 0, 0 ),
+			array( 'PS', 'PSE', 0, 'Palestinian Territory', 'ILS', 'Shekel', 'Shekels', '₪', 1,  2, '+970', 0, 0 ),
+			array( 'GS', 'SGS', 0, 'South Georgia and the South Sandwich Islands', 'GBP', 'Pound', 'Pounds', '£', 1,  2, '+500', 0, 0 ),
+			array( 'TL', 'TLS', 0, 'Timor-Leste', 'USD', 'Dollar', 'Dollars', '$', 1,  2, '+670', 0, 0 ),
+			array( 'TF', 'ATF', 0, 'French Southern Territories', 'EUR', 'Euro', 'Euros', '€', 1,  2, '+262', 0, 0 ),
+
+			array( 'UM', 'UMI', 0, 'United States Minor Outlying Islands', 'USD', 'Dollar', 'Dollars', '$', 1,  2, '+1', 0, 0 ),
 		);
 		global $wpdb;
 		$country_table = $wpdb->prefix."esp_country";

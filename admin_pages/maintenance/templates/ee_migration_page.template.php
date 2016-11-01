@@ -167,7 +167,7 @@ if ( $show_backup_db_text ) { ?>
 						<a id="show-hide-migration-warnings" class="display-the-hidden"><?php _e("Show Warnings", 'event_espresso');?></a>
 						<ul class="migration-warnings" style="display:none">
 						<?php foreach($most_recent_migration->get_errors() as $error){ ?>
-							<li><?php echo $error ?></li>
+							<li><?php echo htmlentities( $error ) ?></li>
 						<?php }?>
 						</ul>
 					</div>
