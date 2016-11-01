@@ -1278,8 +1278,6 @@ final class EE_System {
 				wp_register_script( 'jquery-validate', EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.min.js', array('jquery' ), '1.15.0', TRUE );
 				wp_register_script( 'jquery-validate-extra-methods', EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.additional-methods.min.js', array( 'jquery', 'jquery-validate' ), '1.15.0', TRUE );
 			}
-			wp_register_script( 'select2', EE_GLOBAL_ASSETS_URL . 'scripts/select2.min.js', array(), '4.0.2', true );
-			wp_register_style( 'select2', EE_GLOBAL_ASSETS_URL . 'css/select2.min.css', array(), '4.0.2', 'all' );
 		}
 	}
 

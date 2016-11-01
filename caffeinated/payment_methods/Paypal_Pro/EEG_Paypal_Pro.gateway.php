@@ -91,18 +91,30 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
 	public function do_direct_payment($payment,$billing_info = null){
 		$transaction = $payment->transaction();
 		$primary_registrant = $transaction->primary_registration();
-		$order_description  = sprintf(__("Event Registrations from %s", "event_espresso"),get_bloginfo('name'));
+		$order_description  = $this->_format_order_description( $payment );
 		//charge for the full amount. Show itemized list
 		if( $this->_can_easily_itemize_transaction_for( $payment ) ){
 			$item_num = 1;
 			$total_line_item = $transaction->total_line_item();
 			$order_items = array();
 			foreach ($total_line_item->get_items() as $line_item) {
+				//ignore line items with a quantity of 0
+				if( $line_item->quantity() == 0 ) {
+					continue;
+				}
 				$item = array(
 						// Item Name.  127 char max.
-						'l_name' => substr($line_item->name(),0,127),
+						'l_name' => substr(
+							$this->_format_line_item_name( $line_item, $payment ),
+							0,
+							127
+						),
 						// Item description.  127 char max.
-						'l_desc' => substr($line_item->desc(),0,127),
+						'l_desc' => substr( 
+							$this->_format_line_item_desc( $line_item, $payment ),
+							0,
+							127
+						),
 						// Cost of individual item.
 						'l_amt' => $line_item->unit_price(),
 						// Item Number.  127 char max.
@@ -126,13 +138,20 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
 		}else{
 			$order_items = array();
 			$item_amount = $payment->amount();
-			$single_item_desc = sprintf(__("Partial payment of %s for %s", "event_espresso"),$payment->amount(),$primary_registrant->reg_code());
 			$tax_amount = 0;
 			array_push($order_items,array(
 				// Item Name.  127 char max.
-				'l_name' => sprintf(__("Partial payment for registration: %s", 'event_espresso'),$primary_registrant->reg_code()),
+				'l_name' => substr(
+					$this->_format_partial_payment_line_item_name( $payment ),
+					0,
+					127
+				),
 				// Item description.  127 char max.
-				'l_desc' => $single_item_desc,
+				'l_desc' => substr( 
+					$this->_format_partial_payment_line_item_desc( $payment ),
+					0,
+					127
+				),
 				// Cost of individual item.
 				'l_amt' => $payment->amount(),
 				// Item Number.  127 char max.

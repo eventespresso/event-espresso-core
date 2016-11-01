@@ -595,7 +595,7 @@ class EEH_MSG_Template {
 			'GRP_ID' => $message_template_group,
 			'id' => $data_id
 			);
-		$url = add_query_arg( $query_args, get_site_url() );
+		$url = add_query_arg( $query_args, get_home_url() );
 
 		//made it here so now we can just get the url and filter it.  Filtered globally and by message type.
 		$url = apply_filters(

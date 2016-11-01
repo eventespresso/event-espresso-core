@@ -131,7 +131,6 @@
 					<td class="venue-details-part venue-image-dv">[GOOGLE_MAP_IMAGE]</td>
 				</tr>
 			</table>
-			<div class='aln-cntr'><?php printf( __( "Powered by %sEvent Espresso %s", "event_espresso" ), "<a href='https://eventespresso.com'>", "</a>" ); ?></div>
 		</div>
 	</div>
 </div>
