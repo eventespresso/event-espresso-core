@@ -1,4 +1,6 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) {
+    exit('No direct script access allowed');
+}
 /**
  * class EE_Request
  *
@@ -60,7 +62,7 @@ class EE_Request {
 
 
 	/**
-	 *    class constructor
+	 * class constructor
 	 *
 	 * @access    public
 	 * @param array $get
@@ -69,13 +71,13 @@ class EE_Request {
 	 */
 	public function __construct( $get, $post, $cookie ) {
 		// grab request vars
-		$this->_get    = $get;
-		$this->_post   = $post;
-		$this->_cookie = $cookie;
-		$this->_params = array_merge( $get, $post );
+		$this->_get    = (array) $get;
+		$this->_post   = (array) $post;
+		$this->_cookie = (array) $cookie;
+		$this->_params = array_merge($this->_get, $this->_post);
 		// AJAX ???
 		$this->ajax       = defined( 'DOING_AJAX' ) ? true : false;
-		$this->front_ajax = $this->is_set( 'ee_front_ajax' ) && $this->get( 'ee_front_ajax' ) == 1 ? true : false;
+		$this->front_ajax = $this->is_set( 'ee_front_ajax' ) && (int) $this->get( 'ee_front_ajax' ) === 1;
 		// grab user IP
 		$this->_ip_address = $this->_visitor_ip();
 	}
@@ -130,7 +132,11 @@ class EE_Request {
 	 */
 	public function set( $key, $value, $override_ee = FALSE ) {
 		// don't allow "ee" to be overwritten unless explicitly instructed to do so
-		if ( $key != 'ee' || ( $key == 'ee' && empty( $this->_params['ee'] )) || ( $key == 'ee' && ! empty( $this->_params['ee'] ) && $override_ee )) {
+		if (
+		    $key !== 'ee'
+            || ( $key === 'ee' && empty( $this->_params['ee'] ))
+            || ( $key === 'ee' && ! empty( $this->_params['ee'] ) && $override_ee )
+        ) {
 			$this->_params[ $key ] = $value;
 		}
 	}

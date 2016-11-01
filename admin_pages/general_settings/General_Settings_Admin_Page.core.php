@@ -261,33 +261,49 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 
 	/*************		Espresso Pages 		*************/
-
-
+    /**
+     * _espresso_page_settings
+     *
+     * @throws \EE_Error
+     */
 	protected function _espresso_page_settings() {
-
-		// Check to make sure all of the main pages are setup properly,
-		// if not create the default pages and display an admin notice
-		EEH_Activation::verify_default_pages_exist();
-
-		$this->_transient_garbage_collection();
-		$this->_template_args['values'] = $this->_yes_no_values;
-
-		$this->_template_args['reg_page_id'] = isset(EE_Registry::instance()->CFG->core->reg_page_id ) ?EE_Registry::instance()->CFG->core->reg_page_id : NULL;
-		$this->_template_args['reg_page_obj'] = isset(EE_Registry::instance()->CFG->core->reg_page_id ) ? get_page(EE_Registry::instance()->CFG->core->reg_page_id ) : FALSE;
-
-		$this->_template_args['txn_page_id'] = isset(EE_Registry::instance()->CFG->core->txn_page_id) ?EE_Registry::instance()->CFG->core->txn_page_id : NULL;
-		$this->_template_args['txn_page_obj'] = isset(EE_Registry::instance()->CFG->core->txn_page_id ) ? get_page(EE_Registry::instance()->CFG->core->txn_page_id ) : FALSE;
-
-		$this->_template_args['thank_you_page_id'] = isset(EE_Registry::instance()->CFG->core->thank_you_page_id ) ?EE_Registry::instance()->CFG->core->thank_you_page_id : NULL;
-		$this->_template_args['thank_you_page_obj'] = isset(EE_Registry::instance()->CFG->core->thank_you_page_id ) ? get_page(EE_Registry::instance()->CFG->core->thank_you_page_id ) : FALSE;
-
-		$this->_template_args['cancel_page_id'] = isset(EE_Registry::instance()->CFG->core->cancel_page_id ) ?EE_Registry::instance()->CFG->core->cancel_page_id : NULL;
-		$this->_template_args['cancel_page_obj'] = isset(EE_Registry::instance()->CFG->core->cancel_page_id ) ? get_page(EE_Registry::instance()->CFG->core->cancel_page_id ) : FALSE;
-
-		$this->_set_add_edit_form_tags( 'update_espresso_page_settings' );
-		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
-		$this->_template_args['admin_page_content'] = EEH_Template::display_template( GEN_SET_TEMPLATE_PATH . 'espresso_page_settings.template.php', $this->_template_args, TRUE );
-		$this->display_admin_page_with_sidebar();
+        // Check to make sure all of the main pages are setup properly,
+        // if not create the default pages and display an admin notice
+        EEH_Activation::verify_default_pages_exist();
+        $this->_transient_garbage_collection();
+        $this->_template_args['values'] = $this->_yes_no_values;
+        $this->_template_args['reg_page_id'] = isset(EE_Registry::instance()->CFG->core->reg_page_id)
+            ? EE_Registry::instance()->CFG->core->reg_page_id
+            : null;
+        $this->_template_args['reg_page_obj'] = isset(EE_Registry::instance()->CFG->core->reg_page_id)
+            ? get_page(EE_Registry::instance()->CFG->core->reg_page_id)
+            : false;
+        $this->_template_args['txn_page_id'] = isset(EE_Registry::instance()->CFG->core->txn_page_id)
+            ? EE_Registry::instance()->CFG->core->txn_page_id
+            : null;
+        $this->_template_args['txn_page_obj'] = isset(EE_Registry::instance()->CFG->core->txn_page_id)
+            ? get_page(EE_Registry::instance()->CFG->core->txn_page_id)
+            : false;
+        $this->_template_args['thank_you_page_id'] = isset(EE_Registry::instance()->CFG->core->thank_you_page_id)
+            ? EE_Registry::instance()->CFG->core->thank_you_page_id
+            : null;
+        $this->_template_args['thank_you_page_obj'] = isset(EE_Registry::instance()->CFG->core->thank_you_page_id)
+            ? get_page(EE_Registry::instance()->CFG->core->thank_you_page_id)
+            : false;
+        $this->_template_args['cancel_page_id'] = isset(EE_Registry::instance()->CFG->core->cancel_page_id)
+            ? EE_Registry::instance()->CFG->core->cancel_page_id
+            : null;
+        $this->_template_args['cancel_page_obj'] = isset(EE_Registry::instance()->CFG->core->cancel_page_id)
+            ? get_page(EE_Registry::instance()->CFG->core->cancel_page_id)
+            : false;
+        $this->_set_add_edit_form_tags('update_espresso_page_settings');
+        $this->_set_publish_post_box_vars(null, false, false, null, false);
+        $this->_template_args['admin_page_content'] = EEH_Template::display_template(
+            GEN_SET_TEMPLATE_PATH . 'espresso_page_settings.template.php',
+            $this->_template_args,
+            true
+        );
+        $this->display_admin_page_with_sidebar();
 
 	}
 

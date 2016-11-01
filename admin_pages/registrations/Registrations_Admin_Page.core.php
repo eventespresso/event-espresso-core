@@ -70,7 +70,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     public function wp_loaded()
     {
         // when adding a new registration...
-        if (isset($this->_req_data['action']) && $this->_req_data['action'] == 'new_registration') {
+        if (isset($this->_req_data['action']) && $this->_req_data['action'] === 'new_registration') {
             EE_System::do_not_cache();
             if ( ! isset($this->_req_data['processing_registration'])
                  || absint($this->_req_data['processing_registration']) !== 1
@@ -121,7 +121,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     {
         //gotta make sure this only happens on this route
         $post_type = get_post_type($comment->comment_post_ID);
-        if ($post_type == 'espresso_attendees') {
+        if ($post_type === 'espresso_attendees') {
             return '#commentsdiv';
         }
         return $link;
@@ -2380,16 +2380,19 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
 
 
     /**
-     *        process_reg_step
+     * process_reg_step
      *
      * @access        public
      * @return        string
+     * @throws \RuntimeException
+     * @throws \EE_Error
      */
     public function process_reg_step()
     {
         EE_System::do_not_cache();
         $this->_set_reg_event();
         EE_Registry::instance()->REQ->set_espresso_page(true);
+        EE_Registry::instance()->REQ->set('uts', time());
         //what step are we on?
         $cart = EE_Registry::instance()->SSN->cart();
         $step = ! $cart instanceof EE_Cart ? 'ticket' : 'questions';
@@ -2412,9 +2415,12 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 if (defined('DOING_AJAX')) {
                     $this->new_registration(); //display next step
                 } else {
-                    $query_args['action'] = 'new_registration';
-                    $query_args['processing_registration'] = 1;
-                    $query_args['event_id'] = $this->_reg_event->ID();
+                    $query_args = array(
+                        'action'                  => 'new_registration',
+                        'processing_registration' => 1,
+                        'event_id'                => $this->_reg_event->ID(),
+                        'uts'                     => time(),
+                    );
                     $this->_redirect_after_action(false, '', '', $query_args, true);
                 }
                 break;
@@ -2435,6 +2441,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                         'action'                  => 'new_registration',
                         'processing_registration' => 2,
                         'event_id'                => $this->_reg_event->ID(),
+                        'uts'                     => time(),
                     );
                     if (defined('DOING_AJAX')) {
                         //display registration form again because there are errors (maybe validation?)
