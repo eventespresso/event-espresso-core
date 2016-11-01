@@ -134,13 +134,34 @@ class RegistrationsReport extends JobHandlerFile
                 'group_by' => array('QST_ID'),
             );
         } else {
-            $question_query_params = array( array() );
-            //convert the registration query params into question query params
-            foreach( $where as $key => $val ) {
-                $question_query_params[0][ 'Question_Group.Event.Registration.' . $key ] = $val;
-            }
+            $question_query_params = array(
+                $this->_change_registration_where_params_to_question_where_params( $registration_query_params[0] )
+            );
         }
         return \EEM_Question::instance()->get_all_wpdb_results($question_query_params);
+    }
+
+
+
+    /**
+     * Takes where params meant for registrations and changes them to work for questions
+     * @param array $reg_where_params
+     * @return array
+     */
+    protected function _change_registration_where_params_to_question_where_params( $reg_where_params )
+    {
+        $question_where_params = array();
+        foreach($reg_where_params as $key => $val ) {
+            if( strpos( $key, 'OR' ) === 0
+            || strpos( $key, 'AND' ) === 0
+            || strpos( $key, 'NOT' ) === 0 ) {
+                $question_where_params[ $key ] = $this->_change_registration_query_params_to_question_query_params( $val );
+            } else {
+                //it's a normal where condition
+                $question_where_params[ 'Question_Group.Event.Registration.' . $key ] = $val;
+            }
+        }
+        return $question_where_params;
     }
 
 
