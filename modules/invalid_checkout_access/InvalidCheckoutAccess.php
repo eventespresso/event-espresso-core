@@ -42,7 +42,7 @@ class InvalidCheckoutAccess {
 			&& ! ( defined( 'DOING_AJAX' ) && DOING_AJAX )
 		) {
 			/** @var \EE_Request $request */
-			$request = \EE_Registry::instance()->create( 'EE_Request' );
+			$request = \EE_Registry::instance()->load_core( 'EE_Request' );
 			$ip_address = $request->ip_address();
 			$ee_bot_checkout = get_option( InvalidCheckoutAccess::OPTION_KEY );
 			if ( $ee_bot_checkout === false ) {
