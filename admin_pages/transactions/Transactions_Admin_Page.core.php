@@ -797,7 +797,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 					$reg_steps .= '<li style="color:#2EA2CC">' . sprintf(
 							esc_html__( '%1$s : Initiated %2$s', 'event_espresso' ),
 							ucwords( str_replace( '_', ' ', $reg_step ) ),
-							gmdate( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), ( $reg_step_status + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) ) )
+							date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), ( $reg_step_status + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) ) )
 						) . '</li>';
 				} else {
 				$reg_steps .= '<li style="color:#E76700">' . sprintf( esc_html__( '%1$s : Never Initiated', 'event_espresso' ), ucwords( str_replace( '_', ' ', $reg_step ) ) ) . '</li>';

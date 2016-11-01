@@ -14,13 +14,13 @@ class EE_Text_Input extends EE_Form_Input_Base{
 	/**
 	 * @param array $options
 	 */
-	function __construct($options = array()){
+	public function __construct($options = array()){
 		$this->_set_display_strategy(new EE_Text_Input_Display_Strategy());
 		$this->_set_normalization_strategy(new EE_Text_Normalization());
 		parent::__construct($options);
-		//if the input hasn't specifically mentioned a more lenient validation strategy, 
+		//if the input hasn't specifically mentioned a more lenient validation strategy,
 		//apply plaintext validation strategy
-		if( ! $this->has_validation_strategy( 
+		if( ! $this->has_validation_strategy(
 				array(
 					'EE_Full_HTML_Validation_Strategy',
 					'EE_Simple_HTML_Validation_Strategy'
