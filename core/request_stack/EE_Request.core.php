@@ -50,6 +50,13 @@ class EE_Request {
 	 */
 	public $front_ajax = false;
 
+	/**
+	 * IP address for request
+	 *
+	 * @var string $_ip_address
+	 */
+	private $_ip_address = '';
+
 
 
 	/**
@@ -69,6 +76,8 @@ class EE_Request {
 		// AJAX ???
 		$this->ajax       = defined( 'DOING_AJAX' ) ? true : false;
 		$this->front_ajax = $this->is_set( 'ee_front_ajax' ) && $this->get( 'ee_front_ajax' ) == 1 ? true : false;
+		// grab user IP
+		$this->_ip_address = $this->_visitor_ip();
 	}
 
 
@@ -169,6 +178,47 @@ class EE_Request {
 		}
 	}
 
+
+
+	/**
+	 * @return string
+	 */
+	public function ip_address() {
+		return $this->_ip_address;
+	}
+
+
+
+	/**
+	 * _visitor_ip
+	 *    attempt to get IP address of current visitor from server
+	 * plz see: http://stackoverflow.com/a/2031935/1475279
+	 *
+	 * @access public
+	 * @return string
+	 */
+	private function _visitor_ip() {
+		$visitor_ip = '0.0.0.0';
+		$server_keys = array(
+			'HTTP_CLIENT_IP',
+			'HTTP_X_FORWARDED_FOR',
+			'HTTP_X_FORWARDED',
+			'HTTP_X_CLUSTER_CLIENT_IP',
+			'HTTP_FORWARDED_FOR',
+			'HTTP_FORWARDED',
+			'REMOTE_ADDR'
+		);
+		foreach ( $server_keys as $key ) {
+			if ( isset( $_SERVER[ $key ] ) ) {
+				foreach ( array_map( 'trim', explode( ',', $_SERVER[ $key ] ) ) as $ip ) {
+					if ( $ip === '127.0.0.1' || filter_var( $ip, FILTER_VALIDATE_IP ) !== false ) {
+						$visitor_ip = $ip;
+					}
+				}
+			}
+		}
+		return $visitor_ip;
+	}
 
 
 
