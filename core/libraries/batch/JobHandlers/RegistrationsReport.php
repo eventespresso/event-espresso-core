@@ -345,8 +345,9 @@ class RegistrationsReport extends JobHandlerFile
                         $reg_csv_array[$question_label] = \EEM_State::instance()
                                                                     ->get_state_name_by_ID($answer_row['Answer.ANS_value']);
                     } else {
-                        $reg_csv_array[$question_label] = \EEH_Export::prepare_value_from_db_for_display(\EEM_Answer::instance(),
-                            'ANS_value', $answer_row['Answer.ANS_value']);
+                        //this isn't for html, so don't show html entities
+                        $reg_csv_array[$question_label] = html_entity_decode(\EEH_Export::prepare_value_from_db_for_display(\EEM_Answer::instance(),
+                            'ANS_value', $answer_row['Answer.ANS_value']));
                     }
                 }
                 $registrations_csv_ready_array[] = apply_filters('FHEE__EE_Export__report_registrations__reg_csv_array',
