@@ -179,16 +179,16 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         $att_id = ! empty($this->_req_data['post']) && ! is_array($this->_req_data['post']) ? $this->_req_data['post']
             : $att_id;
         $this->_page_routes = array(
-            'default' => array(
+            'default'                            => array(
                 'func'       => '_registrations_overview_list_table',
                 'capability' => 'ee_read_registrations',
             ),
-            'view_registration' => array(
+            'view_registration'                  => array(
                 'func'       => '_registration_details',
                 'capability' => 'ee_read_registration',
                 'obj_id'     => $reg_id,
             ),
-            'edit_registration' => array(
+            'edit_registration'                  => array(
                 'func'               => '_update_attendee_registration_form',
                 'noheader'           => true,
                 'headers_sent_route' => 'view_registration',
@@ -196,83 +196,83 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 'obj_id'             => $reg_id,
                 '_REG_ID'            => $reg_id,
             ),
-            'trash_registrations' => array(
+            'trash_registrations'                => array(
                 'func'       => '_trash_or_restore_registrations',
                 'args'       => array('trash' => true),
                 'noheader'   => true,
                 'capability' => 'ee_delete_registrations',
             ),
-            'restore_registrations' => array(
+            'restore_registrations'              => array(
                 'func'       => '_trash_or_restore_registrations',
                 'args'       => array('trash' => false),
                 'noheader'   => true,
                 'capability' => 'ee_delete_registrations',
             ),
-            'delete_registrations' => array(
+            'delete_registrations'               => array(
                 'func'       => '_delete_registrations',
                 'noheader'   => true,
                 'capability' => 'ee_delete_registrations',
             ),
-            'new_registration' => array(
+            'new_registration'                   => array(
                 'func'       => 'new_registration',
                 'capability' => 'ee_edit_registrations',
             ),
-            'process_reg_step' => array(
+            'process_reg_step'                   => array(
                 'func'       => 'process_reg_step',
                 'noheader'   => true,
                 'capability' => 'ee_edit_registrations',
             ),
-            'redirect_to_txn' => array(
+            'redirect_to_txn'                    => array(
                 'func'       => 'redirect_to_txn',
                 'noheader'   => true,
                 'capability' => 'ee_edit_registrations',
             ),
-            'change_reg_status' => array(
+            'change_reg_status'                  => array(
                 'func'       => '_change_reg_status',
                 'noheader'   => true,
                 'capability' => 'ee_edit_registration',
                 'obj_id'     => $reg_id,
             ),
-            'approve_registration' => array(
+            'approve_registration'               => array(
                 'func'       => 'approve_registration',
                 'noheader'   => true,
                 'capability' => 'ee_edit_registration',
                 'obj_id'     => $reg_id,
             ),
-            'approve_and_notify_registration' => array(
+            'approve_and_notify_registration'    => array(
                 'func'       => 'approve_registration',
                 'noheader'   => true,
                 'args'       => array(true),
                 'capability' => 'ee_edit_registration',
                 'obj_id'     => $reg_id,
             ),
-            'decline_registration' => array(
+            'decline_registration'               => array(
                 'func'       => 'decline_registration',
                 'noheader'   => true,
                 'capability' => 'ee_edit_registration',
                 'obj_id'     => $reg_id,
             ),
-            'decline_and_notify_registration' => array(
+            'decline_and_notify_registration'    => array(
                 'func'       => 'decline_registration',
                 'noheader'   => true,
                 'args'       => array(true),
                 'capability' => 'ee_edit_registration',
                 'obj_id'     => $reg_id,
             ),
-            'pending_registration' => array(
+            'pending_registration'               => array(
                 'func'       => 'pending_registration',
                 'noheader'   => true,
                 'capability' => 'ee_edit_registration',
                 'obj_id'     => $reg_id,
             ),
-            'pending_and_notify_registration' => array(
+            'pending_and_notify_registration'    => array(
                 'func'       => 'pending_registration',
                 'noheader'   => true,
                 'args'       => array(true),
                 'capability' => 'ee_edit_registration',
                 'obj_id'     => $reg_id,
             ),
-            'no_approve_registration' => array(
+            'no_approve_registration'            => array(
                 'func'       => 'not_approve_registration',
                 'noheader'   => true,
                 'capability' => 'ee_edit_registration',
@@ -285,42 +285,42 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 'capability' => 'ee_edit_registration',
                 'obj_id'     => $reg_id,
             ),
-            'cancel_registration' => array(
+            'cancel_registration'                => array(
                 'func'       => 'cancel_registration',
                 'noheader'   => true,
                 'capability' => 'ee_edit_registration',
                 'obj_id'     => $reg_id,
             ),
-            'cancel_and_notify_registration' => array(
+            'cancel_and_notify_registration'     => array(
                 'func'       => 'cancel_registration',
                 'noheader'   => true,
                 'args'       => array(true),
                 'capability' => 'ee_edit_registration',
                 'obj_id'     => $reg_id,
             ),
-            'contact_list' => array(
+            'contact_list'                       => array(
                 'func'       => '_attendee_contact_list_table',
                 'capability' => 'ee_read_contacts',
             ),
-            'add_new_attendee' => array(
+            'add_new_attendee'                   => array(
                 'func' => '_create_new_cpt_item',
                 'args' => array(
                     'new_attendee' => true,
                     'capability'   => 'ee_edit_contacts',
                 ),
             ),
-            'edit_attendee' => array(
+            'edit_attendee'                      => array(
                 'func'       => '_edit_cpt_item',
                 'capability' => 'ee_edit_contacts',
                 'obj_id'     => $att_id,
             ),
-            'duplicate_attendee' => array(
+            'duplicate_attendee'                 => array(
                 'func'       => '_duplicate_attendee',
                 'noheader'   => true,
                 'capability' => 'ee_edit_contacts',
                 'obj_id'     => $att_id,
             ),
-            'insert_attendee' => array(
+            'insert_attendee'                    => array(
                 'func'       => '_insert_or_update_attendee',
                 'args'       => array(
                     'new_attendee' => true,
@@ -328,7 +328,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 'noheader'   => true,
                 'capability' => 'ee_edit_contacts',
             ),
-            'update_attendee' => array(
+            'update_attendee'                    => array(
                 'func'       => '_insert_or_update_attendee',
                 'args'       => array(
                     'new_attendee' => false,
@@ -337,7 +337,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 'capability' => 'ee_edit_contacts',
                 'obj_id'     => $att_id,
             ),
-            'trash_attendees' => array(
+            'trash_attendees'                    => array(
                 'func'       => '_trash_or_restore_attendees',
                 'args'       => array(
                     'trash' => true,
@@ -346,7 +346,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 'capability' => 'ee_delete_contacts',
                 'obj_id'     => $att_id,
             ),
-            'restore_attendees'    => array(
+            'restore_attendees'                  => array(
                 'func'       => '_trash_or_restore_attendees',
                 'args'       => array(
                     'trash' => false,
@@ -355,22 +355,22 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 'capability' => 'ee_delete_contacts',
                 'obj_id'     => $att_id,
             ),
-            'resend_registration'  => array(
+            'resend_registration'                => array(
                 'func'       => '_resend_registration',
                 'noheader'   => true,
                 'capability' => 'ee_send_message',
             ),
-            'registrations_report' => array(
+            'registrations_report'               => array(
                 'func'       => '_registrations_report',
                 'noheader'   => true,
                 'capability' => 'ee_read_registrations',
             ),
-            'contact_list_export'  => array(
+            'contact_list_export'                => array(
                 'func'       => '_contact_list_export',
                 'noheader'   => true,
                 'capability' => 'export',
             ),
-            'contact_list_report'  => array(
+            'contact_list_report'                => array(
                 'func'       => '_contact_list_report',
                 'noheader'   => true,
                 'capability' => 'ee_read_contacts',
@@ -383,7 +383,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     protected function _set_page_config()
     {
         $this->_page_config = array(
-            'default' => array(
+            'default'           => array(
                 'nav'           => array(
                     'label' => __('Overview', 'event_espresso'),
                     'order' => 5,
@@ -447,7 +447,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                     array('_registration_details_metaboxes')),
                 'require_nonce' => false,
             ),
-            'new_registration' => array(
+            'new_registration'  => array(
                 'nav'           => array(
                     'label'      => __('Add New Registration', 'event_espresso'),
                     'url'        => '#',
@@ -460,7 +460,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 ),
                 'require_nonce' => false,
             ),
-            'add_new_attendee' => array(
+            'add_new_attendee'  => array(
                 'nav'           => array(
                     'label'      => __('Add Contact', 'event_espresso'),
                     'order'      => 15,
@@ -470,7 +470,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                     array('_publish_post_box', 'attendee_editor_metaboxes')),
                 'require_nonce' => false,
             ),
-            'edit_attendee' => array(
+            'edit_attendee'     => array(
                 'nav'           => array(
                     'label'      => __('Edit Contact', 'event_espresso'),
                     'order'      => 15,
@@ -482,7 +482,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 'metaboxes'     => array('attendee_editor_metaboxes'),
                 'require_nonce' => false,
             ),
-            'contact_list' => array(
+            'contact_list'      => array(
                 'nav'           => array(
                     'label' => __('Contact List', 'event_espresso'),
                     'order' => 20,
@@ -511,8 +511,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 'require_nonce' => false,
             ),
             //override default cpt routes
-            'create_new'   => '',
-            'edit'         => '',
+            'create_new'        => '',
+            'edit'              => '',
         );
     }
 
@@ -947,13 +947,12 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      */
     public function get_registrations($per_page = 10, $count = false, $this_month = false, $today = false)
     {
-        $query_params = $this->_get_query_params_from_request( $this->_req_data, $per_page, $count,$this_month, $today );
+        $query_params = $this->_get_query_params_from_request($this->_req_data, $per_page, $count, $this_month, $today);
         if ($count) {
-           return EEM_Registration::instance()->count( $query_params );
+            return EEM_Registration::instance()->count($query_params);
         } else {
-            $registrations =  EEM_Registration::instance()->get_all($query_params);
-            $EVT_ID = ! empty($request['event_id']) && $request['event_id'] > 0
-                ? absint($request['event_id']) : false;
+            $registrations = EEM_Registration::instance()->get_all($query_params);
+            $EVT_ID = ! empty($request['event_id']) && $request['event_id'] > 0 ? absint($request['event_id']) : false;
             if ($EVT_ID
                 && isset($registrations[0])
                 && $registrations[0] instanceof EE_Registration
@@ -995,24 +994,29 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         }
     }
 
+
+
     /**
      * Generates WHERE conditions for a query from a request that fits nicely into a querystring
-     * @param array $request
-     * @param int $per_page
+     *
+     * @param array   $request
+     * @param int     $per_page
      * @param boolean $this_month
      * @param boolean $today
      * @return array
      * @throws \EE_Error
      */
-    protected function _get_query_params_from_request( $request, $per_page = 10, $count = false, $this_month = false, $today = false )
-    {
-        $EVT_ID = ! empty($request['event_id']) && $request['event_id'] > 0
-            ? absint($request['event_id']) : false;
-        $CAT_ID = ! empty($request['EVT_CAT']) && (int)$request['EVT_CAT'] > 0
-            ? absint($request['EVT_CAT']) : false;
+    protected function _get_query_params_from_request(
+        $request,
+        $per_page = 10,
+        $count = false,
+        $this_month = false,
+        $today = false
+    ) {
+        $EVT_ID = ! empty($request['event_id']) && $request['event_id'] > 0 ? absint($request['event_id']) : false;
+        $CAT_ID = ! empty($request['EVT_CAT']) && (int)$request['EVT_CAT'] > 0 ? absint($request['EVT_CAT']) : false;
         $DTT_ID = isset($request['datetime_id']) ? absint($request['datetime_id']) : null;
-        $reg_status = ! empty($request['_reg_status']) ? sanitize_text_field($request['_reg_status'])
-            : false;
+        $reg_status = ! empty($request['_reg_status']) ? sanitize_text_field($request['_reg_status']) : false;
         $month_range = ! empty($request['month_range']) ? sanitize_text_field($request['month_range'])
             : false;//should be like 2013-april
         $today_a = ! empty($request['status']) && $request['status'] === 'today' ? true : false;
@@ -1043,13 +1047,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             default: //'REG_date'
                 $orderby = 'REG_date';
         }
-        $sort = (isset($request['order']) && ! empty($request['order'])) ? $request['order']
-            : 'DESC';
-
-        $current_page = isset($request['paged']) && ! empty($request['paged'])
-            ? $request['paged'] : 1;
-        $per_page = isset($request['perpage']) && ! empty($request['perpage'])
-            ? $request['perpage'] : $per_page;
+        $sort = (isset($request['order']) && ! empty($request['order'])) ? $request['order'] : 'DESC';
+        $current_page = isset($request['paged']) && ! empty($request['paged']) ? $request['paged'] : 1;
+        $per_page = isset($request['perpage']) && ! empty($request['perpage']) ? $request['perpage'] : $per_page;
         $offset = ($current_page - 1) * $per_page;
         $limit = $count ? null : array($offset, $per_page);
         if ($EVT_ID) {
@@ -1151,23 +1151,21 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 'Event.EVT_wp_user' => get_current_user_id(),
             );
         }
-
         $query_params = array(
-            $where
+            $where,
         );
-        if( ! $trash && ! $incomplete ) {
+        if ( ! $trash && ! $incomplete) {
             $query_params['default_where_conditions'] = 'this_model_only';
         }
-        if( ! $count ) {
+        if ( ! $count) {
             $query_params['order_by'] = array($orderby => $sort);
             $query_params['default_where_conditions'] = 'this_model_only';
             if ($per_page !== -1) {
                 $query_params['limit'] = $limit;
             }
         }
-
-        if( $trash ) {
-            $query_params = $this->_alter_query_params_so_only_trashed_items_included( $query_params );
+        if ($trash) {
+            $query_params = $this->_alter_query_params_so_only_trashed_items_included($query_params);
         }
         return $query_params;
     }
@@ -1299,39 +1297,39 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     protected function _generate_reg_status_change_form()
     {
         return new EE_Form_Section_Proper(array(
-                'name'            => 'reg_status_change_form',
-                'html_id'         => 'reg-status-change-form',
-                'layout_strategy' => new EE_Admin_Two_Column_Layout(),
-                'subsections'     => array(
-                    'return'             => new EE_Hidden_Input(array(
-                        'name'    => 'return',
-                        'default' => 'view_registration',
-                    )),
-                    'REG_ID'             => new EE_Hidden_Input(array(
-                        'name'    => 'REG_ID',
-                        'default' => $this->_registration->ID(),
-                    )),
-                    'current_status'     => new EE_Form_Section_HTML(EEH_HTML::tr(EEH_HTML::th(EEH_HTML::label(EEH_HTML::strong(__('Current Registration Status',
-                            'event_espresso')))) . EEH_HTML::td(EEH_HTML::strong($this->_registration->pretty_status(),
-                            '', 'status-' . $this->_registration->status_ID(),
-                            'line-height: 1em; font-size: 1.5em; font-weight: bold;')))),
-                    'reg_status'         => new EE_Select_Input($this->_get_reg_statuses(), array(
-                            'html_label_text' => __('Change Registration Status to', 'event_espresso'),
-                            'default'         => $this->_registration->status_ID(),
-                        )),
-                    'send_notifications' => new EE_Yes_No_Input(array(
-                            'html_label_text' => __('Send Related Messages', 'event_espresso'),
-                            'default'         => false,
-                            'html_help_text'  => __('If set to "Yes", then the related messages will be sent to the registrant.',
-                                'event_espresso'),
-                        )),
-                    'submit'             => new EE_Submit_Input(array(
-                        'html_class'      => 'button-primary',
-                        'html_label_text' => '&nbsp;',
-                        'default'         => __('Update Registration Status', 'event_espresso'),
-                    )),
-                ),
-            ));
+            'name'            => 'reg_status_change_form',
+            'html_id'         => 'reg-status-change-form',
+            'layout_strategy' => new EE_Admin_Two_Column_Layout(),
+            'subsections'     => array(
+                'return'             => new EE_Hidden_Input(array(
+                    'name'    => 'return',
+                    'default' => 'view_registration',
+                )),
+                'REG_ID'             => new EE_Hidden_Input(array(
+                    'name'    => 'REG_ID',
+                    'default' => $this->_registration->ID(),
+                )),
+                'current_status'     => new EE_Form_Section_HTML(EEH_HTML::tr(EEH_HTML::th(EEH_HTML::label(EEH_HTML::strong(__('Current Registration Status',
+                        'event_espresso')))) . EEH_HTML::td(EEH_HTML::strong($this->_registration->pretty_status(), '',
+                        'status-' . $this->_registration->status_ID(),
+                        'line-height: 1em; font-size: 1.5em; font-weight: bold;')))),
+                'reg_status'         => new EE_Select_Input($this->_get_reg_statuses(), array(
+                    'html_label_text' => __('Change Registration Status to', 'event_espresso'),
+                    'default'         => $this->_registration->status_ID(),
+                )),
+                'send_notifications' => new EE_Yes_No_Input(array(
+                    'html_label_text' => __('Send Related Messages', 'event_espresso'),
+                    'default'         => false,
+                    'html_help_text'  => __('If set to "Yes", then the related messages will be sent to the registrant.',
+                        'event_espresso'),
+                )),
+                'submit'             => new EE_Submit_Input(array(
+                    'html_class'      => 'button-primary',
+                    'html_label_text' => '&nbsp;',
+                    'default'         => __('Update Registration Status', 'event_espresso'),
+                )),
+            ),
+        ));
     }
 
 
@@ -1380,8 +1378,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         $current_status = $this->_registration->status_ID();
         // is registration for free event? This will determine whether to display the pending payment option
         if ($current_status != EEM_Registration::status_id_pending_payment
-            && $this->_registration->transaction()
-                                   ->is_free()
+            && $this->_registration->transaction()->is_free()
         ) {
             unset($reg_status_array[EEM_Registration::status_id_pending_payment]);
         }
@@ -1987,9 +1984,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             foreach ($registrations as $registration) {
                 /* @var $registration EE_Registration */
                 $attendee = $registration->attendee()
-                    ? $registration->attendee()
-                    : EEM_Attendee::instance()
-                                  ->create_default_object();
+                    ? $registration->attendee() : EEM_Attendee::instance()
+                                                              ->create_default_object();
                 $this->_template_args['attendees'][$att_nmbr]['STS_ID'] = $registration->status_ID();
                 $this->_template_args['attendees'][$att_nmbr]['fname'] = $attendee->fname();//( isset( $registration->ATT_fname ) & ! empty( $registration->ATT_fname ) ) ? $registration->ATT_fname : '';
                 $this->_template_args['attendees'][$att_nmbr]['lname'] = $attendee->lname();//( isset( $registration->ATT_lname ) & ! empty( $registration->ATT_lname ) ) ? $registration->ATT_lname : '';
@@ -2512,7 +2508,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             $query_args['redirect_from'] = $this->_req_data['redirect_from'];
         }
         EE_Error::add_success(__('Registration Created.  Please review the transaction and add any payments as necessary',
-                'event_espresso'));
+            'event_espresso'));
         $this->_redirect_after_action(false, '', '', $query_args, true);
     }
 
@@ -2654,14 +2650,13 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     public function _registrations_report()
     {
         if ( ! defined('EE_USE_OLD_CSV_REPORT_CLASS')) {
-            $serialized = serialize( $this->_get_query_params_from_request( EEH_Array::is_set( $this->_req_data, 'filters', array() ) ) );
-            $encoded = urlencode( $serialized );
             wp_redirect(EE_Admin_Page::add_query_args_and_nonce(array(
                 'page'        => 'espresso_batch',
                 'batch'       => 'file',
                 'EVT_ID'      => isset($this->_req_data['EVT_ID']) ? $this->_req_data['EVT_ID'] : null,
-                'filters'     => $encoded,
-                'use_filters' => EEH_Array::is_set( $this->_req_data, 'use_filters', false ),
+                'filters'     => urlencode(serialize($this->_get_query_params_from_request(EEH_Array::is_set($this->_req_data,
+                    'filters', array())))),
+                'use_filters' => EEH_Array::is_set($this->_req_data, 'use_filters', false),
                 'job_handler' => urlencode('EventEspressoBatchRequest\JobHandlers\RegistrationsReport'),
                 'return_url'  => urlencode($this->_req_data['return_url']),
             )));
@@ -2875,11 +2870,11 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             'ANS_ID'    => 0,
             'ANS_value' => $this->_cpt_model_obj->state_ID(),
         )), array(
-                'input_id'       => 'STA_ID',
-                'input_name'     => 'STA_ID',
-                'input_prefix'   => '',
-                'append_qstn_id' => false,
-            )));
+            'input_id'       => 'STA_ID',
+            'input_name'     => 'STA_ID',
+            'input_prefix'   => '',
+            'append_qstn_id' => false,
+        )));
         $this->_template_args['country_html'] = EEH_Form_Fields::generate_form_input(new EE_Question_Form_Input(EE_Question::new_instance(array(
             'QST_ID'           => 0,
             'QST_display_text' => __('Country', 'event_espresso'),
@@ -2888,11 +2883,11 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             'ANS_ID'    => 0,
             'ANS_value' => $this->_cpt_model_obj->country_ID(),
         )), array(
-                'input_id'       => 'CNT_ISO',
-                'input_name'     => 'CNT_ISO',
-                'input_prefix'   => '',
-                'append_qstn_id' => false,
-            )));
+            'input_id'       => 'CNT_ISO',
+            'input_name'     => 'CNT_ISO',
+            'input_prefix'   => '',
+            'append_qstn_id' => false,
+        )));
         $template = REG_TEMPLATE_PATH . 'attendee_address_details_metabox_content.template.php';
         EEH_Template::display_template($template, $this->_template_args);
     }

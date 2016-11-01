@@ -44,9 +44,8 @@ class RegistrationsReport extends JobHandlerFile
             $this->get_filename_from_event($event_id));
         $job_parameters->add_extra_data('filepath', $filepath);
         if ($job_parameters->request_datum('use_filters', false)) {
-            $raw = stripslashes( $job_parameters->request_datum( 'filters', array()) );
-            $decoded = urldecode( $raw );
-            $query_params = maybe_unserialize( $decoded );
+            $query_params = maybe_unserialize(urldecode(stripslashes($job_parameters->request_datum('filters',
+                array()))));
         } else {
             $query_params = apply_filters('FHEE__EE_Export__report_registration_for_event', array(
                 array(
@@ -74,13 +73,13 @@ class RegistrationsReport extends JobHandlerFile
                 $query_params['force_join'][] = 'Event';
             }
         }
-        if( ! isset( $query_params['force_join'] ) ){
-            $query_params['force_join'] = array( 'Event', 'Transaction', 'Ticket', 'Attendee' );
+        if ( ! isset($query_params['force_join'])) {
+            $query_params['force_join'] = array('Event', 'Transaction', 'Ticket', 'Attendee');
         }
         $job_parameters->add_extra_data('query_params', $query_params);
         $question_data_for_columns = $this->_get_questions_for_report($query_params);
         $job_parameters->add_extra_data('questions_data', $question_data_for_columns);
-        $job_parameters->set_job_size( \EEM_Registration::instance()->count( $query_params ) );
+        $job_parameters->set_job_size(\EEM_Registration::instance()->count($query_params));
         //we should also set the header columns
         $csv_data_for_row = $this->get_csv_data_for($event_id, 0, 1, $job_parameters->extra_datum('questions_data'),
             $job_parameters->extra_datum('query_params'));
@@ -123,10 +122,10 @@ class RegistrationsReport extends JobHandlerFile
      * @param array $registration_query_params
      * @return array of wpdb results for questions which are to be used for this report
      */
-    protected function _get_questions_for_report( $registration_query_params )
+    protected function _get_questions_for_report($registration_query_params)
     {
-        $where = isset( $registration_query_params[0] ) ? $registration_query_params[0] : null;
-        if( $where === null ) {
+        $where = isset($registration_query_params[0]) ? $registration_query_params[0] : null;
+        if ($where === null) {
             $question_query_params = array(
                 array(
                     'Answer.ANS_ID' => array('IS_NOT_NULL'),
@@ -135,7 +134,7 @@ class RegistrationsReport extends JobHandlerFile
             );
         } else {
             $question_query_params = array(
-                $this->_change_registration_where_params_to_question_where_params( $registration_query_params[0] )
+                $this->_change_registration_where_params_to_question_where_params($registration_query_params[0]),
             );
         }
         return \EEM_Question::instance()->get_all_wpdb_results($question_query_params);
@@ -145,20 +144,22 @@ class RegistrationsReport extends JobHandlerFile
 
     /**
      * Takes where params meant for registrations and changes them to work for questions
+     *
      * @param array $reg_where_params
      * @return array
      */
-    protected function _change_registration_where_params_to_question_where_params( $reg_where_params )
+    protected function _change_registration_where_params_to_question_where_params($reg_where_params)
     {
         $question_where_params = array();
-        foreach($reg_where_params as $key => $val ) {
-            if( strpos( $key, 'OR' ) === 0
-            || strpos( $key, 'AND' ) === 0
-            || strpos( $key, 'NOT' ) === 0 ) {
-                $question_where_params[ $key ] = $this->_change_registration_query_params_to_question_query_params( $val );
+        foreach ($reg_where_params as $key => $val) {
+            if (strpos($key, 'OR') === 0
+                || strpos($key, 'AND') === 0
+                || strpos($key, 'NOT') === 0
+            ) {
+                $question_where_params[$key] = $this->_change_registration_query_params_to_question_query_params($val);
             } else {
                 //it's a normal where condition
-                $question_where_params[ 'Question_Group.Event.Registration.' . $key ] = $val;
+                $question_where_params['Question_Group.Event.Registration.' . $key] = $val;
             }
         }
         return $question_where_params;
@@ -176,12 +177,9 @@ class RegistrationsReport extends JobHandlerFile
      */
     public function continue_job(JobParameters $job_parameters, $batch_size = 50)
     {
-        $csv_data = $this->get_csv_data_for(
-            $job_parameters->request_datum('EVT_ID', '0'),
-            $job_parameters->units_processed(), $batch_size,
-            $job_parameters->extra_datum('questions_data'),
-            $job_parameters->extra_datum('query_params')
-        );
+        $csv_data = $this->get_csv_data_for($job_parameters->request_datum('EVT_ID', '0'),
+            $job_parameters->units_processed(), $batch_size, $job_parameters->extra_datum('questions_data'),
+            $job_parameters->extra_datum('query_params'));
         \EEH_Export::write_data_array_to_csv($job_parameters->extra_datum('filepath'), $csv_data, false);
         $units_processed = count($csv_data);
         $job_parameters->mark_processed($units_processed);
@@ -327,10 +325,10 @@ class RegistrationsReport extends JobHandlerFile
                     $datetimes_strings = array();
                     foreach (
                         \EEM_Datetime::instance()->get_all_wpdb_results(array(
-                                array('Ticket.TKT_ID' => $reg_row['Ticket.TKT_ID']),
-                                'order_by'                 => array('DTT_EVT_start' => 'ASC'),
-                                'default_where_conditions' => 'none',
-                            )) as $datetime
+                            array('Ticket.TKT_ID' => $reg_row['Ticket.TKT_ID']),
+                            'order_by'                 => array('DTT_EVT_start' => 'ASC'),
+                            'default_where_conditions' => 'none',
+                        )) as $datetime
                     ) {
                         $datetimes_strings[] = \EEH_Export::prepare_value_from_db_for_display(\EEM_Datetime::instance(),
                             'DTT_EVT_start', $datetime['Datetime.DTT_EVT_start']);
@@ -434,7 +432,6 @@ class RegistrationsReport extends JobHandlerFile
         }
         return \EEM_Registration::instance()->count($query_params);
     }
-
 
 
 
