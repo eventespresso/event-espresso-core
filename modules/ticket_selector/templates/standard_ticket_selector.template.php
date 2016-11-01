@@ -29,7 +29,7 @@
 					<?php
                     echo apply_filters(
                         'FHEE__ticket_selector_chart_template__table_header_available_tickets',
-                        esc_html__(''),
+                        esc_html(''),
                         $EVT_ID
                     );
                     ?>
@@ -97,7 +97,7 @@
 if ( $max_atndz > 0 ) {
 	echo apply_filters(
 		'FHEE__ticket_selector_chart_template__maximum_tickets_purchased_footnote',
-        esc_html__('')
+        esc_html('')
 	);
 }
 if ( ! apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit', false ) ) {
