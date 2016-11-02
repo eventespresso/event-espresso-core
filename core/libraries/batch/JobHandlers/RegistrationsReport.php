@@ -153,7 +153,7 @@ class RegistrationsReport extends JobHandlerFile
         $question_where_params = array();
         foreach ($reg_where_params as $key => $val) {
             if (\EEM_Registration::instance()->is_logic_query_param_key($key)) {
-                $question_where_params[$key] = $this->_change_registration_query_params_to_question_query_params($val);
+                $question_where_params[$key] = $this->_change_registration_where_params_to_question_where_params($val);
             } else {
                 //it's a normal where condition
                 $question_where_params['Question_Group.Event.Registration.' . $key] = $val;
