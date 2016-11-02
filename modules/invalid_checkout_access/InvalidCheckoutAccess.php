@@ -62,12 +62,14 @@ class InvalidCheckoutAccess {
 			update_option( InvalidCheckoutAccess::OPTION_KEY, $ee_bot_checkout );
 			$checkout->redirect = true;
 			$checkout->redirect_url = get_post_type_archive_link('espresso_events');
-            \EE_Error::add_error(
-                esc_html__('Direct access to the registration checkout page is not allowed.', 'event_espresso'),
-                __FILE__,
-                __FUNCTION__,
-                __LINE__
-            );
+            if (WP_DEBUG) {
+                \EE_Error::add_error(
+                    esc_html__('Direct access to the registration checkout page is not allowed.', 'event_espresso'),
+                    __FILE__,
+                    __FUNCTION__,
+                    __LINE__
+                );
+            }
 			return true;
 		}
 		return false;
