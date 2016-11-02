@@ -5552,4 +5552,39 @@ abstract class EEM_Base extends EE_Base
 
 
 
+    /**
+     * Gets the list of all the where query param keys that relate to logic instead of field names
+     * (eg "and", "or", "not").
+     *
+     * @return array
+     */
+    public function logic_query_param_keys()
+    {
+        return $this->_logic_query_param_keys;
+    }
+
+
+
+    /**
+     * Determines whether or not the where query param array key is for a logic query param.
+     * Eg 'OR', 'not*', and 'and*because-i-say-so' shoudl all return true, whereas
+     * 'ATT_fname', 'EVT_name*not-you-or-me', and 'ORG_name' should return false
+     *
+     * @param $query_param_key
+     * @return bool
+     */
+    public function is_logic_query_param_key($query_param_key)
+    {
+        foreach ($this->logic_query_param_keys() as $logic_query_param_key) {
+            if ($query_param_key === $logic_query_param_key
+                || strpos($query_param_key, $logic_query_param_key . '*') === 0
+            ) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+
 }

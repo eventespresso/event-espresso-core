@@ -152,10 +152,7 @@ class RegistrationsReport extends JobHandlerFile
     {
         $question_where_params = array();
         foreach ($reg_where_params as $key => $val) {
-            if (strpos($key, 'OR') === 0
-                || strpos($key, 'AND') === 0
-                || strpos($key, 'NOT') === 0
-            ) {
+            if (\EEM_Registration::instance()->is_logic_query_param_key($key)) {
                 $question_where_params[$key] = $this->_change_registration_query_params_to_question_query_params($val);
             } else {
                 //it's a normal where condition
