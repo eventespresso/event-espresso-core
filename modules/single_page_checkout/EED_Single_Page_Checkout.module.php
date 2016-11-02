@@ -1,7 +1,12 @@
 <?php use EventEspresso\core\domain\services\capabilities\PublicCapabilities;
 use EventEspresso\core\exceptions\InvalidEntityException;
 
-if ( ! defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed');}
+if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
+	exit( 'No direct script access allowed' );
+}
+
+
+
 /**
  * Single Page Checkout (SPCO)
  *
@@ -11,7 +16,6 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowe
  *
  */
 class EED_Single_Page_Checkout  extends EED_Module {
-
 
 	/**
 	 * $_initialized - has the SPCO controller already been initialized ?
@@ -96,7 +100,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 */
 	public static function set_hooks_admin() {
 		EED_Single_Page_Checkout::set_definitions();
-		if ( defined( 'DOING_AJAX' )) {
+		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
 			// going to start an output buffer in case anything gets accidentally output that might disrupt our JSON response
 			ob_start();
 			EED_Single_Page_Checkout::load_request_handler();
@@ -216,7 +220,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 *
 	 * @access    private
 	 * @throws EE_Error
-	 * @return    array
+	 * @return void
 	 */
 	public static function load_reg_steps() {
 		static $reg_steps_loaded = FALSE;
@@ -318,10 +322,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 	/**
-	 *    process_registration_from_admin
-	 *
-	 * @access    public
-	 * @return    int
+     * process_registration_from_admin
+     *
+     * @access public
+	 * @return \EE_Transaction
 	 * @throws \EE_Error
 	 */
 	public static function process_registration_from_admin() {
@@ -341,7 +345,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				}
 			}
 		}
-		return FALSE;
+		return null;
 	}
 
 
@@ -359,6 +363,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			$WP_Query instanceof WP_Query
 			&& $WP_Query->is_main_query()
 			&& apply_filters( 'FHEE__EED_Single_Page_Checkout__run', true )
+			&& isset( $WP_Query->query['pagename'] )
+			&& strpos( EE_Config::instance()->core->reg_page_url(), $WP_Query->query['pagename'] ) !== false
 		) {
 			$this->_initialize();
 		}
@@ -399,6 +405,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			$this->checkout = apply_filters( 'FHEE__EED_Single_Page_Checkout___initialize__checkout', $this->checkout );
 			// get the $_GET
 			$this->_get_request_vars();
+			$this->_block_bots();
 			// filter continue_reg
 			$this->checkout->continue_reg = apply_filters( 'FHEE__EED_Single_Page_Checkout__init___continue_reg', TRUE, $this->checkout );
 			// load the reg steps array
@@ -512,6 +519,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$this->checkout->edit_step = EE_Registry::instance()->REQ->get( 'edit_step', '' );
 		// and what we're doing on the current step
 		$this->checkout->action = EE_Registry::instance()->REQ->get( 'action', 'display_spco_reg_step' );
+		// timestamp
+		$this->checkout->uts = EE_Registry::instance()->REQ->get( 'uts', 0 );
 		// returning to edit ?
 		$this->checkout->reg_url_link = EE_Registry::instance()->REQ->get( 'e_reg_url_link', '' );
 		// or some other kind of revisit ?
@@ -546,6 +555,23 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		EEH_Debug_Tools::printr( $this->checkout->revisit, '$this->checkout->revisit', __FILE__, __LINE__ );
 		EEH_Debug_Tools::printr( $this->checkout->generate_reg_form, '$this->checkout->generate_reg_form', __FILE__, __LINE__ );
 		EEH_Debug_Tools::printr( $this->checkout->process_form_submission, '$this->checkout->process_form_submission', __FILE__, __LINE__ );
+	}
+
+
+
+	/**
+	 * _block_bots
+	 * checks that the incoming request has either of the following set:
+	 *  a uts (unix timestamp) which indicates that the request was redirected from the Ticket Selector
+	 *  a REG URL Link, which indicates that the request is a return visit to SPCO for a valid TXN
+	 * so if you're not coming from the Ticket Selector nor returning for a valid IP...
+	 * then where you coming from man?
+	 */
+	private function _block_bots() {
+		$invalid_checkout_access = \EED_Invalid_Checkout_Access::getInvalidCheckoutAccess();
+		if ( $invalid_checkout_access->checkoutAccessIsInvalid( $this->checkout ) ) {
+			$this->_handle_html_redirects();
+		}
 	}
 
 
@@ -793,14 +819,15 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 
-	/**
-	 * _get_registrations
-	 *
-	 * @access private
-	 * @param EE_Transaction $transaction
-	 * @return EE_Cart
-	 * @throws \EE_Error
-	 */
+    /**
+     * _get_registrations
+     *
+     * @access private
+     * @param EE_Transaction $transaction
+     * @return void
+     * @throws \EventEspresso\core\exceptions\InvalidEntityException
+     * @throws \EE_Error
+     */
 	private function _get_registrations( EE_Transaction $transaction ) {
 		// first step: grab the registrants  { : o
 		$registrations = $transaction->registrations( $this->checkout->reg_cache_where_params, true );
@@ -839,14 +866,15 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 
-	/**
-	 *    adds related EE_Registration objects for each ticket in the cart to the current EE_Transaction object
-	 *
-	 * @access private
-	 * @param EE_Transaction $transaction
-	 * @return    array
-	 * @throws \EE_Error
-	 */
+    /**
+     *    adds related EE_Registration objects for each ticket in the cart to the current EE_Transaction object
+     *
+     * @access private
+     * @param EE_Transaction $transaction
+     * @return    array
+     * @throws \EventEspresso\core\exceptions\InvalidEntityException
+     * @throws \EE_Error
+     */
 	private function _initialize_registrations( EE_Transaction $transaction ) {
 		$att_nmbr = 0;
 		$registrations = array();
@@ -1186,10 +1214,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 	/**
-	 * 	enqueue_styles_and_scripts
+	 *    enqueue_styles_and_scripts
 	 *
-	 * 	@access 		public
-	 * 	@return 		void
+	 * @access        public
+	 * @return        void
+	 * @throws \EE_Error
 	 */
 	public function enqueue_styles_and_scripts() {
 		// load css
@@ -1199,6 +1228,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		wp_register_script( 'jquery_plugin', EE_THIRD_PARTY_URL . 'jquery	.plugin.min.js', array( 'jquery' ), '1.0.1', TRUE );
 		wp_register_script( 'jquery_countdown', EE_THIRD_PARTY_URL . 'jquery	.countdown.min.js', array( 'jquery_plugin' ), '2.0.2', TRUE );
 		wp_register_script( 'single_page_checkout', SPCO_JS_URL . 'single_page_checkout.js', array( 'espresso_core', 'underscore', 'ee_form_section_validation', 'jquery_countdown' ), EVENT_ESPRESSO_VERSION, TRUE );
+		$this->checkout->registration_form->enqueue_js();
 		wp_enqueue_script( 'single_page_checkout' );
 
 		/**
@@ -1276,14 +1306,14 @@ class EED_Single_Page_Checkout  extends EED_Module {
 									'cookies_not_set_msg' 		=> $cookies_not_set_msg,
 									'registration_time_limit' 	=> $this->checkout->get_registration_time_limit(),
 									'session_expiration' 			=>
-										gmdate( 'M d, Y H:i:s', EE_Registry::instance()->SSN->expiration() + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) )
+										date( 'M d, Y H:i:s', EE_Registry::instance()->SSN->expiration() + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) )
 							)
 						)
 					)
 				)
 			);
 			// load template and add to output sent that gets filtered into the_content()
-			EE_Registry::instance()->REQ->add_output( $this->checkout->registration_form->get_html_and_js() );
+			EE_Registry::instance()->REQ->add_output( $this->checkout->registration_form->get_html() );
 		}
 	}
 
@@ -1295,7 +1325,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * @access    public
 	 * @param $next_step
 	 * @internal  param string $label
-	 * @return        string
+	 * @return void
 	 */
 	public function add_extra_finalize_registration_inputs( $next_step ) {
 		if ( $next_step === 'finalize_registration' ) {
@@ -1326,7 +1356,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			);
 			echo apply_filters(
 				'FHEE__EE_Front_Controller__display_registration_footer',
-				\EEH_Template::powered_by_event_espresso( '', 'espresso-registration-footer-dv' )
+				\EEH_Template::powered_by_event_espresso(
+					'',
+					'espresso-registration-footer-dv',
+					array( 'utm_content' => 'registration_checkout' )
+				)
 			);
 		}
 		return '';
@@ -1354,7 +1388,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 *        _setup_redirect
 	 *
 	 * @access 	private
-	 * @return 	array
+	 * @return void
 	 */
 	private function _setup_redirect() {
 		if ( $this->checkout->continue_reg && $this->checkout->next_step instanceof EE_SPCO_Reg_Step ) {
@@ -1362,7 +1396,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			if ( empty( $this->checkout->redirect_url )) {
 				$this->checkout->redirect_url = $this->checkout->next_step->reg_step_url();
 			}
-			$this->checkout->redirect_url = apply_filters( 'FHEE__EED_Single_Page_Checkout___setup_redirect__checkout_redirect_url', $this->checkout->redirect_url, $this->checkout );
+			$this->checkout->redirect_url = apply_filters(
+			    'FHEE__EED_Single_Page_Checkout___setup_redirect__checkout_redirect_url',
+                $this->checkout->redirect_url,
+                $this->checkout
+            );
 		}
 	}
 
@@ -1464,7 +1502,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 *   set_checkout_anchor
 	 *
 	 * @access public
-	 * @return string
+	 * @return void
 	 */
 	public function set_checkout_anchor() {
 		echo '<a id="checkout" style="float: left; margin-left: -999em;"></a>';

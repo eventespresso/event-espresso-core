@@ -732,7 +732,7 @@ final class EE_Admin {
 	 *  @return 	string
 	 */
 	public function espresso_admin_footer() {
-		return \EEH_Template::powered_by_event_espresso( 'aln-cntr' );
+		return \EEH_Template::powered_by_event_espresso( 'aln-cntr', '', array( 'utm_content' => 'admin_footer' ));
 	}
 
 

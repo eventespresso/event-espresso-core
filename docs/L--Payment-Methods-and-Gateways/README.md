@@ -8,4 +8,4 @@ This folder contains all documentation related to development and usage of payme
 
 ## Related Articles
 
-- [Creating a New Payment Method using the Payment Method Addon Skeleton](https://github.com/eventespresso/event-espresso-core/blob/FET-6935-add-introductory-area-to-each-gateway/docs/D--Addon-API/using-new-payment-method-addon-skeleton.md)
+- [Creating a New Payment Method using the Payment Method Addon Skeleton](https://github.com/eventespresso/event-espresso-core/blob/master/docs/D--Addon-API/using-new-payment-method-addon-skeleton.md)

@@ -391,6 +391,7 @@ class EE_Email_messenger extends EE_messenger  {
 	 * @return string formatted header for email
 	 */
 	protected function _headers() {
+		$this->_ensure_has_from_email_address();
 		$from = stripslashes_deep( html_entity_decode($this->_from,  ENT_QUOTES,"UTF-8" ) );
 		$headers = array(
 			'MIME-Version: 1.0',
@@ -405,6 +406,16 @@ class EE_Email_messenger extends EE_messenger  {
 		return apply_filters( 'FHEE__EE_Email_messenger___headers', $headers, $this->_incoming_message_type, $this );
 	}
 
+
+	/**
+	 * This simply ensures that the from address is not empty.  If it is, then we use whatever is set as the site email
+	 * address for the from address to avoid problems with sending emails.
+	 */
+	protected function _ensure_has_from_email_address() {
+		if ( empty( $this->_from ) ) {
+			$this->_from = get_bloginfo('admin_email');
+		}
+	}
 
 
 
@@ -426,9 +437,11 @@ class EE_Email_messenger extends EE_messenger  {
 			$from_email = substr( $this->_from, strpos( $this->_from, '<' ) + 1 );
 			$from_email = str_replace( '>', '', $from_email );
 			$from_email = trim( $from_email );
-		} else {
+		} elseif ( trim( $this->_from ) !== '' ) {
 			$from_name = '';
 			$from_email = trim( $this->_from );
+		} else {
+			$from_name = $from_email = '';
 		}
 		return array( $from_name, $from_email );
 	}
@@ -445,7 +458,9 @@ class EE_Email_messenger extends EE_messenger  {
 	 */
 	public function set_from_address( $from_email ) {
 		$parsed_from = $this->_parse_from();
-		return $parsed_from[1];
+		//includes fallback if the parsing failed.
+		$from_email = is_array( $parsed_from ) && ! empty( $parsed_from[1] ) ? $parsed_from[1] : get_bloginfo( 'admin_email' );
+		return $from_email;
 	}
 
 
@@ -463,6 +478,9 @@ class EE_Email_messenger extends EE_messenger  {
 		if ( is_array( $parsed_from) && ! empty( $parsed_from[0] ) ) {
 			$from_name =  $parsed_from[0];
 		}
+
+		//if from name is "WordPress" let's sub in the site name instead (more friendly!)
+		$from_name = $from_name == 'WordPress' ? get_bloginfo() : $from_name;
 
 		return stripslashes_deep( html_entity_decode($from_name,  ENT_QUOTES,"UTF-8" ) );
 	}
