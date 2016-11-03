@@ -359,12 +359,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * @throws \EE_Error
 	 */
 	public function run( $WP_Query ) {
-		if (
+        if (
 			$WP_Query instanceof WP_Query
 			&& $WP_Query->is_main_query()
 			&& apply_filters( 'FHEE__EED_Single_Page_Checkout__run', true )
-			&& isset( $WP_Query->query['pagename'] )
-			&& strpos( EE_Config::instance()->core->reg_page_url(), $WP_Query->query['pagename'] ) !== false
+			&& $this->_is_reg_checkout()
 		) {
 			$this->_initialize();
 		}
@@ -372,7 +371,25 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 
-	/**
+    /**
+     * determines whether current url matches reg page url
+     *
+     * @return bool
+     */
+    protected function _is_reg_checkout() {
+        // get current permalink for reg page without any extra query args
+        $reg_page_url = \get_permalink(EE_Config::instance()->core->reg_page_id);
+        // strip typical query args from current url (doesn't include scheme or host)
+        $current_url = remove_query_arg(
+            array('uts', 'e_reg_url_link', 'step', 'action', 'revisit', 'generate_reg_form', 'process_form_submission')
+        );
+        // is current url part of the known reg page url ?
+        return strpos($reg_page_url, $current_url) !== false;
+    }
+
+
+
+    /**
 	 *    run
 	 *
 	 * @access    public
