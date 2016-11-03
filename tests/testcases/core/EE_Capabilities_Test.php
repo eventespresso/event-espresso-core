@@ -49,7 +49,6 @@ class EE_Capabilities_Test extends EE_UnitTestCase
         //check the current user is an admin
         $user = $this->factory->user->create_and_get();
         $this->assertInstanceOf('WP_User', $user);
-        $user->add_role('administrator');
         $this->assertFalse(EE_Registry::instance()->CAP->user_can($user, 'ee_new_cap', 'test'));
         
         //ok now add another cap, and re-init stuff and verify it got added correctly
@@ -58,9 +57,11 @@ class EE_Capabilities_Test extends EE_UnitTestCase
         EE_Registry::instance()->CAP->init_caps();
         //check it got added
         $this->assertArrayContains('ee_new_cap', EE_Registry::instance()->CAP->get_ee_capabilities('administrator'));
+        $user->add_role('administrator');
+        $this->assertTrue(EE_Registry::instance()->CAP->user_can($user, 'ee_new_cap', 'test'));
         //then check newly-created users get that new role
-        //refresh teh roles' caps and the user object
-        $wp_roles->reinit();
+        //refresh the roles' caps and the user object
+        $wp_roles       = new WP_Roles();
         $user_refreshed = get_user_by('id', $user->ID);
         $this->assertTrue(EE_Registry::instance()->CAP->user_can($user_refreshed, 'ee_new_cap', 'test'));
     }
