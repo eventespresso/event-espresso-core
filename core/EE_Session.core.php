@@ -969,6 +969,10 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
 	  * @return bool
 	  */
 	 private function valid_base_64( $string ) {
+         // ensure data is a string
+         if ( ! is_string($string)) {
+             return false;
+         }
 		 $decoded = base64_decode( $string, true );
 		 // Check if there is no invalid character in string
 		 if ( ! preg_match( '/^[a-zA-Z0-9\/\r\n+]*={0,2}$/', $string ) ) {
