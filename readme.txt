@@ -157,7 +157,7 @@ Resources on Event Espresso 4 for a beginner to advanced users.
 [View Event Espresso 4 Documentation →](https://eventespresso.com/support/documentation/versioned-docs?doc_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_plugin_description_tab&utm_content=view+ee4+documentation)
 
 = Mobile Event Apps =
-The Event Espresso 4 check-in & ticket scanning event app is available for [Android](http://evts.io/EE4_Android_App?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_plugin_description_tab&utm_content=mobile+event+apps+android) and [Apple](http://evts.io/EE4_Apple_App?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_plugin_description_tab
+The Event Espresso 4 check-in & ticket scanning event app is available for [Android](http://evts.io/EE4_Android_App?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_plugin_description_tab&utm_content=mobile+event+apps+android) and [Apple](http://evts.io/EE4_Apple_App?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_plugin_description_tab)
 
 = Developers =
 **The full version can be [found on Github](http://evts.io/EE4_WP_Readme)** and provides everything that you need to [sell tickets](https://eventespresso.com/features/multiple-ticket-pricing-options/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_plugin_description_tab&utm_content=sell+tickets), [collect payments](https://eventespresso.com/features/payment-options/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_plugin_description_tab&utm_content=collect+payments), and [manage events](https://eventespresso.com/features/event-management/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_plugin_description_tab&utm_content=manage+events) all from within your WordPress dashboard.
