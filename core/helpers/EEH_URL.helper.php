@@ -120,7 +120,7 @@ class EEH_URL{
 	 */
 	public static function get_query_string( $url = '', $as_array = TRUE ) {
 		// break apart incoming URL
-		$url_bits = parse_url( $url );
+		$url_bits = parse_url( html_entity_decode( $url ) );
 		// grab query string from URL
 		$query = isset( $url_bits[ 'query' ] ) ? $url_bits[ 'query' ] : '';
 		// if we don't want the query string formatted into an array of key => value pairs, then just return it as is
