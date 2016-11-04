@@ -362,5 +362,18 @@ class EE_Datetime_Field_Test extends EE_UnitTestCase {
 
 
 
+	public function test_datetime_field_serialization() {
+		$this->_set_dtt_field_object();
+		$datetime = $this->_datetime_field;
+		$datetime = serialize( $datetime );
+		$datetime = unserialize( $datetime );
+		$this->assertInstanceOf(
+			'DateTime',
+			$datetime->prepare_for_set_from_db('')
+		);
+	}
 
-} // end class EE_Datetime_Field_Test
+
+}
+// end class EE_Datetime_Field_Test
+// Location: tests/testcases/core/db_models/fields/EE_Datetime_Field_Test.php
