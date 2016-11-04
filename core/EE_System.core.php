@@ -89,7 +89,7 @@ final class EE_System
      * Whether or not there was a non-micro version change in EE core version during this request
      * @var boolean
      */
-    private $_major_version_change;
+    private $_major_version_change = false;
 
 
 
@@ -379,11 +379,11 @@ final class EE_System
         } else {
             EE_Data_Migration_Manager::instance()->enqueue_db_initialization_for('Core');
         }
-        if ($request_type == EE_System::req_type_new_activation
-            || $request_type == EE_System::req_type_reactivation
+        if ($request_type === EE_System::req_type_new_activation
+            || $request_type === EE_System::req_type_reactivation
             ||
             (
-                $request_type == EE_System::req_type_upgrade
+                $request_type === EE_System::req_type_upgrade
                 && $this->is_major_version_change()
             )
         ) {
