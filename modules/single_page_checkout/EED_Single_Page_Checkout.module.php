@@ -381,6 +381,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
         $reg_page_url = \get_permalink(EE_Config::instance()->core->reg_page_id);
         // get url for current request, but without the scheme or host
         $current_url = \EEH_URL::filter_input_server_url('REQUEST_URI');
+        $current_url = html_entity_decode( $current_url );
+        
         // get array of query args from the current request url
         $query_args = \EEH_URL::get_query_string($current_url);
         // grab page id if it is set
