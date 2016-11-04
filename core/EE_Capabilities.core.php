@@ -231,14 +231,16 @@ final class EE_Capabilities extends EE_Base
      */
     public function map_meta_caps($caps, $cap, $user_id, $args)
     {
-        //loop through our _meta_caps array
-        foreach ($this->_meta_caps as $meta_map) {
-            if ( ! $meta_map instanceof EE_Meta_Capability_Map) {
-                continue;
+        if (did_action('AHEE__EE_System__load_espresso_addons__complete')) {
+            //loop through our _meta_caps array
+            foreach ($this->_meta_caps as $meta_map) {
+                if (! $meta_map instanceof EE_Meta_Capability_Map) {
+                    continue;
+                }
+                $meta_map->ensure_is_model();
+                
+                $caps = $meta_map->map_meta_caps($caps, $cap, $user_id, $args);
             }
-            $meta_map->ensure_is_model();
-            
-            $caps = $meta_map->map_meta_caps($caps, $cap, $user_id, $args);
         }
         
         return $caps;
