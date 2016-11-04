@@ -87,6 +87,7 @@ final class EE_System
 
     /**
      * Whether or not there was a non-micro version change in EE core version during this request
+     *
      * @var boolean
      */
     private $_major_version_change = false;
@@ -381,8 +382,7 @@ final class EE_System
         }
         if ($request_type === EE_System::req_type_new_activation
             || $request_type === EE_System::req_type_reactivation
-            ||
-            (
+            || (
                 $request_type === EE_System::req_type_upgrade
                 && $this->is_major_version_change()
             )
@@ -446,7 +446,7 @@ final class EE_System
                 : $this->fix_espresso_db_upgrade_option();
             $this->_req_type = $this->detect_req_type_given_activation_history($espresso_db_update,
                 'ee_espresso_activation', espresso_version());
-            $this->_major_version_change = $this->_detect_major_version_change( $espresso_db_update );
+            $this->_major_version_change = $this->_detect_major_version_change($espresso_db_update);
         }
         return $this->_req_type;
     }
@@ -457,18 +457,18 @@ final class EE_System
      * Returns whether or not there was a non-micro version change (ie, change in either
      * the first or second number in the version. Eg 4.9.0.rc.001 to 4.10.0.rc.000,
      * but not 4.9.0.rc.0001 to 4.9.1.rc.0001
+     *
      * @param $activation_history
      * @return bool
      */
-    protected function _detect_major_version_change( $activation_history)
+    protected function _detect_major_version_change($activation_history)
     {
         $previous_version = EE_System::_get_most_recently_active_version_from_activation_history($activation_history);
-        $previous_version_parts = explode('.', $previous_version );
+        $previous_version_parts = explode('.', $previous_version);
         $current_version_parts = explode('.', espresso_version());
-        return isset($previous_version_parts[0],$previous_version_parts[1],$current_version_parts[0],$current_version_parts[1] )
-            &&
-               ( $previous_version_parts[0] !== $current_version_parts[0]
-                || $previous_version_parts[1] !== $current_version_parts[1]
+        return isset($previous_version_parts[0], $previous_version_parts[1], $current_version_parts[0], $current_version_parts[1])
+               && ($previous_version_parts[0] !== $current_version_parts[0]
+                   || $previous_version_parts[1] !== $current_version_parts[1]
                );
     }
 
@@ -477,12 +477,14 @@ final class EE_System
     /**
      * Returns true if either the major or minor version of EE changed during this request.
      * Eg 4.9.0.rc.001 to 4.10.0.rc.000, but not 4.9.0.rc.0001 to 4.9.1.rc.0001
+     *
      * @return bool
      */
     public function is_major_version_change()
     {
         return $this->_major_version_change;
     }
+
 
 
     /**
