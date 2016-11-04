@@ -363,7 +363,8 @@ class EE_Datetime_Field_Test extends EE_UnitTestCase {
 
 
 	public function test_datetime_field_serialization() {
-		$this->_set_dtt_field_object( 'LIN_timestamp', 'LIN_timestamp', false, EE_Datetime_Field::now, 'UTC' );
+		$this->_set_dtt_field_object( 'LIN_timestamp', 'LIN_timestamp', false, EE_Datetime_Field::now );
+		$this->_get_time_strings_for_testing();
 		$datetime = $this->_datetime_field;
 		$datetime = serialize( $datetime );
 		$datetime = unserialize( $datetime );
