@@ -370,7 +370,7 @@ class EE_Datetime_Field_Test extends EE_UnitTestCase {
 		$datetime = unserialize( $datetime );
 		$this->assertInstanceOf(
 			'DateTime',
-			$datetime->get_date_object()
+			$datetime->get_date_object('')
 		);
 	}
 
