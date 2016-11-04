@@ -1714,6 +1714,10 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
                 10,
                 2
         );
+        add_filter(
+                'FHEE__ee_migration_page__migration_options_template',
+                array($this,'use_migration_options_from_ee3_template')
+        );
     }
 
 
@@ -1755,5 +1759,18 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
         <br/><?php _e("Unless an addon's description on our website explicitly states that it is compatible with EE4, you should consider it incompatible and know that it WILL NOT WORK correctly with this new version of Event Espresso 4 (EE4). As well, any data for incompatible addons will NOT BE MIGRATED until an updated EE4 compatible version of the addon is available. If you want, or need to keep using your EE3 addons, you should simply continue using EE3 until EE4 compatible versions of your addons become available. To continue using EE3 for now, just deactivate EE4 and reactivate EE3.",
             "event_espresso"); ?>
         </p><?php
+    }
+
+
+
+    /**
+     * When showing the migration options, show more options and info than normal (ie, give folks the option
+     * to start using EE4 without migrating. From EE3 that's fine, because it doesn't actually remove any data, because
+     * EE4 doesn't have any yet. But when migrating from EE4 it would remove old data, so its not a great idea).
+     * @param $template_filepath
+     * @return string
+     */
+    public function use_migration_options_from_ee3_template( $template_filepath ) {
+        return EE_MAINTENANCE_TEMPLATE_PATH . 'migration_options_from_ee3.template.php';
     }
 }

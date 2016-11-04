@@ -304,6 +304,13 @@ class Maintenance_Admin_Page extends EE_Admin_Page
             ));
         }
         $this->_template_args['most_recent_migration'] = $most_recent_migration;//the actual most recently ran migration
+        //now render the migration options part, and put it in a variable
+        $migration_options_template_file = apply_filters(
+            'FHEE__ee_migration_page__migration_options_template',
+            EE_MAINTENANCE_TEMPLATE_PATH . 'migration_options_from_ee4.template.php'
+        );
+        $migration_options_html = EEH_Template::display_template($migration_options_template_file, $this->_template_args,true);
+        $this->_template_args['migration_options_html'] = $migration_options_html;
         $this->_template_args['admin_page_content'] = EEH_Template::display_template($this->_template_path,
             $this->_template_args, true);
         $this->display_admin_page_with_sidebar();
