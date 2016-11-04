@@ -409,7 +409,7 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
 		$this->_user_agent = ( isset($_SERVER['HTTP_USER_AGENT'])) ? esc_attr( $_SERVER['HTTP_USER_AGENT'] ) : FALSE;
 		// now let's retrieve what's in the db
         $session_data = $this->_retrieve_session_data();
-        if ($session_data) {
+        if (! empty($session_data)) {
             // get the current time in UTC
 			$this->_time = isset( $this->_time ) ? $this->_time : time();
 			// and reset the session expiration
@@ -457,6 +457,9 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
          try {
              // we're using WP's Transient API to store session data using the PHP session ID as the option name
              $session_data = get_transient($ssn_key);
+             if ($session_data === false) {
+                 return array();
+             }
              if (apply_filters('FHEE__EE_Session___perform_session_id_hash_check', WP_DEBUG)) {
                  $hash_check = get_transient(EE_Session::hash_check_prefix . $this->_sid);
                  if ($hash_check && $hash_check !== md5($session_data)) {
@@ -504,7 +507,9 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
                      'An error occurred while attempting to unserialize the session data.',
                      'event_espresso'
                  );
-                 $msg .= WP_DEBUG ? '<br>' . $this->find_serialize_error($session_data) : '';
+                 $msg .= WP_DEBUG
+                     ? '<br><pre>' . print_r($session_data, true) . '</pre><br>' . $this->find_serialize_error($session_data)
+                     : '';
                  throw new InvalidSessionDataException($msg, 0, $e);
              }
          }
@@ -515,7 +520,9 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
                  'The session data is missing, invalid, or corrupted.',
                  'event_espresso'
              );
-             $msg .= WP_DEBUG ? '<br>' . $this->find_serialize_error($session_data) : '';
+             $msg .= WP_DEBUG
+                 ? '<br><pre>' . print_r($session_data, true) . '</pre><br>' . $this->find_serialize_error($session_data)
+                 : '';
              throw new InvalidSessionDataException($msg);
          }
          return $session_data;
