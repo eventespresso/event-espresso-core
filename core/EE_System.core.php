@@ -618,11 +618,12 @@ final class EE_System
     {
         $notices = EE_Error::get_notices(false);
         //if current user is an admin and it's not an ajax request
-        if (
+        if (apply_filters(
+            'FHEE__EE_System__redirect_to_about_ee__do_redirect',
             $this->registry->CAP->current_user_can('manage_options', 'espresso_about_default')
             && ! (defined('DOING_AJAX') && DOING_AJAX)
             && ! isset($notices['errors'])
-        ) {
+        )) {
             $query_params = array('page' => 'espresso_about');
             if (EE_System::instance()->detect_req_type() == EE_System::req_type_new_activation) {
                 $query_params['new_activation'] = true;
