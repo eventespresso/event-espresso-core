@@ -1,6 +1,11 @@
 <?php
 
-//Creates the invoice pdf
+/**
+ * Class Invoice
+ *
+ * @deprecated 4.9.13
+ * @package       Event Espresso
+ */
 class Invoice {
 
 	/**
@@ -19,8 +24,25 @@ class Invoice {
 	 */
 	private $invoice_payment_method;
 	private $EE;
-	public function __construct($url_link = 0) {
 
+
+
+	/**
+	 * Invoice constructor.
+	 *
+	 * @deprecated 4.9.13
+	 * @param int $url_link
+	 */
+	public function __construct($url_link = 0) {
+		EE_Error::doing_it_wrong(
+			__CLASS__,
+			esc_html__(
+				'This class has been deprecated and replaced by the new Messages library.',
+				'event_espresso'
+			),
+			'4.9.12',
+			'5.0.0'
+		);
 		if ( $this->registration = EE_Registry::instance()->load_model( 'Registration' )->get_registration_for_reg_url_link( $url_link)) {
 			$this->transaction = $this->registration->transaction();
 
@@ -137,7 +159,7 @@ class Invoice {
 				$venues_for_events = array_merge($venues_for_events, $event->venues());
 			}
 			$tax_total_line_item = EEM_Line_Item::instance()->get_one(array(array('TXN_ID'=>$this->transaction->ID(),'LIN_type'=>  EEM_Line_Item::type_tax_sub_total)));
-			$questions_to_skip = array(EEM_Attendee::fname_question_id,EEM_Attendee::lname_question_id,  EEM_Attendee::email_question_id);
+			$questions_to_skip = array(EEM_Attendee::system_question_fname,EEM_Attendee::system_question_lname,  EEM_Attendee::system_question_email);
 
 
 			$template_args['events_for_txn'] = $events_for_txn;
@@ -146,7 +168,6 @@ class Invoice {
 			$template_args['venues_for_events'] = $venues_for_events;
 			$template_args['tax_total_line_item'] = $tax_total_line_item;
 			$template_args['questions_to_skip'] = $questions_to_skip;
-			$EE->load_helper( 'Venue_View' );
 //			d($template_args);
 			$template_args['download_link'] = $this->registration->receipt_url('download');
 		}else{
@@ -154,13 +175,7 @@ class Invoice {
 			$template_args['download_link'] = $this->registration->invoice_url('download');
 		}
 
-
-
-		//require helpers
-		$EE->load_helper( 'Formatter' );
-
 		//Get the HTML as an object
-		EE_Registry::instance()->load_helper('Template');
 		$templates_relative_path = 'modules/gateways/Invoice/lib/templates/';
 		$template_header = EEH_Template::locate_template( $templates_relative_path . 'invoice_header.template.php', $template_args, TRUE, TRUE );
 		if(isset($_GET['receipt'])){
@@ -275,7 +290,7 @@ class Invoice {
 				$EE->CFG->organization->get_pretty( 'zip' ),
 				$EE->CFG->organization->get_pretty( 'email' ),
 				$EE->CFG->organization->vat,
-				date_i18n( get_option( 'date_format' ), strtotime( $this->registration->date() )),
+				$this->registration->get_i18n_datetime( 'REG_date', get_option( 'date_format' ) ),
 				$this->invoice_payment_method->get_extra_meta( 'pdf_instructions', TRUE ),
 		);
 

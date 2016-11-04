@@ -7,11 +7,25 @@
  * @subpackage 	Tests
  */
 
-define( 'EE_PLUGIN_DIR', dirname( dirname( dirname( __FILE__ ) ) ) . '/' );
+/** check for env variable for special setups where phpunit is being run outside of the tests folder */
+if ( getenv( 'EE_TESTS_DIR' ) ) {
+	define( 'EE_TESTS_DIR', getenv( 'EE_TESTS_DIR' ) );
+	define( 'EE_PLUGIN_DIR', dirname( dirname( EE_TESTS_DIR ) ) . '/' );
+} else {
+	define( 'EE_PLUGIN_DIR', dirname( dirname( dirname( __FILE__ ) ) ) . '/' );
+	define( 'EE_TESTS_DIR', EE_PLUGIN_DIR . 'tests/' );
+}
 
-if ( ! defined( 'EE_TESTS_DIR' ) ) {
-	define( 'EE_TESTS_DIR', dirname( dirname( __FILE__ ) ) . '/' );
-	define( 'EE_MOCKS_DIR', EE_TESTS_DIR . 'mocks/' );
+define( 'EE_MOCKS_DIR', EE_TESTS_DIR . 'mocks/' );
+$_tests_dir = getenv( 'WP_TESTS_DIR' );
+if ( ! $_tests_dir ) {
+	$_tests_dir = '/tmp/wordpress-tests-lib';
+}
+
+if ( file_exists( $_tests_dir . '/includes/functions.php' ) ) {
+	define( 'WP_TESTS_DIR', $_tests_dir );
+} else {
+	define( 'WP_TESTS_DIR', dirname( dirname( dirname( dirname( dirname( dirname( __DIR__ ) ) ) ) ) ) . '/tests/phpunit' );
 }
 
 /**
@@ -20,7 +34,7 @@ if ( ! defined( 'EE_TESTS_DIR' ) ) {
  * away with in a post-develop.svn world. We'll still check if this variable
  * is set for backwards compat.
  */
-if ( getenv( 'WP_TESTS_DIR' ) ) {
+/*if ( getenv( 'WP_TESTS_DIR' ) ) {
 	define( 'WP_TESTS_DIR', getenv( 'WP_TESTS_DIR' ) );
 	define( 'WP_ROOT_DIR', dirname( dirname( WP_TESTS_DIR ) ) );
 } else {
@@ -45,3 +59,4 @@ if ( file_exists( WP_ROOT_DIR . '/wp-tests-config.php' ) ) {
 } else {
 	die( "wp-tests-config.php could not be found.\n" );
 }
+/**/

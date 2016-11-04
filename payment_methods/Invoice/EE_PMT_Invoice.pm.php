@@ -67,18 +67,20 @@ class EE_PMT_Invoice extends EE_PMT_Base{
 					$pdf_payee_input_name => new EE_Text_Input(array(
 						'html_label_text' => sprintf( __( 'Payee Name %s', 'event_espresso' ), $this->get_help_tab_link())
 					)),
-					'pdf_payee_email' => new EE_Text_Input(array(
+					'pdf_payee_email' => new EE_Email_Input(array(
 						'html_label_text' => sprintf( __( 'Payee Email %s', 'event_espresso' ), $this->get_help_tab_link()),
 					)),
 					'pdf_payee_tax_number' => new EE_Text_Input(array(
 						'html_label_text' => sprintf( __( 'Payee Tax Number %s', 'event_espresso' ), $this->get_help_tab_link()),
 						)),
-					'pdf_payee_address' => new EE_Text_Area_Input(array(
-						'html_label_text' => sprintf( __( 'Payee Address %s', 'event_espresso' ), $this->get_help_tab_link()),
+					'pdf_payee_address' => new EE_Text_Area_Input( array(
+						'html_label_text' => sprintf( __( 'Payee Address %s', 'event_espresso' ), $this->get_help_tab_link() ),
+						'validation_strategies' => array( new EE_Full_HTML_Validation_Strategy() ),
 					)),
 					'pdf_instructions'=>new EE_Text_Area_Input(array(
 						'html_label_text'=>  sprintf(__("Instructions %s", "event_espresso"),  $this->get_help_tab_link()),
-						'default'=>  __("Please send this invoice with payment attached to the address above, or use the payment link below. Payment must be received within 48 hours of event date.", 'event_espresso')
+						'default'=>  __("Please send this invoice with payment attached to the address above, or use the payment link below. Payment must be received within 48 hours of event date.", 'event_espresso'),
+						'validation_strategies' => array( new EE_Full_HTML_Validation_Strategy() ),
 					)),
 					'pdf_logo_image'=>new EE_Admin_File_Uploader_Input(array(
 						'html_label_text'=>  sprintf(__("Logo Image %s", "event_espresso"),  $this->get_help_tab_link()),
@@ -87,14 +89,16 @@ class EE_PMT_Invoice extends EE_PMT_Base{
 					)),
 					$confirmation_text_input_name =>new EE_Text_Area_Input(array(
 						'html_label_text'=>  sprintf(__("Confirmation Text %s", "event_espresso"),  $this->get_help_tab_link()),
-						'default'=>  __("Payment must be received within 48 hours of event date.  Details about where to send payment is included on the invoice.", 'event_espresso')
+						'default'=>  __("Payment must be received within 48 hours of event date.  Details about where to send payment is included on the invoice.", 'event_espresso'),
+						'validation_strategies' => array( new EE_Full_HTML_Validation_Strategy() ),
 					)),
 					'page_extra_info'=>new EE_Text_Area_Input(array(
 						'html_label_text'=>  sprintf(__("Extra Info %s", "event_espresso"),  $this->get_help_tab_link()),
+						'validation_strategies' => array( new EE_Full_HTML_Validation_Strategy() ),
 					)),
 				),
 				'include'=>array(
-					'PMD_ID', 'PMD_name','PMD_desc','PMD_admin_name','PMD_admin_desc', 'PMD_type','PMD_slug', 'PMD_open_by_default','PMD_button_url','PMD_scope','Currency',
+					'PMD_ID', 'PMD_name','PMD_desc','PMD_admin_name','PMD_admin_desc', 'PMD_type','PMD_slug', 'PMD_open_by_default','PMD_button_url','PMD_scope','Currency','PMD_order',
 					$pdf_payee_input_name, 'pdf_payee_email', 'pdf_payee_tax_number', 'pdf_payee_address', 'pdf_instructions','pdf_logo_image',
 					$confirmation_text_input_name, 'page_extra_info'),
 			));
@@ -135,9 +139,8 @@ class EE_PMT_Invoice extends EE_PMT_Base{
 	 * @return string
 	 */
 	public function payment_overview_content( EE_Payment $payment ){
-		EE_Registry::instance()->load_helper('Template');
-		return EEH_Template::display_template(
-			$this->_file_folder.'templates'.DS.'invoice_payment_details_content.template.php',
+		return EEH_Template::locate_template(
+			'payment_methods' . DS . 'Invoice'. DS . 'templates'.DS.'invoice_payment_details_content.template.php',
 			array_merge(
 				array(
 					'payment_method'			=> $this->_pm_instance,
@@ -147,8 +150,7 @@ class EE_PMT_Invoice extends EE_PMT_Base{
 					'invoice_url' 					=> $payment->transaction()->primary_registration()->invoice_url( 'html' )
 				),
 				$this->_pm_instance->all_extra_meta_array()
-			),
-			TRUE
+			)
 		);
 	}
 

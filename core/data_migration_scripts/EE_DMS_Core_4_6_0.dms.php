@@ -1,4 +1,7 @@
 <?php
+use EventEspresso\core\services\database\TableAnalysis;
+use EventEspresso\core\services\database\TableManager;
+
 /**
  * meant to convert DBs between 4.6 and 4.6
  * mostly just
@@ -36,8 +39,11 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 
 	/**
 	 * return EE_DMS_Core_4_6_0
+	 *
+	 * @param TableManager  $table_manager
+	 * @param TableAnalysis $table_analysis
 	 */
-	public function __construct() {
+	public function __construct( TableManager $table_manager = null, TableAnalysis $table_analysis = null ) {
 		$this->_pretty_name = __("Data Migration to Event Espresso 4.6.0.P", "event_espresso");
 		$this->_priority = 10;
 		$this->_migration_stages = array(
@@ -51,7 +57,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 			new EE_DMS_4_6_0_payments(),
 			new EE_DMS_4_6_0_invoice_settings()
 		);
-		parent::__construct();
+		parent::__construct( $table_manager, $table_analysis );
 	}
 
 
@@ -62,7 +68,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 	 */
 	public function can_migrate_from_version($version_array) {
 		$version_string = $version_array['Core'];
-		if($version_string <= '4.6.0' && $version_string >= '4.5.0' ){
+		if ( version_compare( $version_string, '4.6.0', '<=' ) && version_compare( $version_string, '4.5.0', '>=' ) ) {
 //			echo "$version_string can be migrated from";
 			return true;
 		}elseif( ! $version_string ){
@@ -105,13 +111,13 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 						ATT_ID BIGINT(20) UNSIGNED NOT NULL,
 						ATT_fname VARCHAR(45) NOT NULL,
 						ATT_lname VARCHAR(45) NOT	NULL,
-						ATT_address VARCHAR(45) DEFAULT	NULL,
-						ATT_address2 VARCHAR(45) DEFAULT	NULL,
+						ATT_address VARCHAR(255) DEFAULT	NULL,
+						ATT_address2 VARCHAR(255) DEFAULT	NULL,
 						ATT_city VARCHAR(45) DEFAULT	NULL,
 						STA_ID INT(10) DEFAULT	NULL,
 						CNT_ISO VARCHAR(45) DEFAULT	NULL,
 						ATT_zip VARCHAR(12) DEFAULT	NULL,
-						ATT_email VARCHAR(100) NOT NULL,
+						ATT_email VARCHAR(255) NOT NULL,
 						ATT_phone VARCHAR(45) DEFAULT NULL,
 							PRIMARY KEY  (ATTM_ID),
 								KEY ATT_fname (ATT_fname),
@@ -267,7 +273,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 					KEY GRP_ID (GRP_ID)";
 		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB');
 
-		EEH_Activation::drop_index( 'esp_message_template_group', 'EVT_ID' );
+		$this->_get_table_manager()->dropIndex( 'esp_message_template_group', 'EVT_ID' );
 
 		$table_name = 'esp_message_template_group';
 		$sql = "GRP_ID INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -483,8 +489,8 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 		$table_name = 'esp_venue_meta';
 		$sql = "VNUM_ID INT(11) NOT NULL AUTO_INCREMENT,
 			VNU_ID BIGINT(20) UNSIGNED NOT NULL DEFAULT 0,
-			VNU_address VARCHAR(100) DEFAULT NULL,
-			VNU_address2 VARCHAR(100) DEFAULT NULL,
+			VNU_address VARCHAR(255) DEFAULT NULL,
+			VNU_address2 VARCHAR(255) DEFAULT NULL,
 			VNU_city VARCHAR(100) DEFAULT NULL,
 			STA_ID INT(11) DEFAULT NULL,
 			CNT_ISO VARCHAR(2) DEFAULT NULL,
@@ -554,7 +560,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 					  PRIMARY KEY  (TKT_ID)";
 		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB' );
 
-		EEH_Activation::drop_index( 'esp_question_group', 'QSG_identifier_UNIQUE' );
+		$this->_get_table_manager()->dropIndex( 'esp_question_group', 'QSG_identifier_UNIQUE' );
 
 		$table_name = 'esp_question_group';
 		$sql='QSG_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -605,14 +611,13 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 		global $wpdb;
 		$table_name = $wpdb->prefix."esp_payment_method";
 		$user_id = EEH_Activation::get_default_creator_id();
-		if ( $wpdb->get_var( "SHOW TABLES LIKE '" . $table_name . "'") == $table_name ) {
+		if ( $this->_get_table_analysis()->tableExists( $table_name ) ) {
 
 			$SQL = "SELECT COUNT( * ) FROM $table_name";
 			$existing_payment_methods = $wpdb->get_var($SQL);
-			if ( ! $existing_payment_methods ) {
-				//make sure we hae payment method records for the following
-				//so admins can record payments for them from the admin page
-				$default_admin_only_payment_methods = array(
+			$default_admin_only_payment_methods = apply_filters(
+					'FHEE__EEH_Activation__add_default_admin_only_payments__default_admin_only_payment_methods',
+					array(
 					__("Bank", 'event_espresso')=>  __("Bank Draft", 'event_espresso'),
 					__("Cash", 'event_espresso')=>  __("Cash Delivered Physically", 'event_espresso'),
 					__("Check", 'event_espresso')=>  __("Paper Check", 'event_espresso'),
@@ -621,38 +626,41 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 					__("Invoice", 'event_espresso')=>  __("Invoice received with monies included", 'event_espresso'),
 					__("Money Order", 'event_espresso')=>'',
 					__("Paypal", 'event_espresso')=>  __("Paypal eCheck, Invoice, etc", 'event_espresso'),
-				);
+					__('Other', 'event_espresso') => __('Other method of payment', 'event_espresso')
+				) );
+			//make sure we hae payment method records for the following
+			//so admins can record payments for them from the admin page
 
-				foreach($default_admin_only_payment_methods as $nicename => $description){
-					$slug = sanitize_key($nicename);
-				//check that such a payment method exists
-					$exists = $wpdb->get_var($wpdb->prepare("SELECT count(*) FROM $table_name WHERE PMD_slug = %s",$slug));
-					if( ! $exists){
-						$values = array(
-									'PMD_type'=>'Admin_Only',
-									'PMD_name'=>$nicename,
-									'PMD_admin_name'=>$nicename,
-									'PMD_admin_desc'=>$description,
-									'PMD_slug'=>$slug,
-									'PMD_wp_user'=>$user_id,
-									'PMD_scope'=>serialize(array('ADMIN')),
-								);
-						$success = $wpdb->insert(
-								$table_name,
-								$values,
-								array(
-									'%s',//PMD_type
-									'%s',//PMD_name
-									'%s',//PMD_admin_name
-									'%s',//PMD_admin_desc
-									'%s',//PMD_slug
-									'%d',//PMD_wp_user
-									'%s',//PMD_scope
-								)
-								);
-						if( ! $success ){
-							$this->add_error(sprintf(__("Could not insert new admin-only payment method with values %s during migration", "event_espresso"),$this->_json_encode($values)));
-						}
+
+			foreach($default_admin_only_payment_methods as $nicename => $description){
+				$slug = sanitize_key($nicename);
+			//check that such a payment method exists
+				$exists = $wpdb->get_var($wpdb->prepare("SELECT count(*) FROM $table_name WHERE PMD_slug = %s",$slug));
+				if( ! $exists){
+					$values = array(
+								'PMD_type'=>'Admin_Only',
+								'PMD_name'=>$nicename,
+								'PMD_admin_name'=>$nicename,
+								'PMD_admin_desc'=>$description,
+								'PMD_slug'=>$slug,
+								'PMD_wp_user'=>$user_id,
+								'PMD_scope'=>serialize(array('ADMIN')),
+							);
+					$success = $wpdb->insert(
+							$table_name,
+							$values,
+							array(
+								'%s',//PMD_type
+								'%s',//PMD_name
+								'%s',//PMD_admin_name
+								'%s',//PMD_admin_desc
+								'%s',//PMD_slug
+								'%d',//PMD_wp_user
+								'%s',//PMD_scope
+							)
+							);
+					if( ! $success ){
+						$this->add_error(sprintf(__("Could not insert new admin-only payment method with values %s during migration", "event_espresso"),$this->_json_encode($values)));
 					}
 				}
 			}
@@ -670,7 +678,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 
 		global $wpdb;
 		$currency_table = $wpdb->prefix."esp_currency";
-		if ( $wpdb->get_var( "SHOW TABLES LIKE '" . $currency_table . "'") == $currency_table ) {
+		if ( $this->_get_table_analysis()->tableExists( $currency_table ) ) {
 
 			$SQL = "SELECT COUNT('CUR_code') FROM $currency_table";
 			$countries = $wpdb->get_var($SQL);

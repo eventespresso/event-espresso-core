@@ -26,7 +26,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  */
 ?>
 	<tr>
-		<th><h4><?php _e("Invoice Display Settings", 'event_espresso');?></h4></th>
+		<th><h3><?php _e("Invoice Display Settings", 'event_espresso');?></h3></th>
 		<td>
 			<span class="description"><?php _e("The following settings affect the content and/or appearance of the downloadable PDF invoice.", 'event_espresso');?></span>
 		</td>

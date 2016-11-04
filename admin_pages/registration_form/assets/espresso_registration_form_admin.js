@@ -46,23 +46,27 @@ function espresso_update_option_order() {
 	allOptions.each( function(i) {
 		jQuery('.QSO_order', this).val(i);
 	});
-	return;
 }
 
 
 
 function espresso_reg_forms_show_or_hide_question_options(){
 	var val=jQuery('#QST_type').val();
-	if ( val === 'RADIO_BTN' || val === 'CHECKBOX'){
+	if ( val === 'RADIO_BTN' || val === 'CHECKBOX' || val === 'MULTI_SELECT' || val === 'DROPDOWN' ){
 		jQuery('#question_options').show();
-		espresso_reg_forms_show_option_desc(true);
-	}else if(val === 'DROPDOWN'){
-		jQuery('#question_options').show();
-		espresso_reg_forms_show_option_desc(false);
+		espresso_reg_forms_show_option_desc();
 	}else{
 		jQuery('#question_options').hide();
-		espresso_reg_forms_show_option_desc(false);
 	}
+	if ( val === 'TEXT' || val === 'TEXTAREA' || val === 'HTML_TEXTAREA' ){
+		jQuery('#text_input_question_options').show();
+	}else{
+		jQuery('#text_input_question_options').hide();
+	}
+	jQuery('.question_type_description' ).hide();
+	jQuery('#question_type_description-' + val ).show();
+	//alert( 'question_type_description ID = ' + '#question_type_description-' + val );
+
 }
 
 
@@ -87,21 +91,16 @@ function espresso_reg_forms_add_option(){
 	jQuery('#question_options tr:last').after(newRow);
 	//add new count to dom.
 	jQuery('#question_options_count').val(count);
-	newRow.find('input[type="text"]').focus();
+	newRowName.focus();
 }
 
-function espresso_reg_forms_show_option_desc(show){
-	if(show){
-		jQuery('.option-desc-cell').show();
-		jQuery('.option-desc-header').show();
-		jQuery('.option-value-header').css('width', '45%');
-		jQuery('.option-value-cell').css('width','45%');
-	}else{
-		jQuery('.option-desc-cell').hide();
-		jQuery('.option-desc-header').hide();
-		jQuery('.option-value-header').css('width', '90%');
-		jQuery('.option-value-cell').css('width', '90%');
-	}
+function espresso_reg_forms_show_option_desc(){
+	jQuery('.option-desc-cell').show();
+	jQuery('.option-desc-header').show();
+	jQuery('.option-value-header').css('width', '45%');
+	jQuery('.option-value-cell').css('width','45%');
+	/** focus on value field **/
+	jQuery('.option-value').focus();
 }
 
 

@@ -52,7 +52,7 @@ class Extend_Support_Admin_Page extends Support_Admin_Page {
 			'faq' => array(
 				'nav' => array(
 					'label' => __('FAQ', 'event_espresso'),
-					'order' => 50),
+					'order' => 40),
 				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box'),
 				'require_nonce' => FALSE
 				)
@@ -76,7 +76,7 @@ class Extend_Support_Admin_Page extends Support_Admin_Page {
 
 	protected function _installation_boxes() {
 		$callback_args = array('template_path' => EE_SUPPORT_CAF_ADMIN_TEMPLATE_PATH . 'support_admin_details_additional_information.template.php');
-		add_meta_box( 'espresso_additional_information_support', __('Additional Information', 'event_espresso'), create_function('$post, $metabox', 'echo EEH_Template::display_template( $metabox["args"]["template_path"], "", TRUE);' ), $this->_current_screen_id, 'normal', 'high', $callback_args);
+		add_meta_box( 'espresso_additional_information_support', __('Additional Information', 'event_espresso'), create_function('$post, $metabox', 'echo EEH_Template::display_template( $metabox["args"]["template_path"], "", TRUE);' ), $this->_current_screen->id, 'normal', 'high', $callback_args);
 	}
 
 

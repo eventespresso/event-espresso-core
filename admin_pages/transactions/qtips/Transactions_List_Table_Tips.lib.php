@@ -30,7 +30,7 @@ class Transactions_List_Table_Tips extends EE_Qtip_Config {
 
 	protected function _set_tips_array() {
 		$this->_qtipsa = array(
-			0 => array(
+			/*0 => array(
 				'content_id' => 'transaction-status-' . EEM_Transaction::overpaid_status_code,
 				'target' => '.txn-status-' . EEM_Transaction::overpaid_status_code,
 				'content' => $this->_transaction_status_legend(EEM_Transaction::overpaid_status_code),
@@ -69,7 +69,7 @@ class Transactions_List_Table_Tips extends EE_Qtip_Config {
 						'target' => 'mouse'
 					)
 				)
-			)
+			)/**/
 			
 		);
 	}

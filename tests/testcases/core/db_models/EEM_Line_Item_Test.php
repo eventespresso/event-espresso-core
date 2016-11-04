@@ -55,6 +55,22 @@ class EEM_Line_Item_Test extends EE_UnitTestCase {
 		$this->assertTrue( in_array( $line_item_for_nothing, $non_ticket_line_items ) );
 		$this->assertTrue( in_array( $line_item_for_venue, $non_ticket_line_items ) );
 	}
+
+	/**
+	 * @group 7965
+	 */
+	function test_delete_registrations_with_no_transaction(){
+		$deletable_count = 5;
+		$safe_count = 8;
+		for( $i = 0; $i < $deletable_count; $i++ ) {
+			$this->new_model_obj_with_dependencies( 'Line_Item', array( 'TXN_ID' => 0, 'LIN_timestamp' => time() - WEEK_IN_SECONDS * 2 ) );
+		}
+		for( $i=0;$i< $safe_count; $i++ ){
+			$this->new_model_obj_with_dependencies( 'Line_Item' );
+		}
+		$deleted = EEM_Line_Item::instance()->delete_line_items_with_no_transaction();
+		$this->assertEquals( $deletable_count, $deleted );
+	}
 }
 
 // End of file EEM_Line_Item_Test.php

@@ -11,39 +11,31 @@ class EE_Month_Input extends EE_Select_Input{
 	/**
 	 * @param bool  $leading_zero
 	 * @param array $input_settings
+	 * @param bool $january_is_month_1 whether january should have value of 1; or it should be month 0
 	 */
-	function __construct( $leading_zero = false, $input_settings = array()){
+	function __construct( $leading_zero = false, $input_settings = array(), $january_is_month_1 = true){
+		$key_begin_range = $january_is_month_1 ? 1 : 0;
+		$key_range = range($key_begin_range, $key_begin_range + 11 );
 		if($leading_zero){
-			$select_options = array(
-			'01'=>'01',
-			'02'=>'02',
-			'03'=>'03',
-			'04'=>'04',
-			'05'=>'05',
-			'06'=>'06',
-			'07'=>'07',
-			'08'=>'08',
-			'09'=>'09',
-			'10'=>'10',
-			'11'=>'11',
-			'12'=>'12'
-			);
-		}else{
-			$select_options = array(
-				1=>'01',
-				2=>'02',
-				3=>'03',
-				4=>'04',
-				5=>'05',
-				6=>'06',
-				7=>'07',
-				8=>'08',
-				9=>'09',
-				10=>'10',
-				11=>'11',
-				12=>'12'
-			);
+			array_walk( $key_range, array( $this, '_zero_pad' ) );	
 		}
-		parent::__construct($select_options,$input_settings);
+		$value_range = range( 1, 12 );
+		array_walk( $value_range, array( $this, '_zero_pad' ) );
+		parent::__construct(
+			array_combine( 
+				$key_range, 
+				$value_range 
+			),
+			$input_settings
+		);
+	}
+	
+	/**
+	 * Changes int 1 to 01, etc. Useful with array_walk
+	 * @param int $input
+	 * @param mixed $key
+	 */
+	protected function _zero_pad( &$input, $key ) {
+		$input = str_pad( $input, 2, '0', STR_PAD_LEFT );
 	}
 }

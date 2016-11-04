@@ -13,14 +13,16 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * ------------------------------------------------------------------------
  */
-class EEH_Autoloader {
+class EEH_Autoloader extends EEH_Base {
+
 
 	/**
-	 * 	instance of the EEH_Autoloader object
-	 *	@var 	$_instance
-	 * 	@access 	private
+	 *    instance of the EE_System object
+	 *
+	 * @var    $_instance
+	 * @access    private
 	 */
-	private static $_instance = NULL;
+	private static $_instance = null;
 
 	/**
 	* 	$_autoloaders
@@ -29,20 +31,15 @@ class EEH_Autoloader {
 	*/
 	private static $_autoloaders;
 
-
-
 	/**
-	 *	@singleton method used to instantiate class object
-	 *	@access public
-	 *	@return EEH_Autoloader
+	 * set to "paths" to display autoloader class => path mappings
+	 * set to "times" to display autoloader loading times
+	 * set to "all" to display both
+	 *
+	 * @var string $debug
+	 * @access    private
 	 */
-	public static function instance() {
-		// check if class object is instantiated, and instantiated properly
-		if ( ! self::$_instance instanceof  EEH_Autoloader ) {
-			self::$_instance = new self();
-		}
-		return self::$_instance;
-	}
+	public static $debug = false;
 
 
 
@@ -53,9 +50,25 @@ class EEH_Autoloader {
 	 * @return \EEH_Autoloader
 	 */
 	private function __construct() {
-		self::$_autoloaders = array();
-		$this->_register_custom_autoloaders();
-		spl_autoload_register( array( $this, 'espresso_autoloader' ));
+		if ( self::$_autoloaders === null ) {
+			self::$_autoloaders = array();
+			$this->_register_custom_autoloaders();
+			spl_autoload_register( array( $this, 'espresso_autoloader' ) );
+		}
+	}
+
+
+
+	/**
+	 * @access public
+	 * @return EEH_Autoloader
+	 */
+	public static function instance() {
+		// check if class object is instantiated
+		if ( ! self::$_instance instanceof EEH_Autoloader ) {
+			self::$_instance = new self();
+		}
+		return self::$_instance;
 	}
 
 
@@ -82,11 +95,11 @@ class EEH_Autoloader {
 	 *
 	 * @access    public
 	 * @param array | string $class_paths - array of key => value pairings between class names and paths
-	 * @param bool $read_check true if we need to check whether the file is readable or not.
+	 * @param bool           $read_check  true if we need to check whether the file is readable or not.
+	 * @param bool           $debug **deprecated**
 	 * @throws \EE_Error
-	 * @return        void
 	 */
-	public static function register_autoloader( $class_paths, $read_check = true ) {
+	public static function register_autoloader( $class_paths, $read_check = true, $debug = false ) {
 		$class_paths = is_array( $class_paths ) ? $class_paths : array( $class_paths );
 		foreach ( $class_paths as $class => $path ) {
 			// don't give up! you gotta...
@@ -102,7 +115,12 @@ class EEH_Autoloader {
 			if ( $read_check && ! is_readable( $path )) {
 				throw new EE_Error ( sprintf( __( 'The file for the %s class could not be found or is not readable due to file permissions. Please ensure the following path is correct: %s','event_espresso' ), $class, $path ));
 			}
-			self::$_autoloaders[ $class ] = str_replace( array( '\/', '/' ), DS, $path );
+			if ( ! isset( self::$_autoloaders[ $class ] )) {
+				self::$_autoloaders[ $class ] = str_replace( array( '/', '\\' ), DS, $path );
+				if ( EE_DEBUG && ( EEH_Autoloader::$debug === 'paths' || EEH_Autoloader::$debug === 'all' || $debug ) ) {
+					EEH_Debug_Tools::printr( self::$_autoloaders[ $class ], $class, __FILE__, __LINE__ );
+				}
+			}
 		}
 	}
 
@@ -129,10 +147,29 @@ class EEH_Autoloader {
 	 * 	@return void
 	 */
 	private function _register_custom_autoloaders() {
+		EEH_Autoloader::$debug = '';
+		\EEH_Autoloader::register_helpers_autoloaders();
+		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_CORE . 'interfaces' );
 		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_CORE );
-		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_MODELS, TRUE );
+		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_INTERFACES, true );
+		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_MODELS, true );
 		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_CLASSES );
-		EEH_Autoloader::register_form_sections_autoloaders();
+		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_FORM_SECTIONS, true );
+		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_LIBRARIES . 'messages' );
+		if ( EEH_Autoloader::$debug === 'times' || EEH_Autoloader::$debug === 'all' ) {
+			EEH_Debug_Tools::instance()->show_times();
+		}
+	}
+
+
+
+	/**
+	 *    register core, model and class 'autoloaders'
+	 *
+	 * @access public
+	 */
+	public static function register_helpers_autoloaders() {
+		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_HELPERS );
 	}
 
 
@@ -145,7 +182,7 @@ class EEH_Autoloader {
 	 * 	@return void
 	 */
 	public static function register_form_sections_autoloaders() {
-		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_FORM_SECTIONS, TRUE );
+		//EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_FORM_SECTIONS, true );
 	}
 
 
@@ -158,7 +195,33 @@ class EEH_Autoloader {
 	 * 	@return void
 	 */
 	public static function register_line_item_display_autoloaders() {
-		EEH_Autoloader::register_autoloaders_for_each_file_in_folder(  EE_LIBRARIES . 'line_item_display' , TRUE );
+		EEH_Autoloader::register_autoloaders_for_each_file_in_folder(  EE_LIBRARIES . 'line_item_display' , true );
+	}
+
+
+
+
+	/**
+	 * 	register core, model and class 'autoloaders'
+	 *
+	 * 	@access public
+	 * 	@return void
+	 */
+	public static function register_line_item_filter_autoloaders() {
+		EEH_Autoloader::register_autoloaders_for_each_file_in_folder(  EE_LIBRARIES . 'line_item_filters' , true );
+	}
+
+
+
+
+	/**
+	 * 	register template part 'autoloaders'
+	 *
+	 * 	@access public
+	 * 	@return void
+	 */
+	public static function register_template_part_autoloaders() {
+		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_LIBRARIES . 'template_parts', true );
 	}
 
 
@@ -169,13 +232,18 @@ class EEH_Autoloader {
 	 * If that's not the case, you'll need to improve this function or just use EEH_File::get_classname_from_filepath_with_standard_filename() directly.
 	 * Yes this has to scan the directory for files, but it only does it once -- not on EACH
 	 * time the autoloader is used
+	 *
 	 * @param string $folder name, with or without trailing /, doesn't matter
 	 * @param bool   $recursive
-	 * @return array
+	 * @param bool   $debug  **deprecated**
+	 * @throws \EE_Error
 	 */
-	public static function register_autoloaders_for_each_file_in_folder( $folder, $recursive = FALSE ){
+	public static function register_autoloaders_for_each_file_in_folder( $folder, $recursive = false, $debug = false ){
+		if ( EEH_Autoloader::$debug === 'times' || EEH_Autoloader::$debug === 'all' || $debug ) {
+			EEH_Debug_Tools::instance()->start_timer( basename( $folder ) );
+		}
 		// make sure last char is a /
-		$folder .= $folder[strlen($folder)-1] != DS ? DS : '';
+		$folder .= $folder[strlen($folder)-1] !== DS ? DS : '';
 		$class_to_filepath_map = array();
 		$exclude = array( 'index' );
 		//get all the files in that folder that end in php
@@ -186,21 +254,37 @@ class EEH_Autoloader {
 		}
 
 		foreach( $filepaths as $filepath ) {
-			if ( substr( $filepath, -4, 4 ) == '.php' ) {
+			if ( substr( $filepath, -4, 4 ) === '.php' ) {
 				$class_name = EEH_File::get_classname_from_filepath_with_standard_filename( $filepath );
 				if ( ! in_array( $class_name, $exclude )) {
-					$class_to_filepath_map [ $class_name ] = str_replace( array( '\/', '/' ), DS, $filepath );
+					$class_to_filepath_map [ $class_name ] = $filepath;
 				}
 			} else if ( $recursive ) {
-				EEH_Autoloader::register_autoloaders_for_each_file_in_folder( $filepath, $recursive );
+				EEH_Autoloader::register_autoloaders_for_each_file_in_folder( $filepath, $recursive, $debug );
 			}
 		}
-
-		//we remove the necessity to do a is_readable() check via the $read_check flag because glob by nature will not return non_readable files/directories.
-		self::register_autoloader($class_to_filepath_map, FALSE );
+		// we remove the necessity to do a is_readable() check via the $read_check flag because glob by nature will not return non_readable files/directories.
+		self::register_autoloader( $class_to_filepath_map, false, $debug );
+		if ( EEH_Autoloader::$debug === 'times' || EEH_Autoloader::$debug === 'all' ) {
+			EEH_Debug_Tools::instance()->stop_timer( basename( $folder ) );
+		}
 	}
 
 
+
+	/**
+	 * add_alias
+	 * register additional autoloader based on variation of the classname for an existing autoloader
+	 *
+	 * @access    public
+	 * @param string $class_name - simple class name ie: EE_Session
+	 * @param string $alias - variation on class name ie: EE_session, session, etc
+	 */
+	public static function add_alias( $class_name, $alias ) {
+		if ( isset( self::$_autoloaders[ $class_name ] ) ) {
+			self::$_autoloaders[ $alias ] = self::$_autoloaders[ $class_name ];
+		}
+	}
 
 
 

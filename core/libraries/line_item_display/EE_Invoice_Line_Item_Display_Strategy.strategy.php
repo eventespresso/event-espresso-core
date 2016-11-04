@@ -20,8 +20,6 @@ class EE_Invoice_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 	 */
 	public function display_line_item( EE_Line_Item $line_item, $options = array() ) {
 
-		EE_Registry::instance()->load_helper( 'HTML' );
-
 		$html = '';
 		// set some default options and merge with incoming
 		$default_options = array(

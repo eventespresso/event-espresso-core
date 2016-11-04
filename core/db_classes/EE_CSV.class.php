@@ -2,6 +2,10 @@
 /**
  * CSV Import Export class
  *
+ * For dealing with CSV files directly. For exports/reports, it would generally
+ * be preferred to use EventEspressoBatchRequest\BatchRequestProcessor and
+ * EEH_Export to create csv files on the server and then direct the user to download them
+ *
  * @package				Event Espresso
  * @subpackage		includes/functions
  * @author					Brent Christensen
@@ -75,7 +79,7 @@
 	/**
 	 *		@ singleton method used to instantiate class object
 	 *		@ access public
-	 *		@ return class instance
+	 *		@return EE_CSV
 	 */
 	public static function instance ( ) {
 		// check if class object is instantiated
@@ -315,7 +319,8 @@
 //		header("Content-Type: application/download");
 		header('Content-disposition: attachment; filename='.$filename);
 		header("Content-Type: text/csv; charset=utf-8");
-		echo "\xEF\xBB\xBF"; // makes excel open it as UTF-8. UTF-8 BOM, see http://stackoverflow.com/a/4440143/2773835
+                do_action( 'AHEE__EE_CSV__begin_sending_csv__headers' );
+		echo apply_filters('FHEE__EE_CSV__begin_sending_csv__start_writing', "\xEF\xBB\xBF" ); // makes excel open it as UTF-8. UTF-8 BOM, see http://stackoverflow.com/a/4440143/2773835
 		$fh = fopen('php://output', 'w');
 		return $fh;
 	}
@@ -326,10 +331,8 @@
 	 * @param resource $filehandle
 	 */
 	public function write_metadata_to_csv($filehandle){
-		EE_Registry::instance()->load_helper('DTT_Helper');
 		$data_row = array(EE_CSV::metadata_header);//do NOT translate because this exact string is used when importing
 		$this->fputcsv2($filehandle, $data_row);
-		EE_Registry::instance()->load_helper('DTT_Helper');
 		$meta_data = array( 0=> array(
 			'version'=>espresso_version(),
 			'timezone'=>  EEH_DTT_Helper::get_timezone(),
@@ -349,7 +352,6 @@
 	 * @return boolean if we successfully wrote to the CSV or not. If there's no $data, we consider that a success (because we wrote everything there was...nothing)
 	 */
 	public function write_data_array_to_csv($filehandle, $data){
-		EE_Registry::instance()->load_helper('Array');
 
 
 		//determine if $data is actually a 2d array
@@ -597,6 +599,23 @@
 //		}
 //	}
 
+	/**
+	 * Gets the date format to use in teh csv. filterable
+	 * @param string $current_format
+	 * @return string
+	 */
+	public function get_date_format_for_csv( $current_format = null ) {
+		return apply_filters( 'FHEE__EE_CSV__get_date_format_for_csv__format', 'Y-m-d', $current_format );
+	}
+
+	/**
+	 * Gets the time format we want to use in CSV reports. Filterable
+	 * @param string $current_format
+	 * @return string
+	 */
+	public function get_time_format_for_csv( $current_format = null ) {
+		return apply_filters( 'FHEE__EE_CSV__get_time_format_for_csv__format', 'H:i:s', $current_format );
+	}
 
 
 }

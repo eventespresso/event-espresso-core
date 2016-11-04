@@ -100,7 +100,7 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base{
 						array_intersect_key( EE_PMT_Paypal_Pro::card_types_supported(), array_flip( $allowed_types )),
 						array( 'required'=>TRUE, 'html_class' => 'ee-billing-qstn', 'html_label_text' => __( 'Card Type', 'event_espresso' ))
 					),
-					'exp_month'=>new EE_Month_Input(
+					'exp_month'=>new EE_Credit_Card_Month_Input(
 						TRUE, array( 'required'=>TRUE, 'html_class' => 'ee-billing-qstn', 'html_label_text' =>  __( 'Expiry Month', 'event_espresso' )  )
 					),
 					'exp_year'=>new EE_Credit_Card_Year_Input(
@@ -134,9 +134,8 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base{
 				array( 'debug_content' => new EE_Form_Section_HTML_From_Template( dirname(__FILE__).DS.'templates'.DS.'paypal_pro_debug_info.template.php' )),
 				'first_name'
 			);
-			$billing_form->get_input( 'credit_card' )->set_default( '5424180818927383' );
-			$billing_form->get_input( 'credit_card_type' )->set_default( 'MasterCard' );
-			$billing_form->get_input( 'exp_year' )->set_default( date('Y') + 6 );
+			$billing_form->get_input( 'credit_card_type' )->set_default( 'Visa' );
+			$billing_form->get_input( 'exp_year' )->set_default( 2018);
 			$billing_form->get_input( 'cvv' )->set_default( '115' );
 		}
 		return $billing_form;

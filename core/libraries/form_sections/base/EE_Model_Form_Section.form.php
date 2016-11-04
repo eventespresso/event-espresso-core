@@ -127,11 +127,13 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 		$inputs = array();
 		foreach( $model_fields as $field_name=>$model_field ){
 			if ( $model_field instanceof EE_Model_Field_Base ) {
-				$input_constructor_args = array(array(
-					'required'=> ! $model_field->is_nullable() && $model_field->get_default_value() === NULL,
-					'html_label_text'=>$model_field->get_nicename(),
-					'default'=>$model_field->get_default_value(),
-				));
+				$input_constructor_args = array(
+					array(
+						'required'=> ! $model_field->is_nullable() && $model_field->get_default_value() === NULL,
+						'html_label_text'=>$model_field->get_nicename(),
+						'default'=>$model_field->get_default_value(),
+					)
+				);
 				switch(get_class($model_field)){
 					case 'EE_All_Caps_Text_Field':
 					case 'EE_Any_Foreign_Model_Name_Field':
@@ -176,6 +178,7 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 						break;
 					case 'EE_Full_HTML_Field':
 						$input_class = 'EE_Text_Area_Input';
+						$input_constructor_args[ 0 ]['validation_strategies'] = array( new EE_Full_HTML_Validation_Strategy() );
 						break;
 					case 'EE_Infinite_Integer':
 						throw new EE_Error(sprintf(__("Model field '%s' does not yet have a known conversion to form input", "event_espresso"),get_class($model_field)));
@@ -191,6 +194,7 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 						break;
 					case 'EE_Post_Content_Field':
 						$input_class = 'EE_Text_Area_Input';
+						$input_constructor_args[ 0 ][ 'validation_strategies' ] = array( new EE_Full_HTML_Validation_Strategy() );
 						break;
 					case 'EE_Plain_Text_Field':
 						$input_class = 'EE_Text_Input';
@@ -207,6 +211,7 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 						break;
 					case 'EE_Simple_HTML_Field':
 						$input_class = 'EE_Text_Area_Input';
+						$input_constructor_args[ 0 ][ 'validation_strategies' ] = array( new EE_Simple_HTML_Validation_Strategy() );
 						break;
 					case 'EE_Slug_Field':
 						$input_class = 'EE_Text_Input';
@@ -226,6 +231,7 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 				$reflection = new ReflectionClass($input_class);
 				$input = $reflection->newInstanceArgs($input_constructor_args);
 				$inputs[$field_name] = $input;
+				
 			}
 		}
 		return $inputs;
@@ -281,7 +287,7 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 	 * which relates to this form section, validate it, and set it as properties on the form.
 	 * @param array $req_data should usually be $_REQUEST (the default). However, you CAN
 	 * supply a different array. Consider using set_defaults() instead however. (If you rendered
-	 * the form in the page using echo $form_x->get_html_and_js() the inputs will have the correct name
+	 * the form in the page using echo $form_x->get_html() the inputs will have the correct name
 	 * in the request data for this function to find them and populate the form with them.
 	 * If you have a flat form (with only input subsections), you can supply a flat array where keys
 	 * are the form input names and values are their values)

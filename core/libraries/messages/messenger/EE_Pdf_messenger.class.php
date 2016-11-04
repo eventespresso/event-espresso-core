@@ -61,6 +61,34 @@ class EE_Pdf_messenger extends EE_messenger  {
 	}
 
 
+
+
+	/**
+	 * PDF Messenger desires execution immediately.
+	 * @see  parent::send_now() for documentation.
+	 * @since  4.9.0
+	 * @return bool
+	 */
+	public function send_now() {
+		return true;
+	}
+
+
+
+
+	/**
+	 * HTML Messenger allows an empty to field.
+	 * @see parent::allow_empty_to_field() for documentation
+	 * @since  4.9.0
+	 * @return bool
+	 */
+	public function allow_empty_to_field() {
+		return true;
+	}
+
+
+
+
 	/**
 	 * @see abstract declaration in EE_messenger for details.
 	 */
@@ -85,10 +113,10 @@ class EE_Pdf_messenger extends EE_messenger  {
 	protected function _set_validator_config() {
 		$this->_validator_config = array(
 			'subject' => array(
-				'shortcodes' => array('recipient_details', 'organization', 'event', 'ticket', 'venue', 'primary_registration_details', 'event_author', 'email','event_meta', 'recipient_list', 'transaction', 'datetime_list', 'question_list', 'datetime', 'question')
+				'shortcodes' => array('recipient_details', 'organization', 'event', 'ticket', 'venue', 'primary_registration_details', 'event_author', 'email','event_meta', 'recipient_list', 'transaction', 'datetime_list', 'datetime')
 				),
 			'content' => array(
-				'shortcodes' => array( 'recipient_details', 'organization', 'event', 'ticket', 'venue', 'primary_registration_details', 'event_author', 'email','event_meta', 'recipient_list', 'transaction', 'datetime_list', 'question_list', 'datetime', 'question')
+				'shortcodes' => array( 'recipient_details', 'organization', 'event', 'ticket', 'venue', 'primary_registration_details', 'event_author', 'email','event_meta', 'recipient_list', 'transaction', 'datetime_list', 'datetime')
 				),
 			'attendee_list' => array(
 				'shortcodes' => array('attendee', 'event_list', 'ticket_list'),
@@ -106,10 +134,6 @@ class EE_Pdf_messenger extends EE_messenger  {
 				'shortcodes' => array('datetime'),
 				'required' => array('[DATETIME_LIST]')
 				),
-			'question_list' => array(
-				'shortcodes' => array('question'),
-				'required' => array('[QUESTION_LIST]')
-				)
 			);
 	}
 
@@ -202,18 +226,7 @@ class EE_Pdf_messenger extends EE_messenger  {
 						'css_class' => 'large-text',
 						'rows' => '10',
 						'shortcodes_required' => array('[DATETIME_LIST]')
-						),
-					'question_list' => array(
-						'input' => 'textarea',
-						'label' => '[QUESTION_LIST]',
-						'type' => 'string',
-						'required' => TRUE,
-						'validation' => TRUE,
-						'format' => '%s',
-						'css_class' => 'large-text',
-						'rows' => '5',
-						'shortcodes_required' => array('[QUESTION_LIST]')
-					)
+						)
 				)
 			)
 		);
@@ -311,9 +324,8 @@ class EE_Pdf_messenger extends EE_messenger  {
 	 */
 	protected function _get_main_template( $preview = FALSE ) {
 		$wrapper_template = $this->_tmp_pack->get_wrapper( 'html', 'main' );
-
-		//require template helper
-		EE_Registry::instance()->load_helper( 'Template' );
+		//add message type to template_args
+		$this->_template_args['message_type'] = $this->_incoming_message_type;
 		return EEH_Template::display_template( $wrapper_template, $this->_template_args, TRUE );
 	}
 

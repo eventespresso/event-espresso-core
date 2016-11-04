@@ -1,4 +1,4 @@
-<h2><?php _e('Edit Question', 'event_espresso'); ?></h2>
+<p><strong><?php _e('Edit Question', 'event_espresso'); ?></strong></p>
 <p>
 <?php _e('This page allows you to edit a question for Event Espresso.', 'event_espresso'); ?>
 </p>
@@ -27,7 +27,7 @@
 </li>
 <li>
 <strong><?php _e('Question Type', 'event_espresso'); ?></strong><br />
-<?php _e('This shows the type of question. Available options are Text, Textarea, Checkboxes, Radio Buttons, Dropdown, State/Province Dropdown, Country Dropdown, and Date Picker.', 'event_espresso'); ?>
+<?php _e('This shows the type of question. Available options are Text, Textarea, Checkboxes, Radio Buttons, Dropdown, State/Province Dropdown, Country Dropdown, Date Picker, and HTML Textarea (allowed tags: a, abbr, acronym, b, br, blockquote ,cite, code, del ,em, i, li, ol, p, q, s, strike, strong, ul).', 'event_espresso'); ?>
 </li>
 <li>
 <strong><?php _e('Answer Options (for applicable question types)', 'event_espresso');?></strong>

@@ -39,49 +39,49 @@ abstract class EE_SPCO_Reg_Step {
 	 * 	@access protected
 	 *	@type string $_slug
 	 */
-	protected $_slug = NULL;
+	protected $_slug;
 
 	/**
 	 * 	$_name - Step Name - translatable string
 	 * 	@access protected
 	 *	@type string $_slug
 	 */
-	protected $_name = NULL;
+	protected $_name;
 
 	/**
 	 * 	$_submit_button_text - translatable string that appears on this step's submit button
 	 * 	@access protected
 	 *	@type string $_slug
 	 */
-	protected $_submit_button_text = NULL;
+	protected $_submit_button_text;
 
 	/**
 	 * 	$_template - template name
 	 * 	@access protected
 	 *	@type string $_template
 	 */
-	protected $_template = NULL;
+	protected $_template;
 
 	/**
 	 * 	$_reg_form_name - the form input name and id attribute
 	 * 	@access protected
 	 *	@var string $_reg_form_name
 	 */
-	protected $_reg_form_name = NULL;
+	protected $_reg_form_name;
 
 	/**
 	 * 	$_success_message - text to display upon successful form submission
 	 * 	@access private
 	 *	@var string $_success_message
 	 */
-	protected $_success_message = NULL;
+	protected $_success_message;
 
 	/**
 	 * 	$_instructions - a brief description of how to complete the reg step. Usually displayed in conjunction with the previous step's success message.
 	 * 	@access private
 	 *	@var string $_instructions
 	 */
-	protected $_instructions = NULL;
+	protected $_instructions;
 
 	/**
 	 * 	$_valid_data - the normalized and validated data for this step
@@ -95,14 +95,14 @@ abstract class EE_SPCO_Reg_Step {
 	 * 	@access public
 	 *	@var EE_Form_Section_Proper $reg_form
 	 */
-	public $reg_form = NULL;
+	public $reg_form;
 
 	/**
 	 * 	$checkout - EE_Checkout object for handling the properties of the current checkout process
 	 * 	@access public
 	 *	@var EE_Checkout $checkout
 	 */
-	public $checkout = NULL;
+	public $checkout;
 
 
 
@@ -371,7 +371,7 @@ abstract class EE_SPCO_Reg_Step {
 			$query_args['action'] = $action;
 		}
 		// final step has no display
-		if ( $this instanceof EE_SPCO_Reg_Step_Finalize_Registration && $action == 'display_spco_reg_step' ) {
+		if ( $this instanceof EE_SPCO_Reg_Step_Finalize_Registration && $action === 'display_spco_reg_step' ) {
 			$query_args[ 'action' ] = 'process_reg_step';
 		}
 		if( $this->checkout->revisit ) {
@@ -385,10 +385,12 @@ abstract class EE_SPCO_Reg_Step {
 
 
 
-	/**
-	 * creates the default hidden inputs section
-	 * @return EE_Form_Input_Base[]
-	 */
+    /**
+     * creates the default hidden inputs section
+     *
+     * @return EE_Form_Section_Proper
+     * @throws \EE_Error
+     */
 	public function reg_step_hidden_inputs() {
 		// hidden inputs for admin registrations
 		if ( $this->checkout->admin_request ) {
@@ -451,31 +453,45 @@ abstract class EE_SPCO_Reg_Step {
 
 
 	/**
-	 * @return string
+	 * generate_reg_form_for_actions
+	 *
+	 * @param array $actions
+	 * @return void
 	 */
+	public function generate_reg_form_for_actions( $actions = array() ) {
+		$actions = array_merge( array( 'generate_reg_form', 'display_spco_reg_step', 'process_reg_step', 'update_reg_step' ), $actions );
+		$this->checkout->generate_reg_form = in_array( $this->checkout->action, $actions ) ? TRUE : FALSE;
+	}
+
+
+
+    /**
+     * @return string
+     * @throws \EE_Error
+     */
 	public function display_reg_form() {
 		$html = '';
 		if ( $this->reg_form instanceof EE_Form_Section_Proper ) {
-			$html .= $this->checkout->admin_request ? '' : $this->reg_form->form_open( $this->reg_step_url() );
+			$html .= ! $this->checkout->admin_request ? $this->reg_form->form_open( $this->reg_step_url() ) : '';
 			if ( EE_Registry::instance()->REQ->ajax ) {
 				$this->reg_form->localize_validation_rules();
 				$this->checkout->json_response->add_validation_rules( EE_Form_Section_Proper::js_localization() );
-				$html .= $this->reg_form->get_html();
-			} else {
-				$html .= $this->reg_form->get_html_and_js();
 			}
-			$html .= $this->checkout->admin_request ? '' :$this->reg_step_submit_button();
-			$html .= $this->checkout->admin_request ? '' :$this->reg_form->form_close();
+            $html .= $this->reg_form->get_html();
+            $html .= ! $this->checkout->admin_request ? $this->reg_step_submit_button() : '';
+			$html .= ! $this->checkout->admin_request ? $this->reg_form->form_close() : '';
 		}
 		return $html;
 	}
 
 
 
-	/**
-	 * div_class - returns nothing for current step, but a css class of "hidden" for others
-	 * @return string
-	 */
+    /**
+     * div_class - returns nothing for current step, but a css class of "hidden" for others
+     *
+     * @return string
+     * @throws \EE_Error
+     */
 	public function reg_step_submit_button() {
 		if ( ! $this->checkout->next_step instanceof EE_SPCO_Reg_Step ) {
 			return '';
@@ -492,9 +508,9 @@ abstract class EE_SPCO_Reg_Step {
 			'default'							=> $this->submit_button_text()
 		));
 		$sbmt_btn->set_button_css_attributes( TRUE, 'large' );
-		EE_Registry::instance()->load_helper('HTML');
+		$sbmt_btn_html = $sbmt_btn->get_html_for_input();
 		$html .= EEH_HTML::div(
-			$sbmt_btn->get_html_for_input(),
+			apply_filters( 'FHEE__EE_SPCO_Reg_Step__reg_step_submit_button__sbmt_btn_html', $sbmt_btn_html, $this ),
 			'spco-' . $this->slug() . '-whats-next-buttons-dv',
 			'spco-whats-next-buttons'
 		);
@@ -523,6 +539,7 @@ abstract class EE_SPCO_Reg_Step {
 	}
 
 
+
 	/**
 	 * div_class - returns  a css class of "hidden" for current step, but nothing for others
 	 * @return string
@@ -533,6 +550,17 @@ abstract class EE_SPCO_Reg_Step {
 
 
 
+    /**
+     * update_checkout with changes that have been made to the cart
+     *
+     * @return void
+     * @throws \EE_Error
+     */
+	public function update_checkout() {
+		// grab the cart grand total and reset TXN total
+		$this->checkout->transaction->set_total( $this->checkout->cart->get_cart_grand_total() );
+		$this->checkout->stash_transaction_and_checkout();
+	}
 
 
 
@@ -543,7 +571,7 @@ abstract class EE_SPCO_Reg_Step {
 	 * but we won't bother with the reg form, because if needed, it will be regenerated anyways
 	 * @return array
 	 */
-	function __sleep() {
+	public function __sleep() {
 		// remove the reg form and the checkout
 		return array_diff( array_keys( get_object_vars( $this )), array( 'reg_form', 'checkout' ));
 	}

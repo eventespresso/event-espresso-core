@@ -41,7 +41,7 @@ class EE_Messages_Email_Payment_Declined_Validator extends EE_Messages_Validator
 	 * at this point no custom validation needed for this messenger/message_type combo.
 	 */
 	protected function _modify_validator() {
-		$new_config = $this->_MSGR->get_validator_config();
+		$new_config = $this->_messenger->get_validator_config();
 
 		//modify just event_list
 		$new_config['event_list'] = array(
@@ -53,7 +53,7 @@ class EE_Messages_Email_Payment_Declined_Validator extends EE_Messages_Validator
 		$new_config['content'] = array(
 			'shortcodes' => array('event_list','attendee_list', 'ticket_list', 'organization', 'recipient_details', 'recipient_list', 'transaction', 'primary_registration_details', 'primary_registration_list', 'messenger')
 			);
-		$this->_MSGR->set_validator_config( $new_config );
+		$this->_messenger->set_validator_config( $new_config );
 
 		if ( $this->_context != 'admin' )
 			$this->_valid_shortcodes_modifier[$this->_context]['event_list'] = array('event', 'attendee_list', 'ticket_list', 'datetime_list', 'venue', 'organization', 'event_author', 'primary_registration_details', 'primary_registration_list', 'recipient_details', 'recipient_list');

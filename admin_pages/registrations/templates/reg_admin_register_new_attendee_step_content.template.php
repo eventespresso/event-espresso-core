@@ -1,4 +1,4 @@
-<div class="ee-new-registration-step-content">
+<div class="ee-new-registration-step-content clearfix">
 	<h2 class="ee-new-registration-step-header"><?php echo $title ?></h2>
 	<div class="ee-new-registration-step-content">
 		<?php echo $content; ?>

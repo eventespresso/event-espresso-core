@@ -1,0 +1,15 @@
+.form-table .postbox, .postarea .postbox {
+    border: none;
+}
+
+#url-event {
+    width: 100%;
+}
+
+#espresso_venue_address_options input, #espresso_venue_address_options select {
+    width: 100%;
+}
+
+#espresso_venue_virtual_loc_options input, #espresso_venue_virtual_loc_options textarea {
+    width: 100%;
+}

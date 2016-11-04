@@ -24,7 +24,7 @@
  * @subpackage 	includes/classes/EE_Answer.class.php
  * @author 				Mike Nelson
  */
-class EE_Question_Option extends EE_Soft_Delete_Base_Class {
+class EE_Question_Option extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable {
 
 	/**
 	 * Question Option Opt Group Name
@@ -37,22 +37,29 @@ class EE_Question_Option extends EE_Soft_Delete_Base_Class {
 
 
 	/**
-	 * @param array $props_n_values
-	 * @return EE_Question_Option
+	 *
+	 * @param array $props_n_values  incoming values
+	 * @param string $timezone  incoming timezone (if not set the timezone set for the website will be
+	 *                          		used.)
+	 * @param array $date_formats  incoming date_formats in an array where the first value is the
+	 *                             		    date_format and the second value is the time format
+	 * @return EE_Attendee
 	 */
-	public static function new_instance( $props_n_values = array() ) {
-		$has_object = parent::_check_for_object( $props_n_values, __CLASS__ );
-		return $has_object ? $has_object : new self( $props_n_values );
+	public static function new_instance( $props_n_values = array(), $timezone = null, $date_formats = array() ) {
+		$has_object = parent::_check_for_object( $props_n_values, __CLASS__, $timezone, $date_formats );
+		return $has_object ? $has_object : new self( $props_n_values, false, $timezone, $date_formats );
 	}
 
 
 
 	/**
-	 * @param array $props_n_values
-	 * @return EE_Question_Option
+	 * @param array $props_n_values  incoming values from the database
+	 * @param string $timezone  incoming timezone as set by the model.  If not set the timezone for
+	 *                          		the website will be used.
+	 * @return EE_Attendee
 	 */
-	public static function new_instance_from_db( $props_n_values = array() ) {
-		return new self( $props_n_values, TRUE );
+	public static function new_instance_from_db( $props_n_values = array(), $timezone = null ) {
+		return new self( $props_n_values, TRUE, $timezone );
 	}
 
 
@@ -182,6 +189,38 @@ class EE_Question_Option extends EE_Soft_Delete_Base_Class {
 	 */
 	public function opt_group() {
 		return $this->_QSO_opt_group;
+	}
+
+	/**
+	 * Duplicates this question option. By default the new question option will be for the same question,
+	 * but that can be overriden by setting the 'QST_ID' option
+	 * @param array $options {
+	 *	@type int $QST_ID the QST_ID attribute of this question option, otherwise it will be for the same question as the original
+	 */
+	public function duplicate( $options = array() ) {
+		$new_question_option = clone $this;
+		$new_question_option->set( 'QSO_ID', null );
+		if( array_key_exists( 'QST_ID', $options ) ) {//use array_key_exists instead of isset because NULL might be a valid value
+			$new_question_option->set_question_ID( $options[ 'QST_ID' ] );
+		}
+		$new_question_option->save();
+	}
+	
+	/**
+	 * Gets the QSO_system value
+	 * @return string|null
+	 */
+	public function system() {
+		return $this->get('QSO_system');
+	}
+	
+	/**
+	 * Sets QSO_system
+	 * @param string $QSO_system
+	 * @return bool
+	 */
+	public function set_system( $QSO_system ) {
+		return $this->set( 'QSO_system', $QSO_system );
 	}
 }
 

@@ -21,10 +21,10 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed'
 class EE_Newsletter_Shortcodes extends EE_Shortcodes {
 
     protected function _init_props() {
-        $this->label = __("Newsletter Shortcodes", 'event_espresso');
-        $this->description = __('All shortcodes used for the newsletter message type', 'event_espresso');
+        $this->label = __("Batch Messages Shortcodes", 'event_espresso');
+        $this->description = __('All shortcodes used for the batch message type', 'event_espresso');
         $this->_shortcodes = array(
-            '[NEWSLETTER_CONTENT]' => __('This will parse to whatever is found in the related [newsletter_content] field.  Note that when triggering a newsletter message, whatever is added for the custom message will be inserted where this shortcode is placed', 'event_espresso')
+            '[NEWSLETTER_CONTENT]' => __('This will parse to whatever is found in the related [newsletter_content] field.  Note that when triggering a batch message, whatever is added for the custom message will be inserted where this shortcode is placed.', 'event_espresso')
             );
     }
 
@@ -33,11 +33,10 @@ class EE_Newsletter_Shortcodes extends EE_Shortcodes {
     protected function _parser( $shortcode ) {
         if ( $shortcode == '[NEWSLETTER_CONTENT]' ) {
             $this->_validate_list_requirements();
-            $this->_set_shortcode_helper();
             $valid_shortcodes = array('recipient_details', 'organization');
             $template = $this->_data['template']['newsletter_content'];
             $data = $this->_data;
-            return $this->_shortcode_helper->parse_message_template( $template, $data['data'], $valid_shortcodes, $this->_message_type, $this->_messenger, $this->_context, $this->_GRP_ID );
+            return $this->_shortcode_helper->parse_message_template( $template, $data['data'], $valid_shortcodes, $this->_message_type, $this->_messenger, $this->_message );
         }
     }
 
@@ -49,8 +48,8 @@ class EE_Newsletter_Shortcodes extends EE_Shortcodes {
      * 'FHEE__EE_messenger__get_validator_config' filter.
      *
      * @since    4.3.0
-     * @param  array                $validator_config  current validator configuration array
-     * @param  EE_messenger  $messenger
+     * @param  array        $validator_config  current validator configuration array
+     * @param  EE_messenger $messenger
      * @return  array                                             new validator config.
      */
     public static function messenger_validator_config( $validator_config, EE_messenger $messenger ) {
@@ -77,8 +76,8 @@ class EE_Newsletter_Shortcodes extends EE_Shortcodes {
      *
      * @since    4.3.0
      *
-     * @param  array                $template_fields current template fields setup array.
-     * @param  EE_messenger  $messenger
+     * @param  array        $template_fields current template fields setup array.
+     * @param  EE_messenger $messenger
      * @return  array                                           new/modified template fields array.
      */
     public static function messenger_template_fields( $template_fields, EE_messenger $messenger ) {

@@ -31,6 +31,88 @@ class EE_Form_Section_Proper_Test extends EE_UnitTestCase{
 		$form->receive_form_submission( $data );
 		$this->assertEquals( $data, $form->input_values() );
 	}
+	public function test_add_subsection__before(){
+		$input1 = new EE_Text_Input();
+		$input2 = new EE_Text_Input();
+		$input3 = new EE_Text_Input();
+		$input4 = new EE_Text_Input();
+		$input5 = new EE_Text_Input();
+		$parent_form = new EE_Form_Section_Proper( array(
+			'name' => 'form',
+			'subsections' => array(
+				'input1' => $input1,
+				'input2' => $input2,
+			)
+		));
+		$inputs = $parent_form->inputs();
+		$this->assertEquals( $input1, reset($inputs) );
+		$this->assertEquals( $input2, next( $inputs ) );
+
+		//ok now add a subsection before the first one
+		$parent_form->add_subsections( array( 'input3' => $input3 ), 'input1' );
+		$inputs = $parent_form->inputs();
+		$this->assertEquals( $input3, reset($inputs) );
+		$this->assertEquals( $input1, next( $inputs ) );
+		$this->assertEquals( $input2, next( $inputs ) );
+
+		//now add a subsection in the middle
+		$parent_form->add_subsections( array( 'input4' => $input4 ), 'input1' );
+		$inputs = $parent_form->inputs();
+		$this->assertEquals( $input3, reset($inputs) );
+		$this->assertEquals( $input4, next($inputs) );
+		$this->assertEquals( $input1, next( $inputs ) );
+		$this->assertEquals( $input2, next( $inputs ) );
+
+		//lastly add a subsection onto the very end
+		$parent_form->add_subsections( array( 'input5' => $input5 ), null, false );
+		$inputs = $parent_form->inputs();
+		$this->assertEquals( $input3, reset($inputs) );
+		$this->assertEquals( $input4, next($inputs) );
+		$this->assertEquals( $input1, next( $inputs ) );
+		$this->assertEquals( $input2, next( $inputs ) );
+		$this->assertEquals( $input5, next( $inputs ) );
+	}
+	public function test_add_subsection__after(){
+		$input1 = new EE_Text_Input();
+		$input2 = new EE_Text_Input();
+		$input3 = new EE_Text_Input();
+		$input4 = new EE_Text_Input();
+		$input5 = new EE_Text_Input();
+		$parent_form = new EE_Form_Section_Proper( array(
+			'name' => 'form',
+			'subsections' => array(
+				'input1' => $input1,
+				'input2' => $input2,
+			)
+		));
+		$inputs = $parent_form->inputs();
+		$this->assertEquals( $input1, reset($inputs) );
+		$this->assertEquals( $input2, next( $inputs ) );
+
+		//ok now add a subsection after the last one
+		$parent_form->add_subsections( array( 'input3' => $input3 ), 'input2', false );
+		$inputs = $parent_form->inputs();
+		$this->assertEquals( $input1, reset($inputs) );
+		$this->assertEquals( $input2, next( $inputs ) );
+		$this->assertEquals( $input3, next( $inputs ) );
+
+		//now add a subsection in the middle
+		$parent_form->add_subsections( array( 'input4' => $input4 ), 'input2', false );
+		$inputs = $parent_form->inputs();
+		$this->assertEquals( $input1, reset($inputs) );
+		$this->assertEquals( $input2, next($inputs) );
+		$this->assertEquals( $input4, next( $inputs ) );
+		$this->assertEquals( $input3, next( $inputs ) );
+
+		//lastly add a subsection onto the very beginning
+		$parent_form->add_subsections( array( 'input5' => $input5 ) );
+		$inputs = $parent_form->inputs();
+		$this->assertEquals( $input5, reset($inputs) );
+		$this->assertEquals( $input1, next($inputs) );
+		$this->assertEquals( $input2, next($inputs) );
+		$this->assertEquals( $input4, next( $inputs ) );
+		$this->assertEquals( $input3, next( $inputs ) );
+	}
 	public function test_add_subsection__weird_subsection_names(){
 		$grandparent_form = new EE_Form_Section_Proper(array(
 			'name'=>'grandparent',
@@ -242,6 +324,99 @@ class EE_Form_Section_Proper_Test extends EE_UnitTestCase{
 				)
 			);
 		$this->assertTrue( $form->was_submitted( $post_data ) );
+	}
+	/**
+	 * @group 9784
+	 * Verify EE_FOrm_SEction_proper::submitted_values() generates an array
+	 * exactly like the submitted data
+	 */
+	public function test_submitted_values() {
+		$form = new EE_Form_Section_Proper(
+			array(
+				'name' => 'top',
+				'subsections' => array(
+					'middle' => new EE_Form_Section_Proper(
+						array(
+							'subsections' => array(
+								'bottom_input1' => new EE_Phone_Input(),
+								'bottom_radio' => new EE_Radio_Button_Input(
+									array(
+										'op1' => 'option1',
+										'op2' => 'option2',
+										'op3' => 'option3'
+									)
+								)
+							)
+						)
+					),
+					'middle_radio' => new EE_Radio_Button_Input(
+						array(
+							'op1' => 'option1',
+							'op2' => 'option2',
+							'op3' => 'option3'
+						)
+					)
+				)
+			)
+		);
+		$form->_construct_finalize(null, null );
+		$submitted_data = array(
+			'top' => array(
+				'middle' => array(
+					'bottom_input1' => 'not-a-phone-number',
+					'bottom_radio' => array(
+						'op2',
+						'not-existent-op'
+					)
+				),
+				'middle_radio' => array(
+					'op2',
+					'not-existent-op'
+				)
+			)
+		);
+		$form->receive_form_submission( 
+			$submitted_data
+		);
+		$this->assertEquals(
+			$submitted_data,
+			$form->submitted_values( true )
+		);
+	}
+	
+	/**
+	 * @group 9784
+	 * Verify EE_FOrm_section_Proper::submitted_values generates the post-like submission
+	 * array when there are custom names on inputs
+	 */
+	public function test_submitted_values__custom_html_name_on_input(){
+		$form = new EE_Form_Section_Proper(
+			array(
+				'name' => 'top',
+				'subsections' => array(
+					'middle' => new EE_Form_Section_Proper(
+						array(
+							'subsections' => array(
+								'bottom' => new EE_Text_Input(
+									array(
+										'html_name' => 'custom_html_name'
+									)
+								)
+							)
+						)
+					)
+				)
+			)
+		);
+		$form->_construct_finalize(null, null);
+		$submitted_data = array(
+			'custom_html_name' => 'value'
+		);
+		$form->receive_form_submission( $submitted_data );
+		$this->assertEquals(
+			$submitted_data,
+			$form->submitted_values( true )
+		);
 	}
 }
 

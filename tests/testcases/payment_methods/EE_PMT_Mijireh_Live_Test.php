@@ -35,7 +35,6 @@ class EE_PMT_Mijireh_Live_Test extends EE_UnitTestCase{
 	public function setUp(){
 		parent::setUp();
 		//make sure caf payment methods are registered
-		new EE_Brewing_Regular();
 		EE_Payment_Method_Manager::reset();
 	}
 	public function test_set_redirect_info__success(){
@@ -54,7 +53,10 @@ class EE_PMT_Mijireh_Live_Test extends EE_UnitTestCase{
 		$rargs =  json_decode( $p->details() );
 		$mijireh_items = $rargs->items;
 		$first_mijireh_item = array_shift( $mijireh_items );
-		$this->assertEquals( $t->primary_registration()->ticket()->name(), $first_mijireh_item->name );
+		$this->assertEquals( 
+			$t->primary_registration()->ticket()->name() . ' for ' . $t->primary_registration()->event_name(), 
+			$first_mijireh_item->name 
+		);
 		$this->assertEquals( $t->primary_registration()->ticket()->price(), $first_mijireh_item->price );
 		$this->assertEquals( 1, $first_mijireh_item->quantity );
 		$this->assertEquals( $t->tax_total(), $rargs->tax );
@@ -69,14 +71,10 @@ class EE_PMT_Mijireh_Live_Test extends EE_UnitTestCase{
 		$p = $this->new_model_obj_with_dependencies( 'Payment', array('TXN_ID'=>$t->ID(), 'PMD_ID' => $ppm->ID(), 'PAY_amount' => $t->total() ) );
 		$this->assertEmpty( $p->redirect_url() );
 
-		try{
-			$p = $ppg->set_redirection_info( $p, NULL, self::return_url, self::notify_url, self::cancel_url );
-			//that should have thrown an error because the access key is bogus
-			$this->assertTrue( FALSE );
-		}catch( EE_Error $e ){
-			$this->assertTrue( TRUE );
-			$this->assertEmpty( $p->redirect_url() );
-		}
+                $p = $ppg->set_redirection_info( $p, NULL, self::return_url, self::notify_url, self::cancel_url );
+                //that should have thrown an error because the access key is bogus
+                $this->assertEmpty( $p->redirect_url() );
+		
 	}
 	public function test_set_redirect_info__partial_payment(){
 		$ppm = $this->new_model_obj_with_dependencies( 'Payment_Method', array( 'PMD_type' => 'Mijireh' ) );

@@ -1,34 +1,19 @@
 <?php
 /**
- * Event Espresso
- *
- * Event Registration and Management Plugin for WordPress
- *
- * @ package			Event Espresso
- * @ author				Seth Shoultes
- * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link					http://www.eventespresso.com
- * @ version		 	4.2
- *
- * ------------------------------------------------------------------------
- *
  * EE_Gateway
+ * Abstract base class for all gateways for processing payments.
+ * This has been designed in a way so that other WP Plugins
+ * can use this class for processing payments, and theoretically any of its children,
+ * provided they implement the interfaces it uses.
+ * The necessary interfaces to be implemented are contained in:
+ * core/libraries/payment_methods/EEI_Payment_Method_Interfaces.php and EEI_Interfaces.
+ * After constructing a gateway object, you need to set all the properties which reference many of the
+ * needed helpers and models (see all the methods starting with "set_",
+ * eg seg_line_item_helper which should be passed an object which implements EEHI_Line_Item_Helper; etc).
  *
- * Abstract base class for all gateways
- *
- * @package			Event Espresso
+ * @package            Event Espresso
  * @subpackage		core/libraries/payment_methods
  * @author			Mike Nelson
- *
- * ------------------------------------------------------------------------
- * Class for processing payments. This has been designed in a way so that other WP Plugins
- * can use this class for processing payments, and theoreitcally any of its children, provided they implement the
- * interfaces it uses.
- * The necessary interfaces to be implemented are contained in core/libaries/payment_methods/EEI_Payment_Method_Interfaces.php and
- * EEI_Interfaces. After constructing a gateway object, you need to set all the properties which reference many of the
- * needed helpers and models (see all the methods starting with "set_", eg seg_line_item_helper which should be passed an object
- * which implements EEHI_Line_Item_Helper; etc).
  */
 abstract class EE_Gateway{
 	/**
@@ -58,25 +43,25 @@ abstract class EE_Gateway{
 	 * Model for querying for existing payments
 	 * @var EEMI_Payment
 	 */
-	protected $_pay_model = NULL;
+	protected $_pay_model;
 
 	/**
 	 * Model used for adding to the payments log
 	 * @var EEMI_Payment_Log
 	 */
-	protected $_pay_log = NULL;
+	protected $_pay_log;
 
 	/**
 	 * Used for formatting some input to gateways
 	 * @var EEHI_Template
 	 */
-	protected $_template = NULL;
+	protected $_template;
 
 	/**
 	 * Concrete class that implements EEHI_Money, used by most gateways
 	 * @var EEHI_Money
 	 */
-	protected $_money = NULL;
+	protected $_money;
 
 	/**
 	 * Concrete class that implements EEHI_Line_Item, used for manipulating the line item tree
@@ -93,17 +78,17 @@ abstract class EE_Gateway{
 	/**
 	 * @var $_debug_mode boolean whether to send requests to teh sandbox site or not
 	 */
-	protected $_debug_mode = NULL;
+	protected $_debug_mode;
 	/**
 	 *
 	 * @var string $_name name to show for this payment method
 	 */
-	protected $_name = NULL;
+	protected $_name;
 	/**
 	 *
 	 * @var string name to show fir this payment method to admin-type users
 	 */
-	protected $_admin_name = NULL;
+	protected $_admin_name;
 
 	/**
 	 * @return EE_Gateway
@@ -122,8 +107,7 @@ abstract class EE_Gateway{
 	 */
 	public function __sleep(){
 		$properties = get_object_vars($this);
-		unset( $properties[ '_pay_model' ] );
-		unset( $properties[ '_pay_log' ] );
+		unset( $properties[ '_pay_model' ], $properties[ '_pay_log' ] );
 		return array_keys($properties);
 	}
 	/**
@@ -143,6 +127,8 @@ abstract class EE_Gateway{
 		return $this->_supports_receiving_refunds;
 	}
 
+
+
 	/**
 	 * Tries to refund the payment specified, taking into account the extra
 	 * refund info. Note that if the gateway's _supports_sending_refunds is false,
@@ -152,9 +138,12 @@ abstract class EE_Gateway{
 	 * @return EE_Payment for the refund
 	 * @throws EE_Error
 	 */
-	public function do_direct_refund($payment,$refund_info = null){
+	public function do_direct_refund( EE_Payment $payment, $refund_info = null ) {
 		return NULL;
 	}
+
+
+
 	/**
 	 * Sets the payment method's settings so the gateway knows where to send the request
 	 * etc
@@ -163,7 +152,7 @@ abstract class EE_Gateway{
 	public function set_settings($settings_array){
 		foreach($settings_array as $name => $value){
 			$property_name = "_".$name;
-			$this->$property_name = $value;
+			$this->{$property_name} = $value;
 		}
 	}
 	/**
@@ -277,7 +266,7 @@ abstract class EE_Gateway{
 	/**
 	 * Handles updating the transaction and any other related data based on the payment.
 	 * You may be tempted to do this as part of do_direct_payment or handle_payment_update,
-	 * but doing so on those functions might be too early. It's possibel that the changes
+	 * but doing so on those functions might be too early. It's possible that the changes
 	 * you make to teh transaction or registration or line items may just get overwritten
 	 * at that point. Instead, you should store any info you need on the payment during those
 	 * functions, and use that information at this step, which client code will decide
@@ -286,8 +275,112 @@ abstract class EE_Gateway{
 	 * @return void
 	 */
 	public function update_txn_based_on_payment( $payment ){
-		//maybe update the trasnaction or line items or registrations
+		//maybe update the transaction or line items or registrations
 		//but most gateways don't need to do this, because they only update the payment
+	}
+	
+	/**
+	 * Gets the first event for this payment (it's possible that it could be for multiple)
+	 * @param EEI_Payment $payment
+	 * @return EEI_Event|null
+	 */
+	protected function _get_first_event_for_payment( EEI_Payment $payment ) {
+		$transaction = $payment->transaction();
+		if( $transaction instanceof EEI_Transaction ) {
+			$primary_registrant = $transaction->primary_registration();
+			if( $primary_registrant instanceof EE_Registration ) {
+				return $primary_registrant->event_obj();
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Gets the name of the first event for which is being paid
+	 * @param EEI_Payment $payment
+	 * @return string
+	 */
+	protected function _get_first_event_name_for_payment( EEI_Payment $payment ) {
+		$event = $this->_get_first_event_for_payment( $payment );
+		return $event instanceof EEI_Event ? $event->name() : __( 'Event', 'event_espresso' );
+	}
+	/**
+	 * Gets the text to use for a gateway's line item name when this is a partial payment
+	 * @param EE_Payment $payment
+	 * @return string
+	 */
+	protected function _format_partial_payment_line_item_name( EEI_Payment $payment ){
+		return apply_filters( 
+			'EEG_Paypal_Pro__do_direct_payment__partial_amount_line_item_name', 
+			$this->_get_first_event_name_for_payment( $payment ), 
+			$this,
+			$payment
+		);
+	}
+	/**
+	 * Gets the text to use for a gateway's line item description when this is a partial payment
+	 * @param EEI_Payment $payment
+	 * @return string
+	 */
+	protected function _format_partial_payment_line_item_desc( EEI_Payment $payment ) {
+		return apply_filters(
+			'FHEE__EE_Gateway___partial_payment_desc',
+			sprintf(
+				__("Payment of %s for %s", "event_espresso"), 
+				$payment->get_pretty( 'PAY_amount', 'no_currency_code' ), 
+				$this->_get_first_event_name_for_payment( $payment ) ),
+			$this,
+			$payment
+		);
+	}
+	
+	/**
+	 * Gets the name to use for a line item when sending line items to the gateway
+	 * @param EEI_Line_Item $line_item
+	 * @param EEI_Payment $payment
+	 * @return string
+	 */
+	protected function _format_line_item_name( EEI_Line_Item $line_item, EEI_Payment $payment ) {
+		return apply_filters( 
+			'FHEE__EE_gateway___line_item_name', 
+			sprintf( _x( '%1$s for %2$s', 'Ticket for Event', 'event_espresso' ), $line_item->name(), $line_item->ticket_event_name() ), 
+			$this,
+			$line_item, 
+			$payment 
+		);
+	}
+	
+	/**
+	 * Gets the description to use for a line item when sending line items to the gateway
+	 * @param EEI_Line_Item $line_item
+	 * @param EEI_Payment $payment
+	 * @return string
+	 */
+	protected function _format_line_item_desc( EEI_Line_Item $line_item, EEI_Payment $payment ) {
+		return apply_filters( 
+			'FHEE__EE_Gateway___line_item_desc', 
+			$line_item->desc(), 
+			$this, 
+			$line_item,
+			$payment
+		);
+	}
+	
+	/**
+	 * Gets the order description that should generlly be sent to gateways
+	 * @param EEI_Payment $payment
+	 * @return type
+	 */
+	protected function _format_order_description( EEI_Payment $payment ) {
+		return apply_filters( 
+			'FHEE__EE_Gateway___order_description',
+			sprintf(
+				__('Event Registrations from %1$s for %2$s', "event_espresso"),
+				get_bloginfo('name'),
+				$this->_get_first_event_name_for_payment( $payment ) ),
+			$this,
+			$payment
+		);
 	}
 
 

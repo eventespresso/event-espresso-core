@@ -6,12 +6,17 @@
 class EE_Post_Content_Field extends EE_Text_Field_Base{
 	/**
 	 * removes all tags which a WP Post wouldn't allow in its content normally
-	 * @param string $value_inputted_for_field_on_model_object
+	 * @param string $value
 	 * @return string
 	 */
-	function prepare_for_set($value_inputted_for_field_on_model_object) {
-		$value_with_select_tags =  wp_kses("$value_inputted_for_field_on_model_object",wp_kses_allowed_html( 'post' ));
-		return parent::prepare_for_set($value_with_select_tags);
+	function prepare_for_set($value) {
+		if( ! current_user_can( 'unfiltered_html' ) ) {
+			$value =  wp_kses("$value",wp_kses_allowed_html( 'post' ));
+		}
+		return parent::prepare_for_set($value);
 	}
 	
+	function prepare_for_set_from_db($value_found_in_db_for_model_object){
+		return $value_found_in_db_for_model_object;
+	}
 }

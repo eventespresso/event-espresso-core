@@ -26,7 +26,7 @@
  *
  * ------------------------------------------------------------------------
  */
-abstract class EE_Admin_Page_Init extends EE_BASE {
+abstract class EE_Admin_Page_Init extends EE_Base {
 
 	//identity properties (set in _set_defaults and _set_init_properties)
 	public $label;
@@ -418,7 +418,6 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 //		$dir_ref = array(
 //			$this->_folder_path => array('core','class')
 //			);
-//		EE_Registry::instance()->load_helper( 'Autoloader' );
 //		EEH_Autoloader::try_autoload($dir_ref, $className );
 //	}
 

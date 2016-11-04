@@ -160,45 +160,61 @@ jQuery(document).ready(function($) {
 
 
 
-	window.show_admin_page_ajax_msg = function show_admin_page_ajax_msg( response, beforeWhat, closeModal ) {
-		console.log( response );
-		$('#espresso-ajax-loading').fadeOut('fast');
-		if (( typeof(response.success) !== 'undefined' && response.success !== '' ) || ( typeof(response.errors) !== 'undefined' && response.errors !== '' )) {
-//			if ( closeModal === undefined ) {
-//				closeModal = false;
-//			}
-			var fadeaway = true;
-			var msg = '';
-			// if there is no existing message...
-			if ( $(existing_message).length === 0 ) {
-				//create one and add it to the DOM
-				$('.nav-tab-wrapper').before( '<div id="message" class="updated hidden"></div>' );
-			}
-			// success ?
-			if ( typeof(response.success) !== 'undefined' && response.success !== '' && response.success !== false ) {
-				msg = '<p>' + response.success + '</p>';
-			}
-			// no existing errors?
-			if ( typeof(response.errors) !== 'undefined' && response.errors !== '' && response.errors !== false ) {
-				msg = '<p>' + response.errors + '</p>';
-				$(existing_message).removeClass('updated').addClass('error');
-				fadeaway = false;
-			}
-			// set message content
-			$(existing_message).html(msg);
-			//  change location in the DOM if so desired
-			if ( typeof(beforeWhat) !== 'undefined' && beforeWhat !== '' ) {
-				var moved_message = $(existing_message);
-				$(existing_message).remove();
-				$( beforeWhat ).before( moved_message );
-			}
-			// and display it
-			if ( fadeaway === true ) {
-				$(existing_message).removeAttr('style').removeClass('hidden').show().delay(8000).fadeOut();
-			} else {
-				$(existing_message).removeAttr('style').removeClass('hidden').show();
-			}
+	window.show_admin_page_ajax_msg = function show_admin_page_ajax_msg( response, beforeWhat, removeExisting ) {
+		removeExisting = typeof removeExisting !== false;
+		var messages = $( '#ajax-notices-container' );
+		// if there is no existing message...
+		if ( removeExisting === true ) {
+			messages.html('');
 		}
+		// make sure there is at least ONE notification to display
+		if (
+			( typeof response !== 'object' ) ||
+			! ( // or NOT the following
+				( typeof response.success !== 'undefined' && response.success !== '' && response.success !== false ) ||
+				( typeof response.attention !== 'undefined' && response.attention !== '' && response.attention !== false ) ||
+				( typeof response.errors !== 'undefined' && response.errors !== '' && response.errors !== false )
+			)
+		) {
+			console.log( JSON.stringify( 'show_admin_page_ajax_msg response: ', null, 4 ) );
+			console.log( response );
+			return;
+		}
+
+		$( '#espresso-ajax-loading' ).fadeOut( 'fast' );
+		var msg = '';
+		// no existing errors?
+		if ( typeof(response.errors) !== 'undefined' && response.errors !== '' && response.errors !== false ) {
+			msg = msg + '<div class="ee-admin-notification error hidden"><p>' + response.errors + '</p></div>';
+		}
+		// attention notice?
+		if ( typeof(response.attention) !== 'undefined' && response.attention !== '' && response.attention !== false ) {
+			msg = msg + '<div class="ee-admin-notification ee-attention hidden"><p>' + response.attention + '</p></div>';
+		}
+		// success ?
+		if ( typeof(response.success) !== 'undefined' && response.success !== '' && response.success !== false ) {
+			msg = msg + '<div class="ee-admin-notification updated hidden ee-fade-away"><p>' + response.success + '</p></div>';
+		}
+		messages.html( msg );
+		var new_messages = messages;
+		messages.remove();
+		beforeWhat = typeof beforeWhat !== 'undefined' && beforeWhat !== '' ? beforeWhat : '.nav-tab-wrapper';
+		// set message content
+		var messages_displayed = false;
+		$( 'body, html' ).animate( { scrollTop : 0 }, 'normal', function() {
+			if ( ! messages_displayed ) {
+				$( beforeWhat ).before( new_messages );
+			}
+		} );
+		// and display it
+		new_messages.find('.ee-admin-notification').each( function() {
+			$( this ).removeAttr( 'style' ).removeClass( 'hidden' ).show();
+			//  but sometimes not too long
+			if ( $( this ).hasClass( 'ee-fade-away' ) ) {
+				$( this ).delay( 8000 ).fadeOut();
+			}
+		} );
+
 	};
 
 
@@ -291,8 +307,168 @@ jQuery(document).ready(function($) {
 
 
 
+	/**
+	 * when a Country select dropdown changes, find its corresponding state select dropdown
+	 * and hide all option groups that do not correspond to the selected country
+	 */
+	$( '.ee-country-select-js' ).change(
+		function () {
+			var country_select_id = $( this ).attr( 'id' ),
+				selected_country  = $( this ).find( "option:selected" ).text(),
+				state_select_id   = '',
+				$state_select      = null,
+				selected_state    = null,
+				valid_option      = false;
 
+			// console_log( 'country_select_id', country_select_id, true );
+			// console_log( 'selected_country', selected_country, false );
+			// console_log( 'state_select_id', state_select_id, false );
+			// console_log( 'country_select_id.indexOf( country )', ~country_select_id.indexOf( 'country' ), false );
 
+			// is this country question a system question ?
+			if ( ~country_select_id.indexOf( 'country' ) ) {
+				// good, then just swap 'country' for 'state' to get the corresponding state select id
+				state_select_id = country_select_id.replace( 'country', 'state' );
+			} else {
+				// no ??? dang... now we have to try and find the corresponding state question.
+				var $state_div = $(this).parent().next('.ee-state-select-js-input-dv');
+				if ( ! $state_div.length ) {
+					// console.log( 'State Select div not found after Country Select div' );
+					$state_div = $( this ).parent().prev( '.ee-state-select-js-input-dv' );
+				}
+				if ( ! $state_div.length ) {
+					console.log(
+						'Can not find corresponding State select for Country select with id: '
+						+ country_select_id + '. Ideally the State question should be immediately after the Country question.'
+					);
+				}
+				$state_select = $state_div.find('.ee-state-select-js');
+				if ( $state_select === null || ! $state_select.length ) {
+					// going to keep the following commented out code in case we need to support
+					// country <=> state question pairs that are not immediately next to each other
+					// var search_id_parts = country_select_id.split( '-' );
+					// console_log( 'search_id_parts', search_id_parts, false );
+					// var search_id = '',
+					// 	select_id = '';
+					// // event id should be next
+					// if ( typeof search_id_parts[ 1 ] === 'undefined' || typeof search_id_parts[ 2 ] === 'undefined' ) {
+						console.log(
+							'Invalid "country_select_id"! Can not find corresponding State select for Country select with id: '
+							+ country_select_id
+						);
+						return;
+					// }
+					// something like: 'ee_reg_qstn' + '-' + event_id + '-'
+					// search_id = search_id_parts[ 0 ] + '-' + search_id_parts[ 1 ] + '-';
+					// // search_id += search_id_parts[ 2 ];
+					//
+					// console_log( 'search_id', search_id, false );
+					// $( '.ee-state-select-js' ).each(
+					// 	function () {
+					// 		select_id = $( this ).attr( 'id' );
+					// 		console_log( 'select_id', select_id, true );
+					// 		console_log( "~select_id.indexOf( 'state' )", ~select_id.indexOf( 'state' ), false );
+					// 		console_log(
+					// 			"~select_id.indexOf( 'nsmf_new_state' )",
+					// 			~select_id.indexOf( 'nsmf_new_state' ),
+					// 			false
+					// 		);
+					// 		console_log( "~select_id.indexOf( 'search_id' )", ~select_id.indexOf( search_id ), false );
+					// 		// skip any state system questions
+					// 		if ( ~select_id.indexOf( 'state' )
+					// 			 || ~select_id.indexOf( 'nsmf_new_state' )
+					// 			 || !~select_id.indexOf( search_id ) ) {
+					// 			console.log( 'NOT A MATCH' );
+					// 			return true;
+					// 		}
+					// 		console_log( 'MATCH select_id', select_id, false );
+					// 		var select_id_parts = select_id.split( '-' );
+					// 		if ( typeof select_id_parts[ 1 ]
+					// 			 === 'undefined'
+					// 			 || typeof select_id_parts[ 2 ]
+					// 				=== 'undefined' ) {
+					// 			return true;
+					// 		}
+					// 		select_id              = select_id_parts[ 0 ] + '-' + select_id_parts[ 1 ] + '-';
+					// 		var select_question_id = select_id_parts[ 2 ];
+					// 	}
+					// );
+				}
+				state_select_id = $state_select.attr( 'id' );
+			}
+			if ( ( $state_select === null || ! $state_select.length ) && state_select_id !== '' ) {
+				// console_log( 'state_select_id', state_select_id, false );
+				$state_select = $( '#' + state_select_id );
+			}
+
+			if ( $state_select.length ) {
+				// grab the currently selected state (if there is one)
+				selected_state = $state_select.find( ":selected" ).val();
+				// console_log( 'selected_state', selected_state, false );
+				// remove span tags from all optgroups
+				$( 'span > optgroup', $state_select ).unwrap();
+				// if a valid country is selected
+				if ( selected_country !== '' ) {
+					// wrap all unselected optgroup with span tags which effectively hides them in the dropdown
+					$( 'optgroup:not([label="' + selected_country + '"])', $state_select ).wrap( '<span></span>' );
+					// if a valid corresponding state select exists
+					if ( selected_state.length ) {
+						// loop through all of its optgroups
+						$state_select.find( 'optgroup' ).each(
+							function () {
+								// if this optgroup is not hidden (wrapped in  a span)
+								if ( $(this).parent().prop( "tagName" ) == 'SELECT' ) {
+									// then loop through each of its options
+									$( this ).find( 'option' ).each(
+										function () {
+											// was this option match the previously selected state ?
+											if ( $( this ).val() == selected_state ) {
+												valid_option = true;
+												// make sure it's set as the selected option
+												$state_select.val( selected_state ).change();
+											}
+										}
+									);
+								}
+							}
+						);
+					}
+					// console_log( 'valid_option', valid_option, false );
+					// if the previously selected state is not valid
+					if ( ! valid_option ) {
+						// makes sure no option is selected
+						$( "option:selected", $state_select ).prop( "selected", false );
+						// then find the empty placeholder and select it
+						$state_select
+							.find( 'optgroup[label=""]' )
+							.unwrap()
+							.find( 'option[value=""]' )
+							.attr( 'selected', 'selected' );
+						// select it again to be sure
+						$state_select.val('')
+					} else {
+						// previously selected state IS valid
+						// so make sure the empty placeholder is unselected
+						$state_select
+							.find( 'optgroup[label=""]' )
+							.find( 'option[value=""]' )
+							.removeAttr( 'selected' );
+					}
+				} else {
+					// console.log( JSON.stringify( 'NO COUNTRY SELECTED', null, 4 ) );
+					// unwrap any wrapped elements
+					$state_select.find( 'optgroup' ).each(
+						function () {
+							// console_log( 'optgroup', $( this ).val(), false );
+							if ( $( this ).parent().prop( "tagName" ) == 'SPAN' ) {
+								$( this ).unwrap();
+							}
+						}
+					);
+				}
+			}
+		}
+	);
 
 });
 
@@ -344,10 +520,62 @@ function dump(arr,level) {
 	return dumped_text;
 }
 
+/**
+ *  @function console_log
+ *  print to the browser console
+ * @param  {string} item_name
+ * @param  {*} value
+ * @param  {boolean} spacer
+ */
+function console_log( item_name, value, spacer ) {
+	if ( typeof value === 'object' ) {
+		console_log_object( item_name, value, 0 );
+	} else {
+		if ( spacer === true ) {
+			console.log( ' ' );
+		}
+		if ( typeof item_name !== 'undefined' && typeof value !== 'undefined' && value !== '' ) {
+			console.log( item_name + ' = ' + value );
+		} else if ( typeof item_name !== 'undefined' ) {
+			console.log( item_name );
+		}
+	}
+}
 
-//function getFunctionName() {
-//	var myName = arguments.callee.toString();
-//	myName = myName.substr('function '.length);
-//	myName = myName.substr(0, myName.indexOf('('));
-//	return myName;
-//}
+/**
+ * @function console_log_object
+ * print object to the browser console
+ * @param  {string} obj_name
+ * @param  {object} obj
+ * @param  {number} depth
+ */
+function console_log_object( obj_name, obj, depth ) {
+	depth      = typeof depth !== 'undefined' ? depth : 0;
+	var spacer = '';
+	for ( var i = 0; i < depth; i++ ) {
+		spacer = spacer + '    ';
+	}
+	if ( typeof obj === 'object' ) {
+		if ( !depth ) {
+			console.log( ' ' );
+		}
+		if ( typeof obj_name !== 'undefined' ) {
+			console.log( spacer + 'OBJ: ' + obj_name + ' : ' );
+		} else {
+			console.log( spacer + 'OBJ : ' );
+		}
+		jQuery.each(
+			obj, function ( index, value ) {
+				if ( typeof value === 'object' && depth < 6 ) {
+					depth++;
+					console_log_object( index, value, depth );
+				} else {
+					console.log( spacer + index + ' = ' + value );
+				}
+				depth = 0;
+			}
+		);
+	} else {
+		console_log( spacer + obj_name, obj, true );
+	}
+}

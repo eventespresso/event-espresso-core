@@ -22,7 +22,6 @@ abstract class EE_Form_Section_Layout_Base{
 	 * 	__construct
 	 */
 	function __construct(){
-		EE_Registry::instance()->load_helper('HTML');
 	}
 
 
@@ -172,7 +171,7 @@ abstract class EE_Form_Section_Layout_Base{
 	 */
 	public function display_errors($input){
 		if( $input->get_validation_errors() ){
-			return  "<span  id='" . $input->html_id() . "-error' class='ee-error-label red ee-red' for='{$input->html_name()}'>" . $input->get_validation_error_string() . "</span>";
+			return  "<label  id='" . $input->html_id() . "-error' class='error' for='{$input->html_name()}'>" . $input->get_validation_error_string() . "</label>";
 		}else{
 			return '';
 		}

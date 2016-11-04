@@ -8,7 +8,7 @@
 if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 
 /**
- * Used to initialize all EE messages caffeianted functionality.
+ * Used to initialize all EE messages caffeinated functionality.
  *
  * @package        Event Espresso
  * @subpackage  messages
@@ -37,6 +37,10 @@ class EE_Caf_Messages  {
 		add_filter('FHEE__EED_Messages___set_messages_paths___MSG_PATHS', array( $this, 'messages_autoload_paths'), 5 );
 		add_filter('FHEE__EE_Email_messenger__get_validator_config', array( $this, 'email_messenger_validator_config'), 5, 2 );
 		add_filter('FHEE__EE_Email_messenger__get_template_fields', array( $this, 'email_messenger_template_fields'), 5, 2 );
+		add_filter( 'FHEE__EE_Html_messenger__get_template_fields', array( $this, 'html_messenger_template_fields' ), 5, 2 );
+		add_filter( 'FHEE__EE_Html_messenger__get_validator_config', array( $this, 'html_messenger_validator_config' ), 5, 2 );
+		add_filter( 'FHEE__EE_Pdf_messenger__get_template_fields', array( $this, 'pdf_messenger_template_fields' ), 5, 2 );
+		add_filter( 'FHEE__EE_Pdf_messenger__get_validator_config', array( $this, 'pdf_messenger_validator_config' ), 5, 2 );
 		add_filter('FHEE__EE_Messages_Template_Pack__get_specific_template__contents', array( $this, 'new_default_templates'), 5, 7 );
 		add_filter('FHEE__EE_Messages_Base__get_valid_shortcodes', array( $this, 'message_types_valid_shortcodes'), 5, 2 );
 
@@ -57,7 +61,7 @@ class EE_Caf_Messages  {
 		/**
 		 * @since 4.3.0
 		 */
-		//eat our own dogfood!
+		//eat our own dog food!
 		add_action('EE_Brewing_Regular___messages_caf', array( $this, 'register_caf_message_types' ) );
 		add_action('EE_Brewing_Regular___messages_caf', array( $this, 'register_caf_shortcodes' ) );
 		do_action('EE_Brewing_Regular___messages_caf');
@@ -91,6 +95,34 @@ class EE_Caf_Messages  {
 
 
 
+	public function html_messenger_validator_config( $validator_config, EE_Html_messenger $messenger ) {
+		$validator_config['attendee_list'] = array(
+			'shortcodes' => array('attendee', 'question_list'),
+			'required' => array('[ATTENDEE_LIST]')
+		);
+		$validator_config['question_list'] = array(
+			'shortcodes' => array('question'),
+			'required' => array('[QUESTION_LIST]')
+		);
+		return $validator_config;
+	}
+
+
+
+	public function pdf_messenger_validator_config( $validator_config, EE_Pdf_messenger $messenger ) {
+		$validator_config['attendee_list'] = array(
+			'shortcodes' => array('attendee', 'event_list', 'ticket_list', 'question_list'),
+			'required' => array('[ATTENDEE_LIST]')
+		);
+		$validator_config['question_list'] = array(
+			'shortcodes' => array('question'),
+			'required' => array('[QUESTION_LIST]')
+		);
+		return $validator_config;
+	}
+
+
+
 
 	public function email_messenger_template_fields( $template_fields, EE_Email_messenger $messenger ) {
 		$template_fields['extra']['content']['question_list'] = array(
@@ -104,6 +136,39 @@ class EE_Caf_Messages  {
 						'rows' => '5',
 						'shortcodes_required' => array('[QUESTION_LIST]')
 					);
+		return $template_fields;
+	}
+
+
+	public function html_messenger_template_fields( $template_fields, EE_Html_messenger $messenger ) {
+		$template_fields['extra']['content']['question_list'] = array(
+			'input' => 'textarea',
+			'label' => '[QUESTION_LIST]',
+			'type' => 'string',
+			'required' => TRUE,
+			'validation' => TRUE,
+			'format' => '%s',
+			'css_class' => 'large-text',
+			'rows' => '5',
+			'shortcodes_required' => array('[QUESTION_LIST]')
+		);
+		return $template_fields;
+	}
+
+
+
+	public function pdf_messenger_template_fields( $template_fields, EE_Pdf_messenger $messenger ) {
+		$template_fields['extra']['content']['question_list'] = array(
+			'input' => 'textarea',
+			'label' => '[QUESTION_LIST]',
+			'type' => 'string',
+			'required' => TRUE,
+			'validation' => TRUE,
+			'format' => '%s',
+			'css_class' => 'large-text',
+			'rows' => '5',
+			'shortcodes_required' => array('[QUESTION_LIST]')
+		);
 		return $template_fields;
 	}
 
@@ -171,6 +236,13 @@ class EE_Caf_Messages  {
 					$contents = EEH_Template::display_template( $path, array(), true );
 					break;
 			}
+		} elseif ( $messenger->name == 'html' && $message_type->name == 'receipt' ) {
+			switch  ( $template_file_prefix ) {
+				case 'attendee_list_purchaser' :
+					$path = $base_path . $msg_prefix . 'attendee_list.template.php';
+					$contents = EEH_Template::display_template( $path, array(), true );
+					break;
+			}
 		}
 
 		return $contents;
@@ -191,7 +263,10 @@ class EE_Caf_Messages  {
 			'payment_cancelled',
 			'payment',
 			'payment_reminder',
-			'pending_approval'
+			'pending_approval',
+			'registration_summary',
+			'invoice',
+			'receipt'
 			);
 		if ( $msg instanceof EE_message_type && in_array( $msg->name, $include_with )) {
 			$contexts = array_keys($msg->get_contexts());
@@ -227,7 +302,7 @@ class EE_Caf_Messages  {
 		$registration = ! $registration instanceof EE_Registration && is_array( $extra_data ) && isset( $extra_data['data'] ) && $extra_data['data'] instanceof EE_Registration ? $extra_data['data'] : $registration;
 
 		$aee = $data instanceof EE_Messages_Addressee ? $data : null;
-		$aee = ! $aee instanceof EE_Messages_Adressee && is_array( $extra_data ) && isset( $extra_data['data'] ) ? $extra_data['data'] : $aee;
+		$aee = ! $aee instanceof EE_Messages_Addressee && is_array( $extra_data ) && isset( $extra_data['data'] ) ? $extra_data['data'] : $aee;
 
 		if ( ! $registration instanceof EE_Registration || ! $aee instanceof EE_Messages_Addressee ) {
 			return $parsed;
@@ -235,8 +310,13 @@ class EE_Caf_Messages  {
 
 		//now let's figure out which question has this text.
 		foreach ( $aee->questions as $ansid => $question ) {
-			if ( $question->get('QST_display_text') == $shortcode && isset($aee->registrations[$registration->ID()]['ans_objs'][$ansid]) )
-				return $aee->registrations[$registration->ID()]['ans_objs'][$ansid]->get_pretty('ANS_value', 'no_wpautop');
+			if (
+				$question instanceof EE_Question
+				&& trim( $question->display_text() ) == trim( $shortcode )
+				&& isset( $aee->registrations[ $registration->ID() ]['ans_objs'][ $ansid ] )
+			) {
+				return $aee->registrations[ $registration->ID() ]['ans_objs'][ $ansid ]->get_pretty('ANS_value', 'no_wpautop');
+			}
 		}
 
 		//nothing!
@@ -321,26 +401,55 @@ class EE_Caf_Messages  {
 		if ( ! $recipient instanceof EE_Messages_Addressee )
 			return $parsed;
 
-		$send_data = ! $data['data'] instanceof EE_Messages_Addressee ? $extra_data : $data;
-
 		switch ( $shortcode ) {
 			case '[RECIPIENT_QUESTION_LIST]' :
-				if ( ! $recipient->reg_obj instanceof EE_Registration || ! $recipient->att_obj instanceof EE_Attendee )
-					return '';
+				$att = $recipient->att_obj;
+				$registrations_on_attendee = $att instanceof EE_Attendee ? $recipient->attendees[$att->ID()]['reg_objs'] : array();
+				$registrations_on_attendee = empty( $registrations_on_attendee ) && $recipient->reg_obj instanceof EE_Registration ? array( $recipient->reg_obj ) : $registrations_on_attendee;
+				$answers = array();
 
-				$registration = $recipient->reg_obj;
-				$attendee = $recipient->att_obj;
 				$template = is_array($data['template'] ) && isset($data['template']['question_list']) ? $data['template']['question_list'] : $extra_data['template']['question_list'];
 				$valid_shortcodes = array('question');
-				$shortcode_helper = $shortcode_parser->get_shortcode_helper();
-				$answers = !empty($recipient->registrations[$registration->ID()]['ans_objs']) ? $recipient->registrations[$registration->ID()]['ans_objs'] : array();
-				$question_list = '';
-				foreach ( $answers as $answer ) {
-					$question = $answer->question();
-					if ( $question instanceof EE_Question and $question->admin_only() ) {
-						continue;
+
+				//if the context is main_content then get all answers for all registrations on this attendee
+				if ( $data['data'] instanceof EE_Messages_Addressee ) {
+					foreach ( $registrations_on_attendee as $reg ) {
+						if ( $reg instanceof EE_Registration ) {
+							$anss = !empty($recipient->registrations[$reg->ID()]['ans_objs']) ? $recipient->registrations[$reg->ID()]['ans_objs'] : array();
+							foreach( $anss as $ans ) {
+								if ( $ans instanceof EE_Answer ) {
+									$answers[$ans->ID()] = $ans;
+								}
+							}
+						}
 					}
-					$question_list .= $shortcode_helper->parse_question_list_template( $template, $answer, $valid_shortcodes, $send_data);
+				}
+
+				//if the context is the event list parser, then let's return just the answers for all registrations attached to the recipient for that event.
+				if ( $data['data'] instanceof EE_Event ) {
+					$event = $data['data'];
+					foreach( $registrations_on_attendee as $reg ) {
+						if ( $reg instanceof EE_Registration && $reg->event_ID() == $event->ID() ) {
+							$anss = !empty($recipient->registrations[$reg->ID()]['ans_objs']) ? $recipient->registrations[$reg->ID()]['ans_objs'] : array();
+							foreach( $anss as $ans ) {
+								if ( $ans instanceof EE_Answer ) {
+									$answers[$ans->ID()] = $ans;
+								}
+							}
+						}
+					}
+				}
+
+				$question_list = '';
+				$shortcode_helper = $shortcode_parser->get_shortcode_helper();
+				foreach ( $answers as $answer ) {
+					if ( $answer instanceof EE_Answer ) {
+						$question = $answer->question();
+						if ( ! $question instanceof EE_Question || ( $question instanceof EE_Question && $question->admin_only() ) ) {
+							continue;
+						}
+						$question_list .= $shortcode_helper->parse_question_list_template( $template, $answer, $valid_shortcodes, $extra_data);
+					}
 				}
 				return $question_list;
 				break;
@@ -374,7 +483,6 @@ class EE_Caf_Messages  {
 			case '[RECIPIENT_QUESTION_LIST]' :
 				if ( ! $recipient->primary_att_obj instanceof EE_Attendee || ! $recipient->primary_reg_obj instanceof EE_Registration )
 					return '';
-				$attendee = $recipient->primary_att_obj;
 				$registration = $recipient->primary_reg_obj;
 				$template = is_array($data['template'] ) && isset($data['template']['question_list']) ? $data['template']['question_list'] : $extra_data['template']['question_list'];
 				$valid_shortcodes = array('question');
@@ -382,11 +490,13 @@ class EE_Caf_Messages  {
 				$answers = $recipient->registrations[$registration->ID()]['ans_objs'];
 				$question_list = '';
 				foreach ( $answers as $answer ) {
-					$question = $answer->question();
-					if ( $question instanceof EE_Question and $question->admin_only() ) {
-						continue;
+					if ( $answer instanceof EE_Answer ) {
+						$question = $answer->question();
+						if ( $question instanceof EE_Question and $question->admin_only() ) {
+							continue;
+						}
+						$question_list .= $shortcode_helper->parse_question_list_template( $template, $answer, $valid_shortcodes, $send_data);
 					}
-					$question_list .= $shortcode_helper->parse_question_list_template( $template, $answer, $valid_shortcodes, $send_data);
 				}
 				return $question_list;
 				break;

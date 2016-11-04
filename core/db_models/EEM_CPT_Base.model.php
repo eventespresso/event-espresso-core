@@ -19,6 +19,31 @@ define('EE_Event_Category_Taxonomy','espresso_event_category');
 abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 
 	/**
+	 * @var string post_status_publish - the wp post status for published cpts
+	 */
+	const post_status_publish = 'publish';
+
+	/**
+	 * @var string post_status_future - the wp post status for scheduled cpts
+	 */
+	const post_status_future = 'future';
+
+	/**
+	 * @var string post_status_draft - the wp post status for draft cpts
+	 */
+	const post_status_draft = 'draft';
+
+	/**
+	 * @var string post_status_pending - the wp post status for pending cpts
+	 */
+	const post_status_pending = 'pending';
+
+	/**
+	 * @var string post_status_private - the wp post status for private cpts
+	 */
+	const post_status_private = 'private';
+
+	/**
 	 * @var string post_status_trashed - the wp post status for trashed cpts
 	 */
 	const post_status_trashed = 'trash';
@@ -80,6 +105,19 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 
 		if( ! isset( $this->_fields[$primary_table_name]['post_content_filtered'])){
 			$this->_fields[$primary_table_name]['post_content_filtered'] = new EE_DB_Only_Text_Field('post_content_filtered', __( 'Post Content Filtered', 'event_espresso' ), FALSE, '');
+		}
+		if( ! isset( $this->_model_relations[ 'Post_Meta' ] ) ) {
+			//don't block deletes though because we want to maintain the current behaviour
+			$this->_model_relations[ 'Post_Meta' ] = new EE_Has_Many_Relation( false );
+		}
+		if( ! $this->_minimum_where_conditions_strategy instanceof EE_Default_Where_Conditions ){
+			//nothing was set during child constructor, so set default
+			$this->_minimum_where_conditions_strategy = new EE_CPT_Minimum_Where_Conditions( $this->post_type() );
+		}
+		if( ! $this->_default_where_conditions_strategy instanceof EE_Default_Where_Conditions ) {
+			//nothing was set during child constructor, so set default
+			//it's ok for child classes to specify this, but generally this is more DRY
+			$this->_default_where_conditions_strategy = new EE_CPT_Where_Conditions( $this->post_type() );
 		}
 		parent::__construct($timezone);
 
@@ -144,8 +182,7 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 	 * @return array
 	 */
 	protected function _alter_query_params_so_deleted_and_undeleted_items_included($query_params){
-		$post_status_field_name=$this->post_status_field_name();
-		$query_params[0][$post_status_field_name]=array('IN',array_keys($this->get_status_array()));
+		$query_params[ 'default_where_conditions' ] = 'minimum';
 		return $query_params;
 	}
 
@@ -346,8 +383,9 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 	 * are a row from the posts table. If we're missing any fields required for the model,
 	 * we just fetch the entire entry from the DB (ie, if you want to use this to save DB queries,
 	 * make sure you are attaching all the model's fields onto the post)
+	 *
 	 * @param WP_Post|array $post
-	 * @return EE_CPT_Base
+	 * @return EE_Base_Class|EE_Soft_Delete_Base_Class
 	 */
 	public function instantiate_class_from_post_object_orig($post){
 		$post = (array)$post;

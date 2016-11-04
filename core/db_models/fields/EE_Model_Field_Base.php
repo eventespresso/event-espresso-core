@@ -1,6 +1,10 @@
-<?php
-
+<?php if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
+	exit( 'No direct script access allowed' );
+}
 /**
+ *
+ * EE_Model_Field_Base class
+ *
  * Base class for all EE_*_Field classes. These classes are for providing information and functions specific to each
  * field. They define the field's data type for insertion into the db (eg, if the value should be treated as an int, float, or string),
  * what values for the field are acceptable (eg, if setting EVT_ID to a float is acceptable), and generally any functionality within
@@ -9,6 +13,10 @@
  * should be serialized before insertion into the db (prepare_for_insertion_into_db()),
  * should be considered a string when inserting, updating, or using in a where clause for any queries (get_wpdb_data_type()),
  * should be unserialized when being retrieved from the db (prepare_for_set_from_db()), and whatever else.
+ *
+ * @package 			Event Espresso
+ * @subpackage    /core/db_models/fields/EE_Model_Field_Base.php
+ * @author 				Michael Nelson
  */
 abstract class EE_Model_Field_Base{
 	var $_table_alias;
@@ -32,15 +40,23 @@ abstract class EE_Model_Field_Base{
 		$this->_nullable = $nullable;
 		$this->_default_value = $default_value;
 	}
+	
+	
 
 	/**
 	 * @param $table_alias
 	 * @param $name
+	 * @param $model_name
 	 */
 	function _construct_finalize($table_alias, $name, $model_name){
 		$this->_table_alias = $table_alias;
 		$this->_name = $name;
 		$this->_model_name = $model_name;
+		/**
+		 * allow for changing the defaults
+		 */
+		$this->_nicename = apply_filters( 'FHEE__EE_Model_Field_Base___construct_finalize___nicename', $this->_nicename, $this );
+		$this->_default_value = apply_filters( 'FHEE__EE_Model_Field_Base___construct_finalize___default_value', $this->_default_value, $this );
 	}
 	function get_table_alias(){
 		return $this->_table_alias;
@@ -91,6 +107,10 @@ abstract class EE_Model_Field_Base{
 	}
 
 	/**
+	 * Returns the table alias joined to the table column, however this isn't the right
+	 * table alias if the aliased table is being joined to. In that case, you can use
+	 * EE_Model_Parser::extract_table_alias_model_relation_chain_prefix() to find the table's current alias
+	 * in the current query
 	 * @return string
 	 */
 	function get_qualified_column(){

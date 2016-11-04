@@ -4,11 +4,11 @@
  * Converts 3.1 checkins to 4.1 checkins. It's true that in 3.1 there WAS a table named
  * event_attendee_checkin, which recorded the time of registrations' checkins. HOWEVER, it was inconsistently used
  * (if at all), and its data is basically junk. The checked_in_quantity and checked_in values on the attendee table
- * are the important records to convert. 
+ * are the important records to convert.
  * So, in converting we use those numbers to decide how many checkins to add in 4.1, and just assume that
  * they checked in at the time of the event (which is quite reasonable). We COULD try to hunt for the actual time
  * of their checkin from the events_attendee_checkin table, but that'd be very difficult and problematic.
- * 
+ *
 4.1 tables and fields:
  * $this->_tables = array(
 			'Checkin'=>new EE_Primary_Table('esp_checkin','CHK_ID')
@@ -19,7 +19,7 @@
 				'REG_ID'=>new EE_Foreign_Key_Int_Field('REG_ID', 'Registration Id', false, 1, 'Registration'),
 				'DTT_ID'=>new EE_Foreign_Key_Int_Field('DTT_ID', 'Datetime Id', false, 1, 'Datetime'),
 				'CHK_in'=>new EE_Boolean_Field('CHK_in', 'Whether a person has checked in or checked out', false, true),
-				'CHK_timestamp'=>new EE_Datetime_Field('CHK_timestamp', __('When the row was modified','event_espresso'), false, current_time('timestamp'), $timezone )
+				'CHK_timestamp'=>new EE_Datetime_Field('CHK_timestamp', __('When the row was modified','event_espresso'), false, time(), $timezone )
 			)
 		);
 */
@@ -36,9 +36,9 @@ class EE_DMS_4_1_0_checkins extends EE_Data_Migration_Script_Stage_Table{
 	protected function _migrate_old_row($old_row) {
 		global $wpdb;
 		$new_reg_table = $wpdb->prefix."esp_registration";
-		
+
 		$num_to_checkin_at_this_time = max(array(intval($old_row['checked_in_quantity']),intval($old_row['checked_in']))) ;
-		
+
 		$new_registrations_for_attendee = $this->get_migration_script()->get_mapping_new_pk($this->_old_table, $old_row['id'], $new_reg_table);
 		if( ! $new_registrations_for_attendee){
 			$new_registrations_for_attendee = array();
@@ -65,14 +65,14 @@ class EE_DMS_4_1_0_checkins extends EE_Data_Migration_Script_Stage_Table{
 			if($new_id){
 				$new_checkin_ids[]= $new_id;
 			}
-			
+
 		}
 		if ($new_checkin_ids){
 			$this->get_migration_script()->set_mapping($this->_old_table, $old_row['id'], $this->_new_table, $new_checkin_ids);
 		}
 	}
-	
-	
+
+
 	/**
 	 * Tries to find the new datetime the Check-in was for, based on the attendee row
 	 * (because we know the attendee was for an event as a specific time, and we know
@@ -83,7 +83,7 @@ class EE_DMS_4_1_0_checkins extends EE_Data_Migration_Script_Stage_Table{
 	 */
 	private function _try_to_find_datetime($old_attendee){
 		global $wpdb;
-	
+
 		$new_event_id = $this->get_migration_script()->get_mapping_new_pk($wpdb->prefix."events_detail", $old_attendee['event_id'], $wpdb->posts);
 		if ( ! $new_event_id){
 			$this->add_error(sprintf(__("Could nto find new event ID with old event id '%d', on attendee row %s; and because of that couldnt find the correct datetime for Check-in", "event_espresso"),$old_attendee['event_id'],$this->_json_encode($old_attendee)));
@@ -92,7 +92,7 @@ class EE_DMS_4_1_0_checkins extends EE_Data_Migration_Script_Stage_Table{
 		$old_att_start_date = $old_attendee['start_date'];
 		$old_att_start_time = $this->get_migration_script()->convertTimeFromAMPM($old_attendee['event_time']);
 		$old_att_datetime = $this->get_migration_script()->convert_date_string_to_utc($this,$old_attendee,"$old_att_start_date $old_att_start_time:00");
-		
+
 		$datetime_table = $wpdb->prefix."esp_datetime";
 		//add all conditions to an array from which we can SHIFT conditions off in order to widen our search
 		//the most important condition should be last, as it will be array_shift'ed off last
@@ -109,7 +109,7 @@ class EE_DMS_4_1_0_checkins extends EE_Data_Migration_Script_Stage_Table{
 		}while( ! $datetime_found && $conditions);
 		return $datetime_found;
 	}
-	
+
 	/**
 	 * Adds a new Check-in/checkout record according for $new_reg_id,$new_datetime_id,$checking_in, and $timestmap
 	 * @param int $new_reg_id
@@ -119,8 +119,8 @@ class EE_DMS_4_1_0_checkins extends EE_Data_Migration_Script_Stage_Table{
 	 */
 	private function _insert_checkin_record($new_reg_id,$new_datetime){
 		global $wpdb;
-		
-		
+
+
 		//ok we can actually do what we set out to do: add a checkin/checkout record
 		$cols_n_values = array(
 			'REG_ID'=>$new_reg_id,
@@ -142,6 +142,6 @@ class EE_DMS_4_1_0_checkins extends EE_Data_Migration_Script_Stage_Table{
 		$new_id = $wpdb->insert_id;
 		return $new_id;
 	}
-		
-	
+
+
 }

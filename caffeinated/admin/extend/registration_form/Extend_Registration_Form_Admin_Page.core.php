@@ -1,7 +1,7 @@
 <?php
-if (!defined('EVENT_ESPRESSO_VERSION') )
+if (!defined('EVENT_ESPRESSO_VERSION') ){
 	exit('NO direct script access allowed');
-
+}
 /**
  * Event Espresso
  *
@@ -30,6 +30,12 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 
 
+	/**
+	 * 		@Constructor
+	 *
+	 * 		@param bool $routing indicate whether we want to just load the object and handle routing or just load the object.
+	 * 		@access public
+	 */
 	public function __construct( $routing = TRUE ) {
 		define( 'REGISTRATION_FORM_CAF_ADMIN', EE_CORE_CAF_ADMIN_EXTEND . 'registration_form' . DS );
 		define( 'REGISTRATION_FORM_CAF_ASSETS_PATH', REGISTRATION_FORM_CAF_ADMIN . 'assets' . DS );
@@ -64,7 +70,11 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 				'capability' => 'ee_edit_questions',
 				'noheader' => TRUE
 				),
-
+			'duplicate_question' => array(
+				'func' => '_duplicate_question',
+				'capability' => 'ee_edit_questions',
+				'noheader' => TRUE
+				),
 			'trash_question' => array(
 				'func' => '_trash_question',
 				'capability' => 'ee_delete_question',
@@ -202,21 +212,21 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 			'question_groups' => array(
 				'nav' => array(
-					'label' => __('Question Groups'),
+					'label' => esc_html__('Question Groups', 'event_espresso'),
 					'order' => 20
 					),
 				'list_table' => 'Registration_Form_Question_Groups_Admin_List_Table',
 				'help_tabs' => array(
 					'registration_form_question_groups_help_tab' => array(
-						'title' => __('Question Groups', 'event_espresso'),
+						'title' => esc_html__('Question Groups', 'event_espresso'),
 						'filename' => 'registration_form_question_groups'
 						),
 					'registration_form_question_groups_table_column_headings_help_tab' => array(
-						'title' => __('Question Groups Table Column Headings', 'event_espresso'),
+						'title' => esc_html__('Question Groups Table Column Headings', 'event_espresso'),
 						'filename' => 'registration_form_question_groups_table_column_headings'
 						),
 					'registration_form_question_groups_views_bulk_actions_search_help_tab' => array(
-						'title' => __('Question Groups Views & Bulk Actions & Search', 'event_espresso'),
+						'title' => esc_html__('Question Groups Views & Bulk Actions & Search', 'event_espresso'),
 						'filename' => 'registration_form_question_groups_views_bulk_actions_search'
 						),
 					),
@@ -230,14 +240,14 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 			'add_question' => array(
 				'nav' => array(
-					'label' => __('Add Question', 'event_espresso'),
+					'label' => esc_html__('Add Question', 'event_espresso'),
 					'order' => 5,
 					'persistent' => FALSE
 					),
 				'metaboxes' => array_merge( $this->_default_espresso_metaboxes, array('_publish_post_box' ) ),
                 'help_tabs' => array(
 					'registration_form_add_question_help_tab' => array(
-						'title' => __('Add Question', 'event_espresso'),
+						'title' => esc_html__('Add Question', 'event_espresso'),
 						'filename' => 'registration_form_add_question'
 						),
 					),
@@ -247,14 +257,14 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 			'add_question_group' => array(
 				'nav' => array(
-					'label' => __('Add Question Group', 'event_espresso'),
+					'label' => esc_html__('Add Question Group', 'event_espresso'),
 					'order' => 5,
 					'persistent' => FALSE
 					),
 				'metaboxes' => array_merge( $this->_default_espresso_metaboxes, array('_publish_post_box' ) ),
 				'help_tabs' => array(
 					'registration_form_add_question_group_help_tab' => array(
-						'title' => __('Add Question Group', 'event_espresso'),
+						'title' => esc_html__('Add Question Group', 'event_espresso'),
 						'filename' => 'registration_form_add_question_group'
 						),
 					),
@@ -264,7 +274,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 			'edit_question_group' => array(
 				'nav' => array(
-					'label' => __('Edit Question Group', 'event_espresso'),
+					'label' => esc_html__('Edit Question Group', 'event_espresso'),
 					'order' => 5,
 					'persistent' => FALSE,
 					'url' => isset($this->_req_data['question_group_id']) ? add_query_arg(array('question_group_id' => $this->_req_data['question_group_id'] ), $this->_current_page_view_url )  : $this->_admin_base_url
@@ -272,7 +282,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 				'metaboxes' => array_merge( $this->_default_espresso_metaboxes, array('_publish_post_box' ) ),
 				'help_tabs' => array(
 					'registration_form_edit_question_group_help_tab' => array(
-						'title' => __('Edit Question Group', 'event_espresso'),
+						'title' => esc_html__('Edit Question Group', 'event_espresso'),
 						'filename' => 'registration_form_edit_question_group'
 						),
 					),
@@ -282,16 +292,16 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 			'view_reg_form_settings' => array(
 				'nav' => array(
-					'label' => __('Reg Form Settings', 'event_espresso'),
+					'label' => esc_html__('Reg Form Settings', 'event_espresso'),
 					'order' => 40
 					),
 				'labels' => array(
-					'publishbox' => __('Update Settings', 'event_espresso')
+					'publishbox' => esc_html__('Update Settings', 'event_espresso')
 					),
 				'metaboxes' => array_merge( $this->_default_espresso_metaboxes, array( '_publish_post_box' ) ),
 				'help_tabs' => array(
 					'registration_form_reg_form_settings_help_tab' => array(
-						'title' => __('Registration Form Settings', 'event_espresso'),
+						'title' => esc_html__('Registration Form Settings', 'event_espresso'),
 						'filename' => 'registration_form_reg_form_settings'
 						),
 					),
@@ -308,11 +318,11 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 		//additional labels
 		$new_labels = array(
-			'add_question' => __('Add New Question', 'event_espresso'),
-			'delete_question' => __('Delete Question', 'event_espresso'),
-			'add_question_group' => __('Add New Question Group', 'event_espresso'),
-			'edit_question_group' => __('Edit Question Group', 'event_espresso'),
-			'delete_question_group' => __('Delete Question Group', 'event_espresso'),
+			'add_question' => esc_html__('Add New Question', 'event_espresso'),
+			'delete_question' => esc_html__('Delete Question', 'event_espresso'),
+			'add_question_group' => esc_html__('Add New Question Group', 'event_espresso'),
+			'edit_question_group' => esc_html__('Edit Question Group', 'event_espresso'),
+			'delete_question_group' => esc_html__('Delete Question Group', 'event_espresso'),
 			);
 		$this->_labels['buttons'] = array_merge( $this->_labels['buttons'], $new_labels );
 
@@ -362,10 +372,10 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		$this->_views = array(
 			'all' => array(
 				'slug' => 'all',
-				'label' => __('View All Questions', 'event_espresso'),
+				'label' => esc_html__('View All Questions', 'event_espresso'),
 				'count' => 0,
 				'bulk_action' => array(
-					'trash_questions' => __('Trash', 'event_espresso'),
+					'trash_questions' => esc_html__('Trash', 'event_espresso'),
 					)
 				)
 		);
@@ -373,11 +383,11 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		if ( EE_Registry::instance()->CAP->current_user_can('ee_delete_questions', 'espresso_registration_form_trash_questions' ) ) {
 			$this->_views['trash'] = array(
 				'slug' => 'trash',
-				'label' => __('Trash', 'event_espresso'),
+				'label' => esc_html__('Trash', 'event_espresso'),
 				'count' => 0,
 				'bulk_action' => array(
-					'delete_questions' => __('Delete Permanently', 'event_espresso'),
-					'restore_questions' => __('Restore', 'event_espresso'),
+					'delete_questions' => esc_html__('Delete Permanently', 'event_espresso'),
+					'restore_questions' => esc_html__('Restore', 'event_espresso'),
 					)
 				);
 		}
@@ -392,10 +402,10 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		$this->_views = array(
 			'all' => array(
 				'slug' => 'all',
-				'label' => __('All', 'event_espresso'),
+				'label' => esc_html__('All', 'event_espresso'),
 				'count' => 0,
 				'bulk_action' => array(
-					'trash_question_groups' => __('Trash', 'event_espresso'),
+					'trash_question_groups' => esc_html__('Trash', 'event_espresso'),
 					)
 				)
 		);
@@ -403,11 +413,11 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_question_groups', 'espresso_registration_form_trash_question_groups' ) ) {
 			$this->_views['trash'] = array(
 				'slug' => 'trash',
-				'label' => __('Trash', 'event_espresso'),
+				'label' => esc_html__('Trash', 'event_espresso'),
 				'count' => 0,
 				'bulk_action' => array(
-					'delete_question_groups' => __('Delete Permanently', 'event_espresso'),
-					'restore_question_groups' => __('Restore', 'event_espresso'),
+					'delete_question_groups' => esc_html__('Delete Permanently', 'event_espresso'),
+					'restore_question_groups' => esc_html__('Restore', 'event_espresso'),
 					)
 				);
 		}
@@ -419,15 +429,25 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 
 	protected function _questions_overview_list_table() {
-		$this->_admin_page_title .= $this->get_action_link_or_button('add_question', 'add_question', array(), 'add-new-h2');
+		$this->_admin_page_title .= ' ' . $this->get_action_link_or_button(
+		    'add_question',
+            'add_question',
+            array(),
+            'add-new-h2'
+        );
 		parent::_questions_overview_list_table();
 	}
 
 
 
 	protected function _question_groups_overview_list_table() {
-		$this->_search_btn_label = __('Question Groups', 'event_espresso');
-		$this->_admin_page_title .= $this->get_action_link_or_button('add_question_group', 'add_question_group', array(), 'add-new-h2');
+		$this->_search_btn_label = esc_html__('Question Groups', 'event_espresso');
+		$this->_admin_page_title .= ' ' . $this->get_action_link_or_button(
+		    'add_question_group',
+            'add_question_group',
+            array(),
+            'add-new-h2'
+        );
 		$this->display_admin_list_table_page_with_sidebar();
 	}
 
@@ -437,22 +457,32 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 
 	protected function _delete_question(){
-		$success=$this->_question_model->delete_permanently_by_ID(intval($this->_req_data['QST_ID']));
-		$query_args=array('action'=>'default','status'=>'all');
-		$this->_redirect_after_action($success, $this->_question_model->item_name($success), 'deleted', $query_args);
+		$success = $this->_delete_items( $this->_question_model );
+		$this->_redirect_after_action(
+			$success,
+			$this->_question_model->item_name( $success ),
+			'deleted',
+			array( 'action' => 'default', 'status' => 'all' )
+		);
 	}
 
 
 	protected function _delete_questions() {
-		$success = $this->_delete_items($this->_question_model);
-		$this->_redirect_after_action( $success, $this->_question_model->item_name($success), 'deleted permanently', array( 'action'=>'default', 'status'=>'trash' ));
+		$success = $this->_delete_items( $this->_question_model );
+		$this->_redirect_after_action(
+			$success,
+			$this->_question_model->item_name( $success ),
+			'deleted permanently',
+			array( 'action' => 'default', 'status' => 'trash' )
+		);
 	}
 
 
 /**
  * Performs the deletion of a single or multiple questions or question groups.
- * @param EEM_Base $model
- * @return int number of items deleted permanenetly
+ *
+ * @param EEM_Soft_Delete_Base $model
+ * @return int number of items deleted permanently
  */
 	private function _delete_items(EEM_Soft_Delete_Base $model){
 		$success = 0;
@@ -462,21 +492,33 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 			$success = count( $this->_req_data['checkbox'] ) > 1 ? 2 : 1;
 			// cycle thru bulk action checkboxes
 			while (list( $ID, $value ) = each($this->_req_data['checkbox'])) {
-
-				if (!$model->delete_permanently_by_ID(absint($ID))) {
+				if ( ! $this->_delete_item( $ID, $model ) ) {
 					$success = 0;
 				}
 			}
 
 		}elseif( !empty($this->_req_data['QSG_ID'])){
-			$success = $model->delete_permanently_by_ID($this->_req_data['QSG_ID']);
+			$success = $this->_delete_item( $this->_req_data['QSG_ID'], $model );
 
 		}elseif( !empty($this->_req_data['QST_ID'])){
-			$success = $model->delete_permanently_by_ID($this->_req_data['QST_ID']);
+			$success = $this->_delete_item( $this->_req_data['QST_ID'], $model );
 		}else{
-			EE_Error::add_error( sprintf(__("No Questions or Question Groups were selected for deleting. This error usually shows when you've attempted to delete via bulk action but there were no selections.", "event_espresso")), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( sprintf(esc_html__("No Questions or Question Groups were selected for deleting. This error usually shows when you've attempted to delete via bulk action but there were no selections.", "event_espresso")), __FILE__, __FUNCTION__, __LINE__ );
 		}
 		return $success;
+	}
+
+	/**
+	 * Deletes the specified question (and its associated question options) or question group
+	 * @param int $id
+	 * @param EEM_Soft_Delete_Base $model
+	 * @return boolean
+	 */
+	protected function _delete_item( $id, $model ) {
+		if( $model instanceof EEM_Question ) {
+			EEM_Question_Option::instance()->delete_permanently( array( array( 'QST_ID' => absint( $id ) ) ) );
+		}
+		return $model->delete_permanently_by_ID( absint( $id ) );
 	}
 
 
@@ -491,14 +533,26 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 	protected function _edit_question_group( $type = 'add' ) {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$ID=isset( $this->_req_data['QSG_ID'] ) && ! empty( $this->_req_data['QSG_ID'] ) ? absint( $this->_req_data['QSG_ID'] ) : FALSE;
-		$this->_admin_page_title = ucwords( str_replace( '_', ' ', $this->_req_action ));
+
+		switch( $this->_req_action ) {
+			case 'add_question_group' :
+				$this->_admin_page_title = esc_html__( 'Add Question Group', 'event_espresso' );
+				break;
+			case 'edit_question_group' :
+				$this->_admin_page_title = esc_html__( 'Edit Question Group', 'event_espresso' );
+				break;
+			default :
+				$this->_admin_page_title = ucwords( str_replace( '_', ' ', $this->_req_action ));
+		}
 		// add ID to title if editing
 		$this->_admin_page_title = $ID ? $this->_admin_page_title . ' # ' . $ID : $this->_admin_page_title;
 		if($ID){
-			$questionGroup=$this->_question_group_model->get_one_by_ID($ID);
+			/** @var EE_Question_Group $questionGroup */
+			$questionGroup=$this->_question_group_model->get_one_by_ID( $ID);
 			$additional_hidden_fields=array('QSG_ID'=>array('type'=>'hidden','value'=>$ID));
 			$this->_set_add_edit_form_tags('update_question_group', $additional_hidden_fields);
 		}else{
+			/** @var EE_Question_Group $questionGroup */
 			$questionGroup = EEM_Question_Group::instance()->create_default_object();
 			$questionGroup->set_order_to_latest();
 			$this->_set_add_edit_form_tags('insert_question_group');
@@ -526,6 +580,9 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 
 
+	/**
+	 * @param bool $new_question_group
+	 */
 	protected function _insert_or_update_question_group( $new_question_group = TRUE) {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$set_column_values=$this->_set_column_values_for($this->_question_group_model);
@@ -537,18 +594,19 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 			unset( $set_column_values[ 'QSG_ID' ] );
 			$success= $this->_question_group_model->update( $set_column_values, array( array( 'QSG_ID' => $QSG_ID )));
 		}
+		$phone_question_id = EEM_Question::instance()->get_Question_ID_from_system_string( EEM_Attendee::system_question_phone );
 		// update the existing related questions
 		// BUT FIRST...  delete the phone question from the Question_Group_Question if it is being added to this question group (therefore removed from the existing group)
-		if ( isset( $this->_req_data['questions'], $this->_req_data['questions'][ EEM_Attendee::phone_question_id ] )) {
+		if ( isset( $this->_req_data['questions'], $this->_req_data['questions'][ $phone_question_id ] )) {
 			// delete where QST ID = system phone question ID and Question Group ID is NOT this group
-			EEM_Question_Group_Question::instance()->delete( array( array( 'QST_ID' => EEM_Attendee::phone_question_id, 'QSG_ID' => array( '!=', $QSG_ID ))));
+			EEM_Question_Group_Question::instance()->delete( array( array( 'QST_ID' => $phone_question_id, 'QSG_ID' => array( '!=', $QSG_ID ))));
 		}
 		/** @type EE_Question_Group $question_group */
 		$question_group=$this->_question_group_model->get_one_by_ID( $QSG_ID );
 		$questions = $question_group->questions();
 		// make sure system phone question is added to list of questions for this group
-		if ( ! isset( $questions[ EEM_Attendee::phone_question_id ] )) {
-			$questions[ EEM_Attendee::phone_question_id ] = EEM_Question::instance()->get_one_by_ID( EEM_Attendee::phone_question_id );
+		if ( ! isset( $questions[$phone_question_id ] )) {
+			$questions[ $phone_question_id ] = EEM_Question::instance()->get_one_by_ID( $phone_question_id );
 		}
 
 		foreach( $questions as $question_ID => $question ){
@@ -562,8 +620,15 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 			if ( isset( $this->_req_data['questions'], $this->_req_data['questions'][ $question_ID ] )) {
 				$question_group->add_question( $question_ID );
 			} else {
-				// not found, remove it (but only if not a system question for the personal group)
-				if ( ! ( $question->is_system_question() && $question_group->system_group() === EEM_Question_Group::system_personal )) {
+				// not found, remove it (but only if not a system question for the personal group with the exception of lname system question - we allow removal of it)
+				if (
+					in_array(
+						$question->system_ID(),
+						EEM_Question::instance()->required_system_questions_in_system_question_group( $question_group->system_group() )
+					)
+				) {
+					continue;
+				} else {
 					$question_group->remove_question( $question_ID );
 				}
 			}
@@ -579,40 +644,73 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		}
 
 		if ( $success !== FALSE ) {
-			$msg = $new_question_group ? sprintf( __('The %s has been created', 'event_espresso'), $this->_question_group_model->item_name() ) : sprintf( __('The %s has been updated', 'event_espresso' ), $this->_question_group_model->item_name() );
+			$msg = $new_question_group ? sprintf( esc_html__('The %s has been created', 'event_espresso'), $this->_question_group_model->item_name() ) : sprintf( esc_html__('The %s has been updated', 'event_espresso' ), $this->_question_group_model->item_name() );
 			EE_Error::add_success( $msg );
 		}
 		$this->_redirect_after_action(FALSE, '', '', array('action'=>'edit_question_group','QSG_ID'=>$QSG_ID), TRUE);
 
 	}
 
-
-
-	protected function _trash_or_restore_question_groups($trash = TRUE) {
-		return $this->_trash_or_restore_items( $this->_question_group_model, $trash );
+	/**
+	 * duplicates a question and all its question options and redirects to the new question.
+	 */
+	public function _duplicate_question() {
+		$question_ID = (int)$this->_req_data[ 'QST_ID' ];
+		$question = EEM_Question::instance()->get_one_by_ID( $question_ID );
+		if( $question instanceof EE_Question ) {
+			$new_question = $question->duplicate();
+			if( $new_question instanceof EE_Question ) {
+				$this->_redirect_after_action( true, esc_html__( 'Question', 'event_espresso' ), esc_html__( 'Duplicated', 'event_espresso' ), array('action'=>'edit_question', 'QST_ID' => $new_question->ID() ), TRUE);
+			} else {
+				global $wpdb;
+				EE_Error::add_error( sprintf( esc_html__( 'Could not duplicate question with ID %1$d because: %2$s', 'event_espresso' ), $question_ID, $wpdb->last_error ), __FILE__, __FUNCTION__, __LINE__ );
+			$this->_redirect_after_action(false, '', '', array('action'=>'default'), false );
+			}
+		} else {
+			EE_Error::add_error( sprintf( esc_html__( 'Could not duplicate question with ID %d because it didn\'t exist!', 'event_espresso' ), $question_ID ), __FILE__, __FUNCTION__, __LINE__ );
+			$this->_redirect_after_action( false, '', '', array( 'action' => 'default' ), false );
+		}
 	}
 
+
+
+	/**
+	 * @param bool $trash
+	 */
+	protected function _trash_or_restore_question_groups( $trash = TRUE) {
+		$this->_trash_or_restore_items( $this->_question_group_model, $trash );
+	}
+
+
+
+	/**
+	 *_trash_question
+	 */
 	protected function _trash_question(){
-		$success=$this->_question_model->delete_by_ID(intval($this->_req_data['QST_ID']));
+		$success=$this->_question_model->delete_by_ID( (int)$this->_req_data['QST_ID'] );
 		$query_args=array('action'=>'default','status'=>'all');
 		$this->_redirect_after_action($success, $this->_question_model->item_name($success), 'trashed', $query_args);
 	}
 
 
 
-	protected function _trash_or_restore_questions($trash=TRUE){
+	/**
+	 * @param bool $trash
+	 */
+	protected function _trash_or_restore_questions( $trash=TRUE){
 		$this->_trash_or_restore_items( $this->_question_model, $trash );
 	}
 
 
 
 	/**
-	 * Interally used to delete or restore items, using the request data. Meant to be
+	 * Internally used to delete or restore items, using the request data. Meant to be
 	 * flexible between question or question groups
-	 * @param EEM_Base $model
-	 * @param boolean $trash wehter to trash or restore
+	 *
+*@param EEM_Soft_Delete_Base $model
+	 * @param boolean $trash whether to trash or restore
 	 */
-	private function _trash_or_restore_items( EEM_Base $model, $trash = TRUE ) {
+	private function _trash_or_restore_items( EEM_Soft_Delete_Base $model, $trash = TRUE ) {
 
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
@@ -621,7 +719,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		//echo "trash $trash";
 		//var_dump($this->_req_data['checkbox']);die;
 		if ( isset( $this->_req_data['checkbox'] )) {
-			if ( isset( $this->_req_data['checkbox'] ) && ! empty( $this->_req_data['checkbox'] ) && is_array( $this->_req_data['checkbox'] )) {
+			if ( ! empty( $this->_req_data['checkbox'] ) && is_array( $this->_req_data['checkbox'] )) {
 				// if array has more than one element than success message should be plural
 				$success = count( $this->_req_data['checkbox'] ) > 1 ? 2 : 1;
 				// cycle thru bulk action checkboxes
@@ -665,16 +763,21 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 
 
-
-	public function get_trashed_questions( $per_page,$current_page = 1, $count = FALSE ) {
+	/**
+	 * @param            $per_page
+	 * @param int        $current_page
+	 * @param bool|false $count
+	 * @return \EE_Soft_Delete_Base_Class[]|int
+	 */
+	public function get_trashed_questions( $per_page, $current_page = 1, $count = FALSE ) {
 		$query_params = $this->get_query_params(EEM_Question::instance(), $per_page, $current_page);
 
 		if( $count ){
-			//note: this a subclass of EEM_Soft_Delete_Base, so thsi is actually only getting nontrashed items
+			//note: this a subclass of EEM_Soft_Delete_Base, so this is actually only getting non-trashed items
 			$where = isset( $query_params[0] ) ? array( $query_params[0] ) : array();
 			$results=$this->_question_model->count_deleted($where);
 		}else{
-			//note: this a subclass of EEM_Soft_Delete_Base, so thsi is actually only getting nontrashed items
+			//note: this a subclass of EEM_Soft_Delete_Base, so this is actually only getting non-trashed items
 			$results=$this->_question_model->get_all_deleted($query_params);
 		}
 		return $results;
@@ -682,7 +785,13 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 
 
-	public function get_question_groups( $per_page,$current_page = 1, $count = FALSE ) {
+	/**
+	 * @param            $per_page
+	 * @param int        $current_page
+	 * @param bool|false $count
+	 * @return \EE_Soft_Delete_Base_Class[]
+	 */
+	public function get_question_groups( $per_page, $current_page = 1, $count = FALSE ) {
 		$questionGroupModel=EEM_Question_Group::instance();
 		$query_params=$this->get_query_params($questionGroupModel,$per_page,$current_page);
 		if ($count){
@@ -696,7 +805,13 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 
 
-	public function get_trashed_question_groups( $per_page,$current_page = 1, $count = FALSE ) {
+	/**
+	 * @param      $per_page
+	 * @param int  $current_page
+	 * @param bool $count
+	 * @return \EE_Soft_Delete_Base_Class[]|int
+	 */
+	public function get_trashed_question_groups( $per_page, $current_page = 1, $count = FALSE ) {
 		$questionGroupModel=EEM_Question_Group::instance();
 		$query_params=$this->get_query_params($questionGroupModel,$per_page,$current_page);
 		if($count){
@@ -716,63 +831,277 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 	 */
 	public function update_question_group_order() {
 
-		$success = __( 'Question group order was updated successfully.', 'event_espresso' );
+		$success = esc_html__( 'Question group order was updated successfully.', 'event_espresso' );
 
 		// grab our row IDs
-		$row_ids = isset( $this->_req_data['row_ids'] ) && ! empty( $this->_req_data['row_ids'] ) ? explode( ',', rtrim( $this->_req_data['row_ids'], ',' )) : FALSE;
+		$row_ids = isset( $this->_req_data['row_ids'] ) && ! empty( $this->_req_data['row_ids'] )
+			? explode( ',', rtrim( $this->_req_data['row_ids'], ',' ))
+			: array();
 
-		$perpage = !empty( $this->_req_data['perpage'] ) ? (int) $this->_req_data['perpage'] : NULL;
-		$curpage = !empty( $this->_req_data['curpage'] ) ? (int) $this->_req_data['curpage'] : NULL;
+		$perpage = !empty( $this->_req_data['perpage'] )
+			? (int) $this->_req_data['perpage']
+			: NULL;
+		$curpage = !empty( $this->_req_data['curpage'] )
+			? (int) $this->_req_data['curpage']
+			: NULL;
 
-		if ( is_array( $row_ids )) {
+		if ( ! empty( $row_ids ) ) {
 			//figure out where we start the row_id count at for the current page.
 			$qsgcount = empty( $curpage ) ? 0 : ($curpage - 1 ) * $perpage;
 
-			global $wpdb;
-			for ( $i = 0; $i < count($row_ids); $i++ ) {
+			$row_count = count( $row_ids );
+			for( $i = 0; $i < $row_count; $i++ ) {
 				//Update the questions when re-ordering
-				if ( EEM_Question_Group::instance()->update ( array( 'QSG_order' => $qsgcount ), array(array( 'QSG_ID' => $row_ids[$i] ))) === FALSE ) {
-					$success = FALSE;
+				$updated = EEM_Question_Group::instance()->update(
+					array( 'QSG_order' => $qsgcount ),
+					array( array( 'QSG_ID' => $row_ids[ $i ] ) )
+				);
+				if ( $updated === false ) {
+					$success = false;
 				}
 				$qsgcount++;
 			}
 		} else {
-			$success = FALSE;
+			$success = false;
 		}
 
-		$errors = ! $success ? __( 'An error occurred. The question group order was not updated.', 'event_espresso' ) : FALSE;
+		$errors = ! $success
+			? esc_html__( 'An error occurred. The question group order was not updated.', 'event_espresso' )
+			: false;
 
-		echo json_encode( array( 'return_data' => FALSE, 'success' => $success, 'errors' => $errors ));
+		echo json_encode( array( 'return_data' => false, 'success' => $success, 'errors' => $errors ));
 		die();
 
 	}
 
 
 
-
-
-	/***************************************		REGISTRATION SETTINGS 		***************************************/
-
+	/***************************************        REGISTRATION SETTINGS        ***************************************/
 
 
 
-
+	/**
+	 * _reg_form_settings
+	 *
+	 * @throws \EE_Error
+	 */
 	protected function _reg_form_settings() {
 		$this->_template_args['values'] = $this->_yes_no_values;
-		$this->_template_args = apply_filters( 'FHEE__Extend_Registration_Form_Admin_Page___reg_form_settings___template_args', $this->_template_args );
+		add_action(
+			'AHEE__Extend_Registration_Form_Admin_Page___reg_form_settings_template',
+			array( $this, 'email_validation_settings_form' ),
+			2
+		);
+		$this->_template_args = (array)apply_filters(
+			'FHEE__Extend_Registration_Form_Admin_Page___reg_form_settings___template_args',
+			$this->_template_args
+		);
 		$this->_set_add_edit_form_tags( 'update_reg_form_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
-		$this->_template_args['admin_page_content'] = EEH_Template::display_template( REGISTRATION_FORM_CAF_TEMPLATE_PATH . 'reg_form_settings.template.php', $this->_template_args, TRUE );
+		$this->_template_args['admin_page_content'] = EEH_Template::display_template(
+			REGISTRATION_FORM_CAF_TEMPLATE_PATH . 'reg_form_settings.template.php',
+			$this->_template_args,
+			TRUE
+		);
 		$this->display_admin_page_with_sidebar();
 	}
 
 
 
-
+	/**
+	 * _update_reg_form_settings
+	 */
 	protected function _update_reg_form_settings() {
-		EE_Registry::instance()->CFG->registration = apply_filters( 'FHEE__Extend_Registration_Form_Admin_Page___update_reg_form_settings__CFG_registration', EE_Registry::instance()->CFG->registration );
-		$success = $this->_update_espresso_configuration( __('Registration Form Options', 'event_espresso'), EE_Registry::instance()->CFG, __FILE__, __FUNCTION__, __LINE__ );
-		$this->_redirect_after_action( $success, __('Registration Form Options', 'event_espresso'), 'updated', array( 'action' => 'view_reg_form_settings' ) );
+		EE_Registry::instance()->CFG->registration = $this->update_email_validation_settings_form(
+			EE_Registry::instance()->CFG->registration
+		);
+		EE_Registry::instance()->CFG->registration = apply_filters(
+			'FHEE__Extend_Registration_Form_Admin_Page___update_reg_form_settings__CFG_registration',
+			EE_Registry::instance()->CFG->registration
+		);
+		$success = $this->_update_espresso_configuration(
+			esc_html__('Registration Form Options', 'event_espresso'),
+			EE_Registry::instance()->CFG,
+			__FILE__, __FUNCTION__, __LINE__
+		);
+		$this->_redirect_after_action( $success, esc_html__('Registration Form Options', 'event_espresso'), 'updated', array( 'action' => 'view_reg_form_settings' ) );
 	}
+
+
+
+	/**
+	 * email_validation_settings_form
+	 *
+	 * @access    public
+	 * @return    void
+	 * @throws \EE_Error
+	 */
+	public function email_validation_settings_form() {
+		echo $this->_email_validation_settings_form()->get_html();
+	}
+
+
+
+	/**
+	 * _email_validation_settings_form
+	 *
+	 * @access protected
+	 * @return EE_Form_Section_Proper
+	 * @throws \EE_Error
+	 */
+	protected function _email_validation_settings_form() {
+        return new EE_Form_Section_Proper(
+			array(
+				'name'            => 'email_validation_settings',
+				'html_id'         => 'email_validation_settings',
+				'layout_strategy' => new EE_Admin_Two_Column_Layout(),
+				'subsections'     => array(
+					'email_validation_hdr'           => new EE_Form_Section_HTML(
+						EEH_HTML::h2( esc_html__( 'Email Validation Settings', 'event_espresso' ) )
+					),
+					'email_validation_level' => new EE_Select_Input(
+						array(
+							'basic'      => esc_html__( 'Basic', 'event_espresso' ),
+							'wp_default' => esc_html__( 'WordPress Default', 'event_espresso' ),
+							'i18n'       => esc_html__( 'International', 'event_espresso' ),
+							'i18n_dns'   => esc_html__( 'International + DNS Check', 'event_espresso' ),
+						),
+						array(
+							'html_label_text' => esc_html__( 'Email Validation Level', 'event_espresso' )
+							                     . EEH_Template::get_help_tab_link( 'email_validation_info' ),
+							'html_help_text'  => esc_html__( 'These levels range from basic validation ( ie: text@text.text ) to more advanced checks against international email addresses (ie: üñîçøðé@example.com ) with additional MX and A record checks to confirm the domain actually exists. More information on on each level can be found within the help section.', 'event_espresso'),
+							'default' => isset( EE_Registry::instance()->CFG->registration->email_validation_level )
+								? EE_Registry::instance()->CFG->registration->email_validation_level
+								: 'wp_default',
+							'required'        => false
+						)
+					),
+				)
+			)
+		);
+	}
+
+
+	/**
+	 * update_email_validation_settings_form
+	 *
+	 * @access    public
+	 * @param \EE_Registration_Config $EE_Registration_Config
+	 * @return \EE_Registration_Config
+	 */
+	public function update_email_validation_settings_form( EE_Registration_Config $EE_Registration_Config ) {
+        $prev_email_validation_level = $EE_Registration_Config->email_validation_level;
+        try {
+			$email_validation_settings_form = $this->_email_validation_settings_form();
+			// if not displaying a form, then check for form submission
+			if ( $email_validation_settings_form->was_submitted() ) {
+				// capture form data
+				$email_validation_settings_form->receive_form_submission();
+				// validate form data
+				if ( $email_validation_settings_form->is_valid() ) {
+					// grab validated data from form
+					$valid_data = $email_validation_settings_form->valid_data();
+					if ( isset( $valid_data['email_validation_level'] ) ) {
+					    $email_validation_level = $valid_data['email_validation_level'];
+                        // now if they want to use international email addresses
+                        if ( $email_validation_level === 'i18n' || $email_validation_level === 'i18n_dns' ) {
+                            // in case we need to reset their email validation level,
+                            // make sure that the previous value wasn't already set to one of the i18n options.
+                            if ( $prev_email_validation_level === 'i18n' || $prev_email_validation_level === 'i18n_dns' ) {
+                                // if so, then reset it back to "basic" since that is the only other option that,
+                                // despite offering poor validation, supports i18n email addresses
+                                $prev_email_validation_level = 'basic';
+                            }
+                            // confirm our i18n email validation will work on the server
+                            if ( ! $this->_verify_pcre_support($EE_Registration_Config, $email_validation_level)) {
+                                // or reset email validation level to previous value
+                                $email_validation_level = $prev_email_validation_level;
+                            }
+                        }
+                        $EE_Registration_Config->email_validation_level = $email_validation_level;
+                    } else {
+						EE_Error::add_error(
+							esc_html__(
+								'Invalid or missing Email Validation settings. Please refresh the form and try again.',
+								'event_espresso'
+							),
+                            __FILE__, __FUNCTION__, __LINE__
+                        );
+					}
+				} else {
+					if ( $email_validation_settings_form->submission_error_message() !== '' ) {
+						EE_Error::add_error(
+							$email_validation_settings_form->submission_error_message(),
+                            __FILE__, __FUNCTION__, __LINE__
+                        );
+					}
+				}
+			}
+		} catch ( EE_Error $e ) {
+			$e->get_error();
+		}
+		return $EE_Registration_Config;
+	}
+
+
+
+    /**
+     * confirms that the server's PHP version has the PCRE module enabled,
+     * and that the PCRE version works with our i18n email validation
+     *
+     * @param \EE_Registration_Config $EE_Registration_Config
+     * @param string                  $email_validation_level
+     * @return bool
+     */
+    private function _verify_pcre_support(EE_Registration_Config $EE_Registration_Config, $email_validation_level)
+    {
+        // first check that PCRE is enabled
+        if ( ! defined('PREG_BAD_UTF8_ERROR')) {
+            EE_Error::add_error(
+                sprintf(
+                    esc_html__(
+                        'We\'re sorry, but it appears that your server\'s version of PHP was not compiled with PCRE unicode support.%1$sPlease contact your hosting company and ask them whether the PCRE compiled with your version of PHP on your server can be been built with the "--enable-unicode-properties" and "--enable-utf8" configuration switches to enable more complex regex expressions.%1$sIf they are unable, or unwilling to do so, then your server will not support international email addresses using UTF-8 unicode characters. This means you will either have to lower your email validation level to "Basic" or "WordPress Default", or switch to a hosting company that has/can enable PCRE unicode support on the server.',
+                        'event_espresso'
+                    ),
+                    '<br />'
+                ),
+                __FILE__,
+                __FUNCTION__,
+                __LINE__
+            );
+            return false;
+        } else {
+            // PCRE support is enabled, but let's still
+            // perform a test to see if the server will support it.
+            // but first, save the updated validation level to the config,
+            // so that the validation strategy picks it up.
+            // this will get bumped back down if it doesn't work
+            $EE_Registration_Config->email_validation_level = $email_validation_level;
+            try {
+                $email_validator = new EE_Email_Validation_Strategy();
+                $i18n_email_address = apply_filters(
+                    'FHEE__Extend_Registration_Form_Admin_Page__update_email_validation_settings_form__i18n_email_address',
+                    'jägerjürgen@deutschland.com'
+                );
+                $email_validator->validate($i18n_email_address);
+            } catch (Exception $e) {
+                EE_Error::add_error(
+                    sprintf(
+                        esc_html__(
+                            'We\'re sorry, but it appears that your server\'s configuration will not support the "International" or "International + DNS Check" email validation levels.%1$sTo correct this issue, please consult with your hosting company regarding your server\'s PCRE settings.%1$sIt is recommended that your PHP version be configured to use PCRE 8.10 or newer.%1$sMore information regarding PCRE versions and installation can be found here: %2$s',
+                            'event_espresso'
+                        ),
+                        '<br />',
+                        '<a href="http://php.net/manual/en/pcre.installation.php" target="_blank">http://php.net/manual/en/pcre.installation.php</a>'
+                    ),
+                    __FILE__, __FUNCTION__, __LINE__
+                );
+                return false;
+            }
+        }
+        return true;
+    }
+
+
 
 }

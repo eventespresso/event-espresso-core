@@ -44,23 +44,29 @@ class EE_Billing_Attendee_Info_Form extends EE_Billing_Info_Form{
 
 	/**
 	 * Sets the defaults for the billing form according to the attendee's details
-	 * @param int | \EE_Attendee $attendee
+	 * @param EE_Attendee $attendee
 	 */
 	public function populate_from_attendee( $attendee ){
 		$attendee = EEM_Attendee::instance()->ensure_is_obj($attendee);
 		/** @var $attendee EE_Attendee */
-		$this->populate_defaults(array(
-			'first_name'=>$attendee->fname(),
-			'last_name'=>$attendee->lname(),
-			'email'=>$attendee->email(),
-			'address'=>$attendee->address(),
-			'address2'=>$attendee->address2(),
-			'city'=>$attendee->city(),
-			'state'=> $attendee->state_ID(),
-			'country'=> $attendee->country_ID(),
-			'zip'=>$attendee->zip(),
-			'phone'=>$attendee->phone(),
-		));
+		$this->populate_defaults( 
+			apply_filters( 'FHEE__EE_Billing_Attendee_Info_Form__populate_from_attendee',
+				array(
+					'first_name'=>$attendee->fname(),
+					'last_name'=>$attendee->lname(),
+					'email'=>$attendee->email(),
+					'address'=>$attendee->address(),
+					'address2'=>$attendee->address2(),
+					'city'=>$attendee->city(),
+					'state'=> $attendee->state_ID(),
+					'country'=> $attendee->country_ID(),
+					'zip'=>$attendee->zip(),
+					'phone'=>$attendee->phone(),
+				),
+				$attendee,
+				$this 
+			)
+		);
 	}
 
 

@@ -33,9 +33,9 @@
 //				'VNU_name'=>new EE_Plain_Text_Field('post_title', __("Venue Name", "event_espresso"), false, ''),
 //				'VNU_desc'=>new EE_Simple_HTML_Field('post_content', __("Venue Description", "event_espresso"), true),
 //				'VNU_identifier'=>new EE_Slug_Field('post_name', __("Venue Identifier", "event_espresso"), false,''),
-//				'VNU_created'=>new EE_Datetime_Field('post_date', __("Date Venue Created", "event_espresso"), true,current_time('timestamp')),
+//				'VNU_created'=>new EE_Datetime_Field('post_date', __("Date Venue Created", "event_espresso"), true,time()),
 //				'VNU_short_desc'=>new EE_Plain_Text_Field('post_excerpt', __("Short Description of Venue", "event_espresso"), true),
-//				'VNU_modified'=>new EE_Datetime_Field('post_modified', __("Venue Modified Date", "event_espresso"), true,current_time('timestamp')),
+//				'VNU_modified'=>new EE_Datetime_Field('post_modified', __("Venue Modified Date", "event_espresso"), true,time()),
 //				'VNU_wp_user'=>new EE_Integer_Field('post_author', __("Venue Creator", "event_espresso"), false, 1),
 //				'parent'=>new EE_Integer_Field('post_parent', __("Venue Parent ID", "event_espresso"), true),
 //				'VNU_order'=>new EE_Integer_Field('menu_order', __("Venue order", "event_espresso"), false, 1),
@@ -136,7 +136,7 @@ function __construct() {
 					'post_modified'=>current_time('mysql'),//VNU_modified
 					'post_modified_gmt'=>current_time('mysql',true),
 					'post_author'=>$old_venue['wp_user'],//VNU_wp_user
-					'post_parent'=>null,//parent
+					'post_parent'=>0,//parent
 					'menu_order'=>0,//VNU_order
 					'post_type'=>'espresso_venues'//post_type
 				);
@@ -158,7 +158,7 @@ function __construct() {
 				$insertion_array,
 				$datatypes_array);
 		if( ! $success ){
-			$this->add_error($this->get_migration_script->_create_error_message_for_db_insertion($this->_old_table, $old_venue, $this->_new_table, $insertion_array, $datatypes_array));
+			$this->add_error($this->get_migration_script()->_create_error_message_for_db_insertion($this->_old_table, $old_venue, $this->_new_table, $insertion_array, $datatypes_array));
 			return 0;
 		}
 		return $wpdb->insert_id;

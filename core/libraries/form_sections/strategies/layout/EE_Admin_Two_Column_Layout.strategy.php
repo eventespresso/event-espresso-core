@@ -27,9 +27,9 @@ class EE_Admin_Two_Column_Layout extends EE_Two_Column_Layout {
 	 */
 	public function layout_subsection( $form_section ){
 		if ( $form_section instanceof EE_Form_Section_Proper ) {
-			return EEH_HTML::no_row( $form_section->get_html_and_js(), 2 );
+			return EEH_HTML::no_row( $form_section->get_html(), 2 );
 		} else if ( $form_section instanceof EE_Form_Section_HTML ) {
-			return $form_section->get_html_and_js();
+			return EEH_HTML::no_row( $form_section->get_html(), 2 );
 		}
 		return '';
 	}
@@ -54,13 +54,7 @@ class EE_Admin_Two_Column_Layout extends EE_Two_Column_Layout {
 			$input->set_rows( 4 );
 			$input->set_cols( 60 );
 		}
-		// no need to repeat the label for checkboxes, radios, etc
-		if ( $input instanceof EE_Form_Input_With_Options_Base ) {
-			// so if label is in the input html, let's remove that
-			$input_html = str_replace( $input->html_label_text(), '', $input->get_html_for_input() );
-		} else {
-			$input_html = $input->get_html_for_input();
-		}
+		$input_html = $input->get_html_for_input();
 		// maybe add errors and help text ?
 		$input_html .= $input->get_html_for_errors() != '' ? EEH_HTML::nl() . $input->get_html_for_errors() : '';
 		$input_html .= $input->get_html_for_help() != '' ? EEH_HTML::nl() . $input->get_html_for_help() : '';

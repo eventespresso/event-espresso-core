@@ -65,10 +65,14 @@ class EE_PMT_Bank extends EE_PMT_Base{
 					'html_label_text'=>  sprintf(__("Title %s", "event_espresso"),  $this->get_help_tab_link()),
 					'default'=>  __("Electronic Funds Transfers", 'event_espresso')
 				)),
-				'payment_instructions'=>new EE_Text_Area_Input(array(
+				'payment_instructions'=>new EE_Text_Area_Input( array(
 					'html_label_text'=>  sprintf(__("Payment Instructions %s", "event_espresso"),  $this->get_help_tab_link()),
 					'html_help_text' => __( 'Provide instructions on how registrants can send the bank draft payment. Eg, mention your account name, bank account number, bank name, bank routing code, and bank address, etc.', 'event_espresso' ),
-					'default'=>  __('Please initiate an electronic payment using the following bank information: <br/> Account Owner: Luke Skywalker <br/>Bank Account # 1234567890 <br/>Bank Name: Rebellion Bank <br/>Routing Number: 12345 <br/>Bank Address: 12345 Wookie Rd., Planet Corellian. <br/>  Payment must be received within 48 hours of event date.', 'event_espresso')
+					'default'=> sprintf(
+						__('Please initiate an electronic payment using the following bank information: %1$sAccount Owner: Luke Skywalker%1$sBank Account # 1234567890%1$sBank Name: Rebellion Bank%1$sRouting Number: 12345%1$sBank Address: 12345 Wookie Rd., Planet Corellian.%1$sPayment must be received within 48 hours of event date.', 'event_espresso'),
+						"\n"
+					),
+					'validation_strategies' => array( new EE_Full_HTML_Validation_Strategy() ),
 				)),
 			),
 			'exclude'=>array('PMD_debug_mode')
@@ -100,7 +104,6 @@ class EE_PMT_Bank extends EE_PMT_Base{
 	 * @return string
 	 */
 	public function payment_overview_content(EE_Payment $payment){
-		EE_Registry::instance()->load_helper('Template');
 		$extra_meta_for_payment_method = $this->_pm_instance->all_extra_meta_array();
 		$template_vars = array_merge(
 						array(
@@ -110,9 +113,9 @@ class EE_PMT_Bank extends EE_PMT_Base{
 							'payment_instructions'=>'',
 							),
 						$extra_meta_for_payment_method);
-		return EEH_Template::display_template($this->_file_folder.'templates'.DS.'bank_payment_details_content.template.php',
-				$template_vars,
-				true);
+		return EEH_Template::locate_template(
+				'payment_methods' . DS . 'Bank'. DS . 'templates' . DS . 'bank_payment_details_content.template.php',
+				$template_vars);
 	}
 
 
