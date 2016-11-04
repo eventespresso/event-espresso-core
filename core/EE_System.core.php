@@ -620,6 +620,7 @@ final class EE_System
         //if current user is an admin and it's not an ajax or rest request
         if (
             ! (defined('DOING_AJAX') && DOING_AJAX)
+            && ! (defined('REST_REQUEST') && REST_REQUEST)
             && ! isset($notices['errors'])
             && apply_filters(
                 'FHEE__EE_System__redirect_to_about_ee__do_redirect',
