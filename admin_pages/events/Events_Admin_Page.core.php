@@ -1081,10 +1081,12 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				//make sure the $dtt_id here is saved just in case after the add_relation_to() the autosave replaces it.  We need to do this so we dont' TRASH the parent DTT.
 				$saved_dtts[ $DTM->ID() ] = $DTM;
 			} else {
-				$DTM = EE_Registry::instance()->load_class( 'Datetime', array( $datetime_values ), false, false );
-				$DTM->set_date_format( $incoming_date_formats[0] );
-				$DTM->set_time_format( $incoming_date_formats[1] );
-				$DTM->set_timezone( $evtobj->get_timezone() );
+				$DTM = EE_Registry::instance()->load_class(
+					'Datetime',
+					array( $datetime_values, $evtobj->get_timezone(), $incoming_date_formats ),
+					false,
+					false
+				);
 				foreach ( $datetime_values as $field => $value ) {
 					$DTM->set( $field, $value );
 				}
