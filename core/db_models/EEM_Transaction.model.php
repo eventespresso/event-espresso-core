@@ -187,13 +187,14 @@ class EEM_Transaction extends EEM_Base
     public function get_revenue_per_event_report($period = '-1 month')
     {
         global $wpdb;
-        $transaction_table       = $wpdb->prefix . 'esp_transaction';
-        $registration_table      = $wpdb->prefix . 'esp_registration';
-        $event_table             = $wpdb->posts;
-        $payment_table           = $wpdb->prefix . 'esp_payment';
-        $sql_date                = date('Y-m-d H:i:s', strtotime($period));
-        $approved_payment_status = EEM_Payment::status_id_approved;
-        $extra_event_on_join     = '';
+        $transaction_table          = $wpdb->prefix . 'esp_transaction';
+        $registration_table         = $wpdb->prefix . 'esp_registration';
+        $registration_payment_table = $wpdb->prefix . 'esp_registration_payment';
+        $event_table                = $wpdb->posts;
+        $payment_table              = $wpdb->prefix . 'esp_payment';
+        $sql_date                   = date('Y-m-d H:i:s', strtotime($period));
+        $approved_payment_status    = EEM_Payment::status_id_approved;
+        $extra_event_on_join        = '';
         //exclude events not authored by user if permissions in effect
         if ( ! EE_Registry::instance()->CAP->current_user_can('ee_read_others_registrations', 'reg_per_event_report')) {
             $extra_event_on_join = ' AND Event.post_author = ' . get_current_user_id();
@@ -205,19 +206,26 @@ class EEM_Transaction extends EEM_Base
 			SUM(Transaction_Event.paid) AS revenue
 			FROM
 				(
-					SELECT
-						DISTINCT Payment.TXN_ID,
-						Event.post_title AS event_name,
-						Payment.PAY_amount AS paid
-					FROM $transaction_table AS TransactionTable
-						JOIN $registration_table AS Registration
-							ON Registration.TXN_ID = TransactionTable.TXN_ID
-						JOIN $payment_table AS Payment
-							ON Payment.TXN_ID = Registration.TXN_ID
-							AND Payment.PAY_timestamp > '$sql_date'
-							AND Payment.STS_ID = '$approved_payment_status'
-						JOIN $event_table AS Event ON Registration.EVT_ID = Event.ID
-							$extra_event_on_join
+				    SELECT
+                        Event.post_title AS event_name,
+                        Registration_Payment.RPY_amount AS paid
+                    FROM
+                        $registration_payment_table as Registration_Payment
+                    JOIN
+                        $registration_table as Registration
+                            ON Registration.REG_ID = Registration_Payment.REG_ID
+                    JOIN
+                        $transaction_table as TransactionTable
+                            ON Registration.TXN_ID = TransactionTable.TXN_ID
+                    JOIN
+                        $payment_table as Payment
+                            ON Payment.TXN_ID = Registration.TXN_ID
+                            AND Payment.PAY_timestamp > '$sql_date'
+                            AND Payment.STS_ID = '$approved_payment_status'
+                    JOIN
+                        $event_table AS Event
+                            ON Registration.EVT_ID = Event.ID
+					$extra_event_on_join
 				) AS Transaction_Event
 			GROUP BY event_name",
             OBJECT
