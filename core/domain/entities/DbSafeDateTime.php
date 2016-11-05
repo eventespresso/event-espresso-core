@@ -20,7 +20,7 @@ class DbSafeDateTime extends \DateTime {
 	/**
 	 * @type string db_safe_timestamp_format
 	 */
-	const db_safe_timestamp_format = \EE_Datetime_Field::mysql_timestamp_format . ' O e';
+	const db_safe_timestamp_format = 'Y-m-d H:i:s O e';
 
 	/**
 	 * DateTime object converted to a string that includes the date, time, UTC offset, and timezone identifier
