@@ -224,7 +224,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			//if we have an id then let's get existing object first and then set the new values.  Otherwise we instantiate a new object for save.
 
 			if ( !empty( $dtt['DTT_ID'] ) ) {
-				$DTM = EE_Registry::instance()->load_model('Datetime', array($timezone) )->get_one_by_ID($dtt['DTT_ID'] );
+				$DTM = EE_Registry::instance()->load_model( 'Datetime', array($timezone) )->get_one_by_ID($dtt['DTT_ID'] );
 
 				//set date and time format according to what is set in this class.
 				$DTM->set_date_format( $this->_date_format_strings['date'] );
@@ -239,7 +239,16 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				$saved_dtt_ids[$DTM->ID()] = $DTM->ID();
 
 			} else {
-				$DTM = EE_Registry::instance()->load_class('Datetime', array( $datetime_values, $timezone ), FALSE, FALSE );
+				$DTM = EE_Registry::instance()->load_class(
+					'Datetime',
+					array(
+						$datetime_values,
+						$timezone,
+						array( $this->_date_format_strings['date'], $this->_date_format_strings['time'])
+					),
+					false,
+					false
+				);
 
 				//reset date and times to match the format
 				$DTM->set_date_format( $this->_date_format_strings['date'] );
