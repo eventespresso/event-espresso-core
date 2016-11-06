@@ -436,6 +436,17 @@ class EE_Caf_Messages
     }
     
     
+    /**
+     * Callback for FHEE__EE_Recipient_List_Shortcodes__parser_after filter (dynamic filter).
+     *
+     * @param string         $parsed           The original parsed content for the shortcode
+     * @param string         $shortcode        The shortcode being parsed
+     * @param array          $data             The shortcode parser data array
+     * @param array          $extra_data       The shortcode parser extra data array
+     * @param \EE_Shortcodes $shortcode_parser Shortcode parser.
+     *
+     * @return string
+     */
     public function additional_recipient_details_parser($parsed, $shortcode, $data, $extra_data, $shortcode_parser)
     {
         
@@ -462,6 +473,7 @@ class EE_Caf_Messages
                 
                 //if the context is main_content then get all answers for all registrations on this attendee
                 if ($data['data'] instanceof EE_Messages_Addressee) {
+                    
                     foreach ($registrations_on_attendee as $reg) {
                         if ($reg instanceof EE_Registration) {
                             $anss = ! empty($recipient->registrations[$reg->ID()]['ans_objs']) ? $recipient->registrations[$reg->ID()]['ans_objs'] : array();
@@ -521,6 +533,17 @@ class EE_Caf_Messages
     }
     
     
+    /**
+     * Callback for FHEE__EE_Primary_Registration_List_Shortcodes__parser_after filter (dynamic filter).
+     *
+     * @param string         $parsed           The original parsed content for the shortcode
+     * @param string         $shortcode        The shortcode being parsed
+     * @param array          $data             The shortcode parser data array
+     * @param array          $extra_data       The shortcode parser extra data array
+     * @param \EE_Shortcodes $shortcode_parser Shortcode parser.
+     *
+     * @return string
+     */
     public function additional_primary_registration_details_parser(
         $parsed,
         $shortcode,
