@@ -6,8 +6,8 @@
 /** @type EE_Data_Migration_Script_Base $most_recent_migration */
 ?>
 <?php if ( $success ) { ?>
-	<h1><?php _e( "Data Migration Report Sent", "event_espresso" ); ?></h1>
-	<p><?php _e( "A migration crash report email was sent to Event Espresso. You should hear back from us soon.", "event_espresso" ); ?></p>
+	<h1><?php _e( "Database Update Crash Report Sent", "event_espresso" ); ?></h1>
+	<p><?php _e( "A crash report email was sent to Event Espresso. You should hear back from us soon.", "event_espresso" ); ?></p>
 <?php } else {//didn't send email properly ?>
 	<h1><?php _e( "Migration Report not sent", "event_espresso" ); ?></h1>
 	<p><?php _e( "An error occurred and we were not able to automatically send a report to Event Espresso support.", "event_espresso" ); ?></p>
@@ -36,7 +36,7 @@
 					<p>
 						<?php
 						printf(
-							__( 'First, %1$s check the forums %2$s to see if there is a solution before re-attempting to migrate. Often it helps to deactivate other plugins which may have conflicts; or it may help to add %3$s to your %4$s wp-config.php%5$s (which will make the migrations run slower, but may resolve any memory exhaustion errors.', 'event_espresso' ),
+							__( 'First, %1$s check the forums %2$s to see if there is a solution before re-attempting the Database Update. Often it helps to deactivate other plugins which may have conflicts; or it may help to add %3$s to your %4$s wp-config.php%5$s (which will make the update run slower, but may resolve any memory exhaustion errors.', 'event_espresso' ),
 							"<a href='" . EE_SUPPORT_EMAIL . "' target='_blank'>",
 							'</a>',
 							'<pre lang="php">define( EE_MIGRATION_STEP_SIZE, 10 );</pre>',
@@ -49,7 +49,7 @@
 					<p>
 						<?php
 						printf(
-							__( 'To retry migrating your data: restore to the backup you made before the migration and reactivate EE (and any addons you are using) and re-run the migration scripts. If you did not make a database migration and are migrating from EE3: delete your EE4 data (use the %1$s Reset/Delete Data tab above%2$s), and then reactivate EE4, and then re-run the migration scripts. If you did not make a database backup, are not migrating from EE3, have found a solution to the fatal error you received, and are willing to possibly have some data lost, %3$sattempt to continue migrating%2$s.', 'event_espresso' ),
+							__( 'To retry updating your data: restore to the backup you made before the update and reactivate EE (and any addons you are using) and re-run the Database Update. If you did not make a database backup and are migrating from EE3: delete your EE4 data (use the %1$s Reset/Delete Data tab above%2$s), and then reactivate EE4, and then re-run the migration and updates. If you did not make a database backup, are only updating from a previous install of EE4, have found a solution to the fatal error you received, and are willing to possibly have some data lost, %3$sattempt to continue migrating%2$s.', 'event_espresso' ),
 							"<a href='$reset_db_page_url'>",
 							"</a>",
 							"<a class='button-primary' href='$reattempt_action_url'>"
@@ -79,7 +79,7 @@
 				<td>
 					<?php
 					printf(
-						__( 'If you are ok with losing all the EE %1$s data, you can skip the migrations and %2$s use EE4 with only default Data%3$s', 'event_espresso' ),
+						__( 'If you are ok with losing all the EE %1$s data, you can skip the Database Updates and %2$s use EE4 with only default Data%3$s', 'event_espresso' ),
 						$most_recent_migration->slug(),
 						"<a id='do-not-migrate' class='do-not-migrate button-primary' href='$reset_db_action_url'>",
 						"</a>"
@@ -95,7 +95,7 @@
 					<p>
 					<?php
 					printf(
-						__( 'Then we suggest you re-activate the old version of EE %3$s and restore your database to the backup you made just before migrating . If you didn\'t backup your database and are migrating from EE3, you can also delete your EE4 data (use on the %1$s"Reset/Delete Data" tab above%2$s), and then reactivate EE3 from the plugins page. Note: some of your EE3 shortcodes may have been changed to their EE4 equivalents, so you will need to change them back.', 'event_espresso' ),
+						__( 'Then we suggest you re-activate the old version of EE %3$s and restore your database to the backup you made just before the Database Update . If you didn\'t backup your database and are migrating from EE3, you can also delete your EE4 data (use on the %1$s"Reset/Delete Data" tab above%2$s), and then reactivate EE3 from the plugins page. Note: some of your EE3 shortcodes may have been changed to their EE4 equivalents, so you will need to change them back.', 'event_espresso' ),
 						"<a href='$reset_db_page_url'>",
 						"</a>",
 						$most_recent_migration->slug()

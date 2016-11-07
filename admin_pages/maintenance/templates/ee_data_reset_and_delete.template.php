@@ -35,7 +35,7 @@
 	<p><?php _e('If you know for certain that you will no longer be using Event Espresso and you wish to remove ALL traces of the plugin from your system, then perform the following steps.', 'event_espresso');?></p>
 	<p class="important-notice"><?php printf( __('Please note: %sThis is permanent and can NOT be undone.%s', 'event_espresso'), '<strong>', '</strong>' ); ?><br/></p>
 	<ol>
-		<li><?php  printf( __('First, click the button below to permanently delete all Event Espresso tables, records, and options from your WordPress database . If you receive a "500 Internal Server Error" or a blank white screen, it means the server has timed out due to the large number of records being migrated. This is not a cause for concern. Simply %1$srefresh the page%2$s and the migration will continue where it left off.', 'event_espresso'), '<strong>', '</strong>' );?></li>
+		<li><?php  printf( __('First, click the button below to permanently delete all Event Espresso tables, records, and options from your WordPress database . If you receive a "500 Internal Server Error" or a blank white screen, it means the server has timed out due to the large number of records being updated. This is not a cause for concern. Simply %1$srefresh the page%2$s and the Database Update will continue where it left off.', 'event_espresso'), '<strong>', '</strong>' );?></li>
 		<li><?php printf( __('Then, locate Event Espresso on the WordPress Plugins page, and click on %sDelete%s', 'event_espresso'), '<strong>', '</strong>' ); ?></li>
         <li><?php printf( __('Once you are on the Delete Plugin page, click on %sYes, Delete these files and data%s', 'event_espresso'), '<strong>', '</strong>' ); ?></li>
 	</ol>

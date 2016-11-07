@@ -138,7 +138,7 @@ if ($show_backup_db_text) { ?>
                 </ul>
                 <br/>
                 <?php if (count($script_names) > 1) { ?>
-                    <p><?php esc_html_e("Please note: after each task is completed you will need to continue the data migration, or report an error to Event Espresso.",
+                    <p><?php esc_html_e("Please note: after each task is completed you will need to continue the Database Update, or report an error to Event Espresso.",
                                 "event_espresso"); ?></p>
                 <?php } ?>
 
