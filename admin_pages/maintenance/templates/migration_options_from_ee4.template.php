@@ -1,3 +1,23 @@
+<?php
+/**
+ * For displaying the migration options when the old version was an EE4.x version. In this case we only provide
+ * the admin the option to migrate, and if they really want to nuke all their EE4 data, there's a link to the maintenance
+ * page.
+ *
+ * @var array                         $script_names array of strings
+ * @var EE_Data_Migration_Script_Base $most_recent_migration
+ * @var boolean                       $show_backup_db_text
+ * @var boolean                       $show_continue_current_migration_script
+ * @var boolean                       $show_most_recent_migration
+ * @var boolean                       $show_maintenance_switch
+ * @var boolean                       $show_migration_progress
+ * @var string                        $update_migration_script_page_link
+ * @var string                        $current_db_state
+ * @var string                        $next_db_state
+ * @var string                        $ultimate_db_state
+ * @var string                        $reset_db_page_link
+ */
+?>
 <div id="migration-options-dv">
     <div class="ee-table-wrap">
         <table>

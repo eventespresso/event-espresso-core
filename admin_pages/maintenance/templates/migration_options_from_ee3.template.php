@@ -1,3 +1,26 @@
+<?php
+/**
+ * For displaying the migration options when the old version was an EE3.x version. In this case we provide the option to
+ * migrate, and also the option to just start using EE4 without migrating their EE3 data. If they choose to NOT migrate,
+ * the EE3 data is left mostly intact (we do, however, rewrite some EE3 shortcodes into EE4 shortcodes though), so
+ * it's mostly non-destructive (whereas this same option, when migrating from EE4.x to EE4.x+1, would really nuke all
+ * the EE4 data).
+ *
+ * @var array                         $script_names array of strings
+ * @var EE_Data_Migration_Script_Base $most_recent_migration
+ * @var boolean                       $show_backup_db_text
+ * @var boolean                       $show_continue_current_migration_script
+ * @var boolean                       $show_most_recent_migration
+ * @var boolean                       $show_maintenance_switch
+ * @var boolean                       $show_migration_progress
+ * @var string                        $update_migration_script_page_link
+ * @var string                        $current_db_state
+ * @var string                        $next_db_state
+ * @var string                        $ultimate_db_state
+ * @var string                        $reset_db_page_link
+ */
+?>
+
 <div id="migration-options-dv">
     <h2>
         <span class="dashicons dashicons-admin-tools"></span>

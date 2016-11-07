@@ -3,18 +3,19 @@
  * For displaying the migration page. Does not allow the user to migrate until all known EE
  * addons are updated from PUE. Using AJAX to run the migration and update the progress bar
  *
- * @type array                         $script_names array of strings
- * @type EE_Data_Migration_Script_Base $most_recent_migration
- * @type boolean                       $show_backup_db_text
- * @type boolean                       $show_continue_current_migration_script
- * @type boolean                       $show_most_recent_migration
- * @type boolean                       $show_maintenance_switch
- * @type boolean                       $show_migration_progress
- * @type string                        $update_migration_script_page_link
- * @type string                        $current_db_state
- * @type string                        $next_db_state
- * @type string                        $ultimate_db_state
- * @type string                        $reset_db_page_link
+ * @var array                         $script_names array of strings
+ * @var EE_Data_Migration_Script_Base $most_recent_migration
+ * @var boolean                       $show_backup_db_text
+ * @var boolean                       $show_continue_current_migration_script
+ * @var boolean                       $show_most_recent_migration
+ * @var boolean                       $show_maintenance_switch
+ * @var boolean                       $show_migration_progress
+ * @var string                        $update_migration_script_page_link
+ * @var string                        $current_db_state
+ * @var string                        $next_db_state
+ * @var string                        $ultimate_db_state
+ * @var string                        $reset_db_page_link
+ * @var string                        $migration_options_html
  */
 if ($show_backup_db_text) { ?>
     <h1><span class="dashicons dashicons-migrate"></span><?php esc_html_e("Database Update Manager", "event_espresso"); ?>
