@@ -17,7 +17,7 @@
  * @type string                        $reset_db_page_link
  */
 if ($show_backup_db_text) { ?>
-    <h1><span class="dashicons dashicons-migrate"></span><?php _e("Database Update Manager", "event_espresso"); ?>
+    <h1><span class="dashicons dashicons-migrate"></span><?php esc_html_e("Database Update Manager", "event_espresso"); ?>
     </h1>
 <?php } ?>
 <div class="padding">
@@ -30,7 +30,7 @@ if ($show_backup_db_text) { ?>
                 echo apply_filters(
                         'FHEE__ee_migration_page__header',
                         sprintf(
-                                __("Your Event Espresso data needs to be updated.", "event_espresso"),
+                                esc_html__("Your Event Espresso data needs to be updated.", "event_espresso"),
                                 $current_db_state,
                                 $next_db_state
                         ),
@@ -43,16 +43,16 @@ if ($show_backup_db_text) { ?>
             <h3 class="espresso-header">
                 <span class="dashicons dashicons-awards ee-icon-size-22"></span>
                 <?php echo apply_filters('FHEE__ee_migration_page__done_migration_header',
-                        sprintf(__('Congratulations! Your database is "up-to-date" and you are ready to begin using %s',
+                        sprintf(esc_html__('Congratulations! Your database is "up-to-date" and you are ready to begin using %s',
                                 "event_espresso"), $ultimate_db_state)); ?>
             </h3>
             <p>
                 <?php echo apply_filters('FHEE__ee_migration_page__p_after_done_migration_header',
-                        sprintf(__("Time to find out about all the great new features %s has to offer.",
+                        sprintf(esc_html__("Time to find out about all the great new features %s has to offer.",
                                 "event_espresso"), $ultimate_db_state)); ?> &nbsp;
                 <b><a id="get-started-after-migrate" class="button-primary"
                       href="<?php echo add_query_arg(array('page' => 'espresso_about'), admin_url('admin.php')); ?>">
-                        <?php _e("Let's Get Started", "event_espresso"); ?>&nbsp;<span
+                        <?php esc_html_e("Let's Get Started", "event_espresso"); ?>&nbsp;<span
                                 class="dashicons dashicons-arrow-right ee-icon-size-22" style="margin:0;"></span>
                     </a></b>
             </p>
@@ -70,7 +70,7 @@ if ($show_backup_db_text) { ?>
                     //tell the user they should continue their migration because it appears to be unfinished... well, assuming there were no errors ?>
                     <h3 class="espresso-header">
                         <span class="dashicons dashicons-star-half ee-icon-size-22"></span>
-                        <?php printf(__("It appears that your previous Database Upgrade Task (%s) is incomplete, and should be resumed",
+                        <?php printf(esc_html__("It appears that your previous Database Upgrade Task (%s) is incomplete, and should be resumed",
                                 "event_espresso"), $most_recent_migration->pretty_name()); ?>
                     </h3>
                 <?php } elseif ($most_recent_migration->is_broken()) {
@@ -83,10 +83,10 @@ if ($show_backup_db_text) { ?>
                 //display errors or not of the most recent migration ran
                 if ($most_recent_migration->get_errors()) { ?>
                     <div class="ee-attention">
-                        <strong><?php printf(__("Warnings occurred during your last Database Upgrade Task (%s):",
+                        <strong><?php printf(esc_html__("Warnings occurred during your last Database Upgrade Task (%s):",
                                     'event_espresso'),
                                     $most_recent_migration->pretty_name()) ?></strong>
-                        <a id="show-hide-migration-warnings" class="display-the-hidden"><?php _e("Show Warnings",
+                        <a id="show-hide-migration-warnings" class="display-the-hidden"><?php esc_html_e("Show Warnings",
                                     'event_espresso'); ?></a>
                         <ul class="migration-warnings" style="display:none">
                             <?php foreach ($most_recent_migration->get_errors() as $error) { ?>
@@ -96,7 +96,7 @@ if ($show_backup_db_text) { ?>
                     </div>
                 <?php } else {
                     //there were no errors during the last migration, just say so?>
-                    <h2><?php printf(__("The last Database Upgrade Task (%s) ran successfully without errors.",
+                    <h2><?php printf(esc_html__("The last Database Upgrade Task (%s) ran successfully without errors.",
                                 "event_espresso"), $most_recent_migration->pretty_name()) ?></h2>
                 <?php }
             } else {
@@ -114,7 +114,7 @@ if ($show_backup_db_text) { ?>
                 <p>
                     <a class="toggle-migration-monitor small-text" style="cursor: pointer;">
                         <span class="dashicons dashicons-arrow-left-alt2"
-                              style="top:0;"></span><?php _e("return to previous screen", "event_espresso"); ?>
+                              style="top:0;"></span><?php esc_html_e("return to previous screen", "event_espresso"); ?>
                     </a>
                     <br/>
 
@@ -137,25 +137,25 @@ if ($show_backup_db_text) { ?>
                 </ul>
                 <br/>
                 <?php if (count($script_names) > 1) { ?>
-                    <p><?php _e("Please note: after each task is completed you will need to continue the data migration, or report an error to Event Espresso.",
+                    <p><?php esc_html_e("Please note: after each task is completed you will need to continue the data migration, or report an error to Event Espresso.",
                                 "event_espresso"); ?></p>
                 <?php } ?>
 
                 <div class="ee-attention">
                     <p>
 					<span class="reminder-spn">
-						<strong><?php _e("Please Note:", "event_espresso"); ?></strong>
+						<strong><?php esc_html_e("Please Note:", "event_espresso"); ?></strong>
 					</span>
                         <br/>
-                        <?php _e("Depending on the number of events and the complexity of the information in your database, this could take a few minutes.",
+                        <?php esc_html_e("Depending on the number of events and the complexity of the information in your database, this could take a few minutes.",
                                 "event_espresso"); ?>
                     </p>
                     <p>
-                        <?php printf(__("%sPlease be patient and do NOT navigate away from this page once the migration has begun%s. If any issues arise due to existing malformed data, an itemized report will be made available to you after the migration has completed.",
+                        <?php printf(esc_html__("%sPlease be patient and do NOT navigate away from this page once the migration has begun%s. If any issues arise due to existing malformed data, an itemized report will be made available to you after the migration has completed.",
                                 "event_espresso"), '<strong>', '</strong>'); ?>
                     </p>
                     <p>
-                        <?php _e("Click the button below to begin the migration process.", "event_espresso") ?>
+                        <?php esc_html_e("Click the button below to begin the migration process.", "event_espresso") ?>
                     </p>
                 </div>
                 <div id="progress-responsive">
@@ -167,9 +167,9 @@ if ($show_backup_db_text) { ?>
                 <!-- #progress-responsive -->
 
                 <button id='start-migration' class='button-primary'>
-                    <?php echo $show_continue_current_migration_script ? __("Continue Database Upgrade",
+                    <?php echo $show_continue_current_migration_script ? esc_html__("Continue Database Upgrade",
                             "event_espresso")
-                            : __("Begin Database Upgrade", "event_espresso"); ?>
+                            : esc_html__("Begin Database Upgrade", "event_espresso"); ?>
                 </button>
                 <br class="clear"/>
 
@@ -187,7 +187,7 @@ if ($show_backup_db_text) { ?>
     <?php }
     if ($show_maintenance_switch) {
         ?>
-        <h2><span class="dashicons dashicons-admin-tools"></span><?php _e('Set Event Espresso Maintenance Mode',
+        <h2><span class="dashicons dashicons-admin-tools"></span><?php esc_html_e('Set Event Espresso Maintenance Mode',
                     'event_espresso'); ?></h2>
         <form method='post' action='<?php echo $update_migration_script_page_link ?>'>
             <div class="ee-table-wrap">
@@ -200,10 +200,10 @@ if ($show_backup_db_text) { ?>
                                     ? 'checked="checked"' : '' ?>>
                         </td>
                         <th align="left">
-                            <label for="maintenance_mode_level_off"><?php _e('Maintenance Mode OFF',
+                            <label for="maintenance_mode_level_off"><?php esc_html_e('Maintenance Mode OFF',
                                         'event_espresso'); ?></label>
                             <p class='description' style="font-weight: normal;">
-                                <?php _e("This is the normal operating mode for Event Espresso and allows all functionality to be viewed by all site visitors.",
+                                <?php esc_html_e("This is the normal operating mode for Event Espresso and allows all functionality to be viewed by all site visitors.",
                                         "event_espresso"); ?>
                             </p>
                         </th>
@@ -217,10 +217,10 @@ if ($show_backup_db_text) { ?>
                         </td>
                         <th align="left">
                             <label for="maintenance_mode_level_on">
-                                <?php _e('Maintenance Mode ON', 'event_espresso') ?>
+                                <?php esc_html_e('Maintenance Mode ON', 'event_espresso') ?>
                             </label>
                             <p class='description' style="font-weight: normal;">
-                                <?php _e("This disables Event Espresso frontend functionality for all site visitors that are not administrators, and allows you to configure and/or test things on the frontend of your website before others can see.",
+                                <?php esc_html_e("This disables Event Espresso frontend functionality for all site visitors that are not administrators, and allows you to configure and/or test things on the frontend of your website before others can see.",
                                         "event_espresso"); ?>
                             </p>
                         </th>
@@ -229,7 +229,7 @@ if ($show_backup_db_text) { ?>
             </div>
             <p>
                 <input type='submit' class="button-primary"
-                       value='<?php _e("Update Maintenance Mode", "event_espresso"); ?>'>
+                       value='<?php esc_html_e("Update Maintenance Mode", "event_espresso"); ?>'>
             </p>
         </form>
         <?php

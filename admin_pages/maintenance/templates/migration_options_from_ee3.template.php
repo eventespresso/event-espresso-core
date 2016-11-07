@@ -1,26 +1,26 @@
 <div id="migration-options-dv">
     <h2>
         <span class="dashicons dashicons-admin-tools"></span>
-        <?php _e("Migration Options", "event_espresso"); ?>
-        <span class="tiny-text lt-grey-text"> &nbsp; <?php _e(' to migrate or not to migrate?',
+        <?php esc_html_e("Migration Options", "event_espresso"); ?>
+        <span class="tiny-text lt-grey-text"> &nbsp; <?php esc_html_e(' to migrate or not to migrate?',
                     "event_espresso"); ?></span>
     </h2>
     <div class="ee-table-wrap">
         <table>
             <tbody>
             <tr>
-                <td><h3><?php _e('1', 'event_espresso'); ?></h3></td>
+                <td><h3><?php esc_html_e('1', 'event_espresso'); ?></h3></td>
                 <td>
                     <?php
                     echo apply_filters(
                             'FHEE__ee_migration_page__option_1_main',
                             sprintf(
-                                    __('%1$sYes. I have backed up my database%2$s, %3$sunderstand the risks involved%4$s, and am ready to migrate my existing %5$s data to %6$s.',
+                                    esc_html__('%1$sYes. I have backed up my database%2$s, %3$sunderstand the risks involved%4$s, and am ready to migrate my existing %5$s data to %6$s.',
                                             "event_espresso"),
                                     '<strong>',
                                     '</strong>',
                                     '<a id="migration-risks" class="" title="'
-                                    . esc_attr__('click for more details', "event_espresso")
+                                    . esc_attresc_html__('click for more details', "event_espresso")
                                     . '">',
                                     '</a>',
                                     $current_db_state,
@@ -32,30 +32,30 @@
                     ?>
                     <a id="display-migration-details"
                        class="display-the-hidden lt-grey-text smaller-text hide-if-no-js"
-                       rel="migration-details"><?php _e('click for more details', "event_espresso"); ?>
+                       rel="migration-details"><?php esc_html_e('click for more details', "event_espresso"); ?>
                         &nbsp;+</a>
                     <a id="hide-migration-details"
                        class="hide-the-displayed lt-grey-text smaller-text hide-if-no-js"
                        rel="migration-details"
-                       style="display:none;"><?php echo sprintf(__('hide%1$sdetails%1$s-',
+                       style="display:none;"><?php echo sprintf(esc_html__('hide%1$sdetails%1$s-',
                                 'event_espresso'), '&nbsp;'); ?></a>
                 </td>
                 <td>
                     <a id="db-backed-up"
                        class="toggle-migration-monitor button-primary"><?php echo apply_filters('FHEE__ee_migration_page__option_1_button_text',
-                                sprintf(__("Migrate My %s Data to %s", "event_espresso"), $current_db_state,
+                                sprintf(esc_html__("Migrate My %s Data to %s", "event_espresso"), $current_db_state,
                                         $next_db_state), $current_db_state, $next_db_state); ?></a>
                 </td>
             </tr>
             <tr>
                 <td colspan="3" style="padding: 0">
                     <div id="migration-details-dv" style="display: none; padding: 1em;">
-<span class="reminder-spn"><?php printf(__("%s Important: %s Before migrating, please back up your database and files.",
+<span class="reminder-spn"><?php printf(esc_html__("%s Important: %s Before migrating, please back up your database and files.",
             "event_espresso"), "<b>", "</b>"); ?></span>
                         <p>
                             <?php
                             printf(
-                                    __('%1$sNot sure how to backup your existing data?%2$s Here is %3$sWordPress\'s explanation%7$s, and here\'s %6$sour explanation%7$s.%8$sYou can also search the WordPress plugin database for %4$s database backup plugins %7$s,%8$sor have one of our dedicated support technicians help you by purchasing a %5$sPriority Support Token%7$s.',
+                                    esc_html__('%1$sNot sure how to backup your existing data?%2$s Here is %3$sWordPress\'s explanation%7$s, and here\'s %6$sour explanation%7$s.%8$sYou can also search the WordPress plugin database for %4$s database backup plugins %7$s,%8$sor have one of our dedicated support technicians help you by purchasing a %5$sPriority Support Token%7$s.',
                                             "event_espresso"),
                                     '<b>',
                                     '</b>',
@@ -75,29 +75,29 @@
                 </td>
             </tr>
             <tr>
-                <td><h3><?php _e('2', 'event_espresso'); ?></h3></td>
+                <td><h3><?php esc_html_e('2', 'event_espresso'); ?></h3></td>
                 <td>
                     <?php echo apply_filters('FHEE__ee_migration_page__option_2_main',
-                            sprintf(__('I do NOT want to migrate my %1$s data to %2$s at this time and just want to use %3$s without migrating data.',
+                            sprintf(esc_html__('I do NOT want to migrate my %1$s data to %2$s at this time and just want to use %3$s without migrating data.',
                                     "event_espresso"), $current_db_state, $next_db_state,
                                     $ultimate_db_state), $current_db_state, $next_db_state,
                             $ultimate_db_state); ?><br/>
-                    <span class="reminder-spn"><?php _e('Please Note: In order to avoid errors, any existing Event Espresso data (events, ticket, registrations, etc) in your db will be erased! Regular WP data will NOT be affected.',
+                    <span class="reminder-spn"><?php esc_html_e('Please Note: In order to avoid errors, any existing Event Espresso data (events, ticket, registrations, etc) in your db will be erased! Regular WP data will NOT be affected.',
                                 'event_espresso'); ?></span>
                     <a id="display-no-migration-details"
                        class="display-the-hidden lt-grey-text smaller-text hide-if-no-js"
-                       rel="no-migration-details"><?php _e('click for more details', "event_espresso"); ?>
+                       rel="no-migration-details"><?php esc_html_e('click for more details', "event_espresso"); ?>
                         &nbsp;+</a>
                     <a id="hide-no-migration-details"
                        class="hide-the-displayed lt-grey-text smaller-text hide-if-no-js"
                        rel="no-migration-details"
-                       style="display:none;"><?php echo sprintf(__('hide%1$sdetails%1$s-',
+                       style="display:none;"><?php echo sprintf(esc_html__('hide%1$sdetails%1$s-',
                                 'event_espresso'), '&nbsp;'); ?></a>
                 </td>
                 <td>
                     <a id="do-not-migrate" class="do-not-migrate button-primary"
                        href="<?php echo $reset_db_page_link; ?>"><?php echo apply_filters('FHEE__ee_migration_page__option_2_button_text',
-                                sprintf(__("Just Start %s and Delete Existing Data", "event_espresso"),
+                                sprintf(esc_html__("Just Start %s and Delete Existing Data", "event_espresso"),
                                         $ultimate_db_state), $ultimate_db_state); ?></a>
                 </td>
             </tr>
@@ -106,7 +106,7 @@
                     <div id="no-migration-details-dv" style="display: none; padding: 1em;">
                         <p>
                             <?php echo apply_filters('FHEE__ee_migration_page__option_2_details',
-                                    sprintf(__("If your existing Event and Registration Data is no longer relevant nor required, you can just start up %s without performing a data migration.",
+                                    sprintf(esc_html__("If your existing Event and Registration Data is no longer relevant nor required, you can just start up %s without performing a data migration.",
                                             "event_espresso"), $ultimate_db_state), $ultimate_db_state); ?>
                         </p>
                     </div>
