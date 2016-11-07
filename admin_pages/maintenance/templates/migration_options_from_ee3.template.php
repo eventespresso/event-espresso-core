@@ -43,7 +43,7 @@
                                     '<strong>',
                                     '</strong>',
                                     '<a id="migration-risks" class="" title="'
-                                    . esc_attresc_html__('click for more details', "event_espresso")
+                                    . esc_attr__('click for more details', "event_espresso")
                                     . '">',
                                     '</a>',
                                     $current_db_state,

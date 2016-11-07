@@ -66,9 +66,9 @@
             </tbody>
         </table>
     </div>
-    <p><?php esc_htmlesc_html_e('Don\'t want to keep your old Event Espresso data? Alternatively, you can delete it all and start fresh.',
+    <p><?php esc_html_e('Don\'t want to keep your old Event Espresso data? Alternatively, you can delete it all and start fresh.',
                 'event_espresso'); ?> <a
-                href=""><?php esc_htmlesc_html_e('Visit the Maintenance Page and Reset Your Event Espresso Data',
+                href=""><?php esc_html_e('Visit the Maintenance Page and Reset Your Event Espresso Data',
                     'event_espresso'); ?></a></p>
     <?php do_action('AHEE__ee_migration_page__after_migration_options_table'); ?>
 </div>
