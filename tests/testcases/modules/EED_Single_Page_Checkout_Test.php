@@ -57,6 +57,20 @@ class EED_Single_Page_Checkout_Test extends EE_UnitTestCase {
 
 
 	/**
+	 * because older versions of WP don't have \WP_UnitTestCase::set_permalink_structure()
+	 *
+	 * @param string $structure
+	 */
+	public function set_permalink_structure( $structure = '' ) {
+		global $wp_rewrite;
+		$wp_rewrite->init();
+		$wp_rewrite->set_permalink_structure( $structure );
+		$wp_rewrite->flush_rules();
+	}
+
+
+
+	/**
 	 * @group 10220
 	 * @group spco
 	 */
