@@ -71,7 +71,7 @@ if ($show_backup_db_text) { ?>
                     //tell the user they should continue their migration because it appears to be unfinished... well, assuming there were no errors ?>
                     <h3 class="espresso-header">
                         <span class="dashicons dashicons-star-half ee-icon-size-22"></span>
-                        <?php printf(esc_html__("It appears that your previous Database Upgrade Task (%s) is incomplete, and should be resumed",
+                        <?php printf(esc_html__("It appears that your previous Database Update (%s) is incomplete, and should be resumed",
                                 "event_espresso"), $most_recent_migration->pretty_name()); ?>
                     </h3>
                 <?php } elseif ($most_recent_migration->is_broken()) {
@@ -84,7 +84,7 @@ if ($show_backup_db_text) { ?>
                 //display errors or not of the most recent migration ran
                 if ($most_recent_migration->get_errors()) { ?>
                     <div class="ee-attention">
-                        <strong><?php printf(esc_html__("Warnings occurred during your last Database Upgrade Task (%s):",
+                        <strong><?php printf(esc_html__("Warnings occurred during your last Database Update (%s):",
                                     'event_espresso'),
                                     $most_recent_migration->pretty_name()) ?></strong>
                         <a id="show-hide-migration-warnings" class="display-the-hidden"><?php esc_html_e("Show Warnings",
@@ -97,7 +97,7 @@ if ($show_backup_db_text) { ?>
                     </div>
                 <?php } else {
                     //there were no errors during the last migration, just say so?>
-                    <h2><?php printf(esc_html__("The last Database Upgrade Task (%s) ran successfully without errors.",
+                    <h2><?php printf(esc_html__("The last Database Update (%s) ran successfully without errors.",
                                 "event_espresso"), $most_recent_migration->pretty_name()) ?></h2>
                 <?php }
             } else {
@@ -125,8 +125,8 @@ if ($show_backup_db_text) { ?>
                 <h3 class="espresso-header">
                     <?php
                     echo sprintf(_n(
-                            "The following upgrade task needs to be performed:",
-                            "The following %s upgrade tasks need to be performed:",
+                            "The following task needs to be performed:",
+                            "The following %s tasks need to be performed:",
                             count($script_names),
                             "event_espresso"
                     ), count($script_names)); ?>
@@ -168,9 +168,9 @@ if ($show_backup_db_text) { ?>
                 <!-- #progress-responsive -->
 
                 <button id='start-migration' class='button-primary'>
-                    <?php echo $show_continue_current_migration_script ? esc_html__("Continue Database Upgrade",
+                    <?php echo $show_continue_current_migration_script ? esc_html__("Continue Database Update",
                             "event_espresso")
-                            : esc_html__("Begin Database Upgrade", "event_espresso"); ?>
+                            : esc_html__("Begin Database Update", "event_espresso"); ?>
                 </button>
                 <br class="clear"/>
 
