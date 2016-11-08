@@ -57,10 +57,11 @@ class EE_Paypal_Standard_Form extends EE_Payment_Method_Form {
 
 
 
-	/**
-	 * @param array $req_data
-	 */
-	protected function _normalize( $req_data ) {
+    /**
+     * @param array $req_data
+     * @throws EE_Error
+     */
+    public function _normalize( $req_data ) {
 		parent::_normalize( $req_data );
 		$paypal_calculates_shipping = $this->get_input_value( 'paypal_shipping' );
 		$paypal_calculates_taxes = $this->get_input_value( 'paypal_taxes' );

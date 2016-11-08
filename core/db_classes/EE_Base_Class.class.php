@@ -1826,15 +1826,25 @@ abstract class EE_Base_Class {
 	 * @throws EE_Error
 	 * @return EE_Base_Class the object the relation was added to
 	 */
-	public function _add_relation_to( $otherObjectModelObjectOrID,$relationName, $extra_join_model_fields_n_values = array(), $cache_id = NULL ){
+    public function _add_relation_to(
+        $otherObjectModelObjectOrID,
+        $relationName,
+        $extra_join_model_fields_n_values = array(),
+        $cache_id = null
+    ) {
 		//if this thing exists in the DB, save the relation to the DB
 		if( $this->ID() ){
-			$otherObject = $this->get_model()->add_relationship_to( $this, $otherObjectModelObjectOrID, $relationName, $extra_join_model_fields_n_values );
+            $otherObject = $this->get_model() ->add_relationship_to(
+                $this,
+                $otherObjectModelObjectOrID,
+                $relationName,
+                $extra_join_model_fields_n_values
+            );
 			//clear cache so future get_many_related and get_first_related() return new results.
 			$this->clear_cache( $relationName, $otherObject, TRUE );
-                        if( $otherObject instanceof EE_Base_Class ) {
-                            $otherObject->clear_cache( $this->get_model()->get_this_model_name(), $this );
-                        }
+            if( $otherObject instanceof EE_Base_Class ) {
+                $otherObject->clear_cache( $this->get_model()->get_this_model_name(), $this );
+            }
 		} else {
 			//this thing doesn't exist in the DB,  so just cache it
 			if( ! $otherObjectModelObjectOrID instanceof EE_Base_Class){
@@ -1843,23 +1853,21 @@ abstract class EE_Base_Class {
 					$otherObjectModelObjectOrID,
 					get_class( $this )
 				));
-			} else {
-				$otherObject = $otherObjectModelObjectOrID;
 			}
+			$otherObject = $otherObjectModelObjectOrID;
 			$this->cache( $relationName, $otherObjectModelObjectOrID, $cache_id );
 		}
-                if( $otherObject instanceof EE_Base_Class ) {
-                    //fix the reciprocal relation too
-                    if( $otherObject->ID() ) {
-                            //its saved so assumed relations exist in the DB, so we can just
-                            //clear the cache so future queries use the updated info in the DB
-                            $otherObject->clear_cache( $this->get_model()->get_this_model_name(), null, true );
-                    } else {
-
-                            //it's not saved, so it caches relations like this
-                            $otherObject->cache( $this->get_model()->get_this_model_name(), $this );
-                    }
-                }
+        if( $otherObject instanceof EE_Base_Class ) {
+            //fix the reciprocal relation too
+            if( $otherObject->ID() ) {
+                //its saved so assumed relations exist in the DB, so we can just
+                //clear the cache so future queries use the updated info in the DB
+                $otherObject->clear_cache( $this->get_model()->get_this_model_name(), null, true );
+            } else {
+                //it's not saved, so it caches relations like this
+                $otherObject->cache( $this->get_model()->get_this_model_name(), $this );
+            }
+        }
 		return $otherObject;
 	}
 

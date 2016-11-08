@@ -266,6 +266,11 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 				}
 			}
 		}
+		$defaults = apply_filters( 
+			'FHEE__EE_Model_Form_Section__populate_model_obj',
+			$defaults,
+			$this
+		);
 		$this->populate_defaults($defaults);
 	}
 
@@ -283,22 +288,13 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 
 
 	/**
-	 * After the form section is initially created, call this to sanitize the data in the submission
-	 * which relates to this form section, validate it, and set it as properties on the form.
-	 * @param array $req_data should usually be $_REQUEST (the default). However, you CAN
-	 * supply a different array. Consider using set_defaults() instead however. (If you rendered
-	 * the form in the page using echo $form_x->get_html() the inputs will have the correct name
-	 * in the request data for this function to find them and populate the form with them.
-	 * If you have a flat form (with only input subsections), you can supply a flat array where keys
-	 * are the form input names and values are their values)
-	 * @param boolean $validate whether or not to perform validation on this data. Default is,
-	 * of course, to validate that data, and set errors on the invalid values. But if the data
-	 * has already been validated (eg you validated the data then stored it in the DB) you may want
-	 * to skip this step.
+	 * After we've normalized the data as normal, set the corresponding model object
+	 * on the form.
+	 * @param array $req_data should usually be $_REQUEST (the default).
 	 * @return void
-	 */
-	public function receive_form_submission($req_data = NULL, $validate = TRUE) {
-		parent::receive_form_submission($req_data, $validate);
+	 */	
+	public function _normalize( $req_data ) {
+		parent::_normalize( $req_data );
 		//create or set the model object, if it isn't already
 		if( ! $this->_model_object ){
 			//check to see if the form indicates a PK, in which case we want to only retrieve it and update it
@@ -310,14 +306,6 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 				$this->_model_object = EE_Registry::instance()->load_class($this->_model->get_this_model_name() );
 			}
 		}
-		//ok so the model object is set. Just set it with the submitted form data (don't save yet though)
-		foreach($this->inputs_values_corresponding_to_model_fields() as $field_name=>$field_value){
-			//only set the non-primary key
-			if($field_name != $this->_model->primary_key_name()){
-				$this->_model_object->set($field_name,$field_value);
-			}
-		}
-
 	}
 
 
@@ -334,12 +322,20 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 		if( ! $this->_model_object){
 			throw new EE_Error(sprintf(__("Cannot save the model form's model object (model is '%s') because there is no model object set. You must either set it, or call receive_form_submission where it is set automatically", "event_espresso"),get_class($this->_model)));
 		}
+		//ok so the model object is set. Just set it with the submitted form data
+		foreach($this->inputs_values_corresponding_to_model_fields() as $field_name=>$field_value){
+			//only set the non-primary key
+			if($field_name != $this->_model->primary_key_name()){
+				$this->_model_object->set($field_name,$field_value);
+			}
+		}
 		$success =  $this->_model_object->save();
 		foreach($this->_model->relation_settings() as $relation_name => $relation_obj){
 			if(isset($this->_subsections[$relation_name])){
 				$success = $this->_save_related_info($relation_name);
 			}
 		}
+		do_action( 'AHEE__EE_Model_Form_Section__save__done', $this, $success );
 		return $success;
 	}
 
