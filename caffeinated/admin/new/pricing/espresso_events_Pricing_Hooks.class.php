@@ -249,10 +249,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 					false,
 					false
 				);
-
-				//reset date and times to match the format
-				$DTM->set_date_format( $this->_date_format_strings['date'] );
-				$DTM->set_time_format( $this->_date_format_strings['time'] );
+                
 				foreach( $datetime_values as $field => $value ) {
 					$DTM->set( $field, $value );
 				}
