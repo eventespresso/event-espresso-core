@@ -651,7 +651,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
                                     && (is_main_site()//for main tables, verify global tables
                                         || ! $table->is_global()//if not the main site, then only verify non-global tables (avoid doubling up)
                                     )
-                                    && method_exists('maybe_convert_table_to_utf8mb4'),
+                                    && function_exists('maybe_convert_table_to_utf8mb4'),
                                 $table
                             )
                         ) {
