@@ -435,7 +435,9 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			$this->checkout = apply_filters( 'FHEE__EED_Single_Page_Checkout___initialize__checkout', $this->checkout );
 			// get the $_GET
 			$this->_get_request_vars();
-			$this->_block_bots();
+            if ($this->_block_bots()) {
+                return;
+            }
 			// filter continue_reg
 			$this->checkout->continue_reg = apply_filters( 'FHEE__EED_Single_Page_Checkout__init___continue_reg', TRUE, $this->checkout );
 			// load the reg steps array
@@ -596,12 +598,15 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 *  a REG URL Link, which indicates that the request is a return visit to SPCO for a valid TXN
 	 * so if you're not coming from the Ticket Selector nor returning for a valid IP...
 	 * then where you coming from man?
+     *
+     * @return boolean
 	 */
 	private function _block_bots() {
 		$invalid_checkout_access = \EED_Invalid_Checkout_Access::getInvalidCheckoutAccess();
 		if ( $invalid_checkout_access->checkoutAccessIsInvalid( $this->checkout ) ) {
-			$this->_handle_html_redirects();
+			return true;
 		}
+		return false;
 	}
 
 
