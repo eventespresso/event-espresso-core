@@ -366,6 +366,9 @@ class EE_Datetime_Field_Test extends EE_UnitTestCase {
 
 
 	public function test_datetime_field_serialization() {
+		if ( version_compare( PHP_VERSION, '5.5', '<' )) {
+			$this->markTestSkipped();
+		}
 		$this->_set_dtt_field_object( 'LIN_timestamp', 'LIN_timestamp', false, EE_Datetime_Field::now );
 		$this->_get_time_strings_for_testing();
 		$datetime_field = $this->_datetime_field;
