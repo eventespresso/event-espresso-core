@@ -1257,6 +1257,21 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
 
 
     /**
+     * make sure construction finalized was called, otherwise children might not be ready
+     *
+     * @return void
+     * @throws \EE_Error
+     */
+    public function ensure_construct_finalized_called()
+    {
+        if ( ! $this->_construction_finalized) {
+            $this->_construct_finalize($this->_parent_section, $this->_name);
+        }
+    }
+
+
+
+    /**
      * Checks if any of this form section's inputs, or any of its children's inputs,
      * are in teh form data. If any are found, returns true. Else false
      *

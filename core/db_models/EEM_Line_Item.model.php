@@ -206,7 +206,7 @@ class EEM_Line_Item extends EEM_Base {
 				LEFT JOIN ' . EEM_Transaction::instance()->table(). ' t ON li.TXN_ID = t.TXN_ID
 				WHERE t.TXN_ID IS NULL AND li.LIN_timestamp < %s',
 				// use GMT time because that's what TXN_timestamps are in
-				gmdate(  'Y-m-d H:i:s', time() - $time_to_leave_alone )
+				date(  'Y-m-d H:i:s', time() - $time_to_leave_alone )
 				);
 		return $wpdb->query( $query );
 	}
