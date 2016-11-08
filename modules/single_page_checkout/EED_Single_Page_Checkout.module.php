@@ -1246,6 +1246,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		wp_register_script( 'jquery_countdown', EE_THIRD_PARTY_URL . 'jquery	.countdown.min.js', array( 'jquery_plugin' ), '2.0.2', TRUE );
 		wp_register_script( 'single_page_checkout', SPCO_JS_URL . 'single_page_checkout.js', array( 'espresso_core', 'underscore', 'ee_form_section_validation', 'jquery_countdown' ), EVENT_ESPRESSO_VERSION, TRUE );
 		$this->checkout->registration_form->enqueue_js();
+		$this->checkout->current_step->reg_form->enqueue_js();
 		wp_enqueue_script( 'single_page_checkout' );
 
 		/**
