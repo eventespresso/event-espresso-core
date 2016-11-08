@@ -207,6 +207,8 @@ final class EE_System
         ) {
             include_once EE_THIRD_PARTY . 'wp-api-basic-auth' . DS . 'basic-auth.php';
         }
+        
+        do_action('AHEE__EE_System__load_espresso_addons__complete');
     }
 
 
