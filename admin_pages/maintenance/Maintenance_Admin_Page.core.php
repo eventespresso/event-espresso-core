@@ -58,7 +58,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page
         $this->_admin_page_title = EE_MAINTENANCE_LABEL;
         $this->_labels = array(
             'buttons' => array(
-                'reset_capabilities' => __('Reset Event Espresso Capabilities', 'event_espresso'),
+                'reset_capabilities' => esc_html__('Reset Event Espresso Capabilities', 'event_espresso'),
             ),
         );
     }
@@ -136,21 +136,21 @@ class Maintenance_Admin_Page extends EE_Admin_Page
         $this->_page_config = array(
             'default'       => array(
                 'nav'           => array(
-                    'label' => __('Maintenance', 'event_espresso'),
+                    'label' => esc_html__('Maintenance', 'event_espresso'),
                     'order' => 10,
                 ),
                 'require_nonce' => false,
             ),
             'data_reset'    => array(
                 'nav'           => array(
-                    'label' => __('Reset/Delete Data', 'event_espresso'),
+                    'label' => esc_html__('Reset/Delete Data', 'event_espresso'),
                     'order' => 20,
                 ),
                 'require_nonce' => false,
             ),
             'system_status' => array(
                 'nav'           => array(
-                    'label' => __("System Information", "event_espresso"),
+                    'label' => esc_html__("System Information", "event_espresso"),
                     'order' => 30,
                 ),
                 'require_nonce' => false,
@@ -293,10 +293,10 @@ class Maintenance_Admin_Page extends EE_Admin_Page
             //make sure we have the form fields helper available. It usually is, but sometimes it isn't
             //localize script stuff
             wp_localize_script('ee-maintenance', 'ee_maintenance', array(
-                'migrating'                        => __("Updating Database...", "event_espresso"),
-                'next'                             => __("Next", "event_espresso"),
-                'fatal_error'                      => __("A Fatal Error Has Occurred", "event_espresso"),
-                'click_next_when_ready'            => __("The current Database Update has ended. Click 'next' when ready to proceed",
+                'migrating'                        => esc_html__("Updating Database...", "event_espresso"),
+                'next'                             => esc_html__("Next", "event_espresso"),
+                'fatal_error'                      => esc_html__("A Fatal Error Has Occurred", "event_espresso"),
+                'click_next_when_ready'            => esc_html__("The current Database Update has ended. Click 'next' when ready to proceed",
                     "event_espresso"),
                 'status_no_more_migration_scripts' => EE_Data_Migration_Manager::status_no_more_migration_scripts,
                 'status_fatal_error'               => EE_Data_Migration_Manager::status_fatal_error,
@@ -355,7 +355,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page
             EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
             $success = false;
         }
-        $this->_redirect_after_action($success, 'Maintenance Mode', __("Updated", "event_espresso"));
+        $this->_redirect_after_action($success, 'Maintenance Mode', esc_html__("Updated", "event_espresso"));
     }
 
 
@@ -447,8 +447,8 @@ class Maintenance_Admin_Page extends EE_Admin_Page
         } catch (Exception $e) {
             $success = false;
         }
-        $this->_redirect_after_action($success, __("Migration Crash Report", "event_espresso"),
-            __("sent", "event_espresso"),
+        $this->_redirect_after_action($success, esc_html__("Migration Crash Report", "event_espresso"),
+            esc_html__("sent", "event_espresso"),
             array('success' => $success, 'action' => 'confirm_migration_crash_report_sent'));
     }
 
@@ -534,7 +534,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page
         //set the db state to something that will require migrations
         update_option(EE_Data_Migration_Manager::current_database_state, '3.1.36.0');
         EE_Maintenance_Mode::instance()->set_maintenance_level(EE_Maintenance_Mode::level_2_complete_maintenance);
-        $this->_redirect_after_action(true, __("Database", 'event_espresso'), __("reset", 'event_espresso'));
+        $this->_redirect_after_action(true, esc_html__("Database", 'event_espresso'), esc_html__("reset", 'event_espresso'));
     }
 
 
