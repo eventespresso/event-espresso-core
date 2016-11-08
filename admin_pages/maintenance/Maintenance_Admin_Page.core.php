@@ -293,10 +293,10 @@ class Maintenance_Admin_Page extends EE_Admin_Page
             //make sure we have the form fields helper available. It usually is, but sometimes it isn't
             //localize script stuff
             wp_localize_script('ee-maintenance', 'ee_maintenance', array(
-                'migrating'                        => __("Migrating...", "event_espresso"),
+                'migrating'                        => __("Updating Database...", "event_espresso"),
                 'next'                             => __("Next", "event_espresso"),
                 'fatal_error'                      => __("A Fatal Error Has Occurred", "event_espresso"),
-                'click_next_when_ready'            => __("The current Migration has ended. Click 'next' when ready to proceed",
+                'click_next_when_ready'            => __("The current Database Update has ended. Click 'next' when ready to proceed",
                     "event_espresso"),
                 'status_no_more_migration_scripts' => EE_Data_Migration_Manager::status_no_more_migration_scripts,
                 'status_fatal_error'               => EE_Data_Migration_Manager::status_fatal_error,
