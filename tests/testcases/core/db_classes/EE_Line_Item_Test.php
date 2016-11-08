@@ -505,6 +505,9 @@ class EE_Line_Item_Test extends EE_UnitTestCase{
 
 
 	public function test_line_item_serialization() {
+		if ( version_compare( PHP_VERSION, '5.5', '<' ) ) {
+			$this->markTestSkipped();
+		}
 		$line_item = $this->new_model_obj_with_dependencies(
 			'Line_Item',
 			array( 'LIN_parent' => null ),
