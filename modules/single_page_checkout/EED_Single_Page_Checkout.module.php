@@ -202,7 +202,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * @throws \EE_Error
 	 */
 	public static function set_definitions() {
-		define( 'SPCO_BASE_PATH', rtrim( str_replace( array( '\\', '/' ), DS, plugin_dir_path( __FILE__ )), DS ) . DS );
+        define( 'SPCO_BASE_PATH', rtrim( str_replace( array( '\\', '/' ), DS, plugin_dir_path( __FILE__ )), DS ) . DS );
 		define( 'SPCO_CSS_URL', plugin_dir_url( __FILE__ ) . 'css' . DS );
 		define( 'SPCO_IMG_URL', plugin_dir_url( __FILE__ ) . 'img' . DS );
 		define( 'SPCO_JS_URL', plugin_dir_url( __FILE__ ) . 'js' . DS );
@@ -379,12 +379,25 @@ class EED_Single_Page_Checkout  extends EED_Module {
     protected function _is_reg_checkout() {
         // get current permalink for reg page without any extra query args
         $reg_page_url = \get_permalink(EE_Config::instance()->core->reg_page_id);
-        // strip typical query args from current url (doesn't include scheme or host)
-        $current_url = remove_query_arg(
-            array('uts', 'e_reg_url_link', 'step', 'action', 'revisit', 'generate_reg_form', 'process_form_submission')
-        );
-        // is current url part of the known reg page url ?
-        return strpos($reg_page_url, $current_url) !== false;
+        // get request URI for current request, but without the scheme or host
+        $current_request_uri = \EEH_URL::filter_input_server_url('REQUEST_URI');
+        $current_request_uri = html_entity_decode( $current_request_uri );
+        // get array of query args from the current request URI
+        $query_args = \EEH_URL::get_query_string($current_request_uri);
+        // grab page id if it is set
+        $page_id = isset($query_args['page_id']) ? absint($query_args['page_id']) : 0;
+        // and remove the page id from the query args (we will re-add it later)
+        unset($query_args['page_id']);
+        // now strip all query args from current request URI
+        $current_request_uri = remove_query_arg(array_flip($query_args), $current_request_uri);
+        // and re-add the page id if it was set
+        if ($page_id){
+            $current_request_uri = add_query_arg('page_id', $page_id, $current_request_uri);
+        }
+        // remove slashes and ?
+        $current_request_uri = trim($current_request_uri, '?/');
+        // is current request URI part of the known full reg page URL ?
+        return strpos($reg_page_url, $current_request_uri) !== false;
     }
 
 
@@ -415,7 +428,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		if ( EED_Single_Page_Checkout::$_initialized ) {
 			return;
 		}
-		try {
+        try {
 			// setup the EE_Checkout object
 			$this->checkout = $this->_initialize_checkout();
 			// filter checkout
