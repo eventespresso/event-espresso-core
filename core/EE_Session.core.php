@@ -406,7 +406,7 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
 		// and the visitors IP
 		$this->_ip_address = $this->_visitor_ip();
 		// set the "user agent"
-		$this->_user_agent = ( isset($_SERVER['HTTP_USER_AGENT'])) ? esc_attr( $_SERVER['HTTP_USER_AGENT'] ) : FALSE;
+		$this->_user_agent = isset($_SERVER['HTTP_USER_AGENT']) ? esc_attr( $_SERVER['HTTP_USER_AGENT'] ) : FALSE;
 		// now let's retrieve what's in the db
         $session_data = $this->_retrieve_session_data();
         if (! empty($session_data)) {
@@ -457,13 +457,13 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
          try {
              // we're using WP's Transient API to store session data using the PHP session ID as the option name
              $session_data = get_transient($ssn_key);
-             if ($session_data === false) {
-                 return array();
+	         if ($session_data === false) {
+		         return array();
              }
              if (apply_filters('FHEE__EE_Session___perform_session_id_hash_check', WP_DEBUG)) {
                  $hash_check = get_transient(EE_Session::hash_check_prefix . $this->_sid);
                  if ($hash_check && $hash_check !== md5($session_data)) {
-                     EE_Error::add_error(
+	                 EE_Error::add_error(
                          sprintf(
                              __('The stored data for session %1$s failed to pass a hash check and therefore appears to be invalid.', 'event_espresso'),
                              EE_Session::session_id_prefix . $this->_sid
@@ -493,15 +493,16 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
                      $session_data
                  );
              }
-             $session_data = maybe_unserialize($session_data);
+	         $session_data = maybe_unserialize($session_data);
          }
-         // in case the data is encoded... try to decode it
+	     // in case the data is encoded... try to decode it
          $session_data = $this->encryption instanceof EE_Encryption
              ? $this->encryption->base64_string_decode($session_data)
              : $session_data;
+
          if ( ! is_array($session_data)) {
              try {
-                 $session_data = maybe_unserialize($session_data);
+	             $session_data = maybe_unserialize($session_data);
              } catch (Exception $e) {
                  $msg = esc_html__(
                      'An error occurred while attempting to unserialize the session data.',
@@ -523,9 +524,14 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
              $msg .= WP_DEBUG
                  ? '<br><pre>' . print_r($session_data, true) . '</pre><br>' . $this->find_serialize_error($session_data)
                  : '';
-             throw new InvalidSessionDataException($msg);
+	         throw new InvalidSessionDataException($msg);
          }
-         return $session_data;
+	     if ( isset( $this->_session_data['transaction'] ) && absint( $this->_session_data['transaction'] ) !== 0 ) {
+		     $this->_session_data['transaction'] = EEM_Transaction::instance()->get_one_by_ID(
+			     $this->_session_data['transaction']
+	         );
+	     }
+	     return $session_data;
      }
 
 
@@ -604,7 +610,7 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
 			&& is_array( $this->_session_data )
 			&& isset( $this->_session_data['id'])
 			? $this->_session_data
-			: NULL;
+			: array();
 		if ( empty( $this->_session_data )) {
 			$this->_set_defaults();
 		}
@@ -712,14 +718,13 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
 
 
 
-
-
-	/**
-	 * _save_session_to_db
-	 *
-	 * 	@access public
-	 * 	@return string
-	 */
+	 /**
+	  * _save_session_to_db
+	  *
+	  * @access public
+	  * @return string
+	  * @throws \EE_Error
+	  */
 	private function _save_session_to_db() {
 		if (
 			// if the current request is NOT one of the following
@@ -740,9 +745,16 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
 		) {
 			return false;
 		}
-        // then serialize all of our session data
-        $session_data = serialize($this->_session_data);
-        // do we need to also encode it to avoid corrupted data when saved to the db?
+		$transaction = $this->_session_data['transaction'];
+		if ( $transaction instanceof EE_Transaction ) {
+			if ( ! $transaction->ID() ) {
+				$transaction->save();
+			}
+			$this->_session_data['transaction'] = $transaction->ID();
+		}
+		// then serialize all of our session data
+		$session_data = serialize($this->_session_data);
+		// do we need to also encode it to avoid corrupted data when saved to the db?
 		$session_data = $this->_use_encryption ? $this->encryption->base64_string_encode( $session_data ) : $session_data;
 		// maybe save hash check
 		if ( apply_filters( 'FHEE__EE_Session___perform_session_id_hash_check', WP_DEBUG ) ) {
