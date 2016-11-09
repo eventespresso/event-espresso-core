@@ -1190,14 +1190,15 @@ class EE_Checkout {
 
 
 
-    /**
-     *    __sleep
-     * to conserve db space, let's remove the reg_form and the EE_Checkout object from EE_SPCO_Reg_Step objects upon serialization
-     * EE_Checkout will handle the reimplementation of itself upon waking,
-     * but we won't bother with the reg form, because if needed, it will be regenerated anyways
-     *
-     * @return array
-     */
+	/**
+	 *    __sleep
+	 * to conserve db space, let's remove the reg_form and the EE_Checkout object from EE_SPCO_Reg_Step objects upon serialization
+	 * EE_Checkout will handle the reimplementation of itself upon waking,
+	 * but we won't bother with the reg form, because if needed, it will be regenerated anyways
+	 *
+	 * @return array
+	 * @throws \EE_Error
+	 */
     public function __sleep()
     {
 	    if ( $this->primary_attendee_obj instanceof EE_Attendee && $this->primary_attendee_obj->ID() ) {
@@ -1216,10 +1217,12 @@ class EE_Checkout {
 	 * this will reinstate the EE_Checkout object on each EE_SPCO_Reg_Step object
 	 */
 	public function __wakeup() {
-		if ( ! $this->primary_attendee_obj instanceof EE_Attendee && ! absint( $this->primary_attendee_obj ) !== 0 ) {
+		if ( ! $this->primary_attendee_obj instanceof EE_Attendee && absint( $this->primary_attendee_obj ) !== 0 ) {
+			// $this->primary_attendee_obj is actually just an ID, so use it to get the object from the db
 			$this->primary_attendee_obj = EEM_Attendee::instance()->get_one_by_ID( $this->primary_attendee_obj );
 		}
-		if ( ! $this->transaction instanceof EE_Transaction && ! absint( $this->transaction ) !== 0 ) {
+		if ( ! $this->transaction instanceof EE_Transaction && absint( $this->transaction ) !== 0 ) {
+			// $this->transaction is actually just an ID, so use it to get the object from the db
 			$this->transaction = EEM_Transaction::instance()->get_one_by_ID( $this->transaction );
 		}
 		foreach ( $this->reg_steps as $reg_step ) {
