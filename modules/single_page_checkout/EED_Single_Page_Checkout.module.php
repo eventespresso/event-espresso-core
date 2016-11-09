@@ -100,15 +100,15 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 */
 	public static function set_hooks_admin() {
 		EED_Single_Page_Checkout::set_definitions();
-		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
-			// going to start an output buffer in case anything gets accidentally output that might disrupt our JSON response
-			ob_start();
-			EED_Single_Page_Checkout::load_request_handler();
-			EED_Single_Page_Checkout::load_reg_steps();
-		} else {
+		if ( ! ( defined( 'DOING_AJAX' ) && DOING_AJAX )) {
 			// hook into the top of pre_get_posts to set the reg step routing, which gives other modules or plugins a chance to modify the reg steps, but just before the routes get called
 			add_action( 'pre_get_posts', array( 'EED_Single_Page_Checkout', 'load_reg_steps' ), 1 );
+			return;
 		}
+		// going to start an output buffer in case anything gets accidentally output that might disrupt our JSON response
+		ob_start();
+		EED_Single_Page_Checkout::load_request_handler();
+		EED_Single_Page_Checkout::load_reg_steps();
 		// set ajax hooks
 		add_action( 'wp_ajax_process_reg_step', array( 'EED_Single_Page_Checkout', 'process_reg_step' ));
 		add_action( 'wp_ajax_nopriv_process_reg_step', array( 'EED_Single_Page_Checkout', 'process_reg_step' ));
@@ -228,7 +228,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			return;
 		}
 		// filter list of reg_steps
-		$reg_steps_to_load = apply_filters(
+		$reg_steps_to_load = (array) apply_filters(
 			'AHEE__SPCO__load_reg_steps__reg_steps_to_load',
 			EED_Single_Page_Checkout::get_reg_steps()
 		);
@@ -396,7 +396,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
         }
         // remove slashes and ?
         $current_request_uri = trim($current_request_uri, '?/');
-        // is current request URI part of the known full reg page URL ?
+	    // is current request URI part of the known full reg page URL ?
         return strpos($reg_page_url, $current_request_uri) !== false;
     }
 
@@ -429,7 +429,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			return;
 		}
         try {
-			// setup the EE_Checkout object
+	        // setup the EE_Checkout object
 			$this->checkout = $this->_initialize_checkout();
 			// filter checkout
 			$this->checkout = apply_filters( 'FHEE__EED_Single_Page_Checkout___initialize__checkout', $this->checkout );
