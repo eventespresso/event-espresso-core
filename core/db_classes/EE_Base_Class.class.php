@@ -76,15 +76,17 @@ abstract class EE_Base_Class {
 	protected $_cached_properties = array();
 
 	/**
-	 * An array containing keys of the related model, and values are either an array of related mode objects or a single related model object. see the model's _model_relations. The keys should match those specified. And if the relation is of type EE_Belongs_To (or one of its children), then there should only be ONE related model object, all others have an array)
-	 * @type array EE_Base_Class[]
-	 */
+     * An array containing keys of the related model, and values are either an array of related mode objects or a single
+     * related model object. see the model's _model_relations. The keys should match those specified. And if the relation
+     * is of type EE_Belongs_To (or one of its children), then there should only be ONE related model object, all others have an array)
+     * @var array
+     */
 	protected $_model_relations = array();
 
 	/**
 	 * Array where keys are field names (see the model's _fields property) and values are their values. To see what
 	 * their types should be, look at what that field object returns on its prepare_for_get and prepare_for_set methods)
-	 * @var array EE_Model_Field_Base[]
+	 * @var array
 	 */
 	protected $_fields = array();
 
