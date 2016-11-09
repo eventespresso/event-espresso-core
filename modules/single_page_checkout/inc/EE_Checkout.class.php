@@ -1200,7 +1200,12 @@ class EE_Checkout {
      */
     public function __sleep()
     {
-        // remove the reg form and the checkout
+	    if ( $this->primary_attendee_obj instanceof EE_Attendee && $this->primary_attendee_obj->ID() ) {
+		    $this->primary_attendee_obj = $this->primary_attendee_obj->ID();
+	    }        // remove the reg form and the checkout
+	    if ( $this->transaction instanceof EE_Transaction && $this->transaction->ID() ) {
+		    $this->transaction = $this->transaction->ID();
+	    }        // remove the reg form and the checkout
         return array_diff( array_keys( get_object_vars( $this ) ), array( 'billing_form', 'registration_form' ) );
     }
 
@@ -1211,6 +1216,12 @@ class EE_Checkout {
 	 * this will reinstate the EE_Checkout object on each EE_SPCO_Reg_Step object
 	 */
 	public function __wakeup() {
+		if ( ! $this->primary_attendee_obj instanceof EE_Attendee && ! absint( $this->primary_attendee_obj ) !== 0 ) {
+			$this->primary_attendee_obj = EEM_Attendee::instance()->get_one_by_ID( $this->primary_attendee_obj );
+		}
+		if ( ! $this->transaction instanceof EE_Transaction && ! absint( $this->transaction ) !== 0 ) {
+			$this->transaction = EEM_Transaction::instance()->get_one_by_ID( $this->transaction );
+		}
 		foreach ( $this->reg_steps as $reg_step ) {
 			$reg_step->checkout = $this;
 		}
