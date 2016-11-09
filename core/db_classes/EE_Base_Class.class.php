@@ -2486,12 +2486,15 @@ abstract class EE_Base_Class {
 		foreach( $this->get_model()->relation_settings() as $relation_name => $relation_obj ) {
 			if( $relation_obj instanceof EE_Belongs_To_Relation ) {
 				$classname = 'EE_' . $this->get_model()->get_this_model_name();
-				if( $this->get_one_from_cache( $relation_name ) instanceof $classname &&
-						$this->get_one_from_cache( $relation_name )->ID() ) {
+				if(
+					$this->get_one_from_cache( $relation_name ) instanceof $classname
+					&& $this->get_one_from_cache( $relation_name )->ID()
+				) {
 					$this->clear_cache( $relation_name, $this->get_one_from_cache( $relation_name )->ID() );
 				}
 			}
 		}
+		$this->_props_n_values_provided_in_constructor = array();
 		return array_keys( get_object_vars( $this ) );
 	}
 
