@@ -232,6 +232,7 @@ class EED_Events_Archive  extends EED_Module {
 	 * @throws \EE_Error
 	 */
 	public function event_list_iframe() {
+		add_filter( 'FHEE__EED_Events_Archive__event_list_iframe', '__return_true' );
 		$event_list_iframe = new EventsArchiveIframe( $this );
 		$event_list_iframe->display();
 	}
