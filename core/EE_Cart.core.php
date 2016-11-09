@@ -387,7 +387,8 @@ class EE_Cart {
 
 
 	public function __wakeup() {
-		if ( ! $this->_grand_total instanceof EE_Line_Item && ! absint($this->_grand_total) !== 0 ) {
+		if ( ! $this->_grand_total instanceof EE_Line_Item && absint($this->_grand_total) !== 0 ) {
+			// $this->_grand_total is actually just an ID, so use it to get the object from the db
 			$this->_grand_total = EEM_Line_Item::instance()->get_one_by_ID( $this->_grand_total);
 		}
 	}
