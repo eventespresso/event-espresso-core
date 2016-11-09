@@ -397,7 +397,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
         // remove slashes and ?
         $current_request_uri = trim($current_request_uri, '?/');
         // is current request URI part of the known full reg page URL ?
-        return strpos($reg_page_url, $current_request_uri) !== false;
+        return ! empty($current_request_uri) && strpos($reg_page_url, $current_request_uri) !== false;
     }
 
 
