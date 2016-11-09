@@ -124,7 +124,10 @@ class DisplayTicketSelector
         if ( ! $this->setEvent( $event ) ) {
             return false;
         }
-        $event_post = $this->event instanceof \EE_Event ? $this->event->ID() : $event;
+	    if ( apply_filters( 'FHEE__EED_Events_Archive__event_list_iframe', false ) ) {
+		    $this->setIframe();
+	    }
+	    $event_post = $this->event instanceof \EE_Event ? $this->event->ID() : $event;
         // grab event status
         $_event_active_status = $this->event->get_active_status();
         if (
@@ -146,7 +149,7 @@ class DisplayTicketSelector
         ) {
             return ! is_single() ? $this->displayViewDetailsButton() : '';
         }
-        $template_args = array();
+	    $template_args = array();
         $template_args[ 'event_status' ] = $_event_active_status;
         $template_args[ 'date_format' ] = apply_filters(
             'FHEE__EED_Ticket_Selector__display_ticket_selector__date_format',
@@ -225,7 +228,7 @@ class DisplayTicketSelector
             $templates[ 'ticket_selector' ],
             $this->event
         );
-        // redirecting to another site for registration ??
+	    // redirecting to another site for registration ??
         $external_url = $this->event->external_url() !== null || $this->event->external_url() !== ''
             ? $this->event->external_url()
             : '';
@@ -399,7 +402,8 @@ class DisplayTicketSelector
                 __FILE__, __FUNCTION__, __LINE__
             );
         }
-        $view_details_btn = '<form method="POST" action="' . $this->event->get_permalink() . '">';
+	    $extra_params = $this->iframe ? ' target="_blank"' : '';
+	    $view_details_btn = '<form method="POST" action="' . $this->event->get_permalink() . '"'. $extra_params.'>';
         $btn_text = apply_filters(
             'FHEE__EE_Ticket_Selector__display_view_details_btn__btn_text',
             __( 'View Details', 'event_espresso' ),
