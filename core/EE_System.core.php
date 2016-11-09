@@ -85,6 +85,13 @@ final class EE_System
      */
     private $_req_type;
 
+    /**
+     * Whether or not there was a non-micro version change in EE core version during this request
+     *
+     * @var boolean
+     */
+    private $_major_version_change = false;
+
 
 
     /**
@@ -200,6 +207,8 @@ final class EE_System
         ) {
             include_once EE_THIRD_PARTY . 'wp-api-basic-auth' . DS . 'basic-auth.php';
         }
+        
+        do_action('AHEE__EE_System__load_espresso_addons__complete');
     }
 
 
@@ -373,9 +382,12 @@ final class EE_System
         } else {
             EE_Data_Migration_Manager::instance()->enqueue_db_initialization_for('Core');
         }
-        if ($request_type == EE_System::req_type_new_activation
-            || $request_type == EE_System::req_type_reactivation
-            || $request_type == EE_System::req_type_upgrade
+        if ($request_type === EE_System::req_type_new_activation
+            || $request_type === EE_System::req_type_reactivation
+            || (
+                $request_type === EE_System::req_type_upgrade
+                && $this->is_major_version_change()
+            )
         ) {
             add_action('AHEE__EE_System__initialize_last', array($this, 'redirect_to_about_ee'), 9);
         }
@@ -436,8 +448,43 @@ final class EE_System
                 : $this->fix_espresso_db_upgrade_option();
             $this->_req_type = $this->detect_req_type_given_activation_history($espresso_db_update,
                 'ee_espresso_activation', espresso_version());
+            $this->_major_version_change = $this->_detect_major_version_change($espresso_db_update);
         }
         return $this->_req_type;
+    }
+
+
+
+    /**
+     * Returns whether or not there was a non-micro version change (ie, change in either
+     * the first or second number in the version. Eg 4.9.0.rc.001 to 4.10.0.rc.000,
+     * but not 4.9.0.rc.0001 to 4.9.1.rc.0001
+     *
+     * @param $activation_history
+     * @return bool
+     */
+    protected function _detect_major_version_change($activation_history)
+    {
+        $previous_version = EE_System::_get_most_recently_active_version_from_activation_history($activation_history);
+        $previous_version_parts = explode('.', $previous_version);
+        $current_version_parts = explode('.', espresso_version());
+        return isset($previous_version_parts[0], $previous_version_parts[1], $current_version_parts[0], $current_version_parts[1])
+               && ($previous_version_parts[0] !== $current_version_parts[0]
+                   || $previous_version_parts[1] !== $current_version_parts[1]
+               );
+    }
+
+
+
+    /**
+     * Returns true if either the major or minor version of EE changed during this request.
+     * Eg 4.9.0.rc.001 to 4.10.0.rc.000, but not 4.9.0.rc.0001 to 4.9.1.rc.0001
+     *
+     * @return bool
+     */
+    public function is_major_version_change()
+    {
+        return $this->_major_version_change;
     }
 
 
@@ -522,10 +569,26 @@ final class EE_System
     protected static function _new_version_is_higher($activation_history_for_addon, $version_to_upgrade_to)
     {
         //find the most recently-activated version
+        $most_recently_active_version = EE_System::_get_most_recently_active_version_from_activation_history($activation_history_for_addon);
+        return version_compare($version_to_upgrade_to, $most_recently_active_version);
+    }
+
+
+
+    /**
+     * Gets the most recently active version listed in the activation history,
+     * and if none are found (ie, it's a brand new install) returns '0.0.0.dev.000'.
+     *
+     * @param array $activation_history  (keys are versions, values are arrays of times activated,
+     *                                   sometimes containing 'unknown-date'
+     * @return string
+     */
+    protected static function _get_most_recently_active_version_from_activation_history($activation_history)
+    {
         $most_recently_active_version_activation = '1970-01-01 00:00:00';
         $most_recently_active_version = '0.0.0.dev.000';
-        if (is_array($activation_history_for_addon)) {
-            foreach ($activation_history_for_addon as $version => $times_activated) {
+        if (is_array($activation_history)) {
+            foreach ($activation_history as $version => $times_activated) {
                 //check there is a record of when this version was activated. Otherwise,
                 //mark it as unknown
                 if ( ! $times_activated) {
@@ -543,7 +606,7 @@ final class EE_System
                 }
             }
         }
-        return version_compare($version_to_upgrade_to, $most_recently_active_version);
+        return $most_recently_active_version;
     }
 
 
@@ -556,11 +619,15 @@ final class EE_System
     public function redirect_to_about_ee()
     {
         $notices = EE_Error::get_notices(false);
-        //if current user is an admin and it's not an ajax request
+        //if current user is an admin and it's not an ajax or rest request
         if (
-            $this->registry->CAP->current_user_can('manage_options', 'espresso_about_default')
-            && ! (defined('DOING_AJAX') && DOING_AJAX)
+            ! (defined('DOING_AJAX') && DOING_AJAX)
+            && ! (defined('REST_REQUEST') && REST_REQUEST)
             && ! isset($notices['errors'])
+            && apply_filters(
+                'FHEE__EE_System__redirect_to_about_ee__do_redirect',
+                $this->registry->CAP->current_user_can('manage_options', 'espresso_about_default')
+            )
         ) {
             $query_params = array('page' => 'espresso_about');
             if (EE_System::instance()->detect_req_type() == EE_System::req_type_new_activation) {
