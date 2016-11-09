@@ -202,7 +202,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * @throws \EE_Error
 	 */
 	public static function set_definitions() {
-		define( 'SPCO_BASE_PATH', rtrim( str_replace( array( '\\', '/' ), DS, plugin_dir_path( __FILE__ )), DS ) . DS );
+        define( 'SPCO_BASE_PATH', rtrim( str_replace( array( '\\', '/' ), DS, plugin_dir_path( __FILE__ )), DS ) . DS );
 		define( 'SPCO_CSS_URL', plugin_dir_url( __FILE__ ) . 'css' . DS );
 		define( 'SPCO_IMG_URL', plugin_dir_url( __FILE__ ) . 'img' . DS );
 		define( 'SPCO_JS_URL', plugin_dir_url( __FILE__ ) . 'js' . DS );
@@ -359,12 +359,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * @throws \EE_Error
 	 */
 	public function run( $WP_Query ) {
-		if (
+        if (
 			$WP_Query instanceof WP_Query
 			&& $WP_Query->is_main_query()
 			&& apply_filters( 'FHEE__EED_Single_Page_Checkout__run', true )
-			&& isset( $WP_Query->query['pagename'] )
-			&& strpos( EE_Config::instance()->core->reg_page_url(), $WP_Query->query['pagename'] ) !== false
+			&& $this->_is_reg_checkout()
 		) {
 			$this->_initialize();
 		}
@@ -372,7 +371,38 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 
-	/**
+    /**
+     * determines whether current url matches reg page url
+     *
+     * @return bool
+     */
+    protected function _is_reg_checkout() {
+        // get current permalink for reg page without any extra query args
+        $reg_page_url = \get_permalink(EE_Config::instance()->core->reg_page_id);
+        // get request URI for current request, but without the scheme or host
+        $current_request_uri = \EEH_URL::filter_input_server_url('REQUEST_URI');
+        $current_request_uri = html_entity_decode( $current_request_uri );
+        // get array of query args from the current request URI
+        $query_args = \EEH_URL::get_query_string($current_request_uri);
+        // grab page id if it is set
+        $page_id = isset($query_args['page_id']) ? absint($query_args['page_id']) : 0;
+        // and remove the page id from the query args (we will re-add it later)
+        unset($query_args['page_id']);
+        // now strip all query args from current request URI
+        $current_request_uri = remove_query_arg(array_flip($query_args), $current_request_uri);
+        // and re-add the page id if it was set
+        if ($page_id){
+            $current_request_uri = add_query_arg('page_id', $page_id, $current_request_uri);
+        }
+        // remove slashes and ?
+        $current_request_uri = trim($current_request_uri, '?/');
+        // is current request URI part of the known full reg page URL ?
+        return strpos($reg_page_url, $current_request_uri) !== false;
+    }
+
+
+
+    /**
 	 *    run
 	 *
 	 * @access    public
@@ -398,14 +428,16 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		if ( EED_Single_Page_Checkout::$_initialized ) {
 			return;
 		}
-		try {
+        try {
 			// setup the EE_Checkout object
 			$this->checkout = $this->_initialize_checkout();
 			// filter checkout
 			$this->checkout = apply_filters( 'FHEE__EED_Single_Page_Checkout___initialize__checkout', $this->checkout );
 			// get the $_GET
 			$this->_get_request_vars();
-			$this->_block_bots();
+            if ($this->_block_bots()) {
+                return;
+            }
 			// filter continue_reg
 			$this->checkout->continue_reg = apply_filters( 'FHEE__EED_Single_Page_Checkout__init___continue_reg', TRUE, $this->checkout );
 			// load the reg steps array
@@ -566,12 +598,15 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 *  a REG URL Link, which indicates that the request is a return visit to SPCO for a valid TXN
 	 * so if you're not coming from the Ticket Selector nor returning for a valid IP...
 	 * then where you coming from man?
+     *
+     * @return boolean
 	 */
 	private function _block_bots() {
 		$invalid_checkout_access = \EED_Invalid_Checkout_Access::getInvalidCheckoutAccess();
 		if ( $invalid_checkout_access->checkoutAccessIsInvalid( $this->checkout ) ) {
-			$this->_handle_html_redirects();
+			return true;
 		}
+		return false;
 	}
 
 
@@ -1229,6 +1264,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		wp_register_script( 'jquery_countdown', EE_THIRD_PARTY_URL . 'jquery	.countdown.min.js', array( 'jquery_plugin' ), '2.0.2', TRUE );
 		wp_register_script( 'single_page_checkout', SPCO_JS_URL . 'single_page_checkout.js', array( 'espresso_core', 'underscore', 'ee_form_section_validation', 'jquery_countdown' ), EVENT_ESPRESSO_VERSION, TRUE );
 		$this->checkout->registration_form->enqueue_js();
+		$this->checkout->current_step->reg_form->enqueue_js();
 		wp_enqueue_script( 'single_page_checkout' );
 
 		/**

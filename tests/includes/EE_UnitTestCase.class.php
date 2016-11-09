@@ -394,6 +394,16 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 			require_once EE_TESTS_DIR . 'mocks/core/db_models/fields/' . $ModelFieldMock . '_Mock.php';
 		}
 	}
+    
+    
+    /**
+     * @param array $ModuleMocks array of Module class names like "EED_Single_Page_Checkout"
+     */
+	public function loadModuleMocks( $ModuleMocks = array() ) {
+        foreach( $ModuleMocks as $ModuleMock ) {
+            require_once EE_TESTS_DIR . 'mocks/modules/' . $ModuleMock . '_Mock.php';
+        }
+    }
 
 
 
