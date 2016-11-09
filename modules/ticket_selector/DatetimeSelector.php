@@ -135,7 +135,8 @@ class DatetimeSelector
             \EEH_HTML::span('', '', 'dashicons dashicons-calendar-alt') . esc_html__('Datetimes', 'event_espresso'),
             '', 'datetime_selector-lbl'
         );
-        $html .= "\n" . '<select name="datetime_selector-' . $this->event->ID() . '"';
+	    $html .= \EEH_HTML::div( '', '', 'select-wrap-dv' );
+	    $html .= "\n" . '<select name="datetime_selector-' . $this->event->ID() . '"';
         $html .= ' id="datetime-selector-' . $this->event->ID() . '"';
         $html .= ' class="ticket-selector-datetime-selector-slct"';
         $html .= ' data-tkt_slctr_evt="' . $this->event->ID() . '">';
@@ -153,8 +154,9 @@ class DatetimeSelector
             $html .= '</option>';
         }
         $html .= "\n</select>";
-        $html .= \EEH_HTML::br(2);
-        $html .= \EEH_HTML::divx();
+	    $html .= \EEH_HTML::divx('', 'select-wrap-dv');
+	    $html .= \EEH_HTML::br();
+        $html .= \EEH_HTML::divx('', 'datetime_selector-dv');
         return $html;
     }
 
