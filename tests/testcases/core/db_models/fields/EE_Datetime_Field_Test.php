@@ -376,13 +376,13 @@ class EE_Datetime_Field_Test extends EE_UnitTestCase {
 		$datetime_field = unserialize( $datetime_field );
 		/** @var DateTime $datetime */
 		$datetime = $datetime_field->get_date_object( '' );
-		$this->assertInstanceOf( '\EventEspresso\core\domain\entities\DbSafeDateTime', $datetime );
+		$this->assertInstanceOf( 'EventEspresso\core\domain\entities\DbSafeDateTime', $datetime );
 		// now serialize and unserialize
 		$datetime = serialize( $datetime );
 		// ensure that a DateTime object was not serialized
 		$this->assertFalse(strpos($datetime, 'O:8:"DateTime"'));
 		$datetime = unserialize( $datetime );
-		$this->assertInstanceOf( '\EventEspresso\core\domain\entities\DbSafeDateTime', $datetime );
+		$this->assertInstanceOf( 'EventEspresso\core\domain\entities\DbSafeDateTime', $datetime );
 	}
 
 
