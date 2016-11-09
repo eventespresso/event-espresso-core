@@ -1,7 +1,9 @@
 <?php
 namespace EventEspresso\core\domain\entities;
 
-defined( 'ABSPATH' ) || exit;
+if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
+	exit( 'No direct script access allowed' );
+}
 
 
 
