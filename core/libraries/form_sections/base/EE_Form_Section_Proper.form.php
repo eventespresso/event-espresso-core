@@ -1070,7 +1070,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      * @param array $inputs_to_exclude values are the input names
      * @return void
      */
-    public function exclude($inputs_to_exclude = array())
+    public function exclude( array $inputs_to_exclude = array())
     {
         foreach ($inputs_to_exclude as $input_to_exclude_name) {
             unset($this->_subsections[$input_to_exclude_name]);
@@ -1083,7 +1083,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      * @param array $inputs_to_hide
      * @throws \EE_Error
      */
-    public function hide($inputs_to_hide = array())
+    public function hide( array $inputs_to_hide = array())
     {
         foreach ($inputs_to_hide as $input_to_hide) {
             $input = $this->get_input($input_to_hide);
