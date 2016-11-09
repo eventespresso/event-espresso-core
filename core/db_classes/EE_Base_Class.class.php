@@ -2500,6 +2500,18 @@ abstract class EE_Base_Class {
 
 
 
+	/**
+	 * restore _props_n_values_provided_in_constructor
+	 * PLZ NOTE: this will reset the array to whatever fields values were present prior to serialization,
+	 * and therefore should NOT be used to determine if state change has occurred since initial construction.
+	 * At best, you would only be able to detect if state change has occurred during THIS request.
+	 */
+	public function __wakeup() {
+		$this->_props_n_values_provided_in_constructor = $this->_fields;
+	}
+
+
+
 }
 
 
