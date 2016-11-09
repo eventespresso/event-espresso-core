@@ -1165,7 +1165,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             }
         }
         if ($trash) {
-            $query_params = $this->_alter_query_params_so_only_trashed_items_included($query_params);
+            $query_params = EEM_Registration::instance()->alter_query_params_so_only_trashed_items_included($query_params);
         }
         return $query_params;
     }
