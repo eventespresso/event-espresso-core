@@ -47,14 +47,14 @@ class EED_Ticket_Selector_Caff  extends EED_Ticket_Selector {
 	 * @param \WP $WP
 	 */
 	public function run( $WP ) {
-		$this->set_config();
+        $this->set_config();
 	}
 
 
 
 
 	protected function set_config(){
-		$this->set_config_section( 'template_settings' );
+        $this->set_config_section( 'template_settings' );
 		$this->set_config_class( 'EE_Ticket_Selector_Config' );
 		$this->set_config_name( 'EED_Ticket_Selector' );
 	}
@@ -108,7 +108,11 @@ class EED_Ticket_Selector_Caff  extends EED_Ticket_Selector {
      * @throws \EE_Error
      */
     public static function _ticket_selector_appearance_settings() {
-	    // get option for whether to show datetime selector in TS
+        if ( ! \EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector instanceof EE_Ticket_Selector_Config ) {
+            \EED_Ticket_Selector::instance()->set_config();
+            \EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector = \EED_Ticket_Selector::instance()->config();
+        }
+        // get option for whether to show datetime selector in TS
 	    $show_datetime_selector = \EE_Registry::instance()
 		    ->CFG
 		    ->template_settings
@@ -209,8 +213,9 @@ class EED_Ticket_Selector_Caff  extends EED_Ticket_Selector {
 	 * @return EE_Template_Config
 	 */
 	public static function update_template_settings( EE_Template_Config $CFG, $REQ ) {
-		if ( ! isset( $CFG->EED_Ticket_Selector ) ) {
-			$CFG->EED_Ticket_Selector = new EE_Ticket_Selector_Config();
+		if ( ! $CFG->EED_Ticket_Selector instanceof EE_Ticket_Selector_Config ) {
+            \EED_Ticket_Selector::instance()->set_config();
+            $CFG->EED_Ticket_Selector = \EED_Ticket_Selector::instance()->config();
 		}
 		try {
 			$ticket_selector_form = EED_Ticket_Selector_Caff::_ticket_selector_settings_form();
