@@ -541,7 +541,7 @@ class EEM_Event extends EEM_CPT_Base
         }
         
         //let's add specific query_params for active_events - keep in mind this will override any sent status in the query AND any date queries.
-        $where_params['status'] = 'publish';
+        $where_params['status'] = array( 'IN', array( 'publish', EEM_Event::sold_out ) );
         //if already have where params for DTT_EVT_start or DTT_EVT_end then append these conditions
         if (isset($where_params['Datetime.DTT_EVT_start'])) {
             $where_params['Datetime.DTT_EVT_start******'] = array(
@@ -599,7 +599,7 @@ class EEM_Event extends EEM_CPT_Base
         }
         
         //let's add specific query_params for active_events - keep in mind this will override any sent status in the query AND any date queries.
-        $where_params['status'] = 'publish';
+        $where_params['status'] = array( 'IN', array( 'publish', EEM_Event::sold_out ) );
         //if there are already query_params matching DTT_EVT_start then we need to modify that to add them.
         if (isset($where_params['Datetime.DTT_EVT_start'])) {
             $where_params['Datetime.DTT_EVT_start*****'] = array(
