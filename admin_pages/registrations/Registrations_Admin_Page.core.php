@@ -947,6 +947,32 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      */
     public function get_registrations($per_page = 10, $count = false, $this_month = false, $today = false)
     {
+        if( $this_month ) {
+            EE_Error::doing_it_wrong(
+                __FUNCTION__,
+                sprintf(
+                    esc_html__('%1$s parameter %2$s is deprecated, instead set %3$s.', 'event_espresso'),
+                    'Registrations_Admin_Page::get_registrations()',
+                    '$this_month',
+                    '$_REQUEST["status"]="month"'
+                ),
+                '4.9.21.p'
+            );
+            $this->_req_data['status'] = 'month';
+        }
+        if( $today ) {
+            EE_Error::doing_it_wrong(
+                __FUNCTION__,
+                sprintf(
+                    esc_html__('%1$s parameter %2$s is deprecated, instead set %3$s.', 'event_espresso'),
+                    'Registrations_Admin_Page::get_registrations()',
+                    '$today',
+                    '$_REQUEST["status"]="today"'
+                ),
+                '4.9.21.p'
+            );
+            $this->_req_data['status'] = 'today';
+        }
         $query_params = $this->_get_query_params_from_request($this->_req_data, $per_page, $count);
         if ($count) {
             return EEM_Registration::instance()->count($query_params);
@@ -1007,9 +1033,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     protected function _get_query_params_from_request(
         $request,
         $per_page = 10,
-        $count = false,
-        $this_month = false,
-        $today = false
+        $count = false
     ) {
         $EVT_ID = ! empty($request['event_id']) && $request['event_id'] > 0 ? absint($request['event_id']) : false;
         $CAT_ID = ! empty($request['EVT_CAT']) && (int)$request['EVT_CAT'] > 0 ? absint($request['EVT_CAT']) : false;
@@ -1018,8 +1042,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         $reg_status = ! empty($request['_reg_status']) ? sanitize_text_field($request['_reg_status']) : false;
         $month_range = ! empty($request['month_range']) ? sanitize_text_field($request['month_range'])
             : false;//should be like 2013-april
-        $today_a = ! empty($request['status']) && $request['status'] === 'today' ? true : false;
-        $this_month_a = ! empty($request['status']) && $request['status'] === 'month' ? true : false;
+        $today = ! empty($request['status']) && $request['status'] === 'today' ? true : false;
+        $this_month = ! empty($request['status']) && $request['status'] === 'month' ? true : false;
         $start_date = false;
         $end_date = false;
         $trash = ! empty($request['status']) && $request['status'] === 'trash' ? true : false;
@@ -1072,7 +1096,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         $this_year_r = date('Y', current_time('timestamp'));
         $time_start = ' 00:00:00';
         $time_end = ' 23:59:59';
-        if ($today_a || $today) {
+        if ( $today) {
             $curdate = date('Y-m-d', current_time('timestamp'));
             $where['REG_date'] = array(
                 'BETWEEN',
@@ -1083,7 +1107,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                                     ->convert_datetime_for_query('REG_date', $curdate . $time_end, 'Y-m-d H:i:s'),
                 ),
             );
-        } elseif ($this_month_a || $this_month) {
+        } elseif ( $this_month) {
             $this_month_r = date('m', current_time('timestamp'));
             $days_this_month = date('t', current_time('timestamp'));
             $where['REG_date'] = array(
