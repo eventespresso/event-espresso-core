@@ -98,8 +98,9 @@ class EED_Ticket_Selector extends  EED_Module {
 
 		//if config is not set, initialize
 		//If config is not set, set it.
-		if ( ! isset( EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector ) ) {
-			EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector = new EE_Ticket_Selector_Config();
+		if ( ! EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector instanceof EE_Ticket_Selector_Config ) {
+            \EED_Ticket_Selector::instance()->set_config();
+            \EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector = \EED_Ticket_Selector::instance()->config();
 		}
 	}
 
