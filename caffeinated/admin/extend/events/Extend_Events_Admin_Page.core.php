@@ -309,7 +309,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 
 	public function load_scripts_styles_edit() {
-        // plz note, the following script contains some code that is not heartbeat related
 		wp_register_script(
 			'ee-event-editor-heartbeat',
 			EVENTS_CAF_ASSETS_URL . 'event-editor-heartbeat.js',
