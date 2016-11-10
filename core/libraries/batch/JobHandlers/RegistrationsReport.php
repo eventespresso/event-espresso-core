@@ -79,7 +79,16 @@ class RegistrationsReport extends JobHandlerFile
         $job_parameters->add_extra_data('query_params', $query_params);
         $question_data_for_columns = $this->_get_questions_for_report($query_params);
         $job_parameters->add_extra_data('questions_data', $question_data_for_columns);
-        $job_parameters->set_job_size(\EEM_Registration::instance()->count($query_params));
+        $job_parameters->set_job_size(
+            \EEM_Registration::instance()->count(
+                array_diff_key(
+                    $query_params,
+                    array_flip(
+                        array( 'limit' )
+                    )
+                )
+            )
+        );
         //we should also set the header columns
         $csv_data_for_row = $this->get_csv_data_for($event_id, 0, 1, $job_parameters->extra_datum('questions_data'),
             $job_parameters->extra_datum('query_params'));
@@ -174,11 +183,15 @@ class RegistrationsReport extends JobHandlerFile
      */
     public function continue_job(JobParameters $job_parameters, $batch_size = 50)
     {
-        $csv_data = $this->get_csv_data_for($job_parameters->request_datum('EVT_ID', '0'),
-            $job_parameters->units_processed(), $batch_size, $job_parameters->extra_datum('questions_data'),
-            $job_parameters->extra_datum('query_params'));
-        \EEH_Export::write_data_array_to_csv($job_parameters->extra_datum('filepath'), $csv_data, false);
-        $units_processed = count($csv_data);
+        if( $job_parameters->units_processed() < $job_parameters->job_size() ) {
+            $csv_data = $this->get_csv_data_for($job_parameters->request_datum('EVT_ID', '0'),
+                $job_parameters->units_processed(), $batch_size, $job_parameters->extra_datum('questions_data'),
+                $job_parameters->extra_datum('query_params'));
+            \EEH_Export::write_data_array_to_csv($job_parameters->extra_datum('filepath'), $csv_data, false);
+            $units_processed = count($csv_data);
+        }else{
+            $units_processed = 0;
+        }
         $job_parameters->mark_processed($units_processed);
         $extra_response_data = array(
             'file_url' => '',
@@ -187,6 +200,7 @@ class RegistrationsReport extends JobHandlerFile
             $job_parameters->set_status(JobParameters::status_complete);
             $extra_response_data['file_url'] = $this->get_url_to_file($job_parameters->extra_datum('filepath'));
         }
+
         return new JobStepResponse($job_parameters,
             sprintf(__('Wrote %1$s rows to report CSV file...', 'event_espresso'), count($csv_data)),
             $extra_response_data);

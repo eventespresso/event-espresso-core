@@ -947,7 +947,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      */
     public function get_registrations($per_page = 10, $count = false, $this_month = false, $today = false)
     {
-        $query_params = $this->_get_query_params_from_request($this->_req_data, $per_page, $count, $this_month, $today);
+        $query_params = $this->_get_query_params_from_request($this->_req_data, $per_page, $count);
         if ($count) {
             return EEM_Registration::instance()->count($query_params);
         } else {
@@ -995,14 +995,12 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     }
 
 
-
     /**
      * Generates WHERE conditions for a query from a request that fits nicely into a querystring
      *
      * @param array   $request
      * @param int     $per_page
-     * @param boolean $this_month
-     * @param boolean $today
+     * @param boolean $count whether to prepare query params to just count, or to actually fetch the records
      * @return array
      * @throws \EE_Error
      */
@@ -1016,6 +1014,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         $EVT_ID = ! empty($request['event_id']) && $request['event_id'] > 0 ? absint($request['event_id']) : false;
         $CAT_ID = ! empty($request['EVT_CAT']) && (int)$request['EVT_CAT'] > 0 ? absint($request['EVT_CAT']) : false;
         $DTT_ID = isset($request['datetime_id']) ? absint($request['datetime_id']) : null;
+        $DTT_ID = isset( $request['DTT_ID'] ) ? $request['DTT_ID'] : $DTT_ID;
         $reg_status = ! empty($request['_reg_status']) ? sanitize_text_field($request['_reg_status']) : false;
         $month_range = ! empty($request['month_range']) ? sanitize_text_field($request['month_range'])
             : false;//should be like 2013-april
@@ -1123,26 +1122,26 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             throw new EE_Error("not yet supported");
         }
         if ( ! empty($request['s'])) {
-            $sstr = '%' . $request['s'] . '%';
+            $search_term = '%' . $request['s'] . '%';
             $where['OR'] = array(
-                'Event.EVT_name'                          => array('LIKE', $sstr),
-                'Event.EVT_desc'                          => array('LIKE', $sstr),
-                'Event.EVT_short_desc'                    => array('LIKE', $sstr),
-                'Attendee.ATT_full_name'                  => array('LIKE', $sstr),
-                'Attendee.ATT_fname'                      => array('LIKE', $sstr),
-                'Attendee.ATT_lname'                      => array('LIKE', $sstr),
-                'Attendee.ATT_short_bio'                  => array('LIKE', $sstr),
-                'Attendee.ATT_email'                      => array('LIKE', $sstr),
-                'Attendee.ATT_address'                    => array('LIKE', $sstr),
-                'Attendee.ATT_address2'                   => array('LIKE', $sstr),
-                'Attendee.ATT_city'                       => array('LIKE', $sstr),
-                'REG_final_price'                         => array('LIKE', $sstr),
-                'REG_code'                                => array('LIKE', $sstr),
-                'REG_count'                               => array('LIKE', $sstr),
-                'REG_group_size'                          => array('LIKE', $sstr),
-                'Ticket.TKT_name'                         => array('LIKE', $sstr),
-                'Ticket.TKT_description'                  => array('LIKE', $sstr),
-                'Transaction.Payment.PAY_txn_id_chq_nmbr' => array('LIKE', $sstr),
+                'Event.EVT_name'                          => array('LIKE', $search_term),
+                'Event.EVT_desc'                          => array('LIKE', $search_term),
+                'Event.EVT_short_desc'                    => array('LIKE', $search_term),
+                'Attendee.ATT_full_name'                  => array('LIKE', $search_term),
+                'Attendee.ATT_fname'                      => array('LIKE', $search_term),
+                'Attendee.ATT_lname'                      => array('LIKE', $search_term),
+                'Attendee.ATT_short_bio'                  => array('LIKE', $search_term),
+                'Attendee.ATT_email'                      => array('LIKE', $search_term),
+                'Attendee.ATT_address'                    => array('LIKE', $search_term),
+                'Attendee.ATT_address2'                   => array('LIKE', $search_term),
+                'Attendee.ATT_city'                       => array('LIKE', $search_term),
+                'REG_final_price'                         => array('LIKE', $search_term),
+                'REG_code'                                => array('LIKE', $search_term),
+                'REG_count'                               => array('LIKE', $search_term),
+                'REG_group_size'                          => array('LIKE', $search_term),
+                'Ticket.TKT_name'                         => array('LIKE', $search_term),
+                'Ticket.TKT_description'                  => array('LIKE', $search_term),
+                'Transaction.Payment.PAY_txn_id_chq_nmbr' => array('LIKE', $search_term),
             );
         }
         //capability checks
@@ -1331,38 +1330,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             ),
         ));
     }
-
-
-
-    /**
-     * Returns an array of all the buttons for the various statuses and switch status actions
-     *
-     * @return string
-     */
-    protected function _get_current_reg_status_help_text($STS_ID = '')
-    {
-        //$reg_status_help_text = array(
-        //	'RAP' => __( 'XXXXXXXXXXX', 'event_espresso' ),
-        //	'RAP' => __( 'XXXXXXXXXXX', 'event_espresso' ),
-        //	'RAP' => __( 'XXXXXXXXXXX', 'event_espresso' ),
-        //	'RAP' => __( 'XXXXXXXXXXX', 'event_espresso' ),
-        //	'RAP' => __( 'XXXXXXXXXXX', 'event_espresso' ),
-        //	'RAP' => __( 'XXXXXXXXXXX', 'event_espresso' ),
-        //);
-        //Approved
-        //An approved registration allows payments and may have a transaction status of incomplete or complete . The registration is marked as active and a space is reserved for the registrant .
-        //Cancelled
-        //	A {
-        //	cancelled} registration is performed by the registrant . Payments are not allowed, the registration is inactive, and no space is reserved .
-        //Declined
-        //A declined registration is performed by the event admin . Payments are not allowed, the registration is inactive, and not space is reserved .
-        //Not Approved
-        //A not approved registration is performed by the event admin . Payments are not allowed, the registration is active, and no space is reserved .
-        //Pending Payment
-        //A pending registration allows payments . The status will be automatically toggled to approved if the {
-        //	payment} is made in full by registrant .
-    }
-
 
 
     /**
@@ -2647,15 +2614,32 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
 
 
 
-    public function _registrations_report()
+    /**
+     * Creates a registration report, but accepts the name of a method to use for preparing the query parameters
+     * to use when selecting registrations
+     * @param string $method_name_for_getting_query_params the name of the method (on this class) to use for preparing
+     *                                                     the query parameters from the request
+     * @return void ends the request with a redirect or download
+     */
+    public function _registrations_report_base( $method_name_for_getting_query_params )
     {
         if ( ! defined('EE_USE_OLD_CSV_REPORT_CLASS')) {
             wp_redirect(EE_Admin_Page::add_query_args_and_nonce(array(
                 'page'        => 'espresso_batch',
                 'batch'       => 'file',
                 'EVT_ID'      => isset($this->_req_data['EVT_ID']) ? $this->_req_data['EVT_ID'] : null,
-                'filters'     => urlencode(serialize($this->_get_query_params_from_request(EEH_Array::is_set($this->_req_data,
-                    'filters', array())))),
+                'filters'     => urlencode(
+                    serialize(
+                        call_user_func(
+                            array( $this, $method_name_for_getting_query_params ),
+                            EEH_Array::is_set(
+                                $this->_req_data,
+                                'filters',
+                                array()
+                            )
+                        )
+                    )
+                ),
                 'use_filters' => EEH_Array::is_set($this->_req_data, 'use_filters', false),
                 'job_handler' => urlencode('EventEspressoBatchRequest\JobHandlers\RegistrationsReport'),
                 'return_url'  => urlencode($this->_req_data['return_url']),
@@ -2673,6 +2657,17 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 $EE_Export->export();
             }
         }
+    }
+
+
+
+    /**
+     * Creates a registration report using only query parameters in the request
+     * @return void
+     */
+    public function _registrations_report()
+    {
+        $this->_registrations_report_base( '_get_query_params_from_request' );
     }
 
 
