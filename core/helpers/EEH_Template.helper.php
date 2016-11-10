@@ -316,14 +316,23 @@ class EEH_Template {
 
 
 
-	/**
-	 * load and display a template
-	 * @param bool|string $template_path server path to the file to be loaded, including file name and extension
-	 * @param  array      $template_args an array of arguments to be extracted for use in the template
-	 * @param  boolean    $return_string whether to send output immediately to screen, or capture and return as a string
-	 * @return mixed string
-	 */
-	public static function display_template( $template_path = FALSE, $template_args = array(), $return_string = FALSE ) {
+    /**
+     * load and display a template
+     *
+     * @param bool|string $template_path    server path to the file to be loaded, including file name and extension
+     * @param  array      $template_args    an array of arguments to be extracted for use in the template
+     * @param  boolean    $return_string    whether to send output immediately to screen, or capture and return as a string
+     * @param bool        $throw_exceptions if set to true, will throw an exception if the template is either
+     *                                      not found or is not readable
+     * @return mixed string
+     * @throws \DomainException
+     */
+	public static function display_template(
+	        $template_path    = false,
+            $template_args    = array(),
+            $return_string    = false,
+            $throw_exceptions = false
+    ) {
 
 		/**
 		 * These two filters are intended for last minute changes to templates being loaded and/or template arg
@@ -334,7 +343,7 @@ class EEH_Template {
 		 *
 		 * @since 4.6.0
 		 */
-		$template_path = apply_filters( 'FHEE__EEH_Template__display_template__template_path', $template_path );
+		$template_path = (string) apply_filters( 'FHEE__EEH_Template__display_template__template_path', $template_path );
 		$template_args = apply_filters( 'FHEE__EEH_Template__display_template__template_args', $template_args );
 
 		// you gimme nuttin - YOU GET NUTTIN !!
@@ -345,9 +354,17 @@ class EEH_Template {
 		if ( ! is_array( $template_args ) && ! is_object( $template_args )) {
 			$template_args = array( $template_args );
 		}
-		extract( (array) $template_args);
-
-		if ( $return_string ) {
+		extract( $template_args, EXTR_SKIP );
+        // ignore whether template is accessible ?
+        if ( $throw_exceptions && ! is_readable( $template_path ) ) {
+            throw new \DomainException(
+                    esc_html__(
+                            'Invalid, unreadable, or missing file.',
+                            'event_espresso'
+                    )
+            );
+        }
+        if ( $return_string ) {
 			// because we want to return a string, we are going to capture the output
 			ob_start();
 			include( $template_path );
