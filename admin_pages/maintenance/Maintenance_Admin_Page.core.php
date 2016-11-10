@@ -284,6 +284,8 @@ class Maintenance_Admin_Page extends EE_Admin_Page
                     //flag to change wording to indicating that we're only CONTINUING a migration script (somehow it got interrupted0
                     'reset_db_page_link'                     => EE_Admin_Page::add_query_args_and_nonce(array('action' => 'reset_db'),
                         EE_MAINTENANCE_ADMIN_URL),
+                    'data_reset_page'                        => EE_Admin_Page::add_query_args_and_nonce(array('action' => 'data_reset'),
+                        EE_MAINTENANCE_ADMIN_URL),
                     'update_migration_script_page_link'      => EE_Admin_Page::add_query_args_and_nonce(array('action' => 'change_maintenance_level'),
                         EE_MAINTENANCE_ADMIN_URL),
                     'ultimate_db_state'                      => sprintf(__("EE%s", 'event_espresso'),
