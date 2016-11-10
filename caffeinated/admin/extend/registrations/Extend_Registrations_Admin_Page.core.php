@@ -1090,7 +1090,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
 
 
     /**
-     * Download the registrations checking report (same as the normal registration report, but with different where
+     * Download the registrations check-in report (same as the normal registration report, but with different where
      * conditions)
      *
      * @return void ends the request by a redirect or download
