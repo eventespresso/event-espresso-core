@@ -44,18 +44,30 @@ class espresso_events_Registration_Form_Hooks_Extend extends espresso_events_Reg
 	 * @return void
 	 */
 	protected function _extend_properties() {
-		$new_metaboxes = array(
-			1 => array(
-				'page_route' => array('create_new', 'edit'),
-				'func' => 'additional_questions',
-				'label' => __('Questions for Additional Registrants', 'event_espresso'),
-				'priority' => 'default',
-				'context' => 'side'
-				)
-			);
-
-		$this->_metaboxes = array_merge( $this->_metaboxes, $new_metaboxes);
-	}
+        $this->_metaboxes = array_merge(
+            $this->_metaboxes,
+            array(
+                1 => array(
+                    'page_route' => array('create_new', 'edit'),
+                    'func'       => 'additional_questions',
+                    'label'      => __('Questions for Additional Registrants', 'event_espresso'),
+                    'priority'   => 'default',
+                    'context'    => 'side',
+                ),
+            )
+        );
+        $this->_scripts_styles = array(
+            'registers' => array(
+                'extended-event-editor' => array(
+                    'url'     => EE_CORE_CAF_ADMIN_EXTEND_URL . 'registration_form/assets/event-editor-question-groups.js',
+                    'depends' => array('jquery')
+                )
+            ),
+            'enqueues'  => array(
+                'extended-event-editor' => array('edit', 'create_new')
+            ),
+        );
+    }
 
 
 
