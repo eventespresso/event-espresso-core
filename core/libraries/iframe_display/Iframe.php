@@ -239,17 +239,8 @@ class Iframe
      */
     public function getTemplate()
     {
-        $template = __DIR__ . DIRECTORY_SEPARATOR . 'iframe_wrapper.template.php';
-        if ( ! is_readable($template)) {
-            throw new \DomainException(
-                esc_html__(
-                    'Invalid, unreadable, or missing file.',
-                    'event_espresso'
-                )
-            );
-        }
         return \EEH_Template::display_template(
-            $template,
+            __DIR__ . DIRECTORY_SEPARATOR . 'iframe_wrapper.template.php',
             array(
                 'title'             => apply_filters(
                     'FHEE___EventEspresso_core_libraries_iframe_display_Iframe__getTemplate__title',
@@ -285,6 +276,7 @@ class Iframe
                     true
                 ),
             ),
+            true,
             true
         );
     }
