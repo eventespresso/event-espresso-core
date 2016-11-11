@@ -1376,7 +1376,12 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     {
         //load formatter helper
         //args for getting related registrations
-        $approved_query_args = array(array('REG_deleted' => 0, 'STS_ID' => EEM_Registration::status_id_approved));
+        $approved_query_args = array(
+            array(
+                'REG_deleted' => 0,
+                'STS_ID'      => EEM_Registration::status_id_approved,
+            ),
+        );
         $not_approved_query_args = array(
             array(
                 'REG_deleted' => 0,
@@ -1760,9 +1765,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 new DateTimeZone(EEM_Datetime::instance()->get_timezone())
             );
             $start = $DateTime->format(implode(' ', $start_formats));
-            $end = $DateTime->setDate($year_r, $month_r, $DateTime->format('t'))->setTime(23, 59, 59)->format(
-                implode(' ', $start_formats)
-            );
+            $end = $DateTime->setDate($year_r, $month_r, $DateTime->format('t'))
+            				->setTime(23, 59, 59)
+            				->format(implode(' ', $start_formats));
             $where['Datetime.DTT_EVT_start'] = array('BETWEEN', array($start, $end));
         } else if (isset($this->_req_data['status']) && $this->_req_data['status'] == 'today') {
             $DateTime = new DateTime('now', new DateTimeZone(EEM_Event::instance()->get_timezone()));
