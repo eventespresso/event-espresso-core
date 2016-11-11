@@ -87,7 +87,7 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_
 			'CommandBusInterface',
 			array(
 				null,
-				$this->registry->create( 'CapChecker' )
+				array($this->registry->create( 'CapChecker' ))
 			),
 			true
 		);
