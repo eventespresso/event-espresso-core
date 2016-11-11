@@ -1519,6 +1519,7 @@ class EEH_Line_Item {
 			$ticket_line_item->ID()
 		);
 		if ( WP_DEBUG ) {
+			$message .= '<br>' . print_r( $final_prices_per_ticket_line_item, true );
 			throw new \OutOfRangeException( $message );
 		} else {
 			EE_Log::instance()->log( __CLASS__, __FUNCTION__, $message );
