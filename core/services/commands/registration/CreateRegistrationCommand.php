@@ -63,6 +63,7 @@ class CreateRegistrationCommand extends Command implements CommandRequiresCapChe
      * @param \EE_Line_Item   $ticket_line_item
      * @param int             $reg_count
      * @param int             $reg_group_size
+     * @throws \EventEspresso\core\exceptions\InvalidEntityException
      */
     public function __construct(
         \EE_Transaction $transaction,
@@ -77,7 +78,7 @@ class CreateRegistrationCommand extends Command implements CommandRequiresCapChe
                 is_object($this->ticket) ? get_class($this->ticket) : gettype($this->ticket),
                 'EE_Ticket',
                 sprintf(
-                    __("Line item %s did not contain a valid ticket", "event_espresso"),
+                    __('Line item %s did not contain a valid ticket', 'event_espresso'),
                     $ticket_line_item->ID()
                 )
             );
