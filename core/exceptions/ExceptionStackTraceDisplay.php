@@ -193,7 +193,6 @@ class ExceptionStackTraceDisplay {
 			exit();
 		}
 		echo $output;
-		die();
 	}
 
 
@@ -298,7 +297,7 @@ class ExceptionStackTraceDisplay {
 	 *
 	 * @return string
 	 */
-	private static function exceptionStyles() {
+	private function exceptionStyles() {
 		return '
 <style type="text/css">
 	#ee-error-message {
