@@ -24,17 +24,18 @@ class CreateRegistrationService extends DomainService
 {
 
 
-    /**
-     * @param \EE_Event       $event
-     * @param \EE_Transaction $transaction
-     * @param \EE_Ticket      $ticket
-     * @param \EE_Line_Item   $ticket_line_item
-     * @param                 $reg_count
-     * @param                 $reg_group_size
-     * @return \EE_Registration
-     * @throws \EE_Error
-     * @throws UnexpectedEntityException
-     */
+	/**
+	 * @param \EE_Event       $event
+	 * @param \EE_Transaction $transaction
+	 * @param \EE_Ticket      $ticket
+	 * @param \EE_Line_Item   $ticket_line_item
+	 * @param                 $reg_count
+	 * @param                 $reg_group_size
+	 * @return \EE_Registration
+	 * @throws \OutOfRangeException
+	 * @throws \EE_Error
+	 * @throws UnexpectedEntityException
+	 */
     public function create(
         \EE_Event $event,
         \EE_Transaction $transaction,
@@ -75,12 +76,14 @@ class CreateRegistrationService extends DomainService
 
 
 
-    /**
-     * @param \EE_Transaction $transaction
-     * @param \EE_Ticket      $ticket
-     * @param \EE_Line_Item   $ticket_line_item
-     * @return float
-     */
+	/**
+	 * @param \EE_Transaction $transaction
+	 * @param \EE_Ticket      $ticket
+	 * @param \EE_Line_Item   $ticket_line_item
+	 * @return float
+	 * @throws \EE_Error
+	 * @throws \OutOfRangeException
+	 */
     protected function resolveFinalPrice(
         \EE_Transaction $transaction,
         \EE_Ticket $ticket,
