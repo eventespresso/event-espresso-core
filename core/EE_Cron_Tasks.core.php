@@ -45,17 +45,24 @@ class EE_Cron_Tasks extends EE_Base
     {
         do_action('AHEE_log', __CLASS__, __FUNCTION__);
         // verify that WP Cron is enabled
-        if (defined('DISABLE_WP_CRON') && DISABLE_WP_CRON && is_admin()) {
-            EE_Error::add_persistent_admin_notice(
-                'wp_cron_disabled',
-                sprintf(
-                    __(
-                        'Event Espresso has detected that wp_cron is disabled. It\'s important that wp_cron is enabled because Event Espresso depends on wp_cron for critical scheduled tasks.%1$sSince it\'s possible that your site may have an alternative task scheduler set up, we strongly suggest that you inform the website host, or developer that set up the site, about this issue.',
-                        'event_espresso'
-                    ),
-                    '<br />'
-                )
-            );
+        if (
+            defined('DISABLE_WP_CRON')
+            && DISABLE_WP_CRON
+            && is_admin()
+            && ! get_option('ee_disabled_wp_cron_check')
+        ) {
+            /**
+             * This needs to be delayed until after the config is loaded because EE_Cron_Tasks is constructed before
+             * config is loaded.
+             * This is intentionally using a anonymous function so that its not easily de-registered.  Client code
+             * wanting to not have this functionality can just register its own action at a priority after this one to
+             * reverse any changes.
+             */
+            add_action('AHEE__EE_System__load_core_configuration__complete', function () {
+                EE_Registry::instance()->NET_CFG->core->do_messages_on_same_request = true;
+                EE_Registry::instance()->NET_CFG->update_config(true, false);
+                add_option('ee_disabled_wp_cron_check', 1, '', false);
+            });
         }
         // UPDATE TRANSACTION WITH PAYMENT
         add_action(
