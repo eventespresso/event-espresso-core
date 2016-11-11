@@ -51,25 +51,26 @@ class CommandHandlerManager implements CommandHandlerManagerInterface
 	 * However, if you wanted to utilize a CommandHandler from somewhere else,
 	 * then this method allows you to add that CommandHandler and specify the FQCN
 	 * (Fully Qualified ClassName) for the Command class that it should be used for.
-	 *
+     *
 	 * For example:
 	 *      by default the "Vendor\some\namespace\DoSomethingCommand"
 	 *      would resolve to using "Vendor\some\namespace\DoSomethingCommandHandler"
 	 *      but if you wanted to instead process that commend using:
 	 *      "Vendor\a\totally\different\namespace\for\DoSomethingCommandHandler"
 	 *      then the following code:
-	 *
-     *      $CommandHandlerManager = EE_Registry::instance()->create( 'CommandHandlerManagerInterface' );
+     *
+	 *      $CommandHandlerManager = EE_Registry::instance()->create( 'CommandHandlerManagerInterface' );
 	 *      $CommandHandlerManager->addCommandHandler(
 	 *          new Vendor\a\totally\different\namespace\for\DoSomethingCommandHandler(),
 	 *          'Vendor\some\namespace\DoSomethingCommand'
 	 *      );
-	 *
+     * 
 	 *      would result in the alternate CommandHandler being used to process that Command
 	 *
 	 * @param \EventEspresso\core\services\commands\CommandHandlerInterface $command_handler
-	 * @param string $fqcn_for_command Fully Qualified ClassName for Command
-	 * @return mixed
+	 * @param string                                                        $fqcn_for_command Fully Qualified ClassName for Command
+	 * @return void
+	 * @throws \EventEspresso\core\services\commands\InvalidCommandHandlerException
 	 */
 	public function addCommandHandler( CommandHandlerInterface $command_handler, $fqcn_for_command = '' )
 	{
@@ -87,6 +88,7 @@ class CommandHandlerManager implements CommandHandlerManagerInterface
 	/**
 	 * @param \EventEspresso\core\services\commands\CommandInterface $command
 	 * @return mixed
+	 * @throws \EventEspresso\core\services\commands\CommandHandlerNotFoundException
 	 */
 	public function getCommandHandler( CommandInterface $command )
 	{
