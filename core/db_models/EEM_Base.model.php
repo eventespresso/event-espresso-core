@@ -4138,6 +4138,31 @@ abstract class EEM_Base extends EE_Base
 
 
     /**
+     * similar to \EEM_Base::_get_qualified_column_for_field() but returns an array with data for ALL fields
+     *
+     * @param string $table_prefix this can be used for adding a prefix to qualified column names to be used in a JOIN
+     *                             for example: if performing a JOIN from from datetimes to tickets,
+     *                             and you wanted to get all the tickets' SQL selections,
+     *                             you would pass "Datetime__" for the $table_prefix,
+     *                             then the array of results would have all the fields' qualified names in it,
+     *                             each prepended with "Datetime__", like:
+     *                             array("Datetime__Ticket.TKT_ID"...), instead of just array("Ticket.TKT_ID",...)
+     * @param bool   $as_string    if true, will return a string with qualified column names separated by ', '
+     *                             if false, will simply return a numerically indexed array of qualified column names
+     * @return array|string
+     */
+    public function get_qualified_columns_for_all_fields($table_prefix = '', $as_string = false)
+    {
+        $qualified_columns = array();
+        foreach ($this->field_settings() as $field_name => $field) {
+            $qualified_columns[] = $table_prefix . $field->get_qualified_column();
+        }
+        return $as_string ? implode(', ', $qualified_columns) : $qualified_columns;
+    }
+
+
+
+    /**
      * constructs the select use on special limit joins
      * NOTE: for now this has only been tested and will work when the  table alias is for the PRIMARY table. Although
      * its setup so the select query will be setup on and just doing the special select join off of the primary table
