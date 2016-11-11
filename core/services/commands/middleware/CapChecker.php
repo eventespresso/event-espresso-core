@@ -45,11 +45,13 @@ class CapChecker implements CommandBusMiddlewareInterface
 
 
 
-    /**
-     * @param CommandInterface $command
-     * @param \Closure         $next
-     * @return mixed
-     */
+	/**
+	 * @param CommandInterface $command
+	 * @param \Closure         $next
+	 * @return mixed
+	 * @throws \EventEspresso\core\exceptions\InvalidClassException
+	 * @throws \EventEspresso\core\exceptions\InsufficientPermissionsException
+	 */
     public function handle(CommandInterface $command, \Closure $next)
     {
         if ( $command instanceof CommandRequiresCapCheckInterface) {
