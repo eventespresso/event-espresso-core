@@ -385,6 +385,9 @@ class EE_Dependency_Map {
 			'EventEspresso\core\domain\services\registration\CancelRegistrationService' => array(
 				'EventEspresso\core\domain\services\ticket\CancelTicketLineItemService' => EE_Dependency_Map::load_from_cache,
 			),
+			'EventEspresso\core\services\commands\attendee\CreateAttendeeCommandHandler' => array(
+				'EE_Registry' => EE_Dependency_Map::load_from_cache,
+			),
 			'EventEspresso\core\services\database\TableManager' => array(
 				'EventEspresso\core\services\database\TableAnalysis' => EE_Dependency_Map::load_from_cache,
 			),
@@ -521,6 +524,8 @@ class EE_Dependency_Map {
 			'CreateTicketLineItemCommandHandler'                                  => 'EventEspresso\core\services\commands\ticket\CreateTicketLineItemCommand',
 			'TableManager'                                                        => 'EventEspresso\core\services\database\TableManager',
 			'TableAnalysis'                                                       => 'EventEspresso\core\services\database\TableAnalysis',
+			'CreateTransactionCommandHandler'                                     => 'EventEspresso\core\services\commands\transaction\CreateTransactionCommandHandler',
+			'CreateAttendeeCommandHandler'                                        => 'EventEspresso\core\services\commands\attendee\CreateAttendeeCommandHandler',
 		);
 	}
 
