@@ -177,7 +177,7 @@ class EED_Ticket_Selector_Caff  extends EED_Ticket_Selector {
                                     ),
 									'default' => ! empty( $show_datetime_selector )
 										? $show_datetime_selector
-										: \EE_Ticket_Selector_Config::MAYBE_SHOW_DATETIME_SELECTOR,
+										: \EE_Ticket_Selector_Config::DO_NOT_SHOW_DATETIME_SELECTOR,
 									'display_html_label_text' => false
 								)
 							),
