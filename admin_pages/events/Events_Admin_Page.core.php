@@ -744,8 +744,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         if ($gmt_offset === '0' && ! EEM_Event::instance()->exists(array())) {
             EE_Error::add_attention(
                 sprintf(
-                    __('Your website\'s timezone is currently set to UTC + 0. We recommend updating your timezone to a city
-			        or region near you before you create an event. Your timezone can be updated through the %1$sGeneral Settings%2$s page.'),
+                    __(
+                        'Your website\'s timezone is currently set to UTC + 0. We recommend updating your timezone to a city
+			        or region near you before you create an event. Your timezone can be updated through the %1$sGeneral Settings%2$s page.'
+                    ),
                     '<a href="' . admin_url('options-general.php') . '">',
                     '</a>'
                 ),
@@ -1129,10 +1131,12 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 //make sure the $dtt_id here is saved just in case after the add_relation_to() the autosave replaces it.  We need to do this so we dont' TRASH the parent DTT.
                 $saved_dtts[$DTM->ID()] = $DTM;
             } else {
-                $DTM = EE_Registry::instance()->load_class('Datetime', array($datetime_values), false, false);
-                $DTM->set_date_format($incoming_date_formats[0]);
-                $DTM->set_time_format($incoming_date_formats[1]);
-                $DTM->set_timezone($evtobj->get_timezone());
+                $DTM = EE_Registry::instance()->load_class(
+                    'Datetime',
+                    array($datetime_values, $evtobj->get_timezone(), $incoming_date_formats),
+                    false,
+                    false
+                );
                 foreach ($datetime_values as $field => $value) {
                     $DTM->set($field, $value);
                 }
@@ -1253,8 +1257,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             } else {
                 //no TKT_id so a new TKT
                 $TKT_values['TKT_price'] = $ticket_price;
-                $TKT = EE_Registry::instance()->load_class('Ticket', array($TKT_values), false,
-                    false);
+                $TKT = EE_Registry::instance()->load_class('Ticket', array($TKT_values), false, false);
                 if ($TKT instanceof EE_Ticket) {
                     //need to reset values to properly account for the date formats
                     $TKT->set_date_format($incoming_date_formats[0]);
@@ -1768,21 +1771,18 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 new DateTimeZone(EEM_Datetime::instance()->get_timezone())
             );
             $start = $DateTime->format(implode(' ', $start_formats));
-            $end = $DateTime->setDate($year_r, $month_r,
-                $DateTime->format('t'))->setTime(23, 59, 59)->format(
-                implode(' ', $start_formats)
-            );
+            $end = $DateTime->setDate($year_r, $month_r, $DateTime
+            				->format('t'))->setTime(23, 59, 59)
+            				->format(implode(' ', $start_formats));
             $where['Datetime.DTT_EVT_start'] = array('BETWEEN', array($start, $end));
         } else if (isset($this->_req_data['status']) && $this->_req_data['status'] == 'today') {
-            $DateTime = new DateTime('now',
-                new DateTimeZone(EEM_Event::instance()->get_timezone()));
+            $DateTime = new DateTime('now', new DateTimeZone(EEM_Event::instance()->get_timezone()));
             $start = $DateTime->setTime(0, 0, 0)->format(implode(' ', $start_formats));
             $end = $DateTime->setTime(23, 59, 59)->format(implode(' ', $start_formats));
             $where['Datetime.DTT_EVT_start'] = array('BETWEEN', array($start, $end));
         } else if (isset($this->_req_data['status']) && $this->_req_data['status'] == 'month') {
             $now = date('Y-m-01');
-            $DateTime = new DateTime($now,
-                new DateTimeZone(EEM_Event::instance()->get_timezone()));
+            $DateTime = new DateTime($now, new DateTimeZone(EEM_Event::instance()->get_timezone()));
             $start = $DateTime->setTime(0, 0, 0)->format(implode(' ', $start_formats));
             $end = $DateTime->setDate(date('Y'), date('m'), $DateTime->format('t'))
                             ->setTime(23, 59, 59)
