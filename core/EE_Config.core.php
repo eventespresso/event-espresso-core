@@ -2929,7 +2929,7 @@ class EE_Ticket_Selector_Config extends EE_Config_Base {
 	 *
 	 * @var string $show_datetime_selector
 	 */
-	private $show_datetime_selector = 'maybe_datetime_selector';
+	private $show_datetime_selector = 'no_datetime_selector';
 
 	/**
 	 * the number of datetimes an event has to have before conditionally displaying a datetime selector
@@ -2947,7 +2947,7 @@ class EE_Ticket_Selector_Config extends EE_Config_Base {
         $this->show_ticket_sale_columns = true;
 		$this->show_ticket_details = true;
 		$this->show_expired_tickets = true;
-		$this->show_datetime_selector = \EE_Ticket_Selector_Config::MAYBE_SHOW_DATETIME_SELECTOR;
+		$this->show_datetime_selector = \EE_Ticket_Selector_Config::DO_NOT_SHOW_DATETIME_SELECTOR;
 		$this->datetime_selector_threshold = 3;
 	}
 
@@ -3015,7 +3015,7 @@ class EE_Ticket_Selector_Config extends EE_Config_Base {
             $this->getShowDatetimeSelectorOptions()
         )
             ? $show_datetime_selector
-            : \EE_Ticket_Selector_Config::MAYBE_SHOW_DATETIME_SELECTOR;
+            : \EE_Ticket_Selector_Config::DO_NOT_SHOW_DATETIME_SELECTOR;
     }
 
 
