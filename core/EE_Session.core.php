@@ -745,7 +745,7 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
 		) {
 			return false;
 		}
-		$transaction = $this->_session_data['transaction'];
+		$transaction = $this->transaction();
 		if ( $transaction instanceof EE_Transaction ) {
 			if ( ! $transaction->ID() ) {
 				$transaction->save();
