@@ -2373,6 +2373,13 @@ class EE_Registration_Config extends EE_Config_Base {
 	 */
 	public $recaptcha_width;
 
+	/**
+	 * Whether or not invalid attempts to directly access the registration checkout page should be tracked.
+	 *
+	 * @var boolean $track_invalid_checkout_access
+	 */
+	protected $track_invalid_checkout_access = true;
+
 
 
 	/**
@@ -2417,6 +2424,27 @@ class EE_Registration_Config extends EE_Config_Base {
 	 */
 	public function set_default_reg_status_on_EEM_Event() {
 		EEM_Event::set_default_reg_status( $this->default_STS_ID );
+	}
+
+
+
+	/**
+	 * @return boolean
+	 */
+	public function track_invalid_checkout_access() {
+		return $this->track_invalid_checkout_access;
+	}
+
+
+
+	/**
+	 * @param boolean $track_invalid_checkout_access
+	 */
+	public function set_track_invalid_checkout_access( $track_invalid_checkout_access ) {
+		$this->track_invalid_checkout_access = filter_var(
+			$track_invalid_checkout_access,
+			FILTER_VALIDATE_BOOLEAN
+		);
 	}
 
 
@@ -2485,13 +2513,22 @@ class EE_Admin_Config extends EE_Config_Base {
 	 */
 	public $affiliate_id;
 
-
 	/**
 	 * help tours on or off (global setting)
 	 *
 	 * @var boolean
 	 */
 	public $help_tour_activation;
+
+	/**
+     * adds extra layer of encoding to session data to prevent serialization errors
+     * but is incompatible with some server configuration errors
+     * if you get "500 internal server errors" during registration, try turning this on
+     * if you get PHP fatal errors regarding base 64 methods not defined, then turn this off
+     *
+     * @var boolean $encode_session_data
+	 */
+	private $encode_session_data = false;
 
 
 
@@ -2512,6 +2549,7 @@ class EE_Admin_Config extends EE_Config_Base {
 		$this->show_reg_footer = true;
 		$this->affiliate_id = 'default';
 		$this->help_tour_activation = true;
+		$this->encode_session_data = false;
 	}
 
 
@@ -2550,6 +2588,24 @@ class EE_Admin_Config extends EE_Config_Base {
 	public function affiliate_id() {
 		return ! empty( $this->affiliate_id ) ? $this->affiliate_id : 'default';
 	}
+
+
+
+    /**
+     * @return boolean
+     */
+    public function encode_session_data() {
+        return filter_var( $this->encode_session_data, FILTER_VALIDATE_BOOLEAN );
+    }
+
+
+
+    /**
+     * @param boolean $encode_session_data
+     */
+    public function set_encode_session_data( $encode_session_data ) {
+        $this->encode_session_data = filter_var( $encode_session_data, FILTER_VALIDATE_BOOLEAN );
+    }
 
 
 
