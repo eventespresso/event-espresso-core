@@ -112,11 +112,11 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 		$old_STS_ID = $this->status_ID();
 		// if status has changed
 		if (
-			$this->ID() // ensure registration is in the db
-			&& $old_STS_ID != $new_STS_ID // and that status has actually changed
-			&& ! empty( $old_STS_ID ) // and that old status is actually set
+			$old_STS_ID !== $new_STS_ID // the status has actually changed
+            && ! empty( $old_STS_ID ) // and that old status is actually set
 			&& ! empty( $new_STS_ID ) // as well as the new status
-		) {
+            && $this->ID() // and ensure registration is in the db
+        ) {
 			// TO approved
 			if ( $new_STS_ID === EEM_Registration::status_id_approved ) {
 				// reserve a space by incrementing ticket and datetime sold values
@@ -141,8 +141,8 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 				? $closed_reg_statuses
 				: EEM_Registration::closed_reg_statuses();
 			if (
-				in_array( $new_STS_ID, $closed_reg_statuses )
-				&& ! in_array( $old_STS_ID, $closed_reg_statuses )
+				in_array( $new_STS_ID, $closed_reg_statuses, true )
+				&& ! in_array( $old_STS_ID, $closed_reg_statuses, true )
 			) {
 				// cancelled or declined registration
 				$registration_processor->update_registration_after_being_canceled_or_declined(
@@ -155,8 +155,8 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 					false
 				);
 			} else if (
-				in_array( $old_STS_ID, $closed_reg_statuses )
-				&& ! in_array( $new_STS_ID, $closed_reg_statuses )
+				in_array( $old_STS_ID, $closed_reg_statuses, true )
+				&& ! in_array( $new_STS_ID, $closed_reg_statuses, true )
 			) {
 				// reinstating cancelled or declined registration
 				$registration_processor->update_canceled_or_declined_registration_after_being_reinstated(
@@ -167,7 +167,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 			}
 			$transaction_payments->recalculate_transaction_total( $this->transaction(), false );
 			$this->transaction()->update_status_based_on_total_paid( true );
-			do_action( 'AHEE__EE_Registration__set_status__after_update', $this );
+			do_action( 'AHEE__EE_Registration__set_status__after_update', $this, $old_STS_ID, $new_STS_ID );
 			return TRUE;
 		} else {
 			//even though the old value matches the new value, it's still good to
