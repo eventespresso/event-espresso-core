@@ -61,7 +61,7 @@ class CapabilitiesChecker
      */
     public function processCapCheck($cap_check)
     {
-        if (is_array($cap_check)){
+        if (is_array($cap_check)) {
             foreach ($cap_check as $check) {
                 $this->processCapCheck($check);
             }
@@ -77,14 +77,14 @@ class CapabilitiesChecker
         if ($cap_check instanceof PublicCapabilities) {
             return true;
         }
-        $capabilities = (array) $cap_check->capability();
+        $capabilities = (array)$cap_check->capability();
         foreach ($capabilities as $capability) {
             if (
-                ! $this->capabilities()->current_user_can(
-                    $capability,
-                    $cap_check->context(),
-                    $cap_check->ID()
-                )
+            ! $this->capabilities()->current_user_can(
+                $capability,
+                $cap_check->context(),
+                $cap_check->ID()
+            )
             ) {
                 throw new InsufficientPermissionsException($cap_check->context());
             }
@@ -99,6 +99,9 @@ class CapabilitiesChecker
      * @param string $context    - what the user is attempting to do, like: 'Edit Registration'
      * @param int    $ID         - (optional) ID for item where current_user_can is being called from
      * @return bool
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidClassException
+     * @throws \EventEspresso\core\exceptions\InsufficientPermissionsException
      */
     public function process($capability, $context, $ID = 0)
     {
