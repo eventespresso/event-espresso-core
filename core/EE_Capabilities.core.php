@@ -111,8 +111,8 @@ final class EE_Capabilities extends EE_Base
          * In practice, currently this method is usually called around `init`.
          */
         if (
-            EE_Maintenance_Mode::instance()->models_can_query()
-            && did_action('AHEE__EE_System__load_espresso_addons__complete')
+            did_action('AHEE__EE_System__load_espresso_addons__complete')
+            && EE_Maintenance_Mode::instance()->models_can_query()
         ) {
             $this->_caps_map = $this->_init_caps_map();
             $this->init_role_caps($reset);
