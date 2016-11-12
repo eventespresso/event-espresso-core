@@ -185,9 +185,6 @@ final class EE_System
         EEH_Autoloader::instance()->register_autoloaders_for_each_file_in_folder(EE_LIBRARIES . 'plugin_api');
         //load and setup EE_Capabilities
         $this->registry->load_core('Capabilities');
-        //caps need to be initialized on every request so that capability maps are set.
-        //@see https://events.codebasehq.com/projects/event-espresso/tickets/8674
-        $this->registry->CAP->init_caps();
         do_action('AHEE__EE_System__load_espresso_addons');
         //if the WP API basic auth plugin isn't already loaded, load it now.
         //We want it for mobile apps. Just include the entire plugin
@@ -208,6 +205,10 @@ final class EE_System
             include_once EE_THIRD_PARTY . 'wp-api-basic-auth' . DS . 'basic-auth.php';
         }
         do_action('AHEE__EE_System__load_espresso_addons__complete');
+
+        //caps need to be initialized on every request so that capability maps are set.
+        //@see https://events.codebasehq.com/projects/event-espresso/tickets/8674
+        $this->registry->CAP->init_caps();
     }
 
 
