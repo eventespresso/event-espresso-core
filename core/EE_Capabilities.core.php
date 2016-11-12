@@ -87,6 +87,13 @@ final class EE_Capabilities extends EE_Base
      */
     private function __construct()
     {
+        if (is_admin()) {
+            add_filter(
+                'FHEE__EE_Capabilities__init_caps_map__caps',
+                array($this, 'register_additional_capabilities'),
+                10
+            );
+        }
     }
     
     
@@ -104,6 +111,17 @@ final class EE_Capabilities extends EE_Base
     public function init_caps($reset = false)
     {
         if (EE_Maintenance_Mode::instance()->models_can_query()) {
+        /**
+         * Note, this means that caps can only initialized on the default roles when:
+         * - models are queryable
+         * - All addons have been registered  (which happens at plugins_loaded priority 1)
+         *
+         * In practice, currently this method is usually called around `init`.
+         */
+        if (
+            EE_Maintenance_Mode::instance()->models_can_query()
+            && did_action( 'AHEE__EE_System__load_espresso_addons__complete' )
+        ) {
             $this->_caps_map = $this->_init_caps_map();
             $this->init_role_caps($reset);
             $this->_set_meta_caps();
@@ -573,6 +591,26 @@ final class EE_Capabilities extends EE_Base
     }
     
     
+
+
+    /**
+     * Callback for FHEE__EE_Capabilities__init_caps_map__caps that is used for registering additional core
+     * capabilities that get added.
+     * This is typically done for more dynamic cap additions such as what is registered via the
+     * `EE_Payment_Method_Manager`
+     *
+     * @param array $caps  The existing $role=>$capability array.
+     * @return array.
+     */
+    public function register_additional_capabilities($caps)
+    {
+        //take care of dynamic capabilities for payment methods
+        EE_Registry::instance()->load_lib('Payment_Method_Manager');
+        $caps = EE_Payment_Method_Manager::instance()->add_payment_method_caps($caps);
+        return $caps;
+    }
+
+
     /**
      * This adds all the default caps to roles as registered in the _caps_map property.
      *
