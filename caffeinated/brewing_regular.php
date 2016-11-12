@@ -41,41 +41,30 @@ class EE_Brewing_Regular extends EE_BASE
     {
         $this->_table_analysis = $table_analysis;
         if (defined('EE_CAFF_PATH')) {
-            add_action(
-                'AHEE__EE_System__load_core_configuration__complete',
-                array($this, 'load_core_configuration')
+            // activation
+            add_action('AHEE__EEH_Activation__initialize_db_content', array($this, 'initialize_caf_db_content'));
+            // load caff init
+            add_action('AHEE__EE_System__set_hooks_for_core', array($this, 'caffeinated_init'));
+            // remove the "powered by" credit link from receipts and invoices
+            add_filter('FHEE_EE_Html_messenger__add_powered_by_credit_link_to_receipt_and_invoice', '__return_false');
+            // add caffeinated modules
+            add_filter(
+                'FHEE__EE_Config__register_modules__modules_to_register',
+                array($this, 'caffeinated_modules_to_register')
             );
+            // load caff scripts
+            add_action('wp_enqueue_scripts', array($this, 'enqueue_caffeinated_scripts'), 10);
+            add_filter('FHEE__EE_Registry__load_helper__helper_paths', array($this, 'caf_helper_paths'), 10);
             add_filter(
                 'FHEE__EE_Payment_Method_Manager__register_payment_methods__payment_methods_to_register',
                 array($this, 'caf_payment_methods')
             );
+            // caffeinated constructed
+            do_action('AHEE__EE_Brewing_Regular__construct__complete');
+            //seeing how this is caf, which isn't put on WordPress.org, we can have affiliate links without a disclaimer
+            add_filter('FHEE__ee_show_affiliate_links', '__return_false');
         }
     }
-
-
-
-    public function load_core_configuration()
-    {
-        // activation
-        add_action('AHEE__EEH_Activation__initialize_db_content', array($this, 'initialize_caf_db_content'));
-        // load caff init
-        add_action('AHEE__EE_System__set_hooks_for_core', array($this, 'caffeinated_init'));
-        // remove the "powered by" credit link from receipts and invoices
-        add_filter('FHEE_EE_Html_messenger__add_powered_by_credit_link_to_receipt_and_invoice', '__return_false');
-        // add caffeinated modules
-        add_filter(
-            'FHEE__EE_Config__register_modules__modules_to_register',
-            array($this, 'caffeinated_modules_to_register')
-        );
-        // load caff scripts
-        add_action('wp_enqueue_scripts', array($this, 'enqueue_caffeinated_scripts'), 10);
-        add_filter('FHEE__EE_Registry__load_helper__helper_paths', array($this, 'caf_helper_paths'), 10);
-        // caffeinated constructed
-        do_action('AHEE__EE_Brewing_Regular__construct__complete');
-        //seeing how this is caf, which isn't put on WordPress.org, we can have affiliate links without a disclaimer
-        add_filter('FHEE__ee_show_affiliate_links', '__return_false');
-    }
-
 
 
 
