@@ -201,24 +201,24 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 'capability' => 'ee_delete_event_category',
                 'noheader'   => true,
             ),
-            'delete_category' => array(
+            'delete_category'               => array(
                 'func'       => '_delete_categories',
                 'capability' => 'ee_delete_event_category',
                 'noheader'   => true,
             ),
-            'insert_category' => array(
+            'insert_category'               => array(
                 'func'       => '_insert_or_update_category',
                 'args'       => array('new_category' => true),
                 'capability' => 'ee_edit_event_category',
                 'noheader'   => true,
             ),
-            'update_category' => array(
+            'update_category'               => array(
                 'func'       => '_insert_or_update_category',
                 'args'       => array('new_category' => false),
                 'capability' => 'ee_edit_event_category',
                 'noheader'   => true,
             ),
-            'category_list'   => array(
+            'category_list'                 => array(
                 'func'       => '_category_list_table',
                 'capability' => 'ee_manage_event_categories',
             ),

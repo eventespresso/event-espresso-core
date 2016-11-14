@@ -792,7 +792,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      *                                        can be set to 'none' (default), 'read_frontend', 'read_backend', 'edit' or 'delete'
      *                                        }
      * @return EE_Base_Class[]  *note that there is NO option to pass the output type. If you want results different from EE_Base_Class[], use _get_all_wpdb_results()and make it public again. Array keys are object IDs (if there is a
-     *                          primary key on the model. if not, numerically indexed) Some full examples: get 10 transactions which have Scottish attendees: EEM_Transaction::instance()->get_all( array( array(
+     *                                        primary key on the model. if not, numerically indexed) Some full examples: get 10 transactions which have Scottish attendees: EEM_Transaction::instance()->get_all( array( array(
      *                                        'OR'=>array(
      *                                        'Registration.Attendee.ATT_fname'=>array('like','Mc%'),
      *                                        'Registration.Attendee.ATT_fname*other'=>array('like','Mac%')
