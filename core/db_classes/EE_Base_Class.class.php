@@ -76,15 +76,17 @@ abstract class EE_Base_Class {
 	protected $_cached_properties = array();
 
 	/**
-	 * An array containing keys of the related model, and values are either an array of related mode objects or a single related model object. see the model's _model_relations. The keys should match those specified. And if the relation is of type EE_Belongs_To (or one of its children), then there should only be ONE related model object, all others have an array)
-	 * @type array EE_Base_Class[]
-	 */
+     * An array containing keys of the related model, and values are either an array of related mode objects or a single
+     * related model object. see the model's _model_relations. The keys should match those specified. And if the relation
+     * is of type EE_Belongs_To (or one of its children), then there should only be ONE related model object, all others have an array)
+     * @var array
+     */
 	protected $_model_relations = array();
 
 	/**
 	 * Array where keys are field names (see the model's _fields property) and values are their values. To see what
 	 * their types should be, look at what that field object returns on its prepare_for_get and prepare_for_set methods)
-	 * @var array EE_Model_Field_Base[]
+	 * @var array
 	 */
 	protected $_fields = array();
 
@@ -2486,13 +2488,28 @@ abstract class EE_Base_Class {
 		foreach( $this->get_model()->relation_settings() as $relation_name => $relation_obj ) {
 			if( $relation_obj instanceof EE_Belongs_To_Relation ) {
 				$classname = 'EE_' . $this->get_model()->get_this_model_name();
-				if( $this->get_one_from_cache( $relation_name ) instanceof $classname &&
-						$this->get_one_from_cache( $relation_name )->ID() ) {
+				if(
+					$this->get_one_from_cache( $relation_name ) instanceof $classname
+					&& $this->get_one_from_cache( $relation_name )->ID()
+				) {
 					$this->clear_cache( $relation_name, $this->get_one_from_cache( $relation_name )->ID() );
 				}
 			}
 		}
+		$this->_props_n_values_provided_in_constructor = array();
 		return array_keys( get_object_vars( $this ) );
+	}
+
+
+
+	/**
+	 * restore _props_n_values_provided_in_constructor
+	 * PLZ NOTE: this will reset the array to whatever fields values were present prior to serialization,
+	 * and therefore should NOT be used to determine if state change has occurred since initial construction.
+	 * At best, you would only be able to detect if state change has occurred during THIS request.
+	 */
+	public function __wakeup() {
+		$this->_props_n_values_provided_in_constructor = $this->_fields;
 	}
 
 

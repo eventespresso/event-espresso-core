@@ -1023,3 +1023,4 @@ class EEM_Base_Test extends EE_UnitTestCase
 }
 
 // End of file EEM_Base_Test.php
+// Location: testcases/core/db_models/EEM_Base_Test.php
