@@ -550,10 +550,10 @@ abstract class EE_Admin_Page extends EE_Base
             $classname = str_replace('.class.php', '', $page);
             //autoloaders should take care of loading file
             if ( ! class_exists($classname)) {
-                $error_msg[] = sprintf(__('Something went wrong with loading the %s admin hooks page.', 'event_espresso'), $page);
+                $error_msg[] = sprintf( esc_html__('Something went wrong with loading the %s admin hooks page.', 'event_espresso'), $page);
                 $error_msg[] = $error_msg[0]
                                . "\r\n"
-                               . sprintf(__('There is no class in place for the %1$s admin hooks page.%2$sMake sure you have %4$s%3$s%5$s defined. If this is a non-EE-core admin page then you also must have an autoloader in place for your class',
+                               . sprintf( esc_html__('There is no class in place for the %1$s admin hooks page.%2$sMake sure you have %4$s%3$s%5$s defined. If this is a non-EE-core admin page then you also must have an autoloader in place for your class',
                                 'event_espresso'), $page, '<br />', $classname, '<strong>', '</strong>');
                 throw new EE_Error(implode('||', $error_msg));
             }

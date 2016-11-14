@@ -403,7 +403,7 @@ class EE_Admin_Page_Loader {
  		EE_Registry::instance()->load_file( $path, $class_name, 'core' );
 		if ( ! class_exists( $class_name )) {
 			$error_msg[] = sprintf( __('Something went wrong with loading the %s admin page.', 'event_espresso' ), $page);
-			$error_msg[] = $error_msg[0] . "\r\n" . sprintf( __( 'There is no Init class in place for the %s admin page.', 'event_espresso') . '<br />' . __( 'Make sure you have %3$s%s%4$s defined. If this is a non-EE-core admin page then you also must have an autoloader in place for your class', 'event_espresso'), $page, $class_name, '<strong>','</strong>' );
+			$error_msg[] = $error_msg[0] . "\r\n" . sprintf( esc_html__( 'There is no Init class in place for the %s admin page.', 'event_espresso') . '<br />' . esc_html__( 'Make sure you have %3$s%s%4$s defined. If this is a non-EE-core admin page then you also must have an autoloader in place for your class', 'event_espresso'), $page, $class_name, '<strong>','</strong>' );
 			throw new EE_Error( implode( '||', $error_msg ));
 		}
 		$a = new ReflectionClass($class_name);
