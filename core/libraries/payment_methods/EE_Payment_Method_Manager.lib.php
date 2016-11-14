@@ -2,6 +2,8 @@
     exit('No direct script access allowed');
 }
 
+
+
 /**
  * Class EE_Payment_Method_Manager
  * Used for finding all payment method types that can be defined.
@@ -29,6 +31,7 @@ class EE_Payment_Method_Manager
     protected $_payment_method_types = array();
 
 
+
     /**
      * @singleton method used to instantiate class object
      * @access    public
@@ -44,6 +47,8 @@ class EE_Payment_Method_Manager
         return self::$_instance;
     }
 
+
+
     /**
      * Resets the instance and returns a new one
      *
@@ -54,6 +59,8 @@ class EE_Payment_Method_Manager
         self::$_instance = null;
         return self::instance();
     }
+
+
 
     /**
      * If necessary, re-register payment methods
@@ -74,6 +81,8 @@ class EE_Payment_Method_Manager
         }
     }
 
+
+
     /**
      *        register_payment_methods
      *
@@ -86,7 +95,6 @@ class EE_Payment_Method_Manager
         // filter list of modules to register
         $pm_to_register = apply_filters('FHEE__EE_Payment_Method_Manager__register_payment_methods__payment_methods_to_register',
             $pm_to_register);
-
         // loop through folders
         foreach ($pm_to_register as $pm_path) {
             $this->register_payment_method($pm_path);
@@ -98,6 +106,7 @@ class EE_Payment_Method_Manager
         return apply_filters('FHEE__EE_Payment_Method_Manager__register_payment_methods__installed_payment_methods',
             $this->_payment_method_types);
     }
+
 
 
     /**
@@ -145,6 +154,8 @@ class EE_Payment_Method_Manager
         return true;
     }
 
+
+
     /**
      * Checks if a payment method has been registered, and if so includes it
      *
@@ -169,6 +180,8 @@ class EE_Payment_Method_Manager
         }
     }
 
+
+
     /**
      * Returns all the classnames of the various payment method types
      *
@@ -181,7 +194,7 @@ class EE_Payment_Method_Manager
     {
         $this->maybe_register_payment_methods($force_recheck);
         if ($with_prefixes) {
-            $classnames      = array_keys($this->_payment_method_types);
+            $classnames = array_keys($this->_payment_method_types);
             $payment_methods = array();
             foreach ($classnames as $classname) {
                 $payment_methods[] = $this->payment_method_class_from_type($classname);
@@ -191,6 +204,8 @@ class EE_Payment_Method_Manager
             return array_keys($this->_payment_method_types);
         }
     }
+
+
 
     /**
      * Gets an object of each payment method type, none of which are bound to a
@@ -209,6 +224,8 @@ class EE_Payment_Method_Manager
         return $pmt_objs;
     }
 
+
+
     /**
      * Changes the payment method's classname into the payment method type's name
      * (as used on the payment method's table's PMD_type field)
@@ -221,6 +238,8 @@ class EE_Payment_Method_Manager
         return str_replace("EE_PMT_", "", $classname);
     }
 
+
+
     /**
      * Does the opposite of payment-method_type_sans_prefix
      *
@@ -232,6 +251,7 @@ class EE_Payment_Method_Manager
         $this->maybe_register_payment_methods();
         return "EE_PMT_" . $type;
     }
+
 
 
     /**
@@ -248,7 +268,7 @@ class EE_Payment_Method_Manager
             $pm_type_class = $this->payment_method_class_from_type($payment_method_type);
             if (class_exists($pm_type_class)) {
                 /** @var $pm_type_obj EE_PMT_Base */
-                $pm_type_obj    = new $pm_type_class;
+                $pm_type_obj = new $pm_type_class;
                 $payment_method = EEM_Payment_Method::instance()->get_one_by_slug($pm_type_obj->system_name());
                 if ( ! $payment_method) {
                     $payment_method = $this->create_payment_method_of_type($pm_type_obj);
@@ -284,6 +304,7 @@ class EE_Payment_Method_Manager
     }
 
 
+
     /**
      * Creates a payment method of the specified type. Does not save it.
      *
@@ -309,6 +330,7 @@ class EE_Payment_Method_Manager
         );
         return $payment_method;
     }
+
 
 
     /**
@@ -340,6 +362,7 @@ class EE_Payment_Method_Manager
     }
 
 
+
     /**
      * Makes sure the payment method is related to the specified payment method
      *
@@ -354,6 +377,7 @@ class EE_Payment_Method_Manager
         }
         return $payment_method;
     }
+
 
 
     /**
@@ -379,6 +403,7 @@ class EE_Payment_Method_Manager
         );
         return $count_updated;
     }
+
 
 
     /**
