@@ -13,7 +13,7 @@
  *
  * ------------------------------------------------------------------------
  *
- * EE_BASE
+ * EE_Base
  *
  * @package			Event Espresso
  * @subpackage	core/
@@ -36,5 +36,5 @@ class EE_Base {
 	public function __destruct() { return FALSE; }
 
 }
-// End of file EE_BASE.core.php
-// Location: /core/EE_BASE.core.php
+// End of file EE_Base.core.php
+// Location: /core/EE_Base.core.php

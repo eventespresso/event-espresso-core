@@ -1848,7 +1848,12 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      */
     private function _add_screen_columns()
     {
-        if (is_array($this->_route_config) && isset($this->_route_config['columns']) && is_array($this->_route_config['columns']) && count($this->_route_config['columns'] == 2)) {
+        if (
+                is_array($this->_route_config)
+                && isset($this->_route_config['columns'])
+                && is_array($this->_route_config['columns'])
+                && count($this->_route_config['columns']) === 2
+        ) {
             add_screen_option('layout_columns', array('max' => (int)$this->_route_config['columns'][0], 'default' => (int)$this->_route_config['columns'][1]));
             $this->_template_args['num_columns'] = $this->_route_config['columns'][0];
             $screen_id = $this->_current_screen->id;
@@ -2252,8 +2257,13 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         // set current wp page slug - looks like: event-espresso_page_event_categories
         // keep in mind "event-espresso" COULD be something else if the top level menu label has been translated.
         $this->_template_args['current_page'] = $this->_wp_page_slug;
-        $template_path = $sidebar ? EE_ADMIN_TEMPLATE . 'admin_details_wrapper.template.php' : EE_ADMIN_TEMPLATE . 'admin_details_wrapper_no_sidebar.template.php';
-        if (defined('DOING_AJAX')) {
+        $this->_template_args['admin_page_wrapper_div_id'] = $this->_cpt_route
+                ? 'poststuff'
+                : 'espresso-default-admin';
+        $template_path = $sidebar
+                ? EE_ADMIN_TEMPLATE . 'admin_details_wrapper.template.php'
+                : EE_ADMIN_TEMPLATE . 'admin_details_wrapper_no_sidebar.template.php';
+        if (defined('DOING_AJAX') && DOING_AJAX) {
             $template_path = EE_ADMIN_TEMPLATE . 'admin_details_wrapper_no_sidebar_ajax.template.php';
         }
         $template_path = ! empty($this->_column_template_path) ? $this->_column_template_path : $template_path;
@@ -3213,11 +3223,11 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * updates  espresso configuration settings
      *
      * @access    protected
-     * @param string $tab
-     * @param array  $data
-     * @param string $file file where error occurred
-     * @param string $func function  where error occurred
-     * @param string $line line no where error occurred
+     * @param string                   $tab
+     * @param EE_Config_Base|EE_Config $config
+     * @param string                   $file file where error occurred
+     * @param string                   $func function  where error occurred
+     * @param string                   $line line no where error occurred
      * @return boolean
      */
     protected function _update_espresso_configuration($tab, $config, $file = '', $func = '', $line = '')

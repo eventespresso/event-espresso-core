@@ -65,7 +65,6 @@ class Model_Data_Translator_Test extends EE_UnitTestCase{
 	/**
 	 * Verifies prepare_conditions_query_params_for_models works properly,
 	 * especially with datetimes which can be in UTC or local time
-	 * @group current
 	 */
 	public function test_prepare_conditions_query_params_for_models__gmt_datetimes() {
 		update_option( 'gmt_offset', '-04:30' );

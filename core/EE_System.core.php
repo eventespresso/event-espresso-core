@@ -1,4 +1,5 @@
-<?php use EventEspresso\core\interfaces\ResettableInterface;
+<?php
+use EventEspresso\core\interfaces\ResettableInterface;
 
 if ( ! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
@@ -87,6 +88,13 @@ final class EE_System implements ResettableInterface
      */
     private $_req_type;
 
+    /**
+     * Whether or not there was a non-micro version change in EE core version during this request
+     *
+     * @var boolean
+     */
+    private $_major_version_change = false;
+
 
 
     /**
@@ -143,11 +151,13 @@ final class EE_System implements ResettableInterface
         // because the newly-activated addon didn't get a chance to run at all
         add_action('activate_plugin', array($this, 'load_espresso_addons'), 1);
         // detect whether install or upgrade
-        add_action('AHEE__EE_Bootstrap__detect_activations_or_upgrades', array($this, 'detect_activations_or_upgrades'), 3);
+        add_action('AHEE__EE_Bootstrap__detect_activations_or_upgrades', array($this, 'detect_activations_or_upgrades'),
+            3);
         // load EE_Config, EE_Textdomain, etc
         add_action('AHEE__EE_Bootstrap__load_core_configuration', array($this, 'load_core_configuration'), 5);
         // load EE_Config, EE_Textdomain, etc
-        add_action('AHEE__EE_Bootstrap__register_shortcodes_modules_and_widgets', array($this, 'register_shortcodes_modules_and_widgets'), 7);
+        add_action('AHEE__EE_Bootstrap__register_shortcodes_modules_and_widgets',
+            array($this, 'register_shortcodes_modules_and_widgets'), 7);
         // you wanna get going? I wanna get going... let's get going!
         add_action('AHEE__EE_Bootstrap__brew_espresso', array($this, 'brew_espresso'), 9);
         //other housekeeping
@@ -200,6 +210,7 @@ final class EE_System implements ResettableInterface
         ) {
             include_once EE_THIRD_PARTY . 'wp-api-basic-auth' . DS . 'basic-auth.php';
         }
+        do_action('AHEE__EE_System__load_espresso_addons__complete');
     }
 
 
@@ -285,7 +296,8 @@ final class EE_System implements ResettableInterface
     {
         $this->update_list_of_installed_versions($espresso_db_update);
         //get ready to verify the DB is ok (provided we aren't in maintenance mode, of course)
-        add_action('AHEE__EE_System__perform_activations_upgrades_and_migrations', array($this, 'initialize_db_if_no_migrations_required'));
+        add_action('AHEE__EE_System__perform_activations_upgrades_and_migrations',
+            array($this, 'initialize_db_if_no_migrations_required'));
     }
 
 
@@ -296,7 +308,8 @@ final class EE_System implements ResettableInterface
      * NOT necessarily the state of the database
      *
      * @param null $espresso_db_update
-     * @internal param array $espresso_db_update_value the value of the WordPress option. If not supplied, fetches it from the options table
+     * @internal param array $espresso_db_update_value the value of the WordPress option. If not supplied, fetches it
+     *           from the options table
      * @return array the correct value of 'espresso_db_upgrade', after saving it, if it needed correction
      */
     private function fix_espresso_db_upgrade_option($espresso_db_update = null)
@@ -371,7 +384,13 @@ final class EE_System implements ResettableInterface
         } else {
             EE_Data_Migration_Manager::instance()->enqueue_db_initialization_for('Core');
         }
-        if ($request_type == EE_System::req_type_new_activation || $request_type == EE_System::req_type_reactivation || $request_type == EE_System::req_type_upgrade) {
+        if ($request_type === EE_System::req_type_new_activation
+            || $request_type === EE_System::req_type_reactivation
+            || (
+                $request_type === EE_System::req_type_upgrade
+                && $this->is_major_version_change()
+            )
+        ) {
             add_action('AHEE__EE_System__initialize_last', array($this, 'redirect_to_about_ee'), 9);
         }
     }
@@ -419,16 +438,19 @@ final class EE_System implements ResettableInterface
      *
      * @param array $espresso_db_update array from the wp option stored under the name 'espresso_db_update'.
      *                                  If not supplied, fetches it from the options table.
-     *                                  Also, caches its result so later parts of the code can also know whether there's been an
-     *                                  update or not. This way we can add the current version to espresso_db_update,
-     *                                  but still know if this is a new install or not
+     *                                  Also, caches its result so later parts of the code can also know whether
+     *                                  there's been an update or not. This way we can add the current version to
+     *                                  espresso_db_update, but still know if this is a new install or not
      * @return int one of the constants on EE_System::req_type_
      */
     public function detect_req_type($espresso_db_update = null)
     {
         if ($this->_req_type === null) {
-            $espresso_db_update = ! empty($espresso_db_update) ? $espresso_db_update : $this->fix_espresso_db_upgrade_option();
-            $this->_req_type = $this->detect_req_type_given_activation_history($espresso_db_update, 'ee_espresso_activation', espresso_version());
+            $espresso_db_update = ! empty($espresso_db_update) ? $espresso_db_update
+                : $this->fix_espresso_db_upgrade_option();
+            $this->_req_type = $this->detect_req_type_given_activation_history($espresso_db_update,
+                'ee_espresso_activation', espresso_version());
+            $this->_major_version_change = $this->_detect_major_version_change($espresso_db_update);
         }
         return $this->_req_type;
     }
@@ -436,17 +458,58 @@ final class EE_System implements ResettableInterface
 
 
     /**
-     * Determines the request type for any ee addon, given three piece of info: the current array of activation histories (for core that' 'espresso_db_update' wp option); the name of the wordpress option which is temporarily set upon
-     * activation of the plugin (for core it's 'ee_espresso_activation'); and the version that this plugin was just activated to (for core that will always be espresso_version())
+     * Returns whether or not there was a non-micro version change (ie, change in either
+     * the first or second number in the version. Eg 4.9.0.rc.001 to 4.10.0.rc.000,
+     * but not 4.9.0.rc.0001 to 4.9.1.rc.0001
      *
-     * @param array  $activation_history_for_addon     the option's value which stores the activation history for this ee plugin.
-     *                                                 for core that's 'espresso_db_update'
-     * @param string $activation_indicator_option_name the name of the wordpress option that is temporarily set to indicate that this plugin was just activated
-     * @param string $version_to_upgrade_to            the version that was just upgraded to (for core that will be espresso_version())
+     * @param $activation_history
+     * @return bool
+     */
+    protected function _detect_major_version_change($activation_history)
+    {
+        $previous_version = EE_System::_get_most_recently_active_version_from_activation_history($activation_history);
+        $previous_version_parts = explode('.', $previous_version);
+        $current_version_parts = explode('.', espresso_version());
+        return isset($previous_version_parts[0], $previous_version_parts[1], $current_version_parts[0], $current_version_parts[1])
+               && ($previous_version_parts[0] !== $current_version_parts[0]
+                   || $previous_version_parts[1] !== $current_version_parts[1]
+               );
+    }
+
+
+
+    /**
+     * Returns true if either the major or minor version of EE changed during this request.
+     * Eg 4.9.0.rc.001 to 4.10.0.rc.000, but not 4.9.0.rc.0001 to 4.9.1.rc.0001
+     *
+     * @return bool
+     */
+    public function is_major_version_change()
+    {
+        return $this->_major_version_change;
+    }
+
+
+
+    /**
+     * Determines the request type for any ee addon, given three piece of info: the current array of activation
+     * histories (for core that' 'espresso_db_update' wp option); the name of the wordpress option which is temporarily
+     * set upon activation of the plugin (for core it's 'ee_espresso_activation'); and the version that this plugin was
+     * just activated to (for core that will always be espresso_version())
+     *
+     * @param array  $activation_history_for_addon     the option's value which stores the activation history for this
+     *                                                 ee plugin. for core that's 'espresso_db_update'
+     * @param string $activation_indicator_option_name the name of the wordpress option that is temporarily set to
+     *                                                 indicate that this plugin was just activated
+     * @param string $version_to_upgrade_to            the version that was just upgraded to (for core that will be
+     *                                                 espresso_version())
      * @return int one of the constants on EE_System::req_type_*
      */
-    public static function detect_req_type_given_activation_history($activation_history_for_addon, $activation_indicator_option_name, $version_to_upgrade_to)
-    {
+    public static function detect_req_type_given_activation_history(
+        $activation_history_for_addon,
+        $activation_indicator_option_name,
+        $version_to_upgrade_to
+    ) {
         $version_is_higher = self::_new_version_is_higher($activation_history_for_addon, $version_to_upgrade_to);
         if ($activation_history_for_addon) {
             //it exists, so this isn't a completely new install
@@ -508,10 +571,26 @@ final class EE_System implements ResettableInterface
     protected static function _new_version_is_higher($activation_history_for_addon, $version_to_upgrade_to)
     {
         //find the most recently-activated version
+        $most_recently_active_version = EE_System::_get_most_recently_active_version_from_activation_history($activation_history_for_addon);
+        return version_compare($version_to_upgrade_to, $most_recently_active_version);
+    }
+
+
+
+    /**
+     * Gets the most recently active version listed in the activation history,
+     * and if none are found (ie, it's a brand new install) returns '0.0.0.dev.000'.
+     *
+     * @param array $activation_history  (keys are versions, values are arrays of times activated,
+     *                                   sometimes containing 'unknown-date'
+     * @return string
+     */
+    protected static function _get_most_recently_active_version_from_activation_history($activation_history)
+    {
         $most_recently_active_version_activation = '1970-01-01 00:00:00';
         $most_recently_active_version = '0.0.0.dev.000';
-        if (is_array($activation_history_for_addon)) {
-            foreach ($activation_history_for_addon as $version => $times_activated) {
+        if (is_array($activation_history)) {
+            foreach ($activation_history as $version => $times_activated) {
                 //check there is a record of when this version was activated. Otherwise,
                 //mark it as unknown
                 if ( ! $times_activated) {
@@ -521,16 +600,15 @@ final class EE_System implements ResettableInterface
                     $times_activated = array($times_activated);
                 }
                 foreach ($times_activated as $an_activation) {
-                    if ($an_activation != 'unknown-date'
-                        && $an_activation > $most_recently_active_version_activation
-                    ) {
+                    if ($an_activation != 'unknown-date' && $an_activation > $most_recently_active_version_activation) {
                         $most_recently_active_version = $version;
-                        $most_recently_active_version_activation = $an_activation == 'unknown-date' ? '1970-01-01 00:00:00' : $an_activation;
+                        $most_recently_active_version_activation = $an_activation == 'unknown-date'
+                            ? '1970-01-01 00:00:00' : $an_activation;
                     }
                 }
             }
         }
-        return version_compare($version_to_upgrade_to, $most_recently_active_version);
+        return $most_recently_active_version;
     }
 
 
@@ -543,11 +621,15 @@ final class EE_System implements ResettableInterface
     public function redirect_to_about_ee()
     {
         $notices = EE_Error::get_notices(false);
-        //if current user is an admin and it's not an ajax request
+        //if current user is an admin and it's not an ajax or rest request
         if (
-            $this->registry->CAP->current_user_can('manage_options', 'espresso_about_default')
-            && ! (defined('DOING_AJAX') && DOING_AJAX)
+            ! (defined('DOING_AJAX') && DOING_AJAX)
+            && ! (defined('REST_REQUEST') && REST_REQUEST)
             && ! isset($notices['errors'])
+            && apply_filters(
+                'FHEE__EE_System__redirect_to_about_ee__do_redirect',
+                $this->registry->CAP->current_user_can('manage_options', 'espresso_about_default')
+            )
         ) {
             $query_params = array('page' => 'espresso_about');
             if (EE_System::instance()->detect_req_type() == EE_System::req_type_new_activation) {
@@ -622,13 +704,15 @@ final class EE_System implements ResettableInterface
             $model_names[$short_name] = $classname;
         }
         $this->registry->models = apply_filters('FHEE__EE_System__parse_model_names', $model_names);
-        $this->registry->non_abstract_db_models = apply_filters('FHEE__EE_System__parse_implemented_model_names', $non_abstract_db_models);
+        $this->registry->non_abstract_db_models = apply_filters('FHEE__EE_System__parse_implemented_model_names',
+            $non_abstract_db_models);
     }
 
 
 
     /**
-     * The purpose of this method is to simply check for a file named "caffeinated/brewing_regular.php" for any hooks that need to be setup before our EE_System launches.
+     * The purpose of this method is to simply check for a file named "caffeinated/brewing_regular.php" for any hooks
+     * that need to be setup before our EE_System launches.
      *
      * @return void
      */
@@ -672,13 +756,16 @@ final class EE_System implements ResettableInterface
         // get array of classes hooking into here
         $class_names = EEH_Class_Tools::get_class_names_for_all_callbacks_on_hook('AHEE__EE_System__register_shortcodes_modules_and_addons');
         if ( ! empty($class_names)) {
-            $msg = __('The following plugins, addons, or modules appear to be incompatible with this version of Event Espresso and were automatically deactivated to avoid fatal errors:', 'event_espresso');
+            $msg = __('The following plugins, addons, or modules appear to be incompatible with this version of Event Espresso and were automatically deactivated to avoid fatal errors:',
+                'event_espresso');
             $msg .= '<ul>';
             foreach ($class_names as $class_name) {
-                $msg .= '<li><b>Event Espresso - ' . str_replace(array('EE_', 'EEM_', 'EED_', 'EES_', 'EEW_'), '', $class_name) . '</b></li>';
+                $msg .= '<li><b>Event Espresso - ' . str_replace(array('EE_', 'EEM_', 'EED_', 'EES_', 'EEW_'), '',
+                        $class_name) . '</b></li>';
             }
             $msg .= '</ul>';
-            $msg .= __('Compatibility issues can be avoided and/or resolved by keeping addons and plugins updated to the latest version.', 'event_espresso');
+            $msg .= __('Compatibility issues can be avoided and/or resolved by keeping addons and plugins updated to the latest version.',
+                'event_espresso');
             // save list of incompatible addons to wp-options for later use
             add_option('ee_incompatible_addons', $class_names, '', 'no');
             if (is_admin()) {
@@ -793,7 +880,8 @@ final class EE_System implements ResettableInterface
     /**
      * load_controllers
      * this is the best place to load any additional controllers that needs access to EE core.
-     * it is expected that all basic core EE systems, that are not dependant on the current request are loaded at this time
+     * it is expected that all basic core EE systems, that are not dependant on the current request are loaded at this
+     * time
      *
      * @access public
      * @return void
@@ -847,7 +935,8 @@ final class EE_System implements ResettableInterface
 
     /**
      * initialize_last
-     * this is run really late during the WP init hookpoint, and ensures that mostly everything else that needs to initialize has done so
+     * this is run really late during the WP init hookpoint, and ensures that mostly everything else that needs to
+     * initialize has done so
      *
      * @access public
      * @return void
@@ -944,7 +1033,10 @@ final class EE_System implements ResettableInterface
     public function espresso_toolbar_items(WP_Admin_Bar $admin_bar)
     {
         // if in full M-Mode, or its an AJAX request, or user is NOT an admin
-        if (EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_complete_maintenance || defined('DOING_AJAX') || ! $this->registry->CAP->current_user_can('ee_read_ee', 'ee_admin_bar_menu_top_level')) {
+        if (EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_complete_maintenance
+            || defined('DOING_AJAX')
+            || ! $this->registry->CAP->current_user_can('ee_read_ee', 'ee_admin_bar_menu_top_level')
+        ) {
             return;
         }
         do_action('AHEE_log', __FILE__, __FUNCTION__, '');
@@ -958,7 +1050,9 @@ final class EE_System implements ResettableInterface
         //Top Level
         $admin_bar->add_menu(array(
             'id'    => 'espresso-toolbar',
-            'title' => '<span class="ee-icon ee-icon-ee-cup-thick ee-icon-size-20"></span><span class="ab-label">' . _x('Event Espresso', 'admin bar menu group label', 'event_espresso') . '</span>',
+            'title' => '<span class="ee-icon ee-icon-ee-cup-thick ee-icon-size-20"></span><span class="ab-label">'
+                       . _x('Event Espresso', 'admin bar menu group label', 'event_espresso')
+                       . '</span>',
             'href'  => $events_admin_url,
             'meta'  => array(
                 'title' => __('Event Espresso', 'event_espresso'),
@@ -996,13 +1090,16 @@ final class EE_System implements ResettableInterface
         if (is_single() && (get_post_type() == 'espresso_events')) {
             //Current post
             global $post;
-            if ($this->registry->CAP->current_user_can('ee_edit_event', 'ee_admin_bar_menu_espresso-toolbar-events-edit', $post->ID)) {
+            if ($this->registry->CAP->current_user_can('ee_edit_event',
+                'ee_admin_bar_menu_espresso-toolbar-events-edit', $post->ID)
+            ) {
                 //Events Edit Current Event
                 $admin_bar->add_menu(array(
                     'id'     => 'espresso-toolbar-events-edit',
                     'parent' => 'espresso-toolbar-events',
                     'title'  => __('Edit Event', 'event_espresso'),
-                    'href'   => EEH_URL::add_query_args_and_nonce(array('action' => 'edit', 'post' => $post->ID), $events_admin_url),
+                    'href'   => EEH_URL::add_query_args_and_nonce(array('action' => 'edit', 'post' => $post->ID),
+                        $events_admin_url),
                     'meta'   => array(
                         'title'  => __('Edit Event', 'event_espresso'),
                         'target' => '',
@@ -1012,7 +1109,9 @@ final class EE_System implements ResettableInterface
             }
         }
         //Events View
-        if ($this->registry->CAP->current_user_can('ee_read_events', 'ee_admin_bar_menu_espresso-toolbar-events-view')) {
+        if ($this->registry->CAP->current_user_can('ee_read_events',
+            'ee_admin_bar_menu_espresso-toolbar-events-view')
+        ) {
             $admin_bar->add_menu(array(
                 'id'     => 'espresso-toolbar-events-view',
                 'parent' => 'espresso-toolbar-events',
@@ -1039,13 +1138,16 @@ final class EE_System implements ResettableInterface
                 ),
             ));
         }
-        if ($this->registry->CAP->current_user_can('ee_read_events', 'ee_admin_bar_menu_espresso-toolbar-events-today')) {
+        if ($this->registry->CAP->current_user_can('ee_read_events',
+            'ee_admin_bar_menu_espresso-toolbar-events-today')
+        ) {
             //Events View Today
             $admin_bar->add_menu(array(
                 'id'     => 'espresso-toolbar-events-today',
                 'parent' => 'espresso-toolbar-events-view',
                 'title'  => __('Today', 'event_espresso'),
-                'href'   => EEH_URL::add_query_args_and_nonce(array('action' => 'default', 'status' => 'today'), $events_admin_url),
+                'href'   => EEH_URL::add_query_args_and_nonce(array('action' => 'default', 'status' => 'today'),
+                    $events_admin_url),
                 'meta'   => array(
                     'title'  => __('Today', 'event_espresso'),
                     'target' => '',
@@ -1053,13 +1155,16 @@ final class EE_System implements ResettableInterface
                 ),
             ));
         }
-        if ($this->registry->CAP->current_user_can('ee_read_events', 'ee_admin_bar_menu_espresso-toolbar-events-month')) {
+        if ($this->registry->CAP->current_user_can('ee_read_events',
+            'ee_admin_bar_menu_espresso-toolbar-events-month')
+        ) {
             //Events View This Month
             $admin_bar->add_menu(array(
                 'id'     => 'espresso-toolbar-events-month',
                 'parent' => 'espresso-toolbar-events-view',
                 'title'  => __('This Month', 'event_espresso'),
-                'href'   => EEH_URL::add_query_args_and_nonce(array('action' => 'default', 'status' => 'month'), $events_admin_url),
+                'href'   => EEH_URL::add_query_args_and_nonce(array('action' => 'default', 'status' => 'month'),
+                    $events_admin_url),
                 'meta'   => array(
                     'title'  => __('This Month', 'event_espresso'),
                     'target' => '',
@@ -1068,7 +1173,9 @@ final class EE_System implements ResettableInterface
             ));
         }
         //Registration Overview
-        if ($this->registry->CAP->current_user_can('ee_read_registrations', 'ee_admin_bar_menu_espresso-toolbar-registrations')) {
+        if ($this->registry->CAP->current_user_can('ee_read_registrations',
+            'ee_admin_bar_menu_espresso-toolbar-registrations')
+        ) {
             $admin_bar->add_menu(array(
                 'id'     => 'espresso-toolbar-registrations',
                 'parent' => 'espresso-toolbar',
@@ -1082,12 +1189,15 @@ final class EE_System implements ResettableInterface
             ));
         }
         //Registration Overview Today
-        if ($this->registry->CAP->current_user_can('ee_read_registrations', 'ee_admin_bar_menu_espresso-toolbar-registrations-today')) {
+        if ($this->registry->CAP->current_user_can('ee_read_registrations',
+            'ee_admin_bar_menu_espresso-toolbar-registrations-today')
+        ) {
             $admin_bar->add_menu(array(
                 'id'     => 'espresso-toolbar-registrations-today',
                 'parent' => 'espresso-toolbar-registrations',
                 'title'  => __('Today', 'event_espresso'),
-                'href'   => EEH_URL::add_query_args_and_nonce(array('action' => 'default', 'status' => 'today'), $reg_admin_url),
+                'href'   => EEH_URL::add_query_args_and_nonce(array('action' => 'default', 'status' => 'today'),
+                    $reg_admin_url),
                 'meta'   => array(
                     'title'  => __('Today', 'event_espresso'),
                     'target' => '',
@@ -1096,12 +1206,18 @@ final class EE_System implements ResettableInterface
             ));
         }
         //Registration Overview Today Completed
-        if ($this->registry->CAP->current_user_can('ee_read_registrations', 'ee_admin_bar_menu_espresso-toolbar-registrations-today-approved')) {
+        if ($this->registry->CAP->current_user_can('ee_read_registrations',
+            'ee_admin_bar_menu_espresso-toolbar-registrations-today-approved')
+        ) {
             $admin_bar->add_menu(array(
                 'id'     => 'espresso-toolbar-registrations-today-approved',
                 'parent' => 'espresso-toolbar-registrations-today',
                 'title'  => __('Approved', 'event_espresso'),
-                'href'   => EEH_URL::add_query_args_and_nonce(array('action' => 'default', 'status' => 'today', '_reg_status' => EEM_Registration::status_id_approved), $reg_admin_url),
+                'href'   => EEH_URL::add_query_args_and_nonce(array(
+                    'action'      => 'default',
+                    'status'      => 'today',
+                    '_reg_status' => EEM_Registration::status_id_approved,
+                ), $reg_admin_url),
                 'meta'   => array(
                     'title'  => __('Approved', 'event_espresso'),
                     'target' => '',
@@ -1110,12 +1226,18 @@ final class EE_System implements ResettableInterface
             ));
         }
         //Registration Overview Today Pending\
-        if ($this->registry->CAP->current_user_can('ee_read_registrations', 'ee_admin_bar_menu_espresso-toolbar-registrations-today-pending')) {
+        if ($this->registry->CAP->current_user_can('ee_read_registrations',
+            'ee_admin_bar_menu_espresso-toolbar-registrations-today-pending')
+        ) {
             $admin_bar->add_menu(array(
                 'id'     => 'espresso-toolbar-registrations-today-pending',
                 'parent' => 'espresso-toolbar-registrations-today',
                 'title'  => __('Pending', 'event_espresso'),
-                'href'   => EEH_URL::add_query_args_and_nonce(array('action' => 'default', 'status' => 'today', 'reg_status' => EEM_Registration::status_id_pending_payment), $reg_admin_url),
+                'href'   => EEH_URL::add_query_args_and_nonce(array(
+                    'action'     => 'default',
+                    'status'     => 'today',
+                    'reg_status' => EEM_Registration::status_id_pending_payment,
+                ), $reg_admin_url),
                 'meta'   => array(
                     'title'  => __('Pending Payment', 'event_espresso'),
                     'target' => '',
@@ -1124,12 +1246,18 @@ final class EE_System implements ResettableInterface
             ));
         }
         //Registration Overview Today Incomplete
-        if ($this->registry->CAP->current_user_can('ee_read_registrations', 'ee_admin_bar_menu_espresso-toolbar-registrations-today-not-approved')) {
+        if ($this->registry->CAP->current_user_can('ee_read_registrations',
+            'ee_admin_bar_menu_espresso-toolbar-registrations-today-not-approved')
+        ) {
             $admin_bar->add_menu(array(
                 'id'     => 'espresso-toolbar-registrations-today-not-approved',
                 'parent' => 'espresso-toolbar-registrations-today',
                 'title'  => __('Not Approved', 'event_espresso'),
-                'href'   => EEH_URL::add_query_args_and_nonce(array('action' => 'default', 'status' => 'today', '_reg_status' => EEM_Registration::status_id_not_approved), $reg_admin_url),
+                'href'   => EEH_URL::add_query_args_and_nonce(array(
+                    'action'      => 'default',
+                    'status'      => 'today',
+                    '_reg_status' => EEM_Registration::status_id_not_approved,
+                ), $reg_admin_url),
                 'meta'   => array(
                     'title'  => __('Not Approved', 'event_espresso'),
                     'target' => '',
@@ -1138,12 +1266,18 @@ final class EE_System implements ResettableInterface
             ));
         }
         //Registration Overview Today Incomplete
-        if ($this->registry->CAP->current_user_can('ee_read_registrations', 'ee_admin_bar_menu_espresso-toolbar-registrations-today-cancelled')) {
+        if ($this->registry->CAP->current_user_can('ee_read_registrations',
+            'ee_admin_bar_menu_espresso-toolbar-registrations-today-cancelled')
+        ) {
             $admin_bar->add_menu(array(
                 'id'     => 'espresso-toolbar-registrations-today-cancelled',
                 'parent' => 'espresso-toolbar-registrations-today',
                 'title'  => __('Cancelled', 'event_espresso'),
-                'href'   => EEH_URL::add_query_args_and_nonce(array('action' => 'default', 'status' => 'today', '_reg_status' => EEM_Registration::status_id_cancelled), $reg_admin_url),
+                'href'   => EEH_URL::add_query_args_and_nonce(array(
+                    'action'      => 'default',
+                    'status'      => 'today',
+                    '_reg_status' => EEM_Registration::status_id_cancelled,
+                ), $reg_admin_url),
                 'meta'   => array(
                     'title'  => __('Cancelled', 'event_espresso'),
                     'target' => '',
@@ -1152,12 +1286,15 @@ final class EE_System implements ResettableInterface
             ));
         }
         //Registration Overview This Month
-        if ($this->registry->CAP->current_user_can('ee_read_registrations', 'ee_admin_bar_menu_espresso-toolbar-registrations-month')) {
+        if ($this->registry->CAP->current_user_can('ee_read_registrations',
+            'ee_admin_bar_menu_espresso-toolbar-registrations-month')
+        ) {
             $admin_bar->add_menu(array(
                 'id'     => 'espresso-toolbar-registrations-month',
                 'parent' => 'espresso-toolbar-registrations',
                 'title'  => __('This Month', 'event_espresso'),
-                'href'   => EEH_URL::add_query_args_and_nonce(array('action' => 'default', 'status' => 'month'), $reg_admin_url),
+                'href'   => EEH_URL::add_query_args_and_nonce(array('action' => 'default', 'status' => 'month'),
+                    $reg_admin_url),
                 'meta'   => array(
                     'title'  => __('This Month', 'event_espresso'),
                     'target' => '',
@@ -1166,12 +1303,18 @@ final class EE_System implements ResettableInterface
             ));
         }
         //Registration Overview This Month Approved
-        if ($this->registry->CAP->current_user_can('ee_read_registrations', 'ee_admin_bar_menu_espresso-toolbar-registrations-month-approved')) {
+        if ($this->registry->CAP->current_user_can('ee_read_registrations',
+            'ee_admin_bar_menu_espresso-toolbar-registrations-month-approved')
+        ) {
             $admin_bar->add_menu(array(
                 'id'     => 'espresso-toolbar-registrations-month-approved',
                 'parent' => 'espresso-toolbar-registrations-month',
                 'title'  => __('Approved', 'event_espresso'),
-                'href'   => EEH_URL::add_query_args_and_nonce(array('action' => 'default', 'status' => 'month', '_reg_status' => EEM_Registration::status_id_approved), $reg_admin_url),
+                'href'   => EEH_URL::add_query_args_and_nonce(array(
+                    'action'      => 'default',
+                    'status'      => 'month',
+                    '_reg_status' => EEM_Registration::status_id_approved,
+                ), $reg_admin_url),
                 'meta'   => array(
                     'title'  => __('Approved', 'event_espresso'),
                     'target' => '',
@@ -1180,12 +1323,18 @@ final class EE_System implements ResettableInterface
             ));
         }
         //Registration Overview This Month Pending
-        if ($this->registry->CAP->current_user_can('ee_read_registrations', 'ee_admin_bar_menu_espresso-toolbar-registrations-month-pending')) {
+        if ($this->registry->CAP->current_user_can('ee_read_registrations',
+            'ee_admin_bar_menu_espresso-toolbar-registrations-month-pending')
+        ) {
             $admin_bar->add_menu(array(
                 'id'     => 'espresso-toolbar-registrations-month-pending',
                 'parent' => 'espresso-toolbar-registrations-month',
                 'title'  => __('Pending', 'event_espresso'),
-                'href'   => EEH_URL::add_query_args_and_nonce(array('action' => 'default', 'status' => 'month', '_reg_status' => EEM_Registration::status_id_pending_payment), $reg_admin_url),
+                'href'   => EEH_URL::add_query_args_and_nonce(array(
+                    'action'      => 'default',
+                    'status'      => 'month',
+                    '_reg_status' => EEM_Registration::status_id_pending_payment,
+                ), $reg_admin_url),
                 'meta'   => array(
                     'title'  => __('Pending', 'event_espresso'),
                     'target' => '',
@@ -1194,12 +1343,18 @@ final class EE_System implements ResettableInterface
             ));
         }
         //Registration Overview This Month Not Approved
-        if ($this->registry->CAP->current_user_can('ee_read_registrations', 'ee_admin_bar_menu_espresso-toolbar-registrations-month-not-approved')) {
+        if ($this->registry->CAP->current_user_can('ee_read_registrations',
+            'ee_admin_bar_menu_espresso-toolbar-registrations-month-not-approved')
+        ) {
             $admin_bar->add_menu(array(
                 'id'     => 'espresso-toolbar-registrations-month-not-approved',
                 'parent' => 'espresso-toolbar-registrations-month',
                 'title'  => __('Not Approved', 'event_espresso'),
-                'href'   => EEH_URL::add_query_args_and_nonce(array('action' => 'default', 'status' => 'month', '_reg_status' => EEM_Registration::status_id_not_approved), $reg_admin_url),
+                'href'   => EEH_URL::add_query_args_and_nonce(array(
+                    'action'      => 'default',
+                    'status'      => 'month',
+                    '_reg_status' => EEM_Registration::status_id_not_approved,
+                ), $reg_admin_url),
                 'meta'   => array(
                     'title'  => __('Not Approved', 'event_espresso'),
                     'target' => '',
@@ -1208,12 +1363,18 @@ final class EE_System implements ResettableInterface
             ));
         }
         //Registration Overview This Month Cancelled
-        if ($this->registry->CAP->current_user_can('ee_read_registrations', 'ee_admin_bar_menu_espresso-toolbar-registrations-month-cancelled')) {
+        if ($this->registry->CAP->current_user_can('ee_read_registrations',
+            'ee_admin_bar_menu_espresso-toolbar-registrations-month-cancelled')
+        ) {
             $admin_bar->add_menu(array(
                 'id'     => 'espresso-toolbar-registrations-month-cancelled',
                 'parent' => 'espresso-toolbar-registrations-month',
                 'title'  => __('Cancelled', 'event_espresso'),
-                'href'   => EEH_URL::add_query_args_and_nonce(array('action' => 'default', 'status' => 'month', '_reg_status' => EEM_Registration::status_id_cancelled), $reg_admin_url),
+                'href'   => EEH_URL::add_query_args_and_nonce(array(
+                    'action'      => 'default',
+                    'status'      => 'month',
+                    '_reg_status' => EEM_Registration::status_id_cancelled,
+                ), $reg_admin_url),
                 'meta'   => array(
                     'title'  => __('Cancelled', 'event_espresso'),
                     'target' => '',
@@ -1222,7 +1383,9 @@ final class EE_System implements ResettableInterface
             ));
         }
         //Extensions & Services
-        if ($this->registry->CAP->current_user_can('ee_read_ee', 'ee_admin_bar_menu_espresso-toolbar-extensions-and-services')) {
+        if ($this->registry->CAP->current_user_can('ee_read_ee',
+            'ee_admin_bar_menu_espresso-toolbar-extensions-and-services')
+        ) {
             $admin_bar->add_menu(array(
                 'id'     => 'espresso-toolbar-extensions-and-services',
                 'parent' => 'espresso-toolbar',
@@ -1240,7 +1403,8 @@ final class EE_System implements ResettableInterface
 
 
     /**
-     * simply hooks into "wp_list_pages_exclude" filter (for wp_list_pages method) and makes sure EE critical pages are never returned with the function.
+     * simply hooks into "wp_list_pages_exclude" filter (for wp_list_pages method) and makes sure EE critical pages are
+     * never returned with the function.
      *
      * @param  array $exclude_array any existing pages being excluded are in this array.
      * @return array
@@ -1269,8 +1433,11 @@ final class EE_System implements ResettableInterface
             // jquery_validate loading is turned OFF by default, but prior to the wp_enqueue_scripts hook, can be turned back on again via:  add_filter( 'FHEE_load_jquery_validate', '__return_true' );
             if (apply_filters('FHEE_load_jquery_validate', false)) {
                 // register jQuery Validate and additional methods
-                wp_register_script('jquery-validate', EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.min.js', array('jquery'), '1.15.0', true);
-                wp_register_script('jquery-validate-extra-methods', EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.additional-methods.min.js', array('jquery', 'jquery-validate'), '1.15.0', true);
+                wp_register_script('jquery-validate', EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.min.js',
+                    array('jquery'), '1.15.0', true);
+                wp_register_script('jquery-validate-extra-methods',
+                    EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.additional-methods.min.js',
+                    array('jquery', 'jquery-validate'), '1.15.0', true);
             }
         }
     }

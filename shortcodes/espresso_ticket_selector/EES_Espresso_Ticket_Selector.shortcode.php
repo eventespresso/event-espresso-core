@@ -51,7 +51,9 @@ class EES_Espresso_Ticket_Selector  extends EES_Shortcode {
 	 * @param \WP $WP
 	 */
 	public function run( WP $WP ) {
+		add_filter( 'FHEE__EED_Ticket_Selector__load_tckt_slctr_assets', '__return_true' );
 	}
+
 
 	/**
 	 * 	process_shortcode - ESPRESSO_TICKET_SELECTOR

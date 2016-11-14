@@ -95,7 +95,8 @@ class EE_Payment_Method_Manager implements ResettableInterface
         // grab list of installed modules
         $pm_to_register = glob(EE_PAYMENT_METHODS . '*', GLOB_ONLYDIR);
         // filter list of modules to register
-        $pm_to_register = apply_filters('FHEE__EE_Payment_Method_Manager__register_payment_methods__payment_methods_to_register', $pm_to_register);
+        $pm_to_register = apply_filters('FHEE__EE_Payment_Method_Manager__register_payment_methods__payment_methods_to_register',
+            $pm_to_register);
         // loop through folders
         foreach ($pm_to_register as $pm_path) {
             $this->register_payment_method($pm_path);
@@ -104,7 +105,8 @@ class EE_Payment_Method_Manager implements ResettableInterface
         // filter list of installed modules
         //keep them organized alphabetically by the payment method type's name
         ksort($this->_payment_method_types);
-        return apply_filters('FHEE__EE_Payment_Method_Manager__register_payment_methods__installed_payment_methods', $this->_payment_method_types);
+        return apply_filters('FHEE__EE_Payment_Method_Manager__register_payment_methods__installed_payment_methods',
+            $this->_payment_method_types);
     }
 
 
@@ -130,7 +132,8 @@ class EE_Payment_Method_Manager implements ResettableInterface
         $module_class = 'EE_PMT_' . $module;
         // does the module exist ?
         if ( ! is_readable($payment_method_path . DS . $module_class . $module_ext)) {
-            $msg = sprintf(__('The requested %s payment method file could not be found or is not readable due to file permissions.', 'event_espresso'), $module);
+            $msg = sprintf(__('The requested %s payment method file could not be found or is not readable due to file permissions.',
+                'event_espresso'), $module);
             EE_Error::add_error($msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__);
             return false;
         }
@@ -292,7 +295,8 @@ class EE_Payment_Method_Manager implements ResettableInterface
             $message_resource_manager->ensure_messenger_is_active('pdf');
             EE_Error::add_attention(
                 sprintf(
-                    __('Note, when the invoice payment method is activated, the invoice message type, html messenger, and pdf messenger are activated as well for the %1$smessages system%2$s.', 'event_espresso'),
+                    __('Note, when the invoice payment method is activated, the invoice message type, html messenger, and pdf messenger are activated as well for the %1$smessages system%2$s.',
+                        'event_espresso'),
                     '<a href="' . admin_url('admin.php?page=espresso_messages') . '">',
                     '</a>'
                 )

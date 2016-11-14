@@ -35,6 +35,11 @@ final class EE_Config implements ResettableInterface {
 	private static $_instance;
 
 	/**
+	 * @var boolean $_logging_enabled
+	 */
+	private static $_logging_enabled = false;
+
+	/**
 	 * An StdClass whose property names are addon slugs,
 	 * and values are their config classes
 	 *
@@ -85,6 +90,13 @@ final class EE_Config implements ResettableInterface {
 	 * @var EE_Map_Config
 	 */
 	public $map_settings;
+
+	/**
+	 * settings pertaining to Taxes
+	 *
+	 * @var EE_Tax_Config
+	 */
+	public $tax_settings;
 
 	/**
 	 * @deprecated
@@ -174,6 +186,7 @@ final class EE_Config implements ResettableInterface {
 	 */
 	private function __construct() {
 		do_action( 'AHEE__EE_Config__construct__begin', $this );
+		EE_Config::$_logging_enabled = apply_filters( 'FHEE__EE_Config___construct__logging_enabled', false );
 		// setup empty config classes
 		$this->_initialize_config();
 		// load existing EE site settings
@@ -196,6 +209,15 @@ final class EE_Config implements ResettableInterface {
 		do_action( 'AHEE__EE_Config__construct__end', $this );
 		// hardcoded hack
 		$this->template_settings->current_espresso_theme = 'Espresso_Arabica_2014';
+	}
+
+
+
+	/**
+	 * @return boolean
+	 */
+	public static function logging_enabled() {
+		return self::$_logging_enabled;
 	}
 
 
@@ -313,6 +335,10 @@ final class EE_Config implements ResettableInterface {
 			? $this->environment
 			: new EE_Environment_Config();
 		$this->environment = apply_filters( 'FHEE__EE_Config___initialize_config__environment', $this->environment );
+		$this->tax_settings = $this->tax_settings instanceof EE_Tax_Config
+			? $this->tax_settings
+			: new EE_Tax_Config();
+		$this->tax_settings = apply_filters( 'FHEE__EE_Config___initialize_config__tax_settings', $this->tax_settings );
 		$this->gateway = $this->gateway instanceof EE_Gateway_Config
 			? $this->gateway
 			: new EE_Gateway_Config();
@@ -861,7 +887,7 @@ final class EE_Config implements ResettableInterface {
 	 * @param string $config_option_name
 	 */
 	public static function log( $config_option_name = '' ) {
-		if ( ! empty( $config_option_name ) ) {
+		if ( EE_Config::logging_enabled() && ! empty( $config_option_name ) ) {
 			$config_log = get_option( EE_Config::LOG_NAME, array() );
 			//copy incoming $_REQUEST and sanitize it so we can save it
 			$_request = $_REQUEST;
@@ -881,7 +907,10 @@ final class EE_Config implements ResettableInterface {
 	 * reduces the size of the config log to the length specified by EE_Config::LOG_LENGTH
 	 */
 	public static function trim_log() {
-		$config_log = get_option( EE_Config::LOG_NAME, array() );
+		if ( ! EE_Config::logging_enabled() ) {
+			return;
+		}
+		$config_log = maybe_unserialize( get_option( EE_Config::LOG_NAME, array() ) );
 		$log_length = count( $config_log );
 		if ( $log_length > EE_Config::LOG_LENGTH ) {
 			ksort( $config_log );
@@ -2179,8 +2208,11 @@ class EE_Currency_Config extends EE_Config_Base {
 	 *
 	 * @access    public
 	 * @param string $CNT_ISO
+	 * @throws \EE_Error
 	 */
 	public function __construct( $CNT_ISO = '' ) {
+		/** @var \EventEspresso\core\services\database\TableAnalysis $table_analysis */
+		$table_analysis = EE_Registry::instance()->create( 'TableAnalysis', array(), true );
 		// get country code from organization settings or use default
 		$ORG_CNT = isset( EE_Registry::instance()->CFG->organization )
 		           && EE_Registry::instance()->CFG->organization instanceof EE_Organization_Config
@@ -2192,7 +2224,7 @@ class EE_Currency_Config extends EE_Config_Base {
 		if (
 			! empty( $CNT_ISO )
 			&& EE_Maintenance_Mode::instance()->models_can_query()
-			&& EEH_Activation::table_exists( EE_Registry::instance()->load_model( 'Country' )->table() )
+			&& $table_analysis->tableExists( EE_Registry::instance()->load_model( 'Country' )->table() )
 		) {
 			// retrieve the country settings from the db, just in case they have been customized
 			$country = EE_Registry::instance()->load_model( 'Country' )->get_one_by_ID( $CNT_ISO );
@@ -2345,6 +2377,13 @@ class EE_Registration_Config extends EE_Config_Base {
 	 */
 	public $recaptcha_width;
 
+	/**
+	 * Whether or not invalid attempts to directly access the registration checkout page should be tracked.
+	 *
+	 * @var boolean $track_invalid_checkout_access
+	 */
+	protected $track_invalid_checkout_access = true;
+
 
 
 	/**
@@ -2389,6 +2428,27 @@ class EE_Registration_Config extends EE_Config_Base {
 	 */
 	public function set_default_reg_status_on_EEM_Event() {
 		EEM_Event::set_default_reg_status( $this->default_STS_ID );
+	}
+
+
+
+	/**
+	 * @return boolean
+	 */
+	public function track_invalid_checkout_access() {
+		return $this->track_invalid_checkout_access;
+	}
+
+
+
+	/**
+	 * @param boolean $track_invalid_checkout_access
+	 */
+	public function set_track_invalid_checkout_access( $track_invalid_checkout_access ) {
+		$this->track_invalid_checkout_access = filter_var(
+			$track_invalid_checkout_access,
+			FILTER_VALIDATE_BOOLEAN
+		);
 	}
 
 
@@ -2457,13 +2517,22 @@ class EE_Admin_Config extends EE_Config_Base {
 	 */
 	public $affiliate_id;
 
-
 	/**
 	 * help tours on or off (global setting)
 	 *
 	 * @var boolean
 	 */
 	public $help_tour_activation;
+
+	/**
+     * adds extra layer of encoding to session data to prevent serialization errors
+     * but is incompatible with some server configuration errors
+     * if you get "500 internal server errors" during registration, try turning this on
+     * if you get PHP fatal errors regarding base 64 methods not defined, then turn this off
+     *
+     * @var boolean $encode_session_data
+	 */
+	private $encode_session_data = false;
 
 
 
@@ -2484,6 +2553,7 @@ class EE_Admin_Config extends EE_Config_Base {
 		$this->show_reg_footer = true;
 		$this->affiliate_id = 'default';
 		$this->help_tour_activation = true;
+		$this->encode_session_data = false;
 	}
 
 
@@ -2513,6 +2583,33 @@ class EE_Admin_Config extends EE_Config_Base {
 		}
 		return $this->debug_file_name;
 	}
+
+
+
+	/**
+	 * @return string
+	 */
+	public function affiliate_id() {
+		return ! empty( $this->affiliate_id ) ? $this->affiliate_id : 'default';
+	}
+
+
+
+    /**
+     * @return boolean
+     */
+    public function encode_session_data() {
+        return filter_var( $this->encode_session_data, FILTER_VALIDATE_BOOLEAN );
+    }
+
+
+
+    /**
+     * @param boolean $encode_session_data
+     */
+    public function set_encode_session_data( $encode_session_data ) {
+        $this->encode_session_data = filter_var( $encode_session_data, FILTER_VALIDATE_BOOLEAN );
+    }
 
 
 
@@ -2803,10 +2900,19 @@ class EE_Event_Single_Config extends EE_Config_Base {
  */
 class EE_Ticket_Selector_Config extends EE_Config_Base {
 
+	/*
+	 * @var boolean $show_ticket_sale_columns
+	 */
 	public $show_ticket_sale_columns;
 
+	/*
+	 * @var boolean $show_ticket_details
+	 */
 	public $show_ticket_details;
 
+	/*
+	 * @var boolean $show_expired_tickets
+	 */
 	public $show_expired_tickets;
 
 
@@ -2815,9 +2921,9 @@ class EE_Ticket_Selector_Config extends EE_Config_Base {
 	 *    class constructor
 	 */
 	public function __construct() {
-		$this->show_ticket_sale_columns = 1;
-		$this->show_ticket_details = 1;
-		$this->show_expired_tickets = 1;
+		$this->show_ticket_sale_columns = true;
+		$this->show_ticket_details = true;
+		$this->show_expired_tickets = true;
 	}
 }
 
@@ -2910,6 +3016,36 @@ class EE_Environment_Config extends EE_Config_Base {
 
 
 
+}
+
+
+
+/**
+ * Stores any options pertaining to taxes
+ *
+ * @since       4.9.13
+ * @package     Event Espresso
+ * @subpackage  config
+ */
+class EE_Tax_Config extends EE_Config_Base
+{
+
+    /*
+     * flag to indicate whether or not to display ticket prices with the taxes included
+     *
+     * @var boolean $prices_displayed_including_taxes
+     */
+    public $prices_displayed_including_taxes;
+
+
+
+    /**
+     *    class constructor
+     */
+    public function __construct()
+    {
+        $this->prices_displayed_including_taxes = true;
+    }
 }
 
 

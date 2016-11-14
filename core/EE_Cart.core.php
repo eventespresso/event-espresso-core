@@ -1,4 +1,5 @@
-<?php use EventEspresso\core\interfaces\ResettableInterface;
+<?php
+use EventEspresso\core\interfaces\ResettableInterface;
 
 if ( ! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
@@ -8,43 +9,34 @@ do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
 
 /**
- * Event Espresso
- * Event Registration and Management Plugin for WordPress
- * @ package        Event Espresso
- * @ author        Seth Shoultes
- * @ copyright    (c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license        http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link            http://www.eventespresso.com
- * ------------------------------------------------------------------------
  * EE_Cart class
  * Used to keep track of which tickets the user has specified they want to purchase.
  * This data is used for generating the Transaction and Registrations, and the
  * Line Items on cart are themselves saved for creating a persistent snapshot of
  * what was purchased and for how much.
- * @ version        2.0
  *
- * @subpackage    includes/core/EE_Cart.core.php
- *                @ author        Mike Nelson, Brent Christensen
- *                ------------------------------------------------------------------------
+ * @version        2.0
+ * @subpackage     includes/core/EE_Cart.core.php
+ * @author         Mike Nelson, Brent Christensen
  */
 class EE_Cart implements ResettableInterface
 {
 
     /**
-     *    instance of the EE_Cart object
+     * instance of the EE_Cart object
      *
      * @access    private
      * @var EE_Cart $_instance
      */
-    private static $_instance = null;
+    private static $_instance;
 
     /**
-     *    instance of the EE_Session object
+     * instance of the EE_Session object
      *
      * @access    protected
      * @var EE_Session $_session
      */
-    protected $_session = null;
+    protected $_session;
 
     /**
      * The total Line item which comprises all the children line-item subtotals,
@@ -61,7 +53,7 @@ class EE_Cart implements ResettableInterface
      *
      * @var EE_Line_Item
      */
-    private $_grand_total = null;
+    private $_grand_total;
 
 
 
@@ -71,6 +63,7 @@ class EE_Cart implements ResettableInterface
      * @param EE_Line_Item $grand_total
      * @param EE_Session   $session
      * @return \EE_Cart
+     * @throws \EE_Error
      */
     public static function instance(EE_Line_Item $grand_total = null, EE_Session $session = null)
     {
@@ -97,13 +90,12 @@ class EE_Cart implements ResettableInterface
 
 
     /**
-     *    private constructor to prevent direct creation
+     * private constructor to prevent direct creation
      *
      * @Constructor
      * @access private
      * @param EE_Line_Item $grand_total
      * @param EE_Session   $session
-     * @return \EE_Cart
      */
     private function __construct(EE_Line_Item $grand_total = null, EE_Session $session = null)
     {
@@ -122,6 +114,7 @@ class EE_Cart implements ResettableInterface
      * @param EE_Line_Item $grand_total
      * @param EE_Session   $session
      * @return EE_Cart
+     * @throws \EE_Error
      */
     public static function reset(EE_Line_Item $grand_total = null, EE_Session $session = null)
     {
@@ -131,6 +124,19 @@ class EE_Cart implements ResettableInterface
         }
         self::$_instance = null;
         return self::instance($grand_total, $session);
+    }
+
+
+
+    /**
+     * @return \EE_Session
+     */
+    public function session()
+    {
+        if ( ! $this->_session instanceof EE_Session) {
+            $this->set_session();
+        }
+        return $this->_session;
     }
 
 
@@ -159,12 +165,13 @@ class EE_Cart implements ResettableInterface
 
 
     /**
-     *    get_cart_from_reg_url_link
+     * get_cart_from_reg_url_link
      *
      * @access public
      * @param EE_Transaction $transaction
      * @param EE_Session     $session
      * @return \EE_Cart
+     * @throws \EE_Error
      */
     public static function get_cart_from_txn(EE_Transaction $transaction, EE_Session $session = null)
     {
@@ -180,6 +187,7 @@ class EE_Cart implements ResettableInterface
      * Creates the total line item, and ensures it has its 'tickets' and 'taxes' sub-items
      *
      * @return EE_Line_Item
+     * @throws \EE_Error
      */
     private function _create_grand_total()
     {
@@ -190,7 +198,7 @@ class EE_Cart implements ResettableInterface
 
 
     /**
-     *    Gets all the line items of object type Ticket
+     * Gets all the line items of object type Ticket
      *
      * @access public
      * @return \EE_Line_Item[]
@@ -207,6 +215,7 @@ class EE_Cart implements ResettableInterface
      *
      * @access public
      * @return int
+     * @throws \EE_Error
      */
     public function all_ticket_quantity_count()
     {
@@ -216,7 +225,7 @@ class EE_Cart implements ResettableInterface
         }
         $count = 0;
         foreach ($tickets as $ticket) {
-            $count = $count + $ticket->get('LIN_quantity');
+            $count += $ticket->get('LIN_quantity');
         }
         return $count;
     }
@@ -224,9 +233,10 @@ class EE_Cart implements ResettableInterface
 
 
     /**
-     *  Gets all the tax line items
+     * Gets all the tax line items
      *
      * @return \EE_Line_Item[]
+     * @throws \EE_Error
      */
     public function get_taxes()
     {
@@ -239,6 +249,7 @@ class EE_Cart implements ResettableInterface
      * Gets the total line item (which is a parent of all other line items) on this cart
      *
      * @return EE_Line_Item
+     * @throws \EE_Error
      */
     public function get_grand_total()
     {
@@ -253,6 +264,7 @@ class EE_Cart implements ResettableInterface
      * @param EE_Ticket $ticket
      * @param int       $qty
      * @return TRUE on success, FALSE on fail
+     * @throws \EE_Error
      */
     public function add_ticket_to_cart(EE_Ticket $ticket, $qty = 1)
     {
@@ -263,10 +275,11 @@ class EE_Cart implements ResettableInterface
 
 
     /**
-     *    get_cart_total_before_tax
+     * get_cart_total_before_tax
      *
      * @access public
      * @return float
+     * @throws \EE_Error
      */
     public function get_cart_total_before_tax()
     {
@@ -276,10 +289,11 @@ class EE_Cart implements ResettableInterface
 
 
     /**
-     *    gets the total amount of tax paid for items in this cart
+     * gets the total amount of tax paid for items in this cart
      *
      * @access public
      * @return float
+     * @throws \EE_Error
      */
     public function get_applied_taxes()
     {
@@ -289,10 +303,11 @@ class EE_Cart implements ResettableInterface
 
 
     /**
-     *    Gets the total amount to be paid for the items in the cart, including taxes and other modifiers
+     * Gets the total amount to be paid for the items in the cart, including taxes and other modifiers
      *
      * @access public
      * @return float
+     * @throws \EE_Error
      */
     public function get_cart_grand_total()
     {
@@ -303,10 +318,11 @@ class EE_Cart implements ResettableInterface
 
 
     /**
-     *    Gets the total amount to be paid for the items in the cart, including taxes and other modifiers
+     * Gets the total amount to be paid for the items in the cart, including taxes and other modifiers
      *
      * @access public
      * @return float
+     * @throws \EE_Error
      */
     public function recalculate_all_cart_totals()
     {
@@ -320,11 +336,12 @@ class EE_Cart implements ResettableInterface
 
 
     /**
-     *    deletes an item from the cart
+     * deletes an item from the cart
      *
      * @access public
      * @param array|bool|string $line_item_codes
      * @return int on success, FALSE on fail
+     * @throws \EE_Error
      */
     public function delete_items($line_item_codes = false)
     {
@@ -338,6 +355,7 @@ class EE_Cart implements ResettableInterface
      * @remove ALL items from cart and zero ALL totals
      * @access public
      * @return bool
+     * @throws \EE_Error
      */
     public function empty_cart()
     {
@@ -352,6 +370,7 @@ class EE_Cart implements ResettableInterface
      * @remove ALL items from cart and delete total as well
      * @access public
      * @return bool
+     * @throws \EE_Error
      */
     public function delete_cart()
     {
@@ -370,6 +389,7 @@ class EE_Cart implements ResettableInterface
      * @access public
      * @param bool $apply_taxes
      * @return TRUE on success, FALSE on fail
+     * @throws \EE_Error
      */
     public function save_cart($apply_taxes = true)
     {
@@ -382,13 +402,35 @@ class EE_Cart implements ResettableInterface
                 $this->_grand_total->clear_cache('Transaction', null, true);
             }
         }
-        if ($this->_session instanceof EE_Session) {
-            return $this->_session->set_cart($this);
+        if ($this->session() instanceof EE_Session) {
+            return $this->session()->set_cart($this);
         } else {
             return false;
         }
     }
 
+
+
+    public function __wakeup()
+    {
+        if ( ! $this->_grand_total instanceof EE_Line_Item && absint($this->_grand_total) !== 0) {
+            // $this->_grand_total is actually just an ID, so use it to get the object from the db
+            $this->_grand_total = EEM_Line_Item::instance()->get_one_by_ID($this->_grand_total);
+        }
+    }
+
+
+
+    /**
+     * @return array
+     */
+    public function __sleep()
+    {
+        if ($this->_grand_total instanceof EE_Line_Item && $this->_grand_total->ID()) {
+            $this->_grand_total = $this->_grand_total->ID();
+        }
+        return array('_grand_total');
+    }
 
 
 }

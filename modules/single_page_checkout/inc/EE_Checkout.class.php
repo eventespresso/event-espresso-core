@@ -78,6 +78,12 @@ class EE_Checkout {
 	protected $reg_status_updated = array();
 
 	/**
+	 * timestamp when redirected from Ticket Selector to the checkout
+	 * @type int
+	 */
+	public $uts = 0;
+
+	/**
 	 * total number of tickets that were in the cart
 	 * @type int
 	 */
@@ -236,7 +242,6 @@ class EE_Checkout {
 	 *    class constructor
 	 *
 	 * @access    public
-	 * @return    \EE_Checkout
 	 */
 	public function __construct(  ) {
 		$this->reg_page_base_url = EE_Registry::instance()->CFG->core->reg_page_url();
@@ -251,7 +256,8 @@ class EE_Checkout {
 
 	/**
 	 * returns true if ANY reg status was updated during checkout
-	 * @return array
+	 *
+	 * @return boolean
 	 */
 	public function any_reg_status_updated() {
 		foreach ( $this->reg_status_updated as $reg_status ) {
@@ -266,7 +272,7 @@ class EE_Checkout {
 
 	/**
 	 * @param $REG_ID
-	 * @return array
+	 * @return boolean
 	 */
 	public function reg_status_updated( $REG_ID ) {
 		return isset( $this->reg_status_updated[ $REG_ID ] ) ? $this->reg_status_updated[ $REG_ID ] : false;
@@ -388,10 +394,8 @@ class EE_Checkout {
 	public function remove_reg_step( $reg_step_slug = '', $reset = true ) {
 		unset( $this->reg_steps[ $reg_step_slug  ] );
 		if ( $this->transaction instanceof EE_Transaction ) {
-			/** @type EE_Transaction_Processor $transaction_processor */
-			$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
 			// now remove reg step from TXN and save
-			$transaction_processor->remove_reg_step( $this->transaction, $reg_step_slug );
+			$this->transaction->remove_reg_step( $reg_step_slug );
 			$this->transaction->save();
 		}
 		if ( $reset ) {
@@ -556,7 +560,7 @@ class EE_Checkout {
 	 * @access public
 	 * @param EE_SPCO_Reg_Step $reg_step_A
 	 * @param EE_SPCO_Reg_Step $reg_step_B
-	 * @return array()
+	 * @return int
 	 */
 	public function reg_step_sorting_callback( EE_SPCO_Reg_Step $reg_step_A, EE_SPCO_Reg_Step $reg_step_B ) {
 		// send finalize_registration step to the end of the array
@@ -592,10 +596,8 @@ class EE_Checkout {
 				|| $reg_step instanceof EE_SPCO_Reg_Step_Finalize_Registration
 			)
 		) {
-			/** @type EE_Transaction_Processor $transaction_processor */
-			$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
 			// set the start time for this reg step
-			if ( ! $transaction_processor->set_reg_step_initiated( $this->transaction, $reg_step->slug() ) ) {
+			if ( ! $this->transaction->set_reg_step_initiated( $reg_step->slug() ) ) {
 				if ( WP_DEBUG ) {
 					EE_Error::add_error(
 						sprintf(
@@ -633,7 +635,7 @@ class EE_Checkout {
 	 * 	reset_reg_steps
 	 *
 	 * 	@access public
-	 * 	@return 	bool
+	 * 	@return void
 	 */
 	public function reset_reg_steps() {
 		$this->sort_reg_steps();
@@ -656,7 +658,7 @@ class EE_Checkout {
 
 		$registration_time_limit = (float)( EE_Registry::instance()	->SSN->expiration() - time() );
 		$time_limit_format = $registration_time_limit > 60 * MINUTE_IN_SECONDS ? 'H:i:s' : 'i:s';
-		$registration_time_limit = gmdate( $time_limit_format, $registration_time_limit );
+		$registration_time_limit = date( $time_limit_format, $registration_time_limit );
 		return apply_filters(
 			'FHEE__EE_Checkout__get_registration_time_limit__registration_time_limit',
 			$registration_time_limit
@@ -726,11 +728,9 @@ class EE_Checkout {
 	 */
 	public function update_txn_reg_steps_array() {
 		$updated = false;
-		/** @type EE_Transaction_Processor $transaction_processor */
-		$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
 		foreach ( $this->reg_steps as $reg_step ) {
 			if ( $reg_step->completed() ) {
-				$updated = $transaction_processor->set_reg_step_completed( $this->transaction, $reg_step->slug() )
+				$updated = $this->transaction->set_reg_step_completed( $reg_step->slug() )
 					? true
 					: $updated;
 			}
@@ -768,20 +768,14 @@ class EE_Checkout {
 	 *    stores whether any updates were made to the TXN or it's related registrations
 	 *
 	 * @access public
-	 * @return    bool
+	 * @return void
 	 * @throws \EE_Error
 	 */
 	public function track_transaction_and_registration_status_updates() {
 		// verify the transaction
 		if ( $this->transaction instanceof EE_Transaction ) {
-			/** @type EE_Transaction_Payments $transaction_payments */
-			$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
-			/** @type EE_Transaction_Processor $transaction_processor */
-			$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
 			// has there been a TXN status change during this checkout?
-			if ( $transaction_payments->txn_status_updated() || $transaction_processor->txn_status_updated() ) {
-				$this->txn_status_updated = true;
-			}
+			$this->txn_status_updated = $this->transaction->txn_status_updated();
 			/** @type EE_Registration_Processor $registration_processor */
 			$registration_processor = EE_Registry::instance()->load_class( 'Registration_Processor' );
 			// grab the saved registrations from the transaction
@@ -1075,10 +1069,8 @@ class EE_Checkout {
 		if ( $this->transaction instanceof EE_Transaction && $this->transaction->ID() ) {
 			// never cache payment info
 			$this->transaction->clear_cache( 'Payment' );
-			/** @type EE_Transaction_Processor $transaction_processor */
-			$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
 			// is the Payment Options Reg Step completed ?
-			if ( $transaction_processor->reg_step_completed( $this->transaction, 'payment_options' ) ) {
+			if ( $this->transaction->reg_step_completed( 'payment_options' ) ) {
 				// then check for payments and update TXN accordingly
 				/** @type EE_Transaction_Payments $transaction_payments */
 				$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
@@ -1199,11 +1191,40 @@ class EE_Checkout {
 
 
 	/**
+	 *    __sleep
+	 * to conserve db space, let's remove the reg_form and the EE_Checkout object from EE_SPCO_Reg_Step objects upon serialization
+	 * EE_Checkout will handle the reimplementation of itself upon waking,
+	 * but we won't bother with the reg form, because if needed, it will be regenerated anyways
+	 *
+	 * @return array
+	 * @throws \EE_Error
+	 */
+    public function __sleep()
+    {
+	    if ( $this->primary_attendee_obj instanceof EE_Attendee && $this->primary_attendee_obj->ID() ) {
+		    $this->primary_attendee_obj = $this->primary_attendee_obj->ID();
+	    }        // remove the reg form and the checkout
+	    if ( $this->transaction instanceof EE_Transaction && $this->transaction->ID() ) {
+		    $this->transaction = $this->transaction->ID();
+	    }        // remove the reg form and the checkout
+        return array_diff( array_keys( get_object_vars( $this ) ), array( 'billing_form', 'registration_form' ) );
+    }
+
+
+	/**
 	 * 	__wakeup
 	 * to conserve db space, we are removing the EE_Checkout object from EE_SPCO_Reg_Step objects upon serialization
 	 * this will reinstate the EE_Checkout object on each EE_SPCO_Reg_Step object
 	 */
 	public function __wakeup() {
+		if ( ! $this->primary_attendee_obj instanceof EE_Attendee && absint( $this->primary_attendee_obj ) !== 0 ) {
+			// $this->primary_attendee_obj is actually just an ID, so use it to get the object from the db
+			$this->primary_attendee_obj = EEM_Attendee::instance()->get_one_by_ID( $this->primary_attendee_obj );
+		}
+		if ( ! $this->transaction instanceof EE_Transaction && absint( $this->transaction ) !== 0 ) {
+			// $this->transaction is actually just an ID, so use it to get the object from the db
+			$this->transaction = EEM_Transaction::instance()->get_one_by_ID( $this->transaction );
+		}
 		foreach ( $this->reg_steps as $reg_step ) {
 			$reg_step->checkout = $this;
 		}
@@ -1233,7 +1254,7 @@ class EE_Checkout {
 					$this->current_step->slug() : '',
 				'current_step->completed' => $this->current_step instanceof EE_SPCO_Reg_Step ?
 					$this->current_step->completed() : '',
-				'txn_status_updated' => $this->txn_status_updated,
+				'txn_status_updated' => $this->transaction->txn_status_updated(),
 				'reg_status_updated' => $this->reg_status_updated,
 				'reg_url_link' => $this->reg_url_link,
 				'REQ' => $display_request ? $_REQUEST : '',

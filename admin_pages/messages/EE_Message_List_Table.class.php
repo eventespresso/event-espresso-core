@@ -168,7 +168,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 				admin_url( 'admin.php' )
 			)
 			. '">' . __( 'Delete', 'event_espresso' ) . '</a>';
-		return $message->to() . $this->row_actions( $actions );
+		return esc_html( $message->to() ) . $this->row_actions( $actions );
 	}
 
 
@@ -177,7 +177,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 	 * @return string   The sender of the message
 	 */
 	public function column_from( EE_Message $message ) {
-		return $message->from();
+		return esc_html( $message->from() );
 	}
 
 

@@ -37,7 +37,7 @@ class EE_PMT_Aim_Test extends EE_UnitTestCase{
 		parent::__construct($name, $data, $dataName);
 		$this->_test_settings = array(
 			'login_id' => '534NmsVS',
-			'transaction_key' => '95FxUs7W42vFCE96',
+			'transaction_key' => '9u64QUm4VzZ9x66d',
 			'test_transactions' => FALSE,
 			'debug_mode' => TRUE
 		);
@@ -54,13 +54,14 @@ class EE_PMT_Aim_Test extends EE_UnitTestCase{
 			'credit_card' => '4007000000027',
 			'cvv' => '123',
 			'exp_month' => '05',
-			'exp_year' => '2024'
+			'exp_year' => '2024',
+			'company' => 'Event Espresso',
+			'fax' => '1231231231',
+			'phone' => '1231231231',
 		);
 	}
 	public function setUp(){
 		parent::setUp();
-		//make sure caf payment methods are registered
-		new EE_Brewing_Regular();
 		EE_Payment_Method_Manager::reset();
 	}
 	public function test_do_direct_payment__success(){
@@ -73,7 +74,7 @@ class EE_PMT_Aim_Test extends EE_UnitTestCase{
 
 		$p_processed = $ppg->do_direct_payment( $p, $this->_test_billing_info );
 		$this->assertEquals( $p, $p_processed );
-		$this->assertEquals( EEM_Payment::status_id_approved, $p_processed->status() );
+		$this->assertEquals( EEM_Payment::status_id_approved, $p_processed->status(), 'If this fails, verify the accounts transaction key hasntbeen updated. Here is the raw response from aim: ' . var_export( $p_processed->details(), true ) );
 		$this->assertEquals( $t->total(), $p_processed->amount() );
 	}
 	public function test_do_direct_payment__fail(){

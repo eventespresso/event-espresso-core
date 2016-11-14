@@ -29,10 +29,21 @@ class EE_Recommended_Versions extends EE_Middleware
     {
         $this->_request = $request;
         $this->_response = $response;
+        //$this->_response->add_output( "\n\t IN >>  " . __CLASS__ );
+        //$this->_response->set_notice( 1, 'hey look at this' );
         // check required WP version
         if ( ! $this->_minimum_wp_version_required()) {
             $this->_request->un_set('activate', true);
             add_action('admin_notices', array($this, 'minimum_wp_version_error'), 1);
+            //$this->_response->add_output( "\n<br />" . 'minimum_wp_version_error' );
+            $this->_response->terminate_request();
+            $this->_response->deactivate_plugin();
+        }
+        // check required PHP version
+        if ( ! $this->_minimum_php_version_required()) {
+            $this->_request->un_set('activate', true);
+            add_action('admin_notices', array($this, 'minimum_php_version_error'), 1);
+            //$this->_response->add_output( "\n<br />" . 'minimum_php_version_error' );
             $this->_response->terminate_request();
             $this->_response->deactivate_plugin();
         }
@@ -41,6 +52,7 @@ class EE_Recommended_Versions extends EE_Middleware
             $this->_display_minimum_recommended_php_version_notice();
         }
         $this->_response = $this->process_request_stack($this->_request, $this->_response);
+        //$this->_response->add_output( "\n\t OUT << " . __CLASS__ );
         return $this->_response;
     }
 
@@ -84,6 +96,19 @@ class EE_Recommended_Versions extends EE_Middleware
     private function _check_php_version($min_version = EE_MIN_PHP_VER_RECOMMENDED)
     {
         return version_compare(PHP_VERSION, $min_version, '>=') ? true : false;
+    }
+
+
+
+    /**
+     *    _minimum_php_version_required
+     *
+     * @access private
+     * @return boolean
+     */
+    private function _minimum_php_version_required()
+    {
+        return $this->_check_php_version(EE_MIN_PHP_VER_REQUIRED);
     }
 
 
