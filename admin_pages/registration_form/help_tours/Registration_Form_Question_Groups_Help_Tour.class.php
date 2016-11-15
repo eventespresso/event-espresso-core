@@ -34,15 +34,6 @@ class Registration_Form_Question_Groups_Help_Tour extends EE_Help_Tour
         );
         
         if ($this->_is_caf) {
-            $this->_stops[15] = array(
-                'id'      => 'id',
-                'content' => $this->_id_stop(),
-                'options' => array(
-                    'tipLocation'    => 'top',
-                    'tipAdjustmentY' => -30,
-                    'tipAdjustmentX' => -15
-                )
-            );
             $this->_stops[20] = array(
                 'id'      => 'name',
                 'content' => $this->_name_stop(),
@@ -113,12 +104,6 @@ class Registration_Form_Question_Groups_Help_Tour extends EE_Help_Tour
         }
         
         return $content;
-    }
-    
-    protected function _id_stop()
-    {
-        return '<p>' . __('View the ID of the question group. Can be sorted in ascending or descending order.',
-            'event_espresso') . '</p>';
     }
     
     protected function _name_stop()
