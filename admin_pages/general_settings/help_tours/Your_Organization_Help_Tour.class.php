@@ -4,6 +4,8 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) {
 }
 
 /**
+ * Your_Organization_Help_Tour
+ *
  * This is the help tour object for the Registration Overview page
  *
  *
@@ -29,7 +31,6 @@ class Your_Organization_Help_Tour extends EE_Help_Tour
             10 => array(
                 'content' => $this->_start(),
             ),
-            
             30 => array(
                 'id'      => 'contact_info_h4',
                 'content' => $this->_contact_information_stop(),
@@ -76,6 +77,19 @@ class Your_Organization_Help_Tour extends EE_Help_Tour
                 )
             )
         );
+        
+        if (is_main_site()) {
+            $this->_stops[20] = array(
+                'id' => 'site_license_key',
+                'content' => $this->_site_license_key_stop(),
+                'options' => array(
+                    'tipLocation' => 'right',
+                    'tipAdjustmentY' => -50,
+                    'tipAdjustmentX' => 15
+                )
+            );
+        }
+        ksort( $this->_stops );
     }
     
     
