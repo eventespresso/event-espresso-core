@@ -39,14 +39,6 @@ class EE_Recommended_Versions extends EE_Middleware
             $this->_response->terminate_request();
             $this->_response->deactivate_plugin();
         }
-        // check required PHP version
-        if ( ! $this->_minimum_php_version_required()) {
-            $this->_request->un_set('activate', true);
-            add_action('admin_notices', array($this, 'minimum_php_version_error'), 1);
-            //$this->_response->add_output( "\n<br />" . 'minimum_php_version_error' );
-            $this->_response->terminate_request();
-            $this->_response->deactivate_plugin();
-        }
         // check recommended PHP version
         if ( ! $this->_minimum_php_version_recommended()) {
             $this->_display_minimum_recommended_php_version_notice();
@@ -96,19 +88,6 @@ class EE_Recommended_Versions extends EE_Middleware
     private function _check_php_version($min_version = EE_MIN_PHP_VER_RECOMMENDED)
     {
         return version_compare(PHP_VERSION, $min_version, '>=') ? true : false;
-    }
-
-
-
-    /**
-     *    _minimum_php_version_required
-     *
-     * @access private
-     * @return boolean
-     */
-    private function _minimum_php_version_required()
-    {
-        return $this->_check_php_version(EE_MIN_PHP_VER_REQUIRED);
     }
 
 

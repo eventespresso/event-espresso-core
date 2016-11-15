@@ -736,6 +736,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      * Otherwise, do the normal logic
      *
      * @return string
+     * @throws \EE_Error
      */
     protected function _create_new_cpt_item()
     {
@@ -745,8 +746,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             EE_Error::add_attention(
                 sprintf(
                     __(
-                        'Your website\'s timezone is currently set to UTC + 0. We recommend updating your timezone to a city
-			        or region near you before you create an event. Your timezone can be updated through the %1$sGeneral Settings%2$s page.'
+                        'Your website\'s timezone is currently set to UTC + 0. We recommend updating your timezone to a city or region near you before you create an event. Your timezone can be updated through the %1$sGeneral Settings%2$s page.',
+                        'event_espresso'
                     ),
                     '<a href="' . admin_url('options-general.php') . '">',
                     '</a>'
@@ -1756,8 +1757,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             );
             $start = $DateTime->format(implode(' ', $start_formats));
             $end = $DateTime->setDate($year_r, $month_r, $DateTime
-            				->format('t'))->setTime(23, 59, 59)
-            				->format(implode(' ', $start_formats));
+                ->format('t'))->setTime(23, 59, 59)
+                            ->format(implode(' ', $start_formats));
             $where['Datetime.DTT_EVT_start'] = array('BETWEEN', array($start, $end));
         } else if (isset($this->_req_data['status']) && $this->_req_data['status'] == 'today') {
             $DateTime = new DateTime('now', new DateTimeZone(EEM_Event::instance()->get_timezone()));
