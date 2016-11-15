@@ -4138,9 +4138,28 @@ abstract class EEM_Base extends EE_Base
 
 
     /**
-     * similar to \EEM_Base::_get_qualified_column_for_field() but returns an array with data for ALL
+     * similar to \EEM_Base::_get_qualified_column_for_field() but returns an array with data for ALL fields.
+     * Example usage:
+     * EEM_Ticket::instance()->get_all_wpdb_results( array(), ARRAY_A, EEM_Ticket::instance()->get_qualified_columns_for_all_fields() );
+     * is equivalent to EEM_Ticket::instance()->get_all_wpdb_results( array(), ARRAY_A, '*' );
+     * and
+     * EEM_Event::instance()->get_all_wpdb_results(
+     *  array(
+     *      'force_join' => array( 'Datetime.Ticket' ),
+     * ),
+     *  ARRAY_A,
+     *  implode(
+     *      ', ',
+     *      array_merge(
+     *          EEM_Event::instance()->get_qualified_columns_for_all_fields( '', false ),
+     *          EEM_Ticket::instance()->get_qualified_columns_for_all_fields( 'Datetime', false )
+     *      )
+     *  )
+     * )
+     * selects rows from the database, selecting all the event and ticket columns
+
      *
-     * @param array|string $table_joins this can be used for adding prefixes to qualified column names
+*@param string $model_relation_chain  this can be used for adding prefixes to qualified column names
      *                                  required for use when querying across tables with a JOIN.
      *                                  for example:
      *                                  if simply performing a query on the tickets table,
@@ -4151,18 +4170,19 @@ abstract class EEM_Base extends EE_Base
      *                                      "Datetime" for the $table_joins parameter.
      *                                  this would insert "Datetime__" into the fields' qualified names,
      *                                  like: Datetime__Ticket.TKT_ID, Datetime__Ticket.TTM_ID, etc...
-     *                                  For multi table joins, pass an array of table names
-     *                                  in the order the joins occur for the $table_joins parameter, like:
-     *                                      array( "Event", "Datetime" )
+     *                                  For multiple table joins, pass a list of table names
+     *                                  in the order the joins occur, separated by periods, like:
+     *                                      "Event.Datetime"
+     *                                  (eg just like you do when referring to related model's fields in WHERE conditions)
      *                                  which will produce something like:
      *                                  Event__Datetime__Ticket.TKT_ID, Event__Datetime__Ticket.TTM_ID, etc...
-     * @param bool $return_string if true, will return a string with qualified column names separated by ', '
+     * @param bool $return_string           if true, will return a string with qualified column names separated by ', '
      *                            if false, will simply return a numerically indexed array of qualified column names
      * @return array|string
      */
-    public function get_qualified_columns_for_all_fields($table_joins = '', $return_string = true)
+    public function get_qualified_columns_for_all_fields($model_relation_chain = '', $return_string = true)
     {
-        $table_prefix = ! empty($table_joins) ? implode('__', (array)$table_joins ) . '__' : '';
+        $table_prefix = str_replace('.', '__', $model_relation_chain) . (empty($model_relation_chain) ? '' : '__');
         $qualified_columns = array();
         foreach ($this->field_settings() as $field_name => $field) {
             $qualified_columns[] = $table_prefix . $field->get_qualified_column();
