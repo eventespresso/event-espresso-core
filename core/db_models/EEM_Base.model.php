@@ -4140,12 +4140,10 @@ abstract class EEM_Base extends EE_Base
     /**
      * similar to \EEM_Base::_get_qualified_column_for_field() but returns an array with data for ALL fields.
      * Example usage:
-     * EEM_Ticket::instance()->get_all_wpdb_results( array(), ARRAY_A, EEM_Ticket::instance()->get_qualified_columns_for_all_fields() );
-     * is equivalent to EEM_Ticket::instance()->get_all_wpdb_results( array(), ARRAY_A, '*' );
-     * and
-     * EEM_Event::instance()->get_all_wpdb_results(
-     *  array(
-     *      array(
+     * EEM_Ticket::instance()->get_all_wpdb_results( array(), ARRAY_A,
+     * EEM_Ticket::instance()->get_qualified_columns_for_all_fields() ); is equivalent to
+     * EEM_Ticket::instance()->get_all_wpdb_results( array(), ARRAY_A, '*' ); and
+     * EEM_Event::instance()->get_all_wpdb_results( array( array(
      *          'Datetime.Ticket.TKT_ID' => array( '<', 100 ),
      * ),
      *  ARRAY_A,
@@ -4158,27 +4156,21 @@ abstract class EEM_Base extends EE_Base
      *  )
      * )
      * selects rows from the database, selecting all the event and ticket columns, where the ticket ID is below 100
-
      *
-*@param string $model_relation_chain  this can be used for adding prefixes to qualified column names
-     *                                  required for use when querying across tables with a JOIN.
-     *                                  for example:
-     *                                  if simply performing a query on the tickets table,
-     *                                  you would leave this parameter empty. But if you wanted
-     *                                  to perform a JOIN from from datetimes to tickets, and
-     *                                  wanted the correct SQL for all of the ticket's column names,
-     *                                  then you would simply pass:
-     *                                      "Datetime" for the $table_joins parameter.
-     *                                  this would insert "Datetime__" into the fields' qualified names,
-     *                                  like: Datetime__Ticket.TKT_ID, Datetime__Ticket.TTM_ID, etc...
-     *                                  For multiple table joins, pass a list of table names
-     *                                  in the order the joins occur, separated by periods, like:
-     *                                      "Event.Datetime"
-     *                                  (eg just like you do when referring to related model's fields in WHERE conditions)
-     *                                  which will produce something like:
-     *                                  Event__Datetime__Ticket.TKT_ID, Event__Datetime__Ticket.TTM_ID, etc...
-     * @param bool $return_string           if true, will return a string with qualified column names separated by ', '
-     *                            if false, will simply return a numerically indexed array of qualified column names
+     * @param string $model_relation_chain        the chain of models used to join between the model you want to query
+     *                                            and the one whose fields you are selecting for example: when querying
+     *                                            tickets model and selecting fields from the tickets model you would
+     *                                            leave this parameter empty, because no models are needed to join
+     *                                            between the queried model and the selected one. Likewise when
+     *                                            querying the datetime model and selecting fields from the tickets
+     *                                            model, it would also be left empty, because there is a direct
+     *                                            relation from datetimes to tickets, so no model is needed to join
+     *                                            them together. However, when querying from the event model and
+     *                                            selecting fields from the ticket model, you should provide the string
+     *                                            'Datetime', indicating that the event model must first join to the datetime model in order to find its relation to ticket model. Also, when querying from the venue model and selecting fields from the ticket model, you should provide the string 'Event.Datetime', indicating you need to join the venue model to the event model, to the datetime model, in order to find its relation to the ticket model. This string is used to deduce the prefix that gets added onto the models' tables qualified columns
+     * @param bool   $return_string               if true, will return a string with qualified column names separated
+     *                                            by ', ' if false, will simply return a numerically indexed array of
+     *                                            qualified column names
      * @return array|string
      */
     public function get_qualified_columns_for_all_fields($model_relation_chain = '', $return_string = true)
