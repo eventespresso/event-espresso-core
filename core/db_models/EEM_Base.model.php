@@ -4145,7 +4145,8 @@ abstract class EEM_Base extends EE_Base
      * and
      * EEM_Event::instance()->get_all_wpdb_results(
      *  array(
-     *      'force_join' => array( 'Datetime.Ticket' ),
+     *      array(
+     *          'Datetime.Ticket.TKT_ID' => array( '<', 100 ),
      * ),
      *  ARRAY_A,
      *  implode(
@@ -4156,7 +4157,7 @@ abstract class EEM_Base extends EE_Base
      *      )
      *  )
      * )
-     * selects rows from the database, selecting all the event and ticket columns
+     * selects rows from the database, selecting all the event and ticket columns, where the ticket ID is below 100
 
      *
 *@param string $model_relation_chain  this can be used for adding prefixes to qualified column names
