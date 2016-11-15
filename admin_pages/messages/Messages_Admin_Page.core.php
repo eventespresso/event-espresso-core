@@ -2462,7 +2462,7 @@ class Messages_Admin_Page extends EE_Admin_Page
         //was a test send triggered?
         if (isset($this->_req_data['test_button'])) {
             EE_Error::overwrite_success();
-            $this->_do_test_send($context, $messenger_slug, $message_type_slug);
+            $this->_do_test_send($context_slug, $messenger_slug, $message_type_slug);
             $override = true;
         }
         
