@@ -2137,8 +2137,8 @@ abstract class EE_Admin_Page extends EE_Base
         <noscript>
             <div id="no-js-message" class="error">
                 <p style="font-size:1.3em;">
-                    <span style="color:red;"><?php _e('Warning!', 'event_espresso'); ?></span>
-                    <?php _e('Javascript is currently turned off for your browser. Javascript must be enabled in order for all of the features on this page to function properly. Please turn your javascript back on.', 'event_espresso'); ?>
+                    <span style="color:red;"><?php esc_html_e('Warning!', 'event_espresso'); ?></span>
+                    <?php esc_html_e('Javascript is currently turned off for your browser. Javascript must be enabled in order for all of the features on this page to function properly. Please turn your javascript back on.', 'event_espresso'); ?>
                 </p>
             </div>
         </noscript>
@@ -2171,7 +2171,7 @@ abstract class EE_Admin_Page extends EE_Base
     {
         ?>
         <div id="espresso-ajax-loading" class="ajax-loading-grey">
-            <span class="ee-spinner ee-spin"></span><span class="hidden"><?php _e('loading...', 'event_espresso'); ?></span>
+            <span class="ee-spinner ee-spin"></span><span class="hidden"><?php esc_html_e('loading...', 'event_espresso'); ?></span>
         </div>
         <?php
     }
@@ -2429,8 +2429,8 @@ abstract class EE_Admin_Page extends EE_Base
                 'FHEE__EE_Admin_Page___display_admin_list_table_page__before_list_table__template_arg',
                 ! empty($this->_req_data['s'])
                         ? '<p class="ee-search-results">' . sprintf(
-                                __('Displaying search results for the search string: <strong><em>%s</em></strong>', 'event_espresso'),
-                                trim($this->_req_data['s'], '%')
+                                esc_html__('Displaying search results for the search string: %3$s%s%4$s', 'event_espresso'),
+                                trim($this->_req_data['s'], '%', '<strong><em>','</em></strong>')
                         ) . '</p>'
                         : '',
                 $this->page_slug,
