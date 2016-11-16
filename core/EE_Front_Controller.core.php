@@ -580,8 +580,11 @@ final class EE_Front_Controller
      */
     public function header_meta_tag()
     {
-        print(apply_filters("FHEE__EE_Front_Controller__header_meta_tag",
-            "<meta name='generator' content='Event Espresso Version " . EVENT_ESPRESSO_VERSION . "' />"));
+        print(
+            apply_filters(
+                'FHEE__EE_Front_Controller__header_meta_tag',
+                '<meta name="generator" content="Event Espresso Version ' . EVENT_ESPRESSO_VERSION . '" />')
+        );
     }
 
 
