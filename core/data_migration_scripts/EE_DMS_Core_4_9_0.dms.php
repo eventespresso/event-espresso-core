@@ -638,28 +638,50 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
             return;
         }
         // grab tables from each model
+        $tables_to_check = array();
         foreach (EE_Registry::instance()->non_abstract_db_models as $model_name) {
             if (method_exists($model_name, 'instance')) {
                 $model_obj = call_user_func(array($model_name, 'instance'));
                 if ($model_obj instanceof EEM_Base) {
                     foreach ($model_obj->get_tables() as $table) {
-                        //@formatter:off
                         if (
-                            apply_filters(
-                                'FHEE__EE_DMS_Core_4_9_0__verify_db_collations__table_should_be_verified',
-                                strpos($table->get_table_name(), 'esp_')
-                                    && (is_main_site()//for main tables, verify global tables
-                                        || ! $table->is_global()//if not the main site, then only verify non-global tables (avoid doubling up)
-                                    )
-                                    && function_exists('maybe_convert_table_to_utf8mb4'),
-                                $table
+                            strpos($table->get_table_name(), 'esp_')
+                            && (is_main_site()//for main tables, verify global tables
+                                || ! $table->is_global()//if not the main site, then only verify non-global tables (avoid doubling up)
                             )
+                            && function_exists('maybe_convert_table_to_utf8mb4')
                         ) {
-                            //@formatter:on
-                            maybe_convert_table_to_utf8mb4($table->get_table_name());
+                            $tables_to_check[] = $table->get_table_name();
                         }
                     }
                 }
+            }
+        }
+        //and let's just be sure these addons' tables get migrated too. They already get handled if their addons are active
+        //when this code is run, but not otherwise. Once we record what tables EE added, we'll be able to use that instead
+        //of hard-coding this
+        $addon_tables = array(
+            //mailchimp
+            'esp_event_mailchimp_list_group',
+            'esp_event_question_mailchimp_field',
+            //multisite
+            'esp_blog_meta',
+            //people
+            'esp_people_to_post',
+            //promotions
+            'esp_promotion',
+            'esp_promotion_object',
+        );
+        foreach ($addon_tables as $table_name) {
+            $complete_table_name = $this->_table_analysis->ensureTableNameHasPrefix($table_name);
+            if($this->_table_analysis->tableExists( $complete_table_name )){
+                $tables_to_check[] = $complete_table_name;
+            }
+        }
+        $tables_to_check = array_unique($tables_to_check);
+        foreach ($tables_to_check as $table_name) {
+            if ( ! apply_filters('FHEE__EE_DMS_Core_4_9_0__verify_db_collations__check_overridden', false, $table_name ) ) {
+                maybe_convert_table_to_utf8mb4($table_name);
             }
         }
         //ok and now let's remember this was done (without needing to check the db schemas all over again)
