@@ -863,7 +863,7 @@ class Read extends Base {
 					throw new \EE_Error(
 						sprintf(
 							__( 'An invalid limit filter was provided. It was: %s. If the EE4 JSON REST API weren\'t in debug mode, this message would not appear.', 'event_espresso' ),
-							json_encode( $query_parameters[ 'limit' ] )
+							wp_json_encode( $query_parameters[ 'limit' ] )
 						)
 					);
 				}

@@ -896,7 +896,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 					sprintf(
 						__( 'Could not save %1$s using %2$s. Error was %3$s', 'event_espresso' ),
 						$model_name,
-						json_encode($args),
+						wp_json_encode($args),
 						$wpdb->last_error
 					)
 				);

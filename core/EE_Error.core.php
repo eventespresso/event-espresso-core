@@ -483,7 +483,7 @@ class EE_Error extends Exception {
 		$output .= self::_print_scripts( TRUE );
 
 		if ( defined( 'DOING_AJAX' )) {
-			echo json_encode( array( 'error' => $output ));
+			echo wp_json_encode( array( 'error' => $output ));
 			exit();
 		}
 
@@ -949,7 +949,7 @@ class EE_Error extends Exception {
 			return;
 		} else if ( EE_Registry::instance()->REQ->ajax ) {
 			// grab any notices and concatenate into string
-			echo json_encode( array( 'errors' => implode( '<br />', EE_Error::get_notices( FALSE ))));
+			echo wp_json_encode( array( 'errors' => implode( '<br />', EE_Error::get_notices( FALSE ))));
 			exit();
 		} else {
 			// save errors to a transient to be displayed on next request (after redirect)
