@@ -754,6 +754,15 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
 		}
 		// then serialize all of our session data
 		$session_data = serialize($this->_session_data);
+        //use the "private" function _wp_json_convert_string to convert the string to UTF8
+        //which is what the DB is usually in. This way when the string gets inserted into the DB, it won't change
+        //encodings at that point, which change can cause the hash to be different if some of the session data was
+        //in a different encoding, like ANSI.
+        //we double-check the function exists first because it's labelled "private", so it's possible it will be removed
+        //from WP some day2
+        if( function_exists( '_wp_json_convert_string' ) ) {
+            $session_data = _wp_json_convert_string( $session_data );
+        }
 		// do we need to also encode it to avoid corrupted data when saved to the db?
 		$session_data = $this->_use_encryption ? $this->encryption->base64_string_encode( $session_data ) : $session_data;
 		// maybe save hash check
