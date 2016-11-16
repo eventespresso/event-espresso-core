@@ -119,8 +119,8 @@ class EEH_URL{
 	 * @return string|array
 	 */
 	public static function get_query_string( $url = '', $as_array = TRUE ) {
-		// break apart incoming URL
-		$url_bits = parse_url( $url );
+		// decode, then break apart incoming URL
+		$url_bits = parse_url( html_entity_decode( $url ) );
 		// grab query string from URL
 		$query = isset( $url_bits[ 'query' ] ) ? $url_bits[ 'query' ] : '';
 		// if we don't want the query string formatted into an array of key => value pairs, then just return it as is
@@ -139,7 +139,7 @@ class EEH_URL{
 		foreach ( $query as $query_args ) {
 			// break apart the key value pairs
 			$query_args = explode( '=', $query_args );
-			// and add to our results array
+            // and add to our results array
 			$query_params[ $query_args[0] ] = $query_args[1];
 		}
 		return $query_params;
@@ -204,9 +204,10 @@ class EEH_URL{
 		$server_variable = strtoupper( $server_variable );
 		// whitelist INPUT_SERVER var
 		if ( isset( $server_variables[ $server_variable ] ) ) {
-			$URL = filter_input( INPUT_SERVER, $server_variable, FILTER_SANITIZE_URL, FILTER_NULL_ON_FAILURE );
-			if ( empty( $URL ) ) {
-				$URL = esc_url( $_SERVER[ $server_variable ] );
+            $URL = filter_input( INPUT_SERVER, $server_variable, FILTER_SANITIZE_URL, FILTER_NULL_ON_FAILURE );
+            if ( empty( $URL ) ) {
+                 // fallback sanitization if the above fails
+				$URL = wp_sanitize_redirect( $_SERVER[ $server_variable ] );
 			}
 		}
 		return $URL;

@@ -100,8 +100,21 @@ abstract class EE_Form_Section_Base {
 	protected function _construct_finalize( $parent_form_section, $name ){
 		$this->_construction_finalized = TRUE;
 		$this->_parent_section = $parent_form_section;
-		$this->_name = $name;
-		$this->_set_default_html_id_if_empty();
+		if( $name !== null ) {
+			$this->_name = $name;
+		}
+	}
+	
+	/**
+	 * make sure construction finalized was called, otherwise children might not be ready
+	 *
+	 * @return void
+	 * @throws \EE_Error
+	 */
+	public function ensure_construct_finalized_called(){
+		if( ! $this->_construction_finalized ){
+			$this->_construct_finalize($this->_parent_section, $this->_name );
+		}
 	}
 
 
@@ -205,6 +218,7 @@ abstract class EE_Form_Section_Base {
 	 * @return string
 	 */
 	public function html_id( $add_pound_sign = FALSE ){
+		$this->_set_default_html_id_if_empty();
 		return $add_pound_sign ? '#' . $this->_html_id : $this->_html_id;
 	}
 
