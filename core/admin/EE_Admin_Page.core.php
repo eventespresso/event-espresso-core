@@ -2428,10 +2428,15 @@ abstract class EE_Admin_Page extends EE_Base
         $this->_template_args['before_list_table'] .= apply_filters(
                 'FHEE__EE_Admin_Page___display_admin_list_table_page__before_list_table__template_arg',
                 ! empty($this->_req_data['s'])
-                        ? '<p class="ee-search-results">' . sprintf(
-                                esc_html__('Displaying search results for the search string: %3$s%s%4$s', 'event_espresso'),
-                                trim($this->_req_data['s'], '%', '<strong><em>','</em></strong>')
-                        ) . '</p>'
+                        ? '<p class="ee-search-results">'
+                            . sprintf(
+                                esc_html__(
+                                        'Displaying search results for the search string: %1$s',
+                                        'event_espresso'
+                                ),
+                                '<strong><em>' . trim( $this->_req_data['s'], '%' ) . '</em></strong>'
+                            )
+                            . '</p>'
                         : '',
                 $this->page_slug,
                 $this->_req_data,
