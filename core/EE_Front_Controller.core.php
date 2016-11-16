@@ -588,7 +588,10 @@ final class EE_Front_Controller
 
         //let's exclude all event type taxonomy term archive pages from search engine indexing
         //@see https://events.codebasehq.com/projects/event-espresso/tickets/10249
-        if (is_tax('espresso_event_type')) {
+        if (
+            is_tax('espresso_event_type')
+            && get_option( 'blog_public' ) !== '0'
+        ) {
             print(
                 apply_filters(
                     'FHEE__EE_Front_Controller__header_meta_tag__noindex_for_event_type',
