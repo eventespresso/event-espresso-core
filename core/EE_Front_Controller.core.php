@@ -585,6 +585,17 @@ final class EE_Front_Controller
                 'FHEE__EE_Front_Controller__header_meta_tag',
                 '<meta name="generator" content="Event Espresso Version ' . EVENT_ESPRESSO_VERSION . '" />')
         );
+
+        //let's exclude all event type taxonomy term archive pages from search engine indexing
+        //@see https://events.codebasehq.com/projects/event-espresso/tickets/10249
+        if (is_tax('espresso_event_type')) {
+            print(
+                apply_filters(
+                    'FHEE__EE_Front_Controller__header_meta_tag__noindex_for_event_type',
+                    '<meta name="robots" content="noindex">'
+                )
+            );
+        }
     }
 
 
