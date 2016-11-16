@@ -536,6 +536,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 	protected function _update_payment_method_button( EE_Payment_Method $payment_method ) {
 		$update_button = new EE_Submit_Input(
 			array(
+				'name' => 'submit',
 				'html_id' 		=> 'save_' . $payment_method->slug() . '_settings',
 				'default' 		=> sprintf( __( 'Update %s Payment Settings', 'event_espresso' ), $payment_method->admin_name() ),
 				'html_label' => EEH_HTML::nbsp()
@@ -707,12 +708,10 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			EE_Registry::instance()->load_lib('Payment_Method_Manager');
 			/** @var $correct_pmt_form_to_use EE_Payment_Method_Form */
 			$correct_pmt_form_to_use = NULL;
-			$pmt_obj = NULL;
-			foreach(EE_Payment_Method_Manager::instance()->payment_method_types() as $pmt_obj){
-				/** @var $pmt_obj EE_PMT_Base */
+			$payment_method = NULL;
+			foreach( EEM_Payment_Method::instance()->get_all() as $payment_method){
 				//get the form and simplify it, like what we do when we display it
-				$pmt_form = $pmt_obj->settings_form();
-				$this->_simplify_form($pmt_form);
+				$pmt_form = $this->_generate_payment_method_settings_form( $payment_method );
 				if($pmt_form->form_data_present_in($this->_req_data)){
 					$correct_pmt_form_to_use = $pmt_form;
 					break;
@@ -725,15 +724,24 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			}
 			$correct_pmt_form_to_use->receive_form_submission($this->_req_data);
 			if($correct_pmt_form_to_use->is_valid()){
-				$correct_pmt_form_to_use->save();
-				$pm = $correct_pmt_form_to_use->get_model_object();
+				$subsection_name = 'payment_method_settings_' . $payment_method->slug();
+				$payment_settings_subform = $correct_pmt_form_to_use->get_subsection( $subsection_name );
+				if( ! $payment_settings_subform instanceof EE_Payment_Method_Form ) {
+					throw new EE_Error( 
+						sprintf(
+							__( 'The payment method could not be saved because the form sections were misnamed. We expected to find %1$s, but did not.','event_espresso' ),
+							$subsection_name
+						)
+					);
+				}
+				$payment_settings_subform->save();
 				/** @var $pm EE_Payment_Method */
-				$this->_redirect_after_action(TRUE, 'Payment Method', 'updated', array('action' => 'default','payment_method'=>$pm->slug()));
+				$this->_redirect_after_action(TRUE, 'Payment Method', 'updated', array('action' => 'default','payment_method'=>$payment_method->slug()));
 			}else{
 				EE_Error::add_error(
 					sprintf(
 						__('Payment method of type %s was not saved because there were validation errors. They have been marked in the form', 'event_espresso'),
-						$pmt_obj instanceof EE_PMT_Base ? $pmt_obj->pretty_name() : __( '"(unknown)"', 'event_espresso' )
+						$payment_method instanceof EE_PMT_Base ? $payment_method->pretty_name() : __( '"(unknown)"', 'event_espresso' )
 					),
 					__FILE__,
 					__FUNCTION__,
