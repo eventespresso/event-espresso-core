@@ -4,7 +4,7 @@
 <ul>
 <li>
 <strong><?php esc_html_e('Registration Confirmation', 'event_espresso'); ?></strong><br />
-<?php esc_htmlesc_html_e('Triggered by frontend event registrations', 'event_espresso'); ?>
+<?php esc_html_e('Triggered by frontend event registrations', 'event_espresso'); ?>
 </li>
 <li>
 <strong><?php esc_html_e('Payment Confirmation', 'event_espresso'); ?></strong><br />
