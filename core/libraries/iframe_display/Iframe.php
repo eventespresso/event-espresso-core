@@ -220,12 +220,16 @@ class Iframe
 
 
     /**
-     * @return void
+     * @param string $utm_content
      * @throws \DomainException
      */
-    public function display()
+    public function display($utm_content = '')
     {
-        $this->content .= \EEH_HTML::br() . \EEH_Template::powered_by_event_espresso();
+        $this->content .= \EEH_HTML::br() . \EEH_Template::powered_by_event_espresso(
+            '',
+            '',
+            ! empty($utm_content) ? array('utm_content' => $utm_content) : array()
+        );
         \EE_System::do_not_cache();
         echo $this->getTemplate();
         exit;
