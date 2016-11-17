@@ -144,6 +144,45 @@ class EE_Form_Input_Base_Test extends EE_UnitTestCase{
 
 
 	}
+	
+	/**
+	 * Verifies that the inputs default HTML names reflect the actual form structure.
+	 * @group 10110
+	 */
+	public function test_input_names_should_be_consistent_regardless_of_when_input_was_added() {
+		$input1 = new EE_Text_Input();
+		$form = new EE_Form_Section_Proper(
+			array(
+				'subsections' => array(
+					'input1' => $input1,
+				)
+			)
+		);
+		$form->_construct_finalize( null, null );
+		//ok so subform is complete right? Well let's now make it a subform.
+		//what could possibly go wrong when you do that?
+		$top_form = new EE_Form_Section_Proper(
+			array(
+				'subsections' => array(
+					'subform' => $form
+				)
+			)
+		);
+		$top_form->_construct_finalize(null, 'topform' );
+		//ok great. Now let's add something to the form. It shouldn't
+		//matter if the input was added when the form was constructed,
+		//or after it was all done being constructed. It should still work.
+		$input2 = new EE_Text_Input();
+		$form->add_subsections(
+			array(
+				'input2' => $input2
+			)
+		);
+		//both inputs, regardless of when they were added, should have pretty well the
+		//same html name.
+		$this->assertEquals( 'topform[subform][input1]', $input1->html_name() );
+		$this->assertEquals( 'topform[subform][input2]', $input2->html_name() );
+	}
 }
 
 // End of file EE_Form_Input_Base_Test.php
