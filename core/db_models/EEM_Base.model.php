@@ -4140,21 +4140,29 @@ abstract class EEM_Base extends EE_Base
     /**
      * similar to \EEM_Base::_get_qualified_column_for_field() but returns an array with data for ALL fields.
      * Example usage:
-     * EEM_Ticket::instance()->get_all_wpdb_results( array(), ARRAY_A,
-     * EEM_Ticket::instance()->get_qualified_columns_for_all_fields() ); is equivalent to
-     * EEM_Ticket::instance()->get_all_wpdb_results( array(), ARRAY_A, '*' ); and
-     * EEM_Event::instance()->get_all_wpdb_results( array( array(
-     *          'Datetime.Ticket.TKT_ID' => array( '<', 100 ),
-     * ),
-     *  ARRAY_A,
-     *  implode(
-     *      ', ',
-     *      array_merge(
-     *          EEM_Event::instance()->get_qualified_columns_for_all_fields( '', false ),
-     *          EEM_Ticket::instance()->get_qualified_columns_for_all_fields( 'Datetime', false )
+     * EEM_Ticket::instance()->get_all_wpdb_results(
+     *      array(),
+     *      ARRAY_A,
+     *      EEM_Ticket::instance()->get_qualified_columns_for_all_fields()
+     *  );
+     * is equivalent to
+     *  EEM_Ticket::instance()->get_all_wpdb_results( array(), ARRAY_A, '*' );
+     * and
+     *  EEM_Event::instance()->get_all_wpdb_results(
+     *      array(
+     *          array(
+     *              'Datetime.Ticket.TKT_ID' => array( '<', 100 ),
+     *          ),
+     *          ARRAY_A,
+     *          implode(
+     *              ', ',
+     *              array_merge(
+     *                  EEM_Event::instance()->get_qualified_columns_for_all_fields( '', false ),
+     *                  EEM_Ticket::instance()->get_qualified_columns_for_all_fields( 'Datetime', false )
+     *              )
+     *          )
      *      )
-     *  )
-     * )
+     *  );
      * selects rows from the database, selecting all the event and ticket columns, where the ticket ID is below 100
      *
      * @param string $model_relation_chain        the chain of models used to join between the model you want to query
@@ -4167,7 +4175,14 @@ abstract class EEM_Base extends EE_Base
      *                                            relation from datetimes to tickets, so no model is needed to join
      *                                            them together. However, when querying from the event model and
      *                                            selecting fields from the ticket model, you should provide the string
-     *                                            'Datetime', indicating that the event model must first join to the datetime model in order to find its relation to ticket model. Also, when querying from the venue model and selecting fields from the ticket model, you should provide the string 'Event.Datetime', indicating you need to join the venue model to the event model, to the datetime model, in order to find its relation to the ticket model. This string is used to deduce the prefix that gets added onto the models' tables qualified columns
+     *                                            'Datetime', indicating that the event model must first join to the
+     *                                            datetime model in order to find its relation to ticket model.
+     *                                            Also, when querying from the venue model and selecting fields from
+     *                                            the ticket model, you should provide the string 'Event.Datetime',
+     *                                            indicating you need to join the venue model to the event model,
+     *                                            to the datetime model, in order to find its relation to the ticket model.
+     *                                            This string is used to deduce the prefix that gets added onto the
+     *                                            models' tables qualified columns
      * @param bool   $return_string               if true, will return a string with qualified column names separated
      *                                            by ', ' if false, will simply return a numerically indexed array of
      *                                            qualified column names
