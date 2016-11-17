@@ -1310,8 +1310,16 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			);
 		}
 		// fill form with attendee info if applicable
-		if ( $this->checkout->billing_form instanceof EE_Billing_Attendee_Info_Form
-		     && $this->checkout->transaction_has_primary_registrant()
+		if (
+			apply_filters(
+				'FHEE__populate_billing_form_fields_from_attendee',
+				(
+					$this->checkout->billing_form instanceof EE_Billing_Attendee_Info_Form
+					&& $this->checkout->transaction_has_primary_registrant()
+				),
+				$this->checkout->billing_form,
+				$this->checkout->transaction
+			)
 		) {
 			$this->checkout->billing_form->populate_from_attendee(
 				$this->checkout->transaction->primary_registration()->attendee()
@@ -2596,6 +2604,24 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		echo json_encode( $txn_details );
 		exit();
 	}
+
+
+
+    /**
+     *    __sleep
+     * to conserve db space, let's remove the reg_form and the EE_Checkout object from EE_SPCO_Reg_Step objects upon serialization
+     * EE_Checkout will handle the reimplementation of itself upon waking,
+     * but we won't bother with the reg form, because if needed, it will be regenerated anyways
+     *
+     * @return array
+     */
+    public function __sleep()
+    {
+        // remove the reg form and the checkout
+        return array_diff( array_keys( get_object_vars( $this ) ), array( 'reg_form', 'checkout', 'line_item_display' ) );
+    }
+
+
 
 }
 // End of file EE_SPCO_Reg_Step_Payment_Options.class.php

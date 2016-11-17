@@ -219,7 +219,6 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	 */
 	public function _construct_finalize($parent_form_section, $name) {
 		parent::_construct_finalize($parent_form_section, $name);
-		$this->_set_default_html_name_if_empty();
 		if( $this->_html_label === null && $this->_html_label_text === null ){
 			$this->_html_label_text = ucwords( str_replace("_"," ",$name));
 		}
@@ -232,6 +231,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	  * @throws EE_Error
 	  */
 	protected function _get_display_strategy(){
+		$this->ensure_construct_finalized_called();
 		if( ! $this->_display_strategy || ! $this->_display_strategy instanceof EE_Display_Strategy_Base){
 			throw new EE_Error(
 				sprintf(
@@ -402,6 +402,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	 * @throws \EE_Error
 	 */
 	public function get_html_for_input(){
+		
 		return  $this->_get_display_strategy()->display();
 	}
 
@@ -521,6 +522,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	 * @return string
 	 */
 	public function html_name(){
+		$this->_set_default_html_name_if_empty();
 		return $this->_html_name;
 	}
 
@@ -711,7 +713,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 		if ( $required ) {
 			$this->_add_validation_strategy( new EE_Required_Validation_Strategy( $required_text ) );
 		} else {
-			unset( $this->_validation_strategies[ 'EE_Required_Validation_Strategy' ] );
+			$this->remove_validation_strategy( 'EE_Required_Validation_Strategy' );
 		}
 		$this->_required = $required;
 	}

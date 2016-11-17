@@ -30,6 +30,12 @@ The Event Espresso 4 check-in & ticket scanning event app is available for [Andr
 ## Newsletter
 Be the first to know when we ship new features ... [signup here](https://eventespresso.com/newsletter/).
 
+## Community Chat
+Join a real-time community chat group for professionals that are leading the way in events from event management, event technology and event marketing to work-life balance.
+
+[Join the Discussion →](https://eventsmart.com/contact/community-chat/?utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=community+chat)
+
+
 ## Developers
 
 **This is the full version of the plugin** and provides everything that you need to [sell tickets](https://eventespresso.com/features/multiple-ticket-pricing-options/?utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=sell+tickets), [collect payments](https://eventespresso.com/features/payment-options/?utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=collect+payments), and [manage events](https://eventespresso.com/features/event-management/?utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=manage+events) all from within your WordPress dashboard.
