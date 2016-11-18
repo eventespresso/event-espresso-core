@@ -30,3 +30,4 @@
 </div> /**/ ?>
 
 <?php echo $event_editor_overview_add;?>
+<br/>
