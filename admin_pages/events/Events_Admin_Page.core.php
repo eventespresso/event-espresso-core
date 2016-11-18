@@ -652,6 +652,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      * @param  EE_Event $event Event object
      * @access public
      * @return void
+     * @throws \EE_Error
      */
     public function verify_event_edit($event = null)
     {
