@@ -274,9 +274,16 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
 
     protected function _load_autosave_scripts_styles()
     {
-        /*wp_register_script('cpt-autosave', EE_ADMIN_URL . 'assets/ee-cpt-autosave.js', array('ee-serialize-full-array', 'event_editor_js'), EVENT_ESPRESSO_VERSION, TRUE );
-        wp_enqueue_script('cpt-autosave');/**/ //todo re-enable when we start doing autosave again in 4.2
-        //filter _autosave_containers
+        // todo re-enable when we start doing autosave again in 4.2
+        // wp_register_script(
+        //     'cpt-autosave',
+        //     EE_ADMIN_URL . 'assets/ee-cpt-autosave.js',
+        //     array('ee-serialize-full-array', 'event_editor_js'),
+        //     EVENT_ESPRESSO_VERSION,
+        //     TRUE
+        // );
+        // wp_enqueue_script('cpt-autosave');
+        // filter _autosave_containers
         $containers = apply_filters(
             'FHEE__EE_Admin_Page_CPT___load_autosave_scripts_styles__containers',
             $this->_autosave_containers, $this
@@ -325,19 +332,26 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
             parent::_load_page_dependencies();
             return;
         }
-        //now let's do some automatic filters into the wp_system and we'll check to make sure the CHILD class automatically has the required methods in place.
-        //the following filters are for setting all the redirects on DEFAULT WP custom post type actions
-        //let's add a hidden input to the post-edit form so we know when we have to trigger our custom redirects!  Otherwise the redirects will happen on ALL post saves which wouldn't be good of course!
+        // now let's do some automatic filters into the wp_system
+        // and we'll check to make sure the CHILD class
+        // automatically has the required methods in place.
+        // the following filters are for setting all the redirects
+        // on DEFAULT WP custom post type actions
+        // let's add a hidden input to the post-edit form
+        // so we know when we have to trigger our custom redirects!
+        // Otherwise the redirects will happen on ALL post saves which wouldn't be good of course!
         add_action('edit_form_after_title', array($this, 'cpt_post_form_hidden_input'));
-        //inject our Admin page nav tabs...
-        //let's make sure the nav tabs are set if they aren't already
-        //if ( empty( $this->_nav_tabs ) ) $this->_set_nav_tabs();
+        // inject our Admin page nav tabs...
+        // let's make sure the nav tabs are set if they aren't already
+        // if ( empty( $this->_nav_tabs ) ) $this->_set_nav_tabs();
         add_action('post_edit_form_tag', array($this, 'inject_nav_tabs'));
-        //modify the post_updated messages array
+        // modify the post_updated messages array
         add_action('post_updated_messages', array($this, 'post_update_messages'), 10);
-        //add shortlink button to cpt edit screens.  We can do this as a universal thing BECAUSE, cpts use the same format for shortlinks as posts!
+        // add shortlink button to cpt edit screens.  We can do this as a universal thing BECAUSE,
+        // cpts use the same format for shortlinks as posts!
         add_filter('pre_get_shortlink', array($this, 'add_shortlink_button_to_editor'), 10, 4);
-        //This basically allows us to change the title of the "publish" metabox area on CPT pages by setting a 'publishbox' value in the $_labels property array in the child class.
+        // This basically allows us to change the title of the "publish" metabox area
+        // on CPT pages by setting a 'publishbox' value in the $_labels property array in the child class.
         if ( ! empty($this->_labels['publishbox'])) {
             $box_label = is_array($this->_labels['publishbox'])
                          && isset($this->_labels['publishbox'][$this->_req_action])
@@ -369,7 +383,8 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         if (method_exists($this, 'extra_misc_actions_publish_box')) {
             add_action('post_submitbox_misc_actions', array($this, 'extra_misc_actions_publish_box'), 10);
         }
-        //This allows for adding additional stuff after the title field on the wp post edit form.  This is also before the wp_editor for post description field.
+        //This allows for adding additional stuff after the title field on the wp post edit form.
+        //  This is also before the wp_editor for post description field.
         if (method_exists($this, 'edit_form_after_title')) {
             add_action('edit_form_after_title', array($this, 'edit_form_after_title'), 10);
         }
@@ -378,7 +393,10 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
          */
         add_filter('clean_url', array($this, 'switch_core_wp_urls_with_ours'), 10, 3);
         parent::_load_page_dependencies();
-        //notice we are ALSO going to load the pagenow hook set for this route (see _before_page_setup for the reset of the pagenow global ). This is for any plugins that are doing things properly and hooking into the load page hook for core wp cpt routes.
+        //notice we are ALSO going to load the pagenow hook set for this route
+        // (see _before_page_setup for the reset of the pagenow global ).
+        // This is for any plugins that are doing things properly
+        // and hooking into the load page hook for core wp cpt routes.
         global $pagenow;
         do_action('load-' . $pagenow);
         $this->modify_current_screen();
