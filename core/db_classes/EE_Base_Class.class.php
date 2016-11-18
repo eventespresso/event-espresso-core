@@ -99,6 +99,12 @@ abstract class EE_Base_Class {
 	 */
 	protected $_allow_persist = true;
 
+	/**
+	 *
+	 * @var boolean indicating whether or not this model object's properties have changed since construction
+	 */
+	protected $_has_changes = false;
+
 
 
 	/**
@@ -235,7 +241,12 @@ abstract class EE_Base_Class {
 	 * @throws \EE_Error
 	 */
 	public function set( $field_name, $field_value, $use_default = FALSE ){
-		$field_obj = $this->get_model()->field_settings_for( $field_name );
+        // if not using default and nothing has changed, then don't do anything
+        if ( ! $use_default && $this->_fields[$field_name] === $field_value) {
+            return;
+        }
+        $this->_has_changes = true;
+        $field_obj = $this->get_model()->field_settings_for( $field_name );
 		if ( $field_obj instanceof EE_Model_Field_Base ) {
 //			if ( method_exists( $field_obj, 'set_timezone' )) {
 			if ( $field_obj instanceof EE_Datetime_Field ) {
@@ -1424,39 +1435,45 @@ abstract class EE_Base_Class {
 	 *
 	 * @throws \EE_Error
 	 */
-        public function refresh_cache_of_related_objects() {
-            foreach( $this->get_model()->relation_settings() as $relation_name => $relation_obj ) {
-                if( ! empty( $this->_model_relations[ $relation_name ] ) ) {
-                    $related_objects = $this->_model_relations[ $relation_name ];
-                    if( $relation_obj instanceof EE_Belongs_To_Relation ) {
-                        //this relation only stores a single model object, not an array
-                        //but let's make it consistent
-                        $related_objects = array( $related_objects );
-                    }
-                    foreach( $related_objects as $related_object ) {
-                        //only refresh their cache if they're in memory
-                        if( $related_object instanceof EE_Base_Class ) {
-							$related_object->clear_cache( $this->get_model()->get_this_model_name(), $this );
-                        }
+    public function refresh_cache_of_related_objects() {
+        foreach( $this->get_model()->relation_settings() as $relation_name => $relation_obj ) {
+            if( ! empty( $this->_model_relations[ $relation_name ] ) ) {
+                $related_objects = $this->_model_relations[ $relation_name ];
+                if( $relation_obj instanceof EE_Belongs_To_Relation ) {
+                    //this relation only stores a single model object, not an array
+                    //but let's make it consistent
+                    $related_objects = array( $related_objects );
+                }
+                foreach( $related_objects as $related_object ) {
+                    //only refresh their cache if they're in memory
+                    if( $related_object instanceof EE_Base_Class ) {
+                        $related_object->clear_cache( $this->get_model()->get_this_model_name(), $this );
                     }
                 }
             }
         }
+    }
 
 
 
-	/**
-	 *        Saves this object to the database. An array may be supplied to set some values on this
-	 * object just before saving.
-	 *
-	 * @access public
-	 * @param array $set_cols_n_values 	keys are field names, values are their new values,
-	 * 		if provided during the save() method (often client code will change the fields' values before calling save)
-	 * @throws \EE_Error
-	 * @return int , 1 on a successful update, the ID of the new entry on insert; 0 on failure or if the model object
-	 * isn't allowed to persist (as determined by EE_Base_Class::allow_persist())
-	 */
-	public function save($set_cols_n_values=array()) {
+
+    /**
+     * Saves this object to the database. An array may be supplied to set some values on this
+     * object just before saving.
+     *
+     * @param array $set_cols_n_values      keys are field names, values are their new values, if provided during the
+     *                                      save() method (often client code will change the fields' values before
+     *                                      calling save)
+     * @return int                          1 on a successful update, the ID of the new entry on insert;
+     *                                      0 on failure or if the model object isn't allowed to persist
+     *                                      (as determined by EE_Base_Class::allow_persist())
+     * @throws \EE_Error
+     */
+	public function save($set_cols_n_values = array()) {
+        // no changes ? then don't do anything
+        if ( ! $this->_has_changes && empty($set_cols_n_values) && $this->ID()  ) {
+            return 1;
+        }
 		/**
 		 * Filters the fields we're about to save on the model object
 		 *
@@ -2512,21 +2529,6 @@ abstract class EE_Base_Class {
 		$this->_props_n_values_provided_in_constructor = $this->_fields;
 	}
 
-
-
-    /**
-     * defers saving of the object until the shutdown hook
-     *
-     * @throws \EE_Error
-     */
-    public function save_upon_shutdown()
-    {
-        if (did_action('shutdown')) {
-            $this->save();
-        } else {
-            add_action('shutdown', array($this, 'save'));
-        }
-    }
 
 }
 
