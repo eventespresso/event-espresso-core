@@ -469,6 +469,7 @@ jQuery( document ).ready( function ( $ ) {
     /**
      * @function rgb2hex
      * converts hex format to a rgb color
+     * @see http://jsfiddle.net/Mottie/xcqpF/1/light/
      *
      * @param {string} rgb
      * @return string
