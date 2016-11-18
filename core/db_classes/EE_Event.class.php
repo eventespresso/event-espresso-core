@@ -92,11 +92,15 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
      * @access public
      * @param string $new_status
      * @param bool   $use_default
-     * @return bool|void
+     * @return void
      * @throws \EE_Error
      */
     public function set_status($new_status = null, $use_default = false)
     {
+        // if nothing is set, and we aren't explicitly wanting to reset the status, then just leave
+        if (empty($new_status) && ! $use_default) {
+            return;
+        }
         // get current Event status
         $old_status = $this->status();
         // if status has changed
@@ -114,12 +118,12 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
             // update status
             parent::set('status', $new_status, $use_default);
             do_action('AHEE__EE_Event__set_status__after_update', $this);
-            return true;
+            return;
         } else {
             // even though the old value matches the new value, it's still good to
             // allow the parent set method to have a say
             parent::set('status', $new_status, $use_default);
-            return true;
+            return;
         }
     }
 
@@ -883,11 +887,15 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
                 $spaces_remaining += $ticket->qty('saleable');
             }
         }
+        $spaces_remaining = apply_filters(
+            'FHEE_EE_Event__perform_sold_out_status_check__spaces_remaining',
+            $spaces_remaining,
+            $this,
+            $tickets
+        );
         if ($spaces_remaining === 0) {
             $this->set_status(EEM_Event::sold_out);
-            if ( ! is_admin() || (is_admin() && defined('DOING_AJAX'))) {
-                $this->save();
-            }
+            $this->save();
             $sold_out = true;
         } else {
             $sold_out = false;
@@ -897,16 +905,11 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
                 $previous_event_status = $this->get_post_meta('_previous_event_status', true);
                 if ($previous_event_status) {
                     $this->set_status($previous_event_status);
+                    $this->save();
                 }
             }
         }
-        return apply_filters(
-            'FHEE_EE_Event__perform_sold_out_status_check__sold_out',
-            $sold_out,
-            $spaces_remaining,
-            $tickets,
-            $this
-        );
+        return $sold_out;
     }
 
 
@@ -1085,9 +1088,9 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
         return apply_filters(
             'FHEE_EE_Event__total_available_spaces__spaces_available',
             $spaces_available,
+            $this,
             $datetimes,
-            $tickets,
-            $this
+            $tickets
         );
     }
 
