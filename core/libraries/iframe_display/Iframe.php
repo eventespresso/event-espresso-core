@@ -1,8 +1,8 @@
 <?php
 namespace EventEspresso\core\libraries\iframe_display;
 
-if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
-    exit( 'No direct script access allowed' );
+if ( ! defined('EVENT_ESPRESSO_VERSION')) {
+    exit('No direct script access allowed');
 }
 
 
@@ -69,21 +69,19 @@ class Iframe
      * @param string $content
      * @throws \DomainException
      */
-    public function __construct( $title, $content = '' )
+    public function __construct($title, $content)
     {
         global $wp_version;
-        if ( ! defined( 'EE_IFRAME_DIR_URL' ) ) {
-            define( 'EE_IFRAME_DIR_URL', plugin_dir_url( __FILE__ ) );
+        if ( ! defined('EE_IFRAME_DIR_URL')) {
+            define('EE_IFRAME_DIR_URL', plugin_dir_url(__FILE__));
         }
-        if ( ! empty($content)) {
-            $this->setContent($content);
-        }
-        $this->setTitle( $title );
+        $this->setContent($content);
+        $this->setTitle($title);
         $this->addStylesheets(
             apply_filters(
                 'FHEE___EventEspresso_core_libraries_iframe_display_Iframe__construct__default_css',
                 array(
-                    'dashicons'        => includes_url( 'css/dashicons.min.css?ver=' . $wp_version ),
+                    'dashicons'        => includes_url('css/dashicons.min.css?ver=' . $wp_version),
                     'espresso_default' => EE_GLOBAL_ASSETS_URL
                                           . 'css/espresso_default.css?ver=' . EVENT_ESPRESSO_VERSION,
                 )
@@ -93,7 +91,7 @@ class Iframe
             apply_filters(
                 'FHEE___EventEspresso_core_libraries_iframe_display_Iframe__construct__default_js',
                 array(
-                    'jquery'        => includes_url( 'js/jquery/jquery.js?ver=' . $wp_version ),
+                    'jquery'        => includes_url('js/jquery/jquery.js?ver=' . $wp_version),
                     'espresso_core' => EE_GLOBAL_ASSETS_URL
                                        . 'scripts/espresso_core.js?ver=' . EVENT_ESPRESSO_VERSION,
                 )
@@ -107,11 +105,11 @@ class Iframe
      * @param string $title
      * @throws \DomainException
      */
-    public function setTitle( $title )
+    public function setTitle($title)
     {
-        if ( empty( $title ) ) {
+        if (empty($title)) {
             throw new \DomainException(
-                esc_html__( 'You must provide a page title in order to create an iframe.', 'event_espresso' )
+                esc_html__('You must provide a page title in order to create an iframe.', 'event_espresso')
             );
         }
         $this->title = $title;
@@ -123,11 +121,11 @@ class Iframe
      * @param string $content
      * @throws \DomainException
      */
-    public function setContent( $content )
+    public function setContent($content)
     {
-        if ( empty( $content ) ) {
+        if (empty($content)) {
             throw new \DomainException(
-                esc_html__( 'You must provide content in order to create an iframe.', 'event_espresso' )
+                esc_html__('You must provide content in order to create an iframe.', 'event_espresso')
             );
         }
         $this->content = $content;
@@ -138,9 +136,9 @@ class Iframe
     /**
      * @param boolean $enqueue_wp_assets
      */
-    public function setEnqueueWpAssets( $enqueue_wp_assets )
+    public function setEnqueueWpAssets($enqueue_wp_assets)
     {
-        $this->enqueue_wp_assets = filter_var( $enqueue_wp_assets, FILTER_VALIDATE_BOOLEAN );
+        $this->enqueue_wp_assets = filter_var($enqueue_wp_assets, FILTER_VALIDATE_BOOLEAN);
     }
 
 
@@ -149,9 +147,9 @@ class Iframe
      * @param array $stylesheets
      * @throws \DomainException
      */
-    public function addStylesheets( array $stylesheets )
+    public function addStylesheets(array $stylesheets)
     {
-        if ( empty( $stylesheets ) ) {
+        if (empty($stylesheets)) {
             throw new \DomainException(
                 esc_html__(
                     'A non-empty array of URLs, is required to add a CSS stylesheet to an iframe.',
@@ -159,8 +157,8 @@ class Iframe
                 )
             );
         }
-        foreach ( $stylesheets as $handle => $stylesheet ) {
-            $this->css[ $handle ] = $stylesheet;
+        foreach ($stylesheets as $handle => $stylesheet) {
+            $this->css[$handle] = $stylesheet;
         }
     }
 
@@ -171,9 +169,9 @@ class Iframe
      * @param bool  $add_to_header
      * @throws \DomainException
      */
-    public function addScripts( array $scripts, $add_to_header = false )
+    public function addScripts(array $scripts, $add_to_header = false)
     {
-        if ( empty( $scripts ) ) {
+        if (empty($scripts)) {
             throw new \DomainException(
                 esc_html__(
                     'A non-empty array of URLs, is required to add Javascript to an iframe.',
@@ -181,11 +179,11 @@ class Iframe
                 )
             );
         }
-        foreach ( $scripts as $handle => $script ) {
-            if ( $add_to_header ) {
-                $this->header_js[ $handle ] = $script;
+        foreach ($scripts as $handle => $script) {
+            if ($add_to_header) {
+                $this->header_js[$handle] = $script;
             } else {
-                $this->footer_js[ $handle ] = $script;
+                $this->footer_js[$handle] = $script;
             }
         }
     }
@@ -197,9 +195,9 @@ class Iframe
      * @param string $var_name
      * @throws \DomainException
      */
-    public function addLocalizedVars( array $vars, $var_name = 'eei18n' )
+    public function addLocalizedVars(array $vars, $var_name = 'eei18n')
     {
-        if ( empty( $vars ) ) {
+        if (empty($vars)) {
             throw new \DomainException(
                 esc_html__(
                     'A non-empty array of vars, is required to add localized Javascript vars to an iframe.',
@@ -207,14 +205,14 @@ class Iframe
                 )
             );
         }
-        foreach ( $vars as $handle => $var ) {
-            if ( $var_name === 'eei18n' ) {
-                \EE_Registry::$i18n_js_strings[ $handle ] = $var;
+        foreach ($vars as $handle => $var) {
+            if ($var_name === 'eei18n') {
+                \EE_Registry::$i18n_js_strings[$handle] = $var;
             } else {
-                if ( ! isset( $this->localized_vars[ $var_name ] ) ) {
-                    $this->localized_vars[ $var_name ] = array();
+                if ( ! isset($this->localized_vars[$var_name])) {
+                    $this->localized_vars[$var_name] = array();
                 }
-                $this->localized_vars[ $var_name ][ $handle ] = $var;
+                $this->localized_vars[$var_name][$handle] = $var;
             }
         }
     }
@@ -227,16 +225,11 @@ class Iframe
      */
     public function display($utm_content = '')
     {
-        if (empty($this->content)) {
-            throw new \DomainException(
-                esc_html__('You must provide content in order to create an iframe.', 'event_espresso')
-            );
-        }
         $this->content .= \EEH_HTML::br() . \EEH_Template::powered_by_event_espresso(
-            '',
-            '',
-            ! empty($utm_content) ? array('utm_content' => $utm_content) : array()
-        );
+                '',
+                '',
+                ! empty($utm_content) ? array('utm_content' => $utm_content) : array()
+            );
         \EE_System::do_not_cache();
         echo $this->getTemplate();
         exit;
@@ -302,12 +295,12 @@ class Iframe
     public function localizeJsonVars()
     {
         $JSON = '';
-        foreach ( (array)$this->localized_vars as $var_name => $vars ) {
-            foreach ( (array)$vars as $key => $value ) {
-                $this->localized_vars[ $var_name ] = $this->encodeJsonVars( $value );
+        foreach ((array)$this->localized_vars as $var_name => $vars) {
+            foreach ((array)$vars as $key => $value) {
+                $this->localized_vars[$var_name] = $this->encodeJsonVars($value);
             }
             $JSON .= "/* <![CDATA[ */ var {$var_name} = ";
-            $JSON .= wp_json_encode( $this->localized_vars[ $var_name ] );
+            $JSON .= wp_json_encode($this->localized_vars[$var_name]);
             $JSON .= '; /* ]]> */';
         }
         return $JSON;
@@ -319,16 +312,16 @@ class Iframe
      * @param bool|int|float|string|array $var
      * @return array
      */
-    public function encodeJsonVars( $var )
+    public function encodeJsonVars($var)
     {
-        if ( is_array( $var ) ) {
+        if (is_array($var)) {
             $localized_vars = array();
-            foreach ( (array)$var as $key => $value ) {
-                $localized_vars[ $key ] = $this->encodeJsonVars( $value );
+            foreach ((array)$var as $key => $value) {
+                $localized_vars[$key] = $this->encodeJsonVars($value);
             }
             return $localized_vars;
-        } else if ( is_scalar( $var ) ) {
-            return html_entity_decode( (string)$var, ENT_QUOTES, 'UTF-8' );
+        } else if (is_scalar($var)) {
+            return html_entity_decode((string)$var, ENT_QUOTES, 'UTF-8');
         }
         return null;
     }
