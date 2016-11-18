@@ -193,7 +193,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base
 
 
     /**
-     * inactive_reg_statuses
+     * active_reg_statuses
      * a filterable list of registration statuses that are considered active
      *
      * @access public
@@ -242,6 +242,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base
         return apply_filters('FHEE__EEM_Registration__closed_reg_statuses', array(
             EEM_Registration::status_id_cancelled,
             EEM_Registration::status_id_declined,
+            EEM_Registration::status_id_wait_list,
         ));
     }
 
