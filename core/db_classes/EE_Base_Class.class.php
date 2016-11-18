@@ -2514,6 +2514,20 @@ abstract class EE_Base_Class {
 
 
 
+    /**
+     * defers saving of the object until the shutdown hook
+     *
+     * @throws \EE_Error
+     */
+    public function save_upon_shutdown()
+    {
+        if (did_action('shutdown')) {
+            $this->save();
+        } else {
+            add_action('shutdown', array($this, 'save'));
+        }
+    }
+
 }
 
 
