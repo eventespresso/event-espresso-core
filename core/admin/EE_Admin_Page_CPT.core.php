@@ -330,7 +330,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 			$box_label = is_array( $this->_labels['publishbox'] ) && isset( $this->_labels['publishbox'][$this->_req_action]) ? $this->_labels['publishbox'][$this->_req_action] : $this->_labels['publishbox'];
 
-			remove_meta_box( 'submitdiv', __( 'Publish' ), 'post_submit_meta_box', $this->_cpt_routes[$this->_req_action], 'side', 'core' );
+			remove_meta_box( 'submitdiv', $this->_cpt_routes[$this->_req_action], 'side');
 			add_meta_box( 'submitdiv', $box_label, 'post_submit_meta_box', $this->_cpt_routes[$this->_req_action], 'side', 'core' );
 		}
 
