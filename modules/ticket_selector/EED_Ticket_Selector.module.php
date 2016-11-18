@@ -97,7 +97,6 @@ class EED_Ticket_Selector extends  EED_Module {
 		define( 'TICKET_SELECTOR_TEMPLATES_PATH', str_replace( '\\', DS, plugin_dir_path( __FILE__ )) . 'templates' . DS );
 
 		//if config is not set, initialize
-		//If config is not set, set it.
 		if ( ! EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector instanceof EE_Ticket_Selector_Config ) {
             \EED_Ticket_Selector::instance()->set_config();
             \EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector = \EED_Ticket_Selector::instance()->config();
