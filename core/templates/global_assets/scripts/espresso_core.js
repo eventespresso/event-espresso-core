@@ -466,6 +466,56 @@ jQuery( document ).ready( function ( $ ) {
 		}
 	);
 
+    /**
+     * @function rgb2hex
+     * converts hex format to a rgb color
+     *
+     * @param {string} rgb
+     * @return string
+     */
+    window.rgb2hex = function (rgb) {
+        // console_log('rgb', rgb, false);
+        var hex = '';
+        var rgb_parts = rgb.match(/^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i);
+        if (rgb_parts && rgb_parts.length === 4) {
+            hex = "#" + ("0" + parseInt(rgb_parts[1], 10).toString(16)).slice(-2);
+            hex += ("0" + parseInt(rgb_parts[2], 10).toString(16)).slice(-2);
+            hex += ("0" + parseInt(rgb_parts[3], 10).toString(16)).slice(-2);
+        }
+        // console_log('hex', hex, false);
+        return hex;
+    };
+
+
+    /**
+     * @function getParentBackgroundColor
+     * recursively walks up the DOM looking for the first element with
+     * some sort of color set for the background, then returns that value
+     *
+     * @param {object} domElement
+     * @return string
+    */
+    window.getParentBackgroundColor = function(domElement) {
+        var BackgroundColor = '';
+        var $parent = domElement.parent();
+        if ($parent.length){
+            // console_log('$parent', $parent.attr('id'), true);
+            BackgroundColor = $parent.css('backgroundColor');
+            // console_log('BackgroundColor', BackgroundColor, false);
+            if (
+                typeof BackgroundColor === 'undefined'
+                || BackgroundColor === 'transparent'
+                || BackgroundColor === 'inherit'
+                || BackgroundColor === ''
+            ) {
+                return getParentBackgroundColor($parent);
+            }
+        }
+        return BackgroundColor;
+    };
+
+
+
 });
 
 
@@ -523,7 +573,7 @@ function dump(arr,level) {
  * @param  {*} value
  * @param  {boolean} spacer
  */
-function console_log( item_name, value, spacer ) {
+window.console_log = function( item_name, value, spacer ) {
 	if ( typeof value === 'object' ) {
 		console_log_object( item_name, value, 0 );
 	} else {
@@ -536,7 +586,7 @@ function console_log( item_name, value, spacer ) {
 			console.log( item_name );
 		}
 	}
-}
+};
 
 /**
  * @function console_log_object
@@ -545,7 +595,7 @@ function console_log( item_name, value, spacer ) {
  * @param  {object} obj
  * @param  {number} depth
  */
-function console_log_object( obj_name, obj, depth ) {
+window.console_log_object = function( obj_name, obj, depth ) {
 	depth      = typeof depth !== 'undefined' ? depth : 0;
 	var spacer = '';
 	for ( var i = 0; i < depth; i++ ) {
@@ -574,4 +624,4 @@ function console_log_object( obj_name, obj, depth ) {
 	} else {
 		console_log( spacer + obj_name, obj, true );
 	}
-}
+};
