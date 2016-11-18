@@ -256,9 +256,12 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         foreach ($current_metaboxes as $box_context) {
             foreach ($box_context as $box_details) {
                 foreach ($box_details as $box) {
-                    if (is_array($box['callback'])
-                        && ($box['callback'][0] instanceof EE_Admin_Page
-                            || $box['callback'][0] instanceof EE_Admin_Hooks)
+                    if (
+                        is_array($box['callback'])
+                        && (
+                            $box['callback'][0] instanceof EE_Admin_Page
+                            || $box['callback'][0] instanceof EE_Admin_Hooks
+                        )
                     ) {
                         $containers[] = $box['id'];
                     }
@@ -1363,9 +1366,15 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
      */
     protected function _create_new_cpt_item()
     {
-        global $post;
+        // gather template vars for WP_ADMIN_PATH . 'edit-form-advanced.php'
+        global $post, $title, $is_IE, $post_type, $post_type_object;
+        $post_type = $this->_cpt_routes[$this->_req_action];
+        $post_type_object = $this->_cpt_object;
+        $title = $post_type_object->labels->add_new_item;
+        $editing = true;
         wp_enqueue_script('autosave');
         $post = $post = get_default_post_to_edit($this->_cpt_routes[$this->_req_action], true);
+        $post_ID = $post->ID;
         add_action('admin_print_styles', array($this, 'add_new_admin_page_global'));
         //modify the default editor title field with default title.
         add_filter('enter_title_here', array($this, 'add_custom_editor_default_title'), 10);
@@ -1395,7 +1404,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
      */
     protected function _edit_cpt_item()
     {
-        global $post, $title, $post_type, $post_type_object;
+        global $post, $title, $is_IE, $post_type, $post_type_object;
         $post_id = isset($this->_req_data['post']) ? $this->_req_data['post'] : null;
         $post = ! empty($post_id) ? get_post($post_id, OBJECT, 'edit') : null;
         if (empty ($post)) {
@@ -1406,13 +1415,26 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
             wp_redirect(get_edit_post_link($post_id, 'url'));
             exit();
         }
-        // template vars
+        // template vars for WP_ADMIN_PATH . 'edit-form-advanced.php'
+        $editing = true;
+        $post_ID = $post_id;
+        $post_type = $this->_cpt_routes[$this->_req_action];
+        $post_type_object = $this->_cpt_object;
+        if ( ! wp_check_post_lock($post->ID)) {
+            $active_post_lock = wp_set_post_lock($post->ID);
+            //wp_enqueue_script('autosave');
+        }
+        $title = $this->_cpt_object->labels->edit_item;
         add_action('admin_footer', '_admin_notice_post_locked');
         if (isset($this->_cpt_routes[$this->_req_data['action']])
             && ! isset($this->_labels['hide_add_button_on_cpt_route'][$this->_req_data['action']])
         ) {
             $create_new_action = apply_filters('FHEE__EE_Admin_Page_CPT___edit_cpt_item__create_new_action',
                     'create_new', $this);
+            $post_new_file = EE_Admin_Page::add_query_args_and_nonce(array(
+                    'action' => $create_new_action,
+                    'page'   => $this->page_slug
+            ), 'admin.php');
         }
         if (post_type_supports($this->_cpt_routes[$this->_req_action], 'comments')) {
             wp_enqueue_script('admin-comments');
