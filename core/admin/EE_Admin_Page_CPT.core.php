@@ -343,9 +343,14 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
                          && isset($this->_labels['publishbox'][$this->_req_action])
                     ? $this->_labels['publishbox'][$this->_req_action]
                     : $this->_labels['publishbox'];
-            remove_meta_box('submitdiv', $this->_cpt_routes[$this->_req_action], 'side');
-            add_meta_box('submitdiv', $box_label, 'post_submit_meta_box', $this->_cpt_routes[$this->_req_action],
-                    'side', 'core');
+            add_meta_box(
+                'submitdiv',
+                $box_label,
+                'post_submit_meta_box',
+                $this->_cpt_routes[$this->_req_action],
+                'side',
+                'core'
+            );
         }
         //let's add page_templates metabox if this cpt added support for it.
         if ($this->_supports_page_templates($this->_cpt_object->name)) {
