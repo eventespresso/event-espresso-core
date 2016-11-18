@@ -188,10 +188,12 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 
 
-	/**
-	 * increments this registration's related ticket sold and corresponding datetime sold values
-	 * @return void
-	 */
+    /**
+     * increments this registration's related ticket sold and corresponding datetime sold values
+     *
+     * @return void
+     * @throws \EE_Error
+     */
 	private function _reserve_registration_space() {
 		$ticket = $this->ticket();
 		$ticket->increase_sold();
