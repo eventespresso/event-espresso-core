@@ -472,14 +472,15 @@ class EE_Register_CPTs {
 
 	function set_must_use_event_types() {
 		$term_details = array(
-			'single-event' => array( __('Single Event', 'event_espresso'), __('A single event that spans one or more consecutive days. Attendee\'s register for the first date-time only', 'event_espresso') ), //example: a party or two-day long workshop
-
-			'multi-event' => array( __('Multi Event', 'event_espresso'), __('Multiple, separate, but related events that occur on consecutive days. Attendee\'s can register for any of the date-times', 'event_espresso') ), //example: a three day music festival or week long conference
-
-			'event-series' => array( __('Event Series', 'event_espresso'), __(' Multiple events that occur over multiple non-consecutive days. Attendee\'s register for the first date-time only', 'event_espresso') ), //example: an 8 week introduction to basket weaving course
-
-			'recurring-event' => array( __('Recurring Event', 'event_espresso'), __('Multiple events that occur over multiple non-consecutive days. Attendee\'s can register for any of the date-times.', 'event_espresso') ), //example: a yoga class
-
+		    //Attendee's register for the first date-time only
+			'single-event' => array( __('Single Event', 'event_espresso'), __('A single event that spans one or more consecutive days.', 'event_espresso') ), //example: a party or two-day long workshop
+            //Attendee's can register for any of the date-times
+			'multi-event' => array( __('Multi Event', 'event_espresso'), __('Multiple, separate, but related events that occur on consecutive days.', 'event_espresso') ), //example: a three day music festival or week long conference
+            //Attendee's register for the first date-time only
+			'event-series' => array( __('Event Series', 'event_espresso'), __(' Multiple events that occur over multiple non-consecutive days.', 'event_espresso') ), //example: an 8 week introduction to basket weaving course
+            //Attendee's can register for any of the date-times.
+			'recurring-event' => array( __('Recurring Event', 'event_espresso'), __('Multiple events that occur over multiple non-consecutive days.', 'event_espresso') ), //example: a yoga class
+            
 			'ongoing' => array( __('Ongoing Event', 'event_espresso'), __('An "event" that people can purchase tickets to gain access for anytime for this event regardless of date times on the event', 'event_espresso') ) //example: access to a museum
 
 			//'walk-in' => array( __('Walk In', 'event_espresso'), __('Single datetime and single entry recurring events. Attendees register for one or multiple datetimes individually.', 'event_espresso') ),
