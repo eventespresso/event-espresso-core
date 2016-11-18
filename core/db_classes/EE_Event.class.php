@@ -900,7 +900,13 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
                 }
             }
         }
-        return $sold_out;
+        return apply_filters(
+            'FHEE_EE_Event__perform_sold_out_status_check__sold_out',
+            $sold_out,
+            $spaces_remaining,
+            $tickets,
+            $this
+        );
     }
 
 
@@ -969,6 +975,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
         //first get all tickets on the event and include expired tickets
         $tickets = $this->tickets(array('default_where_conditions' => 'none'));
         $ticket_sums = array();
+        $datetimes = array();
         $datetime_limits = array();
         //loop through tickets and normalize them
         foreach ($tickets as $ticket) {
@@ -1075,7 +1082,13 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
                 }
             }
         }
-        return $spaces_available;
+        return apply_filters(
+            'FHEE_EE_Event__total_available_spaces__spaces_available',
+            $spaces_available,
+            $datetimes,
+            $tickets,
+            $this
+        );
     }
 
 
