@@ -149,13 +149,24 @@ abstract class EE_Base_Class {
 		if ( $bydb ){
 			//client code has indicated these field values are from the database
 			foreach( $model_fields as $fieldName => $field ){
-				$this->set_from_db( $fieldName, isset( $fieldValues[ $fieldName] ) ? $fieldValues[ $fieldName ] : null );
+				$this->set_from_db(
+				    $fieldName,
+                    isset( $fieldValues[ $fieldName] )
+                        ? $fieldValues[ $fieldName ]
+                        : null
+                );
 			}
 		} else {
 			//we're constructing a brand
 			//new instance of the model object. Generally, this means we'll need to do more field validation
 			foreach( $model_fields as $fieldName => $field ){
-				$this->set( $fieldName, isset( $fieldValues[ $fieldName ] ) ? $fieldValues[ $fieldName ] : null, true );
+				$this->set(
+				    $fieldName,
+                    isset( $fieldValues[ $fieldName ] )
+                        ? $fieldValues[ $fieldName ]
+                        : null,
+                    true
+                );
 			}
 		}
 
@@ -178,7 +189,7 @@ abstract class EE_Base_Class {
 		 * @param EE_Base_Class $this the model object just created
 		 */
 		do_action( 'AHEE__EE_Base_Class__construct__finished', $this );
-	}
+    }
 
 	/**
 	 * Gets whether or not this model object is allowed to persist/be saved to the database.
@@ -241,8 +252,13 @@ abstract class EE_Base_Class {
 	 * @throws \EE_Error
 	 */
 	public function set( $field_name, $field_value, $use_default = FALSE ){
-        // if not using default and nothing has changed, then don't do anything
-        if ( ! $use_default && $this->_fields[$field_name] === $field_value) {
+        // if not using default and nothing has changed, and object has already been setup (has ID),
+        // then don't do anything
+        if (
+            ! $use_default
+            && $this->_fields[$field_name] === $field_value
+            && $this->ID()
+        ) {
             return;
         }
         $this->_has_changes = true;
@@ -1471,8 +1487,8 @@ abstract class EE_Base_Class {
      */
 	public function save($set_cols_n_values = array()) {
         // no changes ? then don't do anything
-        if ( ! $this->_has_changes && empty($set_cols_n_values) && $this->ID()  ) {
-            return 1;
+        if ( ! $this->_has_changes && empty($set_cols_n_values) && $this->ID() ) {
+            return 0;
         }
 		/**
 		 * Filters the fields we're about to save on the model object
