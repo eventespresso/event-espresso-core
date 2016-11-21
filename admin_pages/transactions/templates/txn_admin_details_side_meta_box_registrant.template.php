@@ -35,11 +35,19 @@
     </p>
     </div> <!-- end #admin-side-mbox-primary-registrant-dv -->
 
-
+    <?php
+    /** only show if logged in user has access */
+    if ( EE_Registry::instance()->CAP->current_user_can(
+            'ee_edit_contact',
+            'view_or_edit_contact_button',
+            $ATT_ID
+    )
+    ) : ?>
     <p style="text-align:right;">
         <a class="button button-small" href="<?php echo $edit_attendee_url; ?>"
            title="<?php esc_attr_e('View details for this contact.', 'event_espresso'); ?>">
             <span class="ee-icon ee-icon-user-edit"></span><?php _e('View / Edit this Contact', 'event_espresso'); ?>
         </a>
     </p>
+    <?php endif; ?>
 <?php endif;  //end no attendee check?>
