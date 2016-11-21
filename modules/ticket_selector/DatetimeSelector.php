@@ -86,7 +86,15 @@ class DatetimeSelector
      */
     protected function getTicketDatetimes(\EE_Ticket $ticket, $datetimes = array())
     {
-        $ticket_datetimes = $ticket->datetimes();
+        $ticket_datetimes = $ticket->datetimes(
+            array(
+                'order_by'                 => array(
+                    'DTT_order'     => 'ASC',
+                    'DTT_EVT_start' => 'ASC'
+                ),
+                'default_where_conditions' => 'none',
+            )
+        );
         foreach ($ticket_datetimes as $ticket_datetime) {
             if ( ! $ticket_datetime instanceof \EE_Datetime) {
                 continue;
