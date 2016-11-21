@@ -138,19 +138,25 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 
 
 
-	/**
-	 * Gets all the datetimes for this event, ordered by the DTT_order on the datetime.
-	 * @darren, we should probably UNSET timezone on the EEM_Datetime model
-	 * after running our query, so that this timezone isn't set for EVERY query
-	 * on EEM_Datetime for the rest of the request, no?
-	 *
-	 * @param boolean $show_expired whether or not to include expired events
-	 * @param boolean $show_deleted whether or not to include deleted events
-	 * @param null $limit
-	 * @return \EE_Datetime[]
-	 */
+    /**
+     * Gets all the datetimes for this event, ordered by the DTT_order on the datetime.
+     * @darren, we should probably UNSET timezone on the EEM_Datetime model
+     * after running our query, so that this timezone isn't set for EVERY query
+     * on EEM_Datetime for the rest of the request, no?
+     *
+     * @param boolean $show_expired whether or not to include expired events
+     * @param boolean $show_deleted whether or not to include deleted events
+     * @param null    $limit
+     * @return \EE_Datetime[]
+     * @throws \EE_Error
+     */
 	public function datetimes_ordered( $show_expired = true, $show_deleted = false, $limit = null ) {
-		return EEM_Datetime::instance( $this->_timezone )->get_datetimes_for_event_ordered_by_DTT_order( $this->ID(), $show_expired, $show_deleted, $limit );
+		return EEM_Datetime::instance( $this->_timezone )->get_datetimes_for_event_ordered_by_DTT_order(
+		    $this->ID(),
+            $show_expired,
+            $show_deleted,
+            $limit
+        );
 	}
 
 
@@ -217,7 +223,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	/**
 	 * @return bool
 	 */
-	function additional_limit() {
+	public function additional_limit() {
 		return $this->get( 'EVT_additional_limit' );
 	}
 
@@ -226,7 +232,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	/**
 	 * @return bool
 	 */
-	function allow_overflow() {
+	public function allow_overflow() {
 		return $this->get( 'EVT_allow_overflow' );
 	}
 
@@ -235,7 +241,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	/**
 	 * @return bool
 	 */
-	function created() {
+	public function created() {
 		return $this->get( 'EVT_created' );
 	}
 
@@ -244,7 +250,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	/**
 	 * @return bool
 	 */
-	function description() {
+	public function description() {
 		return $this->get( 'EVT_desc' );
 	}
 
@@ -254,7 +260,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	 * Runs do_shortcode and wpautop on the description
 	 * @return string of html
 	 */
-	function description_filtered() {
+	public function description_filtered() {
 		return $this->get_pretty( 'EVT_desc' );
 	}
 
@@ -263,7 +269,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	/**
 	 * @return bool
 	 */
-	function display_description() {
+	public function display_description() {
 		return $this->get( 'EVT_display_desc' );
 	}
 
@@ -272,7 +278,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	/**
 	 * @return bool
 	 */
-	function display_ticket_selector() {
+	public function display_ticket_selector() {
 		return (bool)$this->get( 'EVT_display_ticket_selector' );
 	}
 
@@ -281,7 +287,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	/**
 	 * @return bool
 	 */
-	function external_url() {
+	public function external_url() {
 		return $this->get( 'EVT_external_URL' );
 	}
 
@@ -290,7 +296,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	/**
 	 * @return bool
 	 */
-	function member_only() {
+	public function member_only() {
 		return $this->get( 'EVT_member_only' );
 	}
 
@@ -299,7 +305,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	/**
 	 * @return bool
 	 */
-	function phone() {
+	public function phone() {
 		return $this->get( 'EVT_phone' );
 	}
 
@@ -308,7 +314,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	/**
 	 * @return bool
 	 */
-	function modified() {
+	public function modified() {
 		return $this->get( 'EVT_modified' );
 	}
 
@@ -317,7 +323,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	/**
 	 * @return bool
 	 */
-	function name() {
+	public function name() {
 		return $this->get( 'EVT_name' );
 	}
 
@@ -326,7 +332,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	/**
 	 * @return bool
 	 */
-	function order() {
+	public function order() {
 		return $this->get( 'EVT_order' );
 	}
 
@@ -335,7 +341,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	/**
 	 * @return bool|string
 	 */
-	function default_registration_status() {
+	public function default_registration_status() {
 		$event_default_registration_status = $this->get( 'EVT_default_registration_status' );
 		return !empty( $event_default_registration_status ) ? $event_default_registration_status : EE_Registry::instance()->CFG->registration->default_STS_ID;
 	}
@@ -348,7 +354,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	 * @param bool $not_full_desc
 	 * @return bool|string
 	 */
-	function short_description( $num_words = 55, $more = NULL, $not_full_desc = FALSE ) {
+	public function short_description( $num_words = 55, $more = NULL, $not_full_desc = FALSE ) {
 		$short_desc = $this->get( 'EVT_short_desc' );
 		if ( !empty( $short_desc ) || $not_full_desc ) {
 			return $short_desc;
@@ -364,7 +370,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	/**
 	 * @return bool
 	 */
-	function slug() {
+	public function slug() {
 		return $this->get( 'EVT_slug' );
 	}
 
@@ -373,7 +379,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	/**
 	 * @return bool
 	 */
-	function timezone_string() {
+	public function timezone_string() {
 		return $this->get( 'EVT_timezone_string' );
 	}
 
@@ -382,7 +388,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	/**
 	 * @return bool
 	 */
-	function visible_on() {
+	public function visible_on() {
 		return $this->get( 'EVT_visible_on' );
 	}
 
@@ -391,7 +397,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	/**
 	 * @return int
 	 */
-	function wp_user() {
+	public function wp_user() {
 		return $this->get( 'EVT_wp_user' );
 	}
 
@@ -400,7 +406,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	/**
 	 * @return bool
 	 */
-	function donations() {
+	public function donations() {
 		return $this->get( 'EVT_donations' );
 	}
 
@@ -409,7 +415,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	/**
 	 * @param $limit
 	 */
-	function set_additional_limit( $limit ) {
+	public function set_additional_limit( $limit ) {
 		$this->set( 'EVT_additional_limit', $limit );
 	}
 
@@ -418,7 +424,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	/**
 	 * @param $created
 	 */
-	function set_created( $created ) {
+	public function set_created( $created ) {
 		$this->set( 'EVT_created', $created );
 	}
 
@@ -427,7 +433,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	/**
 	 * @param $desc
 	 */
-	function set_description( $desc ) {
+	public function set_description( $desc ) {
 		$this->set( 'EVT_desc', $desc );
 	}
 
@@ -436,7 +442,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	/**
 	 * @param $display_desc
 	 */
-	function set_display_description( $display_desc ) {
+	public function set_display_description( $display_desc ) {
 		$this->set( 'EVT_display_desc', $display_desc );
 	}
 
@@ -445,7 +451,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	/**
 	 * @param $display_ticket_selector
 	 */
-	function set_display_ticket_selector( $display_ticket_selector ) {
+	public function set_display_ticket_selector( $display_ticket_selector ) {
 		$this->set( 'EVT_display_ticket_selector', $display_ticket_selector );
 	}
 
@@ -454,7 +460,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	/**
 	 * @param $external_url
 	 */
-	function set_external_url( $external_url ) {
+	public function set_external_url( $external_url ) {
 		$this->set( 'EVT_external_URL', $external_url );
 	}
 
@@ -463,7 +469,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	/**
 	 * @param $member_only
 	 */
-	function set_member_only( $member_only ) {
+	public function set_member_only( $member_only ) {
 		$this->set( 'EVT_member_only', $member_only );
 	}
 
@@ -472,7 +478,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	/**
 	 * @param $event_phone
 	 */
-	function set_event_phone( $event_phone ) {
+	public function set_event_phone( $event_phone ) {
 		$this->set( 'EVT_phone', $event_phone );
 	}
 
@@ -481,7 +487,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	/**
 	 * @param $modified
 	 */
-	function set_modified( $modified ) {
+	public function set_modified( $modified ) {
 		$this->set( 'EVT_modified', $modified );
 	}
 
@@ -490,7 +496,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	/**
 	 * @param $name
 	 */
-	function set_name( $name ) {
+	public function set_name( $name ) {
 		$this->set( 'EVT_name', $name );
 	}
 
@@ -499,7 +505,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	/**
 	 * @param $order
 	 */
-	function set_order( $order ) {
+	public function set_order( $order ) {
 		$this->set( 'EVT_order', $order );
 	}
 
@@ -508,7 +514,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	/**
 	 * @param $short_desc
 	 */
-	function set_short_description( $short_desc ) {
+	public function set_short_description( $short_desc ) {
 		$this->set( 'EVT_short_desc', $short_desc );
 	}
 
@@ -517,7 +523,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	/**
 	 * @param $slug
 	 */
-	function set_slug( $slug ) {
+	public function set_slug( $slug ) {
 		$this->set( 'EVT_slug', $slug );
 	}
 
@@ -526,7 +532,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	/**
 	 * @param $timezone_string
 	 */
-	function set_timezone_string( $timezone_string ) {
+	public function set_timezone_string( $timezone_string ) {
 		$this->set( 'EVT_timezone_string', $timezone_string );
 	}
 
@@ -535,7 +541,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	/**
 	 * @param $visible_on
 	 */
-	function set_visible_on( $visible_on ) {
+	public function set_visible_on( $visible_on ) {
 		$this->set( 'EVT_visible_on', $visible_on );
 	}
 
@@ -544,7 +550,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	/**
 	 * @param $wp_user
 	 */
-	function set_wp_user( $wp_user ) {
+	public function set_wp_user( $wp_user ) {
 		$this->set( 'EVT_wp_user', $wp_user );
 	}
 
@@ -553,7 +559,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	/**
 	 * @param $default_registration_status
 	 */
-	function set_default_registration_status( $default_registration_status ) {
+	public function set_default_registration_status( $default_registration_status ) {
 		$this->set( 'EVT_default_registration_status', $default_registration_status );
 	}
 
@@ -562,7 +568,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	/**
 	 * @param $donations
 	 */
-	function set_donations( $donations ) {
+	public function set_donations( $donations ) {
 		$this->set( 'EVT_donations', $donations );
 	}
 
@@ -573,7 +579,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	 * @param EE_Venue /int $venue_id_or_obj
 	 * @return EE_Venue
 	 */
-	function add_venue( $venue_id_or_obj ) {
+	public function add_venue( $venue_id_or_obj ) {
 		return $this->_add_relation_to( $venue_id_or_obj, 'Venue' );
 	}
 
@@ -584,7 +590,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	 * @param EE_Venue /int $venue_id_or_obj
 	 * @return EE_Venue
 	 */
-	function remove_venue( $venue_id_or_obj ) {
+	public function remove_venue( $venue_id_or_obj ) {
 		return $this->_remove_relation_to( $venue_id_or_obj, 'Venue' );
 	}
 
@@ -595,7 +601,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	 * @param array $query_params like EEM_Base::get_all's $query_params
 	 * @return EE_Venue[]
 	 */
-	function venues( $query_params = array() ) {
+	public function venues( $query_params = array() ) {
 		return $this->get_many_related( 'Venue', $query_params );
 	}
 
