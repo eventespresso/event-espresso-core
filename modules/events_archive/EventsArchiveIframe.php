@@ -30,6 +30,7 @@ class EventsArchiveIframe extends Iframe
     public function __construct( $EED_Events_Archive )
     {
         \EE_Registry::instance()->REQ->set_espresso_page( true );
+        add_filter('FHEE__EED_Events_Archive__event_list_iframe', '__return_true');
         $EED_Events_Archive->event_list();
         $event_list = new \EES_Espresso_Events();
         parent::__construct(
