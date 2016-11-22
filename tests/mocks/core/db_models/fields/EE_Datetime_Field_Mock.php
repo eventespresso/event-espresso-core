@@ -36,4 +36,13 @@ class EE_Datetime_Field_Mock extends EE_Datetime_Field {
 	public function prepare_for_display( $DateTime, $schema = false ) {
 		return $this->_prepare_for_display( $DateTime, $schema );
 	}
+
+
+
+	public function get_date_object( $date_string ) {
+		return parent::_get_date_object( $date_string );
+	}
+
+
+
 }

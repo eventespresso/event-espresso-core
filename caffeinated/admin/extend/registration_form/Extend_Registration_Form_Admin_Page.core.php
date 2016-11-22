@@ -876,14 +876,15 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 
 
-
-
-	/***************************************		REGISTRATION SETTINGS 		***************************************/
-
+	/***************************************        REGISTRATION SETTINGS        ***************************************/
 
 
 
-
+	/**
+	 * _reg_form_settings
+	 *
+	 * @throws \EE_Error
+	 */
 	protected function _reg_form_settings() {
 		$this->_template_args['values'] = $this->_yes_no_values;
 		add_action(
@@ -906,6 +907,10 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 	}
 
 
+
+	/**
+	 * _update_reg_form_settings
+	 */
 	protected function _update_reg_form_settings() {
 		EE_Registry::instance()->CFG->registration = $this->update_email_validation_settings_form(
 			EE_Registry::instance()->CFG->registration
@@ -929,6 +934,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 	 *
 	 * @access    public
 	 * @return    void
+	 * @throws \EE_Error
 	 */
 	public function email_validation_settings_form() {
 		echo $this->_email_validation_settings_form()->get_html();
@@ -941,6 +947,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 	 *
 	 * @access protected
 	 * @return EE_Form_Section_Proper
+	 * @throws \EE_Error
 	 */
 	protected function _email_validation_settings_form() {
         return new EE_Form_Section_Proper(
@@ -1094,5 +1101,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
         }
         return true;
     }
+
+
 
 }
