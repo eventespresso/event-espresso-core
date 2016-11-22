@@ -34,7 +34,7 @@ class Iframe
     * whether or not to call wp_head() and wp_footer()
     * @var boolean $enqueue_wp_assets
     */
-    protected $enqueue_wp_assets = true;
+    protected $enqueue_wp_assets = false;
 
     /*
     * an array of CSS URLs
@@ -67,17 +67,15 @@ class Iframe
      *
      * @param string $title
      * @param string $content
-     * @throws \DomainException
+     * @throws \EE_Error
      */
-    public function __construct( $title, $content = '' )
+    public function __construct( $title, $content )
     {
         global $wp_version;
         if ( ! defined( 'EE_IFRAME_DIR_URL' ) ) {
             define( 'EE_IFRAME_DIR_URL', plugin_dir_url( __FILE__ ) );
         }
-        if ( ! empty($content)) {
-            $this->setContent($content);
-        }
+        $this->setContent( $content );
         $this->setTitle( $title );
         $this->addStylesheets(
             apply_filters(
@@ -105,12 +103,12 @@ class Iframe
 
     /**
      * @param string $title
-     * @throws \DomainException
+     * @throws \EE_Error
      */
     public function setTitle( $title )
     {
         if ( empty( $title ) ) {
-            throw new \DomainException(
+            throw new \EE_Error(
                 esc_html__( 'You must provide a page title in order to create an iframe.', 'event_espresso' )
             );
         }
@@ -121,12 +119,12 @@ class Iframe
 
     /**
      * @param string $content
-     * @throws \DomainException
+     * @throws \EE_Error
      */
     public function setContent( $content )
     {
         if ( empty( $content ) ) {
-            throw new \DomainException(
+            throw new \EE_Error(
                 esc_html__( 'You must provide content in order to create an iframe.', 'event_espresso' )
             );
         }
@@ -147,12 +145,12 @@ class Iframe
 
     /**
      * @param array $stylesheets
-     * @throws \DomainException
+     * @throws \EE_Error
      */
     public function addStylesheets( array $stylesheets )
     {
         if ( empty( $stylesheets ) ) {
-            throw new \DomainException(
+            throw new \EE_Error(
                 esc_html__(
                     'A non-empty array of URLs, is required to add a CSS stylesheet to an iframe.',
                     'event_espresso'
@@ -169,12 +167,12 @@ class Iframe
     /**
      * @param array $scripts
      * @param bool  $add_to_header
-     * @throws \DomainException
+     * @throws \EE_Error
      */
     public function addScripts( array $scripts, $add_to_header = false )
     {
         if ( empty( $scripts ) ) {
-            throw new \DomainException(
+            throw new \EE_Error(
                 esc_html__(
                     'A non-empty array of URLs, is required to add Javascript to an iframe.',
                     'event_espresso'
@@ -195,12 +193,12 @@ class Iframe
     /**
      * @param array  $vars
      * @param string $var_name
-     * @throws \DomainException
+     * @throws \EE_Error
      */
     public function addLocalizedVars( array $vars, $var_name = 'eei18n' )
     {
         if ( empty( $vars ) ) {
-            throw new \DomainException(
+            throw new \EE_Error(
                 esc_html__(
                     'A non-empty array of vars, is required to add localized Javascript vars to an iframe.',
                     'event_espresso'
@@ -227,11 +225,6 @@ class Iframe
      */
     public function display($utm_content = '')
     {
-        if (empty($this->content)) {
-            throw new \DomainException(
-                esc_html__('You must provide content in order to create an iframe.', 'event_espresso')
-            );
-        }
         $this->content .= \EEH_HTML::br() . \EEH_Template::powered_by_event_espresso(
             '',
             '',
