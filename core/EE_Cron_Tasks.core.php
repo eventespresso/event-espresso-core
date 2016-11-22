@@ -39,7 +39,6 @@ class EE_Cron_Tasks extends EE_Base
 
     /**
      * @access private
-     * @return EE_Cron_Tasks
      */
     private function __construct()
     {
@@ -107,18 +106,23 @@ class EE_Cron_Tasks extends EE_Base
             'AHEE__EE_Cron_Tasks__finalize_abandoned_transactions',
             'AHEE__EE_Cron_Tasks__clean_up_junk_transactions',
         );
-        $crons    = get_option('cron');
+        $crons = (array) get_option('cron');
         if ( ! is_array($crons)) {
             return;
         }
         foreach ($crons as $timestamp => $cron) {
             foreach ($ee_crons as $ee_cron) {
-                if (isset($cron[$ee_cron])) {
+                if (isset($cron[$ee_cron]) && is_array($cron[$ee_cron])) {
                     do_action('AHEE_log', __CLASS__, __FUNCTION__, $ee_cron, 'scheduled EE cron');
-                    foreach ($cron[$ee_cron] as $ee_cron_details) {
+                    foreach ((array) $cron[$ee_cron] as $ee_cron_details) {
                         if ( ! empty($ee_cron_details['args'])) {
-                            do_action('AHEE_log', __CLASS__, __FUNCTION__, print_r($ee_cron_details['args'], true),
-                                "$ee_cron args");
+                            do_action(
+                                'AHEE_log',
+                                __CLASS__,
+                                __FUNCTION__,
+                                print_r($ee_cron_details['args'], true),
+                                "{$ee_cron} args"
+                            );
                         }
                     }
                 }
@@ -140,12 +144,18 @@ class EE_Cron_Tasks extends EE_Base
 	public static function reschedule_cron_for_transactions_if_maintenance_mode( $cron_task, $TXN_IDs ) {
 		// reschedule the cron if we can't hit the db right now
 		if ( ! EE_Maintenance_Mode::instance()->models_can_query() ) {
-			foreach( $TXN_IDs as $TXN_ID => $some_unused_var ) {
-				// reset cron job for finalizing the TXN
-				EE_Cron_Tasks::$cron_task(
-					time() + ( 10 * MINUTE_IN_SECONDS ),
-					$TXN_ID
-				);
+			foreach( $TXN_IDs as $TXN_ID => $additional_vars ) {
+				// reset cron job for the TXN
+                call_user_func_array(
+                    array('EE_Cron_Tasks', $cron_task),
+                    array_merge(
+                        array(
+                            time() + (10 * MINUTE_IN_SECONDS),
+                            $TXN_ID
+                        ),
+                        $additional_vars
+                    )
+                );
 			}
 			return true;
 		}
@@ -236,39 +246,40 @@ class EE_Cron_Tasks extends EE_Base
         do_action('AHEE_log', __CLASS__, __FUNCTION__);
 		if (
 			// are there any TXNs that need cleaning up ?
-			! empty( self::$_update_transactions_with_payment ) &&
+			empty( self::$_update_transactions_with_payment )
 			// reschedule the cron if we can't hit the db right now
-			! EE_Cron_Tasks::reschedule_cron_for_transactions_if_maintenance_mode(
+			|| EE_Cron_Tasks::reschedule_cron_for_transactions_if_maintenance_mode(
 				'schedule_update_transaction_with_payment',
 				self::$_update_transactions_with_payment
 			)
 		) {
-            /** @type EE_Payment_Processor $payment_processor */
-            $payment_processor = EE_Registry::instance()->load_core('Payment_Processor');
-            // set revisit flag for payment processor
-            $payment_processor->set_revisit(false);
-            // load EEM_Transaction
-            EE_Registry::instance()->load_model('Transaction');
-            foreach (self::$_update_transactions_with_payment as $TXN_ID => $PAY_ID) {
-                // reschedule the cron if we can't hit the db right now
-                if ( ! EE_Maintenance_Mode::instance()->models_can_query()) {
-                    // reset cron job for updating the TXN
-                    EE_Cron_Tasks::schedule_update_transaction_with_payment(
-                        time() + EE_Cron_Tasks::reschedule_timeout,
-                        $TXN_ID,
-                        $PAY_ID
-                    );
-                    continue;
-                }
-                $transaction = EEM_Transaction::instance()->get_one_by_ID($TXN_ID);
-                $payment     = EEM_Payment::instance()->get_one_by_ID($PAY_ID);
-                // verify transaction
-                if ($transaction instanceof EE_Transaction && $payment instanceof EE_Payment) {
-                    // now try to update the TXN with any payments
-                    $payment_processor->update_txn_based_on_payment($transaction, $payment, true, true);
-                }
-                unset(self::$_update_transactions_with_payment[$TXN_ID]);
+            return;
+        }
+        /** @type EE_Payment_Processor $payment_processor */
+        $payment_processor = EE_Registry::instance()->load_core('Payment_Processor');
+        // set revisit flag for payment processor
+        $payment_processor->set_revisit(false);
+        // load EEM_Transaction
+        EE_Registry::instance()->load_model('Transaction');
+        foreach (self::$_update_transactions_with_payment as $TXN_ID => $PAY_ID) {
+            // reschedule the cron if we can't hit the db right now
+            if ( ! EE_Maintenance_Mode::instance()->models_can_query()) {
+                // reset cron job for updating the TXN
+                EE_Cron_Tasks::schedule_update_transaction_with_payment(
+                    time() + EE_Cron_Tasks::reschedule_timeout,
+                    $TXN_ID,
+                    $PAY_ID
+                );
+                continue;
             }
+            $transaction = EEM_Transaction::instance()->get_one_by_ID($TXN_ID);
+            $payment     = EEM_Payment::instance()->get_one_by_ID($PAY_ID);
+            // verify transaction
+            if ($transaction instanceof EE_Transaction && $payment instanceof EE_Payment) {
+                // now try to update the TXN with any payments
+                $payment_processor->update_txn_based_on_payment($transaction, $payment, true, true);
+            }
+            unset(self::$_update_transactions_with_payment[$TXN_ID]);
         }
     }
 
@@ -354,46 +365,48 @@ class EE_Cron_Tasks extends EE_Base
     public static function finalize_abandoned_transactions()
     {
         do_action('AHEE_log', __CLASS__, __FUNCTION__);
+        if (
 			// are there any TXNs that need cleaning up ?
-			! empty( self::$_abandoned_transactions ) &&
+			empty( self::$_abandoned_transactions )
 			// reschedule the cron if we can't hit the db right now
-			! EE_Cron_Tasks::reschedule_cron_for_transactions_if_maintenance_mode(
+			|| EE_Cron_Tasks::reschedule_cron_for_transactions_if_maintenance_mode(
 				'schedule_finalize_abandoned_transactions_check',
 				self::$_abandoned_transactions
 			)
 		) {
-            /** @type EE_Transaction_Processor $transaction_processor */
-            $transaction_processor = EE_Registry::instance()->load_class('Transaction_Processor');
-            // set revisit flag for txn processor
-            $transaction_processor->set_revisit(false);
-            /** @type EE_Payment_Processor $payment_processor */
-            $payment_processor = EE_Registry::instance()->load_core('Payment_Processor');
-            // load EEM_Transaction
-            EE_Registry::instance()->load_model('Transaction');
-            foreach (self::$_abandoned_transactions as $TXN_ID) {
-                do_action('AHEE_log', __CLASS__, __FUNCTION__, $TXN_ID, '$TXN_ID');
-                // reschedule the cron if we can't hit the db right now
-                if ( ! EE_Maintenance_Mode::instance()->models_can_query()) {
-                    // reset cron job for finalizing the TXN
-                    EE_Cron_Tasks::schedule_finalize_abandoned_transactions_check(
-                        time() + EE_Cron_Tasks::reschedule_timeout,
-                        $TXN_ID
-                    );
+            return;
+        }
+        /** @type EE_Transaction_Processor $transaction_processor */
+        $transaction_processor = EE_Registry::instance()->load_class('Transaction_Processor');
+        // set revisit flag for txn processor
+        $transaction_processor->set_revisit(false);
+        /** @type EE_Payment_Processor $payment_processor */
+        $payment_processor = EE_Registry::instance()->load_core('Payment_Processor');
+        // load EEM_Transaction
+        EE_Registry::instance()->load_model('Transaction');
+        foreach (self::$_abandoned_transactions as $TXN_ID) {
+            do_action('AHEE_log', __CLASS__, __FUNCTION__, $TXN_ID, '$TXN_ID');
+            // reschedule the cron if we can't hit the db right now
+            if ( ! EE_Maintenance_Mode::instance()->models_can_query()) {
+                // reset cron job for finalizing the TXN
+                EE_Cron_Tasks::schedule_finalize_abandoned_transactions_check(
+                    time() + EE_Cron_Tasks::reschedule_timeout,
+                    $TXN_ID
+                );
+                continue;
+            }
+            $transaction = EEM_Transaction::instance()->get_one_by_ID($TXN_ID);
+            // verify transaction
+            if ($transaction instanceof EE_Transaction) {
+                // don't finalize the TXN if it has already been completed
+                if ($transaction->all_reg_steps_completed() === true) {
                     continue;
                 }
-                $transaction = EEM_Transaction::instance()->get_one_by_ID($TXN_ID);
-                // verify transaction
-                if ($transaction instanceof EE_Transaction) {
-                    // don't finalize the TXN if it has already been completed
-                    if ($transaction->all_reg_steps_completed() === true) {
-                        continue;
-                    }
-                    // let's simulate an IPN here which will trigger any notifications that need to go out
-                    $payment_processor->update_txn_based_on_payment($transaction, $transaction->last_payment(), true,
-                        true);
-                }
-                unset(self::$_abandoned_transactions[$TXN_ID]);
+                // let's simulate an IPN here which will trigger any notifications that need to go out
+                $payment_processor->update_txn_based_on_payment($transaction, $transaction->last_payment(), true,
+                    true);
             }
+            unset(self::$_abandoned_transactions[$TXN_ID]);
         }
     }
 
@@ -455,7 +468,7 @@ class EE_Cron_Tasks extends EE_Base
 	 *
 	 * @param int $TXN_ID
 	 */
-	public static function expired_transaction_check(	$TXN_ID = 0 ) {
+	public static function expired_transaction_check( $TXN_ID = 0 ) {
 		if ( absint( $TXN_ID )) {
 			self::$_expired_transactions[ $TXN_ID ]  = $TXN_ID;
 			add_action(
@@ -468,72 +481,74 @@ class EE_Cron_Tasks extends EE_Base
 
 
 
-	/**
-	 * process_expired_transactions
-	 *
-	 * loops through the self::$_expired_transactions array and processes any failed TXNs
-	 */
+    /**
+     * process_expired_transactions
+     * loops through the self::$_expired_transactions array and processes any failed TXNs
+     *
+     * @throws \EE_Error
+     */
 	public static function process_expired_transactions() {
 		if (
 			// are there any TXNs that need cleaning up ?
-			! empty( self::$_expired_transactions ) &&
+			empty( self::$_expired_transactions )
 			// reschedule the cron if we can't hit the db right now
-			! EE_Cron_Tasks::reschedule_cron_for_transactions_if_maintenance_mode(
+			|| EE_Cron_Tasks::reschedule_cron_for_transactions_if_maintenance_mode(
 				'schedule_expired_transaction_check',
 				self::$_expired_transactions
 			)
 		) {
-			/** @type EE_Transaction_Processor $transaction_processor */
-			$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
-			// set revisit flag for txn processor
-			$transaction_processor->set_revisit( false );
-			 // load EEM_Transaction
-			EE_Registry::instance()->load_model( 'Transaction' );
-			foreach ( self::$_expired_transactions as $TXN_ID ) {
-				$transaction = EEM_Transaction::instance()->get_one_by_ID( $TXN_ID );
-				// verify transaction and whether it is failed or not
-				if ( $transaction instanceof EE_Transaction) {
-					switch( $transaction->status_ID() ) {
-						// Completed TXNs
-						case EEM_Transaction::complete_status_code :
-							do_action( 'AHEE__EE_Cron_Tasks__process_expired_transactions__completed_transaction', $transaction );
-							break;
-						// Overpaid TXNs
-						case EEM_Transaction::overpaid_status_code :
-							do_action( 'AHEE__EE_Cron_Tasks__process_expired_transactions__overpaid_transaction', $transaction );
-							break;
-						// Incomplete TXNs
-						case EEM_Transaction::incomplete_status_code :
-							do_action( 'AHEE__EE_Cron_Tasks__process_expired_transactions__incomplete_transaction', $transaction );
-							// todo : merge the finalize_abandoned_transactions cron into this one...
-							// todo : move business logic into EE_Transaction_Processor for finalizing abandoned transactions
-							break;
-						// Failed TXNs
-						case EEM_Transaction::failed_status_code :
-							do_action( 'AHEE__EE_Cron_Tasks__process_expired_transactions__failed_transaction', $transaction );
-							// todo : perform garbage collection here and remove clean_out_junk_transactions()
-							//$registrations = $transaction->registrations();
-							//if ( ! empty( $registrations ) ) {
-							//	foreach ( $registrations as $registration ) {
-							//		if ( $registration instanceof EE_Registration ) {
-							//$delete_registration = true;
-							//if ( $registration->attendee() instanceof EE_Attendee ) {
-							//	$delete_registration = false;
-							//}
-							//if ( $delete_registration ) {
-							//	$registration->delete_permanently();
-							//	$registration->delete_related_permanently();
-							//}
-							//		}
-							//	}
-							//}
-							break;
-					}
+            return;
+        }
+        /** @type EE_Transaction_Processor $transaction_processor */
+        $transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
+        // set revisit flag for txn processor
+        $transaction_processor->set_revisit( false );
+         // load EEM_Transaction
+        EE_Registry::instance()->load_model( 'Transaction' );
+        foreach ( self::$_expired_transactions as $TXN_ID ) {
+            $transaction = EEM_Transaction::instance()->get_one_by_ID( $TXN_ID );
+            // verify transaction and whether it is failed or not
+            if ( $transaction instanceof EE_Transaction) {
+                switch( $transaction->status_ID() ) {
+                    // Completed TXNs
+                    case EEM_Transaction::complete_status_code :
+                        do_action( 'AHEE__EE_Cron_Tasks__process_expired_transactions__completed_transaction', $transaction );
+                        break;
+                    // Overpaid TXNs
+                    case EEM_Transaction::overpaid_status_code :
+                        do_action( 'AHEE__EE_Cron_Tasks__process_expired_transactions__overpaid_transaction', $transaction );
+                        break;
+                    // Incomplete TXNs
+                    case EEM_Transaction::incomplete_status_code :
+                        do_action( 'AHEE__EE_Cron_Tasks__process_expired_transactions__incomplete_transaction', $transaction );
+                        // todo : merge the finalize_abandoned_transactions cron into this one...
+                        // todo : move business logic into EE_Transaction_Processor for finalizing abandoned transactions
+                        break;
+                    // Failed TXNs
+                    case EEM_Transaction::failed_status_code :
+                        do_action( 'AHEE__EE_Cron_Tasks__process_expired_transactions__failed_transaction', $transaction );
+                        // todo : perform garbage collection here and remove clean_out_junk_transactions()
+                        //$registrations = $transaction->registrations();
+                        //if ( ! empty( $registrations ) ) {
+                        //	foreach ( $registrations as $registration ) {
+                        //		if ( $registration instanceof EE_Registration ) {
+                        //$delete_registration = true;
+                        //if ( $registration->attendee() instanceof EE_Attendee ) {
+                        //	$delete_registration = false;
+                        //}
+                        //if ( $delete_registration ) {
+                        //	$registration->delete_permanently();
+                        //	$registration->delete_related_permanently();
+                        //}
+                        //		}
+                        //	}
+                        //}
+                        break;
+                }
 
-				}
-				unset( self::$_expired_transactions[ $TXN_ID ] );
-			}
-		}
+            }
+            unset( self::$_expired_transactions[ $TXN_ID ] );
+        }
 	}
 
 
