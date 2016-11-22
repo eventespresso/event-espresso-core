@@ -114,7 +114,7 @@ class EE_Cron_Tasks extends EE_Base
             foreach ($ee_crons as $ee_cron) {
                 if (isset($cron[$ee_cron]) && is_array($cron[$ee_cron])) {
                     do_action('AHEE_log', __CLASS__, __FUNCTION__, $ee_cron, 'scheduled EE cron');
-                    foreach ((array) $cron[$ee_cron] as $ee_cron_details) {
+                    foreach ($cron[$ee_cron] as $ee_cron_details) {
                         if ( ! empty($ee_cron_details['args'])) {
                             do_action(
                                 'AHEE_log',
@@ -132,19 +132,29 @@ class EE_Cron_Tasks extends EE_Base
 
 
 
-	/**
-	 * reschedule_cron_for_transactions_if_maintenance_mode
-	 *
-	 * if Maintenance Mode is active, this will reschedule a cron to run again in 10 minutes
-	 *
-	 * @param string $cron_task
-	 * @param array  $TXN_IDs
-	 * @return bool
-	 */
-	public static function reschedule_cron_for_transactions_if_maintenance_mode( $cron_task, $TXN_IDs ) {
+    /**
+     * reschedule_cron_for_transactions_if_maintenance_mode
+     * if Maintenance Mode is active, this will reschedule a cron to run again in 10 minutes
+     *
+     * @param string $cron_task
+     * @param array  $TXN_IDs
+     * @return bool
+     * @throws \DomainException
+     */
+	public static function reschedule_cron_for_transactions_if_maintenance_mode( $cron_task, array $TXN_IDs ) {
+        if( ! method_exists('EE_Cron_Tasks', $cron_task)) {
+            throw new \DomainException(
+                sprintf(
+                    __('"%1$s" is not valid method on EE_Cron_Tasks.', 'event_espresso'),
+                    $cron_task
+                )
+            );
+        }
 		// reschedule the cron if we can't hit the db right now
 		if ( ! EE_Maintenance_Mode::instance()->models_can_query() ) {
 			foreach( $TXN_IDs as $TXN_ID => $additional_vars ) {
+                // ensure $additional_vars is an array
+                $additional_vars = is_array($additional_vars) ? $additional_vars : array($additional_vars);
 				// reset cron job for the TXN
                 call_user_func_array(
                     array('EE_Cron_Tasks', $cron_task),
