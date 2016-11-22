@@ -193,6 +193,10 @@ if (function_exists('espresso_version')) {
         define('EE_INF_IN_DB', -1);
         define('EE_INF', INF > (float)PHP_INT_MAX ? INF : PHP_INT_MAX);
         define('EE_DEBUG', false);
+        // for older WP versions
+        if ( ! defined('MONTH_IN_SECONDS')) {
+            define('MONTH_IN_SECONDS', DAY_IN_SECONDS * 30);
+        }
         /**
          *    espresso_plugin_activation
          *    adds a wp-option to indicate that EE has been activated via the WP admin plugins page
