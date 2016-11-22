@@ -67,7 +67,7 @@ class Iframe
      *
      * @param string $title
      * @param string $content
-     * @throws \EE_Error
+     * @throws \DomainException
      */
     public function __construct( $title, $content )
     {
@@ -97,18 +97,31 @@ class Iframe
                 )
             )
         );
+        if (
+            apply_filters(
+                'FHEE___EventEspresso_core_libraries_iframe_display_Iframe__construct__load_default_theme_stylesheet',
+                false
+            )
+        ) {
+            $this->addStylesheets(
+                apply_filters(
+                    'FHEE___EventEspresso_core_libraries_iframe_display_Iframe__construct__default_theme_stylesheet',
+                    array('default_theme_stylesheet' => get_stylesheet_uri())
+                )
+            );
+        }
     }
 
 
 
     /**
      * @param string $title
-     * @throws \EE_Error
+     * @throws \DomainException
      */
     public function setTitle( $title )
     {
         if ( empty( $title ) ) {
-            throw new \EE_Error(
+            throw new \DomainException(
                 esc_html__( 'You must provide a page title in order to create an iframe.', 'event_espresso' )
             );
         }
@@ -119,12 +132,12 @@ class Iframe
 
     /**
      * @param string $content
-     * @throws \EE_Error
+     * @throws \DomainException
      */
     public function setContent( $content )
     {
         if ( empty( $content ) ) {
-            throw new \EE_Error(
+            throw new \DomainException(
                 esc_html__( 'You must provide content in order to create an iframe.', 'event_espresso' )
             );
         }
@@ -145,12 +158,12 @@ class Iframe
 
     /**
      * @param array $stylesheets
-     * @throws \EE_Error
+     * @throws \DomainException
      */
     public function addStylesheets( array $stylesheets )
     {
         if ( empty( $stylesheets ) ) {
-            throw new \EE_Error(
+            throw new \DomainException(
                 esc_html__(
                     'A non-empty array of URLs, is required to add a CSS stylesheet to an iframe.',
                     'event_espresso'
@@ -167,12 +180,12 @@ class Iframe
     /**
      * @param array $scripts
      * @param bool  $add_to_header
-     * @throws \EE_Error
+     * @throws \DomainException
      */
     public function addScripts( array $scripts, $add_to_header = false )
     {
         if ( empty( $scripts ) ) {
-            throw new \EE_Error(
+            throw new \DomainException(
                 esc_html__(
                     'A non-empty array of URLs, is required to add Javascript to an iframe.',
                     'event_espresso'
@@ -193,12 +206,12 @@ class Iframe
     /**
      * @param array  $vars
      * @param string $var_name
-     * @throws \EE_Error
+     * @throws \DomainException
      */
     public function addLocalizedVars( array $vars, $var_name = 'eei18n' )
     {
         if ( empty( $vars ) ) {
-            throw new \EE_Error(
+            throw new \DomainException(
                 esc_html__(
                     'A non-empty array of vars, is required to add localized Javascript vars to an iframe.',
                     'event_espresso'

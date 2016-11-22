@@ -226,11 +226,12 @@ class EED_Events_Archive  extends EED_Module {
 
 
 
-	/**
-	 * @access    public
-	 * @return    void
-	 * @throws \DomainException
-	 */
+    /**
+     * @access    public
+     * @return    void
+     * @throws \EE_Error
+     * @throws \DomainException
+     */
 	public function event_list_iframe() {
 		$event_list_iframe = new EventsArchiveIframe( $this );
 		$event_list_iframe->display();

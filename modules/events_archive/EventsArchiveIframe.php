@@ -25,7 +25,7 @@ class EventsArchiveIframe extends Iframe
      * EventsArchiveIframe constructor.
      *
      * @param \EED_Events_Archive $EED_Events_Archive
-     * @throws \EE_Error
+     * @throws \DomainException
      */
     public function __construct( $EED_Events_Archive )
     {
@@ -55,7 +55,7 @@ class EventsArchiveIframe extends Iframe
                 'FHEE__EventEspresso_modules_events_archive_EventsArchiveIframe__display__js',
                 array(
                     'gmap_api' => sprintf(
-                        "https://maps.googleapis.com/maps/api/js?key=%s",
+                        'https://maps.googleapis.com/maps/api/js?key=%s',
                         apply_filters(
                             'FHEE__EEH_Maps__espresso_google_maps_js__api_key',
                             \EE_Registry::instance()->CFG->map_settings->google_map_api_key
