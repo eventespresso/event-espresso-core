@@ -746,7 +746,9 @@ abstract class EEM_Base extends EE_Base
      *                                        SQL >> "SELECT * FROM wp_posts AS Event_CPT LEFT JOIN wp_esp_event_meta
      *                                        AS Event_Meta ON Event_CPT.ID = Event_Meta.EVT_ID LEFT JOIN
      *                                        wp_esp_event_venue AS Event_Venue ON Event_Venue.EVT_ID=Event_CPT.ID LEFT
-     *                                        JOIN wp_posts AS Venue_CPT ON Venue_CPT.ID=Event_Venue.VNU_ID LEFT JOIN wp_esp_venue_meta AS Venue_Meta ON Venue_CPT.ID = Venue_Meta.VNU_ID WHERE Venue_CPT.ID = 12 Notice that automatically took care of joining Events to Venues (even when each of those models actually consisted of two tables). Also, you may chain the model relations together. Eg instead of just having "Venue.VNU_ID", you could have
+     *                                        JOIN wp_posts AS Venue_CPT ON Venue_CPT.ID=Event_Venue.VNU_ID LEFT JOIN wp_esp_venue_meta AS Venue_Meta ON Venue_CPT.ID = Venue_Meta.VNU_ID WHERE Venue_CPT.ID = 12 Notice that automatically
+     *                                        took care of joining Events to Venues (even when each of those models actually consisted of two tables). Also, you may chain the model relations together. Eg instead of just having
+     *                                        "Venue.VNU_ID", you could have
      *                                        "Registration.Attendee.ATT_ID" as a field on a query for events (because
      *                                        events are related to Registrations, which are related to Attendees). You
      *                                        can take it even further with
@@ -757,57 +759,74 @@ abstract class EEM_Base extends EE_Base
      *                                        'QST_wp_user' => array('in',array(1,2,7,23))) becomes SQL >> "...WHERE
      *                                        QST_display_text LIKE '%bob%' AND QST_ID < 34 AND QST_wp_user IN
      *                                        (1,2,7,23)...". Valid operators so far: =, !=, <, <=, >, >=, LIKE, NOT
-     *                                        LIKE, IN (followed by numeric-indexed array), NOT IN (dido), BETWEEN (followed by an array with exactly 2 date strings), IS NULL, and IS NOT NULL Values can be a string, int, or float. They can also be arrays IFF the operator is IN. Also, values can actually be field names. To indicate the value is a field, simply provide a third array item (true) to the operator-value array like so: eg: array( 'DTT_reg_limit' => array('>', 'DTT_sold', TRUE) ) becomes SQL >> "...WHERE DTT_reg_limit > DTT_sold" Note: you can also use related model field names like you would any other field name. eg: array('Datetime.DTT_reg_limit'=>array('=','Datetime.DTT_sold',TRUE) could be used if you were querying EEM_Tickets (because Datetime is directly related to tickets) Also, by default all the where conditions are AND'd together. To override this, add an array key 'OR' (or 'AND') and the array to be OR'd together eg: array('OR'=>array('TXN_ID' => 23 , 'TXN_timestamp__>' => 345678912)) becomes SQL >> "...WHERE TXN_ID = 23 OR TXN_timestamp = 345678912...". Also, to negate an entire set of conditions, use 'NOT' as an array key. eg: array('NOT'=>array('TXN_total' => 50, 'TXN_paid'=>23) becomes SQL >> "...where ! (TXN_total =50 AND TXN_paid =23) Note: the 'glue' used to join each condition will continue to be what you last specified. IE, "AND"s by default, but if you had previously specified to use ORs to join, ORs will continue to be used. So, if you specify to use an "OR" to join conditions, it will continue to "stick" until you specify an AND. eg array('OR'=>array('NOT'=>array('TXN_total' => 50, 'TXN_paid'=>23)),AND=>array('TXN_ID'=>1,'STS_ID'=>'TIN') becomes SQL >> "...where ! (TXN_total =50 OR TXN_paid =23) AND TXN_ID=1 AND STS_ID='TIN'" They can be nested indefinitely. eg: array('OR'=>array('TXN_total' => 23, 'NOT'=> array( 'TXN_timestamp'=> 345678912, 'AND'=>array('TXN_paid' => 53, 'STS_ID' => 'TIN')))) becomes SQL >> "...WHERE TXN_total = 23 OR ! (TXN_timestamp = 345678912 OR (TXN_paid = 53 AND STS_ID = 'TIN'))..." GOTCHA: because this is an array, array keys must be unique, making it impossible to place two or more where conditions applying to the same field. eg: array('PAY_timestamp'=>array('>',$start_date),'PAY_timestamp'=>array('<',$end_date),'PAY_timestamp'=>array('!=',$special_date)), as PHP enforces that the array keys must be unique, thus removing the first two array entries with key 'PAY_timestamp'. becomes SQL >> "PAY_timestamp !=  4234232", ignoring the first two PAY_timestamp conditions). To overcome this, you can add a '*' character to the end of the field's name, followed by anything. These will be removed when generating the SQL string, but allow for the array keys to be unique. eg: you could rewrite the previous query as: array('PAY_timestamp'=>array('>',$start_date),'PAY_timestamp*1st'=>array('<',$end_date),'PAY_timestamp*2nd'=>array('!=',$special_date)) which correctly becomes SQL >> "PAY_timestamp > 123412341 AND PAY_timestamp < 2354235235234 AND PAY_timestamp != 1241234123" This can be applied to condition operators too, eg: array('OR'=>array('REG_ID'=>3,'Transaction.TXN_ID'=>23),'OR*whatever'=>array('Attendee.ATT_fname'=>'bob','Attendee.ATT_lname'=>'wilson')));
+     *                                        LIKE, IN (followed by numeric-indexed array), NOT IN (dido), BETWEEN (followed by an array with exactly 2 date strings), IS NULL, and IS NOT NULL Values can be a string, int, or float. They can
+     *                                        also be arrays IFF the operator is IN. Also, values can actually be field names. To indicate the value is a field, simply provide a third array item (true) to the operator-value array like so:
+     *                                        eg: array( 'DTT_reg_limit' => array('>', 'DTT_sold', TRUE) ) becomes SQL >> "...WHERE DTT_reg_limit > DTT_sold" Note: you can also use related model field names like you would any other field
+     *                                        name. eg: array('Datetime.DTT_reg_limit'=>array('=','Datetime.DTT_sold',TRUE) could be used if you were querying EEM_Tickets (because Datetime is directly related to tickets) Also, by default
+     *                                        all the where conditions are AND'd together. To override this, add an array key 'OR' (or 'AND') and the array to be OR'd together eg: array('OR'=>array('TXN_ID' => 23 , 'TXN_timestamp__>' =>
+     *                                        345678912)) becomes SQL >> "...WHERE TXN_ID = 23 OR TXN_timestamp = 345678912...". Also, to negate an entire set of conditions, use 'NOT' as an array key. eg: array('NOT'=>array('TXN_total' =>
+     *                                        50, 'TXN_paid'=>23) becomes SQL >> "...where ! (TXN_total =50 AND TXN_paid =23) Note: the 'glue' used to join each condition will continue to be what you last specified. IE, "AND"s by default,
+     *                                        but if you had previously specified to use ORs to join, ORs will continue to be used. So, if you specify to use an "OR" to join conditions, it will continue to "stick" until you specify an AND.
+     *                                        eg array('OR'=>array('NOT'=>array('TXN_total' => 50, 'TXN_paid'=>23)),AND=>array('TXN_ID'=>1,'STS_ID'=>'TIN') becomes SQL >> "...where ! (TXN_total =50 OR TXN_paid =23) AND TXN_ID=1 AND
+     *                                        STS_ID='TIN'" They can be nested indefinitely. eg: array('OR'=>array('TXN_total' => 23, 'NOT'=> array( 'TXN_timestamp'=> 345678912, 'AND'=>array('TXN_paid' => 53, 'STS_ID' => 'TIN')))) becomes
+     *                                        SQL >> "...WHERE TXN_total = 23 OR ! (TXN_timestamp = 345678912 OR (TXN_paid = 53 AND STS_ID = 'TIN'))..." GOTCHA: because this is an array, array keys must be unique, making it impossible to
+     *                                        place two or more where conditions applying to the same field. eg:
+     *                                        array('PAY_timestamp'=>array('>',$start_date),'PAY_timestamp'=>array('<',$end_date),'PAY_timestamp'=>array('!=',$special_date)), as PHP enforces that the array keys must be unique, thus
+     *                                        removing the first two array entries with key 'PAY_timestamp'. becomes SQL >> "PAY_timestamp !=  4234232", ignoring the first two PAY_timestamp conditions). To overcome this, you can add a '*'
+     *                                        character to the end of the field's name, followed by anything. These will be removed when generating the SQL string, but allow for the array keys to be unique. eg: you could rewrite the
+     *                                        previous query as: array('PAY_timestamp'=>array('>',$start_date),'PAY_timestamp*1st'=>array('<',$end_date),'PAY_timestamp*2nd'=>array('!=',$special_date)) which correctly becomes SQL >>
+     *                                        "PAY_timestamp > 123412341 AND PAY_timestamp < 2354235235234 AND PAY_timestamp != 1241234123" This can be applied to condition operators too, eg:
+     *                                        array('OR'=>array('REG_ID'=>3,'Transaction.TXN_ID'=>23),'OR*whatever'=>array('Attendee.ATT_fname'=>'bob','Attendee.ATT_lname'=>'wilson')));
      * @var mixed   $limit                    int|array    adds a limit to the query just like the SQL limit clause, so
-     *      limits of "23", "25,50", and array(23,42) are all valid would become SQL "...LIMIT 23", "...LIMIT 25,50",
-     *      and "...LIMIT 23,42" respectively. Remember when you provide two numbers for the limit, the 1st number is
-     *      the OFFSET, the 2nd is the LIMIT
+     *                                        limits of "23", "25,50", and array(23,42) are all valid would become SQL "...LIMIT 23", "...LIMIT 25,50",
+     *                                        and "...LIMIT 23,42" respectively. Remember when you provide two numbers for the limit, the 1st number is
+     *                                        the OFFSET, the 2nd is the LIMIT
      * @var array   $on_join_limit            allows the setting of a special select join with a internal limit so you
-     *      can do paging on one-to-many multi-table-joins. Send an array in the following format array('on_join_limit'
-     *      => array( 'table_alias', array(1,2) ) ).
+     *                                        can do paging on one-to-many multi-table-joins. Send an array in the following format array('on_join_limit'
+     *                                        => array( 'table_alias', array(1,2) ) ).
      * @var mixed   $order_by                 name of a column to order by, or an array where keys are field names and
-     *      values are either 'ASC' or 'DESC'. 'limit'=>array('STS_ID'=>'ASC','REG_date'=>'DESC'), which would becomes
-     *      SQL "...ORDER BY TXN_timestamp..." and "...ORDER BY STS_ID ASC, REG_date DESC..." respectively. Like the
-     *      'where' conditions, these fields can be on related models. Eg
-     *      'order_by'=>array('Registration.Transaction.TXN_amount'=>'ASC') is perfectly valid from any model related
-     *      to 'Registration' (like Event, Attendee, Price, Datetime, etc.)
+     *                                        values are either 'ASC' or 'DESC'. 'limit'=>array('STS_ID'=>'ASC','REG_date'=>'DESC'), which would becomes
+     *                                        SQL "...ORDER BY TXN_timestamp..." and "...ORDER BY STS_ID ASC, REG_date DESC..." respectively. Like the
+     *                                        'where' conditions, these fields can be on related models. Eg
+     *                                        'order_by'=>array('Registration.Transaction.TXN_amount'=>'ASC') is perfectly valid from any model related
+     *                                        to 'Registration' (like Event, Attendee, Price, Datetime, etc.)
      * @var string  $order                    If 'order_by' is used and its value is a string (NOT an array), then
-     *      'order' specifies whether to order the field specified in 'order_by' in ascending or descending order.
-     *      Acceptable values are 'ASC' or 'DESC'. If, 'order_by' isn't used, but 'order' is, then it is assumed you
-     *      want to order by the primary key. Eg,
-     *      EEM_Event::instance()->get_all(array('order_by'=>'Datetime.DTT_EVT_start','order'=>'ASC'); //(will join
-     *      with the Datetime model's table(s) and order by its field DTT_EVT_start) or
-     *      EEM_Registration::instance()->get_all(array('order'=>'ASC'));//will make SQL "SELECT * FROM
-     *      wp_esp_registration ORDER BY REG_ID ASC"
+     *                                        'order' specifies whether to order the field specified in 'order_by' in ascending or descending order.
+     *                                        Acceptable values are 'ASC' or 'DESC'. If, 'order_by' isn't used, but 'order' is, then it is assumed you
+     *                                        want to order by the primary key. Eg,
+     *                                        EEM_Event::instance()->get_all(array('order_by'=>'Datetime.DTT_EVT_start','order'=>'ASC'); //(will join
+     *                                        with the Datetime model's table(s) and order by its field DTT_EVT_start) or
+     *                                        EEM_Registration::instance()->get_all(array('order'=>'ASC'));//will make SQL "SELECT * FROM
+     *                                        wp_esp_registration ORDER BY REG_ID ASC"
      * @var mixed   $group_by                 name of field to order by, or an array of fields. Eg either
-     *      'group_by'=>'VNU_ID', or 'group_by'=>array('EVT_name','Registration.Transaction.TXN_total') Note: if no
-     *      $group_by is specified, and a limit is set, automatically groups by the model's primary key (or combined
-     *      primary keys). This avoids some weirdness that results when using limits, tons of joins, and no group by,
-     *      see https://events.codebasehq.com/projects/event-espresso/tickets/9389
+     *                                        'group_by'=>'VNU_ID', or 'group_by'=>array('EVT_name','Registration.Transaction.TXN_total') Note: if no
+     *                                        $group_by is specified, and a limit is set, automatically groups by the model's primary key (or combined
+     *                                        primary keys). This avoids some weirdness that results when using limits, tons of joins, and no group by,
+     *                                        see https://events.codebasehq.com/projects/event-espresso/tickets/9389
      * @var array   $having                   exactly like WHERE parameters array, except these conditions apply to the
-     *      grouped results (whereas WHERE conditions apply to the pre-grouped results)
+     *                                        grouped results (whereas WHERE conditions apply to the pre-grouped results)
      * @var array   $force_join               forces a join with the models named. Should be a numerically-indexed
-     *      array where values are models to be joined in the query.Eg array('Attendee','Payment','Datetime'). You may
-     *      join with transient models using period, eg "Registration.Transaction.Payment". You will probably only want
-     *      to do this in hopes of increasing efficiency, as related models which belongs to the current model
+     *                                        array where values are models to be joined in the query.Eg array('Attendee','Payment','Datetime'). You may
+     *                                        join with transient models using period, eg "Registration.Transaction.Payment". You will probably only want
+     *                                        to do this in hopes of increasing efficiency, as related models which belongs to the current model
      *                                        (ie, the current model has a foreign key to them, like how Registration
      *                                        belongs to Attendee) can be cached in order to avoid future queries
      * @var string  $default_where_conditions can be set to 'none', 'this_model_only', 'other_models_only', or 'all'.
-     *      set this to 'none' to disable all default where conditions. Eg, usually soft-deleted objects are
-     *      filtered-out if you want to include them, set this query param to 'none'. If you want to ONLY disable THIS
-     *      model's default where conditions set it to 'other_models_only'. If you only want this model's default where
-     *      conditions added to the query, use 'this_model_only'. If you want to use all default where conditions
-     *      (default), set to 'all'.
+     *                                        set this to 'none' to disable all default where conditions. Eg, usually soft-deleted objects are
+     *                                        filtered-out if you want to include them, set this query param to 'none'. If you want to ONLY disable THIS
+     *                                        model's default where conditions set it to 'other_models_only'. If you only want this model's default where
+     *                                        conditions added to the query, use 'this_model_only'. If you want to use all default where conditions
+     *                                        (default), set to 'all'.
      * @var string  $caps                     controls what capability requirements to apply to the query; ie, should
-     *      we just NOT apply any capabilities/permissions/restrictions and return everything? Or should we only show
-     *      the current user items they should be able to view on the frontend, backend, edit, or delete? can be set to
-     *      'none' (default), 'read_frontend', 'read_backend', 'edit' or 'delete'
+     *                                        we just NOT apply any capabilities/permissions/restrictions and return everything? Or should we only show
+     *                                        the current user items they should be able to view on the frontend, backend, edit, or delete? can be set to
+     *                                        'none' (default), 'read_frontend', 'read_backend', 'edit' or 'delete'
      *                                        }
      * @return EE_Base_Class[]  *note that there is NO option to pass the output type. If you want results different
-     *                          from EE_Base_Class[], use _get_all_wpdb_results()and make it public again. Array keys
-     *                          are object IDs (if there is a primary key on the model. if not, numerically indexed)
-     *                          Some full examples: get 10 transactions which have Scottish attendees:
-     *                          EEM_Transaction::instance()->get_all( array( array(
+     *                                        from EE_Base_Class[], use _get_all_wpdb_results()and make it public again. Array keys
+     *                                        are object IDs (if there is a primary key on the model. if not, numerically indexed)
+     *                                        Some full examples: get 10 transactions which have Scottish attendees:
+     *                                        EEM_Transaction::instance()->get_all( array( array(
      *                                        'OR'=>array(
      *                                        'Registration.Attendee.ATT_fname'=>array('like','Mc%'),
      *                                        'Registration.Attendee.ATT_fname*other'=>array('like','Mac%')
@@ -1491,14 +1510,15 @@ abstract class EEM_Base extends EE_Base
      *                                         EE_Simple_HTML_Field->prepare_for_set($new_value), which removes the
      *                                         malicious javascript. However, if
      *                                         $values_already_prepared_by_model_object is left as FALSE, then
-     *                                         EE_Simple_HTML_Field->prepare_for_set($new_value) will be called on it, and every other field, before insertion. We provide this parameter because model objects perform their prepare_for_set function on all their values, and so don't need to be called again (and in many cases, shouldn't be called again. Eg: if we escape HTML characters in the prepare_for_set method...)
+     *                                         EE_Simple_HTML_Field->prepare_for_set($new_value) will be called on it, and every other field, before insertion. We provide this parameter because model objects perform their prepare_for_set
+     *                                         function on all their values, and so don't need to be called again (and in many cases, shouldn't be called again. Eg: if we escape HTML characters in the prepare_for_set method...)
      * @param boolean $keep_model_objs_in_sync if TRUE, makes sure we ALSO update model objects
      *                                         in this model's entity map according to $fields_n_values that match
      *                                         $query_params. This obviously has some overhead, so you can disable it
      *                                         by setting this to FALSE, but be aware that model objects being used
      *                                         could get out-of-sync with the database
      * @return int how many rows got updated or FALSE if something went wrong with the query (wp returns FALSE or num
-     *             rows affected which *could* include 0 which DOES NOT mean the query was bad)
+     *                                         rows affected which *could* include 0 which DOES NOT mean the query was bad)
      * @throws \EE_Error
      */
     public function update($fields_n_values, $query_params, $keep_model_objs_in_sync = true)
@@ -4518,7 +4538,7 @@ abstract class EEM_Base extends EE_Base
      * @access        private
      * @param        array $rows of results of $wpdb->get_results($query,ARRAY_A)
      * @return \EE_Base_Class[] array keys are primary keys (if there is a primary key on the model. if not,
-     *                          numerically indexed)
+     *                           numerically indexed)
      * @throws \EE_Error
      */
     protected function _create_objects($rows = array())
@@ -5206,7 +5226,7 @@ abstract class EEM_Base extends EE_Base
      * @param array               $query_params                     like EEM_Base::get_all's query_params.
      * @throws EE_Error
      * @return \EE_Base_Class[] Array keys are object IDs (if there is a primary key on the model. if not, numerically
-     *                          indexed)
+     *                                                              indexed)
      */
     public function get_all_copies($model_object_or_attributes_array, $query_params = array())
     {

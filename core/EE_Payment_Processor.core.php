@@ -124,8 +124,7 @@ class EE_Payment_Processor extends EE_Processor_Base
         } else {
             EE_Error::add_error(
                 sprintf(
-                    __('A valid payment method could not be determined due to a technical issue.%sPlease try again or contact %s for assistance.',
-                        'event_espresso'),
+                    __('A valid payment method could not be determined due to a technical issue.%sPlease try again or contact %s for assistance.', 'event_espresso'),
                     '<br/>',
                     EE_Registry::instance()->CFG->organization->get_pretty('email')
                 ), __FILE__, __FUNCTION__, __LINE__
@@ -248,8 +247,7 @@ class EE_Payment_Processor extends EE_Processor_Base
                     // not a payment
                     EE_Error::add_error(
                         sprintf(
-                            __('A valid payment method could not be determined due to a technical issue.%sPlease refresh your browser and try again or contact %s for assistance.',
-                                'event_espresso'),
+                            __('A valid payment method could not be determined due to a technical issue.%sPlease refresh your browser and try again or contact %s for assistance.', 'event_espresso'),
                             '<br/>',
                             EE_Registry::instance()->CFG->organization->get_pretty('email')
                         ),
@@ -294,19 +292,16 @@ class EE_Payment_Processor extends EE_Processor_Base
             } else {
                 //we couldn't find the payment for this IPN... let's try and log at least SOMETHING
                 if ($payment_method) {
-                    EEM_Change_Log::instance()
-                                  ->log(EEM_Change_Log::type_gateway, array('IPN data' => $_req_data), $payment_method);
+                    EEM_Change_Log::instance()->log(EEM_Change_Log::type_gateway, array('IPN data' => $_req_data), $payment_method);
                 } elseif ($transaction) {
-                    EEM_Change_Log::instance()
-                                  ->log(EEM_Change_Log::type_gateway, array('IPN data' => $_req_data), $transaction);
+                    EEM_Change_Log::instance()->log(EEM_Change_Log::type_gateway, array('IPN data' => $_req_data), $transaction);
                 }
             }
             return $payment;
         } catch (EE_Error $e) {
             do_action(
                 'AHEE__log', __FILE__, __FUNCTION__, sprintf(
-                    __('Error occurred while receiving IPN. Transaction: %1$s, req data: %2$s. The error was "%3$s"',
-                        'event_espresso'),
+                    __('Error occurred while receiving IPN. Transaction: %1$s, req data: %2$s. The error was "%3$s"', 'event_espresso'),
                     print_r($transaction, true),
                     print_r($_req_data, true),
                     $e->getMessage()
@@ -462,13 +457,6 @@ class EE_Payment_Processor extends EE_Processor_Base
                     && $payment->payment_method()->type_obj() instanceof EE_PMT_Base
                 ) {
                     $payment->payment_method()->type_obj()->update_txn_based_on_payment($payment);
-                    //$this->log(
-                    //	__CLASS__, __FUNCTION__, __LINE__,
-                    //	$payment->transaction(),
-                    //	array(
-                    //		'payment_method' => $payment->payment_method(),
-                    //	)
-                    //);
                     // update TXN registrations with payment info
                     $this->process_registration_payments($transaction, $payment);
                 }
@@ -551,17 +539,13 @@ class EE_Payment_Processor extends EE_Processor_Base
                     break;
                 }
                 if ($refund) {
-                    $available_payment_amount = $this->process_registration_refund($registration, $payment,
-                        $available_payment_amount);
+                    $available_payment_amount = $this->process_registration_refund($registration, $payment, $available_payment_amount);
                 } else {
-                    $available_payment_amount = $this->process_registration_payment($registration, $payment,
-                        $available_payment_amount);
+                    $available_payment_amount = $this->process_registration_payment($registration, $payment, $available_payment_amount);
                 }
             }
         }
-        if ($available_payment_amount > 0
-            && apply_filters('FHEE__EE_Payment_Processor__process_registration_payments__display_notifications', false)
-        ) {
+        if ($available_payment_amount > 0 && apply_filters('FHEE__EE_Payment_Processor__process_registration_payments__display_notifications', false)) {
             EE_Error::add_attention(
                 sprintf(
                     __('A remainder of %1$s exists after applying this payment to Registration(s) %2$s.%3$sPlease verify that the original payment amount of %4$s is correct. If so, you should edit this payment and select at least one additional registration in the "Registrations to Apply Payment to" section, so that the remainder of this payment can be applied to the additional registration(s).',
@@ -699,7 +683,9 @@ class EE_Payment_Processor extends EE_Processor_Base
         $transaction_processor->set_revisit($revisit);
         // if this is an IPN, let's consider the Payment Options Reg Step completed if not already
         if (
-            $IPN && $payment_options_step_completed !== true && ($payment->is_approved() || $payment->is_pending())
+            $IPN
+            && $payment_options_step_completed !== true
+            && ($payment->is_approved() || $payment->is_pending())
         ) {
             $payment_options_step_completed = $transaction->set_reg_step_completed(
                 'payment_options'
@@ -720,8 +706,7 @@ class EE_Payment_Processor extends EE_Processor_Base
             // and if we are all good to go, then send out notifications
             add_filter('FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true');
             //ok, now process the transaction according to the payment
-            $transaction_processor->update_transaction_and_registrations_after_checkout_or_payment($transaction,
-                $payment);
+            $transaction_processor->update_transaction_and_registrations_after_checkout_or_payment($transaction, $payment);
         }
         // DEBUG LOG
         $payment_method = $payment->payment_method();

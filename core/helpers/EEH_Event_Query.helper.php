@@ -501,7 +501,7 @@ class EEH_Event_Query {
 	 * @return    string
 	 */
 	public static function posts_where_sql_for_show_expired( $show_expired = FALSE ) {
-		return ! $show_expired ? ' AND ' . EEM_Datetime::instance()->table() . '.DTT_EVT_end > "' . current_time( 'mysql', TRUE ) . '" ' : '';
+		return ! $show_expired ? ' AND ' . EEM_Datetime::instance()->table() . '.DTT_EVT_end > \'' . current_time( 'mysql', TRUE ) . '\' ' : '';
 	}
 
 
@@ -515,7 +515,7 @@ class EEH_Event_Query {
 	 */
 	public static function posts_where_sql_for_event_category_slug( $event_category_slug = NULL ) {
 		global $wpdb;
-		return ! empty( $event_category_slug ) ? ' AND ' . $wpdb->terms . '.slug = "' . $event_category_slug . '" ' : '';
+		return ! empty( $event_category_slug ) ? " AND {$wpdb->terms}.slug = '{$event_category_slug}' " : '';
 	}
 
 
@@ -530,10 +530,11 @@ class EEH_Event_Query {
 	public static function posts_where_sql_for_event_list_month( $month = NULL ) {
 		$SQL = '';
 		if ( ! empty( $month ) ) {
+			$datetime_table = EEM_Datetime::instance()->table();
 			// event start date is LESS than the end of the month ( so nothing that doesn't start until next month )
-			$SQL = ' AND ' . EEM_Datetime::instance()->table() . '.DTT_EVT_start <= "' . gmdate( 'Y-m-t 23:59:59', strtotime( $month ) ) . '"';
+			$SQL = " AND {$datetime_table}.DTT_EVT_start <= '" . date( 'Y-m-t 23:59:59', strtotime( $month ) ) . "'";
 			// event end date is GREATER than the start of the month ( so nothing that ended before this month )
-			$SQL .= ' AND ' . EEM_Datetime::instance()->table() . '.DTT_EVT_end >= "' . gmdate( 'Y-m-01 0:0:00', strtotime( $month ) ) . '" ';
+			$SQL .= " AND {$datetime_table}.DTT_EVT_end >= '" . date( 'Y-m-01 0:0:00', strtotime( $month ) ) . "' ";
 		}
 		return $SQL;
 	}

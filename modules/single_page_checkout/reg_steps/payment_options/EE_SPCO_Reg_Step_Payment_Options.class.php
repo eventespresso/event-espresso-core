@@ -2689,6 +2689,24 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		exit();
 	}
 
+
+
+    /**
+     *    __sleep
+     * to conserve db space, let's remove the reg_form and the EE_Checkout object from EE_SPCO_Reg_Step objects upon serialization
+     * EE_Checkout will handle the reimplementation of itself upon waking,
+     * but we won't bother with the reg form, because if needed, it will be regenerated anyways
+     *
+     * @return array
+     */
+    public function __sleep()
+    {
+        // remove the reg form and the checkout
+        return array_diff( array_keys( get_object_vars( $this ) ), array( 'reg_form', 'checkout', 'line_item_display' ) );
+    }
+
+
+
 }
 // End of file EE_SPCO_Reg_Step_Payment_Options.class.php
 // Location: /EE_SPCO_Reg_Step_Payment_Options.class.php

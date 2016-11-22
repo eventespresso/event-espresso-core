@@ -1,6 +1,6 @@
 <?php
 /*
-  Plugin Name: Event Espresso - New Payment Method
+  Plugin Name: Event Espresso - New Payment Method (EE 4.x+)
   Plugin URI: http://www.eventespresso.com
   Description: The Event Espresso New Payment Method adds 2 new payment methods: new onsite and new offsite
   Version: 0.0.1.dev.002

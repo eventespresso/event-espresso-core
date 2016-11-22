@@ -972,7 +972,7 @@ jQuery(document).ready( function($) {
 				//  check for payment_amount
 				if ( typeof response.payment_amount !== 'undefined' ) {
 					SPCO.payment_amount = parseFloat( response.payment_amount );
-					console.log( JSON.stringify( 'SPCO.payment_amount: ' + SPCO.payment_amount, null, 4 ) );
+					// console.log( JSON.stringify( 'SPCO.payment_amount: ' + SPCO.payment_amount, null, 4 ) );
 					// trigger a custom event so that other JS functions can add listeners for the "spco_payment_amount" event
 					SPCO.main_container.trigger( 'spco_payment_amount', [ SPCO.payment_amount ] );
 				}
