@@ -24,6 +24,7 @@ class TicketSelectorIframe extends Iframe
     /**
      * TicketSelectorIframe constructor.
      *
+     * @throws \DomainException
      * @throws \EE_Error
      */
     public function __construct()
