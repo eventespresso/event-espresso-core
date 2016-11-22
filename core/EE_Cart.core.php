@@ -203,6 +203,9 @@ class EE_Cart
      */
     public function get_tickets()
     {
+        if ($this->_grand_total === null ) {
+            return array();
+        }
         return EEH_Line_Item::get_ticket_line_items($this->_grand_total);
     }
 
