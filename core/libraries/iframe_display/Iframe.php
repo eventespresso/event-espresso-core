@@ -84,7 +84,8 @@ class Iframe
                     'dashicons'        => includes_url( 'css/dashicons.min.css?ver=' . $wp_version ),
                     'espresso_default' => EE_GLOBAL_ASSETS_URL
                                           . 'css/espresso_default.css?ver=' . EVENT_ESPRESSO_VERSION,
-                )
+                ),
+                $this
             )
         );
         $this->addScripts(
@@ -94,7 +95,8 @@ class Iframe
                     'jquery'        => includes_url( 'js/jquery/jquery.js?ver=' . $wp_version ),
                     'espresso_core' => EE_GLOBAL_ASSETS_URL
                                        . 'scripts/espresso_core.js?ver=' . EVENT_ESPRESSO_VERSION,
-                )
+                ),
+                $this
             )
         );
         if (
@@ -106,7 +108,8 @@ class Iframe
             $this->addStylesheets(
                 apply_filters(
                     'FHEE___EventEspresso_core_libraries_iframe_display_Iframe__construct__default_theme_stylesheet',
-                    array('default_theme_stylesheet' => get_stylesheet_uri())
+                    array('default_theme_stylesheet' => get_stylesheet_uri()),
+                    $this
                 )
             );
         }
@@ -261,31 +264,38 @@ class Iframe
             array(
                 'title'             => apply_filters(
                     'FHEE___EventEspresso_core_libraries_iframe_display_Iframe__getTemplate__title',
-                    $this->title
+                    $this->title,
+                    $this
                 ),
                 'content'           => apply_filters(
                     'FHEE___EventEspresso_core_libraries_iframe_display_Iframe__getTemplate__content',
-                    $this->content
+                    $this->content,
+                    $this
                 ),
                 'enqueue_wp_assets' => apply_filters(
                     'FHEE___EventEspresso_core_libraries_iframe_display_Iframe__getTemplate__enqueue_wp_assets',
-                    $this->enqueue_wp_assets
+                    $this->enqueue_wp_assets,
+                    $this
                 ),
                 'css'               => (array)apply_filters(
                     'FHEE___EventEspresso_core_libraries_iframe_display_Iframe__getTemplate__css_urls',
-                    $this->css
+                    $this->css,
+                    $this
                 ),
                 'header_js'         => (array)apply_filters(
                     'FHEE___EventEspresso_core_libraries_iframe_display_Iframe__getTemplate__header_js_urls',
-                    $this->header_js
+                    $this->header_js,
+                    $this
                 ),
                 'footer_js'         => (array)apply_filters(
                     'FHEE___EventEspresso_core_libraries_iframe_display_Iframe__getTemplate__footer_js_urls',
-                    $this->footer_js
+                    $this->footer_js,
+                    $this
                 ),
                 'eei18n'            => apply_filters(
                     'FHEE___EventEspresso_core_libraries_iframe_display_Iframe__getTemplate__eei18n_js_strings',
-                    \EE_Registry::localize_i18n_js_strings() . $this->localizeJsonVars()
+                    \EE_Registry::localize_i18n_js_strings() . $this->localizeJsonVars(),
+                    $this
                 ),
                 'notices'           => \EEH_Template::display_template(
                     EE_TEMPLATES . 'espresso-ajax-notices.template.php',
