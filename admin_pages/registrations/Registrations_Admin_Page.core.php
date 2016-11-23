@@ -933,136 +933,259 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     }
 
 
+    /**
+     * Used to retrieve registrations for the list table.
+     *
+     * @param int    $per_page
+     * @param bool   $count
+     * @param bool   $this_month
+     * @param bool   $today
+     * @param bool   $trash
+     * @param string $orderby
+     * @return \EE_Registration[]
+     */
+    public function get_registrations(
+        $per_page = 10,
+        $count = false,
+        $this_month = false,
+        $today = false
+    ) {
+        $view         = ! empty($this->_req_data['status']) ? $this->_req_data['status'] : '';
+        $query_params = $this->_get_registration_query_parameters($view, $per_page, $count, $this_month, $today);
+        return $this->_get_registrations_or_count( $query_params, $view === 'trash', $count );
+    }
+
 
     /**
-     * get registrations for given parameters (used by list table)
+     * Performs the appropriate model query for retrieving registrations or the count.
      *
-     * @param  int     $per_page   how many registrations displayed per page
-     * @param  boolean $count      return the count or objects
-     * @param  boolean $this_month whether to return for just this month
-     * @param  boolean $today      whether to return results for just today
-     * @throws \EE_Error
-     * @return mixed (int|array)  int = count || array of registration objects
+     * @param $query_params
+     * @param $trash
+     * @param $count
+     * @return int|EE_Registration[]
      */
-    public function get_registrations($per_page = 10, $count = false, $this_month = false, $today = false)
+    protected function _get_registrations_or_count( $query_params, $trash, $count ) {
+        if ($count) {
+            $method_to_use = $trash
+                ? 'count_deleted'
+                : 'count';
+            $registrations = EEM_Registration::instance()->{$method_to_use}($query_params);
+        } else {
+            $method_to_use = $trash
+                ? 'get_all_deleted'
+                : 'get_all';
+            $registrations = EEM_Registration::instance()->{$method_to_use}($query_params);
+        }
+        return $registrations;
+    }
+
+
+    /**
+     * Retrieves the query paramaters to be used by the Registration model for getting registrations.
+     * Note: this listens to values on the request for some of the query parameters.
+     * @param string $view
+     * @param int    $per_page
+     * @param bool   $count
+     * @param bool   $this_month
+     * @param bool   $today
+     * @return array
+     */
+    protected function _get_registration_query_parameters(
+        $view = '',
+        $per_page = 10,
+        $count = false,
+        $this_month = false,
+        $today = false
+    ) {
+        $query_params = array(
+            0                          => $this->_get_where_conditions_for_registrations_query(
+                                            $view,
+                                            $this_month,
+                                            $today
+                                            ),
+            'caps'                     => EEM_Registration::caps_read_admin,
+            'default_where_conditions' => 'this_model_only',
+        );
+        if ( ! $count) {
+            $query_params = array_merge(
+                $query_params,
+                $this->_get_orderby_for_registrations_query(),
+                $this->_get_limit($per_page)
+            );
+        }
+        return $query_params;
+    }
+
+
+    /**
+     * This will add EVT_ID to the provided $where array for EE model query parameters.
+     *
+     * @param array $where incoming $where parameters.
+     * @return array
+     */
+    protected function _add_event_id_to_where_conditions(array $where)
     {
-        $EVT_ID = ! empty($this->_req_data['event_id']) && $this->_req_data['event_id'] > 0
-            ? absint($this->_req_data['event_id']) : false;
-        $CAT_ID = ! empty($this->_req_data['EVT_CAT']) && (int)$this->_req_data['EVT_CAT'] > 0
-            ? absint($this->_req_data['EVT_CAT']) : false;
-        $DTT_ID = isset($this->_req_data['datetime_id']) ? absint($this->_req_data['datetime_id']) : null;
-        $reg_status = ! empty($this->_req_data['_reg_status']) ? sanitize_text_field($this->_req_data['_reg_status'])
-            : false;
-        $month_range = ! empty($this->_req_data['month_range']) ? sanitize_text_field($this->_req_data['month_range'])
-            : false;//should be like 2013-april
-        $today_a = ! empty($this->_req_data['status']) && $this->_req_data['status'] === 'today' ? true : false;
-        $this_month_a = ! empty($this->_req_data['status']) && $this->_req_data['status'] === 'month' ? true : false;
-        $start_date = false;
-        $end_date = false;
-        $_where = array();
-        $trash = ! empty($this->_req_data['status']) && $this->_req_data['status'] === 'trash' ? true : false;
-        $incomplete = ! empty($this->_req_data['status']) && $this->_req_data['status'] === 'incomplete' ? true : false;
-        //set orderby
-        $this->_req_data['orderby'] = ! empty($this->_req_data['orderby']) ? $this->_req_data['orderby'] : '';
-        switch ($this->_req_data['orderby']) {
-            case '_REG_ID':
-                $orderby = 'REG_ID';
-                break;
-            case '_Reg_status':
-                $orderby = 'STS_ID';
-                break;
-            case 'ATT_fname':
-                $orderby = 'Attendee.ATT_lname';
-                break;
-            case 'event_name':
-                $orderby = 'Event.EVT_name';
-                break;
-            case 'DTT_EVT_start':
-                $orderby = 'Event.Datetime.DTT_EVT_start';
-                break;
-            default: //'REG_date'
-                $orderby = 'REG_date';
+        if ( ! empty($this->_req_data['event_id'])) {
+            $where['EVT_ID'] = absint($this->_req_data['event_id']);
         }
-        $sort = (isset($this->_req_data['order']) && ! empty($this->_req_data['order'])) ? $this->_req_data['order']
-            : 'DESC';
-        $current_page = isset($this->_req_data['paged']) && ! empty($this->_req_data['paged'])
-            ? $this->_req_data['paged'] : 1;
-        $per_page = isset($this->_req_data['perpage']) && ! empty($this->_req_data['perpage'])
-            ? $this->_req_data['perpage'] : $per_page;
-        $offset = ($current_page - 1) * $per_page;
-        $limit = $count ? null : array($offset, $per_page);
-        if ($EVT_ID) {
-            $_where['EVT_ID'] = $EVT_ID;
+        return $where;
+    }
+
+
+    /**
+     * Adds category ID if it exists in the request to the where conditions for the registrations query.
+     * @param array $where
+     * @return array
+     */
+    protected function _add_category_id_to_where_conditions(array $where)
+    {
+        if ( ! empty($this->_req_data['EVT_CAT']) && (int) $this->_req_data['EVT_CAT'] !== -1 ) {
+            $where['Event.Term_Taxonomy.term_id'] = absint($this->_req_data['EVT_CAT']);
         }
-        if ($CAT_ID) {
-            $_where['Event.Term_Taxonomy.term_id'] = $CAT_ID;
+        return $where;
+    }
+
+
+    /**
+     * Adds the datetime ID if it exists in the request to the where conditions for the registrations query.
+     * @param array $where
+     * @return array
+     */
+    protected function _add_datetime_id_to_where_conditions(array $where)
+    {
+        if ( ! empty($this->_req_data['datetime_id'])) {
+            $where['Ticket.Datetime.DTT_ID'] = absint($this->_req_data['datetime_id']);
         }
-        //if DTT is included we filter by that datetime.
-        if ($DTT_ID) {
-            $_where['Ticket.Datetime.DTT_ID'] = $DTT_ID;
+        return $where;
+    }
+
+
+    /**
+     * Adds the correct registration status to the where conditions for the registrations query.
+     * @param array  $where
+     * @param string $view
+     * @return array
+     */
+    protected function _add_registration_status_to_where_conditions(array $where, $view = '')
+    {
+        $registration_status = ! empty($this->_req_data['_reg_status'])
+            ? sanitize_text_field($this->_req_data['_reg_status'])
+            : '';
+
+        /*
+         * If filtering by registration status, then we show registrations matching that status.
+         * If not filtering by specified status, then we show all registrations excluding incomplete registrations UNLESS
+         * viewing trashed registrations.
+         */
+        if ( ! empty($registration_status)) {
+            $where['STS_ID'] = $registration_status;
+        } else {
+            //make sure we exclude incomplete registrations, but only if not trashed.
+            if ($view !== 'trash') {
+                $where['STS_ID'] = array('!=', EEM_Registration::status_id_incomplete);
+            }
+
+            //if incomplete is the view.
+            if ($view === 'incomplete') {
+                $where['STS_ID'] = EEM_Registration::status_id_incomplete;
+            }
         }
-        if ($incomplete) {
-            $_where['STS_ID'] = EEM_Registration::status_id_incomplete;
-        } else if ( ! $trash) {
-            $_where['STS_ID'] = array('!=', EEM_Registration::status_id_incomplete);
-        }
-        if ($reg_status) {
-            $_where['STS_ID'] = $reg_status;
-        }
-        $this_year_r = date('Y', current_time('timestamp'));
-        $time_start = ' 00:00:00';
-        $time_end = ' 23:59:59';
-        if ($today_a || $today) {
-            $curdate = date('Y-m-d', current_time('timestamp'));
-            $_where['REG_date'] = array(
+        return $where;
+    }
+
+
+    /**
+     * Adds any provided date restraints to the where conditions for the registrations query.
+     * @param array  $where
+     * @param string $view
+     * @param bool   $this_month
+     * @param bool   $today
+     * @return array
+     */
+    protected function _add_date_to_where_conditions(array $where, $view = '', $this_month = false, $today = false)
+    {
+        $month_range             = ! empty($this->_req_data['month_range'])
+            ? sanitize_text_field($this->_req_data['month_range'])
+            : '';
+        $retrieve_for_today      = $view === 'today' || $today;
+        $retrieve_for_this_month = $view === 'month' || $this_month;
+
+        if ($retrieve_for_today) {
+            $now               = date('Y-m-d', current_time('timestamp'));
+            $where['REG_date'] = array(
                 'BETWEEN',
                 array(
-                    EEM_Registration::instance()
-                                    ->convert_datetime_for_query('REG_date', $curdate . $time_start, 'Y-m-d H:i:s'),
-                    EEM_Registration::instance()
-                                    ->convert_datetime_for_query('REG_date', $curdate . $time_end, 'Y-m-d H:i:s'),
+                    EEM_Registration::instance()->convert_datetime_for_query(
+                        'REG_date',
+                        $now . ' 00:00:00',
+                        'Y-m-d H:i:s'
+                    ),
+                    EEM_Registration::instance()->convert_datetime_for_query(
+                        'REG_date',
+                        $now . ' 23:59:59',
+                        'Y-m-d H:i:s'
+                    ),
                 ),
             );
-        } elseif ($this_month_a || $this_month) {
-            $this_month_r = date('m', current_time('timestamp'));
-            $days_this_month = date('t', current_time('timestamp'));
-            $_where['REG_date'] = array(
+        } elseif ($retrieve_for_this_month) {
+            $current_year_and_month = date('Y-m', current_time('timestamp'));
+            $days_this_month        = date('t', current_time('timestamp'));
+            $where['REG_date']      = array(
                 'BETWEEN',
                 array(
-                    EEM_Registration::instance()
-                                    ->convert_datetime_for_query('REG_date',
-                                        $this_year_r . '-' . $this_month_r . '-01' . ' ' . $time_start, 'Y-m-d H:i:s'),
-                    EEM_Registration::instance()
-                                    ->convert_datetime_for_query('REG_date',
-                                        $this_year_r . '-' . $this_month_r . '-' . $days_this_month . ' ' . $time_end,
-                                        'Y-m-d H:i:s'),
+                    EEM_Registration::instance()->convert_datetime_for_query(
+                        'REG_date',
+                        $current_year_and_month . '-01 00:00:00',
+                        'Y-m-d H:i:s'
+                    ),
+                    EEM_Registration::instance()->convert_datetime_for_query(
+                        'REG_date',
+                        $current_year_and_month . '-' . $days_this_month . ' 23:59:59',
+                        'Y-m-d H:i:s'
+                    ),
                 ),
             );
         } elseif ($month_range) {
-            $pieces = explode(' ', $this->_req_data['month_range'], 3);
-            $month_r = ! empty($pieces[0]) ? date('m', strtotime($month_range)) : '';
-            $year_r = ! empty($pieces[1]) ? $pieces[1] : '';
-            $days_in_month = date('t', strtotime($year_r . '-' . $month_r . '-' . '01'));
-            $_where['REG_date'] = array(
-                'BETWEEN',
-                array(
-                    EEM_Registration::instance()
-                                    ->convert_datetime_for_query('REG_date', $year_r . '-' . $month_r . '-01 00:00:00',
-                                        'Y-m-d H:i:s'),
-                    EEM_Registration::instance()
-                                    ->convert_datetime_for_query('REG_date',
-                                        $year_r . '-' . $month_r . '-' . $days_in_month . ' 23:59:59', 'Y-m-d H:i:s'),
-                ),
-            );
-        } elseif ($start_date && $end_date) {
-            throw new EE_Error("not yet supported");
-        } elseif ($start_date) {
-            throw new EE_Error("not yet supported");
-        } elseif ($end_date) {
-            throw new EE_Error("not yet supported");
+            $pieces          = explode(' ', $month_range, 3);
+            $month_requested = ! empty($pieces[0])
+                ? date('m', strtotime($month_range))
+                : '';
+            $year_requested  = ! empty($pieces[1])
+                ? $pieces[1]
+                : '';
+            //if there is not a month or year then we can't go further
+            if ($month_requested && $year_requested) {
+                $days_in_month     = date('t', strtotime($year_requested . '-' . $month_requested . '-' . '01'));
+                $where['REG_date'] = array(
+                    'BETWEEN',
+                    array(
+                        EEM_Registration::instance()->convert_datetime_for_query(
+                            'REG_date',
+                            $year_requested . '-' . $month_requested . '-01 00:00:00',
+                            'Y-m-d H:i:s'
+                        ),
+                        EEM_Registration::instance()->convert_datetime_for_query(
+                            'REG_date',
+                            $year_requested . '-' . $month_requested . '-' . $days_in_month . ' 23:59:59',
+                            'Y-m-d H:i:s'
+                        ),
+                    ),
+                );
+            }
         }
+        return $where;
+    }
+
+
+    /**
+     * Adds any provided search restraints to the where conditions for the registrations query
+     * @param array $where
+     * @return array
+     */
+    protected function _add_search_to_where_conditions(array $where)
+    {
         if ( ! empty($this->_req_data['s'])) {
-            $sstr = '%' . $this->_req_data['s'] . '%';
+            $sstr         = '%' . sanitize_text_field($this->_req_data['s']) . '%';
             $_where['OR'] = array(
                 'Event.EVT_name'                          => array('LIKE', $sstr),
                 'Event.EVT_desc'                          => array('LIKE', $sstr),
@@ -1084,74 +1207,87 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 'Transaction.Payment.PAY_txn_id_chq_nmbr' => array('LIKE', $sstr),
             );
         }
-        //capability checks
-        if ( ! EE_Registry::instance()->CAP->current_user_can('ee_read_others_registrations', 'get_registrations')) {
-            $_where['AND'] = array(
-                'Event.EVT_wp_user' => get_current_user_id(),
-            );
+        return $where;
+    }
+
+
+    /**
+     * Sets up the where conditions for the registrations query.
+     * @param $view
+     * @param $this_month
+     * @param $today
+     * @return array
+     */
+    protected function _get_where_conditions_for_registrations_query($view, $this_month, $today)
+    {
+        $where = $this->_add_event_id_to_where_conditions(array());
+        $where = $this->_add_category_id_to_where_conditions($where);
+        $where = $this->_add_datetime_id_to_where_conditions($where);
+        $where = $this->_add_registration_status_to_where_conditions($where, $view);
+        $where = $this->_add_date_to_where_conditions($where, $view, $this_month, $today);
+        $where = $this->_add_search_to_where_conditions($where);
+        return $where;
+    }
+
+
+    /**
+     * Sets up the orderby for the registrations query.
+     * @return array
+     */
+    protected function _get_orderby_for_registrations_query()
+    {
+        $orderby_field = ! empty($this->_req_data['orderby'])
+            ? sanitize_text_field($this->_req_data['orderby'])
+            : '';
+        switch ($orderby_field) {
+            case '_REG_ID':
+                $orderby_field = 'REG_ID';
+                break;
+            case '_Reg_status':
+                $orderby_field = 'STS_ID';
+                break;
+            case 'ATT_fname':
+                $orderby_field = 'Attendee.ATT_lname';
+                break;
+            case 'event_name':
+                $orderby_field = 'Event.EVT_name';
+                break;
+            case 'DTT_EVT_start':
+                $orderby_field = 'Event.Datetime.DTT_EVT_start';
+                break;
+            default: //'REG_date'
+                $orderby_field = 'REG_date';
         }
-        if ($count) {
-            if ($trash) {
-                return EEM_Registration::instance()->count_deleted(array($_where));
-            } else if ($incomplete) {
-                return EEM_Registration::instance()->count(array($_where));
-            } else {
-                return EEM_Registration::instance()->count(array(
-                    $_where,
-                    'default_where_conditions' => 'this_model_only',
-                ));
-            }
-        } else {
-            //make sure we remove default where conditions cause all registrations matching query are returned
-            $query_params = array(
-                $_where,
-                'order_by'                 => array($orderby => $sort),
-                'default_where_conditions' => 'this_model_only',
-            );
-            if ($per_page !== -1) {
-                $query_params['limit'] = $limit;
-            }
-            $registrations = $trash ? EEM_Registration::instance()->get_all_deleted($query_params)
-                : EEM_Registration::instance()->get_all($query_params);
-            if ($EVT_ID
-                && isset($registrations[0])
-                && $registrations[0] instanceof EE_Registration
-                && $registrations[0]->event_obj()
-            ) {
-                $first_registration = $registrations[0];
-                //EEH_Debug_Tools::printr( $registrations[0], '$registrations  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-                $event_name = $first_registration->event_obj()->name();
-                $event_date = $first_registration->date_obj()
-                                                 ->start_date_and_time('l F j, Y,',
-                                                     'g:i:s a');// isset( $registrations[0]->DTT_EVT_start ) ? date( 'l F j, Y,    g:i:s a', $registrations[0]->DTT_EVT_start ) : '';
-                // edit event link
-                if ($event_name != '') {
-                    $edit_event_url = self::add_query_args_and_nonce(array(
-                        'action' => 'edit_event',
-                        'EVT_ID' => $EVT_ID,
-                    ), EVENTS_ADMIN_URL);
-                    $edit_event_lnk = '<a href="' . $edit_event_url . '" title="' . esc_attr__('Edit ',
-                            'event_espresso') . $event_name . '">' . __('Edit Event', 'event_espresso') . '</a>';
-                    $event_name .= ' <span class="admin-page-header-edit-lnk not-bold">' . $edit_event_lnk . '</span>';
-                }
-                $back_2_reg_url = self::add_query_args_and_nonce(array('action' => 'default'), REG_ADMIN_URL);
-                $back_2_reg_lnk = '<a href="'
-                                  . $back_2_reg_url
-                                  . '" title="'
-                                  . esc_attr__('click to return to viewing all registrations ', 'event_espresso')
-                                  . '">&laquo; '
-                                  . __('Back to All Registrations', 'event_espresso')
-                                  . '</a>';
-                $this->_template_args['before_admin_page_content'] = '
-			<div id="admin-page-header">
-				<h1><span class="small-text not-bold">' . __('Event: ', 'event_espresso') . '</span>' . $event_name . '</h1>
-				<h3><span class="small-text not-bold">' . __('Date: ', 'event_espresso') . '</span>' . $event_date . '</h3>
-				<span class="admin-page-header-go-back-lnk not-bold">' . $back_2_reg_lnk . '</span>
-			</div>
-			';
-            }
-            return $registrations;
+
+        //order
+        $order = ! empty($this->_req_data['order'])
+            ? sanitize_text_field($this->_req_data['order'])
+            : 'DESC';
+        return array('order_by' => array($orderby_field => $order));
+    }
+
+
+    /**
+     * Sets up the limit for the registrations query.
+     * @param $per_page
+     * @return array
+     */
+    protected function _get_limit($per_page)
+    {
+        $current_page = ! empty($this->_req_data['paged'])
+            ? absint($this->_req_data['paged'])
+            : 1;
+        $per_page     = ! empty($this->_req_data['perpage'])
+            ? $this->_req_data['perpage']
+            : $per_page;
+
+        //-1 means return all results so get out if that's set.
+        if ( (int) $per_page === -1) {
+            return array();
         }
+        $per_page = absint($per_page);
+        $offset   = ($current_page - 1) * $per_page;
+        return array('limit' => array($offset, $per_page));
     }
 
 
