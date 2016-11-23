@@ -47,7 +47,8 @@ class EventsArchiveIframe extends Iframe
                     $EED_Events_Archive->theme() => get_stylesheet_directory_uri()
                                                     . $EED_Events_Archive->theme() . DS
                                                     . 'style.css?ver=' . EVENT_ESPRESSO_VERSION,
-                )
+                ),
+                $this
             )
         );
         $this->addScripts(
@@ -62,7 +63,8 @@ class EventsArchiveIframe extends Iframe
                         )
                     ),
                     'ee_gmap'  => EE_HELPERS_ASSETS . 'ee_gmap.js?ver=1.0',
-                )
+                ),
+                $this
             )
         );
         $this->addLocalizedVars(
