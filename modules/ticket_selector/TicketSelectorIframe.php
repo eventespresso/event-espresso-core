@@ -51,7 +51,8 @@ class TicketSelectorIframe extends Iframe
                     'ticket_selector'       => TICKET_SELECTOR_ASSETS_URL
                                                . 'ticket_selector.css?ver='
                                                . EVENT_ESPRESSO_VERSION,
-                )
+                ),
+                $this
             )
         );
         $this->addScripts(
@@ -61,7 +62,8 @@ class TicketSelectorIframe extends Iframe
                     'ticket_selector_iframe_embed' => TICKET_SELECTOR_ASSETS_URL
                                                       . 'ticket_selector_iframe_embed.js?ver='
                                                       . EVENT_ESPRESSO_VERSION,
-                )
+                ),
+                $this
             )
         );
         $this->addLocalizedVars(
