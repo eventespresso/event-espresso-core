@@ -305,7 +305,164 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
         $this->assertEquals($expected_ids, array_keys($registrations));
     }
 
+    public function test_add_event_id_to_where_conditions()
+    {
+        $this->go_to(
+            $this->_get_reg_admin_url(array('event_id' => 42))
+        );
+        $this->_load_requirements();
+        $where = $this->_admin_page->add_event_id_to_where_conditions(array());
+        $this->assertCount(1, $where);
+        $this->assertArrayHasKey('EVT_ID', $where);
+        $this->assertEquals(42, $where['EVT_ID']);
+    }
 
+
+
+    public function test_add_category_id_to_where_conditions()
+    {
+        $this->go_to(
+            $this->_get_reg_admin_url(array('EVT_CAT' => 42))
+        );
+        $this->_load_requirements();
+        $where = $this->_admin_page->add_category_id_to_where_conditions(array());
+        $this->assertCount(1, $where);
+        $this->assertArrayHasKey('Event.Term_Taxonomy.term_id', $where);
+        $this->assertEquals(42,$where['Event.Term_Taxonomy.term_id']);
+    }
+
+
+    public function test_add_datetime_id_to_where_conditions()
+    {
+        $this->go_to(
+            $this->_get_reg_admin_url(array('datetime_id' => 42))
+        );
+        $this->_load_requirements();
+        $where = $this->_admin_page->add_datetime_id_to_where_conditions(array());
+        $this->assertCount(1, $where);
+        $this->assertArrayHasKey('Ticket.Datetime.DTT_ID', $where);
+        $this->assertEquals(42, $where['Ticket.Datetime.DTT_ID']);
+    }
+
+    public function test_add_registration_status_to_where_conditions_no_status_not_trash_view()
+    {
+        $this->_load_requirements();
+        $where = $this->_admin_page->add_registration_status_to_where_conditions(array());
+        $this->assertCount(1, $where);
+        $this->assertArrayHasKey('STS_ID', $where);
+        $this->assertTrue(is_array($where['STS_ID']));
+        $this->assertArrayContains('!=', $where['STS_ID']);
+        $this->assertArrayContains(EEM_Registration::status_id_incomplete, $where['STS_ID']);
+    }
+
+
+    public function test_add_registration_status_to_where_conditions_no_status_trash_view(){
+        $this->_load_requirements();
+        $where = $this->_admin_page->add_registration_status_to_where_conditions(array(),'trash');
+        $this->assertEmpty($where);
+    }
+
+
+    public function test_add_registration_status_to_where_conditions_with_status_and_incomplete_view()
+    {
+        $this->go_to(
+            $this->_get_reg_admin_url(array('_reg_status'=>EEM_Registration::status_id_approved))
+        );
+        $this->_load_requirements();
+        $where = $this->_admin_page->add_registration_status_to_where_conditions(array(),'incomplete');
+        $this->assertCount(1, $where);
+        $this->assertArrayHasKey('STS_ID',$where);
+        $this->assertEquals(EEM_Registration::status_id_approved, $where['STS_ID']);
+    }
+
+
+    public function test_add_registration_status_to_where_conditions_no_status_and_incomplete_view()
+    {
+        $this->_load_requirements();
+        $where = $this->_admin_page->add_registration_status_to_where_conditions(array(),'incomplete');
+        $this->assertCount(1, $where);
+        $this->assertArrayHasKey('STS_ID',$where);
+        $this->assertEquals(EEM_Registration::status_id_incomplete, $where['STS_ID']);
+    }
+
+
+    public function test_add_registration_status_to_where_conditions_with_status()
+    {
+        $this->go_to(
+            $this->_get_reg_admin_url(array('_reg_status'=>EEM_Registration::status_id_approved))
+        );
+        $this->_load_requirements();
+        $where = $this->_admin_page->add_registration_status_to_where_conditions(array());
+        $this->assertCount(1, $where);
+        $this->assertArrayHasKey('STS_ID',$where);
+        $this->assertEquals(EEM_Registration::status_id_approved,$where['STS_ID']);
+    }
+
+
+
+    public function test_add_date_to_where_conditions_for_this_month()
+    {
+        $this->_load_requirements();
+        $current_year_and_month = date('Y-m', current_time('timestamp'));
+        $days_this_month = date('t', current_time('timestamp'));
+        $expected_start_date = date_create_from_format( 'Y-m-d H:i:s', $current_year_and_month . '-01 00:00:00' );
+        $expected_end_date = date_create_from_format( 'Y-m-d H:i:s', $current_year_and_month . '-' . $days_this_month . ' 23:59:59' );
+        $where = $this->_admin_page->add_date_to_where_conditions(array(),'',true);
+        $this->assertCount(1,$where);
+        $this->assertArrayHasKey('REG_date',$where);
+        $this->assertCount(2,$where['REG_date']);
+        $this->assertContains('BETWEEN',$where['REG_date']);
+        $this->assertInstanceOf('Datetime',$where['REG_date'][1][0]);
+        $this->assertInstanceOf('Datetime',$where['REG_date'][1][1]);
+        $actual_start_date = $where['REG_date'][1][0];
+        $actual_end_date = $where['REG_date'][1][1];
+        $this->assertEquals($expected_start_date->format('Y-m-d H:i'), $actual_start_date->format('Y-m-d H:i'));
+        $this->assertEquals($expected_end_date->format('Y-m-d H:i'), $actual_end_date->format('Y-m-d H:i'));
+    }
+
+
+
+    public function test_add_search_to_where_conditions()
+    {
+        $this->go_to(
+            $this->_get_reg_admin_url(array('s'=>'gogogo'))
+        );
+        $this->_load_requirements();
+        $where = $this->_admin_page->add_search_to_where_conditions(array());
+        $this->assertCount(1,$where);
+        $this->assertArrayHasKey('OR',$where);
+        $this->assertArrayHasKey('Event.EVT_name',$where['OR']);
+        $this->assertTrue(is_array($where['OR']['Event.EVT_name']));
+        $this->assertEquals('%gogogo%',$where['OR']['Event.EVT_name'][1]);
+    }
+
+
+    public function test_get_orderby_for_registrations_query_none_specified()
+    {
+        $this->_load_requirements();
+        $orderby = $this->_admin_page->get_orderby_for_registrations_query();
+        $this->assertCount(1,$orderby);
+        $this->assertArrayHasKey('order_by',$orderby);
+        $this->assertTrue(is_array($orderby['order_by']));
+        $this->assertArrayHasKey('REG_date',$orderby['order_by']);
+        $this->assertEquals('DESC',$orderby['order_by']['REG_date']);
+    }
+
+
+
+    public function test_get_orderby_for_registrations_query_specified_orderby_and_order()
+    {
+        $this->go_to(
+            $this->_get_reg_admin_url(array('orderby'=>'_Reg_status','order'=>'ASC'))
+        );
+        $this->_load_requirements();
+        $orderby = $this->_admin_page->get_orderby_for_registrations_query();
+        $this->assertCount(1,$orderby);
+        $this->assertArrayHasKey('order_by',$orderby);
+        $this->assertTrue(is_array($orderby['order_by']));
+        $this->assertArrayHasKey('STS_ID',$orderby['order_by']);
+        $this->assertEquals('ASC',$orderby['order_by']['STS_ID']);
+    }
 }
 //end Registrations_Admin_Page_Test
 // Location: /tests/testcases/admin_pages/registrations/Registrations_Admin_Page_Test.php
