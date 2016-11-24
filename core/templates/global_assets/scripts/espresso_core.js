@@ -514,7 +514,7 @@ jQuery( document ).ready( function ( $ ) {
                 || BackgroundColor === 'rgba(0, 0, 0, 0)'
                 || BackgroundColor === ''
             ) {
-                return getParentBackgroundColor($parent);
+                return eeGetParentBackgroundColor($parent);
             }
         }
         return BackgroundColor;
