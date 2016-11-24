@@ -73,7 +73,7 @@ class TableManager extends \EE_Base
         $full_table_name = $this->getTableAnalysis()->ensureTableNameHasPrefix($table_name);
         $columns = $this->getTableColumns($table_name);
         if ( ! in_array($column_name, $columns)) {
-            $alter_query = "ALTER TABLE $full_table_name ADD $column_name $column_info";
+            $alter_query = "ALTER TABLE {$full_table_name} ADD {$column_name} {$column_info}";
             return $wpdb->query($alter_query);
         }
         return true;
@@ -95,7 +95,7 @@ class TableManager extends \EE_Base
         $table_name = $this->getTableAnalysis()->ensureTableNameHasPrefix($table_name);
         $fieldArray = array();
         if ( ! empty($table_name)) {
-            $columns = $wpdb->get_results("SHOW COLUMNS FROM $table_name ");
+            $columns = $wpdb->get_results("SHOW COLUMNS FROM {$table_name} ");
             if ($columns !== false) {
                 foreach ($columns as $column) {
                     $fieldArray[] = $column->Field;
@@ -120,7 +120,7 @@ class TableManager extends \EE_Base
         global $wpdb;
         if ($this->getTableAnalysis()->tableExists($table_name)) {
             $table_name = $this->getTableAnalysis()->ensureTableNameHasPrefix($table_name);
-            return $wpdb->query("DROP TABLE IF EXISTS $table_name");
+            return $wpdb->query("DROP TABLE IF EXISTS {$table_name}");
         }
         return 0;
     }
@@ -168,13 +168,13 @@ class TableManager extends \EE_Base
         }
         global $wpdb;
         $table_name = $this->getTableAnalysis()->ensureTableNameHasPrefix($table_name);
-        $index_exists_query = "SHOW INDEX FROM $table_name WHERE Key_name = '$indexName'";
+        $index_exists_query = "SHOW INDEX FROM {$table_name} WHERE Key_name = '{$indexName}'";
         if (
             $this->getTableAnalysis()->tableExists($table_name)
             && $wpdb->get_var($index_exists_query)
                === $table_name //using get_var with the $index_exists_query returns the table's name
         ) {
-            return $wpdb->query("ALTER TABLE $table_name DROP INDEX $indexName");
+            return $wpdb->query("ALTER TABLE {$table_name} DROP INDEX {$indexName}");
         }
         return 0;
     }
@@ -198,7 +198,7 @@ class TableManager extends \EE_Base
             $table_name = $this->getTableAnalysis()->ensureTableNameHasPrefix($table_name);
             /** @var \wpdb $wpdb */
             global $wpdb;
-            $SQL = "CREATE TABLE $table_name ( $createSql ) ENGINE=$engine " . $wpdb->get_charset_collate();
+            $SQL = "CREATE TABLE {$table_name} ( {$createSql} ) ENGINE={$engine} " . $wpdb->get_charset_collate();
 
             //get $wpdb to echo errors, but buffer them. This way at least WE know an error
             //happened. And then we can choose to tell the end user
