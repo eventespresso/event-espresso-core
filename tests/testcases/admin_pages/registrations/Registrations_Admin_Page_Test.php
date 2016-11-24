@@ -110,8 +110,6 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
                 $now = DateTime::createFromFormat( 'Y-m-d', "{$year}-{$month}-{$now_day}" );
             }
         }*/
-
-        $this->_load_requirements();
         // baseline DateTime objects
         $now        = new DateTime('now', new DateTimeZone('America/Vancouver'));
         $prev_month = $this->_get_date_one_month_ago($now);
@@ -130,8 +128,9 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
             'there should be 4 registrations in total, not ' . count($registrations)
             . "\nHere are the registrations: " . $this->reg_debug($registrations, true)
         );
+
         //create an event and add to the registrations
-        $event = $this->factory->event->create(array('EVT_wp_user' => 0));
+        $event = $this->factory->event->create(array('EVT_wp_user' => get_current_user_id()));
         if ($event instanceof EE_Event) {
             foreach ($registrations as $registration) {
                 if ($registration instanceof EE_Registration) {
@@ -152,7 +151,10 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
         $last_registration->save();
         // $this->reg_debug( $registrations );
         //let's test queries for today
-        $_GET['status'] = 'today';
+        $this->go_to(
+            $this->_get_reg_admin_url(array('status'=>'today'))
+        );
+        $this->_load_requirements();
         $registrations  = $this->_admin_page->get_registrations();
         // echo "\n\n " . __LINE__ . ") " . __METHOD__ . "() STATUS: " . $_GET['status'];
         // $this->reg_debug( $registrations );
@@ -163,7 +165,10 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
             . "\nHere are the registrations: " . $this->reg_debug($registrations, true)
         );
         //test queries for this month
-        $_GET['status'] = 'month';
+        $this->go_to(
+            $this->_get_reg_admin_url(array('status'=>'month'))
+        );
+        $this->_load_requirements();
         $registrations  = $this->_admin_page->get_registrations();
         // echo "\n\n " . __LINE__ . ") " . __METHOD__ . "() STATUS: " . $_GET['status'];
         // $this->reg_debug( $registrations );
@@ -174,8 +179,11 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
             . "\nHere are the registrations: " . $this->reg_debug($registrations, true)
         );
         // test queries for month range using last month
-        unset($_GET['status']);
-        $_GET['month_range'] = $prev_month->format('F Y');
+        $this->go_to(
+            $this->_get_reg_admin_url(array('month_range' => $prev_month->format('F Y')))
+        );
+        $this->_load_requirements();
+        $this->_admin_page->get_registrations();
         $registrations       = $this->_admin_page->get_registrations();
         // echo "\n\n " . __LINE__ . ") " . __METHOD__ . "() MONTH_RANGE: " . $_GET[ 'month_range' ];
         // $this->reg_debug( $registrations );
