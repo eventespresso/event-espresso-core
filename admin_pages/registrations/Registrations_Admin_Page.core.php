@@ -983,11 +983,11 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     /**
      * Retrieves the query paramaters to be used by the Registration model for getting registrations.
      * Note: this listens to values on the request for some of the query parameters.
-     * @param string $view
      * @param int    $per_page
      * @param bool   $count
      * @param bool   $this_month
      * @param bool   $today
+     * @param string $view
      * @return array
      */
     protected function _get_registration_query_parameters(
