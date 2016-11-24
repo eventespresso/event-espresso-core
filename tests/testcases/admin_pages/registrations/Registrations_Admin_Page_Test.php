@@ -30,6 +30,10 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
     {
         parent::setUp();
         $this->delayedAdminPageMocks('registrations');
+        //need to set a user with registration privileges for default queries in the admin.
+        $user = $this->factory->user->create_and_get();
+        $user->add_role('administrator');
+        wp_set_current_user( $user->ID );
     }
 
 
