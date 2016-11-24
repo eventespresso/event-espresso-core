@@ -1186,7 +1186,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     {
         if ( ! empty($this->_req_data['s'])) {
             $sstr         = '%' . sanitize_text_field($this->_req_data['s']) . '%';
-            $_where['OR'] = array(
+            $where['OR'] = array(
                 'Event.EVT_name'                          => array('LIKE', $sstr),
                 'Event.EVT_desc'                          => array('LIKE', $sstr),
                 'Event.EVT_short_desc'                    => array('LIKE', $sstr),
