@@ -2,29 +2,35 @@
 .checkbox-dropdown-selector-btn {
     cursor: pointer;
     display: inline-block;
-    width: 230px;
+    margin:0 0 1em;
+    min-width: 250px;
+    width: auto;
 }
 
 .checkbox-dropdown-selector {
     background: #fff;
-    border: #eee;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, .25);
+    border: 1px solid #eee;
+    box-sizing: border-box;
+    box-shadow: 0 13px 5px -5px rgba(0, 0, 0, .5), 0 2px 13px 2px rgba(0, 0, 0, .05);
+    color: #444;
     display: none;
     list-style: none;
     padding: 1em;
     position: absolute;
     top: 0;
-    min-width: 230px;
+    min-width: 250px;
     width: auto;
     z-index: 999;
 }
 
 .checkbox-dropdown-selector ul {
-    margin: 0;
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
 .checkbox-dropdown-selector li {
     list-style: none !important;
+    margin: 0 !important;
     white-space: nowrap;
     word-break: keep-all;
 }
@@ -39,5 +45,8 @@
 }
 
 .datetime-selector-option  {
+    display: inline-block !important;
+    margin: 0 .75em 0 0;
+    width: auto !important;
 }
 
