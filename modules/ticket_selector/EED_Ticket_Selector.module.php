@@ -211,7 +211,9 @@ class EED_Ticket_Selector extends  EED_Module {
 			// make it dance
 			wp_register_script('ticket_selector', TICKET_SELECTOR_ASSETS_URL . 'ticket_selector.js', array('espresso_core'), '', TRUE);
 			wp_enqueue_script('ticket_selector');
-		}
+            require_once( EE_LIBRARIES.'form_sections/strategies/display/EE_Checkbox_Dropdown_Selector_Display_Strategy.strategy.php');
+            \EE_Checkbox_Dropdown_Selector_Display_Strategy::enqueue_styles_and_scripts();
+        }
 	}
 
 
