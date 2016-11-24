@@ -138,34 +138,35 @@ class DatetimeSelector
         if ( ! $this->active) {
             return '';
         }
-        $html = \EEH_HTML::div('', '', 'datetime_selector-dv');
-        $html .= \EEH_HTML::label(
-            \EEH_HTML::span('', '', 'dashicons dashicons-calendar-alt') . esc_html__('Datetimes', 'event_espresso'),
-            '', 'datetime_selector-lbl'
-        );
-	    $html .= \EEH_HTML::div( '', '', 'select-wrap-dv' );
-	    $html .= "\n" . '<select name="datetime_selector-' . $this->event->ID() . '"';
-        $html .= ' id="datetime-selector-' . $this->event->ID() . '"';
-        $html .= ' class="ticket-selector-datetime-selector-slct"';
-        $html .= ' data-tkt_slctr_evt="' . $this->event->ID() . '">';
-        $html .= "\n"
-                 . '<option value="0">'
-                 . esc_html__('- please select a datetime -', 'event_espresso')
-                 . '</option>';
-        // offer ticket quantities from the min to the max
+        $datetime_options = array();
         foreach ($this->datetimes as $datetime) {
             if ( ! $datetime instanceof \EE_Datetime) {
                 continue;
             }
-            $html .= "\n" . '<option value="' . $datetime->date_range('Y_m_d', '-') . '">';
-            $html .= $datetime->date_range($date_format);
-            $html .= '</option>';
+            $desc = $datetime->name();
+            $desc .= ! empty($desc)
+                ? '&nbsp;' . $datetime->date_range($date_format)
+                : $datetime->date_range($date_format);
+            $datetime_options[$datetime->date_range('Y_m_d', '-')] = $desc;
         }
-        $html .= "\n</select>";
-	    $html .= \EEH_HTML::divx('', 'select-wrap-dv');
-	    $html .= \EEH_HTML::br();
-        $html .= \EEH_HTML::divx('', 'datetime_selector-dv');
-        return $html;
+        $dropdown_selector = new \EE_Checkbox_Dropdown_Selector_Input(
+            $datetime_options,
+            array(
+                'html_id'               => 'datetime-selector-' . $this->event->ID(),
+                'html_name'             => 'datetime_selector_' . $this->event->ID(),
+                'html_class'            => 'datetime-selector',
+                'html_label_text'       => '<span class="dashicons dashicons-calendar-alt"></span> Select a Datetime',
+                'other_html_attributes' => ' data-tkt_slctr_evt="' . $this->event->ID() . '"',
+            )
+        );
+        return \EEH_HTML::div(
+            \EEH_HTML::div(
+                $dropdown_selector->get_html_for_input(),
+                '', 'select-wrap-dv'
+            )
+            . \EEH_HTML::br(),
+            '', 'datetime_selector-dv'
+        );
     }
 
 
