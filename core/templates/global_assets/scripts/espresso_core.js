@@ -505,10 +505,10 @@ jQuery(document).ready(function($) {
      * @return string
      */
     window.eeGetParentBackgroundColor = function (domElement) {
-        var BackgroundColor = '';
+        var BackgroundColor = 'rgba(255,255,255,1)';
         var $parent = domElement.parent();
         if ($parent.length) {
-            // console_log('$parent', $parent.attr('id'), true);
+            // console_log('$parent', $parent.prop('tagName') + ' #' + $parent.attr('id'), true);
             BackgroundColor = $parent.css('backgroundColor');
             // console_log('BackgroundColor', BackgroundColor, false);
             if (
@@ -518,7 +518,10 @@ jQuery(document).ready(function($) {
                 || BackgroundColor === 'rgba(0, 0, 0, 0)'
                 || BackgroundColor === ''
             ) {
-                return eeGetParentBackgroundColor($parent);
+            	// if no BG color is found by the time we get to the "<html>" tag, then just return white;
+                return $parent.prop('tagName') !== 'HTML'
+					? eeGetParentBackgroundColor($parent)
+					: 'rgba(255,255,255,1)';
             }
         }
         return BackgroundColor;
