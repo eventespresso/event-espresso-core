@@ -1146,26 +1146,26 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     protected function _add_search_to_where_conditions(array $where)
     {
         if ( ! empty($this->_req_data['s'])) {
-            $sstr        = '%' . sanitize_text_field($this->_req_data['s']) . '%';
+            $search_string = '%' . sanitize_text_field($this->_req_data['s']) . '%';
             $where['OR'] = array(
-                'Event.EVT_name'                          => array('LIKE', $sstr),
-                'Event.EVT_desc'                          => array('LIKE', $sstr),
-                'Event.EVT_short_desc'                    => array('LIKE', $sstr),
-                'Attendee.ATT_full_name'                  => array('LIKE', $sstr),
-                'Attendee.ATT_fname'                      => array('LIKE', $sstr),
-                'Attendee.ATT_lname'                      => array('LIKE', $sstr),
-                'Attendee.ATT_short_bio'                  => array('LIKE', $sstr),
-                'Attendee.ATT_email'                      => array('LIKE', $sstr),
-                'Attendee.ATT_address'                    => array('LIKE', $sstr),
-                'Attendee.ATT_address2'                   => array('LIKE', $sstr),
-                'Attendee.ATT_city'                       => array('LIKE', $sstr),
-                'REG_final_price'                         => array('LIKE', $sstr),
-                'REG_code'                                => array('LIKE', $sstr),
-                'REG_count'                               => array('LIKE', $sstr),
-                'REG_group_size'                          => array('LIKE', $sstr),
-                'Ticket.TKT_name'                         => array('LIKE', $sstr),
-                'Ticket.TKT_description'                  => array('LIKE', $sstr),
-                'Transaction.Payment.PAY_txn_id_chq_nmbr' => array('LIKE', $sstr),
+                'Event.EVT_name'                          => array('LIKE', $search_string),
+                'Event.EVT_desc'                          => array('LIKE', $search_string),
+                'Event.EVT_short_desc'                    => array('LIKE', $search_string),
+                'Attendee.ATT_full_name'                  => array('LIKE', $search_string),
+                'Attendee.ATT_fname'                      => array('LIKE', $search_string),
+                'Attendee.ATT_lname'                      => array('LIKE', $search_string),
+                'Attendee.ATT_short_bio'                  => array('LIKE', $search_string),
+                'Attendee.ATT_email'                      => array('LIKE', $search_string),
+                'Attendee.ATT_address'                    => array('LIKE', $search_string),
+                'Attendee.ATT_address2'                   => array('LIKE', $search_string),
+                'Attendee.ATT_city'                       => array('LIKE', $search_string),
+                'REG_final_price'                         => array('LIKE', $search_string),
+                'REG_code'                                => array('LIKE', $search_string),
+                'REG_count'                               => array('LIKE', $search_string),
+                'REG_group_size'                          => array('LIKE', $search_string),
+                'Ticket.TKT_name'                         => array('LIKE', $search_string),
+                'Ticket.TKT_description'                  => array('LIKE', $search_string),
+                'Transaction.Payment.PAY_txn_id_chq_nmbr' => array('LIKE', $search_string),
             );
         }
         return $where;
