@@ -480,7 +480,7 @@ jQuery(document).ready(function($) {
      * @param {string} rgb
      * @return string
      */
-    window.rgb2hex = function (rgb) {
+    window.eeRgbToHex = function (rgb) {
         // console_log('rgb', rgb, false);
         var hex = '';
         var rgb_parts = rgb.match(/^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i);
@@ -504,7 +504,7 @@ jQuery(document).ready(function($) {
      * @param {object} domElement
      * @return string
      */
-    window.getParentBackgroundColor = function (domElement) {
+    window.eeGetParentBackgroundColor = function (domElement) {
         var BackgroundColor = '';
         var $parent = domElement.parent();
         if ($parent.length) {
