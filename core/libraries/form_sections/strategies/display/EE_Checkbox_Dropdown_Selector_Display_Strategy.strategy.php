@@ -18,7 +18,7 @@ class EE_Checkbox_Dropdown_Selector_Display_Strategy extends EE_Compound_Input_D
 
 
     /**
-     * enqueues css and js
+     * enqueues css and js, so that this can be called statically
      */
     public static function enqueue_styles_and_scripts()
     {
@@ -42,12 +42,21 @@ class EE_Checkbox_Dropdown_Selector_Display_Strategy extends EE_Compound_Input_D
 
 
     /**
+     * Informs the rest of the forms system what CSS and JS is needed to display the input
+     */
+    public function enqueue_js(){
+        EE_Checkbox_Dropdown_Selector_Display_Strategy::enqueue_styles_and_scripts();
+    }
+
+
+    /**
      * @throws EE_Error
      * @return string of html to display the field
      */
     public function display()
     {
         $input = $this->get_input();
+        $select_button_text = $input instanceof EE_Checkbox_Dropdown_Selector_Input ? $input->select_button_text() : '';
         // $multi = count( $input->options() ) > 1 ? TRUE : FALSE;
         $input->set_label_sizes();
         $label_size_class = $input->get_label_size_class();
@@ -74,7 +83,7 @@ class EE_Checkbox_Dropdown_Selector_Display_Strategy extends EE_Compound_Input_D
         $html .= ' data-target="' . $input->html_id() . '-options-dv"';
         $html .= ' ' . $input->html_other_attributes() . '>';
         $html .= '<span class="checkbox-dropdown-selector-selected-spn">';
-        $html .= $input->html_label_text();
+        $html .= $select_button_text;
         $html .= '</span> <span class="dashicons dashicons-arrow-down"></span>';
         $html .= '</button>';
         $html .= EEH_HTML::div(

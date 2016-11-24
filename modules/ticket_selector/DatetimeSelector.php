@@ -155,7 +155,7 @@ class DatetimeSelector
                 'html_id'               => 'datetime-selector-' . $this->event->ID(),
                 'html_name'             => 'datetime_selector_' . $this->event->ID(),
                 'html_class'            => 'datetime-selector',
-                'html_label_text'       => '<span class="dashicons dashicons-calendar-alt"></span> '
+                'select_button_text'       => '<span class="dashicons dashicons-calendar-alt"></span> '
                                             . esc_html__('Select a Datetime', 'event_espresso'),
                 'other_html_attributes' => ' data-tkt_slctr_evt="' . $this->event->ID() . '"',
             )
