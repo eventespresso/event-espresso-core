@@ -99,8 +99,8 @@ abstract class EEME_Base {
      * @param array $existing_tables
      * @return array
      */
-    public function add_extra_tables_on_filter( array $existing_tables ){
-        return array_merge( $existing_tables, $this->_extra_tables );
+    public function add_extra_tables_on_filter( $existing_tables ){
+        return array_merge( (array)$existing_tables, $this->_extra_tables );
 	}
 
 
@@ -109,14 +109,14 @@ abstract class EEME_Base {
      * @param array $existing_fields
      * @return array
      */
-    public function add_extra_fields_on_filter( array $existing_fields ){
+    public function add_extra_fields_on_filter( $existing_fields ){
 		if( $this->_extra_fields){
 			foreach($this->_extra_fields as $table_alias => $fields){
 				if( ! isset( $existing_fields[ $table_alias ] ) ){
 					$existing_fields[ $table_alias ] = array();
 				}
 				$existing_fields[$table_alias] = array_merge(
-				    $existing_fields[$table_alias],
+                    (array)$existing_fields[$table_alias],
                     $this->_extra_fields[$table_alias]
                 );
 
@@ -131,8 +131,8 @@ abstract class EEME_Base {
      * @param array $existing_relations
      * @return array
      */
-    public function add_extra_relations_on_filter( array $existing_relations ){
-        return  array_merge($existing_relations,$this->_extra_relations);
+    public function add_extra_relations_on_filter( $existing_relations ){
+        return  array_merge((array)$existing_relations,$this->_extra_relations);
 	}
 
 
@@ -183,11 +183,11 @@ abstract class EEME_Base {
      * @return mixed
      * @throws EE_Error
      */
-    public function __call( $callback_method_name, array $args){
+    public function __call( $callback_method_name, $args){
 		if(strpos($callback_method_name, self::dynamic_callback_method_prefix) === 0){
 			//it's a dynamic callback for a method name
 			$method_called_on_model = str_replace(self::dynamic_callback_method_prefix, '', $callback_method_name);
-			list( $original_return_val, $model_called, $args_provided_to_method_on_model ) = $args;
+			list( $original_return_val, $model_called, $args_provided_to_method_on_model ) = (array) $args;
 			$this->_ = $model_called;
 			$extending_method = self::extending_method_prefix.$method_called_on_model;
 			if(method_exists($this, $extending_method)){
