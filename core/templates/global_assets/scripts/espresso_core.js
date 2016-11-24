@@ -489,6 +489,7 @@ jQuery(document).ready(function($) {
             hex += ("0" + parseInt(rgb_parts[2], 10).toString(16)).slice(-2);
             hex += ("0" + parseInt(rgb_parts[3], 10).toString(16)).slice(-2);
         }
+        hex = hex !== '' ? hex : rgb;
         // console_log('hex', hex, false);
         return hex;
     };
@@ -514,6 +515,7 @@ jQuery(document).ready(function($) {
                 typeof BackgroundColor === 'undefined'
                 || BackgroundColor === 'transparent'
                 || BackgroundColor === 'inherit'
+                || BackgroundColor === 'rgba(0, 0, 0, 0)'
                 || BackgroundColor === ''
             ) {
                 return getParentBackgroundColor($parent);
