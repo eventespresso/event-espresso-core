@@ -1413,35 +1413,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     }
 
 
-    /**
-     * Returns an array of all the buttons for the various statuses and switch status actions
-     *
-     * @return string
-     */
-    protected function _get_current_reg_status_help_text($STS_ID = '')
-    {
-        //$reg_status_help_text = array(
-        //	'RAP' => __( 'XXXXXXXXXXX', 'event_espresso' ),
-        //	'RAP' => __( 'XXXXXXXXXXX', 'event_espresso' ),
-        //	'RAP' => __( 'XXXXXXXXXXX', 'event_espresso' ),
-        //	'RAP' => __( 'XXXXXXXXXXX', 'event_espresso' ),
-        //	'RAP' => __( 'XXXXXXXXXXX', 'event_espresso' ),
-        //	'RAP' => __( 'XXXXXXXXXXX', 'event_espresso' ),
-        //);
-        //Approved
-        //An approved registration allows payments and may have a transaction status of incomplete or complete . The registration is marked as active and a space is reserved for the registrant .
-        //Cancelled
-        //	A {
-        //	cancelled} registration is performed by the registrant . Payments are not allowed, the registration is inactive, and no space is reserved .
-        //Declined
-        //A declined registration is performed by the event admin . Payments are not allowed, the registration is inactive, and not space is reserved .
-        //Not Approved
-        //A not approved registration is performed by the event admin . Payments are not allowed, the registration is active, and no space is reserved .
-        //Pending Payment
-        //A pending registration allows payments . The status will be automatically toggled to approved if the {
-        //	payment} is made in full by registrant .
-    }
-
 
     /**
      * Returns an array of all the buttons for the various statuses and switch status actions
