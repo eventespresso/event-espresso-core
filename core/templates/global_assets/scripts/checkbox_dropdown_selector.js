@@ -10,6 +10,9 @@ jQuery(document).ready(function ($) {
             var $options = $('#' + $(this).data('target'));
             if ($options.length) {
                 clearTimeout(parseInt($options.data('optionsAutoFade')));
+                var BackgroundColor = getParentBackgroundColor($options);
+                BackgroundColor = rgb2hex(BackgroundColor);
+                $options.css({'background': BackgroundColor});
                 $options.stop(true).fadeIn(100);
             }
         }
