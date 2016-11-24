@@ -517,7 +517,9 @@ class DisplayTicketSelector
                     '',
                     $this->event
                 );
-                $html .= $this->ticketSelectorEndDiv();
+                $html .= empty($external_url)
+                    ? $this->ticketSelectorEndDiv()
+                    : $this->clearTicketSelector();
                 $html .= '<br/>' . $this->formClose();
             } else if (
                 // a "Dude Where's my Ticket Selector?" (DWMTS) type event (ie: $_max_atndz === 1)
