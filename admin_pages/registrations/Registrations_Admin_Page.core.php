@@ -951,7 +951,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         $today = false
     ) {
         $view         = ! empty($this->_req_data['status']) ? $this->_req_data['status'] : '';
-        $query_params = $this->_get_registration_query_parameters($view, $per_page, $count, $this_month, $today);
+        $query_params = $this->_get_registration_query_parameters($per_page, $count, $this_month, $today, $view);
         return $this->_get_registrations_or_count( $query_params, $view === 'trash', $count );
     }
 
@@ -991,12 +991,15 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @return array
      */
     protected function _get_registration_query_parameters(
-        $view = '',
         $per_page = 10,
         $count = false,
         $this_month = false,
-        $today = false
+        $today = false,
+        $view = ''
     ) {
+        if (empty($view)) {
+            $view = ! empty($this->_req_data['status']) ? $this->_req_data['status'] : $view;
+        }
         $query_params = array(
             0                          => $this->_get_where_conditions_for_registrations_query(
                                             $view,
