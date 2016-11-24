@@ -162,9 +162,7 @@ class ProcessTicketSelector
                                \EE_Registry::instance()->CART, $this );
                     \EE_Registry::instance()->CART->recalculate_all_cart_totals();
                     \EE_Registry::instance()->CART->save_cart( false );
-                    \EE_Registry::instance()->SSN->update();
-                    //d( \EE_Registry::instance()->CART );
-                    //die(); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< OR HERE TO KILL REDIRECT AFTER CART UPDATE
+                    // exit('KILL REDIRECT AFTER CART UPDATE'); // <<<<<<<<  OR HERE TO KILL REDIRECT AFTER CART UPDATE
                     // just return TRUE for registrations being made from admin
                     if ( is_admin() ) {
                         return true;

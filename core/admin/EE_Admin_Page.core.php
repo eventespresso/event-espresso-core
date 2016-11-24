@@ -1263,7 +1263,11 @@ abstract class EE_Admin_Page extends EE_Base
             if ($verify_only) {
                 return false;
             } else {
-                wp_die(__('You do not have access to this route.', 'event_espresso'));
+                if ( is_user_logged_in() ) {
+                    wp_die(__('You do not have access to this route.', 'event_espresso'));
+                } else {
+                    return false;
+                }
             }
         }
         return true;

@@ -281,9 +281,14 @@ class DisplayTicketSelector
             }
             return $html;
         }
-        // if there is no submit button, then don't start building a form
+        // if this is a "Dude Where's my Ticket Selector?" ( DWMTS ) type event( ie: $_max_atndz === 1),
+        // and its the event list, and there is no submit button, then don't start building a form
         // because the "View Details" button will build its own form
-        if ( ! apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit', false ) ) {
+        if (
+            $this->getMaxAttendees() === 1
+            && is_archive()
+            && ! apply_filters('FHEE__EE_Ticket_Selector__display_ticket_selector_submit', false)
+        ) {
             return '';
         }
         $checkout_url = \EEH_Event_View::event_link_url( $ID );
@@ -333,7 +338,9 @@ class DisplayTicketSelector
                     '',
                     $this->event
                 );
-                $html .= $this->ticketSelectorEndDiv();
+                $html .= empty($external_url)
+                    ? $this->ticketSelectorEndDiv()
+                    : $this->clearTicketSelector();
                 $html .= '<br/>' . $this->formClose();
             } else if (
                 // a "Dude Where's my Ticket Selector?" (DWMTS) type event (ie: $_max_atndz === 1)
