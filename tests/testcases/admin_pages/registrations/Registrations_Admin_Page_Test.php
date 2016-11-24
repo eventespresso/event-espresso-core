@@ -49,6 +49,22 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
 
 
     /**
+     * This is a utility method for this test suite to generate a url to use with the _GOTO method for testing
+     * functionality.
+     * @param array $extra_query_params
+     */
+    protected function _get_reg_admin_url( $extra_query_params = array() ) {
+        return add_query_arg(
+            array_merge(
+                array( 'page' => 'espresso_registrations' ),
+                $extra_query_params
+            ),
+            admin_url()
+        );
+    }
+
+
+    /**
      * @since 4.6.x
      * -- testing today queries
      * -- testing this month queries
