@@ -55,8 +55,10 @@ class EE_Checkbox_Dropdown_Selector_Display_Strategy extends EE_Compound_Input_D
             EE_Error::doing_it_wrong(
                 'EE_Checkbox_Display_Strategy::display()',
                 sprintf(
-                    __('Input values for checkboxes should be an array of values, but the value for input "%1$s" is "%2$s". Please verify that the input name is exactly "%3$s"',
-                        'event_espresso'),
+                    esc_html__(
+                        'Input values for checkboxes should be an array of values, but the value for input "%1$s" is "%2$s". Please verify that the input name is exactly "%3$s"',
+                        'event_espresso'
+                    ),
                     $input->html_id(),
                     var_export($input->raw_value(), true),
                     $input->html_name() . '[]'
@@ -79,6 +81,13 @@ class EE_Checkbox_Dropdown_Selector_Display_Strategy extends EE_Compound_Input_D
             '',
             $input->html_id() . '-options-dv',
             'checkbox-dropdown-selector'
+        );
+        $html .= EEH_HTML::link(
+            '',
+            '<span class="dashicons dashicons-no"></span>',
+            esc_html__('close datetime selector', 'event_espresso'),
+            '',
+            'close-espresso-notice'
         );
         $html .= EEH_HTML::ul();
         $input_raw_value = (array)$input->raw_value();
