@@ -147,7 +147,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 'edit'                => __('Edit Contact', 'event_espresso'),
                 'report'              => __("Event Registrations CSV Report", "event_espresso"),
                 'report_all'          => __('All Registrations CSV Report', 'event_espresso'),
-                'report_filtered'     => __('Filtered CSV Report', 'event_espresso'),
                 'contact_list_report' => __('Contact List Report', 'event_espresso'),
                 'contact_list_export' => __("Export Data", "event_espresso"),
             ),
@@ -179,16 +178,16 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         $att_id = ! empty($this->_req_data['post']) && ! is_array($this->_req_data['post']) ? $this->_req_data['post']
             : $att_id;
         $this->_page_routes = array(
-            'default'                            => array(
+            'default' => array(
                 'func'       => '_registrations_overview_list_table',
                 'capability' => 'ee_read_registrations',
             ),
-            'view_registration'                  => array(
+            'view_registration' => array(
                 'func'       => '_registration_details',
                 'capability' => 'ee_read_registration',
                 'obj_id'     => $reg_id,
             ),
-            'edit_registration'                  => array(
+            'edit_registration' => array(
                 'func'               => '_update_attendee_registration_form',
                 'noheader'           => true,
                 'headers_sent_route' => 'view_registration',
@@ -196,83 +195,83 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 'obj_id'             => $reg_id,
                 '_REG_ID'            => $reg_id,
             ),
-            'trash_registrations'                => array(
+            'trash_registrations' => array(
                 'func'       => '_trash_or_restore_registrations',
                 'args'       => array('trash' => true),
                 'noheader'   => true,
                 'capability' => 'ee_delete_registrations',
             ),
-            'restore_registrations'              => array(
+            'restore_registrations' => array(
                 'func'       => '_trash_or_restore_registrations',
                 'args'       => array('trash' => false),
                 'noheader'   => true,
                 'capability' => 'ee_delete_registrations',
             ),
-            'delete_registrations'               => array(
+            'delete_registrations' => array(
                 'func'       => '_delete_registrations',
                 'noheader'   => true,
                 'capability' => 'ee_delete_registrations',
             ),
-            'new_registration'                   => array(
+            'new_registration' => array(
                 'func'       => 'new_registration',
                 'capability' => 'ee_edit_registrations',
             ),
-            'process_reg_step'                   => array(
+            'process_reg_step' => array(
                 'func'       => 'process_reg_step',
                 'noheader'   => true,
                 'capability' => 'ee_edit_registrations',
             ),
-            'redirect_to_txn'                    => array(
+            'redirect_to_txn' => array(
                 'func'       => 'redirect_to_txn',
                 'noheader'   => true,
                 'capability' => 'ee_edit_registrations',
             ),
-            'change_reg_status'                  => array(
+            'change_reg_status' => array(
                 'func'       => '_change_reg_status',
                 'noheader'   => true,
                 'capability' => 'ee_edit_registration',
                 'obj_id'     => $reg_id,
             ),
-            'approve_registration'               => array(
+            'approve_registration' => array(
                 'func'       => 'approve_registration',
                 'noheader'   => true,
                 'capability' => 'ee_edit_registration',
                 'obj_id'     => $reg_id,
             ),
-            'approve_and_notify_registration'    => array(
+            'approve_and_notify_registration' => array(
                 'func'       => 'approve_registration',
                 'noheader'   => true,
                 'args'       => array(true),
                 'capability' => 'ee_edit_registration',
                 'obj_id'     => $reg_id,
             ),
-            'decline_registration'               => array(
+            'decline_registration' => array(
                 'func'       => 'decline_registration',
                 'noheader'   => true,
                 'capability' => 'ee_edit_registration',
                 'obj_id'     => $reg_id,
             ),
-            'decline_and_notify_registration'    => array(
+            'decline_and_notify_registration' => array(
                 'func'       => 'decline_registration',
                 'noheader'   => true,
                 'args'       => array(true),
                 'capability' => 'ee_edit_registration',
                 'obj_id'     => $reg_id,
             ),
-            'pending_registration'               => array(
+            'pending_registration' => array(
                 'func'       => 'pending_registration',
                 'noheader'   => true,
                 'capability' => 'ee_edit_registration',
                 'obj_id'     => $reg_id,
             ),
-            'pending_and_notify_registration'    => array(
+            'pending_and_notify_registration' => array(
                 'func'       => 'pending_registration',
                 'noheader'   => true,
                 'args'       => array(true),
                 'capability' => 'ee_edit_registration',
                 'obj_id'     => $reg_id,
             ),
-            'no_approve_registration'            => array(
+            'no_approve_registration' => array(
                 'func'       => 'not_approve_registration',
                 'noheader'   => true,
                 'capability' => 'ee_edit_registration',
@@ -285,42 +284,42 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 'capability' => 'ee_edit_registration',
                 'obj_id'     => $reg_id,
             ),
-            'cancel_registration'                => array(
+            'cancel_registration' => array(
                 'func'       => 'cancel_registration',
                 'noheader'   => true,
                 'capability' => 'ee_edit_registration',
                 'obj_id'     => $reg_id,
             ),
-            'cancel_and_notify_registration'     => array(
+            'cancel_and_notify_registration' => array(
                 'func'       => 'cancel_registration',
                 'noheader'   => true,
                 'args'       => array(true),
                 'capability' => 'ee_edit_registration',
                 'obj_id'     => $reg_id,
             ),
-            'contact_list'                       => array(
+            'contact_list' => array(
                 'func'       => '_attendee_contact_list_table',
                 'capability' => 'ee_read_contacts',
             ),
-            'add_new_attendee'                   => array(
+            'add_new_attendee' => array(
                 'func' => '_create_new_cpt_item',
                 'args' => array(
                     'new_attendee' => true,
                     'capability'   => 'ee_edit_contacts',
                 ),
             ),
-            'edit_attendee'                      => array(
+            'edit_attendee' => array(
                 'func'       => '_edit_cpt_item',
                 'capability' => 'ee_edit_contacts',
                 'obj_id'     => $att_id,
             ),
-            'duplicate_attendee'                 => array(
+            'duplicate_attendee' => array(
                 'func'       => '_duplicate_attendee',
                 'noheader'   => true,
                 'capability' => 'ee_edit_contacts',
                 'obj_id'     => $att_id,
             ),
-            'insert_attendee'                    => array(
+            'insert_attendee' => array(
                 'func'       => '_insert_or_update_attendee',
                 'args'       => array(
                     'new_attendee' => true,
@@ -328,7 +327,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 'noheader'   => true,
                 'capability' => 'ee_edit_contacts',
             ),
-            'update_attendee'                    => array(
+            'update_attendee' => array(
                 'func'       => '_insert_or_update_attendee',
                 'args'       => array(
                     'new_attendee' => false,
@@ -337,7 +336,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 'capability' => 'ee_edit_contacts',
                 'obj_id'     => $att_id,
             ),
-            'trash_attendees'                    => array(
+            'trash_attendees' => array(
                 'func'       => '_trash_or_restore_attendees',
                 'args'       => array(
                     'trash' => true,
@@ -346,7 +345,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 'capability' => 'ee_delete_contacts',
                 'obj_id'     => $att_id,
             ),
-            'restore_attendees'                  => array(
+            'restore_attendees'    => array(
                 'func'       => '_trash_or_restore_attendees',
                 'args'       => array(
                     'trash' => false,
@@ -355,22 +354,22 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 'capability' => 'ee_delete_contacts',
                 'obj_id'     => $att_id,
             ),
-            'resend_registration'                => array(
+            'resend_registration'  => array(
                 'func'       => '_resend_registration',
                 'noheader'   => true,
                 'capability' => 'ee_send_message',
             ),
-            'registrations_report'               => array(
+            'registrations_report' => array(
                 'func'       => '_registrations_report',
                 'noheader'   => true,
                 'capability' => 'ee_read_registrations',
             ),
-            'contact_list_export'                => array(
+            'contact_list_export'  => array(
                 'func'       => '_contact_list_export',
                 'noheader'   => true,
                 'capability' => 'export',
             ),
-            'contact_list_report'                => array(
+            'contact_list_report'  => array(
                 'func'       => '_contact_list_report',
                 'noheader'   => true,
                 'capability' => 'ee_read_contacts',
@@ -383,7 +382,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     protected function _set_page_config()
     {
         $this->_page_config = array(
-            'default'           => array(
+            'default' => array(
                 'nav'           => array(
                     'label' => __('Overview', 'event_espresso'),
                     'order' => 5,
@@ -447,7 +446,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                     array('_registration_details_metaboxes')),
                 'require_nonce' => false,
             ),
-            'new_registration'  => array(
+            'new_registration' => array(
                 'nav'           => array(
                     'label'      => __('Add New Registration', 'event_espresso'),
                     'url'        => '#',
@@ -460,7 +459,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 ),
                 'require_nonce' => false,
             ),
-            'add_new_attendee'  => array(
+            'add_new_attendee' => array(
                 'nav'           => array(
                     'label'      => __('Add Contact', 'event_espresso'),
                     'order'      => 15,
@@ -470,7 +469,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                     array('_publish_post_box', 'attendee_editor_metaboxes')),
                 'require_nonce' => false,
             ),
-            'edit_attendee'     => array(
+            'edit_attendee' => array(
                 'nav'           => array(
                     'label'      => __('Edit Contact', 'event_espresso'),
                     'order'      => 15,
@@ -482,7 +481,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 'metaboxes'     => array('attendee_editor_metaboxes'),
                 'require_nonce' => false,
             ),
-            'contact_list'      => array(
+            'contact_list' => array(
                 'nav'           => array(
                     'label' => __('Contact List', 'event_espresso'),
                     'order' => 20,
@@ -511,8 +510,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 'require_nonce' => false,
             ),
             //override default cpt routes
-            'create_new'        => '',
-            'edit'              => '',
+            'create_new'   => '',
+            'edit'         => '',
         );
     }
 
@@ -934,263 +933,364 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     }
 
 
-
     /**
-     * get registrations for given parameters (used by list table)
+     * Used to retrieve registrations for the list table.
      *
-     * @param  int     $per_page   how many registrations displayed per page
-     * @param  boolean $count      return the count or objects
-     * @param  boolean $this_month whether to return for just this month
-     * @param  boolean $today      whether to return results for just today
-     * @throws \EE_Error
-     * @return mixed (int|array)  int = count || array of registration objects
+     * @param int    $per_page
+     * @param bool   $count
+     * @param bool   $this_month
+     * @param bool   $today
+     * @param bool   $trash
+     * @param string $orderby
+     * @return \EE_Registration[]
      */
-    public function get_registrations($per_page = 10, $count = false, $this_month = false, $today = false)
-    {
-        if( $this_month ) {
-            EE_Error::doing_it_wrong(
-                __FUNCTION__,
-                sprintf(
-                    esc_html__('%1$s parameter %2$s is deprecated, instead set %3$s.', 'event_espresso'),
-                    'Registrations_Admin_Page::get_registrations()',
-                    '$this_month',
-                    '$_REQUEST["status"]="month"'
-                ),
-                '4.9.21.p'
-            );
-            $this->_req_data['status'] = 'month';
-        }
-        if( $today ) {
-            EE_Error::doing_it_wrong(
-                __FUNCTION__,
-                sprintf(
-                    esc_html__('%1$s parameter %2$s is deprecated, instead set %3$s.', 'event_espresso'),
-                    'Registrations_Admin_Page::get_registrations()',
-                    '$today',
-                    '$_REQUEST["status"]="today"'
-                ),
-                '4.9.21.p'
-            );
-            $this->_req_data['status'] = 'today';
-        }
-        $query_params = $this->_get_query_params_from_request($this->_req_data, $per_page, $count);
-        if ($count) {
-            return EEM_Registration::instance()->count($query_params);
-        } else {
-            $registrations = EEM_Registration::instance()->get_all($query_params);
-            $EVT_ID = ! empty($request['event_id']) && $request['event_id'] > 0 ? absint($request['event_id']) : false;
-            if ($EVT_ID
-                && isset($registrations[0])
-                && $registrations[0] instanceof EE_Registration
-                && $registrations[0]->event_obj()
-            ) {
-                $first_registration = $registrations[0];
-                //EEH_Debug_Tools::printr( $registrations[0], '$registrations  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-                $event_name = $first_registration->event_obj()->name();
-                $event_date = $first_registration->date_obj()
-                                                 ->start_date_and_time('l F j, Y,',
-                                                     'g:i:s a');// isset( $registrations[0]->DTT_EVT_start ) ? date( 'l F j, Y,    g:i:s a', $registrations[0]->DTT_EVT_start ) : '';
-                // edit event link
-                if ($event_name != '') {
-                    $edit_event_url = self::add_query_args_and_nonce(array(
-                        'action' => 'edit_event',
-                        'EVT_ID' => $EVT_ID,
-                    ), EVENTS_ADMIN_URL);
-                    $edit_event_lnk = '<a href="' . $edit_event_url . '" title="' . esc_attr__('Edit ',
-                            'event_espresso') . $event_name . '">' . __('Edit Event', 'event_espresso') . '</a>';
-                    $event_name .= ' <span class="admin-page-header-edit-lnk not-bold">' . $edit_event_lnk . '</span>';
-                }
-                $back_2_reg_url = self::add_query_args_and_nonce(array('action' => 'default'), REG_ADMIN_URL);
-                $back_2_reg_lnk = '<a href="'
-                                  . $back_2_reg_url
-                                  . '" title="'
-                                  . esc_attr__('click to return to viewing all registrations ', 'event_espresso')
-                                  . '">&laquo; '
-                                  . __('Back to All Registrations', 'event_espresso')
-                                  . '</a>';
-                $this->_template_args['before_admin_page_content'] = '
-			<div id="admin-page-header">
-				<h1><span class="small-text not-bold">' . __('Event: ', 'event_espresso') . '</span>' . $event_name . '</h1>
-				<h3><span class="small-text not-bold">' . __('Date: ', 'event_espresso') . '</span>' . $event_date . '</h3>
-				<span class="admin-page-header-go-back-lnk not-bold">' . $back_2_reg_lnk . '</span>
-			</div>
-			';
-            }
-            return $registrations;
-        }
+    public function get_registrations(
+        $per_page = 10,
+        $count = false,
+        $this_month = false,
+        $today = false
+    ) {
+        $view         = ! empty($this->_req_data['status']) ? $this->_req_data['status'] : '';
+        $query_params = $this->_get_registration_query_parameters($per_page, $count, $this_month, $today, $view);
+        return $this->_get_registrations_or_count( $query_params, $view === 'trash', $count );
     }
 
 
     /**
-     * Generates WHERE conditions for a query from a request that fits nicely into a querystring
+     * Performs the appropriate model query for retrieving registrations or the count.
      *
-     * @param array   $request
-     * @param int     $per_page
-     * @param boolean $count whether to prepare query params to just count, or to actually fetch the records
-     * @return array
-     * @throws \EE_Error
+     * @param $query_params
+     * @param $trash
+     * @param $count
+     * @return int|EE_Registration[]
      */
-    protected function _get_query_params_from_request(
-        $request,
+    protected function _get_registrations_or_count( $query_params, $trash, $count ) {
+        if ($count) {
+            $method_to_use = $trash
+                ? 'count_deleted'
+                : 'count';
+            $registrations = EEM_Registration::instance()->{$method_to_use}($query_params);
+        } else {
+            $method_to_use = $trash
+                ? 'get_all_deleted'
+                : 'get_all';
+            $registrations = EEM_Registration::instance()->{$method_to_use}($query_params);
+        }
+        return $registrations;
+    }
+
+
+    /**
+     * Retrieves the query paramaters to be used by the Registration model for getting registrations.
+     * Note: this listens to values on the request for some of the query parameters.
+     * @param int    $per_page
+     * @param bool   $count
+     * @param bool   $this_month
+     * @param bool   $today
+     * @param string $view
+     * @return array
+     */
+    protected function _get_registration_query_parameters(
         $per_page = 10,
-        $count = false
+        $count = false,
+        $this_month = false,
+        $today = false,
+        $view = ''
     ) {
-        $EVT_ID = ! empty($request['event_id']) && $request['event_id'] > 0 ? absint($request['event_id']) : false;
-        $CAT_ID = ! empty($request['EVT_CAT']) && (int)$request['EVT_CAT'] > 0 ? absint($request['EVT_CAT']) : false;
-        $DTT_ID = isset($request['datetime_id']) ? absint($request['datetime_id']) : null;
-        $DTT_ID = isset( $request['DTT_ID'] ) ? $request['DTT_ID'] : $DTT_ID;
-        $reg_status = ! empty($request['_reg_status']) ? sanitize_text_field($request['_reg_status']) : false;
-        $month_range = ! empty($request['month_range']) ? sanitize_text_field($request['month_range'])
-            : false;//should be like 2013-april
-        $today = ! empty($request['status']) && $request['status'] === 'today' ? true : false;
-        $this_month = ! empty($request['status']) && $request['status'] === 'month' ? true : false;
-        $start_date = false;
-        $end_date = false;
-        $trash = ! empty($request['status']) && $request['status'] === 'trash' ? true : false;
-        $incomplete = ! empty($request['status']) && $request['status'] === 'incomplete' ? true : false;
-        $where = array();
-        //set orderby
-        $request['orderby'] = ! empty($request['orderby']) ? $request['orderby'] : '';
-        switch ($request['orderby']) {
-            case '_REG_ID':
-                $orderby = 'REG_ID';
-                break;
-            case '_Reg_status':
-                $orderby = 'STS_ID';
-                break;
-            case 'ATT_fname':
-                $orderby = 'Attendee.ATT_lname';
-                break;
-            case 'event_name':
-                $orderby = 'Event.EVT_name';
-                break;
-            case 'DTT_EVT_start':
-                $orderby = 'Event.Datetime.DTT_EVT_start';
-                break;
-            default: //'REG_date'
-                $orderby = 'REG_date';
+        if (empty($view)) {
+            $view = ! empty($this->_req_data['status']) ? $this->_req_data['status'] : $view;
         }
-        $sort = (isset($request['order']) && ! empty($request['order'])) ? $request['order'] : 'DESC';
-        $current_page = isset($request['paged']) && ! empty($request['paged']) ? $request['paged'] : 1;
-        $per_page = isset($request['perpage']) && ! empty($request['perpage']) ? $request['perpage'] : $per_page;
-        $offset = ($current_page - 1) * $per_page;
-        $limit = $count ? null : array($offset, $per_page);
-        if ($EVT_ID) {
-            $where['EVT_ID'] = $EVT_ID;
+        $query_params = array(
+            0                          => $this->_get_where_conditions_for_registrations_query(
+                $view,
+                $this_month,
+                $today
+            ),
+            'caps'                     => EEM_Registration::caps_read_admin,
+            'default_where_conditions' => 'this_model_only',
+        );
+        if ( ! $count) {
+            $query_params = array_merge(
+                $query_params,
+                $this->_get_orderby_for_registrations_query(),
+                $this->_get_limit($per_page)
+            );
         }
-        if ($CAT_ID) {
-            $where['Event.Term_Taxonomy.term_id'] = $CAT_ID;
+        return $query_params;
+    }
+
+
+    /**
+     * This will add EVT_ID to the provided $where array for EE model query parameters.
+     *
+     * @param array $where incoming $where parameters.
+     * @return array
+     */
+    protected function _add_event_id_to_where_conditions(array $where)
+    {
+        if ( ! empty($this->_req_data['event_id'])) {
+            $where['EVT_ID'] = absint($this->_req_data['event_id']);
         }
-        //if DTT is included we filter by that datetime.
-        if ($DTT_ID) {
-            $where['Ticket.Datetime.DTT_ID'] = $DTT_ID;
+        return $where;
+    }
+
+
+    /**
+     * Adds category ID if it exists in the request to the where conditions for the registrations query.
+     * @param array $where
+     * @return array
+     */
+    protected function _add_category_id_to_where_conditions(array $where)
+    {
+        if ( ! empty($this->_req_data['EVT_CAT']) && (int) $this->_req_data['EVT_CAT'] !== -1 ) {
+            $where['Event.Term_Taxonomy.term_id'] = absint($this->_req_data['EVT_CAT']);
         }
-        if ($incomplete) {
-            $where['STS_ID'] = EEM_Registration::status_id_incomplete;
-        } else if ( ! $trash) {
-            $where['STS_ID'] = array('!=', EEM_Registration::status_id_incomplete);
+        return $where;
+    }
+
+
+    /**
+     * Adds the datetime ID if it exists in the request to the where conditions for the registrations query.
+     * @param array $where
+     * @return array
+     */
+    protected function _add_datetime_id_to_where_conditions(array $where)
+    {
+        if ( ! empty($this->_req_data['datetime_id'])) {
+            $where['Ticket.Datetime.DTT_ID'] = absint($this->_req_data['datetime_id']);
         }
-        if ($reg_status) {
-            $where['STS_ID'] = $reg_status;
+        return $where;
+    }
+
+
+    /**
+     * Adds the correct registration status to the where conditions for the registrations query.
+     * @param array  $where
+     * @param string $view
+     * @return array
+     */
+    protected function _add_registration_status_to_where_conditions(array $where, $view = '')
+    {
+        $registration_status = ! empty($this->_req_data['_reg_status'])
+            ? sanitize_text_field($this->_req_data['_reg_status'])
+            : '';
+
+        /*
+         * If filtering by registration status, then we show registrations matching that status.
+         * If not filtering by specified status, then we show all registrations excluding incomplete registrations UNLESS
+         * viewing trashed registrations.
+         */
+        if ( ! empty($registration_status)) {
+            $where['STS_ID'] = $registration_status;
+        } else {
+            //make sure we exclude incomplete registrations, but only if not trashed.
+            if ($view !== 'trash') {
+                $where['STS_ID'] = array('!=', EEM_Registration::status_id_incomplete);
+            }
+
+            //if incomplete is the view.
+            if ($view === 'incomplete') {
+                $where['STS_ID'] = EEM_Registration::status_id_incomplete;
+            }
         }
-        $this_year_r = date('Y', current_time('timestamp'));
-        $time_start = ' 00:00:00';
-        $time_end = ' 23:59:59';
-        if ( $today) {
-            $curdate = date('Y-m-d', current_time('timestamp'));
+        return $where;
+    }
+
+
+    /**
+     * Adds any provided date restraints to the where conditions for the registrations query.
+     * @param array  $where
+     * @param string $view
+     * @param bool   $this_month
+     * @param bool   $today
+     * @return array
+     */
+    protected function _add_date_to_where_conditions(array $where, $view = '', $this_month = false, $today = false)
+    {
+        $month_range             = ! empty($this->_req_data['month_range'])
+            ? sanitize_text_field($this->_req_data['month_range'])
+            : '';
+        $retrieve_for_today      = $view === 'today' || $today;
+        $retrieve_for_this_month = $view === 'month' || $this_month;
+
+        if ($retrieve_for_today) {
+            $now               = date('Y-m-d', current_time('timestamp'));
             $where['REG_date'] = array(
                 'BETWEEN',
                 array(
-                    EEM_Registration::instance()
-                                    ->convert_datetime_for_query('REG_date', $curdate . $time_start, 'Y-m-d H:i:s'),
-                    EEM_Registration::instance()
-                                    ->convert_datetime_for_query('REG_date', $curdate . $time_end, 'Y-m-d H:i:s'),
+                    EEM_Registration::instance()->convert_datetime_for_query(
+                        'REG_date',
+                        $now . ' 00:00:00',
+                        'Y-m-d H:i:s'
+                    ),
+                    EEM_Registration::instance()->convert_datetime_for_query(
+                        'REG_date',
+                        $now . ' 23:59:59',
+                        'Y-m-d H:i:s'
+                    ),
                 ),
             );
-        } elseif ( $this_month) {
-            $this_month_r = date('m', current_time('timestamp'));
-            $days_this_month = date('t', current_time('timestamp'));
-            $where['REG_date'] = array(
+        } elseif ($retrieve_for_this_month) {
+            $current_year_and_month = date('Y-m', current_time('timestamp'));
+            $days_this_month        = date('t', current_time('timestamp'));
+            $where['REG_date']      = array(
                 'BETWEEN',
                 array(
-                    EEM_Registration::instance()
-                                    ->convert_datetime_for_query('REG_date',
-                                        $this_year_r . '-' . $this_month_r . '-01' . ' ' . $time_start, 'Y-m-d H:i:s'),
-                    EEM_Registration::instance()
-                                    ->convert_datetime_for_query('REG_date',
-                                        $this_year_r . '-' . $this_month_r . '-' . $days_this_month . ' ' . $time_end,
-                                        'Y-m-d H:i:s'),
+                    EEM_Registration::instance()->convert_datetime_for_query(
+                        'REG_date',
+                        $current_year_and_month . '-01 00:00:00',
+                        'Y-m-d H:i:s'
+                    ),
+                    EEM_Registration::instance()->convert_datetime_for_query(
+                        'REG_date',
+                        $current_year_and_month . '-' . $days_this_month . ' 23:59:59',
+                        'Y-m-d H:i:s'
+                    ),
                 ),
             );
         } elseif ($month_range) {
-            $pieces = explode(' ', $request['month_range'], 3);
-            $month_r = ! empty($pieces[0]) ? date('m', strtotime($month_range)) : '';
-            $year_r = ! empty($pieces[1]) ? $pieces[1] : '';
-            $days_in_month = date('t', strtotime($year_r . '-' . $month_r . '-' . '01'));
-            $where['REG_date'] = array(
-                'BETWEEN',
-                array(
-                    EEM_Registration::instance()
-                                    ->convert_datetime_for_query('REG_date', $year_r . '-' . $month_r . '-01 00:00:00',
-                                        'Y-m-d H:i:s'),
-                    EEM_Registration::instance()
-                                    ->convert_datetime_for_query('REG_date',
-                                        $year_r . '-' . $month_r . '-' . $days_in_month . ' 23:59:59', 'Y-m-d H:i:s'),
-                ),
-            );
-        } elseif ($start_date && $end_date) {
-            throw new EE_Error("not yet supported");
-        } elseif ($start_date) {
-            throw new EE_Error("not yet supported");
-        } elseif ($end_date) {
-            throw new EE_Error("not yet supported");
-        }
-        if ( ! empty($request['s'])) {
-            $search_term = '%' . $request['s'] . '%';
-            $where['OR'] = array(
-                'Event.EVT_name'                          => array('LIKE', $search_term),
-                'Event.EVT_desc'                          => array('LIKE', $search_term),
-                'Event.EVT_short_desc'                    => array('LIKE', $search_term),
-                'Attendee.ATT_full_name'                  => array('LIKE', $search_term),
-                'Attendee.ATT_fname'                      => array('LIKE', $search_term),
-                'Attendee.ATT_lname'                      => array('LIKE', $search_term),
-                'Attendee.ATT_short_bio'                  => array('LIKE', $search_term),
-                'Attendee.ATT_email'                      => array('LIKE', $search_term),
-                'Attendee.ATT_address'                    => array('LIKE', $search_term),
-                'Attendee.ATT_address2'                   => array('LIKE', $search_term),
-                'Attendee.ATT_city'                       => array('LIKE', $search_term),
-                'REG_final_price'                         => array('LIKE', $search_term),
-                'REG_code'                                => array('LIKE', $search_term),
-                'REG_count'                               => array('LIKE', $search_term),
-                'REG_group_size'                          => array('LIKE', $search_term),
-                'Ticket.TKT_name'                         => array('LIKE', $search_term),
-                'Ticket.TKT_description'                  => array('LIKE', $search_term),
-                'Transaction.Payment.PAY_txn_id_chq_nmbr' => array('LIKE', $search_term),
-            );
-        }
-        //capability checks
-        if ( ! EE_Registry::instance()->CAP->current_user_can('ee_read_others_registrations', 'get_registrations')) {
-            $where['AND'] = array(
-                'Event.EVT_wp_user' => get_current_user_id(),
-            );
-        }
-        $query_params = array(
-            $where,
-        );
-        if ( ! $trash && ! $incomplete) {
-            $query_params['default_where_conditions'] = 'this_model_only';
-        }
-        if ( ! $count) {
-            $query_params['order_by'] = array($orderby => $sort);
-            $query_params['default_where_conditions'] = 'this_model_only';
-            if ($per_page !== -1) {
-                $query_params['limit'] = $limit;
+            $pieces          = explode(' ', $month_range, 3);
+            $month_requested = ! empty($pieces[0])
+                ? date('m', strtotime($month_range))
+                : '';
+            $year_requested  = ! empty($pieces[1])
+                ? $pieces[1]
+                : '';
+            //if there is not a month or year then we can't go further
+            if ($month_requested && $year_requested) {
+                $days_in_month     = date('t', strtotime($year_requested . '-' . $month_requested . '-' . '01'));
+                $where['REG_date'] = array(
+                    'BETWEEN',
+                    array(
+                        EEM_Registration::instance()->convert_datetime_for_query(
+                            'REG_date',
+                            $year_requested . '-' . $month_requested . '-01 00:00:00',
+                            'Y-m-d H:i:s'
+                        ),
+                        EEM_Registration::instance()->convert_datetime_for_query(
+                            'REG_date',
+                            $year_requested . '-' . $month_requested . '-' . $days_in_month . ' 23:59:59',
+                            'Y-m-d H:i:s'
+                        ),
+                    ),
+                );
             }
         }
-        if ($trash) {
-            $query_params = EEM_Registration::instance()->alter_query_params_so_only_trashed_items_included($query_params);
+        return $where;
+    }
+
+
+    /**
+     * Adds any provided search restraints to the where conditions for the registrations query
+     * @param array $where
+     * @return array
+     */
+    protected function _add_search_to_where_conditions(array $where)
+    {
+        if ( ! empty($this->_req_data['s'])) {
+            $sstr         = '%' . sanitize_text_field($this->_req_data['s']) . '%';
+            $where['OR'] = array(
+                'Event.EVT_name'                          => array('LIKE', $sstr),
+                'Event.EVT_desc'                          => array('LIKE', $sstr),
+                'Event.EVT_short_desc'                    => array('LIKE', $sstr),
+                'Attendee.ATT_full_name'                  => array('LIKE', $sstr),
+                'Attendee.ATT_fname'                      => array('LIKE', $sstr),
+                'Attendee.ATT_lname'                      => array('LIKE', $sstr),
+                'Attendee.ATT_short_bio'                  => array('LIKE', $sstr),
+                'Attendee.ATT_email'                      => array('LIKE', $sstr),
+                'Attendee.ATT_address'                    => array('LIKE', $sstr),
+                'Attendee.ATT_address2'                   => array('LIKE', $sstr),
+                'Attendee.ATT_city'                       => array('LIKE', $sstr),
+                'REG_final_price'                         => array('LIKE', $sstr),
+                'REG_code'                                => array('LIKE', $sstr),
+                'REG_count'                               => array('LIKE', $sstr),
+                'REG_group_size'                          => array('LIKE', $sstr),
+                'Ticket.TKT_name'                         => array('LIKE', $sstr),
+                'Ticket.TKT_description'                  => array('LIKE', $sstr),
+                'Transaction.Payment.PAY_txn_id_chq_nmbr' => array('LIKE', $sstr),
+            );
         }
-        return $query_params;
+        return $where;
+    }
+
+
+    /**
+     * Sets up the where conditions for the registrations query.
+     * @param $view
+     * @param $this_month
+     * @param $today
+     * @return array
+     */
+    protected function _get_where_conditions_for_registrations_query($view, $this_month, $today)
+    {
+        $where = $this->_add_event_id_to_where_conditions(array());
+        $where = $this->_add_category_id_to_where_conditions($where);
+        $where = $this->_add_datetime_id_to_where_conditions($where);
+        $where = $this->_add_registration_status_to_where_conditions($where, $view);
+        $where = $this->_add_date_to_where_conditions($where, $view, $this_month, $today);
+        $where = $this->_add_search_to_where_conditions($where);
+        return $where;
+    }
+
+
+    /**
+     * Sets up the orderby for the registrations query.
+     * @return array
+     */
+    protected function _get_orderby_for_registrations_query()
+    {
+        $orderby_field = ! empty($this->_req_data['orderby'])
+            ? sanitize_text_field($this->_req_data['orderby'])
+            : '';
+        switch ($orderby_field) {
+            case '_REG_ID':
+                $orderby_field = 'REG_ID';
+                break;
+            case '_Reg_status':
+                $orderby_field = 'STS_ID';
+                break;
+            case 'ATT_fname':
+                $orderby_field = 'Attendee.ATT_lname';
+                break;
+            case 'event_name':
+                $orderby_field = 'Event.EVT_name';
+                break;
+            case 'DTT_EVT_start':
+                $orderby_field = 'Event.Datetime.DTT_EVT_start';
+                break;
+            default: //'REG_date'
+                $orderby_field = 'REG_date';
+        }
+
+        //order
+        $order = ! empty($this->_req_data['order'])
+            ? sanitize_text_field($this->_req_data['order'])
+            : 'DESC';
+        return array('order_by' => array($orderby_field => $order));
+    }
+
+
+    /**
+     * Sets up the limit for the registrations query.
+     * @param $per_page
+     * @return array
+     */
+    protected function _get_limit($per_page)
+    {
+        $current_page = ! empty($this->_req_data['paged'])
+            ? absint($this->_req_data['paged'])
+            : 1;
+        $per_page     = ! empty($this->_req_data['perpage'])
+            ? $this->_req_data['perpage']
+            : $per_page;
+
+        //-1 means return all results so get out if that's set.
+        if ( (int) $per_page === -1) {
+            return array();
+        }
+        $per_page = absint($per_page);
+        $offset   = ($current_page - 1) * $per_page;
+        return array('limit' => array($offset, $per_page));
     }
 
 
@@ -1333,8 +1433,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                     'default' => $this->_registration->ID(),
                 )),
                 'current_status'     => new EE_Form_Section_HTML(EEH_HTML::tr(EEH_HTML::th(EEH_HTML::label(EEH_HTML::strong(__('Current Registration Status',
-                        'event_espresso')))) . EEH_HTML::td(EEH_HTML::strong($this->_registration->pretty_status(), '',
-                        'status-' . $this->_registration->status_ID(),
+                        'event_espresso')))) . EEH_HTML::td(EEH_HTML::strong($this->_registration->pretty_status(),
+                        '', 'status-' . $this->_registration->status_ID(),
                         'line-height: 1em; font-size: 1.5em; font-weight: bold;')))),
                 'reg_status'         => new EE_Select_Input($this->_get_reg_statuses(), array(
                     'html_label_text' => __('Change Registration Status to', 'event_espresso'),
@@ -1356,6 +1456,38 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     }
 
 
+
+    /**
+     * Returns an array of all the buttons for the various statuses and switch status actions
+     *
+     * @return string
+     */
+    protected function _get_current_reg_status_help_text($STS_ID = '')
+    {
+        //$reg_status_help_text = array(
+        //	'RAP' => __( 'XXXXXXXXXXX', 'event_espresso' ),
+        //	'RAP' => __( 'XXXXXXXXXXX', 'event_espresso' ),
+        //	'RAP' => __( 'XXXXXXXXXXX', 'event_espresso' ),
+        //	'RAP' => __( 'XXXXXXXXXXX', 'event_espresso' ),
+        //	'RAP' => __( 'XXXXXXXXXXX', 'event_espresso' ),
+        //	'RAP' => __( 'XXXXXXXXXXX', 'event_espresso' ),
+        //);
+        //Approved
+        //An approved registration allows payments and may have a transaction status of incomplete or complete . The registration is marked as active and a space is reserved for the registrant .
+        //Cancelled
+        //	A {
+        //	cancelled} registration is performed by the registrant . Payments are not allowed, the registration is inactive, and no space is reserved .
+        //Declined
+        //A declined registration is performed by the event admin . Payments are not allowed, the registration is inactive, and not space is reserved .
+        //Not Approved
+        //A not approved registration is performed by the event admin . Payments are not allowed, the registration is active, and no space is reserved .
+        //Pending Payment
+        //A pending registration allows payments . The status will be automatically toggled to approved if the {
+        //	payment} is made in full by registrant .
+    }
+
+
+
     /**
      * Returns an array of all the buttons for the various statuses and switch status actions
      *
@@ -1369,7 +1501,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         $current_status = $this->_registration->status_ID();
         // is registration for free event? This will determine whether to display the pending payment option
         if ($current_status != EEM_Registration::status_id_pending_payment
-            && $this->_registration->transaction()->is_free()
+            && $this->_registration->transaction()
+                                   ->is_free()
         ) {
             unset($reg_status_array[EEM_Registration::status_id_pending_payment]);
         }
@@ -1975,8 +2108,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             foreach ($registrations as $registration) {
                 /* @var $registration EE_Registration */
                 $attendee = $registration->attendee()
-                    ? $registration->attendee() : EEM_Attendee::instance()
-                                                              ->create_default_object();
+                    ? $registration->attendee()
+                    : EEM_Attendee::instance()
+                                  ->create_default_object();
                 $this->_template_args['attendees'][$att_nmbr]['STS_ID'] = $registration->status_ID();
                 $this->_template_args['attendees'][$att_nmbr]['fname'] = $attendee->fname();//( isset( $registration->ATT_fname ) & ! empty( $registration->ATT_fname ) ) ? $registration->ATT_fname : '';
                 $this->_template_args['attendees'][$att_nmbr]['lname'] = $attendee->lname();//( isset( $registration->ATT_lname ) & ! empty( $registration->ATT_lname ) ) ? $registration->ATT_lname : '';
@@ -2638,33 +2772,13 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
 
 
 
-    /**
-     * Creates a registration report, but accepts the name of a method to use for preparing the query parameters
-     * to use when selecting registrations
-     * @param string $method_name_for_getting_query_params the name of the method (on this class) to use for preparing
-     *                                                     the query parameters from the request
-     * @return void ends the request with a redirect or download
-     */
-    public function _registrations_report_base( $method_name_for_getting_query_params )
+    public function _registrations_report()
     {
         if ( ! defined('EE_USE_OLD_CSV_REPORT_CLASS')) {
             wp_redirect(EE_Admin_Page::add_query_args_and_nonce(array(
                 'page'        => 'espresso_batch',
                 'batch'       => 'file',
                 'EVT_ID'      => isset($this->_req_data['EVT_ID']) ? $this->_req_data['EVT_ID'] : null,
-                'filters'     => urlencode(
-                    serialize(
-                        call_user_func(
-                            array( $this, $method_name_for_getting_query_params ),
-                            EEH_Array::is_set(
-                                $this->_req_data,
-                                'filters',
-                                array()
-                            )
-                        )
-                    )
-                ),
-                'use_filters' => EEH_Array::is_set($this->_req_data, 'use_filters', false),
                 'job_handler' => urlencode('EventEspressoBatchRequest\JobHandlers\RegistrationsReport'),
                 'return_url'  => urlencode($this->_req_data['return_url']),
             )));
@@ -2681,17 +2795,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 $EE_Export->export();
             }
         }
-    }
-
-
-
-    /**
-     * Creates a registration report using only query parameters in the request
-     * @return void
-     */
-    public function _registrations_report()
-    {
-        $this->_registrations_report_base( '_get_query_params_from_request' );
     }
 
 
