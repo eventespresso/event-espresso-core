@@ -7,7 +7,7 @@ defined('ABSPATH') || exit;
 
 /**
  * Class DatetimeSelector
- * Description
+ * adds the ability to filter the Ticket Selector by the available ticket datetimes
  *
  * @package       Event Espresso
  * @author        Brent Christensen
@@ -118,7 +118,7 @@ class DatetimeSelector
         $ticket_datetimes = $this->getTicketDatetimes($ticket);
         $classes = '';
         foreach ($this->datetimes as $datetime) {
-            if ( ! $datetime instanceof \EE_Datetime || ! in_array($datetime, $ticket_datetimes)) {
+            if ( ! $datetime instanceof \EE_Datetime || ! in_array($datetime, $ticket_datetimes, true)) {
                 continue;
             }
             $classes .= ' ee-ticket-datetimes-' . $datetime->date_range('Y_m_d', '-');
@@ -155,7 +155,8 @@ class DatetimeSelector
                 'html_id'               => 'datetime-selector-' . $this->event->ID(),
                 'html_name'             => 'datetime_selector_' . $this->event->ID(),
                 'html_class'            => 'datetime-selector',
-                'html_label_text'       => '<span class="dashicons dashicons-calendar-alt"></span> Select a Datetime',
+                'html_label_text'       => '<span class="dashicons dashicons-calendar-alt"></span> '
+                                            . esc_html__('Select a Datetime', 'event_espresso'),
                 'other_html_attributes' => ' data-tkt_slctr_evt="' . $this->event->ID() . '"',
             )
         );
