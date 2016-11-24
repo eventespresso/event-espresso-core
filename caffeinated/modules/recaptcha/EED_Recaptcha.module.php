@@ -256,7 +256,6 @@ class EED_Recaptcha  extends EED_Module {
 		if ( ! $recaptcha_passed && EED_Recaptcha::$_recaptcha_response ) {
 			$recaptcha_passed = EED_Recaptcha::_process_recaptcha_response();
 			EE_Registry::instance()->SSN->set_session_data( array( 'recaptcha_passed' => $recaptcha_passed ));
-			EE_Registry::instance()->SSN->update();
 		}
 		EED_Recaptcha::$_not_a_robot = $recaptcha_passed;
 		return $recaptcha_passed;

@@ -207,7 +207,6 @@ final class EE_System
         ) {
             include_once EE_THIRD_PARTY . 'wp-api-basic-auth' . DS . 'basic-auth.php';
         }
-        
         do_action('AHEE__EE_System__load_espresso_addons__complete');
     }
 
@@ -266,7 +265,7 @@ final class EE_System
                 //migrations may be required now that we've upgraded
                 EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
                 $this->_handle_core_version_change($espresso_db_update);
-//				echo "done upgrade";die;
+                //				echo "done upgrade";die;
                 break;
             case EE_System::req_type_downgrade:
                 do_action('AHEE__EE_System__detect_if_activation_or_upgrade__downgrade');
@@ -276,7 +275,7 @@ final class EE_System
                 break;
             case EE_System::req_type_normal:
             default:
-//				$this->_maybe_redirect_to_ee_about();
+                //				$this->_maybe_redirect_to_ee_about();
                 break;
         }
         do_action('AHEE__EE_System__detect_if_activation_or_upgrade__complete');
@@ -956,7 +955,7 @@ final class EE_System
      */
     public function set_hooks_for_shortcodes_modules_and_addons()
     {
-//		do_action( 'AHEE__EE_System__set_hooks_for_shortcodes_modules_and_addons' );
+        //		do_action( 'AHEE__EE_System__set_hooks_for_shortcodes_modules_and_addons' );
     }
 
 

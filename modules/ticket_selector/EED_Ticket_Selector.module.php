@@ -438,7 +438,9 @@ class EED_Ticket_Selector extends  EED_Module {
 					'',
 					EED_Ticket_Selector::$_event
 				);
-				$html .= \EED_Ticket_Selector::no_tkt_slctr_end_dv();
+				$html .= empty($external_url) ?
+                    \EED_Ticket_Selector::no_tkt_slctr_end_dv()
+                    : \EED_Ticket_Selector::clear_tkt_slctr();
 				$html .= '<br/>' . \EED_Ticket_Selector::ticket_selector_form_close();
 			} else if (
 				// a "Dude Where's my Ticket Selector?" (DWMTS) type event (ie: $_max_atndz === 1)
@@ -689,9 +691,7 @@ class EED_Ticket_Selector extends  EED_Module {
 					do_action( 'FHEE__EE_Ticket_Selector__process_ticket_selections__before_redirecting_to_checkout', EE_Registry::instance()->CART, $this );
 					EE_Registry::instance()->CART->recalculate_all_cart_totals();
 					EE_Registry::instance()->CART->save_cart( FALSE );
-					EE_Registry::instance()->SSN->update();
-					//d( EE_Registry::instance()->CART );
-					//die(); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< OR HERE TO KILL REDIRECT AFTER CART UPDATE
+					// exit('KILL REDIRECT AFTER CART UPDATE'); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< OR HERE TO KILL REDIRECT AFTER CART UPDATE
 					// just return TRUE for registrations being made from admin
 					if ( is_admin() ) {
 						return TRUE;
