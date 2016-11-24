@@ -915,7 +915,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @param bool   $today
      * @param bool   $trash
      * @param string $orderby
-     * @return \EE_Registration[]
+     * @return \EE_Registration[]|int
      */
     public function get_registrations(
         $per_page = 10,
@@ -923,35 +923,13 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         $this_month = false,
         $today = false
     ) {
-        $view         = ! empty($this->_req_data['status']) ? $this->_req_data['status'] : '';
-        $query_params = $this->_get_registration_query_parameters($per_page, $count, $this_month, $today, $view);
-        return $this->_get_registrations_or_count($query_params, $view === 'trash', $count);
+        $query_params = $this->_get_registration_query_parameters($per_page, $count, $this_month, $today);
+        return $count
+            ? EEM_Registration::instance()->count($query_params)
+            /** @type EE_Registration[] */
+            : EEM_Registration::instance()->get_all($query_params);
     }
 
-
-    /**
-     * Performs the appropriate model query for retrieving registrations or the count.
-     *
-     * @param $query_params
-     * @param $trash
-     * @param $count
-     * @return int|EE_Registration[]
-     */
-    protected function _get_registrations_or_count($query_params, $trash, $count)
-    {
-        if ($count) {
-            $method_to_use = $trash
-                ? 'count_deleted'
-                : 'count';
-            $registrations = EEM_Registration::instance()->{$method_to_use}($query_params);
-        } else {
-            $method_to_use = $trash
-                ? 'get_all_deleted'
-                : 'get_all';
-            $registrations = EEM_Registration::instance()->{$method_to_use}($query_params);
-        }
-        return $registrations;
-    }
 
 
     /**
@@ -962,19 +940,15 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @param bool   $count
      * @param bool   $this_month
      * @param bool   $today
-     * @param string $view
      * @return array
      */
     protected function _get_registration_query_parameters(
         $per_page = 10,
         $count = false,
         $this_month = false,
-        $today = false,
-        $view = ''
+        $today = false
     ) {
-        if (empty($view)) {
-            $view = ! empty($this->_req_data['status']) ? $this->_req_data['status'] : $view;
-        }
+        $view         = ! empty($this->_req_data['status']) ? $this->_req_data['status'] : '';
         $query_params = array(
             0                          => $this->_get_where_conditions_for_registrations_query(
                 $view,
@@ -990,6 +964,10 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 $this->_get_orderby_for_registrations_query(),
                 $this->_get_limit($per_page)
             );
+        }
+
+        if ( $view === 'trash' ) {
+            $query_params = EEM_Registration::instance()->alter_query_params_so_only_trashed_items_included($query_params);
         }
         return $query_params;
     }
