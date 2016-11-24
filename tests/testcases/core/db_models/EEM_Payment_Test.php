@@ -97,7 +97,6 @@ class EEM_Payment_Test extends EE_UnitTestCase
     public function test_get_payments_between_dates()
     {
         $timezone = new DateTimeZone('America/Toronto');
-        EEM_Payment::instance()->set_timezone('America/Toronto');
         // set $test_time in the timezone being tested.
         $test_time = new DateTime('now', $timezone);
         $test_time->setTime(14, 00);
