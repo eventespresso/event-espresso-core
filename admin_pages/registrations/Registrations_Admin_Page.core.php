@@ -911,10 +911,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      *
      * @param int    $per_page
      * @param bool   $count
-     * @param bool   $this_month
-     * @param bool   $today
-     * @param bool   $trash
-     * @param string $orderby
+     * @param bool   $this_month @deprecated since 4.9.21.p instead set $this->_req_data['status']='month'
+     * @param bool   $today @deprecated since 4.9.21.p instead set $this->_req_data['status']='today'
      * @return \EE_Registration[]|int
      */
     public function get_registrations(
@@ -923,7 +921,33 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         $this_month = false,
         $today = false
     ) {
-        $query_params = $this->_get_registration_query_parameters($per_page, $count, $this_month, $today);
+        if( $this_month ) {
+            EE_Error::doing_it_wrong(
+                __FUNCTION__,
+                sprintf(
+                    esc_html__('%1$s parameter %2$s is deprecated, instead set %3$s.', 'event_espresso'),
+                    'Registrations_Admin_Page::get_registrations()',
+                    '$this_month',
+                    '$_REQUEST["status"]="month"'
+                ),
+                '4.9.21.p'
+            );
+            $this->_req_data['status'] = 'month';
+        }
+        if( $today ) {
+            EE_Error::doing_it_wrong(
+                __FUNCTION__,
+                sprintf(
+                    esc_html__('%1$s parameter %2$s is deprecated, instead set %3$s.', 'event_espresso'),
+                    'Registrations_Admin_Page::get_registrations()',
+                    '$today',
+                    '$_REQUEST["status"]="today"'
+                ),
+                '4.9.21.p'
+            );
+            $this->_req_data['status'] = 'today';
+        }
+        $query_params = $this->_get_registration_query_parameters($per_page, $count);
         return $count
             ? EEM_Registration::instance()->count($query_params)
             /** @type EE_Registration[] */
@@ -938,22 +962,16 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      *
      * @param int    $per_page
      * @param bool   $count
-     * @param bool   $this_month
-     * @param bool   $today
      * @return array
      */
     protected function _get_registration_query_parameters(
         $per_page = 10,
-        $count = false,
-        $this_month = false,
-        $today = false
+        $count = false
     ) {
         $view         = ! empty($this->_req_data['status']) ? $this->_req_data['status'] : '';
         $query_params = array(
             0                          => $this->_get_where_conditions_for_registrations_query(
-                $view,
-                $this_month,
-                $today
+                $view
             ),
             'caps'                     => EEM_Registration::caps_read_admin,
             'default_where_conditions' => 'this_model_only',
@@ -1058,17 +1076,15 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      *
      * @param array  $where
      * @param string $view
-     * @param bool   $this_month
-     * @param bool   $today
      * @return array
      */
-    protected function _add_date_to_where_conditions(array $where, $view = '', $this_month = false, $today = false)
+    protected function _add_date_to_where_conditions(array $where, $view = '')
     {
         $month_range             = ! empty($this->_req_data['month_range'])
             ? sanitize_text_field($this->_req_data['month_range'])
             : '';
-        $retrieve_for_today      = $view === 'today' || $today;
-        $retrieve_for_this_month = $view === 'month' || $this_month;
+        $retrieve_for_today      = $view === 'today';
+        $retrieve_for_this_month = $view === 'month';
 
         if ($retrieve_for_today) {
             $now               = date('Y-m-d', current_time('timestamp'));
@@ -1176,17 +1192,15 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * Sets up the where conditions for the registrations query.
      *
      * @param $view
-     * @param $this_month
-     * @param $today
      * @return array
      */
-    protected function _get_where_conditions_for_registrations_query($view, $this_month, $today)
+    protected function _get_where_conditions_for_registrations_query($view)
     {
         $where = $this->_add_event_id_to_where_conditions(array());
         $where = $this->_add_category_id_to_where_conditions($where);
         $where = $this->_add_datetime_id_to_where_conditions($where);
         $where = $this->_add_registration_status_to_where_conditions($where, $view);
-        $where = $this->_add_date_to_where_conditions($where, $view, $this_month, $today);
+        $where = $this->_add_date_to_where_conditions($where, $view);
         $where = $this->_add_search_to_where_conditions($where);
         return $where;
     }
