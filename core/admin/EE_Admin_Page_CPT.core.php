@@ -203,10 +203,11 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 * @return void
 	 */
 	public function modify_pagenow( $current_screen ) {
-		global $pagenow;
+		global $pagenow, $hook_suffix;
 		//possibly reset pagenow.
 		if ( ! empty( $this->_req_data['page'] ) && $this->_req_data['page'] == $this->page_slug && !empty( $this->_req_data['action'] ) && isset( $this->_pagenow_map[$this->_req_data['action'] ] ) ) {
 			$pagenow = $this->_pagenow_map[$this->_req_data['action']];
+            $hook_suffix = $pagenow;
 		}
 	}
 

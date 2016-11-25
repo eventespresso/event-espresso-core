@@ -37,10 +37,10 @@ class InvalidCheckoutAccess {
 	 */
 	public function checkoutAccessIsInvalid( \EE_Checkout $checkout ) {
 		if (
-			\EE_Config::instance()->registration->track_invalid_checkout_access()
-			&& ! ( $checkout->uts || $checkout->reg_url_link )
+			! ( $checkout->uts || $checkout->reg_url_link )
 			&& ! ( defined( 'DOING_AJAX' ) && DOING_AJAX )
-		) {
+            && \EE_Config::instance()->registration->track_invalid_checkout_access()
+        ) {
 			/** @var \EE_Request $request */
 			$request = \EE_Registry::instance()->load_core( 'EE_Request' );
 			$ip_address = $request->ip_address();
@@ -52,7 +52,7 @@ class InvalidCheckoutAccess {
 			if ( ! isset( $ee_bot_checkout[ $ip_address ] ) ) {
 				$ee_bot_checkout[ $ip_address ] = array();
 			}
-			$http_referer = ( isset( $_SERVER['HTTP_REFERER'] ) )
+			$http_referer = isset( $_SERVER['HTTP_REFERER'] )
 				? esc_attr( $_SERVER['HTTP_REFERER'] )
 				: 0;
 			if ( ! isset( $ee_bot_checkout[ $ip_address ][ $http_referer ] ) ) {
@@ -60,8 +60,6 @@ class InvalidCheckoutAccess {
 			}
 			$ee_bot_checkout[ $ip_address ][ $http_referer ]++;
 			update_option( InvalidCheckoutAccess::OPTION_KEY, $ee_bot_checkout );
-			$checkout->redirect = true;
-			$checkout->redirect_url = get_post_type_archive_link('espresso_events');
             if (WP_DEBUG) {
                 \EE_Error::add_error(
                     esc_html__('Direct access to the registration checkout page is not allowed.', 'event_espresso'),
