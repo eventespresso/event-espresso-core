@@ -87,6 +87,11 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
                 'func'       => '_event_registrations_list_table',
                 'capability' => 'ee_read_checkins',
             ),
+            'registrations_checkin_report' => array(
+                'func'       => '_registrations_checkin_report',
+                'noheader'   => true,
+                'capability' => 'ee_read_registrations',
+            ),
         );
         $this->_page_routes = array_merge($this->_page_routes, $new_page_routes);
         $new_page_config = array(
@@ -1082,10 +1087,46 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
         $this->display_admin_list_table_page_with_no_sidebar();
     }
 
+    /**
+     * Download the registrations check-in report (same as the normal registration report, but with different where
+     * conditions)
+     *
+     * @return void ends the request by a redirect or download
+     */
+    public function _registrations_checkin_report()
+    {
+        $this->_registrations_report_base('_get_checkin_query_params_from_request');
+    }
+
+    /**
+     * Gets the query params from the request, plus adds a where condition for the registration status,
+     * because on the checkin page we only ever want to see approved and pending-approval registrations
+     *
+     * @param array     $request
+     * @param int  $per_page
+     * @param bool $count
+     * @return array
+     */
+    protected function _get_checkin_query_params_from_request(
+        $request,
+        $per_page = 10,
+        $count = false
+    ) {
+        $query_params = $this->_get_registration_query_parameters($request, $per_page, $count);
+        //unlike the regular registrations list table,
+        $status_ids_array = apply_filters(
+            'FHEE__Extend_Registrations_Admin_Page__get_event_attendees__status_ids_array',
+            array(EEM_Registration::status_id_pending_payment, EEM_Registration::status_id_approved)
+        );
+        $query_params[0]['STS_ID'] = array('IN', $status_ids_array);
+        return $query_params;
+    }
+
+
 
 
     /**
-     * get_attendees
+     * Gets registrations for an event
      *
      * @param int    $per_page
      * @param bool   $count whether to return count or data.
@@ -1095,30 +1136,17 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
      * @throws \EE_Error
      * @access public
      */
-    public function get_event_attendees($per_page = 10, $count = false, $trash = false, $orderby = 'Attendee.ATT_lname')
+    public function get_event_attendees($per_page = 10, $count = false, $trash = false, $orderby = 'ATT_fname')
     {
         //normalize some request params that get setup by the parent `get_registrations` method.
-        $this->_req_data['orderby'] = ! empty($this->_req_data['orderby']) ? $this->_req_data['orderby'] : $orderby;
-        $this->_req_data['order'] =  ! empty($this->_req_data['order']) ? $this->_req_data['order'] : 'ASC';
-        $view = ! empty($this->_req_data['status']) ? $this->_req_data['status'] : '';
-        $query_params = $this->_get_registration_query_parameters( $view, $per_page, $count );
-
-        //custom_query_params for this method
-        $status_ids_array = apply_filters(
-            'FHEE__Extend_Registrations_Admin_Page__get_event_attendees__status_ids_array',
-            array(EEM_Registration::status_id_pending_payment, EEM_Registration::status_id_approved)
-        );
-        $query_params[0] = array(
-            'Event.status' => array( 'IN', array_keys( EEM_Event::instance()->get_status_array() ) ),
-            'STS_ID' => array('IN', $status_ids_array),
-        );
-
-        if ( $trash ) {
-            $query_params[0]['Attendee.status'] = EEM_CPT_Base::post_status_trashed;
+        $request = $this->_req_data;
+        $request['orderby'] = ! empty($this->_req_data['orderby']) ? $this->_req_data['orderby'] : $orderby;
+        $request['order'] =  ! empty($this->_req_data['order']) ? $this->_req_data['order'] : 'ASC';
+        if($trash){
+            $request['status'] = 'trash';
         }
+        $query_params = $this->_get_checkin_query_params_from_request( $request, $per_page, $count );
 
-        //force join to attendee model so that it gets cached, because we're going to need the attendee for each registration
-        $query_params['force_join'] = array('Attendee');
         return $count
             ? EEM_Registration::instance()->count($query_params)
             /** @type EE_Registration[] */

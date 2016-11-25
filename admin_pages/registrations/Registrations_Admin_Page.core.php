@@ -911,8 +911,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      *
      * @param int    $per_page
      * @param bool   $count
-     * @param bool   $this_month @deprecated since 4.9.21.p instead set $this->_req_data['status']='month'
-     * @param bool   $today @deprecated since 4.9.21.p instead set $this->_req_data['status']='today'
+     * @param bool   $this_month 
+     * @param bool   $today
      * @return \EE_Registration[]|int
      */
     public function get_registrations(
@@ -922,32 +922,12 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         $today = false
     ) {
         if( $this_month ) {
-            EE_Error::doing_it_wrong(
-                __FUNCTION__,
-                sprintf(
-                    esc_html__('%1$s parameter %2$s is deprecated, instead set %3$s.', 'event_espresso'),
-                    'Registrations_Admin_Page::get_registrations()',
-                    '$this_month',
-                    '$_REQUEST["status"]="month"'
-                ),
-                '4.9.21.p'
-            );
             $this->_req_data['status'] = 'month';
         }
         if( $today ) {
-            EE_Error::doing_it_wrong(
-                __FUNCTION__,
-                sprintf(
-                    esc_html__('%1$s parameter %2$s is deprecated, instead set %3$s.', 'event_espresso'),
-                    'Registrations_Admin_Page::get_registrations()',
-                    '$today',
-                    '$_REQUEST["status"]="today"'
-                ),
-                '4.9.21.p'
-            );
             $this->_req_data['status'] = 'today';
         }
-        $query_params = $this->_get_registration_query_parameters($per_page, $count);
+        $query_params = $this->_get_registration_query_parameters($this->_req_data, $per_page, $count);
         return $count
             ? EEM_Registration::instance()->count($query_params)
             /** @type EE_Registration[] */
@@ -957,21 +937,23 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
 
 
     /**
-     * Retrieves the query paramaters to be used by the Registration model for getting registrations.
+     * Retrieves the query parameters to be used by the Registration model for getting registrations.
      * Note: this listens to values on the request for some of the query parameters.
      *
+     * @param array $request
      * @param int    $per_page
      * @param bool   $count
      * @return array
      */
     protected function _get_registration_query_parameters(
+        $request = array(),
         $per_page = 10,
         $count = false
     ) {
-        $view         = ! empty($this->_req_data['status']) ? $this->_req_data['status'] : '';
+
         $query_params = array(
             0                          => $this->_get_where_conditions_for_registrations_query(
-                $view
+                $request
             ),
             'caps'                     => EEM_Registration::caps_read_admin,
             'default_where_conditions' => 'this_model_only',
@@ -984,9 +966,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             );
         }
 
-        if ( $view === 'trash' ) {
-            $query_params = EEM_Registration::instance()->alter_query_params_so_only_trashed_items_included($query_params);
-        }
         return $query_params;
     }
 
@@ -994,13 +973,14 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     /**
      * This will add EVT_ID to the provided $where array for EE model query parameters.
      *
-     * @param array $where incoming $where parameters.
+     * @param array $request usually the same as $this->_req_data but not necessarily
      * @return array
      */
-    protected function _add_event_id_to_where_conditions(array $where)
+    protected function _add_event_id_to_where_conditions(array $request)
     {
-        if ( ! empty($this->_req_data['event_id'])) {
-            $where['EVT_ID'] = absint($this->_req_data['event_id']);
+        $where = array();
+        if ( ! empty($request['event_id'])) {
+            $where['EVT_ID'] = absint($request['event_id']);
         }
         return $where;
     }
@@ -1009,13 +989,14 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     /**
      * Adds category ID if it exists in the request to the where conditions for the registrations query.
      *
-     * @param array $where
+     * @param array $request usually the same as $this->_req_data but not necessarily
      * @return array
      */
-    protected function _add_category_id_to_where_conditions(array $where)
+    protected function _add_category_id_to_where_conditions(array $request)
     {
-        if ( ! empty($this->_req_data['EVT_CAT']) && (int)$this->_req_data['EVT_CAT'] !== -1) {
-            $where['Event.Term_Taxonomy.term_id'] = absint($this->_req_data['EVT_CAT']);
+        $where = array();
+        if ( ! empty($request['EVT_CAT']) && (int)$request['EVT_CAT'] !== -1) {
+            $where['Event.Term_Taxonomy.term_id'] = absint($request['EVT_CAT']);
         }
         return $where;
     }
@@ -1024,13 +1005,14 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     /**
      * Adds the datetime ID if it exists in the request to the where conditions for the registrations query.
      *
-     * @param array $where
+     * @param array $request usually the same as $this->_req_data but not necessarily
      * @return array
      */
-    protected function _add_datetime_id_to_where_conditions(array $where)
+    protected function _add_datetime_id_to_where_conditions(array $request)
     {
-        if ( ! empty($this->_req_data['datetime_id'])) {
-            $where['Ticket.Datetime.DTT_ID'] = absint($this->_req_data['datetime_id']);
+        $where = array();
+        if ( ! empty($request['datetime_id'])) {
+            $where['Ticket.Datetime.DTT_ID'] = absint($request['datetime_id']);
         }
         return $where;
     }
@@ -1039,14 +1021,15 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     /**
      * Adds the correct registration status to the where conditions for the registrations query.
      *
-     * @param array  $where
-     * @param string $view
+     * @param array $request usually the same as $this->_req_data but not necessarily
      * @return array
      */
-    protected function _add_registration_status_to_where_conditions(array $where, $view = '')
+    protected function _add_registration_status_to_where_conditions(array $request)
     {
-        $registration_status = ! empty($this->_req_data['_reg_status'])
-            ? sanitize_text_field($this->_req_data['_reg_status'])
+        $where = array();
+        $view  = EEH_Array::is_set( $request, 'status', '' );
+        $registration_status = ! empty($request['_reg_status'])
+            ? sanitize_text_field($request['_reg_status'])
             : '';
 
         /*
@@ -1058,13 +1041,12 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             $where['STS_ID'] = $registration_status;
         } else {
             //make sure we exclude incomplete registrations, but only if not trashed.
-            if ($view !== 'trash') {
-                $where['STS_ID'] = array('!=', EEM_Registration::status_id_incomplete);
-            }
-
-            //if incomplete is the view.
-            if ($view === 'incomplete') {
+            if ($view === 'trash') {
+                $where['REG_deleted'] = true;
+            } else if ($view === 'incomplete') {
                 $where['STS_ID'] = EEM_Registration::status_id_incomplete;
+            } else {
+                $where['STS_ID'] = array('!=', EEM_Registration::status_id_incomplete);
             }
         }
         return $where;
@@ -1074,14 +1056,15 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     /**
      * Adds any provided date restraints to the where conditions for the registrations query.
      *
-     * @param array  $where
-     * @param string $view
+     * @param array $request usually the same as $this->_req_data but not necessarily
      * @return array
      */
-    protected function _add_date_to_where_conditions(array $where, $view = '')
+    protected function _add_date_to_where_conditions(array $request)
     {
-        $month_range             = ! empty($this->_req_data['month_range'])
-            ? sanitize_text_field($this->_req_data['month_range'])
+        $where = array();
+        $view  = EEH_Array::is_set( $request, 'status', '' );
+        $month_range             = ! empty($request['month_range'])
+            ? sanitize_text_field($request['month_range'])
             : '';
         $retrieve_for_today      = $view === 'today';
         $retrieve_for_this_month = $view === 'month';
@@ -1156,13 +1139,14 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     /**
      * Adds any provided search restraints to the where conditions for the registrations query
      *
-     * @param array $where
+     * @param array $request usually the same as $this->_req_data but not necessarily
      * @return array
      */
-    protected function _add_search_to_where_conditions(array $where)
+    protected function _add_search_to_where_conditions(array $request)
     {
-        if ( ! empty($this->_req_data['s'])) {
-            $search_string = '%' . sanitize_text_field($this->_req_data['s']) . '%';
+        $where = array();
+        if ( ! empty($request['s'])) {
+            $search_string = '%' . sanitize_text_field($request['s']) . '%';
             $where['OR'] = array(
                 'Event.EVT_name'                          => array('LIKE', $search_string),
                 'Event.EVT_desc'                          => array('LIKE', $search_string),
@@ -1191,18 +1175,19 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     /**
      * Sets up the where conditions for the registrations query.
      *
-     * @param $view
+     * @param array $request
      * @return array
      */
-    protected function _get_where_conditions_for_registrations_query($view)
+    protected function _get_where_conditions_for_registrations_query($request)
     {
-        $where = $this->_add_event_id_to_where_conditions(array());
-        $where = $this->_add_category_id_to_where_conditions($where);
-        $where = $this->_add_datetime_id_to_where_conditions($where);
-        $where = $this->_add_registration_status_to_where_conditions($where, $view);
-        $where = $this->_add_date_to_where_conditions($where, $view);
-        $where = $this->_add_search_to_where_conditions($where);
-        return $where;
+        return array_merge(
+            $this->_add_event_id_to_where_conditions($request),
+            $this->_add_category_id_to_where_conditions($request),
+            $this->_add_datetime_id_to_where_conditions($request),
+            $this->_add_registration_status_to_where_conditions($request),
+            $this->_add_date_to_where_conditions($request),
+            $this->_add_search_to_where_conditions($request)
+        );
     }
 
 
@@ -1224,6 +1209,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 $orderby_field = 'STS_ID';
                 break;
             case 'ATT_fname':
+                //just for spite, we're going to order it by their LAST name, NOT their first name. Now who's the boss?
+                //jk, we don't want to break existing links, and customers preferred ordering by last name
+                //besides, from the UI, its ambiguous as to whether we will order by first or last name
                 $orderby_field = 'Attendee.ATT_lname';
                 break;
             case 'event_name':
@@ -2682,8 +2670,14 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         $this->_redirect_after_action(false, '', '', $query_args, true);
     }
 
-
-    public function _registrations_report()
+    /**
+     * Creates a registration report, but accepts the name of a method to use for preparing the query parameters
+     * to use when selecting registrations
+     * @param string $method_name_for_getting_query_params the name of the method (on this class) to use for preparing
+     *                                                     the query parameters from the request
+     * @return void ends the request with a redirect or download
+     */
+    public function _registrations_report_base( $method_name_for_getting_query_params )
     {
         if ( ! defined('EE_USE_OLD_CSV_REPORT_CLASS')) {
             wp_redirect(EE_Admin_Page::add_query_args_and_nonce(array(
@@ -2692,7 +2686,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 'EVT_ID'      => isset($this->_req_data['EVT_ID']) ? $this->_req_data['EVT_ID'] : null,
                 'filters'     => urlencode(
                     serialize(
-                        $this->_get_registration_query_parameters(
+                        call_user_func(
+                            array( $this, $method_name_for_getting_query_params ),
                             EEH_Array::is_set(
                                 $this->_req_data,
                                 'filters',
@@ -2701,7 +2696,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                         )
                     )
                 ),
-                'use_filters' => EEH_Array::is_set( $this->_req_data, 'use_filters', false ),
+                'use_filters' => EEH_Array::is_set($this->_req_data, 'use_filters', false),
                 'job_handler' => urlencode('EventEspressoBatchRequest\JobHandlers\RegistrationsReport'),
                 'return_url'  => urlencode($this->_req_data['return_url']),
             )));
@@ -2711,13 +2706,24 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 'action' => 'registrations_report_for_event',
                 'EVT_ID' => isset($this->_req_data['EVT_ID']) ? $this->_req_data['EVT_ID'] : null,
             );
-            $this->_req_data  = array_merge($this->_req_data, $new_request_args);
+            $this->_req_data = array_merge($this->_req_data, $new_request_args);
             if (is_readable(EE_CLASSES . 'EE_Export.class.php')) {
                 require_once(EE_CLASSES . 'EE_Export.class.php');
                 $EE_Export = EE_Export::instance($this->_req_data);
                 $EE_Export->export();
             }
         }
+    }
+
+
+
+    /**
+     * Creates a registration report using only query parameters in the request
+     * @return void
+     */
+    public function _registrations_report()
+    {
+        $this->_registrations_report_base( '_get_registration_query_parameters' );
     }
 
 
