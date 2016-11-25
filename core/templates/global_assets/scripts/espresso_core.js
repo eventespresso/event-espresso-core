@@ -470,6 +470,64 @@ jQuery(document).ready(function($) {
 		}
 	);
 
+
+
+    /**
+     * @function rgb2hex
+     * converts hex format to a rgb color
+     * @see http://jsfiddle.net/Mottie/xcqpF/1/light/
+     *
+     * @param {string} rgb
+     * @return string
+     */
+    window.eeRgbToHex = function (rgb) {
+        // console_log('rgb', rgb, false);
+        var hex = '';
+        var rgb_parts = rgb.match(/^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i);
+        if (rgb_parts && rgb_parts.length === 4) {
+            hex = "#" + ("0" + parseInt(rgb_parts[1], 10).toString(16)).slice(-2);
+            hex += ("0" + parseInt(rgb_parts[2], 10).toString(16)).slice(-2);
+            hex += ("0" + parseInt(rgb_parts[3], 10).toString(16)).slice(-2);
+        }
+        hex = hex !== '' ? hex : rgb;
+        // console_log('hex', hex, false);
+        return hex;
+    };
+
+
+
+    /**
+     * @function getParentBackgroundColor
+     * recursively walks up the DOM looking for the first element with
+     * some sort of color set for the background, then returns that value
+     *
+     * @param {object} domElement
+     * @return string
+     */
+    window.eeGetParentBackgroundColor = function (domElement) {
+    	// set default color of white with full opacity
+        var BackgroundColor = 'rgba(255,255,255,1)';
+        var $parent = domElement.parent();
+        // if no BG color is found by the time we get to the "<html>" tag, then just return the default;
+        if ($parent.length && $parent.prop('tagName') !== 'HTML') {
+            // console_log('$parent', $parent.prop('tagName') + ' #' + $parent.attr('id'), true);
+            BackgroundColor = $parent.css('backgroundColor');
+            // console_log('BackgroundColor', BackgroundColor, false);
+            if (
+                typeof BackgroundColor === 'undefined'
+                || BackgroundColor === 'transparent'
+                || BackgroundColor === 'inherit'
+                || BackgroundColor === 'rgba(0, 0, 0, 0)'
+                || BackgroundColor === ''
+            ) {
+                return eeGetParentBackgroundColor($parent);
+            }
+        }
+        return BackgroundColor;
+    };
+
+
+
 });
 
 
