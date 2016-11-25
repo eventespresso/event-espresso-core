@@ -305,13 +305,15 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
         $this->assertEquals($expected_ids, array_keys($registrations));
     }
 
+
+
     public function test_add_event_id_to_where_conditions()
     {
         $this->go_to(
             $this->_get_reg_admin_url(array('event_id' => 42))
         );
         $this->_load_requirements();
-        $where = $this->_admin_page->add_event_id_to_where_conditions(array());
+        $where = $this->_admin_page->add_event_id_to_where_conditions($this->_admin_page->get_request_data());
         $this->assertCount(1, $where);
         $this->assertArrayHasKey('EVT_ID', $where);
         $this->assertEquals(42, $where['EVT_ID']);
@@ -325,7 +327,7 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
             $this->_get_reg_admin_url(array('EVT_CAT' => 42))
         );
         $this->_load_requirements();
-        $where = $this->_admin_page->add_category_id_to_where_conditions(array());
+        $where = $this->_admin_page->add_category_id_to_where_conditions($this->_admin_page->get_request_data());
         $this->assertCount(1, $where);
         $this->assertArrayHasKey('Event.Term_Taxonomy.term_id', $where);
         $this->assertEquals(42,$where['Event.Term_Taxonomy.term_id']);
@@ -338,7 +340,7 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
             $this->_get_reg_admin_url(array('datetime_id' => 42))
         );
         $this->_load_requirements();
-        $where = $this->_admin_page->add_datetime_id_to_where_conditions(array());
+        $where = $this->_admin_page->add_datetime_id_to_where_conditions($this->_admin_page->get_request_data());
         $this->assertCount(1, $where);
         $this->assertArrayHasKey('Ticket.Datetime.DTT_ID', $where);
         $this->assertEquals(42, $where['Ticket.Datetime.DTT_ID']);
@@ -347,7 +349,7 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
     public function test_add_registration_status_to_where_conditions_no_status_not_trash_view()
     {
         $this->_load_requirements();
-        $where = $this->_admin_page->add_registration_status_to_where_conditions(array());
+        $where = $this->_admin_page->add_registration_status_to_where_conditions($this->_admin_page->get_request_data());
         $this->assertCount(1, $where);
         $this->assertArrayHasKey('STS_ID', $where);
         $this->assertTrue(is_array($where['STS_ID']));
@@ -356,10 +358,13 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
     }
 
 
+
     public function test_add_registration_status_to_where_conditions_no_status_trash_view(){
         $this->_load_requirements();
-        $where = $this->_admin_page->add_registration_status_to_where_conditions(array(),'trash');
-        $this->assertEmpty($where);
+        $req = $this->_admin_page->get_request_data();
+        $req['status'] = 'trash';
+        $where = $this->_admin_page->add_registration_status_to_where_conditions($req);
+        $this->assertEquals(array( 'REG_deleted' => true ), $where);
     }
 
 
@@ -369,7 +374,9 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
             $this->_get_reg_admin_url(array('_reg_status'=>EEM_Registration::status_id_approved))
         );
         $this->_load_requirements();
-        $where = $this->_admin_page->add_registration_status_to_where_conditions(array(),'incomplete');
+        $req = $this->_admin_page->get_request_data();
+        $req['status'] = 'incomplete';
+        $where = $this->_admin_page->add_registration_status_to_where_conditions($req);
         $this->assertCount(1, $where);
         $this->assertArrayHasKey('STS_ID',$where);
         $this->assertEquals(EEM_Registration::status_id_approved, $where['STS_ID']);
@@ -379,7 +386,9 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
     public function test_add_registration_status_to_where_conditions_no_status_and_incomplete_view()
     {
         $this->_load_requirements();
-        $where = $this->_admin_page->add_registration_status_to_where_conditions(array(),'incomplete');
+        $req = $this->_admin_page->get_request_data();
+        $req['status'] = 'incomplete';
+        $where = $this->_admin_page->add_registration_status_to_where_conditions($req);
         $this->assertCount(1, $where);
         $this->assertArrayHasKey('STS_ID',$where);
         $this->assertEquals(EEM_Registration::status_id_incomplete, $where['STS_ID']);
@@ -392,7 +401,7 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
             $this->_get_reg_admin_url(array('_reg_status'=>EEM_Registration::status_id_approved))
         );
         $this->_load_requirements();
-        $where = $this->_admin_page->add_registration_status_to_where_conditions(array());
+        $where = $this->_admin_page->add_registration_status_to_where_conditions($this->_admin_page->get_request_data());
         $this->assertCount(1, $where);
         $this->assertArrayHasKey('STS_ID',$where);
         $this->assertEquals(EEM_Registration::status_id_approved,$where['STS_ID']);
@@ -407,7 +416,9 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
         $days_this_month = date('t', current_time('timestamp'));
         $expected_start_date = date_create_from_format( 'Y-m-d H:i:s', $current_year_and_month . '-01 00:00:00' );
         $expected_end_date = date_create_from_format( 'Y-m-d H:i:s', $current_year_and_month . '-' . $days_this_month . ' 23:59:59' );
-        $where = $this->_admin_page->add_date_to_where_conditions(array(),'',true);
+        $req = $this->_admin_page->get_request_data();
+        $req['status'] = 'month';
+        $where = $this->_admin_page->add_date_to_where_conditions($req);
         $this->assertCount(1,$where);
         $this->assertArrayHasKey('REG_date',$where);
         $this->assertCount(2,$where['REG_date']);
@@ -428,7 +439,7 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
             $this->_get_reg_admin_url(array('s'=>'gogogo'))
         );
         $this->_load_requirements();
-        $where = $this->_admin_page->add_search_to_where_conditions(array());
+        $where = $this->_admin_page->add_search_to_where_conditions($this->_admin_page->get_request_data());
         $this->assertCount(1,$where);
         $this->assertArrayHasKey('OR',$where);
         $this->assertArrayHasKey('Event.EVT_name',$where['OR']);

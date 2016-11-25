@@ -68,39 +68,39 @@ class Registrations_Admin_Page_Mock extends Registrations_Admin_Page
         return parent::_set_registration_status_from_request($status, $notify);
     }
 
-    public function add_event_id_to_where_conditions(array $where)
+    public function add_event_id_to_where_conditions(array $req)
     {
-        return $this->_add_event_id_to_where_conditions($where);
+        return $this->_add_event_id_to_where_conditions($req);
     }
 
 
-    public function add_category_id_to_where_conditions(array $where)
+    public function add_category_id_to_where_conditions(array $req)
     {
-        return $this->_add_category_id_to_where_conditions($where);
+        return $this->_add_category_id_to_where_conditions($req);
     }
 
 
-    public function add_datetime_id_to_where_conditions(array $where)
+    public function add_datetime_id_to_where_conditions(array $req)
     {
-        return $this->_add_datetime_id_to_where_conditions($where);
+        return $this->_add_datetime_id_to_where_conditions($req);
     }
 
 
-    public function add_registration_status_to_where_conditions(array $where, $view = '')
+    public function add_registration_status_to_where_conditions(array $req)
     {
-        return $this->_add_registration_status_to_where_conditions($where, $view);
+        return $this->_add_registration_status_to_where_conditions($req);
     }
 
 
-    public function add_date_to_where_conditions(array $where, $view = '', $this_month = false, $today = false)
+    public function add_date_to_where_conditions($req)
     {
-        return $this->_add_date_to_where_conditions($where, $view, $this_month, $today);
+        return $this->_add_date_to_where_conditions($req);
     }
 
 
-    public function add_search_to_where_conditions(array $where)
+    public function add_search_to_where_conditions(array $req)
     {
-        return $this->_add_search_to_where_conditions($where);
+        return $this->_add_search_to_where_conditions($req);
     }
 
 
