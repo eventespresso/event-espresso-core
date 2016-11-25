@@ -501,9 +501,11 @@ jQuery( document ).ready( function ( $ ) {
      * @return string
      */
     window.eeGetParentBackgroundColor = function (domElement) {
+    	// set default color of white with full opacity
         var BackgroundColor = 'rgba(255,255,255,1)';
         var $parent = domElement.parent();
-        if ($parent.length) {
+        // if no BG color is found by the time we get to the "<html>" tag, then just return the default;
+        if ($parent.length && $parent.prop('tagName') !== 'HTML') {
             // console_log('$parent', $parent.prop('tagName') + ' #' + $parent.attr('id'), true);
             BackgroundColor = $parent.css('backgroundColor');
             // console_log('BackgroundColor', BackgroundColor, false);
@@ -514,10 +516,7 @@ jQuery( document ).ready( function ( $ ) {
                 || BackgroundColor === 'rgba(0, 0, 0, 0)'
                 || BackgroundColor === ''
             ) {
-            	// if no BG color is found by the time we get to the "<html>" tag, then just return white;
-                return $parent.prop('tagName') !== 'HTML'
-					? eeGetParentBackgroundColor($parent)
-					: 'rgba(255,255,255,1)';
+                return eeGetParentBackgroundColor($parent);
             }
         }
         return BackgroundColor;
