@@ -226,10 +226,6 @@ class ProcessTicketSelector
         $valid_data = array();
         // grab valid id
         $valid_data[ 'id' ] = $id;
-        // grab and sanitize return-url
-        $valid_data[ 'return_url' ] = esc_url_raw(
-            \EE_Registry::instance()->REQ->get( 'tkt-slctr-return-url-' . $id )
-        );
         // array of other form names
         $inputs_to_clean = array(
             'event_id'   => 'tkt-slctr-event-id',
@@ -305,7 +301,16 @@ class ProcessTicketSelector
                         break;
                     case 'return_url' :
                         // grab and sanitize return-url
-                        $valid_data[ $what ] = esc_url_raw( $input_value );
+                        $input_value = esc_url_raw( $input_value );
+                        // was the request coming from an iframe ? if so, then:
+                        if ( strpos($input_value, 'event_list=iframe')) {
+                            // get anchor fragment
+                            $input_value = explode('#', $input_value);
+                            $input_value = end($input_value);
+                            // use event list url instead, but append anchor
+                            $input_value = \EEH_Event_View::event_archive_url() . '#' . $input_value;
+                        }
+                        $valid_data[$what] = $input_value;
                         break;
                 }    // end switch $what
             }
