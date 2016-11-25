@@ -707,7 +707,7 @@ class EED_Ticket_Selector extends EED_Module
         //if event id is valid
         $id = absint(EE_Registry::instance()->REQ->get('tkt-slctr-event-id'));
         // check nonce
-        if ( ! EED_Ticket_Selector::process_ticket_selector_nonce('process_ticket_selections_nonce_' . $id)) {
+        if ( ! EED_Ticket_Selector::process_ticket_selector_nonce('process_ticket_selections', $id)) {
             return false;
         }
         //		d( EE_Registry::instance()->REQ );
