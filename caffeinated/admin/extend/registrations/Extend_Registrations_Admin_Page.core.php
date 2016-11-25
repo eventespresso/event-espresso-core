@@ -1119,7 +1119,10 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
 
         //force join to attendee model so that it gets cached, because we're going to need the attendee for each registration
         $query_params['force_join'] = array('Attendee');
-        return $this->_get_registrations_or_count( $query_params, false, $count );
+        return $count
+            ? EEM_Registration::instance()->count($query_params)
+            /** @type EE_Registration[] */
+            : EEM_Registration::instance()->get_all($query_params);
     }
 
 } //end class Registrations Admin Page
