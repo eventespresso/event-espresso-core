@@ -72,7 +72,7 @@ class EE_Payment_List_Shortcodes extends EE_Shortcodes {
 
 		$addressee_obj = $this->_data['data'];
 		$templates = $this->_extra_data['template'];
-		$payments = $addressee_obj->payments;
+		$payments = apply_filters( 'FHEE__Payment_List_Shortcodes___get_payments_list__payments', $addressee_obj->payments );
 
 		//let's get any attributes that may be present and set the defaults.
 		$atts = $this->_get_shortcode_attrs( $shortcode );
