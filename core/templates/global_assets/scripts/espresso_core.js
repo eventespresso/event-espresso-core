@@ -466,6 +466,8 @@ jQuery( document ).ready( function ( $ ) {
 		}
 	);
 
+
+
     /**
      * @function rgb2hex
      * converts hex format to a rgb color
@@ -474,7 +476,7 @@ jQuery( document ).ready( function ( $ ) {
      * @param {string} rgb
      * @return string
      */
-    window.rgb2hex = function (rgb) {
+    window.eeRgbToHex = function (rgb) {
         // console_log('rgb', rgb, false);
         var hex = '';
         var rgb_parts = rgb.match(/^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i);
@@ -483,9 +485,11 @@ jQuery( document ).ready( function ( $ ) {
             hex += ("0" + parseInt(rgb_parts[2], 10).toString(16)).slice(-2);
             hex += ("0" + parseInt(rgb_parts[3], 10).toString(16)).slice(-2);
         }
+        hex = hex !== '' ? hex : rgb;
         // console_log('hex', hex, false);
         return hex;
     };
+
 
 
     /**
@@ -495,21 +499,24 @@ jQuery( document ).ready( function ( $ ) {
      *
      * @param {object} domElement
      * @return string
-    */
-    window.getParentBackgroundColor = function(domElement) {
-        var BackgroundColor = '';
+     */
+    window.eeGetParentBackgroundColor = function (domElement) {
+    	// set default color of white with full opacity
+        var BackgroundColor = 'rgba(255,255,255,1)';
         var $parent = domElement.parent();
-        if ($parent.length){
-            // console_log('$parent', $parent.attr('id'), true);
+        // if no BG color is found by the time we get to the "<html>" tag, then just return the default;
+        if ($parent.length && $parent.prop('tagName') !== 'HTML') {
+            // console_log('$parent', $parent.prop('tagName') + ' #' + $parent.attr('id'), true);
             BackgroundColor = $parent.css('backgroundColor');
             // console_log('BackgroundColor', BackgroundColor, false);
             if (
                 typeof BackgroundColor === 'undefined'
                 || BackgroundColor === 'transparent'
                 || BackgroundColor === 'inherit'
+                || BackgroundColor === 'rgba(0, 0, 0, 0)'
                 || BackgroundColor === ''
             ) {
-                return getParentBackgroundColor($parent);
+                return eeGetParentBackgroundColor($parent);
             }
         }
         return BackgroundColor;
@@ -613,7 +620,7 @@ window.console_log_object = function( obj_name, obj, depth ) {
 		}
 		jQuery.each(
 			obj, function ( index, value ) {
-				if ( typeof value === 'object' && depth < 6 ) {
+				if ( typeof value === 'object' && depth < 3 ) {
 					depth++;
 					console_log_object( index, value, depth );
 				} else {
@@ -625,4 +632,20 @@ window.console_log_object = function( obj_name, obj, depth ) {
 	} else {
 		console_log( spacer + obj_name, obj, true );
 	}
-};
+}
+
+
+/**
+ * @function object_exists
+ * returns true if object exists and displays console error if it does not
+ * @param  {object} $object
+ * @param  {string} object_name
+ * @return boolean
+ */
+function object_exists($object, object_name) {
+    if ($object.length) {
+        return true;
+    }
+    console_log('ERROR: object not found', object_name, false);
+    return false;
+}

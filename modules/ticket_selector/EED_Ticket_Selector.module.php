@@ -97,9 +97,9 @@ class EED_Ticket_Selector extends  EED_Module {
 		define( 'TICKET_SELECTOR_TEMPLATES_PATH', str_replace( '\\', DS, plugin_dir_path( __FILE__ )) . 'templates' . DS );
 
 		//if config is not set, initialize
-		//If config is not set, set it.
-		if ( ! isset( EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector ) ) {
-			EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector = new EE_Ticket_Selector_Config();
+		if ( ! EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector instanceof EE_Ticket_Selector_Config ) {
+            \EED_Ticket_Selector::instance()->set_config();
+            \EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector = \EED_Ticket_Selector::instance()->config();
 		}
 	}
 
@@ -211,7 +211,9 @@ class EED_Ticket_Selector extends  EED_Module {
 			// make it dance
 			wp_register_script('ticket_selector', TICKET_SELECTOR_ASSETS_URL . 'ticket_selector.js', array('espresso_core'), '', TRUE);
 			wp_enqueue_script('ticket_selector');
-		}
+            require_once( EE_LIBRARIES.'form_sections/strategies/display/EE_Checkbox_Dropdown_Selector_Display_Strategy.strategy.php');
+            \EE_Checkbox_Dropdown_Selector_Display_Strategy::enqueue_styles_and_scripts();
+        }
 	}
 
 

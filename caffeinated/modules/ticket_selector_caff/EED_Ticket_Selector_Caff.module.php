@@ -47,14 +47,14 @@ class EED_Ticket_Selector_Caff  extends EED_Ticket_Selector {
 	 * @param \WP $WP
 	 */
 	public function run( $WP ) {
-		$this->set_config();
+        $this->set_config();
 	}
 
 
 
 
 	protected function set_config(){
-		$this->set_config_section( 'template_settings' );
+        $this->set_config_section( 'template_settings' );
 		$this->set_config_class( 'EE_Ticket_Selector_Config' );
 		$this->set_config_name( 'EED_Ticket_Selector' );
 	}
@@ -108,7 +108,11 @@ class EED_Ticket_Selector_Caff  extends EED_Ticket_Selector {
      * @throws \EE_Error
      */
     public static function _ticket_selector_appearance_settings() {
-	    // get option for whether to show datetime selector in TS
+        if ( ! \EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector instanceof EE_Ticket_Selector_Config ) {
+            \EED_Ticket_Selector::instance()->set_config();
+            \EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector = \EED_Ticket_Selector::instance()->config();
+        }
+        // get option for whether to show datetime selector in TS
 	    $show_datetime_selector = \EE_Registry::instance()
 		    ->CFG
 		    ->template_settings
@@ -166,14 +170,14 @@ class EED_Ticket_Selector_Caff  extends EED_Ticket_Selector {
 									'html_label_text' => esc_html__( 'Show Datetime Selector?', 'event_espresso' ),
 									'html_help_text' => sprintf(
 									    esc_html__(
-									        'Indicates whether or not to display a dropdown select box above each ticket selector that displays dates for the available tickets. Ticket options will then be hidden until a date is selected, and then only tickets for that date are shown.%1$sOptions include:%1$s &bull; do not show datetime selector%1$s &nbsp; this option will NEVER display a datetime selector, regardless of how many datetimes exist.%1$s &bull; always show datetime selector%1$s &nbsp; this option will ALWAYS display a datetime selector, even if there is only one datetime for the event.%1$s &bull; maybe show datetime selector%1$s &nbsp; this option will conditionally display a datetime selector when the number of datetimes for the event matches the value set for "Datetime Selector Threshold".',
+									        'Indicates whether or not to display a dropdown select box above each ticket selector that displays dates for the available tickets. Ticket options will then be hidden until a date is selected, and then only tickets for that date are shown.%1$sOptions include:%1$s &bull; do not show datetime selector%1$s &nbsp; this option will NEVER display a datetime selector, regardless of how many datetimes exist.%1$s &bull; maybe show datetime selector%1$s &nbsp; this option will conditionally display a datetime selector when the number of datetimes for the event matches the value set for "Datetime Selector Threshold".',
                                             'event_espresso'
                                         ),
                                         '<br>'
                                     ),
 									'default' => ! empty( $show_datetime_selector )
 										? $show_datetime_selector
-										: \EE_Ticket_Selector_Config::MAYBE_SHOW_DATETIME_SELECTOR,
+										: \EE_Ticket_Selector_Config::DO_NOT_SHOW_DATETIME_SELECTOR,
 									'display_html_label_text' => false
 								)
 							),
@@ -209,8 +213,9 @@ class EED_Ticket_Selector_Caff  extends EED_Ticket_Selector {
 	 * @return EE_Template_Config
 	 */
 	public static function update_template_settings( EE_Template_Config $CFG, $REQ ) {
-		if ( ! isset( $CFG->EED_Ticket_Selector ) ) {
-			$CFG->EED_Ticket_Selector = new EE_Ticket_Selector_Config();
+		if ( ! $CFG->EED_Ticket_Selector instanceof EE_Ticket_Selector_Config ) {
+            \EED_Ticket_Selector::instance()->set_config();
+            $CFG->EED_Ticket_Selector = \EED_Ticket_Selector::instance()->config();
 		}
 		try {
 			$ticket_selector_form = EED_Ticket_Selector_Caff::_ticket_selector_settings_form();

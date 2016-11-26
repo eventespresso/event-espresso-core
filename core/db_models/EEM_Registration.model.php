@@ -10,10 +10,9 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) {
 /**
  * Registration Model
  *
- * @package               Event Espresso
- * @subpackage            includes/models/
- * @author                Mike Nelson, Brent Christensen
- *                        ------------------------------------------------------------------------
+ * @package    Event Espresso
+ * @subpackage includes/models/
+ * @author     Mike Nelson, Brent Christensen
  */
 class EEM_Registration extends EEM_Soft_Delete_Base
 {
@@ -123,36 +122,52 @@ class EEM_Registration extends EEM_Soft_Delete_Base
         $this->_fields = array(
             'Registration' => array(
                 'REG_ID'           => new EE_Primary_Key_Int_Field('REG_ID', __('Registration ID', 'event_espresso')),
-                'EVT_ID'           => new EE_Foreign_Key_Int_Field('EVT_ID', __('Event ID', 'event_espresso'), false, 0,
-                    'Event'),
-                'ATT_ID'           => new EE_Foreign_Key_Int_Field('ATT_ID', __('Attendee ID', 'event_espresso'), false,
-                    0, 'Attendee'),
+                'EVT_ID'           => new EE_Foreign_Key_Int_Field(
+                    'EVT_ID', __('Event ID', 'event_espresso'), false, 0, 'Event'
+                ),
+                'ATT_ID'           => new EE_Foreign_Key_Int_Field(
+                    'ATT_ID', __('Attendee ID', 'event_espresso'), false, 0, 'Attendee'
+                ),
                 'TXN_ID'           => new EE_Foreign_Key_Int_Field('TXN_ID', __('Transaction ID', 'event_espresso'),
-                    false, 0, 'Transaction'),
+                    false, 0, 'Transaction'
+                ),
                 'TKT_ID'           => new EE_Foreign_Key_Int_Field('TKT_ID', __('Ticket ID', 'event_espresso'), false,
-                    0, 'Ticket'),
+                    0, 'Ticket'
+                ),
                 'STS_ID'           => new EE_Foreign_Key_String_Field('STS_ID', __('Status ID', 'event_espresso'),
-                    false, EEM_Registration::status_id_incomplete, 'Status'),
+                    false, EEM_Registration::status_id_incomplete, 'Status'
+                ),
                 'REG_date'         => new EE_Datetime_Field('REG_date',
-                    __('Time registration occurred', 'event_espresso'), false, EE_Datetime_Field::now, $timezone),
+                    __('Time registration occurred', 'event_espresso'), false, EE_Datetime_Field::now, $timezone
+                ),
                 'REG_final_price'  => new EE_Money_Field('REG_final_price',
-                    __('Registration\'s share of the transaction total', 'event_espresso'), false, 0),
+                    __('Registration\'s share of the transaction total', 'event_espresso'), false, 0
+                ),
                 'REG_paid'         => new EE_Money_Field('REG_paid',
-                    __('Amount paid to date towards registration', 'event_espresso'), false, 0),
+                    __('Amount paid to date towards registration', 'event_espresso'), false, 0
+                ),
                 'REG_session'      => new EE_Plain_Text_Field('REG_session',
-                    __('Session ID of registration', 'event_espresso'), false, ''),
+                    __('Session ID of registration', 'event_espresso'), false, ''
+                ),
                 'REG_code'         => new EE_Plain_Text_Field('REG_code',
-                    __('Unique Code for this registration', 'event_espresso'), false, ''),
+                    __('Unique Code for this registration', 'event_espresso'), false, ''
+                ),
                 'REG_url_link'     => new EE_Plain_Text_Field('REG_url_link',
-                    __('String to be used in URL for identifying registration', 'event_espresso'), false, ''),
+                    __('String to be used in URL for identifying registration', 'event_espresso'), false, ''
+                ),
                 'REG_count'        => new EE_Integer_Field('REG_count',
-                    __('Count of this registration in the group registration ', 'event_espresso'), true, 1),
+                    __('Count of this registration in the group registration ', 'event_espresso'), true, 1
+                ),
                 'REG_group_size'   => new EE_Integer_Field('REG_group_size',
-                    __('Number of registrations on this group', 'event_espresso'), false, 1),
+                    __('Number of registrations on this group', 'event_espresso'), false, 1
+                ),
                 'REG_att_is_going' => new EE_Boolean_Field('REG_att_is_going',
-                    __('Flag indicating the registrant plans on attending', 'event_espresso'), false, false),
-                'REG_deleted'      => new EE_Trashed_Flag_Field('REG_deleted',
-                    __('Flag indicating if registration has been archived or not.', 'event_espresso'), false, false),
+                    __('Flag indicating the registrant plans on attending', 'event_espresso'), false, false
+                ),
+                'REG_deleted'      => new EE_Trashed_Flag_Field(
+                    'REG_deleted', __('Flag indicating if registration has been archived or not.', 'event_espresso'),
+                    false, false
+                ),
             ),
         );
         $this->_model_relations = array(
@@ -279,8 +294,9 @@ class EEM_Registration extends EEM_Soft_Delete_Base
         /** @type WPDB $wpdb */
         global $wpdb;
         if ($this->_get_table_analysis()->tableExists($wpdb->prefix . 'esp_status')) {
-            $SQL = 'SELECT STS_ID, STS_code FROM ' . $wpdb->prefix . 'esp_status WHERE STS_type = "registration"';
-            $results = $wpdb->get_results($SQL);
+            $results = $wpdb->get_results(
+                "SELECT STS_ID, STS_code FROM {$wpdb->prefix}esp_status WHERE STS_type = 'registration'"
+            );
             self::$_reg_status = array();
             foreach ($results as $status) {
                 if ( ! in_array($status->STS_ID, $exclude)) {

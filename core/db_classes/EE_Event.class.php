@@ -173,7 +173,8 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
         return EEM_Datetime::instance($this->_timezone)->get_datetimes_for_event_ordered_by_DTT_order(
             $this->ID(),
             $show_expired,
-            $show_deleted, $limit
+            $show_deleted,
+            $limit
         );
     }
 
@@ -918,8 +919,8 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
      * This returns the total remaining spaces for sale on this event.
      * ############################
      * VERY IMPORTANT FOR DEVELOPERS:
-     * While included here, this method is still being tested internally, so its signature and behaviour COULD change. While
-     * this comment block is in place, usage is at your own risk and know that it may change in future builds.
+     * While included here, this method is still being tested internally, so its signature and behaviour COULD change.
+     * While this comment block is in place, usage is at your own risk and know that it may change in future builds.
      * ############################
      *
      * @uses EE_Event::total_available_spaces()
@@ -1013,9 +1014,13 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
                 if ($datetime->reg_limit() === EE_INF) {
                     $ticket_sums[$ticket->ID()]['datetime_sums'] = EE_INF;
                 } else {
-                    $ticket_sums[$ticket->ID()]['datetime_sums'] += $current_total_available ? $datetime->spaces_remaining() : $datetime->reg_limit();
+                    $ticket_sums[$ticket->ID()]['datetime_sums'] += $current_total_available
+                        ? $datetime->spaces_remaining()
+                        : $datetime->reg_limit();
                 }
-                $datetime_limits[$datetime->ID()] = $current_total_available ? $datetime->spaces_remaining() : $datetime->reg_limit();
+                $datetime_limits[$datetime->ID()] = $current_total_available
+                    ? $datetime->spaces_remaining()
+                    : $datetime->reg_limit();
             }
             $ticket_sums[$ticket->ID()]['ticket'] = $ticket;
         }
@@ -1216,7 +1221,9 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     public function pretty_active_status($echo = true)
     {
         $active_status = $this->get_active_status();
-        $status = '<span class="ee-status event-active-status-' . $active_status . '">'
+        $status = '<span class="ee-status event-active-status-'
+                  . $active_status
+                  . '">'
                   . EEH_Template::pretty_status($active_status, false, 'sentence')
                   . '</span>';
         if ($echo) {

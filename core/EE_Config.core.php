@@ -2902,11 +2902,6 @@ class EE_Ticket_Selector_Config extends EE_Config_Base {
     const DO_NOT_SHOW_DATETIME_SELECTOR = 'no_datetime_selector';
 
     /**
-     * constant to indicate that a datetime selector should ALWAYS be shown for ticket selectors
-     */
-    const ALWAYS_SHOW_DATETIME_SELECTOR = 'show_datetime_selector';
-
-    /**
      * constant to indicate that a datetime selector should only be shown for ticket selectors
      * when the number of datetimes for the event matches the value set for $datetime_selector_threshold
      */
@@ -2934,7 +2929,7 @@ class EE_Ticket_Selector_Config extends EE_Config_Base {
 	 *
 	 * @var string $show_datetime_selector
 	 */
-	private $show_datetime_selector = 'maybe_datetime_selector';
+	private $show_datetime_selector = 'no_datetime_selector';
 
 	/**
 	 * the number of datetimes an event has to have before conditionally displaying a datetime selector
@@ -2952,10 +2947,29 @@ class EE_Ticket_Selector_Config extends EE_Config_Base {
         $this->show_ticket_sale_columns = true;
 		$this->show_ticket_details = true;
 		$this->show_expired_tickets = true;
-		$this->show_datetime_selector = \EE_Ticket_Selector_Config::MAYBE_SHOW_DATETIME_SELECTOR;
+		$this->show_datetime_selector = \EE_Ticket_Selector_Config::DO_NOT_SHOW_DATETIME_SELECTOR;
 		$this->datetime_selector_threshold = 3;
 	}
 
+
+
+    /**
+     * returns true if a datetime selector should be displayed
+     *
+     * @param array $datetimes
+     * @return bool
+     */
+    public function showDatetimeSelector(array $datetimes)
+    {
+        // if the settings are NOT: don't show OR below threshold, THEN active = true
+        return ! (
+            $this->getShowDatetimeSelector() === \EE_Ticket_Selector_Config::DO_NOT_SHOW_DATETIME_SELECTOR
+           || (
+               $this->getShowDatetimeSelector() === \EE_Ticket_Selector_Config::MAYBE_SHOW_DATETIME_SELECTOR
+               && count($datetimes) < $this->getDatetimeSelectorThreshold()
+           )
+        );
+    }
 
 
     /**
@@ -2977,18 +2991,14 @@ class EE_Ticket_Selector_Config extends EE_Config_Base {
         return $keys_only
             ? array(
                 \EE_Ticket_Selector_Config::DO_NOT_SHOW_DATETIME_SELECTOR,
-                \EE_Ticket_Selector_Config::ALWAYS_SHOW_DATETIME_SELECTOR,
                 \EE_Ticket_Selector_Config::MAYBE_SHOW_DATETIME_SELECTOR,
             )
             : array(
                 \EE_Ticket_Selector_Config::DO_NOT_SHOW_DATETIME_SELECTOR => esc_html__(
-                    'do not show datetime selector.', 'event_espresso'
-                ),
-                \EE_Ticket_Selector_Config::ALWAYS_SHOW_DATETIME_SELECTOR => esc_html__(
-                    'always show datetime selector.', 'event_espresso'
+                    'Do not show datetime selector', 'event_espresso'
                 ),
                 \EE_Ticket_Selector_Config::MAYBE_SHOW_DATETIME_SELECTOR => esc_html__(
-                    'maybe show datetime selector.', 'event_espresso'
+                    'Maybe show datetime selector', 'event_espresso'
                 ),
             );
     }
@@ -3005,7 +3015,7 @@ class EE_Ticket_Selector_Config extends EE_Config_Base {
             $this->getShowDatetimeSelectorOptions()
         )
             ? $show_datetime_selector
-            : \EE_Ticket_Selector_Config::MAYBE_SHOW_DATETIME_SELECTOR;
+            : \EE_Ticket_Selector_Config::DO_NOT_SHOW_DATETIME_SELECTOR;
     }
 
 

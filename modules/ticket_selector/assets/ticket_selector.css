@@ -366,14 +366,27 @@
 	top: 0;
 }
 
+
+.datetime_selector-dv {
+    position: relative;
+}
+.select-wrap-dv {
+    display: inline-block;
+    position: relative;
+}
+.datetime_selector-lbl {
+    display: block;
+}
+
 .datetime_selector-lbl .dashicons {
     position: relative;
     top: -2px;
 }
 
-.ee-ticket-datetimes-hide {
+.ee-hidden-ticket-tr {
     display: none;
 }
+
 
 @media (max-width: 600px) {
 
