@@ -1132,9 +1132,8 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
      * @param bool   $count whether to return count or data.
      * @param bool   $trash
      * @param string $orderby
-     * @return array
+     * @return EE_Registration[]|int
      * @throws \EE_Error
-     * @access public
      */
     public function get_event_attendees($per_page = 10, $count = false, $trash = false, $orderby = 'ATT_fname')
     {
