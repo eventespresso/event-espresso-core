@@ -477,8 +477,12 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
     {
         $post = get_post($id);
         if ('publish' != get_post_status($post)) {
-            $return .= '<span_id="view-post-btn"><a href="' . wp_get_shortlink($id,
-                    'post') . '" class="button button-small">' . __('Preview', 'event_espresso') . '</a></span>' . "\n";
+            $return .= '<span_id="view-post-btn"><a target="_blank" href="'
+                       . get_preview_post_link($id)
+                       . '" class="button button-small">'
+                       . __('Preview', 'event_espresso')
+                       . '</a></span>'
+                       . "\n";
         }
         return $return;
     }
