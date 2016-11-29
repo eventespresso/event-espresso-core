@@ -869,7 +869,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 			? esc_html__( 'An error occurred. The question group order was not updated.', 'event_espresso' )
 			: false;
 
-		echo json_encode( array( 'return_data' => false, 'success' => $success, 'errors' => $errors ));
+		echo wp_json_encode( array( 'return_data' => false, 'success' => $success, 'errors' => $errors ));
 		die();
 
 	}
