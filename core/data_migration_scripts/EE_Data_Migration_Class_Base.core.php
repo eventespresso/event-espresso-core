@@ -300,7 +300,7 @@ abstract class EE_Data_Migration_Class_Base{
 				$fields_to_include[$name] = $value;
 			}
 		}
-		return json_encode($fields_to_include);
+		return wp_json_encode($fields_to_include);
 	}
 	
 	/**

@@ -338,7 +338,7 @@ class EED_Add_New_State  extends EED_Module {
 					);
 
 					if ( EE_Registry::instance()->REQ->ajax ) {
-						echo json_encode( array(
+						echo wp_json_encode( array(
 							'success' => TRUE,
 							'id' => $new_state->ID(),
 							'name' => $new_state->name(),
@@ -355,7 +355,7 @@ class EED_Add_New_State  extends EED_Module {
 			} else {
 				$error = __( 'A new State/Province could not be added because invalid or missing data was received.', 'event_espresso' );
 				if ( EE_Registry::instance()->REQ->ajax ) {
-					echo json_encode( array( 'error' => $error ));
+					echo wp_json_encode( array( 'error' => $error ));
 					exit();
 				} else {
 					EE_Error::add_error( $error, __FILE__, __FUNCTION__, __LINE__ );

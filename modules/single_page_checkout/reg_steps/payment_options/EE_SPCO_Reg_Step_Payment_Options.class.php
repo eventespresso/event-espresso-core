@@ -2685,7 +2685,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				)
 			);
 		}
-		echo json_encode( $txn_details );
+		echo wp_json_encode( $txn_details );
 		exit();
 	}
 

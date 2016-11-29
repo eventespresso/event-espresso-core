@@ -2514,11 +2514,8 @@ abstract class EE_Admin_Page extends EE_Base
         if (null === error_get_last() || ! headers_sent()) {
             header('Content-Type: application/json; charset=UTF-8');
         }
-        if (function_exists('wp_json_encode')) {
-            echo wp_json_encode($json);
-        } else {
-            echo json_encode($json);
-        }
+        echo wp_json_encode($json);
+
         exit();
     }
 
