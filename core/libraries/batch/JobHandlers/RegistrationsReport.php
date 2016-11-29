@@ -77,8 +77,8 @@ class RegistrationsReport extends JobHandlerFile
             $query_params['force_join'] = array('Event', 'Transaction', 'Ticket', 'Attendee');
         }
         $job_parameters->add_extra_data('query_params', $query_params);
-        $question_data_for_columns = $this->_get_questions_for_report($query_params);
-        $job_parameters->add_extra_data('questions_data', $question_data_for_columns);
+        $question_labels = $this->_get_question_labels($query_params);
+        $job_parameters->add_extra_data('question_labels', $question_labels);
         $job_parameters->set_job_size(
             \EEM_Registration::instance()->count(
                 array_diff_key(
@@ -90,7 +90,7 @@ class RegistrationsReport extends JobHandlerFile
             )
         );
         //we should also set the header columns
-        $csv_data_for_row = $this->get_csv_data_for($event_id, 0, 1, $job_parameters->extra_datum('questions_data'),
+        $csv_data_for_row = $this->get_csv_data_for($event_id, 0, 1, $job_parameters->extra_datum('question_labels'),
             $job_parameters->extra_datum('query_params'));
         \EEH_Export::write_data_array_to_csv($filepath, $csv_data_for_row, true);
         //if we actually processed a row there, record it
@@ -129,9 +129,9 @@ class RegistrationsReport extends JobHandlerFile
      * can be remembered for later
      *
      * @param array $registration_query_params
-     * @return array of wpdb results for questions which are to be used for this report
+     * @return array question admin labels to be used for this report
      */
-    protected function _get_questions_for_report($registration_query_params)
+    protected function _get_question_labels($registration_query_params)
     {
         $where = isset($registration_query_params[0]) ? $registration_query_params[0] : null;
         $question_query_params = array();
@@ -142,8 +142,7 @@ class RegistrationsReport extends JobHandlerFile
         }
         $question_query_params[0]['Answer.ANS_ID'] = array( 'IS_NOT_NULL' );
         $question_query_params['group_by'] = array( 'QST_ID' );
-
-        return \EEM_Question::instance()->get_all_wpdb_results($question_query_params);
+        return array_unique( \EEM_Question::instance()->get_col( $question_query_params, 'QST_admin_label' ) );
     }
 
 
@@ -182,7 +181,7 @@ class RegistrationsReport extends JobHandlerFile
     {
         if( $job_parameters->units_processed() < $job_parameters->job_size() ) {
             $csv_data = $this->get_csv_data_for($job_parameters->request_datum('EVT_ID', '0'),
-                $job_parameters->units_processed(), $batch_size, $job_parameters->extra_datum('questions_data'),
+                $job_parameters->units_processed(), $batch_size, $job_parameters->extra_datum('question_labels'),
                 $job_parameters->extra_datum('query_params'));
             \EEH_Export::write_data_array_to_csv($job_parameters->extra_datum('filepath'), $csv_data, false);
             $units_processed = count($csv_data);
@@ -207,16 +206,16 @@ class RegistrationsReport extends JobHandlerFile
 
     /**
      * Gets the csv data for a batch of registrations
+
      *
-     * @param int|null $event_id
-     * @param int      $offset
-     * @param int      $limit
-     * @param array    $questions_for_these_regs_rows results of $wpdb->get_results( $something, ARRAY_A) when querying
-     *                                                for questions
-     * @param array    $query_params                  for using where querying the model
+*@param int|null    $event_id
+     * @param int   $offset
+     * @param int   $limit
+     * @param array $question_labels the IDs for all the questions which were answered by someone in this selection
+     * @param array $query_params    for using where querying the model
      * @return array top-level keys are numeric, next-level keys are column headers
      */
-    function get_csv_data_for($event_id, $offset, $limit, $questions_for_these_regs_rows, $query_params)
+    function get_csv_data_for($event_id, $offset, $limit, $question_labels, $query_params)
     {
         $reg_fields_to_include = array(
             'TXN_ID',
@@ -243,7 +242,6 @@ class RegistrationsReport extends JobHandlerFile
         $reg_model = \EE_Registry::instance()->load_model('Registration');
         $query_params['limit'] = array($offset, $limit);
         $registration_rows = $reg_model->get_all_wpdb_results($query_params);
-        //get all questions which relate to someone in this group
         $registration_ids = array();
         foreach ($registration_rows as $reg_row) {
             $registration_ids[] = intval($reg_row['Registration.REG_ID']);
@@ -370,9 +368,9 @@ class RegistrationsReport extends JobHandlerFile
                     $reg_csv_array[\EEH_Export::get_column_name_for_field($field_obj)] = $value;
                 }
                 //make sure each registration has the same questions in the same order
-                foreach ($questions_for_these_regs_rows as $question_row) {
-                    if ( ! isset($reg_csv_array[$question_row['Question.QST_admin_label']])) {
-                        $reg_csv_array[$question_row['Question.QST_admin_label']] = null;
+                foreach ($question_labels as $question_label) {
+                    if ( ! isset($reg_csv_array[$question_label])) {
+                        $reg_csv_array[$question_label] = null;
                     }
                 }
                 $answers = \EEM_Answer::instance()->get_all_wpdb_results(array(
