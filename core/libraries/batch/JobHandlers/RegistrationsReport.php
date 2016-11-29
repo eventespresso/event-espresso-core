@@ -41,7 +41,7 @@ class RegistrationsReport extends JobHandlerFile
             throw new BatchRequestException(__('You do not have permission to view registrations', 'event_espresso'));
         }
         $filepath = $this->create_file_from_job_with_name($job_parameters->job_id(),
-            $this->get_filename_from_event($event_id));
+            $this->get_filename($event_id));
         $job_parameters->add_extra_data('filepath', $filepath);
         if ($job_parameters->request_datum('use_filters', false)) {
             $query_params = maybe_unserialize(urldecode(stripslashes($job_parameters->request_datum('filters',
@@ -104,22 +104,12 @@ class RegistrationsReport extends JobHandlerFile
 
 
     /**
-     * Creates teh filename form the event id (or lack thereof)
-     *
-     * @param int $event_id
+     * Gets the filename
      * @return string
      */
-    protected function get_filename_from_event($event_id)
+    protected function get_filename()
     {
-        if ($event_id) {
-            $event_slug = \EEM_Event::instance()->get_var(array(array('EVT_ID' => $event_id)), 'EVT_slug');
-            if ( ! $event_slug) {
-                $event_slug = __('unknown', 'event_espresso');
-            }
-        } else {
-            $event_slug = __('all', 'event_espresso');
-        }
-        return sprintf("registrations-for-%s.csv", $event_slug);
+        return sprintf("event-espresso-registrations-%s.csv", date('Y-m-d H-i-s') );
     }
 
 
