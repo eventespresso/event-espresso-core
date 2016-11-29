@@ -145,7 +145,7 @@ class DatetimeSelector
             }
             $desc = $datetime->name();
             $desc .= ! empty($desc)
-                ? '&nbsp;' . $datetime->date_range($date_format)
+                ? ' ' . $datetime->date_range($date_format)
                 : $datetime->date_range($date_format);
             $datetime_options[$datetime->date_range('Y_m_d', '-')] = $desc;
         }
