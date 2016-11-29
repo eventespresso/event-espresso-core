@@ -123,8 +123,8 @@ class EE_Checkbox_Dropdown_Selector_Display_Strategy extends EE_Compound_Input_D
                 ? ' checked="checked"'
                 : '';
             $html .= ' ' . $this->_input->other_html_attributes();
-            $html .= '>&nbsp;';
-            $html .= $display_text;
+            $html .= '>';
+            $html .= '<span class="datetime-selector-option-text-spn">' . $display_text . '</span>';
             $html .= EEH_HTML::nl(-1, 'checkbox') . '</label>';
             $html .= EEH_HTML::lix();
         }
