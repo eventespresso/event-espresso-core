@@ -134,18 +134,15 @@ class RegistrationsReport extends JobHandlerFile
     protected function _get_questions_for_report($registration_query_params)
     {
         $where = isset($registration_query_params[0]) ? $registration_query_params[0] : null;
-        if ($where === null) {
-            $question_query_params = array(
-                array(
-                    'Answer.ANS_ID' => array('IS_NOT_NULL'),
-                ),
-                'group_by' => array('QST_ID'),
-            );
-        } else {
+        $question_query_params = array();
+        if ($where !== null) {
             $question_query_params = array(
                 $this->_change_registration_where_params_to_question_where_params($registration_query_params[0]),
             );
         }
+        $question_query_params[0]['Answer.ANS_ID'] = array( 'IS_NOT_NULL' );
+        $question_query_params['group_by'] = array( 'QST_ID' );
+
         return \EEM_Question::instance()->get_all_wpdb_results($question_query_params);
     }
 
