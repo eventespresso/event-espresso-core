@@ -1,6 +1,6 @@
 # EE4 REST API: Calculated Fields Reference
 
-As described in [EE4 REST API Caculated Fields in GET requests document](ee4-rest-api-GET-calculated-fields) , as of EE 4.8.36, there are a number of "calculated fields" you can specify to be returned in EE4 REST API responses. This page is dedicated to describing them. It is organized first by the resource/model, then by the individual fields.
+As described in [EE4 REST API Caculated Fields in GET requests document](ee4-rest-api-GET-calculated-fields.md) , as of EE 4.8.36, there are a number of "calculated fields" you can specify to be returned in EE4 REST API responses. This page is dedicated to describing them. It is organized first by the resource/model, then by the individual fields.
 
 ## Event
 
@@ -15,12 +15,12 @@ Calculated fields on events. Unless otherwise specified, all the following field
 `spots_taken_pending_payment` | The number of registrations pending payment on this event.
 `registrations_checked_in_count` | The count of registrations checked into the event at ANY datetime. Note: once a registration checks out they STILL count towards being checked in- that is, checking out doesn’t negate the count of registrations who have checked in.
 `registrations_checked_out_count` | The count of registrations who have checked in and then checked out of an event.
-`image_full` | Information about the event’s featured image, including its URL, width, height, and whether or not it was generated from the originally uploaded image. (see [image_thumbnail example below](ee4-rest-api-calculated-fields-reference#image-full-example-response)
-`image_thumbnail` | Like the image_full, but the smallest generated version of it, usually 150 by 150 pixels. (see [image_thumbnail example below](ee4-rest-api-calculated-fields-reference#image-thumbnail-example-response))
-`image_medium` | Like image_full, but around 300 pixels by 200 pixels. (see [image_medium example below](ee4-rest-api-calculated-fields-reference#image-medium-example-response))
-`image_medium_large` | Like image_full, but around 660 pixels by 440 pixels. (see [image_medium_large example below](ee4-rest-api-calculated-fields-reference#image-medium-large-example-response))
-`image_large` | Like image_full, but around 660 pixels by 440 pixels. (see [image_large example below](ee4-rest-api-calculated-fields-reference#image-large-example-response))
-`image_post_thumbnail` | Like image_full, but around 825 by 510 pixels. (see [image_post_thumbnail example below](ee4-rest-api-calculated-fields-reference#image-post-thumbnail-example-response))
+`image_full` | Information about the event’s featured image, including its URL, width, height, and whether or not it was generated from the originally uploaded image. (see [image_full example below](ee4-rest-api-calculated-fields-reference.md#image-full-example-response)
+`image_thumbnail` | Like the image_full, but the smallest generated version of it, usually 150 by 150 pixels. (see [image_thumbnail example below](ee4-rest-api-calculated-fields-reference.md#image-thumbnail-example-response))
+`image_medium` | Like image_full, but around 300 pixels by 200 pixels. (see [image_medium example below](ee4-rest-api-calculated-fields-reference.md#image-medium-example-response))
+`image_medium_large` | Like image_full, but around 660 pixels by 440 pixels. (see [image_medium_large example below](ee4-rest-api-calculated-fields-reference.md#image-medium-large-example-response))
+`image_large` | Like image_full, but around 660 pixels by 440 pixels. (see [image_large example below](ee4-rest-api-calculated-fields-reference.md#image-large-example-response))
+`image_post_thumbnail` | Like image_full, but around 825 by 510 pixels. (see [image_post_thumbnail example below](ee4-rest-api-calculated-fields-reference.md#image-post-thumbnail-example-response))
 
 ### Image Full Example Response
 

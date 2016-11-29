@@ -438,7 +438,9 @@ class EED_Ticket_Selector extends  EED_Module {
 					'',
 					EED_Ticket_Selector::$_event
 				);
-				$html .= \EED_Ticket_Selector::no_tkt_slctr_end_dv();
+				$html .= empty($external_url) ?
+                    \EED_Ticket_Selector::no_tkt_slctr_end_dv()
+                    : \EED_Ticket_Selector::clear_tkt_slctr();
 				$html .= '<br/>' . \EED_Ticket_Selector::ticket_selector_form_close();
 			} else if (
 				// a "Dude Where's my Ticket Selector?" (DWMTS) type event (ie: $_max_atndz === 1)
