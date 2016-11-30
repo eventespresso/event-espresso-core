@@ -4,6 +4,7 @@
 [![Latest Tag](https://img.shields.io/github/tag/eventespresso/event-espresso-core.svg?style=flat&label=latest%20tag)](https://github.com/eventespresso/event-espresso-core/releases)
 [![WordPress](https://img.shields.io/badge/WordPress-v4.3.x+%20tested-brightgreen.svg?style=plastic)](https://eventespresso.com/)
 [![License](https://img.shields.io/badge/License-GPLv2-blue.svg?style=plastic)](https://www.gnu.org/licenses/gpl-2.0.html)
+[![Join Chat](https://img.shields.io/badge/Slack-Join%20Chat-aa30ff.svg?style=plastic)](https://eventespresso.com/contact/community-chat/)
 
 ## Event Espresso 4 - Event Ticketing and Registration System
 
