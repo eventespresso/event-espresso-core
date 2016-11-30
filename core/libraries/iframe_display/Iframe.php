@@ -241,7 +241,7 @@ class Iframe
      */
     public function display($utm_content = '')
     {
-        $this->content .= \EEH_HTML::br() . \EEH_Template::powered_by_event_espresso(
+        $this->content .= \EEH_Template::powered_by_event_espresso(
             '',
             '',
             ! empty($utm_content) ? array('utm_content' => $utm_content) : array()
