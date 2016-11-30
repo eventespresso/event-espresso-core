@@ -49,10 +49,12 @@ class DbSafeDateTime extends \DateTime {
 	public function __wakeup() {
 		$date = \DateTime::createFromFormat( DbSafeDateTime::db_safe_timestamp_format, $this->_datetime_string );
 		if ( ! $date instanceof \DateTime) {
-		    throw new \DomainException(
+            error_log(
                 sprintf(
-                    __('A valid DateTime could not be recreated from "%1$s"  because the following errors occurred: %2$s %3$s %2$s PHP version: %4$s',
-                        'event_espresso'),
+                    __(
+                        'A valid DateTime could not be recreated from "%1$s"  because the following errors occurred: %2$s %3$s %2$s PHP version: %4$s',
+                        'event_espresso'
+                    ),
                     $this->_datetime_string,
                     '<br />',
                     print_r(\DateTime::getLastErrors(), true),
