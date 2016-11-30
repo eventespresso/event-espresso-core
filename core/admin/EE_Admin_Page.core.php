@@ -887,7 +887,7 @@ abstract class EE_Admin_Page extends EE_Base
                     ),
                     $method
                 );
-            }/**/
+            }
             if ( ! empty($error_msg)) {
                 throw new EE_Error($error_msg);
             }
