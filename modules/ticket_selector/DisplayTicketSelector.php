@@ -372,7 +372,8 @@ class DisplayTicketSelector
                 $tickets,
                 $this->getMaxAttendees(),
                 $template_args,
-                $this->date_format
+                $this->date_format,
+                $this->time_format
             );
     }
 
