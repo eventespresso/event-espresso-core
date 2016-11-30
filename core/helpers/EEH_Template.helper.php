@@ -892,7 +892,7 @@ class EEH_Template {
 			'FHEE__EEH_Template__powered_by_event_espresso__html',
 			sprintf(
 				esc_html_x(
-					'%1$sOnline event registration and ticketing powered by %2$s%3$s',
+					'%3$s%1$sOnline event registration and ticketing powered by %2$s%3$s',
 					'Online event registration and ticketing powered by [link to eventespresso.com]',
 					'event_espresso'
 				),
