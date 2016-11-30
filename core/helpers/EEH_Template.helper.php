@@ -880,19 +880,25 @@ class EEH_Template {
 			),
 			$query_args
 		);
-		$powered_by = apply_filters( 'FHEE__EEH_Template__powered_by_event_espresso_text', $admin ? 'Event Espresso - ' . EVENT_ESPRESSO_VERSION : 'Event Espresso' );
+		$powered_by = apply_filters(
+		    'FHEE__EEH_Template__powered_by_event_espresso_text',
+            $admin
+                ? 'Event Espresso - ' . EVENT_ESPRESSO_VERSION
+                : 'Event Espresso'
+        );
 		$url = add_query_arg( $query_args, 'https://eventespresso.com/' );
 		$url = apply_filters( 'FHEE__EEH_Template__powered_by_event_espresso__url', $url );
 		return (string) apply_filters(
 			'FHEE__EEH_Template__powered_by_event_espresso__html',
 			sprintf(
 				esc_html_x(
-					'%1$sOnline event registration and ticketing powered by %2$s',
+					'%1$sOnline event registration and ticketing powered by %2$s%3$s',
 					'Online event registration and ticketing powered by [link to eventespresso.com]',
 					'event_espresso'
 				),
 				"<{$tag}{$attributes}>",
-				"<a href=\"{$url}\" target=\"_blank\" rel=\"nofollow\">{$powered_by}</a></{$tag}>"
+				"<a href=\"{$url}\" target=\"_blank\" rel=\"nofollow\">{$powered_by}</a></{$tag}>",
+                $admin ? '' : '<br />'
 			),
 			$wrap_class,
 			$wrap_id
