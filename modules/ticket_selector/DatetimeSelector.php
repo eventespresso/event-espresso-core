@@ -121,7 +121,7 @@ class DatetimeSelector
             if ( ! $datetime instanceof \EE_Datetime || ! in_array($datetime, $ticket_datetimes, true)) {
                 continue;
             }
-            $classes .= ' ee-ticket-datetimes-' . $datetime->date_range('Y_m_d', '-');
+            $classes .= ' ee-ticket-datetimes-' . $datetime->date_and_time_range('Y_m_d', 'H_i', '-', '_');
         }
         $classes .= ' ee-hidden-ticket-tr';
         return $classes;
@@ -131,10 +131,11 @@ class DatetimeSelector
 
     /**
      * @param string $date_format
+     * @param string $time_format
      * @return string
      * @throws \EE_Error
      */
-    public function getDatetimeSelector($date_format = 'Y-m-d') {
+    public function getDatetimeSelector($date_format = 'Y-m-d', $time_format = 'g:i a') {
         if ( ! $this->active) {
             return '';
         }
@@ -143,11 +144,8 @@ class DatetimeSelector
             if ( ! $datetime instanceof \EE_Datetime) {
                 continue;
             }
-            $desc = $datetime->name();
-            $desc .= ! empty($desc)
-                ? ' ' . $datetime->date_range($date_format)
-                : $datetime->date_range($date_format);
-            $datetime_options[$datetime->date_range('Y_m_d', '-')] = $desc;
+            $datetime_options[$datetime->date_and_time_range('Y_m_d', 'H_i', '-', '_')] =
+                $datetime->date_and_time_range($date_format, $time_format, ' - ');
         }
         $dropdown_selector = new \EE_Checkbox_Dropdown_Selector_Input(
             $datetime_options,
