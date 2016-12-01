@@ -31,6 +31,26 @@ class DbSafeDateTime extends \DateTime {
 	 */
 	protected $_datetime_string = '';
 
+	/**
+     * where to write the error log to
+     *
+     * @type string $_error_log_dir
+	 */
+	protected $_error_log_dir = '';
+
+
+
+    /**
+     * @param string $error_log_dir
+     */
+    public function setErrorLogDir($error_log_dir)
+    {
+        // if the folder path is writable, then except the path + filename, else keep empty
+        $this->_error_log_dir = is_writable(str_replace(basename($error_log_dir), '', $error_log_dir))
+            ?  $error_log_dir
+            : '';
+    }
+
 
 
 	public function __toString() {
@@ -43,14 +63,13 @@ class DbSafeDateTime extends \DateTime {
 		$this->_datetime_string = $this->format( DbSafeDateTime::db_safe_timestamp_format );
         $date = \DateTime::createFromFormat(DbSafeDateTime::db_safe_timestamp_format, $this->_datetime_string);
         if ( ! $date instanceof \DateTime) {
-            $stack_trace = '';
             try {
                 // we want a stack trace to determine where the malformed date came from, so...
                 throw new \DomainException();
             } catch (\DomainException $e) {
                 $stack_trace = $e->getTraceAsString();
             }
-            error_log(
+            $this->writeToErrorLog(
                 sprintf(
                     __(
                         'A valid DateTime could not be generated from "%1$s" because the following errors occurred: %2$s %3$s %2$s PHP version: %4$s %2$s Stack Trace: %5$s',
@@ -79,7 +98,7 @@ class DbSafeDateTime extends \DateTime {
         $this->_datetime_string = str_replace('-0001-11-30', '0000-00-00', $this->_datetime_string);
 		$date = \DateTime::createFromFormat( DbSafeDateTime::db_safe_timestamp_format, $this->_datetime_string );
 		if ( ! $date instanceof \DateTime) {
-            error_log(
+            $this->writeToErrorLog(
                 sprintf(
                     __(
                         'A valid DateTime could not be recreated from "%1$s" because the following errors occurred: %2$s %3$s %2$s PHP version: %4$s',
@@ -98,6 +117,17 @@ class DbSafeDateTime extends \DateTime {
             );
         }
 	}
+
+
+
+    private function writeToErrorLog($message)
+    {
+        if ( ! empty($this->_error_log_dir)) {
+            error_log($message, 3, $this->_error_log_dir);
+        } else {
+            error_log($message);
+        }
+    }
 
 
 }
