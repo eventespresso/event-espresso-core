@@ -177,6 +177,18 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 
 
 	/**
+	 *    get the number of tickets sold for this datetime slot
+	 *
+	 * @access        public
+	 * @return        mixed        int on success, FALSE on fail
+	 */
+	public function sold() {
+		return $this->get_raw( 'DTT_sold' );
+	}
+
+
+
+	/**
 	 *    set_sold
 	 *
 	 * @param        int $sold
@@ -195,6 +207,8 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	 */
 	public function increase_sold( $qty = 1 ) {
 		$sold = $this->sold() + $qty;
+		// remove ticket reservation
+		$this->decrease_reserved( $qty );
 		$this->set_sold( $sold );
 	}
 
@@ -207,6 +221,68 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	public function decrease_sold( $qty = 1 ) {
 		$sold = $this->sold() - $qty;
 		$this->set_sold( $sold );
+	}
+
+
+
+	/**
+	 * Gets qty of reserved tickets for this datetime
+	 *
+	 * @return int
+	 */
+	function reserved() {
+		return $this->get_raw( 'DTT_reserved' );
+	}
+
+
+
+	/**
+	 * Sets qty of reserved tickets for this datetime
+	 *
+	 * @param int $reserved
+	 * @return boolean
+	 */
+	function set_reserved( $reserved ) {
+		// reserved can not go below zero
+		$reserved = max( 0, intval( $reserved ) );
+		$this->set( 'DTT_reserved', $reserved );
+	}
+
+
+
+	/**
+	 * increments reserved by amount passed by $qty
+	 *
+	 * @param int $qty
+	 * @return boolean
+	 */
+	function increase_reserved( $qty = 1 ) {
+		$reserved = $this->reserved() + absint( $qty );
+		return $this->set_reserved( $reserved );
+	}
+
+
+
+	/**
+	 * decrements (subtracts) reserved by amount passed by $qty
+	 *
+	 * @param int $qty
+	 * @return boolean
+	 */
+	function decrease_reserved( $qty = 1 ) {
+		$reserved = $this->reserved() - absint( $qty );
+		return $this->set_reserved( $reserved );
+	}
+
+
+
+	/**
+	 * total sold and reserved tickets
+	 *
+	 * @return int
+	 */
+	function sold_and_reserved() {
+		return $this->sold() + $this->reserved();
 	}
 
 
@@ -598,17 +674,6 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	 */
 	public function reg_limit() {
 		return $this->get_raw( 'DTT_reg_limit' );
-	}
-
-
-
-	/**
-	 *    get the number of tickets sold for this datetime slot
-	 *
-	 * @return        mixed        int on success, FALSE on fail
-	 */
-	public function sold() {
-		return $this->get_raw( 'DTT_sold' );
 	}
 
 

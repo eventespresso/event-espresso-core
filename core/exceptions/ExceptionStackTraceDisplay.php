@@ -189,7 +189,7 @@ class ExceptionStackTraceDisplay {
 </div>';
 		$output .= $this->printScripts( true );
 		if ( defined( 'DOING_AJAX' ) ) {
-			echo json_encode( array( 'error' => $output ) );
+			echo wp_json_encode( array( 'error' => $output ) );
 			exit();
 		}
 		echo $output;

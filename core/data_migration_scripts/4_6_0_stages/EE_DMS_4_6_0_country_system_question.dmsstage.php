@@ -51,7 +51,7 @@ class EE_DMS_4_6_0_country_system_question extends EE_Data_Migration_Script_Stag
 				$this->add_error(
 					sprintf(
 						__( 'Could not update question system name "%1$s" for question ID=%2$d because "%3$s"', 'event_espresso' ),
-						json_encode( $question['QST_system'] ),
+						wp_json_encode( $question['QST_system'] ),
 						$question['QST_ID'],
 						$wpdb->last_error
 					)

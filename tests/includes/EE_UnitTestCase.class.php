@@ -896,7 +896,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 					sprintf(
 						__( 'Could not save %1$s using %2$s. Error was %3$s', 'event_espresso' ),
 						$model_name,
-						json_encode($args),
+						wp_json_encode($args),
 						$wpdb->last_error
 					)
 				);
@@ -1131,5 +1131,48 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		return $user;
 	}
 
+
+
+	/**
+	 * increments the ticket and datetime sold values
+	 * @param \EE_ticket $ticket
+	 * @param int        $qty
+	 * @throws \EE_Error
+	 */
+	public function simulate_x_number_ticket_sales( EE_ticket $ticket, $qty = 1 ) {
+		$ticket->increase_sold( $qty );
+		$ticket->save();
+		$datetimes = $ticket->datetimes();
+		if ( is_array( $datetimes ) ) {
+			foreach ( $datetimes as $datetime ) {
+				if ( $datetime instanceof EE_Datetime ) {
+					$datetime->increase_sold( $qty );
+					$datetime->save();
+				}
+			}
+		}
+	}
+
+
+
+	/**
+	 * decrements the ticket and datetime sold values
+	 * @param \EE_ticket $ticket
+	 * @param int        $qty
+	 * @throws \EE_Error
+	 */
+	public function reverse_x_number_ticket_sales( EE_ticket $ticket, $qty = 1 ) {
+		$ticket->decrease_sold( $qty );
+		$ticket->save();
+		$datetimes = $ticket->datetimes();
+		if ( is_array( $datetimes ) ) {
+			foreach ( $datetimes as $datetime ) {
+				if ( $datetime instanceof EE_Datetime ) {
+					$datetime->decrease_sold( $qty );
+					$datetime->save();
+				}
+			}
+		}
+	}
 
 }

@@ -2201,7 +2201,7 @@ abstract class EEM_Base extends EE_Base
                 'event_espresso'),
             $wpdb->last_error,
             $wpdb_method,
-            json_encode($arguments_to_provide)
+            wp_json_encode($arguments_to_provide)
         );
         EE_System::instance()->initialize_db_if_no_migrations_required(false, true);
         return $error_message;
@@ -2228,7 +2228,7 @@ abstract class EEM_Base extends EE_Base
                 'event_espresso'),
             $wpdb->last_error,
             $wpdb_method,
-            json_encode($arguments_to_provide)
+            wp_json_encode($arguments_to_provide)
         );
         EE_System::instance()->initialize_addons();
         return $error_message;
@@ -4859,6 +4859,7 @@ abstract class EEM_Base extends EE_Base
                     $obj_in_map->clear_cache($relation_name, null, true);
                 }
             }
+            $this->_entity_map[EEM_Base::$_model_query_blog_id][$id] = $obj_in_map;
             return $obj_in_map;
         } else {
             return $this->get_one_by_ID($id);
