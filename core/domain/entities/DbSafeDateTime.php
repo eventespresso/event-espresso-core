@@ -55,6 +55,21 @@ class DbSafeDateTime extends \DateTime {
 	}
 
 
+
+    /**
+     * Creates a DbSafeDateTime from ye old DateTime
+     * @param \DateTime $datetime
+     * @return \EventEspresso\core\domain\entities\DbSafeDateTime
+     */
+    public static function createFromDateTime(\DateTime $datetime)
+    {
+        $dbdsafe_datetime = new DbSafeDateTime();
+        $dbdsafe_datetime->setTimestamp($datetime->getTimestamp());
+        $dbdsafe_datetime->setTimezone($datetime->getTimezone());
+        return $dbdsafe_datetime;
+    }
+
+
 }
 // End of file DbSafeDateTime.php
 // Location: EventEspresso\core\domain\entities/DbSafeDateTime.php
