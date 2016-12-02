@@ -493,7 +493,7 @@ class EE_Messages_Queue
             /** @type EE_Message $message */
             $message = $this->_message_repository->current();
             //only process things that are queued for sending
-            if ( ! in_array($message->STS_ID(), EEM_Message::instance()->stati_indicating_to_send())) {
+            if (! in_array($message->STS_ID(), EEM_Message::instance()->stati_indicating_to_send())) {
                 $this->_message_repository->next();
                 continue;
             }
@@ -503,13 +503,13 @@ class EE_Messages_Queue
                 continue;
             }
             //error checking
-            if ( ! $message->valid_messenger()) {
+            if (! $message->valid_messenger()) {
                 $error_messages[] = sprintf(
                     __('The %s messenger is not active at time of sending.', 'event_espresso'),
                     $message->messenger()
                 );
             }
-            if ( ! $message->valid_message_type()) {
+            if (! $message->valid_message_type()) {
                 $error_messages[] = sprintf(
                     __('The %s message type is not active at the time of sending.', 'event_espresso'),
                     $message->message_type()
