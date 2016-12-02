@@ -523,7 +523,9 @@ class EE_Messages_Queue
             }
             // if there are no errors, then let's process the message
             if (empty($error_messages)) {
-                $message->set_messenger_is_executing($save);
+                if ($save) {
+                    $message->set_messenger_is_executing();
+                }
                 if ($this->_process_message($message, $sending_messenger)) {
                     $messages_sent++;
                 }

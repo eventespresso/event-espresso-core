@@ -854,11 +854,10 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links
     /**
      * This sets the EEM_Message::status_messenger_executing class on the message and the appropriate error message for
      * it.
-     * Note this also SAVES the current message object to the db.
+     * Note this also SAVES the current message object to the db because it adds an error message to accompany the status.
      *
-     * @param bool $save  If true then save the message to the db.
      */
-    public function set_messenger_is_executing($save=true)
+    public function set_messenger_is_executing()
     {
         $this->set_STS_ID( EEM_Message::status_messenger_executing );
         $this->set_error_message(
@@ -871,9 +870,6 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links
                 'event_espresso'
             )
         );
-        if ( $save ) {
-            $this->save();
-        }
     }
 }
 /* End of file EE_Message.class.php */
