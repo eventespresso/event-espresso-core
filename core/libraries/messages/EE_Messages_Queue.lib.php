@@ -137,11 +137,12 @@ class EE_Messages_Queue
     /**
      * Persists all queued EE_Message objects to the db.
      *
-     * @return array()  @see EE_Messages_Repository::saveAll() for return values.
+     * @param bool $do_hooks_only       @see EE_Message_Repository::saveAll
+     * @return array @see EE_Messages_Repository::saveAll() for return values.
      */
-    public function save()
+    public function save($do_hooks_only = false)
     {
-        return $this->_message_repository->saveAll();
+        return $this->_message_repository->saveAll($do_hooks_only);
     }
 
 
@@ -530,7 +531,7 @@ class EE_Messages_Queue
             $this->_message_repository->next();
         }
         if ($save) {
-            $this->save();
+            $this->save(true);
         }
         return $messages_sent;
     }
