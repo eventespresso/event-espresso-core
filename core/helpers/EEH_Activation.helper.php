@@ -1159,7 +1159,7 @@ class EEH_Activation
         global $wpdb;
         if (\EEH_Activation::getTableAnalysis()->tableExists(EEM_Status::instance()->table())) {
             $table_name = EEM_Status::instance()->table();
-            $SQL = "DELETE FROM $table_name WHERE STS_ID IN ( 'ACT', 'NAC', 'NOP', 'OPN', 'CLS', 'PND', 'ONG', 'SEC', 'DRF', 'DEL', 'DEN', 'EXP', 'RPP', 'RCN', 'RDC', 'RAP', 'RNA', 'RWL', 'TAB', 'TIN', 'TFL', 'TCM', 'TOP', 'PAP', 'PCN', 'PFL', 'PDC', 'EDR', 'ESN', 'PPN', 'RIC', 'MSN', 'MFL', 'MID', 'MRS', 'MIC' );";
+            $SQL = "DELETE FROM $table_name WHERE STS_ID IN ( 'ACT', 'NAC', 'NOP', 'OPN', 'CLS', 'PND', 'ONG', 'SEC', 'DRF', 'DEL', 'DEN', 'EXP', 'RPP', 'RCN', 'RDC', 'RAP', 'RNA', 'RWL', 'TAB', 'TIN', 'TFL', 'TCM', 'TOP', 'PAP', 'PCN', 'PFL', 'PDC', 'EDR', 'ESN', 'PPN', 'RIC', 'MSN', 'MFL', 'MID', 'MRS', 'MIC', 'MDO', 'MEX' );";
             $wpdb->query($SQL);
             $SQL = "INSERT INTO $table_name
 					(STS_ID, STS_code, STS_type, STS_can_edit, STS_desc, STS_open) VALUES
@@ -1196,6 +1196,8 @@ class EEH_Activation
 					('ESN', 'SENT', 'email', 0, NULL, 1),
 					('MSN', 'SENT', 'message', 0, NULL, 0),
 					('MFL', 'FAIL', 'message', 0, NULL, 0),
+					('MDO', 'DEBUG_ONLY', 'message', 0, NULL, 0),
+					('MEX', 'MESSENGER_EXECUTING', 'message', 0, NULL, 0),
 					('MID', 'IDLE', 'message', 0, NULL, 1),
 					('MRS', 'RESEND', 'message', 0, NULL, 1),
 					('MIC', 'INCOMPLETE', 'message', 0, NULL, 0);";
