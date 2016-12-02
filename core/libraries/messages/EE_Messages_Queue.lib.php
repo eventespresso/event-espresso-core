@@ -522,12 +522,21 @@ class EE_Messages_Queue
                 $error_messages[] = $sending_messenger->getMessage();
             }
             // if there are no errors, then let's process the message
-            if (empty($error_messages) && $this->_process_message($message, $sending_messenger)) {
-                $messages_sent++;
+            if (empty($error_messages)) {
+                $message->set_messenger_is_executing($save);
+                if ($this->_process_message($message, $sending_messenger)) {
+                    $messages_sent++;
+                }
             }
             $this->_set_error_message($message, $error_messages);
             //add modified time
             $message->set_modified(time());
+            //we save each message after its processed to make sure its status persists in case PHP times-out or runs
+            //out of memory. @see https://events.codebasehq.com/projects/event-espresso/tickets/10281
+            if ($save) {
+                $message->save();
+            }
+
             $this->_message_repository->next();
         }
         if ($save) {
