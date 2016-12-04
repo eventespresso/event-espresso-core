@@ -1087,22 +1087,28 @@ jQuery(document).ready(function($) {
 			//get all ticket rows that have this dtt active on them.
 			var tktrow,
 				tktdata,
+                ticketsSelectedinRow = {};
+			    tktName = '',
 				singleDTTTKTs = [],
 				dttisactive = false,
-				activeTKTs = $('.ticket-selected', '#advanced-edit-' + row);
+				activeTKTs = $('.ticket-selected', '#advanced-dtt-edit-row-' + row);
 
 			//foreach of these tickets lets check if this datetime is the ONLY dtt active.
 			activeTKTs.each( function() {
 				tktdata = $(this).data();
 				tktrow = tktdata.ticketRow;
-
-				if ( $('.ticket-selected', '#edit-ticketrow-' + tktrow).length === 1 && $('.ticket-selected', '#edit-ticketrow-' + tktrow ).data('datetimeRow') == row )
-					singleDTTTKTs[tktrow] = $('.edit-ticket-TKT_name', '#edit-ticketrow-' + tktrow).val();
-				});
+				ticketsSelectedinRow = $('.ticket-selected', '#edit-ticketrow-' + tktrow);
 
 
-			if ( singleDTTTKTs.length === 0 )
-				return true; //we're okay
+
+				if ( ticketsSelectedinRow.length === 1 && ticketsSelectedinRow.data('datetimeRow') === row ) {
+				    console.log('assigning');
+                    singleDTTTKTs.push( $('.edit-ticket-TKT_name', '#display-ticketrow-'+tktrow).val() );
+                }
+            });
+			if ( singleDTTTKTs.length === 0 ) {
+                return true; //we're okay
+            }
 
 			//make sure that the checkbox is still checked (cause if user clicked the checkbox input instead of the li item then it will have toggled.)
 			//
