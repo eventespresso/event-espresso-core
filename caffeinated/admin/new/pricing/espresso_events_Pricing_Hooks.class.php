@@ -1177,7 +1177,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
         } else {
             $TKT_taxable = $ticket->get('TKT_taxable') ? ' checked="checked"' : '';
         }
-        
+
         
         $template_args = array(
             'tkt_row'                       => $default ? 'TICKETNUM' : $tktrow,
@@ -1228,9 +1228,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
             'ticket_datetimes_list'         => $default ? '<li class="hidden"></li>' : '',
             'starting_ticket_datetime_rows' => $default || $default_dtt ? '' : implode(',', $tkt_dtts),
             'ticket_datetime_rows'          => $default ? '' : implode(',', $tkt_dtts),
-            'existing_ticket_price_ids'     => $default,
-            '',
-            implode(',', array_keys($prices)),
+            'existing_ticket_price_ids'     => $default ? '' : implode(',', array_keys($prices)),
             'ticket_template_id'            => $default ? 0 : $ticket->get('TTM_ID'),
             'TKT_taxable'                   => $TKT_taxable,
             'display_subtotal'              => $ticket instanceof EE_Ticket && $ticket->get('TKT_taxable') ? '' : ' style="display:none"',
