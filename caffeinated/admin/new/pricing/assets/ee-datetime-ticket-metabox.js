@@ -331,10 +331,6 @@ jQuery(document).ready(function($) {
 						$(this).val(DTT_name);
 						break;
 
-					case 'event-datetime-DTT_is_primary' :
-						$(this).val(row === 1 ? '1' : '0');
-						break;
-
 					case 'event-datetime-DTT_EVT_start' :
 						DTT_start_time = $('#add-new-' + inputid, '#add-event-datetime').val();
 						DTT_start_time = DTT_start_time === '' ? tktHelper.eemoment().add(1, 'weeks').hours(8).minutes(0).format(DTT_CONVERTED_FORMATS.moment) : DTT_start_time;
@@ -520,7 +516,6 @@ jQuery(document).ready(function($) {
 
 				switch ( curclass ) {
 					case 'event-datetime-DTT_ID' :
-					case 'event-datetime-DTT_is_primary' :
 						$(this).attr('name', newname);
 						$(this).val('0');
 						if ( newid !== '' )
