@@ -1087,7 +1087,7 @@ jQuery(document).ready(function($) {
 			//get all ticket rows that have this dtt active on them.
 			var tktrow,
 				tktdata,
-                ticketsSelectedinRow = {};
+                ticketsSelectedinRow = {},
 			    tktName = '',
 				singleDTTTKTs = [],
 				dttisactive = false,
@@ -1102,7 +1102,6 @@ jQuery(document).ready(function($) {
 
 
 				if ( ticketsSelectedinRow.length === 1 && ticketsSelectedinRow.data('datetimeRow') === row ) {
-				    console.log('assigning');
                     singleDTTTKTs.push( $('.edit-ticket-TKT_name', '#display-ticketrow-'+tktrow).val() );
                 }
             });
