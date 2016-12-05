@@ -1082,7 +1082,7 @@ jQuery(document).ready(function($) {
 			//get all ticket rows that have this dtt active on them.
 			var tktrow,
 				tktdata,
-                ticketsSelectedinRow = {};
+                ticketsSelectedinRow = {},
 			    tktName = '',
 				singleDTTTKTs = [],
 				dttisactive = false,
@@ -1097,7 +1097,6 @@ jQuery(document).ready(function($) {
 
 
 				if ( ticketsSelectedinRow.length === 1 && ticketsSelectedinRow.data('datetimeRow') === row ) {
-				    console.log('assigning');
                     singleDTTTKTs.push( $('.edit-ticket-TKT_name', '#display-ticketrow-'+tktrow).val() );
                 }
             });
@@ -1109,7 +1108,7 @@ jQuery(document).ready(function($) {
 			//
 
 			//otherwise let's throw up the dialog and prompt
-			var htmlcontent = '<p>' + DTT_TRASH_BLOCK.main_warning + ' <strong>' + singleDTTTKTs.join('</strong>, <strong>') + '</strong></p>' + '<p>' + DTT_TRASH_BLOCK.after_warning + '</p><div class="save-cancel-button-container">' + DTT_TRASH_BLOCK.cancel_button + '</div>';
+			var htmlcontent = '<p>' + DTT_TRASH_BLOCK.main_warning + ' <strong>' + singleDTTTKTs.join('</strong>, <strong>') + '</strong></p>' + '<p>' + DTT_TRASH_BLOCK.after_warning + '</p><div class="save-cancel-button-container">' + DTT_TRASH_BLOCK.close_button + '</div>';
 
 
 			dialogHelper.displayModal().addContent(htmlcontent);

@@ -149,6 +149,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
                             'event_espresso'),
                         'cancel_button'           => '<button class="button-secondary ee-modal-cancel">' . __('Cancel',
                                 'event_espresso') . '</button>',
+                        'close_button'            => '<button class="button-secondary ee-modal-cancel">' . __('Close',
+                                'event_espresso') . '</button>',
                         'single_warning_from_tkt' => __('The Datetime you are attempting to unassign from this ticket is the only remaining datetime for this ticket. Tickets must always have at least one datetime assigned to them.',
                             'event_espresso'),
                         'single_warning_from_dtt' => __('The ticket you are attempting to unassign from this datetime cannot be unassigned because the datetime is the only remaining datetime for the ticket.  Tickets must always have at least one datetime assigned to them.',
