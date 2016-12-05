@@ -1113,7 +1113,7 @@ jQuery(document).ready(function($) {
 			//
 
 			//otherwise let's throw up the dialog and prompt
-			var htmlcontent = '<p>' + DTT_TRASH_BLOCK.main_warning + ' <strong>' + singleDTTTKTs.join('</strong>, <strong>') + '</strong></p>' + '<p>' + DTT_TRASH_BLOCK.after_warning + '</p><div class="save-cancel-button-container">' + DTT_TRASH_BLOCK.cancel_button + '</div>';
+			var htmlcontent = '<p>' + DTT_TRASH_BLOCK.main_warning + ' <strong>' + singleDTTTKTs.join('</strong>, <strong>') + '</strong></p>' + '<p>' + DTT_TRASH_BLOCK.after_warning + '</p><div class="save-cancel-button-container">' + DTT_TRASH_BLOCK.close_button + '</div>';
 
 
 			dialogHelper.displayModal().addContent(htmlcontent);
