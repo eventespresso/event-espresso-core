@@ -1475,14 +1475,12 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
     
     protected function _get_ticket_datetime_list_item($dttrow, $tktrow, $dtt, $ticket, $ticket_datetimes, $default)
     {
-        $dttid         = ! empty($dtt) ? $dtt->ID() : 0;
-        $displayrow    = ! empty($dtt) ? $dtt->get('DTT_order') : 0;
         $tkt_dtts      = $ticket instanceof EE_Ticket && isset($ticket_datetimes[$ticket->ID()]) ? $ticket_datetimes[$ticket->ID()] : array();
         $template_args = array(
-            'dtt_row'                  => $default && empty($dtt) ? 'DTTNUM' : $dttrow,
+            'dtt_row'                  => $default && ! $dtt instanceof EE_Datetime ? 'DTTNUM' : $dttrow,
             'tkt_row'                  => $default ? 'TICKETNUM' : $tktrow,
-            'ticket_datetime_selected' => in_array($displayrow, $tkt_dtts) ? ' ticket-selected' : '',
-            'ticket_datetime_checked'  => in_array($displayrow, $tkt_dtts) ? ' checked="checked"' : '',
+            'ticket_datetime_selected' => in_array($dttrow, $tkt_dtts) ? ' ticket-selected' : '',
+            'ticket_datetime_checked'  => in_array($dttrow, $tkt_dtts) ? ' checked="checked"' : '',
             'DTT_name'                 => $default && empty($dtt) ? 'DTTNAME' : $dtt->get_dtt_display_name(true),
             'tkt_status_class'         => '',
         );
