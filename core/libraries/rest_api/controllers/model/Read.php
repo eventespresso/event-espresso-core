@@ -991,7 +991,7 @@ class Read extends Base
         } else {
             $model_query_params['caps'] = \EEM_Base::caps_read;
         }
-        if (isset($query_parameters['default_query_params'])) {
+        if (isset($query_parameters['default_where_conditions'])) {
             $model_query_params['default_where_conditions'] = $this->validate_default_query_params($query_parameters['default_where_conditions']);
         }
         return apply_filters('FHEE__Read__create_model_query_params', $model_query_params, $query_parameters, $model);

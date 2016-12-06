@@ -789,12 +789,12 @@ class Read_Test extends \EE_UnitTestCase{
         $request = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events' );
         $request->set_query_params(
             array(
-                'force_join' => array( 'Venue' ),
-                'default_where_conditions' => 'minimum_others'
+                'order_by' => array( 'Venue.VNU_ID' => 'ASC' ),
+                'default_where_conditions' => 'full_this_minimum_others'
             )
         );
         $response = Read::handle_request_get_all( $request );
-        //and that's it
+        //we should find the normal event, and the event for the trashed venue
         $this->assertEquals(2, count($response->data));
     }
 
