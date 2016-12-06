@@ -443,7 +443,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
             //if there are $post_templates for this cpt, then we return false for this method because
             //that means we aren't going to load our page template manager and leave that up to the native
             //cpt template manager.
-            $cpt_has_support = isset($post_templates[$cpt_name]) ? false : $cpt_has_support;
+            $cpt_has_support = ! isset($post_templates[$cpt_name]) ? $cpt_has_support : false;
         }
 
         return $cpt_has_support;
