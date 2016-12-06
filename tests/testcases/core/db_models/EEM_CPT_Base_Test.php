@@ -44,11 +44,11 @@ class EEM_CPT_Base_Test extends EE_UnitTestCase
     }
 
     /**
-     * Test that when we set the minimum where conditions, we DO find cpt items
-     * that are trashed, BUT DO NOT find CPT items of the wrong post_type (whcih might,
-     * by some hackery, have an entry in the meta table)
+     * Test that when we set the minimum_others where conditions, we DO\n'y find trashed cpt items
+     * for the current model (because we use normal default where conditions for main model), but not for related
+     * trashed models (because they only use their minimum where conditions)
      *
-     * @group 9179
+*@group 10260
      */
     public function test_get_minimum_others_where_conditions_during_query()
     {
