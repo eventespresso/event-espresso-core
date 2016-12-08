@@ -149,6 +149,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
                             'event_espresso'),
                         'cancel_button'           => '<button class="button-secondary ee-modal-cancel">' . __('Cancel',
                                 'event_espresso') . '</button>',
+                        'close_button'            => '<button class="button-secondary ee-modal-cancel">' . __('Close',
+                                'event_espresso') . '</button>',
                         'single_warning_from_tkt' => __('The Datetime you are attempting to unassign from this ticket is the only remaining datetime for this ticket. Tickets must always have at least one datetime assigned to them.',
                             'event_espresso'),
                         'single_warning_from_dtt' => __('The ticket you are attempting to unassign from this datetime cannot be unassigned because the datetime is the only remaining datetime for the ticket.  Tickets must always have at least one datetime assigned to them.',
@@ -1177,7 +1179,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
         } else {
             $TKT_taxable = $ticket->get('TKT_taxable') ? ' checked="checked"' : '';
         }
-        
+
         
         $template_args = array(
             'tkt_row'                       => $default ? 'TICKETNUM' : $tktrow,
@@ -1228,9 +1230,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
             'ticket_datetimes_list'         => $default ? '<li class="hidden"></li>' : '',
             'starting_ticket_datetime_rows' => $default || $default_dtt ? '' : implode(',', $tkt_dtts),
             'ticket_datetime_rows'          => $default ? '' : implode(',', $tkt_dtts),
-            'existing_ticket_price_ids'     => $default,
-            '',
-            implode(',', array_keys($prices)),
+            'existing_ticket_price_ids'     => $default ? '' : implode(',', array_keys($prices)),
             'ticket_template_id'            => $default ? 0 : $ticket->get('TTM_ID'),
             'TKT_taxable'                   => $TKT_taxable,
             'display_subtotal'              => $ticket instanceof EE_Ticket && $ticket->get('TKT_taxable') ? '' : ' style="display:none"',
@@ -1477,14 +1477,12 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
     
     protected function _get_ticket_datetime_list_item($dttrow, $tktrow, $dtt, $ticket, $ticket_datetimes, $default)
     {
-        $dttid         = ! empty($dtt) ? $dtt->ID() : 0;
-        $displayrow    = ! empty($dtt) ? $dtt->get('DTT_order') : 0;
         $tkt_dtts      = $ticket instanceof EE_Ticket && isset($ticket_datetimes[$ticket->ID()]) ? $ticket_datetimes[$ticket->ID()] : array();
         $template_args = array(
-            'dtt_row'                  => $default && empty($dtt) ? 'DTTNUM' : $dttrow,
+            'dtt_row'                  => $default && ! $dtt instanceof EE_Datetime ? 'DTTNUM' : $dttrow,
             'tkt_row'                  => $default ? 'TICKETNUM' : $tktrow,
-            'ticket_datetime_selected' => in_array($displayrow, $tkt_dtts) ? ' ticket-selected' : '',
-            'ticket_datetime_checked'  => in_array($displayrow, $tkt_dtts) ? ' checked="checked"' : '',
+            'ticket_datetime_selected' => in_array($dttrow, $tkt_dtts) ? ' ticket-selected' : '',
+            'ticket_datetime_checked'  => in_array($dttrow, $tkt_dtts) ? ' checked="checked"' : '',
             'DTT_name'                 => $default && empty($dtt) ? 'DTTNAME' : $dtt->get_dtt_display_name(true),
             'tkt_status_class'         => '',
         );

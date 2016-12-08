@@ -173,22 +173,29 @@ class Read_Test extends \EE_UnitTestCase{
 		$this->set_current_user_to_new();
 		$limit_on_datetime = 100;
 		$limit_on_ticket = 50;
+		/** @var \EE_Event $event */
 		$event = $this->new_model_obj_with_dependencies( 'Event' );
+		/** @var \EE_Datetime $dtt */
 		$dtt = $this->new_model_obj_with_dependencies(
 			'Datetime',
 			array(
 				'DTT_reg_limit' => $limit_on_datetime,
-				'EVT_ID' => $event->ID()
+				'EVT_ID' => $event->ID(),
+				'DTT_sold' => 0,
+				'DTT_reserved' => 0,
 			)
 		);
+		/** @var \EE_Ticket $tkt */
 		$tkt = $this->new_model_obj_with_dependencies(
 			'Ticket',
 			array(
-				'TKT_qty' => $limit_on_ticket
+				'TKT_qty' => $limit_on_ticket,
+				'TKT_sold' => 0,
+				'TKT_reserved' => 0,
 			)
 		);
 		$tkt->_add_relation_to( $dtt, 'Datetime' );
-		$reg1 = $this->new_model_obj_with_dependencies(
+		$this->new_model_obj_with_dependencies(
 			'Registration',
 			array(
 				'EVT_ID' => $event->ID(),
@@ -212,7 +219,7 @@ class Read_Test extends \EE_UnitTestCase{
 		$result = $response->get_data();
 		$this->assertTrue( isset( $result[ 'EVT_ID' ] ) );
 		//check that the requested calculated fields were added.
-		//Seeing how these calculated fields just wrap other EE methods (which sould already be tested)
+		//Seeing how these calculated fields just wrap other EE methods (which should already be tested)
 		//the emphasis here is just on whether or not they get included properly, not exhaustively
 		//testing the calculations themselves
 		$this->assertTrue( isset( $result[ '_calculated_fields' ] ) );
@@ -649,7 +656,6 @@ class Read_Test extends \EE_UnitTestCase{
 	 * Creates a new wp user with the specified role and makes them the new current user
 	 *
 	 * @global \WP_User $current_user
-	 * @param string $role
 	 * @return \WP_User
 	 */
 	public function set_current_user_to_new(){
@@ -754,7 +760,9 @@ class Read_Test extends \EE_UnitTestCase{
 		$response = Read::handle_request_get_all( $request );
 		$this->assertEmpty( $response->get_data() );
 	}
-}
 
+
+
+}
 // End of file Read_Test.php
 // Location: testcases/core/libraries/rest_api/controllers/Read_Test.php

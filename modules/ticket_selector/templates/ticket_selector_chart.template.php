@@ -64,36 +64,37 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 			$ticket_bundle = TRUE;
 		}
 		$ticket_price = apply_filters( 'FHEE__ticket_selector_chart_template__ticket_price', $ticket_price, $ticket );
+		$is_remaining = $remaining > 0 ? true : false;
 		// if a previous required ticket with the same sale start date is sold out, then mark this ticket as sold out as well.
 		// tickets that go on sale at a later date than the required ticket  will NOT be affected
-		$tkt_status = $required_ticket_sold_out !== FALSE && $required_ticket_sold_out === $ticket->start_date() ? EE_Ticket::sold_out : $ticket->ticket_status();
+		$tkt_status = $required_ticket_sold_out !== FALSE && $required_ticket_sold_out === $ticket->start_date() ? EE_Ticket::sold_out : $ticket->ticket_status( false, $is_remaining );
 		$tkt_status = $event_status === EE_Datetime::sold_out ? EE_Ticket::sold_out : $tkt_status;
 		// check ticket status
 		switch ( $tkt_status ) {
 			// sold_out
 			case EE_Ticket::sold_out :
-				$ticket_status = '<span class="ticket-sales-sold-out">' . $ticket->ticket_status( TRUE ) . '</span>';
+				$ticket_status = '<span class="ticket-sales-sold-out">' . $ticket->ticket_status( TRUE, $is_remaining ) . '</span>';
 				$status_class = 'ticket-sales-sold-out lt-grey-text';
 			break;
 			// expired
 			case EE_Ticket::expired :
-				$ticket_status = '<span class="ticket-sales-expired">' . $ticket->ticket_status( TRUE ) . '</span>';
+				$ticket_status = '<span class="ticket-sales-expired">' . $ticket->ticket_status( true, $is_remaining ) . '</span>';
 				$status_class = 'ticket-sales-expired lt-grey-text';
 			break;
 			// archived
 			case EE_Ticket::archived :
-				$ticket_status = '<span class="archived-ticket">' . $ticket->ticket_status( TRUE ) . '</span>';
+				$ticket_status = '<span class="archived-ticket">' . $ticket->ticket_status( true, $is_remaining ) . '</span>';
 				$status_class = 'archived-ticket hidden';
 			break;
 			// pending
 			case EE_Ticket::pending :
-				$ticket_status = '<span class="ticket-pending">' . $ticket->ticket_status( TRUE ) . '</span>';
+				$ticket_status = '<span class="ticket-pending">' . $ticket->ticket_status( true, $is_remaining ) . '</span>';
 				$status_class = 'ticket-pending';
 			break;
 			// onsale
 			case EE_Ticket::onsale :
 			default :
-				$ticket_status = '<span class="ticket-on-sale">' . $ticket->ticket_status( TRUE ) . '</span>';
+				$ticket_status = '<span class="ticket-on-sale">' . $ticket->ticket_status( true, $is_remaining ) . '</span>';
 				$status_class = 'ticket-on-sale';
 			break;
 		}
@@ -378,7 +379,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 
 									<?php do_action( 'AHEE__ticket_selector_chart_template__after_ticket_date', $ticket ); ?>
 
-									<?php if ( $ticket->min() &&$ticket->max() ) { ?>
+									<?php if ( $ticket->min() && $ticket->max() ) { ?>
 									<section class="tckt-slctr-tkt-quantities-sctn">
 										<h5><?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_details_purchasable_quantities_heading', __( 'Purchasable Quantities', 'event_espresso' )); ?></h5>
 										<span class="drk-grey-text small-text no-bold"> - <?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_details_purchasable_quantities_message', __( 'The number of tickets that can be purchased per transaction (if available).', 'event_espresso' )); ?></span><br/>
@@ -461,7 +462,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 															<?php echo $ticket->sold(); ?>
 														</td>
 														<td data-th="<?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_details_event_access_table_this_ticket_left', __( 'Remaining', 'event_espresso' )); ?>" class="cntr small-text">
-															<?php echo $ticket->qty() === EE_INF ? '<span class="smaller-text">' .  __( 'unlimited ', 'event_espresso' ) . '</span>' : $ticket->qty() - $ticket->sold(); ?>
+															<?php echo $remaining === EE_INF ? '<span class="smaller-text">' .  __( 'unlimited ', 'event_espresso' ) . '</span>' : $remaining; ?>
 														</td>
 														<td data-th="<?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_details_event_access_table_total_ticket_sold', __( 'Total Sold', 'event_espresso' )); ?>" class="cntr small-text">
 															<?php echo $datetime->sold(); ?>
@@ -545,10 +546,10 @@ if ( ! $hide_ticket_selector ) {
 						*
 						* @since 4.7.2
 						*
-						* @param string 'Qty*' The translatable text to display in the table header for the Quantity of tickets
+						* @param string 'Qty' The translatable text to display in the table header for the Quantity of tickets
 						* @param int $EVT_ID The Event ID
 						*/
-						echo esc_html( apply_filters( 'FHEE__ticket_selector_chart_template__table_header_qty', __( 'Qty*', 'event_espresso' ), $EVT_ID ) );
+						echo esc_html( apply_filters( 'FHEE__ticket_selector_chart_template__table_header_qty', __( 'Qty', 'event_espresso' ), $EVT_ID ) );
 					?>
 				</th>
 			</tr>
