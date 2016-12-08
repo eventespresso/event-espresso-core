@@ -173,7 +173,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
 				KEY DTT_EVT_start (DTT_EVT_start),
 				KEY EVT_ID (EVT_ID),
 				KEY DTT_is_primary (DTT_is_primary)";
-        $this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB');
+        $this->_table_is_changed_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
         $table_name = "esp_datetime_ticket";
         $sql = "DTK_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 				DTT_ID int(10) unsigned NOT NULL,
@@ -563,7 +563,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
 				TKT_deleted tinyint(1) NOT NULL DEFAULT '0',
 				PRIMARY KEY  (TKT_ID),
 				KEY TKT_start_date (TKT_start_date)";
-        $this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB');
+        $this->_table_is_changed_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
         $table_name = 'esp_question_group';
         $sql = 'QSG_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 				QSG_name varchar(255) NOT NULL,
