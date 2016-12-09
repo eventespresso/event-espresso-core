@@ -3470,44 +3470,16 @@ abstract class EEM_Base extends EE_Base
                 implode(", ", $allowed_used_default_where_conditions_values)));
         }
         $universal_query_params = array();
-        if (
-        in_array(
-            $use_default_where_conditions,
-            array(
-                EEM_Base::default_where_conditions_all,
-                EEM_Base::default_where_conditions_this_only,
-                EEM_Base::default_where_conditions_minimum_others,
-            ),
-            true
-        )
-        ) {
+        if ($this->_should_use_default_where_conditions( $use_default_where_conditions, true)) {
             $universal_query_params = $this->_get_default_where_conditions();
-        } else if ($use_default_where_conditions === EEM_Base::default_where_conditions_minimum_all) {
+        } else if ($this->_should_use_default_where_conditions( $use_default_where_conditions, true)) {
             $universal_query_params = $this->_get_minimum_where_conditions();
         }
         foreach ($query_info_carrier->get_model_names_included() as $model_relation_path => $model_name) {
             $related_model = $this->get_related_model_obj($model_name);
-            if (
-            in_array(
-                $use_default_where_conditions,
-                array(
-                    EEM_Base::default_where_conditions_all,
-                    EEM_Base::default_where_conditions_others_only,
-                ),
-                true
-            )
-            ) {
+            if ( $this->_should_use_default_where_conditions( $use_default_where_conditions, false)) {
                 $related_model_universal_where_params = $related_model->_get_default_where_conditions($model_relation_path);
-            } elseif (
-            in_array(
-                $use_default_where_conditions,
-                array(
-                    EEM_Base::default_where_conditions_minimum_others,
-                    EEM_Base::default_where_conditions_minimum_all,
-                ),
-                true
-            )
-            ) {
+            } elseif ($this->_should_use_minimum_where_conditions( $use_default_where_conditions, false)) {
                 $related_model_universal_where_params = $related_model->_get_minimum_where_conditions($model_relation_path);
             } else {
                 //we don't want to add full or even minimum default where conditions from this model, so just continue
@@ -3527,6 +3499,73 @@ abstract class EEM_Base extends EE_Base
         return $universal_query_params;
     }
 
+
+
+    /**
+     * Determines whether or not we should use default where conditions for the model in question
+     * (this model, or other related models).
+     * Basically, we should use default where conditions on this model if they have requested to use them on all models,
+     * this model only, or to use minimum where conditions on all other models and normal where conditions on this one.
+     * We should use default where conditions on related models when they requested to use default where conditions
+     * on all models, or specifically just on other related models
+     * @param      $default_where_conditions_value
+     * @param bool $for_this_model false means this is for OTHER related models
+     * @return bool
+     */
+    private function _should_use_default_where_conditions( $default_where_conditions_value, $for_this_model = true )
+    {
+        return (
+                   $for_this_model
+                   && in_array(
+                       $default_where_conditions_value,
+                       array(
+                           EEM_Base::default_where_conditions_all,
+                           EEM_Base::default_where_conditions_this_only,
+                           EEM_Base::default_where_conditions_minimum_others,
+                       ),
+                       true
+                   )
+               )
+               || ! $for_this_model
+                  && in_array(
+                      $default_where_conditions_value,
+                      array(
+                          EEM_Base::default_where_conditions_all,
+                          EEM_Base::default_where_conditions_others_only,
+                      ),
+                      true
+                  );
+    }
+
+    /**
+     * Determines whether or not we should use default minimum conditions for the model in question
+     * (this model, or other related models).
+     * Basically, we should use minimum where conditions on this model only if they requested all models to use minimum
+     * where conditions.
+     * We should use minimum where conditions on related models if they requested to use minimum where conditions
+     * on this model or others
+     * @param      $default_where_conditions_value
+     * @param bool $for_this_model false means this is for OTHER related models
+     * @return bool
+     */
+    private function _should_use_minimum_where_conditions($default_where_conditions_value, $for_this_model = true)
+    {
+        return (
+                   $for_this_model
+                   && $default_where_conditions_value === EEM_Base::default_where_conditions_minimum_all
+               )
+               || (
+                   ! $for_this_model
+                   && in_array(
+                       $default_where_conditions_value,
+                       array(
+                           EEM_Base::default_where_conditions_minimum_others,
+                           EEM_Base::default_where_conditions_minimum_all,
+                       ),
+                       true
+                   )
+               );
+    }
 
 
     /**
