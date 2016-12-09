@@ -3472,7 +3472,7 @@ abstract class EEM_Base extends EE_Base
         $universal_query_params = array();
         if ($this->_should_use_default_where_conditions( $use_default_where_conditions, true)) {
             $universal_query_params = $this->_get_default_where_conditions();
-        } else if ($this->_should_use_default_where_conditions( $use_default_where_conditions, true)) {
+        } else if ($this->_should_use_minimum_where_conditions( $use_default_where_conditions, true)) {
             $universal_query_params = $this->_get_minimum_where_conditions();
         }
         foreach ($query_info_carrier->get_model_names_included() as $model_relation_path => $model_name) {
@@ -3526,15 +3526,17 @@ abstract class EEM_Base extends EE_Base
                        true
                    )
                )
-               || ! $for_this_model
-                  && in_array(
-                      $default_where_conditions_value,
-                      array(
-                          EEM_Base::default_where_conditions_all,
-                          EEM_Base::default_where_conditions_others_only,
-                      ),
-                      true
-                  );
+               || (
+                   ! $for_this_model
+                   && in_array(
+                       $default_where_conditions_value,
+                       array(
+                           EEM_Base::default_where_conditions_all,
+                           EEM_Base::default_where_conditions_others_only,
+                       ),
+                       true
+                   )
+               );
     }
 
     /**

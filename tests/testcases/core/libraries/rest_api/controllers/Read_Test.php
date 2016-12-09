@@ -762,7 +762,7 @@ class Read_Test extends \EE_UnitTestCase{
 	}
 
     /**
-     * Test that when we set the minimum_others where conditions, we DO\n'y find trashed cpt items
+     * Test that when we set the minimum_others where conditions, we don't find trashed cpt items
      * for the current model (because we use normal default where conditions for main model), but not for related
      * trashed models (because they only use their minimum where conditions)
      *
@@ -795,7 +795,7 @@ class Read_Test extends \EE_UnitTestCase{
         );
         $response = Read::handle_request_get_all( $request );
         //we should find the normal event, and the event for the trashed venue
-        $this->assertEquals(2, count($response->data));
+        $this->assertCount(2, $response->data);
     }
 
 }
