@@ -182,7 +182,7 @@ class EED_Ticket_Selector extends  EED_Module {
 
 
 	/**
-	 *    process_ticket_selections
+	 * process_ticket_selections
 	 *
 	 * @access        public
 	 * @access        public
@@ -193,6 +193,20 @@ class EED_Ticket_Selector extends  EED_Module {
 		$form = new ProcessTicketSelector();
 		return $form->processTicketSelections();
 	}
+
+
+
+    /**
+     * cancel_ticket_selections
+     *
+     * @access        public
+     * @return        string
+     */
+    public static function cancel_ticket_selections()
+    {
+        $form = new ProcessTicketSelector();
+        return $form->cancelTicketSelections();
+    }
 
 
 
