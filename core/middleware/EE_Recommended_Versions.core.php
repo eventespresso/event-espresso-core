@@ -49,18 +49,27 @@ class EE_Recommended_Versions extends EE_Middleware
     }
 
 
-
     /**
-     *    _check_wp_version
+     * Helper method to assess installed wp version against given values.
+     * By default this compares the required minimum version of WP for EE against the installed version of WP
      *
-     * @access private
-     * @param string $min_version
-     * @return boolean
+     * Note, $wp_version is the first parameter sent into the PHP version_compare function (what is being checked against)
+     * so consider that when sending in your values.
+     *
+     * @param string $version_to_check
+     * @param string $operator
+     * @return bool
      */
-    private function _check_wp_version($min_version = EE_MIN_WP_VER_REQUIRED)
+    public static function check_wp_version($version_to_check = EE_MIN_WP_VER_REQUIRED, $operator = '>=')
     {
         global $wp_version;
-        return version_compare($wp_version, $min_version, '>=') ? true : false;
+        return version_compare(
+            //first account for wp_version being pre-release (like RC, beta etc which are usually in the format like
+            //4.7-RC3-39519
+            strpos($wp_version, '-') > 0 ? substr($wp_version, 0, strpos($wp_version, '-')) : $wp_version,
+            $version_to_check,
+            $operator
+        );
     }
 
 
@@ -73,7 +82,7 @@ class EE_Recommended_Versions extends EE_Middleware
      */
     private function _minimum_wp_version_required()
     {
-        return $this->_check_wp_version(EE_MIN_WP_VER_REQUIRED);
+        return self::check_wp_version();
     }
 
 

@@ -432,9 +432,21 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
      */
     private function _supports_page_templates($cpt_name)
     {
+
         $cpt_args = EE_Register_CPTs::get_CPTs();
         $cpt_args = isset($cpt_args[$cpt_name]) ? $cpt_args[$cpt_name]['args'] : array();
-        return ! empty($cpt_args['page_templates']) ? true : false;
+        $cpt_has_support = ! empty($cpt_args['page_templates']);
+
+        //if the installed version of WP is > 4.7 we do some additional checks.
+        if (EE_Recommended_Versions::check_wp_version('4.7','>=')) {
+            $post_templates = wp_get_theme()->get_post_templates();
+            //if there are $post_templates for this cpt, then we return false for this method because
+            //that means we aren't going to load our page template manager and leave that up to the native
+            //cpt template manager.
+            $cpt_has_support = ! isset($post_templates[$cpt_name]) ? $cpt_has_support : false;
+        }
+
+        return $cpt_has_support;
     }
 
 
@@ -448,7 +460,14 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
     {
         global $post;
         $template = '';
-        if (count(get_page_templates($post)) != 0) {
+
+        if (EE_Recommended_Versions::check_wp_version('4.7','>=')) {
+            $page_template_count = count(get_page_templates());
+        } else {
+            $page_template_count = count(get_page_templates($post));
+        };
+
+        if ($page_template_count) {
             $page_template = get_post_meta($post->ID, '_wp_page_template', true);
             $template      = ! empty($page_template) ? $page_template : '';
         }
@@ -931,8 +950,13 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
 
         //take care of updating any selected page_template IF this cpt supports it.
         if ($this->_supports_page_templates($post->post_type) && ! empty($this->_req_data['page_template'])) {
-            $post->page_template = $this->_req_data['page_template'];
-            $page_templates      = wp_get_theme()->get_page_templates($post);
+            //wp version aware.
+            if (EE_Recommended_Versions::check_wp_version('4.7', '>=')) {
+                $page_templates = wp_get_theme()->get_page_templates();
+            } else {
+                $post->page_template = $this->_req_data['page_template'];
+                $page_templates      = wp_get_theme()->get_page_templates($post);
+            }
             if ('default' != $this->_req_data['page_template'] && ! isset($page_templates[$this->_req_data['page_template']])) {
                 EE_Error::add_error(__('Invalid Page Template.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__);
             } else {
