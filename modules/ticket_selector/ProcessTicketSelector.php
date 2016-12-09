@@ -30,6 +30,72 @@ class ProcessTicketSelector
 
 
     /**
+     * cancelTicketSelections
+     *
+     * @return        string
+     */
+    public function cancelTicketSelections()
+    {
+        // check nonce
+        if ( ! $this->processTicketSelectorNonce('cancel_ticket_selections')) {
+            return false;
+        }
+        \EE_Registry::instance()->SSN->clear_session(__CLASS__, __FUNCTION__);
+        if (\EE_Registry::instance()->REQ->is_set('event_id')) {
+            wp_safe_redirect(
+                \EEH_Event_View::event_link_url(
+                    \EE_Registry::instance()->REQ->get('event_id')
+                )
+            );
+        } else {
+            wp_safe_redirect(
+                site_url('/' . \EE_Registry::instance()->CFG->core->event_cpt_slug . '/')
+            );
+        }
+        exit();
+    }
+
+
+    /**
+     * processTicketSelectorNonce
+     *
+     * @param  string $nonce_name
+     * @param string  $id
+     * @return bool
+     */
+    private function processTicketSelectorNonce($nonce_name, $id = '')
+    {
+        $nonce_name_with_id = ! empty($id) ? "{$nonce_name}_nonce_{$id}" : "{$nonce_name}_nonce";
+        if (
+            ! is_admin()
+            && (
+                ! \EE_Registry::instance()->REQ->is_set($nonce_name_with_id)
+                || ! wp_verify_nonce(
+                    \EE_Registry::instance()->REQ->get($nonce_name_with_id),
+                    $nonce_name
+                )
+            )
+        ) {
+            \EE_Error::add_error(
+                sprintf(
+                    __(
+                        'We\'re sorry but your request failed to pass a security check.%sPlease click the back button on your browser and try again.',
+                        'event_espresso'
+                    ),
+                    '<br/>'
+                ),
+                __FILE__,
+                __FUNCTION__,
+                __LINE__
+            );
+            return false;
+        }
+        return true;
+    }
+
+
+
+    /**
      * process_ticket_selections
      *
      * @return array|bool
@@ -57,29 +123,10 @@ class ProcessTicketSelector
         //if event id is valid
         $id = absint( \EE_Registry::instance()->REQ->get( 'tkt-slctr-event-id' ) );
         // check nonce
-        if (
-            ! is_admin()
-            && (
-                ! \EE_Registry::instance()->REQ->is_set( 'process_ticket_selections_nonce_' . $id )
-                || ! wp_verify_nonce(
-                    \EE_Registry::instance()->REQ->get( 'process_ticket_selections_nonce_' . $id ),
-                    'process_ticket_selections'
-                )
-            )
-        ) {
-            \EE_Error::add_error(
-                sprintf(
-                    __(
-                        'We\'re sorry but your request failed to pass a security check.%sPlease click the back button on your browser and try again.',
-                        'event_espresso'
-                    ),
-                    '<br/>'
-                ),
-                __FILE__, __FUNCTION__, __LINE__
-            );
+        if ( ! $this->processTicketSelectorNonce('process_ticket_selections', $id)) {
             return false;
         }
-//		d( \EE_Registry::instance()->REQ );
+        //		d( \EE_Registry::instance()->REQ );
         self::$_available_spaces = array(
             'tickets'   => array(),
             'datetimes' => array(),
@@ -268,7 +315,7 @@ class ProcessTicketSelector
                                 : 1;
                             // explode ints by the dash
                             $row_qty = explode( '-', $row_qty );
-                            $row = isset( $row_qty[ 0 ] ) ? ( absint( $row_qty[ 0 ] ) ) : 1;
+                            $row = isset( $row_qty[ 0 ] ) ? absint( $row_qty[ 0 ] ) : 1;
                             $qty = isset( $row_qty[ 1 ] ) ? absint( $row_qty[ 1 ] ) : 0;
                             $row_qty = array( $row => $qty );
                             for ( $x = 1; $x <= $rows; $x++ ) {
@@ -347,6 +394,7 @@ class ProcessTicketSelector
             ) {
                 return false;
             }
+            $qty = absint(apply_filters('FHEE__EE_Ticket_Selector___add_ticket_to_cart__ticket_qty', $qty, $ticket));
             // add event to cart
             if ( \EE_Registry::instance()->CART->add_ticket_to_cart( $ticket, $qty ) ) {
                 $this->recalculateTicketDatetimeAvailability( $ticket, $qty );
@@ -456,7 +504,7 @@ class ProcessTicketSelector
                     // save the total available spaces ( the lesser of the ticket qty minus the number of tickets sold
                     // or the datetime spaces remaining) to this ticket using the datetime ID as the key
                     self::$_available_spaces[ 'tickets' ][ $ticket->ID() ][ $datetime->ID() ] = min(
-                        ( $ticket->qty() - $ticket->sold() ),
+                        $ticket->qty() - $ticket->sold(),
                         $spaces_remaining
                     );
                     // if the remaining spaces for this datetime is already set,
