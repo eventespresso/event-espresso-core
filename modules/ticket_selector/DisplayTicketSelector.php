@@ -323,62 +323,63 @@ class DisplayTicketSelector
         if ( ! is_admin() ) {
             // standard TS displayed with submit button, ie: "Register Now"
             if ( apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit', false ) ) {
-                $btn_text = apply_filters(
-                    'FHEE__EE_Ticket_Selector__display_ticket_selector_submit__btn_text',
-                    __( 'Register Now', 'event_espresso' ),
-                    $this->event
-                );
-                $external_url = $this->event->external_url();
-                $html .= '<input id="ticket-selector-submit-' . $this->event->ID() . '-btn"';
-                $html .= ' class="ticket-selector-submit-btn ';
-                $html .= empty( $external_url ) ? 'ticket-selector-submit-ajax"' : '"';
-                $html .= ' type="submit" value="' . $btn_text . '" />';
-                $html .= apply_filters(
-                    'FHEE__EE_Ticket_Selector__after_ticket_selector_submit',
-                    '',
-                    $this->event
-                );
+                $html .= $this->displayRegisterNowButton();
                 $html .= empty($external_url)
                     ? $this->ticketSelectorEndDiv()
                     : $this->clearTicketSelector();
                 $html .= '<br/>' . $this->formClose();
-            } else if (
-                // a "Dude Where's my Ticket Selector?" (DWMTS) type event (ie: $_max_atndz === 1)
-                $this->getMaxAttendees() === 1
-                // and the event is sold out
-                && $this->event->is_sold_out()
-            ) {
-                // then instead of a View Details or Submit button, just display a "Sold Out" message
-                $html .= apply_filters(
-                    'FHEE__EE_Ticket_Selector__display_ticket_selector_submit__sold_out_msg',
-                    sprintf(
-                        __(
-                            '%1$s"%2$s" is currently sold out.%4$sPlease check back again later, as spots may become available.%3$s',
-                            'event_espresso'
+            } else if ($this->getMaxAttendees() === 1 ) {
+                // its a "Dude Where's my Ticket Selector?" (DWMTS) type event (ie: $_max_atndz === 1)
+                if ( $this->event->is_sold_out() ) {
+                    // then instead of a View Details or Submit button, just display a "Sold Out" message
+                    $html .= apply_filters(
+                        'FHEE__EE_Ticket_Selector__display_ticket_selector_submit__sold_out_msg',
+                        sprintf(
+                            __(
+                                '%1$s"%2$s" is currently sold out.%4$sPlease check back again later, as spots may become available.%3$s',
+                                'event_espresso'
+                            ),
+                            '<p class="no-ticket-selector-msg clear-float">',
+                            $this->event->name(),
+                            '</p>',
+                            '<br />'
                         ),
-                        '<p class="no-ticket-selector-msg clear-float">',
-                        $this->event->name(),
-                        '</p>',
-                        '<br />'
-                    ),
-                    $this->event
-                );
-                // sold out DWMTS event, no TS, no submit or view details button, but has additional content
-                $html .= $this->ticketSelectorEndDiv();
-            } else if (
-                $this->getMaxAttendees() === 1
-                && apply_filters( 'FHEE__EE_Ticket_Selector__hide_ticket_selector', false )
-                && ! is_single()
-            ) {
-                // this is a "Dude Where's my Ticket Selector?" (DWMTS) type event,
-                // but no tickets are available, so display event's "View Details" button.
-                // it is being viewed via somewhere other than a single post
-                $html .= $this->displayViewDetailsButton( true );
+                        $this->event
+                    );
+                    if (
+                        apply_filters(
+                            'FHEE__EE_Ticket_Selector__display_ticket_selector_submit__no_tickets_but_display_register_now_button',
+                            false,
+                            $this->event
+                        )
+                    ) {
+                        $html .= $this->displayRegisterNowButton();
+                    }
+                    // sold out DWMTS event, no TS, no submit or view details button, but has additional content
+                    $html .= $this->ticketSelectorEndDiv();
+                } else if (
+                    apply_filters( 'FHEE__EE_Ticket_Selector__hide_ticket_selector', false )
+                    && ! is_single()
+                ) {
+                    // this is a "Dude Where's my Ticket Selector?" (DWMTS) type event,
+                    // but no tickets are available, so display event's "View Details" button.
+                    // it is being viewed via somewhere other than a single post
+                    $html .= $this->displayViewDetailsButton(true);
+                }
             } else if ( is_archive() ) {
                 // event list, no tickets available so display event's "View Details" button
                 $html .= $this->ticketSelectorEndDiv();
                 $html .= $this->displayViewDetailsButton();
             } else {
+                if (
+                    apply_filters(
+                        'FHEE__EE_Ticket_Selector__display_ticket_selector_submit__no_tickets_but_display_register_now_button',
+                        false,
+                        $this->event
+                    )
+                ) {
+                    $html .= $this->displayRegisterNowButton();
+                }
                 // no submit or view details button, and no additional content
                 $html .= $this->ticketSelectorEndDiv();
             }
@@ -386,6 +387,32 @@ class DisplayTicketSelector
                 $html .= \EEH_Template::powered_by_event_espresso('', '', array('utm_content' => 'ticket_selector'));
             }
         }
+        return $html;
+    }
+
+
+
+    /**
+     * @return string
+     * @throws \EE_Error
+     */
+    public function displayRegisterNowButton()
+    {
+        $btn_text = apply_filters(
+            'FHEE__EE_Ticket_Selector__display_ticket_selector_submit__btn_text',
+            __('Register Now', 'event_espresso'),
+            $this->event
+        );
+        $external_url = $this->event->external_url();
+        $html = '<input id="ticket-selector-submit-' . $this->event->ID() . '-btn"';
+        $html .= ' class="ticket-selector-submit-btn ';
+        $html .= empty($external_url) ? 'ticket-selector-submit-ajax"' : '"';
+        $html .= ' type="submit" value="' . $btn_text . '" />';
+        $html .= apply_filters(
+            'FHEE__EE_Ticket_Selector__after_ticket_selector_submit',
+            '',
+            $this->event
+        );
         return $html;
     }
 
@@ -409,8 +436,16 @@ class DisplayTicketSelector
                 __FILE__, __FUNCTION__, __LINE__
             );
         }
-	    $extra_params = $this->iframe ? ' target="_blank"' : '';
-	    $view_details_btn = '<form method="POST" action="' . $this->event->get_permalink() . '"'. $extra_params.'>';
+	    // $view_details_btn = '<form method="POST" action="' . $this->event->get_permalink() . '"'. $extra_params.'>';
+        $view_details_btn = '<form method="POST" action="'
+                            . apply_filters(
+                                'FHEE__EE_Ticket_Selector__display_view_details_btn__btn_url',
+                                $this->event->get_permalink(),
+                                $this->event
+                            )
+                            . '"';
+        $view_details_btn .= $this->iframe ? ' target="_blank"' : '';
+        $view_details_btn .= '>';
         $btn_text = apply_filters(
             'FHEE__EE_Ticket_Selector__display_view_details_btn__btn_text',
             __( 'View Details', 'event_espresso' ),
