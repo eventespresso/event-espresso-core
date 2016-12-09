@@ -254,19 +254,22 @@ class EE_Error extends Exception {
 
 
 
-	/**
-	 *    has_error
-	 *
-	 * @access public
-	 * @param bool $check_stored
-	 * @return bool
-	 */
-    public static function has_error( $check_stored = false ){
-	    $has_error = self::$_error_count ? true : false;
+    /**
+     *    has_error
+     *
+     * @access public
+     * @param bool   $check_stored
+     * @param string $type_to_check
+     * @return bool
+     */
+    public static function has_error( $check_stored = false, $type_to_check = 'errors' ){
+	    $has_error = isset(self::$_espresso_notices[$type_to_check]) && ! empty(self::$_espresso_notices[$type_to_check])
+            ? true
+            : false;
 	    if ( $check_stored && ! $has_error ) {
 		    $notices = (array) get_option( 'ee_notices', array() );
 		    foreach ( $notices as $type => $notice ) {
-			    if ( $type === 'errors' && $notice ) {
+			    if ( $type === $type_to_check && $notice ) {
 				    return true;
 			    }
 		    }

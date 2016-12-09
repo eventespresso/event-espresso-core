@@ -68,9 +68,13 @@ class EE_Ticket_Test extends EE_UnitTestCase{
 		$d->save();
 		$t->_add_relation_to($d, 'Datetime');
 		$this->assertEquals(10,$t->remaining());
-		$t->set('TKT_sold',5);
+		// simulate 5 ticket sales
+		$this->simulate_x_number_ticket_sales( $t, 5 );
 		$this->assertEquals(5,$t->remaining());
 	}
+
+
+
 	function test_ticket_status(){
 		$t = EE_Ticket::new_instance(array(
 			'TKT_start_date'=>time() - 100,
@@ -87,9 +91,10 @@ class EE_Ticket_Test extends EE_UnitTestCase{
 		$this->assertEquals(EE_Ticket::archived,$t->ticket_status());
 		$t->set('TKT_deleted',FALSE);
 		$this->assertEquals(EE_Ticket::onsale,$t->ticket_status());
-		$t->set('TKT_sold',10);
+		// simulate 10 ticket sales
+		$this->simulate_x_number_ticket_sales( $t, 10 );
 		$this->assertEquals(EE_Ticket::sold_out,$t->ticket_status());
-		$t->set('TKT_sold',0);
+		$this->reverse_x_number_ticket_sales( $t, 10 );
 		$d->set_reg_limit(10);
 		$d->save();
 		$t->set('TKT_start_date',time()+50);

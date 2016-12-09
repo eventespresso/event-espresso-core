@@ -1206,8 +1206,8 @@ class EEH_Line_Item {
 		foreach ( $parent_line_item->children() as $child_line_item ) {
 			if ( $child_line_item instanceof EE_Line_Item ) {
 				if (
-					is_array( $OBJ_IDs )
-					&& $child_line_item->OBJ_type() === $OBJ_type
+					$child_line_item->OBJ_type() === $OBJ_type
+					&& is_array( $OBJ_IDs )
 					&& in_array( $child_line_item->OBJ_ID(), $OBJ_IDs )
 				) {
 					$objects[] = $child_line_item;

@@ -1132,4 +1132,47 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	}
 
 
+
+	/**
+	 * increments the ticket and datetime sold values
+	 * @param \EE_ticket $ticket
+	 * @param int        $qty
+	 * @throws \EE_Error
+	 */
+	public function simulate_x_number_ticket_sales( EE_ticket $ticket, $qty = 1 ) {
+		$ticket->increase_sold( $qty );
+		$ticket->save();
+		$datetimes = $ticket->datetimes();
+		if ( is_array( $datetimes ) ) {
+			foreach ( $datetimes as $datetime ) {
+				if ( $datetime instanceof EE_Datetime ) {
+					$datetime->increase_sold( $qty );
+					$datetime->save();
+				}
+			}
+		}
+	}
+
+
+
+	/**
+	 * decrements the ticket and datetime sold values
+	 * @param \EE_ticket $ticket
+	 * @param int        $qty
+	 * @throws \EE_Error
+	 */
+	public function reverse_x_number_ticket_sales( EE_ticket $ticket, $qty = 1 ) {
+		$ticket->decrease_sold( $qty );
+		$ticket->save();
+		$datetimes = $ticket->datetimes();
+		if ( is_array( $datetimes ) ) {
+			foreach ( $datetimes as $datetime ) {
+				if ( $datetime instanceof EE_Datetime ) {
+					$datetime->decrease_sold( $qty );
+					$datetime->save();
+				}
+			}
+		}
+	}
+
 }
