@@ -1439,7 +1439,7 @@ final class EE_System
 
             //registers the eejs-api script so it can be used as a dependency on other scripts.
             wp_register_script('eejs-api', EE_LIBRARIES_URL . 'rest_api/assets/js/eejs-api.min.js', array('underscore'), espresso_version(), true);
-            EE_Registry::$eejs = array('paths' => array('rest_route' => rest_ur('ee/v4.8.36')));
+            EE_Registry::$eejs['paths'] = array('rest_route' => rest_url('ee/v4.8.36'));
             wp_localize_script(
                 'eejs-api',
                 'eejs',
