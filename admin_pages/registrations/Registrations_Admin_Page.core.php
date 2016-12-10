@@ -1014,6 +1014,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         if ( ! empty($request['datetime_id'])) {
             $where['Ticket.Datetime.DTT_ID'] = absint($request['datetime_id']);
         }
+        if( ! empty($request['DTT_ID'])){
+            $where['Ticket.Datetime.DTT_ID'] = absint($request['DTT_ID']);
+        }
         return $where;
     }
 
