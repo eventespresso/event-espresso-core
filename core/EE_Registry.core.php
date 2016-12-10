@@ -151,15 +151,13 @@ class EE_Registry
      */
     public $non_abstract_db_models = array();
 
+
     /**
-     *    $i18n_js_strings - internationalization for JS strings
-     *    usage:   EE_Registry::i18n_js_strings['string_key'] = __( 'string to translate.', 'event_espresso' );
-     *    in js file:  var translatedString = eei18n.string_key;
-     *
-     * @access    public
-     * @var    array
+     * This is used to hold the eejs object that contains values we want to pass to `eejs` scripts.  EE_System::wp_enqueue_scripts
+     * will register this and attach it to the eejs-api library.  The data will be exposed in the dom on `eejs.data`
+     * @var array
      */
-    public static $i18n_js_strings = array();
+    public static $eejs = array();
 
     /**
      *    $main_file - path to espresso.php
