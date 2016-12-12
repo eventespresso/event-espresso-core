@@ -609,7 +609,10 @@ class EED_Single_Page_Checkout extends EED_Module
         // and whether or not to generate a reg form for this request
         $this->checkout->generate_reg_form = EE_Registry::instance()->REQ->get('generate_reg_form', true);        // TRUE 	FALSE
         // and whether or not to process a reg form submission for this request
-        $this->checkout->process_form_submission = EE_Registry::instance()->REQ->get('process_form_submission', false);        // TRUE 	FALSE
+        $this->checkout->process_form_submission = EE_Registry::instance()->REQ->get(
+            'process_form_submission',
+            $this->checkout->action === 'process_reg_step'
+        ); // TRUE 	FALSE
         $this->checkout->process_form_submission = $this->checkout->action !== 'display_spco_reg_step'
             ? $this->checkout->process_form_submission
             : false;        // TRUE 	FALSE
@@ -1208,7 +1211,7 @@ class EED_Single_Page_Checkout extends EED_Module
                         apply_filters('FHEE__Single_Page_Checkout___check_form_submission__request_params', EE_Registry::instance()->REQ->params(), $this->checkout)
                     );
                     // validate submitted form data
-                    if ( ! $this->checkout->continue_reg && ! $this->checkout->current_step->reg_form->is_valid()) {
+                    if ( ! $this->checkout->continue_reg || ! $this->checkout->current_step->reg_form->is_valid()) {
                         // thou shall not pass !!!
                         $this->checkout->continue_reg = false;
                         // any form validation errors?
