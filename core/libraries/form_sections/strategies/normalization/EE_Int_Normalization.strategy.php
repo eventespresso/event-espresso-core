@@ -15,13 +15,14 @@ class EE_Int_Normalization extends EE_Normalization_Strategy_Base{
 	 * @throws \EE_Validation_Error
 	 */
 	public function normalize($value_to_normalize) {
-	    //consider -1 as equivalent to null
-        if (is_int($value_to_normalize) && $value_to_normalize === -1) {
-            return null;
-        }
 		if( is_int( $value_to_normalize ) ){
 			return $value_to_normalize;
 		}
+
+		if ( is_null( $value_to_normalize ) || $value_to_normalize === 'null' ) {
+		    return null;
+        }
+
 		if( ! is_string( $value_to_normalize )){
 			throw new EE_Validation_Error( sprintf( __( 'The value "%s" must be a string submitted for normalization, it was %s', 'event_espresso' ), print_r( $value_to_normalize, TRUE), gettype( $value_to_normalize ) ) );
 		}
@@ -55,8 +56,8 @@ class EE_Int_Normalization extends EE_Normalization_Strategy_Base{
 	 * @return string
 	 */
 	public function unnormalize( $normalized_value ) {
-	    if ( $normalized_value === null || $normalized_value === '-1' || $normalized_value === -1 ) {
-	        return '-1';
+	    if ( $normalized_value === null || $normalized_value === 'null' ) {
+	        return 'null';
         }elseif( empty( $normalized_value ) ){
 			return '0';
 		}else{

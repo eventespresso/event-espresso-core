@@ -180,9 +180,11 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base{
 				$desc = '';
 				if ( $this->_use_desc_in_label ) {
 					$desc = $question_option->desc();
-					$desc = ! empty( $desc ) ? '<span class="ee-question-option-desc"> - ' . $desc . '</span>' : '';
+					$desc = ! empty( $desc ) ? '<span class="ee-question-option-desc">' . $desc . '</span>' : '';
 				}
-				$flat_array[ $question_option->value() ] = $question_option->value() . $desc;
+				$flat_array[ $question_option->value() ] = $question_option->value() !== 'null'
+                    ? $question_option->value() . ' - ' . $desc
+                    : $desc;
 			} elseif ( is_array( $question_option )) {
 				$non_question_option = $this->_flatten_select_options( $question_option );
 				$flat_array = $flat_array + $non_question_option;

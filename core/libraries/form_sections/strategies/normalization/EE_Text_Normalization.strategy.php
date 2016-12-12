@@ -16,8 +16,8 @@ class EE_Text_Normalization extends EE_Normalization_Strategy_Base{
 	public function normalize($value_to_normalize) {
 		if(is_array($value_to_normalize)) {
             return array_shift($value_to_normalize);
-        //consider `"-1"` values to be equivalent to null.
-        }elseif($value_to_normalize === '-1' || $value_to_normalize === 'null' || $value_to_normalize === -1 ) {
+        //consider `"null"` values to be equivalent to null.
+        }elseif($value_to_normalize === 'null' || $value_to_normalize === null ) {
 		    return null;
 		}else{
 			return $value_to_normalize;
@@ -30,8 +30,8 @@ class EE_Text_Normalization extends EE_Normalization_Strategy_Base{
 	 */
 	public function unnormalize( $normalized_value ){
 	    //account for default "select here" option values
-	    if ( $normalized_value === null || $normalized_value === '-1' || $normalized_value === -1 ) {
-	        return '-1';
+	    if ( $normalized_value === null || $normalized_value === 'null' ) {
+	        return 'null';
         }
 		return $normalized_value;
 	}
