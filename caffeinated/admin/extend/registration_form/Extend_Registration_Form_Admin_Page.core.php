@@ -44,8 +44,8 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
     protected function _extend_page_config()
     {
         $this->_admin_base_path = REGISTRATION_FORM_CAF_ADMIN;
-        $qst_id                 = ! empty($this->_req_data['QST_ID']) && ! is_array($this->_req_data['QST_ID']) ? $this->_req_data['QST_ID'] : 0;
-        $qsg_id                 = ! empty($this->_req_data['QSG_ID']) && ! is_array($this->_req_data['QSG_ID']) ? $this->_req_data['QSG_ID'] : 0;
+        $qst_id = ! empty($this->_req_data['QST_ID']) && ! is_array($this->_req_data['QST_ID']) ? $this->_req_data['QST_ID'] : 0;
+        $qsg_id = ! empty($this->_req_data['QSG_ID']) && ! is_array($this->_req_data['QSG_ID']) ? $this->_req_data['QSG_ID'] : 0;
 
         $new_page_routes    = array(
             'question_groups'    => array(
