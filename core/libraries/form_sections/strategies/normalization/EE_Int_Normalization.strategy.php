@@ -15,6 +15,10 @@ class EE_Int_Normalization extends EE_Normalization_Strategy_Base{
 	 * @throws \EE_Validation_Error
 	 */
 	public function normalize($value_to_normalize) {
+	    //consider -1 as equivalent to null
+        if (is_int($value_to_normalize) && $value_to_normalize === -1) {
+            return null;
+        }
 		if( is_int( $value_to_normalize ) ){
 			return $value_to_normalize;
 		}
@@ -51,7 +55,9 @@ class EE_Int_Normalization extends EE_Normalization_Strategy_Base{
 	 * @return string
 	 */
 	public function unnormalize( $normalized_value ) {
-		if( empty( $normalized_value ) ){
+	    if ( $normalized_value === null || $normalized_value === '-1' || $normalized_value === -1 ) {
+	        return '-1';
+        }elseif( empty( $normalized_value ) ){
 			return '0';
 		}else{
 			return "$normalized_value";
