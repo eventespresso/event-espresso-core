@@ -430,15 +430,25 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
             $question->set_order_to_latest();
             $this->_set_add_edit_form_tags('insert_question');
         }
-        $question_types                                     = $question->has_answers() ? $this->_question_model->question_types_in_same_category($question->type()) : $this->_question_model->allowed_question_types();
+        $question_types                                     = $question->has_answers()
+            ? $this->_question_model->question_types_in_same_category($question->type())
+            : $this->_question_model->allowed_question_types();
         $this->_template_args['QST_ID']                     = $ID;
         $this->_template_args['question']                   = $question;
         $this->_template_args['question_types']             = $question_types;
-        $this->_template_args['max_max']                    = EEM_Question::instance()->absolute_max_for_system_question($question->system_ID());
+        $this->_template_args['max_max']                    = EEM_Question::instance()->absolute_max_for_system_question(
+            $question->system_ID()
+        );
         $this->_template_args['question_type_descriptions'] = $this->_get_question_type_descriptions();
+        $this->_template_args['default_text_for_select_question_type'] = apply_filters(
+            'FHEE__Registrations_Admin_Page___edit_question__default_text_for_select_question_type',
+            esc_html__('Please Select', 'event_espresso')
+        );
         $this->_set_publish_post_box_vars('id', $ID);
-        $this->_template_args['admin_page_content'] = EEH_Template::display_template(REGISTRATION_FORM_TEMPLATE_PATH . 'questions_main_meta_box.template.php',
-            $this->_template_args, true);
+        $this->_template_args['admin_page_content'] = EEH_Template::display_template(
+            REGISTRATION_FORM_TEMPLATE_PATH . 'questions_main_meta_box.template.php',
+            $this->_template_args, true
+        );
 
         // the details template wrapper
         $this->display_admin_page_with_sidebar();
