@@ -320,10 +320,12 @@ jQuery(document).ready(function($) {
 				selected_state    = null,
 				valid_option      = false;
 
-			// console_log( 'country_select_id', country_select_id, true );
-			// console_log( 'selected_country', selected_country, false );
-			// console_log( 'state_select_id', state_select_id, false );
-			// console_log( 'country_select_id.indexOf( country )', ~country_select_id.indexOf( 'country' ), false );
+			// console.log( ' ' );
+			// console.log( 'COUNTRY SELECTION CHANGED' );
+			// console.log( 'country_select_id: ' + country_select_id );
+			// console.log( 'selected_country: ' + selected_country );
+			// console.log( 'state_select_id: ' + state_select_id );
+			// console.log( 'country_select_id.indexOf( country ): ' + ~country_select_id.indexOf( 'country' ) );
 
 			// is this country question a system question ?
 			if ( ~country_select_id.indexOf( 'country' ) ) {
@@ -355,24 +357,33 @@ jQuery(document).ready(function($) {
 			if ( ( $state_select === null || ! $state_select.length ) && state_select_id !== '' ) {
 				$state_select = $( '#' + state_select_id );
 			}
-            // console_log('state_select_id', state_select_id, false);
+            // console.log('state_select_id: ' + state_select_id, false);
 
             if ( $state_select.length ) {
-				// grab the currently selected state (if there is one)
+                // console.log('FOUND STATE SELECTOR');
+                // grab the currently selected state (if there is one)
 				selected_state = $state_select.find( ":selected" ).text();
-				// console_log( 'selected_state', selected_state, false );
+				// console.log( 'selected_state: ' + selected_state );
 				// display and enable all optgroups
-				$( 'span > optgroup', $state_select )
+				$( 'optgroup', $state_select )
+                    .show()
                     .children('option')
                     .prop('disabled', false)
                     .show();
 				// if a valid country is selected
 				if ( selected_country !== '' ) {
-					// hide all unselected optgroups and disable their options
+                    // console.log('Hide unselected countries');
+                    // hide all unselected optgroups and disable their options
                     $( 'optgroup:not([label="' + selected_country + '"])', $state_select )
                         .hide()
                         .children('option')
+                        .prop('selected', false)
                         .prop('disabled', true);
+                    // then enable all options for selected country, but don't select anything
+                    $('optgroup[label="' + selected_country + '"]', $state_select)
+                        .show()
+                        .children('option')
+                        .prop('disabled', false);
                     // if a valid corresponding state select exists
 					if ( selected_state.length ) {
 						// loop through all of its optgroups
@@ -387,14 +398,15 @@ jQuery(document).ready(function($) {
                                         // then loop through each of its options
                                         $(this).find('option').each(
                                             function () {
-                                                // console.log(JSON.stringify('option text: ' + $(this).text(), null, 4));
+                                                // console.log('option text: ' + $(this).text() );
                                                 // was this option match the previously selected state ?
                                                 if ($(this).text() === selected_state) {
                                                     valid_option = true;
                                                     // make sure it's set as the selected option
-                                                    $state_select.prop('selected', true).change();
+                                                    $(this).prop('selected', true);
+                                                    $state_select.change();
                                                 } else {
-                                                    $state_select.prop('selected', false);
+                                                    $(this).prop('selected', false);
                                                 }
                                             }
                                         );
@@ -403,35 +415,37 @@ jQuery(document).ready(function($) {
 							}
 						);
 					}
-					// console_log( 'valid_option', valid_option, false );
+					// console.log( 'valid_option: ' + valid_option );
 					// if the previously selected state is not valid
-					if ( ! valid_option ) {
-						// makes sure no option is selected
-						$( "option:selected", $state_select ).prop( "selected", false );
-						// then find the empty placeholder and select it
-						$state_select
-							.find( 'optgroup[label=""]' )
-                            .show()
-							.find( 'option[value=""]' )
-                            .prop( 'disabled', false )
-							.prop( 'selected', true )
-                            .val('')
-					} else {
-						// previously selected state IS valid
-						// so make sure the empty placeholder is unselected
-						$state_select
-							.find( 'optgroup[label=""]' )
+					if ( valid_option ) {
+                        // console.log('VALID OPTION');
+                        // previously selected state IS valid
+                        // so make sure the empty placeholder is unselected
+                        $state_select
+                            .find('optgroup[label=""]')
                             .hide()
-							.find( 'option[value=""]' )
+                            .find('option[value=""]')
                             .prop('selected', false)
                             .prop('disabled', true);
-					}
+
+					} else {
+                        // console.log('INVALID OPTION');
+                        // then find the empty placeholder and select it
+                        $state_select
+                            .find('optgroup[label=""]')
+                            .show()
+                            .find('option[value=""]')
+                            .prop('disabled', false)
+                            .prop('selected', true)
+                            .val('');
+
+                    }
 				} else {
-					// console.log( JSON.stringify( 'NO COUNTRY SELECTED', null, 4 ) );
+					// console.log( 'NO COUNTRY SELECTED' );
 					// display any hidden optgroups and re-enable options
 					$state_select.find( 'optgroup' ).each(
 						function () {
-							// console_log( 'optgroup', $(this).val(), false );
+							// console.log( 'optgroup: ' + $(this).val() );
 							$(this).show().children('option').prop('disabled', false);
 						}
 					);
