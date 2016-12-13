@@ -499,7 +499,10 @@ class EED_Single_Page_Checkout extends EED_Module
             // DEBUG LOG
             //$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__ );
             // get reg form
-            $this->_check_form_submission();
+            if( ! $this->_check_form_submission()) {
+                EED_Single_Page_Checkout::$_initialized = true;
+                return;
+            }
             // checkout the action!!!
             $this->_process_form_action();
             // add some style and make it dance
@@ -1190,7 +1193,7 @@ class EED_Single_Page_Checkout extends EED_Module
      * _check_form_submission
      *
      * @access private
-     * @return void
+     * @return boolean
      */
     private function _check_form_submission()
     {
@@ -1231,13 +1234,14 @@ class EED_Single_Page_Checkout extends EED_Module
                         }
                         // well not really... what will happen is we'll just get redirected back to redo the current step
                         $this->go_to_next_step();
-                        return;
+                        return false;
                     }
                 }
             } catch (EE_Error $e) {
                 $e->get_error();
             }
         }
+        return true;
     }
 
 
