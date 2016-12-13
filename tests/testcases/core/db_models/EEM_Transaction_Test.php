@@ -42,13 +42,20 @@ class EEM_Transaction_Test extends EE_UnitTestCase
             array( 'TXN_timestamp' => time() - WEEK_IN_SECONDS * 2, 'STS_ID' => EEM_Transaction::failed_status_code )
         );
         $transaction_count = EEM_Transaction::instance()->count();
-        $this->assertEquals(18, $transaction_count);
+
+        $this->assertEquals(
+            $pretend_bot_creations + $pretend_real_recent_txns + $pretend_real_good_txns + count($failed_transaction_with_real_payment),
+            $transaction_count
+        );
         $failed_transaction_count = EEM_Transaction::instance()->count(
             array(
                 array('STS_ID' => EEM_Transaction::failed_status_code)
             )
         );
-        $this->assertEquals(13, $failed_transaction_count);
+        $this->assertEquals(
+            $pretend_bot_creations + $pretend_real_recent_txns + count($failed_transaction_with_real_payment),
+            $failed_transaction_count
+        );
         $this->factory->payment->create(array('TXN_ID' => $failed_transaction_with_real_payment->ID()));
         $num_deleted = EEM_Transaction::instance()->delete_junk_transactions();
         $this->assertEquals($pretend_bot_creations, $num_deleted);
