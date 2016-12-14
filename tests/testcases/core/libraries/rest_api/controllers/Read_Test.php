@@ -761,7 +761,42 @@ class Read_Test extends \EE_UnitTestCase{
 		$this->assertEmpty( $response->get_data() );
 	}
 
-
+    /**
+     * Test that when we set the minimum_others where conditions, we don't find trashed cpt items
+     * for the current model (because we use normal default where conditions for main model), but not for related
+     * trashed models (because they only use their minimum where conditions)
+     *
+     *@group 10260
+     */
+    public function test_handle_request_get_all__use_minimum_others_where_conditions()
+    {
+        $this->assertEquals(0, \EEM_Event::instance()->count(array('default_where_conditions' => 'none')));
+        $e_normal = $this->new_model_obj_with_dependencies('Event',
+            array('status' => \EEM_CPT_Base::post_status_publish));
+        $e_normal_but_with_trashed_v = $this->new_model_obj_with_dependencies('Event',
+            array('status' => \EEM_CPT_Base::post_status_publish));
+        $e_trashed = $this->new_model_obj_with_dependencies('Event',
+            array('status' => \EEM_CPT_Base::post_status_trashed));
+        $v_normal = $this->new_model_obj_with_dependencies('Venue',
+            array('status' => \EEM_CPT_Base::post_status_publish));
+        $v_trashed = $this->new_model_obj_with_dependencies('Venue',
+            array('status' => \EEM_CPT_Base::post_status_trashed));
+        //associate them
+        $e_normal->_add_relation_to($v_normal, 'Venue');
+        $e_normal_but_with_trashed_v->_add_relation_to($v_trashed, 'Venue');
+        $e_trashed->_add_relation_to($v_normal, 'Venue');
+        //now verify we get what we wanted...
+        $request = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events' );
+        $request->set_query_params(
+            array(
+                'order_by' => array( 'Venue.VNU_ID' => 'ASC' ),
+                'default_where_conditions' => 'full_this_minimum_others'
+            )
+        );
+        $response = Read::handle_request_get_all( $request );
+        //we should find the normal event, and the event for the trashed venue
+        $this->assertCount(2, $response->data);
+    }
 
 }
 // End of file Read_Test.php
