@@ -44,8 +44,7 @@ class RegistrationsReport extends JobHandlerFile
             $this->get_filename($event_id));
         $job_parameters->add_extra_data('filepath', $filepath);
         if ($job_parameters->request_datum('use_filters', false)) {
-            $query_params = maybe_unserialize(urldecode(stripslashes($job_parameters->request_datum('filters',
-                array()))));
+            $query_params = maybe_unserialize(stripslashes($job_parameters->request_datum('filters', array())));
         } else {
             $query_params = apply_filters('FHEE__EE_Export__report_registration_for_event', array(
                 array(
@@ -109,7 +108,7 @@ class RegistrationsReport extends JobHandlerFile
      */
     protected function get_filename()
     {
-        return sprintf("event-espresso-registrations-%s.csv", date('Y-m-d H-i-s') );
+        return sprintf("event-espresso-registrations-%s.csv", str_replace(':', '-', current_time('mysql')));
     }
 
 
