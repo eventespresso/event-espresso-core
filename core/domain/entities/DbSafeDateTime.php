@@ -125,12 +125,12 @@ class DbSafeDateTime extends \DateTime {
      */
     public static function createFromDateTime(\DateTime $datetime)
     {
-        $dbdsafe_datetime = new DbSafeDateTime();
-        $dbdsafe_datetime->setTimestamp($datetime->getTimestamp());
-        $dbdsafe_datetime->setTimezone($datetime->getTimezone());
-        return $dbdsafe_datetime;
+        return new DbSafeDateTime(
+            $datetime->format(\EE_Datetime_Field::mysql_timestamp_format),
+            new \DateTimeZone($datetime->format('e'))
+        );
     }
-    
+
     private function writeToErrorLog($message)
     {
         if ( ! empty($this->_error_log_dir)) {

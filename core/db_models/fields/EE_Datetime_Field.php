@@ -568,10 +568,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base
 
         if ($datetime_value instanceof DateTime) {
             if ( ! $datetime_value instanceof DbSafeDateTime) {
-                $datetime_value = new DbSafeDateTime(
-                    $datetime_value->format(EE_Datetime_Field::mysql_timestamp_format),
-                    new \DateTimeZone($datetime_value->format('e'))
-                );
+                $datetime_value = DbSafeDateTime::createFromDateTime($datetime_value);
             }
 
             return $datetime_value->setTimezone($this->get_UTC_DateTimeZone())->format(
