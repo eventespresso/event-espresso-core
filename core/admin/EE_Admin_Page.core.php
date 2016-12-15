@@ -856,16 +856,19 @@ abstract class EE_Admin_Page extends EE_Base
                 // send along this admin page object for access by addons.
                 $args['admin_page_object'] = $this;
             }
+
             if (
                 //is it a method on a class that doesn't work?
                 (
-                    method_exists($class, $method)
-                    && call_user_func_array(array($class, $method), $args) === false
-                )
-                || (
-                    //is it a standalone function that doesn't work?
-                    function_exists($method)
-                    && call_user_func_array($func, array_merge(array('admin_page_object' => $this), $args)) === false
+                    (
+                        method_exists($class, $method)
+                        && call_user_func_array(array($class, $method), $args) === false
+                    )
+                    && (
+                        //is it a standalone function that doesn't work?
+                        function_exists($method)
+                        && call_user_func_array($func, array_merge(array('admin_page_object' => $this), $args)) === false
+                    )
                 )
                 || (
                     //is it neither a class method NOR a standalone function?
@@ -2531,11 +2534,8 @@ abstract class EE_Admin_Page extends EE_Base
         if (null === error_get_last() || ! headers_sent()) {
             header('Content-Type: application/json; charset=UTF-8');
         }
-        if (function_exists('wp_json_encode')) {
-            echo wp_json_encode($json);
-        } else {
-            echo json_encode($json);
-        }
+        echo wp_json_encode($json);
+
         exit();
     }
 

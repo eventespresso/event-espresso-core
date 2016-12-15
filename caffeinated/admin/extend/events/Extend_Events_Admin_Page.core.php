@@ -14,8 +14,8 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) {
  */
 class Extend_Events_Admin_Page extends Events_Admin_Page
 {
-    
-    
+
+
     /**
      * Extend_Events_Admin_Page constructor.
      *
@@ -30,8 +30,9 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
             define('EVENTS_CAF_ASSETS_URL', EE_CORE_CAF_ADMIN_EXTEND_URL . 'events/assets/');
         }
     }
-    
-    
+
+
+
     protected function _extend_page_config()
     {
         $this->_admin_base_path = EE_CORE_CAF_ADMIN_EXTEND . 'events';
@@ -41,10 +42,10 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
             : 0;
         $evt_id = ! empty($this->_req_data['post']) ? $this->_req_data['post'] : $evt_id;
         //tkt_id?
-        $tkt_id             = ! empty($this->_req_data['TKT_ID']) && ! is_array($this->_req_data['TKT_ID'])
+        $tkt_id = ! empty($this->_req_data['TKT_ID']) && ! is_array($this->_req_data['TKT_ID'])
             ? $this->_req_data['TKT_ID']
             : 0;
-        $new_page_routes    = array(
+        $new_page_routes = array(
             'duplicate_event'          => array(
                 'func'       => '_duplicate_event',
                 'capability' => 'ee_edit_event',
@@ -167,7 +168,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
             'help_tour'     => array('Templates_Help_Tour'),
             'require_nonce' => false,
         );
-        $this->_page_config                   = array_merge($this->_page_config, $new_page_config);
+        $this->_page_config = array_merge($this->_page_config, $new_page_config);
         //add filters and actions
         //modifying _views
         add_filter(
@@ -202,8 +203,9 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
         //heartbeat stuff
         add_filter('heartbeat_received', array($this, 'heartbeat_response'), 10, 2);
     }
-    
-    
+
+
+
     /**
      * admin_init
      */
@@ -224,15 +226,15 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
             )
         );
     }
-    
-    
+
+
+
     /**
      * This will be used to listen for any heartbeat data packages coming via the WordPress heartbeat API and handle
      * accordingly.
      *
      * @param array $response The existing heartbeat response array.
      * @param array $data     The incoming data package.
-     *
      * @return array  possibly appended response.
      */
     public function heartbeat_response($response, $data)
@@ -246,23 +248,23 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
                 $data['input_count']
             );
         }
-        
         return $response;
     }
-    
-    
+
+
+
     protected function _add_screen_options_ticket_list_table()
     {
         $this->_per_page_screen_option();
     }
-    
-    
+
+
+
     /**
      * @param string $return
      * @param int    $id
      * @param string $new_title
      * @param string $new_slug
-     *
      * @return string
      */
     public function extra_permalink_field_buttons($return, $id, $new_title, $new_slug)
@@ -283,11 +285,11 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
                        . $title
                        . '</button>';
         }
-        
         return $return;
     }
-    
-    
+
+
+
     public function _set_list_table_views_ticket_list_table()
     {
         $this->_views = array(
@@ -310,8 +312,9 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
             ),
         );
     }
-    
-    
+
+
+
     public function load_scripts_styles_edit()
     {
         wp_register_script(
@@ -330,12 +333,12 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
         wp_enqueue_script('event_editor_js');
         wp_enqueue_script('ee-event-editor-heartbeat');
     }
-    
-    
+
+
+
     /**
      * @param $template
      * @param $template_args
-     *
      * @return mixed
      */
     public function add_additional_datetime_button($template, $template_args)
@@ -346,12 +349,12 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
             true
         );
     }
-    
-    
+
+
+
     /**
      * @param $template
      * @param $template_args
-     *
      * @return mixed
      */
     public function add_datetime_clone_button($template, $template_args)
@@ -362,12 +365,12 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
             true
         );
     }
-    
-    
+
+
+
     /**
      * @param $template
      * @param $template_args
-     *
      * @return mixed
      */
     public function datetime_timezones_template($template, $template_args)
@@ -378,12 +381,13 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
             true
         );
     }
-    
-    
+
+
+
     protected function _set_list_table_views_default()
     {
         parent::_set_list_table_views_default();
-        $new_views    = array(
+        $new_views = array(
             'today' => array(
                 'slug'        => 'today',
                 'label'       => esc_html__('Today', 'event_espresso'),
@@ -403,12 +407,12 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
         );
         $this->_views = array_merge($this->_views, $new_views);
     }
-    
-    
+
+
+
     /**
      * @param array     $action_links
      * @param \EE_Event $event
-     *
      * @return array
      */
     public function extra_list_table_actions(array $action_links, \EE_Event $event)
@@ -440,14 +444,13 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
                 array('EVT_ID' => $event->ID())
             );
         }
-        
         return $action_links;
     }
-    
-    
+
+
+
     /**
      * @param $items
-     *
      * @return mixed
      */
     public function additional_legend_items($items)
@@ -472,11 +475,11 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
                 );
             }
         }
-        
         return $items;
     }
-    
-    
+
+
+
     /**
      * This is the callback method for the duplicate event route
      * Method looks for 'EVT_ID' in the request and retrieves that event and its details and duplicates them
@@ -503,7 +506,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
                 __LINE__
             );
             $this->_redirect_after_action(false, '', '', array(), true);
-            
             return;
         }
         //k we've got EVT_ID so let's use that to get the event we'll duplicate
@@ -608,6 +610,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
                     $orig_prices = $orig_tkt->prices();
                     $new_tkt->set('TKT_ID', 0);
                     $new_tkt->set('TKT_sold', 0);
+                    $new_tkt->set('TKT_reserved', 0);
                     $new_tkt->save(); //make sure new ticket has ID.
                     //price relations on new ticket need to be setup.
                     foreach ($orig_prices as $orig_price) {
@@ -675,8 +678,9 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
         $form_url                                   = EVENTS_ADMIN_URL;
         $action                                     = 'import_events';
         $type                                       = 'csv';
-        $this->_template_args['form']               = EE_Import::instance()->upload_form($title, $intro, $form_url,
-            $action, $type);
+        $this->_template_args['form']               = EE_Import::instance()->upload_form(
+            $title, $intro, $form_url, $action, $type
+        );
         $this->_template_args['sample_file_link']   = EE_Admin_Page::add_query_args_and_nonce(
             array('action' => 'sample_export_file'),
             $this->_admin_base_url
@@ -689,8 +693,9 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
         $this->_template_args['admin_page_content'] = $content;
         $this->display_admin_page_with_sidebar();
     }
-    
-    
+
+
+
     /**
      * _import_events
      * This handles displaying the screen and running imports for importing events.
@@ -703,8 +708,9 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
         $success = EE_Import::instance()->import();
         $this->_redirect_after_action($success, 'Import File', 'ran', array('action' => 'import_page'), true);
     }
-    
-    
+
+
+
     /**
      * _events_export
      * Will export all (or just the given event) to a Excel compatible file.
@@ -734,8 +740,9 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
             $EE_Export->export();
         }
     }
-    
-    
+
+
+
     /**
      * handle category exports()
      *
@@ -756,18 +763,20 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
             $EE_Export->export();
         }
     }
-    
-    
+
+
+
     /**
      * Creates a sample CSV file for importing
      */
     protected function _sample_export_file()
     {
-//		require_once(EE_CLASSES . 'EE_Export.class.php');
+        //		require_once(EE_CLASSES . 'EE_Export.class.php');
         EE_Export::instance()->export_sample();
     }
-    
-    
+
+
+
     /*************        Template Settings        *************/
     protected function _template_settings()
     {
@@ -789,8 +798,9 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
         );
         $this->display_admin_page_with_sidebar();
     }
-    
-    
+
+
+
     protected function _update_template_settings()
     {
         /**
@@ -820,8 +830,9 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
         }
         $this->_redirect_after_action($success, $what, 'updated', array('action' => 'template_settings'));
     }
-    
-    
+
+
+
     /**
      * _premium_event_editor_meta_boxes
      * add all metaboxes related to the event_editor
@@ -841,8 +852,9 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
             'core'
         );
     }
-    
-    
+
+
+
     /**
      * override caf metabox
      *
@@ -850,11 +862,11 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
      */
     public function registration_options_meta_box()
     {
-        $yes_no_values                                    = array(
+        $yes_no_values = array(
             array('id' => true, 'text' => esc_html__('Yes', 'event_espresso')),
             array('id' => false, 'text' => esc_html__('No', 'event_espresso')),
         );
-        $default_reg_status_values                        = EEM_Registration::reg_status_array(
+        $default_reg_status_values = EEM_Registration::reg_status_array(
             array(
                 EEM_Registration::status_id_cancelled,
                 EEM_Registration::status_id_declined,
@@ -871,12 +883,12 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
             $default_reg_status_values,
             $this->_cpt_model_obj->default_registration_status()
         );
-        $template_args['display_description']             = EEH_Form_Fields::select_input(
+        $template_args['display_description'] = EEH_Form_Fields::select_input(
             'display_desc',
             $yes_no_values,
             $this->_cpt_model_obj->display_description()
         );
-        $template_args['display_ticket_selector']         = EEH_Form_Fields::select_input(
+        $template_args['display_ticket_selector'] = EEH_Form_Fields::select_input(
             'display_ticket_selector',
             $yes_no_values,
             $this->_cpt_model_obj->display_ticket_selector(),
@@ -901,9 +913,9 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
             $template_args
         );
     }
-    
-    
-    
+
+
+
     /**
      * wp_list_table_mods for caf
      * ============================
@@ -913,7 +925,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
      *
      * @param  array $old_filters    any existing filters present
      * @param  array $list_table_obj the list table object
-     *
      * @return array                  new filters
      */
     public function list_table_filters($old_filters, $list_table_obj)
@@ -930,11 +941,11 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
         }
         //category filter
         $filters[] = $this->category_dropdown();
-        
         return array_merge($old_filters, $filters);
     }
-    
-    
+
+
+
     /**
      * espresso_event_months_dropdown
      *
@@ -952,17 +963,16 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
             : null;
         //active status?
         $active_status = isset($this->_req_data['active_status']) ? $this->_req_data['active_status'] : null;
-        $cur_date      = isset($this->_req_data['month_range']) ? $this->_req_data['month_range'] : '';
-        
+        $cur_date = isset($this->_req_data['month_range']) ? $this->_req_data['month_range'] : '';
         return EEH_Form_Fields::generate_event_months_dropdown($cur_date, $status, $category, $active_status);
     }
-    
-    
+
+
+
     /**
      * returns a list of "active" statuses on the event
      *
      * @param  string $current_value whatever the current active status is
-     *
      * @return string
      */
     public function active_status_dropdown($current_value = '')
@@ -977,11 +987,11 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
         );
         $id          = 'id="espresso-active-status-dropdown-filter"';
         $class       = 'wide';
-        
         return EEH_Form_Fields::select_input($select_name, $values, $current_value, $id, $class);
     }
-    
-    
+
+
+
     /**
      * output a dropdown of the categories for the category filter on the event admin list table
      *
@@ -991,11 +1001,11 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
     public function category_dropdown()
     {
         $cur_cat = isset($this->_req_data['EVT_CAT']) ? $this->_req_data['EVT_CAT'] : -1;
-        
         return EEH_Form_Fields::generate_event_category_dropdown($cur_cat);
     }
-    
-    
+
+
+
     /**
      * get total number of events today
      *
@@ -1020,11 +1030,11 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
             'Datetime.DTT_EVT_start' => array('BETWEEN', array($start, $end)),
         );
         $count = EEM_Event::instance()->count(array($where, 'caps' => 'read_admin'), 'EVT_ID', true);
-        
         return $count;
     }
-    
-    
+
+
+
     /**
      * get total number of events this month
      *
@@ -1043,34 +1053,34 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
             'Y-m-d H:i:s',
             'UTC'
         );
-        $end             = EEM_Datetime::instance()->convert_datetime_for_query(
+        $end = EEM_Datetime::instance()->convert_datetime_for_query(
             'DTT_EVT_start',
             $this_year_r . '-' . $this_month_r . '-' . $days_this_month . ' 23:59:59',
             'Y-m-d H:i:s',
             'UTC'
         );
-        $where           = array(
+        $where = array(
             'Datetime.DTT_EVT_start' => array('BETWEEN', array($start, $end)),
         );
-        $count           = EEM_Event::instance()->count(array($where, 'caps' => 'read_admin'), 'EVT_ID', true);
-        
+        $count = EEM_Event::instance()->count(array($where, 'caps' => 'read_admin'), 'EVT_ID', true);
         return $count;
     }
-    
-    
+
+
+
     /** DEFAULT TICKETS STUFF **/
     public function _tickets_overview_list_table()
     {
         $this->_search_btn_label = esc_html__('Tickets', 'event_espresso');
         $this->display_admin_list_table_page_with_no_sidebar();
     }
-    
-    
+
+
+
     /**
      * @param int  $per_page
      * @param bool $count
      * @param bool $trashed
-     *
      * @return \EE_Soft_Delete_Base_Class[]|int
      */
     public function get_default_tickets($per_page = 10, $count = false, $trashed = false)
@@ -1128,15 +1138,16 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
             return EEM_Ticket::instance()->get_all_deleted_and_undeleted($query_params);
         }
     }
-    
-    
+
+
+
     /**
      * @param bool $trash
      */
     protected function _trash_or_restore_ticket($trash = false)
     {
         $success = 1;
-        $TKT     = EEM_Ticket::instance();
+        $TKT = EEM_Ticket::instance();
         //checkboxes?
         if ( ! empty($this->_req_data['checkbox']) && is_array($this->_req_data['checkbox'])) {
             //if array has more than one element then success message should be plural
@@ -1173,8 +1184,9 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
         );
         $this->_redirect_after_action($success, 'Tickets', $action_desc, $query_args);
     }
-    
-    
+
+
+
     protected function _delete_ticket()
     {
         $success = 1;
@@ -1212,11 +1224,11 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
         }
         $this->_redirect_after_action($success, 'Tickets', $action_desc, $query_args);
     }
-    
-    
+
+
+
     /**
      * @param int $TKT_ID
-     *
      * @return bool|int
      */
     protected function _delete_the_ticket($TKT_ID)
@@ -1225,10 +1237,13 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
         $tkt->_remove_relations('Datetime');
         //delete all related prices first
         $tkt->delete_related_permanently('Price');
-        
         return $tkt->delete_permanently();
     }
-    
-    
+
+
+
 }
+
+
+
 //end class Events_Admin_Page
