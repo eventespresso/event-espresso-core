@@ -40,3 +40,16 @@ if ( ! function_exists( 'get_preview_post_link' ) ) {
         return apply_filters('preview_post_link', $preview_link, $post);
     }
 }
+
+if ( ! function_exists( 'is_post_type_viewable' ) ) {
+    function is_post_type_viewable( $post_type ) {
+        if ( is_scalar( $post_type ) ) {
+            $post_type = get_post_type_object( $post_type );
+            if ( ! $post_type ) {
+                return false;
+            }
+        }
+     
+        return $post_type->publicly_queryable || ( $post_type->_builtin && $post_type->public );
+    }
+}
