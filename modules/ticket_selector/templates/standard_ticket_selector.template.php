@@ -2,6 +2,7 @@
 /** @var boolean $event_is_expired */
 /** @var boolean $taxable_tickets */
 /** @var boolean $prices_displayed_including_taxes */
+/** @var int $row */
 /** @var int $EVT_ID */
 /** @var int $max_atndz */
 /** @var int $ticket_count */
