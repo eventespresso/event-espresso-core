@@ -24,6 +24,20 @@ class EE_Enum_Integer_Field extends EE_Integer_Field{
 		$this->_allowed_enum_values = $allowed_enum_values;
 		parent::__construct($table_column, $nicename, $nullable, $default_value);
 	}
+
+    /**
+     * Returns the list of allowed enum options, but filterable.
+     * This is used internally
+     * @return array
+     */
+    protected function _allowed_enum_values() {
+        return apply_filters(
+            'FHEE__EE_Enum_Integer_Field___allowed_enum_options',
+            $this->_allowed_enum_values,
+            $this
+        );
+    }
+
 	/**
 	 * When setting, just verify that the value being used matches what we've defined as allowable enum values.
 	 * If not, throw an error (but if WP_DEBUG is false, just set the value to default)
@@ -32,7 +46,7 @@ class EE_Enum_Integer_Field extends EE_Integer_Field{
 	 * @throws EE_Error
 	 */
 	function prepare_for_set($value_inputted_for_field_on_model_object) {
-		if( $value_inputted_for_field_on_model_object !== NULL && ! array_key_exists( $value_inputted_for_field_on_model_object, $this->_allowed_enum_values )){
+		if( $value_inputted_for_field_on_model_object !== NULL && ! array_key_exists( $value_inputted_for_field_on_model_object, $this->_allowed_enum_values() )){
 			if( defined( 'WP_DEBUG' ) && WP_DEBUG ){
 				$msg = sprintf(
 					__('System is assigning incompatible value "%1$s" to field "%2$s"','event_espresso'),
@@ -42,7 +56,7 @@ class EE_Enum_Integer_Field extends EE_Integer_Field{
 				$msg2 = sprintf(
 					__('Allowed values for "%1$s" are "%2$s". You provided "%3$s"','event_espresso'),
 					$this->_name,
-					implode( ', ', array_keys( $this->_allowed_enum_values )),
+					implode( ', ', array_keys( $this->_allowed_enum_values() )),
 					$value_inputted_for_field_on_model_object
 				);
 				 EE_Error::add_error("$msg||$msg2", __FILE__, __FUNCTION__, __LINE__ );
@@ -63,6 +77,11 @@ class EE_Enum_Integer_Field extends EE_Integer_Field{
 	 * @return string
 	 */
 	function prepare_for_pretty_echoing( $value_on_field_to_be_outputted, $schema = NULL ) {
-		return $this->_allowed_enum_values[$value_on_field_to_be_outputted];
+		$options = $this->_allowed_enum_values();
+        if(isset($options[$value_on_field_to_be_outputted])) {
+            return $options[$value_on_field_to_be_outputted];
+        }else{
+            return $value_on_field_to_be_outputted;
+        }
 	}
 }
