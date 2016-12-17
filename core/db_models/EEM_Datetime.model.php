@@ -61,9 +61,9 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
                 'DTT_sold'        => new EE_Integer_Field(
                     'DTT_sold', __('How many sales for this Datetime that have occurred', 'event_espresso'), true, 0
                 ),
-                'DTT_reserved'    => new EE_Integer_Field('DTT_reserved',
-                    __('Quantity of tickets that are reserved, but not yet fully purchased', 'event_espresso'), false,
-                    0),
+                'DTT_reserved' => new EE_Integer_Field('DTT_reserved',
+                    __('Quantity of tickets reserved, but not yet fully purchased', 'event_espresso'), false, 0
+                ),
                 'DTT_is_primary'  => new EE_Boolean_Field(
                     'DTT_is_primary', __('Flag indicating datetime is primary one for event', 'event_espresso'),
                     false, false
