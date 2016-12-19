@@ -368,7 +368,7 @@ class EEM_Base_Test extends EE_UnitTestCase
         $formatted_string = EEM_Datetime::instance()->current_time_for_query('DTT_EVT_start');
         $this->assertDateWithinOneMinute($timezoneTest->format('Y-m-d H:i:s'), $formatted_string, 'Y-m-d H:i:s');
         $unix_timestamp = EEM_Datetime::instance()->current_time_for_query('DTT_EVT_start', true);
-        $this->assertEquals($timezoneTest->format('U'), $unix_timestamp);
+        $this->assertDateWithinOneMinute($timezoneTest->format('U'), $unix_timestamp, 'U');
     }
 
 
