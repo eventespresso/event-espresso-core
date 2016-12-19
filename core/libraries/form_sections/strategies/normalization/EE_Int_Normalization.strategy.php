@@ -19,7 +19,7 @@ class EE_Int_Normalization extends EE_Normalization_Strategy_Base{
 			return $value_to_normalize;
 		}
 
-		if ( is_null( $value_to_normalize ) || $value_to_normalize === 'null' ) {
+		if ( is_null( $value_to_normalize ) || $value_to_normalize === '' ) {
 		    return null;
         }
 
@@ -56,8 +56,8 @@ class EE_Int_Normalization extends EE_Normalization_Strategy_Base{
 	 * @return string
 	 */
 	public function unnormalize( $normalized_value ) {
-	    if ( $normalized_value === null || $normalized_value === 'null' ) {
-	        return 'null';
+	    if ($normalized_value === null) {
+	        return '';
         }elseif( empty( $normalized_value ) ){
 			return '0';
 		}else{
