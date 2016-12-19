@@ -1436,17 +1436,6 @@ final class EE_System
                     EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.additional-methods.min.js',
                     array('jquery', 'jquery-validate'), '1.15.0', true);
             }
-
-            //registers the eejs-api script so it can be used as a dependency on other scripts.
-            wp_register_script('eejs-api', EE_LIBRARIES_URL . 'rest_api/assets/js/eejs-api.min.js', array('underscore'), espresso_version(), true);
-            EE_Registry::$eejs['paths'] = array('rest_route' => rest_url('ee/v4.8.36/'));
-            wp_localize_script(
-                'eejs-api',
-                'eejs',
-                array(
-                    'data' => EE_Registry::$eejs
-                )
-            );
         }
     }
 

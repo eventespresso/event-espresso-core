@@ -48,6 +48,17 @@ class Registry
             espresso_version(),
             true
         );
+
+        //js.api
+        wp_register_script(
+            'eejs-api',
+            EE_LIBRARIES_URL . 'rest_api/assets/js/eejs-api.min.js',
+            array('underscore','eejs-core'),
+            espresso_version(),
+            true
+        );
+        $this->jsdata['paths'] = array('rest_route' => rest_url('ee/v4.8.36'));
+
         wp_localize_script('eejs-core', 'eejs', array('data'=>$this->jsdata));
     }
 
