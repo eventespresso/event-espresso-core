@@ -1198,8 +1198,8 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		// if none of the critical properties are set in the incoming attendee data...
 		// then attempt to copy them from the primary attendee
 		if (
-			! isset( $attendee_data['ATT_fname'], $attendee_data['ATT_lname'], $attendee_data['ATT_email'] )
-			&& $this->checkout->primary_attendee_obj instanceof EE_Attendee
+			$this->checkout->primary_attendee_obj instanceof EE_Attendee
+            && ! isset( $attendee_data['ATT_fname'], $attendee_data['ATT_email'] )
 		) {
 			return $this->checkout->primary_attendee_obj;
 		}
