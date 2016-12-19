@@ -48,35 +48,33 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway {
 	 * All the currencies supported by this gateway.
 	 *  @var array
 	 */
-	protected $_currencies_supported = EE_Gateway::all_currencies_supported;
-
-// array(
-// 		'USD',
-// 		'AUD',
-// 		'BRL',
-// 		'CAD',
-// 		'CZK',
-// 		'DKK',
-// 		'EUR',
-// 		'HKD',
-// 		'HUF',
-// 		'ILS',
-// 		'JPY',
-// 		'MYR',
-// 		'MXN',
-// 		'NOK',
-// 		'NZD',
-// 		'PHP',
-// 		'PLN',
-// 		'GBP',
-// 		'RUB',
-// 		'SGD',
-// 		'SEK',
-// 		'CHF',
-// 		'TWD',
-// 		'THB',
-// 		'TRY'
-// 	);
+	protected $_currencies_supported = array(
+		'USD',
+		'AUD',
+		'BRL',
+		'CAD',
+		'CZK',
+		'DKK',
+		'EUR',
+		'HKD',
+		'HUF',
+		'ILS',
+		'JPY',
+		'MYR',
+		'MXN',
+		'NOK',
+		'NZD',
+		'PHP',
+		'PLN',
+		'GBP',
+		'RUB',
+		'SGD',
+		'SEK',
+		'CHF',
+		'TWD',
+		'THB',
+		'TRY'
+	);
 
 
 	/**

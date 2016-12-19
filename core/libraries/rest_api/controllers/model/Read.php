@@ -6,7 +6,7 @@ use EventEspresso\core\libraries\rest_api\Calculated_Model_Fields;
 use EventEspresso\core\libraries\rest_api\Rest_Exception;
 use EventEspresso\core\libraries\rest_api\Model_Data_Translator;
 
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
+if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
 
@@ -60,7 +60,7 @@ class Read extends Base
             );
             $controller->set_requested_version($matches['version']);
             $model_name_singular = \EEH_Inflector::singularize_and_upper($matches['model']);
-            if ( ! $controller->get_model_version_info()->is_model_name_in_this_version($model_name_singular)) {
+            if (! $controller->get_model_version_info()->is_model_name_in_this_version($model_name_singular)) {
                 return $controller->send_response(
                     new \WP_Error(
                         'endpoint_parsing_error',
@@ -101,7 +101,7 @@ class Read extends Base
                 array('version', 'model', 'id'));
             $controller->set_requested_version($matches['version']);
             $model_name_singular = \EEH_Inflector::singularize_and_upper($matches['model']);
-            if ( ! $controller->get_model_version_info()->is_model_name_in_this_version($model_name_singular)) {
+            if (! $controller->get_model_version_info()->is_model_name_in_this_version($model_name_singular)) {
                 return $controller->send_response(
                     new \WP_Error(
                         'endpoint_parsing_error',
@@ -144,7 +144,7 @@ class Read extends Base
             );
             $controller->set_requested_version($matches['version']);
             $main_model_name_singular = \EEH_Inflector::singularize_and_upper($matches['model']);
-            if ( ! $controller->get_model_version_info()->is_model_name_in_this_version($main_model_name_singular)) {
+            if (! $controller->get_model_version_info()->is_model_name_in_this_version($main_model_name_singular)) {
                 return $controller->send_response(
                     new \WP_Error(
                         'endpoint_parsing_error',
@@ -159,11 +159,11 @@ class Read extends Base
             $main_model = $controller->get_model_version_info()->load_model($main_model_name_singular);
             //assume the related model name is plural and try to find the model's name
             $related_model_name_singular = \EEH_Inflector::singularize_and_upper($matches['related_model']);
-            if ( ! $controller->get_model_version_info()->is_model_name_in_this_version($related_model_name_singular)) {
+            if (! $controller->get_model_version_info()->is_model_name_in_this_version($related_model_name_singular)) {
                 //so the word didn't singularize well. Maybe that's just because it's a singular word?
                 $related_model_name_singular = \EEH_Inflector::humanize($matches['related_model']);
             }
-            if ( ! $controller->get_model_version_info()->is_model_name_in_this_version($related_model_name_singular)) {
+            if (! $controller->get_model_version_info()->is_model_name_in_this_version($related_model_name_singular)) {
                 return $controller->send_response(
                     new \WP_Error(
                         'endpoint_parsing_error',
@@ -199,7 +199,7 @@ class Read extends Base
     public function get_entities_from_model($model, $request)
     {
         $query_params = $this->create_model_query_params($model, $request->get_params());
-        if ( ! Capabilities::current_user_has_partial_access_to($model, $query_params['caps'])) {
+        if (! Capabilities::current_user_has_partial_access_to($model, $query_params['caps'])) {
             $model_name_plural = \EEH_Inflector::pluralize_and_lower($model->get_this_model_name());
             return new \WP_Error(
                 sprintf('rest_%s_cannot_list', $model_name_plural),
@@ -211,7 +211,7 @@ class Read extends Base
                 array('status' => 403)
             );
         }
-        if ( ! $request->get_header('no_rest_headers')) {
+        if (! $request->get_header('no_rest_headers')) {
             $this->_set_headers_from_query_params($model, $query_params);
         }
         /** @type array $results */
@@ -241,7 +241,7 @@ class Read extends Base
         $context = $this->validate_context($request->get_param('caps'));
         $model = $relation->get_this_model();
         $related_model = $relation->get_other_model();
-        if ( ! isset($primary_model_query_params[0])) {
+        if (! isset($primary_model_query_params[0])) {
             $primary_model_query_params[0] = array();
         }
         //check if they can access the 1st model object
@@ -292,7 +292,7 @@ class Read extends Base
         }
         $query_params['default_where_conditions'] = 'none';
         $query_params['caps'] = $context;
-        if ( ! $request->get_header('no_rest_headers')) {
+        if (! $request->get_header('no_rest_headers')) {
             $this->_set_headers_from_query_params($relation->get_other_model(), $query_params);
         }
         /** @type array $results */
@@ -344,7 +344,7 @@ class Read extends Base
      */
     public function get_entities_from_relation($id, $relation, $request)
     {
-        if ( ! $relation->get_this_model()->has_primary_key_field()) {
+        if (! $relation->get_this_model()->has_primary_key_field()) {
             throw new \EE_Error(
                 sprintf(
                     __('Read::get_entities_from_relation should only be called from a model with a primary key, it was called from %1$s',
@@ -381,7 +381,7 @@ class Read extends Base
         $this->_set_debug_info('missing caps',
             Capabilities::get_missing_permissions_string($model, $query_params['caps']));
         //normally the limit to a 2-part array, where the 2nd item is the limit
-        if ( ! isset($query_params['limit'])) {
+        if (! isset($query_params['limit'])) {
             $query_params['limit'] = \EED_Core_Rest_Api::get_default_query_limit();
         }
         if (is_array($query_params['limit'])) {
@@ -415,7 +415,7 @@ class Read extends Base
      */
     public function create_entity_from_wpdb_result($model, $db_row, $rest_request, $deprecated = null)
     {
-        if ( ! $rest_request instanceof \WP_REST_Request) {
+        if (! $rest_request instanceof \WP_REST_Request) {
             //ok so this was called in the old style, where the 3rd arg was
             //$include, and the 4th arg was $context
             //now setup the request just to avoid fatal errors, although we won't be able
@@ -628,14 +628,14 @@ class Read extends Base
         $db_row = array()
     ) {
         //if $db_row not included, hope the entity array has what we need
-        if ( ! $db_row) {
+        if (! $db_row) {
             $db_row = $entity_array;
         }
         $includes_for_this_model = $this->explode_and_get_items_prefixed_with($rest_request->get_param('include'), '');
         $includes_for_this_model = $this->_remove_model_names_from_array($includes_for_this_model);
         //if they passed in * or didn't specify any includes, return everything
-        if ( ! in_array('*', $includes_for_this_model)
-             && ! empty($includes_for_this_model)
+        if (! in_array('*', $includes_for_this_model)
+            && ! empty($includes_for_this_model)
         ) {
             if ($model->has_primary_key_field()) {
                 //always include the primary key. ya just gotta know that at least
@@ -809,7 +809,7 @@ class Read extends Base
         $restricted_query_params['caps'] = $this->validate_context($request->get_param('caps'));
         $this->_set_debug_info('model query params', $restricted_query_params);
         $model_rows = $model->get_all_wpdb_results($restricted_query_params);
-        if ( ! empty ($model_rows)) {
+        if (! empty ($model_rows)) {
             return $this->create_entity_from_wpdb_result(
                 $model,
                 array_shift($model_rows),
@@ -818,7 +818,7 @@ class Read extends Base
             //ok let's test to see if we WOULD have found it, had we not had restrictions from missing capabilities
             $lowercase_model_name = strtolower($model->get_this_model_name());
             $model_rows_found_sans_restrictions = $model->get_all_wpdb_results($query_params);
-            if ( ! empty($model_rows_found_sans_restrictions)) {
+            if (! empty($model_rows_found_sans_restrictions)) {
                 //you got shafted- it existed but we didn't want to tell you!
                 return new \WP_Error(
                     'rest_user_cannot_read',
@@ -853,7 +853,7 @@ class Read extends Base
      */
     public function validate_context($context)
     {
-        if ( ! $context) {
+        if (! $context) {
             $context = \EEM_Base::caps_read;
         }
         $valid_contexts = \EEM_Base::valid_cap_contexts();
@@ -861,6 +861,37 @@ class Read extends Base
             return $context;
         } else {
             return \EEM_Base::caps_read;
+        }
+    }
+
+
+
+    /**
+     * Verifies the passed in value is an allowable default where conditions value.
+     *
+     * @param $default_query_params
+     * @return string
+     */
+    public function validate_default_query_params($default_query_params)
+    {
+        $valid_default_where_conditions_for_api_calls = array(
+            \EEM_Base::default_where_conditions_all,
+            \EEM_Base::default_where_conditions_minimum_all,
+            \EEM_Base::default_where_conditions_minimum_others,
+        );
+        if (! $default_query_params) {
+            $default_query_params = \EEM_Base::default_where_conditions_all;
+        }
+        if (
+        in_array(
+            $default_query_params,
+            $valid_default_where_conditions_for_api_calls,
+            true
+        )
+        ) {
+            return $default_query_params;
+        } else {
+            return \EEM_Base::default_where_conditions_all;
         }
     }
 
@@ -933,14 +964,14 @@ class Read extends Base
         }
         if (isset($query_parameters['limit'])) {
             //limit should be either a string like '23' or '23,43', or an array with two items in it
-            if ( ! is_array($query_parameters['limit'])) {
+            if (! is_array($query_parameters['limit'])) {
                 $limit_array = explode(',', (string)$query_parameters['limit']);
             } else {
                 $limit_array = $query_parameters['limit'];
             }
             $sanitized_limit = array();
             foreach ($limit_array as $key => $limit_part) {
-                if ($this->_debug_mode && ( ! is_numeric($limit_part) || count($sanitized_limit) > 2)) {
+                if ($this->_debug_mode && (! is_numeric($limit_part) || count($sanitized_limit) > 2)) {
                     throw new \EE_Error(
                         sprintf(
                             __('An invalid limit filter was provided. It was: %s. If the EE4 JSON REST API weren\'t in debug mode, this message would not appear.',
@@ -959,6 +990,9 @@ class Read extends Base
             $model_query_params['caps'] = $this->validate_context($query_parameters['caps']);
         } else {
             $model_query_params['caps'] = \EEM_Base::caps_read;
+        }
+        if (isset($query_parameters['default_where_conditions'])) {
+            $model_query_params['default_where_conditions'] = $this->validate_default_query_params($query_parameters['default_where_conditions']);
         }
         return apply_filters('FHEE__Read__create_model_query_params', $model_query_params, $query_parameters, $model);
     }
@@ -1034,7 +1068,7 @@ class Read extends Base
         foreach ($exploded_contents as $item) {
             $item = trim($item);
             //if no prefix was provided, so we look for items with no "." in them
-            if ( ! $prefix) {
+            if (! $prefix) {
                 //does this item have a period?
                 if (strpos($item, '.') === false) {
                     //if not, then its what we're looking for
