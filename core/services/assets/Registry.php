@@ -57,7 +57,7 @@ class Registry
             espresso_version(),
             true
         );
-        $this->jsdata['paths'] = array('rest_route' => rest_url('ee/v4.8.36'));
+        $this->jsdata['paths'] = array('rest_route' => rest_url('ee/v4.8.36/'));
 
         wp_localize_script('eejs-core', 'eejs', array('data'=>$this->jsdata));
     }
