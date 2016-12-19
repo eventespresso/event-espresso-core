@@ -4,7 +4,6 @@ assert(isset($QST_ID));
 assert($question);
 assert($question instanceof EE_Question);
 assert($question_types);
-assert(is_string($default_text_for_select_question_type));
 
 //start output
 echo EEH_Form_Fields::hidden_input('QST_system', $question->system_ID());
@@ -166,19 +165,6 @@ if ( $QST_system === 'country' ) {
 						</thead>
 
 						<tbody>
-                            <tr class="default-option question_option sample">
-                                <td class="option-value-cell">
-                                    <input type="hidden" class="QSO_order" name="question_options[xxcountxx][QSO_order]" value="-1"/>
-                                    <input type="text" disabled class="option-value regular-text" value="null">
-                                    <input type="hidden" class="option-value-hidden" name="question_options[xxcountxx][QSO_value]" value="null">
-                                </td>
-                                <td class="option-desc-cell">
-                                    <input type="text" name="question_options[xxcountxx][QSO_desc]" class="options-desc regular-text" value="<?php echo $default_text_for_select_question_type; ?>">
-                                </td>
-                                <td>
-                                    <span class="dashicons clickable dashicons-post-trash ee-icon-size-18 remove-option remove-item"></span>
-                                </td>
-                            </tr>
 							<tr class="question-option sample">
 								<td class="option-value-cell">
 									<input type="hidden" class="QSO_order" name="question_options[xxcountxx][QSO_order]" value="0"/>
@@ -199,9 +185,8 @@ if ( $QST_system === 'country' ) {
 							if ( ! empty( $question_options )) {
 								foreach( $question_options as $option_id => $option ) {
 									$disabled =  $has_answers || $option->get('QSO_system') ? ' disabled="disabled"'  : '';
-									$has_default_class = $option->get('QSO_value') == 'null' ? ' default-option' : '';
 							?>
-								<tr class="question-option ee-options-sortable<?php echo $has_default_class; ?>">
+								<tr class="question-option ee-options-sortable">
 									<td class="option-value-cell">
 										<input type="hidden" class="QSO_order" name="question_options[<?php echo $count; ?>][QSO_order]" value="<?php echo $count; ?>">
 										<input type="text" class="option-value regular-text" name="question_options[<?php echo $count?>][QSO_value]" value="<?php  $option->f('QSO_value')?>"<?php echo $disabled; ?>>
@@ -216,9 +201,7 @@ if ( $QST_system === 'country' ) {
 										<?php if ( ! $option->system() ) { ?>
 											<span class="dashicons clickable dashicons-post-trash ee-icon-size-18 remove-option remove-item"></span>
 										<?php } ?>
-                                        <?php if ( ! $has_default_class ) {?>
-										    <span class="dashicons dashicons-image-flip-vertical sortable-drag-handle ee-icon-size-18"></span>
-                                        <?php } ?>
+                                        <span class="dashicons dashicons-image-flip-vertical sortable-drag-handle ee-icon-size-18"></span>
 									</td>
 									<?php
 									echo EEH_Form_Fields::hidden_input("question_options[{$count}][QST_ID])", $option->question_ID());
