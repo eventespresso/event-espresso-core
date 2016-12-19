@@ -43,7 +43,7 @@ class Registry
     {
         wp_register_script(
             'eejs-core',
-            EE_PLUGIN_DIR_URL . 'core/services/core_assets/eejs-core.js',
+            EE_PLUGIN_DIR_URL . 'core/services/core/assets/eejs-core.js',
             array(),
             espresso_version(),
             true
