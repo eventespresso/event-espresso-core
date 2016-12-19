@@ -213,7 +213,7 @@ class Registry
                             'event_espresso'
                         ),
                         $key,
-                        'pushData'
+                        'pushData()'
                     )
                 );
             } else {
