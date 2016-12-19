@@ -183,7 +183,7 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base{
 					$desc = $question_option->desc();
 					$desc = ! empty( $desc ) ? '<span class="ee-question-option-desc">' . $desc . '</span>' : '';
 				}
-				$flat_array[ $question_option->value() ] = $question_option->value() !== 'null'
+				$flat_array[ $question_option->value() ] = $question_option->value() !== null && $question_option->value() !== ''
                     ? $question_option->value() . ' - ' . $desc
                     : $desc;
 			} elseif ( is_array( $question_option )) {
