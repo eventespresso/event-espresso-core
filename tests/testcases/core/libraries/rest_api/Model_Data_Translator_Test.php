@@ -69,8 +69,9 @@ class Model_Data_Translator_Test extends EE_UnitTestCase{
 	public function test_prepare_conditions_query_params_for_models__gmt_datetimes() {
 		update_option( 'gmt_offset', -4.5 );
         $now_local_time = current_time( 'mysql' );
-		$now_utc_time = current_time( 'mysql', true );
-		$data_translator = new Model_Data_Translator();
+        $now_utc_time = current_time( 'mysql', true );
+        $this->assertEquals(HOUR_IN_SECONDS * -4.5, $now_local_time - $now_utc_time);
+        $data_translator = new Model_Data_Translator();
 		$model_data = $data_translator::prepare_conditions_query_params_for_models(
 			array(
 				'EVT_created' => mysql_to_rfc3339( $now_local_time ),
@@ -79,7 +80,7 @@ class Model_Data_Translator_Test extends EE_UnitTestCase{
 			\EEM_Event::instance(),
 			'4.8.36'
 		);
-		//verify the model data being inputted is in UTC
+        //verify the model data being inputted is in UTC
 		$this->assertEquals( $now_utc_time, date( 'Y-m-d H:i:s', $model_data[ 'EVT_created' ] ) );
 		//NOT in local time
 		$this->assertNotEquals( $now_local_time, $model_data[ 'EVT_created'] );
