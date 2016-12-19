@@ -172,13 +172,6 @@ class EE_Registry
 
 
     /**
-     * This is used to hold the eejs object that contains values we want to pass to `eejs` scripts.  EE_System::wp_enqueue_scripts
-     * will register this and attach it to the eejs-api library.  The data will be exposed in the dom on `eejs.data`
-     * @var array
-     */
-    public static $eejs = array();
-
-    /**
      *    $main_file - path to espresso.php
      *
      * @access    public
