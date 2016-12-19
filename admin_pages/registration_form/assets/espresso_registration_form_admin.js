@@ -77,37 +77,7 @@ function espresso_reg_forms_add_option(){
 	var count=jQuery('#question_options_count').val();
 	count++;
 
-	//get first row
-    var firstRow = jQuery('.question-option:not(.sample)','#question_options').first();
-    console.log(firstRow.hasClass('default-option'));
-    console.log(firstRow);
-
-	//only do this if there is no default row
-    if ( ! espresso_option_has_default && ( count===0 || ! firstRow.hasClass('default-option') ) ) {
-        var defaultOptionSampleRow = jQuery('#question_options tbody tr:first-child');
-        var newDefaultRow = defaultOptionSampleRow.clone(true);
-        var newDefaultRowName = newDefaultRow.find('.option-value-hidden');
-        var newDefaultRowValue = newDefaultRow.find('.options-desc');
-        var newDefaultRowOrder = newDefaultRow.find('.QSO_order');
-        var defaultName = newDefaultRowName.attr('name');
-        var defaultValue = newDefaultRowValue.attr('name');
-        var defaultOrder = newDefaultRowOrder.attr('name');
-        //manipulate
-        newDefaultRowName.attr('name', defaultName.replace("xxcountxx", count));
-        newDefaultRowValue.attr('name', defaultValue.replace("xxcountxx", count));
-        newDefaultRowOrder.attr('name', defaultOrder.replace("xxcountxx", count));
-        newDefaultRow.removeClass('sample');
-        //this is ALWAYS given a QSO_order of 0
-        newDefaultRowOrder.val(0);
-
-        //add this to the beginning of the options
-        jQuery('tr.ee-options-sortable:first', '#question_options').before(newDefaultRow);
-
-        espresso_option_has_default=true;
-        //bump count for actual new row
-        count++;
-    }
-    var sampleRow=jQuery('#question_options tbody tr:nth-child(2)');
+    var sampleRow=jQuery('#question_options tbody tr:first-child');
 	var newRow=sampleRow.clone(true);
 	var newRowName=newRow.find('.option-value');
 	var newRowValue=newRow.find('.option-desc');
