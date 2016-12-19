@@ -1,36 +1,40 @@
+sudo: false
 language: php
-php:
-- 5.3
-- 5.4
-- 5.5
-- 5.6
-- 7.0
-- 7.1
-- hhvm
-  sudo: required
-  dist: trusty
-  group: edge
-  addons:
-    apt:
-      packages:
-      - mysql-server-5.6
-      - mysql-client-core-5.6
-      - mysql-client-5.6
+cache:
+  apt: true
 env:
-- WP_VERSION=latest WP_MULTISITE=0
-- WP_VERSION=latest WP_MULTISITE=1
-- WP_VERSION=4.1 WP_MULTISITE=0
-- WP_VERSION=4.1 WP_MULTISITE=1
+  global:
+    - WP_VERSION=latest WP_MULTISITE=0
+    - WP_VERSION=latest WP_MULTISITE=1
+    - WP_VERSION=4.1 WP_MULTISITE=0
+    - WP_VERSION=4.1 WP_MULTISITE=1
 matrix:
+  include:
+  - php: 5.3
+  - php: 5.4
+  - php: 5.5
+  - php: 5.6
+  - php: 7.0
+  - php: 7.1
+  - php: hhvm
+    sudo: required
+    dist: trusty
+    group: edge
+    addons:
+      apt:
+        packages:
+        - mysql-server-5.6
+        - mysql-client-core-5.6
+        - mysql-client-5.6
   exclude:
-    - php: 7.0
-      env: WP_VERSION=4.1 WP_MULTISITE=0
-    - php: 7.0
-      env: WP_VERSION=4.1 WP_MULTISITE=1
-    - php: hhvm
-      env: WP_VERSION=4.1 WP_MULTISITE=0
-    - php: hhvm
-      env: WP_VERSION=4.1 WP_MULTISITE=1
+      - php: 7.0
+        env: WP_VERSION=4.1 WP_MULTISITE=0
+      - php: 7.0
+        env: WP_VERSION=4.1 WP_MULTISITE=1
+      - php: hhvm
+        env: WP_VERSION=4.1 WP_MULTISITE=0
+      - php: hhvm
+        env: WP_VERSION=4.1 WP_MULTISITE=1
   allow_failures:
   - php: hhvm
   fast_finish: true
