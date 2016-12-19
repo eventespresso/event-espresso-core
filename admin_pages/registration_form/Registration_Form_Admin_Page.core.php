@@ -440,10 +440,6 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
             $question->system_ID()
         );
         $this->_template_args['question_type_descriptions'] = $this->_get_question_type_descriptions();
-        $this->_template_args['default_text_for_select_question_type'] = apply_filters(
-            'FHEE__Registrations_Admin_Page___edit_question__default_text_for_select_question_type',
-            esc_html__('Please Select', 'event_espresso')
-        );
         $this->_set_publish_post_box_vars('id', $ID);
         $this->_template_args['admin_page_content'] = EEH_Template::display_template(
             REGISTRATION_FORM_TEMPLATE_PATH . 'questions_main_meta_box.template.php',
