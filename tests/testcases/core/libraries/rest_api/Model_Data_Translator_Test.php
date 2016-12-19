@@ -67,11 +67,21 @@ class Model_Data_Translator_Test extends EE_UnitTestCase{
 	 * especially with datetimes which can be in UTC or local time
 	 */
 	public function test_prepare_conditions_query_params_for_models__gmt_datetimes() {
-		update_option( 'gmt_offset', -4.5 );
+	    $gmt_offset = -4.5;
+		update_option( 'gmt_offset', $gmt_offset );
         $this->assertEquals(get_option('gmt_offset'), '-4.5');
         $now_local_time = current_time( 'mysql' );
         $now_utc_time = current_time( 'mysql', true );
-        $this->assertEquals(HOUR_IN_SECONDS * -4.5, $now_local_time - $now_utc_time);
+        $this->assertNotEquals( $now_local_time, $now_utc_time );
+        $this->assertEquals(
+            HOUR_IN_SECONDS * $gmt_offset,
+            strtotime($now_local_time) - strtotime($now_utc_time),
+            sprintf(
+                'Difference between NOW and UTC should be %1$s, but instead it is %2$s',
+                HOUR_IN_SECONDS * $gmt_offset,
+                strtotime($now_local_time) - strtotime($now_utc_time)
+            )
+        );
         $data_translator = new Model_Data_Translator();
 		$model_data = $data_translator::prepare_conditions_query_params_for_models(
 			array(
