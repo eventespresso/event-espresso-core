@@ -1,13 +1,11 @@
-sudo: false
 language: php
 cache:
   apt: true
 env:
-  global:
-    - WP_VERSION=latest WP_MULTISITE=0
-    - WP_VERSION=latest WP_MULTISITE=1
-    - WP_VERSION=4.1 WP_MULTISITE=0
-    - WP_VERSION=4.1 WP_MULTISITE=1
+  - WP_VERSION=latest WP_MULTISITE=0
+  - WP_VERSION=latest WP_MULTISITE=1
+  - WP_VERSION=4.1 WP_MULTISITE=0
+  - WP_VERSION=4.1 WP_MULTISITE=1
 matrix:
   include:
   - php: 5.3
@@ -17,6 +15,7 @@ matrix:
   - php: 7.0
   - php: 7.1
   - php: hhvm
+    env: SKIP_XDEBUG_REMOVE=true
     sudo: required
     dist: trusty
     group: edge
@@ -39,6 +38,11 @@ matrix:
   - php: hhvm
   fast_finish: true
 before_script:
+  - |
+   if [[ "$SKIP_XDEBUG_REMOVE" != "true" ]]: then
+      phpenv config-rm xdebug.ini
+      echo "xdebug removed";
+   fi
   - bash tests/bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
   - mysql --version
   - phpenv versions
