@@ -68,6 +68,7 @@ class Model_Data_Translator_Test extends EE_UnitTestCase{
 	 */
 	public function test_prepare_conditions_query_params_for_models__gmt_datetimes() {
 		update_option( 'gmt_offset', -4.5 );
+        $this->assertEquals(get_option('gmt_offset'), '-4.5');
         $now_local_time = current_time( 'mysql' );
         $now_utc_time = current_time( 'mysql', true );
         $this->assertEquals(HOUR_IN_SECONDS * -4.5, $now_local_time - $now_utc_time);
