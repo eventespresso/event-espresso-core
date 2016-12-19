@@ -104,7 +104,8 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base{
 			//are ALL the options ints? If so use int validation
 			$all_ints = true;
 			foreach($select_option_keys as $value ){
-				if( ! is_int( $value ) ){
+			    //allow for a default value which may be empty.
+				if( ! is_int( $value ) && $value !== '' && $value !== null){
 					$all_ints = false;
 					break;
 				}
