@@ -154,6 +154,50 @@ class Registry
 
 
     /**
+     * Used to set content used by javascript for a template.
+     *
+     * Note: Overrides of existing registered templates are not allowed.
+     *
+     * @param string $template_reference
+     * @param string $template_content
+     */
+    public function addTemplate($template_reference, $template_content)
+    {
+        if (! isset($this->jsdata['templates'])) {
+            $this->jsdata['templates'] = array();
+        }
+
+        //no overrides allowed.
+        if (isset($this->jsdata['templates'][$template_reference])) {
+            throw new invalidArgumentException(
+                sprintf(
+                    __(
+                        'The %1$s key already exists for the templates array in the js data array.  No overrides are allowed.',
+                        'event_espresso'
+                    ),
+                    $template_reference
+                )
+            );
+        } else {
+            $this->jsdata['templates'][$template_reference] = $template_content;
+        }
+    }
+
+
+    /**
+     * Retrieve the template content already registered for the given reference.
+     * @param string $template_reference
+     * @return ''
+     */
+    public function getTemplate($template_reference)
+    {
+        return isset($this->jsdata['templates'], $this->jsdata['templates'][$template_reference])
+            ? $this->jsdata['templates'][$template_reference]
+            : '';
+    }
+
+
+    /**
      * Retrieve registered data.
      *
      * @param string $method_name   Name of actual method or function.

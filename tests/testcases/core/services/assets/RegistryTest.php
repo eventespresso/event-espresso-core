@@ -69,6 +69,27 @@ class RegistryTest extends EE_UnitTestCase
     }
 
 
+    /**
+     * @expectedException InvalidArgumentException
+     * @group 10304
+     */
+    public function test_addTemplate_no_overwrite()
+    {
+        $this->registry->addTemplate('test', 'some_test_content');
+        $this->registry->addTemplate('test', 'cause exception');
+    }
+
+
+    /**
+     * @group 10304
+     */
+    public function test_getTemplate()
+    {
+        $this->registry->addTemplate('test', 'some test content');
+        $this->assertEquals('some test content', $this->registry->getTemplate('test'));
+    }
+
+
 
     /**
      * @expectedException InvalidArgumentException
