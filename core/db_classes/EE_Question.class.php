@@ -501,8 +501,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable 
 		}
 		// has this question been answered ?
 		if ( $answer instanceof EE_Answer
-             && $answer->ID() > 0
-             && $answer->value() === ''
+             && $answer->value() !== ''
         ) {
 			//answer gets htmlspecialchars called on it, undo that please
 			//because the form input's display strategy may call esc_attr too
