@@ -11,7 +11,7 @@
   License: 		    GPLv2
   TextDomain: 		event_espresso
   GitHub Plugin URI: https://github.com/eventespresso/event-espresso-core
-  Copyright 		(c) 2008-2014 Event Espresso  All Rights Reserved.
+  Copyright 		(c) 2008-2017 Event Espresso  All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@
  *
  * @package          Event Espresso
  * @author           Seth Shoultes
- * @copyright    (c) 2008-2014 Event Espresso  All Rights Reserved.
+ * @copyright    (c) 2008-2017 Event Espresso  All Rights Reserved.
  * @license          {@link http://eventespresso.com/support/terms-conditions/}
  * @see              Plugin Licensing
  * @link             {@link http://www.eventespresso.com}
