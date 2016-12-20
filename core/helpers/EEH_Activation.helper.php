@@ -689,15 +689,17 @@ class EEH_Activation
                 \EEH_Activation::getTableManager()->dropTable($wp_table_name);
             } else if ( ! $deleted_safely) {
                 // so we should be more cautious rather than just dropping tables so easily
-                EE_Error::add_persistent_admin_notice(
-                    'bad_table_' . $wp_table_name . '_detected',
-                    sprintf(__('Database table %1$s exists when it shouldn\'t, and may contain erroneous data. If you have previously restored your database from a backup that didn\'t remove the old tables, then we recommend adding %2$s to your %3$s file then restore to that backup again. This will clear out the invalid data from %1$s. Afterwards you should undo that change from your %3$s file. %4$sIf you cannot edit %3$s, you should remove the data from %1$s manually then restore to the backup again.',
-                        'event_espresso'),
+                error_log(
+                    sprintf(
+                        __(
+                            'It appears that database table "%1$s" exists when it shouldn\'t, and therefore may contain erroneous data. If you have previously restored your database from a backup that didn\'t remove the old tables, then we recommend: %2$s 1. create a new COMPLETE backup of your database, %2$s 2. delete ALL tables from your database, %2$s 3. restore to your previous backup. %2$s If, however, you have not restored to a backup, then somehow your "%3$s" WordPress option could not be read. You can probably ignore this message, but should investigate why that option is being removed.',
+                            'event_espresso'
+                        ),
                         $wp_table_name,
-                        "<pre>define( 'EE_DROP_BAD_TABLES', TRUE );</pre>",
-                        '<b>wp-config.php</b>',
-                        '<br/>'),
-                    true);
+                        '<br/>',
+                        'espresso_db_update'
+                    )
+                );
             }
         }
         $engine = str_replace('ENGINE=', '', $engine);
