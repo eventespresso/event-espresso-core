@@ -69,7 +69,7 @@ class Model_Data_Translator_Test extends EE_UnitTestCase{
 	public function test_prepare_conditions_query_params_for_models__gmt_datetimes() {
         update_option('gmt_offset', '');
         $data_translator = new Model_Data_Translator();
-        $gmt_offsets = array(-12, -9, -6, -3, 0, 3, 6, 9, 12);
+        $gmt_offsets = array(-12, -10.5, -9, -7.5, -6, -4.5, -3, -1.5, 0, 1.5, 3, 4.5, 6, 7.5, 9, 10.5, 12);
         foreach($gmt_offsets as $gmt_offset) {
             $TZ_NAME = \EEH_DTT_Helper::get_timezone_string_from_gmt_offset($gmt_offset);
             update_option('timezone_string', $TZ_NAME);
