@@ -67,37 +67,32 @@ class Model_Data_Translator_Test extends EE_UnitTestCase{
 	 * especially with datetimes which can be in UTC or local time
 	 */
 	public function test_prepare_conditions_query_params_for_models__gmt_datetimes() {
-	    $gmt_offset = -4.5;
-		update_option( 'gmt_offset', $gmt_offset );
-        $this->assertEquals(get_option('gmt_offset'), '-4.5');
-        $now_local_time = current_time( 'mysql' );
-        $now_utc_time = current_time( 'mysql', true );
-        $this->assertNotEquals( $now_local_time, $now_utc_time );
-        $this->assertEquals(
-            HOUR_IN_SECONDS * $gmt_offset,
-            strtotime($now_local_time) - strtotime($now_utc_time),
-            sprintf(
-                'Difference between NOW and UTC should be %1$s, but instead it is %2$s',
-                HOUR_IN_SECONDS * $gmt_offset,
-                strtotime($now_local_time) - strtotime($now_utc_time)
-            )
-        );
+        update_option('gmt_offset', '');
         $data_translator = new Model_Data_Translator();
-		$model_data = $data_translator::prepare_conditions_query_params_for_models(
-			array(
-				'EVT_created' => mysql_to_rfc3339( $now_local_time ),
-				'EVT_modified_gmt' => mysql_to_rfc3339( $now_utc_time ),
-			),
-			\EEM_Event::instance(),
-			'4.8.36'
-		);
-        //verify the model data being inputted is in UTC
-		$this->assertEquals( $now_utc_time, date( 'Y-m-d H:i:s', $model_data[ 'EVT_created' ] ) );
-		//NOT in local time
-		$this->assertNotEquals( $now_local_time, $model_data[ 'EVT_created'] );
-		//notice that there's no "_gmt" on EVT_modified. That's (currently at least)
-		//not a real model field. It just indicates to treat the time already being in UTC
-		$this->assertEquals( $now_utc_time, date( 'Y-m-d H:i:s', $model_data[ 'EVT_modified' ] ) );
+        $gmt_offsets = array(-11, -9, -6, -3, 0, 3, 6, 9, 12);
+        foreach($gmt_offsets as $gmt_offset) {
+            $TZ_NAME = \EEH_DTT_Helper::get_timezone_string_from_gmt_offset($gmt_offset);
+            update_option('timezone_string', $TZ_NAME);
+            $now_local_time = current_time('mysql');
+            $now_utc_time = current_time('mysql', true);
+            $this->assertNotEquals($now_local_time, $now_utc_time);
+            $model_data = $data_translator::prepare_conditions_query_params_for_models(
+                array(
+                    'EVT_created'      => mysql_to_rfc3339($now_local_time),
+                    'EVT_modified_gmt' => mysql_to_rfc3339($now_utc_time),
+                ),
+                \EEM_Event::instance(),
+                '4.8.36'
+            );
+            //verify the model data being inputted is in UTC
+            $this->assertEquals($now_utc_time, date('Y-m-d H:i:s', $model_data['EVT_created']));
+            //NOT in local time
+            $this->assertNotEquals($now_local_time, $model_data['EVT_created']);
+            //notice that there's no "_gmt" on EVT_modified. That's (currently at least)
+            //not a real model field. It just indicates to treat the time already being in UTC
+            $this->assertEquals($now_utc_time, date('Y-m-d H:i:s', $model_data['EVT_modified']));
+        }
+
 	}
 
 	public function test_is_gmt_date_field_name__success() {
