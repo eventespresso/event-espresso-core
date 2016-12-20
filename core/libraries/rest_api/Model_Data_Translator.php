@@ -119,7 +119,7 @@ class Model_Data_Translator
         $field_obj,
         $original_value,
         $requested_version,
-        $timezone_string = '' // UTC
+        $timezone_string = 'UTC' // UTC
     )
     {
         $timezone_string = $timezone_string !== '' ? $timezone_string : get_option('timezone_string', '');
