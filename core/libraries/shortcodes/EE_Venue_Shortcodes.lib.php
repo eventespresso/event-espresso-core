@@ -57,7 +57,17 @@ class EE_Venue_Shortcodes extends EE_Shortcodes {
 			'[VENUE_FORMATTED_ADDRESS]' => __('This just outputs the venue address in a semantic address format.', 'event_espresso'),
 			'[VENUE_ZIP]' => __('The zip code for the venue address', 'event_espresso'),
 			'[GOOGLE_MAP_LINK]' => __('Link to a google map for the venue', 'event_espresso'),
-			'[GOOGLE_MAP_IMAGE]' => __('Google map for venue wrapped in image tags', 'event_espresso')
+			'[GOOGLE_MAP_LINK_*]' => __('Link to a google map for the venue with custom height and width', 'event_espresso') .
+				'<p><ul>' .
+				'<li><strong>h</strong>:' . __('Height of the Image in px.', 'event_espresso') . '</li>' .
+				'<li><strong>w</strong>:' . __('Width of the Image in px.', 'event_espresso' ) . '</li>' .
+				'</ul></p>',
+			'[GOOGLE_MAP_IMAGE]' => __('Google map for venue wrapped in image tags', 'event_espresso'),
+			'[GOOGLE_MAP_IMAGE_*]' => __('Google map for venue wrapped in image tags with custom height and width', 'event_espresso') .
+				'<p><ul>' .
+				'<li><strong>h</strong>:' . __('Height of the Image in px.', 'event_espresso') . '</li>' .
+				'<li><strong>w</strong>:' . __('Width of the Image in px.', 'event_espresso' ) . '</li>' .
+				'</ul></p>',
 			);
 	}
 
@@ -114,14 +124,10 @@ class EE_Venue_Shortcodes extends EE_Shortcodes {
 				return $this->_venue('formatted_address');
 				break;
 
-			case '[GOOGLE_MAP_LINK]' :
-				return $this->_venue('gmap_link');
-				break;
-
-			case '[GOOGLE_MAP_IMAGE]' :
-				return $this->_venue('gmap_link_img');
-				break;
-
+		}
+		
+		if ( preg_match('/^\[GOOGLE_MAP_(LINK|IMAGE)(_)?/', $shortcode, $matches) ) {
+			return $this->_venue('gmap_link'.($matches[1] == 'IMAGE' ? '_img' :''), $this->_get_shortcode_attrs( $shortcode ));
 		}
 	}
 
@@ -132,7 +138,7 @@ class EE_Venue_Shortcodes extends EE_Shortcodes {
 	 * @param  string $what What to retrieve from database
 	 * @return string       What was retrieved!
 	 */
-	private function _venue( $db_ref ) {
+	private function _venue( $db_ref, $args = NULL) {
 
 		//we need the EE_Event object to get the venue.
 
@@ -227,8 +233,8 @@ class EE_Venue_Shortcodes extends EE_Shortcodes {
 					'zip' => $venue->get('VNU_zip'),
 					'country' => is_object( $country ) ? $country->get('CNT_name'): '',
 					'type' => $db_ref == 'gmap_link' ? 'url' : 'map',
-					'map_w' => 200,
-					'map_h' => 200
+					'map_w' => !empty($args['w']) ? abs((int) $args['w']) : 200,
+					'map_h' => !empty($args['h']) ? abs((int) $args['h']) : 200
 					);
 
 				return EEH_Maps::google_map_link($atts);
