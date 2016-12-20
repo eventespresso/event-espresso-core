@@ -97,32 +97,38 @@ class Model_Data_Translator {
 		return $new_value_maybe_array;
 	}
 
-	/**
-	 * Prepares incoming data from the json or $_REQUEST parameters for the models'
-	 * "$query_params".
-	 * @param \EE_Model_Field_Base $field_obj
-	 * @param mixed $original_value
-	 * @param string $requested_version
-	 * @param string $timezone_string treat values as being in this timezone
-	 * @return mixed
-	 */
+
+
+    /**
+     * Prepares incoming data from the json or $_REQUEST parameters for the models'
+     * "$query_params".
+     *
+     * @param \EE_Model_Field_Base $field_obj
+     * @param mixed                $original_value
+     * @param string               $requested_version
+     * @param string               $timezone_string treat values as being in this timezone
+     * @return mixed
+     * @throws \DomainException
+     */
 	public static function prepare_field_value_from_json(
 		$field_obj,
 		$original_value,
 		$requested_version,
-		$timezone_string = 'UTC'
+		$timezone_string = '' // UTC
 	) {
-		$new_value = null;
+        $timezone_string = $timezone_string !== '' ? $timezone_string : get_option('timezone_string', '');
+        $new_value = null;
 		if ( $field_obj instanceof \EE_Infinite_Integer_Field
 		     && in_array( $original_value, array( null, '' ), true )
 		) {
 			$new_value = EE_INF;
 		} elseif ( $field_obj instanceof \EE_Datetime_Field ) {
-			//treat the provided value as being in this timezone
-			$offset_secs_string = $field_obj->get_timezone_offset( new \DateTimeZone( $timezone_string ) );
-			$offset_secs = (int) substr( $offset_secs_string, 1 );
-			$offset_sign = substr( $offset_secs_string, 0, 1 ) ? substr( $offset_secs_string, 0, 1 ) : '+';
-			$offset_string =
+            list($offset_sign, $offset_secs) = Model_Data_Translator::parse_timezone_offset(
+                $field_obj->get_timezone_offset(
+                    new \DateTimeZone($timezone_string)
+                )
+            );
+            $offset_string =
 				str_pad(
 					floor( $offset_secs / HOUR_IN_SECONDS ),
 					2,
@@ -142,6 +148,27 @@ class Model_Data_Translator {
 		}
 		return $new_value;
 	}
+
+
+
+    /**
+     * determines what's going on with them timezone strings
+     *
+     * @param int $timezone_offset
+     * @return array
+     */
+    private static function parse_timezone_offset($timezone_offset)
+    {
+        $first_char = substr((string)$timezone_offset, 0, 1);
+        if ($first_char === '+' || $first_char === '-') {
+            $offset_sign = $first_char;
+            $offset_secs = substr((string)$timezone_offset, 1);
+        } else {
+            $offset_sign = '+';
+            $offset_secs = $timezone_offset;
+        }
+        return array($offset_sign, $offset_secs);
+    }
 
 
 
@@ -188,15 +215,19 @@ class Model_Data_Translator {
 	 * @return array
 	 * @throws \EE_Error
 	 */
-	public static function prepare_conditions_query_params_for_models( $inputted_query_params_of_this_type, \EEM_Base $model, $requested_version ) {
-		$query_param_for_models = array();
+	public static function prepare_conditions_query_params_for_models(
+	    $inputted_query_params_of_this_type,
+        \EEM_Base $model,
+        $requested_version
+    ) {
+        $query_param_for_models = array();
 		foreach( $inputted_query_params_of_this_type as $query_param_key => $query_param_value ) {
-			$query_param_sans_stars = Model_Data_Translator::remove_stars_and_anything_after_from_condition_query_param_key( $query_param_key );
-			$field = Model_Data_Translator::deduce_field_from_query_param(
+            $query_param_sans_stars = Model_Data_Translator::remove_stars_and_anything_after_from_condition_query_param_key( $query_param_key );
+            $field = Model_Data_Translator::deduce_field_from_query_param(
 				$query_param_sans_stars,
 				$model
 			);
-			//double-check is it a *_gmt field?
+            //double-check is it a *_gmt field?
 			if( ! $field instanceof \EE_Model_Field_Base
 				&& Model_Data_Translator::is_gmt_date_field_name(  $query_param_sans_stars ) ) {
 				//yep, take off '_gmt', and find the field
@@ -213,16 +244,16 @@ class Model_Data_Translator {
 			if( $field instanceof \EE_Model_Field_Base ) {
 				//did they specify an operator?
 				if( is_array( $query_param_value ) ) {
-					$op = $query_param_value[ 0 ];
+                    $op = $query_param_value[ 0 ];
 					$translated_value = array( $op );
 					if( isset( $query_param_value[ 1 ] ) ) {
 						$value = $query_param_value[ 1 ];
 						$translated_value[1] = Model_Data_Translator::prepare_field_values_from_json( $field, $value, $requested_version, $timezone );
 					}
 				} else {
-					$translated_value  = Model_Data_Translator::prepare_field_value_from_json( $field, $query_param_value, $requested_version, $timezone );
-				}
-				$query_param_for_models[ $query_param_key ] = $translated_value;
+                    $translated_value  = Model_Data_Translator::prepare_field_value_from_json( $field, $query_param_value, $requested_version, $timezone );
+                }
+                $query_param_for_models[ $query_param_key ] = $translated_value;
 			} else {
 				//so it's not for a field, assume it's a logic query param key
 				$query_param_for_models[ $query_param_key ] = Model_Data_Translator::prepare_conditions_query_params_for_models( $query_param_value, $model, $requested_version );
@@ -230,21 +261,21 @@ class Model_Data_Translator {
 		}
 		return $query_param_for_models;
 	}
-	
+
 	/**
-	 * Mostly checks if the last 4 characters are "_gmt", indicating its a 
+	 * Mostly checks if the last 4 characters are "_gmt", indicating its a
 	 * gmt date field name
 	 * @param string $field_name
 	 * @return boolean
 	 */
 	public static function is_gmt_date_field_name( $field_name ) {
-		return substr( 
-			Model_Data_Translator::remove_stars_and_anything_after_from_condition_query_param_key( $field_name ), 
-			-4, 
-			4 
+		return substr(
+			Model_Data_Translator::remove_stars_and_anything_after_from_condition_query_param_key( $field_name ),
+			-4,
+			4
 		) === '_gmt';
 	}
-	
+
 	/**
 	 * Removes the last "_gmt" part of a field name (and if there is no "_gmt" at the end, leave it alone)
 	 * @param string $field_name
@@ -255,17 +286,17 @@ class Model_Data_Translator {
 			return $field_name;
 		}
 		$query_param_sans_stars = Model_Data_Translator::remove_stars_and_anything_after_from_condition_query_param_key( $field_name );
-		$query_param_sans_gmt_and_sans_stars = substr( 
-			$query_param_sans_stars, 
-			0, 
-			strrpos( 
-				$field_name, 
-				'_gmt' 
-			) 
+		$query_param_sans_gmt_and_sans_stars = substr(
+			$query_param_sans_stars,
+			0,
+			strrpos(
+				$field_name,
+				'_gmt'
+			)
 		);
 		return str_replace( $query_param_sans_stars, $query_param_sans_gmt_and_sans_stars, $field_name );
 	}
-	
+
 	/**
 	 * Takes a field name from the REST API and prepares it for the model querying
 	 * @param string $field_name
@@ -290,7 +321,7 @@ class Model_Data_Translator {
 		}
 		return $new_array;
 	}
-	
+
 	/**
 	 * Takes array where array keys are field names (possibly with model path prefixes)
 	 * from the REST API and prepares them for model querying
