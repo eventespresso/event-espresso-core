@@ -893,27 +893,33 @@ class Messages_Admin_Page extends EE_Admin_Page
             }
             $status_bulk_actions = $common_bulk_actions;
             //unset bulk actions not applying to status
-            if ( ! empty($status_bulk_actions)) {
+            if (! empty($status_bulk_actions)) {
                 switch ($status) {
-                    case EEM_Message::status_idle :
-                    case EEM_Message::status_resend :
+                    case EEM_Message::status_idle:
+                    case EEM_Message::status_resend:
                         $status_bulk_actions['send_now'] = $common_bulk_actions['send_now'];
                         break;
                     
-                    case EEM_Message::status_failed :
-                    case EEM_Message::status_debug_only :
+                    case EEM_Message::status_failed:
+                    case EEM_Message::status_debug_only:
+                    case EEM_Message::status_messenger_executing:
                         $status_bulk_actions = array();
                         break;
                     
-                    case EEM_Message::status_incomplete :
+                    case EEM_Message::status_incomplete:
                         unset($status_bulk_actions['queue_for_resending'], $status_bulk_actions['send_now']);
                         break;
                     
-                    case EEM_Message::status_retry :
-                    case EEM_Message::status_sent :
+                    case EEM_Message::status_retry:
+                    case EEM_Message::status_sent:
                         unset($status_bulk_actions['generate_now'], $status_bulk_actions['generate_and_send_now']);
                         break;
                 }
+            }
+
+            //skip adding messenger executing status to views because it will be included with the Failed view.
+            if ( $status === EEM_Message::status_messenger_executing ) {
+                continue;
             }
             
             $this->_views[strtolower($status)] = array(
@@ -972,6 +978,10 @@ class Messages_Admin_Page extends EE_Admin_Page
             'failed_status'     => array(
                 'class' => 'ee-status-legend ee-status-legend-' . EEM_Message::status_failed,
                 'desc'  => EEH_Template::pretty_status(EEM_Message::status_failed, false, 'sentence')
+            ),
+            'messenger_executing_status' => array(
+                'class' => 'ee-status-legend ee-status-legend-' . EEM_Message::status_messenger_executing,
+                'desc' => EEH_Template::pretty_status(EEM_Message::status_messenger_executing, false, 'sentence')
             ),
             'resend_status'     => array(
                 'class' => 'ee-status-legend ee-status-legend-' . EEM_Message::status_resend,
