@@ -81,17 +81,15 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base{
 	 */
 	public function set_select_options( $answer_options = array() ){
 		$answer_options = is_array( $answer_options ) ? $answer_options : array( $answer_options );
-		//get the first item in the select options and check it's type
-		if ( reset( $answer_options ) instanceof EE_Question_Option ) {
-			$this->_options = $this->_process_question_options( $answer_options );
-		} else {
-			$this->_options = $answer_options;
-		}
+        //get the first item in the select options and check it's type
+        $this->_options = reset( $answer_options ) instanceof EE_Question_Option
+            ? $this->_process_question_options( $answer_options )
+            : $answer_options;
 		//d( $this->_options );
 		$select_option_keys = array_keys( $this->_options );
 		// attempt to determine data type for values in order to set normalization type
 		if (
-			count( $this->_options ) == 2
+			count( $this->_options ) === 2
 			&&
 			(
 				( in_array( TRUE, $select_option_keys, true ) && in_array( FALSE, $select_option_keys, true ))
@@ -154,7 +152,7 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base{
 		$flat_array = array();
 		if ( EEH_Array::is_multi_dimensional_array( $arr )) {
 			foreach( $arr as $sub_array ){
-				foreach( $sub_array as $key => $value ) {
+				foreach( (array) $sub_array as $key => $value ) {
 					$flat_array[ $key ] = $value;
 					$this->_set_label_size( $value );
 				}
@@ -183,12 +181,19 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base{
 					$desc = $question_option->desc();
 					$desc = ! empty( $desc ) ? '<span class="ee-question-option-desc">' . $desc . '</span>' : '';
 				}
-				$flat_array[ $question_option->value() ] = $question_option->value() !== null && $question_option->value() !== ''
-                    ? $question_option->value() . ' - ' . $desc
-                    : $desc;
+                $value = $question_option->value();
+				// add value even if it's empty
+                $flat_array[$value] = $value;
+                // if both value and desc are not empty, then separate with a dash
+                if ( ! empty($value) && ! empty($desc)) {
+                    $flat_array[$value] .= ' - ' . $desc;
+                } else {
+                    // otherwise, just add desc, since either or both of the vars is empty, and no dash is necessary
+                    $flat_array[$value] .= $desc;
+                }
+
 			} elseif ( is_array( $question_option )) {
-				$non_question_option = $this->_flatten_select_options( $question_option );
-				$flat_array = $flat_array + $non_question_option;
+                $flat_array += $this->_flatten_select_options( $question_option );
 			}
 		}
 		return $flat_array;
@@ -230,8 +235,9 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base{
 	 * 	get_label_size_class
 	 * @return string
 	 */
-	function get_label_size_class(){
-		// use maximum option value length to determine label size
+	public function get_label_size_class(){
+        $size = ' medium-lbl';
+        // use maximum option value length to determine label size
 		if( $this->_label_size < 3 ) {
 			$size = ' nano-lbl';
 		} else if ( $this->_label_size < 6 ) {
@@ -244,8 +250,6 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base{
 			$size =  ' medium-lbl';
 		} else if ( $this->_label_size >= 100 ) {
 			$size =  ' big-lbl';
-		} else {
-			$size =  ' medium-lbl';
 		}
 		return $size;
 	}
@@ -254,21 +258,21 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base{
 	 * Returns the pretty value for the normalized value
 	 * @return string
 	 */
-	function pretty_value(){
+    public function pretty_value(){
 		$options = $this->flat_options();
 		$unnormalized_value_choices = $this->get_normalization_strategy()->unnormalize( $this->_normalized_value );
 		if( ! $this->_multiple_selections ){
 			$unnormalized_value_choices = array( $unnormalized_value_choices );
 		}
 		$pretty_strings = array();
-		foreach( $unnormalized_value_choices as $unnormalized_value_choice ){
+		foreach( (array) $unnormalized_value_choices as $unnormalized_value_choice ){
 			if( isset( $options[ $unnormalized_value_choice ] ) ){
 				$pretty_strings[] =  $options[ $unnormalized_value_choice ];
 			}else{
 				$pretty_strings[] = $this->normalized_value();
 			}
 		}
-		return implode(", ", $pretty_strings );
+		return implode(', ', $pretty_strings );
 	}
 
 
