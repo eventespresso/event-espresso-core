@@ -628,7 +628,8 @@ final class EE_Admin {
      * @return array
      * @throws \EE_Error
      */
-	public function dashboard_glance_items(array $elements ) {
+	public function dashboard_glance_items($elements) {
+        $elements = is_array($elements) ? $elements : array($elements);
 		$events = EEM_Event::instance()->count();
 		$items['events']['url'] = EE_Admin_Page::add_query_args_and_nonce( array('page' => 'espresso_events'), admin_url('admin.php') );
 		$items['events']['text'] = sprintf( _n( '%s Event', '%s Events', $events ), number_format_i18n( $events ) );
