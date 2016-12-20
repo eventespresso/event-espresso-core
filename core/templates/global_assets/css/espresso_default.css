@@ -261,6 +261,17 @@ ul.ee-upcoming-events-widget-ul li{
 	list-style-type:none !important;
 }
 
+.ee-break-before:before {
+	content: ' ';
+	display: block;
+}
+
+.ee-break-after:after,
+.ee-event-datetime-date + .ee-event-datetime-time:before {
+	content: ' ';
+	display: block;
+}
+
 
 /******************* BUTTONS ****************** */
 
