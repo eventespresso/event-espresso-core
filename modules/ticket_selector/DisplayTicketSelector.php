@@ -576,10 +576,18 @@ class DisplayTicketSelector
             $this->event
         );
         $external_url = $this->event->external_url();
-        $html = '<input id="ticket-selector-submit-' . $this->event->ID() . '-btn"';
+        $html = \EEH_HTML::div(
+            '', 'ticket-selector-submit-' . $this->event->ID() . '-btn-wrap', 'ticket-selector-submit-btn-wrap'
+        );
+        $html .= \EEH_HTML::span(
+            esc_html__('please select a datetime', 'event_espresso'),
+            '', 'ticket-selector-disabled-submit-btn-msg important-notice'
+        );
+        $html .= '<input id="ticket-selector-submit-' . $this->event->ID() . '-btn"';
         $html .= ' class="ticket-selector-submit-btn ';
         $html .= empty($external_url) ? 'ticket-selector-submit-ajax"' : '"';
         $html .= ' type="submit" value="' . $btn_text . '" />';
+        $html .= \EEH_HTML::divx();
         $html .= apply_filters(
             'FHEE__EE_Ticket_Selector__after_ticket_selector_submit',
             '',
