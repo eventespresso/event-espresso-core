@@ -59,4 +59,17 @@ class EE_Float_Field extends EE_Model_Field_Base
         return floatval($value_found_in_db_for_model_object);
     }
 
+    /**
+     * This returns elements used to represent this field in the json schema.
+     *
+     * @link http://json-schema.org/
+     * @return array
+     */
+    public function get_json_schema()
+    {
+        return array(
+            'description' => $this->get_nicename(),
+            'type' => 'number'
+        );
+    }
 }

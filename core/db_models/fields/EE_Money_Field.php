@@ -65,4 +65,20 @@ class EE_Money_Field extends EE_Float_Field
         $c = EE_Registry::instance()->CFG->currency;
         return round(parent::prepare_for_get($value_of_field_on_model_object), $c->dec_plc);
     }
+
+    public function get_json_schema()
+    {
+        $schema = parent::get_json_schema();
+        $schema['type'] = 'object';
+        $schema['properties'] = array(
+            'raw' => array(
+                'description' => $this->get_nicename() . ' - the raw value as it exists in the database as a simple float.',
+                'type' => 'number'
+            ),
+            'pretty' => array(
+                'description' => $this->get_nicename() . ' - formatted for display in the set currency and decimal places.',
+                'type' => 'string'
+            )
+        );
+    }
 }

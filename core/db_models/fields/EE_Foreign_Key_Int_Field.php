@@ -24,4 +24,11 @@ class EE_Foreign_Key_Int_Field extends EE_Foreign_Key_Field_Base
     {
         return intval($value_found_in_db_for_model_object);
     }
+
+    public function get_json_schema()
+    {
+        $schema = parent::get_json_schema();
+        $schema['type'] = 'integer';
+        return $schema;
+    }
 }

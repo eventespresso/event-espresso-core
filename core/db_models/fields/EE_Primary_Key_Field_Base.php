@@ -22,4 +22,12 @@ abstract class EE_Primary_Key_Field_Base extends EE_Field_With_Model_Name
         $this->_model_name_pointed_to = $model_name;
         parent::_construct_finalize($table_alias, $name, $model_name);
     }
+
+
+    public function get_json_schema()
+    {
+        $schema = parent::get_json_schema();
+        $schema['primary_key'] = true;
+        return $schema;
+    }
 }

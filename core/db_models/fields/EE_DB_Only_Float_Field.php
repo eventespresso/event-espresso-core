@@ -7,4 +7,11 @@ class EE_DB_Only_Float_Field extends EE_DB_Only_Field_Base
     {
         return '%f';
     }
+
+    public function get_json_schema()
+    {
+        $schema = parent::get_json_schema();
+        $schema['type'] = 'number';
+        return $schema;
+    }
 }

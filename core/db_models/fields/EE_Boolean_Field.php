@@ -37,4 +37,13 @@ class EE_Boolean_Field extends EE_Integer_Field
             $value_on_field_to_be_outputted
         );
     }
+
+
+    public function get_json_schema()
+    {
+        $schema = parent::get_json_schema();
+        $schema['type'] = 'boolean';
+        return $schema;
+    }
+
 }

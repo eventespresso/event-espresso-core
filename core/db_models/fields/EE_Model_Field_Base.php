@@ -210,7 +210,20 @@ abstract class EE_Model_Field_Base
         return $value_on_field_to_be_outputted;
     }
 
+    /**
+     * Return `%d`, `%s` or `%f` to indicate the data type for the field.
+     * @return string
+     */
     abstract function get_wpdb_data_type();
+
+
+    /**
+     * This returns elements used to represent this field in the json schema.
+     *
+     * @link http://json-schema.org/
+     * @return array
+     */
+    abstract public function get_json_schema();
 
     /**
      * Some fields are in the database-only, (ie, used in queries etc), but shouldn't necessarily be part

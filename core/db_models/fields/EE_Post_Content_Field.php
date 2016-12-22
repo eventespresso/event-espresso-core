@@ -24,4 +24,22 @@ class EE_Post_Content_Field extends EE_Text_Field_Base
     {
         return $value_found_in_db_for_model_object;
     }
+
+
+    public function get_json_schema()
+    {
+        $schema = parent::get_json_schema();
+        $schema['type'] = 'object';
+        $schema['properties'] = array(
+            'raw' => array(
+                'description' => $this->get_nicename() . ' - the content as it is in the database.',
+                'type' => 'string'
+            ),
+            'rendered' => array(
+                'description' => $this->get_nicename() . ' - the content rendered for display.',
+                'type' => 'string'
+            )
+        );
+        return $schema;
+    }
 }

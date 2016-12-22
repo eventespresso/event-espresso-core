@@ -40,4 +40,12 @@ class EE_Email_Field extends EE_Text_Field_Base
         }
         return $email_address;
     }
+
+
+    public function get_json_schema()
+    {
+        $schema = parent::get_json_schema();
+        $schema['format'] = 'email';
+        return $schema;
+    }
 }

@@ -73,4 +73,26 @@ class EE_Enum_Integer_Field extends EE_Integer_Field
     {
         return $this->_allowed_enum_values[$value_on_field_to_be_outputted];
     }
+
+
+
+    public function get_json_schema()
+    {
+        $schema = parent::get_json_schema();
+        $schema['type'] = 'object';
+        $schema['properties'] = array(
+            'raw' => array(
+                'description' => $this->get_nicename() . ' - the value in the database.',
+                'enum' => array_keys($this->_allowed_enum_values),
+                'type' => 'integer'
+            ),
+            'pretty' => array(
+                'description' => $this->get_nicename() .' - the value for display.',
+                'enum' => array_values($this->_allowed_enum_values),
+                'type' => 'string',
+                'read_only' => true
+            )
+        );
+        return $schema;
+    }
 }

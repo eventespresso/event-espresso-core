@@ -32,4 +32,24 @@ class EE_Full_HTML_Field extends EE_Text_Field_Base
             return wpautop(do_shortcode(parent::prepare_for_pretty_echoing($value_on_field_to_be_outputted, $schema)));
         }
     }
+
+
+
+    public function get_json_schema()
+    {
+        $schema = parent::get_json_schema();
+        $schema['type'] = 'object';
+        $schema['properties'] = array(
+            'raw' => array(
+                'description' => $this->get_nicename() . ' - as it exists in the database',
+                'type' => 'string'
+            ),
+            'rendered' => array(
+                'description' => $this->get_nicename() . ' - transformed for display',
+                'type' => 'string',
+                'readonly' => true
+            )
+        );
+        return $schema;
+    }
 }

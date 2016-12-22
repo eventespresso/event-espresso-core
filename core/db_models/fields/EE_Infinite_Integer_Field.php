@@ -9,6 +9,7 @@
  */
 class EE_Infinite_Integer_Field extends EE_Model_Field_Base
 {
+
     function get_wpdb_data_type()
     {
         return '%d';
@@ -73,5 +74,20 @@ class EE_Infinite_Integer_Field extends EE_Model_Field_Base
         } else {
             return $value_on_field_to_be_outputted;
         }
+    }
+
+
+    /**
+     * This returns elements used to represent this field in the json schema.
+     *
+     * @link http://json-schema.org/
+     * @return array
+     */
+    public function get_json_schema()
+    {
+        return array(
+            'description' => $this->get_nicename(),
+            'type' => 'number'
+        );
     }
 }
