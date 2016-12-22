@@ -84,6 +84,78 @@ class Read extends Base
     }
 
 
+    /**
+     * Prepares and returns schema for any OPTIONS request.
+     * @return array
+     */
+    public static function handle_schema_request()
+    {
+        $controller = new Read();
+        //setup request since we dont' have it exposed.
+        //@see https://core.trac.wordpress.org/ticket/39376.  If/when that gets patched then we should have the $route
+        //exposed for determining what model schema is being requested.
+        $request = new \WP_REST_Request($_SERVER['REQUEST_METHOD'], $controller->get_route_from_request() );
+        try {
+            $matches = $controller->parse_route(
+                $request->get_route(),
+                '~' . \EED_Core_Rest_Api::ee_api_namespace_for_regex . '(.*)~',
+                array('version', 'model')
+            );
+            $controller->set_requested_version($matches['version']);
+            $model_name_singular = \EEH_Inflector::singularize_and_upper($matches['model']);
+            if (! $controller->get_model_version_info()->is_model_name_in_this_version($model_name_singular)) {
+                return array();
+            }
+            return $controller->get_model_schema(
+                $controller->get_model_version_info()->load_model($model_name_singular)
+            );
+        } catch(\Exception $e) {
+            return array();
+        }
+    }
+
+
+
+
+    /**
+     * Used to figure out the route from the request when a `WP_REST_Request` object is not available
+     * @return string
+     */
+    protected function get_route_from_request() {
+        if (isset($GLOBALS['wp'])
+            && $GLOBALS['wp'] instanceof \WP
+            && isset($GLOBALS['wp']->query_vars['rest_route'] )
+        ) {
+            return $GLOBALS['wp']->query_vars['rest_route'];
+        } else {
+            return isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : '/';
+        }
+    }
+
+
+    /**
+     * Gets the schema for the given model.
+     * @param \EEM_Base $model
+     * @return array
+     */
+    public function get_model_schema($model)
+    {
+        $fields_on_this_model = $this->get_model_version_info()->fields_on_model_in_this_version($model);
+        //basic details
+        $schema = array(
+            '$schema' => 'http://json-schema.org/draft-04/schema#',
+            'title' => $model->get_this_model_name(),
+            'type' => 'object',
+            'properties' => array()
+        );
+        //loop through and get schema for each model field.
+        foreach ($fields_on_this_model as $field => $model_field) {
+            $schema['properties'][$field] = $model_field->get_json_schema();
+        }
+        return $schema;
+    }
+
+
 
     /**
      * Gets a single entity related to the model indicated in the path and its id
