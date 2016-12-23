@@ -96,7 +96,7 @@ abstract class EE_Field_With_Model_Name extends EE_Model_Field_Base
      * @link http://json-schema.org/
      * @return array
      */
-    public function get_json_schema()
+    public function get_schema()
     {
         return array(
             'description' => $this->get_nicename(),

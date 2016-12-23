@@ -39,9 +39,9 @@ class EE_Boolean_Field extends EE_Integer_Field
     }
 
 
-    public function get_json_schema()
+    public function get_schema()
     {
-        $schema = parent::get_json_schema();
+        $schema = parent::get_schema();
         $schema['type'] = 'boolean';
         return $schema;
     }

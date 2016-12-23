@@ -66,9 +66,9 @@ class EE_Money_Field extends EE_Float_Field
         return round(parent::prepare_for_get($value_of_field_on_model_object), $c->dec_plc);
     }
 
-    public function get_json_schema()
+    public function get_schema()
     {
-        $schema = parent::get_json_schema();
+        $schema = parent::get_schema();
         $schema['type'] = 'object';
         $schema['properties'] = array(
             'raw' => array(

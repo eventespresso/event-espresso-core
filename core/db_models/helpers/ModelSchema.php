@@ -43,7 +43,7 @@ class ModelSchema
             if (! $model_field instanceof EE_Model_Field_Base) {
                 continue;
             }
-            $schema['properties'][$field] = $model_field->get_json_schema();
+            $schema['properties'][$field] = $model_field->get_schema();
         }
         return $schema;
     }

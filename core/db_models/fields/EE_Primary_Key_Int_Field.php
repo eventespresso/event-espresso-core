@@ -31,9 +31,9 @@ class EE_Primary_Key_Int_Field extends EE_Primary_Key_Field_Base
         return true;
     }
 
-    public function get_json_schema()
+    public function get_schema()
     {
-        $schema = parent::get_json_schema();
+        $schema = parent::get_schema();
         $schema['type'] = 'integer';
         return $schema;
     }

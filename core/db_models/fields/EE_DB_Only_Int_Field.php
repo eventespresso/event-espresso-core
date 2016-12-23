@@ -9,9 +9,9 @@ class EE_DB_Only_Int_Field extends EE_DB_Only_Field_Base
         return '%d';
     }
 
-    public function get_json_schema()
+    public function get_schema()
     {
-        $schema = parent::get_json_schema();
+        $schema = parent::get_schema();
         $schema['type'] = 'integer';
         return $schema;
     }

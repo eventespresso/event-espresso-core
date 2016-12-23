@@ -76,9 +76,9 @@ class EE_Enum_Text_Field extends EE_Text_Field_Base
     }
 
 
-    public function get_json_schema()
+    public function get_schema()
     {
-        $schema = parent::get_json_schema();
+        $schema = parent::get_schema();
         $schema['type'] = 'object';
         $schema['properties'] = array(
             'raw' => array(

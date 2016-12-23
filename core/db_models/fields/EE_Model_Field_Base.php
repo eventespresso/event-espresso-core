@@ -223,7 +223,7 @@ abstract class EE_Model_Field_Base
      * @link http://json-schema.org/
      * @return array
      */
-    abstract public function get_json_schema();
+    abstract public function get_schema();
 
     /**
      * Some fields are in the database-only, (ie, used in queries etc), but shouldn't necessarily be part
