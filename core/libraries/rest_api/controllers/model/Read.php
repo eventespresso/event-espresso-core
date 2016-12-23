@@ -109,9 +109,15 @@ class Read extends Base
             }
             $model_schema = new ModelSchema();
             $model = $controller->get_model_version_info()->load_model($model_name_singular);
-            return $model_schema->getModelSchemaForFields(
-                $controller->get_model_version_info()->fields_on_model_in_this_version($model),
-                $model
+            $schema = $model_schema->getInitialSchemaStructure($model);
+            return array_merge(
+                $schema,
+                $model_schema->getModelSchemaForRelations(
+                    $controller->get_model_version_info()->relation_settings($model)
+                ),
+                $model_schema->getModelSchemaForFields(
+                    $controller->get_model_version_info()->fields_on_model_in_this_version($model)
+                )
             );
         } catch(\Exception $e) {
             return array();
