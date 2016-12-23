@@ -731,7 +731,7 @@ class EE_Data_Migration_Manager{
 		if( ! $this->_data_migration_class_to_filepath_map){
 			$this->_data_migration_class_to_filepath_map = array();
 			foreach($this->get_data_migration_script_folders() as $folder_path){
-                $folder_path = rtrim($folder_path, DS ) . DS;
+                $folder_path = EEH_File::end_with_directory_separator($folder_path);
 				$files = glob( $folder_path. '*.dms.php' );
 
 				if ( empty( $files ) ) {
