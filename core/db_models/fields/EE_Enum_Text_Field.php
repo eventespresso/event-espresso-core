@@ -82,12 +82,18 @@ class EE_Enum_Text_Field extends EE_Text_Field_Base
         $schema['type'] = 'object';
         $schema['properties'] = array(
             'raw' => array(
-                'description' => $this->get_nicename() . ' - the value saved to the database',
+                'description' =>  sprintf(
+                    __('%s - the value in the database.', 'event_espresso'),
+                    $this->get_nicename()
+                ),
                 'type' => 'string',
                 'enum' => array_keys($this->_allowed_enum_values)
             ),
             'pretty' => array(
-                'description' => $this->get_nicename() . ' - used in displaying the enum value.',
+                'description' =>  sprintf(
+                    __('%s - the value for display.', 'event_espresso'),
+                    $this->get_nicename()
+                ),
                 'type' => 'string',
                 'enum' => array_values($this->_allowed_enum_values),
                 'read_only' => true

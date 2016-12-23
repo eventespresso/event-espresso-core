@@ -82,12 +82,18 @@ class EE_Enum_Integer_Field extends EE_Integer_Field
         $schema['type'] = 'object';
         $schema['properties'] = array(
             'raw' => array(
-                'description' => $this->get_nicename() . ' - the value in the database.',
+                'description' =>  sprintf(
+                    __('%s - the value in the database.', 'event_espresso'),
+                    $this->get_nicename()
+                ),
                 'enum' => array_keys($this->_allowed_enum_values),
                 'type' => 'integer'
             ),
             'pretty' => array(
-                'description' => $this->get_nicename() .' - the value for display.',
+                'description' =>  sprintf(
+                    __('%s - the value for display.', 'event_espresso'),
+                    $this->get_nicename()
+                ),
                 'enum' => array_values($this->_allowed_enum_values),
                 'type' => 'string',
                 'read_only' => true

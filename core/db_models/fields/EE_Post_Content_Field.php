@@ -32,11 +32,17 @@ class EE_Post_Content_Field extends EE_Text_Field_Base
         $schema['type'] = 'object';
         $schema['properties'] = array(
             'raw' => array(
-                'description' => $this->get_nicename() . ' - the content as it is in the database.',
+                'description' =>  sprintf(
+                    __('%s - the content as it exists in the database.', 'event_espresso'),
+                    $this->get_nicename()
+                ),
                 'type' => 'string'
             ),
             'rendered' => array(
-                'description' => $this->get_nicename() . ' - the content rendered for display.',
+                'description' =>  sprintf(
+                    __('%s - the content rendered for display.', 'event_espresso'),
+                    $this->get_nicename()
+                ),
                 'type' => 'string'
             )
         );

@@ -72,11 +72,17 @@ class EE_Money_Field extends EE_Float_Field
         $schema['type'] = 'object';
         $schema['properties'] = array(
             'raw' => array(
-                'description' => $this->get_nicename() . ' - the raw value as it exists in the database as a simple float.',
+                'description' =>  sprintf(
+                    __('%s - the raw value as it exists in the database as a simple float.', 'event_espresso'),
+                    $this->get_nicename()
+                ),
                 'type' => 'number'
             ),
             'pretty' => array(
-                'description' => $this->get_nicename() . ' - formatted for display in the set currency and decimal places.',
+                'description' =>  sprintf(
+                    __('%s - formatted for display in the set currency and decimal places.', 'event_espresso'),
+                    $this->get_nicename()
+                ),
                 'type' => 'string'
             )
         );

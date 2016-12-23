@@ -41,11 +41,17 @@ class EE_Full_HTML_Field extends EE_Text_Field_Base
         $schema['type'] = 'object';
         $schema['properties'] = array(
             'raw' => array(
-                'description' => $this->get_nicename() . ' - as it exists in the database',
+                'description' =>  sprintf(
+                    __('%s - the value in the database.', 'event_espresso'),
+                    $this->get_nicename()
+                ),
                 'type' => 'string'
             ),
             'rendered' => array(
-                'description' => $this->get_nicename() . ' - transformed for display',
+                'description' =>  sprintf(
+                    __('%s - transformed for display.', 'event_espresso'),
+                    $this->get_nicename()
+                ),
                 'type' => 'string',
                 'readonly' => true
             )
