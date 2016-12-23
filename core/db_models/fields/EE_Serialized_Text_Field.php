@@ -71,7 +71,7 @@ class EE_Serialized_Text_Field extends EE_Text_Field_Base
     public function get_json_schema()
     {
         $schema = parent::get_json_schema();
-        $schema['type'] = 'object';
+        $schema['type'] = array( 'object', 'string' );
         return $schema;
     }
 }
