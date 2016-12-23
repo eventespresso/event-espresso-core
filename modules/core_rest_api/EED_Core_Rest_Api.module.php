@@ -184,14 +184,20 @@ class EED_Core_Rest_Api extends \EED_Module
         foreach (EED_Core_Rest_Api::get_ee_route_data() as $namespace => $relative_urls) {
             foreach ($relative_urls as $endpoint => $routes) {
                 foreach ($routes as $route) {
-                    register_rest_route(
-                        $namespace,
-                        $endpoint,
+                    $route_args = array(
                         array(
                             'callback' => $route['callback'],
                             'methods'  => $route['methods'],
                             'args'     => isset($route['args']) ? $route['args'] : array(),
                         )
+                    );
+                    if (isset($route['schema_callback'])) {
+                        $route_args['schema'] = $route['schema_callback'];
+                    }
+                    register_rest_route(
+                        $namespace,
+                        $endpoint,
+                        $route_args
                     );
                 }
             }
@@ -381,6 +387,10 @@ class EED_Core_Rest_Api extends \EED_Module
                     '_links'          => array(
                         'self' => rest_url(EED_Core_Rest_Api::ee_api_namespace . $version . $singular_model_route),
                     ),
+                    'schema_callback' => array(
+                        'EventEspresso\core\libraries\rest_api\controllers\model\Read',
+                        'handle_schema_request'
+                        ),
                 ),
                 //						array(
                 //							'callback' => array(

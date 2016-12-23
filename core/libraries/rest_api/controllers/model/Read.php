@@ -5,6 +5,7 @@ use EventEspresso\core\libraries\rest_api\Capabilities;
 use EventEspresso\core\libraries\rest_api\Calculated_Model_Fields;
 use EventEspresso\core\libraries\rest_api\Rest_Exception;
 use EventEspresso\core\libraries\rest_api\Model_Data_Translator;
+use EventEspresso\core\db_models\helpers\ModelSchema;
 
 if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
@@ -80,6 +81,63 @@ class Read extends Base
             );
         } catch (\Exception $e) {
             return $controller->send_response($e);
+        }
+    }
+
+
+    /**
+     * Prepares and returns schema for any OPTIONS request.
+     * @return array
+     */
+    public static function handle_schema_request()
+    {
+        $controller = new Read();
+        //setup request since we dont' have it exposed.
+        //@see https://core.trac.wordpress.org/ticket/39376.  If/when that gets patched then we should have the $route
+        //exposed for determining what model schema is being requested.
+        $request = new \WP_REST_Request($_SERVER['REQUEST_METHOD'], $controller->get_route_from_request());
+        try {
+            $matches = $controller->parse_route(
+                $request->get_route(),
+                '~' . \EED_Core_Rest_Api::ee_api_namespace_for_regex . '(.*)~',
+                array('version', 'model')
+            );
+            $controller->set_requested_version($matches['version']);
+            $model_name_singular = \EEH_Inflector::singularize_and_upper($matches['model']);
+            if (! $controller->get_model_version_info()->is_model_name_in_this_version($model_name_singular)) {
+                return array();
+            }
+            $model_schema = new ModelSchema();
+            $model = $controller->get_model_version_info()->load_model($model_name_singular);
+            return array_merge(
+                $model_schema->getInitialSchemaStructure($model),
+                $model_schema->getModelSchemaForRelations(
+                    $controller->get_model_version_info()->relation_settings($model)
+                ),
+                $model_schema->getModelSchemaForFields(
+                    $controller->get_model_version_info()->fields_on_model_in_this_version($model)
+                )
+            );
+        } catch(\Exception $e) {
+            return array();
+        }
+    }
+
+
+
+
+    /**
+     * Used to figure out the route from the request when a `WP_REST_Request` object is not available
+     * @return string
+     */
+    protected function get_route_from_request() {
+        if (isset($GLOBALS['wp'])
+            && $GLOBALS['wp'] instanceof \WP
+            && isset($GLOBALS['wp']->query_vars['rest_route'] )
+        ) {
+            return $GLOBALS['wp']->query_vars['rest_route'];
+        } else {
+            return isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : '/';
         }
     }
 

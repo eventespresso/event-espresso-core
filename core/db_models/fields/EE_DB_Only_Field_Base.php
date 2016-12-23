@@ -7,14 +7,31 @@
  * special default values for them, or some other column-specific functionality. So we can add them as fields,
  * but db-only ones
  */
-abstract class EE_DB_Only_Field_Base extends EE_Model_Field_Base{
-	/**
-	 * All these children classes are for the db-only (meaning, we should select them
-	 * on get_all queries, update, delete, and will still want to set their default value
-	 * on inserts, but the model object won't have reference to these fields)
-	 * @return boolean
-	 */
-	function is_db_only_field() {
-		return true;
-	}
+abstract class EE_DB_Only_Field_Base extends EE_Model_Field_Base
+{
+    /**
+     * All these children classes are for the db-only (meaning, we should select them
+     * on get_all queries, update, delete, and will still want to set their default value
+     * on inserts, but the model object won't have reference to these fields)
+     *
+     * @return boolean
+     */
+    function is_db_only_field()
+    {
+        return true;
+    }
+
+    /**
+     * This returns elements used to represent this field in the json schema.
+     *
+     * @link http://json-schema.org/
+     * @return array
+     */
+    public function get_schema()
+    {
+        return array(
+            'description' => $this->get_nicename(),
+            'type' => 'string'
+        );
+    }
 }
