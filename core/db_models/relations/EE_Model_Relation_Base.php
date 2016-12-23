@@ -391,4 +391,25 @@ abstract class EE_Model_Relation_Base
     }
 
 
+    /**
+     * This returns an array representing a schema for the relation instance.
+     * Typically this is used by \EventEspresso\core\db_models\helpers\ModelSchema when it builds an array representing
+     * the schema for a model.
+     * @return array
+     */
+    public function get_schema()
+    {
+        return array(
+            'type' => 'object',
+            'description' => sprintf(__('Schema for %s relation.', 'event_espresso'), get_class($this)),
+            'properties' => array(
+                'name' => array(
+                    'type' => 'string',
+                    'enum' => array(str_replace('EE_', '', get_class($this)))
+                )
+            ),
+            'readonly' => true
+        );
+    }
+
 }
