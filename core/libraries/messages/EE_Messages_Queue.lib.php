@@ -137,11 +137,12 @@ class EE_Messages_Queue
     /**
      * Persists all queued EE_Message objects to the db.
      *
-     * @return array()  @see EE_Messages_Repository::saveAll() for return values.
+     * @param bool $do_hooks_only       @see EE_Message_Repository::saveAll
+     * @return array @see EE_Messages_Repository::saveAll() for return values.
      */
-    public function save()
+    public function save($do_hooks_only = false)
     {
-        return $this->_message_repository->saveAll();
+        return $this->_message_repository->saveAll($do_hooks_only);
     }
 
 
@@ -493,7 +494,7 @@ class EE_Messages_Queue
             /** @type EE_Message $message */
             $message = $this->_message_repository->current();
             //only process things that are queued for sending
-            if ( ! in_array($message->STS_ID(), EEM_Message::instance()->stati_indicating_to_send())) {
+            if (! in_array($message->STS_ID(), EEM_Message::instance()->stati_indicating_to_send())) {
                 $this->_message_repository->next();
                 continue;
             }
@@ -503,13 +504,13 @@ class EE_Messages_Queue
                 continue;
             }
             //error checking
-            if ( ! $message->valid_messenger()) {
+            if (! $message->valid_messenger()) {
                 $error_messages[] = sprintf(
                     __('The %s messenger is not active at time of sending.', 'event_espresso'),
                     $message->messenger()
                 );
             }
-            if ( ! $message->valid_message_type()) {
+            if (! $message->valid_message_type()) {
                 $error_messages[] = sprintf(
                     __('The %s message type is not active at the time of sending.', 'event_espresso'),
                     $message->message_type()
@@ -521,16 +522,27 @@ class EE_Messages_Queue
                 $error_messages[] = $sending_messenger->getMessage();
             }
             // if there are no errors, then let's process the message
-            if (empty($error_messages) && $this->_process_message($message, $sending_messenger)) {
-                $messages_sent++;
+            if (empty($error_messages)) {
+                if ($save) {
+                    $message->set_messenger_is_executing();
+                }
+                if ($this->_process_message($message, $sending_messenger)) {
+                    $messages_sent++;
+                }
             }
             $this->_set_error_message($message, $error_messages);
             //add modified time
             $message->set_modified(time());
+            //we save each message after its processed to make sure its status persists in case PHP times-out or runs
+            //out of memory. @see https://events.codebasehq.com/projects/event-espresso/tickets/10281
+            if ($save) {
+                $message->save();
+            }
+
             $this->_message_repository->next();
         }
         if ($save) {
-            $this->save();
+            $this->save(true);
         }
         return $messages_sent;
     }
