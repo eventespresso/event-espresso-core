@@ -109,9 +109,8 @@ class Read extends Base
             }
             $model_schema = new ModelSchema();
             $model = $controller->get_model_version_info()->load_model($model_name_singular);
-            $schema = $model_schema->getInitialSchemaStructure($model);
             return array_merge(
-                $schema,
+                $model_schema->getInitialSchemaStructure($model),
                 $model_schema->getModelSchemaForRelations(
                     $controller->get_model_version_info()->relation_settings($model)
                 ),
