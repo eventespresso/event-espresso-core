@@ -5,6 +5,7 @@ use EventEspresso\core\libraries\rest_api\Capabilities;
 use EventEspresso\core\libraries\rest_api\Calculated_Model_Fields;
 use EventEspresso\core\libraries\rest_api\Rest_Exception;
 use EventEspresso\core\libraries\rest_api\Model_Data_Translator;
+use EventEspresso\core\db_models\helpers\ModelSchema;
 
 if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
@@ -94,7 +95,7 @@ class Read extends Base
         //setup request since we dont' have it exposed.
         //@see https://core.trac.wordpress.org/ticket/39376.  If/when that gets patched then we should have the $route
         //exposed for determining what model schema is being requested.
-        $request = new \WP_REST_Request($_SERVER['REQUEST_METHOD'], $controller->get_route_from_request() );
+        $request = new \WP_REST_Request($_SERVER['REQUEST_METHOD'], $controller->get_route_from_request());
         try {
             $matches = $controller->parse_route(
                 $request->get_route(),
@@ -106,8 +107,11 @@ class Read extends Base
             if (! $controller->get_model_version_info()->is_model_name_in_this_version($model_name_singular)) {
                 return array();
             }
-            return $controller->get_model_schema(
-                $controller->get_model_version_info()->load_model($model_name_singular)
+            $model_schema = new ModelSchema();
+            $model = $controller->get_model_version_info()->load_model($model_name_singular);
+            return $model_schema->getModelSchemaForFields(
+                $controller->get_model_version_info()->fields_on_model_in_this_version($model),
+                $model
             );
         } catch(\Exception $e) {
             return array();
@@ -130,29 +134,6 @@ class Read extends Base
         } else {
             return isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : '/';
         }
-    }
-
-
-    /**
-     * Gets the schema for the given model.
-     * @param \EEM_Base $model
-     * @return array
-     */
-    public function get_model_schema($model)
-    {
-        $fields_on_this_model = $this->get_model_version_info()->fields_on_model_in_this_version($model);
-        //basic details
-        $schema = array(
-            '$schema' => 'http://json-schema.org/draft-04/schema#',
-            'title' => $model->get_this_model_name(),
-            'type' => 'object',
-            'properties' => array()
-        );
-        //loop through and get schema for each model field.
-        foreach ($fields_on_this_model as $field => $model_field) {
-            $schema['properties'][$field] = $model_field->get_json_schema();
-        }
-        return $schema;
     }
 
 
