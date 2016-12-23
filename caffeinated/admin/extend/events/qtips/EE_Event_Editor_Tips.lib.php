@@ -171,6 +171,46 @@ class EE_Event_Editor_Tips extends EE_Qtip_Config {
 							)
 						)
 					)
+				),
+			14 => array(
+				'content_id' => 'about-full-checkin-toggle',
+				'target' => '.ticket-full-checkin-container',
+				'content' => __('Any Check-In/Out for this Ticket will Check-In/Out this Ticket for all linked DateTimes.', 'event_espresso'),
+				'options' => array(
+					'show_only_once' => true,
+					'content' => array(
+						'title' => __('Check-In/Out in Full Toggle', 'event_espresso'),
+						'button' => true
+						),
+					'show' => array(
+						'event' => 'click'
+						),
+					'hide' => array(
+						'event' => false
+						),
+					'style' => array(
+						'classes' => ''
+						),
+					'position' => array(
+						'target' => 'mouse',
+						'adjust' => array(
+							'mouse' => false,
+							'y' => -20
+							)
+						)
+					)
+				),
+			15 => array(
+				'content_id' => 'about-ticket-classes',
+				'target' => '.TD_TKT_class_label',
+				'content' => __('Ticket Classes are applied on front-end templates and can also be used for back-end validation.  Classes must be valid CSS Class Names, and can be separated by spaces.', 'event_espresso'),
+				'options' => array(
+					'position' => array(
+						'adjust' => array(
+							'mouse' => false
+							)
+						)
+					)
 				)
 			);
 	}

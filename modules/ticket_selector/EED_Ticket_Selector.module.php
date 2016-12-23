@@ -776,7 +776,7 @@ class EED_Ticket_Selector extends EED_Module
                 $valid['max_atndz'], 'event_espresso');
             $limit_error_2 = sprintf($max_atndz_string, $valid['max_atndz'], $valid['max_atndz']);
             EE_Error::add_error($limit_error_1 . '<br/>' . $limit_error_2, __FILE__, __FUNCTION__, __LINE__);
-        } else {
+        } elseif ( apply_filters('FHEE__EED_Ticket_Selector__process_ticket_selections__validate_requested_tickets', true, $valid) ) {
             // all data appears to be valid
             $tckts_slctd = false;
             $tickets_added = 0;
@@ -848,6 +848,12 @@ class EED_Ticket_Selector extends EED_Module
                 // no ticket quantities were selected
                 EE_Error::add_error(__('You need to select a ticket quantity before you can proceed.',
                     'event_espresso'), __FILE__, __FUNCTION__, __LINE__);
+            }
+        } else {
+            if ( ! EE_Error::has_error() && ! EE_Error::has_error(true, 'attention')) {
+                // nothing added to cart
+                EE_Error::add_attention(__('There was an error adding your tickets to the cart', 'event_espresso'), __FILE__,
+                    __FUNCTION__, __LINE__);
             }
         }
         //die(); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< KILL BEFORE REDIRECT

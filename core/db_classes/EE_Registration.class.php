@@ -979,9 +979,13 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 		if ( ! ( EEM_Datetime_Ticket::instance()->exists( array( array( 'TKT_ID' => $this->get('TKT_ID' ), 'DTT_ID' => $DTT_ID ) ) ) ) ) {
 			return false;
 		}
-
+		
 		//final check is against TKT_uses
-		return $this->verify_can_checkin_against_TKT_uses( $DTT_ID );
+		if ( ! $this->verify_can_checkin_against_TKT_uses( $DTT_ID ) ) {
+			return false;
+		}
+		
+		return apply_filters( 'FHEE__EE_Registration__can_checkin__can_checkin', TRUE, $this, $DTT_ID, $verify );
 	}
 
 
@@ -1044,56 +1048,114 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @throws EE_Error
      */
 	public function toggle_checkin_status( $DTT_ID = null, $verify = false ) {
-		if ( empty( $DTT_ID ) ) {
-			$datetime = $this->get_latest_related_datetime();
-			$DTT_ID = $datetime instanceof EE_Datetime ? $datetime->ID() : 0;
-		// verify the registration can checkin for the given DTT_ID
-		} elseif ( ! $this->can_checkin( $DTT_ID, $verify ) ) {
+		
+		$ticket = $this->ticket();
+		
+		if ( ! ($ticket instanceof EE_Ticket ) ) {
 			EE_Error::add_error(
-					sprintf(
-						__( 'The given registration (ID:%1$d) can not be checked in to the given DTT_ID (%2$d), because the registration does not have access', 'event_espresso'),
-						$this->ID(),
-						$DTT_ID
-					),
-					__FILE__, __FUNCTION__, __LINE__
+				sprintf(
+					__( 'The given registration (ID:%1$d) can not be checked in because we are unable to access the Ticket', 'event_espresso'),
+					$this->ID(),
+					$DTT_ID
+				),
+				__FILE__, __FUNCTION__, __LINE__
 			);
 			return false;
 		}
-		$status_paths = array(
-			EE_Registration::checkin_status_never => EE_Registration::checkin_status_in,
-			EE_Registration::checkin_status_in => EE_Registration::checkin_status_out,
-			EE_Registration::checkin_status_out => EE_Registration::checkin_status_in
-		);
+		
+		if ( empty( $DTT_ID ) ) {
+			$datetime = $this->get_latest_related_datetime();
+			$DTT_ID = $datetime instanceof EE_Datetime ? $datetime->ID() : 0;
+		}
+		
+		$DTTs = $ticket->datetimes();
+		
+		if ( ! isset( $DTTs[$DTT_ID] ) ) {
+			EE_Error::add_error(
+				sprintf(
+					__( 'The given registration (ID:%1$d) can not be checked in to the given DTT_ID (%2$d), because the registration does not have access', 'event_espresso'),
+					$this->ID(),
+					$DTT_ID
+				),
+				__FILE__, __FUNCTION__, __LINE__
+			);
+			return false;
+		}
+		
+		if ( ! $ticket->get('TKT_full_checkin') ) {
+			$DTTs = array($DTT_ID => $DTTs[$DTT_ID]);
+		}
+		
 		//start by getting the current status so we know what status we'll be changing to.
-		$cur_status = $this->check_in_status_for_datetime( $DTT_ID, NULL );
-		$status_to = $status_paths[ $cur_status ];
+		$DTT_ID_status = $this->check_in_status_for_datetime( $DTT_ID, NULL );
+		
 		// database only records true for checked IN or false for checked OUT
 		// no record ( null ) means checked in NEVER, but we obviously don't save that
-		$new_status = $status_to === EE_Registration::checkin_status_in ? true : false;
+		$status_to = (int) ( $DTT_ID_status !== EE_Registration::checkin_status_in );
+		
 		// add relation - note Check-ins are always creating new rows
 		// because we are keeping track of Check-ins over time.
 		// Eventually we'll probably want to show a list table
 		// for the individual Check-ins so that they can be managed.
-		$checkin = EE_Checkin::new_instance( array(
-				'REG_ID' => $this->ID(),
-				'DTT_ID' => $DTT_ID,
-				'CHK_in' => $new_status
-		) );
-		// if the record could not be saved then return false
-		if ( $checkin->save() === 0 ) {
-			if ( WP_DEBUG ) {
-				global $wpdb;
-				$error = sprintf(
-					__( 'Registration check in update failed because of the following database error: %1$s%2$s', 'event_espresso' ),
-					'<br />',
-					$wpdb->last_error
-				);
+		$checked_in = array();
+		
+		foreach ($DTTs as $DTT) {
+			// verify the registration can checkin for the given DTT_ID
+			if ( $this->can_checkin( $DTT, $verify ) ) {
+				$cur_ID = $DTT->ID();
+				if ( ( $cur_ID != $DTT_ID ) ) {
+					$cur_status = (int) ($this->check_in_status_for_datetime( $DTT_ID, NULL ) === EE_Registration::checkin_status_in);
+					// If the DT is not checked in and the new status is to check out, skip
+					// If the DT is checked in, and the new status is to check in, skip
+					if ( $status_to === $cur_status )
+						continue;
+				}
+				
+				$checkin = EE_Checkin::new_instance( array(
+					'REG_ID' => $this->ID(),
+					'DTT_ID' => $DTT->ID(),
+					'CHK_in' => $status_to
+				) );
+				
+				if ( $checkin->save() !== 0 ) {
+					// Maintain list of successful saves, so we can back them out if there is an error.
+					$checked_in[] = $checkin;
+				} else {
+					if ( WP_DEBUG ) {
+						global $wpdb;
+						$error = sprintf(
+							__( 'Registration check in update failed because of the following database error: %1$s%2$s', 'event_espresso' ),
+							'<br />',
+							$wpdb->last_error
+						);
+					} else {
+						$error = __( 'Registration check in update failed because of an unknown database error', 'event_espresso' );
+					}
+					EE_Error::add_error( $error, __FILE__, __FUNCTION__, __LINE__ );
+					$status_to = false;
+					break;
+				}
 			} else {
-				$error = __( 'Registration check in update failed because of an unknown database error', 'event_espresso' );
+				EE_Error::add_error(
+						sprintf(
+							__( 'The given registration (ID:%1$d) can not be checked in because DTT_ID (%2$d) can not be checked in', 'event_espresso'),
+							$this->ID(),
+							$DTT->ID()
+						),
+						__FILE__, __FUNCTION__, __LINE__
+				);
+				$status_to = false;
+				break;
 			}
-			EE_Error::add_error( $error, __FILE__, __FUNCTION__, __LINE__ );
-			return false;
 		}
+		
+		if ( $status_to === false ) {
+			// if a record could not be saved, back out existing, then return false
+			foreach ($checked_in as $checkin) {
+				$checkin->delete();
+			}
+		}
+		
 		return $status_to;
 	}
 

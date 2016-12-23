@@ -166,7 +166,35 @@
 			<ul class="datetime-tickets-list">
 				<?php echo $ticket_datetimes_list; ?>
 			</ul>
-
+			<div style="clear:both"></div>
+			<h4 class="tickets-heading"><?php esc_html_e('Advanced Ticket Details', 'event_espresso'); ?></h4>
+			<div class="ee-editor-advanced-container">
+				<div style="clear:both"></div>
+				<table class="advanced-ticket-info">
+					<thead>
+						<tr valign="bottom">
+							<td><span class="TD_TKT_class_label"><?php esc_html_e('Ticket Class(es)', 'event_espresso'); ?></span></td>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>
+								<?php if ( $disabled ) : ?>
+									<input type="hidden" class="edit-ticket-TKT_class ee-small-text-inp ee-text" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_class]" value="<?php echo $TKT_class; ?>">
+									<input type="text" class="edit-ticket-TKT_class ee-small-text-inp ee-text" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_class]" value="<?php echo $TKT_class; ?>" disabled>
+								<?php else : ?>
+									<input type="text" class="edit-ticket-TKT_class ee-small-text-inp ee-text" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_class]" value="<?php echo $TKT_class; ?>">
+								<?php endif; ?>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<div style="clear:both"></div>
+				<div class="ticket-full-checkin-container">
+					<input type="checkbox" id="edit-ticket-TKT_full_checkin-<?php echo $tkt_row; ?>" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_full_checkin]" class="edit-ticket-TKT_full_checkin" value="1"<?php echo $TKT_full_checkin ? ' checked="checked"' : ''; ?><?php echo $disabled ? ' disabled' : ''; ?>>
+					<label for="edit-ticket-TKT_full_checkin-<?php echo $tkt_row; ?>"><?php esc_html_e('Ticket Checks-In/Out in Full.', 'event_espresso'); ?></label>
+				</div>
+			</div>
 			<?php do_action( 'AHEE__event_tickets_datetime_ticket_row_template__advanced_details_end', $tkt_row, $TKT_ID ); ?>
 			<div class="ee-editor-footer-container">
 				<div class="ee-editor-id-container">
