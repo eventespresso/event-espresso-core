@@ -3,6 +3,7 @@ namespace EventEspresso\core\db_models\helpers;
 
 use EEM_Base;
 use EE_Model_Field_Base;
+use EE_Model_Relation_Base;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -25,20 +26,22 @@ class ModelSchema
      */
     public function getModelSchema(EEM_Base $model)
     {
+        $schema = $this->getInitialSchemaStructure($model);
         $fields_on_model = $model->field_settings();
-        return $this->getModelSchemaForFields($fields_on_model, $model);
+        $relations_on_model = $model->relation_settings();
+        $schema = array_merge($schema, $this->getModelSchemaForFields($fields_on_model));
+        return array_merge($schema, $this->getModelSchemaForRelations($relations_on_model));
     }
 
 
     /**
-     * Get the json schema for a given set of model fields.
+     * Get the schema for a given set of model fields.
      * @param \EE_Model_Field_Base[]     $model_fields
-     * @param \EEM_Base $model
      * @return array
      */
-    public function getModelSchemaForFields(array $model_fields, EEM_Base $model)
+    public function getModelSchemaForFields(array $model_fields)
     {
-        $schema = $this->getInitialSchemaStructure($model);
+        $schema = array();
         foreach ($model_fields as $field => $model_field) {
             if (! $model_field instanceof EE_Model_Field_Base) {
                 continue;
@@ -50,11 +53,35 @@ class ModelSchema
 
 
     /**
+     * Get the schema for a given set of model relations
+     * @param EE_Model_Relation_Base[] $relations_on_model
+     */
+    public function getModelSchemaForRelations(array $relations_on_model)
+    {
+        $schema = array(
+            'relations' => array(
+                'type' => 'object',
+                'description' => __('Relations for this model', 'event_espresso'),
+                'properties' => array(),
+                'readonly' => true
+            )
+        );
+        foreach ($relations_on_model as $model_name => $relation) {
+            if (! $relation instanceof EE_Model_Relation_Base) {
+                continue;
+            }
+            $schema['relations']['properties'][$model_name] = $relation->get_schema();
+        }
+        return $schema;
+    }
+
+
+    /**
      * Outputs the schema header for a model.
      * @param \EEM_Base $model
      * @return array
      */
-    protected function getInitialSchemaStructure(EEM_Base $model)
+    public function getInitialSchemaStructure(EEM_Base $model)
     {
         return array(
             '$schema' => 'http://json-schema.org/draft-04/schema#',
