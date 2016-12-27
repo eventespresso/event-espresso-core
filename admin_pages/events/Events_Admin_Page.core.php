@@ -2254,7 +2254,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         $this->_template_args['default_reg_status'] = isset(
                                                           EE_Registry::instance()->CFG->registration->default_STS_ID
                                                       )
-                                                      && in_array(
+                                                      && array_key_exists(
                                                           EE_Registry::instance()->CFG->registration->default_STS_ID,
                                                           $this->_template_args['reg_status_array']
                                                       )

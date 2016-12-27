@@ -276,9 +276,14 @@ class EEM_Transaction extends EEM_Base
     /**
      * Deletes "junk" transactions that were probably added by bots. There might be TONS
      * of these, so we are very careful to NOT select (which the models do even when deleting),
-     * and so we only use wpdb directly and NOT do any joins.
+     * and so we only use wpdb directly and only do minimal joins.
+     * Transactions are considered "junk" if they're failed for longer than a week.
+     * Also, there is an extra check for payments related to the transaction, because if a transaction has a payment on
+     * it, it's probably not junk (regardless of what status it has).
      * The downside to this approach is that is addons are listening for object deletions
-     * on EEM_Base::delete() they won't be notified of this.
+     * on EEM_Base::delete() they won't be notified of this.  However, there is an action that plugins can hook into
+     * to catch these types of deletions.
+     *
      * @global WPDB $wpdb
      * @return mixed
      */
@@ -288,7 +293,8 @@ class EEM_Transaction extends EEM_Base
         global $wpdb;
         $deleted             = false;
         $time_to_leave_alone = apply_filters(
-            'FHEE__EEM_Transaction__delete_junk_transactions__time_to_leave_alone', WEEK_IN_SECONDS
+            'FHEE__EEM_Transaction__delete_junk_transactions__time_to_leave_alone'
+            , WEEK_IN_SECONDS
         );
         
         
@@ -302,6 +308,7 @@ class EEM_Transaction extends EEM_Base
             array(
                 0 => array(
                     'STS_ID'        => EEM_Transaction::failed_status_code,
+                    'Payment.PAY_ID' => array( 'IS NULL' ),
                     'TXN_timestamp' => array('<', time() - $time_to_leave_alone)
                 )
             ),
@@ -319,7 +326,7 @@ class EEM_Transaction extends EEM_Base
             $time_to_leave_alone
         );
         //now that we have the ids to delete
-        if ( ! empty($txn_ids) && is_array($txn_ids)) {
+        if (! empty($txn_ids) && is_array($txn_ids)) {
             // first, make sure these TXN's are removed the "ee_locked_transactions" array
             EEM_Transaction::unset_locked_transactions($txn_ids);
             // let's get deletin'...
