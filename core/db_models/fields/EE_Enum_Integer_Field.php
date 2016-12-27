@@ -3,24 +3,20 @@
 }
 require_once(EE_MODELS . 'fields/EE_Integer_Field.php');
 
-
-
 /**
  * Class EE_Enum_Integer_Field
  *
- * @package     Event Espresso
- * @subpackage  includes/models/
- * @author      Mike Nelson
+ * @package               Event Espresso
+ * @subpackage            includes/models/
+ * @author                Mike Nelson
+>>>>>>> master
  */
 class EE_Enum_Integer_Field extends EE_Integer_Field
 {
-
     /**
      * @var array $_allowed_enum_values
      */
     public $_allowed_enum_values;
-
-
 
     /**
      * @param string  $table_column
@@ -34,8 +30,6 @@ class EE_Enum_Integer_Field extends EE_Integer_Field
         $this->_allowed_enum_values = $allowed_enum_values;
         parent::__construct($table_column, $nicename, $nullable, $default_value);
     }
-
-
 
     /**
      * Returns the list of allowed enum options, but filterable.
@@ -51,8 +45,6 @@ class EE_Enum_Integer_Field extends EE_Integer_Field
             $this
         );
     }
-
-
 
     /**
      * When setting, just verify that the value being used matches what we've defined as allowable enum values.
