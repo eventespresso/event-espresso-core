@@ -82,7 +82,7 @@ class EED_Bot_Trap  extends EED_Module {
         add_action(
 			'AHEE__Extend_Registration_Form_Admin_Page___reg_form_settings_template',
 			array( 'EED_Bot_Trap', 'bot_trap_settings_form' ),
-			10
+			5
 		);
 		add_filter(
 			'FHEE__Extend_Registration_Form_Admin_Page___update_reg_form_settings__CFG_registration',
@@ -112,15 +112,16 @@ class EED_Bot_Trap  extends EED_Module {
 	 */
 	public static function generate_bot_trap() {
 		$do_not_enter = esc_html__( 'please do not enter anything in this input', 'event_espresso' );
-		$html = '<div id="tkt-slctr-request-processor-dv" style="float:left; margin:0 0 0 -999em; height: 0;">';
-		$html .= '<label for="tkt-slctr-request-processor-email">' . $do_not_enter  . '</label>';
-		$html .= '<input type="email" name="tkt-slctr-request-processor-email" value=""/>';
+		$time = microtime(true);
+		$html = '<div class="tkt-slctr-request-processor-dv" style="float:left; margin:0 0 0 -999em; height: 0;">';
+		$html .= '<label for="tkt-slctr-request-processor-email-' . $time . '">' . $do_not_enter  . '</label>';
+		$html .= '<input type="email" id="tkt-slctr-request-processor-email-' . $time  .'" name="tkt-slctr-request-processor-email" value=""/>';
 		$html .= '<input type="hidden" name="tkt-slctr-request-processor-token" value="';
 		if ( EE_Registry::instance()->CFG->registration->use_encryption ) {
 			EE_Registry::instance()->load_core( 'EE_Encryption' );
-			$html .= EE_Encryption::instance()->encrypt( time() );
+			$html .= EE_Encryption::instance()->encrypt( $time );
 		} else {
-			$html .= time();
+			$html .= $time;
 		}
 		$html .= '"/>';
 		$html .= '</div>';
@@ -193,7 +194,7 @@ class EED_Bot_Trap  extends EED_Module {
 		$redirect_url = apply_filters('FHEE__EED_Bot_Trap__process_bot_trap__redirect_url', $redirect_url);
         // if AJAX, return the redirect URL
         if (defined('DOING_AJAX') && DOING_AJAX) {
-            echo json_encode(
+            echo wp_json_encode(
                 array_merge(
                     \EE_Error::get_notices(false),
                     array(

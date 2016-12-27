@@ -1,10 +1,11 @@
 #Event Espresso 4 Core
 
+[![Latest Tag](https://img.shields.io/github/tag/eventespresso/event-espresso-core.svg?style=flat&label=Latest%20Tag)](https://github.com/eventespresso/event-espresso-core/releases)
 [![Build Status](https://circleci.com/gh/eventespresso/event-espresso-core.svg?style=shield&circle-token=fa8a74e72f3f7c85b8e754044268cafdc9765437)](https://circleci.com/gh/eventespresso)
-[![Latest Tag](https://img.shields.io/github/tag/eventespresso/event-espresso-core.svg?style=flat&label=latest%20tag)](https://github.com/eventespresso/event-espresso-core/releases)
-[![WordPress](https://img.shields.io/badge/WordPress-v4.3.x+%20tested-brightgreen.svg?style=plastic)](https://eventespresso.com/)
-[![License](https://img.shields.io/badge/License-GPLv2-blue.svg?style=plastic)](https://www.gnu.org/licenses/gpl-2.0.html)
-[![License](https://img.shields.io/badge/Now%20100%-Gluten%20Free-ff69b4.svg?style=plastic)](https://eventespresso.com/)
+[![PHP](https://img.shields.io/badge/PHP-4.7%20Tested-brightgreen.svg?style=flat)](https://eventespresso.com/)
+[![WordPress](https://img.shields.io/badge/WordPress-v4.7.x+%20Tested-brightgreen.svg?style=flat)](https://eventespresso.com/)
+[![License](https://img.shields.io/badge/License-GPLv2-blue.svg?style=flat)](https://www.gnu.org/licenses/gpl-2.0.html)
+[![Join Chat](https://img.shields.io/badge/Slack-Join%20Chat-aa30ff.svg?style=flat)](https://eventespresso.com/contact/community-chat/)
 
 ## Event Espresso 4 - Event Ticketing and Registration System
 
@@ -30,6 +31,12 @@ The Event Espresso 4 check-in & ticket scanning event app is available for [Andr
 
 ## Newsletter
 Be the first to know when we ship new features ... [signup here](https://eventespresso.com/newsletter/).
+
+## Community Chat
+Join a real-time community chat group for professionals that are leading the way in events from event management, event technology and event marketing to work-life balance.
+
+[Join the Discussion →](https://eventsmart.com/contact/community-chat/?utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=community+chat)
+
 
 ## Developers
 

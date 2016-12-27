@@ -852,6 +852,37 @@ class Read extends Base
 
 
     /**
+     * Verifies the passed in value is an allowable default where conditions value.
+     *
+     * @param $default_query_params
+     * @return string
+     */
+    public function validate_default_query_params($default_query_params)
+    {
+        $valid_default_where_conditions_for_api_calls = array(
+            \EEM_Base::default_where_conditions_all,
+            \EEM_Base::default_where_conditions_minimum_all,
+            \EEM_Base::default_where_conditions_minimum_others,
+        );
+        if (! $default_query_params) {
+            $default_query_params = \EEM_Base::default_where_conditions_all;
+        }
+        if (
+        in_array(
+            $default_query_params,
+            $valid_default_where_conditions_for_api_calls,
+            true
+        )
+        ) {
+            return $default_query_params;
+        } else {
+            return \EEM_Base::default_where_conditions_all;
+        }
+    }
+
+
+
+    /**
      * Translates API filter get parameter into $query_params array used by EEM_Base::get_all().
      * Note: right now the query parameter keys for fields (and related fields)
      * can be left as-is, but it's quite possible this will change someday.
@@ -930,7 +961,7 @@ class Read extends Base
                         sprintf(
                             __('An invalid limit filter was provided. It was: %s. If the EE4 JSON REST API weren\'t in debug mode, this message would not appear.',
                                 'event_espresso'),
-                            json_encode($query_parameters['limit'])
+                            wp_json_encode($query_parameters['limit'])
                         )
                     );
                 }
@@ -944,6 +975,9 @@ class Read extends Base
             $model_query_params['caps'] = $this->validate_context($query_parameters['caps']);
         } else {
             $model_query_params['caps'] = \EEM_Base::caps_read;
+        }
+        if (isset($query_parameters['default_where_conditions'])) {
+            $model_query_params['default_where_conditions'] = $this->validate_default_query_params($query_parameters['default_where_conditions']);
         }
         return apply_filters('FHEE__Read__create_model_query_params', $model_query_params, $query_parameters, $model);
     }

@@ -55,6 +55,7 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 				'TKT_price'=> new EE_Money_Field('TKT_price', 'Final calculated price for ticket', false, 0),
 				'TKT_sold' => new EE_Integer_Field('TKT_sold', __('Number of this ticket sold', 'event_espresso'), false, 0),
 				'TKT_qty'=>new EE_Infinite_Integer_Field('TKT_qty', __('Quantity of this ticket that is available','event_espresso'), false, EE_INF),
+				'TKT_reserved'=>new EE_Integer_Field('TKT_reserved', __('Quantity of this ticket that is reserved, but not yet fully purchased','event_espresso'), false, 0 ),
 				'TKT_uses'=>new EE_Infinite_Integer_Field('TKT_uses', __('Number of datetimes this ticket can be used at', 'event_espresso'), false, EE_INF ),
 				'TKT_required'=>new EE_Boolean_Field('TKT_required', __("Flag indicating whether this ticket must be purchased with a transaction", "event_espresso"), false, false ),
 				'TKT_taxable'=>new EE_Boolean_Field('TKT_taxable', __("Flag indicating whether there is tax applied on this ticket", "event_espresso"), false,false),
@@ -105,8 +106,8 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 	 */
 	private function _set_default_dates( $tickets ) {
 		foreach ( $tickets as $ticket ) {
-			$ticket->set('TKT_start_date', $this->current_time_for_query('TKT_start_date', true) );
-			$ticket->set('TKT_end_date', $this->current_time_for_query( 'TKT_end_date', true ) + (60 * 60 * 24 * 30 ) );
+			$ticket->set('TKT_start_date', (int)$this->current_time_for_query('TKT_start_date', true) );
+			$ticket->set('TKT_end_date', (int)$this->current_time_for_query( 'TKT_end_date', true ) + (60 * 60 * 24 * 30 ) );
 			$ticket->set_end_time( $this->convert_datetime_for_query( 'TKT_end_date', '11:59 pm', 'g:i a', $this->_timezone ) );
 		}
 
@@ -118,7 +119,7 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 	/**
 	 * Gets the total number of tickets available at a particular datetime (does
 	 * NOT take int account the datetime's spaces available)
-	 * @param int $DTT_ID
+	 * @param int   $DTT_ID
 	 * @param array $query_params
 	 * @return int
 	 */
