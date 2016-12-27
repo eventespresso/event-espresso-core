@@ -1542,7 +1542,7 @@ abstract class EEM_Base extends EE_Base
         //load EEH_DTT_Helper
         $set_timezone = empty($timezone) ? EEH_DTT_Helper::get_timezone() : $timezone;
         $incomingDateTime = date_create_from_format($incoming_format, $timestring, new DateTimeZone($set_timezone));
-        return $incomingDateTime->setTimezone(new DateTimeZone($this->_timezone));
+        return \EventEspresso\core\domain\entities\DbSafeDateTime::createFromDateTime( $incomingDateTime->setTimezone(new DateTimeZone($this->_timezone)) );
     }
 
 
@@ -5749,6 +5749,41 @@ abstract class EEM_Base extends EE_Base
         $this->_cache_foreign_key_to_fields = array();
         $this->_cached_fields = null;
         $this->_cached_fields_non_db_only = null;
+    }
+
+
+
+    /**
+     * Gets the list of all the where query param keys that relate to logic instead of field names
+     * (eg "and", "or", "not").
+     *
+     * @return array
+     */
+    public function logic_query_param_keys()
+    {
+        return $this->_logic_query_param_keys;
+    }
+
+
+
+    /**
+     * Determines whether or not the where query param array key is for a logic query param.
+     * Eg 'OR', 'not*', and 'and*because-i-say-so' shoudl all return true, whereas
+     * 'ATT_fname', 'EVT_name*not-you-or-me', and 'ORG_name' should return false
+     *
+     * @param $query_param_key
+     * @return bool
+     */
+    public function is_logic_query_param_key($query_param_key)
+    {
+        foreach ($this->logic_query_param_keys() as $logic_query_param_key) {
+            if ($query_param_key === $logic_query_param_key
+                || strpos($query_param_key, $logic_query_param_key . '*') === 0
+            ) {
+                return true;
+            }
+        }
+        return false;
     }
 
 
