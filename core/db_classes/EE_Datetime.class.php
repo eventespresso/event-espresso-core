@@ -521,7 +521,11 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	 * @return string
 	 * @throws \EE_Error
 	 */
-	public function date_and_time_range( $dt_format = '', $tm_format = '', $conjunction = ' - ' , $separator = ' '
+	public function date_and_time_range(
+	    $dt_format = '',
+        $tm_format = '',
+        $conjunction = ' - ' ,
+        $separator = ' '
     ) {
 		$dt_format = ! empty( $dt_format ) ? $dt_format : $this->_dt_frmt;
 		$tm_format = ! empty( $tm_format ) ? $tm_format : $this->_tm_frmt;

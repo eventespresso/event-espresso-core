@@ -3,7 +3,7 @@ jQuery(document).ready(function ($) {
     var $datetime_options = $('.datetime-selector-option');
     // reset by unchecking everything, and disabling the submit button
     $.each($datetime_options, function () {
-        $(this).prop('checked', false);
+        $(this).prop('checked', true);
 		var event_id = $( this ).data( 'tkt_slctr_evt' );
         var $submit_button = $('#ticket-selector-submit-' + event_id + '-btn');
         if (object_exists($submit_button, '$submit_button')) {
