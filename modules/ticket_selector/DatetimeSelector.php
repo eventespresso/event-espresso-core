@@ -123,7 +123,6 @@ class DatetimeSelector
             }
             $classes .= ' ee-ticket-datetimes-' . $datetime->date_and_time_range('Y_m_d', 'H_i', '-', '_');
         }
-        $classes .= ' ee-hidden-ticket-tr';
         return $classes;
     }
 
@@ -154,16 +153,12 @@ class DatetimeSelector
                 'html_name'             => 'datetime_selector_' . $this->event->ID(),
                 'html_class'            => 'datetime-selector',
                 'select_button_text'       => '<span class="dashicons dashicons-calendar-alt"></span> '
-                                            . esc_html__('Select a Date', 'event_espresso'),
+                                            . esc_html__('Filter by Date', 'event_espresso'),
                 'other_html_attributes' => ' data-tkt_slctr_evt="' . $this->event->ID() . '"',
             )
         );
         return \EEH_HTML::div(
-            \EEH_HTML::div(
-                $dropdown_selector->get_html_for_input(),
-                '', 'select-wrap-dv'
-            )
-            . \EEH_HTML::br(),
+            $dropdown_selector->get_html_for_input(),
             '', 'datetime_selector-dv'
         );
     }

@@ -75,7 +75,10 @@ class EE_Checkbox_Dropdown_Selector_Display_Strategy extends EE_Compound_Input_D
                 '4.8.1'
             );
         }
-        $html = '<button type="submit"';
+
+
+        $html = \EEH_HTML::div('', '', 'checkbox-dropdown-selector-wrap-dv');
+        $html .= '<button type="submit"';
         $html .= ' id="' . $input->html_id() . '-btn"';
         // $html .= ' name="' . $input->html_name() . '"';
         $html .= ' class="' . $input->html_class() . ' checkbox-dropdown-selector-btn button-secondary button"';
@@ -130,6 +133,8 @@ class EE_Checkbox_Dropdown_Selector_Display_Strategy extends EE_Compound_Input_D
         }
         $html .= EEH_HTML::ulx();
         $html .= EEH_HTML::divx();
+        $html .= EEH_HTML::divx();
+        $html .= \EEH_HTML::br();
         return $html;
     }
 
