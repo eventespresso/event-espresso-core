@@ -252,7 +252,7 @@ class Read_Test extends \EE_UnitTestCase{
 		$original_gmt_offset = get_option( 'gmt_offset' );
 		\EED_Core_Rest_Api::set_hooks_for_changes();
 		//set a weird timezone
-		update_option( 'gmt_offset', '-04:30' );
+		update_option( 'gmt_offset', -4.5 );
 		$this->set_current_user_to_new();
 		$current_time_mysql_gmt = current_time( 'Y-m-d\TH:i:s', true );
 		$current_time_mysql =  current_time( 'Y-m-d\TH:i:s' );
