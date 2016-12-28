@@ -499,7 +499,10 @@ class EED_Single_Page_Checkout extends EED_Module
             // DEBUG LOG
             //$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__ );
             // get reg form
-            $this->_check_form_submission();
+            if( ! $this->_check_form_submission()) {
+                EED_Single_Page_Checkout::$_initialized = true;
+                return;
+            }
             // checkout the action!!!
             $this->_process_form_action();
             // add some style and make it dance
@@ -609,7 +612,10 @@ class EED_Single_Page_Checkout extends EED_Module
         // and whether or not to generate a reg form for this request
         $this->checkout->generate_reg_form = EE_Registry::instance()->REQ->get('generate_reg_form', true);        // TRUE 	FALSE
         // and whether or not to process a reg form submission for this request
-        $this->checkout->process_form_submission = EE_Registry::instance()->REQ->get('process_form_submission', false);        // TRUE 	FALSE
+        $this->checkout->process_form_submission = EE_Registry::instance()->REQ->get(
+            'process_form_submission',
+            $this->checkout->action === 'process_reg_step'
+        ); // TRUE 	FALSE
         $this->checkout->process_form_submission = $this->checkout->action !== 'display_spco_reg_step'
             ? $this->checkout->process_form_submission
             : false;        // TRUE 	FALSE
@@ -1187,7 +1193,7 @@ class EED_Single_Page_Checkout extends EED_Module
      * _check_form_submission
      *
      * @access private
-     * @return void
+     * @return boolean
      */
     private function _check_form_submission()
     {
@@ -1208,7 +1214,7 @@ class EED_Single_Page_Checkout extends EED_Module
                         apply_filters('FHEE__Single_Page_Checkout___check_form_submission__request_params', EE_Registry::instance()->REQ->params(), $this->checkout)
                     );
                     // validate submitted form data
-                    if ( ! $this->checkout->continue_reg && ! $this->checkout->current_step->reg_form->is_valid()) {
+                    if ( ! $this->checkout->continue_reg || ! $this->checkout->current_step->reg_form->is_valid()) {
                         // thou shall not pass !!!
                         $this->checkout->continue_reg = false;
                         // any form validation errors?
@@ -1228,13 +1234,14 @@ class EED_Single_Page_Checkout extends EED_Module
                         }
                         // well not really... what will happen is we'll just get redirected back to redo the current step
                         $this->go_to_next_step();
-                        return;
+                        return false;
                     }
                 }
             } catch (EE_Error $e) {
                 $e->get_error();
             }
         }
+        return true;
     }
 
 

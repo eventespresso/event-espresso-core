@@ -180,7 +180,7 @@ class EEH_Qtip_Loader extends EEH_Base {
 
 		//verify that $qtip is a valid object
 		if ( ! $qtip instanceof EE_Qtip_Config )
-			throw new EE_Error( sprintf( __( 'The class given for the Qtip loader (%s) is not a child of the <strong>EE_Qtip_Config</strong> class. Please make sure you are extending EE_Qtip_Config.', 'event_espresso'), $config ) );
+			throw new EE_Error( sprintf( esc_html__( 'The class given for the Qtip loader (%1$s) is not a child of the %2$sEE_Qtip_Config%3$s class. Please make sure you are extending EE_Qtip_Config.', 'event_espresso'), $config, '<strong>', '</strong>' ) );
 
 		$this->_qtips[] = $a->newInstance();
 

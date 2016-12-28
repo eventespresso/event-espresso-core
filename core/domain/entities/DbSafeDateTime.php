@@ -118,7 +118,18 @@ class DbSafeDateTime extends \DateTime {
         }
 	}
 
-
+    /**
+     * Creates a DbSafeDateTime from ye old DateTime
+     * @param \DateTime $datetime
+     * @return \EventEspresso\core\domain\entities\DbSafeDateTime
+     */
+    public static function createFromDateTime(\DateTime $datetime)
+    {
+        return new DbSafeDateTime(
+            $datetime->format(\EE_Datetime_Field::mysql_timestamp_format),
+            new \DateTimeZone($datetime->format('e'))
+        );
+    }
 
     private function writeToErrorLog($message)
     {
