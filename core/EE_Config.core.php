@@ -154,13 +154,13 @@ final class EE_Config {
 	 * @return EE_Config
 	 */
 	public static function reset( $hard_reset = false, $reinstantiate = true ) {
-		if ( $hard_reset ) {
-			self::$_instance->_addon_option_names = array();
-			self::$_instance->_initialize_config();
-			self::$_instance->update_espresso_config();
-		}
 		if ( self::$_instance instanceof EE_Config ) {
-			self::$_instance->update_addon_option_names();
+            if ($hard_reset) {
+                self::$_instance->_addon_option_names = array();
+                self::$_instance->_initialize_config();
+                self::$_instance->update_espresso_config();
+            }
+            self::$_instance->update_addon_option_names();
 		}
 		self::$_instance = null;
 		//we don't need to reset the static properties imo because those should
