@@ -147,7 +147,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway {
 		);
 
 		// Show itemized list.
-		if ( EEH_Money::compare_floats( $payment->amount(), $transaction->total(), '==' ) ) {
+		if ( $this->_money->compare_floats( $payment->amount(), $transaction->total(), '==' ) ) {
 			$item_num = 0;
 			$itemized_sum = 0;
 			$total_line_items = $transaction->total_line_item();
@@ -191,17 +191,20 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway {
 			$itemized_sum_diff_from_txn_total = round( $transaction->total() - $itemized_sum - $total_line_items->get_total_tax(), 2 );
 			// If we were not able to recognize some item like promotion, surcharge or cancellation,
 			// add the difference as an extra line item.
-			if ( $itemized_sum_diff_from_txn_total !== 0 ) {
+			if ( $this->_money->compare_floats( $itemized_sum_diff_from_txn_total, 0, '!=' ) ) {
 				// Item Name.
 				$token_request_dtls['L_PAYMENTREQUEST_0_NAME'.$item_num] = substr( __( 'Other (promotion/surcharge/cancellation)', 'event_espresso' ), 0, 127 );
 				// Item description.
-				$token_request_dtls['L_PAYMENTREQUEST_0_DESC'.$item_num] = substr( '', 0, 127 );
+				$token_request_dtls['L_PAYMENTREQUEST_0_DESC'.$item_num] = '';
 				// Cost of individual item.
 				$token_request_dtls['L_PAYMENTREQUEST_0_AMT'.$item_num] = $this->format_currency( $itemized_sum_diff_from_txn_total );
 				// Item Number.
 				$token_request_dtls['L_PAYMENTREQUEST_0_NUMBER'.$item_num] = $item_num + 1;
 				// Item quantity.
 				$token_request_dtls['L_PAYMENTREQUEST_0_QTY'.$item_num] = 1;
+                // Digital item is sold.
+                $token_request_dtls['L_PAYMENTREQUEST_0_ITEMCATEGORY'.$item_num] = 'Physical';
+                $item_num++;
 			}
 		} else {
 			// Just one Item.
