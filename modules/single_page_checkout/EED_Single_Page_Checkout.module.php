@@ -674,7 +674,7 @@ class EED_Single_Page_Checkout extends EED_Module
      *
      * @access    private
      * @throws EE_Error
-     * @return    array
+     * @return    string
      */
     private function _get_first_step()
     {
