@@ -1072,14 +1072,14 @@ abstract class EE_Base_Class
      * @param string   $tm_frmt      Same as above except this is for time format
      * @param string   $date_or_time if NULL then both are returned, otherwise "D" = only date and "T" = only time.
      * @param  boolean $echo         Whether the dtt is echoing using pretty echoing or just returned using vanilla get
-     * @return void|string|bool|EE_Error string on success, FALSE on fail, or EE_Error Exception is thrown
+     * @return string|bool|EE_Error string on success, FALSE on fail, or EE_Error Exception is thrown
      *                               if field is not a valid dtt field, or void if echoing
      * @throws \EE_Error
      */
     protected function _get_datetime($field_name, $dt_frmt = '', $tm_frmt = '', $date_or_time = '', $echo = false)
     {
-        $in_dt_frmt = empty($dt_frmt) ? $this->_dt_frmt : $dt_frmt;
-        $in_tm_frmt = empty($tm_frmt) ? $this->_tm_frmt : $tm_frmt;
+        $in_dt_frmt = $dt_frmt === '' ? $this->_dt_frmt : $dt_frmt;
+        $in_tm_frmt = $tm_frmt === '' ? $this->_tm_frmt : $tm_frmt;
         //validate field for datetime and returns field settings if valid.
         $field = $this->_get_dtt_field_settings($field_name);
         //clear cached property if either formats are not null.
