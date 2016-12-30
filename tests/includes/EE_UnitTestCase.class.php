@@ -80,10 +80,6 @@ class EE_UnitTestCase extends WP_UnitTestCase
         //save the hooks state before WP_UnitTestCase actually gets its hands on it...
         //as it immediately adds a few hooks we might not want to backup
         global $auto_made_thing_seed, $wp_filter, $wp_actions, $merged_filters, $wp_current_filter, $wpdb, $current_user;
-        $wpdb->suppress_errors = false;
-        $wpdb->show_errors = true;
-        $wpdb->db_connect();
-        ini_set('display_errors', 1 );
         $this->wp_filters_saved = array(
             'wp_filter' => $wp_filter,
             'wp_actions' => $wp_actions,
