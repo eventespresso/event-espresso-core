@@ -45,5 +45,6 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
     }
   }
   <?php } ?>
+  <?php do_action('AHEE__json_linked_data_for_event__template') ?>
 }
 </script>
