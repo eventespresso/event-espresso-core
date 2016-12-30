@@ -443,6 +443,56 @@ abstract class EEM_Base extends EE_Base
      */
     protected static $_db_verification_level = EEM_Base::db_verified_none;
 
+    /**
+     * @const constant for 'default_where_conditions' to apply default where conditions to ALL queried models
+     *        (eg, if retrieving registrations ordered by their datetimes, this will only return non-trashed
+     *        registrations for non-trashed tickets for non-trashed datetimes)
+     */
+    const default_where_conditions_all = 'all';
+
+    /**
+     * @const constant for 'default_where_conditions' to apply default where conditions to THIS model only, but
+     *        no other models which are joined to (eg, if retrieving registrations ordered by their datetimes, this will
+     *        return non-trashed registrations, regardless of the related datetimes and tickets' statuses).
+     *        It is preferred to use EEM_Base::default_where_conditions_minimum_others because, when joining to
+     *        models which share tables with other models, this can return data for the wrong model.
+     */
+    const default_where_conditions_this_only = 'this_model_only';
+
+    /**
+     * @const constant for 'default_where_conditions' to apply default where conditions to other models queried,
+     *        but not the current model (eg, if retrieving registrations ordered by their datetimes, this will
+     *        return all registrations related to non-trashed tickets and non-trashed datetimes)
+     */
+    const default_where_conditions_others_only = 'other_models_only';
+
+    /**
+     * @const constant for 'default_where_conditions' to apply minimum where conditions to all models queried.
+     *        For most models this the same as EEM_Base::default_where_conditions_none, except for models which share
+     *        their table with other models, like the Event and Venue models. For example, when querying for events
+     *        ordered by their venues' name, this will be sure to only return real events with associated real venues
+     *        (regardless of whether those events and venues are trashed)
+     *        In contrast, using EEM_Base::default_where_conditions_none would could return WP posts other than EE
+     *        events.
+     */
+    const default_where_conditions_minimum_all = 'minimum';
+
+    /**
+     * @const constant for 'default_where_conditions' to apply apply where conditions to other models, and full default
+     *        where conditions for the queried model (eg, when querying events ordered by venues' names, this will
+     *        return non-trashed events for any venues, regardless of whether those associated venues are trashed or
+     *        not)
+     */
+    const default_where_conditions_minimum_others = 'full_this_minimum_others';
+
+    /**
+     * @const constant for 'default_where_conditions' to NOT apply any where conditions. This should very rarely be
+     *        used, because when querying from a model which shares its table with another model (eg Events and Venues)
+     *        it's possible it will return table entries for other models. You should use
+     *        EEM_Base::default_where_conditions_minimum_all instead.
+     */
+    const default_where_conditions_none = 'none';
+
 
 
     /**
@@ -1114,7 +1164,7 @@ abstract class EEM_Base extends EE_Base
         return $this->get_one(
             $this->alter_query_params_to_restrict_by_ID(
                 $id,
-                array('default_where_conditions' => 'minimum')
+                array('default_where_conditions' => EEM_Base::default_where_conditions_minimum_all)
             )
         );
     }
@@ -1492,7 +1542,7 @@ abstract class EEM_Base extends EE_Base
         //load EEH_DTT_Helper
         $set_timezone = empty($timezone) ? EEH_DTT_Helper::get_timezone() : $timezone;
         $incomingDateTime = date_create_from_format($incoming_format, $timestring, new DateTimeZone($set_timezone));
-        return $incomingDateTime->setTimezone(new DateTimeZone($this->_timezone));
+        return \EventEspresso\core\domain\entities\DbSafeDateTime::createFromDateTime( $incomingDateTime->setTimezone(new DateTimeZone($this->_timezone)) );
     }
 
 
@@ -1668,7 +1718,7 @@ abstract class EEM_Base extends EE_Base
                 $query_params = array(
                     array($this->primary_key_name() => array('IN', $model_objs_affected_ids)),
                     'limit'                    => count($model_objs_affected_ids),
-                    'default_where_conditions' => 'none',
+                    'default_where_conditions' => EEM_Base::default_where_conditions_none,
                 );
             }
         }
@@ -2485,7 +2535,7 @@ abstract class EEM_Base extends EE_Base
         //we're just going to use the query params on the related model's normal get_all query,
         //except add a condition to say to match the current mod
         if (! isset($query_params['default_where_conditions'])) {
-            $query_params['default_where_conditions'] = 'none';
+            $query_params['default_where_conditions'] = EEM_Base::default_where_conditions_none;
         }
         $this_model_name = $this->get_this_model_name();
         $this_pk_field_name = $this->get_primary_key_field()->get_name();
@@ -2518,7 +2568,7 @@ abstract class EEM_Base extends EE_Base
         //we're just going to use the query params on the related model's normal get_all query,
         //except add a condition to say to match the current mod
         if (! isset($query_params['default_where_conditions'])) {
-            $query_params['default_where_conditions'] = 'none';
+            $query_params['default_where_conditions'] = EEM_Base::default_where_conditions_none;
         }
         $this_model_name = $this->get_this_model_name();
         $this_pk_field_name = $this->get_primary_key_field()->get_name();
@@ -2753,7 +2803,14 @@ abstract class EEM_Base extends EE_Base
      */
     public function exists_by_ID($id)
     {
-        return $this->exists(array('default_where_conditions' => 'none', array($this->primary_key_name() => $id)));
+        return $this->exists(
+            array(
+                'default_where_conditions' => EEM_Base::default_where_conditions_none,
+                array(
+                    $this->primary_key_name() => $id,
+                ),
+            )
+        );
     }
 
 
@@ -3193,7 +3250,7 @@ abstract class EEM_Base extends EE_Base
         ) {
             $use_default_where_conditions = $query_params['default_where_conditions'];
         } else {
-            $use_default_where_conditions = 'all';
+            $use_default_where_conditions = EEM_Base::default_where_conditions_all;
         }
         $where_query_params = array_merge(
             $this->_get_default_where_conditions_for_models_in_query(
@@ -3403,46 +3460,114 @@ abstract class EEM_Base extends EE_Base
      */
     private function _get_default_where_conditions_for_models_in_query(
         EE_Model_Query_Info_Carrier $query_info_carrier,
-        $use_default_where_conditions = 'all',
+        $use_default_where_conditions = EEM_Base::default_where_conditions_all,
         $where_query_params = array()
     ) {
-        $allowed_used_default_where_conditions_values = array(
-            'all',
-            'this_model_only',
-            'other_models_only',
-            'minimum',
-            'none',
-        );
+        $allowed_used_default_where_conditions_values = EEM_Base::valid_default_where_conditions();
         if (! in_array($use_default_where_conditions, $allowed_used_default_where_conditions_values)) {
             throw new EE_Error(sprintf(__("You passed an invalid value to the query parameter 'default_where_conditions' of '%s'. Allowed values are %s",
                 "event_espresso"), $use_default_where_conditions,
                 implode(", ", $allowed_used_default_where_conditions_values)));
         }
         $universal_query_params = array();
-        if ($use_default_where_conditions === 'all' || $use_default_where_conditions === 'this_model_only') {
+        if ($this->_should_use_default_where_conditions( $use_default_where_conditions, true)) {
             $universal_query_params = $this->_get_default_where_conditions();
-        } else if ($use_default_where_conditions === 'minimum') {
+        } else if ($this->_should_use_minimum_where_conditions( $use_default_where_conditions, true)) {
             $universal_query_params = $this->_get_minimum_where_conditions();
         }
-        if (in_array($use_default_where_conditions, array('all', 'other_models_only'))) {
-            foreach ($query_info_carrier->get_model_names_included() as $model_relation_path => $model_name) {
-                $related_model = $this->get_related_model_obj($model_name);
+        foreach ($query_info_carrier->get_model_names_included() as $model_relation_path => $model_name) {
+            $related_model = $this->get_related_model_obj($model_name);
+            if ( $this->_should_use_default_where_conditions( $use_default_where_conditions, false)) {
                 $related_model_universal_where_params = $related_model->_get_default_where_conditions($model_relation_path);
-                $overrides = $this->_override_defaults_or_make_null_friendly(
-                    $related_model_universal_where_params,
-                    $where_query_params,
-                    $related_model,
-                    $model_relation_path
-                );
-                $universal_query_params = EEH_Array::merge_arrays_and_overwrite_keys(
-                    $universal_query_params,
-                    $overrides
-                );
+            } elseif ($this->_should_use_minimum_where_conditions( $use_default_where_conditions, false)) {
+                $related_model_universal_where_params = $related_model->_get_minimum_where_conditions($model_relation_path);
+            } else {
+                //we don't want to add full or even minimum default where conditions from this model, so just continue
+                continue;
             }
+            $overrides = $this->_override_defaults_or_make_null_friendly(
+                $related_model_universal_where_params,
+                $where_query_params,
+                $related_model,
+                $model_relation_path
+            );
+            $universal_query_params = EEH_Array::merge_arrays_and_overwrite_keys(
+                $universal_query_params,
+                $overrides
+            );
         }
         return $universal_query_params;
     }
 
+
+
+    /**
+     * Determines whether or not we should use default where conditions for the model in question
+     * (this model, or other related models).
+     * Basically, we should use default where conditions on this model if they have requested to use them on all models,
+     * this model only, or to use minimum where conditions on all other models and normal where conditions on this one.
+     * We should use default where conditions on related models when they requested to use default where conditions
+     * on all models, or specifically just on other related models
+     * @param      $default_where_conditions_value
+     * @param bool $for_this_model false means this is for OTHER related models
+     * @return bool
+     */
+    private function _should_use_default_where_conditions( $default_where_conditions_value, $for_this_model = true )
+    {
+        return (
+                   $for_this_model
+                   && in_array(
+                       $default_where_conditions_value,
+                       array(
+                           EEM_Base::default_where_conditions_all,
+                           EEM_Base::default_where_conditions_this_only,
+                           EEM_Base::default_where_conditions_minimum_others,
+                       ),
+                       true
+                   )
+               )
+               || (
+                   ! $for_this_model
+                   && in_array(
+                       $default_where_conditions_value,
+                       array(
+                           EEM_Base::default_where_conditions_all,
+                           EEM_Base::default_where_conditions_others_only,
+                       ),
+                       true
+                   )
+               );
+    }
+
+    /**
+     * Determines whether or not we should use default minimum conditions for the model in question
+     * (this model, or other related models).
+     * Basically, we should use minimum where conditions on this model only if they requested all models to use minimum
+     * where conditions.
+     * We should use minimum where conditions on related models if they requested to use minimum where conditions
+     * on this model or others
+     * @param      $default_where_conditions_value
+     * @param bool $for_this_model false means this is for OTHER related models
+     * @return bool
+     */
+    private function _should_use_minimum_where_conditions($default_where_conditions_value, $for_this_model = true)
+    {
+        return (
+                   $for_this_model
+                   && $default_where_conditions_value === EEM_Base::default_where_conditions_minimum_all
+               )
+               || (
+                   ! $for_this_model
+                   && in_array(
+                       $default_where_conditions_value,
+                       array(
+                           EEM_Base::default_where_conditions_minimum_others,
+                           EEM_Base::default_where_conditions_minimum_all,
+                       ),
+                       true
+                   )
+               );
+    }
 
 
     /**
@@ -5330,7 +5455,7 @@ abstract class EEM_Base extends EE_Base
     {
         $query_params = array(
             0                          => array($this->get_primary_key_field()->get_name() => $id),
-            'default_where_conditions' => 'other_models_only',
+            'default_where_conditions' => EEM_Base::default_where_conditions_others_only,
         );
         return $this->update($fields_n_values, $query_params);
     }
@@ -5558,7 +5683,7 @@ abstract class EEM_Base extends EE_Base
      *
      * @return array
      */
-    static public function valid_cap_contexts()
+    public static function valid_cap_contexts()
     {
         return apply_filters('FHEE__EEM_Base__valid_cap_contexts', array(
             self::caps_read,
@@ -5570,6 +5695,24 @@ abstract class EEM_Base extends EE_Base
 
 
 
+    /**
+     * Returns all valid options for 'default_where_conditions'
+     *
+     * @return array
+     */
+    public static function valid_default_where_conditions()
+    {
+        return array(
+            EEM_Base::default_where_conditions_all,
+            EEM_Base::default_where_conditions_this_only,
+            EEM_Base::default_where_conditions_others_only,
+            EEM_Base::default_where_conditions_minimum_all,
+            EEM_Base::default_where_conditions_minimum_others,
+            EEM_Base::default_where_conditions_none
+        );
+    }
+
+    // public static function default_where_conditions_full
     /**
      * Verifies $context is one of EEM_Base::valid_cap_contexts(), if not it throws an exception
      *
@@ -5606,6 +5749,41 @@ abstract class EEM_Base extends EE_Base
         $this->_cache_foreign_key_to_fields = array();
         $this->_cached_fields = null;
         $this->_cached_fields_non_db_only = null;
+    }
+
+
+
+    /**
+     * Gets the list of all the where query param keys that relate to logic instead of field names
+     * (eg "and", "or", "not").
+     *
+     * @return array
+     */
+    public function logic_query_param_keys()
+    {
+        return $this->_logic_query_param_keys;
+    }
+
+
+
+    /**
+     * Determines whether or not the where query param array key is for a logic query param.
+     * Eg 'OR', 'not*', and 'and*because-i-say-so' shoudl all return true, whereas
+     * 'ATT_fname', 'EVT_name*not-you-or-me', and 'ORG_name' should return false
+     *
+     * @param $query_param_key
+     * @return bool
+     */
+    public function is_logic_query_param_key($query_param_key)
+    {
+        foreach ($this->logic_query_param_keys() as $logic_query_param_key) {
+            if ($query_param_key === $logic_query_param_key
+                || strpos($query_param_key, $logic_query_param_key . '*') === 0
+            ) {
+                return true;
+            }
+        }
+        return false;
     }
 
 

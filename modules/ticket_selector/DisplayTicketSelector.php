@@ -436,7 +436,6 @@ class DisplayTicketSelector
                 __FILE__, __FUNCTION__, __LINE__
             );
         }
-	    // $view_details_btn = '<form method="POST" action="' . $this->event->get_permalink() . '"'. $extra_params.'>';
         $view_details_btn = '<form method="POST" action="'
                             . apply_filters(
                                 'FHEE__EE_Ticket_Selector__display_view_details_btn__btn_url',
