@@ -1130,7 +1130,7 @@ abstract class EE_Base_Class
      * @return string            datetime value formatted
      * @throws \EE_Error
      */
-    public function get_date($field_name, $format = null)
+    public function get_date($field_name, $format = '')
     {
         return $this->_get_datetime($field_name, $format, null, 'D');
     }
@@ -1139,10 +1139,10 @@ abstract class EE_Base_Class
 
     /**
      * @param      $field_name
-     * @param null $format
+     * @param string $format
      * @throws \EE_Error
      */
-    public function e_date($field_name, $format = null)
+    public function e_date($field_name, $format = '')
     {
         $this->_get_datetime($field_name, $format, null, 'D', true);
     }
@@ -1158,7 +1158,7 @@ abstract class EE_Base_Class
      * @return string             datetime value formatted
      * @throws \EE_Error
      */
-    public function get_time($field_name, $format = null)
+    public function get_time($field_name, $format = '')
     {
         return $this->_get_datetime($field_name, null, $format, 'T');
     }
@@ -1167,10 +1167,10 @@ abstract class EE_Base_Class
 
     /**
      * @param      $field_name
-     * @param null $format
+     * @param string $format
      * @throws \EE_Error
      */
-    public function e_time($field_name, $format = null)
+    public function e_time($field_name, $format = '')
     {
         $this->_get_datetime($field_name, null, $format, 'T', true);
     }
@@ -1187,7 +1187,7 @@ abstract class EE_Base_Class
      * @return string             datetime value formatted
      * @throws \EE_Error
      */
-    public function get_datetime($field_name, $dt_frmt = null, $tm_frmt = null)
+    public function get_datetime($field_name, $dt_frmt = '', $tm_frmt = '')
     {
         return $this->_get_datetime($field_name, $dt_frmt, $tm_frmt);
     }
@@ -1195,12 +1195,12 @@ abstract class EE_Base_Class
 
 
     /**
-     * @param      $field_name
-     * @param null $dt_frmt
-     * @param null $tm_frmt
+     * @param string $field_name
+     * @param string $dt_frmt
+     * @param string $tm_frmt
      * @throws \EE_Error
      */
-    public function e_datetime($field_name, $dt_frmt = null, $tm_frmt = null)
+    public function e_datetime($field_name, $dt_frmt = '', $tm_frmt = '')
     {
         $this->_get_datetime($field_name, $dt_frmt, $tm_frmt, null, true);
     }
@@ -1216,7 +1216,7 @@ abstract class EE_Base_Class
      * @throws \EE_Error
      *                           field name.
      */
-    public function get_i18n_datetime($field_name, $format = null)
+    public function get_i18n_datetime($field_name, $format = '')
     {
         $format = empty($format) ? $this->_dt_frmt . ' ' . $this->_tm_frmt : $format;
         return date_i18n(
