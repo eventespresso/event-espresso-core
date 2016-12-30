@@ -948,26 +948,24 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 		return $this->get_model()->count_related( $this, 'Checkin' );
 	}
 
-
+	 /**
+	 * Returns the number of current Check-ins this registration is checked into (CHK_in = 1) that do not have a balancing checkout (CHK_out = 0)
+	 * @return int
+	 */
+	 public function count_active_checkins_only() {
+	 	$check_ins = $this->get_model()->count_related( $this, 'Checkin', array( array( 'CHK_in' => 1 ) ) );
+	 	$check_outs = $this->get_model()->count_related( $this, 'Checkin', array( array( 'CHK_in' => 0 ) ) );
+	 	return $check_ins - $check_outs;
+	 }
 
 	/**
-	 * Returns the number of current Check-ins this registration is checked into for any of the datetimes the registration is for.
+	 * Returns the number of current Check-ins this registration is checked into for any of the datetimes the registration is for.  Note, this is ONLY checked in (does not include checkedout)
 	 * @return int
 	 */
 	public function count_checkins_not_checkedout() {
-		$check_ins = $this->get_model()->count_related( $this, 'Checkin', array( array( 'CHK_in' => 1 ) ) );
-		$check_outs = $this->get_model()->count_related( $this, 'Checkin', array( array( 'CHK_in' => 0 ) ) );
-		
-		return $check_ins - $check_outs;
-    	}
-	
-	/**
-	 * Returns the number of times this registration has had CHK_in set to 1
-	 * @return int
-    	 */
-	public function count_checkins_only() {
-        	return $this->get_model()->count_related( $this, 'Checkin', array( array( 'CHK_in' => 1 ) ) );
-    	}
+		return $this->get_model()->count_related( $this, 'Checkin', array( array( 'CHK_in' => 1 ) ) );
+	}
+
 
 
 
