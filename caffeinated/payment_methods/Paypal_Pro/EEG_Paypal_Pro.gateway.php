@@ -240,14 +240,14 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
         }
         //so if the attendee has enough data to fill out PayPal Pro's shipping info, use it. If not, use the billing info again
         $ShippingAddress = array(
-            'shiptoname' => $use_registration_address_info ? $attendee->full_name() : $billing_info['first_name'] . ' ' . $billing_info['last_name'],
-            'shiptostreet' => $use_registration_address_info ? $attendee->address() : $billing_info['address'],
-            'shiptostreet2' => $use_registration_address_info ? $attendee->address2() : $billing_info['address2'],
-            'shiptocity' => $use_registration_address_info ? $attendee->city() : $billing_info['city'],
-            'state' => $use_registration_address_info ? $attendee->state_name() : $billing_info['state'],
+            'shiptoname' => substr($use_registration_address_info ? $attendee->full_name() : $billing_info['first_name'] . ' ' . $billing_info['last_name'], 0, 32),
+            'shiptostreet' => substr($use_registration_address_info ? $attendee->address() : $billing_info['address'], 0, 100),
+            'shiptostreet2' => substr($use_registration_address_info ? $attendee->address2() : $billing_info['address2'],0,100),
+            'shiptocity' => substr($use_registration_address_info ? $attendee->city() : $billing_info['city'],0,40),
+            'state' => substr($use_registration_address_info ? $attendee->state_name() : $billing_info['state'],0,40),
             'shiptocountry' => $use_registration_address_info ? $attendee->country_ID() : $billing_info['country'],
-            'shiptozip' => $use_registration_address_info ? $attendee->zip() : $billing_info['zip'],
-            'shiptophonenum' => $use_registration_address_info ? $attendee->phone() : $billing_info['phone'],
+            'shiptozip' => substr($use_registration_address_info ? $attendee->zip() : $billing_info['zip'],0,20),
+            'shiptophonenum' => substr($use_registration_address_info ? $attendee->phone() : $billing_info['phone'],0,20),
         );
 
 		$PaymentDetails = array(
