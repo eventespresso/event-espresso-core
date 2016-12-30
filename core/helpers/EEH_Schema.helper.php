@@ -62,6 +62,12 @@ class EEH_Schema {
             $template_args['venue_locality'] = $venue->city();
             $template_args['venue_region'] = $venue->state_name();
         }
+        $template_args = apply_filters(
+            'FHEE__EEH_Schema__add_json_linked_data_for_event__template_args',
+            $template_args,
+            $event,
+            $VNU_ID
+        );
         extract($template_args, EXTR_OVERWRITE);
         include EE_TEMPLATES . 'json_linked_data_for_event.template.php';
     }
