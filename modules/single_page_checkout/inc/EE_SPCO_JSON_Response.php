@@ -171,7 +171,7 @@ class EE_SPCO_JSON_Response {
 		// filter final array
 		$JSON_response = apply_filters( 'FHEE__EE_SPCO_JSON_Response___toString__JSON_response', $JSON_response );
 		// return encoded array
-		return json_encode( $JSON_response );
+		return wp_json_encode( $JSON_response );
 	}
 
 

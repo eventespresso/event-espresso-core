@@ -368,7 +368,7 @@ class EEM_Base_Test extends EE_UnitTestCase
         $formatted_string = EEM_Datetime::instance()->current_time_for_query('DTT_EVT_start');
         $this->assertDateWithinOneMinute($timezoneTest->format('Y-m-d H:i:s'), $formatted_string, 'Y-m-d H:i:s');
         $unix_timestamp = EEM_Datetime::instance()->current_time_for_query('DTT_EVT_start', true);
-        $this->assertEquals($timezoneTest->format('U'), $unix_timestamp);
+        $this->assertDateWithinOneMinute($timezoneTest->format('U'), $unix_timestamp, 'U');
     }
 
 
@@ -1020,6 +1020,21 @@ class EEM_Base_Test extends EE_UnitTestCase
     }
 
 
+
+    /**
+     * @group 9566
+     */
+    public function test_is_logic_query_param_key(){
+        $this->assertTrue( EEM_Answer::instance()->is_logic_query_param_key( 'OR' ) );
+        $this->assertTrue( EEM_Answer::instance()->is_logic_query_param_key( 'NOT*' ) );
+        $this->assertTrue( EEM_Answer::instance()->is_logic_query_param_key( 'AND*other-condition' ) );
+        $this->assertFalse( EEM_Answer::instance()->is_logic_query_param_key( 'ATT_fname' ) );
+        $this->assertFalse( EEM_Answer::instance()->is_logic_query_param_key( 'Registration.REG_date' ) );
+        $this->assertFalse( EEM_Answer::instance()->is_logic_query_param_key( 'ORG_name' ) );
+
+    }
+
 }
 
 // End of file EEM_Base_Test.php
+// Location: testcases/core/db_models/EEM_Base_Test.php

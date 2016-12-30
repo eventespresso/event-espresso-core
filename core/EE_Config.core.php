@@ -154,13 +154,13 @@ final class EE_Config {
 	 * @return EE_Config
 	 */
 	public static function reset( $hard_reset = false, $reinstantiate = true ) {
-		if ( $hard_reset ) {
-			self::$_instance->_addon_option_names = array();
-			self::$_instance->_initialize_config();
-			self::$_instance->update_espresso_config();
-		}
 		if ( self::$_instance instanceof EE_Config ) {
-			self::$_instance->update_addon_option_names();
+            if ($hard_reset) {
+                self::$_instance->_addon_option_names = array();
+                self::$_instance->_initialize_config();
+                self::$_instance->update_espresso_config();
+            }
+            self::$_instance->update_addon_option_names();
 		}
 		self::$_instance = null;
 		//we don't need to reset the static properties imo because those should
@@ -2649,19 +2649,19 @@ class EE_Template_Config extends EE_Config_Base {
 	public $current_espresso_theme;
 
 	/**
-	 * @var EE_Event_Single_Config $EED_Event_Single
-	 */
+	* @var EE_Ticket_Selector_Config $EED_Ticket_Selector
+	*/
+	public $EED_Ticket_Selector;
+
+	/**
+	* @var EE_Event_Single_Config $EED_Event_Single
+	*/
 	public $EED_Event_Single;
 
 	/**
 	 * @var EE_Events_Archive_Config $EED_Events_Archive
 	 */
 	public $EED_Events_Archive;
-
-	/**
-	 * @var EE_Ticket_Selector_Config $EED_Ticket_Selector
-	 */
-	public $EED_Ticket_Selector;
 
 
 

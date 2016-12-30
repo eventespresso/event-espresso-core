@@ -12,6 +12,7 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
  class EE_Session {
 
 	 const session_id_prefix = 'ee_ssn_';
+
 	 const hash_check_prefix = 'ee_shc_';
 
 	 /**
@@ -50,6 +51,13 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
 	  * @var int
 	  */
 	 private $_expiration;
+
+    /**
+     * whether or not session has expired at some point
+     *
+     * @var boolean
+     */
+    private $_expired = false;
 
 	 /**
 	  * current time as Unix timestamp in GMT
@@ -92,14 +100,14 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
 	  * @var array
 	  */
 	 private $_default_session_vars = array (
-		'id' => NULL,
-		'user_id' => NULL,
-		'ip_address' => NULL,
-		'user_agent' => NULL,
-		'init_access' => NULL,
-		'last_access' => NULL,
-		'expiration' => NULL,
-		'pages_visited' => array()
+        'id'            => null,
+        'user_id'       => null,
+        'ip_address'    => null,
+        'user_agent'    => null,
+        'init_access'   => null,
+        'last_access'   => null,
+        'expiration'    => null,
+        'pages_visited' => array(),
 	);
 
 
@@ -135,7 +143,7 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
 	 protected function __construct( EE_Encryption $encryption = null ) {
 
 		// session loading is turned ON by default, but prior to the init hook, can be turned back OFF via: add_filter( 'FHEE_load_EE_Session', '__return_false' );
-		if ( ! apply_filters( 'FHEE_load_EE_Session', TRUE ) ) {
+		if ( ! apply_filters( 'FHEE_load_EE_Session', true ) ) {
 			return;
 		}
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
@@ -154,8 +162,8 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
 		 * 		}
 		 */
 		// retrieve session options from db
-		$session_settings = get_option( 'ee_session_settings' );
-		if ( $session_settings !== FALSE ) {
+		$session_settings = (array) get_option( 'ee_session_settings', array() );
+		if ( ! empty( $session_settings )) {
 			// cycle though existing session options
 			foreach ( $session_settings as $var_name => $session_setting ) {
 				// set values for class properties
@@ -163,29 +171,58 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
 				$this->{$var_name} = $session_setting;
 			}
 		}
-		// are we using encryption?
-		if ( $this->_use_encryption && $encryption instanceof EE_Encryption ) {
-			// encrypt data via: $this->encryption->encrypt();
-			$this->encryption = $encryption;
-		}
+         // are we using encryption?
+         $this->_use_encryption = $encryption instanceof EE_Encryption && EE_Registry::instance()->CFG->admin->encode_session_data();
+         // \EEH_Debug_Tools::printr($this->_use_encryption, '$this->_use_encryption', __FILE__, __LINE__);
+        // encrypt data via: $this->encryption->encrypt();
+        $this->encryption = $encryption;
 		// filter hook allows outside functions/classes/plugins to change default empty cart
 		$extra_default_session_vars = apply_filters( 'FHEE__EE_Session__construct__extra_default_session_vars', array() );
 		array_merge( $this->_default_session_vars, $extra_default_session_vars );
 		// apply default session vars
 		$this->_set_defaults();
-		// check for existing session and retrieve it from db
-		if ( ! $this->_espresso_session() ) {
-			// or just start a new one
-			$this->_create_espresso_session();
-		}
-		// check request for 'clear_session' param
+         add_action('AHEE__EE_System__initialize', array($this, 'open_session'));
+         // check request for 'clear_session' param
 		add_action( 'AHEE__EE_Request_Handler__construct__complete', array( $this, 'wp_loaded' ));
 		// once everything is all said and done,
 		add_action( 'shutdown', array( $this, 'update' ), 100 );
 		add_action( 'shutdown', array( $this, 'garbage_collection' ), 999 );
-		add_filter( 'wp_redirect', array( $this, 'update_on_redirect' ), 100, 1 );
 	}
 
+
+
+     /**
+      * @return void
+      * @throws \EventEspresso\core\exceptions\InvalidSessionDataException
+      * @throws \EE_Error
+      */
+	 public function open_session() {
+         // check for existing session and retrieve it from db
+         if ( ! $this->_espresso_session()) {
+             // or just start a new one
+             $this->_create_espresso_session();
+         }
+     }
+
+
+
+    /**
+     * @return bool
+     */
+    public function expired()
+    {
+        return $this->_expired;
+    }
+
+
+
+    /**
+     * @return void
+     */
+    public function reset_expired()
+    {
+        $this->_expired = false;
+    }
 
 
 	 /**
@@ -194,6 +231,29 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
 	 public function expiration() {
 		 return $this->_expiration;
 	 }
+
+
+
+    /**
+     * @return int
+     */
+    public function extension()
+    {
+        return apply_filters('FHEE__EE_Session__extend_expiration__seconds_added', (10 * MINUTE_IN_SECONDS));
+    }
+
+
+
+    /**
+     * @param int $time number of seconds to add to session expiration
+     * @return int
+     */
+    public function extend_expiration($time = 0)
+    {
+        $time = $time ? $time : $this->extension();
+        $this->_expiration += absint($time);
+    }
+
 
 
 
@@ -236,14 +296,15 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
 
 
 
-	 /**
-	  * @param \EE_Cart $cart
-	  * @return bool
-	  */
-	 public function set_cart( EE_Cart $cart ) {
-		 $this->_session_data['cart'] = $cart;
-		 return TRUE;
-	 }
+    /**
+     * @param \EE_Cart $cart
+     * @return bool
+     */
+    public function set_cart(EE_Cart $cart)
+    {
+        $this->_session_data['cart'] = $cart;
+        return true;
+    }
 
 
 
@@ -251,6 +312,7 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
 	  * reset_cart
 	  */
 	 public function reset_cart() {
+        do_action('AHEE__EE_Session__reset_cart__before_reset', $this);
 		 $this->_session_data['cart'] = NULL;
 	 }
 
@@ -260,7 +322,9 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
 	  * @return \EE_Cart
 	  */
 	 public function cart() {
-		 return isset( $this->_session_data['cart'] ) ? $this->_session_data['cart'] : NULL;
+        return isset($this->_session_data['cart']) && $this->_session_data['cart'] instanceof EE_Cart
+            ? $this->_session_data['cart']
+            : null;
 	 }
 
 
@@ -280,6 +344,7 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
 	  * reset_checkout
 	  */
 	 public function reset_checkout() {
+        do_action('AHEE__EE_Session__reset_checkout__before_reset', $this);
 		 $this->_session_data['checkout'] = NULL;
 	 }
 
@@ -289,7 +354,9 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
 	  * @return \EE_Checkout
 	  */
 	 public function checkout() {
-		 return isset( $this->_session_data['checkout'] ) ? $this->_session_data['checkout'] : NULL;
+        return isset($this->_session_data['checkout']) && $this->_session_data['checkout'] instanceof EE_Checkout
+            ? $this->_session_data['checkout']
+            : null;
 	 }
 
 
@@ -312,6 +379,7 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
 	  * reset_transaction
 	  */
 	 public function reset_transaction() {
+        do_action('AHEE__EE_Session__reset_transaction__before_reset', $this);
 		 $this->_session_data['transaction'] = NULL;
 	 }
 
@@ -321,7 +389,10 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
 	  * @return \EE_Transaction
 	  */
 	 public function transaction() {
-		 return isset( $this->_session_data['transaction'] ) ? $this->_session_data['transaction'] : NULL;
+        return isset($this->_session_data['transaction'])
+               && $this->_session_data['transaction'] instanceof EE_Transaction
+           ? $this->_session_data['transaction']
+           : null;
 	 }
 
 
@@ -396,58 +467,18 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
 		// and the visitors IP
 		$this->_ip_address = $this->_visitor_ip();
 		// set the "user agent"
-		$this->_user_agent = ( isset($_SERVER['HTTP_USER_AGENT'])) ? esc_attr( $_SERVER['HTTP_USER_AGENT'] ) : FALSE;
+		$this->_user_agent = isset($_SERVER['HTTP_USER_AGENT']) ? esc_attr( $_SERVER['HTTP_USER_AGENT'] ) : FALSE;
 		// now let's retrieve what's in the db
-		// we're using WP's Transient API to store session data using the PHP session ID as the option name
-		$session_data = get_transient( EE_Session::session_id_prefix . $this->_sid );
-		if ( $session_data ) {
-			if ( apply_filters( 'FHEE__EE_Session___perform_session_id_hash_check', WP_DEBUG ) ) {
-				$hash_check = get_transient( EE_Session::hash_check_prefix . $this->_sid );
-				if ( $hash_check && $hash_check !== md5( $session_data ) ) {
-					EE_Error::add_error(
-						sprintf(
-							__( 'The stored data for session %1$s failed to pass a hash check and therefore appears to be invalid.', 'event_espresso' ),
-							EE_Session::session_id_prefix . $this->_sid
-						),
-						__FILE__, __FUNCTION__, __LINE__
-					);
-				}
-			}
-			// decode the data ?
-            $session_data = $this->valid_base_64($session_data) ? base64_decode($session_data) : $session_data;
-			// un-encrypt the data ?
-			$session_data = $this->_use_encryption ? $this->encryption->decrypt( $session_data ) : $session_data;
-			if ( ! is_array( $session_data ) ) {
-				try {
-					$session_data = maybe_unserialize( $session_data );
-				} catch ( Exception $e ) {
-					$msg = esc_html__(
-						'An error occurred while attempting to unserialize the session data.',
-						'event_espresso'
-					);
-					$msg .= WP_DEBUG ? '<br>' . $this->find_serialize_error( $session_data ) : '';
-					throw new InvalidSessionDataException( $msg, 0, $e );
-				}
-			}
-			// just a check to make sure the session array is indeed an array
-			if ( ! is_array( $session_data ) ) {
-				// no?!?! then something is wrong
-				$msg = esc_html__(
-					'The session data is missing, invalid, or corrupted.',
-					'event_espresso'
-				);
-				$msg .= WP_DEBUG ? '<br>' . $this->find_serialize_error( $session_data ) : '';
-				throw new InvalidSessionDataException( $msg );
-			}
-			// get the current time in UTC
+        $session_data = $this->_retrieve_session_data();
+        if (! empty($session_data)) {
+            // get the current time in UTC
 			$this->_time = isset( $this->_time ) ? $this->_time : time();
 			// and reset the session expiration
 			$this->_expiration = isset( $session_data['expiration'] )
 				? $session_data['expiration']
 				: $this->_time + $this->_lifespan;
-
 		} else {
-			// set initial site access time and the session expiration
+            // set initial site access time and the session expiration
 			$this->_set_init_access_and_expiration();
 			// set referer
 			$this->_session_data[ 'pages_visited' ][ $this->_session_data['init_access'] ] = isset( $_SERVER['HTTP_REFERER'] )
@@ -456,13 +487,14 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
 			// no previous session = go back and create one (on top of the data above)
 			return FALSE;
 		}
-		// now the user agent
+        // now the user agent
 		if ( $session_data['user_agent'] !== $this->_user_agent ) {
 			return FALSE;
 		}
 		// wait a minute... how old are you?
 		if ( $this->_time > $this->_expiration ) {
 			// yer too old fer me!
+            $this->_expired = true;
 			// wipe out everything that isn't a default session datum
 			$this->clear_session( __CLASS__, __FUNCTION__ );
 		}
@@ -471,6 +503,98 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
 		return TRUE;
 
 	}
+
+
+
+     /**
+      * _get_session_data
+      * Retrieves the session data, and attempts to correct any encoding issues that can occur due to improperly setup databases
+      *
+      * @return array
+      * @throws \EventEspresso\core\exceptions\InvalidSessionDataException
+      */
+     protected function _retrieve_session_data()
+     {
+         $ssn_key = EE_Session::session_id_prefix . $this->_sid;
+         try {
+             // we're using WP's Transient API to store session data using the PHP session ID as the option name
+             $session_data = get_transient($ssn_key);
+	         if ($session_data === false) {
+		         return array();
+             }
+             if (apply_filters('FHEE__EE_Session___perform_session_id_hash_check', WP_DEBUG)) {
+                 $hash_check = get_transient(EE_Session::hash_check_prefix . $this->_sid);
+                 if ($hash_check && $hash_check !== md5($session_data)) {
+	                 EE_Error::add_error(
+                         sprintf(
+                             __('The stored data for session %1$s failed to pass a hash check and therefore appears to be invalid.', 'event_espresso'),
+                             EE_Session::session_id_prefix . $this->_sid
+                         ),
+                         __FILE__, __FUNCTION__, __LINE__
+                     );
+                 }
+             }
+         } catch (Exception $e) {
+             // let's just eat that error for now and attempt to correct any corrupted data
+             global $wpdb;
+             $row = $wpdb->get_row(
+                 $wpdb->prepare(
+                     "SELECT option_value FROM {$wpdb->options} WHERE option_name = %s LIMIT 1",
+                     '_transient_' . $ssn_key
+                 )
+             );
+             $session_data = is_object($row) ? $row->option_value : null;
+             if ($session_data) {
+                 $session_data = preg_replace_callback(
+                     '!s:(d+):"(.*?)";!',
+                     function ($match) {
+                         return $match[1] === strlen($match[2])
+                             ? $match[0]
+                             : 's:' . strlen($match[2]) . ':"' . $match[2] . '";';
+                     },
+                     $session_data
+                 );
+             }
+	         $session_data = maybe_unserialize($session_data);
+         }
+	     // in case the data is encoded... try to decode it
+         $session_data = $this->encryption instanceof EE_Encryption
+             ? $this->encryption->base64_string_decode($session_data)
+             : $session_data;
+
+         if ( ! is_array($session_data)) {
+             try {
+	             $session_data = maybe_unserialize($session_data);
+             } catch (Exception $e) {
+                 $msg = esc_html__(
+                     'An error occurred while attempting to unserialize the session data.',
+                     'event_espresso'
+                 );
+                 $msg .= WP_DEBUG
+                     ? '<br><pre>' . print_r($session_data, true) . '</pre><br>' . $this->find_serialize_error($session_data)
+                     : '';
+                 throw new InvalidSessionDataException($msg, 0, $e);
+             }
+         }
+         // just a check to make sure the session array is indeed an array
+         if ( ! is_array($session_data)) {
+             // no?!?! then something is wrong
+             $msg = esc_html__(
+                 'The session data is missing, invalid, or corrupted.',
+                 'event_espresso'
+             );
+             $msg .= WP_DEBUG
+                 ? '<br><pre>' . print_r($session_data, true) . '</pre><br>' . $this->find_serialize_error($session_data)
+                 : '';
+	         throw new InvalidSessionDataException($msg);
+         }
+	     if ( isset( $this->_session_data['transaction'] ) && absint( $this->_session_data['transaction'] ) !== 0 ) {
+		     $this->_session_data['transaction'] = EEM_Transaction::instance()->get_one_by_ID(
+			     $this->_session_data['transaction']
+	         );
+	     }
+	     return $session_data;
+     }
 
 
 
@@ -548,7 +672,7 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
 			&& is_array( $this->_session_data )
 			&& isset( $this->_session_data['id'])
 			? $this->_session_data
-			: NULL;
+			: array();
 		if ( empty( $this->_session_data )) {
 			$this->_set_defaults();
 		}
@@ -628,21 +752,6 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
 
 
 
-	 /**
-	  * since WordPress has no do_action()s within wp_safe_redirect,
-	  * we have to hack into one of the supplied filters
-	  * in order to make sure the session is updated prior to redirecting.
-	  * This is a callback for the 'wp_redirect' filter
-	  *
-	  * @param string $location
-	  * @return mixed
-	  */
-	 public function update_on_redirect( $location ) {
-		 $this->update();
-		 return $location;
-	}
-
-
 	/**
 	 * 	@create session data array
 	 * 	@access public
@@ -656,14 +765,13 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
 
 
 
-
-
-	/**
-	 * _save_session_to_db
-	 *
-	 * 	@access public
-	 * 	@return string
-	 */
+	 /**
+	  * _save_session_to_db
+	  *
+	  * @access public
+	  * @return string
+	  * @throws \EE_Error
+	  */
 	private function _save_session_to_db() {
 		if (
 			// if the current request is NOT one of the following
@@ -684,14 +792,17 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
 		) {
 			return false;
 		}
-        // then serialize all of our session data
-        $session_data = serialize($this->_session_data);
-        // do we need to also encode it to avoid corrupted data when saved to the db?
-        if (EE_Registry::instance()->CFG->admin->encode_session_data()) {
-            $session_data = base64_encode($session_data);
-        }
-		// encrypt it if we are using encryption
-		$session_data = $this->_use_encryption ? $this->encryption->encrypt( $session_data ) : $session_data;
+		$transaction = $this->transaction();
+		if ( $transaction instanceof EE_Transaction ) {
+			if ( ! $transaction->ID() ) {
+				$transaction->save();
+			}
+			$this->_session_data['transaction'] = $transaction->ID();
+		}
+		// then serialize all of our session data
+		$session_data = serialize($this->_session_data);
+		// do we need to also encode it to avoid corrupted data when saved to the db?
+		$session_data = $this->_use_encryption ? $this->encryption->base64_string_encode( $session_data ) : $session_data;
 		// maybe save hash check
 		if ( apply_filters( 'FHEE__EE_Session___perform_session_id_hash_check', WP_DEBUG ) ) {
 			set_transient( EE_Session::hash_check_prefix . $this->_sid, md5( $session_data ), $this->_lifespan );
@@ -929,17 +1040,17 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
 					OR option_value > {$too_far_in_the_the_future} )
 					LIMIT {$expired_session_transient_delete_query_limit}
 				";
-					 $expired_sessions = $wpdb->get_col( $SQL );
-					 // valid results?
-					 if ( ! $expired_sessions instanceof WP_Error && ! empty( $expired_sessions ) ) {
-						 // format array of results into something usable within the actual DELETE query's IN clause
-						 $expired = array();
-						 foreach ( $expired_sessions as $expired_session ) {
-							 $expired[ ] = "'" . $expired_session . "'";
-							 $expired[ ] = "'" . str_replace( 'timeout_', '', $expired_session ) . "'";
-						 }
-						 $expired = implode( ', ', $expired );
-						 $SQL = "
+                    $expired_sessions = $wpdb->get_col($SQL);
+                    // valid results?
+                    if ( ! $expired_sessions instanceof WP_Error && ! empty($expired_sessions)) {
+                        // format array of results into something usable within the actual DELETE query's IN clause
+                        $expired = array();
+                        foreach ($expired_sessions as $expired_session) {
+                            $expired[] = "'" . $expired_session . "'";
+                            $expired[] = "'" . str_replace('timeout_', '', $expired_session) . "'";
+                        }
+                        $expired = implode(', ', $expired);
+                        $SQL = "
 						DELETE FROM {$wpdb->options}
 						WHERE option_name
 						IN ( $expired );
@@ -959,31 +1070,6 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
 		 }
 
 
-	 }
-
-
-
-	 /**
-	  * @see http://stackoverflow.com/questions/2556345/detect-base64-encoding-in-php#30231906
-	  * @param $string
-	  * @return bool
-	  */
-	 private function valid_base_64( $string ) {
-         // ensure data is a string
-         if ( ! is_string($string)) {
-             return false;
-         }
-		 $decoded = base64_decode( $string, true );
-		 // Check if there is no invalid character in string
-		 if ( ! preg_match( '/^[a-zA-Z0-9\/\r\n+]*={0,2}$/', $string ) ) {
-			 return false;
-		 }
-		 // Decode the string in strict mode and send the response
-		 if ( ! base64_decode( $string, true ) ) {
-			 return false;
-		 }
-		 // Encode and compare it to original one
-		 return base64_encode( $decoded ) === $string;
 	 }
 
 

@@ -10,10 +10,9 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) {
 /**
  * Registration Model
  *
- * @package               Event Espresso
- * @subpackage            includes/models/
- * @author                Mike Nelson, Brent Christensen
- *                        ------------------------------------------------------------------------
+ * @package    Event Espresso
+ * @subpackage includes/models/
+ * @author     Mike Nelson, Brent Christensen
  */
 class EEM_Registration extends EEM_Soft_Delete_Base
 {
@@ -123,36 +122,52 @@ class EEM_Registration extends EEM_Soft_Delete_Base
         $this->_fields = array(
             'Registration' => array(
                 'REG_ID'           => new EE_Primary_Key_Int_Field('REG_ID', __('Registration ID', 'event_espresso')),
-                'EVT_ID'           => new EE_Foreign_Key_Int_Field('EVT_ID', __('Event ID', 'event_espresso'), false, 0,
-                    'Event'),
-                'ATT_ID'           => new EE_Foreign_Key_Int_Field('ATT_ID', __('Attendee ID', 'event_espresso'), false,
-                    0, 'Attendee'),
+                'EVT_ID'           => new EE_Foreign_Key_Int_Field(
+                    'EVT_ID', __('Event ID', 'event_espresso'), false, 0, 'Event'
+                ),
+                'ATT_ID'           => new EE_Foreign_Key_Int_Field(
+                    'ATT_ID', __('Attendee ID', 'event_espresso'), false, 0, 'Attendee'
+                ),
                 'TXN_ID'           => new EE_Foreign_Key_Int_Field('TXN_ID', __('Transaction ID', 'event_espresso'),
-                    false, 0, 'Transaction'),
+                    false, 0, 'Transaction'
+                ),
                 'TKT_ID'           => new EE_Foreign_Key_Int_Field('TKT_ID', __('Ticket ID', 'event_espresso'), false,
-                    0, 'Ticket'),
+                    0, 'Ticket'
+                ),
                 'STS_ID'           => new EE_Foreign_Key_String_Field('STS_ID', __('Status ID', 'event_espresso'),
-                    false, EEM_Registration::status_id_incomplete, 'Status'),
+                    false, EEM_Registration::status_id_incomplete, 'Status'
+                ),
                 'REG_date'         => new EE_Datetime_Field('REG_date',
-                    __('Time registration occurred', 'event_espresso'), false, EE_Datetime_Field::now, $timezone),
+                    __('Time registration occurred', 'event_espresso'), false, EE_Datetime_Field::now, $timezone
+                ),
                 'REG_final_price'  => new EE_Money_Field('REG_final_price',
-                    __('Registration\'s share of the transaction total', 'event_espresso'), false, 0),
+                    __('Registration\'s share of the transaction total', 'event_espresso'), false, 0
+                ),
                 'REG_paid'         => new EE_Money_Field('REG_paid',
-                    __('Amount paid to date towards registration', 'event_espresso'), false, 0),
+                    __('Amount paid to date towards registration', 'event_espresso'), false, 0
+                ),
                 'REG_session'      => new EE_Plain_Text_Field('REG_session',
-                    __('Session ID of registration', 'event_espresso'), false, ''),
+                    __('Session ID of registration', 'event_espresso'), false, ''
+                ),
                 'REG_code'         => new EE_Plain_Text_Field('REG_code',
-                    __('Unique Code for this registration', 'event_espresso'), false, ''),
+                    __('Unique Code for this registration', 'event_espresso'), false, ''
+                ),
                 'REG_url_link'     => new EE_Plain_Text_Field('REG_url_link',
-                    __('String to be used in URL for identifying registration', 'event_espresso'), false, ''),
+                    __('String to be used in URL for identifying registration', 'event_espresso'), false, ''
+                ),
                 'REG_count'        => new EE_Integer_Field('REG_count',
-                    __('Count of this registration in the group registration ', 'event_espresso'), true, 1),
+                    __('Count of this registration in the group registration ', 'event_espresso'), true, 1
+                ),
                 'REG_group_size'   => new EE_Integer_Field('REG_group_size',
-                    __('Number of registrations on this group', 'event_espresso'), false, 1),
+                    __('Number of registrations on this group', 'event_espresso'), false, 1
+                ),
                 'REG_att_is_going' => new EE_Boolean_Field('REG_att_is_going',
-                    __('Flag indicating the registrant plans on attending', 'event_espresso'), false, false),
-                'REG_deleted'      => new EE_Trashed_Flag_Field('REG_deleted',
-                    __('Flag indicating if registration has been archived or not.', 'event_espresso'), false, false),
+                    __('Flag indicating the registrant plans on attending', 'event_espresso'), false, false
+                ),
+                'REG_deleted'      => new EE_Trashed_Flag_Field(
+                    'REG_deleted', __('Flag indicating if registration has been archived or not.', 'event_espresso'),
+                    false, false
+                ),
             ),
         );
         $this->_model_relations = array(
@@ -183,11 +198,14 @@ class EEM_Registration extends EEM_Soft_Delete_Base
      */
     public static function reg_statuses_that_allow_payment()
     {
-        return apply_filters('FHEE__EEM_Registration__reg_statuses_that_allow_payment', array(
-            EEM_Registration::status_id_approved,
-            EEM_Registration::status_id_pending_payment,
-            EEM_Registration::status_id_wait_list,
-        ));
+        return apply_filters(
+            'FHEE__EEM_Registration__reg_statuses_that_allow_payment',
+            array(
+                EEM_Registration::status_id_approved,
+                EEM_Registration::status_id_pending_payment,
+                EEM_Registration::status_id_wait_list,
+            )
+        );
     }
 
 
@@ -201,12 +219,15 @@ class EEM_Registration extends EEM_Soft_Delete_Base
      */
     public static function active_reg_statuses()
     {
-        return apply_filters('FHEE__EEM_Registration__reg_statuses_that_allow_payment', array(
-            EEM_Registration::status_id_approved,
-            EEM_Registration::status_id_pending_payment,
-            EEM_Registration::status_id_wait_list,
-            EEM_Registration::status_id_not_approved,
-        ));
+        return apply_filters(
+            'FHEE__EEM_Registration__reg_statuses_that_allow_payment',
+            array(
+                EEM_Registration::status_id_approved,
+                EEM_Registration::status_id_pending_payment,
+                EEM_Registration::status_id_wait_list,
+                EEM_Registration::status_id_not_approved,
+            )
+        );
     }
 
 
@@ -220,11 +241,14 @@ class EEM_Registration extends EEM_Soft_Delete_Base
      */
     public static function inactive_reg_statuses()
     {
-        return apply_filters('FHEE__EEM_Registration__reg_statuses_that_allow_payment', array(
-            EEM_Registration::status_id_incomplete,
-            EEM_Registration::status_id_cancelled,
-            EEM_Registration::status_id_declined,
-        ));
+        return apply_filters(
+            'FHEE__EEM_Registration__reg_statuses_that_allow_payment',
+            array(
+                EEM_Registration::status_id_incomplete,
+                EEM_Registration::status_id_cancelled,
+                EEM_Registration::status_id_declined,
+            )
+        );
     }
 
 
@@ -239,10 +263,13 @@ class EEM_Registration extends EEM_Soft_Delete_Base
      */
     public static function closed_reg_statuses()
     {
-        return apply_filters('FHEE__EEM_Registration__closed_reg_statuses', array(
-            EEM_Registration::status_id_cancelled,
-            EEM_Registration::status_id_declined,
-        ));
+        return apply_filters(
+            'FHEE__EEM_Registration__closed_reg_statuses',
+            array(
+                EEM_Registration::status_id_cancelled,
+                EEM_Registration::status_id_declined,
+            )
+        );
     }
 
 
@@ -278,8 +305,9 @@ class EEM_Registration extends EEM_Soft_Delete_Base
         /** @type WPDB $wpdb */
         global $wpdb;
         if ($this->_get_table_analysis()->tableExists($wpdb->prefix . 'esp_status')) {
-            $SQL = 'SELECT STS_ID, STS_code FROM ' . $wpdb->prefix . 'esp_status WHERE STS_type = "registration"';
-            $results = $wpdb->get_results($SQL);
+            $results = $wpdb->get_results(
+                "SELECT STS_ID, STS_code FROM {$wpdb->prefix}esp_status WHERE STS_type = 'registration'"
+            );
             self::$_reg_status = array();
             foreach ($results as $status) {
                 if ( ! in_array($status->STS_ID, $exclude)) {
@@ -302,8 +330,12 @@ class EEM_Registration extends EEM_Soft_Delete_Base
         if ($this->_table_analysis instanceof TableAnalysis) {
             return $this->_table_analysis;
         } else {
-            throw new \EE_Error(sprintf(__('Table analysis class on class %1$s is not set properly.', 'event_espresso'),
-                get_class($this)));
+            throw new \EE_Error(
+                sprintf(
+                    __('Table analysis class on class %1$s is not set properly.', 'event_espresso'),
+                    get_class($this)
+                )
+            );
         }
     }
 
@@ -408,14 +440,17 @@ class EEM_Registration extends EEM_Soft_Delete_Base
             $where['Event.EVT_wp_user'] = get_current_user_id();
         }
         $query_interval = EEH_DTT_Helper::get_sql_query_interval_for_offset($this->get_timezone(), 'REG_date');
-        $results = $this->_get_all_wpdb_results(array(
-            $where,
-            'group_by' => 'regDate',
-            'order_by' => array('REG_date' => 'ASC'),
-        ), OBJECT, array(
-            'regDate' => array('DATE(' . $query_interval . ')', '%s'),
-            'total'   => array('count(REG_ID)', '%d'),
-        ));
+        $results = $this->_get_all_wpdb_results(
+            array(
+                $where,
+                'group_by' => 'regDate',
+                'order_by' => array('REG_date' => 'ASC'),
+            ),
+            OBJECT,
+            array(
+                'regDate' => array('DATE(' . $query_interval . ')', '%s'),
+                'total'   => array('count(REG_ID)', '%d'),
+            ));
         return $results;
     }
 
@@ -497,10 +532,13 @@ class EEM_Registration extends EEM_Soft_Delete_Base
             'group_by' => 'Event.EVT_name',
             'order_by' => 'Event.EVT_name',
             'limit'    => array(0, 24),
-        ), OBJECT, array(
-            'event_name' => array('Event_CPT.post_title', '%s'),
-            'total'      => array('COUNT(REG_ID)', '%s'),
-        ));
+        ),
+            OBJECT,
+            array(
+                'event_name' => array('Event_CPT.post_title', '%s'),
+                'total'      => array('COUNT(REG_ID)', '%s'),
+            )
+        );
         return $results;
     }
 
@@ -609,11 +647,12 @@ class EEM_Registration extends EEM_Soft_Delete_Base
     {
         /** @type WPDB $wpdb */
         global $wpdb;
-        return $wpdb->query('DELETE r FROM '
-                            . $this->table()
-                            . ' r LEFT JOIN '
-                            . EEM_Transaction::instance()->table()
-                            . ' t ON r.TXN_ID = t.TXN_ID WHERE t.TXN_ID IS NULL');
+        return $wpdb->query(
+            'DELETE r FROM '
+            . $this->table()
+            . ' r LEFT JOIN '
+            . EEM_Transaction::instance()->table()
+            . ' t ON r.TXN_ID = t.TXN_ID WHERE t.TXN_ID IS NULL');
     }
 
 
@@ -629,25 +668,24 @@ class EEM_Registration extends EEM_Soft_Delete_Base
     {
         global $wpdb;
         //subquery to get latest checkin
-        $query = $wpdb->prepare('SELECT '
-                                . 'COUNT( DISTINCT checkins.REG_ID ) '
-                                . 'FROM '
-                                . EEM_Checkin::instance()
-                                             ->table()
-                                . ' AS checkins INNER JOIN'
-                                . '( SELECT '
-                                . 'max( CHK_timestamp ) AS latest_checkin, '
-                                . 'REG_ID AS REG_ID '
-                                . 'FROM '
-                                . EEM_Checkin::instance()->table()
-                                . ' '
-                                . 'WHERE DTT_ID=%d '
-                                . 'GROUP BY REG_ID'
-                                . ') AS most_recent_checkin_per_reg '
-                                . 'ON checkins.REG_ID=most_recent_checkin_per_reg.REG_ID '
-                                . 'AND checkins.CHK_timestamp = most_recent_checkin_per_reg.latest_checkin '
-                                . 'WHERE '
-                                . 'checkins.CHK_in=%d', $DTT_ID, $checked_in);
+        $query = $wpdb->prepare(
+            'SELECT '
+            . 'COUNT( DISTINCT checkins.REG_ID ) '
+            . 'FROM ' . EEM_Checkin::instance()->table() . ' AS checkins INNER JOIN'
+            . '( SELECT '
+            . 'max( CHK_timestamp ) AS latest_checkin, '
+            . 'REG_ID AS REG_ID '
+            . 'FROM ' . EEM_Checkin::instance()->table() . ' '
+            . 'WHERE DTT_ID=%d '
+            . 'GROUP BY REG_ID'
+            . ') AS most_recent_checkin_per_reg '
+            . 'ON checkins.REG_ID=most_recent_checkin_per_reg.REG_ID '
+            . 'AND checkins.CHK_timestamp = most_recent_checkin_per_reg.latest_checkin '
+            . 'WHERE '
+            . 'checkins.CHK_in=%d',
+            $DTT_ID,
+            $checked_in
+        );
         return (int)$wpdb->get_var($query);
     }
 
@@ -664,29 +702,26 @@ class EEM_Registration extends EEM_Soft_Delete_Base
     {
         global $wpdb;
         //subquery to get latest checkin
-        $query = $wpdb->prepare('SELECT '
-                                . 'COUNT( DISTINCT checkins.REG_ID ) '
-                                . 'FROM '
-                                . EEM_Checkin::instance()
-                                             ->table()
-                                . ' AS checkins INNER JOIN'
-                                . '( SELECT '
-                                . 'max( CHK_timestamp ) AS latest_checkin, '
-                                . 'REG_ID AS REG_ID '
-                                . 'FROM '
-                                . EEM_Checkin::instance()->table()
-                                . ' AS c '
-                                . 'INNER JOIN '
-                                . EEM_Datetime::instance()->table()
-                                . ' AS d '
-                                . 'ON c.DTT_ID=d.DTT_ID '
-                                . 'WHERE d.EVT_ID=%d '
-                                . 'GROUP BY REG_ID'
-                                . ') AS most_recent_checkin_per_reg '
-                                . 'ON checkins.REG_ID=most_recent_checkin_per_reg.REG_ID '
-                                . 'AND checkins.CHK_timestamp = most_recent_checkin_per_reg.latest_checkin '
-                                . 'WHERE '
-                                . 'checkins.CHK_in=%d', $EVT_ID, $checked_in);
+        $query = $wpdb->prepare(
+            'SELECT '
+            . 'COUNT( DISTINCT checkins.REG_ID ) '
+            . 'FROM ' . EEM_Checkin::instance()->table() . ' AS checkins INNER JOIN'
+            . '( SELECT '
+            . 'max( CHK_timestamp ) AS latest_checkin, '
+            . 'REG_ID AS REG_ID '
+            . 'FROM ' . EEM_Checkin::instance()->table() . ' AS c '
+            . 'INNER JOIN ' . EEM_Datetime::instance()->table() . ' AS d '
+            . 'ON c.DTT_ID=d.DTT_ID '
+            . 'WHERE d.EVT_ID=%d '
+            . 'GROUP BY REG_ID'
+            . ') AS most_recent_checkin_per_reg '
+            . 'ON checkins.REG_ID=most_recent_checkin_per_reg.REG_ID '
+            . 'AND checkins.CHK_timestamp = most_recent_checkin_per_reg.latest_checkin '
+            . 'WHERE '
+            . 'checkins.CHK_in=%d',
+            $EVT_ID,
+            $checked_in
+        );
         return (int)$wpdb->get_var($query);
     }
 
@@ -706,7 +741,9 @@ class EEM_Registration extends EEM_Soft_Delete_Base
         global $wpdb;
         $registration_table = $wpdb->prefix . 'esp_registration';
         $attendee_table = $wpdb->posts;
-        $attendee_ids = is_array($attendee_ids) ? array_map('absint', $attendee_ids) : array((int)$attendee_ids);
+        $attendee_ids = is_array($attendee_ids)
+            ? array_map('absint', $attendee_ids)
+            : array((int)$attendee_ids);
         $attendee_ids = implode(',', $attendee_ids);
         //first we do a query to get the registration ids
         // (because a group by before order by causes the order by to be ignored.)
