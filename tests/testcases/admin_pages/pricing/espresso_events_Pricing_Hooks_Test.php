@@ -77,7 +77,7 @@ class espresso_events_Pricing_Hooks_Test extends EE_UnitTestCase {
 
 				foreach ( $dtts as $dtt ) {
 					$this->assertInstanceof( 'EE_Datetime', $dtt );
-
+                    /** @var EE_Datetime $dtt */
 					//verify start and date
 					$this->assertEquals( $dtt->start_date_and_time(), $this->_default_dates['DTT_start']->format( $full_format ), sprintf( 'Start Date Format Tested: %s', $full_format ) );
 					$this->assertEquals( $dtt->end_date_and_time(), $this->_default_dates['DTT_end']->format( $full_format ), sprintf( 'End Date Format Tested: %s', $full_format ) );
