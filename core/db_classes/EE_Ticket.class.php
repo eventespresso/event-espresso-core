@@ -1332,7 +1332,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 		if ( ! $datetime instanceof \EE_Datetime ) {
 			throw new UnexpectedEntityException(
 				$datetime,
-                \EE_Datetime::class,
+                'EE_Datetime',
 				sprintf(
 					__( 'The ticket (%s) is not associated with any valid datetimes.', 'event_espresso'),
 					$datetime->name()
@@ -1343,7 +1343,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 		if ( ! $event instanceof \EE_Event ) {
 			throw new UnexpectedEntityException(
 				$event,
-                \EE_Event::class,
+                'EE_Event',
 				sprintf(
 					__( 'The ticket (%s) is not associated with a valid event.', 'event_espresso'),
 					$this->name()
