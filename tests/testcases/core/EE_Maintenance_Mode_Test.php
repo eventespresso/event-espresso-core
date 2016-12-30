@@ -92,8 +92,8 @@ class EE_Maintenance_Mode_Test extends EE_UnitTestCase{
 	 * the DMS manager maintains a bit of state in order to be more efficient, which we want to lose between tests
 	 */
 	public function setUp(){
-		EE_Data_Migration_Manager::reset();
-		parent::setUp();
+        parent::setUp();
+	    EE_Data_Migration_Manager::reset();
 	}
 }
 
