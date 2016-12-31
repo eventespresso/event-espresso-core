@@ -64,9 +64,29 @@ class EE_Datetime_Field_Test extends EE_UnitTestCase {
 	 * @param null $pretty_date_format
 	 * @param null $pretty_time_format
 	 */
-	protected function _set_dtt_field_object( $table_column = 'DTT_EVT_start', $nice_name = 'Start Date', $nullable = false, $default_value = '', $timezone = NULL, $date_format = NULL, $time_format = NULL, $pretty_date_format = NULL, $pretty_time_format = NULL ) {
-		$this->_datetime_field = new EE_Datetime_Field_Mock( $table_column, $nice_name, $nullable, $default_value, $timezone, $date_format, $time_format, $pretty_date_format, $pretty_time_format );
-	}
+    protected function _set_dtt_field_object(
+        $table_column = 'DTT_EVT_start',
+        $nice_name = 'Start Date',
+        $nullable = false,
+        $default_value = '',
+        $timezone = null,
+        $date_format = null,
+        $time_format = null,
+        $pretty_date_format = null,
+        $pretty_time_format = null
+    ) {
+        $this->_datetime_field = new EE_Datetime_Field_Mock(
+            $table_column,
+            $nice_name,
+            $nullable,
+            $default_value,
+            $timezone,
+            $date_format,
+            $time_format,
+            $pretty_date_format,
+            $pretty_time_format
+        );
+    }
 
 
 
@@ -384,6 +404,7 @@ class EE_Datetime_Field_Test extends EE_UnitTestCase {
 		$datetime = unserialize( $datetime );
 		$this->assertInstanceOf( 'EventEspresso\core\domain\entities\DbSafeDateTime', $datetime );
 	}
+
 
 
 }
