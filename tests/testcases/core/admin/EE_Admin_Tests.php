@@ -244,12 +244,16 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 		$xpct_registration_title = __('Click to view all registrations', 'event_espresso');
 		$xpct_registration_assembled = sprintf( '<a class="ee-dashboard-link-registrations" href="%s" title="%s">%s</a>', $xpct_registration_url, $xpct_registration_title, $xpct_registration_text );
 
-		$generated_items = EE_Admin::instance()->dashboard_glance_items( '' );
+		$generated_items = EE_Admin::instance()->dashboard_glance_items( array() );
 		//first assert the elements are an array.
 		$this->assertInternalType('array', $generated_items);
 
 		//assert the count for the array is two
-		$this->assertcount( 2, $generated_items);
+		$this->assertCount(
+		    2,
+            $generated_items,
+            sprintf('$generated_items should have 2 elements: ', print_r($generated_items, true))
+        );
 
 		//assert that the first item matches the xpctd event string.
 		$this->assertEquals( $xpct_event_assembled, $generated_items[0] );
