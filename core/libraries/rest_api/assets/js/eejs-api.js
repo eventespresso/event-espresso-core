@@ -845,6 +845,8 @@ Vue.use(Vuex);
                         "mixins": [mixins.collection]
                     };
 
+                    components[collection]['components'] = components[collection]['components'] || {};
+
                     //make sure the collection component gets the model component registered with it.
                     components[collection]['components'][singularizedCollection] = components[singularizedCollection];
                 },
