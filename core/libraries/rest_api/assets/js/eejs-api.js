@@ -75,7 +75,6 @@ Vue.use(Vuex);
     eejs.data = eejs.data || {};
     eejs.api.mixins = eejs.api.mixins || {};
     eejs.api.components = eejs.api.components || {};
-    eejs.api.main = {};
     eejs.utils = eejs.utils || {};
 
 
@@ -93,9 +92,9 @@ Vue.use(Vuex);
      *                          that should be initialized for the view.
      * @param initialOptions
      */
-    eejs.api.init = function( initialOptions ) {
+    eejs.api.init = function(initialOptions) {
         // private object internal to eejs.api.init that will be exposed as an instance on eejs.api.main
-        var main = function (options) {
+        var Main = function (options) {
             //initialOptions must contain a collections property
             if (! _.isObject(options) && _.isUndefined(options)) {
                 throw new eejs.exception('eejs.api.init must be initialized with an object that contains at least a collections property');
@@ -171,7 +170,6 @@ Vue.use(Vuex);
                 components = {};
 
             /**
-             * This is invoked immediately on construct.
              * This initializes eejs.api and builds all the various components, mixins etc. that are then
              * exposed for client code to use in constructing a Vue instance.
              * @return Promise
@@ -200,7 +198,7 @@ Vue.use(Vuex);
                         reject(error);
                     });
                 });
-            }(),
+            },
                 /**
                  * Used to validate any collections sent in.
                  * Ensures that:
@@ -214,8 +212,8 @@ Vue.use(Vuex);
                     }
                     _.each(collectionsToValidate, function(collection){
                         if (! collectionHasRoute(collection) ) {
-                            throw new eejs.exception('The incoming collection ('+collection+') does not have a' +
-                                'corresponding route in the api. Doublecheck your spelling.');
+                            throw new eejs.exception('The incoming collection (' + collection + ') does not have a' +
+                                ' corresponding route in the api. Doublecheck your spelling.');
                         }
                     });
                 },
@@ -258,7 +256,7 @@ Vue.use(Vuex);
                     var optionsRequest = {
                         Options: {method: 'OPTIONS'}
                     };
-                    var resource = Vue.resource(restRoute+collection, optionsRequest);
+                    var resource = Vue.resource(restRoute+collection, {}, optionsRequest);
                     return resource.Options().then(function(response){
                         collectionsSchema[collection] = response.body.schema;
                     }).catch(function(e){console.log(e);});
@@ -277,11 +275,11 @@ Vue.use(Vuex);
                                 discoveryCache = response.body;
                                 resolve();
                             }).catch(function (response) {
-                                console.log(response);
                                 reject(response);
                             });
+                        } else {
+                            resolve();
                         }
-                        resolve();
                     });
                 },
                 /**
@@ -558,10 +556,10 @@ Vue.use(Vuex);
                  * @param collectionSchema
                  */
                 getPropertiesFromSchema = function(collectionSchema) {
-                  if (! _.isUndefined(collectionSchema.properties)) {
+                    if (_.isUndefined(collectionSchema.properties)) {
                       throw new eejs.exception('Unable to return properties for the '+collectionSchema.title+'.');
-                  }
-                  return collectionSchema.properties;
+                    }
+                    return collectionSchema.properties;
                 },
                 /**
                  * Takes care of building all the mixins and caching them on the mixins property.
@@ -655,6 +653,12 @@ Vue.use(Vuex);
                                  */
                             },
 
+                            //simply returns whether the main property
+                            isEmpty: function() {
+                                return typeof( this[this.modelName()][this.collectionRecord().primaryKey] ) === 'undefined'
+                                    || typeof( this[this.modelName()]._id ) === 'undefined';
+                            },
+
                             collectionRecord: function() {
                                 return this.$store.state[this.collectionName];
                             },
@@ -691,19 +695,14 @@ Vue.use(Vuex);
                         && _.has(collectionsSchema[collection]['relations'], 'properties')
                     ) {
                         _.each(collectionsSchema[collection]['relations']['properties'], function(relationProperties, relation){
-                            relationName = eejs.utils.inflection.humanize(relation,true);
+                            relationName = eejs.utils.inflection.humanize(relation,true).replace(' ', '_');
                             relation = eejs.utils.inflection.pluralize(relationName);
                             //note we only build relation mixins for which there is a registered collection for that relation.
-                            if ( _.indexOf(collections,relationName) > -1 ) {
+                            if ( _.indexOf(collections,relation) > -1 ) {
                                 buildRelationMixinForCollectionAndRelation(collection,relation,relationName);
                             }
                         });
                     }
-
-                    /** @todo loop through the relations registered on the schema (if present) and build relation mixins
-                     * for each relation.  Each relation mixin gets added to the mixins object
-                     * It should be in the format mixins.relations.{collection}.{relation}
-                     */
                 },
                 /**
                  * Builds a relation mixin for a specific collection and relation.
@@ -729,6 +728,9 @@ Vue.use(Vuex);
                         collectionSingularCapitalized = eejs.utils.inflection.capitalize(collectionSingular),
                         capitalizedRelation = eejs.utils.inflection.capitalize(relation),
                         mixinMethods = {};
+
+                    mixins.relations = mixins.relations || {};
+                    mixins.relations[collectionSingular] = mixins.relations[collectionSingular] || {};
 
                     mixinMethods['getRelated'+capitalizedRelation] = function(){
                         var self = this;
@@ -811,7 +813,7 @@ Vue.use(Vuex);
                         _.each(mixins.relations[singularizedCollection], function(relationMixinObject){
                             mixinsForModelComponent.push(relationMixinObject);
                         });
-                        mxinsForModelComponent.push(mixins.model);
+                        mixinsForModelComponent.push(mixins.model);
                     }
 
                     //next the model component
@@ -854,13 +856,13 @@ Vue.use(Vuex);
                     }
                     //we can get the relations that need registered via the mixins
                     var singularizedRelation = '',
-                        componentsToAdd = [];
+                        componentsToAdd = {};
                     //okay there are relations so let's loop through and then add those to a components array for this
                     //component.
                     _.each(mixins.relations[component], function(relationObject, relation){
                         singularizedRelation = eejs.utils.inflection.singularize(relation);
                        if (_.has(components, singularizedRelation)){
-                           componentsToAdd.push(components[singularizedRelation]);
+                           componentsToAdd[singularizedRelation] = components[singularizedRelation];
                        }
                     });
                     components[component]['components'] = componentsToAdd;
@@ -871,10 +873,7 @@ Vue.use(Vuex);
                  * @return boolean
                  */
                 collectionHasRoute = function(collection) {
-                    var hasKey = _.findKey(getEndpoints, function(key){
-                        return key.indexOf(collection) >= 0;
-                    });
-                    return ! _.isUndefined(hasKey);
+                    return ! _.has(getEndpoints(), collection);
                 };
 
             /**
@@ -883,6 +882,10 @@ Vue.use(Vuex);
              */
             this.getRegisteredCollections = function() {
                 return collections;
+            };
+
+            this.init = function() {
+                return initialize();
             };
 
             /**
@@ -905,8 +908,9 @@ Vue.use(Vuex);
 
         //start ur engines.
         return new Promise(function(resolve, reject) {
-            if ( ! eejs.api.main instanceof main ) {
-                eejs.api.main = new main(initialOptions).then(resolve).catch(function(e){
+            if ( ! (eejs.api.main instanceof Main) ) {
+                eejs.api.main = new Main(initialOptions);
+                eejs.api.main.init().then(function(){resolve()}).catch(function(e){
                     console.log(e);
                     reject(e);
                 });
