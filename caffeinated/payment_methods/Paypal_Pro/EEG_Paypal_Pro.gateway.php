@@ -91,16 +91,16 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
 	public function do_direct_payment($payment,$billing_info = null){
 		$transaction = $payment->transaction();
         if (! $transaction instanceof EEI_Transaction) {
-            throw new EE_Error(esc_html('No transaction for payment while paying with PayPal Pro.', 'event_espresso'));
+            throw new EE_Error(esc_html__('No transaction for payment while paying with PayPal Pro.', 'event_espresso'));
         }
         $primary_registrant = $transaction->primary_registration();
         if (! $primary_registrant instanceof EEI_Registration) {
-            throw new EE_Error(esc_html('No primary registration on transaction while paying with PayPal Pro.',
+            throw new EE_Error(esc_html__('No primary registration on transaction while paying with PayPal Pro.',
                 'event_espresso'));
         }
         $attendee = $primary_registrant->attendee();
         if (! $attendee instanceof EEI_Attendee) {
-            throw new EE_Error(esc_html('No attendee on primary registration while paying with PayPal Pro.',
+            throw new EE_Error(esc_html__('No attendee on primary registration while paying with PayPal Pro.',
                 'event_espresso'));
         }
 		$order_description  = $this->_format_order_description( $payment );
