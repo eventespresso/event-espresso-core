@@ -795,20 +795,10 @@ Vue.use(Vuex);
                     }
                     var capitalizedCollection = eejs.utils.inflection.capitalize(collection),
                         singularizedCollection = eejs.utils.inflection.singularize(collection),
-                        capitalizedSingularizedCollection = eejs.utils.inflection.singularize(capitalizedCollection);
-                    //first the collection component
-                    components[collection] = {
-                        "collection": collection,
-                        "data": function() {
-                            var dataObject = {};
-                            dataObject[collection] = [];
-                            dataObject['has' + capitalizedCollection] = false;
-                            return dataObject;
-                        },
-                        "mixins": [mixins.collection]
-                    };
+                        capitalizedSingularizedCollection = eejs.utils.inflection.singularize(capitalizedCollection),
+                        mixinsForModelComponent = [];
 
-                    var mixinsForModelComponent = [];
+                    //first the model component
                     if (_.has(mixins.relations, singularizedCollection)) {
                         _.each(mixins.relations[singularizedCollection], function(relationMixinObject){
                             mixinsForModelComponent.push(relationMixinObject);
@@ -816,7 +806,6 @@ Vue.use(Vuex);
                         mixinsForModelComponent.push(mixins.model);
                     }
 
-                    //next the model component
                     components[singularizedCollection] = {
                         "collection": collection,
                         "props": ['initial' + capitalizedSingularizedCollection],
@@ -842,7 +831,22 @@ Vue.use(Vuex);
                             }
                         },
                         "mixins" : mixinsForModelComponent
-                    }
+                    };
+
+                    //next the collection component
+                    components[collection] = {
+                        "collection": collection,
+                        "data": function() {
+                            var dataObject = {};
+                            dataObject[collection] = [];
+                            dataObject['has' + capitalizedCollection] = false;
+                            return dataObject;
+                        },
+                        "mixins": [mixins.collection]
+                    };
+
+                    //make sure the collection component gets the model component registered with it.
+                    components[collection]['components'][singularizedCollection] = components[singularizedCollection];
                 },
                 /**
                  * Registers relation components on the given component.
