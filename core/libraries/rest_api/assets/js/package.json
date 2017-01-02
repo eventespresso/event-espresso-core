@@ -3,14 +3,8 @@
   "version": "1.0.0",
   "description": "Models component for implementation with vue.",
   "main": "eejs-api.js",
-  "watch": {
-    "{src,test}/*.js": [
-      "dev"
-    ]
-  },
   "scripts": {
     "dev": "watchify eejs-api.js -o eejs-api.min.js -vd --poll=100 -t aliasify",
-    "watch": "npm-scripts-watcher",
     "build": "cross-env NODE_ENV=production browserify -t aliasify eejs-api.js | uglifyjs -c warnings=false -m > eejs-api.min.js",
     "alias": "aliasify --help"
   },
