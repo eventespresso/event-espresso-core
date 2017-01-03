@@ -269,8 +269,6 @@ Vue.use(Vuex);
                     var resource = Vue.resource(restRoute+collection, {}, optionsRequest);
                     return resource.Options().then(function(response){
                         collectionsSchema[collection] = response.body.schema;
-                    }).catch(function(e){
-                        console.log(e);
                     });
                 },
                 /**
@@ -459,7 +457,6 @@ Vue.use(Vuex);
                                         resolve(response.body);
                                     }).catch(function(response){
                                         //error handling
-                                        console.log(response);
                                         reject(response);
                                     });
                                 });
@@ -507,7 +504,6 @@ Vue.use(Vuex);
                                             + context.state[payload.collection].collectionEndpoint
                                             + payload.id
                                         ).then(function(response){
-                                            // console.log('success');
                                             context.commit('addEntity',
                                                 {
                                                     collection: payload.collection,
@@ -519,7 +515,6 @@ Vue.use(Vuex);
                                         })
                                             .catch(function(response){
                                                 //error handling
-                                                console.log(response);
                                                 reject();
                                             });
                                     } else {
@@ -643,11 +638,15 @@ Vue.use(Vuex);
                                 //this is actually a promise, so will have to be handled appropriately.
                                 this.$store.dispatch('fetchCollection', {collection:this.collectionName,refresh:refresh})
                                     .then( function(){
+                                        //@todo, we could trigger some sort of property that the ui can use to indicate
+                                        // a success in getting the collection.  A custom js event might be good?
                                         self.hasEvents = true;
                                         self.events = self.$store.state[self.collectionName].entities;
                                     })
                                     .catch( function(){
-                                        console.log('no events retrieved')
+                                        //@todo, we could trigger some sort of property that the ui can use to indicate
+                                        // a failure in getting the collection.  A custom js event might be good?
+                                        console.log('no events retrieved');
                                     });
                             }
                         }
@@ -678,10 +677,13 @@ Vue.use(Vuex);
                                     'addEntityById',
                                     {collection:this.collectionName,id:this.id,refresh:refresh}
                                 ).then( function(response){
-                                    // console.log('success add');
+                                    //@todo, we could trigger some sort of property that the ui can use to indicate a
+                                    // success in adding the item.  A custom js event might be good?
                                     self.event = response;
                                 })
                                 .catch( function(response){
+                                    //@todo, we could trigger some sort of property that the ui can use to indicate a
+                                    // failure in adding the item.  A custom js event might be good?
                                     console.log(response);
                                 });
                             },
@@ -790,9 +792,13 @@ Vue.use(Vuex);
                                 ']=' + self[collectionPrimaryKey]
                             }
                         ).then( function(response){
+                            //@todo, we could also trigger some sort of property that the ui can use to indicate a
+                            //success in getting the related item. A custom js event might be good?
                             self['has'+capitalizedRelation] = true;
                             self[relation] = response
                         }).catch( function(response){
+                            //@todo, we could trigger some sort of property that the ui can use to indicate a failure in
+                            //getting the related item.  A custom js event might be good?
                             console.log(response);
                         });
                     };
@@ -871,10 +877,14 @@ Vue.use(Vuex);
                                 var self = this;
                                 this.$store.dispatch('addEntityById', {collection:this.collectionName,id:this.id})
                                     .then( function(response){
+                                        //@todo, we could trigger some sort of property that the ui can use to indicate
+                                        // a success in getting the item.  A custom js event might be good?
                                         self[singularizedCollection] = response;
                                         self['has' + capitalizedSingularizedCollection] = true;
                                     })
                                     .catch( function(response){
+                                        //@todo, we could trigger some sort of property that the ui can use to indicate
+                                        // a failure in getting the item.  A custom js event might be good?
                                         console.log(response);
                                     });
                             }
@@ -967,13 +977,11 @@ Vue.use(Vuex);
             if ( ! (eejs.api.main instanceof Main) ) {
                 eejs.api.main = new Main(initialOptions);
                 eejs.api.main.init().then(function(){resolve()}).catch(function(e){
-                    console.log(e);
                     reject(e);
                 });
             } else {
                 var msg = 'eejs.api.init has already been called in this request so it has been initialized.' +
                     ' If you wish to add more collections then use the eejs.api.main.addCollections method.';
-                console.log(msg);
                 reject(msg);
             }
         });
