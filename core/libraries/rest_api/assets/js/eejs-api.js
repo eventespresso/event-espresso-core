@@ -87,9 +87,10 @@ Vue.use(Vuex);
 
 
     /**
-     * This is a wrapper for the eejs.api.main object that is used for initializing our Vuex store and all the collections
-     * and mixins that will be used for any views interacting with the EE api.
-     *                          that should be initialized for the view.
+     * This is a wrapper for the eejs.api.main object that is used
+     * for initializing our Vuex store and all the collections and mixins
+     * that will be used for any views interacting with the EE api.
+     * that should be initialized for the view.
      * @param initialOptions
      */
     eejs.api.init = function(initialOptions) {
@@ -97,7 +98,9 @@ Vue.use(Vuex);
         var Main = function (options) {
             //initialOptions must contain a collections property
             if (! _.isObject(options) && _.isUndefined(options.collections)) {
-                throw new eejs.exception('eejs.api.init must be initialized with an object that contains at least a collections property');
+                throw new eejs.exception(
+                    'eejs.api.init must be initialized with an object that contains at least a collections property'
+                );
             }
 
             //verify that there is a rest route property set
@@ -105,7 +108,9 @@ Vue.use(Vuex);
                 _.isUndefined(eejs.data.paths)
                 && _.isUndefined(eejs.data.paths.rest_route)
             ) {
-                throw new eejs.exception('eejs.data.paths.rest_route is not defined, unable to initialize the api library');
+                throw new eejs.exception(
+                    'eejs.data.paths.rest_route is not defined, unable to initialize the api library'
+                );
             }
 
             /**
@@ -160,7 +165,8 @@ Vue.use(Vuex);
                  * A cache of all the built components used by client code for creating a Vue instance.
                  * These are also exposed on the `eejs.api.components` property.
                  *
-                 * There should be two components built for each registered collection.  So for instance for the `events`
+                 * There should be two components built for each registered collection.
+                 * So for instance for the `events`
                  * collection:
                  *
                  * eejs.api.components.events
@@ -181,25 +187,26 @@ Vue.use(Vuex);
                     if (_.isUndefined(eejs.data.paths)
                         && _.isUndefined(eejs.data.paths.rest_route)
                     ){
-                        throw new eejs.exception('In order to initialize eejs.api, there must be a rest route exposed' +
-                            ' via `eejs.data.paths.rest_route` property.  Unable to find that.');
+                        throw new eejs.exception(
+                            'In order to initialize eejs.api, there must be a rest route exposed' +
+                            ' via `eejs.data.paths.rest_route` property.  Unable to find that.'
+                        );
                     }
                     restRoute = eejs.data.paths.rest_route;
-                    initDiscoverAPI()
-                    .then( function() {
-                        validateCollections(initialOptions.collections);
-                        registerCollections(initialOptions.collections);
-                        return setSchemaForEachCollection(initialOptions.collections);
-                    }).then( function(){
-                        buildStore();
-                        buildMixins();
-                        buildComponents();
-                        resolve();
-                    }).catch( function(error){
-                        reject(error);
+                    initDiscoverAPI().then( function() {
+                            validateCollections(initialOptions.collections);
+                            registerCollections(initialOptions.collections);
+                            return setSchemaForEachCollection(initialOptions.collections);
+                        }).then( function(){
+                            buildStore();
+                            buildMixins();
+                            buildComponents();
+                            resolve();
+                        }).catch( function(error){
+                            reject(error);
+                        });
                     });
-                });
-            },
+                },
                 /**
                  * Used to validate any collections sent in.
                  * Ensures that:
@@ -213,8 +220,10 @@ Vue.use(Vuex);
                     }
                     _.each(collectionsToValidate, function(collection){
                         if (! collectionHasRoute(collection) ) {
-                            throw new eejs.exception('The incoming collection (' + collection + ') does not have a' +
-                                ' corresponding route in the api. Doublecheck your spelling.');
+                            throw new eejs.exception(
+                                'The incoming collection (' + collection + ') does not have a' +
+                                ' corresponding route in the api. Double-check your spelling.'
+                            );
                         }
                     });
                 },
@@ -260,7 +269,9 @@ Vue.use(Vuex);
                     var resource = Vue.resource(restRoute+collection, {}, optionsRequest);
                     return resource.Options().then(function(response){
                         collectionsSchema[collection] = response.body.schema;
-                    }).catch(function(e){console.log(e);});
+                    }).catch(function(e){
+                        console.log(e);
+                    });
                 },
                 /**
                  * If the discoveryCache has not been set, then this does the initial query to the base RestRoute for
@@ -312,16 +323,20 @@ Vue.use(Vuex);
                              * Used to set a value on a model.
                              * @param state
                              * @param payload Expected to be an object with model, changes and filter keys.
-                             *                model = the name of the model the value is being set on (the pluralized slug).
-                             *                changes = an object of key value pairs for the properties and values being changed on the model
-                             *                id = the value of the primary key for the model entity being updated.
+                             *                model =   the name of the model the value is being set on
+                             *                          (the pluralized slug).
+                             *                changes = an object of key value pairs for the properties
+                             *                          and values being changed on the model
+                             *                id =      the value of the primary key for the model entity being updated.
                              *
                              */
                             updateEntityById: function( state, payload ) {
                                 //make sure we have required payload items here.
                                 if ( ! _.has(payload,'model' ) || ! _.has(payload,'changes') || !_.has(payload,'id') ) {
-                                    throw new eejs.exception( 'The payload for `setById` is missing a required key.  Doublecheck and make sure' +
-                                        'there is a `model`, `changes` and `id` key set.');
+                                    throw new eejs.exception(
+                                        'The payload for `setById` is missing a required key.  Double-check and make' +
+                                        ' sure there is a `model`, `changes` and `id` key set.'
+                                    );
                                 }
                                 if ( _.has(state,payload.model+'s') ) {
                                     //get existing model entity if present and then add it
@@ -333,22 +348,28 @@ Vue.use(Vuex);
                              * Used to add a complete entity to the specific collection in the state.
                              * @param state
                              * @param payload Expect an object with:
-                             *          collection = [required] the name of the collection the entity is being added to.
-                             *          entity = [required] an object representing the properties and values for the entity.
-                             *          refresh = [optional] defaults to false, if true, then we'll allow replacing the existing entity values.
+                             *          collection  = [required] the name of the collection the entity is being added to.
+                             *          entity      = [required] an object representing the properties
+                             *                      and values for the entity.
+                             *          refresh     = [optional] defaults to false, if true,
+                             *                      then we'll allow replacing the existing entity values.
                              */
                             addEntity: function( state, payload ) {
                                 //make sure required payload items are here.
                                 if ( ! _.has(payload,'collection') || !_.has(payload,'entity') ) {
-                                    throw new eejs.exception( 'The payload for `addEntity` is missing a required key. Doublecheck and' +
-                                        'make sure there is a `collection` and `entity` key set (with appropriate values)');
+                                    throw new eejs.exception(
+                                        'The payload for `addEntity` is missing a required key. Double-check and' +
+                                        'make sure there is a `collection` and `entity` key set (with appropriate values)'
+                                    );
                                 }
                                 var refresh = typeof( payload.refresh ) !== 'undefined' ? payload.refresh : false;
                                 //does this collection exist?
                                 if ( _.has(state,payload.collection) ) {
-                                    //is entity an object? Eventually we can add validation to make sure only a valid entity is getting added.
+                                    //is entity an object? Eventually we can add validation
+                                    // to make sure only a valid entity is getting added.
                                     if ( _.isObject(payload.entity) && ! _.isNull(payload.entity) ) {
-                                        //does this entity already exist?  If it does we do not allow overwrites, the state is the source remember
+                                        //does this entity already exist?  If it does we do not allow overwrites,
+                                        // the state is the source remember
                                         if ( ! eejs.api.collections.hasEntityInCollection(payload.collection,payload.entity) ) {
                                             state[payload.collection].entities.push( payload.entity );
                                         } else if (refresh) {
@@ -359,12 +380,13 @@ Vue.use(Vuex);
                             },
 
                             /**
-                             * Haven't fleshed the below methods out yet, they'll basically be used for removing things from the collection
+                             * Haven't fleshed the below methods out yet,
+                             * they'll basically be used for removing things from the collection
                              * @param state
                              * @param payload
                              */
                             removeEntity: function(state,payload){/*@todo*/},
-                            removeEntitybyId: function(state,payload){/*@todo*/}
+                            removeEntityById: function(state,payload){/*@todo*/}
 
                         },
                         actions: {
@@ -372,35 +394,46 @@ Vue.use(Vuex);
                              * Used to retrieve items for a collection and then adds it to the store.
                              * @param context (access the store through this, so context.state, or context.state.events).
                              * @param payload Expect an object with:
-                             *      collection = [required] the name of the collection being retrieved
-                             *      queryString = [optional] a string in the format of extra conditions you want to refine the query to.
+                             *      collection  = [required] the name of the collection being retrieved
+                             *      queryString = [optional] a string in the format of extra conditions
+                             *                    you want to refine the query to.
                              *                    (see ee rest api docs for formatting the query string)
-                             *      refresh = [optional] defaults to false.  When true then if the results match an existing entity in
-                             *                the collection they will be replaced.  Otherwise the default behaviour is to only add
-                             *                entities that don't already exist (via checking the primary key).
+                             *      refresh     = [optional] defaults to false.
+                             *                  When true then if the results match an existing entity in
+                             *                  the collection they will be replaced.
+                             *                  Otherwise the default behaviour is to only add
+                             *                  entities that don't already exist (via checking the primary key).
                              *
-                             * Note: one thing that we might want to do to improve this, is move the actions and mutations to each
-                             *       individual module.  That way they don't have to be aware of any of the other collections and can just
-                             *       handle their own.
+                             * Note: one thing that we might want to do to improve this,
+                             *      is move the actions and mutations to each individual module.
+                             *      That way they don't have to be aware of any of the other
+                             *      collections and can just handle their own.
                              *
-                             * Note: the caveat to adding this to modules is that it'd need to be a unique function name on each module because
-                             * the way vuex works is within modules it exports the actions/mutations/getters to the global space so taht
-                             * when a specific function is called, it acts on all modules with that function defined.  So we won't want
-                             * necessarily be wanting to get all collections for each module when we call it!
+                             * Note: the caveat to adding this to modules is that it'd need to be
+                             *      a unique function name on each module because the way vuex works
+                             *      is within modules it exports the actions/mutations/getters
+                             *      to the global space so that when a specific function is called,
+                             *      it acts on all modules with that function defined.
+                             *      So we won't want necessarily be wanting to get
+                             *      all collections for each module when we call it!
                              *
                              * @return Promise
                              */
                             fetchCollection: function( context, payload ) {
                                 return new Promise( function(resolve, reject) {
                                     if ( _.isUndefined(payload.collection) || payload.collection === '' ) {
-                                        reject( 'In order to get a collection, you need to specify the collection to retrieve' +
-                                            ' via payload.collection.');
+                                        reject(
+                                            'In order to get a collection, you need to specify the collection to' +
+                                            ' retrieve via payload.collection.'
+                                        );
                                     }
 
                                     //in order to successfully fetch, the collection must be registered as a module.
                                     if ( _.isUndefined(context.state[payload.collection]) ) {
-                                        reject( 'In order to get a collection, the collection must be registered as a module in' +
-                                            'the collections store.');
+                                        reject(
+                                            'In order to get a collection, the collection must be registered as a' +
+                                            ' module in the collections store.'
+                                        );
                                     }
 
                                     var routeQueryString = ! _.isUndefined(payload.queryString)
@@ -410,7 +443,8 @@ Vue.use(Vuex);
 
                                     //k made it here, so let's fetch the collection
                                     Vue.http.get(
-                                        context.state.restRoute+context.state[payload.collection].collectionEndpoint
+                                        context.state.restRoute
+                                        + context.state[payload.collection].collectionEndpoint
                                         + routeQueryString
                                     ).then(function(response) {
                                         _.each( response.body, function(entity){
@@ -436,18 +470,21 @@ Vue.use(Vuex);
                              * Optionally will refresh the entity in the collection.
                              * @param context
                              * @param payload  Expect an object with:
-                             *      collection = [required] the collection the entity is being retrieved for.
-                             *      id = [required] the primaryKey id for the entity to retrieve.
-                             *      refresh = [optional] default to false.  If included, and true, then this will retrieve from the db
-                             *           regardless of whether its in the store state or not and will replace whats in the collection with
-                             *           what gets retrieved.
+                             *      collection  = [required] the collection the entity is being retrieved for.
+                             *      id          = [required] the primaryKey id for the entity to retrieve.
+                             *      refresh     = [optional] default to false.  If included, and true,
+                             *                  then this will retrieve from the db regardless of whether
+                             *                  its in the store state or not and will replace whats in
+                             *                  the collection with what gets retrieved.
                              * @return entity object.
                              */
-                            addEntitybyId: function( context, payload ) {
+                            addEntityById: function( context, payload ) {
                                 return new Promise( function(resolve, reject) {
                                     if (_.isUndefined(payload.id) || _.isUndefined(payload.collection)) {
-                                        reject('Unable to retrieve an entity from this collection because both id and collection' +
-                                            ' is required, and either of those (or both) is missing!');
+                                        reject(
+                                            'Unable to retrieve an entity from this collection because both id and' +
+                                            ' collection is required, and either of those (or both) is missing!'
+                                        );
                                     }
 
                                     var primaryKey = context.state[payload.collection].primaryKey,
@@ -455,19 +492,22 @@ Vue.use(Vuex);
                                         entity = {};
 
 
-                                    //do a search for an entity that matches the primaryKey or `_id` for the given id in the payload but
-                                    //only if ! refresh
+                                    // do a search for an entity that matches the primaryKey or `_id`
+                                    // for the given id in the payload but only if ! refresh
                                     if ( ! refresh ) {
                                         entity = _.find(context.state[payload.collection].entities, function (entity) {
                                             return entity[primaryKey] === payload.id || entity._id === payload.id;
                                         });
                                     }
-                                    //if entity doesn't have an EVT_ID then we know its not retrieved yet so let's attempt via the db.
+                                    // if entity doesn't have an EVT_ID then we know
+                                    // its not retrieved yet, so let's attempt via the db.
                                     if ( _.isUndefined( entity ) || _.isUndefined(entity.EVT_ID) || refresh ) {
                                         Vue.http.get(
-                                            context.state.restRoute+context.state[payload.collection].collectionEndpoint+payload.id
+                                            context.state.restRoute
+                                            + context.state[payload.collection].collectionEndpoint
+                                            + payload.id
                                         ).then(function(response){
-                                            console.log('success');
+                                            // console.log('success');
                                             context.commit('addEntity',
                                                 {
                                                     collection: payload.collection,
@@ -489,13 +529,13 @@ Vue.use(Vuex);
                             },
 
                             //below methods are just stubs for now, we don't have endpoints to handle them.
-                            removeEntitybyId: function(context,payload){/*@todo*/},
+                            removeEntityById: function(context,payload){/*@todo*/},
                             removeCollection: function(context,payload){/*@todo*/},
-                            saveEntitybyId: function(context,payload){/*@todo*/},
-                            saveNewEntities: function(context,paylaod){/*@todo*/}
+                            saveEntityById: function(context,payload){/*@todo*/},
+                            saveNewEntities: function(context,payload){/*@todo*/}
                         }
                     };
-                    //intialize Vuex object and add to the eejs.api.collections object.
+                    //initialize Vuex object and add to the eejs.api.collections object.
                     eejs.api.collections = new Vuex.Store(storeState);
                 },
                 /**
@@ -634,14 +674,16 @@ Vue.use(Vuex);
                         methods: {
                             add: function(refresh){
                                 var self = this;
-                                this.$store.dispatch('addEntitybyId', {collection:this.collectionName,id:this.id,refresh:refresh})
-                                    .then( function(response){
-                                        console.log('success add');
-                                        self.event = response;
-                                    })
-                                    .catch( function(response){
-                                        console.log(response);
-                                    });
+                                this.$store.dispatch(
+                                    'addEntityById',
+                                    {collection:this.collectionName,id:this.id,refresh:refresh}
+                                ).then( function(response){
+                                    // console.log('success add');
+                                    self.event = response;
+                                })
+                                .catch( function(response){
+                                    console.log(response);
+                                });
                             },
                             save: function(){
                                 /**
@@ -685,9 +727,10 @@ Vue.use(Vuex);
                 buildRelationMixinForCollection = function(collection) {
                     //we can only build relations mixins if we have the schema for this collection
                     if ( ! _.has(collectionsSchema,collection) ) {
-                        throw new eejs.exception('Unable to build any relation mixins for the ' + collection +
-                        'because there is no schema registered for it.  Are you sure the collection was registered' +
-                            'properly?');
+                        throw new eejs.exception(
+                            'Unable to build any relation mixins for the ' + collection + 'because there is' +
+                            'no schema registered for it.  Are you sure the collection was registered properly?'
+                        );
                     }
 
                     var relationName = '';
@@ -714,14 +757,17 @@ Vue.use(Vuex);
                 buildRelationMixinForCollectionAndRelation = function(collection, relation, relationName){
                     //if there is no collectionSchema for the collection or the relation then we can't build the mixin.
                     if (!_.has(collectionsSchema,collection)) {
-                        throw new eejs.exception('Unable to build any relation mixins for the ' + collection +
-                            ' because there is no schema registered for it.  Are you sure the collection was registered' +
-                            ' properly?');
+                        throw new eejs.exception(
+                            'Unable to build any relation mixins for the ' + collection + ' because there is' +
+                            ' no schema registered for it. Are you sure the collection was registered properly?'
+                        );
                     }
                     if (!_.has(collectionsSchema,relation)) {
-                        throw new eejs.exception('Unable to build any relation mixins for the ' + collection +
-                            'because there is no schema registered for its ' + relationName + ' relation. Are you sure' +
-                            'the collection for ' + relation + ' was registered properly?');
+                        throw new eejs.exception(
+                            'Unable to build any relation mixins for the ' + collection + 'because there is' +
+                            'no schema registered for its ' + relationName + ' relation. Are you sure the' +
+                            'collection for ' + relation + ' was registered properly?'
+                        );
                     }
 
                     var collectionPrimaryKey = getPrimaryKeyFromSchema(collectionsSchema[collection]),
@@ -739,8 +785,9 @@ Vue.use(Vuex);
                             'fetchCollection',
                             {
                                 collection: relation,
-                                queryString: 'where[' + collectionSingularCapitalized + '.' + collectionPrimaryKey +
-                                    ']='+self[collectionPrimaryKey]
+                                queryString: 'where[' +
+                                    collectionSingularCapitalized + '.' + collectionPrimaryKey +
+                                ']=' + self[collectionPrimaryKey]
                             }
                         ).then( function(response){
                             self['has'+capitalizedRelation] = true;
@@ -776,8 +823,9 @@ Vue.use(Vuex);
                        buildComponentForCollection(collection);
                     });
 
-                    //now after all the initial components have been built, we need to link any
-                    //relation model components to their parent (ie. component.event will need component.datetime set on it).
+                    // now after all the initial components have been built, we need to link any
+                    // relation model components to their parent
+                    // (ie. component.event will need component.datetime set on it).
                     _.each(components, function(componentObject, component){
                        registerRelationComponentsForComponent(component);
                     });
@@ -821,7 +869,7 @@ Vue.use(Vuex);
                             // {model} property set.
                             if ( this.isEmpty() && this.id > 0 ) {
                                 var self = this;
-                                this.$store.dispatch('addEntitybyId', {collection:this.collectionName,id:this.id})
+                                this.$store.dispatch('addEntityById', {collection:this.collectionName,id:this.id})
                                     .then( function(response){
                                         self[singularizedCollection] = response;
                                         self['has' + capitalizedSingularizedCollection] = true;
@@ -902,11 +950,12 @@ Vue.use(Vuex);
             this.addCollections = function(collections) {
                 //@todo this needs to return a Promise because it might use an httpRequest to setup the collections.
 
-                //@todo for a new collection registered this would also have to build the vuex module for that collection and
-                //then push to the existing Vuex store.
+                //@todo for a new collection registered this would also have to build the vuex module for that
+                // collection and then push to the existing Vuex store.
 
-                //@todo will also need to build any new mixins for the new collection and add it (along with possibly pushing
-                //to any existing relation mixins thigns that are related to this collection.
+                //@todo will also need to build any new mixins for the new collection and add it
+                // (along with possibly pushing to any existing relation mixins things that are related to this
+                // collection.)
 
                 //@todo will also need to add any new components built to other components that have a relation to each
                 //new collection registered.
