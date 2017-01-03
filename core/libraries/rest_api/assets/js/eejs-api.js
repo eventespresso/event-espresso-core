@@ -151,6 +151,7 @@ Vue.use(Vuex);
                  *
                  * And then mixins for each built relations mixin.  So if `events` and `datetimes` was registered:
                  * eejs.api.mixins.relations.event.datetimes
+                 * eejs.api.mixins.relations.datetime.events
                  *
                  * @type {object}
                  */
