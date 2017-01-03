@@ -613,15 +613,28 @@ Vue.use(Vuex);
                 buildMainMixins = function() {
                     /**
                      * Added to vue components that represent a collection of model ee model entities.
-                     * @type {{collection: string, created: eejs.api.mixins.collectionMixin.created}}
+                     * @type {object}
                      */
                     mixins.collection = {
                         collection: '',
                         store: eejs.api.collections,
                         props: ['collectionName'],
                         created: function(){
-                            //if collection is provided, then that gets used to initialize the collection from the store.
-                            //Otherwise it is expected to be assumed from props in a parent component.
+                            /**
+                             * if collection is provided (via the vue instance options object), then that gets used to
+                             * initialize the collection from the store.  This allows client code to ignore the created
+                             * components and create something completely custom
+                             * For instance, something like (very basic example, obviously this example wouldn't be better
+                             * than the pre-built component):
+                             *
+                             * var myEventsCollection = new eejs.api.vue({
+                             *      app: '#my-view',
+                             *      collection: 'events',
+                             *      mixins: [eejs.api.mixins.collection]
+                             * });
+                             *
+                             * Otherwise it is expected to be assumed from props in a parent component.
+                             */
                             if ( this.$options.collection !== '' ) {
                                 //fetch collection set in store
                                 this.fetch(true);
@@ -645,7 +658,7 @@ Vue.use(Vuex);
                                     })
                                     .catch( function(){
                                         //@todo, we could trigger some sort of property that the ui can use to indicate
-                                        // a failure in getting the collection.  A custom js event might be good?
+                                        // a failure in getting the collection. A custom js event might be good?
                                         console.log('no events retrieved');
                                     });
                             }
@@ -658,8 +671,18 @@ Vue.use(Vuex);
                         store: eejs.api.collections,
                         props: ['id','collection'],
                         created : function(){
-                            /*if the primary key property is set then override modelId (but only if that isn't set).*/
-                            /*if the modelId is not empty then let's do a get.*/
+                            /**
+                             * If the primary key property is set then override modelId (but only if that isn't set).
+                             * This allows client code to completely customize a model for a specific entity in a Vue
+                             * instance instead of using a pre-built one.  So something like this:
+                             *
+                             * var myCustomEventModel = new eejs.api.vue({
+                             *      app: '#my-custom-event-model',
+                             *      collection: 'events',
+                             *      modelId: 25,
+                             *      mixins: [eejs.api.mixins.model]
+                             * });
+                             **/
                             if ( this.$options.modelId > 0 ) {
                                 this.id = this.$options.modelId;
                                 this.add();
