@@ -160,10 +160,7 @@ Next, all you have to do is instantiate your vue instance.  The `eejs.api` libra
 
 ```js
 eejs.api.eventsView = new eejs.api.events({
-    el: '#app',
-    components: {
-        'event': eejs.api.components.event
-    }
+    el: '#app'
 });
 ```
 
