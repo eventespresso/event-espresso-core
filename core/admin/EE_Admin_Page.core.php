@@ -192,7 +192,8 @@ abstract class EE_Admin_Page extends EE_Base
         $this->_ajax_hooks();
         //other_page_hooks have to be early too.
         $this->_do_other_page_hooks();
-        //This just allows us to have extending clases do something specific before the parent constructor runs _page_setup.
+        //This just allows us to have extending classes do something specific
+        // before the parent constructor runs _page_setup().
         if (method_exists($this, '_before_page_setup')) {
             $this->_before_page_setup();
         }
@@ -475,7 +476,7 @@ abstract class EE_Admin_Page extends EE_Base
         global $ee_menu_slugs;
         $ee_menu_slugs = (array)$ee_menu_slugs;
         if (( ! $this->_current_page || ! isset($ee_menu_slugs[$this->_current_page])) && ! defined('DOING_AJAX')) {
-            return false;
+            return;
         }
         // becuz WP List tables have two duplicate select inputs for choosing bulk actions, we need to copy the action from the second to the first
         if (isset($this->_req_data['action2']) && $this->_req_data['action'] == -1) {
@@ -484,7 +485,7 @@ abstract class EE_Admin_Page extends EE_Base
         // then set blank or -1 action values to 'default'
         $this->_req_action = isset($this->_req_data['action']) && ! empty($this->_req_data['action']) && $this->_req_data['action'] != -1 ? sanitize_key($this->_req_data['action']) : 'default';
         //if action is 'default' after the above BUT we have  'route' var set, then let's use the route as the action.  This covers cases where we're coming in from a list table that isn't on the default route.
-        $this->_req_action = $this->_req_action == 'default' && isset($this->_req_data['route']) ? $this->_req_data['route'] : $this->_req_action;
+        $this->_req_action = $this->_req_action === 'default' && isset($this->_req_data['route']) ? $this->_req_data['route'] : $this->_req_action;
         //however if we are doing_ajax and we've got a 'route' set then that's what the req_action will be
         $this->_req_action = defined('DOING_AJAX') && isset($this->_req_data['route']) ? $this->_req_data['route'] : $this->_req_action;
         $this->_current_view = $this->_req_action;
@@ -2441,9 +2442,9 @@ abstract class EE_Admin_Page extends EE_Base
         // filter before_list_table template arg
         $this->_template_args['before_list_table'] = implode(
                 " \n",
-                (array)apply_filters(
+                (array) apply_filters(
                         'FHEE__EE_Admin_Page___display_admin_list_table_page__before_list_table__template_arg',
-                        (array)$this->_template_args['before_list_table'],
+                        $this->_template_args['before_list_table'],
                         $this->page_slug,
                         $this->_req_data,
                         $this->_req_action
@@ -2452,9 +2453,9 @@ abstract class EE_Admin_Page extends EE_Base
         // filter after_list_table template arg
         $this->_template_args['after_list_table'] = implode(
                 " \n",
-                (array)apply_filters(
+                (array) apply_filters(
                         'FHEE__EE_Admin_Page___display_admin_list_table_page__after_list_table__template_arg',
-                        (array)$this->_template_args['after_list_table'],
+                        $this->_template_args['after_list_table'],
                         $this->page_slug,
                         $this->_req_data,
                         $this->_req_action
