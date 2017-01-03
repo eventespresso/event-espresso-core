@@ -48,7 +48,8 @@ class EE_Register_Addon implements EEI_Plugin_API {
 	protected static $_incompatible_addons = array(
 		'Multi_Event_Registration' => '2.0.11.rc.002',
 		'Promotions' => '1.0.0.rc.084',
-	);
+        'Braintree_Gateway' => '1.0.5.rc.000',
+    );
 
 
 
@@ -399,35 +400,41 @@ class EE_Register_Addon implements EEI_Plugin_API {
 		) {
 			$incompatibility_message = sprintf(
 				__(
-					'The Event Espresso "%1$s" addon was deactivated because it is incompatible with this version of core.%2$s Only version %3$s or higher of "%1$s" can run with this version of core. This can happen when attempting to run beta versions or release candidates with older versions of core, or running old versions of addons with a newer version of core.%2$sPlease upgrade Event Espresso Core and the "%1$s" addon, then re-attempt activating it.',
+					'%4$sIMPORTANT!%5$sThe Event Espresso "%1$s" addon is incompatible with this version of core.%2$s Only version %3$s or higher of "%1$s" can run with this version of core. This can happen when attempting to run beta versions or release candidates with older versions of core, or running old versions of addons with a newer version of core.%2$sPlease upgrade Event Espresso Core and the "%1$s" addon.',
 					'event_espresso'
 				),
 				$addon_name,
 				'<br />',
-				EE_Register_Addon::$_incompatible_addons[ $addon_name ]
+				EE_Register_Addon::$_incompatible_addons[ $addon_name ],
+                '<span style="font-weight: bold; color: #D54E21;">',
+                '</span><br />'
 			);
 		} else if (
-		! self::_meets_min_core_version_requirement( $addon_settings['min_core_version'], espresso_version() )
+		    ! self::_meets_min_core_version_requirement( $addon_settings['min_core_version'], espresso_version() )
 		) {
 			$incompatibility_message = sprintf(
 				__(
-					'The Event Espresso "%1$s" addon could not be activated because it requires Event Espresso Core version "%2$s" or higher in order to run.%4$sYour version of Event Espresso Core is currently at "%3$s". Please upgrade Event Espresso Core first and then re-attempt activating "%1$s".',
+					'%5$sIMPORTANT!%6$sThe Event Espresso "%1$s" addon requires Event Espresso Core version "%2$s" or higher in order to run.%4$sYour version of Event Espresso Core is currently at "%3$s". Please upgrade Event Espresso Core first and then re-activate "%1$s".',
 					'event_espresso'
 				),
 				$addon_name,
 				self::_effective_version( $addon_settings['min_core_version'] ),
 				self::_effective_version( espresso_version() ),
-				'<br />'
+				'<br />',
+                '<span style="font-weight: bold; color: #D54E21;">',
+                '</span><br />'
 			);
 		} else if ( version_compare( $wp_version, $addon_settings['min_wp_version'], '<' ) ) {
 			$incompatibility_message = sprintf(
 				__(
-					'The Event Espresso "%1$s" addon could not be activated because it requires WordPress version "%2$s" or greater.%3$sPlease update your version of WordPress to use the "%1$s" addon and to keep your site secure.',
+					'%4$sIMPORTANT!%5$sThe Event Espresso "%1$s" addon requires WordPress version "%2$s" or greater.%3$sPlease update your version of WordPress to use the "%1$s" addon and to keep your site secure.',
 					'event_espresso'
 				),
 				$addon_name,
 				$addon_settings['min_wp_version'],
-				'<br />'
+				'<br />',
+                '<span style="font-weight: bold; color: #D54E21;">',
+                '</span><br />'
 			);
 		}
 		if ( ! empty( $incompatibility_message ) ) {
@@ -441,11 +448,6 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			}
 			//and show an error message indicating the plugin didn't activate properly
 			EE_Error::add_error( $incompatibility_message, __FILE__, __FUNCTION__, __LINE__ );
-			if ( current_user_can( 'activate_plugins' ) ) {
-				require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
-				deactivate_plugins( plugin_basename( $addon_settings['main_file_path'] ), true );
-			}
-			return;
 		}
 		// register namespaces right away before any other files or classes get loaded, but AFTER the version checks
 		if (
