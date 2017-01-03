@@ -529,8 +529,10 @@ class EE_Register_Addon implements EEI_Plugin_API {
             // remove 'activate' from the REQUEST
             // so WP doesn't erroneously tell the user the plugin activated fine when it didn't
             unset($_GET['activate'], $_REQUEST['activate']);
-            // show an error message indicating the plugin didn't activate properly
-            EE_Error::add_error($incompatibility_message, __FILE__, __FUNCTION__, __LINE__);
+            if (current_user_can('activate_plugins')) {
+                // show an error message indicating the plugin didn't activate properly
+                EE_Error::add_error($incompatibility_message, __FILE__, __FUNCTION__, __LINE__);
+            }
             // BAIL FROM THE ADDON REGISTRATION PROCESS
             return false;
         }
