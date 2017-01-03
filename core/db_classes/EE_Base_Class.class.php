@@ -574,20 +574,20 @@ abstract class EE_Base_Class
      *
      * @param \EE_Datetime_Field $datetime_field
      * @param bool               $pretty
-     * @param null               $extra_cache_ref
+     * @param null $date_or_time
      * @return void
      * @throws \EE_Error
      */
     protected function _prepare_datetime_field(
         EE_Datetime_Field $datetime_field,
         $pretty = false,
-        $extra_cache_ref = null
+        $date_or_time = null
     ) {
         $datetime_field->set_timezone($this->_timezone);
         $datetime_field->set_date_format($this->_dt_frmt, $pretty);
         $datetime_field->set_time_format($this->_tm_frmt, $pretty);
         //set the output returned
-        switch ($extra_cache_ref) {
+        switch ($date_or_time) {
             case 'D' :
                 $datetime_field->set_date_time_output('date');
                 break;
