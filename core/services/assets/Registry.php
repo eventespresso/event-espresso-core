@@ -71,15 +71,15 @@ class Registry
      * Data will be accessible as a javascript object when you list `eejs-core` as a dependency for your javascript.
      * If the data you add is something like this:
      *
-     * $this->addData( 'my_plugin_data', array( 'foo' => 'gar' ) );
+     *  $this->addData( 'my_plugin_data', array( 'foo' => 'gar' ) );
      *
      * It will be exposed in the page source as:
      *
-     * eejs.data.my_plugin_data.foo == gar
+     *  eejs.data.my_plugin_data.foo == gar
      *
-     * @param string $key          Key used to access your data
-     * @param string|array $value  Value to attach to key
-     * @throws \InvalidArgumentException
+     * @param string       $key   Key used to access your data
+     * @param string|array $value Value to attach to key
+     * @throws InvalidArgumentException
      */
     public function addData($key, $value)
     {
@@ -133,11 +133,11 @@ class Registry
 
     /**
      * Used to set content used by javascript for a template.
-     *
      * Note: Overrides of existing registered templates are not allowed.
      *
      * @param string $template_reference
      * @param string $template_content
+     * @throws InvalidArgumentException
      */
     public function addTemplate($template_reference, $template_content)
     {
@@ -165,7 +165,7 @@ class Registry
     /**
      * Retrieve the template content already registered for the given reference.
      * @param string $template_reference
-     * @return ''
+     * @return string
      */
     public function getTemplate($template_reference)
     {
