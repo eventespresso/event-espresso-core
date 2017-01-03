@@ -96,7 +96,7 @@ Vue.use(Vuex);
         // private object internal to eejs.api.init that will be exposed as an instance on eejs.api.main
         var Main = function (options) {
             //initialOptions must contain a collections property
-            if (! _.isObject(options) && _.isUndefined(options)) {
+            if (! _.isObject(options) && _.isUndefined(options.collections)) {
                 throw new eejs.exception('eejs.api.init must be initialized with an object that contains at least a collections property');
             }
 
