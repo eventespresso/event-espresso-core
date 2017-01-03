@@ -561,7 +561,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
                     : 'espresso_' . strtolower($class_name),
                 'plugin_basename' => isset($setup_args['pue_options']['plugin_basename'])
                     ? (string)$setup_args['pue_options']['plugin_basename']
-                    : plugin_basename(self::$_settings[$addon_name]['main_file_path']),
+                    : plugin_basename($setup_args['main_file_path']),
                 'checkPeriod'     => isset($setup_args['pue_options']['checkPeriod'])
                     ? (string)$setup_args['pue_options']['checkPeriod']
                     : '24',
