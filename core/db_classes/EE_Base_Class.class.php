@@ -1078,12 +1078,12 @@ abstract class EE_Base_Class
      */
     protected function _get_datetime($field_name, $dt_frmt = '', $tm_frmt = '', $date_or_time = '', $echo = false)
     {
-        $in_dt_frmt = $dt_frmt === '' ? $this->_dt_frmt : $dt_frmt;
-        $in_tm_frmt = $tm_frmt === '' ? $this->_tm_frmt : $tm_frmt;
+        $in_dt_frmt = $dt_frmt !== '' ? $dt_frmt : $this->_dt_frmt;
+        $in_tm_frmt = $tm_frmt !== '' ? $tm_frmt : $this->_tm_frmt;
         //validate field for datetime and returns field settings if valid.
         $field = $this->_get_dtt_field_settings($field_name);
-        //clear cached property if either formats are not null.
-        if ($dt_frmt !== null || $tm_frmt !== null) {
+        // clear cached property if either formats are not empty strings.
+        if ($dt_frmt !== '' || $tm_frmt !== '') {
             $this->_clear_cached_property($field_name);
             //reset format properties because they are used in get()
             $this->_dt_frmt = $in_dt_frmt;
