@@ -25,6 +25,7 @@ class EE_Enum_Text_Field_Test extends EE_UnitTestCase
 
     public function setUp()
     {
+        parent::setUp();
         $this->_an_enum_field = new EE_Enum_Text_Field(
             'A_field',
             'some field',
@@ -36,7 +37,6 @@ class EE_Enum_Text_Field_Test extends EE_UnitTestCase
                 'c' => 'C'
             )
         );
-        return parent::setUp();
     }
 
     /**
