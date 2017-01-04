@@ -168,45 +168,57 @@ class ProcessTicketSelector
         } else {
             // all data appears to be valid
             $tckts_slctd = false;
-            $success = true;
-            // load cart
-            \EE_Registry::instance()->load_core( 'Cart' );
-            // cycle thru the number of data rows sent from the event listing
-            for ( $x = 0; $x < $valid[ 'rows' ]; $x++ ) {
-                // does this row actually contain a ticket quantity?
-                if ( isset( $valid[ 'qty' ][ $x ] ) && $valid[ 'qty' ][ $x ] > 0 ) {
-                    // YES we have a ticket quantity
-                    $tckts_slctd = true;
-                    //						d( $valid['ticket_obj'][$x] );
-                    if ( $valid[ 'ticket_obj' ][ $x ] instanceof \EE_Ticket ) {
-                        // then add ticket to cart
-                        $ticket_added = $this->addTicketToCart( $valid[ 'ticket_obj' ][ $x ],
-                                                                $valid[ 'qty' ][ $x ] );
-                        $success = ! $ticket_added ? false : $success;
-                        if ( \EE_Error::has_error() ) {
-                            break;
-                        }
-                    } else {
-                        // nothing added to cart retrieved
-                        \EE_Error::add_error(
-                            sprintf(
-                                __(
-                                    'A valid ticket could not be retrieved for the event.%sPlease click the back button on your browser and try again.',
-                                    'event_espresso'
+            $tickets_added = 0;
+            $valid = apply_filters('FHEE__EED_Ticket_Selector__process_ticket_selections__valid_post_data', $valid);
+            if ($valid['total_tickets'] > 0) {
+                // load cart
+               \EE_Registry::instance()->load_core( 'Cart' );
+                // cycle thru the number of data rows sent from the event listing
+                for ( $x = 0; $x < $valid[ 'rows' ]; $x++ ) {
+                    // does this row actually contain a ticket quantity?
+                    if ( isset( $valid['qty'][$x] ) && $valid['qty'][$x] > 0 ) {
+                        // YES we have a ticket quantity
+                        $tckts_slctd = true;
+                        //						d( $valid['ticket_obj'][$x] );
+                        if ( $valid['ticket_obj'][$x] instanceof \EE_Ticket ) {
+                            // then add ticket to cart
+                            $tickets_added += $this->addTicketToCart(
+                                $valid[ 'ticket_obj' ][ $x ],
+                                $valid[ 'qty' ][ $x ]
+                            );
+                            if ( \EE_Error::has_error() ) {
+                                break;
+                            }
+                        } else {
+                            // nothing added to cart retrieved
+                            \EE_Error::add_error(
+                                sprintf(
+                                    __(
+                                        'A valid ticket could not be retrieved for the event.%sPlease click the back button on your browser and try again.',
+                                        'event_espresso'
+                                    ),
+                                    '<br/>'
                                 ),
-                                '<br/>'
-                            ),
-                            __FILE__, __FUNCTION__, __LINE__
-                        );
+                                __FILE__, __FUNCTION__, __LINE__
+                            );
+                        }
                     }
                 }
             }
+            do_action(
+                'AHEE__EE_Ticket_Selector__process_ticket_selections__after_tickets_added_to_cart',
+                \EE_Registry::instance()->CART,
+                $this
+            );
             //d( \EE_Registry::instance()->CART );
             //die(); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< KILL REDIRECT HERE BEFORE CART UPDATE
-            if ( $tckts_slctd ) {
-                if ( $success ) {
-                    do_action( 'FHEE__EE_Ticket_Selector__process_ticket_selections__before_redirecting_to_checkout',
-                               \EE_Registry::instance()->CART, $this );
+            if (apply_filters('FHEE__EED_Ticket_Selector__process_ticket_selections__tckts_slctd', $tckts_slctd)) {
+                if (apply_filters('FHEE__EED_Ticket_Selector__process_ticket_selections__success', $tickets_added)) {
+                    do_action(
+                        'FHEE__EE_Ticket_Selector__process_ticket_selections__before_redirecting_to_checkout',
+                        \EE_Registry::instance()->CART,
+                        $this
+                    );
                     \EE_Registry::instance()->CART->recalculate_all_cart_totals();
                     \EE_Registry::instance()->CART->save_cart( false );
                     // exit('KILL REDIRECT AFTER CART UPDATE'); // <<<<<<<<  OR HERE TO KILL REDIRECT AFTER CART UPDATE
@@ -214,11 +226,16 @@ class ProcessTicketSelector
                     if ( is_admin() ) {
                         return true;
                     }
-                    wp_safe_redirect( apply_filters( 'FHEE__EE_Ticket_Selector__process_ticket_selections__success_redirect_url',
-                                                     \EE_Registry::instance()->CFG->core->reg_page_url() ) );
+                    \EE_Error::get_notices(false, true);
+                    wp_safe_redirect(
+                        apply_filters(
+                            'FHEE__EE_Ticket_Selector__process_ticket_selections__success_redirect_url',
+                            \EE_Registry::instance()->CFG->core->reg_page_url()
+                        )
+                    );
                     exit();
                 } else {
-                    if ( ! \EE_Error::has_error() ) {
+                    if ( ! \EE_Error::has_error() && ! \EE_Error::has_error(true, 'attention')) {
                         // nothing added to cart
                         \EE_Error::add_attention( __( 'No tickets were added for the event', 'event_espresso' ),
                                                   __FILE__, __FUNCTION__, __LINE__ );
@@ -407,21 +424,17 @@ class ProcessTicketSelector
         $available_spaces = $this->ticketDatetimeAvailability( $ticket, true );
         // greedy greedy greedy eh?
         if ( $available_spaces > 0 ) {
-            // add error messaging - we're using the _n function that will generate
-            // the appropriate singular or plural message based on the number of $available_spaces
-            \EE_Error::add_error(
-                sprintf(
-                    _n(
-                        'We\'re sorry, but there is only %s available space left for this event at this particular date and time.%sPlease select a different number (or different combination) of tickets.',
-                        'We\'re sorry, but there are only %s available spaces left for this event at this particular date and time.%sPlease select a different number (or different combination) of tickets.',
-                        $available_spaces,
-                        'event_espresso'
-                    ),
-                    $available_spaces,
-                    '<br />'
-                ),
-                __FILE__, __FUNCTION__, __LINE__
-            );
+            if (
+            apply_filters(
+                'FHEE__EE_Ticket_Selector___add_ticket_to_cart__allow_display_availability_error',
+                true,
+                $ticket,
+                $qty,
+                $available_spaces
+            )
+            ) {
+                $this->displayAvailabilityError($available_spaces);
+            }
         } else {
             \EE_Error::add_error(
                 __(
@@ -432,6 +445,42 @@ class ProcessTicketSelector
             );
         }
         return false;
+    }
+
+
+
+    /**
+     * @param int $available_spaces
+     * @throws \EE_Error
+     */
+    private function displayAvailabilityError($available_spaces = 1)
+    {
+        // add error messaging - we're using the _n function that will generate
+        // the appropriate singular or plural message based on the number of $available_spaces
+        if (\EE_Registry::instance()->CART->all_ticket_quantity_count()) {
+            $msg = sprintf(
+                _n(
+                    'We\'re sorry, but there is only %1$s available space left for this event at this particular date and time. Please select a different number (or different combination) of tickets by cancelling the current selection and choosing again, or proceed to registration.',
+                    'We\'re sorry, but there are only %1$s available spaces left for this event at this particular date and time. Please select a different number (or different combination) of tickets by cancelling the current selection and choosing again, or proceed to registration.',
+                    $available_spaces,
+                    'event_espresso'
+                ),
+                $available_spaces,
+                '<br />'
+            );
+        } else {
+            $msg = sprintf(
+                _n(
+                    'We\'re sorry, but there is only %1$s available space left for this event at this particular date and time. Please select a different number (or different combination) of tickets.',
+                    'We\'re sorry, but there are only %1$s available spaces left for this event at this particular date and time. Please select a different number (or different combination) of tickets.',
+                    $available_spaces,
+                    'event_espresso'
+                ),
+                $available_spaces,
+                '<br />'
+            );
+        }
+        \EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
     }
 
 
