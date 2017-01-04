@@ -488,8 +488,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
         ) {
             $incompatibility_message = sprintf(
                 __(
-                    '%4$sIMPORTANT!%5$sThe Event Espresso "%1$s" addon is incompatible with this version of core.%2$s Only version %3$s or higher of "%1$s" can run with this version of core. This can happen when attempting to run beta versions or release candidates with older versions of core, or running old versions of addons with a newer version of core.%2$sPlease upgrade Event Espresso Core and the "%1$s" addon.',
-                    'event_espresso'
+                    '%4$sIMPORTANT!%5$sThe Event Espresso "%1$s" addon is not compatible with this version of Event Espresso.%2$sPlease upgrade your "%1$s" addon to version %3$s or newer to resolve this issue.'
                 ),
                 $addon_name,
                 '<br />',
