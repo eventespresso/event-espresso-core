@@ -116,13 +116,15 @@ class EEH_DTT_Helper {
 			$timezone_string = timezone_name_from_abbr( null, $gmt_offset );
 		}
 		// better have a valid timezone string by now, but if not, sigh... loop thru  the timezone_abbreviations_list()...
-		$timezone_string = $timezone_string !== false ? $timezone_string : EEH_DTT_Helper::get_timezone_string_from_abbreviations_list( $gmt_offset );
+		$timezone_string = $timezone_string !== false
+            ? $timezone_string
+            : EEH_DTT_Helper::get_timezone_string_from_abbreviations_list( $gmt_offset );
 		return $timezone_string;
 	}
-	
+
 	/**
 	 * Gets the site's GMT offset based on either the timezone string
-	 * (in which case teh gmt offset will vary depending on the location's 
+	 * (in which case teh gmt offset will vary depending on the location's
 	 * observance of daylight savings time) or the gmt_offset wp option
 	 * @return int seconds offset
 	 */
@@ -869,7 +871,7 @@ class EEH_DTT_Helper {
 			: 'DATE_ADD(' . $field_for_interval .', INTERVAL ' . $offset . ' HOUR)';
 		return $query_interval;
 	}
-	
+
 	/**
 	 * Retrieves the site's default timezone and returns it formatted so it's ready for display
 	 * to users. If you want to customize how its displayed feel free to fetch the 'timezone_string'
@@ -892,7 +894,7 @@ class EEH_DTT_Helper {
 				load_textdomain( 'continents-cities', $mofile );
 				$mo_loaded = true;
 			}
-			//well that was easy. 
+			//well that was easy.
 			$parts = explode('/', $timezone_string );
 			//remove the continent
 			unset( $parts[0] );

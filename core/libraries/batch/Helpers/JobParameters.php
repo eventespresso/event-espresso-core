@@ -127,7 +127,7 @@ class JobParameters {
 	 * @return boolean success
 	 */
 	function save( $first = false ) {
-		$object_vars = wp_json_encode( get_object_vars( $this ) );
+		$object_vars = get_object_vars( $this );
 		if( $first ) {
 			return add_option( $this->option_name(), $object_vars, null, 'no' );
 		} else{
@@ -155,7 +155,7 @@ class JobParameters {
 	 * @throws BatchRequestException
 	 */
 	static function load( $job_id ) {
-		$job_parameter_vars = json_decode( get_option( JobParameters::wp_option_prefix . $job_id ), true );
+		$job_parameter_vars = get_option( JobParameters::wp_option_prefix . $job_id );
 		if(
 			! is_array( $job_parameter_vars ) ||
 			! isset( $job_parameter_vars[ '_classname' ] ) ||

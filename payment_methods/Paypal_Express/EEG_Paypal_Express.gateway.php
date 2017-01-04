@@ -152,9 +152,9 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway {
 						$line_item_quantity = 1;
 					}
 					// Item Name.
-					$token_request_dtls['L_PAYMENTREQUEST_0_NAME'.$item_num] = substr($line_item->name(), 0, 127);
+					$token_request_dtls['L_PAYMENTREQUEST_0_NAME'.$item_num] = substr($this->_format_line_item_name( $line_item, $payment), 0, 127);
 					// Item description.
-					$token_request_dtls['L_PAYMENTREQUEST_0_DESC'.$item_num] = substr($line_item->desc(), 0, 127);
+					$token_request_dtls['L_PAYMENTREQUEST_0_DESC'.$item_num] = substr($this->_format_line_item_desc( $line_item, $payment), 0, 127);
 					// Cost of individual item.
 					$token_request_dtls['L_PAYMENTREQUEST_0_AMT'.$item_num] = $this->format_currency( $unit_price );
 					// Item Number.
@@ -180,7 +180,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway {
 				// Item Name.
 				$token_request_dtls['L_PAYMENTREQUEST_0_NAME'.$item_num] = substr( __( 'Other (promotion/surcharge/cancellation)', 'event_espresso' ), 0, 127 );
 				// Item description.
-				$token_request_dtls['L_PAYMENTREQUEST_0_DESC'.$item_num] = substr( $line_item->desc(), 0, 127 );
+				$token_request_dtls['L_PAYMENTREQUEST_0_DESC'.$item_num] = substr( $this->_format_line_item_desc($line_item,$payment), 0, 127 );
 				// Cost of individual item.
 				$token_request_dtls['L_PAYMENTREQUEST_0_AMT'.$item_num] = $this->format_currency( $itemized_sum_diff_from_txn_total );
 				// Item Number.
@@ -192,9 +192,9 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway {
 		} else {
 			// Just one Item.
 			// Item Name.
-			$token_request_dtls['L_PAYMENTREQUEST_0_NAME0'] = substr( sprintf( __('Payment for %1$s', 'event_espresso'), $primary_registration->reg_code() ), 0, 127 );
+			$token_request_dtls['L_PAYMENTREQUEST_0_NAME0'] = substr( $this->_format_partial_payment_line_item_name($payment), 0, 127 );
 			// Item description.
-			$token_request_dtls['L_PAYMENTREQUEST_0_DESC0'] = substr( sprintf( __('Payment of %1$s for %2$s', 'event_espresso'), $payment->amount(), $primary_registration->reg_code() ), 0, 127 );
+			$token_request_dtls['L_PAYMENTREQUEST_0_DESC0'] = substr( $this->_format_partial_payment_line_item_desc($payment), 0, 127 );
 			// Cost of individual item.
 			$token_request_dtls['L_PAYMENTREQUEST_0_AMT0'] = $this->format_currency( $payment->amount() );
 			// Item Number.

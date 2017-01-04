@@ -71,7 +71,7 @@ class EE_PMT_Paypal_Pro_Test extends EE_UnitTestCase{
 	 * setUp
 	 */
 	public function setUp(){
-		$return_value = parent::setUp();
+		parent::setUp();
 		//EEG_Paypal_Pro uses $_SERVER at some point, so we need to pretend this is a regular request
 		$this->go_to( 'http://localhost/' );
 		//just set a random address
@@ -79,7 +79,6 @@ class EE_PMT_Paypal_Pro_Test extends EE_UnitTestCase{
 		add_filter('FHEE__EEG_Paypal_Pro__CurlRequest__CURLOPT_VERBOSE', '__return_false' );
 		//make sure caf payment methods are registered
 		EE_Payment_Method_Manager::reset();
-		return $return_value;
 	}
 
 	/**
