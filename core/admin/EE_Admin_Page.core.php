@@ -2439,7 +2439,7 @@ abstract class EE_Admin_Page extends EE_Base
                     '<strong><em>' . trim( $this->_req_data['s'], '%' ) . '</em></strong>'
                 )
                 . '</p>'
-            : '',
+            : '';
         // filter before_list_table template arg
         $this->_template_args['before_list_table'] = implode(
                 " \n",
