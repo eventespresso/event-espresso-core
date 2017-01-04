@@ -412,7 +412,7 @@ class EED_Ticket_Selector extends EED_Module
             $html = '<form method="GET" action="' . EEH_URL::refactor_url($external_url) . '"';
             // open link in new window ?
             $html .= apply_filters(
-                'FHEE__EE_Ticket_Selector__display_ticket_selector__external_url_target_blank',
+                'FHEE__EventEspresso_modules_ticket_selector_DisplayTicketSelector__formOpen__external_url_target_blank',
                 false
             )
                 ? ' target="_blank"'
