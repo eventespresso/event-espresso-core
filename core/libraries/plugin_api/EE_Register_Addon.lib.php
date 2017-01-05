@@ -262,8 +262,9 @@ class EE_Register_Addon implements EEI_Plugin_API {
         // and any payment methods
         \EE_Register_Addon::_register_payment_methods($addon_name);
 		// load and instantiate main addon class
-		\EE_Register_Addon::_load_and_init_addon_class($addon_name);
-	}
+        $addon = \EE_Register_Addon::_load_and_init_addon_class($addon_name);
+        $addon->after_registration();
+    }
 
 
 
