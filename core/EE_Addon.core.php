@@ -737,6 +737,16 @@ abstract class EE_Addon extends EE_Configurable {
 
 
 
+    /**
+     * a safe space for addons to add additional logic like setting hooks
+     * that will run immediately after addon registration
+     * making this a great place for code that needs to be "omnipresent"
+     */
+	public function after_registration()
+    {
+        // cricket chirp... cricket chirp...
+	}
+
 
 }
 // End of file EE_Addon.core.php
