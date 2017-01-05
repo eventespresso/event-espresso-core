@@ -79,8 +79,15 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 		// ensures that all details and statuses for transaction, registration, and payments are updated
 		$txn_update_params = $this->_finalize_transaction();
         // maybe send messages
-        $this->_trigger_notifications();
-		// set a hook point
+        $this->_set_notification_triggers();
+        // send messages
+        /** @type EE_Registration_Processor $registration_processor */
+        $registration_processor = EE_Registry::instance()->load_class('Registration_Processor');
+        $registration_processor->trigger_registration_update_notifications(
+            $this->checkout->transaction->primary_registration(),
+            $txn_update_params
+        );
+        // set a hook point
 		do_action(
 			'AHEE__EE_SPCO_Reg_Step_Finalize_Registration__process_reg_step__completed',
 			$this->checkout,
@@ -132,15 +139,17 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 		}
 		// maybe update status, but don't save transaction just yet
 		$this->checkout->transaction->update_status_based_on_total_paid( false );
-		// this will result in the base session properties getting saved to the TXN_Session_data field
+        // this will result in the base session properties getting saved to the TXN_Session_data field
 		$this->checkout->transaction->set_txn_session_data(
 			EE_Registry::instance()->SSN->get_session_data( null, true )
 		);
-		// update the TXN if payment conditions have changed
+        // update the TXN if payment conditions have changed, but do NOT trigger notifications,
+        // because we will do that in process_reg_step() after setting some more triggers
 		return $transaction_processor->update_transaction_and_registrations_after_checkout_or_payment(
 			$this->checkout->transaction,
 			$this->checkout->payment,
-			$this->checkout->reg_cache_where_params
+			$this->checkout->reg_cache_where_params,
+            false
 		);
 	}
 
@@ -155,7 +164,8 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 	 * @return void
 	 * @throws \EE_Error
 	 */
-	protected function _trigger_notifications() {
+	protected function _set_notification_triggers() {
+
 		if ( $this->checkout->payment_method instanceof EE_Payment_Method ) {
 		    // let's start with the assumption that we need to trigger notifications
             // then toggle this to false for conditions where we know we don't need to
@@ -181,7 +191,7 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
                 ) {
                     // IPN request will handle triggering notifications
                     $deliver_notifications = false;
-                    // no really... don't send any notices in this request 
+                    // no really... don't send any notices in this request
                     remove_all_filters('FHEE__EED_Messages___maybe_registration__deliver_notifications');
                     add_filter(
                         'FHEE__EED_Messages___maybe_registration__deliver_notifications',
