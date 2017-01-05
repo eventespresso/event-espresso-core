@@ -157,42 +157,43 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 	 */
 	protected function _trigger_notifications() {
 		if ( $this->checkout->payment_method instanceof EE_Payment_Method ) {
-			$is_revisit = filter_var( $this->checkout->revisit, FILTER_VALIDATE_BOOLEAN );
+		    // let's start with the assumption that we need to trigger notifications
+            // then toggle this to false for conditions where we know we don't need to
+		    $deliver_notifications = true;
             if (
-                // if SPCO revisit and TXN or any REG status has changed due to a payment
-                $is_revisit
-                && (
+                // if SPCO revisit
+                filter_var($this->checkout->revisit, FILTER_VALIDATE_BOOLEAN)
+                // and TXN or REG statuses have NOT changed due to a payment
+                && ! (
                     $this->checkout->transaction->txn_status_updated()
                     || $this->checkout->any_reg_status_updated()
                 )
             ) {
+                $deliver_notifications = false;
+            }
+            if ($this->checkout->payment_method->is_off_site()) {
+                /** @var EE_Gateway $gateway */
+                $gateway = $this->checkout->payment_method->type_obj()->get_gateway();
+                // and the gateway uses a separate request to process the IPN
+                if (
+                    $gateway instanceof EE_Offsite_Gateway
+                    && $gateway->handle_IPN_in_this_request(\EE_Registry::instance()->REQ->params(), true)
+                ) {
+                    // IPN request will handle triggering notifications
+                    $deliver_notifications = false;
+                    // no really... don't send any notices in this request 
+                    remove_all_filters('FHEE__EED_Messages___maybe_registration__deliver_notifications');
+                    add_filter(
+                        'FHEE__EED_Messages___maybe_registration__deliver_notifications',
+                        '__return_false',
+                        15
+                    );
+                }
+            }
+            if ($deliver_notifications) {
                 // send out notifications
                 add_filter('FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true', 10);
-            } else if ( $this->checkout->payment_method->is_off_site() ) {
-                /** @var EE_Gateway $gateway */
-                $gateway= $this->checkout->payment_method->type_obj()->get_gateway();
-				if (
-					! $is_revisit
-					&& $gateway instanceof EE_Offsite_Gateway
-					&& $gateway->handle_IPN_in_this_request(
-						\EE_Registry::instance()->REQ->params(),
-						false
-					)
-				) {
-                    // first time through SPCO and we are processing the payment notification NOW
-					add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true', 10 );
-				} else {
-                    // do NOT trigger notifications because this is a revisit, OR it was already done during the IPN
-					remove_all_filters( 'FHEE__EED_Messages___maybe_registration__deliver_notifications' );
-					add_filter(
-						'FHEE__EED_Messages___maybe_registration__deliver_notifications',
-						'__return_false',
-						15
-					);
-				}
-			} else if ( ! $is_revisit ) {
-                add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true', 10 );
-			}
+            }
 		}
 	}
 
