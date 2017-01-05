@@ -237,7 +237,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
             // dont bother setting up the rest of the addon atm
             return;
         }
-		// we need cars
+        // we need cars
         \EE_Register_Addon::_setup_autoloaders($addon_name);
         // register new models and extensions
         \EE_Register_Addon::_register_models_and_extensions($addon_name);
@@ -552,7 +552,6 @@ class EE_Register_Addon implements EEI_Plugin_API {
      * @return void
      */
 	private static function _parse_pue_options( $addon_name, $class_name, array $setup_args ) {
-        //
         if ( ! empty($setup_args['pue_options'])) {
             self::$_settings[$addon_name]['pue_options'] = array(
                 'pue_plugin_slug' => isset($setup_args['pue_options']['pue_plugin_slug'])
@@ -614,7 +613,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
             //just check if we have already registered it or not
             //(as the newly-activated addon wasn't around the first time addons were registered)
             if ( ! isset(self::$_settings[$addon_name])) {
-                self::$_settings[$addon_name] = $addon_settings;
+                self::$_settings[$addon_name] += $addon_settings;
                 $addon = self::_load_and_init_addon_class($addon_name);
                 $addon->set_activation_indicator_option();
                 // dont bother setting up the rest of the addon.
@@ -639,7 +638,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
                     '4.3.0'
                 );
             }
-            self::$_settings[$addon_name] = $addon_settings;
+            self::$_settings[$addon_name] += $addon_settings;
         }
         return false;
     }
@@ -919,7 +918,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
 		// cycle thru settings
 		foreach ( self::$_settings as $settings ) {
 			if ( ! empty( $settings['pue_options'] ) ) {
-				// initiate the class and start the plugin update engine!
+                // initiate the class and start the plugin update engine!
 				new PluginUpdateEngineChecker(
 				// host file URL
 					'https://eventespresso.com',
