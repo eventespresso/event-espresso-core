@@ -391,7 +391,6 @@ class EE_Registration_Processor extends EE_Processor_Base {
 			// 	'EE_Transaction: ' . $registration->transaction()->ID()
 			// );
             if ( ! $registration->is_primary_registrant()) {
-                \EEH_Debug_Tools::printr('registration is not primary registrant', __CLASS__, __FILE__, __LINE__, 2);
                 return;
             }
             do_action(
