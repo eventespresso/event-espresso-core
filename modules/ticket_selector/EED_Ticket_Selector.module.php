@@ -409,7 +409,15 @@ class EED_Ticket_Selector extends EED_Module
     {
         // if redirecting, we don't need any anything else
         if ($external_url) {
-            $html = '<form method="GET" action="' . EEH_URL::refactor_url($external_url) . '">';
+            $html = '<form method="GET" action="' . EEH_URL::refactor_url($external_url) . '"';
+            // open link in new window ?
+            $html .= apply_filters(
+                'FHEE__EventEspresso_modules_ticket_selector_DisplayTicketSelector__formOpen__external_url_target_blank',
+                false
+            )
+                ? ' target="_blank"'
+                : '';
+            $html .= '>';
             $query_args = (array)EEH_URL::get_query_string($external_url);
             foreach ($query_args as $query_arg => $value) {
                 $html .= '
