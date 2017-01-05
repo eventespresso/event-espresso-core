@@ -953,10 +953,12 @@ class EE_Register_Addon implements EEI_Plugin_API {
 	 * @throws \EE_Error
 	 */
 	public static function register_message_types() {
-		foreach ( self::$_settings as $settings ) {
-			foreach ( (array) $settings['message_types'] as $message_type => $message_type_settings ) {
-				EE_Register_Message_Type::register( $message_type, $message_type_settings );
-			}
+		foreach ( self::$_settings as $addon_name => $settings ) {
+		    if ( ! empty($settings['message_types'])) {
+                foreach ((array)$settings['message_types'] as $message_type => $message_type_settings) {
+                    EE_Register_Message_Type::register($message_type, $message_type_settings);
+                }
+            }
 		}
 	}
 
