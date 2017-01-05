@@ -607,18 +607,13 @@ class EE_Register_Addon implements EEI_Plugin_API {
      * @return bool
      */
 	private static function _addon_activation( $addon_name, array $addon_settings ) {
-	    // make sure addon settings are set correctly without overwriting anything existing
-        if (isset(self::$_settings[$addon_name])) {
-            self::$_settings[$addon_name] += $addon_settings;
-        } else {
-            self::$_settings[$addon_name] = $addon_settings;
-        }
         // this is an activation request
         if (did_action('activate_plugin')) {
             //to find if THIS is the addon that was activated,
             //just check if we have already registered it or not
             //(as the newly-activated addon wasn't around the first time addons were registered)
             if ( ! isset(self::$_settings[$addon_name])) {
+                self::$_settings[$addon_name] = $addon_settings;
                 $addon = self::_load_and_init_addon_class($addon_name);
                 $addon->set_activation_indicator_option();
                 // dont bother setting up the rest of the addon.
@@ -643,7 +638,12 @@ class EE_Register_Addon implements EEI_Plugin_API {
                     '4.3.0'
                 );
             }
-
+            // make sure addon settings are set correctly without overwriting anything existing
+            if (isset(self::$_settings[$addon_name])) {
+                self::$_settings[$addon_name] += $addon_settings;
+            } else {
+                self::$_settings[$addon_name] = $addon_settings;
+            }
         }
         return false;
     }
