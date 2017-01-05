@@ -674,7 +674,7 @@ class EED_Single_Page_Checkout extends EED_Module
      *
      * @access    private
      * @throws EE_Error
-     * @return    array
+     * @return    string
      */
     private function _get_first_step()
     {
@@ -1410,8 +1410,12 @@ class EED_Single_Page_Checkout extends EED_Module
         wp_register_script('jquery_plugin', EE_THIRD_PARTY_URL . 'jquery	.plugin.min.js', array('jquery'), '1.0.1', true);
         wp_register_script('jquery_countdown', EE_THIRD_PARTY_URL . 'jquery	.countdown.min.js', array('jquery_plugin'), '2.0.2', true);
         wp_register_script('single_page_checkout', SPCO_JS_URL . 'single_page_checkout.js', array('espresso_core', 'underscore', 'ee_form_section_validation', 'jquery_countdown'), EVENT_ESPRESSO_VERSION, true);
-        $this->checkout->registration_form->enqueue_js();
-        $this->checkout->current_step->reg_form->enqueue_js();
+        if ($this->checkout->registration_form instanceof EE_Form_Section_Proper) {
+            $this->checkout->registration_form->enqueue_js();
+        }
+        if ($this->checkout->current_step->reg_form instanceof EE_Form_Section_Proper) {
+            $this->checkout->current_step->reg_form->enqueue_js();
+        }
         wp_enqueue_script('single_page_checkout');
         /**
          * global action hook for enqueueing styles and scripts with
