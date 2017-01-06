@@ -18,7 +18,7 @@ Class  EE_New_Addon extends EE_Addon {
 
     /**
      * EE_New_Addon constructor.
- * !!! IMPORTANT !!!
+     * !!! IMPORTANT !!!
      * you should NOT run any logic in the constructor for addons
      * because addon construction should NOT result in code execution.
      * Successfully registering the addon via the EE_Register_Addon API
@@ -120,10 +120,10 @@ Class  EE_New_Addon extends EE_Addon {
      * that will run immediately after addon registration
      * making this a great place for code that needs to be "omnipresent"
      */
-    // public function after_registration()
-    // {
-    //     // your logic here
-    // }
+    public function after_registration()
+    {
+        // your logic here
+    }
 
 
 
