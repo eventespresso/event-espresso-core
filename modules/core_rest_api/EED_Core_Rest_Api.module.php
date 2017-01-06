@@ -192,7 +192,20 @@ class EED_Core_Rest_Api extends \EED_Module
                         )
                     );
                     if (isset($route['schema_callback'])) {
-                        $route_args['schema'] = $route['schema_callback'];
+                        $model_name = isset($route['schema_callback'][0])
+                            ? $route['schema_callback'][0]
+                            : '';
+                        $version = isset( $route['schema_callback'][1])
+                            ? $route['schema_callback'][1]
+                            : '';
+                        if (! empty($model_name) && ! empty($version)) {
+                            $route_args['schema'] = function () use ($model_name, $version) {
+                                return EventEspresso\core\libraries\rest_api\controllers\model\Read::handle_schema_request(
+                                    $model_name,
+                                    $version
+                                );
+                            };
+                        }
                     }
                     register_rest_route(
                         $namespace,
@@ -372,6 +385,12 @@ class EED_Core_Rest_Api extends \EED_Module
         $model_routes = array();
         foreach ($models_to_register as $model_name => $model_classname) {
             $model = \EE_Registry::instance()->load_model($model_name);
+
+            //if this isn't a valid model then let's skip iterate to the next item in the loop.
+            if (! $model instanceof EEM_Base) {
+                continue;
+            }
+
             //yes we could just register one route for ALL models, but then they wouldn't show up in the index
             $plural_model_route = EEH_Inflector::pluralize_and_lower($model_name);
             $singular_model_route = $plural_model_route . '/(?P<id>\d+)';
@@ -387,10 +406,7 @@ class EED_Core_Rest_Api extends \EED_Module
                     '_links'          => array(
                         'self' => rest_url(EED_Core_Rest_Api::ee_api_namespace . $version . $singular_model_route),
                     ),
-                    'schema_callback' => array(
-                        'EventEspresso\core\libraries\rest_api\controllers\model\Read',
-                        'handle_schema_request'
-                        ),
+                    'schema_callback' => array($model_name, $version)
                 ),
                 //						array(
                 //							'callback' => array(
