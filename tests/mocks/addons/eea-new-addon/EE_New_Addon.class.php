@@ -119,6 +119,8 @@ Class  EE_New_Addon extends EE_Addon {
      * a safe space to add additional logic like setting hooks
      * that will run immediately after addon registration
      * making this a great place for code that needs to be "omnipresent"
+     *
+     * @since 4.9.26
      */
     public function after_registration()
     {

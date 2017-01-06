@@ -741,6 +741,8 @@ abstract class EE_Addon extends EE_Configurable {
      * a safe space for addons to add additional logic like setting hooks
      * that will run immediately after addon registration
      * making this a great place for code that needs to be "omnipresent"
+     *
+     * @since 4.9.26
      */
 	public function after_registration()
     {
