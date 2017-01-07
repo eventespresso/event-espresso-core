@@ -1,5 +1,5 @@
 <?php
-namespace EventEspresso\core\db_models\helpers;
+namespace EventEspresso\core\entities\models;
 
 use EEM_Base;
 use EE_Model_Field_Base;

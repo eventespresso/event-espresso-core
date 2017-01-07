@@ -5,7 +5,7 @@ use EventEspresso\core\libraries\rest_api\Capabilities;
 use EventEspresso\core\libraries\rest_api\Calculated_Model_Fields;
 use EventEspresso\core\libraries\rest_api\Rest_Exception;
 use EventEspresso\core\libraries\rest_api\Model_Data_Translator;
-use EventEspresso\core\db_models\helpers\JsonModelSchema;
+use EventEspresso\core\entities\models\JsonModelSchema;
 
 if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
