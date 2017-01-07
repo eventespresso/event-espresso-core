@@ -11,6 +11,7 @@ require_once(EE_MODELS . 'fields/EE_Text_Field_Base.php');
 
 class EE_Serialized_Text_Field extends EE_Text_Field_Base
 {
+    protected $_schema_type = array('object','string');
     /**
      * Value SHOULD be an array, and we want to now convert it to a serialized string
      *
@@ -65,13 +66,5 @@ class EE_Serialized_Text_Field extends EE_Text_Field_Base
                 $pretty_value = implode(", ", $value_on_field_to_be_outputted);
         }
         return $pretty_value;
-    }
-
-
-    public function get_schema()
-    {
-        $schema = parent::get_schema();
-        $schema['type'] = array( 'object', 'string' );
-        return $schema;
     }
 }

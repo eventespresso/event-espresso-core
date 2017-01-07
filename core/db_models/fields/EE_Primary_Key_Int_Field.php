@@ -3,10 +3,8 @@ require_once(EE_MODELS . 'fields/EE_Primary_Key_Field_Base.php');
 
 class EE_Primary_Key_Int_Field extends EE_Primary_Key_Field_Base
 {
-    function get_wpdb_data_type()
-    {
-        return '%d';
-    }
+
+    protected $_schema_type = 'integer';
 
     public function __construct($table_column, $nicename)
     {
@@ -29,12 +27,5 @@ class EE_Primary_Key_Int_Field extends EE_Primary_Key_Field_Base
     function is_auto_increment()
     {
         return true;
-    }
-
-    public function get_schema()
-    {
-        $schema = parent::get_schema();
-        $schema['type'] = 'integer';
-        return $schema;
     }
 }

@@ -18,6 +18,9 @@ class EE_Enum_Integer_Field extends EE_Integer_Field
      */
     public $_allowed_enum_values;
 
+
+    protected $_schema_type = 'object';
+
     /**
      * @param string  $table_column
      * @param string  $nicename
@@ -100,18 +103,15 @@ class EE_Enum_Integer_Field extends EE_Integer_Field
     }
 
 
-
-    public function get_schema()
+    public function getSchemaProperties()
     {
-        $schema = parent::get_schema();
-        $schema['type'] = 'object';
-        $schema['properties'] = array(
+        return array(
             'raw' => array(
                 'description' =>  sprintf(
                     __('%s - the value in the database.', 'event_espresso'),
                     $this->get_nicename()
                 ),
-                'enum' => array_keys($this->_allowed_enum_values),
+                'enum' => array_keys($this->_allowed_enum_values()),
                 'type' => 'integer'
             ),
             'pretty' => array(
@@ -119,11 +119,10 @@ class EE_Enum_Integer_Field extends EE_Integer_Field
                     __('%s - the value for display.', 'event_espresso'),
                     $this->get_nicename()
                 ),
-                'enum' => array_values($this->_allowed_enum_values),
+                'enum' => array_values($this->_allowed_enum_values()),
                 'type' => 'string',
                 'read_only' => true
             )
         );
-        return $schema;
     }
 }

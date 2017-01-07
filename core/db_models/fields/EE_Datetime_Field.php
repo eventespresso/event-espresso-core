@@ -118,6 +118,9 @@ class EE_Datetime_Field extends EE_Model_Field_Base
     protected $_blog_offset;
 
 
+    protected $_schema_format = 'datetime';
+
+
     /**
      * @param string $table_column
      * @param string $nice_name
@@ -150,15 +153,6 @@ class EE_Datetime_Field extends EE_Model_Field_Base
         parent::__construct($table_column, $nice_name, $nullable, $default_value);
         $this->set_timezone($timezone_string);
 
-    }
-
-
-    /**
-     * @return string
-     */
-    public function get_wpdb_data_type()
-    {
-        return '%s';
     }
 
 
@@ -764,21 +758,5 @@ class EE_Datetime_Field extends EE_Model_Field_Base
         } else {
             return parent::get_default_value();
         }
-    }
-
-
-    /**
-     * This returns elements used to represent this field in the json schema.
-     *
-     * @link http://json-schema.org/
-     * @return array
-     */
-    public function get_schema()
-    {
-        return array(
-            'description' => $this->get_nicename(),
-            'type' => 'string',
-            'format' => 'date-time'
-        );
     }
 }

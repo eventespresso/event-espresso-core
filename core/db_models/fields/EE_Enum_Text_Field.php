@@ -18,6 +18,7 @@ class EE_Enum_Text_Field extends EE_Text_Field_Base
     public $_allowed_enum_values;
 
 
+    protected $_schema_type = 'object';
 
     /**
      * @param string  $table_column
@@ -118,11 +119,9 @@ class EE_Enum_Text_Field extends EE_Text_Field_Base
     }
 
 
-    public function get_schema()
+    public function getSchemaProperties()
     {
-        $schema = parent::get_schema();
-        $schema['type'] = 'object';
-        $schema['properties'] = array(
+        return array(
             'raw' => array(
                 'description' =>  sprintf(
                     __('%s - the value in the database.', 'event_espresso'),
@@ -141,6 +140,5 @@ class EE_Enum_Text_Field extends EE_Text_Field_Base
                 'read_only' => true
             )
         );
-        return $schema;
     }
 }

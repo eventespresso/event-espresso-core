@@ -9,6 +9,7 @@
  */
 abstract class EE_DB_Only_Field_Base extends EE_Model_Field_Base
 {
+    protected $_schema_readonly = true;
     /**
      * All these children classes are for the db-only (meaning, we should select them
      * on get_all queries, update, delete, and will still want to set their default value
@@ -19,19 +20,5 @@ abstract class EE_DB_Only_Field_Base extends EE_Model_Field_Base
     function is_db_only_field()
     {
         return true;
-    }
-
-    /**
-     * This returns elements used to represent this field in the json schema.
-     *
-     * @link http://json-schema.org/
-     * @return array
-     */
-    public function get_schema()
-    {
-        return array(
-            'description' => $this->get_nicename(),
-            'type' => 'string'
-        );
     }
 }

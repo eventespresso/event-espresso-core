@@ -6,10 +6,8 @@
  */
 class EE_Float_Field extends EE_Model_Field_Base
 {
-    function get_wpdb_data_type()
-    {
-        return '%f';
-    }
+
+    protected $_schema_type = 'number';
 
     /**
      * If provided a string, strips out number-related formatting, like commas, periods, spaces, other junk, etc.
@@ -57,19 +55,5 @@ class EE_Float_Field extends EE_Model_Field_Base
     {
 //		echo "prepare for set from db of ";d($value_found_in_db_for_model_object);
         return floatval($value_found_in_db_for_model_object);
-    }
-
-    /**
-     * This returns elements used to represent this field in the json schema.
-     *
-     * @link http://json-schema.org/
-     * @return array
-     */
-    public function get_schema()
-    {
-        return array(
-            'description' => $this->get_nicename(),
-            'type' => 'number'
-        );
     }
 }

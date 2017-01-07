@@ -9,6 +9,8 @@
 class EE_Email_Field extends EE_Text_Field_Base
 {
 
+    protected $_schema_format = 'email';
+
     /**
      * In form inputs, we should have called htmlentities and addslashes() on form inputs,
      * so we need to undo that on setting of these fields
@@ -39,13 +41,5 @@ class EE_Email_Field extends EE_Text_Field_Base
             return '';
         }
         return $email_address;
-    }
-
-
-    public function get_schema()
-    {
-        $schema = parent::get_schema();
-        $schema['format'] = 'email';
-        return $schema;
     }
 }

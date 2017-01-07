@@ -3,6 +3,9 @@ require_once(EE_MODELS . 'fields/EE_Integer_Field.php');
 
 class EE_Boolean_Field extends EE_Integer_Field
 {
+
+    protected $_schema_type = 'boolean';
+
     function prepare_for_set($value_inputted_for_field_on_model_object)
     {
         if ($value_inputted_for_field_on_model_object) {
@@ -36,14 +39,6 @@ class EE_Boolean_Field extends EE_Integer_Field
             $value_on_field_to_be_outputted ? __('Yes', 'event_espresso') : __('No', 'event_espresso'),
             $value_on_field_to_be_outputted
         );
-    }
-
-
-    public function get_schema()
-    {
-        $schema = parent::get_schema();
-        $schema['type'] = 'boolean';
-        return $schema;
     }
 
 }

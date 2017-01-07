@@ -14,6 +14,7 @@
 class EE_Full_HTML_Field extends EE_Text_Field_Base
 {
 
+    protected $_schema_type = 'object';
 
     /**
      * Does shortcodes and auto-paragraphs the content (unless schema is 'no_wpautop')
@@ -35,11 +36,9 @@ class EE_Full_HTML_Field extends EE_Text_Field_Base
 
 
 
-    public function get_schema()
+    public function getSchemaProperties()
     {
-        $schema = parent::get_schema();
-        $schema['type'] = 'object';
-        $schema['properties'] = array(
+        return array(
             'raw' => array(
                 'description' =>  sprintf(
                     __('%s - the value in the database.', 'event_espresso'),
@@ -56,6 +55,5 @@ class EE_Full_HTML_Field extends EE_Text_Field_Base
                 'readonly' => true
             )
         );
-        return $schema;
     }
 }

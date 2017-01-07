@@ -6,6 +6,8 @@
  */
 class EE_Post_Content_Field extends EE_Text_Field_Base
 {
+    protected $_schema_type = 'object';
+
     /**
      * removes all tags which a WP Post wouldn't allow in its content normally
      *
@@ -26,11 +28,9 @@ class EE_Post_Content_Field extends EE_Text_Field_Base
     }
 
 
-    public function get_schema()
+    public function getSchemaProperties()
     {
-        $schema = parent::get_schema();
-        $schema['type'] = 'object';
-        $schema['properties'] = array(
+        return array(
             'raw' => array(
                 'description' =>  sprintf(
                     __('%s - the content as it exists in the database.', 'event_espresso'),
@@ -46,6 +46,5 @@ class EE_Post_Content_Field extends EE_Text_Field_Base
                 'type' => 'string'
             )
         );
-        return $schema;
     }
 }

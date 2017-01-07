@@ -3,10 +3,7 @@ require_once(EE_MODELS . 'fields/EE_Foreign_Key_Field_Base.php');
 
 class EE_Foreign_Key_Int_Field extends EE_Foreign_Key_Field_Base
 {
-    function get_wpdb_data_type()
-    {
-        return '%d';
-    }
+    protected $_schema_type = 'integer';
 
     /**
      * @param int|EE_Base_Class $value_inputted_for_field_on_model_object
@@ -25,10 +22,4 @@ class EE_Foreign_Key_Int_Field extends EE_Foreign_Key_Field_Base
         return intval($value_found_in_db_for_model_object);
     }
 
-    public function get_schema()
-    {
-        $schema = parent::get_schema();
-        $schema['type'] = 'integer';
-        return $schema;
-    }
 }
