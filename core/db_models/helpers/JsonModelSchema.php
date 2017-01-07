@@ -3,7 +3,10 @@ namespace EventEspresso\core\db_models\helpers;
 
 use EEM_Base;
 use EE_Model_Field_Base;
+use EE_Primary_Key_Field_Base;
+use EE_Foreign_Key_Field_Base;
 use EE_Model_Relation_Base;
+use EEH_Inflector;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -19,18 +22,33 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  */
 class JsonModelSchema
 {
+
+    /**
+     * @var \EEM_Base
+     */
+    protected $model;
+
+    /**
+     * JsonModelSchema constructor.
+     *
+     * @param \EEM_Base $model
+     */
+    public function __construct(EEM_Base $model){
+        $this->model = $model;
+    }
+
     /**
      * Return the schema for a given model from a given model.
      * @param \EEM_Base $model
      * @return array
      */
-    public function getModelSchema(EEM_Base $model)
+    public function getModelSchema()
     {
-        $schema = $this->getInitialSchemaStructure($model);
-        $fields_on_model = $model->field_settings();
-        $relations_on_model = $model->relation_settings();
-        $schema = array_merge($schema, $this->getModelSchemaForFields($fields_on_model));
-        return array_merge($schema, $this->getModelSchemaForRelations($relations_on_model));
+        $schema = $this->getInitialSchemaStructure();
+        $fields_on_model = $this->model->field_settings();
+        $relations_on_model = $this->model->relation_settings();
+        $schema = $this->getModelSchemaForFields($fields_on_model, $schema);
+        return $this->getModelSchemaForRelations($relations_on_model, $schema);
     }
 
 
@@ -39,14 +57,27 @@ class JsonModelSchema
      * @param \EE_Model_Field_Base[]     $model_fields
      * @return array
      */
-    public function getModelSchemaForFields(array $model_fields)
+    public function getModelSchemaForFields(array $model_fields, array $schema)
     {
-        $schema = array();
         foreach ($model_fields as $field => $model_field) {
             if (! $model_field instanceof EE_Model_Field_Base) {
                 continue;
             }
-            $schema['properties'][$field] = $model_field->get_schema();
+            $schema['properties'][$field] = $model_field->getSchema();
+
+            //if this is a primary key field add the primary key item
+            if ($model_field instanceof EE_Primary_Key_Field_Base) {
+                $schema['properties'][$field]['primary_key'] = true;
+            }
+
+            //if this is a foreign key field add the foreign key item
+            if ($model_field instanceof EE_Foreign_Key_Field_Base) {
+                $schema['properties'][$field]['foreign_key'] = array(
+                    'description' => esc_html__('This is a foreign key the points to the given models.', 'event_espresso'),
+                    'type' => 'array',
+                    'enum' => $model_field->get_model_class_names_pointed_to()
+                );
+            }
         }
         return $schema;
     }
@@ -55,22 +86,16 @@ class JsonModelSchema
     /**
      * Get the schema for a given set of model relations
      * @param EE_Model_Relation_Base[] $relations_on_model
+     * @return array
      */
-    public function getModelSchemaForRelations(array $relations_on_model)
+    public function getModelSchemaForRelations(array $relations_on_model, array $schema)
     {
-        $schema = array(
-            'relations' => array(
-                'type' => 'object',
-                'description' => __('Relations for this model', 'event_espresso'),
-                'properties' => array(),
-                'readonly' => true
-            )
-        );
         foreach ($relations_on_model as $model_name => $relation) {
             if (! $relation instanceof EE_Model_Relation_Base) {
                 continue;
             }
-            $schema['relations']['properties'][$model_name] = $relation->get_schema();
+            $model_name_for_schema = EEH_Inflector::pluralize_and_lower($model_name);
+            $schema['properties'][$model_name_for_schema] = $relation->getSchema();
         }
         return $schema;
     }
@@ -81,11 +106,11 @@ class JsonModelSchema
      * @param \EEM_Base $model
      * @return array
      */
-    public function getInitialSchemaStructure(EEM_Base $model)
+    public function getInitialSchemaStructure()
     {
         return array(
             '$schema' => 'http://json-schema.org/draft-04/schema#',
-            'title' => $model->get_this_model_name(),
+            'title' => $this->model->get_this_model_name(),
             'type' => 'object',
             'properties' => array()
         );
@@ -93,13 +118,16 @@ class JsonModelSchema
 
 
     /**
-     * Helper function that simply allows one to get whatever has been generated in an actual json object as opposed to
-     * an array.
-     * @param array $array_to_convert
+     * Allows one to just use the object as a string to get the json.
+     * eg.
+     *
+     * $json_schema = new JsonModelSchema(EEM_Event::instance());
+     * echo $json_schema; //outputs the schema as a json formatted string.
+     *
      * @return bool|false|mixed|string
      */
-    public function toJson($array_to_convert)
+    public function __toString()
     {
-        return wp_json_encode($array_to_convert);
+        return wp_json_encode($this->getModelSchema());
     }
 }
