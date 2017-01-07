@@ -402,10 +402,9 @@ abstract class EE_Model_Relation_Base implements HasSchemaInterface
     {
         return sprintf(
             esc_html__(
-                'Schema for %1$s relation. Returns all the related %2$s entities for the %3$s model.',
+                'Returns all the related %2$s entities for the %3$s model.',
                 'event_espresso'
             ),
-            get_class($this),
             $this->get_other_model()->get_this_model_name(),
             $this->get_this_model()->get_this_model_name()
         );
