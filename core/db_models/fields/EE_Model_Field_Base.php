@@ -1,6 +1,7 @@
-<?php if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
+<?php
+use EventEspresso\core\entities\interfaces\HasSchemaInterface;
+
+defined('EVENT_ESPRESSO_VERSION') || exit;
 
 /**
  * EE_Model_Field_Base class
@@ -18,7 +19,7 @@
  * @subpackage            /core/db_models/fields/EE_Model_Field_Base.php
  * @author                Michael Nelson
  */
-abstract class EE_Model_Field_Base
+abstract class EE_Model_Field_Base implements HasSchemaInterface
 {
     /**
      * The alias for the table the column belongs to.
@@ -73,6 +74,32 @@ abstract class EE_Model_Field_Base
      * @var string
      */
     protected $_model_name;
+
+
+    /**
+     * This should be a json-schema valid data type for the field.
+     * @link http://json-schema.org/latest/json-schema-core.html#rfc.section.4.2
+     * @var string
+     */
+    protected $_schema_type = 'string';
+
+
+    /**
+     * If the schema has a defined format then it should be defined via this property.
+     * @link http://json-schema.org/latest/json-schema-validation.html#rfc.section.7
+     * @var string
+     */
+    protected $_schema_format = '';
+
+
+    /**
+     * Indicates that the value of the field is managed exclusively by the server/model and not something
+     * settable by client code.
+     * @link http://json-schema.org/latest/json-schema-hypermedia.html#rfc.section.4.4
+     * @var bool
+     */
+    protected $_schema_readonly = false;
+
 
     /**
      * @param      $table_column
@@ -255,11 +282,160 @@ abstract class EE_Model_Field_Base
         return $value_on_field_to_be_outputted;
     }
 
+
     /**
-     * Return `%d`, `%s` or `%f` to indicate the data type for the field.
+     * Returns whatever is set as the nicename for the object.
      * @return string
      */
-    abstract function get_wpdb_data_type();
+    public function getSchemaDescription()
+    {
+        return $this->get_nicename();
+    }
+
+
+    /**
+     * Returns whatever is set as the $_schema_type property for the object.
+     * Note: this will automatically add 'null' to the schema if the object is_nullable()
+     * @return string|array
+     */
+    public function getSchemaType()
+    {
+        if ($this->is_nullable()) {
+            $this->_schema_type = (array) $this->_schema_type;
+            if (! in_array('null', $this->_schema_type)) {
+                $this->_schema_type[] = 'null';
+            };
+        }
+        return $this->_schema_type;
+    }
+
+
+    /**
+     * This is usually present when the $_schema_type property is 'object'.  Any child classes will need to override
+     * this method and return the properties for the schema.
+     *
+     * The reason this is not a property on the class is because there may be filters set on the values for the property
+     * that won't be exposed on construct.  For example enum type schemas may have the enum values filtered.
+     *
+     * @return array
+     */
+    public function getSchemaProperties()
+    {
+        return array();
+    }
+
+
+    /**
+     * If a child class has enum values, they should override this method and provide a simple array
+     * of the enum values.
+
+     * The reason this is not a property on the class is because there may be filterable enum values that
+     * are set on the instantiated object that could be filtered after construct.
+     *
+     * @return array
+     */
+    public function getSchemaEnum()
+    {
+        return array();
+    }
+
+
+    /**
+     * This returns the value of the $_schema_format property on the object.
+     * @return string
+     */
+    public function getSchemaFormat()
+    {
+        return $this->_schema_format;
+    }
+
+
+    /**
+     * This returns the value of the $_schema_readonly property on the object.
+     * @return bool
+     */
+    public function getSchemaReadonly()
+    {
+        return $this->_schema_readonly;
+    }
+
+
+
+
+    /**
+     * Return `%d`, `%s` or `%f` to indicate the data type for the field.
+     * @uses _get_wpdb_data_type()
+     *
+     * @return string
+     */
+    public function get_wpdb_data_type()
+    {
+        return $this->_get_wpdb_data_type();
+    }
+
+
+    /**
+     * Return `%d`, `%s` or `%f` to indicate the data type for the field that should be indicated in wpdb queries.
+     * @param string $type  Included if a specific type is requested.
+     * @uses get_schema_type()
+     * @return string
+     */
+    protected function _get_wpdb_data_type($type='')
+    {
+        $type = empty($type) ? $this->get_schema_type() : $type;
+
+        //if type is an array, then different parsing is required.
+        if (is_array($type)) {
+            return $this->_get_wpdb_data_type_for_type_array($type);
+        }
+
+        $wpdbtype = '%s';
+        switch ($type) {
+            case 'number':
+                $wpdbtype = '%f';
+                break;
+            case 'integer':
+            case 'boolean':
+                $wpdbtype = '%d';
+                break;
+            case 'object':
+                $properties = $this->get_schema_properties();
+                if (isset($properties['raw'], $properties['raw']['type'])) {
+                    $wpdbtype = $this->_get_wpdb_data_type($properties['raw']['type']);
+                }
+                break; //leave at default
+        }
+        return $wpdbtype;
+    }
+
+
+
+    protected function _get_wpdb_data_type_for_type_array($type)
+    {
+        $type = (array) $type;
+        //first let's flip because then we can do a faster key check
+        $type = array_flip($type);
+
+        //check for things that mean '%s'
+        if (isset($type['string'],$type['object'],$type['array'])) {
+            return '%s';
+        }
+
+        //if makes it past the above condition and there's float in the array
+        //then the type is %f
+        if (isset($type['number'])) {
+            return '%f';
+        }
+
+        //if it makes it above the above conditions and there is an integer in the array
+        //then the type is %d
+        if (isset($type['integer'])) {
+            return '%d';
+        }
+
+        //anything else is a string
+        return '%s';
+    }
 
 
     /**
@@ -268,7 +444,31 @@ abstract class EE_Model_Field_Base
      * @link http://json-schema.org/
      * @return array
      */
-    abstract public function get_schema();
+    public function getSchema()
+    {
+        $schema = array(
+            'description' => $this->getSchemaDescription(),
+            'type' => $this->getSchemaType(),
+            'readonly' => $this->getSchemaReadonly(),
+        );
+
+        //optional properties of the schema
+        $enum = $this->getSchemaEnum();
+        $properties = $this->getSchemaProperties();
+        $format = $this->getSchemaFormat();
+        if ($enum) {
+            $schema['enum'] = $enum;
+        }
+
+        if ($properties) {
+            $schema['properties'] = $properties;
+        }
+
+        if ($format) {
+            $schema['format'] = $format;
+        }
+        return $schema;
+    }
 
     /**
      * Some fields are in the database-only, (ie, used in queries etc), but shouldn't necessarily be part
