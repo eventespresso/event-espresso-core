@@ -382,7 +382,7 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
      */
     protected function _get_wpdb_data_type($type='')
     {
-        $type = empty($type) ? $this->get_schema_type() : $type;
+        $type = empty($type) ? $this->getSchemaType() : $type;
 
         //if type is an array, then different parsing is required.
         if (is_array($type)) {
@@ -399,7 +399,7 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
                 $wpdbtype = '%d';
                 break;
             case 'object':
-                $properties = $this->get_schema_properties();
+                $properties = $this->getSchemaProperties();
                 if (isset($properties['raw'], $properties['raw']['type'])) {
                     $wpdbtype = $this->_get_wpdb_data_type($properties['raw']['type']);
                 }
