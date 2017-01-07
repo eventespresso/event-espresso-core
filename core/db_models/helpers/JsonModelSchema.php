@@ -17,7 +17,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  * @author     Darren Ethier
  * @since      4.9.24.rc.018
  */
-class ModelSchema
+class JsonModelSchema
 {
     /**
      * Return the schema for a given model from a given model.

@@ -393,7 +393,7 @@ abstract class EE_Model_Relation_Base
 
     /**
      * This returns an array representing a schema for the relation instance.
-     * Typically this is used by \EventEspresso\core\db_models\helpers\ModelSchema when it builds an array representing
+     * Typically this is used by \EventEspresso\core\db_models\helpers\JsonModelSchema when it builds an array representing
      * the schema for a model.
      * @return array
      */

@@ -5,7 +5,7 @@ use EventEspresso\core\libraries\rest_api\Capabilities;
 use EventEspresso\core\libraries\rest_api\Calculated_Model_Fields;
 use EventEspresso\core\libraries\rest_api\Rest_Exception;
 use EventEspresso\core\libraries\rest_api\Model_Data_Translator;
-use EventEspresso\core\db_models\helpers\ModelSchema;
+use EventEspresso\core\db_models\helpers\JsonModelSchema;
 
 if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
@@ -100,7 +100,7 @@ class Read extends Base
             if (! $controller->get_model_version_info()->is_model_name_in_this_version($model_name)) {
                 return array();
             }
-            $model_schema = new ModelSchema();
+            $model_schema = new JsonModelSchema();
             //get the model for this version
             $model = $controller->get_model_version_info()->load_model($model_name);
             $schema = array_merge(
