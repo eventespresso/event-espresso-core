@@ -20,13 +20,58 @@
  */
 abstract class EE_Model_Field_Base
 {
-    var $_table_alias;
-    var $_table_column;
-    var $_name;
-    var $_nicename;
-    var $_nullable;
-    var $_default_value;
-    var $_other_config;
+    /**
+     * The alias for the table the column belongs to.
+     * @var string
+     */
+    protected $_table_alias;
+
+    /**
+     * The actual db column name for the table
+     * @var string
+     */
+    protected $_table_column;
+
+
+    /**
+     * The authoritative name for the table column (used by client code to reference the field).
+     * @var string
+     */
+    protected $_name;
+
+
+    /**
+     * A description for the field.
+     * @var string
+     */
+    protected $_nicename;
+
+
+    /**
+     * Whether the field is nullable or not
+     * @var bool
+     */
+    protected $_nullable;
+
+
+    /**
+     * What the default value for the field should be.
+     * @var mixed
+     */
+    protected $_default_value;
+
+
+    /**
+     * Other configuration for the field
+     * @var mixed
+     */
+    protected $_other_config;
+
+
+    /**
+     * The name of the model this field is instantiated for.
+     * @var string
+     */
     protected $_model_name;
 
     /**
@@ -35,7 +80,7 @@ abstract class EE_Model_Field_Base
      * @param      $nullable
      * @param null $default_value
      */
-    function __construct($table_column, $nicename, $nullable, $default_value = null)
+    public function __construct($table_column, $nicename, $nullable, $default_value = null)
     {
         $this->_table_column  = $table_column;
         $this->_nicename      = $nicename;
@@ -49,7 +94,7 @@ abstract class EE_Model_Field_Base
      * @param $name
      * @param $model_name
      */
-    function _construct_finalize($table_alias, $name, $model_name)
+    public function _construct_finalize($table_alias, $name, $model_name)
     {
         $this->_table_alias = $table_alias;
         $this->_name        = $name;
@@ -63,12 +108,12 @@ abstract class EE_Model_Field_Base
             $this->_default_value, $this);
     }
 
-    function get_table_alias()
+    public function get_table_alias()
     {
         return $this->_table_alias;
     }
 
-    function get_table_column()
+    public function get_table_column()
     {
         return $this->_table_column;
     }
@@ -78,7 +123,7 @@ abstract class EE_Model_Field_Base
      *
      * @return string
      */
-    function get_model_name()
+    public function get_model_name()
     {
         return $this->_model_name;
     }
@@ -87,7 +132,7 @@ abstract class EE_Model_Field_Base
      * @throws \EE_Error
      * @return string
      */
-    function get_name()
+    public function get_name()
     {
         if ($this->_name) {
             return $this->_name;
@@ -97,12 +142,12 @@ abstract class EE_Model_Field_Base
         }
     }
 
-    function get_nicename()
+    public function get_nicename()
     {
         return $this->_nicename;
     }
 
-    function is_nullable()
+    public function is_nullable()
     {
         return $this->_nullable;
     }
@@ -113,7 +158,7 @@ abstract class EE_Model_Field_Base
      *
      * @return boolean
      */
-    function is_auto_increment()
+    public function is_auto_increment()
     {
         return false;
     }
@@ -124,7 +169,7 @@ abstract class EE_Model_Field_Base
      *
      * @return mixed
      */
-    function get_default_value()
+    public function get_default_value()
     {
         return $this->_default_value;
     }
@@ -137,7 +182,7 @@ abstract class EE_Model_Field_Base
      *
      * @return string
      */
-    function get_qualified_column()
+    public function get_qualified_column()
     {
         return $this->get_table_alias() . "." . $this->get_table_column();
     }
@@ -151,7 +196,7 @@ abstract class EE_Model_Field_Base
      * @param mixed $value_of_field_on_model_object
      * @return mixed
      */
-    function prepare_for_get($value_of_field_on_model_object)
+    public function prepare_for_get($value_of_field_on_model_object)
     {
         return $value_of_field_on_model_object;
     }
@@ -164,7 +209,7 @@ abstract class EE_Model_Field_Base
      * @param mixed $value_of_field_on_model_object
      * @return mixed
      */
-    function prepare_for_use_in_db($value_of_field_on_model_object)
+    public function prepare_for_use_in_db($value_of_field_on_model_object)
     {
         return $value_of_field_on_model_object;
     }
@@ -177,7 +222,7 @@ abstract class EE_Model_Field_Base
      * @param mixed $value_inputted_for_field_on_model_object
      * @return mixed
      */
-    function prepare_for_set($value_inputted_for_field_on_model_object)
+    public function prepare_for_set($value_inputted_for_field_on_model_object)
     {
         return $value_inputted_for_field_on_model_object;
     }
@@ -191,7 +236,7 @@ abstract class EE_Model_Field_Base
      * @param mixed $value_found_in_db_for_model_object
      * @return mixed
      */
-    function prepare_for_set_from_db($value_found_in_db_for_model_object)
+    public function prepare_for_set_from_db($value_found_in_db_for_model_object)
     {
         return $this->prepare_for_set($value_found_in_db_for_model_object);
     }
@@ -205,7 +250,7 @@ abstract class EE_Model_Field_Base
      * @param mixed $value_on_field_to_be_outputted
      * @return mixed
      */
-    function prepare_for_pretty_echoing($value_on_field_to_be_outputted)
+    public function prepare_for_pretty_echoing($value_on_field_to_be_outputted)
     {
         return $value_on_field_to_be_outputted;
     }
@@ -235,7 +280,7 @@ abstract class EE_Model_Field_Base
      *
      * @return boolean
      */
-    function is_db_only_field()
+    public function is_db_only_field()
     {
         return false;
     }
