@@ -100,17 +100,17 @@ class Read extends Base
             if (! $controller->get_model_version_info()->is_model_name_in_this_version($model_name)) {
                 return array();
             }
-            $model_schema = new JsonModelSchema();
             //get the model for this version
             $model = $controller->get_model_version_info()->load_model($model_name);
-            $schema = array_merge(
-                $model_schema->getInitialSchemaStructure($model),
-                $model_schema->getModelSchemaForRelations(
-                    $controller->get_model_version_info()->relation_settings($model)
-                ),
-                $model_schema->getModelSchemaForFields(
-                    $controller->get_model_version_info()->fields_on_model_in_this_version($model)
-                )
+            $model_schema = new JsonModelSchema($model);
+            $schema = $model_schema->getInitialSchemaStructure();
+            $schema = $model_schema->getModelSchemaForFields(
+                $controller->get_model_version_info()->fields_on_model_in_this_version($model),
+                $schema
+            );
+            $schema = $model_schema->getModelSchemaForRelations(
+                $controller->get_model_version_info()->relation_settings($model),
+                $schema
             );
             return $schema;
         } catch (\Exception $e) {
