@@ -140,29 +140,27 @@ var Maintenance_helper = {
 				success: function(response, status, xhr) {
 //					alert('response:'+response);
 					var ct = xhr.getResponseHeader("content-type") || "";
+                    //did we get HTML in the response? wack
 					if (ct.indexOf('html') > -1) {
-						Maintenance_helper.display_content(response,setup.where,setup.what);
-						if( typeof(setup.dont_report) === 'undefined'){
-							Maintenance_helper.report_general_migration_error(response);
-							Maintenance_helper.display_content(ee_maintenance.fatal_error, '#main-message', 'clear');
-							Maintenance_helper.finish();
-						}
+                        Maintenance_helper.handle_ajax_error(response,setup);
 					}
-
+                    //was the response valid JSON?
 					if (ct.indexOf('json') > -1 ) {
-						var resp = response,
-						wht = typeof(resp.data.what) === 'undefined' ? setup.what : resp.data.what,
-						whr = typeof(resp.data.where) === 'undefined' ? setup.where : resp.data.where,
-						display_content = resp.error ? resp.error : resp.content;
+                        wht = typeof(response.data.what) === 'undefined' ? setup.what : response.data.what,
+                            whr = typeof(response.data.where) === 'undefined' ? setup.where : response.data.where,
+                            display_content = response.error ? response.error : response.content;
 
-						Maintenance_helper.display_notices(resp.notices);
-						Maintenance_helper.display_content(display_content, whr, wht);
-						//call the callback that was passed in
-						if (typeof(setup.callback) !== 'undefined'){
-							setup.callback(response);
-						}
+                        Maintenance_helper.display_notices(response.notices);
+                        Maintenance_helper.display_content(display_content, whr, wht);
+                        //call the callback that was passed in
+                        if (typeof(setup.callback) !== 'undefined'){
+                            setup.callback(response);
+                        }
 					}
-				}
+				},
+                error: function(xhr,status,error_thrown) {
+                    Maintenance_helper.handle_ajax_error(error_thrown,setup);
+                }
 			});
 			return false;
 		},
@@ -194,7 +192,20 @@ var Maintenance_helper = {
 		} else if ( what == 'prepend' ) {
 			jQuery(where).prepend(content);
 		}
-	}
+	},
+    /**
+     * Handles an error because of either invalid JSON being returned, or an empty response
+     * @param response_text
+     * @param setup
+     */
+    handle_ajax_error: function(response_text, setup) {
+        Maintenance_helper.display_content(response_text,setup.where,setup.what);
+        if( typeof(setup.dont_report) === 'undefined'){
+            Maintenance_helper.report_general_migration_error(response_text);
+            Maintenance_helper.display_content(ee_maintenance.fatal_error, '#main-message', 'clear');
+            Maintenance_helper.finish();
+        }
+    }
 };
 
 jQuery(function() {
