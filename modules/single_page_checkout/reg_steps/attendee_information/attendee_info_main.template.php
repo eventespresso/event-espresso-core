@@ -1,11 +1,16 @@
+<?php
+/** @var boolean $revisit */
+/** @var array $ticket_line_item */
+/** @var string $default_hidden_inputs */
+?>
 	<p id="spco-attendee_information-pg" class="spco-steps-pg small-text drk-grey-text">
 		<?php echo apply_filters( 'FHEE__registration_page_attendee_information__attendee_information_pg', sprintf( __('In order to process your registration, we ask you to provide the following information.%1$sPlease note that all fields marked with an asterisk (%2$s) are required.', 'event_espresso'), '<br />', '<span class="asterisk">*</span>' )); ?>
 	</p>
 
 <?php
 $att_nmbr = 0;
-$prev_event = '';
-$prev_ticket = '';
+$prev_event = 0;
+$prev_ticket = 0;
 
 if ( count( $registrations ) > 0 ) {
 	foreach ( $registrations as $registration ) {
