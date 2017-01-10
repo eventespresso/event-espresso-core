@@ -9,7 +9,6 @@ require_once(EE_MODELS . 'fields/EE_Integer_Field.php');
  * @package               Event Espresso
  * @subpackage            includes/models/
  * @author                Mike Nelson
->>>>>>> master
  */
 class EE_Enum_Integer_Field extends EE_Integer_Field
 {
