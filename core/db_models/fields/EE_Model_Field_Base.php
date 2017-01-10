@@ -387,7 +387,7 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
 
     /**
      * This sets the value for the $_schema_readonly property.
-     * @param $readonly
+     * @param bool $readonly  (only explicit boolean values are accepted)
      */
     protected function setSchemaReadOnly($readonly)
     {
