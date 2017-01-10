@@ -46,13 +46,13 @@ class EventListIframeEmbedButton extends IframeEmbedButton
 	 * Adds an iframe embed code button to the Event editor.
 	 * return string
 	 *
-	 * @param array $after_list_table
+	 * @param array|string $after_list_table
 	 * @return array
 	 */
-    public function addEventListIframeEmbedButtonSection( array $after_list_table )
+    public function addEventListIframeEmbedButtonSection( $after_list_table )
     {
 	    return \EEH_Array::insert_into_array(
-    		$after_list_table,
+            (array) $after_list_table,
 		    array(
 			    'iframe_embed_buttons' => $this->addIframeEmbedButtonsSection(
 				    array( 'event_list' => $this->embedButtonHtml() )
