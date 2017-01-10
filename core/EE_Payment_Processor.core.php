@@ -468,7 +468,7 @@ class EE_Payment_Processor extends EE_Processor_Base
                 add_filter('FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true');
                 $do_action = 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__no_payment_made';
             }
-            if ($payment->status() !== EEM_Payment::status_id_failed) {
+            if ($payment instanceof EE_Payment && $payment->status() !== EEM_Payment::status_id_failed) {
                 /** @type EE_Transaction_Payments $transaction_payments */
                 $transaction_payments = EE_Registry::instance()->load_class('Transaction_Payments');
                 // set new value for total paid
