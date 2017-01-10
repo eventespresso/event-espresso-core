@@ -36,6 +36,7 @@ class EEH_Schema {
             'venue_url' => '',
             'venue_locality' => '',
             'venue_region' => '',
+            'event_image' => '',
         );
         $template_args['event_permalink'] = $event->get_permalink();
         $template_args['event_name'] = $event->name();
@@ -62,6 +63,7 @@ class EEH_Schema {
             $template_args['venue_locality'] = $venue->city();
             $template_args['venue_region'] = $venue->state_name();
         }
+        $template_args['event_image'] = $event->feature_image_url();
         $template_args = apply_filters(
             'FHEE__EEH_Schema__add_json_linked_data_for_event__template_args',
             $template_args,

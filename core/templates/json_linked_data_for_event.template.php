@@ -11,6 +11,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 /** @var string $venue_url */
 /** @var string $venue_locality */
 /** @var string $venue_region */
+/** @var string $event_image */
 ?>
 <script type="application/ld+json">
 {
@@ -44,6 +45,9 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
       "addressRegion": "<?php echo $venue_region ?>"
     }
   }
+  <?php } ?>
+  <?php if ($event_image) { ?>,
+  "image": "<?php echo $event_image ?>"
   <?php } ?>
   <?php do_action('AHEE__json_linked_data_for_event__template') ?>
 }
