@@ -16,8 +16,6 @@ class EE_Enum_Integer_Field extends EE_Integer_Field
     public $_allowed_enum_values;
 
 
-    protected $_schema_type = 'object';
-
     /**
      * @param string  $table_column
      * @param string  $nicename
@@ -29,6 +27,7 @@ class EE_Enum_Integer_Field extends EE_Integer_Field
     {
         $this->_allowed_enum_values = $allowed_enum_values;
         parent::__construct($table_column, $nicename, $nullable, $default_value);
+        $this->setSchemaType('object');
     }
 
     /**

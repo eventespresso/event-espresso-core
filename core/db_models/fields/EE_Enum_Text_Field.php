@@ -17,9 +17,6 @@ class EE_Enum_Text_Field extends EE_Text_Field_Base
      */
     public $_allowed_enum_values;
 
-
-    protected $_schema_type = 'object';
-
     /**
      * @param string  $table_column
      * @param string  $nice_name
@@ -31,6 +28,7 @@ class EE_Enum_Text_Field extends EE_Text_Field_Base
     {
         $this->_allowed_enum_values = $allowed_enum_values;
         parent::__construct($table_column, $nice_name, $nullable, $default_value);
+        $this->setSchemaType('object');
     }
 
 

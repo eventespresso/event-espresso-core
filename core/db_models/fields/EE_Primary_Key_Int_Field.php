@@ -4,11 +4,10 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 class EE_Primary_Key_Int_Field extends EE_Primary_Key_Field_Base
 {
 
-    protected $_schema_type = 'integer';
-
     public function __construct($table_column, $nicename)
     {
         parent::__construct($table_column, $nicename, 0);
+        $this->setSchemaType('integer');
     }
 
     function prepare_for_set($value_inputted_for_field_on_model_object)

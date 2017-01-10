@@ -15,7 +15,18 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 class EE_Full_HTML_Field extends EE_Text_Field_Base
 {
 
-    protected $_schema_type = 'object';
+    /**
+     * @param string $table_column
+     * @param string $nicename
+     * @param bool   $nullable
+     * @param null   $default_value
+     */
+    public function __construct($table_column, $nicename, $nullable, $default_value = null)
+    {
+        parent::__construct($table_column, $nicename, $nullable, $default_value);
+        $this->setSchemaType('object');
+    }
+
 
     /**
      * Does shortcodes and auto-paragraphs the content (unless schema is 'no_wpautop')

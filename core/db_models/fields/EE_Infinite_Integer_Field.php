@@ -11,7 +11,18 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 class EE_Infinite_Integer_Field extends EE_Model_Field_Base
 {
 
-    protected $_schema_type = array('integer','null');
+    /**
+     * @param string $table_column
+     * @param string $nicename
+     * @param bool   $nullable
+     * @param null   $default_value
+     */
+    public function __construct($table_column, $nicename, $nullable, $default_value = null)
+    {
+        parent::__construct($table_column, $nicename, $nullable, $default_value);
+        $this->setSchemaType(array('integer', 'null'));
+    }
+
 
     function prepare_for_use_in_db($value_of_field_on_model_object)
     {

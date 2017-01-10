@@ -9,7 +9,20 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  */
 class EE_Serialized_Text_Field extends EE_Text_Field_Base
 {
-    protected $_schema_type = array('object','string');
+
+    /**
+     * @param string $table_column
+     * @param string $nicename
+     * @param bool   $nullable
+     * @param null   $default_value
+     */
+    public function __construct($table_column, $nicename, $nullable, $default_value = null)
+    {
+        parent::__construct($table_column, $nicename, $nullable, $default_value);
+        $this->setSchemaType(array('object','string'));
+    }
+
+
     /**
      * Value SHOULD be an array, and we want to now convert it to a serialized string
      *

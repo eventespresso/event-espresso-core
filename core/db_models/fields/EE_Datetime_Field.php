@@ -117,9 +117,6 @@ class EE_Datetime_Field extends EE_Model_Field_Base
     protected $_blog_offset;
 
 
-    protected $_schema_format = 'datetime';
-
-
     /**
      * @param string $table_column
      * @param string $nice_name
@@ -151,7 +148,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base
 
         parent::__construct($table_column, $nice_name, $nullable, $default_value);
         $this->set_timezone($timezone_string);
-
+        $this->setSchemaFormat('date-time');
     }
 
 

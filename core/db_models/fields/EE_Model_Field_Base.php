@@ -81,7 +81,7 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
      * @link http://json-schema.org/latest/json-schema-core.html#rfc.section.4.2
      * @var string
      */
-    protected $_schema_type = 'string';
+    private $_schema_type = 'string';
 
 
     /**
@@ -89,7 +89,7 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
      * @link http://json-schema.org/latest/json-schema-validation.html#rfc.section.7
      * @var string
      */
-    protected $_schema_format = '';
+    private $_schema_format = '';
 
 
     /**
@@ -98,14 +98,14 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
      * @link http://json-schema.org/latest/json-schema-hypermedia.html#rfc.section.4.4
      * @var bool
      */
-    protected $_schema_readonly = false;
+    private $_schema_readonly = false;
 
 
     /**
-     * @param      $table_column
-     * @param      $nicename
-     * @param      $nullable
-     * @param null $default_value
+     * @param string $table_column
+     * @param string $nicename
+     * @param bool   $nullable
+     * @param null   $default_value
      */
     public function __construct($table_column, $nicename, $nullable, $default_value = null)
     {
@@ -311,6 +311,19 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
 
 
     /**
+     * Sets the _schema_type property.  Child classes should call this in their constructors to override the default state
+     * for this property.
+     * @param string|array $type
+     * @throws InvalidArgumentException
+     */
+    protected function setSchemaType($type)
+    {
+        $this->validateSchemaType($type);
+        $this->_schema_type = $type;
+    }
+
+
+    /**
      * This is usually present when the $_schema_type property is 'object'.  Any child classes will need to override
      * this method and return the properties for the schema.
      *
@@ -351,12 +364,43 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
 
 
     /**
+     * Sets the schema format property.
+     * @throws InvalidArgumentException
+     * @param string $format
+     */
+    protected function setSchemaFormat($format)
+    {
+        $this->validateSchemaFormat($format);
+        $this->_schema_format = $format;
+    }
+
+
+    /**
      * This returns the value of the $_schema_readonly property on the object.
      * @return bool
      */
     public function getSchemaReadonly()
     {
         return $this->_schema_readonly;
+    }
+
+
+    /**
+     * This sets the value for the $_schema_readonly property.
+     * @param $readonly
+     */
+    protected function setSchemaReadOnly($readonly)
+    {
+        if (! is_bool($readonly)) {
+            throw new InvalidArgumentException(
+                sprintf(
+                    esc_html__('The incoming argument (%s) must be a boolean.', 'event_espresso'),
+                    print_r($readonly, true)
+                )
+            );
+        }
+
+        $this->_schema_readonly = $readonly;
     }
 
 
@@ -483,5 +527,96 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
     public function is_db_only_field()
     {
         return false;
+    }
+
+
+    /**
+     * Validates the incoming string|array to ensure its an allowable type.
+     * @throws InvalidArgumentException
+     * @param string|array $type
+     */
+    private function validateSchemaType($type)
+    {
+        if (! (is_string($type) || is_array($type))) {
+            throw new InvalidArgumentException(
+                sprintf(
+                    esc_html__('The incoming argument (%s) must be a string or an array.', 'event_espresso'),
+                    print_r($type, true)
+                )
+            );
+        }
+
+        //validate allowable types.
+        //@link http://json-schema.org/latest/json-schema-core.html#rfc.section.4.2
+        $allowable_types = array_flip(
+            array(
+                'string',
+                'number',
+                'null',
+                'object',
+                'array',
+                'boolean',
+                'integer'
+            )
+        );
+
+        if (is_array($type)) {
+            foreach ($type as $item_in_type) {
+                $this->validateSchemaType($item_in_type);
+            }
+            return;
+        }
+
+        if (! isset($allowable_types[$type])) {
+            throw new InvalidArgumentException(
+                sprintf(
+                    esc_html__('The incoming argument (%1$s) must be one of the allowable types: %2$s', 'event_espresso'),
+                    $type,
+                    implode(',', array_flip($allowable_types))
+                )
+            );
+        }
+    }
+
+
+    /**
+     * Validates that the incoming format is an allowable string to use for the _schema_format property
+     * @throws InvalidArgumentException
+     * @param $format
+     */
+    private function validateSchemaFormat($format)
+    {
+        if (! is_string($format)) {
+            throw new InvalidArgumentException(
+                sprintf(
+                    esc_html__('The incoming argument (%s) must be a string.', 'event_espresso'),
+                    print_r($format, true)
+                )
+            );
+        }
+
+        //validate allowable format values
+        //@link http://json-schema.org/latest/json-schema-validation.html#rfc.section.7
+        $allowable_formats = array_flip(
+            array(
+                'date-time',
+                'email',
+                'hostname',
+                'ipv4',
+                'ipv6',
+                'uri',
+                'uriref'
+            )
+        );
+
+        if (! isset($allowable_formats[$format])) {
+            throw new InvalidArgumentException(
+                sprintf(
+                    esc_html__('The incoming argument (%1$s) must be one of the allowable formats: %2$s', 'event_espresso'),
+                    $format,
+                    implode(',', array_flip($allowable_formats))
+                )
+            );
+        }
     }
 }
