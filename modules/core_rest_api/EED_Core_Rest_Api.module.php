@@ -2,7 +2,7 @@
 use EventEspresso\core\libraries\rest_api\Calculated_Model_Fields;
 use EventEspresso\core\libraries\rest_api\controllers\model\Read as ModelRead;
 use EventEspresso\core\libraries\rest_api\changes\Changes_In_Base;
-use \EventEspresso\core\libraries\rest_api\Model_Version_Info;
+use EventEspresso\core\libraries\rest_api\Model_Version_Info;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
