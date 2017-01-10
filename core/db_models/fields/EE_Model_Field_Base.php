@@ -389,23 +389,23 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
             return $this->_get_wpdb_data_type_for_type_array($type);
         }
 
-        $wpdbtype = '%s';
+        $wpdb_type = '%s';
         switch ($type) {
             case 'number':
-                $wpdbtype = '%f';
+                $wpdb_type = '%f';
                 break;
             case 'integer':
             case 'boolean':
-                $wpdbtype = '%d';
+                $wpdb_type = '%d';
                 break;
             case 'object':
                 $properties = $this->getSchemaProperties();
                 if (isset($properties['raw'], $properties['raw']['type'])) {
-                    $wpdbtype = $this->_get_wpdb_data_type($properties['raw']['type']);
+                    $wpdb_type = $this->_get_wpdb_data_type($properties['raw']['type']);
                 }
                 break; //leave at default
         }
-        return $wpdbtype;
+        return $wpdb_type;
     }
 
 
