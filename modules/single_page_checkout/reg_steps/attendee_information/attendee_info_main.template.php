@@ -15,12 +15,12 @@ if ( count( $registrations ) > 0 ) {
 
 		<div id="spco-attendee-panel-dv-<?php echo $registration->reg_url_link();?>" class="spco-attendee-panel-dv spco-attendee-ticket-<?php echo $registration->ticket()->ID();?>">
 
-			<?php if ( $registration->event()->ID() != $prev_event ) { ?>
+			<?php if ( $registration->event()->ID() !== $prev_event ) { ?>
 			<h4 id="event_title-<?php echo $registration->event()->ID() ?>" class="big-event-title-hdr">
 				<?php echo $registration->event()->name(); ?>
 			</h4>
 			<?php } ?>
-			<?php if ( $registration->ticket()->ID() != $prev_ticket ) { ?>
+			<?php if ( $registration->ticket()->ID() !== $prev_ticket ) { ?>
 				<?php if ( ! $revisit ) { ?>
 			<div class="spco-ticket-info-dv small-text">
 				<h5><?php _e('Details', 'event_espresso');?></h5>
