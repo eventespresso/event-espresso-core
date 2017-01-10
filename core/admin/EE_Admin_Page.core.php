@@ -2440,26 +2440,46 @@ abstract class EE_Admin_Page extends EE_Base
                 ) . '</p>'
                 : '';
         // filter before_list_table template arg
+        $this->_template_args['before_list_table'] = apply_filters(
+            'FHEE__EE_Admin_Page___display_admin_list_table_page__before_list_table__template_arg',
+            $this->_template_args['before_list_table'],
+            $this->page_slug,
+            $this->_req_data,
+            $this->_req_action
+        );
+        // convert to array and filter again
+        // arrays are easier to inject new items in a specific location,
+        // but would not be backwards compatible, so we have to add a new filter
         $this->_template_args['before_list_table'] = implode(
-                " \n",
-                (array) apply_filters(
-                        'FHEE__EE_Admin_Page___display_admin_list_table_page__before_list_table__template_arg',
-                        $this->_template_args['before_list_table'],
-                        $this->page_slug,
-                        $this->_req_data,
-                        $this->_req_action
-                )
+            " \n",
+            (array) apply_filters(
+                'FHEE__EE_Admin_Page___display_admin_list_table_page__before_list_table__template_args_array',
+                (array) $this->_template_args['before_list_table'],
+                $this->page_slug,
+                $this->_req_data,
+                $this->_req_action
+            )
         );
         // filter after_list_table template arg
+        $this->_template_args['after_list_table'] = apply_filters(
+            'FHEE__EE_Admin_Page___display_admin_list_table_page__after_list_table__template_arg',
+            $this->_template_args['after_list_table'],
+            $this->page_slug,
+            $this->_req_data,
+            $this->_req_action
+        );
+        // convert to array and filter again
+        // arrays are easier to inject new items in a specific location,
+        // but would not be backwards compatible, so we have to add a new filter
         $this->_template_args['after_list_table'] = implode(
-                " \n",
-                (array) apply_filters(
-                        'FHEE__EE_Admin_Page___display_admin_list_table_page__after_list_table__template_arg',
-                        $this->_template_args['after_list_table'],
-                        $this->page_slug,
-                        $this->_req_data,
-                        $this->_req_action
-                )
+            " \n",
+            (array) apply_filters(
+                'FHEE__EE_Admin_Page___display_admin_list_table_page__after_list_table__template_args_array',
+                (array) $this->_template_args['after_list_table'],
+                $this->page_slug,
+                $this->_req_data,
+                $this->_req_action
+            )
         );
         $this->_template_args['admin_page_content'] = EEH_Template::display_template(
                 $template_path,
