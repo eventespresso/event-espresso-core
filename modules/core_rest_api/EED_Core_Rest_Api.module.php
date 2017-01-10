@@ -1,9 +1,10 @@
 <?php
 use EventEspresso\core\libraries\rest_api\Calculated_Model_Fields;
+use EventEspresso\core\libraries\rest_api\controllers\model\Read as ModelRead;
+use EventEspresso\core\libraries\rest_api\changes\Changes_In_Base;
+use \EventEspresso\core\libraries\rest_api\Model_Version_Info;
 
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
+defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
 
@@ -166,7 +167,7 @@ class EED_Core_Rest_Api extends \EED_Module
             $full_classname = 'EventEspresso\core\libraries\rest_api\changes\\' . $classname_in_namespace;
             if (class_exists($full_classname)) {
                 $instance_of_class = new $full_classname;
-                if ($instance_of_class instanceof EventEspresso\core\libraries\rest_api\changes\Changes_In_Base) {
+                if ($instance_of_class instanceof Changes_In_Base) {
                     $instance_of_class->set_hooks();
                 }
             }
@@ -200,7 +201,7 @@ class EED_Core_Rest_Api extends \EED_Module
                             : '';
                         if (! empty($model_name) && ! empty($version)) {
                             $route_args['schema'] = function () use ($model_name, $version) {
-                                return EventEspresso\core\libraries\rest_api\controllers\model\Read::handle_schema_request(
+                                return ModelRead::handle_schema_request(
                                     $model_name,
                                     $version
                                 );
@@ -374,7 +375,7 @@ class EED_Core_Rest_Api extends \EED_Module
      */
     protected function _get_model_route_data_for_version($version, $hidden_endpoint = false)
     {
-        $model_version_info = new \EventEspresso\core\libraries\rest_api\Model_Version_Info($version);
+        $model_version_info = new Model_Version_Info($version);
         $models_to_register = apply_filters(
             'FHEE__EED_Core_REST_API___register_model_routes',
             $model_version_info->models_for_requested_version()
@@ -436,7 +437,7 @@ class EED_Core_Rest_Api extends \EED_Module
             );
             //@todo: also handle  DELETE for a single item
             foreach ($model_version_info->relation_settings($model) as $relation_name => $relation_obj) {
-                $related_model_name_endpoint_part = EventEspresso\core\libraries\rest_api\controllers\model\Read::get_related_entity_name(
+                $related_model_name_endpoint_part = ModelRead::get_related_entity_name(
                     $relation_name,
                     $relation_obj
                 );
