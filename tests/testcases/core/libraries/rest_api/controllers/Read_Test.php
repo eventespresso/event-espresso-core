@@ -801,7 +801,7 @@ class Read_Test extends \EE_UnitTestCase{
 
     /**
      * This tests getting schema object returned for an options request on a valid collection endpoint.
-     * @group rest_schema_test
+     * @group rest_schema_request
      */
     public function test_handle_schema_request()
     {
