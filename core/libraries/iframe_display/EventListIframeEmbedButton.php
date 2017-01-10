@@ -30,7 +30,7 @@ class EventListIframeEmbedButton extends IframeEmbedButton
 
 	public function addEmbedButton() {
 		add_filter(
-			'FHEE__EE_Admin_Page___display_admin_list_table_page__after_list_table__template_arg',
+			'FHEE__EE_Admin_Page___display_admin_list_table_page__after_list_table__template_args_array',
 			array( $this, 'addEventListIframeEmbedButtonSection' )
 		);
 		add_action(
