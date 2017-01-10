@@ -1,4 +1,5 @@
 <?php
+defined('EVENT_ESPRESSO_VERSION') || exit;
 
 /**
  * Field for DB columns which don't correspond to model fields. Eg, on the Event model, which

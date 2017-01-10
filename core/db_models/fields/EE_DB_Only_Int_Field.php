@@ -1,6 +1,5 @@
 <?php
-
-require_once(EE_MODELS . 'fields/EE_DB_Only_Field_Base.php');
+defined('EVENT_ESPRESSO_VERSION') || exit;
 
 class EE_DB_Only_Int_Field extends EE_DB_Only_Field_Base
 {

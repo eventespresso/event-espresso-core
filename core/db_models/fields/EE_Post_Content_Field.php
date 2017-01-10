@@ -1,4 +1,5 @@
 <?php
+defined('EVENT_ESPRESSO_VERSION') || exit;
 
 /**
  * Field to only allow tags that are normally allowed on post_content:

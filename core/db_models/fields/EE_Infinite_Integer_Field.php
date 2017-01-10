@@ -1,4 +1,5 @@
 <?php
+defined('EVENT_ESPRESSO_VERSION') || exit;
 
 /**
  * For storing integers which can assume the value of INFINITY. They're stored in the DB as -1,

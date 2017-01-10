@@ -1,5 +1,5 @@
 <?php
-require_once(EE_MODELS . 'fields/EE_Foreign_Key_Field_Base.php');
+defined('EVENT_ESPRESSO_VERSION') || exit;
 
 class EE_Foreign_Key_Int_Field extends EE_Foreign_Key_Field_Base
 {

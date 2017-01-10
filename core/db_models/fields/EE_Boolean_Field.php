@@ -1,5 +1,5 @@
 <?php
-require_once(EE_MODELS . 'fields/EE_Integer_Field.php');
+defined( 'EVENT_ESPRESSO_VERSION') || exit;
 
 class EE_Boolean_Field extends EE_Integer_Field
 {

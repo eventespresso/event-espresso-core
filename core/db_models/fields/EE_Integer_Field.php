@@ -1,4 +1,5 @@
 <?php
+defined('EVENT_ESPRESSO_VERSION') || exit;
 
 /**
  * Text_Fields is a base class for any fields which are have integer value. (Exception: foreign and private key fields.

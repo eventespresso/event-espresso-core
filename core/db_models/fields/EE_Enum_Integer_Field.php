@@ -1,7 +1,5 @@
-<?php if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-require_once(EE_MODELS . 'fields/EE_Integer_Field.php');
+<?php
+defined('EVENT_ESPRESSO_VERSION') || exit;
 
 /**
  * Class EE_Enum_Integer_Field

@@ -1,5 +1,5 @@
 <?php
-require_once(EE_MODELS . 'fields/EE_Text_Field_Base.php');
+defined('EVENT_ESPRESSO_VERSION') || exit;
 
 /**
  * Class EE_Enum_Text_Field

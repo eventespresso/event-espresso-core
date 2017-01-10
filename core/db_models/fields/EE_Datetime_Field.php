@@ -1,8 +1,7 @@
-<?php use EventEspresso\core\domain\entities\DbSafeDateTime;
+<?php
+use EventEspresso\core\domain\entities\DbSafeDateTime;
 
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
+defined('EVENT_ESPRESSO_VERSION') || exit;
 
 /**
  * EE_Datetime_Field
