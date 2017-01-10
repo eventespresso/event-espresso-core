@@ -61,7 +61,8 @@ class EED_Ticket_Selector extends  EED_Module {
 		// routing
 		EE_Config::register_route( 'iframe', 'EED_Ticket_Selector', 'ticket_selector_iframe', 'ticket_selector' );
 		EE_Config::register_route( 'process_ticket_selections', 'EED_Ticket_Selector', 'process_ticket_selections' );
-		add_action( 'wp_loaded', array( 'EED_Ticket_Selector', 'set_definitions' ), 2 );
+        EE_Config::register_route('cancel_ticket_selections', 'EED_Ticket_Selector', 'cancel_ticket_selections');
+        add_action( 'wp_loaded', array( 'EED_Ticket_Selector', 'set_definitions' ), 2 );
 		add_action( 'AHEE_event_details_header_bottom', array( 'EED_Ticket_Selector', 'display_ticket_selector' ), 10, 1 );
 		add_action( 'wp_enqueue_scripts', array( 'EED_Ticket_Selector', 'load_tckt_slctr_assets' ), 10 );
 	}
@@ -186,13 +187,26 @@ class EED_Ticket_Selector extends  EED_Module {
 	 *    process_ticket_selections
 	 *
 	 * @access        public
-	 * @access        public
 	 * @return        array  or FALSE
 	 * @throws \EE_Error
 	 */
 	public function process_ticket_selections() {
 		$form = new ProcessTicketSelector();
 		return $form->processTicketSelections();
+	}
+
+
+
+	/**
+     * cancel_ticket_selections
+     *
+     * @access        public
+	 * @return        array  or FALSE
+	 * @throws \EE_Error
+	 */
+	public function cancel_ticket_selections() {
+		$form = new ProcessTicketSelector();
+		return $form->cancelTicketSelections();
 	}
 
 
