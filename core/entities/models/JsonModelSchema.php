@@ -44,11 +44,13 @@ class JsonModelSchema
      */
     public function getModelSchema()
     {
-        $schema = $this->getInitialSchemaStructure();
-        $fields_on_model = $this->model->field_settings();
-        $relations_on_model = $this->model->relation_settings();
-        $schema = $this->getModelSchemaForFields($fields_on_model, $schema);
-        return $this->getModelSchemaForRelations($relations_on_model, $schema);
+        return $this->getModelSchemaForRelations(
+            $this->model->relation_settings(),
+            $this->getModelSchemaForFields(
+                $this->model->field_settings(),
+                $this->getInitialSchemaStructure()
+            )
+        );
     }
 
 
