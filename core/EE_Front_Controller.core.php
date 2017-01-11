@@ -1,4 +1,6 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) {
+<?php use EventEspresso\widgets\EspressoWidget;
+
+if ( ! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
 
@@ -97,8 +99,6 @@ final class EE_Front_Controller
         add_action('loop_start', array($this, 'display_errors'), 2);
         // the content
         // add_filter( 'the_content', array( $this, 'the_content' ), 5, 1 );
-        // add_filter('widget_text', array($this, 'widget_text'));
-        // add_filter('dynamic_sidebar_params', array($this, 'dynamic_sidebar_params'));
         //exclude our private cpt comments
         add_filter('comments_clauses', array($this, 'filter_wp_comments'), 10, 1);
         //make sure any ajax requests will respect the url schema when requests are made against admin-ajax.php (http:// or https://)
@@ -107,7 +107,7 @@ final class EE_Front_Controller
         do_action('AHEE__EE_Front_Controller__construct__done', $this);
         // for checking that browser cookies are enabled
         if (apply_filters('FHEE__EE_Front_Controller____construct__set_test_cookie', true)) {
-            setcookie('ee_cookie_test', uniqid(), time() + DAY_IN_SECONDS, '/');
+            setcookie('ee_cookie_test', uniqid('ect',true), time() + DAY_IN_SECONDS, '/');
         }
     }
 
@@ -292,56 +292,42 @@ final class EE_Front_Controller
 
 
 
+    /**
+     * callback for the WP "get_header" hook point
+     * checks posts for EE shortcodes, and sidebars for EE widgets
+     * loads resources and assets accordingly
+     *
+     * @return void
+     */
     public function get_header()
     {
-        global $wp, $wp_query;
+        global $wp_query;
         if (empty($wp_query->posts)){
             return;
         }
-        // \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
+        // if we already know this is an espresso page, then load assets
         $load_assets = $this->Request_Handler->is_espresso_page();
-        $posts = is_array($wp_query->posts) ? $wp_query->posts : array($wp_query->posts);
+        // list of EE CPTs
         $espresso_post_types = \EE_Register_CPTs::get_CPTs();
+        // array of posts displayed in current request
+        $posts = is_array($wp_query->posts) ? $wp_query->posts : array($wp_query->posts);
         foreach ($posts as $post) {
+            // if post type is an EE CPT, then load assets
             $load_assets = isset($espresso_post_types[$post->post_type]) ? true : $load_assets;
+            // now check post content and excerpt for EE shortcodes
             foreach ($this->Registry->shortcodes as $shortcode_class => $shortcode) {
                 if (
                     has_shortcode($post->post_content, $shortcode_class)
                     || has_shortcode($post->post_excerpt, $shortcode_class)
                 ) {
-                    \EEH_Debug_Tools::printr($shortcode_class, '$shortcode_class', __FILE__, __LINE__);
-                    $this->initialize_shortcode($shortcode_class, $wp);
+                    // load up the shortcode
+                    $this->initialize_shortcode($shortcode_class);
                     $load_assets = true;
                 }
             }
         }
-        if (!$load_assets) {
-            $espresso_widgets = array();
-            foreach ($this->Registry->widgets as $widget_class => $widget) {
-                $id_base = \EventEspresso\widgets\EspressoWidget::getIdBase($widget_class);
-                // \EEH_Debug_Tools::printr($id_base, '$id_base', __FILE__, __LINE__, 6);
-                if ($is_active_widget = is_active_widget(false, false, $id_base)) {
-                    // \EEH_Debug_Tools::printr($is_active_widget, '$is_active_widget', __FILE__, __LINE__);
-                    $espresso_widgets[] = $id_base;
-                }
-            }
-            // \EEH_Debug_Tools::printr($post, '$post', __FILE__, __LINE__);
-            $all_sidebar_widgets = wp_get_sidebars_widgets();
-            // \EEH_Debug_Tools::printr($all_sidebar_widgets, '$all_sidebar_widgets', __FILE__, __LINE__);
-            foreach ($all_sidebar_widgets as $sidebar_name => $sidebar_widgets) {
-                // \EEH_Debug_Tools::printr($sidebar_name, '$sidebar_name', __FILE__, __LINE__);
-                if (is_array($sidebar_widgets) && ! empty($sidebar_widgets)) {
-                    foreach ($sidebar_widgets as $sidebar_widget) {
-                        foreach ($espresso_widgets as $espresso_widget) {
-                            if (strpos($sidebar_widget, $espresso_widget) !== false) {
-                                // \EEH_Debug_Tools::printr($sidebar_widget, '$sidebar_widget', __FILE__, __LINE__, 6);
-                                $load_assets = true;
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        // if we are already loading assets then just move along, otherwise check for widgets
+        $load_assets = $load_assets ? $load_assets : $this->espresso_widgets_in_active_sidebars();
         if ( $load_assets){
             add_filter('FHEE_load_css', '__return_true');
             add_filter('FHEE_load_js', '__return_true');
@@ -351,11 +337,14 @@ final class EE_Front_Controller
 
 
     /**
+     * given a shortcode classname, will instantiate the shortcode and call it's run() method
+     *
      * @param string $shortcode_class
-     * @param \WP    $WP
+     * @param \WP    $wp
      */
-    public function initialize_shortcode($shortcode_class = '', WP $WP)
+    public function initialize_shortcode($shortcode_class = '', WP $wp = null)
     {
+        global $wp;
         // let's pause to reflect on this...
         $sc_reflector = new ReflectionClass('EES_' . $shortcode_class);
         // ensure that class is actually a shortcode
@@ -382,8 +371,43 @@ final class EE_Front_Controller
         // and pass the request object to the run method
         $this->Registry->shortcodes->{$shortcode_class} = $sc_reflector->newInstance();
         // fire the shortcode class's run method, so that it can activate resources
-        $this->Registry->shortcodes->{$shortcode_class}->run($WP);
+        $this->Registry->shortcodes->{$shortcode_class}->run($wp);
     }
+
+
+    /**
+     * builds list of active widgets then scans active sidebars looking for them
+     * returns true is an EE widget is found in an active sidebar
+     * Please Note: this does NOT mean that the sidebar or widget
+     * is actually in use in a given template, as that is unfortunately not known
+     * until a sidebar and it's widgets are actually loaded
+     *
+     * @return boolean
+     */
+    private function espresso_widgets_in_active_sidebars()
+    {
+        $espresso_widgets = array();
+        foreach ($this->Registry->widgets as $widget_class => $widget) {
+            $id_base = EspressoWidget::getIdBase($widget_class);
+            if (is_active_widget(false, false, $id_base)) {
+                $espresso_widgets[] = $id_base;
+            }
+        }
+        $all_sidebar_widgets = wp_get_sidebars_widgets();
+        foreach ($all_sidebar_widgets as $sidebar_name => $sidebar_widgets) {
+            if (is_array($sidebar_widgets) && ! empty($sidebar_widgets)) {
+                foreach ($sidebar_widgets as $sidebar_widget) {
+                    foreach ($espresso_widgets as $espresso_widget) {
+                        if (strpos($sidebar_widget, $espresso_widget) !== false) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
 
 
 
@@ -581,37 +605,14 @@ final class EE_Front_Controller
 
 
 
-    // /**
-    //  * @param string $widget_text
-    //  */
-    // public function widget_text($widget_text = '')
-    // {
-    //     \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
-    //     \EEH_Debug_Tools::printr($widget_text, '$widget_text', __FILE__, __LINE__);
-    //
-    // }
-
-
-
-    /**
-     * @param string $content
-     * @return string
-     */
-    public function dynamic_sidebar_params($content)
-    {
-        // \EEH_Debug_Tools::printr($content, '$content', __FILE__, __LINE__);
-        return $content;
-    }
-
-
     /***********************************************        WP_FOOTER         ***********************************************/
 
 
     /**
-     *    display_errors
+     * display_errors
      *
-     * @access    public
-     * @return    string
+     * @access public
+     * @return void
      */
     public function display_errors()
     {
