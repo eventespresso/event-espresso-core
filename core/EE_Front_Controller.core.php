@@ -80,12 +80,13 @@ final class EE_Front_Controller
         add_action('wp_loaded', array($this, 'wp_loaded'), 5);
         // analyse the incoming WP request
         add_action('parse_request', array($this, 'get_request'), 1, 1);
-        // process any content shortcodes
-        add_action('parse_request', array($this, '_initialize_shortcodes'), 5);
         // process request with module factory
         add_action('pre_get_posts', array($this, 'pre_get_posts'), 10, 1);
         // before headers sent
         add_action('wp', array($this, 'wp'), 5);
+        // after headers sent but before any markup is output,
+        // primarily used to process any content shortcodes
+        add_action('get_header', array($this, 'get_header'));
         // load css and js
         add_action('wp_enqueue_scripts', array($this, 'wp_enqueue_scripts'), 1);
         // header
@@ -95,6 +96,8 @@ final class EE_Front_Controller
         add_action('loop_start', array($this, 'display_errors'), 2);
         // the content
         // add_filter( 'the_content', array( $this, 'the_content' ), 5, 1 );
+        // add_filter('widget_text', array($this, 'widget_text'));
+        // add_filter('dynamic_sidebar_params', array($this, 'dynamic_sidebar_params'));
         //exclude our private cpt comments
         add_filter('comments_clauses', array($this, 'filter_wp_comments'), 10, 1);
         //make sure any ajax requests will respect the url schema when requests are made against admin-ajax.php (http:// or https://)
@@ -103,7 +106,7 @@ final class EE_Front_Controller
         do_action('AHEE__EE_Front_Controller__construct__done', $this);
         // for checking that browser cookies are enabled
         if (apply_filters('FHEE__EE_Front_Controller____construct__set_test_cookie', true)) {
-            setcookie('ee_cookie_test', uniqid(), time() + 24 * HOUR_IN_SECONDS, '/');
+            setcookie('ee_cookie_test', uniqid(), time() + DAY_IN_SECONDS, '/');
         }
     }
 
@@ -234,164 +237,6 @@ final class EE_Front_Controller
     }
 
 
-    /**
-     *    _initialize_shortcodes - calls init method on shortcodes that have been determined to be in the_content for
-     *    the currently requested page
-     *
-     * @access    public
-     * @param WP $WP
-     * @return    void
-     */
-    public function _initialize_shortcodes(WP $WP)
-    {
-        do_action('AHEE__EE_Front_Controller__initialize_shortcodes__begin', $WP, $this);
-        $this->Request_Handler->set_request_vars($WP);
-        // grab post_name from request
-        $current_post  = apply_filters('FHEE__EE_Front_Controller__initialize_shortcodes__current_post_name',
-            $this->Request_Handler->get('post_name'));
-        $show_on_front = get_option('show_on_front');
-        // if it's not set, then check if frontpage is blog
-        if (empty($current_post)) {
-            // yup.. this is the posts page, prepare to load all shortcode modules
-            $current_post = 'posts';
-            // unless..
-            if ($show_on_front === 'page') {
-                // some other page is set as the homepage
-                $page_on_front = get_option('page_on_front');
-                if ($page_on_front) {
-                    // k now we need to find the post_name for this page
-                    global $wpdb;
-                    $page_on_front = $wpdb->get_var(
-                        $wpdb->prepare(
-                            "SELECT post_name from $wpdb->posts WHERE post_type='page' AND post_status='publish' AND ID=%d",
-                            $page_on_front
-                        )
-                    );
-                    // set the current post slug to what it actually is
-                    $current_post = $page_on_front ? $page_on_front : $current_post;
-                }
-            }
-        }
-        // where are posts being displayed ?
-        $page_for_posts = EE_Config::get_page_for_posts();
-        // in case $current_post is hierarchical like: /parent-page/current-page
-        $current_post = basename($current_post);
-        // are we on a category page?
-        $term_exists = is_array(term_exists($current_post, 'category')) || array_key_exists('category_name',
-                $WP->query_vars);
-        // make sure shortcodes are set
-        if (isset($this->Registry->CFG->core->post_shortcodes)) {
-            if ( ! isset($this->Registry->CFG->core->post_shortcodes[$page_for_posts])) {
-                $this->Registry->CFG->core->post_shortcodes[$page_for_posts] = array();
-            }
-            // cycle thru all posts with shortcodes set
-            foreach ($this->Registry->CFG->core->post_shortcodes as $post_name => $post_shortcodes) {
-                // filter shortcodes so
-                $post_shortcodes = apply_filters('FHEE__Front_Controller__initialize_shortcodes__post_shortcodes',
-                    $post_shortcodes);
-                // now cycle thru shortcodes
-                foreach ($post_shortcodes as $shortcode_class => $post_id) {
-                    // are we on this page, or on the blog page, or an EE CPT category page ?
-                    if ($current_post === $post_name || $term_exists) {
-                        // maybe init the shortcode
-                        $this->initialize_shortcode_if_active_on_page(
-                            $shortcode_class,
-                            $current_post,
-                            $page_for_posts,
-                            $post_id,
-                            $term_exists,
-                            $WP
-                        );
-                        // if this is NOT the "Posts page" and we have a valid entry
-                        // for the "Posts page" in our tracked post_shortcodes array
-                        // but the shortcode is not being tracked for this page
-                    } else if (
-                        $post_name !== $page_for_posts
-                        && isset($this->Registry->CFG->core->post_shortcodes[$page_for_posts])
-                        && ! isset($this->Registry->CFG->core->post_shortcodes[$page_for_posts][$shortcode_class])
-                    ) {
-                        // then remove the "fallback" shortcode processor
-                        remove_shortcode($shortcode_class);
-                    }
-                }
-            }
-        }
-        do_action('AHEE__EE_Front_Controller__initialize_shortcodes__end', $this);
-    }
-
-
-    /**
-     * @param string $shortcode_class
-     * @param string $current_post
-     * @param string $page_for_posts
-     * @param int    $post_id
-     * @param bool   $term_exists
-     * @param WP     $WP
-     */
-    protected function initialize_shortcode_if_active_on_page(
-        $shortcode_class,
-        $current_post,
-        $page_for_posts,
-        $post_id,
-        $term_exists,
-        $WP
-    ) {
-        // verify shortcode is in list of registered shortcodes
-        if ( ! isset($this->Registry->shortcodes->{$shortcode_class})) {
-            if ($current_post !== $page_for_posts && current_user_can('edit_post', $post_id)) {
-                EE_Error::add_error(
-                    sprintf(
-                        __(
-                            'The [%s] shortcode has not been properly registered or the corresponding addon/module is not active for some reason. Either fix/remove the shortcode from the post, or activate the addon/module the shortcode is associated with.',
-                            'event_espresso'
-                        ),
-                        $shortcode_class
-                    ),
-                    __FILE__,
-                    __FUNCTION__,
-                    __LINE__
-                );
-                add_filter('FHEE_run_EE_the_content', '__return_true');
-            }
-            add_shortcode($shortcode_class, array('EES_Shortcode', 'invalid_shortcode_processor'));
-            return;
-        }
-        // is this : a shortcodes set exclusively for this post, or for the home page, or a category, or a taxonomy ?
-        if (
-            $term_exists
-            || $current_post === $page_for_posts
-            || isset($this->Registry->CFG->core->post_shortcodes[$current_post])
-        ) {
-            // let's pause to reflect on this...
-            $sc_reflector = new ReflectionClass('EES_' . $shortcode_class);
-            // ensure that class is actually a shortcode
-            if (
-                defined('WP_DEBUG')
-                && WP_DEBUG === true
-                && ! $sc_reflector->isSubclassOf('EES_Shortcode')
-            ) {
-                EE_Error::add_error(
-                    sprintf(
-                        __(
-                            'The requested %s shortcode is not of the class "EES_Shortcode". Please check your files.',
-                            'event_espresso'
-                        ),
-                        $shortcode_class
-                    ),
-                    __FILE__,
-                    __FUNCTION__,
-                    __LINE__
-                );
-                add_filter('FHEE_run_EE_the_content', '__return_true');
-                return;
-            }
-            // and pass the request object to the run method
-            $this->Registry->shortcodes->{$shortcode_class} = $sc_reflector->newInstance();
-            // fire the shortcode class's run method, so that it can activate resources
-            $this->Registry->shortcodes->{$shortcode_class}->run($WP);
-        }
-    }
-
 
     /**
      *    pre_get_posts - basically a module factory for instantiating modules and selecting the final view template
@@ -442,7 +287,86 @@ final class EE_Front_Controller
 
 
 
-    /***********************************************        WP_ENQUEUE_SCRIPTS && WP_HEAD HOOK         ***********************************************/
+    /***********************     GET_HEADER, WP_ENQUEUE_SCRIPTS && WP_HEAD HOOK     ***********************/
+
+
+
+    public function get_header()
+    {
+        // \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
+        global $post, $wp;
+        // \EEH_Debug_Tools::printr($post, '$post', __FILE__, __LINE__);
+        foreach ($this->Registry->shortcodes as $shortcode_class => $shortcode) {
+            if (
+                has_shortcode($post->post_content, $shortcode_class)
+            ) {
+                // \EEH_Debug_Tools::printr($shortcode_class, '$shortcode_class', __FILE__, __LINE__);
+                $this->initialize_shortcode($shortcode_class, $wp);
+            }
+        }
+        // $espresso_widgets = array();
+        // foreach ($this->Registry->widgets as $widget_class => $widget) {
+        //     $id_base = \EventEspresso\widgets\EspressoWidget::getIdBase($widget_class);
+        //     \EEH_Debug_Tools::printr($id_base, '$id_base', __FILE__, __LINE__, 6);
+        //     $is_active_widget = is_active_widget(false, false, $id_base);
+        //     \EEH_Debug_Tools::printr($is_active_widget, '$is_active_widget', __FILE__, __LINE__);
+        //     $espresso_widgets[] = $id_base;
+        // }
+        // // \EEH_Debug_Tools::printr($post, '$post', __FILE__, __LINE__);
+        // $all_sidebar_widgets = wp_get_sidebars_widgets();
+        // \EEH_Debug_Tools::printr($all_sidebar_widgets, '$all_sidebar_widgets', __FILE__, __LINE__);
+        // $all_sidebar_widgets = (array)get_option('sidebars_widgets');
+        // foreach ($all_sidebar_widgets as $sidebar_name => $sidebar_widgets) {
+        //     \EEH_Debug_Tools::printr($sidebar_name, '$sidebar_name', __FILE__, __LINE__);
+        //     if (is_array($sidebar_widgets) && ! empty($sidebar_widgets)) {
+        //         foreach ($sidebar_widgets as $sidebar_widget) {
+        //             foreach ($espresso_widgets as $espresso_widget) {
+        //                 if (strpos($sidebar_widget, $espresso_widget) !== false) {
+        //                     \EEH_Debug_Tools::printr($sidebar_widget, '$sidebar_widget', __FILE__, __LINE__, 6);
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
+    }
+
+
+
+    /**
+     * @param string $shortcode_class
+     * @param \WP    $WP
+     */
+    public function initialize_shortcode($shortcode_class = '', WP $WP)
+    {
+        // let's pause to reflect on this...
+        $sc_reflector = new ReflectionClass('EES_' . $shortcode_class);
+        // ensure that class is actually a shortcode
+        if (
+            defined('WP_DEBUG')
+            && WP_DEBUG === true
+            && ! $sc_reflector->isSubclassOf('EES_Shortcode')
+        ) {
+            EE_Error::add_error(
+                sprintf(
+                    __(
+                        'The requested %s shortcode is not of the class "EES_Shortcode". Please check your files.',
+                        'event_espresso'
+                    ),
+                    $shortcode_class
+                ),
+                __FILE__,
+                __FUNCTION__,
+                __LINE__
+            );
+            add_filter('FHEE_run_EE_the_content', '__return_true');
+            return;
+        }
+        // and pass the request object to the run method
+        $this->Registry->shortcodes->{$shortcode_class} = $sc_reflector->newInstance();
+        // fire the shortcode class's run method, so that it can activate resources
+        $this->Registry->shortcodes->{$shortcode_class}->run($WP);
+    }
+
 
 
     /**
@@ -604,20 +528,47 @@ final class EE_Front_Controller
 
 
 
-    /***********************************************        THE_CONTENT FILTER HOOK         ***********************************************/
-    /**
-     *    the_content
-     *
-     * @access    public
-     * @param   $the_content
-     * @return    string
-     */
+    /***********************************************        THE_CONTENT FILTER HOOK         **********************************************
+
+
+
+    // /**
+    //  *    the_content
+    //  *
+    //  * @access    public
+    //  * @param   $the_content
+    //  * @return    string
+    //  */
     // public function the_content( $the_content ) {
     // 	// nothing gets loaded at this point unless other systems turn this hookpoint on by using:  add_filter( 'FHEE_run_EE_the_content', '__return_true' );
     // 	if ( apply_filters( 'FHEE_run_EE_the_content', FALSE ) ) {
     // 	}
     // 	return $the_content;
     // }
+
+
+
+    // /**
+    //  * @param string $widget_text
+    //  */
+    // public function widget_text($widget_text = '')
+    // {
+    //     \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
+    //     \EEH_Debug_Tools::printr($widget_text, '$widget_text', __FILE__, __LINE__);
+    //
+    // }
+
+
+
+    /**
+     * @param string $content
+     * @return string
+     */
+    public function dynamic_sidebar_params($content)
+    {
+        // \EEH_Debug_Tools::printr($content, '$content', __FILE__, __LINE__);
+        return $content;
+    }
 
 
     /***********************************************        WP_FOOTER         ***********************************************/
