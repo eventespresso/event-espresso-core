@@ -300,14 +300,15 @@ final class EE_Front_Controller
         // \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
         $load_assets = $this->Request_Handler->is_espresso_page();
         $posts = is_array($wp_query->posts) ? $wp_query->posts : array($wp_query->posts);
-        // \EEH_Debug_Tools::printr($wp_query->posts, '$wp_query->posts', __FILE__, __LINE__);
+        $espresso_post_types = \EE_Register_CPTs::get_CPTs();
         foreach ($posts as $post) {
+            $load_assets = isset($espresso_post_types[$post->post_type]) ? true : $load_assets;
             foreach ($this->Registry->shortcodes as $shortcode_class => $shortcode) {
                 if (
                     has_shortcode($post->post_content, $shortcode_class)
                     || has_shortcode($post->post_excerpt, $shortcode_class)
                 ) {
-                    // \EEH_Debug_Tools::printr($shortcode_class, '$shortcode_class', __FILE__, __LINE__);
+                    \EEH_Debug_Tools::printr($shortcode_class, '$shortcode_class', __FILE__, __LINE__);
                     $this->initialize_shortcode($shortcode_class, $wp);
                     $load_assets = true;
                 }
