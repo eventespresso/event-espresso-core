@@ -486,6 +486,13 @@ abstract class EE_Model_Relation_Base implements HasSchemaInterface
         if ($this instanceof EE_HABTM_Relation) {
             $schema['joining_model_name'] = $this->get_join_model()->get_this_model_name();
         }
+
+        if ($this->getSchemaType() === 'array') {
+            $schema['items'] = array(
+                'type' => 'object'
+            );
+        }
+
         return $schema;
     }
 }
