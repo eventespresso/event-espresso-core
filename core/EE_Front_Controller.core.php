@@ -297,8 +297,8 @@ final class EE_Front_Controller
         if (empty($wp_query->posts)){
             return;
         }
-        $load_assets = false;
-        \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
+        // \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
+        $load_assets = $this->Request_Handler->is_espresso_page();
         $posts = is_array($wp_query->posts) ? $wp_query->posts : array($wp_query->posts);
         // \EEH_Debug_Tools::printr($wp_query->posts, '$wp_query->posts', __FILE__, __LINE__);
         foreach ($posts as $post) {
@@ -307,40 +307,42 @@ final class EE_Front_Controller
                     has_shortcode($post->post_content, $shortcode_class)
                     || has_shortcode($post->post_excerpt, $shortcode_class)
                 ) {
-                    \EEH_Debug_Tools::printr($shortcode_class, '$shortcode_class', __FILE__, __LINE__);
+                    // \EEH_Debug_Tools::printr($shortcode_class, '$shortcode_class', __FILE__, __LINE__);
                     $this->initialize_shortcode($shortcode_class, $wp);
                     $load_assets = true;
                 }
             }
         }
-        $espresso_widgets = array();
-        foreach ($this->Registry->widgets as $widget_class => $widget) {
-            $id_base = \EventEspresso\widgets\EspressoWidget::getIdBase($widget_class);
-            // \EEH_Debug_Tools::printr($id_base, '$id_base', __FILE__, __LINE__, 6);
-            if ($is_active_widget = is_active_widget(false, false, $id_base)) {
-                \EEH_Debug_Tools::printr($is_active_widget, '$is_active_widget', __FILE__, __LINE__);
-                $espresso_widgets[] = $id_base;
+        if (!$load_assets) {
+            $espresso_widgets = array();
+            foreach ($this->Registry->widgets as $widget_class => $widget) {
+                $id_base = \EventEspresso\widgets\EspressoWidget::getIdBase($widget_class);
+                // \EEH_Debug_Tools::printr($id_base, '$id_base', __FILE__, __LINE__, 6);
+                if ($is_active_widget = is_active_widget(false, false, $id_base)) {
+                    // \EEH_Debug_Tools::printr($is_active_widget, '$is_active_widget', __FILE__, __LINE__);
+                    $espresso_widgets[] = $id_base;
+                }
             }
-        }
-        // \EEH_Debug_Tools::printr($post, '$post', __FILE__, __LINE__);
-        $all_sidebar_widgets = wp_get_sidebars_widgets();
-        // \EEH_Debug_Tools::printr($all_sidebar_widgets, '$all_sidebar_widgets', __FILE__, __LINE__);
-        foreach ($all_sidebar_widgets as $sidebar_name => $sidebar_widgets) {
-            // \EEH_Debug_Tools::printr($sidebar_name, '$sidebar_name', __FILE__, __LINE__);
-            if (is_array($sidebar_widgets) && ! empty($sidebar_widgets)) {
-                foreach ($sidebar_widgets as $sidebar_widget) {
-                    foreach ($espresso_widgets as $espresso_widget) {
-                        if (strpos($sidebar_widget, $espresso_widget) !== false) {
-                            \EEH_Debug_Tools::printr($sidebar_widget, '$sidebar_widget', __FILE__, __LINE__, 6);
-                            $load_assets = true;
+            // \EEH_Debug_Tools::printr($post, '$post', __FILE__, __LINE__);
+            $all_sidebar_widgets = wp_get_sidebars_widgets();
+            // \EEH_Debug_Tools::printr($all_sidebar_widgets, '$all_sidebar_widgets', __FILE__, __LINE__);
+            foreach ($all_sidebar_widgets as $sidebar_name => $sidebar_widgets) {
+                // \EEH_Debug_Tools::printr($sidebar_name, '$sidebar_name', __FILE__, __LINE__);
+                if (is_array($sidebar_widgets) && ! empty($sidebar_widgets)) {
+                    foreach ($sidebar_widgets as $sidebar_widget) {
+                        foreach ($espresso_widgets as $espresso_widget) {
+                            if (strpos($sidebar_widget, $espresso_widget) !== false) {
+                                // \EEH_Debug_Tools::printr($sidebar_widget, '$sidebar_widget', __FILE__, __LINE__, 6);
+                                $load_assets = true;
+                            }
                         }
                     }
                 }
             }
         }
         if ( $load_assets){
-            apply_filters('FHEE_load_css', '__return_true');
-            apply_filters('FHEE_load_js', '__return_true');
+            add_filter('FHEE_load_css', '__return_true');
+            add_filter('FHEE_load_js', '__return_true');
         }
     }
 
