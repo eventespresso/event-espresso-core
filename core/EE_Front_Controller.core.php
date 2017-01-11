@@ -90,6 +90,7 @@ final class EE_Front_Controller
         add_action('wp_enqueue_scripts', array($this, 'wp_enqueue_scripts'), 1);
         // header
         add_action('wp_head', array($this, 'header_meta_tag'), 5);
+        add_action('wp_print_scripts', array($this, 'wp_print_scripts'), 10);
         add_filter('template_include', array($this, 'template_include'), 1);
         // display errors
         add_action('loop_start', array($this, 'display_errors'), 2);
@@ -603,8 +604,25 @@ final class EE_Front_Controller
 
 
 
+    /**
+     * wp_print_scripts
+     *
+     * @return void
+     */
+    public function wp_print_scripts()
+    {
+        global $post;
+        if (get_post_type() === 'espresso_events' && is_singular()) {
+            \EEH_Schema::add_json_linked_data_for_event($post->EE_Event);
+        }
+    }
+
+
 
     /***********************************************        THE_CONTENT FILTER HOOK         ***********************************************/
+
+
+
     /**
      *    the_content
      *

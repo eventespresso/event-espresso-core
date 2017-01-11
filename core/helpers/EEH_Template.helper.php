@@ -404,6 +404,7 @@ class EEH_Template
     }
 
 
+
     /**
      * EEH_Template::format_currency
      * This helper takes a raw float value and formats it according to the default config country currency settings, or
@@ -415,6 +416,7 @@ class EEH_Template
      * @param string   $CNT_ISO      2 letter ISO code for a country
      * @param string   $cur_code_span_class
      * @return string        the html output for the formatted money value
+     * @throws \EE_Error
      */
     public static function format_currency(
         $amount = null,
@@ -424,7 +426,7 @@ class EEH_Template
         $cur_code_span_class = 'currency-code'
     ) {
         // ensure amount was received
-        if (is_null($amount)) {
+        if ($amount === null) {
             $msg = __('In order to format currency, an amount needs to be passed.', 'event_espresso');
             EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
             return '';
@@ -441,7 +443,9 @@ class EEH_Template
             // verify results
             if ( ! $mny instanceof EE_Currency_Config) {
                 // set default config country currency settings
-                $mny = EE_Registry::instance()->CFG->currency instanceof EE_Currency_Config ? EE_Registry::instance()->CFG->currency : new EE_Currency_Config();
+                $mny = EE_Registry::instance()->CFG->currency instanceof EE_Currency_Config
+                    ? EE_Registry::instance()->CFG->currency
+                    : new EE_Currency_Config();
             }
             // format float
             $amount_formatted = number_format($amount, $mny->dec_plc, $mny->dec_mrk, $mny->thsnds);
