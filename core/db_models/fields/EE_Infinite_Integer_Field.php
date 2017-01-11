@@ -1,4 +1,5 @@
 <?php
+defined('EVENT_ESPRESSO_VERSION') || exit;
 
 /**
  * For storing integers which can assume the value of INFINITY. They're stored in the DB as -1,
@@ -10,10 +11,18 @@
 class EE_Infinite_Integer_Field extends EE_Model_Field_Base
 {
 
-    function get_wpdb_data_type()
+    /**
+     * @param string $table_column
+     * @param string $nicename
+     * @param bool   $nullable
+     * @param null   $default_value
+     */
+    public function __construct($table_column, $nicename, $nullable, $default_value = null)
     {
-        return '%d';
+        parent::__construct($table_column, $nicename, $nullable, $default_value);
+        $this->setSchemaType(array('integer', 'null'));
     }
+
 
     function prepare_for_use_in_db($value_of_field_on_model_object)
     {
@@ -74,20 +83,5 @@ class EE_Infinite_Integer_Field extends EE_Model_Field_Base
         } else {
             return $value_on_field_to_be_outputted;
         }
-    }
-
-
-    /**
-     * This returns elements used to represent this field in the json schema.
-     *
-     * @link http://json-schema.org/
-     * @return array
-     */
-    public function get_schema()
-    {
-        return array(
-            'description' => $this->get_nicename(),
-            'type' => 'number'
-        );
     }
 }

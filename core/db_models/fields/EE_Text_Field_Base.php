@@ -6,10 +6,6 @@
  */
 abstract class EE_Text_Field_Base extends EE_Model_Field_Base
 {
-    function get_wpdb_data_type()
-    {
-        return '%s';
-    }
 
     function prepare_for_get($value_of_field_on_model_object)
     {
@@ -42,21 +38,5 @@ abstract class EE_Text_Field_Base extends EE_Model_Field_Base
     {
         return stripslashes(html_entity_decode(parent::prepare_for_set($value_inputted_for_field_on_model_object),
             ENT_QUOTES, 'UTF-8'));
-    }
-
-    /**
-     * This returns any elements used to represent this field in the json schema.
-     * Note: It is expected this will only return field specific elements such as "type" or "format".  Other details
-     * will have to be inferred from the other data injected into the object on construct (title, description etc).
-     *
-     * @link http://json-schema.org/
-     * @return array
-     */
-    public function get_schema()
-    {
-        return array(
-            'description' => $this->get_nicename(),
-            'type' => 'string'
-        );
     }
 }

@@ -1,4 +1,5 @@
 <?php
+defined('EVENT_ESPRESSO_VERSION') || exit;
 
 /**
  * EE_Full_HTML_Field
@@ -13,6 +14,18 @@
  */
 class EE_Full_HTML_Field extends EE_Text_Field_Base
 {
+
+    /**
+     * @param string $table_column
+     * @param string $nicename
+     * @param bool   $nullable
+     * @param null   $default_value
+     */
+    public function __construct($table_column, $nicename, $nullable, $default_value = null)
+    {
+        parent::__construct($table_column, $nicename, $nullable, $default_value);
+        $this->setSchemaType('object');
+    }
 
 
     /**
@@ -35,11 +48,9 @@ class EE_Full_HTML_Field extends EE_Text_Field_Base
 
 
 
-    public function get_schema()
+    public function getSchemaProperties()
     {
-        $schema = parent::get_schema();
-        $schema['type'] = 'object';
-        $schema['properties'] = array(
+        return array(
             'raw' => array(
                 'description' =>  sprintf(
                     __('%s - the value in the database.', 'event_espresso'),
@@ -56,6 +67,5 @@ class EE_Full_HTML_Field extends EE_Text_Field_Base
                 'readonly' => true
             )
         );
-        return $schema;
     }
 }

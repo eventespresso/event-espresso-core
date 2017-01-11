@@ -212,13 +212,4 @@ class EE_HABTM_Relation extends EE_Model_Relation_Base
         return $other_model_obj;
     }
 
-
-    public function get_schema() {
-        $schema = parent::get_schema();
-        $schema['properties']['joining_model_name'] = array(
-            'type' => 'string',
-            'enum' => array($this->get_join_model()->get_this_model_name())
-        );
-        return $schema;
-    }
 }
