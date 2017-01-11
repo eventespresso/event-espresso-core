@@ -6,6 +6,7 @@ use EventEspresso\core\libraries\rest_api\Calculated_Model_Fields;
 use EventEspresso\core\libraries\rest_api\Rest_Exception;
 use EventEspresso\core\libraries\rest_api\Model_Data_Translator;
 use EventEspresso\core\entities\models\JsonModelSchema;
+use EE_Datetime_Field;
 
 if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
@@ -103,19 +104,43 @@ class Read extends Base
             //get the model for this version
             $model = $controller->get_model_version_info()->load_model($model_name);
             $model_schema = new JsonModelSchema($model);
-            $schema = $model_schema->getInitialSchemaStructure();
-            $schema = $model_schema->getModelSchemaForFields(
-                $controller->get_model_version_info()->fields_on_model_in_this_version($model),
-                $schema
-            );
-            $schema = $model_schema->getModelSchemaForRelations(
+            return $model_schema->getModelSchemaForRelations(
                 $controller->get_model_version_info()->relation_settings($model),
-                $schema
+                $controller->_add_extra_fields_to_schema(
+                    $model,
+                    $model_schema->getModelSchemaForFields(
+                        $controller->get_model_version_info()->fields_on_model_in_this_version($model),
+                        $model_schema->getInitialSchemaStructure()
+                    )
+                )
             );
-            return $schema;
         } catch (\Exception $e) {
             return array();
         }
+    }
+
+
+    /**
+     * Adds additional fields to the schema
+     * The REST API returns a GMT value field for each datetime field in the resource.  Thus the description about this
+     * needs to be added to the schema.
+     *
+     * @param \EEM_Base $model
+     * @param string    $schema
+     */
+    protected function _add_extra_fields_to_schema(\EEM_Base $model, $schema)
+    {
+        foreach ($this->get_model_version_info()->fields_on_model_in_this_version($model) as $field_name => $field) {
+            if ($field instanceof EE_Datetime_Field) {
+                $schema['properties'][$field_name . '_gmt'] = $field->getSchema();
+                //modify the description
+                $schema['properties'][$field_name . '_gmt']['description'] = sprintf(
+                    esc_html__('%s - the value for this field is in GMT.', 'event_espresso'),
+                    $field->get_nicename()
+                );
+            }
+        }
+        return $schema;
     }
 
 

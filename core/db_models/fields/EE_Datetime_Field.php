@@ -755,4 +755,13 @@ class EE_Datetime_Field extends EE_Model_Field_Base
             return parent::get_default_value();
         }
     }
+
+
+    public function getSchemaDescription()
+    {
+        return sprintf(
+            esc_html__('%s - the value for this field is in the timezone of the site.', 'event_espresso'),
+            $this->get_nicename()
+        );
+    }
 }
