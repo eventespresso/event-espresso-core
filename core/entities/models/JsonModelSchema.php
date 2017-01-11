@@ -7,6 +7,7 @@ use EE_Primary_Key_Field_Base;
 use EE_Foreign_Key_Field_Base;
 use EE_Model_Relation_Base;
 use EEH_Inflector;
+use EE_Belongs_To_Relation;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -96,7 +97,9 @@ class JsonModelSchema
             if (! $relation instanceof EE_Model_Relation_Base) {
                 continue;
             }
-            $model_name_for_schema = EEH_Inflector::pluralize_and_lower($model_name);
+            $model_name_for_schema = $relation instanceof EE_Belongs_To_Relation
+                ? strtolower($model_name)
+                : EEH_Inflector::pluralize_and_lower($model_name);
             $schema['properties'][$model_name_for_schema] = $relation->getSchema();
         }
         return $schema;

@@ -400,11 +400,11 @@ abstract class EE_Model_Relation_Base implements HasSchemaInterface
      */
     public function getSchemaDescription()
     {
+        $description = $this instanceof EE_Belongs_To_Relation
+            ? esc_html__('The related %1$s entity to the %2$s.', 'event_espresso')
+            : esc_html__('The related %1$s entities to the %2$s.', 'event_espresso');
         return sprintf(
-            esc_html__(
-                'All the related %1$s entities to the %2$s.',
-                'event_espresso'
-            ),
+            $description,
             $this->get_other_model()->get_this_model_name(),
             $this->get_this_model()->get_this_model_name()
         );
@@ -418,7 +418,7 @@ abstract class EE_Model_Relation_Base implements HasSchemaInterface
      */
     public function getSchemaType()
     {
-        return 'array';
+        return $this instanceof EE_Belongs_To_Relation ? 'object' : 'array';
     }
 
     /**
