@@ -293,15 +293,22 @@ final class EE_Front_Controller
 
     public function get_header()
     {
-        // \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
-        global $post, $wp;
-        // \EEH_Debug_Tools::printr($post, '$post', __FILE__, __LINE__);
-        foreach ($this->Registry->shortcodes as $shortcode_class => $shortcode) {
-            if (
-                has_shortcode($post->post_content, $shortcode_class)
-            ) {
-                // \EEH_Debug_Tools::printr($shortcode_class, '$shortcode_class', __FILE__, __LINE__);
-                $this->initialize_shortcode($shortcode_class, $wp);
+        global $wp, $wp_query;
+        if (empty($wp_query->posts)){
+            return;
+        }
+        \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
+        $posts = is_array($wp_query->posts) ? $wp_query->posts : array($wp_query->posts);
+        // \EEH_Debug_Tools::printr($wp_query->posts, '$wp_query->posts', __FILE__, __LINE__);
+        foreach ($posts as $post) {
+            foreach ($this->Registry->shortcodes as $shortcode_class => $shortcode) {
+                if (
+                    has_shortcode($post->post_content, $shortcode_class)
+                    || has_shortcode($post->post_excerpt, $shortcode_class)
+                ) {
+                    \EEH_Debug_Tools::printr($shortcode_class, '$shortcode_class', __FILE__, __LINE__);
+                    $this->initialize_shortcode($shortcode_class, $wp);
+                }
             }
         }
         // $espresso_widgets = array();
