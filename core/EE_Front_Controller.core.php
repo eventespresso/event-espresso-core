@@ -1,4 +1,5 @@
-<?php use EventEspresso\widgets\EspressoWidget;
+<?php use EventEspresso\core\domain\services\helpers\ShortcodeHelper;
+use EventEspresso\widgets\EspressoWidget;
 
 if ( ! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
@@ -25,36 +26,34 @@ final class EE_Front_Controller
 {
 
     /**
-     *    $_template_path
-     * @var    string $_template_path
-     * @access    public
+     * @var string $_template_path
      */
     private $_template_path;
 
     /**
-     *    $_template
-     * @var    string $_template
-     * @access    public
+     * @var string $_template
      */
     private $_template;
 
     /**
-     * @type  EE_Registry $Registry
-     * @access    protected
+     * @type EE_Registry $Registry
      */
     protected $Registry;
 
     /**
-     * @type  EE_Request_Handler $Request_Handler
-     * @access    protected
+     * @type EE_Request_Handler $Request_Handler
      */
     protected $Request_Handler;
 
     /**
-     * @type  EE_Module_Request_Router $Module_Request_Router
-     * @access    protected
+     * @type EE_Module_Request_Router $Module_Request_Router
      */
     protected $Module_Request_Router;
+
+    /**
+     * @type ShortcodeHelper $shortcode_helper
+     */
+    protected $shortcode_helper;
 
 
     /**
@@ -127,6 +126,19 @@ final class EE_Front_Controller
     public function Module_Request_Router()
     {
         return $this->Module_Request_Router;
+    }
+
+
+
+    /**
+     * @return ShortcodeHelper
+     */
+    public function Shortcode_Helper()
+    {
+        if ( ! $this->shortcode_helper instanceof ShortcodeHelper) {
+            $this->shortcode_helper = new ShortcodeHelper($this->Registry);
+        }
+        return $this->shortcode_helper;
     }
 
 
@@ -321,7 +333,7 @@ final class EE_Front_Controller
                     || has_shortcode($post->post_excerpt, $shortcode_class)
                 ) {
                     // load up the shortcode
-                    $this->initialize_shortcode($shortcode_class);
+                    $this->Shortcode_Helper()->initializeShortcode($shortcode_class);
                     $load_assets = true;
                 }
             }
@@ -334,45 +346,6 @@ final class EE_Front_Controller
         }
     }
 
-
-
-    /**
-     * given a shortcode classname, will instantiate the shortcode and call it's run() method
-     *
-     * @param string $shortcode_class
-     * @param \WP    $wp
-     */
-    public function initialize_shortcode($shortcode_class = '', WP $wp = null)
-    {
-        global $wp;
-        // let's pause to reflect on this...
-        $sc_reflector = new ReflectionClass('EES_' . $shortcode_class);
-        // ensure that class is actually a shortcode
-        if (
-            defined('WP_DEBUG')
-            && WP_DEBUG === true
-            && ! $sc_reflector->isSubclassOf('EES_Shortcode')
-        ) {
-            EE_Error::add_error(
-                sprintf(
-                    __(
-                        'The requested %s shortcode is not of the class "EES_Shortcode". Please check your files.',
-                        'event_espresso'
-                    ),
-                    $shortcode_class
-                ),
-                __FILE__,
-                __FUNCTION__,
-                __LINE__
-            );
-            add_filter('FHEE_run_EE_the_content', '__return_true');
-            return;
-        }
-        // and pass the request object to the run method
-        $this->Registry->shortcodes->{$shortcode_class} = $sc_reflector->newInstance();
-        // fire the shortcode class's run method, so that it can activate resources
-        $this->Registry->shortcodes->{$shortcode_class}->run($wp);
-    }
 
 
     /**
@@ -419,7 +392,6 @@ final class EE_Front_Controller
      */
     public function wp_enqueue_scripts()
     {
-
         // css is turned ON by default, but prior to the wp_enqueue_scripts hook, can be turned OFF  via:  add_filter( 'FHEE_load_css', '__return_false' );
         if (apply_filters('FHEE_load_css', false)) {
 
@@ -670,6 +642,25 @@ final class EE_Front_Controller
         return $with_path ? $this->_template_path : $this->_template;
     }
 
+
+
+    /**
+     * @deprecated 4.9.26
+     * @param string $shortcode_class
+     * @param \WP    $wp
+     */
+    public function initialize_shortcode($shortcode_class = '', WP $wp = null)
+    {
+        \EE_Error::doing_it_wrong(
+            __METHOD__,
+            __(
+                'Usage is deprecated. Please use \EventEspresso\core\domain\services\helpers\ShortcodeHelper::initializeShortcode() instead.',
+                'event_espresso'
+            ),
+            '4.9.26'
+        );
+        $this->Shortcode_Helper()->initializeShortcode($shortcode_class, $wp);
+    }
 
 }
 // End of file EE_Front_Controller.core.php
