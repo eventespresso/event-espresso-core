@@ -589,13 +589,30 @@ Vue.use(Vuex);
                 /**
                  * Given a json schema object, returns the properties (represents model field names like 'EVT_ID',
                  * 'EVT_name' etc.
+                 *
+                 * Note: although collectionSchema.properties has relations on that schema.  We do not include those
+                 * relations in the response.  Instead, using this method, we assign those properties to the relations
+                 * property on the collectionSchema object.
+                 *
                  * @param collectionSchema
                  */
                 getPropertiesFromSchema = function(collectionSchema) {
                     if (_.isUndefined(collectionSchema.properties)) {
                       throw new eejs.exception('Unable to return properties for the '+collectionSchema.title+'.');
                     }
-                    return collectionSchema.properties;
+                    //build our relations here because we want to exclude them from the properties.
+                    var mainProperties = {};
+                    collectionSchema.relations = collectionSchema.relations || {};
+                    _.each(collectionSchema.properties, function(els, property){
+                        if (!_.isUndefined(els.relation) && els.relation) {
+                            //make sure we pluralize the relation so its consistent with collections.
+                            property = eejs.utils.inflection.pluralize(property);
+                            collectionSchema.relations[property] = els;
+                        } else {
+                            mainProperties[property] = els;
+                        }
+                    });
+                    return mainProperties;
                 },
                 /**
                  * Takes care of building all the mixins and caching them on the mixins property.
@@ -618,7 +635,7 @@ Vue.use(Vuex);
                     mixins.collection = {
                         collection: '',
                         store: eejs.api.collections,
-                        props: ['collectionName'],
+                        props: ['nameCollection'],
                         created: function(){
                             /**
                              * if collection is provided (via the vue instance options object), then that gets used to
@@ -642,7 +659,7 @@ Vue.use(Vuex);
                         },
                         computed: {
                             collectionName : function() {
-                                return this.$options.collection !== '' ? this.$options.collection : this.collectionName;
+                                return this.$options.collection !== '' ? this.$options.collection : this.nameCollection;
                             }
                         },
                         methods: {
@@ -758,14 +775,16 @@ Vue.use(Vuex);
                         );
                     }
 
-                    var relationName = '';
+                    var relationName = '',
+                        relationModelName = '';
 
-                    if (_.has(collectionsSchema[collection], 'relations')
-                        && _.has(collectionsSchema[collection]['relations'], 'properties')
-                    ) {
-                        _.each(collectionsSchema[collection]['relations']['properties'], function(relationProperties, relation){
+                    if (_.has(collectionsSchema[collection], 'relations')) {
+                        _.each(collectionsSchema[collection]['relations'], function(relationProperties, relation){
+                            relationModelName = _.has(relationProperties, 'relation_model')
+                                ? relationProperties.relation_model
+                                : relation;
                             relationName = eejs.utils.inflection.humanize(relation,true).replace(' ', '_');
-                            relation = eejs.utils.inflection.pluralize(relationName);
+                            relation = eejs.utils.inflection.pluralize(relation);
                             //note we only build relation mixins for which there is a registered collection for that relation.
                             if ( _.indexOf(collections,relation) > -1 ) {
                                 buildRelationMixinForCollectionAndRelation(collection,relation,relationName);
