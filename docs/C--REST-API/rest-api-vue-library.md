@@ -19,14 +19,14 @@ The library is built using browserify and including the `Vue`, `Vuex`, `Vue-reso
 
 To use it, list it as a dependency in your own script registration.  You'd end up with something like:
 
-```
+```php
 wp_register_script('my-vue-view', $path_to_my_js . 'my-vue-view.js', array('eejs-api'), $my_script_version, true);
 wp_enqueue_script('my-vue-view');
 ```
 
 Then in your script (in this case `my-vue-view.js`), you just need to initialize the library with the collections you want to interact with:
 
-```
+```js
 (function(){
    'use strict';
    eejs.api.init({collections:['events','datetimes']}).then( function(){
@@ -97,7 +97,7 @@ This is the mixin that describes how to get related events for a datetime entity
 
 The `eejs-api` library automatically builds component objects that can be used when setting up [vue components](https://vuejs.org/v2/guide/components.html).  There are primarily two types of component for each collection that are built.
 
-1. *Collection* components
+##### 1. *Collection* components
 
 These are components that represent an entire collection of entities (eg. `datetimes` or `events`). If you registered the `datetimes` collection then the following would be exposed:
 
@@ -106,7 +106,7 @@ These are components that represent an entire collection of entities (eg. `datet
 The `eejs.api.components.datetimes` component already would have had the `eejs.api.mixins.collection` mixin registered on it, and it would already have the `eejs.api.components.datetime` component registered with it.
 
 
-2. *Model* components
+##### 2. *Model* components
 
 These are components that are used for interacting with a specific entity (eg. `datetime` or `event`). If you registered the `datetimes` and `events` collections then the following would be exposed:
 
