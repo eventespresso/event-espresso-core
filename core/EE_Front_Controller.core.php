@@ -73,8 +73,6 @@ final class EE_Front_Controller
         $this->Registry              = $Registry;
         $this->Request_Handler       = $Request_Handler;
         $this->Module_Request_Router = $Module_Request_Router;
-        // make sure template tags are loaded immediately so that themes don't break
-        add_action('AHEE__EE_System__core_loaded_and_ready', array($this, 'load_espresso_template_tags'), 10);
         // determine how to integrate WP_Query with the EE models
         add_action('AHEE__EE_System__initialize', array($this, 'employ_CPT_Strategy'));
         // load other resources and begin to actually run shortcodes and modules
@@ -147,19 +145,6 @@ final class EE_Front_Controller
 
     /***********************************************        INIT ACTION HOOK         ***********************************************/
 
-
-    /**
-     *    load_espresso_template_tags - if current theme is an espresso theme, or uses ee theme template parts, then
-     *    load it's functions.php file ( if not already loaded )
-     *
-     * @return void
-     */
-    public function load_espresso_template_tags()
-    {
-        if (is_readable(EE_PUBLIC . 'template_tags.php')) {
-            require_once(EE_PUBLIC . 'template_tags.php');
-        }
-    }
 
 
     /**
