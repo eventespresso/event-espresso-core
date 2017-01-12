@@ -64,6 +64,20 @@ Vuex.Store.prototype.replaceEntityInCollection = function( collection, entity ) 
 
 Vue.use(Vuex);
 
+
+//polyfill `String.prototype.endsWith` for environments that dont' have ECMA6
+if (!String.prototype.endsWith) {
+    String.prototype.endsWith = function(searchString, position) {
+        var subjectString = this.toString();
+        if (typeof position !== 'number' || !isFinite(position) || Math.floor(position) !== position || position > subjectString.length) {
+            position = subjectString.length;
+        }
+        position -= searchString.length;
+        var lastIndex = subjectString.lastIndexOf(searchString, position);
+        return lastIndex !== -1 && lastIndex === position;
+    };
+}
+
 (function( window, undefined ) {
     'use strict';
 
@@ -980,7 +994,10 @@ Vue.use(Vuex);
                  * @return boolean
                  */
                 collectionHasRoute = function(collection) {
-                    return ! _.has(getEndpoints(), collection);
+                    var endpoints = getEndpoints();
+                    return _.find(endpoints, function(endpointObject, endpoint){
+                        return endpoint.endsWith(collection);
+                    });
                 };
 
             /**
