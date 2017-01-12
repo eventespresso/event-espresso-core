@@ -101,6 +101,7 @@ class JsonModelSchema
                 ? strtolower($model_name)
                 : EEH_Inflector::pluralize_and_lower($model_name);
             $schema['properties'][$model_name_for_schema] = $relation->getSchema();
+            $schema['properties'][$model_name_for_schema]['relation_model'] = $model_name;
         }
         return $schema;
     }
