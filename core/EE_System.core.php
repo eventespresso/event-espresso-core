@@ -889,7 +889,7 @@ final class EE_System
         // let's get it started
         if ( ! is_admin() && ! EE_Maintenance_Mode::instance()->level()) {
             do_action('AHEE__EE_System__load_controllers__load_front_controllers');
-            $this->registry->load_core('Front_Controller', array(), false, true);
+            $this->registry->load_core('Front_Controller', array(), false);
         } else if ( ! EE_FRONT_AJAX) {
             do_action('AHEE__EE_System__load_controllers__load_admin_controllers');
             EE_Registry::instance()->load_core('Admin');
@@ -909,9 +909,12 @@ final class EE_System
     public function core_loaded_and_ready()
     {
         do_action('AHEE__EE_System__core_loaded_and_ready');
+        // load_espresso_template_tags
+        if (is_readable(EE_PUBLIC . 'template_tags.php')) {
+            require_once(EE_PUBLIC . 'template_tags.php');
+        }
         do_action('AHEE__EE_System__set_hooks_for_shortcodes_modules_and_addons');
         $this->registry->load_core('Session');
-        //		add_action( 'wp_loaded', array( $this, 'set_hooks_for_shortcodes_modules_and_addons' ), 1 );
     }
 
 
