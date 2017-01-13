@@ -43,7 +43,7 @@ class EspressoCancelled extends EspressoShortcode
      *
      * @return void
      */
-    public function initialize()
+    public function initializeShortcode()
     {
         // TODO: Implement initialize() method.
     }
