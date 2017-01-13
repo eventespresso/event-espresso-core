@@ -1,26 +1,13 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
-/**
- * Event Espresso
- *
- * Event Registration and Management Plugin for WordPress
- *
- * @ package		Event Espresso
- * @ author			Event Espresso
- * @ copyright	(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license		http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link				http://www.eventespresso.com
- * @ version		 	EE4
- *
- * ------------------------------------------------------------------------
- */
+
 /**
  * EED_Ical Class
  *
  * 	adds a link that will import an event's details into any calendar that supports the iCal format
  *
- * @package 			Event Espresso
+ * @package     Event Espresso
  * @subpackage 	/modules/ical/
- * @author 				Brent Christensen
+ * @author      Brent Christensen
  */
 class EED_Ical  extends EED_Module {
 
@@ -29,7 +16,7 @@ class EED_Ical  extends EED_Module {
 
 
 	/**
-	 * @return EED_Ical
+	 * @return EED_Ical|EED_Module
 	 */
 	public static function instance() {
 		return parent::get_instance( __CLASS__ );
@@ -45,7 +32,12 @@ class EED_Ical  extends EED_Module {
 	 */
 	public static function set_hooks() {
 		// create download buttons
-		add_filter( 'FHEE__espresso_list_of_event_dates__datetime_html', array( 'EED_Ical', 'generate_add_to_iCal_button' ), 10, 2 );
+		add_filter(
+		    'FHEE__espresso_list_of_event_dates__datetime_html',
+            array( 'EED_Ical', 'generate_add_to_iCal_button' ),
+            10,
+            2
+        );
 		 // process ics download request
 		EE_Config::register_route( 'download_ics_file', 'EED_Ical', 'download_ics_file' );
 	}
@@ -74,14 +66,15 @@ class EED_Ical  extends EED_Module {
 
 
 
-	/**
-	 *    generate_add_to_iCal_button
-	 *
-	 * @access    public
-	 * @param $html
-	 * @param $datetime
-	 * @return    string
-	 */
+    /**
+     *    generate_add_to_iCal_button
+     *
+     * @access    public
+     * @param $html
+     * @param $datetime
+     * @return    string
+     * @throws \EE_Error
+     */
 	public static function generate_add_to_iCal_button( $html, $datetime ) {
 		// first verify a proper datetime object has been received
 		if ( $datetime instanceof EE_Datetime ) {
@@ -93,19 +86,24 @@ class EED_Ical  extends EED_Module {
 			switch ( $iCal_type ) {
 				// submit buttons appear as buttons and are very compatible with a theme's style
 				case 'submit' :
-					$html .= '<form id="download-iCal-frm-' . $datetime->ID() . '" class="download-iCal-frm" action="' . $URL . '" method="post" >';
-					$html .= '<input type="submit" class="ee-ical-sbmt" value="&#xf145;" title="' . __( 'Add to iCal Calendar', 'event_espresso' ) . '"/>';
+					$html .= '<form id="download-iCal-frm-' . $datetime->ID();
+					$html .= '" class="download-iCal-frm" action="' . $URL . '" method="post" >';
+					$html .= '<input type="submit" class="ee-ical-sbmt" value="&#xf145;" title="';
+					$html .= __( 'Add to iCal Calendar', 'event_espresso' ) . '"/>';
 					$html .= '</form>';
 					break;
-				// buttons are just links that have been styled to appear as buttons, but may not be blend with a theme as well as submit buttons
+				// buttons are just links that have been styled to appear as buttons,
+                // but may not be blend with a theme as well as submit buttons
 				case 'button' :
-					$html .= '<a class="ee-ical-btn small ee-button ee-roundish" href="' . $URL . '" title="' . __( 'Add to iCal Calendar', 'event_espresso' ) . '">';
+					$html .= '<a class="ee-ical-btn small ee-button ee-roundish" href="' . $URL;
+					$html .= '" title="' . __( 'Add to iCal Calendar', 'event_espresso' ) . '">';
 					$html .= ' <span class="dashicons dashicons-calendar"></span>';
 					$html .= '</a>';
 					break;
 				// links are just links that use the calendar dashicon
 				case 'icon' :
-					$html .= '<a class="ee-ical-lnk" href="' . $URL . '" title="' . __( 'Add to iCal Calendar', 'event_espresso' ) . '">';
+					$html .= '<a class="ee-ical-lnk" href="' . $URL . '" title="';
+					$html .= __( 'Add to iCal Calendar', 'event_espresso' ) . '">';
 					$html .= ' <span class="dashicons dashicons-calendar"></span>';
 					$html .= '</a>';
 					break;
@@ -116,12 +114,13 @@ class EED_Ical  extends EED_Module {
 
 
 
-	/**
-	 * 	download_ics_file
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
+    /**
+     *    download_ics_file
+     *
+     * @access    public
+     * @return    void
+     * @throws \EE_Error
+     */
 	public static function download_ics_file() {
 		if ( EE_Registry::instance()->REQ->is_set( 'ics_id' )) {
 			$DTT_ID = absint( EE_Registry::instance()->REQ->get( 'ics_id' ));
@@ -147,9 +146,9 @@ class EED_Ical  extends EED_Module {
 				//Generate filename
 				$filename = $event->slug() . '-' . $datetime->start_date( 'Y-m-d' ) . '.ics';
 
-				//Check the datetime status has not been cancelled and set the ics value acordingly
+				//Check the datetime status has not been cancelled and set the ics value accordingly
 				$status = $datetime->get_active_status();
-				$status = $status == EE_Datetime::cancelled ? 'CANCELLED' : 'CONFIRMED';
+				$status = $status === EE_Datetime::cancelled ? 'CANCELLED' : 'CONFIRMED';
 
 				// Create array of ics details, escape strings, convert timestamps to ics format, etc
 				$ics_data = array(
@@ -168,7 +167,7 @@ class EED_Ical  extends EED_Module {
 				);
 
 				$ics_data = apply_filters( 'FHEE__EED_Ical__download_ics_file_ics_data', $ics_data, $datetime );
-				
+
 				// set headers
 				header( 'Content-type: text/calendar; charset=utf-8' );
 				header( 'Content-Disposition: attachment; filename="' . $filename . '"' );
@@ -225,8 +224,8 @@ class EED_Ical  extends EED_Module {
 	 *  	@return	string
 	 */
 	private static function _escape_ICal_description( $description = '' ) {
-			
-			//Escape spcial chars within the decription
+
+			//Escape special chars within the description
 			$description = EED_Ical::_escape_ICal_data( $description );
 
 		    //Remove line breaks and output in iCal format
@@ -234,7 +233,7 @@ class EED_Ical  extends EED_Module {
 
 		return $description;
 	}
-	
+
 }
 // End of file EED_Ical.module.php
 // Location: /modules/ical/EED_Ical.module.php
