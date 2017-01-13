@@ -1,4 +1,6 @@
-<?php if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
+<?php use EventEspresso\core\services\shortcodes\LegacyShortcodesManager;
+
+if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
 }
 
@@ -34,6 +36,11 @@ final class EE_Config {
 	 * @var boolean $_logging_enabled
 	 */
 	private static $_logging_enabled = false;
+
+	/**
+	 * @var LegacyShortcodesManager $LegacyShortcodesManager
+	 */
+	private  $LegacyShortcodesManager;
 
 	/**
 	 * An StdClass whose property names are addon slugs,
@@ -948,8 +955,6 @@ final class EE_Config {
 	 * @return    void
 	 */
 	public function register_shortcodes_and_modules() {
-		// allow shortcodes to register with WP and to set hooks for the rest of the system
-		EE_Registry::instance()->shortcodes = $this->_register_shortcodes();
 		// allow modules to set hooks for the rest of the system
 		EE_Registry::instance()->modules = $this->_register_modules();
 	}
@@ -964,8 +969,6 @@ final class EE_Config {
 	 * @return    void
 	 */
 	public function initialize_shortcodes_and_modules() {
-		// allow shortcodes to set hooks for the rest of the system
-		$this->_initialize_shortcodes();
 		// allow modules to set hooks for the rest of the system
 		$this->_initialize_modules();
 	}
@@ -1075,106 +1078,6 @@ final class EE_Config {
 
 
 	/**
-	 *        _register_shortcodes
-	 *
-	 * @access private
-	 * @return array
-	 */
-	private function _register_shortcodes() {
-		// grab list of installed shortcodes
-		$shortcodes_to_register = glob( EE_SHORTCODES . '*', GLOB_ONLYDIR );
-		// filter list of modules to register
-		$shortcodes_to_register = apply_filters(
-			'FHEE__EE_Config__register_shortcodes__shortcodes_to_register',
-			$shortcodes_to_register
-		);
-		if ( ! empty( $shortcodes_to_register ) ) {
-			// cycle thru shortcode folders
-			foreach ( $shortcodes_to_register as $shortcode_path ) {
-				// add to list of installed shortcode modules
-				EE_Config::register_shortcode( $shortcode_path );
-			}
-		}
-		// filter list of installed modules
-		return apply_filters(
-			'FHEE__EE_Config___register_shortcodes__installed_shortcodes',
-			EE_Registry::instance()->shortcodes
-		);
-	}
-
-
-
-	/**
-	 *    register_shortcode - makes core aware of this shortcode
-	 *
-	 * @access    public
-	 * @param    string $shortcode_path - full path up to and including shortcode folder
-	 * @return    bool
-	 */
-	public static function register_shortcode( $shortcode_path = null ) {
-		do_action( 'AHEE__EE_Config__register_shortcode__begin', $shortcode_path );
-		$shortcode_ext = '.shortcode.php';
-		// make all separators match
-		$shortcode_path = str_replace( array( '\\', '/' ), DS, $shortcode_path );
-		// does the file path INCLUDE the actual file name as part of the path ?
-		if ( strpos( $shortcode_path, $shortcode_ext ) !== false ) {
-			// grab shortcode file name from directory name and break apart at dots
-			$shortcode_file = explode( '.', basename( $shortcode_path ) );
-			// take first segment from file name pieces and remove class prefix if it exists
-			$shortcode = strpos( $shortcode_file[0], 'EES_' ) === 0
-				? substr( $shortcode_file[0], 4 )
-				: $shortcode_file[0];
-			// sanitize shortcode directory name
-			$shortcode = sanitize_key( $shortcode );
-			// now we need to rebuild the shortcode path
-			$shortcode_path = explode( DS, $shortcode_path );
-			// remove last segment
-			array_pop( $shortcode_path );
-			// glue it back together
-			$shortcode_path = implode( DS, $shortcode_path ) . DS;
-		} else {
-			// we need to generate the filename based off of the folder name
-			// grab and sanitize shortcode directory name
-			$shortcode = sanitize_key( basename( $shortcode_path ) );
-			$shortcode_path = rtrim( $shortcode_path, DS ) . DS;
-		}
-		// create classname from shortcode directory or file name
-		$shortcode = str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $shortcode ) ) );
-		// add class prefix
-		$shortcode_class = 'EES_' . $shortcode;
-		// does the shortcode exist ?
-		if ( ! is_readable( $shortcode_path . DS . $shortcode_class . $shortcode_ext ) ) {
-			$msg = sprintf(
-				__(
-					'The requested %s shortcode file could not be found or is not readable due to file permissions. It should be in %s',
-					'event_espresso'
-				),
-				$shortcode_class,
-				$shortcode_path . DS . $shortcode_class . $shortcode_ext
-			);
-			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return false;
-		}
-		// load the shortcode class file
-		require_once( $shortcode_path . $shortcode_class . $shortcode_ext );
-		// verify that class exists
-		if ( ! class_exists( $shortcode_class ) ) {
-			$msg = sprintf(
-				__( 'The requested %s shortcode class does not exist.', 'event_espresso' ),
-				$shortcode_class
-			);
-			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return false;
-		}
-		$shortcode = strtoupper( $shortcode );
-		// add to array of registered shortcodes
-		EE_Registry::instance()->shortcodes->{$shortcode} = $shortcode_path . $shortcode_class . $shortcode_ext;
-		return true;
-	}
-
-
-
-	/**
 	 *        _register_modules
 	 *
 	 * @access private
@@ -1276,42 +1179,6 @@ final class EE_Config {
 			EE_Registry::instance()->modules->{$module_class}
 		);
 		return true;
-	}
-
-
-
-	/**
-	 *    _initialize_shortcodes
-	 *    allow shortcodes to set hooks for the rest of the system
-	 *
-	 * @access private
-	 * @return void
-	 */
-	private function _initialize_shortcodes() {
-		// cycle thru shortcode folders
-		foreach ( EE_Registry::instance()->shortcodes as $shortcode => $shortcode_path ) {
-			// add class prefix
-			$shortcode_class = 'EES_' . $shortcode;
-			// fire the shortcode class's set_hooks methods in case it needs to hook into other parts of the system
-			// which set hooks ?
-			if ( is_admin() ) {
-				// fire immediately
-				call_user_func( array( $shortcode_class, 'set_hooks_admin' ) );
-			} else {
-				// delay until other systems are online
-				add_action(
-					'AHEE__EE_System__set_hooks_for_shortcodes_modules_and_addons',
-					array( $shortcode_class, 'set_hooks' )
-				);
-				// convert classname to UPPERCASE and create WP shortcode.
-				$shortcode_tag = strtoupper( $shortcode );
-				// but first check if the shortcode has already been added before assigning 'fallback_shortcode_processor'
-				if ( ! shortcode_exists( $shortcode_tag ) ) {
-					// NOTE: this shortcode declaration will get overridden if the shortcode is successfully detected in the post content in EE_Front_Controller->_initialize_shortcodes()
-					add_shortcode( $shortcode_tag, array( $shortcode_class, 'fallback_shortcode_processor' ) );
-				}
-			}
-		}
 	}
 
 
@@ -1569,6 +1436,34 @@ final class EE_Config {
 	public function shutdown() {
 		$this->update_addon_option_names();
 	}
+
+
+
+    /**
+     * @return LegacyShortcodesManager
+     */
+    public static function getLegacyShortcodesManager()
+    {
+        if ( ! EE_Config::instance()->LegacyShortcodesManager instanceof LegacyShortcodesManager) {
+            EE_Config::instance()->LegacyShortcodesManager = new LegacyShortcodesManager();
+        }
+        return EE_Config::instance()->LegacyShortcodesManager;
+    }
+
+
+
+    /**
+     * register_shortcode - makes core aware of this shortcode
+     *
+     * @deprecated 4.9.26
+     * @param    string $shortcode_path - full path up to and including shortcode folder
+     * @return    bool
+     */
+    public static function register_shortcode($shortcode_path = null)
+    {
+        return EE_Config::instance()->getLegacyShortcodesManager()->registerShortcode($shortcode_path);
+    }
+
 
 
 }
