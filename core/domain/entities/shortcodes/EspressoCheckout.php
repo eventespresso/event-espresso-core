@@ -1,11 +1,9 @@
 <?php
 namespace EventEspresso\core\domain\entities\shortcodes;
 
-use EE_Config;
 use EE_Registry;
+use EED_Single_Page_Checkout;
 use EventEspresso\core\services\shortcodes\EspressoShortcode;
-use WP_Post;
-use WP_Query;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -21,31 +19,6 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  */
 class EspressoCheckout extends EspressoShortcode
 {
-
-    /**
-     * Shortcodes constructor.
-     */
-    public function __construct()
-    {
-        add_action('parse_query', array($this, 'isCheckoutPage'));
-    }
-
-
-    public function isCheckoutPage(WP_Query $wp_query)
-    {
-        if (
-            isset($wp_query->queried_object)
-            && $wp_query->queried_object instanceof WP_Post
-            && $wp_query->queried_object->ID === EE_Config::instance()->core->reg_page_id
-        ) {
-            // hook into the top of pre_get_posts to set the reg step routing, which gives other modules or plugins a chance to modify the reg steps, but just before the routes get called
-            add_action('pre_get_posts', array('EED_Single_Page_Checkout', 'load_reg_steps'), 1);
-            // this will trigger the EED_Single_Page_Checkout module's run() method during the pre_get_posts hook point,
-            // this allows us to initialize things, enqueue assets, etc,
-            add_action('pre_get_posts', array('EED_Single_Page_Checkout', 'init'), 10, 1);
-        }
-    }
-
 
 
     /**
@@ -68,8 +41,9 @@ class EspressoCheckout extends EspressoShortcode
      * @return void
      * @throws \EE_Error
      */
-    public function initialize()
+    public function initializeShortcode()
     {
+        EED_Single_Page_Checkout::init();
     }
 
 
