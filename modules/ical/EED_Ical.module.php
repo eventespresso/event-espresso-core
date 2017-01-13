@@ -187,7 +187,7 @@ class EED_Ical  extends EED_Module {
 				echo "CALSCALE:GREGORIAN" . PHP_EOL;
 				echo "BEGIN:VEVENT" . PHP_EOL;
 				echo "UID:{$ics_data['UID']}" . PHP_EOL;
-				echo "ORGANIZER:MAILTO:{$ics_data['org_email']}" . PHP_EOL;
+				if ( isset( $ics_data['org_email'] ) ) { echo "ORGANIZER:MAILTO:{$ics_data['org_email']}" . PHP_EOL; }
 				echo "DTSTAMP:{$ics_data['timestamp']}" . PHP_EOL;
 				echo "LOCATION:{$ics_data['location']}" . PHP_EOL;
 				echo "SUMMARY:{$ics_data['summary']}" . PHP_EOL;
