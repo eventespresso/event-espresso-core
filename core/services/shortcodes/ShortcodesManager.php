@@ -2,7 +2,7 @@
 namespace EventEspresso\core\services\shortcodes;
 
 use EventEspresso\core\domain\EnqueueAssetsInterface;
-use EventEspresso\core\domain\SetHooksInterface;
+// use EventEspresso\core\domain\SetHooksInterface;
 use EventEspresso\core\exceptions\InvalidClassException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidEntityException;
@@ -31,6 +31,11 @@ class ShortcodesManager
 {
 
     /**
+     * @var LegacyShortcodesManager $LegacyShortcodesManager
+     */
+    private $LegacyShortcodesManager;
+
+    /**
      * @var ShortcodeInterface[] $shortcodes
      */
     private $shortcodes;
@@ -38,17 +43,23 @@ class ShortcodesManager
 
 
     /**
-     * ShortcodesManager constructor.
+     * ShortcodesManager constructor
+     *
+     * @param LegacyShortcodesManager $LegacyShortcodesManager
      */
-    public function __construct() {
-        //  register shortcodes and modules
+    public function __construct(LegacyShortcodesManager $LegacyShortcodesManager) {
+        $this->LegacyShortcodesManager = $LegacyShortcodesManager;
+        // assemble a list of installed and active shortcodes
         add_action(
             'AHEE__EE_System__register_shortcodes_modules_and_widgets',
             array($this, 'registerShortcodes'),
             999
         );
-        //  initialize shortcodes and modules
-        add_action('AHEE__EE_System__core_loaded_and_ready', array($this, 'initializeShortcodes'));
+        //  call add_shortcode() for all installed shortcodes
+        add_action('AHEE__EE_System__core_loaded_and_ready', array($this, 'addShortcodes'));
+        // check content for shortcodes
+        add_action('get_header', array($this, 'get_header'));
+
     }
 
 
@@ -105,16 +116,30 @@ class ShortcodesManager
 
 
 
+    /**
+     * @return void
+     * @throws InvalidInterfaceException
+     * @throws InvalidIdentifierException
+     * @throws InvalidFilePathException
+     * @throws InvalidEntityException
+     * @throws InvalidDataTypeException
+     * @throws InvalidClassException
+     */
     public function registerShortcodes()
     {
         $this->shortcodes = apply_filters(
             'FHEE__EventEspresso_core_services_shortcodes_ShortcodesManager__registerShortcodes__shortcode_collection',
             $this->getShortcodes()
         );
+        $this->LegacyShortcodesManager->registerShortcodes();
     }
 
 
-    public function initializeShortcodes()
+
+    /**
+     * @return void
+     */
+    public function addShortcodes()
     {
         // cycle thru shortcode folders
         foreach ($this->shortcodes as $shortcode) {
@@ -128,9 +153,64 @@ class ShortcodesManager
                 add_shortcode($shortcode->getTag(), array($shortcode, 'processShortcodeCallback'));
             }
         }
+        $this->LegacyShortcodesManager->addShortcodes();
     }
 
 
+
+    /**
+     * callback for the WP "get_header" hook point
+     * checks posts for EE shortcodes, and initializes them,
+     * then toggles filter switch that loads core default assets
+     *
+     * @return void
+     */
+    public function get_header()
+    {
+        global $wp_query;
+        if (empty($wp_query->posts)) {
+            return;
+        }
+        $load_assets = false;
+        // array of posts displayed in current request
+        $posts = is_array($wp_query->posts) ? $wp_query->posts : array($wp_query->posts);
+        foreach ($posts as $post) {
+            // now check post content and excerpt for EE shortcodes
+            $load_assets = $this->parseContentForShortcodes($post->post_content)
+                ? true
+                : $load_assets;
+            $load_assets = $this->LegacyShortcodesManager->parseContentForShortcodes($post->post_content)
+                ? true
+                : $load_assets;
+        }
+        if ($load_assets) {
+            add_filter('FHEE_load_css', '__return_true');
+            add_filter('FHEE_load_js', '__return_true');
+        }
+    }
+
+
+
+    /**
+     * checks supplied content against list of shortcodes,
+     * then initializes any found shortcodes, and returns true.
+     * returns false if no shortcodes found.
+     *
+     * @param string $content
+     * @return bool
+     */
+    public function parseContentForShortcodes($content)
+    {
+        $has_shortcode = false;
+        foreach ($this->shortcodes as $shortcode) {
+            /** @var ShortcodeInterface $shortcode */
+            if (has_shortcode($content, $shortcode->getTag())) {
+                $shortcode->initializeShortcode();
+                $has_shortcode = true;
+            }
+        }
+        return $has_shortcode;
+    }
 
 }
 // End of file ShortcodesManager.php
