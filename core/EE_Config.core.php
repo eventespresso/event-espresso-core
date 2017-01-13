@@ -1445,7 +1445,9 @@ final class EE_Config {
     public static function getLegacyShortcodesManager()
     {
         if ( ! EE_Config::instance()->LegacyShortcodesManager instanceof LegacyShortcodesManager) {
-            EE_Config::instance()->LegacyShortcodesManager = new LegacyShortcodesManager();
+            EE_Config::instance()->LegacyShortcodesManager = new LegacyShortcodesManager(
+                EE_Registry::instance()
+            );
         }
         return EE_Config::instance()->LegacyShortcodesManager;
     }
