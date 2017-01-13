@@ -1,4 +1,5 @@
-<?php use EventEspresso\core\domain\services\helpers\ShortcodeHelper;
+<?php
+use EventEspresso\core\services\shortcodes\LegacyShortcodesManager;
 use EventEspresso\widgets\EspressoWidget;
 
 if ( ! defined('EVENT_ESPRESSO_VERSION')) {
@@ -49,11 +50,6 @@ final class EE_Front_Controller
      * @type EE_Module_Request_Router $Module_Request_Router
      */
     protected $Module_Request_Router;
-
-    /**
-     * @type ShortcodeHelper $shortcode_helper
-     */
-    protected $shortcode_helper;
 
 
     /**
@@ -129,14 +125,11 @@ final class EE_Front_Controller
 
 
     /**
-     * @return ShortcodeHelper
+     * @return LegacyShortcodesManager
      */
-    public function Shortcode_Helper()
+    public function getLegacyShortcodesManager()
     {
-        if ( ! $this->shortcode_helper instanceof ShortcodeHelper) {
-            $this->shortcode_helper = new ShortcodeHelper($this->Registry);
-        }
-        return $this->shortcode_helper;
+        return EE_Config::getLegacyShortcodesManager();
     }
 
 
@@ -304,25 +297,10 @@ final class EE_Front_Controller
         }
         // if we already know this is an espresso page, then load assets
         $load_assets = $this->Request_Handler->is_espresso_page();
-        // list of EE CPTs
-        $espresso_post_types = \EE_Register_CPTs::get_CPTs();
         // array of posts displayed in current request
         $posts = is_array($wp_query->posts) ? $wp_query->posts : array($wp_query->posts);
-        foreach ($posts as $post) {
-            // if post type is an EE CPT, then load assets
-            $load_assets = isset($espresso_post_types[$post->post_type]) ? true : $load_assets;
-            // now check post content and excerpt for EE shortcodes
-            foreach ($this->Registry->shortcodes as $shortcode_class => $shortcode) {
-                if (
-                    has_shortcode($post->post_content, $shortcode_class)
-                    || has_shortcode($post->post_excerpt, $shortcode_class)
-                ) {
-                    // load up the shortcode
-                    $this->Shortcode_Helper()->initializeShortcode($shortcode_class);
-                    $load_assets = true;
-                }
-            }
-        }
+        $load_assets = $this->getLegacyShortcodesManager()->postHasShortcodes($posts)
+            ? true : $load_assets;
         // if we are already loading assets then just move along, otherwise check for widgets
         $load_assets = $load_assets ? $load_assets : $this->espresso_widgets_in_active_sidebars();
         if ( $load_assets){
@@ -644,7 +622,7 @@ final class EE_Front_Controller
             ),
             '4.9.26'
         );
-        $this->Shortcode_Helper()->initializeShortcode($shortcode_class, $wp);
+        $this->LegacyShortcodesManager()->initializeShortcode($shortcode_class, $wp);
     }
 
 }
