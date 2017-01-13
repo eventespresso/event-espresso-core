@@ -7,7 +7,7 @@ Tested up to: 4.7.1
 Stable tag: 4.9.19.decaf
 License: GPL2
 
-Manage your events from your WordPress dashboard. Reduce your admin, reduce your costs, make your life easier!
+Manage online event registration and ticketing. Create event registration forms, sell tickets, collect money, send email, and SEO for events.
 
 == Description ==
 
