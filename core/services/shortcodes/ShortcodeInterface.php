@@ -22,7 +22,7 @@ interface ShortcodeInterface
      *
      * @return void
      */
-    public function initialize();
+    public function initializeShortcode();
 
     /**
      * callback that runs when the shortcode is encountered in post content.
