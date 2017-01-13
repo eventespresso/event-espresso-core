@@ -39,14 +39,6 @@ class LegacyShortcodesManager
     public function __construct(EE_Registry $registry)
     {
         $this->registry = $registry;
-        //  register shortcodes and modules
-        add_action(
-            'AHEE__EE_System__register_shortcodes_modules_and_widgets',
-            array($this, 'registerShortcodes'),
-            999
-        );
-        //  initialize shortcodes and modules
-        add_action('AHEE__EE_System__core_loaded_and_ready', array($this, 'initializeShortcodes'));
     }
 
 
@@ -173,7 +165,7 @@ class LegacyShortcodesManager
      * @access private
      * @return void
      */
-    public function initializeShortcodes()
+    public function addShortcodes()
     {
         // cycle thru shortcode folders
         foreach ($this->registry->shortcodes as $shortcode => $shortcode_path) {
@@ -206,30 +198,24 @@ class LegacyShortcodesManager
 
 
     /**
-     * @param WP_Post[] $posts
-     * @return boolean
+     * checks supplied content against list of legacy shortcodes,
+     * then initializes any found shortcodes, and returns true.
+     * returns false if no shortcodes found.
+     *
+     * @param string $content
+     * @return bool
      */
-    public function postHasShortcodes($posts)
+    public function parseContentForShortcodes($content = '')
     {
-        $load_assets = false;
-        // list of EE CPTs
-        $espresso_post_types = \EE_Register_CPTs::get_CPTs();
-        foreach ($posts as $post) {
-            // if post type is an EE CPT, then load assets
-            $load_assets = isset($espresso_post_types[$post->post_type]) ? true : $load_assets;
-            // now check post content and excerpt for EE shortcodes
-            foreach ($this->registry->shortcodes as $shortcode_class => $shortcode) {
-                if (
-                    has_shortcode($post->post_content, $shortcode_class)
-                    || has_shortcode($post->post_excerpt, $shortcode_class)
-                ) {
-                    // load up the shortcode
-                    $this->initializeShortcode($shortcode_class);
-                    $load_assets = true;
-                }
+        $has_shortcode = false;
+        foreach ($this->registry->shortcodes as $shortcode_class => $shortcode) {
+            if ( has_shortcode($content, $shortcode_class) ) {
+                // load up the shortcode
+                $this->initializeShortcode($shortcode_class);
+                $has_shortcode = true;
             }
         }
-        return $load_assets;
+        return $has_shortcode;
     }
 
 
