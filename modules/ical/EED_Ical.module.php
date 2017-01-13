@@ -143,22 +143,32 @@ class EED_Ical  extends EED_Module {
 						$location = espresso_venue_raw_address( 'inline', $venue->ID(), FALSE );
 					}
 				}
-				// set variables, escape strings, convert timestamps to ics format, etc
+
+				//Generate filename
 				$filename = $event->slug() . '-' . $datetime->start_date( 'Y-m-d' ) . '.ics';
-				$organizer = EED_Ical::_escape_ICal_data( EE_Registry::instance()->CFG->organization->name );
-				$UID = EED_Ical::_escape_ICal_data( md5( $event->name() . $event->ID() . $datetime->ID() ));
-				$org_email = EED_Ical::_escape_ICal_data( $datetime->ID() );
-				$timestamp = date( EED_Ical::iCal_datetime_format );
-				$location = EED_Ical::_escape_ICal_data( $location );
-				$summary = EED_Ical::_escape_ICal_data( $event->name() );
-				$description = EED_Ical::_escape_ICal_description( wp_strip_all_tags( $event->description() ));
+
+				//Check the datetime status has not been cancelled and set the ics value acordingly
 				$status = $datetime->get_active_status();
-				$status = $status == EE_Datetime::cancelled ? 'Cancelled' : 'Confirmed';
-				$status = EED_Ical::_escape_ICal_data( $status );
-				$categories = EED_Ical::_escape_ICal_data( $category );
-				$url = EED_Ical::_escape_ICal_data( get_permalink( $event->ID() ));
-				$dtt_start = EED_Ical::_escape_ICal_data( date( EED_Ical::iCal_datetime_format, $datetime->start() ));
-				$dtt_end = EED_Ical::_escape_ICal_data( date( EED_Ical::iCal_datetime_format, $datetime->end() ));
+				$status = $status == EE_Datetime::cancelled ? 'CANCELLED' : 'CONFIRMED';
+
+				// Create array of ics details, escape strings, convert timestamps to ics format, etc
+				$ics_data = array(
+					'organizer' => EED_Ical::_escape_ICal_data( EE_Registry::instance()->CFG->organization->name ),
+					'UID' => EED_Ical::_escape_ICal_data( md5( $event->name() . $event->ID() . $datetime->ID() )),
+					'org_email' => EED_Ical::_escape_ICal_data( EE_Registry::instance()->CFG->organization->email ),
+					'timestamp' => date( EED_Ical::iCal_datetime_format ),
+					'location' => EED_Ical::_escape_ICal_data( $location ),
+					'summary' => EED_Ical::_escape_ICal_data( $event->name() ),
+					'description' => EED_Ical::_escape_ICal_description( wp_strip_all_tags( $event->description() )),
+					'status' => EED_Ical::_escape_ICal_data( $status ),
+					'categories' => EED_Ical::_escape_ICal_data( $category ),
+					'url' => EED_Ical::_escape_ICal_data( get_permalink( $event->ID() )),
+					'dtt_start' => EED_Ical::_escape_ICal_data( date( EED_Ical::iCal_datetime_format, $datetime->start() )),
+					'dtt_end' => EED_Ical::_escape_ICal_data( date( EED_Ical::iCal_datetime_format, $datetime->end() )),
+				);
+
+				$ics_data = apply_filters( 'FHEE__EED_Ical__download_ics_file_ics_data', $ics_data, $datetime );
+				
 				// set headers
 				header( 'Content-type: text/calendar; charset=utf-8' );
 				header( 'Content-Disposition: attachment; filename="' . $filename . '"' );
@@ -173,20 +183,20 @@ class EED_Ical  extends EED_Module {
 				// echo the output
 				echo "BEGIN:VCALENDAR" . PHP_EOL;
 				echo "VERSION:2.0" . PHP_EOL;
-				echo "PRODID:-//{$organizer}//NONSGML PDA Calendar Version 1.0//EN" . PHP_EOL;
+				echo "PRODID:-//{$ics_data['organizer']}//NONSGML PDA Calendar Version 1.0//EN" . PHP_EOL;
 				echo "CALSCALE:GREGORIAN" . PHP_EOL;
 				echo "BEGIN:VEVENT" . PHP_EOL;
-				echo "UID:{$UID}" . PHP_EOL;
-				echo "ORGANIZER:MAILTO:{$org_email}" . PHP_EOL;
-				echo "DTSTAMP:{$timestamp}" . PHP_EOL;
-				echo "LOCATION:{$location}" . PHP_EOL;
-				echo "SUMMARY:{$summary}" . PHP_EOL;
-				echo "DESCRIPTION:{$description}" . PHP_EOL;
-				echo "STATUS:{$status}" . PHP_EOL;
-				echo "CATEGORIES:{$categories}" . PHP_EOL;
-				echo "URL;VALUE=URI:{$url}" . PHP_EOL;
-				echo "DTSTART:{$dtt_start}" . PHP_EOL;
-				echo "DTEND:{$dtt_end}" . PHP_EOL;
+				echo "UID:{$ics_data['UID']}" . PHP_EOL;
+				echo "ORGANIZER:MAILTO:{$ics_data['org_email']}" . PHP_EOL;
+				echo "DTSTAMP:{$ics_data['timestamp']}" . PHP_EOL;
+				echo "LOCATION:{$ics_data['location']}" . PHP_EOL;
+				echo "SUMMARY:{$ics_data['summary']}" . PHP_EOL;
+				echo "DESCRIPTION:{$ics_data['description']}" . PHP_EOL;
+				echo "STATUS:{$ics_data['status']}" . PHP_EOL;
+				echo "CATEGORIES:{$ics_data['categories']}" . PHP_EOL;
+				echo "URL;VALUE=URI:{$ics_data['url']}" . PHP_EOL;
+				echo "DTSTART:{$ics_data['dtt_start']}" . PHP_EOL;
+				echo "DTEND:{$ics_data['dtt_end']}" . PHP_EOL;
 				echo "END:VEVENT" . PHP_EOL;
 				echo "END:VCALENDAR" . PHP_EOL;
 			}
