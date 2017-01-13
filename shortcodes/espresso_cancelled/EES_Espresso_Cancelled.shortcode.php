@@ -58,13 +58,12 @@ class EES_Espresso_Cancelled extends EES_Shortcode
         \EE_Error::doing_it_wrong(
             __METHOD__,
             __(
-                'Usage is deprecated. Please use \EventEspresso\core\domain\entities\shortcodes\EspressoCancelled::processShortcode() instead.',
+                'Usage is deprecated. Please use \EventEspresso\core\domain\entities\shortcodes\EspressoCancelled instead.',
                 'event_espresso'
             ),
             '4.9.26'
         );
-        $shortcode = new \EventEspresso\core\domain\entities\shortcodes\EspressoCancelled();
-        return $shortcode->processShortcode($attributes);
+        return '';
     }
 
 }
