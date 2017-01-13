@@ -1,9 +1,11 @@
-<?php use EventEspresso\core\domain\services\helpers\ShortcodeHelper;
+<?php
+use EventEspresso\core\services\shortcodes\LegacyShortcodesManager;
 
 defined('EVENT_ESPRESSO_VERSION') || exit();
 /**
  * EES_Shortcode
  *
+ * @deprecated  4.9.26
  * @package     Event Espresso
  * @subpackage	/shortcodes/
  * @author      Brent Christensen
@@ -23,7 +25,7 @@ abstract class EES_Shortcode extends EE_Base {
      */
     final public function __construct()
     {
-        $shortcode = ShortcodeHelper::generateShortcodeTagFromClassName(get_class($this));
+        $shortcode = LegacyShortcodesManager::generateShortcodeTagFromClassName(get_class($this));
         // assign shortcode to the preferred callback, which overwrites the "fallback shortcode processor" assigned earlier
         add_shortcode($shortcode, array($this, 'process_shortcode'));
         // make sure system knows this is an EE page
