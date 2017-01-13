@@ -88,6 +88,8 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      */
     public function create_new_blank_datetime()
     {
+        //makes sure timezone is always set.
+        $timezone_string = $this->get_timezone();
         $blank_datetime = EE_Datetime::new_instance(
             array(
                 'DTT_EVT_start' => $this->current_time_for_query('DTT_EVT_start', true) + (60 * 60 * 24 * 30),
@@ -95,11 +97,11 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
                 'DTT_order'     => 1,
                 'DTT_reg_limit' => EE_INF,
             ),
-            $this->_timezone
+            $timezone_string
         );
         $blank_datetime->set_start_time($this->convert_datetime_for_query('DTT_EVT_start', '8am', 'ga',
-            $this->_timezone));
-        $blank_datetime->set_end_time($this->convert_datetime_for_query('DTT_EVT_end', '5pm', 'ga', $this->_timezone));
+            $timezone_string));
+        $blank_datetime->set_end_time($this->convert_datetime_for_query('DTT_EVT_end', '5pm', 'ga', $timezone_string));
         return array($blank_datetime);
     }
 

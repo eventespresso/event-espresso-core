@@ -550,11 +550,11 @@ abstract class EE_Admin_Page extends EE_Base
             $classname = str_replace('.class.php', '', $page);
             //autoloaders should take care of loading file
             if ( ! class_exists($classname)) {
-                $error_msg[] = sprintf(__('Something went wrong with loading the %s admin hooks page.', 'event_espresso'), $page);
+                $error_msg[] = sprintf( esc_html__('Something went wrong with loading the %s admin hooks page.', 'event_espresso'), $page);
                 $error_msg[] = $error_msg[0]
                                . "\r\n"
-                               . sprintf(__('There is no class in place for the %s admin hooks page.%sMake sure you have <strong>%s</strong> defined. If this is a non-EE-core admin page then you also must have an autoloader in place for your class',
-                                'event_espresso'), $page, '<br />', $classname);
+                               . sprintf( esc_html__('There is no class in place for the %1$s admin hooks page.%2$sMake sure you have %3$s defined. If this is a non-EE-core admin page then you also must have an autoloader in place for your class',
+                                'event_espresso'), $page, '<br />', '<strong>' . $classname . '</strong>');
                 throw new EE_Error(implode('||', $error_msg));
             }
             $a = new ReflectionClass($classname);
@@ -2144,8 +2144,8 @@ abstract class EE_Admin_Page extends EE_Base
         <noscript>
             <div id="no-js-message" class="error">
                 <p style="font-size:1.3em;">
-                    <span style="color:red;"><?php _e('Warning!', 'event_espresso'); ?></span>
-                    <?php _e('Javascript is currently turned off for your browser. Javascript must be enabled in order for all of the features on this page to function properly. Please turn your javascript back on.', 'event_espresso'); ?>
+                    <span style="color:red;"><?php esc_html_e('Warning!', 'event_espresso'); ?></span>
+                    <?php esc_html_e('Javascript is currently turned off for your browser. Javascript must be enabled in order for all of the features on this page to function properly. Please turn your javascript back on.', 'event_espresso'); ?>
                 </p>
             </div>
         </noscript>
@@ -2178,7 +2178,7 @@ abstract class EE_Admin_Page extends EE_Base
     {
         ?>
         <div id="espresso-ajax-loading" class="ajax-loading-grey">
-            <span class="ee-spinner ee-spin"></span><span class="hidden"><?php _e('loading...', 'event_espresso'); ?></span>
+            <span class="ee-spinner ee-spin"></span><span class="hidden"><?php esc_html_e('loading...', 'event_espresso'); ?></span>
         </div>
         <?php
     }
@@ -2435,10 +2435,15 @@ abstract class EE_Admin_Page extends EE_Base
         $this->_template_args['before_list_table'] .= apply_filters(
                 'FHEE__EE_Admin_Page___display_admin_list_table_page__before_list_table__template_arg',
                 ! empty($this->_req_data['s'])
-                        ? '<p class="ee-search-results">' . sprintf(
-                                __('Displaying search results for the search string: <strong><em>%s</em></strong>', 'event_espresso'),
-                                trim($this->_req_data['s'], '%')
-                        ) . '</p>'
+                        ? '<p class="ee-search-results">'
+                            . sprintf(
+                                esc_html__(
+                                        'Displaying search results for the search string: %1$s',
+                                        'event_espresso'
+                                ),
+                                '<strong><em>' . trim( $this->_req_data['s'], '%' ) . '</em></strong>'
+                            )
+                            . '</p>'
                         : '',
                 $this->page_slug,
                 $this->_req_data,

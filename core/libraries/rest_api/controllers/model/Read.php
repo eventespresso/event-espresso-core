@@ -574,21 +574,6 @@ class Read extends Base
                 ),
             ),
         );
-        //add link to the wp core endpoint, if wp api is active
-        global $wp_rest_server;
-        if ($model instanceof \EEM_CPT_Base
-            && $wp_rest_server instanceof \WP_REST_Server
-            && $wp_rest_server->get_route_options('/wp/v2/posts')
-            && $model->has_primary_key_field()
-        ) {
-            $links[\EED_Core_Rest_Api::ee_api_link_namespace . 'self_wp_post'] = array(
-                array(
-                    'href'   => rest_url('/wp/v2/posts/' . $db_row[$model->get_primary_key_field()
-                                                                         ->get_qualified_column()]),
-                    'single' => true,
-                ),
-            );
-        }
         //add links to related models
         if ($model->has_primary_key_field()) {
             foreach ($this->get_model_version_info()->relation_settings($model) as $relation_name => $relation_obj) {
@@ -1141,6 +1126,7 @@ class Read extends Base
         return $extracted_fields_to_include;
     }
 }
+
 
 
 // End of file Read.php

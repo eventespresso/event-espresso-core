@@ -236,6 +236,10 @@ class EEM_Status extends EEM_Base
                 __('debug only', 'event_espresso'),
                 __('debug only', 'event_espresso'),
             ),
+            EEM_Message::status_messenger_executing     => array(
+                __('messenger is executing', 'event_espresso'),
+                __('messenger is executing', 'event_espresso'),
+            ),
             EEM_Message::status_resend                  => array(
                 __('queued for resending', 'event_espresso'),
                 __('queued for resending', 'event_espresso'),

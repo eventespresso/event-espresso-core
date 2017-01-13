@@ -51,7 +51,6 @@ class Registrations_Admin_Page_Mock extends Registrations_Admin_Page
      */
     public function get_registrations($per_page = 10, $count = false, $this_month = false, $today = false)
     {
-        $this->_req_data = array_merge($_POST, $_GET);
         return parent::get_registrations($per_page, $count, $this_month, $today);
     }
 
@@ -67,6 +66,53 @@ class Registrations_Admin_Page_Mock extends Registrations_Admin_Page
     {
         $this->_req_data = array_merge($_POST, $_REQUEST);
         return parent::_set_registration_status_from_request($status, $notify);
+    }
+
+    public function add_event_id_to_where_conditions(array $req)
+    {
+        return $this->_add_event_id_to_where_conditions($req);
+    }
+
+
+    public function add_category_id_to_where_conditions(array $req)
+    {
+        return $this->_add_category_id_to_where_conditions($req);
+    }
+
+
+    public function add_datetime_id_to_where_conditions(array $req)
+    {
+        return $this->_add_datetime_id_to_where_conditions($req);
+    }
+
+
+    public function add_registration_status_to_where_conditions(array $req)
+    {
+        return $this->_add_registration_status_to_where_conditions($req);
+    }
+
+
+    public function add_date_to_where_conditions($req)
+    {
+        return $this->_add_date_to_where_conditions($req);
+    }
+
+
+    public function add_search_to_where_conditions(array $req)
+    {
+        return $this->_add_search_to_where_conditions($req);
+    }
+
+
+    public function get_orderby_for_registrations_query()
+    {
+        return $this->_get_orderby_for_registrations_query();
+    }
+
+
+    public function get_limit($per_page)
+    {
+        return $this->_get_limit($per_page);
     }
 
 } //end class Registrations_Admin_Page_Mock

@@ -145,8 +145,10 @@ class TableManager extends \EE_Base
                 $tables_to_delete[] = $table_name;
             }
         }
-        global $wpdb;
-        $wpdb->query('DROP TABLE ' . implode(', ', $tables_to_delete));
+        if( ! empty( $tables_to_delete ) ) {
+            global $wpdb;
+            $wpdb->query('DROP TABLE ' . implode(', ', $tables_to_delete));
+        }
         return $tables_to_delete;
     }
 
