@@ -736,11 +736,11 @@ final class EE_System
      */
     public function register_shortcodes_modules_and_widgets()
     {
-        // load, register, and add shortcodes
-        // the new way
-        new ShortcodesManager();
-        // the old way
-        EE_Config::getLegacyShortcodesManager();
+        // load, register, and add shortcodes the new way
+        new ShortcodesManager(
+            // and the old way, but we'll put it under control of the new system
+            EE_Config::getLegacyShortcodesManager()
+        );
         do_action('AHEE__EE_System__register_shortcodes_modules_and_widgets');
         // check for addons using old hookpoint
         if (has_action('AHEE__EE_System__register_shortcodes_modules_and_addons')) {
