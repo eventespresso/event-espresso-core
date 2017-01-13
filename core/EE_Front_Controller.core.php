@@ -284,7 +284,7 @@ final class EE_Front_Controller
 
     /**
      * callback for the WP "get_header" hook point
-     * checks posts for EE shortcodes, and sidebars for EE widgets
+     * checks sidebars for EE widgets
      * loads resources and assets accordingly
      *
      * @return void
@@ -297,10 +297,6 @@ final class EE_Front_Controller
         }
         // if we already know this is an espresso page, then load assets
         $load_assets = $this->Request_Handler->is_espresso_page();
-        // array of posts displayed in current request
-        $posts = is_array($wp_query->posts) ? $wp_query->posts : array($wp_query->posts);
-        $load_assets = $this->getLegacyShortcodesManager()->postHasShortcodes($posts)
-            ? true : $load_assets;
         // if we are already loading assets then just move along, otherwise check for widgets
         $load_assets = $load_assets ? $load_assets : $this->espresso_widgets_in_active_sidebars();
         if ( $load_assets){
@@ -617,12 +613,12 @@ final class EE_Front_Controller
         \EE_Error::doing_it_wrong(
             __METHOD__,
             __(
-                'Usage is deprecated. Please use \EventEspresso\core\domain\services\helpers\ShortcodeHelper::initializeShortcode() instead.',
+                'Usage is deprecated. Please use \EventEspresso\core\services\shortcodes\LegacyShortcodesManager::initializeShortcode() instead.',
                 'event_espresso'
             ),
             '4.9.26'
         );
-        $this->LegacyShortcodesManager()->initializeShortcode($shortcode_class, $wp);
+        $this->getLegacyShortcodesManager()->initializeShortcode($shortcode_class, $wp);
     }
 
 }
