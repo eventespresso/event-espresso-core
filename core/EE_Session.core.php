@@ -588,12 +588,12 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
                  : '';
 	         throw new InvalidSessionDataException($msg);
          }
-	     if ( isset( $this->_session_data['transaction'] ) && absint( $this->_session_data['transaction'] ) !== 0 ) {
-		     $this->_session_data['transaction'] = EEM_Transaction::instance()->get_one_by_ID(
-			     $this->_session_data['transaction']
+	     if ( isset($session_data['transaction'] ) && absint($session_data['transaction'] ) !== 0 ) {
+             $session_data['transaction'] = EEM_Transaction::instance()->get_one_by_ID(
+                 $session_data['transaction']
 	         );
 	     }
-	     return $session_data;
+         return $session_data;
      }
 
 
@@ -799,7 +799,7 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
 			}
 			$this->_session_data['transaction'] = $transaction->ID();
 		}
-		// then serialize all of our session data
+        // then serialize all of our session data
 		$session_data = serialize($this->_session_data);
 		// do we need to also encode it to avoid corrupted data when saved to the db?
 		$session_data = $this->_use_encryption ? $this->encryption->base64_string_encode( $session_data ) : $session_data;
@@ -807,7 +807,7 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
 		if ( apply_filters( 'FHEE__EE_Session___perform_session_id_hash_check', WP_DEBUG ) ) {
 			set_transient( EE_Session::hash_check_prefix . $this->_sid, md5( $session_data ), $this->_lifespan );
 		}
-		// we're using the Transient API for storing session data, cuz it's so damn simple -> set_transient(  transient ID, data, expiry )
+        // we're using the Transient API for storing session data, cuz it's so damn simple -> set_transient(  transient ID, data, expiry )
 		return set_transient( EE_Session::session_id_prefix . $this->_sid, $session_data, $this->_lifespan );
 	}
 
@@ -912,7 +912,7 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
 	  */
 	public function clear_session( $class = '', $function = '' ) {
 		//echo '<h3 style="color:#999;line-height:.9em;"><span style="color:#2EA2CC">' . __CLASS__ . '</span>::<span style="color:#E76700">' . __FUNCTION__ . '( ' . $class . '::' . $function . '() )</span><br/><span style="font-size:9px;font-weight:normal;">' . __FILE__ . '</span>    <b style="font-size:10px;">  ' . __LINE__ . ' </b></h3>';
-		do_action( 'AHEE_log', __FILE__, __FUNCTION__, 'session cleared by : ' . $class . '::' .  $function . '()' );
+        do_action( 'AHEE_log', __FILE__, __FUNCTION__, 'session cleared by : ' . $class . '::' .  $function . '()' );
 		$this->reset_cart();
 		$this->reset_checkout();
 		$this->reset_transaction();
