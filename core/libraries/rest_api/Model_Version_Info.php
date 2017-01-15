@@ -92,7 +92,7 @@ class Model_Version_Info {
     /**
      * Model_Version_Info constructor.
      *
-     * @param array $requested_version
+     * @param string $requested_version
      */
     public function __construct( $requested_version ) {
 		$this->_requested_version = $requested_version;
