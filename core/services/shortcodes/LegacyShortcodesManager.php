@@ -1,11 +1,13 @@
 <?php
 namespace EventEspresso\core\services\shortcodes;
 
+use EE_Config;
 use EE_Error;
+use EE_Front_controller;
 use EE_Registry;
 use ReflectionClass;
 use WP;
-use WP_Post;
+use WP_Query;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -198,18 +200,97 @@ class LegacyShortcodesManager
 
 
     /**
+     * callback for the WP "get_header" hook point
+     * checks posts for EE shortcodes, and initializes them,
+     * then toggles filter switch that loads core default assets
+     *
+     * @param \WP_Query $wp_query
+     * @return void
+     */
+    public function initializeShortcodes(WP_Query $wp_query)
+    {
+        if (empty($this->registry->shortcodes) || ! $wp_query->is_main_query() || is_admin()) {
+            return;
+        }
+        global $wp;
+        /** @var EE_Front_controller $Front_Controller */
+        $Front_Controller = $this->registry->load_core('Front_Controller', array(), false);
+        do_action('AHEE__EE_Front_Controller__initialize_shortcodes__begin', $wp, $Front_Controller);
+        $Front_Controller->Request_Handler()->set_request_vars();
+        // grab post_name from request
+        $current_post = apply_filters(
+            'FHEE__EE_Front_Controller__initialize_shortcodes__current_post_name',
+            $Front_Controller->Request_Handler()->get('post_name')
+        );
+        $show_on_front = get_option('show_on_front');
+        // if it's not set, then check if frontpage is blog
+        if (empty($current_post)) {
+            // yup.. this is the posts page, prepare to load all shortcode modules
+            $current_post = 'posts';
+            // unless..
+            if ($show_on_front === 'page') {
+                // some other page is set as the homepage
+                $page_on_front = get_option('page_on_front');
+                if ($page_on_front) {
+                    // k now we need to find the post_name for this page
+                    global $wpdb;
+                    $page_on_front = $wpdb->get_var(
+                        $wpdb->prepare(
+                            "SELECT post_name from {$wpdb->posts} WHERE post_type='page' AND post_status='publish' AND ID=%d",
+                            $page_on_front
+                        )
+                    );
+                    // set the current post slug to what it actually is
+                    $current_post = $page_on_front ? $page_on_front : $current_post;
+                }
+            }
+        }
+        // in case $current_post is hierarchical like: /parent-page/current-page
+        $current_post = basename($current_post);
+        if (
+            // is current page/post the "blog" page ?
+            $current_post === EE_Config::get_page_for_posts()
+            // or are we on a category page?
+            || (
+                is_array(term_exists($current_post, 'category'))
+                || array_key_exists('category_name', $wp->query_vars)
+            )
+        ) {
+            // initialize all legacy shortcodes
+            $load_assets = $this->parseContentForShortcodes('', true);
+        } else {
+            global $wpdb;
+            $post_content = $wpdb->get_var(
+                $wpdb->prepare(
+                    "SELECT post_content from {$wpdb->posts} WHERE post_status='publish' AND post_name=%s",
+                    $current_post
+                )
+            );
+            $load_assets = $this->parseContentForShortcodes($post_content);
+        }
+        if ($load_assets) {
+            add_filter('FHEE_load_css', '__return_true');
+            add_filter('FHEE_load_js', '__return_true');
+        }
+        do_action('AHEE__EE_Front_Controller__initialize_shortcodes__end', $Front_Controller);
+    }
+
+
+
+    /**
      * checks supplied content against list of legacy shortcodes,
      * then initializes any found shortcodes, and returns true.
      * returns false if no shortcodes found.
      *
      * @param string $content
+     * @param bool   $load_all if true, then ALL active legacy shortcodes will be initialized
      * @return bool
      */
-    public function parseContentForShortcodes($content = '')
+    public function parseContentForShortcodes($content = '', $load_all = false)
     {
         $has_shortcode = false;
         foreach ($this->registry->shortcodes as $shortcode_class => $shortcode) {
-            if ( has_shortcode($content, $shortcode_class) ) {
+            if ($load_all || has_shortcode($content, $shortcode_class) ) {
                 // load up the shortcode
                 $this->initializeShortcode($shortcode_class);
                 $has_shortcode = true;
