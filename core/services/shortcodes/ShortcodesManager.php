@@ -57,9 +57,9 @@ class ShortcodesManager
         );
         //  call add_shortcode() for all installed shortcodes
         add_action('AHEE__EE_System__core_loaded_and_ready', array($this, 'addShortcodes'));
-        // check content for shortcodes
-        add_action('get_header', array($this, 'get_header'));
-
+        // check content for shortcodes, the old way, and the more efficient new way
+        add_action('parse_query', array($this->LegacyShortcodesManager, 'initializeShortcodes'), 5);
+        add_action('get_header', array($this, 'getHeader'));
     }
 
 
@@ -165,7 +165,7 @@ class ShortcodesManager
      *
      * @return void
      */
-    public function get_header()
+    public function getHeader()
     {
         global $wp_query;
         if (empty($wp_query->posts)) {
@@ -177,9 +177,6 @@ class ShortcodesManager
         foreach ($posts as $post) {
             // now check post content and excerpt for EE shortcodes
             $load_assets = $this->parseContentForShortcodes($post->post_content)
-                ? true
-                : $load_assets;
-            $load_assets = $this->LegacyShortcodesManager->parseContentForShortcodes($post->post_content)
                 ? true
                 : $load_assets;
         }
