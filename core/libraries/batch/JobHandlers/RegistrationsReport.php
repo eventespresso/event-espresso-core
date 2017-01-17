@@ -167,7 +167,7 @@ class RegistrationsReport extends JobHandlerFile
      * @throws \EE_Error
      */
     public function continue_job(JobParameters $job_parameters, $batch_size = 50)
-    {
+    {die;
         if( $job_parameters->units_processed() < $job_parameters->job_size() ) {
             $csv_data = $this->get_csv_data_for($job_parameters->request_datum('EVT_ID', '0'),
                 $job_parameters->units_processed(), $batch_size, $job_parameters->extra_datum('question_labels'),
