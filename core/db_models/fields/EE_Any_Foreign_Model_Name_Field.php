@@ -13,8 +13,4 @@ require_once(EE_MODELS . 'fields/EE_DB_Only_Field_Base.php');
  */
 class EE_Any_Foreign_Model_Name_Field extends EE_Field_With_Model_Name
 {
-    function get_wpdb_data_type()
-    {
-        return '%s';
-    }
 }

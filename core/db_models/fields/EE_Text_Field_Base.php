@@ -6,10 +6,6 @@
  */
 abstract class EE_Text_Field_Base extends EE_Model_Field_Base
 {
-    function get_wpdb_data_type()
-    {
-        return '%s';
-    }
 
     function prepare_for_get($value_of_field_on_model_object)
     {

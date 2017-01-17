@@ -1,4 +1,7 @@
 <?php
+use EventEspresso\core\entities\interfaces\HasSchemaInterface;
+
+defined('EVENT_ESPRESSO_VERSION') || exit;
 
 /**
  * Class EE_Model_Relation_Base
@@ -12,7 +15,7 @@
  * @subpackage    core
  * @author        Michael Nelson
  */
-abstract class EE_Model_Relation_Base
+abstract class EE_Model_Relation_Base implements HasSchemaInterface
 {
     /**
      * The model name of which this relation is a component (ie, the model that called new EE_Model_Relation_Base)
@@ -388,5 +391,108 @@ abstract class EE_Model_Relation_Base
                 $this->get_other_model()->item_name(2)
             );
         }
+    }
+
+    /**
+     * Returns whatever is set as the nicename for the object.
+     *
+     * @return string
+     */
+    public function getSchemaDescription()
+    {
+        $description = $this instanceof EE_Belongs_To_Relation
+            ? esc_html__('The related %1$s entity to the %2$s.', 'event_espresso')
+            : esc_html__('The related %1$s entities to the %2$s.', 'event_espresso');
+        return sprintf(
+            $description,
+            $this->get_other_model()->get_this_model_name(),
+            $this->get_this_model()->get_this_model_name()
+        );
+    }
+
+    /**
+     * Returns whatever is set as the $_schema_type property for the object.
+     * Note: this will automatically add 'null' to the schema if the object is_nullable()
+     *
+     * @return string|array
+     */
+    public function getSchemaType()
+    {
+        return $this instanceof EE_Belongs_To_Relation ? 'object' : 'array';
+    }
+
+    /**
+     * This is usually present when the $_schema_type property is 'object'.  Any child classes will need to override
+     * this method and return the properties for the schema.
+     * The reason this is not a property on the class is because there may be filters set on the values for the property
+     * that won't be exposed on construct.  For example enum type schemas may have the enum values filtered.
+     *
+     * @return array
+     */
+    public function getSchemaProperties()
+    {
+        return array();
+    }
+
+    /**
+     * If a child class has enum values, they should override this method and provide a simple array
+     * of the enum values.
+     * The reason this is not a property on the class is because there may be filterable enum values that
+     * are set on the instantiated object that could be filtered after construct.
+     *
+     * @return array
+     */
+    public function getSchemaEnum()
+    {
+        return array();
+    }
+
+    /**
+     * This returns the value of the $_schema_format property on the object.
+     *
+     * @return string
+     */
+    public function getSchemaFormat()
+    {
+        return array();
+    }
+
+    /**
+     * This returns the value of the $_schema_readonly property on the object.
+     *
+     * @return bool
+     */
+    public function getSchemaReadonly()
+    {
+        return true;
+    }
+
+    /**
+     * This returns elements used to represent this field in the json schema.
+     *
+     * @link http://json-schema.org/
+     * @return array
+     */
+    public function getSchema()
+    {
+        $schema = array(
+            'description' => $this->getSchemaDescription(),
+            'type' => $this->getSchemaType(),
+            'relation' => true,
+            'relation_type' => get_class($this),
+            'readonly' => $this->getSchemaReadonly()
+        );
+
+        if ($this instanceof EE_HABTM_Relation) {
+            $schema['joining_model_name'] = $this->get_join_model()->get_this_model_name();
+        }
+
+        if ($this->getSchemaType() === 'array') {
+            $schema['items'] = array(
+                'type' => 'object'
+            );
+        }
+
+        return $schema;
     }
 }

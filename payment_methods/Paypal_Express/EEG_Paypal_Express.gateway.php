@@ -18,88 +18,103 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway {
 	 * Merchant API Username.
 	 *  @var string
 	 */
-	protected $_api_username = null;
+	protected $_api_username;
 
 	/**
 	 * Merchant API Password.
 	 *  @var string
 	 */
-	protected $_api_password = null;
+	protected $_api_password;
 
 	/**
 	 * API Signature.
 	 *  @var string
 	 */
-	protected $_api_signature = null;
+	protected $_api_signature;
 
 	/**
 	 * Request Shipping address on PP checkout page.
 	 *  @var string
 	 */
-	protected $_request_shipping_addr = null;
+	protected $_request_shipping_addr;
 
 	/**
 	 * Business/personal logo.
 	 *  @var string
 	 */
-	protected $_image_url = null;
+	protected $_image_url;
 
-	/**
-	 * All the currencies supported by this gateway.
-	 *  @var array
-	 */
-	protected $_currencies_supported = array(
-		'USD',
-		'AUD',
-		'BRL',
-		'CAD',
-		'CZK',
-		'DKK',
-		'EUR',
-		'HKD',
-		'HUF',
-		'ILS',
-		'JPY',
-		'MYR',
-		'MXN',
-		'NOK',
-		'NZD',
-		'PHP',
-		'PLN',
-		'GBP',
-		'RUB',
-		'SGD',
-		'SEK',
-		'CHF',
-		'TWD',
-		'THB',
-		'TRY'
-	);
+    /**
+     * gateway URL variable
+     *
+     * @var string
+     */
+    protected $_base_gateway_url = '';
 
 
-	/**
+
+    /**
+     * EEG_Paypal_Express constructor.
+     */
+    public function __construct()
+    {
+        $this->_currencies_supported = array(
+            'USD',
+            'AUD',
+            'BRL',
+            'CAD',
+            'CZK',
+            'DKK',
+            'EUR',
+            'HKD',
+            'HUF',
+            'ILS',
+            'JPY',
+            'MYR',
+            'MXN',
+            'NOK',
+            'NZD',
+            'PHP',
+            'PLN',
+            'GBP',
+            'RUB',
+            'SGD',
+            'SEK',
+            'CHF',
+            'TWD',
+            'THB',
+            'TRY'
+        );
+        parent::__construct();
+    }
+
+
+
+    /**
 	 * Sets the gateway URL variable based on whether debug mode is enabled or not.
+
 	 *
-	 *  @param type $settings_array
+*@param array $settings_array
 	 */
 	public function set_settings( $settings_array ) {
 		parent::set_settings($settings_array);
 		// Redirect URL.
-		if ( $this->_debug_mode ) {
-			$this->_base_gateway_url = 'https://api-3t.sandbox.paypal.com/nvp';
-		} else {
-			$this->_base_gateway_url = 'https://api-3t.paypal.com/nvp';
-		}
+        $this->_base_gateway_url = $this->_debug_mode
+            ? 'https://api-3t.sandbox.paypal.com/nvp'
+            : 'https://api-3t.paypal.com/nvp';
 	}
 
 
-	/**
-	 *
-	 *  @param EEI_Payment $payment
-	 *  @param type $billing_info
-	 *  @param type $return_url
-	 *  @param type $cancel_url
-	 */
+
+    /**
+     * @param EEI_Payment $payment
+     * @param array       $billing_info
+     * @param string      $return_url
+     * @param string      $notify_url
+     * @param string      $cancel_url
+     * @return \EE_Payment|\EEI_Payment
+     * @throws \EE_Error
+     */
 	public function set_redirection_info( $payment, $billing_info = array(), $return_url = NULL, $notify_url = NULL, $cancel_url = NULL ) {
 		if ( ! $payment instanceof EEI_Payment ) {
 			$payment->set_gateway_response( __( 'Error. No associated payment was found.', 'event_espresso' ) );
@@ -126,13 +141,13 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway {
 			'RETURNURL' => $return_url,
 			'CANCELURL' => $cancel_url,
 			'PAYMENTREQUEST_0_PAYMENTACTION' => 'Sale',
-			'SOLUTIONTYPE' => 'Sole',	// Buyer does not need to create a PayPal account to check out. This is referred to as PayPal Account Optional. 
+			'SOLUTIONTYPE' => 'Sole',	// Buyer does not need to create a PayPal account to check out. This is referred to as PayPal Account Optional.
 			'BUTTONSOURCE' => 'EventEspresso_SP',//EE will blow up if you change this
 			'LOCALECODE' => $locale[1]	// Locale of the pages displayed by PayPal during Express Checkout.
 		);
 
 		// Show itemized list.
-		if ( EEH_Money::compare_floats( $payment->amount(), $transaction->total(), '==' ) ) {
+		if ( $this->_money->compare_floats( $payment->amount(), $transaction->total(), '==' ) ) {
 			$item_num = 0;
 			$itemized_sum = 0;
 			$total_line_items = $transaction->total_line_item();
@@ -152,9 +167,9 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway {
 						$line_item_quantity = 1;
 					}
 					// Item Name.
-					$token_request_dtls['L_PAYMENTREQUEST_0_NAME'.$item_num] = substr($line_item->name(), 0, 127);
+					$token_request_dtls['L_PAYMENTREQUEST_0_NAME'.$item_num] = substr($this->_format_line_item_name( $line_item, $payment), 0, 127);
 					// Item description.
-					$token_request_dtls['L_PAYMENTREQUEST_0_DESC'.$item_num] = substr($line_item->desc(), 0, 127);
+					$token_request_dtls['L_PAYMENTREQUEST_0_DESC'.$item_num] = substr($this->_format_line_item_desc( $line_item, $payment), 0, 127);
 					// Cost of individual item.
 					$token_request_dtls['L_PAYMENTREQUEST_0_AMT'.$item_num] = $this->format_currency( $unit_price );
 					// Item Number.
@@ -174,27 +189,29 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway {
 			$token_request_dtls['PAYMENTREQUEST_0_HANDLINGAMT'] = '0';
 
 			$itemized_sum_diff_from_txn_total = round( $transaction->total() - $itemized_sum - $total_line_items->get_total_tax(), 2 );
-			// If we were not able to recognize some item like promotion, surcharge or cancellation, 
+			// If we were not able to recognize some item like promotion, surcharge or cancellation,
 			// add the difference as an extra line item.
-			if ( $itemized_sum_diff_from_txn_total != 0 ) {
+			if ( $this->_money->compare_floats( $itemized_sum_diff_from_txn_total, 0, '!=' ) ) {
 				// Item Name.
 				$token_request_dtls['L_PAYMENTREQUEST_0_NAME'.$item_num] = substr( __( 'Other (promotion/surcharge/cancellation)', 'event_espresso' ), 0, 127 );
 				// Item description.
-				$token_request_dtls['L_PAYMENTREQUEST_0_DESC'.$item_num] = substr( $line_item->desc(), 0, 127 );
+				$token_request_dtls['L_PAYMENTREQUEST_0_DESC'.$item_num] = '';
 				// Cost of individual item.
 				$token_request_dtls['L_PAYMENTREQUEST_0_AMT'.$item_num] = $this->format_currency( $itemized_sum_diff_from_txn_total );
 				// Item Number.
 				$token_request_dtls['L_PAYMENTREQUEST_0_NUMBER'.$item_num] = $item_num + 1;
 				// Item quantity.
 				$token_request_dtls['L_PAYMENTREQUEST_0_QTY'.$item_num] = 1;
-				++$item_num;
+                // Digital item is sold.
+                $token_request_dtls['L_PAYMENTREQUEST_0_ITEMCATEGORY'.$item_num] = 'Physical';
+                $item_num++;
 			}
 		} else {
 			// Just one Item.
 			// Item Name.
-			$token_request_dtls['L_PAYMENTREQUEST_0_NAME0'] = substr( sprintf( __('Payment for %1$s', 'event_espresso'), $primary_registration->reg_code() ), 0, 127 );
+			$token_request_dtls['L_PAYMENTREQUEST_0_NAME0'] = substr( $this->_format_partial_payment_line_item_name($payment), 0, 127 );
 			// Item description.
-			$token_request_dtls['L_PAYMENTREQUEST_0_DESC0'] = substr( sprintf( __('Payment of %1$s for %2$s', 'event_espresso'), $payment->amount(), $primary_registration->reg_code() ), 0, 127 );
+			$token_request_dtls['L_PAYMENTREQUEST_0_DESC0'] = substr( $this->_format_partial_payment_line_item_desc($payment), 0, 127 );
 			// Cost of individual item.
 			$token_request_dtls['L_PAYMENTREQUEST_0_AMT0'] = $this->format_currency( $payment->amount() );
 			// Item Number.
@@ -230,6 +247,11 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway {
 		if ( ! empty($this->_image_url) ) {
 			$token_request_dtls['LOGOIMG'] = $this->_image_url;
 		}
+		$token_request_dtls = apply_filters( 
+			'FHEE__EEG_Paypal_Express__set_redirection_info__arguments', 
+			$token_request_dtls, 
+			$this 
+		);
 		// Request PayPal token.
 		$token_request_response = $this->_ppExpress_request( $token_request_dtls, 'Payment Token', $payment );
 		$token_rstatus = $this->_ppExpress_check_response( $token_request_response );
@@ -238,7 +260,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway {
 			// We got the Token so we may continue with the payment and redirect the client.
 			$payment->set_details( $response_args );
 
-			$gateway_url = ( $this->_debug_mode ) ? 'https://www.sandbox.paypal.com' : 'https://www.paypal.com';
+			$gateway_url = $this->_debug_mode ? 'https://www.sandbox.paypal.com' : 'https://www.paypal.com';
 			$payment->set_redirect_url( $gateway_url . '/checkoutnow?useraction=commit&cmd=_express-checkout&token=' . $response_args['TOKEN'] );
 		} else {
 			if ( isset($response_args['L_ERRORCODE']) ) {
@@ -255,21 +277,19 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway {
 
 
 	/**
-	 *
+
 	 *  @param array $update_info {
 	 *	  @type string $gateway_txn_id
 	 *	  @type string status an EEMI_Payment status
 	 *  }
-	 *  @param type $transaction
+	 *  @param EEI_Transaction $transaction
 	 *  @return EEI_Payment
 	 */
 	public function handle_payment_update( $update_info, $transaction ) {
-		$payment = ( $transaction instanceof EEI_Transaction ) ? $transaction->last_payment() : null;
+		$payment = $transaction instanceof EEI_Transaction ? $transaction->last_payment() : null;
 
 		if ( $payment instanceof EEI_Payment ) {
 			$this->log( array( 'Return from Authorization' => $update_info ), $payment );
-
-			$payment_details = $payment->details();
 			$transaction = $payment->transaction();
 			if ( ! $transaction instanceof EEI_Transaction ) {
 				$payment->set_gateway_response( __( 'Could not process this payment because it has no associated transaction.', 'event_espresso' ) );
@@ -277,8 +297,8 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway {
 				return $payment;
 			}
 			$primary_registrant = $transaction->primary_registration();
-
-			// Check if we still have the token.
+            $payment_details = $payment->details();
+            // Check if we still have the token.
 			if ( ! isset($payment_details['TOKEN']) || empty($payment_details['TOKEN']) ) {
 				$payment->set_status( $this->_pay_model->failed_status() );
 				return $payment;
@@ -310,7 +330,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway {
 					// All is well, payment approved.
 					$primary_registration_code = $primary_registrant instanceof EE_Registration ? $primary_registrant->reg_code() : '';
 					$payment->set_extra_accntng( $primary_registration_code );
-					$payment->set_amount( isset($docheckout_response_args['PAYMENTINFO_0_AMT']) ? floatval( $docheckout_response_args['PAYMENTINFO_0_AMT'] ) : 0 );
+					$payment->set_amount( isset($docheckout_response_args['PAYMENTINFO_0_AMT']) ? (float) $docheckout_response_args['PAYMENTINFO_0_AMT'] : 0 );
 					$payment->set_txn_id_chq_nmbr( isset( $docheckout_response_args['PAYMENTINFO_0_TRANSACTIONID'] ) ? $docheckout_response_args['PAYMENTINFO_0_TRANSACTIONID'] : null );
 					$payment->set_details( $cdata_response_args );
 					$payment->set_gateway_response( isset( $docheckout_response_args['PAYMENTINFO_0_ACK'] ) ? $docheckout_response_args['PAYMENTINFO_0_ACK'] : '' );
@@ -386,47 +406,44 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway {
 	 *	@return array
 	 */
 	public function _ppExpress_check_response( $request_response ) {
-		if ( ! is_wp_error( $request_response ) && $request_response['body'] && ! empty($request_response['body'] ) ) {
-			$response_args = array();
-			parse_str( urldecode($request_response['body']), $response_args );
-			if ( isset($response_args['ACK']) 
-				&& $response_args['ACK'] === 'Success' 
-				&& ( isset($response_args['PAYERID']) 
-					|| isset($response_args['PAYMENTINFO_0_TRANSACTIONID']) 
-					|| ( isset($response_args['PAYMENTSTATUS']) && $response_args['PAYMENTSTATUS'] === 'Completed' ) 
-					|| isset($response_args['TOKEN']) 
-				) 
-			) {
-				// Response status OK, return response parameters for further processing.
-				return array('status' => true, 'args' => $response_args);
-			} else {
-				if ( isset($response_args['ACK']) ) {
-					$errors = $this->_get_errors($response_args);
-					return array( 'status' => false, 'args' => $errors );
-				} else {
-					return array( 'status' => false, 'args' => $request_response );
-				}
-			}
-		} else {
-			// If we got here then there was an error in this request.
-			return array( 'status' => false, 'args' => $request_response );
-		}
+		if (empty($request_response['body']) || is_wp_error( $request_response ) ) {
+            // If we got here then there was an error in this request.
+            return array('status' => false, 'args' => $request_response);
+        }
+        $response_args = array();
+        parse_str( urldecode($request_response['body']), $response_args );
+        if ( ! isset($response_args['ACK'])) {
+            return array('status' => false, 'args' => $request_response);
+        }
+        if (
+            $response_args['ACK'] === 'Success'
+            && (
+                isset($response_args['PAYERID'])
+                || isset($response_args['PAYMENTINFO_0_TRANSACTIONID'])
+                || (isset($response_args['PAYMENTSTATUS']) && $response_args['PAYMENTSTATUS'] === 'Completed')
+                || isset($response_args['TOKEN'])
+            )
+        ) {
+            // Response status OK, return response parameters for further processing.
+            return array('status' => true, 'args' => $response_args);
+        } else {
+            $errors = $this->_get_errors($response_args);
+            return array('status' => false, 'args' => $errors);
+        }
 	}
 
 
 	/**
-	 *  Log a "Cleared" request.
-	 *
-	 *	@param array        $response
-	 *	@param EEI_Payment  $payment
-	 *	@param string  		$info
-	 *	@return void
+     *  Log a "Cleared" request.
+     *
+     * @param array $request
+	 * @param EEI_Payment  $payment
+	 * @param string  		$info
+	 * @return void
 	 */
-	private function _log_clean_request( $request_prms, $payment, $info ) {
-		$cleaned_request_data = $request_prms;
-		unset($cleaned_request_data['PWD']);
-		unset($cleaned_request_data['USER']);
-		unset($cleaned_request_data['SIGNATURE']);
+	private function _log_clean_request($request, $payment, $info ) {
+		$cleaned_request_data = $request;
+		unset($cleaned_request_data['PWD'], $cleaned_request_data['USER'], $cleaned_request_data['SIGNATURE']);
 		$this->log( array($info => $cleaned_request_data), $payment );
 	}
 
@@ -440,13 +457,21 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway {
 	private function _get_errors( $data_array ) {
 		$errors = array();
 		$n = 0;
-		while ( isset($data_array['L_ERRORCODE' . $n . '']) ) {
-			$l_error_code = isset($data_array['L_ERRORCODE' . $n . '']) ? $data_array['L_ERRORCODE' . $n . ''] : '';
-			$l_severity_code = isset($data_array['L_SEVERITYCODE' . $n . '']) ? $data_array['L_SEVERITYCODE' . $n . ''] : '';
-			$l_short_message = isset($data_array['L_SHORTMESSAGE' . $n . '']) ? $data_array['L_SHORTMESSAGE' . $n . ''] : '';
-			$l_long_message = isset($data_array['L_LONGMESSAGE' . $n . '']) ? $data_array['L_LONGMESSAGE' . $n . ''] : '';
+		while ( isset($data_array["L_ERRORCODE{$n}"]) ) {
+			$l_error_code = isset($data_array["L_ERRORCODE{$n}"])
+                ? $data_array["L_ERRORCODE{$n}"]
+                : '';
+			$l_severity_code = isset($data_array["L_SEVERITYCODE{$n}"])
+                ? $data_array["L_SEVERITYCODE{$n}"]
+                : '';
+			$l_short_message = isset($data_array["L_SHORTMESSAGE{$n}"])
+                ? $data_array["L_SHORTMESSAGE{$n}"]
+                : '';
+			$l_long_message = isset($data_array["L_LONGMESSAGE{$n}"])
+                ? $data_array["L_LONGMESSAGE{$n}"]
+                : '';
 
-			if ( $n == 0 ) {
+			if ( $n === 0 ) {
 				$errors = array(
 					'L_ERRORCODE' => $l_error_code,
 					'L_SHORTMESSAGE' => $l_short_message,

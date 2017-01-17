@@ -1,4 +1,5 @@
 <?php
+defined('EVENT_ESPRESSO_VERSION') || exit;
 
 /**
  * EE_Full_HTML_Field
@@ -13,6 +14,18 @@
  */
 class EE_Full_HTML_Field extends EE_Text_Field_Base
 {
+
+    /**
+     * @param string $table_column
+     * @param string $nicename
+     * @param bool   $nullable
+     * @param null   $default_value
+     */
+    public function __construct($table_column, $nicename, $nullable, $default_value = null)
+    {
+        parent::__construct($table_column, $nicename, $nullable, $default_value);
+        $this->setSchemaType('object');
+    }
 
 
     /**
@@ -31,5 +44,28 @@ class EE_Full_HTML_Field extends EE_Text_Field_Base
         } else {
             return wpautop(do_shortcode(parent::prepare_for_pretty_echoing($value_on_field_to_be_outputted, $schema)));
         }
+    }
+
+
+
+    public function getSchemaProperties()
+    {
+        return array(
+            'raw' => array(
+                'description' =>  sprintf(
+                    __('%s - the value in the database.', 'event_espresso'),
+                    $this->get_nicename()
+                ),
+                'type' => 'string'
+            ),
+            'rendered' => array(
+                'description' =>  sprintf(
+                    __('%s - transformed for display.', 'event_espresso'),
+                    $this->get_nicename()
+                ),
+                'type' => 'string',
+                'readonly' => true
+            )
+        );
     }
 }

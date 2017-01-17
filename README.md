@@ -2,7 +2,7 @@
 
 [![Latest Tag](https://img.shields.io/github/tag/eventespresso/event-espresso-core.svg?style=flat&label=Latest%20Tag)](https://github.com/eventespresso/event-espresso-core/releases)
 [![Build Status](https://circleci.com/gh/eventespresso/event-espresso-core.svg?style=shield&circle-token=fa8a74e72f3f7c85b8e754044268cafdc9765437)](https://circleci.com/gh/eventespresso)
-[![PHP](https://img.shields.io/badge/PHP-4.7%20Tested-brightgreen.svg?style=flat)](https://eventespresso.com/)
+[![PHP](https://img.shields.io/badge/PHP-7%20Ready-brightgreen.svg?style=flat)](https://eventespresso.com/)
 [![WordPress](https://img.shields.io/badge/WordPress-v4.7.x+%20Tested-brightgreen.svg?style=flat)](https://eventespresso.com/)
 [![License](https://img.shields.io/badge/License-GPLv2-blue.svg?style=flat)](https://www.gnu.org/licenses/gpl-2.0.html)
 [![Join Chat](https://img.shields.io/badge/Slack-Join%20Chat-aa30ff.svg?style=flat)](https://eventespresso.com/contact/community-chat/)
