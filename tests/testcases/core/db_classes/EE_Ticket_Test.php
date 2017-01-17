@@ -129,6 +129,20 @@ class EE_Ticket_Test extends EE_UnitTestCase
         $t->decrease_sold(2);
         $this->assertEquals(0, $t->sold());
     }
+
+
+    /**
+     * @group 10283
+     * @expectedException \EventEspresso\core\exceptions\UnexpectedEntityException
+     */
+    public function test_get_related_event_exception()
+    {
+        //create a ticket (it won't have any datetime).
+        /** @var EE_Ticket $ticket */
+        $ticket = $this->factory->ticket->create();
+        //the following should throw the exception
+        $ticket->get_related_event();
+    }
 }
 
 // End of file EE_Ticket_Test.php
