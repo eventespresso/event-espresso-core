@@ -485,25 +485,25 @@
     margin-left: 10px;
 }
 
-.basic-ticket-info, .price-table {
+.advanced-ticket-info .basic-ticket-info, .price-table {
     width: 100%;
     border-collapse: collapse;
 }
 
-.basic-ticket-info thead, .price-table thead {
+.advanced-ticket-info thead, .basic-ticket-info thead, .price-table thead {
     font-weight: normal;
     border: none;
 }
 
-.basic-ticket-info tbody tr td, .price-table tbody tr td {
+.advanced-ticket-info tbody tr td, .basic-ticket-info tbody tr td, .price-table tbody tr td {
     padding: 0;
 }
 
-.basic-ticket-info input {
+.advanced-ticket-info input, .basic-ticket-info input {
     text-align: right;
 }
 
-.basic-ticket-info tbody tr td {
+.advanced-ticket-info tbody tr td, .basic-ticket-info tbody tr td {
     padding-right: .4em;
     width: 33%;
 }
@@ -685,7 +685,7 @@
 }
 
 
-
+.ticket-full-checkin-container,
 .ticket-is-required-container {
     margin-top: 10px;
 }

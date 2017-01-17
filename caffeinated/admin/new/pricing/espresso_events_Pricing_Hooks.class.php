@@ -417,7 +417,9 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
                 'TKT_order'       => isset($tkt['TKT_order']) ? $tkt['TKT_order'] : 0,
                 'TKT_taxable'     => ! empty($tkt['TKT_taxable']) ? 1 : 0,
                 'TKT_required'    => ! empty($tkt['TKT_required']) ? 1 : 0,
-                'TKT_price'       => $ticket_price
+                'TKT_price'       => $ticket_price,
+                'TKT_class'       => $tkt['TKT_class'],
+                'TKT_full_checkin'=> $tkt['TKT_full_checkin']
             );
             
             
@@ -1190,6 +1192,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
             'edit_tkt_expanded'             => '',
             'edit_tickets_name'             => $default ? 'TICKETNAMEATTR' : 'edit_tickets',
             'TKT_name'                      => $default ? '' : $ticket->get('TKT_name'),
+            'TKT_class'                     => $default ? '' : $ticket->get('TKT_class'),
+            'TKT_full_checkin'              => $default ? '' : $ticket->get('TKT_full_checkin'),
             'TKT_start_date'                => $default ? '' : $ticket->get_date('TKT_start_date',
                 $this->_date_format_strings['date'] . ' ' . $this->_date_format_strings['time']),
             'TKT_end_date'                  => $default ? '' : $ticket->get_date('TKT_end_date',
