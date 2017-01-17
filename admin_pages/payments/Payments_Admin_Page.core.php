@@ -473,7 +473,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 					EEH_HTML::td(
 						EEH_HTML::strong(
 							sprintf(
-								__( 'This payment method does not support the currency set on your site (%1$s) and so will not appear as a payment option to registrants. Please activate a different payment method or change your site\'s country and associated currency.', 'event_espresso'),
+								__( 'This payment method does not support the currency set on your site (%1$s). Please activate a different payment method or change your site\'s country and associated currency.', 'event_espresso'),
 								EE_Config::instance()->currency->code
 							)
 						)
