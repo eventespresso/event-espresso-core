@@ -121,7 +121,7 @@ class EEM_Payment_Method extends EEM_Base {
 	 */
 	public function get_all_active( $scope = NULL, $query_params = array() ) {
 		if( ! isset( $query_params[ 'order_by' ] ) && ! isset( $query_params[ 'order' ] ) ) {
-			$query_params = array( 'order_by' => array( 'PMD_order' => 'ASC', 'PMD_ID' => 'ASC' ) );
+			$query_params['order_by'] = array( 'PMD_order' => 'ASC', 'PMD_ID' => 'ASC' );
 		}
 		return $this->get_all( $this->_get_query_params_for_all_active( $scope, $query_params ) );
 	}
