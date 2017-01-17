@@ -140,23 +140,24 @@ var Maintenance_helper = {
 				success: function(response, status, xhr) {
 //					alert('response:'+response);
 					var ct = xhr.getResponseHeader("content-type") || "";
-                    //did we get HTML in the response? wack
-					if (ct.indexOf('html') > -1) {
-                        Maintenance_helper.handle_ajax_error(response,setup);
-					}
                     //was the response valid JSON?
 					if (ct.indexOf('json') > -1 ) {
-                        wht = typeof(response.data.what) === 'undefined' ? setup.what : response.data.what,
-                            whr = typeof(response.data.where) === 'undefined' ? setup.where : response.data.where,
-                            display_content = response.error ? response.error : response.content;
+					    var what, where, display_content;
+
+                        what = typeof(response.data.what) === 'undefined' ? setup.what : response.data.what;
+                        where = typeof(response.data.where) === 'undefined' ? setup.where : response.data.where;
+                        display_content = response.error ? response.error : response.content;
 
                         Maintenance_helper.display_notices(response.notices);
-                        Maintenance_helper.display_content(display_content, whr, wht);
+                        Maintenance_helper.display_content(display_content, where, what);
                         //call the callback that was passed in
                         if (typeof(setup.callback) !== 'undefined'){
                             setup.callback(response);
                         }
-					}
+					}else{
+					    //so we didn't get json back? that's probably an error
+                        Maintenance_helper.handle_ajax_error(response,setup);
+                    }
 				},
                 error: function(xhr,status,error_thrown) {
                     Maintenance_helper.handle_ajax_error(error_thrown,setup);
