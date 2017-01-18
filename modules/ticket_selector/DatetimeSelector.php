@@ -32,6 +32,11 @@ class DatetimeSelector
     protected $datetimes;
 
     /**
+     * @var \EE_Datetime[] $unique_dates
+     */
+    protected $unique_dates;
+
+    /**
      * @var \EE_Ticket_Selector_Config $template_settings
      */
     protected $template_settings;
@@ -49,15 +54,23 @@ class DatetimeSelector
      * @param \EE_Event                  $event
      * @param \EE_Ticket[]               $tickets
      * @param \EE_Ticket_Selector_Config $template_settings
+     * @param string                     $date_format
+     * @param string                     $time_format
      * @throws \EE_Error
      */
-    public function __construct(\EE_Event $event, array $tickets, \EE_Ticket_Selector_Config $template_settings)
-    {
+    public function __construct(
+        \EE_Event $event,
+        array $tickets,
+        \EE_Ticket_Selector_Config $template_settings,
+        $date_format = 'Y-m-d',
+        $time_format = 'g:i a'
+    ) {
         $this->event = $event;
         $this->tickets = $tickets;
         $this->template_settings = $template_settings;
         $this->datetimes = $this->getAllDatetimesForAllTicket($tickets);
-        $this->active = $this->template_settings->showDatetimeSelector($this->datetimes);
+        $this->unique_dates = $this->getUniqueDatetimeOptions($date_format, $time_format);
+        $this->active = $this->template_settings->showDatetimeSelector($this->unique_dates);
     }
 
 
@@ -131,13 +144,10 @@ class DatetimeSelector
     /**
      * @param string $date_format
      * @param string $time_format
-     * @return string
+     * @return array
      * @throws \EE_Error
      */
-    public function getDatetimeSelector($date_format = 'Y-m-d', $time_format = 'g:i a') {
-        if ( ! $this->active) {
-            return '';
-        }
+    public function getUniqueDatetimeOptions($date_format = 'Y-m-d', $time_format = 'g:i a') {
         $datetime_options = array();
         foreach ($this->datetimes as $datetime) {
             if ( ! $datetime instanceof \EE_Datetime) {
@@ -146,8 +156,21 @@ class DatetimeSelector
             $datetime_options[$datetime->date_and_time_range('Y_m_d', 'H_i', '-', '_')] =
                 $datetime->date_and_time_range($date_format, $time_format, ' - ');
         }
+        return $datetime_options;
+    }
+
+
+
+    /**
+     * @return string
+     * @throws \EE_Error
+     */
+    public function getDatetimeSelector() {
+        if ( ! $this->active) {
+            return '';
+        }
         $dropdown_selector = new \EE_Checkbox_Dropdown_Selector_Input(
-            $datetime_options,
+            $this->unique_dates,
             array(
                 'html_id'               => 'datetime-selector-' . $this->event->ID(),
                 'html_name'             => 'datetime_selector_' . $this->event->ID(),
