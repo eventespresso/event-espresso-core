@@ -212,20 +212,6 @@ class EED_Ticket_Selector extends  EED_Module {
 
 
 	/**
-     * cancel_ticket_selections
-     *
-     * @access        public
-	 * @return        array  or FALSE
-	 * @throws \EE_Error
-	 */
-	public function cancel_ticket_selections() {
-		$form = new ProcessTicketSelector();
-		return $form->cancelTicketSelections();
-	}
-
-
-
-	/**
 	* 	load js
 	*
 	* 	@access 		public
