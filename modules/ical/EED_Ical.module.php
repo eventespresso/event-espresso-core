@@ -166,6 +166,7 @@ class EED_Ical  extends EED_Module {
 					'DTEND' => EED_Ical::_escape_ICal_data( date( EED_Ical::iCal_datetime_format, $datetime->end() )),
 				);
 
+				//Filter the values used within the ics output.
 				$ics_data = apply_filters( 'FHEE__EED_Ical__download_ics_file_ics_data', $ics_data, $datetime );
 
 				//Pull the organizer name from ics_data and remove it from the array.
@@ -188,10 +189,13 @@ class EED_Ical  extends EED_Module {
 				echo "VERSION:2.0" . PHP_EOL;
 				echo "PRODID:-//{$organizer_name}//NONSGML PDA Calendar Version 1.0//EN" . PHP_EOL;
 				echo "CALSCALE:GREGORIAN" . PHP_EOL;
-				echo "BEGIN:VEVENT" . PHP_EOL;	
+				echo "BEGIN:VEVENT" . PHP_EOL;
+				
+				//Output all remaining values from ics_data.
 				foreach( $ics_data as $key => $value) {
 					echo strtoupper( $key ) . ':' . $value . PHP_EOL;
 				}
+
 				echo "END:VEVENT" . PHP_EOL;
 				echo "END:VCALENDAR" . PHP_EOL;
 			}
