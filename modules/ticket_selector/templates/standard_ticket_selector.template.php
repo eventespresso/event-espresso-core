@@ -61,12 +61,12 @@
 						*
 						* @since 4.7.2
 						*
-						* @param string 'Qty*' The translatable text to display in the table header for the Quantity of tickets
+						* @param string 'Qty' The translatable text to display in the table header for the Quantity of tickets
 						* @param int $EVT_ID The Event ID
 						*/
 						echo apply_filters(
                             'FHEE__ticket_selector_chart_template__table_header_qty',
-                            esc_html__( 'Qty*', 'event_espresso' ),
+                            esc_html__( 'Qty', 'event_espresso' ),
                             $EVT_ID
                         );
 					?>
@@ -89,7 +89,7 @@
 	?>
 
 	<input type="hidden" name="noheader" value="true" />
-	<input type="hidden" name="tkt-slctr-return-url-<?php echo $EVT_ID ?>" value="<?php echo EEH_URL::filter_input_server_url() . $anchor_id; ?>" />
+	<input type="hidden" name="tkt-slctr-return-url-<?php echo $EVT_ID ?>" value="<?php echo EEH_URL::current_url() . $anchor_id; ?>" />
 	<input type="hidden" name="tkt-slctr-rows-<?php echo $EVT_ID; ?>" value="<?php echo $row - 1; ?>" />
 	<input type="hidden" name="tkt-slctr-max-atndz-<?php echo $EVT_ID; ?>" value="<?php echo $max_atndz; ?>" />
 	<input type="hidden" name="tkt-slctr-event-id" value="<?php echo $EVT_ID; ?>" />
