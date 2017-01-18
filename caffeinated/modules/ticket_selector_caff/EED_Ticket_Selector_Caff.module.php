@@ -209,7 +209,7 @@ class EED_Ticket_Selector_Caff  extends EED_Ticket_Selector {
      */
     public static function ticket_price_details(EE_Ticket $ticket, $ticket_price)
     {
-        require_once( str_replace('\\', DS, plugin_dir_path(__FILE__)) . 'templates' . DS . 'ticket_selector_price_details.template.php');
+        require( str_replace('\\', DS, plugin_dir_path(__FILE__)) . 'templates' . DS . 'ticket_selector_price_details.template.php');
 	}
 
 
