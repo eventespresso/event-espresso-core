@@ -4,11 +4,6 @@ jQuery(document).ready(function ($) {
     // reset by unchecking everything, and disabling the submit button
     $.each($datetime_options, function () {
         $(this).prop('checked', true);
-		var event_id = $( this ).data( 'tkt_slctr_evt' );
-        var $submit_button = $('#ticket-selector-submit-' + event_id + '-btn');
-        if (object_exists($submit_button, '$submit_button')) {
-            $submit_button.addClass( 'ee-disabled-btn' ).data('active-rows', 0);
-        }
     });
     // update ticket selector if datetime is chosen
     $('.checkbox-dropdown-selector').on( 'click', '.datetime-selector-option',
