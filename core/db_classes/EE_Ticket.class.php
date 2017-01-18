@@ -1335,7 +1335,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
                 'EE_Datetime',
 				sprintf(
 					__( 'The ticket (%s) is not associated with any valid datetimes.', 'event_espresso'),
-					$datetime->name()
+					$this->name()
 				)
 			);
 		}

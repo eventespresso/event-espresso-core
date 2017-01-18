@@ -102,7 +102,8 @@ class EED_Recaptcha  extends EED_Module {
 		// use_captcha ?
 		if (
 			EE_Registry::instance()->CFG->registration->use_captcha
-			&& ! (
+            && EE_Registry::instance()->REQ->get( 'step', '' ) !== ''
+            && ! (
 				EE_Registry::instance()->REQ->get( 'step', '' ) === 'payment_options'
 				&& (boolean) EE_Registry::instance()->REQ->get( 'revisit', false ) === true
 			)

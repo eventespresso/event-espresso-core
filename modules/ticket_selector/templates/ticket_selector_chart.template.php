@@ -57,9 +57,10 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 			: $ticket->get_ticket_subtotal();
 		$taxable_tickets = $ticket->taxable() ? true : $taxable_tickets;
 		$ticket_bundle = FALSE;
+		$ticket_min = $ticket->min();
 		// for ticket bundles, set min and max qty the same
-		if ( $ticket->min() !== 0 && $ticket->min() === $ticket->max() ) {
-			$ticket_price *= $ticket->min();
+		if ( $ticket_min !== 0 && $ticket_min === $ticket->max() ) {
+			$ticket_price *= $ticket_min;
 			$ticket_bundle = TRUE;
 		}
 		$ticket_price = apply_filters( 'FHEE__ticket_selector_chart_template__ticket_price', $ticket_price, $ticket );
@@ -108,22 +109,19 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 		 *
 		 * @var string|bool
 		 */
-		if (
-			false !== (
-				$new_row_content = apply_filters(
-					'FHEE__ticket_selector_chart_template__do_ticket_entire_row',
-					false,
-					$ticket,
-					$max,
-					$min,
-					$required_ticket_sold_out,
-					$ticket_price,
-					$ticket_bundle,
-					$ticket_status,
-					$status_class
-				)
-			)
-		) {
+		$new_row_content = apply_filters(
+			'FHEE__ticket_selector_chart_template__do_ticket_entire_row',
+			false,
+			$ticket,
+			$max,
+			$min,
+			$required_ticket_sold_out,
+			$ticket_price,
+			$ticket_bundle,
+			$ticket_status,
+			$status_class
+		);
+		if ( $new_row_content !== false ) {
 			echo $new_row_content;
 			continue;
 		}
@@ -145,7 +143,19 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 		 *
 		 * @var string|bool
 		 */
-		if ( false !== ( $new_row_cells_content = apply_filters( 'FHEE__ticket_selector_chart_template__do_ticket_inside_row', false, $ticket, $max, $min, $required_ticket_sold_out, $ticket_price, $ticket_bundle, $ticket_status, $status_class ) ) ) {
+		$new_row_cells_content = apply_filters(
+			'FHEE__ticket_selector_chart_template__do_ticket_inside_row',
+			false,
+			$ticket,
+			$max,
+			$min,
+			$required_ticket_sold_out,
+			$ticket_price,
+			$ticket_bundle,
+			$ticket_status,
+			$status_class
+		);
+		if ( $new_row_cells_content !== false ) {
 			echo $new_row_cells_content;
 			echo '</tr>';
 			continue;
@@ -253,7 +263,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 					<select name="tkt-slctr-qty-<?php echo $EVT_ID; ?>[]" id="ticket-selector-tbl-qty-slct-<?php echo $EVT_ID . '-' . $row; ?>" class="ticket-selector-tbl-qty-slct" title="">
 					<?php
 						// this ensures that non-required tickets with non-zero MIN QTYs don't HAVE to be purchased
-						if ( ! $ticket->required() && $min !== 0 ) {
+						if ( $min !== 0 && ! $ticket->required() ) {
 					?>
 						<option value="0">&nbsp;0&nbsp;</option>
 					<?php }
@@ -381,7 +391,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 									<br/>
 									<?php } ?>
 
-									<?php if ( $ticket->uses() !== EE_INF && ( ! defined( 'EE_DECAF' ) || EE_DECAF !== TRUE )) { ?>
+									<?php if ( ( ! defined( 'EE_DECAF' ) || EE_DECAF !== TRUE ) && $ticket->uses() !== EE_INF) { ?>
 									<section class="tckt-slctr-tkt-uses-sctn">
 										<h5><?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_details_event_date_ticket_uses_heading', __( 'Event Date Ticket Uses', 'event_espresso' )); ?></h5>
 										<span class="drk-grey-text small-text no-bold"> - <?php
@@ -560,7 +570,7 @@ if ( ! $hide_ticket_selector ) {
 	?>
 
 	<input type="hidden" name="noheader" value="true" />
-	<input type="hidden" name="tkt-slctr-return-url-<?php echo $EVT_ID ?>" value="<?php echo EEH_URL::filter_input_server_url() . $anchor_id; ?>" />
+	<input type="hidden" name="tkt-slctr-return-url-<?php echo $EVT_ID ?>" value="<?php echo EEH_URL::current_url() . $anchor_id; ?>" />
 	<input type="hidden" name="tkt-slctr-rows-<?php echo $EVT_ID; ?>" value="<?php echo $row - 1; ?>" />
 	<input type="hidden" name="tkt-slctr-max-atndz-<?php echo $EVT_ID; ?>" value="<?php echo $max_atndz; ?>" />
 	<input type="hidden" name="tkt-slctr-event-id" value="<?php echo $EVT_ID; ?>" />
@@ -586,7 +596,7 @@ do_action( 'AHEE__ticket_selector_chart__template__after_ticket_selector', $EVT_
 <input type="hidden" name="tkt-slctr-qty-<?php echo $EVT_ID; ?>[]" value="1"/>
 <input type="hidden" name="tkt-slctr-ticket-id-<?php echo $EVT_ID; ?>[]" value="<?php echo $TKT_ID; ?>"/>
 <input type="hidden" name="noheader" value="true"/>
-<input type="hidden" name="tkt-slctr-return-url-<?php echo $EVT_ID ?>" value="<?php echo EEH_URL::filter_input_server_url() . $anchor_id; ?>"/>
+<input type="hidden" name="tkt-slctr-return-url-<?php echo $EVT_ID ?>" value="<?php echo EEH_URL::current_url() . $anchor_id; ?>"/>
 <input type="hidden" name="tkt-slctr-rows-<?php echo $EVT_ID; ?>" value="<?php echo $row - 1; ?>"/>
 <input type="hidden" name="tkt-slctr-max-atndz-<?php echo $EVT_ID; ?>" value="<?php echo $max_atndz; ?>"/>
 <input type="hidden" name="tkt-slctr-event-id" value="<?php echo $EVT_ID; ?>"/>

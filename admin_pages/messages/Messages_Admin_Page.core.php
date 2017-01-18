@@ -2509,6 +2509,12 @@ class Messages_Admin_Page extends EE_Admin_Page
         if (
             isset($this->_req_data['test_settings_fld'])
             && $active_messenger instanceof EE_messenger
+            && apply_filters(
+                'FHEE__Messages_Admin_Page__do_test_send__set_existing_test_settings',
+                true,
+                $this->_req_data['test_settings_fld'],
+                $active_messenger
+            )
         ) {
             $active_messenger->set_existing_test_settings($this->_req_data['test_settings_fld']);
         }

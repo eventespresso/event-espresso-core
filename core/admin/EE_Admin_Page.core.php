@@ -2432,22 +2432,35 @@ abstract class EE_Admin_Page extends EE_Base
         $hidden_form_fields .= '<input type="hidden" name="' . $nonce_ref . '" value="' . wp_create_nonce($nonce_ref) . '">';
         $this->_template_args['list_table_hidden_fields'] = $hidden_form_fields;
         //display message about search results?
-        $this->_template_args['before_list_table'] .= apply_filters(
-                'FHEE__EE_Admin_Page___display_admin_list_table_page__before_list_table__template_arg',
-                ! empty($this->_req_data['s'])
-                        ? '<p class="ee-search-results">'
-                            . sprintf(
-                                esc_html__(
-                                        'Displaying search results for the search string: %1$s',
-                                        'event_espresso'
-                                ),
-                                '<strong><em>' . trim( $this->_req_data['s'], '%' ) . '</em></strong>'
-                            )
-                            . '</p>'
-                        : '',
-                $this->page_slug,
-                $this->_req_data,
-                $this->_req_action
+        $this->_template_args['before_list_table'] .= ! empty($this->_req_data['s'])
+            ? '<p class="ee-search-results">'
+                . sprintf(
+                    esc_html__('Displaying search results for the search string: %1$s', 'event_espresso'),
+                    '<strong><em>' . trim( $this->_req_data['s'], '%' ) . '</em></strong>'
+                )
+                . '</p>'
+            : '';
+        // filter before_list_table template arg
+        $this->_template_args['before_list_table'] = implode(
+                " \n",
+                (array)apply_filters(
+                        'FHEE__EE_Admin_Page___display_admin_list_table_page__before_list_table__template_arg',
+                        (array)$this->_template_args['before_list_table'],
+                        $this->page_slug,
+                        $this->_req_data,
+                        $this->_req_action
+                )
+        );
+        // filter after_list_table template arg
+        $this->_template_args['after_list_table'] = implode(
+                " \n",
+                (array)apply_filters(
+                        'FHEE__EE_Admin_Page___display_admin_list_table_page__after_list_table__template_arg',
+                        (array)$this->_template_args['after_list_table'],
+                        $this->page_slug,
+                        $this->_req_data,
+                        $this->_req_action
+                )
         );
         $this->_template_args['admin_page_content'] = EEH_Template::display_template(
                 $template_path,
