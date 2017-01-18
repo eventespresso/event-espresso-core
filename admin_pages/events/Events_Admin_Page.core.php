@@ -42,6 +42,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     protected $_event_model;
 
 
+
     /**
      * @var EE_Event
      */

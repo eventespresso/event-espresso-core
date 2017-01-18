@@ -798,6 +798,49 @@ class Read_Test extends \EE_UnitTestCase{
         $this->assertCount(2, $response->data);
     }
 
+
+    /**
+     * This tests getting schema object returned for an options request on a valid collection endpoint.
+     * @group rest_schema_request
+     */
+    public function test_handle_schema_request()
+    {
+        $request = new \WP_REST_Request( 'OPTIONS', '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events');
+        $response = rest_do_request($request);
+        $data = $response->get_data();
+        //verify there is a schema array
+        $this->assertArrayHasKey('schema', $data);
+
+        //verify schema has a `$schema` key
+        $this->assertArrayHasKey('$schema', $data['schema']);
+
+        //verify there is a title and it is "Event"
+        $this->assertArrayHasKey('title', $data['schema']);
+        $this->assertEquals('Event', $data['schema']['title']);
+
+        //verify there is a properties array in the schema and a few of the common fields are there (including that the
+        //EVT_ID field has `primary_key` flag set to true.
+        $this->assertArrayHasKey('properties', $data['schema']);
+        $this->assertArrayHasKey('EVT_ID', $data['schema']['properties']);
+        $this->assertArrayHasKey('primary_key', $data['schema']['properties']['EVT_ID']);
+        $this->assertTrue($data['schema']['properties']['EVT_ID']['primary_key']);
+        $this->assertArrayHasKey('EVT_desc', $data['schema']['properties']);
+
+        //finally let's verify that a relation that should be in the events schema (datetimes!) is present and that its
+        //relation items are correct.
+        $this->assertArrayHasKey('datetimes', $data['schema']['properties']);
+        $datetimes_array = $data['schema']['properties']['datetimes'];
+        $this->assertArrayHasKey('description', $datetimes_array);
+        $this->assertArrayHasKey('type', $datetimes_array);
+        $this->assertEquals('array', $datetimes_array['type']);
+        $this->assertArrayHasKey('relation', $datetimes_array);
+        $this->assertTrue($datetimes_array['relation']);
+        $this->assertArrayHasKey('relation_type', $datetimes_array);
+        $this->assertEquals('EE_Has_Many_Relation',$datetimes_array['relation_type']);
+        $this->assertArrayHasKey('readonly', $datetimes_array);
+        $this->assertTrue($datetimes_array['readonly']);
+    }
+
 }
 // End of file Read_Test.php
 // Location: testcases/core/libraries/rest_api/controllers/Read_Test.php

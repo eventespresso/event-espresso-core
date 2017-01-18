@@ -296,7 +296,7 @@ if ( ! function_exists( 'espresso_event_reg_button' )) {
 			$class = 'ee-grey';
 		}
 		?>
-		<a class="ee-button ee-register-button <?php echo $class; ?>" href="<?php espresso_event_link_url(); ?>">
+		<a class="ee-button ee-register-button <?php echo $class; ?>" href="<?php espresso_event_link_url(); ?>"<?php echo \EED_Events_Archive::link_target(); ?>>
 			<?php echo $btn_text; ?>
 		</a>
 	<?php

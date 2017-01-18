@@ -35,8 +35,10 @@
 </head>
 <body>
 	<?php echo $notices; ?>
-	<?php echo $content; ?>
-	<?php foreach ( $footer_js as $url ) : ?>
+    <div style="padding: 1em;">
+        <?php echo $content; ?>
+    </div>
+    <?php foreach ( $footer_js as $url ) : ?>
 		<script type="text/javascript" src="<?php echo $url; ?>"></script>
 	<?php endforeach; ?>
 <?php if ( $enqueue_wp_assets ) : ?>

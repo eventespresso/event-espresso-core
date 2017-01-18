@@ -1,4 +1,5 @@
 <?php
+defined('EVENT_ESPRESSO_VERSION') || exit;
 
 /**
  * Field for DB columns which don't correspond to model fields. Eg, on the Event model, which
@@ -9,6 +10,20 @@
  */
 abstract class EE_DB_Only_Field_Base extends EE_Model_Field_Base
 {
+
+    /**
+     * @param string $table_column
+     * @param string $nicename
+     * @param bool   $nullable
+     * @param null   $default_value
+     */
+    public function __construct($table_column, $nicename, $nullable, $default_value = null)
+    {
+        parent::__construct($table_column, $nicename, $nullable, $default_value);
+        $this->setSchemaReadOnly(true);
+    }
+
+
     /**
      * All these children classes are for the db-only (meaning, we should select them
      * on get_all queries, update, delete, and will still want to set their default value
