@@ -2,7 +2,7 @@
 /**
  * EES_Espresso_Checkout
  *
- * @deprecated  4.9.26
+ * @deprecated  4.9.27
  * @package     Event Espresso
  * @subpackage	/shortcodes/
  * @author      Brent Christensen
@@ -47,7 +47,7 @@ class EES_Espresso_Checkout  extends EES_Shortcode {
                 'Usage is deprecated. Please use \EventEspresso\core\domain\entities\shortcodes\EspressoCheckout instead.',
                 'event_espresso'
             ),
-            '4.9.26'
+            '4.9.27'
         );
 	}
 
@@ -67,7 +67,7 @@ class EES_Espresso_Checkout  extends EES_Shortcode {
                 'Usage is deprecated. Please use \EventEspresso\core\domain\entities\shortcodes\EspressoCheckout::processShortcode() instead.',
                 'event_espresso'
             ),
-            '4.9.26'
+            '4.9.27'
         );
         return '';
     }

@@ -2,7 +2,7 @@
 /**
  * Event Attendees shortcode class
  *
- * @deprecated 4.9.26
+ * @deprecated 4.9.27
  * @package			Event Espresso
  * @subpackage		/shortcodes/
  * @author			Darren Ethier
@@ -42,7 +42,7 @@ class EES_Espresso_Event_Attendees  extends EES_Shortcode {
 
 
     /**
-     * @deprecated 4.9.26
+     * @deprecated 4.9.27
      * @param array $attributes
      * @return string
      * @throws \EE_Error
@@ -54,7 +54,7 @@ class EES_Espresso_Event_Attendees  extends EES_Shortcode {
                 'Usage is deprecated. Please use \EventEspresso\core\domain\entities\shortcodes\EspressoEventAttendeesShortcode instead.',
                 'event_espresso'
             ),
-            '4.9.26'
+            '4.9.27'
         );
         return '';
 	}
