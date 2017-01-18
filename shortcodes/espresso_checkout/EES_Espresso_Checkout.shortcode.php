@@ -41,14 +41,6 @@ class EES_Espresso_Checkout  extends EES_Shortcode {
      * @throws \EE_Error
      */
 	public function run( WP $WP ) {
-        \EE_Error::doing_it_wrong(
-            __METHOD__,
-            __(
-                'Usage is deprecated. Please use \EventEspresso\core\domain\entities\shortcodes\EspressoCheckout instead.',
-                'event_espresso'
-            ),
-            '4.9.27'
-        );
 	}
 
 
