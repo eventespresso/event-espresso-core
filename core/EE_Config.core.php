@@ -2995,10 +2995,10 @@ class EE_Ticket_Selector_Config extends EE_Config_Base {
             )
             : array(
                 \EE_Ticket_Selector_Config::DO_NOT_SHOW_DATETIME_SELECTOR => esc_html__(
-                    'Do not show datetime selector', 'event_espresso'
+                    'Do not show date & time filter', 'event_espresso'
                 ),
                 \EE_Ticket_Selector_Config::MAYBE_SHOW_DATETIME_SELECTOR => esc_html__(
-                    'Maybe show datetime selector', 'event_espresso'
+                    'Maybe show date & time filter', 'event_espresso'
                 ),
             );
     }
@@ -3012,7 +3012,8 @@ class EE_Ticket_Selector_Config extends EE_Config_Base {
     {
         $this->show_datetime_selector = in_array(
             $show_datetime_selector,
-            $this->getShowDatetimeSelectorOptions()
+            $this->getShowDatetimeSelectorOptions(),
+            true
         )
             ? $show_datetime_selector
             : \EE_Ticket_Selector_Config::DO_NOT_SHOW_DATETIME_SELECTOR;
