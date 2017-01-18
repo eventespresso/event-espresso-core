@@ -484,14 +484,27 @@ if ( ! function_exists( 'espresso_list_of_event_dates' )) {
 				if ( $datetime instanceof EE_Datetime ) {
 					$html .= '<li id="ee-event-datetimes-li-' . $datetime->ID();
 					$html .= '" class="ee-event-datetimes-li ee-event-datetimes-li-' . $datetime->get_active_status() . '">';
+					
 					$datetime_name = $datetime->name();
-					$html .= ! empty( $datetime_name ) ? '<strong>' . $datetime_name . '</strong>' : '';
-					$html .= ! empty( $datetime_name )  && $add_breaks ? '<br />' : '';
-					$html .= '<span class="dashicons dashicons-calendar"></span>' . $datetime->date_range( $date_format ) . '<br/>';
+					if (!empty( $datetime_name )) {
+						$html .= '<strong class="ee-event-datetime-name'.($add_breaks ? ' ee-break-after' : '').'">' . $datetime_name . '</strong>';
+					}
+					
+					$html .= '<span class="ee-event-datetime-date">';
+					$html .= '<span class="dashicons dashicons-calendar"></span>' . $datetime->date_range( $date_format );
+					$html .= '</span>';
+					
+					$html .= '<span class="ee-event-datetime-time">';
 					$html .= '<span class="dashicons dashicons-clock"></span>' . $datetime->time_range( $time_format );
+					$html .= '</span>';
+					
 					$datetime_description = $datetime->description();
-					$html .= ! empty( $datetime_description )  && $add_breaks ? '<br />' : '';
-					$html .= ! empty( $datetime_description ) ? ' - ' . $datetime_description : '';
+					if (!empty( $datetime_description )) {
+						$html .= '<span class="ee-event-datetime-description'.($add_breaks ? ' ee-break-before' : '').'">';
+						$html .= ' - ' . $datetime_description;
+						$html .= '</span>';
+					}
+					
 					$html = apply_filters( 'FHEE__espresso_list_of_event_dates__datetime_html', $html, $datetime );
 					$html .= '</li>';
 				}
