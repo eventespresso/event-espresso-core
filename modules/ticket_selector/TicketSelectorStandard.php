@@ -91,7 +91,13 @@ class TicketSelectorStandard extends TicketSelector
         $required_ticket_sold_out = false;
         // flag to indicate that at least one taxable ticket has been encountered
         $taxable_tickets = false;
-        $datetime_selector = new DatetimeSelector($this->event, $this->tickets, $this->ticket_selector_config);
+        $datetime_selector = new DatetimeSelector(
+            $this->event,
+            $this->tickets,
+            $this->ticket_selector_config,
+            $this->date_format,
+            $this->time_format
+        );
         // loop through tickets
         foreach ($this->tickets as $TKT_ID => $ticket) {
             if ($ticket instanceof \EE_Ticket) {
@@ -118,9 +124,7 @@ class TicketSelectorStandard extends TicketSelector
         $this->template_args['row'] = $row;
         $this->template_args['ticket_row_html'] = $ticket_row_html;
         $this->template_args['taxable_tickets'] = $taxable_tickets;
-        $this->template_args['datetime_selector'] = $datetime_selector->getDatetimeSelector(
-            $this->date_format, $this->time_format
-        );
+        $this->template_args['datetime_selector'] = $datetime_selector->getDatetimeSelector();
         $this->template_args['prices_displayed_including_taxes'] = $this->tax_config->prices_displayed_including_taxes;
         $this->template_args['template_path'] = TICKET_SELECTOR_TEMPLATES_PATH . 'standard_ticket_selector.template.php';
         remove_all_filters('FHEE__EE_Ticket_Selector__hide_ticket_selector');
