@@ -39,6 +39,8 @@
 
 .checkbox-dropdown-selector label {
     cursor: pointer;
+    display: block;
+    font-size: 16px !important;
     margin: 0 !important;
     position: relative;
 }
@@ -46,9 +48,10 @@
 .datetime-selector-option  {
     left:0;
     position: absolute;
-    top: 3px;
+    top: 4px;
     display: inline;
     float: left;
+    vertical-align: middle;
 }
 
 .datetime-selector-option-text-spn {
@@ -57,4 +60,5 @@
     padding: 0 0 0 1.75em;
     word-break: keep-all;
     word-wrap: normal;
+    vertical-align: middle;
 }
