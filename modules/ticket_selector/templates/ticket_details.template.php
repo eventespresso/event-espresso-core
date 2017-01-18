@@ -326,11 +326,11 @@
                                                 'FHEE__ticket_selector_chart_template__ticket_details_event_access_table_this_ticket_left',
                                                 __( 'Remaining', 'event_espresso' )
                                                 ); ?>" class="cntr small-text">
-                                                    <?php echo $ticket->qty() === EE_INF
+                                                    <?php echo $remaining === EE_INF
                                                     ? '<span class="smaller-text">' . __(
                                                     'unlimited ',
                                                     'event_espresso'
-                                                    ) . '</span>' : $ticket->qty() - $ticket->sold(); ?>
+                                                    ) . '</span>' : $remaining; ?>
                                                 </td>
                                                 <td data-th="<?php echo apply_filters(
                                                 'FHEE__ticket_selector_chart_template__ticket_details_event_access_table_total_ticket_sold',
