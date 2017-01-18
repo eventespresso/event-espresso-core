@@ -152,6 +152,7 @@ class EED_Ical  extends EED_Module {
 
 				// Create array of ics details, escape strings, convert timestamps to ics format, etc
 				$ics_data = array(
+					'ORGANIZER_NAME' => EED_Ical::_escape_ICal_data( EE_Registry::instance()->CFG->organization->name ),
 					'UID' => EED_Ical::_escape_ICal_data( md5( $event->name() . $event->ID() . $datetime->ID() )),
 					'ORGANIZER' => EED_Ical::_escape_ICal_data( EE_Registry::instance()->CFG->organization->email ),
 					'TIMESTAMP' => date( EED_Ical::iCal_datetime_format ),
@@ -166,7 +167,11 @@ class EED_Ical  extends EED_Module {
 				);
 
 				$ics_data = apply_filters( 'FHEE__EED_Ical__download_ics_file_ics_data', $ics_data, $datetime );
-				
+
+				//Pull the organizer name from ics_data and remove it from the array.
+				$organizer_name = isset( $ics_data['ORGANIZER_NAME'] ) ? $ics_data['ORGANIZER_NAME'] : '';
+				unset( $ics_data['ORGANIZER_NAME'] );
+
 				// set headers
 				header( 'Content-type: text/calendar; charset=utf-8' );
 				header( 'Content-Disposition: attachment; filename="' . $filename . '"' );
