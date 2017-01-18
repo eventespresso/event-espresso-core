@@ -9,21 +9,6 @@
  */
 class EES_Espresso_Txn_Page  extends EES_Shortcode {
 
-	/**
-     * The transaction specified by the reg_url_link passed from the Request, or from the Session
-     *
-     * @deprecated 4.9.27
-     * @var EE_Transaction $_current_txn
-	 */
-	protected $_current_txn;
-
-	/**
-     * The current payment method for the IPN
-     *
-     * @deprecated 4.9.27
-     * @var EE_Payment_Method $_current_pm
-	 */
-	protected $_current_pm;
 
 	/**
      * @deprecated 4.9.27
