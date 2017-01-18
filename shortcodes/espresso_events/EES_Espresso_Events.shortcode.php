@@ -14,7 +14,6 @@ class EES_Espresso_Events  extends EES_Shortcode {
      *  @return 	void
 	 */
 	public static function set_hooks() {
-        \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
 	}
 
 	/**
