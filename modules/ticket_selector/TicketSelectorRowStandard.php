@@ -155,7 +155,7 @@ class TicketSelectorRowStandard extends TicketSelectorRow
                 : $this->required_ticket_sold_out;
         }
         list($ticket_price, $ticket_bundle) = $this->getTicketPriceDetails();
-        list($tkt_status, $ticket_status, $status_class) = $this->getTicketStatusClasses();
+        list($tkt_status, $ticket_status, $status_class) = $this->getTicketStatusClasses($remaining);
         /**
          * Allow plugins to hook in and abort the generation and display of this row to do
          * something else if they want.
@@ -282,12 +282,15 @@ class TicketSelectorRowStandard extends TicketSelectorRow
     }
 
 
+
     /**
      * getTicketStatusClasses
      *
+     * @param int $remaining
      * @return array
+     * @throws \EE_Error
      */
-    protected function getTicketStatusClasses()
+    protected function getTicketStatusClasses($remaining = 0)
     {
         // if a previous required ticket with the same sale start date is sold out,
         // then mark this ticket as sold out as well.
@@ -328,7 +331,7 @@ class TicketSelectorRowStandard extends TicketSelectorRow
                 $status_class = 'ticket-on-sale';
                 break;
         }
-        $ticket_status = \EEH_HTML::span($this->ticket->ticket_status(true), '', $ticket_status);
+        $ticket_status = \EEH_HTML::span($this->ticket->ticket_status(true, ($remaining > 0)), '', $ticket_status);
         return array($tkt_status, $ticket_status, $status_class);
     }
 
@@ -366,6 +369,7 @@ class TicketSelectorRowStandard extends TicketSelectorRow
      * @param float $ticket_price
      * @param bool  $ticket_bundle
      * @return string
+     * @throws \EE_Error
      */
     protected function ticketPriceTableCell($ticket_price, $ticket_bundle)
     {
@@ -451,6 +455,7 @@ class TicketSelectorRowStandard extends TicketSelectorRow
      * getHiddenInputs
      *
      * @return string
+     * @throws \EE_Error
      */
     protected function ticketQtyAndIdHiddenInputs()
     {
