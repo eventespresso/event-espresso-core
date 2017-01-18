@@ -272,7 +272,6 @@ class EED_Thank_You_Page extends EED_Module
      * @throws \EE_Error
      */
     public function load_resources() {
-
         $this->_get_reg_url_link();
         // resend_reg_confirmation_email ?
         if (EE_Registry::instance()->REQ->is_set('resend')) {
@@ -450,7 +449,6 @@ class EED_Thank_You_Page extends EED_Module
         if ( ! $this->_current_txn instanceof EE_Transaction) {
             return EE_Error::get_notices();
         }
-        //EEH_Debug_Tools::log( __CLASS__, __FUNCTION__, __LINE__, array( $this->_current_txn ), true, 	'EE_Transaction: ' . $this->_current_txn->ID() );
         // link to receipt
         $template_args['TXN_receipt_url'] = $this->_current_txn->receipt_url('html');
         if ( ! empty($template_args['TXN_receipt_url'])) {
