@@ -941,10 +941,13 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
 
 
     /**
-     * This is hooked into the WordPress do_action('save_post') hook and runs after the custom post type has been saved.  Child classes are required to declare this method.  Typically you would use this to save any additional data.
+     * This is hooked into the WordPress do_action('save_post') hook and runs after the custom post type has been
+     * saved.  Child classes are required to declare this method.  Typically you would use this to save any additional
+     * data.
      * Keep in mind also that "save_post" runs on EVERY post update to the database.
-     * ALSO very important.  When a post transitions from scheduled to published, the save_post action is fired but you will NOT have any _POST data containing any extra info you may have from other meta saves.  So MAKE sure that you
-     * handle this accordingly.
+     * ALSO very important.  When a post transitions from scheduled to published, the save_post action is fired but you
+     * will NOT have any _POST data containing any extra info you may have from other meta saves.  So MAKE sure that
+     * you handle this accordingly.
      *
      * @access protected
      * @abstract
