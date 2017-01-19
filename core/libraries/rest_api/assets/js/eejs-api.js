@@ -2,6 +2,7 @@ var Vue = require('vue');
 var Vuex = require('vuex');
 var VueResource = require('vue-resource');
 var inflection = require('inflection');
+var URI = require('urijs');
 
 Vue.use(VueResource);
 
@@ -98,6 +99,8 @@ if (!String.prototype.endsWith) {
 
     //add inflection to the utils
     eejs.utils.inflection = inflection;
+    //add URI.js to the utils
+    eejs.utils.URI = URI;
 
 
     /**

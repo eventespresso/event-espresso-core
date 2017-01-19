@@ -34,6 +34,7 @@
     "envify": "^4.0.0",
     "inflection": "^1.10.0",
     "uglify-js": "^2.7.5",
+    "urijs": "^1.18.4",
     "vue": "^2.1.4",
     "vue-resource": "^1.0.3",
     "vueify": "^9.3.0",
