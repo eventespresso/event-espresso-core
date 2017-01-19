@@ -25,7 +25,8 @@
                 do_action(
                     'AHEE__ticket_selector_chart_template__ticket_details__after_description',
                     $ticket,
-                    $ticket_price
+                    $ticket_price,
+                    $display_ticket_price
                 );
                 ?>
 
