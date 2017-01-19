@@ -509,18 +509,26 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	/**
 	 * This returns a range representation of the date and times.
 	 * Output is dependent on the difference (or similarity) between DTT_EVT_start and DTT_EVT_end.
-	 * Also, the return value is localized.
-	 *
-	 * @param string $dt_format
+     * Also, the return value is localized.
+     *
+     * @param string $dt_format
 	 * @param string $tm_format
-	 * @param string $conjunction
+	 * @param string $conjunction used between two different dates or times.
+     *                            ex: Dec 1{$conjunction}}Dec 6, or 2pm{$conjunction}3pm
+     * @param string $separator   used between the date and time formats.
+     *                            ex: Dec 1, 2016{$separator}2pm
 	 * @return string
 	 * @throws \EE_Error
 	 */
-	public function date_and_time_range( $dt_format = '', $tm_format = '', $conjunction = ' - '  ) {
-		$dt_format = $dt_format !== '' ? $dt_format : $this->_dt_frmt;
-		$tm_format = $tm_format !== '' ? $tm_format : $this->_tm_frmt;
-		$full_format = $dt_format . ' ' . $tm_format;
+	public function date_and_time_range(
+	    $dt_format = '',
+        $tm_format = '',
+        $conjunction = ' - ' ,
+        $separator = ' '
+    ) {
+		$dt_format = ! empty( $dt_format ) ? $dt_format : $this->_dt_frmt;
+		$tm_format = ! empty( $tm_format ) ? $tm_format : $this->_tm_frmt;
+		$full_format = $dt_format . $separator . $tm_format;
 
 		//the range output depends on various conditions
 		switch ( true ) {

@@ -605,7 +605,7 @@ function console_log_object( obj_name, obj, depth ) {
 		}
 		jQuery.each(
 			obj, function ( index, value ) {
-				if ( typeof value === 'object' && depth < 6 ) {
+				if ( typeof value === 'object' && depth < 3 ) {
 					depth++;
 					console_log_object( index, value, depth );
 				} else {
@@ -617,4 +617,20 @@ function console_log_object( obj_name, obj, depth ) {
 	} else {
 		console_log( spacer + obj_name, obj, true );
 	}
+}
+
+
+/**
+ * @function object_exists
+ * returns true if object exists and displays console error if it does not
+ * @param  {object} $object
+ * @param  {string} object_name
+ * @return boolean
+ */
+function object_exists($object, object_name) {
+    if ($object.length) {
+        return true;
+    }
+    console_log('ERROR: object not found', object_name, false);
+    return false;
 }
