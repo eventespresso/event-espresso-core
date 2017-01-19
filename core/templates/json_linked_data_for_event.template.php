@@ -17,10 +17,10 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 {
   "@context": "http://schema.org/",
   "@type": "Event",
-  "name": <?php echo $event_name; ?>,
+  "name": <?php echo wp_json_encode($event_name); ?>,
   "startDate": "<?php echo $event_start; ?>",
   "endDate": "<?php echo $event_end; ?>",
-  "description": <?php echo $event_description ?>,
+  "description": <?php echo wp_json_encode($event_description); ?>,
   "url": "<?php echo $event_permalink; ?>",
   "offers": [
   <?php foreach ($event_tickets as $ticket) { ?>
@@ -37,12 +37,12 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
     ]<?php if ($venue_name) { ?>,
   "location": {
     "@type": "Place",
-    "name": <?php echo $venue_name; ?>,
+    "name": <?php echo wp_json_encode($venue_name); ?>,
     "url": "<?php echo $venue_url ?>",
     "address": {
       "@type": "PostalAddress",
-      "addressLocality": <?php echo $venue_locality ?>,
-      "addressRegion": <?php echo $venue_region ?>
+      "addressLocality": <?php echo wp_json_encode($venue_locality); ?>,
+      "addressRegion": <?php echo wp_json_encode($venue_region); ?>
     }
   }
   <?php } ?>

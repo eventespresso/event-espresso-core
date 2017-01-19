@@ -39,8 +39,8 @@ class EEH_Schema {
             'event_image' => '',
         );
         $template_args['event_permalink'] = $event->get_permalink();
-        $template_args['event_name'] = wp_json_encode($event->name());
-        $template_args['event_description'] = wp_json_encode(wp_strip_all_tags($event->short_description(200)));
+        $template_args['event_name'] = $event->name();
+        $template_args['event_description'] = wp_strip_all_tags($event->short_description(200));
         $template_args['event_start'] = $event->primary_datetime()->start_date(DateTime::ATOM);
         $template_args['event_end'] = $event->primary_datetime()->end_date(DateTime::ATOM);
         $template_args['currency'] = EE_Registry::instance()->CFG->currency->code;
@@ -58,10 +58,10 @@ class EEH_Schema {
         $VNU_ID = espresso_venue_id();
         if ( ! empty($VNU_ID) && ! espresso_is_venue_private($VNU_ID)) {
             $venue = EEH_Venue_View::get_venue($VNU_ID);
-            $template_args['venue_name'] = wp_json_encode(get_the_title($VNU_ID));
+            $template_args['venue_name'] = get_the_title($VNU_ID);
             $template_args['venue_url'] = get_permalink($VNU_ID);
-            $template_args['venue_locality'] = wp_json_encode($venue->city());
-            $template_args['venue_region'] = wp_json_encode($venue->state_name());
+            $template_args['venue_locality'] = $venue->city();
+            $template_args['venue_region'] = $venue->state_name();
         }
         $template_args['event_image'] = $event->feature_image_url();
         $template_args = apply_filters(
