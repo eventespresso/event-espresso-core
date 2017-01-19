@@ -118,5 +118,14 @@ abstract class EED_Module extends EE_Configurable {
 
 
 
+	/**
+	 * @return string
+	 */
+	public function theme() {
+		return $this->theme;
+	}
+
+
+
 }
 // End of file EED_Module.module.php

@@ -1,6 +1,6 @@
-(function ( $ ) {
+jQuery( document ).ready( function ( $ ) {
 
-	/**
+		/**
 	*	add jQuery functions
 	*/
 	$.fn.extend({
@@ -26,7 +26,7 @@
 		 * Shortcut for adding a window overlay quickly if none exists in the dom
 		 *
 		 * @param {int} opacity allows the setting of the opacity value for the overlay via client. opacity[0] = webkit opacity, opacity[1] = value for alpha(opacity=).
-		 * @return {jQuery}
+		 * @return {object}
 		 */
 		eeAddOverlay : function( opacity ) {
 			opacity = typeof opacity === 'undefined' || opacity > 1 ? 0.5 : opacity;
@@ -50,7 +50,7 @@
 
 		/**
 		 * Shortcut for removing a window overlay quickly if none exists in the dom (will destroy)
-		 * @return {jQuery}
+		 * @return {object}
 		 */
 		eeRemoveOverlay : function() {
 			$('#ee-overlay').remove();
@@ -60,7 +60,7 @@
 
 		/**
 		 * adds a scrollTo action for jQuery
-		 * @return {jQuery}
+		 * @return {object}
 		 */
 		eeScrollTo : function( speed ) {
 			var selector = this;
@@ -141,10 +141,6 @@
 
 	});
 
-}( jQuery ));
-
-
-jQuery(document).ready(function($) {
 
 	var existing_message = $('#message');
 	$('.show-if-js').css({ 'display' : 'inline-block' });
@@ -609,7 +605,7 @@ function console_log_object( obj_name, obj, depth ) {
 		}
 		jQuery.each(
 			obj, function ( index, value ) {
-				if ( typeof value === 'object' && depth < 6 ) {
+				if ( typeof value === 'object' && depth < 3 ) {
 					depth++;
 					console_log_object( index, value, depth );
 				} else {
@@ -621,4 +617,20 @@ function console_log_object( obj_name, obj, depth ) {
 	} else {
 		console_log( spacer + obj_name, obj, true );
 	}
+}
+
+
+/**
+ * @function object_exists
+ * returns true if object exists and displays console error if it does not
+ * @param  {object} $object
+ * @param  {string} object_name
+ * @return boolean
+ */
+function object_exists($object, object_name) {
+    if ($object.length) {
+        return true;
+    }
+    console_log('ERROR: object not found', object_name, false);
+    return false;
 }

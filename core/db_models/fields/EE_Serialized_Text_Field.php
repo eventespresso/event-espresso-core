@@ -1,5 +1,5 @@
 <?php
-
+defined('EVENT_ESPRESSO_VERSION') || exit;
 
 /**
  * Serialized text field should basically: accept either an array or serialized text as input.
@@ -7,10 +7,22 @@
  * However, when inserting into the DB, it should be serialized.
  * Upon retrieval from the DB, it should be unserialized back into an array.
  */
-require_once(EE_MODELS . 'fields/EE_Text_Field_Base.php');
-
 class EE_Serialized_Text_Field extends EE_Text_Field_Base
 {
+
+    /**
+     * @param string $table_column
+     * @param string $nicename
+     * @param bool   $nullable
+     * @param null   $default_value
+     */
+    public function __construct($table_column, $nicename, $nullable, $default_value = null)
+    {
+        parent::__construct($table_column, $nicename, $nullable, $default_value);
+        $this->setSchemaType(array('object','string'));
+    }
+
+
     /**
      * Value SHOULD be an array, and we want to now convert it to a serialized string
      *

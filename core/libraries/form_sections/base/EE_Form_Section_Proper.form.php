@@ -1088,7 +1088,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      * @param array $inputs_to_hide
      * @throws \EE_Error
      */
-    public function hide($inputs_to_hide = array())
+    public function hide(array $inputs_to_hide = array())
     {
         foreach ($inputs_to_hide as $input_to_hide) {
             $input = $this->get_input($input_to_hide);
