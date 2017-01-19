@@ -1,11 +1,10 @@
 <?php
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
-if (
-    $ticket_price !== 0
-    && apply_filters('FHEE__ticket_selector_chart_template__display_ticket_price_details', true)
-) {
-?>
+/** @var boolean $display_ticket_price */
+/** @var \EE_Ticket $ticket */
+
+if ($display_ticket_price) { ?>
     <section class="tckt-slctr-tkt-price-sctn">
         <h5><?php echo apply_filters('FHEE__ticket_selector_chart_template__ticket_details_price_breakdown_heading',
                 __('Price', 'event_espresso')); ?></h5>
@@ -17,8 +16,7 @@ if (
                     </th>
                     <th class="jst-cntr"><span class="small-text"><?php _e('Description', 'event_espresso'); ?></span>
                     </th>
-                    <th class="ee-fourth-width jst-rght"><span class="small-text"><?php _e('Amount',
-                                'event_espresso'); ?></span></th>
+                    <th class="ee-fourth-width jst-rght"><span class="small-text"><?php _e('Amount', 'event_espresso'); ?></span></th>
                 </tr>
                 </thead>
                 <tbody>
