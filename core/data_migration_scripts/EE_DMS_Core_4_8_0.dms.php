@@ -46,7 +46,7 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base
      */
     public function __construct(TableManager $table_manager = null, TableAnalysis $table_analysis = null)
     {
-        $this->_pretty_name = __("Data Migration to Event Espresso 4.8.0.P (for promotions)", "event_espresso");
+        $this->_pretty_name = esc_html__("Data Update to Event Espresso 4.8.0", "event_espresso");
         $this->_priority = 10;
         $this->_migration_stages = array(
             new EE_DMS_4_8_0_pretax_totals(),
@@ -80,16 +80,6 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base
 //			echo "$version_string doesnt apply";
             return false;
         }
-    }
-
-
-
-    /**
-     * @return string|void
-     */
-    public function pretty_name()
-    {
-        return __("Core Data Migration to version 4.8.0", "event_espresso");
     }
 
 
@@ -172,7 +162,7 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base
 				  DTT_EVT_start datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
 				  DTT_EVT_end datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
 				  DTT_reg_limit mediumint(8) DEFAULT -1,
-				  DTT_sold mediumint(8) unsigned DEFAULT 0,
+				  DTT_sold mediumint(8) unsigned NOT NULL DEFAULT 0,
 				  DTT_is_primary tinyint(1) unsigned NOT NULL DEFAULT 0,
 				  DTT_order mediumint(3) unsigned DEFAULT 0,
 				  DTT_parent int(10) unsigned DEFAULT 0,
@@ -530,7 +520,7 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base
 					  TKT_name varchar(245) NOT NULL DEFAULT '',
 					  TKT_description text NOT NULL,
 					  TKT_qty mediumint(8) DEFAULT NULL,
-					  TKT_sold mediumint(8) NOT NULL DEFAULT 0,
+					  TKT_sold mediumint(8) unsigned NOT NULL DEFAULT 0,
 					  TKT_uses tinyint(2) NOT NULL DEFAULT '-1',
 					  TKT_required tinyint(2) unsigned NOT NULL DEFAULT '0',
 					  TKT_min tinyint(2) unsigned NOT NULL DEFAULT '0',

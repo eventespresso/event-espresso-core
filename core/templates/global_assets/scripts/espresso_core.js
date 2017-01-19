@@ -1,6 +1,6 @@
-(function ( $ ) {
+jQuery( document ).ready( function ( $ ) {
 
-	/**
+		/**
 	*	add jQuery functions
 	*/
 	$.fn.extend({
@@ -26,7 +26,7 @@
 		 * Shortcut for adding a window overlay quickly if none exists in the dom
 		 *
 		 * @param {int} opacity allows the setting of the opacity value for the overlay via client. opacity[0] = webkit opacity, opacity[1] = value for alpha(opacity=).
-		 * @return {jQuery}
+		 * @return {object}
 		 */
 		eeAddOverlay : function( opacity ) {
 			opacity = typeof opacity === 'undefined' || opacity > 1 ? 0.5 : opacity;
@@ -50,7 +50,7 @@
 
 		/**
 		 * Shortcut for removing a window overlay quickly if none exists in the dom (will destroy)
-		 * @return {jQuery}
+		 * @return {object}
 		 */
 		eeRemoveOverlay : function() {
 			$('#ee-overlay').remove();
@@ -60,7 +60,7 @@
 
 		/**
 		 * adds a scrollTo action for jQuery
-		 * @return {jQuery}
+		 * @return {object}
 		 */
 		eeScrollTo : function( speed ) {
 			var selector = this;
@@ -141,10 +141,6 @@
 
 	});
 
-}( jQuery ));
-
-
-jQuery(document).ready(function($) {
 
 	var existing_message = $('#message');
 	$('.show-if-js').css({ 'display' : 'inline-block' });
@@ -313,17 +309,19 @@ jQuery(document).ready(function($) {
 	 */
 	$( '.ee-country-select-js' ).change(
 		function () {
-			var country_select_id = $( this ).attr( 'id' ),
-				selected_country  = $( this ).find( "option:selected" ).text(),
+			var country_select_id = $(this).attr( 'id' ),
+				selected_country  = $(this).find( "option:selected" ).text(),
 				state_select_id   = '',
 				$state_select      = null,
 				selected_state    = null,
 				valid_option      = false;
 
-			// console_log( 'country_select_id', country_select_id, true );
-			// console_log( 'selected_country', selected_country, false );
-			// console_log( 'state_select_id', state_select_id, false );
-			// console_log( 'country_select_id.indexOf( country )', ~country_select_id.indexOf( 'country' ), false );
+			// console.log( ' ' );
+			// console.log( 'COUNTRY SELECTION CHANGED' );
+			// console.log( 'country_select_id: ' + country_select_id );
+			// console.log( 'selected_country: ' + selected_country );
+			// console.log( 'state_select_id: ' + state_select_id );
+			// console.log( 'country_select_id.indexOf( country ): ' + ~country_select_id.indexOf( 'country' ) );
 
 			// is this country question a system question ?
 			if ( ~country_select_id.indexOf( 'country' ) ) {
@@ -334,7 +332,7 @@ jQuery(document).ready(function($) {
 				var $state_div = $(this).parent().next('.ee-state-select-js-input-dv');
 				if ( ! $state_div.length ) {
 					// console.log( 'State Select div not found after Country Select div' );
-					$state_div = $( this ).parent().prev( '.ee-state-select-js-input-dv' );
+					$state_div = $(this).parent().prev( '.ee-state-select-js-input-dv' );
 				}
 				if ( ! $state_div.length ) {
 					console.log(
@@ -344,131 +342,172 @@ jQuery(document).ready(function($) {
 				}
 				$state_select = $state_div.find('.ee-state-select-js');
 				if ( $state_select === null || ! $state_select.length ) {
-					// going to keep the following commented out code in case we need to support
-					// country <=> state question pairs that are not immediately next to each other
-					// var search_id_parts = country_select_id.split( '-' );
-					// console_log( 'search_id_parts', search_id_parts, false );
-					// var search_id = '',
-					// 	select_id = '';
-					// // event id should be next
-					// if ( typeof search_id_parts[ 1 ] === 'undefined' || typeof search_id_parts[ 2 ] === 'undefined' ) {
 						console.log(
 							'Invalid "country_select_id"! Can not find corresponding State select for Country select with id: '
 							+ country_select_id
 						);
 						return;
-					// }
-					// something like: 'ee_reg_qstn' + '-' + event_id + '-'
-					// search_id = search_id_parts[ 0 ] + '-' + search_id_parts[ 1 ] + '-';
-					// // search_id += search_id_parts[ 2 ];
-					//
-					// console_log( 'search_id', search_id, false );
-					// $( '.ee-state-select-js' ).each(
-					// 	function () {
-					// 		select_id = $( this ).attr( 'id' );
-					// 		console_log( 'select_id', select_id, true );
-					// 		console_log( "~select_id.indexOf( 'state' )", ~select_id.indexOf( 'state' ), false );
-					// 		console_log(
-					// 			"~select_id.indexOf( 'nsmf_new_state' )",
-					// 			~select_id.indexOf( 'nsmf_new_state' ),
-					// 			false
-					// 		);
-					// 		console_log( "~select_id.indexOf( 'search_id' )", ~select_id.indexOf( search_id ), false );
-					// 		// skip any state system questions
-					// 		if ( ~select_id.indexOf( 'state' )
-					// 			 || ~select_id.indexOf( 'nsmf_new_state' )
-					// 			 || !~select_id.indexOf( search_id ) ) {
-					// 			console.log( 'NOT A MATCH' );
-					// 			return true;
-					// 		}
-					// 		console_log( 'MATCH select_id', select_id, false );
-					// 		var select_id_parts = select_id.split( '-' );
-					// 		if ( typeof select_id_parts[ 1 ]
-					// 			 === 'undefined'
-					// 			 || typeof select_id_parts[ 2 ]
-					// 				=== 'undefined' ) {
-					// 			return true;
-					// 		}
-					// 		select_id              = select_id_parts[ 0 ] + '-' + select_id_parts[ 1 ] + '-';
-					// 		var select_question_id = select_id_parts[ 2 ];
-					// 	}
-					// );
 				}
 				state_select_id = $state_select.attr( 'id' );
 			}
 			if ( ( $state_select === null || ! $state_select.length ) && state_select_id !== '' ) {
-				// console_log( 'state_select_id', state_select_id, false );
 				$state_select = $( '#' + state_select_id );
 			}
+            // console.log('state_select_id: ' + state_select_id, false);
 
-			if ( $state_select.length ) {
-				// grab the currently selected state (if there is one)
-				selected_state = $state_select.find( ":selected" ).val();
-				// console_log( 'selected_state', selected_state, false );
-				// remove span tags from all optgroups
-				$( 'span > optgroup', $state_select ).unwrap();
+            if ( $state_select.length ) {
+                // console.log('FOUND STATE SELECTOR');
+                // grab the currently selected state (if there is one)
+				selected_state = $state_select.find( ":selected" ).text();
+				// console.log( 'selected_state: ' + selected_state );
+				// display and enable all optgroups
+				$( 'optgroup', $state_select )
+                    .show()
+                    .children('option')
+                    .prop('disabled', false)
+                    .show();
 				// if a valid country is selected
 				if ( selected_country !== '' ) {
-					// wrap all unselected optgroup with span tags which effectively hides them in the dropdown
-					$( 'optgroup:not([label="' + selected_country + '"])', $state_select ).wrap( '<span></span>' );
-					// if a valid corresponding state select exists
+                    // console.log('Hide unselected countries');
+                    // hide all unselected optgroups and disable their options
+                    $( 'optgroup:not([label="' + selected_country + '"])', $state_select )
+                        .hide()
+                        .children('option')
+                        .prop('selected', false)
+                        .prop('disabled', true);
+                    // then enable all options for selected country, but don't select anything
+                    $('optgroup[label="' + selected_country + '"]', $state_select)
+                        .show()
+                        .children('option')
+                        .prop('disabled', false);
+                    // if a valid corresponding state select exists
 					if ( selected_state.length ) {
 						// loop through all of its optgroups
 						$state_select.find( 'optgroup' ).each(
 							function () {
-								// if this optgroup is not hidden (wrapped in  a span)
-								if ( $(this).parent().prop( "tagName" ) == 'SELECT' ) {
-									// then loop through each of its options
-									$( this ).find( 'option' ).each(
-										function () {
-											// was this option match the previously selected state ?
-											if ( $( this ).val() == selected_state ) {
-												valid_option = true;
-												// make sure it's set as the selected option
-												$state_select.val( selected_state ).change();
-											}
-										}
-									);
+                                // if this is the selected optgroup
+								if ( $(this).attr('label') === selected_country ) {
+								    // then make sure its options are enabled
+                                    $(this).show().children('option').prop('disabled', false);
+								    // and it contains the selected option
+                                    if ( $(this).text().indexOf(selected_state) !== -1 ) {
+                                        // then loop through each of its options
+                                        $(this).find('option').each(
+                                            function () {
+                                                // console.log('option text: ' + $(this).text() );
+                                                // was this option match the previously selected state ?
+                                                if ($(this).text() === selected_state) {
+                                                    valid_option = true;
+                                                    // make sure it's set as the selected option
+                                                    $(this).prop('selected', true);
+                                                    $state_select.change();
+                                                } else {
+                                                    $(this).prop('selected', false);
+                                                }
+                                            }
+                                        );
+                                    }
 								}
 							}
 						);
 					}
-					// console_log( 'valid_option', valid_option, false );
+					// console.log( 'valid_option: ' + valid_option );
 					// if the previously selected state is not valid
-					if ( ! valid_option ) {
-						// makes sure no option is selected
-						$( "option:selected", $state_select ).prop( "selected", false );
-						// then find the empty placeholder and select it
-						$state_select
-							.find( 'optgroup[label=""]' )
-							.unwrap()
-							.find( 'option[value=""]' )
-							.attr( 'selected', 'selected' );
-						// select it again to be sure
-						$state_select.val('')
+					if ( valid_option ) {
+                        // console.log('VALID OPTION');
+                        // previously selected state IS valid
+                        // so make sure the empty placeholder is unselected
+                        $state_select
+                            .find('optgroup[label=""]')
+                            .hide()
+                            .find('option[value=""]')
+                            .prop('selected', false)
+                            .prop('disabled', true);
+
 					} else {
-						// previously selected state IS valid
-						// so make sure the empty placeholder is unselected
-						$state_select
-							.find( 'optgroup[label=""]' )
-							.find( 'option[value=""]' )
-							.removeAttr( 'selected' );
-					}
+                        // console.log('INVALID OPTION');
+                        // then find the empty placeholder and select it
+                        $state_select
+                            .find('optgroup[label=""]')
+                            .show()
+                            .find('option[value=""]')
+                            .prop('disabled', false)
+                            .prop('selected', true)
+                            .val('');
+
+                    }
 				} else {
-					// console.log( JSON.stringify( 'NO COUNTRY SELECTED', null, 4 ) );
-					// unwrap any wrapped elements
+					// console.log( 'NO COUNTRY SELECTED' );
+					// display any hidden optgroups and re-enable options
 					$state_select.find( 'optgroup' ).each(
 						function () {
-							// console_log( 'optgroup', $( this ).val(), false );
-							if ( $( this ).parent().prop( "tagName" ) == 'SPAN' ) {
-								$( this ).unwrap();
-							}
+							// console.log( 'optgroup: ' + $(this).val() );
+							$(this).show().children('option').prop('disabled', false);
 						}
 					);
 				}
 			}
-		}
+        }
 	);
+
+
+
+
+    /**
+     * @function rgb2hex
+     * converts hex format to a rgb color
+     * @see http://jsfiddle.net/Mottie/xcqpF/1/light/
+     *
+     * @param {string} rgb
+     * @return string
+     */
+    window.eeRgbToHex = function (rgb) {
+        // console_log('rgb', rgb, false);
+        var hex = '';
+        var rgb_parts = rgb.match(/^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i);
+        if (rgb_parts && rgb_parts.length === 4) {
+            hex = "#" + ("0" + parseInt(rgb_parts[1], 10).toString(16)).slice(-2);
+            hex += ("0" + parseInt(rgb_parts[2], 10).toString(16)).slice(-2);
+            hex += ("0" + parseInt(rgb_parts[3], 10).toString(16)).slice(-2);
+        }
+        hex = hex !== '' ? hex : rgb;
+        // console_log('hex', hex, false);
+        return hex;
+    };
+
+
+
+    /**
+     * @function getParentBackgroundColor
+     * recursively walks up the DOM looking for the first element with
+     * some sort of color set for the background, then returns that value
+     *
+     * @param {object} domElement
+     * @return string
+     */
+    window.eeGetParentBackgroundColor = function (domElement) {
+    	// set default color of white with full opacity
+        var BackgroundColor = 'rgba(255,255,255,1)';
+        var $parent = domElement.parent();
+        // if no BG color is found by the time we get to the "<html>" tag, then just return the default;
+        if ($parent.length && $parent.prop('tagName') !== 'HTML') {
+            // console_log('$parent', $parent.prop('tagName') + ' #' + $parent.attr('id'), true);
+            BackgroundColor = $parent.css('backgroundColor');
+            // console_log('BackgroundColor', BackgroundColor, false);
+            if (
+                typeof BackgroundColor === 'undefined'
+                || BackgroundColor === 'transparent'
+                || BackgroundColor === 'inherit'
+                || BackgroundColor === 'rgba(0, 0, 0, 0)'
+                || BackgroundColor === ''
+            ) {
+                return eeGetParentBackgroundColor($parent);
+            }
+        }
+        return BackgroundColor;
+    };
+
+
 
 });
 
@@ -566,7 +605,7 @@ function console_log_object( obj_name, obj, depth ) {
 		}
 		jQuery.each(
 			obj, function ( index, value ) {
-				if ( typeof value === 'object' && depth < 6 ) {
+				if ( typeof value === 'object' && depth < 3 ) {
 					depth++;
 					console_log_object( index, value, depth );
 				} else {
@@ -578,4 +617,20 @@ function console_log_object( obj_name, obj, depth ) {
 	} else {
 		console_log( spacer + obj_name, obj, true );
 	}
+}
+
+
+/**
+ * @function object_exists
+ * returns true if object exists and displays console error if it does not
+ * @param  {object} $object
+ * @param  {string} object_name
+ * @return boolean
+ */
+function object_exists($object, object_name) {
+    if ($object.length) {
+        return true;
+    }
+    console_log('ERROR: object not found', object_name, false);
+    return false;
 }

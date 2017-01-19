@@ -201,7 +201,7 @@ class EED_Mijireh_Slurper  extends EED_Module {
 				'Authorization' => 'Basic ' . base64_encode( $access_key . ':' ),
 				'Accept'=>'application/json'
 			),
-			'body'=>json_encode(
+			'body'=> wp_json_encode(
 				array(
 					'url'=>  get_permalink($post->ID),
 					'page_id'=>$post->ID,

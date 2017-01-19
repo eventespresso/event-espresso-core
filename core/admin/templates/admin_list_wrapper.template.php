@@ -3,6 +3,7 @@
 /** @var EE_Admin_List_Table $list_table */
 /** @var string $list_table_class */
 /** @var string $table_url */
+/** @var array $search */
 /** @var string $sortable_list_table_form_fields */
 /** @var string $current_page */
 /** @var string $list_table_hidden_fields */

@@ -73,7 +73,7 @@ class TableManager extends \EE_Base
         $full_table_name = $this->getTableAnalysis()->ensureTableNameHasPrefix($table_name);
         $columns = $this->getTableColumns($table_name);
         if ( ! in_array($column_name, $columns)) {
-            $alter_query = "ALTER TABLE $full_table_name ADD $column_name $column_info";
+            $alter_query = "ALTER TABLE {$full_table_name} ADD {$column_name} {$column_info}";
             return $wpdb->query($alter_query);
         }
         return true;
@@ -93,16 +93,16 @@ class TableManager extends \EE_Base
     {
         global $wpdb;
         $table_name = $this->getTableAnalysis()->ensureTableNameHasPrefix($table_name);
-        $fieldArray = array();
+        $field_array = array();
         if ( ! empty($table_name)) {
-            $columns = $wpdb->get_results("SHOW COLUMNS FROM $table_name ");
+            $columns = $wpdb->get_results("SHOW COLUMNS FROM {$table_name} ");
             if ($columns !== false) {
                 foreach ($columns as $column) {
-                    $fieldArray[] = $column->Field;
+                    $field_array[] = $column->Field;
                 }
             }
         }
-        return $fieldArray;
+        return $field_array;
     }
 
 
@@ -120,7 +120,7 @@ class TableManager extends \EE_Base
         global $wpdb;
         if ($this->getTableAnalysis()->tableExists($table_name)) {
             $table_name = $this->getTableAnalysis()->ensureTableNameHasPrefix($table_name);
-            return $wpdb->query("DROP TABLE IF EXISTS $table_name");
+            return $wpdb->query("DROP TABLE IF EXISTS {$table_name}");
         }
         return 0;
     }
@@ -145,8 +145,10 @@ class TableManager extends \EE_Base
                 $tables_to_delete[] = $table_name;
             }
         }
-        global $wpdb;
-        $wpdb->query('DROP TABLE ' . implode(', ', $tables_to_delete));
+        if( ! empty( $tables_to_delete ) ) {
+            global $wpdb;
+            $wpdb->query('DROP TABLE ' . implode(', ', $tables_to_delete));
+        }
         return $tables_to_delete;
     }
 
@@ -155,26 +157,27 @@ class TableManager extends \EE_Base
     /**
      * Drops the specified index from the specified table. $table_name can
      * optionally start with $wpdb->prefix or not
+
      *
-     * @global \wpdb $wpdb
+*@global \wpdb       $wpdb
      * @param string $table_name
-     * @param string $indexName
+     * @param string $index_name
      * @return int
      */
-    public function dropIndex($table_name, $indexName)
+    public function dropIndex($table_name, $index_name)
     {
         if (apply_filters('FHEE__EEH_Activation__drop_index__short_circuit', false)) {
             return false;
         }
         global $wpdb;
         $table_name = $this->getTableAnalysis()->ensureTableNameHasPrefix($table_name);
-        $index_exists_query = "SHOW INDEX FROM $table_name WHERE Key_name = '$indexName'";
+        $index_exists_query = "SHOW INDEX FROM {$table_name} WHERE Key_name = '{$index_name}'";
         if (
             $this->getTableAnalysis()->tableExists($table_name)
             && $wpdb->get_var($index_exists_query)
                === $table_name //using get_var with the $index_exists_query returns the table's name
         ) {
-            return $wpdb->query("ALTER TABLE $table_name DROP INDEX $indexName");
+            return $wpdb->query("ALTER TABLE {$table_name} DROP INDEX {$index_name}");
         }
         return 0;
     }
@@ -184,21 +187,23 @@ class TableManager extends \EE_Base
     /**
      * Just creates the requested table. $table_name can
      * optionally start with $wpdb->prefix or not
+
      *
-     * @param string $table_name
-     * @param string $createSql defining the table's columns and indexes
-     * @param string $engine    (no need to specify "ENGINE=", that's implied)
+*@param string       $table_name
+     * @param string $create_sql defining the table's columns and indexes
+     * @param string $engine     (no need to specify "ENGINE=", that's implied)
      * @return void
      * @throws \EE_Error
      */
-    public function createTable($table_name, $createSql, $engine = 'MyISAM')
+    public function createTable($table_name, $create_sql, $engine = 'MyISAM')
     {
         // does $sql contain valid column information? ( LPT: https://regex101.com/ is great for working out regex patterns )
-        if (preg_match('((((.*?))(,\s))+)', $createSql, $valid_column_data)) {
+        if (preg_match('((((.*?))(,\s))+)', $create_sql, $valid_column_data)) {
             $table_name = $this->getTableAnalysis()->ensureTableNameHasPrefix($table_name);
-            $SQL = "CREATE TABLE $table_name ( $createSql ) ENGINE=$engine DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;";
             /** @var \wpdb $wpdb */
             global $wpdb;
+            $SQL = "CREATE TABLE {$table_name} ( {$create_sql} ) ENGINE={$engine} " . $wpdb->get_charset_collate();
+
             //get $wpdb to echo errors, but buffer them. This way at least WE know an error
             //happened. And then we can choose to tell the end user
             $old_show_errors_policy = $wpdb->show_errors(true);
@@ -218,7 +223,7 @@ class TableManager extends \EE_Base
                     __('The following table creation SQL does not contain valid information about the table columns: %1$s %2$s',
                         'event_espresso'),
                     '<br />',
-                    $createSql
+                    $create_sql
                 )
             );
         }

@@ -42,6 +42,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     protected $_event_model;
 
 
+
     /**
      * @var EE_Event
      */
@@ -736,6 +737,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      * Otherwise, do the normal logic
      *
      * @return string
+     * @throws \EE_Error
      */
     protected function _create_new_cpt_item()
     {
@@ -745,8 +747,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             EE_Error::add_attention(
                 sprintf(
                     __(
-                        'Your website\'s timezone is currently set to UTC + 0. We recommend updating your timezone to a city
-			        or region near you before you create an event. Your timezone can be updated through the %1$sGeneral Settings%2$s page.'
+                        'Your website\'s timezone is currently set to UTC + 0. We recommend updating your timezone to a city or region near you before you create an event. Your timezone can be updated through the %1$sGeneral Settings%2$s page.',
+                        'event_espresso'
                     ),
                     '<a href="' . admin_url('options-general.php') . '">',
                     '</a>'
@@ -900,16 +902,21 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      *
      * @access protected
      * @return void
+     * @throws \EE_Error
      */
     protected function _events_overview_list_table()
     {
         do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-        $this->_template_args['after_list_table'] = EEH_Template::get_button_or_link(
-            get_post_type_archive_link('espresso_events'),
-            esc_html__("View Event Archive Page", "event_espresso"),
-            'button'
-        );
-        $this->_template_args['after_list_table'] .= $this->_display_legend($this->_event_legend_items());
+        $this->_template_args['after_list_table'] = ! empty($this->_template_args['after_list_table'])
+            ? (array)$this->_template_args['after_list_table']
+            : array();
+        $this->_template_args['after_list_table']['view_event_list_button'] = EEH_HTML::br()
+                                                                              . EEH_Template::get_button_or_link(
+                get_post_type_archive_link('espresso_events'),
+                esc_html__("View Event Archive Page", "event_espresso"),
+                'button'
+            );
+        $this->_template_args['after_list_table']['legend'] = $this->_display_legend($this->_event_legend_items());
         $this->_admin_page_title .= ' ' . $this->get_action_link_or_button(
                 'create_new',
                 'add',
@@ -934,8 +941,19 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
 
 
     /**
-     * @param string $post_id
-     * @param object $post
+     * This is hooked into the WordPress do_action('save_post') hook and runs after the custom post type has been
+     * saved.  Child classes are required to declare this method.  Typically you would use this to save any additional
+     * data.
+     * Keep in mind also that "save_post" runs on EVERY post update to the database.
+     * ALSO very important.  When a post transitions from scheduled to published, the save_post action is fired but you
+     * will NOT have any _POST data containing any extra info you may have from other meta saves.  So MAKE sure that
+     * you handle this accordingly.
+     *
+     * @access protected
+     * @abstract
+     * @param  string $post_id The ID of the cpt that was saved (so you can link relationally)
+     * @param  object $post    The post object of the cpt that was saved.
+     * @return void
      */
     protected function _insert_update_cpt_item($post_id, $post)
     {
@@ -1756,8 +1774,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             );
             $start = $DateTime->format(implode(' ', $start_formats));
             $end = $DateTime->setDate($year_r, $month_r, $DateTime
-            				->format('t'))->setTime(23, 59, 59)
-            				->format(implode(' ', $start_formats));
+                ->format('t'))->setTime(23, 59, 59)
+                            ->format(implode(' ', $start_formats));
             $where['Datetime.DTT_EVT_start'] = array('BETWEEN', array($start, $end));
         } else if (isset($this->_req_data['status']) && $this->_req_data['status'] == 'today') {
             $DateTime = new DateTime('now', new DateTimeZone(EEM_Event::instance()->get_timezone()));
@@ -2253,7 +2271,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         $this->_template_args['default_reg_status'] = isset(
                                                           EE_Registry::instance()->CFG->registration->default_STS_ID
                                                       )
-                                                      && in_array(
+                                                      && array_key_exists(
                                                           EE_Registry::instance()->CFG->registration->default_STS_ID,
                                                           $this->_template_args['reg_status_array']
                                                       )

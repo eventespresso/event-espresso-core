@@ -108,7 +108,7 @@ class EEG_Mijireh extends EE_Offsite_Gateway{
 				'Authorization' => 'Basic ' . base64_encode( $this->_access_key . ':' ),
 				'Accept'=>'application/json'
 			),
-			'body'=>  json_encode($order)
+			'body'=>  wp_json_encode($order)
 		);
 		$response = wp_remote_post( $this->_mijireh_api_orders_url, $args );
                 $problems_string = false;

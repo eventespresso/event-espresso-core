@@ -254,19 +254,22 @@ class EE_Error extends Exception {
 
 
 
-	/**
-	 *    has_error
-	 *
-	 * @access public
-	 * @param bool $check_stored
-	 * @return bool
-	 */
-    public static function has_error( $check_stored = false ){
-	    $has_error = self::$_error_count ? true : false;
+    /**
+     *    has_error
+     *
+     * @access public
+     * @param bool   $check_stored
+     * @param string $type_to_check
+     * @return bool
+     */
+    public static function has_error( $check_stored = false, $type_to_check = 'errors' ){
+	    $has_error = isset(self::$_espresso_notices[$type_to_check]) && ! empty(self::$_espresso_notices[$type_to_check])
+            ? true
+            : false;
 	    if ( $check_stored && ! $has_error ) {
 		    $notices = (array) get_option( 'ee_notices', array() );
 		    foreach ( $notices as $type => $notice ) {
-			    if ( $type === 'errors' && $notice ) {
+			    if ( $type === $type_to_check && $notice ) {
 				    return true;
 			    }
 		    }
@@ -483,7 +486,7 @@ class EE_Error extends Exception {
 		$output .= self::_print_scripts( TRUE );
 
 		if ( defined( 'DOING_AJAX' )) {
-			echo json_encode( array( 'error' => $output ));
+			echo wp_json_encode( array( 'error' => $output ));
 			exit();
 		}
 
@@ -839,23 +842,23 @@ class EE_Error extends Exception {
 
 			$notices = '<div id="espresso-notices">';
 
-			$close = is_admin() ? '' : '<a class="close-espresso-notice hide-if-no-js">&times;</a>';
+			$close = is_admin() ? '' : '<a class="close-espresso-notice hide-if-no-js"><span class="dashicons dashicons-no"></span></a>';
 
-			if ($success_messages != '') {
+			if ($success_messages !== '') {
 				$css_id = is_admin() ? 'message' : 'espresso-notices-success';
 				$css_class = is_admin() ? 'updated fade' : 'success fade-away';
 				//showMessage( $success_messages );
 				$notices .= '<div id="' . $css_id . '" class="espresso-notices ' . $css_class . '" style="display:none;"><p>' . $success_messages . '</p>' . $close . '</div>';
 			}
 
-			if ($attention_messages != '') {
+			if ($attention_messages !== '') {
 				$css_id = is_admin() ? 'message' : 'espresso-notices-attention';
 				$css_class = is_admin() ? 'updated ee-notices-attention' : 'attention fade-away';
 				//showMessage( $error_messages, TRUE );
 				$notices .= '<div id="' . $css_id . '" class="espresso-notices ' . $css_class . '" style="display:none;"><p>' . $attention_messages . '</p>' . $close . '</div>';
 			}
 
-			if ($error_messages != '') {
+			if ($error_messages !== '') {
 				$css_id = is_admin() ? 'message' : 'espresso-notices-error';
 				$css_class = is_admin() ? 'error' : 'error fade-away';
 				//showMessage( $error_messages, TRUE );
@@ -949,7 +952,7 @@ class EE_Error extends Exception {
 			return;
 		} else if ( EE_Registry::instance()->REQ->ajax ) {
 			// grab any notices and concatenate into string
-			echo json_encode( array( 'errors' => implode( '<br />', EE_Error::get_notices( FALSE ))));
+			echo wp_json_encode( array( 'errors' => implode( '<br />', EE_Error::get_notices( FALSE ))));
 			exit();
 		} else {
 			// save errors to a transient to be displayed on next request (after redirect)

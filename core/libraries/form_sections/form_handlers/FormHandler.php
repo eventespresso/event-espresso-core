@@ -21,10 +21,9 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * abstract parent class for handling the last mile of boilerplate client code required
  * for displaying and processing a typical form.
  * allow your form to integrate with other systems that utilize the
- * \EventEspresso\core\libraries\form_sections\form_handlers\FormInterface interface
-
+ * \EventEspresso\core\libraries\form_sections\form_handlers\FormHandlerInterface interface
  *
-*@package       Event Espresso
+ * @package       Event Espresso
  * @author        Brent Christensen
  * @since         4.9.0
  */
@@ -120,17 +119,19 @@ abstract class FormHandler implements FormHandlerInterface{
 
 
 
-	/**
-	 * Form constructor.
-
-	 *
-*@param string $form_name
-	 * @param string     $admin_name
-	 * @param string     $slug
-	 * @param string     $form_action
-	 * @param string     $form_config
-	 * @param \EE_Registry $registry
-	 */
+    /**
+     * Form constructor.
+     *
+     * @param string       $form_name
+     * @param string       $admin_name
+     * @param string       $slug
+     * @param string       $form_action
+     * @param string       $form_config
+     * @param \EE_Registry $registry
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \DomainException
+     * @throws \InvalidArgumentException
+     */
 	public function __construct(
 		$form_name,
 		$admin_name,
@@ -336,9 +337,11 @@ abstract class FormHandler implements FormHandlerInterface{
 
 
 
-	/**
-	 * @param string $submit_btn_text
-	 */
+    /**
+     * @param string $submit_btn_text
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \InvalidArgumentException
+     */
 	public function setSubmitBtnText( $submit_btn_text ) {
 		if ( ! is_string( $submit_btn_text ) ) {
 			throw new InvalidDataTypeException( '$submit_btn_text', $submit_btn_text, 'string' );
