@@ -612,7 +612,12 @@ final class EE_Front_Controller
     public function wp_print_scripts()
     {
         global $post;
-        if (get_post_type() === 'espresso_events' && is_singular()) {
+        if (
+            get_post_type() === 'espresso_events' 
+            && is_singular() 
+            && isset($post->EE_Event)
+            && $post->EE_Event instanceof EE_Event
+        ) {
             \EEH_Schema::add_json_linked_data_for_event($post->EE_Event);
         }
     }
