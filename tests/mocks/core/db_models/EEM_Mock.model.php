@@ -21,8 +21,8 @@ class EEM_Mock extends EEM_Base{
 		);
 		$this->_fields = array(
 			'Mock'=>array(
-				'MCK_ID'=>new EE_Primary_Key_Int_Field('MCK_ID', __("Mock Object ID", 'event_espresso')),
-                'MCK_value' => new EE_Plain_Text_Field('MCK_value',esc_html__('Mock Object Value', 'event_espresso'),true),
+				'MCK_ID'=>new EE_Primary_Key_Int_Field('MCK_ID', "Mock Object ID"),
+                'MCK_value' => new EE_Plain_Text_Field('MCK_value','Mock Object Value',true),
 			)
 		);
 		parent::__construct($timezone);
