@@ -1,4 +1,6 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) {
+<?php use EventEspresso\core\exceptions\InvalidDataTypeException;
+
+if ( ! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
 
@@ -147,19 +149,22 @@ class EE_Recommended_Versions extends EE_Middleware
      *
      * @access private
      * @return void
+     * @throws InvalidDataTypeException
      */
     private function _display_minimum_recommended_php_version_notice()
     {
-        EE_Error::add_persistent_admin_notice(
-                'php_version_' . str_replace('.', '-', EE_MIN_PHP_VER_RECOMMENDED) . '_recommended',
-                sprintf(
-                        __('Event Espresso recommends PHP version %1$s or greater for optimal performance. You are currently running version %2$s.%3$sIn order to update your version of PHP, you will need to contact your current hosting provider.%3$sFor information on stable PHP versions, please go to %4$s.',
-                                'event_espresso'),
-                        EE_MIN_PHP_VER_RECOMMENDED,
-                        PHP_VERSION,
-                        '<br/>',
-                        '<a href="http://php.net/downloads.php">http://php.net/downloads.php</a>'
-                )
+        new \EventEspresso\core\domain\entities\notifications\PersistentAdminNotice(
+            'php_version_' . str_replace('.', '-', EE_MIN_PHP_VER_RECOMMENDED) . '_recommended',
+            sprintf(
+                __(
+                    'Event Espresso recommends PHP version %1$s or greater for optimal performance. You are currently running version %2$s.%3$sIn order to update your version of PHP, you will need to contact your current hosting provider.%3$sFor information on stable PHP versions, please go to %4$s.',
+                    'event_espresso'
+                ),
+                EE_MIN_PHP_VER_RECOMMENDED,
+                PHP_VERSION,
+                '<br/>',
+                '<a href="http://php.net/downloads.php">http://php.net/downloads.php</a>'
+            )
         );
     }
 
