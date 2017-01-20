@@ -1,4 +1,12 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+<?php
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\container\CoffeeMill;
+use EventEspresso\core\services\container\exceptions\ServiceNotFoundException;
+use EventEspresso\core\services\notifications\PersistentAdminNoticeManager;
+
+
+if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 /**
  * Event Espresso
  *
@@ -29,7 +37,10 @@ final class EE_Admin {
 	 */
 	private static $_instance;
 
-
+    /**
+     * @var PersistentAdminNoticeManager $persistent_admin_notice_manager
+     */
+    private $persistent_admin_notice_manager;
 
 	/**
 	 *@ singleton method used to instantiate class object
@@ -166,19 +177,30 @@ final class EE_Admin {
 
 
 
-	/**
-	* init- should fire after shortcode, module,  addon, other plugin (default priority), and even EE_Front_Controller's init phases have run
-	*
-	* @access public
-	* @return void
-	*/
+    /**
+     * init- should fire after shortcode, module,  addon, other plugin (default priority), and even EE_Front_Controller's init phases have run
+     *
+     * @access public
+     * @return void
+     * @throws InvalidDataTypeException
+     * @throws ServiceNotFoundException
+     */
 	public function init() {
 		//only enable most of the EE_Admin IF we're not in full maintenance mode
 		if ( EE_Maintenance_Mode::instance()->models_can_query() ){
-			//ok so we want to enable the entire admin
-			add_action( 'wp_ajax_dismiss_ee_nag_notice', array( $this, 'dismiss_ee_nag_notice_callback' ));
-			add_action( 'admin_notices', array( $this, 'get_persistent_admin_notices' ), 9 );
-			add_action( 'network_admin_notices', array( $this, 'get_persistent_admin_notices' ), 9 );
+            //ok so we want to enable the entire admin
+            $this->persistent_admin_notice_manager = CoffeeMill::getService(
+                'EventEspresso\core\services\notifications\PersistentAdminNoticeManager',
+                array(
+                    EE_Admin_Page::add_query_args_and_nonce(
+                        array(
+                            'page'   => EE_Registry::instance()->REQ->get('page', ''),
+                            'action' => EE_Registry::instance()->REQ->get('action', ''),
+                        ),
+                        EE_ADMIN_URL
+                    )
+                )
+            );
 			//at a glance dashboard widget
 			add_filter( 'dashboard_glance_items', array( $this, 'dashboard_glance_items' ), 10 );
 			//filter for get_edit_post_link used on comments for custom post types
@@ -582,44 +604,14 @@ final class EE_Admin {
 
 
 	/**
-	 * 	display_admin_notices
+	 * display_admin_notices
 	 *
-	 *  @access 	public
-	 *  @return 	string
+	 *  @return void
 	 */
 	public function display_admin_notices() {
 		echo EE_Error::get_notices();
 	}
 
-
-
-	/**
-	 * 	get_persistent_admin_notices
-	 *
-	 *  	@access 	public
-	 *  	@return 		void
-	 */
-	public function get_persistent_admin_notices() {
-		// http://www.example.com/wp-admin/admin.php?page=espresso_general_settings&action=critical_pages&critical_pages_nonce=2831ce0f30
-		$args = array(
-			'page' => EE_Registry::instance()->REQ->is_set( 'page' ) ? EE_Registry::instance()->REQ->get( 'page' ) : '',
-			'action' => EE_Registry::instance()->REQ->is_set( 'action' ) ? EE_Registry::instance()->REQ->get( 'action' ) : '',
-		);
-		$return_url = EE_Admin_Page::add_query_args_and_nonce( $args, EE_ADMIN_URL );
-		echo EE_Error::get_persistent_admin_notices( $return_url );
-	}
-
-
-
-	/**
-	* 	dismiss_persistent_admin_notice
-	*
-	*	@access 	public
-	* 	@return 		void
-	*/
-	public function dismiss_ee_nag_notice_callback() {
-		EE_Error::dismiss_persistent_admin_notice();
-	}
 
 
 
@@ -805,6 +797,44 @@ final class EE_Admin {
 		EventEspresso\core\admin\PostShortcodeTracking::reset_page_for_posts_on_change( $option, $old_value, $value );
 	}
 
+
+
+    /**
+     * @deprecated 4.9.27
+     * @return void
+     */
+    public function get_persistent_admin_notices()
+    {
+        EE_Error::doing_it_wrong(
+            __METHOD__,
+            sprintf(
+                __('Usage is deprecated. Use "%1$s" instead.', 'event_espresso'),
+                '\EventEspresso\core\services\notifications\PersistentAdminNoticeManager'
+            ),
+            '4.9.27'
+        );
+    }
+
+
+
+    /**
+     * @deprecated 4.9.27
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws DomainException
+     */
+    public function dismiss_ee_nag_notice_callback()
+    {
+        EE_Error::doing_it_wrong(
+            __METHOD__,
+            sprintf(
+                __('Usage is deprecated. Use "%1$s" instead.', 'event_espresso'),
+                '\EventEspresso\core\services\notifications\PersistentAdminNoticeManager'
+            ),
+            '4.9.27'
+        );
+        $this->persistent_admin_notice_manager->dismissNotice();
+    }
 }
 // End of file EE_Admin.core.php
 // Location: /core/admin/EE_Admin.core.php
