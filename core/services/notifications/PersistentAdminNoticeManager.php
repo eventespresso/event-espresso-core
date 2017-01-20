@@ -305,6 +305,7 @@ class PersistentAdminNoticeManager
             $persistent_admin_notice = $this->notice_collection->get($pan_name);
             $persistent_admin_notice->setDismissed(true);
             $persistent_admin_notice->setPurge($purge);
+            $this->saveNotices();
         }
         if ($return) {
             return;
