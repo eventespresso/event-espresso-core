@@ -1,4 +1,7 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) {
+<?php use EventEspresso\core\domain\entities\notifications\PersistentAdminNotice;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+
+if ( ! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
 
@@ -403,14 +406,13 @@ class EEH_Activation
 
 
 
-
-
     /**
      * verify_default_pages_exist
      *
      * @access public
      * @static
      * @return void
+     * @throws InvalidDataTypeException
      */
     public static function verify_default_pages_exist()
     {
@@ -493,18 +495,18 @@ class EEH_Activation
                     : $critical_page_problem;
         }
         if ($critical_page_problem) {
-            $msg = sprintf(
-                __(
-                    'A potential issue has been detected with one or more of your Event Espresso pages. Go to %s to view your Event Espresso pages.',
-                    'event_espresso'
-                ),
-                '<a href="'
-                . admin_url('admin.php?page=espresso_general_settings&action=critical_pages')
-                . '">'
-                . __('Event Espresso Critical Pages Settings', 'event_espresso')
-                . '</a>'
+            new PersistentAdminNotice(
+                'critical_page_problem',
+                sprintf(
+                    esc_html__(
+                        'A potential issue has been detected with one or more of your Event Espresso pages. Go to %s to view your Event Espresso pages.',
+                        'event_espresso'
+                    ),
+                    '<a href="' . admin_url('admin.php?page=espresso_general_settings&action=critical_pages') . '">'
+                    . __('Event Espresso Critical Pages Settings', 'event_espresso')
+                    . '</a>'
+                )
             );
-            EE_Error::add_persistent_admin_notice('critical_page_problem', $msg);
         }
         if (EE_Error::has_notices()) {
             EE_Error::get_notices(false, true, true);
