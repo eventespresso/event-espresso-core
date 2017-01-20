@@ -1,4 +1,12 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+<?php
+use EventEspresso\core\domain\entities\notifications\PersistentAdminNotice;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\container\CoffeeMill;
+use EventEspresso\core\services\container\exceptions\ServiceNotFoundException;
+use EventEspresso\core\services\notifications\PersistentAdminNoticeManager;
+
+if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 // if you're a dev and want to receive all errors via email add this to your wp-config.php: define( 'EE_ERROR_EMAILS', TRUE );
 if ( defined( 'WP_DEBUG' ) && WP_DEBUG === TRUE && defined( 'EE_ERROR_EMAILS' ) && EE_ERROR_EMAILS === TRUE ) {
 	set_error_handler( array( 'EE_Error', 'error_handler' ));
@@ -894,140 +902,6 @@ class EE_Error extends Exception {
 
 
 
-
-
-	/**
-	* 	add_persistent_admin_notice
-	*
-	*	@access 	public
-	* 	@param		string	$pan_name	the name, or key of the Persistent Admin Notice to be stored
-	* 	@param		string	$pan_message	the message to be stored persistently until dismissed
-	* 	@param bool $force_update allows one to enforce the reappearance of a persistent message.
-	* 	@return 		void
-	*/
-	public static function add_persistent_admin_notice( $pan_name = '', $pan_message, $force_update = FALSE ) {
-		if ( ! empty( $pan_name ) && ! empty( $pan_message )) {
-			$persistent_admin_notices = get_option( 'ee_pers_admin_notices', array() );
-			//maybe initialize persistent_admin_notices
-			if ( empty( $persistent_admin_notices )) {
-				add_option( 'ee_pers_admin_notices', array(), '', 'no' );
-			}
-			$pan_name = sanitize_key( $pan_name );
-			if ( ! array_key_exists( $pan_name, $persistent_admin_notices ) || $force_update ) {
-				$persistent_admin_notices[ $pan_name ] = $pan_message;
-				update_option( 'ee_pers_admin_notices', $persistent_admin_notices );
-			}
-		}
-	}
-
-
-
-	/**
-	 *    dismiss_persistent_admin_notice
-	 *
-	 * @access    public
-	 * @param        string $pan_name the name, or key of the Persistent Admin Notice to be dismissed
-	 * @param bool          $purge
-	 * @param bool          $return_immediately
-	 * @return        void
-	 */
-	public static function dismiss_persistent_admin_notice( $pan_name = '', $purge = FALSE, $return_immediately = FALSE ) {
-		$pan_name = EE_Registry::instance()->REQ->is_set( 'ee_nag_notice' ) ? EE_Registry::instance()->REQ->get( 'ee_nag_notice' ) : $pan_name;
-		if ( ! empty( $pan_name )) {
-			$persistent_admin_notices = get_option( 'ee_pers_admin_notices', array() );
-			// check if notice we wish to dismiss is actually in the $persistent_admin_notices array
-			if ( is_array( $persistent_admin_notices ) && isset( $persistent_admin_notices[ $pan_name ] )) {
-				// completely delete nag notice, or just NULL message so that it can NOT be added again ?
-				if ( $purge ) {
-					unset( $persistent_admin_notices[ $pan_name ] );
-				} else {
-					$persistent_admin_notices[ $pan_name ] = NULL;
-				}
-				if ( update_option( 'ee_pers_admin_notices', $persistent_admin_notices ) === FALSE ) {
-					EE_Error::add_error( sprintf( __( 'The persistent admin notice for "%s" could not be deleted.', 'event_espresso' ), $pan_name ), __FILE__, __FUNCTION__, __LINE__ );
-				}
-			}
-		}
-		if ( $return_immediately ) {
-			return;
-		} else if ( EE_Registry::instance()->REQ->ajax ) {
-			// grab any notices and concatenate into string
-			echo wp_json_encode( array( 'errors' => implode( '<br />', EE_Error::get_notices( FALSE ))));
-			exit();
-		} else {
-			// save errors to a transient to be displayed on next request (after redirect)
-			EE_Error::get_notices( FALSE, TRUE );
-			$return_url = EE_Registry::instance()->REQ->is_set( 'return_url' ) ? EE_Registry::instance()->REQ->get( 'return_url' ) : '';
-			wp_safe_redirect( urldecode( $return_url ));
-		}
-	}
-
-
-
-	/**
-	 * display_persistent_admin_notices
-	 *
-	 * @access public
-	 * @param  string $pan_name    the name, or key of the Persistent Admin Notice to be stored
-	 * @param  string $pan_message the message to be stored persistently until dismissed
-	 * @param  string $return_url  URL to go back to after nag notice is dismissed
-	 * @return string
-	 */
-	public static function display_persistent_admin_notices( $pan_name = '', $pan_message = '', $return_url = '' ) {
-		if ( ! empty( $pan_name ) && ! empty( $pan_message )) {
-			$args = array(
-				'nag_notice' => $pan_name,
-				'return_url' => urlencode( $return_url ),
-				'ajax_url' => WP_AJAX_URL,
-				'unknown_error' => __( 'An unknown error has occurred on the server while attempting to dismiss this notice.', 'event_espresso' )
-			);
-			wp_localize_script( 'espresso_core', 'ee_dismiss', $args );
-			return '
-			<div id="' . $pan_name . '" class="espresso-notices updated ee-nag-notice clearfix" style="border-left: 4px solid #fcb93c;">
-				<p>' . $pan_message . '</p>
-				<a class="dismiss-ee-nag-notice hide-if-no-js" style="float: right; cursor: pointer; text-decoration:none;" rel="' . $pan_name . '">
-					<span class="dashicons dashicons-dismiss" style="position:relative; top:-1px; margin-right:.25em;"></span>'.__( 'Dismiss', 'event_espresso' ) .'
-				</a>
-				<div style="clear:both;"></div>
-			</div>';
-		}
-		return '';
-	}
-
-
-
-	/**
-	 *    get_persistent_admin_notices
-	 *
-	 * @access    public
-	 * @param string $return_url
-	 * @return    array
-	 */
-	public static function get_persistent_admin_notices( $return_url = '' ) {
-		$notices = '';
-		// check for persistent admin notices
-		//filter the list though so plugins can notify the admin in a different way if they want
-		$persistent_admin_notices = apply_filters(
-			'FHEE__EE_Error__get_persistent_admin_notices',
-			get_option( 'ee_pers_admin_notices', FALSE ),
-			'ee_pers_admin_notices',
-			$return_url
-		);
-		if ( $persistent_admin_notices ) {
-			// load scripts
-			wp_register_script( 'espresso_core', EE_GLOBAL_ASSETS_URL . 'scripts/espresso_core.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
-			wp_register_script( 'ee_error_js', EE_GLOBAL_ASSETS_URL . 'scripts/EE_Error.js', array('espresso_core'), EVENT_ESPRESSO_VERSION, TRUE );
-			wp_enqueue_script( 'ee_error_js' );
-			// and display notices
-			foreach( $persistent_admin_notices as $pan_name => $pan_message ) {
-				$notices .= self::display_persistent_admin_notices( $pan_name, $pan_message, $return_url );
-			}
-		}
-		return $notices;
-	}
-
-
-
 	/**
 	 *    _print_scripts
 	 *
@@ -1192,6 +1066,99 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
 		return self::$_espresso_notices;
 	}
 
+
+
+    /**
+     * @deprecated 4.9.27
+     * @param string $pan_name     the name, or key of the Persistent Admin Notice to be stored
+     * @param string $pan_message  the message to be stored persistently until dismissed
+     * @param bool   $force_update allows one to enforce the reappearance of a persistent message.
+     * @return void
+     * @throws InvalidDataTypeException
+     */
+    public static function add_persistent_admin_notice($pan_name = '', $pan_message, $force_update = false)
+    {
+        new PersistentAdminNotice(
+            $pan_name,
+            $pan_message,
+            $force_update
+        );
+        EE_Error::doing_it_wrong(
+            __METHOD__,
+            sprintf(
+                __('Usage is deprecated. Use "%1$s" instead.', 'event_espresso'),
+                '\EventEspresso\core\domain\entities\notifications\PersistentAdminNotice'
+            ),
+            '4.9.27'
+        );
+    }
+
+
+
+    /**
+     * @deprecated 4.9.27
+     * @param string $pan_name the name, or key of the Persistent Admin Notice to be dismissed
+     * @param bool   $purge
+     * @param bool   $return
+     * @throws DomainException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws ServiceNotFoundException
+     */
+    public static function dismiss_persistent_admin_notice($pan_name = '', $purge = false, $return = false)
+    {
+        /** @var PersistentAdminNoticeManager $persistent_admin_notice_manager */
+        $persistent_admin_notice_manager = CoffeeMill::getService(
+            'EventEspresso\core\services\notifications\PersistentAdminNoticeManager'
+        );
+        $persistent_admin_notice_manager->dismissNotice($pan_name, $purge, $return);
+        EE_Error::doing_it_wrong(
+            __METHOD__,
+            sprintf(
+                __('Usage is deprecated. Use "%1$s" instead.', 'event_espresso'),
+                '\EventEspresso\core\services\notifications\PersistentAdminNoticeManager'
+            ),
+            '4.9.27'
+        );
+    }
+
+
+
+    /**
+     * @deprecated 4.9.27
+     * @param  string $pan_name    the name, or key of the Persistent Admin Notice to be stored
+     * @param  string $pan_message the message to be stored persistently until dismissed
+     * @param  string $return_url  URL to go back to after nag notice is dismissed
+     */
+    public static function display_persistent_admin_notices($pan_name = '', $pan_message = '', $return_url = '')
+    {
+        EE_Error::doing_it_wrong(
+            __METHOD__,
+            sprintf(
+                __('Usage is deprecated. Use "%1$s" instead.', 'event_espresso'),
+                '\EventEspresso\core\services\notifications\PersistentAdminNoticeManager'
+            ),
+            '4.9.27'
+        );
+    }
+
+
+
+    /**
+     * @deprecated 4.9.27
+     * @param string $return_url
+     */
+    public static function get_persistent_admin_notices($return_url = '')
+    {
+        EE_Error::doing_it_wrong(
+            __METHOD__,
+            sprintf(
+                __('Usage is deprecated. Use "%1$s" instead.', 'event_espresso'),
+                '\EventEspresso\core\services\notifications\PersistentAdminNoticeManager'
+            ),
+            '4.9.27'
+        );
+    }
 
 
 
