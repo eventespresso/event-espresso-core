@@ -1,4 +1,6 @@
 <?php
+use EventEspresso\core\domain\entities\notifications\PersistentAdminNotice;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\libraries\rest_api\Calculated_Model_Fields;
 use EventEspresso\core\libraries\rest_api\controllers\model\Read as ModelRead;
 use EventEspresso\core\libraries\rest_api\changes\Changes_In_Base;
@@ -116,6 +118,8 @@ class EED_Core_Rest_Api extends \EED_Module
      * If the user appears to be using WP API basic auth, tell them (via a persistent
      * admin notice and an email) that we're going to remove it soon, so they should
      * replace it with application passwords.
+     *
+     * @throws InvalidDataTypeException
      */
     public static function maybe_notify_of_basic_auth_removal()
     {
@@ -130,15 +134,19 @@ class EED_Core_Rest_Api extends \EED_Module
             return;
         }
         //ok they're using the WP API with Basic Auth
-        $message = sprintf(
-            __('We noticed you\'re using the WP API, which is used by the Event Espresso 4 mobile apps. Because of security and compatibility concerns, we will soon be removing our default authentication mechanism, WP API Basic Auth, from Event Espresso. It is recommended you instead install the %1$sWP Application Passwords plugin%2$s and use it with the EE4 Mobile apps. See %3$sour mobile app documentation%2$s for more information. %4$sIf you have installed the WP API Basic Auth plugin separately, or are not using the Event Espresso 4 mobile apps, you can disregard this message.%4$sThe Event Espresso Team',
-                'event_espresso'),
-            '<a href="https://wordpress.org/plugins/application-passwords/">',
-            '</a>',
-            '<a href="https://eventespresso.com/wiki/ee4-event-apps/#authentication">',
-            '<br/>'
+        new PersistentAdminNotice(
+            'using_basic_auth',
+            sprintf(
+                __(
+                    'We noticed you\'re using the WP API, which is used by the Event Espresso 4 mobile apps. Because of security and compatibility concerns, we will soon be removing our default authentication mechanism, WP API Basic Auth, from Event Espresso. It is recommended you instead install the %1$sWP Application Passwords plugin%2$s and use it with the EE4 Mobile apps. See %3$sour mobile app documentation%2$s for more information. %4$sIf you have installed the WP API Basic Auth plugin separately, or are not using the Event Espresso 4 mobile apps, you can disregard this message.%4$sThe Event Espresso Team',
+                    'event_espresso'
+                ),
+                '<a href="https://wordpress.org/plugins/application-passwords/">',
+                '</a>',
+                '<a href="https://eventespresso.com/wiki/ee4-event-apps/#authentication">',
+                '<br/>'
+            )
         );
-        EE_Error::add_persistent_admin_notice('using_basic_auth', $message);
         if ( ! get_option('ee_notified_admin_on_basic_auth_removal', false)) {
             add_option('ee_notified_admin_on_basic_auth_removal', true);
             //piggy back off EE_Error::set_content_type, which sets the content type to HTML
