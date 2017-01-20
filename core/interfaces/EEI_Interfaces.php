@@ -190,6 +190,7 @@ interface EEI_Registration extends EEI_Base {
 interface EEI_Attendee {
 	public function fname();
 	public function lname();
+    public function full_name();
 	public function email();
 	public function phone();
 	public function address();
