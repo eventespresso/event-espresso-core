@@ -193,7 +193,6 @@ class PersistentAdminNoticeManager
      */
     public function displayNotices()
     {
-        $load_assets = false;
         $this->notice_collection = $this->getPersistentAdminNoticeCollection();
         if ($this->notice_collection->hasObjects()) {
             // and display notices
@@ -212,13 +211,8 @@ class PersistentAdminNoticeManager
                     // and just eat the exception - nom nom nom nom
                     continue;
                 }
-                $this->displayPersistentAdminNoticeHtml($persistent_admin_notice);
-                $load_assets = true;
+                $this->displayPersistentAdminNotice($persistent_admin_notice);
             }
-        }
-        if ($load_assets) {
-            // load scripts
-            $this->enqueueAssets();
         }
     }
 
@@ -226,9 +220,15 @@ class PersistentAdminNoticeManager
 
     /**
      * does what it's named
+     *
+     * @return bool
      */
     public function enqueueAssets()
     {
+        static $print_scripts = true;
+        if (! $print_scripts) {
+            return $print_scripts;
+        }
         wp_register_script(
             'espresso_core',
             EE_GLOBAL_ASSETS_URL . 'scripts/espresso_core.js',
@@ -244,6 +244,8 @@ class PersistentAdminNoticeManager
             true
         );
         wp_enqueue_script('ee_error_js');
+        $print_scripts = true;
+        return $print_scripts;
     }
 
 
@@ -254,8 +256,10 @@ class PersistentAdminNoticeManager
      *
      * @param  PersistentAdminNotice $persistent_admin_notice
      */
-    public function displayPersistentAdminNoticeHtml(PersistentAdminNotice $persistent_admin_notice)
+    public function displayPersistentAdminNotice(PersistentAdminNotice $persistent_admin_notice)
     {
+        // used in template for printing css
+        $print_styles = $this->enqueueAssets();
         wp_localize_script(
             'espresso_core',
             'ee_dismiss',
@@ -269,18 +273,10 @@ class PersistentAdminNoticeManager
                 )
             )
         );
-        $html = "\n";
-        $html .= '<div id="' . $persistent_admin_notice->getName() . '" ';
-        $html .= 'class="espresso-notices updated ee-nag-notice clearfix">';
-        $html .= '<button class="dismiss-ee-nag-notice-btn dismiss-ee-nag-notice hide-if-no-js" ';
-        $html .= 'data-target="' . $persistent_admin_notice->getName() . '" >';
-        $html .= '<a><span class="dashicons dashicons-dismiss"></span>';
-        $html .= esc_html__('Dismiss', 'event_espresso') . '</a> ';
-        $html .= '</button> ';
-        $html .= '<p>' . $persistent_admin_notice->getMessage() . '</p> ';
-        $html .= '<div style="clear:both;"></div> ';
-        $html .= '</div>';
-        echo $html;
+        // used in template
+        $persistent_admin_notice_name = $persistent_admin_notice->getName();
+        $persistent_admin_notice_message = $persistent_admin_notice->getMessage();
+        require EE_TEMPLATES . DS . 'notifications' . DS . 'persistent_admin_notice.template.php';
     }
 
 
@@ -332,9 +328,14 @@ class PersistentAdminNoticeManager
 
     /**
      * saveNotices
+     *
+     * @throws DomainException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function saveNotices()
     {
+        $this->notice_collection = $this->getPersistentAdminNoticeCollection();
         if ($this->notice_collection->hasObjects()) {
             $persistent_admin_notices = get_option(PersistentAdminNoticeManager::WP_OPTION_KEY, array());
             //maybe initialize persistent_admin_notices
