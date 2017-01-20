@@ -32,7 +32,7 @@ jQuery(document).ready(function($) {
 
 
 	$('.dismiss-ee-nag-notice').click(function(event) {
-		var nag_notice = $(this).attr('rel');
+		var nag_notice = $(this).data('target');
 		if ( $('#'+nag_notice).size() ) {
 			event.preventDefault();
 			$.ajax({
