@@ -83,6 +83,8 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_
 		// build DI container
 		$OpenCoffeeShop = new OpenCoffeeShop();
 		$OpenCoffeeShop->addRecipes();
+        $OpenCoffeeShop->CoffeeShop()->addService('EE_Request', $request);
+        $OpenCoffeeShop->CoffeeShop()->addService('EE_Response', $response);
         CoffeeMill::setCoffeeShop($OpenCoffeeShop->CoffeeShop());
 		// $CoffeeShop = $OpenCoffeeShop->CoffeeShop();
 		// create and cache the CommandBus, and also add the CapChecker middleware
