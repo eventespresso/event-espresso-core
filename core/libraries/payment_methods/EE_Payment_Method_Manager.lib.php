@@ -1,4 +1,7 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) {
+<?php use EventEspresso\core\domain\entities\notifications\PersistentAdminNotice;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+
+if ( ! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
 
@@ -259,6 +262,7 @@ class EE_Payment_Method_Manager
      *
      * @param string $payment_method_type the PMT_type; for EE_PMT_Invoice this would be 'Invoice'
      * @return \EE_Payment_Method
+     * @throws InvalidDataTypeException
      * @throws \EE_Error
      */
     public function activate_a_payment_method_of_type($payment_method_type)
@@ -291,11 +295,13 @@ class EE_Payment_Method_Manager
             $message_resource_manager = EE_Registry::instance()->load_lib('Message_Resource_Manager');
             $message_resource_manager->ensure_message_type_is_active('invoice', 'html');
             $message_resource_manager->ensure_messenger_is_active('pdf');
-            EE_Error::add_persistent_admin_notice(
+            new PersistentAdminNotice(
                 'invoice_pm_requirements_notice',
                 sprintf(
-                    __('The Invoice payment method has been activated. It requires the invoice message type, html messenger, and pdf messenger be activated as well for the %1$smessages system%2$s, so it has been automatically verified that they are also active.',
-                        'event_espresso'),
+                    __(
+                        'The Invoice payment method has been activated. It requires the invoice message type, html messenger, and pdf messenger be activated as well for the %1$smessages system%2$s, so it has been automatically verified that they are also active.',
+                        'event_espresso'
+                    ),
                     '<a href="' . admin_url('admin.php?page=espresso_messages') . '">',
                     '</a>'
                 ),
