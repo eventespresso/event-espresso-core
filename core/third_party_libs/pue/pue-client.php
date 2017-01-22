@@ -1151,6 +1151,7 @@ class PluginUpdateEngineChecker {
 
 		$update_dismissed = get_site_option($this->dismiss_upgrade);
 		$is_dismissed = !empty($update_dismissed) && !empty( $this->json_error ) && in_array( $this->json_error->version, $update_dismissed ) ? true : false;
+		$show_dismissal_button = false;
 
 		//first any json errors?
 		if ( !empty( $this->json_error ) && isset($this->json_error->api_invalid) ) {
@@ -1161,26 +1162,29 @@ class PluginUpdateEngineChecker {
 				$msg = sprintf( __('It appears you\'ve tried entering an api key to upgrade to the premium version of %s, however, the key does not appear to be valid.  This is the message received back from the server:', $this->lang_domain ), $this->pluginName ) . '</p><p>' . $msg;
 				//let's add an option for plugin developers to display some sort of verification message on their options page.
 				update_site_option( $ver_option_key, $msg );
-
+                $show_dismissal_button = true;
 		} else {
 			$msg = sprintf( __('Congratulations!  You have entered in a valid api key for the premium version of %s.  You can click the button below to upgrade to this version immediately.', $this->lang_domain), $this->pluginName );
 			delete_site_option( $ver_option_key );
 		}
 
-		//todo add in upgrade button in here.
 		$button_link = wp_nonce_url( self_admin_url('update.php?action=upgrade-plugin&plugin=') . $this->pluginFile, 'upgrade-plugin_' . $this->pluginFile );
 		$button = '<a href="' . $button_link . '" class="button-secondary pue-upgrade-now-button" value="no">' . __('Upgrade Now', $this->lang_domain) . '</a>';
 
 		$content = '<div class="updated" style="padding:15px; position:relative;" id="pue_update_now_container"><p>' . $msg . '</p>';
 		$content .= empty($this->json_error) ? $button : '';
-		$content .= '<a class="button-secondary" href="javascript:void(0);" onclick="PUDismissUpgrade();" style="float:right;">' . __("Dismiss") . '</a>';
+		$content .= $show_dismissal_button
+            ? '<a class="button-secondary" href="javascript:void(0);" onclick="PUDismissUpgrade();" style="float:right;">' . __("Dismiss") . '</a>'
+            : '';
 		$content .= '<div style="clear:both;"></div></div>';
-		$content .= '<script type="text/javascript">
-			function PUDismissUpgrade(){
-				jQuery("#pue_update_now_container").slideUp();
-				jQuery.post( ajaxurl, {action:"' . $this->dismiss_upgrade .'", version:"' . $this->json_error->version . '", cookie: encodeURIComponent(document.cookie)});
-			}
-			</script>';
+		$content .= $show_dismissal_button
+            ? '<script type="text/javascript">
+                function PUDismissUpgrade(){
+                    jQuery("#pue_update_now_container").slideUp();
+                    jQuery.post( ajaxurl, {action:"' . $this->dismiss_upgrade .'", version:"' . $this->json_error->version . '", cookie: encodeURIComponent(document.cookie)});
+                }
+                </script>'
+            : '';
 
 		echo $content;
 	}
