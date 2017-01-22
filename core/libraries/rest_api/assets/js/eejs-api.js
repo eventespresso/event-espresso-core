@@ -1039,7 +1039,7 @@ if (!String.prototype.endsWith) {
                                     : [payload.relationEntityId];
 
                                 //k now loop through the relationEntityId and commit
-                                _.each(payload.relationId, function(id){
+                                _.each(payload.relationEntityId, function(id){
                                    relationPayload.collectionEntityId = id;
                                    context.commit('addRelationsForEntity', relationPayload);
                                 });
