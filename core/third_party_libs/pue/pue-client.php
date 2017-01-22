@@ -1464,7 +1464,9 @@ class PU_PluginInfo {
 		foreach($sameFormat as $field){
 			if ( isset($this->{$field}) ) {
 				$info->{$field} = $this->{$field};
-			}
+			} else {
+			    $info->{$field} = '';
+            }
 		}
 
 		//Other fields need to be renamed and/or transformed.
