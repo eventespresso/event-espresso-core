@@ -193,7 +193,7 @@ Vuex.Store.prototype.commitEntityToCollection = function(collection, entity, ref
         relationIds = [],
         relationsToReplicate = {};
 
-    refresh = _.isUndefined(refresh) ? false : refresh;
+    refresh = refresh || false;
 
     //does this collection exist?
     if ( _.has(state,collection) ) {
@@ -694,8 +694,8 @@ if (!String.prototype.endsWith) {
                                         'make sure there is a `collection` and `entity` key set (with appropriate values)'
                                     );
                                 }
-                                var refresh = _.isUndefined(payload.refresh) ? false : payload.refresh;
-                                eejs.api.collections.commitEntityToCollection(payload.collection,payload.entity,refresh);
+                                payload.refresh = ! _.isUndefined(payload.refresh) ? payload.refresh : false;
+                                eejs.api.collections.commitEntityToCollection(payload.collection,payload.entity,payload.refresh);
                             },
 
 
@@ -806,8 +806,9 @@ if (!String.prototype.endsWith) {
                                         );
                                     }
 
-                                    var endpointUri = eejs.api.collections.getCollectionEndpoint(payload.collection),
-                                        refresh = _.isUndefined(payload.refresh) ? false : payload.refresh;
+                                    var endpointUri = eejs.api.collections.getCollectionEndpoint(payload.collection);
+
+                                    payload.refresh = ! _.isUndefined(payload.refresh) ? payload.refresh: false;
 
 
                                     //add the incoming query object to the endpoint.
@@ -829,7 +830,7 @@ if (!String.prototype.endsWith) {
                                                 {
                                                     collection: payload.collection,
                                                     entity: entity,
-                                                    refresh: refresh
+                                                    refresh: payload.refresh
                                                 }
                                             )
                                         });
@@ -870,7 +871,7 @@ if (!String.prototype.endsWith) {
                                             'the payload object: ' + verified.join());
                                     }
 
-                                    var refresh = _.isUndefined(payload.refresh) ? false : payload.refresh,
+                                    var refresh = ! _.isUndefined(payload.refresh) ? payload.refresh : false,
                                         relationEntities = [],
                                         relation = eejs.utils.inflection.pluralize(payload.relation),
                                         relationPrimaryKey = eejs.api.main.getPrimaryKeyForCollection(relation);
