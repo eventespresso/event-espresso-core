@@ -547,8 +547,11 @@ class PluginUpdateEngineChecker {
 		$ver_option_key = 'puvererr_' . basename( $this->pluginFile );
 
 
-		//possible update checks on an option page save that is setting the license key. Note we're not actually using the response yet for this triggered update check but we might at some later date.
-		$triggered = $this->trigger_update_check();
+		//possible update checks on an option page save that is setting the license key.
+        //Note we're not actually using the response yet for this triggered update check but we might at some later date.
+		if ( ! $this->trigger_update_check() ) {
+		    return;
+        }
 
 
 		//if we've got a forced premium upgrade then let's add an admin notice for this with a nice button to do the upgrade right away.  We'll also handle the display of any json errors in this admin_notice.
@@ -626,7 +629,10 @@ class PluginUpdateEngineChecker {
 
 		$has_triggered = FALSE;
 
-		if ( defined( 'DOING_WP_CRON' ) && DOING_WP_CRON ) {
+		if (
+            ( defined( 'DOING_WP_CRON' ) && DOING_WP_CRON )
+            || ( ( defined( 'DOING_AJAX' ) && DOING_AJAX ) )
+        ) {
 		    return $has_triggered;
         }
 
