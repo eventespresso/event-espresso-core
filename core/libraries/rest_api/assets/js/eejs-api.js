@@ -61,7 +61,7 @@ Vuex.Store.prototype.replaceEntityInCollection = function(collection, entity) {
 
     //if entity primary key is empty at this point then we use the temporary key for entity id and
     //we'll make sure we're checking the collection for that temp_id match as well
-    if ( typeof(entityId) === 'undefined' || entityId === 0 ) {
+    if ( _.isUndefined(entityId) || entityId === 0 ) {
         entityId = entity._id;
         primaryKey = '_id';
     }
