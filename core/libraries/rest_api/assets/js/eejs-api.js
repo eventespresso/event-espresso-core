@@ -11,9 +11,9 @@ Vue.use(VueResource);
 
 /**
  * Checks if the entity is in the collection.
- * @param collection
- * @param entity
- * @returns {*}
+ * @param {string} collection
+ * @param {object} entity
+ * @returns {boolean}
  */
 Vuex.Store.prototype.hasEntityInCollection = function(collection, entity) {
     //if there isn't even any collection matching what's requested then get out
@@ -44,8 +44,8 @@ Vuex.Store.prototype.hasEntityInCollection = function(collection, entity) {
  *
  * This method should only be called within a mutation.
  *
- * @param collection
- * @param entity
+ * @param {string} collection
+ * @param {object} entity
  * @returns {boolean}
  */
 Vuex.Store.prototype.replaceEntityInCollection = function(collection, entity) {
@@ -84,7 +84,7 @@ Vuex.Store.prototype.replaceEntityInCollection = function(collection, entity) {
 
 /**
  * Retrieves the fully qualified endpoint uri for the collection.
- * @param collection
+ * @param {string} collection
  * @returns {string}
  */
 Vuex.Store.prototype.getCollectionEndpoint = function(collection){
@@ -96,18 +96,17 @@ Vuex.Store.prototype.getCollectionEndpoint = function(collection){
 };
 
 
-
 /**
  * Used to connect related items by ID in the store for all affected relations.
  *
  * This method should never be called directly to modify the store but should be only used in mutations.
  *
- * @param collection = [required] the main collection the relation is being added to (eg events)
- * @param collectionEntityId = The primary key of the collection the relation is being added to.
- * @param relation   = [required] the collection related to the main collection (eg datetimes)
- * @param relationEntityId = [required] The primary key of the relation being added.  This is
+ * @param {string} collection = [required] the main collection the relation is being added to (eg events)
+ * @param {integer} collectionEntityId = The primary key of the collection the relation is being added to.
+ * @param {string} relation   = [required] the collection related to the main collection (eg datetimes)
+ * @param {integer} relationEntityId = [required] The primary key of the relation being added.  This is
  *                         expected to be an array|integer.
- * @param doStoreCheck = [optional] expected to be boolean.  Used to indicate whether to
+ * @param {boolean} doStoreCheck = [optional] expected to be boolean.  Used to indicate whether to
  *                       do a storeCheck for the collection and throw an exception if its not
  *                       present.  Otherwise if the collection doesn't exist, it just will
  *                       return false. Defaults to true.
@@ -178,9 +177,9 @@ Vuex.Store.prototype.commitRelationsForEntity = function(
  *
  * Note, this method should only be called from within a mutation.
  *
- * @param collection
- * @param entity
- * @param refresh
+ * @param {string} collection
+ * @param {object} entity
+ * @param {boolean} refresh
  */
 Vuex.Store.prototype.commitEntityToCollection = function(collection, entity, refresh){
     //make sure required props are here
@@ -256,7 +255,9 @@ Vuex.Store.prototype.commitEntityToCollection = function(collection, entity, ref
 Vue.use(Vuex);
 
 
-//polyfill `String.prototype.endsWith` for environments that dont' have ECMA6
+/**
+ * Polyfill `String.prototype.endsWith` for environments that don't have ECMA6
+ */
 if (!String.prototype.endsWith) {
     String.prototype.endsWith = function(searchString, position) {
         var subjectString = this.toString();
@@ -295,8 +296,8 @@ if (!String.prototype.endsWith) {
 
     /**
      * For adding relations to a collection to the fetch query for a collection.
-     * @param collection
-     * @param endpointUri
+     * @param {string} collection
+     * @param {string} endpointUri
      * @returns {string}
      */
     eejs.utils.addRelationsToEndpointURI = function(collection, endpointUri) {
@@ -326,8 +327,8 @@ if (!String.prototype.endsWith) {
      * development of client code but is not necessary for the first draft (REST Response on incorrect params would be
      * used in the meantime.
      *
-     * @param queryStringObject
-     * @param endpointUri
+     * @param {object} queryStringObject
+     * @param {string} endpointUri
      * @returns {string}
      */
     eejs.utils.addQueryStringToEndpointURI = function(queryStringObject, endpointUri) {
@@ -347,8 +348,8 @@ if (!String.prototype.endsWith) {
      * 'datetimes' might be a relation on 'events', if the eejs.api was not initialized with `['events','datetimes']`,
      * then this method will return false.
      *
-     * @param collection
-     * @param relation
+     * @param {string} collection
+     * @param {string} relation
      * @returns {boolean}
      */
     eejs.utils.isRelationOf = function(relation, collection) {
@@ -369,8 +370,8 @@ if (!String.prototype.endsWith) {
      * that are required to be present in the object.  All of those keys must be present and if they
      * aren't then an array with the missing keys is returned.  If all required keys are present then a
      * simple boolean `true` is returned.
-     * @param payload
-     * @param requiredKeys
+     * @param {object} payload
+     * @param {array} requiredKeys
      * @returns {array|boolean}
      */
     eejs.utils.verifyRequiredKeysPresentInObject = function(payload, requiredKeys) {
@@ -394,8 +395,8 @@ if (!String.prototype.endsWith) {
 
     /**
      * This simply returns an array of ids for the given collection entities using the primaryKey
-     * @param entities
-     * @param primaryKey
+     * @param {array} entities
+     * @param {integer} primaryKey
      * @returns {array}
      */
     eejs.utils.getIdsFromEntities = function(entities,primaryKey) {
@@ -544,7 +545,8 @@ if (!String.prototype.endsWith) {
                  * Ensures that:
                  * 1. The incoming collections are in an array.
                  * 2. There is a valid REST route for the collection.
-                 * @param collectionsToValidate
+                 *
+                 * @param {array} collectionsToValidate
                  */
                 validateCollections = function(collectionsToValidate) {
                     if (! _.isArray(collectionsToValidate) ) {
@@ -561,7 +563,7 @@ if (!String.prototype.endsWith) {
                 },
                 /**
                  * Registers collections to the collections property.
-                 * @param newCollections
+                 * @param {array} newCollections
                  */
                 registerCollections = function(newCollections){
                     if (! _.isArray(newCollections)){
@@ -576,7 +578,7 @@ if (!String.prototype.endsWith) {
                 /**
                  * This takes care of retrieving schemas for all the collections via REST API (if not already retrieved)
                  *
-                 * @param collectionsForSchema
+                 * @param {array} collectionsForSchema
                  * @return Promise
                  */
                 setSchemaForEachCollection = function(collectionsForSchema){
@@ -586,7 +588,7 @@ if (!String.prototype.endsWith) {
                 },
                 /**
                  * This sets the schema for a given collection to the collectionsSchema property.
-                 * @param collection
+                 * @param {string} collection
                  * @returns {boolean|Promise}
                  */
                 setSchemaForCollection = function(collection){
@@ -651,8 +653,8 @@ if (!String.prototype.endsWith) {
                         mutations: {
                             /**
                              * Used to set a value on a model.
-                             * @param state
-                             * @param payload Expected to be an object with model, changes and filter keys.
+                             * @param {object} state  Vuex store state
+                             * @param {object} payload Expected to be an object with model, changes and filter keys.
                              *                model =   the name of the model the value is being set on
                              *                          (the pluralized slug).
                              *                changes = an object of key value pairs for the properties
@@ -676,8 +678,8 @@ if (!String.prototype.endsWith) {
 
                             /**
                              * Used to add a complete entity to the specific collection in the state.
-                             * @param state
-                             * @param payload Expect an object with:
+                             * @param {object} state   Vuex Store State
+                             * @param {object} payload Expect an object with:
                              *          collection  = [required] the name of the collection the entity is being added to.
                              *          entity      = [required] an object representing the properties
                              *                      and values for the entity.
@@ -708,8 +710,8 @@ if (!String.prototype.endsWith) {
                              * is via the `addRelation` action as it will take care of that automatic replication of
                              * relations.
                              *
-                             * @param state
-                             * @param payload Expect an object with:
+                             * @param {object} state  Vuex Store State
+                             * @param {object} payload Expect an object with:
                              *      collection = [required] the main collection the relation is being added to (eg events)
                              *      collectionEntityId = The primary key of the collection the relation is being added to.
                              *      relation   = [required] the collection related to the main collection (eg datetimes)
@@ -748,8 +750,8 @@ if (!String.prototype.endsWith) {
                             /**
                              * Haven't fleshed the below methods out yet,
                              * they'll basically be used for removing things from the collection
-                             * @param state
-                             * @param payload
+                             * @param {object} state  Vuex store state
+                             * @param {object} payload
                              */
                             removeRelationsForEntity: function(state,payload){/*@todo*/},
                             removeEntity: function(state,payload){/*@todo*/},
@@ -760,8 +762,8 @@ if (!String.prototype.endsWith) {
 
                             /**
                              * Used to retrieve items for a collection and then adds it to the store.
-                             * @param context (access the store through this, so context.state, or context.state.events).
-                             * @param payload Expect an object with:
+                             * @param {object} context (access the store through this, so context.state, or context.state.events).
+                             * @param {object} payload Expect an object with:
                              *      collection  = [required] the name of the collection being retrieved
                              *      queryString = [optional] an object containing the extra params you want added to the
                              *                    request.
@@ -847,8 +849,8 @@ if (!String.prototype.endsWith) {
                              * If there are, and payload.refresh isn't set or is false, then those will be returned.
                              * Otherwise, if payload.refresh is true, or there are no related entities set, this will
                              * query via the REST API endpoint for the relation collection.
-                             * @param context
-                             * @param payload Expect an object with:
+                             * @param {object} context
+                             * @param {object} payload Expect an object with:
                              *      collection  = [required] the name of the collection the given entity is for.
                              *      entityId = [required] the id of the entity getting relations for.
                              *      relation = [required] the relation retrieving related items for.
@@ -927,6 +929,12 @@ if (!String.prototype.endsWith) {
                                 });
                             },
 
+
+                            /**
+                             * Fetches a specific entity by the value for its primary key.
+                             * @param {object} context
+                             * @param {object} payload
+                             */
                             fetchEntityById: function(context,payload) {
                                 /**
                                  * @todo add in here the script for fetching an entity by id and adding it to the
@@ -938,8 +946,8 @@ if (!String.prototype.endsWith) {
                             /**
                              * This ensures an entity with the given id is in the collection or added to it.
                              * Optionally will refresh the entity in the collection.
-                             * @param context
-                             * @param payload  Expect an object with:
+                             * @param {object} context
+                             * @param {object} payload  Expect an object with:
                              *      collection  = [required] the collection the entity is being retrieved for.
                              *      id          = [required] the primaryKey id for the entity to retrieve.
                              *      refresh     = [optional] default to false.  If included, and true,
@@ -1006,8 +1014,8 @@ if (!String.prototype.endsWith) {
                              * you are adding a related datetime ID to an event, this will ensure that in the datetimes
                              * collection (if it exists) the evt_id is also registered as a relation on the datetime.
                              *
-                             * @param context
-                             * @param payload Expect an object with:
+                             * @param {object} context
+                             * @param {object} payload Expect an object with:
                              *      collection = [required] the main collection the relation is being added to (eg events)
                              *      collectionEntityId = The primary key of the collection the relation is being added to.
                              *      relation   = [required] the collection related to the main collection (eg datetimes)
@@ -1057,7 +1065,7 @@ if (!String.prototype.endsWith) {
                 },
                 /**
                  * Builds and caches a module for a given collection.
-                 * @param collection
+                 * @param {string} collection
                  * @returns {boolean}
                  */
                 buildStoreModuleForCollection = function(collection) {
@@ -1091,7 +1099,8 @@ if (!String.prototype.endsWith) {
                 },
                 /**
                  * Given a json schema object, returns the field designated as the primary key in the schema.
-                 * @param collectionSchema
+                 * @param {object} collectionSchema
+                 * @returns {string}
                  */
                 getPrimaryKeyFromSchema = function(collectionSchema){
                     var primaryKey = '',
@@ -1116,7 +1125,8 @@ if (!String.prototype.endsWith) {
                  * relations in the response.  Instead, using this method, we assign those properties to the relations
                  * property on the collectionSchema object.
                  *
-                 * @param collectionSchema
+                 * @param {object} collectionSchema
+                 * @returns {object}
                  */
                 getPropertiesFromSchema = function(collectionSchema) {
                     if (_.isUndefined(collectionSchema.properties)) {
@@ -1185,6 +1195,11 @@ if (!String.prototype.endsWith) {
                             }
                         },
                         methods: {
+                            /**
+                             * Fetches the collection
+                             * @param {boolean} refresh  Forces a refresh of the existing entities in the store for the
+                             *                           collection
+                             */
                             fetch: function(refresh) {
                                 var self = this,
                                     collectionCapitalized = eejs.utils.inflection.capitalize(this.collectionName);
@@ -1236,6 +1251,12 @@ if (!String.prototype.endsWith) {
                             }
                         },
                         methods: {
+                            /**
+                             * Adds an entity to the store.
+                             * @param {boolean} refresh  When true, this will replace the existing entity in the store
+                             *                           state with an id matching this entity.  Otherwise, if it
+                             *                           already exists, what is there will NOT be replaced.
+                             */
                             add: function(refresh){
                                 var self = this;
                                 this.$store.dispatch(
@@ -1263,18 +1284,28 @@ if (!String.prototype.endsWith) {
                                  */
                             },
 
-                            //simply returns whether the main property
+                            /**
+                             * Returns whether the property representing the entity has been set yet or not.
+                             * @returns {boolean}
+                             */
                             isEmpty: function() {
-                                return typeof( this[this.modelName()][this.collectionRecord().primaryKey] ) === 'undefined'
-                                    || typeof( this[this.modelName()]._id ) === 'undefined';
+                                return _.isEmpty(this[this.modelName()]);
                             },
 
+                            /**
+                             * Returns the collectionRecord for this entity from the state.
+                             * @returns {object}
+                             */
                             collectionRecord: function() {
                                 return this.$store.state[this.collectionName];
                             },
 
+                            /**
+                             * Returns the singular collection name for this entity.
+                             * @returns {string}
+                             */
                             modelName: function() {
-                                return this.collectionName.slice(0,-1);
+                                return eejs.utils.inflection.singularize(this.collectionName);
                             }
                         }
                     };
@@ -1289,7 +1320,7 @@ if (!String.prototype.endsWith) {
                 },
                 /**
                  * Builds a relation mixin for a specific collection.
-                 * @param collection
+                 * @param {string} collection
                  */
                 buildRelationMixinForCollection = function(collection) {
                     //we can only build relations mixins if we have the schema for this collection
@@ -1319,9 +1350,9 @@ if (!String.prototype.endsWith) {
                 },
                 /**
                  * Builds a relation mixin for a specific collection and relation.
-                 * @param collection
-                 * @param relation
-                 * @param relationName
+                 * @param {string} collection
+                 * @param {string} relation
+                 * @param {string} relationName
                  */
                 buildRelationMixinForCollectionAndRelation = function(collection, relation, relationName){
                     //if there is no collectionSchema for the collection or the relation then we can't build the mixin.
@@ -1408,7 +1439,7 @@ if (!String.prototype.endsWith) {
                 },
                 /**
                  * Builds components for a specific collection (if not already built).
-                 * @param collection
+                 * @param {string} collection
                  */
                 buildComponentForCollection = function(collection){
                     //get out if there is already a component for this collection
@@ -1478,7 +1509,7 @@ if (!String.prototype.endsWith) {
                 },
                 /**
                  * Registers relation components on the given component.
-                 * @param component
+                 * @param {string} component
                  */
                 registerRelationComponentsForComponent = function(component){
                     //if the relation components on this component have already been registered or
@@ -1501,8 +1532,8 @@ if (!String.prototype.endsWith) {
                 },
                 /**
                  * Returns whether the given collection has a valid route (via the api discovery route) or not.
-                 * @param collection
-                 * @return boolean
+                 * @param {string} collection
+                 * @return {boolean}
                  */
                 collectionHasRoute = function(collection) {
                     var endpoints = getEndpoints();
@@ -1513,7 +1544,7 @@ if (!String.prototype.endsWith) {
 
             /**
              * Return the protected collections property.
-             * @returns {Array}
+             * @returns {array}
              */
             this.getRegisteredCollections = function() {
                 return collections;
@@ -1521,7 +1552,7 @@ if (!String.prototype.endsWith) {
 
             /**
              * Return the protected collectionsSchema property
-             * @returns {Object}
+             * @returns {object}
              */
             this.getCollectionsSchema = function() {
                 return collectionsSchema;
@@ -1531,7 +1562,7 @@ if (!String.prototype.endsWith) {
             /**
              * Used to get the primary key for a given collection.
              * Note, if the collection is not registered, this will throw an exception.
-             * @param collection
+             * @param {string} collection
              * @throws eejs.exception
              * @returns {string}
              */
@@ -1543,13 +1574,18 @@ if (!String.prototype.endsWith) {
                 return getPrimaryKeyFromSchema(collectionsSchema[collection]);
             };
 
+
+            /**
+             * This simply initializes the Main object.
+             * @returns {Promise}
+             */
             this.init = function() {
                 return initialize();
             };
 
             /**
              * This allows client code to push additional collections to the main instance.
-             * @param collections
+             * @param {array} collections
              */
             this.addCollections = function(collections) {
                 //@todo this needs to return a Promise because it might use an httpRequest to setup the collections.
@@ -1574,6 +1610,11 @@ if (!String.prototype.endsWith) {
                     reject(e);
                 });
             } else {
+                /**
+                 * @todo Eventually in this else block, we'll call Main.addCollections to register new collections after
+                 * Main has already been initialized.  For now we're not allowing it.
+                 * @type {string}
+                 */
                 var msg = 'eejs.api.init has already been called in this request so it has been initialized.' +
                     ' If you wish to add more collections then use the eejs.api.main.addCollections method.';
                 reject(msg);
