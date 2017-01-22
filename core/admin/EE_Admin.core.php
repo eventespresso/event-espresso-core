@@ -478,10 +478,11 @@ final class EE_Admin {
 
 		/**
 		 * This code is for removing any set EE critical pages from the "Static Page" option dropdowns on the
-		 * 'options-reading.php' core WordPress admin settings page.  This is for user-proofing.
+         * 'options-reading.php' core WordPress admin settings page or in the WordPress customizer.
+         *  This is for user-proofing.
 		 */
 		global $pagenow;
-		if ( $pagenow === 'options-reading.php' ) {
+		if ( $pagenow === 'options-reading.php' || is_customize_preview() ) {
 			add_filter( 'wp_dropdown_pages', array( $this, 'modify_dropdown_pages' ) );
 		}
 
