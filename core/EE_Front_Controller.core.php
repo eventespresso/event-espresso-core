@@ -589,9 +589,13 @@ final class EE_Front_Controller
 
         //let's exclude all event type taxonomy term archive pages from search engine indexing
         //@see https://events.codebasehq.com/projects/event-espresso/tickets/10249
+        //also exclude all critical pages from indexing
         if (
-            is_tax('espresso_event_type')
-            && get_option( 'blog_public' ) !== '0'
+            (
+                is_tax('espresso_event_type')
+                && get_option( 'blog_public' ) !== '0'
+            )
+            || is_page(EE_Registry::instance()->CFG->core->get_critical_pages_array())
         ) {
             print(
                 apply_filters(
