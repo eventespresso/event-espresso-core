@@ -2333,7 +2333,7 @@ abstract class EE_Admin_Page extends EE_Base
     public function display_admin_caf_preview_page($utm_campaign_source = '', $display_sidebar = true)
     {
         //let's generate a default preview action button if there isn't one already present.
-        $this->_labels['buttons']['buy_now'] = __('Upgrade Now', 'event_espresso');
+        $this->_labels['buttons']['buy_now'] = __('Upgrade to Event Espresso 4 Right Now', 'event_espresso');
         $buy_now_url = add_query_arg(
                 array(
                         'ee_ver'       => 'ee4',
