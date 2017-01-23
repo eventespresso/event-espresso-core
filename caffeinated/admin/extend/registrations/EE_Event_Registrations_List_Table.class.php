@@ -343,7 +343,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 			'ee_edit_contacts',
 			'espresso_registrations_edit_attendee'
 		)
-			? '<a href="' . $edit_lnk_url . '" title="' . esc_attr__( 'Edit Contact', 'event_espresso' ) . '">'
+			? '<a href="' . $edit_lnk_url . '" title="' . esc_attr__( 'View Registration Details', 'event_espresso' ) . '">'
 			    . $item->attendee()->full_name()
 			    . '</a>'
 			: $item->attendee()->full_name();
