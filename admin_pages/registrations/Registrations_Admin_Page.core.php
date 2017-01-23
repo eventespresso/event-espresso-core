@@ -928,6 +928,13 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             $this->_req_data['status'] = 'today';
         }
         $query_params = $this->_get_registration_query_parameters($this->_req_data, $per_page, $count);
+        /**
+         * Override the default groupby added by EEM_Base so that sorts with multiple order bys work as expected
+         * @link https://events.codebasehq.com/projects/event-espresso/tickets/10093
+         * @see EEM_Base::get_all()
+         */
+        $query_params['group_by'] = '';
+
         return $count
             ? EEM_Registration::instance()->count($query_params)
             /** @type EE_Registration[] */
@@ -1212,10 +1219,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 $orderby_field = 'STS_ID';
                 break;
             case 'ATT_fname':
-                //just for spite, we're going to order it by their LAST name, NOT their first name. Now who's the boss?
-                //jk, we don't want to break existing links, and customers preferred ordering by last name
-                //besides, from the UI, its ambiguous as to whether we will order by first or last name
-                $orderby_field = 'Attendee.ATT_lname';
+                $orderby_field = array('Attendee.ATT_fname', 'Attendee.ATT_lname');
                 break;
             case 'event_name':
                 $orderby_field = 'Event.EVT_name';
@@ -1231,7 +1235,15 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         $order = ! empty($this->_req_data['order'])
             ? sanitize_text_field($this->_req_data['order'])
             : 'DESC';
-        return array('order_by' => array($orderby_field => $order));
+
+        //mutate orderby_field
+        $orderby_field = is_array($orderby_field)
+            ? array_combine(
+                $orderby_field,
+                array_fill(0, count($orderby_field), $order)
+            )
+            : array($orderby_field => $order);
+        return array('order_by' => $orderby_field);
     }
 
 
