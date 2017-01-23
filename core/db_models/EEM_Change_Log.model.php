@@ -175,7 +175,8 @@ class EEM_Change_Log extends EEM_Base{
 
 
     /**
-     * Executes a database query to delete gateway logs
+     * Executes a database query to delete gateway logs. Does not affect model objects, so if you attempt to use
+     * models after this, they may be out-of-sync with the database
      * @param string $mysql_timestamp
      * @return false|int
      */
