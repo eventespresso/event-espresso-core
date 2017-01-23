@@ -28,6 +28,12 @@ class EED_Ticket_Selector_Caff  extends EED_Ticket_Selector {
 	 *  @return 	void
 	 */
 	public static function set_hooks() {
+        add_action(
+            'AHEE__ticket_selector_chart_template__ticket_details__after_description',
+            array('EED_Ticket_Selector_Caff', 'ticket_price_details'),
+            10,
+            3
+        );
 	}
 
 	/**
@@ -258,5 +264,22 @@ class EED_Ticket_Selector_Caff  extends EED_Ticket_Selector {
 
 		return $CFG;
 	}
+
+
+
+    /**
+     * @param \EE_Ticket $ticket
+     * @param int        $ticket_price
+     * @param bool       $display_ticket_price
+     */
+    public static function ticket_price_details(EE_Ticket $ticket, $ticket_price = 0, $display_ticket_price = false)
+    {
+        require(
+            str_replace('\\', DS, plugin_dir_path(__FILE__))
+            . 'templates' . DS . 'ticket_selector_price_details.template.php'
+        );
+	}
+
+
 
 } //end EED_Ticket_Selector_Caff
