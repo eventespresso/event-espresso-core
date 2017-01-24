@@ -1238,12 +1238,10 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             : 'DESC';
 
         //mutate orderby_field
-        $orderby_field = is_array($orderby_field)
-            ? array_combine(
-                $orderby_field,
+        $orderby_field = array_combine(
+                (array) $orderby_field,
                 array_fill(0, count($orderby_field), $order)
-            )
-            : array($orderby_field => $order);
+            );
         return array('order_by' => $orderby_field);
     }
 
