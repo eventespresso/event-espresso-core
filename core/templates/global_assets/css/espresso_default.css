@@ -590,6 +590,7 @@ input.ee-register-button {
 
 .espresso-notices,
 .espresso-ajax-notices {
+	box-sizing: border-box;
 	position: relative;
 	width: 74.5%;
 	min-width: 200px;
@@ -626,28 +627,27 @@ input.ee-register-button {
 
 
 .close-espresso-notice {
-	background: #ffffff;
-	border: 3px solid #666666;
-	border-radius: 999px;
-	box-sizing: border-box;
-	color:#666666;
+	background: none !important;
+	box-shadow: none !important;
+	color: #ccc;
 	cursor: pointer;
 	font-size: 21px;
 	font-weight: bold;
-	height: 26px;
-	line-height: 20px;
+	line-height: 21px;
 	padding: 0;
 	position: absolute;
-	right: -12px;
+	right: 3px;
 	text-align: center;
-	top: -12px;
+	top: 1px;
 	vertical-align: middle;
-	width: 26px;
+	text-decoration: none !important;
 }
 .close-espresso-notice:hover {
-	background: #ffffff;
-	border: 3px solid #333333;
-	color: #333333;
+	color: #666;
+}
+
+.close-espresso-notice .dashicons-no {
+	margin:0 !important;
 }
 
 

@@ -17,38 +17,38 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 {
   "@context": "http://schema.org/",
   "@type": "Event",
-  "name": "<?php echo $event_name; ?>",
+  "name": <?php echo wp_json_encode($event_name); ?>,
   "startDate": "<?php echo $event_start; ?>",
   "endDate": "<?php echo $event_end; ?>",
-  "description": "<?php echo $event_description ?>",
+  "description": <?php echo wp_json_encode($event_description); ?>,
   "url": "<?php echo $event_permalink; ?>",
   "offers": [
   <?php foreach ($event_tickets as $ticket) { ?>
     {
       "@type": "Offer",
-      "url": "<?php echo $event_permalink ?>",
-      "validFrom": "<?php echo $ticket['start_date'] ?>",
-      "validThrough": "<?php echo $ticket['end_date'] ?>",
-      "price": "<?php echo $ticket['price'] ?>",
-      "priceCurrency": "<?php echo $currency ?>"
+      "url": "<?php echo $event_permalink; ?>",
+      "validFrom": "<?php echo $ticket['start_date']; ?>",
+      "validThrough": "<?php echo $ticket['end_date']; ?>",
+      "price": "<?php echo $ticket['price']; ?>",
+      "priceCurrency": "<?php echo $currency; ?>"
     }<?php if (is_array($event_tickets) && end($event_tickets) !== $ticket) { echo ','; }
     }
     ?>
     ]<?php if ($venue_name) { ?>,
   "location": {
     "@type": "Place",
-    "name": "<?php echo $venue_name; ?>",
-    "url": "<?php echo $venue_url ?>",
+    "name": <?php echo wp_json_encode($venue_name); ?>,
+    "url": "<?php echo $venue_url; ?>",
     "address": {
       "@type": "PostalAddress",
-      "addressLocality": "<?php echo $venue_locality ?>",
-      "addressRegion": "<?php echo $venue_region ?>"
+      "addressLocality": <?php echo wp_json_encode($venue_locality); ?>,
+      "addressRegion": <?php echo wp_json_encode($venue_region); ?>
     }
   }
   <?php } ?>
   <?php if ($event_image) { ?>,
-  "image": "<?php echo $event_image ?>"
+  "image": "<?php echo $event_image; ?>"
   <?php } ?>
-  <?php do_action('AHEE__json_linked_data_for_event__template') ?>
+  <?php do_action('AHEE__json_linked_data_for_event__template'); ?>
 }
 </script>

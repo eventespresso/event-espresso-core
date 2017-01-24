@@ -14,6 +14,10 @@ The documents in this folder are all related to the REST API in EE core.
 - [EE4 REST API: GET Response Headers](ee4-rest-api-GET-response-headers.md)
 - [EE4 REST API: GET Calculated Fields](ee4-rest-api-GET-calculated-fields.md)
 
+### Schema
+
+- [EE4 REST API: Schema](eer-rest-api-schema.md)
+
 ### RPC Style Endpoints
 
 There are a few endpoints in the EE4 REST API that really don't follow the REST way of doing things, and are more like RPC (Remote Procedure Calls). These endpoints aren't just for simple reading, inserting, updating, or deleting. They have a bunch of other logic tied in there, which can sometimes be handy, so that your application doesn't need to implement all this logic itself (of course if you don't want all this extra logic, you're welcome to use the more traditional RESTy read and writing endpoints instead).
