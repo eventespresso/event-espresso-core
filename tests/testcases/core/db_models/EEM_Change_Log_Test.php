@@ -36,7 +36,7 @@ class EEM_Change_Log_Test extends EE_UnitTestCase
             )
         );
 
-        $result = EEM_Change_Log::instance()->delete_gateway_logs_older_than(date(EE_Datetime_Field::mysql_timestamp_format, strtotime('-1 week')));
+        $result = EEM_Change_Log::instance()->delete_gateway_logs_older_than(new DateTime('-1 weeks'));
         $this->assertTrue(EEM_Change_Log::instance()->exists_by_ID( $wrong_type->ID()));
         $this->assertTrue(EEM_Change_Log::instance()->exists_by_ID($too_new->ID()));
         $this->assertFalse(EEM_Change_Log::instance()->exists_by_ID($delete_me->ID()));

@@ -595,7 +595,7 @@ class EE_Cron_Tasks extends EE_Base
                 'FHEE__EE_Cron_Tasks__clean_out_old_gateway_logs__time_diff_for_comparison',
                 "-1 week"
             );
-            EEM_Change_Log::instance()->delete_gateway_logs_older_than( date(EE_Datetime_Field::mysql_timestamp_format, strtotime($time_diff_for_comparison)));
+            EEM_Change_Log::instance()->delete_gateway_logs_older_than(new DateTime($time_diff_for_comparison));
         }
     }
 
