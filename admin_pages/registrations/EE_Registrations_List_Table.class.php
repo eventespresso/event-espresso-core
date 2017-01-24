@@ -158,7 +158,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
         $this->_primary_column = '_REG_ID';
         $this->_sortable_columns = array(
             '_REG_date'     => array('_REG_date' => true),   //true means its already sorted
-            'ATT_fname'     => array('ATT_fname' => false),
+            'ATT_fname'     => array('ATT_lname' => false),
             'event_name'    => array('event_name' => false),
             'DTT_EVT_start' => array('DTT_EVT_start' => false),
             '_REG_ID'       => array('_REG_ID' => false),

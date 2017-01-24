@@ -1219,8 +1219,10 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 $orderby_field = 'STS_ID';
                 break;
             case 'ATT_fname':
-            case 'ATT_name' :
                 $orderby_field = array('Attendee.ATT_fname', 'Attendee.ATT_lname');
+                break;
+            case 'ATT_lname' :
+                $orderby_field = array('Attendee.ATT_lname', 'Attendee.ATT_fname');
                 break;
             case 'event_name':
                 $orderby_field = 'Event.EVT_name';

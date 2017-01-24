@@ -128,7 +128,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
         );
 		$this->_sortable_columns = array(
 			//true means its already sorted
-			'ATT_name' => array( 'ATT_name' => true ),
+			'ATT_name' => array( 'ATT_lname' => true ),
 			'Event'    => array( 'Event.EVT.Name' => false ),
 		);
 		$this->_hidden_columns = array();
