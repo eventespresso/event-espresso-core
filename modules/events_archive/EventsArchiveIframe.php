@@ -44,9 +44,6 @@ class EventsArchiveIframe extends Iframe
                     'espresso_default'           => is_readable( EVENT_ESPRESSO_UPLOAD_DIR . 'css/style.css' )
                         ? EVENT_ESPRESSO_UPLOAD_DIR . 'css/espresso_default.css?ver=' . EVENT_ESPRESSO_VERSION
                         : EE_GLOBAL_ASSETS_URL . 'css/espresso_default.css?ver=' . EVENT_ESPRESSO_VERSION,
-                    $EED_Events_Archive->theme() => get_stylesheet_directory_uri()
-                                                    . $EED_Events_Archive->theme() . DS
-                                                    . 'style.css?ver=' . EVENT_ESPRESSO_VERSION,
                 ),
                 $this
             )
