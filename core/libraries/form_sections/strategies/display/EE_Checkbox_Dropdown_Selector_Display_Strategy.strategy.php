@@ -49,6 +49,32 @@ class EE_Checkbox_Dropdown_Selector_Display_Strategy extends EE_Compound_Input_D
     }
 
 
+
+    /**
+     * callback for Iframe::addStylesheets() child class methods
+     *
+     * @param array $iframe_css
+     * @return array
+     */
+    public function iframe_css(array $iframe_css){
+        $iframe_css['checkbox_dropdown_selector'] = EE_GLOBAL_ASSETS_URL . 'css/checkbox_dropdown_selector.css';
+        return $iframe_css;
+    }
+
+
+
+    /**
+     * callback for Iframe::addScripts() child class methods
+     *
+     * @param array $iframe_js
+     * @return array
+     */
+    public function iframe_js(array $iframe_js){
+        $iframe_js['checkbox_dropdown_selector'] = EE_GLOBAL_ASSETS_URL . 'scripts/checkbox_dropdown_selector.js';
+        return $iframe_js;
+    }
+
+
     /**
      * @throws EE_Error
      * @return string of html to display the field
