@@ -1,3 +1,5 @@
+> **Note: This library is still in development and being worked on internally as we implement it for various ui elements in EE.  So consider this documentation still in flux.  We _welcome_ contributions by any developers who start using this, but be aware that everything is subject to change**
+
 # VUE.js library (eejs-api)
 
 Overtime Event Espresso is implementing javascript more and more for the various functionality throughout the application.  One of the main components that will power this is the EE REST API.  Along with that, as a team, we decided that the js library that would work the best for the javascript apps we build would be [vue.js](https://vuejs.org/v2).
@@ -8,6 +10,7 @@ Something that will be used in all the various views/apps we build in EE over ti
   - exposes mixins to build custom components if needed.
   - creates a Vuex.Store instance that preserves state of all the registered collections for usage in any VUE instances created.  This store is automatically registered with the components and mixins using it.
   - implements and exposes the [inflection.js](https://github.com/dreamerslab/node.inflection) library.
+  - implements and exposes the [uri.js](https://medialize.github.io/URI.js/) library.
   
 ## Usage
 
@@ -15,7 +18,7 @@ Something that will be used in all the various views/apps we build in EE over ti
 
 The library is registered via `wp_register_script` very early in the Event Espresso loading process and made available via the `eejs-api` reference.  It has `underscore` as a dependency so anywhere it is loaded, underscore will also be made available.
 
-The library is built using browserify and including the `Vue`, `Vuex`, `Vue-resource`, and `inflection` sources as modules so there should be no conflicts with other plugins that might load those libraries. 
+The library is built using browserify and including the `Vue`, `Vuex`, `Vue-resource`, `inflection`, and `urijs` sources as modules so there should be no conflicts with other plugins that might load those libraries. 
 
 To use it, list it as a dependency in your own script registration.  You'd end up with something like:
 
@@ -60,6 +63,10 @@ This holds a reference to the [Vuex](https://vuex.vuejs.org/en/) object.
 #### `eejs.utils.inflection`
 
 This holds a reference to the [inflection](https://github.com/dreamerslab/node.inflection) library.  So you can use all the methods exposed on that library.
+
+#### `eejs.utils.URI`
+
+This holds a reference to the [URI.js](https://www.npmjs.com/package/urijs) library.  So you can use all the methods exposed on that library.
 
 ### After the library is initialized:
 
