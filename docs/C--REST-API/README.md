@@ -24,3 +24,16 @@ There are a few endpoints in the EE4 REST API that really don't follow the REST 
 
 - [EE4 REST API: RPC Style Endpoints Table of Contents](ee4-rest-api-rpc-style-endpoints.md)
 - [/checkin](ee4-rest-api-rpc-checkin.md)
+
+### Libraries
+
+There are some handy libraries that have been built that integrate with the REST API.
+
+| Library | Description |
+|---------|-------------|
+[eejs-api (VUE.js library)](rest-api-vue-library.md) | When implemented you can use this to automatically build EE model and collection components that can be used in your views.
+
+#### Library Examples/Tutorials
+| Example/Tutorial | Library | Description |
+|----------------- | ------- | ----------- |
+[Simple List of Events with Datetimes](rest-api-vue-library-basic-implementation-example.md) | [eejs-api](rest-api-vue-library.md) | This gives a very basic example of how one can use the eejs-api library to retrieve and display a list of events with their datetimes. 
