@@ -1,6 +1,6 @@
-<?php if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
+<?php
+
+defined('EVENT_ESPRESSO_VERSION') || exit;
 
 /**
  * EEH_DTT_Helper_Test
