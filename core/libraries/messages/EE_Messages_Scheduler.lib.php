@@ -1,6 +1,5 @@
-<?php if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
+<?php
+defined('EVENT_ESPRESSO_VERSION') || exit;
 
 /**
  * This class is used for setting scheduled tasks related to the EE_messages system.
@@ -33,9 +32,10 @@ class EE_Messages_Scheduler extends EE_Base
         }
 
         //register callbacks for scheduled events (but make sure they are set only once).
-        if (! has_action('AHEE__EE_Messages_Scheduler__generation',
-            array('EE_Messages_Scheduler', 'batch_generation'))
-        ) {
+        if (! has_action(
+            'AHEE__EE_Messages_Scheduler__generation',
+            array('EE_Messages_Scheduler', 'batch_generation')
+        )) {
             add_action('AHEE__EE_Messages_Scheduler__generation', array('EE_Messages_Scheduler', 'batch_generation'));
             add_action('AHEE__EE_Messages_Scheduler__sending', array('EE_Messages_Scheduler', 'batch_sending'));
         }
@@ -54,8 +54,10 @@ class EE_Messages_Scheduler extends EE_Base
     {
         $schedules['ee_message_cron'] = array(
             'interval' => self::message_cron_schedule,
-            'display'  => __('This is the cron time interval for EE Message schedules (defaults to once every 5 minutes)',
-                'event_espresso'),
+            'display'  => __(
+                'This is the cron time interval for EE Message schedules (defaults to once every 5 minutes)',
+                'event_espresso'
+            ),
         );
         return $schedules;
     }
@@ -84,8 +86,10 @@ class EE_Messages_Scheduler extends EE_Base
      */
     public static function initiate_scheduled_non_blocking_request($task)
     {
-        if (apply_filters('EE_Messages_Scheduler__initiate_scheduled_non_blocking_request__do_separate_request',
-            true)) {
+        if (apply_filters(
+            'EE_Messages_Scheduler__initiate_scheduled_non_blocking_request__do_separate_request',
+            true
+        )) {
             $request_url  = add_query_arg(
                 array_merge(
                     array('ee' => 'msg_cron_trigger'),
@@ -152,8 +156,7 @@ class EE_Messages_Scheduler extends EE_Base
         /**
          * @see filter usage in EE_Messages_Queue::initiate_request_by_priority()
          */
-        if (
-            ! apply_filters('FHEE__EE_Messages_Processor__initiate_request_by_priority__do_immediate_processing', false)
+        if (! apply_filters('FHEE__EE_Messages_Processor__initiate_request_by_priority__do_immediate_processing', false)
             || ! EE_Registry::instance()->NET_CFG->core->do_messages_on_same_request
         ) {
             EE_Messages_Scheduler::initiate_immediate_request_on_cron('generate');
@@ -169,8 +172,7 @@ class EE_Messages_Scheduler extends EE_Base
         /**
          * @see filter usage in EE_Messages_Queue::initiate_request_by_priority()
          */
-        if (
-            ! apply_filters('FHEE__EE_Messages_Processor__initiate_request_by_priority__do_immediate_processing', false)
+        if (! apply_filters('FHEE__EE_Messages_Processor__initiate_request_by_priority__do_immediate_processing', false)
             || ! EE_Registry::instance()->NET_CFG->core->do_messages_on_same_request
         ) {
             EE_Messages_Scheduler::initiate_immediate_request_on_cron('send');
