@@ -40,7 +40,7 @@ class EEH_Schema {
         );
         $template_args['event_permalink'] = $event->get_permalink();
         $template_args['event_name'] = $event->name();
-        $template_args['event_description'] = $event->description();
+        $template_args['event_description'] = wp_strip_all_tags($event->short_description(200));
         $template_args['event_start'] = $event->primary_datetime()->start_date(DateTime::ATOM);
         $template_args['event_end'] = $event->primary_datetime()->end_date(DateTime::ATOM);
         $template_args['currency'] = EE_Registry::instance()->CFG->currency->code;

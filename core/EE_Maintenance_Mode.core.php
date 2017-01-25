@@ -272,7 +272,7 @@ class EE_Maintenance_Mode {
 			printf(
 				__( '%sclose%sEvent Registration is currently disabled because Event Espresso has been placed into Maintenance Mode. To change Maintenance Mode settings, click here %sEE Maintenance Mode Admin Page%s', 'event_espresso' ),
 				'<div id="ee-m-mode-admin-notice-dv" class="ee-really-important-notice-dv"><a class="close-espresso-notice" title="',
-				'">&times;</a><p>',
+				'"><span class="dashicons dashicons-no"></span></a><p>',
 				' &raquo; <a href="' . add_query_arg( array( 'page' => 'espresso_maintenance_settings' ), admin_url( 'admin.php' )) . '">',
 				'</a></p></div>'
 			);
