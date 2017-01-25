@@ -220,7 +220,19 @@ class EEH_Activation
 
         foreach (EEH_Activation::get_cron_tasks('current') as $hook_name => $frequency) {
             if (! wp_next_scheduled($hook_name)) {
-                wp_schedule_event(time(), $frequency, $hook_name);
+                /**
+                 * This allows client code to define the initial start timestamp for this schedule.
+                 */
+                if (is_array($frequency)
+                    && count($frequency) === 2
+                    && isset($frequency[0], $frequency[1])
+                ) {
+                    $start_timestamp = $frequency[0];
+                    $frequency = $frequency[1];
+                } else {
+                    $start_timestamp = time();
+                }
+                wp_schedule_event($start_timestamp, $frequency, $hook_name);
             }
         }
 
