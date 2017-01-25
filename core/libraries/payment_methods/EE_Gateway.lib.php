@@ -383,6 +383,17 @@ abstract class EE_Gateway{
 		);
 	}
 
+    /**
+     * Removes emojis, for gateways that can't handle them. See https://drive.google.com/file/d/0B2KCao4zFjaxTXU0WUhxbUNLQ0k/view?usp=drivesdk
+     * @param $input
+     * @return string
+     */
+    protected function _remove_emojis($input){
+        return trim( preg_replace('/[\x00-\x1F\x80-\xFF]/', '',
+            $input ) );
+    }
+
+
 
 
 }
