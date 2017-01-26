@@ -94,6 +94,14 @@ final class EE_Config
      */
     public $tax_settings;
 
+
+    /**
+     * Settings pertaining to global messages settings.
+     *
+     * @var EE_Messages_Config
+     */
+    public $messages;
+
     /**
      * @deprecated
      * @var EE_Gateway_Config
@@ -340,6 +348,10 @@ final class EE_Config
             : new EE_Tax_Config();
         $this->tax_settings      = apply_filters('FHEE__EE_Config___initialize_config__tax_settings',
             $this->tax_settings);
+        $this->messages = apply_filters('FHEE__EE_Config__initialize_config__messages', $this->messages);
+        $this->messages = $this->messages instanceof EE_Messages_Config
+            ? $this->messages
+            : new EE_Messages_Config();
         $this->gateway           = $this->gateway instanceof EE_Gateway_Config
             ? $this->gateway
             : new EE_Gateway_Config();
@@ -3155,6 +3167,31 @@ class EE_Tax_Config extends EE_Config_Base
     public function __construct()
     {
         $this->prices_displayed_including_taxes = true;
+    }
+}
+
+
+/**
+ * Holds all global messages configuration options.
+ *
+ * @package    EventEspresso/core/
+ * @subpackage config
+ * @author     Darren Ethier
+ * @since      4.27.rc
+ */
+class EE_Messages_Config extends EE_Config_Base
+{
+
+    /**
+     * Whether all `EE_Message` records (that are not queued for sending or generating) will be kept in the database
+     * indefinitely (forever) or not.  If false, then a cron scheduled event will run that prunes old messages.
+     *
+     * @var boolean
+     */
+    public $keep_messages_forever;
+
+    public function __construct() {
+        $this->keep_messages_forever = false;
     }
 }
 
