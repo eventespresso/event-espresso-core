@@ -1,6 +1,7 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api\controllers\model;
 use EventEspresso\core\libraries\rest_api\Capabilities;
+use EventEspresso\core\libraries\rest_api\Rest_Exception;
 if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
 }
@@ -167,11 +168,21 @@ class Write extends Base {
 	 * @throws \EE_Error
 	 */
 	public function insert( \EEM_Base $model, \WP_REST_Request $request ) {
-		Capabilities::verify_at_least_partial_access_to( $model, \EEM_Base::caps_edit, 'edit' );
-		//we only know they can edit SOME of these model objects. Not sure if what they are about to add is ok...
-		//so we'll start a transaction, insert it, and then see if it looks ok. If not, we'll revert it.
-		$this->_start_transaction();
-		$new_id = $model->insert( array_merge( (array)$request->get_body_params(), (array)$request->get_json_params() ) );
+		Capabilities::verify_at_least_partial_access_to( $model, \EEM_Base::caps_edit, 'create' );
+        $default_cap_to_check_for = \EE_Restriction_Generator_Base::get_default_restrictions_cap();
+        if(!current_user_can($default_cap_to_check_for)){
+            throw new Rest_Exception(
+                'rest_cannot_create_' . \EEH_Inflector::pluralize_and_lower(($model->get_this_model_name())),
+                sprintf(
+                    esc_html__('For now, only those with the admin capability to "%1$s" are allowed to use the REST API to insert data into Event Espresso.', 'event_espresso'),
+                    $default_cap_to_check_for
+                ),
+                array('status' => 403)
+            );
+        }
+        $submitted_json_data = array_merge( (array)$request->get_body_params(), (array)$request->get_json_params() );
+
+		$new_id = $model->insert(  );
 		if( ! $new_id ) {
 			throw new \EE_Error(
 				'rest_insertion_failed', 
@@ -195,15 +206,11 @@ class Write extends Base {
 				$request
 			)
 		) {
-			//yeah when we applied their restrictions they could find the item, so its good
-			$this->_commit_transaction();
 		} else {
-			//they aren't allowed to create that! rollback
-			$this->_rollback_transaction();
 			return new \WP_Error(
 					'rest_user_cannot_insert',
 					sprintf(
-						__( 'Sorry, you cannot insert this a new %1$s with properties %2$s. Missing permissions are: %3$s', 'event_espresso' ),
+						__( 'Sorry, you cannot insert a new %1$s with properties %2$s. Missing permissions are: %3$s', 'event_espresso' ),
 						strtolower( $model->get_this_model_name() ),
 						apply_filters( 
 							'FHEE__EventEspresso\core\libraries\rest_api\controllers\model\Write__insert__caps_missing',
@@ -229,24 +236,6 @@ class Write extends Base {
 			)
 		);
 		return Read::handle_request_get_one( $get_request );
-	}
-	
-	protected function _start_transaction() {
-		global $wpdb;
-		$wpdb->query( 'SET autocommit = 0;' );
-		$wpdb->query( 'START TRANSACTION;' );
-	}
-	
-	protected function _rollback_transaction() {
-		global $wpdb;
-		$wpdb->query( 'ROLLBACK' );		
-		$wpdb->query( 'SET autocommit = 1;' );
-	}
-	
-	protected function _commit_transaction() {
-		global $wpdb;
-		$wpdb->query( 'COMMIT;' );
-		$wpdb->query( 'SET autocommit = 1;' );
 	}
 }
 

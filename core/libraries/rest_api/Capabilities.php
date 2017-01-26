@@ -158,7 +158,7 @@ class Capabilities {
         if (! Capabilities::current_user_has_partial_access_to($model, $model_action_context)) {
             $model_name_plural = \EEH_Inflector::pluralize_and_lower($model->get_this_model_name());
             throw new Rest_Exception(
-                sprintf('rest_%s_cannot_' . strtolower($action_name), $model_name_plural),
+                sprintf('rest_cannot_%s_%s', strtolower($action_name), $model_name_plural),
                 sprintf(
                     __('Sorry, you are not allowed to %1$s %2$s. Missing permissions: %2$s', 'event_espresso'),
                     $action_name,
