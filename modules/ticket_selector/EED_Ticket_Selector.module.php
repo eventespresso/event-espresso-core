@@ -65,7 +65,8 @@ class EED_Ticket_Selector extends  EED_Module {
         add_action( 'wp_loaded', array( 'EED_Ticket_Selector', 'set_definitions' ), 2 );
 		add_action( 'AHEE_event_details_header_bottom', array( 'EED_Ticket_Selector', 'display_ticket_selector' ), 10, 1 );
 		add_action( 'wp_enqueue_scripts', array( 'EED_Ticket_Selector', 'load_tckt_slctr_assets' ), 10 );
-	}
+        EED_Ticket_Selector::loadIframeAssets();
+    }
 
 
 
@@ -230,6 +231,60 @@ class EED_Ticket_Selector extends  EED_Module {
         }
 	}
 
+
+
+    /**
+     * @return void
+     */
+    public static function loadIframeAssets()
+    {
+        // for event lists
+        add_filter(
+            'FHEE__EventEspresso_modules_events_archive_EventsArchiveIframe__display__css',
+            array('EED_Ticket_Selector', 'iframeCss')
+        );
+        add_filter(
+            'FHEE__EventEspresso_modules_events_archive_EventsArchiveIframe__display__js',
+            array('EED_Ticket_Selector', 'iframeJs')
+        );
+        // for ticket selectors
+        add_filter(
+            'FHEE__EED_Ticket_Selector__ticket_selector_iframe__css',
+            array('EED_Ticket_Selector', 'iframeCss')
+        );
+        add_filter(
+            'FHEE__EED_Ticket_Selector__ticket_selector_iframe__js',
+            array('EED_Ticket_Selector', 'iframeJs')
+        );
+    }
+
+
+
+    /**
+     * Informs the rest of the forms system what CSS and JS is needed to display the input
+     *
+     * @param array $iframe_css
+     * @return array
+     */
+    public static function iframeCss(array $iframe_css)
+    {
+        $iframe_css['ticket_selector'] = TICKET_SELECTOR_ASSETS_URL . 'ticket_selector.css';
+        return $iframe_css;
+    }
+
+
+
+    /**
+     * Informs the rest of the forms system what CSS and JS is needed to display the input
+     *
+     * @param array $iframe_js
+     * @return array
+     */
+    public static function iframeJs(array $iframe_js)
+    {
+        $iframe_js['ticket_selector'] = TICKET_SELECTOR_ASSETS_URL . 'ticket_selector.js';
+        return $iframe_js;
+    }
 
 
 	/****************************** DEPRECATED ******************************/
