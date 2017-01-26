@@ -38,6 +38,7 @@ class EE_Messages_Scheduler extends EE_Base
         )) {
             add_action('AHEE__EE_Messages_Scheduler__generation', array('EE_Messages_Scheduler', 'batch_generation'));
             add_action('AHEE__EE_Messages_Scheduler__sending', array('EE_Messages_Scheduler', 'batch_sending'));
+            add_action('AHEE__EE_Messages_Scheduler__cleanup', array('EE_Messages_Scheduler', 'cleanup'));
         }
 
         //add custom schedules
@@ -72,8 +73,10 @@ class EE_Messages_Scheduler extends EE_Base
      */
     public function register_scheduled_tasks($tasks)
     {
+        EE_Registry::instance()->load_helper('DTT_Helper');
         $tasks['AHEE__EE_Messages_Scheduler__generation'] = 'ee_message_cron';
         $tasks['AHEE__EE_Messages_Scheduler__sending']    = 'ee_message_cron';
+        $tasks['AHEE__EE_Messages_Scheduler__cleanup'] = array( EEH_DTT_Helper::tomorrow(), 'daily');
         return $tasks;
     }
 
@@ -176,6 +179,31 @@ class EE_Messages_Scheduler extends EE_Base
             || ! EE_Registry::instance()->NET_CFG->core->do_messages_on_same_request
         ) {
             EE_Messages_Scheduler::initiate_immediate_request_on_cron('send');
+        }
+    }
+
+
+    /**
+     * This is the callback for the `AHEE__EE_Messages_Scheduler__cleanup` scheduled event action.
+     * This runs once a day and if cleanup is active (set via messages settings), it will (by default) delete permanently
+     * from the database messages that have a MSG_modified date older than 30 days.
+     */
+    public static function cleanup()
+    {
+        //first check if user has cleanup turned on or if we're in maintenance mode.  If in maintenance mode we'll wait
+        //until the next scheduled event.
+        if (EE_Registry::instance()->CFG->messages->keep_messages_forever
+            || ! EE_Maintenance_Mode::instance()->models_can_query()
+        ) {
+            return;
+        }
+
+        /**
+         * This filter switch allows other code (such as the EE_Worker_Queue add-on) to replace this with its own handling
+         * of deleting messages.
+         */
+        if (apply_filters('FHEE__EE_Messages_Scheduler__cleanup__handle_cleanup_on_cron', true)) {
+            EEM_Message::instance()->delete_old_messages();
         }
     }
 
