@@ -6,6 +6,11 @@
 	font-size: 1.1em;
 }
 
+.tkt-slctr-tbl {
+    width:99%;
+	margin-bottom: 1.5em;
+}
+
 /* span.ui-icon { float:none !important; }*/
 .icon-right span.ui-icon {
 	margin: 0.7em 0.3em 0 0;
@@ -140,26 +145,34 @@
 	margin: 0 0 -.5em;
 	line-height: .8em;
 }
-.tkt-slctr-tbl td .ticket-on-sale {
+.no-tkt-slctr-ticket-dv .ticket-pending-pg {
+	line-height: .8em;
+}
+.tkt-slctr-tbl td .ticket-on-sale,
+.no-tkt-slctr-ticket-dv .ticket-on-sale {
 	color: #60A000;
 	font-weight: bold;
 }
-.tkt-slctr-tbl td .ticket-pending {
+.tkt-slctr-tbl td .ticket-pending,
+.no-tkt-slctr-ticket-dv .ticket-pending {
 	font-size: .85em;
 	color: #f59200;
 	font-weight: bold;
 }
-.tkt-slctr-tbl td .ticket-sales-expired {
+.tkt-slctr-tbl td .ticket-sales-expired,
+.no-tkt-slctr-ticket-dv .ticket-sales-expired {
 	font-size: .85em;
 	color: #A8A8A8;
 }
 
-.tkt-slctr-tbl td .sold-out {
+.tkt-slctr-tbl td .sold-out,
+.no-tkt-slctr-ticket-dv .sold-out {
 	font-size: .85em;
 	font-weight: bold;
 	color: #E53248;
 }
-.tkt-slctr-tbl td .ticket-required-pg {
+.tkt-slctr-tbl td .ticket-required-pg,
+.no-tkt-slctr-ticket-dv .ticket-required-pg {
 	font-size: .85em;
 	font-weight: bold;
 	color: #d54e21;
@@ -285,8 +298,19 @@
 	box-radius: 0 !important;
 }
 
-.ticket-selector-submit-btn {
+.ticket-selector-submit-btn,
+.ticket-selector-submit-btn-wrap {
 	float: right;
+}
+.ticket-selector-submit-btn-wrap {
+	display:inline-block;
+}
+.ticket-selector-disabled-submit-btn-msg {
+	display: none;
+	margin: .25em 1.5em;
+	font-size: .75em;
+	line-height: 1.4em;
+	letter-spacing: .25px;
 }
 
 .ee-event-expired-notice {
@@ -326,9 +350,42 @@
 	float: left;
 	margin: 0;
 }
-.no-tkt-slctr-ticket-dv p,
-.no-tkt-slctr-ticket-dv h5 {
+.no-tkt-slctr-ticket-dv p {
 	margin: 0;
+}
+.no-tkt-slctr-ticket-dv .no-ticket-selector-msg {
+	font-size: .85em;
+}
+.no-tkt-slctr-ticket-dv h5 {
+	margin: 0 0 .5em;
+}
+
+.event-tickets .no-ticket-selector-h2 {
+	margin: 0;
+	position: relative;
+	text-align: center;
+	top: 0;
+}
+
+
+.datetime_selector-dv {
+    position: relative;
+}
+.select-wrap-dv {
+    display: inline-block;
+    position: relative;
+}
+.datetime_selector-lbl {
+    display: block;
+}
+
+.datetime_selector-lbl .dashicons {
+    position: relative;
+    top: -2px;
+}
+
+.ee-hidden-ticket-tr {
+    display: none;
 }
 
 

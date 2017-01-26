@@ -1,7 +1,7 @@
 <?php
-if (!defined('EVENT_ESPRESSO_VERSION'))
+if (!defined('EVENT_ESPRESSO_VERSION')){
 	exit('No direct script access allowed');
-
+}
 /**
  * Event Espresso
  *
@@ -109,7 +109,7 @@ abstract class EE_Form_Section_Validatable extends EE_Form_Section_Base{
 	 * @param Exception $previous_exception if there was an exception that caused the error, that exception
 	 * @return void
 	 */
-	function add_validation_error( $message_or_object, $error_code = NULL, $previous_exception = NULL ){
+	public function add_validation_error( $message_or_object, $error_code = NULL, $previous_exception = NULL ){
 		if($message_or_object instanceof EE_Validation_Error){
 			$validation_error= $message_or_object;
 			$validation_error->set_form_section($this);
@@ -138,19 +138,19 @@ abstract class EE_Form_Section_Validatable extends EE_Form_Section_Base{
 	 * turn it into a JSON object which can be used by the js
 	 * @return array
 	 */
-	abstract function get_jquery_validation_rules();
+	abstract public function get_jquery_validation_rules();
 
 	/**
 	 * Checks if this form section's data is present in the req data specified
 	 * @param array $req_data usually $_POST, if null that's what's used
 	 * @return boolean
 	 */
-	public abstract function form_data_present_in($req_data = NULL);
+	abstract public function form_data_present_in($req_data = NULL);
 	/**
 	 * Removes teh sensitive data from this form section (usually done after
 	 * utilizing the data business function, but before saving it somewhere. Eg,
 	 * may remove a password from the form after verifying it was correct)
 	 * @return void
 	 */
-	public abstract function clean_sensitive_data();
+	abstract public function clean_sensitive_data();
 }

@@ -47,7 +47,7 @@ jQuery(document).ready(function($) {
 			e_reg_url_link : "",
 			initial_access : new Date().getTime(),
 			IPN_wait_time : 1200,
-			wp_debug : 0
+			wp_debug : false
 		};
 	}
 

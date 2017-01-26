@@ -36,7 +36,7 @@ class EEM_WP_User extends EEM_Base {
 				'user_pass'=>new EE_Plain_Text_Field('user_pass', __('User Password','event_espresso'), false, '' ),
 				'user_nicename'=>new EE_Plain_Text_Field('user_nicename', __(' User Nice Name','event_espresso'), false, ''),
 				'user_email' => new EE_Email_Field('user_email', __( 'User Email', 'event_espresso' ), false),
-				'user_registered' => new EE_Datetime_Field( 'user_registered', __( 'Date User Registered', 'event_espresso' ), false, current_time('timestamp'), $timezone ),
+				'user_registered' => new EE_Datetime_Field( 'user_registered', __( 'Date User Registered', 'event_espresso' ), false, EE_Datetime_Field::now, $timezone ),
 				'user_activation_key' => new EE_Plain_Text_Field( 'user_activation_key', __( 'User Activation Key', 'event_espresso' ), false, '' ),
 				'user_status' => new EE_Integer_Field( 'user_status', __( 'User Status', 'event_espresso' ), false, 0 ),
 				'display_name' => new EE_Plain_Text_Field( 'display_name', __( 'Display Name', 'event_espresso' ), false, '' )

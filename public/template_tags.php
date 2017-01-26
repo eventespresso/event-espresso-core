@@ -296,7 +296,7 @@ if ( ! function_exists( 'espresso_event_reg_button' )) {
 			$class = 'ee-grey';
 		}
 		?>
-		<a class="ee-button ee-register-button <?php echo $class; ?>" href="<?php espresso_event_link_url(); ?>">
+		<a class="ee-button ee-register-button <?php echo $class; ?>" href="<?php espresso_event_link_url(); ?>"<?php echo \EED_Events_Archive::link_target(); ?>>
 			<?php echo $btn_text; ?>
 		</a>
 	<?php
@@ -711,7 +711,7 @@ if ( ! function_exists( 'espresso_organization_address' )) {
 	 */
 	function espresso_organization_address( $type = 'inline' ) {
 		if ( EE_Registry::instance()->CFG->organization instanceof EE_Organization_Config ) {
-			$address = new EventEspresso\core\entities\GenericAddress(
+			$address = new EventEspresso\core\domain\entities\GenericAddress(
 				EE_Registry::instance()->CFG->organization->address_1,
 				EE_Registry::instance()->CFG->organization->address_2,
 				EE_Registry::instance()->CFG->organization->city,

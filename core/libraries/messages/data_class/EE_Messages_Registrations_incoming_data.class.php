@@ -2,8 +2,8 @@
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) exit( 'No direct script access allowed' );
 
 /**
- * This prepares data for message types that send messages for multiple registrations (that could span multiple transactions)
- * and handles when the incoming data is an array of EE_Registration objects.
+ * This prepares data for message types that send messages for multiple registrations (that could span multiple
+ * transactions) and handles when the incoming data is an array of EE_Registration objects.
  *
  * @package        Event Espresso
  * @subpackage     messages
@@ -48,5 +48,65 @@ class EE_Messages_Registrations_incoming_data extends EE_Messages_incoming_data 
 		$this->txn = null;
 		$this->reg_objs = $this->data();
 		$this->_assemble_data();
+	}
+
+
+	/**
+	 * Returns database safe representation of the data later used to when instantiating this object.
+	 *
+	 * @param array $registrations The incoming data to be prepped.
+	 *
+	 * @return EE_Registration[]   The data being prepared for the db
+	 */
+	static public function convert_data_for_persistent_storage( $registrations ) {
+		if (
+			! is_array( $registrations )
+			|| ! reset( $registrations ) instanceof EE_Registration
+		) {
+			return array();
+		}
+
+		$registration_ids = array();
+
+		$registration_ids = array_filter(
+			array_map(
+				function( $registration ) {
+					if ( $registration instanceof EE_Registration ) {
+						return $registration->ID();
+					}
+					return false;
+				},
+				$registrations
+			)
+		);
+
+		return $registration_ids;
+	}
+
+
+
+
+
+
+	/**
+	 * Data that has been stored in persistent storage that was prepped by _convert_data_for_persistent_storage
+	 * can be sent into this method and converted back into the format used for instantiating with this data handler.
+	 *
+	 * @param array  $data
+	 *
+	 * @return EE_Registration[]
+	 */
+	static public function convert_data_from_persistent_storage( $data ) {
+		//since this was added later, we need to account of possible back compat issues where data already queued for generation
+		//is in the old format, which is an array of EE_Registration objects.  So if that's the case, then let's just return them
+		//@see https://events.codebasehq.com/projects/event-espresso/tickets/10127
+		if ( is_array( $data ) && reset( $data ) instanceof EE_Registration ) {
+			return $data;
+		}
+
+		$registrations = is_array( $data )
+				? EEM_Registration::instance()->get_all( array( array( 'REG_ID' => array( 'IN', $data ) ) ) )
+				: array();
+		return $registrations;
 	}
 }

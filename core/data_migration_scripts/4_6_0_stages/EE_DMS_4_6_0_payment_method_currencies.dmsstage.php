@@ -174,7 +174,7 @@ class EE_DMS_4_6_0_payment_method_currencies extends EE_Data_Migration_Script_St
 					'%d',//PMD_ID
 				));
 		if( ! $success ){
-			$this->add_error( sprintf( __( 'Could not add currency relation %s because %s', "event_espresso" ), json_encode( $cur_pm_relation ), $wpdb->last_error ) );
+			$this->add_error( sprintf( __( 'Could not add currency relation %s because %s', "event_espresso" ), wp_json_encode( $cur_pm_relation ), $wpdb->last_error ) );
 		}
 	}
 }

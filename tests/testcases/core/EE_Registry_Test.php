@@ -42,6 +42,10 @@ class EE_Registry_Test extends EE_UnitTestCase{
 
 
 
+	/**
+	 * @param array $class_abbreviations
+	 * @return array
+	 */
 	public function unit_test_registry_class_abbreviations( $class_abbreviations = array() ) {
 		$class_abbreviations[ 'EE_Session_Mock' ] = 'SSN';
 		return $class_abbreviations;
@@ -49,6 +53,10 @@ class EE_Registry_Test extends EE_UnitTestCase{
 
 
 
+	/**
+	 * @param array $core_paths
+	 * @return array
+	 */
 	public function unit_test_registry_core_paths( $core_paths = array() ) {
 		$core_paths[] = EE_TESTS_DIR . 'mocks' . DS . 'core' . DS;
 		return $core_paths;
@@ -457,23 +465,55 @@ class EE_Registry_Test extends EE_UnitTestCase{
 	}
 
 
+	/**
+	 * Checks to ensure that when we reset the registry with reset models to true, that the models are actually reset.
+	 * @group 10109
+	 */
+	public function test_reset_with_reset_models() {
+		$testing_model = EE_Registry_Mock::instance()->load_model( 'Event' );
+
+		//put something in the entity map
+		$e = $this->new_model_obj_with_dependencies( 'Event' );
+		$this->assertNotNull( $testing_model->get_from_entity_map( $e->ID() ) );
+
+		//now let's do the full Registry reset including resetting the models.
+		EE_Registry_Mock::instance()->reset( false, true, true );
+
+		//after the reset, the entity map on the model SHOULD be empty.
+		$this->assertNull( EEM_Registration::instance()->get_from_entity_map( $e->ID() ) );
+		$this->assertNull( $testing_model->get_from_entity_map( $e->ID() ) );
+	}
+
+
 
 	/**
-	 * checks that when we reset a model, that it does so properly and
-	 * also returns the NEW model
-	 *
+	 * checks model resets happen properly: the model instance should NOT change
+	 * (in case code anywhere has a direct reference to it) but its properties
+	 * should be reset to their original settings
+	 * @group 10107
 	 * @author    Mike Nelson
 	 */
 	public function test_reset_model(){
 		$model_a = EE_Registry_Mock::instance()->load_model('Event');
 		$model_a2 = EE_Registry_Mock::instance()->load_model('Event');
 		$model_a3 = EEM_Event::instance();
+		//and put something in its entity map
+		$e = $this->new_model_obj_with_dependencies( 'Event' );
+		$this->assertNotNull( $model_a->get_from_entity_map( $e->ID() ) );
 		$this->assertEquals($model_a, $model_a2);
 		$this->assertEquals($model_a2, $model_a3);
+		//let's set a differnet WP timezone. When the model is reset, it
+		//should automatically use this new timezone
+		$new_timezone_string = 'America/Detroit';
+		update_option( 'timezone_string', $new_timezone_string );
 		$model_b1 = EEM_Event::reset();
-		$this->assertNotSame( $model_a, $model_b1);
+		$this->assertEquals( $model_a, $model_b1);
 		$model_b2 = EE_Registry_Mock::instance()->reset_model('Event');
-		$this->assertNotSame( $model_a, $model_b2);
+		$this->assertEquals( $model_a, $model_b2);
+		//verify the model now has the new wp timezone
+		$this->assertEquals( $new_timezone_string, $model_b1->get_timezone() );
+		//and that the model's entity map has been reset
+		$this->assertNull( $model_b1->get_from_entity_map( $e->ID() ) );
 	}
 
 

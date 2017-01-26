@@ -489,7 +489,7 @@ jQuery(document).ready(function($) {
 			$('#txn-amount-due-h2 > span').removeClass();
 			$('#txn-admin-payments-total-tr').show();
 			$('#txn-admin-no-payments-tr').hide();
-			$('#payments-total-spn').html( 'Payments Total' );
+			$('#payments-total-spn').html( eei18n.payments_total );
 			$('#payments-total-spn').parents('tr').removeClass( 'important-notice');
 		} else if ( totalPaid > txnTotal ) {
 			//alert( 'overpaid' );
@@ -497,7 +497,7 @@ jQuery(document).ready(function($) {
 			$('#txn-amount-due-h2 > span').removeClass().addClass('txn-overview-no-payment-spn');
 			$('#txn-admin-payments-total-tr').show();
 			$('#txn-admin-no-payments-tr').hide();
-			$('#payments-total-spn').html( 'This transaction has been overpaid ! Payments Total' );
+			$('#payments-total-spn').html( eei18n.transaction_overpaid );
 			$('#payments-total-spn').parents('tr').addClass( 'important-notice');
 		} else if ( totalPaid > 0 ) {
 			//alert( 'part payment' );
@@ -505,7 +505,7 @@ jQuery(document).ready(function($) {
 			$('#txn-amount-due-h2 > span').removeClass().addClass('txn-overview-part-payment-spn');
 			$('#txn-admin-payments-total-tr').show();
 			$('#txn-admin-no-payments-tr').hide();
-			$('#payments-total-spn').html( 'Payments Total' );
+			$('#payments-total-spn').html( eei18n.payments_total );
 			$('#overpaid').remove();
 			$('#payments-total-spn').parents('tr').removeClass( 'important-notice');
 		} else {
@@ -514,7 +514,7 @@ jQuery(document).ready(function($) {
 			$('#txn-amount-due-h2 > span').removeClass().addClass('txn-overview-no-payment-spn');
 			$('#txn-admin-payments-total-tr').hide();
 			$('#txn-admin-no-payments-tr').show();
-			$('#payments-total-spn').html( 'Payments Total' );
+			$('#payments-total-spn').html( eei18n.payments_total );
 			$('#overpaid').remove();
 			$('#payments-total-spn').parents('tr').removeClass( 'important-notice');
 		}

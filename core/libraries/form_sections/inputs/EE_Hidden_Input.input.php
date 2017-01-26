@@ -11,7 +11,7 @@ class EE_Hidden_Input extends EE_Form_Input_Base{
 	/**
 	 * @param array $input_settings
 	 */
-	function __construct($input_settings = array()){
+	public function __construct($input_settings = array()){
 		//require_once('strategies/display_strategies/EE_Text_Input_Display_Strategy.strategy.php');
 		$this->_set_display_strategy(new EE_Hidden_Display_Strategy());
 		if ( isset( $input_settings['normalization_strategy'] ) && $input_settings['normalization_strategy'] instanceof EE_Normalization_Strategy_Base ) {

@@ -27,7 +27,7 @@ require_once( EE_INTERFACES . 'EEI_Interfaces.php' );
  * into the wp filesystem credentials form. See http://ottopress.com/2011/tutorial-using-the-wp_filesystem/
  * If you want to test your usage of EEH_File and WP_Filesystem, you can use our
  * filesystem debugger plugin: https://github.com/eventespresso/filesystem-debug-helper,
- * which simulates requiring ftp or ssh to access your site (even if your site is 
+ * which simulates requiring ftp or ssh to access your site (even if your site is
  * actually local and you haven't set it up for ftp or ssh access)
  *
  * @package 			Event Espresso
@@ -42,20 +42,20 @@ class EEH_File extends EEH_Base implements EEHI_File {
 	 * @var string $_credentials_form
 	 */
 	private static $_credentials_form;
-	
+
 	protected static $_wp_filesystem_direct;
-	
+
 	/**
-	 * @param string|null $filepath the filepath we want to work in. If its in the 
+	 * @param string|null $filepath the filepath we want to work in. If its in the
 	 * wp uploads directory, we'll want to just use the filesystem directly.
 	 * If not provided, we have to assume its not in the uploads directory
 	 * @throws EE_Error if filesystem credentials are required
 	 * @return WP_Filesystem_Base
 	 */
 	private static function _get_wp_filesystem( $filepath = null) {
-		if( apply_filters( 
-				'FHEE__EEH_File___get_wp_filesystem__allow_using_filesystem_direct', 
-				$filepath && EEH_File::is_in_uploads_folder( $filepath ), 
+		if( apply_filters(
+				'FHEE__EEH_File___get_wp_filesystem__allow_using_filesystem_direct',
+				$filepath && EEH_File::is_in_uploads_folder( $filepath ),
 				$filepath ) ) {
 			if( ! EEH_File::$_wp_filesystem_direct instanceof WP_Filesystem_Direct ) {
 				require_once(ABSPATH . 'wp-admin/includes/class-wp-filesystem-base.php');
@@ -218,7 +218,7 @@ class EEH_File extends EEH_Base implements EEHI_File {
 	 * Also ensures all the parent folders exist, and if not tries to create them.
 	 * Also, if this function creates the folder, adds a .htaccess file and index.html file
 	 * @param string $folder
-	 * @throws EE_Error if the folder exists and is writeable, but for some reason we 
+	 * @throws EE_Error if the folder exists and is writeable, but for some reason we
 	 * can't write to it
 	 * @return bool false if folder isn't writable; true if it exists and is writeable,
 	 */
@@ -313,7 +313,7 @@ class EEH_File extends EEH_Base implements EEHI_File {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Gets the parent folder. If provided with file, gets the folder that contains it.
 	 * If provided a folder, gets its parent folder.
@@ -324,13 +324,15 @@ class EEH_File extends EEH_Base implements EEHI_File {
 		//find the last DS, ignoring a DS on the very end
 		//eg if given "/var/something/somewhere/", we want to get "somewhere"'s
 		//parent folder, "/var/something/"
-		$ds = strrpos( $file_or_folder_path, DS, -2 );
-		return substr( $file_or_folder_path, 0, $ds + 1 );
+		$ds = strlen($file_or_folder_path) > 1
+            ? strrpos($file_or_folder_path, DS, -2)
+            : strlen($file_or_folder_path);
+		return substr($file_or_folder_path, 0, $ds + 1);
 	}
-	
-	public static function ensure_folder_exists_recursively( $folder ) {
-		
-	}
+
+	// public static function ensure_folder_exists_recursively( $folder ) {
+	//
+	// }
 
 
 
@@ -483,10 +485,10 @@ class EEH_File extends EEH_Base implements EEHI_File {
 				return FALSE;
 			}
 		}
-		
+
 		return TRUE;
 	}
-	
+
 	/**
 	 * Adds an index file to this folder, so folks can't list all the file's contents
 	 * @param string $folder
@@ -627,9 +629,9 @@ class EEH_File extends EEH_Base implements EEHI_File {
 		// load WP_Filesystem and set file permissions
 		$wp_filesystem = EEH_File::_get_wp_filesystem( $destination_file );
 		// write the file
-		if ( ! $wp_filesystem->copy( 
-						EEH_File::convert_local_filepath_to_remote_filepath( $full_source_path ), 
-						EEH_File::convert_local_filepath_to_remote_filepath( $full_dest_path ), 
+		if ( ! $wp_filesystem->copy(
+						EEH_File::convert_local_filepath_to_remote_filepath( $full_source_path ),
+						EEH_File::convert_local_filepath_to_remote_filepath( $full_dest_path ),
 						$overwrite )) {
 			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 				$msg = sprintf( __( 'Attempted writing to file %1$s, but could not, probably because of permissions issues', 'event_espresso' ), $full_source_path );
@@ -640,7 +642,7 @@ class EEH_File extends EEH_Base implements EEHI_File {
 		}
 		return TRUE;
 	}
-	
+
 	/**
 	 * Reports whether or not the filepath is in the EE uploads folder or not
 	 * @param string $filepath
@@ -650,17 +652,17 @@ class EEH_File extends EEH_Base implements EEHI_File {
 		$uploads = wp_upload_dir();
 		return strpos( $filepath, $uploads[ 'basedir' ] ) === 0 ? true : false;
 	}
-	
+
 	/**
 	 * Given a "local" filepath (what you probably thought was the only filepath),
-	 * converts it into a "remote" filepath (the filepath the currently-in-use 
+	 * converts it into a "remote" filepath (the filepath the currently-in-use
 	 * $wp_filesystem needs to use access the folder or file).
 	 * See http://wordpress.stackexchange.com/questions/124900/using-wp-filesystem-in-plugins
 	 * @param WP_Filesystem_Base $wp_filesystem we aren't initially sure which one
 	 * is in use, so you need to provide it
 	 * @param string $local_filepath the filepath to the folder/file locally
 	 * @throws EE_Error if filesystem credentials are required
-	 * @return string the remote filepath (eg the filepath the filesystem method, eg 
+	 * @return string the remote filepath (eg the filepath the filesystem method, eg
 	 * ftp or ssh, will use to access the folder
 	 */
 	public static function convert_local_filepath_to_remote_filepath( $local_filepath ) {

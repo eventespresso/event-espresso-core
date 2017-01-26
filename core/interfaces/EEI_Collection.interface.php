@@ -5,7 +5,10 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 
 /**
  * Collection Interface
+ * 
+ * PLZ USE \EventEspresso\core\services\collections\CollectionInterface
  *
+ * @deprecated since 4.9
  * @package    Event Espresso
  * @subpackage interfaces
  * @since      4.8.0

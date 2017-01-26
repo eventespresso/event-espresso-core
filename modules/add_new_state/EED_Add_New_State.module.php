@@ -132,11 +132,17 @@ class EED_Add_New_State  extends EED_Module {
 		// only add the 'new_state_micro_form' when displaying reg forms,
 		// not during processing since we process the 'new_state_micro_form' in it's own AJAX request
 		$action = EE_Registry::instance()->REQ->get( 'action', '' );
-		if ( $action === 'process_reg_step' || $action === 'update_reg_step' ) {
-			return $question_group_reg_form;
-		}
 		// is the "state" question in this form section?
 		$input = $question_group_reg_form->get_subsection( 'state' );
+		if ( $action === 'process_reg_step' || $action === 'update_reg_step' ) {
+			//ok then all we need to do is make sure the input's HTML name is consistent
+			//by forcing it to set it now, like it did while getting the form for display
+			if( $input instanceof EE_State_Select_Input ) {
+				$input->html_name();
+			}
+			return $question_group_reg_form;
+		}
+		
 		// we're only doing this for state select inputs
 		if ( $input instanceof EE_State_Select_Input ) {
 			// grab any set values from the request
@@ -332,7 +338,7 @@ class EED_Add_New_State  extends EED_Module {
 					);
 
 					if ( EE_Registry::instance()->REQ->ajax ) {
-						echo json_encode( array(
+						echo wp_json_encode( array(
 							'success' => TRUE,
 							'id' => $new_state->ID(),
 							'name' => $new_state->name(),
@@ -349,7 +355,7 @@ class EED_Add_New_State  extends EED_Module {
 			} else {
 				$error = __( 'A new State/Province could not be added because invalid or missing data was received.', 'event_espresso' );
 				if ( EE_Registry::instance()->REQ->ajax ) {
-					echo json_encode( array( 'error' => $error ));
+					echo wp_json_encode( array( 'error' => $error ));
 					exit();
 				} else {
 					EE_Error::add_error( $error, __FILE__, __FUNCTION__, __LINE__ );

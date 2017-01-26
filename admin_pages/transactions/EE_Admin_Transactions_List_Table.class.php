@@ -117,7 +117,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 	protected function _get_table_filters() {
 		$filters = array();
 		$start_date = isset( $this->_req_data['txn-filter-start-date'] ) ? wp_strip_all_tags( $this->_req_data['txn-filter-start-date'] ) : date( 'm/d/Y', strtotime( '-10 year' ));
-		$end_date = isset( $this->_req_data['txn-filter-end-date'] ) ? wp_strip_all_tags( $this->_req_data['txn-filter-end-date'] ) : date( 'm/d/Y' );
+		$end_date = isset( $this->_req_data['txn-filter-end-date'] ) ? wp_strip_all_tags( $this->_req_data['txn-filter-end-date'] ) : date( 'm/d/Y', current_time('timestamp') );
 		ob_start();
 		?>
 		<label for="txn-filter-start-date">Display Transactions from </label>

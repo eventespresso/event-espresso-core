@@ -178,7 +178,7 @@ class EE_CPT_Event_Strategy {
 			)
 		) {
 			if ( ! isset( EE_Registry::instance()->CFG->template_settings->EED_Events_Archive ) || ! isset( EE_Registry::instance()->CFG->template_settings->EED_Events_Archive->display_expired_events ) || ! EE_Registry::instance()->CFG->template_settings->EED_Events_Archive->display_expired_events ) {
-				$SQL .=  ' AND ' . EEM_Datetime::instance()->table() . '.DTT_EVT_end > "' . current_time( 'mysql', true ) . '" ';
+				$SQL .=  ' AND ' . EEM_Datetime::instance()->table() . ".DTT_EVT_end > '" . current_time( 'mysql', true ) . "' ";
 			}
 		}
 		return $SQL;

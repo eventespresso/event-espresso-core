@@ -1,49 +1,37 @@
-<?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+<?php use EventEspresso\core\exceptions\InvalidSessionDataException;
+
+if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed');}
 /**
- *
- * Event Espresso
- *
- * Event Registration and Management Plugin for WordPress
- *
- * @ package			Event Espresso
- * @ author				Seth Shoultes
- * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link					http://www.eventespresso.com
- * @ version		 	4.0
- *
- * ------------------------------------------------------------------------
  *
  * EE_Session class
  *
- * @package				Event Espresso
- * @subpackage			includes/classes
- * @author					Brent Christensen
- *
- * ------------------------------------------------------------------------
+ * @package    Event Espresso
+ * @subpackage includes/classes
+ * @author     Brent Christensen
  */
  class EE_Session {
 
 	 const session_id_prefix = 'ee_ssn_';
+
 	 const hash_check_prefix = 'ee_shc_';
 
 	 /**
 	  * instance of the EE_Session object
 	  * @var EE_Session
 	  */
-	 private static $_instance = NULL;
+	 private static $_instance;
 
 	 /**
 	  * the session id
 	  * @var string
 	  */
-	 private $_sid = NULL;
+	 private $_sid;
 
 	 /**
 	  * session id salt
 	  * @var string
 	  */
-	 private $_sid_salt = NULL;
+	 private $_sid_salt;
 
 	 /**
 	  * session data
@@ -64,6 +52,13 @@
 	  */
 	 private $_expiration;
 
+    /**
+     * whether or not session has expired at some point
+     *
+     * @var boolean
+     */
+    private $_expired = false;
+
 	 /**
 	  * current time as Unix timestamp in GMT
 	  * @var int
@@ -74,59 +69,56 @@
 	  * whether to encrypt session data
 	  * @var bool
 	  */
-	 private $_use_encryption = FALSE;
+	 private $_use_encryption = false;
 
 	 /**
 	  * EE_Encryption object
 	  * @var EE_Encryption
 	  */
-	 protected $encryption = NULL;
+	 protected $encryption;
 
 	 /**
 	  * well... according to the server...
 	  * @var null
 	  */
-	 private $_user_agent = NULL;
+	 private $_user_agent;
 
 	 /**
 	  * do you really trust the server ?
 	  * @var null
 	  */
-	 private $_ip_address = NULL;
+	 private $_ip_address;
 
 	 /**
 	  * current WP user_id
 	  * @var null
 	  */
-	 private $_wp_user_id = NULL;
+	 private $_wp_user_id;
 
 	 /**
 	  * array for defining default session vars
 	  * @var array
 	  */
 	 private $_default_session_vars = array (
-		'id' => NULL,
-		'user_id' => NULL,
-		'ip_address' => NULL,
-		'user_agent' => NULL,
-		'init_access' => NULL,
-		'last_access' => NULL,
-		'expiration' => NULL,
-		'pages_visited' => array()
+        'id'            => null,
+        'user_id'       => null,
+        'ip_address'    => null,
+        'user_agent'    => null,
+        'init_access'   => null,
+        'last_access'   => null,
+        'expiration'    => null,
+        'pages_visited' => array(),
 	);
 
 
 
-
-
-
-
-	/**
-	 *	@singleton method used to instantiate class object
-	 *	@access public
-	 * @param \EE_Encryption $encryption
-	 *	@return EE_Session
-	 */
+	 /**
+	  * @singleton method used to instantiate class object
+	  * @param \EE_Encryption $encryption
+	  * @return EE_Session
+	  * @throws InvalidSessionDataException
+	  * @throws \EE_Error
+	  */
 	public static function instance( EE_Encryption $encryption = null ) {
 		// check if class object is instantiated
 		// session loading is turned ON by default, but prior to the init hook, can be turned back OFF via:
@@ -141,15 +133,18 @@
 
 	 /**
 	  * protected constructor to prevent direct creation
+	  *
 	  * @Constructor
 	  * @access protected
 	  * @param \EE_Encryption $encryption
+	  * @throws \EE_Error
+	  * @throws \EventEspresso\core\exceptions\InvalidSessionDataException
 	  */
 	 protected function __construct( EE_Encryption $encryption = null ) {
 
 		// session loading is turned ON by default, but prior to the init hook, can be turned back OFF via: add_filter( 'FHEE_load_EE_Session', '__return_false' );
-		if ( ! apply_filters( 'FHEE_load_EE_Session', TRUE ) ) {
-			return NULL;
+		if ( ! apply_filters( 'FHEE_load_EE_Session', true ) ) {
+			return;
 		}
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		if ( ! defined( 'ESPRESSO_SESSION' ) ) {
@@ -167,8 +162,8 @@
 		 * 		}
 		 */
 		// retrieve session options from db
-		$session_settings = get_option( 'ee_session_settings' );
-		if ( $session_settings !== FALSE ) {
+		$session_settings = (array) get_option( 'ee_session_settings', array() );
+		if ( ! empty( $session_settings )) {
 			// cycle though existing session options
 			foreach ( $session_settings as $var_name => $session_setting ) {
 				// set values for class properties
@@ -176,29 +171,58 @@
 				$this->{$var_name} = $session_setting;
 			}
 		}
-		// are we using encryption?
-		if ( $this->_use_encryption && $encryption instanceof EE_Encryption ) {
-			// encrypt data via: $this->encryption->encrypt();
-			$this->encryption = $encryption;
-		}
+         // are we using encryption?
+         $this->_use_encryption = $encryption instanceof EE_Encryption && EE_Registry::instance()->CFG->admin->encode_session_data();
+         // \EEH_Debug_Tools::printr($this->_use_encryption, '$this->_use_encryption', __FILE__, __LINE__);
+        // encrypt data via: $this->encryption->encrypt();
+        $this->encryption = $encryption;
 		// filter hook allows outside functions/classes/plugins to change default empty cart
 		$extra_default_session_vars = apply_filters( 'FHEE__EE_Session__construct__extra_default_session_vars', array() );
 		array_merge( $this->_default_session_vars, $extra_default_session_vars );
 		// apply default session vars
 		$this->_set_defaults();
-		// check for existing session and retrieve it from db
-		if ( ! $this->_espresso_session() ) {
-			// or just start a new one
-			$this->_create_espresso_session();
-		}
-		// check request for 'clear_session' param
+         add_action('AHEE__EE_System__initialize', array($this, 'open_session'));
+         // check request for 'clear_session' param
 		add_action( 'AHEE__EE_Request_Handler__construct__complete', array( $this, 'wp_loaded' ));
 		// once everything is all said and done,
 		add_action( 'shutdown', array( $this, 'update' ), 100 );
 		add_action( 'shutdown', array( $this, 'garbage_collection' ), 999 );
-
 	}
 
+
+
+     /**
+      * @return void
+      * @throws \EventEspresso\core\exceptions\InvalidSessionDataException
+      * @throws \EE_Error
+      */
+	 public function open_session() {
+         // check for existing session and retrieve it from db
+         if ( ! $this->_espresso_session()) {
+             // or just start a new one
+             $this->_create_espresso_session();
+         }
+     }
+
+
+
+    /**
+     * @return bool
+     */
+    public function expired()
+    {
+        return $this->_expired;
+    }
+
+
+
+    /**
+     * @return void
+     */
+    public function reset_expired()
+    {
+        $this->_expired = false;
+    }
 
 
 	 /**
@@ -207,6 +231,29 @@
 	 public function expiration() {
 		 return $this->_expiration;
 	 }
+
+
+
+    /**
+     * @return int
+     */
+    public function extension()
+    {
+        return apply_filters('FHEE__EE_Session__extend_expiration__seconds_added', (10 * MINUTE_IN_SECONDS));
+    }
+
+
+
+    /**
+     * @param int $time number of seconds to add to session expiration
+     * @return int
+     */
+    public function extend_expiration($time = 0)
+    {
+        $time = $time ? $time : $this->extension();
+        $this->_expiration += absint($time);
+    }
+
 
 
 
@@ -249,14 +296,15 @@
 
 
 
-	 /**
-	  * @param \EE_Cart $cart
-	  * @return bool
-	  */
-	 public function set_cart( EE_Cart $cart ) {
-		 $this->_session_data['cart'] = $cart;
-		 return TRUE;
-	 }
+    /**
+     * @param \EE_Cart $cart
+     * @return bool
+     */
+    public function set_cart(EE_Cart $cart)
+    {
+        $this->_session_data['cart'] = $cart;
+        return true;
+    }
 
 
 
@@ -264,6 +312,7 @@
 	  * reset_cart
 	  */
 	 public function reset_cart() {
+        do_action('AHEE__EE_Session__reset_cart__before_reset', $this);
 		 $this->_session_data['cart'] = NULL;
 	 }
 
@@ -273,7 +322,9 @@
 	  * @return \EE_Cart
 	  */
 	 public function cart() {
-		 return isset( $this->_session_data['cart'] ) ? $this->_session_data['cart'] : NULL;
+        return isset($this->_session_data['cart']) && $this->_session_data['cart'] instanceof EE_Cart
+            ? $this->_session_data['cart']
+            : null;
 	 }
 
 
@@ -293,6 +344,7 @@
 	  * reset_checkout
 	  */
 	 public function reset_checkout() {
+        do_action('AHEE__EE_Session__reset_checkout__before_reset', $this);
 		 $this->_session_data['checkout'] = NULL;
 	 }
 
@@ -302,7 +354,9 @@
 	  * @return \EE_Checkout
 	  */
 	 public function checkout() {
-		 return isset( $this->_session_data['checkout'] ) ? $this->_session_data['checkout'] : NULL;
+        return isset($this->_session_data['checkout']) && $this->_session_data['checkout'] instanceof EE_Checkout
+            ? $this->_session_data['checkout']
+            : null;
 	 }
 
 
@@ -310,6 +364,7 @@
 	 /**
 	  * @param \EE_Transaction $transaction
 	  * @return bool
+	  * @throws \EE_Error
 	  */
 	 public function set_transaction( EE_Transaction $transaction ) {
 		 // first remove the session from the transaction before we save the transaction in the session
@@ -324,6 +379,7 @@
 	  * reset_transaction
 	  */
 	 public function reset_transaction() {
+        do_action('AHEE__EE_Session__reset_transaction__before_reset', $this);
 		 $this->_session_data['transaction'] = NULL;
 	 }
 
@@ -333,7 +389,10 @@
 	  * @return \EE_Transaction
 	  */
 	 public function transaction() {
-		 return isset( $this->_session_data['transaction'] ) ? $this->_session_data['transaction'] : NULL;
+        return isset($this->_session_data['transaction'])
+               && $this->_session_data['transaction'] instanceof EE_Transaction
+           ? $this->_session_data['transaction']
+           : null;
 	 }
 
 
@@ -393,6 +452,7 @@
 	  * @initiate session
 	  * @access   private
 	  * @return TRUE on success, FALSE on fail
+	  * @throws \EventEspresso\core\exceptions\InvalidSessionDataException
 	  * @throws \EE_Error
 	  */
 	private function _espresso_session() {
@@ -407,52 +467,34 @@
 		// and the visitors IP
 		$this->_ip_address = $this->_visitor_ip();
 		// set the "user agent"
-		$this->_user_agent = ( isset($_SERVER['HTTP_USER_AGENT'])) ? esc_attr( $_SERVER['HTTP_USER_AGENT'] ) : FALSE;
+		$this->_user_agent = isset($_SERVER['HTTP_USER_AGENT']) ? esc_attr( $_SERVER['HTTP_USER_AGENT'] ) : FALSE;
 		// now let's retrieve what's in the db
-		// we're using WP's Transient API to store session data using the PHP session ID as the option name
-		$session_data = get_transient( EE_Session::session_id_prefix . $this->_sid );
-		if ( $session_data ) {
-			if ( apply_filters( 'FHEE__EE_Session___perform_session_id_hash_check', WP_DEBUG ) ) {
-				$hash_check = get_transient( EE_Session::hash_check_prefix . $this->_sid );
-				if ( $hash_check && $hash_check !== md5( $session_data ) ) {
-					EE_Error::add_error(
-						sprintf(
-							__( 'The stored data for session %1$s failed to pass a hash check and therefore appears to be invalid.', 'event_espresso' ),
-							EE_Session::session_id_prefix . $this->_sid
-						),
-						__FILE__, __FUNCTION__, __LINE__
-					);
-				}
-			}
-			// un-encrypt the data
-			$session_data = $this->_use_encryption ? $this->encryption->decrypt( $session_data ) : $session_data;
-			// unserialize
-			$session_data = maybe_unserialize( $session_data );
-			// just a check to make sure the session array is indeed an array
-			if ( ! is_array( $session_data ) ) {
-				// no?!?! then something is wrong
-				return FALSE;
-			}
-			// get the current time in UTC
+        $session_data = $this->_retrieve_session_data();
+        if (! empty($session_data)) {
+            // get the current time in UTC
 			$this->_time = isset( $this->_time ) ? $this->_time : time();
 			// and reset the session expiration
-			$this->_expiration = isset( $session_data['expiration'] ) ? $session_data['expiration'] : $this->_time + $this->_lifespan;
-
+			$this->_expiration = isset( $session_data['expiration'] )
+				? $session_data['expiration']
+				: $this->_time + $this->_lifespan;
 		} else {
-			// set initial site access time and the session expiration
+            // set initial site access time and the session expiration
 			$this->_set_init_access_and_expiration();
 			// set referer
-			$this->_session_data[ 'pages_visited' ][ $this->_session_data['init_access'] ] = isset( $_SERVER['HTTP_REFERER'] ) ? esc_attr( $_SERVER['HTTP_REFERER'] ) : '';
+			$this->_session_data[ 'pages_visited' ][ $this->_session_data['init_access'] ] = isset( $_SERVER['HTTP_REFERER'] )
+				? esc_attr( $_SERVER['HTTP_REFERER'] )
+				: '';
 			// no previous session = go back and create one (on top of the data above)
 			return FALSE;
 		}
-		// now the user agent
-		if ( $session_data['user_agent'] != $this->_user_agent ) {
+        // now the user agent
+		if ( $session_data['user_agent'] !== $this->_user_agent ) {
 			return FALSE;
 		}
 		// wait a minute... how old are you?
 		if ( $this->_time > $this->_expiration ) {
 			// yer too old fer me!
+            $this->_expired = true;
 			// wipe out everything that isn't a default session datum
 			$this->clear_session( __CLASS__, __FUNCTION__ );
 		}
@@ -461,6 +503,98 @@
 		return TRUE;
 
 	}
+
+
+
+     /**
+      * _get_session_data
+      * Retrieves the session data, and attempts to correct any encoding issues that can occur due to improperly setup databases
+      *
+      * @return array
+      * @throws \EventEspresso\core\exceptions\InvalidSessionDataException
+      */
+     protected function _retrieve_session_data()
+     {
+         $ssn_key = EE_Session::session_id_prefix . $this->_sid;
+         try {
+             // we're using WP's Transient API to store session data using the PHP session ID as the option name
+             $session_data = get_transient($ssn_key);
+	         if ($session_data === false) {
+		         return array();
+             }
+             if (apply_filters('FHEE__EE_Session___perform_session_id_hash_check', WP_DEBUG)) {
+                 $hash_check = get_transient(EE_Session::hash_check_prefix . $this->_sid);
+                 if ($hash_check && $hash_check !== md5($session_data)) {
+	                 EE_Error::add_error(
+                         sprintf(
+                             __('The stored data for session %1$s failed to pass a hash check and therefore appears to be invalid.', 'event_espresso'),
+                             EE_Session::session_id_prefix . $this->_sid
+                         ),
+                         __FILE__, __FUNCTION__, __LINE__
+                     );
+                 }
+             }
+         } catch (Exception $e) {
+             // let's just eat that error for now and attempt to correct any corrupted data
+             global $wpdb;
+             $row = $wpdb->get_row(
+                 $wpdb->prepare(
+                     "SELECT option_value FROM {$wpdb->options} WHERE option_name = %s LIMIT 1",
+                     '_transient_' . $ssn_key
+                 )
+             );
+             $session_data = is_object($row) ? $row->option_value : null;
+             if ($session_data) {
+                 $session_data = preg_replace_callback(
+                     '!s:(d+):"(.*?)";!',
+                     function ($match) {
+                         return $match[1] === strlen($match[2])
+                             ? $match[0]
+                             : 's:' . strlen($match[2]) . ':"' . $match[2] . '";';
+                     },
+                     $session_data
+                 );
+             }
+	         $session_data = maybe_unserialize($session_data);
+         }
+	     // in case the data is encoded... try to decode it
+         $session_data = $this->encryption instanceof EE_Encryption
+             ? $this->encryption->base64_string_decode($session_data)
+             : $session_data;
+
+         if ( ! is_array($session_data)) {
+             try {
+	             $session_data = maybe_unserialize($session_data);
+             } catch (Exception $e) {
+                 $msg = esc_html__(
+                     'An error occurred while attempting to unserialize the session data.',
+                     'event_espresso'
+                 );
+                 $msg .= WP_DEBUG
+                     ? '<br><pre>' . print_r($session_data, true) . '</pre><br>' . $this->find_serialize_error($session_data)
+                     : '';
+                 throw new InvalidSessionDataException($msg, 0, $e);
+             }
+         }
+         // just a check to make sure the session array is indeed an array
+         if ( ! is_array($session_data)) {
+             // no?!?! then something is wrong
+             $msg = esc_html__(
+                 'The session data is missing, invalid, or corrupted.',
+                 'event_espresso'
+             );
+             $msg .= WP_DEBUG
+                 ? '<br><pre>' . print_r($session_data, true) . '</pre><br>' . $this->find_serialize_error($session_data)
+                 : '';
+	         throw new InvalidSessionDataException($msg);
+         }
+	     if ( isset( $this->_session_data['transaction'] ) && absint( $this->_session_data['transaction'] ) !== 0 ) {
+		     $this->_session_data['transaction'] = EEM_Transaction::instance()->get_one_by_ID(
+			     $this->_session_data['transaction']
+	         );
+	     }
+	     return $session_data;
+     }
 
 
 
@@ -538,7 +672,7 @@
 			&& is_array( $this->_session_data )
 			&& isset( $this->_session_data['id'])
 			? $this->_session_data
-			: NULL;
+			: array();
 		if ( empty( $this->_session_data )) {
 			$this->_set_defaults();
 		}
@@ -618,8 +752,6 @@
 
 
 
-
-
 	/**
 	 * 	@create session data array
 	 * 	@access public
@@ -633,28 +765,44 @@
 
 
 
-
-
-	/**
-	 * _save_session_to_db
-	 *
-	 * 	@access public
-	 * 	@return string
-	 */
+	 /**
+	  * _save_session_to_db
+	  *
+	  * @access public
+	  * @return string
+	  * @throws \EE_Error
+	  */
 	private function _save_session_to_db() {
 		if (
-			! EE_Registry::instance()->REQ instanceof EE_Request_Handler
-			|| ! (
-				EE_Registry::instance()->REQ->is_espresso_page()
+			// if the current request is NOT one of the following
+			! (
+				(
+					// an espresso page
+					EE_Registry::instance()->REQ instanceof EE_Request_Handler
+					&& EE_Registry::instance()->REQ->is_espresso_page()
+				)
+				// OR an an AJAX request from the frontend
 				|| EE_Registry::instance()->REQ->front_ajax
+				// OR an admin request that is NOT AJAX
+				|| (
+					is_admin()
+					&& ! ( defined( 'DOING_AJAX' ) && DOING_AJAX )
+				)
 			)
 		) {
-			return FALSE;
+			return false;
 		}
-		// first serialize all of our session data
-		$session_data = serialize( $this->_session_data );
-		// encrypt it if we are using encryption
-		$session_data = $this->_use_encryption ? $this->encryption->encrypt( $session_data ) : $session_data;
+		$transaction = $this->transaction();
+		if ( $transaction instanceof EE_Transaction ) {
+			if ( ! $transaction->ID() ) {
+				$transaction->save();
+			}
+			$this->_session_data['transaction'] = $transaction->ID();
+		}
+		// then serialize all of our session data
+		$session_data = serialize($this->_session_data);
+		// do we need to also encode it to avoid corrupted data when saved to the db?
+		$session_data = $this->_use_encryption ? $this->encryption->base64_string_encode( $session_data ) : $session_data;
 		// maybe save hash check
 		if ( apply_filters( 'FHEE__EE_Session___perform_session_id_hash_check', WP_DEBUG ) ) {
 			set_transient( EE_Session::hash_check_prefix . $this->_sid, md5( $session_data ), $this->_lifespan );
@@ -708,47 +856,32 @@
 	 *			@return string
 	 */
 	public function _get_page_visit() {
-
-//		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 		$page_visit = home_url('/') . 'wp-admin/admin-ajax.php';
-
 		// check for request url
 		if ( isset( $_SERVER['REQUEST_URI'] )) {
-
+			$http_host = '';
+			$page_id = '?';
+			$e_reg = '';
 			$request_uri = esc_url( $_SERVER['REQUEST_URI'] );
-
 			$ru_bits = explode( '?', $request_uri );
 			$request_uri = $ru_bits[0];
-			//echo '<h1>$request_uri   ' . $request_uri . '</h1>';
-
 			// check for and grab host as well
 			if ( isset( $_SERVER['HTTP_HOST'] )) {
 				$http_host = esc_url( $_SERVER['HTTP_HOST'] );
-			} else {
-				$http_host = '';
 			}
-			//echo '<h1>$http_host   ' . $http_host . '</h1>';
-
 			// check for page_id in SERVER REQUEST
 			if ( isset( $_REQUEST['page_id'] )) {
 				// rebuild $e_reg without any of the extra parameters
 				$page_id = '?page_id=' . esc_attr( $_REQUEST['page_id'] ) . '&amp;';
-			} else {
-				$page_id = '?';
 			}
 			// check for $e_reg in SERVER REQUEST
 			if ( isset( $_REQUEST['ee'] )) {
 				// rebuild $e_reg without any of the extra parameters
 				$e_reg = 'ee=' . esc_attr( $_REQUEST['ee'] );
-			} else {
-				$e_reg = '';
 			}
-
 			$page_visit = rtrim( $http_host . $request_uri . $page_id . $e_reg, '?' );
-
 		}
-
-		return $page_visit != home_url( '/wp-admin/admin-ajax.php' ) ? $page_visit : '';
+		return $page_visit !== home_url( '/wp-admin/admin-ajax.php' ) ? $page_visit : '';
 
 	}
 
@@ -852,7 +985,6 @@
 	/**
 	 *   wp_loaded
 	 *   @access public
-	 *   @return	 string
 	 */
 	public function wp_loaded() {
 		if ( isset(  EE_Registry::instance()->REQ ) && EE_Registry::instance()->REQ->is_set( 'clear_session' )) {
@@ -908,17 +1040,17 @@
 					OR option_value > {$too_far_in_the_the_future} )
 					LIMIT {$expired_session_transient_delete_query_limit}
 				";
-					 $expired_sessions = $wpdb->get_col( $SQL );
-					 // valid results?
-					 if ( ! $expired_sessions instanceof WP_Error && ! empty( $expired_sessions ) ) {
-						 // format array of results into something usable within the actual DELETE query's IN clause
-						 $expired = array();
-						 foreach ( $expired_sessions as $expired_session ) {
-							 $expired[ ] = "'" . $expired_session . "'";
-							 $expired[ ] = "'" . str_replace( 'timeout_', '', $expired_session ) . "'";
-						 }
-						 $expired = implode( ', ', $expired );
-						 $SQL = "
+                    $expired_sessions = $wpdb->get_col($SQL);
+                    // valid results?
+                    if ( ! $expired_sessions instanceof WP_Error && ! empty($expired_sessions)) {
+                        // format array of results into something usable within the actual DELETE query's IN clause
+                        $expired = array();
+                        foreach ($expired_sessions as $expired_session) {
+                            $expired[] = "'" . $expired_session . "'";
+                            $expired[] = "'" . str_replace('timeout_', '', $expired_session) . "'";
+                        }
+                        $expired = implode(', ', $expired);
+                        $SQL = "
 						DELETE FROM {$wpdb->options}
 						WHERE option_name
 						IN ( $expired );
@@ -929,14 +1061,79 @@
 							 EE_Error::add_error( $results->get_error_message(), __FILE__, __FUNCTION__, __LINE__ );
 						 }
 					 }
-					 do_action( 'FHEE__EE_Session__garbage_collection___end', $expired_session_transient_delete_query_limit );
 				 }
+				 do_action(
+					 'FHEE__EE_Session__garbage_collection___end',
+					 $expired_session_transient_delete_query_limit
+				 );
 			 }
 		 }
+
 
 	 }
 
 
+
+	 /**
+	  * @see http://stackoverflow.com/questions/10152904/unserialize-function-unserialize-error-at-offset/21389439#10152996
+	  * @param $data1
+	  * @return string
+	  */
+	 private function find_serialize_error( $data1 ) {
+		$error = "<pre>";
+		 $data2 = preg_replace_callback(
+			 '!s:(\d+):"(.*?)";!',
+			 function ( $match ) {
+				 return ( $match[1] === strlen( $match[2] ) )
+					 ? $match[0]
+					 : 's:'
+					   . strlen( $match[2] )
+					   . ':"'
+					   . $match[2]
+					   . '";';
+			 },
+			 $data1
+		 );
+		$max = ( strlen( $data1 ) > strlen( $data2 ) ) ? strlen( $data1 ) : strlen( $data2 );
+		$error .= $data1 . PHP_EOL;
+		$error .= $data2 . PHP_EOL;
+		for ( $i = 0; $i < $max; $i++ ) {
+			if ( @$data1[ $i ] !== @$data2[ $i ] ) {
+				$error .= "Difference " . @$data1[ $i ] . " != " . @$data2[ $i ] . PHP_EOL;
+				$error .= "\t-> ORD number " . ord( @$data1[ $i ] ) . " != " . ord( @$data2[ $i ] ) . PHP_EOL;
+				$error .= "\t-> Line Number = $i" . PHP_EOL;
+				$start = ( $i - 20 );
+				$start = ( $start < 0 ) ? 0 : $start;
+				$length = 40;
+				$point = $max - $i;
+				if ( $point < 20 ) {
+					$rlength = 1;
+					$rpoint = -$point;
+				} else {
+					$rpoint = $length - 20;
+					$rlength = 1;
+				}
+				$error .= "\t-> Section Data1  = ";
+				$error .= substr_replace(
+					substr( $data1, $start, $length ),
+					"<b style=\"color:green\">{$data1[ $i ]}</b>",
+					$rpoint,
+					$rlength
+				);
+				$error .= PHP_EOL;
+				$error .= "\t-> Section Data2  = ";
+				$error .= substr_replace(
+					substr( $data2, $start, $length ),
+					"<b style=\"color:red\">{$data2[ $i ]}</b>",
+					$rpoint,
+					$rlength
+				);
+				$error .= PHP_EOL;
+			}
+		}
+		$error .= "</pre>";
+		return $error;
+	}
 
  }
 /* End of file EE_Session.class.php */

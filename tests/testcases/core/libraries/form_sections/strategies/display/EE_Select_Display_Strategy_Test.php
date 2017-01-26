@@ -15,6 +15,9 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
  */
 class EE_Select_Display_Strategy_Test extends EE_UnitTestCase{
 
+	/**
+	 * @group html
+	 */
 	public function test_display_flat_array(){
 		$form = new EE_Form_Section_Proper( array(
 			'name' => 'form',
@@ -24,12 +27,12 @@ class EE_Select_Display_Strategy_Test extends EE_UnitTestCase{
 		));
 		$input = $form->get_input( 'input1' );
 		$expected_output = '
-<select id="form-input1" name="form[input1]" class="" style="">
+<select id="form-input1" name="form[input1]" class="" style="" >
 	<option value="foo">Foo</option>
 	<option value="bar">Bar</option>
 	<option value="baz&#039;em">Baz</option>
 </select>';
-		$this->assertEquals( $expected_output, $input->get_html_for_input() );
+		$this->assertHTMLEquals( $expected_output, $input->get_html_for_input() );
 		//now if we set the default, does it get selected?
 		$form->populate_defaults( array(
 			'input1' => "baz'em"
@@ -37,14 +40,18 @@ class EE_Select_Display_Strategy_Test extends EE_UnitTestCase{
 		$this->assertEquals( "baz'em", $input->normalized_value() );
 		$this->assertEquals( "baz'em", $input->raw_value() );
 		$expected_output2 = '
-<select id="form-input1" name="form[input1]" class="" style="">
+<select id="form-input1" name="form[input1]" class="" style="" >
 	<option value="foo">Foo</option>
 	<option value="bar">Bar</option>
 	<option value="baz&#039;em" selected="selected">Baz</option>
 </select>';
-		$this->assertEquals( $expected_output2, $input->get_html_for_input() );
+		$this->assertHTMLEquals( $expected_output2, $input->get_html_for_input() );
 
 	}
+	
+	/**
+	 * @group html
+	 */
 	public function test_display_flat_multidimensional_array(){
 		$input = new EE_Select_Input( array(
 					'code_var_names' => array(
@@ -57,7 +64,7 @@ class EE_Select_Display_Strategy_Test extends EE_UnitTestCase{
 						'baboon' => 'Baboon'
 					)));
 		$expected_output = '
-<select id="" name="" class="" style="">
+<select id="" name="" class="" style="" >
 	<optgroup label="code_var_names">
 		<option value="foo">Foo</option>
 		<option value="bar">Bar</option>
@@ -69,7 +76,7 @@ class EE_Select_Display_Strategy_Test extends EE_UnitTestCase{
 		<option value="baboon">Baboon</option>
 	</optgroup>
 </select>';
-		$this->assertEquals( $expected_output, $input->get_html_for_input() );
+		$this->assertHTMLEquals( $expected_output, $input->get_html_for_input() );
 
 
 	}

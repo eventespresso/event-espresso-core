@@ -59,7 +59,7 @@ var EETxnCharts = {
             || typeof optionsObject.id === 'undefined'
             || optionsObject.noResults
         ) {
-            document.getElementById(txnRevPerDay.id).innerHTML = txnRevPerDay.noRegsMsg;
+            document.getElementById(optionsObject.id).innerHTML = optionsObject.noTxnMsg;
             return false;
         }
         return true;

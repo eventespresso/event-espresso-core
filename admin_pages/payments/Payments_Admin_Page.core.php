@@ -192,9 +192,9 @@ class Payments_Admin_Page extends EE_Admin_Page {
 				$template_args[ 'admin_page_obj' ] = $this;
 				$all_pmt_help_tabs_config[$help_tab_name] = array(
 					'title'=>$config['title'],
-					'content'=>EEH_Template::display_template( 
-							$payment_method_type->file_folder().'help_tabs'.DS.$config['filename'].'.help_tab.php', 
-							$template_args, 
+					'content'=>EEH_Template::display_template(
+							$payment_method_type->file_folder().'help_tabs'.DS.$config['filename'].'.help_tab.php',
+							$template_args,
 							true)
 				);
 			}
@@ -536,6 +536,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 	protected function _update_payment_method_button( EE_Payment_Method $payment_method ) {
 		$update_button = new EE_Submit_Input(
 			array(
+				'name' => 'submit',
 				'html_id' 		=> 'save_' . $payment_method->slug() . '_settings',
 				'default' 		=> sprintf( __( 'Update %s Payment Settings', 'event_espresso' ), $payment_method->admin_name() ),
 				'html_label' => EEH_HTML::nbsp()
@@ -605,6 +606,14 @@ class Payments_Admin_Page extends EE_Admin_Page {
 					'FHEE__Payments_Admin_Page___activate_payment_method_button__form_subsections',
 					array(
 						new EE_Form_Section_HTML(
+							EEH_HTML::tr(
+								EEH_HTML::td( $payment_method->type_obj()->introductory_html(),
+									'',
+									'',
+									'',
+									'colspan="2"' 
+								)
+							) . 
 							EEH_HTML::tr(
 								EEH_HTML::th(
 									EEH_HTML::label( __( 'Click to Activate ', 'event_espresso' ))
@@ -699,12 +708,10 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			EE_Registry::instance()->load_lib('Payment_Method_Manager');
 			/** @var $correct_pmt_form_to_use EE_Payment_Method_Form */
 			$correct_pmt_form_to_use = NULL;
-			$pmt_obj = NULL;
-			foreach(EE_Payment_Method_Manager::instance()->payment_method_types() as $pmt_obj){
-				/** @var $pmt_obj EE_PMT_Base */
+			$payment_method = NULL;
+			foreach( EEM_Payment_Method::instance()->get_all() as $payment_method){
 				//get the form and simplify it, like what we do when we display it
-				$pmt_form = $pmt_obj->settings_form();
-				$this->_simplify_form($pmt_form);
+				$pmt_form = $this->_generate_payment_method_settings_form( $payment_method );
 				if($pmt_form->form_data_present_in($this->_req_data)){
 					$correct_pmt_form_to_use = $pmt_form;
 					break;
@@ -717,15 +724,24 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			}
 			$correct_pmt_form_to_use->receive_form_submission($this->_req_data);
 			if($correct_pmt_form_to_use->is_valid()){
-				$correct_pmt_form_to_use->save();
-				$pm = $correct_pmt_form_to_use->get_model_object();
+				$subsection_name = 'payment_method_settings_' . $payment_method->slug();
+				$payment_settings_subform = $correct_pmt_form_to_use->get_subsection( $subsection_name );
+				if( ! $payment_settings_subform instanceof EE_Payment_Method_Form ) {
+					throw new EE_Error( 
+						sprintf(
+							__( 'The payment method could not be saved because the form sections were misnamed. We expected to find %1$s, but did not.','event_espresso' ),
+							$subsection_name
+						)
+					);
+				}
+				$payment_settings_subform->save();
 				/** @var $pm EE_Payment_Method */
-				$this->_redirect_after_action(TRUE, 'Payment Method', 'updated', array('action' => 'default','payment_method'=>$pm->slug()));
+				$this->_redirect_after_action(TRUE, 'Payment Method', 'updated', array('action' => 'default','payment_method'=>$payment_method->slug()));
 			}else{
 				EE_Error::add_error(
 					sprintf(
 						__('Payment method of type %s was not saved because there were validation errors. They have been marked in the form', 'event_espresso'),
-						$pmt_obj instanceof EE_PMT_Base ? $pmt_obj->pretty_name() : __( '"(unknown)"', 'event_espresso' )
+						$payment_method instanceof EE_PMT_Base ? $payment_method->pretty_name() : __( '"(unknown)"', 'event_espresso' )
 					),
 					__FILE__,
 					__FUNCTION__,
@@ -763,6 +779,23 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		EE_Registry::instance()->CFG->registration->show_pending_payment_options = isset( $this->_req_data['show_pending_payment_options'] ) ? $this->_req_data['show_pending_payment_options'] : FALSE;
 		EE_Registry::instance()->CFG = apply_filters( 'FHEE__Payments_Admin_Page___update_payment_settings__CFG', EE_Registry::instance()->CFG );
 
+//		 $superform = new EE_Form_Section_Proper(
+//		 	array(
+//		 		'subsections' => array(
+//		 			'phony' => new EE_Phone_Input()
+//		 		)
+//		 	)
+//		 );
+//		 $superform->receive_form_submission( $_POST );
+//		 if ( ! $superform->is_valid() ) {
+//		 	EE_Error::add_error(
+//		 		__( "Super Form is invalid... but where are the inline error messages?", 'event_espresso' ),
+//		 		__FILE__,
+//		 		__FUNCTION__,
+//		 		__LINE__
+//		 	);
+//		 	$this->_redirect_after_action( 0, 'settings', 'updated', array( 'action' => 'payment_settings' ) );
+//		 }
 
 		$what = __('Payment Settings','event_espresso');
 		$success = $this->_update_espresso_configuration( $what, EE_Registry::instance()->CFG, __FILE__, __FUNCTION__, __LINE__ );

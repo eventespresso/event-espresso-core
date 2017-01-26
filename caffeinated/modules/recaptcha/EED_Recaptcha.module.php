@@ -102,7 +102,8 @@ class EED_Recaptcha  extends EED_Module {
 		// use_captcha ?
 		if (
 			EE_Registry::instance()->CFG->registration->use_captcha
-			&& ! (
+            && EE_Registry::instance()->REQ->get( 'step', '' ) !== ''
+            && ! (
 				EE_Registry::instance()->REQ->get( 'step', '' ) === 'payment_options'
 				&& (boolean) EE_Registry::instance()->REQ->get( 'revisit', false ) === true
 			)
@@ -256,7 +257,6 @@ class EED_Recaptcha  extends EED_Module {
 		if ( ! $recaptcha_passed && EED_Recaptcha::$_recaptcha_response ) {
 			$recaptcha_passed = EED_Recaptcha::_process_recaptcha_response();
 			EE_Registry::instance()->SSN->set_session_data( array( 'recaptcha_passed' => $recaptcha_passed ));
-			EE_Registry::instance()->SSN->update();
 		}
 		EED_Recaptcha::$_not_a_robot = $recaptcha_passed;
 		return $recaptcha_passed;

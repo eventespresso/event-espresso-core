@@ -47,6 +47,7 @@ class EE_Select_Multiple_Display_Strategy extends EE_Select_Display_Strategy{
 		// add html5 required
 		$html .= $this->_input->required() ? ' required' : '';
 		$html .= ' style="' . $this->_input->html_style() . '"';
+		$html .= ' ' . $this->_input->other_html_attributes();
 		$html .= '>';
 
 		EEH_HTML::indent( 1, 'select' );

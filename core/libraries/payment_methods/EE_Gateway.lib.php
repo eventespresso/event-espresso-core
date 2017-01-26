@@ -278,6 +278,110 @@ abstract class EE_Gateway{
 		//maybe update the transaction or line items or registrations
 		//but most gateways don't need to do this, because they only update the payment
 	}
+	
+	/**
+	 * Gets the first event for this payment (it's possible that it could be for multiple)
+	 * @param EEI_Payment $payment
+	 * @return EEI_Event|null
+	 */
+	protected function _get_first_event_for_payment( EEI_Payment $payment ) {
+		$transaction = $payment->transaction();
+		if( $transaction instanceof EEI_Transaction ) {
+			$primary_registrant = $transaction->primary_registration();
+			if( $primary_registrant instanceof EE_Registration ) {
+				return $primary_registrant->event_obj();
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Gets the name of the first event for which is being paid
+	 * @param EEI_Payment $payment
+	 * @return string
+	 */
+	protected function _get_first_event_name_for_payment( EEI_Payment $payment ) {
+		$event = $this->_get_first_event_for_payment( $payment );
+		return $event instanceof EEI_Event ? $event->name() : __( 'Event', 'event_espresso' );
+	}
+	/**
+	 * Gets the text to use for a gateway's line item name when this is a partial payment
+	 * @param EE_Payment $payment
+	 * @return string
+	 */
+	protected function _format_partial_payment_line_item_name( EEI_Payment $payment ){
+		return apply_filters( 
+			'EEG_Paypal_Pro__do_direct_payment__partial_amount_line_item_name', 
+			$this->_get_first_event_name_for_payment( $payment ), 
+			$this,
+			$payment
+		);
+	}
+	/**
+	 * Gets the text to use for a gateway's line item description when this is a partial payment
+	 * @param EEI_Payment $payment
+	 * @return string
+	 */
+	protected function _format_partial_payment_line_item_desc( EEI_Payment $payment ) {
+		return apply_filters(
+			'FHEE__EE_Gateway___partial_payment_desc',
+			sprintf(
+				__("Payment of %s for %s", "event_espresso"), 
+				$payment->get_pretty( 'PAY_amount', 'no_currency_code' ), 
+				$this->_get_first_event_name_for_payment( $payment ) ),
+			$this,
+			$payment
+		);
+	}
+	
+	/**
+	 * Gets the name to use for a line item when sending line items to the gateway
+	 * @param EEI_Line_Item $line_item
+	 * @param EEI_Payment $payment
+	 * @return string
+	 */
+	protected function _format_line_item_name( EEI_Line_Item $line_item, EEI_Payment $payment ) {
+		return apply_filters( 
+			'FHEE__EE_gateway___line_item_name', 
+			sprintf( _x( '%1$s for %2$s', 'Ticket for Event', 'event_espresso' ), $line_item->name(), $line_item->ticket_event_name() ), 
+			$this,
+			$line_item, 
+			$payment 
+		);
+	}
+	
+	/**
+	 * Gets the description to use for a line item when sending line items to the gateway
+	 * @param EEI_Line_Item $line_item
+	 * @param EEI_Payment $payment
+	 * @return string
+	 */
+	protected function _format_line_item_desc( EEI_Line_Item $line_item, EEI_Payment $payment ) {
+		return apply_filters( 
+			'FHEE__EE_Gateway___line_item_desc', 
+			$line_item->desc(), 
+			$this, 
+			$line_item,
+			$payment
+		);
+	}
+	
+	/**
+	 * Gets the order description that should generlly be sent to gateways
+	 * @param EEI_Payment $payment
+	 * @return type
+	 */
+	protected function _format_order_description( EEI_Payment $payment ) {
+		return apply_filters( 
+			'FHEE__EE_Gateway___order_description',
+			sprintf(
+				__('Event Registrations from %1$s for %2$s', "event_espresso"),
+				get_bloginfo('name'),
+				$this->_get_first_event_name_for_payment( $payment ) ),
+			$this,
+			$payment
+		);
+	}
 
 
 

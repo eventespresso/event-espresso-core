@@ -20,7 +20,6 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 	 *
 	 * @access    public
 	 * @param    EE_Checkout $checkout
-	 * @return    \EE_SPCO_Reg_Step_Finalize_Registration
 	 */
 	public function __construct( EE_Checkout $checkout ) {
 		$this->_slug = 'finalize_registration';
@@ -57,45 +56,38 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 
 
 
-	/**
-	 * @return string
-	 */
+    /**
+     * @return string
+     * @throws \EE_Error
+     */
 	public function generate_reg_form() {
 		// create empty form so that things don't break
 		$this->reg_form = new EE_Form_Section_Proper();
+		return '';
 	}
 
 
 
-	/**
-	 * @return boolean
-	 * @throws \EE_Error
-	 */
+    /**
+     * @return boolean
+     * @throws \RuntimeException
+     * @throws \EE_Error
+     */
 	public function process_reg_step() {
-		// ensure all data gets refreshed from the db
+        // ensure all data gets refreshed from the db
 		$this->checkout->refresh_all_entities( true );
 		// ensures that all details and statuses for transaction, registration, and payments are updated
 		$txn_update_params = $this->_finalize_transaction();
-		// DEBUG LOG
-		// $this->checkout->log(
-		// 	__CLASS__,
-		// 	__FUNCTION__,
-		// 	__LINE__,
-		// 	array(
-		// 		'txn_update_params'       => $txn_update_params,
-		// 		'did_action__trigger'     => did_action(
-		// 			'AHEE__EE_Registration_Processor__trigger_registration_update_notifications'
-		// 		),
-		// 		'notifications_callbacks' => EEH_Debug_Tools::registered_filter_callbacks(
-		// 			'FHEE__EED_Messages___maybe_registration__deliver_notifications'
-		// 		),
-		// 		'deliver_notifications'   => apply_filters(
-		// 			'FHEE__EED_Messages___maybe_registration__deliver_notifications',
-		// 			false
-		// 		),
-		// 	)
-		// );
-		// set a hook point
+        // maybe send messages
+        $this->_set_notification_triggers();
+        // send messages
+        /** @type EE_Registration_Processor $registration_processor */
+        $registration_processor = EE_Registry::instance()->load_class('Registration_Processor');
+        $registration_processor->trigger_registration_update_notifications(
+            $this->checkout->transaction->primary_registration(),
+            $txn_update_params
+        );
+        // set a hook point
 		do_action(
 			'AHEE__EE_SPCO_Reg_Step_Finalize_Registration__process_reg_step__completed',
 			$this->checkout,
@@ -124,41 +116,40 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 
 
 
-	/**
-	 * _finalize_transaction
-	 * ensures that all details and statuses for transaction, registration, and payments are updated
-	 *
-	 * @return array
-	 * @throws \EE_Error
-	 */
+    /**
+     * _finalize_transaction
+     * ensures that all details and statuses for transaction, registration, and payments are updated
+     *
+     * @return array
+     * @throws \RuntimeException
+     * @throws \EE_Error
+     */
 	protected function _finalize_transaction() {
 		/** @type EE_Transaction_Processor $transaction_processor */
 		$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
 		//set revisit flag in txn processor
 		$transaction_processor->set_revisit( $this->checkout->revisit );
 		// at this point we'll consider a TXN to not have been abandoned
-		$transaction_processor->toggle_abandoned_transaction_status( $this->checkout->transaction );
+		$this->checkout->transaction->toggle_abandoned_transaction_status();
 		if ( $this->checkout->cart instanceof EE_Cart ) {
 			// save TXN data to the cart
 			$this->checkout->cart->get_grand_total()->save_this_and_descendants_to_txn(
 				$this->checkout->transaction->ID()
 			);
 		}
-		/** @type EE_Transaction_Payments $transaction_payments */
-		$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
 		// maybe update status, but don't save transaction just yet
-		$transaction_payments->update_transaction_status_based_on_total_paid( $this->checkout->transaction, false );
-		// maybe send messages
-		$this->_trigger_notifications();
-		// this will result in the base session properties getting saved to the TXN_Session_data field
+		$this->checkout->transaction->update_status_based_on_total_paid( false );
+        // this will result in the base session properties getting saved to the TXN_Session_data field
 		$this->checkout->transaction->set_txn_session_data(
 			EE_Registry::instance()->SSN->get_session_data( null, true )
 		);
-		// update the TXN if payment conditions have changed
+        // update the TXN if payment conditions have changed, but do NOT trigger notifications,
+        // because we will do that in process_reg_step() after setting some more triggers
 		return $transaction_processor->update_transaction_and_registrations_after_checkout_or_payment(
 			$this->checkout->transaction,
 			$this->checkout->payment,
-			$this->checkout->reg_cache_where_params
+			$this->checkout->reg_cache_where_params,
+            false
 		);
 	}
 
@@ -173,39 +164,46 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 	 * @return void
 	 * @throws \EE_Error
 	 */
-	protected function _trigger_notifications() {
+	protected function _set_notification_triggers() {
+
 		if ( $this->checkout->payment_method instanceof EE_Payment_Method ) {
-			$is_revisit = filter_var( $this->checkout->revisit, FILTER_VALIDATE_BOOLEAN );
-			if ( $this->checkout->payment_method->is_off_site() ) {
-				$gateway= $this->checkout->payment_method->type_obj()->get_gateway();
-				if (
-					! $is_revisit
-					&& $gateway instanceof EE_Offsite_Gateway
-					&& $gateway->handle_IPN_in_this_request(
-						\EE_Registry::instance()->REQ->params(),
-						false
-					)
-				) {
-					// first time through SPCO and we are processing the payment notification NOW
-					add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true', 10 );
-				} else {
-					// do NOT trigger notifications because this is a revisit, OR it was already done during the IPN
-					remove_all_filters( 'FHEE__EED_Messages___maybe_registration__deliver_notifications' );
-					add_filter(
-						'FHEE__EED_Messages___maybe_registration__deliver_notifications',
-						'__return_false',
-						15
-					);
-				}
-			} else if (
-				// if SPCO revisit and TXN status has changed due to a payment
-				$is_revisit && ( $this->checkout->txn_status_updated || $this->checkout->any_reg_status_updated() )
-			) {
-				// send out notifications
-				add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true', 10 );
-			} else if ( ! $is_revisit ) {
-				add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true', 10 );
-			}
+		    // let's start with the assumption that we need to trigger notifications
+            // then toggle this to false for conditions where we know we don't need to
+		    $deliver_notifications = true;
+            if (
+                // if SPCO revisit
+                filter_var($this->checkout->revisit, FILTER_VALIDATE_BOOLEAN)
+                // and TXN or REG statuses have NOT changed due to a payment
+                && ! (
+                    $this->checkout->transaction->txn_status_updated()
+                    || $this->checkout->any_reg_status_updated()
+                )
+            ) {
+                $deliver_notifications = false;
+            }
+            if ($this->checkout->payment_method->is_off_site()) {
+                /** @var EE_Gateway $gateway */
+                $gateway = $this->checkout->payment_method->type_obj()->get_gateway();
+                // and the gateway uses a separate request to process the IPN
+                if (
+                    $gateway instanceof EE_Offsite_Gateway
+                    && $gateway->handle_IPN_in_this_request(\EE_Registry::instance()->REQ->params(), true)
+                ) {
+                    // IPN request will handle triggering notifications
+                    $deliver_notifications = false;
+                    // no really... don't send any notices in this request
+                    remove_all_filters('FHEE__EED_Messages___maybe_registration__deliver_notifications');
+                    add_filter(
+                        'FHEE__EED_Messages___maybe_registration__deliver_notifications',
+                        '__return_false',
+                        15
+                    );
+                }
+            }
+            if ($deliver_notifications) {
+                // send out notifications
+                add_filter('FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true', 10);
+            }
 		}
 	}
 
@@ -240,7 +238,7 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 
 
 	/**
-	 * @return boolean
+	 * @return void
 	 */
 	public function update_reg_step() {
 		EE_Error::doing_it_wrong(

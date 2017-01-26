@@ -678,7 +678,7 @@ class EES_Espresso_Thank_You extends EES_Shortcode {
 		}
 		// request sent via AJAX ?
 		if ( EE_FRONT_AJAX ) {
-			echo json_encode( EE_Error::get_notices( false ) );
+			echo wp_json_encode( EE_Error::get_notices( false ) );
 			die();
 			// or was JS disabled ?
 		} else {
@@ -740,7 +740,7 @@ class EES_Espresso_Thank_You extends EES_Shortcode {
 				<div id="espresso-thank-you-page-ajax-transaction-dv"></div>
 				<div id="espresso-thank-you-page-ajax-payment-dv"></div>
 				<div id="espresso-thank-you-page-ajax-loading-dv">
-					<div id="ee-ajax-loading-dv" class="left lt-blue-text">
+					<div id="ee-ajax-loading-dv" class="float-left lt-blue-text">
 						<span class="dashicons dashicons-upload"></span><span id="ee-ajax-loading-msg-spn"><?php _e(
 							'loading transaction and payment information...',
 							'event_espresso'

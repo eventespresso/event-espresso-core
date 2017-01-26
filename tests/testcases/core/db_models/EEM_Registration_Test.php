@@ -19,9 +19,9 @@ class EEM_Registration_Test extends EE_UnitTestCase {
 
 
 	public function setUp() {
-		//set timezone string.  NOTE, this is purposely a high positive timezone string because it works better for testing expiry times.
-		update_option( 'timezone_string', 'Australia/Sydney' );
 		parent::setUp();
+        //set timezone string.  NOTE, this is purposely a high positive timezone string because it works better for testing expiry times.
+        update_option( 'timezone_string', 'Australia/Sydney' );
 	}
 
 
@@ -40,7 +40,6 @@ class EEM_Registration_Test extends EE_UnitTestCase {
 	public function _setup_registrations() {
 		//setup some dates we'll use for testing with.
 		$timezone = new DateTimeZone( 'America/Toronto' );
-		$future_today_date = new DateTime( "now +2hours", $timezone );
 		$past_start_date = new DateTime( "now -2months", $timezone );
 		$future_end_date = new DateTime( "now +2months", $timezone );
 		$current = new DateTime( "now", $timezone );
@@ -48,20 +47,47 @@ class EEM_Registration_Test extends EE_UnitTestCase {
 		$full_format = implode( ' ', $formats );
 
 		//let's setup the args for our payments in an array, then we can just loop through to grab
+		/** @var EE_Transaction $transaction */
+		$transaction = $this->factory->transaction->create();
 		//them and set things up.
 		$registration_args = array(
-			array( 'REG_date' => $past_start_date->format( $full_format ) , 'timezone' => 'America/Toronto', 'formats' => $formats ),
-			array( 'REG_date' => $future_end_date->format( $full_format ) , 'timezone' => 'America/Toronto', 'formats' => $formats ),
-			array( 'REG_date' => $current->sub( new DateInterval( "PT2H") )->format( $full_format ) , 'timezone' => 'America/Toronto', 'formats' => $formats ),
-			array( 'REG_date' => $current->add( new DateInterval( "P1M" ) )->format( $full_format) , 'timezone' => 'America/Toronto', 'formats' => $formats ),
-			array( 'REG_date' => $past_start_date->format( $full_format ) , 'timezone' => 'America/Toronto', 'formats' => $formats ),
-			);
-
+			array(
+				'REG_date' => $past_start_date->format( $full_format ),
+				'timezone' => 'America/Toronto',
+				'formats'  => $formats,
+				'TXN_ID'   => $transaction->ID(),
+			),
+			array(
+				'REG_date' => $future_end_date->format( $full_format ),
+				'timezone' => 'America/Toronto',
+				'formats'  => $formats,
+				'TXN_ID'   => $transaction->ID(),
+			),
+			array(
+				'REG_date' => $current->sub( new DateInterval( "PT2H" ) )->format( $full_format ),
+				'timezone' => 'America/Toronto',
+				'formats'  => $formats,
+				'TXN_ID'   => $transaction->ID(),
+			),
+			array(
+				'REG_date' => $current->add( new DateInterval( "P1M" ) )->format( $full_format ),
+				'timezone' => 'America/Toronto',
+				'formats'  => $formats,
+				'TXN_ID'   => $transaction->ID(),
+			),
+			array(
+				'REG_date' => $past_start_date->format( $full_format ),
+				'timezone' => 'America/Toronto',
+				'formats'  => $formats,
+				'TXN_ID'   => $transaction->ID(),
+			),
+		);
 		//need to create an event to add all these registrations to because of the capability checks
 		$events = $this->factory->event->create_many( 4,  array( 'EVT_wp_user' => 0 ) );
 
 		foreach ( $events as $event ) {
 			foreach( $registration_args as $registration_arg ) {
+				/** @var EE_Registration $reg */
 				$reg = $this->factory->registration->create( $registration_arg );
 				//set registrations to pending so we can test
 				$reg->set_status( EEM_Registration::status_id_pending_payment );
@@ -128,3 +154,4 @@ class EEM_Registration_Test extends EE_UnitTestCase {
 
 }
 // End of file EEM_Registration_Test.php
+// Location: testcases/core/db_models/EEM_Registration_Test.php

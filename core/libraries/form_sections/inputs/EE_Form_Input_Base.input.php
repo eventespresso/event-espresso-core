@@ -219,8 +219,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	 */
 	public function _construct_finalize($parent_form_section, $name) {
 		parent::_construct_finalize($parent_form_section, $name);
-		$this->_set_default_html_name_if_empty();
-		if( ! $this->_html_label && ! $this->_html_label_text){
+		if( $this->_html_label === null && $this->_html_label_text === null ){
 			$this->_html_label_text = ucwords( str_replace("_"," ",$name));
 		}
 		do_action( 'AHEE__EE_Form_Input_Base___construct_finalize__end', $this, $parent_form_section, $name );
@@ -232,6 +231,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	  * @throws EE_Error
 	  */
 	protected function _get_display_strategy(){
+		$this->ensure_construct_finalized_called();
 		if( ! $this->_display_strategy || ! $this->_display_strategy instanceof EE_Display_Strategy_Base){
 			throw new EE_Error(
 				sprintf(
@@ -402,6 +402,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	 * @throws \EE_Error
 	 */
 	public function get_html_for_input(){
+		
 		return  $this->_get_display_strategy()->display();
 	}
 
@@ -474,11 +475,12 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	/**
 	 * Performs basic sanitization on this value. But what sanitization can be performed anyways?
 	 * This value MIGHT be allowed to have tags, so we can't really remove them.
+	 *
 	 * @param string $value
 	 * @return null|string
 	 */
-	private function _sanitize($value){
-		return $value !== NULL ?stripslashes(html_entity_decode($value)) : NULL;//don't sanitize_text_field
+	private function _sanitize( $value ) {
+		return $value !== null ? stripslashes( html_entity_decode( trim( $value ) ) ) : null;
 	}
 
 
@@ -499,15 +501,16 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 			$raw_input = $this->find_form_data_for_this_section( $req_data );
 			//super simple sanitization for now
 			if ( is_array( $raw_input )) {
-				$this->_raw_value = array();
+				$raw_value = array();
 				foreach( $raw_input as $key => $value ) {
-					$this->_raw_value[ $key ] = $this->_sanitize( $value );
+					$raw_value[ $key ] = $this->_sanitize( $value );
 				}
+				$this->_set_raw_value( $raw_value );
 			} else {
-				$this->_raw_value = $this->_sanitize( $raw_input );
+				$this->_set_raw_value( $this->_sanitize( $raw_input ) );
 			}
-			//we want ot mostly leave the input alone in case we need to re-display it to the user
-			$this->_normalized_value = $this->_normalization_strategy->normalize( $this->raw_value() );
+			//we want to mostly leave the input alone in case we need to re-display it to the user
+			$this->_set_normalized_value( $this->_normalization_strategy->normalize( $this->raw_value() ) );
 		} catch ( EE_Validation_Error $e ) {
 			$this->add_validation_error( $e );
 		}
@@ -519,6 +522,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	 * @return string
 	 */
 	public function html_name(){
+		$this->_set_default_html_name_if_empty();
 		return $this->_html_name;
 	}
 
@@ -664,7 +668,23 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	 * @return void
 	 */
 	public function set_default($value){
+		$this->_set_normalized_value( $value );
+		$this->_set_raw_value( $value );
+	}
+	
+	/**
+	 * Sets the normalized value on this input
+	 * @param mixed $value
+	 */
+	protected function _set_normalized_value( $value ) {
 		$this->_normalized_value = $value;
+	}
+	
+	/**
+	 * Sets the raw value on this input (ie, exactly as the user submitted it)
+	 * @param mixed $value
+	 */
+	protected function _set_raw_value( $value ) {
 		$this->_raw_value = $this->_normalization_strategy->unnormalize( $value );
 	}
 
@@ -693,7 +713,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 		if ( $required ) {
 			$this->_add_validation_strategy( new EE_Required_Validation_Strategy( $required_text ) );
 		} else {
-			unset( $this->_validation_strategies[ 'EE_Required_Validation_Strategy' ] );
+			$this->remove_validation_strategy( 'EE_Required_Validation_Strategy' );
 		}
 		$this->_required = $required;
 	}
@@ -743,11 +763,13 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 		//if we need more logic than this we'll make a strategy for it
 		if( $this->_sensitive_data_removal_strategy &&
 				! $this->_sensitive_data_removal_strategy instanceof EE_No_Sensitive_Data_Removal ){
-			$this->_raw_value = NULL;
+			$this->_set_raw_value( null );
 		}
 		//and clean the normalized value according to the appropriate strategy
-		$this->_normalized_value = $this->get_sensitive_data_removal_strategy()->remove_sensitive_data(
-			$this->_normalized_value
+		$this->_set_normalized_value(
+			$this->get_sensitive_data_removal_strategy()->remove_sensitive_data(
+				$this->_normalized_value
+			)
 		);
 	}
 

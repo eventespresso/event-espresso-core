@@ -1,20 +1,10 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
-/*
- * Event Espresso
- *
- * Event Registration and Management Plugin for WordPress
- *
- * @ package		Event Espresso
- * @ author			Event Espresso
- * @ copyright	(c) 2008-2014 Event Espresso  All Rights Reserved.
- * @ license		http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link				http://www.eventespresso.com
- * @ version		$VID:$
- *
- * ------------------------------------------------------------------------
- */
 /**
  * Class  EED_New_Addon
+ * 
+ * This is where miscellaneous action and filters callbacks should be setup to
+ * do your addon's business logic (that doesn't fit neatly into one of the
+ * other classes in the mock addon)
  *
  * @package			Event Espresso
  * @subpackage		eea-new-addon
@@ -64,7 +54,7 @@ class EED_New_Addon extends EED_Module {
 	 }
 
 	 public static function get_new_addon(){
-		 echo json_encode( array( 'response' => 'ok', 'details' => 'you have made an ajax request!') );
+		 echo wp_json_encode( array( 'response' => 'ok', 'details' => 'you have made an ajax request!') );
 		 die;
 	 }
 
@@ -128,22 +118,6 @@ class EED_New_Addon extends EED_Module {
 			wp_enqueue_script( 'espresso_new_addon' );
 		}
 	}
-
-
-
-
-	/**
-	 *		@ override magic methods
-	 *		@ return void
-	 */
-	public function __set($a,$b) { return FALSE; }
-	public function __get($a) { return FALSE; }
-	public function __isset($a) { return FALSE; }
-	public function __unset($a) { return FALSE; }
-	public function __clone() { return FALSE; }
-	public function __wakeup() { return FALSE; }
-	public function __destruct() { return FALSE; }
-
  }
 // End of file EED_New_Addon.module.php
 // Location: /wp-content/plugins/eea-new-addon/EED_New_Addon.module.php

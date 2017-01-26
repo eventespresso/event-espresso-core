@@ -477,13 +477,12 @@ final class EE_Admin {
 
 
 		/**
-		 * This code is for removing any set EE critical pages from the "Static Page" option dropdowns on the
-		 * 'options-reading.php' core WordPress admin settings page.  This is for user-proofing.
+		 * This code excludes EE critical pages anywhere `wp_dropdown_pages` is used to create a dropdown for selecting
+         * critical pages.  The only place critical pages need included in a generated dropdown is on the "Critical Pages"
+         * tab in the EE General Settings Admin page.
+         * This is for user-proofing.
 		 */
-		global $pagenow;
-		if ( $pagenow === 'options-reading.php' ) {
-			add_filter( 'wp_dropdown_pages', array( $this, 'modify_dropdown_pages' ) );
-		}
+        add_filter( 'wp_dropdown_pages', array( $this, 'modify_dropdown_pages' ) );
 
 	}
 
@@ -623,11 +622,13 @@ final class EE_Admin {
 
 
 
-	/**
-	 * @param $elements
-	 * @return array
-	 */
-	public function dashboard_glance_items( $elements ) {
+    /**
+     * @param array $elements
+     * @return array
+     * @throws \EE_Error
+     */
+	public function dashboard_glance_items($elements) {
+        $elements = is_array($elements) ? $elements : array($elements);
 		$events = EEM_Event::instance()->count();
 		$items['events']['url'] = EE_Admin_Page::add_query_args_and_nonce( array('page' => 'espresso_events'), admin_url('admin.php') );
 		$items['events']['text'] = sprintf( _n( '%s Event', '%s Events', $events ), number_format_i18n( $events ) );
@@ -643,7 +644,7 @@ final class EE_Admin {
 		$items['registrations']['text'] = sprintf( _n( '%s Registration', '%s Registrations', $registrations ), number_format_i18n($registrations) );
 		$items['registrations']['title'] = __('Click to view all registrations', 'event_espresso');
 
-		$items = apply_filters( 'FHEE__EE_Admin__dashboard_glance_items__items', $items );
+		$items = (array) apply_filters( 'FHEE__EE_Admin__dashboard_glance_items__items', $items );
 
 		foreach ( $items as $type => $item_properties ) {
 			$elements[] = sprintf( '<a class="ee-dashboard-link-' . $type . '" href="%s" title="%s">%s</a>', $item_properties['url'], $item_properties['title'], $item_properties['text'] );
@@ -732,11 +733,7 @@ final class EE_Admin {
 	 *  @return 	string
 	 */
 	public function espresso_admin_footer() {
-		return sprintf(
-			__( 'Event Registration and Ticketing Powered by %sEvent Registration Powered by Event Espresso%s', 'event_espresso' ),
-			'<a href="https://eventespresso.com/" title="',
-			'">' . EVENT_ESPRESSO_POWERED_BY . '</a>'
-		);
+		return \EEH_Template::powered_by_event_espresso( 'aln-cntr', '', array( 'utm_content' => 'admin_footer' ));
 	}
 
 

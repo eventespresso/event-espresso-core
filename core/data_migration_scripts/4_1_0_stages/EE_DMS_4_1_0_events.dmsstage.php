@@ -101,7 +101,7 @@ CREATE TABLE `wp_events_detail` (
 				'EVT_slug'=>new EE_Slug_Field('post_name', __("Event Slug", "event_espresso"), false, ''),
 				'EVT_created'=>new EE_Datetime_Field('post_date', __("Date/Time Event Created", "event_espresso"), false, time()),
 				'EVT_short_desc'=>new EE_Simple_HTML_Field('post_excerpt', __("Event Short Description", "event_espresso"), false,''),
-				'EVT_modified'=>new EE_Datetime_Field('post_modified', __("Dateim/Time Event Modified", "event_espresso"), true, time()),
+				'EVT_modified'=>new EE_Datetime_Field('post_modified', __("Date/Time Event Modified", "event_espresso"), true, time()),
 				'EVT_wp_user'=>new EE_Integer_Field('post_author', __("Wordpress User ID", "event_espresso"), false,1),
 				'parent'=>new EE_Integer_Field('post_parent', __("Event Parent ID", "event_espresso"), true),
 				'EVT_order'=>new EE_Integer_Field('menu_order', __("Event Menu Order", "event_espresso"), false, 1),
@@ -166,6 +166,11 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 	private $_new_datetime_table;
 
 
+
+	/**
+	 * Just initializes the status of the migration
+	 * @throws EE_Error
+	 */
 	function __construct() {
 		global $wpdb;
 		$this->_old_table = $wpdb->prefix."events_detail";
@@ -176,12 +181,31 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 		$this->_pretty_name = __("Events", "event_espresso");
 		parent::__construct();
 	}
+
+
+
+	/**
+	 * Counts the records to migrate; the public version may cache it
+	 * @return int
+	 */
 	function _count_records_to_migrate() {
 		global $wpdb;
 		$count = $wpdb->get_var("SELECT COUNT(*) FROM ".$this->_old_table);
 		return intval($count);
 	}
-	protected function _migration_step($num_items_to_migrate = 50) {
+
+
+
+	/**
+	 * IMPORTANT: if an error is encountered, or everything is finished, this stage should update its status property accordingly.
+	 * Note: it should not alter the count of items migrated. That is done in the public function that calls this.
+	 * IMPORTANT: The count of items migrated should ONLY be less than $num_items_to_migrate when it's the last migration step, otherwise it
+	 * should always return $num_items_to_migrate. (Eg, if we're migrating attendees rows from the database, and $num_items_to_migrate is set to 50,
+	 * then we SHOULD actually migrate 50 rows,but at very least we MUST report/return 50 items migrated)
+	 * @param int $num_items_to_migrate
+	 * @return int number of items ACTUALLY migrated
+	 */
+	protected function _migration_step( $num_items_to_migrate = 50) {
 		global $wpdb;
 		//because the migration of each event can be a LOT more work, make each step smaller
 		$num_items_to_migrate = max(1,$num_items_to_migrate/5);
@@ -189,7 +213,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 		$items_migrated_this_step = 0;
 
 		foreach($events as $event_row){
-			$created_attachment_post = false;
+			$guid = null;
 			//insert new 4.1 Attendee object using $wpdb
 			$post_id = $this->_insert_cpt($event_row);
 			if($post_id){
@@ -201,7 +225,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 				$this->_convert_start_end_times($event_row,$post_id);
 				$event_meta = maybe_unserialize($event_row['event_meta']);
 				$guid = isset($event_meta['event_thumbnail_url']) ? $event_meta['event_thumbnail_url'] : null;
-				$created_attachment_post = $this->get_migration_script()->convert_image_url_to_attachment_and_attach_to_post($guid,$post_id,$this);
+				$this->get_migration_script()->convert_image_url_to_attachment_and_attach_to_post($guid,$post_id,$this);
 
 				//maybe create a venue from info on the event?
 				$new_venue_id = $this->_maybe_create_venue($event_row);
@@ -209,7 +233,6 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 					$this->_insert_new_venue_to_event($post_id,$new_venue_id);
 				}
 				$this->_add_post_metas($event_row, $post_id);
-
 			}
 			$items_migrated_this_step++;
 			if($guid){
@@ -226,8 +249,8 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 
 	/**
 	 * Stores any extra 3.1 "event_meta" column things as post meta
-	 * @param type $old_event
-	 * @param type $post_id
+	 * @param array $old_event
+	 * @param int $post_id
 	 * @return void
 	 */
 	private function _add_post_metas($old_event,$post_id){
@@ -236,11 +259,11 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 			return;
 		}
 		unset($event_meta['date_submitted']);//factored into CPT
-		unset($event_meta['additional_attendee_reg_info']);//facotred into event meta table
+		unset($event_meta['additional_attendee_reg_info']);//factored into event meta table
 		unset($event_meta['default_payment_status']);//dido
 		unset($event_meta['event_thumbnail_url']);//used to find post featured image
 		foreach($event_meta as $meta_key => $meta_value){
-			if ($meta_key){//if th emeta key is just an empty string, ignore it
+			if ($meta_key){//if the meta key is just an empty string, ignore it
 				$success = add_post_meta($post_id,$meta_key,$meta_value,true);
 				if( ! $success ){
 					$this->add_error(sprintf(__("Could not add post meta for CPT with ID #%d. Meta key: '%s',meta value:'%d' for 3.1 event: %s", "event_espresso"),$post_id,$meta_key,$meta_value,implode(",",$old_event)));
@@ -254,39 +277,47 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 			add_post_meta($post_id,'recurrence_id',$old_event['recurrence_id']);
 		}
 	}
+
+
+
 	/**
 	 * Finds a unique slug for this event, given its name (we could have simply used
 	 * the old unique_identifier column, but it added a long string of seemingly random characters onto the end
 	 * and really wasn't that pretty for a slug, so we decided we'd make our own slug again)
-	 * @param string $event_name
+	 * @param string $event_name (the name of the event for reading by humans)
+	 * @param string $old_identifier the old EE3 identifier (a long unique string)
+	 * @param string $new_post_status a post status
 	 * @return string
 	 */
-	private function _find_unique_slug($event_name, $old_identifier = ''){
+	private function _find_unique_slug($event_name, $old_identifier = '', $new_post_status = 'publish'){
 		$count = 0;
 		$original_name = $event_name ? sanitize_title($event_name) : $old_identifier;
-		$event_slug = $original_name;
-		while( $this->_other_post_exists_with_that_slug($event_slug) && $count<50){
-			$event_slug = sanitize_title($original_name."-".++$count);
-		}
-		return $event_slug;
+		return wp_unique_post_slug($original_name, 0, $new_post_status, 'espresso_events', 0 );
 	}
 
 	/**
 	 * returns whether or not there is a post that has this same slug (post_title)
-	 * @global type $wpdb
-	 * @param type $slug
+	 * @global wpdb $wpdb
+	 * @param string $slug
 	 * @return boolean
 	 */
 	private function _other_post_exists_with_that_slug($slug){
 		global $wpdb;
-		$query = $wpdb->prepare("SELECT COUNT(ID) FROM ".$this->_new_table." WHERE post_name = %s",$slug);
+		$query = $wpdb->prepare("SELECT COUNT(ID) FROM {$this->_new_table} WHERE post_name = %s",$slug);
 		$count = $wpdb->get_var($query);
 		return (boolean)intval($count);
 	}
-	private function _insert_cpt($old_event){
+
+
+
+	/**
+	 * @param $old_event
+	 * @return int
+	 */
+	private function _insert_cpt( $old_event ){
 		global $wpdb;
 		//convert 3.1 event status to 4.1 CPT status
-		//for refrence, 3.1 event stati available for setting are:
+		//for reference, 3.1 event stati available for setting are:
 //		$status = array(array('id' => 'A', 'text' => __('Public', 'event_espresso')), array('id' => 'S', 'text' => __('Waitlist', 'event_espresso')), array('id' => 'O', 'text' => __('Ongoing', 'event_espresso')), array('id' => 'R', 'text' => __('Draft', 'event_espresso')), array('id' => 'D', 'text' => __('Deleted', 'event_espresso')));
 //		and the json api uses the following to convert from 3.1 to 4.0
 //		'S'=>'secondary/waitlist',
@@ -320,7 +351,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 		$cols_n_values = array(
 			'post_title'=>stripslashes($old_event['event_name']),//EVT_name
 			'post_content'=>stripslashes($old_event['event_desc']),//EVT_desc
-			'post_name'=>$this->_find_unique_slug($old_event['event_name']),//$old_event['event_identifier'],//EVT_slug
+			'post_name'=>$this->_find_unique_slug($old_event['event_name'], $old_event['event_identifier'], $post_status ),//EVT_slug
 			'post_date'=>$old_event['submitted'],//EVT_created NOT
 			'post_date_gmt'=>get_gmt_from_date($old_event['submitted']),
 			'post_excerpt'=>'',//EVT_short_desc
@@ -332,6 +363,17 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 			'post_type'=>'espresso_events',//post_type
 			'post_status'=>$post_status,//status
 		);
+		$cols_n_values_with_no_invalid_text = array();
+		foreach( $cols_n_values as $col => $value ) {
+			$value_sans_invalid_chars = $wpdb->strip_invalid_text_for_column( $this->_new_table, $col, $value );
+			if( ! is_wp_error( $value_sans_invalid_chars ) ) {
+				$cols_n_values_with_no_invalid_text[ $col ] = $value_sans_invalid_chars;
+			} else {
+				//otherwise leave it as-is. It will blow everything up and stop the migration
+				$cols_n_values_with_no_invalid_text[ $col ] = $value;
+			}
+		}
+		$cols_n_values = $cols_n_values_with_no_invalid_text;
 		$datatypes = array(
 			'%s',//EVT_name
 			'%s',//EVT_desc
@@ -359,8 +401,8 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 
 	/**
 	 * Counts all the registrations for the event in the 3.1 DB. (takes into account attendee rows which represent various registrations)
-	 * @global type $wpdb
-	 * @param type $event_id
+	 * @global wpdb $wpdb
+	 * @param int $event_id
 	 * @return int
 	 */
 	public static function count_registrations($event_id){
@@ -369,7 +411,14 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 		return intval($count);
 	}
 
-	private function _insert_event_meta($old_event,$new_cpt_id){
+
+
+	/**
+	 * @param $old_event
+	 * @param $new_cpt_id
+	 * @return int
+	 */
+	private function _insert_event_meta( $old_event, $new_cpt_id){
 		global $wpdb;
 		$event_meta = maybe_unserialize($old_event['event_meta']);
 //		for reference, 3.1 'default_payment_status' are: $default_payment_status = array(
@@ -383,7 +432,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 			'EVT_ID'=>$new_cpt_id,//EVT_ID_fk
 			'EVT_display_desc'=> 'Y' == $old_event['display_desc'],
 			'EVT_display_ticket_selector'=> 'Y'== $old_event['display_reg_form'],
-			'EVT_visible_on'=> $this->get_migration_script()->convert_date_string_to_utc($this,$old_event,current_time('mysql'),$old_event['timezone_string']),//don't use the old 'visible_on', as it wasnt ever used
+			'EVT_visible_on'=> $this->get_migration_script()->convert_date_string_to_utc($this,$old_event,current_time('mysql'),$old_event['timezone_string']),//don't use the old 'visible_on', as it wasn't ever used
 			'EVT_additional_limit'=> $old_event['allow_multiple'] == 'N' ? 1 : $old_event['additional_limit'],
 			'EVT_default_registration_status' => $default_reg_status,
 			'EVT_member_only'=>$old_event['member_only'],
@@ -418,7 +467,13 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 		return $wpdb->insert_id;
 	}
 
-	private function _maybe_create_venue($old_event){
+
+
+	/**
+	 * @param $old_event
+	 * @return int
+	 */
+	private function _maybe_create_venue( $old_event){
 		if(		$old_event['address'] ||
 				$old_event['address2'] ||
 				$old_event['city'] ||
@@ -470,7 +525,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 		);
 		$sql_conditions = array();
 		foreach($conditions as $column => $value){
-			$sql_conditions [] = "$column = '$value'";
+			$sql_conditions [] = $wpdb->prepare("$column = %s", $value );
 		}
 		$query = "SELECT VNU_ID
 					FROM
@@ -480,10 +535,10 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 		$id = $wpdb->get_var( $query );
 		return $id;
 	}
-	
+
 	/**
 	 * Gets teh venue's title or makes one up if there is none
-	 * @param array $event_data_array keys are events_details columns and valuesa re their values
+	 * @param array $event_data_array keys are events_details columns and values are their values
 	 * @return string
 	 */
 	protected function _get_venue_title_for_event( $event_data_array ) {
@@ -492,7 +547,8 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 
 	/**
 	 * Inserts the CPT
-	 * @param array $old_venue keys are cols, values are col values
+	 *
+	 * @param array $old_event keys are cols, values are col values
 	 * @return int
 	 */
 	private function _insert_venue_into_posts($old_event){
@@ -503,7 +559,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 					'post_name'=> $this->_find_unique_slug( $old_event['venue_title'], sanitize_title( 'venue-of-' . $old_event['event_name'] ) ),//VNU_identifier
 					'post_date'=>current_time('mysql'),//VNU_created
 					'post_date_gmt'=>get_gmt_from_date(current_time('mysql')),
-					'post_excerpt'=>'',//VNU_short_desc arbitraty only 50 characters
+					'post_excerpt'=>'',//VNU_short_desc arbitrary only 50 characters
 					'post_modified'=>current_time('mysql'),//VNU_modified
 					'post_modified_gmt'=>get_gmt_from_date(current_time('mysql')),
 					'post_author'=>$old_event['wp_user'],//VNU_wp_user
@@ -529,7 +585,15 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 				$insertion_array,
 				$datatypes_array);
 		if( ! $success ){
-			$this->add_error($this->get_migration_script()->_create_error_message_for_db_insertion($this->_old_table, $old_venue, $this->_new_table, $insertion_array, $datatypes_array));
+			$this->add_error(
+				$this->get_migration_script()->_create_error_message_for_db_insertion(
+					$this->_old_table,
+					$old_event,
+					$this->_new_table,
+					$insertion_array,
+					$datatypes_array
+				)
+			);
 			return 0;
 		}
 		return $wpdb->insert_id;
@@ -537,8 +601,8 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 
 	/**
 	 * Inserts into the venue_meta table
-	 * @param type $cpt_id
-	 * @param type $old_event
+	 * @param int $cpt_id
+	 * @param array $old_event
 	 * @return int
 	 */
 	private function _insert_venue_into_meta_table($cpt_id,$old_event){
@@ -605,7 +669,14 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 		return $wpdb->insert_id;
 	}
 
-	private function _insert_new_venue_to_event($new_event_id,$new_venue_id){
+
+
+	/**
+	 * @param $new_event_id
+	 * @param $new_venue_id
+	 * @return int
+	 */
+	private function _insert_new_venue_to_event( $new_event_id, $new_venue_id){
 		global $wpdb;
 		if( ! $new_event_id){
 			$this->add_error(sprintf(__("Could not find 4.1 event id for 3.1 event #%d.", "event_espresso"),$new_event_id));
@@ -627,7 +698,15 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 		);
 		$success = $wpdb->insert($wpdb->prefix."esp_event_venue",$cols_n_values,$datatypes);
 		if ( ! $success){
-			$this->add_error($this->get_migration_script()->_create_error_message_for_db_insertion($this->_old_table, $old_event_venue_rel, $this->_new_table, $cols_n_values, $datatypes));
+			$this->add_error(
+				$this->get_migration_script()->_create_error_message_for_db_insertion(
+					$this->_old_table,
+					array(),
+					$this->_new_table,
+					$cols_n_values,
+					$datatypes
+				)
+			);
 			return 0;
 		}
 		return $wpdb->insert_id;
@@ -635,7 +714,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 	}
 	/**
 	 * Converts all the 3.1 start-end times for the event to 4.1 datetimes
-	 * @global type $wpdb
+	 * @global wpdb $wpdb
 	 * @param array $old_event results of get_results(...,ARRAY_A)
 	 * @param int $new_cpt_id new post ID
 	 * @return void (if there are errors though, adds them to the stage's error list
@@ -651,9 +730,9 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 	}
 	/**
 	 * Queries the 3.1 wp_events_start_end table to get all the start and end times for the event
-	 * @global type $wpdb
-	 * @param type $old_event_id
-	 * @return type
+	 * @global wpdb $wpdb
+	 * @param int $old_event_id
+	 * @return array
 	 */
 	private function _get_old_start_end_times($old_event_id){
 		global $wpdb;
@@ -661,9 +740,9 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 	}
 	/**
 	 * Inserts a 4.1 datetime given the 3.1 start_end db row and event_details row
-	 * @param type $start_end_time_row
-	 * @param type $old_event_row
-	 * @param type $new_cpt_id
+	 * @param array $start_end_time_row
+	 * @param array $old_event_row
+	 * @param int $new_cpt_id
 	 * @return int ID of new datetime
 	 */
 	private function _insert_new_datetime($start_end_time_row,$old_event_row,$new_cpt_id){
@@ -708,8 +787,8 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 	/**
 	 * Checks if there's a 4.1 datetime for this event already. This is mostly only handy
 	 * when deciding whether a datetime we're about ot insert should be the 'primary' or not
-	 * @global type $wpdb
-	 * @param type $cpt_event_id
+	 * @global wpdb $wpdb
+	 * @param int $cpt_event_id
 	 * @return int
 	 */
 	private function _count_other_datetimes_exist_for_new_event($cpt_event_id){

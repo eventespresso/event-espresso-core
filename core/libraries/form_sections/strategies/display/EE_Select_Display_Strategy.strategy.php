@@ -30,20 +30,23 @@ class EE_Select_Display_Strategy extends EE_Display_Strategy_Base{
 		$class = $this->_input->required() ? $this->_input->required_css_class() . ' ' . $this->_input->html_class() : $this->_input->html_class();
 		$html .= ' class="' . $class . '"';
 		// add html5 required
-
 		$html .= $this->_input->required() ? ' required' : '';
 		$html .= ' style="' . $this->_input->html_style() . '"';
+		$html .= ' ' . $this->_input->other_html_attributes();
 		$html .= '>';
 
-//		EEH_HTML::indent( 1, 'select' );
 		if ( EEH_Array::is_multi_dimensional_array( $this->_input->options() )) {
 			EEH_HTML::indent( 1, 'optgroup' );
 			foreach( $this->_input->options() as $opt_group_label => $opt_group ){
-				$html .= EEH_HTML::nl( 0, 'optgroup' ) . '<optgroup label="' . esc_attr( $opt_group_label ) . '">';
+			    if ( ! empty($opt_group_label)) {
+                    $html .= EEH_HTML::nl(0, 'optgroup') . '<optgroup label="' . esc_attr($opt_group_label) . '">';
+                }
 				EEH_HTML::indent( 1, 'option' );
 				$html .= $this->_display_options( $opt_group );
-				$html .= EEH_HTML::indent( -1, 'option' );
-				$html .= EEH_HTML::nl( 0, 'optgroup' ) . '</optgroup>';
+				EEH_HTML::indent( -1, 'option' );
+                if ( ! empty($opt_group_label)) {
+                    $html .= EEH_HTML::nl( 0, 'optgroup' ) . '</optgroup>';
+			    }
 			}
 			EEH_HTML::indent( -1, 'optgroup' );
 		} else {
@@ -51,7 +54,6 @@ class EE_Select_Display_Strategy extends EE_Display_Strategy_Base{
 		}
 
 		$html.= EEH_HTML::nl( 0, 'select' ) . '</select>';
-//		$html.= EEH_HTML::nl( -1, 'select' ) . '</select>';
 		return $html;
 	}
 

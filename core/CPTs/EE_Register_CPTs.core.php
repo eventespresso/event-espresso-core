@@ -125,6 +125,7 @@ class EE_Register_CPTs {
 				'args' => array(
 					'public'=>true,
 					'show_in_nav_menus' => true,
+					'show_in_rest' => true,
 					'capabilities' => array(
 						'manage_terms' => 'ee_manage_event_categories',
 						'edit_terms' => 'ee_edit_event_category',
@@ -139,6 +140,7 @@ class EE_Register_CPTs {
 				'args' => array(
 					'public'=>true,
 					'show_in_nav_menus' => false, //by default this doesn't show for decaf
+					'show_in_rest' => true,
 					'capabilities' => array(
 						'manage_terms' => 'ee_manage_venue_categories',
 						'edit_terms' => 'ee_edit_venue_category',
@@ -153,6 +155,7 @@ class EE_Register_CPTs {
 				'args' => array(
 					'public'=>true,
 					'show_ui'=>false,
+					'show_in_rest' => true,
 					'capabilities' => array(
 						'manage_terms' => 'ee_read_event_type',
 						'edit_terms' => 'ee_edit_event_type',
@@ -375,18 +378,19 @@ class EE_Register_CPTs {
 	function register_taxonomy( $taxonomy_name, $singular_name, $plural_name, $override_args = array() ){
 
 		$args = array(
-		'hierarchical'      => true,
-		'labels'            => array(
-			'name'=>  $plural_name,
-			'singular_name'=>$singular_name
-		),
-		'show_ui'           => true,
-		'show_admin_column' => true,
-		'query_var'         => true,
-		'show_in_nav_menus' => false,
-		'map_meta_cap' => true
-		//'rewrite'           => array( 'slug' => 'genre' ),
-	);
+			'hierarchical'      => true,
+			'labels'            => array(
+				'name'=>  $plural_name,
+				'singular_name'=>$singular_name
+			),
+			'show_ui'           => true,
+			'show_ee_ui'        => true,
+			'show_admin_column' => true,
+			'query_var'         => true,
+			'show_in_nav_menus' => false,
+			'map_meta_cap' => true
+			//'rewrite'           => array( 'slug' => 'genre' ),
+		);
 
 	  if($override_args){
 		  if(isset($override_args['labels'])){
@@ -439,6 +443,7 @@ class EE_Register_CPTs {
 		'public' => true,
 		'publicly_queryable' => true,
 		'show_ui' => false,
+		'show_ee_ui' => true,
 		'show_in_menu' => false,
 		'show_in_nav_menus' => false,
 		'query_var' => true,
@@ -446,7 +451,7 @@ class EE_Register_CPTs {
 		'capability_type' => 'post',
 		'map_meta_cap' => true,
 		'has_archive' => true,
-		'hierarchical' => true,
+		'hierarchical' => false,
 		'menu_position' => null,
 		'supports' => array( 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'custom-fields', 'comments' )
 	  );
@@ -467,14 +472,15 @@ class EE_Register_CPTs {
 
 	function set_must_use_event_types() {
 		$term_details = array(
-			'single-event' => array( __('Single Event', 'event_espresso'), __('A single event that spans one or more consecutive days. Attendee\'s register for the first date-time only', 'event_espresso') ), //example: a party or two-day long workshop
-
-			'multi-event' => array( __('Multi Event', 'event_espresso'), __('Multiple, separate, but related events that occur on consecutive days. Attendee\'s can register for any of the date-times', 'event_espresso') ), //example: a three day music festival or week long conference
-
-			'event-series' => array( __('Event Series', 'event_espresso'), __(' Multiple events that occur over multiple non-consecutive days. Attendee\'s register for the first date-time only', 'event_espresso') ), //example: an 8 week introduction to basket weaving course
-
-			'recurring-event' => array( __('Recurring Event', 'event_espresso'), __('Multiple events that occur over multiple non-consecutive days. Attendee\'s can register for any of the date-times.', 'event_espresso') ), //example: a yoga class
-
+		    //Attendee's register for the first date-time only
+			'single-event' => array( __('Single Event', 'event_espresso'), __('A single event that spans one or more consecutive days.', 'event_espresso') ), //example: a party or two-day long workshop
+            //Attendee's can register for any of the date-times
+			'multi-event' => array( __('Multi Event', 'event_espresso'), __('Multiple, separate, but related events that occur on consecutive days.', 'event_espresso') ), //example: a three day music festival or week long conference
+            //Attendee's register for the first date-time only
+			'event-series' => array( __('Event Series', 'event_espresso'), __(' Multiple events that occur over multiple non-consecutive days.', 'event_espresso') ), //example: an 8 week introduction to basket weaving course
+            //Attendee's can register for any of the date-times.
+			'recurring-event' => array( __('Recurring Event', 'event_espresso'), __('Multiple events that occur over multiple non-consecutive days.', 'event_espresso') ), //example: a yoga class
+            
 			'ongoing' => array( __('Ongoing Event', 'event_espresso'), __('An "event" that people can purchase tickets to gain access for anytime for this event regardless of date times on the event', 'event_espresso') ) //example: access to a museum
 
 			//'walk-in' => array( __('Walk In', 'event_espresso'), __('Single datetime and single entry recurring events. Attendees register for one or multiple datetimes individually.', 'event_espresso') ),

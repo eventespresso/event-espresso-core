@@ -4,6 +4,7 @@
 		<?php echo __( 'Current Registration Status : ', 'event_espresso' ); ?>
 		<span class="<?php echo $reg_status_class; ?> bigger-text"><?php echo $reg_status_value; ?></span>
 	</h2>
+	<?php do_action( 'AHEE__reg_status_change_buttons__after_header', $REG_ID ); ?>
 
 	<h3 id="reg-admin-reg-details-reg-status-hdr">
 		<?php echo __( 'Change Registration Status to :', 'event_espresso' ); ?>

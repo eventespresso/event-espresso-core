@@ -74,6 +74,9 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
 				break;
 
 			case EEM_Line_Item::type_sub_total:
+				if ( $line_item->quantity() === 0 ) {
+					return $html;
+				}
 				//loop through children
 				$child_line_items = $line_item->children();
 				//loop through children
@@ -188,14 +191,15 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
 		$name_html .=  sprintf(
 			_x( '%1$sfor the %2$s: %3$s%4$s', 'eg. "for the Event: My Cool Event"', 'event_espresso'),
 			'<span class="ee-line-item-related-parent-object">',
-			$line_item->parent() instanceof EE_Line_Item ? $line_item->parent()->OBJ_type() : __( 'Item:', 'event_espresso' ),
+			$line_item->parent() instanceof EE_Line_Item ? $line_item->parent()->OBJ_type_i18n() : __( 'Item:', 'event_espresso' ),
 			$parent_related_object_link ? '<a href="' . $parent_related_object_link . '">' . $parent_related_object_name . '</a>' : $parent_related_object_name,
 			'</span>'
 		);
 		$html .= EEH_HTML::td( $name_html, '', 'jst-left' );
-
 		//Type Column
-		$type_html = $line_item->OBJ_type() ? $line_item->OBJ_type() . '<br />' : '';
+		$type_html = $line_item->OBJ_type() ? $line_item->OBJ_type_i18n() : '';
+		$type_html .= $this->_get_cancellations( $line_item );
+		$type_html .= $line_item->OBJ_type() ? '<br />' : '';
 		$code = $line_item_related_object instanceof EEI_Has_Code ? $line_item_related_object->code() : '';
 		$type_html .= ! empty( $code ) ? '<span class="ee-line-item-id">' . sprintf( __( 'Code: %s', 'event_espresso' ), $code ) . '</span>' : '';
 		$html .= EEH_HTML::td( $type_html, '', 'jst-left' );
@@ -216,6 +220,35 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
 
 		//finish things off and return
 		$html .= EEH_HTML::trx();
+		return $html;
+	}
+
+
+
+	/**
+	 *    _get_cancellations
+	 *
+	 * @param EE_Line_Item $line_item
+	 * @return string
+	 */
+	protected function _get_cancellations( EE_Line_Item $line_item ) {
+		$html = '';
+		$cancellations = $line_item->get_cancellations();
+		$cancellation = reset( $cancellations );
+		// \EEH_Debug_Tools::printr( $cancellation, '$cancellation', __FILE__, __LINE__ );
+		if ( $cancellation instanceof EE_Line_Item ) {
+			$html .= ' <span class="ee-line-item-id">';
+			$html .= sprintf(
+				_n(
+					'(%1$s Cancellation)',
+					'(%1$s Cancellations)',
+					$cancellation->quantity(),
+					'event_espresso'
+				),
+				$cancellation->quantity()
+			);
+			$html .= '</span>';
+		}
 		return $html;
 	}
 

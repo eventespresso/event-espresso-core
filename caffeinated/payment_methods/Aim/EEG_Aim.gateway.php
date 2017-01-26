@@ -189,21 +189,28 @@ class EEG_Aim extends EE_Onsite_Gateway{
 
 			$item_num = 1;
 			$transaction = $payment->transaction();
-			$order_description = '';
+			$order_description = $this->_format_order_description( $payment );
 			$primary_registrant = $transaction->primary_registration();
 			//if we're are charging for the full amount, show the normal line items
 			//and the itemized total adds up properly
 			if( $this->_can_easily_itemize_transaction_for( $payment ) ){
 				$total_line_item = $transaction->total_line_item();
 				foreach ($total_line_item->get_items() as $line_item) {
-					$this->addLineItem($item_num++, $line_item->name(), $line_item->desc(), $line_item->quantity(), $line_item->unit_price(), 'N');
+					if( $line_item->quantity() == 0 ){
+						continue;
+					}
+					$this->addLineItem(
+						$item_num++, 
+						$this->_format_line_item_name( $line_item, $payment ), 
+						$this->_format_line_item_desc( $line_item, $payment ), 
+						$line_item->quantity(),
+						$line_item->unit_price(), 
+						'N');
 					$order_description .= $line_item->desc().', ';
 				}
 				foreach($total_line_item->tax_descendants() as $tax_line_item){
 					$this->addLineItem($item_num++, $tax_line_item->name(), $tax_line_item->desc(), 1, $tax_line_item->total(), 'N');
 				}
-			}else{//partial payment
-				$order_description = sprintf(__("Payment of %s for %s", "event_espresso"),$payment->amount(),$primary_registrant->reg_code());
 			}
 
 

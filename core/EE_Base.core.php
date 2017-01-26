@@ -13,20 +13,20 @@
  *
  * ------------------------------------------------------------------------
  *
- * EE_BASE
+ * EE_Base
  *
  * @package			Event Espresso
  * @subpackage	core/
- * @author				Brent Christensen 
+ * @author				Brent Christensen
  *
  * ------------------------------------------------------------------------
  */
-class EE_BASE {
+class EE_Base {
 
 	/**
 	 *		@ override magic methods
 	 *		@ return void
-	 */	
+	 */
 	public function __get($a) { return FALSE; }
 	public function __set($a,$b) { return FALSE; }
 	public function __isset($a) { return FALSE; }
@@ -36,5 +36,5 @@ class EE_BASE {
 	public function __destruct() { return FALSE; }
 
 }
-// End of file EE_BASE.core.php
-// Location: /core/EE_BASE.core.php
+// End of file EE_Base.core.php
+// Location: /core/EE_Base.core.php

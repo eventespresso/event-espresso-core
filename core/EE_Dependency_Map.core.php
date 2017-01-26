@@ -39,7 +39,7 @@ class EE_Dependency_Map {
 	/**
 	 * @type EE_Dependency_Map $_instance
 	 */
-	protected static $_instance = null;
+	protected static $_instance;
 
 	/**
 	 * @type EE_Request $request
@@ -61,6 +61,11 @@ class EE_Dependency_Map {
 	 * @type array $_class_loaders
 	 */
 	protected $_class_loaders = array();
+
+	/**
+	 * @type array $_aliases
+	 */
+	protected $_aliases = array();
 
 
 
@@ -84,6 +89,7 @@ class EE_Dependency_Map {
 	public function initialize() {
 		$this->_register_core_dependencies();
 		$this->_register_core_class_loaders();
+		$this->_register_core_aliases();
 	}
 
 
@@ -112,7 +118,14 @@ class EE_Dependency_Map {
 	 */
 	public static function register_dependencies( $class, $dependencies ) {
 		if ( ! isset( self::$_instance->_dependency_map[ $class ] ) ) {
-			self::$_instance->_dependency_map[ $class ] = (array)$dependencies;
+			// we need to make sure that any aliases used when registering a dependency
+			// get resolved to the correct class name
+			foreach ( (array) $dependencies as $dependency => $load_source ) {
+				$alias = self::$_instance->get_alias( $dependency );
+				unset( $dependencies[ $dependency ] );
+				$dependencies[ $alias ] = $load_source;
+			}
+			self::$_instance->_dependency_map[ $class ] = (array) $dependencies;
 			return true;
 		}
 		return false;
@@ -136,6 +149,7 @@ class EE_Dependency_Map {
 				)
 			);
 		}
+		$class_name = self::$_instance->get_alias( $class_name );
 		if ( ! isset( self::$_instance->_class_loaders[ $class_name ] ) ) {
 			self::$_instance->_class_loaders[ $class_name ] = $loader;
 			return true;
@@ -174,6 +188,7 @@ class EE_Dependency_Map {
 	 * @return bool
 	 */
 	public function has_dependency_for_class( $class_name = '', $dependency = '' ) {
+		$dependency = $this->get_alias( $dependency );
 		return isset( $this->_dependency_map[ $class_name ], $this->_dependency_map[ $class_name ][ $dependency ] )
 			? true
 			: false;
@@ -189,6 +204,7 @@ class EE_Dependency_Map {
 	 * @return int
 	 */
 	public function loading_strategy_for_class_dependency( $class_name = '', $dependency = '' ) {
+		$dependency = $this->get_alias( $dependency );
 		return $this->has_dependency_for_class( $class_name, $dependency )
 			? $this->_dependency_map[ $class_name ][ $dependency ]
 			: EE_Dependency_Map::not_registered;
@@ -201,6 +217,7 @@ class EE_Dependency_Map {
 	 * @return string | Closure
 	 */
 	public function class_loader( $class_name ) {
+		$class_name = $this->get_alias( $class_name );
 		return isset( $this->_class_loaders[ $class_name ] ) ? $this->_class_loaders[ $class_name ] : '';
 	}
 
@@ -213,6 +230,52 @@ class EE_Dependency_Map {
 		return $this->_class_loaders;
 	}
 
+
+
+	/**
+	 * adds an alias for a classname
+	 *
+	 * @param string $class_name
+	 * @param string $alias
+	 */
+	public function add_alias( $class_name, $alias ) {
+		$this->_aliases[ $class_name ] = $alias;
+	}
+
+
+
+	/**
+	 * returns TRUE if the provided class name has an alias
+	 *
+	 * @param string $class_name
+	 * @return boolean
+	 */
+	public function has_alias( $class_name = '' ) {
+		return isset( $this->_aliases[ $class_name ] ) ? true : false;
+	}
+
+
+
+	/**
+	 * returns alias for class name if one exists, otherwise returns the original classname
+	 * functions recursively, so that multiple aliases can be used to drill down to a classname
+	 *  for example:
+	 *      if the following two entries were added to the _aliases array:
+	 *          array(
+	 *              'interface_alias'           => 'some\namespace\interface'
+	 *              'some\namespace\interface'  => 'some\namespace\classname'
+	 *          )
+	 *      then one could use EE_Registry::instance()->create( 'interface_alias' )
+	 *      to load an instance of 'some\namespace\classname'
+	 *
+	 * @param string $class_name
+	 * @return string
+	 */
+	public function get_alias( $class_name = '' ) {
+		return $this->has_alias( $class_name )
+			? $this->get_alias( $this->_aliases[ $class_name ] )
+			: $class_name;
+	}
 
 
 	/**
@@ -277,8 +340,84 @@ class EE_Dependency_Map {
 			),
 			'EE_Message_To_Generate_From_Request' => array(
 				'EE_Message_Resource_Manager' => EE_Dependency_Map::load_from_cache,
-				'EE_Request_Handler' => EE_Dependency_Map::load_from_cache
-			)
+				'EE_Request_Handler' => EE_Dependency_Map::load_from_cache,
+			),
+			'EventEspresso\core\services\commands\CommandBus' => array(
+				'EventEspresso\core\services\commands\CommandHandlerManager' => EE_Dependency_Map::load_from_cache,
+			),
+			'EventEspresso\services\commands\CommandHandler' => array(
+				'EE_Registry'         => EE_Dependency_Map::load_from_cache,
+				'CommandBusInterface' => EE_Dependency_Map::load_from_cache,
+			),
+			'EventEspresso\core\services\commands\CommandHandlerManager' => array(
+				'EE_Registry' => EE_Dependency_Map::load_from_cache,
+			),
+			'EventEspresso\core\services\commands\middleware\CapChecker' => array(
+				'EventEspresso\core\domain\services\capabilities\CapabilitiesChecker' => EE_Dependency_Map::load_from_cache,
+			),
+			'EventEspresso\core\domain\services\capabilities\CapabilitiesChecker' => array(
+				'EE_Capabilities' => EE_Dependency_Map::load_from_cache,
+			),
+			'EventEspresso\core\domain\services\capabilities\RegistrationsCapChecker' => array(
+				'EE_Capabilities' => EE_Dependency_Map::load_from_cache,
+			),
+			'EventEspresso\core\services\commands\registration\CreateRegistrationCommandHandler' => array(
+				'EventEspresso\core\domain\services\registration\CreateRegistrationService' => EE_Dependency_Map::load_from_cache,
+			),
+			'EventEspresso\core\services\commands\registration\CopyRegistrationDetailsCommandHandler' => array(
+				'EventEspresso\core\domain\services\registration\CopyRegistrationService' => EE_Dependency_Map::load_from_cache,
+			),
+			'EventEspresso\core\services\commands\registration\CopyRegistrationPaymentsCommandHandler' => array(
+				'EventEspresso\core\domain\services\registration\CopyRegistrationService' => EE_Dependency_Map::load_from_cache,
+			),
+			'EventEspresso\core\services\commands\registration\CancelRegistrationAndTicketLineItemCommandHandler' => array(
+				'EventEspresso\core\domain\services\registration\CancelTicketLineItemService' => EE_Dependency_Map::load_from_cache,
+			),
+			'EventEspresso\core\services\commands\registration\UpdateRegistrationAndTransactionAfterChangeCommandHandler' => array(
+				'EventEspresso\core\domain\services\registration\UpdateRegistrationService' => EE_Dependency_Map::load_from_cache,
+			),
+			'EventEspresso\core\services\commands\ticket\CreateTicketLineItemCommandHandler' => array(
+				'EventEspresso\core\domain\services\ticket\CreateTicketLineItemService' => EE_Dependency_Map::load_from_cache,
+			),
+			'EventEspresso\core\services\commands\ticket\CancelTicketLineItemCommandHandler' => array(
+				'EventEspresso\core\domain\services\ticket\CancelTicketLineItemService' => EE_Dependency_Map::load_from_cache,
+			),
+			'EventEspresso\core\domain\services\registration\CancelRegistrationService' => array(
+				'EventEspresso\core\domain\services\ticket\CancelTicketLineItemService' => EE_Dependency_Map::load_from_cache,
+			),
+			'EventEspresso\core\services\database\TableManager' => array(
+				'EventEspresso\core\services\database\TableAnalysis' => EE_Dependency_Map::load_from_cache,
+			),
+			'EE_Data_Migration_Class_Base' => array(
+				'EventEspresso\core\services\database\TableAnalysis' => EE_Dependency_Map::load_from_cache,
+			),
+			'EE_DMS_Core_4_1_0' => array(
+				'EventEspresso\core\services\database\TableAnalysis' => EE_Dependency_Map::load_from_cache,
+			),
+			'EE_DMS_Core_4_2_0' => array(
+				'EventEspresso\core\services\database\TableAnalysis' => EE_Dependency_Map::load_from_cache,
+			),
+			'EE_DMS_Core_4_3_0' => array(
+				'EventEspresso\core\services\database\TableAnalysis' => EE_Dependency_Map::load_from_cache,
+			),
+			'EE_DMS_Core_4_4_0' => array(
+				'EventEspresso\core\services\database\TableAnalysis' => EE_Dependency_Map::load_from_cache,
+			),
+			'EE_DMS_Core_4_5_0' => array(
+				'EventEspresso\core\services\database\TableAnalysis' => EE_Dependency_Map::load_from_cache,
+			),
+			'EE_DMS_Core_4_6_0' => array(
+				'EventEspresso\core\services\database\TableAnalysis' => EE_Dependency_Map::load_from_cache,
+			),
+			'EE_DMS_Core_4_7_0' => array(
+				'EventEspresso\core\services\database\TableAnalysis' => EE_Dependency_Map::load_from_cache,
+			),
+			'EE_DMS_Core_4_8_0' => array(
+				'EventEspresso\core\services\database\TableAnalysis' => EE_Dependency_Map::load_from_cache,
+			),
+			'EE_DMS_Core_4_9_0' => array(
+				'EventEspresso\core\services\database\TableAnalysis' => EE_Dependency_Map::load_from_cache,
+			),
 		);
 	}
 
@@ -314,6 +453,7 @@ class EE_Dependency_Map {
 		$response = &$this->_response;
 		$this->_class_loaders = array(
 			//load_core
+			'EE_Capabilities'                      => 'load_core',
 			'EE_Encryption'                        => 'load_core',
 			'EE_Front_Controller'                  => 'load_core',
 			'EE_Module_Request_Router'             => 'load_core',
@@ -354,6 +494,33 @@ class EE_Dependency_Map {
 				}
 				return null;
 			},
+		);
+	}
+
+
+	/**
+	 * can be used for supplying alternate names for classes,
+	 * or for connecting interface names to instantiable classes
+	 */
+	protected function _register_core_aliases() {
+		$this->_aliases = array(
+			'CommandBusInterface'                                                 => 'EventEspresso\core\services\commands\CommandBusInterface',
+			'EventEspresso\core\services\commands\CommandBusInterface'            => 'EventEspresso\core\services\commands\CommandBus',
+			'CommandHandlerManagerInterface'                                      => 'EventEspresso\core\services\commands\CommandHandlerManagerInterface',
+			'EventEspresso\core\services\commands\CommandHandlerManagerInterface' => 'EventEspresso\core\services\commands\CommandHandlerManager',
+			'CapChecker'                                                          => 'EventEspresso\core\services\commands\middleware\CapChecker',
+			'CapabilitiesChecker'                                                 => 'EventEspresso\core\domain\services\capabilities\CapabilitiesChecker',
+			'CreateRegistrationService'                                           => 'EventEspresso\core\domain\services\registration\CreateRegistrationService',
+			'CreateRegCodeCommandHandler'                                         => 'EventEspresso\core\services\commands\registration\CreateRegCodeCommand',
+			'CreateRegUrlLinkCommandHandler'                                      => 'EventEspresso\core\services\commands\registration\CreateRegUrlLinkCommand',
+			'CreateRegistrationCommandHandler'                                    => 'EventEspresso\core\services\commands\registration\CreateRegistrationCommand',
+			'CopyRegistrationDetailsCommandHandler'                               => 'EventEspresso\core\services\commands\registration\CopyRegistrationDetailsCommand',
+			'CopyRegistrationPaymentsCommandHandler'                              => 'EventEspresso\core\services\commands\registration\CopyRegistrationPaymentsCommand',
+			'CancelRegistrationAndTicketLineItemCommandHandler'                   => 'EventEspresso\core\services\commands\registration\CancelRegistrationAndTicketLineItemCommandHandler',
+			'UpdateRegistrationAndTransactionAfterChangeCommandHandler'           => 'EventEspresso\core\services\commands\registration\UpdateRegistrationAndTransactionAfterChangeCommandHandler',
+			'CreateTicketLineItemCommandHandler'                                  => 'EventEspresso\core\services\commands\ticket\CreateTicketLineItemCommand',
+			'TableManager'                                                        => 'EventEspresso\core\services\database\TableManager',
+			'TableAnalysis'                                                       => 'EventEspresso\core\services\database\TableAnalysis',
 		);
 	}
 

@@ -277,10 +277,17 @@ abstract class EE_PMT_Base{
 		//if we know who the attendee is, and this is a billing form
 		//that uses attendee info, populate it
 		if (
-			$this->_billing_form instanceof EE_Billing_Attendee_Info_Form &&
-			$transaction instanceof EE_Transaction &&
-			$transaction->primary_registration() instanceof EE_Registration &&
-			$transaction->primary_registration()->attendee() instanceof EE_Attendee
+            apply_filters(
+                'FHEE__populate_billing_form_fields_from_attendee',
+                (
+                    $this->_billing_form instanceof EE_Billing_Attendee_Info_Form
+                    && $transaction instanceof EE_Transaction
+                    && $transaction->primary_registration() instanceof EE_Registration
+                    && $transaction->primary_registration()->attendee() instanceof EE_Attendee
+                ),
+                $this->_billing_form,
+                $transaction
+            )
 		){
 			$this->_billing_form->populate_from_attendee( $transaction->primary_registration()->attendee() );
 		}
@@ -708,6 +715,20 @@ abstract class EE_PMT_Base{
 		if( $this->_gateway instanceof EE_Gateway ){
 			$this->_gateway->update_txn_based_on_payment( $payment );
 		}
+	}
+
+	/**
+	 * Returns a string of HTML describing this payment method type for an admin,
+	 * primarily intended for them to read before activating it.
+	 * The easiest way to set this is to create a folder 'templates' alongside
+	 * your EE_PMT_{System_Name} file, and in it create a file named "{system_name}_intro.template.php".
+	 * Eg, if your payment method file is named "EE_PMT_Foo_Bar.pm.php",
+	 * then you'd create a file named "templates" in the same folder as it, and name the file
+	 * "foo_bar_intro.template.php", and its content will be returned by this method
+	 * @return string
+	 */
+	public function introductory_html() {
+		return EEH_Template::locate_template( $this->file_folder() . 'templates' . DS . strtolower( $this->system_name() ) . '_intro.template.php', array( 'pmt_obj' => $this, 'pm_instance' => $this->_pm_instance ) );
 	}
 
 

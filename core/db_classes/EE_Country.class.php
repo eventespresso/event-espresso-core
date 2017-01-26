@@ -75,7 +75,7 @@ class EE_Country extends EE_Base_Class {
 	 */
 	public function currency_sign() {
 		$CNT_cur_sign = $this->get( 'CNT_cur_sign' );
-		return $CNT_cur_sign ? $CNT_cur_sign : '&#164;';
+		return $CNT_cur_sign ? $CNT_cur_sign : '';
 	}
 
 

@@ -33,7 +33,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 	if ( ! empty( $invoice_url )) {
 		?>
 		<p>
-			<a href="<?php echo $invoice_url; ?>" class="ee-button-lnk inline-button" target="_blank">
+			<a href="<?php echo $invoice_url; ?>" class="ee-button-lnk inline-button ee-invoice-lnk" target="_blank">
 				<?php _e('View Invoice', 'event_espresso'); ?>
 			</a>
 		</p>

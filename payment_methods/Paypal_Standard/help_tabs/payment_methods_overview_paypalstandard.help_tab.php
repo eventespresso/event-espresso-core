@@ -1,4 +1,5 @@
 <p><strong><?php _e('PayPal Standard', 'event_espresso'); ?></strong></p>
+<p><span class="required"><?php _e('Please Note! This gateway has been deprecated and replaced with the PayPal Express payment method. ', 'event_espresso'); ?> <?php printf( __('If you still want to use this gateway, please follow the directions to %1$sactivate it here%2$s.', 'event_espresso'), "<a href='https://eventespresso.com/wiki/paypal-standard-payment-gateway/#deprecated' target='_blank'>", '</a>'); ?></span></p>
 <p>
 <?php _e('Adjust the settings for the PayPal Standard payment gateway.', 'event_espresso'); ?>
 </p>

@@ -254,14 +254,28 @@ class EE_Error extends Exception {
 
 
 
-	/**
-	*	has_error
-	*	@access public
-	*	@return boolean
-	*/
-    public static function has_error(){
-		return self::$_error_count ? TRUE : FALSE;
-	}
+    /**
+     *    has_error
+     *
+     * @access public
+     * @param bool   $check_stored
+     * @param string $type_to_check
+     * @return bool
+     */
+    public static function has_error( $check_stored = false, $type_to_check = 'errors' ){
+	    $has_error = isset(self::$_espresso_notices[$type_to_check]) && ! empty(self::$_espresso_notices[$type_to_check])
+            ? true
+            : false;
+	    if ( $check_stored && ! $has_error ) {
+		    $notices = (array) get_option( 'ee_notices', array() );
+		    foreach ( $notices as $type => $notice ) {
+			    if ( $type === $type_to_check && $notice ) {
+				    return true;
+			    }
+		    }
+	    }
+	    return $has_error;
+    }
 
 
 
@@ -472,7 +486,7 @@ class EE_Error extends Exception {
 		$output .= self::_print_scripts( TRUE );
 
 		if ( defined( 'DOING_AJAX' )) {
-			echo json_encode( array( 'error' => $output ));
+			echo wp_json_encode( array( 'error' => $output ));
 			exit();
 		}
 
@@ -645,7 +659,7 @@ class EE_Error extends Exception {
 		 * Do an action so other code can be triggered when a notice is created
 		 * @param string $type can be 'errors', 'attention', or 'success'
 		 * @param string $user_msg message displayed to user when WP_DEBUG is off
-		 * @param string $user_msg message displayed to user when WP_DEBUG is on 
+		 * @param string $user_msg message displayed to user when WP_DEBUG is on
 		 * @param string $file file where error was generated
 		 * @param string $func function where error was generated
 		 * @param string $line line where error was generated
@@ -791,7 +805,7 @@ class EE_Error extends Exception {
 		if ( $notices = get_option( 'ee_notices', FALSE )) {
 			foreach ( $notices as $type => $notice ) {
 				if ( is_array( $notice ) && ! empty( $notice )) {
-					// make sure that existsing notice type is an array
+					// make sure that existing notice type is an array
 					self::$_espresso_notices[ $type ] =  is_array( self::$_espresso_notices[ $type ] ) && ! empty( self::$_espresso_notices[ $type ] ) ? self::$_espresso_notices[ $type ] : array();
 					// merge stored notices with any newly created ones
 					self::$_espresso_notices[ $type ] = array_merge( self::$_espresso_notices[ $type ], $notice );
@@ -828,23 +842,23 @@ class EE_Error extends Exception {
 
 			$notices = '<div id="espresso-notices">';
 
-			$close = is_admin() ? '' : '<a class="close-espresso-notice hide-if-no-js">&times;</a>';
+			$close = is_admin() ? '' : '<a class="close-espresso-notice hide-if-no-js"><span class="dashicons dashicons-no"></span></a>';
 
-			if ($success_messages != '') {
+			if ($success_messages !== '') {
 				$css_id = is_admin() ? 'message' : 'espresso-notices-success';
 				$css_class = is_admin() ? 'updated fade' : 'success fade-away';
 				//showMessage( $success_messages );
 				$notices .= '<div id="' . $css_id . '" class="espresso-notices ' . $css_class . '" style="display:none;"><p>' . $success_messages . '</p>' . $close . '</div>';
 			}
 
-			if ($attention_messages != '') {
+			if ($attention_messages !== '') {
 				$css_id = is_admin() ? 'message' : 'espresso-notices-attention';
 				$css_class = is_admin() ? 'updated ee-notices-attention' : 'attention fade-away';
 				//showMessage( $error_messages, TRUE );
 				$notices .= '<div id="' . $css_id . '" class="espresso-notices ' . $css_class . '" style="display:none;"><p>' . $attention_messages . '</p>' . $close . '</div>';
 			}
 
-			if ($error_messages != '') {
+			if ($error_messages !== '') {
 				$css_id = is_admin() ? 'message' : 'espresso-notices-error';
 				$css_class = is_admin() ? 'error' : 'error fade-away';
 				//showMessage( $error_messages, TRUE );
@@ -938,7 +952,7 @@ class EE_Error extends Exception {
 			return;
 		} else if ( EE_Registry::instance()->REQ->ajax ) {
 			// grab any notices and concatenate into string
-			echo json_encode( array( 'errors' => implode( '<br />', EE_Error::get_notices( FALSE ))));
+			echo wp_json_encode( array( 'errors' => implode( '<br />', EE_Error::get_notices( FALSE ))));
 			exit();
 		} else {
 			// save errors to a transient to be displayed on next request (after redirect)
@@ -951,13 +965,13 @@ class EE_Error extends Exception {
 
 
 	/**
-	 * 	display_persistent_admin_notices
+	 * display_persistent_admin_notices
 	 *
-	 *  	@access 	public
-	* 	@param		string	$pan_name	the name, or key of the Persistent Admin Notice to be stored
-	* 	@param		string	$pan_name	the message to be stored persistently until dismissed
-	* 	@param		string	$return_url	URL to go back to aftger nag notice is dismissed
-	 *  	@return 		string
+	 * @access public
+	 * @param  string $pan_name    the name, or key of the Persistent Admin Notice to be stored
+	 * @param  string $pan_message the message to be stored persistently until dismissed
+	 * @param  string $return_url  URL to go back to after nag notice is dismissed
+	 * @return string
 	 */
 	public static function display_persistent_admin_notices( $pan_name = '', $pan_message = '', $return_url = '' ) {
 		if ( ! empty( $pan_name ) && ! empty( $pan_message )) {
@@ -977,6 +991,7 @@ class EE_Error extends Exception {
 				<div style="clear:both;"></div>
 			</div>';
 		}
+		return '';
 	}
 
 
@@ -1068,10 +1083,10 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
 	*	and line number where exception or error was thrown
 	*
 	*	@access public
-	*	@ param string $file
-	*	@ param string $func
-	*	@ param string $line
-	*	@ return string
+	*	@param string $file
+	*	@param string $func
+	*	@param string $line
+	*	@return string
 	*/
 	public static function generate_error_code ( $file = '', $func = '', $line = '' ) {
 		$file = explode( '.', basename( $file ));

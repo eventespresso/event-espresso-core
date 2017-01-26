@@ -1,4 +1,5 @@
 <?php
+
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
 }
@@ -50,6 +51,8 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_
 	 * @access 	public
 	 */
 	public function __construct() {
+		// deprecated functions
+		espresso_load_required( 'EventEspresso\core\Factory', EE_CORE . 'Factory.php' );
 	}
 
 
@@ -75,6 +78,19 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_
 		do_action( 'EE_Load_Espresso_Core__handle_request__initialize_core_loading' );
 		// PSR4 Autoloaders
 		$this->registry->load_core( 'EE_Psr4AutoloaderInit' );
+		// build DI container
+		$OpenCoffeeShop = new EventEspresso\core\services\container\OpenCoffeeShop();
+		$OpenCoffeeShop->addRecipes();
+		// $CoffeeShop = $OpenCoffeeShop->CoffeeShop();
+		// create and cache the CommandBus, and also add the CapChecker middleware
+		$this->registry->create(
+			'CommandBusInterface',
+			array(
+				null,
+				$this->registry->create( 'CapChecker' )
+			),
+			true
+		);
 		// workarounds for PHP < 5.3
 		$this->_load_class_tools();
 		// load interfaces

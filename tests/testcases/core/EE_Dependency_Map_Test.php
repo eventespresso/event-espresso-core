@@ -34,24 +34,36 @@ class EE_Dependency_Map_Test extends EE_UnitTestCase {
 		$this->validate_core_dependency_map( $this->_dependency_map->dependency_map() );
 	}
 
+
+
+	/**
+	 * @param        $dependencies_or_load
+	 * @param string $classname
+	 */
 	public function validate_core_dependency_map( $dependencies_or_load, $classname = '' ) {
 		if ( is_array( $dependencies_or_load ) ) {
 			foreach ( $dependencies_or_load as $classname => $dependency ) {
-				$this->validate_core_dependency_map( $dependency, $classname );
+				if ( $dependency !== null ) {
+					$this->validate_core_dependency_map( $dependency, $classname );
+				}
 			}
 		} else {
+		    $classname = $this->_dependency_map->get_alias($classname);
 			// verify that a valid class constant has been set for the value
 			$this->assertEquals(
 				( EE_Dependency_Map::load_new_object || EE_Dependency_Map::load_from_cache ),
 				$dependencies_or_load,
 				sprintf( 'The %s class has an invalid value in the EE_Dependency_Map.', $classname )
 			);
-			// now verify that a loader exists for the class
-			$loader = $this->_dependency_map->class_loader( $classname );
-			$this->assertNotEmpty(
-				$loader,
-				sprintf( 'A class loader should be set for "%s" but appears to be missing.', $classname )
-			);
+            // if class is not using PSR-4 compatible namespacing
+            if (strpos($classname,'\\') === false) {
+                // verify that a loader exists for the class
+                $loader = $this->_dependency_map->class_loader($classname);
+                $this->assertNotEmpty(
+                    $loader,
+                    sprintf('A class loader should be set for "%s" but appears to be missing.', $classname)
+                );
+            }
 		}
 	}
 
@@ -65,7 +77,7 @@ class EE_Dependency_Map_Test extends EE_UnitTestCase {
 		);
 		//loop through and verify the class loader can successfully load the class it is set for
 		foreach ( $this->_dependency_map->class_loaders() as $class => $loader ) {
-			if ( isset( $skip[ $class ] ) ) {
+			if ( isset( $skip[ $class ] ) || strpos( $class, 'Command' ) !== false ) {
 				continue;
 			}
 			$dependency = $loader instanceof Closure ? $loader() : EE_Registry::instance()->$loader( $class );

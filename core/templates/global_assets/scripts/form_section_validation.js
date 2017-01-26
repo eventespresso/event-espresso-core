@@ -40,8 +40,6 @@ jQuery(document).ready(function($){
 		 *  @param {object} form_data
 		 */
 		initialize : function( form_data ) {
-            // reset previous form validation rules
-            EEFV.reset_validation_rules();
 			EEFV.initialize_datepicker_inputs();
 			EEFV.initialize_select_reveal_inputs( form_data );
 			EEFV.validation_rules_array = form_data;
@@ -196,13 +194,20 @@ jQuery(document).ready(function($){
 						}
 						// if the form already exists, then let's reset it
 						if ( typeof EEFV.form_validators[ form_id ] !== 'undefined' ) {
-							EEFV.form_validators[ form_id ].resetForm();
+							EEFV.resetForm(EEFV.form_validators[ form_id ]);
 						}
 						// remove the non-js-generated server-side validation errors
 						// because we will allow jquery validate to populate them
-						html_form.find( '.ee-error-label' ).remove();
 						// need to call validate() before doing anything else, i know, seems counter intuitive...
-						EEFV.form_validators[ form_id ] = html_form.validate();
+						EEFV.form_validators[ form_id ] = html_form.validate(
+							{
+								errorPlacement:function( error, input ) {
+									//remove error inputs added server-side,
+									//this new error overrides it
+									input.siblings('label.error').remove();
+									error.appendTo(input.parent());
+								}
+							});
 						// now add form section's validation rules
 						EEFV.add_rules( form_data.form_section_id, form_data.validation_rules );
 						// and cache incoming form sections and rules so that they can be later removed if necessary
@@ -322,6 +327,23 @@ jQuery(document).ready(function($){
 					return this.optional( element ) || regex.test( value );
 				};
 			}
+		},
+		/**
+		 * We can't use jquery validate's native resetForm() because jquery-form
+		 * also defines it and they conflict (ie, we want to call jquery validate's resetForm,
+		 * but we instead get jquery-form's resetForm, which is a totally different method), 
+		 * so we're best off just avoiding using resetForm() entirely. 
+		 * But this method does the same thing as jquery-validate's resetForm.
+		 * @param jQuery object form
+		 * @returns void
+		 */
+		resetForm: function( form ) {
+			form.invalid = {};
+			form.submitted = {};
+			form.prepareForm();
+			form.hideErrors();
+			var b = form.elements().removeData("previousValue").removeAttr("aria-invalid");
+			form.resetElements(b)
 		},
 
 
@@ -511,7 +533,6 @@ jQuery(document).ready(function($){
 	) {
 		EEFV.initialize( ee_form_section_vars.form_data );
 	}
-
 });
 
 // example  ee_form_section_vars

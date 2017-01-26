@@ -1,3 +1,11 @@
+<?php
+/** @type string $transaction_details */
+/** @type string $before_payment_options */
+/** @type string $payment_options */
+/** @type string $after_payment_options */
+/** @type string $default_hidden_inputs */
+/** @type string $extra_hidden_inputs */
+?>
 
 	<h4 id="reg-page-totals-hdr" class="">
 		<span class="drk-grey-text"><?php _e('Registrations:', 'event_espresso'); ?></span> <?php echo $reg_count;?>
@@ -26,12 +34,8 @@
 
 	<div id="methods-of-payment">
 		<?php echo $payment_options; ?>
-		<a id="reg-page-select-other-method-of-payment-lnk" class="hidden smaller-text right" rel=""><?php echo apply_filters( 'FHEE__registration_page_payment_options__select_other_method_of_payment_lnk', __( 'select a different method of payment:', 'event_espresso' )); ?></a>
 	</div>
 	<!-- end #methods-of-payment -->
 
 	<?php  echo $after_payment_options;  ?>
-
-	<?php  echo $default_hidden_inputs;  ?>
-	<?php  echo $extra_hidden_inputs;  ?>
 

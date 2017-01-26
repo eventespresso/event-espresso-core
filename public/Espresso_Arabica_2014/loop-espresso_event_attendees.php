@@ -7,11 +7,11 @@
  * @since 4.6.29
  * @author Darren Ethier
  *
- * Template Args that are available in this template
+ * Template Args that are available in this template (yarr!)
  * @type EE_Attendee[] $contacts
  * @type EE_Event   $event
- * @type EE_Datetime    $datetime
- * @type EE_Ticket  $ticket
+ * @type EE_Datetime|null  $datetime  an EE_Datetime object will be available if the the datetime_id attribute is set in the shortcode and the id matches a valid datetime.
+ * @type EE_Ticket|null  $ticket  an EE_Ticket object will be available if the the ticket_id attribute is set in the shortcode and the id matches a valid ticket.
  * @type bool       $show_gravatar  whether to show gravatar or not.
  */
 
@@ -25,7 +25,13 @@ $no_attendees_message =  apply_filters( 'FHEE__loop-espresso_attendees-shortcode
 	<?php if ( $contacts ) : ?>
 		<ul class="event-attendees-list">
 			<?php foreach( $contacts as $contact ) :
-				EEH_Template::get_template_part( 'content', 'espresso_event_attendees', array( 'contact' => $contact, 'show_gravatar' => $show_gravatar ) );
+				EEH_Template::get_template_part( 'content', 'espresso_event_attendees', array( 
+					'contact'       => $contact, 
+					'event'         => $event,
+					'datetime'      => $datetime,
+					'ticket'        => $ticket,
+					'show_gravatar' => $show_gravatar 
+				) );
 				endforeach; ?>
 		</ul>
 	<?php else : ?>

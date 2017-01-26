@@ -73,7 +73,7 @@ class Checkin_Test extends \EE_UnitTestCase {
 		$this->assertDateWithinOneMinute( 
 			mysql_to_rfc3339(date( 'c' ) ),
 			$data[ 'CHK_timestamp' ],
-			'Y-m-d\TH:m:i' 
+			'Y-m-d\TH:m:i+' 
 		);
 	}	
 	

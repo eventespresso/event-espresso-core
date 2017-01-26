@@ -1,18 +1,36 @@
 language: php
-php:
-- 5.3
-- 5.4
-- 5.5
-- 5.6
-- 7.0
-- hhvm
+cache:
+  apt: true
 env:
-- WP_VERSION=latest WP_MULTISITE=0
-- WP_VERSION=latest WP_MULTISITE=1
-- WP_VERSION=4.1 WP_MULTISITE=0
-- WP_VERSION=4.1 WP_MULTISITE=1
+  - WP_VERSION=latest WP_MULTISITE=0
+  - WP_VERSION=latest WP_MULTISITE=1
+  - WP_VERSION=4.1 WP_MULTISITE=0
+  - WP_VERSION=4.1 WP_MULTISITE=1
+php:
+  - 5.3
+  - 5.4
+  - 5.5
+  - 5.6
+  - 7.0
+  - 7.1
 matrix:
   exclude:
+    - php: 5.3
+      env: WP_VERSION=4.1 WP_MULTISITE=1
+    - php: 5.3
+      env: WP_VERSION=latest WP_MULTISITE=1
+    - php: 5.4
+      env: WP_VERSION=4.1 WP_MULTISITE=1
+    - php: 5.4
+      env: WP_VERSION=latest WP_MULTISITE=1
+    - php: 5.5
+      env: WP_VERSION=4.1 WP_MULTISITE=1
+    - php: 5.5
+      env: WP_VERSION=latest WP_MULTISITE=1
+    - php: 7.1
+      env: WP_VERSION=4.1 WP_MULTISITE=0
+    - php: 7.1
+      env: WP_VERSION=4.1 WP_MULTISITE=1
     - php: 7.0
       env: WP_VERSION=4.1 WP_MULTISITE=0
     - php: 7.0
@@ -21,11 +39,17 @@ matrix:
       env: WP_VERSION=4.1 WP_MULTISITE=0
     - php: hhvm
       env: WP_VERSION=4.1 WP_MULTISITE=1
-  allow_failures:
-  - php: hhvm
   fast_finish: true
+before_install:
+   - |
+      if [[ "$SKIP_XDEBUG_REMOVE" != "true" ]]; then
+        phpenv config-rm xdebug.ini
+        echo "xdebug removed";
+      fi
 before_script:
-- bash tests/bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
+  - bash tests/bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
+  - mysql --version
+  - phpenv versions
 script: cd tests; phpunit;
 notifications:
   slack:

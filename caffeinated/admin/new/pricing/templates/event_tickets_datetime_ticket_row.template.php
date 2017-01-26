@@ -49,20 +49,20 @@
 			<input type="hidden" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_ID]" class="edit-ticket-TKT_ID" value="<?php echo $TKT_ID; ?>">
 			<input type="hidden" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_row]" class="edit-ticket-TKT_row" value="<?php echo $tkt_row; ?>">
 
-			<!--<div class="total-price-container"><?php printf( __('Total Final Price: %s', 'event_espresso'), '<span class="ticket-price-amount">' . $TKT_price . '</span>'); ?> </div>-->
+			<!--<div class="total-price-container"><?php printf( esc_html__('Total Final Price: %s', 'event_espresso'), '<span class="ticket-price-amount">' . $TKT_price . '</span>'); ?> </div>-->
 			<textarea name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_description]" class="edit-ticket-TKT_description ee-full-textarea-inp" placeholder="Ticket Description"><?php echo $TKT_description; ?></textarea>
 
 			<?php do_action( 'AHEE__event_tickets_datetime_ticket_row_template_after_desc', $tkt_row, $TKT_ID ); ?>
 
 			<div class="basic-ticket-container">
-				<h4 class="tickets-heading"><?php _e('Ticket Details', 'event_espresso'); ?></h4>
+				<h4 class="tickets-heading"><?php esc_html_e('Ticket Details', 'event_espresso'); ?></h4>
 				<div style="clear:both"></div>
 				<table class="basic-ticket-info">
 					<thead>
 						<tr valign="bottom">
-							<td><span class="TD_TKT_number_datetimes_label"><?php _e('# Datetimes', 'event_espresso'); ?></span></td>
-							<td><span class="TD_TKT_min_qty_label"><?php _e('Minimum Quantity', 'event_espresso'); ?></span></td>
-							<td><span class="TD_TKT_max_qty_label"><?php _e('Maximum Quantity', 'event_espresso'); ?></span></td>
+							<td><span class="TD_TKT_number_datetimes_label"><?php esc_html_e('# Datetimes', 'event_espresso'); ?></span></td>
+							<td><span class="TD_TKT_min_qty_label"><?php esc_html_e('Minimum Quantity', 'event_espresso'); ?></span></td>
+							<td><span class="TD_TKT_max_qty_label"><?php esc_html_e('Maximum Quantity', 'event_espresso'); ?></span></td>
 						</tr>
 					</thead>
 					<tbody>
@@ -95,11 +95,11 @@
 					</tbody>
 				</table>
 				<button data-context="price-create" class="button-secondary ee-create-button ee-price-create-button" data-ticket-row="<?php echo $tkt_row; ?>"<?php echo $show_price_mod_button; ?>>
-					<?php _e('Add Price Modifier', 'event_espresso'); ?>
+					<?php esc_html_e('Add Price Modifier', 'event_espresso'); ?>
 				</button>
 				<div class="ticket-is-required-container">
 					<input type="checkbox" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_required]" class="edit-ticket-TKT_required" value="1"<?php echo $TKT_required ? ' checked="checked"' : ''; ?><?php echo $disabled ? ' disabled' : ''; ?>>
-					<label for="edit-ticket-TKT_required"><?php _e('This ticket is required (will appear first in frontend ticket lists).', 'event_espresso'); ?></label>
+					<label for="edit-ticket-TKT_required"><?php esc_html_e('This ticket is required (will appear first in frontend ticket lists).', 'event_espresso'); ?></label>
 				</div>
 				<div class="ticket-is-taxable-container">
 					<?php if ( !empty($tax_rows) ) { ?>
@@ -112,20 +112,20 @@
 						<?php else : ?>
 							<input class="TKT-taxable-checkbox" id="edit-ticket-TKT_taxable-<?php echo $tkt_row; ?>" type="checkbox" name="<?php echo $edit_tickets_name;?>[<?php echo $tkt_row; ?>][TKT_taxable]" value="1"<?php echo $TKT_taxable; ?>>
 						<?php endif; ?>
-						<label for="edit-ticket-TKT_taxable-<?php echo $tkt_row; ?>"> <?php _e('This ticket is taxable.', 'event_espresso'); ?>
+						<label for="edit-ticket-TKT_taxable-<?php echo $tkt_row; ?>"> <?php esc_html_e('This ticket is taxable.', 'event_espresso'); ?>
 					<?php } //end tax_rows check ?>
 				</div>
 			</div>
 			<div class="price-table-container">
-				<h4 class="tickets-heading price-table-info"<?php echo $show_price_modifier; ?>><?php _e('Price Modifiers', 'event_espresso'); ?></h4>
+				<h4 class="tickets-heading price-table-info"<?php echo $show_price_modifier; ?>><?php esc_html_e('Price Modifiers', 'event_espresso'); ?></h4>
 				<table class="price-table">
 					<thead class="price-table-info"<?php echo $show_price_modifier; ?>>
 						<tr>
-							<td><?php _e('Price Type', 'event_espresso'); ?></td>
-							<td><?php _e('Name', 'event_espresso'); ?></td>
-							<td><?php _e('Description', 'event_espresso'); ?></td>
+							<td><?php esc_html_e('Price Type', 'event_espresso'); ?></td>
+							<td><?php esc_html_e('Name', 'event_espresso'); ?></td>
+							<td><?php esc_html_e('Description', 'event_espresso'); ?></td>
 							<td></td>
-							<td><?php _e('Amount', 'event_espresso'); ?></td>
+							<td><?php esc_html_e('Amount', 'event_espresso'); ?></td>
 							<td></td>
 							<td></td>
 						</tr>
@@ -136,7 +136,7 @@
 					<tfoot>
 						<tr class="price-subtotal-row TKT-taxes-display"<?php echo $display_subtotal; ?>>
 							<td colspan="4" class="ee-numeric">
-								<span class="TKT-taxable-subtotal-label"><strong><?php _e('Subtotal', 'event_espresso'); ?></strong></span>
+								<span class="TKT-taxable-subtotal-label"><strong><?php esc_html_e('Subtotal', 'event_espresso'); ?></strong></span>
 							</td>
 							<td class="ee-numeric">
 								<span class="TKT-taxable-subtotal-amount-display"><?php echo $TKT_subtotal_amount_display; ?></span>
@@ -148,7 +148,7 @@
 						<?php echo $tax_rows; ?>
 						<tr class="price-total-row">
 							<td colspan="4" class="ee-numeric">
-								<strong><?php _e('Total', 'event_espresso'); ?></strong>
+								<strong><?php esc_html_e('Total', 'event_espresso'); ?></strong>
 							</td>
 							<td class="ee-numeric" >
 								<span id="price-total-amount-<?php echo $tkt_row; ?>"><?php echo $TKT_price; ?></span>
@@ -161,8 +161,8 @@
 				</table>
 			</div>
 			<div style="clear:both"></div>
-			<h4 class="tickets-heading"><?php _e('Event Datetimes', 'event_espresso'); ?></h4>
-			<p><?php _e('This ticket will be usable (allow entrance) for the following selected event datetimes (click to select).  The "# Datetimes" amount (above) indicates how many of the assigned datetimes the ticket holder can gain access to:', 'event_espresso'); ?></p>
+			<h4 class="tickets-heading"><?php esc_html_e('Event Datetimes', 'event_espresso'); ?></h4>
+			<p><?php esc_html_e('This ticket will be usable (allow entrance) for the following selected event datetimes (click to select).  The "# Datetimes" amount (above) indicates how many of the assigned datetimes the ticket holder can gain access to:', 'event_espresso'); ?></p>
 			<ul class="datetime-tickets-list">
 				<?php echo $ticket_datetimes_list; ?>
 			</ul>
@@ -170,13 +170,13 @@
 			<?php do_action( 'AHEE__event_tickets_datetime_ticket_row_template__advanced_details_end', $tkt_row, $TKT_ID ); ?>
 			<div class="ee-editor-footer-container">
 				<div class="ee-editor-id-container">
-					<span class="ee-item-id"><?php echo $TKT_ID ? 'Ticket ID: ' . $TKT_ID : ''; ?></span>
+					<span class="ee-item-id"><?php echo $TKT_ID ? sprintf( esc_html__( 'Ticket ID: %d', 'event_espresso' ), $TKT_ID ) : ''; ?></span>
 				</div>
 				<div class="save-cancel-button-container">
-					<label for="edit-ticket-TKT_is_default_selector"><?php _e('use this new ticket as a default ticket for any new events', 'event_espresso'); ?></label>
+					<label for="edit-ticket-TKT_is_default_selector"><?php esc_html_e('use this new ticket as a default ticket for any new events', 'event_espresso'); ?></label>
 					<input type="checkbox" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_is_default_selector]" class="edit-ticket-TKT_is_default_selector" value="1"<?php echo $disabled ? ' disabled' : ''; ?>>
 					<input type="hidden" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_is_default]" class="edit-ticket-TKT_is_default" value="<?php echo $TKT_is_default; ?>">
-					<!--<button class="button-primary ee-save-button" data-context="ticket" data-ticket-row="<?php echo $tkt_row; ?>"><?php _e('Update Ticket', 'event_espresso'); ?></button>--><button class="button-secondary ee-cancel-button" data-context="ticket" data-ticket-row="<?php echo $tkt_row; ?>"><?php _e('Close', 'event_espresso'); ?></button>
+					<!--<button class="button-primary ee-save-button" data-context="ticket" data-ticket-row="<?php echo $tkt_row; ?>"><?php esc_html_e('Update Ticket', 'event_espresso'); ?></button>--><button class="button-secondary ee-cancel-button" data-context="ticket" data-ticket-row="<?php echo $tkt_row; ?>"><?php esc_html_e('Close', 'event_espresso'); ?></button>
 				</div>
 			</div>
 			<!-- these hidden inputs are for tracking changes in dtts attached to tickets during a js session -->

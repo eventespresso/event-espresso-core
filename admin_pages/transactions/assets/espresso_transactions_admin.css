@@ -33,17 +33,20 @@
 }
 
 /*txn complete, pymt approved*/
+.reg-status-RAP,
 .txn-status-TCM,
 .pymt-status-PAP,
 .txn-status-TCM td:first-child {
     border-left-color: #70CC50;
 }
 
+.reg-status-RIC,
 .txn-status-TAB,
 .txn-status-TAB td:first-child  {
     border-left-color: #FCB93C;
 }
 /*txn incomplete, pymt declined*/
+.reg-status-RDC,
 .txn-status-TFL,
 .pymt-status-PDC,
 .txn-status-TFL td:first-child {
@@ -51,6 +54,7 @@
 }
 
 /*txn open, pymt pending*/
+.reg-status-RPP,
 .txn-status-TIN,
 .pymt-status-PPN,
 .txn-status-TIN td:first-child {
@@ -58,6 +62,7 @@
 }
 
 /*txn overpaid, pymt fail*/
+.reg-status-RNA,
 .txn-status-TOP,
 .pymt-status-PFL,
 .txn-status-TOP td:first-child {
@@ -65,9 +70,11 @@
 }
 
 /*pymt cancelled*/
+.reg-status-RCN,
 .pymt-status-PCN {
     border-left-color: #A39D9C;
 }
+
 
 /*.ee-status-strip-td {*/
 /*padding: 0;*/
@@ -157,7 +164,7 @@ td.column-TXN_ID { padding: 4px 7px  29px; }
 .admin-side-mbox-label-spn { width:30%; padding-right:.5em; text-align:right; }
 .admin-side-mbox-text-dv { padding-left:.5em; margin:0 0 1em 30%; }
 
-#poststuff .admin-modal-dialog-h2 { font-size:2em; margin:.25em 0;  }
+.ee-admin-dialog-container .admin-modal-dialog-h2 { font-size:2em; margin:.25em 0;  }
 .admin-primary-mbox-h4 { margin:2em 0 .25em; font-size:1.3em;  }
 
 .admin-modal-dialog-wrap,
@@ -301,4 +308,8 @@ td.column-TXN_ID { padding: 4px 7px  29px; }
     -webkit-box-shadow: 1px 1px 1px rgba(0,0,0,.2), 3px 3px 2px rgba(0,0,0,.1);
     -moz-box-shadow: 1px 1px 1px rgba(0,0,0,.2), 3px 3px 2px rgba(0,0,0,.1);
     box-shadow: 1px 1px 1px rgba(0,0,0,.2), 3px 3px 2px rgba(0,0,0,.1);
+}
+
+#txn-admin-transaction-attendees-table .reg-status-RCN {
+	color: #999;
 }

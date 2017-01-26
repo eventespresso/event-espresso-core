@@ -159,4 +159,43 @@ class EEH_Array extends EEH_Base {
 	}
 
 
+
+	/**
+	 * given a flat array like $array = array('A', 'B', 'C')
+	 * will convert into a multidimensional array like $array[A][B][C]
+	 * if $final_value is provided and is anything other than null,
+	 * then that will be set as the value for the innermost array key
+	 * like so: $array[A][B][C] = $final_value
+	 *
+	 * @param array $flat_array
+	 * @param mixed $final_value
+	 * @return array
+	 */
+	public static function convert_array_values_to_keys( array $flat_array, $final_value = null ) {
+		$multidimensional = array();
+		$reference = &$multidimensional;
+		foreach ( $flat_array as $key ) {
+			$reference[ $key ] = array();
+			$reference = &$reference[ $key ];
+		}
+		if ( $final_value !== null ) {
+			$reference = $final_value;
+		}
+		return $multidimensional;
+	}
+
+
+
+	/**
+	 * @see http://stackoverflow.com/questions/173400/how-to-check-if-php-array-is-associative-or-sequential
+	 * @param array $array
+	 * @return bool
+	 */
+	public static function is_array_numerically_and_sequentially_indexed(array $array) {
+		return ! empty($array) ? array_keys($array) === range(0, count($array) - 1) : true;
+	}
+
+
+
+
 } //end EEH_Template class

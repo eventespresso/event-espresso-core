@@ -626,6 +626,10 @@ class PluginUpdateEngineChecker {
 
 		$has_triggered = FALSE;
 
+		if ( defined( 'DOING_WP_CRON' ) && DOING_WP_CRON ) {
+		    return $has_triggered;
+        }
+
 		if ( !empty($_POST) && !empty( $this->option_key ) ) {
 			foreach ( $_POST as $key => $value ) {
 				$triggered = $this->maybe_trigger_update($value, $key, $this->option_key);

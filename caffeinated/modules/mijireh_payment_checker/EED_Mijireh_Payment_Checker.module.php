@@ -58,7 +58,7 @@ class EED_Mijireh_Payment_Checker extends EED_Module{
 					array( 'EED_Mijireh_Payment_Checker', 'send_notifications_after_mijireh_ipn' ),
 					5, 2
 				);
-				EE_Payment_Processor::instance()->process_ipn( null, $transaction, $last_payment->payment_method() );
+				EE_Payment_Processor::instance()->process_ipn( array(), $transaction, $last_payment->payment_method() );
 			}
 		}
 	}

@@ -227,7 +227,7 @@ class EE_DMS_4_6_0_gateways extends EE_Data_Migration_Script_Stage{
 						'%d',//PMD_ID
 					));
 			if( ! $success ){
-				$this->add_error(sprintf(__('Could not update payment method %d with properties %s because %s', "event_espresso"),$id,json_encode($payment_method_col_values),$wpdb->last_error));
+				$this->add_error(sprintf(__('Could not update payment method %d with properties %s because %s', "event_espresso"),$id,wp_json_encode($payment_method_col_values),$wpdb->last_error));
 			}
 		}else{
 			$success = $wpdb->insert(
@@ -277,7 +277,7 @@ class EE_DMS_4_6_0_gateways extends EE_Data_Migration_Script_Stage{
 						'%s',//EXM_value
 					));
 			if( ! $success ){
-				$this->add_error(sprintf(__('Could not insert extra meta key with values %s. %s', "event_espresso"),json_encode($exm_args),$wpdb->last_error));
+				$this->add_error(sprintf(__('Could not insert extra meta key with values %s. %s', "event_espresso"),wp_json_encode($exm_args),$wpdb->last_error));
 			}
 		}
 	}

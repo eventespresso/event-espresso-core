@@ -1,9 +1,12 @@
 <?php
 use EventEspresso\core\libraries\rest_api\Calculated_Model_Fields;
+use EventEspresso\core\libraries\rest_api\controllers\model\Read as ModelRead;
+use EventEspresso\core\libraries\rest_api\changes\Changes_In_Base;
+use EventEspresso\core\libraries\rest_api\Model_Version_Info;
 
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
+defined('EVENT_ESPRESSO_VERSION') || exit;
+
+
 
 
 
@@ -13,7 +16,6 @@ if (! defined('EVENT_ESPRESSO_VERSION')) {
  * @package            Event Espresso
  * @subpackage         eea-rest-api
  * @author             Mike Nelson
- *                     ------------------------------------------------------------------------
  */
 class EED_Core_Rest_Api extends \EED_Module
 {
@@ -119,8 +121,12 @@ class EED_Core_Rest_Api extends \EED_Module
      */
     public static function maybe_notify_of_basic_auth_removal()
     {
-        if (! isset($_SERVER['PHP_AUTH_USER'])
+        if (
+        apply_filters(
+            'FHEE__EED_Core_Rest_Api__maybe_notify_of_basic_auth_removal__override',
+            ! isset($_SERVER['PHP_AUTH_USER'])
             && ! isset($_SERVER['HTTP_AUTHORIZATION'])
+        )
         ) {
             //sure it's a WP API request, but they aren't using basic auth, so don't bother them
             return;
@@ -135,7 +141,7 @@ class EED_Core_Rest_Api extends \EED_Module
             '<br/>'
         );
         EE_Error::add_persistent_admin_notice('using_basic_auth', $message);
-        if (! get_option('ee_notified_admin_on_basic_auth_removal', false)) {
+        if ( ! get_option('ee_notified_admin_on_basic_auth_removal', false)) {
             add_option('ee_notified_admin_on_basic_auth_removal', true);
             //piggy back off EE_Error::set_content_type, which sets the content type to HTML
             add_filter('wp_mail_content_type', array('EE_Error', 'set_content_type'));
@@ -163,7 +169,7 @@ class EED_Core_Rest_Api extends \EED_Module
             $full_classname = 'EventEspresso\core\libraries\rest_api\changes\\' . $classname_in_namespace;
             if (class_exists($full_classname)) {
                 $instance_of_class = new $full_classname;
-                if ($instance_of_class instanceof EventEspresso\core\libraries\rest_api\changes\Changes_In_Base) {
+                if ($instance_of_class instanceof Changes_In_Base) {
                     $instance_of_class->set_hooks();
                 }
             }
@@ -181,14 +187,33 @@ class EED_Core_Rest_Api extends \EED_Module
         foreach (EED_Core_Rest_Api::get_ee_route_data() as $namespace => $relative_urls) {
             foreach ($relative_urls as $endpoint => $routes) {
                 foreach ($routes as $route) {
-                    register_rest_route(
-                        $namespace,
-                        $endpoint,
+                    $route_args = array(
                         array(
                             'callback' => $route['callback'],
                             'methods'  => $route['methods'],
                             'args'     => isset($route['args']) ? $route['args'] : array(),
                         )
+                    );
+                    if (isset($route['schema_callback'])) {
+                        $model_name = isset($route['schema_callback'][0])
+                            ? $route['schema_callback'][0]
+                            : '';
+                        $version = isset( $route['schema_callback'][1])
+                            ? $route['schema_callback'][1]
+                            : '';
+                        if (! empty($model_name) && ! empty($version)) {
+                            $route_args['schema'] = function () use ($model_name, $version) {
+                                return ModelRead::handle_schema_request(
+                                    $model_name,
+                                    $version
+                                );
+                            };
+                        }
+                    }
+                    register_rest_route(
+                        $namespace,
+                        $endpoint,
+                        $route_args
                     );
                 }
             }
@@ -222,7 +247,9 @@ class EED_Core_Rest_Api extends \EED_Module
     public static function invalidate_cached_route_data()
     {
         //delete the saved EE REST API routes
-        delete_option(EED_Core_Rest_Api::saved_routes_option_names);
+        foreach (EED_Core_Rest_Api::versions_served() as $version => $hidden) {
+            delete_option(EED_Core_Rest_Api::saved_routes_option_names . $version);
+        }
     }
 
 
@@ -259,7 +286,7 @@ class EED_Core_Rest_Api extends \EED_Module
     protected static function _get_ee_route_data_for_version($version, $hidden_endpoints = false)
     {
         $ee_routes = get_option(self::saved_routes_option_names . $version, null);
-        if (! $ee_routes || (defined('EE_REST_API_DEBUG_MODE') && EE_REST_API_DEBUG_MODE)) {
+        if ( ! $ee_routes || (defined('EE_REST_API_DEBUG_MODE') && EE_REST_API_DEBUG_MODE)) {
             $ee_routes = self::_save_ee_route_data_for_version($version, $hidden_endpoints);
         }
         return $ee_routes;
@@ -286,7 +313,12 @@ class EED_Core_Rest_Api extends \EED_Module
                 $instance->_get_rpc_route_data_for_version($version, $hidden_endpoints)
             )
         );
-        update_option(self::saved_routes_option_names . $version, $routes, true);
+        $option_name = self::saved_routes_option_names . $version;
+        if (get_option($option_name)) {
+            update_option($option_name, $routes, true);
+        } else {
+            add_option($option_name, $routes, null, 'no');
+        }
         return $routes;
     }
 
@@ -345,7 +377,7 @@ class EED_Core_Rest_Api extends \EED_Module
      */
     protected function _get_model_route_data_for_version($version, $hidden_endpoint = false)
     {
-        $model_version_info = new \EventEspresso\core\libraries\rest_api\Model_Version_Info($version);
+        $model_version_info = new Model_Version_Info($version);
         $models_to_register = apply_filters(
             'FHEE__EED_Core_REST_API___register_model_routes',
             $model_version_info->models_for_requested_version()
@@ -356,6 +388,10 @@ class EED_Core_Rest_Api extends \EED_Module
         $model_routes = array();
         foreach ($models_to_register as $model_name => $model_classname) {
             $model = \EE_Registry::instance()->load_model($model_name);
+            //if this isn't a valid model then let's skip iterate to the next item in the loop.
+            if (! $model instanceof EEM_Base) {
+                continue;
+            }
             //yes we could just register one route for ALL models, but then they wouldn't show up in the index
             $plural_model_route = EEH_Inflector::pluralize_and_lower($model_name);
             $singular_model_route = $plural_model_route . '/(?P<id>\d+)';
@@ -371,6 +407,7 @@ class EED_Core_Rest_Api extends \EED_Module
                     '_links'          => array(
                         'self' => rest_url(EED_Core_Rest_Api::ee_api_namespace . $version . $singular_model_route),
                     ),
+                    'schema_callback' => array($model_name, $version)
                 ),
                 array(
                     'callback'        => array(
@@ -403,7 +440,7 @@ class EED_Core_Rest_Api extends \EED_Module
                 ),
             );
             foreach ($model->relation_settings() as $relation_name => $relation_obj) {
-                $related_model_name_endpoint_part = EventEspresso\core\libraries\rest_api\controllers\model\Read::get_related_entity_name(
+                $related_model_name_endpoint_part = ModelRead::get_related_entity_name(
                     $relation_name,
                     $relation_obj
                 );
@@ -679,6 +716,16 @@ class EED_Core_Rest_Api extends \EED_Module
                     'hidden_endpoint' => $hidden_endpoint,
                 ),
             ),
+            'site_info' => array(
+                array(
+                    'callback'        => array(
+                        'EventEspresso\core\libraries\rest_api\controllers\config\Read',
+                        'handle_request_site_info',
+                    ),
+                    'methods'         => WP_REST_Server::READABLE,
+                    'hidden_endpoint' => $hidden_endpoint,
+                ),
+            ),
         );
     }
 
@@ -733,10 +780,22 @@ class EED_Core_Rest_Api extends \EED_Module
      */
     public static function hide_old_endpoints($route_data)
     {
+        //allow API clients to override which endpoints get hidden, in case
+        //they want to discover particular endpoints
+        //also, we don't have access to the request so we have to just grab it from the superglobal
+        $force_show_ee_namespace = ltrim(
+            EEH_Array::is_set($_REQUEST, 'force_show_ee_namespace', ''),
+            '/'
+        );
         foreach (EED_Core_Rest_Api::get_ee_route_data() as $namespace => $relative_urls) {
             foreach ($relative_urls as $endpoint => $routes) {
                 foreach ($routes as $route) {
-                    if ($route['hidden_endpoint']) {
+                    //by default, hide "hidden_endpoint"s, unless the request indicates
+                    //to $force_show_ee_namespace, in which case only show that one
+                    //namespace's endpoints (and hide all others)
+                    if (($route['hidden_endpoint'] && $force_show_ee_namespace === '')
+                        || ($force_show_ee_namespace !== '' && $force_show_ee_namespace !== $namespace)
+                    ) {
                         $full_route = '/' . ltrim($namespace, '/') . '/' . ltrim($endpoint, '/');
                         unset($route_data[$full_route]);
                     }

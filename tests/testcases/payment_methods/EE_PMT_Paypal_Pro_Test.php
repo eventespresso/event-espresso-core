@@ -59,11 +59,11 @@ class EE_PMT_Paypal_Pro_Test extends EE_UnitTestCase{
 			'country' => 'US',
 			'zip' => '84604',
 			'phone' => '123-123-1234',
-			'credit_card_type' => 'MasterCard',
-			'credit_card' => '5424180818927383',
+			'credit_card_type' => 'Visa',
+			'credit_card' => '4127143344648082',
 			'cvv' => '115',
-			'exp_month' => '05',
-			'exp_year' => '2024'
+			'exp_month' => '01',
+			'exp_year' => '2018'
 		);
 	}
 
@@ -71,16 +71,14 @@ class EE_PMT_Paypal_Pro_Test extends EE_UnitTestCase{
 	 * setUp
 	 */
 	public function setUp(){
-		$return_value = parent::setUp();
+		parent::setUp();
 		//EEG_Paypal_Pro uses $_SERVER at some point, so we need to pretend this is a regular request
 		$this->go_to( 'http://localhost/' );
 		//just set a random address
 		$_SERVER[ 'REMOTE_ADDR' ] = '192.0.0.1';
 		add_filter('FHEE__EEG_Paypal_Pro__CurlRequest__CURLOPT_VERBOSE', '__return_false' );
 		//make sure caf payment methods are registered
-		new EE_Brewing_Regular();
 		EE_Payment_Method_Manager::reset();
-		return $return_value;
 	}
 
 	/**
@@ -96,7 +94,7 @@ class EE_PMT_Paypal_Pro_Test extends EE_UnitTestCase{
 
 		$p_processed = $ppg->do_direct_payment( $p, $this->_test_billing_info );
 		$this->assertEquals( $p, $p_processed );
-		$this->assertEquals( EEM_Payment::status_id_approved, $p_processed->status() );
+		$this->assertEquals( EEM_Payment::status_id_approved, $p_processed->status(), 'If this test fails, verify the paypal sandbox account HAS ENOUGH FUNDS and that we are still using the correct test credit card. Here is the payments details: ' . var_export( $p_processed->details(), true ) );
 		$this->assertEquals( $t->total(), $p_processed->amount() );
 	}
 
@@ -113,15 +111,21 @@ class EE_PMT_Paypal_Pro_Test extends EE_UnitTestCase{
 			'debug_mode' => TRUE
 		) );
 		$t = $this->new_typical_transaction( array('ticket_types' => 8 ) );
-		///set the payment amount to a specific error code (yes it's a partial payment that will be failing)
-		$amount_to_pay = 105.06;
+		///set the payment amount to a specific error code (yes it's a partial payment that will be failing). See
+		//https://developer.paypal.com/docs/classic/lifecycle/sb_error-conditions/ for details
+		$amount_to_pay = 107.55;
 		$p = $this->new_model_obj_with_dependencies( 'Payment', array('TXN_ID'=>$t->ID(), 'PMD_ID' => $ppm->ID(), 'PAY_amount' => $amount_to_pay ) );
 		$this->assertNotEquals( EEM_Payment::status_id_declined, $p->status() );
-
-		$p_processed = $ppg->do_direct_payment( $p, $this->_test_billing_info );
+		
+		$billing_info = $this->_test_billing_info;
+		$billing_info['credit_card'] = '6011779094237966';
+		$billing_info['credit_card_type'] = 'Discover';
+		$billing_info['exp_month'] = '07';
+		$billing_info['exp_year'] = '2019';
+		$p_processed = $ppg->do_direct_payment( $p, $billing_info );
 
 		$this->assertEquals( $p, $p_processed );
-		$this->assertEquals( EEM_Payment::status_id_declined, $p_processed->status() );
+		$this->assertEquals( EEM_Payment::status_id_declined, $p_processed->status(), 'transaction was for ' . $t->total() . ' and payment details were: ' . var_export( $p->details(), true ) );
 		$this->assertEquals( $amount_to_pay, $p_processed->amount() );
 	}
 

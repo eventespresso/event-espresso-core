@@ -7,8 +7,9 @@
 	function ee_show_billing_info_cleaned( EE_Form_Section_Proper $form_section, $found_cc_data = false ) {
 		foreach( $form_section->subsections() as $subsection ) {
 			if( $subsection instanceof EE_Form_Input_Base ) {
-				if( $subsection->get_sensitive_data_removal_strategy() instanceof EE_All_Sensitive_Data_Removal ||
-					$subsection->get_sensitive_data_removal_strategy() instanceof EE_CCV_Sensitive_Data_Removal ){
+				if( $subsection->get_sensitive_data_removal_strategy() instanceof EE_All_Sensitive_Data_Removal
+                    || $subsection->get_sensitive_data_removal_strategy() instanceof EE_CCV_Sensitive_Data_Removal
+                    || $subsection->get_display_strategy() instanceof EE_Hidden_Display_Strategy ){
 					continue;
 				}
 				if( $subsection->get_sensitive_data_removal_strategy() instanceof EE_Credit_Card_Sensitive_Data_Removal ) {

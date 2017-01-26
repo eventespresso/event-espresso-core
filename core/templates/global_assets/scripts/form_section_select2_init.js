@@ -16,6 +16,10 @@ jQuery(document).bind( 'EEFV:initialize_specific_form', function(event, passed_i
 		jQuery.each( passed_in_args.form_data.other_data.select2s , function( select2_input_id, select2_args ) {
 			if( typeof select2_args.ajax !== 'undefined' ) {
 				if( typeof select2_args.ajax.data_interface !== 'undefined' ) {
+
+					// console_log_object( 'select2_input_id', select2_input_id, 0 );
+					// console_log_object( 'select2_args', select2_args, 0 );
+
 					var function_name_or_declaration = select2_args.ajax.data_interface;
 					var function_named = window[ function_name_or_declaration ];
 					if( typeof function_named === 'function' ) {
@@ -33,6 +37,7 @@ jQuery(document).bind( 'EEFV:initialize_specific_form', function(event, passed_i
 					}
 				}
 			}
+			// console_log_object( 'select2_args', select2_args, 0 );
 			jQuery( '#' + select2_input_id ).select2( select2_args );
 		});
 	}
@@ -54,6 +59,7 @@ function EE_Select2_REST_API_Interface( data_interface_args ) {
 	 * @returns object
 	 */
 	this.prepData = function ( params ) {
+		// console_log( 'prepData', '', true );
 		params.page = params.page || 1;
 		var new_params =  this.default_query_params;
 		new_params.limit = [
@@ -65,8 +71,9 @@ function EE_Select2_REST_API_Interface( data_interface_args ) {
 		}
 		var search_term = params.term || '';
 		new_params.where[this.display_field]= [ 'like', '%' + search_term + '%' ];
-		new_params.include=this.display_field;
+		// new_params.include=this.display_field;
 		new_params._wpnonce = this.nonce;
+		// console_log_object( 'new_params', new_params, 0 );
 		return new_params;
 	};
 
@@ -89,12 +96,16 @@ function EE_Select2_REST_API_Interface( data_interface_args ) {
 	 * @returns object
 	 */
 	this.processResults = function ( data, params ){
+		// console_log( 'processResults', '', true );
+		// console_log_object( 'data', data, 0 );
+		// console_log_object( 'params', params, 0 );
 		var formatted_results = [];
 		for( var i=0; i<data.length; i++ ) {
+
 			formatted_results.push(
 				{
 					id: data[i][this.value_field],
-					text: data[i][this.display_field]
+					text: data[ i ][ this.value_field ] + ': ' + data[i][this.display_field]
 				}
 			);
 		}

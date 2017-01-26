@@ -1,10 +1,10 @@
-# Batch Jobs Libary Overview
+# Batch Jobs Library Overview
 
 Most HTTP requests can be served within 30 seconds or less, but sometimes there are jobs that will take longer. That's a problem when you don't have control over the server and php settings, and the request is set to timeout after 30 seconds. For example, when you're processing images or lots of data, or generating a large report file.
 
 If you can't make the job go faster, then the only alternative to fix this problem is to distribute the job across multiple HTTP requests. The typical approach is to:
 
-1. send the user to a page for performing a batched job, (it's curteous to provide a progress bar showing how the job is going)
+1. send the user to a page for performing a batched job, (it's courteous to provide a progress bar showing how the job is going)
 2. from this page, send AJAX requests to the server to do the job is small pieces (and update the progress bar accordingly)
 3. handle the AJAX requests server side and do the job in batches
 4. once the job is done, notify the user the job is done (and possibly redirect the user)
