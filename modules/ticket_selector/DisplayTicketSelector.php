@@ -563,7 +563,7 @@ class DisplayTicketSelector
                 // no submit or view details button, and no additional content
                 $html .= $this->ticketSelectorEndDiv();
             }
-            if ( ! is_archive()) {
+            if ( ! $this->iframe && ! is_archive()) {
                 $html .= \EEH_Template::powered_by_event_espresso('', '', array('utm_content' => 'ticket_selector'));
             }
         }
