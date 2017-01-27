@@ -3016,16 +3016,21 @@ class Messages_Admin_Page extends EE_Admin_Page
                                     'event_espresso'),
                             )
                         ),
-                        'keep_messages_forever' => new EE_Select_Input(
+                        'delete_threshold' => new EE_Select_Input(
                             array(
-                                true => esc_html__('Keep Forever', 'event_espresso'),
-                                false => esc_html__('Purge after 30 days', 'event_espresso')
+                                0 => esc_html__('Forever', 'event_espresso'),
+                                3 => esc_html__('3 Months', 'event_espresso'),
+                                6 => esc_html__('6 Months', 'event_espresso'),
+                                9 => esc_html__('9 Months', 'event_espresso'),
+                                12 => esc_html__('12 Months', 'event_espresso'),
+                                24 => esc_html__('24 Months', 'event_espresso'),
+                                36 => esc_html__('36 Months', 'event_espresso')
                             ),
                             array(
-                                'default' => EE_Registry::instance()->CFG->messages->keep_messages_forever,
+                                'default' => EE_Registry::instance()->CFG->messages->delete_threshold,
                                 'html_label_text' => esc_html__('Cleanup of old messages:', 'event_espresso'),
                                 'html_help_text' => esc_html__('You can control how long a record of processed messages is kept 
-                                                    via this option', 'event_espresso'),
+                                                    via this option.', 'event_espresso'),
                             )
                         ),
                         'update_settings'             => new EE_Submit_Input(
