@@ -22,7 +22,7 @@ class EE_Messages_Scheduler_Test extends EE_UnitTestCase
     {
         //create some messages
         $this->addSomeMessagesForTesting();
-        EE_Registry::instance()->CFG->messages->keep_messages_forever = true;
+        EE_Registry::instance()->CFG->messages->delete_threshold = 0;
         EE_Messages_Scheduler::cleanup();
         //there should still be the old message in there.
         $this->assertEquals(3, EEM_Message::instance()->count());
@@ -37,9 +37,9 @@ class EE_Messages_Scheduler_Test extends EE_UnitTestCase
     {
         //create some messages
         $this->addSomeMessagesForTesting();
-        EE_Registry::instance()->CFG->messages->keep_messages_forever = false;
+        EE_Registry::instance()->CFG->messages->delete_threshold = 3;
         EE_Messages_Scheduler::cleanup();
-        $this->assertEquals(2, EEM_Message::instance()->count());
+        $this->assertEquals(1, EEM_Message::instance()->count());
     }
 
 
@@ -48,15 +48,15 @@ class EE_Messages_Scheduler_Test extends EE_UnitTestCase
         $messages_to_create = array(
             array(
                 'STS_ID' => EEM_Message::status_idle,
-                'MSG_modified' => time() - (60*DAY_IN_SECONDS)
+                'MSG_modified' => time() - (4*MONTH_IN_SECONDS)
             ),
             array(
                 'STS_ID' => EEM_Message::status_debug_only,
-                'MSG_modified' => time() - (60*DAY_IN_SECONDS)
+                'MSG_modified' => time() - (4*MONTH_IN_SECONDS)
             ),
             array(
                 'STS_ID' => EEM_Message::status_sent,
-                'MSG_modified' => time() - (29*DAY_IN_SECONDS)
+                'MSG_modified' => time() - (4*MONTH_IN_SECONDS)
             )
         );
         foreach ($messages_to_create as $message_to_create) {

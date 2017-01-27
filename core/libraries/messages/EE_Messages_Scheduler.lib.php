@@ -192,7 +192,7 @@ class EE_Messages_Scheduler extends EE_Base
     {
         //first check if user has cleanup turned on or if we're in maintenance mode.  If in maintenance mode we'll wait
         //until the next scheduled event.
-        if (EE_Registry::instance()->CFG->messages->keep_messages_forever
+        if (! EE_Registry::instance()->CFG->messages->delete_threshold
             || ! EE_Maintenance_Mode::instance()->models_can_query()
         ) {
             return;
@@ -203,7 +203,7 @@ class EE_Messages_Scheduler extends EE_Base
          * of deleting messages.
          */
         if (apply_filters('FHEE__EE_Messages_Scheduler__cleanup__handle_cleanup_on_cron', true)) {
-            EEM_Message::instance()->delete_old_messages();
+            EEM_Message::instance()->delete_old_messages(EE_Registry::instance()->CFG->messages->delete_threshold);
         }
     }
 
