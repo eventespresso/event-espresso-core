@@ -589,7 +589,8 @@ class DisplayTicketSelector
         );
         $html .= \EEH_HTML::span(
             esc_html__('please select a datetime', 'event_espresso'),
-            '', 'ticket-selector-disabled-submit-btn-msg important-notice'
+            '', 'ticket-selector-disabled-submit-btn-msg important-notice',
+            'display:none;'
         );
         $html .= '<input id="ticket-selector-submit-' . $this->event->ID() . '-btn"';
         $html .= ' class="ticket-selector-submit-btn ';
