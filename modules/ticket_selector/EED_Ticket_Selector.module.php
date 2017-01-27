@@ -84,6 +84,16 @@ class EED_Ticket_Selector extends  EED_Module {
 			array( 'EED_Ticket_Selector', 'ticket_selector_iframe_embed_button' ),
 			10
 		);
+
+        /**
+         * Make sure assets for the ticket selector are loaded on the espresso registrations route so  admin side
+         * registrations work.
+         */
+		add_action(
+		    'FHEE__EE_Admin_Page___load_page_dependencies__after_load__espresso_registrations__new_registration',
+            array('EED_Ticket_Selector', 'set_definitions'),
+            10
+        );
     }
 
 
