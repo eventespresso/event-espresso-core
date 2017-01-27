@@ -3183,15 +3183,15 @@ class EE_Messages_Config extends EE_Config_Base
 {
 
     /**
-     * Whether all `EE_Message` records (that are not queued for sending or generating) will be kept in the database
-     * indefinitely (forever) or not.  If false, then a cron scheduled event will run that prunes old messages.
+     * This is an integer representing the deletion threshold in months for when old messages will get deleted.
+     * A value of 0 represents never deleting.  Default is 0.
      *
-     * @var boolean
+     * @var integer
      */
-    public $keep_messages_forever;
+    public $delete_threshold;
 
     public function __construct() {
-        $this->keep_messages_forever = false;
+        $this->delete_threshold = 0;
     }
 }
 
