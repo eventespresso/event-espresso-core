@@ -491,21 +491,20 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
 
     /**
      * Deletes old messages meeting certain criteria for removal from the database.
-     *
      * By default, this will delete messages that are:
-     * - have a MSG_modified timestamp older than 30 days before now.
+     * - are older than the value of the delete_threshold in months.
      * - have a STS_ID other than EEM_Message::status_idle
      *
-     * @return bool|false|int  Either the number of records affected or false if there was an error (you can call
+     * @param int $delete_threshold  This integer will be used to se the boundary for what messages are deleted in months.
+     * @return bool|false|int Either the number of records affected or false if there was an error (you can call
      *                         $wpdb->last_error to find out what the error was.
      */
-    public function delete_old_messages()
+    public function delete_old_messages($delete_threshold = 6)
     {
         $number_deleted = 0;
         /**
          * Allows code to change the boundary for what messages are kept.
-         * Defaults to 30 days in seconds which means for the delete query that any messages older than 30 days will be
-         * removed.
+         * Uses the value of the value of the `delete_threshold` variable by default.
          *
          * @param int $seconds seconds that will be subtracted from the timestamp for now.
          * @return int
@@ -513,7 +512,7 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
         $time_to_leave_alone = absint(
             apply_filters(
                 'FHEE__EEM_Message__delete_old_messages__time_to_leave_alone',
-                30 * DAY_IN_SECONDS
+                ((int) $delete_threshold) * MONTH_IN_SECONDS
             )
         );
 
