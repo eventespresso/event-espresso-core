@@ -491,11 +491,11 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
 
     /**
      * Deletes old messages meeting certain criteria for removal from the database.
-     * By default, this will delete messages that are:
+     * By default, this will delete messages that:
      * - are older than the value of the delete_threshold in months.
      * - have a STS_ID other than EEM_Message::status_idle
      *
-     * @param int $delete_threshold  This integer will be used to se the boundary for what messages are deleted in months.
+     * @param int $delete_threshold  This integer will be used to set the boundary for what messages are deleted in months.
      * @return bool|false|int Either the number of records affected or false if there was an error (you can call
      *                         $wpdb->last_error to find out what the error was.
      */
@@ -504,7 +504,7 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
         $number_deleted = 0;
         /**
          * Allows code to change the boundary for what messages are kept.
-         * Uses the value of the value of the `delete_threshold` variable by default.
+         * Uses the value of the `delete_threshold` variable by default.
          *
          * @param int $seconds seconds that will be subtracted from the timestamp for now.
          * @return int
