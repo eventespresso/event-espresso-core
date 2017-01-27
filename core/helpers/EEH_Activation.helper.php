@@ -151,7 +151,6 @@ class EEH_Activation
 
         EEH_Activation::validate_messages_system();
         EEH_Activation::insert_default_payment_methods();
-        EEH_Activation::set_default_for_messages_purge_option();
         //in case we've
         EEH_Activation::remove_cron_tasks();
         EEH_Activation::create_cron_tasks();
@@ -1781,43 +1780,6 @@ class EEH_Activation
     {
         self::$_default_creator_id                             = null;
         self::$_initialized_db_content_already_in_this_request = false;
-    }
-
-
-    /**
-     * By default the EE_Messages_Config::keep_messages_forever configuration is set to false.
-     * However, when this feature is first introduced we want to ensure that the default for existing sites that have
-     * messages that would get deleted in the threshold, we override that default to prevent deleting
-     * messages that users might want deleted.
-     */
-    public static function set_default_for_messages_purge_option()
-    {
-        /**
-         * Only run this if the option for this has not been set.
-         * Also, we have a filter switch so this default check can be overridden if necessary (eg EventSmart)
-         */
-        if (apply_filters('FHEE__EEH_Activation__set_default_for_messages_purge_option', true)
-            && ! get_option('ee_set_default_for_messages_purge_option')
-        ) {
-            //are there messages over the threshold?
-            //note since this is a default check only, we're not considering the filters that client code might add for
-            //stati and delete threshold.  If those filters are in use then this default check doesn't matter.
-            $number_of_messages_to_delete = EEM_Message::instance()->count(
-                array(
-                    0 => array(
-                        'STS_ID' => array('NOT_IN', array(EEM_Message::status_idle)),
-                        'MSG_modified' => array('<', time() - (30 * DAY_IN_SECONDS))
-                    )
-                )
-            );
-
-            if ($number_of_messages_to_delete > 0) {
-                EE_Registry::instance()->CFG->messages->keep_messages_forever = true;
-                EE_Registry::instance()->CFG->update_espresso_config();
-            }
-            //this is the kind of thing that would be good to be autoloaded I think.
-            add_option('ee_set_default_for_messages_purge_option', true);
-        }
     }
 }
 // End of file EEH_Activation.helper.php
