@@ -159,6 +159,7 @@ class EE_Registry
      */
     public $non_abstract_db_models = array();
 
+
     /**
      *    $i18n_js_strings - internationalization for JS strings
      *    usage:   EE_Registry::i18n_js_strings['string_key'] = __( 'string to translate.', 'event_espresso' );
@@ -168,6 +169,7 @@ class EE_Registry
      * @var    array
      */
     public static $i18n_js_strings = array();
+
 
     /**
      *    $main_file - path to espresso.php

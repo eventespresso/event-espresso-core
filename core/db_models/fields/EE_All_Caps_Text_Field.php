@@ -6,11 +6,6 @@
  */
 class EE_All_Caps_Text_Field extends EE_Text_Field_Base
 {
-    function get_wpdb_data_type()
-    {
-        return '%s';
-    }
-
     /**
      * makes it all upper case, and key-like
      *

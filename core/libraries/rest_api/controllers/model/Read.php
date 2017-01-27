@@ -5,6 +5,8 @@ use EventEspresso\core\libraries\rest_api\Capabilities;
 use EventEspresso\core\libraries\rest_api\Calculated_Model_Fields;
 use EventEspresso\core\libraries\rest_api\Rest_Exception;
 use EventEspresso\core\libraries\rest_api\Model_Data_Translator;
+use EventEspresso\core\entities\models\JsonModelSchema;
+use EE_Datetime_Field;
 
 if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
@@ -80,6 +82,82 @@ class Read extends Base
             );
         } catch (\Exception $e) {
             return $controller->send_response($e);
+        }
+    }
+
+
+    /**
+     * Prepares and returns schema for any OPTIONS request.
+     *
+     * @param string $model_name  Something like `Event` or `Registration`
+     * @param string $version     The API endpoint version being used.
+     * @return array
+     */
+    public static function handle_schema_request($model_name, $version)
+    {
+        $controller = new Read();
+        try {
+            $controller->set_requested_version($version);
+            if (! $controller->get_model_version_info()->is_model_name_in_this_version($model_name)) {
+                return array();
+            }
+            //get the model for this version
+            $model = $controller->get_model_version_info()->load_model($model_name);
+            $model_schema = new JsonModelSchema($model);
+            return $model_schema->getModelSchemaForRelations(
+                $controller->get_model_version_info()->relation_settings($model),
+                $controller->_add_extra_fields_to_schema(
+                    $model,
+                    $model_schema->getModelSchemaForFields(
+                        $controller->get_model_version_info()->fields_on_model_in_this_version($model),
+                        $model_schema->getInitialSchemaStructure()
+                    )
+                )
+            );
+        } catch (\Exception $e) {
+            return array();
+        }
+    }
+
+
+    /**
+     * Adds additional fields to the schema
+     * The REST API returns a GMT value field for each datetime field in the resource.  Thus the description about this
+     * needs to be added to the schema.
+     *
+     * @param \EEM_Base $model
+     * @param string    $schema
+     */
+    protected function _add_extra_fields_to_schema(\EEM_Base $model, $schema)
+    {
+        foreach ($this->get_model_version_info()->fields_on_model_in_this_version($model) as $field_name => $field) {
+            if ($field instanceof EE_Datetime_Field) {
+                $schema['properties'][$field_name . '_gmt'] = $field->getSchema();
+                //modify the description
+                $schema['properties'][$field_name . '_gmt']['description'] = sprintf(
+                    esc_html__('%s - the value for this field is in GMT.', 'event_espresso'),
+                    $field->get_nicename()
+                );
+            }
+        }
+        return $schema;
+    }
+
+
+
+
+    /**
+     * Used to figure out the route from the request when a `WP_REST_Request` object is not available
+     * @return string
+     */
+    protected function get_route_from_request() {
+        if (isset($GLOBALS['wp'])
+            && $GLOBALS['wp'] instanceof \WP
+            && isset($GLOBALS['wp']->query_vars['rest_route'] )
+        ) {
+            return $GLOBALS['wp']->query_vars['rest_route'];
+        } else {
+            return isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : '/';
         }
     }
 

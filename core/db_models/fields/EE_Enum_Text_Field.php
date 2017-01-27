@@ -1,5 +1,5 @@
 <?php
-require_once(EE_MODELS . 'fields/EE_Text_Field_Base.php');
+defined('EVENT_ESPRESSO_VERSION') || exit;
 
 /**
  * Class EE_Enum_Text_Field
@@ -17,8 +17,6 @@ class EE_Enum_Text_Field extends EE_Text_Field_Base
      */
     public $_allowed_enum_values;
 
-
-
     /**
      * @param string  $table_column
      * @param string  $nice_name
@@ -30,6 +28,7 @@ class EE_Enum_Text_Field extends EE_Text_Field_Base
     {
         $this->_allowed_enum_values = $allowed_enum_values;
         parent::__construct($table_column, $nice_name, $nullable, $default_value);
+        $this->setSchemaType('object');
     }
 
 
@@ -115,5 +114,29 @@ class EE_Enum_Text_Field extends EE_Text_Field_Base
     public function prepare_for_set_from_db($value_in_db)
     {
         return $value_in_db;
+    }
+
+
+    public function getSchemaProperties()
+    {
+        return array(
+            'raw' => array(
+                'description' =>  sprintf(
+                    __('%s - the value in the database.', 'event_espresso'),
+                    $this->get_nicename()
+                ),
+                'type' => 'string',
+                'enum' => array_keys($this->_allowed_enum_values)
+            ),
+            'pretty' => array(
+                'description' =>  sprintf(
+                    __('%s - the value for display.', 'event_espresso'),
+                    $this->get_nicename()
+                ),
+                'type' => 'string',
+                'enum' => array_values($this->_allowed_enum_values),
+                'read_only' => true
+            )
+        );
     }
 }

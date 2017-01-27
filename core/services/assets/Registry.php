@@ -48,6 +48,17 @@ class Registry
             espresso_version(),
             true
         );
+
+        //js.api
+        wp_register_script(
+            'eejs-api',
+            EE_LIBRARIES_URL . 'rest_api/assets/js/eejs-api.min.js',
+            array('underscore','eejs-core'),
+            espresso_version(),
+            true
+        );
+        $this->jsdata['paths'] = array('rest_route' => rest_url('ee/v4.8.36/'));
+
         wp_localize_script('eejs-core', 'eejs', array('data'=>$this->jsdata));
     }
 
@@ -60,15 +71,15 @@ class Registry
      * Data will be accessible as a javascript object when you list `eejs-core` as a dependency for your javascript.
      * If the data you add is something like this:
      *
-     * $this->addData( 'my_plugin_data', array( 'foo' => 'gar' ) );
+     *  $this->addData( 'my_plugin_data', array( 'foo' => 'gar' ) );
      *
      * It will be exposed in the page source as:
      *
-     * eejs.data.my_plugin_data.foo == gar
+     *  eejs.data.my_plugin_data.foo == gar
      *
-     * @param string $key          Key used to access your data
-     * @param string|array $value  Value to attach to key
-     * @throws \InvalidArgumentException
+     * @param string       $key   Key used to access your data
+     * @param string|array $value Value to attach to key
+     * @throws InvalidArgumentException
      */
     public function addData($key, $value)
     {
@@ -117,6 +128,50 @@ class Registry
         }
 
         $this->jsdata[$key][] = $value;
+    }
+
+
+    /**
+     * Used to set content used by javascript for a template.
+     * Note: Overrides of existing registered templates are not allowed.
+     *
+     * @param string $template_reference
+     * @param string $template_content
+     * @throws InvalidArgumentException
+     */
+    public function addTemplate($template_reference, $template_content)
+    {
+        if (! isset($this->jsdata['templates'])) {
+            $this->jsdata['templates'] = array();
+        }
+
+        //no overrides allowed.
+        if (isset($this->jsdata['templates'][$template_reference])) {
+            throw new invalidArgumentException(
+                sprintf(
+                    __(
+                        'The %1$s key already exists for the templates array in the js data array.  No overrides are allowed.',
+                        'event_espresso'
+                    ),
+                    $template_reference
+                )
+            );
+        } else {
+            $this->jsdata['templates'][$template_reference] = $template_content;
+        }
+    }
+
+
+    /**
+     * Retrieve the template content already registered for the given reference.
+     * @param string $template_reference
+     * @return string
+     */
+    public function getTemplate($template_reference)
+    {
+        return isset($this->jsdata['templates'], $this->jsdata['templates'][$template_reference])
+            ? $this->jsdata['templates'][$template_reference]
+            : '';
     }
 
 
