@@ -152,22 +152,33 @@ class EED_Ical  extends EED_Module {
 
 				// Create array of ics details, escape strings, convert timestamps to ics format, etc
 				$ics_data = array(
-					'ORGANIZER_NAME' => EED_Ical::_escape_ICal_data( EE_Registry::instance()->CFG->organization->name ),
-					'UID' => EED_Ical::_escape_ICal_data( md5( $event->name() . $event->ID() . $datetime->ID() )),
-					'ORGANIZER' => EED_Ical::_escape_ICal_data( EE_Registry::instance()->CFG->organization->email ),
+					'ORGANIZER_NAME' => EE_Registry::instance()->CFG->organization->name,
+					'UID' => md5( $event->name() . $event->ID() . $datetime->ID() ),
+					'ORGANIZER' => EE_Registry::instance()->CFG->organization->email,
 					'TIMESTAMP' => date( EED_Ical::iCal_datetime_format ),
-					'LOCATION' => EED_Ical::_escape_ICal_data( $location ),
-					'SUMMARY' => EED_Ical::_escape_ICal_data( $event->name() ),
-					'DESCRIPTION' => EED_Ical::_escape_ICal_description( wp_strip_all_tags( $event->description() )),
-					'STATUS' => EED_Ical::_escape_ICal_data( $status ),
-					'CATEGORIES' => EED_Ical::_escape_ICal_data( $category ),
-					'URL;VALUE=URI' => EED_Ical::_escape_ICal_data( get_permalink( $event->ID() )),
-					'DTSTART' => EED_Ical::_escape_ICal_data( date( EED_Ical::iCal_datetime_format, $datetime->start() )),
-					'DTEND' => EED_Ical::_escape_ICal_data( date( EED_Ical::iCal_datetime_format, $datetime->end() )),
+					'LOCATION' => $location,
+					'SUMMARY' => $event->name(),
+					'DESCRIPTION' => wp_strip_all_tags( $event->description() ),
+					'STATUS' => $status,
+					'CATEGORIES' => $category,
+					'URL;VALUE=URI' => get_permalink( $event->ID() ),
+					'DTSTART' => date( EED_Ical::iCal_datetime_format, $datetime->start() ),
+					'DTEND' => date( EED_Ical::iCal_datetime_format, $datetime->end() ),
 				);
 
 				//Filter the values used within the ics output.
+				//NOTE - all values within ics_data will be escaped automatically.
 				$ics_data = apply_filters( 'FHEE__EED_Ical__download_ics_file_ics_data', $ics_data, $datetime );
+
+				//Escape all ics data
+				foreach( $ics_data as $key => $value ) {
+					//Description is escaped differently from all all values
+					if( $key == 'DESCRIPTION' ) {
+						$ics_data[$key] = EED_Ical::_escape_ICal_description( wp_strip_all_tags( $value ) );
+					} else {
+						$ics_data[$key] = EED_Ical::_escape_ICal_data( $value );
+					}
+				}
 
 				//Pull the organizer name from ics_data and remove it from the array.
 				$organizer_name = isset( $ics_data['ORGANIZER_NAME'] ) ? $ics_data['ORGANIZER_NAME'] : '';
@@ -192,8 +203,8 @@ class EED_Ical  extends EED_Module {
 				echo "BEGIN:VEVENT" . PHP_EOL;
 				
 				//Output all remaining values from ics_data.
-				foreach( $ics_data as $key => $value) {
-					echo strtoupper( $key ) . ':' . $value . PHP_EOL;
+				foreach( $ics_data as $key => $value ) {
+					echo $key . ':' . $value . PHP_EOL;
 				}
 
 				echo "END:VEVENT" . PHP_EOL;
