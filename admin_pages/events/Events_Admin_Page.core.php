@@ -1740,7 +1740,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         $order = isset($this->_req_data['order']) ? $this->_req_data['order'] : "DESC";
         if (isset($this->_req_data['month_range'])) {
             $pieces = explode(' ', $this->_req_data['month_range'], 3);
-            //simulate the FIRST day of the month, that fixes issues for month's like February
+            //simulate the FIRST day of the month, that fixes issues for months like February
             //where PHP doesn't know what to assume for date.
             //@see https://events.codebasehq.com/projects/event-espresso/tickets/10437
             $month_r = ! empty($pieces[0]) ? date('m', strtotime($pieces[0] . ' 1')) : '';
