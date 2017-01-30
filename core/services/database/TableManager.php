@@ -249,7 +249,7 @@ class TableManager extends \EE_Base
         }
         foreach($index_entries as $index_entry){
             if( $column_name === $index_entry->Column_name
-                && (string)$desired_index_size !== $index_entries->Sub_part){
+                && (string)$desired_index_size !== $index_entry->Sub_part){
                 return $this->dropIndex($table_name,$index_name);
             }
         }
