@@ -587,10 +587,6 @@ class DisplayTicketSelector
         $html = \EEH_HTML::div(
             '', 'ticket-selector-submit-' . $this->event->ID() . '-btn-wrap', 'ticket-selector-submit-btn-wrap'
         );
-        $html .= \EEH_HTML::span(
-            esc_html__('please select a datetime', 'event_espresso'),
-            '', 'ticket-selector-disabled-submit-btn-msg important-notice'
-        );
         $html .= '<input id="ticket-selector-submit-' . $this->event->ID() . '-btn"';
         $html .= ' class="ticket-selector-submit-btn ';
         $html .= empty($external_url) ? 'ticket-selector-submit-ajax"' : '"';
