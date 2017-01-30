@@ -1,7 +1,5 @@
 <?php
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
+defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
 
@@ -12,6 +10,8 @@ if (! defined('EVENT_ESPRESSO_VERSION')) {
  * @package       Event Espresso
  * @author        Michael Nelson
  * @since         $VID:$
+ * @group model_fields
+ * @group models
  */
 class EE_Enum_Text_Field_Test extends EE_UnitTestCase
 {
@@ -98,5 +98,17 @@ class EE_Enum_Text_Field_Test extends EE_UnitTestCase
             'invalid-data-on-model-object',
             $this->_an_enum_field->prepare_for_use_in_db('invalid-data-on-model-object')
         );
+    }
+
+
+    public function test_getSchemaType()
+    {
+        $this->assertEquals(array('object','null'), $this->_an_enum_field->getSchemaType());
+    }
+
+
+    public function test_get_wpdb_data_type()
+    {
+        $this->assertEquals('%s', $this->_an_enum_field->get_wpdb_data_type());
     }
 }

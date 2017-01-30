@@ -14,9 +14,26 @@ The documents in this folder are all related to the REST API in EE core.
 - [EE4 REST API: GET Response Headers](ee4-rest-api-GET-response-headers.md)
 - [EE4 REST API: GET Calculated Fields](ee4-rest-api-GET-calculated-fields.md)
 
+### Schema
+
+- [EE4 REST API: Schema](eer-rest-api-schema.md)
+
 ### RPC Style Endpoints
 
 There are a few endpoints in the EE4 REST API that really don't follow the REST way of doing things, and are more like RPC (Remote Procedure Calls). These endpoints aren't just for simple reading, inserting, updating, or deleting. They have a bunch of other logic tied in there, which can sometimes be handy, so that your application doesn't need to implement all this logic itself (of course if you don't want all this extra logic, you're welcome to use the more traditional RESTy read and writing endpoints instead).
 
 - [EE4 REST API: RPC Style Endpoints Table of Contents](ee4-rest-api-rpc-style-endpoints.md)
 - [/checkin](ee4-rest-api-rpc-checkin.md)
+
+### Libraries
+
+There are some handy libraries that have been built that integrate with the REST API.
+
+| Library | Description |
+|---------|-------------|
+[eejs-api (VUE.js library)](rest-api-vue-library.md) | When implemented you can use this to automatically build EE model and collection components that can be used in your views.
+
+#### Library Examples/Tutorials
+| Example/Tutorial | Library | Description |
+|----------------- | ------- | ----------- |
+[Simple List of Events with Datetimes](rest-api-vue-library-basic-implementation-example.md) | [eejs-api](rest-api-vue-library.md) | This gives a very basic example of how one can use the eejs-api library to retrieve and display a list of events with their datetimes. 

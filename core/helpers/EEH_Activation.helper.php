@@ -220,7 +220,19 @@ class EEH_Activation
 
         foreach (EEH_Activation::get_cron_tasks('current') as $hook_name => $frequency) {
             if (! wp_next_scheduled($hook_name)) {
-                wp_schedule_event(time(), $frequency, $hook_name);
+                /**
+                 * This allows client code to define the initial start timestamp for this schedule.
+                 */
+                if (is_array($frequency)
+                    && count($frequency) === 2
+                    && isset($frequency[0], $frequency[1])
+                ) {
+                    $start_timestamp = $frequency[0];
+                    $frequency = $frequency[1];
+                } else {
+                    $start_timestamp = time();
+                }
+                wp_schedule_event($start_timestamp, $frequency, $hook_name);
             }
         }
 
@@ -616,7 +628,12 @@ class EEH_Activation
             unset($EE_Core_Config->post_shortcodes['posts'][$critical_page['code']]);
         }
         // update post_shortcode CFG
-        if ( ! EE_Config::instance()->update_espresso_config(false, false)) {
+        EE_Config::instance()->update_espresso_config(false, false);
+        // verify that saved ID in the config matches the ID for the post the shortcode is on
+        if (
+            EE_Registry::instance()->CFG->core->post_shortcodes[$critical_page['post']->post_name][$critical_page['code']]
+            !== $critical_page['post']->ID
+        ) {
             $msg = sprintf(
                 __(
                     'The Event Espresso critical page shortcode for the %s page could not be configured properly.',

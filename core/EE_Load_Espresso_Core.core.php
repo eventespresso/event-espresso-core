@@ -51,6 +51,8 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_
 	 * @access 	public
 	 */
 	public function __construct() {
+		// deprecated functions
+		espresso_load_required( 'EventEspresso\core\Factory', EE_CORE . 'Factory.php' );
 	}
 
 
