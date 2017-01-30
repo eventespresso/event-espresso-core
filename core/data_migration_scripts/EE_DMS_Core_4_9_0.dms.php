@@ -93,6 +93,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
 					KEY QST_ID (QST_ID)";
         $this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB');
         $table_name = 'esp_attendee_meta';
+        $this->_get_table_manager()->dropIndexIfSizeNot($table_name, 'ATT_email', 'ATT_email', 191);
         $sql = "ATTM_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 				ATT_ID bigint(20) unsigned NOT NULL,
 				ATT_fname varchar(45) NOT NULL,
@@ -110,7 +111,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
 				KEY ATT_email (ATT_email(191)),
 				KEY ATT_lname (ATT_lname),
 				KEY ATT_fname (ATT_fname)";
-        $this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB ');
+        $this->_table_is_changed_in_this_version($table_name, $sql, 'ENGINE=InnoDB ');
         $table_name = 'esp_checkin';
         $sql = "CHK_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 				REG_ID int(10) unsigned NOT NULL,
@@ -277,6 +278,9 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
 				KEY LOG_type (LOG_type)";
         $this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB');
         $table_name = 'esp_message';
+        $this->_get_table_manager()->dropIndexIfSizeNot($table_name, 'MSG_to', 'MSG_to', 191);
+        $this->_get_table_manager()->dropIndexIfSizeNot($table_name, 'MSG_from', 'MSG_from', 191);
+        $this->_get_table_manager()->dropIndexIfSizeNot($table_name, 'MSG_subject', 'MSG_subject', 191);
         $sql = "MSG_ID bigint(20) unsigned NOT NULL AUTO_INCREMENT,
 				GRP_ID int(10) unsigned NULL,
 				MSG_token varchar(255) NULL,
