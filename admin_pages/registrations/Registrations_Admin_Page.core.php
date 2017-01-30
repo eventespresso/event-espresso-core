@@ -1110,7 +1110,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         } elseif ($month_range) {
             $pieces          = explode(' ', $month_range, 3);
             $month_requested = ! empty($pieces[0])
-                ? date('m', strtotime($month_range))
+                ? date('m', strtotime($pieces[0] . ' 1'))
                 : '';
             $year_requested  = ! empty($pieces[1])
                 ? $pieces[1]
