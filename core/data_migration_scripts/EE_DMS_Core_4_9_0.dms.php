@@ -602,6 +602,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
         $script_4_8_defaults->verify_new_countries();
         $script_4_8_defaults->verify_new_currencies();
         $this->verify_db_collations();
+        $this->verify_db_collations_again();
         return true;
     }
 
@@ -669,18 +670,51 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
             'esp_promotion_object',
         );
         foreach ($addon_tables as $table_name) {
-            $complete_table_name = $this->_table_analysis->ensureTableNameHasPrefix($table_name);
-            if($this->_table_analysis->tableExists( $complete_table_name )){
-                $tables_to_check[] = $complete_table_name;
+            if($this->_table_analysis->tableExists( $table_name )){
+                $tables_to_check[] = $table_name;
             }
         }
-        $tables_to_check = array_unique($tables_to_check);
+        $this->_verify_db_collations_for_tables(array_unique($tables_to_check));
+        //ok and now let's remember this was done (without needing to check the db schemas all over again)
+        add_option('ee_verified_db_collations', true, null, 'no');
+        //seeing how this ran with the fix from 10435, no need to check again
+        add_option('ee_verified_db_collations_again',true,null,'no');
+    }
+
+
+
+    /**
+     * Verifies DB collations because a bug was discovered on https://events.codebasehq.com/projects/event-espresso/tickets/10435
+     * which meant some DB collations might not have been updated
+     * @return void
+     */
+    public function verify_db_collations_again(){
+        if (get_option('ee_verified_db_collations_again', false)) {
+            return;
+        }
+        $tables_to_check = array(
+            'esp_attendee_meta',
+            'esp_message'
+        );
+        $this->_verify_db_collations_for_tables(array_unique($tables_to_check));
+        add_option('ee_verified_db_collations_again',true,null,'no');
+    }
+
+
+
+    /**
+     * Runs maybve_convert_table_to_utf8mb4 on the specified tables
+     * @param $tables_to_check
+     * @param $wp_option_indcating_if_checked
+     * @return boolean true if logic ran, false if it didn't
+     */
+    protected function _verify_db_collations_for_tables($tables_to_check)
+    {
         foreach ($tables_to_check as $table_name) {
+            $table_name = $this->_table_analysis->ensureTableNameHasPrefix($table_name);
             if ( ! apply_filters('FHEE__EE_DMS_Core_4_9_0__verify_db_collations__check_overridden', false, $table_name ) ) {
                 maybe_convert_table_to_utf8mb4($table_name);
             }
         }
-        //ok and now let's remember this was done (without needing to check the db schemas all over again)
-        add_option('ee_verified_db_collations', true, null, 'no');
     }
 }
