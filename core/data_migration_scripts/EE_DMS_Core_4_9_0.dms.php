@@ -93,7 +93,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
 					KEY QST_ID (QST_ID)";
         $this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB');
         $table_name = 'esp_attendee_meta';
-        $this->_get_table_manager()->dropIndexIfSizeNot($table_name, 'ATT_email', 'ATT_email', 191);
+        $this->_get_table_manager()->dropIndexIfSizeNot($table_name, 'ATT_email');
         $sql = "ATTM_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 				ATT_ID bigint(20) unsigned NOT NULL,
 				ATT_fname varchar(45) NOT NULL,
@@ -278,9 +278,9 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
 				KEY LOG_type (LOG_type)";
         $this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB');
         $table_name = 'esp_message';
-        $this->_get_table_manager()->dropIndexIfSizeNot($table_name, 'MSG_to', 'MSG_to', 191);
-        $this->_get_table_manager()->dropIndexIfSizeNot($table_name, 'MSG_from', 'MSG_from', 191);
-        $this->_get_table_manager()->dropIndexIfSizeNot($table_name, 'MSG_subject', 'MSG_subject', 191);
+        $this->_get_table_manager()->dropIndexIfSizeNot($table_name, 'MSG_to');
+        $this->_get_table_manager()->dropIndexIfSizeNot($table_name, 'MSG_from');
+        $this->_get_table_manager()->dropIndexIfSizeNot($table_name, 'MSG_subject');
         $sql = "MSG_ID bigint(20) unsigned NOT NULL AUTO_INCREMENT,
 				GRP_ID int(10) unsigned NULL,
 				MSG_token varchar(255) NULL,
@@ -703,9 +703,8 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
 
 
     /**
-     * Runs maybve_convert_table_to_utf8mb4 on the specified tables
+     * Runs maybe_convert_table_to_utf8mb4 on the specified tables
      * @param $tables_to_check
-     * @param $wp_option_indcating_if_checked
      * @return boolean true if logic ran, false if it didn't
      */
     protected function _verify_db_collations_for_tables($tables_to_check)
