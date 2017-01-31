@@ -628,7 +628,12 @@ class EEH_Activation
             unset($EE_Core_Config->post_shortcodes['posts'][$critical_page['code']]);
         }
         // update post_shortcode CFG
-        if ( ! EE_Config::instance()->update_espresso_config(false, false)) {
+        EE_Config::instance()->update_espresso_config(false, false);
+        // verify that saved ID in the config matches the ID for the post the shortcode is on
+        if (
+            EE_Registry::instance()->CFG->core->post_shortcodes[$critical_page['post']->post_name][$critical_page['code']]
+            !== $critical_page['post']->ID
+        ) {
             $msg = sprintf(
                 __(
                     'The Event Espresso critical page shortcode for the %s page could not be configured properly.',
