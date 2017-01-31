@@ -173,7 +173,7 @@ class EED_Ical  extends EED_Module {
 				//Escape all ics data
 				foreach( $ics_data as $key => $value ) {
 					//Description is escaped differently from all all values
-					if( $key == 'DESCRIPTION' ) {
+					if( $key === 'DESCRIPTION' ) {
 						$ics_data[$key] = EED_Ical::_escape_ICal_description( wp_strip_all_tags( $value ) );
 					} else {
 						$ics_data[$key] = EED_Ical::_escape_ICal_data( $value );
