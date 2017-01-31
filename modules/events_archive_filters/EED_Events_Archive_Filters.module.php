@@ -381,9 +381,9 @@ class EED_Events_Archive_Filters  extends EED_Module {
 		$SQL= '';
 		if ( ! empty( $month )) {
 			// event start date is LESS than the end of the month ( so nothing that doesn't start until next month )
-			$SQL = ' AND ' . EEM_Datetime::instance()->table() . '.DTT_EVT_start <= "' . date('Y-m-t 23:59:59', strtotime( $month )) . '"';
+			$SQL = ' AND ' . EEM_Datetime::instance()->table() . '.DTT_EVT_start <= "' . date('Y-m-t 23:59:59', strtotime( $month . ' 1' )) . '"';
 			// event end date is GREATER than the start of the month ( so nothing that ended before this month )
-			$SQL .= ' AND ' . EEM_Datetime::instance()->table() . '.DTT_EVT_end >= "' . date('Y-m-d 0:0:00', strtotime( $month )) . '" ';
+			$SQL .= ' AND ' . EEM_Datetime::instance()->table() . '.DTT_EVT_end >= "' . date('Y-m-d 0:0:00', strtotime( $month . ' 1' )) . '" ';
 		}
 		return $SQL;
 	}
