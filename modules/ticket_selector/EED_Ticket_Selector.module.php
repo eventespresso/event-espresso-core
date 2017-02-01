@@ -64,7 +64,8 @@ class EED_Ticket_Selector extends  EED_Module {
         EE_Config::register_route('cancel_ticket_selections', 'EED_Ticket_Selector', 'cancel_ticket_selections');
         add_action( 'wp_loaded', array( 'EED_Ticket_Selector', 'set_definitions' ), 2 );
 		add_action( 'AHEE_event_details_header_bottom', array( 'EED_Ticket_Selector', 'display_ticket_selector' ), 10, 1 );
-		add_action( 'wp_enqueue_scripts', array( 'EED_Ticket_Selector', 'load_tckt_slctr_assets' ), 10 );
+        add_action( 'wp_enqueue_scripts', array( 'EED_Ticket_Selector', 'translate_js_strings' ), 0 );
+        add_action( 'wp_enqueue_scripts', array( 'EED_Ticket_Selector', 'load_tckt_slctr_assets' ), 10 );
         EED_Ticket_Selector::loadIframeAssets();
     }
 
@@ -223,6 +224,17 @@ class EED_Ticket_Selector extends  EED_Module {
 
 
 	/**
+	* @return void
+	*/
+	public static function translate_js_strings() {
+        EE_Registry::$i18n_js_strings['please_select_date_filter_notice'] = esc_html__(
+            'please select a datetime', 'event_espresso'
+        );
+    }
+
+
+
+	/**
 	* 	load js
 	*
 	* 	@access 		public
@@ -230,7 +242,7 @@ class EED_Ticket_Selector extends  EED_Module {
 	*/
 	public static function load_tckt_slctr_assets() {
 		if ( apply_filters( 'FHEE__EED_Ticket_Selector__load_tckt_slctr_assets', FALSE ) ) {
-			// add some style
+            // add some style
 			wp_register_style('ticket_selector', TICKET_SELECTOR_ASSETS_URL . 'ticket_selector.css');
 			wp_enqueue_style('ticket_selector');
 			// make it dance
