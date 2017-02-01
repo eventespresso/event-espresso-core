@@ -375,7 +375,9 @@ class EE_Register_Message_Type implements EEI_Plugin_API
      * Callback for `FHEE__EE_Messages_Template_Pack_Default__get_supports` filter to register this message type as
      * supporting the default template pack
      *
-     * @param $supports_array
+     * @param array $supports
+     *
+     * @return array
      */
     public static function register_default_template_pack_supports($supports)
     {
@@ -394,12 +396,14 @@ class EE_Register_Message_Type implements EEI_Plugin_API
     /**
      * Callback for FHEE__EE_Template_Pack___get_specific_template__filtered_base_path
      *
-     * @param $base_path The original base path for message templates
+     * @param string $base_path The original base path for message templates
      * @param EE_messenger $messenger
      * @param EE_message_type $message_type
      * @param string $field  The field requesting a template
      * @param string $context  The context requesting a template
      * @param EE_Messages_Template_Pack $template_pack
+     *
+     * @return string
      */
     public static function register_base_template_path(
         $base_path,
@@ -437,6 +441,8 @@ class EE_Register_Message_Type implements EEI_Plugin_API
      * @param string $file_extension What file extension is expected for the variation file.
      * @param bool $url whether a url or path is being requested.
      * @param EE_Messages_Template_Pack $template_pack
+     *
+     * @return string
      */
     public static function register_variation_base_path_or_url(
         $base_path_or_url,
