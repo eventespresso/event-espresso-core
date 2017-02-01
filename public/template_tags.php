@@ -1150,7 +1150,7 @@ if ( ! function_exists('espresso_do_shortcode')) {
      */
     function espresso_do_shortcode($content = '')
     {
-        if(!did_action('AHEE__EE_System__core_loaded_and_ready')){
+        if(!did_action('get_header')){
             \EE_Error::doing_it_wrong(
                 __METHOD__,
                 __(
@@ -1160,9 +1160,7 @@ if ( ! function_exists('espresso_do_shortcode')) {
                 '4.9.26'
             );
         }
-        /** @var EE_Front_Controller $FC */
-        $FC = EE_Registry::instance()->load_class('Front_Controller');
-        return $FC->LegacyShortcodesManager()->doShortcode($content);
+        return \EE_Config::getLegacyShortcodesManager()->doShortcode($content);
     }
 }
 
