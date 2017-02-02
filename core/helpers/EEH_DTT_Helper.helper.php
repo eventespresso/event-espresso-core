@@ -926,4 +926,41 @@ class EEH_DTT_Helper
     }
 
 
+
+    /**
+     * So PHP does this awesome thing where if you are trying to get a timestamp
+     * for a month using a string like "February" or "February 2017",
+     * and you don't specify a day as part of your string,
+     * then PHP will use whatever the current day of the month is.
+     * IF the current day of the month happens to be the 30th or 31st,
+     * then PHP gets really confused by a date like February 30,
+     * so instead of saying
+     *      "Hey February only has 28 days (this year)...
+     *      ...you must have meant the last day of the month!"
+     * PHP does the next most logical thing, and bumps the date up to March 2nd,
+     * because someone requesting February 30th obviously meant March 1st!
+     * The way around this is to always set the day to the first,
+     * so that the month will stay on the month you wanted.
+     * this method will add that "1" into your date regardless of the format.
+     *
+     * @param string $month
+     * @return string
+     */
+    public static function first_of_month_timestamp($month = '')
+    {
+        $month = (string)$month;
+        $year = '';
+        // check if the incoming string has a year in it or not
+       if (preg_match('/\b\d{4}\b/', $month, $matches)) {
+           $year = $matches[0];
+           // ten remove that from the month string as well as any spaces
+           $month = trim(str_replace($year, '', $month));
+           // add a space before the year
+           $year = " {$year}";
+        }
+        // return timestamp for something like "February 1 2017"
+        return strtotime("{$month} 1{$year}");
+    }
+
+
 }// end class EEH_DTT_Helper
