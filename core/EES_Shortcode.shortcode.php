@@ -143,6 +143,18 @@ abstract class EES_Shortcode extends EE_Base {
 
 
     /**
+     * Performs basic sanitization on shortcode attributes
+     * Since incoming attributes from the shortcode usage in the WP editor will all be strings,
+     * most attributes will by default be sanitized using the sanitize_text_field() function.
+     * This can be overridden by supplying an array for the $custom_sanitization param,
+     * where keys match keys in your attributes array,
+     * and values represent the sanitization function you wish to be applied to that attribute.
+     * So for example, if you had an integer attribute named "event_id"
+     * that you wanted to be sanitized using absint(),
+     * then you would pass the following for your $custom_sanitization array:
+     *      array('event_id' => 'absint')
+     * all other attributes would be sanitized using the defaults in the switch statement below
+     *
      * @param array $attributes
      * @param array $custom_sanitization
      * @return array
