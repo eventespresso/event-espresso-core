@@ -133,11 +133,11 @@ class EEH_Event_Query {
 	 */
 	public static function set_query_params( $month = '', $category = '', $show_expired = FALSE, $orderby = 'start_date', $sort = 'ASC' ) {
 		self::$_query_params = array();
-		EEH_Event_Query::$_event_query_month = EEH_Event_Query::_display_month( $month );
-		EEH_Event_Query::$_event_query_category = EEH_Event_Query::_event_category_slug( $category );
-		EEH_Event_Query::$_event_query_show_expired = EEH_Event_Query::_show_expired( $show_expired );
-		EEH_Event_Query::$_event_query_orderby = EEH_Event_Query::_orderby( $orderby );
-		EEH_Event_Query::$_event_query_sort = EEH_Event_Query::_sort( $sort );
+		EEH_Event_Query::$_event_query_month = esc_sql(EEH_Event_Query::_display_month( $month ));
+		EEH_Event_Query::$_event_query_category = esc_sql(EEH_Event_Query::_event_category_slug( $category ));
+		EEH_Event_Query::$_event_query_show_expired = esc_sql(EEH_Event_Query::_show_expired( $show_expired ));
+		EEH_Event_Query::$_event_query_orderby = esc_sql(EEH_Event_Query::_orderby( $orderby ));
+		EEH_Event_Query::$_event_query_sort = esc_sql(EEH_Event_Query::_sort( $sort ));
 	}
 
 
@@ -163,7 +163,8 @@ class EEH_Event_Query {
 	 * @return    string
 	 */
 	private static function _event_category_slug( $category = '' ) {
-		return EE_Registry::instance()->REQ->is_set( 'event_query_category' ) ? sanitize_text_field( EE_Registry::instance()->REQ->get( 'event_query_category' ) ) : $category;
+		$category = EE_Registry::instance()->REQ->is_set( 'event_query_category' ) ? EE_Registry::instance()->REQ->get( 'event_query_category' ) : $category;
+		return sanitize_text_field($category);
 	}
 
 
