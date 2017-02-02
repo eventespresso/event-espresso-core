@@ -169,6 +169,7 @@ abstract class EES_Shortcode extends EE_Base {
                     $value = null;
                     break;
             }
+            $attributes[$key] = $value;
         }
         return $attributes;
 	}
