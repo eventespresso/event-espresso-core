@@ -153,7 +153,10 @@ abstract class EES_Shortcode extends EE_Base {
             // is a custom sanitization callback specified ?
             if ( isset($custom_sanitization[$key])) {
                 $callback = $custom_sanitization[$key];
-                if (function_exists($callback)){
+                if ($callback === 'skip_sanitization') {
+                    $attributes[$key] = $value;
+                    continue;
+                } else if (function_exists($callback)){
                     $attributes[$key] = $callback($value);
                     continue;
                 }
