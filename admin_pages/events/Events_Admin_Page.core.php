@@ -1743,7 +1743,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             //simulate the FIRST day of the month, that fixes issues for months like February
             //where PHP doesn't know what to assume for date.
             //@see https://events.codebasehq.com/projects/event-espresso/tickets/10437
-            $month_r = ! empty($pieces[0]) ? date('m', strtotime($pieces[0] . ' 1')) : '';
+            $month_r = ! empty($pieces[0]) ? date('m', \EEH_DTT_Helper::first_of_month_timestamp($pieces[0])) : '';
             $year_r = ! empty($pieces[1]) ? $pieces[1] : '';
         }
         $where = array();
