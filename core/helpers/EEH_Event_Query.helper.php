@@ -133,11 +133,11 @@ class EEH_Event_Query {
 	 */
 	public static function set_query_params( $month = '', $category = '', $show_expired = FALSE, $orderby = 'start_date', $sort = 'ASC' ) {
 		self::$_query_params = array();
-		EEH_Event_Query::$_event_query_month = esc_sql(EEH_Event_Query::_display_month( $month ));
-		EEH_Event_Query::$_event_query_category = esc_sql(EEH_Event_Query::_event_category_slug( $category ));
-		EEH_Event_Query::$_event_query_show_expired = esc_sql(EEH_Event_Query::_show_expired( $show_expired ));
-		EEH_Event_Query::$_event_query_orderby = esc_sql(EEH_Event_Query::_orderby( $orderby ));
-		EEH_Event_Query::$_event_query_sort = esc_sql(EEH_Event_Query::_sort( $sort ));
+		EEH_Event_Query::$_event_query_month = EEH_Event_Query::_display_month( $month );
+		EEH_Event_Query::$_event_query_category = EEH_Event_Query::_event_category_slug( $category );
+		EEH_Event_Query::$_event_query_show_expired = EEH_Event_Query::_show_expired( $show_expired );
+		EEH_Event_Query::$_event_query_orderby = EEH_Event_Query::_orderby( $orderby );
+		EEH_Event_Query::$_event_query_sort = EEH_Event_Query::_sort( $sort );
 	}
 
 
@@ -516,7 +516,10 @@ class EEH_Event_Query {
 	 */
 	public static function posts_where_sql_for_event_category_slug( $event_category_slug = NULL ) {
 		global $wpdb;
-		return ! empty( $event_category_slug ) ? " AND {$wpdb->terms}.slug = '{$event_category_slug}' " : '';
+		$event_category_slug = esc_sql($event_category_slug);
+		return ! empty( $event_category_slug )
+            ? " AND {$wpdb->terms}.slug = '{$event_category_slug}' "
+            : '';
 	}
 
 
@@ -530,6 +533,7 @@ class EEH_Event_Query {
 	 */
 	public static function posts_where_sql_for_event_list_month( $month = NULL ) {
 		$SQL = '';
+		$month = esc_sql($month);
 		if ( ! empty( $month ) ) {
 			$datetime_table = EEM_Datetime::instance()->table();
 			// event start date is LESS than the end of the month ( so nothing that doesn't start until next month )
@@ -587,6 +591,7 @@ class EEH_Event_Query {
 		global $wpdb;
 		$SQL = '';
 		$counter = 0;
+		$sort = esc_sql($sort);
 		//make sure 'orderby' is set in query params
 		if ( ! isset( self::$_query_params['orderby'] )) {
 			self::$_query_params['orderby'] = array();
