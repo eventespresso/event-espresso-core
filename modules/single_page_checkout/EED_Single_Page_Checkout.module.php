@@ -499,7 +499,10 @@ class EED_Single_Page_Checkout extends EED_Module
             // DEBUG LOG
             //$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__ );
             // get reg form
-            $this->_check_form_submission();
+            if( ! $this->_check_form_submission()) {
+                EED_Single_Page_Checkout::$_initialized = true;
+                return;
+            }
             // checkout the action!!!
             $this->_process_form_action();
             // add some style and make it dance
@@ -605,14 +608,29 @@ class EED_Single_Page_Checkout extends EED_Module
         // returning to edit ?
         $this->checkout->reg_url_link = EE_Registry::instance()->REQ->get('e_reg_url_link', '');
         // or some other kind of revisit ?
-        $this->checkout->revisit = EE_Registry::instance()->REQ->get('revisit', false);
+        $this->checkout->revisit = filter_var(
+            EE_Registry::instance()->REQ->get('revisit', false),
+            FILTER_VALIDATE_BOOLEAN
+        );
         // and whether or not to generate a reg form for this request
-        $this->checkout->generate_reg_form = EE_Registry::instance()->REQ->get('generate_reg_form', true);        // TRUE 	FALSE
+        $this->checkout->generate_reg_form = filter_var(
+            EE_Registry::instance()->REQ->get('generate_reg_form', true),
+            FILTER_VALIDATE_BOOLEAN
+        );
         // and whether or not to process a reg form submission for this request
-        $this->checkout->process_form_submission = EE_Registry::instance()->REQ->get('process_form_submission', false);        // TRUE 	FALSE
-        $this->checkout->process_form_submission = $this->checkout->action !== 'display_spco_reg_step'
-            ? $this->checkout->process_form_submission
-            : false;        // TRUE 	FALSE
+        $this->checkout->process_form_submission = filter_var(
+            EE_Registry::instance()->REQ->get(
+                'process_form_submission',
+                $this->checkout->action === 'process_reg_step'
+            ),
+            FILTER_VALIDATE_BOOLEAN
+        );
+        $this->checkout->process_form_submission = filter_var(
+            $this->checkout->action !== 'display_spco_reg_step'
+                ? $this->checkout->process_form_submission
+                : false,
+            FILTER_VALIDATE_BOOLEAN
+        );
         // $this->_display_request_vars();
     }
 
@@ -668,7 +686,7 @@ class EED_Single_Page_Checkout extends EED_Module
      *
      * @access    private
      * @throws EE_Error
-     * @return    array
+     * @return    string
      */
     private function _get_first_step()
     {
@@ -1187,7 +1205,7 @@ class EED_Single_Page_Checkout extends EED_Module
      * _check_form_submission
      *
      * @access private
-     * @return void
+     * @return boolean
      */
     private function _check_form_submission()
     {
@@ -1208,7 +1226,7 @@ class EED_Single_Page_Checkout extends EED_Module
                         apply_filters('FHEE__Single_Page_Checkout___check_form_submission__request_params', EE_Registry::instance()->REQ->params(), $this->checkout)
                     );
                     // validate submitted form data
-                    if ( ! $this->checkout->continue_reg && ! $this->checkout->current_step->reg_form->is_valid()) {
+                    if ( ! $this->checkout->continue_reg || ! $this->checkout->current_step->reg_form->is_valid()) {
                         // thou shall not pass !!!
                         $this->checkout->continue_reg = false;
                         // any form validation errors?
@@ -1228,13 +1246,14 @@ class EED_Single_Page_Checkout extends EED_Module
                         }
                         // well not really... what will happen is we'll just get redirected back to redo the current step
                         $this->go_to_next_step();
-                        return;
+                        return false;
                     }
                 }
             } catch (EE_Error $e) {
                 $e->get_error();
             }
         }
+        return true;
     }
 
 
@@ -1403,8 +1422,12 @@ class EED_Single_Page_Checkout extends EED_Module
         wp_register_script('jquery_plugin', EE_THIRD_PARTY_URL . 'jquery	.plugin.min.js', array('jquery'), '1.0.1', true);
         wp_register_script('jquery_countdown', EE_THIRD_PARTY_URL . 'jquery	.countdown.min.js', array('jquery_plugin'), '2.0.2', true);
         wp_register_script('single_page_checkout', SPCO_JS_URL . 'single_page_checkout.js', array('espresso_core', 'underscore', 'ee_form_section_validation', 'jquery_countdown'), EVENT_ESPRESSO_VERSION, true);
-        $this->checkout->registration_form->enqueue_js();
-        $this->checkout->current_step->reg_form->enqueue_js();
+        if ($this->checkout->registration_form instanceof EE_Form_Section_Proper) {
+            $this->checkout->registration_form->enqueue_js();
+        }
+        if ($this->checkout->current_step->reg_form instanceof EE_Form_Section_Proper) {
+            $this->checkout->current_step->reg_form->enqueue_js();
+        }
         wp_enqueue_script('single_page_checkout');
         /**
          * global action hook for enqueueing styles and scripts with

@@ -271,7 +271,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table
      * @param string $view    The view items are being retrieved for
      * @param bool   $count   Whether to just return a count or not.
      * @param bool   $all     Disregard any paging info (no limit on data returned).
-     * @return int | EE_Message[]
+     * @return int|EE_Message[]
      * @throws \EE_Error
      */
     protected function _get_messages($perpage = 10, $view = 'all', $count = false, $all = false)
@@ -310,13 +310,18 @@ class EE_Message_List_Table extends EE_Admin_List_Table
             );
         }
 
-        if ( ! $all && ! empty($this->_req_data['status']) && $this->_req_data['status'] !== 'all') {
-            $query_params[0]['AND*view_conditional'] = array(
-                'STS_ID' => strtoupper($this->_req_data['status']),
-            );
+        if (! $all && ! empty($this->_req_data['status']) && $this->_req_data['status'] !== 'all') {
+            $query_params[0]['AND*view_conditional'] = $this->_req_data === EEM_Message::status_failed
+                ? array(
+                    'STS_ID' => array(
+                        'IN',
+                        array(EEM_Message::status_failed, EEM_Message::status_messenger_executing)
+                    )
+                )
+                : array( 'STS_ID' => strtoupper($this->_req_data['status']) );
         }
 
-        if ( ! $all && ! empty($this->_req_data['s'])) {
+        if (! $all && ! empty($this->_req_data['s'])) {
             $search_string         = '%' . $this->_req_data['s'] . '%';
             $query_params[0]['OR'] = array(
                 'MSG_to'      => array('LIKE', $search_string),
@@ -330,15 +335,14 @@ class EE_Message_List_Table extends EE_Admin_List_Table
         //the messages system is in debug mode.
         //Note: for backward compat with previous iterations, this is necessary because there may be EEM_Message::status_debug_only
         //messages in the database.
-        if ( ! EEM_Message::debug()) {
+        if (! EEM_Message::debug()) {
             $query_params[0]['AND*debug_only_conditional'] = array(
                 'STS_ID' => array('!=', EEM_Message::status_debug_only),
             );
         }
 
         //account for filters
-        if (
-            ! $all
+        if (! $all
             && isset($this->_req_data['ee_messenger_filter_by'])
             && $this->_req_data['ee_messenger_filter_by'] !== 'none_selected'
         ) {
@@ -346,8 +350,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table
                 'MSG_messenger' => $this->_req_data['ee_messenger_filter_by'],
             );
         }
-        if (
-            ! $all
+        if (! $all
             && ! empty($this->_req_data['ee_message_type_filter_by'])
             && $this->_req_data['ee_message_type_filter_by'] !== 'none_selected'
         ) {
@@ -356,8 +359,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table
             );
         }
 
-        if (
-            ! $all
+        if (! $all
             && ! empty($this->_req_data['ee_context_filter_by'])
             && $this->_req_data['ee_context_filter_by'] !== 'none_selected'
         ) {
@@ -367,7 +369,9 @@ class EE_Message_List_Table extends EE_Admin_List_Table
         }
 
         return $count
+            /** @type int */
             ? EEM_Message::instance()->count($query_params, null, true)
+            /** @type EE_Message[] */
             : EEM_Message::instance()->get_all($query_params);
     }
 

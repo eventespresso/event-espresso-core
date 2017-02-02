@@ -893,27 +893,33 @@ class Messages_Admin_Page extends EE_Admin_Page
             }
             $status_bulk_actions = $common_bulk_actions;
             //unset bulk actions not applying to status
-            if ( ! empty($status_bulk_actions)) {
+            if (! empty($status_bulk_actions)) {
                 switch ($status) {
-                    case EEM_Message::status_idle :
-                    case EEM_Message::status_resend :
+                    case EEM_Message::status_idle:
+                    case EEM_Message::status_resend:
                         $status_bulk_actions['send_now'] = $common_bulk_actions['send_now'];
                         break;
                     
-                    case EEM_Message::status_failed :
-                    case EEM_Message::status_debug_only :
+                    case EEM_Message::status_failed:
+                    case EEM_Message::status_debug_only:
+                    case EEM_Message::status_messenger_executing:
                         $status_bulk_actions = array();
                         break;
                     
-                    case EEM_Message::status_incomplete :
+                    case EEM_Message::status_incomplete:
                         unset($status_bulk_actions['queue_for_resending'], $status_bulk_actions['send_now']);
                         break;
                     
-                    case EEM_Message::status_retry :
-                    case EEM_Message::status_sent :
+                    case EEM_Message::status_retry:
+                    case EEM_Message::status_sent:
                         unset($status_bulk_actions['generate_now'], $status_bulk_actions['generate_and_send_now']);
                         break;
                 }
+            }
+
+            //skip adding messenger executing status to views because it will be included with the Failed view.
+            if ( $status === EEM_Message::status_messenger_executing ) {
+                continue;
             }
             
             $this->_views[strtolower($status)] = array(
@@ -973,6 +979,10 @@ class Messages_Admin_Page extends EE_Admin_Page
                 'class' => 'ee-status-legend ee-status-legend-' . EEM_Message::status_failed,
                 'desc'  => EEH_Template::pretty_status(EEM_Message::status_failed, false, 'sentence')
             ),
+            'messenger_executing_status' => array(
+                'class' => 'ee-status-legend ee-status-legend-' . EEM_Message::status_messenger_executing,
+                'desc' => EEH_Template::pretty_status(EEM_Message::status_messenger_executing, false, 'sentence')
+            ),
             'resend_status'     => array(
                 'class' => 'ee-status-legend ee-status-legend-' . EEM_Message::status_resend,
                 'desc'  => EEH_Template::pretty_status(EEM_Message::status_resend, false, 'sentence')
@@ -1002,7 +1012,7 @@ class Messages_Admin_Page extends EE_Admin_Page
         $this->_admin_page_title              = __('Custom Message Templates (Preview)', 'event_espresso');
         $this->_template_args['preview_img']  = '<img src="' . EE_MSG_ASSETS_URL . 'images/custom_mtps_preview.png" alt="' . esc_attr__('Preview Custom Message Templates screenshot',
                 'event_espresso') . '" />';
-        $this->_template_args['preview_text'] = '<strong>' . __('Custom Message Templates is a feature that is only available in the caffeinated version of Event Espresso.  With the Custom Message Templates feature, you are able to create custom templates and set them per event.',
+        $this->_template_args['preview_text'] = '<strong>' . __('Custom Message Templates is a feature that is only available in the premium version of Event Espresso 4 which is available with a support license purchase on EventEspresso.com. With the Custom Message Templates feature, you are able to create custom message templates and assign them on a per-event basis.',
                 'event_espresso') . '</strong>';
         $this->display_admin_caf_preview_page('custom_message_types', false);
     }
@@ -2499,6 +2509,12 @@ class Messages_Admin_Page extends EE_Admin_Page
         if (
             isset($this->_req_data['test_settings_fld'])
             && $active_messenger instanceof EE_messenger
+            && apply_filters(
+                'FHEE__Messages_Admin_Page__do_test_send__set_existing_test_settings',
+                true,
+                $this->_req_data['test_settings_fld'],
+                $active_messenger
+            )
         ) {
             $active_messenger->set_existing_test_settings($this->_req_data['test_settings_fld']);
         }

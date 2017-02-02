@@ -61,3 +61,11 @@ define( 'SAVEQUERIES', TRUE );
 function wp_mail( $to, $subject, $message, $headers = '', $attachments = array() ) {
 	return apply_filters( 'FHEE__wp_mail', true, $to, $subject, $message, $headers, $attachments );
 }
+//nuke all EE4 data once the tests are done, so that it doesn't carry over to the next time we run tests
+register_shutdown_function(
+    'ee_finished_testing'
+);
+function ee_finished_testing(){
+    //this should only be torn down when all tests are done
+    EEH_Activation::delete_all_espresso_tables_and_data();
+}

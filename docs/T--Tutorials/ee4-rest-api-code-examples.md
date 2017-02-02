@@ -16,7 +16,7 @@ The first example is server-side PHP code that can be run from anywhere. The onl
 $curdate_utc = date("Y-m-d H:i:s");
 
 //Retrieve the upcoming events and their related datetimes
-$data_url = "http://demoee.org/demo/wp-json/ee/v4.8.29/events?include=Datetime&filter[where][Datetime.DTT_EVT_end][]=>&filter[where][Datetime.DTT_EVT_end][]=" . urlencode($curdate_utc);
+$data_url = "http://demoee.org/use-cases/wp-json/ee/v4.8.29/events?include=Datetime&where[Datetime.DTT_EVT_end][]=>&where[Datetime.DTT_EVT_end][]=" . urlencode($curdate_utc);
 
 $json = file_get_contents($data_url, true); //getting the file content
 $events = json_decode($json, true); //getting the file content as array
@@ -77,20 +77,18 @@ This next example can be run from any site as it only uses javascript.
 		$('#calendar').fullCalendar({
 			events: function( start, end, timezone, callback ){
 				var objectdata = {
-						filter:{
-							where:{
-								'Datetime.DTT_EVT_end':[
-									'>',start.format()
-								],
-								'Datetime.DTT_EVT_start':[
-									'<', end.format()
-								]
-							}
-						},
+                        where:{
+                            'Datetime.DTT_EVT_end':[
+                                '>',start.format()
+                            ],
+                            'Datetime.DTT_EVT_start':[
+                                '<', end.format()
+                            ]
+                        },
 						"include": 'Datetime.*'
 					};
 				$.ajax({
-					url: 'http://demoee.org/demo/wp-json/ee/v4.8.29/events',
+					url: 'http://demoee.org/use-cases/wp-json/ee/v4.8.29/events',
 					dataType: 'json',
 //					crossDomain:true,
 //					mimeType:'json',

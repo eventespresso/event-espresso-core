@@ -192,7 +192,8 @@ abstract class EE_Admin_Page extends EE_Base
         $this->_ajax_hooks();
         //other_page_hooks have to be early too.
         $this->_do_other_page_hooks();
-        //This just allows us to have extending clases do something specific before the parent constructor runs _page_setup.
+        //This just allows us to have extending classes do something specific
+        // before the parent constructor runs _page_setup().
         if (method_exists($this, '_before_page_setup')) {
             $this->_before_page_setup();
         }
@@ -475,7 +476,7 @@ abstract class EE_Admin_Page extends EE_Base
         global $ee_menu_slugs;
         $ee_menu_slugs = (array)$ee_menu_slugs;
         if (( ! $this->_current_page || ! isset($ee_menu_slugs[$this->_current_page])) && ! defined('DOING_AJAX')) {
-            return false;
+            return;
         }
         // becuz WP List tables have two duplicate select inputs for choosing bulk actions, we need to copy the action from the second to the first
         if (isset($this->_req_data['action2']) && $this->_req_data['action'] == -1) {
@@ -484,7 +485,7 @@ abstract class EE_Admin_Page extends EE_Base
         // then set blank or -1 action values to 'default'
         $this->_req_action = isset($this->_req_data['action']) && ! empty($this->_req_data['action']) && $this->_req_data['action'] != -1 ? sanitize_key($this->_req_data['action']) : 'default';
         //if action is 'default' after the above BUT we have  'route' var set, then let's use the route as the action.  This covers cases where we're coming in from a list table that isn't on the default route.
-        $this->_req_action = $this->_req_action == 'default' && isset($this->_req_data['route']) ? $this->_req_data['route'] : $this->_req_action;
+        $this->_req_action = $this->_req_action === 'default' && isset($this->_req_data['route']) ? $this->_req_data['route'] : $this->_req_action;
         //however if we are doing_ajax and we've got a 'route' set then that's what the req_action will be
         $this->_req_action = defined('DOING_AJAX') && isset($this->_req_data['route']) ? $this->_req_data['route'] : $this->_req_action;
         $this->_current_view = $this->_req_action;
@@ -550,11 +551,11 @@ abstract class EE_Admin_Page extends EE_Base
             $classname = str_replace('.class.php', '', $page);
             //autoloaders should take care of loading file
             if ( ! class_exists($classname)) {
-                $error_msg[] = sprintf(__('Something went wrong with loading the %s admin hooks page.', 'event_espresso'), $page);
+                $error_msg[] = sprintf( esc_html__('Something went wrong with loading the %s admin hooks page.', 'event_espresso'), $page);
                 $error_msg[] = $error_msg[0]
                                . "\r\n"
-                               . sprintf(__('There is no class in place for the %s admin hooks page.%sMake sure you have <strong>%s</strong> defined. If this is a non-EE-core admin page then you also must have an autoloader in place for your class',
-                                'event_espresso'), $page, '<br />', $classname);
+                               . sprintf( esc_html__('There is no class in place for the %1$s admin hooks page.%2$sMake sure you have %3$s defined. If this is a non-EE-core admin page then you also must have an autoloader in place for your class',
+                                'event_espresso'), $page, '<br />', '<strong>' . $classname . '</strong>');
                 throw new EE_Error(implode('||', $error_msg));
             }
             $a = new ReflectionClass($classname);
@@ -2144,8 +2145,8 @@ abstract class EE_Admin_Page extends EE_Base
         <noscript>
             <div id="no-js-message" class="error">
                 <p style="font-size:1.3em;">
-                    <span style="color:red;"><?php _e('Warning!', 'event_espresso'); ?></span>
-                    <?php _e('Javascript is currently turned off for your browser. Javascript must be enabled in order for all of the features on this page to function properly. Please turn your javascript back on.', 'event_espresso'); ?>
+                    <span style="color:red;"><?php esc_html_e('Warning!', 'event_espresso'); ?></span>
+                    <?php esc_html_e('Javascript is currently turned off for your browser. Javascript must be enabled in order for all of the features on this page to function properly. Please turn your javascript back on.', 'event_espresso'); ?>
                 </p>
             </div>
         </noscript>
@@ -2178,7 +2179,7 @@ abstract class EE_Admin_Page extends EE_Base
     {
         ?>
         <div id="espresso-ajax-loading" class="ajax-loading-grey">
-            <span class="ee-spinner ee-spin"></span><span class="hidden"><?php _e('loading...', 'event_espresso'); ?></span>
+            <span class="ee-spinner ee-spin"></span><span class="hidden"><?php esc_html_e('loading...', 'event_espresso'); ?></span>
         </div>
         <?php
     }
@@ -2332,7 +2333,7 @@ abstract class EE_Admin_Page extends EE_Base
     public function display_admin_caf_preview_page($utm_campaign_source = '', $display_sidebar = true)
     {
         //let's generate a default preview action button if there isn't one already present.
-        $this->_labels['buttons']['buy_now'] = __('Upgrade Now', 'event_espresso');
+        $this->_labels['buttons']['buy_now'] = __('Upgrade to Event Espresso 4 Right Now', 'event_espresso');
         $buy_now_url = add_query_arg(
                 array(
                         'ee_ver'       => 'ee4',
@@ -2432,17 +2433,53 @@ abstract class EE_Admin_Page extends EE_Base
         $hidden_form_fields .= '<input type="hidden" name="' . $nonce_ref . '" value="' . wp_create_nonce($nonce_ref) . '">';
         $this->_template_args['list_table_hidden_fields'] = $hidden_form_fields;
         //display message about search results?
-        $this->_template_args['before_list_table'] .= apply_filters(
-                'FHEE__EE_Admin_Page___display_admin_list_table_page__before_list_table__template_arg',
-                ! empty($this->_req_data['s'])
-                        ? '<p class="ee-search-results">' . sprintf(
-                                __('Displaying search results for the search string: <strong><em>%s</em></strong>', 'event_espresso'),
-                                trim($this->_req_data['s'], '%')
-                        ) . '</p>'
-                        : '',
+        $this->_template_args['before_list_table'] .= ! empty($this->_req_data['s'])
+                ? '<p class="ee-search-results">' . sprintf(
+                        esc_html__('Displaying search results for the search string: %1$s', 'event_espresso'),
+                        trim($this->_req_data['s'], '%')
+                ) . '</p>'
+                : '';
+        // filter before_list_table template arg
+        $this->_template_args['before_list_table'] = apply_filters(
+            'FHEE__EE_Admin_Page___display_admin_list_table_page__before_list_table__template_arg',
+            $this->_template_args['before_list_table'],
+            $this->page_slug,
+            $this->_req_data,
+            $this->_req_action
+        );
+        // convert to array and filter again
+        // arrays are easier to inject new items in a specific location,
+        // but would not be backwards compatible, so we have to add a new filter
+        $this->_template_args['before_list_table'] = implode(
+            " \n",
+            (array) apply_filters(
+                'FHEE__EE_Admin_Page___display_admin_list_table_page__before_list_table__template_args_array',
+                (array) $this->_template_args['before_list_table'],
                 $this->page_slug,
                 $this->_req_data,
                 $this->_req_action
+            )
+        );
+        // filter after_list_table template arg
+        $this->_template_args['after_list_table'] = apply_filters(
+            'FHEE__EE_Admin_Page___display_admin_list_table_page__after_list_table__template_arg',
+            $this->_template_args['after_list_table'],
+            $this->page_slug,
+            $this->_req_data,
+            $this->_req_action
+        );
+        // convert to array and filter again
+        // arrays are easier to inject new items in a specific location,
+        // but would not be backwards compatible, so we have to add a new filter
+        $this->_template_args['after_list_table'] = implode(
+            " \n",
+            (array) apply_filters(
+                'FHEE__EE_Admin_Page___display_admin_list_table_page__after_list_table__template_args_array',
+                (array) $this->_template_args['after_list_table'],
+                $this->page_slug,
+                $this->_req_data,
+                $this->_req_action
+            )
         );
         $this->_template_args['admin_page_content'] = EEH_Template::display_template(
                 $template_path,

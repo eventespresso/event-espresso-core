@@ -553,7 +553,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 
 	public function display_views() {
 		$views = $this->get_views();
-		$assembled_views = '';
+		$assembled_views = array();
 
 		if ( empty( $views )) {
 			return;
@@ -566,7 +566,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 			}
 		}
 
-		echo is_array( $assembled_views) && ! empty( $assembled_views ) ? implode( " |</li>\n", $assembled_views ) . "</li>\n" : '';
+		echo ! empty( $assembled_views ) ? implode( " |</li>\n", $assembled_views ) . "</li>\n" : '';
 		echo "</ul>";
 	}
 

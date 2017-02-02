@@ -45,248 +45,262 @@ class EEH_Activation
      */
     protected static $_initialized_db_content_already_in_this_request = false;
 
-	/**
-	 * @var \EventEspresso\core\services\database\TableAnalysis $table_analysis
-	 */
-	private static $table_analysis;
+    /**
+     * @var \EventEspresso\core\services\database\TableAnalysis $table_analysis
+     */
+    private static $table_analysis;
 
-	/**
-	 * @var \EventEspresso\core\services\database\TableManager $table_manager
-	 */
-	private static $table_manager;
-
-
-
-	/**
-	 * @return \EventEspresso\core\services\database\TableAnalysis
-	 */
-	public static function getTableAnalysis() {
-		if ( ! self::$table_analysis instanceof \EventEspresso\core\services\database\TableAnalysis ) {
-			self::$table_analysis = EE_Registry::instance()->create( 'TableAnalysis', array(), true );
-		}
-		return self::$table_analysis;
-	}
+    /**
+     * @var \EventEspresso\core\services\database\TableManager $table_manager
+     */
+    private static $table_manager;
 
 
-
-	/**
-	 * @return \EventEspresso\core\services\database\TableManager
-	 */
-	public static function getTableManager() {
-		if ( ! self::$table_manager instanceof \EventEspresso\core\services\database\TableManager ) {
-			self::$table_manager = EE_Registry::instance()->create( 'TableManager', array(), true );
-		}
-		return self::$table_manager;
-	}
-
-
-
-	/**
-	 *    _ensure_table_name_has_prefix
-	 * @deprecated instead use TableAnalysis::ensureTableNameHasPrefix()
-	 * @access public
-	 * @static
-	 * @param $table_name
-	 * @return string
-	 */
-	public static function ensure_table_name_has_prefix( $table_name ) {
-		return \EEH_Activation::getTableAnalysis()->ensureTableNameHasPrefix( $table_name );
-	}
+    /**
+     * @return \EventEspresso\core\services\database\TableAnalysis
+     */
+    public static function getTableAnalysis()
+    {
+        if (! self::$table_analysis instanceof \EventEspresso\core\services\database\TableAnalysis) {
+            self::$table_analysis = EE_Registry::instance()->create('TableAnalysis', array(), true);
+        }
+        return self::$table_analysis;
+    }
 
 
-	/**
-	 * 	system_initialization
-	 * 	ensures the EE configuration settings are loaded with at least default options set
-	 * 	and that all critical EE pages have been generated with the appropriate shortcodes in place
-	 *
-	 * 	@access public
-	 * 	@static
-	 * 	@return void
-	 */
-	public static function system_initialization() {
-		EEH_Activation::reset_and_update_config();
-		//which is fired BEFORE activation of plugin anyways
-		EEH_Activation::verify_default_pages_exist();
-	}
+    /**
+     * @return \EventEspresso\core\services\database\TableManager
+     */
+    public static function getTableManager()
+    {
+        if (! self::$table_manager instanceof \EventEspresso\core\services\database\TableManager) {
+            self::$table_manager = EE_Registry::instance()->create('TableManager', array(), true);
+        }
+        return self::$table_manager;
+    }
 
 
-
-	/**
-	 * Sets the database schema and creates folders. This should
-	 * be called on plugin activation and reactivation
-	 *
-	 * @return boolean success, whether the database and folders are setup properly
-	 * @throws \EE_Error
-	 */
-	public static function initialize_db_and_folders(){
-		$good_filesystem = EEH_Activation::create_upload_directories();
-		$good_db = EEH_Activation::create_database_tables();
-		return $good_filesystem && $good_db;
-	}
-
-
-
-	/**
-	 * assuming we have an up-to-date database schema, this will populate it
-	 * with default and initial data. This should be called
-	 * upon activation of a new plugin, reactivation, and at the end
-	 * of running migration scripts
-	 *
-	 * @throws \EE_Error
-	 */
-	public static function initialize_db_content(){
-		//let's avoid doing all this logic repeatedly, especially when addons are requesting it
-		if( EEH_Activation::$_initialized_db_content_already_in_this_request ) {
-			return;
-		}
-		EEH_Activation::$_initialized_db_content_already_in_this_request = true;
-
-		EEH_Activation::initialize_system_questions();
-		EEH_Activation::insert_default_status_codes();
-		EEH_Activation::generate_default_message_templates();
-		EEH_Activation::create_no_ticket_prices_array();
-		EE_Registry::instance()->CAP->init_caps();
-
-		EEH_Activation::validate_messages_system();
-		EEH_Activation::insert_default_payment_methods();
-		//in case we've
-		EEH_Activation::remove_cron_tasks();
-		EEH_Activation::create_cron_tasks();
-		// remove all TXN locks since that is being done via extra meta now
-		delete_option( 'ee_locked_transactions' );
-		//also, check for CAF default db content
-		do_action( 'AHEE__EEH_Activation__initialize_db_content' );
-		//also: EEM_Gateways::load_all_gateways() outputs a lot of success messages
-		//which users really won't care about on initial activation
-		EE_Error::overwrite_success();
-	}
+    /**
+     *    _ensure_table_name_has_prefix
+     *
+     * @deprecated instead use TableAnalysis::ensureTableNameHasPrefix()
+     * @access     public
+     * @static
+     * @param $table_name
+     * @return string
+     */
+    public static function ensure_table_name_has_prefix($table_name)
+    {
+        return \EEH_Activation::getTableAnalysis()->ensureTableNameHasPrefix($table_name);
+    }
 
 
+    /**
+     *    system_initialization
+     *    ensures the EE configuration settings are loaded with at least default options set
+     *    and that all critical EE pages have been generated with the appropriate shortcodes in place
+     *
+     * @access public
+     * @static
+     * @return void
+     */
+    public static function system_initialization()
+    {
+        EEH_Activation::reset_and_update_config();
+        //which is fired BEFORE activation of plugin anyways
+        EEH_Activation::verify_default_pages_exist();
+    }
 
 
-	/**
-	 * Returns an array of cron tasks. Array values are the actions fired by the cron tasks (the "hooks"),
-	 * values are the frequency (the "recurrence"). See http://codex.wordpress.org/Function_Reference/wp_schedule_event
-	 * If the cron task should NO longer be used, it should have a value of EEH_Activation::cron_task_no_longer_in_use
-	 * (null)
-	 *
-	 * @param string $which_to_include can be 'current' (ones that are currently in use),
-	 *                          'old' (only returns ones that should no longer be used),or 'all',
-	 * @return array
-	 * @throws \EE_Error
-	 */
-	public static function get_cron_tasks( $which_to_include ) {
-		$cron_tasks = apply_filters(
-			'FHEE__EEH_Activation__get_cron_tasks',
-			array(
-				'AHEE__EE_Cron_Tasks__clean_up_junk_transactions' => 'hourly',
+    /**
+     * Sets the database schema and creates folders. This should
+     * be called on plugin activation and reactivation
+     *
+     * @return boolean success, whether the database and folders are setup properly
+     * @throws \EE_Error
+     */
+    public static function initialize_db_and_folders()
+    {
+        $good_filesystem = EEH_Activation::create_upload_directories();
+        $good_db         = EEH_Activation::create_database_tables();
+        return $good_filesystem && $good_db;
+    }
+
+
+    /**
+     * assuming we have an up-to-date database schema, this will populate it
+     * with default and initial data. This should be called
+     * upon activation of a new plugin, reactivation, and at the end
+     * of running migration scripts
+     *
+     * @throws \EE_Error
+     */
+    public static function initialize_db_content()
+    {
+        //let's avoid doing all this logic repeatedly, especially when addons are requesting it
+        if (EEH_Activation::$_initialized_db_content_already_in_this_request) {
+            return;
+        }
+        EEH_Activation::$_initialized_db_content_already_in_this_request = true;
+
+        EEH_Activation::initialize_system_questions();
+        EEH_Activation::insert_default_status_codes();
+        EEH_Activation::generate_default_message_templates();
+        EEH_Activation::create_no_ticket_prices_array();
+        EE_Registry::instance()->CAP->init_caps();
+
+        EEH_Activation::validate_messages_system();
+        EEH_Activation::insert_default_payment_methods();
+        //in case we've
+        EEH_Activation::remove_cron_tasks();
+        EEH_Activation::create_cron_tasks();
+        // remove all TXN locks since that is being done via extra meta now
+        delete_option('ee_locked_transactions');
+        //also, check for CAF default db content
+        do_action('AHEE__EEH_Activation__initialize_db_content');
+        //also: EEM_Gateways::load_all_gateways() outputs a lot of success messages
+        //which users really won't care about on initial activation
+        EE_Error::overwrite_success();
+    }
+
+
+    /**
+     * Returns an array of cron tasks. Array values are the actions fired by the cron tasks (the "hooks"),
+     * values are the frequency (the "recurrence"). See http://codex.wordpress.org/Function_Reference/wp_schedule_event
+     * If the cron task should NO longer be used, it should have a value of EEH_Activation::cron_task_no_longer_in_use
+     * (null)
+     *
+     * @param string $which_to_include can be 'current' (ones that are currently in use),
+     *                                 'old' (only returns ones that should no longer be used),or 'all',
+     * @return array
+     * @throws \EE_Error
+     */
+    public static function get_cron_tasks($which_to_include)
+    {
+        $cron_tasks = apply_filters(
+            'FHEE__EEH_Activation__get_cron_tasks',
+            array(
+                'AHEE__EE_Cron_Tasks__clean_up_junk_transactions'      => 'hourly',
 //				'AHEE__EE_Cron_Tasks__finalize_abandoned_transactions' => EEH_Activation::cron_task_no_longer_in_use, actually this is still in use
-				'AHEE__EE_Cron_Tasks__update_transaction_with_payment' => EEH_Activation::cron_task_no_longer_in_use, //there may have been a bug which prevented from these cron tasks from getting unscheduled, so we might want to remove these for a few updates
-			)
-		);
-		if ( $which_to_include === 'old' ) {
-			$cron_tasks = array_filter(
-				$cron_tasks,
-				function ( $value ) {
-					return $value === EEH_Activation::cron_task_no_longer_in_use;
-				}
-			);
-		} elseif ( $which_to_include === 'current' ) {
-			$cron_tasks = array_filter( $cron_tasks );
-		} elseif ( WP_DEBUG && $which_to_include !== 'all' ) {
-			throw new EE_Error(
-				sprintf(
-					__(
-						'Invalid argument of "%1$s" passed to EEH_Activation::get_cron_tasks. Valid values are "all", "old" and "current".',
-						'event_espresso'
-					),
-					$which_to_include
-				)
-			);
-		}
-		return $cron_tasks;
-	}
+                'AHEE__EE_Cron_Tasks__update_transaction_with_payment' => EEH_Activation::cron_task_no_longer_in_use,
+                //there may have been a bug which prevented from these cron tasks from getting unscheduled, so we might want to remove these for a few updates
+            )
+        );
+        if ($which_to_include === 'old') {
+            $cron_tasks = array_filter(
+                $cron_tasks,
+                function ($value) {
+                    return $value === EEH_Activation::cron_task_no_longer_in_use;
+                }
+            );
+        } elseif ($which_to_include === 'current') {
+            $cron_tasks = array_filter($cron_tasks);
+        } elseif (WP_DEBUG && $which_to_include !== 'all') {
+            throw new EE_Error(
+                sprintf(
+                    __(
+                        'Invalid argument of "%1$s" passed to EEH_Activation::get_cron_tasks. Valid values are "all", "old" and "current".',
+                        'event_espresso'
+                    ),
+                    $which_to_include
+                )
+            );
+        }
+        return $cron_tasks;
+    }
 
 
+    /**
+     * Ensure cron tasks are setup (the removal of crons should be done by remove_crons())
+     *
+     * @throws \EE_Error
+     */
+    public static function create_cron_tasks()
+    {
 
-	/**
-	 * Ensure cron tasks are setup (the removal of crons should be done by remove_crons())
-	 *
-	 * @throws \EE_Error
-	 */
-	public static function create_cron_tasks() {
+        foreach (EEH_Activation::get_cron_tasks('current') as $hook_name => $frequency) {
+            if (! wp_next_scheduled($hook_name)) {
+                /**
+                 * This allows client code to define the initial start timestamp for this schedule.
+                 */
+                if (is_array($frequency)
+                    && count($frequency) === 2
+                    && isset($frequency[0], $frequency[1])
+                ) {
+                    $start_timestamp = $frequency[0];
+                    $frequency = $frequency[1];
+                } else {
+                    $start_timestamp = time();
+                }
+                wp_schedule_event($start_timestamp, $frequency, $hook_name);
+            }
+        }
 
-		foreach( EEH_Activation::get_cron_tasks( 'current' ) as $hook_name => $frequency ) {
-			if( ! wp_next_scheduled( $hook_name ) ) {
-				wp_schedule_event( time(), $frequency, $hook_name );
-			}
-		}
-
-	}
-
-
-
-	/**
-	 * Remove the currently-existing and now-removed cron tasks.
-	 *
-	 * @param boolean $remove_all whether to only remove the old ones, or remove absolutely ALL the EE ones
-	 * @throws \EE_Error
-	 */
-	public static function remove_cron_tasks( $remove_all = true ) {
-		$cron_tasks_to_remove = $remove_all ? 'all' : 'old';
-		$crons = _get_cron_array();
-		$crons = is_array( $crons ) ? $crons : array();
-		/* reminder of what $crons look like:
-		 * Top-level keys are timestamps, and their values are arrays.
-		 * The 2nd level arrays have keys with each of the cron task hook names to run at that time
-		 * and their values are arrays.
-		 * The 3rd level level arrays are keys which are hashes of the cron task's arguments,
-		 *  and their values are the UN-hashed arguments
-		 * eg
-		 * array (size=13)
-		 *		1429903276 =>
-		 *		  array (size=1)
-		 *			'AHEE__EE_Cron_Tasks__update_transaction_with_payment' =>
-		 *			  array (size=1)
-		 *				'561299d6e42c8e079285870ade0e47e6' =>
-		 *				  array (size=2)
-		 *					...
-		 *      ...
-		 */
-		$ee_cron_tasks_to_remove = EEH_Activation::get_cron_tasks( $cron_tasks_to_remove );
-		foreach ( $crons as $timestamp => $hooks_to_fire_at_time ) {
-			if ( is_array( $hooks_to_fire_at_time ) ) {
-				foreach ( $hooks_to_fire_at_time as $hook_name => $hook_actions ) {
-					if ( isset( $ee_cron_tasks_to_remove[ $hook_name ] )
-					     && is_array( $ee_cron_tasks_to_remove[ $hook_name ] )
-					) {
-						unset( $crons[ $timestamp ][ $hook_name ] );
-					}
-				}
-				//also take care of any empty cron timestamps.
-				if ( empty( $hooks_to_fire_at_time ) ) {
-					unset( $crons[ $timestamp ] );
-				}
-			}
-		}
-		_set_cron_array( $crons );
-	}
+    }
 
 
+    /**
+     * Remove the currently-existing and now-removed cron tasks.
+     *
+     * @param boolean $remove_all whether to only remove the old ones, or remove absolutely ALL the EE ones
+     * @throws \EE_Error
+     */
+    public static function remove_cron_tasks($remove_all = true)
+    {
+        $cron_tasks_to_remove = $remove_all ? 'all' : 'old';
+        $crons                = _get_cron_array();
+        $crons                = is_array($crons) ? $crons : array();
+        /* reminder of what $crons look like:
+         * Top-level keys are timestamps, and their values are arrays.
+         * The 2nd level arrays have keys with each of the cron task hook names to run at that time
+         * and their values are arrays.
+         * The 3rd level level arrays are keys which are hashes of the cron task's arguments,
+         *  and their values are the UN-hashed arguments
+         * eg
+         * array (size=13)
+         *		1429903276 =>
+         *		  array (size=1)
+         *			'AHEE__EE_Cron_Tasks__update_transaction_with_payment' =>
+         *			  array (size=1)
+         *				'561299d6e42c8e079285870ade0e47e6' =>
+         *				  array (size=2)
+         *					...
+         *      ...
+         */
+        $ee_cron_tasks_to_remove = EEH_Activation::get_cron_tasks($cron_tasks_to_remove);
+        foreach ($crons as $timestamp => $hooks_to_fire_at_time) {
+            if (is_array($hooks_to_fire_at_time)) {
+                foreach ($hooks_to_fire_at_time as $hook_name => $hook_actions) {
+                    if (isset($ee_cron_tasks_to_remove[$hook_name])
+                        && is_array($ee_cron_tasks_to_remove[$hook_name])
+                    ) {
+                        unset($crons[$timestamp][$hook_name]);
+                    }
+                }
+                //also take care of any empty cron timestamps.
+                if (empty($hooks_to_fire_at_time)) {
+                    unset($crons[$timestamp]);
+                }
+            }
+        }
+        _set_cron_array($crons);
+    }
 
-	/**
-	 * 	CPT_initialization
-	 *	registers all EE CPTs ( Custom Post Types ) then flushes rewrite rules so that all endpoints exist
-	 *
-	 * 	@access public
-	 * 	@static
-	 * 	@return void
-	 */
-	public static function CPT_initialization() {
-		// register Custom Post Types
-		EE_Registry::instance()->load_core( 'Register_CPTs' );
-		flush_rewrite_rules();
-	}
+
+    /**
+     *    CPT_initialization
+     *    registers all EE CPTs ( Custom Post Types ) then flushes rewrite rules so that all endpoints exist
+     *
+     * @access public
+     * @static
+     * @return void
+     */
+    public static function CPT_initialization()
+    {
+        // register Custom Post Types
+        EE_Registry::instance()->load_core('Register_CPTs');
+        flush_rewrite_rules();
+    }
 
 
 
@@ -303,49 +317,54 @@ class EEH_Activation
     public static function reset_and_update_config()
     {
         do_action('AHEE__EE_Config___load_core_config__start', array('EEH_Activation', 'load_calendar_config'));
-        add_filter('FHEE__EE_Config___load_core_config__config_settings',
-            array('EEH_Activation', 'migrate_old_config_data'), 10, 3);
+        add_filter(
+            'FHEE__EE_Config___load_core_config__config_settings',
+            array('EEH_Activation', 'migrate_old_config_data'),
+            10,
+            3
+        );
         //EE_Config::reset();
-        if ( ! EE_Config::logging_enabled()) {
+        if (! EE_Config::logging_enabled()) {
             delete_option(EE_Config::LOG_NAME);
         }
     }
 
 
-	/**
-	 *    load_calendar_config
-	 *
-	 * @access    public
-	 * @return    void
-	 */
-	public static function load_calendar_config() {
-		// grab array of all plugin folders and loop thru it
-		$plugins = glob( WP_PLUGIN_DIR . DS . '*', GLOB_ONLYDIR );
-		if ( empty( $plugins ) ) {
-			return;
-		}
-		foreach ( $plugins as $plugin_path ) {
-			// grab plugin folder name from path
-			$plugin = basename( $plugin_path );
-			// drill down to Espresso plugins
-			// then to calendar related plugins
-			if (
-				strpos( $plugin, 'espresso' ) !== FALSE
-				|| strpos( $plugin, 'Espresso' ) !== FALSE
-				|| strpos( $plugin, 'ee4' ) !== FALSE
-				|| strpos( $plugin, 'EE4' ) !== FALSE
-				|| strpos( $plugin, 'calendar' ) !== false
-			) {
-				// this is what we are looking for
-				$calendar_config = $plugin_path . DS . 'EE_Calendar_Config.php';
-				// does it exist in this folder ?
-				if ( is_readable( $calendar_config )) {
-					// YEAH! let's load it
-					require_once( $calendar_config );
-				}
-			}
-		}
-	}
+    /**
+     *    load_calendar_config
+     *
+     * @access    public
+     * @return    void
+     */
+    public static function load_calendar_config()
+    {
+        // grab array of all plugin folders and loop thru it
+        $plugins = glob(WP_PLUGIN_DIR . DS . '*', GLOB_ONLYDIR);
+        if (empty($plugins)) {
+            return;
+        }
+        foreach ($plugins as $plugin_path) {
+            // grab plugin folder name from path
+            $plugin = basename($plugin_path);
+            // drill down to Espresso plugins
+            // then to calendar related plugins
+            if (
+                strpos($plugin, 'espresso') !== false
+                || strpos($plugin, 'Espresso') !== false
+                || strpos($plugin, 'ee4') !== false
+                || strpos($plugin, 'EE4') !== false
+                || strpos($plugin, 'calendar') !== false
+            ) {
+                // this is what we are looking for
+                $calendar_config = $plugin_path . DS . 'EE_Calendar_Config.php';
+                // does it exist in this folder ?
+                if (is_readable($calendar_config)) {
+                    // YEAH! let's load it
+                    require_once($calendar_config);
+                }
+            }
+        }
+    }
 
 
 
@@ -379,20 +398,20 @@ class EEH_Activation
     }
 
 
-
-	/**
-	 * deactivate_event_espresso
-	 *
-	 * 	@access public
-	 * 	@static
-	 * 	@return void
-	 */
-	public static function deactivate_event_espresso() {
-		// check permissions
-		if ( current_user_can( 'activate_plugins' )) {
-			deactivate_plugins( EE_PLUGIN_BASENAME, TRUE );
-		}
-	}
+    /**
+     * deactivate_event_espresso
+     *
+     * @access public
+     * @static
+     * @return void
+     */
+    public static function deactivate_event_espresso()
+    {
+        // check permissions
+        if (current_user_can('activate_plugins')) {
+            deactivate_plugins(EE_PLUGIN_BASENAME, true);
+        }
+    }
 
 
 
@@ -450,8 +469,10 @@ class EEH_Activation
                     $critical_page = EEH_Activation::create_critical_page($critical_page);
                     // REALLY? Still nothing ??!?!?
                     if ($critical_page['post'] === null) {
-                        $msg = __('The Event Espresso critical page configuration settings could not be updated.',
-                            'event_espresso');
+                        $msg = __(
+                            'The Event Espresso critical page configuration settings could not be updated.',
+                            'event_espresso'
+                        );
                         EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
                         break;
                     }
@@ -468,9 +489,11 @@ class EEH_Activation
             ) {
                 //update Config with post ID
                 $EE_Core_Config->{$critical_page['id']} = $critical_page['post']->ID;
-                if ( ! EE_Config::instance()->update_espresso_config(false, false)) {
-                    $msg = __('The Event Espresso critical page configuration settings could not be updated.',
-                        'event_espresso');
+                if (! EE_Config::instance()->update_espresso_config(false, false)) {
+                    $msg = __(
+                        'The Event Espresso critical page configuration settings could not be updated.',
+                        'event_espresso'
+                    );
                     EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
                 }
             }
@@ -483,8 +506,10 @@ class EEH_Activation
         }
         if ($critical_page_problem) {
             $msg = sprintf(
-                __('A potential issue has been detected with one or more of your Event Espresso pages. Go to %s to view your Event Espresso pages.',
-                    'event_espresso'),
+                __(
+                    'A potential issue has been detected with one or more of your Event Espresso pages. Go to %s to view your Event Espresso pages.',
+                    'event_espresso'
+                ),
                 '<a href="'
                 . admin_url('admin.php?page=espresso_general_settings&action=critical_pages')
                 . '">'
@@ -520,50 +545,49 @@ class EEH_Activation
         } else {
             return null;
         }
-//		return $post_id;
     }
 
 
+    /**
+     *    This function generates a post for critical espresso pages
+     *
+     * @access public
+     * @static
+     * @param array $critical_page
+     * @return array
+     */
+    public static function create_critical_page($critical_page)
+    {
 
-	/**
-	 *    This function generates a post for critical espresso pages
-	 *
-	 * @access public
-	 * @static
-	 * @param array $critical_page
-	 * @return array
-	 */
-	public static function create_critical_page( $critical_page ) {
+        $post_args = array(
+            'post_title'     => $critical_page['name'],
+            'post_status'    => 'publish',
+            'post_type'      => 'page',
+            'comment_status' => 'closed',
+            'post_content'   => '[' . $critical_page['code'] . ']',
+        );
 
-		$post_args = array(
-			'post_title' => $critical_page['name'],
-			'post_status' => 'publish',
-			'post_type' => 'page',
-			'comment_status' => 'closed',
-			'post_content' => '[' . $critical_page['code'] . ']'
-		);
+        $post_id = wp_insert_post($post_args);
+        if (! $post_id) {
+            $msg = sprintf(
+                __('The Event Espresso  critical page entitled "%s" could not be created.', 'event_espresso'),
+                $critical_page['name']
+            );
+            EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
+            return $critical_page;
+        }
+        // get newly created post's details
+        if (! $critical_page['post'] = get_post($post_id)) {
+            $msg = sprintf(
+                __('The Event Espresso critical page entitled "%s" could not be retrieved.', 'event_espresso'),
+                $critical_page['name']
+            );
+            EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
+        }
 
-		$post_id = wp_insert_post( $post_args );
-		if ( ! $post_id ) {
-			$msg = sprintf(
-				__( 'The Event Espresso  critical page entitled "%s" could not be created.', 'event_espresso' ),
-				$critical_page['name']
-			);
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return $critical_page;
-		}
-		// get newly created post's details
-		if ( ! $critical_page['post'] = get_post( $post_id )) {
-			$msg = sprintf(
-				__( 'The Event Espresso critical page entitled "%s" could not be retrieved.', 'event_espresso' ),
-				$critical_page['name']
-			);
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-		}
+        return $critical_page;
 
-		return $critical_page;
-
-	}
+    }
 
 
 
@@ -582,8 +606,10 @@ class EEH_Activation
         // check the goods
         if ( ! $critical_page['post'] instanceof WP_Post) {
             $msg = sprintf(
-                __('The Event Espresso critical page shortcode for the page %s can not be tracked because it is not a WP_Post object.',
-                    'event_espresso'),
+                __(
+                    'The Event Espresso critical page shortcode for the page %s can not be tracked because it is not a WP_Post object.',
+                    'event_espresso'
+                ),
                 $critical_page['name']
             );
             EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
@@ -602,10 +628,17 @@ class EEH_Activation
             unset($EE_Core_Config->post_shortcodes['posts'][$critical_page['code']]);
         }
         // update post_shortcode CFG
-        if ( ! EE_Config::instance()->update_espresso_config(false, false)) {
+        EE_Config::instance()->update_espresso_config(false, false);
+        // verify that saved ID in the config matches the ID for the post the shortcode is on
+        if (
+            EE_Registry::instance()->CFG->core->post_shortcodes[$critical_page['post']->post_name][$critical_page['code']]
+            !== $critical_page['post']->ID
+        ) {
             $msg = sprintf(
-                __('The Event Espresso critical page shortcode for the %s page could not be configured properly.',
-                    'event_espresso'),
+                __(
+                    'The Event Espresso critical page shortcode for the %s page could not be configured properly.',
+                    'event_espresso'
+                ),
                 $critical_page['name']
             );
             EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
@@ -630,14 +663,19 @@ class EEH_Activation
         }/**/
         $role_to_check = apply_filters('FHEE__EEH_Activation__get_default_creator_id__role_to_check', 'administrator');
         //let's allow pre_filtering for early exits by alternative methods for getting id.  We check for truthy result and if so then exit early.
-        $pre_filtered_id = apply_filters('FHEE__EEH_Activation__get_default_creator_id__pre_filtered_id', false,
-            $role_to_check);
+        $pre_filtered_id = apply_filters(
+            'FHEE__EEH_Activation__get_default_creator_id__pre_filtered_id',
+            false,
+            $role_to_check
+        );
         if ($pre_filtered_id !== false) {
             return (int)$pre_filtered_id;
         }
         $capabilities_key = \EEH_Activation::getTableAnalysis()->ensureTableNameHasPrefix('capabilities');
-        $query = $wpdb->prepare("SELECT user_id FROM $wpdb->usermeta WHERE meta_key = '$capabilities_key' AND meta_value LIKE %s ORDER BY user_id ASC LIMIT 0,1",
-            '%' . $role_to_check . '%');
+        $query = $wpdb->prepare(
+            "SELECT user_id FROM $wpdb->usermeta WHERE meta_key = '$capabilities_key' AND meta_value LIKE %s ORDER BY user_id ASC LIMIT 0,1",
+            '%' . $role_to_check . '%'
+        );
         $user_id = $wpdb->get_var($query);
         $user_id = apply_filters('FHEE__EEH_Activation_Helper__get_default_creator_id__user_id', $user_id);
         if ($user_id && (int)$user_id) {
@@ -689,15 +727,17 @@ class EEH_Activation
                 \EEH_Activation::getTableManager()->dropTable($wp_table_name);
             } else if ( ! $deleted_safely) {
                 // so we should be more cautious rather than just dropping tables so easily
-                EE_Error::add_persistent_admin_notice(
-                    'bad_table_' . $wp_table_name . '_detected',
-                    sprintf(__('Database table %1$s exists when it shouldn\'t, and may contain erroneous data. If you have previously restored your database from a backup that didn\'t remove the old tables, then we recommend adding %2$s to your %3$s file then restore to that backup again. This will clear out the invalid data from %1$s. Afterwards you should undo that change from your %3$s file. %4$sIf you cannot edit %3$s, you should remove the data from %1$s manually then restore to the backup again.',
-                        'event_espresso'),
+                error_log(
+                    sprintf(
+                        __(
+                            'It appears that database table "%1$s" exists when it shouldn\'t, and therefore may contain erroneous data. If you have previously restored your database from a backup that didn\'t remove the old tables, then we recommend: %2$s 1. create a new COMPLETE backup of your database, %2$s 2. delete ALL tables from your database, %2$s 3. restore to your previous backup. %2$s If, however, you have not restored to a backup, then somehow your "%3$s" WordPress option could not be read. You can probably ignore this message, but should investigate why that option is being removed.',
+                            'event_espresso'
+                        ),
                         $wp_table_name,
-                        "<pre>define( 'EE_DROP_BAD_TABLES', TRUE );</pre>",
-                        '<b>wp-config.php</b>',
-                        '<br/>'),
-                    true);
+                        '<br/>',
+                        'espresso_db_update'
+                    )
+                );
             }
         }
         $engine = str_replace('ENGINE=', '', $engine);
@@ -728,84 +768,83 @@ class EEH_Activation
     }
 
 
+    /**
+     * get_fields_on_table
+     * Gets all the fields on the database table.
+     *
+     * @access     public
+     * @deprecated instead use TableManager::getTableColumns()
+     * @static
+     * @param string $table_name , without prefixed $wpdb->prefix
+     * @return array of database column names
+     */
+    public static function get_fields_on_table($table_name = null)
+    {
+        return \EEH_Activation::getTableManager()->getTableColumns($table_name);
+    }
 
 
-	/**
-	 * get_fields_on_table
-	 * Gets all the fields on the database table.
-	 *
-	 * @access public
-	 * @deprecated instead use TableManager::getTableColumns()
-	 * @static
-	 * @param string $table_name, without prefixed $wpdb->prefix
-	 * @return array of database column names
-	 */
-	public static function get_fields_on_table( $table_name = NULL ) {
-		return \EEH_Activation::getTableManager()->getTableColumns( $table_name );
-	}
+    /**
+     * db_table_is_empty
+     *
+     * @access     public\
+     * @deprecated instead use TableAnalysis::tableIsEmpty()
+     * @static
+     * @param string $table_name
+     * @return bool
+     */
+    public static function db_table_is_empty($table_name)
+    {
+        return \EEH_Activation::getTableAnalysis()->tableIsEmpty($table_name);
+    }
 
 
-
-	/**
-	 * db_table_is_empty
-	 *
-	 * @access public\
-	 * @deprecated instead use TableAnalysis::tableIsEmpty()
-	 * @static
-	 * @param string $table_name
-	 * @return bool
-	 */
-	public static function db_table_is_empty( $table_name ) {
-		return \EEH_Activation::getTableAnalysis()->tableIsEmpty( $table_name );
-}
-
-
-
-/**
-	 * delete_db_table_if_empty
-	 *
-	 * @access public
-	 * @static
-	 * @param string $table_name
-	 * @return bool | int
-	 */
-	public static function delete_db_table_if_empty( $table_name ) {
-		if ( \EEH_Activation::getTableAnalysis()->tableIsEmpty( $table_name ) ) {
-			return \EEH_Activation::getTableManager()->dropTable( $table_name );
-		}
-		return false;
-	}
+    /**
+     * delete_db_table_if_empty
+     *
+     * @access public
+     * @static
+     * @param string $table_name
+     * @return bool | int
+     */
+    public static function delete_db_table_if_empty($table_name)
+    {
+        if (\EEH_Activation::getTableAnalysis()->tableIsEmpty($table_name)) {
+            return \EEH_Activation::getTableManager()->dropTable($table_name);
+        }
+        return false;
+    }
 
 
+    /**
+     * delete_unused_db_table
+     *
+     * @access     public
+     * @static
+     * @deprecated instead use TableManager::dropTable()
+     * @param string $table_name
+     * @return bool | int
+     */
+    public static function delete_unused_db_table($table_name)
+    {
+        return \EEH_Activation::getTableManager()->dropTable($table_name);
+    }
 
-	/**
-	 * delete_unused_db_table
-	 *
-	 * @access public
-	 * @static
-	 * @deprecated instead use TableManager::dropTable()
-	 * @param string $table_name
-	 * @return bool | int
-	 */
-	public static function delete_unused_db_table( $table_name ) {
-		return \EEH_Activation::getTableManager()->dropTable( $table_name );
-	}
 
-
-
-	/**
-	 * drop_index
-	 *
-	 * @access public
-	 * @static
-	 * @deprecated instead use TableManager::dropIndex()
-	 * @param string $table_name
-	 * @param string $index_name
-	 * @return bool | int
-	 */
-	public static function drop_index( $table_name, $index_name ) {
-		return \EEH_Activation::getTableManager()->dropIndex( $table_name, $index_name );
-	}
+    /**
+     * drop_index
+     *
+     * @access     public
+     * @static
+     * @deprecated instead use TableManager::dropIndex()
+     * @param string $table_name
+     * @param string $index_name
+     * @return bool | int
+     */
+    public static function drop_index($table_name, $index_name)
+    {
+        return \EEH_Activation::getTableManager()->dropIndex($table_name, $index_name);
+    }
 
 
 
@@ -833,15 +872,28 @@ class EEH_Activation
                         EE_Error::add_error($error, __FILE__, __FUNCTION__, __LINE__);
                     }
                 } else {
-                    EE_Error::add_error(__('There were errors creating the Event Espresso database tables and Event Espresso has been deactivated. To view the errors, please enable WP_DEBUG in your wp-config.php file.',
-                        'event_espresso'));
+                    EE_Error::add_error(
+                        __(
+                            'There were errors creating the Event Espresso database tables and Event Espresso has been 
+                            deactivated. To view the errors, please enable WP_DEBUG in your wp-config.php file.',
+                            'event_espresso'
+                        )
+                    );
                 }
                 return false;
             }
             EE_Data_Migration_Manager::instance()->update_current_database_state_to();
         } else {
-            EE_Error::add_error(__('Could not determine most up-to-date data migration script from which to pull database schema structure. So database is probably not setup properly',
-                'event_espresso'), __FILE__, __FUNCTION__, __LINE__);
+            EE_Error::add_error(
+                __(
+                    'Could not determine most up-to-date data migration script from which to pull database schema
+                     structure. So database is probably not setup properly',
+                    'event_espresso'
+                ),
+                __FILE__,
+                __FUNCTION__,
+                __LINE__
+            );
             return false;
         }
         return true;
@@ -873,7 +925,7 @@ class EEH_Activation
             // reset values array
             $QSG_values = array();
             // if we don't have what we should have (but use $QST_system as as string because that's what we got from the db)
-            if ( ! in_array("$QSG_system", $question_groups)) {
+            if (! in_array("$QSG_system", $question_groups)) {
                 // add it
                 switch ($QSG_system) {
                     case 1:
@@ -902,7 +954,7 @@ class EEH_Activation
                         break;
                 }
                 // make sure we have some values before inserting them
-                if ( ! empty($QSG_values)) {
+                if (! empty($QSG_values)) {
                     // insert system question
                     $wpdb->insert(
                         $table_name,
@@ -939,7 +991,7 @@ class EEH_Activation
             // reset values array
             $QST_values = array();
             // if we don't have what we should have
-            if ( ! in_array($QST_system, $questions)) {
+            if (! in_array($QST_system, $questions)) {
                 // add it
                 switch ($QST_system) {
                     case 'fname':
@@ -952,8 +1004,7 @@ class EEH_Activation
                             'QST_required_text' => __('This field is required', 'event_espresso'),
                             'QST_order'         => 1,
                             'QST_admin_only'    => 0,
-                            'QST_max'           => EEM_Question::instance()
-                                                               ->absolute_max_for_system_question($QST_system),
+                            'QST_max'           => EEM_Question::instance()->absolute_max_for_system_question($QST_system),
                             'QST_wp_user'       => self::get_default_creator_id(),
                             'QST_deleted'       => 0,
                         );
@@ -968,8 +1019,7 @@ class EEH_Activation
                             'QST_required_text' => __('This field is required', 'event_espresso'),
                             'QST_order'         => 2,
                             'QST_admin_only'    => 0,
-                            'QST_max'           => EEM_Question::instance()
-                                                               ->absolute_max_for_system_question($QST_system),
+                            'QST_max'           => EEM_Question::instance()->absolute_max_for_system_question($QST_system),
                             'QST_wp_user'       => self::get_default_creator_id(),
                             'QST_deleted'       => 0,
                         );
@@ -984,8 +1034,7 @@ class EEH_Activation
                             'QST_required_text' => __('This field is required', 'event_espresso'),
                             'QST_order'         => 3,
                             'QST_admin_only'    => 0,
-                            'QST_max'           => EEM_Question::instance()
-                                                               ->absolute_max_for_system_question($QST_system),
+                            'QST_max'           => EEM_Question::instance()->absolute_max_for_system_question($QST_system),
                             'QST_wp_user'       => self::get_default_creator_id(),
                             'QST_deleted'       => 0,
                         );
@@ -1000,8 +1049,7 @@ class EEH_Activation
                             'QST_required_text' => __('This field is required', 'event_espresso'),
                             'QST_order'         => 4,
                             'QST_admin_only'    => 0,
-                            'QST_max'           => EEM_Question::instance()
-                                                               ->absolute_max_for_system_question($QST_system),
+                            'QST_max'           => EEM_Question::instance()->absolute_max_for_system_question($QST_system),
                             'QST_wp_user'       => self::get_default_creator_id(),
                             'QST_deleted'       => 0,
                         );
@@ -1016,8 +1064,7 @@ class EEH_Activation
                             'QST_required_text' => __('This field is required', 'event_espresso'),
                             'QST_order'         => 5,
                             'QST_admin_only'    => 0,
-                            'QST_max'           => EEM_Question::instance()
-                                                               ->absolute_max_for_system_question($QST_system),
+                            'QST_max'           => EEM_Question::instance()->absolute_max_for_system_question($QST_system),
                             'QST_wp_user'       => self::get_default_creator_id(),
                             'QST_deleted'       => 0,
                         );
@@ -1032,13 +1079,12 @@ class EEH_Activation
                             'QST_required_text' => __('This field is required', 'event_espresso'),
                             'QST_order'         => 6,
                             'QST_admin_only'    => 0,
-                            'QST_max'           => EEM_Question::instance()
-                                                               ->absolute_max_for_system_question($QST_system),
+                            'QST_max'           => EEM_Question::instance()->absolute_max_for_system_question($QST_system),
                             'QST_wp_user'       => self::get_default_creator_id(),
                             'QST_deleted'       => 0,
                         );
                         break;
-                    case 'country' :
+                    case 'country':
                         $QST_values = array(
                             'QST_display_text'  => __('Country', 'event_espresso'),
                             'QST_admin_label'   => __('Country - System Question', 'event_espresso'),
@@ -1076,8 +1122,7 @@ class EEH_Activation
                             'QST_required_text' => __('This field is required', 'event_espresso'),
                             'QST_order'         => 9,
                             'QST_admin_only'    => 0,
-                            'QST_max'           => EEM_Question::instance()
-                                                               ->absolute_max_for_system_question($QST_system),
+                            'QST_max'           => EEM_Question::instance()->absolute_max_for_system_question($QST_system),
                             'QST_wp_user'       => self::get_default_creator_id(),
                             'QST_deleted'       => 0,
                         );
@@ -1092,14 +1137,13 @@ class EEH_Activation
                             'QST_required_text' => __('This field is required', 'event_espresso'),
                             'QST_order'         => 10,
                             'QST_admin_only'    => 0,
-                            'QST_max'           => EEM_Question::instance()
-                                                               ->absolute_max_for_system_question($QST_system),
+                            'QST_max'           => EEM_Question::instance()->absolute_max_for_system_question($QST_system),
                             'QST_wp_user'       => self::get_default_creator_id(),
                             'QST_deleted'       => 0,
                         );
                         break;
                 }
-                if ( ! empty($QST_values)) {
+                if (! empty($QST_values)) {
                     // insert system question
                     $wpdb->insert(
                         $table_name,
@@ -1126,8 +1170,11 @@ class EEH_Activation
                                 __FILE__,
                                 __FUNCTION__,
                                 sprintf(
-                                    __('Could not associate question %1$s to a question group because no system question group existed',
-                                        'event_espresso'),
+                                    __(
+                                        'Could not associate question %1$s to a question group because no system question
+                                         group existed',
+                                        'event_espresso'
+                                    ),
                                     $QST_ID),
                                 'error');
                             continue;
@@ -1149,41 +1196,42 @@ class EEH_Activation
     }
 
 
+    /**
+     * Makes sure the default payment method (Invoice) is active.
+     * This used to be done automatically as part of constructing the old gateways config
+     *
+     * @throws \EE_Error
+     */
+    public static function insert_default_payment_methods()
+    {
+        if (! EEM_Payment_Method::instance()->count_active(EEM_Payment_Method::scope_cart)) {
+            EE_Registry::instance()->load_lib('Payment_Method_Manager');
+            EE_Payment_Method_Manager::instance()->activate_a_payment_method_of_type('Invoice');
+        } else {
+            EEM_Payment_Method::instance()->verify_button_urls();
+        }
+    }
 
-	/**
-	 * Makes sure the default payment method (Invoice) is active.
-	 * This used to be done automatically as part of constructing the old gateways config
-	 *
-	 * @throws \EE_Error
-	 */
-	public static function insert_default_payment_methods(){
-		if( ! EEM_Payment_Method::instance()->count_active( EEM_Payment_Method::scope_cart ) ){
-			EE_Registry::instance()->load_lib( 'Payment_Method_Manager' );
-			EE_Payment_Method_Manager::instance()->activate_a_payment_method_of_type( 'Invoice' );
-		}else{
-			EEM_Payment_Method::instance()->verify_button_urls();
-		}
-	}
+    /**
+     * insert_default_status_codes
+     *
+     * @access public
+     * @static
+     * @return void
+     */
+    public static function insert_default_status_codes()
+    {
 
-	/**
-	 * insert_default_status_codes
-	 *
-	 * 	@access public
-	 * 	@static
-	 * 	@return void
-	 */
-	public static function insert_default_status_codes() {
+        global $wpdb;
 
-		global $wpdb;
+        if (\EEH_Activation::getTableAnalysis()->tableExists(EEM_Status::instance()->table())) {
 
-		if ( \EEH_Activation::getTableAnalysis()->tableExists( EEM_Status::instance()->table() ) ) {
+            $table_name = EEM_Status::instance()->table();
 
-			$table_name = EEM_Status::instance()->table();
+            $SQL = "DELETE FROM $table_name WHERE STS_ID IN ( 'ACT', 'NAC', 'NOP', 'OPN', 'CLS', 'PND', 'ONG', 'SEC', 'DRF', 'DEL', 'DEN', 'EXP', 'RPP', 'RCN', 'RDC', 'RAP', 'RNA', 'RWL', 'TAB', 'TIN', 'TFL', 'TCM', 'TOP', 'PAP', 'PCN', 'PFL', 'PDC', 'EDR', 'ESN', 'PPN', 'RIC', 'MSN', 'MFL', 'MID', 'MRS', 'MIC', 'MDO', 'MEX' );";
+            $wpdb->query($SQL);
 
-			$SQL = "DELETE FROM $table_name WHERE STS_ID IN ( 'ACT', 'NAC', 'NOP', 'OPN', 'CLS', 'PND', 'ONG', 'SEC', 'DRF', 'DEL', 'DEN', 'EXP', 'RPP', 'RCN', 'RDC', 'RAP', 'RNA', 'RWL', 'TAB', 'TIN', 'TFL', 'TCM', 'TOP', 'PAP', 'PCN', 'PFL', 'PDC', 'EDR', 'ESN', 'PPN', 'RIC', 'MSN', 'MFL', 'MID', 'MRS', 'MIC' );";
-			$wpdb->query($SQL);
-
-			$SQL = "INSERT INTO $table_name
+            $SQL = "INSERT INTO $table_name
 					(STS_ID, STS_code, STS_type, STS_can_edit, STS_desc, STS_open) VALUES
 					('ACT', 'ACTIVE', 'event', 0, NULL, 1),
 					('NAC', 'NOT_ACTIVE', 'event', 0, NULL, 0),
@@ -1218,117 +1266,111 @@ class EEH_Activation
 					('ESN', 'SENT', 'email', 0, NULL, 1),
 					('MSN', 'SENT', 'message', 0, NULL, 0),
 					('MFL', 'FAIL', 'message', 0, NULL, 0),
+					('MDO', 'DEBUG_ONLY', 'message', 0, NULL, 0),
+					('MEX', 'MESSENGER_EXECUTING', 'message', 0, NULL, 0),
 					('MID', 'IDLE', 'message', 0, NULL, 1),
 					('MRS', 'RESEND', 'message', 0, NULL, 1),
 					('MIC', 'INCOMPLETE', 'message', 0, NULL, 0);";
-			$wpdb->query($SQL);
+            $wpdb->query($SQL);
 
-		}
+        }
 
-	}
-
-
+    }
 
 
+    /**
+     * create_upload_directories
+     * Creates folders in the uploads directory to facilitate addons and templates
+     *
+     * @access public
+     * @static
+     * @return boolean success of verifying upload directories exist
+     */
+    public static function create_upload_directories()
+    {
+        // Create the required folders
+        $folders = array(
+            EVENT_ESPRESSO_TEMPLATE_DIR,
+            EVENT_ESPRESSO_GATEWAY_DIR,
+            EVENT_ESPRESSO_UPLOAD_DIR . 'logs/',
+            EVENT_ESPRESSO_UPLOAD_DIR . 'css/',
+            EVENT_ESPRESSO_UPLOAD_DIR . 'tickets/',
+        );
+        foreach ($folders as $folder) {
+            try {
+                EEH_File::ensure_folder_exists_and_is_writable($folder);
+                @ chmod($folder, 0755);
+            } catch (EE_Error $e) {
+                EE_Error::add_error(
+                    sprintf(
+                        __('Could not create the folder at "%1$s" because: %2$s', 'event_espresso'),
+                        $folder,
+                        '<br />' . $e->getMessage()
+                    ),
+                    __FILE__, __FUNCTION__, __LINE__
+                );
+                //indicate we'll need to fix this later
+                update_option(EEH_Activation::upload_directories_incomplete_option_name, true);
+                return false;
+            }
+        }
+        //just add the .htaccess file to the logs directory to begin with. Even if logging
+        //is disabled, there might be activation errors recorded in there
+        EEH_File::add_htaccess_deny_from_all(EVENT_ESPRESSO_UPLOAD_DIR . 'logs/');
+        //remember EE's folders are all good
+        delete_option(EEH_Activation::upload_directories_incomplete_option_name);
+        return true;
+    }
+
+    /**
+     * Whether the upload directories need to be fixed or not.
+     * If EE is installed but filesystem access isn't initially available,
+     * we need to get the user's filesystem credentials and THEN create them,
+     * so there might be period of time when EE is installed but its
+     * upload directories aren't available. This indicates such a state
+     *
+     * @return boolean
+     */
+    public static function upload_directories_incomplete()
+    {
+        return get_option(EEH_Activation::upload_directories_incomplete_option_name, false);
+    }
 
 
-
-
-
-
-
-
-
-	/**
-	 * create_upload_directories
-	 * Creates folders in the uploads directory to facilitate addons and templates
-	 *
-	 * 	@access public
-	 * 	@static
-	 * 	@return boolean success of verifying upload directories exist
-	 */
-	public static function create_upload_directories() {
-		// Create the required folders
-		$folders = array(
-				EVENT_ESPRESSO_TEMPLATE_DIR,
-				EVENT_ESPRESSO_GATEWAY_DIR,
-				EVENT_ESPRESSO_UPLOAD_DIR . 'logs/',
-				EVENT_ESPRESSO_UPLOAD_DIR . 'css/',
-				EVENT_ESPRESSO_UPLOAD_DIR . 'tickets/'
-		);
-		foreach ( $folders as $folder ) {
-			try {
-				EEH_File::ensure_folder_exists_and_is_writable( $folder );
-				@ chmod( $folder, 0755 );
-			} catch( EE_Error $e ){
-				EE_Error::add_error(
-					sprintf(
-						__(  'Could not create the folder at "%1$s" because: %2$s', 'event_espresso' ),
-						$folder,
-						'<br />' . $e->getMessage()
-					),
-					__FILE__, __FUNCTION__, __LINE__
-				);
-				//indicate we'll need to fix this later
-				update_option( EEH_Activation::upload_directories_incomplete_option_name, true );
-				return FALSE;
-			}
-		}
-		//just add the .htaccess file to the logs directory to begin with. Even if logging
-		//is disabled, there might be activation errors recorded in there
-		EEH_File::add_htaccess_deny_from_all( EVENT_ESPRESSO_UPLOAD_DIR . 'logs/' );
-		//remember EE's folders are all good
-		delete_option( EEH_Activation::upload_directories_incomplete_option_name );
-		return TRUE;
-	}
-
-	/**
-	 * Whether the upload directories need to be fixed or not.
-	 * If EE is installed but filesystem access isn't initially available,
-	 * we need to get the user's filesystem credentials and THEN create them,
-	 * so there might be period of time when EE is installed but its
-	 * upload directories aren't available. This indicates such a state
-	 * @return boolean
-	 */
-	public static function upload_directories_incomplete() {
-		return get_option( EEH_Activation::upload_directories_incomplete_option_name, false );
-	}
-
-
-
-	/**
-	 * generate_default_message_templates
-	 *
-	 * @static
-	 * @throws EE_Error
-	 * @return bool     true means new templates were created.
-	 *                  false means no templates were created.
-	 *                  This is NOT an error flag. To check for errors you will want
-	 *                  to use either EE_Error or a try catch for an EE_Error exception.
-	 */
-	public static function generate_default_message_templates() {
-		/** @type EE_Message_Resource_Manager $message_resource_manager */
-		$message_resource_manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
-		/*
-		 * This first method is taking care of ensuring any default messengers
-		 * that should be made active and have templates generated are done.
-		 */
-		$new_templates_created_for_messenger = self::_activate_and_generate_default_messengers_and_message_templates(
-			$message_resource_manager
-		);
-		/**
-		 * This method is verifying there are no NEW default message types
-		 * for ACTIVE messengers that need activated (and corresponding templates setup).
-		 */
-		$new_templates_created_for_message_type = self::_activate_new_message_types_for_active_messengers_and_generate_default_templates(
-			$message_resource_manager
-		);
-		//after all is done, let's persist these changes to the db.
-		$message_resource_manager->update_has_activated_messengers_option();
-		$message_resource_manager->update_active_messengers_option();
-		// will return true if either of these are true.  Otherwise will return false.
-		return $new_templates_created_for_message_type || $new_templates_created_for_messenger;
-	}
+    /**
+     * generate_default_message_templates
+     *
+     * @static
+     * @throws EE_Error
+     * @return bool     true means new templates were created.
+     *                  false means no templates were created.
+     *                  This is NOT an error flag. To check for errors you will want
+     *                  to use either EE_Error or a try catch for an EE_Error exception.
+     */
+    public static function generate_default_message_templates()
+    {
+        /** @type EE_Message_Resource_Manager $message_resource_manager */
+        $message_resource_manager = EE_Registry::instance()->load_lib('Message_Resource_Manager');
+        /*
+         * This first method is taking care of ensuring any default messengers
+         * that should be made active and have templates generated are done.
+         */
+        $new_templates_created_for_messenger = self::_activate_and_generate_default_messengers_and_message_templates(
+            $message_resource_manager
+        );
+        /**
+         * This method is verifying there are no NEW default message types
+         * for ACTIVE messengers that need activated (and corresponding templates setup).
+         */
+        $new_templates_created_for_message_type = self::_activate_new_message_types_for_active_messengers_and_generate_default_templates(
+            $message_resource_manager
+        );
+        //after all is done, let's persist these changes to the db.
+        $message_resource_manager->update_has_activated_messengers_option();
+        $message_resource_manager->update_active_messengers_option();
+        // will return true if either of these are true.  Otherwise will return false.
+        return $new_templates_created_for_message_type || $new_templates_created_for_messenger;
+    }
 
 
 
@@ -1354,8 +1396,10 @@ class EEH_Activation
                 // (otherwise we might reactivate something user's intentionally deactivated.)
                 // we also skip if the message type is not installed.
                 if (
-                    $message_resource_manager->has_message_type_been_activated_for_messenger($default_message_type_name_for_messenger,
-                        $active_messenger->name)
+                    $message_resource_manager->has_message_type_been_activated_for_messenger(
+                        $default_message_type_name_for_messenger,
+                        $active_messenger->name
+                    )
                     || $message_resource_manager->is_message_type_active_for_messenger(
                         $active_messenger->name,
                         $default_message_type_name_for_messenger
@@ -1409,8 +1453,10 @@ class EEH_Activation
             foreach ($default_message_type_names_for_messenger as $key => $name) {
                 if (
                     ! isset($installed_message_types[$name])
-                    || $message_resource_manager->has_message_type_been_activated_for_messenger($name,
-                        $messenger_to_generate->name)
+                    || $message_resource_manager->has_message_type_been_activated_for_messenger(
+                        $name,
+                        $messenger_to_generate->name
+                    )
                 ) {
                     unset($default_message_type_names_for_messenger[$key]);
                 }
@@ -1439,168 +1485,162 @@ class EEH_Activation
     }
 
 
+    /**
+     * This returns the default messengers to generate templates for on activation of EE.
+     * It considers:
+     * - whether a messenger is already active in the db.
+     * - whether a messenger has been made active at any time in the past.
+     *
+     * @static
+     * @param  EE_Message_Resource_Manager $message_resource_manager
+     * @return EE_messenger[]
+     */
+    protected static function _get_default_messengers_to_generate_on_activation(
+        EE_Message_Resource_Manager $message_resource_manager
+    ) {
+        $active_messengers    = $message_resource_manager->active_messengers();
+        $installed_messengers = $message_resource_manager->installed_messengers();
+        $has_activated        = $message_resource_manager->get_has_activated_messengers_option();
 
-	/**
-	 * This returns the default messengers to generate templates for on activation of EE.
-	 * It considers:
-	 * - whether a messenger is already active in the db.
-	 * - whether a messenger has been made active at any time in the past.
-	 *
-	 * @static
-	 * @param  EE_Message_Resource_Manager $message_resource_manager
-	 * @return EE_messenger[]
-	 */
-	protected static function _get_default_messengers_to_generate_on_activation(
-		EE_Message_Resource_Manager $message_resource_manager
-	) {
-		$active_messengers = $message_resource_manager->active_messengers();
-		$installed_messengers = $message_resource_manager->installed_messengers();
-		$has_activated = $message_resource_manager->get_has_activated_messengers_option();
-
-		$messengers_to_generate = array();
-		foreach ( $installed_messengers as $installed_messenger ) {
-			//if installed messenger is a messenger that should be activated on install
-			//and is not already active
-			//and has never been activated
-			if (
-				! $installed_messenger->activate_on_install
-				|| isset( $active_messengers[ $installed_messenger->name ] )
-				|| isset( $has_activated[ $installed_messenger->name ] )
-			) {
-				continue;
-			}
-			$messengers_to_generate[ $installed_messenger->name ] = $installed_messenger;
-		}
-		return $messengers_to_generate;
-	}
-
+        $messengers_to_generate = array();
+        foreach ($installed_messengers as $installed_messenger) {
+            //if installed messenger is a messenger that should be activated on install
+            //and is not already active
+            //and has never been activated
+            if (
+                ! $installed_messenger->activate_on_install
+                || isset($active_messengers[$installed_messenger->name])
+                || isset($has_activated[$installed_messenger->name])
+            ) {
+                continue;
+            }
+            $messengers_to_generate[$installed_messenger->name] = $installed_messenger;
+        }
+        return $messengers_to_generate;
+    }
 
 
+    /**
+     * This simply validates active message types to ensure they actually match installed
+     * message types.  If there's a mismatch then we deactivate the message type and ensure all related db
+     * rows are set inactive.
+     * Note: Messengers are no longer validated here as of 4.9.0 because they get validated automatically whenever
+     * EE_Messenger_Resource_Manager is constructed.  Message Types are a bit more resource heavy for validation so they
+     * are still handled in here.
+     *
+     * @since 4.3.1
+     * @return void
+     */
+    public static function validate_messages_system()
+    {
+        /** @type EE_Message_Resource_Manager $message_resource_manager */
+        $message_resource_manager = EE_Registry::instance()->load_lib('Message_Resource_Manager');
+        $message_resource_manager->validate_active_message_types_are_installed();
+        do_action('AHEE__EEH_Activation__validate_messages_system');
+    }
 
 
-
-	/**
-	 * This simply validates active message types to ensure they actually match installed
-	 * message types.  If there's a mismatch then we deactivate the message type and ensure all related db
-	 * rows are set inactive.
-	 *
-	 * Note: Messengers are no longer validated here as of 4.9.0 because they get validated automatically whenever
-	 * EE_Messenger_Resource_Manager is constructed.  Message Types are a bit more resource heavy for validation so they
-	 * are still handled in here.
-	 *
-	 * @since 4.3.1
-	 *
-	 * @return void
-	 */
-	public static function validate_messages_system() {
-		/** @type EE_Message_Resource_Manager $message_resource_manager */
-		$message_resource_manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
-		$message_resource_manager->validate_active_message_types_are_installed();
-		do_action( 'AHEE__EEH_Activation__validate_messages_system' );
-	}
+    /**
+     * create_no_ticket_prices_array
+     *
+     * @access public
+     * @static
+     * @return void
+     */
+    public static function create_no_ticket_prices_array()
+    {
+        // this creates an array for tracking events that have no active ticket prices created
+        // this allows us to warn admins of the situation so that it can be corrected
+        $espresso_no_ticket_prices = get_option('ee_no_ticket_prices', false);
+        if (! $espresso_no_ticket_prices) {
+            add_option('ee_no_ticket_prices', array(), '', false);
+        }
+    }
 
 
+    /**
+     * plugin_deactivation
+     *
+     * @access public
+     * @static
+     * @return void
+     */
+    public static function plugin_deactivation()
+    {
+    }
 
 
-	/**
-	 * create_no_ticket_prices_array
-	 *
-	 * 	@access public
-	 * 	@static
-	 * 	@return void
-	 */
-	public static function create_no_ticket_prices_array(){
-		// this creates an array for tracking events that have no active ticket prices created
-		// this allows us to warn admins of the situation so that it can be corrected
-		$espresso_no_ticket_prices = get_option( 'ee_no_ticket_prices', FALSE );
-		if ( ! $espresso_no_ticket_prices ) {
-			add_option( 'ee_no_ticket_prices', array(), '', FALSE );
-		}
-	}
+    /**
+     * Finds all our EE4 custom post types, and deletes them and their associated data
+     * (like post meta or term relations)
+     *
+     * @global wpdb $wpdb
+     * @throws \EE_Error
+     */
+    public static function delete_all_espresso_cpt_data()
+    {
+        global $wpdb;
+        //get all the CPT post_types
+        $ee_post_types = array();
+        foreach (EE_Registry::instance()->non_abstract_db_models as $model_name) {
+            if (method_exists($model_name, 'instance')) {
+                $model_obj = call_user_func(array($model_name, 'instance'));
+                if ($model_obj instanceof EEM_CPT_Base) {
+                    $ee_post_types[] = $wpdb->prepare("%s", $model_obj->post_type());
+                }
+            }
+        }
+        //get all our CPTs
+        $query   = "SELECT ID FROM {$wpdb->posts} WHERE post_type IN (" . implode(",", $ee_post_types) . ")";
+        $cpt_ids = $wpdb->get_col($query);
+        //delete each post meta and term relations too
+        foreach ($cpt_ids as $post_id) {
+            wp_delete_post($post_id, true);
+        }
+    }
 
+    /**
+     * Deletes all EE custom tables
+     *
+     * @return array
+     */
+    public static function drop_espresso_tables()
+    {
+        $tables = array();
+        // load registry
+        foreach (EE_Registry::instance()->non_abstract_db_models as $model_name) {
+            if (method_exists($model_name, 'instance')) {
+                $model_obj = call_user_func(array($model_name, 'instance'));
+                if ($model_obj instanceof EEM_Base) {
+                    foreach ($model_obj->get_tables() as $table) {
+                        if (strpos($table->get_table_name(), 'esp_')
+                            &&
+                            (
+                                is_main_site()//main site? nuke them all
+                                || ! $table->is_global()//not main site,but not global either. nuke it
+                            )
+                        ) {
+                            $tables[] = $table->get_table_name();
+                        }
+                    }
+                }
+            }
+        }
 
-
-	/**
-	 * plugin_deactivation
-	 *
-	 * 	@access public
-	 * 	@static
-	 * 	@return void
-	 */
-	public static function plugin_deactivation() {
-	}
-
-
-
-	/**
-	 * Finds all our EE4 custom post types, and deletes them and their associated data
-	 * (like post meta or term relations)
-	 *
-	 * @global wpdb $wpdb
-	 * @throws \EE_Error
-	 */
-	public static function delete_all_espresso_cpt_data(){
-		global $wpdb;
-		//get all the CPT post_types
-		$ee_post_types = array();
-		foreach(EE_Registry::instance()->non_abstract_db_models as $model_name){
-			if ( method_exists( $model_name, 'instance' )) {
-				$model_obj = call_user_func( array( $model_name, 'instance' ));
-				if ( $model_obj instanceof EEM_CPT_Base ) {
-					$ee_post_types[] = $wpdb->prepare("%s",$model_obj->post_type());
-				}
-			}
-		}
-		//get all our CPTs
-		$query = "SELECT ID FROM {$wpdb->posts} WHERE post_type IN (".implode(",",$ee_post_types).")";
-		$cpt_ids = $wpdb->get_col($query);
-		//delete each post meta and term relations too
-		foreach($cpt_ids as $post_id){
-			wp_delete_post($post_id,true);
-		}
-	}
-
-	/**
-	 * Deletes all EE custom tables
-	 *
-	 * @return array
-	 */
-	public static function drop_espresso_tables() {
-		$tables = array();
-		// load registry
-		foreach( EE_Registry::instance()->non_abstract_db_models as $model_name ){
-			if ( method_exists( $model_name, 'instance' )) {
-				$model_obj = call_user_func( array( $model_name, 'instance' ));
-				if ( $model_obj instanceof EEM_Base ) {
-					foreach ( $model_obj->get_tables() as $table ) {
-						if ( strpos( $table->get_table_name(), 'esp_' )
-							&&
-							(
-								is_main_site()//main site? nuke them all
-								|| ! $table->is_global()//not main site,but not global either. nuke it
-							)
-						) {
-							$tables[] = $table->get_table_name();
-						}
-					}
-				}
-			}
-		}
-
-		//there are some tables whose models were removed.
-		//they should be removed when removing all EE core's data
-		$tables_without_models = array(
-			'esp_promotion',
-			'esp_promotion_applied',
-			'esp_promotion_object',
-			'esp_promotion_rule',
-			'esp_rule'
-		);
-		foreach( $tables_without_models as $table ){
-			$tables[] = $table;
-		}
-		return \EEH_Activation::getTableManager()->dropTables( $tables );
-	}
+        //there are some tables whose models were removed.
+        //they should be removed when removing all EE core's data
+        $tables_without_models = array(
+            'esp_promotion',
+            'esp_promotion_applied',
+            'esp_promotion_object',
+            'esp_promotion_rule',
+            'esp_rule',
+        );
+        foreach ($tables_without_models as $table) {
+            $tables[] = $table;
+        }
+        return \EEH_Activation::getTableManager()->dropTables($tables);
+    }
 
 
 
@@ -1710,37 +1750,42 @@ class EEH_Activation
         }
     }
 
-	/**
-	 * Gets the mysql error code from the last used query by wpdb
-	 * @return int mysql error code, see https://dev.mysql.com/doc/refman/5.5/en/error-messages-server.html
-	 */
-	public static function last_wpdb_error_code() {
-		global $wpdb;
-		if( $wpdb->use_mysqli ) {
-			return mysqli_errno( $wpdb->dbh );
-		} else {
-			return mysql_errno( $wpdb->dbh );
-		}
-	}
+    /**
+     * Gets the mysql error code from the last used query by wpdb
+     *
+     * @return int mysql error code, see https://dev.mysql.com/doc/refman/5.5/en/error-messages-server.html
+     */
+    public static function last_wpdb_error_code()
+    {
+        global $wpdb;
+        if ($wpdb->use_mysqli) {
+            return mysqli_errno($wpdb->dbh);
+        } else {
+            return mysql_errno($wpdb->dbh);
+        }
+    }
 
-	/**
-	 * Checks that the database table exists. Also works on temporary tables (for unit tests mostly).
-	 * @global wpdb $wpdb
-	 * @deprecated instead use TableAnalysis::tableExists()
-	 * @param string $table_name with or without $wpdb->prefix
-	 * @return boolean
-	 */
-	public static function table_exists( $table_name ){
-		return \EEH_Activation::getTableAnalysis()->tableExists( $table_name );
-	}
+    /**
+     * Checks that the database table exists. Also works on temporary tables (for unit tests mostly).
+     *
+     * @global wpdb  $wpdb
+     * @deprecated instead use TableAnalysis::tableExists()
+     * @param string $table_name with or without $wpdb->prefix
+     * @return boolean
+     */
+    public static function table_exists($table_name)
+    {
+        return \EEH_Activation::getTableAnalysis()->tableExists($table_name);
+    }
 
-	/**
-	 * Resets the cache on EEH_Activation
-	 */
-	public static function reset(){
-		self::$_default_creator_id = NULL;
-		self::$_initialized_db_content_already_in_this_request = false;
-	}
+    /**
+     * Resets the cache on EEH_Activation
+     */
+    public static function reset()
+    {
+        self::$_default_creator_id                             = null;
+        self::$_initialized_db_content_already_in_this_request = false;
+    }
 }
 // End of file EEH_Activation.helper.php
 // Location: /helpers/EEH_Activation.core.php

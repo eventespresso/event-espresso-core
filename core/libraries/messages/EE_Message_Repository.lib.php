@@ -92,38 +92,40 @@ class EE_Message_Repository extends EE_Base_Class_Repository
     /**
      * Save all EE_Message objects to the db.
      *
-     * @return array  array(
+     * @param bool $do_hooks_only  When true, only the hooks related to saving are fired.
+     * @return array array(
      *                  'updated' => 0, //count of how many messages updated
      *                  'notupdated' => 0, //count of how many messages not updated.
      *                  'errors' => array( $token ), //array of message object tokens that had errors in saving
-     *                )
+     *                  )
      */
-    public function saveAll()
+    public function saveAll($do_hooks_only = false)
     {
-        $this->rewind();
         $save_tracking = array('updated' => 0, 'notupdated' => 0, 'errors' => array());
 
-        //exit early if there is nothing to save.
-        if ( ! $this->count() > 0) {
-            return $save_tracking;
-        }
-
-        while ($this->valid()) {
-
-            $saved = $this->current()->save();
-            if ($saved === false) {
-                $save_tracking['errors'][] = $this->current()->MSG_token();
-            } elseif ($saved) {
-                $save_tracking['updated']++;
-            } else {
-                $save_tracking['notupdated']++;
+        if (! $do_hooks_only) {
+            $this->rewind();
+            //exit early if there is nothing to save.
+            if (! $this->count() > 0) {
+                return $save_tracking;
             }
-            //maybe persist generation data if this is an incomplete EE_Message.
-            $this->_maybe_persist_attached_data();
 
-            $this->next();
+            while ($this->valid()) {
+                $saved = $this->current()->save();
+                if ($saved === false) {
+                    $save_tracking['errors'][] = $this->current()->MSG_token();
+                } elseif ($saved) {
+                    $save_tracking['updated']++;
+                } else {
+                    $save_tracking['notupdated']++;
+                }
+                //maybe persist generation data if this is an incomplete EE_Message.
+                $this->_maybe_persist_attached_data();
+
+                $this->next();
+            }
         }
-        do_action('AHEE__EE_Message_Repository__saveAll__after', $save_tracking, $this);
+        do_action('AHEE__EE_Message_Repository__saveAll__after', $save_tracking, $this, $do_hooks_only);
         return $save_tracking;
     }
 

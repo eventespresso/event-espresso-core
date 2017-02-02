@@ -93,6 +93,14 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
 
 
     /**
+     * This status is given to messages it is processed by the messenger send method.
+     * Messages with this status should rarely be seen in the Message List table, but if they are, that's usually
+     * indicative of a PHP timeout or memory limit issue.
+     */
+    const status_messenger_executing = 'MEX';
+
+
+    /**
      *    Private constructor to prevent direct creation.
      *
      * @param string $timezone string representing the timezone we want to set for returned Date Time Strings (and
@@ -289,6 +297,7 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
         $failed_stati = array(
             self::status_failed,
             self::status_retry,
+            self::status_messenger_executing,
         );
         //if WP_DEBUG is set, then let's include debug_only fails
         if (WP_DEBUG) {
@@ -314,6 +323,7 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
                 EEM_Message::status_resend,
                 EEM_Message::status_retry,
                 EEM_Message::status_failed,
+                EEM_Message::status_messenger_executing,
                 EEM_Message::status_debug_only,
             )
         );
