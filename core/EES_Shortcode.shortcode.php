@@ -65,14 +65,18 @@ abstract class EES_Shortcode extends EE_Base {
 	 * @param 	string $shortcode_class
 	 * @return 	\EES_Shortcode
 	 */
-	final public static function instance( $shortcode_class = NULL ) {
+	final public static function instance( $shortcode_class = null ) {
 		$shortcode_class = ! empty( $shortcode_class ) ? $shortcode_class : get_called_class();
-		if ( $shortcode_class == 'EES_Shortcode' || empty( $shortcode_class )) {
-			return NULL;
+		if ( $shortcode_class === 'EES_Shortcode' || empty( $shortcode_class )) {
+			return null;
 		}
 		$shortcode = str_replace( 'EES_', '', strtoupper( $shortcode_class ));
-		$shortcode_obj = isset( EE_Registry::instance()->shortcodes->{$shortcode} ) ? EE_Registry::instance()->shortcodes->{$shortcode} : NULL;
-		return $shortcode_obj instanceof $shortcode_class || $shortcode_class == 'self' ? $shortcode_obj : new $shortcode_class();
+		$shortcode_obj = isset( EE_Registry::instance()->shortcodes->{$shortcode} )
+            ? EE_Registry::instance()->shortcodes->{$shortcode}
+            : null;
+		return $shortcode_obj instanceof $shortcode_class || $shortcode_class === 'self'
+            ? $shortcode_obj
+            : new $shortcode_class();
 	}
 
 
@@ -104,7 +108,7 @@ abstract class EES_Shortcode extends EE_Base {
 			$shortcode_obj->_attributes = (array)$attributes;
 			return $shortcode_obj->process_shortcode( $shortcode_obj->_attributes );
 		} else {
-			return NULL;
+			return null;
 		}
 	}
 
@@ -125,10 +129,7 @@ abstract class EES_Shortcode extends EE_Base {
 
 
 	/**
-	 *    class constructor - should ONLY be instantiated by EE_Front_Controller
-	 *
-	 * @access   public
-	 * @return \EES_Shortcode
+	 * class constructor - should ONLY be instantiated by EE_Front_Controller
 	 */
 	final public function __construct() {
 		// get classname, remove EES_prefix, and convert to UPPERCASE
@@ -140,6 +141,37 @@ abstract class EES_Shortcode extends EE_Base {
 	}
 
 
+
+    /**
+     * @param array $attributes
+     * @return array
+     */
+    public static function sanitize_attributes(array $attributes)
+    {
+        foreach ($attributes as $key => $value) {
+            switch (true) {
+                case $value === null :
+                case is_int($value) :
+                case is_float($value) :
+                    // typical booleans
+                case in_array($value, array(true, 'true', '1', 'on', 'yes', false, 'false', '0', 'off', 'no'), true) :
+                    // do nothing
+                    break;
+                case is_string($value) :
+                    $value = sanitize_text_field($value);
+                    break;
+                case is_array($value) :
+                    $value = \EES_Shortcode::sanitize_attributes($value);
+                    break;
+                default :
+                    // only remaining data types are Object and Resource
+                    // which are not allowed as shortcode attributes
+                    $value = null;
+                    break;
+            }
+        }
+        return $attributes;
+	}
 
 
 }
