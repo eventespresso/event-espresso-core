@@ -1937,8 +1937,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     {
         if ( ! $this->_reg_custom_questions_form) {
             require_once(REG_ADMIN . 'form_sections' . DS . 'EE_Registration_Custom_Questions_Form.form.php');
-            $this->_reg_custom_questions_form = new EE_Registration_Custom_Questions_Form(EEM_Registration::instance()
-                                                                                                          ->get_one_by_ID($REG_ID));
+            $this->_reg_custom_questions_form = new EE_Registration_Custom_Questions_Form(
+                EEM_Registration::instance()->get_one_by_ID($REG_ID)
+            );
             $this->_reg_custom_questions_form->_construct_finalize(null, null);
         }
         return $this->_reg_custom_questions_form;

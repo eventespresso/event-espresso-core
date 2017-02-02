@@ -129,7 +129,10 @@ class RegistrationsReport extends JobHandlerFile
                 $this->_change_registration_where_params_to_question_where_params($registration_query_params[0]),
             );
         }
-        $question_query_params[0]['Answer.ANS_ID'] = array( 'IS_NOT_NULL' );
+        $question_query_params[0]['QST_system'] = array('NOT_IN', array_keys(\EEM_Attendee::instance()->system_question_to_attendee_field_mapping()));
+        if(apply_filters('FHEE__EventEspressoBatchRequest__JobHandlers__RegistrationsReport___get_question_labels__only_include_answered_questions', false, $registration_query_params)) {
+            $question_query_params[0]['Answer.ANS_ID'] = array('IS_NOT_NULL');
+        }
         $question_query_params['group_by'] = array( 'QST_ID' );
         return array_unique( \EEM_Question::instance()->get_col( $question_query_params, 'QST_admin_label' ) );
     }
