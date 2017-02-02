@@ -103,6 +103,7 @@ class EES_Espresso_Events  extends EES_Shortcode {
 		);
 		// grab attributes and merge with defaults, then extract
 		$attributes = array_merge( (array) $default_espresso_events_shortcode_atts, (array) $attributes );
+		$attributes = \EES_Shortcode::sanitize_attributes($attributes);
 		// make sure we use the_excerpt()
 		add_filter( 'FHEE__EES_Espresso_Events__process_shortcode__true', '__return_true' );
 		// apply query filters
@@ -162,10 +163,8 @@ class EE_Event_List_Query extends WP_Query {
 	 * sets up a WordPress query
 	 *
 	 * @param array $args
-	 * @return \EE_Event_List_Query
 	 */
-	function __construct( $args = array() ) {
-//		EEH_Debug_Tools::printr( $args, '$args  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+	public function __construct( $args = array() ) {
 		// incoming args could be a mix of WP query args + EE shortcode args
 		foreach ( $args as $key =>$value ) {
 			$property = '_' . $key;
@@ -208,11 +207,10 @@ class EE_Event_List_Query extends WP_Query {
 
 
 	/**
-	 *    event_list_title
+	 * event_list_title
 	 *
-	 * @access    public
 	 * @param string $event_list_title
-	 * @return    string
+	 * @return string
 	 */
 	public function event_list_title( $event_list_title = '' ) {
 		if ( ! empty( $this->_title )) {
@@ -224,11 +222,10 @@ class EE_Event_List_Query extends WP_Query {
 
 
 	/**
-	 *    event_list_css
-	 *
-	 * @access    public
-	 * @param string $event_list_css
-	 * @return    array
+     * event_list_css
+     *
+     * @param string $event_list_css
+	 * @return string
 	 */
 	public function event_list_css( $event_list_css = '' ) {
 		$event_list_css .=  ! empty( $event_list_css ) ? ' ' : '';
