@@ -549,9 +549,11 @@ class EEH_Event_Query {
 		if ( ! empty( $month ) ) {
 			$datetime_table = EEM_Datetime::instance()->table();
 			// event start date is LESS than the end of the month ( so nothing that doesn't start until next month )
-			$SQL = " AND {$datetime_table}.DTT_EVT_start <= '" . date( 'Y-m-t 23:59:59', strtotime( $month . ' 1') ) . "'";
+			$SQL = " AND {$datetime_table}.DTT_EVT_start <= '";
+			$SQL .= date( 'Y-m-t 23:59:59', \EEH_DTT_Helper::first_of_month_timestamp($month)) . "'";
 			// event end date is GREATER than the start of the month ( so nothing that ended before this month )
-			$SQL .= " AND {$datetime_table}.DTT_EVT_end >= '" . date( 'Y-m-01 0:0:00', strtotime( $month . ' 1') ) . "' ";
+			$SQL .= " AND {$datetime_table}.DTT_EVT_end >= '";
+			$SQL .= date( 'Y-m-01 0:0:00', \EEH_DTT_Helper::first_of_month_timestamp($month)) . "' ";
 		}
 		return $SQL;
 	}

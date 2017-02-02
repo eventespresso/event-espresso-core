@@ -102,4 +102,32 @@ class TableAnalysis extends \EE_Base {
 		}
 		return true;
 	}
+
+
+
+    /**
+     * @param $table_name
+     * @param $index_name
+     * @return array of columns used on that index, Each entry is an object with the following properties {
+     *  @type string Table
+     *  @type string Non_unique "0" or "1"
+     *  @type string Key_name
+     *  @type string Seq_in_index
+     *  @type string Column_name
+     *  @type string Collation
+     *  @type string Cardinality
+     *  @type string Sub_part on a column, usually this is just the number of characters from this column to use in indexing
+     *  @type string|null Packed
+     *  @type string Null
+     *  @type string Index_type
+     *  @type string Comment
+     *  @type string Index_comment
+     * }
+     */
+	public function showIndexes($table_name, $index_name){
+	    global $wpdb;
+        $table_name = $this->ensureTableNameHasPrefix($table_name);
+        $index_exists_query = "SHOW INDEX FROM {$table_name} WHERE Key_name = '{$index_name}'";
+        return $wpdb->get_results($index_exists_query);
+    }
 }
