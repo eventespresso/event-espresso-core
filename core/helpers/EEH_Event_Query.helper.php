@@ -546,7 +546,6 @@ class EEH_Event_Query {
      */
 	public static function posts_where_sql_for_event_list_month( $month = NULL ) {
 		$SQL = '';
-		$month = esc_sql($month);
 		if ( ! empty( $month ) ) {
 			$datetime_table = EEM_Datetime::instance()->table();
 			// event start date is LESS than the end of the month ( so nothing that doesn't start until next month )
@@ -605,7 +604,9 @@ class EEH_Event_Query {
 		global $wpdb;
 		$SQL = '';
 		$counter = 0;
-		$sort = esc_sql($sort);
+		$sort = in_array($sort, array('ASC', 'asc', 'DESC', 'desc'), true)
+            ? strtoupper($sort)
+            : 'ASC';
 		//make sure 'orderby' is set in query params
 		if ( ! isset( self::$_query_params['orderby'] )) {
 			self::$_query_params['orderby'] = array();
