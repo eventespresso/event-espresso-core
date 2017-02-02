@@ -163,7 +163,7 @@ class EEH_Event_Query {
 	 * @return    string
 	 */
 	private static function _event_category_slug( $category = '' ) {
-		return sanitize_text_field(EE_Registry::instance()->REQ->get('event_query_category', $category));
+		return sanitize_title_with_dashes(EE_Registry::instance()->REQ->get('event_query_category', $category));
 	}
 
 
