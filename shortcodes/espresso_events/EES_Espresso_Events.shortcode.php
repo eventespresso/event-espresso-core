@@ -105,7 +105,14 @@ class EES_Espresso_Events  extends EES_Shortcode {
 		$attributes = array_merge( (array) $default_espresso_events_shortcode_atts, (array) $attributes );
 		$attributes = \EES_Shortcode::sanitize_attributes(
 		    $attributes,
-            array('category_slug' => 'sanitize_title_with_dashes')
+            // the following get sanitized/whitelisted in EEH_Event_Query
+            array(
+                'category_slug' => 'skip_sanitization',
+                'show_expired'  => 'skip_sanitization',
+                'order_by'      => 'skip_sanitization',
+                'month'         => 'skip_sanitization',
+                'sort'          => 'skip_sanitization',
+            )
         );
 		// make sure we use the_excerpt()
 		add_filter( 'FHEE__EES_Espresso_Events__process_shortcode__true', '__return_true' );
