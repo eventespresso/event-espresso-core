@@ -144,32 +144,40 @@ abstract class EES_Shortcode extends EE_Base {
 
     /**
      * @param array $attributes
+     * @param array $custom_sanitization
      * @return array
      */
-    public static function sanitize_attributes(array $attributes)
+    public static function sanitize_attributes(array $attributes, $custom_sanitization = array())
     {
         foreach ($attributes as $key => $value) {
+            // is a custom sanitization callback specified ?
+            if ( isset($custom_sanitization[$key])) {
+                $callback = $custom_sanitization[$key];
+                if (function_exists($callback)){
+                    $attributes[$key] = $callback($value);
+                    continue;
+                }
+            }
             switch (true) {
                 case $value === null :
                 case is_int($value) :
                 case is_float($value) :
                     // typical booleans
                 case in_array($value, array(true, 'true', '1', 'on', 'yes', false, 'false', '0', 'off', 'no'), true) :
-                    // do nothing
+                    $attributes[$key] = $value;
                     break;
                 case is_string($value) :
-                    $value = sanitize_text_field($value);
+                    $attributes[$key] = sanitize_text_field($value);
                     break;
                 case is_array($value) :
-                    $value = \EES_Shortcode::sanitize_attributes($value);
+                    $attributes[$key] = \EES_Shortcode::sanitize_attributes($value);
                     break;
                 default :
                     // only remaining data types are Object and Resource
                     // which are not allowed as shortcode attributes
-                    $value = null;
+                    $attributes[$key] = null;
                     break;
             }
-            $attributes[$key] = $value;
         }
         return $attributes;
 	}
