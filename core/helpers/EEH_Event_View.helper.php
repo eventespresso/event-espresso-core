@@ -32,14 +32,14 @@ class EEH_Event_View extends EEH_Base {
 
 
 
-	/**
-	 *    get_event
-	 *    attempts to retrieve an EE_Event object any way it can
-	 *
-	 * @access    public
-	 * @param    int $EVT_ID
-	 * @return    object
-	 */
+    /**
+     * get_event
+     * attempts to retrieve an EE_Event object any way it can
+     *
+     * @param int|WP_Post $EVT_ID
+     * @return EE_Event|null
+     * @throws \EE_Error
+     */
 	public static function get_event( $EVT_ID = 0 ) {
 		$EVT_ID = $EVT_ID instanceof WP_Post ? $EVT_ID->ID : absint( $EVT_ID );
 		// do we already have the Event  you are looking for?
@@ -50,18 +50,15 @@ class EEH_Event_View extends EEH_Base {
 		// international newspaper?
 		global $post;
 		// if this is being called from an EE_Event post, then we can just grab the attached EE_Event object
-		 if ( isset( $post->post_type ) && $post->post_type == 'espresso_events' || $EVT_ID ) {
-//			d( $post );
+		 if (( isset( $post->post_type ) && $post->post_type === 'espresso_events' ) || $EVT_ID ) {
 			// grab the event we're looking for
-			if ( isset( $post->EE_Event ) && ( $EVT_ID == 0 || ( $EVT_ID == $post->ID ))) {
+			if ( isset( $post->EE_Event ) && ( $EVT_ID === 0 || ( $EVT_ID === $post->ID ))) {
 				EEH_Event_View::$_event = $post->EE_Event;
-//				d( EEH_Event_View::$_event );
 			}
 			// now if we STILL do NOT have an EE_Event model object, BUT we have an Event ID...
 			if ( ! EEH_Event_View::$_event instanceof EE_Event && $EVT_ID ) {
 				// sigh... pull it from the db
 				EEH_Event_View::$_event = EEM_Event::instance()->get_one_by_ID( $EVT_ID );
-//				d( EEH_Event_View::$_event );
 			}
 		}
 		return EEH_Event_View::$_event;
@@ -141,53 +138,58 @@ class EEH_Event_View extends EEH_Base {
 	 * @return    string
 	 */
 	public static function event_content_or_excerpt( $num_words = NULL, $more = NULL ) {
-		global $post;
-
+        global $post;
 		ob_start();
 		if (( is_single() ) || ( is_archive() && espresso_display_full_description_in_event_list() )) {
-			// admin has chosen "full description" for the "Event Espresso - Events > Templates > Display Description" option
+			// admin has chosen "full description"
+            // for the "Event Espresso - Events > Templates > Display Description" option
 			the_content();
-		} else if (( is_archive() && has_excerpt( $post->ID ) && espresso_display_excerpt_in_event_list() ) ) {
-            // admin has chosen "excerpt (short desc)" for the "Event Espresso - Events > Templates > Display Description" option
-			// AND an excerpt actually exists
-			the_excerpt();
-		} else if (( is_archive() && ! has_excerpt( $post->ID ) && espresso_display_excerpt_in_event_list() )) {
-            // admin has chosen "excerpt (short desc)" for the "Event Espresso - Events > Templates > Display Description" option
-			// but NO excerpt actually exists, so we need to create one
-			if ( ! empty( $num_words )) {
-				if ( empty( $more )) {
-					$more_link_text = __( '(more&hellip;)' );
-					$more = ' <a href="' . get_permalink() . '"';
-					$more .= ' class="more-link"';
-					$more .= \EED_Events_Archive::link_target();
-					$more .= '>' . $more_link_text . '</a>';
-                    $more = apply_filters( 'the_content_more_link', $more, $more_link_text );
-				}
-				$content = str_replace( 'NOMORELINK', '', get_the_content( 'NOMORELINK' ));
-
-				$content =  wp_trim_words( $content, $num_words, ' ' ) . $more;
+		} else if (( is_archive() && espresso_display_excerpt_in_event_list() ) ) {
+            if ( has_excerpt( $post->ID )) {
+                // admin has chosen "excerpt (short desc)"
+                // for the "Event Espresso - Events > Templates > Display Description" option
+                // AND an excerpt actually exists
+                the_excerpt();
             } else {
-                $content =  get_the_content();
-			}
-			global $allowedtags;
-			// make sure links are allowed
-            $allowedtags['a'] = isset($allowedtags['a'])
-                ? $allowedtags['a']
-                : array();
-            // as well as target attribute
-            $allowedtags['a']['target'] = isset($allowedtags['a']['target'])
-                ? $allowedtags['a']['target']
-                : false;
-            // but get previous value so we can reset it
-            $prev_value = $allowedtags['a']['target'];
-            $allowedtags['a']['target'] = true;
-			$content = wp_kses( $content, $allowedtags );
-			$content = strip_shortcodes( $content );
-			echo apply_filters( 'the_content', $content );
-			$allowedtags['a']['target'] = $prev_value;
+                // admin has chosen "excerpt (short desc)"
+                // for the "Event Espresso - Events > Templates > Display Description" option
+                // but NO excerpt actually exists, so we need to create one
+                if ( ! empty( $num_words )) {
+                    if ( empty( $more )) {
+                        $more_link_text = __( '(more&hellip;)' );
+                        $more = ' <a href="' . get_permalink() . '"';
+                        $more .= ' class="more-link"';
+                        $more .= \EED_Events_Archive::link_target();
+                        $more .= '>' . $more_link_text . '</a>';
+                        $more = apply_filters( 'the_content_more_link', $more, $more_link_text );
+                    }
+                    $content = str_replace( 'NOMORELINK', '', get_the_content( 'NOMORELINK' ));
+
+                    $content =  wp_trim_words( $content, $num_words, ' ' ) . $more;
+                } else {
+                    $content =  get_the_content();
+                }
+                global $allowedtags;
+                // make sure links are allowed
+                $allowedtags['a'] = isset($allowedtags['a'])
+                    ? $allowedtags['a']
+                    : array();
+                // as well as target attribute
+                $allowedtags['a']['target'] = isset($allowedtags['a']['target'])
+                    ? $allowedtags['a']['target']
+                    : false;
+                // but get previous value so we can reset it
+                $prev_value = $allowedtags['a']['target'];
+                $allowedtags['a']['target'] = true;
+                $content = wp_kses( $content, $allowedtags );
+                $content = strip_shortcodes( $content );
+                echo apply_filters( 'the_content', $content );
+                $allowedtags['a']['target'] = $prev_value;
+            }
         } else {
-            // admin has chosen "none" for the "Event Espresso - Events > Templates > Display Description" option
-			echo apply_filters( 'the_content', '' );
+            // admin has chosen "none"
+            // for the "Event Espresso - Events > Templates > Display Description" option
+            echo apply_filters( 'the_content', '' );
 		}
 		return ob_get_clean();
 	}
