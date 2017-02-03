@@ -1143,26 +1143,6 @@ if ( ! function_exists( 'espresso_edit_venue_link' )) {
 }
 
 
-if ( ! function_exists('espresso_do_shortcode')) {
-    /**
-     * @param string $content
-     * @return string
-     */
-    function espresso_do_shortcode($content = '')
-    {
-        if(!did_action('get_header')){
-            \EE_Error::doing_it_wrong(
-                __METHOD__,
-                __(
-                    'The "espresso_do_shortcode()" template tag can not be called until after WordPress "get_header()" function has been called.',
-                    'event_espresso'
-                ),
-                '4.9.26'
-            );
-        }
-        return \EE_Config::getLegacyShortcodesManager()->doShortcode($content);
-    }
-}
 
 
 // End of file template_tags.php
