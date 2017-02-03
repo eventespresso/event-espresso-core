@@ -121,7 +121,7 @@ class EspressoEventAttendees extends EspressoShortcode
         ) {
             if (WP_DEBUG) {
                 return '<div class="important-notice ee-attention">'
-                       . __('The [ESPRESSO_EVENT_ATTENDEES] shortcode has been used incorrectly.  Please double check the arguments you used for any typos.  In the case of ID type arguments, its possible the given ID does not correspond to existing data in the database.',
+                       . esc_html__('The [ESPRESSO_EVENT_ATTENDEES] shortcode has been used incorrectly.  Please double check the arguments you used for any typos.  In the case of ID type arguments, its possible the given ID does not correspond to existing data in the database.',
                         'event_espresso')
                        . '</div>';
             } else {
