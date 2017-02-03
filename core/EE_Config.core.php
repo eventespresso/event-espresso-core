@@ -38,9 +38,9 @@ final class EE_Config {
 	private static $_logging_enabled = false;
 
 	/**
-	 * @var LegacyShortcodesManager $LegacyShortcodesManager
+	 * @var LegacyShortcodesManager $legacy_shortcodes_manager
 	 */
-	private  $LegacyShortcodesManager;
+	private $legacy_shortcodes_manager;
 
 	/**
 	 * An StdClass whose property names are addon slugs,
@@ -1444,12 +1444,12 @@ final class EE_Config {
      */
     public static function getLegacyShortcodesManager()
     {
-        if ( ! EE_Config::instance()->LegacyShortcodesManager instanceof LegacyShortcodesManager) {
-            EE_Config::instance()->LegacyShortcodesManager = new LegacyShortcodesManager(
+        if ( ! EE_Config::instance()->legacy_shortcodes_manager instanceof LegacyShortcodesManager) {
+            EE_Config::instance()->legacy_shortcodes_manager = new LegacyShortcodesManager(
                 EE_Registry::instance()
             );
         }
-        return EE_Config::instance()->LegacyShortcodesManager;
+        return EE_Config::instance()->legacy_shortcodes_manager;
     }
 
 
@@ -1463,6 +1463,14 @@ final class EE_Config {
      */
     public static function register_shortcode($shortcode_path = null)
     {
+        EE_Error::doing_it_wrong(
+            __METHOD__,
+            __(
+                'Usage is deprecated. Use \EventEspresso\core\services\shortcodes\LegacyShortcodesManager::registerShortcode() as direct replacement, or better yet, please see the new \EventEspresso\core\services\shortcodes\ShortcodesManager class.',
+                'event_espresso'
+            ),
+            '4.9.26'
+        );
         return EE_Config::instance()->getLegacyShortcodesManager()->registerShortcode($shortcode_path);
     }
 
