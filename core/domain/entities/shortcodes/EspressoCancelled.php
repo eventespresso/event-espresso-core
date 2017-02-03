@@ -37,6 +37,18 @@ class EspressoCancelled extends EspressoShortcode
 
 
     /**
+     * the time in seconds to cache the results of the processShortcode() method
+     * 0 means the processShortcode() results will NOT be cached at all
+     *
+     * @return int
+     */
+    public function cacheExpiration()
+    {
+        return 0;
+    }
+
+
+    /**
      * a place for adding any initialization code that needs to run prior to wp_header().
      * this may be required for shortcodes that utilize a corresponding module,
      * and need to enqueue assets for that module
@@ -45,7 +57,7 @@ class EspressoCancelled extends EspressoShortcode
      */
     public function initializeShortcode()
     {
-        // TODO: Implement initialize() method.
+        // required by interface, but nothing to do atm
     }
 
 
