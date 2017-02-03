@@ -464,7 +464,7 @@ class EE_Register_Message_Type implements EEI_Plugin_API
                     && ! empty($mt_reg['base_url_for_default_variation'])
                 ) {
                     return $mt_reg['base_url_for_default_variation'];
-                } elseif ($url
+                } elseif (! $url
                     && ! empty($mt_reg['base_path_for_default_variation'])
                 ) {
                     return $mt_reg['base_path_for_default_variation'];
