@@ -131,7 +131,7 @@ class LegacyShortcodesManager
         // does the shortcode exist ?
         if ( ! is_readable($shortcode_path . DS . $shortcode_class . $shortcode_ext)) {
             $msg = sprintf(
-                __(
+                esc_html__(
                     'The requested %s shortcode file could not be found or is not readable due to file permissions. It should be in %s',
                     'event_espresso'
                 ),
@@ -146,7 +146,7 @@ class LegacyShortcodesManager
         // verify that class exists
         if ( ! class_exists($shortcode_class)) {
             $msg = sprintf(
-                __('The requested %s shortcode class does not exist.', 'event_espresso'),
+                esc_html__('The requested %s shortcode class does not exist.', 'event_espresso'),
                 $shortcode_class
             );
             EE_Error::add_error($msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__);
@@ -326,7 +326,7 @@ class LegacyShortcodesManager
         ) {
             EE_Error::add_error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'The requested %s shortcode is not of the class "EES_Shortcode". Please check your files.',
                         'event_espresso'
                     ),
