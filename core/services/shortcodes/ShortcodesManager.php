@@ -31,9 +31,9 @@ class ShortcodesManager
 {
 
     /**
-     * @var LegacyShortcodesManager $LegacyShortcodesManager
+     * @var LegacyShortcodesManager $legacy_shortcodes_manager
      */
-    private $LegacyShortcodesManager;
+    private $legacy_shortcodes_manager;
 
     /**
      * @var ShortcodeInterface[] $shortcodes
@@ -48,7 +48,7 @@ class ShortcodesManager
      * @param LegacyShortcodesManager $LegacyShortcodesManager
      */
     public function __construct(LegacyShortcodesManager $LegacyShortcodesManager) {
-        $this->LegacyShortcodesManager = $LegacyShortcodesManager;
+        $this->legacy_shortcodes_manager = $LegacyShortcodesManager;
         // assemble a list of installed and active shortcodes
         add_action(
             'AHEE__EE_System__register_shortcodes_modules_and_widgets',
@@ -58,7 +58,7 @@ class ShortcodesManager
         //  call add_shortcode() for all installed shortcodes
         add_action('AHEE__EE_System__core_loaded_and_ready', array($this, 'addShortcodes'));
         // check content for shortcodes, the old way, and the more efficient new way
-        add_action('parse_query', array($this->LegacyShortcodesManager, 'initializeShortcodes'), 5);
+        add_action('parse_query', array($this->legacy_shortcodes_manager, 'initializeShortcodes'), 5);
         add_action('get_header', array($this, 'getHeader'));
     }
 
@@ -131,7 +131,7 @@ class ShortcodesManager
             'FHEE__EventEspresso_core_services_shortcodes_ShortcodesManager__registerShortcodes__shortcode_collection',
             $this->getShortcodes()
         );
-        $this->LegacyShortcodesManager->registerShortcodes();
+        $this->legacy_shortcodes_manager->registerShortcodes();
     }
 
 
@@ -153,7 +153,7 @@ class ShortcodesManager
                 add_shortcode($shortcode->getTag(), array($shortcode, 'processShortcodeCallback'));
             }
         }
-        $this->LegacyShortcodesManager->addShortcodes();
+        $this->legacy_shortcodes_manager->addShortcodes();
     }
 
 
