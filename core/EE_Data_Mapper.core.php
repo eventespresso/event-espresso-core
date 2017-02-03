@@ -83,7 +83,7 @@ class EE_Data_Mapper {
 	final function __wakeup() {}
 	final function __toString() {}
 	final function __invoke() {}
-	final function __set_state() {}
+	final static function __set_state() {}
 	final function __clone() {}
 
 
