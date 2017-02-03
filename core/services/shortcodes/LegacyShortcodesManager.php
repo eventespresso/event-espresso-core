@@ -77,7 +77,7 @@ class LegacyShortcodesManager
             // cycle thru shortcode folders
             foreach ($shortcodes_to_register as $shortcode_path) {
                 // add to list of installed shortcode modules
-                LegacyShortcodesManager::registerShortcode($shortcode_path);
+                $this->registerShortcode($shortcode_path);
             }
         }
         // filter list of installed modules
