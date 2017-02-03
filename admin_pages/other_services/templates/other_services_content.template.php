@@ -371,7 +371,6 @@
 															</div>
 															<div class="desc column-description">
 																<p><a href="https://eventespresso.com/product/eea-braintree-gateway/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=braintree_payment_gateway&ap_id=EEspresso" target="_blank"><img src="https://ee-screenshots.s3.amazonaws.com/ee4/braintree-payment-gateway-231x152.jpg"></a><a href="https://www.braintreepayments.com/">Braintree</a> is a full stack payment platform that helps merchants accept online payments. Braintree also supports PayPal payments.</p>
-																<p><strong>Make $50K, Keep $50K</strong><br>Free payment processing on your first $50K. <a class="button--simple__pink" href="https://www.braintreepayments.com/pricing" target="_blank" data-analytics-action="Pricing - Bucket" data-analytics-label="us:/">Learn more &gt;&gt;</a><br><br></p>
 															</div>
 														</div>
 														<div class="action-links">
