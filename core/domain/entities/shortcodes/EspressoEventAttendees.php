@@ -52,6 +52,19 @@ class EspressoEventAttendees extends EspressoShortcode
 
 
     /**
+     * the time in seconds to cache the results of the processShortcode() method
+     * 0 means the processShortcode() results will NOT be cached at all
+     *
+     * @return int
+     */
+    public function cacheExpiration()
+    {
+        return HOUR_IN_SECONDS;
+    }
+
+
+
+    /**
      * a place for adding any initialization code that needs to run prior to wp_header().
      * this may be required for shortcodes that utilize a corresponding module,
      * and need to enqueue assets for that module
@@ -60,7 +73,7 @@ class EspressoEventAttendees extends EspressoShortcode
      */
     public function initializeShortcode()
     {
-        // TODO: Implement initialize() method.
+        // required by interface, but nothing to do atm
     }
 
 
@@ -100,11 +113,11 @@ class EspressoEventAttendees extends EspressoShortcode
         // then there was an invalid parameter or the shortcode was used incorrectly
         // so when WP_DEBUG is set and true, we'll show a message,
         // otherwise we'll just return an empty string.
-        if (
+         if (
             ! $this->template_args['event'] instanceof EE_Event
-            || ! $this->template_args['datetime'] instanceof EE_Datetime
-            || ! $this->template_args['ticket'] instanceof EE_Ticket
             || empty($this->query_params[0])
+            || ($attributes['datetime_id'] && ! $this->template_args['datetime'] instanceof EE_Datetime)
+            || ($attributes['ticket_id'] && ! $this->template_args['ticket'] instanceof EE_Ticket)
         ) {
             if (WP_DEBUG) {
                 return '<div class="important-notice ee-attention">'
@@ -226,7 +239,6 @@ class EspressoEventAttendees extends EspressoShortcode
             $ticket = EEM_Ticket::instance()->get_one_by_ID($attributes['ticket_id']);
             if ($ticket instanceof EE_Ticket) {
                 $this->query_params[0]['Registration.TKT_ID'] = $attributes['ticket_id'];
-                $this->template_args['ticket'] = $ticket;
                 if ( ! $this->template_args['event'] instanceof EE_Event) {
                     $this->template_args['event'] = $ticket->first_datetime() instanceof EE_Datetime
                         ? $ticket->first_datetime()->event()
@@ -255,6 +267,7 @@ class EspressoEventAttendees extends EspressoShortcode
             array('ATT_lname' => 'ASC', 'ATT_fname' => 'ASC')
         );
     }
+
 
 
 }
