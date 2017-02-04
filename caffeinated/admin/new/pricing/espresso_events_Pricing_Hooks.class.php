@@ -688,7 +688,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
         // create new ticket that's a copy of the existing
         // except a new id of course (and not archived)
         // AND has the new TKT_price associated with it.
-        $new_ticket = clone($ticket);
+        $new_ticket = clone $ticket;
         $new_ticket->set('TKT_ID', 0);
         $new_ticket->set('TKT_deleted', 0);
         $new_ticket->set('TKT_price', $ticket_price);
