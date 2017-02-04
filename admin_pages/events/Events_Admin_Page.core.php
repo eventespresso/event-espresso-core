@@ -941,10 +941,13 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
 
 
     /**
-     * This is hooked into the WordPress do_action('save_post') hook and runs after the custom post type has been saved.  Child classes are required to declare this method.  Typically you would use this to save any additional data.
+     * This is hooked into the WordPress do_action('save_post') hook and runs after the custom post type has been
+     * saved.  Child classes are required to declare this method.  Typically you would use this to save any additional
+     * data.
      * Keep in mind also that "save_post" runs on EVERY post update to the database.
-     * ALSO very important.  When a post transitions from scheduled to published, the save_post action is fired but you will NOT have any _POST data containing any extra info you may have from other meta saves.  So MAKE sure that you
-     * handle this accordingly.
+     * ALSO very important.  When a post transitions from scheduled to published, the save_post action is fired but you
+     * will NOT have any _POST data containing any extra info you may have from other meta saves.  So MAKE sure that
+     * you handle this accordingly.
      *
      * @access protected
      * @abstract
@@ -1737,7 +1740,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         $order = isset($this->_req_data['order']) ? $this->_req_data['order'] : "DESC";
         if (isset($this->_req_data['month_range'])) {
             $pieces = explode(' ', $this->_req_data['month_range'], 3);
-            $month_r = ! empty($pieces[0]) ? date('m', strtotime($pieces[0])) : '';
+            //simulate the FIRST day of the month, that fixes issues for months like February
+            //where PHP doesn't know what to assume for date.
+            //@see https://events.codebasehq.com/projects/event-espresso/tickets/10437
+            $month_r = ! empty($pieces[0]) ? date('m', \EEH_DTT_Helper::first_of_month_timestamp($pieces[0])) : '';
             $year_r = ! empty($pieces[1]) ? $pieces[1] : '';
         }
         $where = array();
@@ -2323,7 +2329,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                                                . esc_attr__('Template Settings Preview screenshot', 'event_espresso')
                                                . '" />';
         $this->_template_args['preview_text'] = '<strong>' . esc_html__(
-                'Template Settings is a feature that is only available in the Caffeinated version of Event Espresso. Template Settings allow you to configure some of the appearance options for both the Event List and Event Details pages.',
+                'Template Settings is a feature that is only available in the premium version of Event Espresso 4 which is available with a support license purchase on EventEspresso.com. Template Settings allow you to configure some of the appearance options for both the Event List and Event Details pages.',
                 'event_espresso'
             ) . '</strong>';
         $this->display_admin_caf_preview_page('template_settings_tab');

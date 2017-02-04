@@ -485,9 +485,13 @@ final class EE_Front_Controller
 
         //let's exclude all event type taxonomy term archive pages from search engine indexing
         //@see https://events.codebasehq.com/projects/event-espresso/tickets/10249
+        //also exclude all critical pages from indexing
         if (
-            is_tax('espresso_event_type')
-            && get_option( 'blog_public' ) !== '0'
+            (
+                is_tax('espresso_event_type')
+                && get_option( 'blog_public' ) !== '0'
+            )
+            || is_page(EE_Registry::instance()->CFG->core->get_critical_pages_array())
         ) {
             print(
                 apply_filters(
@@ -508,7 +512,12 @@ final class EE_Front_Controller
     public function wp_print_scripts()
     {
         global $post;
-        if (get_post_type() === 'espresso_events' && is_singular()) {
+        if (
+            get_post_type() === 'espresso_events' 
+            && is_singular() 
+            && isset($post->EE_Event)
+            && $post->EE_Event instanceof EE_Event
+        ) {
             \EEH_Schema::add_json_linked_data_for_event($post->EE_Event);
         }
     }

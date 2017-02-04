@@ -319,7 +319,10 @@ final class EE_Config
         $this->organization = $this->organization instanceof EE_Organization_Config
             ? $this->organization
             : new EE_Organization_Config();
-        $this->organization = apply_filters('FHEE__EE_Config___initialize_config__organization', $this->organization);
+        $this->organization = apply_filters(
+            'FHEE__EE_Config___initialize_config__organization',
+            $this->organization
+        );
         $this->currency = $this->currency instanceof EE_Currency_Config
             ? $this->currency
             : new EE_Currency_Config();
@@ -327,7 +330,10 @@ final class EE_Config
         $this->registration = $this->registration instanceof EE_Registration_Config
             ? $this->registration
             : new EE_Registration_Config();
-        $this->registration = apply_filters('FHEE__EE_Config___initialize_config__registration', $this->registration);
+        $this->registration = apply_filters(
+            'FHEE__EE_Config___initialize_config__registration',
+            $this->registration
+        );
         $this->admin = $this->admin instanceof EE_Admin_Config
             ? $this->admin
             : new EE_Admin_Config();
@@ -342,15 +348,18 @@ final class EE_Config
         $this->map_settings = $this->map_settings instanceof EE_Map_Config
             ? $this->map_settings
             : new EE_Map_Config();
-        $this->map_settings = apply_filters('FHEE__EE_Config___initialize_config__map_settings', $this->map_settings);
+        $this->map_settings = apply_filters('FHEE__EE_Config___initialize_config__map_settings',
+            $this->map_settings);
         $this->environment = $this->environment instanceof EE_Environment_Config
             ? $this->environment
             : new EE_Environment_Config();
-        $this->environment = apply_filters('FHEE__EE_Config___initialize_config__environment', $this->environment);
+        $this->environment = apply_filters('FHEE__EE_Config___initialize_config__environment',
+            $this->environment);
         $this->tax_settings = $this->tax_settings instanceof EE_Tax_Config
             ? $this->tax_settings
             : new EE_Tax_Config();
-        $this->tax_settings = apply_filters('FHEE__EE_Config___initialize_config__tax_settings', $this->tax_settings);
+        $this->tax_settings = apply_filters('FHEE__EE_Config___initialize_config__tax_settings',
+            $this->tax_settings);
         $this->gateway = $this->gateway instanceof EE_Gateway_Config
             ? $this->gateway
             : new EE_Gateway_Config();
@@ -1573,12 +1582,7 @@ class EE_Config_Base
     }
 
 
-    /**
-     *        @ override magic methods
-     *        @ return void
-     */
-    //	public function __get($a) { return apply_filters('FHEE__'.get_class($this).'__get__'.$a,$this->{$a}); }
-    //	public function __set($a,$b) { return apply_filters('FHEE__'.get_class($this).'__set__'.$a, $this->{$a} = $b ); }
+
     /**
      *        __isset
      *
@@ -1691,7 +1695,6 @@ class EE_Core_Config extends EE_Config_Base
      * The next vars relate to the custom slugs for EE CPT routes
      */
     public $event_cpt_slug;
-
 
 
     /**
@@ -1985,7 +1988,6 @@ class EE_Organization_Config extends EE_Config_Base
     public $email;
 
 
-
     /**
      * @var string $phone
      * eg. 111-111-1111
@@ -2027,14 +2029,12 @@ class EE_Organization_Config extends EE_Config_Base
     public $twitter;
 
 
-
     /**
      * linkedin (linkedin.com/in/profile_name)
      *
      * @var string
      */
     public $linkedin;
-
 
 
     /**
@@ -2045,14 +2045,12 @@ class EE_Organization_Config extends EE_Config_Base
     public $pinterest;
 
 
-
     /**
      * google+ (google.com/+profileName)
      *
      * @var string
      */
     public $google;
-
 
 
     /**
@@ -2881,20 +2879,47 @@ class EE_Event_Single_Config extends EE_Config_Base
 class EE_Ticket_Selector_Config extends EE_Config_Base
 {
 
-    /*
-	 * @var boolean $show_ticket_sale_columns
-	 */
+    /**
+     * constant to indicate that a datetime selector should NEVER be shown for ticket selectors
+     */
+    const DO_NOT_SHOW_DATETIME_SELECTOR = 'no_datetime_selector';
+
+    /**
+     * constant to indicate that a datetime selector should only be shown for ticket selectors
+     * when the number of datetimes for the event matches the value set for $datetime_selector_threshold
+     */
+    const MAYBE_SHOW_DATETIME_SELECTOR = 'maybe_datetime_selector';
+
+    /**
+     * @var boolean $show_ticket_sale_columns
+     */
     public $show_ticket_sale_columns;
 
-    /*
-	 * @var boolean $show_ticket_details
-	 */
+    /**
+     * @var boolean $show_ticket_details
+     */
     public $show_ticket_details;
 
-    /*
-	 * @var boolean $show_expired_tickets
-	 */
+    /**
+     * @var boolean $show_expired_tickets
+     */
     public $show_expired_tickets;
+
+    /**
+     * whether or not to display a dropdown box populated with event datetimes
+     * that toggles which tickets are displayed for a ticket selector.
+     * uses one of the *_DATETIME_SELECTOR constants defined above
+     *
+     * @var string $show_datetime_selector
+     */
+    private $show_datetime_selector = 'no_datetime_selector';
+
+    /**
+     * the number of datetimes an event has to have before conditionally displaying a datetime selector
+     *
+     * @var int $datetime_selector_threshold
+     */
+    private $datetime_selector_threshold = 3;
 
 
 
@@ -2906,7 +2931,103 @@ class EE_Ticket_Selector_Config extends EE_Config_Base
         $this->show_ticket_sale_columns = true;
         $this->show_ticket_details = true;
         $this->show_expired_tickets = true;
+        $this->show_datetime_selector = \EE_Ticket_Selector_Config::DO_NOT_SHOW_DATETIME_SELECTOR;
+        $this->datetime_selector_threshold = 3;
     }
+
+
+
+    /**
+     * returns true if a datetime selector should be displayed
+     *
+     * @param array $datetimes
+     * @return bool
+     */
+    public function showDatetimeSelector(array $datetimes)
+    {
+        // if the settings are NOT: don't show OR below threshold, THEN active = true
+        return ! (
+            $this->getShowDatetimeSelector() === \EE_Ticket_Selector_Config::DO_NOT_SHOW_DATETIME_SELECTOR
+            || (
+                $this->getShowDatetimeSelector() === \EE_Ticket_Selector_Config::MAYBE_SHOW_DATETIME_SELECTOR
+                && count($datetimes) < $this->getDatetimeSelectorThreshold()
+            )
+        );
+    }
+
+
+
+    /**
+     * @return string
+     */
+    public function getShowDatetimeSelector()
+    {
+        return $this->show_datetime_selector;
+    }
+
+
+
+    /**
+     * @param bool $keys_only
+     * @return array
+     */
+    public function getShowDatetimeSelectorOptions($keys_only = true)
+    {
+        return $keys_only
+            ? array(
+                \EE_Ticket_Selector_Config::DO_NOT_SHOW_DATETIME_SELECTOR,
+                \EE_Ticket_Selector_Config::MAYBE_SHOW_DATETIME_SELECTOR,
+            )
+            : array(
+                \EE_Ticket_Selector_Config::DO_NOT_SHOW_DATETIME_SELECTOR => esc_html__(
+                    'Do not show date & time filter', 'event_espresso'
+                ),
+                \EE_Ticket_Selector_Config::MAYBE_SHOW_DATETIME_SELECTOR  => esc_html__(
+                    'Maybe show date & time filter', 'event_espresso'
+                ),
+            );
+    }
+
+
+
+    /**
+     * @param string $show_datetime_selector
+     */
+    public function setShowDatetimeSelector($show_datetime_selector)
+    {
+        $this->show_datetime_selector = in_array(
+            $show_datetime_selector,
+            $this->getShowDatetimeSelectorOptions(),
+            true
+        )
+            ? $show_datetime_selector
+            : \EE_Ticket_Selector_Config::DO_NOT_SHOW_DATETIME_SELECTOR;
+    }
+
+
+
+    /**
+     * @return int
+     */
+    public function getDatetimeSelectorThreshold()
+    {
+        return $this->datetime_selector_threshold;
+    }
+
+
+
+
+    /**
+     * @param int $datetime_selector_threshold
+     */
+    public function setDatetimeSelectorThreshold($datetime_selector_threshold)
+    {
+        $datetime_selector_threshold = absint($datetime_selector_threshold);
+        $this->datetime_selector_threshold = $datetime_selector_threshold ? $datetime_selector_threshold : 3;
+    }
+
+
+
 }
 
 

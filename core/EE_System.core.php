@@ -800,8 +800,8 @@ final class EE_System
         add_action('init', array($this, 'core_loaded_and_ready'), 9);
         add_action('init', array($this, 'initialize'), 10);
         add_action('init', array($this, 'initialize_last'), 100);
-        add_action('wp_enqueue_scripts', array($this, 'wp_enqueue_scripts'), 25);
-        add_action('admin_enqueue_scripts', array($this, 'wp_enqueue_scripts'), 25);
+        add_action('wp_enqueue_scripts', array($this, 'wp_enqueue_scripts'), 100);
+        add_action('admin_enqueue_scripts', array($this, 'wp_enqueue_scripts'), 100);
         add_action('admin_bar_menu', array($this, 'espresso_toolbar_items'), 100);
         if (is_admin() && apply_filters('FHEE__EE_System__brew_espresso__load_pue', true)) {
             // pew pew pew

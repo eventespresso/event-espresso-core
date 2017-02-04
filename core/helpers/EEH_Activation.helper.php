@@ -184,6 +184,7 @@ class EEH_Activation
 //				'AHEE__EE_Cron_Tasks__finalize_abandoned_transactions' => EEH_Activation::cron_task_no_longer_in_use, actually this is still in use
                 'AHEE__EE_Cron_Tasks__update_transaction_with_payment' => EEH_Activation::cron_task_no_longer_in_use,
                 //there may have been a bug which prevented from these cron tasks from getting unscheduled, so we might want to remove these for a few updates
+                'AHEE_EE_Cron_Tasks__clean_out_old_gateway_logs'       => 'daily',
             )
         );
         if ($which_to_include === 'old') {
@@ -220,7 +221,19 @@ class EEH_Activation
 
         foreach (EEH_Activation::get_cron_tasks('current') as $hook_name => $frequency) {
             if (! wp_next_scheduled($hook_name)) {
-                wp_schedule_event(time(), $frequency, $hook_name);
+                /**
+                 * This allows client code to define the initial start timestamp for this schedule.
+                 */
+                if (is_array($frequency)
+                    && count($frequency) === 2
+                    && isset($frequency[0], $frequency[1])
+                ) {
+                    $start_timestamp = $frequency[0];
+                    $frequency = $frequency[1];
+                } else {
+                    $start_timestamp = time();
+                }
+                wp_schedule_event($start_timestamp, $frequency, $hook_name);
             }
         }
 

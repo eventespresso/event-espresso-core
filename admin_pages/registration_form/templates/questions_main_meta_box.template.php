@@ -201,7 +201,7 @@ if ( $QST_system === 'country' ) {
 										<?php if ( ! $option->system() ) { ?>
 											<span class="dashicons clickable dashicons-post-trash ee-icon-size-18 remove-option remove-item"></span>
 										<?php } ?>
-										<span class="dashicons dashicons-image-flip-vertical sortable-drag-handle ee-icon-size-18"></span>
+                                        <span class="dashicons dashicons-image-flip-vertical sortable-drag-handle ee-icon-size-18"></span>
 									</td>
 									<?php
 									echo EEH_Form_Fields::hidden_input("question_options[{$count}][QST_ID])", $option->question_ID());
