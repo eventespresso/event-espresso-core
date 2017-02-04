@@ -73,7 +73,7 @@ class EspressoEvents extends EspressoShortcode
     public function processShortcode($attributes = array())
     {
         // grab attributes and merge with defaults
-        $attributes = $this->getAttributes((array)$attributes);
+        $attributes = $this->getAttributes($attributes);
         // make sure we use the_excerpt()
         add_filter('FHEE__EES_Espresso_Events__process_shortcode__true', '__return_true');
         // apply query filters
@@ -111,12 +111,12 @@ class EspressoEvents extends EspressoShortcode
             (array)apply_filters(
                 'EES_Espresso_Events__process_shortcode__default_espresso_events_shortcode_atts',
                 array(
-                    'title'         => null,
+                    'title'         => '',
                     'limit'         => 10,
-                    'css_class'     => null,
+                    'css_class'     => '',
                     'show_expired'  => false,
-                    'month'         => null,
-                    'category_slug' => null,
+                    'month'         => '',
+                    'category_slug' => '',
                     'order_by'      => 'start_date',
                     'sort'          => 'ASC',
                 )
@@ -124,6 +124,32 @@ class EspressoEvents extends EspressoShortcode
             $attributes
         );
     }
+
+
+
+    /**
+     * array for defining custom attribute sanitization callbacks,
+     * where keys match keys in your attributes array,
+     * and values represent the sanitization function you wish to be applied to that attribute.
+     * So for example, if you had an integer attribute named "event_id"
+     * that you wanted to be sanitized using absint(),
+     * then you would pass the following for your $custom_sanitization array:
+     *      array('event_id' => 'absint')
+     *
+     * @return array
+     */
+    protected function customAttributeSanitizationMap()
+    {
+        // the following get sanitized/whitelisted in EEH_Event_Query
+        return array(
+            'category_slug' => 'skip_sanitization',
+            'show_expired'  => 'skip_sanitization',
+            'order_by'      => 'skip_sanitization',
+            'month'         => 'skip_sanitization',
+            'sort'          => 'skip_sanitization',
+        );
+    }
+
 
 
 }
