@@ -43,7 +43,9 @@ abstract class EspressoShortcode implements ShortcodeInterface
                 $this->enqueueScripts();
             }
         }
-        return $this->shortcodeContent((array)$attributes);
+        return $this->shortcodeContent(
+            $this->sanitizeAttributes((array)$attributes)
+        );
     }
 
 
@@ -110,6 +112,79 @@ abstract class EspressoShortcode implements ShortcodeInterface
     }
 
 
+
+    /**
+     * array for defining custom attribute sanitization callbacks,
+     * where keys match keys in your attributes array,
+     * and values represent the sanitization function you wish to be applied to that attribute.
+     * So for example, if you had an integer attribute named "event_id"
+     * that you wanted to be sanitized using absint(),
+     * then you would return the following:
+     *      array('event_id' => 'absint')
+     * Entering 'skip_sanitization' for the callback value
+     * means that no sanitization will be applied
+     * on the assumption that the attribute
+     * will be sanitized at some point... right?
+     * You wouldn't pass around unsanitized attributes would you?
+     * That would be very Tom Foolery of you!!!
+     *
+     * @return array
+     */
+    protected function customAttributeSanitizationMap()
+    {
+        return array();
+    }
+
+
+
+    /**
+     * Performs basic sanitization on shortcode attributes
+     * Since incoming attributes from the shortcode usage in the WP editor will all be strings,
+     * most attributes will by default be sanitized using the sanitize_text_field() function.
+     * This can be overridden using the customAttributeSanitizationMap() method (see above),
+     * all other attributes would be sanitized using the defaults in the switch statement below
+     *
+     * @param array $attributes
+     * @return array
+     */
+    private function sanitizeAttributes(array $attributes)
+    {
+        $custom_sanitization = $this->customAttributeSanitizationMap();
+        foreach ($attributes as $key => $value) {
+            // is a custom sanitization callback specified ?
+            if (isset($custom_sanitization[$key])) {
+                $callback = $custom_sanitization[$key];
+                if ($callback === 'skip_sanitization') {
+                    $attributes[$key] = $value;
+                    continue;
+                } else if (function_exists($callback)) {
+                    $attributes[$key] = $callback($value);
+                    continue;
+                }
+            }
+            switch (true) {
+                case $value === null :
+                case is_int($value) :
+                case is_float($value) :
+                    // typical booleans
+                case in_array($value, array(true, 'true', '1', 'on', 'yes', false, 'false', '0', 'off', 'no'), true) :
+                    $attributes[$key] = $value;
+                    break;
+                case is_string($value) :
+                    $attributes[$key] = sanitize_text_field($value);
+                    break;
+                case is_array($value) :
+                    $attributes[$key] = $this->sanitizeAttributes($value);
+                    break;
+                default :
+                    // only remaining data types are Object and Resource
+                    // which are not allowed as shortcode attributes
+                    $attributes[$key] = null;
+                    break;
+            }
+        }
+        return $attributes;
+    }
 
 
 
