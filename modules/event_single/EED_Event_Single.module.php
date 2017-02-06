@@ -222,7 +222,7 @@ class EED_Event_Single  extends EED_Module {
 	 */
 	public static function the_title( $title = '', $id = 0 ) {
 		global $post;
-		return in_the_loop() && $post->ID === $id ? espresso_event_status_banner( $post->ID ) . $title :  $title;
+		return in_the_loop() && $post->ID === (int) $id ? espresso_event_status_banner( $post->ID ) . $title :  $title;
 	}
 
 
