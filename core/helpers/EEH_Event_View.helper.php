@@ -41,18 +41,20 @@ class EEH_Event_View extends EEH_Base {
      * @throws \EE_Error
      */
 	public static function get_event( $EVT_ID = 0 ) {
-		$EVT_ID = $EVT_ID instanceof WP_Post ? $EVT_ID->ID : absint( $EVT_ID );
+        // international newspaper?
+        global $post;
+        $EVT_ID = $EVT_ID instanceof WP_Post && $post->post_type === 'espresso_events'
+            ? $EVT_ID->ID
+            : absint( $EVT_ID );
 		// do we already have the Event  you are looking for?
 		if ( EEH_Event_View::$_event instanceof EE_Event && $EVT_ID && EEH_Event_View::$_event->ID() === $EVT_ID ) {
 			return EEH_Event_View::$_event;
 		}
 		EEH_Event_View::$_event = NULL;
-		// international newspaper?
-		global $post;
 		// if this is being called from an EE_Event post, then we can just grab the attached EE_Event object
 		 if (( isset( $post->post_type ) && $post->post_type === 'espresso_events' ) || $EVT_ID ) {
 			// grab the event we're looking for
-			if ( isset( $post->EE_Event ) && ( $EVT_ID === 0 || ( $EVT_ID === $post->ID ))) {
+			if ( isset( $post->EE_Event ) && ( $EVT_ID === 0 || $EVT_ID === $post->ID )) {
 				EEH_Event_View::$_event = $post->EE_Event;
 			}
 			// now if we STILL do NOT have an EE_Event model object, BUT we have an Event ID...
