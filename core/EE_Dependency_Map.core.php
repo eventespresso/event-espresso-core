@@ -428,6 +428,27 @@ class EE_Dependency_Map {
 				'EventEspresso\core\services\database\TableAnalysis' => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\database\TableManager' => EE_Dependency_Map::load_from_cache,
 			),
+			'\EventEspresso\core\domain\entities\shortcodes\EspressoCancelled' => array(
+				'EventEspresso\core\services\cache\CacheManager' => EE_Dependency_Map::load_from_cache,
+			),
+			'\EventEspresso\core\domain\entities\shortcodes\EspressoCheckout' => array(
+				'EventEspresso\core\services\cache\CacheManager' => EE_Dependency_Map::load_from_cache,
+			),
+			'\EventEspresso\core\domain\entities\shortcodes\EspressoEventAttendees' => array(
+				'EventEspresso\core\services\cache\CacheManager' => EE_Dependency_Map::load_from_cache,
+			),
+			'\EventEspresso\core\domain\entities\shortcodes\EspressoEvents' => array(
+				'EventEspresso\core\services\cache\CacheManager' => EE_Dependency_Map::load_from_cache,
+			),
+			'\EventEspresso\core\domain\entities\shortcodes\EspressoThankYou' => array(
+				'EventEspresso\core\services\cache\CacheManager' => EE_Dependency_Map::load_from_cache,
+			),
+			'\EventEspresso\core\domain\entities\shortcodes\EspressoTicketSelector' => array(
+				'EventEspresso\core\services\cache\CacheManager' => EE_Dependency_Map::load_from_cache,
+			),
+			'\EventEspresso\core\domain\entities\shortcodes\EspressoTxnPage' => array(
+				'EventEspresso\core\services\cache\CacheManager' => EE_Dependency_Map::load_from_cache,
+			),
 		);
 	}
 
@@ -531,6 +552,10 @@ class EE_Dependency_Map {
 			'CreateTicketLineItemCommandHandler'                                  => 'EventEspresso\core\services\commands\ticket\CreateTicketLineItemCommand',
 			'TableManager'                                                        => 'EventEspresso\core\services\database\TableManager',
 			'TableAnalysis'                                                       => 'EventEspresso\core\services\database\TableAnalysis',
+			'EspressoShortcode'                                                   => 'EventEspresso\core\services\shortcodes\EspressoShortcode',
+			'ShortcodeInterface'                                                  => 'EventEspresso\core\services\shortcodes\ShortcodeInterface',
+			'EventEspresso\core\services\shortcodes\ShortcodeInterface'           => 'EventEspresso\core\services\shortcodes\EspressoShortcode',
+			'EventEspresso\core\domain\entities\shortcodes\EspressoCancelled'     => 'EventEspresso\core\services\shortcodes\EspressoShortcode',
 		);
 	}
 
