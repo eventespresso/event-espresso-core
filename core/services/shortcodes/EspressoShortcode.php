@@ -1,7 +1,9 @@
 <?php
 namespace EventEspresso\core\services\shortcodes;
 
+use EEH_Event_View;
 use EventEspresso\core\domain\EnqueueAssetsInterface;
+use EventEspresso\core\services\cache\CacheManager;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -25,6 +27,22 @@ abstract class EspressoShortcode implements ShortcodeInterface
      */
     const CACHE_TRANSIENT_PREFIX = 'ee_sc_';
 
+    /**
+     * @var CacheManager $cache_manager
+     */
+    private $cache_manager;
+
+
+
+    /**
+     * EspressoShortcode constructor
+     *
+     * @param CacheManager $cache_manager
+     */
+    public function __construct(CacheManager $cache_manager)
+    {
+        $this->cache_manager = $cache_manager;
+    }
 
 
     /**
@@ -62,10 +80,17 @@ abstract class EspressoShortcode implements ShortcodeInterface
      */
     private function shortcodeContent(array $attributes)
     {
-        $content = '';
-        $cache_id = '';
-        // how long should we cache this shortcode's content for? 0 means no caching.
-        $cache_expiration = absint(
+        $shortcode = $this;
+        return $this->cache_manager->getCachedContent(
+            // something like "SC_EVENTS-123"
+            $this->shortcodeCacheID($attributes),
+            // serialized attributes
+            wp_json_encode($attributes),
+            // Closure for generating content if cache is expired
+            function() use ($shortcode, $attributes) {
+                return $shortcode->processShortcode($attributes);
+            },
+            // filterable cache expiration set by each shortcode
             apply_filters(
                 'FHEE__EventEspresso_core_services_shortcodes_EspressoShortcode__shortcodeContent__cache_expiration',
                 $this->cacheExpiration(),
@@ -73,21 +98,6 @@ abstract class EspressoShortcode implements ShortcodeInterface
                 $this
             )
         );
-        // is caching enabled for this shortcode ?
-        if ($cache_expiration) {
-            $cache_id = $this->shortcodeCacheID($attributes);
-            $content = get_transient($cache_id);
-        }
-        // any existing content ?
-        if (empty($content)) {
-            // nope! let's generate some new stuff
-            $content = $this->processShortcode($attributes);
-            // save the new content if caching is enabled
-            if ($cache_expiration) {
-                set_transient($cache_id, $content, $cache_expiration);
-            }
-        }
-        return $content;
     }
 
 
@@ -100,7 +110,7 @@ abstract class EspressoShortcode implements ShortcodeInterface
     private function shortcodeCacheID(array $attributes)
     {
         // try to get EE_Event any way we can
-        $event = \EEH_Event_View::get_event();
+        $event = EEH_Event_View::get_event();
         // then get some kind of ID
         if ($event instanceof \EE_Event) {
             $ID = $event->ID();
@@ -108,7 +118,8 @@ abstract class EspressoShortcode implements ShortcodeInterface
             global $post;
             $ID = $post->ID;
         }
-        return EspressoShortcode::CACHE_TRANSIENT_PREFIX . $ID . md5(wp_json_encode($attributes));
+        $tag = str_replace('ESPRESSO_', '', $this->getTag());
+        return "SC_{$tag}-{$ID}";
     }
 
 
