@@ -15,6 +15,11 @@ namespace EventEspresso\core\services\database;
  *
  */
 class TableAnalysis extends \EE_Base {
+
+    /**
+     * The maximum number of characters that can be indexed on a column using utf8mb4 collation
+     */
+    const index_col_size = 191;
 	/**
 	 * Returns the table name which will definitely have the wpdb prefix on the front,
 	 * except if it currently has the wpdb->base_prefix on the front, in which case
