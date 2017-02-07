@@ -20,7 +20,7 @@ class TableAnalysis extends \EE_Base {
      * The maximum number of characters that can be indexed on a column using utf8mb4 collation,
      * see https://events.codebasehq.com/redirect?https://make.wordpress.org/core/2015/04/02/the-utf8mb4-upgrade/
      */
-    const index_column_size = 191;
+    const INDEX_COLUMN_SIZE = 191;
 	/**
 	 * Returns the table name which will definitely have the wpdb prefix on the front,
 	 * except if it currently has the wpdb->base_prefix on the front, in which case
