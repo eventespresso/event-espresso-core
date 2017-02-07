@@ -1,4 +1,5 @@
-<?php use EventEspresso\core\services\shortcodes\LegacyShortcodesManager;
+<?php use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
+use EventEspresso\core\services\shortcodes\LegacyShortcodesManager;
 use EventEspresso\core\services\shortcodes\ShortcodesManager;
 
 if ( ! defined('EVENT_ESPRESSO_VERSION')) {
@@ -736,11 +737,15 @@ final class EE_System
      */
     public function register_shortcodes_modules_and_widgets()
     {
-        // load, register, and add shortcodes the new way
-        new ShortcodesManager(
+        try {
+            // load, register, and add shortcodes the new way
+            new ShortcodesManager(
             // and the old way, but we'll put it under control of the new system
-            EE_Config::getLegacyShortcodesManager()
-        );
+                EE_Config::getLegacyShortcodesManager()
+            );
+        } catch (Exception $exception) {
+            new ExceptionStackTraceDisplay($exception);
+        }
         do_action('AHEE__EE_System__register_shortcodes_modules_and_widgets');
         // check for addons using old hookpoint
         if (has_action('AHEE__EE_System__register_shortcodes_modules_and_addons')) {
