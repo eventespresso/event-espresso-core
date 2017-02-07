@@ -243,7 +243,7 @@ class TableManager extends \EE_Base
      * @return bool
      * @throws /EE_Error if table analysis object isn't defined
      */
-    public function dropIndexIfSizeNot($table_name, $index_name, $column_name = null, $desired_index_size = TableAnalysis::index_col_size)
+    public function dropIndexIfSizeNot($table_name, $index_name, $column_name = null, $desired_index_size = TableAnalysis::index_column_size)
     {
         if($column_name === null){
             $column_name = $index_name;
