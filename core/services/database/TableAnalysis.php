@@ -17,7 +17,8 @@ namespace EventEspresso\core\services\database;
 class TableAnalysis extends \EE_Base {
 
     /**
-     * The maximum number of characters that can be indexed on a column using utf8mb4 collation
+     * The maximum number of characters that can be indexed on a column using utf8mb4 collation,
+     * see https://events.codebasehq.com/redirect?https://make.wordpress.org/core/2015/04/02/the-utf8mb4-upgrade/
      */
     const index_col_size = 191;
 	/**
