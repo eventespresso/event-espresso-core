@@ -55,8 +55,7 @@ class EventListIframeEmbedButton extends IframeEmbedButton
     		$after_list_table,
 		    array(
 			    'iframe_embed_buttons' => $this->addIframeEmbedButtonsSection(
-			        array()
-				    // array( 'event_list' => $this->embedButtonHtml() )
+				    array( 'event_list' => $this->embedButtonHtml() )
 			    )
 		    ),
 		    'legend'
