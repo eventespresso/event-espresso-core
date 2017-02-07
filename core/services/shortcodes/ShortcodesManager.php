@@ -45,10 +45,10 @@ class ShortcodesManager
     /**
      * ShortcodesManager constructor
      *
-     * @param LegacyShortcodesManager $LegacyShortcodesManager
+     * @param LegacyShortcodesManager $legacy_shortcodes_manager
      */
-    public function __construct(LegacyShortcodesManager $LegacyShortcodesManager) {
-        $this->legacy_shortcodes_manager = $LegacyShortcodesManager;
+    public function __construct(LegacyShortcodesManager $legacy_shortcodes_manager) {
+        $this->legacy_shortcodes_manager = $legacy_shortcodes_manager;
         // assemble a list of installed and active shortcodes
         add_action(
             'AHEE__EE_System__register_shortcodes_modules_and_widgets',
