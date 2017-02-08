@@ -500,7 +500,9 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable 
 			$answer = EEM_Answer::instance()->get_registration_question_answer_object( $registration, $this->ID() );
 		}
 		// has this question been answered ?
-		if ( $answer instanceof EE_Answer ) {
+		if ( $answer instanceof EE_Answer
+             && $answer->value() !== ''
+        ) {
 			//answer gets htmlspecialchars called on it, undo that please
 			//because the form input's display strategy may call esc_attr too
 			//which also does html special characters

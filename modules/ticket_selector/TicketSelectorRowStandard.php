@@ -206,7 +206,10 @@ class TicketSelectorRowStandard extends TicketSelectorRow
             $status_class
         );
         if ($new_row_cells_content !== false) {
-            return $ticket_selector_row_html . $new_row_cells_content . \EEH_HTML::trx();
+            return $ticket_selector_row_html
+                   . $new_row_cells_content
+                   . $this->ticketQtyAndIdHiddenInputs()
+                   . \EEH_HTML::trx();
         }
         $this->hidden_input_qty = $this->max_atndz > 1 ? true : false;
 

@@ -171,7 +171,7 @@ class TableManager extends \EE_Base
         }
         global $wpdb;
         $table_name = $this->getTableAnalysis()->ensureTableNameHasPrefix($table_name);
-        $index_exists_query = "SHOW INDEX FROM {$table_name} WHERE Key_name = '{$index_name}'";
+        $index_exists_query = "SHOW INDEX FROM {$table_name} WHERE key_name = '{$index_name}'";
         if (
             $this->getTableAnalysis()->tableExists($table_name)
             && $wpdb->get_var($index_exists_query)
@@ -227,6 +227,39 @@ class TableManager extends \EE_Base
                 )
             );
         }
+    }
+
+
+
+    /**
+     * Drops the specified index if it's size differs from $desired_index_size.
+     * WordPress' dbdelta method doesn't automatically change index sizes, so this
+     * method can be used to only drop the index if needed, and afterwards dbdelta can be used as normal.
+     *
+*@param string $table_name
+     * @param string $index_name
+     * @param string $column_name if none is provided, we assume the column name matches the index (often true in EE)
+     * @param string|int $desired_index_size defaults to 191, the max for utf8mb4.
+     *                   See https://events.codebasehq.com/redirect?https://make.wordpress.org/core/2015/04/02/the-utf8mb4-upgrade/
+     * @return bool
+     * @throws /EE_Error if table analysis object isn't defined
+     */
+    public function dropIndexIfSizeNot($table_name, $index_name, $column_name = null, $desired_index_size = 191)
+    {
+        if($column_name === null){
+            $column_name = $index_name;
+        }
+        $index_entries = $this->getTableAnalysis()->showIndexes($table_name,$index_name);
+        if(empty($index_entries)){
+            return false;
+        }
+        foreach($index_entries as $index_entry){
+            if( $column_name === $index_entry->Column_name
+                && (string)$desired_index_size !== $index_entry->Sub_part){
+                return $this->dropIndex($table_name,$index_name);
+            }
+        }
+        return false;
     }
 
 }

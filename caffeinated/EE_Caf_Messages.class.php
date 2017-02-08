@@ -612,7 +612,8 @@ class EE_Caf_Messages
                 EE_CAF_LIBRARIES . 'messages/message_type/newsletter/'
             ),
             'messengers_to_activate_with' => array('email'),
-            'messengers_to_validate_with' => array('email')
+            'messengers_to_validate_with' => array('email'),
+            'messengers_supporting_default_template_pack_with' => array('email')
         );
         EE_Register_Message_Type::register('newsletter', $setup_args);
         
@@ -621,7 +622,8 @@ class EE_Caf_Messages
             'mtfilename'                  => 'EE_Payment_Reminder_message_type.class.php',
             'autoloadpaths'               => array(EE_CAF_LIBRARIES . 'messages/message_type/payment_reminder/'),
             'messengers_to_activate_with' => array('email'),
-            'messengers_to_validate_with' => array('email')
+            'messengers_to_validate_with' => array('email'),
+            'messengers_supporting_default_template_pack_with' => array('email')
         );
         EE_Register_Message_Type::register('payment_reminder', $setup_args);
         
@@ -630,7 +632,8 @@ class EE_Caf_Messages
             'mtfilename'                  => 'EE_Payment_Declined_message_type.class.php',
             'autoloadpaths'               => array(EE_CAF_LIBRARIES . 'messages/message_type/payment_declined/'),
             'messengers_to_activate_with' => array('email'),
-            'messengers_to_validate_with' => array('email')
+            'messengers_to_validate_with' => array('email'),
+            'messengers_supporting_default_template_pack_with' => array('email')
         );
         EE_Register_Message_Type::register('payment_declined', $setup_args);
         
@@ -639,7 +642,8 @@ class EE_Caf_Messages
             'mtfilename'                  => 'EE_Declined_Registration_message_type.class.php',
             'autoloadpaths'               => array(EE_CAF_LIBRARIES . 'messages/message_type/declined_registration/'),
             'messengers_to_activate_with' => array('email'),
-            'messengers_to_validate_with' => array('email')
+            'messengers_to_validate_with' => array('email'),
+            'messengers_supporting_default_template_pack_with' => array('email')
         );
         EE_Register_Message_Type::register('declined_registration', $setup_args);
         
@@ -648,7 +652,8 @@ class EE_Caf_Messages
             'mtfilename'                  => 'EE_Cancelled_Registration_message_type.class.php',
             'autoloadpaths'               => array(EE_CAF_LIBRARIES . 'messages/message_type/cancelled_registration/'),
             'messengers_to_activate_with' => array('email'),
-            'messengers_to_validate_with' => array('email')
+            'messengers_to_validate_with' => array('email'),
+            'messengers_supporting_default_template_pack_with' => array('email')
         );
         EE_Register_Message_Type::register('cancelled_registration', $setup_args);
         
@@ -658,7 +663,8 @@ class EE_Caf_Messages
             'mtfilename'                  => 'EE_Payment_Failed_message_type.class.php',
             'autoloadpaths'               => array(EE_CAF_LIBRARIES . 'messages/message_type/payment_failed/'),
             'messengers_to_activate_with' => array('email'),
-            'messengers_to_validate_with' => array('email')
+            'messengers_to_validate_with' => array('email'),
+            'messengers_supporting_default_template_pack_with' => array('email')
         );
         EE_Register_Message_Type::register('payment_failed', $setup_args);
         
@@ -667,7 +673,8 @@ class EE_Caf_Messages
             'mtfilename'                  => 'EE_Payment_Cancelled_message_type.class.php',
             'autoloadpaths'               => array(EE_CAF_LIBRARIES . 'messages/message_type/payment_cancelled/'),
             'messengers_to_activate_with' => array('email'),
-            'messengers_to_validate_with' => array('email')
+            'messengers_to_validate_with' => array('email'),
+            'messengers_supporting_default_template_pack_with' => array('email')
         );
         EE_Register_Message_Type::register('payment_cancelled', $setup_args);
     }
