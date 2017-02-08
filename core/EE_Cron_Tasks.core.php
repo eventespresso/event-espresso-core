@@ -92,6 +92,11 @@ class EE_Cron_Tasks extends EE_Base
             array('EE_Cron_Tasks', 'log_scheduled_ee_crons')
         );
         EE_Registry::instance()->load_lib('Messages_Scheduler');
+        //clean out old gateway logs
+        add_action(
+            'AHEE_EE_Cron_Tasks__clean_out_old_gateway_logs',
+            array('EE_Cron_Tasks', 'clean_out_old_gateway_logs')
+        );
     }
 
 
@@ -576,6 +581,21 @@ class EE_Cron_Tasks extends EE_Base
             EEM_Transaction::instance('')->delete_junk_transactions();
             EEM_Registration::instance('')->delete_registrations_with_no_transaction();
             EEM_Line_Item::instance('')->delete_line_items_with_no_transaction();
+        }
+    }
+
+
+
+    /**
+     * Deletes old gateway logs. After about a week we usually don't need them for debugging. But folks can filter that.
+     */
+    public static function clean_out_old_gateway_logs(){
+        if (EE_Maintenance_Mode::instance()->models_can_query()) {
+            $time_diff_for_comparison = apply_filters(
+                'FHEE__EE_Cron_Tasks__clean_out_old_gateway_logs__time_diff_for_comparison',
+                "-1 week"
+            );
+            EEM_Change_Log::instance()->delete_gateway_logs_older_than(new DateTime($time_diff_for_comparison));
         }
     }
 
