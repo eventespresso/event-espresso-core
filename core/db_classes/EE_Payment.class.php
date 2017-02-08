@@ -806,6 +806,67 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment {
 
 
 
+    /**
+     * Gets the first event for this payment (it's possible that it could be for multiple)
+     *
+     * @param EE_Payment $payment
+     * @return EE_Event|null
+     */
+    public function get_first_event()
+    {
+        $transaction = $this->transaction();
+        if ($transaction instanceof EE_Transaction) {
+            $primary_registrant = $transaction->primary_registration();
+            if ($primary_registrant instanceof EE_Registration) {
+                return $primary_registrant->event_obj();
+            }
+        }
+        return null;
+    }
+
+
+
+    /**
+     * Gets the name of the first event for which is being paid
+     *
+     * @param EE_Payment $payment
+     * @return string
+     */
+    public function get_first_event_name()
+    {
+        $event = $this->get_first_event();
+        return $event instanceof EE_Event ? $event->name() : __('Event', 'event_espresso');
+    }
+
+
+
+    /**
+     * Returns the payment's transaction's primary registration
+     *
+     * @return EE_Registration|null
+     */
+    public function get_primary_registration()
+    {
+        if ($this->transaction() instanceof EE_Transaction) {
+            return $this->transaction()->primary_registration();
+        }
+        return null;
+    }
+
+
+
+    /**
+     * Gets the payment's transaction's primary registration's attendee, or null
+     * @return EE_Attendee|null
+     */
+    public function get_primary_attendee()
+    {
+        $primary_reg = $this->get_primary_registration();
+        if( $primary_reg instanceof EE_Registration) {
+            return $primary_reg->attendee();
+        }
+        return null;
+    }
 }
 /* End of file EE_Payment.class.php */
 /* Location: /includes/classes/EE_Payment.class.php */
