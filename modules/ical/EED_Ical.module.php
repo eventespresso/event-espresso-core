@@ -155,7 +155,7 @@ class EED_Ical  extends EED_Module {
 					'ORGANIZER_NAME' => EE_Registry::instance()->CFG->organization->name,
 					'UID' => md5( $event->name() . $event->ID() . $datetime->ID() ),
 					'ORGANIZER' => EE_Registry::instance()->CFG->organization->email,
-					'TIMESTAMP' => date( EED_Ical::iCal_datetime_format ),
+					'DTSTAMP' => date( EED_Ical::iCal_datetime_format ),
 					'LOCATION' => $location,
 					'SUMMARY' => $event->name(),
 					'DESCRIPTION' => wp_strip_all_tags( $event->description() ),
