@@ -1,4 +1,8 @@
 <?php
+
+use \EventEspresso\core\services\payment_methods\gateways\GatewayDataFormatterInterface;
+use \EventEspresso\core\exceptions\InvalidEntityException;
+
 /**
  * EE_Gateway
  * Abstract base class for all gateways for processing payments.
@@ -68,6 +72,11 @@ abstract class EE_Gateway{
 	 * @var EEHI_Line_Item
 	 */
 	protected $_line_item;
+
+    /**
+     * @var GatewayDataFormatterInterface
+     */
+    protected $_gateway_data_formatter;
 
 	/**
 	 * The ID of the payment method using this gateway
@@ -195,6 +204,37 @@ abstract class EE_Gateway{
 	}
 
 
+
+    /**
+     * Sets the gateway data formatter helper
+     * @param GatewayDataFormatterInterface $gateway_data_formatter
+     */
+	public function set_gateway_data_formatter( GatewayDataFormatterInterface $gateway_data_formatter){
+        if( ! $gateway_data_formatter instanceof GatewayDataFormatterInterface){
+            throw new InvalidEntityException(
+                '\\EventEspresso\\core\\services\\payment_methods\\gateways\\GatewayDataFormatterInterface',
+                is_object($gateway_data_formatter) ? get_class($$gateway_data_formatter) : esc_html__('Not an object','event_espresso')
+            );
+        }
+        $this->_gateway_data_formatter = $gateway_data_formatter;
+    }
+
+    /**
+     * Gets the gateway data formatter
+     * @return GatewayDataFormatterInterface
+     * @throws InvalidEntityException if it's not set properly
+     */
+    protected function _get_gateway_formatter(){
+        if( ! $this->_gateway_data_formatter instanceof GatewayDataFormatterInterface){
+            throw new InvalidEntityException(
+                '\\EventEspresso\\core\\services\\payment_methods\\gateways\\GatewayDataFormatterInterface',
+                is_object($this->_gateway_data_formatter) ? get_class($this->_gateway_data_formatter) : esc_html__('Not an object','event_espresso')
+            );
+        }
+        return $this->_gateway_data_formatter;
+    }
+
+
 	/**
 	 * @param $message
 	 * @param $payment
@@ -213,10 +253,10 @@ abstract class EE_Gateway{
 	 * Formats the amount so it can generally be sent to gateways
 	 * @param float $amount
 	 * @return string
+     * @deprecated since 4.9.31 insetad use EventEspresso\core\services\payment_methods\gateways\GatewayDataFormatter::format_currency()
 	 */
 	public function format_currency($amount){
-		return number_format( $amount, 2, '.', '' );
-//		return $this->_template->format_currency($amount, true);
+		return $this->_get_gateway_formatter()->format_currency($amount);
 	}
 
 	/**
@@ -283,71 +323,49 @@ abstract class EE_Gateway{
 	 * Gets the first event for this payment (it's possible that it could be for multiple)
 	 * @param EEI_Payment $payment
 	 * @return EEI_Event|null
+     * @deprecated since 4.9.31 instead use EEI_Payment::get_first_event()
 	 */
 	protected function _get_first_event_for_payment( EEI_Payment $payment ) {
-		$transaction = $payment->transaction();
-		if( $transaction instanceof EEI_Transaction ) {
-			$primary_registrant = $transaction->primary_registration();
-			if( $primary_registrant instanceof EE_Registration ) {
-				return $primary_registrant->event_obj();
-			}
-		}
-		return null;
+		return $payment->get_first_event();
 	}
 	
 	/**
 	 * Gets the name of the first event for which is being paid
 	 * @param EEI_Payment $payment
 	 * @return string
+     * @deprecated since 4.9.31 instead use EEI_Payment::get_first_event_name()
 	 */
 	protected function _get_first_event_name_for_payment( EEI_Payment $payment ) {
-		$event = $this->_get_first_event_for_payment( $payment );
-		return $event instanceof EEI_Event ? $event->name() : __( 'Event', 'event_espresso' );
+		return $payment->get_first_event_name();
 	}
 	/**
 	 * Gets the text to use for a gateway's line item name when this is a partial payment
 	 * @param EE_Payment $payment
+     * @deprecated since 4.9.31 instead use EventEspresso\core\services\payment_methods\gateways\GatewayDataFormatter::format_partial_payment_line_item_name()
 	 * @return string
 	 */
 	protected function _format_partial_payment_line_item_name( EEI_Payment $payment ){
-		return apply_filters( 
-			'EEG_Paypal_Pro__do_direct_payment__partial_amount_line_item_name', 
-			$this->_get_first_event_name_for_payment( $payment ), 
-			$this,
-			$payment
-		);
+		return $this->_get_gateway_formatter()->_format_partial_payment_line_item_name();
 	}
 	/**
 	 * Gets the text to use for a gateway's line item description when this is a partial payment
 	 * @param EEI_Payment $payment
+     * @deprecated since 4.9.31 instead use EventEspresso\core\services\payment_methods\gateways\GatewayDataFormatter::format_partial_payment_line_item_desc()
 	 * @return string
 	 */
 	protected function _format_partial_payment_line_item_desc( EEI_Payment $payment ) {
-		return apply_filters(
-			'FHEE__EE_Gateway___partial_payment_desc',
-			sprintf(
-				__("Payment of %s for %s", "event_espresso"), 
-				$payment->get_pretty( 'PAY_amount', 'no_currency_code' ), 
-				$this->_get_first_event_name_for_payment( $payment ) ),
-			$this,
-			$payment
-		);
+		return $this->_get_gateway_formatter()->format_partial_payment_line_item_desc();
 	}
 	
 	/**
 	 * Gets the name to use for a line item when sending line items to the gateway
 	 * @param EEI_Line_Item $line_item
 	 * @param EEI_Payment $payment
+     * @deprecated since 4.9.31 instead use EventEspresso\core\services\payment_methods\gateways\GatewayDataFormatter::format_line_item_name()
 	 * @return string
 	 */
 	protected function _format_line_item_name( EEI_Line_Item $line_item, EEI_Payment $payment ) {
-		return apply_filters( 
-			'FHEE__EE_gateway___line_item_name', 
-			sprintf( _x( '%1$s for %2$s', 'Ticket for Event', 'event_espresso' ), $line_item->name(), $line_item->ticket_event_name() ), 
-			$this,
-			$line_item, 
-			$payment 
-		);
+		return $this->_get_gateway_formatter()->format_line_item_name();
 	}
 	
 	/**
@@ -357,13 +375,7 @@ abstract class EE_Gateway{
 	 * @return string
 	 */
 	protected function _format_line_item_desc( EEI_Line_Item $line_item, EEI_Payment $payment ) {
-		return apply_filters( 
-			'FHEE__EE_Gateway___line_item_desc', 
-			$line_item->desc(), 
-			$this, 
-			$line_item,
-			$payment
-		);
+		return $this->_get_gateway_formatter()->format_line_item_desc();
 	}
 	
 	/**
@@ -372,37 +384,6 @@ abstract class EE_Gateway{
 	 * @return type
 	 */
 	protected function _format_order_description( EEI_Payment $payment ) {
-		return apply_filters( 
-			'FHEE__EE_Gateway___order_description',
-			sprintf(
-				__('Event Registrations from %1$s for %2$s', "event_espresso"),
-				get_bloginfo('name'),
-				$this->_get_first_event_name_for_payment( $payment ) ),
-			$this,
-			$payment
-		);
+		return $this->_get_gateway_formatter()->format_order_description();
 	}
-
-    /**
-     * Removes emojis, for gateways that can't handle them. See https://drive.google.com/file/d/0B2KCao4zFjaxTXU0WUhxbUNLQ0k/view?usp=drivesdk
-     * @param $input string|array
-     * @return string
-     */
-    protected function _remove_emojis($input){
-        if(is_array($input)){
-            $succcess =  array_walk_recursive(
-                $input,
-                function( &$value, $key ){
-                    if(is_string($value)){
-                        $value = $this->_remove_emojis($value);
-                    }
-                });
-            return $input;
-        }else{
-            return trim( preg_replace('/[\x00-\x1F\x80-\xFF]/', '',
-                $input ) );
-        }
-    }
-
-
 }

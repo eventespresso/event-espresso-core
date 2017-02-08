@@ -2,6 +2,7 @@
 EE_Registry::instance()->load_lib('Gateway');
 EE_Registry::instance()->load_lib('Onsite_Gateway');
 EE_Registry::instance()->load_lib('Offsite_Gateway');
+use \EventEspresso\core\services\payment_methods\gateways\GatewayDataFormatter;
 /**
  *
  * Class EE_PMT_Base
@@ -104,6 +105,7 @@ abstract class EE_PMT_Base{
 			$this->_gateway->set_template_helper( new EEH_Template() );
 			$this->_gateway->set_line_item_helper( new EEH_Line_Item() );
 			$this->_gateway->set_money_helper( new EEH_Money() );
+            $this->_gateway->set_gateway_data_formatter(new GatewayDataFormatter());
 		}
 		if ( ! isset( $this->_has_billing_form ) ) {
 			// by default, On Site gateways have a billing form
