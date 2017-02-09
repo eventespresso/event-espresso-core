@@ -388,12 +388,20 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 			$checkin_list_url = EE_Admin_Page::add_query_args_and_nonce(
 				array( 'action' => 'registration_checkins', '_REGID' => $item->ID(), 'DTT_ID' => $DTT_ID )
 			);
-			$actions['checkin'] = '<a href="' . $checkin_list_url . '" title="' . esc_attr__(
-					'View all the check-ins/checkouts for this registrant',
-					'event_espresso'
-				) . '">' . __( 'View', 'event_espresso' ) . '</a>';
-		}
-		return ! empty( $DTT_ID ) ? sprintf( '%1$s %2$s', $name_link, $this->row_actions( $actions ) ) : $name_link;
+			// get the timestamps for this registration's checkins, related to the selected datetime
+			$timestamps = $item->get_many_related( 'Checkin', array( array( 'DTT_ID' => $DTT_ID ) ) );
+			if( ! empty( $timestamps ) ) {
+				// show only the last timestamp
+				$last_timestamp = end( $timestamps )->get_datetime( 'CHK_timestamp' );
+				$actions['checkin'] = '<a href="' . $checkin_list_url . '" title="' . esc_attr__(
+						'View this registrant\'s check-ins/checkouts for the datetime',
+						'event_espresso'
+					) . '">' . $last_timestamp . '</a>';
+			}
+		} 
+		return ( ! empty( $DTT_ID ) && ! empty( $timestamps ) ) 
+			? sprintf( '%1$s %2$s', $name_link, $this->row_actions( $actions, true ) ) 
+			: $name_link;
 	}
 
 
