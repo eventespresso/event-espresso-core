@@ -295,7 +295,8 @@ class EE_Dependency_Map {
 				'EE_Registry' => EE_Dependency_Map::load_from_cache,
 			),
 			'EE_Session' => array(
-				'EE_Encryption' => EE_Dependency_Map::load_from_cache
+                'EventEspresso\core\services\database\TransientManager' => EE_Dependency_Map::load_from_cache,
+                'EE_Encryption' => EE_Dependency_Map::load_from_cache
 			),
 			'EE_Cart' => array(
 				'EE_Session' => EE_Dependency_Map::load_from_cache,
@@ -448,6 +449,9 @@ class EE_Dependency_Map {
 			),
 			'\EventEspresso\core\domain\entities\shortcodes\EspressoTxnPage' => array(
 				'EventEspresso\core\services\cache\CacheManager' => EE_Dependency_Map::load_from_cache,
+			),
+			'EventEspresso\core\services\cache\CacheManager' => array(
+				'EventEspresso\core\services\database\TransientManager' => EE_Dependency_Map::load_from_cache,
 			),
 		);
 	}
