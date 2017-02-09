@@ -247,6 +247,11 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway {
 		if ( ! empty($this->_image_url) ) {
 			$token_request_dtls['LOGOIMG'] = $this->_image_url;
 		}
+		$token_request_dtls = apply_filters( 
+			'FHEE__EEG_Paypal_Express__set_redirection_info__arguments', 
+			$token_request_dtls, 
+			$this 
+		);
 		// Request PayPal token.
 		$token_request_response = $this->_ppExpress_request( $token_request_dtls, 'Payment Token', $payment );
 		$token_rstatus = $this->_ppExpress_check_response( $token_request_response );

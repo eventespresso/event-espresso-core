@@ -326,7 +326,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
         $this->_admin_page_title              = esc_html__('Question Groups (Preview)', 'event_espresso');
         $this->_template_args['preview_img']  = '<img src="' . REGISTRATION_FORM_ASSETS_URL . 'caf_reg_form_preview.jpg" alt="' . esc_attr__('Preview Question Groups Overview List Table screenshot',
                 'event_espresso') . '" />';
-        $this->_template_args['preview_text'] = '<strong>' . esc_html__('Question Groups is a feature that is only available in the Caffeinated version of Event Espresso.  With the Question Groups feature you are able to: create new question groups, edit existing question groups, and also create and edit new questions and add them to question groups.',
+        $this->_template_args['preview_text'] = '<strong>' . esc_html__('Question Groups is a feature that is only available in the premium version of Event Espresso 4 which is available with a support license purchase on EventEspresso.com. With the Question Groups feature you are able to create new question groups, edit existing question groups, and create and edit new questions and add them to question groups.',
                 'event_espresso') . '</strong>';
         $this->display_admin_caf_preview_page('question_groups_tab');
     }
@@ -430,15 +430,21 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
             $question->set_order_to_latest();
             $this->_set_add_edit_form_tags('insert_question');
         }
-        $question_types                                     = $question->has_answers() ? $this->_question_model->question_types_in_same_category($question->type()) : $this->_question_model->allowed_question_types();
+        $question_types                                     = $question->has_answers()
+            ? $this->_question_model->question_types_in_same_category($question->type())
+            : $this->_question_model->allowed_question_types();
         $this->_template_args['QST_ID']                     = $ID;
         $this->_template_args['question']                   = $question;
         $this->_template_args['question_types']             = $question_types;
-        $this->_template_args['max_max']                    = EEM_Question::instance()->absolute_max_for_system_question($question->system_ID());
+        $this->_template_args['max_max']                    = EEM_Question::instance()->absolute_max_for_system_question(
+            $question->system_ID()
+        );
         $this->_template_args['question_type_descriptions'] = $this->_get_question_type_descriptions();
         $this->_set_publish_post_box_vars('id', $ID);
-        $this->_template_args['admin_page_content'] = EEH_Template::display_template(REGISTRATION_FORM_TEMPLATE_PATH . 'questions_main_meta_box.template.php',
-            $this->_template_args, true);
+        $this->_template_args['admin_page_content'] = EEH_Template::display_template(
+            REGISTRATION_FORM_TEMPLATE_PATH . 'questions_main_meta_box.template.php',
+            $this->_template_args, true
+        );
 
         // the details template wrapper
         $this->display_admin_page_with_sidebar();
@@ -514,10 +520,13 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
             }
             //save new related options
             foreach ($this->_req_data['question_options'] as $index => $option_req_data) {
-                if (empty($option_req_data['QSO_ID']) && ((isset($option_req_data['QSO_value']) && $option_req_data['QSO_value'] !== '') || ! empty($option_req_data['QSO_desc']))) {//no ID! save it!
-                    if (! isset($option_req_data['QSO_value']) || $option_req_data['QSO_value'] === '') {
-                        $option_req_data['QSO_value'] = $option_req_data['QSO_desc'];
-                    }
+                //skip $index that is from our sample
+                if ( $index === 'xxcountxx' ) {
+                    continue;
+                }
+                //note we allow saving blank options.
+                if (empty($option_req_data['QSO_ID'])
+                ) {//no ID! save it!
                     $new_option = EE_Question_Option::new_instance(array(
                         'QSO_value' => $option_req_data['QSO_value'],
                         'QSO_desc'  => $option_req_data['QSO_desc'],

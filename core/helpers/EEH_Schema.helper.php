@@ -17,6 +17,63 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 class EEH_Schema {
 
 
+    /**
+     * generates JSON-based linked data for an event
+     *
+     * @param \EE_Event $event
+     */
+    public static function add_json_linked_data_for_event(\EE_Event $event)
+    {
+        $template_args = array(
+            'event_permalink' => '',
+            'event_name' => '',
+            'event_description' => '',
+            'event_start' => '',
+            'event_end' => '',
+            'currency' => '',
+            'event_tickets' => array(),
+            'venue_name' => '',
+            'venue_url' => '',
+            'venue_locality' => '',
+            'venue_region' => '',
+            'event_image' => '',
+        );
+        $template_args['event_permalink'] = $event->get_permalink();
+        $template_args['event_name'] = $event->name();
+        $template_args['event_description'] = wp_strip_all_tags($event->short_description(200));
+        $template_args['event_start'] = $event->primary_datetime()->start_date(DateTime::ATOM);
+        $template_args['event_end'] = $event->primary_datetime()->end_date(DateTime::ATOM);
+        $template_args['currency'] = EE_Registry::instance()->CFG->currency->code;
+        foreach ($event->tickets() as $ticket) {
+            $ID = $ticket->ID();
+            $template_args['event_tickets'][$ID]['start_date'] = $ticket->start_date(DateTime::ATOM, null);
+            $template_args['event_tickets'][$ID]['end_date'] = $ticket->end_date(DateTime::ATOM, null);
+            $template_args['event_tickets'][$ID]['price'] = number_format(
+                $ticket->price(),
+                EE_Registry::instance()->CFG->currency->dec_plc,
+                EE_Registry::instance()->CFG->currency->dec_mrk,
+                EE_Registry::instance()->CFG->currency->thsnds
+            );
+        }
+        $VNU_ID = espresso_venue_id();
+        if ( ! empty($VNU_ID) && ! espresso_is_venue_private($VNU_ID)) {
+            $venue = EEH_Venue_View::get_venue($VNU_ID);
+            $template_args['venue_name'] = get_the_title($VNU_ID);
+            $template_args['venue_url'] = get_permalink($VNU_ID);
+            $template_args['venue_locality'] = $venue->city();
+            $template_args['venue_region'] = $venue->state_name();
+        }
+        $template_args['event_image'] = $event->feature_image_url();
+        $template_args = apply_filters(
+            'FHEE__EEH_Schema__add_json_linked_data_for_event__template_args',
+            $template_args,
+            $event,
+            $VNU_ID
+        );
+        extract($template_args, EXTR_OVERWRITE);
+        include EE_TEMPLATES . 'json_linked_data_for_event.template.php';
+    }
+
 
 	/**
 	 *    location

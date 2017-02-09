@@ -211,4 +211,5 @@ class EE_HABTM_Relation extends EE_Model_Relation_Base
         $this->get_join_model()->delete(array($cols_n_values));
         return $other_model_obj;
     }
+
 }

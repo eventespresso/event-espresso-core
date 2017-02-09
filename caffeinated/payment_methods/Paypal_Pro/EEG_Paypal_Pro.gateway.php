@@ -90,7 +90,19 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
 	 */
 	public function do_direct_payment($payment,$billing_info = null){
 		$transaction = $payment->transaction();
-		$primary_registrant = $transaction->primary_registration();
+        if (! $transaction instanceof EEI_Transaction) {
+            throw new EE_Error(esc_html__('No transaction for payment while paying with PayPal Pro.', 'event_espresso'));
+        }
+        $primary_registrant = $transaction->primary_registration();
+        if (! $primary_registrant instanceof EEI_Registration) {
+            throw new EE_Error(esc_html__('No primary registration on transaction while paying with PayPal Pro.',
+                'event_espresso'));
+        }
+        $attendee = $primary_registrant->attendee();
+        if (! $attendee instanceof EEI_Attendee) {
+            throw new EE_Error(esc_html__('No attendee on primary registration while paying with PayPal Pro.',
+                'event_espresso'));
+        }
 		$order_description  = $this->_format_order_description( $payment );
 		//charge for the full amount. Show itemized list
 		if( $this->_can_easily_itemize_transaction_for( $payment ) ){
@@ -218,10 +230,25 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
 			'countrycode' => $billing_info['country'],
 			// Required.  Postal code of payer.
 			'zip' => $billing_info['zip'],
-			// Phone Number of payer.  20 char max.
-			'shiptophonenum' => substr($billing_info['phone'],0,20)
 		);
 
+        //check if the registration info contains the needed fields for paypal pro (see https://developer.paypal.com/docs/classic/api/merchant/DoDirectPayment_API_Operation_NVP/)
+        if($attendee->address() && $attendee->city() && $attendee->country_ID()){
+            $use_registration_address_info = true;
+        } else {
+            $use_registration_address_info = false;
+        }
+        //so if the attendee has enough data to fill out PayPal Pro's shipping info, use it. If not, use the billing info again
+        $ShippingAddress = array(
+            'shiptoname' => substr($use_registration_address_info ? $attendee->full_name() : $billing_info['first_name'] . ' ' . $billing_info['last_name'], 0, 32),
+            'shiptostreet' => substr($use_registration_address_info ? $attendee->address() : $billing_info['address'], 0, 100),
+            'shiptostreet2' => substr($use_registration_address_info ? $attendee->address2() : $billing_info['address2'],0,100),
+            'shiptocity' => substr($use_registration_address_info ? $attendee->city() : $billing_info['city'],0,40),
+            'state' => substr($use_registration_address_info ? $attendee->state_name() : $billing_info['state'],0,40),
+            'shiptocountry' => $use_registration_address_info ? $attendee->country_ID() : $billing_info['country'],
+            'shiptozip' => substr($use_registration_address_info ? $attendee->zip() : $billing_info['zip'],0,20),
+            'shiptophonenum' => substr($use_registration_address_info ? $attendee->phone() : $billing_info['phone'],0,20),
+        );
 
 		$PaymentDetails = array(
 			// Required.  Total amount of order, including shipping, handling, and tax.
@@ -253,6 +280,7 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
 				'PayerInfo' => $PayerInfo,
 				'PayerName' => $PayerName,
 				'BillingAddress' => $BillingAddress,
+                'ShippingAddress' => $ShippingAddress,
 				'PaymentDetails' => $PaymentDetails,
 				'OrderItems' => $order_items,
 		);

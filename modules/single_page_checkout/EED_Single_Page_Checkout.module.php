@@ -608,17 +608,29 @@ class EED_Single_Page_Checkout extends EED_Module
         // returning to edit ?
         $this->checkout->reg_url_link = EE_Registry::instance()->REQ->get('e_reg_url_link', '');
         // or some other kind of revisit ?
-        $this->checkout->revisit = EE_Registry::instance()->REQ->get('revisit', false);
+        $this->checkout->revisit = filter_var(
+            EE_Registry::instance()->REQ->get('revisit', false),
+            FILTER_VALIDATE_BOOLEAN
+        );
         // and whether or not to generate a reg form for this request
-        $this->checkout->generate_reg_form = EE_Registry::instance()->REQ->get('generate_reg_form', true);        // TRUE 	FALSE
+        $this->checkout->generate_reg_form = filter_var(
+            EE_Registry::instance()->REQ->get('generate_reg_form', true),
+            FILTER_VALIDATE_BOOLEAN
+        );
         // and whether or not to process a reg form submission for this request
-        $this->checkout->process_form_submission = EE_Registry::instance()->REQ->get(
-            'process_form_submission',
-            $this->checkout->action === 'process_reg_step'
-        ); // TRUE 	FALSE
-        $this->checkout->process_form_submission = $this->checkout->action !== 'display_spco_reg_step'
-            ? $this->checkout->process_form_submission
-            : false;        // TRUE 	FALSE
+        $this->checkout->process_form_submission = filter_var(
+            EE_Registry::instance()->REQ->get(
+                'process_form_submission',
+                $this->checkout->action === 'process_reg_step'
+            ),
+            FILTER_VALIDATE_BOOLEAN
+        );
+        $this->checkout->process_form_submission = filter_var(
+            $this->checkout->action !== 'display_spco_reg_step'
+                ? $this->checkout->process_form_submission
+                : false,
+            FILTER_VALIDATE_BOOLEAN
+        );
         // $this->_display_request_vars();
     }
 

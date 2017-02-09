@@ -84,7 +84,7 @@ class EE_Select_Display_Strategy extends EE_Display_Strategy_Base{
 	 * @return string
 	 */
 	protected function _check_if_option_selected( $value ){
-		return $this->_input->raw_value() == $value ? TRUE : FALSE;
+		return $this->_input->raw_value() === $value ? TRUE : FALSE;
 	}
 
 

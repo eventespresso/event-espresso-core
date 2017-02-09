@@ -19,7 +19,7 @@ class EE_Has_Many_Relation extends EE_Model_Relation_Base
      * NOT through a JOIN table, which is the case for EE_HABTM_Relations). This knows how to join the models, get
      * related models across the relation, and add-and-remove the relationships.
      *
-     * @param boolean $block_deletes                 For this type of relation, we block by default. If there are
+     * @param boolean $block_deletes                 For this type of r elation, we block by default. If there are
      *                                               related models across this relation, block (prevent and add an
      *                                               error) the deletion of this model
      * @param string  $blocking_delete_error_message a customized error message on blocking deletes instead of the

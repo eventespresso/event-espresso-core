@@ -1,9 +1,10 @@
 <?php
 use EventEspresso\core\libraries\rest_api\Calculated_Model_Fields;
+use EventEspresso\core\libraries\rest_api\controllers\model\Read as ModelRead;
+use EventEspresso\core\libraries\rest_api\changes\Changes_In_Base;
+use EventEspresso\core\libraries\rest_api\Model_Version_Info;
 
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
+defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
 
@@ -166,7 +167,7 @@ class EED_Core_Rest_Api extends \EED_Module
             $full_classname = 'EventEspresso\core\libraries\rest_api\changes\\' . $classname_in_namespace;
             if (class_exists($full_classname)) {
                 $instance_of_class = new $full_classname;
-                if ($instance_of_class instanceof EventEspresso\core\libraries\rest_api\changes\Changes_In_Base) {
+                if ($instance_of_class instanceof Changes_In_Base) {
                     $instance_of_class->set_hooks();
                 }
             }
@@ -184,14 +185,33 @@ class EED_Core_Rest_Api extends \EED_Module
         foreach (EED_Core_Rest_Api::get_ee_route_data() as $namespace => $relative_urls) {
             foreach ($relative_urls as $endpoint => $routes) {
                 foreach ($routes as $route) {
-                    register_rest_route(
-                        $namespace,
-                        $endpoint,
+                    $route_args = array(
                         array(
                             'callback' => $route['callback'],
                             'methods'  => $route['methods'],
                             'args'     => isset($route['args']) ? $route['args'] : array(),
                         )
+                    );
+                    if (isset($route['schema_callback'])) {
+                        $model_name = isset($route['schema_callback'][0])
+                            ? $route['schema_callback'][0]
+                            : '';
+                        $version = isset( $route['schema_callback'][1])
+                            ? $route['schema_callback'][1]
+                            : '';
+                        if (! empty($model_name) && ! empty($version)) {
+                            $route_args['schema'] = function () use ($model_name, $version) {
+                                return ModelRead::handle_schema_request(
+                                    $model_name,
+                                    $version
+                                );
+                            };
+                        }
+                    }
+                    register_rest_route(
+                        $namespace,
+                        $endpoint,
+                        $route_args
                     );
                 }
             }
@@ -355,7 +375,7 @@ class EED_Core_Rest_Api extends \EED_Module
      */
     protected function _get_model_route_data_for_version($version, $hidden_endpoint = false)
     {
-        $model_version_info = new \EventEspresso\core\libraries\rest_api\Model_Version_Info($version);
+        $model_version_info = new Model_Version_Info($version);
         $models_to_register = apply_filters(
             'FHEE__EED_Core_REST_API___register_model_routes',
             $model_version_info->models_for_requested_version()
@@ -366,6 +386,12 @@ class EED_Core_Rest_Api extends \EED_Module
         $model_routes = array();
         foreach ($models_to_register as $model_name => $model_classname) {
             $model = \EE_Registry::instance()->load_model($model_name);
+
+            //if this isn't a valid model then let's skip iterate to the next item in the loop.
+            if (! $model instanceof EEM_Base) {
+                continue;
+            }
+
             //yes we could just register one route for ALL models, but then they wouldn't show up in the index
             $plural_model_route = EEH_Inflector::pluralize_and_lower($model_name);
             $singular_model_route = $plural_model_route . '/(?P<id>\d+)';
@@ -381,6 +407,7 @@ class EED_Core_Rest_Api extends \EED_Module
                     '_links'          => array(
                         'self' => rest_url(EED_Core_Rest_Api::ee_api_namespace . $version . $singular_model_route),
                     ),
+                    'schema_callback' => array($model_name, $version)
                 ),
                 //						array(
                 //							'callback' => array(
@@ -410,7 +437,7 @@ class EED_Core_Rest_Api extends \EED_Module
             );
             //@todo: also handle  DELETE for a single item
             foreach ($model_version_info->relation_settings($model) as $relation_name => $relation_obj) {
-                $related_model_name_endpoint_part = EventEspresso\core\libraries\rest_api\controllers\model\Read::get_related_entity_name(
+                $related_model_name_endpoint_part = ModelRead::get_related_entity_name(
                     $relation_name,
                     $relation_obj
                 );

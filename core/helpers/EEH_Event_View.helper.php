@@ -145,39 +145,48 @@ class EEH_Event_View extends EEH_Base {
 
 		ob_start();
 		if (( is_single() ) || ( is_archive() && espresso_display_full_description_in_event_list() )) {
-
 			// admin has chosen "full description" for the "Event Espresso - Events > Templates > Display Description" option
 			the_content();
-
 		} else if (( is_archive() && has_excerpt( $post->ID ) && espresso_display_excerpt_in_event_list() ) ) {
-
-			// admin has chosen "excerpt (short desc)" for the "Event Espresso - Events > Templates > Display Description" option
+            // admin has chosen "excerpt (short desc)" for the "Event Espresso - Events > Templates > Display Description" option
 			// AND an excerpt actually exists
 			the_excerpt();
-
 		} else if (( is_archive() && ! has_excerpt( $post->ID ) && espresso_display_excerpt_in_event_list() )) {
-
-			// admin has chosen "excerpt (short desc)" for the "Event Espresso - Events > Templates > Display Description" option
+            // admin has chosen "excerpt (short desc)" for the "Event Espresso - Events > Templates > Display Description" option
 			// but NO excerpt actually exists, so we need to create one
 			if ( ! empty( $num_words )) {
 				if ( empty( $more )) {
 					$more_link_text = __( '(more&hellip;)' );
-					$more = ' <a href="' . get_permalink() . '" class="more-link">' . $more_link_text . '</a>';
-					$more = apply_filters( 'the_content_more_link', $more, $more_link_text );
+					$more = ' <a href="' . get_permalink() . '"';
+					$more .= ' class="more-link"';
+					$more .= \EED_Events_Archive::link_target();
+					$more .= '>' . $more_link_text . '</a>';
+                    $more = apply_filters( 'the_content_more_link', $more, $more_link_text );
 				}
 				$content = str_replace( 'NOMORELINK', '', get_the_content( 'NOMORELINK' ));
 
 				$content =  wp_trim_words( $content, $num_words, ' ' ) . $more;
-			} else {
-				$content =  get_the_content();
+            } else {
+                $content =  get_the_content();
 			}
 			global $allowedtags;
+			// make sure links are allowed
+            $allowedtags['a'] = isset($allowedtags['a'])
+                ? $allowedtags['a']
+                : array();
+            // as well as target attribute
+            $allowedtags['a']['target'] = isset($allowedtags['a']['target'])
+                ? $allowedtags['a']['target']
+                : false;
+            // but get previous value so we can reset it
+            $prev_value = $allowedtags['a']['target'];
+            $allowedtags['a']['target'] = true;
 			$content = wp_kses( $content, $allowedtags );
 			$content = strip_shortcodes( $content );
 			echo apply_filters( 'the_content', $content );
-
-		} else {
-			// admin has chosen "none" for the "Event Espresso - Events > Templates > Display Description" option
+			$allowedtags['a']['target'] = $prev_value;
+        } else {
+            // admin has chosen "none" for the "Event Espresso - Events > Templates > Display Description" option
 			echo apply_filters( 'the_content', '' );
 		}
 		return ob_get_clean();
@@ -224,7 +233,12 @@ class EEH_Event_View extends EEH_Base {
 				foreach ( $event_categories as $term ) {
 					$url = get_term_link( $term, 'espresso_venue_categories' );
 					if ( ! is_wp_error( $url ) && (( $hide_uncategorized && strtolower( $term->name ) != __( 'uncategorized', 'event_espresso' )) || ! $hide_uncategorized )) {
-						$category_links[] = '<a href="' . esc_url( $url ) . '" rel="tag">' . $term->name . '</a>';
+						$category_links[] = '<a href="' . esc_url( $url )
+                                            . '" rel="tag"'
+                                            . \EED_Events_Archive::link_target()
+                                            .'>'
+                                            . $term->name
+                                            . '</a>';
 					}
 				}
 			}
@@ -295,7 +309,7 @@ class EEH_Event_View extends EEH_Base {
 	 * @return    string
 	 */
 	public static function the_latest_event_date( $dt_frmt = 'D M jS', $tm_frmt = 'g:i a', $EVT_ID = 0 ) {
-		$datetime = EEH_Event_View::get_last_date_obj( $EVT_ID );
+		$datetime = EEH_Event_View::get_latest_date_obj( $EVT_ID );
 		$format = ! empty( $dt_frmt ) && ! empty( $tm_frmt ) ? $dt_frmt . ' ' . $tm_frmt : $dt_frmt . $tm_frmt;
 		return $datetime instanceof EE_Datetime ?  $datetime->get_i18n_datetime( 'DTT_EVT_end', $format ) : '';
 	}
@@ -503,7 +517,7 @@ class EEH_Event_View extends EEH_Base {
 			// can the user edit this post ?
 			if ( current_user_can( 'edit_post', $event->ID() )) {
 				// set link text
-				$link = ! empty( $link ) ? $link : __('edit this event');
+				$link_text = ! empty( $link ) ? $link : __('edit this event');
 				// generate nonce
 				$nonce = wp_create_nonce( 'edit_nonce' );
 				// generate url to event editor for this event
@@ -511,7 +525,10 @@ class EEH_Event_View extends EEH_Base {
 				// get edit CPT text
 				$post_type_obj = get_post_type_object( 'espresso_events' );
 				// build final link html
-				$link = '<a class="post-edit-link" href="' . $url . '" title="' . esc_attr( $post_type_obj->labels->edit_item ) . '">' . $link . '</a>';
+				$link = '<a class="post-edit-link" href="' . $url . '" ';
+				$link .= ' title="' . esc_attr( $post_type_obj->labels->edit_item ) . '"';
+				$link .= \EED_Events_Archive::link_target();
+				$link .='>' . $link_text . '</a>';
 				// put it all together
 				return $before . apply_filters( 'edit_post_link', $link, $event->ID() ) . $after;
 			}

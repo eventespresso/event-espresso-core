@@ -2,17 +2,19 @@
     exit('No direct script access allowed');
 }
 /**
- *    Datetime Model
+ * Class Datetime Model
  *
  * @package               Event Espresso
  * @subpackage            includes/models/
- * @author                Brent Christensen
+ * @author                Michael Nelson, Brent Christensen
  */
 class EEM_Datetime extends EEM_Soft_Delete_Base
 {
 
-    // private instance of the EEM_Datetime object
-    protected static $_instance = null;
+    /**
+     * @var EEM_Datetime $_instance
+     */
+    protected static $_instance;
 
 
 
@@ -25,6 +27,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      *                         incoming timezone data that gets saved).  Note this just sends the timezone info to the
      *                         date time model field objects.  Default is NULL (and will be assumed using the set
      *                         timezone in the 'timezone_string' wp option)
+     * @throws \EE_Error
      */
     protected function __construct($timezone)
     {
@@ -36,31 +39,44 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
         $this->_fields = array(
             'Datetime' => array(
                 'DTT_ID'          => new EE_Primary_Key_Int_Field('DTT_ID', __('Datetime ID', 'event_espresso')),
-                'EVT_ID'          => new EE_Foreign_Key_Int_Field('EVT_ID', __('Event ID', 'event_espresso'), false, 0,
-                    'Event'),
-                'DTT_name'        => new EE_Plain_Text_Field('DTT_name', __('Datetime Name', 'event_espresso'), false,
-                    ''),
-                'DTT_description' => new EE_Post_Content_Field('DTT_description',
-                    __('Description for Datetime', 'event_espresso'), false, ''),
-                'DTT_EVT_start'   => new EE_Datetime_Field('DTT_EVT_start',
-                    __('Start time/date of Event', 'event_espresso'), false, EE_Datetime_Field::now, $timezone),
-                'DTT_EVT_end'     => new EE_Datetime_Field('DTT_EVT_end',
-                    __('End time/date of Event', 'event_espresso'), false, EE_Datetime_Field::now, $timezone),
-                'DTT_reg_limit'   => new EE_Infinite_Integer_Field('DTT_reg_limit',
-                    __('Registration Limit for this time', 'event_espresso'), true, EE_INF),
-                'DTT_sold'        => new EE_Integer_Field('DTT_sold',
-                    __('How many sales for this Datetime that have occurred', 'event_espresso'), true, 0),
-                'DTT_reserved'    => new EE_Integer_Field('DTT_reserved',
-                    __('Quantity of tickets that are reserved, but not yet fully purchased', 'event_espresso'), false,
-                    0),
-                'DTT_is_primary'  => new EE_Boolean_Field('DTT_is_primary',
-                    __("Flag indicating datetime is primary one for event", "event_espresso"), false, false),
-                'DTT_order'       => new EE_Integer_Field('DTT_order',
-                    __('The order in which the Datetime is displayed', 'event_espresso'), false, 0),
-                'DTT_parent'      => new EE_Integer_Field('DTT_parent',
-                    __('Indicates what DTT_ID is the parent of this DTT_ID'), true, 0),
-                'DTT_deleted'     => new EE_Trashed_Flag_Field('DTT_deleted',
-                    __('Flag indicating datetime is archived', 'event_espresso'), false, false),
+                'EVT_ID'          => new EE_Foreign_Key_Int_Field(
+                    'EVT_ID', __('Event ID', 'event_espresso'), false, 0, 'Event'
+                ),
+                'DTT_name'        => new EE_Plain_Text_Field(
+                    'DTT_name', __('Datetime Name', 'event_espresso'), false, ''
+                ),
+                'DTT_description' => new EE_Post_Content_Field(
+                    'DTT_description', __('Description for Datetime', 'event_espresso'), false, ''
+                ),
+                'DTT_EVT_start'   => new EE_Datetime_Field(
+                    'DTT_EVT_start', __('Start time/date of Event', 'event_espresso'), false, EE_Datetime_Field::now,
+                    $timezone
+                ),
+                'DTT_EVT_end'     => new EE_Datetime_Field(
+                    'DTT_EVT_end', __('End time/date of Event', 'event_espresso'), false, EE_Datetime_Field::now,
+                    $timezone
+                ),
+                'DTT_reg_limit'   => new EE_Infinite_Integer_Field(
+                    'DTT_reg_limit', __('Registration Limit for this time', 'event_espresso'), true, EE_INF),
+                'DTT_sold'        => new EE_Integer_Field(
+                    'DTT_sold', __('How many sales for this Datetime that have occurred', 'event_espresso'), true, 0
+                ),
+                'DTT_reserved' => new EE_Integer_Field('DTT_reserved',
+                    __('Quantity of tickets reserved, but not yet fully purchased', 'event_espresso'), false, 0
+                ),
+                'DTT_is_primary'  => new EE_Boolean_Field(
+                    'DTT_is_primary', __('Flag indicating datetime is primary one for event', 'event_espresso'),
+                    false, false
+                ),
+                'DTT_order'       => new EE_Integer_Field(
+                    'DTT_order', __('The order in which the Datetime is displayed', 'event_espresso'), false, 0
+                ),
+                'DTT_parent'      => new EE_Integer_Field(
+                    'DTT_parent', __('Indicates what DTT_ID is the parent of this DTT_ID'), true, 0
+                ),
+                'DTT_deleted'     => new EE_Trashed_Flag_Field(
+                    'DTT_deleted', __('Flag indicating datetime is archived', 'event_espresso'), false, false
+                ),
             ),
         );
         $this->_model_relations = array(
@@ -81,10 +97,11 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
 
 
     /**
-     *        create new blank datetime
+     * create new blank datetime
      *
-     * @access        public
-     * @return        EE_Datetime[]        array on success, FALSE on fail
+     * @access public
+     * @return EE_Datetime[] array on success, FALSE on fail
+     * @throws \EE_Error
      */
     public function create_new_blank_datetime()
     {
@@ -92,8 +109,8 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
         $timezone_string = $this->get_timezone();
         $blank_datetime = EE_Datetime::new_instance(
             array(
-                'DTT_EVT_start' => $this->current_time_for_query('DTT_EVT_start', true) + (60 * 60 * 24 * 30),
-                'DTT_EVT_end'   => $this->current_time_for_query('DTT_EVT_end', true) + (60 * 60 * 24 * 30),
+                'DTT_EVT_start' => $this->current_time_for_query('DTT_EVT_start', true) + MONTH_IN_SECONDS,
+                'DTT_EVT_end'   => $this->current_time_for_query('DTT_EVT_end', true) + MONTH_IN_SECONDS,
                 'DTT_order'     => 1,
                 'DTT_reg_limit' => EE_INF,
             ),
@@ -108,11 +125,12 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
 
 
     /**
-     *        get event start date from db
+     * get event start date from db
      *
-     * @access        public
-     * @param        int $EVT_ID
-     * @return        EE_Datetime[]        array on success, FALSE on fail
+     * @access public
+     * @param  int $EVT_ID
+     * @return EE_Datetime[] array on success, FALSE on fail
+     * @throws \EE_Error
      */
     public function get_all_event_dates($EVT_ID = 0)
     {
@@ -138,6 +156,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * @param  int    $limit      If included then limit the count of results by
      *                            the given number
      * @return EE_Datetime[]
+     * @throws \EE_Error
      */
     public function get_datetimes_for_event_ordered_by_DTT_order(
         $EVT_ID,
@@ -146,22 +165,29 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
         $limit = null
     ) {
         //sanitize EVT_ID
-        $EVT_ID = intval($EVT_ID);
+        $EVT_ID = absint($EVT_ID);
         $old_assumption = $this->get_assumption_concerning_values_already_prepared_by_model_object();
         $this->assume_values_already_prepared_by_model_object(EEM_Base::prepared_for_use_in_db);
         $where_params = array('Event.EVT_ID' => $EVT_ID);
-        $query_params = ! empty($limit) ? array(
-            $where_params,
-            'limit'                    => $limit,
-            'order_by'                 => array('DTT_order' => 'ASC'),
-            'default_where_conditions' => 'none',
-        ) : array($where_params, 'order_by' => array('DTT_order' => 'ASC'), 'default_where_conditions' => 'none');
+        $query_params = ! empty($limit)
+            ? array(
+                $where_params,
+                'limit'                    => $limit,
+                'order_by'                 => array('DTT_order' => 'ASC'),
+                'default_where_conditions' => 'none',
+            )
+            : array(
+                $where_params,
+                'order_by'                 => array('DTT_order' => 'ASC'),
+                'default_where_conditions' => 'none',
+            );
         if ( ! $include_expired) {
             $query_params[0]['DTT_EVT_end'] = array('>=', current_time('mysql', true));
         }
         if ($include_deleted) {
             $query_params[0]['DTT_deleted'] = array('IN', array(true, false));
         }
+        /** @var EE_Datetime[] $result */
         $result = $this->get_all($query_params);
         $this->assume_values_already_prepared_by_model_object($old_assumption);
         return $result;
@@ -176,16 +202,19 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      *
      * @param int $EVT_ID
      * @param int $limit
-     * @return EE_Datetime[]
+     * @return EE_Datetime[]|EE_Base_Class[]
+     * @throws \EE_Error
      */
     public function get_datetimes_for_event_ordered_by_importance($EVT_ID = 0, $limit = null)
     {
-        return $this->get_all(array(
-            array('Event.EVT_ID' => $EVT_ID),
-            'limit'                    => $limit,
-            'order_by'                 => array('DTT_EVT_start' => 'ASC'),
-            'default_where_conditions' => 'none',
-        ));
+        return $this->get_all(
+            array(
+                array('Event.EVT_ID' => $EVT_ID),
+                'limit'                    => $limit,
+                'order_by'                 => array('DTT_EVT_start' => 'ASC'),
+                'default_where_conditions' => 'none',
+            )
+        );
     }
 
 
@@ -195,6 +224,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * @param boolean $include_expired
      * @param boolean $include_deleted
      * @return EE_Datetime
+     * @throws \EE_Error
      */
     public function get_oldest_datetime_for_event($EVT_ID, $include_expired = false, $include_deleted = false)
     {
@@ -215,6 +245,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * @param bool $try_to_exclude_expired
      * @param bool $try_to_exclude_deleted
      * @return \EE_Datetime
+     * @throws \EE_Error
      */
     public function get_primary_datetime_for_event(
         $EVT_ID,
@@ -233,8 +264,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
                 return $expired_even;
             }
         }
-        $deleted_even = $this->get_oldest_datetime_for_event($EVT_ID, true, true);
-        return $deleted_even;
+        return $this->get_oldest_datetime_for_event($EVT_ID, true, true);
     }
 
 
@@ -248,6 +278,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * @param boolean $include_deleted
      * @param int     $limit
      * @return EE_Datetime[]
+     * @throws \EE_Error
      */
     public function get_datetimes_for_event_ordered_by_start_time(
         $EVT_ID,
@@ -256,7 +287,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
         $limit = null
     ) {
         //sanitize EVT_ID
-        $EVT_ID = intval($EVT_ID);
+        $EVT_ID = absint($EVT_ID);
         $old_assumption = $this->get_assumption_concerning_values_already_prepared_by_model_object();
         $this->assume_values_already_prepared_by_model_object(EEM_Base::prepared_for_use_in_db);
         $query_params = array(array('Event.EVT_ID' => $EVT_ID), 'order_by' => array('DTT_EVT_start' => 'asc'));
@@ -269,6 +300,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
         if ($limit) {
             $query_params['limit'] = $limit;
         }
+        /** @var EE_Datetime[] $result */
         $result = $this->get_all($query_params);
         $this->assume_values_already_prepared_by_model_object($old_assumption);
         return $result;
@@ -285,6 +317,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * @param boolean $include_deleted
      * @param int     $limit
      * @return EE_Datetime[]
+     * @throws \EE_Error
      */
     public function get_datetimes_for_ticket_ordered_by_start_time(
         $TKT_ID,
@@ -293,7 +326,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
         $limit = null
     ) {
         //sanitize TKT_ID
-        $TKT_ID = intval($TKT_ID);
+        $TKT_ID = absint($TKT_ID);
         $old_assumption = $this->get_assumption_concerning_values_already_prepared_by_model_object();
         $this->assume_values_already_prepared_by_model_object(EEM_Base::prepared_for_use_in_db);
         $query_params = array(array('Ticket.TKT_ID' => $TKT_ID), 'order_by' => array('DTT_EVT_start' => 'asc'));
@@ -306,6 +339,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
         if ($limit) {
             $query_params['limit'] = $limit;
         }
+        /** @var EE_Datetime[] $result */
         $result = $this->get_all($query_params);
         $this->assume_values_already_prepared_by_model_object($old_assumption);
         return $result;
@@ -323,6 +357,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * @param  int|null $limit           if null, no limit, if int then limit results by
      *                                   that number
      * @return EE_Datetime[]
+     * @throws \EE_Error
      */
     public function get_datetimes_for_ticket_ordered_by_DTT_order(
         $TKT_ID,
@@ -331,7 +366,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
         $limit = null
     ) {
         //sanitize id.
-        $TKT_ID = intval($TKT_ID);
+        $TKT_ID = absint($TKT_ID);
         $old_assumption = $this->get_assumption_concerning_values_already_prepared_by_model_object();
         $this->assume_values_already_prepared_by_model_object(EEM_Base::prepared_for_use_in_db);
         $where_params = array('Ticket.TKT_ID' => $TKT_ID);
@@ -345,6 +380,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
         if ($limit) {
             $query_params['limit'] = $limit;
         }
+        /** @var EE_Datetime[] $result */
         $result = $this->get_all($query_params);
         $this->assume_values_already_prepared_by_model_object($old_assumption);
         return $result;
@@ -358,6 +394,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      *
      * @param int $EVT_ID
      * @return EE_Datetime
+     * @throws \EE_Error
      */
     public function get_most_important_datetime_for_event($EVT_ID)
     {
@@ -384,7 +421,8 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      *                                   - active = Events that are published and have at least one datetime that
      *                                   starts before now and ends after now.
      *                                   - inactive = Events that are either not published.
-     * @return wpdb results array
+     * @return EE_Base_Class[]
+     * @throws \EE_Error
      */
     public function get_dtt_months_and_years($where_params, $evt_active_status = '')
     {
@@ -482,7 +520,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * @return int of tickets available. If sold out, return less than 1. If infinite, returns EE_INF,  IF there are NO
      *             tickets attached to datetime then FALSE is returned.
      */
-    public function sum_tickets_currently_available_at_datetime($DTT_ID, $query_params = array())
+    public function sum_tickets_currently_available_at_datetime($DTT_ID, array $query_params = array())
     {
         $datetime = $this->get_one_by_ID($DTT_ID);
         if ($datetime instanceof EE_Datetime) {
@@ -502,9 +540,10 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * @param  array $query_params     If included can be used to refine the conditions for returning the count (i.e.
      *                                 only for Datetimes connected to a specific event, or specific ticket.
      * @return array  The value returned is an array indexed by Datetime Status and the values are the counts.  The
-     *                stati used as index keys are: EE_Datetime::active EE_Datetime::upcoming EE_Datetime::expired
+     * @throws \EE_Error
+     *                                 stati used as index keys are: EE_Datetime::active EE_Datetime::upcoming EE_Datetime::expired
      */
-    public function get_datetime_counts_by_status($stati_to_include = array(), $query_params = array())
+    public function get_datetime_counts_by_status(array $stati_to_include = array(), array $query_params = array())
     {
         //only accept where conditions for this query.
         $_where = isset($query_params[0]) ? $query_params[0] : array();
@@ -524,7 +563,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
         );
         if ( ! empty($stati_to_include)) {
             foreach (array_keys($status_query_args) as $status) {
-                if ( ! in_array($status, $stati_to_include)) {
+                if ( ! in_array($status, $stati_to_include, true)) {
                     unset($status_query_args[$status]);
                 }
             }
@@ -545,8 +584,9 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * @param string $status Valid string representation for Datetime status requested. (Defaults to Active).
      * @param array  $query_params
      * @return int
+     * @throws \EE_Error
      */
-    public function get_datetime_count_for_status($status = EE_Datetime::active, $query_params = array())
+    public function get_datetime_count_for_status($status = EE_Datetime::active, array $query_params = array())
     {
         $count = $this->get_datetime_counts_by_status(array($status), $query_params);
         return ! empty($count[$status]) ? $count[$status] : 0;

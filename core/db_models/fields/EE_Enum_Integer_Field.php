@@ -1,7 +1,5 @@
-<?php if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-require_once(EE_MODELS . 'fields/EE_Integer_Field.php');
+<?php
+defined('EVENT_ESPRESSO_VERSION') || exit;
 
 /**
  * Class EE_Enum_Integer_Field
@@ -9,7 +7,6 @@ require_once(EE_MODELS . 'fields/EE_Integer_Field.php');
  * @package               Event Espresso
  * @subpackage            includes/models/
  * @author                Mike Nelson
->>>>>>> master
  */
 class EE_Enum_Integer_Field extends EE_Integer_Field
 {
@@ -17,6 +14,7 @@ class EE_Enum_Integer_Field extends EE_Integer_Field
      * @var array $_allowed_enum_values
      */
     public $_allowed_enum_values;
+
 
     /**
      * @param string  $table_column
@@ -29,6 +27,7 @@ class EE_Enum_Integer_Field extends EE_Integer_Field
     {
         $this->_allowed_enum_values = $allowed_enum_values;
         parent::__construct($table_column, $nicename, $nullable, $default_value);
+        $this->setSchemaType('object');
     }
 
     /**
@@ -97,5 +96,29 @@ class EE_Enum_Integer_Field extends EE_Integer_Field
         } else {
             return $value_on_field_to_be_outputted;
         }
+    }
+
+
+    public function getSchemaProperties()
+    {
+        return array(
+            'raw' => array(
+                'description' =>  sprintf(
+                    __('%s - the value in the database.', 'event_espresso'),
+                    $this->get_nicename()
+                ),
+                'enum' => array_keys($this->_allowed_enum_values()),
+                'type' => 'integer'
+            ),
+            'pretty' => array(
+                'description' =>  sprintf(
+                    __('%s - the value for display.', 'event_espresso'),
+                    $this->get_nicename()
+                ),
+                'enum' => array_values($this->_allowed_enum_values()),
+                'type' => 'string',
+                'read_only' => true
+            )
+        );
     }
 }

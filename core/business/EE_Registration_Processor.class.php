@@ -215,7 +215,7 @@ class EE_Registration_Processor extends EE_Processor_Base {
 			}
 			// don't trigger notifications during IPNs because they will get triggered by EE_Payment_Processor
 			if ( ! EE_Processor_Base::$IPN ) {
-				// otherwise, send out notifications
+                // otherwise, send out notifications
 				add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true', 10 );
 			}
 			// DEBUG LOG
@@ -262,7 +262,7 @@ class EE_Registration_Processor extends EE_Processor_Base {
 			}
 			// don't trigger notifications during IPNs because they will get triggered by EE_Payment_Processor
 			if ( ! EE_Processor_Base::$IPN ) {
-				// otherwise, send out notifications
+                // otherwise, send out notifications
 				add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true', 10 );
 			}
 			// DEBUG LOG
@@ -349,7 +349,7 @@ class EE_Registration_Processor extends EE_Processor_Base {
 			}
 			// don't trigger notifications during IPNs because they will get triggered by EE_Payment_Processor
 			if ( ! EE_Processor_Base::$IPN ) {
-				// otherwise, send out notifications
+                // otherwise, send out notifications
 				add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true', 10 );
 			}
 			// DEBUG LOG
@@ -381,16 +381,19 @@ class EE_Registration_Processor extends EE_Processor_Base {
 			if ( ! $registration instanceof EE_Registration ) {
 				throw new EE_Error( __( 'An invalid registration was received.', 'event_espresso' ) );
 			}
-			EE_Registry::instance()->load_helper( 'Debug_Tools' );
-			EEH_Debug_Tools::log(
-				__CLASS__,
-				__FUNCTION__,
-				__LINE__,
-				array( $registration->transaction(), $additional_details ),
-				false,
-				'EE_Transaction: ' . $registration->transaction()->ID()
-			);
-			do_action(
+			// EE_Registry::instance()->load_helper( 'Debug_Tools' );
+			// EEH_Debug_Tools::log(
+			// 	__CLASS__,
+			// 	__FUNCTION__,
+			// 	__LINE__,
+			// 	array( $registration->transaction(), $additional_details ),
+			// 	false,
+			// 	'EE_Transaction: ' . $registration->transaction()->ID()
+			// );
+            if ( ! $registration->is_primary_registrant()) {
+                return;
+            }
+            do_action(
 				'AHEE__EE_Registration_Processor__trigger_registration_update_notifications',
 				$registration,
 				$additional_details

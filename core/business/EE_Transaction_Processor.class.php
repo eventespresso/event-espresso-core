@@ -177,21 +177,24 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 
 
 
-	/**
-	 * update_transaction_and_registrations_after_checkout_or_payment
-	 * cycles thru related registrations and calls update_registration_after_checkout_or_payment() on each
-	 *
-	 * @param EE_Transaction     $transaction
-	 * @param \EE_Payment | NULL $payment
-	 * @param array              $registration_query_params    array of query WHERE params to use
-	 *                                                         when retrieving cached registrations from a transaction
-	 * @throws \EE_Error
-	 * @return array
-	 */
+    /**
+     * update_transaction_and_registrations_after_checkout_or_payment
+     * cycles thru related registrations and calls update_registration_after_checkout_or_payment() on each
+     *
+     * @param EE_Transaction $transaction
+     * @param \EE_Payment | NULL $payment
+     * @param array              $registration_query_params    array of query WHERE params to use
+     *                                                         when retrieving cached registrations from a transaction
+     * @param bool $trigger_notifications                      whether or not to call
+     *                                                         \EE_Registration_Processor::trigger_registration_update_notifications()
+     * @return array
+     * @throws \EE_Error
+     */
 	public function update_transaction_and_registrations_after_checkout_or_payment(
 		EE_Transaction $transaction,
 		$payment = null,
-		$registration_query_params = array()
+		$registration_query_params = array(),
+        $trigger_notifications = true
 	) {
 		// make sure some query params are set for retrieving registrations
 		$this->_set_registration_query_params( $registration_query_params );
@@ -220,15 +223,16 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 			$this->_registration_query_params,
 			$update_params
 		);
-
-		// send messages
-		/** @type EE_Registration_Processor $registration_processor */
-		$registration_processor = EE_Registry::instance()->load_class( 'Registration_Processor' );
-		$registration_processor->trigger_registration_update_notifications(
-			$transaction->primary_registration(),
-			$update_params
-		);
-		do_action(
+		if ($trigger_notifications) {
+            // send messages
+            /** @type EE_Registration_Processor $registration_processor */
+            $registration_processor = EE_Registry::instance()->load_class('Registration_Processor');
+            $registration_processor->trigger_registration_update_notifications(
+                $transaction->primary_registration(),
+                $update_params
+            );
+        }
+        do_action(
 			'AHEE__EE_Transaction_Processor__update_transaction_and_registrations_after_checkout_or_payment',
 			$transaction,
 			$update_params

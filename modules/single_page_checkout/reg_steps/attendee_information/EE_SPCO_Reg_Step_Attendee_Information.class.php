@@ -135,29 +135,24 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 					$registration instanceof EE_Registration
 					&& $this->checkout->visit_allows_processing_of_this_registration( $registration )
 				) {
-                    $attendee_reg_form = $this->_registrations_reg_form($registration);
-                    if ($attendee_reg_form instanceof EE_Form_Section_Proper) {
-                        $subsections[$registration->reg_url_link()] = $attendee_reg_form;
-                        if ( ! $this->checkout->admin_request) {
-                            $template_args['registrations'][$registration->reg_url_link()] = $registration;
-                            $template_args['ticket_count'][$registration->ticket()->ID()] = isset(
-                                $template_args['ticket_count'][$registration->ticket()->ID()]
-                            )
-                                ? $template_args['ticket_count'][$registration->ticket()->ID()] + 1
-                                : 1;
-                            $ticket_line_item = EEH_Line_Item::get_line_items_by_object_type_and_IDs(
-                                $this->checkout->cart->get_grand_total(),
-                                'Ticket',
-                                array($registration->ticket()->ID())
-                            );
-                            $ticket_line_item = is_array($ticket_line_item)
-                                ? reset($ticket_line_item)
-                                : $ticket_line_item;
-                            $template_args['ticket_line_item'][$registration->ticket()
-                                                                            ->ID()] = $Line_Item_Display->display_line_item(
-                                $ticket_line_item
-                            );
-                        }
+                    $subsections[$registration->reg_url_link()] = $this->_registrations_reg_form($registration);
+                    if ( ! $this->checkout->admin_request) {
+                        $template_args['registrations'][$registration->reg_url_link()] = $registration;
+                        $template_args['ticket_count'][$registration->ticket()->ID()] = isset(
+                            $template_args['ticket_count'][$registration->ticket()->ID()]
+                        )
+                            ? $template_args['ticket_count'][$registration->ticket()->ID()] + 1
+                            : 1;
+                        $ticket_line_item = EEH_Line_Item::get_line_items_by_object_type_and_IDs(
+                            $this->checkout->cart->get_grand_total(),
+                            'Ticket',
+                            array($registration->ticket()->ID())
+                        );
+                        $ticket_line_item = is_array($ticket_line_item)
+                            ? reset($ticket_line_item)
+                            : $ticket_line_item;
+                        $template_args['ticket_line_item'][$registration->ticket()->ID()] =
+                            $Line_Item_Display->display_line_item($ticket_line_item);
                     }
                     if ($registration->is_primary_registrant()) {
                         $primary_registrant = $registration->reg_url_link();
@@ -201,9 +196,9 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 
 
 
-	/**
+    /**
 	 * @param EE_Registration $registration
-	 * @return EE_Form_Section_Proper
+	 * @return EE_Form_Section_Base
 	 * @throws \EE_Error
 	 */
 	private function _registrations_reg_form( EE_Registration $registration ) {
@@ -257,7 +252,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
             }
 		}
         $attendee_nmbr++;
-		return ! empty($form_args) ? new EE_Form_Section_Proper( $form_args ) : null;
+		return ! empty($form_args) ? new EE_Form_Section_Proper( $form_args ) : new EE_Form_Section_HTML();
 	}
 
 
