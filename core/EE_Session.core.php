@@ -25,7 +25,7 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
      /**
       * @var TransientManager $transient_manager
       */
-     private $transient_manager;
+     protected $transient_manager;
 
      /**
       * EE_Encryption object
