@@ -81,9 +81,12 @@ abstract class EspressoShortcode implements ShortcodeInterface
     private function shortcodeContent(array $attributes)
     {
         $shortcode = $this;
+        $post_ID = $this->currentPostID();
+        // something like "SC_EVENTS-123"
+        $cache_ID = $this->shortcodeCacheID($post_ID);
+        $this->cache_manager->clearPostRelatedCacheOnUpdate($post_ID, $cache_ID);
         return $this->cache_manager->getCachedContent(
-            // something like "SC_EVENTS-123"
-            $this->shortcodeCacheID($attributes),
+            $cache_ID,
             // serialized attributes
             wp_json_encode($attributes),
             // Closure for generating content if cache is expired
@@ -103,23 +106,34 @@ abstract class EspressoShortcode implements ShortcodeInterface
 
 
     /**
-     * @param array $attributes
-     * @return string
+     * @return int
      * @throws \EE_Error
      */
-    private function shortcodeCacheID(array $attributes)
+    private function currentPostID()
     {
         // try to get EE_Event any way we can
         $event = EEH_Event_View::get_event();
         // then get some kind of ID
         if ($event instanceof \EE_Event) {
-            $ID = $event->ID();
+            $post_ID = $event->ID();
         } else {
             global $post;
-            $ID = $post->ID;
+            $post_ID = $post->ID;
         }
+        return $post_ID;
+    }
+
+
+
+    /**
+     * @param int $post_ID
+     * @return string
+     * @throws \EE_Error
+     */
+    private function shortcodeCacheID($post_ID)
+    {
         $tag = str_replace('ESPRESSO_', '', $this->getTag());
-        return "SC_{$tag}-{$ID}";
+        return "SC_{$tag}-{$post_ID}";
     }
 
 
