@@ -313,7 +313,7 @@ class EEH_Event_View extends EEH_Base {
 	 * @return    string
 	 */
 	public static function the_latest_event_date( $dt_frmt = 'D M jS', $tm_frmt = 'g:i a', $EVT_ID = 0 ) {
-		$datetime = EEH_Event_View::get_last_date_obj( $EVT_ID );
+		$datetime = EEH_Event_View::get_latest_date_obj( $EVT_ID );
 		$format = ! empty( $dt_frmt ) && ! empty( $tm_frmt ) ? $dt_frmt . ' ' . $tm_frmt : $dt_frmt . $tm_frmt;
 		return $datetime instanceof EE_Datetime ?  $datetime->get_i18n_datetime( 'DTT_EVT_end', $format ) : '';
 	}
