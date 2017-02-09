@@ -61,7 +61,6 @@ class TransientManager
      */
     public function __construct()
     {
-        // \EEH_Debug_Tools::printr(date('Y-m-d g:i:s a'), 'time now : ' . time(), __FILE__, __LINE__);
         $this->transient_cleanup_frequency = $this->setTransientCleanupFrequency();
         // round current time down to closest 5 minutes to simplify scheduling
         $this->current_time = $this->roundTimestamp(time(), '5-minutes', false);
@@ -120,7 +119,6 @@ class TransientManager
      */
     private function roundTimestamp($timestamp, $cleanup_frequency = 'hour', $round_up = true) {
         $cleanup_frequency = $cleanup_frequency ? $cleanup_frequency : $this->transient_cleanup_frequency;
-        // \EEH_Debug_Tools::printr($cleanup_frequency, '$cleanup_frequency', __FILE__, __LINE__);
         // in order to round the time to the closest xx minutes (or hours),
         // we take the minutes (or hours) portion of the timestamp and divide it by xx,
         // round down to a whole number, then multiply by xx to bring us almost back up to where we were
@@ -155,12 +153,8 @@ class TransientManager
                 $offset = HOUR_IN_SECONDS;
                 break;
         }
-        // \EEH_Debug_Tools::printr($hours, '$hours', __FILE__, __LINE__);
-        // \EEH_Debug_Tools::printr($minutes, '$minutes', __FILE__, __LINE__);
-        // \EEH_Debug_Tools::printr((string)$offset, '$offset', __FILE__, __LINE__);
         $timestamp = strtotime(date("Y-m-d {$hours}:{$minutes}:00", $timestamp));
         $timestamp += $round_up ? $offset : 0;
-        // \EEH_Debug_Tools::printr(date('Y-m-d g:i:s a', $timestamp), '$timestamp', __FILE__, __LINE__);
         return apply_filters(
             'FHEE__ExpiredTransientManager__roundTimestamp__timestamp',
             $timestamp,
@@ -182,8 +176,6 @@ class TransientManager
      */
     public function addTransient($transient_key, $data, $expiration = 0)
     {
-        // \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
-        // \EEH_Debug_Tools::printr((string)$expiration, '$expiration', __FILE__, __LINE__);
         $expiration = (int)abs($expiration);
         $saved = set_transient($transient_key, $data, $expiration);
         if ($saved && $expiration) {
@@ -256,7 +248,6 @@ class TransientManager
         }
         if ( ! empty($full_transient_keys) && $this->deleteTransientKeys($full_transient_keys)) {
             $this->updateTransients();
-            // \EEH_Debug_Tools::printr($this->transients, '$this->transients', __FILE__, __LINE__);
         }
     }
 
@@ -285,14 +276,10 @@ class TransientManager
      */
     private function scheduleTransientCleanup($transient_key, $expiration)
     {
-        // \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
         // make sure a valid future timestamp is set
         $expiration += $expiration < time() ? time() : 0;
         // and round to the closest 15 minutes
         $expiration = $this->roundTimestamp($expiration);
-        // \EEH_Debug_Tools::printr($transient_key, 'schedule Transient Cleanup', __FILE__, __LINE__);
-        // \EEH_Debug_Tools::printr((string)$expiration, '$expiration', __FILE__, __LINE__);
-        // \EEH_Debug_Tools::printr(date('Y-m-d g:i:s a', $expiration), '$expiration', __FILE__, __LINE__);
         // save transients to clear using their ID as the key to avoid duplicates
         $this->transients[ $transient_key ] = $expiration;
         $this->updateTransients();
@@ -311,26 +298,12 @@ class TransientManager
         if ( empty($this->transients)) {
             return;
         }
-        // \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
-        // \EEH_Debug_Tools::printr(date('Y-m-d g:i:s a'), 'time now : ' . time(), __FILE__, __LINE__);
-        // \EEH_Debug_Tools::printr(
-        //     date('Y-m-d g:i:s a', $this->current_time),
-        //     'current_time : ' . $this->current_time,
-        //     __FILE__, __LINE__
-        // );
         // when do we run the next cleanup job?
         reset($this->transients);
         $next_scheduled_cleanup = current($this->transients);
-        // \EEH_Debug_Tools::printr(
-        //     date('Y-m-d g:i:s a', $next_scheduled_cleanup),
-        //     '$next_scheduled_cleanup : ' . $next_scheduled_cleanup,
-        //     __FILE__, __LINE__
-        // );
-        // \EEH_Debug_Tools::printr($this->transients, '$this->transients', __FILE__, __LINE__);
         // if the next cleanup job is scheduled for the current hour
         if ($next_scheduled_cleanup <= $this->current_time) {
             if ($this->cleanupExpiredTransients()) {
-                // \EEH_Debug_Tools::printr('SUCCESS!!!', __METHOD__.'()', __FILE__, __LINE__, 1);
                 $this->updateTransients();
             }
         }
@@ -347,7 +320,6 @@ class TransientManager
      */
     private function cleanupExpiredTransients()
     {
-        // \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
         $update = false;
         // filter the query limit. Set to 0 to turn off garbage collection
         $limit = (int)abs(
@@ -372,7 +344,6 @@ class TransientManager
             }
             if ( ! empty($transient_keys)){
                 $update = $this->deleteTransientKeys($transient_keys, $limit);
-                // \EEH_Debug_Tools::printr($this->transients, '$this->transients', __FILE__, __LINE__);
             }
             do_action(
                 'FHEE__EventEspresso_core_services_database_ExpiredTransientManager__clearExpiredTransients__end',
@@ -398,18 +369,14 @@ class TransientManager
     {
         /** @type wpdb $wpdb */
         global $wpdb;
-        // \EEH_Debug_Tools::printr($transient_keys, '$transient_keys', __FILE__, __LINE__);
         $regexp = implode('|(.*)', $transient_keys);
-        // \EEH_Debug_Tools::printr($regexp, '$regexp', __FILE__, __LINE__);
         $SQL = "
             DELETE FROM {$wpdb->options}
             WHERE option_name
             REGEXP '(.*){$regexp}'
             LIMIT {$limit}
         ";
-        // \EEH_Debug_Tools::printr($SQL, '$SQL', __FILE__, __LINE__);
         $results = $wpdb->query($SQL);
-        // \EEH_Debug_Tools::printr($results, '$results', __FILE__, __LINE__);
         // if something went wrong, then notify the admin
         if ($results instanceof WP_Error && is_admin()) {
             EE_Error::add_error($results->get_error_message(), __FILE__, __FUNCTION__, __LINE__);
