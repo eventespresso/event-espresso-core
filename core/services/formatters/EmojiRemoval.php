@@ -1,19 +1,19 @@
 <?php
 namespace EventEspresso\core\services\formatters;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
-use EventEspresso\core\exceptions\InvalidDataTypeException;
 
 
 /**
  * Class EmojiRemoval
- * Description
+ * Removes emojis from the input
  *
  * @package        Event Espresso
  * @author         Mike Nelson
  * @since          $VID:$
  */
-class EmojiRemoval
+class EmojiRemoval extends FormatterBase
 {
     /**
      * Removes the emojis from the inputted string

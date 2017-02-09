@@ -1,8 +1,9 @@
 <?php
-namespace core\services\formatters;
+namespace EventEspresso\core\services\formatters;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
-use EventEspresso\core\exceptions\InvalidDataTypeException;
+
 
 
 
@@ -21,7 +22,7 @@ abstract class FormatterBase implements FormatterInterface
      * @param array $input
      * @return array
      */
-    public function format($input)
+    public function format_array($input)
     {
         if(!is_array($input)){
             throw new InvalidDataTypeException('input',$input,'array');

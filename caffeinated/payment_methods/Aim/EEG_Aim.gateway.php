@@ -336,11 +336,11 @@ class EEG_Aim extends EE_Onsite_Gateway{
 		$this->_x_post_fields['tran_key'] = $this->_transaction_key;
 		$x_keys = array();
 		foreach ($this->_x_post_fields as $key => $value) {
-			$x_keys[] = "x_$key=" . urlencode($this->_remove_emojis($value));
+			$x_keys[] = "x_$key=" . urlencode($this->_get_unsupported_character_remover()->format($value));
 		}
 		// Add line items
 		foreach ($this->_additional_line_items as $key => $value) {
-			$x_keys[] =  "x_line_item=" . urlencode($this->_remove_emojis($value));
+			$x_keys[] =  "x_line_item=" . urlencode($this->_get_unsupported_character_remover()->format($value));
 		}
 		$this->_log_clean_request($x_keys, $payment);
 		$post_url = $this->_get_server_url();

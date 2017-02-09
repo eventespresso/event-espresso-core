@@ -1,5 +1,5 @@
 <?php
-namespace core\services\formatters;
+namespace EventEspresso\core\services\formatters;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
