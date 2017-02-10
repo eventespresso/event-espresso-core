@@ -3,7 +3,8 @@
     cursor: pointer;
     display: inline-block;
     margin:0 0 1em;
-    min-width: 240px;
+    min-width: 220px;
+    padding: 1em 0;
     position:relative;
     width: auto;
 }
