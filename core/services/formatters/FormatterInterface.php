@@ -7,23 +7,28 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 
 /**
  * Class FormatterInterface
- * Interface for all
+ * Interface for all formatter services which take care of formatting text or arrays of text.
  *
  * @package        Event Espresso
  * @author         Mike Nelson
- * @since          $VID:$
+ * @since          4.9.31.p
  */
 interface FormatterInterface
 {
 
     /**
      * Applies the formatting to all items in the array
+     *
      * @param array $input
      * @return array
      */
-    public function format_array($input);
+    public function formatArray($input);
+
+
+
     /**
      * Formats the string
+     *
      * @param string $input
      * @return string
      */

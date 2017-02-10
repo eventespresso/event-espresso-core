@@ -104,7 +104,7 @@ class EEG_Mijireh extends EE_Offsite_Gateway{
 		$order = apply_filters( 'FHEE__EEG_Mijireh__set_redirection_info__order_arguments', $order, $payment, $primary_registrant );
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, serialize(get_object_vars($this)) );
         if(apply_filters('FHEE__EEG_Mijireh__remove_emojis', true)){
-            $order = $this->_get_unsupported_character_remover()->format_array($order);
+            $order = $this->_get_unsupported_character_remover()->formatArray($order);
         }
 		$args = array(
 			'headers' => array(

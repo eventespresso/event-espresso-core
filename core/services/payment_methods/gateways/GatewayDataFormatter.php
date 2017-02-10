@@ -7,21 +7,23 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 
 /**
  * Class GatewayDataFormatter
- * Description
+ * Helper for gateway classes which helps to prepare data for sending to gateways. These methods help
+ * to keep data sent to the various gateways consistent and filterable.
  *
  * @package        Event Espresso
  * @author         Mike Nelson
- * @since          $VID:$
+ * @since          4.9.31.p
  */
 class GatewayDataFormatter implements GatewayDataFormatterInterface
 {
+
     /**
      * Gets the text to use for a gateway's line item name when this is a partial payment
      *
      * @param \EEI_Payment $payment
      * @return string
      */
-    public function format_partial_payment_line_item_name(\EEI_Payment $payment)
+    public function formatPartialPaymentLineItemName(\EEI_Payment $payment)
     {
         return apply_filters(
             'EEG_Paypal_Pro__do_direct_payment__partial_amount_line_item_name',
@@ -39,7 +41,7 @@ class GatewayDataFormatter implements GatewayDataFormatterInterface
      * @param \EEI_Payment $payment
      * @return string
      */
-    public function format_partial_payment_line_item_desc(\EEI_Payment $payment)
+    public function formatPartialPaymentLineItemDesc(\EEI_Payment $payment)
     {
         return apply_filters(
             'FHEE__EE_Gateway___partial_payment_desc',
@@ -62,7 +64,7 @@ class GatewayDataFormatter implements GatewayDataFormatterInterface
      * @param \EEI_Payment   $payment
      * @return string
      */
-    public function format_line_item_name(\EEI_Line_Item $line_item, \EEI_Payment $payment)
+    public function formatLineItemName(\EEI_Line_Item $line_item, \EEI_Payment $payment)
     {
         return apply_filters(
             'FHEE__EE_gateway___line_item_name',
@@ -86,7 +88,7 @@ class GatewayDataFormatter implements GatewayDataFormatterInterface
      * @param \EEI_Payment   $payment
      * @return string
      */
-    public function format_line_item_desc(\EEI_Line_Item $line_item, \EEI_Payment $payment)
+    public function formatLineItemDesc(\EEI_Line_Item $line_item, \EEI_Payment $payment)
     {
         return apply_filters(
             'FHEE__EE_Gateway___line_item_desc',
@@ -100,12 +102,12 @@ class GatewayDataFormatter implements GatewayDataFormatterInterface
 
 
     /**
-     * Gets the order description that should generlly be sent to gateways
+     * Gets the order description that should generally be sent to gateways
      *
      * @param \EEI_Payment $payment
      * @return string
      */
-    public function format_order_description(\EEI_Payment $payment)
+    public function formatOrderDescription(\EEI_Payment $payment)
     {
         return apply_filters(
             'FHEE__EE_Gateway___order_description',
@@ -119,13 +121,17 @@ class GatewayDataFormatter implements GatewayDataFormatterInterface
         );
     }
 
+
+
     /**
      * Formats the amount so it can generally be sent to gateways
+     *
      * @param float $amount
      * @return string
      */
-    public function format_currency($amount){
-        return number_format( $amount, 2, '.', '' );
+    public function formatCurrency($amount)
+    {
+        return number_format($amount, 2, '.', '');
     }
 }
 // End of file GatewayDataFormatter.php

@@ -809,7 +809,6 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment {
     /**
      * Gets the first event for this payment (it's possible that it could be for multiple)
      *
-     * @param EE_Payment $payment
      * @return EE_Event|null
      */
     public function get_first_event()
@@ -829,7 +828,6 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment {
     /**
      * Gets the name of the first event for which is being paid
      *
-     * @param EE_Payment $payment
      * @return string
      */
     public function get_first_event_name()
@@ -842,7 +840,6 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment {
 
     /**
      * Returns the payment's transaction's primary registration
-     *
      * @return EE_Registration|null
      */
     public function get_primary_registration()
