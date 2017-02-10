@@ -346,11 +346,6 @@ class EEG_Aim extends EE_Onsite_Gateway{
 		$post_url = $this->_get_server_url();
 		$curl_request = curl_init($post_url);
         $post_body = implode("&",$x_keys);
-        // if(function_exists('mb_convert_encoding')){
-        //     $post_body =
-            // $post_body = trim( preg_replace('/[\x00-\x1F\x80-\xFF]/', '',
-            //     mb_convert_encoding( $post_body, "UTF-8" ) ) );
-        // }
 		curl_setopt($curl_request, CURLOPT_POSTFIELDS, $post_body);
 		curl_setopt($curl_request, CURLOPT_HEADER, 0);
 		curl_setopt($curl_request, CURLOPT_TIMEOUT, 45);
