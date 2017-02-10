@@ -43,28 +43,36 @@ class EEH_Event_View extends EEH_Base {
 	public static function get_event( $EVT_ID = 0 ) {
         // international newspaper?
         global $post;
-        $EVT_ID = $EVT_ID instanceof WP_Post && $post->post_type === 'espresso_events'
+        $EVT_ID = $EVT_ID instanceof WP_Post && $EVT_ID->post_type === 'espresso_events'
             ? $EVT_ID->ID
-            : absint( $EVT_ID );
-		// do we already have the Event  you are looking for?
-		if ( EEH_Event_View::$_event instanceof EE_Event && $EVT_ID && EEH_Event_View::$_event->ID() === $EVT_ID ) {
-			return EEH_Event_View::$_event;
-		}
-		EEH_Event_View::$_event = NULL;
-		// if this is being called from an EE_Event post, then we can just grab the attached EE_Event object
-		 if (( isset( $post->post_type ) && $post->post_type === 'espresso_events' ) || $EVT_ID ) {
-			// grab the event we're looking for
-			if ( isset( $post->EE_Event ) && ( $EVT_ID === 0 || $EVT_ID === $post->ID )) {
-				EEH_Event_View::$_event = $post->EE_Event;
-			}
-			// now if we STILL do NOT have an EE_Event model object, BUT we have an Event ID...
-			if ( ! EEH_Event_View::$_event instanceof EE_Event && $EVT_ID ) {
-				// sigh... pull it from the db
-				EEH_Event_View::$_event = EEM_Event::instance()->get_one_by_ID( $EVT_ID );
-			}
-		}
-		return EEH_Event_View::$_event;
-	}
+            : absint($EVT_ID);
+        // do we already have the Event  you are looking for?
+        if (EEH_Event_View::$_event instanceof EE_Event && $EVT_ID && EEH_Event_View::$_event->ID() === $EVT_ID) {
+            return EEH_Event_View::$_event;
+        }
+        //reset property so that the new event is cached.
+        EEH_Event_View::$_event = null;
+
+        if ($EVT_ID || $post instanceof WP_Post) {
+            //if the post type is for an event and it has a cached event and we don't have a different incoming $EVT_ID
+            //then let's just use that cached event on the $post object.
+            if ($post->post_type === 'espresso_events'
+                && isset($post->EE_Event)
+                && ($EVT_ID === 0
+                    || $EVT_ID === $post->ID
+                    )
+            ) {
+                EEH_Event_View::$_event = $post->EE_Event;
+            }
+
+            //If the event we have isn't an event but we do have an EVT_ID, let's try getting the event using the ID.
+            if (! EEH_Event_View::$_event instanceof EE_Event && $EVT_ID) {
+                EEH_Event_View::$_event = EEM_Event::instance()->get_one_by_ID($EVT_ID);
+            }
+        }
+
+        return EEH_Event_View::$_event;
+    }
 
 
 
