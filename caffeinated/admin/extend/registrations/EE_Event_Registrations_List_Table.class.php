@@ -391,12 +391,18 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 			// get the timestamps for this registration's checkins, related to the selected datetime
 			$timestamps = $item->get_many_related( 'Checkin', array( array( 'DTT_ID' => $DTT_ID ) ) );
 			if( ! empty( $timestamps ) ) {
-				// show only the last timestamp
-				$last_timestamp = end( $timestamps )->get_datetime( 'CHK_timestamp' );
+				// get the last timestamp
+				$last_timestamp = end( $timestamps );
+				// checked in or checked out?
+				$checkin_status = $last_timestamp->get( 'CHK_in' ) 
+					? esc_html__( 'Checked In', 'event_espresso' )
+					: esc_html__( 'Checked Out', 'event_espresso' );
+				// get timestamp string
+				$timestamp_string = $last_timestamp->get_datetime( 'CHK_timestamp' );
 				$actions['checkin'] = '<a href="' . $checkin_list_url . '" title="' . esc_attr__(
 						'View this registrant\'s check-ins/checkouts for the datetime',
 						'event_espresso'
-					) . '">' . $last_timestamp . '</a>';
+					) . '">' . $checkin_status . ': ' . $timestamp_string . '</a>';
 			}
 		} 
 		return ( ! empty( $DTT_ID ) && ! empty( $timestamps ) ) 
