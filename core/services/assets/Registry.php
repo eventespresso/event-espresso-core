@@ -41,6 +41,7 @@ class Registry
      */
     public function scripts()
     {
+        global $wp_version;
         wp_register_script(
             'eejs-core',
             EE_PLUGIN_DIR_URL . 'core/services/assets/core_assets/eejs-core.js',
@@ -48,18 +49,20 @@ class Registry
             espresso_version(),
             true
         );
+        //only run this if WordPress 4.4.0 > is in use.
+        if (version_compare($wp_version, '4.4.0', '>')) {
+            //js.api
+            wp_register_script(
+                'eejs-api',
+                EE_LIBRARIES_URL . 'rest_api/assets/js/eejs-api.min.js',
+                array('underscore', 'eejs-core'),
+                espresso_version(),
+                true
+            );
+            $this->jsdata['paths'] = array('rest_route' => rest_url('ee/v4.8.36/'));
 
-        //js.api
-        wp_register_script(
-            'eejs-api',
-            EE_LIBRARIES_URL . 'rest_api/assets/js/eejs-api.min.js',
-            array('underscore','eejs-core'),
-            espresso_version(),
-            true
-        );
-        $this->jsdata['paths'] = array('rest_route' => rest_url('ee/v4.8.36/'));
-
-        wp_localize_script('eejs-core', 'eejs', array('data'=>$this->jsdata));
+            wp_localize_script('eejs-core', 'eejs', array('data' => $this->jsdata));
+        }
     }
 
 

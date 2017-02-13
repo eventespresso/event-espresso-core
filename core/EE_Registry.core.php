@@ -1335,7 +1335,7 @@ class EE_Registry
 
 
 
-    final function __set_state()
+    final static function __set_state()
     {
     }
 
