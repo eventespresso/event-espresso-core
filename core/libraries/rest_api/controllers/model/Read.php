@@ -157,7 +157,7 @@ class Read extends Base
             $schema['properties'][$field_name]['default'] = Model_Data_Translator::prepare_field_value_for_json(
                 $field,
                 $schema['properties'][$field_name]['default'],
-                $this->get_model_version_info()
+                $this->get_model_version_info()->requested_version()
             );
         }
         return $schema;
