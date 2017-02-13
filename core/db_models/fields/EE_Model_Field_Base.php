@@ -494,6 +494,7 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
             'description' => $this->getSchemaDescription(),
             'type' => $this->getSchemaType(),
             'readonly' => $this->getSchemaReadonly(),
+            'default' => $this->get_default_value()
         );
 
         //optional properties of the schema
