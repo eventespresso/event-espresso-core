@@ -106,7 +106,7 @@ class Read extends Base
             $model_schema = new JsonModelSchema($model);
             return $model_schema->getModelSchemaForRelations(
                 $controller->get_model_version_info()->relation_settings($model),
-                $controller->_add_extra_fields_to_schema(
+                $controller->_customize_schema_for_rest_response(
                     $model,
                     $model_schema->getModelSchemaForFields(
                         $controller->get_model_version_info()->fields_on_model_in_this_version($model),
@@ -121,24 +121,68 @@ class Read extends Base
 
 
     /**
+     * This loops through each field in the given schema for the model and does the following:
+     * - add any extra fields that are REST API specific and related to existing fields.
+     * - transform default values into the correct format for a REST API response.
+     *
+     * @param \EEM_Base $model
+     * @param array     $schema
+     * @return array  The final schema.
+     */
+    protected function _customize_schema_for_rest_response(\EEM_Base $model, array $schema)
+    {
+       foreach ($this->get_model_version_info()->fields_on_model_in_this_version($model) as $field_name => $field) {
+           $schema = $this->_translate_defaults_for_rest_response(
+               $field_name,
+               $field,
+               $this->_maybe_add_extra_fields_to_schema($field_name, $field, $schema)
+            );
+       }
+       return $schema;
+    }
+
+
+    /**
+     * This is used to ensure that the 'default' value set in the schema response is formatted correctly for the REST
+     * response.
+     *
+     * @param                      $field_name
+     * @param \EE_Model_Field_Base $field
+     * @param array                $schema
+     * @return array
+     */
+    protected function _translate_defaults_for_rest_response($field_name, \EE_Model_Field_Base $field, array $schema)
+    {
+        if (isset($schema['properties'][$field_name]['default'])) {
+            $schema['properties'][$field_name]['default'] = Model_Data_Translator::prepare_field_value_for_json(
+                $field,
+                $schema['properties'][$field_name]['default'],
+                $this->get_model_version_info()
+            );
+        }
+        return $schema;
+    }
+
+
+    /**
      * Adds additional fields to the schema
      * The REST API returns a GMT value field for each datetime field in the resource.  Thus the description about this
      * needs to be added to the schema.
      *
-     * @param \EEM_Base $model
-     * @param string    $schema
+     * @param                      $field_name
+     * @param \EE_Model_Field_Base $field
+     * @param array                $schema
+     * @return array
      */
-    protected function _add_extra_fields_to_schema(\EEM_Base $model, $schema)
+    protected function _maybe_add_extra_fields_to_schema($field_name, \EE_Model_Field_Base $field, array $schema)
     {
-        foreach ($this->get_model_version_info()->fields_on_model_in_this_version($model) as $field_name => $field) {
-            if ($field instanceof EE_Datetime_Field) {
-                $schema['properties'][$field_name . '_gmt'] = $field->getSchema();
-                //modify the description
-                $schema['properties'][$field_name . '_gmt']['description'] = sprintf(
-                    esc_html__('%s - the value for this field is in GMT.', 'event_espresso'),
-                    $field->get_nicename()
-                );
-            }
+        if ($field instanceof EE_Datetime_Field) {
+            $schema['properties'][$field_name . '_gmt'] = $field->getSchema();
+            //modify the description
+            $schema['properties'][$field_name . '_gmt']['description'] = sprintf(
+                esc_html__('%s - the value for this field is in GMT.', 'event_espresso'),
+                $field->get_nicename()
+            );
         }
         return $schema;
     }
