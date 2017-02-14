@@ -37,6 +37,7 @@ class TicketSelectorSimple extends TicketSelector
     {
         $this->ticket = $ticket;
         parent::__construct($event, array($this->ticket), $max_attendees, $template_args);
+        add_filter('FHEE__EE_Ticket_Selector__display_ticket_selector_submit', '__return_true');
     }
 
 
