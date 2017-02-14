@@ -3,7 +3,7 @@ namespace EventEspresso\core\services\shortcodes;
 
 use EEH_Event_View;
 use EventEspresso\core\domain\EnqueueAssetsInterface;
-use EventEspresso\core\services\cache\CacheManager;
+use EventEspresso\core\services\cache\PostRelatedCacheManger;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -28,7 +28,7 @@ abstract class EspressoShortcode implements ShortcodeInterface
     const CACHE_TRANSIENT_PREFIX = 'ee_sc_';
 
     /**
-     * @var CacheManager $cache_manager
+     * @var PostRelatedCacheManger $cache_manager
      */
     private $cache_manager;
 
@@ -37,9 +37,9 @@ abstract class EspressoShortcode implements ShortcodeInterface
     /**
      * EspressoShortcode constructor
      *
-     * @param CacheManager $cache_manager
+     * @param PostRelatedCacheManger $cache_manager
      */
-    public function __construct(CacheManager $cache_manager)
+    public function __construct(PostRelatedCacheManger $cache_manager)
     {
         $this->cache_manager = $cache_manager;
     }
@@ -85,7 +85,7 @@ abstract class EspressoShortcode implements ShortcodeInterface
         // something like "SC_EVENTS-123"
         $cache_ID = $this->shortcodeCacheID($post_ID);
         $this->cache_manager->clearPostRelatedCacheOnUpdate($post_ID, $cache_ID);
-        return $this->cache_manager->getCachedContent(
+        return $this->cache_manager->get(
             $cache_ID,
             // serialized attributes
             wp_json_encode($attributes),
