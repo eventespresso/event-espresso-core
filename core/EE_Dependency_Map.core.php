@@ -295,7 +295,7 @@ class EE_Dependency_Map {
 				'EE_Registry' => EE_Dependency_Map::load_from_cache,
 			),
 			'EE_Session' => array(
-                'EventEspresso\core\services\database\TransientManager' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\cache\TransientCacheStorage' => EE_Dependency_Map::load_from_cache,
                 'EE_Encryption' => EE_Dependency_Map::load_from_cache
 			),
 			'EE_Cart' => array(
@@ -430,28 +430,31 @@ class EE_Dependency_Map {
                 'EventEspresso\core\services\database\TableManager' => EE_Dependency_Map::load_from_cache,
 			),
 			'\EventEspresso\core\domain\entities\shortcodes\EspressoCancelled' => array(
-				'EventEspresso\core\services\cache\CacheManager' => EE_Dependency_Map::load_from_cache,
+				'EventEspresso\core\services\cache\PostRelatedCacheManger' => EE_Dependency_Map::load_from_cache,
 			),
 			'\EventEspresso\core\domain\entities\shortcodes\EspressoCheckout' => array(
-				'EventEspresso\core\services\cache\CacheManager' => EE_Dependency_Map::load_from_cache,
+				'EventEspresso\core\services\cache\PostRelatedCacheManger' => EE_Dependency_Map::load_from_cache,
 			),
 			'\EventEspresso\core\domain\entities\shortcodes\EspressoEventAttendees' => array(
-				'EventEspresso\core\services\cache\CacheManager' => EE_Dependency_Map::load_from_cache,
+				'EventEspresso\core\services\cache\PostRelatedCacheManger' => EE_Dependency_Map::load_from_cache,
 			),
 			'\EventEspresso\core\domain\entities\shortcodes\EspressoEvents' => array(
-				'EventEspresso\core\services\cache\CacheManager' => EE_Dependency_Map::load_from_cache,
+				'EventEspresso\core\services\cache\PostRelatedCacheManger' => EE_Dependency_Map::load_from_cache,
 			),
 			'\EventEspresso\core\domain\entities\shortcodes\EspressoThankYou' => array(
-				'EventEspresso\core\services\cache\CacheManager' => EE_Dependency_Map::load_from_cache,
+				'EventEspresso\core\services\cache\PostRelatedCacheManger' => EE_Dependency_Map::load_from_cache,
 			),
 			'\EventEspresso\core\domain\entities\shortcodes\EspressoTicketSelector' => array(
-				'EventEspresso\core\services\cache\CacheManager' => EE_Dependency_Map::load_from_cache,
+				'EventEspresso\core\services\cache\PostRelatedCacheManger' => EE_Dependency_Map::load_from_cache,
 			),
 			'\EventEspresso\core\domain\entities\shortcodes\EspressoTxnPage' => array(
-				'EventEspresso\core\services\cache\CacheManager' => EE_Dependency_Map::load_from_cache,
+				'EventEspresso\core\services\cache\PostRelatedCacheManger' => EE_Dependency_Map::load_from_cache,
 			),
-			'EventEspresso\core\services\cache\CacheManager' => array(
-				'EventEspresso\core\services\database\TransientManager' => EE_Dependency_Map::load_from_cache,
+			'EventEspresso\core\services\cache\BasicCacheManager' => array(
+				'EventEspresso\core\services\cache\TransientCacheStorage' => EE_Dependency_Map::load_from_cache,
+			),
+			'EventEspresso\core\services\cache\PostRelatedCacheManger' => array(
+				'EventEspresso\core\services\cache\TransientCacheStorage' => EE_Dependency_Map::load_from_cache,
 			),
 		);
 	}
@@ -560,6 +563,7 @@ class EE_Dependency_Map {
 			'ShortcodeInterface'                                                  => 'EventEspresso\core\services\shortcodes\ShortcodeInterface',
 			'EventEspresso\core\services\shortcodes\ShortcodeInterface'           => 'EventEspresso\core\services\shortcodes\EspressoShortcode',
 			'EventEspresso\core\domain\entities\shortcodes\EspressoCancelled'     => 'EventEspresso\core\services\shortcodes\EspressoShortcode',
+			'EventEspresso\core\services\cache\CacheStorageInterface'             => 'EventEspresso\core\services\cache\TransientCacheStorage',
 		);
 	}
 
