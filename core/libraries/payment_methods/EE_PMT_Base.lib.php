@@ -108,6 +108,7 @@ abstract class EE_PMT_Base{
 			$this->_gateway->set_money_helper( new EEH_Money() );
             $this->_gateway->set_gateway_data_formatter(new GatewayDataFormatter());
             $this->_gateway->set_unsupported_character_remover(new AsciiOnly());
+            do_action( 'AHEE__EE_PMT_Bse___construct__done_initializing_gateway_class',$this,$this->_gateway);2
 		}
 		if ( ! isset( $this->_has_billing_form ) ) {
 			// by default, On Site gateways have a billing form
