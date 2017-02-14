@@ -1,26 +1,26 @@
 <?php
 namespace EventEspresso\core\services\formatters;
 
-use EventEspresso\core\services\formatters\EmojiRemoval;
+use EventEspresso\core\services\formatters\AsciiOnly;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
 
 /**
- * Class EmojiRemovalTest
- * Description
+ * Class AsciiOnlyTest
+ * Verifies we're correctly removing non-ascii characters
  *
  * @package        Event Espresso
  * @author         Mike Nelson
  * @since          $VID:$
  */
-class EmojiRemovalTest extends \EE_UnitTestCase
+class AsciiOnlyTest extends \EE_UnitTestCase
 {
     protected $formatter;
     public function __construct()
     {
-        $this->formatter = new EmojiRemoval();
+        $this->formatter = new AsciiOnly();
         parent::__construct();
     }
 
