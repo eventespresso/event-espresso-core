@@ -1,5 +1,5 @@
 <?php use EventEspresso\core\exceptions\InvalidSessionDataException;
-use EventEspresso\core\services\database\TransientManager;
+use EventEspresso\core\services\cache\CacheStorageInterface;
 
 if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed');}
 /**
@@ -23,9 +23,9 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
 	 private static $_instance;
 
      /**
-      * @var TransientManager $transient_manager
+      * @var CacheStorageInterface $cache_storage
       */
-     protected $transient_manager;
+     protected $cache_storage;
 
      /**
       * EE_Encryption object
@@ -121,21 +121,21 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
 
 	 /**
 	  * @singleton method used to instantiate class object
-      * @param TransientManager $expired_transient_manager
-      * @param \EE_Encryption   $encryption
+      * @param CacheStorageInterface $cache_storage
+      * @param \EE_Encryption        $encryption
 	  * @return EE_Session
 	  * @throws InvalidSessionDataException
 	  * @throws \EE_Error
 	  */
 	public static function instance(
-	    TransientManager $expired_transient_manager = null,
+        CacheStorageInterface $cache_storage = null,
         EE_Encryption $encryption = null
     ) {
 		// check if class object is instantiated
 		// session loading is turned ON by default, but prior to the init hook, can be turned back OFF via:
 		// add_filter( 'FHEE_load_EE_Session', '__return_false' );
 		if ( ! self::$_instance instanceof EE_Session && apply_filters( 'FHEE_load_EE_Session', true ) ) {
-			self::$_instance = new self($expired_transient_manager, $encryption );
+			self::$_instance = new self($cache_storage, $encryption );
 		}
 		return self::$_instance;
 	}
@@ -145,12 +145,12 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
 	 /**
       * protected constructor to prevent direct creation
       *
-      * @param TransientManager $expired_transient_manager
+      * @param CacheStorageInterface $cache_storage
       * @param \EE_Encryption $encryption
 	  * @throws \EE_Error
 	  * @throws \EventEspresso\core\exceptions\InvalidSessionDataException
 	  */
-	 protected function __construct(TransientManager $expired_transient_manager, EE_Encryption $encryption = null ) {
+	 protected function __construct(CacheStorageInterface $cache_storage, EE_Encryption $encryption = null ) {
 
 		// session loading is turned ON by default, but prior to the init hook, can be turned back OFF via: add_filter( 'FHEE_load_EE_Session', '__return_false' );
 		if ( ! apply_filters( 'FHEE_load_EE_Session', true ) ) {
@@ -181,7 +181,7 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
 				$this->{$var_name} = $session_setting;
 			}
 		}
-         $this->transient_manager = $expired_transient_manager;
+         $this->cache_storage = $cache_storage;
          // are we using encryption?
          $this->_use_encryption = $encryption instanceof EE_Encryption && EE_Registry::instance()->CFG->admin->encode_session_data();
          // \EEH_Debug_Tools::printr($this->_use_encryption, '$this->_use_encryption', __FILE__, __LINE__);
@@ -528,12 +528,12 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
          $ssn_key = EE_Session::session_id_prefix . $this->_sid;
          try {
              // we're using WP's Transient API to store session data using the PHP session ID as the option name
-             $session_data = $this->transient_manager->getTransient($ssn_key, false);
+             $session_data = $this->cache_storage->get($ssn_key, false);
 	         if ($session_data === false) {
 		         return array();
              }
              if (apply_filters('FHEE__EE_Session___perform_session_id_hash_check', WP_DEBUG)) {
-                 $hash_check = $this->transient_manager->getTransient(
+                 $hash_check = $this->cache_storage->get(
                      EE_Session::hash_check_prefix . $this->_sid,
                      false
                  );
@@ -648,7 +648,7 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
 				$this->_sid_salt = AUTH_SALT;
 			}
 			// if salt doesn't exist or is too short
-			if ( empty( $this->_sid_salt ) || strlen( $this->_sid_salt ) < 32 ) {
+			if ( strlen( $this->_sid_salt ) < 32 ) {
 				// create a new one
 				$this->_sid_salt = wp_generate_password( 64 );
 			}
@@ -825,14 +825,14 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
             : $session_data;
 		// maybe save hash check
 		if ( apply_filters( 'FHEE__EE_Session___perform_session_id_hash_check', WP_DEBUG ) ) {
-            $this->transient_manager->addTransient(
+            $this->cache_storage->add(
                 EE_Session::hash_check_prefix . $this->_sid,
                 md5($session_data),
                 $this->_lifespan
             );
         }
         // we're using the Transient API for storing session data,
-        return $this->transient_manager->addTransient(
+        return $this->cache_storage->add(
             EE_Session::session_id_prefix . $this->_sid,
             $session_data,
             $this->_lifespan
@@ -1044,18 +1044,18 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
                  50
              )
          );
-         // is there a value?
-         if ($expired_session_transient_delete_query_limit) {
-             // then use that for the new transient cleanup query limit
+         // is there a value? or one that is different than the default 50 records?
+         if ($expired_session_transient_delete_query_limit === 0) {
+             // hook into TransientCacheStorage in case Session cleanup was turned off
+             add_filter('FHEE__TransientCacheStorage__transient_cleanup_schedule', '__return_zero');
+         } else if ($expired_session_transient_delete_query_limit !== 50) {
+             // or use that for the new transient cleanup query limit
              add_filter(
-                 'FHEE__EventEspresso_core_services_database_ExpiredTransientManager__clearExpiredTransients__limit',
+                 'FHEE__TransientCacheStorage__clearExpiredTransients__limit',
                  function () use ($expired_session_transient_delete_query_limit) {
                      return $expired_session_transient_delete_query_limit;
                  }
              );
-         } else {
-             // or hook into TransientManager in case Session cleanup was turned off
-             add_filter('FHEE__ExpiredTransientManager__transient_cleanup_schedule', '__return_zero');
          }
      }
 
@@ -1067,7 +1067,7 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
 	  * @return string
 	  */
 	 private function find_serialize_error( $data1 ) {
-		$error = "<pre>";
+		$error = '<pre>';
 		 $data2 = preg_replace_callback(
 			 '!s:(\d+):"(.*?)";!',
 			 function ( $match ) {
@@ -1086,8 +1086,8 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
 		$error .= $data2 . PHP_EOL;
 		for ( $i = 0; $i < $max; $i++ ) {
 			if ( @$data1[ $i ] !== @$data2[ $i ] ) {
-				$error .= "Difference " . @$data1[ $i ] . " != " . @$data2[ $i ] . PHP_EOL;
-				$error .= "\t-> ORD number " . ord( @$data1[ $i ] ) . " != " . ord( @$data2[ $i ] ) . PHP_EOL;
+				$error .= 'Difference ' . @$data1[ $i ] . ' != ' . @$data2[ $i ] . PHP_EOL;
+				$error .= "\t-> ORD number " . ord( @$data1[ $i ] ) . ' != ' . ord( @$data2[ $i ] ) . PHP_EOL;
 				$error .= "\t-> Line Number = $i" . PHP_EOL;
 				$start = ( $i - 20 );
 				$start = ( $start < 0 ) ? 0 : $start;
@@ -1118,7 +1118,7 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
 				$error .= PHP_EOL;
 			}
 		}
-		$error .= "</pre>";
+		$error .= '</pre>';
 		return $error;
 	}
 
