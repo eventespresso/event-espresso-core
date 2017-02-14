@@ -1,5 +1,5 @@
 <?php
-namespace EventEspresso\core\services\database;
+namespace EventEspresso\core\services\cache;
 
 use EE_Error;
 use WP_Error;
@@ -10,7 +10,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
 /**
- * Class TransientManager
+ * Class TransientCacheStorage
  * Manages the creation and cleanup of transients
  * by tracking transient keys and their corresponding expiration.
  * The transient cleanup schedule is filterable
@@ -18,9 +18,9 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * @since         $VID:$
+ * @since         4.9.31
  */
-class TransientManager
+class TransientCacheStorage implements CacheStorageInterface
 {
 
     /**
@@ -57,14 +57,14 @@ class TransientManager
 
 
     /**
-     * TransientManager constructor.
+     * TransientCacheStorage constructor.
      */
     public function __construct()
     {
         $this->transient_cleanup_frequency = $this->setTransientCleanupFrequency();
         // round current time down to closest 5 minutes to simplify scheduling
         $this->current_time = $this->roundTimestamp(time(), '5-minutes', false);
-        $this->transients = (array) get_option(TransientManager::TRANSIENT_SCHEDULE_OPTIONS_KEY, array());
+        $this->transients = (array) get_option(TransientCacheStorage::TRANSIENT_SCHEDULE_OPTIONS_KEY, array());
         if ( ! (defined('DOING_AJAX') && DOING_AJAX) && $this->transient_cleanup_frequency !== 'off') {
             add_action('shutdown', array($this, 'checkTransientCleanupSchedule'), 999);
         }
@@ -80,7 +80,7 @@ class TransientManager
     private function setTransientCleanupFrequency() {
         // sets how often transients are cleaned up
         $this->transient_cleanup_frequency_options = apply_filters(
-            'FHEE__ExpiredTransientManager__transient_cleanup_schedule_options',
+            'FHEE__TransientCacheStorage__transient_cleanup_schedule_options',
             array(
                 'off',
                 '15-minutes',
@@ -90,7 +90,7 @@ class TransientManager
             )
         );
         $transient_cleanup_frequency = apply_filters(
-            'FHEE__ExpiredTransientManager__transient_cleanup_schedule',
+            'FHEE__TransientCacheStorage__transient_cleanup_schedule',
             'hour'
         );
         return in_array(
@@ -156,7 +156,7 @@ class TransientManager
         $timestamp = strtotime(date("Y-m-d {$hours}:{$minutes}:00", $timestamp));
         $timestamp += $round_up ? $offset : 0;
         return apply_filters(
-            'FHEE__ExpiredTransientManager__roundTimestamp__timestamp',
+            'FHEE__TransientCacheStorage__roundTimestamp__timestamp',
             $timestamp,
             $cleanup_frequency,
             $round_up
@@ -174,7 +174,7 @@ class TransientManager
      * @param int    $expiration
      * @return bool
      */
-    public function addTransient($transient_key, $data, $expiration = 0)
+    public function add($transient_key, $data, $expiration = 0)
     {
         $expiration = (int)abs($expiration);
         $saved = set_transient($transient_key, $data, $expiration);
@@ -197,7 +197,7 @@ class TransientManager
      * @param bool   $standard_cache
      * @return string
      */
-    public function getTransient($transient_key, $standard_cache = true)
+    public function get($transient_key, $standard_cache = true)
     {
         // to avoid cache stampedes (AKA:dogpiles) for standard cache items,
         // check if known cache expires within the next minute,
@@ -224,9 +224,9 @@ class TransientManager
      *
      * @param string $transient_key [required] full or partial transient key to be deleted
      */
-    public function deleteTransient($transient_key)
+    public function delete($transient_key)
     {
-        $this->deleteTransients(array($transient_key));
+        $this->deleteMany(array($transient_key));
     }
 
 
@@ -236,7 +236,7 @@ class TransientManager
      *
      * @param array $transient_keys [required] array of full or partial transient keys to be deleted
      */
-    public function deleteTransients(array $transient_keys)
+    public function deleteMany(array $transient_keys)
     {
         $full_transient_keys = array();
         foreach ($this->transients as $transient_key => $expiration) {
@@ -261,7 +261,7 @@ class TransientManager
     {
         asort($this->transients, SORT_NUMERIC);
         update_option(
-            TransientManager::TRANSIENT_SCHEDULE_OPTIONS_KEY,
+            TransientCacheStorage::TRANSIENT_SCHEDULE_OPTIONS_KEY,
             $this->transients
         );
     }
@@ -324,7 +324,7 @@ class TransientManager
         // filter the query limit. Set to 0 to turn off garbage collection
         $limit = (int)abs(
             apply_filters(
-                'FHEE__EventEspresso_core_services_database_ExpiredTransientManager__clearExpiredTransients__limit',
+                'FHEE__TransientCacheStorage__clearExpiredTransients__limit',
                 50
             )
         );
@@ -346,7 +346,7 @@ class TransientManager
                 $update = $this->deleteTransientKeys($transient_keys, $limit);
             }
             do_action(
-                'FHEE__EventEspresso_core_services_database_ExpiredTransientManager__clearExpiredTransients__end',
+                'FHEE__TransientCacheStorage__clearExpiredTransients__end',
                 $limit
             );
         }
@@ -391,5 +391,5 @@ class TransientManager
 
 
 }
-// End of file TransientManager.php
-// Location: EventEspresso\core\services\database/TransientManager.php
+// End of file TransientCacheStorage.php
+// Location: EventEspresso\core\services\cache/TransientCacheStorage.php
