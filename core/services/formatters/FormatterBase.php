@@ -33,15 +33,10 @@ abstract class FormatterBase implements FormatterInterface
         array_walk_recursive(
             $input,
             function (&$value, $key) {
-                if (is_string($value)) {
-                    $value = $this->format($value);
-                }
+                $value = $this->format($value);
             }
         );
         return $input;
-    }
-
-
-}
+    }}
 // End of file FormatterBase.php
 // Location: core\services\formatters/FormatterBase.php

@@ -21,15 +21,14 @@ class EmojiRemoval extends FormatterBase
     /**
      * Removes the emojis from the inputted string
      *
-     * @param string $input
+     * @param string|int|float $input anything easily cast into a string
      * @return string
      * @throws InvalidDataTypeException if $input is not a string
      */
     public function format($input)
     {
-        if (! is_string($input)) {
-            throw new InvalidDataTypeException('input', $input, 'string');
-        }
+        //in case an int or float etc was passed in
+        $input = (string)$input;
         // Match Emoticons
         $regexEmoticons = '/[\x{1F600}-\x{1F64F}]/u';
         $input = preg_replace($regexEmoticons, '', $input);

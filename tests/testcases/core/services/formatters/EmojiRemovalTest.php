@@ -33,7 +33,8 @@ class EmojiRemovalTest extends \EE_UnitTestCase
         //array keys are the strings, values are arrays containign each emoji in that string
         $emoji_strings = array(
             'I feel 😁 today' => array('😁'),
-            'I would like a taco 🌮, and some ramen 🍜 too' => array('🌮','🍜')
+            'I would like a taco 🌮, and some ramen 🍜 too' => array('🌮','🍜'),
+            'Party 🈵 time' => array('🈵'),
         );
         foreach($emoji_strings as $emoji_string => $emojis){
             $this->assertEquals(

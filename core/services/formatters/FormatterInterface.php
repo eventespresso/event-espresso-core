@@ -19,7 +19,7 @@ interface FormatterInterface
     /**
      * Applies the formatting to all items in the array
      *
-     * @param array $input
+     * @param array $input accepts a multi-dimensional array, but all "leaf nodes" are easily cast to a string
      * @return array
      */
     public function formatArray($input);
@@ -29,7 +29,7 @@ interface FormatterInterface
     /**
      * Formats the string
      *
-     * @param string $input
+     * @param string|int|float $input anything easily cast into a string
      * @return string
      */
     public function format($input);
