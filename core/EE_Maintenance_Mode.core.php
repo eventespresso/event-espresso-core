@@ -302,7 +302,7 @@ class EE_Maintenance_Mode {
 	final function __wakeup() {}
 //	final function __toString() {}
 	final function __invoke() {}
-	final function __set_state() {}
+	final static function __set_state() {}
 	final function __clone() {}
 	final static function __callStatic($a,$b) {}
 

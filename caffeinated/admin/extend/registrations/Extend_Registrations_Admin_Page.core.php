@@ -1145,6 +1145,12 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
             $request['status'] = 'trash';
         }
         $query_params = $this->_get_checkin_query_params_from_request( $request, $per_page, $count );
+        /**
+         * Override the default groupby added by EEM_Base so that sorts with multiple order bys work as expected
+         * @link https://events.codebasehq.com/projects/event-espresso/tickets/10093
+         * @see EEM_Base::get_all()
+         */
+        $query_params['group_by'] = '';
 
         return $count
             ? EEM_Registration::instance()->count($query_params)

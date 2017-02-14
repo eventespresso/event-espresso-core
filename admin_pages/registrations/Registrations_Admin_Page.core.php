@@ -911,7 +911,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      *
      * @param int    $per_page
      * @param bool   $count
-     * @param bool   $this_month 
+     * @param bool   $this_month
      * @param bool   $today
      * @return \EE_Registration[]|int
      */
@@ -928,6 +928,13 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             $this->_req_data['status'] = 'today';
         }
         $query_params = $this->_get_registration_query_parameters($this->_req_data, $per_page, $count);
+        /**
+         * Override the default groupby added by EEM_Base so that sorts with multiple order bys work as expected
+         * @link https://events.codebasehq.com/projects/event-espresso/tickets/10093
+         * @see EEM_Base::get_all()
+         */
+        $query_params['group_by'] = '';
+
         return $count
             ? EEM_Registration::instance()->count($query_params)
             /** @type EE_Registration[] */
@@ -1110,7 +1117,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         } elseif ($month_range) {
             $pieces          = explode(' ', $month_range, 3);
             $month_requested = ! empty($pieces[0])
-                ? date('m', strtotime($month_range))
+                ? date('m', \EEH_DTT_Helper::first_of_month_timestamp($pieces[0]))
                 : '';
             $year_requested  = ! empty($pieces[1])
                 ? $pieces[1]
@@ -1212,10 +1219,10 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 $orderby_field = 'STS_ID';
                 break;
             case 'ATT_fname':
-                //just for spite, we're going to order it by their LAST name, NOT their first name. Now who's the boss?
-                //jk, we don't want to break existing links, and customers preferred ordering by last name
-                //besides, from the UI, its ambiguous as to whether we will order by first or last name
-                $orderby_field = 'Attendee.ATT_lname';
+                $orderby_field = array('Attendee.ATT_fname', 'Attendee.ATT_lname');
+                break;
+            case 'ATT_lname' :
+                $orderby_field = array('Attendee.ATT_lname', 'Attendee.ATT_fname');
                 break;
             case 'event_name':
                 $orderby_field = 'Event.EVT_name';
@@ -1231,7 +1238,13 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         $order = ! empty($this->_req_data['order'])
             ? sanitize_text_field($this->_req_data['order'])
             : 'DESC';
-        return array('order_by' => array($orderby_field => $order));
+
+        //mutate orderby_field
+        $orderby_field = array_combine(
+                (array) $orderby_field,
+                array_fill(0, count($orderby_field), $order)
+            );
+        return array('order_by' => $orderby_field);
     }
 
 
@@ -1937,8 +1950,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     {
         if ( ! $this->_reg_custom_questions_form) {
             require_once(REG_ADMIN . 'form_sections' . DS . 'EE_Registration_Custom_Questions_Form.form.php');
-            $this->_reg_custom_questions_form = new EE_Registration_Custom_Questions_Form(EEM_Registration::instance()
-                                                                                                          ->get_one_by_ID($REG_ID));
+            $this->_reg_custom_questions_form = new EE_Registration_Custom_Questions_Form(
+                EEM_Registration::instance()->get_one_by_ID($REG_ID)
+            );
             $this->_reg_custom_questions_form->_construct_finalize(null, null);
         }
         return $this->_reg_custom_questions_form;
