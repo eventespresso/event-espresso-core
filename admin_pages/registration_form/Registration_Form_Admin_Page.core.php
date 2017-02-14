@@ -430,9 +430,19 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
             $question->set_order_to_latest();
             $this->_set_add_edit_form_tags('insert_question');
         }
-        $question_types                                     = $question->has_answers()
-            ? $this->_question_model->question_types_in_same_category($question->type())
-            : $this->_question_model->allowed_question_types();
+        if( $question->system_ID() === EEM_Attendee::system_question_phone ){
+            $question_types = array_intersect_key(
+                EEM_Question::instance()->allowed_question_types(),
+                array_flip(
+                    array(
+                        EEM_Question::QST_type_text,
+                        EEM_Question::QST_type_us_phone
+                    )
+                )
+            );
+        } else {
+            $question_types = $question->has_answers() ? $this->_question_model->question_types_in_same_category($question->type()) : $this->_question_model->allowed_question_types();
+        }
         $this->_template_args['QST_ID']                     = $ID;
         $this->_template_args['question']                   = $question;
         $this->_template_args['question_types']             = $question_types;

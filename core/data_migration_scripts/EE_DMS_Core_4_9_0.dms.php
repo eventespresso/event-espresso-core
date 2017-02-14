@@ -670,9 +670,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
             'esp_promotion_object',
         );
         foreach ($addon_tables as $table_name) {
-            if($this->_table_analysis->tableExists( $table_name )){
                 $tables_to_check[] = $table_name;
-            }
         }
         $this->_verify_db_collations_for_tables(array_unique($tables_to_check));
         //ok and now let's remember this was done (without needing to check the db schemas all over again)
@@ -711,7 +709,9 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
     {
         foreach ($tables_to_check as $table_name) {
             $table_name = $this->_table_analysis->ensureTableNameHasPrefix($table_name);
-            if ( ! apply_filters('FHEE__EE_DMS_Core_4_9_0__verify_db_collations__check_overridden', false, $table_name ) ) {
+            if ( ! apply_filters('FHEE__EE_DMS_Core_4_9_0__verify_db_collations__check_overridden', false, $table_name )
+                && $this->_get_table_analysis()->tableExists($table_name)
+            ) {
                 maybe_convert_table_to_utf8mb4($table_name);
             }
         }
