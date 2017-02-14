@@ -1,4 +1,8 @@
 <?php
+namespace EventEspresso\core\services\cache;
+
+use Closure;
+
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
 /**
