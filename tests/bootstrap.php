@@ -42,8 +42,8 @@ add_filter(
 EE_Dependency_Map::register_dependencies(
 	'EE_Session_Mock',
 	array(
-        'EventEspresso\core\services\database\TransientManager' => EE_Dependency_Map::load_from_cache,
-        'EE_Encryption' => EE_Dependency_Map::load_from_cache
+        'EventEspresso\core\services\cache\TransientCacheStorage' => EE_Dependency_Map::load_from_cache,
+        'EE_Encryption'                                           => EE_Dependency_Map::load_from_cache
     )
 );
 EE_Dependency_Map::register_class_loader( 'Session_Mock' );
