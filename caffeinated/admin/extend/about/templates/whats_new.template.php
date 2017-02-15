@@ -76,8 +76,6 @@
 	<h3><a href="https://eventespresso.com/product/eea-braintree-gateway/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_about_page&utm_content=braintree_addon_link&ap_id=EEspresso" target="_blank">Braintree Payment Gateway</a></h3>
 	<a href="https://eventespresso.com/product/eea-braintree-gateway/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_about_page&utm_content=braintree_addon_link&ap_id=EEspresso" target="_blank"><img class="alignright " alt="Braintree Payment Gateway" src="http://ee-screenshots.s3.amazonaws.com/ee4/braintree-payment-gateway.jpg" width="260" height="202" /></a>
 	<p>Braintree is a full stack payment platform that helps merchants accept online payments. Braintree also supports PayPal payments.</p>
-	<p><strong>Make $50K, Keep $50K</strong><br>
-	Free payment processing on your first $50K. <a href="http://evts.io/1Ud9HJu" target="_blank">Learn more &gt;&gt;</a></p>
 	<p><strong>40+ countries, 130 currencies</strong><br>
 	And now with the global reach of PayPal. Braintree is your payments platform almost anywhere you do business.</p>
 	<p><strong>Instant sign-up</strong><br>

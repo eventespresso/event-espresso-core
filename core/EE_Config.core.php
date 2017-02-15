@@ -1,6 +1,7 @@
-<?php if (! defined('EVENT_ESPRESSO_VERSION')) {
+<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
+
 
 
 /**
@@ -13,11 +14,11 @@
 final class EE_Config
 {
 
-    const OPTION_NAME = 'ee_config';
+    const OPTION_NAME        = 'ee_config';
 
-    const LOG_NAME = 'ee_config_log';
+    const LOG_NAME           = 'ee_config_log';
 
-    const LOG_LENGTH = 100;
+    const LOG_LENGTH         = 100;
 
     const ADDON_OPTION_NAMES = 'ee_config_option_names';
 
@@ -133,6 +134,7 @@ final class EE_Config
     private static $_module_view_map = array();
 
 
+
     /**
      * @singleton method used to instantiate class object
      * @access    public
@@ -146,6 +148,7 @@ final class EE_Config
         }
         return self::$_instance;
     }
+
 
 
     /**
@@ -182,6 +185,7 @@ final class EE_Config
     }
 
 
+
     /**
      *    class constructor
      *
@@ -216,6 +220,7 @@ final class EE_Config
     }
 
 
+
     /**
      * @return boolean
      */
@@ -223,6 +228,7 @@ final class EE_Config
     {
         return self::$_logging_enabled;
     }
+
 
 
     /**
@@ -237,6 +243,7 @@ final class EE_Config
     }
 
 
+
     /**
      *        _initialize_config
      *
@@ -248,7 +255,7 @@ final class EE_Config
         EE_Config::trim_log();
         //set defaults
         $this->_addon_option_names = get_option(EE_Config::ADDON_OPTION_NAMES, array());
-        $this->addons              = new stdClass();
+        $this->addons = new stdClass();
         // set _module_route_map
         EE_Config::$_module_route_map = array();
         // set _module_forward_map
@@ -256,6 +263,7 @@ final class EE_Config
         // set _module_view_map
         EE_Config::$_module_view_map = array();
     }
+
 
 
     /**
@@ -296,6 +304,7 @@ final class EE_Config
     }
 
 
+
     /**
      *    _verify_config
      *
@@ -304,28 +313,28 @@ final class EE_Config
      */
     protected function _verify_config()
     {
-        $this->core              = $this->core instanceof EE_Core_Config
+        $this->core = $this->core instanceof EE_Core_Config
             ? $this->core
             : new EE_Core_Config();
-        $this->core              = apply_filters('FHEE__EE_Config___initialize_config__core', $this->core);
-        $this->organization      = $this->organization instanceof EE_Organization_Config
+        $this->core = apply_filters('FHEE__EE_Config___initialize_config__core', $this->core);
+        $this->organization = $this->organization instanceof EE_Organization_Config
             ? $this->organization
             : new EE_Organization_Config();
-        $this->organization      = apply_filters('FHEE__EE_Config___initialize_config__organization',
+        $this->organization = apply_filters('FHEE__EE_Config___initialize_config__organization',
             $this->organization);
-        $this->currency          = $this->currency instanceof EE_Currency_Config
+        $this->currency = $this->currency instanceof EE_Currency_Config
             ? $this->currency
             : new EE_Currency_Config();
-        $this->currency          = apply_filters('FHEE__EE_Config___initialize_config__currency', $this->currency);
-        $this->registration      = $this->registration instanceof EE_Registration_Config
+        $this->currency = apply_filters('FHEE__EE_Config___initialize_config__currency', $this->currency);
+        $this->registration = $this->registration instanceof EE_Registration_Config
             ? $this->registration
             : new EE_Registration_Config();
-        $this->registration      = apply_filters('FHEE__EE_Config___initialize_config__registration',
+        $this->registration = apply_filters('FHEE__EE_Config___initialize_config__registration',
             $this->registration);
-        $this->admin             = $this->admin instanceof EE_Admin_Config
+        $this->admin = $this->admin instanceof EE_Admin_Config
             ? $this->admin
             : new EE_Admin_Config();
-        $this->admin             = apply_filters('FHEE__EE_Config___initialize_config__admin', $this->admin);
+        $this->admin = apply_filters('FHEE__EE_Config___initialize_config__admin', $this->admin);
         $this->template_settings = $this->template_settings instanceof EE_Template_Config
             ? $this->template_settings
             : new EE_Template_Config();
@@ -333,29 +342,29 @@ final class EE_Config
             'FHEE__EE_Config___initialize_config__template_settings',
             $this->template_settings
         );
-        $this->map_settings      = $this->map_settings instanceof EE_Map_Config
+        $this->map_settings = $this->map_settings instanceof EE_Map_Config
             ? $this->map_settings
             : new EE_Map_Config();
-        $this->map_settings      = apply_filters('FHEE__EE_Config___initialize_config__map_settings',
+        $this->map_settings = apply_filters('FHEE__EE_Config___initialize_config__map_settings',
             $this->map_settings);
-        $this->environment       = $this->environment instanceof EE_Environment_Config
+        $this->environment = $this->environment instanceof EE_Environment_Config
             ? $this->environment
             : new EE_Environment_Config();
-        $this->environment       = apply_filters('FHEE__EE_Config___initialize_config__environment',
+        $this->environment = apply_filters('FHEE__EE_Config___initialize_config__environment',
             $this->environment);
-        $this->tax_settings      = $this->tax_settings instanceof EE_Tax_Config
+        $this->tax_settings = $this->tax_settings instanceof EE_Tax_Config
             ? $this->tax_settings
             : new EE_Tax_Config();
-        $this->tax_settings      = apply_filters('FHEE__EE_Config___initialize_config__tax_settings',
+        $this->tax_settings = apply_filters('FHEE__EE_Config___initialize_config__tax_settings',
             $this->tax_settings);
         $this->messages = apply_filters('FHEE__EE_Config__initialize_config__messages', $this->messages);
         $this->messages = $this->messages instanceof EE_Messages_Config
             ? $this->messages
             : new EE_Messages_Config();
-        $this->gateway           = $this->gateway instanceof EE_Gateway_Config
+        $this->gateway = $this->gateway instanceof EE_Gateway_Config
             ? $this->gateway
             : new EE_Gateway_Config();
-        $this->gateway           = apply_filters('FHEE__EE_Config___initialize_config__gateway', $this->gateway);
+        $this->gateway = apply_filters('FHEE__EE_Config___initialize_config__gateway', $this->gateway);
     }
 
 
@@ -373,6 +382,7 @@ final class EE_Config
             get_option(EE_Config::OPTION_NAME, array())
         );
     }
+
 
 
     /**
@@ -410,6 +420,7 @@ final class EE_Config
     }
 
 
+
     /**
      *    update_espresso_config
      *
@@ -420,13 +431,14 @@ final class EE_Config
         $this->_addon_option_names = array();
         foreach ($this->addons as $addon_name => $addon_config_obj) {
             $addon_config_obj = maybe_unserialize($addon_config_obj);
-            $config_class     = get_class($addon_config_obj);
+            $config_class = get_class($addon_config_obj);
             if ($addon_config_obj instanceof $config_class && ! $addon_config_obj instanceof __PHP_Incomplete_Class) {
                 $this->update_config('addons', $addon_name, $addon_config_obj, false);
             }
             $this->addons->{$addon_name} = null;
         }
     }
+
 
 
     /**
@@ -493,6 +505,7 @@ final class EE_Config
             return false;
         }
     }
+
 
 
     /**
@@ -674,6 +687,7 @@ final class EE_Config
     }
 
 
+
     /**
      *    _generate_config_option_name
      *
@@ -686,6 +700,7 @@ final class EE_Config
     {
         return 'ee_config-' . strtolower($section . '-' . str_replace(array('EE_', 'EED_'), '', $name));
     }
+
 
 
     /**
@@ -703,6 +718,7 @@ final class EE_Config
             ? $config_class
             : str_replace(' ', '_', ucwords(str_replace('_', ' ', $name))) . '_Config';
     }
+
 
 
     /**
@@ -756,6 +772,7 @@ final class EE_Config
     }
 
 
+
     /**
      *    update_config
      * Important: the config object must ALREADY be set, otherwise this will produce an error.
@@ -797,7 +814,7 @@ final class EE_Config
         } else {
             // first check if the record already exists
             $existing_config = get_option($config_option_name);
-            $config_obj      = serialize($config_obj);
+            $config_obj = serialize($config_obj);
             // just return if db record is already up to date (NOT type safe comparison)
             if ($existing_config == $config_obj) {
                 $this->{$section}->{$name} = $config_obj;
@@ -825,6 +842,7 @@ final class EE_Config
         }
         return false;
     }
+
 
 
     /**
@@ -874,6 +892,7 @@ final class EE_Config
     }
 
 
+
     /**
      *    get_config_option
      *
@@ -890,6 +909,7 @@ final class EE_Config
         }
         return $config_option;
     }
+
 
 
     /**
@@ -913,6 +933,7 @@ final class EE_Config
     }
 
 
+
     /**
      * trim_log
      * reduces the size of the config log to the length specified by EE_Config::LOG_LENGTH
@@ -930,6 +951,7 @@ final class EE_Config
             update_option(EE_Config::LOG_NAME, $config_log);
         }
     }
+
 
 
     /**
@@ -953,6 +975,7 @@ final class EE_Config
     }
 
 
+
     /**
      *    register_shortcodes_and_modules.
      *    At this point, it's too early to tell if we're maintenance mode or not.
@@ -971,6 +994,7 @@ final class EE_Config
     }
 
 
+
     /**
      *    initialize_shortcodes_and_modules
      *    meaning they can start adding their hooks to get stuff done
@@ -985,6 +1009,7 @@ final class EE_Config
         // allow modules to set hooks for the rest of the system
         $this->_initialize_modules();
     }
+
 
 
     /**
@@ -1025,6 +1050,7 @@ final class EE_Config
             );
         }
     }
+
 
 
     /**
@@ -1089,6 +1115,7 @@ final class EE_Config
     }
 
 
+
     /**
      *        _register_shortcodes
      *
@@ -1117,6 +1144,7 @@ final class EE_Config
             EE_Registry::instance()->shortcodes
         );
     }
+
 
 
     /**
@@ -1151,7 +1179,7 @@ final class EE_Config
         } else {
             // we need to generate the filename based off of the folder name
             // grab and sanitize shortcode directory name
-            $shortcode      = sanitize_key(basename($shortcode_path));
+            $shortcode = sanitize_key(basename($shortcode_path));
             $shortcode_path = rtrim($shortcode_path, DS) . DS;
         }
         // create classname from shortcode directory or file name
@@ -1189,6 +1217,7 @@ final class EE_Config
     }
 
 
+
     /**
      *        _register_modules
      *
@@ -1223,6 +1252,7 @@ final class EE_Config
             EE_Registry::instance()->modules
         );
     }
+
 
 
     /**
@@ -1295,6 +1325,7 @@ final class EE_Config
     }
 
 
+
     /**
      *    _initialize_shortcodes
      *    allow shortcodes to set hooks for the rest of the system
@@ -1331,6 +1362,7 @@ final class EE_Config
     }
 
 
+
     /**
      *    _initialize_modules
      *    allow modules to set hooks for the rest of the system
@@ -1358,6 +1390,7 @@ final class EE_Config
     }
 
 
+
     /**
      *    register_route - adds module method routes to route_map
      *
@@ -1371,7 +1404,7 @@ final class EE_Config
     public static function register_route($route = null, $module = null, $method_name = null, $key = 'ee')
     {
         do_action('AHEE__EE_Config__register_route__begin', $route, $module, $method_name);
-        $module       = str_replace('EED_', '', $module);
+        $module = str_replace('EED_', '', $module);
         $module_class = 'EED_' . $module;
         if (! isset(EE_Registry::instance()->modules->{$module_class})) {
             $msg = sprintf(__('The module %s has not been registered.', 'event_espresso'), $module);
@@ -1396,6 +1429,7 @@ final class EE_Config
     }
 
 
+
     /**
      *    get_route - get module method route
      *
@@ -1415,6 +1449,7 @@ final class EE_Config
     }
 
 
+
     /**
      *    get_routes - get ALL module method routes
      *
@@ -1425,6 +1460,7 @@ final class EE_Config
     {
         return EE_Config::$_module_route_map;
     }
+
 
 
     /**
@@ -1486,6 +1522,7 @@ final class EE_Config
     }
 
 
+
     /**
      *    get_forward - get forwarding route
      *
@@ -1509,6 +1546,7 @@ final class EE_Config
         }
         return null;
     }
+
 
 
     /**
@@ -1550,6 +1588,7 @@ final class EE_Config
     }
 
 
+
     /**
      *    get_view - get view for route and status
      *
@@ -1575,10 +1614,12 @@ final class EE_Config
     }
 
 
+
     public function update_addon_option_names()
     {
         update_option(EE_Config::ADDON_OPTION_NAMES, $this->_addon_option_names);
     }
+
 
 
     public function shutdown()
@@ -1588,6 +1629,7 @@ final class EE_Config
 
 
 }
+
 
 
 /**
@@ -1627,11 +1669,12 @@ class EE_Config_Base
     }
 
 
+
     public function populate()
     {
         //grab defaults via a new instance of this class.
         $class_name = get_class($this);
-        $defaults   = new $class_name;
+        $defaults = new $class_name;
         //loop through the properties for this class and see if they are set.  If they are NOT, then grab the
         //default from our $defaults object.
         foreach (get_object_vars($defaults) as $property => $value) {
@@ -1648,8 +1691,8 @@ class EE_Config_Base
      *        @ override magic methods
      *        @ return void
      */
-//	public function __get($a) { return apply_filters('FHEE__'.get_class($this).'__get__'.$a,$this->{$a}); }
-//	public function __set($a,$b) { return apply_filters('FHEE__'.get_class($this).'__set__'.$a, $this->{$a} = $b ); }
+    //	public function __get($a) { return apply_filters('FHEE__'.get_class($this).'__get__'.$a,$this->{$a}); }
+    //	public function __set($a,$b) { return apply_filters('FHEE__'.get_class($this).'__set__'.$a, $this->{$a} = $b ); }
     /**
      *        __isset
      *
@@ -1660,6 +1703,7 @@ class EE_Config_Base
     {
         return false;
     }
+
 
 
     /**
@@ -1674,12 +1718,14 @@ class EE_Config_Base
     }
 
 
+
     /**
      *        __clone
      */
     public function __clone()
     {
     }
+
 
 
     /**
@@ -1690,6 +1736,7 @@ class EE_Config_Base
     }
 
 
+
     /**
      *        __destruct
      */
@@ -1697,6 +1744,7 @@ class EE_Config_Base
     {
     }
 }
+
 
 
 /**
@@ -1769,6 +1817,7 @@ class EE_Core_Config extends EE_Config_Base
     public static $ee_ueip_option;
 
 
+
     /**
      *    class constructor
      *
@@ -1777,32 +1826,33 @@ class EE_Core_Config extends EE_Config_Base
     public function __construct()
     {
         // set default organization settings
-        $this->current_blog_id      = get_current_blog_id();
-        $this->current_blog_id      = $this->current_blog_id === null ? 1 : $this->current_blog_id;
-        $this->ee_ueip_optin        = $this->_get_main_ee_ueip_optin();
+        $this->current_blog_id = get_current_blog_id();
+        $this->current_blog_id = $this->current_blog_id === null ? 1 : $this->current_blog_id;
+        $this->ee_ueip_optin = $this->_get_main_ee_ueip_optin();
         $this->ee_ueip_has_notified = is_main_site() ? get_option('ee_ueip_has_notified', false) : true;
-        $this->post_shortcodes      = array();
-        $this->module_route_map     = array();
-        $this->module_forward_map   = array();
-        $this->module_view_map      = array();
+        $this->post_shortcodes = array();
+        $this->module_route_map = array();
+        $this->module_forward_map = array();
+        $this->module_view_map = array();
         // critical EE page IDs
-        $this->reg_page_id       = 0;
-        $this->txn_page_id       = 0;
+        $this->reg_page_id = 0;
+        $this->txn_page_id = 0;
         $this->thank_you_page_id = 0;
-        $this->cancel_page_id    = 0;
+        $this->cancel_page_id = 0;
         // critical EE page URLs
-        $this->reg_page_url       = '';
-        $this->txn_page_url       = '';
+        $this->reg_page_url = '';
+        $this->txn_page_url = '';
         $this->thank_you_page_url = '';
-        $this->cancel_page_url    = '';
+        $this->cancel_page_url = '';
         //cpt slugs
         $this->event_cpt_slug = __('events', 'event_espresso');
         //ueip constant check
         if (defined('EE_DISABLE_UXIP') && EE_DISABLE_UXIP) {
-            $this->ee_ueip_optin        = false;
+            $this->ee_ueip_optin = false;
             $this->ee_ueip_has_notified = true;
         }
     }
+
 
 
     /**
@@ -1819,6 +1869,7 @@ class EE_Core_Config extends EE_Config_Base
     }
 
 
+
     /**
      * @return array
      */
@@ -1831,6 +1882,7 @@ class EE_Core_Config extends EE_Config_Base
             $this->cancel_page_id    => 'ESPRESSO_CANCELLED',
         );
     }
+
 
 
     /**
@@ -1849,6 +1901,7 @@ class EE_Core_Config extends EE_Config_Base
         }
         return $this->reg_page_url;
     }
+
 
 
     /**
@@ -1872,6 +1925,7 @@ class EE_Core_Config extends EE_Config_Base
     }
 
 
+
     /**
      *  gets/returns URL for EE thank_you_page
      *
@@ -1893,6 +1947,7 @@ class EE_Core_Config extends EE_Config_Base
     }
 
 
+
     /**
      *  gets/returns URL for EE cancel_page
      *
@@ -1908,6 +1963,7 @@ class EE_Core_Config extends EE_Config_Base
     }
 
 
+
     /**
      * Resets all critical page urls to their original state.  Used primarily by the __sleep() magic method currently.
      *
@@ -1915,11 +1971,12 @@ class EE_Core_Config extends EE_Config_Base
      */
     protected function _reset_urls()
     {
-        $this->reg_page_url       = '';
-        $this->txn_page_url       = '';
-        $this->cancel_page_url    = '';
+        $this->reg_page_url = '';
+        $this->txn_page_url = '';
+        $this->cancel_page_url = '';
         $this->thank_you_page_url = '';
     }
+
 
 
     /**
@@ -1935,21 +1992,16 @@ class EE_Core_Config extends EE_Config_Base
         if (is_main_site()) {
             return get_option('ee_ueip_optin', false);
         }
-
         //is this already cached for this request?  If so use it.
-        if (! empty(EE_Core_Config::$ee_ueip_option)) {
+        if ( ! empty(EE_Core_Config::$ee_ueip_option)) {
             return EE_Core_Config::$ee_ueip_option;
         }
-
         global $wpdb;
         $current_network_main_site = is_multisite() ? get_current_site() : null;
-        $current_main_site_id      = ! empty($current_network_main_site) ? $current_network_main_site->blog_id : 1;
-        $option                    = 'ee_ueip_optin';
-
+        $current_main_site_id = ! empty($current_network_main_site) ? $current_network_main_site->blog_id : 1;
+        $option = 'ee_ueip_optin';
         //set correct table for query
         $table_name = $wpdb->get_blog_prefix($current_main_site_id) . 'options';
-
-
         //rather than getting blog option for the $current_main_site_id, we do a direct $wpdb query because
         //get_blog_option() does a switch_to_blog an that could cause infinite recursion because EE_Core_Config might be
         //re-constructed on the blog switch.  Note, we are still executing any core wp filters on this option retrieval.
@@ -1960,7 +2012,6 @@ class EE_Core_Config extends EE_Config_Base
             EE_Core_Config::$ee_ueip_option = $pre;
             return EE_Core_Config::$ee_ueip_option;
         }
-
         $row = $wpdb->get_row($wpdb->prepare("SELECT option_value FROM $table_name WHERE option_name = %s LIMIT 1",
             $option));
         if (is_object($row)) {
@@ -1968,10 +2019,10 @@ class EE_Core_Config extends EE_Config_Base
         } else { //option does not exist so use default.
             return apply_filters('default_option_' . $option, false, $option);
         }
-
         EE_Core_Config::$ee_ueip_option = apply_filters('option_' . $option, maybe_unserialize($value), $option);
         return EE_Core_Config::$ee_ueip_option;
     }
+
 
 
     /**
@@ -1989,6 +2040,7 @@ class EE_Core_Config extends EE_Config_Base
     }
 
 }
+
 
 
 /**
@@ -2119,6 +2171,7 @@ class EE_Organization_Config extends EE_Config_Base
     public $instagram;
 
 
+
     /**
      *    class constructor
      *
@@ -2127,26 +2180,27 @@ class EE_Organization_Config extends EE_Config_Base
     public function __construct()
     {
         // set default organization settings
-        $this->name      = get_bloginfo('name');
+        $this->name = get_bloginfo('name');
         $this->address_1 = '123 Onna Road';
         $this->address_2 = 'PO Box 123';
-        $this->city      = 'Inna City';
-        $this->STA_ID    = 4;
-        $this->CNT_ISO   = 'US';
-        $this->zip       = '12345';
-        $this->email     = get_bloginfo('admin_email');
-        $this->phone     = '';
-        $this->vat       = '123456789';
-        $this->logo_url  = '';
-        $this->facebook  = '';
-        $this->twitter   = '';
-        $this->linkedin  = '';
+        $this->city = 'Inna City';
+        $this->STA_ID = 4;
+        $this->CNT_ISO = 'US';
+        $this->zip = '12345';
+        $this->email = get_bloginfo('admin_email');
+        $this->phone = '';
+        $this->vat = '123456789';
+        $this->logo_url = '';
+        $this->facebook = '';
+        $this->twitter = '';
+        $this->linkedin = '';
         $this->pinterest = '';
-        $this->google    = '';
+        $this->google = '';
         $this->instagram = '';
     }
 
 }
+
 
 
 /**
@@ -2214,6 +2268,7 @@ class EE_Currency_Config extends EE_Config_Base
     public $thsnds;
 
 
+
     /**
      *    class constructor
      *
@@ -2241,30 +2296,31 @@ class EE_Currency_Config extends EE_Config_Base
             // retrieve the country settings from the db, just in case they have been customized
             $country = EE_Registry::instance()->load_model('Country')->get_one_by_ID($CNT_ISO);
             if ($country instanceof EE_Country) {
-                $this->code    = $country->currency_code();    // currency code: USD, CAD, EUR
-                $this->name    = $country->currency_name_single();    // Dollar
-                $this->plural  = $country->currency_name_plural();    // Dollars
-                $this->sign    = $country->currency_sign();            // currency sign: $
+                $this->code = $country->currency_code();    // currency code: USD, CAD, EUR
+                $this->name = $country->currency_name_single();    // Dollar
+                $this->plural = $country->currency_name_plural();    // Dollars
+                $this->sign = $country->currency_sign();            // currency sign: $
                 $this->sign_b4 = $country->currency_sign_before();        // currency sign before or after: $TRUE  or  FALSE$
                 $this->dec_plc = $country->currency_decimal_places();    // decimal places: 2 = 0.00  3 = 0.000
                 $this->dec_mrk = $country->currency_decimal_mark();    // decimal mark: (comma) ',' = 0,01   or (decimal) '.' = 0.01
-                $this->thsnds  = $country->currency_thousands_separator();    // thousands separator: (comma) ',' = 1,000   or (decimal) '.' = 1.000
+                $this->thsnds = $country->currency_thousands_separator();    // thousands separator: (comma) ',' = 1,000   or (decimal) '.' = 1.000
             }
         }
         // fallback to hardcoded defaults, in case the above failed
         if (empty($this->code)) {
             // set default currency settings
-            $this->code    = 'USD';    // currency code: USD, CAD, EUR
-            $this->name    = __('Dollar', 'event_espresso');    // Dollar
-            $this->plural  = __('Dollars', 'event_espresso');    // Dollars
-            $this->sign    = '$';    // currency sign: $
+            $this->code = 'USD';    // currency code: USD, CAD, EUR
+            $this->name = __('Dollar', 'event_espresso');    // Dollar
+            $this->plural = __('Dollars', 'event_espresso');    // Dollars
+            $this->sign = '$';    // currency sign: $
             $this->sign_b4 = true;    // currency sign before or after: $TRUE  or  FALSE$
             $this->dec_plc = 2;    // decimal places: 2 = 0.00  3 = 0.000
             $this->dec_mrk = '.';    // decimal mark: (comma) ',' = 0,01   or (decimal) '.' = 0.01
-            $this->thsnds  = ',';    // thousands separator: (comma) ',' = 1,000   or (decimal) '.' = 1.000
+            $this->thsnds = ',';    // thousands separator: (comma) ',' = 1,000   or (decimal) '.' = 1.000
         }
     }
 }
+
 
 
 /**
@@ -2397,6 +2453,7 @@ class EE_Registration_Config extends EE_Config_Base
     protected $track_invalid_checkout_access = true;
 
 
+
     /**
      *    class constructor
      *
@@ -2405,22 +2462,23 @@ class EE_Registration_Config extends EE_Config_Base
     public function __construct()
     {
         // set default registration settings
-        $this->default_STS_ID               = EEM_Registration::status_id_pending_payment;
-        $this->email_validation_level       = 'wp_default';
+        $this->default_STS_ID = EEM_Registration::status_id_pending_payment;
+        $this->email_validation_level = 'wp_default';
         $this->show_pending_payment_options = true;
-        $this->skip_reg_confirmation        = false;
-        $this->reg_steps                    = array();
-        $this->reg_confirmation_last        = false;
-        $this->use_bot_trap                 = true;
-        $this->use_encryption               = true;
-        $this->use_captcha                  = false;
-        $this->recaptcha_theme              = 'light';
-        $this->recaptcha_type               = 'image';
-        $this->recaptcha_language           = 'en';
-        $this->recaptcha_publickey          = null;
-        $this->recaptcha_privatekey         = null;
-        $this->recaptcha_width              = 500;
+        $this->skip_reg_confirmation = false;
+        $this->reg_steps = array();
+        $this->reg_confirmation_last = false;
+        $this->use_bot_trap = true;
+        $this->use_encryption = true;
+        $this->use_captcha = false;
+        $this->recaptcha_theme = 'light';
+        $this->recaptcha_type = 'image';
+        $this->recaptcha_language = 'en';
+        $this->recaptcha_publickey = null;
+        $this->recaptcha_privatekey = null;
+        $this->recaptcha_width = 500;
     }
+
 
 
     /**
@@ -2434,6 +2492,7 @@ class EE_Registration_Config extends EE_Config_Base
     }
 
 
+
     /**
      * @return void
      */
@@ -2443,6 +2502,7 @@ class EE_Registration_Config extends EE_Config_Base
     }
 
 
+
     /**
      * @return boolean
      */
@@ -2450,6 +2510,7 @@ class EE_Registration_Config extends EE_Config_Base
     {
         return $this->track_invalid_checkout_access;
     }
+
 
 
     /**
@@ -2465,6 +2526,7 @@ class EE_Registration_Config extends EE_Config_Base
 
 
 }
+
 
 
 /**
@@ -2546,6 +2608,7 @@ class EE_Admin_Config extends EE_Config_Base
     private $encode_session_data = false;
 
 
+
     /**
      *    class constructor
      *
@@ -2555,17 +2618,18 @@ class EE_Admin_Config extends EE_Config_Base
     {
         // set default general admin settings
         $this->use_personnel_manager = true;
-        $this->use_dashboard_widget  = true;
-        $this->events_in_dashboard   = 30;
-        $this->use_event_timezones   = false;
-        $this->use_full_logging      = false;
-        $this->use_remote_logging    = false;
-        $this->remote_logging_url    = null;
-        $this->show_reg_footer       = true;
-        $this->affiliate_id          = 'default';
-        $this->help_tour_activation  = true;
-        $this->encode_session_data   = false;
+        $this->use_dashboard_widget = true;
+        $this->events_in_dashboard = 30;
+        $this->use_event_timezones = false;
+        $this->use_full_logging = false;
+        $this->use_remote_logging = false;
+        $this->remote_logging_url = null;
+        $this->show_reg_footer = true;
+        $this->affiliate_id = 'default';
+        $this->help_tour_activation = true;
+        $this->encode_session_data = false;
     }
+
 
 
     /**
@@ -2582,6 +2646,7 @@ class EE_Admin_Config extends EE_Config_Base
     }
 
 
+
     /**
      * @param bool $reset
      * @return string
@@ -2596,6 +2661,7 @@ class EE_Admin_Config extends EE_Config_Base
     }
 
 
+
     /**
      * @return string
      */
@@ -2605,6 +2671,7 @@ class EE_Admin_Config extends EE_Config_Base
     }
 
 
+
     /**
      * @return boolean
      */
@@ -2612,6 +2679,7 @@ class EE_Admin_Config extends EE_Config_Base
     {
         return filter_var($this->encode_session_data, FILTER_VALIDATE_BOOLEAN);
     }
+
 
 
     /**
@@ -2624,6 +2692,7 @@ class EE_Admin_Config extends EE_Config_Base
 
 
 }
+
 
 
 /**
@@ -2678,6 +2747,7 @@ class EE_Template_Config extends EE_Config_Base
     public $EED_Events_Archive;
 
 
+
     /**
      *    class constructor
      *
@@ -2686,18 +2756,19 @@ class EE_Template_Config extends EE_Config_Base
     public function __construct()
     {
         // set default template settings
-        $this->enable_default_style                  = true;
-        $this->custom_style_sheet                    = null;
-        $this->display_address_in_regform            = true;
+        $this->enable_default_style = true;
+        $this->custom_style_sheet = null;
+        $this->display_address_in_regform = true;
         $this->display_description_on_multi_reg_page = false;
-        $this->use_custom_templates                  = false;
-        $this->current_espresso_theme                = 'Espresso_Arabica_2014';
-        $this->EED_Event_Single                      = null;
-        $this->EED_Events_Archive                    = null;
-        $this->EED_Ticket_Selector                   = null;
+        $this->use_custom_templates = false;
+        $this->current_espresso_theme = 'Espresso_Arabica_2014';
+        $this->EED_Event_Single = null;
+        $this->EED_Events_Archive = null;
+        $this->EED_Ticket_Selector = null;
     }
 
 }
+
 
 
 /**
@@ -2787,6 +2858,7 @@ class EE_Map_Config extends EE_Config_Base
     public $event_list_map_align;
 
 
+
     /**
      *    class constructor
      *
@@ -2795,27 +2867,28 @@ class EE_Map_Config extends EE_Config_Base
     public function __construct()
     {
         // set default map settings
-        $this->use_google_maps    = true;
+        $this->use_google_maps = true;
         $this->google_map_api_key = '';
         // for event details pages (reg page)
-        $this->event_details_map_width    = 585;            // ee_map_width_single
-        $this->event_details_map_height   = 362;            // ee_map_height_single
-        $this->event_details_map_zoom     = 14;            // ee_map_zoom_single
-        $this->event_details_display_nav  = true;            // ee_map_nav_display_single
-        $this->event_details_nav_size     = false;            // ee_map_nav_size_single
+        $this->event_details_map_width = 585;            // ee_map_width_single
+        $this->event_details_map_height = 362;            // ee_map_height_single
+        $this->event_details_map_zoom = 14;            // ee_map_zoom_single
+        $this->event_details_display_nav = true;            // ee_map_nav_display_single
+        $this->event_details_nav_size = false;            // ee_map_nav_size_single
         $this->event_details_control_type = 'default';        // ee_map_type_control_single
-        $this->event_details_map_align    = 'center';            // ee_map_align_single
+        $this->event_details_map_align = 'center';            // ee_map_align_single
         // for event list pages
-        $this->event_list_map_width    = 300;            // ee_map_width
-        $this->event_list_map_height   = 185;        // ee_map_height
-        $this->event_list_map_zoom     = 12;            // ee_map_zoom
-        $this->event_list_display_nav  = false;        // ee_map_nav_display
-        $this->event_list_nav_size     = true;            // ee_map_nav_size
+        $this->event_list_map_width = 300;            // ee_map_width
+        $this->event_list_map_height = 185;        // ee_map_height
+        $this->event_list_map_zoom = 12;            // ee_map_zoom
+        $this->event_list_display_nav = false;        // ee_map_nav_display
+        $this->event_list_nav_size = true;            // ee_map_nav_size
         $this->event_list_control_type = 'dropdown';        // ee_map_type_control
-        $this->event_list_map_align    = 'center';            // ee_map_align
+        $this->event_list_map_align = 'center';            // ee_map_align
     }
 
 }
+
 
 
 /**
@@ -2847,24 +2920,26 @@ class EE_Events_Archive_Config extends EE_Config_Base
     public $display_order_venue;
 
 
+
     /**
      *    class constructor
      */
     public function __construct()
     {
-        $this->display_status_banner      = 0;
-        $this->display_description        = 1;
-        $this->display_ticket_selector    = 0;
-        $this->display_datetimes          = 1;
-        $this->display_venue              = 0;
-        $this->display_expired_events     = 0;
+        $this->display_status_banner = 0;
+        $this->display_description = 1;
+        $this->display_ticket_selector = 0;
+        $this->display_datetimes = 1;
+        $this->display_venue = 0;
+        $this->display_expired_events = 0;
         $this->use_sortable_display_order = false;
-        $this->display_order_tickets      = 100;
-        $this->display_order_datetimes    = 110;
-        $this->display_order_event        = 120;
-        $this->display_order_venue        = 130;
+        $this->display_order_tickets = 100;
+        $this->display_order_datetimes = 110;
+        $this->display_order_event = 120;
+        $this->display_order_venue = 130;
     }
 }
+
 
 
 /**
@@ -2888,20 +2963,22 @@ class EE_Event_Single_Config extends EE_Config_Base
     public $display_order_venue;
 
 
+
     /**
      *    class constructor
      */
     public function __construct()
     {
         $this->display_status_banner_single = 0;
-        $this->display_venue                = 1;
-        $this->use_sortable_display_order   = false;
-        $this->display_order_tickets        = 100;
-        $this->display_order_datetimes      = 110;
-        $this->display_order_event          = 120;
-        $this->display_order_venue          = 130;
+        $this->display_venue = 1;
+        $this->use_sortable_display_order = false;
+        $this->display_order_tickets = 100;
+        $this->display_order_datetimes = 110;
+        $this->display_order_event = 120;
+        $this->display_order_venue = 130;
     }
 }
+
 
 
 /**
@@ -2953,17 +3030,19 @@ class EE_Ticket_Selector_Config extends EE_Config_Base
     private $datetime_selector_threshold = 3;
 
 
+
     /**
      *    class constructor
      */
     public function __construct()
     {
-        $this->show_ticket_sale_columns    = true;
-        $this->show_ticket_details         = true;
-        $this->show_expired_tickets        = true;
-        $this->show_datetime_selector      = \EE_Ticket_Selector_Config::DO_NOT_SHOW_DATETIME_SELECTOR;
+        $this->show_ticket_sale_columns = true;
+        $this->show_ticket_details = true;
+        $this->show_expired_tickets = true;
+        $this->show_datetime_selector = \EE_Ticket_Selector_Config::DO_NOT_SHOW_DATETIME_SELECTOR;
         $this->datetime_selector_threshold = 3;
     }
+
 
 
     /**
@@ -2985,6 +3064,7 @@ class EE_Ticket_Selector_Config extends EE_Config_Base
     }
 
 
+
     /**
      * @return string
      */
@@ -2992,6 +3072,7 @@ class EE_Ticket_Selector_Config extends EE_Config_Base
     {
         return $this->show_datetime_selector;
     }
+
 
 
     /**
@@ -3016,6 +3097,7 @@ class EE_Ticket_Selector_Config extends EE_Config_Base
     }
 
 
+
     /**
      * @param string $show_datetime_selector
      */
@@ -3031,6 +3113,7 @@ class EE_Ticket_Selector_Config extends EE_Config_Base
     }
 
 
+
     /**
      * @return int
      */
@@ -3040,17 +3123,19 @@ class EE_Ticket_Selector_Config extends EE_Config_Base
     }
 
 
+
     /**
      * @param int $datetime_selector_threshold
      */
     public function setDatetimeSelectorThreshold($datetime_selector_threshold)
     {
-        $datetime_selector_threshold       = absint($datetime_selector_threshold);
+        $datetime_selector_threshold = absint($datetime_selector_threshold);
         $this->datetime_selector_threshold = $datetime_selector_threshold ? $datetime_selector_threshold : 3;
     }
 
 
 }
+
 
 
 /**
@@ -3071,6 +3156,7 @@ class EE_Environment_Config extends EE_Config_Base
     public $php;
 
 
+
     /**
      *    constructor
      */
@@ -3079,6 +3165,7 @@ class EE_Environment_Config extends EE_Config_Base
         $this->php = new stdClass();
         $this->_set_php_values();
     }
+
 
 
     /**
@@ -3090,8 +3177,9 @@ class EE_Environment_Config extends EE_Config_Base
     protected function _set_php_values()
     {
         $this->php->max_input_vars = ini_get('max_input_vars');
-        $this->php->version        = phpversion();
+        $this->php->version = phpversion();
     }
+
 
 
     /**
@@ -3128,6 +3216,7 @@ class EE_Environment_Config extends EE_Config_Base
     }
 
 
+
     /**
      * The purpose of this method is just to force rechecking php values so if they've changed, they get updated.
      *
@@ -3141,6 +3230,7 @@ class EE_Environment_Config extends EE_Config_Base
 
 
 }
+
 
 
 /**
@@ -3159,6 +3249,7 @@ class EE_Tax_Config extends EE_Config_Base
      * @var boolean $prices_displayed_including_taxes
      */
     public $prices_displayed_including_taxes;
+
 
 
     /**
@@ -3221,6 +3312,7 @@ class EE_Gateway_Config extends EE_Config_Base
     public $active_gateways;
 
 
+
     /**
      *    class constructor
      *
@@ -3229,7 +3321,7 @@ class EE_Gateway_Config extends EE_Config_Base
     public function __construct()
     {
         $this->payment_settings = array();
-        $this->active_gateways  = array('Invoice' => false);
+        $this->active_gateways = array('Invoice' => false);
     }
 }
 
