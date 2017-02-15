@@ -219,10 +219,9 @@ class EED_Events_Archive  extends EED_Module {
 
 
 	/**
-	 * 	event_list - most likely called by the EES_Espresso_Events shortcode which uses this module to do some of it's lifting
-	 *
-	 *  @access 	public
-	 *  @return 	void
+     * most likely called by the ESPRESSO_EVENTS shortcode which uses this module to do some of it's lifting
+     *
+     * @return    void
 	 */
 	public function event_list() {
 		// ensure valid EE_Events_Archive_Config() object exists
