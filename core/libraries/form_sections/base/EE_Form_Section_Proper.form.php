@@ -109,7 +109,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
         if (isset($options_array['layout_strategy'])) {
             $this->_layout_strategy = $options_array['layout_strategy'];
         }
-        if ( ! $this->_layout_strategy) {
+        if (! $this->_layout_strategy) {
             $this->_layout_strategy = is_admin() ? new EE_Admin_Two_Column_Layout() : new EE_Two_Column_Layout();
         }
         $this->_layout_strategy->_construct_finalize($this);
@@ -238,7 +238,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
         if ($validate) {
             $this->_validate();
             //if it's invalid, we're going to want to re-display so remember what they submitted
-            if ( ! $this->is_valid()) {
+            if (! $this->is_valid()) {
                 $this->store_submitted_form_data_in_session();
             }
         }
@@ -418,7 +418,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
     public function get_input($name, $require_construction_to_be_finalized = true)
     {
         $subsection = $this->get_subsection($name, $require_construction_to_be_finalized);
-        if ( ! $subsection instanceof EE_Form_Input_Base) {
+        if (! $subsection instanceof EE_Form_Input_Base) {
             throw new EE_Error(
                 sprintf(
                     __(
@@ -453,7 +453,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
     public function get_proper_subsection($name, $require_construction_to_be_finalized = true)
     {
         $subsection = $this->get_subsection($name, $require_construction_to_be_finalized);
-        if ( ! $subsection instanceof EE_Form_Section_Proper) {
+        if (! $subsection instanceof EE_Form_Section_Proper) {
             throw new EE_Error(
                 sprintf(
                     __("Subsection '%'s is not an instanceof EE_Form_Section_Proper on form '%s'", 'event_espresso'),
@@ -491,7 +491,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      */
     public function is_valid()
     {
-        if ( ! $this->has_received_submission()) {
+        if (! $this->has_received_submission()) {
             throw new EE_Error(
                 sprintf(
                     __(
@@ -501,14 +501,14 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
                 )
             );
         }
-        if ( ! parent::is_valid()) {
+        if (! parent::is_valid()) {
             return false;
         }
         // ok so no general errors to this entire form section.
         // so let's check the subsections, but only set errors if that hasn't been done yet
         $set_submission_errors = $this->submission_error_message() === '' ? true : false;
         foreach ($this->get_validatable_subsections() as $subsection) {
-            if ( ! $subsection->is_valid() || $subsection->get_validation_error_string() !== '') {
+            if (! $subsection->is_valid() || $subsection->get_validation_error_string() !== '') {
                 if ($set_submission_errors) {
                     $this->set_submission_error_message($subsection->get_validation_error_string());
                 }
@@ -527,7 +527,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      */
     protected function _set_default_name_if_empty()
     {
-        if ( ! $this->_name) {
+        if (! $this->_name) {
             $classname = get_class($this);
             $default_name = str_replace("EE_", "", $classname);
             $this->_name = $default_name;
@@ -757,7 +757,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      */
     public function ensure_scripts_localized()
     {
-        if ( ! EE_Form_Section_Proper::$_scripts_localized) {
+        if (! EE_Form_Section_Proper::$_scripts_localized) {
             $this->_enqueue_and_localize_form_js();
         }
     }
@@ -1122,7 +1122,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
     public function add_subsections($new_subsections, $subsection_name_to_target = null, $add_before = true)
     {
         foreach ($new_subsections as $subsection_name => $subsection) {
-            if ( ! $subsection instanceof EE_Form_Section_Base) {
+            if (! $subsection instanceof EE_Form_Section_Base) {
                 EE_Error::add_error(
                     sprintf(
                         __(
@@ -1264,7 +1264,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      */
     public function ensure_construct_finalized_called()
     {
-        if ( ! $this->_construction_finalized) {
+        if (! $this->_construction_finalized) {
             $this->_construct_finalize($this->_parent_section, $this->_name);
         }
     }

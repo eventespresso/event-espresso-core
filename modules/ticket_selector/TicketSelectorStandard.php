@@ -106,22 +106,21 @@ class TicketSelectorStandard extends TicketSelector
             );
             $this->template_args['datetime_selector'] = $datetime_selector->getDatetimeSelector();
         }
+        $total_tickets = count($this->tickets);
         // loop through tickets
         foreach ($this->tickets as $TKT_ID => $ticket) {
             if ($ticket instanceof \EE_Ticket) {
                 $cols = 2;
                 $taxable_tickets = $ticket->taxable() ? true : $taxable_tickets;
                 $ticket_selector_row = new TicketSelectorRowStandard(
-                    $ticket,
                     new TicketDetails($ticket, $this->ticket_selector_config, $this->template_args),
-                    $this->ticket_selector_config,
                     $this->tax_config,
+                    $total_tickets,
                     $this->max_attendees,
                     $row,
                     $cols,
                     $required_ticket_sold_out,
                     $this->template_args['event_status'],
-                    $this->template_args['date_format'],
                     $datetime_selector instanceof DatetimeSelector
                         ? $datetime_selector->getTicketDatetimeClasses($ticket)
                         : ''
