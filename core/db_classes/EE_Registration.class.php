@@ -1497,14 +1497,22 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      */
     public function delete()
     {
-        //if status is approved or pending, change to cancelled.
-        if (
-            $this->status_ID() === EEM_Registration::status_id_approved
-            || $this->status_ID() === EEM_Registration::status_id_pending_payment
-        ) {
-            $this->set_status(EEM_Registration::status_id_cancelled);
-        }
+        $this->update_extra_meta('pre_trash_registration_status', $this->status_ID());
+        $this->set_status(EEM_Registration::status_id_cancelled);
         return parent::delete();
+    }
+
+
+    /**
+     * Restores whatever the previous status was on a registration before it was trashed (if possible)
+     */
+    public function restore()
+    {
+        $previous_status = $this->get_extra_meta('pre_trash_registration_status');
+        if ($previous_status) {
+            $this->set_status($previous_status);
+        }
+        return parent::restore();
     }
 }
 /* End of file EE_Registration.class.php */
