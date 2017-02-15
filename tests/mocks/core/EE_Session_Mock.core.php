@@ -20,10 +20,6 @@ class EE_Session_Mock extends EE_Session {
 	 */
 	private static $_instance;
 
-    /**
-     * @var CacheStorageInterface $cache_storage
-     */
-    private $cache_storage;
 
 
 
