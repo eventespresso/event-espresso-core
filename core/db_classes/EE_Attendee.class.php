@@ -257,6 +257,22 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
 
 
     /**
+     * This returns the value of the `ATT_full_name` field which is usually equivalent to calling `full_name()` unless
+     * the post_title field has been directly modified in the db for the post (espresso_attendees post type) for this
+     * attendee.
+     *
+     * @param bool $apply_html_entities
+     * @return string
+     */
+    public function ATT_full_name($apply_html_entities = false)
+    {
+        return $apply_html_entities
+            ? htmlentities($this->get('ATT_full_name'), ENT_QUOTES, 'UTF-8')
+            : $this->get('ATT_full_name');
+    }
+
+
+    /**
      *        get Attendee Last Name
      *
      * @access        public
