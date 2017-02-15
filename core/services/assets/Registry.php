@@ -32,7 +32,7 @@ class Registry
         add_action('wp_enqueue_scripts', array($this, 'scripts'), 100);
         add_action('admin_enqueue_scripts', array($this, 'scripts'), 100);
         add_action('wp_print_footer_scripts', array($this, 'enqueueData'), 1);
-        add_action('admin_print_footer_scripts', array($this, 'enqueueData', 1));
+        add_action('admin_print_footer_scripts', array($this, 'enqueueData'), 1);
     }
 
 
