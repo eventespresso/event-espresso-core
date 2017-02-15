@@ -7,14 +7,14 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
 /**
- * Class PostRelatedCacheManger
+ * Class PostRelatedCacheManager
  * Tracks cached content for Posts and clears them when a post is updated
  *
  * @package       Event Espresso
  * @author        Brent Christensen
  * @since         4.9.31
  */
-class PostRelatedCacheManger extends BasicCacheManager
+class PostRelatedCacheManager extends BasicCacheManager
 {
 
     /**
@@ -32,7 +32,7 @@ class PostRelatedCacheManger extends BasicCacheManager
 
 
     /**
-     * PostRelatedCacheManger constructor.
+     * PostRelatedCacheManager constructor.
      *
      * @param CacheStorageInterface $cache_storage
      */
@@ -51,7 +51,7 @@ class PostRelatedCacheManger extends BasicCacheManager
      */
     public function cachePrefix()
     {
-        return PostRelatedCacheManger::POST_CACHE_PREFIX;
+        return PostRelatedCacheManager::POST_CACHE_PREFIX;
     }
 
 
@@ -71,7 +71,7 @@ class PostRelatedCacheManger extends BasicCacheManager
      */
     public function clearPostRelatedCacheOnUpdate($post_ID, $id_prefix)
     {
-        $post_related_cache = (array)get_option(PostRelatedCacheManger::POST_CACHE_OPTIONS_KEY, array());
+        $post_related_cache = (array)get_option(PostRelatedCacheManager::POST_CACHE_OPTIONS_KEY, array());
         // if post is not already being tracked
         if ( ! isset($post_related_cache[ $post_ID ])) {
             // add array to add cache ids to
@@ -79,7 +79,7 @@ class PostRelatedCacheManger extends BasicCacheManager
         }
         // add cache id to be tracked
         $post_related_cache[ $post_ID ][] = $id_prefix;
-        update_option(PostRelatedCacheManger::POST_CACHE_OPTIONS_KEY, $post_related_cache);
+        update_option(PostRelatedCacheManager::POST_CACHE_OPTIONS_KEY, $post_related_cache);
     }
 
 
@@ -92,7 +92,7 @@ class PostRelatedCacheManger extends BasicCacheManager
      */
     public function clearPostRelatedCache($post_ID)
     {
-        $post_related_cache = (array)get_option(PostRelatedCacheManger::POST_CACHE_OPTIONS_KEY, array());
+        $post_related_cache = (array)get_option(PostRelatedCacheManager::POST_CACHE_OPTIONS_KEY, array());
         // if post is not being tracked
         if ( ! isset($post_related_cache[ $post_ID ])) {
             return;
@@ -100,10 +100,10 @@ class PostRelatedCacheManger extends BasicCacheManager
         // get cache id prefixes for post, and delete their corresponding transients
         $this->clear($post_related_cache[ $post_ID ]);
         unset($post_related_cache[ $post_ID ]);
-        update_option(PostRelatedCacheManger::POST_CACHE_OPTIONS_KEY, $post_related_cache);
+        update_option(PostRelatedCacheManager::POST_CACHE_OPTIONS_KEY, $post_related_cache);
     }
 
 
 }
-// End of file PostRelatedCacheManger.php
-// Location: EventEspresso\core\services\cache/PostRelatedCacheManger.php
+// End of file PostRelatedCacheManager.php
+// Location: EventEspresso\core\services\cache/PostRelatedCacheManager.php

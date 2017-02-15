@@ -3,7 +3,7 @@ namespace EventEspresso\core\services\shortcodes;
 
 use EEH_Event_View;
 use EventEspresso\core\domain\EnqueueAssetsInterface;
-use EventEspresso\core\services\cache\PostRelatedCacheManger;
+use EventEspresso\core\services\cache\PostRelatedCacheManager;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -28,7 +28,7 @@ abstract class EspressoShortcode implements ShortcodeInterface
     const CACHE_TRANSIENT_PREFIX = 'ee_sc_';
 
     /**
-     * @var PostRelatedCacheManger $cache_manager
+     * @var PostRelatedCacheManager $cache_manager
      */
     private $cache_manager;
 
@@ -36,10 +36,11 @@ abstract class EspressoShortcode implements ShortcodeInterface
 
     /**
      * EspressoShortcode constructor
+
      *
-     * @param PostRelatedCacheManger $cache_manager
+*@param PostRelatedCacheManager $cache_manager
      */
-    public function __construct(PostRelatedCacheManger $cache_manager)
+    public function __construct(PostRelatedCacheManager $cache_manager)
     {
         $this->cache_manager = $cache_manager;
     }
