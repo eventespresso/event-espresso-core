@@ -32,7 +32,7 @@ interface CacheManagerInterface
      *                           May also be helpful to include an additional specific identifier,
      *                           such as a post ID as part of the $id_prefix so that individual caches
      *                           can be found and/or cleared. ex: "venue-28", or "shortcode-156".
-     *                           BasicCacheManager::CACHE_PREFIX will also be appended to the cache id.
+     *                           BasicCacheManager::CACHE_PREFIX will also be prepended to the cache id.
      * @param string  $cache_id  [required] Additional identifying details that make this cache unique.
      *                           It is advisable to use some of the actual data
      *                           that is used to generate the content being cached,
