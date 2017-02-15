@@ -60,6 +60,7 @@ class BasicCacheManager implements CacheManagerInterface
     }
 
 
+
     /**
      * @param string  $id_prefix [required] Prepended to all cache IDs. Can be helpful in finding specific cache types.
      *                           May also be helpful to include an additional specific identifier,
@@ -75,7 +76,7 @@ class BasicCacheManager implements CacheManagerInterface
      * @param Closure $callback  [required] since the point of caching is to avoid generating content when not
      *                           necessary,
      *                           we wrap our content creation in a Closure so that it is not executed until needed.
-     * @param int $expiration
+     * @param int     $expiration
      * @return Closure|mixed
      */
     public function get($id_prefix, $cache_id, Closure $callback, $expiration = HOUR_IN_SECONDS)
@@ -128,7 +129,6 @@ class BasicCacheManager implements CacheManagerInterface
         // delete corresponding transients for the supplied id prefix
         $this->cache_storage->deleteMany($cache_id);
     }
-
 
 
 

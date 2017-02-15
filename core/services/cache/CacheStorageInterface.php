@@ -2,6 +2,9 @@
 namespace EventEspresso\core\services\cache;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
+
+
+
 /**
  * Manages the creation and deletion of cached data
  *
@@ -16,7 +19,7 @@ interface CacheStorageInterface
      * Saves supplied data
      * if an expiration is set, then it automatically schedules the cache for deletion
      *
-     * @param string $key [required]
+     * @param string $key  [required]
      * @param string $data [required]
      * @param int    $expiration
      * @return bool
@@ -32,7 +35,7 @@ interface CacheStorageInterface
      * For non-standard cache items like PHP Session data where early refreshing is not wanted,
      * the $standard_cache parameter should be set to false when retrieving data
      *
-     * @param string $key            [required]
+     * @param string $key [required]
      * @param bool   $standard_cache
      * @return string
      */

@@ -36,14 +36,14 @@ abstract class EspressoShortcode implements ShortcodeInterface
 
     /**
      * EspressoShortcode constructor
-
      *
-*@param PostRelatedCacheManager $cache_manager
+     * @param PostRelatedCacheManager $cache_manager
      */
     public function __construct(PostRelatedCacheManager $cache_manager)
     {
         $this->cache_manager = $cache_manager;
     }
+
 
 
     /**
@@ -91,7 +91,7 @@ abstract class EspressoShortcode implements ShortcodeInterface
             // serialized attributes
             wp_json_encode($attributes),
             // Closure for generating content if cache is expired
-            function() use ($shortcode, $attributes) {
+            function () use ($shortcode, $attributes) {
                 return $shortcode->processShortcode($attributes);
             },
             // filterable cache expiration set by each shortcode

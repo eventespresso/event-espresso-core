@@ -1,7 +1,6 @@
 <?php
 namespace EventEspresso\core\services\cache;
 
-
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
@@ -55,6 +54,7 @@ class PostRelatedCacheManager extends BasicCacheManager
     }
 
 
+
     /**
      * If you are caching content that pertains to a Post of any type,
      * then it is recommended to pass the post id and cache id prefix to this method
@@ -73,12 +73,12 @@ class PostRelatedCacheManager extends BasicCacheManager
     {
         $post_related_cache = (array)get_option(PostRelatedCacheManager::POST_CACHE_OPTIONS_KEY, array());
         // if post is not already being tracked
-        if ( ! isset($post_related_cache[ $post_ID ])) {
+        if ( ! isset($post_related_cache[$post_ID])) {
             // add array to add cache ids to
-            $post_related_cache[ $post_ID ] = array();
+            $post_related_cache[$post_ID] = array();
         }
         // add cache id to be tracked
-        $post_related_cache[ $post_ID ][] = $id_prefix;
+        $post_related_cache[$post_ID][] = $id_prefix;
         update_option(PostRelatedCacheManager::POST_CACHE_OPTIONS_KEY, $post_related_cache);
     }
 
@@ -94,12 +94,12 @@ class PostRelatedCacheManager extends BasicCacheManager
     {
         $post_related_cache = (array)get_option(PostRelatedCacheManager::POST_CACHE_OPTIONS_KEY, array());
         // if post is not being tracked
-        if ( ! isset($post_related_cache[ $post_ID ])) {
+        if ( ! isset($post_related_cache[$post_ID])) {
             return;
         }
         // get cache id prefixes for post, and delete their corresponding transients
-        $this->clear($post_related_cache[ $post_ID ]);
-        unset($post_related_cache[ $post_ID ]);
+        $this->clear($post_related_cache[$post_ID]);
+        unset($post_related_cache[$post_ID]);
         update_option(PostRelatedCacheManager::POST_CACHE_OPTIONS_KEY, $post_related_cache);
     }
 

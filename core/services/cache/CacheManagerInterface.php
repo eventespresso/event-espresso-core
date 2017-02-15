@@ -5,6 +5,8 @@ use Closure;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
+
+
 /**
  * CacheManagerInterface
  * Controls the creation and deletion of cached content
@@ -22,6 +24,8 @@ interface CacheManagerInterface
      * @return string
      */
     public function cachePrefix();
+
+
 
     /**
      * @param string  $id_prefix [required] Prepended to all cache IDs. Can be helpful in finding specific cache types.
@@ -42,6 +46,8 @@ interface CacheManagerInterface
      * @return Closure|mixed
      */
     public function get($id_prefix, $cache_id, Closure $callback, $expiration = HOUR_IN_SECONDS);
+
+
 
     /**
      * @param array|string $cache_id [required] Could be an ID prefix affecting many caches
