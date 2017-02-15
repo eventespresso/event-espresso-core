@@ -546,13 +546,9 @@ class PluginUpdateEngineChecker {
 		$this->maybeCheckForUpdates();
 		$ver_option_key = 'puvererr_' . basename( $this->pluginFile );
 
-
 		//possible update checks on an option page save that is setting the license key.
         //Note we're not actually using the response yet for this triggered update check but we might at some later date.
-		if ( ! $this->trigger_update_check() ) {
-		    return;
-        }
-
+        $this->trigger_update_check();
 
 		//if we've got a forced premium upgrade then let's add an admin notice for this with a nice button to do the upgrade right away.  We'll also handle the display of any json errors in this admin_notice.
 		if ( $this->_force_premium_upgrade ) {
