@@ -34,7 +34,8 @@ class JsonModelSchema
      *
      * @param \EEM_Base $model
      */
-    public function __construct(EEM_Base $model){
+    public function __construct(EEM_Base $model)
+    {
         $this->model = $model;
     }
 

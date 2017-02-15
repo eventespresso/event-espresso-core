@@ -563,7 +563,7 @@ class DisplayTicketSelector
                 // no submit or view details button, and no additional content
                 $html .= $this->ticketSelectorEndDiv();
             }
-            if ( ! is_archive()) {
+            if ( ! $this->iframe && ! is_archive()) {
                 $html .= \EEH_Template::powered_by_event_espresso('', '', array('utm_content' => 'ticket_selector'));
             }
         }
@@ -586,10 +586,6 @@ class DisplayTicketSelector
         $external_url = $this->event->external_url();
         $html = \EEH_HTML::div(
             '', 'ticket-selector-submit-' . $this->event->ID() . '-btn-wrap', 'ticket-selector-submit-btn-wrap'
-        );
-        $html .= \EEH_HTML::span(
-            esc_html__('please select a datetime', 'event_espresso'),
-            '', 'ticket-selector-disabled-submit-btn-msg important-notice'
         );
         $html .= '<input id="ticket-selector-submit-' . $this->event->ID() . '-btn"';
         $html .= ' class="ticket-selector-submit-btn ';

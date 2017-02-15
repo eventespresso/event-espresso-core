@@ -71,43 +71,40 @@ class TicketSelectorRowStandard extends TicketSelectorRow
     /**
      * TicketDetails constructor.
      *
-     * @param \EE_Ticket $ticket
      * @param TicketDetails              $ticket_details
-     * @param \EE_Ticket_Selector_Config $template_settings
      * @param \EE_Tax_Config             $tax_settings
+     * @param int                        $total_tickets
      * @param int                        $max_atndz
      * @param int                        $row
      * @param int                        $cols
      * @param boolean                    $required_ticket_sold_out
      * @param string                     $event_status
-     * @param string                     $date_format
      * @param string                     $ticket_datetime_classes
      */
     public function __construct(
-        \EE_Ticket $ticket,
         TicketDetails $ticket_details,
-        \EE_Ticket_Selector_Config $template_settings,
         \EE_Tax_Config $tax_settings,
+        $total_tickets,
         $max_atndz,
         $row,
         $cols,
         $required_ticket_sold_out,
         $event_status,
-        $date_format,
         $ticket_datetime_classes
     ) {
-        $this->ticket = $ticket;
+        $this->ticket = $ticket_details->getTicket();
         $this->ticket_details = $ticket_details;
-        $this->template_settings = $template_settings;
+        $this->template_settings = $ticket_details->getTemplateSettings();
         $this->tax_settings = $tax_settings;
+        $this->total_tickets = $total_tickets;
         $this->max_atndz = $max_atndz;
         $this->row = $row;
         $this->cols = $cols;
         $this->required_ticket_sold_out = $required_ticket_sold_out;
         $this->event_status = $event_status;
-        $this->date_format = $date_format;
+        $this->date_format = $ticket_details->getDateFormat();
         $this->ticket_datetime_classes = $ticket_datetime_classes;
-        parent::__construct($ticket, $max_atndz, $date_format);
+        parent::__construct($this->ticket, $max_atndz, $this->date_format);
     }
 
 
@@ -206,7 +203,10 @@ class TicketSelectorRowStandard extends TicketSelectorRow
             $status_class
         );
         if ($new_row_cells_content !== false) {
-            return $ticket_selector_row_html . $new_row_cells_content . \EEH_HTML::trx();
+            return $ticket_selector_row_html
+                   . $new_row_cells_content
+                   . $this->ticketQtyAndIdHiddenInputs()
+                   . \EEH_HTML::trx();
         }
         $this->hidden_input_qty = $this->max_atndz > 1 ? true : false;
 
@@ -240,6 +240,7 @@ class TicketSelectorRowStandard extends TicketSelectorRow
      *
      * @param int $remaining
      * @return array
+     * @throws \EE_Error
      */
     protected function setTicketMinAndMax($remaining)
     {
@@ -256,10 +257,12 @@ class TicketSelectorRowStandard extends TicketSelectorRow
     }
 
 
+
     /**
      * getTicketPriceDetails
      *
      * @return array
+     * @throws \EE_Error
      */
     protected function getTicketPriceDetails()
     {
@@ -415,7 +418,7 @@ class TicketSelectorRowStandard extends TicketSelectorRow
         $html = '<input type="radio" name="tkt-slctr-qty-' . $this->EVT_ID . '"';
         $html .= ' id="ticket-selector-tbl-qty-slct-' . $this->EVT_ID . '-' . $this->row . '"';
         $html .= ' class="ticket-selector-tbl-qty-slct" value="' . $this->row . '-1"';
-        $html .= $this->row === 1 ? ' checked="checked"' : '';
+        $html .= $this->total_tickets === 1 ? ' checked="checked"' : '';
         $html .= ' title=""/>';
         return $html;
     }
@@ -428,6 +431,7 @@ class TicketSelectorRowStandard extends TicketSelectorRow
      * @param int $min
      * @param int $max
      * @return string
+     * @throws \EE_Error
      */
     protected function ticketQuantitySelector($min = 0, $max = 0)
     {
