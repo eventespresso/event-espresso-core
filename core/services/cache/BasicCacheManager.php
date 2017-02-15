@@ -61,7 +61,7 @@ class BasicCacheManager implements CacheManagerInterface
 
 
     /**
-     * @param string  $id_prefix [required] Appended to all cache IDs. Can be helpful in finding specific cache types.
+     * @param string  $id_prefix [required] Prepended to all cache IDs. Can be helpful in finding specific cache types.
      *                           May also be helpful to include an additional specific identifier,
      *                           such as a post ID as part of the $id_prefix so that individual caches
      *                           can be found and/or cleared. ex: "venue-28", or "shortcode-156".
