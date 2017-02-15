@@ -82,17 +82,17 @@ class BasicCacheManager implements CacheManagerInterface
     public function get($id_prefix, $cache_id, Closure $callback, $expiration = HOUR_IN_SECONDS)
     {
         $content = '';
-        // how long should we cache this shortcode's content for? 0 means no caching.
+        // how long should we cache this content for? 0 means no caching.
         $expiration = absint(
             apply_filters(
-                'FHEE__EventEspresso_core_services_shortcodes_EspressoShortcode__shortcodeContent__cache_expiration',
+                'FHEE__CacheManager__get__cache_expiration',
                 $expiration,
                 $id_prefix,
                 $cache_id
             )
         );
         $cache_id = substr($this->cachePrefix() . $id_prefix . '-' . md5($cache_id), 0, 182);
-        // is caching enabled for this shortcode ?
+        // is caching enabled for this content ?
         if ($expiration) {
             $content = $this->cache_storage->get($cache_id);
         }
