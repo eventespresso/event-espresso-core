@@ -99,7 +99,7 @@ class ShortcodesManager
             // collection name
                 'shortcodes',
                 // collection interface
-                '\EventEspresso\core\services\shortcodes\ShortcodeInterface',
+                'EventEspresso\core\services\shortcodes\ShortcodeInterface',
                 // FQCNs for classes to add (all classes within that namespace will be loaded)
                 array('EventEspresso\core\domain\entities\shortcodes'),
                 // filepaths to classes to add
