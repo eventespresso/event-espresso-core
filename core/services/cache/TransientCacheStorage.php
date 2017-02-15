@@ -248,7 +248,7 @@ class TransientCacheStorage implements CacheStorageInterface
                 }
             }
         }
-        if ( ! empty($full_transient_keys) && $this->deleteTransientKeys($full_transient_keys)) {
+        if ($this->deleteTransientKeys($full_transient_keys)) {
             $this->updateTransients();
         }
     }
@@ -344,9 +344,8 @@ class TransientCacheStorage implements CacheStorageInterface
                 }
                 $transient_keys[] = $transient_key;
             }
-            if ( ! empty($transient_keys)) {
-                $update = $this->deleteTransientKeys($transient_keys, $limit);
-            }
+            // delete expired keys, but maintain value of $update if nothing is deleted
+            $update = $this->deleteTransientKeys($transient_keys, $limit) ? true : $update;
             do_action(
                 'FHEE__TransientCacheStorage__clearExpiredTransients__end',
                 $limit
@@ -369,6 +368,9 @@ class TransientCacheStorage implements CacheStorageInterface
      */
     private function deleteTransientKeys(array $transient_keys, $limit = 50)
     {
+        if (empty($transient_keys)) {
+            return false;
+        }
         /** @type wpdb $wpdb */
         global $wpdb;
         $regexp = implode('|(.*)', $transient_keys);
