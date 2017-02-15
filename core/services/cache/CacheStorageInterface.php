@@ -37,7 +37,7 @@ interface CacheStorageInterface
      *
      * @param string $key [required]
      * @param bool   $standard_cache
-     * @return string
+     * @return mixed
      */
     public function get($key, $standard_cache = true);
 

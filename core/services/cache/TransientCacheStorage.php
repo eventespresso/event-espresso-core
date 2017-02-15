@@ -197,7 +197,7 @@ class TransientCacheStorage implements CacheStorageInterface
      *
      * @param string $transient_key [required]
      * @param bool   $standard_cache
-     * @return string
+     * @return mixed
      */
     public function get($transient_key, $standard_cache = true)
     {
