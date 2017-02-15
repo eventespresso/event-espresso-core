@@ -430,30 +430,30 @@ class EE_Dependency_Map {
                 'EventEspresso\core\services\database\TableManager' => EE_Dependency_Map::load_from_cache,
 			),
 			'\EventEspresso\core\domain\entities\shortcodes\EspressoCancelled' => array(
-				'EventEspresso\core\services\cache\PostRelatedCacheManger' => EE_Dependency_Map::load_from_cache,
+				'EventEspresso\core\services\cache\PostRelatedCacheManager' => EE_Dependency_Map::load_from_cache,
 			),
 			'\EventEspresso\core\domain\entities\shortcodes\EspressoCheckout' => array(
-				'EventEspresso\core\services\cache\PostRelatedCacheManger' => EE_Dependency_Map::load_from_cache,
+				'EventEspresso\core\services\cache\PostRelatedCacheManager' => EE_Dependency_Map::load_from_cache,
 			),
 			'\EventEspresso\core\domain\entities\shortcodes\EspressoEventAttendees' => array(
-				'EventEspresso\core\services\cache\PostRelatedCacheManger' => EE_Dependency_Map::load_from_cache,
+				'EventEspresso\core\services\cache\PostRelatedCacheManager' => EE_Dependency_Map::load_from_cache,
 			),
 			'\EventEspresso\core\domain\entities\shortcodes\EspressoEvents' => array(
-				'EventEspresso\core\services\cache\PostRelatedCacheManger' => EE_Dependency_Map::load_from_cache,
+				'EventEspresso\core\services\cache\PostRelatedCacheManager' => EE_Dependency_Map::load_from_cache,
 			),
 			'\EventEspresso\core\domain\entities\shortcodes\EspressoThankYou' => array(
-				'EventEspresso\core\services\cache\PostRelatedCacheManger' => EE_Dependency_Map::load_from_cache,
+				'EventEspresso\core\services\cache\PostRelatedCacheManager' => EE_Dependency_Map::load_from_cache,
 			),
 			'\EventEspresso\core\domain\entities\shortcodes\EspressoTicketSelector' => array(
-				'EventEspresso\core\services\cache\PostRelatedCacheManger' => EE_Dependency_Map::load_from_cache,
+				'EventEspresso\core\services\cache\PostRelatedCacheManager' => EE_Dependency_Map::load_from_cache,
 			),
 			'\EventEspresso\core\domain\entities\shortcodes\EspressoTxnPage' => array(
-				'EventEspresso\core\services\cache\PostRelatedCacheManger' => EE_Dependency_Map::load_from_cache,
+				'EventEspresso\core\services\cache\PostRelatedCacheManager' => EE_Dependency_Map::load_from_cache,
 			),
 			'EventEspresso\core\services\cache\BasicCacheManager' => array(
 				'EventEspresso\core\services\cache\TransientCacheStorage' => EE_Dependency_Map::load_from_cache,
 			),
-			'EventEspresso\core\services\cache\PostRelatedCacheManger' => array(
+			'EventEspresso\core\services\cache\PostRelatedCacheManager' => array(
 				'EventEspresso\core\services\cache\TransientCacheStorage' => EE_Dependency_Map::load_from_cache,
 			),
 		);
