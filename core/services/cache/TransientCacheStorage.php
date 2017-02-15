@@ -382,8 +382,10 @@ class TransientCacheStorage implements CacheStorageInterface
         ";
         $results = $wpdb->query($SQL);
         // if something went wrong, then notify the admin
-        if ($results instanceof WP_Error && is_admin()) {
-            EE_Error::add_error($results->get_error_message(), __FILE__, __FUNCTION__, __LINE__);
+        if ($results instanceof WP_Error) {
+            if (is_admin()) {
+                EE_Error::add_error($results->get_error_message(), __FILE__, __FUNCTION__, __LINE__);
+            }
             return false;
         } else if ($results < $limit) {
             foreach ($transient_keys as $transient_key) {
