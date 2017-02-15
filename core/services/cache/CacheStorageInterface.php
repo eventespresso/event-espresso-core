@@ -19,9 +19,9 @@ interface CacheStorageInterface
      * Saves supplied data
      * if an expiration is set, then it automatically schedules the cache for deletion
      *
-     * @param string $key  [required]
-     * @param string $data [required]
-     * @param int    $expiration
+     * @param string $key        [required]
+     * @param string $data       [required]
+     * @param int    $expiration number of seconds until the cache expires
      * @return bool
      */
     public function add($key, $data, $expiration = 0);

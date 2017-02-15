@@ -173,7 +173,7 @@ class TransientCacheStorage implements CacheStorageInterface
      *
      * @param string $transient_key [required]
      * @param string $data          [required]
-     * @param int    $expiration
+     * @param int    $expiration    number of seconds until the cache expires
      * @return bool
      */
     public function add($transient_key, $data, $expiration = 0)
