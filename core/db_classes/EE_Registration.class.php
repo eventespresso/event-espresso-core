@@ -924,7 +924,11 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 	 * @return boolean
 	 */
 	public function set_deleted($deleted) {
-		$this->set( 'REG_deleted', $deleted );
+	    if ( $deleted ) {
+	        $this->delete();
+        } else {
+	        $this->restore();
+        }
 	}
 
 
@@ -1485,6 +1489,23 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     }
 
 
+    /**
+     * Soft Deletes this model object.
+     *
+     * @return boolean | int
+     * @throws \EE_Error
+     */
+    public function delete()
+    {
+        //if status is approved or pending, change to cancelled.
+        if (
+            $this->status_ID() === EEM_Registration::status_id_approved
+            || $this->status_ID() === EEM_Registration::status_id_pending_payment
+        ) {
+            $this->set_status(EEM_Registration::status_id_cancelled);
+        }
+        return parent::delete();
+    }
 }
 /* End of file EE_Registration.class.php */
 /* Location: includes/classes/EE_Registration.class.php */
