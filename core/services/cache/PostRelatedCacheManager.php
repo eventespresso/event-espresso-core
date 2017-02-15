@@ -20,7 +20,7 @@ class PostRelatedCacheManager extends BasicCacheManager
     /**
      * @type string
      */
-    const POST_CACHE_PREFIX = 'ee_post_cache_';
+    const POST_CACHE_PREFIX = 'ee_cache_post_';
 
     /**
      * wp-option option_name for tracking post related cache
