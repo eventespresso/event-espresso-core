@@ -155,10 +155,11 @@ class TransientCacheStorage implements CacheStorageInterface
                 $offset = HOUR_IN_SECONDS;
                 break;
         }
-        $timestamp = strtotime(date("Y-m-d {$hours}:{$minutes}:00", $timestamp));
-        $timestamp += $round_up ? $offset : 0;
+        $rounded_timestamp = strtotime(date("Y-m-d {$hours}:{$minutes}:00", $timestamp));
+        $rounded_timestamp += $round_up ? $offset : 0;
         return apply_filters(
             'FHEE__TransientCacheStorage__roundTimestamp__timestamp',
+            $rounded_timestamp,
             $timestamp,
             $cleanup_frequency,
             $round_up
@@ -197,7 +198,7 @@ class TransientCacheStorage implements CacheStorageInterface
      *
      * @param string $transient_key [required]
      * @param bool   $standard_cache
-     * @return mixed
+     * @return mixed|null
      */
     public function get($transient_key, $standard_cache = true)
     {
@@ -210,13 +211,14 @@ class TransientCacheStorage implements CacheStorageInterface
         if (
             $standard_cache
             && isset($this->transients[$transient_key])
-            && $this->transients[$transient_key] <= time() + MINUTE_IN_SECONDS
+            && $this->transients[$transient_key] - time() <= MINUTE_IN_SECONDS
         ) {
             unset($this->transients[$transient_key]);
             $this->updateTransients();
-            return '';
+            return null;
         }
-        return get_transient($transient_key);
+        $content = get_transient($transient_key);
+        return $content !== false ? $content : null;
     }
 
 
@@ -373,13 +375,8 @@ class TransientCacheStorage implements CacheStorageInterface
         }
         /** @type wpdb $wpdb */
         global $wpdb;
-        $regexp = implode('|(.*)', $transient_keys);
-        $SQL = "
-            DELETE FROM {$wpdb->options}
-            WHERE option_name
-            REGEXP '(.*){$regexp}'
-            LIMIT {$limit}
-        ";
+        $regexp = implode('|_transient.*', $transient_keys);
+        $SQL = "DELETE FROM {$wpdb->options} WHERE option_name REGEXP '_transient.*{$regexp}' LIMIT {$limit}";
         $results = $wpdb->query($SQL);
         // if something went wrong, then notify the admin
         if ($results instanceof WP_Error) {
@@ -387,9 +384,13 @@ class TransientCacheStorage implements CacheStorageInterface
                 EE_Error::add_error($results->get_error_message(), __FILE__, __FUNCTION__, __LINE__);
             }
             return false;
-        } else if ($results < $limit) {
+        } else if ($results) {
             foreach ($transient_keys as $transient_key) {
                 unset($this->transients[$transient_key]);
+                // also need to manually remove the transients from the WP cache,
+                // else they will continue to be returned if you use get_transient()
+                wp_cache_delete("_transient_{$transient_key}", 'options');
+                wp_cache_delete("_transient_timeout_{$transient_key}", 'options');
             }
         }
         return true;
