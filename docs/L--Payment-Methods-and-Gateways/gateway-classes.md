@@ -5,7 +5,7 @@ Besides the constructor and those two methods, there is nothing else you need to
 | Property Name | Description |
 | ------------- | ----------- |
 `_currencies_supported` | An array of 3-letter currency codes defining all the currencies this gateway supports. If the gateway supports ALL currencies, instead assign this to be the class constant EE_Gateway::all_currencies_supported
-`_supports_sending_refunds` | Boolean value indicating whether or not this gateway can SEND refund requests. If so, it shoudl implement override the method "do_direct_refund"
+`_supports_sending_refunds` | Boolean value indicating whether or not this gateway can SEND refund requests. If so, it should implement override the method "do_direct_refund"
 `_supports_receiving_refunds` | Boolean indicating whether or not this gateway can RECEIVE refund requests via Instant Payment Notifications from the payment processing site.
 
 > Note: for each of the "extra_meta_inputs" defined in your payment method's settings form, you should add a property to the gateway class with the same name, prefixed with an underscore. These properties will automatically have the values of those "extra_meta_inputs" put on them. Eg, if your form defined an "extra_meta_input" of "account_num", you should add a property onto your gateway class entitled `protected $_account_num;`
