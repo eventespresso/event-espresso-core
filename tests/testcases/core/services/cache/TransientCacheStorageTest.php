@@ -26,6 +26,15 @@ class TransientCacheStorageTest extends EE_UnitTestCase
 
     public function setUp()
     {
+        // we only want our expirations to be 1 second in the future
+        add_filter(
+            'FHEE__TransientCacheStorage__roundTimestamp__timestamp',
+            function($rounded_timestamp, $timestamp) {
+                return $timestamp + 1;
+            },
+            10,
+            2
+        );
         $this->cache_storage = new \EventEspresso\core\services\cache\TransientCacheStorage();
         parent::setUp();
     }
@@ -57,80 +66,107 @@ class TransientCacheStorageTest extends EE_UnitTestCase
     }
 
 
-    public function test_add() {
+    /**
+     * @group CacheStorageInterface
+     * @group slow_test
+     */
+    public function test_add()
+    {
+        // echo "\n\n** " . __LINE__ . ") " . __METHOD__ . '() **';
         $key = __FUNCTION__;
         $data = $this->generateRandomString();
-        $this->cache_storage->add($key, $data);
+        $added = $this->cache_storage->add($key, $data);
+        $this->assertTrue($added, __LINE__ . ") Transient {$key} was not added");
         $transient = get_transient($key);
         $this->assertEquals($data, $transient);
         // now test expiration
         $key = __FUNCTION__ . '_expires_in_1_second';
-        $this->cache_storage->add($key, $data, 1);
+        $added = $this->cache_storage->add($key, $data, 1);
+        $this->assertTrue($added, __LINE__ . ") Transient {$key} was not added");
         // wait 2 seconds
-        usleep(200000);
+        sleep(2);
         $transient = get_transient($key);
-        $this->assertFalse($data, $transient);
+        $this->assertFalse($transient, __LINE__ . ") Transient {$key} returned data when it should not have");
     }
 
 
 
+    /**
+     * @group CacheStorageInterface
+     * @group slow_test
+     */
     public function test_get()
     {
+        // echo "\n\n** " . __LINE__ . ") " . __METHOD__ . '() **';
         $key = __FUNCTION__;
         $data = $this->generateRandomString();
-        set_transient($key, $data);
+        $added = $this->cache_storage->add($key, $data);
+        $this->assertTrue($added, __LINE__ . ") Transient {$key} was not added");
         $transient = $this->cache_storage->get($key);
         $this->assertEquals($data, $transient);
         // now test expiration
         $key = __FUNCTION__ . '_expires_in_1_second';
-        set_transient($key, $data, 1);
+        $added = $this->cache_storage->add($key, $data, 1);
+        $this->assertTrue($added, __LINE__ . ") Transient {$key} was not added");
         // wait 2 seconds
-        usleep(200000);
+        sleep(2);
         $transient = $this->cache_storage->get($key);
-        $this->assertFalse($data, $transient);
+        $this->assertNull($transient, __LINE__ . ") Transient {$key} returned data when it should not have");
         // now test standard cache early expiration
         $key = __FUNCTION__ . '_expires_in_60_seconds';
-        set_transient($key, $data, 60);
+        $added = $this->cache_storage->add($key, $data, 60);
+        $this->assertTrue($added, __LINE__ . ") Transient {$key} was not added");
         // wait 2 seconds
-        usleep(200000);
+        sleep(2);
         $transient = $this->cache_storage->get($key);
-        // should be false because this request should trigger cache regeneration
+        // should be null because this request should trigger cache regeneration
         // BEFORE the cache actually expires in roughly 58 seconds
-        $this->assertFalse($data, $transient);
-        // now attempt to retrieve the cache again
+        $this->assertNull($transient, __LINE__ . ") Transient {$key} returned data when it should not have");
+        // now attempt to retrieve the cache again,
         $transient = $this->cache_storage->get($key);
-        // second request should receive the cached content that still exists from before
-        // therefore avoiding a cache stampede,
+        // however, this second request should receive the cached content
+        // that still exists from before, therefore avoiding a cache stampede,
         // (assuming the previous get() can regenerate the content in time)
-        $this->assertEquals($data, $transient);
+        $this->assertEquals($data, $transient, __LINE__ . ") Transient {$key} returned incorrect data");
         // now test with standard cache early expiration turned off
-        $key = __FUNCTION__ . '_dont_delete_my_early';
-        set_transient($key, $data, 60);
+        $key = __FUNCTION__ . '_not_standard_cache';
+        $added = $this->cache_storage->add($key, $data, 60);
+        $this->assertTrue($added, __LINE__ . ") Transient {$key} was not added");
         // wait 2 seconds
-        usleep(200000);
-        $transient = $this->cache_storage->get($key);
+        sleep(2);
+        $transient = $this->cache_storage->get($key, false);
         // cached content should be returned despite expiration being less than 60 seconds
         // therefore avoiding a cache stampede,
         // (assuming the previous get() can regenerate the content in time)
-        $this->assertEquals($data, $transient);
+        $this->assertEquals($data, $transient, __LINE__ . ") Transient {$key} returned incorrect data");
     }
 
 
-
+    /**
+     * @group CacheStorageInterface
+     */
     public function test_delete()
     {
+        // echo "\n\n** " . __LINE__ . ") " . __METHOD__ . '() **';
         $key = __FUNCTION__;
         $data = $this->generateRandomString();
-        set_transient($key, $data);
+        $added = $this->cache_storage->add($key, $data, 300);
+        $this->assertTrue($added, __LINE__ . ") Transient {$key} was not added");
+        $transient = get_transient($key);
+        $this->assertEquals($data, $transient, __LINE__ . ") Transient {$key} returned incorrect data");
         $this->cache_storage->delete($key);
         $transient = get_transient($key);
-        $this->assertFalse($data, $transient);
+        $this->assertFalse($transient, __LINE__ . ") Transient {$key} returned data when it should not have");
     }
 
 
 
+    /**
+     * @group CacheStorageInterface
+     */
     public function test_deleteMany()
     {
+        // echo "\n\n** " . __LINE__ . ") " . __METHOD__ . '() **';
         $data = $this->generateRandomString();
         $tests = array(
             '_no_expiration_'        => 0,
@@ -138,12 +174,17 @@ class TransientCacheStorageTest extends EE_UnitTestCase
             '_expires_in_1_hour_'    => HOUR_IN_SECONDS,
         );
         foreach ($tests as $test => $expiration) {
+            // add transient with nearly identical name to confirm
+            // that deletion does not target transients it shouldn't
+            $added = set_transient($test, 'plz do not delete me', HOUR_IN_SECONDS);
+            $this->assertTrue($added, __LINE__ . ") Transient {$test} was not added");
             for ($x = 0; $x < 4; $x++) {
                 $key = __FUNCTION__ . $test . $x;
-                set_transient($key, $data, $expiration);
+                $added = $this->cache_storage->add($key, $data, $expiration);
+                $this->assertTrue($added, __LINE__ . ") Transient {$key} was not added");
                 // assert that all transients exist
                 $transient = $this->cache_storage->get($key);
-                $this->assertEquals($data, $transient);
+                $this->assertEquals($data, $transient, __LINE__ . ") Transient {$key} returned incorrect data");
             }
         }
         // delete transients that expire in 5 minutes
@@ -161,6 +202,12 @@ class TransientCacheStorageTest extends EE_UnitTestCase
                     : "Transient {$key} exists when it should not";
                 $this->assertEquals($result, get_transient($key), $message);
             }
+            // now confirm our similarly named transients still exist
+            $this->assertEquals(
+                'plz do not delete me',
+                get_transient($test),
+                "Transient {$test} does not exist when it should"
+            );
         }
     }
 
