@@ -1,6 +1,7 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api\controllers\model;
 use EventEspresso\core\libraries\rest_api\Capabilities;
+use EventEspresso\core\libraries\rest_api\Model_Data_Translator;
 use EventEspresso\core\libraries\rest_api\Rest_Exception;
 if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
@@ -182,7 +183,13 @@ class Write extends Base {
         }
         $submitted_json_data = array_merge( (array)$request->get_body_params(), (array)$request->get_json_params() );
 
-		$new_id = $model->insert(  );
+		$new_id = $model->insert(
+		    Model_Data_Translator::prepare_conditions_query_params_for_models(
+                $submitted_json_data,
+                $model,
+                $this->get_model_version_info()->requested_version()
+            )
+        );
 		if( ! $new_id ) {
 			throw new \EE_Error(
 				'rest_insertion_failed', 
