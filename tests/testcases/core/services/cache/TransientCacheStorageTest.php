@@ -40,9 +40,26 @@ class TransientCacheStorageTest extends EE_UnitTestCase
 
 
 
+    /**
+     * @see http://stackoverflow.com/a/4356295
+     * @param int $length
+     * @return string
+     */
+    private function generateRandomString($length = 100)
+    {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[mt_rand(0, $charactersLength - 1)];
+        }
+        return $randomString;
+    }
+
+
     public function test_add() {
         $key = __FUNCTION__;
-        $data = wp_json_encode($this);
+        $data = $this->generateRandomString();
         $this->cache_storage->add($key, $data);
         $transient = get_transient($key);
         $this->assertEquals($data, $transient);
@@ -60,7 +77,7 @@ class TransientCacheStorageTest extends EE_UnitTestCase
     public function test_get()
     {
         $key = __FUNCTION__;
-        $data = wp_json_encode($this);
+        $data = $this->generateRandomString();
         set_transient($key, $data);
         $transient = $this->cache_storage->get($key);
         $this->assertEquals($data, $transient);
@@ -103,7 +120,7 @@ class TransientCacheStorageTest extends EE_UnitTestCase
     public function test_delete()
     {
         $key = __FUNCTION__;
-        $data = wp_json_encode($this);
+        $data = $this->generateRandomString();
         set_transient($key, $data);
         $this->cache_storage->delete($key);
         $transient = get_transient($key);
@@ -114,7 +131,7 @@ class TransientCacheStorageTest extends EE_UnitTestCase
 
     public function test_deleteMany()
     {
-        $data = wp_json_encode($this);
+        $data = $this->generateRandomString();
         $tests = array(
             '_no_expiration_'        => 0,
             '_expires_in_5_minutes_' => 5 * MINUTE_IN_SECONDS,
