@@ -51,7 +51,7 @@ class EED_Mijireh_Payment_Checker extends EED_Module{
      */
 	public static function check_for_payment_update_on_transaction( $transaction ) {
 		if( $transaction instanceof EE_Transaction ) {
-			//are there pending mijireh payments on this transaction?
+			//are there pending Mijireh payments on this transaction?
 			if( EEM_Payment::instance()->exists(
 			    array(
 			        array(

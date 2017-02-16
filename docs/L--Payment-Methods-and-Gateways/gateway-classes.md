@@ -51,7 +51,7 @@ The `$notify_url` is the URL IPNs should be sent to which you may need to pass t
 The `$cancel_url` is the URL the customer should be sent to if they decide to cancel their purchase after they arrive at the Payment Gateway.
 
 Note about the payment's status: the `$payment` passed into this method will initially have a failed status ("PFL"). This is on purpose, in case somehow the request dies
-before completion, in which case the failed status is accurate. Currently, before redirecting the user to `PMD_redirect_url`, the payment is updated to the pending status ("PPN"). 
+before completion, in which case the failed status is accurate. Currently, before redirecting the user to `PAY_redirect_url`, the payment is updated to the pending status ("PPN"). 
 
 So during this method you don't need to worry about changing the payment's status from failed to pending, as that will be taken care of for you elsewhere. You only need to set the payment's `PAY_redirect_url` and `PAY_redirect_args`.
 
