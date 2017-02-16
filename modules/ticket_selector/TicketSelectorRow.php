@@ -188,27 +188,6 @@ abstract class TicketSelectorRow
 
 
 
-    /**
-     * getHiddenInputs
-     *
-     * @param string $anchor_id
-     * @param int    $row
-     * @param int    $max_atndz
-     * @return string
-     */
-    protected function getHiddenInputs($anchor_id, $row, $max_atndz)
-    {
-        $html = '<input type="hidden" name="noheader" value="true"/>';
-        $html .= '<input type="hidden" name="tkt-slctr-return-url-' . $this->EVT_ID . '"';
-        $html .= ' value="' . \EEH_URL::current_url() . $anchor_id . '"/>';
-        $html .= '<input type="hidden" name="tkt-slctr-rows-' . $this->EVT_ID . '" value="' . $row - 1 . '"/>';
-        $html .= '<input type="hidden" name="tkt-slctr-max-atndz-' . $this->EVT_ID . '" value="' . $max_atndz . '"/>';
-        $html .= '<input type="hidden" name="tkt-slctr-event-id" value="' . $this->EVT_ID . '"/>';
-        return $html;
-    }
-
-
-
 }
 // End of file TicketSelectorRow.php
 // Location: EventEspresso\modules\ticket_selector/TicketSelectorRow.php
