@@ -46,6 +46,7 @@ class TicketSelectorSimple extends TicketSelector
      * sets any and all template args that are required for this Ticket Selector
      *
      * @return void
+     * @throws \EE_Error
      */
     protected function addTemplateArgs()
     {
@@ -56,6 +57,7 @@ class TicketSelectorSimple extends TicketSelector
             $this->max_attendees,
             $this->template_args['date_format']
         );
+        $this->template_args['TKT_ID'] = $this->ticket->ID();
         $this->template_args['ticket_status_display'] = $ticket_selector_row->getTicketStatusDisplay();
         $this->template_args['template_path'] = TICKET_SELECTOR_TEMPLATES_PATH . 'simple_ticket_selector.template.php';
     }
