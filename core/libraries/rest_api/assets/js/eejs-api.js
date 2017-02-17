@@ -1870,6 +1870,7 @@ if (!String.prototype.includes) {
                         collection: '',
                         id: 0,
                         autoUpdate: true,
+                        initialUpdateCompleted : false,
                         store: eejs.api.collections,
                         props: ['collection'],
                         data: function() {
@@ -1915,6 +1916,10 @@ if (!String.prototype.includes) {
                             }
                         },
                         mounted : function() {
+                        },
+                        updated : function() {
+                            //set initalUpdated to true.
+                            this.$options.initialUpdateCompleted = true;
                         },
                         computed: {
                             collectionName: function() {
@@ -2041,7 +2046,7 @@ if (!String.prototype.includes) {
                                 if ((currentModelId !== 0
                                     || (_.isString(currentModelId) && currentModelId !== '')
                                     )
-                                    && ! this.$store.getters.hasEntityInCollection(collection,this[this.modelName])
+                                    && ! this.$store.getters.hasEntityInCollection(this.collectionName,this[this.modelName])
                                 ){
                                     this.id = currentModelId;
                                     return;
@@ -2297,7 +2302,10 @@ if (!String.prototype.includes) {
                            //@todo could eventually do some validation in here I suppose
                            //@todo we could use the lodash .debounce to add some delay to this so it's not triggered on
                            //every update.
-                           if (this.$options.autoUpdate) {
+                           //note that the `initialUpdateCompleted` flag is used to ensure that when the first entity
+                           //updates are done in the local state, we don't update in the store.  This is because the `create`
+                           //hook is already taking care of updating the store state.  This has a huge impact on performance.
+                           if (this.$options.autoUpdate && this.$options.initialUpdateCompleted) {
                                this.update();
                            }
                        }
