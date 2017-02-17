@@ -33,6 +33,14 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 	const checkin_status_out = 0;
 
 
+	/**
+	 * extra meta key for tracking reg status os trashed registrations
+     *
+	 * @type string
+	 */
+	const PRE_TRASH_REG_STATUS_KEY = 'pre_trash_registration_status';
+
+
 
 	/**
 	 *
@@ -1447,6 +1455,46 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 
 
+    /**
+     * Soft Deletes this model object.
+     *
+     * @return boolean | int
+     * @throws \RuntimeException
+     * @throws \EE_Error
+     */
+    public function delete()
+    {
+        $updated = $this->update_extra_meta(EE_Registration::PRE_TRASH_REG_STATUS_KEY, $this->status_ID());
+        if($updated === true) {
+            $this->set_status(EEM_Registration::status_id_cancelled);
+        }
+        return parent::delete();
+    }
+
+
+
+    /**
+     * Restores whatever the previous status was on a registration before it was trashed (if possible)
+     *
+     * @throws \EE_Error
+     * @throws \RuntimeException
+     */
+    public function restore()
+    {
+        $previous_status = $this->get_extra_meta(
+            EE_Registration::PRE_TRASH_REG_STATUS_KEY,
+            true,
+            EEM_Registration::status_id_cancelled
+        );
+        if ($previous_status) {
+            $this->delete_extra_meta(EE_Registration::PRE_TRASH_REG_STATUS_KEY);
+            $this->set_status($previous_status);
+        }
+        return parent::restore();
+    }
+
+
+
     /*************************** DEPRECATED ***************************/
 
 
@@ -1517,31 +1565,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     }
 
 
-    /**
-     * Soft Deletes this model object.
-     *
-     * @return boolean | int
-     * @throws \EE_Error
-     */
-    public function delete()
-    {
-        $this->update_extra_meta('pre_trash_registration_status', $this->status_ID());
-        $this->set_status(EEM_Registration::status_id_cancelled);
-        return parent::delete();
-    }
 
-
-    /**
-     * Restores whatever the previous status was on a registration before it was trashed (if possible)
-     */
-    public function restore()
-    {
-        $previous_status = $this->get_extra_meta('pre_trash_registration_status');
-        if ($previous_status) {
-            $this->set_status($previous_status);
-        }
-        return parent::restore();
-    }
 }
 /* End of file EE_Registration.class.php */
 /* Location: includes/classes/EE_Registration.class.php */
