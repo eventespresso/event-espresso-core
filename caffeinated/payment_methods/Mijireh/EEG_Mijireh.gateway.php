@@ -185,23 +185,20 @@ class EEG_Mijireh extends EE_Offsite_Gateway{
 	 *
 	 * @param array $update_info unused. We just use the $transaction
 	 * @param EEI_Transaction $transaction
-	 * @return \EEI_Payment|null
+	 * @return \EEI_Payment
+     * @throws EE_Error
 	 */
 	public function handle_payment_update($update_info, $transaction) {
-
-		$payment = $transaction instanceof EEI_Transaction ? $transaction->last_payment() : NULL;
-
-		if ( ! $payment instanceof EEI_Payment ){
-			throw new EE_Error( sprintf( __( "Could not find Mijireh payment for transaction %s", 'event_espresso' ), $transaction->ID() ) );
-		}
-
-		$payment_to_return = nulll;
-		foreach( $transaction->pending_payments() as $payment){
+        foreach( $transaction->pending_payments() as $payment){
 		    $payment = $this->check_payment_in_mijireh($payment);
-            if( ! $payment_to_return instanceof EEI_Payment
-                || $payment->status() === $this->_pay_model->approved_status()){
-                $payment_to_return = $payment;
+            if( $payment->status() === $this->_pay_model->approved_status()){
+                return $payment;
             }
+        }
+        $payment = $transaction instanceof EEI_Transaction ? $transaction->last_payment() : NULL;
+
+        if ( ! $payment instanceof EEI_Payment ){
+            throw new EE_Error( sprintf( __( "Could not find Mijireh payment for transaction %s", 'event_espresso' ), $transaction->ID() ) );
         }
         return $payment;
 	}
