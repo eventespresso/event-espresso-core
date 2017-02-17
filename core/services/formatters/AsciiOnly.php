@@ -19,38 +19,16 @@ class AsciiOnly extends FormatterBase
 {
 
     /**
-     * Removes the emojis from the inputted string
+     * Removes all non Ascii characters from string
      *
      * @param string|int|float $input anything easily cast into a string
      * @return string
-     * @throws InvalidDataTypeException if $input is not a string
      */
     public function format($input)
     {
         //in case an int or float etc was passed in
         $input = (string)$input;
-        $input = $this->convert_ascii($input);
-        // //reference for what are emojis: http://apps.timwhitlock.info/emoji/tables/unicode
-        // // Match Emoticons
-        // $regexEmoticons = '/[\x{1F601}-\x{1F64F}]/u';
-        // $input = preg_replace($regexEmoticons, '', $input);
-        // // Match Dingbats
-        // $regexDingbats = '/[\x{2700}-\x{27BF}]/u';
-        // $input = preg_replace($regexDingbats, '', $input);
-        // // Match Transport And Map Symbols
-        // $regexTransport = '/[\x{1F680}-\x{1F6FF}]/u';
-        // $input = preg_replace($regexTransport, '', $input);
-        // // Match Enclosed characters
-        // $regexTransport = '/[\x{1F170}-\x{1F251}|\x{24C2}]/u';
-        // $input = preg_replace($regexTransport, '', $input);
-        // // Match Miscellaneous Symbols and Pictographs
-        // $regexSymbols = '/[\x{1F300}-\x{1F5FF}]/u';
-        // $input = preg_replace($regexSymbols, '', $input);
-        //
-        // // Match Miscellaneous Symbols
-        // $regexMisc = '/[\x{2600}-\x{26FF}]/u';
-        // $input = preg_replace($regexMisc, '', $input);
-
+        $input = $this->convertAscii($input);
         return $input;
     }
 
@@ -61,7 +39,7 @@ class AsciiOnly extends FormatterBase
      * @param $string
      * @return string
      */
-    function convert_ascii($string)
+    protected function convertAscii($string)
     {
         // Replace Single Curly Quotes
         $search[]  = chr(226).chr(128).chr(152);

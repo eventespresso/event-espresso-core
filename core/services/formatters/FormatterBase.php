@@ -9,7 +9,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 
 /**
  * Class FormatterBase
- * Class for funcitonality often common among FormatterInterface implementations
+ * Class for functionality often common among FormatterInterface implementations
  *
  * @package        Event Espresso
  * @author         Mike Nelson

@@ -29,6 +29,17 @@ class LeaveAlone extends FormatterBase
     {
         return $input;
     }
+
+    /**
+     * Just returns the inputted $input array
+     *
+     * @param array $input
+     * @return array
+     */
+    public function formatArray($input)
+    {
+        return $input;
+    }
 }
 // End of file LeaveAlonel.php
 // Location: core\services\formatters/LeaveAlonel.php
