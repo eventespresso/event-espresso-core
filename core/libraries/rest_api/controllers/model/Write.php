@@ -182,18 +182,20 @@ class Write extends Base {
             );
         }
         $submitted_json_data = array_merge( (array)$request->get_body_params(), (array)$request->get_json_params() );
-
-		$new_id = $model->insert(
-		    Model_Data_Translator::prepare_conditions_query_params_for_models(
-                $submitted_json_data,
-                $model,
-                $this->get_model_version_info()->requested_version()
-            )
+        $model_data = Model_Data_Translator::prepare_conditions_query_params_for_models(
+            $submitted_json_data,
+            $model,
+            $this->get_model_version_info()->requested_version()
         );
+        $model_obj = \EE_Registry::instance()
+                                ->load_class($model->get_this_model_name(), array($model_data,$model->get_timezone()),
+                                    false, false);
+        $model_obj->save();
+		$new_id = $model_obj->ID();
 		if( ! $new_id ) {
-			throw new \EE_Error(
+			throw new Rest_Exception(
 				'rest_insertion_failed', 
-				sprintf( __( 'Could not insert new %1$s', 'event_espresso'), $model->get_this_model_name() ) 
+				sprintf( __( 'Could not insert new %1$s', 'event_espresso'), $model->get_this_model_name() )
 			);
 		}
 		//ok so is that the sort of thing they are allowed to edit?

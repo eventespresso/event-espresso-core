@@ -246,9 +246,12 @@ class Model_Data_Translator
                     $model
                 );
                 $timezone = 'UTC';
-            } else {
+            } elseif( $field instanceof \EE_Datetime_Field ) {
                 //so it's not a GMT field. Set the timezone on the model to the default
                 $timezone = \EEH_DTT_Helper::get_valid_timezone_string();
+            }else{
+                //just keep using what's already set for the timezone
+                $timezone = $model->get_timezone();
             }
             if ($field instanceof \EE_Model_Field_Base) {
                 //did they specify an operator?
