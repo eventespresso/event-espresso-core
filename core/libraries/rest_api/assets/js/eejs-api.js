@@ -377,27 +377,55 @@ if (!String.prototype.includes) {
 
 
     /**
-     * This simply returns an array of ids for the given collection entities using the primaryKey
+     * This simply returns an array of ids for the given collection entities using the primaryKey.
+     * Remember some of these ids may be for new objects not persisted yet to the db (they'll have a `_new_id_` prefix.
      * @param {array} entities
-     * @param {integer} primaryKey
+     * @param {string} primaryKey
      * @returns {array}
      */
     eejs.utils.getIdsFromEntities = function(entities,primaryKey) {
         //if there is not a primaryKey set, then we have no way of knowing what values to assemble!
-        if (_.isUndefined(primaryKey)) {
-            throw new eejs.exception('Unable to return ids because the primaryKey argument is not defined.');
+        if (_.isUndefined(primaryKey) || !_.isString(primaryKey)) {
+            throw new eejs.exception('Unable to return any id because the primaryKey argument is not defined or is ' +
+                'not an accepted type (string).');
         }
 
-        var ids = [];
+        var ids = [],
+            id = 0;
 
         //if entities is not an array let's make sure its an array!
         entities = !_.isArray(entities) ? [entities] : entities;
         _.each(entities, function(entity){
-           if(_.has(entity,primaryKey)) {
-              ids.push(entity[primaryKey]);
-           }
+            id = eejs.utils.getIdFromEntity(entity, primaryKey);
+            if (id) {
+                ids.push(id);
+            }
         });
         return ids;
+    };
+
+
+    /**
+     * This returns the id representing the given entity.
+     * Remember some of these ids may be for new objects not persisted yet to the db (they'll have a `_new_id_` prefix.
+     *
+     *
+     * @param {object} entity
+     * @param {string} primaryKey
+     * @returns {integer|string}  Some primary keys might be string values.  If no id is retrieved then the default of 0
+     *                            is returned so you may want to account for that.
+     */
+    eejs.utils.getIdFromEntity = function(entity,primaryKey) {
+        if(_.isUndefined(primaryKey) || !_.isString(primaryKey)) {
+            throw new eejs.exception('Unable to return any id because the primaryKey argument is not defined or is ' +
+                'not an accepted type (string).');
+        }
+
+        if (_.has(entity, primaryKey) && entity[primaryKey] !== 0) {
+            return entity[primaryKey];
+        }
+
+        return 0;
     };
 
 
