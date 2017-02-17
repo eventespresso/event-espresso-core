@@ -131,7 +131,8 @@ class Model_Data_Translator
         } elseif ($field_obj instanceof \EE_Datetime_Field) {
             list($offset_sign, $offset_secs) = Model_Data_Translator::parse_timezone_offset(
                 $field_obj->get_timezone_offset(
-                    new \DateTimeZone($timezone_string)
+                    new \DateTimeZone($timezone_string),
+                    $original_value
                 )
             );
             $offset_string =
