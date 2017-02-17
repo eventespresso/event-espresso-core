@@ -464,7 +464,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 
     /**
      * Gets all payments which have not been approved
-     * @return \EE_Base_Class[]
+     * @return \EEI_Payment[]
      * @throws EE_Error if a model is misconfigured somehow
      */
 	public function pending_payments()
