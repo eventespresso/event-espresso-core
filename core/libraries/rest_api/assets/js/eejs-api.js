@@ -1528,75 +1528,73 @@ if (!String.prototype.includes) {
                             /**
                              * Fetches a specific entity by the value for its primary key.
                              * @param {object} context
-                             * @param {object} payload
+                             * @param {object} payload  Expects the following as keys in the object:
+                             *              collection  = [required] the collection the entity is being retrieved for.
+                             *              entityId    = [required] the primaryKey id for the entity to retrieve.
                              */
                             fetchEntityById: function(context,payload) {
-                                /**
-                                 * @todo add in here the script for fetching an entity by id and adding it to the
-                                 * collection state.
-                                 * addEntityById can then call this when its refreshing
-                                 */
-                            },
+                               return new Promise( function(resolve, reject) {
+                                   //verify needed things in the payload are present
+                                   var verified = eejs.utils.verifyRequiredKeysPresentInObject(
+                                       payload,
+                                       ['collection', 'entityId']
+                                   );
 
-                            /**
-                             * This ensures an entity with the given id is in the collection or added to it.
-                             * Optionally will refresh the entity in the collection.
-                             * @param {object} context
-                             * @param {object} payload  Expect an object with:
-                             *      collection  = [required] the collection the entity is being retrieved for.
-                             *      id          = [required] the primaryKey id for the entity to retrieve.
-                             *      refresh     = [optional] default to false.  If included, and true,
-                             *                  then this will retrieve from the db regardless of whether
-                             *                  its in the store state or not and will replace whats in
-                             *                  the collection with what gets retrieved.
-                             * @return entity object.
-                             */
-                            addEntityById: function( context, payload ) {
-                                return new Promise( function(resolve, reject) {
-                                    if (_.isUndefined(payload.id) || _.isUndefined(payload.collection)) {
-                                        reject(
-                                            'Unable to retrieve an entity from this collection because both id and' +
-                                            ' collection is required, and either of those (or both) is missing!'
-                                        );
-                                    }
+                                   if (verified !== true && _.isObject(verified)) {
+                                       throw new eejs.exception('The following required keys are missing from the ' +
+                                           'payload object: ' + verified.join());
+                                   }
 
-                                    var primaryKey = context.state[payload.collection].primaryKey,
-                                        refresh = ! _.isUndefined(payload.refresh) ? payload.refresh : false,
-                                        entity = {};
+                                   var entityPrimaryKey = eejs.api.main.getPrimaryKeyForCollection(payload.collection),
+                                       entity = {},
+                                       searchObj = {},
+                                       endpointUri = context.getters.getCollectionEndpoint(payload.collection);
 
+                                   payload.refresh = ! _.isUndefined(payload.refresh) ? payload.refresh : false;
 
-                                    // do a search for an entity that matches the primaryKey or `_id`
-                                    // for the given id in the payload but only if ! refresh
-                                    if ( ! refresh ) {
-                                        entity = _.find(context.state[payload.collection].entities, function (entity) {
-                                            return entity[primaryKey] === payload.id || entity._id === payload.id;
-                                        });
-                                    }
-                                    // if entity doesn't have an id then we know
-                                    // its not retrieved yet, so let's attempt via the db.
-                                    if ( _.isUndefined(entity) || _.isUndefined(entity[primaryKey]) || refresh ) {
-                                        Vue.http.get(
-                                            context.state.restRoute
-                                            + context.state[payload.collection].collectionEndpoint
-                                            + payload.id
-                                        ).then(function(response){
-                                            context.commit('addEntity',
-                                                {
-                                                    collection: payload.collection,
-                                                    entity: response.body,
-                                                    refresh: true
-                                                }
-                                            );
-                                            resolve(response.body);
-                                        })
-                                            .catch(function(response){
-                                                //error handling
-                                                reject();
-                                            });
-                                    } else {
-                                        resolve(entity);
-                                    }
-                                });
+                                   //if not refreshing, see if the entity is in the store.
+                                   if (! payload.refresh) {
+                                       searchObj[entityPrimaryKey] = payload.entityId;
+                                       entity = _.findWhere(context.state[payload.collection].entities, searchObj);
+                                   }
+
+                                   //if entity is undefined or we're refreshing and the entity isn't  a new object
+                                   //then fetch using the api.
+                                   if (
+                                       (payload.refresh || _.isUndefined(entity))
+                                       && ! context.getters.isNewObject(payload.entityId)
+                                   ) {
+
+                                       //add id to query string
+                                       endpointUri = endpointUri + payload.entityId;
+
+                                       //include any registered relations
+                                       endpointUri = eejs.utils.addRelationsToEndpointURI(payload.collection, endpointUri);
+
+                                       Vue.http.get(
+                                           endpointUri
+                                       ).then(function(response){
+                                           entity = response.body;
+                                           //commit this to the store state
+                                           context.commit(
+                                               'addEntity',
+                                               {
+                                                   collection: payload.collection,
+                                                   entity: entity,
+                                                   refresh: payload.refresh,
+                                                   fromDb: true
+                                               }
+                                           );
+                                           resolve(entity);
+                                       }).catch(function(response){
+                                           reject(response);
+                                       });
+                                   } else {
+                                       //if we made it here then that means we have an entity in the that we can just resolve
+                                       //with
+                                       resolve(entity);
+                                   }
+                               });
                             },
 
 
@@ -1863,26 +1861,36 @@ if (!String.prototype.includes) {
                         },
                         methods: {
                             /**
-                             * Adds an entity to the store.
-                             * @param {boolean} refresh  When true, this will replace the existing entity in the store
-                             *                           state with an id matching this entity.  Otherwise, if it
-                             *                           already exists, what is there will NOT be replaced.
+                             * This fetches the entity for this model using the given id on the model.
+                             * By default, if it doesn't already exist in the store, then the REST API will be used to
+                             * retrieve and then commit it to the store.
+                             * @param {boolean} refresh  True means that even if there is this entity in the store, it
+                             *                           will be replaced/reverted to what is retrieved by the REST API.
+                             *                           False means that if the entity is in the store state, that will
+                             *                           be retrieved.
                              */
-                            add: function(refresh){
+                            fetchById: function (refresh) {
                                 var self = this;
                                 this.$store.dispatch(
-                                    'addEntityById',
-                                    {collection:this.collectionName,id:this.id,refresh:refresh}
-                                ).then( function(response){
-                                    //@todo, we could trigger some sort of property that the ui can use to indicate a
-                                    // success in adding the item.  A custom js event might be good?
-                                    self.event = response;
-                                })
-                                .catch( function(response){
-                                    //@todo, we could trigger some sort of property that the ui can use to indicate a
-                                    // failure in adding the item.  A custom js event might be good?
+                                    'fetchEntityById',
+                                    {collection:this.collectionName, entityId:this.id, refresh:refresh}
+                                ).then( function(response) {
+                                    self[self.modelName()] = response;
+                                    self['has'+eejs.utils.inflection.capitalize(self.modelName())] = true;
+                                }).catch( function(response) {
                                     console.log(response);
                                 });
+                            },
+                            /**
+                             * Update the props in this instance to the store.state for this entity.
+                             * If the entity doesn't exists then it will be added to the store state.  If it exists then
+                             * it will be replaced with the current values of the entity from the local data.
+                             */
+                            update: function(){
+                                this.$store.commit(
+                                    'updateEntityById',
+                                    {collection:this.collectionName,entity:this[this.modelName()]}
+                                );
                             },
                             save: function(){
                                 /**
@@ -1981,9 +1989,7 @@ if (!String.prototype.includes) {
                         );
                     }
 
-                    var collectionPrimaryKey = getPrimaryKeyFromSchema(collectionsSchema[collection]),
-                        collectionSingular = eejs.utils.inflection.singularize(collection),
-                        collectionSingularCapitalized = eejs.utils.inflection.capitalize(collectionSingular),
+                    var collectionSingular = eejs.utils.inflection.singularize(collection),
                         capitalizedRelation = eejs.utils.inflection.capitalize(relation),
                         mixinMethods = {};
 
@@ -1997,7 +2003,7 @@ if (!String.prototype.includes) {
                             'fetchRelatedForEntity',
                             {
                                 "collection": collection,
-                                "entityId": self[collectionPrimaryKey],
+                                "entityId": self.id,
                                 "relation": relation
                             }
                         ).then( function(response){
@@ -2015,14 +2021,13 @@ if (!String.prototype.includes) {
                     mixins.relations[collectionSingular][relation] = {
                         data: function(){
                             var dataObject = {};
-                            dataObject[collectionPrimaryKey] = this['initial'+collectionSingularCapitalized][collectionPrimaryKey];
                             dataObject[relation] = [];
                             dataObject['has'+capitalizedRelation] = false;
                             return dataObject;
                         },
                         store: eejs.api.collections,
                         mounted: function() {
-                            if (this[relation].length === 0 && this[collectionPrimaryKey] > 0) {
+                            if (this[relation].length === 0 && this.id > 0) {
                                 this['getRelated'+capitalizedRelation]();
                             }
                         },
