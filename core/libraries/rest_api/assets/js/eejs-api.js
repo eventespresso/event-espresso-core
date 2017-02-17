@@ -26,17 +26,10 @@ Vuex.Store.prototype.replaceEntityInCollection = function(collection, entity) {
     }
 
     var primaryKey = this.state[collection].primaryKey,
-        entityId = entity[primaryKey],
         searchObj = {},
         entityLocation = -1;
 
-    //if entity primary key is empty at this point then we use the temporary key for entity id and
-    //we'll make sure we're checking the collection for that temp_id match as well
-    if ( _.isUndefined(entityId) || entityId === 0 ) {
-        entityId = entity._id;
-        primaryKey = '_id';
-    }
-    searchObj[primaryKey] = entityId;
+    searchObj[primaryKey] = entity[primaryKey];
     entityLocation = _.findIndex(this.state[collection].entities, searchObj );
 
     //if there's no match, then there's no replacement so lets just push
