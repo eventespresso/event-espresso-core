@@ -163,7 +163,9 @@ Vuex.Store.prototype.commitEntityToCollection = function(collection, entity, ref
         self = this,
         entityToSave = {},
         relationIds = [],
-        relationsToReplicate = {};
+        relationsToReplicate = {},
+        linksToCommit = {},
+        calculatedFieldsToCommit = {};
 
     refresh = refresh || false;
     fromDb = fromDb || false;
@@ -176,14 +178,29 @@ Vuex.Store.prototype.commitEntityToCollection = function(collection, entity, ref
             //first detect if there are relations listed with the entity, if there are we
             //actually remove those from the entity and add them to the relation collection
             //and then also add a relation record for this collection and the other collection
-            _.each(entity, function(fieldValue, fieldKey, entity){
-                if(eejs.utils.isRelationOf(fieldKey,collection)){
+            _.each(entity, function(fieldValue, fieldKey, entity) {
+                if (eejs.utils.isRelationOf(fieldKey, collection)) {
                     //okay this field is for a relation, so let's go ahead and take care of
                     //committing it's entities, and then doing the relation commits.
                     //if the fieldValue is not an array let's make it an array.  This is needed
                     //because some relations are singular.
                     fieldValue = !_.isArray(fieldValue) ? [fieldValue] : fieldValue;
                     relationsToReplicate[eejs.utils.inflection.pluralize(fieldKey)] = fieldValue;
+                    //next extract _links and _calculated fields out of the entity into their specific properties in the
+                    //collection state.
+                } else if (fieldKey === eejs.api.main.getPrimaryKeyForCollection(collection)) {
+                    if (_.has(entity, '_links')) {
+                        linksToCommit[fieldValue] = entity._links;
+                    }
+                    if (_.has(entity, '_calculated_fields')) {
+                        calculatedFieldsToCommit[fieldValue] = entity._calculated_fields;
+                    }
+                    //make sure primary key is kept with the entity
+                    entityToSave[fieldKey] = fieldValue;
+                } else if(fieldKey === '_links' || fieldKey === '_calculated_fields') {
+                    //skip because we should have already handled this and we do not want it committed with the entity
+                    //record
+                    return true;
                 } else {
                     entityToSave[fieldKey] = fieldValue;
                 }
@@ -197,28 +214,50 @@ Vuex.Store.prototype.commitEntityToCollection = function(collection, entity, ref
             state[collection].entities.push(entityToSave);
         } else if (refresh) {
             self.replaceEntityInCollection(collection,entityToSave)
+        //handle _links and _calculated_field commits.
+        if (!_.isEmpty(linksToCommit)) {
+            _.each(linksToCommit, function(links, entityId) {
+               state[collection]._links[entityId] = links;
+            });
+        }
+
+        if (!_.isEmpty(calculatedFieldsToCommit)) {
+            _.each(calculatedFieldsToCommit, function(fields, entityId) {
+               state[collection]._calculated_fields[entityId] = fields;
+            });
         }
 
         //next let's loop through relationsToReplicate now that we have the filtered entity and add relations (which
-        //includes commiting each relation entity.
+        //includes committing each relation entity.
         if (!_.isEmpty(relationsToReplicate)) {
+            var primaryKeyValueForRelationObject = 0,
+                primaryKeyValueForEntity = 0;
             _.each(relationsToReplicate, function (relationObjects, relation) {
                 relationIds = eejs.utils.getIdsFromEntities(relationObjects, state[relation].primaryKey);
                 _.each(relationObjects, function (relationObject) {
-                    self.commitEntityToCollection(relation, relationObject);
+                    self.commitEntityToCollection(relation, relationObject, false, fromDb);
+
+                    //get primaryKey value for relationObject.
+                    primaryKeyValueForRelationObject = eejs.utils.getIdFromEntity(relationObject, state[relation].primaryKey);
+                    primaryKeyValueForEntity = eejs.utils.getIdFromEntity(entity,state[collection].primaryKey);
+
                     //then commit this entity as a relation on the entities relation!
                     self.commitRelationsForEntity(
                         relation,
-                        relationObject[state[relation].primaryKey],
+                        primaryKeyValueForRelationObject,
                         collection,
-                        entity[state[collection].primaryKey]
+                        primaryKeyValueForEntity,
+                        true,
+                        fromDb
                     );
                 });
                 self.commitRelationsForEntity(
                     collection,
-                    entity[state[collection].primaryKey],
+                    primaryKeyValueForEntity,
                     relation,
-                    relationIds
+                    relationIds,
+                    true,
+                    fromDb
                 );
             });
         }
@@ -1249,8 +1288,10 @@ if (!String.prototype.includes) {
                              * This stores the relations and their ids for the collection.  So for example if the
                              * collection was events.  Then the 'datetime' relation object in here would be something like:
                              * ```
-                             * relations: {'datetimes': [12,34,41]}
+                             * relations: {'datetimes': { 236: [12,34,41], 456: [12] }
                              * ```
+                             *
+                             * The key is the EVT_ID for the event, the value is the array of DTT_ID's related to that event.
                              */
                             relations:{},
                             primaryKey: getPrimaryKeyFromSchema(collectionSchema),
@@ -1260,7 +1301,21 @@ if (!String.prototype.includes) {
                              * for that property.  This can allow for rudimentary validation in the future as well.
                              */
                             allowedProperties: getPropertiesFromSchema(collectionSchema),
-                            collectionEndpoint: collection + '/'
+                            collectionEndpoint: collection + '/',
+                            /**
+                             * These two properties are retrieved from the entity response.  Contains an object where keys
+                             * are the values of the primary key for entities in this collection, and the value is the
+                             * corresponding object for that entity.  So for _links it would be something like:
+                             * _links : { 236: { .._linksobj_for_event_236}, 14: { ..linksobj_for_event_14} } ,
+                             */
+                            _links : {},
+                            _calculated_fields : {},
+                            changeMap : {
+                                create : [],
+                                update : [],
+                                delete : [],
+                                relations : {}
+                            }
                         }
                     };
                     return true;
