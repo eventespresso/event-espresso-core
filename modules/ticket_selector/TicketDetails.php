@@ -67,11 +67,51 @@ class TicketDetails
 
 
     /**
+     * @return \EE_Ticket
+     */
+    public function getTicket()
+    {
+        return $this->ticket;
+    }
+
+
+
+    /**
      * @return bool
      */
     public function showTicketDetails()
     {
         return $this->template_settings->show_ticket_details;
+    }
+
+
+
+    /**
+     * @return \EE_Ticket_Selector_Config
+     */
+    public function getTemplateSettings()
+    {
+        return $this->template_settings;
+    }
+
+
+
+    /**
+     * @return string
+     */
+    public function getDateFormat()
+    {
+        return $this->date_format;
+    }
+
+
+
+    /**
+     * @return string
+     */
+    public function getTimeFormat()
+    {
+        return $this->time_format;
     }
 
 
