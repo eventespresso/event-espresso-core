@@ -73,16 +73,19 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 
 
-	/**
-	 * Overrides parent set() method so that all calls to set( 'REG_code', $REG_code ) OR set( 'STS_ID', $STS_ID ) can be routed to internal methods
-	 * @param string $field_name
-	 * @param mixed  $field_value
-	 * @param bool   $use_default
-	 */
+    /**
+     * Overrides parent set() method so that all calls to set( 'REG_code', $REG_code ) OR set( 'STS_ID', $STS_ID ) can be routed to internal methods
+     *
+     * @param string $field_name
+     * @param mixed  $field_value
+     * @param bool   $use_default
+     * @throws \EE_Error
+     * @throws \RuntimeException
+     */
 	public function set( $field_name, $field_value, $use_default = FALSE ) {
 		switch( $field_name ) {
 			case 'REG_code' :
-				if ( ! empty( $field_value ) && $this->reg_code() == '' ) {
+				if ( ! empty( $field_value ) && $this->reg_code() === '' ) {
 					$this->set_reg_code( $field_value, $use_default );
 				}
 				break;
@@ -96,28 +99,39 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 
 
-	/**
-	 * Set Status ID
-	 * updates the registration status and ALSO...
-	 * calls reserve_registration_space() if the reg status changes TO approved from any other reg status
-	 * calls release_registration_space() if the reg status changes FROM approved to any other reg status
-	 *
-	 * @param string  $new_STS_ID
-	 * @param boolean $use_default
-	 * @return bool
-	 * @throws \EE_Error
-	 */
+    /**
+     * Set Status ID
+     * updates the registration status and ALSO...
+     * calls reserve_registration_space() if the reg status changes TO approved from any other reg status
+     * calls release_registration_space() if the reg status changes FROM approved to any other reg status
+     *
+     * @param string  $new_STS_ID
+     * @param boolean $use_default
+     * @return bool
+     * @throws \RuntimeException
+     * @throws \EE_Error
+     */
 	public function set_status( $new_STS_ID = NULL, $use_default = FALSE ) {
 		// get current REG_Status
 		$old_STS_ID = $this->status_ID();
 		// if status has changed
 		if (
-			$this->ID() // ensure registration is in the db
-			&& $old_STS_ID != $new_STS_ID // and that status has actually changed
+			$old_STS_ID !== $new_STS_ID // and that status has actually changed
 			&& ! empty( $old_STS_ID ) // and that old status is actually set
 			&& ! empty( $new_STS_ID ) // as well as the new status
+			&& $this->ID() // ensure registration is in the db
 		) {
-			// TO approved
+            // these reg statuses should not be considered in any calculations involving monies owing
+            $closed_reg_statuses = ! empty($closed_reg_statuses)
+                ? $closed_reg_statuses
+                : EEM_Registration::closed_reg_statuses();
+            // true if registration has been cancelled or declined
+            $canceled_or_declined = in_array($new_STS_ID, $closed_reg_statuses, true)
+                                    && ! in_array($old_STS_ID, $closed_reg_statuses, true);
+            // true if reinstating cancelled or declined registration
+            $reinstated = in_array($old_STS_ID, $closed_reg_statuses, true)
+                          && ! in_array($new_STS_ID, $closed_reg_statuses, true);
+            // TO approved
 			if ( $new_STS_ID === EEM_Registration::status_id_approved ) {
 				// reserve a space by incrementing ticket and datetime sold values
 				$this->_reserve_registration_space();
@@ -127,6 +141,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 				// release a space by decrementing ticket and datetime sold values
 				$this->_release_registration_space();
 				do_action( 'AHEE__EE_Registration__set_status__from_approved', $this, $old_STS_ID, $new_STS_ID );
+			} else if ($canceled_or_declined) {
+				// release a reserved space by decrementing ticket and datetime reserved values
+				$this->_release_reserved_space();
+				do_action( 'AHEE__EE_Registration__set_status__canceled_or_declined', $this, $old_STS_ID, $new_STS_ID );
 			}
 			// update status
 			parent::set( 'STS_ID', $new_STS_ID, $use_default );
@@ -136,16 +154,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 			$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
 			/** @type EE_Transaction_Payments $transaction_payments */
 			$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
-			// these reg statuses should not be considered in any calculations involving monies owing
-			$closed_reg_statuses = ! empty( $closed_reg_statuses )
-				? $closed_reg_statuses
-				: EEM_Registration::closed_reg_statuses();
-			if (
-				in_array( $new_STS_ID, $closed_reg_statuses )
-				&& ! in_array( $old_STS_ID, $closed_reg_statuses )
-			) {
-				// cancelled or declined registration
-				$registration_processor->update_registration_after_being_canceled_or_declined(
+			// update REGs and TXN when cancelled or declined registrations involved
+            if ($canceled_or_declined) {
+                // cancelled or declined registration
+                $registration_processor->update_registration_after_being_canceled_or_declined(
 					$this,
 					$closed_reg_statuses
 				);
@@ -154,10 +166,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 					$closed_reg_statuses,
 					false
 				);
-			} else if (
-				in_array( $old_STS_ID, $closed_reg_statuses )
-				&& ! in_array( $new_STS_ID, $closed_reg_statuses )
-			) {
+			} else if ($reinstated) {
 				// reinstating cancelled or declined registration
 				$registration_processor->update_canceled_or_declined_registration_after_being_reinstated(
 					$this,
@@ -188,10 +197,12 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 
 
-	/**
-	 * increments this registration's related ticket sold and corresponding datetime sold values
-	 * @return void
-	 */
+    /**
+     * increments this registration's related ticket sold and corresponding datetime sold values
+     *
+     * @return void
+     * @throws \EE_Error
+     */
 	private function _reserve_registration_space() {
 		$ticket = $this->ticket();
 		$ticket->increase_sold();
@@ -202,12 +213,13 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 
 
-	/**
-	 * Gets the ticket this registration is for
-	 *
-	 * @param boolean $include_archived whether to include archived tickets or not.
-	 * @return EE_Ticket
-	 */
+    /**
+     * Gets the ticket this registration is for
+     *
+     * @param boolean $include_archived whether to include archived tickets or not.
+     * @return EE_Ticket|EE_Base_Class
+     * @throws \EE_Error
+     */
 	public function ticket( $include_archived = TRUE ) {
 		$query_params = array();
 		if ( $include_archived ) {
@@ -249,13 +261,29 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 
 
-	/**
-	 * decrements (subtracts) this registration's related ticket sold and corresponding datetime sold values
-	 * @return void
-	 */
+    /**
+     * decrements (subtracts) this registration's related ticket sold and corresponding datetime sold values
+     *
+     * @return void
+     * @throws \EE_Error
+     */
 	private function _release_registration_space() {
 		$ticket = $this->ticket();
 		$ticket->decrease_sold();
+		$ticket->save();
+	}
+
+
+
+    /**
+     * decrements (subtracts) this registration's related ticket reserved and corresponding datetime reserved values
+     *
+     * @return void
+     * @throws \EE_Error
+     */
+	private function _release_reserved_space() {
+		$ticket = $this->ticket();
+		$ticket->decrease_reserved();
 		$ticket->save();
 	}
 
