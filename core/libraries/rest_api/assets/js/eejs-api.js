@@ -74,6 +74,8 @@ Vuex.Store.prototype.getCollectionEndpoint = function(collection){
  *                       do a storeCheck for the collection and throw an exception if its not
  *                       present.  Otherwise if the collection doesn't exist, it just will
  *                       return false. Defaults to true.
+ * @param {boolean} fromDb = [optional]. Used to indicate whether the incoming relations are coming from the db or not.
+ *                           defaults to false.
  * @returns {boolean}
  */
 Vuex.Store.prototype.commitRelationsForEntity = function(
@@ -81,7 +83,8 @@ Vuex.Store.prototype.commitRelationsForEntity = function(
     collectionEntityId,
     relation,
     relationEntityId,
-    doStoreCheck
+    doStoreCheck,
+    fromDb
 ) {
     //make sure all required properties are set
     if (_.isUndefined(collection)
@@ -97,8 +100,10 @@ Vuex.Store.prototype.commitRelationsForEntity = function(
     }
 
     var state = this.state;
+    var self = this;
 
-    doStoreCheck = _.isUndefined(doStoreCheck) ? true : doStoreCheck;
+    doStoreCheck = doStoreCheck || true;
+    fromDb = fromDb || false;
 
     //make sure relationEntityId is an array
     relationEntityId = _.isArray(relationEntityId)
@@ -141,11 +146,14 @@ Vuex.Store.prototype.commitRelationsForEntity = function(
  *
  * Note, this method should only be called from within a mutation.
  *
- * @param {string} collection
- * @param {object} entity
- * @param {boolean} refresh
+ * @param {string} collection  The string representing the collection name
+ * @param {object} entity      The entity being added to the collection.
+ * @param {boolean} refresh    (optional). Indicates whether this entity should replace any existing entity in the state
+ *                             or not. Defaults to false
+ * @param {boolean} fromDb     (optional). Indicates (if true) that the entity has been retrieved from the db holding
+ *                              it. Defaults to false.
  */
-Vuex.Store.prototype.commitEntityToCollection = function(collection, entity, refresh){
+Vuex.Store.prototype.commitEntityToCollection = function(collection, entity, refresh, fromDb){
     //make sure required props are here
     if(_.isUndefined(collection) || _.isUndefined(entity)) {
         throw new eejs.exception('Either the collection or entity is missing.');
@@ -158,6 +166,7 @@ Vuex.Store.prototype.commitEntityToCollection = function(collection, entity, ref
         relationsToReplicate = {};
 
     refresh = refresh || false;
+    fromDb = fromDb || false;
 
     //does this collection exist?
     if ( _.has(state,collection) ) {
@@ -782,28 +791,28 @@ if (!String.prototype.includes) {
                         },
                         mutations: {
                             /**
-                             * Used to set a value on a model.
+                             * Used to update the entity stored in the state for the given collection and entity.
                              * @param {object} state  Vuex store state
                              * @param {object} payload Expected to be an object with model, changes and filter keys.
-                             *                model =   the name of the model the value is being set on
+                             *                collection =   the name of the collection the entity belongs to
                              *                          (the pluralized slug).
-                             *                changes = an object of key value pairs for the properties
-                             *                          and values being changed on the model
-                             *                id =      the value of the primary key for the model entity being updated.
+                             *                entity     =   the entity being updated in the state.
                              *
                              */
                             updateEntityById: function( state, payload ) {
                                 //make sure we have required payload items here.
-                                if (! _.has(payload,'model' ) || ! _.has(payload,'changes') || !_.has(payload,'id') ) {
-                                    throw new eejs.exception(
-                                        'The payload for `setById` is missing a required key.  Double-check and make' +
-                                        ' sure there is a `model`, `changes` and `id` key set.'
-                                    );
+                                var verified = eejs.utils.verifyRequiredKeysPresentInObject(
+                                    payload,
+                                    ['collection', 'entity']
+                                );
+
+                                if (verified !== true && _.isObject(verified)) {
+                                    throw new eejs.exception('The following required keys are missing from the ' +
+                                        'payload object: ' + verified.join());
                                 }
-                                if (_.has(state,payload.model+'s')) {
-                                    //get existing model entity if present and then add it
-                                    //not sure if I need this so just leaving for now.
-                                }
+
+                                //replace or add the entity into store state
+                                eejs.api.collections.commitEntityToCollection(payload.collection, payload.entity, true);
                             },
 
                             /**
@@ -815,17 +824,29 @@ if (!String.prototype.includes) {
                              *                      and values for the entity.
                              *          refresh     = [optional] defaults to false, if true,
                              *                      then we'll allow replacing the existing entity values.
+                             *          fromDb      = [optional] defaults to false, used to indicate (if false) when the
+                             *                        entity being added is from the db.  This has implications for
+                             *                        when the changeMap is updated.
                              */
                             addEntity: function( state, payload ) {
-                                //make sure required payload items are here.
-                                if (!_.has(payload,'collection') || !_.has(payload,'entity') ) {
+                                var verified = eejs.utils.verifyRequiredKeysPresentInObject(
+                                    payload,
+                                    ['collection','entity']
+                                );
+                                if (verified !== true && _.isObject(verified)) {
                                     throw new eejs.exception(
                                         'The payload for `addEntity` is missing a required key. Double-check and ' +
                                         'make sure there is a `collection` and `entity` key set (with appropriate values)'
                                     );
                                 }
                                 payload.refresh = ! _.isUndefined(payload.refresh) ? payload.refresh : false;
-                                eejs.api.collections.commitEntityToCollection(payload.collection,payload.entity,payload.refresh);
+                                payload.fromDb = ! _.isUndefined(payload.fromDb) ? payload.fromDb : false;
+                                eejs.api.collections.commitEntityToCollection(
+                                    payload.collection,
+                                    payload.entity,
+                                    payload.refresh,
+                                    payload.fromDb
+                                );
                             },
 
 
@@ -853,12 +874,12 @@ if (!String.prototype.includes) {
                              *                       return false. Defaults to true.
                              */
                             addRelationsForEntity: function(state, payload) {
+                                var verified = eejs.utils.verifyRequiredKeysPresentInObject(
+                                    payload,
+                                    ['collection','collectionEntityId', 'relation', 'relationEntityId']
+                                );
                                 //make sure required payload items are here.
-                                if (! _.has(payload,'collection')
-                                    || ! _.has(payload,'collectionEntityId')
-                                    || ! _.has(payload,'relation')
-                                    || ! _.has(payload,'relationEntityId')
-                                ) {
+                                if (verified !== true && _.isObject(verified)) {
                                     throw new eejs.exception(
                                         'The payload for `addRelation` is missing a required property.  Double-check ' +
                                         'and make sure there is a `collection`, `collectionEntityId`, `relation`, and ' +
@@ -907,21 +928,27 @@ if (!String.prototype.includes) {
                              * Note: one thing that we might want to do to improve this,
                              *      is move the actions and mutations to each individual module.
                              *      That way they don't have to be aware of any of the other
-                             *      collections and can just handle their own.
-                             *
-                             * Note: the caveat to adding this to modules is that it'd need to be
-                             *      a unique function name on each module because the way vuex works
-                             *      is within modules it exports the actions/mutations/getters
+                             *      collections and can just handle their own.  The caveat to adding this to modules
+                             *      is that it'd need to be a unique function name on each module because the way vuex
+                             *      works is within modules it exports the actions/mutations/getters
                              *      to the global space so that when a specific function is called,
                              *      it acts on all modules with that function defined.
                              *      So we won't want necessarily be wanting to get
                              *      all collections for each module when we call it!
                              *
+                             *      @see https://vuex.vuejs.org/en/modules.html for more info on namespacing etc to allow
+                             *      doing this.
+                             *
                              * @return Promise
                              */
                             fetchCollection: function( context, payload ) {
                                 return new Promise( function(resolve, reject) {
-                                    if ( _.isUndefined(payload.collection) || payload.collection === '' ) {
+                                    var verified = eejs.utils.verifyRequiredKeysPresentInObject(
+                                        payload,
+                                        ['collection']
+                                    );
+                                    //make sure required payload items are here.
+                                    if (verified !== true && _.isObject(verified)) {
                                         reject(
                                             'In order to get a collection, you need to specify the collection to' +
                                             ' retrieve via payload.collection.'
@@ -936,10 +963,15 @@ if (!String.prototype.includes) {
                                         );
                                     }
 
-                                    var endpointUri = eejs.api.collections.getCollectionEndpoint(payload.collection);
+                                    var endpointUri = context.getters.getCollectionEndpoint(payload.collection);
 
                                     payload.refresh = ! _.isUndefined(payload.refresh) ? payload.refresh: false;
 
+                                    //if not refreshing, then we're just returning the entities already in the store
+                                    //state for this collection
+                                    if (! payload.refresh) {
+                                        resolve(context.state[payload.collection].entities);
+                                    }
 
                                     //add the incoming query object to the endpoint.
                                     if (!_.isUndefined(payload.queryString)) {
@@ -960,7 +992,8 @@ if (!String.prototype.includes) {
                                                 {
                                                     collection: payload.collection,
                                                     entity: entity,
-                                                    refresh: payload.refresh
+                                                    refresh: payload.refresh,
+                                                    fromDb: true
                                                 }
                                             )
                                         });
@@ -1033,7 +1066,11 @@ if (!String.prototype.includes) {
                                     }
 
                                     //if relationEntities length is 0 or refresh is set, then lets do a fetch on the api.
-                                    if ( relationEntities.length === 0 || refresh ) {
+                                    //Note: this will not fetch anything from the api if the entityId indicates a new object.
+                                    if (
+                                        (relationEntities.length === 0 || refresh)
+                                        && ! context.getters.isNewObject(payload.entityId)
+                                    ) {
                                         var relationQueryObject = {},
                                             collectionSingularCapitalized = eejs.utils.inflection.transform(
                                                 payload.collection,
