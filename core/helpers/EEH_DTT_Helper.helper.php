@@ -962,5 +962,17 @@ class EEH_DTT_Helper
         return strtotime("{$month} 1{$year}");
     }
 
+	/**
+     * This simply returns the timestamp for tomorrow (midnight next day) in this sites timezone.  So it may be midnight
+	* for this sites timezone, but the timestamp could be some other time GMT.
+    */
+    public static function tomorrow()
+	{
+		//The multiplication of -1 ensures that we switch positive offsets to negative and negative offsets to positive
+		//before adding to the timestamp.  Why? Because we want tomorrow to be for midnight the next day in THIS timezone
+		//not an offset from midnight in UTC.  So if we're starting with UTC 00:00:00, then we want to make sure the
+		//final timestamp is equivalent to midnight in this timezone as represented in GMT.
+		return strtotime('tomorrow') + (self::get_site_timezone_gmt_offset()*-1);
+	}
 
 }// end class EEH_DTT_Helper

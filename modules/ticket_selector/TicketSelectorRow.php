@@ -22,6 +22,11 @@ abstract class TicketSelectorRow
     protected $ticket;
 
     /**
+     * @var int $total_tickets
+     */
+    protected $total_tickets;
+
+    /**
      * @var int $max_atndz
      */
     protected $max_atndz;
