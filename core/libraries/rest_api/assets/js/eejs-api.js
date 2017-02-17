@@ -903,6 +903,11 @@ if (!String.prototype.includes) {
                  */
                 collections = [],
                 /**
+                 * This holds all the defaults for fields on a registered collection entity as obtained from the schema.
+                 * @type {object}
+                 */
+                defaults = {},
+                /**
                  * Cache of the response from pinging the discovery route.
                  * @type {object}
                  */
@@ -937,6 +942,13 @@ if (!String.prototype.includes) {
                  * And then mixins for each built relations mixin.  So if `events` and `datetimes` was registered:
                  * eejs.api.mixins.relations.event.datetimes
                  * eejs.api.mixins.relations.datetime.events
+                 *
+                 * And then mixins for each collection that is a build of computed properties specific to model which
+                 * links the fields reactively with the store state for that model. So if `events` and `datetimes` was
+                 * registered:
+                 * eejs.api.mixins.computedProperties.events
+                 * eejs.api.mixins.computedProperties.datetimes
+                 *
                  *
                  * @type {object}
                  */
@@ -1050,7 +1062,29 @@ if (!String.prototype.includes) {
                     var resource = Vue.resource(restRoute+collection, {}, optionsRequest);
                     return resource.Options().then(function(response){
                         collectionsSchema[collection] = response.body.schema;
+                        setDefaultsForCollectionEntity(collection, response.body.schema);
                     });
+                },
+                /**
+                 * This reads the incoming schema and uses that to set the collection property in the defaults object
+                 * using defaults value for each field in the schema for the collection entity.
+                 *
+                 * @param {string} collection The collection this schema is for.
+                 * @param {object} schema     The json schema for entities in this collection.
+                 */
+                setDefaultsForCollectionEntity = function(collection, schema) {
+                    //set collection on the default property if its not already set.
+                    defaults[collection] = defaults[collection] || {};
+
+                    //loop through schema properties and get the default prop from each field.
+                    if (_.has(schema, 'properties')) {
+                        _.each(schema.properties, function(fieldSchema, field) {
+                            if (_.has(fieldSchema, 'default')) {
+
+                                defaults[collection][field] = fieldSchema.default;
+                            }
+                        });
+                    }
                 },
                 /**
                  * If the discoveryCache has not been set, then this does the initial query to the base RestRoute for
@@ -1762,6 +1796,7 @@ if (!String.prototype.includes) {
                 buildMixins = function(){
                     buildMainMixins();
                     buildRelationMixins();
+                    buildComputedPropertiesMixinsForModels();
                     //add mixins to the exposed eejs.api.mixins object
                     eejs.api.mixins = mixins;
                 },
@@ -1832,27 +1867,54 @@ if (!String.prototype.includes) {
                     };
 
                     mixins.model = {
-                        modelId: 0,
                         collection: '',
+                        id: 0,
+                        autoUpdate: true,
                         store: eejs.api.collections,
-                        props: ['id','collection'],
+                        props: ['collection'],
+                        data: function() {
+                          return { id: 0 };
+                        },
                         created : function(){
+                            //make sure incoming $options.id is an integer
+                            this.$options.id = parseInt(this.$options.id);
                             /**
-                             * If the primary key property is set then override modelId (but only if that isn't set).
-                             * This allows client code to completely customize a model for a specific entity in a Vue
-                             * instance instead of using a pre-built one.  So something like this:
+                             * There are three ways for determining what gets set as the model on the object:
+                             * 1. Pass in the id via the `id` prop with the options when instantiating,
+                             *    (eg eejs.api.components.event.id = 10);
+                             * 2. A parent can pass in an ID for the model via the `initialId` prop. This triggers a
+                             *    fetch via the REST API.
+                             * 3. A parent can pass in a full object containing the things to replace defaults with via
+                             *    the `initial{modelName}` (i.e. initialEvent) prop.  This latter does NOT trigger a fetch
+                             *    via the REST API.*
                              *
-                             * var myCustomEventModel = new eejs.api.vue({
-                             *      app: '#my-custom-event-model',
-                             *      collection: 'events',
-                             *      modelId: 25,
-                             *      mixins: [eejs.api.mixins.model]
-                             * });
-                             **/
-                            if ( this.$options.modelId > 0 ) {
-                                this.id = this.$options.modelId;
-                                this.add();
+                             * Note, these are hierarchical.  The last option overrides and of the previous and so on.
+                             *
+                             * If after all the other conditions the id prop is still equal to zero, then this will just
+                             * become a default object with the id set to a temporary client side unique id.
+                             */
+                            if (this.$options.id > 0 ) {
+                                this.id = this.$options.id;
+                                this.fetchById(true);
+                            } else if (this.initialId) {
+                                this.id = this.initialId;
+                                this.fetchById(true);
+                            } else if (!_.isEmpty(this['initial'+eejs.utils.inflection.capitalize(this.modelName())])) {
+                                //if `initialId` is set, we will be populating from a fetch on create.  Otherwise if
+                                //initial{modelname} is not empty, we'll populate from that object.
+                                this.replaceDefaults(this['initial'+eejs.utils.inflection.capitalize(this.modelName())], false);
+                                //ensure that a unique id has been set.
+                                this.ensureHasUniqueId();
+                                //now we actually DO have an entity so we should set the `has_` property accordingly.
+                                this['has'+eejs.utils.inflection.capitalize(this.modelName())] = true;
+                                this.update();
+                            } else if (this.id === 0) {
+                                this.ensureHasUniqueId();
+                                this['has'+eejs.utils.inflection.capitalize(this.modelName())] = true;
+                                this.update();
                             }
+                        },
+                        mounted : function() {
                         },
                         computed: {
                             collectionName: function() {
@@ -1881,6 +1943,39 @@ if (!String.prototype.includes) {
                                     console.log(response);
                                 });
                             },
+
+                            /**
+                             * This method is used to override the default values for the field on the initial setup of
+                             * the Data property.
+                             * @param {object} replacements Should be what's replacing the model values in the data object.
+                             * @param {bool}   update       Whether or not to trigger an update in the store state after
+                             *                              replacing.
+                             */
+                            replaceDefaults: function (replacements, update) {
+                                var self = this;
+                                replacements = replacements || {};
+                                update = update || false;
+
+                                //loop through each property for the model, if there's a value for this in replacements
+                                //use that.
+                                _.each(
+                                    self[self.modelName()],
+                                    function(fieldValue, fieldName) {
+                                        if (_.has(replacements, fieldName)) {
+                                            self.$set(
+                                                self[self.modelName()],
+                                                fieldName,
+                                                replacements[fieldName]
+                                            );
+                                        }
+                                    }
+                                );
+                                //update the store state if requested
+                                if (update) {
+                                    this.update();
+                                }
+                            },
+
                             /**
                              * Update the props in this instance to the store.state for this entity.
                              * If the entity doesn't exists then it will be added to the store state.  If it exists then
@@ -1908,7 +2003,12 @@ if (!String.prototype.includes) {
                              * @returns {boolean}
                              */
                             isEmpty: function() {
-                                return _.isEmpty(this[this.modelName()]);
+                                return _.isEmpty(this[this.modelName()])
+                                    || (
+                                        _.size(this[this.modelName()]) === 1
+                                        && _.has(this[this.modelName()], getPrimaryKeyFromSchema(collectionsSchema[this.collectionName]))
+                                    )
+                                    ;
                             },
 
                             /**
@@ -1925,6 +2025,35 @@ if (!String.prototype.includes) {
                              */
                             modelName: function() {
                                 return eejs.utils.inflection.singularize(this.collectionName);
+                            },
+
+
+                            /**
+                             * This basically ensures that a unique id is set for both the internal component `id`
+                             * property and the entity ID.
+                             */
+                            ensureHasUniqueId: function() {
+                                if (this.id > 0 || (_.isString(this.id) && this.id !== '')) {
+                                    //it's already been set.
+                                    return;
+                                }
+                                var currentModelId = this[this.modelName()][getPrimaryKeyFromSchema(collectionsSchema[this.collectionName])];
+                                if ((currentModelId !== 0
+                                    || (_.isString(currentModelId) && currentModelId !== '')
+                                    )
+                                    && ! this.$store.getters.hasEntityInCollection(collection,this[this.modelName])
+                                ){
+                                    this.id = currentModelId;
+                                    return;
+                                }
+
+                                //if we're still here, then that means we need to generate a unique ID.
+                                this.id = _.uniqueId('_new_id_');
+                                this.$set(
+                                    this[this.modelName()],
+                                    getPrimaryKeyFromSchema(collectionsSchema[this.collectionName]),
+                                    this.id
+                                );
                             }
                         }
                     };
@@ -2067,43 +2196,32 @@ if (!String.prototype.includes) {
                         capitalizedSingularizedCollection = eejs.utils.inflection.singularize(capitalizedCollection),
                         mixinsForModelComponent = [];
 
+                    mixinsForModelComponent.push(mixins.model);
+
                     //first the model component
                     if (_.has(mixins.relations, singularizedCollection)) {
                         _.each(mixins.relations[singularizedCollection], function(relationMixinObject){
                             mixinsForModelComponent.push(relationMixinObject);
                         });
-                        mixinsForModelComponent.push(mixins.model);
+                    }
+
+                    //if we have computed mixins
+                    if (_.has(mixins.computedProperties, collection)) {
+                        mixinsForModelComponent.push(mixins.computedProperties[collection]);
                     }
 
                     components[singularizedCollection] = {
-                        "collection": collection,
-                        "props": ['initial' + capitalizedSingularizedCollection],
-                        "data": function() {
+                        'collection': collection,
+                        'props' : ['initial'+capitalizedSingularizedCollection, 'initialId'],
+                        'data': function() {
                             var dataObject = {};
-                            dataObject[singularizedCollection] = this['initial' + capitalizedSingularizedCollection];
                             dataObject['has' + capitalizedSingularizedCollection] = false;
+                            //set default for the model fields
+                            dataObject[singularizedCollection] = populateDefaultFields(collection);
                             return dataObject;
                         },
-                        "mounted" : function() {
-                            //if the {model} property is empty, and we have an id, then lets attempt to get the
-                            // {model} property set.
-                            if ( this.isEmpty() && this.id > 0 ) {
-                                var self = this;
-                                this.$store.dispatch('addEntityById', {collection:this.collectionName,id:this.id})
-                                    .then( function(response){
-                                        //@todo, we could trigger some sort of property that the ui can use to indicate
-                                        // a success in getting the item.  A custom js event might be good?
-                                        self[singularizedCollection] = response;
-                                        self['has' + capitalizedSingularizedCollection] = true;
-                                    })
-                                    .catch( function(response){
-                                        //@todo, we could trigger some sort of property that the ui can use to indicate
-                                        // a failure in getting the item.  A custom js event might be good?
-                                        console.log(response);
-                                    });
-                            }
-                        },
-                        "mixins" : mixinsForModelComponent
+                        'watch' : buildWatchersForEachModelField(collection),
+                        'mixins' : mixinsForModelComponent
                     };
 
                     //next the collection component
@@ -2122,6 +2240,21 @@ if (!String.prototype.includes) {
 
                     //make sure the collection component gets the model component registered with it.
                     components[collection]['components'][singularizedCollection] = components[singularizedCollection];
+                },
+                /**
+                 * This is used to populate default fields for the entity data object on the model component.
+                 * @param {string} The collection the fields are being populated from.
+                 * @returns {object}
+                 */
+                populateDefaultFields = function(collection) {
+                    var defaultFields = {};
+                    _.each(
+                        eejs.api.main.getDefaultsForCollection(collection),
+                        function(fieldDefault, fieldName){
+                            defaultFields[fieldName] = fieldDefault;
+                        }
+                    );
+                    return defaultFields;
                 },
                 /**
                  * Registers relation components on the given component.
@@ -2145,6 +2278,97 @@ if (!String.prototype.includes) {
                        }
                     });
                     components[component]['components'] = componentsToAdd;
+                },
+                /**
+                 * This is used to build the watchObject for each model field for use in a registered model component.
+                 * @param {string} collection  The model collection being built for (used to retrieve fields to use
+                 *                             from schema.
+                 * @return {object}
+                 */
+                buildWatchersForEachModelField = function(collection) {
+                    if (! _.has(collectionsSchema, collection)) {
+                        throw new eejs.exception( 'There is no registered collection for ' + collection + '. Unable to' +
+                            ' retrieve the schema for it to build watchers for the model fields.');
+                    }
+                    var modelName = eejs.utils.inflection.singularize(collection),
+                        watchers = {};
+                    _.each(getPropertiesFromSchema(collectionsSchema[collection]), function(els, fieldName) {
+                       watchers[modelName + '.' + fieldName] = function(value) {
+                           //@todo could eventually do some validation in here I suppose
+                           //@todo we could use the lodash .debounce to add some delay to this so it's not triggered on
+                           //every update.
+                           if (this.$options.autoUpdate) {
+                               this.update();
+                           }
+                       }
+                    });
+                    return watchers;
+                },
+                /**
+                 * Builds a computed properties mixin for each registered collection.  This is typically added to model
+                 * components so that there is a linked computed property for each model field with the store state for
+                 * that model.
+                 */
+                buildComputedPropertiesMixinsForModels = function(){
+                    _.each(collections, function(collection){
+                       buildComputedPropertiesMixinsForModel(collection);
+                    });
+                },
+                /**
+                 * Builds a computed properties mixin for the given collection.  This is typically added to model
+                 * components so that there is a linked computed property for each model field with the store state for
+                 * that model.
+                 *
+                 * @param {string} collection
+                 */
+                buildComputedPropertiesMixinsForModel = function(collection){
+                    if (! _.has(collectionsSchema, collection)) {
+                        throw new eejs.exception( 'There is no registered collection for ' + collection + '. Unable to' +
+                            ' retrieve the schema for it to build computed properties on the model mixin.');
+                    }
+
+                    mixins.computedProperties = mixins.computedProperties || {};
+                    mixins.computedProperties[collection] = mixins.computedProperties[collection] || {};
+                    mixins.computedProperties[collection].computed = mixins.computedProperties[collection].computed || {};
+
+                    var setException = function(value) {
+                        //computed properties can not be set.
+                        throw eejs.exception('Setting this property (' + property + ') is not allowed.  It is ' +
+                            'a computed property. The computed properties in the eejs.models are used for ' +
+                            'representing the state of this model object in the store.  If the `autoUpdate` ' +
+                            'flag was set to true on instantiation, then the store state will automatically be ' +
+                            'updated whenever the local state has changed.  Otherwise it will have to be ' +
+                            'triggered by calling the update method.');
+                    }
+
+                    _.each(getPropertiesFromSchema(collectionsSchema[collection]), function(els, property){
+                        //if the property is an object, that means there's different versions returned for this object
+                        if (_.has(els, 'properties')) {
+                            _.each(els.properties, function(el, propertyName) {
+                               mixins.computedProperties[collection].computed[property+eejs.utils.inflection.capitalize(propertyName)] = {
+                                   get: function() {
+                                       var mainProp = this.$store.getters.getFieldValueFromEntitybyId(this.collectionName,this.id,property);
+                                       /**
+                                        * Keep in mind that even though this propertyName might exist in the schema, it
+                                        * might not actually exist in the store.state because it requires permissions
+                                        * that the consumer has not authed successfully for.
+                                        */
+                                       return _.has(mainProp, propertyName) ? mainProp[propertyName] : null;
+                                   },
+                                   set: setException
+                               }
+                            });
+                        } else {
+
+                            //property representation for each item in the value (i.e. `rendered` or `raw` or `pretty`)
+                            mixins.computedProperties[collection].computed[property] = {
+                                get: function () {
+                                    return this.$store.getters.getFieldValueFromEntitybyId(this.collectionName, this.id, property);
+                                },
+                                set: setException
+                            }
+                        }
+                    });
                 },
                 /**
                  * Returns whether the given collection has a valid route (via the api discovery route) or not.
@@ -2188,6 +2412,35 @@ if (!String.prototype.includes) {
                         'retrieve the primary key for it.');
                 }
                 return getPrimaryKeyFromSchema(collectionsSchema[collection]);
+            };
+
+
+            /**
+             * Used to return the defaults property
+             * @return {object}
+             */
+            this.getDefaults = function() {
+                return defaults;
+            };
+
+
+            /**
+             * Used to return the defaults for a specific collection (if present).
+             * @param {string} collection
+             * @return {object}
+             */
+            this.getDefaultsForCollection = function(collection) {
+                if (_.isUndefined(collection)) {
+                    throw new eejs.exception('You need to send in a string representing the registered collection you ' +
+                        'want defaults for.');
+                }
+
+                if (!_.has(defaults, collection)) {
+                    throw new eejs.exception('There is no defaults record for the ' + collection + ' collection. Was ' +
+                        'that collection registered?');
+                }
+
+                return defaults[collection];
             };
 
 
