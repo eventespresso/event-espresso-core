@@ -45,18 +45,384 @@ Vuex.Store.prototype.replaceEntityInCollection = function(collection, entity) {
 };
 
 
+/**
+ * This is used to commit a change record to the `changeMap` property in the store state for a collection.
+ * This should only be called by a Vuex.mutation.
+ *
+ * @param {string} collection   The name of the collection the change is for.
+ * @param {object} entity       The object the change is for.
+ * @param {string} changeType   The type of change being recorded.  Accepts the following:
+ *                              'delete' - means the entity is deleted.
+ *                              'create' - means the entity is created.
+ *                              'update' -  means the entity had a property(s) changed on it.
+ */
+Vuex.Store.prototype.commitChangeRecord = function(collection, entity, changeType) {
+    //validate required properties are present.
+    if (_.isUndefined(collection)
+        || _.isUndefined(entity)
+        || _.isUndefined(changeType)
+    ) {
+        throw new eejs.exception(
+            'The properties for `commitChangeRecord` are not all defined. Double-check and make sure there is a ' +
+            '`collection`, `entity`, and `changeType` values passed in.'
+        );
+    }
+
+    //check that the collection actually exists (meaning it was registered) in the store.  If it doesn't then the
+    //changeMap cannot be written to.
+    if (!_.has(this.state, collection)) {
+        throw new eejs.exception(
+            'Unable to record a changeRecord for the ' + collection + ' collection because there is no record for it ' +
+            'in the store state.  Are  you sure it was registered?'
+        );
+    }
+
+    //check if there is a primaryKey in the entity for this collection (validate we're recording state for the right
+    //entity
+    if (!_.has(entity, eejs.api.main.getPrimaryKeyForCollection(collection))) {
+        throw new eejs.exception(
+            'The provided entity object does not have a property matching the primaryKey for the given collection (' +
+                collection + '). Are you sure the correct entity was passed in?'
+        );
+    }
+
+    var entityId = entity[eejs.api.main.getPrimaryKeyForCollection(collection)];
+
+    //k looks like we're able to get this changeType added.
+    switch(changeType) {
+        case 'delete' :
+            //make sure if this is in either the create or update map its removed from there (and also remove any
+            // change records for relations).
+            this.removeChangeRecord(collection, entityId, 'create');
+            this.removeChangeRecord(collection, entityId, 'update');
+            this.removeAllRelatedChangeRecords(collection,entityId);
+            if (_.indexOf(this.state[collection].changeMap.delete, entityId) === -1) {
+                //if this is a NEW object then it doesn't need added here because it hasn't been persisted yet so no
+                //deletes necessary!
+                if (! this.getters.isNewObject(entityId)) {
+                    this.state[collection].changeMap.delete.push(entityId);
+                }
+            }
+            break;
+        case 'create' :
+            //some simple validation.  If this is already in the 'update' or 'delete' maps then how is it getting "created"?
+            if (_.indexOf(this.state[collection].changeMap.delete, entityId) > -1
+                || _.indexOf(this.state[collection].changeMap.update, entityId) > -1
+            ) {
+                throw new eejs.exception(
+                    'Adding the entity with the id of ' + entityId + ' to this ' + collection + ' changeMap for create ' +
+                    'was aborted because its already part of either the delete or update changeMaps.  How can it be ' +
+                    'created if its already in those maps?'
+                );
+            }
+            if (_.indexOf(this.state[collection].changeMap.create, entityId) === -1) {
+                this.state[collection].changeMap.create.push(entityId);
+            }
+            break;
+        case 'update' :
+            //If this is already in the 'create' map then silently skip because the current state for this object will
+            //get persisted on the create action.
+            if (_.indexOf(this.state[collection].changeMap.create, entityId) === -1) {
+                //if this is in the delete changeMap, then how is an update supposed to persist?
+                if(_.indexOf(this.state[collection].changeMap.delete, entityId) > -1) {
+                    throw new eejs.exception(
+                        'Adding the entity with the id of ' + entityId + ' to this ' + collection + ' changeMap for ' +
+                        'update was aborted because its already part of the delete changeMap.  If you want to update ' +
+                        'an entity already marked for deletion then you should make sure its removed from the delete ' +
+                        'map first.'
+                    );
+                }
+
+                //if the primary key for the entity is for a new object, then we don't update but instead add to the
+                //created index.
+                if (this.getters.isNewObject(entityId)) {
+                    changeType = 'create';
+                }
+
+                //made it here? K all good to add to the map
+                if (_.indexOf(this.state[collection].changeMap[changeType], entityId) === -1) {
+                    this.state[collection].changeMap[changeType].push(entityId);
+                }
+            }
+            break;
+        default :
+            throw new eejs.exception(
+                'An invalid value for changeType (' + changeType + ') was passed in.  Must be either: ' +
+                '"create", "delete", or "update"'
+            );
+    }
+};
+
 
 /**
- * Retrieves the fully qualified endpoint uri for the collection.
+ * This is used to remove a changeRecord from the changeMap in the given collection.
+ * This should only be called as a part of a mutation.
+ *
  * @param {string} collection
- * @returns {string}
+ * @param {integer|string} entityId The id of the entity being removed from the changeMap
+ * @param {string} changeType  The type of change the record is being removed from. Accepts the following:
+ *                              'delete', 'create', 'update'
  */
-Vuex.Store.prototype.getCollectionEndpoint = function(collection){
-    //if there isn't a collection matching in the store or a restRoute then get out
-    if (_.isUndefined(this.state[collection]) || _.isUndefined(this.state.restRoute)) {
-        return '';
+Vuex.Store.prototype.removeChangeRecord = function(collection, entityId, changeType) {
+    //validate required properties are present.
+    if (_.isUndefined(collection)
+        || _.isUndefined(entityId)
+        || _.isUndefined(changeType)
+    ) {
+        throw new eejs.exception(
+            'The properties for `removeChangeRecord` are not all defined. Double-check and make sure there is a ' +
+            '`collection`, `entityId`, and `changeType` values passed in.'
+        );
     }
-    return this.state.restRoute + this.state[collection].collectionEndpoint;
+
+    //check that the collection actually exists (meaning it was registered) in the store.  If it doesn't then the
+    //changeMap cannot be written to.
+    if(!_.has(this.state, collection)) {
+        throw new eejs.exception(
+            'Unable to remove from the changeRecord for the ' + collection + ' collection because there is no record ' +
+            'for it in the store state.  Are  you sure it was registered?'
+        );
+    }
+
+    switch(changeType) {
+        case 'delete' :
+        case 'create' :
+        case 'update' :
+            this.state[collection].changeMap[changeType] = _.without(this.state[collection].changeMap[changeType], entityId);
+            break;
+        default :
+            throw new eejs.exception(
+                'An invalid value for changeType (' + changeType + ') was passed in.  Must be either: ' +
+                '"create", "delete", or "update"'
+            );
+    }
+};
+
+
+/**
+ * This is used to commit a change record to the `changeMap.relations` property in the store state for a collection.
+ * This should only be called by a Vuex mutation.
+ *
+ * @param {string} collection  The name of the collection the change is for (eg 'events').
+ * @param {string} relation    The name of the relation the change is for (eg 'datetimes').
+ * @param {integer} entityId      The entityId for the entity from the collection the change is for.
+ * @param {integer} relatedEntityId  The entityId for the entity from the relation the change is for.
+ * @param {string} changeType   The type of change being recorded.  Accepts the following:
+ *                              'removed' = means the relation was removed between the entity and relatedEntity.
+ *                              'added' = means the relation was added between the entity and related Entity.
+ * @param {bool}  recursive     Defaults to true.  This is used to indicate whether the change should be recursively
+ *                              applied to the relations changeMap state as well.
+ */
+Vuex.Store.prototype.commitRelatedChangeRecord = function(
+    collection,
+    relation,
+    entityId,
+    relatedEntityId,
+    changeType,
+    recursive
+) {
+    //validate required properties are present.
+    if (_.isUndefined(collection)
+        || _.isUndefined(relation)
+        || _.isUndefined(entityId)
+        || _.isUndefined(relatedEntityId)
+        || _.isUndefined(changeType)
+    ) {
+        throw new eejs.exception(
+            'The properties for `commitRelatedChangeRecord` are not all defined. Double-check and make sure there is a ' +
+            '`collection`, `relation`, `entityId`, `relatedEntityid` and `changeType` values passed in.'
+        );
+    }
+
+    //check that the collection actually exists (meaning it was registered) in the store.  If it doesn't then the
+    //changeMap cannot be written to.
+    if (!_.has(this.state, collection)) {
+        throw new eejs.exception(
+            'Unable to record a changeRecord for the ' + collection + ' collection because there is no record for it ' +
+            'in the store state.  Are  you sure it was registered?'
+        );
+    }
+
+    //check the related collection exists.
+    if (!_.has(this.state, relation)) {
+        throw new eejs.exception(
+            'Unable to record a changeRecord for the ' + relation + ' relation because there is no record for it ' +
+            'in the store state. Are you sure it was registered?'
+        );
+    }
+
+    recursive = _.isUndefined(recursive) ? true : recursive;
+
+    //make sure that the relation object is defined.
+    this.state[collection].changeMap.relations[relation] = this.state[collection].changeMap.relations[relation] ||
+        { added : {}, removed : {} };
+
+    //k now we can do whatever the changeType being recorded is.
+    switch(changeType) {
+        case 'added' :
+            //make sure we have a definition for this entityId
+            this.state[collection].changeMap.relations[relation].added[entityId] =
+                this.state[collection].changeMap.relations[relation].added[entityId]
+                || [];
+
+            //remove any existing removed relation
+            this.removeRelatedChangeRecord(collection, relation, entityId, relatedEntityId, 'removed', false);
+            this.state[collection].changeMap.relations[relation].added[entityId].push(relatedEntityId);
+            break;
+        case 'removed' :
+            this.state[collection].changeMap.relations[relation].removed[entityId] =
+                this.state[collection].changeMap.relations[relation].removed[entityId]
+                || [];
+            //remove any existing added relation
+            this.removeRelatedChangeRecord(collection, relation, entityId, relatedEntityId, 'added', false);
+            this.state[collection].changeMap.relations[relation].removed[entityId].push(relatedEntityId);
+            break;
+        default :
+            throw new eejs.exception(
+                'An invalid value for changeType (' + changeType + ') was passed in.  Must be either: ' +
+                '"added", or "removed"'
+            );
+    }
+
+    //if recursive is true then apply the changes in reverse so there is a record on the relation as well.
+    if (recursive) {
+        this.commitRelatedChangeRecord(relation, collection, relatedEntityId, entityId, changeType, false);
+    }
+};
+
+
+/**
+ * Used to remove a change record from the `changeMap.relations` property for the given collection and relation entities.
+ * This only removes for the specified changeType.  If you want to remove instances of this relation everywhere, then
+ * use the removeAllRelatedChangeRecords method
+ *
+ * This should only be called by a Vuex mutation.
+ *
+ * @param {string} collection  The name of the collection the changeMap is being modified for.
+ * @param {string} relation    The name of the relation being modified.
+ * @param {integer} entityId    The id of the entity belonging to the collection that is being removed.
+ * @param {integer} relatedEntityId  The id of the related entity being removed.
+ * @param {string} changeType   The type of changeMap being removed from.  Required to be one of the following:
+ *                              'removed', 'added'.
+ * @param {bool}  recursive     Defaults to true.  This is used to indicate whether the change should be recursively
+ *                              applied to the relations changeMap state as well.
+ */
+Vuex.Store.prototype.removeRelatedChangeRecord = function(
+    collection,
+    relation,
+    entityId,
+    relatedEntityId,
+    changeType,
+    recursive
+) {
+    //validate required properties are present.
+    if (_.isUndefined(collection)
+        || _.isUndefined(relation)
+        || _.isUndefined(entityId)
+        || _.isUndefined(relatedEntityId)
+        || _.isUndefined(changeType)
+    ) {
+        throw new eejs.exception(
+            'The properties for `removeRelatedChangeRecord` are not all defined. Double-check and make sure there is a ' +
+            '`collection`, `relation`, `entityId`, `relatedEntityId`, and `changeType` values passed in.'
+        );
+    }
+
+    //check that the collection actually exists (meaning it was registered) in the store.  If it doesn't then the
+    //changeMap cannot be written to.
+    if(!_.has(this.state, collection)) {
+        throw new eejs.exception(
+            'Unable to remove from the changeRecord for the ' + collection + ' collection because there is no record ' +
+            'for it in the store state.  Are  you sure it was registered?'
+        );
+    }
+
+    //do same check for relation
+    if(!_.has(this.state, relation)) {
+        throw new eejs.exception(
+            'Unable to remove from the changeRecord for the ' + relation + ' relation because there is no record ' +
+            'for it in the store state.  Are  you sure it was registered?'
+        );
+    }
+
+    switch(changeType) {
+        case 'added' :
+        case 'removed' :
+            this.state[collection].changeMap.relations[relation][changeMap][entityId] = _.without(
+                this.state[collection].changeMap.relations[relation][changeMap][entityId], relationId);
+            break;
+        default:
+            throw new eejs.exception(
+                'An invalid value for changeType (' + changeType + ') was passed in.  Must be either: ' +
+                '"added", or "removed"'
+            );
+    }
+
+    //if recursive is true then lets do the reverse for the relation.
+    if (recursive) {
+        this.removeRelatedChangeRecord(relation, collection, relatedEntityId, entityId, changeType, false);
+    }
+};
+
+
+/**
+ * This will remove all related changeRecords for the given collection and entityId in the changeMap.relations property
+ * for the collection.  Note, if recursive is true, this will in turn look through all the changeMaps stored with
+ * relations to this collection and ensure relations containing this entityId is removed from their maps as well.
+ * Should only be called by a Vuex mutation.
+ *
+ * @param {string} collection  The collection the changemap.relations is being modified for.
+ * @param {integer} entityId    The entityId the relations are being removed for.
+ * @param {boolean} recursive   Defaults to true. This is used to indicate whether the change should be recursively
+ *                              applied to all other collections this collection is a relation for.
+ */
+Vuex.Store.prototype.removeAllRelatedChangeRecords = function(
+    collection,
+    entityId,
+    recursive
+) {
+    //validate required properties are present.
+    if (_.isUndefined(collection)
+        || _.isUndefined(entityId)
+    ) {
+        throw new eejs.exception(
+            'The properties for `removeAllRelatedChangeRecords` are not all defined. Double-check and make sure there ' +
+            'is are `collection` and `entityId`  values passed in.'
+        );
+    }
+
+    //check that the collection actually exists (meaning it was registered) in the store.  If it doesn't then the
+    //changeMap cannot be written to.
+    if(!_.has(this.state, collection)) {
+        throw new eejs.exception(
+            'Unable to remove from the changeRecord for the ' + collection + ' collection because there is no record ' +
+            'for it in the store state.  Are  you sure it was registered?'
+        );
+    }
+
+    //we'll loop through each relation record on the relations property in the changeMap for `added` and `removed`.
+    var state = this.state,
+        relationIds = [];
+    _.each(state[collection].changeMap.relations, function(relationChangeMapObject, relation, relationsChangeMap) {
+        //if the entity ID exists in the relationChangeMapObject.added or relationChangeMapObject.removed, then clear it
+        //and go into the relation (if recursive = true) and remove in the relations as well.
+        _.each(['added','removed'], function(changeType) {
+            if (_.has(relationChangeMapObject[changeType], entityId)) {
+                relationIds = relationsChangeMapObject[changeType][entityId];
+                relationsChangeMap[relation][changeType] = _.omit(relationChangeMapObject[changeType], entityId);
+                if (recursive) {
+                    _.each(relationIds, function(relationId) {
+                       if (_.has(state[relation].changeMap.relations[collection][changeType], relationId)) {
+                           state[relation].changeMap.relations[collection][changeType][relationId] = _.without(
+                               state[relation].changeMap.relations[collection][changeType][relationId],
+                               entityId
+                           );
+                       }
+                    });
+                }
+            }
+        });
+    });
 };
 
 
@@ -123,10 +489,18 @@ Vuex.Store.prototype.commitRelationsForEntity = function(
             : [];
         //push our relation on to the store
         _.each(relationEntityId, function(id){
-            state[collection]['relations'][relation][collectionEntityId].push(id);
+            if ( !_.contains(state[collection]['relations'][relation][collectionEntityId]), id) {
+                state[collection]['relations'][relation][collectionEntityId].push(id);
+                //make sure this is added to the changeMap if not from db OR if either the relation entity or the
+                //collection entity is a new object.
+                if (! fromDb
+                    || self.getters.isNewObject(collectionEntityId)
+                    || self.getters.isNewObject(relationEntityId)
+                ) {
+                    self.commitRelatedChangeRecord(collection, relation, collectionEntityId, id, 'added');
+                }
+            }
         });
-        //make sure we got uniq ids in the relation here.
-        _.uniq(state[collection]['relations'][relation][collectionEntityId]);
         return true;
     } else {
         if (doStoreCheck) {
@@ -212,8 +586,22 @@ Vuex.Store.prototype.commitEntityToCollection = function(collection, entity, ref
         // the state is the source remember
         if (! self.getters.hasEntityInCollection(collection,entityToSave) ) {
             state[collection].entities.push(entityToSave);
+            //if this is a new object or NOT from the db then let's make sure its added to the 'create' map.
+            if (self.getters.isNewObject(entity[eejs.api.main.getPrimaryKeyForCollection(collection)]) || ! fromDb) {
+                self.commitChangeRecord(collection, entity, 'create');
+            }
         } else if (refresh) {
             self.replaceEntityInCollection(collection,entityToSave)
+            if (fromDb) {
+                //if this is fromDb, then we need to remove any updates/deletes for this entity in the changeMap.
+                self.removeChangeRecord(collection, entity[eejs.api.main.getPrimaryKeyForCollection(collection)], 'update');
+                self.removeChangeRecord(collection,entity[eejs.api.main.getPrimaryKeyForCollection(collection)], 'delete');
+            } else {
+                //add change record for update if this is not from the db.
+                self.commitChangeRecord(collection, entity, 'update');
+            }
+        }
+        
         //handle _links and _calculated_field commits.
         if (!_.isEmpty(linksToCommit)) {
             _.each(linksToCommit, function(links, entityId) {
