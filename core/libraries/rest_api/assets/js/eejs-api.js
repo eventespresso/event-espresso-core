@@ -9,35 +9,6 @@ Vue.use(VueResource);
 
 //custom vuex store methods.
 
-/**
- * Checks if the entity is in the collection.
- * @param {string} collection
- * @param {object} entity
- * @returns {boolean}
- */
-Vuex.Store.prototype.hasEntityInCollection = function(collection, entity) {
-    //if there isn't even any collection matching what's requested then get out
-    if ( _.isUndefined(this.state[collection]) ) {
-        return false;
-    }
-
-    var primaryKey = this.state[collection].primaryKey,
-        entityId   = entity[primaryKey],
-        searchObj = {};
-
-    //if entity primary key is empty at this point then we use the temporary key for entity id and
-    //we'll make sure we're checking the collection for that temp_id match as well
-    if ( _.isUndefined(entityId) || entityId === 0 ) {
-        entityId = entity._id;
-        primaryKey = '_id';
-    }
-
-    searchObj[primaryKey] = entityId;
-
-    //now let's see if this entity is already in the collection
-    return ! _.isUndefined( _.findWhere(this.state[collection].entities,searchObj ) );
-};
-
 
 /**
  * Replaces the entity in a collection.
@@ -220,7 +191,7 @@ Vuex.Store.prototype.commitEntityToCollection = function(collection, entity, ref
         //does this entity already exist?  If it does we do not allow overwrites by default
         //unless refresh is true.
         // the state is the source remember
-        if (! self.hasEntityInCollection(collection,entityToSave) ) {
+        if (! self.getters.hasEntityInCollection(collection,entityToSave) ) {
             state[collection].entities.push(entityToSave);
         } else if (refresh) {
             self.replaceEntityInCollection(collection,entityToSave)
@@ -649,7 +620,126 @@ if (!String.prototype.endsWith) {
                             "restRoute": restRoute
                         },
                         modules: storeModules,
-                        getters: {},
+                        getters: {
+                            /**
+                             * This is used to determine whether an entity object exists in the specified collection or not.
+                             *
+                             * Note: this extracts the primary key from the given entity object and does NOT compare values
+                             * of other fields/properties in the provided entity.
+                             *
+                             * Note: This getter returns a function because that's how one provides a method to send in
+                             * arguments in the Vuex instance for getters.  @link https://vuex.vuejs.org/en/getters.html
+                             *
+                             * @param {object} state
+                             * @param {object} getters
+                             * @returns {Function}
+                             */
+                            hasEntityInCollection: function(state, getters) {
+                                /**
+                                 * @param {string} collection   The collection the entity belongs to
+                                 * @param {object} entity       The entity being used to check if it exists or not in the
+                                 *                              collection
+                                 * @return boolean
+                                 */
+                                return function(collection, entity) {
+                                    if (! _.has(state, collection)) {
+                                        return false;
+                                    }
+                                    var primaryKey = state[collection].primaryKey,
+                                        entityId = _.has(entity, primaryKey) ? entity[primaryKey] : 0;
+
+                                    //now let's see if this entity is already in the collection
+                                    return ! _.isUndefined( getters.getEntityForId(collection, entityId) );
+                                }
+                            },
+                            /**
+                             * Returns whether the given entityId represents a new object or not.
+                             * The test is for the presence of the string `_new_id_` in the entity ID.
+                             * @param {object} state
+                             * @param {object} getters
+                             * @returns {Function}
+                             */
+                            isNewObject: function(state, getters) {
+                                /**
+                                 * @param {integer|string} entityId   The id for an entity that is being checked.
+                                 * @return boolean
+                                 */
+                                return function(entityId) {
+                                    return _.isString(entityId) && entityId.includes('_new_id_');
+                                }
+                            },
+                            /**
+                             * This is used to return the entity found in the collection in the store state if it exists
+                             * for the given entityId.
+                             *
+                             * @param {object} state
+                             * @param {object} getters
+                             * @returns {Function}
+                             */
+                            getEntityForId: function(state, getters) {
+                                /**
+                                 * @param {string} collection  The collection the entity belongs to.
+                                 * @param {integer|string}  entityId  The value for the entity's primaryKey
+                                 * @return {object|undefined}  the entity if it exists, an empty object, or undefined.
+                                 */
+                                return function(collection, entityId) {
+                                    if ( ! _.has(state, collection)) {
+                                        return {};
+                                    }
+                                    var primaryKey = state[collection].primaryKey,
+                                        searchObj = {};
+                                    searchObj[primaryKey] = entityId;
+                                    return _.findWhere(state[collection].entities,searchObj);
+                                }
+                            },
+                            /**
+                             * This is used to retrieve the value for a specific field in a specific entity in the
+                             * specified collection.
+                             *
+                             * @param {object} state
+                             * @param {object} getters
+                             * @returns {Function}
+                             */
+                            getFieldValueFromEntitybyId: function(state, getters) {
+                                /**
+                                 * @param {string} collection  The collection the entity belongs to.
+                                 * @param {integer|string} Value for the primary key of the entity we're retrieving the
+                                 *                         field value for.
+                                 * @param {string} The field we're getting returning the value for.
+                                 * @return {mixed}
+                                 */
+                                return function(collection, entityId, field) {
+                                    if(! _.has(state, collection)) {
+                                        return null;
+                                    }
+                                    var entity = getters.getEntityForId(collection, entityId);
+                                    if (_.has(entity, field)) {
+                                        return entity[field];
+                                    }
+                                    return null;
+                                };
+                            },
+                            /**
+                             * This is used to retrieve the base endpoint for a given collection route.
+                             *
+                             * @param {object} state
+                             * @param {object} getters
+                             * @returns {Function}
+                             */
+                            getCollectionEndpoint: function(state,getters) {
+                                /**
+                                 * @param {string} collection
+                                 * @return {string}
+                                 */
+                                return function(collection){
+                                    //if there isn't a collection matching in the store or a restRoute then get out
+                                    if (_.isUndefined(state[collection]) || _.isUndefined(state.restRoute)) {
+                                        return '';
+                                    }
+                                    return state.restRoute + state[collection].collectionEndpoint;
+                                }
+                            }
+                        },
                         mutations: {
                             /**
                              * Used to set a value on a model.
