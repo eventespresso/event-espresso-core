@@ -156,11 +156,13 @@ class Read extends Base
         if (isset($schema['properties'][$field_name]['default'])) {
             if (is_array($schema['properties'][$field_name]['default'])) {
                 foreach ($schema['properties'][$field_name]['default'] as $default_key => $default_value) {
-                    $schema['properties'][$field_name]['default'][$default_key] = Model_Data_Translator::prepare_field_value_for_json(
-                        $field,
-                        $default_value,
-                        $this->get_model_version_info()->requested_version()
-                    );
+                    if ($default_key === 'raw') {
+                        $schema['properties'][$field_name]['default'][$default_key] = Model_Data_Translator::prepare_field_value_for_json(
+                            $field,
+                            $default_value,
+                            $this->get_model_version_info()->requested_version()
+                        );
+                    }
                 }
             } else {
                 $schema['properties'][$field_name]['default'] = Model_Data_Translator::prepare_field_value_for_json(
