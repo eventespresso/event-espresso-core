@@ -349,7 +349,7 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
      */
     public function getSchemaDefault()
     {
-        $default_value = $this->prepare_for_get($this->get_default_value());
+        $default_value = $this->prepare_for_use_in_db($this->prepare_for_set($this->get_default_value()));
         $schema_properties = $this->getSchemaProperties();
 
         //if this schema has properties than shape the default value to match the properties shape.
@@ -359,14 +359,14 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
                 switch ($property_key) {
                     case 'pretty':
                     case 'rendered':
-                        $value_to_return[$property_key] = $this->prepare_for_pretty_echoing($this->get_default_value());
+                        $value_to_return[$property_key] = $this->prepare_for_pretty_echoing($this->prepare_for_set($default_value));
                         break;
                     default:
                         $value_to_return[$property_key] = $default_value;
                         break;
                 }
-                $default_value = $value_to_return;
             }
+            $default_value = $value_to_return;
         }
         return $default_value;
     }
