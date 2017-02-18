@@ -209,6 +209,11 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 					$checked = '';
 				}
 			}
+			$evts = apply_filters( 
+				'FHEE__Event_Registrations__get_event_filter_toggle_html', 
+				$evts
+			);
+			
 			$event_filter = '<div class="ee-event-filter">';
 			$event_filter .= EEH_Form_Fields::select_input( 'event_id', $evts, $current_EVT_ID );
 			$event_filter .= '<span class="ee-event-filter-toggle">';
