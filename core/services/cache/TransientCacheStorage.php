@@ -368,7 +368,7 @@ class TransientCacheStorage implements CacheStorageInterface
      * @param int   $limit
      * @return bool
      */
-    private function deleteTransientKeys(array $transient_keys, $limit = 50)
+    private function deleteTransientKeys(array $transient_keys, $limit = 0)
     {
         if (empty($transient_keys)) {
             return false;
@@ -376,7 +376,9 @@ class TransientCacheStorage implements CacheStorageInterface
         /** @type wpdb $wpdb */
         global $wpdb;
         $regexp = implode('|_transient.*', $transient_keys);
-        $SQL = "DELETE FROM {$wpdb->options} WHERE option_name REGEXP '_transient.*{$regexp}' LIMIT {$limit}";
+        $SQL = "DELETE FROM {$wpdb->options} WHERE option_name REGEXP '_transient.*{$regexp}'";
+        // scheduled deletions will have a limit set, but manual deletions will NOT
+        $SQL .= $limit ? " LIMIT {$limit}" : '';
         $results = $wpdb->query($SQL);
         // if something went wrong, then notify the admin
         if ($results instanceof WP_Error) {
@@ -385,12 +387,21 @@ class TransientCacheStorage implements CacheStorageInterface
             }
             return false;
         } else if ($results) {
+            $deletions = 0;
             foreach ($transient_keys as $transient_key) {
+                // don't unset more than what was deleted in the scheduled cleanup query
+                if ($limit && $deletions >= $results) {
+                    continue;
+                }
                 unset($this->transients[$transient_key]);
                 // also need to manually remove the transients from the WP cache,
                 // else they will continue to be returned if you use get_transient()
-                wp_cache_delete("_transient_{$transient_key}", 'options');
-                wp_cache_delete("_transient_timeout_{$transient_key}", 'options');
+                if ( wp_cache_delete("_transient_{$transient_key}", 'options')) {
+                    $deletions++;
+                }
+                if (wp_cache_delete("_transient_timeout_{$transient_key}", 'options')) {
+                    $deletions++;
+                }
             }
         }
         return true;
