@@ -42,7 +42,7 @@ Then in your script (in this case `my-vue-view.js`), you just need to initialize
 })();
 ```
 
-> For a more detailed example of building a basic Vue app using this library see [a basic example returning a list of events with their datetimes](rest-api-vue-library-basic-implementation-example.md).
+> For a more detailed example of building a basic Vue app using this library see [a basic example returning a list of events with their datetimes](examples/rest-api-vue-library-basic-implementation-example.md).
 
 ## What is available?
 

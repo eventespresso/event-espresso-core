@@ -31,9 +31,9 @@ There are some handy libraries that have been built that integrate with the REST
 
 | Library | Description |
 |---------|-------------|
-[eejs-api (VUE.js library)](rest-api-vue-library.md) | When implemented you can use this to automatically build EE model and collection components that can be used in your views.
+[eejs-api (VUE.js library)](eejs-api/rest-api-vue-library.md) | When implemented you can use this to automatically build EE model and collection components that can be used in your views.
 
 #### Library Examples/Tutorials
 | Example/Tutorial | Library | Description |
 |----------------- | ------- | ----------- |
-[Simple List of Events with Datetimes](rest-api-vue-library-basic-implementation-example.md) | [eejs-api](rest-api-vue-library.md) | This gives a very basic example of how one can use the eejs-api library to retrieve and display a list of events with their datetimes. 
+[Simple List of Events with Datetimes](eejs-api/examples/rest-api-vue-library-basic-implementation-example.md) | [eejs-api](eejs-api/rest-api-vue-library.md) | This gives a very basic example of how one can use the eejs-api library to retrieve and display a list of events with their datetimes. 

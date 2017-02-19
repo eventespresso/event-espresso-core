@@ -2,7 +2,7 @@
 
 In this example, we'll be building a simple plugin that utilizes the `eejs-api` to setup a simple vue app that retrieves and displays a list of events with their datetimes.  We'll use a WordPress shortcode to output the app on a page.
   
-  > Note: This is a very _basic_ application that is not styled or "prettied" up.  It's intent is to merely demonstrate how the eejs-api library can be used to build vue based apps utilizing data provided by the EE REST API. There is no pagination on this implementation so up to the default number of events for events collection requests (50 at the time of writing this) will be returned for display. For more technical details on the `ee-js` library [go here](rest-api-vue-library.md)
+  > Note: This is a very _basic_ application that is not styled or "prettied" up.  It's intent is to merely demonstrate how the eejs-api library can be used to build vue based apps utilizing data provided by the EE REST API. There is no pagination on this implementation so up to the default number of events for events collection requests (50 at the time of writing this) will be returned for display. For more technical details on the `ee-js` library [go here](../rest-api-vue-library.md)
   
 The code in this tutorial can be found [here](https://github.com/eventespresso/eejs-api-example-simple-event-list).
 
