@@ -948,6 +948,11 @@ if (!String.prototype.includes) {
              */
             var initialOptions = options,
                 /**
+                 * Indicate what authentication method to use for requests.  Defaults to cookie.
+                 * @type {string}
+                 */
+                authenticationMethod = 'cookie',
+                /**
                  * Array of successfully registered collections ('events', 'datetimes' etc)
                  * @type {array}
                  */
@@ -1035,6 +1040,10 @@ if (!String.prototype.includes) {
                         );
                     }
                     restRoute = eejs.data.paths.rest_route;
+                    authenticationMethod = _.has(initialOptions,'authenticationMethod')
+                        ? initialOptions.authenticationMethod
+                        : authenticationMethod;
+                    setAuthenticationMethodOnHttpResource();
                     initDiscoverAPI().then( function() {
                             validateCollections(initialOptions.collections);
                             registerCollections(initialOptions.collections);
@@ -1048,6 +1057,14 @@ if (!String.prototype.includes) {
                             reject(error);
                         });
                     });
+                },
+                /**
+                 * Used to ensure whatever is being used for http requests has the correct authentication method set.
+                 */
+                setAuthenticationMethodOnHttpResource = function() {
+                    if (authenticationMethod === 'cookie') {
+                        Vue.http.headers.custom['X-WP-Nonce'] = eejs.data.eejs_api_nonce;
+                    }
                 },
                 /**
                  * Used to validate any collections sent in.
@@ -2493,6 +2510,15 @@ if (!String.prototype.includes) {
              */
             this.getRegisteredCollections = function() {
                 return collections;
+            };
+
+
+            /**
+             * This returns what has been set as the authentication method for this use.
+             * @returns {string}
+             */
+            this.getAuthMethod = function() {
+                return authenticationMethod;
             };
 
             /**
