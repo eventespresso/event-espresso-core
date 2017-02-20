@@ -1854,7 +1854,7 @@ if (!String.prototype.includes) {
                                         //@todo, we could trigger some sort of property that the ui can use to indicate
                                         // a success in getting the collection.  A custom js event might be good?
                                         self['has'+collectionCapitalized] = true;
-                                        self.events = self.$store.state[self.collectionName].entities;
+                                        self[self.collectionName] = self.$store.state[self.collectionName].entities;
                                     })
                                     .catch( function(response){
                                         console.log(response);
