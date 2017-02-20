@@ -90,12 +90,10 @@ class Write extends Base {
 					)
 				);
 			}
-			return $controller->send_response(
-					$controller->get_entity_from_model(
-							$controller->get_model_version_info()->load_model( $model_name_singular ),
-							$request
-						)
-				);
+			return $controller->update(
+                $controller->get_model_version_info()->load_model( $model_name_singular ),
+                $request
+            );
 		} catch( \Exception $e ) {
 			return $controller->send_response( $e );
 		}
@@ -162,7 +160,7 @@ class Write extends Base {
 	}
 	
 	/**
-	 * 
+	 * Inserts a new model object according to the $request
 	 * @param \EEM_Base $model
 	 * @param \WP_REST_Request $request
 	 * @return WP_REST_Response
@@ -198,54 +196,82 @@ class Write extends Base {
 				sprintf( __( 'Could not insert new %1$s', 'event_espresso'), $model->get_this_model_name() )
 			);
 		}
-		//ok so is that the sort of thing they are allowed to edit?
-		if( 
-			apply_filters( 
-				'FHEE__EventEspresso\core\libraries\rest_api\controllers\model\Write__insert__allowed',
-				$model->exists( 
-					$model->alter_query_params_to_restrict_by_ID( 
-						$new_id, 
-						array( 
-							'caps' => \EEM_Base::caps_edit 
-						) 
-					) 
-				),
-				$model,
-				$new_id, 
-				$request
-			)
-		) {
-		} else {
-			return new \WP_Error(
-					'rest_user_cannot_insert',
-					sprintf(
-						__( 'Sorry, you cannot insert a new %1$s with properties %2$s. Missing permissions are: %3$s', 'event_espresso' ),
-						strtolower( $model->get_this_model_name() ),
-						apply_filters( 
-							'FHEE__EventEspresso\core\libraries\rest_api\controllers\model\Write__insert__caps_missing',
-							Capabilities::get_missing_permissions_string(
-							$model,
-							$this->validate_context( \EEM_Base::caps_edit ) ),
-							$model,
-							$new_id,
-							$request
-						)
-					),
-					array( 'status' => 403 )
-				);
-		}
-		$requested_version = $this->get_requested_version( $request->get_route() );
-		$get_request = new \WP_REST_Request(
-			'GET',
-			\EED_Core_Rest_Api::ee_api_namespace . $requested_version . '/' . \EEH_Inflector::pluralize_and_lower(  $model->get_this_model_name() ).'/' . $new_id
-		);
-		$get_request->set_url_params(
-			array(
-				'id' => $new_id
-			)
-		);
-		return Read::handle_request_get_one( $get_request );
+        return $this->_get_one_based_on_request($model,$request,$new_id);
 	}
+
+    /**
+     * Updates an existing model object according to the $request
+     * @param \EEM_Base $model
+     * @param \WP_REST_Request $request
+     * @return WP_REST_Response
+     * @throws \EE_Error
+     */
+    public function update( \EEM_Base $model, \WP_REST_Request $request ) {
+        Capabilities::verify_at_least_partial_access_to( $model, \EEM_Base::caps_edit, 'edit' );
+        $default_cap_to_check_for = \EE_Restriction_Generator_Base::get_default_restrictions_cap();
+        if(!current_user_can($default_cap_to_check_for)){
+            throw new Rest_Exception(
+                'rest_cannot_edit_' . \EEH_Inflector::pluralize_and_lower(($model->get_this_model_name())),
+                sprintf(
+                    esc_html__('For now, only those with the admin capability to "%1$s" are allowed to use the REST API to update data into Event Espresso.', 'event_espresso'),
+                    $default_cap_to_check_for
+                ),
+                array('status' => 403)
+            );
+        }
+        $obj_id = $request->get_param('id');
+        if( ! $obj_id ) {
+            throw new Rest_Exception(
+                'rest_edit_failed',
+                sprintf( __( 'Could not edit %1$s', 'event_espresso'), $model->get_this_model_name() )
+            );
+        }
+        $submitted_json_data = array_merge( (array)$request->get_body_params(), (array)$request->get_json_params() );
+        $model_data = Model_Data_Translator::prepare_conditions_query_params_for_models(
+            $submitted_json_data,
+            $model,
+            $this->get_model_version_info()->requested_version()
+        );
+        $model_obj = $model->get_one_by_ID($obj_id);
+        $model_obj->save($model_data);
+        return $this->_get_one_based_on_request($model,$request,$obj_id);
+    }
+
+
+
+    /**
+     * Gets the item affected by this request
+     * @param \EEM_Base        $model
+     * @param \WP_REST_Request $request
+     * @param  int|string                $obj_id
+     * @return \WP_Error|\WP_REST_Response
+     */
+    protected function _get_one_based_on_request( \EEM_Base $model, \WP_REST_Request $request, $obj_id )
+    {
+        $requested_version = $this->get_requested_version( $request->get_route() );
+        $get_request = new \WP_REST_Request(
+            'GET',
+            \EED_Core_Rest_Api::ee_api_namespace . $requested_version . '/' . \EEH_Inflector::pluralize_and_lower(  $model->get_this_model_name() ).'/' . $obj_id
+        );
+        $get_request->set_url_params(
+            array(
+                'id' => $obj_id
+            )
+        );
+        return Read::handle_request_get_one( $get_request );
+    }
+
+
+
+    /**
+     * @param \EEM_Base        $model
+     * @param \WP_REST_Request $request
+     * @param string           $action 'create', 'edit', 'delete'
+     */
+    protected function _verify_caps( \EEM_Base $model, \WP_REST_Request $request, $action = 'create' )
+    {
+
+    }
 }
 
 
