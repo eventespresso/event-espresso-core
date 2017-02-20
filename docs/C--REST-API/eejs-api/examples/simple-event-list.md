@@ -2,72 +2,74 @@
 
 In this example, we'll be building a simple plugin that utilizes the `eejs-api` to setup a simple vue app that retrieves and displays a list of events with their datetimes.  We'll use a WordPress shortcode to output the app on a page.
   
-  > Note: This is a very _basic_ application that is not styled or "prettied" up.  It's intent is to merely demonstrate how the eejs-api library can be used to build vue based apps utilizing data provided by the EE REST API. There is no pagination on this implementation so up to the default number of events for events collection requests (50 at the time of writing this) will be returned for display. For more technical details on the `ee-js` library [go here](../rest-api-vue-library.md)
+  > Note: This is a very _basic_ application that is not styled or "prettied" up.  It's intent is to merely demonstrate how the eejs-api library can be used to build vue based apps utilizing data provided by the EE REST API. There is no pagination on this implementation so up to the default number of events for events collection requests (50 at the time of writing this) will be returned for display. For more technical details on the `ee-js` library [go here](../eejs-api-overview.md)
   
 The code in this tutorial can be found [here](https://github.com/eventespresso/eejs-api-example-simple-event-list).
 
+This plugin contains a number of different shortcodes that demonstrate various implementations of the eejs-api.  Each example is in its own shortcode class.  The one we're looking at here is found in the `SimpleEventList` class 
 
-## Main Plugin File
 
-In the main plugin file we have this:
+## `SimpleEventList`
+
+In this class we have this:
 
 ```php
 <?php
-/*
-Plugin Name: Simple Event List using eejs-api
-Plugin URI: http://eventespresso.com
-Description: This plugin provides example usage of the eejs-api to build vue apps.  Just add <code>[EJS_EVENTS_LIST]`</code> to any page to see in action.
-Version: 1.0
-Author: Darren Ethier
-Author URI: https://darrenethier.com
-License: GPLv2
-*/
+namespace Eejsapi\shortcodes;
 
-define( 'EEJS_EXAMPLE_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
-define( 'EEJS_EXAMPLE_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
-define( 'EEJS_EXAMPLE_VERSION', '1.0' );
+use Eejsapi\ShortcodeInterface;
+use EE_Registry;
+use EEH_Template;
 
-//first let's register the scripts we're going to use but not enqueue them.  This allows the shortcode handler to only
-//enqueue the script as needed.
-add_action('wp_enqueue_scripts', 'eejs_example_register_scripts' );
-function eejs_example_register_scripts() {
-    wp_register_script(
-        'eejs-example-event-list',
-        EEJS_EXAMPLE_PLUGIN_URL . 'assets/eejs-example-event-list.js',
-        array('eejs-api'),
-        EEJS_EXAMPLE_VERSION,
-        true
-    );
-    //make sure templates are registered for the `eejs.data` property.
-    EE_Registry::instance()->AssetsRegistry->addTemplate(
-        'event',
-        EEH_Template::display_template(
-            EEJS_EXAMPLE_PLUGIN_DIR . 'templates/event_template.html',
+class SimpleEventList implements ShortcodeInterface
+{
+
+    public function registerScripts()
+    {
+        wp_register_script(
+            'eejs-example-event-list',
+            EEJS_EXAMPLE_PLUGIN_URL . 'assets/eejs-example-event-list.js',
+            array('eejs-api'),
+            EEJS_EXAMPLE_VERSION,
+            true
+        );
+        //make sure templates are registered for the `eejs.data` property.
+        EE_Registry::instance()->AssetsRegistry->addTemplate(
+            'event',
+            EEH_Template::display_template(
+                EEJS_EXAMPLE_PLUGIN_DIR . 'templates/event_template.html',
+                '',
+                true
+            )
+        );
+        EE_Registry::instance()->AssetsRegistry->addTemplate(
+            'datetime',
+            EEH_Template::display_template(
+                EEJS_EXAMPLE_PLUGIN_DIR . 'templates/datetime_template.html',
+                '',
+                true
+            )
+        );
+    }
+
+    public function shortcodeTag()
+    {
+        return 'EEJS_EVENTS_LIST';
+    }
+
+    public function shortcodeContent($attributes = array())
+    {
+        //enqueue the script needed for the shortcode content
+        wp_enqueue_script('eejs-example-event-list');
+        //now return the main app container
+        return EEH_Template::display_template(
+            EEJS_EXAMPLE_PLUGIN_DIR . 'templates/app_container.html',
             '',
             true
-        )
-    );
-    EE_Registry::instance()->AssetsRegistry->addTemplate(
-        'datetime',
-        EEH_Template::display_template(
-            EEJS_EXAMPLE_PLUGIN_DIR . 'templates/datetime_template.html',
-            '',
-            true
-        )
-    );
+        );
+    }
 }
 
-add_shortcode( 'EEJS_EVENTS_LIST', 'eejs_example_events_list' );
-function eejs_example_events_list() {
-    //enqueue the script needed for the shortcode content
-    wp_enqueue_script('eejs-example-event-list');
-    //now return the main app container
-    return EEH_Template::display_template(
-        EEJS_EXAMPLE_PLUGIN_DIR . 'templates/app_container.html',
-        '',
-        true
-    );
-}
 ```
 
 Focusing on three things:
@@ -96,13 +98,10 @@ This is the actual vue app.  Here's the code that is in this file that powers th
     eejs.api.init({collections:['events','datetimes']}).then( function(){
         eejs.api.components.datetime.template = eejs.data.templates.datetime;
         eejs.api.components.event.template = eejs.data.templates.event;
-        eejs.api.events = eejs.vue.extend(eejs.api.components.events);
-        eejs.api.eventsView = new eejs.api.events({
-            el: '#app',
-            components: {
-                'event': eejs.api.components.event
-            }
-        });
+        var EventList = eejs.vue.extend(eejs.api.components.events),
+            EventsView = new EventList({
+               el: '#app'
+            });
     }).catch( function(e){
         console.log(e);
     });
@@ -133,7 +132,7 @@ The `eejs.api.init` method returns a javascript `Promise` object so you'll want 
 
 ### Set up any templates for the components you are using.
 
-The promise is resolved when the library has finished building the components you can use for your vue instance(s).  So inside the callback for this you'll first want to register any templates you want to use with the components.  Here you see we've done the following:
+The promise is resolved when the library has finished building the component options you can use for your vue instance(s).  So inside the callback for this you'll first want to register any templates you want to use with the components.  Here you see we've done the following:
 
 ```js
 eejs.api.components.datetime.template = eejs.data.templates.datetime;
@@ -142,29 +141,25 @@ eejs.api.components.event.template = eejs.data.templates.event;
 
 Remember how earlier we had used the `AssetsRegistry` php object to register our templates?  Those are exposed on the `eejs.data.templates` property and you see that we are using that here.
 
-Notice also that we now have the datetime and event model exposed in the `eejs.api.components` property.  These were built by the library automatically using the REST API json schema.  Also exposed on this property will be the collection components: `eejs.api.components.datetimes` and `eejs.api.components.events`.
+Notice also that we now have the datetime and event model exposed in the `eejs.api.components` property.  These were built by the library automatically using the REST API json schema.  Also exposed on this property will be the collection component options: `eejs.api.components.datetimes` and `eejs.api.components.events`.
 
-### Prep any components that will become vue instances.
+### Register Components you are using.
 
-All the built components living at `eejs.api.components` are not in themselves something you can construct a vue instance from.  For anything you want to serve as the base for a vue instance, you need to create an extended vue object using that component.  In our case, since our main view is a list of events, we're going to use the event collection component.  That's why we do this line:
+All the built component options living at `eejs.api.components` are simple option objects that Vue can use for constructing components.  You can use these options to create a vue component and/or assign to the `components` property in a constructed vue instance..  In our case, since our main view is a list of events, we've created an `EventList` component by extending our `eejs.vue` object, then we've constructed a vue instance from that component.  That's why we do this line:
 
 ```js
-eejs.api.events = eejs.vue.extend(eejs.api.components.events);
+var EventList = eejs.vue.extend(eejs.api.components.events);
 ```
-
-In this example we're just adding a custom `events` property on `eejs.api` but it's probably better to create your own locally scoped variable for your custom Vue view.
 
 ### Create your vue instance
 
 Next, all you have to do is instantiate your vue instance.  The `eejs.api` library has taken care of registering all necessary mixins and components so the only thing you have to take care of for the basic example is attaching your view to a dom element.  In this case it is the container with the css id `app`.
 
 ```js
-eejs.api.eventsView = new eejs.api.events({
+EventsView = new EventList({
     el: '#app'
 });
 ```
-
-Again, we assigned our view to a property on `eejs.api` but its probably better in production to assign your view to a locally scoped variable.
 
 ## What will you build?
 
