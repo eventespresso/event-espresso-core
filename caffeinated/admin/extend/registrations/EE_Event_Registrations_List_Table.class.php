@@ -200,20 +200,15 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 				if ( ! $evt->get_count_of_all_registrations() ) {
 					continue;
 				}
-				$evts[] = array(
+                                $evts[] = array(
 					'id'    => $evt->ID(),
-					'text'  => $evt->get( 'EVT_name' ),
+					'text'  => apply_filters('FHEE__EE_Event_Registrations___get_table_filters__event_name', $evt->get( 'EVT_name' ), $event),
 					'class' => $evt->is_expired() ? 'ee-expired-event' : '',
 				);
 				if ( $evt->ID() === $current_EVT_ID && $evt->is_expired() ) {
 					$checked = '';
 				}
 			}
-			$evts = apply_filters( 
-				'FHEE__Event_Registrations__get_event_filter_toggle_html', 
-				$evts
-			);
-			
 			$event_filter = '<div class="ee-event-filter">';
 			$event_filter .= EEH_Form_Fields::select_input( 'event_id', $evts, $current_EVT_ID );
 			$event_filter .= '<span class="ee-event-filter-toggle">';
