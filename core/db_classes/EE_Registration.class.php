@@ -130,9 +130,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 			&& $this->ID() // ensure registration is in the db
 		) {
             // these reg statuses should not be considered in any calculations involving monies owing
-            $closed_reg_statuses = ! empty($closed_reg_statuses)
-                ? $closed_reg_statuses
-                : EEM_Registration::closed_reg_statuses();
+            $closed_reg_statuses = EEM_Registration::closed_reg_statuses();
             // true if registration has been cancelled or declined
             $canceled_or_declined = in_array($new_STS_ID, $closed_reg_statuses, true)
                                     && ! in_array($old_STS_ID, $closed_reg_statuses, true);
