@@ -41,6 +41,14 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 	const PRE_TRASH_REG_STATUS_KEY = 'pre_trash_registration_status';
 
 
+	/**
+	 * extra meta key for tracking if registration has reserved ticket
+     *
+	 * @type string
+	 */
+	const HAS_RESERVED_TICKET_KEY = 'has_reserved_ticket';
+
+
 
 	/**
 	 *
@@ -129,14 +137,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 			&& ! empty( $new_STS_ID ) // as well as the new status
 			&& $this->ID() // ensure registration is in the db
 		) {
-            // these reg statuses should not be considered in any calculations involving monies owing
-            $closed_reg_statuses = EEM_Registration::closed_reg_statuses();
-            // true if registration has been cancelled or declined
-            $canceled_or_declined = in_array($new_STS_ID, $closed_reg_statuses, true)
-                                    && ! in_array($old_STS_ID, $closed_reg_statuses, true);
-            // true if reinstating cancelled or declined registration
-            $reinstated = in_array($old_STS_ID, $closed_reg_statuses, true)
-                          && ! in_array($new_STS_ID, $closed_reg_statuses, true);
             // TO approved
 			if ( $new_STS_ID === EEM_Registration::status_id_approved ) {
 				// reserve a space by incrementing ticket and datetime sold values
@@ -147,40 +147,13 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 				// release a space by decrementing ticket and datetime sold values
 				$this->_release_registration_space();
 				do_action( 'AHEE__EE_Registration__set_status__from_approved', $this, $old_STS_ID, $new_STS_ID );
-			} else if ($canceled_or_declined) {
-				// release a reserved space by decrementing ticket and datetime reserved values
-				$this->_release_reserved_space();
-				do_action( 'AHEE__EE_Registration__set_status__canceled_or_declined', $this, $old_STS_ID, $new_STS_ID );
 			}
-			// update status
-			parent::set( 'STS_ID', $new_STS_ID, $use_default );
-			/** @type EE_Registration_Processor $registration_processor */
-			$registration_processor = EE_Registry::instance()->load_class( 'Registration_Processor' );
-			/** @type EE_Transaction_Processor $transaction_processor */
-			$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
-			/** @type EE_Transaction_Payments $transaction_payments */
-			$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
-			// update REGs and TXN when cancelled or declined registrations involved
-            if ($canceled_or_declined) {
-                // cancelled or declined registration
-                $registration_processor->update_registration_after_being_canceled_or_declined(
-					$this,
-					$closed_reg_statuses
-				);
-				$transaction_processor->update_transaction_after_canceled_or_declined_registration(
-					$this,
-					$closed_reg_statuses,
-					false
-				);
-			} else if ($reinstated) {
-				// reinstating cancelled or declined registration
-				$registration_processor->update_canceled_or_declined_registration_after_being_reinstated(
-					$this,
-					$closed_reg_statuses
-				);
-				$transaction_processor->update_transaction_after_reinstating_canceled_registration( $this );
-			}
-			$transaction_payments->recalculate_transaction_total( $this->transaction(), false );
+            // update status
+            parent::set('STS_ID', $new_STS_ID, $use_default);
+            $this->_update_if_canceled_or_declined($new_STS_ID, $old_STS_ID);
+            /** @type EE_Transaction_Payments $transaction_payments */
+            $transaction_payments = EE_Registry::instance()->load_class('Transaction_Payments');
+            $transaction_payments->recalculate_transaction_total( $this->transaction(), false );
 			$this->transaction()->update_status_based_on_total_paid( true );
 			do_action( 'AHEE__EE_Registration__set_status__after_update', $this );
 			return TRUE;
@@ -192,6 +165,63 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 		}
 	}
 
+
+
+    /**
+     * update REGs and TXN when cancelled or declined registrations involved
+     *
+     * @param string $new_STS_ID
+     * @param string $old_STS_ID
+     * @throws \EE_Error
+     */
+    private function _update_if_canceled_or_declined($new_STS_ID, $old_STS_ID)
+    {
+        // these reg statuses should not be considered in any calculations involving monies owing
+        $closed_reg_statuses = EEM_Registration::closed_reg_statuses();
+        // true if registration has been cancelled or declined
+        if (
+            in_array($new_STS_ID, $closed_reg_statuses, true)
+            && ! in_array($old_STS_ID, $closed_reg_statuses, true)
+        ) {
+            /** @type EE_Registration_Processor $registration_processor */
+            $registration_processor = EE_Registry::instance()->load_class('Registration_Processor');
+            /** @type EE_Transaction_Processor $transaction_processor */
+            $transaction_processor = EE_Registry::instance()->load_class('Transaction_Processor');
+            // cancelled or declined registration
+            $registration_processor->update_registration_after_being_canceled_or_declined(
+                $this,
+                $closed_reg_statuses
+            );
+            $transaction_processor->update_transaction_after_canceled_or_declined_registration(
+                $this,
+                $closed_reg_statuses,
+                false
+            );
+            do_action('AHEE__EE_Registration__set_status__canceled_or_declined', $this, $old_STS_ID, $new_STS_ID);
+            return;
+        }
+        // true if reinstating cancelled or declined registration
+        if (
+            in_array($old_STS_ID, $closed_reg_statuses, true)
+            && ! in_array($new_STS_ID, $closed_reg_statuses, true)
+        ) {
+            /** @type EE_Registration_Processor $registration_processor */
+            $registration_processor = EE_Registry::instance()->load_class('Registration_Processor');
+            /** @type EE_Transaction_Processor $transaction_processor */
+            $transaction_processor = EE_Registry::instance()->load_class('Transaction_Processor');
+            // reinstating cancelled or declined registration
+            $registration_processor->update_canceled_or_declined_registration_after_being_reinstated(
+                $this,
+                $closed_reg_statuses
+            );
+            $transaction_processor->update_transaction_after_reinstating_canceled_registration(
+                $this,
+                $closed_reg_statuses,
+                false
+            );
+            do_action('AHEE__EE_Registration__set_status__after_reinstated', $this, $old_STS_ID, $new_STS_ID);
+        }
+	}
 
 
 	/**
@@ -210,6 +240,9 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @throws \EE_Error
      */
 	private function _reserve_registration_space() {
+	    // reserved ticket and datetime counts will be decremented as sold counts are incremented
+        // so stop tracking that this reg has a ticket reserved
+	    $this->release_reserved_ticket();
 		$ticket = $this->ticket();
 		$ticket->increase_sold();
 		$ticket->save();
@@ -282,15 +315,45 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 
     /**
-     * decrements (subtracts) this registration's related ticket reserved and corresponding datetime reserved values
+     * tracks this registration's ticket reservation in extra meta
+     * and can increment related ticket reserved and corresponding datetime reserved values
      *
+     * @param bool $update_ticket if true, will increment ticket and datetime reserved count
      * @return void
      * @throws \EE_Error
      */
-	private function _release_reserved_space() {
-		$ticket = $this->ticket();
-		$ticket->decrease_reserved();
-		$ticket->save();
+	public function reserve_ticket($update_ticket = false) {
+        $has_reserved_ticket = $this->get_extra_meta(EE_Registration::HAS_RESERVED_TICKET_KEY, true, false);
+        if ($has_reserved_ticket === false) {
+            $updated = $this->update_extra_meta(EE_Registration::HAS_RESERVED_TICKET_KEY, true, false);
+            if ($updated && $update_ticket) {
+                $ticket = $this->ticket();
+                $ticket->increase_reserved();
+                $ticket->save();
+            }
+        }
+	}
+
+
+
+    /**
+     * stops tracking this registration's ticket reservation in extra meta
+     * decrements (subtracts) related ticket reserved and corresponding datetime reserved values
+     *
+     * @param bool $update_ticket if true, will decrement ticket and datetime reserved count
+     * @return void
+     * @throws \EE_Error
+     */
+    public function release_reserved_ticket($update_ticket = false) {
+        $has_reserved_ticket = $this->get_extra_meta(EE_Registration::HAS_RESERVED_TICKET_KEY, true, false);
+        if ($has_reserved_ticket !== false) {
+            $deleted = $this->delete_extra_meta(EE_Registration::HAS_RESERVED_TICKET_KEY);
+            if ($deleted && $update_ticket) {
+                $ticket = $this->ticket();
+                $ticket->decrease_reserved();
+                $ticket->save();
+            }
+        }
 	}
 
 
