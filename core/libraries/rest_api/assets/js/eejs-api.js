@@ -1210,7 +1210,7 @@ if (!String.prototype.includes) {
                              * @param {object} getters
                              * @returns {Function}
                              */
-                            getFieldValueFromEntitybyId: function(state, getters) {
+                            getFieldValueFromEntityById: function(state, getters) {
                                 /**
                                  * @param {string} collection  The collection the entity belongs to.
                                  * @param {integer|string} Value for the primary key of the entity we're retrieving the
@@ -2355,7 +2355,7 @@ if (!String.prototype.includes) {
                             _.each(els.properties, function(el, propertyName) {
                                mixins.computedProperties[collection].computed[property+eejs.utils.inflection.capitalize(propertyName)] = {
                                    get: function() {
-                                       var mainProp = this.$store.getters.getFieldValueFromEntitybyId(this.collectionName,this.id,property);
+                                       var mainProp = this.$store.getters.getFieldValueFromEntityById(this.collectionName,this.id,property);
                                        /**
                                         * Keep in mind that even though this propertyName might exist in the schema, it
                                         * might not actually exist in the store.state because it requires permissions
@@ -2371,7 +2371,7 @@ if (!String.prototype.includes) {
                             //property representation for each item in the value (i.e. `rendered` or `raw` or `pretty`)
                             mixins.computedProperties[collection].computed[property] = {
                                 get: function () {
-                                    return this.$store.getters.getFieldValueFromEntitybyId(this.collectionName, this.id, property);
+                                    return this.$store.getters.getFieldValueFromEntityById(this.collectionName, this.id, property);
                                 },
                                 set: setException
                             }
