@@ -1120,7 +1120,7 @@ if (!String.prototype.includes) {
                         : {};
                 },
                 /**
-                 * This method kicks off building the Vuex.store instance and assigns it to eejs.api.collections
+                 * This method kicks off building the Vuex.store instance and assigns it to eejs.api.store
                  */
                 buildStore = function() {
                     //build modules for the collections
@@ -1273,7 +1273,7 @@ if (!String.prototype.includes) {
                                 }
 
                                 //replace or add the entity into store state
-                                eejs.api.collections.commitEntityToCollection(payload.collection, payload.entity, true);
+                                eejs.api.store.commitEntityToCollection(payload.collection, payload.entity, true);
                             },
 
                             /**
@@ -1302,7 +1302,7 @@ if (!String.prototype.includes) {
                                 }
                                 payload.refresh = ! _.isUndefined(payload.refresh) ? payload.refresh : false;
                                 payload.fromDb = ! _.isUndefined(payload.fromDb) ? payload.fromDb : false;
-                                eejs.api.collections.commitEntityToCollection(
+                                eejs.api.store.commitEntityToCollection(
                                     payload.collection,
                                     payload.entity,
                                     payload.refresh,
@@ -1350,7 +1350,7 @@ if (!String.prototype.includes) {
 
                                 payload.doStoreCheck = _.isUndefined(payload.doStoreCheck) ? true : payload.doStoreCheck;
 
-                                eejs.collections.commitRelationsForEntity(
+                                eejs.api.store.commitRelationsForEntity(
                                     payload.collection,
                                     payload.collectionEntityId,
                                     payload.relation,
@@ -1679,8 +1679,8 @@ if (!String.prototype.includes) {
                             saveNewEntities: function(context,payload){/*@todo*/}
                         }
                     };
-                    //initialize Vuex object and add to the eejs.api.collections object.
-                    eejs.api.collections = new Vuex.Store(storeState);
+                    //initialize Vuex object and add to the eejs.api.store object.
+                    eejs.api.store = new Vuex.Store(storeState);
                 },
                 /**
                  * Builds and caches all the modules that will be used for initialising the Vuex.store object.
@@ -1810,7 +1810,7 @@ if (!String.prototype.includes) {
                      */
                     mixins.collection = {
                         collection: '',
-                        store: eejs.api.collections,
+                        store: eejs.api.store,
                         props: ['nameCollection'],
                         created: function(){
                             /**
@@ -1871,7 +1871,7 @@ if (!String.prototype.includes) {
                         id: 0,
                         autoUpdate: true,
                         initialUpdateCompleted : false,
-                        store: eejs.api.collections,
+                        store: eejs.api.store,
                         props: ['collection'],
                         data: function() {
                           return { id: 0 };
@@ -2159,7 +2159,7 @@ if (!String.prototype.includes) {
                             dataObject['has'+capitalizedRelation] = false;
                             return dataObject;
                         },
-                        store: eejs.api.collections,
+                        store: eejs.api.store,
                         mounted: function() {
                             if (this[relation].length === 0 && this.id > 0) {
                                 this['getRelated'+capitalizedRelation]();
