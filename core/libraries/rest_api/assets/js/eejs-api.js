@@ -99,7 +99,7 @@ Vuex.Store.prototype.commitChangeRecord = function(collection, entity, changeTyp
             if (_.indexOf(this.state[collection].changeMap.delete, entityId) === -1) {
                 //if this is a NEW object then it doesn't need added here because it hasn't been persisted yet so no
                 //deletes necessary!
-                if (! this.getters.isNewObject(entityId)) {
+                if (! this.getters.isNewEntity(entityId)) {
                     this.state[collection].changeMap.delete.push(entityId);
                 }
             }
@@ -135,7 +135,7 @@ Vuex.Store.prototype.commitChangeRecord = function(collection, entity, changeTyp
 
                 //if the primary key for the entity is for a new object, then we don't update but instead add to the
                 //created index.
-                if (this.getters.isNewObject(entityId)) {
+                if (this.getters.isNewEntity(entityId)) {
                     changeType = 'create';
                 }
 
@@ -494,8 +494,8 @@ Vuex.Store.prototype.commitRelationsForEntity = function(
                 //make sure this is added to the changeMap if not from db OR if either the relation entity or the
                 //collection entity is a new object.
                 if (! fromDb
-                    || self.getters.isNewObject(collectionEntityId)
-                    || self.getters.isNewObject(relationEntityId)
+                    || self.getters.isNewEntity(collectionEntityId)
+                    || self.getters.isNewEntity(relationEntityId)
                 ) {
                     self.commitRelatedChangeRecord(collection, relation, collectionEntityId, id, 'added');
                 }
@@ -587,7 +587,7 @@ Vuex.Store.prototype.commitEntityToCollection = function(collection, entity, ref
         if (! self.getters.hasEntityInCollection(collection,entityToSave) ) {
             state[collection].entities.push(entityToSave);
             //if this is a new object or NOT from the db then let's make sure its added to the 'create' map.
-            if (self.getters.isNewObject(entity[eejs.api.main.getPrimaryKeyForCollection(collection)]) || ! fromDb) {
+            if (self.getters.isNewEntity(entity[eejs.api.main.getPrimaryKeyForCollection(collection)]) || ! fromDb) {
                 self.commitChangeRecord(collection, entity, 'create');
             }
         } else if (refresh) {
@@ -1169,7 +1169,7 @@ if (!String.prototype.includes) {
                              * @param {object} getters
                              * @returns {Function}
                              */
-                            isNewObject: function(state, getters) {
+                            isNewEntity: function(state, getters) {
                                 /**
                                  * @param {integer|string} entityId   The id for an entity that is being checked.
                                  * @return boolean
@@ -1530,7 +1530,7 @@ if (!String.prototype.includes) {
                                     //Note: this will not fetch anything from the api if the entityId indicates a new object.
                                     if (
                                         (relationEntities.length === 0 || refresh)
-                                        && ! context.getters.isNewObject(payload.entityId)
+                                        && ! context.getters.isNewEntity(payload.entityId)
                                     ) {
                                         var relationQueryObject = {},
                                             collectionSingularCapitalized = eejs.utils.inflection.transform(
@@ -1596,7 +1596,7 @@ if (!String.prototype.includes) {
                                    //then fetch using the api.
                                    if (
                                        (payload.refresh || _.isUndefined(entity))
-                                       && ! context.getters.isNewObject(payload.entityId)
+                                       && ! context.getters.isNewEntity(payload.entityId)
                                    ) {
 
                                        //add id to query string
