@@ -65,10 +65,11 @@ class CreateRegistrationService extends DomainService
         if ( ! $registration instanceof \EE_Registration) {
             throw new UnexpectedEntityException($registration, 'EE_Registration');
         }
+        // save registration so that we have an ID
+        $registration->save();
         // track reservation on reg but don't adjust ticket and datetime reserved counts
         // because that is done as soon as the tickets are added/removed from the cart
         $registration->reserve_ticket();
-        $registration->save();
         $registration->_add_relation_to($event, 'Event', array(), $event->ID());
         $registration->_add_relation_to($ticket, 'Ticket', array(), $ticket->ID());
         $transaction->_add_relation_to($registration, 'Registration', array(), $registration->ID());
