@@ -24,6 +24,11 @@ class EEH_Schema {
      */
     public static function add_json_linked_data_for_event(\EE_Event $event)
     {
+    	//Check we have a valid datetime for the event
+    	if( empty( $event->primary_datetime() ) ) {
+    		return;
+    	}
+
         $template_args = array(
             'event_permalink' => '',
             'event_name' => '',
