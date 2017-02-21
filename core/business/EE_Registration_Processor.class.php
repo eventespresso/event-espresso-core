@@ -523,7 +523,8 @@ class EE_Registration_Processor extends EE_Processor_Base {
 		$update_reg = true
 	) {
 		// these reg statuses should not be considered in any calculations involving monies owing
-		$closed_reg_statuses = ! empty( $closed_reg_statuses ) ? $closed_reg_statuses
+		$closed_reg_statuses = ! empty( $closed_reg_statuses )
+            ? $closed_reg_statuses
 			: EEM_Registration::closed_reg_statuses();
 		if ( ! in_array( $registration->status_ID(), $closed_reg_statuses, true ) ) {
 			return false;
