@@ -37,7 +37,7 @@ class Changes_In_4_8_36 extends Changes_In_Base {
 		//remove the old featured_image part of the response...
 		add_filter(
 			'FHEE__Read__create_entity_from_wpdb_results__entity_before_inaccessible_field_removal',
-			array( $this, 'remove_old_featured_image_part_of_cpt_entities' ),
+			array( $this, 'add_old_featured_image_part_of_cpt_entities' ),
 			10,
 			5
 		);
@@ -90,8 +90,7 @@ class Changes_In_4_8_36 extends Changes_In_Base {
 	}
 
 	/**
-	 * Removes the new headers just added in this version to any requests to older versions
-	 * of the API
+	 * Removes the new headers for requests before 4.8.36
 	 * @param array $headers
 	 * @param Base $controller
 	 * @param string $version
@@ -116,7 +115,7 @@ class Changes_In_4_8_36 extends Changes_In_Base {
 	}
 
 	/**
-	 * Removes the "_calculate_fields" part of entity responses before 4.8.36
+	 * Puts the 'featured_image_url' back in for responses before 4.8.36.
 	 * @param array $entity_response_array
 	 * @param \EEM_Base $model
 	 * @param string $request_context
@@ -124,7 +123,7 @@ class Changes_In_4_8_36 extends Changes_In_Base {
 	 * @param Read $controller
 	 * @return array
 	 */
-	public function remove_old_featured_image_part_of_cpt_entities(
+	public function add_old_featured_image_part_of_cpt_entities(
 		$entity_response_array,
 		\EEM_Base $model,
 		$request_context,
