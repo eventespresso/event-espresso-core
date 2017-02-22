@@ -1830,16 +1830,18 @@ abstract class EEM_Base extends EE_Base
      * Wrapper for EEM_Base::delete_permanently()
      *
      * @param mixed $id
-     * @return boolean whether the row got deleted or not
+     * @param boolean $allow_blocking
+     * @return int the number of rows deleted
      * @throws \EE_Error
      */
-    public function delete_permanently_by_ID($id)
+    public function delete_permanently_by_ID($id, $allow_blocking = true)
     {
         return $this->delete_permanently(
             array(
                 array($this->get_primary_key_field()->get_name() => $id),
                 'limit' => 1,
-            )
+            ),
+            $allow_blocking
         );
     }
 
@@ -1850,16 +1852,18 @@ abstract class EEM_Base extends EE_Base
      * Wrapper for EEM_Base::delete()
      *
      * @param mixed $id
-     * @return boolean whether the row got deleted or not
+     * @param boolean $allow_blocking
+     * @return int the number of rows deleted
      * @throws \EE_Error
      */
-    public function delete_by_ID($id)
+    public function delete_by_ID($id, $allow_blocking = true)
     {
         return $this->delete(
             array(
                 array($this->get_primary_key_field()->get_name() => $id),
                 'limit' => 1,
-            )
+            ),
+            $allow_blocking
         );
     }
 
