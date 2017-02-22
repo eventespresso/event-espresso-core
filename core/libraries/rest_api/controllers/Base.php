@@ -287,6 +287,26 @@ class Base {
 		}
 		return $indexed_matches;
 	}
+
+
+
+    /**
+     * Gets the body's params (either from JSON or parsed body), which EXCLUDES the GET params and URL params
+     * @param \WP_REST_Request $request
+     * @return array
+     */
+	protected function _get_body_params( \WP_REST_Request $request ){
+	    //$request->get_params();
+        return array_merge(
+            (array)$request->get_body_params(),
+            (array)$request->get_json_params()
+        );
+        // return array_diff_key(
+	     //    $request->get_params(),
+        //     $request->get_url_params(),
+        //     $request->get_query_params()
+        // );
+    }
 }
 
 // End of file Base.php

@@ -438,6 +438,15 @@ class EED_Core_Rest_Api extends \EED_Module
                     'hidden_endpoint' => $hidden_endpoint,
                     'args'            => $this->_get_write_params($model_name, $model_version_info),
                 ),
+                array(
+                    'callback'        => array(
+                        'EventEspresso\core\libraries\rest_api\controllers\model\Write',
+                        'handle_request_delete',
+                    ),
+                    'methods'         => WP_REST_Server::DELETABLE,
+                    'hidden_endpoint' => $hidden_endpoint,
+                    'args'            => $this->_get_response_selection_query_params($model, $version),
+                )
             );
             foreach ($model->relation_settings() as $relation_name => $relation_obj) {
                 $related_model_name_endpoint_part = ModelRead::get_related_entity_name(
@@ -478,7 +487,7 @@ class EED_Core_Rest_Api extends \EED_Module
                 }
                 $model_routes[$singular_model_route . '/' . $related_model_name_endpoint_part] = $endpoints;
             }
-            //@todo: also handle  DELETE for a single item
+
         }
         return $model_routes;
     }
@@ -561,6 +570,40 @@ class EED_Core_Rest_Api extends \EED_Module
                     'default'  => '',
                     'enum'     => self::$_field_calculator->retrieve_calculated_fields_for_model($model),
                 ),
+            ),
+            $model,
+            $version
+        );
+    }
+
+
+
+    /**
+     * Gets the parameters acceptable for delete requests
+     * @param \EEM_Base $model
+     * @param string          $version
+     * @return array
+     */
+    protected function _get_delete_query_params(\EEM_Base $model, $version)
+    {
+        $params_for_delete = array(
+            'allow_blocking' => array(
+                'required' => false,
+                'default' => true
+            )
+        );
+        if( $model instanceof \EEM_Soft_Delete_Base ){
+            $params_for_delete['permanent'] = array(
+                'required' => false,
+                'default' => false
+            );
+        }
+
+        return apply_filters(
+            'FHEE__EED_Core_Rest_Api___get_delete_query_params',
+            array_merge(
+                $this->_get_response_selection_query_params($model,$version),
+                $params_for_delete
             ),
             $model,
             $version

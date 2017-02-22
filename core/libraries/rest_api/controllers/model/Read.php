@@ -278,34 +278,34 @@ class Read extends Base
     public function get_entities_from_model($model, $request)
     {
         $query_params = $this->create_model_query_params($model, $request->get_params());
-        if (! Capabilities::current_user_has_partial_access_to($model, $query_params['caps'])) {
-            $model_name_plural = \EEH_Inflector::pluralize_and_lower($model->get_this_model_name());
-            return new \WP_Error(
-                sprintf('rest_%s_cannot_list', $model_name_plural),
-                sprintf(
-                    __('Sorry, you are not allowed to list %1$s. Missing permissions: %2$s', 'event_espresso'),
-                    $model_name_plural,
-                    Capabilities::get_missing_permissions_string($model, $query_params['caps'])
-                ),
-                array('status' => 403)
-            );
-        }
-        if (! $request->get_header('no_rest_headers')) {
-            $this->_set_headers_from_query_params($model, $query_params);
-        }
-        /** @type array $results */
-        $results = $model->get_all_wpdb_results($query_params);
-        $nice_results = array();
-        foreach ($results as $result) {
-            $nice_results[] = $this->create_entity_from_wpdb_result(
-                $model,
-                $result,
-                $request
-            );
-        }
-        return $nice_results;
-    }
-
+       if (! Capabilities::current_user_has_partial_access_to($model, $query_params['caps'])) {
+        $model_name_plural = \EEH_Inflector::pluralize_and_lower($model->get_this_model_name());
+           return new \WP_Error(
+               sprintf('rest_%s_cannot_list', $model_name_plural),
+               sprintf(
+                   __('Sorry, you are not allowed to list %1$s. Missing permis
+sions: %2$s', 'event_espresso'),
+                   $model_name_plural,
+                   Capabilities::get_missing_permissions_string($model, $query_params['caps'])
+               ),
+               array('status' => 403)
+           );
+       }
+       if (! $request->get_header('no_rest_headers')) {
+           $this->_set_headers_from_query_params($model, $query_params);
+       }
+       /** @type array $results */
+       $results = $model->get_all_wpdb_results($query_params);
+       $nice_results = array();
+       foreach ($results as $result) {
+           $nice_results[] = $this->create_entity_from_wpdb_result(
+               $model,
+               $result,
+               $request
+           );
+       }
+       return $nice_results;
+   }
 
 
     /**
@@ -867,48 +867,9 @@ class Read extends Base
      */
     public function get_entity_from_model($model, $request)
     {
-        $query_params = array(array($model->primary_key_name() => $request->get_param('id')), 'limit' => 1);
-        if ($model instanceof \EEM_Soft_Delete_Base) {
-            $query_params = $model->alter_query_params_so_deleted_and_undeleted_items_included($query_params);
-        }
-        $restricted_query_params = $query_params;
-        $restricted_query_params['caps'] = $this->validate_context($request->get_param('caps'));
-        $this->_set_debug_info('model query params', $restricted_query_params);
-        $model_rows = $model->get_all_wpdb_results($restricted_query_params);
-        if (! empty ($model_rows)) {
-            return $this->create_entity_from_wpdb_result(
-                $model,
-                array_shift($model_rows),
-                $request);
-        } else {
-            //ok let's test to see if we WOULD have found it, had we not had restrictions from missing capabilities
-            $lowercase_model_name = strtolower($model->get_this_model_name());
-            $model_rows_found_sans_restrictions = $model->get_all_wpdb_results($query_params);
-            if (! empty($model_rows_found_sans_restrictions)) {
-                //you got shafted- it existed but we didn't want to tell you!
-                return new \WP_Error(
-                    'rest_user_cannot_read',
-                    sprintf(
-                        __('Sorry, you cannot read this %1$s. Missing permissions are: %2$s', 'event_espresso'),
-                        strtolower($model->get_this_model_name()),
-                        Capabilities::get_missing_permissions_string(
-                            $model,
-                            $this->validate_context($request->get_param('caps')))
-                    ),
-                    array('status' => 403)
-                );
-            } else {
-                //it's not you. It just doesn't exist
-                return new \WP_Error(
-                    sprintf('rest_%s_invalid_id', $lowercase_model_name),
-                    sprintf(__('Invalid %s ID.', 'event_espresso'), $lowercase_model_name),
-                    array('status' => 404)
-                );
-            }
-        }
+        $context = $this->validate_context($request->get_param('caps'));
+        return $this->get_one_or_report_permission_error( $model, $request, $context );
     }
-
-
 
     /**
      * If a context is provided which isn't valid, maybe it was added in a future
@@ -1205,6 +1166,59 @@ class Read extends Base
             }
         }
         return $extracted_fields_to_include;
+    }
+
+    /**
+     * Gets the single item using the model according to the request in the context given, otherwise
+     * returns that it's inacccessible to the current user
+     * @param \EEM_Base        $model
+     * @param \WP_REST_Request $request
+     * @param null             $context
+     * @return array|\WP_Error
+     */
+    public function get_one_or_report_permission_error( \EEM_Base $model, \WP_REST_Request $request, $context = null )
+    {
+        $query_params = array(array($model->primary_key_name() => $request->get_param('id')), 'limit' => 1);
+        if ($model instanceof \EEM_Soft_Delete_Base) {
+            $query_params = $model->alter_query_params_so_deleted_and_undeleted_items_included($query_params);
+        }
+        $restricted_query_params = $query_params;
+        $restricted_query_params['caps'] = $context;
+        $this->_set_debug_info('model query params', $restricted_query_params);
+        $model_rows = $model->get_all_wpdb_results($restricted_query_params);
+        if (! empty ($model_rows)) {
+            return $this->create_entity_from_wpdb_result(
+                $model,
+                array_shift($model_rows),
+                $request);
+        } else {
+            //ok let's test to see if we WOULD have found it, had we not had restrictions from missing capabilities
+            $lowercase_model_name = strtolower($model->get_this_model_name());
+            $model_rows_found_sans_restrictions = $model->get_all_wpdb_results($query_params);
+            if (! empty($model_rows_found_sans_restrictions)) {
+                //you got shafted- it existed but we didn't want to tell you!
+                return new \WP_Error(
+                    'rest_user_cannot_' . $context,
+                    sprintf(
+                        __('Sorry, you cannot %1$s this %2$s. Missing permissions are: %3$s', 'event_espresso'),
+                        $context,
+                        strtolower($model->get_this_model_name()),
+                        Capabilities::get_missing_permissions_string(
+                            $model,
+                            $context
+                        )
+                    ),
+                    array('status' => 403)
+                );
+            } else {
+                //it's not you. It just doesn't exist
+                return new \WP_Error(
+                    sprintf('rest_%s_invalid_id', $lowercase_model_name),
+                    sprintf(__('Invalid %s ID.', 'event_espresso'), $lowercase_model_name),
+                    array('status' => 404)
+                );
+            }
+        }
     }
 }
 

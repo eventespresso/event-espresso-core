@@ -74,7 +74,6 @@ class Base extends Controller_Base {
 		}
 		return false;
 	}
-
 }
 
 // End of file Base.php

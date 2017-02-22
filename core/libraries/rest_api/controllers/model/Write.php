@@ -99,6 +99,45 @@ class Write extends Base {
 		}
 	}
 
+
+
+    /**
+     * Deletes a single model object and returns it. Unless
+     *
+     * @param \WP_Rest_Request $request
+     * @return \WP_REST_Response|\WP_Error
+     */
+    public static function handle_request_delete( \WP_Rest_Request $request ) {
+        $controller = new Write();
+        try{
+            $matches = $controller->parse_route(
+                $request->get_route(),
+                '~' . \EED_Core_Rest_Api::ee_api_namespace_for_regex . '(.*)/(.*)~',
+                array( 'version', 'model', 'id' ) );
+            $controller->set_requested_version( $matches[ 'version' ] );
+            $model_name_singular = \EEH_Inflector::singularize_and_upper( $matches[ 'model' ] );
+            if ( ! $controller->get_model_version_info()->is_model_name_in_this_version( $model_name_singular ) ) {
+                return $controller->send_response(
+                    new \WP_Error(
+                        'endpoint_parsing_error',
+                        sprintf(
+                            __( 'There is no model for endpoint %s. Please contact event espresso support', 'event_espresso' ),
+                            $model_name_singular
+                        )
+                    )
+                );
+            }
+            return $controller->send_response(
+                $controller->delete(
+                    $controller->get_model_version_info()->load_model( $model_name_singular ),
+                    $request
+                )
+            );
+        } catch( \Exception $e ) {
+            return $controller->send_response( $e );
+        }
+    }
+
 	/**
 	 *
 	 * Gets all the related entities (or if its a belongs-to relation just the one)
@@ -163,7 +202,7 @@ class Write extends Base {
 	 * Inserts a new model object according to the $request
 	 * @param \EEM_Base $model
 	 * @param \WP_REST_Request $request
-	 * @return WP_REST_Response
+	 * @return array
 	 * @throws \EE_Error
 	 */
 	public function insert( \EEM_Base $model, \WP_REST_Request $request ) {
@@ -203,7 +242,7 @@ class Write extends Base {
      * Updates an existing model object according to the $request
      * @param \EEM_Base $model
      * @param \WP_REST_Request $request
-     * @return WP_REST_Response
+     * @return array
      * @throws \EE_Error
      */
     public function update( \EEM_Base $model, \WP_REST_Request $request ) {
@@ -226,12 +265,12 @@ class Write extends Base {
                 sprintf( __( 'Could not edit %1$s', 'event_espresso'), $model->get_this_model_name() )
             );
         }
-        $submitted_json_data = array_merge( (array)$request->get_body_params(), (array)$request->get_json_params() );
         $model_data = Model_Data_Translator::prepare_conditions_query_params_for_models(
-            $submitted_json_data,
+            $this->_get_body_params($request),
             $model,
             $this->get_model_version_info()->requested_version()
         );
+
         $model_obj = $model->get_one_by_ID($obj_id);
         $model_obj->save($model_data);
         return $this->_get_one_based_on_request($model,$request,$obj_id);
@@ -240,11 +279,38 @@ class Write extends Base {
 
 
     /**
+     * Updates an existing model object according to the $request
+     * @param \EEM_Base $model
+     * @param \WP_REST_Request $request
+     * @return array of either the soft-deleted item, or
+     * @throws \EE_Error
+     */
+    public function delete( \EEM_Base $model, \WP_REST_Request $request ) {
+        $obj_id = $request->get_param('id');
+        $requested_permanent_delete = (bool)$request->get_param('permanent');
+        $requested_allow_blocking = (bool)$request->get_param('allow_blocking');
+        if( $requested_permanent_delete){
+            $read_controller = new Read();
+            $read_controller->set_requested_version($this->get_requested_version());
+            $original_entity = $read_controller->get_one_or_report_permission_error( $model, $request, \EEM_Base::caps_delete);
+            $deleted = (bool)$model->delete_permanently_by_ID($obj_id, $requested_allow_blocking);
+            return array(
+                'deleted' => $deleted,
+                'previous' => $original_entity
+            );
+        } else {
+            $model->delete_by_ID($obj_id,$requested_allow_blocking);
+            return $this->_get_one_based_on_request($model,$request,$obj_id);
+        }
+    }
+
+
+    /**
      * Gets the item affected by this request
      * @param \EEM_Base        $model
      * @param \WP_REST_Request $request
      * @param  int|string                $obj_id
-     * @return \WP_Error|\WP_REST_Response
+     * @return \WP_Error|array
      */
     protected function _get_one_based_on_request( \EEM_Base $model, \WP_REST_Request $request, $obj_id )
     {
@@ -258,20 +324,11 @@ class Write extends Base {
                 'id' => $obj_id
             )
         );
-        return Read::handle_request_get_one( $get_request );
+        $read_controller = new Read();
+        $read_controller->set_requested_version($this->get_requested_version());
+        return $read_controller->get_entity_from_model($model, $get_request );
     }
 
-
-
-    /**
-     * @param \EEM_Base        $model
-     * @param \WP_REST_Request $request
-     * @param string           $action 'create', 'edit', 'delete'
-     */
-    protected function _verify_caps( \EEM_Base $model, \WP_REST_Request $request, $action = 'create' )
-    {
-
-    }
 }
 
 
