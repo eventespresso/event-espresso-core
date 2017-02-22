@@ -1596,7 +1596,7 @@ if (!String.prototype.includes) {
                                    payload.refresh = ! _.isUndefined(payload.refresh) ? payload.refresh : false;
 
                                    //if not refreshing, see if the entity is in the store.
-                                   if (! payload.refresh) {
+                                   if (! payload.refresh || context.getters.isNewEntity(payload.entityId)) {
                                        searchObj[entityPrimaryKey] = payload.entityId;
                                        entity = _.findWhere(context.state[payload.collection].entities, searchObj);
                                    }
@@ -1887,7 +1887,7 @@ if (!String.prototype.includes) {
                         },
                         created : function(){
                             //make sure incoming $options.id is an integer
-                            this.$options.id = parseInt(this.$options.id);
+                            this.$options.id = this.$store.getters.isNewEntity(this.$options.id) ? this.$options.id : parseInt(this.$options.id);
                             /**
                              * There are three ways for determining what gets set as the model on the object:
                              * 1. Pass in the id via the `id` prop with the options when instantiating,
@@ -1903,15 +1903,14 @@ if (!String.prototype.includes) {
                              * If after all the other conditions the id prop is still equal to zero, then this will just
                              * become a default object with the id set to a temporary client side unique id.
                              */
-                            if (this.$options.id > 0 ) {
+                            if ( (_.isString(this.$options.id) && this.$options.id !== '') || this.$options.id > 0) {
                                 this.id = this.$options.id;
                                 this.fetchById(true);
                             } else if (this.initialId) {
                                 this.id = this.initialId;
                                 this.fetchById(true);
                             } else if (!_.isEmpty(this['initial'+eejs.utils.inflection.capitalize(this.modelName())])) {
-                                //if `initialId` is set, we will be populating from a fetch on create.  Otherwise if
-                                //initial{modelname} is not empty, we'll populate from that object.
+                                 //if initial{modelname} is not empty, we'll populate from that object.
                                 this.replaceDefaults(this['initial'+eejs.utils.inflection.capitalize(this.modelName())], false);
                                 //ensure that a unique id has been set.
                                 this.ensureHasUniqueId();
@@ -1951,10 +1950,24 @@ if (!String.prototype.includes) {
                                     'fetchEntityById',
                                     {collection:this.collectionName, entityId:this.id, refresh:refresh}
                                 ).then( function(response) {
-                                    self[self.modelName()] = response;
+                                    /**
+                                     * If the id represents a "new" object, and this object doesn't exist in the store
+                                     * then let's make sure we update the store state with the defaults so the next fetch
+                                     * will return it.
+                                     */
+                                    if (_.isUndefined(response) && self.$store.getters.isNewEntity(self.id)) {
+                                        self.$set(
+                                         self[self.modelName()],
+                                         getPrimaryKeyFromSchema(collectionsSchema[self.collectionName]),
+                                         self.id
+                                         );
+                                        self.update();
+                                    } else {
+                                        self[self.modelName()] = response;
+                                    }
                                     self['has'+eejs.utils.inflection.capitalize(self.modelName())] = true;
                                 }).catch( function(response) {
-                                    console.log(response);
+                                        console.log(response);
                                 });
                             },
 
@@ -2048,7 +2061,6 @@ if (!String.prototype.includes) {
                              */
                             ensureHasUniqueId: function() {
                                 if (this.id > 0 || (_.isString(this.id) && this.id !== '')) {
-                                    //it's already been set.
                                     return;
                                 }
                                 var currentModelId = this[this.modelName()][getPrimaryKeyFromSchema(collectionsSchema[this.collectionName])];
