@@ -36,7 +36,7 @@ class Changes_In_4_8_36 extends Changes_In_Base {
 		);
 		//remove the old featured_image part of the response...
 		add_filter(
-			'FHEE__Read__create_entity_from_wpdb_results__entity_before_inaccessible_field_removal',
+			'FHEE__Read__create_entity_from_wpdb_results__entity_before_including_requested_models',
 			array( $this, 'add_old_featured_image_part_of_cpt_entities' ),
 			10,
 			5

@@ -104,8 +104,8 @@ class Read_Test extends \EE_REST_TestCase{
 	}
 
     /**
-     * Verifies a legacy quirk still exists. On requests prior to 4.9.36, the featured_image_url was added onto
-     * ALL responses for CPT items. Just for consistency that should continue to be the case
+     * Verifies 'featured_image_url' isn't added to all 4.8.29 requests. We had a bug introduced in 4.8.36
+     * where requests to 4.8.29 added 'featured_image_url' all the time
      * @group 10526
      */
     public function test_handle_request_get_one_4_8_29__event_includes() {
@@ -127,7 +127,6 @@ class Read_Test extends \EE_REST_TestCase{
             array (
                 'EVT_ID' => $event->ID(),
                 'EVT_name' => $event->name(),
-                'featured_image_url' => null
             ),
             $result
         );
