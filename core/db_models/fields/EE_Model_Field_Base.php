@@ -341,9 +341,9 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
 
     /**
      * By default this returns the scalar default value that was sent in on the class prepped according to the class type
-     * as the default.  However, child classes can and should override this if their schema type is an object and they
-     * have 'rendered', 'pretty', or 'raw values in the schema.  The getSchema method validates whether the schema for
-     * default is setup correctly or not according to the schema type.
+     * as the default.  However, when there are schema properties, then the default property is setup to mirror the
+     * property keys and correctly prepare the default according to that expected property value.
+     * The getSchema method validates whether the schema for default is setup correctly or not according to the schema type
      *
      * @return mixed
      */
