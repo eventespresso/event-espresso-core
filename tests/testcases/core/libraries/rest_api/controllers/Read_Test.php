@@ -839,6 +839,24 @@ class Read_Test extends \EE_REST_TestCase{
         $this->assertTrue($datetimes_array['readonly']);
     }
 
+
+    /**
+     * @group rest_schema_request
+     */
+    public function test_handle_schema_request_returning_defaults() {
+        $request = new \WP_REST_Request( 'OPTIONS', '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/prices');
+        $response = rest_do_request($request);
+        $data = $response->get_data();
+        //verify that defaults are in the schema and in the correct format.
+        $PRC_amount_defaults = $data['schema']['properties']['PRC_amount']['default'];
+
+        $this->assertTrue(is_array($PRC_amount_defaults));
+        $this->assertArrayHasKey('raw', $PRC_amount_defaults);
+        $this->assertArrayHasKey('pretty', $PRC_amount_defaults);
+        $this->assertEquals((float) 0, $PRC_amount_defaults['raw']);
+        $this->assertEquals('$0.00 <span class="currency-code">(USD)</span>', $PRC_amount_defaults['pretty']);
+    }
+
 }
 // End of file Read_Test.php
 // Location: testcases/core/libraries/rest_api/controllers/Read_Test.php
