@@ -14,13 +14,13 @@ abstract class EE_REST_TestCase extends EE_UnitTestCase
 
     public function setUp()
     {
+        parent::setUp();
         if (! class_exists('WP_Rest_Request')
             || ! class_exists('Spy_REST_Server')) {
             $this->markTestSkipped(
                 'Test being run on a version of WP that does not have the REST framework installed'
             );
         }
-        parent::setUp();
         add_filter('rest_url', array($this, 'filter_rest_url_for_leading_slash'), 10, 2);
         /** @var WP_REST_Server $wp_rest_server */
         global $wp_rest_server;
