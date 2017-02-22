@@ -136,3 +136,39 @@ $discount_amount = $this->_sum_items_and_taxes($transaction) - $transaction->tot
 ```
 
 For more details, use /payment_methods/Paypal_Standard/EEG_Paypal_Standard.gateway.php as an example.
+
+## A Note on Character Encoding in Requests
+Some gateway servers, like Authorize.net, don't use UTF-8 character encoding for their text. This means that your request data
+sent to their server, which is normally sent in UTF-8, might appear garbled or invalid in their system. (This is, of course, an issue with any other servers).
+Some characters are the same in all character encodings (mostly just letters commonly used in English, the ASCII characters set), but some are totally different. So
+you might only notice these issues if you send accented characters (e.g., À or ü) or emojis  (e.g. 😀 or 😤).
+
+The lazy way to fix this is to remove all non-ASCII characters. We have provided a helper for doing this to gateways.
+For example, anywhere inside your gateway class, you can call 
+
+```
+$ascii_only_string = $this->_get_unsupported_character_remover()->format($utf8_string);
+```
+
+You can also use the `formatArray` method on arrays.
+
+However, this will also remove characters that the gateway's server might be fine with too.
+
+So preferably you need to find what character encoding the gateway's server uses for API communication. If it uses
+Windows-1252, a.k.a. CP-1252, a.k.a. ISO-8859-1, you can set the gateway up to use another formatter class. The following
+payment method type class does that for its gateway:
+
+```
+class EE_PMT_Example extends EE_PMT_Base{
+  public function __construct($pm_instance = NULL) {
+        parent::__construct($pm_instance);
+        $this->_gateway->set_unsupported_character_remover(new \EventEspresso\core\services\formatters\Windows1252());
+	}
+  ...
+}
+```
+Then in your gateway class, when you call `$this->_get_unsupported_character_remover()->format($utf8_string)` it will convert the incoming
+string to Windows-1252 instead of ASCII.
+
+You can of course create your own Formatter classes that convert to other formats, just make sure they implement `\EventEspresso\core\services\formatters\FormatterInterface`.
+ See the files `/core/services/formatters` for examples. 
