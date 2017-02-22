@@ -865,6 +865,15 @@ if (!String.prototype.includes) {
     };
 
 
+    /**
+     * Returns a unique id in the format used to represent uniq_ids in this library.
+     * @returns {string}
+     */
+    eejs.utils.getUniqueId = function() {
+        return _.uniqueId('_new_id_');
+    };
+
+
 
     /**
      * This is a wrapper for the eejs.api.main object that is used
@@ -2053,7 +2062,7 @@ if (!String.prototype.includes) {
                                 }
 
                                 //if we're still here, then that means we need to generate a unique ID.
-                                this.id = _.uniqueId('_new_id_');
+                                this.id = eejs.utils.getUniqueId();
                                 this.$set(
                                     this[this.modelName()],
                                     getPrimaryKeyFromSchema(collectionsSchema[this.collectionName]),
