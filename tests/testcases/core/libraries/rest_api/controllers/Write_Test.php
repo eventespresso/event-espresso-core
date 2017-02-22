@@ -39,12 +39,9 @@ class Write_Test extends \EE_UnitTestCase
      * @group current
      */
     public function test_no_insert_limited_user(){
-        $user = $this->wp_admin_with_ee_caps(
-            array(
-                'ee_read_events',
-                'ee_edit_events',
-            )
-        );
+        $user = $this->factory->user->create_and_get(array('role' => 'subscriber'));
+        $user->add_cap('ee_edit_events');
+        $user->add_cap('ee_read_events');
         wp_set_current_user( $user->ID );
         //ok now try to insert an event
         $request = new \WP_REST_Request( 'POST', '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events');
