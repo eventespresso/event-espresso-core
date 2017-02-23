@@ -1,6 +1,9 @@
 <?php
 namespace EventEspresso\modules\ticket_selector;
 
+use EE_Error;
+use EventEspresso\core\exceptions\UnexpectedEntityException;
+
 defined('ABSPATH') || exit;
 
 
@@ -42,6 +45,16 @@ abstract class TicketSelectorRow
     protected $EVT_ID;
 
     /**
+     * @var string $event_status
+     */
+    protected $event_status;
+
+    /**
+     * @var boolean $required_ticket_sold_out
+     */
+    protected $required_ticket_sold_out;
+
+    /**
      * @var string $ticket_status_display
      */
     protected $ticket_status_display;
@@ -49,23 +62,82 @@ abstract class TicketSelectorRow
 
 
     /**
-     * TicketDetails constructor.
-     *
-     * @param \EE_Ticket                 $ticket
-     * @param int                        $max_atndz
-     * @param string                     $date_format
+     * @param \EE_Ticket $ticket
+     * @param int        $max_atndz
+     * @param string     $date_format
+     * @param string     $event_status
+     * @param bool       $required_ticket_sold_out
+     * @throws EE_Error
+     * @throws UnexpectedEntityException
      */
     public function __construct(
         \EE_Ticket $ticket,
         $max_atndz,
-        $date_format
+        $date_format,
+        $event_status,
+        $required_ticket_sold_out = false
     ) {
         $this->ticket = $ticket;
         $this->max_atndz = $max_atndz;
         $this->date_format = $date_format;
         $this->EVT_ID = $this->ticket->get_event_ID();
+        $this->event_status = $event_status;
+        $this->required_ticket_sold_out = $required_ticket_sold_out;
     }
 
+
+
+    /**
+     * getTicketStatusClasses
+     *
+     * @param int $remaining
+     * @return array
+     * @throws EE_Error
+     */
+    protected function getTicketStatusClasses($remaining = 0)
+    {
+        // if a previous required ticket with the same sale start date is sold out,
+        // then mark this ticket as sold out as well.
+        // tickets that go on sale at a later date than the required ticket  will NOT be affected
+        $tkt_status = $this->required_ticket_sold_out !== false
+                      && $this->required_ticket_sold_out === $this->ticket->start_date()
+            ? \EE_Ticket::sold_out
+            : $this->ticket->ticket_status();
+        $tkt_status = $this->event_status === \EE_Datetime::sold_out
+            ? \EE_Ticket::sold_out
+            : $tkt_status;
+        // check ticket status
+        switch ($tkt_status) {
+            // sold_out
+            case \EE_Ticket::sold_out :
+                $ticket_status = 'ticket-sales-sold-out';
+                $status_class = 'ticket-sales-sold-out lt-grey-text';
+                break;
+            // expired
+            case \EE_Ticket::expired :
+                $ticket_status = 'ticket-sales-expired';
+                $status_class = 'ticket-sales-expired lt-grey-text';
+                break;
+            // archived
+            case \EE_Ticket::archived :
+                $ticket_status = 'archived-ticket';
+                $status_class = 'archived-ticket hidden';
+                break;
+            // pending
+            case \EE_Ticket::pending :
+                $ticket_status = 'ticket-pending';
+                $status_class = 'ticket-pending';
+                break;
+            // onsale
+            case \EE_Ticket::onsale :
+            default :
+                $ticket_status = 'ticket-on-sale';
+                $status_class = 'ticket-on-sale';
+                break;
+        }
+        $ticket_status = \EEH_HTML::span($this->ticket->ticket_status(true, ($remaining > 0)), '', $ticket_status);
+        return array($tkt_status, $ticket_status, $status_class);
+    }
 
 
     /**
@@ -84,7 +156,7 @@ abstract class TicketSelectorRow
      * @param string $tkt_status
      * @param string $ticket_status
      * @param int    $remaining
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     protected function setTicketStatusDisplay($tkt_status, $ticket_status, $remaining) {
         $this->ticket_status_display = '';
@@ -144,7 +216,7 @@ abstract class TicketSelectorRow
     /**
      * ticketsSalesPending
      *
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     protected function ticketsSalesPending()
     {
