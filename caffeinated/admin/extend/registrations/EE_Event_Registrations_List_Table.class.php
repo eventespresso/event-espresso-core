@@ -200,9 +200,9 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 				if ( ! $evt->get_count_of_all_registrations() ) {
 					continue;
 				}
-				$evts[] = array(
+                                $evts[] = array(
 					'id'    => $evt->ID(),
-					'text'  => $evt->get( 'EVT_name' ),
+					'text'  => apply_filters('FHEE__EE_Event_Registrations___get_table_filters__event_name', $evt->get( 'EVT_name' ), $evt),
 					'class' => $evt->is_expired() ? 'ee-expired-event' : '',
 				);
 				if ( $evt->ID() === $current_EVT_ID && $evt->is_expired() ) {

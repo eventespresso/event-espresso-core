@@ -43,22 +43,32 @@ class EED_Mijireh_Payment_Checker extends EED_Module{
 		add_action( 'AHEE__Transactions_Admin_Page__transaction_details__start', array( 'EED_Mijireh_Payment_Checker', 'check_for_payment_update_on_transaction' ), 10, 1 );
 	}
 
+
+
+    /**
+     * If the transaction has pending mijireh payments, we check with mijireh to see if they've been completed.
+     * @param EE_Transaction $transaction
+     * @throws EE_Error if a model is misconfigured
+     */
 	public static function check_for_payment_update_on_transaction( $transaction ) {
 		if( $transaction instanceof EE_Transaction ) {
-			$last_payment = $transaction->last_payment();
-			//if this payment is from Mijireh and so far unapproved
-			if(
-				$last_payment instanceof EE_Payment &&
-				$last_payment->payment_method() instanceof EE_Payment_Method &&
-				$last_payment->payment_method()->type_obj() instanceof EE_PMT_Mijireh &&
-				$last_payment->status() != EEM_Payment::status_id_approved
-			) {
+			//are there pending Mijireh payments on this transaction?
+            $a_mijireh_payment = EEM_Payment::instance()->get_one(
+                array(
+                    array(
+                        'TXN_ID' => $transaction->ID(),
+                        'STS_ID' => EEM_Payment::status_id_pending,
+                        'Payment_Method.PMD_type' => 'Mijireh',
+                    )
+                )
+            );
+			if($a_mijireh_payment instanceof EE_Payment) {
 				add_action(
 					'AHEE__EE_Registration_Processor__trigger_registration_update_notifications',
 					array( 'EED_Mijireh_Payment_Checker', 'send_notifications_after_mijireh_ipn' ),
 					5, 2
 				);
-				EE_Payment_Processor::instance()->process_ipn( array(), $transaction, $last_payment->payment_method() );
+				EE_Payment_Processor::instance()->process_ipn( array(), $transaction, $a_mijireh_payment->payment_method() );
 			}
 		}
 	}

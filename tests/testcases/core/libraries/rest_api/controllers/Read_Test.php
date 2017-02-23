@@ -15,15 +15,10 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @group rest_api
  *
  */
-class Read_Test extends \EE_UnitTestCase{
+class Read_Test extends \EE_REST_TestCase{
 
 	public function setUp() {
 		parent::setUp();
-		if ( ! class_exists( 'WP_Rest_Request' ) ) {
-			$this->markTestSkipped(
-				'Test being run on a version of WP that does not have the REST framework installed'
-			);
-		}
 	}
 
 	public function test_explode_and_get_items_prefixed_with__basic(){
@@ -80,6 +75,7 @@ class Read_Test extends \EE_UnitTestCase{
 	}
 
 	public function test_handle_request_get_one__event_includes() {
+	    $this->markTestSkipped('See https://events.codebasehq.com/projects/event-espresso/tickets/10526');
 		$event = $this->new_model_obj_with_dependencies( 'Event', array( 'status' => 'publish' ) );
 		$req = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.29/events/' . $event->ID() );
 		$req->set_url_params(
@@ -134,6 +130,7 @@ class Read_Test extends \EE_UnitTestCase{
 	}
 
 	public function test_handle_request_get_one__event_include_non_model_field() {
+        $this->markTestSkipped('See https://events.codebasehq.com/projects/event-espresso/tickets/10526');
 		$this->set_current_user_to_new();
 		$event = $this->new_model_obj_with_dependencies( 'Event' );
 		$req = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.29/events/' . $event->ID() );
@@ -622,6 +619,7 @@ class Read_Test extends \EE_UnitTestCase{
 	 * @group 9406
 	 */
 	public function test_handle_request_get_all__set_headers(){
+        $this->markTestSkipped('See https://events.codebasehq.com/projects/event-espresso/tickets/10526');
 		$datetimes_created = 65;
 		$event = $this->new_model_obj_with_dependencies( 'Event',  array( 'status' => \EEM_CPT_Base::post_status_publish ) );
 		for( $i=0;$i < $datetimes_created; $i++ ) {
@@ -839,6 +837,24 @@ class Read_Test extends \EE_UnitTestCase{
         $this->assertEquals('EE_Has_Many_Relation',$datetimes_array['relation_type']);
         $this->assertArrayHasKey('readonly', $datetimes_array);
         $this->assertTrue($datetimes_array['readonly']);
+    }
+
+
+    /**
+     * @group rest_schema_request
+     */
+    public function test_handle_schema_request_returning_defaults() {
+        $request = new \WP_REST_Request( 'OPTIONS', '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/prices');
+        $response = rest_do_request($request);
+        $data = $response->get_data();
+        //verify that defaults are in the schema and in the correct format.
+        $PRC_amount_defaults = $data['schema']['properties']['PRC_amount']['default'];
+
+        $this->assertTrue(is_array($PRC_amount_defaults));
+        $this->assertArrayHasKey('raw', $PRC_amount_defaults);
+        $this->assertArrayHasKey('pretty', $PRC_amount_defaults);
+        $this->assertEquals((float) 0, $PRC_amount_defaults['raw']);
+        $this->assertEquals('$0.00 <span class="currency-code">(USD)</span>', $PRC_amount_defaults['pretty']);
     }
 
 }
