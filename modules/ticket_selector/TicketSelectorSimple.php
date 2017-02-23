@@ -37,7 +37,6 @@ class TicketSelectorSimple extends TicketSelector
     {
         $this->ticket = $ticket;
         parent::__construct($event, array($this->ticket), $max_attendees, $template_args);
-        add_filter('FHEE__EE_Ticket_Selector__display_ticket_selector_submit', '__return_true');
     }
 
 
@@ -46,6 +45,7 @@ class TicketSelectorSimple extends TicketSelector
      * sets any and all template args that are required for this Ticket Selector
      *
      * @return void
+     * @throws \EventEspresso\core\exceptions\UnexpectedEntityException
      * @throws \EE_Error
      */
     protected function addTemplateArgs()
@@ -55,10 +55,15 @@ class TicketSelectorSimple extends TicketSelector
         $ticket_selector_row = new TicketSelectorRowSimple(
             $this->ticket,
             $this->max_attendees,
-            $this->template_args['date_format']
+            $this->template_args['date_format'],
+            $this->template_args['event_status']
         );
         $this->template_args['TKT_ID'] = $this->ticket->ID();
+        $ticket_selector_row->setupTicketStatusDisplay();
         $this->template_args['ticket_status_display'] = $ticket_selector_row->getTicketStatusDisplay();
+        if (empty($this->template_args['ticket_status_display'])) {
+            add_filter('FHEE__EE_Ticket_Selector__display_ticket_selector_submit', '__return_true');
+        }
         $this->template_args['template_path'] = TICKET_SELECTOR_TEMPLATES_PATH . 'simple_ticket_selector.template.php';
     }
 
