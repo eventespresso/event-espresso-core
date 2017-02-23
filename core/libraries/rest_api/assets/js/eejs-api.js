@@ -2368,7 +2368,7 @@ if (!String.prototype.includes) {
                             'flag was set to true on instantiation, then the store state will automatically be ' +
                             'updated whenever the local state has changed.  Otherwise it will have to be ' +
                             'triggered by calling the update method.');
-                    }
+                    };
 
                     _.each(getPropertiesFromSchema(collectionsSchema[collection]), function(els, property){
                         //if the property is an object, that means there's different versions returned for this object
