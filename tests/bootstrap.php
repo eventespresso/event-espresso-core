@@ -51,6 +51,7 @@ EE_Registry::instance()->SSN = EE_Registry::instance()->load_core( 'EE_Session_M
 
 //Load the EE_specific testing tools
 require EE_TESTS_DIR . 'includes/EE_UnitTestCase.class.php';
+require EE_TESTS_DIR . 'includes/EE_REST_TestCase.php';
 
 require_once EE_TESTS_DIR . 'mocks/addons/eea-new-addon/eea-new-addon.php';
 remove_action( 'AHEE__EE_System__load_espresso_addons', 'load_espresso_new_addon' );
