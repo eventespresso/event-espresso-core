@@ -451,7 +451,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page
         header( 'Content-Disposition: attachment' );
         header( "Content-Disposition: attachment; filename=system_status_" . sanitize_key( site_url() ) . ".html" );
         echo "<style>table{border:1px solid darkgrey;}td{vertical-align:top}</style>";
-        echo "<h1>System Status for " . site_url() . "</h1>";
+        echo "<h1>System Information for " . site_url() . "</h1>";
         echo EEH_Template::layout_array_as_table( $status_info );
         die;
     }
