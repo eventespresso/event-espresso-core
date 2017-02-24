@@ -20,7 +20,7 @@ In this example we've registered the "Events" and "Datetimes" collections with t
 
 ## Collection Component Option Objects
 
-For each collection registered, a collection component option object is created.  Component option objects are what one uses to register as a component as a part of the `components` value in a Vue instance options object or for creating a custom component with.  All automatically built component objects are exposed after the promise resolves at `eejs.api.components`. Examples:
+For each collection registered, a collection component option object is created.  Component option objects are what one uses to register as a component with the `components` property in a Vue instance options object or for creating a custom component with.  All automatically built component objects are exposed after the promise resolves at `eejs.api.components`. Examples:
 
 **Registering as a component on a Vue instance**
 
@@ -49,8 +49,9 @@ The library intentionally does not build actual vue components because it allows
 Property | Description
 |---------|-----------|
 `collection` | Automatically built components have this set to the canonical reference for the collection (i.e. `events`).  It is used globally by all logic within the instantiated vue instance (and any components registered with a collection when its instantiated) to reference the collection.
- `data` | In vue, the data property is what is used to declare reactive properties exposed/implemented in templates.  For the collection component object the initial data property is initialzed with an object containing two properties:  A property representing the collections entities (i.e. `data.events`), and a boolean property indicating whether any entities exist or not (i.e. `data.hasEvents`).
- `mixins` : Automatically built mixins for the collection component object are registered here.  You can read more about these auto-built mixins (and what they add to the properties for a component) later in this document.
+ `data` | In vue, the data property is what is used to declare reactive properties exposed/implemented in templates.  For the collection component object the initial data property is initialized with an object containing two properties:  A property representing the collection's entities (i.e. `data.events`), and a boolean property indicating whether any entities exist or not (i.e. `data.hasEvents`).
+ `mixins` | Automatically built mixins for the collection component object are registered here.  You can read more about these auto-built mixins (and what they add to the properties for a component) later in this document.
+ `components` | Automatically built [model component option objects](eejs-api-models.md#model-component-option-objects) are registered on this property.
  
  
  
@@ -64,6 +65,8 @@ var registrationsWithSeatIds = eejs.vue.extend({
     data : function() {
         return {
             seatIds : [],
+            hasRegistrations : false,
+            registrations : []
         }
     },
     created : function(){
@@ -72,18 +75,16 @@ var registrationsWithSeatIds = eejs.vue.extend({
     methods : {
         /**
         * This might integrate with a custom module you registered with to eejs.api.store for grabbing 
-        * seatIds for all registrations in the registration collection state. 
+        * seatIds for all registrations in the registration collection store state. 
         */
         fetchSeatIds : function() {
+            var self = this;
             this.$store.dispatch('fetchSeatIds', {collection:this.collectionName}).then( function(response) {
                 self.seatIds = response;
             }).catch( function(response){
                console.log(response); 
             });
         }
-    },
-    components : {
-        registration : eejs.api.components.registration
     },
     /**
      * this brings all the default collection stuff from the auto-generated collection mixin. Note according

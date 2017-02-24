@@ -9,8 +9,7 @@ Something that will be used in all the various views/apps we build in EE over ti
   - exposes component options for collections and models to implement in VUE components.
   - exposes mixins to build custom components if needed.
   - creates a Vuex.Store instance that preserves state of all the registered collections for usage in any VUE instances created.  This store is automatically registered with the component options and mixins using it.
-  - implements and exposes the [inflection.js](https://github.com/dreamerslab/node.inflection) library.
-  - implements and exposes the [uri.js](https://medialize.github.io/URI.js/) library.
+  - implements third party libraries and other helper methods in [eejs.utils](eejs-utils.md).
   
 ## Getting Started - Basic Usage
 

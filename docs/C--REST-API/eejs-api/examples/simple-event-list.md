@@ -1,6 +1,6 @@
 # `eejs-api` Example: Simple List of Events with Datetimes
 
-In this example, we'll be building a simple plugin that utilizes the `eejs-api` to setup a simple vue app that retrieves and displays a list of events with their datetimes.  We'll use a WordPress shortcode to output the app on a page.
+This example uses a plugin that utilizes the `eejs-api` to setup a simple vue app that retrieves and displays a list of events with their datetimes.  We'll use a WordPress shortcode to output the app on a page.
   
   > Note: This is a very _basic_ application that is not styled or "prettied" up.  It's intent is to merely demonstrate how the eejs-api library can be used to build vue based apps utilizing data provided by the EE REST API. There is no pagination on this implementation so up to the default number of events for events collection requests (50 at the time of writing this) will be returned for display. For more technical details on the `ee-js` library [go here](../eejs-api-overview.md)
   
@@ -74,15 +74,15 @@ class SimpleEventList implements ShortcodeInterface
 
 Focusing on three things:
 
-1. The app javascript is registered listing `eejs-api` as a dependency.
+### 1. The app javascript is registered listing `eejs-api` as a dependency.
 
 This ensures that the `eejs-api` library is exposed to the app.
 
-2. Templates used by the app views are being registered via the `AssetsRegistry::addTemplate` method exposed by `EE_Registry`. 
+### 2. Templates used by the app views are being registered via the `AssetsRegistry::addTemplate` method exposed by `EE_Registry`. 
 
 All this does is make your templates easily accessible to your vue app via the `eejs.data.templates` property loaded in the source. Client code is not _required_ to use this method for exposing templates for the js app to use, however its a useful tool if desired.
 
-3. The shortcode is just enqueuing our app javascript and the main app container.
+### 3. The shortcode is just enqueuing our app javascript and the main app container.
 
 ## Templates
 

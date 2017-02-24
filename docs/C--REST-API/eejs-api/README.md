@@ -13,7 +13,9 @@ Document | Purpose |
 [eejs.api.main](eejs-api-main.md) | The main eejs.api object. 
 [eejs.api collections](eejs-api-collections.md) | Using eejs-api collection component options and mixins
 [eejs.api models](eejs-api-models.md) | Using eejs-api model component options and mixins.
-[eejs.api.utils](eejs-api-utils.md) | All the utility methods exposed on eejs.api.utils
+[eejs.api Relations](eejs-api-relations.md) | Structure and implementing relations in the library (relation components and mixins).
+[eejs.api Watchers and Computed Properties](eejs-api-watchers-and-computed-properties.md) | How vue watchers and computed properties are implemented in the library.
+[eejs.utils](eejs-utils.md) | All the utility methods exposed on eejs.api.utils
 [eejs.api.store](eejs-api-store.md) | About the custom vuex store instance in eejs.api.
  
 ## Examples/Code Recipes

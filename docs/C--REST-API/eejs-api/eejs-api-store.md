@@ -114,5 +114,4 @@ Method | Arguments | Description
 `removeAllRelatedChangeRecords` | *collection, entityId, recursive* | This is a method for rapidly removing all change records in the change maps for the given entity.  By default, it is recursive which means it will in turn ensure that the corresponding changeMap in any registered relations have the entity ids removed.
 `commitRelationsForEntity` | *collection, collectionEntityId, relation, relationEntityId, doStoreCheck, fromDb* | Used to conect related items by ID in the store for all affected relations.
  `commitEntityToCollection` | *collection, entity, refresh, fromDb* | Commits an entity to its collection state.
- 
 
