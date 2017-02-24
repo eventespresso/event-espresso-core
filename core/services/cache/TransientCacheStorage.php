@@ -348,10 +348,7 @@ class TransientCacheStorage implements CacheStorageInterface
             }
             // delete expired keys, but maintain value of $update if nothing is deleted
             $update = $this->deleteTransientKeys($transient_keys, $limit) ? true : $update;
-            do_action(
-                'FHEE__TransientCacheStorage__clearExpiredTransients__end',
-                $limit
-            );
+            do_action( 'FHEE__TransientCacheStorage__clearExpiredTransients__end', $this);
         }
         return $update;
     }
@@ -359,52 +356,27 @@ class TransientCacheStorage implements CacheStorageInterface
 
 
     /**
-     * given an array of transient keys to be deleted,
-     * performs a single delete query using a regex pattern
-     * so that both the transient data records
-     * and their corresponding expiration timestamp records get deleted
+     * calls delete_transient() on each transient key provided, up to the specified limit
      *
      * @param array $transient_keys [required]
      * @param int   $limit
      * @return bool
      */
-    private function deleteTransientKeys(array $transient_keys, $limit = 0)
+    private function deleteTransientKeys(array $transient_keys, $limit = 50)
     {
         if (empty($transient_keys)) {
             return false;
         }
-        /** @type wpdb $wpdb */
-        global $wpdb;
-        $regexp = implode('|_transient.*', $transient_keys);
-        $SQL = "DELETE FROM {$wpdb->options} WHERE option_name REGEXP '_transient.*{$regexp}'";
-        // scheduled deletions will have a limit set, but manual deletions will NOT
-        $SQL .= $limit ? " LIMIT {$limit}" : '';
-        $results = $wpdb->query($SQL);
-        // if something went wrong, then notify the admin
-        if ($results instanceof WP_Error) {
-            if (is_admin()) {
-                EE_Error::add_error($results->get_error_message(), __FILE__, __FUNCTION__, __LINE__);
+        $success = false;
+        $counter = 0;
+        foreach ($transient_keys as $transient_key) {
+            if($counter === $limit){
+                break;
             }
-            return false;
-        } else if ($results) {
-            $deletions = 0;
-            foreach ($transient_keys as $transient_key) {
-                // don't unset more than what was deleted in the scheduled cleanup query
-                if ($limit && $deletions >= $results) {
-                    continue;
-                }
-                unset($this->transients[$transient_key]);
-                // also need to manually remove the transients from the WP cache,
-                // else they will continue to be returned if you use get_transient()
-                if ( wp_cache_delete("_transient_{$transient_key}", 'options')) {
-                    $deletions++;
-                }
-                if (wp_cache_delete("_transient_timeout_{$transient_key}", 'options')) {
-                    $deletions++;
-                }
-            }
+            $success = delete_transient($transient_key) ? true : $success;
+            $counter++;
         }
-        return true;
+        return $success;
     }
 
 
