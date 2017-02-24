@@ -323,10 +323,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @throws \EE_Error
      */
 	public function reserve_ticket($update_ticket = false) {
-        $has_reserved_ticket = $this->get_extra_meta(EE_Registration::HAS_RESERVED_TICKET_KEY, true, false);
-        if ($has_reserved_ticket === false) {
-            $updated = $this->update_extra_meta(EE_Registration::HAS_RESERVED_TICKET_KEY, true, false);
-            if ($updated && $update_ticket) {
+        if ($this->get_extra_meta(EE_Registration::HAS_RESERVED_TICKET_KEY, true, false) === false) {
+            // PLZ NOTE: although checking $update_ticket first would be more efficient,
+            // we NEED to ALWAYS call update_extra_meta(), which is why that is done first
+            if ($this->update_extra_meta(EE_Registration::HAS_RESERVED_TICKET_KEY, true, false) && $update_ticket) {
                 $ticket = $this->ticket();
                 $ticket->increase_reserved();
                 $ticket->save();
@@ -345,10 +345,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @throws \EE_Error
      */
     public function release_reserved_ticket($update_ticket = false) {
-        $has_reserved_ticket = $this->get_extra_meta(EE_Registration::HAS_RESERVED_TICKET_KEY, true, false);
-        if ($has_reserved_ticket !== false) {
-            $deleted = $this->delete_extra_meta(EE_Registration::HAS_RESERVED_TICKET_KEY);
-            if ($deleted && $update_ticket) {
+        if ($this->get_extra_meta(EE_Registration::HAS_RESERVED_TICKET_KEY, true, false) !== false) {
+            // PLZ NOTE: although checking $update_ticket first would be more efficient,
+            // we NEED to ALWAYS call delete_extra_meta(), which is why that is done first
+            if ($this->delete_extra_meta(EE_Registration::HAS_RESERVED_TICKET_KEY) && $update_ticket) {
                 $ticket = $this->ticket();
                 $ticket->decrease_reserved();
                 $ticket->save();
@@ -1525,8 +1525,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      */
     public function delete()
     {
-        $updated = $this->update_extra_meta(EE_Registration::PRE_TRASH_REG_STATUS_KEY, $this->status_ID());
-        if($updated === true) {
+        if($this->update_extra_meta(EE_Registration::PRE_TRASH_REG_STATUS_KEY, $this->status_ID()) === true) {
             $this->set_status(EEM_Registration::status_id_cancelled);
         }
         return parent::delete();
