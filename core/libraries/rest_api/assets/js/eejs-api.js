@@ -1880,12 +1880,16 @@ if (!String.prototype.includes) {
                         id: 0,
                         autoUpdate: true,
                         initialUpdateCompleted : false,
+                        skipInitialization : false,
                         store: eejs.api.store,
                         props: ['collection'],
                         data: function() {
                           return { id: 0 };
                         },
                         created : function(){
+                            if ( this.$options.skipInitialization ) {
+                                return;
+                            }
                             //make sure incoming $options.id is an integer
                             this.$options.id = this.$store.getters.isNewEntity(this.$options.id) ? this.$options.id : parseInt(this.$options.id);
                             /**
@@ -1905,12 +1909,12 @@ if (!String.prototype.includes) {
                              */
                             if ( (_.isString(this.$options.id) && this.$options.id !== '') || this.$options.id > 0) {
                                 this.id = this.$options.id;
-                                this.fetchById(true);
+                                this.fetchById();
                             } else if (this.initialId) {
                                 this.id = this.initialId;
-                                this.fetchById(true);
+                                this.fetchById();
                             } else if (!_.isEmpty(this['initial'+eejs.utils.inflection.capitalize(this.modelName())])) {
-                                 //if initial{modelname} is not empty, we'll populate from that object.
+                                //if initial{modelname} is not empty, we'll populate from that object.
                                 this.replaceDefaults(this['initial'+eejs.utils.inflection.capitalize(this.modelName())], false);
                                 //ensure that a unique id has been set.
                                 this.ensureHasUniqueId();
