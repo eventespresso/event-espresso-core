@@ -154,11 +154,23 @@ class Read extends Base
     protected function _translate_defaults_for_rest_response($field_name, \EE_Model_Field_Base $field, array $schema)
     {
         if (isset($schema['properties'][$field_name]['default'])) {
-            $schema['properties'][$field_name]['default'] = Model_Data_Translator::prepare_field_value_for_json(
-                $field,
-                $schema['properties'][$field_name]['default'],
-                $this->get_model_version_info()->requested_version()
-            );
+            if (is_array($schema['properties'][$field_name]['default'])) {
+                foreach ($schema['properties'][$field_name]['default'] as $default_key => $default_value) {
+                    if ($default_key === 'raw') {
+                        $schema['properties'][$field_name]['default'][$default_key] = Model_Data_Translator::prepare_field_value_for_json(
+                            $field,
+                            $default_value,
+                            $this->get_model_version_info()->requested_version()
+                        );
+                    }
+                }
+            } else {
+                $schema['properties'][$field_name]['default'] = Model_Data_Translator::prepare_field_value_for_json(
+                    $field,
+                    $schema['properties'][$field_name]['default'],
+                    $this->get_model_version_info()->requested_version()
+                );
+            }
         }
         return $schema;
     }
