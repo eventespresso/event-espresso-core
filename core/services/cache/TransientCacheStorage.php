@@ -367,16 +367,16 @@ class TransientCacheStorage implements CacheStorageInterface
         if (empty($transient_keys)) {
             return false;
         }
-        $success = false;
         $counter = 0;
         foreach ($transient_keys as $transient_key) {
             if($counter === $limit){
                 break;
             }
-            $success = delete_transient($transient_key) ? true : $success;
+            delete_transient($transient_key);
+            unset($this->transients[$transient_key]);
             $counter++;
         }
-        return $success;
+        return $counter > 0;
     }
 
 
