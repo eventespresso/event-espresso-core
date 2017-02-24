@@ -81,6 +81,11 @@ class Maintenance_Admin_Page extends EE_Admin_Page
                 'func'       => '_system_status',
                 'capability' => 'manage_options',
             ),
+            'download_system_status' => array(
+                'func'       => '_download_system_status',
+                'capability' => 'manage_options',
+                'noheader'   => true,
+            ),
             'send_migration_crash_report'         => array(
                 'func'       => '_send_migration_crash_report',
                 'capability' => 'manage_options',
@@ -426,9 +431,29 @@ class Maintenance_Admin_Page extends EE_Admin_Page
     {
         $this->_template_path = EE_MAINTENANCE_TEMPLATE_PATH . 'ee_system_stati_page.template.php';
         $this->_template_args['system_stati'] = EEM_System_Status::instance()->get_system_stati();
+        $this->_template_args['download_system_status_url'] = EE_Admin_Page::add_query_args_and_nonce(
+            array(
+                'action' => 'download_system_status',
+            ),
+            EE_MAINTENANCE_ADMIN_URL
+        );
         $this->_template_args['admin_page_content'] = EEH_Template::display_template($this->_template_path,
             $this->_template_args, true);
         $this->display_admin_page_with_sidebar();
+    }
+
+    /**
+     * Downloads an HTML file of the system status that can be easily stored or emailed
+     */
+    public function _download_system_status()
+    {
+        $status_info = EEM_System_Status::instance()->get_system_stati();
+        header( 'Content-Disposition: attachment' );
+        header( "Content-Disposition: attachment; filename=system_status_" . sanitize_key( site_url() ) . ".html" );
+        echo "<style>table{border:1px solid darkgrey;}td{vertical-align:top}</style>";
+        echo "<h1>System Status for " . site_url() . "</h1>";
+        echo EEH_Template::layout_array_as_table( $status_info );
+        die;
     }
 
 
