@@ -87,17 +87,9 @@ This is mixed into every component representing a model (such as the `datetime` 
 
 **The following are mixins that are built for any registered collections**:
 
-For every `relation` on a collection (eg. `datetimes` are related to `events`) there is a special automatically built mixin.  This adds the logic for automatically getting the related entities for that model on the specific entity for the parent collection.  However, relation mixins are _only_ automatically built if the related collection was also registered. So if you only initialize the library with the `events` collection, then the relation mixin for `datetimes` will not get automatically built and registered.  
+##### `eejs.api.mixins.relations`
 
-As an example, let's say you initialized the library with `{collections:['events','datetimes']}`, that means the following will be exposed for use by client code (but keep in mind these relation mixins are _already_ added to their related components.): 
-
-##### `eejs.api.mixins.relations.event.datetimes`
-
-This is the mixin that describes how to get related datetimes for an event entity.  It is automatically registered to the generated `eejs.api.components.event` component.  However if you wanted to build a custom `event` component, you might want to include this mixin with it.
-
-##### `eejs.api.mixins.relations.datetime.events`
-
-This is the mixin that describes how to get related events for a datetime entity.  It is automatically registered to the generated `eejs.api.components.datetime` component.  However if you wanted to build a custom `datetime` component, you might want to include this mixin with it.
+For every `relation` on a collection (eg. `datetimes` are related to `events`) there is a special automatically built mixin.  This adds the logic for automatically getting the related entities for that model on the specific entity for the parent collection.  However, relation mixins are _only_ automatically built if the related collection was also registered. So if you only initialize the library with the `events` collection, then the relation mixin for `datetimes` will not get automatically built and registered.  Read more about relation mixins [here](eejs-api-relations.md).
 
 #### `eejs.api.components`
 
@@ -121,7 +113,7 @@ These are components that are used for interacting with a specific entity (eg. `
 - `eejs.api.components.datetime`
 - `eejs.api.components.event`
 
-The `eejs.api.components.event` component would already have the `eejs.api.mixins.model` and `eejs.api.mixins.relations.datetime.event` mixins registered on it.  It would also already have the `eejs.api.component.event` component registered on it because event is a relation to datetime.
+The `eejs.api.components.event` component would already have the `eejs.api.mixins.model` and `eejs.api.mixins.relations.datetime.event` mixins registered on it.  It would also already have the `eejs.api.component.datetime` component registered on it because datetime is a relation to event.
 
 You can read more about the model components [here](eejs-api-models.md).
 
