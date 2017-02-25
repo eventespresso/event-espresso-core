@@ -10,11 +10,11 @@ In order to keep the loading time to a minimum, instead of building code for eve
 
 So for example, if you register the `events` and `datetimes` collection then all the logic necessary for the relationship between events and datetimes will be automatically built.
  
- ## Relations in component option objects.
+## Relations in component option objects.
  
- For each relation that exists to a collection the related collection will have its model component option object added as a component on the main entities model component option object.  So for example, if you registered the `events` and `datetimes` collection, then when things are built, the `eejs.api.components.event` component options object will have the following record:
+For each relation that exists to a collection the related collection will have its model component option object added as a component on the main entities model component option object.  So for example, if you registered the `events` and `datetimes` collection, then when things are built, the `eejs.api.components.event` component options object will have the following record:
  
- ```js
+```js
 console.log(eejs.api.components.event);
 /**
  * Outputs this as a part of the component options object
@@ -40,7 +40,7 @@ console.log(eejs.api.components.datetime);
  */
 ```
 
-## Relation Mixins.
+## Relation Mixins
 
 > Note: Although there are a variety of different relation types (one to many, many to one, many to many etc) in the EE model structure, for the purpose of simplicity (at least currently), relations for a model are always referred to in the plural and stored as such (array etc).  This allows for more consistent interation with relations vs sometimes having singular or sometimes having plural.
 
