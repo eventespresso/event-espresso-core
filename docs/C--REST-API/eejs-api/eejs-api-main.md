@@ -5,7 +5,7 @@
 Method  | Arguments | Purpose
 |------|------------|-----------|
 `getRegisteredCollections` | n/a | This returns all the registered collections as an array.
-`getCollectionsSchema` | n/a | This returns the local cached copy of the schema for each of the collections as retrieved and built from the REST API options endpoint for each registered collection.  It is a simple object where the keys are collection labels and values are the raw schema object extracted from the response to that collection's OPTIONS endpoint.
+`getCollectionsSchema` | n/a | This returns the local cached copy of the schema for each of the collections as retrieved and built from the REST API options endpoint for each registered collection.  It is a simple object where the keys are collection labels and values are the raw schema object extracted from the response to that collection's endpoint via the `OPTIONS` http method.
 `getPrimaryKeyForCollection` | *collection* | Use this to return the primary key field name for the given collection.
 `getDefaults` | n/a | This returns the defaults cached in the object for all the registered collections.  The returned value will be a simple object where the keys are collection labels, and the values are a representative entity for that collection where the values for the entities fields are the defaults as declared by the schema response for that collection.
 `getDefaultsForCollection` | *collection* | This returns the defaults for a specific collection.  The response format is the same as `getDefaults` except its just the object for that specific collection.
