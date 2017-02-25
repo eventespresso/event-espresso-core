@@ -20,8 +20,8 @@ In the eejs-api library, model component objects are _automatically_ registered 
 Property | Description
 |----------|------------|
 `collection` | The name of the collection the represented by this model belong to.
-`props` | The default component object receives two props: One for passing in the initial id (i.e. `initialEventId`) and one for passing in an initial entity object (i.e. `initialEvent`).
-`data` | In vue, the data property is what is used to declare reactivfe properties exposed/implemented in templates. For the model component object the initial data property is initialized with an object containing two properties: A property representing the entity object (i.e. `data.event`), and a boolean property indicating whether the component has that entity set or not (i.e. `data.hasEvent`).
+`props` | The default component object receives two props: One for passing in the initial id (via `initialId`) and one for passing in an initial entity object (i.e. `initialEvent`).
+`data` | In vue, the data property is what is used to declare reactive properties exposed/implemented in templates. For the model component object the initial data property is initialized with an object containing two properties: A property representing the entity object (i.e. `data.event`), and a boolean property indicating whether the component has that entity set or not (i.e. `data.hasEvent`).
 `watch` | Each model option component sets a watcher for any changes to the model entity in the data property.  More on the watchers [is found in this document](eejs-api-watchers-and-computed-properties.md)
 `mixins` | Automatically built mixins including the model mixin and model [relations mixins](eejs-api-relations.md) are registered with this property.
 `computed` | When the model component for each collection is created.  There is also a generated set of computed properties created for each field on the entity.  More on this is found in the related document [here](eejs-api-watchers-and-computed-properties.md)
@@ -72,9 +72,9 @@ Property | Description
 |---------|-------------|
 `collection` | This is an options property used to indicate what collection the model belongs to.
 `id` | This is an options property used to indicate that primary key value for the model.
-`autoUpdate` | This is a flag to indicate whether the store state for this entity should be updated whenever its local state changes via the registered watcher (read more about watchers [here](eejs-api-watchers-and-computed-properties.md)
-`initialUpdateCompleted` | This is an internal options property used to track when the initial update of store state has been completed (set on the `updated` hook).  This is needed for performance reasons (more details in the [watchers and computed properties document](eejs-api-watchers-and-computed-properties.md)
-`skipInitialization` | By default, the `created` option has a callback on it that will initialized various properties on the component when it is created. In order to provide flexibility to clients that may wish to implement the component without doing this initialization (instead providing their own initialization routine), this flag is provided.  By default the flag is set to false.
+`autoUpdate` | This is a flag to indicate whether the store state for this entity should be updated whenever its local state changes via the registered watcher (read more about watchers [here](eejs-api-watchers-and-computed-properties.md))
+`initialUpdateCompleted` | This is an internal options property used to track when the initial update of store state has been completed (set on the `updated` hook).  This is needed for performance reasons (more details in the [watchers and computed properties document](eejs-api-watchers-and-computed-properties.md))
+`skipInitialization` | By default, the `created` option has a callback on it that will initialize various properties on the component when it is created. In order to provide flexibility to clients that may wish to implement the component without doing this initialization (instead providing their own initialization routine), this flag is provided.  By default the flag is set to false.
 `store` | The generated vuex store for the library is passed in via this property.
 `props` | There is one prop on the model mixin labeled `collection`.  This allows parent properties to pass in the collection name.
 `data` | The data object passed in has one property, id which is used to reference the primary key value for the entity.  More on how this is set and impacts the loaded entity in the [initialization example](examples/initializing-model-component-with-an-entity.md)
