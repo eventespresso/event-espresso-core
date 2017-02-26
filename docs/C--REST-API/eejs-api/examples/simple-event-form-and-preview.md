@@ -243,7 +243,7 @@ The solution chosen here is to take advantage of the ability to pass in an exter
 
 ## Improvements
 
-The example given above works ok, but one problem with it is that due to the fact the components will be calling the `fetchEntityById` action from their internal store reference immediately on create.  They will BOTH be pinging the endpoint for the event.  A solution for this would be to do what is in the commented out example found in `eejs-example-simple-event.js`:
+The example given above works ok, but one problem with it is that due to the fact the components will be calling the `fetchEntityById` action from their internal store reference immediately on create, they will BOTH be pinging the endpoint for the event.  A solution for this would be to do what is in the commented out example found in `eejs-example-simple-event.js`:
 
 ```js
 (function(){
