@@ -17,9 +17,9 @@ This receives the arguments:
 - *collection*,  a string representing the collection the endpoint is for.
 - *endpointUri*, the endpoint URI for the passed in collection.
  
- ### Usage
- 
- Assuming the `events` and `datetimes` collection have been registered and initialized with the `eejs-api` library, you could do something like this:
+### Usage
+
+Assuming the `events` and `datetimes` collection have been registered and initialized with the `eejs-api` library, you could do something like this:
  
  ```js
 var relationsEndpointForEvents = eejs.utils.addRelationsToEndpointURI( 'events', 'https://mywebsite.com/wp-json/ee/v4.8.36/events');
