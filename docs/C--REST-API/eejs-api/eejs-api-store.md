@@ -40,20 +40,20 @@ Method | Arguments | Purpose & Example Usage (outside of vue instance)
 `getCollectionEndpoint` | *collection* | Retrieves the base endpoint for the given collection (if the collection is registered).<br><br>**Example:**<br><br>`eejs.api.store.getters.getCollectionEndpoint('events');`
 
 
-#### mutations
+#### `mutations`
 
 In Vuex, any mutations of the state must be done via the vuex commit method invoking a registered mutation. This maintains the integrity of the state.  In this library, all the mutations not only affect the store state but also maintains the changeMap for each collection (more on that later). As with getters, all calls to mutations are synchronous.
 
 Each mutation call expects a payload object. The properties within the object are listed in the table.
- 
- Mutation | Payload Object | Purpose & Example Usage (outside the Vue instance)
- |-------|----------|-----------------------------|
- `updateEntityById` | {*collection*, *entity*} | This updates an entity in the given collection matching the incoming entities ID.<br><br>**Example Usage:** `eejs.api.store.commit('updateEntityById', { collection : 'events', entity : { EVT_ID : 11, EVT_name : 'Replacing Event Title' }});`
- `addEntity` | {*collection*, *entity*, *refresh*, *fromDb*} | This is used to add a complete entity to the specific collection in the state.  The optional *refresh* argument defaults to false, but if its true, then any existing entity values are replaced.  Otherwise if the entity already exists it will not be replace.  The optional *fromDb* argument which defaults to false is used to indicate that the entity being added comes from a db (or server) call when set to true.  This has implications for how/when the changeMap is updated.  The changeMap does not have ANY changes recorded for entities that are added to the state from the db.<br><br>**Example:**<br><br>`eejs.api.store.commit('addEntity', { collection : 'events', entity : { EVT_ID : 10, EVT_name : 'Adding an Event' }});`
- `addRelationsForEntity` | {*collection*, *collectionEntityId*, *relation*, *relationEntityId*, *doStoreCheck*} | Used to connect related items by ID in the store for the given values.<br><br> **Note:** in general this mutation should not be committed directly because it only adds the relation one way. It's better to add relations using the `addRelation` _action_ because it will take care of recursively committing relations both ways.<br><br>  There is an optional `doStoreCheck` property that can be included in the `payload` object. It defaults to true.  When true an exception is thrown if any of the passed in collections are not registered in the store state. When false, an exception is not thrown but the relation won't get added for non-registered collections.<br><br>**Example:**<br><br>`eejs.api.store.commit('addRelationsForEntity', { collection: 'events', collectionEntityId: 10, relation : 'datetimes', relationEntityId : 23 })`
+
+Mutation | Payload Object | Purpose & Example Usage (outside the Vue instance)
+|-------|----------|-----------------------------|
+`updateEntityById` | {*collection*, *entity*} | This updates an entity in the given collection matching the incoming entities ID.<br><br>**Example Usage:**<br><br> `eejs.api.store.commit('updateEntityById', { collection : 'events', entity : { EVT_ID : 11, EVT_name : 'Replacing Event Title' }});`
+`addEntity` | {*collection*, *entity*, *refresh*, *fromDb*} | This is used to add a complete entity to the specific collection in the state.  The optional *refresh* argument defaults to false, but if its true, then any existing entity values are replaced.  Otherwise if the entity already exists it will not be replace.  The optional *fromDb* argument which defaults to false is used to indicate that the entity being added comes from a db (or server) call when set to true.  This has implications for how/when the changeMap is updated.  The changeMap does not have ANY changes recorded for entities that are added to the state from the db.<br><br>**Example:**<br><br>`eejs.api.store.commit('addEntity', { collection : 'events', entity : { EVT_ID : 10, EVT_name : 'Adding an Event' }});`
+`addRelationsForEntity` | {*collection*, *collectionEntityId*, *relation*, *relationEntityId*, *doStoreCheck*} | Used to connect related items by ID in the store for the given values.<br><br> **Note:** in general this mutation should not be committed directly because it only adds the relation one way. It's better to add relations using the `addRelation` _action_ because it will take care of recursively committing relations both ways.<br><br>  There is an optional `doStoreCheck` property that can be included in the `payload` object. It defaults to true.  When true an exception is thrown if any of the passed in collections are not registered in the store state. When false, an exception is not thrown but the relation won't get added for non-registered collections.<br><br>**Example:**<br><br>`eejs.api.store.commit('addRelationsForEntity', { collection: 'events', collectionEntityId: 10, relation : 'datetimes', relationEntityId : 23 })`
   
 
-#### actions
+#### `actions`
 
 Instead of mutating the state, actions commit mutations. Actions are also used when there are things you need to do that may be asynchronous in nature. All usage of the vue-resource libary to make calls to the server via the REST API endpoints are done via actions.  This is important because in Vuex, mutations _cannot_ be asynchronous.  
 
@@ -73,7 +73,7 @@ Action | Payload Object | Purpose & Example Usage (outside the Vue instance) | R
 
 The eejs.api.main object builds a vuex module using each registered collection for the `eejs.api.store`. This is then registered with the `eejs.api.store` object.  Currently the only property on collection modules is the `state`.  This is where various information about the collection is preserved.
 
-#### state
+#### `state`
 
 state properties | Description |
 | --------------- | ------------- |
@@ -90,12 +90,12 @@ allowedProperties | This sets the values from the `properties` object returned w
 
 In the changemap tracked by `eejs.api.store`, ids are only found once in the various changeMap objects.  For instance, if an Event entity is updated, it gets added to the `update` property in the `changeMap` for the `events` collection state.  However, if it later is marked for `delete` then it's id gets removed from the `update` property and added to the `delete` property.
  
-property | description | example format
-|--------|-------------|----------------|
-create | A simple array of ids for entities in the collection state that were created by the client (and don't exist yet in the server). | `{ create : [ 10, 11, 12 ] }`
-update | A simple array of ids for entities that were changed by the client after the initial fetch from the server. | `{ update : [ 12 ] }`
-delete | A simple array of ids for entities that the client has marked for deletion on the server. | `{ delete : [ 15 ] }`
-relations | This property has an object as its value that holds a changeMap of relations for this entity.  The object has relation collection names as the keys, then the value of those is an object with the keys `addd` and `removed` and the values of those are an object where the keys are the ids for entities in this collection and the values are a simple array of relations that were added or removed for that entity. In the example given, if the collection this changeMap belonged to is an event, then this means that for the event entity with the id of 12, it had a relation created for datetimes with the ids 23, and 24.  For the event entity with the id of 56, it had its relations with the datetimes having ids of 33 and 34 removed. | `{ relations : { 'datetimes : { added : { 12 : [ 23, 24 ] }, removed : { 56 : [ 33, 34 ] } } } }`
+property | description
+|--------|-------------|
+create | A simple array of ids for entities in the collection state that were created by the client (and don't exist yet in the server).<br><br>**Example format:</br><br> `{ create : [ 10, 11, 12 ] }`
+update | A simple array of ids for entities that were changed by the client after the initial fetch from the server. <br><br>**Example format:</br><br> `{ update : [ 12 ] }`
+delete | A simple array of ids for entities that the client has marked for deletion on the server. <br><br>**Example format:</br><br> `{ delete : [ 15 ] }`
+relations | This property has an object as its value that holds a changeMap of relations for this entity.  The object has relation collection names as the keys, then the value of those is an object with the keys `addd` and `removed` and the values of those are an object where the keys are the ids for entities in this collection and the values are a simple array of relations that were added or removed for that entity. In the example given, if the collection this changeMap belonged to is an event, then this means that for the event entity with the id of 12, it had a relation created for datetimes with the ids 23, and 24.  For the event entity with the id of 56, it had its relations with the datetimes having ids of 33 and 34 removed. <br><br>**Example format:</br><br> `{ relations : { 'datetimes : { added : { 12 : [ 23, 24 ] }, removed : { 56 : [ 33, 34 ] } } } }`
 
 
 ### Extra Methods added to vuex prototype.
@@ -107,7 +107,7 @@ There are various methods that were added to the vuex prototype to make certain 
 Method | Arguments | Description
 |--------|------------|---------------|
 `replaceEntityInCollection` | *collection, entity* | This is called to replace an entity in a collection in the store state.
-`commitChangeRecord` | *collection, entity, changeType` | This is used to commit a change record to the changeMap for the given collection.
+`commitChangeRecord` | *collection, entity, changeType* | This is used to commit a change record to the changeMap for the given collection.
 `removeChangeRecord` | *collection, entityId, changeType* | This is used to remove a change record from the changeMap for the given collection and entity. 
 `commitRelatedChangeRecord` | *collection, relation, entityId, relatedEntityId, changeType, recursive* | This is used to commit a change record to the change map for the given collection for a relation on the given entity.  The `recursive` argument is optional, defaults to true, and is used to indicate whether the changeRecord should be recorded on the relations changeMap as well.
 `removeRelatedChangeRecord` | *collection, relation, entityId, relatedEntityId, changeType, recursive* | This is similar to `commitRelatedChangeRecord` except it removes relation from the changeMap record.
