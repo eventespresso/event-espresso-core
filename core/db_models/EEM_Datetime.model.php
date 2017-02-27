@@ -500,10 +500,20 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * Updates the DTT_sold attribute on each datetime (based on the registrations
      * for the tickets for each datetime)
      *
-     * @param EE_Datetime[] $datetimes
+     * @param EE_Base_Class[]|EE_Datetime[] $datetimes
+     * @throws \EE_Error
      */
     public function update_sold($datetimes)
     {
+        EE_Error::doing_it_wrong(
+            __FUNCTION__,
+            esc_html__(
+                'Please use \EEM_Ticket::update_tickets_sold() instead which will in turn correctly update both the Ticket AND Datetime counts.',
+                'event_espresso'
+            ),
+            '4.9.32.rc.005',
+            '5.0.0'
+        );
         foreach ($datetimes as $datetime) {
             $datetime->update_sold();
         }
