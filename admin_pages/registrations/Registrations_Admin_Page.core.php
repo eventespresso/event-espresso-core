@@ -2109,15 +2109,18 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     }
 
 
+
     /**
      * trash or restore registrations
      *
      * @param  boolean $trash whether to archive or restore
      * @access protected
      * @return void
+     * @throws \EE_Error
      */
     protected function _trash_or_restore_registrations($trash = true)
     {
+        /** @var EEM_Registration $REGM */
         $REGM    = EEM_Registration::instance();
         $success = 1;
         $error   = 0;
@@ -2165,6 +2168,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         } else {
             // grab single id and delete
             $REG_ID                 = absint($this->_req_data['_REG_ID']);
+            /** @var EE_Registration $REG */
             $REG                    = $REGM->get_one_by_ID($REG_ID);
             $ticket                 = $REG->get_first_related('Ticket');
             $tickets[$ticket->ID()] = $ticket;
