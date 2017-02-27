@@ -28,7 +28,10 @@ function json_basic_auth_handler( $user ) {
 			$header = null;
 		}
         if( ! empty( $header ) ) {
-              list($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']) = explode( ':', base64_decode( substr( $header, 6 ) ) );
+            $auth_parts = explode( ':', base64_decode( substr( $header, 6 ) ) );
+            if( is_array($auth_parts) && count($auth_parts) == 2 ) {
+                list( $_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW'] ) = $auth_parts;
+            }
         }
     }
 
