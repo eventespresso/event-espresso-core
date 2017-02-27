@@ -125,7 +125,8 @@ Vuex.Store.prototype.commitChangeRecord = function(collection, entity, changeTyp
             }
             break;
         case 'create' :
-            //some simple validation.  If this is already in the 'update' or 'delete' maps then how is it getting "created"?
+            //some simple validation. If this is already in the 'update'
+            // or 'delete' maps then how is it getting "created"?
             if (_.indexOf(this.state[collection].changeMap.delete, entityId) > -1
                 || _.indexOf(this.state[collection].changeMap.update, entityId) > -1
             ) {
@@ -179,7 +180,7 @@ Vuex.Store.prototype.commitChangeRecord = function(collection, entity, changeTyp
  * This should only be called as a part of a mutation.
  *
  * @param {string} collection
- * @param {integer|string} entityId The id of the entity being removed from the changeMap
+ * @param {number|string} entityId The id of the entity being removed from the changeMap
  * @param {string} changeType  The type of change the record is being removed from. Accepts the following:
  *                              'delete', 'create', 'update'
  */
@@ -208,7 +209,10 @@ Vuex.Store.prototype.removeChangeRecord = function(collection, entityId, changeT
         case 'delete' :
         case 'create' :
         case 'update' :
-            this.state[collection].changeMap[changeType] = _.without(this.state[collection].changeMap[changeType], entityId);
+            this.state[collection].changeMap[changeType] = _.without(
+                this.state[collection].changeMap[changeType],
+                entityId
+            );
             break;
         default :
             throw new eejs.exception(
@@ -250,7 +254,7 @@ Vuex.Store.prototype.commitRelatedChangeRecord = function(
     ) {
         throw new eejs.exception(
             'The properties for `commitRelatedChangeRecord` are not all defined. Double-check and make sure there is a ' +
-            '`collection`, `relation`, `entityId`, `relatedEntityid` and `changeType` values passed in.'
+            '`collection`, `relation`, `entityId`, `relatedEntityId` and `changeType` values passed in.'
         );
     }
 
@@ -455,7 +459,7 @@ Vuex.Store.prototype.removeAllRelatedChangeRecords = function(
  * @param {number} collectionEntityId = The primary key of the collection the relation is being added to.
  * @param {string} relation   = [required] the collection related to the main collection (eg datetimes)
  * @param {number} relationEntityId = [required] The primary key of the relation being added.  This is
- *                         expected to be an array|integer.
+ *                         expected to be an array|number.
  * @param {boolean} doStoreCheck = [optional] expected to be boolean.  Used to indicate whether to
  *                       do a storeCheck for the collection and throw an exception if its not
  *                       present.  Otherwise if the collection doesn't exist, it just will
@@ -473,7 +477,8 @@ Vuex.Store.prototype.commitRelationsForEntity = function(
     fromDb
 ) {
     //make sure all required properties are set
-    if (_.isUndefined(collection)
+    if (
+        _.isUndefined(collection)
         || _.isUndefined(collectionEntityId)
         || _.isUndefined(relation)
         || _.isUndefined(relationEntityId)
@@ -614,8 +619,16 @@ Vuex.Store.prototype.commitEntityToCollection = function(collection, entity, ref
             self.replaceEntityInCollection(collection,entityToSave);
             if (fromDb) {
                 //if this is fromDb, then we need to remove any updates/deletes for this entity in the changeMap.
-                self.removeChangeRecord(collection, entity[eejs.api.main.getPrimaryKeyForCollection(collection)], 'update');
-                self.removeChangeRecord(collection,entity[eejs.api.main.getPrimaryKeyForCollection(collection)], 'delete');
+                self.removeChangeRecord(
+                    collection,
+                    entity[eejs.api.main.getPrimaryKeyForCollection(collection)],
+                    'update'
+                );
+                self.removeChangeRecord(
+                    collection,
+                    entity[eejs.api.main.getPrimaryKeyForCollection(collection)],
+                    'delete'
+                );
             } else {
                 //add change record for update if this is not from the db.
                 self.commitChangeRecord(collection, entity, 'update');
@@ -646,7 +659,10 @@ Vuex.Store.prototype.commitEntityToCollection = function(collection, entity, ref
                     self.commitEntityToCollection(relation, relationObject, false, fromDb);
 
                     //get primaryKey value for relationObject.
-                    primaryKeyValueForRelationObject = eejs.utils.getIdFromEntity(relationObject, state[relation].primaryKey);
+                    primaryKeyValueForRelationObject = eejs.utils.getIdFromEntity(
+                        relationObject,
+                        state[relation].primaryKey
+                    );
                     primaryKeyValueForEntity = eejs.utils.getIdFromEntity(entity,state[collection].primaryKey);
 
                     //then commit this entity as a relation on the entities relation!
@@ -681,7 +697,12 @@ Vue.use(Vuex);
 if (!String.prototype.endsWith) {
     String.prototype.endsWith = function(searchString, position) {
         var subjectString = this.toString();
-        if (typeof position !== 'number' || !isFinite(position) || Math.floor(position) !== position || position > subjectString.length) {
+        if (
+            typeof position !== 'number'
+            || !isFinite(position)
+            || Math.floor(position) !== position
+            || position > subjectString.length
+        ) {
             position = subjectString.length;
         }
         position -= searchString.length;
@@ -868,7 +889,7 @@ if (!String.prototype.includes) {
      *
      * @param {object} entity
      * @param {string} primaryKey
-     * @returns {integer|string}  Some primary keys might be string values.  If no id is retrieved then the default of 0
+     * @returns {number|string}  Some primary keys might be string values.  If no id is retrieved then the default of 0
      *                            is returned so you may want to account for that.
      */
     eejs.utils.getIdFromEntity = function(entity,primaryKey) {
@@ -928,7 +949,7 @@ if (!String.prototype.includes) {
             var initialOptions = options,
                 /**
                  * Array of successfully registered collections ('events', 'datetimes' etc)
-                 * @type {Array}
+                 * @type {array}
                  */
                 collections = [],
                 /**
@@ -1118,7 +1139,7 @@ if (!String.prototype.includes) {
                 /**
                  * If the discoveryCache has not been set, then this does the initial query to the base RestRoute for
                  * the autodiscovery response.
-                 * @returns {*|Promise$1}
+                 * @return {Promise}
                  */
                 initDiscoverAPI = function() {
                     return new Promise( function(resolve, reject) {
@@ -1200,7 +1221,7 @@ if (!String.prototype.includes) {
                              */
                             isNewEntity: function(state, getters) {
                                 /**
-                                 * @param {integer|string} entityId   The id for an entity that is being checked.
+                                 * @param {number|string} entityId   The id for an entity that is being checked.
                                  * @return boolean
                                  */
                                 return function(entityId) {
@@ -1218,7 +1239,7 @@ if (!String.prototype.includes) {
                             getEntityForId: function(state, getters) {
                                 /**
                                  * @param {string} collection  The collection the entity belongs to.
-                                 * @param {integer|string}  entityId  The value for the entity's primaryKey
+                                 * @param {number|string}  entityId  The value for the entity's primaryKey
                                  * @return {object|undefined}  the entity if it exists, an empty object, or undefined.
                                  */
                                 return function(collection, entityId) {
@@ -1242,7 +1263,7 @@ if (!String.prototype.includes) {
                             getFieldValueFromEntityById: function(state, getters) {
                                 /**
                                  * @param {string} collection  The collection the entity belongs to.
-                                 * @param {integer|string} Value for the primary key of the entity we're retrieving the
+                                 * @param {number|string} Value for the primary key of the entity we're retrieving the
                                  *                         field value for.
                                  * @param {string} The field we're getting returning the value for.
                                  * @return {mixed}
@@ -1357,7 +1378,7 @@ if (!String.prototype.includes) {
                              *      collectionEntityId = The primary key of the collection the relation is being added to.
                              *      relation   = [required] the collection related to the main collection (eg datetimes)
                              *      relationEntityId = [required] The primary key of the relation being added.  This is
-                             *                         expected to be an array|integer.
+                             *                         expected to be an array|number.
                              *      doStoreCheck = [optional] expected to be boolean.  Used to indicate whether to
                              *                       do a storeCheck for the collection and throw an exception if its not
                              *                       present.  Otherwise if the collection doesn't exist, it just will
@@ -1532,9 +1553,13 @@ if (!String.prototype.includes) {
                                     //now that we have a our payload verified, let's see if there are already related objects
                                     //in the store state for the given collection (only done if no refresh).
                                     if (! refresh) {
-                                        if (_.has(context.state[payload.collection], 'relations')
+                                        if (
+                                            _.has(context.state[payload.collection], 'relations')
                                             && _.has(context.state[payload.collection].relations, relation)
-                                            && _.has(context.state[payload.collection].relations[relation],payload.entityId)
+                                            && _.has(
+                                                context.state[payload.collection].relations[relation],
+                                                payload.entityId
+                                            )
                                         ) {
                                             //k we know the relations are in the store, so let's build up our list of relations
                                             //to return from the store state.
@@ -1543,7 +1568,10 @@ if (!String.prototype.includes) {
                                                 function(relationId){
                                                     var primaryKeySearchObject = {};
                                                     primaryKeySearchObject[relationPrimaryKey] = relationId;
-                                                    return _.findWhere(context.state[relation].entities, primaryKeySearchObject);
+                                                    return _.findWhere(
+                                                        context.state[relation].entities,
+                                                        primaryKeySearchObject
+                                                    );
                                                 }
                                             );
                                             relationEntities = _.filter(
@@ -1566,7 +1594,9 @@ if (!String.prototype.includes) {
                                                 payload.collection,
                                                 ['singularize', 'capitalize']
                                             ),
-                                            collectionPrimaryKey = eejs.api.main.getPrimaryKeyForCollection(payload.collection);
+                                            collectionPrimaryKey = eejs.api.main.getPrimaryKeyForCollection(
+                                                payload.collection
+                                            );
                                             relationQueryObject['where[' + collectionSingularCapitalized + '.' + collectionPrimaryKey+ ']'] = payload.entityId;
 
                                         //return the Promise for fetchCollection
@@ -1632,7 +1662,10 @@ if (!String.prototype.includes) {
                                        endpointUri = endpointUri + payload.entityId;
 
                                        //include any registered relations
-                                       endpointUri = eejs.utils.addRelationsToEndpointURI(payload.collection, endpointUri);
+                                       endpointUri = eejs.utils.addRelationsToEndpointURI(
+                                           payload.collection,
+                                           endpointUri
+                                       );
 
                                        Vue.http.get(
                                            endpointUri
@@ -1653,8 +1686,8 @@ if (!String.prototype.includes) {
                                            reject(response);
                                        });
                                    } else {
-                                       //if we made it here then that means we have an entity in the that we can just resolve
-                                       //with
+                                       //if we made it here then that means we have
+                                       // an entity in the that we can just resolve with
                                        resolve(entity);
                                    }
                                });
@@ -1662,8 +1695,8 @@ if (!String.prototype.includes) {
 
 
                             /**
-                             * This adds specified relation ids to the store for the given collection and collection entity
-                             * id.
+                             * This adds specified relation ids to the store for the given collection
+                             * and collection entity id.
                              *
                              * It is preferable to use this action instead of the `addRelationsForEntity` mutation directly
                              * to ensure that ALL cross relations are kept in sync in the store state.  For example, if
@@ -1676,7 +1709,7 @@ if (!String.prototype.includes) {
                              *      collectionEntityId = The primary key of the collection the relation is being added to.
                              *      relation   = [required] the collection related to the main collection (eg datetimes)
                              *      relationEntityId = [required] The primary key of the relation being added.  This is
-                             *                         expected to be an array|integer.
+                             *                         expected to be an array|number.
                              */
                             addRelationByIds: function(context,payload){
                                 //this will throw an exception if the collection doesn't exist in the store.
@@ -1911,7 +1944,9 @@ if (!String.prototype.includes) {
                                 return;
                             }
                             //make sure incoming $options.id is an integer
-                            this.$options.id = this.$store.getters.isNewEntity(this.$options.id) ? this.$options.id : parseInt(this.$options.id);
+                            this.$options.id = this.$store.getters.isNewEntity(this.$options.id)
+                                ? this.$options.id
+                                : parseInt(this.$options.id);
                             /**
                              * There are three ways for determining what gets set as the model on the object:
                              * 1. Pass in the id via the `id` prop with the options when instantiating,
@@ -1935,7 +1970,10 @@ if (!String.prototype.includes) {
                                 this.fetchById();
                             } else if (!_.isEmpty(this['initial'+eejs.utils.inflection.capitalize(this.modelName())])) {
                                 //if initial{modelname} is not empty, we'll populate from that object.
-                                this.replaceDefaults(this['initial'+eejs.utils.inflection.capitalize(this.modelName())], false);
+                                this.replaceDefaults(
+                                    this['initial'+eejs.utils.inflection.capitalize(this.modelName())],
+                                    false
+                                );
                                 //ensure that a unique id has been set.
                                 this.ensureHasUniqueId();
                                 //now we actually DO have an entity so we should set the `has_` property accordingly.
@@ -2057,7 +2095,9 @@ if (!String.prototype.includes) {
                                 return _.isEmpty(this[this.modelName()])
                                     || (
                                         _.size(this[this.modelName()]) === 1
-                                        && _.has(this[this.modelName()], getPrimaryKeyFromSchema(collectionsSchema[this.collectionName]))
+                                        && _.has(this[this.modelName()], getPrimaryKeyFromSchema(
+                                            collectionsSchema[this.collectionName])
+                                        )
                                     )
                                     ;
                             },
@@ -2087,11 +2127,16 @@ if (!String.prototype.includes) {
                                 if (this.id > 0 || (_.isString(this.id) && this.id !== '')) {
                                     return;
                                 }
-                                var currentModelId = this[this.modelName()][getPrimaryKeyFromSchema(collectionsSchema[this.collectionName])];
+                                var currentModelId = this[this.modelName()][
+                                        getPrimaryKeyFromSchema(collectionsSchema[this.collectionName])
+                                    ];
                                 if ((currentModelId !== 0
                                     || (_.isString(currentModelId) && currentModelId !== '')
                                     )
-                                    && ! this.$store.getters.hasEntityInCollection(this.collectionName,this[this.modelName])
+                                    && ! this.$store.getters.hasEntityInCollection(
+                                        this.collectionName,
+                                        this[this.modelName]
+                                    )
                                 ){
                                     this.id = currentModelId;
                                     return;
@@ -2293,7 +2338,7 @@ if (!String.prototype.includes) {
                 },
                 /**
                  * This is used to populate default fields for the entity data object on the model component.
-                 * @param {string} The collection the fields are being populated from.
+                 * @param {string} collection The collection the fields are being populated from.
                  * @returns {object}
                  */
                 populateDefaultFields = function(collection) {
@@ -2400,7 +2445,10 @@ if (!String.prototype.includes) {
                             _.each(els.properties, function(el, propertyName) {
                                mixins.computedProperties[collection].computed[property+eejs.utils.inflection.capitalize(propertyName)] = {
                                    get: function() {
-                                       var mainProp = this.$store.getters.getFieldValueFromEntityById(this.collectionName,this.id,property);
+                                       var mainProp = this.$store.getters.getFieldValueFromEntityById(
+                                           this.collectionName,
+                                           this.id,property
+                                       );
                                        /**
                                         * Keep in mind that even though this propertyName might exist in the schema, it
                                         * might not actually exist in the store.state because it requires permissions
@@ -2416,7 +2464,11 @@ if (!String.prototype.includes) {
                             //property representation for each item in the value (i.e. `rendered` or `raw` or `pretty`)
                             mixins.computedProperties[collection].computed[property] = {
                                 get: function () {
-                                    return this.$store.getters.getFieldValueFromEntityById(this.collectionName, this.id, property);
+                                    return this.$store.getters.getFieldValueFromEntityById(
+                                        this.collectionName,
+                                        this.id,
+                                        property
+                                    );
                                 },
                                 set: setException
                             }
