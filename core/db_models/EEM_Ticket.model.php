@@ -129,16 +129,37 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 
 
 
-	/**
-	 * Updates the TKT_sold quantity on all the tickets matching $query_params
-	 * @param EE_Ticket[] $tickets
-	 * @return void
-	 */
+    /**
+     * Updates the TKT_sold quantity on all the tickets matching $query_params
+     *
+     * @param EE_Base_Class[]|EE_Ticket[] $tickets
+     * @return void
+     * @throws \EE_Error
+     */
 	public function update_tickets_sold($tickets){
 		foreach($tickets as $ticket){
 			/* @var  $ticket EE_Ticket */
 			$ticket->update_tickets_sold();
 		}
+	}
+
+
+
+    /**
+     * returns an array of EE_Ticket objects with a non-zero value for TKT_reserved
+     *
+     * @return EE_Base_Class[]|EE_Ticket[]
+     * @throws \EE_Error
+     */
+    public function get_tickets_with_reservations()
+    {
+        return $this->get_all(
+            array(
+                array(
+                    'TKT_reserved' => array( '>', 0 )
+                )
+            )
+        );
 	}
 
 
