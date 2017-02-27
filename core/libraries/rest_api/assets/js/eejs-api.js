@@ -1,8 +1,28 @@
+/**
+ * @namespace Vue
+ */
 var Vue = require('vue');
+/**
+ * @namespace Vuex
+ * @property {object}  Store
+ */
 var Vuex = require('vuex');
+/**
+ * @namespace VueResource
+ */
 var VueResource = require('vue-resource');
+/**
+ * @namespace inflection
+ */
 var inflection = require('inflection');
+/**
+ * @namespace URI
+ */
 var URI = require('urijs');
+/**
+ * @namespace _
+ */
+
 
 Vue.use(VueResource);
 
@@ -205,12 +225,12 @@ Vuex.Store.prototype.removeChangeRecord = function(collection, entityId, changeT
  *
  * @param {string} collection  The name of the collection the change is for (eg 'events').
  * @param {string} relation    The name of the relation the change is for (eg 'datetimes').
- * @param {integer} entityId      The entityId for the entity from the collection the change is for.
- * @param {integer} relatedEntityId  The entityId for the entity from the relation the change is for.
+ * @param {number} entityId      The entityId for the entity from the collection the change is for.
+ * @param {number} relatedEntityId  The entityId for the entity from the relation the change is for.
  * @param {string} changeType   The type of change being recorded.  Accepts the following:
  *                              'removed' = means the relation was removed between the entity and relatedEntity.
  *                              'added' = means the relation was added between the entity and related Entity.
- * @param {bool}  recursive     Defaults to true.  This is used to indicate whether the change should be recursively
+ * @param {boolean}  recursive     Defaults to true.  This is used to indicate whether the change should be recursively
  *                              applied to the relations changeMap state as well.
  */
 Vuex.Store.prototype.commitRelatedChangeRecord = function(
@@ -300,11 +320,11 @@ Vuex.Store.prototype.commitRelatedChangeRecord = function(
  *
  * @param {string} collection  The name of the collection the changeMap is being modified for.
  * @param {string} relation    The name of the relation being modified.
- * @param {integer} entityId    The id of the entity belonging to the collection that is being removed.
- * @param {integer} relatedEntityId  The id of the related entity being removed.
+ * @param {number} entityId    The id of the entity belonging to the collection that is being removed.
+ * @param {number} relatedEntityId  The id of the related entity being removed.
  * @param {string} changeType   The type of changeMap being removed from.  Required to be one of the following:
  *                              'removed', 'added'.
- * @param {bool}  recursive     Defaults to true.  This is used to indicate whether the change should be recursively
+ * @param {boolean}  recursive     Defaults to true.  This is used to indicate whether the change should be recursively
  *                              applied to the relations changeMap state as well.
  */
 Vuex.Store.prototype.removeRelatedChangeRecord = function(
@@ -372,7 +392,7 @@ Vuex.Store.prototype.removeRelatedChangeRecord = function(
  * Should only be called by a Vuex mutation.
  *
  * @param {string} collection  The collection the changemap.relations is being modified for.
- * @param {integer} entityId    The entityId the relations are being removed for.
+ * @param {number} entityId    The entityId the relations are being removed for.
  * @param {boolean} recursive   Defaults to true. This is used to indicate whether the change should be recursively
  *                              applied to all other collections this collection is a relation for.
  */
@@ -408,7 +428,7 @@ Vuex.Store.prototype.removeAllRelatedChangeRecords = function(
         //and go into the relation (if recursive = true) and remove in the relations as well.
         _.each(['added','removed'], function(changeType) {
             if (_.has(relationChangeMapObject[changeType], entityId)) {
-                relationIds = relationsChangeMapObject[changeType][entityId];
+                relationIds = relationChangeMapObject[changeType][entityId];
                 relationsChangeMap[relation][changeType] = _.omit(relationChangeMapObject[changeType], entityId);
                 if (recursive) {
                     _.each(relationIds, function(relationId) {
@@ -432,9 +452,9 @@ Vuex.Store.prototype.removeAllRelatedChangeRecords = function(
  * This method should never be called directly to modify the store but should be only used in mutations.
  *
  * @param {string} collection = [required] the main collection the relation is being added to (eg events)
- * @param {integer} collectionEntityId = The primary key of the collection the relation is being added to.
+ * @param {number} collectionEntityId = The primary key of the collection the relation is being added to.
  * @param {string} relation   = [required] the collection related to the main collection (eg datetimes)
- * @param {integer} relationEntityId = [required] The primary key of the relation being added.  This is
+ * @param {number} relationEntityId = [required] The primary key of the relation being added.  This is
  *                         expected to be an array|integer.
  * @param {boolean} doStoreCheck = [optional] expected to be boolean.  Used to indicate whether to
  *                       do a storeCheck for the collection and throw an exception if its not
@@ -462,7 +482,7 @@ Vuex.Store.prototype.commitRelationsForEntity = function(
             'The properties for `commitRelationsForEntity` are not all defined.  Double-check ' +
             'and make sure there is a `collection`, `collectionEntityId`, `relation`, and ' +
             '`relationEntityId` defined.'
-        )
+        );
     }
 
     var state = this.state;
@@ -591,7 +611,7 @@ Vuex.Store.prototype.commitEntityToCollection = function(collection, entity, ref
                 self.commitChangeRecord(collection, entity, 'create');
             }
         } else if (refresh) {
-            self.replaceEntityInCollection(collection,entityToSave)
+            self.replaceEntityInCollection(collection,entityToSave);
             if (fromDb) {
                 //if this is fromDb, then we need to remove any updates/deletes for this entity in the changeMap.
                 self.removeChangeRecord(collection, entity[eejs.api.main.getPrimaryKeyForCollection(collection)], 'update');
@@ -601,7 +621,7 @@ Vuex.Store.prototype.commitEntityToCollection = function(collection, entity, ref
                 self.commitChangeRecord(collection, entity, 'update');
             }
         }
-        
+
         //handle _links and _calculated_field commits.
         if (!_.isEmpty(linksToCommit)) {
             _.each(linksToCommit, function(links, entityId) {
@@ -1979,7 +1999,7 @@ if (!String.prototype.includes) {
                              * This method is used to override the default values for the field on the initial setup of
                              * the Data property.
                              * @param {object} replacements Should be what's replacing the model values in the data object.
-                             * @param {bool}   update       Whether or not to trigger an update in the store state after
+                             * @param {boolean}   update       Whether or not to trigger an update in the store state after
                              *                              replacing.
                              */
                             replaceDefaults: function (replacements, update) {
