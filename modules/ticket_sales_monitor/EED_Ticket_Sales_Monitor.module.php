@@ -818,12 +818,11 @@ class EED_Ticket_Sales_Monitor extends EED_Module
                     esc_html__('Transaction does not have a valid Total Line Item associated with it.', 'event_espresso')
                 );
             }
-            $ticket_line_items = EEH_Line_Item::get_ticket_line_items($total_line_item);
-            foreach ($ticket_line_items as $ticket_line_item) {
-                if ($ticket_line_item instanceof EE_Line_Item) {
-                    $valid_reserved_tickets[] = $ticket_line_item;
-                }
-            }
+            $valid_reserved_tickets += EED_Ticket_Sales_Monitor::get_reserved_tickets_for_line_item($total_line_item);
+        }
+        $total_line_items = EEM_Line_Item::instance()->get_total_line_items_just_added_to_cart();
+        foreach ($total_line_items as $total_line_item) {
+            $valid_reserved_tickets += EED_Ticket_Sales_Monitor::get_reserved_tickets_for_line_item($total_line_item);
         }
         $tickets_with_reservations = EEM_Ticket::instance()->get_tickets_with_reservations();
         foreach ($tickets_with_reservations as $ticket_with_reservations) {
@@ -846,6 +845,21 @@ class EED_Ticket_Sales_Monitor extends EED_Module
             }
         }
         return $total_tickets_released;
+    }
+
+
+
+    private static function get_reserved_tickets_for_line_item(EE_Line_Item $total_line_item)
+    {
+        /** @var EE_Line_Item[] $valid_reserved_tickets */
+        $valid_reserved_tickets = array();
+        $ticket_line_items = EEH_Line_Item::get_ticket_line_items($total_line_item);
+        foreach ($ticket_line_items as $ticket_line_item) {
+            if ($ticket_line_item instanceof EE_Line_Item) {
+                $valid_reserved_tickets[] = $ticket_line_item;
+            }
+        }
+        return $valid_reserved_tickets;
     }
 
 }
