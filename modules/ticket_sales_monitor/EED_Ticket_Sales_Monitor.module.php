@@ -826,22 +826,22 @@ class EED_Ticket_Sales_Monitor extends EED_Module
             }
         }
         $tickets_with_reservations = EEM_Ticket::instance()->get_tickets_with_reservations();
-        foreach ($tickets_with_reservations as $tickets_with_reservation) {
-            if (! $tickets_with_reservation instanceof EE_Ticket) {
+        foreach ($tickets_with_reservations as $ticket_with_reservations) {
+            if (! $ticket_with_reservations instanceof EE_Ticket) {
                 continue;
             }
-            $reserved_qty = $tickets_with_reservation->reserved();
+            $reserved_qty = $ticket_with_reservations->reserved();
             foreach ($valid_reserved_tickets as $valid_reserved_ticket) {
                 if(
                     $valid_reserved_ticket instanceof EE_Line_Item
-                    && $valid_reserved_ticket->OBJ_ID() === $tickets_with_reservation->ID()
+                    && $valid_reserved_ticket->OBJ_ID() === $ticket_with_reservations->ID()
                 ) {
                     $reserved_qty -= $valid_reserved_ticket->quantity();
                 }
             }
             if ($reserved_qty > 0) {
-                $tickets_with_reservation->decrease_reserved($reserved_qty);
-                $tickets_with_reservation->save();
+                $ticket_with_reservations->decrease_reserved($reserved_qty);
+                $ticket_with_reservations->save();
                 $total_tickets_released += $reserved_qty;
             }
         }
