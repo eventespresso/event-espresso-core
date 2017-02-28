@@ -45,6 +45,7 @@ abstract class TicketSelector
      * @param \EE_Ticket[] $tickets
      * @param int          $max_attendees
      * @param array        $template_args
+     * @throws \EE_Error
      */
     public function __construct(\EE_Event $event, array $tickets, $max_attendees, array $template_args)
     {
@@ -52,6 +53,7 @@ abstract class TicketSelector
         $this->tickets       = $tickets;
         $this->max_attendees = $max_attendees;
         $this->template_args = $template_args;
+        $this->template_args['hidden_inputs'] = $this->getHiddenInputs();
         $this->addTemplateArgs();
     }
 
@@ -102,6 +104,27 @@ abstract class TicketSelector
     }
 
 
+
+
+    /**
+     * getHiddenInputs
+     *
+     * @return string
+     * @throws \EE_Error
+     */
+    public function getHiddenInputs()
+    {
+        // $rows = count($this->tickets);
+        $html = '<input type="hidden" name="noheader" value="true"/>';
+        $html .= '<input type="hidden" name="tkt-slctr-return-url-' . $this->event->ID() . '"';
+        $html .= ' value="' . \EEH_URL::current_url() . $this->template_args['anchor_id'] . '"/>';
+        $html .= '<input type="hidden" name="tkt-slctr-rows-' . $this->event->ID();
+        $html .= '" value="' . count($this->tickets) . '"/>';
+        $html .= '<input type="hidden" name="tkt-slctr-max-atndz-' . $this->event->ID();
+        $html .= '" value="' . $this->template_args['max_atndz'] . '"/>';
+        $html .= '<input type="hidden" name="tkt-slctr-event-id" value="' . $this->event->ID() . '"/>';
+        return $html;
+    }
 
 }
 // End of file TicketSelector.php
