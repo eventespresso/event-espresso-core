@@ -66,6 +66,8 @@ function json_basic_auth_handler( $user ) {
     //if we found a user, remove regular cookie filters because
     //they're just going to overwrite what we've found
     if( $user->ID ){
+        global $wp_json_basic_auth_success;
+        $wp_json_basic_auth_success = true;
         remove_filter( 'determine_current_user', 'wp_validate_auth_cookie' );
         remove_filter( 'determine_current_user', 'wp_validate_logged_in_cookie', 20 );
     }
