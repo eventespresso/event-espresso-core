@@ -788,6 +788,62 @@ class EED_Ticket_Sales_Monitor extends EED_Module
 
 
 
+    /********************************** RESET RESERVATION COUNTS  *********************************/
+
+
+
+    /**
+     * Resets all ticket and datetime reserved counts to zero
+     * Tickets that are currently associated with a Transaction that is in progress
+     *
+     * @throws \EE_Error
+     * @throws \DomainException
+     */
+    public static function reset_reservation_counts()
+    {
+        $total_tickets_released = 0;
+        /** @var EE_Line_Item[] $valid_reserved_tickets */
+        $valid_reserved_tickets = array();
+        $transactions_in_progress = EEM_Transaction::instance()->get_transactions_in_progress();
+        foreach ($transactions_in_progress as $transaction_in_progress) {
+            /** @var EE_Transaction $transaction_in_progress */
+            $total_line_item = $transaction_in_progress->total_line_item();
+            // $transaction_in_progress->line
+            if (! $total_line_item instanceof EE_Line_Item) {
+                throw new DomainException(
+                    esc_html__('Transaction does not have a valid Total Line Item associated with it.', 'event_espresso')
+                );
+            }
+            $ticket_line_items = EEH_Line_Item::get_ticket_line_items($total_line_item);
+            foreach ($ticket_line_items as $ticket_line_item) {
+                if ($ticket_line_item instanceof EE_Line_Item) {
+                    $valid_reserved_tickets[] = $ticket_line_item;
+                }
+            }
+        }
+        $tickets_with_reservations = EEM_Ticket::instance()->get_tickets_with_reservations();
+        foreach ($tickets_with_reservations as $tickets_with_reservation) {
+            if (! $tickets_with_reservation instanceof EE_Ticket) {
+                continue;
+            }
+            $reserved_qty = $tickets_with_reservation->reserved();
+            foreach ($valid_reserved_tickets as $valid_reserved_ticket) {
+                if(
+                    $valid_reserved_ticket instanceof EE_Line_Item
+                    && $valid_reserved_ticket->OBJ_ID() === $tickets_with_reservation->ID()
+                ) {
+                    $reserved_qty -= $valid_reserved_ticket->quantity();
+                }
+            }
+            if ($reserved_qty > 0) {
+                $tickets_with_reservation->decrease_reserved($reserved_qty);
+                $tickets_with_reservation->save();
+                $total_tickets_released += $reserved_qty;
+            }
+        }
+        return $total_tickets_released;
+    }
+
 }
 // End of file EED_Ticket_Sales_Monitor.module.php
 // Location: /modules/ticket_sales_monitor/EED_Ticket_Sales_Monitor.module.php
