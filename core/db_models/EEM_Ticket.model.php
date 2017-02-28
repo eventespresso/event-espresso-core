@@ -132,7 +132,7 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
     /**
      * Updates the TKT_sold quantity on all the tickets matching $query_params
      *
-     * @param EE_Base_Class[]|EE_Ticket[] $tickets
+     * @param EE_Ticket[] $tickets
      * @return void
      * @throws \EE_Error
      */
