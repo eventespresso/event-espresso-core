@@ -508,26 +508,30 @@ class EE_Registration_Processor extends EE_Processor_Base {
 
 
 
-	/**
-	 * update_registration_after_being_canceled_or_declined
-	 *
-	 * @param \EE_Registration 	$registration
-	 * @param array            	$closed_reg_statuses
-	 * @param bool        		$update_reg
-	 * @return bool
-	 */
+    /**
+     * update_registration_after_being_canceled_or_declined
+     *
+     * @param \EE_Registration $registration
+     * @param array            $closed_reg_statuses
+     * @param bool             $update_reg
+     * @return bool
+     * @throws \EE_Error
+     */
 	public function update_registration_after_being_canceled_or_declined(
 		EE_Registration $registration,
 		$closed_reg_statuses = array(),
 		$update_reg = true
 	) {
 		// these reg statuses should not be considered in any calculations involving monies owing
-		$closed_reg_statuses = ! empty( $closed_reg_statuses ) ? $closed_reg_statuses
+		$closed_reg_statuses = ! empty( $closed_reg_statuses )
+            ? $closed_reg_statuses
 			: EEM_Registration::closed_reg_statuses();
-		if ( ! in_array( $registration->status_ID(), $closed_reg_statuses ) ) {
+		if ( ! in_array( $registration->status_ID(), $closed_reg_statuses, true ) ) {
 			return false;
 		}
-		$registration->set_final_price(0);
+        // release a reserved ticket by decrementing ticket and datetime reserved values
+        $registration->release_reserved_ticket(true);
+        $registration->set_final_price(0);
 		if ( $update_reg ) {
 			$registration->save();
 		}
