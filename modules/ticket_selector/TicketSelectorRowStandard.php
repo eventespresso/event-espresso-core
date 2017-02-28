@@ -1,6 +1,9 @@
 <?php
 namespace EventEspresso\modules\ticket_selector;
 
+use EE_Error;
+use EventEspresso\core\exceptions\UnexpectedEntityException;
+
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
@@ -32,19 +35,9 @@ class TicketSelectorRowStandard extends TicketSelectorRow
     protected $tax_settings;
 
     /**
-     * @var boolean $required_ticket_sold_out
-     */
-    protected $required_ticket_sold_out;
-
-    /**
      * @var boolean $prices_displayed_including_taxes
      */
     protected $prices_displayed_including_taxes;
-
-    /**
-     * @var string $event_status
-     */
-    protected $event_status;
 
     /**
      * @var int $row
@@ -71,15 +64,17 @@ class TicketSelectorRowStandard extends TicketSelectorRow
     /**
      * TicketDetails constructor.
      *
-     * @param TicketDetails              $ticket_details
-     * @param \EE_Tax_Config             $tax_settings
-     * @param int                        $total_tickets
-     * @param int                        $max_atndz
-     * @param int                        $row
-     * @param int                        $cols
-     * @param boolean                    $required_ticket_sold_out
-     * @param string                     $event_status
-     * @param string                     $ticket_datetime_classes
+     * @param TicketDetails  $ticket_details
+     * @param \EE_Tax_Config $tax_settings
+     * @param int            $total_tickets
+     * @param int            $max_atndz
+     * @param int            $row
+     * @param int            $cols
+     * @param boolean        $required_ticket_sold_out
+     * @param string         $event_status
+     * @param string         $ticket_datetime_classes
+     * @throws EE_Error
+     * @throws UnexpectedEntityException
      */
     public function __construct(
         TicketDetails $ticket_details,
@@ -100,11 +95,9 @@ class TicketSelectorRowStandard extends TicketSelectorRow
         $this->max_atndz = $max_atndz;
         $this->row = $row;
         $this->cols = $cols;
-        $this->required_ticket_sold_out = $required_ticket_sold_out;
-        $this->event_status = $event_status;
         $this->date_format = $ticket_details->getDateFormat();
         $this->ticket_datetime_classes = $ticket_datetime_classes;
-        parent::__construct($this->ticket, $max_atndz, $this->date_format);
+        parent::__construct($this->ticket, $max_atndz, $this->date_format, $event_status, $required_ticket_sold_out);
     }
 
 
@@ -136,7 +129,7 @@ class TicketSelectorRowStandard extends TicketSelectorRow
      * getHtml
      *
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function getHtml()
     {
@@ -240,7 +233,7 @@ class TicketSelectorRowStandard extends TicketSelectorRow
      *
      * @param int $remaining
      * @return array
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     protected function setTicketMinAndMax($remaining)
     {
@@ -262,7 +255,7 @@ class TicketSelectorRowStandard extends TicketSelectorRow
      * getTicketPriceDetails
      *
      * @return array
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     protected function getTicketPriceDetails()
     {
@@ -286,65 +279,12 @@ class TicketSelectorRowStandard extends TicketSelectorRow
 
 
 
-    /**
-     * getTicketStatusClasses
-     *
-     * @param int $remaining
-     * @return array
-     * @throws \EE_Error
-     */
-    protected function getTicketStatusClasses($remaining = 0)
-    {
-        // if a previous required ticket with the same sale start date is sold out,
-        // then mark this ticket as sold out as well.
-        // tickets that go on sale at a later date than the required ticket  will NOT be affected
-        $tkt_status = $this->required_ticket_sold_out !== false
-                      && $this->required_ticket_sold_out === $this->ticket->start_date()
-            ? \EE_Ticket::sold_out
-            : $this->ticket->ticket_status();
-        $tkt_status = $this->event_status === \EE_Datetime::sold_out
-            ? \EE_Ticket::sold_out
-            : $tkt_status;
-        // check ticket status
-        switch ($tkt_status) {
-            // sold_out
-            case \EE_Ticket::sold_out :
-                $ticket_status = 'ticket-sales-sold-out';
-                $status_class = 'ticket-sales-sold-out lt-grey-text';
-                break;
-            // expired
-            case \EE_Ticket::expired :
-                $ticket_status = 'ticket-sales-expired';
-                $status_class = 'ticket-sales-expired lt-grey-text';
-                break;
-            // archived
-            case \EE_Ticket::archived :
-                $ticket_status = 'archived-ticket';
-                $status_class = 'archived-ticket hidden';
-                break;
-            // pending
-            case \EE_Ticket::pending :
-                $ticket_status = 'ticket-pending';
-                $status_class = 'ticket-pending';
-                break;
-            // onsale
-            case \EE_Ticket::onsale :
-            default :
-                $ticket_status = 'ticket-on-sale';
-                $status_class = 'ticket-on-sale';
-                break;
-        }
-        $ticket_status = \EEH_HTML::span($this->ticket->ticket_status(true, ($remaining > 0)), '', $ticket_status);
-        return array($tkt_status, $ticket_status, $status_class);
-    }
-
-
 
     /**
      * ticketNameTableCell
      *
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     protected function ticketNameTableCell()
     {
@@ -372,7 +312,7 @@ class TicketSelectorRowStandard extends TicketSelectorRow
      * @param float $ticket_price
      * @param bool  $ticket_bundle
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     protected function ticketPriceTableCell($ticket_price, $ticket_bundle)
     {
@@ -431,7 +371,7 @@ class TicketSelectorRowStandard extends TicketSelectorRow
      * @param int $min
      * @param int $max
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     protected function ticketQuantitySelector($min = 0, $max = 0)
     {
@@ -459,7 +399,7 @@ class TicketSelectorRowStandard extends TicketSelectorRow
      * getHiddenInputs
      *
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     protected function ticketQtyAndIdHiddenInputs()
     {
