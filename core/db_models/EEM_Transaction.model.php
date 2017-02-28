@@ -390,7 +390,11 @@ class EEM_Transaction extends EEM_Base
                     'TXN_timestamp' => array(
                         '>',
                         time() - EE_Registry::instance()->SSN->lifespan()
-                    )
+                    ),
+                    'STS_ID' => array(
+                        '!=',
+                        EEM_Transaction::complete_status_code
+                    ),
                 )
             )
         );
