@@ -83,6 +83,7 @@ class EED_Core_Rest_Api extends \EED_Module
         add_filter('rest_index',
             array('EventEspresso\core\libraries\rest_api\controllers\model\Meta', 'filter_ee_metadata_into_index'));
         EED_Core_Rest_Api::invalidate_cached_route_data_on_version_change();
+        add_filter( 'rest_post_dispatch', array( 'EED_Core_Rest_Api', 'warn_about_use_of_unencrypted_basic_auth' ), 10, 3 );
     }
 
 
@@ -855,6 +856,23 @@ class EED_Core_Rest_Api extends \EED_Module
      */
     public function run($WP)
     {
+    }
+
+    /**
+     * When a user authenticates using basic auth, check they're using SSL. If not, set a warning for them to see.
+     * @param \WP_REST_Response $response
+     * @param \WP_REST_Server   $server
+     * @param \WP_REST_Request  $request
+     */
+    public static function warn_about_use_of_unencrypted_basic_auth( WP_REST_Response $response, WP_REST_Server $server, WP_REST_Request $request ){
+        global $wp_json_basic_auth_success;
+        if( $wp_json_basic_auth_success && ! is_ssl() ) {
+            $headers                         = $response->get_headers();
+            $headers['X-Basic-Auth-Warning'] = esc_html__( 'It is possibbile for your password to be intercepted. Please read serve your site over HTTPS or use the Application Passwords WordPress Plugin.',
+                'event_espresso' );
+            $response->set_headers( $headers );
+        }
+        return $response;
     }
 
 
