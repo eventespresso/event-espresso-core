@@ -511,8 +511,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
                 'Please use \EEM_Ticket::update_tickets_sold() instead which will in turn correctly update both the Ticket AND Datetime counts.',
                 'event_espresso'
             ),
-            '4.9.32.rc.005',
-            '5.0.0'
+            '4.9.32.rc.005'
         );
         foreach ($datetimes as $datetime) {
             $datetime->update_sold();
