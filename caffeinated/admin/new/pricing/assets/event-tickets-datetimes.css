@@ -383,20 +383,26 @@
 }
 
 /* Sold, REgs */
-.ticket-table tbody .ticket-row td:nth-child(7), .ticket-table tbody .ticket-row td:nth-child(8) {
+.ticket-table tbody .ticket-row td:nth-child(7),
+.ticket-table tbody .ticket-row td:nth-child(8),
+.ticket-table tbody .ticket-row.ee-wp-debug td:nth-child(9) {
     text-align: right;
     padding-right: 1em;
     width: 4%;
 }
 
 /* Actions */
-.ticket-table tbody .ticket-row td:nth-child(9) {
+.ticket-table tbody .ticket-row td:last-child {
     width: 20%;
     min-width: 120px;
 }
 
 
-.ticket-table .ticket-display-row-TKT_sold, .ticket-table .ticket-display-row-TKT_registrations, .datetime-tickets-sold {
+.ticket-table .ticket-display-row-TKT_sold,
+.ticket-table .ticket-display-row-TKT_reserved,
+.ticket-table .ticket-display-row-TKT_registrations,
+.datetime-tickets-sold,
+.datetime-tickets-reserved {
     display:block;
     margin-top: 4px;
 }
