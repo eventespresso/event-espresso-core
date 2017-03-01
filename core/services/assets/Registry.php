@@ -31,6 +31,8 @@ class Registry
     {
         add_action('wp_enqueue_scripts', array($this, 'scripts'), 100);
         add_action('admin_enqueue_scripts', array($this, 'scripts'), 100);
+        add_action('wp_print_footer_scripts', array($this, 'enqueueData'), 1);
+        add_action('admin_print_footer_scripts', array($this, 'enqueueData'), 1);
     }
 
 
@@ -41,6 +43,7 @@ class Registry
      */
     public function scripts()
     {
+        global $wp_version;
         wp_register_script(
             'eejs-core',
             EE_PLUGIN_DIR_URL . 'core/services/assets/core_assets/eejs-core.js',
@@ -48,18 +51,30 @@ class Registry
             espresso_version(),
             true
         );
+        //only run this if WordPress 4.4.0 > is in use.
+        if (version_compare($wp_version, '4.4.0', '>')) {
+            //js.api
+            wp_register_script(
+                'eejs-api',
+                EE_LIBRARIES_URL . 'rest_api/assets/js/eejs-api.min.js',
+                array('underscore', 'eejs-core'),
+                espresso_version(),
+                true
+            );
+            $this->jsdata['eejs_api_nonce'] = wp_create_nonce('wp_rest');
+            $this->jsdata['paths'] = array('rest_route' => rest_url('ee/v4.8.36/'));
+        }
+    }
 
-        //js.api
-        wp_register_script(
-            'eejs-api',
-            EE_LIBRARIES_URL . 'rest_api/assets/js/eejs-api.min.js',
-            array('underscore','eejs-core'),
-            espresso_version(),
-            true
-        );
-        $this->jsdata['paths'] = array('rest_route' => rest_url('ee/v4.8.36/'));
 
-        wp_localize_script('eejs-core', 'eejs', array('data'=>$this->jsdata));
+    /**
+     * Call back for the script print in frontend and backend.
+     * Used to call wp_localize_scripts so that data can be added throughout the runtime until this later hookpoint.
+     * @since 4.9.31.rc.015
+     */
+    public function enqueueData()
+    {
+        wp_localize_script('eejs-core', 'eejs', array('data' => $this->jsdata));
     }
 
 

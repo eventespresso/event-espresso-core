@@ -150,6 +150,14 @@ interface EEI_Transaction extends EEI_Base {
 	 * @return float
 	 */
 	public function paid();
+
+
+
+    /**
+     * Retrieves all the pending payments on this transaction
+     * @return EEI_Payment[]
+     */
+    public function pending_payments();
 }
 
 
