@@ -372,7 +372,10 @@ class EEM_Line_Item extends EEM_Base {
             array(
                 'TXN_ID'   => 0,
                 'LIN_type' => 'total',
-            )
+                'LIN_timestamp' => array(
+                    '>',
+                    time() - EE_Registry::instance()->SSN->lifespan()
+                ),            )
         ));
     }
 
