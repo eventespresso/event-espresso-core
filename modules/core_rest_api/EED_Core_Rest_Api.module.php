@@ -866,7 +866,13 @@ class EED_Core_Rest_Api extends \EED_Module
      */
     public static function warn_about_use_of_unencrypted_basic_auth( WP_REST_Response $response, WP_REST_Server $server, WP_REST_Request $request ){
         global $wp_json_basic_auth_success;
-        if( $wp_json_basic_auth_success && ! is_ssl() ) {
+        if( apply_filters(
+            'FHEE__EED_Core_Rest_Api__warn_about_use_of_unencrypted_basic_auth',
+            $wp_json_basic_auth_success && ! is_ssl(),
+            $response,
+            $server,
+            $request
+        ) ) {
             $headers                         = $response->get_headers();
             $headers['X-Basic-Auth-Warning'] = esc_html__( 'It is possible for your password to be intercepted. Please switch your site to HTTPS or use the Application Passwords WordPress Plugin.',
                 'event_espresso' );
