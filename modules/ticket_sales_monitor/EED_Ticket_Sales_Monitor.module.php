@@ -66,7 +66,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
         // release tickets for expired carts
         add_action('EED_Ticket_Selector__process_ticket_selections__before',
             array('EED_Ticket_Sales_Monitor', 'release_tickets_for_expired_carts'),
-            20, 3
+            1
         );
         // check ticket reserves AFTER MER does it's check (hence priority 20)
         add_filter('FHEE__EE_Ticket_Selector___add_ticket_to_cart__ticket_qty',
