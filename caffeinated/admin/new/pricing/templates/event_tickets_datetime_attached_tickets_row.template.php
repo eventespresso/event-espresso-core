@@ -1,5 +1,9 @@
 <tr id="advanced-dtt-edit-row-<?php echo $dtt_row; ?>" class="advanced-dtt-edit-row">
-	<td colspan="6">
+    <?php if (WP_DEBUG) { ?>
+    <td colspan="7">
+        <?php } else { ?>
+    <td colspan="6">
+    <?php } ?>
 		<section id="edit-event-datetime-tickets-<?php echo $dtt_row; ?>" class="datetime-tickets-edit"<?php echo $show_tickets_row; ?>>
 			<div class="datetime-description-container">
 				<textarea name="<?php echo $event_datetimes_name; ?>[<?php echo $dtt_row; ?>][DTT_description]" class="event-datetime-DTT_description ee-full-textarea-inp" placeholder="Datetime Description (optional)"><?php echo $DTT_description; ?></textarea>
@@ -9,8 +13,8 @@
 			<ul class="datetime-tickets-list">
 				<?php echo $datetime_tickets_list; ?>
 			</ul>
-			
-			
+
+
 			<div class="add-datetime-ticket-container">
 				<h4 class="datetime-tickets-heading"><?php esc_html_e('Add New Ticket', 'event_espresso'); ?></h4><?php echo $add_new_datetime_ticket_help_link; ?><br>
 				<table class="add-new-ticket-table">
@@ -35,7 +39,7 @@
 							<td>
 								<input type="text" name="add_new_ticket[TKT_end_date]" class="add-new-ticket-TKT_end_date ee-text-inp ee-datepicker" data-context="end-ticket" data-date-field-context="#edit-event-datetime-tickets-<?php echo $dtt_row; ?>" data-related-field=".add-new-ticket-TKT_start_date" data-next-field=".add-new-ticket-PRC_amount">
 							</td>
-							<td>	
+							<td>
 								<input type="text" name="add_new_ticket[PRC_amount]" class="ee-text-inp add-new-ticket-PRC_amount ee-numeric" size="1">
 							</td>
 							<td>
@@ -69,7 +73,7 @@
 </tr>
 
 
-<?php 
+<?php
 /**
  * template args used
  *
