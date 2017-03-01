@@ -18,7 +18,6 @@ class Write_Test extends \EE_REST_TestCase
 {
 
     /**
-     * @group current
      */
     public function test_no_insert_if_no_caps(){
         $request = new \WP_REST_Request( 'POST', '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events');
@@ -37,7 +36,6 @@ class Write_Test extends \EE_REST_TestCase
     /**
      * Verifies that even if the current user can edit events, they shouldn't be able
      * to insert until we've sorted that code out
-     * @group current
      */
     public function test_no_insert_limited_user(){
         $user = $this->factory->user->create_and_get(array('role' => 'subscriber'));
@@ -55,6 +53,139 @@ class Write_Test extends \EE_REST_TestCase
         $data = $response->get_data();
         $this->assertEquals('rest_cannot_create_events', $data['code']);
     }
+
+    /**
+     * @group 9222
+     */
+    public function test_insert_utc_and_relative_times(){
+        //let's set a differnet WP timezone.
+        update_option( 'gmt_offset', '-1' );
+        $this->_authenticate_an_admin();
+        $req = new \WP_REST_Request(
+            'POST',
+            '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/datetimes'
+        );
+        $req->set_body_params(
+            array(
+                'DTT_EVT_start_gmt' => '2016-01-02T00:00:00',
+                'DTT_EVT_end' => '2016-01-03T00:00:00',
+            )
+        );
+        $response = rest_do_request( $req );
+
+        $response_data = $response->get_data();
+        $this->assertTrue( empty( $response_data['code'] ) );
+        $this->assertEquals( '2016-01-02T00:00:00', $response_data['DTT_EVT_start_gmt'] );
+        $this->assertEquals( '2016-01-01T23:00:00', $response_data['DTT_EVT_start'] );
+        $this->assertEquals( '2016-01-03T01:00:00', $response_data['DTT_EVT_end_gmt'] );
+        $this->assertEquals( '2016-01-03T00:00:00', $response_data['DTT_EVT_end'] );
+
+    }
+
+    /**
+     * @group 9222
+     */
+    public function test_update_only_some_fields(){
+        $this->_authenticate_an_admin();
+        $original_reg_limit = 25;
+        $original_sold = 100;
+        $datetime = $this->new_model_obj_with_dependencies(
+            'Datetime',
+            array(
+                'DTT_reg_limit' => $original_reg_limit,
+                'DTT_sold' => $original_sold
+            )
+        );
+        $req = new \WP_REST_Request(
+            'PUT',
+            '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/datetimes/' . $datetime->ID()
+        );
+        //just update the reg limit, not the number sold
+        $req->set_body_params(
+            array(
+                'DTT_reg_limit' => $original_reg_limit * 2,
+            )
+        );
+        $response = rest_do_request( $req );
+        $response_data = $response->get_data();
+        //verify there was no error code
+        $this->assertTrue( empty( $response_data['code'] ) );
+        //assert the reg limit was updated properly
+        $this->assertEquals( $original_reg_limit * 2, (int)$response_data['DTT_reg_limit'] );
+        //but that teh sold count wasn't changed
+        $this->assertEquals( $original_sold, (int)$response_data['DTT_sold']);
+
+    }
+
+    /**
+     * @group 9222
+     */
+    public function test_delete__trashed(){
+        $this->_authenticate_an_admin();
+        $datetime = $this->new_model_obj_with_dependencies(
+            'Datetime',
+            array(
+                'DTT_deleted' => false
+            )
+        );
+        //double-check the datetime isn't trashed
+        $this->assertFalse( $datetime->get( 'DTT_deleted' ) );
+
+        $req = new \WP_REST_Request(
+            'DELETE',
+            '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/datetimes/' . $datetime->ID()
+        );
+        $response = rest_do_request( $req );
+        $response_data = $response->get_data();
+        //verify there was no error code
+        $this->assertTrue( empty( $response_data['code'] ) );
+        $this->assertTrue( $response_data['DTT_deleted'] );
+    }
+
+    /**
+     * @group 9222
+     */
+    public function test_delete__permanent(){
+        $this->_authenticate_an_admin();
+
+        $datetime_count_before_insertion = \EEM_Datetime::instance()->count_deleted_and_undeleted();
+        $datetime = $this->new_model_obj_with_dependencies('Datetime');
+        $req = new \WP_REST_Request(
+            'DELETE',
+            '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/datetimes/' . $datetime->ID()
+        );
+        $req->set_query_params(
+            array(
+                'permanent' => true
+            )
+        );
+        $response = rest_do_request( $req );
+        $response_data = $response->get_data();
+        //verify there was no error code
+        $this->assertTrue( empty( $response_data['code'] ) );
+        $this->assertTrue( isset( $response_data['deleted'], $response_data['previous'] ) );
+        $this->assertEquals( $datetime->ID(), $response_data['previous']['DTT_ID'] );
+        $this->assertEquals( $datetime_count_before_insertion, \EEM_Datetime::instance()->count_deleted_and_undeleted() );
+
+    }
+
+    /**
+     * Authenticates an admin with capabilities to use the API
+     * @param array  $caps
+     *
+     * @return \WP_User
+     */
+    protected function _authenticate_an_admin()
+    {
+        global $current_user;
+        //setup our user and set as current user.
+        $current_user = $this->factory->user->create_and_get();
+        $this->assertInstanceOf('WP_User', $current_user);
+        $current_user->add_role('administrator');
+        return $current_user;
+    }
+
+
 
 
 }
