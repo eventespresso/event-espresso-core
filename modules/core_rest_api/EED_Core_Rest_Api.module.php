@@ -868,7 +868,7 @@ class EED_Core_Rest_Api extends \EED_Module
         global $wp_json_basic_auth_success;
         if( $wp_json_basic_auth_success && ! is_ssl() ) {
             $headers                         = $response->get_headers();
-            $headers['X-Basic-Auth-Warning'] = esc_html__( 'It is possibbile for your password to be intercepted. Please read serve your site over HTTPS or use the Application Passwords WordPress Plugin.',
+            $headers['X-Basic-Auth-Warning'] = esc_html__( 'It is possible for your password to be intercepted. Please switch your site to HTTPS or use the Application Passwords WordPress Plugin.',
                 'event_espresso' );
             $response->set_headers( $headers );
         }
