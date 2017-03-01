@@ -379,7 +379,6 @@ class EEM_Line_Item extends EEM_Base {
      */
     public function get_total_line_items_for_expired_carts()
     {
-        \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
         return $this->get_total_line_items_for_carts(true);
     }
 
