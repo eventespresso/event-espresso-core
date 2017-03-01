@@ -37,7 +37,7 @@
 	</td>
 	<!--<td><span class="ticket-display-row-TKT_price"><?php //echo $TKT_price; ?></span></td>-->
 	<td><span class="ticket-display-row-TKT_sold"><?php echo $TKT_sold; ?></span></td>
-    <?php if(WP_DEBUG): ?>
+    <?php if(WP_DEBUG):  // for now we are only showing reserved counts if WP_DEBUG is on?>
 	<td><span class="ticket-display-row-TKT_reserved"><?php echo $TKT_reserved; ?></span></td>
     <?php endif; ?>
     <td><span class="ticket-display-row-TKT_registrations"><?php echo $TKT_registrations; ?></span></td>
@@ -46,7 +46,7 @@
 	</td>
 </tr>
 <tr id="edit-ticketrow-<?php echo $tkt_row; ?>" class="edit-ticket-row">
-    <?php if (WP_DEBUG) { ?>
+    <?php if (WP_DEBUG) {  // for now we are only showing reserved counts if WP_DEBUG is on ?>
     <td colspan="10">
     <?php } else {?>
     <td colspan="9">

@@ -1,5 +1,5 @@
 <tr id="advanced-dtt-edit-row-<?php echo $dtt_row; ?>" class="advanced-dtt-edit-row">
-    <?php if (WP_DEBUG) { ?>
+    <?php if (WP_DEBUG) {  // for now we are only showing reserved counts if WP_DEBUG is on ?>
     <td colspan="7">
         <?php } else { ?>
     <td colspan="6">
