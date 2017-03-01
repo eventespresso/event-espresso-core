@@ -368,14 +368,39 @@ class EEM_Line_Item extends EEM_Base {
      */
     public function get_total_line_items_just_added_to_cart()
     {
+        return $this->get_total_line_items_for_carts();
+    }
+
+
+
+    /**
+     * @return EE_Base_Class[]|EE_Line_Item[]
+     * @throws \EE_Error
+     */
+    public function get_total_line_items_for_expired_carts()
+    {
+        \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
+        return $this->get_total_line_items_for_carts(true);
+    }
+
+
+
+    /**
+     * @param bool $expired
+     * @return EE_Base_Class[]|EE_Line_Item[]
+     * @throws \EE_Error
+     */
+    private function get_total_line_items_for_carts($expired = false)
+    {
         return $this->get_all(array(
             array(
-                'TXN_ID'   => 0,
-                'LIN_type' => 'total',
+                'TXN_ID'        => 0,
+                'LIN_type'      => 'total',
                 'LIN_timestamp' => array(
-                    '>',
-                    time() - EE_Registry::instance()->SSN->lifespan()
-                ),            )
+                    $expired ? '<=' : '>',
+                    time() - EE_Registry::instance()->SSN->lifespan(),
+                ),
+            ),
         ));
     }
 
