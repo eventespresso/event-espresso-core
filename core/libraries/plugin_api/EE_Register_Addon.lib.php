@@ -979,7 +979,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
 	 * @return void
 	 */
 	public static function deregister( $addon_name = null ) {
-		if ( isset( self::$_settings[ $addon_name ] ) && isset( self::$_settings[$addon_name]['class_name']) ) {
+		if ( isset( self::$_settings[ $addon_name ], self::$_settings[$addon_name]['class_name'] ) ) {
 			$class_name = self::$_settings[ $addon_name ]['class_name'];
 			if ( ! empty( self::$_settings[ $addon_name ]['dms_paths'] ) ) {
 				// setup DMS
