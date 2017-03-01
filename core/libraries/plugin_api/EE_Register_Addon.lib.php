@@ -225,7 +225,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
 		//setup $_settings array from incoming values.
         $addon_settings = \EE_Register_Addon::_get_addon_settings($class_name, $setup_args);
         // setup PUE
-        $addon_settings = \EE_Register_Addon::_parse_pue_options($addon_name, $class_name, $setup_args, $addon_settings);
+        \EE_Register_Addon::_parse_pue_options($addon_name, $class_name, $setup_args);
         // does this addon work with this version of core or WordPress ?
         if ( ! \EE_Register_Addon::_addon_is_compatible($addon_name, $addon_settings) ) {
             return;
@@ -550,12 +550,11 @@ class EE_Register_Addon implements EEI_Plugin_API {
      * @param string $addon_name
      * @param string $class_name
      * @param array  $setup_args
-     * @param array $addon_settings
-     * @return array
+     * @return void
      */
-    private static function _parse_pue_options( $addon_name, $class_name, array $setup_args, $addon_settings = array() ) {
+	private static function _parse_pue_options( $addon_name, $class_name, array $setup_args ) {
         if ( ! empty($setup_args['pue_options'])) {
-            $addon_settings['pue_options'] = array(
+            self::$_settings[$addon_name]['pue_options'] = array(
                 'pue_plugin_slug' => isset($setup_args['pue_options']['pue_plugin_slug'])
                     ? (string)$setup_args['pue_options']['pue_plugin_slug']
                     : 'espresso_' . strtolower($class_name),
@@ -574,8 +573,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
                 array('EE_Register_Addon', 'load_pue_update')
             );
         }
-        return $addon_settings;
-    }
+	}
 
 
 
