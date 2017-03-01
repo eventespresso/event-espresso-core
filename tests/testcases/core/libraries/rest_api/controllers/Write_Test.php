@@ -58,7 +58,7 @@ class Write_Test extends \EE_REST_TestCase
      * @group 9222
      */
     public function test_insert_utc_and_relative_times(){
-        //let's set a differnet WP timezone.
+        //let's set a different WP timezone.
         update_option( 'gmt_offset', '-1' );
         $this->_authenticate_an_admin();
         $req = new \WP_REST_Request(
