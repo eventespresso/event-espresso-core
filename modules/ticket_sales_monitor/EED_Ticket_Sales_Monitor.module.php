@@ -168,8 +168,10 @@ class EED_Ticket_Sales_Monitor extends EED_Module
 
 
     /**
-     * Retrieves grand totals from the line items with no TXN ID
-     * and timestamps less than the current time minus the session lifespan
+     * Retrieves grand totals from the line items that have no TXN ID
+     * and timestamps less than the current time minus the session lifespan.
+     * These are carts that have been abandoned before the "registrant" even attempted to checkout.
+     * We're going to release the tickets for these line items before attempting to add more to the cart.
      *
      * @return void
      * @throws \EE_Error
