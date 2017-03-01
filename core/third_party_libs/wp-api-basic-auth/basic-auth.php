@@ -19,11 +19,16 @@ function json_basic_auth_handler( $user ) {
 	//account for issue where some servers remove the PHP auth headers
 	//so instead look for auth info in a custom environment variable set by rewrite rules
 	//probably in .htaccess
+    //and, as a last resort, look in the querystring
     if( ! isset( $_SERVER['PHP_AUTH_USER'] ) ) {
         if( isset( $_SERVER['HTTP_AUTHORIZATION'])) {
             $header = $_SERVER['HTTP_AUTHORIZATION'];
         } elseif( isset( $_SERVER[ 'REDIRECT_HTTP_AUTHORIZATION' ] ) ) {
             $header = $_SERVER['REDIRECT_HTTP_AUTHORIZATION'];
+        } elseif( isset( $_GET['_authorization'] ) ) {
+            $header = $_GET['_authorization'];
+            //and now remove this special header so it doesn't interfere with other parts of the request
+            unset( $_GET['authorization'] );
         } else {
 			$header = null;
 		}
