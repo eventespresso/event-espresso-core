@@ -874,8 +874,11 @@ class EED_Core_Rest_Api extends \EED_Module
             $request
         ) ) {
             $headers                         = $response->get_headers();
-            $headers['X-Basic-Auth-Warning'] = esc_html__( 'It is possible for your password to be intercepted. Please switch your site to HTTPS or use the Application Passwords WordPress Plugin.',
-                'event_espresso' );
+            $headers['X-Basic-Auth-Warning'] = sprintf(
+                esc_html__( 'Your data is not secured with SSL. %1$sPlease see our recommendations.%2$s', 'event_espresso' ),
+                '<a href="https://eventespresso.com/wiki/rest-api-security-recommendations/">',
+                '</a>'
+            );
             $response->set_headers( $headers );
         }
         return $response;
