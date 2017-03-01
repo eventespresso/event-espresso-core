@@ -180,6 +180,9 @@ class EED_Ticket_Sales_Monitor extends EED_Module
     {
         $ticket_IDs = array();
         $total_line_items = EEM_Line_Item::instance()->get_total_line_items_for_expired_carts();
+        if(empty($total_line_items)){
+            return;
+        }
         foreach ($total_line_items as $total_line_item) {
             $ticket_line_items = EED_Ticket_Sales_Monitor::get_ticket_line_items_for_grand_total($total_line_item);
             foreach ($ticket_line_items as $ticket_line_item) {
