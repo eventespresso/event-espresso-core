@@ -12,8 +12,9 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  * @package        Event Espresso
  * @author         Mike Nelson
  * @since          $VID:$
+ * @group rest_api
  */
-class Write_Test extends \EE_UnitTestCase
+class Write_Test extends \EE_REST_TestCase
 {
 
     /**
