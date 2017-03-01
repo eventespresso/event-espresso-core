@@ -61,7 +61,7 @@ function json_basic_auth_handler( $user ) {
     remove_filter( 'determine_current_user', 'json_basic_auth_handler', 20 );
     remove_filter( 'authenticate', 'wp_authenticate_spam_check', 99 );
 
-    $user = `v`( $username, $password );
+    $user = wp_authenticate( $username, $password );
 
     add_filter( 'determine_current_user', 'json_basic_auth_handler', 20 );
     add_filter( 'authenticate', 'wp_authenticate_spam_check', 99 );
