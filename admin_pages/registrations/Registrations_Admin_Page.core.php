@@ -2146,7 +2146,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             /** @var EE_Registration $REG */
             $REG = EEM_Registration::instance()->get_one_by_ID($REG_ID);
             $payments = $REG->registration_payments();
-            if (empty($payments)) {
+            if (! empty($payments)) {
                 $name = $REG->attendee() instanceof EE_Attendee
                     ? $REG->attendee()->full_name()
                     : __('Unknown Attendee', 'event_espresso');
