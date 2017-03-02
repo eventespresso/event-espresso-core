@@ -34,8 +34,8 @@ function json_basic_auth_handler( $user ) {
 		}
         if( ! empty( $header ) ) {
             //make sure there's the word 'Basic ' at the start, or else it's not for us
-            $header_sans_word_basic = str_replace( 'Basic ', '', $header );
-            if( $header_sans_word_basic !== $header ) {
+            if( strpos( $header, 'Basic ' ) === 0 ) {
+                $header_sans_word_basic = str_replace( 'Basic ', '', $header );
                 $auth_parts = explode( ':', base64_decode( $header_sans_word_basic ), 2 );
                 if ( is_array( $auth_parts ) && isset( $auth_parts[0], $auth_parts[1] ) ) {
                     $_SERVER['PHP_AUTH_USER'] = $auth_parts[0];
