@@ -334,7 +334,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      */
     public function populate_defaults($default_data)
     {
-        foreach ($this->subsections() as $subsection_name => $subsection) {
+        foreach ($this->subsections(false) as $subsection_name => $subsection) {
             if (isset($default_data[$subsection_name])) {
                 if ($subsection instanceof EE_Form_Input_Base) {
                     $subsection->set_default($default_data[$subsection_name]);
@@ -923,11 +923,19 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      * Consider using inputs() or subforms()
      * if you only want form inputs or proper form sections.
      *
+     * @param boolean $require_construction_to_be_finalized most client code should
+     *                                                      leave this as TRUE so that the inputs will be properly
+     *                                                      configured. However, some client code may be ok with
+     *                                                      construction finalize being called later
+     *                                                      (realizing that the subsections' html names might not be
+     *                                                      set yet, etc.)
      * @return EE_Form_Section_Proper[]
      */
-    public function subsections()
+    public function subsections($require_construction_to_be_finalized = true)
     {
-        $this->ensure_construct_finalized_called();
+        if ($require_construction_to_be_finalized) {
+            $this->ensure_construct_finalized_called();
+        }
         return $this->_subsections;
     }
 
