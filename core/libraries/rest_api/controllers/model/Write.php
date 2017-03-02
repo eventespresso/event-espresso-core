@@ -3,6 +3,7 @@ namespace EventEspresso\core\libraries\rest_api\controllers\model;
 use EventEspresso\core\libraries\rest_api\Capabilities;
 use EventEspresso\core\libraries\rest_api\Model_Data_Translator;
 use EventEspresso\core\libraries\rest_api\Rest_Exception;
+use \EEM_Base;
 use \WP_REST_Request;
 use \WP_REST_Response;
 use \EE_Registry;
@@ -34,19 +35,19 @@ class Write extends Base {
 
 	/**
 	 * Handles requests to get all (or a filtered subset) of entities for a particular model
-	 * @param \WP_REST_Request $request
-	 * @return \WP_REST_Response|\WP_Error
+	 * @param WP_REST_Request $request
+	 * @return WP_REST_Response|\WP_Error
 	 */
-	public static function handle_request_insert( \WP_REST_Request $request) {
+	public static function handle_request_insert( WP_REST_Request $request ) {
 		$controller = new Write();
 		try{
-			$matches = $controller->parse_route(
-				$request->get_route(),
-				'~' . \EED_Core_Rest_Api::ee_api_namespace_for_regex . '(.*)~',
-				array( 'version', 'model' )
-			);
-			$controller->set_requested_version( $matches[ 'version' ] );
-			$model_name_singular = \EEH_Inflector::singularize_and_upper( $matches[ 'model' ] );
+            $matches = $controller->parse_route(
+               $request->get_route(),
+               '~' . \EED_Core_Rest_Api::ee_api_namespace_for_regex . '(.*)~',
+                   array( 'version', 'model' )
+            );
+            $controller->set_requested_version( $matches[ 'version'] );
+            $model_name_singular = \EEH_Inflector::singularize_and_upper( $matches[ 'model' ] );
 			if ( ! $controller->get_model_version_info()->is_model_name_in_this_version( $model_name_singular ) ) {
 				return $controller->send_response(
 					new \WP_Error(
@@ -70,10 +71,10 @@ class Write extends Base {
 	/**
 	 * Handles a request from \WP_REST_Server to update an EE model
 	 *
-	 * @param \WP_Rest_Request $request
-	 * @return \WP_REST_Response|\WP_Error
+	 * @param WP_Rest_Request $request
+	 * @return WP_REST_Response|\WP_Error
 	 */
-	public static function handle_request_update( \WP_Rest_Request $request ) {
+	public static function handle_request_update( WP_Rest_Request $request ) {
 		$controller = new Write();
 		try{
 			$matches = $controller->parse_route(
@@ -107,10 +108,10 @@ class Write extends Base {
     /**
      * Deletes a single model object and returns it. Unless
      *
-     * @param \WP_Rest_Request $request
-     * @return \WP_REST_Response|\WP_Error
+     * @param WP_Rest_Request $request
+     * @return WP_REST_Response|\WP_Error
      */
-    public static function handle_request_delete( \WP_Rest_Request $request ) {
+    public static function handle_request_delete( WP_Rest_Request $request ) {
         $controller = new Write();
         try{
             $matches = $controller->parse_route(
@@ -143,13 +144,13 @@ class Write extends Base {
 	
 	/**
 	 * Inserts a new model object according to the $request
-	 * @param \EEM_Base $model
-	 * @param \WP_REST_Request $request
+	 * @param EEM_Base $model
+	 * @param WP_REST_Request $request
 	 * @return array
 	 * @throws \EE_Error
 	 */
-	public function insert( \EEM_Base $model, \WP_REST_Request $request ) {
-		Capabilities::verify_at_least_partial_access_to( $model, \EEM_Base::caps_edit, 'create' );
+	public function insert( EEM_Base $model, WP_REST_Request $request ) {
+		Capabilities::verify_at_least_partial_access_to( $model, EEM_Base::caps_edit, 'create' );
         $default_cap_to_check_for = \EE_Restriction_Generator_Base::get_default_restrictions_cap();
         if(!current_user_can($default_cap_to_check_for)){
             throw new Rest_Exception(
@@ -183,13 +184,13 @@ class Write extends Base {
 
     /**
      * Updates an existing model object according to the $request
-     * @param \EEM_Base $model
+     * @param EEM_Base $model
      * @param WP_REST_Request $request
      * @return array
      * @throws \EE_Error
      */
-    public function update( \EEM_Base $model, WP_REST_Request $request ) {
-        Capabilities::verify_at_least_partial_access_to( $model, \EEM_Base::caps_edit, 'edit' );
+    public function update( EEM_Base $model, WP_REST_Request $request ) {
+        Capabilities::verify_at_least_partial_access_to( $model, EEM_Base::caps_edit, 'edit' );
         $default_cap_to_check_for = \EE_Restriction_Generator_Base::get_default_restrictions_cap();
         if(!current_user_can($default_cap_to_check_for)){
             throw new Rest_Exception(
@@ -223,19 +224,19 @@ class Write extends Base {
 
     /**
      * Updates an existing model object according to the $request
-     * @param \EEM_Base $model
+     * @param EEM_Base $model
      * @param WP_REST_Request $request
      * @return array of either the soft-deleted item, or
      * @throws \EE_Error
      */
-    public function delete( \EEM_Base $model, WP_REST_Request $request ) {
+    public function delete( EEM_Base $model, WP_REST_Request $request ) {
         $obj_id = $request->get_param('id');
         $requested_permanent_delete = (bool)$request->get_param('permanent');
         $requested_allow_blocking = (bool)$request->get_param('allow_blocking');
         if( $requested_permanent_delete){
             $read_controller = new Read();
             $read_controller->set_requested_version($this->get_requested_version());
-            $original_entity = $read_controller->get_one_or_report_permission_error( $model, $request, \EEM_Base::caps_delete);
+            $original_entity = $read_controller->get_one_or_report_permission_error( $model, $request, EEM_Base::caps_delete);
             $deleted = (bool)$model->delete_permanently_by_ID($obj_id, $requested_allow_blocking);
             return array(
                 'deleted' => $deleted,
@@ -250,12 +251,12 @@ class Write extends Base {
 
     /**
      * Gets the item affected by this request
-     * @param \EEM_Base        $model
+     * @param EEM_Base        $model
      * @param WP_REST_Request $request
      * @param  int|string                $obj_id
      * @return \WP_Error|array
      */
-    protected function _get_one_based_on_request( \EEM_Base $model, WP_REST_Request $request, $obj_id )
+    protected function _get_one_based_on_request( EEM_Base $model, WP_REST_Request $request, $obj_id )
     {
         $requested_version = $this->get_requested_version( $request->get_route() );
         $get_request = new WP_REST_Request(
