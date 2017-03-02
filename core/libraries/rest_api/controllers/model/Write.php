@@ -3,6 +3,9 @@ namespace EventEspresso\core\libraries\rest_api\controllers\model;
 use EventEspresso\core\libraries\rest_api\Capabilities;
 use EventEspresso\core\libraries\rest_api\Model_Data_Translator;
 use EventEspresso\core\libraries\rest_api\Rest_Exception;
+use \WP_REST_Request;
+use \WP_REST_Response;
+use \EE_Registry;
 if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
 }
@@ -26,7 +29,7 @@ class Write extends Base {
 
 	public function __construct() {
 		parent::__construct();
-		\EE_Registry::instance()->load_helper( 'Inflector' );
+		EE_Registry::instance()->load_helper( 'Inflector' );
 	}
 
 	/**
@@ -65,7 +68,7 @@ class Write extends Base {
 	}
 
 	/**
-	 * Gets a single entity related to the model indicated in the path and its id
+	 * Handles a request from \WP_REST_Server to update an EE model
 	 *
 	 * @param \WP_Rest_Request $request
 	 * @return \WP_REST_Response|\WP_Error
@@ -137,66 +140,6 @@ class Write extends Base {
             return $controller->send_response( $e );
         }
     }
-
-	/**
-	 *
-	 * Gets all the related entities (or if its a belongs-to relation just the one)
-	 * to the item with the given id
-	 *
-	 * @param \WP_REST_Request $request
-	 * @return \WP_REST_Response|\WP_Error
-	 */
-	public static function handle_request_update_related( \WP_REST_Request $request ) {
-		$controller = new Write();
-		try{
-			$matches = $controller->parse_route(
-				$request->get_route(),
-				'~' . \EED_Core_Rest_Api::ee_api_namespace_for_regex . '(.*)/(.*)/(.*)~',
-				array( 'version', 'model', 'id', 'related_model' )
-			);
-			$controller->set_requested_version( $matches[ 'version' ] );
-			$main_model_name_singular = \EEH_Inflector::singularize_and_upper( $matches[ 'model' ] );
-			if ( ! $controller->get_model_version_info()->is_model_name_in_this_version( $main_model_name_singular ) ) {
-				return $controller->send_response(
-					new \WP_Error(
-						'endpoint_parsing_error',
-						sprintf(
-							__( 'There is no model for endpoint %s. Please contact event espresso support', 'event_espresso' ),
-							$main_model_name_singular
-						)
-					)
-				);
-			}
-			$main_model = $controller->get_model_version_info()->load_model( $main_model_name_singular );
-			//assume the related model name is plural and try to find the model's name
-			$related_model_name_singular = \EEH_Inflector::singularize_and_upper( $matches[ 'related_model' ] );
-			if ( ! $controller->get_model_version_info()->is_model_name_in_this_version( $related_model_name_singular ) ) {
-				//so the word didn't singularize well. Maybe that's just because it's a singular word?
-				$related_model_name_singular = \EEH_Inflector::humanize( $matches[ 'related_model' ] );
-			}
-			if ( ! $controller->get_model_version_info()->is_model_name_in_this_version( $related_model_name_singular ) ) {
-				return $controller->send_response(
-					new \WP_Error(
-						'endpoint_parsing_error',
-						sprintf(
-							__( 'There is no model for endpoint %s. Please contact event espresso support', 'event_espresso' ),
-							$related_model_name_singular
-						)
-					)
-				);
-			}
-
-			return $controller->send_response(
-					$controller->get_entities_from_relation(
-						$request->get_param( 'id' ),
-						$main_model->related_settings_for( $related_model_name_singular ) ,
-						$request
-					)
-				);
-		} catch( \Exception $e ) {
-			return $controller->send_response( $e );
-		}
-	}
 	
 	/**
 	 * Inserts a new model object according to the $request
@@ -224,7 +167,7 @@ class Write extends Base {
             $model,
             $this->get_model_version_info()->requested_version()
         );
-        $model_obj = \EE_Registry::instance()
+        $model_obj = EE_Registry::instance()
                                 ->load_class($model->get_this_model_name(), array($model_data,$model->get_timezone()),
                                     false, false);
         $model_obj->save();
@@ -241,11 +184,11 @@ class Write extends Base {
     /**
      * Updates an existing model object according to the $request
      * @param \EEM_Base $model
-     * @param \WP_REST_Request $request
+     * @param WP_REST_Request $request
      * @return array
      * @throws \EE_Error
      */
-    public function update( \EEM_Base $model, \WP_REST_Request $request ) {
+    public function update( \EEM_Base $model, WP_REST_Request $request ) {
         Capabilities::verify_at_least_partial_access_to( $model, \EEM_Base::caps_edit, 'edit' );
         $default_cap_to_check_for = \EE_Restriction_Generator_Base::get_default_restrictions_cap();
         if(!current_user_can($default_cap_to_check_for)){
@@ -281,11 +224,11 @@ class Write extends Base {
     /**
      * Updates an existing model object according to the $request
      * @param \EEM_Base $model
-     * @param \WP_REST_Request $request
+     * @param WP_REST_Request $request
      * @return array of either the soft-deleted item, or
      * @throws \EE_Error
      */
-    public function delete( \EEM_Base $model, \WP_REST_Request $request ) {
+    public function delete( \EEM_Base $model, WP_REST_Request $request ) {
         $obj_id = $request->get_param('id');
         $requested_permanent_delete = (bool)$request->get_param('permanent');
         $requested_allow_blocking = (bool)$request->get_param('allow_blocking');
@@ -308,14 +251,14 @@ class Write extends Base {
     /**
      * Gets the item affected by this request
      * @param \EEM_Base        $model
-     * @param \WP_REST_Request $request
+     * @param WP_REST_Request $request
      * @param  int|string                $obj_id
      * @return \WP_Error|array
      */
-    protected function _get_one_based_on_request( \EEM_Base $model, \WP_REST_Request $request, $obj_id )
+    protected function _get_one_based_on_request( \EEM_Base $model, WP_REST_Request $request, $obj_id )
     {
         $requested_version = $this->get_requested_version( $request->get_route() );
-        $get_request = new \WP_REST_Request(
+        $get_request = new WP_REST_Request(
             'GET',
             \EED_Core_Rest_Api::ee_api_namespace . $requested_version . '/' . \EEH_Inflector::pluralize_and_lower(  $model->get_this_model_name() ).'/' . $obj_id
         );
