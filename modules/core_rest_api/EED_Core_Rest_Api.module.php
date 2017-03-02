@@ -464,27 +464,6 @@ class EED_Core_Rest_Api extends \EED_Module
                         'args'            => $this->_get_read_query_params($relation_obj->get_other_model(), $version),
                     ),
                 );
-                //don't include "transient" relations. eg, events HABTM attendees through registrations.
-                //well, we don't want to try creating attendees and automatically creating registrations
-                //for them (eg with no status, transaction, ticket, etc). So those aren't writeable
-                if (
-                ! (
-                    $relation_obj instanceof EE_HABTM_Relation
-                    && $model->has_relation($relation_obj->get_join_model()->get_this_model_name())
-                )
-                ) {
-                    $endpoints[] = array(
-                        'callback'        => array(
-                            'EventEspresso\core\libraries\rest_api\controllers\model\Write',
-                            'handle_request_update_related',
-                        ),
-                        'methods'         => WP_REST_Server::EDITABLE,
-                        'hidden_endpoint' => $hidden_endpoint,
-                        'args'            => $this->_get_write_params($relation_obj->get_other_model()
-                                                                                   ->get_this_model_name(),
-                            $model_version_info),
-                    );
-                }
                 $model_routes[$singular_model_route . '/' . $related_model_name_endpoint_part] = $endpoints;
             }
 
