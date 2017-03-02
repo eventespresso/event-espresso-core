@@ -1,4 +1,4 @@
-<tr valign="top" class="ee-ticket-sortable ticket-row<?php echo $ticket_archive_class; if(WP_DEBUG){ echo ' ee-wp-debug'; } ?>" id="display-ticketrow-<?php echo $tkt_row; ?>">
+    <tr valign="top" class="ee-ticket-sortable ticket-row<?php echo $ticket_archive_class; if(WP_DEBUG){ echo ' ee-wp-debug'; } ?>" id="display-ticketrow-<?php echo $tkt_row; ?>">
 	<!--<td class="ee-tkt-order-field"><span class="dashicons dashicons-sort<?php echo $tkt_status_class; ?>"><input type="hidden" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_order]" class="edit-ticket-TKT_order" value ="<?php echo $TKT_order; ?>" ></span></td>-->
 	<td class="ee-tkt-order-field"><span class="ee-status-strip-td ee-status-strip<?php echo $tkt_status_class; ?>"></span><input type="hidden" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_order]" class="edit-ticket-TKT_order" value ="<?php echo $TKT_order; ?>"></td>
 	<td><input maxlength="245" type="text" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_name]" class="edit-ticket-TKT_name ee-large-text-inp" placeholder="Ticket Title" value="<?php echo $TKT_name; ?>"></td>
@@ -37,7 +37,7 @@
 	</td>
 	<!--<td><span class="ticket-display-row-TKT_price"><?php //echo $TKT_price; ?></span></td>-->
 	<td><span class="ticket-display-row-TKT_sold"><?php echo $TKT_sold; ?></span></td>
-    <?php if(WP_DEBUG): ?>
+    <?php if(WP_DEBUG):  // for now we are only showing reserved counts if WP_DEBUG is on?>
 	<td><span class="ticket-display-row-TKT_reserved"><?php echo $TKT_reserved; ?></span></td>
     <?php endif; ?>
     <td><span class="ticket-display-row-TKT_registrations"><?php echo $TKT_registrations; ?></span></td>
@@ -46,12 +46,11 @@
 	</td>
 </tr>
 <tr id="edit-ticketrow-<?php echo $tkt_row; ?>" class="edit-ticket-row">
-    <?php if (WP_DEBUG) { ?>
+    <?php if (WP_DEBUG) {  // for now we are only showing reserved counts if WP_DEBUG is on ?>
     <td colspan="10">
     <?php } else {?>
     <td colspan="9">
     <?php } ?>
-    <td colspan="9">
 		<fieldset id="fieldset-edit-ticketrow-<?php echo $tkt_row; ?>" class="ticket-fieldset"<?php echo $display_edit_tkt_row; ?>>
 			<legend></legend>
 			<input type="hidden" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_ID]" class="edit-ticket-TKT_ID" value="<?php echo $TKT_ID; ?>">
