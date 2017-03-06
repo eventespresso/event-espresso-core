@@ -77,11 +77,10 @@ class EE_Shortcodes_Mock extends EE_Shortcodes
      * @param bool $show
      * @return string
      */
-    public function mutate_conditional_block_in_template($shortcode, $closing_tag, $show = true)
+    public function mutate_conditional_block_in_template($shortcode, $show = true)
     {
         return parent::_mutate_conditional_block_in_template(
             $shortcode,
-            $closing_tag,
             $show
         );
     }

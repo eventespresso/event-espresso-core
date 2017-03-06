@@ -44,63 +44,44 @@ class EE_Shortcodes_Test extends EE_UnitTestCase
         //test the method we're testing.
         //key is shortcode to test, value is expectation on return value.
         $assertions_for_hide = array(
-            '[IF_MOCK_TEST_ONE_* id=10]' => array(
-                'closing' => '[/IF_MOCK_TEST_ONE_*]',
-                'expected' => 'This is a template with some conditional tags.'
+            '[IF_MOCK_TEST_ONE_* id=10]' => 'This is a template with some conditional tags.'
                                 . '  [IF_MOCK_TEST_ONE_* id=14]Mock Test One Content B[/IF_MOCK_TEST_ONE_*]'
-                                . '  [IF_MOCK_TEST_TWO_* something=30]Mock Test Two Content[/IF_MOCK_TEST_TWO_*]'
-            ),
-            '[IF_MOCK_TEST_ONE_* id=14]' => array(
-                'closing' => '[/IF_MOCK_TEST_ONE_*]',
-                'expected' => 'This is a template with some conditional tags.'
+                                . '  [IF_MOCK_TEST_TWO_* something=30]Mock Test Two Content[/IF_MOCK_TEST_TWO_*]',
+            '[IF_MOCK_TEST_ONE_* id=14]' => 'This is a template with some conditional tags.'
                                 . ' [IF_MOCK_TEST_ONE_* id=10]Mock Test One Content A[/IF_MOCK_TEST_ONE_*]'
                                 . '  [IF_MOCK_TEST_ONE_* id=10]Mock Test One Content C[/IF_MOCK_TEST_ONE_*]'
-                                . ' [IF_MOCK_TEST_TWO_* something=30]Mock Test Two Content[/IF_MOCK_TEST_TWO_*]'
-            ),
-            '[IF_MOCK_TEST_TWO_* something=30]' => array(
-                'closing' => '[/IF_MOCK_TEST_TWO_*]',
-                'expected' => 'This is a template with some conditional tags.'
+                                . ' [IF_MOCK_TEST_TWO_* something=30]Mock Test Two Content[/IF_MOCK_TEST_TWO_*]',
+            '[IF_MOCK_TEST_TWO_* something=30]' => 'This is a template with some conditional tags.'
                                 . ' [IF_MOCK_TEST_ONE_* id=10]Mock Test One Content A[/IF_MOCK_TEST_ONE_*]'
                                 . ' [IF_MOCK_TEST_ONE_* id=14]Mock Test One Content B[/IF_MOCK_TEST_ONE_*]'
                                 . ' [IF_MOCK_TEST_ONE_* id=10]Mock Test One Content C[/IF_MOCK_TEST_ONE_*] '
-            )
         );
 
         $assertions_for_show = array(
-            '[IF_MOCK_TEST_ONE_* id=10]' => array(
-                'closing' => '[/IF_MOCK_TEST_ONE_*]',
-                'expected' => 'This is a template with some conditional tags.'
+            '[IF_MOCK_TEST_ONE_* id=10]' => 'This is a template with some conditional tags.'
                                 . ' Mock Test One Content A'
                                 . ' [IF_MOCK_TEST_ONE_* id=14]Mock Test One Content B[/IF_MOCK_TEST_ONE_*]'
                                 . ' Mock Test One Content C'
-                                . ' [IF_MOCK_TEST_TWO_* something=30]Mock Test Two Content[/IF_MOCK_TEST_TWO_*]'
-            ),
-            '[IF_MOCK_TEST_ONE_* id=14]' => array(
-                'closing' => '[/IF_MOCK_TEST_ONE_*]',
-                'expected' => 'This is a template with some conditional tags.'
+                                . ' [IF_MOCK_TEST_TWO_* something=30]Mock Test Two Content[/IF_MOCK_TEST_TWO_*]',
+            '[IF_MOCK_TEST_ONE_* id=14]' => 'This is a template with some conditional tags.'
                                 . ' [IF_MOCK_TEST_ONE_* id=10]Mock Test One Content A[/IF_MOCK_TEST_ONE_*]'
                                 . ' Mock Test One Content B'
                                 . ' [IF_MOCK_TEST_ONE_* id=10]Mock Test One Content C[/IF_MOCK_TEST_ONE_*]'
-                                . ' [IF_MOCK_TEST_TWO_* something=30]Mock Test Two Content[/IF_MOCK_TEST_TWO_*]'
-            ),
-            '[IF_MOCK_TEST_TWO_* something=30]' => array(
-                'closing' => '[/IF_MOCK_TEST_TWO_*]',
-                'expected' => 'This is a template with some conditional tags.'
+                                . ' [IF_MOCK_TEST_TWO_* something=30]Mock Test Two Content[/IF_MOCK_TEST_TWO_*]',
+            '[IF_MOCK_TEST_TWO_* something=30]' => 'This is a template with some conditional tags.'
                                 . ' [IF_MOCK_TEST_ONE_* id=10]Mock Test One Content A[/IF_MOCK_TEST_ONE_*]'
                                 . ' [IF_MOCK_TEST_ONE_* id=14]Mock Test One Content B[/IF_MOCK_TEST_ONE_*]'
                                 . ' [IF_MOCK_TEST_ONE_* id=10]Mock Test One Content C[/IF_MOCK_TEST_ONE_*]'
                                 . ' Mock Test Two Content'
-            )
         );
 
         //first lets test the expectations for when a condition results in hiding the contained content.
-        foreach ($assertions_for_hide as $shortcode => $expectations) {
+        foreach ($assertions_for_hide as $shortcode => $expectation) {
             $this->shortcode_mock->parser('', $data);
             $this->assertEquals(
-                $expectations['expected'],
+                $expectation,
                 $this->shortcode_mock->mutate_conditional_block_in_template(
                     $shortcode,
-                    $expectations['closing'],
                     false
                 ),
                 sprintf('Testing %s shortcode in the assertions for hide tests.', $shortcode)
@@ -108,14 +89,13 @@ class EE_Shortcodes_Test extends EE_UnitTestCase
         }
 
         //next test the expectations for when a condition results in showing
-        foreach ($assertions_for_show as $shortcode => $expectations) {
+        foreach ($assertions_for_show as $shortcode => $expectation) {
             //reset template to original
             $this->shortcode_mock->parser('', $data);
             $this->assertEquals(
-                $expectations['expected'],
+                $expectation,
                 $this->shortcode_mock->mutate_conditional_block_in_template(
-                    $shortcode,
-                    $expectations['closing']
+                    $shortcode
                 ),
                 sprintf('Testing %s shortcode in the assertions for show tests.', $shortcode)
             );
