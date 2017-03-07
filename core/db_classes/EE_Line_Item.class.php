@@ -172,7 +172,7 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 	 * Sets quantity
 	 * @param int $quantity
 	 */
-	function set_quantity( $quantity ) {
+    public function set_quantity( $quantity ) {
 		$this->set( 'LIN_quantity', max( $quantity, 0 ) );
 	}
 
@@ -212,7 +212,7 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 	 * Gets item_type
 	 * @return string
 	 */
-	function OBJ_type_i18n() {
+    public function OBJ_type_i18n() {
 	    $obj_type = $this->OBJ_type();
         switch ($obj_type) {
             case 'Event':
@@ -770,7 +770,7 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 	 * Whether or not this line item is a cancellation line item
 	 * @return boolean
 	 */
-	function is_cancellation() {
+	public function is_cancellation() {
 		return EEM_Line_Item::type_cancellation === $this->type();
 	}
 
@@ -1214,33 +1214,9 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 	 * returns the cancellation line item if this item was cancelled
 	 * @return EE_Line_Item[]
 	 */
-	function get_cancellations() {
+	public function get_cancellations() {
 		EE_Registry::instance()->load_helper( 'Line_Item' );
 		return EEH_Line_Item::get_descendants_of_type( $this, EEM_Line_Item::type_cancellation );
-	}
-
-
-
-	/**
-	 * @deprecated
-	 * @param string $type one of the constants on EEM_Line_Item
-	 * @return EE_Line_Item[]
-	 */
-	protected function _get_descendants_of_type( $type ) {
-		EE_Error::doing_it_wrong( 'EE_Line_Item::_get_descendants_of_type()', __('Method replaced with EEH_Line_Item::get_descendants_of_type()', 'event_espresso'), '4.6.0' );
-		return EEH_Line_Item::get_descendants_of_type( $this, $type );
-	}
-
-
-
-	/**
-	 * @deprecated
-	 * @param string $type like one of the EEM_Line_Item::type_*
-	 * @return EE_Line_Item
-	 */
-	public function get_nearest_descendant_of_type( $type ) {
-		EE_Error::doing_it_wrong( 'EE_Line_Item::get_nearest_descendant_of_type()', __('Method replaced with EEH_Line_Item::get_nearest_descendant_of_type()', 'event_espresso'), '4.6.0' );
-		return EEH_Line_Item::get_nearest_descendant_of_type( $this, $type );
 	}
 
 
@@ -1265,6 +1241,51 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 		$this->_children = array();
 		$this->_parent = null;
 	}
+
+
+
+    /**
+     * @param bool $raw
+     * @return int
+     * @throws \EE_Error
+     */
+    public function timestamp($raw = false)
+    {
+        return $raw ? $this->get_raw('LIN_timestamp') : $this->get('LIN_timestamp');
+    }
+
+
+
+
+    /************************* DEPRECATED *************************/
+
+
+
+    /**
+     * @deprecated
+     * @param string $type one of the constants on EEM_Line_Item
+     * @return EE_Line_Item[]
+     */
+    protected function _get_descendants_of_type($type)
+    {
+        EE_Error::doing_it_wrong('EE_Line_Item::_get_descendants_of_type()',
+            __('Method replaced with EEH_Line_Item::get_descendants_of_type()', 'event_espresso'), '4.6.0');
+        return EEH_Line_Item::get_descendants_of_type($this, $type);
+    }
+
+
+
+    /**
+     * @deprecated
+     * @param string $type like one of the EEM_Line_Item::type_*
+     * @return EE_Line_Item
+     */
+    public function get_nearest_descendant_of_type($type)
+    {
+        EE_Error::doing_it_wrong('EE_Line_Item::get_nearest_descendant_of_type()',
+            __('Method replaced with EEH_Line_Item::get_nearest_descendant_of_type()', 'event_espresso'), '4.6.0');
+        return EEH_Line_Item::get_nearest_descendant_of_type($this, $type);
+    }
 
 
 
