@@ -325,21 +325,12 @@ abstract class EE_Shortcodes extends EE_Base
             //we need to hide all instances of the matches
             foreach ($matches[0] as $index => $content_to_show_or_hide) {
                 $content_to_show_or_hide = preg_quote($content_to_show_or_hide);
-                if ($show) {
-                    //if $show then we just remove the opening/closing tag from each match
-                    $this->_data['template'] = preg_replace(
-                        '~' . $content_to_show_or_hide . '~',
-                        $matches[4][$index],
-                        $this->_data['template']
-                    );
-                } else {
-                    //hiding everything
-                    $this->_data['template'] = preg_replace(
-                        '~' . $content_to_show_or_hide . '~',
-                        '',
-                        $this->_data['template']
-                    );
-                }
+                $replacement = $show ? $matches[4][$index] : '';
+                $this->_data['template'] = preg_replace(
+                    '~' . $content_to_show_or_hide . '~',
+                    $replacement,
+                    $this->_data['template']
+                );
             }
         }
         //return $template
