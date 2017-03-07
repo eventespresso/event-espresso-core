@@ -366,6 +366,17 @@ class EEM_Line_Item extends EEM_Base {
      * @return EE_Base_Class[]|EE_Line_Item[]
      * @throws \EE_Error
      */
+    public function get_total_line_items_with_no_transaction()
+    {
+        return $this->get_total_line_items_for_carts(false, true);
+    }
+
+
+
+    /**
+     * @return EE_Base_Class[]|EE_Line_Item[]
+     * @throws \EE_Error
+     */
     public function get_total_line_items_just_added_to_cart()
     {
         return $this->get_total_line_items_for_carts();
@@ -386,21 +397,23 @@ class EEM_Line_Item extends EEM_Base {
 
     /**
      * @param bool $expired
+     * @param bool $all
      * @return EE_Base_Class[]|EE_Line_Item[]
      * @throws \EE_Error
      */
-    private function get_total_line_items_for_carts($expired = false)
+    private function get_total_line_items_for_carts($expired = false, $all = false)
     {
-        return $this->get_all(array(
-            array(
-                'TXN_ID'        => 0,
-                'LIN_type'      => 'total',
-                'LIN_timestamp' => array(
-                    $expired ? '<=' : '>',
-                    time() - EE_Registry::instance()->SSN->lifespan(),
-                ),
-            ),
-        ));
+        $where_params = array(
+            'TXN_ID'        => 0,
+            'LIN_type'      => 'total',
+        );
+        if (! $all) {
+            $where_params['LIN_timestamp'] = array(
+                $expired ? '<=' : '>',
+                time() - EE_Registry::instance()->SSN->lifespan(),
+            );
+        }
+        return $this->get_all(array($where_params));
     }
 
 
