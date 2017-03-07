@@ -400,11 +400,11 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase
             //should not be conditional shortcode
             $this->assertFalse(
                 $this->_parse_shortcodes_helper_mock->is_conditional_shortcode(
-                    $non_conditional_expectation,
-                    sprintf(
-                        'This shortcode pattern should not test as matching a conditional shortcode but it did: %s',
-                        $non_conditional_expectation
-                    )
+                    $non_conditional_expectation
+                ),
+                sprintf(
+                    'This shortcode pattern should not test as matching a conditional shortcode but it did: %s',
+                    $non_conditional_expectation
                 )
             );
         }
