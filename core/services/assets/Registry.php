@@ -61,6 +61,7 @@ class Registry
                 espresso_version(),
                 true
             );
+            $this->jsdata['eejs_api_nonce'] = wp_create_nonce('wp_rest');
             $this->jsdata['paths'] = array('rest_route' => rest_url('ee/v4.8.36/'));
         }
     }

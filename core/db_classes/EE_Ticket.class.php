@@ -498,7 +498,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * @throws \EE_Error
      */
 	public function is_free() {
-		return $this->get_ticket_total_with_taxes() === 0;
+		return $this->get_ticket_total_with_taxes() === (float) 0;
 	}
 
 

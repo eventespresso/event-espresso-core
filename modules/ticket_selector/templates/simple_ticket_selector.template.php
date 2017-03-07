@@ -1,10 +1,11 @@
 <?php
 /** @var int $EVT_ID */
 /** @var int $TKT_ID */
+/** @var string $hidden_inputs */
 /** @var string $ticket_status_display */
 /** @var \EE_Event $event */
 ?>
-
+<?php echo $hidden_inputs; ?>
 <input type="hidden" name="tkt-slctr-qty-<?php echo $EVT_ID; ?>[]" value="1"/>
 <input type="hidden" name="tkt-slctr-ticket-id-<?php echo $EVT_ID; ?>[]" value="<?php echo $TKT_ID; ?>"/>
 <?php

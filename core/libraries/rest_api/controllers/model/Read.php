@@ -154,11 +154,23 @@ class Read extends Base
     protected function _translate_defaults_for_rest_response($field_name, \EE_Model_Field_Base $field, array $schema)
     {
         if (isset($schema['properties'][$field_name]['default'])) {
-            $schema['properties'][$field_name]['default'] = Model_Data_Translator::prepare_field_value_for_json(
-                $field,
-                $schema['properties'][$field_name]['default'],
-                $this->get_model_version_info()->requested_version()
-            );
+            if (is_array($schema['properties'][$field_name]['default'])) {
+                foreach ($schema['properties'][$field_name]['default'] as $default_key => $default_value) {
+                    if ($default_key === 'raw') {
+                        $schema['properties'][$field_name]['default'][$default_key] = Model_Data_Translator::prepare_field_value_for_json(
+                            $field,
+                            $default_value,
+                            $this->get_model_version_info()->requested_version()
+                        );
+                    }
+                }
+            } else {
+                $schema['properties'][$field_name]['default'] = Model_Data_Translator::prepare_field_value_for_json(
+                    $field,
+                    $schema['properties'][$field_name]['default'],
+                    $this->get_model_version_info()->requested_version()
+                );
+            }
         }
         return $schema;
     }
@@ -553,6 +565,7 @@ class Read extends Base
         $entity_array = $this->_add_extra_fields($model, $db_row, $entity_array);
         $entity_array['_links'] = $this->_get_entity_links($model, $db_row, $entity_array);
         $entity_array['_calculated_fields'] = $this->_get_entity_calculations($model, $db_row, $rest_request);
+        $entity_array = apply_filters( 'FHEE__Read__create_entity_from_wpdb_results__entity_before_including_requested_models', $entity_array, $model, $rest_request->get_param('caps'),$rest_request,$this);
         $entity_array = $this->_include_requested_models($model, $rest_request, $entity_array, $db_row);
         $entity_array = apply_filters(
             'FHEE__Read__create_entity_from_wpdb_results__entity_before_inaccessible_field_removal',

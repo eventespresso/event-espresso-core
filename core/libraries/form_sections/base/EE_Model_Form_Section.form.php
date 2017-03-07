@@ -269,8 +269,8 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper
         $this->_model_object = $model_obj;
         $defaults = $model_obj->model_field_array();
         foreach ($this->_model->relation_settings() as $relation_name => $relation_obj) {
-            $form_inputs = $this->inputs();
-            if (isset($form_inputs[$relation_name])) {
+            $subsection = $this->get_subsection($relation_name, false);
+            if ($subsection instanceof EE_Form_Input_Base) {
                 if ($relation_obj instanceof EE_Belongs_To_Relation) {
                     //then we only expect there to be one
                     $related_item = $this->_model_object->get_first_related($relation_name);
