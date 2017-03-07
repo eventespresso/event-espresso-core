@@ -16,6 +16,8 @@ If you'd like a more hands-on tutorial, checkout [Building an EE4 Addon that use
 
 Some of the EE4 REST API data is public and requires no authentication, but much of it is protected and requires authentication. Because the EE4 REST API is built on the WP REST API, the authentication process is identical: once you authenticate with the WP JSON REST API, you are also authenticated with the EE4 JSON REST API. So we suggest you [read their documentation on authentication](http://v2.wp-api.org/guide/authentication/).
 
+Currently, Event Espresso also comes bundled with a [customized version of WP API Basic Auth](https://github.com/eventespresso/Basic-Auth/), primarily used in our mobile apps. However, we do not guarantee we will continue to bundle it with Event Espresso, and so recommend 3rd party applications instead use other authentication methods.
+
 If your application needs to write or delete EE4 data, or if it needs to read data that's normally not publicly-available, you'll need to authenticate (read our [google doc on permissions](https://docs.google.com/spreadsheets/d/1WWfMrmHaA-5LW468GnrgvNX1cQFOvKYq6jj61681GEE/edit?usp=sharing) for more info).
 
 ## Endpoint Discovery

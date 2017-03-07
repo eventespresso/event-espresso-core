@@ -4,7 +4,7 @@
  * Description: Basic Authentication handler for the JSON API, used for development and debugging purposes
  * Author: WordPress API Team
  * Author URI: https://github.com/WP-API
- * Version: 0.1
+ * Version: 0.2
  * Plugin URI: https://github.com/WP-API/Basic-Auth
  */
 
@@ -19,16 +19,29 @@ function json_basic_auth_handler( $user ) {
 	//account for issue where some servers remove the PHP auth headers
 	//so instead look for auth info in a custom environment variable set by rewrite rules
 	//probably in .htaccess
+    //and, as a last resort, look in the querystring
     if( ! isset( $_SERVER['PHP_AUTH_USER'] ) ) {
         if( isset( $_SERVER['HTTP_AUTHORIZATION'])) {
             $header = $_SERVER['HTTP_AUTHORIZATION'];
         } elseif( isset( $_SERVER[ 'REDIRECT_HTTP_AUTHORIZATION' ] ) ) {
             $header = $_SERVER['REDIRECT_HTTP_AUTHORIZATION'];
+        } elseif( isset( $_GET['_authorization'] ) ) {
+            $header = $_GET['_authorization'];
+            //and now remove this special header so it doesn't interfere with other parts of the request
+            unset( $_GET['authorization'] );
         } else {
 			$header = null;
 		}
         if( ! empty( $header ) ) {
-              list($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']) = explode( ':', base64_decode( substr( $header, 6 ) ) );
+            //make sure there's the word 'Basic ' at the start, or else it's not for us
+            if( strpos( $header, 'Basic ' ) === 0 ) {
+                $header_sans_word_basic = str_replace( 'Basic ', '', $header );
+                $auth_parts = explode( ':', base64_decode( $header_sans_word_basic ), 2 );
+                if ( is_array( $auth_parts ) && isset( $auth_parts[0], $auth_parts[1] ) ) {
+                    $_SERVER['PHP_AUTH_USER'] = $auth_parts[0];
+                    $_SERVER['PHP_AUTH_PW']   = $auth_parts[1];
+                }
+            }
         }
     }
 

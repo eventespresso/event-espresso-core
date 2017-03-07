@@ -462,7 +462,29 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 
 
 
-	/**
+    /**
+     * Gets all payments which have not been approved
+     * @return \EEI_Payment[]
+     * @throws EE_Error if a model is misconfigured somehow
+     */
+	public function pending_payments()
+    {
+        return $this->get_many_related(
+            'Payment',
+            array(
+                array(
+                    'STS_ID' => EEM_Payment::status_id_pending
+                ),
+                'order_by' => array(
+                    'PAY_timestamp' => 'DESC'
+                )
+            )
+        );
+    }
+
+
+
+    /**
 	 * echoes $this->pretty_status()
 	 *
 	 * @param bool $show_icons
