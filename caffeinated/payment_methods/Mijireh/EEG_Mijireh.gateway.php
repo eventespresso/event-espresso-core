@@ -185,56 +185,71 @@ class EEG_Mijireh extends EE_Offsite_Gateway{
 	 *
 	 * @param array $update_info unused. We just use the $transaction
 	 * @param EEI_Transaction $transaction
-	 * @return \EEI_Payment|null
+	 * @return \EEI_Payment
+     * @throws EE_Error
 	 */
 	public function handle_payment_update($update_info, $transaction) {
+        foreach( $transaction->pending_payments() as $payment){
+		    $payment = $this->check_payment_in_mijireh($payment);
+            if( $payment->status() === $this->_pay_model->approved_status()){
+                return $payment;
+            }
+        }
+        $payment = $transaction instanceof EEI_Transaction ? $transaction->last_payment() : NULL;
 
-		$payment = $transaction instanceof EEI_Transaction ? $transaction->last_payment() : NULL;
-
-		if ( ! $payment instanceof EEI_Payment ){
-			throw new EE_Error( sprintf( __( "Could not find Mijireh payment for transaction %s", 'event_espresso' ), $transaction->ID() ) );
-		}
-
-		$request_args = array(
-			'headers' => array(
-				'Authorization' => 'Basic ' . base64_encode( $this->_access_key . ':' ),
-				'Accept'=>'application/json'
-			)
-		);
-
-		$response = wp_remote_get(
-			$this->_mijireh_api_orders_url . '/' . $payment->txn_id_chq_nmbr(),
-			$request_args
-		);
-
-		$this->log(
-			array( 'get payment status request_args' => $request_args, 'response' => $response ),
-			$payment
-		);
-		// validate response
-		$response_body = isset( $response[ 'body' ] ) ? json_decode( $response[ 'body' ] ) : '';
-		if( $response && $response_body ){
-			switch( $response_body->status ){
-				case 'paid':
-					$payment->set_status($this->_pay_model->approved_status());
-					break;
-				case 'pending':
-					$payment->set_status($this->_pay_model->pending_status());
-					break;
-				default:
-					$payment->set_status($this->_pay_model->declined_status());
-			}
-
-		} else {
-			$payment->set_gateway_response( __( 'Response from Mijireh could not be understood.', 'event_espresso' ) );
-			$payment->set_details( $response );
-			$payment->set_status( $this->_pay_model->failed_status() );
-		}
-		// the following is ONLY for testing the Mijireh IPN and should NEVER be uncommented for real usage
-//		$payment->set_status( $this->_pay_model->pending_status() );
-		return $payment;
-
+        if ( ! $payment instanceof EEI_Payment ){
+            throw new EE_Error( sprintf( __( "Could not find Mijireh payment for transaction %s", 'event_espresso' ), $transaction->ID() ) );
+        }
+        return $payment;
 	}
+
+
+
+    /**
+     * Checks the payment's status in Mijireh for this specific payment
+     * @param \EEI_Payment $payment
+     * @return \EEI_Payment
+     */
+	public function check_payment_in_mijireh( EEI_Payment $payment ){
+        $request_args = array(
+            'headers' => array(
+                'Authorization' => 'Basic ' . base64_encode( $this->_access_key . ':' ),
+                'Accept'=>'application/json'
+            )
+        );
+
+        $response = wp_remote_get(
+            $this->_mijireh_api_orders_url . '/' . $payment->txn_id_chq_nmbr(),
+            $request_args
+        );
+
+        $this->log(
+            array( 'get payment status request_args' => $request_args, 'response' => $response ),
+            $payment
+        );
+        // validate response
+        $response_body = isset( $response[ 'body' ] ) ? json_decode( $response[ 'body' ] ) : '';
+        if( $response && $response_body ){
+            switch( $response_body->status ){
+                case 'paid':
+                    $payment->set_status($this->_pay_model->approved_status());
+                    break;
+                case 'pending':
+                    $payment->set_status($this->_pay_model->pending_status());
+                    break;
+                default:
+                    $payment->set_status($this->_pay_model->declined_status());
+            }
+
+        } else {
+            $payment->set_gateway_response( __( 'Response from Mijireh could not be understood.', 'event_espresso' ) );
+            $payment->set_details( $response );
+            $payment->set_status( $this->_pay_model->failed_status() );
+        }
+        // the following is ONLY for testing the Mijireh IPN and should NEVER be uncommented for real usage
+//		$payment->set_status( $this->_pay_model->pending_status() );
+        return $payment;
+    }
 
 }
 

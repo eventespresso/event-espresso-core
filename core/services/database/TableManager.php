@@ -237,15 +237,14 @@ class TableManager extends \EE_Base
      * method can be used to only drop the index if needed, and afterwards dbdelta can be used as normal.
      * If the table doesn't exist, or it exists but the index does not, or returns false
      *
-*@param string $table_name
+     * @param string $table_name
      * @param string $index_name
      * @param string $column_name if none is provided, we assume the column name matches the index (often true in EE)
-     * @param string|int $desired_index_size defaults to 191, the max for utf8mb4.
-     *                   See https://events.codebasehq.com/redirect?https://make.wordpress.org/core/2015/04/02/the-utf8mb4-upgrade/
+     * @param string|int $desired_index_size defaults to TableAnalysis::index_col_size, the max for utf8mb4.
      * @return bool whether an index was dropped or not
      * @throws /EE_Error if table analysis object isn't defined
      */
-    public function dropIndexIfSizeNot($table_name, $index_name, $column_name = null, $desired_index_size = 191)
+    public function dropIndexIfSizeNot($table_name, $index_name, $column_name = null, $desired_index_size = TableAnalysis::INDEX_COLUMN_SIZE)
     {
         if($column_name === null){
             $column_name = $index_name;
