@@ -74,10 +74,14 @@ class Read_Test extends \EE_REST_TestCase{
 		);
 	}
 
+
+
+    /**
+     * @group 10526
+     */
 	public function test_handle_request_get_one__event_includes() {
-	    $this->markTestSkipped('See https://events.codebasehq.com/projects/event-espresso/tickets/10526');
 		$event = $this->new_model_obj_with_dependencies( 'Event', array( 'status' => 'publish' ) );
-		$req = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.29/events/' . $event->ID() );
+		$req = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events/' . $event->ID() );
 		$req->set_url_params(
 				array(
 					'id' => $event->ID()
@@ -98,6 +102,35 @@ class Read_Test extends \EE_REST_TestCase{
 			$result
 		);
 	}
+
+    /**
+     * Verifies 'featured_image_url' isn't added to all 4.8.29 requests. We had a bug introduced in 4.8.36
+     * where requests to 4.8.29 added 'featured_image_url' all the time
+     * @group 10526
+     */
+    public function test_handle_request_get_one_4_8_29__event_includes() {
+        $event = $this->new_model_obj_with_dependencies( 'Event', array( 'status' => 'publish' ) );
+        $req = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.29/events/' . $event->ID() );
+        $req->set_url_params(
+            array(
+                'id' => $event->ID()
+            )
+        );
+        $req->set_query_params(
+            array(
+                'include' =>  'EVT_ID,EVT_name'
+            )
+        );
+        $response = Read::handle_request_get_one( $req );
+        $result = $response->get_data();
+        $this->assertEquals(
+            array (
+                'EVT_ID' => $event->ID(),
+                'EVT_name' => $event->name(),
+            ),
+            $result
+        );
+    }
 
 	public function test_handle_request_get_one__event_includes_two_related_models() {
 		$event = $this->new_model_obj_with_dependencies( 'Event', array( 'status' => 'publish' ) );
@@ -129,11 +162,15 @@ class Read_Test extends \EE_REST_TestCase{
 		);
 	}
 
+
+
+    /**
+     * @group 10526
+     */
 	public function test_handle_request_get_one__event_include_non_model_field() {
-        $this->markTestSkipped('See https://events.codebasehq.com/projects/event-espresso/tickets/10526');
 		$this->set_current_user_to_new();
 		$event = $this->new_model_obj_with_dependencies( 'Event' );
-		$req = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.29/events/' . $event->ID() );
+		$req = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events/' . $event->ID() );
 		$req->set_url_params(
 				array(
 					'id' => $event->ID()
@@ -617,18 +654,18 @@ class Read_Test extends \EE_REST_TestCase{
 
 	/**
 	 * @group 9406
+     * @group 10526
 	 */
 	public function test_handle_request_get_all__set_headers(){
-        $this->markTestSkipped('See https://events.codebasehq.com/projects/event-espresso/tickets/10526');
 		$datetimes_created = 65;
 		$event = $this->new_model_obj_with_dependencies( 'Event',  array( 'status' => \EEM_CPT_Base::post_status_publish ) );
 		for( $i=0;$i < $datetimes_created; $i++ ) {
 			$this->new_model_obj_with_dependencies( 'Datetime', array( 'EVT_ID' => $event->ID() ) );
 		}
    		$this->assertEquals( $datetimes_created, \EEM_Datetime::instance()->count( array( 'caps' => \EEM_Base::caps_read ) ) );
-		//request all datetimes
+		//request all datetimes from 4.8.36 (where the headers got added)
 		$response = Read::handle_request_get_all(
-			new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.34/datetimes' )
+			new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/datetimes' )
 		);
 		$this->assertInstanceOf( 'WP_REST_Response', $response );
 		$headers = $response->get_headers();

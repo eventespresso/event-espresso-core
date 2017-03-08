@@ -126,6 +126,19 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
             add_action('admin_enqueue_scripts', array('EE_Form_Section_Proper', 'wp_enqueue_scripts'));
         }
         add_action('wp_footer', array($this, 'ensure_scripts_localized'), 1);
+
+        /**
+         * Gives other plugins a chance to hook in before construct finalize is called. The form probably doesn't
+         * yet have a parent form section. Since 4.9.32, when this action was introduced, this is the best place to
+         * add a subsection onto a form, assuming you don't care what the form section's name, HTML ID, or HTML name etc are.
+         * Also see AHEE__EE_Form_Section_Proper___construct_finalize__end
+         * @since 4.9.32
+         * @param EE_Form_Section_Proper $this before __construct is done, but all of its logic, except maybe calling
+         *                                      _construct_finalize has been done
+         * @param array $options_array options passed into the constructor
+         */
+        do_action('AHEE__EE_Form_Input_Base___construct__before_construct_finalize_called', $this, $options_array);
+
         if (isset($options_array['name'])) {
             $this->_construct_finalize(null, $options_array['name']);
         }
@@ -160,6 +173,17 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
                 );
             }
         }
+        /**
+         * Action performed just after form has been given a name (and HTML ID etc) and is fully constructed.
+         * If you have code that should modify the form and needs it and its subsections to have a name, HTML ID (or other attributes derived
+         * from the name like the HTML label id, etc), this is where it should be done.
+         * This might only happen just before displaying the form, or just before it receives form submission data.
+         * If you need to modify the form or its subsections before _construct_finalize is called on it (and we've
+         * ensured it has a name, HTML IDs, etc
+         * @param EE_Form_Section_Proper $this
+         * @param EE_Form_Section_Proper|null $parent_form_section
+         * @param string $name
+         */
         do_action('AHEE__EE_Form_Section_Proper___construct_finalize__end', $this, $parent_form_section, $name);
     }
 
