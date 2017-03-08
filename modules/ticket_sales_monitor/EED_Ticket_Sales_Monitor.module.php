@@ -870,7 +870,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
                 $total_line_item
             );
         }
-        $total_line_items = EEM_Line_Item::instance()->get_total_line_items_just_added_to_cart();
+        $total_line_items = EEM_Line_Item::instance()->get_total_line_items_for_active_carts();
         foreach ($total_line_items as $total_line_item) {
             $valid_reserved_tickets += EED_Ticket_Sales_Monitor::get_ticket_line_items_for_grand_total(
                 $total_line_item
