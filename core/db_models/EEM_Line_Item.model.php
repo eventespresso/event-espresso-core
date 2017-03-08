@@ -368,7 +368,7 @@ class EEM_Line_Item extends EEM_Base {
      */
     public function get_total_line_items_with_no_transaction()
     {
-        return $this->get_total_line_items_for_carts(false, true);
+        return $this->get_total_line_items_for_carts();
     }
 
 
@@ -377,9 +377,9 @@ class EEM_Line_Item extends EEM_Base {
      * @return EE_Base_Class[]|EE_Line_Item[]
      * @throws \EE_Error
      */
-    public function get_total_line_items_just_added_to_cart()
+    public function get_total_line_items_for_active_carts()
     {
-        return $this->get_total_line_items_for_carts();
+        return $this->get_total_line_items_for_carts(false);
     }
 
 
@@ -396,18 +396,21 @@ class EEM_Line_Item extends EEM_Base {
 
 
     /**
-     * @param bool $expired
-     * @param bool $all
+     * Returns an array of grand total line items where the TXN_ID is 0.
+     * If $expired is set to true, then only line items for expired sessions will be returned.
+     * If $expired is set to false, then only line items for active sessions will be returned.
+     *
+     * @param bool|null $expired
      * @return EE_Base_Class[]|EE_Line_Item[]
      * @throws \EE_Error
      */
-    private function get_total_line_items_for_carts($expired = false, $all = false)
+    private function get_total_line_items_for_carts($expired = null)
     {
         $where_params = array(
             'TXN_ID'        => 0,
             'LIN_type'      => 'total',
         );
-        if (! $all) {
+        if ($expired !== null) {
             $where_params['LIN_timestamp'] = array(
                 $expired ? '<=' : '>',
                 time() - EE_Registry::instance()->SSN->lifespan(),
