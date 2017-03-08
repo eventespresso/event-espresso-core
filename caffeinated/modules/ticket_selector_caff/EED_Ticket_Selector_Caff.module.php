@@ -28,6 +28,12 @@ class EED_Ticket_Selector_Caff  extends EED_Ticket_Selector {
 	 *  @return 	void
 	 */
 	public static function set_hooks() {
+        add_action(
+            'AHEE__ticket_selector_chart_template__ticket_details__after_description',
+            array('EED_Ticket_Selector_Caff', 'ticket_price_details'),
+            10,
+            3
+        );
 	}
 
 	/**
@@ -167,13 +173,16 @@ class EED_Ticket_Selector_Caff  extends EED_Ticket_Selector {
 							'show_datetime_selector' => new EE_Select_Input(
                                 \EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector->getShowDatetimeSelectorOptions(false),
 								array(
-									'html_label_text' => esc_html__( 'Show Datetime Selector?', 'event_espresso' ),
+									'html_label_text' => esc_html__( 'Show Date & Time Filter?', 'event_espresso' ),
 									'html_help_text' => sprintf(
 									    esc_html__(
-									        'Indicates whether or not to display a dropdown select box above each ticket selector that displays dates for the available tickets. Ticket options will then be hidden until a date is selected, and then only tickets for that date are shown.%1$sOptions include:%1$s &bull; do not show datetime selector%1$s &nbsp; this option will NEVER display a datetime selector, regardless of how many datetimes exist.%1$s &bull; maybe show datetime selector%1$s &nbsp; this option will conditionally display a datetime selector when the number of datetimes for the event matches the value set for "Datetime Selector Threshold".',
+									        'Indicates whether or not to display a dropdown select box above each ticket selector that displays dates and times for the available tickets. Ticket options can be unselected, which removes (hides) them from the list of tickets being displayed.%1$sOptions include:%1$s &bull; %2$sdo not show date & time filter%3$s%1$s &nbsp; this option will NEVER display a date filter, regardless of how many dates exist.%1$s &bull; %2$smaybe show date & time filter%3$s%1$s &nbsp; this option will conditionally display the date filter when the number of dates for the event matches the value set for "Date Filter Threshold".',
                                             'event_espresso'
                                         ),
-                                        '<br>'
+                                        '<br>',
+                                        '<strong>',
+                                        '</strong>'
+
                                     ),
 									'default' => ! empty( $show_datetime_selector )
 										? $show_datetime_selector
@@ -182,11 +191,11 @@ class EED_Ticket_Selector_Caff  extends EED_Ticket_Selector {
 								)
 							),
 							'datetime_selector_threshold' => new EE_Select_Input(
-                                range(0,10),
+                                array_combine($r = range(1, 10), $r),
 								array(
-									'html_label_text' => esc_html__( 'Datetime Selector Threshold', 'event_espresso' ),
+									'html_label_text' => esc_html__( 'Date & Time Filter Threshold', 'event_espresso' ),
 									'html_help_text' => esc_html__(
-                                        'The number of datetimes an event has to have before conditionally displaying a datetime selector',
+                                        'The number of unique dates an event has to have before conditionally displaying a date & time filter',
                                         'event_espresso'
                                     ),
 									'default' => ! empty( $datetime_selector_threshold )
@@ -255,5 +264,22 @@ class EED_Ticket_Selector_Caff  extends EED_Ticket_Selector {
 
 		return $CFG;
 	}
+
+
+
+    /**
+     * @param \EE_Ticket $ticket
+     * @param int        $ticket_price
+     * @param bool       $display_ticket_price
+     */
+    public static function ticket_price_details(EE_Ticket $ticket, $ticket_price = 0, $display_ticket_price = false)
+    {
+        require(
+            str_replace('\\', DS, plugin_dir_path(__FILE__))
+            . 'templates' . DS . 'ticket_selector_price_details.template.php'
+        );
+	}
+
+
 
 } //end EED_Ticket_Selector_Caff

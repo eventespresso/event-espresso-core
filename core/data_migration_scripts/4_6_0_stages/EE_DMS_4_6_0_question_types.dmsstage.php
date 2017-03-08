@@ -58,7 +58,7 @@ class EE_DMS_4_6_0_question_types extends EE_Data_Migration_Script_Stage_Table {
 				$this->add_error(
 					sprintf(
 						__( 'Could not update question type %1$s for question ID=%2$d because "%3$s"', 'event_espresso' ),
-						json_encode( $question['QST_type'] ),
+						wp_json_encode( $question['QST_type'] ),
 						$question['QST_ID'],
 						$wpdb->last_error
 					)

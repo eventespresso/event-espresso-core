@@ -37,12 +37,19 @@ class EED_Events_Archive  extends EED_Module {
 	 */
 	protected static $using_get_the_excerpt = false;
 
-	/**
+    /**
+     * Used to flag when the event list is being called from an external iframe.
+     *
+     * @var bool $iframe
+     */
+    protected static $iframe = false;
+
+    /**
 	 * @var \EventEspresso\core\libraries\iframe_display\EventListIframeEmbedButton $_iframe_embed_button
 	 */
 	private static $_iframe_embed_button;
 
-	/**
+    /**
 	 * @type EE_Template_Part_Manager $template_parts
 	 */
 	protected $template_parts;
@@ -226,14 +233,36 @@ class EED_Events_Archive  extends EED_Module {
 
 
 
-	/**
-	 * @access    public
-	 * @return    void
-	 * @throws \EE_Error
-	 */
+    /**
+     * @access    public
+     * @return    void
+     * @throws \EE_Error
+     * @throws \DomainException
+     */
 	public function event_list_iframe() {
+        \EED_Events_Archive::$iframe = true;
 		$event_list_iframe = new EventsArchiveIframe( $this );
 		$event_list_iframe->display();
+	}
+
+
+
+    /**
+     * @access public
+     * @return string
+     */
+	public static function is_iframe() {
+        return \EED_Events_Archive::$iframe;
+	}
+
+
+
+    /**
+     * @access public
+     * @return string
+     */
+	public static function link_target() {
+        return \EED_Events_Archive::$iframe ? ' target="_blank"' : '';
 	}
 
 
@@ -571,7 +600,7 @@ class EED_Events_Archive  extends EED_Module {
 	 *  @return 	void
 	 */
 	public function load_event_list_assets() {
-		do_action( 'AHEE__EED_Events_Archive__before_load_assets' );
+        do_action( 'AHEE__EED_Events_Archive__before_load_assets' );
 		add_filter( 'FHEE_load_EE_Session', '__return_true' );
 		add_filter( 'FHEE__EED_Ticket_Selector__load_tckt_slctr_assets', '__return_true' );
 		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 10 );

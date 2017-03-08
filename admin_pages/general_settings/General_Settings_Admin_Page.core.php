@@ -728,7 +728,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
         
         if (defined('DOING_AJAX')) {
             $notices = EE_Error::get_notices(false, false, false);
-            echo json_encode(array(
+            echo wp_json_encode(array(
                 'return_data' => $country_details_settings,
                 'success'     => $notices['success'],
                 'errors'      => $notices['errors']
@@ -815,7 +815,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
         
         if (defined('DOING_AJAX')) {
             $notices = EE_Error::get_notices(false, false, false);
-            echo json_encode(array(
+            echo wp_json_encode(array(
                 'return_data' => $state_details_settings,
                 'success'     => $notices['success'],
                 'errors'      => $notices['errors']
@@ -872,7 +872,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
         
         if (defined('DOING_AJAX')) {
             $notices = EE_Error::get_notices(false, false, false);
-            echo json_encode(array_merge($notices, array('return_data' => $CNT_ISO)));
+            echo wp_json_encode(array_merge($notices, array('return_data' => $CNT_ISO)));
             die();
         } else {
             $this->_redirect_after_action($success, 'State', 'added', array('action' => 'country_settings'));
@@ -906,7 +906,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
         if (defined('DOING_AJAX')) {
             $notices                = EE_Error::get_notices(false, false);
             $notices['return_data'] = true;
-            echo json_encode($notices);
+            echo wp_json_encode($notices);
             die();
         } else {
             $this->_redirect_after_action($success, 'State', 'deleted', array('action' => 'country_settings'));

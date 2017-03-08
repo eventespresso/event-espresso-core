@@ -902,7 +902,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 
 		$errors = ! $success ? __( 'An error occurred. The price order was not updated.', 'event_espresso' ) : FALSE;
 
-		echo json_encode( array( 'return_data' => FALSE, 'success' => $success, 'errors' => $errors ));
+		echo wp_json_encode( array( 'return_data' => FALSE, 'success' => $success, 'errors' => $errors ));
 		die();
 	}
 

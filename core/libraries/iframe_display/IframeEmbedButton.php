@@ -276,6 +276,9 @@ abstract class IframeEmbedButton
             'FHEE__EventEspresso_core_libraries_iframe_display_IframeEmbedButton__addIframeEmbedButtonsSection__embed_buttons',
             $embed_buttons
         );
+        if ( empty($embed_buttons)) {
+            return '';
+        }
         // add button for iframe code to event editor.
         $html = \EEH_HTML::br( 2 );
         $html .= \EEH_HTML::h3( esc_html__( 'iFrame Embed Code', 'event_espresso' ) );

@@ -24,6 +24,7 @@ class TicketSelectorIframe extends Iframe
     /**
      * TicketSelectorIframe constructor.
      *
+     * @throws \DomainException
      * @throws \EE_Error
      */
     public function __construct()
@@ -50,9 +51,13 @@ class TicketSelectorIframe extends Iframe
                     'ticket_selector'       => TICKET_SELECTOR_ASSETS_URL
                                                . 'ticket_selector.css?ver='
                                                . EVENT_ESPRESSO_VERSION,
-                )
+                ),
+                $this
             )
         );
+        if ( ! apply_filters('FHEE__EED_Ticket_Selector__ticket_selector_iframe__load_theme_css', false, $this)) {
+            $this->addStylesheets( array('site_theme' => '' ) );
+        }
         $this->addScripts(
             apply_filters(
                 'FHEE__EED_Ticket_Selector__ticket_selector_iframe__js',
@@ -60,7 +65,8 @@ class TicketSelectorIframe extends Iframe
                     'ticket_selector_iframe_embed' => TICKET_SELECTOR_ASSETS_URL
                                                       . 'ticket_selector_iframe_embed.js?ver='
                                                       . EVENT_ESPRESSO_VERSION,
-                )
+                ),
+                $this
             )
         );
         $this->addLocalizedVars(

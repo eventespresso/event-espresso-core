@@ -49,6 +49,32 @@ class EE_Checkbox_Dropdown_Selector_Display_Strategy extends EE_Compound_Input_D
     }
 
 
+
+    /**
+     * callback for Iframe::addStylesheets() child class methods
+     *
+     * @param array $iframe_css
+     * @return array
+     */
+    public function iframe_css(array $iframe_css){
+        $iframe_css['checkbox_dropdown_selector'] = EE_GLOBAL_ASSETS_URL . 'css/checkbox_dropdown_selector.css';
+        return $iframe_css;
+    }
+
+
+
+    /**
+     * callback for Iframe::addScripts() child class methods
+     *
+     * @param array $iframe_js
+     * @return array
+     */
+    public function iframe_js(array $iframe_js){
+        $iframe_js['checkbox_dropdown_selector'] = EE_GLOBAL_ASSETS_URL . 'scripts/checkbox_dropdown_selector.js';
+        return $iframe_js;
+    }
+
+
     /**
      * @throws EE_Error
      * @return string of html to display the field
@@ -75,8 +101,10 @@ class EE_Checkbox_Dropdown_Selector_Display_Strategy extends EE_Compound_Input_D
                 '4.8.1'
             );
         }
-        $html = '<button type="submit"';
-        $html .= ' id="' . $input->html_id() . '-btn"';
+
+
+        $html = \EEH_HTML::div('', '', 'checkbox-dropdown-selector-wrap-dv');
+        $html .= '<button id="' . $input->html_id() . '-btn"';
         // $html .= ' name="' . $input->html_name() . '"';
         $html .= ' class="' . $input->html_class() . ' checkbox-dropdown-selector-btn button-secondary button"';
         $html .= ' style="' . $input->html_style() . '"';
@@ -123,13 +151,15 @@ class EE_Checkbox_Dropdown_Selector_Display_Strategy extends EE_Compound_Input_D
                 ? ' checked="checked"'
                 : '';
             $html .= ' ' . $this->_input->other_html_attributes();
-            $html .= '>&nbsp;';
-            $html .= $display_text;
+            $html .= '>';
+            $html .= '<span class="datetime-selector-option-text-spn">' . $display_text . '</span>';
             $html .= EEH_HTML::nl(-1, 'checkbox') . '</label>';
             $html .= EEH_HTML::lix();
         }
         $html .= EEH_HTML::ulx();
         $html .= EEH_HTML::divx();
+        $html .= EEH_HTML::divx();
+        $html .= \EEH_HTML::br();
         return $html;
     }
 

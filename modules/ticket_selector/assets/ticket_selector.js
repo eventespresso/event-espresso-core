@@ -1,17 +1,19 @@
 jQuery(document).ready(function ($) {
     // collection of ALL datetime selectors for ALL Events on the page
-    var $datetime_options = $('.datetime-selector-option');
+    var $datetime_options = $('.datetime-selector-option'),
+        $ticket_selector_submit_btn = $('.ticket-selector-submit-btn');
     // reset by unchecking everything, and disabling the submit button
     $.each($datetime_options, function () {
-        $(this).prop('checked', false);
-		var event_id = $( this ).data( 'tkt_slctr_evt' );
-        var $submit_button = $('#ticket-selector-submit-' + event_id + '-btn');
-        if (object_exists($submit_button, '$submit_button')) {
-            $submit_button.addClass( 'ee-disabled-btn' ).data('active-rows', 0);
-        }
+        $(this).prop('checked', true);
     });
+    // add error notices to the DOM
+    $ticket_selector_submit_btn.before(
+        '<span class="ticket-selector-disabled-submit-btn-msg important-notice">'+ eei18n.please_select_date_filter_notice+'</span>'
+    );
     // update ticket selector if datetime is chosen
-    $('.checkbox-dropdown-selector').on( 'click', '.datetime-selector-option',
+    $('.checkbox-dropdown-selector').on(
+        'click',
+        '.datetime-selector-option',
         function () {
             var $datetime_selector_option = $(this);
             var event_id = $datetime_selector_option.data('tkt_slctr_evt');
@@ -71,7 +73,7 @@ jQuery(document).ready(function ($) {
         }
     );
 
-	$('.ticket-selector-submit-btn').on('click', function (e) {
+    $ticket_selector_submit_btn.on('click', function (e) {
 		if( $( this ).hasClass( 'ee-disabled-btn' ) ) {
 			e.preventDefault();
 			e.stopPropagation();

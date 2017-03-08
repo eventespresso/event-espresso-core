@@ -38,11 +38,15 @@ class EE_Select_Display_Strategy extends EE_Display_Strategy_Base{
 		if ( EEH_Array::is_multi_dimensional_array( $this->_input->options() )) {
 			EEH_HTML::indent( 1, 'optgroup' );
 			foreach( $this->_input->options() as $opt_group_label => $opt_group ){
-				$html .= EEH_HTML::nl( 0, 'optgroup' ) . '<optgroup label="' . esc_attr( $opt_group_label ) . '">';
+			    if ( ! empty($opt_group_label)) {
+                    $html .= EEH_HTML::nl(0, 'optgroup') . '<optgroup label="' . esc_attr($opt_group_label) . '">';
+                }
 				EEH_HTML::indent( 1, 'option' );
 				$html .= $this->_display_options( $opt_group );
 				EEH_HTML::indent( -1, 'option' );
-				$html .= EEH_HTML::nl( 0, 'optgroup' ) . '</optgroup>';
+                if ( ! empty($opt_group_label)) {
+                    $html .= EEH_HTML::nl( 0, 'optgroup' ) . '</optgroup>';
+			    }
 			}
 			EEH_HTML::indent( -1, 'optgroup' );
 		} else {
@@ -80,7 +84,7 @@ class EE_Select_Display_Strategy extends EE_Display_Strategy_Base{
 	 * @return string
 	 */
 	protected function _check_if_option_selected( $value ){
-		return $this->_input->raw_value() == $value ? TRUE : FALSE;
+		return $this->_input->raw_value() === $value ? TRUE : FALSE;
 	}
 
 

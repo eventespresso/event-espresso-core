@@ -331,10 +331,6 @@ jQuery(document).ready(function($) {
 						$(this).val(DTT_name);
 						break;
 
-					case 'event-datetime-DTT_is_primary' :
-						$(this).val(row === 1 ? '1' : '0');
-						break;
-
 					case 'event-datetime-DTT_EVT_start' :
 						DTT_start_time = $('#add-new-' + inputid, '#add-event-datetime').val();
 						DTT_start_time = DTT_start_time === '' ? tktHelper.eemoment().add(1, 'weeks').hours(8).minutes(0).format(DTT_CONVERTED_FORMATS.moment) : DTT_start_time;
@@ -520,7 +516,6 @@ jQuery(document).ready(function($) {
 
 				switch ( curclass ) {
 					case 'event-datetime-DTT_ID' :
-					case 'event-datetime-DTT_is_primary' :
 						$(this).attr('name', newname);
 						$(this).val('0');
 						if ( newid !== '' )
@@ -1087,28 +1082,33 @@ jQuery(document).ready(function($) {
 			//get all ticket rows that have this dtt active on them.
 			var tktrow,
 				tktdata,
+                ticketsSelectedinRow = {},
+			    tktName = '',
 				singleDTTTKTs = [],
 				dttisactive = false,
-				activeTKTs = $('.ticket-selected', '#advanced-edit-' + row);
+				activeTKTs = $('.ticket-selected', '#advanced-dtt-edit-row-' + row);
 
 			//foreach of these tickets lets check if this datetime is the ONLY dtt active.
 			activeTKTs.each( function() {
 				tktdata = $(this).data();
 				tktrow = tktdata.ticketRow;
-
-				if ( $('.ticket-selected', '#edit-ticketrow-' + tktrow).length === 1 && $('.ticket-selected', '#edit-ticketrow-' + tktrow ).data('datetimeRow') == row )
-					singleDTTTKTs[tktrow] = $('.edit-ticket-TKT_name', '#edit-ticketrow-' + tktrow).val();
-				});
+				ticketsSelectedinRow = $('.ticket-selected', '#edit-ticketrow-' + tktrow);
 
 
-			if ( singleDTTTKTs.length === 0 )
-				return true; //we're okay
+
+				if ( ticketsSelectedinRow.length === 1 && ticketsSelectedinRow.data('datetimeRow') === row ) {
+                    singleDTTTKTs.push( $('.edit-ticket-TKT_name', '#display-ticketrow-'+tktrow).val() );
+                }
+            });
+			if ( singleDTTTKTs.length === 0 ) {
+                return true; //we're okay
+            }
 
 			//make sure that the checkbox is still checked (cause if user clicked the checkbox input instead of the li item then it will have toggled.)
 			//
 
 			//otherwise let's throw up the dialog and prompt
-			var htmlcontent = '<p>' + DTT_TRASH_BLOCK.main_warning + ' <strong>' + singleDTTTKTs.join('</strong>, <strong>') + '</strong></p>' + '<p>' + DTT_TRASH_BLOCK.after_warning + '</p><div class="save-cancel-button-container">' + DTT_TRASH_BLOCK.cancel_button + '</div>';
+			var htmlcontent = '<p>' + DTT_TRASH_BLOCK.main_warning + ' <strong>' + singleDTTTKTs.join('</strong>, <strong>') + '</strong></p>' + '<p>' + DTT_TRASH_BLOCK.after_warning + '</p><div class="save-cancel-button-container">' + DTT_TRASH_BLOCK.close_button + '</div>';
 
 
 			dialogHelper.displayModal().addContent(htmlcontent);

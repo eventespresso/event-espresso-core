@@ -1,12 +1,10 @@
-<?php use EventEspresso\core\domain\entities\DbSafeDateTime;
+<?php
+use EventEspresso\core\domain\entities\DbSafeDateTime;
 
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
+defined('EVENT_ESPRESSO_VERSION') || exit;
 
 /**
  * EE_Datetime_Field
- *
  * Text_Fields is a base class for any fields which are have integer value. (Exception: foreign and private key fields.
  * Wish PHP had multiple-inheritance for this...)
  *
@@ -20,6 +18,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base
     /**
      * The pattern we're looking for is if only the characters 0-9 are found and there are only
      * 10 or more numbers (because 9 numbers even with all 9's would be sometime in 2001 )
+     *
      * @type string unix_timestamp_regex
      */
     const unix_timestamp_regex = '/[0-9]{10,}/';
@@ -92,6 +91,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base
      * This property holds how we want the output returned when getting a datetime string.  It is set for the
      * set_date_time_output() method.  By default this is empty.  When empty, we are assuming that we want both date
      * and time returned via getters.
+     *
      * @var mixed (null|string)
      */
     protected $_date_time_output;
@@ -102,6 +102,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base
      * This gets set by the constructor and can be changed by the "set_timezone()" method so that we know what timezone
      * incoming strings|timestamps are in.  This can also be used before a get to set what timezone you want strings
      * coming out of the object to be in.  Default timezone is the current WP timezone option setting
+     *
      * @var string
      */
     protected $_timezone_string;
@@ -110,24 +111,24 @@ class EE_Datetime_Field extends EE_Model_Field_Base
     /**
      * This holds whatever UTC offset for the blog (we automatically convert timezone strings into their related
      * offsets for comparison purposes).
+     *
      * @var int
      */
     protected $_blog_offset;
 
 
-
-	/**
-	 * @param string $table_column
-	 * @param string $nice_name
-	 * @param bool   $nullable
-	 * @param string $default_value
-	 * @param string $timezone_string
-	 * @param string $date_format
-	 * @param string $time_format
-	 * @param string $pretty_date_format
-	 * @param string $pretty_time_format
-	 * @throws \EE_Error
-	 */
+    /**
+     * @param string $table_column
+     * @param string $nice_name
+     * @param bool   $nullable
+     * @param string $default_value
+     * @param string $timezone_string
+     * @param string $date_format
+     * @param string $time_format
+     * @param string $pretty_date_format
+     * @param string $pretty_time_format
+     * @throws \EE_Error
+     */
     public function __construct(
         $table_column,
         $nice_name,
@@ -147,42 +148,31 @@ class EE_Datetime_Field extends EE_Model_Field_Base
 
         parent::__construct($table_column, $nice_name, $nullable, $default_value);
         $this->set_timezone($timezone_string);
-
+        $this->setSchemaFormat('date-time');
     }
 
 
     /**
-     * @return string
+     * @return DateTimeZone
+     * @throws \EE_Error
      */
-    public function get_wpdb_data_type()
-    {
-        return '%s';
-    }
-
-
-
-	/**
-	 * @return DateTimeZone
-	 * @throws \EE_Error
-	 */
     public function get_UTC_DateTimeZone()
     {
         return $this->_UTC_DateTimeZone instanceof DateTimeZone
-	        ? $this->_UTC_DateTimeZone
-	        : $this->_create_timezone_object_from_timezone_string('UTC');
+            ? $this->_UTC_DateTimeZone
+            : $this->_create_timezone_object_from_timezone_string('UTC');
     }
 
 
-
-	/**
-	 * @return DateTimeZone
-	 * @throws \EE_Error
-	 */
+    /**
+     * @return DateTimeZone
+     * @throws \EE_Error
+     */
     public function get_blog_DateTimeZone()
     {
         return $this->_blog_DateTimeZone instanceof DateTimeZone
-	        ? $this->_blog_DateTimeZone
-	        : $this->_create_timezone_object_from_timezone_string('');
+            ? $this->_blog_DateTimeZone
+            : $this->_create_timezone_object_from_timezone_string('');
     }
 
 
@@ -191,7 +181,6 @@ class EE_Datetime_Field extends EE_Model_Field_Base
      *
      * @param  string|int $value_inputted_for_field_on_model_object could be a string formatted date time or int unix
      *                                                              timestamp
-     *
      * @return DateTime
      */
     public function prepare_for_set($value_inputted_for_field_on_model_object)
@@ -202,7 +191,6 @@ class EE_Datetime_Field extends EE_Model_Field_Base
 
     /**
      * This returns the format string to be used by getters depending on what the $_date_time_output property is set at.
-     *
      * getters need to know whether we're just returning the date or the time or both.  By default we return both.
      *
      * @param bool $pretty If we're returning the pretty formats or standard format string.
@@ -222,8 +210,8 @@ class EE_Datetime_Field extends EE_Model_Field_Base
 
             default :
                 return $pretty
-	                ? $this->_pretty_date_format . ' ' . $this->_pretty_time_format
-	                : $this->_date_format . ' ' . $this->_time_format;
+                    ? $this->_pretty_date_format . ' ' . $this->_pretty_time_format
+                    : $this->_date_format . ' ' . $this->_time_format;
         }
     }
 
@@ -243,18 +231,17 @@ class EE_Datetime_Field extends EE_Model_Field_Base
     }
 
 
-
-	/**
-	 * See $_timezone property for description of what the timezone property is for.  This SETS the timezone internally
-	 * for being able to reference what timezone we are running conversions on when converting TO the internal timezone
-	 * (UTC Unix Timestamp) for the object OR when converting FROM the internal timezone (UTC Unix Timestamp).
-	 * We also set some other properties in this method.
-	 *
-	 * @param string $timezone_string A valid timezone string as described by @link
-	 *                                http://www.php.net/manual/en/timezones.php
-	 * @return void
-	 * @throws \EE_Error
-	 */
+    /**
+     * See $_timezone property for description of what the timezone property is for.  This SETS the timezone internally
+     * for being able to reference what timezone we are running conversions on when converting TO the internal timezone
+     * (UTC Unix Timestamp) for the object OR when converting FROM the internal timezone (UTC Unix Timestamp).
+     * We also set some other properties in this method.
+     *
+     * @param string $timezone_string A valid timezone string as described by @link
+     *                                http://www.php.net/manual/en/timezones.php
+     * @return void
+     * @throws \EE_Error
+     */
     public function set_timezone($timezone_string)
     {
         if (empty($timezone_string) && $this->_timezone_string !== null) {
@@ -268,15 +255,14 @@ class EE_Datetime_Field extends EE_Model_Field_Base
     }
 
 
-
-	/**
-	 * _create_timezone_object_from_timezone_name
-	 *
-	 * @access protected
-	 * @param string $timezone_string
-	 * @return \DateTimeZone
-	 * @throws \EE_Error
-	 */
+    /**
+     * _create_timezone_object_from_timezone_name
+     *
+     * @access protected
+     * @param string $timezone_string
+     * @return \DateTimeZone
+     * @throws \EE_Error
+     */
     protected function _create_timezone_object_from_timezone_string($timezone_string = '')
     {
         return new DateTimeZone(EEH_DTT_Helper::get_valid_timezone_string($timezone_string));
@@ -299,10 +285,8 @@ class EE_Datetime_Field extends EE_Model_Field_Base
      * set the $_date_format property
      *
      * @access public
-     *
      * @param string $format a new date format (corresponding to formats accepted by PHP date() function)
      * @param bool   $pretty Whether to set pretty format or not.
-     *
      * @return void
      */
     public function set_date_format($format, $pretty = false)
@@ -319,7 +303,6 @@ class EE_Datetime_Field extends EE_Model_Field_Base
      * return the $_date_format property value.
      *
      * @param bool $pretty Whether to get pretty format or not.
-     *
      * @return string
      */
     public function get_date_format($pretty = false)
@@ -332,10 +315,8 @@ class EE_Datetime_Field extends EE_Model_Field_Base
      * set the $_time_format property
      *
      * @access public
-     *
      * @param string $format a new time format (corresponding to formats accepted by PHP date() function)
      * @param bool   $pretty Whether to set pretty format or not.
-     *
      * @return void
      */
     public function set_time_format($format, $pretty = false)
@@ -352,7 +333,6 @@ class EE_Datetime_Field extends EE_Model_Field_Base
      * return the $_time_format property value.
      *
      * @param bool $pretty Whether to get pretty format or not.
-     *
      * @return string
      */
     public function get_time_format($pretty = false)
@@ -365,9 +345,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base
      * set the $_pretty_date_format property
      *
      * @access public
-     *
      * @param string $format a new pretty date format (corresponding to formats accepted by PHP date() function)
-     *
      * @return void
      */
     public function set_pretty_date_format($format)
@@ -380,9 +358,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base
      * set the $_pretty_time_format property
      *
      * @access public
-     *
      * @param string $format a new pretty time format (corresponding to formats accepted by PHP date() function)
-     *
      * @return void
      */
     public function set_pretty_time_format($format)
@@ -396,18 +372,17 @@ class EE_Datetime_Field extends EE_Model_Field_Base
      *
      * @param string|DateTime $time_to_set_string like 8am OR a DateTime object.
      * @param DateTime        $current            current DateTime object for the datetime field
-     *
      * @return DateTime
      */
     public function prepare_for_set_with_new_time($time_to_set_string, DateTime $current)
     {
         // if $time_to_set_string is datetime object, then let's use it to set the parse array.
-	    // Otherwise parse the string.
+        // Otherwise parse the string.
         if ($time_to_set_string instanceof DateTime) {
             $parsed = array(
                 'hour'   => $time_to_set_string->format('H'),
                 'minute' => $time_to_set_string->format('i'),
-                'second' => $time_to_set_string->format('s')
+                'second' => $time_to_set_string->format('s'),
             );
         } else {
             //parse incoming string
@@ -426,18 +401,17 @@ class EE_Datetime_Field extends EE_Model_Field_Base
      *
      * @param string|DateTime $date_to_set_string like Friday, January 8th or a DateTime object.
      * @param DateTime        $current            current DateTime object for the datetime field
-     *
      * @return DateTime
      */
     public function prepare_for_set_with_new_date($date_to_set_string, DateTime $current)
     {
         // if $time_to_set_string is datetime object, then let's use it to set the parse array.
-	    // Otherwise parse the string.
+        // Otherwise parse the string.
         if ($date_to_set_string instanceof DateTime) {
             $parsed = array(
                 'year'  => $date_to_set_string->format('Y'),
                 'month' => $date_to_set_string->format('m'),
-                'day'   => $date_to_set_string->format('d')
+                'day'   => $date_to_set_string->format('d'),
             );
         } else {
             //parse incoming string
@@ -451,33 +425,31 @@ class EE_Datetime_Field extends EE_Model_Field_Base
     }
 
 
-
-	/**
-	 * This prepares the EE_DateTime value to be saved to the db as mysql timestamp (UTC +0 timezone).  When the
-	 * datetime gets to this stage it should ALREADY be in UTC time
-	 *
-	 * @param  DateTime $DateTime
-	 * @return string formatted date time for given timezone
-	 * @throws \EE_Error
-	 */
+    /**
+     * This prepares the EE_DateTime value to be saved to the db as mysql timestamp (UTC +0 timezone).  When the
+     * datetime gets to this stage it should ALREADY be in UTC time
+     *
+     * @param  DateTime $DateTime
+     * @return string formatted date time for given timezone
+     * @throws \EE_Error
+     */
     public function prepare_for_get($DateTime)
     {
         return $this->_prepare_for_display($DateTime);
     }
 
 
-
-	/**
-	 * This differs from prepare_for_get in that it considers whether the internal $_timezone differs
-	 * from the set wp timezone.  If so, then it returns the datetime string formatted via
-	 * _pretty_date_format, and _pretty_time_format.  However, it also appends a timezone
-	 * abbreviation to the date_string.
-	 *
-	 * @param mixed $DateTime
-	 * @param null  $schema
-	 * @return string
-	 * @throws \EE_Error
-	 */
+    /**
+     * This differs from prepare_for_get in that it considers whether the internal $_timezone differs
+     * from the set wp timezone.  If so, then it returns the datetime string formatted via
+     * _pretty_date_format, and _pretty_time_format.  However, it also appends a timezone
+     * abbreviation to the date_string.
+     *
+     * @param mixed $DateTime
+     * @param null  $schema
+     * @return string
+     * @throws \EE_Error
+     */
     public function prepare_for_pretty_echoing($DateTime, $schema = null)
     {
         return $this->_prepare_for_display($DateTime, $schema ? $schema : true);
@@ -495,31 +467,31 @@ class EE_Datetime_Field extends EE_Model_Field_Base
      */
     protected function _prepare_for_display($DateTime, $schema = false)
     {
-        if ( ! $DateTime instanceof DateTime) {
+        if (! $DateTime instanceof DateTime) {
             if ($this->_nullable) {
                 return '';
             } else {
                 if (WP_DEBUG) {
-	                throw new EE_Error(
-		                sprintf(
-			                __(
-				                'EE_Datetime_Field::_prepare_for_display requires a DateTime class to be the value for the $DateTime argument because the %s field is not nullable.',
-				                'event_espresso'
-			                ),
-			                $this->_nicename
-		                )
-	                );
+                    throw new EE_Error(
+                        sprintf(
+                            __(
+                                'EE_Datetime_Field::_prepare_for_display requires a DateTime class to be the value for the $DateTime argument because the %s field is not nullable.',
+                                'event_espresso'
+                            ),
+                            $this->_nicename
+                        )
+                    );
                 } else {
                     $DateTime = new DbSafeDateTime(\EE_Datetime_Field::now);
-	                EE_Error::add_error(
-		                sprintf(
-			                __(
-				                'EE_Datetime_Field::_prepare_for_display requires a DateTime class to be the value for the $DateTime argument because the %s field is not nullable.  When WP_DEBUG is false, the value is set to "now" instead of throwing an exception.',
-				                'event_espresso'
-			                ),
-			                $this->_nicename
-		                )
-	                );
+                    EE_Error::add_error(
+                        sprintf(
+                            __(
+                                'EE_Datetime_Field::_prepare_for_display requires a DateTime class to be the value for the $DateTime argument because the %s field is not nullable.  When WP_DEBUG is false, the value is set to "now" instead of throwing an exception.',
+                                'event_espresso'
+                            ),
+                            $this->_nicename
+                        )
+                    );
                 }
             }
         }
@@ -550,14 +522,13 @@ class EE_Datetime_Field extends EE_Model_Field_Base
      * timezone).
      *
      * @param  mixed $datetime_value u
-     *
      * @return string mysql timestamp in UTC
      * @throws \EE_Error
      */
     public function prepare_for_use_in_db($datetime_value)
     {
         //we allow an empty value or DateTime object, but nothing else.
-        if ( ! empty($datetime_value) && ! $datetime_value instanceof DateTime) {
+        if (! empty($datetime_value) && ! $datetime_value instanceof DateTime) {
             throw new EE_Error(
             	sprintf(
             	    __(
@@ -573,14 +544,11 @@ class EE_Datetime_Field extends EE_Model_Field_Base
 
         if ($datetime_value instanceof DateTime) {
             if ( ! $datetime_value instanceof DbSafeDateTime) {
-                $datetime_value = new DbSafeDateTime(
-                    $datetime_value->format(EE_Datetime_Field::mysql_timestamp_format),
-                    new \DateTimeZone($datetime_value->format('e'))
-                );
+                $datetime_value = DbSafeDateTime::createFromDateTime($datetime_value);
             }
 
             return $datetime_value->setTimezone($this->get_UTC_DateTimeZone())->format(
-            	EE_Datetime_Field::mysql_timestamp_format
+                EE_Datetime_Field::mysql_timestamp_format
             );
         }
 
@@ -589,15 +557,14 @@ class EE_Datetime_Field extends EE_Model_Field_Base
     }
 
 
-
-	/**
-	 * This prepares the datetime for internal usage as a PHP DateTime object OR null (if nullable is
-	 * allowed)
-	 *
-	 * @param string $datetime_string mysql timestamp in UTC
-	 * @return  mixed null | DateTime
-	 * @throws \EE_Error
-	 */
+    /**
+     * This prepares the datetime for internal usage as a PHP DateTime object OR null (if nullable is
+     * allowed)
+     *
+     * @param string $datetime_string mysql timestamp in UTC
+     * @return  mixed null | DateTime
+     * @throws \EE_Error
+     */
     public function prepare_for_set_from_db($datetime_string)
     {
         //if $datetime_value is empty, and ! $this->_nullable, just use time()
@@ -621,7 +588,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base
             }
         }
 
-        if ( ! $DateTime instanceof DbSafeDateTime) {
+        if (! $DateTime instanceof DbSafeDateTime) {
             // if still no datetime object, then let's just use now
             $DateTime = new DbSafeDateTime(\EE_Datetime_Field::now, $this->get_UTC_DateTimeZone());
         }
@@ -632,20 +599,19 @@ class EE_Datetime_Field extends EE_Model_Field_Base
     }
 
 
-
-	/**
-	 * All this method does is determine if we're going to display the timezone string or not on any output.
-	 * To determine this we check if the set timezone offset is different than the blog's set timezone offset.
-	 * If so, then true.
-	 *
-	 * @return bool true for yes false for no
-	 * @throws \EE_Error
-	 */
+    /**
+     * All this method does is determine if we're going to display the timezone string or not on any output.
+     * To determine this we check if the set timezone offset is different than the blog's set timezone offset.
+     * If so, then true.
+     *
+     * @return bool true for yes false for no
+     * @throws \EE_Error
+     */
     protected function _display_timezone()
     {
 
         // first let's do a comparison of timezone strings.
-	    // If they match then we can get out without any further calculations
+        // If they match then we can get out without any further calculations
         $blog_string = get_option('timezone_string');
         if ($blog_string === $this->_timezone_string) {
             return false;
@@ -654,7 +620,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base
         $this_offset = $this->get_timezone_offset($this->_DateTimeZone);
         $blog_offset = $this->get_timezone_offset($this->get_blog_DateTimeZone());
         // now compare
-	    return $blog_offset !== $this_offset;
+        return $blog_offset !== $this_offset;
     }
 
 
@@ -666,7 +632,6 @@ class EE_Datetime_Field extends EE_Model_Field_Base
      * @param int|string|DateTime $date_string            This should be the incoming date string.  It's assumed to be
      *                                                    in the format that is set on the date_field (or DateTime
      *                                                    object)!
-     *
      * @return DateTime
      */
     protected function _get_date_object($date_string)
@@ -691,7 +656,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base
         if (preg_match(EE_Datetime_Field::unix_timestamp_regex, $date_string)) {
             try {
                 // This is operating under the assumption that the incoming Unix timestamp
-	            // is an ACTUAL Unix timestamp and not the calculated one output by current_time('timestamp');
+                // is an ACTUAL Unix timestamp and not the calculated one output by current_time('timestamp');
                 $DateTime = new DbSafeDateTime(\EE_Datetime_Field::now, $this->_DateTimeZone);
                 $DateTime->setTimestamp($date_string);
 
@@ -711,7 +676,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base
                     $this->_DateTimeZone
                 );
             }
-            if ( ! $DateTime instanceof DbSafeDateTime) {
+            if (! $DateTime instanceof DbSafeDateTime) {
                 throw new EE_Error(
                     sprintf(
                         __('"%1$s" does not represent a valid Date Time in the format "%2$s".', 'event_espresso'),
@@ -722,7 +687,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base
             }
         } catch (Exception $e) {
             // if we made it here then likely then something went really wrong.
-	        // Instead of throwing an exception, let's just return a DateTime object for now, in the set timezone.
+            // Instead of throwing an exception, let's just return a DateTime object for now, in the set timezone.
             $DateTime = new DbSafeDateTime(\EE_Datetime_Field::now, $this->_DateTimeZone);
         }
 
@@ -730,31 +695,50 @@ class EE_Datetime_Field extends EE_Model_Field_Base
     }
 
 
+
+    /**
+     * get_timezone_transitions
+     *
+     * @param \DateTimeZone $DateTimeZone
+     * @param int           $time
+     * @param bool          $first_only
+     * @return mixed
+     */
+    public function get_timezone_transitions(DateTimeZone $DateTimeZone, $time = null, $first_only = true)
+    {
+        $time = is_int($time) || $time === null ? $time : strtotime($time);
+        $time = preg_match(EE_Datetime_Field::unix_timestamp_regex, $time) ? $time : time();
+        $transitions = $DateTimeZone->getTransitions($time);
+        return $first_only && ! isset($transitions['ts']) ? reset($transitions) : $transitions;
+    }
+
+
+
     /**
      * get_timezone_offset
      *
      * @param \DateTimeZone $DateTimeZone
      * @param int           $time
-     *
      * @return mixed
+     * @throws \DomainException
      */
     public function get_timezone_offset(DateTimeZone $DateTimeZone, $time = null)
     {
-        $time        = preg_match(EE_Datetime_Field::unix_timestamp_regex, $time) ? $time : time();
-        $transitions = $DateTimeZone->getTransitions($time);
-
-        return $transitions[0]['offset'];
+        $transitions = $this->get_timezone_transitions($DateTimeZone, $time);
+        if ( ! isset($transitions['offset'])) {
+            throw new DomainException();
+        }
+        return $transitions['offset'];
     }
 
 
-
-	/**
-	 * This will take an incoming timezone string and return the abbreviation for that timezone
-	 *
-	 * @param  string $timezone_string
-	 * @return string           abbreviation
-	 * @throws \EE_Error
-	 */
+    /**
+     * This will take an incoming timezone string and return the abbreviation for that timezone
+     *
+     * @param  string $timezone_string
+     * @return string           abbreviation
+     * @throws \EE_Error
+     */
     public function get_timezone_abbrev($timezone_string)
     {
         $timezone_string = EEH_DTT_Helper::get_valid_timezone_string($timezone_string);
@@ -778,4 +762,11 @@ class EE_Datetime_Field extends EE_Model_Field_Base
     }
 
 
+    public function getSchemaDescription()
+    {
+        return sprintf(
+            esc_html__('%s - the value for this field is in the timezone of the site.', 'event_espresso'),
+            $this->get_nicename()
+        );
+    }
 }

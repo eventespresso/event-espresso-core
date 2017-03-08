@@ -678,7 +678,7 @@ class EES_Espresso_Thank_You extends EES_Shortcode {
 		}
 		// request sent via AJAX ?
 		if ( EE_FRONT_AJAX ) {
-			echo json_encode( EE_Error::get_notices( false ) );
+			echo wp_json_encode( EE_Error::get_notices( false ) );
 			die();
 			// or was JS disabled ?
 		} else {

@@ -1,6 +1,7 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
+<?php
+use EventEspresso\core\services\assets\Registry;
+
+defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
 
@@ -105,6 +106,13 @@ class EE_Registry
      */
     public $MRM = null;
 
+
+    /**
+     * Holds the Assets Registry instance
+     * @var Registry
+     */
+    public $AssetsRegistry = null;
+
     /**
      *    $addons - StdClass object for holding addons which have registered themselves to work with EE core
      *
@@ -151,6 +159,7 @@ class EE_Registry
      */
     public $non_abstract_db_models = array();
 
+
     /**
      *    $i18n_js_strings - internationalization for JS strings
      *    usage:   EE_Registry::i18n_js_strings['string_key'] = __( 'string to translate.', 'event_espresso' );
@@ -160,6 +169,7 @@ class EE_Registry
      * @var    array
      */
     public static $i18n_js_strings = array();
+
 
     /**
      *    $main_file - path to espresso.php
@@ -269,6 +279,7 @@ class EE_Registry
      */
     public function init()
     {
+        $this->AssetsRegistry = new Registry();
         // Get current page protocol
         $protocol = isset($_SERVER['HTTPS']) ? 'https://' : 'http://';
         // Output admin-ajax.php URL with same protocol as current page
@@ -1221,6 +1232,7 @@ class EE_Registry
         $instance->CFG = EE_Config::reset($hard, $reinstantiate);
         $instance->CART = null;
         $instance->MRM = null;
+        $instance->AssetsRegistry = new Registry();
         //messages reset
         EED_Messages::reset();
         if ($reset_models) {
@@ -1323,7 +1335,7 @@ class EE_Registry
 
 
 
-    final function __set_state()
+    final static function __set_state()
     {
     }
 

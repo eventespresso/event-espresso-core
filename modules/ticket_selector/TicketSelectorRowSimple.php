@@ -1,6 +1,8 @@
 <?php
 namespace EventEspresso\modules\ticket_selector;
 
+use EE_Error;
+
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
@@ -15,6 +17,16 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  */
 class TicketSelectorRowSimple extends TicketSelectorRow
 {
+
+    /**
+     * @throws EE_Error
+     */
+    public function setupTicketStatusDisplay()
+    {
+        $remaining = $this->ticket->remaining();
+        list($tkt_status, $ticket_status) = $this->getTicketStatusClasses($remaining);
+        $this->setTicketStatusDisplay($tkt_status, $ticket_status, $remaining);
+    }
 
 
 

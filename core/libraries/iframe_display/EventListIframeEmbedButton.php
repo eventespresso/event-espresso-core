@@ -21,7 +21,7 @@ class EventListIframeEmbedButton extends IframeEmbedButton
     public function __construct()
     {
         parent::__construct(
-            esc_html__( 'Event List', 'event_espresso' ),
+            esc_html__( 'Upcoming Event List', 'event_espresso' ),
             'event_list'
         );
     }
@@ -29,8 +29,8 @@ class EventListIframeEmbedButton extends IframeEmbedButton
 
 
 	public function addEmbedButton() {
-		add_filter(
-			'FHEE__EE_Admin_Page___display_admin_list_table_page__after_list_table__template_arg',
+        add_filter(
+			'FHEE__EE_Admin_Page___display_admin_list_table_page__after_list_table__template_args_array',
 			array( $this, 'addEventListIframeEmbedButtonSection' )
 		);
 		add_action(
@@ -51,7 +51,7 @@ class EventListIframeEmbedButton extends IframeEmbedButton
 	 */
     public function addEventListIframeEmbedButtonSection( array $after_list_table )
     {
-	    return \EEH_Array::insert_into_array(
+        return \EEH_Array::insert_into_array(
     		$after_list_table,
 		    array(
 			    'iframe_embed_buttons' => $this->addIframeEmbedButtonsSection(

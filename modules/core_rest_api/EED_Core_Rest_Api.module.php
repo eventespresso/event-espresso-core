@@ -1,9 +1,10 @@
 <?php
 use EventEspresso\core\libraries\rest_api\Calculated_Model_Fields;
+use EventEspresso\core\libraries\rest_api\controllers\model\Read as ModelRead;
+use EventEspresso\core\libraries\rest_api\changes\Changes_In_Base;
+use EventEspresso\core\libraries\rest_api\Model_Version_Info;
 
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
+defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
 
@@ -94,7 +95,6 @@ class EED_Core_Rest_Api extends \EED_Module
     {
         //set hooks which account for changes made to the API
         EED_Core_Rest_Api::_set_hooks_for_changes();
-        EED_Core_Rest_Api::maybe_notify_of_basic_auth_removal();
     }
 
 
@@ -111,43 +111,7 @@ class EED_Core_Rest_Api extends \EED_Module
 
 
 
-    /**
-     * If the user appears to be using WP API basic auth, tell them (via a persistent
-     * admin notice and an email) that we're going to remove it soon, so they should
-     * replace it with application passwords.
-     */
-    public static function maybe_notify_of_basic_auth_removal()
-    {
-        if (
-        apply_filters(
-            'FHEE__EED_Core_Rest_Api__maybe_notify_of_basic_auth_removal__override',
-            ! isset($_SERVER['PHP_AUTH_USER'])
-            && ! isset($_SERVER['HTTP_AUTHORIZATION'])
-        )
-        ) {
-            //sure it's a WP API request, but they aren't using basic auth, so don't bother them
-            return;
-        }
-        //ok they're using the WP API with Basic Auth
-        $message = sprintf(
-            __('We noticed you\'re using the WP API, which is used by the Event Espresso 4 mobile apps. Because of security and compatibility concerns, we will soon be removing our default authentication mechanism, WP API Basic Auth, from Event Espresso. It is recommended you instead install the %1$sWP Application Passwords plugin%2$s and use it with the EE4 Mobile apps. See %3$sour mobile app documentation%2$s for more information. %4$sIf you have installed the WP API Basic Auth plugin separately, or are not using the Event Espresso 4 mobile apps, you can disregard this message.%4$sThe Event Espresso Team',
-                'event_espresso'),
-            '<a href="https://wordpress.org/plugins/application-passwords/">',
-            '</a>',
-            '<a href="https://eventespresso.com/wiki/ee4-event-apps/#authentication">',
-            '<br/>'
-        );
-        EE_Error::add_persistent_admin_notice('using_basic_auth', $message);
-        if ( ! get_option('ee_notified_admin_on_basic_auth_removal', false)) {
-            add_option('ee_notified_admin_on_basic_auth_removal', true);
-            //piggy back off EE_Error::set_content_type, which sets the content type to HTML
-            add_filter('wp_mail_content_type', array('EE_Error', 'set_content_type'));
-            //and send the message to the site admin too
-            wp_mail(get_option('admin_email'),
-                __('Notice of Removal of WP API Basic Auth From Event Espresso 4', 'event_espresso'), $message);
-            remove_filter('wp_mail_content_type', array('EE_Error', 'set_content_type'));
-        }
-    }
+
 
 
 
@@ -166,7 +130,7 @@ class EED_Core_Rest_Api extends \EED_Module
             $full_classname = 'EventEspresso\core\libraries\rest_api\changes\\' . $classname_in_namespace;
             if (class_exists($full_classname)) {
                 $instance_of_class = new $full_classname;
-                if ($instance_of_class instanceof EventEspresso\core\libraries\rest_api\changes\Changes_In_Base) {
+                if ($instance_of_class instanceof Changes_In_Base) {
                     $instance_of_class->set_hooks();
                 }
             }
@@ -184,14 +148,33 @@ class EED_Core_Rest_Api extends \EED_Module
         foreach (EED_Core_Rest_Api::get_ee_route_data() as $namespace => $relative_urls) {
             foreach ($relative_urls as $endpoint => $routes) {
                 foreach ($routes as $route) {
-                    register_rest_route(
-                        $namespace,
-                        $endpoint,
+                    $route_args = array(
                         array(
                             'callback' => $route['callback'],
                             'methods'  => $route['methods'],
                             'args'     => isset($route['args']) ? $route['args'] : array(),
                         )
+                    );
+                    if (isset($route['schema_callback'])) {
+                        $model_name = isset($route['schema_callback'][0])
+                            ? $route['schema_callback'][0]
+                            : '';
+                        $version = isset( $route['schema_callback'][1])
+                            ? $route['schema_callback'][1]
+                            : '';
+                        if (! empty($model_name) && ! empty($version)) {
+                            $route_args['schema'] = function () use ($model_name, $version) {
+                                return ModelRead::handle_schema_request(
+                                    $model_name,
+                                    $version
+                                );
+                            };
+                        }
+                    }
+                    register_rest_route(
+                        $namespace,
+                        $endpoint,
+                        $route_args
                     );
                 }
             }
@@ -355,7 +338,7 @@ class EED_Core_Rest_Api extends \EED_Module
      */
     protected function _get_model_route_data_for_version($version, $hidden_endpoint = false)
     {
-        $model_version_info = new \EventEspresso\core\libraries\rest_api\Model_Version_Info($version);
+        $model_version_info = new Model_Version_Info($version);
         $models_to_register = apply_filters(
             'FHEE__EED_Core_REST_API___register_model_routes',
             $model_version_info->models_for_requested_version()
@@ -366,6 +349,12 @@ class EED_Core_Rest_Api extends \EED_Module
         $model_routes = array();
         foreach ($models_to_register as $model_name => $model_classname) {
             $model = \EE_Registry::instance()->load_model($model_name);
+
+            //if this isn't a valid model then let's skip iterate to the next item in the loop.
+            if (! $model instanceof EEM_Base) {
+                continue;
+            }
+
             //yes we could just register one route for ALL models, but then they wouldn't show up in the index
             $plural_model_route = EEH_Inflector::pluralize_and_lower($model_name);
             $singular_model_route = $plural_model_route . '/(?P<id>\d+)';
@@ -381,6 +370,7 @@ class EED_Core_Rest_Api extends \EED_Module
                     '_links'          => array(
                         'self' => rest_url(EED_Core_Rest_Api::ee_api_namespace . $version . $singular_model_route),
                     ),
+                    'schema_callback' => array($model_name, $version)
                 ),
                 //						array(
                 //							'callback' => array(
@@ -410,7 +400,7 @@ class EED_Core_Rest_Api extends \EED_Module
             );
             //@todo: also handle  DELETE for a single item
             foreach ($model_version_info->relation_settings($model) as $relation_name => $relation_obj) {
-                $related_model_name_endpoint_part = EventEspresso\core\libraries\rest_api\controllers\model\Read::get_related_entity_name(
+                $related_model_name_endpoint_part = ModelRead::get_related_entity_name(
                     $relation_name,
                     $relation_obj
                 );

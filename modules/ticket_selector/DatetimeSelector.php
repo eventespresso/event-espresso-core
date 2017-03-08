@@ -32,6 +32,11 @@ class DatetimeSelector
     protected $datetimes;
 
     /**
+     * @var \EE_Datetime[] $unique_dates
+     */
+    protected $unique_dates;
+
+    /**
      * @var \EE_Ticket_Selector_Config $template_settings
      */
     protected $template_settings;
@@ -49,15 +54,23 @@ class DatetimeSelector
      * @param \EE_Event                  $event
      * @param \EE_Ticket[]               $tickets
      * @param \EE_Ticket_Selector_Config $template_settings
+     * @param string                     $date_format
+     * @param string                     $time_format
      * @throws \EE_Error
      */
-    public function __construct(\EE_Event $event, array $tickets, \EE_Ticket_Selector_Config $template_settings)
-    {
+    public function __construct(
+        \EE_Event $event,
+        array $tickets,
+        \EE_Ticket_Selector_Config $template_settings,
+        $date_format = 'Y-m-d',
+        $time_format = 'g:i a'
+    ) {
         $this->event = $event;
         $this->tickets = $tickets;
         $this->template_settings = $template_settings;
         $this->datetimes = $this->getAllDatetimesForAllTicket($tickets);
-        $this->active = $this->template_settings->showDatetimeSelector($this->datetimes);
+        $this->unique_dates = $this->getUniqueDatetimeOptions($date_format, $time_format);
+        $this->active = $this->template_settings->showDatetimeSelector($this->unique_dates);
     }
 
 
@@ -121,9 +134,8 @@ class DatetimeSelector
             if ( ! $datetime instanceof \EE_Datetime || ! in_array($datetime, $ticket_datetimes, true)) {
                 continue;
             }
-            $classes .= ' ee-ticket-datetimes-' . $datetime->date_range('Y_m_d', '-');
+            $classes .= ' ee-ticket-datetimes-' . $datetime->date_and_time_range('Y_m_d', 'H_i', '-', '_');
         }
-        $classes .= ' ee-hidden-ticket-tr';
         return $classes;
     }
 
@@ -131,41 +143,45 @@ class DatetimeSelector
 
     /**
      * @param string $date_format
-     * @return string
+     * @param string $time_format
+     * @return array
      * @throws \EE_Error
      */
-    public function getDatetimeSelector($date_format = 'Y-m-d') {
-        if ( ! $this->active) {
-            return '';
-        }
+    public function getUniqueDatetimeOptions($date_format = 'Y-m-d', $time_format = 'g:i a') {
         $datetime_options = array();
         foreach ($this->datetimes as $datetime) {
             if ( ! $datetime instanceof \EE_Datetime) {
                 continue;
             }
-            $desc = $datetime->name();
-            $desc .= ! empty($desc)
-                ? '&nbsp;' . $datetime->date_range($date_format)
-                : $datetime->date_range($date_format);
-            $datetime_options[$datetime->date_range('Y_m_d', '-')] = $desc;
+            $datetime_options[$datetime->date_and_time_range('Y_m_d', 'H_i', '-', '_')] =
+                $datetime->date_and_time_range($date_format, $time_format, ' - ');
+        }
+        return $datetime_options;
+    }
+
+
+
+    /**
+     * @return string
+     * @throws \EE_Error
+     */
+    public function getDatetimeSelector() {
+        if ( ! $this->active) {
+            return '';
         }
         $dropdown_selector = new \EE_Checkbox_Dropdown_Selector_Input(
-            $datetime_options,
+            $this->unique_dates,
             array(
                 'html_id'               => 'datetime-selector-' . $this->event->ID(),
                 'html_name'             => 'datetime_selector_' . $this->event->ID(),
                 'html_class'            => 'datetime-selector',
                 'select_button_text'       => '<span class="dashicons dashicons-calendar-alt"></span> '
-                                            . esc_html__('Select a Datetime', 'event_espresso'),
+                                            . esc_html__('Filter by Date', 'event_espresso'),
                 'other_html_attributes' => ' data-tkt_slctr_evt="' . $this->event->ID() . '"',
             )
         );
         return \EEH_HTML::div(
-            \EEH_HTML::div(
-                $dropdown_selector->get_html_for_input(),
-                '', 'select-wrap-dv'
-            )
-            . \EEH_HTML::br(),
+            $dropdown_selector->get_html_for_input(),
             '', 'datetime_selector-dv'
         );
     }

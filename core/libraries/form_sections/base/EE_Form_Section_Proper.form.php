@@ -109,7 +109,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
         if (isset($options_array['layout_strategy'])) {
             $this->_layout_strategy = $options_array['layout_strategy'];
         }
-        if ( ! $this->_layout_strategy) {
+        if (! $this->_layout_strategy) {
             $this->_layout_strategy = is_admin() ? new EE_Admin_Two_Column_Layout() : new EE_Two_Column_Layout();
         }
         $this->_layout_strategy->_construct_finalize($this);
@@ -126,6 +126,19 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
             add_action('admin_enqueue_scripts', array('EE_Form_Section_Proper', 'wp_enqueue_scripts'));
         }
         add_action('wp_footer', array($this, 'ensure_scripts_localized'), 1);
+
+        /**
+         * Gives other plugins a chance to hook in before construct finalize is called. The form probably doesn't
+         * yet have a parent form section. Since 4.9.32, when this action was introduced, this is the best place to
+         * add a subsection onto a form, assuming you don't care what the form section's name, HTML ID, or HTML name etc are.
+         * Also see AHEE__EE_Form_Section_Proper___construct_finalize__end
+         * @since 4.9.32
+         * @param EE_Form_Section_Proper $this before __construct is done, but all of its logic, except maybe calling
+         *                                      _construct_finalize has been done
+         * @param array $options_array options passed into the constructor
+         */
+        do_action('AHEE__EE_Form_Input_Base___construct__before_construct_finalize_called', $this, $options_array);
+
         if (isset($options_array['name'])) {
             $this->_construct_finalize(null, $options_array['name']);
         }
@@ -160,6 +173,17 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
                 );
             }
         }
+        /**
+         * Action performed just after form has been given a name (and HTML ID etc) and is fully constructed.
+         * If you have code that should modify the form and needs it and its subsections to have a name, HTML ID (or other attributes derived
+         * from the name like the HTML label id, etc), this is where it should be done.
+         * This might only happen just before displaying the form, or just before it receives form submission data.
+         * If you need to modify the form or its subsections before _construct_finalize is called on it (and we've
+         * ensured it has a name, HTML IDs, etc
+         * @param EE_Form_Section_Proper $this
+         * @param EE_Form_Section_Proper|null $parent_form_section
+         * @param string $name
+         */
         do_action('AHEE__EE_Form_Section_Proper___construct_finalize__end', $this, $parent_form_section, $name);
     }
 
@@ -238,7 +262,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
         if ($validate) {
             $this->_validate();
             //if it's invalid, we're going to want to re-display so remember what they submitted
-            if ( ! $this->is_valid()) {
+            if (! $this->is_valid()) {
                 $this->store_submitted_form_data_in_session();
             }
         }
@@ -334,7 +358,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      */
     public function populate_defaults($default_data)
     {
-        foreach ($this->subsections() as $subsection_name => $subsection) {
+        foreach ($this->subsections(false) as $subsection_name => $subsection) {
             if (isset($default_data[$subsection_name])) {
                 if ($subsection instanceof EE_Form_Input_Base) {
                     $subsection->set_default($default_data[$subsection_name]);
@@ -418,7 +442,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
     public function get_input($name, $require_construction_to_be_finalized = true)
     {
         $subsection = $this->get_subsection($name, $require_construction_to_be_finalized);
-        if ( ! $subsection instanceof EE_Form_Input_Base) {
+        if (! $subsection instanceof EE_Form_Input_Base) {
             throw new EE_Error(
                 sprintf(
                     __(
@@ -453,7 +477,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
     public function get_proper_subsection($name, $require_construction_to_be_finalized = true)
     {
         $subsection = $this->get_subsection($name, $require_construction_to_be_finalized);
-        if ( ! $subsection instanceof EE_Form_Section_Proper) {
+        if (! $subsection instanceof EE_Form_Section_Proper) {
             throw new EE_Error(
                 sprintf(
                     __("Subsection '%'s is not an instanceof EE_Form_Section_Proper on form '%s'", 'event_espresso'),
@@ -491,7 +515,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      */
     public function is_valid()
     {
-        if ( ! $this->has_received_submission()) {
+        if (! $this->has_received_submission()) {
             throw new EE_Error(
                 sprintf(
                     __(
@@ -501,14 +525,14 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
                 )
             );
         }
-        if ( ! parent::is_valid()) {
+        if (! parent::is_valid()) {
             return false;
         }
         // ok so no general errors to this entire form section.
         // so let's check the subsections, but only set errors if that hasn't been done yet
         $set_submission_errors = $this->submission_error_message() === '' ? true : false;
         foreach ($this->get_validatable_subsections() as $subsection) {
-            if ( ! $subsection->is_valid() || $subsection->get_validation_error_string() !== '') {
+            if (! $subsection->is_valid() || $subsection->get_validation_error_string() !== '') {
                 if ($set_submission_errors) {
                     $this->set_submission_error_message($subsection->get_validation_error_string());
                 }
@@ -527,7 +551,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      */
     protected function _set_default_name_if_empty()
     {
-        if ( ! $this->_name) {
+        if (! $this->_name) {
             $classname = get_class($this);
             $default_name = str_replace("EE_", "", $classname);
             $this->_name = $default_name;
@@ -757,7 +781,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      */
     public function ensure_scripts_localized()
     {
-        if ( ! EE_Form_Section_Proper::$_scripts_localized) {
+        if (! EE_Form_Section_Proper::$_scripts_localized) {
             $this->_enqueue_and_localize_form_js();
         }
     }
@@ -923,11 +947,19 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      * Consider using inputs() or subforms()
      * if you only want form inputs or proper form sections.
      *
+     * @param boolean $require_construction_to_be_finalized most client code should
+     *                                                      leave this as TRUE so that the inputs will be properly
+     *                                                      configured. However, some client code may be ok with
+     *                                                      construction finalize being called later
+     *                                                      (realizing that the subsections' html names might not be
+     *                                                      set yet, etc.)
      * @return EE_Form_Section_Proper[]
      */
-    public function subsections()
+    public function subsections($require_construction_to_be_finalized = true)
     {
-        $this->ensure_construct_finalized_called();
+        if ($require_construction_to_be_finalized) {
+            $this->ensure_construct_finalized_called();
+        }
         return $this->_subsections;
     }
 
@@ -1088,7 +1120,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      * @param array $inputs_to_hide
      * @throws \EE_Error
      */
-    public function hide($inputs_to_hide = array())
+    public function hide(array $inputs_to_hide = array())
     {
         foreach ($inputs_to_hide as $input_to_hide) {
             $input = $this->get_input($input_to_hide);
@@ -1122,7 +1154,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
     public function add_subsections($new_subsections, $subsection_name_to_target = null, $add_before = true)
     {
         foreach ($new_subsections as $subsection_name => $subsection) {
-            if ( ! $subsection instanceof EE_Form_Section_Base) {
+            if (! $subsection instanceof EE_Form_Section_Base) {
                 EE_Error::add_error(
                     sprintf(
                         __(
@@ -1264,7 +1296,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      */
     public function ensure_construct_finalized_called()
     {
-        if ( ! $this->_construction_finalized) {
+        if (! $this->_construction_finalized) {
             $this->_construct_finalize($this->_parent_section, $this->_name);
         }
     }

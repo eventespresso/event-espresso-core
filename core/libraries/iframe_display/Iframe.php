@@ -67,7 +67,7 @@ class Iframe
      *
      * @param string $title
      * @param string $content
-     * @throws \EE_Error
+     * @throws \DomainException
      */
     public function __construct( $title, $content )
     {
@@ -81,10 +81,13 @@ class Iframe
             apply_filters(
                 'FHEE___EventEspresso_core_libraries_iframe_display_Iframe__construct__default_css',
                 array(
+                    'site_theme'       => get_stylesheet_directory_uri() . DS
+                                          . 'style.css?ver=' . EVENT_ESPRESSO_VERSION,
                     'dashicons'        => includes_url( 'css/dashicons.min.css?ver=' . $wp_version ),
                     'espresso_default' => EE_GLOBAL_ASSETS_URL
                                           . 'css/espresso_default.css?ver=' . EVENT_ESPRESSO_VERSION,
-                )
+                ),
+                $this
             )
         );
         $this->addScripts(
@@ -94,21 +97,36 @@ class Iframe
                     'jquery'        => includes_url( 'js/jquery/jquery.js?ver=' . $wp_version ),
                     'espresso_core' => EE_GLOBAL_ASSETS_URL
                                        . 'scripts/espresso_core.js?ver=' . EVENT_ESPRESSO_VERSION,
-                )
+                ),
+                $this
             )
         );
+        if (
+            apply_filters(
+                'FHEE___EventEspresso_core_libraries_iframe_display_Iframe__construct__load_default_theme_stylesheet',
+                false
+            )
+        ) {
+            $this->addStylesheets(
+                apply_filters(
+                    'FHEE___EventEspresso_core_libraries_iframe_display_Iframe__construct__default_theme_stylesheet',
+                    array('default_theme_stylesheet' => get_stylesheet_uri()),
+                    $this
+                )
+            );
+        }
     }
 
 
 
     /**
      * @param string $title
-     * @throws \EE_Error
+     * @throws \DomainException
      */
     public function setTitle( $title )
     {
         if ( empty( $title ) ) {
-            throw new \EE_Error(
+            throw new \DomainException(
                 esc_html__( 'You must provide a page title in order to create an iframe.', 'event_espresso' )
             );
         }
@@ -119,12 +137,12 @@ class Iframe
 
     /**
      * @param string $content
-     * @throws \EE_Error
+     * @throws \DomainException
      */
     public function setContent( $content )
     {
         if ( empty( $content ) ) {
-            throw new \EE_Error(
+            throw new \DomainException(
                 esc_html__( 'You must provide content in order to create an iframe.', 'event_espresso' )
             );
         }
@@ -145,12 +163,12 @@ class Iframe
 
     /**
      * @param array $stylesheets
-     * @throws \EE_Error
+     * @throws \DomainException
      */
     public function addStylesheets( array $stylesheets )
     {
         if ( empty( $stylesheets ) ) {
-            throw new \EE_Error(
+            throw new \DomainException(
                 esc_html__(
                     'A non-empty array of URLs, is required to add a CSS stylesheet to an iframe.',
                     'event_espresso'
@@ -167,12 +185,12 @@ class Iframe
     /**
      * @param array $scripts
      * @param bool  $add_to_header
-     * @throws \EE_Error
+     * @throws \DomainException
      */
     public function addScripts( array $scripts, $add_to_header = false )
     {
         if ( empty( $scripts ) ) {
-            throw new \EE_Error(
+            throw new \DomainException(
                 esc_html__(
                     'A non-empty array of URLs, is required to add Javascript to an iframe.',
                     'event_espresso'
@@ -193,12 +211,12 @@ class Iframe
     /**
      * @param array  $vars
      * @param string $var_name
-     * @throws \EE_Error
+     * @throws \DomainException
      */
     public function addLocalizedVars( array $vars, $var_name = 'eei18n' )
     {
         if ( empty( $vars ) ) {
-            throw new \EE_Error(
+            throw new \DomainException(
                 esc_html__(
                     'A non-empty array of vars, is required to add localized Javascript vars to an iframe.',
                     'event_espresso'
@@ -220,12 +238,16 @@ class Iframe
 
 
     /**
-     * @return void
+     * @param string $utm_content
      * @throws \DomainException
      */
-    public function display()
+    public function display($utm_content = '')
     {
-        $this->content .= \EEH_HTML::br() . \EEH_Template::powered_by_event_espresso();
+        $this->content .= \EEH_Template::powered_by_event_espresso(
+            '',
+            '',
+            ! empty($utm_content) ? array('utm_content' => $utm_content) : array()
+        );
         \EE_System::do_not_cache();
         echo $this->getTemplate();
         exit;
@@ -239,45 +261,43 @@ class Iframe
      */
     public function getTemplate()
     {
-        $template = __DIR__ . DIRECTORY_SEPARATOR . 'iframe_wrapper.template.php';
-        if ( ! is_readable($template)) {
-            throw new \DomainException(
-                esc_html__(
-                    'Invalid, unreadable, or missing file.',
-                    'event_espresso'
-                )
-            );
-        }
         return \EEH_Template::display_template(
-            $template,
+            __DIR__ . DIRECTORY_SEPARATOR . 'iframe_wrapper.template.php',
             array(
                 'title'             => apply_filters(
                     'FHEE___EventEspresso_core_libraries_iframe_display_Iframe__getTemplate__title',
-                    $this->title
+                    $this->title,
+                    $this
                 ),
                 'content'           => apply_filters(
                     'FHEE___EventEspresso_core_libraries_iframe_display_Iframe__getTemplate__content',
-                    $this->content
+                    $this->content,
+                    $this
                 ),
                 'enqueue_wp_assets' => apply_filters(
                     'FHEE___EventEspresso_core_libraries_iframe_display_Iframe__getTemplate__enqueue_wp_assets',
-                    $this->enqueue_wp_assets
+                    $this->enqueue_wp_assets,
+                    $this
                 ),
                 'css'               => (array)apply_filters(
                     'FHEE___EventEspresso_core_libraries_iframe_display_Iframe__getTemplate__css_urls',
-                    $this->css
+                    $this->css,
+                    $this
                 ),
                 'header_js'         => (array)apply_filters(
                     'FHEE___EventEspresso_core_libraries_iframe_display_Iframe__getTemplate__header_js_urls',
-                    $this->header_js
+                    $this->header_js,
+                    $this
                 ),
                 'footer_js'         => (array)apply_filters(
                     'FHEE___EventEspresso_core_libraries_iframe_display_Iframe__getTemplate__footer_js_urls',
-                    $this->footer_js
+                    $this->footer_js,
+                    $this
                 ),
                 'eei18n'            => apply_filters(
                     'FHEE___EventEspresso_core_libraries_iframe_display_Iframe__getTemplate__eei18n_js_strings',
-                    \EE_Registry::localize_i18n_js_strings() . $this->localizeJsonVars()
+                    \EE_Registry::localize_i18n_js_strings() . $this->localizeJsonVars(),
+                    $this
                 ),
                 'notices'           => \EEH_Template::display_template(
                     EE_TEMPLATES . 'espresso-ajax-notices.template.php',
@@ -285,6 +305,7 @@ class Iframe
                     true
                 ),
             ),
+            true,
             true
         );
     }

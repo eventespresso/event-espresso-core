@@ -149,7 +149,7 @@ class Base {
 		if( $this->_debug_mode && is_array( $this->_debug_info ) ) {
 			foreach( $this->_debug_info  as $debug_key => $debug_info ) {
 				if( is_array( $debug_info ) ) {
-					$debug_info = json_encode( $debug_info );
+					$debug_info = wp_json_encode( $debug_info );
 				}
 				$headers[ 'X-EE4-Debug-' . ucwords( $debug_key ) ] = $debug_info;
 			}

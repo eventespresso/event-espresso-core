@@ -7,7 +7,9 @@
 }
 
 .tkt-slctr-tbl {
-    width:99%;
+    border-collapse: collapse;
+	margin-bottom: 1.5em;
+    width: 99%;
 }
 
 /* span.ui-icon { float:none !important; }*/

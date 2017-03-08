@@ -20,8 +20,12 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  */
 class EE_System_Test_With_Addons extends EE_UnitTestCase{
 
+    protected $_table_analysis;
+    protected $_table_manager;
 	public function __construct($name = NULL, array $data = array(), $dataName = '') {
 		$this->_main_file_path = EE_TESTS_DIR . 'mocks/addons/eea-new-addon/eea-new-addon.php';
+        $this->_table_analysis = new \EventEspresso\core\services\database\TableAnalysis();
+        $this->_table_manager = new \EventEspresso\core\services\database\TableManager( $this->_table_analysis );
 		parent::__construct($name, $data, $dataName);
 	}
 	/**
@@ -60,6 +64,12 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 	 * @var string
 	 */
 	protected $_pretend_addon_previous_version = '0.0.1.dev.000';
+
+    /**
+     * Names of the temporary tables added by the add-on
+     * @var array
+     */
+    protected $_temp_tables_added_by_addon = array( 'esp_new_addon_thing', 'esp_new_addon_attendee_meta' );
 	/**
 	 * tests that we're correctly detecting activation or upgrades in registered
 	 * addons.
@@ -377,9 +387,9 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 		//implicit commits. But I like allowing re-defining the tables on test
 		//test_detect_activations_or_upgrades__new_install_on_core_and_addon_simultaneously
 		//so we can confirm a notices are sent when attempting to redefine an addon table
-		if( in_array( $table_name, array( 'esp_new_addon_thing', 'esp_new_addon_attendee_meta' ) ) ){
+		if( in_array( $table_name, $this->_temp_tables_added_by_addon  )){
 			//it's not altering. it's ok to allow this
-			return FALSE;
+			return false;
 		}else{
 			return $short_circuit;
 		}
@@ -402,6 +412,8 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 			$DMSs_available = EE_Data_Migration_Manager::reset()->get_all_data_migration_scripts_available();
 			$this->assertArrayNotHasKey('EE_DMS_New_Addon_1_0_0',$DMSs_available);
 			$this->_stop_pretending_addon_hook_time();
+            //drop all the temporary tables we created during this test, because each subsequent test expects them to be gone
+            $this->_table_manager->dropTables( $this->_temp_tables_added_by_addon );
 		}
 		parent::tearDown();
 	}

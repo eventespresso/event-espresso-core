@@ -586,14 +586,9 @@ abstract class EE_Base_Class
         }
         $field_obj = $this->get_model()->field_settings_for($fieldname);
         if ($field_obj instanceof EE_Model_Field_Base) {
-            /**
-             * maybe this is EE_Datetime_Field.  If so we need to make sure timezone and
-             * formats are correct.
-             */
+            // If this is an EE_Datetime_Field we need to make sure timezone, formats, and output are correct
             if ($field_obj instanceof EE_Datetime_Field) {
-                $field_obj->set_timezone($this->_timezone);
-                $field_obj->set_date_format($this->_dt_frmt, $pretty);
-                $field_obj->set_time_format($this->_tm_frmt, $pretty);
+                $this->_prepare_datetime_field($field_obj, $pretty, $extra_cache_ref);
             }
             if ( ! isset($this->_fields[$fieldname])) {
                 $this->_fields[$fieldname] = null;
@@ -605,6 +600,38 @@ abstract class EE_Base_Class
             return $value;
         }
         return null;
+    }
+
+
+
+    /**
+     * set timezone, formats, and output for EE_Datetime_Field objects
+     *
+     * @param \EE_Datetime_Field $datetime_field
+     * @param bool               $pretty
+     * @param null $date_or_time
+     * @return void
+     * @throws \EE_Error
+     */
+    protected function _prepare_datetime_field(
+        EE_Datetime_Field $datetime_field,
+        $pretty = false,
+        $date_or_time = null
+    ) {
+        $datetime_field->set_timezone($this->_timezone);
+        $datetime_field->set_date_format($this->_dt_frmt, $pretty);
+        $datetime_field->set_time_format($this->_tm_frmt, $pretty);
+        //set the output returned
+        switch ($date_or_time) {
+            case 'D' :
+                $datetime_field->set_date_time_output('date');
+                break;
+            case 'T' :
+                $datetime_field->set_date_time_output('time');
+                break;
+            default :
+                $datetime_field->set_date_time_output();
+        }
     }
 
 
@@ -1126,46 +1153,17 @@ abstract class EE_Base_Class
      * @param string   $tm_frmt      Same as above except this is for time format
      * @param string   $date_or_time if NULL then both are returned, otherwise "D" = only date and "T" = only time.
      * @param  boolean $echo         Whether the dtt is echoing using pretty echoing or just returned using vanilla get
-     * @return void|string|bool|EE_Error string on success, FALSE on fail, or EE_Error Exception is thrown
+     * @return string|bool|EE_Error string on success, FALSE on fail, or EE_Error Exception is thrown
      *                               if field is not a valid dtt field, or void if echoing
      * @throws \EE_Error
      */
     protected function _get_datetime($field_name, $dt_frmt = '', $tm_frmt = '', $date_or_time = '', $echo = false)
     {
-        $in_dt_frmt = empty($dt_frmt) ? $this->_dt_frmt : $dt_frmt;
-        $in_tm_frmt = empty($tm_frmt) ? $this->_tm_frmt : $tm_frmt;
-        //validate field for datetime and returns field settings if valid.
-        $field = $this->_get_dtt_field_settings($field_name);
-        //clear cached property if either formats are not null.
-        if ($dt_frmt !== null || $tm_frmt !== null) {
-            $this->_clear_cached_property($field_name);
-            //reset format properties because they are used in get()
-            $this->_dt_frmt = $in_dt_frmt;
-            $this->_tm_frmt = $in_tm_frmt;
-        }
-        if ($echo) {
-            $field->set_pretty_date_format($in_dt_frmt);
-        } else {
-            $field->set_date_format($in_dt_frmt);
-        }
-        if ($echo) {
-            $field->set_pretty_time_format($in_tm_frmt);
-        } else {
-            $field->set_time_format($in_tm_frmt);
-        }
-        //set timezone in field object
-        $field->set_timezone($this->_timezone);
-        //set the output returned
-        switch ($date_or_time) {
-            case 'D' :
-                $field->set_date_time_output('date');
-                break;
-            case 'T' :
-                $field->set_date_time_output('time');
-                break;
-            default :
-                $field->set_date_time_output();
-        }
+        // clear cached property
+        $this->_clear_cached_property($field_name);
+        //reset format properties because they are used in get()
+        $this->_dt_frmt = $dt_frmt !== '' ? $dt_frmt : $this->_dt_frmt;
+        $this->_tm_frmt = $tm_frmt !== '' ? $tm_frmt : $this->_tm_frmt;
         if ($echo) {
             $this->e($field_name, $date_or_time);
             return '';
@@ -1185,7 +1183,7 @@ abstract class EE_Base_Class
      * @return string            datetime value formatted
      * @throws \EE_Error
      */
-    public function get_date($field_name, $format = null)
+    public function get_date($field_name, $format = '')
     {
         return $this->_get_datetime($field_name, $format, null, 'D');
     }
@@ -1194,10 +1192,10 @@ abstract class EE_Base_Class
 
     /**
      * @param      $field_name
-     * @param null $format
+     * @param string $format
      * @throws \EE_Error
      */
-    public function e_date($field_name, $format = null)
+    public function e_date($field_name, $format = '')
     {
         $this->_get_datetime($field_name, $format, null, 'D', true);
     }
@@ -1214,7 +1212,7 @@ abstract class EE_Base_Class
      * @return string             datetime value formatted
      * @throws \EE_Error
      */
-    public function get_time($field_name, $format = null)
+    public function get_time($field_name, $format = '')
     {
         return $this->_get_datetime($field_name, null, $format, 'T');
     }
@@ -1223,10 +1221,10 @@ abstract class EE_Base_Class
 
     /**
      * @param      $field_name
-     * @param null $format
+     * @param string $format
      * @throws \EE_Error
      */
-    public function e_time($field_name, $format = null)
+    public function e_time($field_name, $format = '')
     {
         $this->_get_datetime($field_name, null, $format, 'T', true);
     }
@@ -1244,7 +1242,7 @@ abstract class EE_Base_Class
      * @return string             datetime value formatted
      * @throws \EE_Error
      */
-    public function get_datetime($field_name, $dt_frmt = null, $tm_frmt = null)
+    public function get_datetime($field_name, $dt_frmt = '', $tm_frmt = '')
     {
         return $this->_get_datetime($field_name, $dt_frmt, $tm_frmt);
     }
@@ -1252,12 +1250,12 @@ abstract class EE_Base_Class
 
 
     /**
-     * @param      $field_name
-     * @param null $dt_frmt
-     * @param null $tm_frmt
+     * @param string $field_name
+     * @param string $dt_frmt
+     * @param string $tm_frmt
      * @throws \EE_Error
      */
-    public function e_datetime($field_name, $dt_frmt = null, $tm_frmt = null)
+    public function e_datetime($field_name, $dt_frmt = '', $tm_frmt = '')
     {
         $this->_get_datetime($field_name, $dt_frmt, $tm_frmt, null, true);
     }
@@ -1274,7 +1272,7 @@ abstract class EE_Base_Class
      * @throws \EE_Error
      *                           field name.
      */
-    public function get_i18n_datetime($field_name, $format = null)
+    public function get_i18n_datetime($field_name, $format = '')
     {
         $format = empty($format) ? $this->_dt_frmt . ' ' . $this->_tm_frmt : $format;
         return date_i18n(

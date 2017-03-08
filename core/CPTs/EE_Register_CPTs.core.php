@@ -451,7 +451,7 @@ class EE_Register_CPTs {
 		'capability_type' => 'post',
 		'map_meta_cap' => true,
 		'has_archive' => true,
-		'hierarchical' => true,
+		'hierarchical' => false,
 		'menu_position' => null,
 		'supports' => array( 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'custom-fields', 'comments' )
 	  );

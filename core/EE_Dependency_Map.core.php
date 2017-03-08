@@ -393,33 +393,43 @@ class EE_Dependency_Map {
 			),
 			'EE_Data_Migration_Class_Base' => array(
 				'EventEspresso\core\services\database\TableAnalysis' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\database\TableManager' => EE_Dependency_Map::load_from_cache,
 			),
 			'EE_DMS_Core_4_1_0' => array(
 				'EventEspresso\core\services\database\TableAnalysis' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\database\TableManager' => EE_Dependency_Map::load_from_cache,
 			),
 			'EE_DMS_Core_4_2_0' => array(
 				'EventEspresso\core\services\database\TableAnalysis' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\database\TableManager' => EE_Dependency_Map::load_from_cache,
 			),
 			'EE_DMS_Core_4_3_0' => array(
 				'EventEspresso\core\services\database\TableAnalysis' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\database\TableManager' => EE_Dependency_Map::load_from_cache,
 			),
 			'EE_DMS_Core_4_4_0' => array(
 				'EventEspresso\core\services\database\TableAnalysis' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\database\TableManager' => EE_Dependency_Map::load_from_cache,
 			),
 			'EE_DMS_Core_4_5_0' => array(
 				'EventEspresso\core\services\database\TableAnalysis' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\database\TableManager' => EE_Dependency_Map::load_from_cache,
 			),
 			'EE_DMS_Core_4_6_0' => array(
 				'EventEspresso\core\services\database\TableAnalysis' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\database\TableManager' => EE_Dependency_Map::load_from_cache,
 			),
 			'EE_DMS_Core_4_7_0' => array(
 				'EventEspresso\core\services\database\TableAnalysis' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\database\TableManager' => EE_Dependency_Map::load_from_cache,
 			),
 			'EE_DMS_Core_4_8_0' => array(
 				'EventEspresso\core\services\database\TableAnalysis' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\database\TableManager' => EE_Dependency_Map::load_from_cache,
 			),
 			'EE_DMS_Core_4_9_0' => array(
 				'EventEspresso\core\services\database\TableAnalysis' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\database\TableManager' => EE_Dependency_Map::load_from_cache,
 			),
 		);
 	}
