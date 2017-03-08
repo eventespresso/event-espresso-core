@@ -980,6 +980,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
 	 */
 	public static function deregister( $addon_name = null ) {
 		if ( isset( self::$_settings[ $addon_name ], self::$_settings[$addon_name]['class_name'] ) ) {
+		    do_action('AHEE__EE_Register_Addon__deregister__before', $addon_name);
 			$class_name = self::$_settings[ $addon_name ]['class_name'];
 			if ( ! empty( self::$_settings[ $addon_name ]['dms_paths'] ) ) {
 				// setup DMS
@@ -1045,6 +1046,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
 				array( EE_Registry::instance()->addons->{$class_name}, 'initialize_db_if_no_migrations_required' )
 			);
 			unset( EE_Registry::instance()->addons->{$class_name}, self::$_settings[ $addon_name ] );
+            do_action('AHEE__EE_Register_Addon__deregister__after', $addon_name);
 		}
 	}
 
