@@ -1262,7 +1262,7 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 
 
     /**
-     * @deprecated
+     * @deprecated 4.6.0
      * @param string $type one of the constants on EEM_Line_Item
      * @return EE_Line_Item[]
      */
@@ -1276,7 +1276,7 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 
 
     /**
-     * @deprecated
+     * @deprecated 4.6.0
      * @param string $type like one of the EEM_Line_Item::type_*
      * @return EE_Line_Item
      */
