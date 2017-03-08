@@ -58,6 +58,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page
         $this->_admin_page_title = EE_MAINTENANCE_LABEL;
         $this->_labels = array(
             'buttons' => array(
+                'reset_reservations' => esc_html__('Reset Ticket and Datetime Reserved Counts', 'event_espresso'),
                 'reset_capabilities' => esc_html__('Reset Event Espresso Capabilities', 'event_espresso'),
             ),
         );
@@ -80,6 +81,11 @@ class Maintenance_Admin_Page extends EE_Admin_Page
             'system_status'                       => array(
                 'func'       => '_system_status',
                 'capability' => 'manage_options',
+            ),
+            'download_system_status' => array(
+                'func'       => '_download_system_status',
+                'capability' => 'manage_options',
+                'noheader'   => true,
             ),
             'send_migration_crash_report'         => array(
                 'func'       => '_send_migration_crash_report',
@@ -113,6 +119,11 @@ class Maintenance_Admin_Page extends EE_Admin_Page
             ),
             'rerun_migration_from_ee3'            => array(
                 'func'       => '_rerun_migration_from_ee3',
+                'capability' => 'manage_options',
+                'noheader'   => true,
+            ),
+            'reset_reservations'                  => array(
+                'func'       => '_reset_reservations',
                 'capability' => 'manage_options',
                 'noheader'   => true,
             ),
@@ -345,11 +356,11 @@ class Maintenance_Admin_Page extends EE_Admin_Page
 
 
     /**
-     * changes the maintenance level, provided there are still no migration scripts that shoudl run
+     * changes the maintenance level, provided there are still no migration scripts that should run
      */
     public function _change_maintenance_level()
     {
-        $new_level = intval($this->_req_data['maintenance_mode_level']);
+        $new_level = absint($this->_req_data['maintenance_mode_level']);
         if ( ! EE_Data_Migration_Manager::instance()->check_for_applicable_data_migration_scripts()) {
             EE_Maintenance_Mode::instance()->set_maintenance_level($new_level);
             $success = true;
@@ -366,10 +377,19 @@ class Maintenance_Admin_Page extends EE_Admin_Page
      * a tab with options for resetting and/or deleting EE data
      *
      * @throws \EE_Error
+     * @throws \DomainException
      */
     public function _data_reset_and_delete()
     {
         $this->_template_path = EE_MAINTENANCE_TEMPLATE_PATH . 'ee_data_reset_and_delete.template.php';
+        $this->_template_args['reset_reservations_button'] = $this->get_action_link_or_button(
+            'reset_reservations',
+            'reset_reservations',
+            array(),
+            'button button-primary',
+            '',
+            false
+        );
         $this->_template_args['reset_capabilities_button'] = $this->get_action_link_or_button(
             'reset_capabilities',
             'reset_capabilities',
@@ -392,6 +412,28 @@ class Maintenance_Admin_Page extends EE_Admin_Page
             true
         );
         $this->display_admin_page_with_sidebar();
+    }
+
+
+
+    protected function _reset_reservations()
+    {
+        if(\EED_Ticket_Sales_Monitor::reset_reservation_counts()) {
+            EE_Error::add_success(
+                __(
+                    'Ticket and datetime reserved counts have been successfully reset.',
+                    'event_espresso'
+                )
+            );
+        } else {
+            EE_Error::add_success(
+                __(
+                    'Ticket and datetime reserved counts were correct and did not need resetting.',
+                    'event_espresso'
+                )
+            );
+        }
+        $this->_redirect_after_action(true, '', '', array('action' => 'data_reset'), true);
     }
 
 
@@ -426,9 +468,29 @@ class Maintenance_Admin_Page extends EE_Admin_Page
     {
         $this->_template_path = EE_MAINTENANCE_TEMPLATE_PATH . 'ee_system_stati_page.template.php';
         $this->_template_args['system_stati'] = EEM_System_Status::instance()->get_system_stati();
+        $this->_template_args['download_system_status_url'] = EE_Admin_Page::add_query_args_and_nonce(
+            array(
+                'action' => 'download_system_status',
+            ),
+            EE_MAINTENANCE_ADMIN_URL
+        );
         $this->_template_args['admin_page_content'] = EEH_Template::display_template($this->_template_path,
             $this->_template_args, true);
         $this->display_admin_page_with_sidebar();
+    }
+
+    /**
+     * Downloads an HTML file of the system status that can be easily stored or emailed
+     */
+    public function _download_system_status()
+    {
+        $status_info = EEM_System_Status::instance()->get_system_stati();
+        header( 'Content-Disposition: attachment' );
+        header( "Content-Disposition: attachment; filename=system_status_" . sanitize_key( site_url() ) . ".html" );
+        echo "<style>table{border:1px solid darkgrey;}td{vertical-align:top}</style>";
+        echo "<h1>System Information for " . site_url() . "</h1>";
+        echo EEH_Template::layout_array_as_table( $status_info );
+        die;
     }
 
 

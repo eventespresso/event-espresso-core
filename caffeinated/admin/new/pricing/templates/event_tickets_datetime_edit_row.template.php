@@ -33,9 +33,15 @@
 		<input type="text" name="<?php echo $event_datetimes_name; ?>[<?php echo $dtt_row; ?>][DTT_reg_limit]" id="event-datetime-DTT_reg_limit-<?php echo $dtt_row; ?>" class="ee-small-text-inp event-datetime-DTT_reg_limit ee-numeric" value="<?php echo $DTT_reg_limit; ?>">
 	</td>
 	<td>
-		<span  data-context="datetime" data-datetime-row="<?php echo $dtt_row; ?>" class="datetime-tickets-sold ee-numeric"><?php echo $dtt_sold; ?></span>
+		<span data-context="datetime" data-datetime-row="<?php echo $dtt_row; ?>" class="datetime-tickets-sold ee-numeric"><?php echo $dtt_sold; ?></span>
 	</td>
-	<td>
+    <?php if (WP_DEBUG): // for now we are only showing reserved counts if WP_DEBUG is on?>
+        <td>
+            <span class="datetime-tickets-reserved ee-numeric"><?php echo $dtt_reserved; ?></span>
+        </td>
+    <?php endif; ?>
+
+    <td>
 		<div class="ee-editing-container<?php echo $edit_dtt_expanded; ?>">
 			<span data-datetime-row="<?php echo $dtt_row; ?>" data-context="datetime" class="ticket-icon dashicons dashicons-admin-generic clickable"></span>
 		</div>

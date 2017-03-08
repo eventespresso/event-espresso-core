@@ -418,8 +418,8 @@ class EE_Cron_Tasks extends EE_Base
                     continue;
                 }
                 // let's simulate an IPN here which will trigger any notifications that need to go out
-                $payment_processor->update_txn_based_on_payment($transaction, $transaction->last_payment(), true,
-                    true);
+                $payment_processor->update_txn_based_on_payment($transaction, $transaction->last_payment(), true, true);
+                do_action('AHEE__EE_Cron_Tasks__finalize_abandoned_transactions__abandoned_transaction', $transaction);
             }
             unset(self::$_abandoned_transactions[$TXN_ID]);
         }

@@ -11,6 +11,7 @@
 /** @var string $time_format */
 /** @var string $ticket_row_html */
 /** @var string $anchor_id */
+/** @var string $hidden_inputs */
 /** @var string $datetime_selector */
 /** @var EE_Ticket[] $tickets */
 /** @var EE_Event $event */
@@ -88,11 +89,8 @@
 	}
 	?>
 
-	<input type="hidden" name="noheader" value="true" />
-	<input type="hidden" name="tkt-slctr-return-url-<?php echo $EVT_ID ?>" value="<?php echo EEH_URL::current_url() . $anchor_id; ?>" />
-	<input type="hidden" name="tkt-slctr-rows-<?php echo $EVT_ID; ?>" value="<?php echo $row - 1; ?>" />
-	<input type="hidden" name="tkt-slctr-max-atndz-<?php echo $EVT_ID; ?>" value="<?php echo $max_atndz; ?>" />
-	<input type="hidden" name="tkt-slctr-event-id" value="<?php echo $EVT_ID; ?>" />
+    <?php echo $hidden_inputs; ?>
+
 
 <?php
 if ( $max_atndz > 0 ) {
