@@ -45,6 +45,8 @@ class AsciiOnlyTest extends \EE_UnitTestCase
     }
 
 
+
+
 }
 // End of file EmojiRemovalTest.php
 // Location: tests\testcases\core\services\formatters/EmojiRemovalTest.php

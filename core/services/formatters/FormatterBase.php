@@ -30,10 +30,12 @@ abstract class FormatterBase implements FormatterInterface
         if (! is_array($input)) {
             throw new InvalidDataTypeException('input', $input, 'array');
         }
+        //we can use $this inside the closure in PHP 5.3, so pass in a variable pointing to this instead
+        $formatter = $this;
         array_walk_recursive(
             $input,
-            function (&$value, $key) {
-                $value = $this->format($value);
+            function (&$value, $key) use ($formatter) {
+                $value = $formatter->format($value);
             }
         );
         return $input;
