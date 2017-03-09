@@ -28,7 +28,7 @@ class BasicCacheManager implements CacheManagerInterface
      *
      * @type boolean
      */
-    const DEBUG = true;
+    const DEBUG = false;
 
     /**
      * @var CacheStorageInterface $cache_storage
