@@ -199,10 +199,18 @@ class EED_Ticket_Sales_Monitor extends EED_Module
                 }
             }
         }
-        EED_Ticket_Sales_Monitor::release_reservations_for_tickets(
-            \EEM_Ticket::instance()->get_tickets_with_IDs($expired_ticket_IDs),
-            $valid_ticket_line_items
-        );
+        if (! empty($expired_ticket_IDs)) {
+            EED_Ticket_Sales_Monitor::release_reservations_for_tickets(
+                \EEM_Ticket::instance()->get_tickets_with_IDs($expired_ticket_IDs),
+                $valid_ticket_line_items
+            );
+            // let's get rid of expired line items so that they can't interfere with tracking
+            add_action(
+                'shutdown',
+                array('EED_Ticket_Sales_Monitor', 'clear_expired_line_items_with_no_transaction'),
+                999
+            );
+        }
     }
 
 
@@ -934,6 +942,30 @@ class EED_Ticket_Sales_Monitor extends EED_Module
             }
         }
         return $total_tickets_released;
+    }
+
+
+
+    /********************************** SHUTDOWN  **********************************/
+
+
+
+    /**
+     * @return false|int
+     * @throws \EE_Error
+     */
+    public static function clear_expired_line_items_with_no_transaction()
+    {
+        /** @type WPDB $wpdb */
+        global $wpdb;
+        return $wpdb->query(
+            $wpdb->prepare(
+                'DELETE FROM ' . EEM_Line_Item::instance()->table() . '
+                WHERE TXN_ID = 0 AND LIN_timestamp <= %s',
+                // use GMT time because that's what LIN_timestamps are in
+                date('Y-m-d H:i:s', time() - EE_Registry::instance()->SSN->lifespan())
+            )
+        );
     }
 
 }
