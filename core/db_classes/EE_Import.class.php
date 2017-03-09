@@ -240,38 +240,42 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		return;
 	}
 
-	/**
-	 *	Given an array of data (usually from a CSV import) attempts to save that data to the db.
-	 *	If $model_name ISN'T provided, assumes that this is a 3d array, with toplevel keys being model names,
-	 *	next level being numeric indexes adn each value representing a model object, and the last layer down
-	 *	being keys of model fields and their proposed values.
-	 *	If $model_name IS provided, assumes a 2d array of the bottom two layers previously mentioned.
-	 *	If the CSV data says (in the metadata row) that it's from the SAME database,
-	 *	we treat the IDs in the CSV as the normal IDs, and try to update those records. However, if those
-	 *	IDs DON'T exist in the database, they're treated as temporary IDs,
-	 *	which can used elsewhere to refer to the same object. Once an item
-	 *	with a temporary ID gets inserted, we record its mapping from temporary
-	 *	ID to real ID, and use the real ID in place of the temporary ID
-	 *	when that temporary ID was used as a foreign key.
-	 *	If the CSV data says (in the metadata again) that it's from a DIFFERENT database,
-	 *	we treat all the IDs in the CSV as temporary ID- eg, if the CSV specifies an event with
-	 *	ID 1, and the database already has an event with ID 1, we assume that's just a coincidence,
-	 *	and insert a new event, and map it's temporary ID of 1 over to its new real ID.
-	 *	An important exception are non-auto-increment primary keys. If one entry in the
-	 *	CSV file has the same ID as one in the DB, we assume they are meant to be
-	 *	the same item, and instead update the item in the DB with that same ID.
-	 *	Also note, we remember the mappings permanently. So the 2nd, 3rd, and 10000th
-	 *	time you import a CSV from a different site, we remember their mappings, and
-	 * will try to update the item in the DB instead of inserting another item (eg
-	 * if we previously imported an event with temporary ID 1, and then it got a
-	 * real ID of 123, we remember that. So the next time we import an event with
-	 * temporary ID, from the same site, we know that it's real ID is 123, and will
-	 * update that event, instead of adding a new event).
-	 *		  @access public
-	 *			@param array $csv_data_array - the array containing the csv data produced from EE_CSV::import_csv_to_model_data_array()
-	 *			@param array $fields_to_save - an array containing the csv column names as keys with the corresponding db table fields they will be saved to
-	 *			@return TRUE on success, FALSE on fail
-	 */
+
+
+     /**
+      *    Given an array of data (usually from a CSV import) attempts to save that data to the db.
+      *    If $model_name ISN'T provided, assumes that this is a 3d array, with toplevel keys being model names,
+      *    next level being numeric indexes adn each value representing a model object, and the last layer down
+      *    being keys of model fields and their proposed values.
+      *    If $model_name IS provided, assumes a 2d array of the bottom two layers previously mentioned.
+      *    If the CSV data says (in the metadata row) that it's from the SAME database,
+      *    we treat the IDs in the CSV as the normal IDs, and try to update those records. However, if those
+      *    IDs DON'T exist in the database, they're treated as temporary IDs,
+      *    which can used elsewhere to refer to the same object. Once an item
+      *    with a temporary ID gets inserted, we record its mapping from temporary
+      *    ID to real ID, and use the real ID in place of the temporary ID
+      *    when that temporary ID was used as a foreign key.
+      *    If the CSV data says (in the metadata again) that it's from a DIFFERENT database,
+      *    we treat all the IDs in the CSV as temporary ID- eg, if the CSV specifies an event with
+      *    ID 1, and the database already has an event with ID 1, we assume that's just a coincidence,
+      *    and insert a new event, and map it's temporary ID of 1 over to its new real ID.
+      *    An important exception are non-auto-increment primary keys. If one entry in the
+      *    CSV file has the same ID as one in the DB, we assume they are meant to be
+      *    the same item, and instead update the item in the DB with that same ID.
+      *    Also note, we remember the mappings permanently. So the 2nd, 3rd, and 10000th
+      *    time you import a CSV from a different site, we remember their mappings, and
+      * will try to update the item in the DB instead of inserting another item (eg
+      * if we previously imported an event with temporary ID 1, and then it got a
+      * real ID of 123, we remember that. So the next time we import an event with
+      * temporary ID, from the same site, we know that it's real ID is 123, and will
+      * update that event, instead of adding a new event).
+      *
+      * @access public
+      * @param array $csv_data_array - the array containing the csv data produced from EE_CSV::import_csv_to_model_data_array()
+      * @param array $fields_to_save - an array containing the csv column names as keys with the corresponding db table fields they will be saved to
+      * @return TRUE on success, FALSE on fail
+      * @throws \EE_Error
+      */
 	public function save_csv_data_array_to_db( $csv_data_array, $model_name = FALSE ) {
 
 
@@ -334,8 +338,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		}
 
 		//lastly, we need to update the datetime and ticket sold amounts
-		//as those may ahve been affected by this
-		EEM_Datetime::instance()->update_sold( EEM_Datetime::instance()->get_all() );
+		//as those may have been affected by this
 		EEM_Ticket::instance()->update_tickets_sold(EEM_Ticket::instance()->get_all());
 
 		// if there was at least one success and absolutely no errors

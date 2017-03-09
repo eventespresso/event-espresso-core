@@ -498,7 +498,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * @throws \EE_Error
      */
 	public function is_free() {
-		return $this->get_ticket_total_with_taxes() === 0;
+		return $this->get_ticket_total_with_taxes() === (float) 0;
 	}
 
 
@@ -1288,9 +1288,22 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * @throws \EE_Error
      */
 	public function update_tickets_sold() {
-		$count_regs_for_this_ticket = $this->count_registrations( array( array( 'STS_ID' => EEM_Registration::status_id_approved, 'REG_deleted' => 0 ) ) );
-		$this->set_sold( $count_regs_for_this_ticket );
-		$this->save();
+        $count_regs_for_this_ticket = $this->count_registrations(
+            array(
+                array(
+                    'STS_ID'      => EEM_Registration::status_id_approved,
+                    'REG_deleted' => 0,
+                ),
+            )
+        );
+        $sold = $this->sold();
+        if ($count_regs_for_this_ticket > $sold) {
+            $this->increase_sold($count_regs_for_this_ticket - $sold);
+            $this->save();
+        } else if ($count_regs_for_this_ticket < $sold) {
+            $this->decrease_sold($count_regs_for_this_ticket - $sold);
+            $this->save();
+        }
 		return $count_regs_for_this_ticket;
 	}
 

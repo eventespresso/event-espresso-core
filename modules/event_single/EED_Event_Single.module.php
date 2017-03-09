@@ -315,6 +315,7 @@ class EED_Event_Single  extends EED_Module {
 		remove_filter( 'the_content', array( 'EED_Event_Single', 'event_datetimes' ), 110 );
 		remove_filter( 'the_content', array( 'EED_Event_Single', 'event_tickets' ), 120 );
 		remove_filter( 'the_content', array( 'EED_Event_Single', 'event_venues' ), 130 );
+		do_action( 'AHEE__EED_Event_Single__use_filterable_display_order__after_remove_filters' );
 		// we're not returning the $content directly because the template we are loading uses the_content (or the_excerpt)
 		return $content;
 	}

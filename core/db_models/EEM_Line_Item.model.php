@@ -362,4 +362,23 @@ class EEM_Line_Item extends EEM_Base {
 
 
 
+    /**
+     * @return EE_Base_Class[]|EE_Line_Item[]
+     * @throws \EE_Error
+     */
+    public function get_total_line_items_just_added_to_cart()
+    {
+        return $this->get_all(array(
+            array(
+                'TXN_ID'   => 0,
+                'LIN_type' => 'total',
+                'LIN_timestamp' => array(
+                    '>',
+                    time() - EE_Registry::instance()->SSN->lifespan()
+                ),            )
+        ));
+    }
+
+
+
 }
