@@ -894,7 +894,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
             $this,
             $tickets
         );
-        if ($spaces_remaining === 0) {
+        if ($spaces_remaining < 1) {
             $this->set_status(EEM_Event::sold_out);
             $this->save();
             $sold_out = true;
@@ -910,6 +910,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
                 }
             }
         }
+        do_action('AHEE__EE_Event__perform_sold_out_status_check__end', $this, $sold_out, $spaces_remaining, $tickets);
         return $sold_out;
     }
 
