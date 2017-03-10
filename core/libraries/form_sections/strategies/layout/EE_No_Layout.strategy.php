@@ -1,8 +1,8 @@
 <?php
+defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
+
 /**
- * Class EE_No_Layout
- *
- * Description
+ * Template Layout strategy class for the EE Forms System that applies no layout.
  *
  * @package 			Event Espresso
  * @subpackage 	core
