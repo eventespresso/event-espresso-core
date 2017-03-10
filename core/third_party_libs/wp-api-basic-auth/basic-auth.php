@@ -29,6 +29,8 @@ function json_basic_auth_handler( $user ) {
     if ( ! empty( $user ) ) {
         return $user;
     }
+    $username = null;
+    $password = null;
 	//account for issue where some servers remove the PHP auth headers
 	//so instead look for auth info in a custom environment variable set by rewrite rules
 	//probably in .htaccess
@@ -37,17 +39,23 @@ function json_basic_auth_handler( $user ) {
         $username = $_SERVER['PHP_AUTH_USER'];
         $password = $_SERVER['PHP_AUTH_PW'];
     } else {
+        //ok so no normal HTTP basic auth data. Let's search for it elsewhere...
+        $header = null;
+        //did it somehow not get into PHP?
         if( isset( $_SERVER['HTTP_AUTHORIZATION'])) {
             $header = $_SERVER['HTTP_AUTHORIZATION'];
-        } elseif( isset( $_SERVER[ 'REDIRECT_HTTP_AUTHORIZATION' ] ) ) {
+        }
+        //did CGI or Fast CGI somehow remove the Authorization header, so the site owner used the .htaccess workaround?
+        if( empty( $header) && isset( $_SERVER[ 'REDIRECT_HTTP_AUTHORIZATION' ] ) ) {
             $header = $_SERVER['REDIRECT_HTTP_AUTHORIZATION'];
-        } elseif( isset( $_GET['_authorization'] ) ) {
+        }
+        //did they pass it in the query string?
+        if( empty( $header) && isset( $_GET['_authorization'] ) ) {
             $header = $_GET['_authorization'];
             //and now remove this special header so it doesn't interfere with other parts of the request
             unset( $_GET['authorization'] );
-        } else {
-			$header = null;
-		}
+        }
+        //ok if we found the header data ourselves, let's parse it
         if( ! empty( $header ) ) {
             //make sure there's the word 'Basic ' at the start, or else it's not for us
             if( strpos( $header, 'Basic ' ) === 0 ) {
