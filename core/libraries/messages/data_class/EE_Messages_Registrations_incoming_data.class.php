@@ -47,10 +47,31 @@ class EE_Messages_Registrations_incoming_data extends EE_Messages_incoming_data
         //we'll loop through each contact and setup the data needed.  Note that many properties will just be set as empty
         //because this data handler is for a very specific set of data (i.e. just what's related to the registration).
 
-        //there could be multiple transactions represented so we leave at null.
-        $this->txn      = null;
         $this->reg_objs = $this->data();
+        $this->txn      = $this->_maybe_get_transaction();
         $this->_assemble_data();
+    }
+
+
+    /**
+     * If the incoming registrations all share the same transaction then this will return the transaction object shared
+     * among the registrations. Otherwise the transaction object is set to null because its intended to only represent
+     * one transaction.
+     *
+     * @return EE_Transaction|null
+     */
+    protected function _maybe_get_transaction()
+    {
+        $transactions = array();
+        foreach ($this->reg_objs as $registration) {
+            if ($registration instanceof EE_Registration) {
+                $transaction = $registration->transaction();
+                if ($transaction instanceof EE_Transaction) {
+                    $transactions[$transaction->ID()] = $transaction;
+                }
+            }
+        }
+        return count($transactions) === 1 ? reset($transactions) : null;
     }
 
 

@@ -305,6 +305,93 @@ abstract class EE_Shortcodes extends EE_Base
 
 
     /**
+     * Conditional blocks are shortcode patterns with an opening conditional tag `[IF_*]` and a corresponding
+     * closing tag (eg `[/IF_*]`).  The content within the tags will be displayed/hidden depending on whatever conditions
+     * existed in the opening tag.  This method handles parsing the actual template to show/hide this conditional content.
+     *
+     * @since 4.9.32
+     *
+     * @param string $shortcode  This should be original shortcode as used in the template and passed to the parser.
+     * @param bool $show  true means the opening and closing tags are removed and the content is left showing, false
+     *                    means the opening and closing tags and the contained content are removed.
+     * @return string     The template for the shortcode is returned.
+     */
+    protected function _mutate_conditional_block_in_template($shortcode, $show = true)
+    {
+        //first let's get all the matches in the template for this particular shortcode.
+        preg_match_all('~' . $this->_get_conditional_block_regex($shortcode) . '~', $this->_data['template'], $matches);
+
+        if ($matches && is_array($matches[0]) && !empty($matches[0])) {
+            //we need to hide all instances of the matches
+            foreach ($matches[0] as $index => $content_to_show_or_hide) {
+                $content_to_show_or_hide = preg_quote($content_to_show_or_hide);
+                $replacement = $show ? $matches[4][$index] : '';
+                $this->_data['template'] = preg_replace(
+                    '~' . $content_to_show_or_hide . '~',
+                    $replacement,
+                    $this->_data['template']
+                );
+            }
+        }
+        //return $template
+        return $this->_data['template'];
+    }
+
+
+    /**
+     * This returns the regex pattern to use for conditional shortcodes parsing.
+     *
+     * Note: regex comes in part from the WP `get_shortcode_regex` expression in \wp-includes\shortcodes.php
+     *
+     * @param $shortcode
+     * @since 4.9.32
+     * @return string
+     */
+    private function _get_conditional_block_regex($shortcode)
+    {
+        //get just the shortcode tag for the match
+        preg_match('@\[([^<>&/\[\]\x00-\x20=]++)@', $shortcode, $shortcode_tag_matches);
+        if (empty($shortcode_tag_matches[1])) {
+            return $this->_data['template'];
+        }
+
+        $shortcode_tag = $shortcode_tag_matches[1];
+        //get attributes_part_of_tag
+        $attributes_part = preg_quote(str_replace(array($shortcode_tag,'[',']'), '', $shortcode));
+        //escape
+        $shortcode_tag = preg_quote($shortcode_tag);
+
+        return
+              '\['                                  //Opening Bracket
+            . "($shortcode_tag)$attributes_part"    //1: Shortcode Name
+            . '(?![\w-])'                           //Not followed by word character or hyphen
+            . '('                                   //2: Unroll the loop: Inside the opening shortcode tag
+            .   '[^\]\/]*'                          //Not a closing bracket or forward slash
+            .   '(?:'
+            .       '\/(?!\])'                      //A forward slash not followed by a closing bracket
+            .       '[^\]\/]*'                      //Not a closing bracket or forward slash.
+            .   ')*?'
+            . ')'
+            . '(?:'
+            .   '(\/)'                              //3. Self closing tag ...
+            .   '\]'                                // ... and closing bracket
+            . '|'
+            .   '\]'                                //Closing bracket
+            .   '(?:'
+            .       '('                             //4: Unroll the loop: Optionally, anything between the opening and closing brackets
+            .           '[^\[]*+'                   //Not an opening bracket
+            .           '(?:'
+            .               '\[(?!\/\1\])'          //An opening bracket not followed by the closing shortcode tag.
+            .               '[^\[]*+'               //Not an opening bracket
+            .           ')*+'
+            .       ')'
+            .       '\[\/\1\]'                      //Closing shortcode tag
+            .   ')?'
+            . ')';
+    }
+
+
+    /**
      * This sets the properties related to the messages system
      *
      * @since 4.5.0

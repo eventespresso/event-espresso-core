@@ -905,11 +905,13 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 
 
 
-	/**
-	 * Updates the DTT_sold attribute (and saves) based on the number of registrations for this datetime (via the tickets).
-	 * into account
-	 * @return int
-	 */
+    /**
+     * Updates the DTT_sold attribute (and saves) based on the number of registrations for this datetime (via the tickets).
+     * into account
+     *
+     * @return int
+     * @throws \EE_Error
+     */
 	public function update_sold() {
 		$count_regs_for_this_datetime = EEM_Registration::instance()->count(
 			array( array(
@@ -918,8 +920,14 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 				'Ticket.Datetime.DTT_ID' 	=> $this->ID(),
 			) )
 		);
-		$this->set( 'DTT_sold', $count_regs_for_this_datetime );
-		$this->save();
+        $sold = $this->sold();
+        if ($count_regs_for_this_datetime > $sold) {
+            $this->increase_sold($count_regs_for_this_datetime - $sold);
+            $this->save();
+        } else if ($count_regs_for_this_datetime < $sold) {
+            $this->decrease_sold($count_regs_for_this_datetime - $sold);
+            $this->save();
+        }
 		return $count_regs_for_this_datetime;
 	}
 }
