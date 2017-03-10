@@ -366,11 +366,29 @@ abstract class EE_Form_Section_Base
             $this->set_method($method);
         }
         $html = EEH_HTML::nl(1, 'form') . '<form';
-        $html .= $this->html_id() !== '' ? ' id="' . $this->html_id() . '-frm"' : '';
+        $html .= $this->html_id() !== '' ? ' id="' . $this->get_html_id_for_form($this->html_id()) . '"' : '';
         $html .= ' action="' . $this->action() . '"';
         $html .= ' method="' . $this->method() . '"';
         $html .= $other_attributes . '>';
         return $html;
+    }
+
+
+
+    /**
+     * ensures that html id for form either ends in "-form" or "-frm"
+     * so that id doesn't conflict/collide with other elements
+     *
+     * @param string $html_id
+     * @return string
+     */
+    protected function get_html_id_for_form($html_id)
+    {
+        $strlen = strlen($html_id);
+        $html_id = strpos($html_id, '-form') === $strlen-5 || strpos($html_id, '-frm') === $strlen - 4
+            ? $html_id
+            : $html_id . '-frm';
+        return $html_id;
     }
 
 
