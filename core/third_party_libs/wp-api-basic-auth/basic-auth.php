@@ -33,7 +33,7 @@ function json_basic_auth_handler( $user ) {
 	//so instead look for auth info in a custom environment variable set by rewrite rules
 	//probably in .htaccess
     //and, as a last resort, look in the querystring
-    if( isset( $_SERVER['PHP_AUTH_USER'] ) ) {
+    if( isset( $_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW'] ) ) {
         $username = $_SERVER['PHP_AUTH_USER'];
         $password = $_SERVER['PHP_AUTH_PW'];
     } else {
