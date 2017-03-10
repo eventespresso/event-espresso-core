@@ -233,6 +233,15 @@ class EEH_Parse_Shortcodes
                         $data_send = $this->_data;
                     }
 
+                    //is this a conditional type shortcode?  If it is then we actually parse the template here.
+                    if ($this->_is_conditional_shortcode($shortcode)) {
+                        //most shortcode parsers are not going to have a match for this shortcode and will return an
+                        //empty string so we need to make sure that we're only replacing the template when there is a non empty string.
+                        $parsed = $sc_obj->parser($shortcode, $data_send, $this->_data['extra_data']);
+                        if ($parsed) {
+                            $this->_template = $parsed;
+                        }
+                    }
 
                     $parsed = $sc_obj->parser($shortcode, $data_send, $this->_data['extra_data']);
 
@@ -245,6 +254,19 @@ class EEH_Parse_Shortcodes
         //now we've got parsed values for all the shortcodes in the template so we can go ahead and swap the shortcodes out.
         $parsed = str_replace(array_values($matched_code), array_values($sc_values), $this->_template);
         return $parsed;
+    }
+
+
+    /**
+     * Simply returns whether the given shortcode matches the structure for a conditional shortcode.
+     *
+     * Does it match this format: `[IF_`
+     *
+     * @param $shortcode
+     */
+    protected function _is_conditional_shortcode($shortcode)
+    {
+        return strpos($shortcode, '[IF_') === 0;
     }
 
 

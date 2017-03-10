@@ -251,6 +251,16 @@ class EED_Events_Archive  extends EED_Module {
      * @access public
      * @return string
      */
+	public static function is_iframe() {
+        return \EED_Events_Archive::$iframe;
+	}
+
+
+
+    /**
+     * @access public
+     * @return string
+     */
 	public static function link_target() {
         return \EED_Events_Archive::$iframe ? ' target="_blank"' : '';
 	}
@@ -590,7 +600,7 @@ class EED_Events_Archive  extends EED_Module {
 	 *  @return 	void
 	 */
 	public function load_event_list_assets() {
-		do_action( 'AHEE__EED_Events_Archive__before_load_assets' );
+        do_action( 'AHEE__EED_Events_Archive__before_load_assets' );
 		add_filter( 'FHEE_load_EE_Session', '__return_true' );
 		add_filter( 'FHEE__EED_Ticket_Selector__load_tckt_slctr_assets', '__return_true' );
 		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 10 );
