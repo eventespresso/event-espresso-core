@@ -12,6 +12,29 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
  */
 class EE_No_Layout extends EE_Div_Per_Section_Layout {
 
+
+    /**
+     * This is a flag indicating whether to use '<br>' tags after each input in the layout
+     * strategy.
+     * @var bool
+     */
+    protected $_use_break_tags = true;
+
+
+    /**
+     * EE_No_Layout constructor.
+     *
+     * @param array $options  Currently if this has a 'use_break_tags' key that is used to set the _use_break_tags
+     *                        property on the class.
+     */
+    public function __construct($options = array())
+    {
+        $this->_use_break_tags = is_array($options) && isset($options['use_break_tags'])
+            ? (bool) $options['use_break_tags']
+            : $this->_use_break_tags;
+        parent::__construct();
+    }
+
 	/**
 	 * opening div tag for a form
 	 * @return string
@@ -31,22 +54,22 @@ class EE_No_Layout extends EE_Div_Per_Section_Layout {
 		if ( $input instanceof EE_Hidden_Input  ) {
 			$html .= EEH_HTML::nl() . $input->get_html_for_input();
 		} else if ( $input instanceof EE_Submit_Input  ) {
-			$html .= EEH_HTML::br();
+			$html .= $this->br();
 			$html .= $input->get_html_for_input();
 		} else if ( $input instanceof EE_Select_Input  ) {
-			$html .= EEH_HTML::br();
+			$html .= $this->br();
 			$html .= EEH_HTML::nl(1) . $input->get_html_for_label();
 			$html .= EEH_HTML::nl() . $input->get_html_for_errors();
 			$html .= EEH_HTML::nl() . $input->get_html_for_input();
 			$html .= EEH_HTML::nl() . $input->get_html_for_help();
-			$html .= EEH_HTML::br();
+			$html .= $this->br();
 		} else if ( $input instanceof EE_Form_Input_With_Options_Base  ) {
-			$html .= EEH_HTML::br();
+			$html .= $this->br();
 			$html .= EEH_HTML::nl() . $input->get_html_for_errors();
 			$html .= EEH_HTML::nl() . $input->get_html_for_input();
 			$html .= EEH_HTML::nl() . $input->get_html_for_help();
 		} else {
-			$html .= EEH_HTML::br();
+			$html .= $this->br();
 			$html .= EEH_HTML::nl(1) . $input->get_html_for_label();
 			$html .= EEH_HTML::nl() . $input->get_html_for_errors();
 			$html .= EEH_HTML::nl() . $input->get_html_for_input();
@@ -76,4 +99,14 @@ class EE_No_Layout extends EE_Div_Per_Section_Layout {
 	public function layout_form_end(){
 		return EEH_HTML::nl(-1);
 	}
+
+
+    /**
+     * This returns a break tag or an empty string depending on the value of the `_use_break_tags` property.
+     * @return string
+     */
+	protected function br()
+    {
+        return $this->_use_break_tags ? EEH_HTML::br() : '';
+    }
 }
