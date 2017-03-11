@@ -1,6 +1,5 @@
 <?php
-
-
+use EventEspresso\core\libraries\form_sections\strategies\parser\FormHtmlParser;
 
 /**
  * For containing info about a non-field form section, which contains other form sections/fields.
@@ -28,6 +27,13 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      * @var EE_Form_Section_Layout_Base
      */
     protected $_layout_strategy;
+
+    /**
+     * Strategy for parsing the form HTML upon display
+     *
+     * @var FormHtmlParser
+     */
+    protected $_form_html_parser;
 
     /**
      * Whether or not this form has received and validated a form submission yet
@@ -113,11 +119,14 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
             $this->_layout_strategy = is_admin() ? new EE_Admin_Two_Column_Layout() : new EE_Two_Column_Layout();
         }
         $this->_layout_strategy->_construct_finalize($this);
+
+        // set parser which allows the form section's rendered HTML to be filtered
+        if (isset($options_array['form_html_parser']) && $options_array['form_html_parser'] instanceof FormHtmlParser) {
+            $this->_form_html_parser = $options_array['form_html_parser'];
+        }
         //ok so we are definitely going to want the forms JS,
         //so enqueue it or remember to enqueue it during wp_enqueue_scripts
-        if (did_action('wp_enqueue_scripts')
-            || did_action('admin_enqueue_scripts')
-        ) {
+        if (did_action('wp_enqueue_scripts') || did_action('admin_enqueue_scripts')) {
             //ok so they've constructed this object after when they should have.
             //just enqueue the generic form scripts and initialize the form immediately in the JS
             \EE_Form_Section_Proper::wp_enqueue_scripts(true);
@@ -591,7 +600,9 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
         if ($display_previously_submitted_data) {
             $this->populate_from_session();
         }
-        return $this->_layout_strategy->layout_form();
+        return $this->_form_html_parser
+            ? $this->_form_html_parser->parseHtml($this->_layout_strategy->layout_form())
+            : $this->_layout_strategy->layout_form();
     }
 
 
