@@ -30,7 +30,7 @@ class EE_No_Layout extends EE_Div_Per_Section_Layout {
     public function __construct($options = array())
     {
         $this->_use_break_tags = is_array($options) && isset($options['use_break_tags'])
-            ? (bool) $options['use_break_tags']
+            ? filter_var($options['use_break_tags'], FILTER_VALIDATE_BOOLEAN)
             : $this->_use_break_tags;
         parent::__construct();
     }
@@ -44,11 +44,14 @@ class EE_No_Layout extends EE_Div_Per_Section_Layout {
 	}
 
 
-	/**
-	 * Lays out the row for the input, including label and errors
-	 * @param EE_Form_Input_Base $input
-	 * @return string
-	 */
+
+    /**
+     * Lays out the row for the input, including label and errors
+     *
+     * @param EE_Form_Input_Base $input
+     * @return string
+     * @throws \EE_Error
+     */
 	public function layout_input( $input ) {
 		$html = '';
 		if ( $input instanceof EE_Hidden_Input  ) {
