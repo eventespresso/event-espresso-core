@@ -51,7 +51,6 @@ class VsprintfParser extends FormHtmlParser
     public function parseHtml($html = '')
     {
         $this->args[] = $html;
-        \EEH_Debug_Tools::printr($this->args, '$this->args', __FILE__, __LINE__);
         return vprintf($this->format, $this->args);
     }
 
