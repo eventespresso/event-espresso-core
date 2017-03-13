@@ -601,7 +601,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
             $this->populate_from_session();
         }
         return $this->_form_html_parser
-            ? $this->_form_html_parser->parseHtml($this->_layout_strategy->layout_form())
+            ? $this->_form_html_parser->parseHtml($this->_layout_strategy->layout_form(), $this)
             : $this->_layout_strategy->layout_form();
     }
 
