@@ -101,7 +101,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 	public function set( $field_name, $field_value, $use_default = FALSE ) {
 		switch( $field_name ) {
 			case 'REG_code' :
-				if ( ! empty( $field_value ) && $this->reg_code() === '' ) {
+				if ( ! empty( $field_value ) && $this->reg_code() === null ) {
 					$this->set_reg_code( $field_value, $use_default );
 				}
 				break;

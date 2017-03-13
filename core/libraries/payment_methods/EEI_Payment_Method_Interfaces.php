@@ -95,6 +95,34 @@ interface EEI_Payment extends EEI_Base{
 	 */
 	public function set_extra_accntng($extra_accounting_info);
 
+    /**
+     * Gets the first event for this payment (it's possible that it could be for multiple)
+     *
+     * @param EE_Payment $payment
+     * @return EE_Event|null
+     */
+    public function get_first_event();
+
+    /**
+     * Gets the name of the first event for which is being paid
+     *
+     * @param EE_Payment $payment
+     * @return string
+     */
+    public function get_first_event_name();
+
+    /**
+     * Returns the payment's transaction's primary registration
+     *
+     * @return EE_Registration|null
+     */
+    public function get_primary_registration();
+
+    /**
+     * Gets the payment's transaction's primary registration's attendee, or null
+     * @return EE_Attendee|null
+     */
+    public function get_primary_attendee();
 }
 
 
