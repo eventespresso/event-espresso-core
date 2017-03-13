@@ -10,7 +10,11 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 /**
  * Class SprintfFormHtmlParser
  * parses a form section's rendered HTML using vsprintf()
- * PLZ NOTE: the rendered HTML will be the LAST argument in the array of args passed to vsprintf()
+ * PLZ NOTE:
+ *      the rendered HTML for the full form will be the FIRST argument
+ *      appended to the array of args passed to vsprintf(),
+ *      and the rendered HTML for each form subsection
+ *      will be appended to the array of args passed after that
  *
  * @package       Event Espresso
  * @author        Brent Christensen
@@ -53,7 +57,13 @@ class VsprintfParser extends FormHtmlParser
      */
     public function parseHtml($html, EE_Form_Section_Proper $form_section)
     {
-        $this->args = array_merge($this->args, $form_section->subsections());
+        $this->args[] = $html;
+        $subsections = $form_section->subsections();
+        if (count($subsections) > 1) {
+            foreach ($subsections as $subsection) {
+                $this->args[] = $subsection->get_html();
+            }
+        }
         return vprintf($this->format, $this->args);
     }
 
