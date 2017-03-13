@@ -1,6 +1,8 @@
 <?php
 namespace EventEspresso\core\libraries\form_sections\strategies\parser;
 
+use EE_Form_Section_Proper;
+
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
@@ -45,12 +47,13 @@ class VsprintfParser extends FormHtmlParser
 
 
     /**
-     * @param string $html
-     * @return int
+     * @param                        $html
+     * @param EE_Form_Section_Proper $form_section
+     * @return string
      */
-    public function parseHtml($html = '')
+    public function parseHtml($html, EE_Form_Section_Proper $form_section)
     {
-        $this->args[] = $html;
+        $this->args = array_merge($this->args, $form_section->subsections());
         return vprintf($this->format, $this->args);
     }
 
