@@ -22,6 +22,7 @@ class EE_PMT_Aim extends EE_PMT_Base{
 	public function __construct($pm_instance = NULL) {
 		$this->_setup_properties();
 		parent::__construct($pm_instance);
+        $this->_gateway->set_unsupported_character_remover(new \EventEspresso\core\services\formatters\Windows1252());
 	}
 	
 	/**
