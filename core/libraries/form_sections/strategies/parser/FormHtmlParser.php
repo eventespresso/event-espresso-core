@@ -1,6 +1,8 @@
 <?php
 namespace EventEspresso\core\libraries\form_sections\strategies\parser;
 
+use EE_Form_Section_Proper;
+
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
@@ -16,7 +18,12 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 abstract class FormHtmlParser
 {
 
-    abstract public function parseHtml($html);
+    /**
+     * @param                        $html
+     * @param EE_Form_Section_Proper $form_section
+     * @return string
+     */
+    abstract public function parseHtml($html, EE_Form_Section_Proper $form_section);
 
 }
 // End of file FormHtmlParser.php
