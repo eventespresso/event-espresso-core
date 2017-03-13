@@ -71,8 +71,8 @@ class Read {
 			),
 			'default_currency' => \EE_Config::instance()->currency,
             'authentication' => array(
-                'received_basic_auth_data' => $wp_json_basic_auth_received_data,
-                'insecure_usage_of_basic_auth' => $insecure_usage_of_basic_auth,
+                'received_basic_auth_data' => (bool)$wp_json_basic_auth_received_data,
+                'insecure_usage_of_basic_auth' => (bool)$insecure_usage_of_basic_auth,
                 'warning' => $warning
             )
 		);
