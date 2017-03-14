@@ -73,13 +73,23 @@ class Checkin extends Base {
 		}
 		$success = $reg->toggle_checkin_status( $dtt_id, ! $force );
 		if( $success === false ) {
-			//rely on EE_Error::add_error messages to have been added to give more data about hwy it failed
-			return $this->send_response(
-				new \WP_Error(
-					'rest_toggle_checkin_failed',
-					__( 'Registration checkin failed. Please see additional error data.', 'event_espresso' )
-				)
-			);
+            //check if we know they can't check in because they're not approved and we aren't forcing
+            if( ! $reg->is_approved() && ! $force ) {
+                //rely on EE_Error::add_error messages to have been added to give more data about hwy it failed
+                return $this->send_response(
+                    new \WP_Error(
+                        'rest_toggle_checkin_failed',
+                        __( 'Registration check-in failed because the registration is not approved. You may attempt to force checking in though.', 'event_espresso' )
+                    )
+                );
+            }
+            return $this->send_response(
+                new \WP_Error(
+                    'rest_toggle_checkin_failed_not_forceable',
+                    __( 'Registration checkin failed. Please see additional error data.', 'event_espresso' )
+                )
+            );
+
 		}
 		$checkin = \EEM_Checkin::instance()->get_one(
 			array(

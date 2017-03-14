@@ -143,7 +143,7 @@ class Checkin_Test extends \EE_UnitTestCase {
 		$this->assertEquals( $checkins_before, \EEM_Checkin::instance()->count() );
 		$data = $response->get_data();
 		$this->assertTrue( isset( $data[ 'code' ] ) );
-		$this->assertEquals( 'rest_toggle_checkin_failed', $data[ 'code' ] );
+		$this->assertEquals( 'rest_toggle_checkin_failed_uses_exceeded', $data[ 'code' ] );
 		$this->assertTrue( isset( $data[ 'additional_errors' ] ) );
 		$this->assertFalse( empty( $data[ 'additional_errors' ][ 0 ][ 'message'] ) );
 	}	
