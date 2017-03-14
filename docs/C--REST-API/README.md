@@ -33,3 +33,6 @@ There are some handy libraries and tools that have been built that integrate wit
 |---------|-------------|
 [eejs-api (VUE.js library)](eejs-api/README.md) | When implemented you can use this to automatically build EE model and collection components that can be used in your views.
  
+### Related Tutorials
+
+Don't miss the [REST API tutorials in our tutorials section](../T--Tutorials).

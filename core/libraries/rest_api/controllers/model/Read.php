@@ -570,6 +570,7 @@ sions: %2$s', 'event_espresso'),
         $entity_array = $this->_add_extra_fields($model, $db_row, $entity_array);
         $entity_array['_links'] = $this->_get_entity_links($model, $db_row, $entity_array);
         $entity_array['_calculated_fields'] = $this->_get_entity_calculations($model, $db_row, $rest_request);
+        $entity_array = apply_filters( 'FHEE__Read__create_entity_from_wpdb_results__entity_before_including_requested_models', $entity_array, $model, $rest_request->get_param('caps'),$rest_request,$this);
         $entity_array = $this->_include_requested_models($model, $rest_request, $entity_array, $db_row);
         $entity_array = apply_filters(
             'FHEE__Read__create_entity_from_wpdb_results__entity_before_inaccessible_field_removal',

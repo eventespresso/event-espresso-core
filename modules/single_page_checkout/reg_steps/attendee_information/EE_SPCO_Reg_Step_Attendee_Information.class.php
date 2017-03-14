@@ -1054,10 +1054,13 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		) ) {
 			return true;
 		}
-		// $answer_cache_id is the key used to find the EE_Answer we want
+        /*
+         * $answer_cache_id is the key used to find the EE_Answer we want
+         * @see https://events.codebasehq.com/projects/event-espresso/tickets/10477
+         */
 		$answer_cache_id = $this->checkout->reg_url_link
-			? $form_input
-			: $form_input . '-' . $registration->reg_url_link();
+			? $form_input . '-' . $registration->reg_url_link()
+			: $form_input;
 		$answer_is_obj = isset( $this->_registration_answers[ $answer_cache_id ] )
 		                 && $this->_registration_answers[ $answer_cache_id ] instanceof EE_Answer
 			? true
