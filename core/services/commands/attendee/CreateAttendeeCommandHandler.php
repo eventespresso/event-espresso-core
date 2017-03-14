@@ -122,6 +122,8 @@ class CreateAttendeeCommandHandler extends CommandHandler {
 	 */
 	private function updateExistingAttendeeData( EE_Attendee $existing_attendee, array $attendee_data ) {
 		// first remove fname, lname, and email from attendee data
+        // because these properties will be exactly the same as the returned attendee object,
+        // since they were used in the query to get the attendee object in the first place
 		$dont_set = array( 'ATT_fname', 'ATT_lname', 'ATT_email' );
 		// now loop thru what's left and add to attendee CPT
 		foreach ( $attendee_data as $property_name => $property_value ) {
