@@ -1,6 +1,10 @@
 <?php
 namespace EventEspresso\core\services\commands\attendee;
 
+use EE_Attendee;
+use EE_Error;
+use EE_Registration;
+use EE_Registry;
 use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\services\commands\CommandHandler;
 use EventEspresso\core\services\commands\CommandInterface;
@@ -20,16 +24,16 @@ defined( 'EVENT_ESPRESSO_VERSION' ) || exit;
 class CreateAttendeeCommandHandler extends CommandHandler {
 
 	/**
-	 * @var \EE_Registry $registry
+	 * @var EE_Registry $registry
 	 */
 	protected $registry;
 
 
 
 	/**
-	 * @param \EE_Registry $registry
+	 * @param EE_Registry $registry
 	 */
-	public function __construct( \EE_Registry $registry ) {
+	public function __construct( EE_Registry $registry ) {
 		$this->registry = $registry;
 	}
 
@@ -37,9 +41,9 @@ class CreateAttendeeCommandHandler extends CommandHandler {
 
 	/**
 	 * @param CommandInterface $command
-	 * @return \EE_Attendee
-	 * @throws \EE_Error
-	 * @throws \EventEspresso\core\exceptions\InvalidEntityException
+	 * @return EE_Attendee
+	 * @throws EE_Error
+	 * @throws InvalidEntityException
 	 */
 	public function handle( CommandInterface $command ) {
 		/** @var CreateAttendeeCommand $command */
@@ -52,7 +56,7 @@ class CreateAttendeeCommandHandler extends CommandHandler {
 			$command->attendeeDetails()
 		);
 		// did we find an already existing record for this attendee ?
-		if ( $attendee instanceof \EE_Attendee ) {
+		if ( $attendee instanceof EE_Attendee ) {
 			$attendee = $this->updateExistingAttendeeData(
 				$attendee,
 				$command->attendeeDetails()
@@ -71,20 +75,20 @@ class CreateAttendeeCommandHandler extends CommandHandler {
 	/**
 	 * find_existing_attendee
 	 *
-	 * @param \EE_Registration $registration
+	 * @param EE_Registration $registration
 	 * @param  array           $attendee_data
-	 * @return \EE_Attendee
+	 * @return EE_Attendee
 	 */
-	private function findExistingAttendee( \EE_Registration $registration, array $attendee_data ) {
+	private function findExistingAttendee( EE_Registration $registration, array $attendee_data ) {
 		$existing_attendee = null;
 		// does this attendee already exist in the db ? we're searching using a combination of first name, last name, AND email address
-		$ATT_fname = isset( $attendee_data['ATT_fname'] ) && ! empty( $attendee_data['ATT_fname'] )
+		$ATT_fname = ! empty( $attendee_data['ATT_fname'] )
 			? $attendee_data['ATT_fname']
 			: '';
-		$ATT_lname = isset( $attendee_data['ATT_lname'] ) && ! empty( $attendee_data['ATT_lname'] )
+		$ATT_lname = ! empty( $attendee_data['ATT_lname'] )
 			? $attendee_data['ATT_lname']
 			: '';
-		$ATT_email = isset( $attendee_data['ATT_email'] ) && ! empty( $attendee_data['ATT_email'] )
+		$ATT_email = ! empty( $attendee_data['ATT_email'] )
 			? $attendee_data['ATT_email']
 			: '';
 		// but only if those have values
@@ -98,7 +102,7 @@ class CreateAttendeeCommandHandler extends CommandHandler {
 			);
 		}
 		return apply_filters(
-			'FHEE_EE_Single_Page_Checkout__save_registration_items__find_existing_attendee',
+			'FHEE_EventEspresso_core_services_commands_attendee_CreateAttendeeCommandHandler__findExistingAttendee__existing_attendee',
 			$existing_attendee,
 			$registration,
 			$attendee_data
@@ -111,12 +115,12 @@ class CreateAttendeeCommandHandler extends CommandHandler {
 	 * _update_existing_attendee_data
 	 * in case it has changed since last time they registered for an event
 	 *
-	 * @param \EE_Attendee $existing_attendee
+	 * @param EE_Attendee $existing_attendee
 	 * @param  array       $attendee_data
-	 * @return \EE_Attendee
-	 * @throws \EE_Error
+	 * @return EE_Attendee
+	 * @throws EE_Error
 	 */
-	private function updateExistingAttendeeData( \EE_Attendee $existing_attendee, array $attendee_data ) {
+	private function updateExistingAttendeeData( EE_Attendee $existing_attendee, array $attendee_data ) {
 		// first remove fname, lname, and email from attendee data
 		$dont_set = array( 'ATT_fname', 'ATT_lname', 'ATT_email' );
 		// now loop thru what's left and add to attendee CPT
@@ -138,14 +142,14 @@ class CreateAttendeeCommandHandler extends CommandHandler {
 	/**
 	 * create_new_attendee
 	 *
-	 * @param \EE_Registration $registration
+	 * @param EE_Registration $registration
 	 * @param  array           $attendee_data
-	 * @return \EE_Attendee
-	 * @throws \EE_Error
+	 * @return EE_Attendee
+	 * @throws EE_Error
 	 */
-	private function createNewAttendee( \EE_Registration $registration, array $attendee_data ) {
+	private function createNewAttendee( EE_Registration $registration, array $attendee_data ) {
 		// create new attendee object
-		$new_attendee = \EE_Attendee::new_instance( $attendee_data );
+		$new_attendee = EE_Attendee::new_instance( $attendee_data );
 		// set author to event creator
 		$new_attendee->set( 'ATT_author', $registration->event()->wp_user() );
 		$new_attendee->save();
