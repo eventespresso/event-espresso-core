@@ -81,7 +81,7 @@ class Read_Test extends \EE_REST_TestCase{
      */
 	public function test_handle_request_get_one__event_includes() {
 		$event = $this->new_model_obj_with_dependencies( 'Event', array( 'status' => 'publish' ) );
-		$req = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events/' . $event->ID() );
+		$req = new \WP_REST_Request( 'GET', '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events/' . $event->ID() );
 		$req->set_url_params(
 				array(
 					'id' => $event->ID()
@@ -92,7 +92,7 @@ class Read_Test extends \EE_REST_TestCase{
 					'include' =>  'EVT_ID,EVT_name'
 				)
 			);
-		$response = Read::handle_request_get_one( $req );
+		$response = rest_do_request($req);
 		$result = $response->get_data();
 		$this->assertEquals(
 			array (
@@ -110,7 +110,7 @@ class Read_Test extends \EE_REST_TestCase{
      */
     public function test_handle_request_get_one_4_8_29__event_includes() {
         $event = $this->new_model_obj_with_dependencies( 'Event', array( 'status' => 'publish' ) );
-        $req = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.29/events/' . $event->ID() );
+        $req = new \WP_REST_Request( 'GET', '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.29/events/' . $event->ID() );
         $req->set_url_params(
             array(
                 'id' => $event->ID()
@@ -121,7 +121,7 @@ class Read_Test extends \EE_REST_TestCase{
                 'include' =>  'EVT_ID,EVT_name'
             )
         );
-        $response = Read::handle_request_get_one( $req );
+        $response = rest_do_request($req);
         $result = $response->get_data();
         $this->assertEquals(
             array (
@@ -134,7 +134,7 @@ class Read_Test extends \EE_REST_TestCase{
 
 	public function test_handle_request_get_one__event_includes_two_related_models() {
 		$event = $this->new_model_obj_with_dependencies( 'Event', array( 'status' => 'publish' ) );
-		$req = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events/' . $event->ID() );
+		$req = new \WP_REST_Request( 'GET', '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events/' . $event->ID() );
 		$req->set_url_params(
 				array(
 					'id' => $event->ID()
@@ -145,7 +145,7 @@ class Read_Test extends \EE_REST_TestCase{
 					'include' =>  'Venue,Datetime'
 				)
 			);
-		$response = Read::handle_request_get_one( $req );
+		$response = rest_do_request($req);
 		$result = $response->get_data();
 		//make sure we still included all the normal event fields
 		$this->assertArrayHasKey(
@@ -170,7 +170,7 @@ class Read_Test extends \EE_REST_TestCase{
 	public function test_handle_request_get_one__event_include_non_model_field() {
 		$this->set_current_user_to_new();
 		$event = $this->new_model_obj_with_dependencies( 'Event' );
-		$req = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events/' . $event->ID() );
+		$req = new \WP_REST_Request( 'GET', '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events/' . $event->ID() );
 		$req->set_url_params(
 				array(
 					'id' => $event->ID()
@@ -181,7 +181,7 @@ class Read_Test extends \EE_REST_TestCase{
 					'include' =>  'EVT_desc'
 				)
 			);
-		$response = Read::handle_request_get_one( $req );
+		$response = rest_do_request($req);
 		$result = $response->get_data();
 		$this->assertEquals(
 			array (
@@ -237,7 +237,7 @@ class Read_Test extends \EE_REST_TestCase{
 				'STS_ID' => \EEM_Registration::status_id_approved
 			)
 		);
-		$req = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events/' . $event->ID() );
+		$req = new \WP_REST_Request( 'GET', '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events/' . $event->ID() );
 		$req->set_url_params(
 				array(
 					'id' => $event->ID()
@@ -249,7 +249,7 @@ class Read_Test extends \EE_REST_TestCase{
 					'calculate' =>  'optimum_sales_at_start,spots_taken,Datetime.registrations_checked_in_count'
 				)
 			);
-		$response = Read::handle_request_get_one( $req );
+		$response = rest_do_request($req);
 		$result = $response->get_data();
 		$this->assertTrue( isset( $result[ 'EVT_ID' ] ) );
 		//check that the requested calculated fields were added.
@@ -301,13 +301,13 @@ class Read_Test extends \EE_REST_TestCase{
 //				'EVT_visible_on' => $current_time_mysql_gmt,
 //			)
 		);
-		$req = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.29/events/' . $event->ID() );
+		$req = new \WP_REST_Request( 'GET', '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.29/events/' . $event->ID() );
 		$req->set_url_params(
 				array(
 					'id' => $event->ID()
 				)
 			);
-		$response = Read::handle_request_get_one( $req );
+		$response = rest_do_request($req);
 
 		$result = $response->get_data();
 		$this->assertTrue( is_array( $result ) );
@@ -525,7 +525,7 @@ class Read_Test extends \EE_REST_TestCase{
 		$r = $this->new_model_obj_with_dependencies( 'Registration' );
 		$req = new \WP_REST_Request(
 					'GET',
-					\EED_Core_Rest_Api::ee_api_namespace . '4.8.29/registrations/' . $r->ID()
+					'/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.29/registrations/' . $r->ID()
 				);
 		$req->set_query_params(
 				array(
@@ -537,7 +537,7 @@ class Read_Test extends \EE_REST_TestCase{
 					'id' => $r->ID()
 				)
 			);
-		$response = Read::handle_request_get_one( $req );
+		$response = rest_do_request($req);
 		$entity = $response->get_data();
 		$this->assertArrayHasKey( 'attendee', $entity );
 	}
@@ -547,7 +547,7 @@ class Read_Test extends \EE_REST_TestCase{
 		$this->set_current_user_to_new();
 		$r = $this->new_model_obj_with_dependencies( 'Registration' );
 		$this->new_model_obj_with_dependencies( 'Answer', array( 'REG_ID' => $r->ID() ) );
-		$req = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.29/registrations/' . $r->ID() );
+		$req = new \WP_REST_Request( 'GET', '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.29/registrations/' . $r->ID() );
 		$req->set_query_params(
 				array(
 					'include' => 'Answer.Question.*'
@@ -558,7 +558,7 @@ class Read_Test extends \EE_REST_TestCase{
 					'id' => $r->ID()
 				)
 			);
-		$response = Read::handle_request_get_one( $req );
+		$response = rest_do_request($req);
 		$entity = $response->get_data();
 		$this->assertArrayHasKey( 'REG_date', $entity );
 		$this->assertArrayHasKey( 'answers', $entity );
@@ -572,7 +572,7 @@ class Read_Test extends \EE_REST_TestCase{
 		$this->set_current_user_to_new();
 		$r = $this->new_model_obj_with_dependencies( 'Registration' );
 		$this->new_model_obj_with_dependencies( 'Answer', array( 'REG_ID' => $r->ID() ) );
-		$req = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.29/registrations/' . $r->ID() );
+		$req = new \WP_REST_Request( 'GET', '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.29/registrations/' . $r->ID() );
 		$req->set_query_params(
 				array(
 					'include' => 'Answer.Question'
@@ -583,7 +583,7 @@ class Read_Test extends \EE_REST_TestCase{
 					'id' => $r->ID()
 				)
 			);
-		$response = Read::handle_request_get_one( $req );
+		$response = rest_do_request($req);
 		$entity = $response->get_data();
 		$this->assertArrayHasKey( 'REG_date', $entity );
 		$this->assertArrayHasKey( 'answers', $entity );
@@ -597,7 +597,7 @@ class Read_Test extends \EE_REST_TestCase{
 		$this->set_current_user_to_new();
 		$r = $this->new_model_obj_with_dependencies( 'Registration' );
 		$this->new_model_obj_with_dependencies( 'Answer', array( 'REG_ID' => $r->ID() ) );
-		$req = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.29/registrations/' . $r->ID() );
+		$req = new \WP_REST_Request( 'GET', '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.29/registrations/' . $r->ID() );
 		$req->set_query_params(
 				array(
 					'include' => 'Answer.ATT_ID, Answer.Question.QST_ID'
@@ -608,7 +608,7 @@ class Read_Test extends \EE_REST_TestCase{
 					'id' => $r->ID()
 				)
 			);
-		$response = Read::handle_request_get_one( $req );
+		$response = rest_do_request($req);
 		$entity = $response->get_data();
 		$this->assertArrayHasKey( 'answers', $entity );
 		$answers = $entity['answers'];
@@ -620,33 +620,33 @@ class Read_Test extends \EE_REST_TestCase{
 	public function test_handle_request_get_one__doesnt_exist(){
 		$e = $this->new_model_obj_with_dependencies('Event');
 		$non_existent_id = $e->ID() + 100;
-		$req = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.29/events/' . $non_existent_id );
+		$req = new \WP_REST_Request( 'GET', '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.29/events/' . $non_existent_id );
 		$req->set_url_params(
 				array(
 					'id' => $non_existent_id
 				)
 			);
-		$response = Read::handle_request_get_one( $req );
+		$response = rest_do_request($req);
 		$this->assertInstanceOf( 'WP_REST_Response', $response );
 		$this->assertEquals( 404, $response->get_status() );
 	}
 	public function test_handle_request_get_one__cannot_access(){
 		$e = $this->new_model_obj_with_dependencies('Event', array( 'status' => 'draft' ) );
-		$req = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.29/events/' . $e->ID() );
+		$req = new \WP_REST_Request( 'GET', '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.29/events/' . $e->ID() );
 		$req->set_url_params(
 				array(
 					'id' => $e->ID()
 				)
 			);
-		$response = Read::handle_request_get_one( $req );
+		$response = rest_do_request($req);
 		$this->assertInstanceOf( 'WP_REST_Response', $response );
 		$this->assertEquals( 403, $response->get_status() );
 	}
 
 	public function test_handle_request_get_all__not_logged_in(){
 		$this->new_model_obj_with_dependencies('Registration');
-		$response = Read::handle_request_get_all(
-			new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.29/registrations' )
+		$response =rest_do_request(
+			new \WP_REST_Request( 'GET', '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.29/registrations' )
 		);
 		$this->assertInstanceOf( 'WP_REST_Response', $response );
 		$this->assertEquals( 403, $response->get_status() );
@@ -664,8 +664,8 @@ class Read_Test extends \EE_REST_TestCase{
 		}
    		$this->assertEquals( $datetimes_created, \EEM_Datetime::instance()->count( array( 'caps' => \EEM_Base::caps_read ) ) );
 		//request all datetimes from 4.8.36 (where the headers got added)
-		$response = Read::handle_request_get_all(
-			new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/datetimes' )
+		$response = rest_do_request(
+			new \WP_REST_Request( 'GET', '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/datetimes' )
 		);
 		$this->assertInstanceOf( 'WP_REST_Response', $response );
 		$headers = $response->get_headers();
@@ -783,7 +783,7 @@ class Read_Test extends \EE_REST_TestCase{
 	 * @group 9389
 	 */
 	public function test_handle_request_get_all__automatic_group_by() {
-		$request = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/question_groups' );
+		$request = new \WP_REST_Request( 'GET', '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/question_groups' );
 		$request->set_query_params(
 			array(
 				'where' => array(
@@ -792,7 +792,7 @@ class Read_Test extends \EE_REST_TestCase{
 				'limit' => '2,2'
 			)
 		);
-		$response = Read::handle_request_get_all( $request );
+		$response = rest_do_request($request);
 		$this->assertEmpty( $response->get_data() );
 	}
 
@@ -821,14 +821,14 @@ class Read_Test extends \EE_REST_TestCase{
         $e_normal_but_with_trashed_v->_add_relation_to($v_trashed, 'Venue');
         $e_trashed->_add_relation_to($v_normal, 'Venue');
         //now verify we get what we wanted...
-        $request = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events' );
+        $request = new \WP_REST_Request( 'GET', '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events' );
         $request->set_query_params(
             array(
                 'order_by' => array( 'Venue.VNU_ID' => 'ASC' ),
                 'default_where_conditions' => 'full_this_minimum_others'
             )
         );
-        $response = Read::handle_request_get_all( $request );
+        $response = rest_do_request($request);
         //we should find the normal event, and the event for the trashed venue
         $this->assertCount(2, $response->data);
     }
@@ -840,7 +840,8 @@ class Read_Test extends \EE_REST_TestCase{
      */
     public function test_handle_schema_request()
     {
-        $request = new \WP_REST_Request( 'OPTIONS', '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events');
+        $request = new \WP_REST_Request( 'OPTIONS',
+            '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events');
         $response = rest_do_request($request);
         $data = $response->get_data();
         //verify there is a schema array

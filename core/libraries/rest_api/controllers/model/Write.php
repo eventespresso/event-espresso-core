@@ -36,19 +36,15 @@ class Write extends Base {
      * Handles requests to get all (or a filtered subset) of entities for a particular model
      *
      * @param WP_REST_Request $request
-     *
+     * @param string $version
+     * @param string $model_name
      * @return WP_REST_Response|\WP_Error
      */
-    public static function handle_request_insert( WP_REST_Request $request ) {
+    public static function handle_request_insert( WP_REST_Request $request, $version, $model_name ) {
         $controller = new Write();
         try {
-            $matches = $controller->parse_route(
-                $request->get_route(),
-                '~' . \EED_Core_Rest_Api::ee_api_namespace_for_regex . '(.*)~',
-                array( 'version', 'model' )
-            );
-            $controller->set_requested_version( $matches['version'] );
-            $model_name_singular = \EEH_Inflector::singularize_and_upper( $matches['model'] );
+            $controller->set_requested_version( $version );
+            $model_name_singular = \EEH_Inflector::singularize_and_upper( $model_name );
             if ( ! $controller->get_model_version_info()->is_model_name_in_this_version( $model_name_singular ) ) {
                 return $controller->send_response(
                     new \WP_Error(
@@ -75,18 +71,15 @@ class Write extends Base {
      * Handles a request from \WP_REST_Server to update an EE model
      *
      * @param WP_Rest_Request $request
-     *
+     * @param string $version
+     * @param string $model_name
      * @return WP_REST_Response|\WP_Error
      */
-    public static function handle_request_update( WP_Rest_Request $request ) {
+    public static function handle_request_update( WP_Rest_Request $request, $version, $model_name ) {
         $controller = new Write();
         try {
-            $matches = $controller->parse_route(
-                $request->get_route(),
-                '~' . \EED_Core_Rest_Api::ee_api_namespace_for_regex . '(.*)/(.*)~',
-                array( 'version', 'model', 'id' ) );
-            $controller->set_requested_version( $matches['version'] );
-            $model_name_singular = \EEH_Inflector::singularize_and_upper( $matches['model'] );
+            $controller->set_requested_version( $version );
+            $model_name_singular = \EEH_Inflector::singularize_and_upper( $model_name );
             if ( ! $controller->get_model_version_info()->is_model_name_in_this_version( $model_name_singular ) ) {
                 return $controller->send_response(
                     new \WP_Error(
@@ -115,18 +108,15 @@ class Write extends Base {
      * Deletes a single model object and returns it. Unless
      *
      * @param WP_Rest_Request $request
-     *
+     * @param string $version
+     * @param string $model_name
      * @return WP_REST_Response|\WP_Error
      */
-    public static function handle_request_delete( WP_Rest_Request $request ) {
+    public static function handle_request_delete( WP_Rest_Request $request, $version, $model_name ) {
         $controller = new Write();
         try {
-            $matches = $controller->parse_route(
-                $request->get_route(),
-                '~' . \EED_Core_Rest_Api::ee_api_namespace_for_regex . '(.*)/(.*)~',
-                array( 'version', 'model', 'id' ) );
-            $controller->set_requested_version( $matches['version'] );
-            $model_name_singular = \EEH_Inflector::singularize_and_upper( $matches['model'] );
+            $controller->set_requested_version( $version );
+            $model_name_singular = \EEH_Inflector::singularize_and_upper( $model_name );
             if ( ! $controller->get_model_version_info()->is_model_name_in_this_version( $model_name_singular ) ) {
                 return $controller->send_response(
                     new \WP_Error(

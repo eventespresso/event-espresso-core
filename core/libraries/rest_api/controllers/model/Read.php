@@ -49,19 +49,16 @@ class Read extends Base
      * Handles requests to get all (or a filtered subset) of entities for a particular model
      *
      * @param \WP_REST_Request $request
+     * @param string $version
+     * @param string $model_name
      * @return \WP_REST_Response|\WP_Error
      */
-    public static function handle_request_get_all(\WP_REST_Request $request)
+    public static function handle_request_get_all(\WP_REST_Request $request, $version, $model_name)
     {
         $controller = new Read();
         try {
-            $matches = $controller->parse_route(
-                $request->get_route(),
-                '~' . \EED_Core_Rest_Api::ee_api_namespace_for_regex . '(.*)~',
-                array('version', 'model')
-            );
-            $controller->set_requested_version($matches['version']);
-            $model_name_singular = \EEH_Inflector::singularize_and_upper($matches['model']);
+            $controller->set_requested_version($version);
+            $model_name_singular = \EEH_Inflector::singularize_and_upper($model_name);
             if (! $controller->get_model_version_info()->is_model_name_in_this_version($model_name_singular)) {
                 return $controller->send_response(
                     new \WP_Error(
@@ -89,12 +86,11 @@ class Read extends Base
 
     /**
      * Prepares and returns schema for any OPTIONS request.
-     *
-     * @param string $model_name  Something like `Event` or `Registration`
      * @param string $version     The API endpoint version being used.
+     * @param string $model_name  Something like `Event` or `Registration`
      * @return array
      */
-    public static function handle_schema_request($model_name, $version)
+    public static function handle_schema_request($version, $model_name)
     {
         $controller = new Read();
         try {
@@ -224,18 +220,16 @@ class Read extends Base
      * Gets a single entity related to the model indicated in the path and its id
      *
      * @param \WP_REST_Request $request
+     * @param string $version
+     * @param string $model_name
      * @return \WP_REST_Response|\WP_Error
      */
-    public static function handle_request_get_one(\WP_REST_Request $request)
+    public static function handle_request_get_one(\WP_REST_Request $request, $version, $model_name)
     {
         $controller = new Read();
         try {
-            $matches = $controller->parse_route(
-                $request->get_route(),
-                '~' . \EED_Core_Rest_Api::ee_api_namespace_for_regex . '(.*)/(.*)~',
-                array('version', 'model', 'id'));
-            $controller->set_requested_version($matches['version']);
-            $model_name_singular = \EEH_Inflector::singularize_and_upper($matches['model']);
+            $controller->set_requested_version($version);
+            $model_name_singular = \EEH_Inflector::singularize_and_upper($model_name);
             if (! $controller->get_model_version_info()->is_model_name_in_this_version($model_name_singular)) {
                 return $controller->send_response(
                     new \WP_Error(
@@ -266,19 +260,17 @@ class Read extends Base
      * to the item with the given id
      *
      * @param \WP_REST_Request $request
+     * @param string $version
+     * @param string $model_name
+     * @param string $related_model_name
      * @return \WP_REST_Response|\WP_Error
      */
-    public static function handle_request_get_related(\WP_REST_Request $request)
+    public static function handle_request_get_related(\WP_REST_Request $request, $version, $model_name, $related_model_name)
     {
         $controller = new Read();
         try {
-            $matches = $controller->parse_route(
-                $request->get_route(),
-                '~' . \EED_Core_Rest_Api::ee_api_namespace_for_regex . '(.*)/(.*)/(.*)~',
-                array('version', 'model', 'id', 'related_model')
-            );
-            $controller->set_requested_version($matches['version']);
-            $main_model_name_singular = \EEH_Inflector::singularize_and_upper($matches['model']);
+            $controller->set_requested_version($version);
+            $main_model_name_singular = \EEH_Inflector::singularize_and_upper($model_name);
             if (! $controller->get_model_version_info()->is_model_name_in_this_version($main_model_name_singular)) {
                 return $controller->send_response(
                     new \WP_Error(
@@ -293,10 +285,10 @@ class Read extends Base
             }
             $main_model = $controller->get_model_version_info()->load_model($main_model_name_singular);
             //assume the related model name is plural and try to find the model's name
-            $related_model_name_singular = \EEH_Inflector::singularize_and_upper($matches['related_model']);
+            $related_model_name_singular = \EEH_Inflector::singularize_and_upper($related_model_name);
             if (! $controller->get_model_version_info()->is_model_name_in_this_version($related_model_name_singular)) {
                 //so the word didn't singularize well. Maybe that's just because it's a singular word?
-                $related_model_name_singular = \EEH_Inflector::humanize($matches['related_model']);
+                $related_model_name_singular = \EEH_Inflector::humanize($related_model_name);
             }
             if (! $controller->get_model_version_info()->is_model_name_in_this_version($related_model_name_singular)) {
                 return $controller->send_response(
