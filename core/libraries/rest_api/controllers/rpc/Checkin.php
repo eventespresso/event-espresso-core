@@ -75,7 +75,7 @@ class Checkin extends Base {
 		if( $success === false ) {
             //check if we know they can't check in because they're not approved and we aren't forcing
             if( ! $reg->is_approved() && ! $force ) {
-                //rely on EE_Error::add_error messages to have been added to give more data about hwy it failed
+                //rely on EE_Error::add_error messages to have been added to give more data about why it failed
                 return $this->send_response(
                     new \WP_Error(
                         'rest_toggle_checkin_failed',
