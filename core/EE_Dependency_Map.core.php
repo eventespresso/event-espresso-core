@@ -386,7 +386,7 @@ class EE_Dependency_Map {
 				'EventEspresso\core\domain\services\ticket\CancelTicketLineItemService' => EE_Dependency_Map::load_from_cache,
 			),
 			'EventEspresso\core\services\commands\attendee\CreateAttendeeCommandHandler' => array(
-				'EE_Registry' => EE_Dependency_Map::load_from_cache,
+				'EEM_Attendee' => EE_Dependency_Map::load_from_cache,
 			),
 			'EventEspresso\core\services\database\TableManager' => array(
 				'EventEspresso\core\services\database\TableAnalysis' => EE_Dependency_Map::load_from_cache,
