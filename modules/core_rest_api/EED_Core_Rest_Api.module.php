@@ -145,23 +145,62 @@ class EED_Core_Rest_Api extends \EED_Module
      * Filters the WP routes to add our EE-related ones. This takes a bit of time
      * so we actually prefer to only do it when an EE plugin is activated or upgraded
      */
-    public static function register_routes()
-    {
-        foreach (EED_Core_Rest_Api::get_ee_route_data() as $namespace => $relative_urls) {
-            foreach ($relative_urls as $endpoint => $routes) {
-                foreach ($routes as $route) {
-                    $callback = $route['callback'];
-                    $route_args = array(
-                        array(
-                            'methods'  => $route['methods'],
-                            'args'     => isset($route['args']) ? $route['args'] : array(),
-                        )
+    public static function register_routes() {
+        foreach ( EED_Core_Rest_Api::get_ee_route_data() as $namespace => $relative_routes ) {
+            foreach ( $relative_routes as $relative_route => $data_for_multiple_endpoints ) {
+                /**
+                 * @var array     $data_for_multiple_endpoints numerically indexed array but can also contain route optiions like {
+                 * @type array    $schema                      {
+                 * @type callable $schema_callback
+                 * @type string   $callback_arg1
+                 * @type string   $callback_arg2
+                 * }
+                 * }
+                 */
+                //when registering routes, register all the endpoints' data at the same time
+                $multiple_endpoint_args = array();
+                foreach ( $data_for_multiple_endpoints as $endpoint_key => $data_for_single_endpoint ) {
+                    /**
+                     * @var array     $data_for_single_endpoint {
+                     * @type callable $callback
+                     * @type string methods
+                     * @type array args
+                     * @type array _links
+                     * @type mixed callback_arg1
+                     * @type mixed callback_arg2
+                     * @type mixed callback_arg2}
+                     */
+                    //skip route options
+                    if ( ! is_numeric( $endpoint_key ) ) {
+                        continue;
+                    }
+                    if ( ! isset( $data_for_single_endpoint['callback'], $data_for_single_endpoint['methhods'] ) ) {
+                        throw new EE_Error(
+                            esc_html__( 'Endpoint configuration data needs to have entries "callback" (callable) and "methods" (comma-separated list of accepts HTTP methods).',
+                                'event_espresso' )
+                        );
+                    }
+                    $callback             = $data_for_single_endpoint['callback'];
+                    $single_endpoint_args = array(
+                        'methods' => $data_for_single_endpoint['methods'],
+                        'args'    => isset( $data_for_single_endpoint['args'] ) ? $data_for_single_endpoint['args']
+                            : array(),
                     );
-                    if( isset( $route['callback_arg1'])){
-                        $arg1 = $route['callback_arg1'];
-                        $arg2 = isset($route['callback_arg2']) ? $route['callback_arg2'] : null;
-                        $arg3 = isset($route['callback_arg3']) ? $route['callback_arg3'] : null;
-                        $route_args['callback'] = function (\WP_REST_Request $request) use ($callback, $arg1, $arg2, $arg3) {
+                    if ( isset( $data_for_single_endpoint['_links'] ) ) {
+                        $single_endpoint_args['_links'] = $data_for_single_endpoint['_links'];
+                    }
+                    if ( isset( $data_for_single_endpoint['callback_arg1'] ) ) {
+                        $arg1                             = $data_for_single_endpoint['callback_arg1'];
+                        $arg2                             = isset( $data_for_single_endpoint['callback_arg2'] )
+                            ? $data_for_single_endpoint['callback_arg2'] : null;
+                        $arg3                             = isset( $data_for_single_endpoint['callback_arg3'] )
+                            ? $data_for_single_endpoint['callback_arg3'] : null;
+                        $single_endpoint_args['callback'] = function ( \WP_REST_Request $request ) use (
+                            $callback,
+                            $arg1,
+                            $arg2,
+                            $arg3
+                        ) {
                             return call_user_func(
                                 $callback,
                                 $request,
@@ -170,27 +209,30 @@ class EED_Core_Rest_Api extends \EED_Module
                                 $arg3
                             );
                         };
-                        if (isset($route['schema_callback'])) {
-                            $schema_callback = $route['schema_callback'];
-                            $route_args['schema'] = function () use ($schema_callback, $arg1, $arg2) {
-                                return call_user_func(
-                                    $schema_callback,
-                                    $arg1,
-                                    $arg2
-                                );
-                            };
-                        }
                     } else {
-                        $route_args['callback'] = $route['callback'];
+                        $single_endpoint_args['callback'] = $data_for_single_endpoint['callback'];
                     }
-
-
-                    register_rest_route(
-                        $namespace,
-                        $endpoint,
-                        $route_args
-                    );
+                    $multiple_endpoint_args[] = $single_endpoint_args;
                 }
+                if ( isset( $data_for_multiple_endpoints['schema'] ) ) {
+                    $schema_route_data                = $data_for_multiple_endpoints['schema'];
+                    $schema_callback                  = $schema_route_data['schema_callback'];
+                    $arg1                             = $schema_route_data['callback_arg1'];
+                    $arg2                             = isset( $schema_route_data['callback_arg2'] )
+                        ? $schema_route_data['callback_arg2'] : null;
+                    $multiple_endpoint_args['schema'] = function () use ( $schema_callback, $arg1, $arg2 ) {
+                        return call_user_func(
+                            $schema_callback,
+                            $arg1,
+                            $arg2
+                        );
+                    };
+                }
+                register_rest_route(
+                    $namespace,
+                    $relative_route,
+                    $multiple_endpoint_args
+                );
             }
         }
     }
@@ -376,10 +418,6 @@ class EED_Core_Rest_Api extends \EED_Module
                         'EventEspresso\core\libraries\rest_api\controllers\model\Read',
                         'handle_request_get_all',
                     ),
-                    'schema_callback' => array(
-                        'EventEspresso\core\libraries\rest_api\controllers\model\Read',
-                        'handle_schema_request',
-                    ),
                     'callback_arg1' => $version,
                     'callback_arg2' => $model_name,
                     'methods'         => WP_REST_Server::READABLE,
@@ -400,6 +438,14 @@ class EED_Core_Rest_Api extends \EED_Module
                     'hidden_endpoint' => $hidden_endpoint,
                     'args'            => $this->_get_write_params($model_name, $model_version_info),
                 ),
+                'schema' => array(
+                    'schema_callback' => array(
+                        'EventEspresso\core\libraries\rest_api\controllers\model\Read',
+                        'handle_schema_request',
+                    ),
+                    'callback_arg1' => $version,
+                    'callback_arg2' => $model_name,
+                )
             );
             $model_routes[$singular_model_route] = array(
                 array(
