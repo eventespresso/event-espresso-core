@@ -498,6 +498,7 @@ class EE_Dependency_Map {
 				return EE_Registry::instance()->load_lib( 'Messages_Template_Defaults', $arguments, false, false );
 			},
 			//load_model
+			'EEM_Attendee'                         => 'load_model',
 			'EEM_Message_Template_Group'           => 'load_model',
 			'EEM_Message_Template'                 => 'load_model',
 			//load_helper
