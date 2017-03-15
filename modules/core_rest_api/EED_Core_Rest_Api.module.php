@@ -174,7 +174,7 @@ class EED_Core_Rest_Api extends \EED_Module
                     if ( ! is_numeric( $endpoint_key ) ) {
                         continue;
                     }
-                    if ( ! isset( $data_for_single_endpoint['callback'], $data_for_single_endpoint['methhods'] ) ) {
+                    if ( ! isset( $data_for_single_endpoint['callback'], $data_for_single_endpoint['methods'] ) ) {
                         throw new EE_Error(
                             esc_html__( 'Endpoint configuration data needs to have entries "callback" (callable) and "methods" (comma-separated list of accepts HTTP methods).',
                                 'event_espresso' )
@@ -774,6 +774,7 @@ class EED_Core_Rest_Api extends \EED_Module
                     ),
                     'methods'         => WP_REST_Server::READABLE,
                     'hidden_endpoint' => $hidden_endpoint,
+                    'callback_arg1' => $version
                 ),
             ),
             'site_info' => array(
@@ -784,6 +785,7 @@ class EED_Core_Rest_Api extends \EED_Module
                     ),
                     'methods'         => WP_REST_Server::READABLE,
                     'hidden_endpoint' => $hidden_endpoint,
+                    'callback_arg1' => $version
                 ),
             ),
         );

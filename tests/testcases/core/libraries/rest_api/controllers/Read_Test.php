@@ -17,10 +17,6 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  */
 class Read_Test extends \EE_REST_TestCase{
 
-	public function setUp() {
-		parent::setUp();
-	}
-
 	public function test_explode_and_get_items_prefixed_with__basic(){
 		$controller = new Read();
 		$controller->set_requested_version( '4.8.29' );

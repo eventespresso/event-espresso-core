@@ -19,9 +19,10 @@ class Read {
 
 	/**
 	 * @param \WP_REST_Request $request
+     * @param string $version
 	 * @return \EE_Config|\WP_Error
 	 */
-	public static function handle_request( \WP_REST_Request $request) {
+	public static function handle_request( \WP_REST_Request $request, $version) {
 		$cap = \EE_Restriction_Generator_Base::get_default_restrictions_cap();
 		if( \EE_Capabilities::instance()->current_user_can( $cap, 'read_over_api' ) ){
 			return \EE_Config::instance();
@@ -43,9 +44,10 @@ class Read {
 	/**
 	 * Handles the request for public site info
 	 * @param \WP_REST_Request $request
+     * @param string $version
 	 * @return \EE_Config|\WP_Error
 	 */
-	public static function handle_request_site_info( \WP_REST_Request $request) {
+	public static function handle_request_site_info( \WP_REST_Request $request, $version) {
 		return array(
 			'default_timezone' => array(
 				'pretty' => \EEH_DTT_Helper::get_timezone_string_for_display(),
