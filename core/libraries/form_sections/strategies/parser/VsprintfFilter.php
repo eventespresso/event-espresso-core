@@ -2,6 +2,7 @@
 namespace EventEspresso\core\libraries\form_sections\strategies\parser;
 
 use EE_Form_Section_Proper;
+use EE_Form_Section_Validatable;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -20,7 +21,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  * @author        Brent Christensen
  * @since         $VID:$
  */
-class VsprintfParser extends FormHtmlParser
+class VsprintfFilter extends FormHtmlFilter
 {
 
     /**
@@ -52,19 +53,21 @@ class VsprintfParser extends FormHtmlParser
 
     /**
      * @param                        $html
-     * @param EE_Form_Section_Proper $form_section
+     * @param EE_Form_Section_Validatable $form_section
      * @return string
      */
-    public function parseHtml($html, EE_Form_Section_Proper $form_section)
+    public function filterHtml($html, EE_Form_Section_Validatable $form_section)
     {
         $this->args[] = $html;
-        $subsections = $form_section->subsections();
-        if (count($subsections) > 1) {
-            foreach ($subsections as $subsection) {
-                $this->args[] = $subsection->get_html();
+        if ($form_section instanceof EE_Form_Section_Proper) {
+            $subsections = $form_section->subsections();
+            if (count($subsections) > 1) {
+                foreach ($subsections as $subsection) {
+                    $this->args[] = $subsection->get_html();
+                }
             }
         }
-        return vprintf($this->format, $this->args);
+        return vsprintf($this->format, $this->args);
     }
 
 
