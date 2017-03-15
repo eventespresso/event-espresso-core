@@ -4,7 +4,7 @@ namespace EventEspresso\core\services\commands\attendee;
 use EE_Attendee;
 use EE_Error;
 use EE_Registration;
-use EE_Registry;
+use EEM_Attendee;
 use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\services\commands\CommandHandler;
 use EventEspresso\core\services\commands\CommandInterface;
@@ -23,18 +23,19 @@ defined( 'EVENT_ESPRESSO_VERSION' ) || exit;
  */
 class CreateAttendeeCommandHandler extends CommandHandler {
 
-	/**
-	 * @var EE_Registry $registry
-	 */
-	protected $registry;
-
-
 
 	/**
-	 * @param EE_Registry $registry
+	 * @var EEM_Attendee $attendee_model
 	 */
-	public function __construct( EE_Registry $registry ) {
-		$this->registry = $registry;
+	protected $attendee_model;
+
+
+
+	/**
+	 * @param EEM_Attendee $attendee_model
+	 */
+	public function __construct(EEM_Attendee $attendee_model ) {
+        $this->attendee_model = $attendee_model;
 	}
 
 
@@ -81,7 +82,8 @@ class CreateAttendeeCommandHandler extends CommandHandler {
 	 */
 	private function findExistingAttendee( EE_Registration $registration, array $attendee_data ) {
 		$existing_attendee = null;
-		// does this attendee already exist in the db ? we're searching using a combination of first name, last name, AND email address
+		// does this attendee already exist in the db ?
+        // we're searching using a combination of first name, last name, AND email address
 		$ATT_fname = ! empty( $attendee_data['ATT_fname'] )
 			? $attendee_data['ATT_fname']
 			: '';
@@ -93,7 +95,7 @@ class CreateAttendeeCommandHandler extends CommandHandler {
 			: '';
 		// but only if those have values
 		if ( $ATT_fname && $ATT_lname && $ATT_email ) {
-			$existing_attendee = $this->registry->LIB->EEM_Attendee->find_existing_attendee(
+			$existing_attendee = $this->attendee_model->find_existing_attendee(
 				array(
 					'ATT_fname' => $ATT_fname,
 					'ATT_lname' => $ATT_lname,
@@ -129,7 +131,7 @@ class CreateAttendeeCommandHandler extends CommandHandler {
 		foreach ( $attendee_data as $property_name => $property_value ) {
 			if (
 				! in_array( $property_name, $dont_set, true )
-				&& $this->registry->LIB->EEM_Attendee->has_field( $property_name )
+				&& $this->attendee_model->has_field( $property_name )
 			) {
 				$existing_attendee->set( $property_name, $property_value );
 			}
