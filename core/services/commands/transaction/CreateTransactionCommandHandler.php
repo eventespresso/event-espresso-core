@@ -39,6 +39,7 @@ class CreateTransactionCommandHandler extends CommandHandler
             throw new InvalidEntityException(get_class($command), 'CreateTransactionCommand');
         }
         $transaction_details = $command->transactionDetails();
+        $cart_total = null;
         if ($command->checkout() instanceof EE_Checkout) {
             // ensure cart totals have been calculated
             $command->checkout()->cart->get_grand_total()->recalculate_total_including_taxes();
@@ -53,12 +54,14 @@ class CreateTransactionCommandHandler extends CommandHandler
             throw new InvalidEntityException(get_class($transaction), 'EE_Transaction');
         }
         $transaction->save();
-        // every TXN needs a grand total line item created
-        $total_line_item = EEH_Line_Item::create_total_line_item($transaction);
-        if (! $total_line_item instanceof EE_Line_Item) {
-            throw new InvalidEntityException(get_class($total_line_item), 'EE_Line_Item');
+        // ensure grand total line item created
+        $cart_total = $cart_total instanceof EE_Line_Item
+            ? $cart_total
+            : EEH_Line_Item::create_total_line_item($transaction);
+        if (! $cart_total instanceof EE_Line_Item) {
+            throw new InvalidEntityException(get_class($cart_total), 'EE_Line_Item');
         }
-        $total_line_item->save_this_and_descendants();
+        $cart_total->save_this_and_descendants_to_txn($transaction->ID());
         return $transaction;
     }
 
