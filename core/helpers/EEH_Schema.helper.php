@@ -244,7 +244,7 @@ class EEH_Schema {
 	 * @return string (link)
 	 */
 	public static function url( $url = null, $text = null, $attributes = array() ) {
-		//Check the URL includes a schema 
+		//Check the URL includes a scheme
 		$parsed_url = parse_url($url);
 		if ( empty($parsed_url['scheme']) ) {
 		    $url = 'http://' . ltrim($url, '/');
