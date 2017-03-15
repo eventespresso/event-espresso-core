@@ -50,6 +50,14 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase
     protected $_ticket;
 
 
+    /**
+     * Holds the mock class for EEH_Parse_Shortcodes
+     *
+     * @var EEH_Parse_Shortcodes_Mock
+     */
+    protected $_parse_shortcodes_helper_mock;
+
+
     public function setUp()
     {
         parent::setUp();
@@ -69,6 +77,8 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase
 
         //set the author of the event
         $this->_event->set('EVT_wp_user', 1);
+        require_once EE_TESTS_DIR . 'mocks/core/helpers/EEH_Parse_Shortcodes_Mock.php';
+        $this->_parse_shortcodes_helper_mock = new EEH_Parse_Shortcodes_Mock;
     }
 
 
@@ -370,5 +380,34 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase
         $this->fail('Expected an exception for invalid EE_Attendee Object');
     }
 
+
+    /**
+     * @group 10561
+     */
+    public function test_is_conditional_shortcode()
+    {
+        //test is conditional shortcode
+        $this->assertTrue($this->_parse_shortcodes_helper_mock->is_conditional_shortcode('[IF_something_* id=10]'));
+
+        $non_conditional_expectations = array(
+            '[SOMETHING]',
+            '[WHEN_IF_NESTED]',
+            '[if_lowercase]',
+            '[/IF_CLOSING_TAG]'
+        );
+
+        foreach ($non_conditional_expectations as $non_conditional_expectation) {
+            //should not be conditional shortcode
+            $this->assertFalse(
+                $this->_parse_shortcodes_helper_mock->is_conditional_shortcode(
+                    $non_conditional_expectation
+                ),
+                sprintf(
+                    'This shortcode pattern should not test as matching a conditional shortcode but it did: %s',
+                    $non_conditional_expectation
+                )
+            );
+        }
+    }
 
 } //end class EEH_Parse_Shortcodes_Test
