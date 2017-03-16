@@ -268,6 +268,16 @@ class Model_Data_Translator
                     $translated_value = Model_Data_Translator::prepare_field_value_from_json($field, $query_param_value,
                         $requested_version, $timezone);
                 }
+                if(isset( $query_param_for_models[$query_param_key])){
+                   throw new Rest_Exception(
+                       'repeated_model_field',
+                       500,
+                       sprintf(
+                           esc_html__('You have already provided the model field %1$s; providing it again is contradictory.', 'event_espresso'),
+                           $query_param_key
+                       )
+                   );
+                }
                 $query_param_for_models[$query_param_key] = $translated_value;
             } else {
                 //so it's not for a field, assume it's a logic query param key

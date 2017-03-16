@@ -79,7 +79,29 @@ class Write_Test extends \EE_REST_TestCase
         $this->assertEquals( '2016-01-01T23:00:00', $response_data['DTT_EVT_start'] );
         $this->assertEquals( '2016-01-03T01:00:00', $response_data['DTT_EVT_end_gmt'] );
         $this->assertEquals( '2016-01-03T00:00:00', $response_data['DTT_EVT_end'] );
+    }
 
+    /**
+     * Tests that when you provide both a UTC and local time for the SAME field, there's an error
+     * @group 9222
+     */
+    public function test_insert_utc_and_relative_duplicate(){
+        //let's set a different WP timezone.
+        $this->_authenticate_an_admin();
+        $req = new \WP_REST_Request(
+            'POST',
+            '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/datetimes'
+        );
+        $req->set_body_params(
+            array(
+                'DTT_EVT_start_gmt' => '2016-01-02T00:00:00',
+                'DTT_EVT_start' => '2016-01-03T00:00:00',
+            )
+        );
+        $response = rest_do_request( $req );
+
+        $response_data = $response->get_data();
+        $this->assertEquals( 'repeated_model_field',  $response_data['code'] );
     }
 
     /**
