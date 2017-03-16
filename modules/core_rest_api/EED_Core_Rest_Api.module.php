@@ -479,7 +479,7 @@ class EED_Core_Rest_Api extends \EED_Module
                     'callback_arg2' => $model_name,
                     'methods'         => WP_REST_Server::DELETABLE,
                     'hidden_endpoint' => $hidden_endpoint,
-                    'args'            => $this->_get_response_selection_query_params($model, $version),
+                    'args'            => $this->_get_delete_query_params($model, $version),
                 )
             );
             foreach ($model->relation_settings() as $relation_name => $relation_obj) {
@@ -852,15 +852,19 @@ class EED_Core_Rest_Api extends \EED_Module
             '/'
         );
         foreach (EED_Core_Rest_Api::get_ee_route_data() as $namespace => $relative_urls) {
-            foreach ($relative_urls as $endpoint => $routes) {
-                foreach ($routes as $route) {
+            foreach ($relative_urls as $resource_name => $endpoints) {
+                foreach ($endpoints as $key => $endpoint) {
+                    //skip schema and other route options
+                    if( ! is_numeric( $key)){
+                        continue;
+                    }
                     //by default, hide "hidden_endpoint"s, unless the request indicates
                     //to $force_show_ee_namespace, in which case only show that one
                     //namespace's endpoints (and hide all others)
-                    if (($route['hidden_endpoint'] && $force_show_ee_namespace === '')
+                    if (($endpoint['hidden_endpoint'] && $force_show_ee_namespace === '')
                         || ($force_show_ee_namespace !== '' && $force_show_ee_namespace !== $namespace)
                     ) {
-                        $full_route = '/' . ltrim($namespace, '/') . '/' . ltrim($endpoint, '/');
+                        $full_route = '/' . ltrim($namespace, '/') . '/' . ltrim($resource_name, '/');
                         unset($route_data[$full_route]);
                     }
                 }

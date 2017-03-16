@@ -192,10 +192,10 @@ class Write_Test extends \EE_REST_TestCase
     }
 
     /**
-     * Tests that when we delete a non-soft-deletable model object, it behaves as a permanent deletion
+     * Tests that when we delete a non-soft-deletable model object, it has an error
      * @group 9222
      */
-    public function test_delete(){
+    public function test_delete__not_allowed_on_non_soft_delete_model(){
         $this->_authenticate_an_admin();
 
 
@@ -204,6 +204,31 @@ class Write_Test extends \EE_REST_TestCase
         $req = new \WP_REST_Request(
             'DELETE',
             '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/payments/' . $payment->ID()
+        );
+        $response = rest_do_request( $req );
+        $response_data = $response->get_data();
+        $this->assertEquals( 'rest_trash_not_supported', $response_data['code']);
+
+    }
+
+    /**
+     * Tests that when we delete a non-soft-deletable model object permanently, it works as normal
+     * @group 9222
+     */
+    public function test_delete__non_soft_delete_model(){
+        $this->_authenticate_an_admin();
+
+
+        $payment = $this->new_model_obj_with_dependencies('Payment');
+        $payment_count_before_deletion = \EEM_Payment::instance()->count();
+        $req = new \WP_REST_Request(
+            'DELETE',
+            '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/payments/' . $payment->ID()
+        );
+        $req->set_query_params(
+            array(
+                'permanent' => true
+            )
         );
         $response = rest_do_request( $req );
         $response_data = $response->get_data();

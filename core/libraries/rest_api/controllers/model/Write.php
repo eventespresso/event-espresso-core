@@ -257,7 +257,7 @@ class Write extends Base
         $obj_id = $request->get_param('id');
         $requested_permanent_delete = (bool)$request->get_param('permanent');
         $requested_allow_blocking = (bool)$request->get_param('allow_blocking');
-        if ($requested_permanent_delete || ! $model instanceof EEM_Soft_Delete_Base) {
+        if ($requested_permanent_delete ) {
             $read_controller = new Read();
             $read_controller->set_requested_version($this->get_requested_version());
             $original_entity = $read_controller->get_one_or_report_permission_error($model, $request,
@@ -268,8 +268,20 @@ class Write extends Base
                 'previous' => $original_entity,
             );
         } else {
-            $model->delete_by_ID($obj_id, $requested_allow_blocking);
-            return $this->_get_one_based_on_request($model, $request, $obj_id);
+            if($model instanceof EEM_Soft_Delete_Base){
+                $model->delete_by_ID($obj_id, $requested_allow_blocking);
+                return $this->_get_one_based_on_request($model, $request, $obj_id);
+            }else{
+                throw new Rest_Exception(
+                    'rest_trash_not_supported',
+                    501,
+                    sprintf(
+                        esc_html__('%1$s do not support trashing. Set permanent=1 to delete.', 'event_espresso'),
+                        \EEH_Inflector::pluralize($model->get_this_model_name())
+                    )
+                );
+            }
+
         }
     }
 
@@ -327,6 +339,7 @@ class Write extends Base
         $get_request->set_url_params(
             array(
                 'id' => $obj_id,
+                'include' => $request->get_param('include')
             )
         );
         $read_controller = new Read();
