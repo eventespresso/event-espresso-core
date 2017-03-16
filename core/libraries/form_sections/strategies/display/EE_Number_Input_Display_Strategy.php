@@ -17,14 +17,14 @@ class EE_Number_Input_Display_Strategy extends EE_Display_Strategy_Base
     /**
      * minimum value for number field
      *
-     * @var int $min
+     * @var int|null $min
      */
     protected $min;
 
     /**
      * maximum value for number field
      *
-     * @var int $max
+     * @var int|null $max
      */
     protected $max;
 
@@ -36,7 +36,7 @@ class EE_Number_Input_Display_Strategy extends EE_Display_Strategy_Base
      * @param int $min
      * @param int $max
      */
-    public function __construct($min = PHP_INT_MIN, $max = PHP_INT_MAX)
+    public function __construct($min = null, $max = null)
     {
         $this->min = $min;
         $this->max = $max;
@@ -49,20 +49,18 @@ class EE_Number_Input_Display_Strategy extends EE_Display_Strategy_Base
      */
     public function display()
     {
-        $input = '<input type="number"';
-        $input .= ' min="' . $this->min . '"';
-        $input .= ' max="' . $this->max . '"';
-        $input .= ' name="' . $this->_input->html_name() . '"';
-        $input .= ' id="' . $this->_input->html_id() . '"';
-        $class = $this->_input->required() ? $this->_input->required_css_class() . ' ' . $this->_input->html_class()
-            : $this->_input->html_class();
-        $input .= ' class="' . $class . '"';
-        // add html5 required
-        $input .= $this->_input->required() ? ' required' : '';
-        $input .= ' value="' . $this->_input->raw_value_in_form() . '"';
-        $input .= ' style="' . $this->_input->html_style() . '"';
+        $input = $this->opening_tag('input');
+        $input .= $this->attribute('type', 'number');
+        $input .= $this->attribute('min', $this->min);
+        $input .= $this->attribute('max', $this->max);
+        $input .= $this->attribute('name', $this->_input->html_name());
+        $input .= $this->attribute('id', $this->_input->html_id());
+        $input .= $this->attribute('class', $this->_input->html_class());
+        $input .= $this->single_attribute('required', $this->_input->required());
+        $input .= $this->attribute('value', $this->_input->raw_value_in_form());
+        $input .= $this->attribute('style', $this->_input->html_style());
         $input .= $this->_input->other_html_attributes();
-        $input .= '/>';
+        $input .= $this->closing_tag();
         return $input;
     }
 
