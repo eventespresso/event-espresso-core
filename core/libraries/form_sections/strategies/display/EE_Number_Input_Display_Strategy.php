@@ -55,7 +55,7 @@ class EE_Number_Input_Display_Strategy extends EE_Display_Strategy_Base
         $input .= $this->attribute('max', $this->max);
         $input .= $this->attribute('name', $this->_input->html_name());
         $input .= $this->attribute('id', $this->_input->html_id());
-        $input .= $this->attribute('class', $this->_input->html_class());
+        $input .= $this->attribute('class', $this->_input->html_class(true));
         $input .= $this->single_attribute('required', $this->_input->required());
         $input .= $this->attribute('value', $this->_input->raw_value_in_form());
         $input .= $this->attribute('style', $this->_input->html_style());
