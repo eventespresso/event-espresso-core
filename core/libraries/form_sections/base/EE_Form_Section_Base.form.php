@@ -1,5 +1,5 @@
 <?php
-use EventEspresso\core\libraries\form_sections\strategies\parser\FormHtmlFilter;
+use EventEspresso\core\libraries\form_sections\strategies\filter\FormHtmlFilter;
 
 if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');

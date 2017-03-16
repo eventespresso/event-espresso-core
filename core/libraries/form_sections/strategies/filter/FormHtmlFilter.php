@@ -1,5 +1,5 @@
 <?php
-namespace EventEspresso\core\libraries\form_sections\strategies\parser;
+namespace EventEspresso\core\libraries\form_sections\strategies\filter;
 
 use EE_Form_Section_Validatable;
 
@@ -27,4 +27,4 @@ abstract class FormHtmlFilter
 
 }
 // End of file FormHtmlFilter.php
-// Location: EventEspresso\core\libraries\form_sections\strategies\parser/FormHtmlFilter.php
+// Location: EventEspresso\core\libraries\form_sections\strategies\filter\FormHtmlFilter.php

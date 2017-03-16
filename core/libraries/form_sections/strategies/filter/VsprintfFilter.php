@@ -1,5 +1,5 @@
 <?php
-namespace EventEspresso\core\libraries\form_sections\strategies\parser;
+namespace EventEspresso\core\libraries\form_sections\strategies\filter;
 
 use EE_Form_Section_Proper;
 use EE_Form_Section_Validatable;
@@ -9,8 +9,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
 /**
- * Class SprintfFormHtmlParser
- * parses a form section's rendered HTML using vsprintf()
+ * Parses a form section's rendered HTML using vsprintf()
  * PLZ NOTE:
  *      the rendered HTML for the full form will be the FIRST argument
  *      appended to the array of args passed to vsprintf(),
@@ -73,5 +72,5 @@ class VsprintfFilter extends FormHtmlFilter
 
 
 }
-// End of file SprintfFormHtmlParser.php
-// Location: EventEspresso\core\libraries\form_sections\strategies\parser/SprintfFormHtmlParser.php
+// End of file VsprintfFormHtmlParser.php
+// Location: EventEspresso\core\libraries\form_sections\strategies\filter\VsprintfFormHtmlParser.php
