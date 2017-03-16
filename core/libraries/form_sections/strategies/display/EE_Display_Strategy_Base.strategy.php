@@ -27,7 +27,7 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base{
     /**
      * @param array $attributes
      */
-    public function set_attributes(array $attributes)
+    public function _set_attributes(array $attributes)
     {
         // add existing attributes to new, but don't overwrite (ie: favour new)
         $attributes += $this->attributes;
@@ -109,7 +109,7 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base{
      * @param string $tag
      * @return string
      */
-    protected function opening_tag($tag)
+    protected function _opening_tag($tag)
     {
         $this->tag = $tag;
         return "<{$this->tag}";
@@ -122,7 +122,7 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base{
      *
      * @return string
      */
-    protected function closing_tag()
+    protected function _closing_tag()
     {
         return "</{$this->tag}>";
     }
@@ -134,7 +134,7 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base{
      *
      * @return string
      */
-    protected function close_tag()
+    protected function _close_tag()
     {
         return '/>';
     }
@@ -148,7 +148,7 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base{
      *
      * @return array
      */
-    protected function standard_attributes_array()
+    protected function _standard_attributes_array()
     {
         return array(
             'name'  => $this->_input->html_name(),
@@ -169,11 +169,15 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base{
      * @param array $attributes
      * @return string
      */
-    protected function attributes_string($attributes = array())
+    protected function _attributes_string($attributes = array())
     {
-        $this->set_attributes($attributes);
+        $this->_set_attributes($attributes);
         // add standard attributes but ONLY if they were not already set in the attributes array
-        $this->attributes += $this->standard_attributes_array();
+        $this->attributes += $this->_standard_attributes_array();
+        $this->attributes = apply_filters(
+            'FHEE__EE_Display_Strategy_Base__attributes_string__attributes',
+            $this->attributes
+        );
         $attributes_string = '';
         foreach ($this->attributes as $attribute => $value) {
             if(is_numeric($attribute)){
@@ -184,9 +188,9 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base{
                 } else {
                     $attribute = $value;
                 }
-                $attributes_string .=  $this->single_attribute($attribute, $add);
+                $attributes_string .=  $this->_single_attribute($attribute, $add);
             } else {
-                $attributes_string .= $this->attribute($attribute, $value);
+                $attributes_string .= $this->_attribute($attribute, $value);
             }
         }
         return $attributes_string;
@@ -202,7 +206,7 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base{
      * @param string $value
      * @return string
      */
-    protected function attribute($attribute, $value = '')
+    protected function _attribute($attribute, $value = '')
     {
         return $value !== null ? " {$attribute}=\"{$value}\"" : '';
     }
@@ -217,7 +221,7 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base{
      * @param string $value
      * @return string
      */
-    protected function data_attribute($attribute, $value = '')
+    protected function _data_attribute($attribute, $value = '')
     {
         return $value !== null ? " data-{$attribute}=\"{$value}\"" : '';
     }
@@ -231,7 +235,7 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base{
      * @param boolean $add
      * @return string
      */
-    protected function single_attribute($attribute, $add = true)
+    protected function _single_attribute($attribute, $add = true)
     {
         return $add ? " {$attribute}" : '';
     }
