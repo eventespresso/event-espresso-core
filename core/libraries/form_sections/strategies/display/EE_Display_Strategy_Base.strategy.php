@@ -192,7 +192,9 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
         $this->attributes += $this->_standard_attributes_array();
         $this->attributes = apply_filters(
             'FHEE__EE_Display_Strategy_Base__attributes_string__attributes',
-            $this->attributes
+            $this->attributes,
+            $this,
+            $this->_input
         );
         $attributes_string = '';
         foreach ($this->attributes as $attribute => $value) {
