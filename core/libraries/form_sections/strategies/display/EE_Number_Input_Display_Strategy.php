@@ -50,17 +50,14 @@ class EE_Number_Input_Display_Strategy extends EE_Display_Strategy_Base
     public function display()
     {
         $input = $this->opening_tag('input');
-        $input .= $this->attribute('type', 'number');
-        $input .= $this->attribute('min', $this->min);
-        $input .= $this->attribute('max', $this->max);
-        $input .= $this->attribute('name', $this->_input->html_name());
-        $input .= $this->attribute('id', $this->_input->html_id());
-        $input .= $this->attribute('class', $this->_input->html_class(true));
-        $input .= $this->single_attribute('required', $this->_input->required());
-        $input .= $this->attribute('value', $this->_input->raw_value_in_form());
-        $input .= $this->attribute('style', $this->_input->html_style());
-        $input .= $this->_input->other_html_attributes();
-        $input .= $this->closing_tag();
+        $input .= $this->attributes_string(
+            array(
+                'type' => 'number',
+                'min'  => $this->min,
+                'max'  => $this->max,
+            )
+        );
+        $input .= $this->close_tag();
         return $input;
     }
 
