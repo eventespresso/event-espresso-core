@@ -42,7 +42,7 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base{
 	protected function _append_chars( $string = '', $chars = '-' ) {
 		return  $this->_remove_chars( $string, $chars ) . $chars;
 	}
-	
+
 	/**
 	 * Gets the HTML IDs of all the inputs
 	 * @return array
@@ -68,10 +68,63 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base{
 	 * Opportunity for this display strategy to call wp_enqueue_script and wp_enqueue_style.
 	 * This should be called during wp_enqueue_scripts
 	 */
-	public function enqueue_js() {
-
-	}
+	public function enqueue_js() {}
 
 
+
+    /**
+     * returns string like: attribute="value"
+     * returns an empty string if $value is null
+     *
+     * @param string $tag
+     * @return string
+     */
+    protected function opening_tag($tag)
+    {
+        return "<{$tag}";
+    }
+
+
+
+    /**
+     * returns string like: attribute="value"
+     * returns an empty string if $value is null
+     *
+     * @param string $tag
+     * @return string
+     */
+    protected function closing_tag($tag = '')
+    {
+        return ! empty($tag) ? "/{$tag}>" : '/>';
+    }
+
+
+
+    /**
+     * returns string like: ' attribute="value"'
+     * returns an empty string if $value is null
+     *
+     * @param string $attribute
+     * @param string $value
+     * @return string
+     */
+    protected function attribute($attribute, $value = '')
+    {
+        return $value !== null ? " {$attribute}=\"{$value}\"" : '';
+    }
+
+
+
+    /**
+     * returns string like: ' attribute' if $add is true
+     *
+     * @param string  $attribute
+     * @param boolean $add
+     * @return string
+     */
+    protected function single_attribute($attribute, $add = true)
+    {
+        return $add ? " {$attribute}" : '';
+    }
 
 }
