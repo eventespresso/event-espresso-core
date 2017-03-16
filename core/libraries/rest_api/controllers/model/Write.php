@@ -1,13 +1,14 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api\controllers\model;
 
+use \WP_REST_Request;
+use \WP_REST_Response;
+use \EEM_Base;
+use \EE_Registry;
+use \EEM_Soft_Delete_Base;
 use EventEspresso\core\libraries\rest_api\Capabilities;
 use EventEspresso\core\libraries\rest_api\Model_Data_Translator;
 use EventEspresso\core\libraries\rest_api\Rest_Exception;
-use \EEM_Base;
-use \WP_REST_Request;
-use \WP_REST_Response;
-use \EE_Registry;
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
     exit( 'No direct script access allowed' );
@@ -242,7 +243,7 @@ class Write extends Base {
         $obj_id                     = $request->get_param( 'id' );
         $requested_permanent_delete = (bool) $request->get_param( 'permanent' );
         $requested_allow_blocking   = (bool) $request->get_param( 'allow_blocking' );
-        if ( $requested_permanent_delete ) {
+        if ( $requested_permanent_delete || ! $model instanceof EEM_Soft_Delete_Base) {
             $read_controller = new Read();
             $read_controller->set_requested_version( $this->get_requested_version() );
             $original_entity = $read_controller->get_one_or_report_permission_error( $model, $request,

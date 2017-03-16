@@ -170,6 +170,30 @@ class Write_Test extends \EE_REST_TestCase
     }
 
     /**
+     * Tests that when we delete a non-soft-deletable model object, it behaves as a permanent deletion
+     * @group 9222
+     */
+    public function test_delete(){
+        $this->_authenticate_an_admin();
+
+
+        $payment = $this->new_model_obj_with_dependencies('Payment');
+        $payment_count_before_deletion = \EEM_Payment::instance()->count();
+        $req = new \WP_REST_Request(
+            'DELETE',
+            '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/payments/' . $payment->ID()
+        );
+        $response = rest_do_request( $req );
+        $response_data = $response->get_data();
+        //verify there was no error code
+        $this->assertTrue( empty( $response_data['code'] ) );
+        $this->assertTrue( isset( $response_data['deleted'], $response_data['previous'] ) );
+        $this->assertEquals( $payment->ID(), $response_data['previous']['PAY_ID'] );
+        $this->assertEquals( $payment_count_before_deletion - 1, \EEM_Payment::instance()->count() );
+
+    }
+
+    /**
      * Authenticates an admin with capabilities to use the API
      * @param array  $caps
      *
