@@ -49,15 +49,15 @@ class EE_Number_Input_Display_Strategy extends EE_Display_Strategy_Base
      */
     public function display()
     {
-        $input = $this->opening_tag('input');
-        $input .= $this->attributes_string(
+        $input = $this->_opening_tag('input');
+        $input .= $this->_attributes_string(
             array(
                 'type' => 'number',
                 'min'  => $this->min,
                 'max'  => $this->max,
             )
         );
-        $input .= $this->close_tag();
+        $input .= $this->_close_tag();
         return $input;
     }
 
