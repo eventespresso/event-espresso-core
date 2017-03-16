@@ -9,7 +9,34 @@
  *
  */
 abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base{
-	/**
+
+
+    /**
+     * @var string $tag
+     */
+    protected $tag = '';
+
+
+    /**
+     * @var array $attributes
+     */
+    protected $attributes = array();
+
+
+
+    /**
+     * @param array $attributes
+     */
+    public function set_attributes(array $attributes)
+    {
+        // add existing attributes to new, but don't overwrite (ie: favour new)
+        $attributes += $this->attributes;
+        $this->attributes = $attributes;
+    }
+
+
+
+    /**
 	 * returns HTML and javascript related to the displaying of this input
 	 * @return string
 	 */
@@ -43,10 +70,14 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base{
 		return  $this->_remove_chars( $string, $chars ) . $chars;
 	}
 
-	/**
-	 * Gets the HTML IDs of all the inputs
-	 * @return array
-	 */
+
+
+    /**
+     * Gets the HTML IDs of all the inputs
+     *
+     * @param bool $add_pound_sign
+     * @return array
+     */
 	public function get_html_input_ids( $add_pound_sign = false ) {
 		return array( $this->get_input()->html_id( $add_pound_sign ) );
 	}
@@ -73,29 +104,92 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base{
 
 
     /**
-     * returns string like: attribute="value"
-     * returns an empty string if $value is null
+     * returns string like: '<tag'
      *
      * @param string $tag
      * @return string
      */
     protected function opening_tag($tag)
     {
-        return "<{$tag}";
+        $this->tag = $tag;
+        return "<{$this->tag}";
     }
 
 
 
     /**
-     * returns string like: attribute="value"
-     * returns an empty string if $value is null
+     * returns string like: '</tag>
      *
-     * @param string $tag
      * @return string
      */
-    protected function closing_tag($tag = '')
+    protected function closing_tag()
     {
-        return ! empty($tag) ? "/{$tag}>" : '/>';
+        return "</{$this->tag}>";
+    }
+
+
+
+    /**
+     * returns string like: '/>'
+     *
+     * @return string
+     */
+    protected function close_tag()
+    {
+        return '/>';
+    }
+
+
+
+    /**
+     * returns an array of standard HTML attributes that get added to nearly all inputs,
+     * where string keys represent named attributes like id, class, etc
+     * and numeric keys represent single attributes like 'required'
+     *
+     * @return array
+     */
+    protected function standard_attributes_array()
+    {
+        return array(
+            'name'  => $this->_input->html_name(),
+            'id'    => $this->_input->html_id(),
+            'class' => $this->_input->html_class(true),
+            0       => array('required', $this->_input->required()),
+            1       => $this->_input->other_html_attributes(),
+            'style' => $this->_input->html_style(),
+        );
+    }
+
+
+
+    /**
+     * sets the attributes using the incoming array
+     * and returns a string of all attributes rendered as valid HTML
+     *
+     * @param array $attributes
+     * @return string
+     */
+    protected function attributes_string($attributes = array())
+    {
+        $this->set_attributes($attributes);
+        // add standard attributes but ONLY if they were not already set in the attributes array
+        $this->attributes += $this->standard_attributes_array();
+        $attributes_string = '';
+        foreach ($this->attributes as $attribute => $value) {
+            if(is_numeric($attribute)){
+                $add = true;
+                if (is_array($value)) {
+                    $attribute = isset($value[0]) ? $value[0] : '';
+                    $add       = isset($value[1]) ? $value[1] : false;
+                } else {
+                    $attribute = $value;
+                }
+                $attributes_string .=  $this->single_attribute($attribute, $add);
+            } else {
+                $attributes_string .= $this->attribute($attribute, $value);
+            }
+        }
+        return $attributes_string;
     }
 
 
@@ -111,6 +205,21 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base{
     protected function attribute($attribute, $value = '')
     {
         return $value !== null ? " {$attribute}=\"{$value}\"" : '';
+    }
+
+
+
+    /**
+     * returns string like: ' data-attribute="value"'
+     * returns an empty string if $value is null
+     *
+     * @param string $attribute
+     * @param string $value
+     * @return string
+     */
+    protected function data_attribute($attribute, $value = '')
+    {
+        return $value !== null ? " data-{$attribute}=\"{$value}\"" : '';
     }
 
 
