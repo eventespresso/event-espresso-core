@@ -105,8 +105,8 @@ abstract class EE_Form_Section_Base
             }
         }
         // set parser which allows the form section's rendered HTML to be filtered
-        if (isset($options_array['form_html_parser']) && $options_array['form_html_parser'] instanceof FormHtmlFilter) {
-            $this->_form_html_filter = $options_array['form_html_parser'];
+        if (isset($options_array['form_html_filter']) && $options_array['form_html_filter'] instanceof FormHtmlFilter) {
+            $this->_form_html_filter = $options_array['form_html_filter'];
         }
     }
 
