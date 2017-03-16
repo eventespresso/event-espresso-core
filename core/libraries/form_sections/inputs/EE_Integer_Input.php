@@ -24,10 +24,10 @@ class EE_Integer_Input extends EE_Form_Input_Base
             new EE_Number_Input_Display_Strategy(
                 isset($input_settings['min_value'])
                     ? $input_settings['min_value']
-                    : PHP_INT_MIN,
+                    : null,
                 isset($input_settings['max_value'])
                     ? $input_settings['max_value']
-                    : PHP_INT_MAX
+                    : null
             )
         );
         $this->_set_normalization_strategy(
