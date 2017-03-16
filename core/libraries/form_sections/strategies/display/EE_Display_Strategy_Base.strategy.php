@@ -17,26 +17,26 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
 
 
     /**
-     * @var string $tag
+     * @var string $_tag
      */
-    protected $tag = '';
+    protected $_tag = '';
 
 
     /**
-     * @var array $attributes
+     * @var array $_attributes
      */
-    protected $attributes = array();
+    protected $_attributes = array();
 
 
 
     /**
-     * @param array $attributes
+     * @param array $_attributes
      */
-    public function _set_attributes(array $attributes)
+    public function _set_attributes(array $_attributes)
     {
         // add existing attributes to new, but don't overwrite (ie: favour new)
-        $attributes += $this->attributes;
-        $this->attributes = $attributes;
+        $_attributes += $this->_attributes;
+        $this->_attributes = $_attributes;
     }
 
 
@@ -127,8 +127,8 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
      */
     protected function _opening_tag($tag)
     {
-        $this->tag = $tag;
-        return "<{$this->tag}";
+        $this->_tag = $tag;
+        return "<{$this->_tag}";
     }
 
 
@@ -140,7 +140,7 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
      */
     protected function _closing_tag()
     {
-        return "</{$this->tag}>";
+        return "</{$this->_tag}>";
     }
 
 
@@ -189,15 +189,15 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
     {
         $this->_set_attributes($attributes);
         // add standard attributes but ONLY if they were not already set in the attributes array
-        $this->attributes += $this->_standard_attributes_array();
-        $this->attributes = apply_filters(
+        $this->_attributes += $this->_standard_attributes_array();
+        $this->_attributes = apply_filters(
             'FHEE__EE_Display_Strategy_Base__attributes_string__attributes',
-            $this->attributes,
+            $this->_attributes,
             $this,
             $this->_input
         );
         $attributes_string = '';
-        foreach ($this->attributes as $attribute => $value) {
+        foreach ($this->_attributes as $attribute => $value) {
             if (is_numeric($attribute)) {
                 $add = true;
                 if (is_array($value)) {
