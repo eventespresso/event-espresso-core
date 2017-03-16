@@ -22,11 +22,12 @@ class Checkin extends Base {
 
 	/**
 	 * @param \WP_REST_Request $request
+     * @param string $version
 	 * @return \WP_Error|\WP_REST_Response
 	 */
-	public static function handle_request_toggle_checkin( \WP_REST_Request $request ) {
+	public static function handle_request_toggle_checkin( \WP_REST_Request $request, $version ) {
 		$controller = new Checkin();
-		return $controller->_create_checkin_checkout_object( $request );
+		return $controller->_create_checkin_checkout_object( $request, $version );
 	}
 
 
@@ -35,9 +36,10 @@ class Checkin extends Base {
 	 * Toggles whether the user is checked in or not.
 	 *
 	 * @param \WP_REST_Request $request
+     * @param string $version
 	 * @return \WP_Error|\WP_REST_Response
 	 */
-	protected function _create_checkin_checkout_object( \WP_REST_Request $request ) {
+	protected function _create_checkin_checkout_object( \WP_REST_Request $request, $version ) {
 		$reg_id = $request->get_param( 'REG_ID' );
 		$dtt_id = $request->get_param( 'DTT_ID' );
 		$force = $request->get_param( 'force' );
@@ -104,16 +106,15 @@ class Checkin extends Base {
 				)
 			);
 		}
-		$requested_version = $this->get_requested_version( $request->get_route() );
 		$get_request = new \WP_REST_Request(
 			'GET',
-			\EED_Core_Rest_Api::ee_api_namespace . $requested_version . '/checkins/' . $checkin->ID()
+			'/' . \EED_Core_Rest_Api::ee_api_namespace . 'v' . $version . '/checkins/' . $checkin->ID()
 		);
 		$get_request->set_url_params(
 			array(
 				'id' => $checkin->ID()
 			)
 		);
-		return Read::handle_request_get_one( $get_request );
+		return Read::handle_request_get_one( $get_request, $version, 'Checkin' );
 	}
 }

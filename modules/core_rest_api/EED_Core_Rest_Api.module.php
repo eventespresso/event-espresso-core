@@ -554,6 +554,7 @@ class EED_Core_Rest_Api extends \EED_Module
                             'event_espresso'),
                     ),
                 ),
+                'callback_arg1' => $version,
             ),
         );
         return apply_filters(

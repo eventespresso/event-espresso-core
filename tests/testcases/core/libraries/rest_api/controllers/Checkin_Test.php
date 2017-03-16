@@ -36,8 +36,8 @@ class Checkin_Test extends \EE_UnitTestCase {
 	 */
 	protected function _create_checkin_request( $reg_id, $dtt_id ) {
 		$req = new \WP_REST_Request( 
-			'PUT', 
-			\EED_Core_Rest_Api::ee_api_namespace . '4.8.33/registrations/' . $reg_id . '/toggle_checkin_for_datetime/' . $dtt_id . '/force'
+			'POST',
+			'/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.33/registrations/' . $reg_id . '/toggle_checkin_for_datetime/' . $dtt_id
 		);
 		$req->set_url_params( 
 			array(
@@ -61,10 +61,11 @@ class Checkin_Test extends \EE_UnitTestCase {
 		$dtt = $this->new_model_obj_with_dependencies( 'Datetime' );
 		$dtt->_add_relation_to($reg->get( 'TKT_ID'), 'Ticket' );
 		
-		$response = Checkin::handle_request_toggle_checkin( $this->_create_checkin_request( $reg->ID(), $dtt->ID() ) );
-		
+		$response = rest_do_request( $this->_create_checkin_request( $reg->ID(), $dtt->ID() ) );
+        $data = $response->get_data();-
+
 		$this->assertEquals( $checkins_before + 1, \EEM_Checkin::instance()->count() );
-		$data = $response->get_data();
+
 		$this->assertTrue( isset( $data[ 'CHK_ID' ] ) );
 		$checkin_obj = \EEM_Checkin::instance()->get_one_by_ID( $data[ 'CHK_ID' ] );
 		$this->assertEquals( $reg->ID(), $checkin_obj->get( 'REG_ID' ) );
@@ -85,7 +86,7 @@ class Checkin_Test extends \EE_UnitTestCase {
 		$dtt = $this->new_model_obj_with_dependencies( 'Datetime' );
 		$dtt->_add_relation_to($reg->get( 'TKT_ID'), 'Ticket' );
 		
-		$response = Checkin::handle_request_toggle_checkin( $this->_create_checkin_request( $reg->ID(), $dtt->ID() ) );
+		$response = rest_do_request( $this->_create_checkin_request( $reg->ID(), $dtt->ID() ) );
 		
 		$this->assertEquals( $checkins_before, \EEM_Checkin::instance()->count() );
 		$data = $response->get_data();
@@ -103,7 +104,7 @@ class Checkin_Test extends \EE_UnitTestCase {
 		$dtt = $this->new_model_obj_with_dependencies( 'Datetime' );
 		$dtt->_add_relation_to($reg->get( 'TKT_ID'), 'Ticket' );
 		
-		$response = Checkin::handle_request_toggle_checkin( $this->_create_checkin_request( $reg->ID(), $dtt->ID() ) );
+		$response = rest_do_request( $this->_create_checkin_request( $reg->ID(), $dtt->ID() ) );
 		
 		$this->assertEquals( $checkins_before, \EEM_Checkin::instance()->count() );
 		$data = $response->get_data();
@@ -138,7 +139,7 @@ class Checkin_Test extends \EE_UnitTestCase {
 		
 		$checkins_before = \EEM_Checkin::instance()->count();
 		
-		$response = Checkin::handle_request_toggle_checkin( $this->_create_checkin_request( $reg->ID(), $dtt2->ID() ) );
+		$response = rest_do_request( $this->_create_checkin_request( $reg->ID(), $dtt2->ID() ) );
 		
 		$this->assertEquals( $checkins_before, \EEM_Checkin::instance()->count() );
 		$data = $response->get_data();
@@ -164,7 +165,7 @@ class Checkin_Test extends \EE_UnitTestCase {
 		$checkins_before = \EEM_Checkin::instance()->count();
 		$req = $this->_create_checkin_request( $reg->ID(), $dtt->ID() );
 		$req->set_body_params( array( 'force' => "true" ) );
-		$response = Checkin::handle_request_toggle_checkin( $req );
+		$response = rest_do_request( $req );
 		
 		$this->assertEquals( $checkins_before + 1, \EEM_Checkin::instance()->count() );
 	}
