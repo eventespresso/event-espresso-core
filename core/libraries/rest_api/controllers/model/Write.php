@@ -4,7 +4,9 @@ namespace EventEspresso\core\libraries\rest_api\controllers\model;
 use \WP_REST_Request;
 use \WP_REST_Response;
 use \EEM_Base;
+use \EE_Base_Class;
 use \EE_Registry;
+use \EE_Datetime_Field;
 use \EEM_Soft_Delete_Base;
 use EventEspresso\core\libraries\rest_api\Capabilities;
 use EventEspresso\core\libraries\rest_api\Model_Data_Translator;
@@ -63,9 +65,11 @@ class Write extends Base
                 );
             }
 
-            return $controller->insert(
-                $controller->get_model_version_info()->load_model($model_name_singular),
-                $request
+            return $controller->send_response(
+                    $controller->insert(
+                    $controller->get_model_version_info()->load_model($model_name_singular),
+                    $request
+                )
             );
         } catch (\Exception $e) {
             return $controller->send_response($e);
@@ -100,9 +104,11 @@ class Write extends Base
                 );
             }
 
-            return $controller->update(
-                $controller->get_model_version_info()->load_model($model_name_singular),
-                $request
+            return $controller->send_response(
+                    $controller->update(
+                    $controller->get_model_version_info()->load_model($model_name_singular),
+                    $request
+                )
             );
         } catch (\Exception $e) {
             return $controller->send_response($e);
@@ -193,7 +199,7 @@ class Write extends Base
             );
         }
 
-        return $this->_get_one_based_on_request($model, $request, $new_id);
+        return $this->_return_model_obj_as_json_response($model_obj);
     }
 
     /**
@@ -235,7 +241,7 @@ class Write extends Base
         $model_obj  = $model->get_one_by_ID($obj_id);
         $model_obj->save($model_data);
 
-        return $this->_get_one_based_on_request($model, $request, $obj_id);
+        return $this->_return_model_obj_as_json_response($model_obj);
     }
 
 
@@ -270,6 +276,32 @@ class Write extends Base
 
             return $this->_get_one_based_on_request($model, $request, $obj_id);
         }
+    }
+
+    /**
+     * Returns an array ready to be converted into a JSON response, based solely on the model object
+     * @param \EE_Base_Class $model_obj
+     * @return array ready for a response
+     */
+    protected function _return_model_obj_as_json_response(EE_Base_Class $model_obj)
+    {
+        $model = $model_obj->get_model();
+        //create an array exactly like the wpdb results row, so we can pass it to controllers/model/Read::create_entity_from_wpdb_result()
+        $simulated_db_row = array();
+        foreach($model->field_settings() as $field_name => $field_obj){
+            if( $field_obj instanceof EE_Datetime_Field){
+                $raw_value = $model_obj->get_DateTime_object($field_name);
+            }else{
+                $raw_value = $model_obj->get_raw($field_name);
+            }
+            $simulated_db_row[$field_obj->get_qualified_column()] = $field_obj->prepare_for_use_in_db( $raw_value );
+        }
+        $read_controller = new Read();
+        $read_controller->set_requested_version($this->get_requested_version());
+        //the simulates request really doesn't need any info downstream
+        $simulated_request = new WP_REST_Request('GET');
+        return $read_controller->create_entity_from_wpdb_result($model_obj->get_model(), $simulated_db_row, $simulated_request);
+
     }
 
 
