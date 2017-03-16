@@ -273,7 +273,9 @@ class Model_Data_Translator
                        'repeated_model_field',
                        500,
                        sprintf(
-                           esc_html__('You have already provided the model field %1$s; providing it again is contradictory.', 'event_espresso'),
+                           esc_html__('You have already provided the model field %1$s; providing it again is 
+                           contradictory. If it is a query parameter, you may add a star ("*"s) and anything you like 
+                           afterwards to make it unique.', 'event_espresso'),
                            $query_param_key
                        )
                    );
