@@ -255,9 +255,9 @@ class Write extends Base
     public function delete(EEM_Base $model, WP_REST_Request $request)
     {
         $obj_id = $request->get_param('id');
-        $requested_permanent_delete = (bool)$request->get_param('permanent');
-        $requested_allow_blocking = (bool)$request->get_param('allow_blocking');
-        if ($requested_permanent_delete ) {
+        $requested_permanent_delete = filter_var($request->get_param('force'), FILTER_VALIDATE_BOOLEAN);
+        $requested_allow_blocking = filter_var($request->get_param('allow_blocking'), FILTER_VALIDATE_BOOLEAN);
+        if ($requested_permanent_delete) {
             $read_controller = new Read();
             $read_controller->set_requested_version($this->get_requested_version());
             $original_entity = $read_controller->get_one_or_report_permission_error($model, $request,
@@ -276,7 +276,7 @@ class Write extends Base
                     'rest_trash_not_supported',
                     501,
                     sprintf(
-                        esc_html__('%1$s do not support trashing. Set permanent=1 to delete.', 'event_espresso'),
+                        esc_html__('%1$s do not support trashing. Set force=1 to delete.', 'event_espresso'),
                         \EEH_Inflector::pluralize($model->get_this_model_name())
                     )
                 );

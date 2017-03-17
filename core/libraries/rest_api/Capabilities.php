@@ -1,6 +1,7 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api;
 use EventEspresso\core\libraries\rest_api\Rest_Exception;
+use EEM_Base;
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
 }
@@ -147,9 +148,9 @@ class Capabilities {
      * If not, throws an exception (so we can define the code that sets up this error object
      * once)
      *
-     * @param type $model
-     * @param type $model_action_context
-     * @param type $action_name
+     * @param EEM_Base $model
+     * @param string $model_action_context
+     * @param string $action_name
      * @return void
      * @throw Rest_Exception
      */

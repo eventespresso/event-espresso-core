@@ -611,7 +611,7 @@ class EED_Core_Rest_Api extends \EED_Module
             )
         );
         if( $model instanceof \EEM_Soft_Delete_Base ){
-            $params_for_delete['permanent'] = array(
+            $params_for_delete['force'] = array(
                 'required' => false,
                 'default' => false
             );

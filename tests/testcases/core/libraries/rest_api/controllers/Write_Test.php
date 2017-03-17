@@ -191,7 +191,7 @@ class Write_Test extends \EE_REST_TestCase
         );
         $req->set_query_params(
             array(
-                'permanent' => true,
+                'force' => true,
             )
         );
         $response = rest_do_request($req);
@@ -242,7 +242,7 @@ class Write_Test extends \EE_REST_TestCase
         );
         $req->set_query_params(
             array(
-                'permanent' => true,
+                'force' => 'true',
             )
         );
         $response = rest_do_request($req);
