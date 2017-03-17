@@ -81,12 +81,12 @@ class Write extends Base
     /**
      * Handles a request from \WP_REST_Server to update an EE model
      *
-     * @param WP_Rest_Request $request
+     * @param WP_REST_Request $request
      * @param string          $version
      * @param string          $model_name
      * @return WP_REST_Response|\WP_Error
      */
-    public static function handle_request_update(WP_Rest_Request $request, $version, $model_name)
+    public static function handle_request_update(WP_REST_Request $request, $version, $model_name)
     {
         $controller = new Write();
         try {
@@ -120,12 +120,12 @@ class Write extends Base
     /**
      * Deletes a single model object and returns it. Unless
      *
-     * @param WP_Rest_Request $request
+     * @param WP_REST_Request $request
      * @param string          $version
      * @param string          $model_name
      * @return WP_REST_Response|\WP_Error
      */
-    public static function handle_request_delete(WP_Rest_Request $request, $version, $model_name)
+    public static function handle_request_delete(WP_REST_Request $request, $version, $model_name)
     {
         $controller = new Write();
         try {
