@@ -71,7 +71,7 @@ abstract class EE_Form_Section_Base
 
     /**
      * flag indicating that _construct_finalize has been called.
-     * If it hasn't been called and we try to use functions which require it, we call it
+     * If it has not been called and we try to use functions which require it, we call it
      * with no parameters. But normally, _construct_finalize should be called by the instantiating class
      *
      * @var boolean
