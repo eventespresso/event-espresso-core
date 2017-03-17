@@ -503,6 +503,53 @@ class EEM_Event extends EEM_CPT_Base
 
 
     /**
+     * Gets all events that are published
+     * and have an event end time later than now
+     *
+     * @param  array $query_params An array of query params to further filter on
+     *                             (note that status and DTT_EVT_end will be overridden)
+     * @param bool   $count        whether to return the count or not (default FALSE)
+     * @return EE_Event[]|int
+     * @throws \EE_Error
+     */
+    public function get_active_and_upcoming_events($query_params, $count = false)
+    {
+        if (array_key_exists(0, $query_params)) {
+            $where_params = $query_params[0];
+            unset($query_params[0]);
+        } else {
+            $where_params = array();
+        }
+        // if we have count make sure we don't include group by
+        if ($count && isset($query_params['group_by'])) {
+            unset($query_params['group_by']);
+        }
+        // let's add specific query_params for active_events
+        // keep in mind this will override any sent status in the query AND any date queries.
+        $where_params['status'] = array('IN', array('publish', EEM_Event::sold_out));
+        // add where params for DTT_EVT_end
+        if (isset($where_params['Datetime.DTT_EVT_end'])) {
+            $where_params['Datetime.DTT_EVT_end*****'] = array(
+                '>',
+                EEM_Datetime::instance()->current_time_for_query('DTT_EVT_end'),
+            );
+        } else {
+            $where_params['Datetime.DTT_EVT_end'] = array(
+                '>',
+                EEM_Datetime::instance()->current_time_for_query('DTT_EVT_end'),
+            );
+        }
+        $query_params[0] = $where_params;
+        // don't use $query_params with count()
+        // because we don't want to include additional query clauses like "GROUP BY"
+        return $count
+            ? $this->count(array($where_params), 'EVT_ID', true)
+            : $this->get_all($query_params);
+    }
+
+
+
+    /**
      * This only returns events that are expired.
      * They may still be published but all their datetimes have expired.
      *
