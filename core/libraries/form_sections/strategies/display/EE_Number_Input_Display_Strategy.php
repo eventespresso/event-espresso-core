@@ -52,12 +52,12 @@ class EE_Number_Input_Display_Strategy extends EE_Display_Strategy_Base
         $input = $this->_opening_tag('input');
         $input .= $this->_attributes_string(
             array_merge(
+                $this->_standard_attributes_array(),
                 array(
                     'type' => 'number',
                     'min'  => $this->min,
                     'max'  => $this->max,
-                ),
-                $this->_standard_attributes_array()
+                )
             )
         );
         $input .= $this->_close_tag();
