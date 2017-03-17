@@ -1050,5 +1050,6 @@ add_filter(
             'FHEE_EE_Single_Page_Checkout__save_registration_items__find_existing_attendee',
             $existing_attendee, $registration, $attendee_data
         );
-	}
+	},
+    10,3
 );
