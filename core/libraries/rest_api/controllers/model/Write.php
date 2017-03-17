@@ -249,7 +249,7 @@ class Write extends Base
      *
      * @param EEM_Base        $model
      * @param WP_REST_Request $request
-     * @return array of eithe2r the soft-deleted item, or
+     * @return array of either the soft-deleted item, or
      * @throws \EE_Error
      */
     public function delete(EEM_Base $model, WP_REST_Request $request)
@@ -281,7 +281,6 @@ class Write extends Base
                     )
                 );
             }
-
         }
     }
 
