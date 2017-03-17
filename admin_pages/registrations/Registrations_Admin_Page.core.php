@@ -1389,8 +1389,10 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     }
 
 
+
     /**
      * @return EE_Form_Section_Proper
+     * @throws \EE_Error
      */
     protected function _generate_reg_status_change_form()
     {
@@ -1436,6 +1438,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * Returns an array of all the buttons for the various statuses and switch status actions
      *
      * @return array
+     * @throws \EE_Error
      */
     protected function _get_reg_statuses()
     {
@@ -1444,14 +1447,15 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         // get current reg status
         $current_status = $this->_registration->status_ID();
         // is registration for free event? This will determine whether to display the pending payment option
-        if ($current_status != EEM_Registration::status_id_pending_payment
-            && $this->_registration->transaction()
-                                   ->is_free()
+        if (
+            $current_status !== EEM_Registration::status_id_pending_payment
+            && $this->_registration->transaction()->is_free()
         ) {
             unset($reg_status_array[EEM_Registration::status_id_pending_payment]);
         }
         return EEM_Status::instance()->localized_status($reg_status_array, false, 'sentence');
     }
+
 
 
     /**
@@ -1460,6 +1464,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @param bool $status REG status given for changing registrations to.
      * @param bool $notify Whether to send messages notifications or not.
      * @return array  (array with reg_id(s) updated and whether update was successful.
+     * @throws \EE_Error
      */
     protected function _set_registration_status_from_request($status = false, $notify = false)
     {
@@ -1482,6 +1487,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     }
 
 
+
     /**
      * Set the registration status for the given reg_id (which may or may not be an array, it gets typecast to an
      * array). Note, this method does NOT take care of possible notifications.  That is required by calling code.
@@ -1489,6 +1495,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @param array $REG_IDs
      * @param bool  $status
      * @return array (an array with 'success' key representing whether status change was successful, and 'REG_ID' as
+     * @throws \RuntimeException
+     * @throws \EE_Error
      *               the array of updated registrations).
      */
     protected function _set_registration_status($REG_IDs = array(), $status = false)
