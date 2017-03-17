@@ -1,14 +1,14 @@
 <?php namespace EventEspresso\core\libraries\rest_api\controllers\rpc;
 
-use \WP_Error;
-use \WP_REST_Response;
-use \WP_REST_Request;
-use \EE_Registration;
-use \EEM_Registration;
-use \EE_Capabilities;
-use \EE_Checkin;
-use \EEM_Checkin;
-use \EED_Core_Rest_Api;
+use WP_Error;
+use WP_REST_Response;
+use WP_REST_Request;
+use EE_Registration;
+use EEM_Registration;
+use EE_Capabilities;
+use EE_Checkin;
+use EEM_Checkin;
+use EED_Core_Rest_Api;
 use EventEspresso\core\libraries\rest_api\controllers\Base as Base;
 use EventEspresso\core\libraries\rest_api\controllers\model\Read;
 
