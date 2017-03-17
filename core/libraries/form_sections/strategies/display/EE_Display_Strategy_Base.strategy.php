@@ -22,22 +22,6 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
     protected $_tag = '';
 
 
-    /**
-     * @var array $_attributes
-     */
-    protected $_attributes = array();
-
-
-
-    /**
-     * @param array $_attributes
-     */
-    public function _set_attributes(array $_attributes)
-    {
-        // add existing attributes to new, but don't overwrite (ie: favour new)
-        $_attributes += $this->_attributes;
-        $this->_attributes = $_attributes;
-    }
 
 
 
@@ -187,17 +171,14 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
      */
     protected function _attributes_string($attributes = array())
     {
-        $this->_set_attributes($attributes);
-        // add standard attributes but ONLY if they were not already set in the attributes array
-        $this->_attributes += $this->_standard_attributes_array();
-        $this->_attributes = apply_filters(
+        $attributes = apply_filters(
             'FHEE__EE_Display_Strategy_Base__attributes_string__attributes',
-            $this->_attributes,
+            $attributes,
             $this,
             $this->_input
         );
         $attributes_string = '';
-        foreach ($this->_attributes as $attribute => $value) {
+        foreach ($attributes as $attribute => $value) {
             if (is_numeric($attribute)) {
                 $add = true;
                 if (is_array($value)) {
