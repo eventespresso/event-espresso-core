@@ -63,7 +63,8 @@ class CreateRegistrationCommandHandler extends CommandHandler
             $command->ticket(),
             $command->ticketLineItem(),
             $command->regCount(),
-            $command->regGroupSize()
+            $command->regGroupSize(),
+            $command->regStatus()
         );
     }
 
