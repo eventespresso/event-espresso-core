@@ -986,6 +986,7 @@ class EED_Single_Page_Checkout extends EED_Module
      * @access private
      * @param EE_Transaction $transaction
      * @return void
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
      * @throws \EventEspresso\core\exceptions\InvalidEntityException
      * @throws \EE_Error
      */
@@ -1034,6 +1035,7 @@ class EED_Single_Page_Checkout extends EED_Module
      * @access private
      * @param EE_Transaction $transaction
      * @return    array
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
      * @throws \EventEspresso\core\exceptions\InvalidEntityException
      * @throws \EE_Error
      */
@@ -1051,16 +1053,15 @@ class EED_Single_Page_Checkout extends EED_Module
                 for ($x = 1; $x <= $line_item->quantity(); $x++) {
                     $att_nmbr++;
                     /** @var EventEspresso\core\services\commands\registration\CreateRegistrationCommand $CreateRegistrationCommand */
-                    $CreateRegistrationCommand = EE_Registry::instance()
-                                                            ->create(
-                                                                'EventEspresso\core\services\commands\registration\CreateRegistrationCommand',
-                                                                array(
-                                                                    $transaction,
-                                                                    $line_item,
-                                                                    $att_nmbr,
-                                                                    $this->checkout->total_ticket_count,
-                                                                )
-                                                            );
+                    $CreateRegistrationCommand = EE_Registry::instance()->create(
+                        'EventEspresso\core\services\commands\registration\CreateRegistrationCommand',
+                        array(
+                            $transaction,
+                            $line_item,
+                            $att_nmbr,
+                            $this->checkout->total_ticket_count,
+                        )
+                    );
                     // override capabilities for frontend registrations
                     if ( ! is_admin()) {
                         $CreateRegistrationCommand->setCapCheck(
