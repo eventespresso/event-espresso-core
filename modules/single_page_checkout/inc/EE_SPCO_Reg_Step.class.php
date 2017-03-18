@@ -481,13 +481,6 @@ abstract class EE_SPCO_Reg_Step
                 )
             );
         } else {
-            $default_form_action = apply_filters(
-                'FHEE__EE_SPCO_Reg_Step__reg_step_hidden_inputs__default_form_action',
-                empty($this->checkout->reg_url_link)
-                    ? 'process_reg_step'
-                    : 'update_reg_step',
-                $this
-            );
             // hidden inputs for frontend registrations
             return new EE_Form_Section_Proper(
                 array(
@@ -498,7 +491,9 @@ abstract class EE_SPCO_Reg_Step
                             array(
                                 'html_name' => 'action',
                                 'html_id'   => 'spco-' . $this->slug() . '-action',
-                                'default'   => $default_form_action,
+                                'default'   => empty($this->checkout->reg_url_link)
+                                    ? 'process_reg_step'
+                                    : 'update_reg_step',
                             )
                         ),
                         'next_step'      => new EE_Fixed_Hidden_Input(
