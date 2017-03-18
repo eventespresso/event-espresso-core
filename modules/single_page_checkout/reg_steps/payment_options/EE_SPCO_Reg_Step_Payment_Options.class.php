@@ -490,8 +490,16 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
         // registrations that have lost their space
 		$ejected_registrations = array();
 		foreach ( $registrations as $REG_ID => $registration ) {
-			if ( $registration->status_ID() === EEM_Registration::status_id_approved ) {
-				continue;
+            if (
+                $registration->status_ID() === EEM_Registration::status_id_approved
+                || apply_filters(
+                    'FHEE__EE_SPCO_Reg_Step_Payment_Options__find_registrations_that_lost_their_space__allow_reg_payment',
+                    false,
+                    $registration,
+                    $revisit
+                )
+            ) {
+                continue;
 			}
 			$EVT_ID = $registration->event_ID();
             $ticket = $registration->ticket();
