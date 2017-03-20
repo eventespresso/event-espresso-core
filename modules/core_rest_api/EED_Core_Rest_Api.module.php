@@ -418,7 +418,7 @@ class EED_Core_Rest_Api extends \EED_Module
                 array(
                     'callback'        => array(
                         'EventEspresso\core\libraries\rest_api\controllers\model\Write',
-                        'handle_request_insert',
+                        'handleRequestInsert',
                     ),
                     'callback_args' => array($version, $model_name),
                     'methods'         => WP_REST_Server::CREATABLE,
@@ -447,7 +447,7 @@ class EED_Core_Rest_Api extends \EED_Module
                 array(
                     'callback'        => array(
                         'EventEspresso\core\libraries\rest_api\controllers\model\Write',
-                        'handle_request_update',
+                        'handleRequestUpdate',
                     ),
                     'callback_args' => array($version, $model_name),
                     'methods'         => WP_REST_Server::EDITABLE,
@@ -457,7 +457,7 @@ class EED_Core_Rest_Api extends \EED_Module
                 array(
                     'callback'        => array(
                         'EventEspresso\core\libraries\rest_api\controllers\model\Write',
-                        'handle_request_delete',
+                        'handleRequestDelete',
                     ),
                     'callback_args' => array($version, $model_name),
                     'methods'         => WP_REST_Server::DELETABLE,

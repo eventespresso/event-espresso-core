@@ -47,7 +47,7 @@ class Write extends Base
      * @param string          $model_name
      * @return WP_REST_Response|\WP_Error
      */
-    public static function handle_request_insert(WP_REST_Request $request, $version, $model_name)
+    public static function handleRequestInsert(WP_REST_Request $request, $version, $model_name)
     {
         $controller = new Write();
         try {
@@ -86,7 +86,7 @@ class Write extends Base
      * @param string          $model_name
      * @return WP_REST_Response|\WP_Error
      */
-    public static function handle_request_update(WP_REST_Request $request, $version, $model_name)
+    public static function handleRequestUpdate(WP_REST_Request $request, $version, $model_name)
     {
         $controller = new Write();
         try {
@@ -125,7 +125,7 @@ class Write extends Base
      * @param string          $model_name
      * @return WP_REST_Response|\WP_Error
      */
-    public static function handle_request_delete(WP_REST_Request $request, $version, $model_name)
+    public static function handleRequestDelete(WP_REST_Request $request, $version, $model_name)
     {
         $controller = new Write();
         try {
@@ -197,7 +197,7 @@ class Write extends Base
                 sprintf(__('Could not insert new %1$s', 'event_espresso'), $model->get_this_model_name())
             );
         }
-        return $this->_return_model_obj_as_json_response($model_obj);
+        return $this->returnModelObjSsJSONResponse($model_obj);
     }
 
 
@@ -239,7 +239,7 @@ class Write extends Base
         );
         $model_obj = $model->get_one_by_ID($obj_id);
         $model_obj->save($model_data);
-        return $this->_return_model_obj_as_json_response($model_obj);
+        return $this->returnModelObjSsJSONResponse($model_obj);
     }
 
 
@@ -270,7 +270,7 @@ class Write extends Base
         } else {
             if($model instanceof EEM_Soft_Delete_Base){
                 $model->delete_by_ID($obj_id, $requested_allow_blocking);
-                return $this->_get_one_based_on_request($model, $request, $obj_id);
+                return $this->getOneBasedOnRequest($model, $request, $obj_id);
             }else{
                 throw new Rest_Exception(
                     'rest_trash_not_supported',
@@ -292,7 +292,7 @@ class Write extends Base
      * @param \EE_Base_Class $model_obj
      * @return array ready for a response
      */
-    protected function _return_model_obj_as_json_response(EE_Base_Class $model_obj)
+    protected function returnModelObjSsJSONResponse(EE_Base_Class $model_obj)
     {
         $model = $model_obj->get_model();
         //create an array exactly like the wpdb results row, so we can pass it to controllers/model/Read::create_entity_from_wpdb_result()
@@ -323,7 +323,7 @@ class Write extends Base
      * @param  int|string     $obj_id
      * @return \WP_Error|array
      */
-    protected function _get_one_based_on_request(EEM_Base $model, WP_REST_Request $request, $obj_id)
+    protected function getOneBasedOnRequest(EEM_Base $model, WP_REST_Request $request, $obj_id)
     {
         $requested_version = $this->get_requested_version($request->get_route());
         $get_request = new WP_REST_Request(

@@ -331,8 +331,7 @@ class Read extends Base
            return new \WP_Error(
                sprintf('rest_%s_cannot_list', $model_name_plural),
                sprintf(
-                   __('Sorry, you are not allowed to list %1$s. Missing permis
-sions: %2$s', 'event_espresso'),
+                   __('Sorry, you are not allowed to list %1$s. Missing permissions: %2$s', 'event_espresso'),
                    $model_name_plural,
                    Capabilities::get_missing_permissions_string($model, $query_params['caps'])
                ),
