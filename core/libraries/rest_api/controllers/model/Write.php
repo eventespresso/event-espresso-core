@@ -345,7 +345,6 @@ class Write extends Base
         $read_controller->set_requested_version($this->get_requested_version());
         return $read_controller->get_entity_from_model($model, $get_request);
     }
-
 }
 
 

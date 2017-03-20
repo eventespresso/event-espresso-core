@@ -88,13 +88,15 @@ class Write_Test extends \EE_REST_TestCase
 
 
     /**
-     * Tests that when you provide both a UTC and local time for the SAME field, there's an error
      *
+     * Verify that we follow WP's current behaviour when both a gmt and non-gmt date are provided:
+     * ignore the gmt datetime. See https://core.trac.wordpress.org/ticket/39954
      * @group 9222
      */
     public function test_insert_utc_and_relative_duplicate()
     {
         //let's set a different WP timezone.
+        update_option('gmt_offset', '-1');
         $this->_authenticate_an_admin();
         $req = new \WP_REST_Request(
             'POST',
@@ -102,13 +104,14 @@ class Write_Test extends \EE_REST_TestCase
         );
         $req->set_body_params(
             array(
-                'DTT_EVT_start_gmt' => '2016-01-02T00:00:00',
                 'DTT_EVT_start'     => '2016-01-03T00:00:00',
+                'DTT_EVT_start_gmt' => '2016-01-02T00:00:00',
             )
         );
         $response = rest_do_request($req);
         $response_data = $response->get_data();
-        $this->assertEquals('repeated_model_field', $response_data['code']);
+        $this->assertTrue(empty($response_data['code']));
+        $this->assertEquals('2016-01-03T00:00:00', $response_data['DTT_EVT_start']);
     }
 
 

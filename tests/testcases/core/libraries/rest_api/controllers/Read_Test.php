@@ -987,26 +987,59 @@ class Read_Test extends \EE_REST_TestCase
 
 
     /**
-     * If someone specifies the same model field in a query parameter, which do we use? Let's just fail early and let
-     * them know their request doesn't make sense.
+     * If someone specifies the same model field in a query parameter, which do we use? WP core uses the non-gmt field
+     * for now, so we'll do that too. See https://core.trac.wordpress.org/ticket/39954
      *
      * @group 9222
      */
     public function test_handle_request_get_all__duplicate_query_fields_specified()
     {
+        $this->set_current_user_to_new();
+        //we aren't testing whether the timezone offset is being applied, we are just testing
+        //to see whether the gmt or non-gmt time is being used
+        $e = $this->new_model_obj_with_dependencies('Event',array('status' => 'publish'));
+        $d1 = $this->new_model_obj_with_dependencies(
+            'Datetime',
+            array(
+                'EVT_ID' => $e->ID(),
+                'DTT_EVT_start' => \EEM_Datetime::instance()->convert_datetime_for_query(
+                    'DTT_EVT_start',
+                    '2017-01-02 00:00:00',
+                    \EE_Datetime_Field::mysql_timestamp_format,
+                    \EEM_Datetime::instance()->get_timezone()
+                )
+            )
+        );
+        $d2 = $this->new_model_obj_with_dependencies(
+            'Datetime',
+            array(
+                'EVT_ID' => $e->ID(),
+                'DTT_EVT_start' => \EEM_Datetime::instance()->convert_datetime_for_query(
+                    'DTT_EVT_start',
+                    '2017-01-03 00:00:00',
+                    \EE_Datetime_Field::mysql_timestamp_format,
+                    \EEM_Datetime::instance()->get_timezone()
+                )
+            )
+        );
         $request = new \WP_REST_Request('GET',
             '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/datetimes');
         $request->set_query_params(
             array(
                 'where' => array(
-                    'DTT_EVT_start_gmt' => '2017-01-01T00:00:00',
-                    'DTT_EVT_start' => '2017-01-01T00:00:00'
+                    'DTT_EVT_start_gmt' => '2017-01-02T00:00:00',
+                    'DTT_EVT_start' => '2017-01-03T00:00:00'
                 )
             )
         );
         $response = rest_do_request($request);
-        $data = $response->get_data();
-        $this->assertEquals('repeated_model_field', $data['code']);
+        $response_data = $response->get_data();
+        $this->assertFalse(empty($response_data));
+        $this->assertTrue(empty($response_data['code']));
+        $first_result = array_shift( $response_data);
+        //we should have found the datetime which matches the DTT_EVT_start query parameter
+        //and DTT_EVT_start_gmt should have been ignored
+        $this->assertEquals('2017-01-03T00:00:00', $first_result['DTT_EVT_start']);
     }
 
 }
