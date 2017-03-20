@@ -405,7 +405,7 @@ class EED_Core_Rest_Api extends \EED_Module
                 array(
                     'callback'        => array(
                         'EventEspresso\core\libraries\rest_api\controllers\model\Read',
-                        'handle_request_get_all',
+                        'handleRequestGetAll',
                     ),
                     'callback_args' => array($version, $model_name),
                     'methods'         => WP_REST_Server::READABLE,
@@ -437,7 +437,7 @@ class EED_Core_Rest_Api extends \EED_Module
                 array(
                     'callback'        => array(
                         'EventEspresso\core\libraries\rest_api\controllers\model\Read',
-                        'handle_request_get_one',
+                        'handleRequestGetOne',
                     ),
                     'callback_args' => array($version, $model_name),
                     'methods'         => WP_REST_Server::READABLE,
@@ -466,7 +466,7 @@ class EED_Core_Rest_Api extends \EED_Module
                 )
             );
             foreach ($model->relation_settings() as $relation_name => $relation_obj) {
-                $related_model_name_endpoint_part = ModelRead::get_related_entity_name(
+                $related_model_name_endpoint_part = ModelRead::getRelatedEntityName(
                     $relation_name,
                     $relation_obj
                 );
@@ -474,7 +474,7 @@ class EED_Core_Rest_Api extends \EED_Module
                     array(
                         'callback'        => array(
                             'EventEspresso\core\libraries\rest_api\controllers\model\Read',
-                            'handle_request_get_related',
+                            'handleRequestGetRelated',
                         ),
                         'callback_args' => array($version, $model_name, $relation_name ),
                         'methods'         => WP_REST_Server::READABLE,

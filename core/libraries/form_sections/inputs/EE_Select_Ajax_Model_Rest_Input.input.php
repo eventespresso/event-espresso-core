@@ -97,7 +97,7 @@ class EE_Select_Ajax_Model_Rest_Input extends EE_Form_Input_With_Options_Base{
 		$rest_controller->set_requested_version( EED_Core_Rest_Api::latest_rest_api_version() );
 		$default_select2_args = array(
 			'ajax' => array(
-				'url' => $rest_controller->get_versioned_link_to(
+				'url' => $rest_controller->getVersionedLinkTo(
 					EEH_Inflector::pluralize_and_lower( $this->_model_name )
 				),
 				'dataType' => 'json',

@@ -115,6 +115,6 @@ class Checkin extends Base {
 				'id' => $checkin->ID()
 			)
 		);
-		return Read::handle_request_get_one( $get_request, $version, 'Checkin' );
+		return Read::handleRequestGetOne( $get_request, $version, 'Checkin' );
 	}
 }

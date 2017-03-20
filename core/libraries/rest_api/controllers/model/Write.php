@@ -260,7 +260,7 @@ class Write extends Base
         if ($requested_permanent_delete) {
             $read_controller = new Read();
             $read_controller->set_requested_version($this->get_requested_version());
-            $original_entity = $read_controller->get_one_or_report_permission_error($model, $request,
+            $original_entity = $read_controller->getOneOrReportPermissionError($model, $request,
                 EEM_Base::caps_delete);
             $deleted = (bool)$model->delete_permanently_by_ID($obj_id, $requested_allow_blocking);
             return array(
@@ -309,7 +309,7 @@ class Write extends Base
         $read_controller->set_requested_version($this->get_requested_version());
         //the simulates request really doesn't need any info downstream
         $simulated_request = new WP_REST_Request('GET');
-        return $read_controller->create_entity_from_wpdb_result($model_obj->get_model(), $simulated_db_row,
+        return $read_controller->createEntityFromWPDBResult($model_obj->get_model(), $simulated_db_row,
             $simulated_request);
     }
 
@@ -343,7 +343,7 @@ class Write extends Base
         );
         $read_controller = new Read();
         $read_controller->set_requested_version($this->get_requested_version());
-        return $read_controller->get_entity_from_model($model, $get_request);
+        return $read_controller->getEntityFromModel($model, $get_request);
     }
 }
 

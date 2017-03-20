@@ -27,7 +27,7 @@ class Read_Test extends \EE_REST_TestCase
         $this->assertEquals(array(
             'EVT_ID',
             'EVT_name',
-        ), $controller->explode_and_get_items_prefixed_with('EVT_ID,EVT_name', ''));
+        ), $controller->explodeAndGetItemsPrefixedWith('EVT_ID,EVT_name', ''));
     }
 
 
@@ -40,7 +40,7 @@ class Read_Test extends \EE_REST_TestCase
             'EVT_ID',
             'EVT_name',
             'EVT_desc',
-        ), $controller->explode_and_get_items_prefixed_with('EVT_ID , EVT_name , EVT_desc', ''));
+        ), $controller->explodeAndGetItemsPrefixedWith('EVT_ID , EVT_name , EVT_desc', ''));
     }
 
 
@@ -49,7 +49,7 @@ class Read_Test extends \EE_REST_TestCase
     {
         $controller = new Read();
         $controller->set_requested_version('4.8.29');
-        $this->assertEquals(array(), $controller->explode_and_get_items_prefixed_with('Registration.*', ''));
+        $this->assertEquals(array(), $controller->explodeAndGetItemsPrefixedWith('Registration.*', ''));
     }
 
 
@@ -62,7 +62,7 @@ class Read_Test extends \EE_REST_TestCase
             array(
                 '*',
             ),
-            $controller->explode_and_get_items_prefixed_with('Registration.*', 'Registration')
+            $controller->explodeAndGetItemsPrefixedWith('Registration.*', 'Registration')
         );
     }
 
@@ -74,7 +74,7 @@ class Read_Test extends \EE_REST_TestCase
         $controller->set_requested_version('4.8.29');
         $this->assertEquals(
             array(),
-            $controller->explode_and_get_items_prefixed_with('Registration.REG_ID, Registration.Attendee.ATT_ID', '')
+            $controller->explodeAndGetItemsPrefixedWith('Registration.REG_ID, Registration.Attendee.ATT_ID', '')
         );
     }
 
@@ -89,7 +89,7 @@ class Read_Test extends \EE_REST_TestCase
                 'REG_ID',
                 'Attendee.ATT_ID',
             ),
-            $controller->explode_and_get_items_prefixed_with('Registration.REG_ID, Registration.Attendee.ATT_ID',
+            $controller->explodeAndGetItemsPrefixedWith('Registration.REG_ID, Registration.Attendee.ATT_ID',
                 'Registration')
         );
     }
@@ -234,7 +234,7 @@ class Read_Test extends \EE_REST_TestCase
     {
         $controller = new Read();
         $controller->set_requested_version('4.8.29');
-        $this->assertEquals(array('*'), $controller->explode_and_get_items_prefixed_with('*', ''));
+        $this->assertEquals(array('*'), $controller->explodeAndGetItemsPrefixedWith('*', ''));
     }
 
 
@@ -793,7 +793,7 @@ class Read_Test extends \EE_REST_TestCase
                 'EVT_desc*gotchaagain' => array('IN', array('1', '2')),
             ),
         ),
-            $controller->prepare_rest_query_params_key_for_models(
+            $controller->prepareRESTQueryParamsKeyForModels(
                 \EEM_Event::instance(),
                 array(
                     'EVT_desc' => 'foobar',
@@ -838,7 +838,7 @@ class Read_Test extends \EE_REST_TestCase
             'limit'    => 50,
             'caps'     => \EEM_Base::caps_read_admin,
         ),
-            $controller->create_model_query_params(
+            $controller->createModelQueryParams(
                 \EEM_Event::instance(),
                 array(
                     'where'    => array(
@@ -1040,6 +1040,22 @@ class Read_Test extends \EE_REST_TestCase
         //we should have found the datetime which matches the DTT_EVT_start query parameter
         //and DTT_EVT_start_gmt should have been ignored
         $this->assertEquals('2017-01-03T00:00:00', $first_result['DTT_EVT_start']);
+    }
+
+
+
+    /**
+     * Tests that when we call a method with the legacy naming conventions, it dynamically calls the new method instead
+     * @group 9222
+     * @group 10605
+     */
+    public function test_call(){
+        $read = new Read();
+        $read->set_requested_version('v4.8.36');
+        $this->assertEquals(
+            $read->getVersionedLinkTo('foobar'),
+            $read->get_versioned_link_to('foobar')
+        );
     }
 
 }
