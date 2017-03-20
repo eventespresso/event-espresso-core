@@ -46,6 +46,16 @@ class LegacyShortcodesManager
 
 
     /**
+     * @return EE_Registry
+     */
+    public function registry()
+    {
+        return $this->registry;
+    }
+
+
+
+    /**
      * registerShortcodes
      *
      * @return void
@@ -271,6 +281,7 @@ class LegacyShortcodesManager
             $load_assets = $this->parseContentForShortcodes($post_content);
         }
         if ($load_assets) {
+            $this->registry->REQ->set_espresso_page(true);
             add_filter('FHEE_load_css', '__return_true');
             add_filter('FHEE_load_js', '__return_true');
         }
