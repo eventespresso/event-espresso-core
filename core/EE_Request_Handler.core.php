@@ -261,8 +261,7 @@ final class EE_Request_Handler {
 	 * @return    void
 	 */
 	public function set_espresso_page( $value = null ) {
-		$value = $value ? $value : $this->test_for_espresso_page();
-		$this->_params['is_espresso_page'] = $value;
+        $this->_params['is_espresso_page'] = ! empty($value) ? $value : $this->test_for_espresso_page();
 	}
 
 
