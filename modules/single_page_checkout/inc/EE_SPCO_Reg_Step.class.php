@@ -89,9 +89,10 @@ abstract class EE_SPCO_Reg_Step
     protected $_success_message;
 
     /**
-     * a brief description of how to complete the reg step.
-     * Usually displayed in conjunction with the previous step's success message.
+     *    $_instructions - a brief description of how to complete the reg step.
+     *    Usually displayed in conjunction with the previous step's success message.
      *
+     * @access private
      * @var string $_instructions
      */
     protected $_instructions;
@@ -481,6 +482,13 @@ abstract class EE_SPCO_Reg_Step
                 )
             );
         } else {
+            $default_form_action = apply_filters(
+                'FHEE__EE_SPCO_Reg_Step__reg_step_hidden_inputs__default_form_action',
+                empty($this->checkout->reg_url_link)
+                    ? 'process_reg_step'
+                    : 'update_reg_step',
+                $this
+            );
             // hidden inputs for frontend registrations
             return new EE_Form_Section_Proper(
                 array(
@@ -491,9 +499,7 @@ abstract class EE_SPCO_Reg_Step
                             array(
                                 'html_name' => 'action',
                                 'html_id'   => 'spco-' . $this->slug() . '-action',
-                                'default'   => empty($this->checkout->reg_url_link)
-                                    ? 'process_reg_step'
-                                    : 'update_reg_step',
+                                'default'   => $default_form_action,
                             )
                         ),
                         'next_step'      => new EE_Fixed_Hidden_Input(
@@ -536,7 +542,12 @@ abstract class EE_SPCO_Reg_Step
     public function generate_reg_form_for_actions($actions = array())
     {
         $actions = array_merge(
-            array('generate_reg_form', 'display_spco_reg_step', 'process_reg_step', 'update_reg_step'),
+            array(
+                'generate_reg_form',
+                'display_spco_reg_step',
+                'process_reg_step',
+                'update_reg_step',
+            ),
             $actions
         );
         $this->checkout->generate_reg_form = in_array($this->checkout->action, $actions, true) ? true : false;
@@ -656,12 +667,13 @@ abstract class EE_SPCO_Reg_Step
 
 
 
+
+
     /**
      *    __sleep
-     * to conserve db space, let's remove the reg_form and the EE_Checkout object
-     * from EE_SPCO_Reg_Step objects upon serialization
-     * EE_Checkout will handle the reimplementation of itself upon waking,
-     * but we won't bother with the reg form, because if needed, it will be regenerated anyways
+     * to conserve db space, let's remove the reg_form and the EE_Checkout object from EE_SPCO_Reg_Step objects upon
+     * serialization EE_Checkout will handle the reimplementation of itself upon waking, but we won't bother with the
+     * reg form, because if needed, it will be regenerated anyways
      *
      * @return array
      */
@@ -670,7 +682,9 @@ abstract class EE_SPCO_Reg_Step
         // remove the reg form and the checkout
         return array_diff(array_keys(get_object_vars($this)), array('reg_form', 'checkout'));
     }
-}
 
+
+
+}
 // End of file EE_SPCO_Reg_Step.class.php
 // Location: /EE_SPCO_Reg_Step.class.php
