@@ -47,17 +47,17 @@ class CreateRegistrationCommand extends Command implements CommandRequiresCapChe
     /**
      * @var int $reg_count
      */
-    private $reg_count = 1;
+    private $reg_count;
 
     /**
      * @var int $reg_group_size
      */
-    private $reg_group_size = 0;
+    private $reg_group_size;
 
     /**
      * @var string $reg_status
      */
-    private $reg_status = '';
+    private $reg_status;
 
     /**
      * @var EE_Registration $registration
