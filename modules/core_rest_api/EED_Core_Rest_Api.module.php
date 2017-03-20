@@ -149,11 +149,11 @@ class EED_Core_Rest_Api extends \EED_Module
         foreach ( EED_Core_Rest_Api::get_ee_route_data() as $namespace => $relative_routes ) {
             foreach ( $relative_routes as $relative_route => $data_for_multiple_endpoints ) {
                 /**
-                 * @var array     $data_for_multiple_endpoints numerically indexed array but can also contain route optiions like {
+                 * @var array     $data_for_multiple_endpoints numerically indexed array but can also contain route options like {
                  * @type array    $schema                      {
                  * @type callable $schema_callback
-                 * @type string   $callback_arg1
-                 * @type string   $callback_arg2
+                 * @type array    $callback_args arguments that will be passed to the callback, after the
+                 * WP_REST_Request of course
                  * }
                  * }
                  */
@@ -166,9 +166,9 @@ class EED_Core_Rest_Api extends \EED_Module
                      * @type string methods
                      * @type array args
                      * @type array _links
-                     * @type mixed callback_arg1
-                     * @type mixed callback_arg2
-                     * @type mixed callback_arg2}
+                     * @type array    $callback_args arguments that will be passed to the callback, after the
+                     * WP_REST_Request of course
+                     * }
                      */
                     //skip route options
                     if ( ! is_numeric( $endpoint_key ) ) {
@@ -189,24 +189,16 @@ class EED_Core_Rest_Api extends \EED_Module
                     if ( isset( $data_for_single_endpoint['_links'] ) ) {
                         $single_endpoint_args['_links'] = $data_for_single_endpoint['_links'];
                     }
-                    if ( isset( $data_for_single_endpoint['callback_arg1'] ) ) {
-                        $arg1                             = $data_for_single_endpoint['callback_arg1'];
-                        $arg2                             = isset( $data_for_single_endpoint['callback_arg2'] )
-                            ? $data_for_single_endpoint['callback_arg2'] : null;
-                        $arg3                             = isset( $data_for_single_endpoint['callback_arg3'] )
-                            ? $data_for_single_endpoint['callback_arg3'] : null;
+                    if ( isset( $data_for_single_endpoint['callback_args'] ) ) {
+                        $callback_args = $data_for_single_endpoint['callback_args'];
                         $single_endpoint_args['callback'] = function ( \WP_REST_Request $request ) use (
                             $callback,
-                            $arg1,
-                            $arg2,
-                            $arg3
+                            $callback_args
                         ) {
-                            return call_user_func(
+                            array_unshift($callback_args, $request);
+                            return call_user_func_array(
                                 $callback,
-                                $request,
-                                $arg1,
-                                $arg2,
-                                $arg3
+                                $callback_args
                             );
                         };
                     } else {
@@ -217,14 +209,11 @@ class EED_Core_Rest_Api extends \EED_Module
                 if ( isset( $data_for_multiple_endpoints['schema'] ) ) {
                     $schema_route_data                = $data_for_multiple_endpoints['schema'];
                     $schema_callback                  = $schema_route_data['schema_callback'];
-                    $arg1                             = $schema_route_data['callback_arg1'];
-                    $arg2                             = isset( $schema_route_data['callback_arg2'] )
-                        ? $schema_route_data['callback_arg2'] : null;
-                    $multiple_endpoint_args['schema'] = function () use ( $schema_callback, $arg1, $arg2 ) {
-                        return call_user_func(
+                    $callback_args                             = $schema_route_data['callback_args'];
+                    $multiple_endpoint_args['schema'] = function () use ( $schema_callback, $callback_args ) {
+                        return call_user_func_array(
                             $schema_callback,
-                            $arg1,
-                            $arg2
+                            $callback_args
                         );
                     };
                 }
@@ -418,8 +407,7 @@ class EED_Core_Rest_Api extends \EED_Module
                         'EventEspresso\core\libraries\rest_api\controllers\model\Read',
                         'handle_request_get_all',
                     ),
-                    'callback_arg1' => $version,
-                    'callback_arg2' => $model_name,
+                    'callback_args' => array($version, $model_name),
                     'methods'         => WP_REST_Server::READABLE,
                     'hidden_endpoint' => $hidden_endpoint,
                     'args'            => $this->_get_read_query_params($model, $version),
@@ -432,8 +420,7 @@ class EED_Core_Rest_Api extends \EED_Module
                         'EventEspresso\core\libraries\rest_api\controllers\model\Write',
                         'handle_request_insert',
                     ),
-                    'callback_arg1' => $version,
-                    'callback_arg2' => $model_name,
+                    'callback_args' => array($version, $model_name),
                     'methods'         => WP_REST_Server::CREATABLE,
                     'hidden_endpoint' => $hidden_endpoint,
                     'args'            => $this->_get_write_params($model_name, $model_version_info),
@@ -443,8 +430,7 @@ class EED_Core_Rest_Api extends \EED_Module
                         'EventEspresso\core\libraries\rest_api\controllers\model\Read',
                         'handle_schema_request',
                     ),
-                    'callback_arg1' => $version,
-                    'callback_arg2' => $model_name,
+                    'callback_args' => array($version,$model_name),
                 )
             );
             $model_routes[$singular_model_route] = array(
@@ -453,8 +439,7 @@ class EED_Core_Rest_Api extends \EED_Module
                         'EventEspresso\core\libraries\rest_api\controllers\model\Read',
                         'handle_request_get_one',
                     ),
-                    'callback_arg1' => $version,
-                    'callback_arg2' => $model_name,
+                    'callback_args' => array($version, $model_name),
                     'methods'         => WP_REST_Server::READABLE,
                     'hidden_endpoint' => $hidden_endpoint,
                     'args'            => $this->_get_response_selection_query_params($model, $version),
@@ -464,8 +449,7 @@ class EED_Core_Rest_Api extends \EED_Module
                         'EventEspresso\core\libraries\rest_api\controllers\model\Write',
                         'handle_request_update',
                     ),
-                    'callback_arg1' => $version,
-                    'callback_arg2' => $model_name,
+                    'callback_args' => array($version, $model_name),
                     'methods'         => WP_REST_Server::EDITABLE,
                     'hidden_endpoint' => $hidden_endpoint,
                     'args'            => $this->_get_write_params($model_name, $model_version_info),
@@ -475,8 +459,7 @@ class EED_Core_Rest_Api extends \EED_Module
                         'EventEspresso\core\libraries\rest_api\controllers\model\Write',
                         'handle_request_delete',
                     ),
-                    'callback_arg1' => $version,
-                    'callback_arg2' => $model_name,
+                    'callback_args' => array($version, $model_name),
                     'methods'         => WP_REST_Server::DELETABLE,
                     'hidden_endpoint' => $hidden_endpoint,
                     'args'            => $this->_get_delete_query_params($model, $version),
@@ -493,10 +476,7 @@ class EED_Core_Rest_Api extends \EED_Module
                             'EventEspresso\core\libraries\rest_api\controllers\model\Read',
                             'handle_request_get_related',
                         ),
-
-                        'callback_arg1' => $version,
-                        'callback_arg2' => $model_name,
-                        'callback_arg3' => $relation_name,
+                        'callback_args' => array($version, $model_name, $relation_name ),
                         'methods'         => WP_REST_Server::READABLE,
                         'hidden_endpoint' => $hidden_endpoint,
                         'args'            => $this->_get_read_query_params($relation_obj->get_other_model(), $version),
@@ -554,7 +534,7 @@ class EED_Core_Rest_Api extends \EED_Module
                             'event_espresso'),
                     ),
                 ),
-                'callback_arg1' => $version,
+                'callback_args' => array( $version ),
             ),
         );
         return apply_filters(
@@ -775,7 +755,7 @@ class EED_Core_Rest_Api extends \EED_Module
                     ),
                     'methods'         => WP_REST_Server::READABLE,
                     'hidden_endpoint' => $hidden_endpoint,
-                    'callback_arg1' => $version
+                    'callback_args' => array($version)
                 ),
             ),
             'site_info' => array(
@@ -786,7 +766,7 @@ class EED_Core_Rest_Api extends \EED_Module
                     ),
                     'methods'         => WP_REST_Server::READABLE,
                     'hidden_endpoint' => $hidden_endpoint,
-                    'callback_arg1' => $version
+                    'callback_args' => array($version)
                 ),
             ),
         );
@@ -828,7 +808,7 @@ class EED_Core_Rest_Api extends \EED_Module
                     ),
                     'methods'         => WP_REST_Server::READABLE,
                     'hidden_endpoint' => $hidden_endpoint,
-                    'callback_arg1' => $version
+                    'callback_args' => array($version),
                 ),
             ),
         );
