@@ -1,5 +1,4 @@
 <?php use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
-use EventEspresso\core\services\shortcodes\LegacyShortcodesManager;
 use EventEspresso\core\services\shortcodes\ShortcodesManager;
 
 if ( ! defined('EVENT_ESPRESSO_VERSION')) {
@@ -902,7 +901,7 @@ final class EE_System
         // let's get it started
         if ( ! is_admin() && ! EE_Maintenance_Mode::instance()->level()) {
             do_action('AHEE__EE_System__load_controllers__load_front_controllers');
-            $this->registry->load_core('Front_Controller', array(), false);
+            $this->registry->load_core('Front_Controller');
         } else if ( ! EE_FRONT_AJAX) {
             do_action('AHEE__EE_System__load_controllers__load_admin_controllers');
             EE_Registry::instance()->load_core('Admin');
