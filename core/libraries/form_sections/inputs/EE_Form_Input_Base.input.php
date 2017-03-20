@@ -907,6 +907,18 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
 
 
     /**
+     * @param bool $add_required
+     * @return string
+     */
+    public function html_class($add_required = false)
+    {
+        return $add_required && $this->required()
+            ? $this->required_css_class() . ' ' . $this->_html_class
+            : $this->_html_class;
+    }
+
+
+    /**
      * Sets the help text, in case
      *
      * @param string $text
