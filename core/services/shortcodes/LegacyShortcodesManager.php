@@ -83,7 +83,9 @@ class LegacyShortcodesManager
         // filter list of installed modules
         return apply_filters(
             'FHEE__EE_Config___register_shortcodes__installed_shortcodes',
-            $this->registry->shortcodes
+            ! empty($this->registry->shortcodes)
+                ? $this->registry->shortcodes
+                : array()
         );
     }
 
