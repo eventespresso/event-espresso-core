@@ -181,6 +181,7 @@ class ShortcodesManager
                 : $load_assets;
         }
         if ($load_assets) {
+            $this->legacy_shortcodes_manager->registry()->REQ->set_espresso_page(true);
             add_filter('FHEE_load_css', '__return_true');
             add_filter('FHEE_load_js', '__return_true');
         }
