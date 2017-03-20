@@ -174,6 +174,7 @@ final class EE_Config
     {
         if (self::$_instance instanceof EE_Config) {
             if ($hard_reset) {
+                self::$_instance->legacy_shortcodes_manager = null;
                 self::$_instance->_addon_option_names = array();
                 self::$_instance->_initialize_config();
                 self::$_instance->update_espresso_config();
@@ -376,6 +377,7 @@ final class EE_Config
             ? $this->gateway
             : new EE_Gateway_Config();
         $this->gateway = apply_filters('FHEE__EE_Config___initialize_config__gateway', $this->gateway);
+        $this->legacy_shortcodes_manager = null;
     }
 
 
@@ -474,8 +476,12 @@ final class EE_Config
         // hook into update_option because that happens AFTER the ( $value === $old_value ) conditional
         // but BEFORE the actual update occurs
         add_action('update_option', array($this, 'double_check_config_comparison'), 1, 3);
+        // don't want to persist legacy_shortcodes_manager, but don't want to lose it either
+        $legacy_shortcodes_manager = $this->legacy_shortcodes_manager;
+        $this->legacy_shortcodes_manager = null;
         // now update "ee_config"
         $saved = update_option(EE_Config::OPTION_NAME, $this);
+        $this->legacy_shortcodes_manager = $legacy_shortcodes_manager;
         EE_Config::log(EE_Config::OPTION_NAME);
         // if not saved... check if the hook we just added still exists;
         // if it does, it means one of two things:
@@ -1502,6 +1508,7 @@ final class EE_Config
      */
     public static function getLegacyShortcodesManager()
     {
+
         if ( ! EE_Config::instance()->legacy_shortcodes_manager instanceof LegacyShortcodesManager) {
             EE_Config::instance()->legacy_shortcodes_manager = new LegacyShortcodesManager(
                 EE_Registry::instance()
