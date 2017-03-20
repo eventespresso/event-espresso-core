@@ -26,11 +26,11 @@ class Meta extends Base {
      * @param string $version
 	 * @return array|\WP_REST_Response
 	 */
-	public static function handle_request_models_meta( \WP_REST_Request $request, $version ) {
+	public static function handleRequestModelsMeta( \WP_REST_Request $request, $version ) {
 		$controller = new Meta();
 		try{
 			$controller->set_requested_version( $version );
-			return $controller->send_response( $controller->_get_models_metadata_entity() );
+			return $controller->send_response( $controller->getModelsMetadataEntity() );
 		} catch( \Exception $e ) {
 			return $controller->send_response( $e );
 		}
@@ -40,7 +40,7 @@ class Meta extends Base {
 	 * Gets the model metadata resource entity
 	 * @return array for JSON response, describing all the models available in teh requested version
 	 */
-	protected function _get_models_metadata_entity(){
+	protected function getModelsMetadataEntity(){
 		$response = array();
 		foreach( $this->get_model_version_info()->models_for_requested_version() as $model_name => $model_classname ){
 			$model = $this->get_model_version_info()->load_model( $model_name );
@@ -99,7 +99,7 @@ class Meta extends Base {
 	 * @param \WP_REST_Response $rest_response_obj
 	 * @return \WP_REST_Response
 	 */
-	public static function filter_ee_metadata_into_index( \WP_REST_Response $rest_response_obj ) {
+	public static function filterEEMetadataIntoIndex( \WP_REST_Response $rest_response_obj ) {
 		$response_data = $rest_response_obj->get_data();
 		$addons = array();
 		foreach( \EE_Registry::instance()->addons as $addon){
@@ -119,6 +119,20 @@ class Meta extends Base {
 		$rest_response_obj->set_data( $response_data );
 		return $rest_response_obj;
 	}
+
+    /**
+     * When calling public methods with the legacy EE4 naming conventions, dynamically call the new method instead.
+     * @param string $name
+     * @param array $arguments
+     * @return mixed
+     */
+    public function __call($name, $arguments)
+    {
+        $new_method_name = EEH_Inflector::camelize_all_but_first($name);
+        //you tried calling an old method which doesn't correspond to an existing new method,
+        //let's just have the fatal error. There's nothing we can do to fix their problem
+        return call_user_func_array(array($this,$new_method_name),$arguments);
+    }
 }
 
 

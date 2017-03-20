@@ -83,7 +83,7 @@ class EED_Core_Rest_Api extends \EED_Module
         add_action('rest_api_init', array('EED_Core_Rest_Api', 'set_hooks_rest_api'), 5);
         add_filter('rest_route_data', array('EED_Core_Rest_Api', 'hide_old_endpoints'), 10, 2);
         add_filter('rest_index',
-            array('EventEspresso\core\libraries\rest_api\controllers\model\Meta', 'filter_ee_metadata_into_index'));
+            array('EventEspresso\core\libraries\rest_api\controllers\model\Meta', 'filterEEMetadataIntoIndex'));
         EED_Core_Rest_Api::invalidate_cached_route_data_on_version_change();
     }
 
@@ -331,7 +331,7 @@ class EED_Core_Rest_Api extends \EED_Module
 
 
     /**
-     * Calculates all the EE routes and saves it to a wordpress option so we don't
+     * Calculates all the EE routes and saves it to a WordPress option so we don't
      * need to calculate it on every request
      *
      * @deprecated since version 4.9.1
@@ -804,7 +804,7 @@ class EED_Core_Rest_Api extends \EED_Module
                 array(
                     'callback'        => array(
                         'EventEspresso\core\libraries\rest_api\controllers\model\Meta',
-                        'handle_request_models_meta',
+                        'handleRequestModelsMeta',
                     ),
                     'methods'         => WP_REST_Server::READABLE,
                     'hidden_endpoint' => $hidden_endpoint,
