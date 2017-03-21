@@ -1,7 +1,15 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api\controllers\model;
 
+use Exception;
+use EE_Boolean_Field;
+use EE_Maintenance_Mode;
+use EE_Registry;
+use EE_Serialized_Text_Field;
+use EED_Core_Rest_Api;
+use EEM_System_Status;
 use EventEspresso\core\libraries\rest_api\ModelDataTranslator;
+
 
 if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
@@ -32,7 +40,7 @@ class Meta extends Base
         try {
             $controller->setRequestedVersion($version);
             return $controller->sendResponse($controller->getModelsMetadataEntity());
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $controller->sendResponse($e);
         }
     }
@@ -53,11 +61,11 @@ class Meta extends Base
                 if ($this->getModelVersionInfo()->fieldIsIgnored($field_obj)) {
                     continue;
                 }
-                if ($field_obj instanceof \EE_Boolean_Field) {
+                if ($field_obj instanceof EE_Boolean_Field) {
                     $datatype = 'Boolean';
                 } elseif ($field_obj->get_wpdb_data_type() == '%d') {
                     $datatype = 'Number';
-                } elseif ($field_name instanceof \EE_Serialized_Text_Field) {
+                } elseif ($field_name instanceof EE_Serialized_Text_Field) {
                     $datatype = 'Object';
                 } else {
                     $datatype = 'String';
@@ -112,7 +120,7 @@ class Meta extends Base
     {
         $response_data = $rest_response_obj->get_data();
         $addons = array();
-        foreach (\EE_Registry::instance()->addons as $addon) {
+        foreach (EE_Registry::instance()->addons as $addon) {
             $addon_json = array(
                 'name'    => $addon->name(),
                 'version' => $addon->version(),
@@ -120,11 +128,11 @@ class Meta extends Base
             $addons[$addon_json['name']] = $addon_json;
         }
         $response_data['ee'] = array(
-            'version'              => \EEM_System_Status::instance()->get_ee_version(),
+            'version'              => EEM_System_Status::instance()->get_ee_version(),
             'documentation_url'    => 'https://github.com/eventespresso/event-espresso-core/tree/master/docs/C--REST-API',
             'addons'               => $addons,
-            'maintenance_mode'     => \EE_Maintenance_Mode::instance()->real_level(),
-            'served_core_versions' => array_keys(\EED_Core_Rest_Api::versions_served()),
+            'maintenance_mode'     => EE_Maintenance_Mode::instance()->real_level(),
+            'served_core_versions' => array_keys(EED_Core_Rest_Api::versions_served()),
         );
         $rest_response_obj->set_data($response_data);
         return $rest_response_obj;

@@ -1,16 +1,20 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api\controllers\model;
 
+
 use \WP_REST_Request;
 use \WP_REST_Response;
+use EventEspresso\core\libraries\rest_api\Capabilities;
+use EventEspresso\core\libraries\rest_api\ModelDataTranslator;
+use EventEspresso\core\libraries\rest_api\RestException;
 use \EEM_Base;
 use \EE_Base_Class;
 use \EE_Registry;
 use \EE_Datetime_Field;
 use \EEM_Soft_Delete_Base;
-use EventEspresso\core\libraries\rest_api\Capabilities;
-use EventEspresso\core\libraries\rest_api\ModelDataTranslator;
-use EventEspresso\core\libraries\rest_api\RestException;
+use EE_Restriction_Generator_Base;
+use EED_Core_Rest_Api;
+use EEH_Inflector;
 
 if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
@@ -52,7 +56,7 @@ class Write extends Base
         $controller = new Write();
         try {
             $controller->setRequestedVersion($version);
-            $model_name_singular = \EEH_Inflector::singularize_and_upper($model_name);
+            $model_name_singular = EEH_Inflector::singularize_and_upper($model_name);
             if (! $controller->getModelVersionInfo()->isModel_NameInThisVersion($model_name_singular)) {
                 return $controller->sendResponse(
                     new \WP_Error(
@@ -91,7 +95,7 @@ class Write extends Base
         $controller = new Write();
         try {
             $controller->setRequestedVersion($version);
-            $model_name_singular = \EEH_Inflector::singularize_and_upper($model_name);
+            $model_name_singular = EEH_Inflector::singularize_and_upper($model_name);
             if (! $controller->getModelVersionInfo()->isModel_NameInThisVersion($model_name_singular)) {
                 return $controller->sendResponse(
                     new \WP_Error(
@@ -130,7 +134,7 @@ class Write extends Base
         $controller = new Write();
         try {
             $controller->setRequestedVersion($version);
-            $model_name_singular = \EEH_Inflector::singularize_and_upper($model_name);
+            $model_name_singular = EEH_Inflector::singularize_and_upper($model_name);
             if (! $controller->getModelVersionInfo()->isModel_NameInThisVersion($model_name_singular)) {
                 return $controller->sendResponse(
                     new \WP_Error(
@@ -167,10 +171,10 @@ class Write extends Base
     public function insert(EEM_Base $model, WP_REST_Request $request)
     {
         Capabilities::verifyAtLeastPartialAccessTo($model, EEM_Base::caps_edit, 'create');
-        $default_cap_to_check_for = \EE_Restriction_Generator_Base::get_default_restrictions_cap();
+        $default_cap_to_check_for = EE_Restriction_Generator_Base::get_default_restrictions_cap();
         if (! current_user_can($default_cap_to_check_for)) {
             throw new RestException(
-                'rest_cannot_create_' . \EEH_Inflector::pluralize_and_lower(($model->get_this_model_name())),
+                'rest_cannot_create_' . EEH_Inflector::pluralize_and_lower(($model->get_this_model_name())),
                 sprintf(
                     esc_html__('For now, only those with the admin capability to "%1$s" are allowed to use the REST API to insert data into Event Espresso.',
                         'event_espresso'),
@@ -213,10 +217,10 @@ class Write extends Base
     public function update(EEM_Base $model, WP_REST_Request $request)
     {
         Capabilities::verifyAtLeastPartialAccessTo($model, EEM_Base::caps_edit, 'edit');
-        $default_cap_to_check_for = \EE_Restriction_Generator_Base::get_default_restrictions_cap();
+        $default_cap_to_check_for = EE_Restriction_Generator_Base::get_default_restrictions_cap();
         if (! current_user_can($default_cap_to_check_for)) {
             throw new RestException(
-                'rest_cannot_edit_' . \EEH_Inflector::pluralize_and_lower(($model->get_this_model_name())),
+                'rest_cannot_edit_' . EEH_Inflector::pluralize_and_lower(($model->get_this_model_name())),
                 sprintf(
                     esc_html__('For now, only those with the admin capability to "%1$s" are allowed to use the REST API to update data into Event Espresso.',
                         'event_espresso'),
@@ -277,7 +281,7 @@ class Write extends Base
                     501,
                     sprintf(
                         esc_html__('%1$s do not support trashing. Set force=1 to delete.', 'event_espresso'),
-                        \EEH_Inflector::pluralize($model->get_this_model_name())
+                        EEH_Inflector::pluralize($model->get_this_model_name())
                     )
                 );
             }
@@ -328,10 +332,10 @@ class Write extends Base
         $requested_version = $this->getRequestedVersion($request->get_route());
         $get_request = new WP_REST_Request(
             'GET',
-            \EED_Core_Rest_Api::ee_api_namespace
+            EED_Core_Rest_Api::ee_api_namespace
             . $requested_version
             . '/'
-            . \EEH_Inflector::pluralize_and_lower($model->get_this_model_name())
+            . EEH_Inflector::pluralize_and_lower($model->get_this_model_name())
             . '/'
             . $obj_id
         );

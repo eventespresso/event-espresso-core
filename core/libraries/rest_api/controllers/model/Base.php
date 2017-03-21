@@ -3,7 +3,7 @@ namespace EventEspresso\core\libraries\rest_api\controllers\model;
 
 use EventEspresso\core\libraries\rest_api\controllers\Base as Controller_Base;
 use EventEspresso\core\libraries\rest_api\ModelVersionInfo;
-
+use EE_Error;
 if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
@@ -48,12 +48,12 @@ class Base extends Controller_Base
      * because it's takes the requested and current core version into account
      *
      * @return \EventEspresso\core\libraries\rest_api\ModelVersionInfo
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function getModelVersionInfo()
     {
         if (! $this->model_version_info) {
-            throw new \EE_Error(
+            throw new EE_Error(
                 sprintf(
                     __(
                         'Cannot use model version info before setting the requested version in the controller',

@@ -34,7 +34,7 @@ class ChangesIn4_8_34 extends ChangesInBase
      * to api versions lowers than 4.8.33
      *
      * @param array                                                  $routes_on_this_version
-     * @param EventEspresso\core\libraries\rest_api\controllers\Base $controller
+     * @param Base $controller
      * @return array like $routes_on_this_version
      */
     public function removeResponseHeaders($response_headers, $controller, $requested_version)

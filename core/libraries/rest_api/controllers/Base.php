@@ -1,7 +1,13 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api\controllers;
 
+use Exception;
+use WP_Error;
+use WP_REST_Response;
 use EventEspresso\core\libraries\rest_api\RestException;
+
+use EE_Error;
+use EED_Core_Rest_Api;
 use EEH_Inflector;
 
 if (! defined('EVENT_ESPRESSO_VERSION')) {
@@ -113,7 +119,7 @@ class Base
                 $this->setResponseHeader($header_key . '[' . $value_key . ']', $value_value);
             }
         } else {
-            $prefix = $use_ee_prefix ? Base::header_prefix_for_ee : Base::header_prefix_for_wp;
+            $prefix = $use_ee_prefix ? Base::HEADER_PREFIX_FOR_EE : Base::HEADER_PREFIX_FOR_WP;
             $this->response_headers[$prefix . $header_key] = $value;
         }
     }
@@ -139,12 +145,12 @@ class Base
     /**
      * Adds error notices from EE_Error onto the provided \WP_Error
      *
-     * @param \WP_Error $wp_error_response
-     * @return \WP_Error
+     * @param WP_Error $wp_error_response
+     * @return WP_Error
      */
-    protected function addEeErrorsToResponse(\WP_Error $wp_error_response)
+    protected function addEeErrorsToResponse(WP_Error $wp_error_response)
     {
-        $notices_during_checkin = \EE_Error::get_raw_notices();
+        $notices_during_checkin = EE_Error::get_raw_notices();
         if (! empty($notices_during_checkin['errors'])) {
             foreach ($notices_during_checkin['errors'] as $error_code => $error_message) {
                 $wp_error_response->add(
@@ -164,23 +170,23 @@ class Base
      * what exactly was the Models query that got run, what capabilities came into play, what fields were omitted from
      * the response, others?
      *
-     * @param array|\WP_Error|\Exception|\Rest_Exception $response
-     * @return \WP_REST_Response
+     * @param array|WP_Error|Exception|RestException $response
+     * @return WP_REST_Response
      */
     public function sendResponse($response)
     {
         if ($response instanceof RestException) {
-            $response = new \WP_Error($response->getStringCode(), $response->getMessage(), $response->getData());
+            $response = new WP_Error($response->getStringCode(), $response->getMessage(), $response->getData());
         }
-        if ($response instanceof \Exception) {
+        if ($response instanceof Exception) {
             $code = $response->getCode() ? $response->getCode() : 'error_occurred';
-            $response = new \WP_Error($code, $response->getMessage());
+            $response = new WP_Error($code, $response->getMessage());
         }
-        if ($response instanceof \WP_Error) {
-            $response = $this->addEEErrorsToResponse($response);
-            $rest_response = $this->createRESTResponseFromWPError($response);
+        if ($response instanceof WP_Error) {
+            $response = $this->addEeErrorsToResponse($response);
+            $rest_response = $this->createRestResponseFromWpError($response);
         } else {
-            $rest_response = new \WP_REST_Response($response, 200);
+            $rest_response = new WP_REST_Response($response, 200);
         }
         $headers = array();
         if ($this->debug_mode && is_array($this->debug_info)) {
@@ -194,7 +200,7 @@ class Base
         $headers = array_merge(
             $headers,
             $this->getResponseHeaders(),
-            $this->getHeadersFromEENotices()
+            $this->getHeadersFromEeNotices()
         );
         $rest_response->set_headers($headers);
         return $rest_response;
@@ -207,10 +213,10 @@ class Base
      * Mostly this is just a copy-and-paste from \WP_REST_Server::error_to_response
      * (which is protected)
      *
-     * @param \WP_Error $wp_error
-     * @return \WP_REST_Response
+     * @param WP_Error $wp_error
+     * @return WP_REST_Response
      */
-    protected function createRestResponseFromWpError(\WP_Error $wp_error)
+    protected function createRestResponseFromWpError(WP_Error $wp_error)
     {
         $error_data = $wp_error->get_error_data();
         if (is_array($error_data) && isset($error_data['status'])) {
@@ -234,7 +240,7 @@ class Base
             array_shift($errors);
             $data['additional_errors'] = $errors;
         }
-        return new \WP_REST_Response($data, $status);
+        return new WP_REST_Response($data, $status);
     }
 
 
@@ -247,14 +253,14 @@ class Base
     protected function getHeadersFromEeNotices()
     {
         $headers = array();
-        $notices = \EE_Error::get_raw_notices();
+        $notices = EE_Error::get_raw_notices();
         foreach ($notices as $notice_type => $sub_notices) {
             if (! is_array($sub_notices)) {
                 continue;
             }
             foreach ($sub_notices as $notice_code => $sub_notice) {
                 $headers['X-EE4-Notices-'
-                         . \EEH_Inflector::humanize($notice_type)
+                         . EEH_Inflector::humanize($notice_type)
                          . '['
                          . $notice_code
                          . ']'] = strip_tags($sub_notice);
@@ -287,13 +293,13 @@ class Base
         }
         $matches = $this->parseRoute(
             $route,
-            '~' . \EED_Core_Rest_Api::ee_api_namespace_for_regex . '~',
+            '~' . EED_Core_Rest_Api::ee_api_namespace_for_regex . '~',
             array('version')
         );
         if (isset($matches['version'])) {
             return $matches['version'];
         } else {
-            return \EED_Core_Rest_Api::latest_rest_api_version();
+            return EED_Core_Rest_Api::latest_rest_api_version();
         }
     }
 
@@ -313,7 +319,7 @@ class Base
      *                           becomes the first key of the return value, etc. Eg passing in $match_keys of
      *                           array( 'model', 'id' ), will, if the regex is successful, will return
      *                           array( 'model' => 'foo', 'id' => 'bar' )
-     * @throws \EE_Error if it couldn't be parsed
+     * @throws EE_Error if it couldn't be parsed
      */
     public function parseRoute($route, $regex, $match_keys)
     {
@@ -332,7 +338,7 @@ class Base
             }
         }
         if (! $success) {
-            throw new \EE_Error(
+            throw new EE_Error(
                 __('We could not parse the URL. Please contact Event Espresso Support', 'event_espresso'),
                 'endpoint_parsing_error'
             );

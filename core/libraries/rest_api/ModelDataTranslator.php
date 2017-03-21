@@ -1,6 +1,12 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api;
 
+use EE_Datetime_Field;
+use EE_Error;
+use EE_Infinite_Integer_Field;
+use EE_Model_Field_Base;
+use EEM_Base;
+
 if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
@@ -38,7 +44,7 @@ class ModelDataTranslator
     /**
      * Prepares a possible array of input values from JSON for use by the models
      *
-     * @param \EE_Model_Field_Base $field_obj
+     * @param EE_Model_Field_Base $field_obj
      * @param mixed                $original_value_maybe_array
      * @param string               $requested_version
      * @param string               $timezone_string treat values as being in this timezone
@@ -77,7 +83,7 @@ class ModelDataTranslator
     /**
      * Prepares an array of field values FOR use in JSON/REST API
      *
-     * @param \EE_Model_Field_Base $field_obj
+     * @param EE_Model_Field_Base $field_obj
      * @param mixed                $original_value_maybe_array
      * @param string               $request_version (eg 4.8.36)
      * @return array
@@ -109,7 +115,7 @@ class ModelDataTranslator
      * Prepares incoming data from the json or $_REQUEST parameters for the models'
      * "$query_params".
      *
-     * @param \EE_Model_Field_Base $field_obj
+     * @param EE_Model_Field_Base $field_obj
      * @param mixed                $original_value
      * @param string               $requested_version
      * @param string               $timezone_string treat values as being in this timezone
@@ -125,11 +131,11 @@ class ModelDataTranslator
     {
         $timezone_string = $timezone_string !== '' ? $timezone_string : get_option('timezone_string', '');
         $new_value = null;
-        if ($field_obj instanceof \EE_Infinite_Integer_Field
+        if ($field_obj instanceof EE_Infinite_Integer_Field
             && in_array($original_value, array(null, ''), true)
         ) {
             $new_value = EE_INF;
-        } elseif ($field_obj instanceof \EE_Datetime_Field) {
+        } elseif ($field_obj instanceof EE_Datetime_Field) {
             list($offset_sign, $offset_secs) = ModelDataTranslator::parseTimezoneOffset(
                 $field_obj->get_timezone_offset(
                     new \DateTimeZone($timezone_string),
@@ -183,7 +189,7 @@ class ModelDataTranslator
     /**
      * Prepares a field's value for display in the API
      *
-     * @param \EE_Model_Field_Base $field_obj
+     * @param EE_Model_Field_Base $field_obj
      * @param mixed                $original_value
      * @param string               $requested_version
      * @return mixed
@@ -192,7 +198,7 @@ class ModelDataTranslator
     {
         if ($original_value === EE_INF) {
             $new_value = ModelDataTranslator::EE_INF_IN_REST;
-        } elseif ($field_obj instanceof \EE_Datetime_Field) {
+        } elseif ($field_obj instanceof EE_Datetime_Field) {
             if ($original_value instanceof \DateTime) {
                 $new_value = $original_value->format('Y-m-d H:i:s');
             } elseif (is_int($original_value)) {
@@ -219,15 +225,15 @@ class ModelDataTranslator
      * the format expected in the API to use in the models
      *
      * @param array     $inputted_query_params_of_this_type
-     * @param \EEM_Base $model
+     * @param EEM_Base $model
      * @param string    $requested_version
      * @return array
      * @throws \DomainException
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public static function prepareConditionsQueryParamsForModels(
         $inputted_query_params_of_this_type,
-        \EEM_Base $model,
+        EEM_Base $model,
         $requested_version
     ) {
         $query_param_for_models = array();
@@ -239,7 +245,7 @@ class ModelDataTranslator
                 $model
             );
             //double-check is it a *_gmt field?
-            if (! $field instanceof \EE_Model_Field_Base
+            if (! $field instanceof EE_Model_Field_Base
                 && ModelDataTranslator::isGmtDateFieldName($query_param_sans_stars)
             ) {
                 //yep, take off '_gmt', and find the field
@@ -250,14 +256,14 @@ class ModelDataTranslator
                 );
                 $timezone = 'UTC';
                 $is_gmt_datetime_field = true;
-            } elseif ($field instanceof \EE_Datetime_Field) {
+            } elseif ($field instanceof EE_Datetime_Field) {
                 //so it's not a GMT field. Set the timezone on the model to the default
                 $timezone = \EEH_DTT_Helper::get_valid_timezone_string();
             } else {
                 //just keep using what's already set for the timezone
                 $timezone = $model->get_timezone();
             }
-            if ($field instanceof \EE_Model_Field_Base) {
+            if ($field instanceof EE_Model_Field_Base) {
                 //did they specify an operator?
                 if (is_array($query_param_value)) {
                     $op = $query_param_value[0];
@@ -386,15 +392,15 @@ class ModelDataTranslator
      * Prepares an array of model query params for use in the REST API
      *
      * @param array     $model_query_params
-     * @param \EEM_Base $model
+     * @param EEM_Base $model
      * @param string    $requested_version eg "4.8.36". If null is provided, defaults to the latest release of the EE4
      *                                     REST API
      * @return array which can be passed into the EE4 REST API when querying a model resource
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public static function prepareQueryParamsForRestApi(
         array $model_query_params,
-        \EEM_Base $model,
+        EEM_Base $model,
         $requested_version = null
     ) {
         if ($requested_version === null) {
@@ -427,14 +433,14 @@ class ModelDataTranslator
      *
      * @param array     $inputted_query_params_of_this_type eg like the "where" or "having" conditions query params
      *                                                      passed into EEM_Base::get_all()
-     * @param \EEM_Base $model
+     * @param EEM_Base $model
      * @param string    $requested_version                  eg "4.8.36"
      * @return array ready for use in the rest api query params
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public static function prepareConditionsQueryParamsForRestApi(
         $inputted_query_params_of_this_type,
-        \EEM_Base $model,
+        EEM_Base $model,
         $requested_version
     ) {
         $query_param_for_models = array();
@@ -443,7 +449,7 @@ class ModelDataTranslator
                 ModelDataTranslator::removeStarsAndAnythingAfterFromConditionQueryParamKey($query_param_key),
                 $model
             );
-            if ($field instanceof \EE_Model_Field_Base) {
+            if ($field instanceof EE_Model_Field_Base) {
                 //did they specify an operator?
                 if (is_array($query_param_value)) {
                     $op = $query_param_value[0];
@@ -490,17 +496,17 @@ class ModelDataTranslator
      * Takes the input parameter and finds the model field that it indicates.
      *
      * @param string    $query_param_name like Registration.Transaction.TXN_ID, Event.Datetime.start_time, or REG_ID
-     * @param \EEM_Base $model
-     * @return \EE_Model_Field_Base
-     * @throws \EE_Error
+     * @param EEM_Base $model
+     * @return EE_Model_Field_Base
+     * @throws EE_Error
      */
-    public static function deduceFieldFromQueryParam($query_param_name, \EEM_Base $model)
+    public static function deduceFieldFromQueryParam($query_param_name, EEM_Base $model)
     {
         //ok, now proceed with deducing which part is the model's name, and which is the field's name
         //which will help us find the database table and column
         $query_param_parts = explode('.', $query_param_name);
         if (empty($query_param_parts)) {
-            throw new \EE_Error(sprintf(__('_extract_column_name is empty when trying to extract column and table name from %s',
+            throw new EE_Error(sprintf(__('_extract_column_name is empty when trying to extract column and table name from %s',
                 'event_espresso'), $query_param_name));
         }
         $number_of_parts = count($query_param_parts);
@@ -514,7 +520,7 @@ class ModelDataTranslator
         }
         try {
             return $model->field_settings_for($field_name);
-        } catch (\EE_Error $e) {
+        } catch (EE_Error $e) {
             return null;
         }
     }

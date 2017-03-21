@@ -1,5 +1,6 @@
 <?php namespace EventEspresso\core\libraries\rest_api\changes;
 
+use EE_Error;
 /*
  * Class for tracking what changes are made to the API and when. It's almost like
  * on-the-fly-migrations.
@@ -80,7 +81,7 @@ abstract class ChangesInBase
      * by the callbacks of this class.
      *
      * @return string eg "4.8.33"
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function version()
     {
@@ -93,7 +94,7 @@ abstract class ChangesInBase
                 $matches
             );
             if (! $success) {
-                throw new \EE_Error(
+                throw new EE_Error(
                     sprintf(
                         __('The class %1$s was misnamed. It name should match the regex "%2$s"', 'event_espresso'),
                         get_class($this),

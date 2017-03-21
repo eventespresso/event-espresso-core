@@ -1,12 +1,13 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api;
 
+use EEM_Base;
 use EventEspresso\core\libraries\rest_api\controllers\Base;
 use EventEspresso\core\libraries\rest_api\RestException;
 use EEH_Inflector;
 
 /**
- * Class Calculationshelpers
+ * Class CalculatedModelFields
  * Class for defining which model fields can be calculated, and performing those calculations
  * as requested
  *
@@ -35,7 +36,7 @@ class CalculatedModelFields
      * @param bool $refresh
      * @return array top-level-keys are model names (eg "Event")
      * next-level are the calculated field names AND method names on classes
-     * which perform calculations, values are the fully qualified classnames which do the calculationss
+     * which perform calculations, values are the fully qualified classnames which do the calculations
      * These callbacks should accept as arguments:
      * the wpdb row results,
      * the WP_Request object,
@@ -98,10 +99,10 @@ class CalculatedModelFields
     /**
      * Gets the known calculated fields for model
      *
-     * @param \EEM_Base $model
+     * @param EEM_Base $model
      * @return array allowable values for this field
      */
-    public function retrieveCalculatedFieldsForModel(\EEM_Base $model)
+    public function retrieveCalculatedFieldsForModel(EEM_Base $model)
     {
         $mapping = $this->mapping();
         if (isset($mapping[$model->get_this_model_name()])) {
@@ -116,7 +117,7 @@ class CalculatedModelFields
     /**
      * Retrieves the value for this calculation
      *
-     * @param \EEM_Base                                               type $model
+     * @param EEM_Base                                               type $model
      * @param string                                                  $field_name
      * @param array                                                   $wpdb_row
      * @param \WP_REST_Request
@@ -125,7 +126,7 @@ class CalculatedModelFields
      * @throws \EE_Error
      */
     public function retrieveCalculatedFieldValue(
-        \EEM_Base $model,
+        EEM_Base $model,
         $field_name,
         $wpdb_row,
         $rest_request,

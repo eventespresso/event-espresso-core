@@ -1,6 +1,9 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api;
 
+use EE_Registry;
+use EED_Core_Rest_Api;
+
 if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
@@ -142,7 +145,7 @@ class ModelVersionInfo
         if ($this->cached_model_changes_between_requested_version_and_current === null) {
             $model_changes = array();
             foreach ($this->modelChanges() as $version => $models_changed_in_version) {
-                if ($version <= \EED_Core_Rest_Api::core_version() && $version > $this->requestedVersion()) {
+                if ($version <= EED_Core_Rest_Api::core_version() && $version > $this->requestedVersion()) {
                     $model_changes[$version] = $models_changed_in_version;
                 }
             }
@@ -165,7 +168,7 @@ class ModelVersionInfo
         if ($this->cached_resource_changes_between_requested_version_and_current === null) {
             $resource_changes = array();
             foreach ($this->resourceChanges() as $version => $model_classnames) {
-                if ($version <= \EED_Core_Rest_Api::core_version() && $version > $this->requestedVersion()) {
+                if ($version <= EED_Core_Rest_Api::core_version() && $version > $this->requestedVersion()) {
                     $resource_changes[$version] = $model_classnames;
                 }
             }
@@ -216,7 +219,7 @@ class ModelVersionInfo
     public function modelsForRequestedVersion()
     {
         if ($this->cached_models_for_requested_version === null) {
-            $all_models_in_current_version = \EE_Registry::instance()->non_abstract_db_models;
+            $all_models_in_current_version = EE_Registry::instance()->non_abstract_db_models;
             foreach ($this->modelChangesBetweenRequestedVersionAndCurrent() as $version => $models_changed) {
                 foreach ($models_changed as $model_name => $new_indicator_or_fields_added) {
                     if ($new_indicator_or_fields_added === ModelVersionInfo::MODEL_ADDED) {
@@ -266,7 +269,7 @@ class ModelVersionInfo
     public function loadModel($model_name)
     {
         if ($this->isModel_NameInThisVersion($model_name)) {
-            return \EE_Registry::instance()->load_model($model_name);
+            return EE_Registry::instance()->load_model($model_name);
         } else {
             throw new \EE_Error(
                 sprintf(

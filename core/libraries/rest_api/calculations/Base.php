@@ -2,7 +2,7 @@
 namespace EventEspresso\core\libraries\rest_api\calculations;
 
 use EventEspresso\core\libraries\rest_api\RestException;
-
+use EEH_Inflector;
 /**
  * Class Base
  * Description here
@@ -35,7 +35,7 @@ class Base
                     __('Permission denied, you cannot calculate %1$s on %2$s because you do not have the capability "%3$s"',
                         'event_espresso'),
                     $attempted_calculation,
-                    \EEH_Inflector::pluralize_and_lower(self::getResourceName()),
+                    EEH_Inflector::pluralize_and_lower(self::getResourceName()),
                     $required_permission
                 )
             );

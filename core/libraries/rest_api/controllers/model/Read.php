@@ -1,13 +1,22 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api\controllers\model;
 
-use EE_Datetime_Field;
-use EEH_Inflector;
+use Exception;
+use WP_Error;
+use WP_REST_Request;
 use EventEspresso\core\libraries\rest_api\Capabilities;
 use EventEspresso\core\libraries\rest_api\CalculatedModelFields;
 use EventEspresso\core\libraries\rest_api\RestException;
 use EventEspresso\core\libraries\rest_api\ModelDataTranslator;
 use EventEspresso\core\entities\models\JsonModelSchema;
+use EE_Belongs_To_Relation;
+use EE_Datetime_Field;
+use EE_Error;
+use EE_Registry;
+use EED_Core_Rest_Api;
+use EEH_Inflector;
+use EEM_Base;
+use EEM_CPT_Base;
 
 if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
@@ -48,21 +57,22 @@ class Read extends Base
 
     /**
      * Handles requests to get all (or a filtered subset) of entities for a particular model
+
      *
-     * @param \WP_REST_Request $request
+*@param WP_REST_Request $request
      * @param string           $version
      * @param string           $model_name
-     * @return \WP_REST_Response|\WP_Error
+     * @return \WP_REST_Response|WP_Error
      */
-    public static function handleRequestGetAll(\WP_REST_Request $request, $version, $model_name)
+    public static function handleRequestGetAll(WP_REST_Request $request, $version, $model_name)
     {
         $controller = new Read();
         try {
             $controller->setRequestedVersion($version);
-            $model_name_singular = \EEH_Inflector::singularize_and_upper($model_name);
+            $model_name_singular = EEH_Inflector::singularize_and_upper($model_name);
             if (! $controller->getModelVersionInfo()->isModel_NameInThisVersion($model_name_singular)) {
                 return $controller->sendResponse(
-                    new \WP_Error(
+                    new WP_Error(
                         'endpoint_parsing_error',
                         sprintf(
                             __('There is no model for endpoint %s. Please contact event espresso support',
@@ -78,7 +88,7 @@ class Read extends Base
                     $request
                 )
             );
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $controller->sendResponse($e);
         }
     }
@@ -113,7 +123,7 @@ class Read extends Base
                     )
                 )
             );
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return array();
         }
     }
@@ -125,11 +135,11 @@ class Read extends Base
      * - add any extra fields that are REST API specific and related to existing fields.
      * - transform default values into the correct format for a REST API response.
      *
-     * @param \EEM_Base $model
+     * @param EEM_Base $model
      * @param array     $schema
      * @return array  The final schema.
      */
-    protected function customizeSchemaForRestResponse(\EEM_Base $model, array $schema)
+    protected function customizeSchemaForRestResponse(EEM_Base $model, array $schema)
     {
         foreach ($this->getModelVersionInfo()->fieldsOnModelInThisVersion($model) as $field_name => $field) {
             $schema = $this->translateDefaultsForRestResponse(
@@ -224,21 +234,22 @@ class Read extends Base
 
     /**
      * Gets a single entity related to the model indicated in the path and its id
+
      *
-     * @param \WP_REST_Request $request
+*@param WP_REST_Request $request
      * @param string           $version
      * @param string           $model_name
-     * @return \WP_REST_Response|\WP_Error
+     * @return \WP_REST_Response|WP_Error
      */
-    public static function handleRequestGetOne(\WP_REST_Request $request, $version, $model_name)
+    public static function handleRequestGetOne(WP_REST_Request $request, $version, $model_name)
     {
         $controller = new Read();
         try {
             $controller->setRequestedVersion($version);
-            $model_name_singular = \EEH_Inflector::singularize_and_upper($model_name);
+            $model_name_singular = EEH_Inflector::singularize_and_upper($model_name);
             if (! $controller->getModelVersionInfo()->isModel_NameInThisVersion($model_name_singular)) {
                 return $controller->sendResponse(
-                    new \WP_Error(
+                    new WP_Error(
                         'endpoint_parsing_error',
                         sprintf(
                             __('There is no model for endpoint %s. Please contact event espresso support',
@@ -254,7 +265,7 @@ class Read extends Base
                     $request
                 )
             );
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $controller->sendResponse($e);
         }
     }
@@ -264,15 +275,16 @@ class Read extends Base
     /**
      * Gets all the related entities (or if its a belongs-to relation just the one)
      * to the item with the given id
+
      *
-     * @param \WP_REST_Request $request
+*@param WP_REST_Request $request
      * @param string           $version
      * @param string           $model_name
      * @param string           $related_model_name
-     * @return \WP_REST_Response|\WP_Error
+     * @return \WP_REST_Response|WP_Error
      */
     public static function handleRequestGetRelated(
-        \WP_REST_Request $request,
+        WP_REST_Request $request,
         $version,
         $model_name,
         $related_model_name
@@ -280,10 +292,10 @@ class Read extends Base
         $controller = new Read();
         try {
             $controller->setRequestedVersion($version);
-            $main_model_name_singular = \EEH_Inflector::singularize_and_upper($model_name);
+            $main_model_name_singular = EEH_Inflector::singularize_and_upper($model_name);
             if (! $controller->getModelVersionInfo()->isModel_NameInThisVersion($main_model_name_singular)) {
                 return $controller->sendResponse(
-                    new \WP_Error(
+                    new WP_Error(
                         'endpoint_parsing_error',
                         sprintf(
                             __('There is no model for endpoint %s. Please contact event espresso support',
@@ -295,14 +307,14 @@ class Read extends Base
             }
             $main_model = $controller->getModelVersionInfo()->loadModel($main_model_name_singular);
             //assume the related model name is plural and try to find the model's name
-            $related_model_name_singular = \EEH_Inflector::singularize_and_upper($related_model_name);
+            $related_model_name_singular = EEH_Inflector::singularize_and_upper($related_model_name);
             if (! $controller->getModelVersionInfo()->isModel_NameInThisVersion($related_model_name_singular)) {
                 //so the word didn't singularize well. Maybe that's just because it's a singular word?
-                $related_model_name_singular = \EEH_Inflector::humanize($related_model_name);
+                $related_model_name_singular = EEH_Inflector::humanize($related_model_name);
             }
             if (! $controller->getModelVersionInfo()->isModel_NameInThisVersion($related_model_name_singular)) {
                 return $controller->sendResponse(
-                    new \WP_Error(
+                    new WP_Error(
                         'endpoint_parsing_error',
                         sprintf(
                             __('There is no model for endpoint %s. Please contact event espresso support',
@@ -319,7 +331,7 @@ class Read extends Base
                     $request
                 )
             );
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $controller->sendResponse($e);
         }
     }
@@ -328,17 +340,18 @@ class Read extends Base
 
     /**
      * Gets a collection for the given model and filters
+
      *
-     * @param \EEM_Base        $model
-     * @param \WP_REST_Request $request
-     * @return array|\WP_Error
+*@param EEM_Base        $model
+     * @param WP_REST_Request $request
+     * @return array|WP_Error
      */
     public function getEntitiesFromModel($model, $request)
     {
         $query_params = $this->createModelQueryParams($model, $request->get_params());
         if (! Capabilities::currentUserHasPartialAccessTo($model, $query_params['caps'])) {
-            $model_name_plural = \EEH_Inflector::pluralize_and_lower($model->get_this_model_name());
-            return new \WP_Error(
+            $model_name_plural = EEH_Inflector::pluralize_and_lower($model->get_this_model_name());
+            return new WP_Error(
                 sprintf('rest_%s_cannot_list', $model_name_plural),
                 sprintf(
                     __('Sorry, you are not allowed to list %1$s. Missing permissions: %2$s', 'event_espresso'),
@@ -375,8 +388,8 @@ class Read extends Base
      * @param array                   $primary_model_query_params query params for finding the item from which
      *                                                            relations will be based
      * @param \EE_Model_Relation_Base $relation
-     * @param \WP_REST_Request        $request
-     * @return \WP_Error|array
+     * @param WP_REST_Request        $request
+     * @return WP_Error|array
      */
     protected function getEntitiesFromRelationUsingModelQueryParams($primary_model_query_params, $relation, $request)
     {
@@ -404,12 +417,12 @@ class Read extends Base
             && $model->exists($restricted_query_params)
         )
         ) {
-            if ($relation instanceof \EE_Belongs_To_Relation) {
+            if ($relation instanceof EE_Belongs_To_Relation) {
                 $related_model_name_maybe_plural = strtolower($related_model->get_this_model_name());
             } else {
-                $related_model_name_maybe_plural = \EEH_Inflector::pluralize_and_lower($related_model->get_this_model_name());
+                $related_model_name_maybe_plural = EEH_Inflector::pluralize_and_lower($related_model->get_this_model_name());
             }
-            return new \WP_Error(
+            return new WP_Error(
                 sprintf('rest_%s_cannot_list', $related_model_name_maybe_plural),
                 sprintf(
                     __('Sorry, you are not allowed to list %1$s related to %2$s. Missing permissions: %3$s',
@@ -463,7 +476,7 @@ class Read extends Base
             }
             $nice_results[] = $nice_result;
         }
-        if ($relation instanceof \EE_Belongs_To_Relation) {
+        if ($relation instanceof EE_Belongs_To_Relation) {
             return array_shift($nice_results);
         } else {
             return $nice_results;
@@ -477,17 +490,18 @@ class Read extends Base
      * The same as Read::get_entities_from_model(), except if the relation
      * is a HABTM relation, in which case it merges any non-foreign-key fields from
      * the join-model-object into the results
+
      *
-     * @param string                  $id the ID of the thing we are fetching related stuff from
+*@param string                  $id the ID of the thing we are fetching related stuff from
      * @param \EE_Model_Relation_Base $relation
-     * @param \WP_REST_Request        $request
-     * @return array|\WP_Error
-     * @throws \EE_Error
+     * @param WP_REST_Request        $request
+     * @return array|WP_Error
+     * @throws EE_Error
      */
     public function getEntitiesFromRelation($id, $relation, $request)
     {
         if (! $relation->get_this_model()->has_primary_key_field()) {
-            throw new \EE_Error(
+            throw new EE_Error(
                 sprintf(
                     __('Read::get_entities_from_relation should only be called from a model with a primary key, it was called from %1$s',
                         'event_espresso'),
@@ -513,7 +527,7 @@ class Read extends Base
      * like the total records. This should only be called on the original request
      * from the client, not on subsequent internal
      *
-     * @param \EEM_Base $model
+     * @param EEM_Base $model
      * @param array     $query_params
      * @return void
      */
@@ -524,7 +538,7 @@ class Read extends Base
             Capabilities::getMissingPermissionsString($model, $query_params['caps']));
         //normally the limit to a 2-part array, where the 2nd item is the limit
         if (! isset($query_params['limit'])) {
-            $query_params['limit'] = \EED_Core_Rest_Api::get_default_query_limit();
+            $query_params['limit'] = EED_Core_Rest_Api::get_default_query_limit();
         }
         if (is_array($query_params['limit'])) {
             $limit_parts = $query_params['limit'];
@@ -549,25 +563,25 @@ class Read extends Base
     /**
      * Changes database results into REST API entities
      *
-     * @param \EEM_Base        $model
+     * @param EEM_Base        $model
      * @param array            $db_row     like results from $wpdb->get_results()
-     * @param \WP_REST_Request $rest_request
+     * @param WP_REST_Request $rest_request
      * @param string           $deprecated no longer used
      * @return array ready for being converted into json for sending to client
      */
     public function createEntityFromWpdbResult($model, $db_row, $rest_request, $deprecated = null)
     {
-        if (! $rest_request instanceof \WP_REST_Request) {
+        if (! $rest_request instanceof WP_REST_Request) {
             //ok so this was called in the old style, where the 3rd arg was
             //$include, and the 4th arg was $context
             //now setup the request just to avoid fatal errors, although we won't be able
             //to truly make use of it because it's kinda devoid of info
-            $rest_request = new \WP_REST_Request();
+            $rest_request = new WP_REST_Request();
             $rest_request->set_param('include', $rest_request);
             $rest_request->set_param('caps', $deprecated);
         }
         if ($rest_request->get_param('caps') == null) {
-            $rest_request->set_param('caps', \EEM_Base::caps_read);
+            $rest_request->set_param('caps', EEM_Base::caps_read);
         }
         $entity_array = $this->createBareEntityFromWpdbResults($model, $db_row);
         $entity_array = $this->addExtraFields($model, $db_row, $entity_array);
@@ -612,11 +626,11 @@ class Read extends Base
      * for now still a PHP array, but soon enough we'll call json_encode on it, don't worry),
      * from $wpdb->get_row( $sql, ARRAY_A)
      *
-     * @param \EEM_Base $model
+     * @param EEM_Base $model
      * @param array     $db_row
      * @return array entity mostly ready for converting to JSON and sending in the response
      */
-    protected function createBareEntityFromWpdbResults(\EEM_Base $model, $db_row)
+    protected function createBareEntityFromWpdbResults(EEM_Base $model, $db_row)
     {
         $result = $model->deduce_fields_n_values_from_cols_n_values($db_row);
         $result = array_intersect_key($result,
@@ -672,14 +686,14 @@ class Read extends Base
     /**
      * Adds a few extra fields to the entity response
      *
-     * @param \EEM_Base $model
+     * @param EEM_Base $model
      * @param array     $db_row
      * @param array     $entity_array
      * @return array modified entity
      */
-    protected function addExtraFields(\EEM_Base $model, $db_row, $entity_array)
+    protected function addExtraFields(EEM_Base $model, $db_row, $entity_array)
     {
-        if ($model instanceof \EEM_CPT_Base) {
+        if ($model instanceof EEM_CPT_Base) {
             $entity_array['link'] = get_permalink($db_row[$model->get_primary_key_field()->get_qualified_column()]);
         }
         return $entity_array;
@@ -691,7 +705,7 @@ class Read extends Base
      * Gets links we want to add to the response
      *
      * @global \WP_REST_Server $wp_rest_server
-     * @param \EEM_Base        $model
+     * @param EEM_Base        $model
      * @param array            $db_row
      * @param array            $entity_array
      * @return array the _links item in the entity
@@ -704,7 +718,7 @@ class Read extends Base
             $links['self'] = array(
                 array(
                     'href' => $this->getVersionedLinkTo(
-                        \EEH_Inflector::pluralize_and_lower($model->get_this_model_name())
+                        EEH_Inflector::pluralize_and_lower($model->get_this_model_name())
                         . '/'
                         . $entity_array[$model->primary_key_name()]
                     ),
@@ -714,7 +728,7 @@ class Read extends Base
         $links['collection'] = array(
             array(
                 'href' => $this->getVersionedLinkTo(
-                    \EEH_Inflector::pluralize_and_lower($model->get_this_model_name())
+                    EEH_Inflector::pluralize_and_lower($model->get_this_model_name())
                 ),
             ),
         );
@@ -722,16 +736,16 @@ class Read extends Base
         if ($model->has_primary_key_field()) {
             foreach ($this->getModelVersionInfo()->relationSettings($model) as $relation_name => $relation_obj) {
                 $related_model_part = Read::getRelatedEntityName($relation_name, $relation_obj);
-                $links[\EED_Core_Rest_Api::ee_api_link_namespace . $related_model_part] = array(
+                $links[EED_Core_Rest_Api::ee_api_link_namespace . $related_model_part] = array(
                     array(
                         'href'   => $this->getVersionedLinkTo(
-                            \EEH_Inflector::pluralize_and_lower($model->get_this_model_name())
+                            EEH_Inflector::pluralize_and_lower($model->get_this_model_name())
                             . '/'
                             . $entity_array[$model->primary_key_name()]
                             . '/'
                             . $related_model_part
                         ),
-                        'single' => $relation_obj instanceof \EE_Belongs_To_Relation ? true : false,
+                        'single' => $relation_obj instanceof EE_Belongs_To_Relation ? true : false,
                     ),
                 );
             }
@@ -744,15 +758,15 @@ class Read extends Base
     /**
      * Adds the included models indicated in the request to the entity provided
      *
-     * @param \EEM_Base        $model
-     * @param \WP_REST_Request $rest_request
+     * @param EEM_Base        $model
+     * @param WP_REST_Request $rest_request
      * @param array            $entity_array
      * @param array            $db_row
      * @return array the modified entity
      */
     protected function includeRequestedModels(
-        \EEM_Base $model,
-        \WP_REST_Request $rest_request,
+        EEM_Base $model,
+        WP_REST_Request $rest_request,
         $entity_array,
         $db_row = array()
     ) {
@@ -790,7 +804,7 @@ class Read extends Base
             //or did they specify to calculate a field from a related model?
             if ($related_fields_to_include || $related_fields_to_calculate) {
                 //if so, we should include at least some part of the related model
-                $pretend_related_request = new \WP_REST_Request();
+                $pretend_related_request = new WP_REST_Request();
                 $pretend_related_request->set_query_params(
                     array(
                         'caps'      => $rest_request->get_param('caps'),
@@ -811,7 +825,7 @@ class Read extends Base
                 );
                 $entity_array[Read::getRelatedEntityName($relation_name, $relation_obj)] = $related_results
                                                                                            instanceof
-                                                                                           \WP_Error
+                                                                                           WP_Error
                     ? null
                     : $related_results;
             }
@@ -830,7 +844,7 @@ class Read extends Base
      */
     private function removeModelNamesFromArray($arr)
     {
-        return array_diff($arr, array_keys(\EE_Registry::instance()->non_abstract_db_models));
+        return array_diff($arr, array_keys(EE_Registry::instance()->non_abstract_db_models));
     }
 
 
@@ -838,9 +852,9 @@ class Read extends Base
     /**
      * Gets the calculated fields for the response
      *
-     * @param \EEM_Base        $model
+     * @param EEM_Base        $model
      * @param array            $wpdb_row
-     * @param \WP_REST_Request $rest_request
+     * @param WP_REST_Request $rest_request
      * @return \stdClass the _calculations item in the entity
      */
     protected function getEntityCalculations($model, $wpdb_row, $rest_request)
@@ -893,7 +907,7 @@ class Read extends Base
     public function getVersionedLinkTo($link_part_after_version_and_slash)
     {
         return rest_url(
-            \EED_Core_Rest_Api::ee_api_namespace
+            EED_Core_Rest_Api::ee_api_namespace
             . $this->getModelVersionInfo()->requestedVersion()
             . '/'
             . $link_part_after_version_and_slash
@@ -912,10 +926,10 @@ class Read extends Base
      */
     public static function getRelatedEntityName($relation_name, $relation_obj)
     {
-        if ($relation_obj instanceof \EE_Belongs_To_Relation) {
+        if ($relation_obj instanceof EE_Belongs_To_Relation) {
             return strtolower($relation_name);
         } else {
-            return \EEH_Inflector::pluralize_and_lower($relation_name);
+            return EEH_Inflector::pluralize_and_lower($relation_name);
         }
     }
 
@@ -924,9 +938,9 @@ class Read extends Base
     /**
      * Gets the one model object with the specified id for the specified model
      *
-     * @param \EEM_Base        $model
-     * @param \WP_REST_Request $request
-     * @return array|\WP_Error
+     * @param EEM_Base        $model
+     * @param WP_REST_Request $request
+     * @return array|WP_Error
      */
     public function getEntityFromModel($model, $request)
     {
@@ -946,13 +960,13 @@ class Read extends Base
     public function validateContext($context)
     {
         if (! $context) {
-            $context = \EEM_Base::caps_read;
+            $context = EEM_Base::caps_read;
         }
-        $valid_contexts = \EEM_Base::valid_cap_contexts();
+        $valid_contexts = EEM_Base::valid_cap_contexts();
         if (in_array($context, $valid_contexts)) {
             return $context;
         } else {
-            return \EEM_Base::caps_read;
+            return EEM_Base::caps_read;
         }
     }
 
@@ -967,12 +981,12 @@ class Read extends Base
     public function validateDefaultQueryParams($default_query_params)
     {
         $valid_default_where_conditions_for_api_calls = array(
-            \EEM_Base::default_where_conditions_all,
-            \EEM_Base::default_where_conditions_minimum_all,
-            \EEM_Base::default_where_conditions_minimum_others,
+            EEM_Base::default_where_conditions_all,
+            EEM_Base::default_where_conditions_minimum_all,
+            EEM_Base::default_where_conditions_minimum_others,
         );
         if (! $default_query_params) {
-            $default_query_params = \EEM_Base::default_where_conditions_all;
+            $default_query_params = EEM_Base::default_where_conditions_all;
         }
         if (
         in_array(
@@ -983,7 +997,7 @@ class Read extends Base
         ) {
             return $default_query_params;
         } else {
-            return \EEM_Base::default_where_conditions_all;
+            return EEM_Base::default_where_conditions_all;
         }
     }
 
@@ -995,11 +1009,11 @@ class Read extends Base
      * can be left as-is, but it's quite possible this will change someday.
      * Also, this method's contents might be candidate for moving to Model_Data_Translator
      *
-     * @param \EEM_Base $model
+     * @param EEM_Base $model
      * @param array     $query_parameters from $_GET parameter @see Read:handle_request_get_all
      * @return array like what EEM_Base::get_all() expects or FALSE to indicate
      *                                    that absolutely no results should be returned
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function createModelQueryParams($model, $query_parameters)
     {
@@ -1064,7 +1078,7 @@ class Read extends Base
             $sanitized_limit = array();
             foreach ($limit_array as $key => $limit_part) {
                 if ($this->debug_mode && (! is_numeric($limit_part) || count($sanitized_limit) > 2)) {
-                    throw new \EE_Error(
+                    throw new EE_Error(
                         sprintf(
                             __('An invalid limit filter was provided. It was: %s. If the EE4 JSON REST API weren\'t in debug mode, this message would not appear.',
                                 'event_espresso'),
@@ -1076,12 +1090,12 @@ class Read extends Base
             }
             $model_query_params['limit'] = implode(',', $sanitized_limit);
         } else {
-            $model_query_params['limit'] = \EED_Core_Rest_Api::get_default_query_limit();
+            $model_query_params['limit'] = EED_Core_Rest_Api::get_default_query_limit();
         }
         if (isset($query_parameters['caps'])) {
             $model_query_params['caps'] = $this->validateContext($query_parameters['caps']);
         } else {
-            $model_query_params['caps'] = \EEM_Base::caps_read;
+            $model_query_params['caps'] = EEM_Base::caps_read;
         }
         if (isset($query_parameters['default_where_conditions'])) {
             $model_query_params['default_where_conditions'] = $this->validateDefaultQueryParams($query_parameters['default_where_conditions']);
@@ -1095,7 +1109,7 @@ class Read extends Base
      * Changes the REST-style query params for use in the models
      *
      * @deprecated
-     * @param \EEM_Base $model
+     * @param EEM_Base $model
      * @param array     $query_params sub-array from @see EEM_Base::get_all()
      * @return array
      */
@@ -1238,13 +1252,14 @@ class Read extends Base
     /**
      * Gets the single item using the model according to the request in the context given, otherwise
      * returns that it's inaccessible to the current user
+
      *
-     * @param \EEM_Base        $model
-     * @param \WP_REST_Request $request
+*@param EEM_Base        $model
+     * @param WP_REST_Request $request
      * @param null             $context
-     * @return array|\WP_Error
+     * @return array|WP_Error
      */
-    public function getOneOrReportPermissionError(\EEM_Base $model, \WP_REST_Request $request, $context = null)
+    public function getOneOrReportPermissionError(EEM_Base $model, WP_REST_Request $request, $context = null)
     {
         $query_params = array(array($model->primary_key_name() => $request->get_param('id')), 'limit' => 1);
         if ($model instanceof \EEM_Soft_Delete_Base) {
@@ -1265,7 +1280,7 @@ class Read extends Base
             $model_rows_found_sans_restrictions = $model->get_all_wpdb_results($query_params);
             if (! empty($model_rows_found_sans_restrictions)) {
                 //you got shafted- it existed but we didn't want to tell you!
-                return new \WP_Error(
+                return new WP_Error(
                     'rest_user_cannot_' . $context,
                     sprintf(
                         __('Sorry, you cannot %1$s this %2$s. Missing permissions are: %3$s', 'event_espresso'),
@@ -1280,7 +1295,7 @@ class Read extends Base
                 );
             } else {
                 //it's not you. It just doesn't exist
-                return new \WP_Error(
+                return new WP_Error(
                     sprintf('rest_%s_invalid_id', $lowercase_model_name),
                     sprintf(__('Invalid %s ID.', 'event_espresso'), $lowercase_model_name),
                     array('status' => 404)

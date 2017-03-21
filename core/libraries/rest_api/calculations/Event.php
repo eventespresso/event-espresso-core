@@ -3,6 +3,11 @@ namespace EventEspresso\core\libraries\rest_api\calculations;
 
 use EventEspresso\core\libraries\rest_api\calculations\Base as Calculations_Base;
 use EventEspresso\core\libraries\rest_api\controllers\model\Base;
+use EventEspresso\core\libraries\rest_api\RestException;
+use EEM_Event;
+use EE_Event;
+use EE_Error;
+use EEM_Registration;
 
 /**
  * Class Event_Calculations
@@ -31,19 +36,19 @@ class Event extends Calculations_Base
      * @param \WP_REST_Request $request
      * @param Base             $controller
      * @return int
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public static function optimumSalesAtStart($wpdb_row, $request, $controller)
     {
         if (is_array($wpdb_row) && isset($wpdb_row['Event_CPT.ID'])) {
-            $event_obj = \EEM_Event::instance()->get_one_by_ID($wpdb_row['Event_CPT.ID']);
+            $event_obj = EEM_Event::instance()->get_one_by_ID($wpdb_row['Event_CPT.ID']);
         } else {
             $event_obj = null;
         }
-        if ($event_obj instanceof \EE_Event) {
+        if ($event_obj instanceof EE_Event) {
             return $event_obj->total_available_spaces(true);
         } else {
-            throw new \EE_Error(
+            throw new EE_Error(
                 sprintf(
                     __('Cannot calculate optimum_sales_at_start because the event with ID %1$s (from database row %2$s) was not found',
                         'event_espresso'),
@@ -65,19 +70,19 @@ class Event extends Calculations_Base
      * @param \WP_REST_Request $request
      * @param Base             $controller
      * @return int
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public static function optimumSalesNow($wpdb_row, $request, $controller)
     {
         if (is_array($wpdb_row) && isset($wpdb_row['Event_CPT.ID'])) {
-            $event_obj = \EEM_Event::instance()->get_one_by_ID($wpdb_row['Event_CPT.ID']);
+            $event_obj = EEM_Event::instance()->get_one_by_ID($wpdb_row['Event_CPT.ID']);
         } else {
             $event_obj = null;
         }
-        if ($event_obj instanceof \EE_Event) {
+        if ($event_obj instanceof EE_Event) {
             return $event_obj->total_available_spaces(false);
         } else {
-            throw new \EE_Error(
+            throw new EE_Error(
                 sprintf(
                     __('Cannot calculate optimum_sales_now because the event with ID %1$s (from database row %2$s) was not found',
                         'event_espresso'),
@@ -98,19 +103,19 @@ class Event extends Calculations_Base
      * @param \WP_REST_Request $request
      * @param Base             $controller
      * @return int
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public static function spacesRemaining($wpdb_row, $request, $controller)
     {
         if (is_array($wpdb_row) && isset($wpdb_row['Event_CPT.ID'])) {
-            $event_obj = \EEM_Event::instance()->get_one_by_ID($wpdb_row['Event_CPT.ID']);
+            $event_obj = EEM_Event::instance()->get_one_by_ID($wpdb_row['Event_CPT.ID']);
         } else {
             $event_obj = null;
         }
-        if ($event_obj instanceof \EE_Event) {
+        if ($event_obj instanceof EE_Event) {
             return $event_obj->spaces_remaining_for_sale();
         } else {
-            throw new \EE_Error(
+            throw new EE_Error(
                 sprintf(
                     __('Cannot calculate spaces_remaining because the event with ID %1$s (from database row %2$s) was not found',
                         'event_espresso'),
@@ -131,12 +136,12 @@ class Event extends Calculations_Base
      * @param \WP_REST_Request $request
      * @param Base             $controller
      * @return int
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public static function spotsTaken($wpdb_row, $request, $controller)
     {
         if (! is_array($wpdb_row) || ! isset($wpdb_row['Event_CPT.ID'])) {
-            throw new \EE_Error(
+            throw new EE_Error(
                 sprintf(
                     __('Cannot calculate spots_taken because the database row %1$s does not have an entry for "Event_CPT.ID"',
                         'event_espresso'),
@@ -144,11 +149,11 @@ class Event extends Calculations_Base
                 )
             );
         }
-        return \EEM_Registration::instance()->count(
+        return EEM_Registration::instance()->count(
             array(
                 array(
                     'EVT_ID' => $wpdb_row['Event_CPT.ID'],
-                    'STS_ID' => \EEM_Registration::status_id_approved,
+                    'STS_ID' => EEM_Registration::status_id_approved,
                 ),
             ),
             'REG_ID',
@@ -166,13 +171,13 @@ class Event extends Calculations_Base
      * @param \WP_REST_Request $request
      * @param Base             $controller
      * @return int
-     * @throws \EE_Error
-     * @throws \EventEspresso\core\libraries\rest_api\RestException
+     * @throws EE_Error
+     * @throws RestException
      */
     public static function spotsTakenPendingPayment($wpdb_row, $request, $controller)
     {
         if (! is_array($wpdb_row) || ! isset($wpdb_row['Event_CPT.ID'])) {
-            throw new \EE_Error(
+            throw new EE_Error(
                 sprintf(
                     __('Cannot calculate spots_taken_pending_payment because the database row %1$s does not have an entry for "Event_CPT.ID"',
                         'event_espresso'),
@@ -181,11 +186,11 @@ class Event extends Calculations_Base
             );
         }
         self::verifyCurrentUserCan('ee_read_registrations', 'spots_taken_pending_payment');
-        return \EEM_Registration::instance()->count(
+        return EEM_Registration::instance()->count(
             array(
                 array(
                     'EVT_ID' => $wpdb_row['Event_CPT.ID'],
-                    'STS_ID' => \EEM_Registration::status_id_pending_payment,
+                    'STS_ID' => EEM_Registration::status_id_pending_payment,
                 ),
             ),
             'REG_ID',
@@ -203,13 +208,13 @@ class Event extends Calculations_Base
      * @param \WP_REST_Request $request
      * @param Base             $controller
      * @return int|null if permission denied
-     * @throws \EE_Error
-     * @throws \EventEspresso\core\libraries\rest_api\RestException
+     * @throws EE_Error
+     * @throws RestException
      */
     public static function registrationsCheckedInCount($wpdb_row, $request, $controller)
     {
         if (! is_array($wpdb_row) || ! isset($wpdb_row['Event_CPT.ID'])) {
-            throw new \EE_Error(
+            throw new EE_Error(
                 sprintf(
                     __('Cannot calculate registrations_checked_in_count because the database row %1$s does not have an entry for "Event_CPT.ID"',
                         'event_espresso'),
@@ -218,7 +223,7 @@ class Event extends Calculations_Base
             );
         }
         self::verifyCurrentUserCan('ee_read_checkins', 'registrations_checked_in_count');
-        return \EEM_Registration::instance()->count_registrations_checked_into_event($wpdb_row['Event_CPT.ID'], true);
+        return EEM_Registration::instance()->count_registrations_checked_into_event($wpdb_row['Event_CPT.ID'], true);
     }
 
 
@@ -231,13 +236,13 @@ class Event extends Calculations_Base
      * @param \WP_REST_Request $request
      * @param Base             $controller
      * @return int
-     * @throws \EE_Error
-     * @throws \EventEspresso\core\libraries\rest_api\RestException
+     * @throws EE_Error
+     * @throws RestException
      */
     public static function registrationsCheckedOutCount($wpdb_row, $request, $controller)
     {
         if (! is_array($wpdb_row) || ! isset($wpdb_row['Event_CPT.ID'])) {
-            throw new \EE_Error(
+            throw new EE_Error(
                 sprintf(
                     __('Cannot calculate registrations_checked_out_count because the database row %1$s does not have an entry for "Event_CPT.ID"',
                         'event_espresso'),
@@ -246,7 +251,7 @@ class Event extends Calculations_Base
             );
         }
         self::verifyCurrentUserCan('ee_read_checkins', 'registrations_checked_out_count');
-        return \EEM_Registration::instance()->count_registrations_checked_into_event($wpdb_row['Event_CPT.ID'], false);
+        return EEM_Registration::instance()->count_registrations_checked_into_event($wpdb_row['Event_CPT.ID'], false);
     }
 
 

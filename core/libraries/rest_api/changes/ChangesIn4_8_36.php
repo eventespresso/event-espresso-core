@@ -1,8 +1,10 @@
 <?php namespace EventEspresso\core\libraries\rest_api\changes;
 
+use WP_REST_Request;
 use EventEspresso\core\libraries\rest_api\controllers\model\Read;
 use EventEspresso\core\libraries\rest_api\controllers\model\Base;
 use EventEspresso\core\libraries\rest_api\controllers\Base as Controller_Base;
+use EEM_Base;
 
 /*
  * The checkin and checkout endpoints were added in 4.8.36,
@@ -65,11 +67,11 @@ class ChangesIn4_8_36 extends ChangesInBase
      * Don't show "calculate" as an query param option in the index
      *
      * @param array     $query_params
-     * @param \EEM_base $model
+     * @param EEM_Base $model
      * @param string    $version
      * @return array
      */
-    public function removeCalculateQueryParam($query_params, \EEM_Base $model, $version)
+    public function removeCalculateQueryParam($query_params, EEM_Base $model, $version)
     {
         if ($this->appliesToVersion($version)) {
             unset($query_params['calculate']);
@@ -83,17 +85,17 @@ class ChangesIn4_8_36 extends ChangesInBase
      * Removes the "_calculate_fields" part of entity responses before 4.8.36
      *
      * @param array            $entity_response_array
-     * @param \EEM_Base        $model
+     * @param EEM_Base        $model
      * @param string           $request_context
-     * @param \WP_REST_Request $request
+     * @param WP_REST_Request $request
      * @param Read             $controller
      * @return array
      */
     public function removeCalculatedFieldsFromResponse(
         $entity_response_array,
-        \EEM_Base $model,
+        EEM_Base $model,
         $request_context,
-        \WP_REST_Request $request,
+        WP_REST_Request $request,
         Read $controller
     ) {
         if ($this->appliesToVersion($controller->getModelVersionInfo()->requestedVersion())) {
@@ -122,9 +124,9 @@ class ChangesIn4_8_36 extends ChangesInBase
                 $headers,
                 array_flip(
                     array(
-                        Base::header_prefix_for_wp . 'Total',
-                        Base::header_prefix_for_wp . 'TotalPages',
-                        Base::header_prefix_for_wp . 'PageSize',
+                        Base::HEADER_PREFIX_FOR_WP . 'Total',
+                        Base::HEADER_PREFIX_FOR_WP . 'TotalPages',
+                        Base::HEADER_PREFIX_FOR_WP . 'PageSize',
                     )));
         }
         return $headers;
@@ -136,17 +138,17 @@ class ChangesIn4_8_36 extends ChangesInBase
      * Puts the 'featured_image_url' back in for responses before 4.8.36.
      *
      * @param array            $entity_response_array
-     * @param \EEM_Base        $model
+     * @param EEM_Base        $model
      * @param string           $request_context
-     * @param \WP_REST_Request $request
+     * @param WP_REST_Request $request
      * @param Read             $controller
      * @return array
      */
     public function addOldFeaturedImagePartOfCptEntities(
         $entity_response_array,
-        \EEM_Base $model,
+        EEM_Base $model,
         $request_context,
-        \WP_REST_Request $request,
+        WP_REST_Request $request,
         Read $controller
     ) {
         if ($this->appliesToVersion($controller->getModelVersionInfo()->requestedVersion())

@@ -1,8 +1,8 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api;
 
-use EventEspresso\core\libraries\rest_api\RestException;
 use EEM_Base;
+use EventEspresso\core\libraries\rest_api\RestException;
 use EEH_Inflector;
 
 if (! defined('EVENT_ESPRESSO_VERSION')) {
@@ -24,11 +24,11 @@ class Capabilities
     /**
      * The current user can see at least SOME of these entities.
      *
-     * @param \EEM_Base $model
+     * @param EEM_Base $model
      * @param string    $model_context one of the return values from EEM_Base::valid_cap_contexts()
      * @return boolean
      */
-    public static function currentUserHasPartialAccessTo($model, $model_context = \EEM_Base::caps_read)
+    public static function currentUserHasPartialAccessTo($model, $model_context = EEM_Base::caps_read)
     {
         if (
         apply_filters(
@@ -64,11 +64,11 @@ class Capabilities
      * Gets an array of all the capabilities the current user is missing that affected
      * the query
      *
-     * @param \EEM_Base $model
+     * @param EEM_Base $model
      * @param string    $request_type one of the constants on WP_JSON_Server
      * @return array
      */
-    public static function getMissingPermissions($model, $request_type = \EEM_Base::caps_read)
+    public static function getMissingPermissions($model, $request_type = EEM_Base::caps_read)
     {
         return $model->caps_missing($request_type);
     }
@@ -79,11 +79,11 @@ class Capabilities
      * Gets a string of all the capabilities the current user is missing that affected
      * the query
      *
-     * @param \EEM_Base $model
+     * @param EEM_Base $model
      * @param string    $model_context one of the return values from EEM_Base::valid_cap_contexts()
      * @return string
      */
-    public static function getMissingPermissionsString($model, $model_context = \EEM_Base::caps_read)
+    public static function getMissingPermissionsString($model, $model_context = EEM_Base::caps_read)
     {
         return implode(',', array_keys(self::getMissingPermissions($model, $model_context)));
     }
@@ -94,7 +94,7 @@ class Capabilities
      * Takes a entity that's ready to be returned and removes fields which the user shouldn't be able to access.
      *
      * @param array            $entity
-     * @param \EEM_Base        $model
+     * @param EEM_Base        $model
      * @param string           $request_type         one of the return values from EEM_Base::valid_cap_contexts()
      * @param ModelVersionInfo $model_version_info
      * @param string           $primary_key_string   result of EEM_Base::get_index_primary_key_string(), so that we can
@@ -118,13 +118,13 @@ class Capabilities
         }
         //we only care to do this for frontend reads and when the user can't edit the item
         if (
-            $request_type !== \EEM_Base::caps_read
+            $request_type !== EEM_Base::caps_read
             || $model->exists(
                 $model->alter_query_params_to_restrict_by_ID(
                     $primary_key_string,
                     array(
                         'default_where_conditions' => 'none',
-                        'caps'                     => \EEM_Base::caps_edit,
+                        'caps'                     => EEM_Base::caps_edit,
                     )
                 )
             )
@@ -166,7 +166,7 @@ class Capabilities
     public static function verifyAtLeastPartialAccessTo($model, $model_action_context, $action_name = 'list')
     {
         if (! Capabilities::currentUserHasPartialAccessTo($model, $model_action_context)) {
-            $model_name_plural = \EEH_Inflector::pluralize_and_lower($model->get_this_model_name());
+            $model_name_plural = EEH_Inflector::pluralize_and_lower($model->get_this_model_name());
             throw new RestException(
                 sprintf('rest_cannot_%s_%s', strtolower($action_name), $model_name_plural),
                 sprintf(
