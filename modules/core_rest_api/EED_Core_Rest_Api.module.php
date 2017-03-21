@@ -1,7 +1,7 @@
 <?php
 use EventEspresso\core\libraries\rest_api\Calculated_Model_Fields;
 use EventEspresso\core\libraries\rest_api\controllers\model\Read as ModelRead;
-use EventEspresso\core\libraries\rest_api\changes\Changes_In_Base;
+use EventEspresso\core\libraries\rest_api\changes\ChangesInBase;
 use EventEspresso\core\libraries\rest_api\Model_Version_Info;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
@@ -126,14 +126,16 @@ class EED_Core_Rest_Api extends \EED_Module
         $folder_contents = EEH_File::get_contents_of_folders(array(EE_LIBRARIES . 'rest_api' . DS . 'changes'), false);
         foreach ($folder_contents as $classname_in_namespace => $filepath) {
             //ignore the base parent class
-            if ($classname_in_namespace === 'Changes_In_Base') {
+            //and legacy named classes
+            if ( $classname_in_namespace === 'ChangesInBase'
+                || strpos( $classname_in_namespace, 'Changes_In_') === 0) {
                 continue;
             }
             $full_classname = 'EventEspresso\core\libraries\rest_api\changes\\' . $classname_in_namespace;
             if (class_exists($full_classname)) {
                 $instance_of_class = new $full_classname;
-                if ($instance_of_class instanceof Changes_In_Base) {
-                    $instance_of_class->set_hooks();
+                if ($instance_of_class instanceof ChangesInBase) {
+                    $instance_of_class->setHooks();
                 }
             }
         }
@@ -428,7 +430,7 @@ class EED_Core_Rest_Api extends \EED_Module
                 'schema' => array(
                     'schema_callback' => array(
                         'EventEspresso\core\libraries\rest_api\controllers\model\Read',
-                        'handle_schema_request',
+                        'handleSchemaRequest',
                     ),
                     'callback_args' => array($version,$model_name),
                 )

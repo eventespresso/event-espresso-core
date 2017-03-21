@@ -1,33 +1,7 @@
 <?php namespace EventEspresso\core\libraries\rest_api\changes;
 
 /*
- * Class for tracking what changes are made to the API and when. It's almost like
- * on-the-fly-migrations.
- * This class' name indicates what requested versions it applies to.
- * For example, if its name is "In_4_8_33" then it relates to changes made in 4.8.33.
- * So if a request comes in for 4.8.29, this class adds hooks and filters will take
- * care of altering the 4.8.33 endpoints/contents/functionality
- * to behave like it did in 4.8.29.
- * For example, if 4.8.33 adds a new endpoint called "/registrations/{id}/datetimes/{id}"
- * then this class will enqueue a filter to remove that endpoint (and remember this c
- * class is only loaded for requests to 4.8.29 and lower).
- * If an endpoint's response had a new field added in 4.8.33, then this would
- * also enqueue a filter to change that endpoint's response to remove it from
- * requests to the 4.9.29 version of that endpoint. Etc.
- * Note that this is different than the Model_Version_Info class. That class just
- * tracks changes made in EE core's models. This tracks changes just made in the REST API.
- * They have the same purpose though: provide backwards compatibility so that
- * the EE4 REST API behaves the same regardless of what version of EE is running
- * behind the scenes.
- * Note: this class is loaded on every rest api request, and its filters get
- * added too, so its up to its filters and action callbacks to determine if they should
- * apply or not. They should probably use the Changes_In_Base::applies_to_version()
- * helper method to determine whether to perform their action or not.
- * Also note that children of this class should be in the same folder and be
- * named like "Changes_In_{MajorVersion}_{MinorVersion}_{MicroVersion}",
- * eg "Changes_In_4_8_33", and they should be the namespace "EventEspresso\core\libraries\rest_api\changes".
- * If so, they will be automatically loaded on all rest api requests, and their
- * "set_hooks" method will be called automatically during "rest_api_init"
+ * @deprecated use ChangesInBase instead
  */
 
 abstract class Changes_In_Base {
