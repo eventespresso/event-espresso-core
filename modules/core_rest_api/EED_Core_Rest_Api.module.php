@@ -524,7 +524,7 @@ class EED_Core_Rest_Api extends \EED_Module
             array(
                 'callback'        => array(
                     'EventEspresso\core\libraries\rest_api\controllers\rpc\Checkin',
-                    'handle_request_toggle_checkin',
+                    'handleRequestToggleCheckin',
                 ),
                 'methods'         => WP_REST_Server::CREATABLE,
                 'hidden_endpoint' => $hidden_endpoint,
@@ -753,7 +753,7 @@ class EED_Core_Rest_Api extends \EED_Module
                 array(
                     'callback'        => array(
                         'EventEspresso\core\libraries\rest_api\controllers\config\Read',
-                        'handle_request',
+                        'handleRequest',
                     ),
                     'methods'         => WP_REST_Server::READABLE,
                     'hidden_endpoint' => $hidden_endpoint,
@@ -764,7 +764,7 @@ class EED_Core_Rest_Api extends \EED_Module
                 array(
                     'callback'        => array(
                         'EventEspresso\core\libraries\rest_api\controllers\config\Read',
-                        'handle_request_site_info',
+                        'handleRequestSiteInfo',
                     ),
                     'methods'         => WP_REST_Server::READABLE,
                     'hidden_endpoint' => $hidden_endpoint,
