@@ -645,11 +645,11 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 	 * @throws \EE_Error
 	 */
 	public function primary_registration() {
-		return $this->get_first_related(
-		    'Registration', array(
-		        array(
-		            'REG_count' => EEM_Registration::PRIMARY_REGISTRANT_COUNT,
-                    'STS_ID' => array('NOT IN' => EEM_Registration::closed_reg_statuses())
+        return $this->get_first_related(
+            'Registration', array(
+                array(
+                    'REG_count' => EEM_Registration::PRIMARY_REGISTRANT_COUNT,
+                    'STS_ID' => array('NOT IN', EEM_Registration::closed_reg_statuses())
                 )
             )
         );
