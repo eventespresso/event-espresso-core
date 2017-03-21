@@ -984,9 +984,6 @@ class EED_Core_Rest_Api extends \EED_Module
     public function run($WP)
     {
     }
-
-
-
 }
 
 // End of file EED_Core_Rest_Api.module.php
