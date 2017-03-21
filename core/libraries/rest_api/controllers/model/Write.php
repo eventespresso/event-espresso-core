@@ -166,7 +166,7 @@ class Write extends Base
      */
     public function insert(EEM_Base $model, WP_REST_Request $request)
     {
-        Capabilities::verify_at_least_partial_access_to($model, EEM_Base::caps_edit, 'create');
+        Capabilities::verifyAtLeastPartialAccessTo($model, EEM_Base::caps_edit, 'create');
         $default_cap_to_check_for = \EE_Restriction_Generator_Base::get_default_restrictions_cap();
         if (! current_user_can($default_cap_to_check_for)) {
             throw new RestException(
@@ -212,7 +212,7 @@ class Write extends Base
      */
     public function update(EEM_Base $model, WP_REST_Request $request)
     {
-        Capabilities::verify_at_least_partial_access_to($model, EEM_Base::caps_edit, 'edit');
+        Capabilities::verifyAtLeastPartialAccessTo($model, EEM_Base::caps_edit, 'edit');
         $default_cap_to_check_for = \EE_Restriction_Generator_Base::get_default_restrictions_cap();
         if (! current_user_can($default_cap_to_check_for)) {
             throw new RestException(

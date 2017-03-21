@@ -327,14 +327,14 @@ class Read extends Base
     public function getEntitiesFromModel($model, $request)
     {
         $query_params = $this->createModelQueryParams($model, $request->get_params());
-       if (! Capabilities::current_user_has_partial_access_to($model, $query_params['caps'])) {
+       if (! Capabilities::currentUserHasPartialAccessTo($model, $query_params['caps'])) {
         $model_name_plural = \EEH_Inflector::pluralize_and_lower($model->get_this_model_name());
            return new \WP_Error(
                sprintf('rest_%s_cannot_list', $model_name_plural),
                sprintf(
                    __('Sorry, you are not allowed to list %1$s. Missing permissions: %2$s', 'event_espresso'),
                    $model_name_plural,
-                   Capabilities::get_missing_permissions_string($model, $query_params['caps'])
+                   Capabilities::getMissingPermissionsString($model, $query_params['caps'])
                ),
                array('status' => 403)
            );
@@ -386,10 +386,10 @@ class Read extends Base
         $restricted_query_params = $primary_model_query_params;
         $restricted_query_params['caps'] = $context;
         $this->setDebugInfo('main model query params', $restricted_query_params);
-        $this->setDebugInfo('missing caps', Capabilities::get_missing_permissions_string($related_model, $context));
+        $this->setDebugInfo('missing caps', Capabilities::getMissingPermissionsString($related_model, $context));
         if (
         ! (
-            Capabilities::current_user_has_partial_access_to($related_model, $context)
+            Capabilities::currentUserHasPartialAccessTo($related_model, $context)
             && $model->exists($restricted_query_params)
         )
         ) {
@@ -408,7 +408,7 @@ class Read extends Base
                     implode(
                         ',',
                         array_keys(
-                            Capabilities::get_missing_permissions($related_model, $context)
+                            Capabilities::getMissingPermissions($related_model, $context)
                         )
                     )
                 ),
@@ -510,7 +510,7 @@ class Read extends Base
     {
         $this->setDebugInfo('model query params', $query_params);
         $this->setDebugInfo('missing caps',
-            Capabilities::get_missing_permissions_string($model, $query_params['caps']));
+            Capabilities::getMissingPermissionsString($model, $query_params['caps']));
         //normally the limit to a 2-part array, where the 2nd item is the limit
         if (! isset($query_params['limit'])) {
             $query_params['limit'] = \EED_Core_Rest_Api::get_default_query_limit();
@@ -572,7 +572,7 @@ class Read extends Base
             $rest_request,
             $this
         );
-        $result_without_inaccessible_fields = Capabilities::filter_out_inaccessible_entity_fields(
+        $result_without_inaccessible_fields = Capabilities::filterOutInaccessibleEntityFields(
             $entity_array,
             $model,
             $rest_request->get_param('caps'),
@@ -1252,7 +1252,7 @@ class Read extends Base
                         __('Sorry, you cannot %1$s this %2$s. Missing permissions are: %3$s', 'event_espresso'),
                         $context,
                         strtolower($model->get_this_model_name()),
-                        Capabilities::get_missing_permissions_string(
+                        Capabilities::getMissingPermissionsString(
                             $model,
                             $context
                         )

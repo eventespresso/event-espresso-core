@@ -33,11 +33,11 @@ class Capabilities_Test extends \EE_UnitTestCase{
 	function test_current_user_has_partial_access_to() {
 		//yes - they can access some generally
 		//the user has free access to prices
-		$this->assertTrue( Capabilities::current_user_has_partial_access_to( \EE_Registry::instance()->load_model( 'Price' ) ) );
+		$this->assertTrue( Capabilities::currentUserHasPartialAccessTo( \EE_Registry::instance()->load_model( 'Price' ) ) );
 		//although there are some restrictions, the current user can access SOME events
-		$this->assertTrue( Capabilities::current_user_has_partial_access_to( \EE_Registry::instance()->load_model( 'Event' ) ) );
+		$this->assertTrue( Capabilities::currentUserHasPartialAccessTo( \EE_Registry::instance()->load_model( 'Event' ) ) );
 		//yes - they can access this field specifically sometimes
-		$this->assertTrue( Capabilities::current_user_has_partial_access_to( \EE_Registry::instance()->load_model( 'Event' ), \EEM_Base::caps_read, 'EVT_wp_user' ) );
+		$this->assertTrue( Capabilities::currentUserHasPartialAccessTo( \EE_Registry::instance()->load_model( 'Event' ), \EEM_Base::caps_read, 'EVT_wp_user' ) );
 		//no - no they can never access it
 	}
 
@@ -50,7 +50,7 @@ class Capabilities_Test extends \EE_UnitTestCase{
 		$e = $this->new_model_obj_with_dependencies( 'Event' );
 		$entity = $e->model_field_array();
 		$entity[ 'datetimes' ] = array( array( 'DTT_ID' => 12 ) );
-		$filtered_entity = Capabilities::filter_out_inaccessible_entity_fields(
+		$filtered_entity = Capabilities::filterOutInaccessibleEntityFields(
 				$entity, 
 				\EE_Registry::instance()->load_model( 'Event' ),
 				\EEM_Base::caps_read,

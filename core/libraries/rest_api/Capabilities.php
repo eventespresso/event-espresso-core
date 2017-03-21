@@ -2,6 +2,7 @@
 namespace EventEspresso\core\libraries\rest_api;
 use EventEspresso\core\libraries\rest_api\RestException;
 use EEM_Base;
+use EEH_Inflector;
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
 }
@@ -24,7 +25,7 @@ class Capabilities {
 	 * @param string    $model_context one of the return values from EEM_Base::valid_cap_contexts()
 	 * @return boolean
 	 */
-	public static function current_user_has_partial_access_to( $model, $model_context = \EEM_Base::caps_read ) {
+	public static function currentUserHasPartialAccessTo( $model, $model_context = \EEM_Base::caps_read ) {
 		if (
 			apply_filters(
 				'FHEE__Capabilities__current_user_has_partial_access_to__override_begin',
@@ -63,7 +64,7 @@ class Capabilities {
 	 * @param string    $request_type one of the constants on WP_JSON_Server
 	 * @return array
 	 */
-	public static function get_missing_permissions( $model, $request_type = \EEM_Base::caps_read ) {
+	public static function getMissingPermissions( $model, $request_type = \EEM_Base::caps_read ) {
 		return $model->caps_missing( $request_type );
 	}
 
@@ -77,8 +78,8 @@ class Capabilities {
 	 * @param string    $model_context one of the return values from EEM_Base::valid_cap_contexts()
 	 * @return string
 	 */
-	public static function get_missing_permissions_string( $model, $model_context = \EEM_Base::caps_read ) {
-		return implode( ',', array_keys( self::get_missing_permissions( $model, $model_context ) ) );
+	public static function getMissingPermissionsString( $model, $model_context = \EEM_Base::caps_read ) {
+		return implode( ',', array_keys( self::getMissingPermissions( $model, $model_context ) ) );
 	}
 
 
@@ -94,7 +95,7 @@ class Capabilities {
 	 *                                               use this with models that have no primary key
 	 * @return array ready for converting into json
 	 */
-	public static function filter_out_inaccessible_entity_fields(
+	public static function filterOutInaccessibleEntityFields(
 		$entity,
 		$model,
 		$request_type,
@@ -152,11 +153,11 @@ class Capabilities {
      * @param string $model_action_context
      * @param string $action_name
      * @return void
-     * @throw Rest_Exception
+     * @throws RestException
      */
-    public static function verify_at_least_partial_access_to($model, $model_action_context, $action_name = 'list')
+    public static function verifyAtLeastPartialAccessTo($model, $model_action_context, $action_name = 'list')
     {
-        if (! Capabilities::current_user_has_partial_access_to($model, $model_action_context)) {
+        if (! Capabilities::currentUserHasPartialAccessTo($model, $model_action_context)) {
             $model_name_plural = \EEH_Inflector::pluralize_and_lower($model->get_this_model_name());
             throw new RestException(
                 sprintf('rest_cannot_%s_%s', strtolower($action_name), $model_name_plural),
@@ -164,11 +165,25 @@ class Capabilities {
                     __('Sorry, you are not allowed to %1$s %2$s. Missing permissions: %3$s', 'event_espresso'),
                     $action_name,
                     $model_name_plural,
-                    Capabilities::get_missing_permissions_string($model, $model_action_context)
+                    Capabilities::getMissingPermissionsString($model, $model_action_context)
                 ),
                 array('status' => 403)
             );
         }
+    }
+
+    /**
+     * When calling methods with the legacy EE4 naming conventions, dynamically call the new method instead.
+     * @param string $name
+     * @param array $arguments
+     * @return mixed
+     */
+    public function __call($name, $arguments)
+    {
+        $new_method_name = EEH_Inflector::camelize_all_but_first($name);
+        //you tried calling an old method which doesn't correspond to an existing new method,
+        //let's just have the fatal error. There's nothing we can do to fix their problem
+        return call_user_func_array(array($this,$new_method_name),$arguments);
     }
 }
 
