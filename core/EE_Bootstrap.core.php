@@ -94,19 +94,21 @@ class EE_Bootstrap {
 
 
 
-	/**
-	 * load_required_files
-	 */
+    /**
+     * load_required_files
+     *
+     * @throws \EE_Error
+     */
 	protected function set_autoloaders_for_required_files() {
 		// load interfaces
-		espresso_load_required( 'EEI_Interfaces', EE_CORE . 'interfaces' . DS . 'EEI_Interfaces.php' );
-		// load helpers
+        EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_CORE . 'interfaces', true);
+        // load helpers
 		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_HELPERS );
 		// load request stack
 		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_CORE . 'request_stack' . DS );
 		// load middleware
 		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_CORE . 'middleware' . DS );
-	}
+    }
 
 
 
