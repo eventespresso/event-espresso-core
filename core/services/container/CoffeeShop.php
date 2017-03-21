@@ -8,6 +8,7 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\collections\Collection;
 use EventEspresso\core\services\collections\CollectionInterface;
 use EventEspresso\core\services\collections\LooseCollection;
+use EventEspresso\core\services\container\exceptions\InstantiationException;
 use EventEspresso\core\services\container\exceptions\InvalidServiceException;
 use EventEspresso\core\services\container\exceptions\ServiceExistsException;
 use EventEspresso\core\services\container\exceptions\ServiceNotFoundException;
@@ -145,6 +146,7 @@ class CoffeeShop implements CoffeePotInterface
      * @param string  $type
      * @return mixed
      * @throws OutOfBoundsException
+     * @throws InstantiationException
      * @throws InvalidDataTypeException
      * @throws InvalidClassException
      * @throws InvalidIdentifierException
@@ -172,23 +174,47 @@ class CoffeeShop implements CoffeePotInterface
             // so let's brew something up and add it to the proper collection
             $brewed = $this->makeCoffee($identifier, $arguments, $type);
         }
+        if ($type === CoffeeMaker::BREW_LOAD_ONLY) {
+            if ($brewed !== true) {
+                throw new ServiceNotFoundException(
+                    sprintf(
+                        esc_html__(
+                            'The "%1$s" class could not be loaded.',
+                            'event_espresso'
+                        ),
+                        $identifier
+                    )
+                );
+            }
+            return true;
+        }
         // was the brewed item a callable factory function ?
         if (is_callable($brewed)) {
             // then instantiate a new entity from the cached closure
-            $entity = $brewed($arguments);
-        } else if ($brewed) {
+            return $brewed($arguments);
+        }
+        if ($brewed) {
             // requested object was a shared entity, so attempt to get it from the carafe again
             // because if it wasn't there before, then it should have just been brewed and added,
             // but if it still isn't there, then this time
             // the thrown ServiceNotFoundException will not be caught
-            $entity = $this->get($identifier);
-        } else {
-            // if identifier is for a non-shared entity,
-            // then either a cached closure already existed, or was just brewed
-            $closure = $this->reservoir->get($identifier);
-            $entity = $closure($arguments);
+            return $this->get($identifier);
         }
-        return $entity;
+        // if identifier is for a non-shared entity,
+        // then either a cached closure already existed, or was just brewed
+        $closure = $this->reservoir->get($identifier);
+        if ( empty($closure)) {
+            throw new InstantiationException(
+                sprintf(
+                    esc_html__(
+                        'Could not brew an instance of "%1$s".',
+                        'event_espresso'
+                    ),
+                    $identifier
+                )
+            );
+        }
+        return $closure($arguments);
     }
 
 
