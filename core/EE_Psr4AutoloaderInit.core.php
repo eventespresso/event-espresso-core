@@ -32,7 +32,6 @@ class EE_Psr4AutoloaderInit {
         static $initialized = false;
         if ( ! $initialized) {
             // instantiate PSR4 autoloader
-            espresso_load_required('Psr4Autoloader', EE_CORE . 'Psr4Autoloader.php');
             EE_Psr4AutoloaderInit::$psr4_loader = new \EventEspresso\core\Psr4Autoloader();
             // register the autoloader
             EE_Psr4AutoloaderInit::$psr4_loader->register();
