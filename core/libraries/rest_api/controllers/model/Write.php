@@ -268,10 +268,10 @@ class Write extends Base
                 'previous' => $original_entity,
             );
         } else {
-            if($model instanceof EEM_Soft_Delete_Base){
+            if ($model instanceof EEM_Soft_Delete_Base) {
                 $model->delete_by_ID($obj_id, $requested_allow_blocking);
                 return $this->_get_one_based_on_request($model, $request, $obj_id);
-            }else{
+            } else {
                 throw new Rest_Exception(
                     'rest_trash_not_supported',
                     501,
@@ -337,8 +337,8 @@ class Write extends Base
         );
         $get_request->set_url_params(
             array(
-                'id' => $obj_id,
-                'include' => $request->get_param('include')
+                'id'      => $obj_id,
+                'include' => $request->get_param('include'),
             )
         );
         $read_controller = new Read();

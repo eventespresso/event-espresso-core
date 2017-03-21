@@ -1,7 +1,7 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api;
 
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
+if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
 
@@ -238,8 +238,8 @@ class Model_Data_Translator
                 $model
             );
             //double-check is it a *_gmt field?
-            if ( ! $field instanceof \EE_Model_Field_Base
-                 && Model_Data_Translator::is_gmt_date_field_name($query_param_sans_stars)
+            if (! $field instanceof \EE_Model_Field_Base
+                && Model_Data_Translator::is_gmt_date_field_name($query_param_sans_stars)
             ) {
                 //yep, take off '_gmt', and find the field
                 $query_param_key = Model_Data_Translator::remove_gmt_from_field_name($query_param_sans_stars);
@@ -249,10 +249,10 @@ class Model_Data_Translator
                 );
                 $timezone = 'UTC';
                 $is_gmt_datetime_field = true;
-            } elseif( $field instanceof \EE_Datetime_Field ) {
+            } elseif ($field instanceof \EE_Datetime_Field) {
                 //so it's not a GMT field. Set the timezone on the model to the default
                 $timezone = \EEH_DTT_Helper::get_valid_timezone_string();
-            }else{
+            } else {
                 //just keep using what's already set for the timezone
                 $timezone = $model->get_timezone();
             }
@@ -270,7 +270,7 @@ class Model_Data_Translator
                     $translated_value = Model_Data_Translator::prepare_field_value_from_json($field, $query_param_value,
                         $requested_version, $timezone);
                 }
-                if(isset( $query_param_for_models[$query_param_key]) && $is_gmt_datetime_field){
+                if (isset($query_param_for_models[$query_param_key]) && $is_gmt_datetime_field) {
                     //they have already provided a non-gmt field, ignore the gmt one. That's what WP core
                     //currently does (they might change it though). See https://core.trac.wordpress.org/ticket/39954
                     continue;
@@ -313,7 +313,7 @@ class Model_Data_Translator
      */
     public static function remove_gmt_from_field_name($field_name)
     {
-        if ( ! Model_Data_Translator::is_gmt_date_field_name($field_name)) {
+        if (! Model_Data_Translator::is_gmt_date_field_name($field_name)) {
             return $field_name;
         }
         $query_param_sans_stars = Model_Data_Translator::remove_stars_and_anything_after_from_condition_query_param_key($field_name);

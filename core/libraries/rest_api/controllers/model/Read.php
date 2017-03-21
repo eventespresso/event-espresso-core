@@ -49,8 +49,8 @@ class Read extends Base
      * Handles requests to get all (or a filtered subset) of entities for a particular model
      *
      * @param \WP_REST_Request $request
-     * @param string $version
-     * @param string $model_name
+     * @param string           $version
+     * @param string           $model_name
      * @return \WP_REST_Response|\WP_Error
      */
     public static function handle_request_get_all(\WP_REST_Request $request, $version, $model_name)
@@ -86,8 +86,9 @@ class Read extends Base
 
     /**
      * Prepares and returns schema for any OPTIONS request.
-     * @param string $version     The API endpoint version being used.
-     * @param string $model_name  Something like `Event` or `Registration`
+     *
+     * @param string $version    The API endpoint version being used.
+     * @param string $model_name Something like `Event` or `Registration`
      * @return array
      */
     public static function handle_schema_request($version, $model_name)
@@ -117,6 +118,7 @@ class Read extends Base
     }
 
 
+
     /**
      * This loops through each field in the given schema for the model and does the following:
      * - add any extra fields that are REST API specific and related to existing fields.
@@ -128,15 +130,16 @@ class Read extends Base
      */
     protected function _customize_schema_for_rest_response(\EEM_Base $model, array $schema)
     {
-       foreach ($this->get_model_version_info()->fields_on_model_in_this_version($model) as $field_name => $field) {
-           $schema = $this->_translate_defaults_for_rest_response(
-               $field_name,
-               $field,
-               $this->_maybe_add_extra_fields_to_schema($field_name, $field, $schema)
+        foreach ($this->get_model_version_info()->fields_on_model_in_this_version($model) as $field_name => $field) {
+            $schema = $this->_translate_defaults_for_rest_response(
+                $field_name,
+                $field,
+                $this->_maybe_add_extra_fields_to_schema($field_name, $field, $schema)
             );
-       }
-       return $schema;
+        }
+        return $schema;
     }
+
 
 
     /**
@@ -173,6 +176,7 @@ class Read extends Base
     }
 
 
+
     /**
      * Adds additional fields to the schema
      * The REST API returns a GMT value field for each datetime field in the resource.  Thus the description about this
@@ -198,15 +202,16 @@ class Read extends Base
 
 
 
-
     /**
      * Used to figure out the route from the request when a `WP_REST_Request` object is not available
+     *
      * @return string
      */
-    protected function get_route_from_request() {
+    protected function get_route_from_request()
+    {
         if (isset($GLOBALS['wp'])
             && $GLOBALS['wp'] instanceof \WP
-            && isset($GLOBALS['wp']->query_vars['rest_route'] )
+            && isset($GLOBALS['wp']->query_vars['rest_route'])
         ) {
             return $GLOBALS['wp']->query_vars['rest_route'];
         } else {
@@ -220,8 +225,8 @@ class Read extends Base
      * Gets a single entity related to the model indicated in the path and its id
      *
      * @param \WP_REST_Request $request
-     * @param string $version
-     * @param string $model_name
+     * @param string           $version
+     * @param string           $model_name
      * @return \WP_REST_Response|\WP_Error
      */
     public static function handle_request_get_one(\WP_REST_Request $request, $version, $model_name)
@@ -260,13 +265,17 @@ class Read extends Base
      * to the item with the given id
      *
      * @param \WP_REST_Request $request
-     * @param string $version
-     * @param string $model_name
-     * @param string $related_model_name
+     * @param string           $version
+     * @param string           $model_name
+     * @param string           $related_model_name
      * @return \WP_REST_Response|\WP_Error
      */
-    public static function handle_request_get_related(\WP_REST_Request $request, $version, $model_name, $related_model_name)
-    {
+    public static function handle_request_get_related(
+        \WP_REST_Request $request,
+        $version,
+        $model_name,
+        $related_model_name
+    ) {
         $controller = new Read();
         try {
             $controller->set_requested_version($version);
@@ -326,34 +335,35 @@ class Read extends Base
     public function get_entities_from_model($model, $request)
     {
         $query_params = $this->create_model_query_params($model, $request->get_params());
-       if (! Capabilities::current_user_has_partial_access_to($model, $query_params['caps'])) {
-        $model_name_plural = \EEH_Inflector::pluralize_and_lower($model->get_this_model_name());
-           return new \WP_Error(
-               sprintf('rest_%s_cannot_list', $model_name_plural),
-               sprintf(
-                   __('Sorry, you are not allowed to list %1$s. Missing permis
+        if (! Capabilities::current_user_has_partial_access_to($model, $query_params['caps'])) {
+            $model_name_plural = \EEH_Inflector::pluralize_and_lower($model->get_this_model_name());
+            return new \WP_Error(
+                sprintf('rest_%s_cannot_list', $model_name_plural),
+                sprintf(
+                    __('Sorry, you are not allowed to list %1$s. Missing permis
 sions: %2$s', 'event_espresso'),
-                   $model_name_plural,
-                   Capabilities::get_missing_permissions_string($model, $query_params['caps'])
-               ),
-               array('status' => 403)
-           );
-       }
-       if (! $request->get_header('no_rest_headers')) {
-           $this->_set_headers_from_query_params($model, $query_params);
-       }
-       /** @type array $results */
-       $results = $model->get_all_wpdb_results($query_params);
-       $nice_results = array();
-       foreach ($results as $result) {
-           $nice_results[] = $this->create_entity_from_wpdb_result(
-               $model,
-               $result,
-               $request
-           );
-       }
-       return $nice_results;
-   }
+                    $model_name_plural,
+                    Capabilities::get_missing_permissions_string($model, $query_params['caps'])
+                ),
+                array('status' => 403)
+            );
+        }
+        if (! $request->get_header('no_rest_headers')) {
+            $this->_set_headers_from_query_params($model, $query_params);
+        }
+        /** @type array $results */
+        $results = $model->get_all_wpdb_results($query_params);
+        $nice_results = array();
+        foreach ($results as $result) {
+            $nice_results[] = $this->create_entity_from_wpdb_result(
+                $model,
+                $result,
+                $request
+            );
+        }
+        return $nice_results;
+    }
+
 
 
     /**
@@ -361,6 +371,7 @@ sions: %2$s', 'event_espresso'),
      * The same as Read::get_entities_from_model(), except if the relation
      * is a HABTM relation, in which case it merges any non-foreign-key fields from
      * the join-model-object into the results
+     *
      * @param array                   $primary_model_query_params query params for finding the item from which
      *                                                            relations will be based
      * @param \EE_Model_Relation_Base $relation
@@ -562,7 +573,8 @@ sions: %2$s', 'event_espresso'),
         $entity_array = $this->_add_extra_fields($model, $db_row, $entity_array);
         $entity_array['_links'] = $this->_get_entity_links($model, $db_row, $entity_array);
         $entity_array['_calculated_fields'] = $this->_get_entity_calculations($model, $db_row, $rest_request);
-        $entity_array = apply_filters( 'FHEE__Read__create_entity_from_wpdb_results__entity_before_including_requested_models', $entity_array, $model, $rest_request->get_param('caps'),$rest_request,$this);
+        $entity_array = apply_filters('FHEE__Read__create_entity_from_wpdb_results__entity_before_including_requested_models',
+            $entity_array, $model, $rest_request->get_param('caps'), $rest_request, $this);
         $entity_array = $this->_include_requested_models($model, $rest_request, $entity_array, $db_row);
         $entity_array = apply_filters(
             'FHEE__Read__create_entity_from_wpdb_results__entity_before_inaccessible_field_removal',
@@ -907,6 +919,8 @@ sions: %2$s', 'event_espresso'),
         }
     }
 
+
+
     /**
      * Gets the one model object with the specified id for the specified model
      *
@@ -917,8 +931,10 @@ sions: %2$s', 'event_espresso'),
     public function get_entity_from_model($model, $request)
     {
         $context = $this->validate_context($request->get_param('caps'));
-        return $this->get_one_or_report_permission_error( $model, $request, $context );
+        return $this->get_one_or_report_permission_error($model, $request, $context);
     }
+
+
 
     /**
      * If a context is provided which isn't valid, maybe it was added in a future
@@ -1217,15 +1233,18 @@ sions: %2$s', 'event_espresso'),
         return $extracted_fields_to_include;
     }
 
+
+
     /**
      * Gets the single item using the model according to the request in the context given, otherwise
      * returns that it's inacccessible to the current user
+     *
      * @param \EEM_Base        $model
      * @param \WP_REST_Request $request
      * @param null             $context
      * @return array|\WP_Error
      */
-    public function get_one_or_report_permission_error( \EEM_Base $model, \WP_REST_Request $request, $context = null )
+    public function get_one_or_report_permission_error(\EEM_Base $model, \WP_REST_Request $request, $context = null)
     {
         $query_params = array(array($model->primary_key_name() => $request->get_param('id')), 'limit' => 1);
         if ($model instanceof \EEM_Soft_Delete_Base) {
