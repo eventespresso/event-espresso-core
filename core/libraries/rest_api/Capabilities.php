@@ -1,6 +1,6 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api;
-use EventEspresso\core\libraries\rest_api\Rest_Exception;
+use EventEspresso\core\libraries\rest_api\RestException;
 use EEM_Base;
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
@@ -86,11 +86,11 @@ class Capabilities {
 	/**
 	 * Takes a entity that's ready to be returned and removes fields which the user shouldn't be able to access.
 	 *
-	 * @param array              $entity
-	 * @param \EEM_Base          $model
-	 * @param string             $request_type       one of the return values from EEM_Base::valid_cap_contexts()
-	 * @param Model_Version_Info $model_version_info
-	 * @param string             $primary_key_string result of EEM_Base::get_index_primary_key_string(), so that we can
+	 * @param array            $entity
+	 * @param \EEM_Base        $model
+	 * @param string           $request_type       one of the return values from EEM_Base::valid_cap_contexts()
+	 * @param ModelVersionInfo $model_version_info
+	 * @param string           $primary_key_string result of EEM_Base::get_index_primary_key_string(), so that we can
 	 *                                               use this with models that have no primary key
 	 * @return array ready for converting into json
 	 */
@@ -126,7 +126,7 @@ class Capabilities {
 		}
 		foreach ( $model->field_settings() as $field_name => $field_obj ) {
 			if (
-				$model_version_info->field_has_rendered_format( $field_obj )
+				$model_version_info->fieldHasRenderedFormat( $field_obj )
 				&& isset( $entity[ $field_name ] )
 				&& is_array( $entity[ $field_name ] )
 				&& isset( $entity[ $field_name ]['raw'] )
@@ -158,7 +158,7 @@ class Capabilities {
     {
         if (! Capabilities::current_user_has_partial_access_to($model, $model_action_context)) {
             $model_name_plural = \EEH_Inflector::pluralize_and_lower($model->get_this_model_name());
-            throw new Rest_Exception(
+            throw new RestException(
                 sprintf('rest_cannot_%s_%s', strtolower($action_name), $model_name_plural),
                 sprintf(
                     __('Sorry, you are not allowed to %1$s %2$s. Missing permissions: %3$s', 'event_espresso'),

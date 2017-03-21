@@ -1,11 +1,7 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api;
 use EventEspresso\core\libraries\rest_api\controllers\Base;
-use EventEspresso\core\libraries\rest_api\Rest_Exception;
-
-if( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
-    exit( 'No direct script access allowed' );
-}
+use EventEspresso\core\libraries\rest_api\RestException;
 /**
  *
  * Class Calculationshelpers
@@ -17,16 +13,18 @@ if( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @subpackage
  * @author				Mike Nelson
  * @since		 	   4.8.35.rc.001
- * @deprecated use CalculatedModelFields class instead
  *
  */
+if( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
+	exit( 'No direct script access allowed' );
+}
 
-class Calculated_Model_Fields {
+class CalculatedModelFields {
 	/**
 	 *
 	 * @var array
 	 */
-	protected $_mapping;
+	protected $mapping;
 
 
 
@@ -41,10 +39,10 @@ class Calculated_Model_Fields {
 	 * the controller object
 	 */
 	public function mapping( $refresh = false ) {
-		if( ! $this->_mapping || $refresh ) {
-			$this->_mapping = $this->_generate_new_mapping();
+		if(! $this->mapping || $refresh ) {
+			$this->mapping = $this->generateNewMapping();
 		}
-		return $this->_mapping;
+		return $this->mapping;
 
 	}
 
@@ -52,7 +50,7 @@ class Calculated_Model_Fields {
 	 * Generates  anew mapping between model calculated fields and their callbacks
 	 * @return array
 	 */
-	protected function _generate_new_mapping() {
+	protected function generateNewMapping() {
 		$rest_api_calculations_namespace = 'EventEspresso\core\libraries\rest_api\calculations\\';
 		$event_calculations_class = $rest_api_calculations_namespace . 'Event';
 		$datetime_calculations_class = $rest_api_calculations_namespace . 'Datetime';
@@ -93,7 +91,7 @@ class Calculated_Model_Fields {
 	 * @param \EEM_Base $model
 	 * @return array allowable values for this field
 	 */
-	public function retrieve_calculated_fields_for_model( \EEM_Base $model ) {
+	public function retrieveCalculatedFieldsForModel( \EEM_Base $model ) {
 		$mapping = $this->mapping();
 		if( isset( $mapping[ $model->get_this_model_name() ] ) ) {
 			return array_keys( $mapping[ $model->get_this_model_name() ] );
@@ -115,14 +113,14 @@ class Calculated_Model_Fields {
 	 * @return mixed|null
 	 * @throws \EE_Error
 	 */
-	public function retrieve_calculated_field_value( \EEM_Base $model, $field_name, $wpdb_row, $rest_request, Base $controller ) {
+	public function retrieveCalculatedFieldValue( \EEM_Base $model, $field_name, $wpdb_row, $rest_request, Base $controller ) {
 		$mapping = $this->mapping();
 		if( isset( $mapping[ $model->get_this_model_name() ] )
 			&& isset( $mapping[ $model->get_this_model_name() ][ $field_name ] ) ) {
 			$classname = $mapping[ $model->get_this_model_name() ][ $field_name ];
 			return call_user_func( array( $classname, $field_name ), $wpdb_row, $rest_request, $controller );
 		}
-		throw new Rest_Exception( 
+		throw new RestException(
 			'calculated_field_does_not_exist',
 			sprintf( 
 				__( 'There is no calculated field %1$s on resource %2$s', 'event_espresso' ), 

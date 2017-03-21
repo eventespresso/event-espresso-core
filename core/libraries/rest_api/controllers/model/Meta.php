@@ -1,7 +1,7 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api\controllers\model;
 
-use EventEspresso\core\libraries\rest_api\Model_Data_Translator;
+use EventEspresso\core\libraries\rest_api\ModelDataTranslator;
 
 if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
@@ -42,11 +42,11 @@ class Meta extends Base {
 	 */
 	protected function getModelsMetadataEntity(){
 		$response = array();
-		foreach($this->getModelVersionInfo()->models_for_requested_version() as $model_name => $model_classname ){
-			$model = $this->getModelVersionInfo()->load_model( $model_name );
+		foreach($this->getModelVersionInfo()->modelsForRequestedVersion() as $model_name => $model_classname ){
+			$model = $this->getModelVersionInfo()->loadModel( $model_name );
 			$fields_json = array();
-			foreach($this->getModelVersionInfo()->fields_on_model_in_this_version( $model ) as $field_name => $field_obj ) {
-				if( $this->getModelVersionInfo()->field_is_ignored( $field_obj ) ) {
+			foreach($this->getModelVersionInfo()->fieldsOnModelInThisVersion( $model ) as $field_name => $field_obj ) {
+				if( $this->getModelVersionInfo()->fieldIsIgnored( $field_obj ) ) {
 					continue;
 				}
 				if( $field_obj instanceof \EE_Boolean_Field ) {
@@ -58,16 +58,16 @@ class Meta extends Base {
 				}else{
 					$datatype = 'String';
 				}
-				$default_value = Model_Data_Translator::prepare_field_value_for_json(
+				$default_value = ModelDataTranslator::prepareFieldValueForJson(
 					$field_obj,
 					$field_obj->get_default_value(),
-					$this->getModelVersionInfo()->requested_version()
+					$this->getModelVersionInfo()->requestedVersion()
 				);
 				$field_json = array(
                     'name' => $field_name,
                     'nicename' => $field_obj->get_nicename(),
-                    'has_rendered_format' => $this->getModelVersionInfo()->field_has_rendered_format( $field_obj ),
-                    'has_pretty_format' => $this->getModelVersionInfo()->field_has_pretty_format( $field_obj ),
+                    'has_rendered_format' => $this->getModelVersionInfo()->fieldHasRenderedFormat( $field_obj ),
+                    'has_pretty_format' => $this->getModelVersionInfo()->fieldHasPrettyFormat( $field_obj ),
                     'type' => str_replace('EE_', '', get_class( $field_obj ) ),
                     'datatype' => $datatype,
                     'nullable' => $field_obj->is_nullable(),
@@ -78,7 +78,7 @@ class Meta extends Base {
 				$fields_json[ $field_json[ 'name' ] ] = $field_json;
 
 			}
-			$fields_json = array_merge( $fields_json, $this->getModelVersionInfo()->extra_resource_properties_for_model( $model ) );
+			$fields_json = array_merge( $fields_json, $this->getModelVersionInfo()->extraResourcePropertiesForModel( $model ) );
 			$response[ $model_name ]['fields'] = apply_filters( 'FHEE__Meta__handle_request_models_meta__fields', $fields_json, $model );
 			$relations_json = array();
 			foreach( $model->relation_settings()  as $relation_name => $relation_obj ) {

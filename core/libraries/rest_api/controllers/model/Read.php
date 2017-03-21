@@ -4,9 +4,9 @@ namespace EventEspresso\core\libraries\rest_api\controllers\model;
 use EE_Datetime_Field;
 use EEH_Inflector;
 use EventEspresso\core\libraries\rest_api\Capabilities;
-use EventEspresso\core\libraries\rest_api\Calculated_Model_Fields;
-use EventEspresso\core\libraries\rest_api\Rest_Exception;
-use EventEspresso\core\libraries\rest_api\Model_Data_Translator;
+use EventEspresso\core\libraries\rest_api\CalculatedModelFields;
+use EventEspresso\core\libraries\rest_api\RestException;
+use EventEspresso\core\libraries\rest_api\ModelDataTranslator;
 use EventEspresso\core\entities\models\JsonModelSchema;
 
 if (! defined('EVENT_ESPRESSO_VERSION')) {
@@ -29,7 +29,7 @@ class Read extends Base
 
 
     /**
-     * @var Calculated_Model_Fields
+     * @var CalculatedModelFields
      */
     protected $_fields_calculator;
 
@@ -41,7 +41,7 @@ class Read extends Base
     public function __construct()
     {
         parent::__construct();
-        $this->_fields_calculator = new Calculated_Model_Fields();
+        $this->_fields_calculator = new CalculatedModelFields();
     }
 
 
@@ -60,7 +60,7 @@ class Read extends Base
         try {
             $controller->setRequestedVersion($version);
             $model_name_singular = \EEH_Inflector::singularize_and_upper($model_name);
-            if (! $controller->getModelVersionInfo()->is_model_name_in_this_version($model_name_singular)) {
+            if (! $controller->getModelVersionInfo()->isModel_NameInThisVersion($model_name_singular)) {
                 return $controller->sendResponse(
                     new \WP_Error(
                         'endpoint_parsing_error',
@@ -74,7 +74,7 @@ class Read extends Base
             }
             return $controller->sendResponse(
                 $controller->getEntitiesFromModel(
-                    $controller->getModelVersionInfo()->load_model($model_name_singular),
+                    $controller->getModelVersionInfo()->loadModel($model_name_singular),
                     $request
                 )
             );
@@ -96,18 +96,18 @@ class Read extends Base
         $controller = new Read();
         try {
             $controller->setRequestedVersion($version);
-            if (! $controller->getModelVersionInfo()->is_model_name_in_this_version($model_name)) {
+            if (! $controller->getModelVersionInfo()->isModel_NameInThisVersion($model_name)) {
                 return array();
             }
             //get the model for this version
-            $model = $controller->getModelVersionInfo()->load_model($model_name);
+            $model = $controller->getModelVersionInfo()->loadModel($model_name);
             $model_schema = new JsonModelSchema($model);
             return $model_schema->getModelSchemaForRelations(
-                $controller->getModelVersionInfo()->relation_settings($model),
+                $controller->getModelVersionInfo()->relationSettings($model),
                 $controller->customizeSchemaForRestResponse(
                     $model,
                     $model_schema->getModelSchemaForFields(
-                        $controller->getModelVersionInfo()->fields_on_model_in_this_version($model),
+                        $controller->getModelVersionInfo()->fieldsOnModelInThisVersion($model),
                         $model_schema->getInitialSchemaStructure()
                     )
                 )
@@ -129,7 +129,7 @@ class Read extends Base
      */
     protected function customizeSchemaForRestResponse(\EEM_Base $model, array $schema)
     {
-       foreach ($this->getModelVersionInfo()->fields_on_model_in_this_version($model) as $field_name => $field) {
+       foreach ($this->getModelVersionInfo()->fieldsOnModelInThisVersion($model) as $field_name => $field) {
            $schema = $this->translateDefaultsForRestResponse(
                $field_name,
                $field,
@@ -155,18 +155,18 @@ class Read extends Base
             if (is_array($schema['properties'][$field_name]['default'])) {
                 foreach ($schema['properties'][$field_name]['default'] as $default_key => $default_value) {
                     if ($default_key === 'raw') {
-                        $schema['properties'][$field_name]['default'][$default_key] = Model_Data_Translator::prepare_field_value_for_json(
+                        $schema['properties'][$field_name]['default'][$default_key] = ModelDataTranslator::prepareFieldValueForJson(
                             $field,
                             $default_value,
-                            $this->getModelVersionInfo()->requested_version()
+                            $this->getModelVersionInfo()->requestedVersion()
                         );
                     }
                 }
             } else {
-                $schema['properties'][$field_name]['default'] = Model_Data_Translator::prepare_field_value_for_json(
+                $schema['properties'][$field_name]['default'] = ModelDataTranslator::prepareFieldValueForJson(
                     $field,
                     $schema['properties'][$field_name]['default'],
-                    $this->getModelVersionInfo()->requested_version()
+                    $this->getModelVersionInfo()->requestedVersion()
                 );
             }
         }
@@ -231,7 +231,7 @@ class Read extends Base
         try {
             $controller->setRequestedVersion($version);
             $model_name_singular = \EEH_Inflector::singularize_and_upper($model_name);
-            if (! $controller->getModelVersionInfo()->is_model_name_in_this_version($model_name_singular)) {
+            if (! $controller->getModelVersionInfo()->isModel_NameInThisVersion($model_name_singular)) {
                 return $controller->sendResponse(
                     new \WP_Error(
                         'endpoint_parsing_error',
@@ -245,7 +245,7 @@ class Read extends Base
             }
             return $controller->sendResponse(
                 $controller->getEntityFromModel(
-                    $controller->getModelVersionInfo()->load_model($model_name_singular),
+                    $controller->getModelVersionInfo()->loadModel($model_name_singular),
                     $request
                 )
             );
@@ -272,7 +272,7 @@ class Read extends Base
         try {
             $controller->setRequestedVersion($version);
             $main_model_name_singular = \EEH_Inflector::singularize_and_upper($model_name);
-            if (! $controller->getModelVersionInfo()->is_model_name_in_this_version($main_model_name_singular)) {
+            if (! $controller->getModelVersionInfo()->isModel_NameInThisVersion($main_model_name_singular)) {
                 return $controller->sendResponse(
                     new \WP_Error(
                         'endpoint_parsing_error',
@@ -284,14 +284,14 @@ class Read extends Base
                     )
                 );
             }
-            $main_model = $controller->getModelVersionInfo()->load_model($main_model_name_singular);
+            $main_model = $controller->getModelVersionInfo()->loadModel($main_model_name_singular);
             //assume the related model name is plural and try to find the model's name
             $related_model_name_singular = \EEH_Inflector::singularize_and_upper($related_model_name);
-            if (! $controller->getModelVersionInfo()->is_model_name_in_this_version($related_model_name_singular)) {
+            if (! $controller->getModelVersionInfo()->isModel_NameInThisVersion($related_model_name_singular)) {
                 //so the word didn't singularize well. Maybe that's just because it's a singular word?
                 $related_model_name_singular = \EEH_Inflector::humanize($related_model_name);
             }
-            if (! $controller->getModelVersionInfo()->is_model_name_in_this_version($related_model_name_singular)) {
+            if (! $controller->getModelVersionInfo()->isModel_NameInThisVersion($related_model_name_singular)) {
                 return $controller->sendResponse(
                     new \WP_Error(
                         'endpoint_parsing_error',
@@ -608,21 +608,21 @@ class Read extends Base
     {
         $result = $model->deduce_fields_n_values_from_cols_n_values($db_row);
         $result = array_intersect_key($result,
-            $this->getModelVersionInfo()->fields_on_model_in_this_version($model));
+            $this->getModelVersionInfo()->fieldsOnModelInThisVersion($model));
         foreach ($result as $field_name => $raw_field_value) {
             $field_obj = $model->field_settings_for($field_name);
             $field_value = $field_obj->prepare_for_set_from_db($raw_field_value);
-            if ($this->isSubclassOfOne($field_obj, $this->getModelVersionInfo()->fields_ignored())) {
+            if ($this->isSubclassOfOne($field_obj, $this->getModelVersionInfo()->fieldsIgnored())) {
                 unset($result[$field_name]);
             } elseif (
-            $this->isSubclassOfOne($field_obj, $this->getModelVersionInfo()->fields_that_have_rendered_format())
+            $this->isSubclassOfOne($field_obj, $this->getModelVersionInfo()->fieldsThatHaveRenderedFormat())
             ) {
                 $result[$field_name] = array(
                     'raw'      => $field_obj->prepare_for_get($field_value),
                     'rendered' => $field_obj->prepare_for_pretty_echoing($field_value),
                 );
             } elseif (
-            $this->isSubclassOfOne($field_obj, $this->getModelVersionInfo()->fields_that_have_pretty_format())
+            $this->isSubclassOfOne($field_obj, $this->getModelVersionInfo()->fieldsThatHavePrettyFormat())
             ) {
                 $result[$field_name] = array(
                     'raw'    => $field_obj->prepare_for_get($field_value),
@@ -632,23 +632,23 @@ class Read extends Base
                 if ($field_value instanceof \DateTime) {
                     $timezone = $field_value->getTimezone();
                     $field_value->setTimezone(new \DateTimeZone('UTC'));
-                    $result[$field_name . '_gmt'] = Model_Data_Translator::prepare_field_value_for_json(
+                    $result[$field_name . '_gmt'] = ModelDataTranslator::prepareFieldValueForJson(
                         $field_obj,
                         $field_value,
-                        $this->getModelVersionInfo()->requested_version()
+                        $this->getModelVersionInfo()->requestedVersion()
                     );
                     $field_value->setTimezone($timezone);
-                    $result[$field_name] = Model_Data_Translator::prepare_field_value_for_json(
+                    $result[$field_name] = ModelDataTranslator::prepareFieldValueForJson(
                         $field_obj,
                         $field_value,
-                        $this->getModelVersionInfo()->requested_version()
+                        $this->getModelVersionInfo()->requestedVersion()
                     );
                 }
             } else {
-                $result[$field_name] = Model_Data_Translator::prepare_field_value_for_json(
+                $result[$field_name] = ModelDataTranslator::prepareFieldValueForJson(
                     $field_obj,
                     $field_obj->prepare_for_get($field_value),
-                    $this->getModelVersionInfo()->requested_version()
+                    $this->getModelVersionInfo()->requestedVersion()
                 );
             }
         }
@@ -708,7 +708,7 @@ class Read extends Base
         );
         //add links to related models
         if ($model->has_primary_key_field()) {
-            foreach ($this->getModelVersionInfo()->relation_settings($model) as $relation_name => $relation_obj) {
+            foreach ($this->getModelVersionInfo()->relationSettings($model) as $relation_name => $relation_obj) {
                 $related_model_part = Read::getRelatedEntityName($relation_name, $relation_obj);
                 $links[\EED_Core_Rest_Api::ee_api_link_namespace . $related_model_part] = array(
                     array(
@@ -763,7 +763,7 @@ class Read extends Base
             }
             $entity_array = array_intersect_key($entity_array, array_flip($includes_for_this_model));
         }
-        $relation_settings = $this->getModelVersionInfo()->relation_settings($model);
+        $relation_settings = $this->getModelVersionInfo()->relationSettings($model);
         foreach ($relation_settings as $relation_name => $relation_obj) {
             $related_fields_to_include = $this->explodeAndGetItemsPrefixedWith(
                 $rest_request->get_param('include'),
@@ -841,22 +841,22 @@ class Read extends Base
         $calculated_fields_to_return = new \stdClass();
         foreach ($calculated_fields as $field_to_calculate) {
             try {
-                $calculated_fields_to_return->$field_to_calculate = Model_Data_Translator::prepare_field_value_for_json(
+                $calculated_fields_to_return->$field_to_calculate = ModelDataTranslator::prepareFieldValueForJson(
                     null,
-                    $this->_fields_calculator->retrieve_calculated_field_value(
+                    $this->_fields_calculator->retrieveCalculatedFieldValue(
                         $model,
                         $field_to_calculate,
                         $wpdb_row,
                         $rest_request,
                         $this
                     ),
-                    $this->getModelVersionInfo()->requested_version()
+                    $this->getModelVersionInfo()->requestedVersion()
                 );
-            } catch (Rest_Exception $e) {
+            } catch (RestException $e) {
                 //if we don't have permission to read it, just leave it out. but let devs know about the problem
                 $this->setResponseHeader(
                     'Notices-Field-Calculation-Errors['
-                    . $e->get_string_code()
+                    . $e->getStringCode()
                     . ']['
                     . $model->get_this_model_name()
                     . ']['
@@ -882,7 +882,7 @@ class Read extends Base
     {
         return rest_url(
             \EED_Core_Rest_Api::ee_api_namespace
-            . $this->getModelVersionInfo()->requested_version()
+            . $this->getModelVersionInfo()->requestedVersion()
             . '/'
             . $link_part_after_version_and_slash
         );
@@ -989,10 +989,10 @@ class Read extends Base
     {
         $model_query_params = array();
         if (isset($query_parameters['where'])) {
-            $model_query_params[0] = Model_Data_Translator::prepare_conditions_query_params_for_models(
+            $model_query_params[0] = ModelDataTranslator::prepareConditionsQueryParamsForModels(
                 $query_parameters['where'],
                 $model,
-                $this->getModelVersionInfo()->requested_version()
+                $this->getModelVersionInfo()->requestedVersion()
             );
         }
         if (isset($query_parameters['order_by'])) {
@@ -1004,10 +1004,10 @@ class Read extends Base
         }
         if ($order_by !== null) {
             if (is_array($order_by)) {
-                $order_by = Model_Data_Translator::prepare_field_names_in_array_keys_from_json($order_by);
+                $order_by = ModelDataTranslator::prepareFieldNamesInArrayKeysFromJson($order_by);
             } else {
                 //it's a single item
-                $order_by = Model_Data_Translator::prepare_field_name_from_json($order_by);
+                $order_by = ModelDataTranslator::prepareFieldNameFromJson($order_by);
             }
             $model_query_params['order_by'] = $order_by;
         }
@@ -1020,16 +1020,16 @@ class Read extends Base
         }
         //make sure they're all real names
         if (is_array($group_by)) {
-            $group_by = Model_Data_Translator::prepare_field_names_from_json($group_by);
+            $group_by = ModelDataTranslator::prepareFieldNamesFromJson($group_by);
         }
         if ($group_by !== null) {
             $model_query_params['group_by'] = $group_by;
         }
         if (isset($query_parameters['having'])) {
-            $model_query_params['having'] = Model_Data_Translator::prepare_conditions_query_params_for_models(
+            $model_query_params['having'] = ModelDataTranslator::prepareConditionsQueryParamsForModels(
                 $query_parameters['having'],
                 $model,
-                $this->getModelVersionInfo()->requested_version()
+                $this->getModelVersionInfo()->requestedVersion()
             );
         }
         if (isset($query_parameters['order'])) {
@@ -1208,7 +1208,7 @@ class Read extends Base
                 $field_to_include = trim($field_to_include);
                 if (
                     strpos($field_to_include, '.') === false
-                    && ! $this->getModelVersionInfo()->is_model_name_in_this_version($field_to_include)
+                    && ! $this->getModelVersionInfo()->isModel_NameInThisVersion($field_to_include)
                 ) {
                     $extracted_fields_to_include[] = $field_to_include;
                 }

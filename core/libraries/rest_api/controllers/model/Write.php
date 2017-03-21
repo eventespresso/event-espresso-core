@@ -9,8 +9,8 @@ use \EE_Registry;
 use \EE_Datetime_Field;
 use \EEM_Soft_Delete_Base;
 use EventEspresso\core\libraries\rest_api\Capabilities;
-use EventEspresso\core\libraries\rest_api\Model_Data_Translator;
-use EventEspresso\core\libraries\rest_api\Rest_Exception;
+use EventEspresso\core\libraries\rest_api\ModelDataTranslator;
+use EventEspresso\core\libraries\rest_api\RestException;
 
 if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
@@ -53,7 +53,7 @@ class Write extends Base
         try {
             $controller->setRequestedVersion($version);
             $model_name_singular = \EEH_Inflector::singularize_and_upper($model_name);
-            if (! $controller->getModelVersionInfo()->is_model_name_in_this_version($model_name_singular)) {
+            if (! $controller->getModelVersionInfo()->isModel_NameInThisVersion($model_name_singular)) {
                 return $controller->sendResponse(
                     new \WP_Error(
                         'endpoint_parsing_error',
@@ -67,7 +67,7 @@ class Write extends Base
             }
             return $controller->sendResponse(
                 $controller->insert(
-                    $controller->getModelVersionInfo()->load_model($model_name_singular),
+                    $controller->getModelVersionInfo()->loadModel($model_name_singular),
                     $request
                 )
             );
@@ -92,7 +92,7 @@ class Write extends Base
         try {
             $controller->setRequestedVersion($version);
             $model_name_singular = \EEH_Inflector::singularize_and_upper($model_name);
-            if (! $controller->getModelVersionInfo()->is_model_name_in_this_version($model_name_singular)) {
+            if (! $controller->getModelVersionInfo()->isModel_NameInThisVersion($model_name_singular)) {
                 return $controller->sendResponse(
                     new \WP_Error(
                         'endpoint_parsing_error',
@@ -106,7 +106,7 @@ class Write extends Base
             }
             return $controller->sendResponse(
                 $controller->update(
-                    $controller->getModelVersionInfo()->load_model($model_name_singular),
+                    $controller->getModelVersionInfo()->loadModel($model_name_singular),
                     $request
                 )
             );
@@ -131,7 +131,7 @@ class Write extends Base
         try {
             $controller->setRequestedVersion($version);
             $model_name_singular = \EEH_Inflector::singularize_and_upper($model_name);
-            if (! $controller->getModelVersionInfo()->is_model_name_in_this_version($model_name_singular)) {
+            if (! $controller->getModelVersionInfo()->isModel_NameInThisVersion($model_name_singular)) {
                 return $controller->sendResponse(
                     new \WP_Error(
                         'endpoint_parsing_error',
@@ -145,7 +145,7 @@ class Write extends Base
             }
             return $controller->sendResponse(
                 $controller->delete(
-                    $controller->getModelVersionInfo()->load_model($model_name_singular),
+                    $controller->getModelVersionInfo()->loadModel($model_name_singular),
                     $request
                 )
             );
@@ -169,7 +169,7 @@ class Write extends Base
         Capabilities::verify_at_least_partial_access_to($model, EEM_Base::caps_edit, 'create');
         $default_cap_to_check_for = \EE_Restriction_Generator_Base::get_default_restrictions_cap();
         if (! current_user_can($default_cap_to_check_for)) {
-            throw new Rest_Exception(
+            throw new RestException(
                 'rest_cannot_create_' . \EEH_Inflector::pluralize_and_lower(($model->get_this_model_name())),
                 sprintf(
                     esc_html__('For now, only those with the admin capability to "%1$s" are allowed to use the REST API to insert data into Event Espresso.',
@@ -180,10 +180,10 @@ class Write extends Base
             );
         }
         $submitted_json_data = array_merge((array)$request->get_body_params(), (array)$request->get_json_params());
-        $model_data = Model_Data_Translator::prepare_conditions_query_params_for_models(
+        $model_data = ModelDataTranslator::prepareConditionsQueryParamsForModels(
             $submitted_json_data,
             $model,
-            $this->getModelVersionInfo()->requested_version()
+            $this->getModelVersionInfo()->requestedVersion()
         );
         $model_obj = EE_Registry::instance()
                                 ->load_class($model->get_this_model_name(),
@@ -192,7 +192,7 @@ class Write extends Base
         $model_obj->save();
         $new_id = $model_obj->ID();
         if (! $new_id) {
-            throw new Rest_Exception(
+            throw new RestException(
                 'rest_insertion_failed',
                 sprintf(__('Could not insert new %1$s', 'event_espresso'), $model->get_this_model_name())
             );
@@ -215,7 +215,7 @@ class Write extends Base
         Capabilities::verify_at_least_partial_access_to($model, EEM_Base::caps_edit, 'edit');
         $default_cap_to_check_for = \EE_Restriction_Generator_Base::get_default_restrictions_cap();
         if (! current_user_can($default_cap_to_check_for)) {
-            throw new Rest_Exception(
+            throw new RestException(
                 'rest_cannot_edit_' . \EEH_Inflector::pluralize_and_lower(($model->get_this_model_name())),
                 sprintf(
                     esc_html__('For now, only those with the admin capability to "%1$s" are allowed to use the REST API to update data into Event Espresso.',
@@ -227,15 +227,15 @@ class Write extends Base
         }
         $obj_id = $request->get_param('id');
         if (! $obj_id) {
-            throw new Rest_Exception(
+            throw new RestException(
                 'rest_edit_failed',
                 sprintf(__('Could not edit %1$s', 'event_espresso'), $model->get_this_model_name())
             );
         }
-        $model_data = Model_Data_Translator::prepare_conditions_query_params_for_models(
+        $model_data = ModelDataTranslator::prepareConditionsQueryParamsForModels(
             $this->getBodyParams($request),
             $model,
-            $this->getModelVersionInfo()->requested_version()
+            $this->getModelVersionInfo()->requestedVersion()
         );
         $model_obj = $model->get_one_by_ID($obj_id);
         $model_obj->save($model_data);
@@ -272,7 +272,7 @@ class Write extends Base
                 $model->delete_by_ID($obj_id, $requested_allow_blocking);
                 return $this->getOneBasedOnRequest($model, $request, $obj_id);
             }else{
-                throw new Rest_Exception(
+                throw new RestException(
                     'rest_trash_not_supported',
                     501,
                     sprintf(

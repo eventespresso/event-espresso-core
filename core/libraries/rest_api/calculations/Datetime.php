@@ -55,13 +55,14 @@ class Datetime extends Calculations_Base {
 
 	/**
 	 * Counts registrations who have checked into this datetime
+
 	 *
-	 * @param array            $wpdb_row
+*@param array            $wpdb_row
 	 * @param \WP_REST_Request $request
 	 * @param Controller_Base  $controller
 	 * @return int
 	 * @throws \EE_Error
-	 * @throws \EventEspresso\core\libraries\rest_api\Rest_Exception
+	 * @throws \EventEspresso\core\libraries\rest_api\RestException
 	 */
 	public static function registrations_checked_in_count( $wpdb_row, $request, $controller ){
 		if( ! is_array( $wpdb_row ) || ! isset( $wpdb_row[ 'Datetime.DTT_ID' ] ) ) {
@@ -80,13 +81,14 @@ class Datetime extends Calculations_Base {
 
 	/**
 	 * Counts registrations who have checked out of this datetime
+
 	 *
-	 * @param array            $wpdb_row
+*@param array            $wpdb_row
 	 * @param \WP_REST_Request $request
 	 * @param Controller_Base  $controller
 	 * @return int
 	 * @throws \EE_Error
-	 * @throws \EventEspresso\core\libraries\rest_api\Rest_Exception
+	 * @throws \EventEspresso\core\libraries\rest_api\RestException
 	 */
 	public static function registrations_checked_out_count( $wpdb_row, $request, $controller ){
 		if( ! is_array( $wpdb_row ) || ! isset( $wpdb_row[ 'Datetime.DTT_ID' ] ) ) {
@@ -106,13 +108,14 @@ class Datetime extends Calculations_Base {
 	/**
 	 * Counts the number of pending-payment registrations for this event (regardless
 	 * of how many datetimes each registrations' ticket purchase is for)
+
 	 *
-	 * @param array            $wpdb_row
+*@param array            $wpdb_row
 	 * @param \WP_REST_Request $request
 	 * @param Controller_Base  $controller
 	 * @return int
 	 * @throws \EE_Error
-	 * @throws \EventEspresso\core\libraries\rest_api\Rest_Exception
+	 * @throws \EventEspresso\core\libraries\rest_api\RestException
 	 */
 	public static function spots_taken_pending_payment( $wpdb_row, $request, $controller ){
 		if( ! is_array( $wpdb_row ) || ! isset( $wpdb_row[ 'Datetime.DTT_ID' ] ) ) {

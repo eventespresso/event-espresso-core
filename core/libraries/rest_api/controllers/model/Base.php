@@ -1,7 +1,7 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api\controllers\model;
 use EventEspresso\core\libraries\rest_api\controllers\Base as Controller_Base;
-use EventEspresso\core\libraries\rest_api\Model_Version_Info;
+use EventEspresso\core\libraries\rest_api\ModelVersionInfo;
 
 if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
@@ -21,7 +21,8 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 class Base extends Controller_Base {
 	/**
 	 * Holds reference to the model version info, which knows the requested version
-	 * @var Model_Version_Info
+	 *
+*@var ModelVersionInfo
 	 */
 	protected $model_version_info;
 
@@ -31,7 +32,7 @@ class Base extends Controller_Base {
 	 */
 	public function setRequestedVersion( $version ) {
 		parent::setRequestedVersion( $version );
-		$this->model_version_info = new Model_Version_Info( $version );
+		$this->model_version_info = new ModelVersionInfo( $version );
 	}
 
 
@@ -39,8 +40,9 @@ class Base extends Controller_Base {
 	/**
 	 * Gets the object that should be used for getting any info from the models,
 	 * because it's takes the requested and current core version into account
+
 	 *
-	 * @return \EventEspresso\core\libraries\rest_api\Model_Version_Info
+*@return \EventEspresso\core\libraries\rest_api\ModelVersionInfo
 	 * @throws \EE_Error
 	 */
 	public function getModelVersionInfo(){

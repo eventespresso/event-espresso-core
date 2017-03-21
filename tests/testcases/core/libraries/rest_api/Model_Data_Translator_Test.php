@@ -1,6 +1,6 @@
 <?php
 
-use EventEspresso\core\libraries\rest_api\Model_Data_Translator;
+use EventEspresso\core\libraries\rest_api\ModelDataTranslator;
 /**
  *
  * Class Model_Data_Translator_Test
@@ -46,7 +46,7 @@ class Model_Data_Translator_Test extends EE_UnitTestCase{
 			),
 			'limit' => 10
 		);
-		$rest_query = Model_Data_Translator::prepare_query_params_for_rest_api( $model_query, EEM_Registration::instance() );
+		$rest_query = ModelDataTranslator::prepareQueryParamsForRestApi( $model_query, EEM_Registration::instance() );
 		//assert the reg date matches and is in the right format
 		$this->assertArrayHasKey( 'where', $rest_query );
 		$this->assertArrayHasKey( 'REG_date', $rest_query[ 'where' ] );
@@ -68,7 +68,7 @@ class Model_Data_Translator_Test extends EE_UnitTestCase{
 	 */
 	public function test_prepare_conditions_query_params_for_models__gmt_datetimes() {
         update_option('gmt_offset', '');
-        $data_translator = new Model_Data_Translator();
+        $data_translator = new ModelDataTranslator();
         $gmt_offsets = array(-12, -10.5, -9, -7.5, -6, -4.5, -3, -1.5, 0, 1.5, 3, 4.5, 6, 7.5, 9, 10.5, 12);
         foreach($gmt_offsets as $gmt_offset) {
             $TZ_NAME = \EEH_DTT_Helper::get_timezone_string_from_gmt_offset($gmt_offset);
@@ -76,7 +76,7 @@ class Model_Data_Translator_Test extends EE_UnitTestCase{
             $now_local_time = current_time('mysql');
             $now_utc_time = current_time('mysql', true);
             $this->assertNotEquals($now_local_time, $now_utc_time);
-            $model_data = $data_translator::prepare_conditions_query_params_for_models(
+            $model_data = $data_translator::prepareConditionsQueryParamsForModels(
                 array(
                     'EVT_created'      => mysql_to_rfc3339($now_local_time),
                     'EVT_modified_gmt' => mysql_to_rfc3339($now_utc_time),
@@ -96,24 +96,24 @@ class Model_Data_Translator_Test extends EE_UnitTestCase{
 	}
 
 	public function test_is_gmt_date_field_name__success() {
-		$this->assertTrue( Model_Data_Translator::is_gmt_date_field_name( 'Event.EVT_created_gmt' ) );
+		$this->assertTrue( ModelDataTranslator::isGmtDateFieldName( 'Event.EVT_created_gmt' ) );
 	}
 	public function test_is_gmt_date_field_name__fail() {
-		$this->assertFalse( Model_Data_Translator::is_gmt_date_field_name( 'Event.EVT_created' ) );
+		$this->assertFalse( ModelDataTranslator::isGmtDateFieldName( 'Event.EVT_created' ) );
 	}
 	public function test_is_gmt_date_field_name__fail_tiny_input() {
-		$this->assertFalse( Model_Data_Translator::is_gmt_date_field_name( 'foo' ) );
+		$this->assertFalse( ModelDataTranslator::isGmtDateFieldName( 'foo' ) );
 	}
 
 	public function test_remove_gmt_from_field_name() {
 		$this->assertEquals(
 			'Event.EVT_created',
-			Model_Data_Translator::remove_gmt_from_field_name( 'Event.EVT_created_gmt' ) );
+			ModelDataTranslator::removeGmtFromFieldName( 'Event.EVT_created_gmt' ) );
 	}
 	public function test_remove_gmt_from_field_name__no_gmt_anyways() {
 		$this->assertEquals(
 			'Event.EVT_created',
-			Model_Data_Translator::remove_gmt_from_field_name( 'Event.EVT_created' ) );
+			ModelDataTranslator::removeGmtFromFieldName( 'Event.EVT_created' ) );
 	}
 }
 

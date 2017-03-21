@@ -152,13 +152,14 @@ class Event extends Calculations_Base {
 	/**
 	 * Counts the number of pending-payment registrations for this event (regardless
 	 * of how many datetimes each registrations' ticket purchase is for)
+
 	 *
-	 * @param array            $wpdb_row
+*@param array            $wpdb_row
 	 * @param \WP_REST_Request $request
 	 * @param Base             $controller
 	 * @return int
 	 * @throws \EE_Error
-	 * @throws \EventEspresso\core\libraries\rest_api\Rest_Exception
+	 * @throws \EventEspresso\core\libraries\rest_api\RestException
 	 */
 	public static function spots_taken_pending_payment( $wpdb_row, $request, $controller ){
 		if( ! is_array( $wpdb_row ) || ! isset( $wpdb_row[ 'Event_CPT.ID' ] ) ) {
@@ -187,13 +188,14 @@ class Event extends Calculations_Base {
 	/**
 	 * Counts all the registrations who have checked into one of this events' datetimes
 	 * See EE_Event::total_available_spaces( false );
+
 	 *
-	 * @param array            $wpdb_row
+*@param array            $wpdb_row
 	 * @param \WP_REST_Request $request
 	 * @param Base             $controller
 	 * @return int|null if permission denied
 	 * @throws \EE_Error
-	 * @throws \EventEspresso\core\libraries\rest_api\Rest_Exception
+	 * @throws \EventEspresso\core\libraries\rest_api\RestException
 	 */
 	public static function registrations_checked_in_count( $wpdb_row, $request, $controller ){
 		if( ! is_array( $wpdb_row ) || ! isset( $wpdb_row[ 'Event_CPT.ID' ] ) ) {
@@ -213,13 +215,14 @@ class Event extends Calculations_Base {
 	/**
 	 * Counts all the registrations who have checked out of one of this events' datetimes
 	 * See EE_Event::total_available_spaces( false );
+
 	 *
-	 * @param array            $wpdb_row
+*@param array            $wpdb_row
 	 * @param \WP_REST_Request $request
 	 * @param Base             $controller
 	 * @return int
 	 * @throws \EE_Error
-	 * @throws \EventEspresso\core\libraries\rest_api\Rest_Exception
+	 * @throws \EventEspresso\core\libraries\rest_api\RestException
 	 */
 	public static function registrations_checked_out_count( $wpdb_row, $request, $controller ){
 		if( ! is_array( $wpdb_row ) || ! isset( $wpdb_row[ 'Event_CPT.ID' ] ) ) {

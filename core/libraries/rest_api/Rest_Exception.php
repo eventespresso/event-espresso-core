@@ -1,5 +1,9 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api;
+
+if( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
+    exit( 'No direct script access allowed' );
+}
 /**
  *
  * Class Exception
@@ -11,11 +15,9 @@ namespace EventEspresso\core\libraries\rest_api;
  * @subpackage    
  * @author				Mike Nelson
  * @since		 	   $VID:$
+ * @deprecated use RestException instead
  *
  */
-if( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
-	exit( 'No direct script access allowed' );
-}
 
 class Rest_Exception extends \EE_Error {
 	/**
@@ -25,15 +27,9 @@ class Rest_Exception extends \EE_Error {
 	protected $_wp_error_data = array();
 	protected $_wp_error_code = '';
 	public function __construct( $string_code, $message, $wp_error_data = array(), $previous = null ) {
-		if( is_array( $wp_error_data ) 
-			&& isset( $wp_error_data[ 'status' ] ) ) {
-			$http_status_number = $wp_error_data[ 'status' ];
-		} else {
-			$http_status_number = 500;
-		}
 		parent::__construct( 
 			$message,
-			$http_status_number,
+			500,
 			$previous );
 		$this->_wp_error_data = $wp_error_data;
 		$this->_wp_error_code = $string_code;

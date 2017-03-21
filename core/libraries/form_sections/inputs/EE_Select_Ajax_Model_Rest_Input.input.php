@@ -1,5 +1,5 @@
 <?php
-use EventEspresso\core\libraries\rest_api\Model_Data_Translator;
+use EventEspresso\core\libraries\rest_api\ModelDataTranslator;
 
 if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
 /**
@@ -104,7 +104,7 @@ class EE_Select_Ajax_Model_Rest_Input extends EE_Form_Input_With_Options_Base{
 				'delay' => '250',
 				'data_interface' => 'EE_Select2_REST_API_Interface',
 				'data_interface_args' => array(
-					'default_query_params' => (object)Model_Data_Translator::prepare_query_params_for_rest_api(
+					'default_query_params' => (object)ModelDataTranslator::prepareQueryParamsForRestApi(
 						$query_params,
 						$model
 					),
