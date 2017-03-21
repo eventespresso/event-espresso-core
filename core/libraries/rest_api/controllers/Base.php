@@ -153,7 +153,11 @@ class Base
      * what exactly was the Models query that got run, what capabilities came into play, what fields were omitted from
      * the response, others?
      *
+<<<<<<< HEAD
      * @param array|\WP_Error|\Exception|\Rest_Exception $response
+=======
+     * @param array|\WP_Error|\Exception $response
+>>>>>>> master
      * @return \WP_REST_Response
      */
     public function send_response($response)

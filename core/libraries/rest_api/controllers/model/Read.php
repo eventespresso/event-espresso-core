@@ -1,12 +1,16 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api\controllers\model;
 
+use WP_REST_Request;
+use WP_REST_Response;
+use WP_Error;
 use EventEspresso\core\libraries\rest_api\Capabilities;
 use EventEspresso\core\libraries\rest_api\Calculated_Model_Fields;
 use EventEspresso\core\libraries\rest_api\Rest_Exception;
 use EventEspresso\core\libraries\rest_api\Model_Data_Translator;
 use EventEspresso\core\entities\models\JsonModelSchema;
 use EE_Datetime_Field;
+use EEH_Inflector;
 
 if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
@@ -48,20 +52,20 @@ class Read extends Base
     /**
      * Handles requests to get all (or a filtered subset) of entities for a particular model
      *
-     * @param \WP_REST_Request $request
+     * @param WP_REST_Request $request
      * @param string           $version
      * @param string           $model_name
-     * @return \WP_REST_Response|\WP_Error
+     * @return WP_REST_Response|WP_Error
      */
-    public static function handle_request_get_all(\WP_REST_Request $request, $version, $model_name)
+    public static function handle_request_get_all(WP_REST_Request $request, $version, $model_name)
     {
         $controller = new Read();
         try {
             $controller->set_requested_version($version);
-            $model_name_singular = \EEH_Inflector::singularize_and_upper($model_name);
+            $model_name_singular = EEH_Inflector::singularize_and_upper($model_name);
             if (! $controller->get_model_version_info()->is_model_name_in_this_version($model_name_singular)) {
                 return $controller->send_response(
-                    new \WP_Error(
+                    new WP_Error(
                         'endpoint_parsing_error',
                         sprintf(
                             __('There is no model for endpoint %s. Please contact event espresso support',
@@ -224,20 +228,20 @@ class Read extends Base
     /**
      * Gets a single entity related to the model indicated in the path and its id
      *
-     * @param \WP_REST_Request $request
+     * @param WP_REST_Request $request
      * @param string           $version
      * @param string           $model_name
-     * @return \WP_REST_Response|\WP_Error
+     * @return WP_REST_Response|WP_Error
      */
-    public static function handle_request_get_one(\WP_REST_Request $request, $version, $model_name)
+    public static function handle_request_get_one(WP_REST_Request $request, $version, $model_name)
     {
         $controller = new Read();
         try {
             $controller->set_requested_version($version);
-            $model_name_singular = \EEH_Inflector::singularize_and_upper($model_name);
+            $model_name_singular = EEH_Inflector::singularize_and_upper($model_name);
             if (! $controller->get_model_version_info()->is_model_name_in_this_version($model_name_singular)) {
                 return $controller->send_response(
-                    new \WP_Error(
+                    new WP_Error(
                         'endpoint_parsing_error',
                         sprintf(
                             __('There is no model for endpoint %s. Please contact event espresso support',
@@ -264,14 +268,14 @@ class Read extends Base
      * Gets all the related entities (or if its a belongs-to relation just the one)
      * to the item with the given id
      *
-     * @param \WP_REST_Request $request
+     * @param WP_REST_Request $request
      * @param string           $version
      * @param string           $model_name
      * @param string           $related_model_name
-     * @return \WP_REST_Response|\WP_Error
+     * @return WP_REST_Response|WP_Error
      */
     public static function handle_request_get_related(
-        \WP_REST_Request $request,
+        WP_REST_Request $request,
         $version,
         $model_name,
         $related_model_name
@@ -279,10 +283,10 @@ class Read extends Base
         $controller = new Read();
         try {
             $controller->set_requested_version($version);
-            $main_model_name_singular = \EEH_Inflector::singularize_and_upper($model_name);
+            $main_model_name_singular = EEH_Inflector::singularize_and_upper($model_name);
             if (! $controller->get_model_version_info()->is_model_name_in_this_version($main_model_name_singular)) {
                 return $controller->send_response(
-                    new \WP_Error(
+                    new WP_Error(
                         'endpoint_parsing_error',
                         sprintf(
                             __('There is no model for endpoint %s. Please contact event espresso support',
@@ -294,14 +298,14 @@ class Read extends Base
             }
             $main_model = $controller->get_model_version_info()->load_model($main_model_name_singular);
             //assume the related model name is plural and try to find the model's name
-            $related_model_name_singular = \EEH_Inflector::singularize_and_upper($related_model_name);
+            $related_model_name_singular = EEH_Inflector::singularize_and_upper($related_model_name);
             if (! $controller->get_model_version_info()->is_model_name_in_this_version($related_model_name_singular)) {
                 //so the word didn't singularize well. Maybe that's just because it's a singular word?
-                $related_model_name_singular = \EEH_Inflector::humanize($related_model_name);
+                $related_model_name_singular = EEH_Inflector::humanize($related_model_name);
             }
             if (! $controller->get_model_version_info()->is_model_name_in_this_version($related_model_name_singular)) {
                 return $controller->send_response(
-                    new \WP_Error(
+                    new WP_Error(
                         'endpoint_parsing_error',
                         sprintf(
                             __('There is no model for endpoint %s. Please contact event espresso support',
@@ -329,15 +333,15 @@ class Read extends Base
      * Gets a collection for the given model and filters
      *
      * @param \EEM_Base        $model
-     * @param \WP_REST_Request $request
-     * @return array|\WP_Error
+     * @param WP_REST_Request $request
+     * @return array|WP_Error
      */
     public function get_entities_from_model($model, $request)
     {
         $query_params = $this->create_model_query_params($model, $request->get_params());
         if (! Capabilities::current_user_has_partial_access_to($model, $query_params['caps'])) {
-            $model_name_plural = \EEH_Inflector::pluralize_and_lower($model->get_this_model_name());
-            return new \WP_Error(
+            $model_name_plural = EEH_Inflector::pluralize_and_lower($model->get_this_model_name());
+            return new WP_Error(
                 sprintf('rest_%s_cannot_list', $model_name_plural),
                 sprintf(
                     __('Sorry, you are not allowed to list %1$s. Missing permis
@@ -375,8 +379,8 @@ sions: %2$s', 'event_espresso'),
      * @param array                   $primary_model_query_params query params for finding the item from which
      *                                                            relations will be based
      * @param \EE_Model_Relation_Base $relation
-     * @param \WP_REST_Request        $request
-     * @return \WP_Error|array
+     * @param WP_REST_Request        $request
+     * @return WP_Error|array
      */
     protected function _get_entities_from_relation($primary_model_query_params, $relation, $request)
     {
@@ -407,9 +411,9 @@ sions: %2$s', 'event_espresso'),
             if ($relation instanceof \EE_Belongs_To_Relation) {
                 $related_model_name_maybe_plural = strtolower($related_model->get_this_model_name());
             } else {
-                $related_model_name_maybe_plural = \EEH_Inflector::pluralize_and_lower($related_model->get_this_model_name());
+                $related_model_name_maybe_plural = EEH_Inflector::pluralize_and_lower($related_model->get_this_model_name());
             }
-            return new \WP_Error(
+            return new WP_Error(
                 sprintf('rest_%s_cannot_list', $related_model_name_maybe_plural),
                 sprintf(
                     __('Sorry, you are not allowed to list %1$s related to %2$s. Missing permissions: %3$s',
@@ -480,8 +484,8 @@ sions: %2$s', 'event_espresso'),
      *
      * @param string                  $id the ID of the thing we are fetching related stuff from
      * @param \EE_Model_Relation_Base $relation
-     * @param \WP_REST_Request        $request
-     * @return array|\WP_Error
+     * @param WP_REST_Request        $request
+     * @return array|WP_Error
      * @throws \EE_Error
      */
     public function get_entities_from_relation($id, $relation, $request)
@@ -551,18 +555,18 @@ sions: %2$s', 'event_espresso'),
      *
      * @param \EEM_Base        $model
      * @param array            $db_row     like results from $wpdb->get_results()
-     * @param \WP_REST_Request $rest_request
+     * @param WP_REST_Request $rest_request
      * @param string           $deprecated no longer used
      * @return array ready for being converted into json for sending to client
      */
     public function create_entity_from_wpdb_result($model, $db_row, $rest_request, $deprecated = null)
     {
-        if (! $rest_request instanceof \WP_REST_Request) {
+        if (! $rest_request instanceof WP_REST_Request) {
             //ok so this was called in the old style, where the 3rd arg was
             //$include, and the 4th arg was $context
             //now setup the request just to avoid fatal errors, although we won't be able
             //to truly make use of it because it's kinda devoid of info
-            $rest_request = new \WP_REST_Request();
+            $rest_request = new WP_REST_Request();
             $rest_request->set_param('include', $rest_request);
             $rest_request->set_param('caps', $deprecated);
         }
@@ -704,7 +708,7 @@ sions: %2$s', 'event_espresso'),
             $links['self'] = array(
                 array(
                     'href' => $this->get_versioned_link_to(
-                        \EEH_Inflector::pluralize_and_lower($model->get_this_model_name())
+                        EEH_Inflector::pluralize_and_lower($model->get_this_model_name())
                         . '/'
                         . $entity_array[$model->primary_key_name()]
                     ),
@@ -714,7 +718,7 @@ sions: %2$s', 'event_espresso'),
         $links['collection'] = array(
             array(
                 'href' => $this->get_versioned_link_to(
-                    \EEH_Inflector::pluralize_and_lower($model->get_this_model_name())
+                    EEH_Inflector::pluralize_and_lower($model->get_this_model_name())
                 ),
             ),
         );
@@ -725,7 +729,7 @@ sions: %2$s', 'event_espresso'),
                 $links[\EED_Core_Rest_Api::ee_api_link_namespace . $related_model_part] = array(
                     array(
                         'href'   => $this->get_versioned_link_to(
-                            \EEH_Inflector::pluralize_and_lower($model->get_this_model_name())
+                            EEH_Inflector::pluralize_and_lower($model->get_this_model_name())
                             . '/'
                             . $entity_array[$model->primary_key_name()]
                             . '/'
@@ -745,14 +749,14 @@ sions: %2$s', 'event_espresso'),
      * Adds the included models indicated in the request to the entity provided
      *
      * @param \EEM_Base        $model
-     * @param \WP_REST_Request $rest_request
+     * @param WP_REST_Request $rest_request
      * @param array            $entity_array
      * @param array            $db_row
      * @return array the modified entity
      */
     protected function _include_requested_models(
         \EEM_Base $model,
-        \WP_REST_Request $rest_request,
+        WP_REST_Request $rest_request,
         $entity_array,
         $db_row = array()
     ) {
@@ -790,7 +794,7 @@ sions: %2$s', 'event_espresso'),
             //or did they specify to calculate a field from a related model?
             if ($related_fields_to_include || $related_fields_to_calculate) {
                 //if so, we should include at least some part of the related model
-                $pretend_related_request = new \WP_REST_Request();
+                $pretend_related_request = new WP_REST_Request();
                 $pretend_related_request->set_query_params(
                     array(
                         'caps'      => $rest_request->get_param('caps'),
@@ -811,7 +815,7 @@ sions: %2$s', 'event_espresso'),
                 );
                 $entity_array[Read::get_related_entity_name($relation_name, $relation_obj)] = $related_results
                                                                                               instanceof
-                                                                                              \WP_Error
+                                                                                              WP_Error
                     ? null
                     : $related_results;
             }
@@ -840,7 +844,7 @@ sions: %2$s', 'event_espresso'),
      *
      * @param \EEM_Base        $model
      * @param array            $wpdb_row
-     * @param \WP_REST_Request $rest_request
+     * @param WP_REST_Request $rest_request
      * @return \stdClass the _calculations item in the entity
      */
     protected function _get_entity_calculations($model, $wpdb_row, $rest_request)
@@ -915,7 +919,7 @@ sions: %2$s', 'event_espresso'),
         if ($relation_obj instanceof \EE_Belongs_To_Relation) {
             return strtolower($relation_name);
         } else {
-            return \EEH_Inflector::pluralize_and_lower($relation_name);
+            return EEH_Inflector::pluralize_and_lower($relation_name);
         }
     }
 
@@ -925,8 +929,8 @@ sions: %2$s', 'event_espresso'),
      * Gets the one model object with the specified id for the specified model
      *
      * @param \EEM_Base        $model
-     * @param \WP_REST_Request $request
-     * @return array|\WP_Error
+     * @param WP_REST_Request $request
+     * @return array|WP_Error
      */
     public function get_entity_from_model($model, $request)
     {
@@ -1240,11 +1244,11 @@ sions: %2$s', 'event_espresso'),
      * returns that it's inacccessible to the current user
      *
      * @param \EEM_Base        $model
-     * @param \WP_REST_Request $request
+     * @param WP_REST_Request $request
      * @param null             $context
-     * @return array|\WP_Error
+     * @return array|WP_Error
      */
-    public function get_one_or_report_permission_error(\EEM_Base $model, \WP_REST_Request $request, $context = null)
+    public function get_one_or_report_permission_error(\EEM_Base $model, WP_REST_Request $request, $context = null)
     {
         $query_params = array(array($model->primary_key_name() => $request->get_param('id')), 'limit' => 1);
         if ($model instanceof \EEM_Soft_Delete_Base) {
@@ -1265,7 +1269,7 @@ sions: %2$s', 'event_espresso'),
             $model_rows_found_sans_restrictions = $model->get_all_wpdb_results($query_params);
             if (! empty($model_rows_found_sans_restrictions)) {
                 //you got shafted- it existed but we didn't want to tell you!
-                return new \WP_Error(
+                return new WP_Error(
                     'rest_user_cannot_' . $context,
                     sprintf(
                         __('Sorry, you cannot %1$s this %2$s. Missing permissions are: %3$s', 'event_espresso'),
@@ -1280,7 +1284,7 @@ sions: %2$s', 'event_espresso'),
                 );
             } else {
                 //it's not you. It just doesn't exist
-                return new \WP_Error(
+                return new WP_Error(
                     sprintf('rest_%s_invalid_id', $lowercase_model_name),
                     sprintf(__('Invalid %s ID.', 'event_espresso'), $lowercase_model_name),
                     array('status' => 404)

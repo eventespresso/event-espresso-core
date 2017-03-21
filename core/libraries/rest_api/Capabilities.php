@@ -3,7 +3,6 @@ namespace EventEspresso\core\libraries\rest_api;
 
 use EventEspresso\core\libraries\rest_api\Rest_Exception;
 use EEM_Base;
-
 if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
@@ -160,7 +159,7 @@ class Capabilities
      * @param string   $model_action_context
      * @param string   $action_name
      * @return void
-     * @throw Rest_Exception
+     * @throws Rest_Exception
      */
     public static function verify_at_least_partial_access_to($model, $model_action_context, $action_name = 'list')
     {
