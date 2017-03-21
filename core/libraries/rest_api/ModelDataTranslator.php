@@ -1,7 +1,7 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api;
 
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
+if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
 
@@ -18,9 +18,8 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) {
  * like
  * "where[EVT_ID][]=<&where[EVT_ID][]=100" is less intuitive, so we may want
  * to allow REST API query parameters to diverge from the format accepted by models)
-
  *
-*@package               Event Espresso
+ * @package               Event Espresso
  * @subpackage
  * @author                Mike Nelson
  * @since                 4.8.36
@@ -251,10 +250,10 @@ class ModelDataTranslator
                 );
                 $timezone = 'UTC';
                 $is_gmt_datetime_field = true;
-            } elseif( $field instanceof \EE_Datetime_Field ) {
+            } elseif ($field instanceof \EE_Datetime_Field) {
                 //so it's not a GMT field. Set the timezone on the model to the default
                 $timezone = \EEH_DTT_Helper::get_valid_timezone_string();
-            }else{
+            } else {
                 //just keep using what's already set for the timezone
                 $timezone = $model->get_timezone();
             }
@@ -272,7 +271,7 @@ class ModelDataTranslator
                     $translated_value = ModelDataTranslator::prepareFieldValueFromJson($field, $query_param_value,
                         $requested_version, $timezone);
                 }
-                if(isset( $query_param_for_models[$query_param_key]) && $is_gmt_datetime_field){
+                if (isset($query_param_for_models[$query_param_key]) && $is_gmt_datetime_field) {
                     //they have already provided a non-gmt field, ignore the gmt one. That's what WP core
                     //currently does (they might change it though). See https://core.trac.wordpress.org/ticket/39954
                     continue;
@@ -315,7 +314,7 @@ class ModelDataTranslator
      */
     public static function removeGmtFromFieldName($field_name)
     {
-        if ( ! ModelDataTranslator::isGmtDateFieldName($field_name)) {
+        if (! ModelDataTranslator::isGmtDateFieldName($field_name)) {
             return $field_name;
         }
         $query_param_sans_stars = ModelDataTranslator::removeStarsAndAnythingAfterFromConditionQueryParamKey($field_name);

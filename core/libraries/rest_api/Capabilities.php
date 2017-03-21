@@ -1,10 +1,12 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api;
+
 use EventEspresso\core\libraries\rest_api\RestException;
 use EEM_Base;
 use EEH_Inflector;
-if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
-	exit( 'No direct script access allowed' );
+
+if (! defined('EVENT_ESPRESSO_VERSION')) {
+    exit('No direct script access allowed');
 }
 
 
@@ -16,133 +18,139 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @subpackage
  * @author                Mike Nelson
  */
-class Capabilities {
+class Capabilities
+{
 
-	/**
-	 * The current user can see at least SOME of these entities.
-	 *
-	 * @param \EEM_Base $model
-	 * @param string    $model_context one of the return values from EEM_Base::valid_cap_contexts()
-	 * @return boolean
-	 */
-	public static function currentUserHasPartialAccessTo( $model, $model_context = \EEM_Base::caps_read ) {
-		if (
-			apply_filters(
-				'FHEE__Capabilities__current_user_has_partial_access_to__override_begin',
-				false,
-				$model,
-				$model
-			)
-		) {
-			return true;
-		}
-		foreach ( $model->caps_missing( $model_context ) as $capability_name => $restriction_obj ) {
-			if ( $restriction_obj instanceof \EE_Return_None_Where_Conditions ) {
-				return false;
-			}
-		}
-		if (
-			apply_filters(
-				'FHEE__Capabilities__current_user_has_partial_access_to__override_end',
-				false,
-				$model,
-				$model
-			)
-		) {
-			return false;
-		}
-		return true;
-	}
-
-
-
-	/**
-	 * Gets an array of all the capabilities the current user is missing that affected
-	 * the query
-	 *
-	 * @param \EEM_Base $model
-	 * @param string    $request_type one of the constants on WP_JSON_Server
-	 * @return array
-	 */
-	public static function getMissingPermissions( $model, $request_type = \EEM_Base::caps_read ) {
-		return $model->caps_missing( $request_type );
-	}
+    /**
+     * The current user can see at least SOME of these entities.
+     *
+     * @param \EEM_Base $model
+     * @param string    $model_context one of the return values from EEM_Base::valid_cap_contexts()
+     * @return boolean
+     */
+    public static function currentUserHasPartialAccessTo($model, $model_context = \EEM_Base::caps_read)
+    {
+        if (
+        apply_filters(
+            'FHEE__Capabilities__current_user_has_partial_access_to__override_begin',
+            false,
+            $model,
+            $model
+        )
+        ) {
+            return true;
+        }
+        foreach ($model->caps_missing($model_context) as $capability_name => $restriction_obj) {
+            if ($restriction_obj instanceof \EE_Return_None_Where_Conditions) {
+                return false;
+            }
+        }
+        if (
+        apply_filters(
+            'FHEE__Capabilities__current_user_has_partial_access_to__override_end',
+            false,
+            $model,
+            $model
+        )
+        ) {
+            return false;
+        }
+        return true;
+    }
 
 
 
-	/**
-	 * Gets a string of all the capabilities the current user is missing that affected
-	 * the query
-	 *
-	 * @param \EEM_Base $model
-	 * @param string    $model_context one of the return values from EEM_Base::valid_cap_contexts()
-	 * @return string
-	 */
-	public static function getMissingPermissionsString( $model, $model_context = \EEM_Base::caps_read ) {
-		return implode( ',', array_keys( self::getMissingPermissions( $model, $model_context ) ) );
-	}
+    /**
+     * Gets an array of all the capabilities the current user is missing that affected
+     * the query
+     *
+     * @param \EEM_Base $model
+     * @param string    $request_type one of the constants on WP_JSON_Server
+     * @return array
+     */
+    public static function getMissingPermissions($model, $request_type = \EEM_Base::caps_read)
+    {
+        return $model->caps_missing($request_type);
+    }
 
 
 
-	/**
-	 * Takes a entity that's ready to be returned and removes fields which the user shouldn't be able to access.
-	 *
-	 * @param array            $entity
-	 * @param \EEM_Base        $model
-	 * @param string           $request_type       one of the return values from EEM_Base::valid_cap_contexts()
-	 * @param ModelVersionInfo $model_version_info
-	 * @param string           $primary_key_string result of EEM_Base::get_index_primary_key_string(), so that we can
-	 *                                               use this with models that have no primary key
-	 * @return array ready for converting into json
-	 */
-	public static function filterOutInaccessibleEntityFields(
-		$entity,
-		$model,
-		$request_type,
-		$model_version_info,
-		$primary_key_string = null
-	) {
-		//if they didn't provide the primary key string, we'll just hope we can figure it out
-		//from the entity (although it's preferred client code does it, because the entity might be missing
-		//necessary fields for creating the primary key string, or they could be named differently)
-		if ( $primary_key_string === null ) {
-			$primary_key_string = $model->get_index_primary_key_string(
-				$model->deduce_fields_n_values_from_cols_n_values( $entity )
-			);
-		}
-		//we only care to do this for frontend reads and when the user can't edit the item
-		if (
-			$request_type !== \EEM_Base::caps_read
-		     || $model->exists(
-				$model->alter_query_params_to_restrict_by_ID(
-					$primary_key_string,
-					array(
-						'default_where_conditions' => 'none',
-						'caps'                     => \EEM_Base::caps_edit,
-					)
-				)
-			)
-		) {
-			return $entity;
-		}
-		foreach ( $model->field_settings() as $field_name => $field_obj ) {
-			if (
-				$model_version_info->fieldHasRenderedFormat( $field_obj )
-				&& isset( $entity[ $field_name ] )
-				&& is_array( $entity[ $field_name ] )
-				&& isset( $entity[ $field_name ]['raw'] )
-			) {
-				unset( $entity[ $field_name ]['raw'] );
-			}
-		}
-		//theoretically we may want to filter out specific fields for specific models
-		return apply_filters(
-			'FHEE__Capabilities__filter_out_inaccessible_entity_fields',
-			$entity,
-			$model,
-			$request_type
-		);
-	}
+    /**
+     * Gets a string of all the capabilities the current user is missing that affected
+     * the query
+     *
+     * @param \EEM_Base $model
+     * @param string    $model_context one of the return values from EEM_Base::valid_cap_contexts()
+     * @return string
+     */
+    public static function getMissingPermissionsString($model, $model_context = \EEM_Base::caps_read)
+    {
+        return implode(',', array_keys(self::getMissingPermissions($model, $model_context)));
+    }
+
+
+
+    /**
+     * Takes a entity that's ready to be returned and removes fields which the user shouldn't be able to access.
+     *
+     * @param array            $entity
+     * @param \EEM_Base        $model
+     * @param string           $request_type         one of the return values from EEM_Base::valid_cap_contexts()
+     * @param ModelVersionInfo $model_version_info
+     * @param string           $primary_key_string   result of EEM_Base::get_index_primary_key_string(), so that we can
+     *                                               use this with models that have no primary key
+     * @return array ready for converting into json
+     */
+    public static function filterOutInaccessibleEntityFields(
+        $entity,
+        $model,
+        $request_type,
+        $model_version_info,
+        $primary_key_string = null
+    ) {
+        //if they didn't provide the primary key string, we'll just hope we can figure it out
+        //from the entity (although it's preferred client code does it, because the entity might be missing
+        //necessary fields for creating the primary key string, or they could be named differently)
+        if ($primary_key_string === null) {
+            $primary_key_string = $model->get_index_primary_key_string(
+                $model->deduce_fields_n_values_from_cols_n_values($entity)
+            );
+        }
+        //we only care to do this for frontend reads and when the user can't edit the item
+        if (
+            $request_type !== \EEM_Base::caps_read
+            || $model->exists(
+                $model->alter_query_params_to_restrict_by_ID(
+                    $primary_key_string,
+                    array(
+                        'default_where_conditions' => 'none',
+                        'caps'                     => \EEM_Base::caps_edit,
+                    )
+                )
+            )
+        ) {
+            return $entity;
+        }
+        foreach ($model->field_settings() as $field_name => $field_obj) {
+            if (
+                $model_version_info->fieldHasRenderedFormat($field_obj)
+                && isset($entity[$field_name])
+                && is_array($entity[$field_name])
+                && isset($entity[$field_name]['raw'])
+            ) {
+                unset($entity[$field_name]['raw']);
+            }
+        }
+        //theoretically we may want to filter out specific fields for specific models
+        return apply_filters(
+            'FHEE__Capabilities__filter_out_inaccessible_entity_fields',
+            $entity,
+            $model,
+            $request_type
+        );
+    }
+
+
 
     /**
      * Verifies the current user has at least partial access to do this action on this model.
@@ -150,8 +158,8 @@ class Capabilities {
      * once)
      *
      * @param EEM_Base $model
-     * @param string $model_action_context
-     * @param string $action_name
+     * @param string   $model_action_context
+     * @param string   $action_name
      * @return void
      * @throws RestException
      */
@@ -172,10 +180,13 @@ class Capabilities {
         }
     }
 
+
+
     /**
      * When calling methods with the legacy EE4 naming conventions, dynamically call the new method instead.
+     *
      * @param string $name
-     * @param array $arguments
+     * @param array  $arguments
      * @return mixed
      */
     public function __call($name, $arguments)
@@ -183,7 +194,7 @@ class Capabilities {
         $new_method_name = EEH_Inflector::camelize_all_but_first($name);
         //you tried calling an old method which doesn't correspond to an existing new method,
         //let's just have the fatal error. There's nothing we can do to fix their problem
-        return call_user_func_array(array($this,$new_method_name),$arguments);
+        return call_user_func_array(array($this, $new_method_name), $arguments);
     }
 }
 
