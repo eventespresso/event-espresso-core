@@ -2,6 +2,7 @@
 namespace EventEspresso\core\libraries\rest_api;
 use EventEspresso\core\libraries\rest_api\controllers\Base;
 use EventEspresso\core\libraries\rest_api\RestException;
+use EEH_Inflector;
 /**
  *
  * Class Calculationshelpers
@@ -118,7 +119,8 @@ class CalculatedModelFields {
 		if( isset( $mapping[ $model->get_this_model_name() ] )
 			&& isset( $mapping[ $model->get_this_model_name() ][ $field_name ] ) ) {
 			$classname = $mapping[ $model->get_this_model_name() ][ $field_name ];
-			return call_user_func( array( $classname, $field_name ), $wpdb_row, $rest_request, $controller );
+			$class_method_name = EEH_Inflector::camelize_all_but_first($field_name);
+			return call_user_func( array( $classname, $class_method_name ), $wpdb_row, $rest_request, $controller );
 		}
 		throw new RestException(
 			'calculated_field_does_not_exist',

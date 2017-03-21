@@ -32,7 +32,7 @@ class Datetime extends Calculations_Base {
 	 * @return int
 	 * @throws \EE_Error
 	 */
-	public static function spaces_remaining_considering_tickets( $wpdb_row, $request, $controller ){
+	public static function spacesRemainingConsideringTickets( $wpdb_row, $request, $controller ){
 		if( is_array( $wpdb_row ) && isset( $wpdb_row[ 'Datetime.DTT_ID' ] ) ) {
 			$dtt_obj = \EEM_Datetime::instance()->get_one_by_ID( $wpdb_row[ 'Datetime.DTT_ID' ] );
 		} else {
@@ -64,7 +64,7 @@ class Datetime extends Calculations_Base {
 	 * @throws \EE_Error
 	 * @throws \EventEspresso\core\libraries\rest_api\RestException
 	 */
-	public static function registrations_checked_in_count( $wpdb_row, $request, $controller ){
+	public static function registrationsCheckedInCount( $wpdb_row, $request, $controller ){
 		if( ! is_array( $wpdb_row ) || ! isset( $wpdb_row[ 'Datetime.DTT_ID' ] ) ) {
 			throw new \EE_Error(
 				sprintf(
@@ -73,7 +73,7 @@ class Datetime extends Calculations_Base {
 				)
 			);
 		}
-		self::_verify_current_user_can( 'ee_read_checkins', 'registrations_checked_in_count' );
+		self::verifyCurrentUserCan( 'ee_read_checkins', 'registrations_checked_in_count' );
 		return \EEM_Registration::instance()->count_registrations_checked_into_datetime( $wpdb_row[ 'Datetime.DTT_ID' ], true );
 	}
 
@@ -90,7 +90,7 @@ class Datetime extends Calculations_Base {
 	 * @throws \EE_Error
 	 * @throws \EventEspresso\core\libraries\rest_api\RestException
 	 */
-	public static function registrations_checked_out_count( $wpdb_row, $request, $controller ){
+	public static function registrationsCheckedOutCount( $wpdb_row, $request, $controller ){
 		if( ! is_array( $wpdb_row ) || ! isset( $wpdb_row[ 'Datetime.DTT_ID' ] ) ) {
 			throw new \EE_Error(
 				sprintf(
@@ -99,7 +99,7 @@ class Datetime extends Calculations_Base {
 				)
 			);
 		}
-		self::_verify_current_user_can( 'ee_read_checkins', 'registrations_checked_out_count' );
+		self::verifyCurrentUserCan( 'ee_read_checkins', 'registrations_checked_out_count' );
 		return \EEM_Registration::instance()->count_registrations_checked_into_datetime( $wpdb_row[ 'Datetime.DTT_ID' ], false );
 	}
 
@@ -117,7 +117,7 @@ class Datetime extends Calculations_Base {
 	 * @throws \EE_Error
 	 * @throws \EventEspresso\core\libraries\rest_api\RestException
 	 */
-	public static function spots_taken_pending_payment( $wpdb_row, $request, $controller ){
+	public static function spotsTakenPendingPayment( $wpdb_row, $request, $controller ){
 		if( ! is_array( $wpdb_row ) || ! isset( $wpdb_row[ 'Datetime.DTT_ID' ] ) ) {
 			throw new \EE_Error(
 				sprintf(
@@ -126,7 +126,7 @@ class Datetime extends Calculations_Base {
 				)
 			);
 		}
-		self::_verify_current_user_can( 'ee_read_registrations', 'spots_taken_pending_payment' );
+		self::verifyCurrentUserCan( 'ee_read_registrations', 'spots_taken_pending_payment' );
 		return \EEM_Registration::instance()->count(
 			array(
 				array(
