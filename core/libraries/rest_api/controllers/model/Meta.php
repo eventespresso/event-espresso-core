@@ -29,10 +29,10 @@ class Meta extends Base {
 	public static function handleRequestModelsMeta( \WP_REST_Request $request, $version ) {
 		$controller = new Meta();
 		try{
-			$controller->set_requested_version( $version );
-			return $controller->send_response( $controller->getModelsMetadataEntity() );
+			$controller->setRequestedVersion( $version );
+			return $controller->sendResponse( $controller->getModelsMetadataEntity() );
 		} catch( \Exception $e ) {
-			return $controller->send_response( $e );
+			return $controller->sendResponse( $e );
 		}
 	}
 
@@ -42,11 +42,11 @@ class Meta extends Base {
 	 */
 	protected function getModelsMetadataEntity(){
 		$response = array();
-		foreach( $this->get_model_version_info()->models_for_requested_version() as $model_name => $model_classname ){
-			$model = $this->get_model_version_info()->load_model( $model_name );
+		foreach($this->getModelVersionInfo()->models_for_requested_version() as $model_name => $model_classname ){
+			$model = $this->getModelVersionInfo()->load_model( $model_name );
 			$fields_json = array();
-			foreach( $this->get_model_version_info()->fields_on_model_in_this_version( $model ) as $field_name => $field_obj ) {
-				if( $this->get_model_version_info()->field_is_ignored( $field_obj ) ) {
+			foreach($this->getModelVersionInfo()->fields_on_model_in_this_version( $model ) as $field_name => $field_obj ) {
+				if( $this->getModelVersionInfo()->field_is_ignored( $field_obj ) ) {
 					continue;
 				}
 				if( $field_obj instanceof \EE_Boolean_Field ) {
@@ -61,24 +61,24 @@ class Meta extends Base {
 				$default_value = Model_Data_Translator::prepare_field_value_for_json(
 					$field_obj,
 					$field_obj->get_default_value(),
-					$this->get_model_version_info()->requested_version()
+					$this->getModelVersionInfo()->requested_version()
 				);
 				$field_json = array(
-					'name' => $field_name,
-					'nicename' => $field_obj->get_nicename(),
-					'has_rendered_format' => $this->get_model_version_info()->field_has_rendered_format( $field_obj ),
-					'has_pretty_format' => $this->get_model_version_info()->field_has_pretty_format( $field_obj ),
-					'type' => str_replace('EE_', '', get_class( $field_obj ) ),
-					'datatype' => $datatype,
-					'nullable' => $field_obj->is_nullable(),
-					'default' => $default_value,
-					'table_alias' => $field_obj->get_table_alias(),
-					'table_column' => $field_obj->get_table_column(),
+                    'name' => $field_name,
+                    'nicename' => $field_obj->get_nicename(),
+                    'has_rendered_format' => $this->getModelVersionInfo()->field_has_rendered_format( $field_obj ),
+                    'has_pretty_format' => $this->getModelVersionInfo()->field_has_pretty_format( $field_obj ),
+                    'type' => str_replace('EE_', '', get_class( $field_obj ) ),
+                    'datatype' => $datatype,
+                    'nullable' => $field_obj->is_nullable(),
+                    'default' => $default_value,
+                    'table_alias' => $field_obj->get_table_alias(),
+                    'table_column' => $field_obj->get_table_column(),
 				);
 				$fields_json[ $field_json[ 'name' ] ] = $field_json;
 
 			}
-			$fields_json = array_merge( $fields_json, $this->get_model_version_info()->extra_resource_properties_for_model( $model ) );
+			$fields_json = array_merge( $fields_json, $this->getModelVersionInfo()->extra_resource_properties_for_model( $model ) );
 			$response[ $model_name ]['fields'] = apply_filters( 'FHEE__Meta__handle_request_models_meta__fields', $fields_json, $model );
 			$relations_json = array();
 			foreach( $model->relation_settings()  as $relation_name => $relation_obj ) {
@@ -99,7 +99,7 @@ class Meta extends Base {
 	 * @param \WP_REST_Response $rest_response_obj
 	 * @return \WP_REST_Response
 	 */
-	public static function filterEEMetadataIntoIndex( \WP_REST_Response $rest_response_obj ) {
+	public static function filterEeMetadataIntoIndex( \WP_REST_Response $rest_response_obj ) {
 		$response_data = $rest_response_obj->get_data();
 		$addons = array();
 		foreach( \EE_Registry::instance()->addons as $addon){
@@ -119,20 +119,6 @@ class Meta extends Base {
 		$rest_response_obj->set_data( $response_data );
 		return $rest_response_obj;
 	}
-
-    /**
-     * When calling public methods with the legacy EE4 naming conventions, dynamically call the new method instead.
-     * @param string $name
-     * @param array $arguments
-     * @return mixed
-     */
-    public function __call($name, $arguments)
-    {
-        $new_method_name = EEH_Inflector::camelize_all_but_first($name);
-        //you tried calling an old method which doesn't correspond to an existing new method,
-        //let's just have the fatal error. There's nothing we can do to fix their problem
-        return call_user_func_array(array($this,$new_method_name),$arguments);
-    }
 }
 
 

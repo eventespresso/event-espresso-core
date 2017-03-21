@@ -58,10 +58,10 @@ class Read extends Base
     {
         $controller = new Read();
         try {
-            $controller->set_requested_version($version);
+            $controller->setRequestedVersion($version);
             $model_name_singular = \EEH_Inflector::singularize_and_upper($model_name);
-            if (! $controller->get_model_version_info()->is_model_name_in_this_version($model_name_singular)) {
-                return $controller->send_response(
+            if (! $controller->getModelVersionInfo()->is_model_name_in_this_version($model_name_singular)) {
+                return $controller->sendResponse(
                     new \WP_Error(
                         'endpoint_parsing_error',
                         sprintf(
@@ -72,14 +72,14 @@ class Read extends Base
                     )
                 );
             }
-            return $controller->send_response(
+            return $controller->sendResponse(
                 $controller->getEntitiesFromModel(
-                    $controller->get_model_version_info()->load_model($model_name_singular),
+                    $controller->getModelVersionInfo()->load_model($model_name_singular),
                     $request
                 )
             );
         } catch (\Exception $e) {
-            return $controller->send_response($e);
+            return $controller->sendResponse($e);
         }
     }
 
@@ -95,19 +95,19 @@ class Read extends Base
     {
         $controller = new Read();
         try {
-            $controller->set_requested_version($version);
-            if (! $controller->get_model_version_info()->is_model_name_in_this_version($model_name)) {
+            $controller->setRequestedVersion($version);
+            if (! $controller->getModelVersionInfo()->is_model_name_in_this_version($model_name)) {
                 return array();
             }
             //get the model for this version
-            $model = $controller->get_model_version_info()->load_model($model_name);
+            $model = $controller->getModelVersionInfo()->load_model($model_name);
             $model_schema = new JsonModelSchema($model);
             return $model_schema->getModelSchemaForRelations(
-                $controller->get_model_version_info()->relation_settings($model),
+                $controller->getModelVersionInfo()->relation_settings($model),
                 $controller->customizeSchemaForRestResponse(
                     $model,
                     $model_schema->getModelSchemaForFields(
-                        $controller->get_model_version_info()->fields_on_model_in_this_version($model),
+                        $controller->getModelVersionInfo()->fields_on_model_in_this_version($model),
                         $model_schema->getInitialSchemaStructure()
                     )
                 )
@@ -129,8 +129,8 @@ class Read extends Base
      */
     protected function customizeSchemaForRestResponse(\EEM_Base $model, array $schema)
     {
-       foreach ($this->get_model_version_info()->fields_on_model_in_this_version($model) as $field_name => $field) {
-           $schema = $this->translateDefaultsForRESTResponse(
+       foreach ($this->getModelVersionInfo()->fields_on_model_in_this_version($model) as $field_name => $field) {
+           $schema = $this->translateDefaultsForRestResponse(
                $field_name,
                $field,
                $this->maybeAddExtraFieldsToSchema($field_name, $field, $schema)
@@ -149,7 +149,7 @@ class Read extends Base
      * @param array                $schema
      * @return array
      */
-    protected function translateDefaultsForRESTResponse($field_name, \EE_Model_Field_Base $field, array $schema)
+    protected function translateDefaultsForRestResponse($field_name, \EE_Model_Field_Base $field, array $schema)
     {
         if (isset($schema['properties'][$field_name]['default'])) {
             if (is_array($schema['properties'][$field_name]['default'])) {
@@ -158,7 +158,7 @@ class Read extends Base
                         $schema['properties'][$field_name]['default'][$default_key] = Model_Data_Translator::prepare_field_value_for_json(
                             $field,
                             $default_value,
-                            $this->get_model_version_info()->requested_version()
+                            $this->getModelVersionInfo()->requested_version()
                         );
                     }
                 }
@@ -166,7 +166,7 @@ class Read extends Base
                 $schema['properties'][$field_name]['default'] = Model_Data_Translator::prepare_field_value_for_json(
                     $field,
                     $schema['properties'][$field_name]['default'],
-                    $this->get_model_version_info()->requested_version()
+                    $this->getModelVersionInfo()->requested_version()
                 );
             }
         }
@@ -229,10 +229,10 @@ class Read extends Base
     {
         $controller = new Read();
         try {
-            $controller->set_requested_version($version);
+            $controller->setRequestedVersion($version);
             $model_name_singular = \EEH_Inflector::singularize_and_upper($model_name);
-            if (! $controller->get_model_version_info()->is_model_name_in_this_version($model_name_singular)) {
-                return $controller->send_response(
+            if (! $controller->getModelVersionInfo()->is_model_name_in_this_version($model_name_singular)) {
+                return $controller->sendResponse(
                     new \WP_Error(
                         'endpoint_parsing_error',
                         sprintf(
@@ -243,14 +243,14 @@ class Read extends Base
                     )
                 );
             }
-            return $controller->send_response(
+            return $controller->sendResponse(
                 $controller->getEntityFromModel(
-                    $controller->get_model_version_info()->load_model($model_name_singular),
+                    $controller->getModelVersionInfo()->load_model($model_name_singular),
                     $request
                 )
             );
         } catch (\Exception $e) {
-            return $controller->send_response($e);
+            return $controller->sendResponse($e);
         }
     }
 
@@ -270,10 +270,10 @@ class Read extends Base
     {
         $controller = new Read();
         try {
-            $controller->set_requested_version($version);
+            $controller->setRequestedVersion($version);
             $main_model_name_singular = \EEH_Inflector::singularize_and_upper($model_name);
-            if (! $controller->get_model_version_info()->is_model_name_in_this_version($main_model_name_singular)) {
-                return $controller->send_response(
+            if (! $controller->getModelVersionInfo()->is_model_name_in_this_version($main_model_name_singular)) {
+                return $controller->sendResponse(
                     new \WP_Error(
                         'endpoint_parsing_error',
                         sprintf(
@@ -284,15 +284,15 @@ class Read extends Base
                     )
                 );
             }
-            $main_model = $controller->get_model_version_info()->load_model($main_model_name_singular);
+            $main_model = $controller->getModelVersionInfo()->load_model($main_model_name_singular);
             //assume the related model name is plural and try to find the model's name
             $related_model_name_singular = \EEH_Inflector::singularize_and_upper($related_model_name);
-            if (! $controller->get_model_version_info()->is_model_name_in_this_version($related_model_name_singular)) {
+            if (! $controller->getModelVersionInfo()->is_model_name_in_this_version($related_model_name_singular)) {
                 //so the word didn't singularize well. Maybe that's just because it's a singular word?
                 $related_model_name_singular = \EEH_Inflector::humanize($related_model_name);
             }
-            if (! $controller->get_model_version_info()->is_model_name_in_this_version($related_model_name_singular)) {
-                return $controller->send_response(
+            if (! $controller->getModelVersionInfo()->is_model_name_in_this_version($related_model_name_singular)) {
+                return $controller->sendResponse(
                     new \WP_Error(
                         'endpoint_parsing_error',
                         sprintf(
@@ -303,7 +303,7 @@ class Read extends Base
                     )
                 );
             }
-            return $controller->send_response(
+            return $controller->sendResponse(
                 $controller->getEntitiesFromRelation(
                     $request->get_param('id'),
                     $main_model->related_settings_for($related_model_name_singular),
@@ -311,7 +311,7 @@ class Read extends Base
                 )
             );
         } catch (\Exception $e) {
-            return $controller->send_response($e);
+            return $controller->sendResponse($e);
         }
     }
 
@@ -346,7 +346,7 @@ class Read extends Base
        $results = $model->get_all_wpdb_results($query_params);
        $nice_results = array();
        foreach ($results as $result) {
-           $nice_results[] = $this->createEntityFromWPDBResult(
+           $nice_results[] = $this->createEntityFromWpdbResult(
                $model,
                $result,
                $request
@@ -385,8 +385,8 @@ class Read extends Base
         }
         $restricted_query_params = $primary_model_query_params;
         $restricted_query_params['caps'] = $context;
-        $this->_set_debug_info('main model query params', $restricted_query_params);
-        $this->_set_debug_info('missing caps', Capabilities::get_missing_permissions_string($related_model, $context));
+        $this->setDebugInfo('main model query params', $restricted_query_params);
+        $this->setDebugInfo('missing caps', Capabilities::get_missing_permissions_string($related_model, $context));
         if (
         ! (
             Capabilities::current_user_has_partial_access_to($related_model, $context)
@@ -430,7 +430,7 @@ class Read extends Base
         $results = $relation->get_other_model()->get_all_wpdb_results($query_params);
         $nice_results = array();
         foreach ($results as $result) {
-            $nice_result = $this->createEntityFromWPDBResult(
+            $nice_result = $this->createEntityFromWpdbResult(
                 $relation->get_other_model(),
                 $result,
                 $request
@@ -438,7 +438,7 @@ class Read extends Base
             if ($relation instanceof \EE_HABTM_Relation) {
                 //put the unusual stuff (properties from the HABTM relation) first, and make sure
                 //if there are conflicts we prefer the properties from the main model
-                $join_model_result = $this->createEntityFromWPDBResult(
+                $join_model_result = $this->createEntityFromWpdbResult(
                     $relation->get_join_model(),
                     $result,
                     $request
@@ -508,8 +508,8 @@ class Read extends Base
      */
     protected function setHeadersFromQueryParams($model, $query_params)
     {
-        $this->_set_debug_info('model query params', $query_params);
-        $this->_set_debug_info('missing caps',
+        $this->setDebugInfo('model query params', $query_params);
+        $this->setDebugInfo('missing caps',
             Capabilities::get_missing_permissions_string($model, $query_params['caps']));
         //normally the limit to a 2-part array, where the 2nd item is the limit
         if (! isset($query_params['limit'])) {
@@ -528,9 +528,9 @@ class Read extends Base
         unset($query_params['group_by'], $query_params['having'], $query_params['limit']);
         $count = $model->count($query_params, null, true);
         $pages = $count / $limit_parts[1];
-        $this->_set_response_header('Total', $count, false);
-        $this->_set_response_header('PageSize', $limit_parts[1], false);
-        $this->_set_response_header('TotalPages', ceil($pages), false);
+        $this->setResponseHeader('Total', $count, false);
+        $this->setResponseHeader('PageSize', $limit_parts[1], false);
+        $this->setResponseHeader('TotalPages', ceil($pages), false);
     }
 
 
@@ -544,7 +544,7 @@ class Read extends Base
      * @param string           $deprecated no longer used
      * @return array ready for being converted into json for sending to client
      */
-    public function createEntityFromWPDBResult($model, $db_row, $rest_request, $deprecated = null)
+    public function createEntityFromWpdbResult($model, $db_row, $rest_request, $deprecated = null)
     {
         if (! $rest_request instanceof \WP_REST_Request) {
             //ok so this was called in the old style, where the 3rd arg was
@@ -558,7 +558,7 @@ class Read extends Base
         if ($rest_request->get_param('caps') == null) {
             $rest_request->set_param('caps', \EEM_Base::caps_read);
         }
-        $entity_array = $this->createBareEntityFromWPDBResults($model, $db_row);
+        $entity_array = $this->createBareEntityFromWpdbResults($model, $db_row);
         $entity_array = $this->addExtraFields($model, $db_row, $entity_array);
         $entity_array['_links'] = $this->getEntityLinks($model, $db_row, $entity_array);
         $entity_array['_calculated_fields'] = $this->getEntityCalculations($model, $db_row, $rest_request);
@@ -576,12 +576,12 @@ class Read extends Base
             $entity_array,
             $model,
             $rest_request->get_param('caps'),
-            $this->get_model_version_info(),
+            $this->getModelVersionInfo(),
             $model->get_index_primary_key_string(
                 $model->deduce_fields_n_values_from_cols_n_values($db_row)
             )
         );
-        $this->_set_debug_info(
+        $this->setDebugInfo(
             'inaccessible fields',
             array_keys(array_diff_key($entity_array, $result_without_inaccessible_fields))
         );
@@ -604,25 +604,25 @@ class Read extends Base
      * @param array     $db_row
      * @return array entity mostly ready for converting to JSON and sending in the response
      */
-    protected function createBareEntityFromWPDBResults(\EEM_Base $model, $db_row)
+    protected function createBareEntityFromWpdbResults(\EEM_Base $model, $db_row)
     {
         $result = $model->deduce_fields_n_values_from_cols_n_values($db_row);
         $result = array_intersect_key($result,
-            $this->get_model_version_info()->fields_on_model_in_this_version($model));
+            $this->getModelVersionInfo()->fields_on_model_in_this_version($model));
         foreach ($result as $field_name => $raw_field_value) {
             $field_obj = $model->field_settings_for($field_name);
             $field_value = $field_obj->prepare_for_set_from_db($raw_field_value);
-            if ($this->is_subclass_of_one($field_obj, $this->get_model_version_info()->fields_ignored())) {
+            if ($this->isSubclassOfOne($field_obj, $this->getModelVersionInfo()->fields_ignored())) {
                 unset($result[$field_name]);
             } elseif (
-            $this->is_subclass_of_one($field_obj, $this->get_model_version_info()->fields_that_have_rendered_format())
+            $this->isSubclassOfOne($field_obj, $this->getModelVersionInfo()->fields_that_have_rendered_format())
             ) {
                 $result[$field_name] = array(
                     'raw'      => $field_obj->prepare_for_get($field_value),
                     'rendered' => $field_obj->prepare_for_pretty_echoing($field_value),
                 );
             } elseif (
-            $this->is_subclass_of_one($field_obj, $this->get_model_version_info()->fields_that_have_pretty_format())
+            $this->isSubclassOfOne($field_obj, $this->getModelVersionInfo()->fields_that_have_pretty_format())
             ) {
                 $result[$field_name] = array(
                     'raw'    => $field_obj->prepare_for_get($field_value),
@@ -635,20 +635,20 @@ class Read extends Base
                     $result[$field_name . '_gmt'] = Model_Data_Translator::prepare_field_value_for_json(
                         $field_obj,
                         $field_value,
-                        $this->get_model_version_info()->requested_version()
+                        $this->getModelVersionInfo()->requested_version()
                     );
                     $field_value->setTimezone($timezone);
                     $result[$field_name] = Model_Data_Translator::prepare_field_value_for_json(
                         $field_obj,
                         $field_value,
-                        $this->get_model_version_info()->requested_version()
+                        $this->getModelVersionInfo()->requested_version()
                     );
                 }
             } else {
                 $result[$field_name] = Model_Data_Translator::prepare_field_value_for_json(
                     $field_obj,
                     $field_obj->prepare_for_get($field_value),
-                    $this->get_model_version_info()->requested_version()
+                    $this->getModelVersionInfo()->requested_version()
                 );
             }
         }
@@ -708,7 +708,7 @@ class Read extends Base
         );
         //add links to related models
         if ($model->has_primary_key_field()) {
-            foreach ($this->get_model_version_info()->relation_settings($model) as $relation_name => $relation_obj) {
+            foreach ($this->getModelVersionInfo()->relation_settings($model) as $relation_name => $relation_obj) {
                 $related_model_part = Read::getRelatedEntityName($relation_name, $relation_obj);
                 $links[\EED_Core_Rest_Api::ee_api_link_namespace . $related_model_part] = array(
                     array(
@@ -763,7 +763,7 @@ class Read extends Base
             }
             $entity_array = array_intersect_key($entity_array, array_flip($includes_for_this_model));
         }
-        $relation_settings = $this->get_model_version_info()->relation_settings($model);
+        $relation_settings = $this->getModelVersionInfo()->relation_settings($model);
         foreach ($relation_settings as $relation_name => $relation_obj) {
             $related_fields_to_include = $this->explodeAndGetItemsPrefixedWith(
                 $rest_request->get_param('include'),
@@ -850,11 +850,11 @@ class Read extends Base
                         $rest_request,
                         $this
                     ),
-                    $this->get_model_version_info()->requested_version()
+                    $this->getModelVersionInfo()->requested_version()
                 );
             } catch (Rest_Exception $e) {
                 //if we don't have permission to read it, just leave it out. but let devs know about the problem
-                $this->_set_response_header(
+                $this->setResponseHeader(
                     'Notices-Field-Calculation-Errors['
                     . $e->get_string_code()
                     . ']['
@@ -882,7 +882,7 @@ class Read extends Base
     {
         return rest_url(
             \EED_Core_Rest_Api::ee_api_namespace
-            . $this->get_model_version_info()->requested_version()
+            . $this->getModelVersionInfo()->requested_version()
             . '/'
             . $link_part_after_version_and_slash
         );
@@ -992,7 +992,7 @@ class Read extends Base
             $model_query_params[0] = Model_Data_Translator::prepare_conditions_query_params_for_models(
                 $query_parameters['where'],
                 $model,
-                $this->get_model_version_info()->requested_version()
+                $this->getModelVersionInfo()->requested_version()
             );
         }
         if (isset($query_parameters['order_by'])) {
@@ -1029,7 +1029,7 @@ class Read extends Base
             $model_query_params['having'] = Model_Data_Translator::prepare_conditions_query_params_for_models(
                 $query_parameters['having'],
                 $model,
-                $this->get_model_version_info()->requested_version()
+                $this->getModelVersionInfo()->requested_version()
             );
         }
         if (isset($query_parameters['order'])) {
@@ -1047,7 +1047,7 @@ class Read extends Base
             }
             $sanitized_limit = array();
             foreach ($limit_array as $key => $limit_part) {
-                if ($this->_debug_mode && (! is_numeric($limit_part) || count($sanitized_limit) > 2)) {
+                if ($this->debug_mode && (! is_numeric($limit_part) || count($sanitized_limit) > 2)) {
                     throw new \EE_Error(
                         sprintf(
                             __('An invalid limit filter was provided. It was: %s. If the EE4 JSON REST API weren\'t in debug mode, this message would not appear.',
@@ -1083,12 +1083,12 @@ class Read extends Base
      * @param array     $query_params sub-array from @see EEM_Base::get_all()
      * @return array
      */
-    public function prepareRESTQueryParamsKeyForModels($model, $query_params)
+    public function prepareRestQueryParamsKeyForModels($model, $query_params)
     {
         $model_ready_query_params = array();
         foreach ($query_params as $key => $value) {
             if (is_array($value)) {
-                $model_ready_query_params[$key] = $this->prepareRESTQueryParamsKeyForModels($model, $value);
+                $model_ready_query_params[$key] = $this->prepareRestQueryParamsKeyForModels($model, $value);
             } else {
                 $model_ready_query_params[$key] = $value;
             }
@@ -1104,12 +1104,12 @@ class Read extends Base
      * @param $query_params
      * @return array
      */
-    public function prepareRESTQueryParamsValuesForModels($model, $query_params)
+    public function prepareRestQueryParamsValuesForModels($model, $query_params)
     {
         $model_ready_query_params = array();
         foreach ($query_params as $key => $value) {
             if (is_array($value)) {
-                $model_ready_query_params[$key] = $this->prepareRESTQueryParamsValuesForModels($model, $value);
+                $model_ready_query_params[$key] = $this->prepareRestQueryParamsValuesForModels($model, $value);
             } else {
                 $model_ready_query_params[$key] = $value;
             }
@@ -1123,7 +1123,7 @@ class Read extends Base
      * Explodes the string on commas, and only returns items with $prefix followed by a period.
      * If no prefix is specified, returns items with no period.
      *
-     * @param string|array $string_to_explode eg "jibba,jabba, blah, blaabla" or array('jibba', 'jabba' )
+     * @param string|array $string_to_explode eg "jibba,jabba, blah, blah, blah" or array('jibba', 'jabba' )
      * @param string       $prefix            "Event" or "foobar"
      * @return array $string_to_exploded exploded on COMMAS, and if a prefix was specified
      *                                        we only return strings starting with that and a period; if no prefix was
@@ -1181,7 +1181,7 @@ class Read extends Base
      *                               the fields for that model, with the model's name removed from each.
      *                               If $include_string was blank or '*' returns an empty array
      */
-    public function extractIncludesRorThisModel($include_string, $model_name = null)
+    public function extractIncludesForThisModel($include_string, $model_name = null)
     {
         if (is_array($include_string)) {
             $include_string = implode(',', $include_string);
@@ -1208,7 +1208,7 @@ class Read extends Base
                 $field_to_include = trim($field_to_include);
                 if (
                     strpos($field_to_include, '.') === false
-                    && ! $this->get_model_version_info()->is_model_name_in_this_version($field_to_include)
+                    && ! $this->getModelVersionInfo()->is_model_name_in_this_version($field_to_include)
                 ) {
                     $extracted_fields_to_include[] = $field_to_include;
                 }
@@ -1233,10 +1233,10 @@ class Read extends Base
         }
         $restricted_query_params = $query_params;
         $restricted_query_params['caps'] = $context;
-        $this->_set_debug_info('model query params', $restricted_query_params);
+        $this->setDebugInfo('model query params', $restricted_query_params);
         $model_rows = $model->get_all_wpdb_results($restricted_query_params);
         if (! empty ($model_rows)) {
-            return $this->createEntityFromWPDBResult(
+            return $this->createEntityFromWpdbResult(
                 $model,
                 array_shift($model_rows),
                 $request);
@@ -1268,22 +1268,6 @@ class Read extends Base
                 );
             }
         }
-    }
-
-
-
-    /**
-     * When calling public methods with the legacy EE4 naming conventions, dynamically call the new method instead.
-     * @param string $name
-     * @param array $arguments
-     * @return mixed
-     */
-    public function __call($name, $arguments)
-    {
-        $new_method_name = EEH_Inflector::camelize_all_but_first($name);
-        //you tried calling an old method which doesn't correspond to an existing new method,
-        //let's just have the fatal error. There's nothing we can do to fix their problem
-        return call_user_func_array(array($this,$new_method_name),$arguments);
     }
 }
 

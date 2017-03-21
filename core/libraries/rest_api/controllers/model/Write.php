@@ -51,10 +51,10 @@ class Write extends Base
     {
         $controller = new Write();
         try {
-            $controller->set_requested_version($version);
+            $controller->setRequestedVersion($version);
             $model_name_singular = \EEH_Inflector::singularize_and_upper($model_name);
-            if (! $controller->get_model_version_info()->is_model_name_in_this_version($model_name_singular)) {
-                return $controller->send_response(
+            if (! $controller->getModelVersionInfo()->is_model_name_in_this_version($model_name_singular)) {
+                return $controller->sendResponse(
                     new \WP_Error(
                         'endpoint_parsing_error',
                         sprintf(
@@ -65,14 +65,14 @@ class Write extends Base
                     )
                 );
             }
-            return $controller->send_response(
+            return $controller->sendResponse(
                 $controller->insert(
-                    $controller->get_model_version_info()->load_model($model_name_singular),
+                    $controller->getModelVersionInfo()->load_model($model_name_singular),
                     $request
                 )
             );
         } catch (\Exception $e) {
-            return $controller->send_response($e);
+            return $controller->sendResponse($e);
         }
     }
 
@@ -90,10 +90,10 @@ class Write extends Base
     {
         $controller = new Write();
         try {
-            $controller->set_requested_version($version);
+            $controller->setRequestedVersion($version);
             $model_name_singular = \EEH_Inflector::singularize_and_upper($model_name);
-            if (! $controller->get_model_version_info()->is_model_name_in_this_version($model_name_singular)) {
-                return $controller->send_response(
+            if (! $controller->getModelVersionInfo()->is_model_name_in_this_version($model_name_singular)) {
+                return $controller->sendResponse(
                     new \WP_Error(
                         'endpoint_parsing_error',
                         sprintf(
@@ -104,14 +104,14 @@ class Write extends Base
                     )
                 );
             }
-            return $controller->send_response(
+            return $controller->sendResponse(
                 $controller->update(
-                    $controller->get_model_version_info()->load_model($model_name_singular),
+                    $controller->getModelVersionInfo()->load_model($model_name_singular),
                     $request
                 )
             );
         } catch (\Exception $e) {
-            return $controller->send_response($e);
+            return $controller->sendResponse($e);
         }
     }
 
@@ -129,10 +129,10 @@ class Write extends Base
     {
         $controller = new Write();
         try {
-            $controller->set_requested_version($version);
+            $controller->setRequestedVersion($version);
             $model_name_singular = \EEH_Inflector::singularize_and_upper($model_name);
-            if (! $controller->get_model_version_info()->is_model_name_in_this_version($model_name_singular)) {
-                return $controller->send_response(
+            if (! $controller->getModelVersionInfo()->is_model_name_in_this_version($model_name_singular)) {
+                return $controller->sendResponse(
                     new \WP_Error(
                         'endpoint_parsing_error',
                         sprintf(
@@ -143,14 +143,14 @@ class Write extends Base
                     )
                 );
             }
-            return $controller->send_response(
+            return $controller->sendResponse(
                 $controller->delete(
-                    $controller->get_model_version_info()->load_model($model_name_singular),
+                    $controller->getModelVersionInfo()->load_model($model_name_singular),
                     $request
                 )
             );
         } catch (\Exception $e) {
-            return $controller->send_response($e);
+            return $controller->sendResponse($e);
         }
     }
 
@@ -183,7 +183,7 @@ class Write extends Base
         $model_data = Model_Data_Translator::prepare_conditions_query_params_for_models(
             $submitted_json_data,
             $model,
-            $this->get_model_version_info()->requested_version()
+            $this->getModelVersionInfo()->requested_version()
         );
         $model_obj = EE_Registry::instance()
                                 ->load_class($model->get_this_model_name(),
@@ -197,7 +197,7 @@ class Write extends Base
                 sprintf(__('Could not insert new %1$s', 'event_espresso'), $model->get_this_model_name())
             );
         }
-        return $this->returnModelObjSsJSONResponse($model_obj);
+        return $this->returnModelObjSsJsonResponse($model_obj);
     }
 
 
@@ -233,13 +233,13 @@ class Write extends Base
             );
         }
         $model_data = Model_Data_Translator::prepare_conditions_query_params_for_models(
-            $this->_get_body_params($request),
+            $this->getBodyParams($request),
             $model,
-            $this->get_model_version_info()->requested_version()
+            $this->getModelVersionInfo()->requested_version()
         );
         $model_obj = $model->get_one_by_ID($obj_id);
         $model_obj->save($model_data);
-        return $this->returnModelObjSsJSONResponse($model_obj);
+        return $this->returnModelObjSsJsonResponse($model_obj);
     }
 
 
@@ -259,7 +259,7 @@ class Write extends Base
         $requested_allow_blocking = filter_var($request->get_param('allow_blocking'), FILTER_VALIDATE_BOOLEAN);
         if ($requested_permanent_delete) {
             $read_controller = new Read();
-            $read_controller->set_requested_version($this->get_requested_version());
+            $read_controller->setRequestedVersion($this->getRequestedVersion());
             $original_entity = $read_controller->getOneOrReportPermissionError($model, $request,
                 EEM_Base::caps_delete);
             $deleted = (bool)$model->delete_permanently_by_ID($obj_id, $requested_allow_blocking);
@@ -292,7 +292,7 @@ class Write extends Base
      * @param \EE_Base_Class $model_obj
      * @return array ready for a response
      */
-    protected function returnModelObjSsJSONResponse(EE_Base_Class $model_obj)
+    protected function returnModelObjSsJsonResponse(EE_Base_Class $model_obj)
     {
         $model = $model_obj->get_model();
         //create an array exactly like the wpdb results row, so we can pass it to controllers/model/Read::create_entity_from_wpdb_result()
@@ -306,10 +306,10 @@ class Write extends Base
             $simulated_db_row[$field_obj->get_qualified_column()] = $field_obj->prepare_for_use_in_db($raw_value);
         }
         $read_controller = new Read();
-        $read_controller->set_requested_version($this->get_requested_version());
+        $read_controller->setRequestedVersion($this->getRequestedVersion());
         //the simulates request really doesn't need any info downstream
         $simulated_request = new WP_REST_Request('GET');
-        return $read_controller->createEntityFromWPDBResult($model_obj->get_model(), $simulated_db_row,
+        return $read_controller->createEntityFromWpdbResult($model_obj->get_model(), $simulated_db_row,
             $simulated_request);
     }
 
@@ -325,7 +325,7 @@ class Write extends Base
      */
     protected function getOneBasedOnRequest(EEM_Base $model, WP_REST_Request $request, $obj_id)
     {
-        $requested_version = $this->get_requested_version($request->get_route());
+        $requested_version = $this->getRequestedVersion($request->get_route());
         $get_request = new WP_REST_Request(
             'GET',
             \EED_Core_Rest_Api::ee_api_namespace
@@ -342,7 +342,7 @@ class Write extends Base
             )
         );
         $read_controller = new Read();
-        $read_controller->set_requested_version($this->get_requested_version());
+        $read_controller->setRequestedVersion($this->getRequestedVersion());
         return $read_controller->getEntityFromModel($model, $get_request);
     }
 }

@@ -50,7 +50,7 @@ class Checkin extends Base {
 		}
 		$reg = \EEM_Registration::instance()->get_one_by_ID( $reg_id );
 		if( ! $reg instanceof \EE_Registration ) {
-			return $this->send_response(
+			return $this->sendResponse(
 				new \WP_Error(
 					'rest_registration_toggle_checkin_invalid_id',
 					sprintf(
@@ -62,7 +62,7 @@ class Checkin extends Base {
 			);
 		}
 		if( ! \EE_Capabilities::instance()->current_user_can( 'ee_edit_checkin', 'rest_api_checkin_endpoint', $reg_id ) ) {
-			return $this->send_response(
+			return $this->sendResponse(
 				new \WP_Error(
 					'rest_user_cannot_toggle_checkin',
 					sprintf(
@@ -76,7 +76,7 @@ class Checkin extends Base {
 		$success = $reg->toggle_checkin_status( $dtt_id, ! $force );
 		if( $success === false ) {
 			//rely on EE_Error::add_error messages to have been added to give more data about hwy it failed
-			return $this->send_response(
+			return $this->sendResponse(
 				new \WP_Error(
 					'rest_toggle_checkin_failed',
 					__( 'Registration checkin failed. Please see additional error data.', 'event_espresso' )
@@ -95,7 +95,7 @@ class Checkin extends Base {
 			)
 		);
 		if( ! $checkin instanceof \EE_Checkin ) {
-			return $this->send_response(
+			return $this->sendResponse(
 				new \WP_Error(
 					'rest_toggle_checkin_error',
 					sprintf(

@@ -83,7 +83,7 @@ class Changes_In_4_8_36 extends Changes_In_Base {
 		\WP_REST_Request $request,
 		Read $controller
 	) {
-		if( $this->applies_to_version( $controller->get_model_version_info()->requested_version() ) ) {
+		if( $this->applies_to_version( $controller->getModelVersionInfo()->requested_version() ) ) {
 			unset( $entity_response_array[ '_calculated_fields' ] );
 		}
 		return $entity_response_array;
@@ -130,7 +130,7 @@ class Changes_In_4_8_36 extends Changes_In_Base {
 		\WP_REST_Request $request,
 		Read $controller
 	) {
-		if( $this->applies_to_version( $controller->get_model_version_info()->requested_version() )
+		if( $this->applies_to_version( $controller->getModelVersionInfo()->requested_version() )
 			&& $model instanceof \EEM_CPT_Base
 		) {
 			$attachment = wp_get_attachment_image_src(

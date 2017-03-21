@@ -1,6 +1,7 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api\controllers;
 use EventEspresso\core\libraries\rest_api\Rest_Exception;
+use EEH_Inflector;
 if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
 }
@@ -18,38 +19,46 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  */
 class Base {
 
+    /**
+     * @deprecated use all-caps version
+     */
 	const header_prefix_for_ee = 'X-EE-';
+	const HEADER_PREFIX_FOR_EE = 'X-EE-';
 
+    /**
+     * @deprecated use all-caps version instead
+     */
 	const header_prefix_for_wp = 'X-WP-';
+    const HEADER_PREFIX_FOR_WP = 'X-WP-';
 
 	/**
 	 * Contains debug info we'll send back in the response headers
 	 * @var array
 	 */
-	protected $_debug_info = array();
+	protected $debug_info = array();
 
 	/**
 	 * Indicates whether or not the API is in debug mode
 	 * @var boolean
 	 */
-	protected $_debug_mode = false;
+	protected $debug_mode = false;
 
 	/**
 	 * Indicates the version that was requested
 	 * @var string
 	 */
-	protected $_requested_version;
+	protected $requested_version;
 
 	/**
 	 * flat array of headers to send in the response
 	 * @var array
 	 */
-	protected $_response_headers = array();
+	protected $response_headers = array();
 
 
 
 	public function __construct() {
-		$this->_debug_mode = defined( 'EE_REST_API_DEBUG_MODE' ) ? EE_REST_API_DEBUG_MODE : false;
+		$this->debug_mode = defined( 'EE_REST_API_DEBUG_MODE' ) ? EE_REST_API_DEBUG_MODE : false;
 	}
 
 
@@ -57,8 +66,8 @@ class Base {
 	 * Sets the version the user requested
 	 * @param string $version eg '4.8'
 	 */
-	public function set_requested_version( $version ) {
-		$this->_requested_version = $version;
+	public function setRequestedVersion( $version ) {
+		$this->requested_version = $version;
 	}
 
 	/**
@@ -66,8 +75,8 @@ class Base {
 	 * @param string $key
 	 * @param string|array $info
 	 */
-	protected function _set_debug_info( $key, $info ){
-		$this->_debug_info[ $key ] = $info;
+	protected function setDebugInfo( $key, $info ){
+        $this->debug_info[$key ] = $info;
 	}
 
 	/**
@@ -79,14 +88,14 @@ class Base {
 	 * @param boolean      $use_ee_prefix whether to use the EE prefix on the header, or fallback to
 	 *                                    the standard WP one
 	 */
-	protected function _set_response_header( $header_key, $value, $use_ee_prefix = true ) {
+	protected function setResponseHeader( $header_key, $value, $use_ee_prefix = true ) {
 		if( is_array( $value ) ) {
 			foreach( $value as $value_key => $value_value ) {
-				$this->_set_response_header(  $header_key . '[' . $value_key . ']', $value_value );
+				$this->setResponseHeader($header_key . '[' . $value_key . ']', $value_value );
 			}
 		} else {
 			$prefix = $use_ee_prefix ? Base::header_prefix_for_ee : Base::header_prefix_for_wp;
-			$this->_response_headers[ $prefix . $header_key  ] = $value;
+            $this->response_headers[$prefix . $header_key  ] = $value;
 		}
 	}
 
@@ -94,11 +103,11 @@ class Base {
 	 * Returns a flat array of headers to be added to the response
 	 * @return array
 	 */
-	protected function _get_response_headers() {
+	protected function getResponseHeaders() {
 		return apply_filters( 'FHEE__EventEspresso\core\libraries\rest_api\controllers\Base___get_response_headers',
-			$this->_response_headers,
+			$this->response_headers,
 			$this,
-			$this->_requested_version
+			$this->requested_version
 		);
 	}
 
@@ -107,7 +116,7 @@ class Base {
 	 * @param \WP_Error $wp_error_response
 	 * @return \WP_Error
 	 */
-	protected function _add_ee_errors_to_response( \WP_Error $wp_error_response ) {
+	protected function addEeErrorsToResponse( \WP_Error $wp_error_response ) {
 		$notices_during_checkin = \EE_Error::get_raw_notices();
 		if( ! empty( $notices_during_checkin[ 'errors' ] ) ) {
 			foreach( $notices_during_checkin[ 'errors' ] as $error_code => $error_message ) {
@@ -131,7 +140,7 @@ class Base {
 	 * @param array|\WP_Error|\Exception|\Rest_Exception $response
 	 * @return \WP_REST_Response
 	 */
-	public function send_response( $response ) {
+	public function sendResponse( $response ) {
 		if( $response instanceof Rest_Exception ) {
 			$response = new \WP_Error( $response->get_string_code(), $response->getMessage(), $response->get_data() );
 		}
@@ -140,14 +149,14 @@ class Base {
 			$response = new \WP_Error( $code, $response->getMessage() );
 		}
 		if( $response instanceof \WP_Error ) {
-			$response = $this->_add_ee_errors_to_response( $response );
-			$rest_response = $this->_create_rest_response_from_wp_error( $response );
+			$response = $this->addEEErrorsToResponse( $response );
+			$rest_response = $this->createRESTResponseFromWPError( $response );
 		}else{
 			$rest_response = new \WP_REST_Response( $response, 200 );
 		}
 		$headers = array();
-		if( $this->_debug_mode && is_array( $this->_debug_info ) ) {
-			foreach( $this->_debug_info  as $debug_key => $debug_info ) {
+		if($this->debug_mode && is_array( $this->debug_info ) ) {
+			foreach($this->debug_info as $debug_key => $debug_info ) {
 				if( is_array( $debug_info ) ) {
 					$debug_info = wp_json_encode( $debug_info );
 				}
@@ -156,8 +165,8 @@ class Base {
 		}
 		$headers = array_merge(
 			$headers,
-			$this->_get_response_headers(),
-			$this->_get_headers_from_ee_notices()
+			$this->getResponseHeaders(),
+			$this->getHeadersFromEENotices()
 		);
 
 		$rest_response->set_headers( $headers );
@@ -171,7 +180,7 @@ class Base {
 	 * @param \WP_Error $wp_error
 	 * @return \WP_REST_Response
 	 */
-	protected function _create_rest_response_from_wp_error( \WP_Error $wp_error ) {
+	protected function createRestResponseFromWpError( \WP_Error $wp_error ) {
 		$error_data = $wp_error->get_error_data();
 		if ( is_array( $error_data ) && isset( $error_data['status'] ) ) {
 			$status = $error_data['status'];
@@ -202,7 +211,7 @@ class Base {
 	 * Array of headers derived from EE success, attention, and error messages
 	 * @return array
 	 */
-	protected function _get_headers_from_ee_notices() {
+	protected function getHeadersFromEeNotices() {
 		$headers = array();
 		$notices = \EE_Error::get_raw_notices();
 		foreach( $notices as $notice_type => $sub_notices ) {
@@ -216,7 +225,7 @@ class Base {
 		return apply_filters(
 			'FHEE__EventEspresso\core\libraries\rest_api\controllers\Base___get_headers_from_ee_notices__return',
 			$headers,
-			$this->_requested_version,
+			$this->requested_version,
 			$notices
 		);
 	}
@@ -230,11 +239,11 @@ class Base {
 	 * @param string $route 
 	 * @return string
 	 */
-	public function get_requested_version( $route = null ) {
+	public function getRequestedVersion( $route = null ) {
 		if( $route === null ) {
-			return $this->_requested_version;
+			return $this->requested_version;
 		}
-		$matches = $this->parse_route(
+		$matches = $this->parseRoute(
 			$route,
 			'~' . \EED_Core_Rest_Api::ee_api_namespace_for_regex . '~',
 			array( 'version' )
@@ -265,7 +274,7 @@ class Base {
 	 * array( 'model' => 'foo', 'id' => 'bar' )
 	 * @throws \EE_Error if it couldn't be parsed
 	 */
-	public function parse_route( $route, $regex, $match_keys ) {
+	public function parseRoute( $route, $regex, $match_keys ) {
 		$indexed_matches = array();
 		$success = preg_match( $regex, $route, $matches );
 		if(
@@ -295,7 +304,7 @@ class Base {
      * @param \WP_REST_Request $request
      * @return array
      */
-	protected function _get_body_params( \WP_REST_Request $request ){
+	protected function getBodyParams( \WP_REST_Request $request ){
 	    //$request->get_params();
         return array_merge(
             (array)$request->get_body_params(),
@@ -306,6 +315,63 @@ class Base {
         //     $request->get_url_params(),
         //     $request->get_query_params()
         // );
+    }
+
+    /**
+     * When calling methods with the legacy EE4 naming conventions, dynamically call the new method instead.
+     * @param string $name
+     * @param array $arguments
+     * @return mixed
+     */
+    public function __call($name, $arguments)
+    {
+        $new_method_name = EEH_Inflector::camelize_all_but_first($name);
+        //you tried calling an old method which doesn't correspond to an existing new method,
+        //let's just have the fatal error. There's nothing we can do to fix their problem
+        return call_user_func_array(array($this,$new_method_name),$arguments);
+    }
+
+
+
+    /**
+     * When trying to access a property that apparently doesn't exist, maybe the caller was looking for a property
+     * with the leading underscore, which these class properties used to have. Let's check if they
+     * just need to remove the underscore.
+     * @param string $name
+     * @return mixed
+     */
+    public function __get($name)
+    {
+        //does the property start with an underscore?
+        if(strpos($name,'_') === 0){
+            //then you're probably trying to access a property from before they got renamed
+            //we no longer use leading underscores. So let's try the same name, but without the underscore...
+            $name = substr($name,1);
+            return $this->{$name};
+        }
+        return $this->{$name};
+    }
+
+
+
+    /**
+     * When trying to set a property that apparently doesn't exist, maybe the caller was looking for a property
+     * with the leading underscore, which these class properties used to have. Let's check if they
+     * just need to remove the underscore.
+     * @param string $name
+     * @param mixed $value
+     * @return mixed
+     */
+    public function __set($name, $value)
+    {
+        //does the property start with an underscore?
+        if(strpos($name,'_') === 0){
+            //then you're probably trying to access a property from before they got renamed
+            //we no longer use leading underscores. So let's try the same name, but without the underscore...
+            $name = substr($name,1);
+            return $this->{$name} = $value;
+        }
+        return $this->{$name} = $value;
     }
 }
 

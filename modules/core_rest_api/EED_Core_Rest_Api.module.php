@@ -83,7 +83,7 @@ class EED_Core_Rest_Api extends \EED_Module
         add_action('rest_api_init', array('EED_Core_Rest_Api', 'set_hooks_rest_api'), 5);
         add_filter('rest_route_data', array('EED_Core_Rest_Api', 'hide_old_endpoints'), 10, 2);
         add_filter('rest_index',
-            array('EventEspresso\core\libraries\rest_api\controllers\model\Meta', 'filterEEMetadataIntoIndex'));
+            array('EventEspresso\core\libraries\rest_api\controllers\model\Meta', 'filterEeMetadataIntoIndex'));
         EED_Core_Rest_Api::invalidate_cached_route_data_on_version_change();
     }
 

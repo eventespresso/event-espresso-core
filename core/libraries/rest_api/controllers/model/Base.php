@@ -23,15 +23,15 @@ class Base extends Controller_Base {
 	 * Holds reference to the model version info, which knows the requested version
 	 * @var Model_Version_Info
 	 */
-	protected $_model_version_info;
+	protected $model_version_info;
 
 /**
 	 * Sets the version the user requested
 	 * @param string $version eg '4.8'
 	 */
-	public function set_requested_version( $version ) {
-		parent::set_requested_version( $version );
-		$this->_model_version_info = new Model_Version_Info( $version );
+	public function setRequestedVersion( $version ) {
+		parent::setRequestedVersion( $version );
+		$this->model_version_info = new Model_Version_Info( $version );
 	}
 
 
@@ -43,8 +43,8 @@ class Base extends Controller_Base {
 	 * @return \EventEspresso\core\libraries\rest_api\Model_Version_Info
 	 * @throws \EE_Error
 	 */
-	public function get_model_version_info(){
-		if( ! $this->_model_version_info ) {
+	public function getModelVersionInfo(){
+		if( ! $this->model_version_info ) {
 			throw new \EE_Error(
 				sprintf(
 					__(
@@ -54,7 +54,7 @@ class Base extends Controller_Base {
 				)
 			);
 		}
-		return $this->_model_version_info;
+		return $this->model_version_info;
 	}
 
 	/**
@@ -66,7 +66,7 @@ class Base extends Controller_Base {
 	 * @param array $classnames
 	 * @return boolean
 	 */
-	public function is_subclass_of_one( $object, $classnames ) {
+	public function isSubclassOfOne( $object, $classnames ) {
 		foreach( $classnames as $classname ) {
 			if( is_a( $object, $classname ) ) {
 				return true;
