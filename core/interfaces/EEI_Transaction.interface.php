@@ -59,6 +59,18 @@ interface EEI_Transaction extends EEI_Base
      * @return float
      */
     public function paid();
+
+
+
+    /**
+     * Retrieves all the pending payments on this transaction
+     *
+     * @return EEI_Payment[]
+     */
+    public function pending_payments();
+
+
+
 }
 // End of file EEI_Transaction.interface.php
-// Location: ${NAMESPACE}/EEI_Transaction.interface.php
+// Location: core/interfaces/EEI_Transaction.interface.php
