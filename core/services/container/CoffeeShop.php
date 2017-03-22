@@ -581,7 +581,7 @@ class CoffeeShop implements CoffeePotInterface
      */
     private function copyDefaultRecipe(RecipeInterface $default_recipe, $identifier, $type = '')
     {
-        $recipe = clone($default_recipe);
+        $recipe = clone $default_recipe;
         if ( ! empty($type)) {
             $recipe->setType($type);
         }

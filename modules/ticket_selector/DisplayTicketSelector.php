@@ -176,6 +176,9 @@ class DisplayTicketSelector
         if (count($tickets) < 1) {
             return $this->noTicketAvailableMessage();
         }
+        if (\EED_Events_Archive::is_iframe()){
+            $this->setIframe();
+        }
         // redirecting to another site for registration ??
         $external_url = (string) $this->event->external_url();
         // if redirecting to another site for registration, then we don't load the TS
@@ -453,7 +456,7 @@ class DisplayTicketSelector
             // open link in new window ?
             $html .= apply_filters(
                 'FHEE__EventEspresso_modules_ticket_selector_DisplayTicketSelector__formOpen__external_url_target_blank',
-                false
+                \EED_Events_Archive::is_iframe()
             )
                 ? ' target="_blank"'
                 : '';
@@ -563,7 +566,7 @@ class DisplayTicketSelector
                 // no submit or view details button, and no additional content
                 $html .= $this->ticketSelectorEndDiv();
             }
-            if ( ! is_archive()) {
+            if ( ! $this->iframe && ! is_archive()) {
                 $html .= \EEH_Template::powered_by_event_espresso('', '', array('utm_content' => 'ticket_selector'));
             }
         }
@@ -586,10 +589,6 @@ class DisplayTicketSelector
         $external_url = $this->event->external_url();
         $html = \EEH_HTML::div(
             '', 'ticket-selector-submit-' . $this->event->ID() . '-btn-wrap', 'ticket-selector-submit-btn-wrap'
-        );
-        $html .= \EEH_HTML::span(
-            esc_html__('please select a datetime', 'event_espresso'),
-            '', 'ticket-selector-disabled-submit-btn-msg important-notice'
         );
         $html .= '<input id="ticket-selector-submit-' . $this->event->ID() . '-btn"';
         $html .= ' class="ticket-selector-submit-btn ';
@@ -629,7 +628,15 @@ class DisplayTicketSelector
             $this->event->get_permalink(),
             $this->event
         );
-        $view_details_btn .= '">';
+        $view_details_btn .= '"';
+        // open link in new window ?
+        $view_details_btn .= apply_filters(
+            'FHEE__EventEspresso_modules_ticket_selector_DisplayTicketSelector__displayViewDetailsButton__url_target_blank',
+            \EED_Events_Archive::is_iframe()
+        )
+            ? ' target="_blank"'
+            : '';
+        $view_details_btn .='>';
         $btn_text = apply_filters(
             'FHEE__EE_Ticket_Selector__display_view_details_btn__btn_text',
             esc_html__('View Details', 'event_espresso'),

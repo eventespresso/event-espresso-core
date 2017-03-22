@@ -282,12 +282,14 @@ class EEH_Template
             foreach ((array)$full_template_paths as $full_template_path) {
                 if (is_readable($full_template_path)) {
                     $template_path = str_replace(array('\\', '/'), DIRECTORY_SEPARATOR, $full_template_path);
-                    // hook that can be used to display the full template path that will be used
-                    do_action('AHEE__EEH_Template__locate_template__full_template_path', $template_path);
                     break;
                 }
             }
         }
+
+        // hook that can be used to display the full template path that will be used
+        do_action('AHEE__EEH_Template__locate_template__full_template_path', $template_path);
+
         // if we got it and you want to see it...
         if ($template_path && $load && ! $check_if_custom) {
             if ($return_string) {

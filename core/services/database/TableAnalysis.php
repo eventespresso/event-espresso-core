@@ -15,6 +15,12 @@ namespace EventEspresso\core\services\database;
  *
  */
 class TableAnalysis extends \EE_Base {
+
+    /**
+     * The maximum number of characters that can be indexed on a column using utf8mb4 collation,
+     * see https://events.codebasehq.com/redirect?https://make.wordpress.org/core/2015/04/02/the-utf8mb4-upgrade/
+     */
+    const INDEX_COLUMN_SIZE = 191;
 	/**
 	 * Returns the table name which will definitely have the wpdb prefix on the front,
 	 * except if it currently has the wpdb->base_prefix on the front, in which case
@@ -102,4 +108,32 @@ class TableAnalysis extends \EE_Base {
 		}
 		return true;
 	}
+
+
+
+    /**
+     * @param $table_name
+     * @param $index_name
+     * @return array of columns used on that index, Each entry is an object with the following properties {
+     *  @type string Table
+     *  @type string Non_unique "0" or "1"
+     *  @type string Key_name
+     *  @type string Seq_in_index
+     *  @type string Column_name
+     *  @type string Collation
+     *  @type string Cardinality
+     *  @type string Sub_part on a column, usually this is just the number of characters from this column to use in indexing
+     *  @type string|null Packed
+     *  @type string Null
+     *  @type string Index_type
+     *  @type string Comment
+     *  @type string Index_comment
+     * }
+     */
+	public function showIndexes($table_name, $index_name){
+	    global $wpdb;
+        $table_name = $this->ensureTableNameHasPrefix($table_name);
+        $index_exists_query = "SHOW INDEX FROM {$table_name} WHERE Key_name = '{$index_name}'";
+        return $wpdb->get_results($index_exists_query);
+    }
 }

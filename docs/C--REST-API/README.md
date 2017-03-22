@@ -24,3 +24,15 @@ There are a few endpoints in the EE4 REST API that really don't follow the REST 
 
 - [EE4 REST API: RPC Style Endpoints Table of Contents](ee4-rest-api-rpc-style-endpoints.md)
 - [/checkin](ee4-rest-api-rpc-checkin.md)
+
+### Libraries/Tools
+
+There are some handy libraries and tools that have been built that integrate with the REST API.
+
+| Library | Description |
+|---------|-------------|
+[eejs-api (VUE.js library)](eejs-api/README.md) | When implemented you can use this to automatically build EE model and collection components that can be used in your views.
+ 
+### Related Tutorials
+
+Don't miss the [REST API tutorials in our tutorials section](../T--Tutorials).

@@ -93,24 +93,25 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
 					KEY QST_ID (QST_ID)";
         $this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB');
         $table_name = 'esp_attendee_meta';
+        $this->_get_table_manager()->dropIndexIfSizeNot($table_name, 'ATT_email');
         $sql = "ATTM_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 				ATT_ID bigint(20) unsigned NOT NULL,
 				ATT_fname varchar(45) NOT NULL,
-				ATT_lname varchar(45) NOT	NULL,
-				ATT_address varchar(255) DEFAULT	NULL,
-				ATT_address2 varchar(255) DEFAULT	NULL,
-				ATT_city varchar(45) DEFAULT	NULL,
-				STA_ID int(10) DEFAULT	NULL,
+				ATT_lname varchar(45) NOT NULL,
+				ATT_address varchar(255) DEFAULT NULL,
+				ATT_address2 varchar(255) DEFAULT NULL,
+				ATT_city varchar(45) DEFAULT NULL,
+				STA_ID int(10) DEFAULT NULL,
 				CNT_ISO varchar(45) DEFAULT	NULL,
 				ATT_zip varchar(12) DEFAULT	NULL,
 				ATT_email varchar(255) NOT NULL,
 				ATT_phone varchar(45) DEFAULT NULL,
 				PRIMARY KEY  (ATTM_ID),
 				KEY ATT_ID (ATT_ID),
-				KEY ATT_email (ATT_email),
+				KEY ATT_email (ATT_email(191)),
 				KEY ATT_lname (ATT_lname),
 				KEY ATT_fname (ATT_fname)";
-        $this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB ');
+        $this->_table_is_changed_in_this_version($table_name, $sql, 'ENGINE=InnoDB ');
         $table_name = 'esp_checkin';
         $sql = "CHK_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 				REG_ID int(10) unsigned NOT NULL,
@@ -277,6 +278,9 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
 				KEY LOG_type (LOG_type)";
         $this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB');
         $table_name = 'esp_message';
+        $this->_get_table_manager()->dropIndexIfSizeNot($table_name, 'MSG_to');
+        $this->_get_table_manager()->dropIndexIfSizeNot($table_name, 'MSG_from');
+        $this->_get_table_manager()->dropIndexIfSizeNot($table_name, 'MSG_subject');
         $sql = "MSG_ID bigint(20) unsigned NOT NULL AUTO_INCREMENT,
 				GRP_ID int(10) unsigned NULL,
 				MSG_token varchar(255) NULL,
@@ -302,9 +306,9 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
 				KEY MSG_context (MSG_context),
 				KEY MSG_recipient_ID (MSG_recipient_ID),
 				KEY MSG_recipient_type (MSG_recipient_type),
-				KEY MSG_to (MSG_to),
-				KEY MSG_from (MSG_from),
-				KEY MSG_subject (MSG_subject),
+				KEY MSG_to (MSG_to(191)),
+				KEY MSG_from (MSG_from(191)),
+				KEY MSG_subject (MSG_subject(191)),
 				KEY MSG_priority (MSG_priority),
 				KEY STS_ID (STS_ID),
 				KEY MSG_created (MSG_created),
@@ -598,6 +602,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
         $script_4_8_defaults->verify_new_countries();
         $script_4_8_defaults->verify_new_currencies();
         $this->verify_db_collations();
+        $this->verify_db_collations_again();
         return true;
     }
 
@@ -665,18 +670,50 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
             'esp_promotion_object',
         );
         foreach ($addon_tables as $table_name) {
-            $complete_table_name = $this->_table_analysis->ensureTableNameHasPrefix($table_name);
-            if($this->_table_analysis->tableExists( $complete_table_name )){
-                $tables_to_check[] = $complete_table_name;
-            }
+                $tables_to_check[] = $table_name;
         }
-        $tables_to_check = array_unique($tables_to_check);
+        $this->_verify_db_collations_for_tables(array_unique($tables_to_check));
+        //ok and now let's remember this was done (without needing to check the db schemas all over again)
+        add_option('ee_verified_db_collations', true, null, 'no');
+        //seeing how this ran with the fix from 10435, no need to check again
+        add_option('ee_verified_db_collations_again',true,null,'no');
+    }
+
+
+
+    /**
+     * Verifies DB collations because a bug was discovered on https://events.codebasehq.com/projects/event-espresso/tickets/10435
+     * which meant some DB collations might not have been updated
+     * @return void
+     */
+    public function verify_db_collations_again(){
+        if (get_option('ee_verified_db_collations_again', false)) {
+            return;
+        }
+        $tables_to_check = array(
+            'esp_attendee_meta',
+            'esp_message'
+        );
+        $this->_verify_db_collations_for_tables(array_unique($tables_to_check));
+        add_option('ee_verified_db_collations_again',true,null,'no');
+    }
+
+
+
+    /**
+     * Runs maybe_convert_table_to_utf8mb4 on the specified tables
+     * @param $tables_to_check
+     * @return boolean true if logic ran, false if it didn't
+     */
+    protected function _verify_db_collations_for_tables($tables_to_check)
+    {
         foreach ($tables_to_check as $table_name) {
-            if ( ! apply_filters('FHEE__EE_DMS_Core_4_9_0__verify_db_collations__check_overridden', false, $table_name ) ) {
+            $table_name = $this->_table_analysis->ensureTableNameHasPrefix($table_name);
+            if ( ! apply_filters('FHEE__EE_DMS_Core_4_9_0__verify_db_collations__check_overridden', false, $table_name )
+                && $this->_get_table_analysis()->tableExists($table_name)
+            ) {
                 maybe_convert_table_to_utf8mb4($table_name);
             }
         }
-        //ok and now let's remember this was done (without needing to check the db schemas all over again)
-        add_option('ee_verified_db_collations', true, null, 'no');
     }
 }

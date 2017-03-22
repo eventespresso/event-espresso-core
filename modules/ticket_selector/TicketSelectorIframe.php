@@ -55,6 +55,9 @@ class TicketSelectorIframe extends Iframe
                 $this
             )
         );
+        if ( ! apply_filters('FHEE__EED_Ticket_Selector__ticket_selector_iframe__load_theme_css', false, $this)) {
+            $this->addStylesheets( array('site_theme' => '' ) );
+        }
         $this->addScripts(
             apply_filters(
                 'FHEE__EED_Ticket_Selector__ticket_selector_iframe__js',
