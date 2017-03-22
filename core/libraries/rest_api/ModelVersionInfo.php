@@ -246,7 +246,7 @@ class ModelVersionInfo
      * @param string $model_name eg 'Event'
      * @return boolean
      */
-    public function isModel_NameInThisVersion($model_name)
+    public function isModelNameInThisVersion($model_name)
     {
         $model_names = $this->modelsForRequestedVersion();
         if (isset($model_names[$model_name])) {
@@ -268,7 +268,7 @@ class ModelVersionInfo
      */
     public function loadModel($model_name)
     {
-        if ($this->isModel_NameInThisVersion($model_name)) {
+        if ($this->isModelNameInThisVersion($model_name)) {
             return EE_Registry::instance()->load_model($model_name);
         } else {
             throw new \EE_Error(
@@ -471,7 +471,7 @@ class ModelVersionInfo
     {
         $relations = array();
         foreach ($model->relation_settings() as $relation_name => $relation_obj) {
-            if ($this->isModel_NameInThisVersion($relation_name)) {
+            if ($this->isModelNameInThisVersion($relation_name)) {
                 $relations[$relation_name] = $relation_obj;
             }
         }

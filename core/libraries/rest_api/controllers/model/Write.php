@@ -57,7 +57,7 @@ class Write extends Base
         try {
             $controller->setRequestedVersion($version);
             $model_name_singular = EEH_Inflector::singularize_and_upper($model_name);
-            if (! $controller->getModelVersionInfo()->isModel_NameInThisVersion($model_name_singular)) {
+            if (! $controller->getModelVersionInfo()->isModelNameInThisVersion($model_name_singular)) {
                 return $controller->sendResponse(
                     new \WP_Error(
                         'endpoint_parsing_error',
@@ -96,7 +96,7 @@ class Write extends Base
         try {
             $controller->setRequestedVersion($version);
             $model_name_singular = EEH_Inflector::singularize_and_upper($model_name);
-            if (! $controller->getModelVersionInfo()->isModel_NameInThisVersion($model_name_singular)) {
+            if (! $controller->getModelVersionInfo()->isModelNameInThisVersion($model_name_singular)) {
                 return $controller->sendResponse(
                     new \WP_Error(
                         'endpoint_parsing_error',
@@ -135,7 +135,7 @@ class Write extends Base
         try {
             $controller->setRequestedVersion($version);
             $model_name_singular = EEH_Inflector::singularize_and_upper($model_name);
-            if (! $controller->getModelVersionInfo()->isModel_NameInThisVersion($model_name_singular)) {
+            if (! $controller->getModelVersionInfo()->isModelNameInThisVersion($model_name_singular)) {
                 return $controller->sendResponse(
                     new \WP_Error(
                         'endpoint_parsing_error',

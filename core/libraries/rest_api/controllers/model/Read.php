@@ -70,7 +70,7 @@ class Read extends Base
         try {
             $controller->setRequestedVersion($version);
             $model_name_singular = EEH_Inflector::singularize_and_upper($model_name);
-            if (! $controller->getModelVersionInfo()->isModel_NameInThisVersion($model_name_singular)) {
+            if (! $controller->getModelVersionInfo()->isModelNameInThisVersion($model_name_singular)) {
                 return $controller->sendResponse(
                     new WP_Error(
                         'endpoint_parsing_error',
@@ -107,7 +107,7 @@ class Read extends Base
         $controller = new Read();
         try {
             $controller->setRequestedVersion($version);
-            if (! $controller->getModelVersionInfo()->isModel_NameInThisVersion($model_name)) {
+            if (! $controller->getModelVersionInfo()->isModelNameInThisVersion($model_name)) {
                 return array();
             }
             //get the model for this version
@@ -247,7 +247,7 @@ class Read extends Base
         try {
             $controller->setRequestedVersion($version);
             $model_name_singular = EEH_Inflector::singularize_and_upper($model_name);
-            if (! $controller->getModelVersionInfo()->isModel_NameInThisVersion($model_name_singular)) {
+            if (! $controller->getModelVersionInfo()->isModelNameInThisVersion($model_name_singular)) {
                 return $controller->sendResponse(
                     new WP_Error(
                         'endpoint_parsing_error',
@@ -293,7 +293,7 @@ class Read extends Base
         try {
             $controller->setRequestedVersion($version);
             $main_model_name_singular = EEH_Inflector::singularize_and_upper($model_name);
-            if (! $controller->getModelVersionInfo()->isModel_NameInThisVersion($main_model_name_singular)) {
+            if (! $controller->getModelVersionInfo()->isModelNameInThisVersion($main_model_name_singular)) {
                 return $controller->sendResponse(
                     new WP_Error(
                         'endpoint_parsing_error',
@@ -308,11 +308,11 @@ class Read extends Base
             $main_model = $controller->getModelVersionInfo()->loadModel($main_model_name_singular);
             //assume the related model name is plural and try to find the model's name
             $related_model_name_singular = EEH_Inflector::singularize_and_upper($related_model_name);
-            if (! $controller->getModelVersionInfo()->isModel_NameInThisVersion($related_model_name_singular)) {
+            if (! $controller->getModelVersionInfo()->isModelNameInThisVersion($related_model_name_singular)) {
                 //so the word didn't singularize well. Maybe that's just because it's a singular word?
                 $related_model_name_singular = EEH_Inflector::humanize($related_model_name);
             }
-            if (! $controller->getModelVersionInfo()->isModel_NameInThisVersion($related_model_name_singular)) {
+            if (! $controller->getModelVersionInfo()->isModelNameInThisVersion($related_model_name_singular)) {
                 return $controller->sendResponse(
                     new WP_Error(
                         'endpoint_parsing_error',
@@ -1238,7 +1238,7 @@ class Read extends Base
                 $field_to_include = trim($field_to_include);
                 if (
                     strpos($field_to_include, '.') === false
-                    && ! $this->getModelVersionInfo()->isModel_NameInThisVersion($field_to_include)
+                    && ! $this->getModelVersionInfo()->isModelNameInThisVersion($field_to_include)
                 ) {
                     $extracted_fields_to_include[] = $field_to_include;
                 }
