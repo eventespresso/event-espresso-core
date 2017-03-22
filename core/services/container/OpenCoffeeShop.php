@@ -203,16 +203,13 @@ class OpenCoffeeShop {
      * @throws InvalidIdentifierException
      * @throws exceptions\ServiceExistsException
      * @throws OutOfBoundsException
+     * @throws exceptions\InstantiationException
      */
     public function firstBrew()
     {
         $this->CoffeeShop->brew('EE_Request', array($_GET, $_POST, $_COOKIE));
         $this->CoffeeShop->brew('EE_Response');
         $this->CoffeeShop->brew('EE_Bootstrap');
-        /** @var CoffeeMill $CoffeeMill a factory class that for now doubles as service locator (BOO) */
-        $CoffeeMill = $this->CoffeeShop->brew('EventEspresso\core\services\container\CoffeeMill');
-        $CoffeeMill::setCoffeeShop($this->CoffeeShop);
-
     }
 
 
