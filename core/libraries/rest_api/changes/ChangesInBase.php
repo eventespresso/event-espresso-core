@@ -102,7 +102,7 @@ abstract class ChangesInBase
                     )
                 );
             }
-            $this->version = $matches[1] . '.' . (int)$matches[2] . '.' . (int)$matches[3];
+            $this->version = (int)$matches[1] . '.' . (int)$matches[2] . '.' . (int)$matches[3];
         }
         return $this->version;
     }
