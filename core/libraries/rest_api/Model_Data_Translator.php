@@ -132,7 +132,8 @@ class Model_Data_Translator
         } elseif ($field_obj instanceof \EE_Datetime_Field) {
             list($offset_sign, $offset_secs) = Model_Data_Translator::parse_timezone_offset(
                 $field_obj->get_timezone_offset(
-                    new \DateTimeZone($timezone_string)
+                    new \DateTimeZone($timezone_string),
+                    $original_value
                 )
             );
             $offset_string =
@@ -231,6 +232,7 @@ class Model_Data_Translator
     ) {
         $query_param_for_models = array();
         foreach ($inputted_query_params_of_this_type as $query_param_key => $query_param_value) {
+            $is_gmt_datetime_field = false;
             $query_param_sans_stars = Model_Data_Translator::remove_stars_and_anything_after_from_condition_query_param_key($query_param_key);
             $field = Model_Data_Translator::deduce_field_from_query_param(
                 $query_param_sans_stars,
@@ -247,9 +249,13 @@ class Model_Data_Translator
                     $model
                 );
                 $timezone = 'UTC';
-            } else {
+                $is_gmt_datetime_field = true;
+            } elseif( $field instanceof \EE_Datetime_Field ) {
                 //so it's not a GMT field. Set the timezone on the model to the default
                 $timezone = \EEH_DTT_Helper::get_valid_timezone_string();
+            }else{
+                //just keep using what's already set for the timezone
+                $timezone = $model->get_timezone();
             }
             if ($field instanceof \EE_Model_Field_Base) {
                 //did they specify an operator?
@@ -264,6 +270,11 @@ class Model_Data_Translator
                 } else {
                     $translated_value = Model_Data_Translator::prepare_field_value_from_json($field, $query_param_value,
                         $requested_version, $timezone);
+                }
+                if(isset( $query_param_for_models[$query_param_key]) && $is_gmt_datetime_field){
+                    //they have already provided a non-gmt field, ignore the gmt one. That's what WP core
+                    //currently does (they might change it though). See https://core.trac.wordpress.org/ticket/39954
+                    continue;
                 }
                 $query_param_for_models[$query_param_key] = $translated_value;
             } else {

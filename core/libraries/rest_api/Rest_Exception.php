@@ -32,12 +32,19 @@ class Rest_Exception extends \EE_Error
 
     public function __construct($string_code, $message, $wp_error_data = array(), $previous = null)
     {
+        if (is_array($wp_error_data)
+            && isset($wp_error_data['status'])
+        ) {
+            $http_status_number = $wp_error_data['status'];
+        } else {
+            $http_status_number = 500;
+        }
         parent::__construct(
             $message,
-            500,
+            $http_status_number,
             $previous);
-        $this->_wp_error_data = $wp_error_data;
-        $this->_wp_error_code = $string_code;
+        $this->wp_error_data = $wp_error_data;
+        $this->wp_error_code = $string_code;
     }
 
 

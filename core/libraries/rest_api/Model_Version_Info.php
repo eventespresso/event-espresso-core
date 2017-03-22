@@ -95,7 +95,7 @@ class Model_Version_Info
      */
     public function __construct($requested_version)
     {
-        $this->_requested_version = $requested_version;
+        $this->requested_version = (string)$requested_version;
         $this->_model_changes = array(
             '4.8.29' => array(
                 //first version where the REST API is in EE core, so no need
