@@ -4,7 +4,7 @@
  * The checkin and checkout endpoints were added in 4.8.33, 
  * so remove them from any requests for 4.8.29 etc.
  */
-class ChangesIn4_8_33 extends ChangesInBase
+class ChangesIn40833 extends ChangesInBase
 {
 
     /**

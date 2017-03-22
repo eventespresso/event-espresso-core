@@ -87,7 +87,7 @@ abstract class ChangesInBase
     {
         if ($this->version === null) {
             $matches = array();
-            $regex = '~ChangesIn(.*)_(.*)_(.*)$~';
+            $regex = '~ChangesIn(\d)(\d\d)(\d\d)$~';
             $success = preg_match(
                 $regex,
                 get_class($this),
@@ -102,7 +102,7 @@ abstract class ChangesInBase
                     )
                 );
             }
-            $this->version = $matches[1] . '.' . $matches[2] . '.' . $matches[3];
+            $this->version = $matches[1] . '.' . (int)$matches[2] . '.' . (int)$matches[3];
         }
         return $this->version;
     }

@@ -13,7 +13,7 @@ use EEM_Base;
 
 
 
-class ChangesIn4_8_36 extends ChangesInBase
+class ChangesIn40836 extends ChangesInBase
 {
 
     /**

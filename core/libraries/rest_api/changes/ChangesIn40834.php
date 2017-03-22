@@ -9,7 +9,7 @@ use EventEspresso\core\libraries\rest_api\controllers\Base;
 
 
 
-class ChangesIn4_8_34 extends ChangesInBase
+class ChangesIn40834 extends ChangesInBase
 {
 
     /**
