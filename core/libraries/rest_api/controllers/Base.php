@@ -380,9 +380,12 @@ class Base
     public function __call($name, $arguments)
     {
         $new_method_name = EEH_Inflector::camelize_all_but_first($name);
-        //you tried calling an old method which doesn't correspond to an existing new method,
-        //let's just have the fatal error. There's nothing we can do to fix their problem
-        return call_user_func_array(array($this, $new_method_name), $arguments);
+        if( is_callable(array($this, $new_method_name))) {
+            //you tried calling an old method which doesn't correspond to an existing new method,
+            //let's just have the fatal error. There's nothing we can do to fix their problem
+            return call_user_func_array(array($this, $new_method_name), $arguments);
+        }
+        //purposefully not returning anything, so normal PHP method-not-found logic will kick in
     }
 
 
