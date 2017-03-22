@@ -218,7 +218,7 @@ class CoffeeShop implements CoffeePotInterface
      * @param mixed  $brewed
      * @param string $identifier
      * @param string $type
-     * @return bool|mixed
+     * @return bool
      * @throws InvalidClassException
      * @throws InvalidDataTypeException
      * @throws InvalidIdentifierException
@@ -242,7 +242,7 @@ class CoffeeShop implements CoffeePotInterface
             }
             return true;
         }
-        return $brewed;
+        return false;
     }
 
 
