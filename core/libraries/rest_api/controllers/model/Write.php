@@ -201,7 +201,7 @@ class Write extends Base
                 sprintf(__('Could not insert new %1$s', 'event_espresso'), $model->get_this_model_name())
             );
         }
-        return $this->returnModelObjSsJsonResponse($model_obj);
+        return $this->returnModelObjAsJsonResponse($model_obj);
     }
 
 
@@ -243,7 +243,7 @@ class Write extends Base
         );
         $model_obj = $model->get_one_by_ID($obj_id);
         $model_obj->save($model_data);
-        return $this->returnModelObjSsJsonResponse($model_obj);
+        return $this->returnModelObjAsJsonResponse($model_obj);
     }
 
 
@@ -296,7 +296,7 @@ class Write extends Base
      * @param \EE_Base_Class $model_obj
      * @return array ready for a response
      */
-    protected function returnModelObjSsJsonResponse(EE_Base_Class $model_obj)
+    protected function returnModelObjAsJsonResponse(EE_Base_Class $model_obj)
     {
         $model = $model_obj->get_model();
         //create an array exactly like the wpdb results row, so we can pass it to controllers/model/Read::create_entity_from_wpdb_result()
