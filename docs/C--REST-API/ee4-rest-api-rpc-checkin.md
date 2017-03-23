@@ -97,7 +97,18 @@ On failure, returns an error response like the following:
 }
 ```
 
-Note that additional data about why the checkin failed is available in the `additional_errors` section (eg the registration's status wasn't approved, or ticket uses would be exceeded, or the registration's ticket doesn't provide access to the datetime). Note that the `additional_errors`'s `code`s might change slightly down the road because they're based on the line of the code where the error was encountered, and may change in future versions of the Event Espresso. For that reason, it's probably best to just show the additional errors' messages directly to the user.
+Note that additional data about why the checkin failed is available in the `additional_errors` section. 
+
+There are two `code` values possible:
+
+* `rest_toggle_checkin_failed` when the registration isn't approved and we are not forcing check-in. Forcing check-in 
+should resolve this.
+* `rest_toggle_checkin_failed_not_forceable` for any other errors that may happen (like ticket uses would be 
+exceeded, or the registration's ticket doesn't provide access to the datetime, or a database error occurred) , for 
+which forcing check-in won't help
+
+Note that the `additional_errors`'s `code`s might change slightly down the road because they're based on the line of 
+the code where the error was encountered, and may change in future versions of the Event Espresso. For that reason, it's probably best to just show the additional errors' messages directly to the user.
 
 ## Example Usage
 
