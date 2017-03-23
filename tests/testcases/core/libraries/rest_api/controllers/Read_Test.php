@@ -1041,23 +1041,6 @@ class Read_Test extends \EE_REST_TestCase
         //and DTT_EVT_start_gmt should have been ignored
         $this->assertEquals('2017-01-03T00:00:00', $first_result['DTT_EVT_start']);
     }
-
-
-
-    /**
-     * Tests that when we call a method with the legacy naming conventions, it dynamically calls the new method instead
-     * @group 9222
-     * @group 10605
-     */
-    public function test_call(){
-        $read = new Read();
-        $read->setRequestedVersion('v4.8.36');
-        $this->assertEquals(
-            $read->getVersionedLinkTo('foobar'),
-            $read->get_versioned_link_to('foobar')
-        );
-    }
-
 }
 // End of file Read_Test.php
 // Location: testcases/core/libraries/rest_api/controllers/Read_Test.php
