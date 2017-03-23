@@ -1,12 +1,12 @@
 /**
  * @namespace Vue
  */
-var Vue = require('vue');
+var Vue         = require('vue');
 /**
  * @namespace Vuex
  * @property {object}  Store
  */
-var Vuex = require('vuex');
+var Vuex        = require('vuex');
 /**
  * @namespace VueResource
  */
@@ -14,11 +14,11 @@ var VueResource = require('vue-resource');
 /**
  * @namespace inflection
  */
-var inflection = require('inflection');
+var inflection  = require('inflection');
 /**
  * @namespace URI
  */
-var URI = require('urijs');
+var URI         = require('urijs');
 /**
  * @namespace _
  */
@@ -26,9 +26,7 @@ var URI = require('urijs');
 
 Vue.use(VueResource);
 
-
 //custom vuex store methods.
-
 
 /**
  * Replaces the entity in a collection.
@@ -39,31 +37,30 @@ Vue.use(VueResource);
  * @param {object} entity
  * @returns {boolean}
  */
-Vuex.Store.prototype.replaceEntityInCollection = function(collection, entity) {
+Vuex.Store.prototype.replaceEntityInCollection = function (collection, entity) {
     //if there isn't a collection matching in the store then get out
-    if ( typeof(this.state[collection]) === 'undefined' ) {
+    if (typeof(this.state[collection]) === 'undefined') {
         return false;
     }
 
-    var primaryKey = this.state[collection].primaryKey,
-        searchObj = {},
+    var primaryKey     = this.state[collection].primaryKey,
+        searchObj      = {},
         entityLocation = -1;
 
     searchObj[primaryKey] = entity[primaryKey];
-    entityLocation = _.findIndex(this.state[collection].entities, searchObj );
+    entityLocation        = _.findIndex(this.state[collection].entities, searchObj);
 
     //if there's no match, then there's no replacement so lets just push
-    if ( entityLocation === -1 ) {
+    if (entityLocation === -1) {
         this.state[collection].entities.push(entity);
     } else {
         var store = this;
         //replace the values with the incoming entity
-        _.each(entity, function(value,prop){
+        _.each(entity, function (value, prop) {
             store.state[collection].entities[entityLocation][prop] = value;
         });
     }
 };
-
 
 /**
  * This is used to commit a change record to the `changeMap` property in the store state for a collection.
@@ -76,7 +73,7 @@ Vuex.Store.prototype.replaceEntityInCollection = function(collection, entity) {
  *                              'create' - means the entity is created.
  *                              'update' -  means the entity had a property(s) changed on it.
  */
-Vuex.Store.prototype.commitChangeRecord = function(collection, entity, changeType) {
+Vuex.Store.prototype.commitChangeRecord = function (collection, entity, changeType) {
     //validate required properties are present.
     if (_.isUndefined(collection)
         || _.isUndefined(entity)
@@ -102,24 +99,24 @@ Vuex.Store.prototype.commitChangeRecord = function(collection, entity, changeTyp
     if (!_.has(entity, eejs.api.main.getPrimaryKeyForCollection(collection))) {
         throw new eejs.exception(
             'The provided entity object does not have a property matching the primaryKey for the given collection (' +
-                collection + '). Are you sure the correct entity was passed in?'
+            collection + '). Are you sure the correct entity was passed in?'
         );
     }
 
     var entityId = entity[eejs.api.main.getPrimaryKeyForCollection(collection)];
 
     //k looks like we're able to get this changeType added.
-    switch(changeType) {
+    switch (changeType) {
         case 'delete' :
             //make sure if this is in either the create or update map its removed from there (and also remove any
             // change records for relations).
             this.removeChangeRecord(collection, entityId, 'create');
             this.removeChangeRecord(collection, entityId, 'update');
-            this.removeAllRelatedChangeRecords(collection,entityId);
+            this.removeAllRelatedChangeRecords(collection, entityId);
             if (_.indexOf(this.state[collection].changeMap.delete, entityId) === -1) {
                 //if this is a NEW object then it doesn't need added here because it hasn't been persisted yet so no
                 //deletes necessary!
-                if (! this.getters.isNewEntity(entityId)) {
+                if (!this.getters.isNewEntity(entityId)) {
                     this.state[collection].changeMap.delete.push(entityId);
                 }
             }
@@ -145,7 +142,7 @@ Vuex.Store.prototype.commitChangeRecord = function(collection, entity, changeTyp
             //get persisted on the create action.
             if (_.indexOf(this.state[collection].changeMap.create, entityId) === -1) {
                 //if this is in the delete changeMap, then how is an update supposed to persist?
-                if(_.indexOf(this.state[collection].changeMap.delete, entityId) > -1) {
+                if (_.indexOf(this.state[collection].changeMap.delete, entityId) > -1) {
                     throw new eejs.exception(
                         'Adding the entity with the id of ' + entityId + ' to this ' + collection + ' changeMap for ' +
                         'update was aborted because its already part of the delete changeMap.  If you want to update ' +
@@ -174,7 +171,6 @@ Vuex.Store.prototype.commitChangeRecord = function(collection, entity, changeTyp
     }
 };
 
-
 /**
  * This is used to remove a changeRecord from the changeMap in the given collection.
  * This should only be called as a part of a mutation.
@@ -184,7 +180,7 @@ Vuex.Store.prototype.commitChangeRecord = function(collection, entity, changeTyp
  * @param {string} changeType  The type of change the record is being removed from. Accepts the following:
  *                              'delete', 'create', 'update'
  */
-Vuex.Store.prototype.removeChangeRecord = function(collection, entityId, changeType) {
+Vuex.Store.prototype.removeChangeRecord = function (collection, entityId, changeType) {
     //validate required properties are present.
     if (_.isUndefined(collection)
         || _.isUndefined(entityId)
@@ -198,14 +194,14 @@ Vuex.Store.prototype.removeChangeRecord = function(collection, entityId, changeT
 
     //check that the collection actually exists (meaning it was registered) in the store.  If it doesn't then the
     //changeMap cannot be written to.
-    if(!_.has(this.state, collection)) {
+    if (!_.has(this.state, collection)) {
         throw new eejs.exception(
             'Unable to remove from the changeRecord for the ' + collection + ' collection because there is no record ' +
             'for it in the store state.  Are  you sure it was registered?'
         );
     }
 
-    switch(changeType) {
+    switch (changeType) {
         case 'delete' :
         case 'create' :
         case 'update' :
@@ -222,7 +218,6 @@ Vuex.Store.prototype.removeChangeRecord = function(collection, entityId, changeT
     }
 };
 
-
 /**
  * This is used to commit a change record to the `changeMap.relations` property in the store state for a collection.
  * This should only be called by a Vuex mutation.
@@ -237,14 +232,12 @@ Vuex.Store.prototype.removeChangeRecord = function(collection, entityId, changeT
  * @param {boolean}  recursive     Defaults to true.  This is used to indicate whether the change should be recursively
  *                              applied to the relations changeMap state as well.
  */
-Vuex.Store.prototype.commitRelatedChangeRecord = function(
-    collection,
-    relation,
-    entityId,
-    relatedEntityId,
-    changeType,
-    recursive
-) {
+Vuex.Store.prototype.commitRelatedChangeRecord = function (collection,
+                                                           relation,
+                                                           entityId,
+                                                           relatedEntityId,
+                                                           changeType,
+                                                           recursive) {
     //validate required properties are present.
     if (_.isUndefined(collection)
         || _.isUndefined(relation)
@@ -279,10 +272,10 @@ Vuex.Store.prototype.commitRelatedChangeRecord = function(
 
     //make sure that the relation object is defined.
     this.state[collection].changeMap.relations[relation] = this.state[collection].changeMap.relations[relation] ||
-        { added : {}, removed : {} };
+        {added: {}, removed: {}};
 
     //k now we can do whatever the changeType being recorded is.
-    switch(changeType) {
+    switch (changeType) {
         case 'added' :
             //make sure we have a definition for this entityId
             this.state[collection].changeMap.relations[relation].added[entityId] =
@@ -314,7 +307,6 @@ Vuex.Store.prototype.commitRelatedChangeRecord = function(
     }
 };
 
-
 /**
  * Used to remove a change record from the `changeMap.relations` property for the given collection and relation entities.
  * This only removes for the specified changeType.  If you want to remove instances of this relation everywhere, then
@@ -331,14 +323,12 @@ Vuex.Store.prototype.commitRelatedChangeRecord = function(
  * @param {boolean}  recursive     Defaults to true.  This is used to indicate whether the change should be recursively
  *                              applied to the relations changeMap state as well.
  */
-Vuex.Store.prototype.removeRelatedChangeRecord = function(
-    collection,
-    relation,
-    entityId,
-    relatedEntityId,
-    changeType,
-    recursive
-) {
+Vuex.Store.prototype.removeRelatedChangeRecord = function (collection,
+                                                           relation,
+                                                           entityId,
+                                                           relatedEntityId,
+                                                           changeType,
+                                                           recursive) {
     //validate required properties are present.
     if (_.isUndefined(collection)
         || _.isUndefined(relation)
@@ -354,7 +344,7 @@ Vuex.Store.prototype.removeRelatedChangeRecord = function(
 
     //check that the collection actually exists (meaning it was registered) in the store.  If it doesn't then the
     //changeMap cannot be written to.
-    if(!_.has(this.state, collection)) {
+    if (!_.has(this.state, collection)) {
         throw new eejs.exception(
             'Unable to remove from the changeRecord for the ' + collection + ' collection because there is no record ' +
             'for it in the store state.  Are  you sure it was registered?'
@@ -362,14 +352,14 @@ Vuex.Store.prototype.removeRelatedChangeRecord = function(
     }
 
     //do same check for relation
-    if(!_.has(this.state, relation)) {
+    if (!_.has(this.state, relation)) {
         throw new eejs.exception(
             'Unable to remove from the changeRecord for the ' + relation + ' relation because there is no record ' +
             'for it in the store state.  Are  you sure it was registered?'
         );
     }
 
-    switch(changeType) {
+    switch (changeType) {
         case 'added' :
         case 'removed' :
             this.state[collection].changeMap.relations[relation][changeMap][entityId] = _.without(
@@ -388,7 +378,6 @@ Vuex.Store.prototype.removeRelatedChangeRecord = function(
     }
 };
 
-
 /**
  * This will remove all related changeRecords for the given collection and entityId in the changeMap.relations property
  * for the collection.  Note, if recursive is true, this will in turn look through all the changeMaps stored with
@@ -400,11 +389,9 @@ Vuex.Store.prototype.removeRelatedChangeRecord = function(
  * @param {boolean} recursive   Defaults to true. This is used to indicate whether the change should be recursively
  *                              applied to all other collections this collection is a relation for.
  */
-Vuex.Store.prototype.removeAllRelatedChangeRecords = function(
-    collection,
-    entityId,
-    recursive
-) {
+Vuex.Store.prototype.removeAllRelatedChangeRecords = function (collection,
+                                                               entityId,
+                                                               recursive) {
     //validate required properties are present.
     if (_.isUndefined(collection)
         || _.isUndefined(entityId)
@@ -417,7 +404,7 @@ Vuex.Store.prototype.removeAllRelatedChangeRecords = function(
 
     //check that the collection actually exists (meaning it was registered) in the store.  If it doesn't then the
     //changeMap cannot be written to.
-    if(!_.has(this.state, collection)) {
+    if (!_.has(this.state, collection)) {
         throw new eejs.exception(
             'Unable to remove from the changeRecord for the ' + collection + ' collection because there is no record ' +
             'for it in the store state.  Are  you sure it was registered?'
@@ -425,30 +412,29 @@ Vuex.Store.prototype.removeAllRelatedChangeRecords = function(
     }
 
     //we'll loop through each relation record on the relations property in the changeMap for `added` and `removed`.
-    var state = this.state,
+    var state       = this.state,
         relationIds = [];
-    _.each(state[collection].changeMap.relations, function(relationChangeMapObject, relation, relationsChangeMap) {
+    _.each(state[collection].changeMap.relations, function (relationChangeMapObject, relation, relationsChangeMap) {
         //if the entity ID exists in the relationChangeMapObject.added or relationChangeMapObject.removed, then clear it
         //and go into the relation (if recursive = true) and remove in the relations as well.
-        _.each(['added','removed'], function(changeType) {
+        _.each(['added', 'removed'], function (changeType) {
             if (_.has(relationChangeMapObject[changeType], entityId)) {
-                relationIds = relationChangeMapObject[changeType][entityId];
+                relationIds                              = relationChangeMapObject[changeType][entityId];
                 relationsChangeMap[relation][changeType] = _.omit(relationChangeMapObject[changeType], entityId);
                 if (recursive) {
-                    _.each(relationIds, function(relationId) {
-                       if (_.has(state[relation].changeMap.relations[collection][changeType], relationId)) {
-                           state[relation].changeMap.relations[collection][changeType][relationId] = _.without(
-                               state[relation].changeMap.relations[collection][changeType][relationId],
-                               entityId
-                           );
-                       }
+                    _.each(relationIds, function (relationId) {
+                        if (_.has(state[relation].changeMap.relations[collection][changeType], relationId)) {
+                            state[relation].changeMap.relations[collection][changeType][relationId] = _.without(
+                                state[relation].changeMap.relations[collection][changeType][relationId],
+                                entityId
+                            );
+                        }
                     });
                 }
             }
         });
     });
 };
-
 
 /**
  * Used to connect related items by ID in the store for all affected relations.
@@ -468,14 +454,12 @@ Vuex.Store.prototype.removeAllRelatedChangeRecords = function(
  *                           defaults to false.
  * @returns {boolean}
  */
-Vuex.Store.prototype.commitRelationsForEntity = function(
-    collection,
-    collectionEntityId,
-    relation,
-    relationEntityId,
-    doStoreCheck,
-    fromDb
-) {
+Vuex.Store.prototype.commitRelationsForEntity = function (collection,
+                                                          collectionEntityId,
+                                                          relation,
+                                                          relationEntityId,
+                                                          doStoreCheck,
+                                                          fromDb) {
     //make sure all required properties are set
     if (
         _.isUndefined(collection)
@@ -491,10 +475,10 @@ Vuex.Store.prototype.commitRelationsForEntity = function(
     }
 
     var state = this.state;
-    var self = this;
+    var self  = this;
 
     doStoreCheck = doStoreCheck || true;
-    fromDb = fromDb || false;
+    fromDb       = fromDb || false;
 
     //make sure relationEntityId is an array
     relationEntityId = _.isArray(relationEntityId)
@@ -502,23 +486,23 @@ Vuex.Store.prototype.commitRelationsForEntity = function(
         : [relationEntityId];
 
     //we can only add the relation to a collection that exists in the store!
-    if ( _.has(state, collection) ) {
-        state[collection]['relations'][relation] = _.has(state[collection]['relations'], relation)
+    if (_.has(state, collection)) {
+        state[collection]['relations'][relation]                     = _.has(state[collection]['relations'], relation)
             ? state[collection]['relations'][relation]
             : {};
         state[collection]['relations'][relation][collectionEntityId] = _.has(
-                state[collection]['relations'][relation],
-                collectionEntityId
-            )
+            state[collection]['relations'][relation],
+            collectionEntityId
+        )
             ? state[collection]['relations'][relation][collectionEntityId]
             : [];
         //push our relation on to the store
-        _.each(relationEntityId, function(id){
-            if ( !_.contains(state[collection]['relations'][relation][collectionEntityId]), id) {
+        _.each(relationEntityId, function (id) {
+            if (!_.contains(state[collection]['relations'][relation][collectionEntityId]), id) {
                 state[collection]['relations'][relation][collectionEntityId].push(id);
                 //make sure this is added to the changeMap if not from db OR if either the relation entity or the
                 //collection entity is a new object.
-                if (! fromDb
+                if (!fromDb
                     || self.getters.isNewEntity(collectionEntityId)
                     || self.getters.isNewEntity(relationEntityId)
                 ) {
@@ -539,7 +523,6 @@ Vuex.Store.prototype.commitRelationsForEntity = function(
     }
 };
 
-
 /**
  * Commits an entity to its collection.
  *
@@ -552,38 +535,38 @@ Vuex.Store.prototype.commitRelationsForEntity = function(
  * @param {boolean} fromDb     (optional). Indicates (if true) that the entity has been retrieved from the db holding
  *                              it. Defaults to false.
  */
-Vuex.Store.prototype.commitEntityToCollection = function(collection, entity, refresh, fromDb){
+Vuex.Store.prototype.commitEntityToCollection = function (collection, entity, refresh, fromDb) {
     //make sure required props are here
-    if(_.isUndefined(collection) || _.isUndefined(entity)) {
+    if (_.isUndefined(collection) || _.isUndefined(entity)) {
         throw new eejs.exception('Either the collection or entity is missing.');
     }
 
-    var state = this.state,
-        self = this,
-        entityToSave = {},
-        relationIds = [],
-        relationsToReplicate = {},
-        linksToCommit = {},
+    var state                    = this.state,
+        self                     = this,
+        entityToSave             = {},
+        relationIds              = [],
+        relationsToReplicate     = {},
+        linksToCommit            = {},
         calculatedFieldsToCommit = {};
 
     refresh = refresh || false;
-    fromDb = fromDb || false;
+    fromDb  = fromDb || false;
 
     //does this collection exist?
-    if ( _.has(state,collection) ) {
+    if (_.has(state, collection)) {
         //is entity an object? Eventually we can add validation
         // to make sure only a valid entity is getting added.
-        if ( _.isObject(entity) && ! _.isNull(entity) ) {
+        if (_.isObject(entity) && !_.isNull(entity)) {
             //first detect if there are relations listed with the entity, if there are we
             //actually remove those from the entity and add them to the relation collection
             //and then also add a relation record for this collection and the other collection
-            _.each(entity, function(fieldValue, fieldKey, entity) {
+            _.each(entity, function (fieldValue, fieldKey, entity) {
                 if (eejs.utils.isRelationOf(fieldKey, collection)) {
                     //okay this field is for a relation, so let's go ahead and take care of
                     //committing it's entities, and then doing the relation commits.
                     //if the fieldValue is not an array let's make it an array.  This is needed
                     //because some relations are singular.
-                    fieldValue = !_.isArray(fieldValue) ? [fieldValue] : fieldValue;
+                    fieldValue                                                      = !_.isArray(fieldValue) ? [fieldValue] : fieldValue;
                     relationsToReplicate[eejs.utils.inflection.pluralize(fieldKey)] = fieldValue;
                     //next extract _links and _calculated fields out of the entity into their specific properties in the
                     //collection state.
@@ -596,7 +579,7 @@ Vuex.Store.prototype.commitEntityToCollection = function(collection, entity, ref
                     }
                     //make sure primary key is kept with the entity
                     entityToSave[fieldKey] = fieldValue;
-                } else if(fieldKey === '_links' || fieldKey === '_calculated_fields') {
+                } else if (fieldKey === '_links' || fieldKey === '_calculated_fields') {
                     //skip because we should have already handled this and we do not want it committed with the entity
                     //record
                     return true;
@@ -609,14 +592,14 @@ Vuex.Store.prototype.commitEntityToCollection = function(collection, entity, ref
         //does this entity already exist?  If it does we do not allow overwrites by default
         //unless refresh is true.
         // the state is the source remember
-        if (! self.getters.hasEntityInCollection(collection,entityToSave) ) {
+        if (!self.getters.hasEntityInCollection(collection, entityToSave)) {
             state[collection].entities.push(entityToSave);
             //if this is a new object or NOT from the db then let's make sure its added to the 'create' map.
-            if (self.getters.isNewEntity(entity[eejs.api.main.getPrimaryKeyForCollection(collection)]) || ! fromDb) {
+            if (self.getters.isNewEntity(entity[eejs.api.main.getPrimaryKeyForCollection(collection)]) || !fromDb) {
                 self.commitChangeRecord(collection, entity, 'create');
             }
         } else if (refresh) {
-            self.replaceEntityInCollection(collection,entityToSave);
+            self.replaceEntityInCollection(collection, entityToSave);
             if (fromDb) {
                 //if this is fromDb, then we need to remove any updates/deletes for this entity in the changeMap.
                 self.removeChangeRecord(
@@ -637,14 +620,14 @@ Vuex.Store.prototype.commitEntityToCollection = function(collection, entity, ref
 
         //handle _links and _calculated_field commits.
         if (!_.isEmpty(linksToCommit)) {
-            _.each(linksToCommit, function(links, entityId) {
-               state[collection]._links[entityId] = links;
+            _.each(linksToCommit, function (links, entityId) {
+                state[collection]._links[entityId] = links;
             });
         }
 
         if (!_.isEmpty(calculatedFieldsToCommit)) {
-            _.each(calculatedFieldsToCommit, function(fields, entityId) {
-               state[collection]._calculated_fields[entityId] = fields;
+            _.each(calculatedFieldsToCommit, function (fields, entityId) {
+                state[collection]._calculated_fields[entityId] = fields;
             });
         }
 
@@ -652,7 +635,7 @@ Vuex.Store.prototype.commitEntityToCollection = function(collection, entity, ref
         //includes committing each relation entity.
         if (!_.isEmpty(relationsToReplicate)) {
             var primaryKeyValueForRelationObject = 0,
-                primaryKeyValueForEntity = 0;
+                primaryKeyValueForEntity         = 0;
             _.each(relationsToReplicate, function (relationObjects, relation) {
                 relationIds = eejs.utils.getIdsFromEntities(relationObjects, state[relation].primaryKey);
                 _.each(relationObjects, function (relationObject) {
@@ -663,7 +646,7 @@ Vuex.Store.prototype.commitEntityToCollection = function(collection, entity, ref
                         relationObject,
                         state[relation].primaryKey
                     );
-                    primaryKeyValueForEntity = eejs.utils.getIdFromEntity(entity,state[collection].primaryKey);
+                    primaryKeyValueForEntity         = eejs.utils.getIdFromEntity(entity, state[collection].primaryKey);
 
                     //then commit this entity as a relation on the entities relation!
                     self.commitRelationsForEntity(
@@ -690,12 +673,11 @@ Vuex.Store.prototype.commitEntityToCollection = function(collection, entity, ref
 
 Vue.use(Vuex);
 
-
 /**
  * Polyfill `String.prototype.endsWith` for environments that don't have ECMA6
  */
 if (!String.prototype.endsWith) {
-    String.prototype.endsWith = function(searchString, position) {
+    String.prototype.endsWith = function (searchString, position) {
         var subjectString = this.toString();
         if (
             typeof position !== 'number'
@@ -711,12 +693,11 @@ if (!String.prototype.endsWith) {
     };
 }
 
-
 /**
  * Polyfill `String.prototype.includes` for environments that don't have the ECMAScript 2015 specification of this.
  */
 if (!String.prototype.includes) {
-    String.prototype.includes = function(search, start) {
+    String.prototype.includes = function (search, start) {
         'use strict';
         if (typeof start !== 'number') {
             start = 0;
@@ -730,29 +711,27 @@ if (!String.prototype.includes) {
     };
 }
 
-(function( window, undefined ) {
+(function (window, undefined) {
     'use strict';
 
     /**
      * initialize eejs and eejs.api
      */
     window.eejs = window.eejs || {};
-    eejs.api = eejs.api || {};
-    eejs.data = eejs.data || {};
-    eejs.api.mixins = eejs.api.mixins || {};
+    eejs.api            = eejs.api || {};
+    eejs.data           = eejs.data || {};
+    eejs.api.mixins     = eejs.api.mixins || {};
     eejs.api.components = eejs.api.components || {};
-    eejs.utils = eejs.utils || {};
-
+    eejs.utils          = eejs.utils || {};
 
     //expose Vue and Vuex on eejs.
-    eejs.vue = Vue;
+    eejs.vue  = Vue;
     eejs.vuex = Vuex;
 
     //add inflection to the utils
     eejs.utils.inflection = inflection;
     //add URI.js to the utils
-    eejs.utils.URI = URI;
-
+    eejs.utils.URI        = URI;
 
     /**
      * For adding relations to a collection to the fetch query for a collection.
@@ -760,24 +739,23 @@ if (!String.prototype.includes) {
      * @param {string} endpointUri
      * @returns {string}
      */
-    eejs.utils.addRelationsToEndpointURI = function(collection, endpointUri) {
+    eejs.utils.addRelationsToEndpointURI = function (collection, endpointUri) {
         var collectionsSchema = eejs.api.main.getCollectionsSchema();
         //does this collection have a schema or relations on the collection schema for this collection?
         if (!_.has(collectionsSchema, collection) || !_.has(collectionsSchema[collection], 'relations')) {
             return endpointUri;
         }
 
-        _.each(collectionsSchema[collection].relations, function(relationObject, relation){
+        _.each(collectionsSchema[collection].relations, function (relationObject, relation) {
             //only add the relation to the endpoint query IF that relation collection is registered.
-            if (_.has(collectionsSchema,relation)) {
+            if (_.has(collectionsSchema, relation)) {
                 //get the singularized capitalized value for the relation
-                relation = eejs.utils.inflection.transform(relation, ['singularize', 'capitalize']);
+                relation    = eejs.utils.inflection.transform(relation, ['singularize', 'capitalize']);
                 endpointUri = decodeURI(eejs.utils.URI(endpointUri).addSearch({"include": relation + '.*'}).toString());
             }
         });
         return endpointUri;
     };
-
 
     /**
      * This takes an incoming object representing additional queryString parameters to add to the endpoint uri for the
@@ -791,16 +769,13 @@ if (!String.prototype.includes) {
      * @param {string} endpointUri
      * @returns {string}
      */
-    eejs.utils.addQueryStringToEndpointURI = function(queryStringObject, endpointUri) {
+    eejs.utils.addQueryStringToEndpointURI = function (queryStringObject, endpointUri) {
         //make sure that the queryStringObject is in fact an object
         if (!_.isObject(queryStringObject)) {
             return endpointUri;
         }
         return decodeURI(eejs.utils.URI(endpointUri).addSearch(queryStringObject).toString());
     };
-
-
-
 
     /**
      * This returns whether the given relation string is a registered relation to the collection.
@@ -812,18 +787,15 @@ if (!String.prototype.includes) {
      * @param {string} relation
      * @returns {boolean}
      */
-    eejs.utils.isRelationOf = function(relation, collection) {
+    eejs.utils.isRelationOf = function (relation, collection) {
         var collectionsSchema = eejs.api.main.getCollectionsSchema();
         //make sure relation is pluralized
-        relation = eejs.utils.inflection.pluralize(relation);
+        relation              = eejs.utils.inflection.pluralize(relation);
 
         return _.has(collectionsSchema, collection)
             && _.has(collectionsSchema[collection], 'relations')
             && _.has(collectionsSchema[collection].relations, relation);
     };
-
-
-
 
     /**
      * This is a utility that simply receives an incoming object and then an array listing the keys
@@ -834,24 +806,21 @@ if (!String.prototype.includes) {
      * @param {array} requiredKeys
      * @returns {array|boolean}
      */
-    eejs.utils.verifyRequiredKeysPresentInObject = function(payload, requiredKeys) {
-       var missing = [];
-       if (!_.isArray(requiredKeys) && !_.isObject(payload)) {
-           throw new eejs.exception( 'The eejs.utils.verifyRequiredKeysPresentInObject method must have a payload ' +
-               'object as the first argument, and a requiredKeys array as the second argument.');
-       }
+    eejs.utils.verifyRequiredKeysPresentInObject = function (payload, requiredKeys) {
+        var missing = [];
+        if (!_.isArray(requiredKeys) && !_.isObject(payload)) {
+            throw new eejs.exception('The eejs.utils.verifyRequiredKeysPresentInObject method must have a payload ' +
+                'object as the first argument, and a requiredKeys array as the second argument.');
+        }
 
-       _.each( requiredKeys, function(key) {
-          if (!_.has(payload, key)) {
-              missing.push(key);
-          }
-       });
+        _.each(requiredKeys, function (key) {
+            if (!_.has(payload, key)) {
+                missing.push(key);
+            }
+        });
 
-       return missing.length === 0 ? true : missing;
+        return missing.length === 0 ? true : missing;
     };
-
-
-
 
     /**
      * This simply returns an array of ids for the given collection entities using the primaryKey.
@@ -860,7 +829,7 @@ if (!String.prototype.includes) {
      * @param {string} primaryKey
      * @returns {array}
      */
-    eejs.utils.getIdsFromEntities = function(entities,primaryKey) {
+    eejs.utils.getIdsFromEntities = function (entities, primaryKey) {
         //if there is not a primaryKey set, then we have no way of knowing what values to assemble!
         if (_.isUndefined(primaryKey) || !_.isString(primaryKey)) {
             throw new eejs.exception('Unable to return any id because the primaryKey argument is not defined or is ' +
@@ -868,11 +837,11 @@ if (!String.prototype.includes) {
         }
 
         var ids = [],
-            id = 0;
+            id  = 0;
 
         //if entities is not an array let's make sure its an array!
         entities = !_.isArray(entities) ? [entities] : entities;
-        _.each(entities, function(entity){
+        _.each(entities, function (entity) {
             id = eejs.utils.getIdFromEntity(entity, primaryKey);
             if (id) {
                 ids.push(id);
@@ -880,7 +849,6 @@ if (!String.prototype.includes) {
         });
         return ids;
     };
-
 
     /**
      * This returns the id representing the given entity.
@@ -892,8 +860,8 @@ if (!String.prototype.includes) {
      * @returns {number|string}  Some primary keys might be string values.  If no id is retrieved then the default of 0
      *                            is returned so you may want to account for that.
      */
-    eejs.utils.getIdFromEntity = function(entity,primaryKey) {
-        if(_.isUndefined(primaryKey) || !_.isString(primaryKey)) {
+    eejs.utils.getIdFromEntity = function (entity, primaryKey) {
+        if (_.isUndefined(primaryKey) || !_.isString(primaryKey)) {
             throw new eejs.exception('Unable to return any id because the primaryKey argument is not defined or is ' +
                 'not an accepted type (string).');
         }
@@ -905,16 +873,13 @@ if (!String.prototype.includes) {
         return 0;
     };
 
-
     /**
      * Returns a unique id in the format used to represent uniq_ids in this library.
      * @returns {string}
      */
-    eejs.utils.getUniqueId = function() {
+    eejs.utils.getUniqueId = function () {
         return _.uniqueId('_new_id_');
     };
-
-
 
     /**
      * This is a wrapper for the eejs.api.main object that is used
@@ -923,11 +888,11 @@ if (!String.prototype.includes) {
      * that should be initialized for the view.
      * @param initialOptions
      */
-    eejs.api.init = function(initialOptions) {
+    eejs.api.init = function (initialOptions) {
         // private object internal to eejs.api.init that will be exposed as an instance on eejs.api.main
         var Main = function (options) {
             //initialOptions must contain a collections property
-            if (! _.isObject(options) && _.isUndefined(options.collections)) {
+            if (!_.isObject(options) && _.isUndefined(options.collections)) {
                 throw new eejs.exception(
                     'eejs.api.init must be initialized with an object that contains at least a collections property'
                 );
@@ -946,7 +911,7 @@ if (!String.prototype.includes) {
             /**
              * holds the incoming options
              */
-            var initialOptions = options,
+            var initialOptions       = options,
                 /**
                  * Indicate what authentication method to use for requests.  Defaults to cookie.
                  * @type {string}
@@ -956,37 +921,37 @@ if (!String.prototype.includes) {
                  * Array of successfully registered collections ('events', 'datetimes' etc)
                  * @type {array}
                  */
-                collections = [],
+                collections          = [],
                 /**
                  * This holds all the defaults for fields on a registered collection entity as obtained from the schema.
                  * @type {object}
                  */
-                defaults = {},
+                defaults             = {},
                 /**
                  * Cache of the response from pinging the discovery route.
                  * @type {object}
                  */
-                discoveryCache = null,
+                discoveryCache       = null,
                 /**
                  * Base url for accessing the REST api.
                  * @type {string}
                  */
-                restRoute = '',
+                restRoute            = '',
                 /**
                  * Cache of the object used to initialize the Vuex.store instance.
                  * @type {object}
                  */
-                storeState = {},
+                storeState           = {},
                 /**
                  * A cache of the collections json schema's retrieved from the collection REST endpoint.
                  * @type {object}
                  */
-                collectionsSchema = {},
+                collectionsSchema    = {},
                 /**
                  * A cache of the built modules used to initialize the Vuex.store instance.
                  * @type {object}
                  */
-                storeModules = {},
+                storeModules         = {},
                 /**
                  * A cache of all the built mixins used for building the components.
                  * This is also exposed on the `eejs.api.mixins` property.
@@ -1007,7 +972,7 @@ if (!String.prototype.includes) {
                  *
                  * @type {object}
                  */
-                mixins = {},
+                mixins               = {},
                 /**
                  * A cache of all the built components used by client code for creating a Vue instance.
                  * These are also exposed on the `eejs.api.components` property.
@@ -1021,47 +986,47 @@ if (!String.prototype.includes) {
                  *
                  * @type {object}
                  */
-                components = {};
+                components           = {};
 
             /**
              * This initializes eejs.api and builds all the various components, mixins etc. that are then
              * exposed for client code to use in constructing a Vue instance.
              * @return Promise
              */
-            var initialize = function() {
-                return new Promise( function(resolve,reject) {
+            var initialize                                 = function () {
+                return new Promise(function (resolve, reject) {
                     //set the restRoute property
                     if (_.isUndefined(eejs.data.paths)
                         && _.isUndefined(eejs.data.paths.rest_route)
-                    ){
+                    ) {
                         throw new eejs.exception(
                             'In order to initialize eejs.api, there must be a rest route exposed' +
                             ' via `eejs.data.paths.rest_route` property.  Unable to find that.'
                         );
                     }
-                    restRoute = eejs.data.paths.rest_route;
-                    authenticationMethod = _.has(initialOptions,'authenticationMethod')
+                    restRoute            = eejs.data.paths.rest_route;
+                    authenticationMethod = _.has(initialOptions, 'authenticationMethod')
                         ? initialOptions.authenticationMethod
                         : authenticationMethod;
                     setAuthenticationMethodOnHttpResource();
-                    initDiscoverAPI().then( function() {
-                            validateCollections(initialOptions.collections);
-                            registerCollections(initialOptions.collections);
-                            return setSchemaForEachCollection(initialOptions.collections);
-                        }).then( function(){
-                            buildStore();
-                            buildMixins();
-                            buildComponents();
-                            resolve();
-                        }).catch( function(error){
-                            reject(error);
-                        });
+                    initDiscoverAPI().then(function () {
+                        validateCollections(initialOptions.collections);
+                        registerCollections(initialOptions.collections);
+                        return setSchemaForEachCollection(initialOptions.collections);
+                    }).then(function () {
+                        buildStore();
+                        buildMixins();
+                        buildComponents();
+                        resolve();
+                    }).catch(function (error) {
+                        reject(error);
                     });
-                },
+                });
+            },
                 /**
                  * Used to ensure whatever is being used for http requests has the correct authentication method set.
                  */
-                setAuthenticationMethodOnHttpResource = function() {
+                setAuthenticationMethodOnHttpResource      = function () {
                     if (authenticationMethod === 'cookie') {
                         Vue.http.headers.custom['X-WP-Nonce'] = eejs.data.eejs_api_nonce;
                     }
@@ -1074,12 +1039,12 @@ if (!String.prototype.includes) {
                  *
                  * @param {array} collectionsToValidate
                  */
-                validateCollections = function(collectionsToValidate) {
-                    if (! _.isArray(collectionsToValidate) ) {
+                validateCollections                        = function (collectionsToValidate) {
+                    if (!_.isArray(collectionsToValidate)) {
                         throw new eejs.exception('Incoming collections must be an array of collections.');
                     }
-                    _.each(collectionsToValidate, function(collection){
-                        if (! collectionHasRoute(collection) ) {
+                    _.each(collectionsToValidate, function (collection) {
+                        if (!collectionHasRoute(collection)) {
                             throw new eejs.exception(
                                 'The incoming collection (' + collection + ') does not have a' +
                                 ' corresponding route in the api. Double-check your spelling.'
@@ -1091,8 +1056,8 @@ if (!String.prototype.includes) {
                  * Registers collections to the collections property.
                  * @param {array} newCollections
                  */
-                registerCollections = function(newCollections){
-                    if (! _.isArray(newCollections)){
+                registerCollections                        = function (newCollections) {
+                    if (!_.isArray(newCollections)) {
                         throw new eejs.exception('New collections must be registered as an array of collections.');
                     }
                     if (collections.length === 0) {
@@ -1107,8 +1072,8 @@ if (!String.prototype.includes) {
                  * @param {array} collectionsForSchema
                  * @return Promise
                  */
-                setSchemaForEachCollection = function(collectionsForSchema){
-                    return Promise.all( _.map(collectionsForSchema, function(collection){
+                setSchemaForEachCollection                 = function (collectionsForSchema) {
+                    return Promise.all(_.map(collectionsForSchema, function (collection) {
                         return setSchemaForCollection(collection)
                     }));
                 },
@@ -1117,17 +1082,17 @@ if (!String.prototype.includes) {
                  * @param {string} collection
                  * @returns {boolean|Promise}
                  */
-                setSchemaForCollection = function(collection){
+                setSchemaForCollection                     = function (collection) {
                     //only do the http request if needed.
-                    if ( _.has(collectionsSchema,collection) ) {
+                    if (_.has(collectionsSchema, collection)) {
                         return true;
                     }
                     //nope no schema yet so lets do the http options request to get it.
                     var optionsRequest = {
                         Options: {method: 'OPTIONS'}
                     };
-                    var resource = Vue.resource(restRoute+collection, {}, optionsRequest);
-                    return resource.Options().then(function(response){
+                    var resource       = Vue.resource(restRoute + collection, {}, optionsRequest);
+                    return resource.Options().then(function (response) {
                         collectionsSchema[collection] = response.body.schema;
                         setDefaultsForCollectionEntity(collection, response.body.schema);
                     });
@@ -1139,13 +1104,13 @@ if (!String.prototype.includes) {
                  * @param {string} collection The collection this schema is for.
                  * @param {object} schema     The json schema for entities in this collection.
                  */
-                setDefaultsForCollectionEntity = function(collection, schema) {
+                setDefaultsForCollectionEntity             = function (collection, schema) {
                     //set collection on the default property if its not already set.
                     defaults[collection] = defaults[collection] || {};
 
                     //loop through schema properties and get the default prop from each field.
                     if (_.has(schema, 'properties')) {
-                        _.each(schema.properties, function(fieldSchema, field) {
+                        _.each(schema.properties, function (fieldSchema, field) {
                             if (_.has(fieldSchema, 'default')) {
 
                                 defaults[collection][field] = fieldSchema.default;
@@ -1158,8 +1123,8 @@ if (!String.prototype.includes) {
                  * the autodiscovery response.
                  * @return {Promise}
                  */
-                initDiscoverAPI = function() {
-                    return new Promise( function(resolve, reject) {
+                initDiscoverAPI                            = function () {
+                    return new Promise(function (resolve, reject) {
                         if (discoveryCache === null) {
                             Vue.http.get(
                                 restRoute
@@ -1180,24 +1145,24 @@ if (!String.prototype.includes) {
                  * automatically set the discoveryCache if its not set.
                  * @return {object}
                  */
-                getEndpoints = function() {
+                getEndpoints                               = function () {
                     //discoveryCache should have the body of the endpoints
-                    return ! _.isNull(discoveryCache) && ! _.isUndefined(discoveryCache.routes)
+                    return !_.isNull(discoveryCache) && !_.isUndefined(discoveryCache.routes)
                         ? discoveryCache.routes
                         : {};
                 },
                 /**
                  * This method kicks off building the Vuex.store instance and assigns it to eejs.api.store
                  */
-                buildStore = function() {
+                buildStore                                 = function () {
                     //build modules for the collections
                     buildStoreModules();
-                    storeState = {
-                        state: {
+                    storeState     = {
+                        state:     {
                             "restRoute": restRoute
                         },
-                        modules: storeModules,
-                        getters: {
+                        modules:   storeModules,
+                        getters:   {
                             /**
                              * This is used to determine whether an entity object exists in the specified collection or not.
                              *
@@ -1211,22 +1176,22 @@ if (!String.prototype.includes) {
                              * @param {object} getters
                              * @returns {Function}
                              */
-                            hasEntityInCollection: function(state, getters) {
+                            hasEntityInCollection:       function (state, getters) {
                                 /**
                                  * @param {string} collection   The collection the entity belongs to
                                  * @param {object} entity       The entity being used to check if it exists or not in the
                                  *                              collection
                                  * @return boolean
                                  */
-                                return function(collection, entity) {
-                                    if (! _.has(state, collection)) {
+                                return function (collection, entity) {
+                                    if (!_.has(state, collection)) {
                                         return false;
                                     }
                                     var primaryKey = state[collection].primaryKey,
-                                        entityId = _.has(entity, primaryKey) ? entity[primaryKey] : 0;
+                                        entityId   = _.has(entity, primaryKey) ? entity[primaryKey] : 0;
 
                                     //now let's see if this entity is already in the collection
-                                    return ! _.isUndefined( getters.getEntityForId(collection, entityId) );
+                                    return !_.isUndefined(getters.getEntityForId(collection, entityId));
                                 }
                             },
                             /**
@@ -1236,12 +1201,12 @@ if (!String.prototype.includes) {
                              * @param {object} getters
                              * @returns {Function}
                              */
-                            isNewEntity: function(state, getters) {
+                            isNewEntity:                 function (state, getters) {
                                 /**
                                  * @param {number|string} entityId   The id for an entity that is being checked.
                                  * @return boolean
                                  */
-                                return function(entityId) {
+                                return function (entityId) {
                                     return _.isString(entityId) && entityId.includes('_new_id_');
                                 }
                             },
@@ -1253,20 +1218,20 @@ if (!String.prototype.includes) {
                              * @param {object} getters
                              * @returns {Function}
                              */
-                            getEntityForId: function(state, getters) {
+                            getEntityForId:              function (state, getters) {
                                 /**
                                  * @param {string} collection  The collection the entity belongs to.
                                  * @param {number|string}  entityId  The value for the entity's primaryKey
                                  * @return {object|undefined}  the entity if it exists, an empty object, or undefined.
                                  */
-                                return function(collection, entityId) {
-                                    if ( ! _.has(state, collection)) {
+                                return function (collection, entityId) {
+                                    if (!_.has(state, collection)) {
                                         return {};
                                     }
-                                    var primaryKey = state[collection].primaryKey,
-                                        searchObj = {};
+                                    var primaryKey        = state[collection].primaryKey,
+                                        searchObj         = {};
                                     searchObj[primaryKey] = entityId;
-                                    return _.findWhere(state[collection].entities,searchObj);
+                                    return _.findWhere(state[collection].entities, searchObj);
                                 }
                             },
                             /**
@@ -1277,7 +1242,7 @@ if (!String.prototype.includes) {
                              * @param {object} getters
                              * @returns {Function}
                              */
-                            getFieldValueFromEntityById: function(state, getters) {
+                            getFieldValueFromEntityById: function (state, getters) {
                                 /**
                                  * @param {string} collection  The collection the entity belongs to.
                                  * @param {number|string} Value for the primary key of the entity we're retrieving the
@@ -1285,8 +1250,8 @@ if (!String.prototype.includes) {
                                  * @param {string} The field we're getting returning the value for.
                                  * @return {mixed}
                                  */
-                                return function(collection, entityId, field) {
-                                    if(! _.has(state, collection)) {
+                                return function (collection, entityId, field) {
+                                    if (!_.has(state, collection)) {
                                         return null;
                                     }
                                     var entity = getters.getEntityForId(collection, entityId);
@@ -1303,12 +1268,12 @@ if (!String.prototype.includes) {
                              * @param {object} getters
                              * @returns {Function}
                              */
-                            getCollectionEndpoint: function(state,getters) {
+                            getCollectionEndpoint:       function (state, getters) {
                                 /**
                                  * @param {string} collection
                                  * @return {string}
                                  */
-                                return function(collection){
+                                return function (collection) {
                                     //if there isn't a collection matching in the store or a restRoute then get out
                                     if (_.isUndefined(state[collection]) || _.isUndefined(state.restRoute)) {
                                         return '';
@@ -1327,7 +1292,7 @@ if (!String.prototype.includes) {
                              *                entity     =   the entity being updated in the state.
                              *
                              */
-                            updateEntityById: function( state, payload ) {
+                            updateEntityById: function (state, payload) {
                                 //make sure we have required payload items here.
                                 var verified = eejs.utils.verifyRequiredKeysPresentInObject(
                                     payload,
@@ -1356,10 +1321,10 @@ if (!String.prototype.includes) {
                              *                        entity being added is from the db.  This has implications for
                              *                        when the changeMap is updated.
                              */
-                            addEntity: function( state, payload ) {
+                            addEntity: function (state, payload) {
                                 var verified = eejs.utils.verifyRequiredKeysPresentInObject(
                                     payload,
-                                    ['collection','entity']
+                                    ['collection', 'entity']
                                 );
                                 if (verified !== true && _.isObject(verified)) {
                                     throw new eejs.exception(
@@ -1367,8 +1332,8 @@ if (!String.prototype.includes) {
                                         'make sure there is a `collection` and `entity` key set (with appropriate values)'
                                     );
                                 }
-                                payload.refresh = ! _.isUndefined(payload.refresh) ? payload.refresh : false;
-                                payload.fromDb = ! _.isUndefined(payload.fromDb) ? payload.fromDb : false;
+                                payload.refresh = !_.isUndefined(payload.refresh) ? payload.refresh : false;
+                                payload.fromDb  = !_.isUndefined(payload.fromDb) ? payload.fromDb : false;
                                 eejs.api.store.commitEntityToCollection(
                                     payload.collection,
                                     payload.entity,
@@ -1376,7 +1341,6 @@ if (!String.prototype.includes) {
                                     payload.fromDb
                                 );
                             },
-
 
                             /**
                              * Used to connect related items by ID in the store for all affected relations.
@@ -1401,10 +1365,10 @@ if (!String.prototype.includes) {
                              *                       present.  Otherwise if the collection doesn't exist, it just will
                              *                       return false. Defaults to true.
                              */
-                            addRelationsForEntity: function(state, payload) {
+                            addRelationsForEntity: function (state, payload) {
                                 var verified = eejs.utils.verifyRequiredKeysPresentInObject(
                                     payload,
-                                    ['collection','collectionEntityId', 'relation', 'relationEntityId']
+                                    ['collection', 'collectionEntityId', 'relation', 'relationEntityId']
                                 );
                                 //make sure required payload items are here.
                                 if (verified !== true && _.isObject(verified)) {
@@ -1432,12 +1396,15 @@ if (!String.prototype.includes) {
                              * @param {object} state  Vuex store state
                              * @param {object} payload
                              */
-                            removeRelationsForEntity: function(state,payload){/*@todo*/},
-                            removeEntity: function(state,payload){/*@todo*/},
-                            removeEntityById: function(state,payload){/*@todo*/}
+                            removeRelationsForEntity: function (state, payload) {/*@todo*/
+                            },
+                            removeEntity:             function (state, payload) {/*@todo*/
+                            },
+                            removeEntityById:         function (state, payload) {/*@todo*/
+                            }
 
                         },
-                        actions: {
+                        actions:   {
 
                             /**
                              * Used to retrieve items for a collection and then adds it to the store.
@@ -1469,8 +1436,8 @@ if (!String.prototype.includes) {
                              *
                              * @return Promise
                              */
-                            fetchCollection: function( context, payload ) {
-                                return new Promise( function(resolve, reject) {
+                            fetchCollection: function (context, payload) {
+                                return new Promise(function (resolve, reject) {
                                     var verified = eejs.utils.verifyRequiredKeysPresentInObject(
                                         payload,
                                         ['collection']
@@ -1484,7 +1451,7 @@ if (!String.prototype.includes) {
                                     }
 
                                     //in order to successfully fetch, the collection must be registered as a module.
-                                    if ( _.isUndefined(context.state[payload.collection]) ) {
+                                    if (_.isUndefined(context.state[payload.collection])) {
                                         reject(
                                             'In order to get a collection, the collection must be registered as a' +
                                             ' module in the collections store.'
@@ -1493,11 +1460,11 @@ if (!String.prototype.includes) {
 
                                     var endpointUri = context.getters.getCollectionEndpoint(payload.collection);
 
-                                    payload.refresh = ! _.isUndefined(payload.refresh) ? payload.refresh: false;
+                                    payload.refresh = !_.isUndefined(payload.refresh) ? payload.refresh : false;
 
                                     //if not refreshing, then we're just returning the entities already in the store
                                     //state for this collection
-                                    if (! payload.refresh) {
+                                    if (!payload.refresh) {
                                         resolve(context.state[payload.collection].entities);
                                     }
 
@@ -1509,31 +1476,29 @@ if (!String.prototype.includes) {
                                     }
 
                                     //maybe add relations if they exist for the collection.
-                                    endpointUri = eejs.utils.addRelationsToEndpointURI(payload.collection,endpointUri);
+                                    endpointUri = eejs.utils.addRelationsToEndpointURI(payload.collection, endpointUri);
 
                                     //k made it here, so let's fetch the collection
                                     Vue.http.get(
                                         endpointUri
-                                    ).then(function(response) {
-                                        _.each( response.body, function(entity){
+                                    ).then(function (response) {
+                                        _.each(response.body, function (entity) {
                                             context.commit('addEntity',
                                                 {
                                                     collection: payload.collection,
-                                                    entity: entity,
-                                                    refresh: payload.refresh,
-                                                    fromDb: true
+                                                    entity:     entity,
+                                                    refresh:    payload.refresh,
+                                                    fromDb:     true
                                                 }
                                             )
                                         });
                                         resolve(response.body);
-                                    }).catch(function(response){
+                                    }).catch(function (response) {
                                         //error handling
                                         reject(response);
                                     });
                                 });
                             },
-
-
 
                             /**
                              * This fetches the related entities for the given entity.
@@ -1550,26 +1515,26 @@ if (!String.prototype.includes) {
                              *                    When true, a REST API request is always done and any existing relations
                              *                    are replaced in the store state with the response of this request.
                              */
-                            fetchRelatedForEntity: function(context,payload) {
-                                return new Promise( function(resolve, reject) {
+                            fetchRelatedForEntity: function (context, payload) {
+                                return new Promise(function (resolve, reject) {
                                     //verify needed things in the payload are present
                                     var verified = eejs.utils.verifyRequiredKeysPresentInObject(
                                         payload,
-                                        ['collection','entityId','relation']
+                                        ['collection', 'entityId', 'relation']
                                     );
                                     if (verified !== true && _.isObject(verified)) {
                                         throw new eejs.exception('The following required keys are missing from the ' +
                                             'the payload object: ' + verified.join());
                                     }
 
-                                    var refresh = ! _.isUndefined(payload.refresh) ? payload.refresh : false,
-                                        relationEntities = [],
-                                        relation = eejs.utils.inflection.pluralize(payload.relation),
+                                    var refresh            = !_.isUndefined(payload.refresh) ? payload.refresh : false,
+                                        relationEntities   = [],
+                                        relation           = eejs.utils.inflection.pluralize(payload.relation),
                                         relationPrimaryKey = eejs.api.main.getPrimaryKeyForCollection(relation);
 
                                     //now that we have a our payload verified, let's see if there are already related objects
                                     //in the store state for the given collection (only done if no refresh).
-                                    if (! refresh) {
+                                    if (!refresh) {
                                         if (
                                             _.has(context.state[payload.collection], 'relations')
                                             && _.has(context.state[payload.collection].relations, relation)
@@ -1582,8 +1547,8 @@ if (!String.prototype.includes) {
                                             //to return from the store state.
                                             relationEntities = _.map(
                                                 context.state[payload.collection].relations[relation][payload.entityId],
-                                                function(relationId){
-                                                    var primaryKeySearchObject = {};
+                                                function (relationId) {
+                                                    var primaryKeySearchObject                 = {};
                                                     primaryKeySearchObject[relationPrimaryKey] = relationId;
                                                     return _.findWhere(
                                                         context.state[relation].entities,
@@ -1592,11 +1557,11 @@ if (!String.prototype.includes) {
                                                 }
                                             );
                                             relationEntities = _.filter(
-                                                    relationEntities,
-                                                    function(entity){
-                                                        return ! _.isUndefined(entity);
-                                                    }
-                                                );
+                                                relationEntities,
+                                                function (entity) {
+                                                    return !_.isUndefined(entity);
+                                                }
+                                            );
                                         }
                                     }
 
@@ -1604,28 +1569,28 @@ if (!String.prototype.includes) {
                                     //Note: this will not fetch anything from the api if the entityId indicates a new object.
                                     if (
                                         (relationEntities.length === 0 || refresh)
-                                        && ! context.getters.isNewEntity(payload.entityId)
+                                        && !context.getters.isNewEntity(payload.entityId)
                                     ) {
-                                        var relationQueryObject = {},
-                                            collectionSingularCapitalized = eejs.utils.inflection.transform(
+                                        var relationQueryObject                                                                          = {},
+                                            collectionSingularCapitalized                                                                = eejs.utils.inflection.transform(
                                                 payload.collection,
                                                 ['singularize', 'capitalize']
                                             ),
-                                            collectionPrimaryKey = eejs.api.main.getPrimaryKeyForCollection(
+                                            collectionPrimaryKey                                                                         = eejs.api.main.getPrimaryKeyForCollection(
                                                 payload.collection
                                             );
-                                            relationQueryObject['where[' + collectionSingularCapitalized + '.' + collectionPrimaryKey+ ']'] = payload.entityId;
+                                        relationQueryObject['where[' + collectionSingularCapitalized + '.' + collectionPrimaryKey + ']'] = payload.entityId;
 
                                         //return the Promise for fetchCollection
                                         context.dispatch(
                                             'fetchCollection',
                                             {
-                                                "collection" : relation,
-                                                "queryString" : relationQueryObject
+                                                "collection":  relation,
+                                                "queryString": relationQueryObject
                                             }
-                                        ).then( function(response){
+                                        ).then(function (response) {
                                             resolve(response);
-                                        }).catch( function(response){
+                                        }).catch(function (response) {
                                             reject(response)
                                         });
                                     } else {
@@ -1634,7 +1599,6 @@ if (!String.prototype.includes) {
                                 });
                             },
 
-
                             /**
                              * Fetches a specific entity by the value for its primary key.
                              * @param {object} context
@@ -1642,74 +1606,73 @@ if (!String.prototype.includes) {
                              *              collection  = [required] the collection the entity is being retrieved for.
                              *              entityId    = [required] the primaryKey id for the entity to retrieve.
                              */
-                            fetchEntityById: function(context,payload) {
-                               return new Promise( function(resolve, reject) {
-                                   //verify needed things in the payload are present
-                                   var verified = eejs.utils.verifyRequiredKeysPresentInObject(
-                                       payload,
-                                       ['collection', 'entityId']
-                                   );
+                            fetchEntityById: function (context, payload) {
+                                return new Promise(function (resolve, reject) {
+                                    //verify needed things in the payload are present
+                                    var verified = eejs.utils.verifyRequiredKeysPresentInObject(
+                                        payload,
+                                        ['collection', 'entityId']
+                                    );
 
-                                   if (verified !== true && _.isObject(verified)) {
-                                       throw new eejs.exception('The following required keys are missing from the ' +
-                                           'payload object: ' + verified.join());
-                                   }
+                                    if (verified !== true && _.isObject(verified)) {
+                                        throw new eejs.exception('The following required keys are missing from the ' +
+                                            'payload object: ' + verified.join());
+                                    }
 
-                                   var entityPrimaryKey = eejs.api.main.getPrimaryKeyForCollection(payload.collection),
-                                       entity = {},
-                                       searchObj = {},
-                                       endpointUri = context.getters.getCollectionEndpoint(payload.collection);
+                                    var entityPrimaryKey = eejs.api.main.getPrimaryKeyForCollection(payload.collection),
+                                        entity           = {},
+                                        searchObj        = {},
+                                        endpointUri      = context.getters.getCollectionEndpoint(payload.collection);
 
-                                   payload.refresh = ! _.isUndefined(payload.refresh) ? payload.refresh : false;
+                                    payload.refresh = !_.isUndefined(payload.refresh) ? payload.refresh : false;
 
-                                   //if not refreshing, see if the entity is in the store.
-                                   if (! payload.refresh || context.getters.isNewEntity(payload.entityId)) {
-                                       searchObj[entityPrimaryKey] = payload.entityId;
-                                       entity = _.findWhere(context.state[payload.collection].entities, searchObj);
-                                   }
+                                    //if not refreshing, see if the entity is in the store.
+                                    if (!payload.refresh || context.getters.isNewEntity(payload.entityId)) {
+                                        searchObj[entityPrimaryKey] = payload.entityId;
+                                        entity                      = _.findWhere(context.state[payload.collection].entities, searchObj);
+                                    }
 
-                                   //if entity is undefined or we're refreshing and the entity isn't  a new object
-                                   //then fetch using the api.
-                                   if (
-                                       (payload.refresh || _.isUndefined(entity))
-                                       && ! context.getters.isNewEntity(payload.entityId)
-                                   ) {
+                                    //if entity is undefined or we're refreshing and the entity isn't  a new object
+                                    //then fetch using the api.
+                                    if (
+                                        (payload.refresh || _.isUndefined(entity))
+                                        && !context.getters.isNewEntity(payload.entityId)
+                                    ) {
 
-                                       //add id to query string
-                                       endpointUri = endpointUri + payload.entityId;
+                                        //add id to query string
+                                        endpointUri = endpointUri + payload.entityId;
 
-                                       //include any registered relations
-                                       endpointUri = eejs.utils.addRelationsToEndpointURI(
-                                           payload.collection,
-                                           endpointUri
-                                       );
+                                        //include any registered relations
+                                        endpointUri = eejs.utils.addRelationsToEndpointURI(
+                                            payload.collection,
+                                            endpointUri
+                                        );
 
-                                       Vue.http.get(
-                                           endpointUri
-                                       ).then(function(response){
-                                           entity = response.body;
-                                           //commit this to the store state
-                                           context.commit(
-                                               'addEntity',
-                                               {
-                                                   collection: payload.collection,
-                                                   entity: entity,
-                                                   refresh: payload.refresh,
-                                                   fromDb: true
-                                               }
-                                           );
-                                           resolve(entity);
-                                       }).catch(function(response){
-                                           reject(response);
-                                       });
-                                   } else {
-                                       //if we made it here then that means we have
-                                       // an entity in the that we can just resolve with
-                                       resolve(entity);
-                                   }
-                               });
+                                        Vue.http.get(
+                                            endpointUri
+                                        ).then(function (response) {
+                                            entity = response.body;
+                                            //commit this to the store state
+                                            context.commit(
+                                                'addEntity',
+                                                {
+                                                    collection: payload.collection,
+                                                    entity:     entity,
+                                                    refresh:    payload.refresh,
+                                                    fromDb:     true
+                                                }
+                                            );
+                                            resolve(entity);
+                                        }).catch(function (response) {
+                                            reject(response);
+                                        });
+                                    } else {
+                                        //if we made it here then that means we have
+                                        // an entity in the that we can just resolve with
+                                        resolve(entity);
+                                    }
+                                });
                             },
-
 
                             /**
                              * This adds specified relation ids to the store for the given collection
@@ -1728,34 +1691,39 @@ if (!String.prototype.includes) {
                              *      relationEntityId = [required] The primary key of the relation being added.  This is
                              *                         expected to be an array|number.
                              */
-                            addRelationByIds: function(context,payload){
+                            addRelationByIds: function (context, payload) {
                                 //this will throw an exception if the collection doesn't exist in the store.
                                 context.commit('addRelationsForEntity', payload);
                                 //let's reverse the payload and send it so that relations in reverse get added.
-                                var relationPayload = {};
-                                relationPayload.collection = payload.relation;
-                                relationPayload.relation = payload.collection;
+                                var relationPayload              = {};
+                                relationPayload.collection       = payload.relation;
+                                relationPayload.relation         = payload.collection;
                                 relationPayload.relationEntityId = payload.collectionEntityId;
                                 //we don't want any exception thrown.
-                                relationPayload.doStoreCheck = false;
+                                relationPayload.doStoreCheck     = false;
                                 //ensure relationEntityId is an array
-                                payload.relationEntityId = _.isArray(payload.relationEntityId)
+                                payload.relationEntityId         = _.isArray(payload.relationEntityId)
                                     ? payload.relationEntityId
                                     : [payload.relationEntityId];
 
                                 //k now loop through the relationEntityId and commit
-                                _.each(payload.relationEntityId, function(id){
-                                   relationPayload.collectionEntityId = id;
-                                   context.commit('addRelationsForEntity', relationPayload);
+                                _.each(payload.relationEntityId, function (id) {
+                                    relationPayload.collectionEntityId = id;
+                                    context.commit('addRelationsForEntity', relationPayload);
                                 });
                             },
 
                             //below methods are just stubs for now, we don't have endpoints to handle them.
-                            removeRelationsByIds: function(context,payload){/*@todo*/},
-                            removeEntityById: function(context,payload){/*@todo*/},
-                            removeCollection: function(context,payload){/*@todo*/},
-                            saveEntityById: function(context,payload){/*@todo*/},
-                            saveNewEntities: function(context,payload){/*@todo*/}
+                            removeRelationsByIds: function (context, payload) {/*@todo*/
+                            },
+                            removeEntityById:     function (context, payload) {/*@todo*/
+                            },
+                            removeCollection:     function (context, payload) {/*@todo*/
+                            },
+                            saveEntityById:       function (context, payload) {/*@todo*/
+                            },
+                            saveNewEntities:      function (context, payload) {/*@todo*/
+                            }
                         }
                     };
                     //initialize Vuex object and add to the eejs.api.store object.
@@ -1764,25 +1732,25 @@ if (!String.prototype.includes) {
                 /**
                  * Builds and caches all the modules that will be used for initialising the Vuex.store object.
                  */
-                buildStoreModules = function() {
-                   _.each(collections, function(collection){
-                       buildStoreModuleForCollection(collection);
-                   });
+                buildStoreModules                          = function () {
+                    _.each(collections, function (collection) {
+                        buildStoreModuleForCollection(collection);
+                    });
                 },
                 /**
                  * Builds and caches a module for a given collection.
                  * @param {string} collection
                  * @returns {boolean}
                  */
-                buildStoreModuleForCollection = function(collection) {
-                    if ( ! _.has(collectionsSchema,collection) ) {
+                buildStoreModuleForCollection              = function (collection) {
+                    if (!_.has(collectionsSchema, collection)) {
                         //return because we don't have a schema for this collection.
                         return false;
                     }
-                    var collectionSchema = collectionsSchema[collection];
+                    var collectionSchema     = collectionsSchema[collection];
                     storeModules[collection] = {
                         state: {
-                            entities:[],
+                            entities:           [],
                             /**
                              * This stores the relations and their ids for the collection.  So for example if the
                              * collection was events.  Then the 'datetime' relation object in here would be something like:
@@ -1792,14 +1760,14 @@ if (!String.prototype.includes) {
                              *
                              * The key is the EVT_ID for the event, the value is the array of DTT_ID's related to that event.
                              */
-                            relations:{},
-                            primaryKey: getPrimaryKeyFromSchema(collectionSchema),
+                            relations:          {},
+                            primaryKey:         getPrimaryKeyFromSchema(collectionSchema),
                             /**
                              * This will set the actual properties object from the schema to this index. So keys will be
                              * the property name (i.e. 'EVT_ID', 'EVT_name' etc and the values will be the schema details
                              * for that property.  This can allow for rudimentary validation in the future as well.
                              */
-                            allowedProperties: getPropertiesFromSchema(collectionSchema),
+                            allowedProperties:  getPropertiesFromSchema(collectionSchema),
                             collectionEndpoint: collection + '/',
                             /**
                              * These two properties are retrieved from the entity response.  Contains an object where keys
@@ -1807,13 +1775,13 @@ if (!String.prototype.includes) {
                              * corresponding object for that entity.  So for _links it would be something like:
                              * _links : { 236: { .._linksobj_for_event_236}, 14: { ..linksobj_for_event_14} } ,
                              */
-                            _links : {},
-                            _calculated_fields : {},
-                            changeMap : {
-                                create : [],
-                                update : [],
-                                delete : [],
-                                relations : {}
+                            _links:             {},
+                            _calculated_fields: {},
+                            changeMap:          {
+                                create:    [],
+                                update:    [],
+                                delete:    [],
+                                relations: {}
                             }
                         }
                     };
@@ -1824,18 +1792,18 @@ if (!String.prototype.includes) {
                  * @param {object} collectionSchema
                  * @returns {string}
                  */
-                getPrimaryKeyFromSchema = function(collectionSchema){
+                getPrimaryKeyFromSchema                    = function (collectionSchema) {
                     var primaryKey = '',
                         properties = getPropertiesFromSchema(collectionSchema);
 
-                    _.each(properties, function(els, property){
-                       if (! _.isUndefined(els.primary_key) && els.primary_key ) {
-                           primaryKey = property;
-                       }
+                    _.each(properties, function (els, property) {
+                        if (!_.isUndefined(els.primary_key) && els.primary_key) {
+                            primaryKey = property;
+                        }
                     });
 
                     if (primaryKey === '') {
-                        throw new eejs.exception('Unable to discover primary key for the '+collectionSchema.title+'.');
+                        throw new eejs.exception('Unable to discover primary key for the ' + collectionSchema.title + '.');
                     }
                     return primaryKey;
                 },
@@ -1850,17 +1818,17 @@ if (!String.prototype.includes) {
                  * @param {object} collectionSchema
                  * @returns {object}
                  */
-                getPropertiesFromSchema = function(collectionSchema) {
+                getPropertiesFromSchema                    = function (collectionSchema) {
                     if (_.isUndefined(collectionSchema.properties)) {
-                      throw new eejs.exception('Unable to return properties for the '+collectionSchema.title+'.');
+                        throw new eejs.exception('Unable to return properties for the ' + collectionSchema.title + '.');
                     }
                     //build our relations here because we want to exclude them from the properties.
-                    var mainProperties = {};
+                    var mainProperties         = {};
                     collectionSchema.relations = collectionSchema.relations || {};
-                    _.each(collectionSchema.properties, function(els, property){
+                    _.each(collectionSchema.properties, function (els, property) {
                         if (!_.isUndefined(els.relation) && els.relation) {
                             //make sure we pluralize the relation so its consistent with collections.
-                            property = eejs.utils.inflection.pluralize(property);
+                            property                             = eejs.utils.inflection.pluralize(property);
                             collectionSchema.relations[property] = els;
                         } else {
                             mainProperties[property] = els;
@@ -1872,7 +1840,7 @@ if (!String.prototype.includes) {
                  * Takes care of building all the mixins and caching them on the mixins property.
                  * Also exposes built mixins on eejs.api.mixins.
                  */
-                buildMixins = function(){
+                buildMixins                                = function () {
                     buildMainMixins();
                     buildRelationMixins();
                     buildComputedPropertiesMixinsForModels();
@@ -1882,16 +1850,16 @@ if (!String.prototype.includes) {
                 /**
                  * Builds the main mixins (mixins.collection, mixins.model)
                  */
-                buildMainMixins = function() {
+                buildMainMixins                            = function () {
                     /**
                      * Added to vue components that represent a collection of model ee model entities.
                      * @type {object}
                      */
                     mixins.collection = {
                         collection: '',
-                        store: eejs.api.store,
-                        props: ['nameCollection'],
-                        created: function(){
+                        store:      eejs.api.store,
+                        props:      ['nameCollection'],
+                        created:    function () {
                             /**
                              * if collection is provided (via the vue instance options object), then that gets used to
                              * initialize the collection from the store.  This allows client code to ignore the created
@@ -1907,35 +1875,38 @@ if (!String.prototype.includes) {
                              *
                              * Otherwise it is expected to be assumed from props in a parent component.
                              */
-                            if ( this.$options.collection !== '' ) {
+                            if (this.$options.collection !== '') {
                                 //fetch collection set in store
                                 this.fetch(true);
                             }
                         },
-                        computed: {
-                            collectionName : function() {
+                        computed:   {
+                            collectionName: function () {
                                 return this.$options.collection !== '' ? this.$options.collection : this.nameCollection;
                             }
                         },
-                        methods: {
+                        methods:    {
                             /**
                              * Fetches the collection
                              * @param {boolean} refresh  Forces a refresh of the existing entities in the store for the
                              *                           collection
                              */
-                            fetch: function(refresh) {
-                                var self = this,
+                            fetch: function (refresh) {
+                                var self                  = this,
                                     collectionCapitalized = eejs.utils.inflection.capitalize(this.collectionName);
 
                                 //this is actually a promise, so will have to be handled appropriately.
-                                this.$store.dispatch('fetchCollection', {collection:this.collectionName,refresh:refresh})
-                                    .then( function(){
+                                this.$store.dispatch('fetchCollection', {
+                                    collection: this.collectionName,
+                                    refresh:    refresh
+                                })
+                                    .then(function () {
                                         //@todo, we could trigger some sort of property that the ui can use to indicate
                                         // a success in getting the collection.  A custom js event might be good?
-                                        self['has'+collectionCapitalized] = true;
-                                        self[self.collectionName] = self.$store.state[self.collectionName].entities;
+                                        self['has' + collectionCapitalized] = true;
+                                        self[self.collectionName]           = self.$store.state[self.collectionName].entities;
                                     })
-                                    .catch( function(response){
+                                    .catch(function (response) {
                                         console.log(response);
                                         //@todo, we could trigger some sort of property that the ui can use to indicate
                                         // a failure in getting the collection. A custom js event might be good?
@@ -1946,18 +1917,18 @@ if (!String.prototype.includes) {
                     };
 
                     mixins.model = {
-                        collection: '',
-                        id: 0,
-                        autoUpdate: true,
-                        initialUpdateCompleted : false,
-                        skipInitialization : false,
-                        store: eejs.api.store,
-                        props: ['collection'],
-                        data: function() {
-                          return { id: 0 };
+                        collection:             '',
+                        id:                     0,
+                        autoUpdate:             true,
+                        initialUpdateCompleted: false,
+                        skipInitialization:     false,
+                        store:                  eejs.api.store,
+                        props:                  ['collection'],
+                        data:                   function () {
+                            return {id: 0};
                         },
-                        created : function(){
-                            if ( this.$options.skipInitialization ) {
+                        created:                function () {
+                            if (this.$options.skipInitialization) {
                                 return;
                             }
                             //make sure incoming $options.id is an integer
@@ -1979,41 +1950,41 @@ if (!String.prototype.includes) {
                              * If after all the other conditions the id prop is still equal to zero, then this will just
                              * become a default object with the id set to a temporary client side unique id.
                              */
-                            if ( (_.isString(this.$options.id) && this.$options.id !== '') || this.$options.id > 0) {
+                            if ((_.isString(this.$options.id) && this.$options.id !== '') || this.$options.id > 0) {
                                 this.id = this.$options.id;
                                 this.fetchById();
                             } else if (this.initialId) {
                                 this.id = this.initialId;
                                 this.fetchById();
-                            } else if (!_.isEmpty(this['initial'+eejs.utils.inflection.capitalize(this.modelName())])) {
+                            } else if (!_.isEmpty(this['initial' + eejs.utils.inflection.capitalize(this.modelName())])) {
                                 //if initial{modelname} is not empty, we'll populate from that object.
                                 this.replaceDefaults(
-                                    this['initial'+eejs.utils.inflection.capitalize(this.modelName())],
+                                    this['initial' + eejs.utils.inflection.capitalize(this.modelName())],
                                     false
                                 );
                                 //ensure that a unique id has been set.
                                 this.ensureHasUniqueId();
                                 //now we actually DO have an entity so we should set the `has_` property accordingly.
-                                this['has'+eejs.utils.inflection.capitalize(this.modelName())] = true;
+                                this['has' + eejs.utils.inflection.capitalize(this.modelName())] = true;
                                 this.update();
                             } else if (this.id === 0) {
                                 this.ensureHasUniqueId();
-                                this['has'+eejs.utils.inflection.capitalize(this.modelName())] = true;
+                                this['has' + eejs.utils.inflection.capitalize(this.modelName())] = true;
                                 this.update();
                             }
                         },
-                        mounted : function() {
+                        mounted:                function () {
                         },
-                        updated : function() {
+                        updated:                function () {
                             //set initalUpdated to true.
                             this.$options.initialUpdateCompleted = true;
                         },
-                        computed: {
-                            collectionName: function() {
+                        computed:               {
+                            collectionName: function () {
                                 return this.$options.collection !== '' ? this.$options.collection : this.collection;
                             }
                         },
-                        methods: {
+                        methods:                {
                             /**
                              * This fetches the entity for this model using the given id on the model.
                              * By default, if it doesn't already exist in the store, then the REST API will be used to
@@ -2027,8 +1998,8 @@ if (!String.prototype.includes) {
                                 var self = this;
                                 this.$store.dispatch(
                                     'fetchEntityById',
-                                    {collection:this.collectionName, entityId:this.id, refresh:refresh}
-                                ).then( function(response) {
+                                    {collection: this.collectionName, entityId: this.id, refresh: refresh}
+                                ).then(function (response) {
                                     /**
                                      * If the id represents a "new" object, and this object doesn't exist in the store
                                      * then let's make sure we update the store state with the defaults so the next fetch
@@ -2036,17 +2007,17 @@ if (!String.prototype.includes) {
                                      */
                                     if (_.isUndefined(response) && self.$store.getters.isNewEntity(self.id)) {
                                         self.$set(
-                                         self[self.modelName()],
-                                         getPrimaryKeyFromSchema(collectionsSchema[self.collectionName]),
-                                         self.id
-                                         );
+                                            self[self.modelName()],
+                                            getPrimaryKeyFromSchema(collectionsSchema[self.collectionName]),
+                                            self.id
+                                        );
                                         self.update();
                                     } else {
                                         self[self.modelName()] = response;
                                     }
-                                    self['has'+eejs.utils.inflection.capitalize(self.modelName())] = true;
-                                }).catch( function(response) {
-                                        console.log(response);
+                                    self['has' + eejs.utils.inflection.capitalize(self.modelName())] = true;
+                                }).catch(function (response) {
+                                    console.log(response);
                                 });
                             },
 
@@ -2058,15 +2029,15 @@ if (!String.prototype.includes) {
                              *                              replacing.
                              */
                             replaceDefaults: function (replacements, update) {
-                                var self = this;
+                                var self     = this;
                                 replacements = replacements || {};
-                                update = update || false;
+                                update       = update || false;
 
                                 //loop through each property for the model, if there's a value for this in replacements
                                 //use that.
                                 _.each(
                                     self[self.modelName()],
-                                    function(fieldValue, fieldName) {
+                                    function (fieldValue, fieldName) {
                                         if (_.has(replacements, fieldName)) {
                                             self.$set(
                                                 self[self.modelName()],
@@ -2087,18 +2058,18 @@ if (!String.prototype.includes) {
                              * If the entity doesn't exists then it will be added to the store state.  If it exists then
                              * it will be replaced with the current values of the entity from the local data.
                              */
-                            update: function(){
+                            update: function () {
                                 this.$store.commit(
                                     'updateEntityById',
-                                    {collection:this.collectionName,entity:this[this.modelName()]}
+                                    {collection: this.collectionName, entity: this[this.modelName()]}
                                 );
                             },
-                            save: function(){
+                            save:   function () {
                                 /**
                                  * todo
                                  */
                             },
-                            remove: function(){
+                            remove: function () {
                                 /**
                                  * todo
                                  */
@@ -2108,7 +2079,7 @@ if (!String.prototype.includes) {
                              * Returns whether the property representing the entity has been set yet or not.
                              * @returns {boolean}
                              */
-                            isEmpty: function() {
+                            isEmpty: function () {
                                 return _.isEmpty(this[this.modelName()])
                                     || (
                                         _.size(this[this.modelName()]) === 1
@@ -2123,7 +2094,7 @@ if (!String.prototype.includes) {
                              * Returns the collectionRecord for this entity from the state.
                              * @returns {object}
                              */
-                            collectionRecord: function() {
+                            collectionRecord: function () {
                                 return this.$store.state[this.collectionName];
                             },
 
@@ -2131,30 +2102,29 @@ if (!String.prototype.includes) {
                              * Returns the singular collection name for this entity.
                              * @returns {string}
                              */
-                            modelName: function() {
+                            modelName: function () {
                                 return eejs.utils.inflection.singularize(this.collectionName);
                             },
-
 
                             /**
                              * This basically ensures that a unique id is set for both the internal component `id`
                              * property and the entity ID.
                              */
-                            ensureHasUniqueId: function() {
+                            ensureHasUniqueId: function () {
                                 if (this.id > 0 || (_.isString(this.id) && this.id !== '')) {
                                     return;
                                 }
                                 var currentModelId = this[this.modelName()][
-                                        getPrimaryKeyFromSchema(collectionsSchema[this.collectionName])
+                                    getPrimaryKeyFromSchema(collectionsSchema[this.collectionName])
                                     ];
                                 if ((currentModelId !== 0
-                                    || (_.isString(currentModelId) && currentModelId !== '')
+                                        || (_.isString(currentModelId) && currentModelId !== '')
                                     )
-                                    && ! this.$store.getters.hasEntityInCollection(
+                                    && !this.$store.getters.hasEntityInCollection(
                                         this.collectionName,
                                         this[this.modelName]
                                     )
-                                ){
+                                ) {
                                     this.id = currentModelId;
                                     return;
                                 }
@@ -2173,37 +2143,37 @@ if (!String.prototype.includes) {
                 /**
                  * Loops through each collection and builds all relation mixins for that collection.
                  */
-                buildRelationMixins = function() {
-                    _.each(collections, function(collection){
-                       buildRelationMixinForCollection(collection);
+                buildRelationMixins                        = function () {
+                    _.each(collections, function (collection) {
+                        buildRelationMixinForCollection(collection);
                     });
                 },
                 /**
                  * Builds a relation mixin for a specific collection.
                  * @param {string} collection
                  */
-                buildRelationMixinForCollection = function(collection) {
+                buildRelationMixinForCollection            = function (collection) {
                     //we can only build relations mixins if we have the schema for this collection
-                    if ( ! _.has(collectionsSchema,collection) ) {
+                    if (!_.has(collectionsSchema, collection)) {
                         throw new eejs.exception(
                             'Unable to build any relation mixins for the ' + collection + 'because there is' +
                             'no schema registered for it.  Are you sure the collection was registered properly?'
                         );
                     }
 
-                    var relationName = '',
+                    var relationName      = '',
                         relationModelName = '';
 
                     if (_.has(collectionsSchema[collection], 'relations')) {
-                        _.each(collectionsSchema[collection]['relations'], function(relationProperties, relation){
+                        _.each(collectionsSchema[collection]['relations'], function (relationProperties, relation) {
                             relationModelName = _.has(relationProperties, 'relation_model')
                                 ? relationProperties.relation_model
                                 : relation;
-                            relationName = eejs.utils.inflection.humanize(relation,true).replace(' ', '_');
-                            relation = eejs.utils.inflection.pluralize(relation);
+                            relationName      = eejs.utils.inflection.humanize(relation, true).replace(' ', '_');
+                            relation          = eejs.utils.inflection.pluralize(relation);
                             //note we only build relation mixins for which there is a registered collection for that relation.
-                            if ( _.indexOf(collections,relation) > -1 ) {
-                                buildRelationMixinForCollectionAndRelation(collection,relation,relationName);
+                            if (_.indexOf(collections, relation) > -1) {
+                                buildRelationMixinForCollectionAndRelation(collection, relation, relationName);
                             }
                         });
                     }
@@ -2214,15 +2184,15 @@ if (!String.prototype.includes) {
                  * @param {string} relation
                  * @param {string} relationName
                  */
-                buildRelationMixinForCollectionAndRelation = function(collection, relation, relationName){
+                buildRelationMixinForCollectionAndRelation = function (collection, relation, relationName) {
                     //if there is no collectionSchema for the collection or the relation then we can't build the mixin.
-                    if (!_.has(collectionsSchema,collection)) {
+                    if (!_.has(collectionsSchema, collection)) {
                         throw new eejs.exception(
                             'Unable to build any relation mixins for the ' + collection + ' because there is' +
                             ' no schema registered for it. Are you sure the collection was registered properly?'
                         );
                     }
-                    if (!_.has(collectionsSchema,relation)) {
+                    if (!_.has(collectionsSchema, relation)) {
                         throw new eejs.exception(
                             'Unable to build any relation mixins for the ' + collection + 'because there is' +
                             'no schema registered for its ' + relationName + ' relation. Are you sure the' +
@@ -2230,29 +2200,29 @@ if (!String.prototype.includes) {
                         );
                     }
 
-                    var collectionSingular = eejs.utils.inflection.singularize(collection),
+                    var collectionSingular  = eejs.utils.inflection.singularize(collection),
                         capitalizedRelation = eejs.utils.inflection.capitalize(relation),
-                        mixinMethods = {};
+                        mixinMethods        = {};
 
-                    mixins.relations = mixins.relations || {};
+                    mixins.relations                     = mixins.relations || {};
                     mixins.relations[collectionSingular] = mixins.relations[collectionSingular] || {};
 
-                    mixinMethods['getRelated'+capitalizedRelation] = function(){
-                        var self = this,
+                    mixinMethods['getRelated' + capitalizedRelation] = function () {
+                        var self              = this,
                             queryStringObject = {};
                         this.$store.dispatch(
                             'fetchRelatedForEntity',
                             {
                                 "collection": collection,
-                                "entityId": self.id,
-                                "relation": relation
+                                "entityId":   self.id,
+                                "relation":   relation
                             }
-                        ).then( function(response){
+                        ).then(function (response) {
                             //@todo, we could also trigger some sort of property that the ui can use to indicate a
                             //success in getting the related item. A custom js event might be good?
-                            self['has'+capitalizedRelation] = true;
-                            self[relation] = response
-                        }).catch( function(response){
+                            self['has' + capitalizedRelation] = true;
+                            self[relation]                    = response
+                        }).catch(function (response) {
                             //@todo, we could trigger some sort of property that the ui can use to indicate a failure in
                             //getting the related item.  A custom js event might be good?
                             console.log(response);
@@ -2260,16 +2230,16 @@ if (!String.prototype.includes) {
                     };
 
                     mixins.relations[collectionSingular][relation] = {
-                        data: function(){
-                            var dataObject = {};
-                            dataObject[relation] = [];
-                            dataObject['has'+capitalizedRelation] = false;
+                        data:    function () {
+                            var dataObject                          = {};
+                            dataObject[relation]                    = [];
+                            dataObject['has' + capitalizedRelation] = false;
                             return dataObject;
                         },
-                        store: eejs.api.store,
-                        mounted: function() {
+                        store:   eejs.api.store,
+                        mounted: function () {
                             if (this[relation].length === 0 && this.id > 0) {
-                                this['getRelated'+capitalizedRelation]();
+                                this['getRelated' + capitalizedRelation]();
                             }
                         },
                         methods: mixinMethods
@@ -2279,16 +2249,16 @@ if (!String.prototype.includes) {
                  * Builds all components used by client code for creating a vue instance with.
                  * Assigns to the components property and exposes to client code via eejs.api.components
                  */
-                buildComponents = function() {
-                    _.each(collections, function(collection){
-                       buildComponentForCollection(collection);
+                buildComponents                            = function () {
+                    _.each(collections, function (collection) {
+                        buildComponentForCollection(collection);
                     });
 
                     // now after all the initial components have been built, we need to link any
                     // relation model components to their parent
                     // (ie. component.event will need component.datetime set on it).
-                    _.each(components, function(componentObject, component){
-                       registerRelationComponentsForComponent(component);
+                    _.each(components, function (componentObject, component) {
+                        registerRelationComponentsForComponent(component);
                     });
 
                     //expose components on our global eejs.api object.
@@ -2298,21 +2268,21 @@ if (!String.prototype.includes) {
                  * Builds components for a specific collection (if not already built).
                  * @param {string} collection
                  */
-                buildComponentForCollection = function(collection){
+                buildComponentForCollection                = function (collection) {
                     //get out if there is already a component for this collection
-                    if (_.has(components,collection)){
+                    if (_.has(components, collection)) {
                         return;
                     }
-                    var capitalizedCollection = eejs.utils.inflection.capitalize(collection),
-                        singularizedCollection = eejs.utils.inflection.singularize(collection),
+                    var capitalizedCollection             = eejs.utils.inflection.capitalize(collection),
+                        singularizedCollection            = eejs.utils.inflection.singularize(collection),
                         capitalizedSingularizedCollection = eejs.utils.inflection.singularize(capitalizedCollection),
-                        mixinsForModelComponent = [];
+                        mixinsForModelComponent           = [];
 
                     mixinsForModelComponent.push(mixins.model);
 
                     //first the model component
                     if (_.has(mixins.relations, singularizedCollection)) {
-                        _.each(mixins.relations[singularizedCollection], function(relationMixinObject){
+                        _.each(mixins.relations[singularizedCollection], function (relationMixinObject) {
                             mixinsForModelComponent.push(relationMixinObject);
                         });
                     }
@@ -2324,28 +2294,28 @@ if (!String.prototype.includes) {
 
                     components[singularizedCollection] = {
                         'collection': collection,
-                        'props' : ['initial'+capitalizedSingularizedCollection, 'initialId'],
-                        'data': function() {
-                            var dataObject = {};
+                        'props':      ['initial' + capitalizedSingularizedCollection, 'initialId'],
+                        'data':       function () {
+                            var dataObject                                        = {};
                             dataObject['has' + capitalizedSingularizedCollection] = false;
                             //set default for the model fields
-                            dataObject[singularizedCollection] = populateDefaultFields(collection);
+                            dataObject[singularizedCollection]                    = populateDefaultFields(collection);
                             return dataObject;
                         },
-                        'watch' : buildWatchersForEachModelField(collection),
-                        'mixins' : mixinsForModelComponent
+                        'watch':      buildWatchersForEachModelField(collection),
+                        'mixins':     mixinsForModelComponent
                     };
 
                     //next the collection component
                     components[collection] = {
                         "collection": collection,
-                        "data": function() {
-                            var dataObject = {};
-                            dataObject[collection] = [];
+                        "data":       function () {
+                            var dataObject                            = {};
+                            dataObject[collection]                    = [];
                             dataObject['has' + capitalizedCollection] = false;
                             return dataObject;
                         },
-                        "mixins": [mixins.collection]
+                        "mixins":     [mixins.collection]
                     };
 
                     components[collection]['components'] = components[collection]['components'] || {};
@@ -2358,11 +2328,11 @@ if (!String.prototype.includes) {
                  * @param {string} collection The collection the fields are being populated from.
                  * @returns {object}
                  */
-                populateDefaultFields = function(collection) {
+                populateDefaultFields                      = function (collection) {
                     var defaultFields = {};
                     _.each(
                         eejs.api.main.getDefaultsForCollection(collection),
-                        function(fieldDefault, fieldName){
+                        function (fieldDefault, fieldName) {
                             defaultFields[fieldName] = fieldDefault;
                         }
                     );
@@ -2372,22 +2342,22 @@ if (!String.prototype.includes) {
                  * Registers relation components on the given component.
                  * @param {string} component
                  */
-                registerRelationComponentsForComponent = function(component){
+                registerRelationComponentsForComponent     = function (component) {
                     //if the relation components on this component have already been registered or
                     //there are no relations for this component, then bail.
-                    if(_.has(components[component], 'components') || !_.has(mixins.relations,component)) {
+                    if (_.has(components[component], 'components') || !_.has(mixins.relations, component)) {
                         return;
                     }
                     //we can get the relations that need registered via the mixins
                     var singularizedRelation = '',
-                        componentsToAdd = {};
+                        componentsToAdd      = {};
                     //okay there are relations so let's loop through and then add those to a components array for this
                     //component.
-                    _.each(mixins.relations[component], function(relationObject, relation){
+                    _.each(mixins.relations[component], function (relationObject, relation) {
                         singularizedRelation = eejs.utils.inflection.singularize(relation);
-                       if (_.has(components, singularizedRelation)){
-                           componentsToAdd[singularizedRelation] = components[singularizedRelation];
-                       }
+                        if (_.has(components, singularizedRelation)) {
+                            componentsToAdd[singularizedRelation] = components[singularizedRelation];
+                        }
                     });
                     components[component]['components'] = componentsToAdd;
                 },
@@ -2397,25 +2367,25 @@ if (!String.prototype.includes) {
                  *                             from schema.
                  * @return {object}
                  */
-                buildWatchersForEachModelField = function(collection) {
-                    if (! _.has(collectionsSchema, collection)) {
-                        throw new eejs.exception( 'There is no registered collection for ' + collection + '. Unable to' +
+                buildWatchersForEachModelField             = function (collection) {
+                    if (!_.has(collectionsSchema, collection)) {
+                        throw new eejs.exception('There is no registered collection for ' + collection + '. Unable to' +
                             ' retrieve the schema for it to build watchers for the model fields.');
                     }
                     var modelName = eejs.utils.inflection.singularize(collection),
-                        watchers = {};
-                    _.each(getPropertiesFromSchema(collectionsSchema[collection]), function(els, fieldName) {
-                       watchers[modelName + '.' + fieldName] = function(value) {
-                           //@todo could eventually do some validation in here I suppose
-                           //@todo we could use the lodash .debounce to add some delay to this so it's not triggered on
-                           //every update.
-                           //note that the `initialUpdateCompleted` flag is used to ensure that when the first entity
-                           //updates are done in the local state, we don't update in the store.  This is because the `create`
-                           //hook is already taking care of updating the store state.  This has a huge impact on performance.
-                           if (this.$options.autoUpdate && this.$options.initialUpdateCompleted) {
-                               this.update();
-                           }
-                       }
+                        watchers  = {};
+                    _.each(getPropertiesFromSchema(collectionsSchema[collection]), function (els, fieldName) {
+                        watchers[modelName + '.' + fieldName] = function (value) {
+                            //@todo could eventually do some validation in here I suppose
+                            //@todo we could use the lodash .debounce to add some delay to this so it's not triggered on
+                            //every update.
+                            //note that the `initialUpdateCompleted` flag is used to ensure that when the first entity
+                            //updates are done in the local state, we don't update in the store.  This is because the `create`
+                            //hook is already taking care of updating the store state.  This has a huge impact on performance.
+                            if (this.$options.autoUpdate && this.$options.initialUpdateCompleted) {
+                                this.update();
+                            }
+                        }
                     });
                     return watchers;
                 },
@@ -2424,9 +2394,9 @@ if (!String.prototype.includes) {
                  * components so that there is a linked computed property for each model field with the store state for
                  * that model.
                  */
-                buildComputedPropertiesMixinsForModels = function(){
-                    _.each(collections, function(collection){
-                       buildComputedPropertiesMixinsForModel(collection);
+                buildComputedPropertiesMixinsForModels     = function () {
+                    _.each(collections, function (collection) {
+                        buildComputedPropertiesMixinsForModel(collection);
                     });
                 },
                 /**
@@ -2436,17 +2406,17 @@ if (!String.prototype.includes) {
                  *
                  * @param {string} collection
                  */
-                buildComputedPropertiesMixinsForModel = function(collection){
-                    if (! _.has(collectionsSchema, collection)) {
-                        throw new eejs.exception( 'There is no registered collection for ' + collection + '. Unable to' +
+                buildComputedPropertiesMixinsForModel      = function (collection) {
+                    if (!_.has(collectionsSchema, collection)) {
+                        throw new eejs.exception('There is no registered collection for ' + collection + '. Unable to' +
                             ' retrieve the schema for it to build computed properties on the model mixin.');
                     }
 
-                    mixins.computedProperties = mixins.computedProperties || {};
-                    mixins.computedProperties[collection] = mixins.computedProperties[collection] || {};
+                    mixins.computedProperties                      = mixins.computedProperties || {};
+                    mixins.computedProperties[collection]          = mixins.computedProperties[collection] || {};
                     mixins.computedProperties[collection].computed = mixins.computedProperties[collection].computed || {};
 
-                    var setException = function(value) {
+                    var setException = function (value) {
                         //computed properties can not be set.
                         throw eejs.exception('Setting this property (' + property + ') is not allowed.  It is ' +
                             'a computed property. The computed properties in the eejs.models are used for ' +
@@ -2456,25 +2426,25 @@ if (!String.prototype.includes) {
                             'triggered by calling the update method.');
                     };
 
-                    _.each(getPropertiesFromSchema(collectionsSchema[collection]), function(els, property){
+                    _.each(getPropertiesFromSchema(collectionsSchema[collection]), function (els, property) {
                         //if the property is an object, that means there's different versions returned for this object
                         if (_.has(els, 'properties')) {
-                            _.each(els.properties, function(el, propertyName) {
-                               mixins.computedProperties[collection].computed[property+eejs.utils.inflection.capitalize(propertyName)] = {
-                                   get: function() {
-                                       var mainProp = this.$store.getters.getFieldValueFromEntityById(
-                                           this.collectionName,
-                                           this.id,property
-                                       );
-                                       /**
-                                        * Keep in mind that even though this propertyName might exist in the schema, it
-                                        * might not actually exist in the store.state because it requires permissions
-                                        * that the consumer has not authed successfully for.
-                                        */
-                                       return _.has(mainProp, propertyName) ? mainProp[propertyName] : null;
-                                   },
-                                   set: setException
-                               }
+                            _.each(els.properties, function (el, propertyName) {
+                                mixins.computedProperties[collection].computed[property + eejs.utils.inflection.capitalize(propertyName)] = {
+                                    get: function () {
+                                        var mainProp = this.$store.getters.getFieldValueFromEntityById(
+                                            this.collectionName,
+                                            this.id, property
+                                        );
+                                        /**
+                                         * Keep in mind that even though this propertyName might exist in the schema, it
+                                         * might not actually exist in the store.state because it requires permissions
+                                         * that the consumer has not authed successfully for.
+                                         */
+                                        return _.has(mainProp, propertyName) ? mainProp[propertyName] : null;
+                                    },
+                                    set: setException
+                                }
                             });
                         } else {
 
@@ -2497,9 +2467,9 @@ if (!String.prototype.includes) {
                  * @param {string} collection
                  * @return {boolean}
                  */
-                collectionHasRoute = function(collection) {
+                collectionHasRoute                         = function (collection) {
                     var endpoints = getEndpoints();
-                    return _.find(endpoints, function(endpointObject, endpoint){
+                    return _.find(endpoints, function (endpointObject, endpoint) {
                         return endpoint.endsWith(collection);
                     });
                 };
@@ -2508,16 +2478,15 @@ if (!String.prototype.includes) {
              * Return the protected collections property.
              * @returns {array}
              */
-            this.getRegisteredCollections = function() {
+            this.getRegisteredCollections = function () {
                 return collections;
             };
-
 
             /**
              * This returns what has been set as the authentication method for this use.
              * @returns {string}
              */
-            this.getAuthMethod = function() {
+            this.getAuthMethod = function () {
                 return authenticationMethod;
             };
 
@@ -2525,10 +2494,9 @@ if (!String.prototype.includes) {
              * Return the protected collectionsSchema property
              * @returns {object}
              */
-            this.getCollectionsSchema = function() {
+            this.getCollectionsSchema = function () {
                 return collectionsSchema;
             };
-
 
             /**
              * Used to get the primary key for a given collection.
@@ -2537,30 +2505,28 @@ if (!String.prototype.includes) {
              * @throws eejs.exception
              * @returns {string}
              */
-            this.getPrimaryKeyForCollection = function(collection) {
-                if (! _.has(collectionsSchema, collection)) {
-                    throw new eejs.exception( 'There is no registered collection for ' + collection + ' so unable to ' +
+            this.getPrimaryKeyForCollection = function (collection) {
+                if (!_.has(collectionsSchema, collection)) {
+                    throw new eejs.exception('There is no registered collection for ' + collection + ' so unable to ' +
                         'retrieve the primary key for it.');
                 }
                 return getPrimaryKeyFromSchema(collectionsSchema[collection]);
             };
 
-
             /**
              * Used to return the defaults property
              * @return {object}
              */
-            this.getDefaults = function() {
+            this.getDefaults = function () {
                 return defaults;
             };
-
 
             /**
              * Used to return the defaults for a specific collection (if present).
              * @param {string} collection
              * @return {object}
              */
-            this.getDefaultsForCollection = function(collection) {
+            this.getDefaultsForCollection = function (collection) {
                 if (_.isUndefined(collection)) {
                     throw new eejs.exception('You need to send in a string representing the registered collection you ' +
                         'want defaults for.');
@@ -2574,12 +2540,11 @@ if (!String.prototype.includes) {
                 return defaults[collection];
             };
 
-
             /**
              * This simply initializes the Main object.
              * @returns {Promise}
              */
-            this.init = function() {
+            this.init = function () {
                 return initialize();
             };
 
@@ -2587,7 +2552,7 @@ if (!String.prototype.includes) {
              * This allows client code to push additional collections to the main instance.
              * @param {array} collections
              */
-            this.addCollections = function(collections) {
+            this.addCollections = function (collections) {
                 //@todo this needs to return a Promise because it might use an httpRequest to setup the collections.
 
                 //@todo for a new collection registered this would also have to build the vuex module for that
@@ -2603,10 +2568,12 @@ if (!String.prototype.includes) {
         };
 
         //start ur engines.
-        return new Promise(function(resolve, reject) {
-            if ( ! (eejs.api.main instanceof Main) ) {
+        return new Promise(function (resolve, reject) {
+            if (!(eejs.api.main instanceof Main)) {
                 eejs.api.main = new Main(initialOptions);
-                eejs.api.main.init().then(function(){resolve()}).catch(function(e){
+                eejs.api.main.init().then(function () {
+                    resolve()
+                }).catch(function (e) {
                     reject(e);
                 });
             } else {
