@@ -41,6 +41,30 @@ class EE_Post_Content_Field extends EE_Text_Field_Base
     }
 
 
+
+    /**
+     * Runs the content through `the_content`, or if prepares the content for placing in a form input
+     * @param string $value_on_field_to_be_outputted
+     * @param string   $schema possible values: 'form_input' or null (if null, will run through 'the_content')
+     * @return string
+     */
+    public function prepare_for_pretty_echoing($value_on_field_to_be_outputted, $schema = null)
+    {
+        if ($schema == 'form_input') {
+            return parent::prepare_for_pretty_echoing($value_on_field_to_be_outputted, $schema);
+        } else {
+            return apply_filters(
+                'the_content',
+                parent::prepare_for_pretty_echoing(
+                    $value_on_field_to_be_outputted,
+                    $schema
+                )
+            );
+        }
+    }
+
+
+
     public function getSchemaProperties()
     {
         return array(
