@@ -320,6 +320,7 @@ class MoneyTest extends \EE_UnitTestCase
         $this->assertEquals('1234.50', $money->format(MoneyFormatter::DECIMAL_ONLY));
         $this->assertEquals('1,234.50', $money->format(MoneyFormatter::ADD_THOUSANDS));
         $this->assertEquals('$1,234.50', $money->format(MoneyFormatter::ADD_CURRENCY_SIGN));
+        $this->assertEquals('$1,234.50 USD', $money->format(MoneyFormatter::ADD_CURRENCY_CODE));
         $this->assertEquals(
             '$1,234.50 <span class="currency-code">(USD)</span>',
             $money->format(MoneyFormatter::INTERNATIONAL)

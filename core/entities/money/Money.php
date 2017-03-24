@@ -7,6 +7,7 @@ use EE_Organization_Config;
 use EE_Registry;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\services\currency\Calculator;
+use EventEspresso\core\services\currency\CurrencyCodeMoneyFormatter;
 use EventEspresso\core\services\currency\CurrencySignMoneyFormatter;
 use EventEspresso\core\services\currency\DecimalMoneyFormatter;
 use EventEspresso\core\services\currency\InternationalMoneyFormatter;
@@ -427,7 +428,8 @@ class Money
                 1 => new DecimalMoneyFormatter(),
                 2 => new ThousandsMoneyFormatter(),
                 3 => new CurrencySignMoneyFormatter(),
-                4 => new InternationalMoneyFormatter(),
+                4 => new CurrencyCodeMoneyFormatter(),
+                5 => new InternationalMoneyFormatter(),
             )
         );
     }
