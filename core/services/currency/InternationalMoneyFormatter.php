@@ -28,7 +28,10 @@ class InternationalMoneyFormatter implements MoneyFormatter
      */
     public function format($money_amount, Currency $currency)
     {
-        return $money_amount . ' <span class="currency-code">(' . $currency->code() . ')</span>';
+        $currency_code = $currency->code();
+        // remove currency code if already added
+        $money_amount = str_replace($currency_code, '', $money_amount);
+        return trim($money_amount) . ' <span class="currency-code">(' . $currency_code . ')</span>';
     }
 
 
