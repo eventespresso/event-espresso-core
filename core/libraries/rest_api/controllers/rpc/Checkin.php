@@ -2,14 +2,16 @@
 
 
 use WP_Error;
-use WP_REST_Request;
 use WP_REST_Response;
+use WP_REST_Request;
+use EE_Registration;
+use EEM_Registration;
+use EE_Capabilities;
+use EE_Checkin;
+use EEM_Checkin;
+use EED_Core_Rest_Api;
 use EventEspresso\core\libraries\rest_api\controllers\Base as Base;
 use EventEspresso\core\libraries\rest_api\controllers\model\Read;
-use EE_Capabilities;
-use EE_Registration;
-use EED_Core_Rest_Api;
-use EEM_Registration;
 
 if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
@@ -46,7 +48,7 @@ class Checkin extends Base
      * Toggles whether the user is checked in or not.
 
      *
-*@param WP_REST_Request $request
+     * @param WP_REST_Request $request
      * @param string           $version
      * @return WP_Error|WP_REST_Response
      */
@@ -66,7 +68,8 @@ class Checkin extends Base
                 new WP_Error(
                     'rest_registration_toggle_checkin_invalid_id',
                     sprintf(
-                        __('You cannot checkin registration with ID %1$s because it doesn\'t exist.', 'event_espresso'),
+                        __('You cannot checkin registration with ID %1$s because it doesn\'t exist.',
+                            'event_espresso'),
                         $reg_id
                     ),
                     array('status' => 422)
@@ -87,15 +90,25 @@ class Checkin extends Base
         }
         $success = $reg->toggle_checkin_status($dtt_id, ! $force);
         if ($success === false) {
-            //rely on EE_Error::add_error messages to have been added to give more data about hwy it failed
+            //check if we know they can't check in because they're not approved and we aren't forcing
+            if (! $reg->is_approved() && ! $force) {
+                //rely on EE_Error::add_error messages to have been added to give more data about why it failed
+                return $this->sendResponse(
+                    new WP_Error(
+                        'rest_toggle_checkin_failed',
+                        __('Registration check-in failed because the registration is not approved. You may attempt to force checking in though.',
+                            'event_espresso')
+                    )
+                );
+            }
             return $this->sendResponse(
                 new WP_Error(
-                    'rest_toggle_checkin_failed',
+                    'rest_toggle_checkin_failed_not_forceable',
                     __('Registration checkin failed. Please see additional error data.', 'event_espresso')
                 )
             );
         }
-        $checkin = \EEM_Checkin::instance()->get_one(
+        $checkin = EEM_Checkin::instance()->get_one(
             array(
                 array(
                     'REG_ID' => $reg_id,
@@ -106,7 +119,7 @@ class Checkin extends Base
                 ),
             )
         );
-        if (! $checkin instanceof \EE_Checkin) {
+        if (! $checkin instanceof EE_Checkin) {
             return $this->sendResponse(
                 new WP_Error(
                     'rest_toggle_checkin_error',
