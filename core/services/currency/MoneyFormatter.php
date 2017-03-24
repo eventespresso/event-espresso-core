@@ -45,9 +45,16 @@ interface MoneyFormatter
 
     /**
      * format money amount by adding decimal mark, thousands separator, currency sign, and currency code
-     * eg: USD $1,234.56
+     * eg: $1,234.56 USD
      */
-    const INTERNATIONAL = 4;
+    const ADD_CURRENCY_CODE = 4;
+
+    /**
+     * format money amount by adding decimal mark, thousands separator, currency sign,
+     * and currency code wrapped in HTML span tag with HTML class
+     * eg: $1,234.56 <span class="currency-code">(USD)</span>
+     */
+    const INTERNATIONAL = 5;
 
 
 
