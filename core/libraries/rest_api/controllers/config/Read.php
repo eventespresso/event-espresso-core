@@ -4,6 +4,7 @@ use WP_REST_Request;
 use WP_Error;
 use EE_Restriction_Generator_Base;
 use EE_Config;
+use EE_Capabilities;
 use EEH_DTT_Helper;
 if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
