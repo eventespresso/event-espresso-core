@@ -337,7 +337,11 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes
      */
     private function _get_payment_gateway($transaction)
     {
-        $pm = $this->_get_invoice_payment_method($transaction);
+        if($transaction instanceof EE_Transaction){
+            $pm = $transaction->payment_method();
+        } else {
+            $pm = null;
+        }
         return $pm instanceof EE_Payment_Method ? $pm->name() : '';
     }
 
