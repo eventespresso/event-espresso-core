@@ -2,8 +2,8 @@
 namespace EventEspresso\core\libraries\rest_api\controllers\model;
 
 use EventEspresso\core\libraries\rest_api\controllers\Base as Controller_Base;
-use EventEspresso\core\libraries\rest_api\Model_Version_Info;
-
+use EventEspresso\core\libraries\rest_api\ModelVersionInfo;
+use EE_Error;
 if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
@@ -24,9 +24,9 @@ class Base extends Controller_Base
     /**
      * Holds reference to the model version info, which knows the requested version
      *
-     * @var Model_Version_Info
+     * @var ModelVersionInfo
      */
-    protected $_model_version_info;
+    protected $model_version_info;
 
 
 
@@ -35,10 +35,10 @@ class Base extends Controller_Base
      *
      * @param string $version eg '4.8'
      */
-    public function set_requested_version($version)
+    public function setRequestedVersion($version)
     {
-        parent::set_requested_version($version);
-        $this->_model_version_info = new Model_Version_Info($version);
+        parent::setRequestedVersion($version);
+        $this->model_version_info = new ModelVersionInfo($version);
     }
 
 
@@ -47,13 +47,13 @@ class Base extends Controller_Base
      * Gets the object that should be used for getting any info from the models,
      * because it's takes the requested and current core version into account
      *
-     * @return \EventEspresso\core\libraries\rest_api\Model_Version_Info
-     * @throws \EE_Error
+     * @return \EventEspresso\core\libraries\rest_api\ModelVersionInfo
+     * @throws EE_Error
      */
-    public function get_model_version_info()
+    public function getModelVersionInfo()
     {
-        if (! $this->_model_version_info) {
-            throw new \EE_Error(
+        if (! $this->model_version_info) {
+            throw new EE_Error(
                 sprintf(
                     __(
                         'Cannot use model version info before setting the requested version in the controller',
@@ -62,7 +62,7 @@ class Base extends Controller_Base
                 )
             );
         }
-        return $this->_model_version_info;
+        return $this->model_version_info;
     }
 
 
@@ -76,7 +76,7 @@ class Base extends Controller_Base
      * @param array  $classnames
      * @return boolean
      */
-    public function is_subclass_of_one($object, $classnames)
+    public function isSubclassOfOne($object, $classnames)
     {
         foreach ($classnames as $classname) {
             if (is_a($object, $classname)) {

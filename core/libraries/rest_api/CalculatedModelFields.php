@@ -1,11 +1,13 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api;
 
+use EEM_Base;
 use EventEspresso\core\libraries\rest_api\controllers\Base;
-use EventEspresso\core\libraries\rest_api\Rest_Exception;
+use EventEspresso\core\libraries\rest_api\RestException;
+use EEH_Inflector;
 
 /**
- * Class Calculationshelpers
+ * Class CalculatedModelFields
  * Class for defining which model fields can be calculated, and performing those calculations
  * as requested
  *
@@ -20,13 +22,13 @@ if (! defined('EVENT_ESPRESSO_VERSION')) {
 
 
 
-class Calculated_Model_Fields
+class CalculatedModelFields
 {
 
     /**
      * @var array
      */
-    protected $_mapping;
+    protected $mapping;
 
 
 
@@ -34,7 +36,7 @@ class Calculated_Model_Fields
      * @param bool $refresh
      * @return array top-level-keys are model names (eg "Event")
      * next-level are the calculated field names AND method names on classes
-     * which perform calculations, values are the fully qualified classnames which do the calculationss
+     * which perform calculations, values are the fully qualified classnames which do the calculations
      * These callbacks should accept as arguments:
      * the wpdb row results,
      * the WP_Request object,
@@ -42,10 +44,10 @@ class Calculated_Model_Fields
      */
     public function mapping($refresh = false)
     {
-        if (! $this->_mapping || $refresh) {
-            $this->_mapping = $this->_generate_new_mapping();
+        if (! $this->mapping || $refresh) {
+            $this->mapping = $this->generateNewMapping();
         }
-        return $this->_mapping;
+        return $this->mapping;
     }
 
 
@@ -55,7 +57,7 @@ class Calculated_Model_Fields
      *
      * @return array
      */
-    protected function _generate_new_mapping()
+    protected function generateNewMapping()
     {
         $rest_api_calculations_namespace = 'EventEspresso\core\libraries\rest_api\calculations\\';
         $event_calculations_class = $rest_api_calculations_namespace . 'Event';
@@ -97,10 +99,10 @@ class Calculated_Model_Fields
     /**
      * Gets the known calculated fields for model
      *
-     * @param \EEM_Base $model
+     * @param EEM_Base $model
      * @return array allowable values for this field
      */
-    public function retrieve_calculated_fields_for_model(\EEM_Base $model)
+    public function retrieveCalculatedFieldsForModel(EEM_Base $model)
     {
         $mapping = $this->mapping();
         if (isset($mapping[$model->get_this_model_name()])) {
@@ -115,7 +117,7 @@ class Calculated_Model_Fields
     /**
      * Retrieves the value for this calculation
      *
-     * @param \EEM_Base                                               type $model
+     * @param EEM_Base                                               type $model
      * @param string                                                  $field_name
      * @param array                                                   $wpdb_row
      * @param \WP_REST_Request
@@ -123,8 +125,8 @@ class Calculated_Model_Fields
      * @return mixed|null
      * @throws \EE_Error
      */
-    public function retrieve_calculated_field_value(
-        \EEM_Base $model,
+    public function retrieveCalculatedFieldValue(
+        EEM_Base $model,
         $field_name,
         $wpdb_row,
         $rest_request,
@@ -135,9 +137,10 @@ class Calculated_Model_Fields
             && isset($mapping[$model->get_this_model_name()][$field_name])
         ) {
             $classname = $mapping[$model->get_this_model_name()][$field_name];
-            return call_user_func(array($classname, $field_name), $wpdb_row, $rest_request, $controller);
+            $class_method_name = EEH_Inflector::camelize_all_but_first($field_name);
+            return call_user_func(array($classname, $class_method_name), $wpdb_row, $rest_request, $controller);
         }
-        throw new Rest_Exception(
+        throw new RestException(
             'calculated_field_does_not_exist',
             sprintf(
                 __('There is no calculated field %1$s on resource %2$s', 'event_espresso'),

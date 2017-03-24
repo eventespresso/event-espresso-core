@@ -1,11 +1,14 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api\controllers\config;
+
+
 use WP_REST_Request;
 use WP_Error;
-use EE_Restriction_Generator_Base;
 use EE_Config;
 use EE_Capabilities;
+use EE_Restriction_Generator_Base;
 use EEH_DTT_Helper;
+
 if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
@@ -28,13 +31,13 @@ class Read
      * @param string           $version
      * @return EE_Config|WP_Error
      */
-    public static function handle_request(WP_REST_Request $request, $version)
+    public static function handleRequest(WP_REST_Request $request, $version)
     {
         $cap = EE_Restriction_Generator_Base::get_default_restrictions_cap();
         if (EE_Capabilities::instance()->current_user_can($cap, 'read_over_api')) {
-            return \EE_Config::instance();
+            return EE_Config::instance();
         } else {
-            return new \WP_Error(
+            return new WP_Error(
                 'cannot_read_config',
                 sprintf(
                     __(
@@ -57,11 +60,11 @@ class Read
      *                         current user could be authenticated using basic auth data
      * @global                 $wp_json_basic_auth_received_data boolean set by the basic auth plugin, indicates if
      *                         basic auth data was somehow received
-     * @param \WP_REST_Request $request
+     * @param WP_REST_Request $request
      * @param string           $version
-     * @return array|\WP_Error
+     * @return array|WP_Error
      */
-    public static function handle_request_site_info(WP_REST_Request $request, $version)
+    public static function handleRequestSiteInfo(WP_REST_Request $request, $version)
     {
         global $wp_json_basic_auth_success, $wp_json_basic_auth_received_data;
         $insecure_usage_of_basic_auth = apply_filters(

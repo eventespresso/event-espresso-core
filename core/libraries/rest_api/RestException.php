@@ -17,15 +17,15 @@ if (! defined('EVENT_ESPRESSO_VERSION')) {
 
 
 
-class Rest_Exception extends \EE_Error
+class RestException extends \EE_Error
 {
 
     /**
      * @var array
      */
-    protected $_wp_error_data = array();
+    protected $wp_error_data = array();
 
-    protected $_wp_error_code = '';
+    protected $wp_error_code = '';
 
 
 
@@ -42,8 +42,8 @@ class Rest_Exception extends \EE_Error
             $message,
             $http_status_number,
             $previous);
-        $this->_wp_error_data = $wp_error_data;
-        $this->_wp_error_code = $string_code;
+        $this->wp_error_data = $wp_error_data;
+        $this->wp_error_code = $string_code;
     }
 
 
@@ -53,9 +53,9 @@ class Rest_Exception extends \EE_Error
      *
      * @return array
      */
-    public function get_data()
+    public function getData()
     {
-        return $this->_wp_error_data;
+        return $this->wp_error_data;
     }
 
 
@@ -65,8 +65,8 @@ class Rest_Exception extends \EE_Error
      *
      * @return string
      */
-    public function get_string_code()
+    public function getStringCode()
     {
-        return $this->_wp_error_code;
+        return $this->wp_error_code;
     }
 }

@@ -33,23 +33,26 @@ class Checkin extends Base
 
     /**
      * @param WP_REST_Request $request
+     * @param string           $version
      * @return WP_Error|WP_REST_Response
      */
-    public static function handle_request_toggle_checkin(WP_REST_Request $request,  $version)
+    public static function handleRequestToggleCheckin(WP_REST_Request $request, $version)
     {
         $controller = new Checkin();
-        return $controller->_create_checkin_checkout_object($request, $version);
+        return $controller->createCheckinCheckoutObject($request, $version);
     }
 
 
 
     /**
      * Toggles whether the user is checked in or not.
+
      *
      * @param WP_REST_Request $request
+     * @param string           $version
      * @return WP_Error|WP_REST_Response
      */
-    protected function _create_checkin_checkout_object(WP_REST_Request $request, $version)
+    protected function createCheckinCheckoutObject(WP_REST_Request $request, $version)
     {
         $reg_id = $request->get_param('REG_ID');
         $dtt_id = $request->get_param('DTT_ID');
@@ -61,7 +64,7 @@ class Checkin extends Base
         }
         $reg = EEM_Registration::instance()->get_one_by_ID($reg_id);
         if (! $reg instanceof EE_Registration) {
-            return $this->send_response(
+            return $this->sendResponse(
                 new WP_Error(
                     'rest_registration_toggle_checkin_invalid_id',
                     sprintf(
@@ -73,10 +76,8 @@ class Checkin extends Base
                 )
             );
         }
-        if (! EE_Capabilities::instance()
-                             ->current_user_can('ee_edit_checkin', 'rest_api_checkin_endpoint', $reg_id)
-        ) {
-            return $this->send_response(
+        if (! EE_Capabilities::instance()->current_user_can('ee_edit_checkin', 'rest_api_checkin_endpoint', $reg_id)) {
+            return $this->sendResponse(
                 new WP_Error(
                     'rest_user_cannot_toggle_checkin',
                     sprintf(
@@ -92,7 +93,7 @@ class Checkin extends Base
             //check if we know they can't check in because they're not approved and we aren't forcing
             if (! $reg->is_approved() && ! $force) {
                 //rely on EE_Error::add_error messages to have been added to give more data about why it failed
-                return $this->send_response(
+                return $this->sendResponse(
                     new WP_Error(
                         'rest_toggle_checkin_failed',
                         __('Registration check-in failed because the registration is not approved. You may attempt to force checking in though.',
@@ -100,7 +101,7 @@ class Checkin extends Base
                     )
                 );
             }
-            return $this->send_response(
+            return $this->sendResponse(
                 new WP_Error(
                     'rest_toggle_checkin_failed_not_forceable',
                     __('Registration checkin failed. Please see additional error data.', 'event_espresso')
@@ -119,7 +120,7 @@ class Checkin extends Base
             )
         );
         if (! $checkin instanceof EE_Checkin) {
-            return $this->send_response(
+            return $this->sendResponse(
                 new WP_Error(
                     'rest_toggle_checkin_error',
                     sprintf(
@@ -140,6 +141,6 @@ class Checkin extends Base
                 'id' => $checkin->ID(),
             )
         );
-        return Read::handle_request_get_one($get_request, $version, 'Checkin');
+        return Read::handleRequestGetOne($get_request, $version, 'Checkin');
     }
 }

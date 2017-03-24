@@ -1,16 +1,22 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api\controllers\model;
 
-use WP_REST_Request;
-use WP_REST_Response;
+use Exception;
 use WP_Error;
+use WP_REST_Request;
 use EventEspresso\core\libraries\rest_api\Capabilities;
-use EventEspresso\core\libraries\rest_api\Calculated_Model_Fields;
-use EventEspresso\core\libraries\rest_api\Rest_Exception;
-use EventEspresso\core\libraries\rest_api\Model_Data_Translator;
+use EventEspresso\core\libraries\rest_api\CalculatedModelFields;
+use EventEspresso\core\libraries\rest_api\RestException;
+use EventEspresso\core\libraries\rest_api\ModelDataTranslator;
 use EventEspresso\core\entities\models\JsonModelSchema;
+use EE_Belongs_To_Relation;
 use EE_Datetime_Field;
+use EE_Error;
+use EE_Registry;
+use EED_Core_Rest_Api;
 use EEH_Inflector;
+use EEM_Base;
+use EEM_CPT_Base;
 
 if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
@@ -32,7 +38,7 @@ class Read extends Base
 
 
     /**
-     * @var Calculated_Model_Fields
+     * @var CalculatedModelFields
      */
     protected $_fields_calculator;
 
@@ -44,27 +50,28 @@ class Read extends Base
     public function __construct()
     {
         parent::__construct();
-        $this->_fields_calculator = new Calculated_Model_Fields();
+        $this->_fields_calculator = new CalculatedModelFields();
     }
 
 
 
     /**
      * Handles requests to get all (or a filtered subset) of entities for a particular model
+
      *
-     * @param WP_REST_Request $request
+*@param WP_REST_Request $request
      * @param string           $version
      * @param string           $model_name
-     * @return WP_REST_Response|WP_Error
+     * @return \WP_REST_Response|WP_Error
      */
-    public static function handle_request_get_all(WP_REST_Request $request, $version, $model_name)
+    public static function handleRequestGetAll(WP_REST_Request $request, $version, $model_name)
     {
         $controller = new Read();
         try {
-            $controller->set_requested_version($version);
+            $controller->setRequestedVersion($version);
             $model_name_singular = EEH_Inflector::singularize_and_upper($model_name);
-            if (! $controller->get_model_version_info()->is_model_name_in_this_version($model_name_singular)) {
-                return $controller->send_response(
+            if (! $controller->getModelVersionInfo()->isModelNameInThisVersion($model_name_singular)) {
+                return $controller->sendResponse(
                     new WP_Error(
                         'endpoint_parsing_error',
                         sprintf(
@@ -75,14 +82,14 @@ class Read extends Base
                     )
                 );
             }
-            return $controller->send_response(
-                $controller->get_entities_from_model(
-                    $controller->get_model_version_info()->load_model($model_name_singular),
+            return $controller->sendResponse(
+                $controller->getEntitiesFromModel(
+                    $controller->getModelVersionInfo()->loadModel($model_name_singular),
                     $request
                 )
             );
-        } catch (\Exception $e) {
-            return $controller->send_response($e);
+        } catch (Exception $e) {
+            return $controller->sendResponse($e);
         }
     }
 
@@ -95,28 +102,28 @@ class Read extends Base
      * @param string $model_name Something like `Event` or `Registration`
      * @return array
      */
-    public static function handle_schema_request($version, $model_name)
+    public static function handleSchemaRequest($version, $model_name)
     {
         $controller = new Read();
         try {
-            $controller->set_requested_version($version);
-            if (! $controller->get_model_version_info()->is_model_name_in_this_version($model_name)) {
+            $controller->setRequestedVersion($version);
+            if (! $controller->getModelVersionInfo()->isModelNameInThisVersion($model_name)) {
                 return array();
             }
             //get the model for this version
-            $model = $controller->get_model_version_info()->load_model($model_name);
+            $model = $controller->getModelVersionInfo()->loadModel($model_name);
             $model_schema = new JsonModelSchema($model);
             return $model_schema->getModelSchemaForRelations(
-                $controller->get_model_version_info()->relation_settings($model),
-                $controller->_customize_schema_for_rest_response(
+                $controller->getModelVersionInfo()->relationSettings($model),
+                $controller->customizeSchemaForRestResponse(
                     $model,
                     $model_schema->getModelSchemaForFields(
-                        $controller->get_model_version_info()->fields_on_model_in_this_version($model),
+                        $controller->getModelVersionInfo()->fieldsOnModelInThisVersion($model),
                         $model_schema->getInitialSchemaStructure()
                     )
                 )
             );
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return array();
         }
     }
@@ -128,17 +135,17 @@ class Read extends Base
      * - add any extra fields that are REST API specific and related to existing fields.
      * - transform default values into the correct format for a REST API response.
      *
-     * @param \EEM_Base $model
+     * @param EEM_Base $model
      * @param array     $schema
      * @return array  The final schema.
      */
-    protected function _customize_schema_for_rest_response(\EEM_Base $model, array $schema)
+    protected function customizeSchemaForRestResponse(EEM_Base $model, array $schema)
     {
-        foreach ($this->get_model_version_info()->fields_on_model_in_this_version($model) as $field_name => $field) {
-            $schema = $this->_translate_defaults_for_rest_response(
+        foreach ($this->getModelVersionInfo()->fieldsOnModelInThisVersion($model) as $field_name => $field) {
+            $schema = $this->translateDefaultsForRestResponse(
                 $field_name,
                 $field,
-                $this->_maybe_add_extra_fields_to_schema($field_name, $field, $schema)
+                $this->maybeAddExtraFieldsToSchema($field_name, $field, $schema)
             );
         }
         return $schema;
@@ -155,24 +162,24 @@ class Read extends Base
      * @param array                $schema
      * @return array
      */
-    protected function _translate_defaults_for_rest_response($field_name, \EE_Model_Field_Base $field, array $schema)
+    protected function translateDefaultsForRestResponse($field_name, \EE_Model_Field_Base $field, array $schema)
     {
         if (isset($schema['properties'][$field_name]['default'])) {
             if (is_array($schema['properties'][$field_name]['default'])) {
                 foreach ($schema['properties'][$field_name]['default'] as $default_key => $default_value) {
                     if ($default_key === 'raw') {
-                        $schema['properties'][$field_name]['default'][$default_key] = Model_Data_Translator::prepare_field_value_for_json(
+                        $schema['properties'][$field_name]['default'][$default_key] = ModelDataTranslator::prepareFieldValueForJson(
                             $field,
                             $default_value,
-                            $this->get_model_version_info()->requested_version()
+                            $this->getModelVersionInfo()->requestedVersion()
                         );
                     }
                 }
             } else {
-                $schema['properties'][$field_name]['default'] = Model_Data_Translator::prepare_field_value_for_json(
+                $schema['properties'][$field_name]['default'] = ModelDataTranslator::prepareFieldValueForJson(
                     $field,
                     $schema['properties'][$field_name]['default'],
-                    $this->get_model_version_info()->requested_version()
+                    $this->getModelVersionInfo()->requestedVersion()
                 );
             }
         }
@@ -191,7 +198,7 @@ class Read extends Base
      * @param array                $schema
      * @return array
      */
-    protected function _maybe_add_extra_fields_to_schema($field_name, \EE_Model_Field_Base $field, array $schema)
+    protected function maybeAddExtraFieldsToSchema($field_name, \EE_Model_Field_Base $field, array $schema)
     {
         if ($field instanceof EE_Datetime_Field) {
             $schema['properties'][$field_name . '_gmt'] = $field->getSchema();
@@ -211,7 +218,7 @@ class Read extends Base
      *
      * @return string
      */
-    protected function get_route_from_request()
+    protected function getRouteFromRequest()
     {
         if (isset($GLOBALS['wp'])
             && $GLOBALS['wp'] instanceof \WP
@@ -227,20 +234,21 @@ class Read extends Base
 
     /**
      * Gets a single entity related to the model indicated in the path and its id
+
      *
-     * @param WP_REST_Request $request
+*@param WP_REST_Request $request
      * @param string           $version
      * @param string           $model_name
-     * @return WP_REST_Response|WP_Error
+     * @return \WP_REST_Response|WP_Error
      */
-    public static function handle_request_get_one(WP_REST_Request $request, $version, $model_name)
+    public static function handleRequestGetOne(WP_REST_Request $request, $version, $model_name)
     {
         $controller = new Read();
         try {
-            $controller->set_requested_version($version);
+            $controller->setRequestedVersion($version);
             $model_name_singular = EEH_Inflector::singularize_and_upper($model_name);
-            if (! $controller->get_model_version_info()->is_model_name_in_this_version($model_name_singular)) {
-                return $controller->send_response(
+            if (! $controller->getModelVersionInfo()->isModelNameInThisVersion($model_name_singular)) {
+                return $controller->sendResponse(
                     new WP_Error(
                         'endpoint_parsing_error',
                         sprintf(
@@ -251,14 +259,14 @@ class Read extends Base
                     )
                 );
             }
-            return $controller->send_response(
-                $controller->get_entity_from_model(
-                    $controller->get_model_version_info()->load_model($model_name_singular),
+            return $controller->sendResponse(
+                $controller->getEntityFromModel(
+                    $controller->getModelVersionInfo()->loadModel($model_name_singular),
                     $request
                 )
             );
-        } catch (\Exception $e) {
-            return $controller->send_response($e);
+        } catch (Exception $e) {
+            return $controller->sendResponse($e);
         }
     }
 
@@ -267,14 +275,15 @@ class Read extends Base
     /**
      * Gets all the related entities (or if its a belongs-to relation just the one)
      * to the item with the given id
+
      *
-     * @param WP_REST_Request $request
+*@param WP_REST_Request $request
      * @param string           $version
      * @param string           $model_name
      * @param string           $related_model_name
-     * @return WP_REST_Response|WP_Error
+     * @return \WP_REST_Response|WP_Error
      */
-    public static function handle_request_get_related(
+    public static function handleRequestGetRelated(
         WP_REST_Request $request,
         $version,
         $model_name,
@@ -282,10 +291,10 @@ class Read extends Base
     ) {
         $controller = new Read();
         try {
-            $controller->set_requested_version($version);
+            $controller->setRequestedVersion($version);
             $main_model_name_singular = EEH_Inflector::singularize_and_upper($model_name);
-            if (! $controller->get_model_version_info()->is_model_name_in_this_version($main_model_name_singular)) {
-                return $controller->send_response(
+            if (! $controller->getModelVersionInfo()->isModelNameInThisVersion($main_model_name_singular)) {
+                return $controller->sendResponse(
                     new WP_Error(
                         'endpoint_parsing_error',
                         sprintf(
@@ -296,15 +305,15 @@ class Read extends Base
                     )
                 );
             }
-            $main_model = $controller->get_model_version_info()->load_model($main_model_name_singular);
+            $main_model = $controller->getModelVersionInfo()->loadModel($main_model_name_singular);
             //assume the related model name is plural and try to find the model's name
             $related_model_name_singular = EEH_Inflector::singularize_and_upper($related_model_name);
-            if (! $controller->get_model_version_info()->is_model_name_in_this_version($related_model_name_singular)) {
+            if (! $controller->getModelVersionInfo()->isModelNameInThisVersion($related_model_name_singular)) {
                 //so the word didn't singularize well. Maybe that's just because it's a singular word?
                 $related_model_name_singular = EEH_Inflector::humanize($related_model_name);
             }
-            if (! $controller->get_model_version_info()->is_model_name_in_this_version($related_model_name_singular)) {
-                return $controller->send_response(
+            if (! $controller->getModelVersionInfo()->isModelNameInThisVersion($related_model_name_singular)) {
+                return $controller->sendResponse(
                     new WP_Error(
                         'endpoint_parsing_error',
                         sprintf(
@@ -315,15 +324,15 @@ class Read extends Base
                     )
                 );
             }
-            return $controller->send_response(
-                $controller->get_entities_from_relation(
+            return $controller->sendResponse(
+                $controller->getEntitiesFromRelation(
                     $request->get_param('id'),
                     $main_model->related_settings_for($related_model_name_singular),
                     $request
                 )
             );
-        } catch (\Exception $e) {
-            return $controller->send_response($e);
+        } catch (Exception $e) {
+            return $controller->sendResponse($e);
         }
     }
 
@@ -331,35 +340,35 @@ class Read extends Base
 
     /**
      * Gets a collection for the given model and filters
+
      *
-     * @param \EEM_Base        $model
+*@param EEM_Base        $model
      * @param WP_REST_Request $request
      * @return array|WP_Error
      */
-    public function get_entities_from_model($model, $request)
+    public function getEntitiesFromModel($model, $request)
     {
-        $query_params = $this->create_model_query_params($model, $request->get_params());
-        if (! Capabilities::current_user_has_partial_access_to($model, $query_params['caps'])) {
+        $query_params = $this->createModelQueryParams($model, $request->get_params());
+        if (! Capabilities::currentUserHasPartialAccessTo($model, $query_params['caps'])) {
             $model_name_plural = EEH_Inflector::pluralize_and_lower($model->get_this_model_name());
             return new WP_Error(
                 sprintf('rest_%s_cannot_list', $model_name_plural),
                 sprintf(
-                    __('Sorry, you are not allowed to list %1$s. Missing permis
-sions: %2$s', 'event_espresso'),
+                    __('Sorry, you are not allowed to list %1$s. Missing permissions: %2$s', 'event_espresso'),
                     $model_name_plural,
-                    Capabilities::get_missing_permissions_string($model, $query_params['caps'])
+                    Capabilities::getMissingPermissionsString($model, $query_params['caps'])
                 ),
                 array('status' => 403)
             );
         }
         if (! $request->get_header('no_rest_headers')) {
-            $this->_set_headers_from_query_params($model, $query_params);
+            $this->setHeadersFromQueryParams($model, $query_params);
         }
         /** @type array $results */
         $results = $model->get_all_wpdb_results($query_params);
         $nice_results = array();
         foreach ($results as $result) {
-            $nice_results[] = $this->create_entity_from_wpdb_result(
+            $nice_results[] = $this->createEntityFromWpdbResult(
                 $model,
                 $result,
                 $request
@@ -382,9 +391,9 @@ sions: %2$s', 'event_espresso'),
      * @param WP_REST_Request        $request
      * @return WP_Error|array
      */
-    protected function _get_entities_from_relation($primary_model_query_params, $relation, $request)
+    protected function getEntitiesFromRelationUsingModelQueryParams($primary_model_query_params, $relation, $request)
     {
-        $context = $this->validate_context($request->get_param('caps'));
+        $context = $this->validateContext($request->get_param('caps'));
         $model = $relation->get_this_model();
         $related_model = $relation->get_other_model();
         if (! isset($primary_model_query_params[0])) {
@@ -400,15 +409,15 @@ sions: %2$s', 'event_espresso'),
         }
         $restricted_query_params = $primary_model_query_params;
         $restricted_query_params['caps'] = $context;
-        $this->_set_debug_info('main model query params', $restricted_query_params);
-        $this->_set_debug_info('missing caps', Capabilities::get_missing_permissions_string($related_model, $context));
+        $this->setDebugInfo('main model query params', $restricted_query_params);
+        $this->setDebugInfo('missing caps', Capabilities::getMissingPermissionsString($related_model, $context));
         if (
         ! (
-            Capabilities::current_user_has_partial_access_to($related_model, $context)
+            Capabilities::currentUserHasPartialAccessTo($related_model, $context)
             && $model->exists($restricted_query_params)
         )
         ) {
-            if ($relation instanceof \EE_Belongs_To_Relation) {
+            if ($relation instanceof EE_Belongs_To_Relation) {
                 $related_model_name_maybe_plural = strtolower($related_model->get_this_model_name());
             } else {
                 $related_model_name_maybe_plural = EEH_Inflector::pluralize_and_lower($related_model->get_this_model_name());
@@ -423,14 +432,14 @@ sions: %2$s', 'event_espresso'),
                     implode(
                         ',',
                         array_keys(
-                            Capabilities::get_missing_permissions($related_model, $context)
+                            Capabilities::getMissingPermissions($related_model, $context)
                         )
                     )
                 ),
                 array('status' => 403)
             );
         }
-        $query_params = $this->create_model_query_params($relation->get_other_model(), $request->get_params());
+        $query_params = $this->createModelQueryParams($relation->get_other_model(), $request->get_params());
         foreach ($primary_model_query_params[0] as $where_condition_key => $where_condition_value) {
             $query_params[0][$relation->get_this_model()->get_this_model_name()
                              . '.'
@@ -439,13 +448,13 @@ sions: %2$s', 'event_espresso'),
         $query_params['default_where_conditions'] = 'none';
         $query_params['caps'] = $context;
         if (! $request->get_header('no_rest_headers')) {
-            $this->_set_headers_from_query_params($relation->get_other_model(), $query_params);
+            $this->setHeadersFromQueryParams($relation->get_other_model(), $query_params);
         }
         /** @type array $results */
         $results = $relation->get_other_model()->get_all_wpdb_results($query_params);
         $nice_results = array();
         foreach ($results as $result) {
-            $nice_result = $this->create_entity_from_wpdb_result(
+            $nice_result = $this->createEntityFromWpdbResult(
                 $relation->get_other_model(),
                 $result,
                 $request
@@ -453,7 +462,7 @@ sions: %2$s', 'event_espresso'),
             if ($relation instanceof \EE_HABTM_Relation) {
                 //put the unusual stuff (properties from the HABTM relation) first, and make sure
                 //if there are conflicts we prefer the properties from the main model
-                $join_model_result = $this->create_entity_from_wpdb_result(
+                $join_model_result = $this->createEntityFromWpdbResult(
                     $relation->get_join_model(),
                     $result,
                     $request
@@ -467,7 +476,7 @@ sions: %2$s', 'event_espresso'),
             }
             $nice_results[] = $nice_result;
         }
-        if ($relation instanceof \EE_Belongs_To_Relation) {
+        if ($relation instanceof EE_Belongs_To_Relation) {
             return array_shift($nice_results);
         } else {
             return $nice_results;
@@ -481,17 +490,18 @@ sions: %2$s', 'event_espresso'),
      * The same as Read::get_entities_from_model(), except if the relation
      * is a HABTM relation, in which case it merges any non-foreign-key fields from
      * the join-model-object into the results
+
      *
-     * @param string                  $id the ID of the thing we are fetching related stuff from
+*@param string                  $id the ID of the thing we are fetching related stuff from
      * @param \EE_Model_Relation_Base $relation
      * @param WP_REST_Request        $request
      * @return array|WP_Error
-     * @throws \EE_Error
+     * @throws EE_Error
      */
-    public function get_entities_from_relation($id, $relation, $request)
+    public function getEntitiesFromRelation($id, $relation, $request)
     {
         if (! $relation->get_this_model()->has_primary_key_field()) {
-            throw new \EE_Error(
+            throw new EE_Error(
                 sprintf(
                     __('Read::get_entities_from_relation should only be called from a model with a primary key, it was called from %1$s',
                         'event_espresso'),
@@ -499,7 +509,7 @@ sions: %2$s', 'event_espresso'),
                 )
             );
         }
-        return $this->_get_entities_from_relation(
+        return $this->getEntitiesFromRelationUsingModelQueryParams(
             array(
                 array(
                     $relation->get_this_model()->primary_key_name() => $id,
@@ -517,18 +527,18 @@ sions: %2$s', 'event_espresso'),
      * like the total records. This should only be called on the original request
      * from the client, not on subsequent internal
      *
-     * @param \EEM_Base $model
+     * @param EEM_Base $model
      * @param array     $query_params
      * @return void
      */
-    protected function _set_headers_from_query_params($model, $query_params)
+    protected function setHeadersFromQueryParams($model, $query_params)
     {
-        $this->_set_debug_info('model query params', $query_params);
-        $this->_set_debug_info('missing caps',
-            Capabilities::get_missing_permissions_string($model, $query_params['caps']));
+        $this->setDebugInfo('model query params', $query_params);
+        $this->setDebugInfo('missing caps',
+            Capabilities::getMissingPermissionsString($model, $query_params['caps']));
         //normally the limit to a 2-part array, where the 2nd item is the limit
         if (! isset($query_params['limit'])) {
-            $query_params['limit'] = \EED_Core_Rest_Api::get_default_query_limit();
+            $query_params['limit'] = EED_Core_Rest_Api::get_default_query_limit();
         }
         if (is_array($query_params['limit'])) {
             $limit_parts = $query_params['limit'];
@@ -543,9 +553,9 @@ sions: %2$s', 'event_espresso'),
         unset($query_params['group_by'], $query_params['having'], $query_params['limit']);
         $count = $model->count($query_params, null, true);
         $pages = $count / $limit_parts[1];
-        $this->_set_response_header('Total', $count, false);
-        $this->_set_response_header('PageSize', $limit_parts[1], false);
-        $this->_set_response_header('TotalPages', ceil($pages), false);
+        $this->setResponseHeader('Total', $count, false);
+        $this->setResponseHeader('PageSize', $limit_parts[1], false);
+        $this->setResponseHeader('TotalPages', ceil($pages), false);
     }
 
 
@@ -553,13 +563,13 @@ sions: %2$s', 'event_espresso'),
     /**
      * Changes database results into REST API entities
      *
-     * @param \EEM_Base        $model
+     * @param EEM_Base        $model
      * @param array            $db_row     like results from $wpdb->get_results()
      * @param WP_REST_Request $rest_request
      * @param string           $deprecated no longer used
      * @return array ready for being converted into json for sending to client
      */
-    public function create_entity_from_wpdb_result($model, $db_row, $rest_request, $deprecated = null)
+    public function createEntityFromWpdbResult($model, $db_row, $rest_request, $deprecated = null)
     {
         if (! $rest_request instanceof WP_REST_Request) {
             //ok so this was called in the old style, where the 3rd arg was
@@ -571,15 +581,15 @@ sions: %2$s', 'event_espresso'),
             $rest_request->set_param('caps', $deprecated);
         }
         if ($rest_request->get_param('caps') == null) {
-            $rest_request->set_param('caps', \EEM_Base::caps_read);
+            $rest_request->set_param('caps', EEM_Base::caps_read);
         }
-        $entity_array = $this->_create_bare_entity_from_wpdb_results($model, $db_row);
-        $entity_array = $this->_add_extra_fields($model, $db_row, $entity_array);
-        $entity_array['_links'] = $this->_get_entity_links($model, $db_row, $entity_array);
-        $entity_array['_calculated_fields'] = $this->_get_entity_calculations($model, $db_row, $rest_request);
+        $entity_array = $this->createBareEntityFromWpdbResults($model, $db_row);
+        $entity_array = $this->addExtraFields($model, $db_row, $entity_array);
+        $entity_array['_links'] = $this->getEntityLinks($model, $db_row, $entity_array);
+        $entity_array['_calculated_fields'] = $this->getEntityCalculations($model, $db_row, $rest_request);
         $entity_array = apply_filters('FHEE__Read__create_entity_from_wpdb_results__entity_before_including_requested_models',
             $entity_array, $model, $rest_request->get_param('caps'), $rest_request, $this);
-        $entity_array = $this->_include_requested_models($model, $rest_request, $entity_array, $db_row);
+        $entity_array = $this->includeRequestedModels($model, $rest_request, $entity_array, $db_row);
         $entity_array = apply_filters(
             'FHEE__Read__create_entity_from_wpdb_results__entity_before_inaccessible_field_removal',
             $entity_array,
@@ -588,16 +598,16 @@ sions: %2$s', 'event_espresso'),
             $rest_request,
             $this
         );
-        $result_without_inaccessible_fields = Capabilities::filter_out_inaccessible_entity_fields(
+        $result_without_inaccessible_fields = Capabilities::filterOutInaccessibleEntityFields(
             $entity_array,
             $model,
             $rest_request->get_param('caps'),
-            $this->get_model_version_info(),
+            $this->getModelVersionInfo(),
             $model->get_index_primary_key_string(
                 $model->deduce_fields_n_values_from_cols_n_values($db_row)
             )
         );
-        $this->_set_debug_info(
+        $this->setDebugInfo(
             'inaccessible fields',
             array_keys(array_diff_key($entity_array, $result_without_inaccessible_fields))
         );
@@ -616,29 +626,29 @@ sions: %2$s', 'event_espresso'),
      * for now still a PHP array, but soon enough we'll call json_encode on it, don't worry),
      * from $wpdb->get_row( $sql, ARRAY_A)
      *
-     * @param \EEM_Base $model
+     * @param EEM_Base $model
      * @param array     $db_row
      * @return array entity mostly ready for converting to JSON and sending in the response
      */
-    protected function _create_bare_entity_from_wpdb_results(\EEM_Base $model, $db_row)
+    protected function createBareEntityFromWpdbResults(EEM_Base $model, $db_row)
     {
         $result = $model->deduce_fields_n_values_from_cols_n_values($db_row);
         $result = array_intersect_key($result,
-            $this->get_model_version_info()->fields_on_model_in_this_version($model));
+            $this->getModelVersionInfo()->fieldsOnModelInThisVersion($model));
         foreach ($result as $field_name => $raw_field_value) {
             $field_obj = $model->field_settings_for($field_name);
             $field_value = $field_obj->prepare_for_set_from_db($raw_field_value);
-            if ($this->is_subclass_of_one($field_obj, $this->get_model_version_info()->fields_ignored())) {
+            if ($this->isSubclassOfOne($field_obj, $this->getModelVersionInfo()->fieldsIgnored())) {
                 unset($result[$field_name]);
             } elseif (
-            $this->is_subclass_of_one($field_obj, $this->get_model_version_info()->fields_that_have_rendered_format())
+            $this->isSubclassOfOne($field_obj, $this->getModelVersionInfo()->fieldsThatHaveRenderedFormat())
             ) {
                 $result[$field_name] = array(
                     'raw'      => $field_obj->prepare_for_get($field_value),
                     'rendered' => $field_obj->prepare_for_pretty_echoing($field_value),
                 );
             } elseif (
-            $this->is_subclass_of_one($field_obj, $this->get_model_version_info()->fields_that_have_pretty_format())
+            $this->isSubclassOfOne($field_obj, $this->getModelVersionInfo()->fieldsThatHavePrettyFormat())
             ) {
                 $result[$field_name] = array(
                     'raw'    => $field_obj->prepare_for_get($field_value),
@@ -648,23 +658,23 @@ sions: %2$s', 'event_espresso'),
                 if ($field_value instanceof \DateTime) {
                     $timezone = $field_value->getTimezone();
                     $field_value->setTimezone(new \DateTimeZone('UTC'));
-                    $result[$field_name . '_gmt'] = Model_Data_Translator::prepare_field_value_for_json(
+                    $result[$field_name . '_gmt'] = ModelDataTranslator::prepareFieldValueForJson(
                         $field_obj,
                         $field_value,
-                        $this->get_model_version_info()->requested_version()
+                        $this->getModelVersionInfo()->requestedVersion()
                     );
                     $field_value->setTimezone($timezone);
-                    $result[$field_name] = Model_Data_Translator::prepare_field_value_for_json(
+                    $result[$field_name] = ModelDataTranslator::prepareFieldValueForJson(
                         $field_obj,
                         $field_value,
-                        $this->get_model_version_info()->requested_version()
+                        $this->getModelVersionInfo()->requestedVersion()
                     );
                 }
             } else {
-                $result[$field_name] = Model_Data_Translator::prepare_field_value_for_json(
+                $result[$field_name] = ModelDataTranslator::prepareFieldValueForJson(
                     $field_obj,
                     $field_obj->prepare_for_get($field_value),
-                    $this->get_model_version_info()->requested_version()
+                    $this->getModelVersionInfo()->requestedVersion()
                 );
             }
         }
@@ -676,14 +686,14 @@ sions: %2$s', 'event_espresso'),
     /**
      * Adds a few extra fields to the entity response
      *
-     * @param \EEM_Base $model
+     * @param EEM_Base $model
      * @param array     $db_row
      * @param array     $entity_array
      * @return array modified entity
      */
-    protected function _add_extra_fields(\EEM_Base $model, $db_row, $entity_array)
+    protected function addExtraFields(EEM_Base $model, $db_row, $entity_array)
     {
-        if ($model instanceof \EEM_CPT_Base) {
+        if ($model instanceof EEM_CPT_Base) {
             $entity_array['link'] = get_permalink($db_row[$model->get_primary_key_field()->get_qualified_column()]);
         }
         return $entity_array;
@@ -695,19 +705,19 @@ sions: %2$s', 'event_espresso'),
      * Gets links we want to add to the response
      *
      * @global \WP_REST_Server $wp_rest_server
-     * @param \EEM_Base        $model
+     * @param EEM_Base        $model
      * @param array            $db_row
      * @param array            $entity_array
      * @return array the _links item in the entity
      */
-    protected function _get_entity_links($model, $db_row, $entity_array)
+    protected function getEntityLinks($model, $db_row, $entity_array)
     {
         //add basic links
         $links = array();
         if ($model->has_primary_key_field()) {
             $links['self'] = array(
                 array(
-                    'href' => $this->get_versioned_link_to(
+                    'href' => $this->getVersionedLinkTo(
                         EEH_Inflector::pluralize_and_lower($model->get_this_model_name())
                         . '/'
                         . $entity_array[$model->primary_key_name()]
@@ -717,25 +727,25 @@ sions: %2$s', 'event_espresso'),
         }
         $links['collection'] = array(
             array(
-                'href' => $this->get_versioned_link_to(
+                'href' => $this->getVersionedLinkTo(
                     EEH_Inflector::pluralize_and_lower($model->get_this_model_name())
                 ),
             ),
         );
         //add links to related models
         if ($model->has_primary_key_field()) {
-            foreach ($this->get_model_version_info()->relation_settings($model) as $relation_name => $relation_obj) {
-                $related_model_part = Read::get_related_entity_name($relation_name, $relation_obj);
-                $links[\EED_Core_Rest_Api::ee_api_link_namespace . $related_model_part] = array(
+            foreach ($this->getModelVersionInfo()->relationSettings($model) as $relation_name => $relation_obj) {
+                $related_model_part = Read::getRelatedEntityName($relation_name, $relation_obj);
+                $links[EED_Core_Rest_Api::ee_api_link_namespace . $related_model_part] = array(
                     array(
-                        'href'   => $this->get_versioned_link_to(
+                        'href'   => $this->getVersionedLinkTo(
                             EEH_Inflector::pluralize_and_lower($model->get_this_model_name())
                             . '/'
                             . $entity_array[$model->primary_key_name()]
                             . '/'
                             . $related_model_part
                         ),
-                        'single' => $relation_obj instanceof \EE_Belongs_To_Relation ? true : false,
+                        'single' => $relation_obj instanceof EE_Belongs_To_Relation ? true : false,
                     ),
                 );
             }
@@ -748,14 +758,14 @@ sions: %2$s', 'event_espresso'),
     /**
      * Adds the included models indicated in the request to the entity provided
      *
-     * @param \EEM_Base        $model
+     * @param EEM_Base        $model
      * @param WP_REST_Request $rest_request
      * @param array            $entity_array
      * @param array            $db_row
      * @return array the modified entity
      */
-    protected function _include_requested_models(
-        \EEM_Base $model,
+    protected function includeRequestedModels(
+        EEM_Base $model,
         WP_REST_Request $rest_request,
         $entity_array,
         $db_row = array()
@@ -764,8 +774,8 @@ sions: %2$s', 'event_espresso'),
         if (! $db_row) {
             $db_row = $entity_array;
         }
-        $includes_for_this_model = $this->explode_and_get_items_prefixed_with($rest_request->get_param('include'), '');
-        $includes_for_this_model = $this->_remove_model_names_from_array($includes_for_this_model);
+        $includes_for_this_model = $this->explodeAndGetItemsPrefixedWith($rest_request->get_param('include'), '');
+        $includes_for_this_model = $this->removeModelNamesFromArray($includes_for_this_model);
         //if they passed in * or didn't specify any includes, return everything
         if (! in_array('*', $includes_for_this_model)
             && ! empty($includes_for_this_model)
@@ -774,18 +784,18 @@ sions: %2$s', 'event_espresso'),
                 //always include the primary key. ya just gotta know that at least
                 $includes_for_this_model[] = $model->primary_key_name();
             }
-            if ($this->explode_and_get_items_prefixed_with($rest_request->get_param('calculate'), '')) {
+            if ($this->explodeAndGetItemsPrefixedWith($rest_request->get_param('calculate'), '')) {
                 $includes_for_this_model[] = '_calculated_fields';
             }
             $entity_array = array_intersect_key($entity_array, array_flip($includes_for_this_model));
         }
-        $relation_settings = $this->get_model_version_info()->relation_settings($model);
+        $relation_settings = $this->getModelVersionInfo()->relationSettings($model);
         foreach ($relation_settings as $relation_name => $relation_obj) {
-            $related_fields_to_include = $this->explode_and_get_items_prefixed_with(
+            $related_fields_to_include = $this->explodeAndGetItemsPrefixedWith(
                 $rest_request->get_param('include'),
                 $relation_name
             );
-            $related_fields_to_calculate = $this->explode_and_get_items_prefixed_with(
+            $related_fields_to_calculate = $this->explodeAndGetItemsPrefixedWith(
                 $rest_request->get_param('calculate'),
                 $relation_name
             );
@@ -808,14 +818,14 @@ sions: %2$s', 'event_espresso'),
                         $model->deduce_fields_n_values_from_cols_n_values($db_row)
                     )
                 );
-                $related_results = $this->_get_entities_from_relation(
+                $related_results = $this->getEntitiesFromRelationUsingModelQueryParams(
                     $primary_model_query_params,
                     $relation_obj,
                     $pretend_related_request
                 );
-                $entity_array[Read::get_related_entity_name($relation_name, $relation_obj)] = $related_results
-                                                                                              instanceof
-                                                                                              WP_Error
+                $entity_array[Read::getRelatedEntityName($relation_name, $relation_obj)] = $related_results
+                                                                                           instanceof
+                                                                                           WP_Error
                     ? null
                     : $related_results;
             }
@@ -832,9 +842,9 @@ sions: %2$s', 'event_espresso'),
      * @param array $arr
      * @return array
      */
-    private function _remove_model_names_from_array($arr)
+    private function removeModelNamesFromArray($arr)
     {
-        return array_diff($arr, array_keys(\EE_Registry::instance()->non_abstract_db_models));
+        return array_diff($arr, array_keys(EE_Registry::instance()->non_abstract_db_models));
     }
 
 
@@ -842,14 +852,14 @@ sions: %2$s', 'event_espresso'),
     /**
      * Gets the calculated fields for the response
      *
-     * @param \EEM_Base        $model
+     * @param EEM_Base        $model
      * @param array            $wpdb_row
      * @param WP_REST_Request $rest_request
      * @return \stdClass the _calculations item in the entity
      */
-    protected function _get_entity_calculations($model, $wpdb_row, $rest_request)
+    protected function getEntityCalculations($model, $wpdb_row, $rest_request)
     {
-        $calculated_fields = $this->explode_and_get_items_prefixed_with(
+        $calculated_fields = $this->explodeAndGetItemsPrefixedWith(
             $rest_request->get_param('calculate'),
             ''
         );
@@ -857,22 +867,22 @@ sions: %2$s', 'event_espresso'),
         $calculated_fields_to_return = new \stdClass();
         foreach ($calculated_fields as $field_to_calculate) {
             try {
-                $calculated_fields_to_return->$field_to_calculate = Model_Data_Translator::prepare_field_value_for_json(
+                $calculated_fields_to_return->$field_to_calculate = ModelDataTranslator::prepareFieldValueForJson(
                     null,
-                    $this->_fields_calculator->retrieve_calculated_field_value(
+                    $this->_fields_calculator->retrieveCalculatedFieldValue(
                         $model,
                         $field_to_calculate,
                         $wpdb_row,
                         $rest_request,
                         $this
                     ),
-                    $this->get_model_version_info()->requested_version()
+                    $this->getModelVersionInfo()->requestedVersion()
                 );
-            } catch (Rest_Exception $e) {
+            } catch (RestException $e) {
                 //if we don't have permission to read it, just leave it out. but let devs know about the problem
-                $this->_set_response_header(
+                $this->setResponseHeader(
                     'Notices-Field-Calculation-Errors['
-                    . $e->get_string_code()
+                    . $e->getStringCode()
                     . ']['
                     . $model->get_this_model_name()
                     . ']['
@@ -894,11 +904,11 @@ sions: %2$s', 'event_espresso'),
      * @param string $link_part_after_version_and_slash eg "events/10/datetimes"
      * @return string url eg "http://mysite.com/wp-json/ee/v4.6/events/10/datetimes"
      */
-    public function get_versioned_link_to($link_part_after_version_and_slash)
+    public function getVersionedLinkTo($link_part_after_version_and_slash)
     {
         return rest_url(
-            \EED_Core_Rest_Api::ee_api_namespace
-            . $this->get_model_version_info()->requested_version()
+            EED_Core_Rest_Api::ee_api_namespace
+            . $this->getModelVersionInfo()->requestedVersion()
             . '/'
             . $link_part_after_version_and_slash
         );
@@ -914,9 +924,9 @@ sions: %2$s', 'event_espresso'),
      * @param \EE_Model_Relation_Base $relation_obj
      * @return string
      */
-    public static function get_related_entity_name($relation_name, $relation_obj)
+    public static function getRelatedEntityName($relation_name, $relation_obj)
     {
-        if ($relation_obj instanceof \EE_Belongs_To_Relation) {
+        if ($relation_obj instanceof EE_Belongs_To_Relation) {
             return strtolower($relation_name);
         } else {
             return EEH_Inflector::pluralize_and_lower($relation_name);
@@ -928,14 +938,14 @@ sions: %2$s', 'event_espresso'),
     /**
      * Gets the one model object with the specified id for the specified model
      *
-     * @param \EEM_Base        $model
+     * @param EEM_Base        $model
      * @param WP_REST_Request $request
      * @return array|WP_Error
      */
-    public function get_entity_from_model($model, $request)
+    public function getEntityFromModel($model, $request)
     {
-        $context = $this->validate_context($request->get_param('caps'));
-        return $this->get_one_or_report_permission_error($model, $request, $context);
+        $context = $this->validateContext($request->get_param('caps'));
+        return $this->getOneOrReportPermissionError($model, $request, $context);
     }
 
 
@@ -947,16 +957,16 @@ sions: %2$s', 'event_espresso'),
      * @param string $context
      * @return string array key of EEM_Base::cap_contexts_to_cap_action_map()
      */
-    public function validate_context($context)
+    public function validateContext($context)
     {
         if (! $context) {
-            $context = \EEM_Base::caps_read;
+            $context = EEM_Base::caps_read;
         }
-        $valid_contexts = \EEM_Base::valid_cap_contexts();
+        $valid_contexts = EEM_Base::valid_cap_contexts();
         if (in_array($context, $valid_contexts)) {
             return $context;
         } else {
-            return \EEM_Base::caps_read;
+            return EEM_Base::caps_read;
         }
     }
 
@@ -968,15 +978,15 @@ sions: %2$s', 'event_espresso'),
      * @param $default_query_params
      * @return string
      */
-    public function validate_default_query_params($default_query_params)
+    public function validateDefaultQueryParams($default_query_params)
     {
         $valid_default_where_conditions_for_api_calls = array(
-            \EEM_Base::default_where_conditions_all,
-            \EEM_Base::default_where_conditions_minimum_all,
-            \EEM_Base::default_where_conditions_minimum_others,
+            EEM_Base::default_where_conditions_all,
+            EEM_Base::default_where_conditions_minimum_all,
+            EEM_Base::default_where_conditions_minimum_others,
         );
         if (! $default_query_params) {
-            $default_query_params = \EEM_Base::default_where_conditions_all;
+            $default_query_params = EEM_Base::default_where_conditions_all;
         }
         if (
         in_array(
@@ -987,7 +997,7 @@ sions: %2$s', 'event_espresso'),
         ) {
             return $default_query_params;
         } else {
-            return \EEM_Base::default_where_conditions_all;
+            return EEM_Base::default_where_conditions_all;
         }
     }
 
@@ -999,20 +1009,20 @@ sions: %2$s', 'event_espresso'),
      * can be left as-is, but it's quite possible this will change someday.
      * Also, this method's contents might be candidate for moving to Model_Data_Translator
      *
-     * @param \EEM_Base $model
+     * @param EEM_Base $model
      * @param array     $query_parameters from $_GET parameter @see Read:handle_request_get_all
      * @return array like what EEM_Base::get_all() expects or FALSE to indicate
      *                                    that absolutely no results should be returned
-     * @throws \EE_Error
+     * @throws EE_Error
      */
-    public function create_model_query_params($model, $query_parameters)
+    public function createModelQueryParams($model, $query_parameters)
     {
         $model_query_params = array();
         if (isset($query_parameters['where'])) {
-            $model_query_params[0] = Model_Data_Translator::prepare_conditions_query_params_for_models(
+            $model_query_params[0] = ModelDataTranslator::prepareConditionsQueryParamsForModels(
                 $query_parameters['where'],
                 $model,
-                $this->get_model_version_info()->requested_version()
+                $this->getModelVersionInfo()->requestedVersion()
             );
         }
         if (isset($query_parameters['order_by'])) {
@@ -1024,10 +1034,10 @@ sions: %2$s', 'event_espresso'),
         }
         if ($order_by !== null) {
             if (is_array($order_by)) {
-                $order_by = Model_Data_Translator::prepare_field_names_in_array_keys_from_json($order_by);
+                $order_by = ModelDataTranslator::prepareFieldNamesInArrayKeysFromJson($order_by);
             } else {
                 //it's a single item
-                $order_by = Model_Data_Translator::prepare_field_name_from_json($order_by);
+                $order_by = ModelDataTranslator::prepareFieldNameFromJson($order_by);
             }
             $model_query_params['order_by'] = $order_by;
         }
@@ -1040,16 +1050,16 @@ sions: %2$s', 'event_espresso'),
         }
         //make sure they're all real names
         if (is_array($group_by)) {
-            $group_by = Model_Data_Translator::prepare_field_names_from_json($group_by);
+            $group_by = ModelDataTranslator::prepareFieldNamesFromJson($group_by);
         }
         if ($group_by !== null) {
             $model_query_params['group_by'] = $group_by;
         }
         if (isset($query_parameters['having'])) {
-            $model_query_params['having'] = Model_Data_Translator::prepare_conditions_query_params_for_models(
+            $model_query_params['having'] = ModelDataTranslator::prepareConditionsQueryParamsForModels(
                 $query_parameters['having'],
                 $model,
-                $this->get_model_version_info()->requested_version()
+                $this->getModelVersionInfo()->requestedVersion()
             );
         }
         if (isset($query_parameters['order'])) {
@@ -1067,8 +1077,8 @@ sions: %2$s', 'event_espresso'),
             }
             $sanitized_limit = array();
             foreach ($limit_array as $key => $limit_part) {
-                if ($this->_debug_mode && (! is_numeric($limit_part) || count($sanitized_limit) > 2)) {
-                    throw new \EE_Error(
+                if ($this->debug_mode && (! is_numeric($limit_part) || count($sanitized_limit) > 2)) {
+                    throw new EE_Error(
                         sprintf(
                             __('An invalid limit filter was provided. It was: %s. If the EE4 JSON REST API weren\'t in debug mode, this message would not appear.',
                                 'event_espresso'),
@@ -1080,15 +1090,15 @@ sions: %2$s', 'event_espresso'),
             }
             $model_query_params['limit'] = implode(',', $sanitized_limit);
         } else {
-            $model_query_params['limit'] = \EED_Core_Rest_Api::get_default_query_limit();
+            $model_query_params['limit'] = EED_Core_Rest_Api::get_default_query_limit();
         }
         if (isset($query_parameters['caps'])) {
-            $model_query_params['caps'] = $this->validate_context($query_parameters['caps']);
+            $model_query_params['caps'] = $this->validateContext($query_parameters['caps']);
         } else {
-            $model_query_params['caps'] = \EEM_Base::caps_read;
+            $model_query_params['caps'] = EEM_Base::caps_read;
         }
         if (isset($query_parameters['default_where_conditions'])) {
-            $model_query_params['default_where_conditions'] = $this->validate_default_query_params($query_parameters['default_where_conditions']);
+            $model_query_params['default_where_conditions'] = $this->validateDefaultQueryParams($query_parameters['default_where_conditions']);
         }
         return apply_filters('FHEE__Read__create_model_query_params', $model_query_params, $query_parameters, $model);
     }
@@ -1099,16 +1109,16 @@ sions: %2$s', 'event_espresso'),
      * Changes the REST-style query params for use in the models
      *
      * @deprecated
-     * @param \EEM_Base $model
+     * @param EEM_Base $model
      * @param array     $query_params sub-array from @see EEM_Base::get_all()
      * @return array
      */
-    public function prepare_rest_query_params_key_for_models($model, $query_params)
+    public function prepareRestQueryParamsKeyForModels($model, $query_params)
     {
         $model_ready_query_params = array();
         foreach ($query_params as $key => $value) {
             if (is_array($value)) {
-                $model_ready_query_params[$key] = $this->prepare_rest_query_params_key_for_models($model, $value);
+                $model_ready_query_params[$key] = $this->prepareRestQueryParamsKeyForModels($model, $value);
             } else {
                 $model_ready_query_params[$key] = $value;
             }
@@ -1124,12 +1134,12 @@ sions: %2$s', 'event_espresso'),
      * @param $query_params
      * @return array
      */
-    public function prepare_rest_query_params_values_for_models($model, $query_params)
+    public function prepareRestQueryParamsValuesForModels($model, $query_params)
     {
         $model_ready_query_params = array();
         foreach ($query_params as $key => $value) {
             if (is_array($value)) {
-                $model_ready_query_params[$key] = $this->prepare_rest_query_params_values_for_models($model, $value);
+                $model_ready_query_params[$key] = $this->prepareRestQueryParamsValuesForModels($model, $value);
             } else {
                 $model_ready_query_params[$key] = $value;
             }
@@ -1143,13 +1153,13 @@ sions: %2$s', 'event_espresso'),
      * Explodes the string on commas, and only returns items with $prefix followed by a period.
      * If no prefix is specified, returns items with no period.
      *
-     * @param string|array $string_to_explode eg "jibba,jabba, blah, blaabla" or array('jibba', 'jabba' )
+     * @param string|array $string_to_explode eg "jibba,jabba, blah, blah, blah" or array('jibba', 'jabba' )
      * @param string       $prefix            "Event" or "foobar"
      * @return array $string_to_exploded exploded on COMMAS, and if a prefix was specified
      *                                        we only return strings starting with that and a period; if no prefix was
      *                                        specified we return all items containing NO periods
      */
-    public function explode_and_get_items_prefixed_with($string_to_explode, $prefix)
+    public function explodeAndGetItemsPrefixedWith($string_to_explode, $prefix)
     {
         if (is_string($string_to_explode)) {
             $exploded_contents = explode(',', $string_to_explode);
@@ -1201,7 +1211,7 @@ sions: %2$s', 'event_espresso'),
      *                               the fields for that model, with the model's name removed from each.
      *                               If $include_string was blank or '*' returns an empty array
      */
-    public function extract_includes_for_this_model($include_string, $model_name = null)
+    public function extractIncludesForThisModel($include_string, $model_name = null)
     {
         if (is_array($include_string)) {
             $include_string = implode(',', $include_string);
@@ -1228,7 +1238,7 @@ sions: %2$s', 'event_espresso'),
                 $field_to_include = trim($field_to_include);
                 if (
                     strpos($field_to_include, '.') === false
-                    && ! $this->get_model_version_info()->is_model_name_in_this_version($field_to_include)
+                    && ! $this->getModelVersionInfo()->isModelNameInThisVersion($field_to_include)
                 ) {
                     $extracted_fields_to_include[] = $field_to_include;
                 }
@@ -1241,14 +1251,15 @@ sions: %2$s', 'event_espresso'),
 
     /**
      * Gets the single item using the model according to the request in the context given, otherwise
-     * returns that it's inacccessible to the current user
+     * returns that it's inaccessible to the current user
+
      *
-     * @param \EEM_Base        $model
+*@param EEM_Base        $model
      * @param WP_REST_Request $request
      * @param null             $context
      * @return array|WP_Error
      */
-    public function get_one_or_report_permission_error(\EEM_Base $model, WP_REST_Request $request, $context = null)
+    public function getOneOrReportPermissionError(EEM_Base $model, WP_REST_Request $request, $context = null)
     {
         $query_params = array(array($model->primary_key_name() => $request->get_param('id')), 'limit' => 1);
         if ($model instanceof \EEM_Soft_Delete_Base) {
@@ -1256,10 +1267,10 @@ sions: %2$s', 'event_espresso'),
         }
         $restricted_query_params = $query_params;
         $restricted_query_params['caps'] = $context;
-        $this->_set_debug_info('model query params', $restricted_query_params);
+        $this->setDebugInfo('model query params', $restricted_query_params);
         $model_rows = $model->get_all_wpdb_results($restricted_query_params);
         if (! empty ($model_rows)) {
-            return $this->create_entity_from_wpdb_result(
+            return $this->createEntityFromWpdbResult(
                 $model,
                 array_shift($model_rows),
                 $request);
@@ -1275,7 +1286,7 @@ sions: %2$s', 'event_espresso'),
                         __('Sorry, you cannot %1$s this %2$s. Missing permissions are: %3$s', 'event_espresso'),
                         $context,
                         strtolower($model->get_this_model_name()),
-                        Capabilities::get_missing_permissions_string(
+                        Capabilities::getMissingPermissionsString(
                             $model,
                             $context
                         )

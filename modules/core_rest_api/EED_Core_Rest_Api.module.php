@@ -1,8 +1,8 @@
 <?php
-use EventEspresso\core\libraries\rest_api\Calculated_Model_Fields;
+use EventEspresso\core\libraries\rest_api\CalculatedModelFields;
 use EventEspresso\core\libraries\rest_api\controllers\model\Read as ModelRead;
-use EventEspresso\core\libraries\rest_api\changes\Changes_In_Base;
-use EventEspresso\core\libraries\rest_api\Model_Version_Info;
+use EventEspresso\core\libraries\rest_api\changes\ChangesInBase;
+use EventEspresso\core\libraries\rest_api\ModelVersionInfo;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -34,7 +34,7 @@ class EED_Core_Rest_Api extends \EED_Module
     const ee_api_link_namespace = 'https://api.eventespresso.com/';
 
     /**
-     * @var Calculated_Model_Fields
+     * @var CalculatedModelFields
      */
     protected static $_field_calculator = null;
 
@@ -45,7 +45,7 @@ class EED_Core_Rest_Api extends \EED_Module
      */
     public static function instance()
     {
-        self::$_field_calculator = new Calculated_Model_Fields();
+        self::$_field_calculator = new CalculatedModelFields();
         return parent::get_instance(__CLASS__);
     }
 
@@ -83,7 +83,7 @@ class EED_Core_Rest_Api extends \EED_Module
         add_action('rest_api_init', array('EED_Core_Rest_Api', 'set_hooks_rest_api'), 5);
         add_filter('rest_route_data', array('EED_Core_Rest_Api', 'hide_old_endpoints'), 10, 2);
         add_filter('rest_index',
-            array('EventEspresso\core\libraries\rest_api\controllers\model\Meta', 'filter_ee_metadata_into_index'));
+            array('EventEspresso\core\libraries\rest_api\controllers\model\Meta', 'filterEeMetadataIntoIndex'));
         EED_Core_Rest_Api::invalidate_cached_route_data_on_version_change();
     }
 
@@ -126,14 +126,16 @@ class EED_Core_Rest_Api extends \EED_Module
         $folder_contents = EEH_File::get_contents_of_folders(array(EE_LIBRARIES . 'rest_api' . DS . 'changes'), false);
         foreach ($folder_contents as $classname_in_namespace => $filepath) {
             //ignore the base parent class
-            if ($classname_in_namespace === 'Changes_In_Base') {
+            //and legacy named classes
+            if ( $classname_in_namespace === 'ChangesInBase'
+                || strpos( $classname_in_namespace, 'Changes_In_') === 0) {
                 continue;
             }
             $full_classname = 'EventEspresso\core\libraries\rest_api\changes\\' . $classname_in_namespace;
             if (class_exists($full_classname)) {
                 $instance_of_class = new $full_classname;
-                if ($instance_of_class instanceof Changes_In_Base) {
-                    $instance_of_class->set_hooks();
+                if ($instance_of_class instanceof ChangesInBase) {
+                    $instance_of_class->setHooks();
                 }
             }
         }
@@ -331,7 +333,7 @@ class EED_Core_Rest_Api extends \EED_Module
 
 
     /**
-     * Calculates all the EE routes and saves it to a wordpress option so we don't
+     * Calculates all the EE routes and saves it to a WordPress option so we don't
      * need to calculate it on every request
      *
      * @deprecated since version 4.9.1
@@ -383,10 +385,10 @@ class EED_Core_Rest_Api extends \EED_Module
      */
     protected function _get_model_route_data_for_version($version, $hidden_endpoint = false)
     {
-        $model_version_info = new Model_Version_Info($version);
+        $model_version_info = new ModelVersionInfo($version);
         $models_to_register = apply_filters(
             'FHEE__EED_Core_REST_API___register_model_routes',
-            $model_version_info->models_for_requested_version()
+            $model_version_info->modelsForRequestedVersion()
         );
         //let's not bother having endpoints for extra metas
         unset($models_to_register['Extra_Meta']);
@@ -405,7 +407,7 @@ class EED_Core_Rest_Api extends \EED_Module
                 array(
                     'callback'        => array(
                         'EventEspresso\core\libraries\rest_api\controllers\model\Read',
-                        'handle_request_get_all',
+                        'handleRequestGetAll',
                     ),
                     'callback_args' => array($version, $model_name),
                     'methods'         => WP_REST_Server::READABLE,
@@ -418,7 +420,7 @@ class EED_Core_Rest_Api extends \EED_Module
                 array(
                     'callback'        => array(
                         'EventEspresso\core\libraries\rest_api\controllers\model\Write',
-                        'handle_request_insert',
+                        'handleRequestInsert',
                     ),
                     'callback_args' => array($version, $model_name),
                     'methods'         => WP_REST_Server::CREATABLE,
@@ -428,7 +430,7 @@ class EED_Core_Rest_Api extends \EED_Module
                 'schema' => array(
                     'schema_callback' => array(
                         'EventEspresso\core\libraries\rest_api\controllers\model\Read',
-                        'handle_schema_request',
+                        'handleSchemaRequest',
                     ),
                     'callback_args' => array($version,$model_name),
                 )
@@ -437,7 +439,7 @@ class EED_Core_Rest_Api extends \EED_Module
                 array(
                     'callback'        => array(
                         'EventEspresso\core\libraries\rest_api\controllers\model\Read',
-                        'handle_request_get_one',
+                        'handleRequestGetOne',
                     ),
                     'callback_args' => array($version, $model_name),
                     'methods'         => WP_REST_Server::READABLE,
@@ -447,7 +449,7 @@ class EED_Core_Rest_Api extends \EED_Module
                 array(
                     'callback'        => array(
                         'EventEspresso\core\libraries\rest_api\controllers\model\Write',
-                        'handle_request_update',
+                        'handleRequestUpdate',
                     ),
                     'callback_args' => array($version, $model_name),
                     'methods'         => WP_REST_Server::EDITABLE,
@@ -457,7 +459,7 @@ class EED_Core_Rest_Api extends \EED_Module
                 array(
                     'callback'        => array(
                         'EventEspresso\core\libraries\rest_api\controllers\model\Write',
-                        'handle_request_delete',
+                        'handleRequestDelete',
                     ),
                     'callback_args' => array($version, $model_name),
                     'methods'         => WP_REST_Server::DELETABLE,
@@ -466,7 +468,7 @@ class EED_Core_Rest_Api extends \EED_Module
                 )
             );
             foreach ($model->relation_settings() as $relation_name => $relation_obj) {
-                $related_model_name_endpoint_part = ModelRead::get_related_entity_name(
+                $related_model_name_endpoint_part = ModelRead::getRelatedEntityName(
                     $relation_name,
                     $relation_obj
                 );
@@ -474,7 +476,7 @@ class EED_Core_Rest_Api extends \EED_Module
                     array(
                         'callback'        => array(
                             'EventEspresso\core\libraries\rest_api\controllers\model\Read',
-                            'handle_request_get_related',
+                            'handleRequestGetRelated',
                         ),
                         'callback_args' => array($version, $model_name, $relation_name ),
                         'methods'         => WP_REST_Server::READABLE,
@@ -522,7 +524,7 @@ class EED_Core_Rest_Api extends \EED_Module
             array(
                 'callback'        => array(
                     'EventEspresso\core\libraries\rest_api\controllers\rpc\Checkin',
-                    'handle_request_toggle_checkin',
+                    'handleRequestToggleCheckin',
                 ),
                 'methods'         => WP_REST_Server::CREATABLE,
                 'hidden_endpoint' => $hidden_endpoint,
@@ -566,7 +568,7 @@ class EED_Core_Rest_Api extends \EED_Module
                 'calculate' => array(
                     'required' => false,
                     'default'  => '',
-                    'enum'     => self::$_field_calculator->retrieve_calculated_fields_for_model($model),
+                    'enum'     => self::$_field_calculator->retrieveCalculatedFieldsForModel($model),
                 ),
             ),
             $model,
@@ -659,17 +661,18 @@ class EED_Core_Rest_Api extends \EED_Module
 
     /**
      * Gets parameter information for a model regarding writing data
+
      *
-     * @param type                                                     $model_name
-     * @param EventEspresso\core\libraries\rest_api\Model_Version_Info $model_version_info
+*@param type                                                         $model_name
+     * @param EventEspresso\core\libraries\rest_api\ModelVersionInfo $model_version_info
      * @return array
      */
     protected function _get_write_params(
         $model_name,
-        EventEspresso\core\libraries\rest_api\Model_Version_Info $model_version_info
+        EventEspresso\core\libraries\rest_api\ModelVersionInfo $model_version_info
     ) {
         $model = EE_Registry::instance()->load_model($model_name);
-        $fields = $model_version_info->fields_on_model_in_this_version($model);
+        $fields = $model_version_info->fieldsOnModelInThisVersion($model);
         $param_info = array();
         foreach ($fields as $field_name => $field_obj) {
             if ($field_obj->is_auto_increment()) {
@@ -751,7 +754,7 @@ class EED_Core_Rest_Api extends \EED_Module
                 array(
                     'callback'        => array(
                         'EventEspresso\core\libraries\rest_api\controllers\config\Read',
-                        'handle_request',
+                        'handleRequest',
                     ),
                     'methods'         => WP_REST_Server::READABLE,
                     'hidden_endpoint' => $hidden_endpoint,
@@ -762,7 +765,7 @@ class EED_Core_Rest_Api extends \EED_Module
                 array(
                     'callback'        => array(
                         'EventEspresso\core\libraries\rest_api\controllers\config\Read',
-                        'handle_request_site_info',
+                        'handleRequestSiteInfo',
                     ),
                     'methods'         => WP_REST_Server::READABLE,
                     'hidden_endpoint' => $hidden_endpoint,
@@ -804,7 +807,7 @@ class EED_Core_Rest_Api extends \EED_Module
                 array(
                     'callback'        => array(
                         'EventEspresso\core\libraries\rest_api\controllers\model\Meta',
-                        'handle_request_models_meta',
+                        'handleRequestModelsMeta',
                     ),
                     'methods'         => WP_REST_Server::READABLE,
                     'hidden_endpoint' => $hidden_endpoint,

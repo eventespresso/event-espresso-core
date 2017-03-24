@@ -23,11 +23,11 @@ class Read_Test extends \EE_REST_TestCase
     public function test_explode_and_get_items_prefixed_with__basic()
     {
         $controller = new Read();
-        $controller->set_requested_version('4.8.29');
+        $controller->setRequestedVersion('4.8.29');
         $this->assertEquals(array(
             'EVT_ID',
             'EVT_name',
-        ), $controller->explode_and_get_items_prefixed_with('EVT_ID,EVT_name', ''));
+        ), $controller->explodeAndGetItemsPrefixedWith('EVT_ID,EVT_name', ''));
     }
 
 
@@ -35,12 +35,12 @@ class Read_Test extends \EE_REST_TestCase
     public function test_explode_and_get_items_prefixed_with__extra_whitespace()
     {
         $controller = new Read();
-        $controller->set_requested_version('4.8.29');
+        $controller->setRequestedVersion('4.8.29');
         $this->assertEquals(array(
             'EVT_ID',
             'EVT_name',
             'EVT_desc',
-        ), $controller->explode_and_get_items_prefixed_with('EVT_ID , EVT_name , EVT_desc', ''));
+        ), $controller->explodeAndGetItemsPrefixedWith('EVT_ID , EVT_name , EVT_desc', ''));
     }
 
 
@@ -48,8 +48,8 @@ class Read_Test extends \EE_REST_TestCase
     public function test_explode_and_get_items_prefixed_with__related_model()
     {
         $controller = new Read();
-        $controller->set_requested_version('4.8.29');
-        $this->assertEquals(array(), $controller->explode_and_get_items_prefixed_with('Registration.*', ''));
+        $controller->setRequestedVersion('4.8.29');
+        $this->assertEquals(array(), $controller->explodeAndGetItemsPrefixedWith('Registration.*', ''));
     }
 
 
@@ -57,12 +57,12 @@ class Read_Test extends \EE_REST_TestCase
     public function test_explode_and_get_items_prefixed_with__related_model_all()
     {
         $controller = new Read();
-        $controller->set_requested_version('4.8.29');
+        $controller->setRequestedVersion('4.8.29');
         $this->assertEquals(
             array(
                 '*',
             ),
-            $controller->explode_and_get_items_prefixed_with('Registration.*', 'Registration')
+            $controller->explodeAndGetItemsPrefixedWith('Registration.*', 'Registration')
         );
     }
 
@@ -71,10 +71,10 @@ class Read_Test extends \EE_REST_TestCase
     public function test_explode_and_get_items_prefixed_with__related_models_but_searching_for_this_one()
     {
         $controller = new Read();
-        $controller->set_requested_version('4.8.29');
+        $controller->setRequestedVersion('4.8.29');
         $this->assertEquals(
             array(),
-            $controller->explode_and_get_items_prefixed_with('Registration.REG_ID, Registration.Attendee.ATT_ID', '')
+            $controller->explodeAndGetItemsPrefixedWith('Registration.REG_ID, Registration.Attendee.ATT_ID', '')
         );
     }
 
@@ -83,13 +83,13 @@ class Read_Test extends \EE_REST_TestCase
     public function test_explode_and_get_items_prefixed_with__related_models_but_searching_for_other()
     {
         $controller = new Read();
-        $controller->set_requested_version('4.8.29');
+        $controller->setRequestedVersion('4.8.29');
         $this->assertEquals(
             array(
                 'REG_ID',
                 'Attendee.ATT_ID',
             ),
-            $controller->explode_and_get_items_prefixed_with('Registration.REG_ID, Registration.Attendee.ATT_ID',
+            $controller->explodeAndGetItemsPrefixedWith('Registration.REG_ID, Registration.Attendee.ATT_ID',
                 'Registration')
         );
     }
@@ -233,8 +233,8 @@ class Read_Test extends \EE_REST_TestCase
     public function test_explode_and_get_items_prefixed_with__null()
     {
         $controller = new Read();
-        $controller->set_requested_version('4.8.29');
-        $this->assertEquals(array('*'), $controller->explode_and_get_items_prefixed_with('*', ''));
+        $controller->setRequestedVersion('4.8.29');
+        $this->assertEquals(array('*'), $controller->explodeAndGetItemsPrefixedWith('*', ''));
     }
 
 
@@ -793,7 +793,7 @@ class Read_Test extends \EE_REST_TestCase
                 'EVT_desc*gotchaagain' => array('IN', array('1', '2')),
             ),
         ),
-            $controller->prepare_rest_query_params_key_for_models(
+            $controller->prepareRestQueryParamsKeyForModels(
                 \EEM_Event::instance(),
                 array(
                     'EVT_desc' => 'foobar',
@@ -814,7 +814,7 @@ class Read_Test extends \EE_REST_TestCase
     public function test_create_model_query_params__4_8_36()
     {
         $controller = new Read();
-        $controller->set_requested_version('4.8.36');
+        $controller->setRequestedVersion('4.8.36');
         $this->assertEquals(array(
             0          => array(
                 'EVT_desc*foobar'    => array('LIKE', '%frogs%'),
@@ -838,7 +838,7 @@ class Read_Test extends \EE_REST_TestCase
             'limit'    => 50,
             'caps'     => \EEM_Base::caps_read_admin,
         ),
-            $controller->create_model_query_params(
+            $controller->createModelQueryParams(
                 \EEM_Event::instance(),
                 array(
                     'where'    => array(
@@ -1041,7 +1041,6 @@ class Read_Test extends \EE_REST_TestCase
         //and DTT_EVT_start_gmt should have been ignored
         $this->assertEquals('2017-01-03T00:00:00', $first_result['DTT_EVT_start']);
     }
-
 }
 // End of file Read_Test.php
 // Location: testcases/core/libraries/rest_api/controllers/Read_Test.php
