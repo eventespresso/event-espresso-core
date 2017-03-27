@@ -26,6 +26,11 @@ class CreateMoney
 {
 
     /**
+     * @var string $site_country_iso
+     */
+    protected static $site_country_iso;
+
+    /**
      * @var Calculator $calculator
      */
     protected static $calculator;
@@ -48,16 +53,28 @@ class CreateMoney
      */
     public static function forSite($amount)
     {
-        $CNT_ISO = isset(EE_Registry::instance()->CFG->organization)
-                   && EE_Registry::instance()->CFG->organization instanceof EE_Organization_Config
-            ? EE_Registry::instance()->CFG->organization->CNT_ISO
-            : 'US';
         return new Money(
             $amount,
-            Currency::createFromCountryCode($CNT_ISO),
+            Currency::createFromCountryCode(CreateMoney::getSiteCurrency()),
             CreateMoney::calculator(),
             CreateMoney::formatters()
         );
+    }
+
+
+
+    /**
+     * @return string
+     */
+    protected static function getSiteCurrency()
+    {
+        if (empty(self::$site_country_iso)) {
+            self::$site_country_iso = isset(EE_Registry::instance()->CFG->organization)
+                       && EE_Registry::instance()->CFG->organization instanceof EE_Organization_Config
+                ? EE_Registry::instance()->CFG->organization->CNT_ISO
+                : 'US';
+        }
+        return self::$site_country_iso;
     }
 
 
