@@ -104,12 +104,6 @@ class Money
             case 'integer' :
             case 'double' :
             case 'string' :
-                // shift the decimal position by the number of decimal places used internally
-                // ex: 12.5 for a currency using 2 decimal places, would become 1250
-                // then if our extra internal precision was 3, it would become 1250000
-                $amount *= pow(10, $this->precision());
-                // then round up the remaining value if there is still a fractional amount left
-                $amount = round($amount, 0, PHP_ROUND_HALF_UP);
             break;
             default  :
                 throw new InvalidDataTypeException(
@@ -118,6 +112,28 @@ class Money
                     'integer (or float or string)'
                 );
         }
+        if ($this->currency->decimalMark() !== '.') {
+            // remove thousands separator and replace decimal place with standard decimal.
+            $amount = str_replace(
+                array(
+                    $this->currency->thousands(),
+                    $this->currency->decimalMark()
+                ),
+                array(
+                    '',
+                    '.'
+                ),
+                $amount
+            );
+        }
+        // remove any non numeric values but leave the decimal
+        $amount = (float)preg_replace('/([^0-9\\.])/i', '', $amount);
+        // shift the decimal position by the number of decimal places used internally
+        // ex: 12.5 for a currency using 2 decimal places, would become 1250
+        // then if our extra internal precision was 3, it would become 1250000
+        $amount *= pow(10, $this->precision());
+        // then round up the remaining value if there is still a fractional amount left
+        $amount = round($amount, 0, PHP_ROUND_HALF_UP);
         return $amount;
     }
 
