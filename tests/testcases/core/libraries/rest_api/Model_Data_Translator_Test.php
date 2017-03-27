@@ -75,7 +75,15 @@ class Model_Data_Translator_Test extends EE_UnitTestCase{
             update_option('timezone_string', $TZ_NAME);
             $now_local_time = current_time('mysql');
             $now_utc_time = current_time('mysql', true);
-            $this->assertNotEquals($now_local_time, $now_utc_time);
+            $skip_test = false;
+            if ($now_local_time === $now_utc_time ){
+                $timezone = new DateTimeZone($TZ_NAME);
+                $TZ_offset = $timezone->getOffset(new DateTime());
+                $skip_test = $TZ_offset === 0;
+            }
+            if (! $skip_test) {
+                $this->assertNotEquals($now_local_time, $now_utc_time);
+            }
             $model_data = $data_translator::prepare_conditions_query_params_for_models(
                 array(
                     'EVT_created'      => mysql_to_rfc3339($now_local_time),
