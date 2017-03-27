@@ -2,17 +2,9 @@
 
 namespace EventEspresso\core\entities\money;
 
-use EE_Error;
-use EE_Organization_Config;
-use EE_Registry;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\services\currency\Calculator;
-use EventEspresso\core\services\currency\CurrencyCodeMoneyFormatter;
-use EventEspresso\core\services\currency\CurrencySignMoneyFormatter;
-use EventEspresso\core\services\currency\DecimalMoneyFormatter;
-use EventEspresso\core\services\currency\InternationalMoneyFormatter;
 use EventEspresso\core\services\currency\MoneyFormatter;
-use EventEspresso\core\services\currency\ThousandsMoneyFormatter;
 use InvalidArgumentException;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
@@ -50,12 +42,12 @@ class Money
     /**
      * @var Calculator $calculator
      */
-    protected static $calculator;
+    protected $calculator;
 
     /**
      * @var MoneyFormatter[] $formatters
      */
-    protected static $formatters;
+    protected $formatters;
 
 
 
@@ -65,88 +57,36 @@ class Money
      * @param float|int|string $amount money amount IN THE STANDARD UNIT FOR THE CURRENCY ie: dollars, Euros, etc
      *                                 example: $12.5 USD would equate to a value amount of 12.50
      * @param Currency         $currency
+     * @param Calculator       $calculator
+     * @param MoneyFormatter[] $formatters
      * @throws InvalidDataTypeException
      */
-    public function __construct($amount, Currency $currency)
+    public function __construct($amount, Currency $currency, Calculator $calculator, array $formatters)
     {
         $this->currency = $currency;
         $this->amount = (string)$this->parseAmount($amount);
+        $this->calculator = $calculator;
+        $this->formatters = $formatters;
     }
 
 
 
     /**
-     * factory method that returns a Money object using the currency corresponding to the site's country
-     * example: Money::forSite(12.5)
-     *
-     * @param float|int|string $amount money amount IN THE STANDARD UNIT FOR THE CURRENCY ie: dollars, Euros, etc
-     *                                 example: $12.5 USD would equate to a value amount of 12.50
-     * @return Money
-     * @throws InvalidArgumentException
+     * @return Calculator
      */
-    public static function forSite($amount)
+    protected function calculator()
     {
-        $CNT_ISO = isset(EE_Registry::instance()->CFG->organization)
-                   && EE_Registry::instance()->CFG->organization instanceof EE_Organization_Config
-            ? EE_Registry::instance()->CFG->organization->CNT_ISO
-            : 'US';
-        return new self($amount, Currency::createFromCountryCode($CNT_ISO));
+        return $this->calculator;
     }
 
 
 
     /**
-     * factory method that returns a Money object using the currency as specified by the supplied ISO country code
-     * example: Money::forCountry(12.5,'US')
-     *
-     * @param float|int|string $amount money amount IN THE STANDARD UNIT FOR THE CURRENCY ie: dollars, Euros, etc
-     *                                 example: $12.5 USD would equate to a value amount of 12.50
-     * @param string           $CNT_ISO
-     * @return Money
-     * @throws InvalidArgumentException
+     * @return MoneyFormatter[]
      */
-    public static function forCountry($amount, $CNT_ISO)
+    protected function formatters()
     {
-        return new self($amount, Currency::createFromCountryCode($CNT_ISO));
-    }
-
-
-
-    /**
-     * factory method that returns a Money object using the currency as specified by the supplied currency code
-     * example: Money::forCurrency(12.5, 'USD')
-     *
-     * @param float|int|string $amount money amount IN THE STANDARD UNIT FOR THE CURRENCY ie: dollars, Euros, etc
-     *                                 example: $12.5 USD would equate to a value amount of 12.50
-     * @param string           $currency_code
-     * @return Money
-     * @throws InvalidDataTypeException
-     * @throws EE_Error
-     * @throws InvalidArgumentException
-     */
-    public static function forCurrency($amount, $currency_code)
-    {
-        return new self($amount, Currency::createFromCode($currency_code));
-    }
-
-
-
-    /**
-     * factory method that returns a Money object for the currency specified as if it were a class method
-     * example: Money::USD(12.5);
-     * money amount IN THE STANDARD UNIT FOR THE CURRENCY ie: dollars, Euros, etc
-     * example: $12.5 USD would equate to a value amount of 12.50
-     *
-     * @param string $currency_code
-     * @param array  $arguments
-     * @return Money
-     * @throws InvalidDataTypeException
-     * @throws EE_Error
-     * @throws InvalidArgumentException
-     */
-    public static function __callStatic($currency_code, $arguments)
-    {
-        return new self($arguments[0], Currency::createFromCode($currency_code));
+        return $this->formatters;
     }
 
 
@@ -269,7 +209,9 @@ class Money
                 $this->amount(),
                 $other->amount()
             ),
-            $this->currency()
+            $this->currency(),
+            $this->calculator(),
+            $this->formatters()
         );
     }
 
@@ -291,7 +233,9 @@ class Money
                 $this->amount(),
                 $other->amount()
             ),
-            $this->currency()
+            $this->currency(),
+            $this->calculator(),
+            $this->formatters()
         );
     }
 
@@ -315,7 +259,9 @@ class Money
                 $this->precision(),
                 $rounding_mode
             ),
-            $this->currency()
+            $this->currency(),
+            $this->calculator(),
+            $this->formatters()
         );
     }
 
@@ -339,7 +285,9 @@ class Money
                 $this->precision(),
                 $rounding_mode
             ),
-            $this->currency()
+            $this->currency(),
+            $this->calculator(),
+            $this->formatters()
         );
     }
 
@@ -364,86 +312,12 @@ class Money
 
 
     /**
-     * @return Calculator
-     */
-    protected function calculator()
-    {
-        $this->initializeCalculators();
-        return self::$calculator;
-    }
-
-
-
-    /**
-     * loops through a filterable array of Calculator services
-     * and selects the first one that is supported by the current server
-     */
-    protected function initializeCalculators()
-    {
-        if (self::$calculator instanceof Calculator) {
-            return;
-        }
-        $calculators = apply_filters(
-            'FHEE__EventEspresso\core\entities\money\Money__initializeCalculators__Calculator_array',
-            array(
-                '\EventEspresso\core\services\currency\DefaultCalculator',
-            )
-        );
-        foreach ($calculators as $calculator) {
-            if (! class_exists($calculator)) {
-                continue;
-            }
-            $calculator = new $calculator();
-            if ($calculator instanceof Calculator && $calculator->isSupported()) {
-                self::$calculator = $calculator;
-                break;
-            }
-        }
-    }
-
-
-
-    /**
-     * @return MoneyFormatter[]
-     */
-    protected function formatters()
-    {
-        $this->initializeFormatters();
-        return self::$formatters;
-    }
-
-
-
-    /**
-     * initializes a filterable array of MoneyFormatter services
-     */
-    protected function initializeFormatters()
-    {
-        if (! empty(self::$formatters)) {
-            return;
-        }
-        self::$formatters = apply_filters(
-            'FHEE__EventEspresso\core\entities\money\Money__initializeFormatters__MoneyFormatters_array',
-            array(
-                1 => new DecimalMoneyFormatter(),
-                2 => new ThousandsMoneyFormatter(),
-                3 => new CurrencySignMoneyFormatter(),
-                4 => new CurrencyCodeMoneyFormatter(),
-                5 => new InternationalMoneyFormatter(),
-            )
-        );
-    }
-
-
-
-    /**
      * @return string
      */
     public function __toString()
     {
         return $this->format(MoneyFormatter::DECIMAL_ONLY);
     }
-
 
 
 
