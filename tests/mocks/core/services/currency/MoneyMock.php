@@ -11,7 +11,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
 /**
- * Class MoneyMock
+ * Class MoneyFactoryMock
  *
  * @package       Event Espresso
  * @author        Brent Christensen
@@ -25,7 +25,7 @@ class MoneyMock extends Money
      */
     public function getCalculator()
     {
-        return self::$calculator;
+        return $this->calculator();
     }
 
 
@@ -35,11 +35,11 @@ class MoneyMock extends Money
      */
     public function getFormatters()
     {
-        return self::$formatters;
+        return $this->formatters();
     }
 
 
 
 }
 // End of file MoneyMock.php
-// Location: EventEspresso\tests\mocks\core\services\currency/MoneyMock.php
+// Location: EventEspresso\tests\mocks\core\services\currency/MoneyFactoryMock.php
