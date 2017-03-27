@@ -66,6 +66,37 @@ class MoneyTest extends \EE_UnitTestCase
 
 
     /**
+     * @group MoneyConvert
+     */
+    public function test_construct_with_wonky_values()
+    {
+        // update details for Russian Federation because the db data is wrong:
+        /** @var EE_Country $russia */
+        $russia = EEM_Country::instance()->get_one_by_ID('RU');
+        $russia->set('CNT_cur_thsnds', '.');
+        $russia->set('CNT_cur_dec_mrk', ',');
+        $russia->save();
+
+        $wonky_values = array(
+            '$1,000,000.00'       => array('1000000.00', 'US'),
+            '$1 000 000.00'       => array('1000000.00', 'US'),
+            '1,000 000.00'        => array('1000000.00', 'US'),
+            '$123'                => array('123', 'US'),
+            '$123 456 789'        => array('123456789', 'US'),
+            '0.15¢'               => array('0.15', 'US'),
+            '75.25 £'             => array('75.25', 'GB'),
+            'руб1.234.567,89 RUB' => array('1234567.89', 'RU'),
+        );
+        foreach ($wonky_values as $wonky_value => $currency) {
+            $money = CreateMoney::forCountry($wonky_value, $currency[1]);
+            $this->assertInstanceOf('\EventEspresso\core\entities\money\Money', $money);
+            $this->assertEquals($currency[0], $money->amount());
+        }
+    }
+
+
+
+    /**
      * @group Money
      * @expectedException InvalidArgumentException
      */
