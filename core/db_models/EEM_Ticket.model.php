@@ -164,5 +164,25 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 
 
 
+    /**
+     * returns an array of EE_Ticket objects matching the supplied list of IDs
+     *
+     * @param array $ticket_IDs
+     * @return EE_Base_Class[]|EE_Ticket[]
+     * @throws \EE_Error
+     */
+    public function get_tickets_with_IDs(array $ticket_IDs)
+    {
+        return $this->get_all(
+            array(
+                array(
+                    'TKT_ID' => array( 'IN', $ticket_IDs )
+                )
+            )
+        );
+	}
+
+
+
 }
 //end EEM_Ticket model

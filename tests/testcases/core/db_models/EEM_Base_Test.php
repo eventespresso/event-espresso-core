@@ -141,10 +141,10 @@ class EEM_Base_Test extends EE_UnitTestCase
         $att3 = EEM_Attendee::instance()->insert(array('ATT_fname' => 'three'));
         $att4 = EEM_Attendee::instance()->insert(array('ATT_fname' => 'four'));
         $all = EEM_Attendee::instance()->get_col();
-        $this->assertArrayContains($att1, $all);
-        $this->assertArrayContains($att2, $all);
-        $this->assertArrayContains($att3, $all);
-        $this->assertArrayContains($att4, $all);
+        $this->assertArrayContains((string)$att1, $all);
+        $this->assertArrayContains((string)$att2, $all);
+        $this->assertArrayContains((string)$att3, $all);
+        $this->assertArrayContains((string)$att4, $all);
         $just_two_and_threes_names = EEM_Attendee::instance()->get_col(array(
             array(
                 'ATT_fname' => array(
