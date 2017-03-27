@@ -15,14 +15,14 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
 /**
- * Class MoneyFactory
+ * Class CreateMoney
  * Factory class for creating Money objects
  *
  * @package       Event Espresso
  * @author        Brent Christensen
  * @since         $VID:$
  */
-class MoneyFactory
+class CreateMoney
 {
 
     /**
@@ -55,8 +55,8 @@ class MoneyFactory
         return new Money(
             $amount,
             Currency::createFromCountryCode($CNT_ISO),
-            MoneyFactory::calculator(),
-            MoneyFactory::formatters()
+            CreateMoney::calculator(),
+            CreateMoney::formatters()
         );
     }
 
@@ -77,8 +77,8 @@ class MoneyFactory
         return new Money(
             $amount,
             Currency::createFromCountryCode($CNT_ISO),
-            MoneyFactory::calculator(),
-            MoneyFactory::formatters()
+            CreateMoney::calculator(),
+            CreateMoney::formatters()
         );
     }
 
@@ -101,8 +101,8 @@ class MoneyFactory
         return new Money(
             $amount,
             Currency::createFromCode($currency_code),
-            MoneyFactory::calculator(),
-            MoneyFactory::formatters()
+            CreateMoney::calculator(),
+            CreateMoney::formatters()
         );
     }
 
@@ -127,8 +127,8 @@ class MoneyFactory
         return new Money(
             $arguments[0],
             Currency::createFromCode($currency_code),
-            MoneyFactory::calculator(),
-            MoneyFactory::formatters()
+            CreateMoney::calculator(),
+            CreateMoney::formatters()
         );
     }
 
@@ -139,7 +139,7 @@ class MoneyFactory
      */
     public static function calculator()
     {
-        MoneyFactory::initializeCalculators();
+        CreateMoney::initializeCalculators();
         return self::$calculator;
     }
 
@@ -179,7 +179,7 @@ class MoneyFactory
      */
     public static function formatters()
     {
-        MoneyFactory::initializeFormatters();
+        CreateMoney::initializeFormatters();
         return self::$formatters;
     }
 
@@ -207,5 +207,5 @@ class MoneyFactory
 
 
 }
-// End of file MoneyFactory.php
-// Location: core/services/currency/MoneyFactory.php
+// End of file CreateMoney.php
+// Location: core/services/currency/CreateMoney.php

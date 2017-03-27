@@ -1,7 +1,7 @@
 <?php
 use EventEspresso\core\entities\money\Currency;
 use EventEspresso\core\entities\money\Money;
-use EventEspresso\core\services\currency\MoneyFactory;
+use EventEspresso\core\services\currency\CreateMoney;
 use EventEspresso\tests\mocks\core\services\currency\MoneyMock;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
@@ -9,14 +9,14 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
 /**
- * Class MoneyTest
+ * Class CreateMoneyTest
  * Description
  *
  * @package       Event Espresso
  * @author        Brent Christensen
  * @since         $VID:$
  */
-class MoneyFactoryTest extends \EE_UnitTestCase
+class CreateMoneyTest extends \EE_UnitTestCase
 {
 
     /**
@@ -34,7 +34,7 @@ class MoneyFactoryTest extends \EE_UnitTestCase
      */
     public function test_forSite()
     {
-        $money = MoneyFactory::forSite(1234.56789);
+        $money = CreateMoney::forSite(1234.56789);
         $this->assertInstanceOf('\EventEspresso\core\entities\money\Money', $money);
         $this->assertEquals('1234.57', $money->amount());
         $this->assertInstanceOf('\EventEspresso\core\entities\money\Currency', $money->currency());
@@ -51,7 +51,7 @@ class MoneyFactoryTest extends \EE_UnitTestCase
      */
     public function test_forCountry()
     {
-        $money = MoneyFactory::forCountry(1234.56789, 'US');
+        $money = CreateMoney::forCountry(1234.56789, 'US');
         $this->assertInstanceOf('\EventEspresso\core\entities\money\Money', $money);
         $this->assertEquals('1234.57', $money->amount());
         $this->assertInstanceOf('\EventEspresso\core\entities\money\Currency', $money->currency());
@@ -64,7 +64,7 @@ class MoneyFactoryTest extends \EE_UnitTestCase
      */
     public function test_forCurrency()
     {
-        $money = MoneyFactory::forCurrency(1234.56789, 'USD');
+        $money = CreateMoney::forCurrency(1234.56789, 'USD');
         $this->assertInstanceOf('\EventEspresso\core\entities\money\Money', $money);
         $this->assertEquals('1234.57', $money->amount());
         $this->assertInstanceOf('\EventEspresso\core\entities\money\Currency', $money->currency());
@@ -78,7 +78,7 @@ class MoneyFactoryTest extends \EE_UnitTestCase
     public function test_callStatic()
     {
         /** @var Money $money */
-        $money = MoneyFactory::USD(1234.56789);
+        $money = CreateMoney::USD(1234.56789);
         $this->assertInstanceOf('\EventEspresso\core\entities\money\Money', $money);
         $this->assertEquals('1234.57', $money->amount());
         $this->assertInstanceOf('\EventEspresso\core\entities\money\Currency', $money->currency());
@@ -94,15 +94,15 @@ class MoneyFactoryTest extends \EE_UnitTestCase
         // confirm getter returns correct object
         $this->assertInstanceOf(
             '\EventEspresso\core\services\currency\Calculator',
-            MoneyFactory::calculator()
+            CreateMoney::calculator()
         );
         // now create a MoneyMock object
         $USD = $this->currency();
         $money_mock = new MoneyMock(
             1234.5,
             $USD,
-            MoneyFactory::calculator(),
-            MoneyFactory::formatters()
+            CreateMoney::calculator(),
+            CreateMoney::formatters()
         );
         $this->assertInstanceOf(
             '\EventEspresso\tests\mocks\core\services\currency\MoneyMock',
@@ -118,8 +118,8 @@ class MoneyFactoryTest extends \EE_UnitTestCase
             new MoneyMock(
                 10,
                 $USD,
-                MoneyFactory::calculator(),
-                MoneyFactory::formatters()
+                CreateMoney::calculator(),
+                CreateMoney::formatters()
             )
         );
         // confirm that calculator is set on new MoneyMock returned
@@ -134,7 +134,7 @@ class MoneyFactoryTest extends \EE_UnitTestCase
      */
     public function test_initializeFormatters()
     {
-        $formatters = MoneyFactory::formatters();
+        $formatters = CreateMoney::formatters();
         foreach ($formatters as $formatter) {
             $this->assertInstanceOf(
                 '\EventEspresso\core\services\currency\MoneyFormatter',
@@ -145,8 +145,8 @@ class MoneyFactoryTest extends \EE_UnitTestCase
         $money_mock = new MoneyMock(
             1234.5,
             $USD,
-            MoneyFactory::calculator(),
-            MoneyFactory::formatters()
+            CreateMoney::calculator(),
+            CreateMoney::formatters()
         );
         $this->assertInstanceOf(
             '\EventEspresso\tests\mocks\core\services\currency\MoneyMock',
@@ -162,4 +162,4 @@ class MoneyFactoryTest extends \EE_UnitTestCase
 
 }
 // End of file MoneyTest.php
-// Location: tests/testcases/core/services/currency/MoneyTest.php
+// Location: tests/testcases/core/services/currency/CreateMoneyTest.php
