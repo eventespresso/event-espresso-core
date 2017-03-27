@@ -102,13 +102,16 @@ class EEH_DTT_Helper
     {
         $timezone_string = 'UTC';
         $gmt_offset      = ! empty($gmt_offset) ? $gmt_offset : get_option('gmt_offset');
+        //because WP hooks in on timezone_string, we need to see if that is set because it will override `gmt_offset`
+        //via `pre_get_option` filter.
+        $dst_flag = get_option('timezone_string') !== '' ? 1 : 0;
         if ($gmt_offset !== '') {
             // convert GMT offset to seconds
             $gmt_offset = $gmt_offset * HOUR_IN_SECONDS;
             // account for WP offsets that aren't valid UTC
             $gmt_offset = EEH_DTT_Helper::adjust_invalid_gmt_offsets($gmt_offset);
             // although we don't know the TZ abbreviation, we know the UTC offset
-            $timezone_string = timezone_name_from_abbr(null, $gmt_offset);
+            $timezone_string = timezone_name_from_abbr(null, $gmt_offset, $dst_flag);
         }
         // better have a valid timezone string by now, but if not, sigh... loop thru  the timezone_abbreviations_list()...
         $timezone_string = $timezone_string !== false
