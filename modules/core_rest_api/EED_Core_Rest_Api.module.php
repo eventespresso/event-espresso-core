@@ -1,4 +1,5 @@
 <?php
+use EventEspresso\core\entities\models\JsonModelSchema;
 use EventEspresso\core\libraries\rest_api\CalculatedModelFields;
 use EventEspresso\core\libraries\rest_api\controllers\model\Read as ModelRead;
 use EventEspresso\core\libraries\rest_api\changes\ChangesInBase;
@@ -682,37 +683,46 @@ class EED_Core_Rest_Api extends \EED_Module
     ) {
         $model = EE_Registry::instance()->load_model($model_name);
         $fields = $model_version_info->fieldsOnModelInThisVersion($model);
-        $param_info = array();
+        $args_info = array();
         foreach ($fields as $field_name => $field_obj) {
             if ($field_obj->is_auto_increment()) {
                 //totally ignore auto increment IDs
                 continue;
             }
+            $arg_info = $field_obj->getSchema();
             $required = ! $field_obj->is_nullable() && $field_obj->get_default_value() === null;
-            $param_info[$field_name] = array(
-                'required'    => $required,
-                'default'     => ModelDataTranslator::prepareFieldValueForJson(
-                    $field_obj,
-                    $field_obj->get_default_value(),
-                    $model_version_info->requestedVersion()
-                ),
-                'description' => $field_obj->getSchemaDescription(),
-                'type' => $field_obj->getSchemaType()
+            $arg_info['required'] = $required;
+            //remove the read-only flag. If it were read-only we wouldn't list it as an argument while writing, right?
+            unset($arg_info['readonly']);
+            $schema_properties = $field_obj->getSchemaProperties();
+            if( $field_obj->getSchemaType() === 'object'
+                && isset($schema_properties['raw'])){
+                //if there's a "raw" form of this argument, use those properties instead
+                $arg_info = array_replace(
+                    $arg_info,
+                    $schema_properties['raw']
+                );
+            }
+            $arg_info['default'] = ModelDataTranslator::prepareFieldValueForJson(
+                $field_obj,
+                $field_obj->get_default_value(),
+                $model_version_info->requestedVersion()
             );
-            if( $field_obj instanceof EE_Datetime_Field ){
-                $param_info[$field_name.'_gmt'] = $param_info[$field_name];
-                $param_info[$field_name.'_gmt']['description'] = sprintf(
+            $args_info[$field_name] = $arg_info;
+            if ($field_obj instanceof EE_Datetime_Field) {
+                $gmt_arg_info = $arg_info;
+                $gmt_arg_info['description'] = sprintf(
                     esc_html__(
-                        '%1$s - the value for this field in UTC. Only used if %2$s is not provided.',
+                        '%1$s - the value for this field in UTC. Ignored if %2$s is provided.',
                         'event_espresso'
                     ),
                     $field_obj->get_nicename(),
                     $field_name
                 );
+                $args_info[$field_name . '_gmt'] = $gmt_arg_info;
             }
-
         }
-        return $param_info;
+        return $args_info;
     }
 
 
