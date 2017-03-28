@@ -23,7 +23,7 @@ class EE_Number_Input_Display_Strategy_Test extends EE_UnitTestCase{
         $input = new EE_Integer_Input(array());
         $input->_construct_finalize(null, 'age');
         $output = $input->get_display_strategy()->display();
-        $expected = '<input name="age" id="age" type="number"/>';
+        $expected = '<input name="age" id="age" type="number" value=""/>';
         $this->assertHTMLEquals($expected,$output);
     }
 
@@ -41,7 +41,7 @@ class EE_Number_Input_Display_Strategy_Test extends EE_UnitTestCase{
             ));
         $input->_construct_finalize(null, 'age');
         $output = $input->get_display_strategy()->display();
-        $expected = '<input name="age" id="age" class="ee-required funky" required type="number" min="2" max="5"/>';
+        $expected = '<input name="age" id="age" class="ee-required funky" required type="number" min="2" max="5" value=""/>';
         $this->assertHTMLEquals($expected,$output);
     }
 
@@ -58,7 +58,23 @@ class EE_Number_Input_Display_Strategy_Test extends EE_UnitTestCase{
             ));
         $input->_construct_finalize(null, 'age');
         $output = $input->get_display_strategy()->display();
-        $expected = '<input name="age" id="age" class="ee-required funky" required step="any" type="number"/>';
+        $expected = '<input name="age" id="age" class="ee-required funky" required step="any" type="number" value=""/>';
+        $this->assertHTMLEquals($expected,$output);
+    }
+
+    /**
+     * @group 10586
+     */
+    public function test_display__with_value()
+    {
+        $input = new EE_Integer_Input(
+            array(
+                'default' => 123
+            )
+        );
+        $input->_construct_finalize(null, 'age');
+        $output = $input->get_display_strategy()->display();
+        $expected = '<input name="age" id="age" type="number" value="123"/>';
         $this->assertHTMLEquals($expected,$output);
     }
 }
