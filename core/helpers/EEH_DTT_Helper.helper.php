@@ -113,6 +113,15 @@ class EEH_DTT_Helper
             $gmt_offset = EEH_DTT_Helper::adjust_invalid_gmt_offsets($gmt_offset);
             // although we don't know the TZ abbreviation, we know the UTC offset
             $timezone_string = timezone_name_from_abbr(null, $gmt_offset, $dst_flag);
+            //only use this timezone_string IF it's current offset matches the given offset
+            try {
+                $offset = self::get_timezone_offset(new DateTimeZone($timezone_string));
+                if ($offset !== $gmt_offset) {
+                    $timezone_string = false;
+                }
+            } catch (Exception $e) {
+                $timezone_string = false;
+            }
         }
         // better have a valid timezone string by now, but if not, sigh... loop thru  the timezone_abbreviations_list()...
         $timezone_string = $timezone_string !== false
@@ -201,7 +210,7 @@ class EEH_DTT_Helper
      * get_timezone_string_from_abbreviations_list
      *
      * @access public
-     * @param int $gmt_offset
+     * @param int  $gmt_offset
      * @return string
      * @throws \EE_Error
      */
@@ -211,9 +220,15 @@ class EEH_DTT_Helper
         foreach ($abbreviations as $abbreviation) {
             foreach ($abbreviation as $city) {
                 if ($city['offset'] === $gmt_offset && $city['dst'] === false) {
-                    // check if the timezone is valid but don't throw any errors if it isn't
-                    if (EEH_DTT_Helper::validate_timezone($city['timezone_id'], false)) {
-                        return $city['timezone_id'];
+                    try {
+                        $offset = self::get_timezone_offset(new DateTimeZone($city['timezone_id']));
+                        if ($offset !== $gmt_offset) {
+                            continue;
+                        } else {
+                            return $city['timezone_id'];
+                        }
+                    } catch (Exception $e) {
+                        continue;
                     }
                 }
             }
