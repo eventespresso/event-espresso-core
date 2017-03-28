@@ -163,8 +163,11 @@ class EEH_DTT_Helper
 
 
     /**
-     * PHP doesn't have valid current timezone strings to match these gmt_offsets in its current timezone tables.
+     * Depending on PHP version, there might not bevalid current timezone strings to match these gmt_offsets in its
+     * timezone tables.
      * To get around that, for these fringe timezones we bump them to a known valid offset.
+     *
+     * This method should ONLY be called after first verifying an timezone_string cannot be retrieved for the offset.
      *
      * @access public
      * @param int $gmt_offset
