@@ -65,6 +65,7 @@ class Model_Data_Translator_Test extends EE_UnitTestCase{
 	/**
 	 * Verifies prepare_conditions_query_params_for_models works properly,
 	 * especially with datetimes which can be in UTC or local time
+     * @group 10626
 	 */
 	public function test_prepare_conditions_query_params_for_models__gmt_datetimes() {
         $data_translator = new Model_Data_Translator();
