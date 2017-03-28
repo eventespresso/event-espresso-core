@@ -121,8 +121,6 @@ class EEH_DTT_Helper
         if ($gmt_offset !== '') {
             // convert GMT offset to seconds
             $gmt_offset = $gmt_offset * HOUR_IN_SECONDS;
-            // account for WP offsets that aren't valid UTC
-            $gmt_offset = EEH_DTT_Helper::adjust_invalid_gmt_offsets($gmt_offset);
             // although we don't know the TZ abbreviation, we know the UTC offset
             $timezone_string = timezone_name_from_abbr(null, $gmt_offset);
             //only use this timezone_string IF it's current offset matches the given offset
@@ -168,9 +166,6 @@ class EEH_DTT_Helper
      * PHP doesn't have valid current timezone strings to match these gmt_offsets in its current timezone tables.
      * To get around that, for these fringe timezones we bump them to a known valid offset.
      *
-     * @todo  we need to makes sure that we only coerce this AFTER trying normal methods to get the offset because
-     *        timezone tables ARE updated and it might be correct on the server running this.
-     *
      * @access public
      * @param int $gmt_offset
      * @return int
@@ -208,6 +203,10 @@ class EEH_DTT_Helper
             case -19800:
                 $gmt_offset = -18000;
                 break;
+            //-4.5
+            case -16200:
+                $gmt_offset = -14400;
+                break;
             //-3.5
             case -12600:
                 $gmt_offset = -10800;
@@ -240,6 +239,7 @@ class EEH_DTT_Helper
             case 12600:
                 $gmt_offset = 14400;
                 break;
+
             //7.5
             case 27000:
                 $gmt_offset = 28800;
@@ -270,10 +270,11 @@ class EEH_DTT_Helper
      *
      * @access public
      * @param int  $gmt_offset
+     * @param bool $coerce   If true, we attempt to coerce with our adjustment table @see self::adjust_invalid_gmt_offset.
      * @return string
      * @throws \EE_Error
      */
-    public static function get_timezone_string_from_abbreviations_list($gmt_offset = 0)
+    public static function get_timezone_string_from_abbreviations_list($gmt_offset = 0, $coerce = true)
     {
         $abbreviations = timezone_abbreviations_list();
         foreach ($abbreviations as $abbreviation) {
@@ -290,6 +291,16 @@ class EEH_DTT_Helper
                         continue;
                     }
                 }
+            }
+        }
+        //if $coerce is true, let's see if we can get a timezone string after the offset is adjusted
+        if ($coerce == true) {
+            $timezone_string = self::get_timezone_string_from_abbreviations_list(
+                self::adjust_invalid_gmt_offsets($gmt_offset),
+                false
+            );
+            if ($timezone_string) {
+                return $timezone_string;
             }
         }
         throw new EE_Error(
