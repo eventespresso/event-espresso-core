@@ -153,7 +153,11 @@ class EEH_DTT_Helper
 
 
     /**
-     * _create_timezone_object_from_timezone_name
+     * PHP doesn't have valid current timezone strings to match these gmt_offsets in its current timezone tables.
+     * To get around that, for these fringe timezones we bump them to a known valid offset.
+     *
+     * @todo  we need to makes sure that we only coerce this AFTER trying normal methods to get the offset because
+     *        timezone tables ARE updated and it might be correct on the server running this.
      *
      * @access public
      * @param int $gmt_offset
@@ -164,43 +168,86 @@ class EEH_DTT_Helper
         //make sure $gmt_offset is int
         $gmt_offset = (int)$gmt_offset;
         switch ($gmt_offset) {
-
-            //			case -30600 :
-            //				$gmt_offset = -28800;
-            //				break;
-
-            case -27000 :
+            //-12
+            case -43200:
+                $gmt_offset = -39600;
+                break;
+            //-11.5
+            case -41400:
+                $gmt_offset = -39600;
+                break;
+            //-10.5
+            case -37800:
+                $gmt_offset = -39600;
+                break;
+            //-8.5
+            case -30600:
+                $gmt_offset = -28800;
+                break;
+            //-7.5
+            case -27000:
                 $gmt_offset = -25200;
                 break;
-
-            case -23400 :
+            //-6.5
+            case -23400:
                 $gmt_offset = -21600;
                 break;
-
-            case -19800 :
+            //-5.5
+            case -19800:
                 $gmt_offset = -18000;
                 break;
-
-            case -9000 :
+            //-3.5
+            case -12600:
+                $gmt_offset = -10800;
+                break;
+            //-2.5
+            case -9000:
                 $gmt_offset = -7200;
                 break;
-
-            case -5400 :
+            //-1.5
+            case -5400:
                 $gmt_offset = -3600;
                 break;
-
-            case -1800 :
+            //-0.5
+            case -1800:
                 $gmt_offset = 0;
                 break;
-
-            case 1800 :
+            //.5
+            case 1800:
                 $gmt_offset = 3600;
                 break;
-
-            case 49500 :
+            //1.5
+            case 5400:
+                $gmt_offset = 7200;
+                break;
+            //2.5
+            case 9000:
+                $gmt_offset = 10800;
+                break;
+            //3.5
+            case 12600:
+                $gmt_offset = 14400;
+                break;
+            //7.5
+            case 27000:
+                $gmt_offset = 28800;
+                break;
+            //8.5
+            case 30600:
+                $gmt_offset = 31500;
+                break;
+            //10.5
+            case 37800:
+                $gmt_offset = 39600;
+                break;
+            //12.75
+            case 45900:
+                $gmt_offset = 46800;
+                break;
+            //13.75
+            case 49500:
                 $gmt_offset = 50400;
                 break;
-
         }
         return $gmt_offset;
     }
