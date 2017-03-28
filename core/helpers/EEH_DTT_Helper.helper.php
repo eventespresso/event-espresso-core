@@ -230,6 +230,40 @@ class EEH_DTT_Helper
     }
 
 
+
+    /**
+     * Get Timezone Transitions
+     * @param \DateTimeZone $date_time_zone
+     * @param null          $time
+     * @param bool          $first_only
+     * @return array|mixed
+     */
+    public static function get_timezone_transitions(DateTimeZone $date_time_zone, $time = null, $first_only = true)
+    {
+        $time = is_int($time) || $time === null ? $time : strtotime($time);
+        $time = preg_match(EE_Datetime_Field::unix_timestamp_regex, $time) ? $time : time();
+        $transitions = $date_time_zone->getTransitions($time);
+        return $first_only && ! isset($transitions['ts']) ? reset($transitions) : $transitions;
+    }
+
+
+    /**
+     * Get Timezone Offset for given timezone object.
+     * @param \DateTimeZone $date_time_zone
+     * @param null          $time
+     * @return mixed
+     * @throws \DomainException
+     */
+    public static function get_timezone_offset(DateTimeZone $date_time_zone, $time = null)
+    {
+        $transitions = self::get_timezone_transitions($date_time_zone, $time);
+        if (! isset($transitions['offset'])) {
+            throw new DomainException();
+        }
+        return $transitions['offset'];
+    }
+
+
     /**
      * @access public
      * @param string $timezone_string
