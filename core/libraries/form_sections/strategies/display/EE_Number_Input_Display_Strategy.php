@@ -57,6 +57,7 @@ class EE_Number_Input_Display_Strategy extends EE_Display_Strategy_Base
                     'type' => 'number',
                     'min'  => $this->min,
                     'max'  => $this->max,
+                    'value' => $this->_input->raw_value_in_form()
                 )
             )
         );
