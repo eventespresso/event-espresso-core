@@ -19,8 +19,7 @@ use EEM_Base;
 use EEM_CPT_Base;
 
 if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
+    exit('No direct script access allowed');}
 
 
 

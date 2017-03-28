@@ -2,6 +2,7 @@
 use EventEspresso\core\libraries\rest_api\CalculatedModelFields;
 use EventEspresso\core\libraries\rest_api\controllers\model\Read as ModelRead;
 use EventEspresso\core\libraries\rest_api\changes\ChangesInBase;
+use EventEspresso\core\libraries\rest_api\ModelDataTranslator;
 use EventEspresso\core\libraries\rest_api\ModelVersionInfo;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
@@ -688,36 +689,15 @@ class EED_Core_Rest_Api extends \EED_Module
             );
             $param_info[$field_name] = array(
                 'required'    => $required,
-                'default'     => EED_Core_Rest_Api::prepare_field_value_for_rest_api($field_obj,
-                    $field_obj->get_default_value()),
+                'default'     => ModelDataTranslator::prepareFieldValueForJson(
+                    $field_obj,
+                    $field_obj->get_default_value(),
+                    $model_version_info->requestedVersion()
+                ),
                 'description' => $description,
             );
         }
         return $param_info;
-    }
-
-
-
-    /**
-     * Prepares a field's value for display in the API
-     *
-     * @param \EE_Model_Field $field_obj
-     * @param mixed           $value
-     * @return mixed
-     */
-    public static function prepare_field_value_for_rest_api($field_obj, $value)
-    {
-        if ($value === EE_INF) {
-            $value = EE_INF_IN_DB;
-        } elseif ($field_obj instanceof \EE_Datetime_Field
-                  && $value instanceof \DateTime
-        ) {
-            $value = $value->format('c');
-            $value = mysql_to_rfc3339($value);
-        } else {
-            $value = $value;
-        }
-        return $value;
     }
 
 
