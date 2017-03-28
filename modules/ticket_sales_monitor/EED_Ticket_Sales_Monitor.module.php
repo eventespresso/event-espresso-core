@@ -63,6 +63,11 @@ class EED_Ticket_Sales_Monitor extends EED_Module
      */
     public static function set_hooks()
     {
+        // release tickets for expired carts
+        add_action('EED_Ticket_Selector__process_ticket_selections__before',
+            array('EED_Ticket_Sales_Monitor', 'release_tickets_for_expired_carts'),
+            1
+        );
         // check ticket reserves AFTER MER does it's check (hence priority 20)
         add_filter('FHEE__EE_Ticket_Selector___add_ticket_to_cart__ticket_qty',
             array('EED_Ticket_Sales_Monitor', 'validate_ticket_sale'),
@@ -154,6 +159,58 @@ class EED_Ticket_Sales_Monitor extends EED_Module
      */
     public function run($WP_Query)
     {
+    }
+
+
+
+    /********************************** PRE_TICKET_SALES  **********************************/
+
+
+
+    /**
+     * Retrieves grand totals from the line items that have no TXN ID
+     * and timestamps less than the current time minus the session lifespan.
+     * These are carts that have been abandoned before the "registrant" even attempted to checkout.
+     * We're going to release the tickets for these line items before attempting to add more to the cart.
+     *
+     * @return void
+     * @throws \EE_Error
+     */
+    public static function release_tickets_for_expired_carts()
+    {
+        $expired_ticket_IDs = array();
+        $valid_ticket_line_items = array();
+        $total_line_items = EEM_Line_Item::instance()->get_total_line_items_with_no_transaction();
+        if(empty($total_line_items)){
+            return;
+        }
+        $expired = current_time('timestamp') - EE_Registry::instance()->SSN->lifespan();
+        foreach ($total_line_items as $total_line_item) {
+            /** @var EE_Line_Item $total_line_item */
+            $ticket_line_items = EED_Ticket_Sales_Monitor::get_ticket_line_items_for_grand_total($total_line_item);
+            foreach ($ticket_line_items as $ticket_line_item) {
+                if(! $ticket_line_item instanceof EE_Line_Item) {
+                    continue;
+                }
+                if ($total_line_item->timestamp(true) <= $expired ) {
+                    $expired_ticket_IDs[$ticket_line_item->OBJ_ID()] = $ticket_line_item->OBJ_ID();
+                } else {
+                    $valid_ticket_line_items[$ticket_line_item->OBJ_ID()] = $ticket_line_item;
+                }
+            }
+        }
+        if (! empty($expired_ticket_IDs)) {
+            EED_Ticket_Sales_Monitor::release_reservations_for_tickets(
+                \EEM_Ticket::instance()->get_tickets_with_IDs($expired_ticket_IDs),
+                $valid_ticket_line_items
+            );
+            // let's get rid of expired line items so that they can't interfere with tracking
+            add_action(
+                'shutdown',
+                array('EED_Ticket_Sales_Monitor', 'clear_expired_line_items_with_no_transaction'),
+                999
+            );
+        }
     }
 
 
@@ -801,7 +858,6 @@ class EED_Ticket_Sales_Monitor extends EED_Module
      */
     public static function reset_reservation_counts()
     {
-        $total_tickets_released = 0;
         /** @var EE_Line_Item[] $valid_reserved_tickets */
         $valid_reserved_tickets = array();
         $transactions_in_progress = EEM_Transaction::instance()->get_transactions_in_progress();
@@ -818,24 +874,65 @@ class EED_Ticket_Sales_Monitor extends EED_Module
                     esc_html__('Transaction does not have a valid Total Line Item associated with it.', 'event_espresso')
                 );
             }
-            $valid_reserved_tickets += EED_Ticket_Sales_Monitor::get_reserved_tickets_for_line_item($total_line_item);
+            $valid_reserved_tickets += EED_Ticket_Sales_Monitor::get_ticket_line_items_for_grand_total(
+                $total_line_item
+            );
         }
-        $total_line_items = EEM_Line_Item::instance()->get_total_line_items_just_added_to_cart();
+        $total_line_items = EEM_Line_Item::instance()->get_total_line_items_for_active_carts();
         foreach ($total_line_items as $total_line_item) {
-            $valid_reserved_tickets += EED_Ticket_Sales_Monitor::get_reserved_tickets_for_line_item($total_line_item);
+            $valid_reserved_tickets += EED_Ticket_Sales_Monitor::get_ticket_line_items_for_grand_total(
+                $total_line_item
+            );
         }
-        $tickets_with_reservations = EEM_Ticket::instance()->get_tickets_with_reservations();
+        return EED_Ticket_Sales_Monitor::release_reservations_for_tickets(
+            EEM_Ticket::instance()->get_tickets_with_reservations(),
+            $valid_reserved_tickets
+        );
+    }
+
+
+
+    /**
+     * @param EE_Line_Item $total_line_item
+     * @return EE_Line_Item[]
+     */
+    private static function get_ticket_line_items_for_grand_total(EE_Line_Item $total_line_item)
+    {
+        /** @var EE_Line_Item[] $valid_reserved_tickets */
+        $valid_reserved_tickets = array();
+        $ticket_line_items = EEH_Line_Item::get_ticket_line_items($total_line_item);
+        foreach ($ticket_line_items as $ticket_line_item) {
+            if ($ticket_line_item instanceof EE_Line_Item) {
+                $valid_reserved_tickets[] = $ticket_line_item;
+            }
+        }
+        return $valid_reserved_tickets;
+    }
+
+
+
+    /**
+     * @param EE_Ticket[] $tickets_with_reservations
+     * @param EE_Line_Item[] $valid_reserved_ticket_line_items
+     * @return int
+     * @throws \EE_Error
+     */
+    private static function release_reservations_for_tickets(
+        array $tickets_with_reservations,
+        $valid_reserved_ticket_line_items = array()
+    ) {
+        $total_tickets_released = 0;
         foreach ($tickets_with_reservations as $ticket_with_reservations) {
             if (! $ticket_with_reservations instanceof EE_Ticket) {
                 continue;
             }
             $reserved_qty = $ticket_with_reservations->reserved();
-            foreach ($valid_reserved_tickets as $valid_reserved_ticket) {
-                if(
-                    $valid_reserved_ticket instanceof EE_Line_Item
-                    && $valid_reserved_ticket->OBJ_ID() === $ticket_with_reservations->ID()
+            foreach ($valid_reserved_ticket_line_items as $valid_reserved_ticket_line_item) {
+                if (
+                    $valid_reserved_ticket_line_item instanceof EE_Line_Item
+                    && $valid_reserved_ticket_line_item->OBJ_ID() === $ticket_with_reservations->ID()
                 ) {
-                    $reserved_qty -= $valid_reserved_ticket->quantity();
+                    $reserved_qty -= $valid_reserved_ticket_line_item->quantity();
                 }
             }
             if ($reserved_qty > 0) {
@@ -849,17 +946,26 @@ class EED_Ticket_Sales_Monitor extends EED_Module
 
 
 
-    private static function get_reserved_tickets_for_line_item(EE_Line_Item $total_line_item)
+    /********************************** SHUTDOWN  **********************************/
+
+
+
+    /**
+     * @return false|int
+     * @throws \EE_Error
+     */
+    public static function clear_expired_line_items_with_no_transaction()
     {
-        /** @var EE_Line_Item[] $valid_reserved_tickets */
-        $valid_reserved_tickets = array();
-        $ticket_line_items = EEH_Line_Item::get_ticket_line_items($total_line_item);
-        foreach ($ticket_line_items as $ticket_line_item) {
-            if ($ticket_line_item instanceof EE_Line_Item) {
-                $valid_reserved_tickets[] = $ticket_line_item;
-            }
-        }
-        return $valid_reserved_tickets;
+        /** @type WPDB $wpdb */
+        global $wpdb;
+        return $wpdb->query(
+            $wpdb->prepare(
+                'DELETE FROM ' . EEM_Line_Item::instance()->table() . '
+                WHERE TXN_ID = 0 AND LIN_timestamp <= %s',
+                // use GMT time because that's what LIN_timestamps are in
+                date('Y-m-d H:i:s', time() - EE_Registry::instance()->SSN->lifespan())
+            )
+        );
     }
 
 }
