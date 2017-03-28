@@ -113,7 +113,7 @@ class EEH_DTT_Helper
         $gmt_offset = $gmt_offset !== '' ? $gmt_offset : get_option('gmt_offset');
 
         //if $gmt_offset is 0, then just return UTC
-        if ($gmt_offset === 0) {
+        if ((int)$gmt_offset === 0) {
             return $timezone_string;
         }
 
