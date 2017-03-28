@@ -101,18 +101,30 @@ class EEH_DTT_Helper
     public static function get_timezone_string_from_gmt_offset($gmt_offset = '')
     {
         $timezone_string = 'UTC';
-        $gmt_offset      = ! empty($gmt_offset) ? $gmt_offset : get_option('gmt_offset');
-        //because WP hooks in on timezone_string, we need to see if that is set because it will override `gmt_offset`
-        //via `pre_get_option` filter.
-        $dst_flag = get_option('timezone_string') !== '' ? 1 : 0;
+        //if there is no incoming gmt_offset, then because WP hooks in on timezone_string, we need to see if that is
+        //set because it will override `gmt_offset` via `pre_get_option` filter.  If that's set, then let's just use
+        //that!  Otherwise we'll leave timezone_string at the default of 'UTC' before doing other logic.
+        if ($gmt_offset === '') {
+            $timezone_string = get_option('timezone_string');
+            if ($timezone_string) {
+                return $timezone_string;
+            }
+        }
+        $gmt_offset = $gmt_offset !== '' ? $gmt_offset : get_option('gmt_offset');
 
-        if ($gmt_offset !== '' && $gmt_offset !== 0) {
+        //if $gmt_offset is 0, then just return UTC
+        if ($gmt_offset === 0) {
+            return $timezone_string;
+        }
+
+
+        if ($gmt_offset !== '') {
             // convert GMT offset to seconds
             $gmt_offset = $gmt_offset * HOUR_IN_SECONDS;
             // account for WP offsets that aren't valid UTC
             $gmt_offset = EEH_DTT_Helper::adjust_invalid_gmt_offsets($gmt_offset);
             // although we don't know the TZ abbreviation, we know the UTC offset
-            $timezone_string = timezone_name_from_abbr(null, $gmt_offset, $dst_flag);
+            $timezone_string = timezone_name_from_abbr(null, $gmt_offset);
             //only use this timezone_string IF it's current offset matches the given offset
             try {
                 $offset = self::get_timezone_offset(new DateTimeZone($timezone_string));
