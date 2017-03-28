@@ -105,7 +105,8 @@ class EEH_DTT_Helper
         //because WP hooks in on timezone_string, we need to see if that is set because it will override `gmt_offset`
         //via `pre_get_option` filter.
         $dst_flag = get_option('timezone_string') !== '' ? 1 : 0;
-        if ($gmt_offset !== '') {
+
+        if ($gmt_offset !== '' && $gmt_offset !== 0) {
             // convert GMT offset to seconds
             $gmt_offset = $gmt_offset * HOUR_IN_SECONDS;
             // account for WP offsets that aren't valid UTC
