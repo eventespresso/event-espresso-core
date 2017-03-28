@@ -144,7 +144,9 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
     /**
      * returns an array of standard HTML attributes that get added to nearly all inputs,
      * where string keys represent named attributes like id, class, etc
-     * and numeric keys represent single attributes like 'required'
+     * and numeric keys represent single attributes like 'required'.
+     * Note: this does not include "value" because many inputs (like dropdowns, textareas, and checkboxes) don't use
+     * it.
      *
      * @return array
      */
