@@ -65,11 +65,15 @@ class Model_Data_Translator_Test extends EE_UnitTestCase{
 	/**
 	 * Verifies prepare_conditions_query_params_for_models works properly,
 	 * especially with datetimes which can be in UTC or local time
-     * @group 10626
 	 */
 	public function test_prepare_conditions_query_params_for_models__gmt_datetimes() {
         $data_translator = new Model_Data_Translator();
-        $gmt_offsets = array(-12, -10.5, -9, -7.5, -6, -4.5, -3, -1.5, 0, 1.5, 3, 4.5, 6, 7.5, 9, 10.5, 12);
+        //note the following offsets that WERE tested originally are actually _invalid_ offsets in that they do not
+        //represent a valid timezone in the PHP timezone db. This means that although we coerce them to a valid timezone
+        //offset in EEH_DTT_Helper.  Any comparison done with WP's current_time('mysql') will fail because wp is
+        //returning the time with the _actual_ offset applied whereas our dates/times are using our coerced valid timezone string.
+        // $invalid_offsets = array(-12, -10.5, -7.5, -4.5, -1.5, 1.5, 4.5, 7.5, 10.5)
+        $gmt_offsets = array(-11, -9, -6, -3, 0, 3, 6, 9, 12);
         $original_gmt = get_option('gmt_offset');
         $original_timezone = get_option('timezone_string');
         update_option('timezone_string', '');
@@ -77,7 +81,20 @@ class Model_Data_Translator_Test extends EE_UnitTestCase{
             update_option('gmt_offset', $gmt_offset);
             $now_local_time = current_time('mysql');
             $now_utc_time = current_time('mysql', true);
-            $this->assertNotEquals($now_local_time, $now_utc_time);
+            if ($gmt_offset === 0 ) {
+                //if the offset is 0 then both these values should be equal!
+                $this->assertEquals(
+                    $now_local_time,
+                    $now_utc_time,
+                    sprintf('Offset Tested: %s', $gmt_offset)
+                );
+            } else {
+                $this->assertNotEquals(
+                    $now_local_time,
+                    $now_utc_time,
+                    sprintf('Offset Tested: %s', $gmt_offset)
+                );
+            }
             $model_data = $data_translator::prepare_conditions_query_params_for_models(
                 array(
                     'EVT_created'      => mysql_to_rfc3339($now_local_time),
