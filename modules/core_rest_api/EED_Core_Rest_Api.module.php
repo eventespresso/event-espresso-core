@@ -565,11 +565,13 @@ class EED_Core_Rest_Api extends \EED_Module
                 'include'   => array(
                     'required' => false,
                     'default'  => '*',
+                    'type' => 'string'
                 ),
                 'calculate' => array(
                     'required' => false,
                     'default'  => '',
                     'enum'     => self::$_field_calculator->retrieveCalculatedFieldsForModel($model),
+                    'type' => 'string'
                 ),
             ),
             $model,
@@ -633,26 +635,32 @@ class EED_Core_Rest_Api extends \EED_Module
                 'where'    => array(
                     'required' => false,
                     'default'  => array(),
+                    'type' => 'object',
                 ),
                 'limit'    => array(
                     'required' => false,
                     'default'  => EED_Core_Rest_Api::get_default_query_limit(),
+                    'type' => 'string'
                 ),
                 'order_by' => array(
                     'required' => false,
                     'default'  => $default_orderby,
+                    'type' => 'object',
                 ),
                 'group_by' => array(
                     'required' => false,
                     'default'  => null,
+                    'type' => 'object'
                 ),
                 'having'   => array(
                     'required' => false,
                     'default'  => null,
+                    'type' => 'object'
                 ),
                 'caps'     => array(
                     'required' => false,
                     'default'  => EEM_Base::caps_read,
+                    'type' => 'string'
                 ),
             )
         );
@@ -681,12 +689,6 @@ class EED_Core_Rest_Api extends \EED_Module
                 continue;
             }
             $required = ! $field_obj->is_nullable() && $field_obj->get_default_value() === null;
-            $description = sprintf(
-                __('%1$s (field of type %2$s). See %3$s', 'event_espresso'),
-                $field_obj->get_nicename(),
-                get_class($field_obj),
-                'http://developer.eventespresso.com/?p=639'
-            );
             $param_info[$field_name] = array(
                 'required'    => $required,
                 'default'     => ModelDataTranslator::prepareFieldValueForJson(
@@ -694,8 +696,21 @@ class EED_Core_Rest_Api extends \EED_Module
                     $field_obj->get_default_value(),
                     $model_version_info->requestedVersion()
                 ),
-                'description' => $description,
+                'description' => $field_obj->getSchemaDescription(),
+                'type' => $field_obj->getSchemaType()
             );
+            if( $field_obj instanceof EE_Datetime_Field ){
+                $param_info[$field_name.'_gmt'] = $param_info[$field_name];
+                $param_info[$field_name.'_gmt']['description'] = sprintf(
+                    esc_html__(
+                        '%1$s - the value for this field in UTC. Only used if %2$s is not provided.',
+                        'event_espresso'
+                    ),
+                    $field_obj->get_nicename(),
+                    $field_name
+                );
+            }
+
         }
         return $param_info;
     }
