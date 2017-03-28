@@ -102,13 +102,26 @@ class EEH_DTT_Helper
     {
         $timezone_string = 'UTC';
         $gmt_offset      = ! empty($gmt_offset) ? $gmt_offset : get_option('gmt_offset');
-        if ($gmt_offset !== '') {
+        //because WP hooks in on timezone_string, we need to see if that is set because it will override `gmt_offset`
+        //via `pre_get_option` filter.
+        $dst_flag = get_option('timezone_string') !== '' ? 1 : 0;
+
+        if ($gmt_offset !== '' && $gmt_offset !== 0) {
             // convert GMT offset to seconds
             $gmt_offset = $gmt_offset * HOUR_IN_SECONDS;
             // account for WP offsets that aren't valid UTC
             $gmt_offset = EEH_DTT_Helper::adjust_invalid_gmt_offsets($gmt_offset);
             // although we don't know the TZ abbreviation, we know the UTC offset
-            $timezone_string = timezone_name_from_abbr(null, $gmt_offset);
+            $timezone_string = timezone_name_from_abbr(null, $gmt_offset, $dst_flag);
+            //only use this timezone_string IF it's current offset matches the given offset
+            try {
+                $offset = self::get_timezone_offset(new DateTimeZone($timezone_string));
+                if ($offset !== $gmt_offset) {
+                    $timezone_string = false;
+                }
+            } catch (Exception $e) {
+                $timezone_string = false;
+            }
         }
         // better have a valid timezone string by now, but if not, sigh... loop thru  the timezone_abbreviations_list()...
         $timezone_string = $timezone_string !== false
@@ -140,7 +153,11 @@ class EEH_DTT_Helper
 
 
     /**
-     * _create_timezone_object_from_timezone_name
+     * PHP doesn't have valid current timezone strings to match these gmt_offsets in its current timezone tables.
+     * To get around that, for these fringe timezones we bump them to a known valid offset.
+     *
+     * @todo  we need to makes sure that we only coerce this AFTER trying normal methods to get the offset because
+     *        timezone tables ARE updated and it might be correct on the server running this.
      *
      * @access public
      * @param int $gmt_offset
@@ -151,43 +168,86 @@ class EEH_DTT_Helper
         //make sure $gmt_offset is int
         $gmt_offset = (int)$gmt_offset;
         switch ($gmt_offset) {
-
-            //			case -30600 :
-            //				$gmt_offset = -28800;
-            //				break;
-
-            case -27000 :
+            //-12
+            case -43200:
+                $gmt_offset = -39600;
+                break;
+            //-11.5
+            case -41400:
+                $gmt_offset = -39600;
+                break;
+            //-10.5
+            case -37800:
+                $gmt_offset = -39600;
+                break;
+            //-8.5
+            case -30600:
+                $gmt_offset = -28800;
+                break;
+            //-7.5
+            case -27000:
                 $gmt_offset = -25200;
                 break;
-
-            case -23400 :
+            //-6.5
+            case -23400:
                 $gmt_offset = -21600;
                 break;
-
-            case -19800 :
+            //-5.5
+            case -19800:
                 $gmt_offset = -18000;
                 break;
-
-            case -9000 :
+            //-3.5
+            case -12600:
+                $gmt_offset = -10800;
+                break;
+            //-2.5
+            case -9000:
                 $gmt_offset = -7200;
                 break;
-
-            case -5400 :
+            //-1.5
+            case -5400:
                 $gmt_offset = -3600;
                 break;
-
-            case -1800 :
+            //-0.5
+            case -1800:
                 $gmt_offset = 0;
                 break;
-
-            case 1800 :
+            //.5
+            case 1800:
                 $gmt_offset = 3600;
                 break;
-
-            case 49500 :
+            //1.5
+            case 5400:
+                $gmt_offset = 7200;
+                break;
+            //2.5
+            case 9000:
+                $gmt_offset = 10800;
+                break;
+            //3.5
+            case 12600:
+                $gmt_offset = 14400;
+                break;
+            //7.5
+            case 27000:
+                $gmt_offset = 28800;
+                break;
+            //8.5
+            case 30600:
+                $gmt_offset = 31500;
+                break;
+            //10.5
+            case 37800:
+                $gmt_offset = 39600;
+                break;
+            //12.75
+            case 45900:
+                $gmt_offset = 46800;
+                break;
+            //13.75
+            case 49500:
                 $gmt_offset = 50400;
                 break;
-
         }
         return $gmt_offset;
     }
@@ -197,7 +257,7 @@ class EEH_DTT_Helper
      * get_timezone_string_from_abbreviations_list
      *
      * @access public
-     * @param int $gmt_offset
+     * @param int  $gmt_offset
      * @return string
      * @throws \EE_Error
      */
@@ -207,9 +267,15 @@ class EEH_DTT_Helper
         foreach ($abbreviations as $abbreviation) {
             foreach ($abbreviation as $city) {
                 if ($city['offset'] === $gmt_offset && $city['dst'] === false) {
-                    // check if the timezone is valid but don't throw any errors if it isn't
-                    if (EEH_DTT_Helper::validate_timezone($city['timezone_id'], false)) {
-                        return $city['timezone_id'];
+                    try {
+                        $offset = self::get_timezone_offset(new DateTimeZone($city['timezone_id']));
+                        if ($offset !== $gmt_offset) {
+                            continue;
+                        } else {
+                            return $city['timezone_id'];
+                        }
+                    } catch (Exception $e) {
+                        continue;
                     }
                 }
             }
@@ -223,6 +289,40 @@ class EEH_DTT_Helper
                 '</a>'
             )
         );
+    }
+
+
+
+    /**
+     * Get Timezone Transitions
+     * @param \DateTimeZone $date_time_zone
+     * @param null          $time
+     * @param bool          $first_only
+     * @return array|mixed
+     */
+    public static function get_timezone_transitions(DateTimeZone $date_time_zone, $time = null, $first_only = true)
+    {
+        $time = is_int($time) || $time === null ? $time : strtotime($time);
+        $time = preg_match(EE_Datetime_Field::unix_timestamp_regex, $time) ? $time : time();
+        $transitions = $date_time_zone->getTransitions($time);
+        return $first_only && ! isset($transitions['ts']) ? reset($transitions) : $transitions;
+    }
+
+
+    /**
+     * Get Timezone Offset for given timezone object.
+     * @param \DateTimeZone $date_time_zone
+     * @param null          $time
+     * @return mixed
+     * @throws \DomainException
+     */
+    public static function get_timezone_offset(DateTimeZone $date_time_zone, $time = null)
+    {
+        $transitions = self::get_timezone_transitions($date_time_zone, $time);
+        if (! isset($transitions['offset'])) {
+            throw new DomainException();
+        }
+        return $transitions['offset'];
     }
 
 

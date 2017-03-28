@@ -701,10 +701,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base
      */
     public function get_timezone_transitions(DateTimeZone $DateTimeZone, $time = null, $first_only = true)
     {
-        $time = is_int($time) || $time === null ? $time : strtotime($time);
-        $time = preg_match(EE_Datetime_Field::unix_timestamp_regex, $time) ? $time : time();
-        $transitions = $DateTimeZone->getTransitions($time);
-        return $first_only && ! isset($transitions['ts']) ? reset($transitions) : $transitions;
+        return EEH_DTT_Helper::get_timezone_transitions($DateTimeZone, $time, $first_only);
     }
 
 
@@ -719,11 +716,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base
      */
     public function get_timezone_offset(DateTimeZone $DateTimeZone, $time = null)
     {
-        $transitions = $this->get_timezone_transitions($DateTimeZone, $time);
-        if ( ! isset($transitions['offset'])) {
-            throw new DomainException();
-        }
-        return $transitions['offset'];
+        return EEH_DTT_Helper::get_timezone_offset($DateTimeZone, $time);
     }
 
 
