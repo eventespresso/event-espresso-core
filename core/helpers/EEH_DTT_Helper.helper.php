@@ -252,6 +252,10 @@ class EEH_DTT_Helper
             case 37800:
                 $gmt_offset = 39600;
                 break;
+            //11.5
+            case 41400:
+                $gmt_offset = 43200;
+                break;
             //12.75
             case 45900:
                 $gmt_offset = 46800;
