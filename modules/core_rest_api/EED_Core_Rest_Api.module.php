@@ -641,17 +641,27 @@ class EED_Core_Rest_Api extends \EED_Module
                 'limit'    => array(
                     'required' => false,
                     'default'  => EED_Core_Rest_Api::get_default_query_limit(),
-                    'type' => 'string'
+                    'type' => array(
+                        'object',
+                        'string',
+                        'integer'
+                    )
                 ),
                 'order_by' => array(
                     'required' => false,
                     'default'  => $default_orderby,
-                    'type' => 'object',
+                    'type' => array(
+                        'object',
+                        'string'
+                    )
                 ),
                 'group_by' => array(
                     'required' => false,
                     'default'  => null,
-                    'type' => 'object'
+                    'type' => array(
+                        'object',
+                        'string'
+                    )
                 ),
                 'having'   => array(
                     'required' => false,
