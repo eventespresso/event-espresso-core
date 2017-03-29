@@ -822,7 +822,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
      * @global int $auto_made_thing_seed
      * @return EE_Base_Class
      */
-    function new_model_obj_with_dependencies($model_name, $args = array(), $save = true)
+    public function new_model_obj_with_dependencies($model_name, $args = array(), $save = true)
     {
         global $auto_made_thing_seed;
         if ($auto_made_thing_seed === NULL) {
@@ -834,15 +834,14 @@ class EE_UnitTestCase extends WP_UnitTestCase
         foreach ($model->relation_settings() as $related_model_name => $relation) {
             if ($relation instanceof EE_Belongs_To_Any_Relation) {
                 continue;
-            } elseif ($related_model_name == 'Country') {
+            }
+            if ($related_model_name === 'Country' && ! isset($args['CNT_ISO'])) {
                 //we already have lots of countries. lets not make any more
                 //what's more making them is tricky: the primary key needs to be a unique
                 //2-character string but not an integer (else it confuses the country
                 //form input validation)
-                if (!isset($args['CNT_ISO'])) {
-                    $args['CNT_ISO'] = 'US';
-                }
-            } elseif ($related_model_name == 'Status') {
+                $args['CNT_ISO'] = 'US';
+            } elseif ($related_model_name === 'Status') {
                 $fk = $model->get_foreign_key_to($related_model_name);
                 if (!isset($args[$fk->get_name()])) {
                     //only set the default if they haven't specified anything
@@ -861,37 +860,45 @@ class EE_UnitTestCase extends WP_UnitTestCase
         //set any other fields which haven't yet been set
         foreach ($model->field_settings() as $field_name => $field) {
             $value = NULL;
-            if (in_array($field_name, array(
-                'EVT_timezone_string',
-                'PAY_redirect_url',
-                'PAY_redirect_args',
-                'parent'))) {
+            if (
+                in_array(
+                    $field_name,
+                    array(
+                        'EVT_timezone_string',
+                        'PAY_redirect_url',
+                        'PAY_redirect_args',
+                        'parent'
+                    ),
+                    true
+                )
+            ) {
                 $value = NULL;
-            } elseif ($field instanceof EE_Enum_Integer_Field ||
+            } elseif (
+                $field instanceof EE_Enum_Integer_Field ||
                 $field instanceof EE_Enum_Text_Field ||
                 $field instanceof EE_Boolean_Field ||
-                $field_name == 'PMD_type' ||
-                $field->get_name() == 'CNT_cur_dec_mrk' ||
-                $field->get_name() == 'CNT_cur_thsnds' ||
-                $field->get_name() == 'CNT_tel_code'
+                $field_name === 'PMD_type' ||
+                $field_name === 'CNT_cur_dec_mrk' ||
+                $field_name === 'CNT_cur_thsnds' ||
+                $field_name === 'CNT_tel_code'
             ) {
                 $value = $field->get_default_value();
-            } elseif ($field instanceof EE_Integer_Field ||
+            } elseif (
+                $field instanceof EE_Integer_Field ||
                 $field instanceof EE_Float_Field ||
                 $field instanceof EE_Foreign_Key_Field_Base ||
-                $field instanceof EE_Primary_Key_String_Field ||
-                $field->get_name() == 'STA_abbrev' ||
-                $field->get_name() == 'CNT_ISO3' ||
-                $field->get_name() == 'CNT_cur_code'
+                $field_name === 'STA_abbrev' ||
+                $field_name === 'CNT_ISO3' ||
+                $field_name === 'CNT_cur_code'
             ) {
                 $value = $auto_made_thing_seed;
             } elseif ($field instanceof EE_Primary_Key_String_Field) {
                 $value = "$auto_made_thing_seed";
             } elseif ($field instanceof EE_Text_Field_Base) {
-                $value = $auto_made_thing_seed . "_" . $field->get_name();
+                $value = $auto_made_thing_seed . "_" . $field_name;
             }
             if (!array_key_exists($field_name, $args) && $value !== NULL) {
-                $args[$field->get_name()] = $value;
+                $args[$field_name] = $value;
             }
         }
         //and finally make the model obj
@@ -1073,12 +1080,44 @@ class EE_UnitTestCase extends WP_UnitTestCase
      */
     public function new_ticket($options = array())
     {
-        // grab ticket price or set to default of 16.50
-        $ticket_price = isset($options['TKT_price']) && is_numeric($options['TKT_price']) ? $options['TKT_price'] : 16.5;
+        // copy incoming options to use for ticket args
+        $ticket_args = $options;
+        // make sure ticket price is set or use default of 16.50
+        $ticket_args['TKT_price'] = isset($options['TKT_price']) && is_numeric($options['TKT_price'])
+            ? $options['TKT_price']
+            : 16.5;
         // apply taxes? default = true
-        $ticket_taxable = isset($options['TKT_taxable']) ? filter_var($options['TKT_taxable'], FILTER_VALIDATE_BOOLEAN) : true;
+        $ticket_args['TKT_taxable'] = isset($options['TKT_taxable'])
+            ? filter_var($options['TKT_taxable'], FILTER_VALIDATE_BOOLEAN)
+            : true;
+        // now dump any other elements that came from the incoming options that are not ticket properties
+        $ticket_args = array_intersect_key(
+            $ticket_args,
+            array(
+                'TTM_ID' => 1,
+                'TKT_name' => 1,
+                'TKT_description' => 1,
+                'TKT_start_date' => 1,
+                'TKT_end_date' => 1,
+                'TKT_min' => 1,
+                'TKT_max' => 1,
+                'TKT_price' => 1,
+                'TKT_sold' => 1,
+                'TKT_qty' => 1,
+                'TKT_reserved' => 1,
+                'TKT_uses' => 1,
+                'TKT_required' => 1,
+                'TKT_taxable' => 1,
+                'TKT_is_default' => 1,
+                'TKT_order' => 1,
+                'TKT_row' => 1,
+                'TKT_deleted' => 1,
+                'TKT_wp_user' => 1,
+                'TKT_parent' => 1,
+            )
+        );
         /** @type EE_Ticket $ticket */
-        $ticket = $this->new_model_obj_with_dependencies('Ticket', array('TKT_price' => $ticket_price, 'TKT_taxable' => $ticket_taxable));
+        $ticket = $this->new_model_obj_with_dependencies('Ticket',$ticket_args);
         $base_price_type = EEM_Price_Type::instance()->get_one(array(array('PRT_name' => 'Base Price')));
         $this->assertInstanceOf('EE_Price_Type', $base_price_type);
 
