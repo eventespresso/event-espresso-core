@@ -105,9 +105,9 @@ class EEH_DTT_Helper
         //set because it will override `gmt_offset` via `pre_get_option` filter.  If that's set, then let's just use
         //that!  Otherwise we'll leave timezone_string at the default of 'UTC' before doing other logic.
         if ($gmt_offset === '') {
-            $timezone_string = get_option('timezone_string');
-            if ($timezone_string) {
-                return $timezone_string;
+            //autoloaded so no need to set to a variable.  There will not be multiple hits to the db.
+            if (get_option('timezone_string')) {
+                get_option('timezone_string');
             }
         }
         $gmt_offset = $gmt_offset !== '' ? $gmt_offset : get_option('gmt_offset');
