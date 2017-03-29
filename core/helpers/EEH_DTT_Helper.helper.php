@@ -107,7 +107,7 @@ class EEH_DTT_Helper
         if ($gmt_offset === '') {
             //autoloaded so no need to set to a variable.  There will not be multiple hits to the db.
             if (get_option('timezone_string')) {
-                get_option('timezone_string');
+                return get_option('timezone_string');
             }
         }
         $gmt_offset = $gmt_offset !== '' ? $gmt_offset : get_option('gmt_offset');
