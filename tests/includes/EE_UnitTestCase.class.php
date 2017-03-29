@@ -1055,17 +1055,21 @@ class EE_UnitTestCase extends WP_UnitTestCase
         return $txn;
     }
 
+
+
     /**
      * Creates an interesting ticket, with a base price, dollar surcharge, and a percent surcharge,
      * which is for 2 different datetimes.
-     * @param array $options {
-     * @type int $dollar_surcharge the dollar surcharge to add to this ticket
-     * @type int $percent_surcharge teh percent surcharge to add to this ticket (value in percent, not in decimal. Eg if it's a 10% surcharge, enter 10.00, not 0.10
-     * @type int $datetimes the number of datetimes for this ticket,
-     * @type int $TKT_price set the TKT_price to this value.
-     * @type int $TKT_taxable set the TKT_taxable to this value.
-     * }
+     *
+     * @param array $options           {
+     * @type int    $dollar_surcharge  the dollar surcharge to add to this ticket
+     * @type int    $percent_surcharge teh percent surcharge to add to this ticket (value in percent, not in decimal. Eg if it's a 10% surcharge, enter 10.00, not 0.10
+     * @type int    $datetimes         the number of datetimes for this ticket,
+     * @type int    $TKT_price         set the TKT_price to this value.
+     * @type int    $TKT_taxable       set the TKT_taxable to this value.
+     *                                 }
      * @return EE_Ticket
+     * @throws \EE_Error
      */
     public function new_ticket($options = array())
     {
@@ -1108,15 +1112,20 @@ class EE_UnitTestCase extends WP_UnitTestCase
         if (isset($options['TKT_taxable'])) {
             $ticket->set('TKT_taxable', $options['TKT_taxable']);
         }
-
-        // set datetimes, default = 1
-        $datetimes = isset($options['datetimes']) ? $options['datetimes'] : 1;
-
-        $event = $this->new_model_obj_with_dependencies('Event');
-        for ($i = 0; $i <= $datetimes; $i++) {
-            $ddt = $this->new_model_obj_with_dependencies('Datetime', array('EVT_ID' => $event->ID()));
-            $ticket->_add_relation_to($ddt, 'Datetime');
-            $this->assertArrayContains($ddt, $ticket->datetimes());
+        // were datetimes (and their related events) already setup?
+        if(!empty($options['datetime_objects']) && is_array($options['datetime_objects'])) {
+            foreach ($options['datetime_objects'] as $datetime_object) {
+                $ticket->_add_relation_to($datetime_object, 'Datetime');
+            }
+        } else {
+            // create new datetimes, default = 1
+            $datetimes = isset($options['datetimes']) ? $options['datetimes'] : 1;
+            $event = $this->new_model_obj_with_dependencies('Event');
+            for ($i = 0; $i <= $datetimes; $i++) {
+                $ddt = $this->new_model_obj_with_dependencies('Datetime', array('EVT_ID' => $event->ID()));
+                $ticket->_add_relation_to($ddt, 'Datetime');
+                $this->assertArrayContains($ddt, $ticket->datetimes());
+            }
         }
 
         //resave ticket to account for possible field value changes
