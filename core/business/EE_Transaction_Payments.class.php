@@ -232,11 +232,7 @@ class EE_Transaction_Payments {
 					$registration = $registration_payment->registration();
 					if ( $registration instanceof EE_Registration ) {
 						$registration->set_paid( $registration->paid() - $amount_paid );
-                        $registration->_remove_relation_to( $payment, 'Payment' );
 						if ($registration->save() !== false) {
-                            //because we're saving the payment later, we need to make sure we remove it from its
-                            // the registration payment relation as well.
-                            $payment->_remove_relation_to($registration, 'Registration');
 						    $registration_payment->delete_permanently();
                             $save_payment = true;
 						}
