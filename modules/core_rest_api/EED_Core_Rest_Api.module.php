@@ -427,7 +427,7 @@ class EED_Core_Rest_Api extends \EED_Module
                     'callback_args' => array($version, $model_name),
                     'methods'         => WP_REST_Server::CREATABLE,
                     'hidden_endpoint' => $hidden_endpoint,
-                    'args'            => $this->_get_write_params($model_name, $model_version_info),
+                    'args'            => $this->_get_write_params($model_name, $model_version_info, true),
                 ),
                 'schema' => array(
                     'schema_callback' => array(
@@ -456,7 +456,7 @@ class EED_Core_Rest_Api extends \EED_Module
                     'callback_args' => array($version, $model_name),
                     'methods'         => WP_REST_Server::EDITABLE,
                     'hidden_endpoint' => $hidden_endpoint,
-                    'args'            => $this->_get_write_params($model_name, $model_version_info),
+                    'args'            => $this->_get_write_params($model_name, $model_version_info, false),
                 ),
                 array(
                     'callback'        => array(
@@ -681,15 +681,17 @@ class EED_Core_Rest_Api extends \EED_Module
 
     /**
      * Gets parameter information for a model regarding writing data
-
-     *
+ *
 *@param type                                                         $model_name
      * @param EventEspresso\core\libraries\rest_api\ModelVersionInfo $model_version_info
+     * @param boolean                                                $create whether this is for request to create (in which case we need
+     * all required params) or just to update (in which case we don't need those on every request)
      * @return array
      */
     protected function _get_write_params(
         $model_name,
-        EventEspresso\core\libraries\rest_api\ModelVersionInfo $model_version_info
+        EventEspresso\core\libraries\rest_api\ModelVersionInfo $model_version_info,
+        $create = false
     ) {
         $model = EE_Registry::instance()->load_model($model_name);
         $fields = $model_version_info->fieldsOnModelInThisVersion($model);
@@ -700,7 +702,8 @@ class EED_Core_Rest_Api extends \EED_Module
                 continue;
             }
             $arg_info = $field_obj->getSchema();
-            $required = ! $field_obj->is_nullable() && $field_obj->get_default_value() === null;
+
+            $required = $create && ! $field_obj->is_nullable() && $field_obj->get_default_value() === null;
             $arg_info['required'] = $required;
             //remove the read-only flag. If it were read-only we wouldn't list it as an argument while writing, right?
             unset($arg_info['readonly']);
