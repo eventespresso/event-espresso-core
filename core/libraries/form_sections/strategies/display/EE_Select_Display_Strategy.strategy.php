@@ -68,9 +68,9 @@ class EE_Select_Display_Strategy extends EE_Display_Strategy_Base{
 		$html = '';
 		EEH_HTML::indent( 1, 'option' );
 		foreach( $options as $value => $display_text ){
-			$unnormalized_value = $this->_input->get_normalization_strategy()->unnormalize_one( $value );
-			$selected = $this->_check_if_option_selected( $unnormalized_value ) ? ' selected="selected"' : '';
-			$html.= EEH_HTML::nl( 0, 'option' ) . '<option value="' . esc_attr( $unnormalized_value ) . '"' . $selected . '>' . $display_text . '</option>';
+            $value = $this->_input->get_normalization_strategy()->normalize_one( $value );
+            $selected = $this->_check_if_option_selected($value ) ? ' selected="selected"' : '';
+            $html.= EEH_HTML::nl( 0, 'option' ) . '<option value="' . esc_attr($value ) . '"' . $selected . '>' . $display_text . '</option>';
 		}
 		EEH_HTML::indent( -1, 'option' );
 		return $html;
@@ -80,11 +80,12 @@ class EE_Select_Display_Strategy extends EE_Display_Strategy_Base{
 
 	/**
 	 * Checks if that value is the one selected
-	 * @param string|int $value unnormalized value option (string)
+	 *
+	 * @param string|int $option_value normalized value option (string)
 	 * @return string
 	 */
-	protected function _check_if_option_selected( $value ){
-		return $this->_input->raw_value() === $value ? TRUE : FALSE;
+	protected function _check_if_option_selected($option_value ){
+		return $option_value === $this->_input->get_normalization_strategy()->normalize($this->_input->raw_value());
 	}
 
 
