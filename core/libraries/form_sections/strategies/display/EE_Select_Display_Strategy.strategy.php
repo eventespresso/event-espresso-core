@@ -18,7 +18,7 @@ class EE_Select_Display_Strategy extends EE_Display_Strategy_Base{
 	 * @throws EE_Error
 	 * @return string of html to display the field
 	 */
-	function display(){
+	public function display(){
 		if( ! $this->_input instanceof EE_Form_Input_With_Options_Base){
 			throw new EE_Error( sprintf( __( 'Cannot use Select Display Strategy with an input that doesn\'t have options', 'event_espresso' )));
 		}
@@ -84,7 +84,7 @@ class EE_Select_Display_Strategy extends EE_Display_Strategy_Base{
 	 * @return string
 	 */
 	protected function _check_if_option_selected( $value ){
-		return $this->_input->raw_value() === $value ? TRUE : FALSE;
+		return $this->_input->raw_value() == $value ? TRUE : FALSE;
 	}
 
 
