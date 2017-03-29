@@ -5551,6 +5551,16 @@ abstract class EEM_Base extends EE_Base
 
 
     /**
+     * Gets the valid operators
+     * @return array keys are accepted strings, values are the SQL they are converted to
+     */
+    public function valid_operators(){
+        return $this->_valid_operators;
+    }
+
+
+
+    /**
      * Gets an array where keys are the primary keys and values are their 'names'
      * (as determined by the model object's name() function, which is often overridden)
      *

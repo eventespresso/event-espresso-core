@@ -1,10 +1,13 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api;
 
+use EE_Capabilities;
 use EE_Datetime_Field;
 use EE_Error;
 use EE_Infinite_Integer_Field;
+use EE_Maybe_Serialized_Simple_HTML_Field;
 use EE_Model_Field_Base;
+use EE_Serialized_Text_Field;
 use EEM_Base;
 
 if (! defined('EVENT_ESPRESSO_VERSION')) {
@@ -127,8 +130,7 @@ class ModelDataTranslator
         $original_value,
         $requested_version,
         $timezone_string = 'UTC' // UTC
-    )
-    {
+    ){
         $timezone_string = $timezone_string !== '' ? $timezone_string : get_option('timezone_string', '');
         $new_value = null;
         if ($field_obj instanceof EE_Infinite_Integer_Field
@@ -227,6 +229,9 @@ class ModelDataTranslator
      * @param array     $inputted_query_params_of_this_type
      * @param EEM_Base $model
      * @param string    $requested_version
+     * @param boolean $writing whether this data will be written to the DB, or if we're just building a query.
+     *                         If we're writing to the DB, we don't expect any operators, or any logic query parameters,
+     *                         and we also won't accept serialized data unless the current user has unfiltered_html.
      * @return array
      * @throws \DomainException
      * @throws EE_Error
@@ -234,9 +239,11 @@ class ModelDataTranslator
     public static function prepareConditionsQueryParamsForModels(
         $inputted_query_params_of_this_type,
         EEM_Base $model,
-        $requested_version
+        $requested_version,
+        $writing = false
     ) {
         $query_param_for_models = array();
+        $valid_operators = $model->valid_operators();
         foreach ($inputted_query_params_of_this_type as $query_param_key => $query_param_value) {
             $is_gmt_datetime_field = false;
             $query_param_sans_stars = ModelDataTranslator::removeStarsAndAnythingAfterFromConditionQueryParamKey($query_param_key);
@@ -264,15 +271,91 @@ class ModelDataTranslator
                 $timezone = $model->get_timezone();
             }
             if ($field instanceof EE_Model_Field_Base) {
-                //did they specify an operator?
-                if (is_array($query_param_value)) {
-                    $op = $query_param_value[0];
-                    $translated_value = array($op);
-                    if (isset($query_param_value[1])) {
-                        $value = $query_param_value[1];
-                        $translated_value[1] = ModelDataTranslator::prepareFieldValuesFromJson($field, $value,
-                            $requested_version, $timezone);
+                if( $field instanceof EE_Serialized_Text_Field ){
+                    //ok it's serialized input. Careful it's not a string of serialized PHP! Unserializing that
+                    // is security breach, because it could be a serialized object who is set to execute something
+                    //on the magic method __wakeup!
+                    if(is_serialized($query_param_value)){
+                        //someone's trying to submit serialized data! nasty!
+                        if(defined('EE_REST_API_DEBUG_MODE') && EE_REST_API_DEBUG_MODE) {
+                            throw new RestException(
+                                'rest_not_allowed_to_submit_serialized_php',
+                                sprintf(
+                                    esc_html__(
+                                        'You tried to provide serialized PHP inside parameter %1$s. Submitting serialized PHP via the REST API is not allowed.',
+                                        'event_espresso'
+                                    ),
+                                    $field->get_name()
+                                ),
+                                array(
+                                    'status' => 400
+                                )
+                            );
+                        } else {
+                            //pretend they didn't provide this parameter
+                            continue;
+                        }
                     }
+                    //writing serialized data to the DB is sensitive stuff (especially if it's not restricted to
+                    //only being HTML inside.
+                    // Only allow trusted users to do that
+                    if(
+                        $writing &&
+                        ! $field instanceof EE_Maybe_Serialized_Simple_HTML_Field &&
+                        ! EE_Capabilities::instance()->current_user_can('unfiltered_html', 'rest_api_check_if_can_write_serialized_data')){
+                        //in debug mode, throw an exception. Otherwise fail silently
+                        if(defined('EE_REST_API_DEBUG_MODE') && EE_REST_API_DEBUG_MODE) {
+                            throw new RestException(
+                                'rest_not_allowed_to_write_serialized_data',
+                                sprintf(
+                                    esc_html__(
+                                        'You are not allowed to write to the field %1$s because it is serialized data. You need the "%1$s" capability to do that',
+                                        'event_espresso'),
+                                    $field->get_name(),
+                                    'unfiltered_html'
+                                ),
+                                array(
+                                    'status' => 400
+                                )
+                            );
+                        } else {
+                            //pretend they didn't provide this parameter
+                            continue;
+                        }
+                    }
+                    //it's either a EE_Maybe_Serialized_Simple_HTML_Field, which we can rely on to remove harmful
+                    // HTML, or it's a serialized input and the user is allowed to write serialized input
+                    $translated_value = $query_param_value;
+                }elseif (! $writing && is_array($query_param_value)) {
+                    //did they specify an operator?
+                    if (isset($query_param_value[0],$query_param_value[1])
+                    && isset($valid_operators[$query_param_value[0]])) {
+                        $op = $query_param_value[0];
+                        $value = $query_param_value[1];
+                        $translated_value = array(
+                            $op,
+                            ModelDataTranslator::prepareFieldValuesFromJson($field, $value,
+                                $requested_version, $timezone));
+                    }else{
+                        //so they didn't provide a valid operator
+                        if(defined('EE_REST_API_DEBUG_MODE') && EE_REST_API_DEBUG_MODE){
+                            throw new RestException(
+                                'invalid_operator',
+                                    sprintf(
+                                        esc_html__(
+                                        'You provided an invalid parameter, with key "%1$s" and value "%2$s"',
+                                        'event_espresso'),
+                                        $query_param_key,
+                                        $query_param_value
+                                    ),
+                                array(
+                                    'status' => 400
+                                )
+                            );
+                        }
+                        $translated_value = null;
+                    }
+
                 } else {
                     $translated_value = ModelDataTranslator::prepareFieldValueFromJson($field, $query_param_value,
                         $requested_version, $timezone);
@@ -283,7 +366,7 @@ class ModelDataTranslator
                     continue;
                 }
                 $query_param_for_models[$query_param_key] = $translated_value;
-            } else {
+            } elseif(! $writing){
                 //so it's not for a field, assume it's a logic query param key
                 $query_param_for_models[$query_param_key] = ModelDataTranslator::prepareConditionsQueryParamsForModels($query_param_value,
                     $model, $requested_version);
