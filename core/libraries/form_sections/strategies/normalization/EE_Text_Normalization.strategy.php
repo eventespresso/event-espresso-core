@@ -33,7 +33,9 @@ class EE_Text_Normalization extends EE_Normalization_Strategy_Base{
 	    if ($normalized_value === null) {
 	        return '';
         }
-		return $normalized_value;
+        //double-check it's a string. It's possible this value was a question option that happened to be a numeric
+        //string, in which case PHP has automatically converted it to an integer!
+		return (string)$normalized_value;
 	}
 }
 
