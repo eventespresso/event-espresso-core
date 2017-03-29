@@ -68,9 +68,11 @@ class EE_Select_Display_Strategy extends EE_Display_Strategy_Base{
 		$html = '';
 		EEH_HTML::indent( 1, 'option' );
 		foreach( $options as $value => $display_text ){
-            $value = $this->_input->get_normalization_strategy()->normalize_one( $value );
-            $selected = $this->_check_if_option_selected($value ) ? ' selected="selected"' : '';
-            $html.= EEH_HTML::nl( 0, 'option' ) . '<option value="' . esc_attr($value ) . '"' . $selected . '>' . $display_text . '</option>';
+		    //even if this input uses EE_Text_Normalization if one of the array keys is a numeric string, like "123",
+            //PHP will have converted it to a PHP integer (eg 123). So we need to make sure it's a string
+            $unnormalized_value = $this->_input->get_normalization_strategy()->unnormalize_one( $value );
+            $selected = $this->_check_if_option_selected($unnormalized_value ) ? ' selected="selected"' : '';
+            $html.= EEH_HTML::nl( 0, 'option' ) . '<option value="' . esc_attr($unnormalized_value ) . '"' . $selected . '>' . $display_text . '</option>';
 		}
 		EEH_HTML::indent( -1, 'option' );
 		return $html;
@@ -81,11 +83,11 @@ class EE_Select_Display_Strategy extends EE_Display_Strategy_Base{
 	/**
 	 * Checks if that value is the one selected
 	 *
-	 * @param string|int $option_value normalized value option (string)
+	 * @param string|int $option_value unnormalized value option (string). How it will appear in the HTML.
 	 * @return string
 	 */
 	protected function _check_if_option_selected($option_value ){
-		return $option_value === $this->_input->get_normalization_strategy()->normalize($this->_input->raw_value());
+		return $option_value === $this->_input->raw_value();
 	}
 
 
