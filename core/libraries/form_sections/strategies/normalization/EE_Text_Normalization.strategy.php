@@ -16,13 +16,13 @@ class EE_Text_Normalization extends EE_Normalization_Strategy_Base{
 	public function normalize($value_to_normalize) {
 		if(is_array($value_to_normalize)) {
             return (string)array_shift($value_to_normalize);
-        //consider `"null"` values to be equivalent to null.
-        }elseif($value_to_normalize === '' || $value_to_normalize === null) {
+        }
+        // consider `"null"` values to be equivalent to null.
+        if($value_to_normalize === '' || $value_to_normalize === null) {
 		    return null;
-		}else{
-			return (string)$value_to_normalize;
 		}
-	}
+        return (string)$value_to_normalize;
+    }
 	/**
 	 * IF its a string in PHP, it will be a string in the HTML form. easy
 	 * @param string $normalized_value
