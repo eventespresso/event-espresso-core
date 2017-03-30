@@ -43,7 +43,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
      * keep checking or warning the test runner about it
      * @var boolean
      */
-    static $accidental_txn_commit_noted = FALSE;
+    public static $accidental_txn_commit_noted = FALSE;
 
 
     /**
@@ -67,6 +67,8 @@ class EE_UnitTestCase extends WP_UnitTestCase
      * this can be helpful if you are getting weird errors happening,
      * but the test name is not being reported anywhere.
      * Just uncomment this method as well as the first line of setUp() below.
+     *
+     * @throws \EE_Error
      */
     // public static function setUpBeforeClass() {
     // 	parent::setUpBeforeClass();
@@ -103,7 +105,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
 
         // load factories
         EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_TESTS_DIR . 'includes' . DS . 'factories');
-        $this->factory = new EE_UnitTest_Factory;
+        $this->factory = new EE_UnitTest_Factory();
 
         // load scenarios
         require_once EE_TESTS_DIR . 'includes/scenarios/EE_Test_Scenario_Classes.php';
@@ -113,7 +115,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
         //updating all_caps when `WP_User::add_cap` is run (which is fixed in later wp versions).  So we hook into the
         // 'user_has_cap' filter to do this
         $_wp_test_version = getenv('WP_VERSION');
-        if ($_wp_test_version && $_wp_test_version == '4.1') {
+        if ($_wp_test_version && $_wp_test_version === '4.1') {
             add_filter('user_has_cap', function ($all_caps, $caps, $args, WP_User $WP_User) {
                 $WP_User->get_role_caps();
 
@@ -133,7 +135,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
     public function _short_circuit_db_implicit_commits($short_circuit = FALSE, $table_name, $sql)
     {
         $whitelisted_tables = apply_filters('FHEE__EE_UnitTestCase__short_circuit_db_implicit_commits__whitelisted_tables', array());
-        if (in_array($table_name, $whitelisted_tables)) {
+        if (in_array($table_name, $whitelisted_tables, true)) {
             //it's not altering. it's ok
             return FALSE;
         } else {
@@ -197,7 +199,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
      * @todo this of course means we need an easy way to reset our singletons...
      * @see parent::cleanup_global_scope();
      */
-    function clean_up_global_scope()
+    public function clean_up_global_scope()
     {
         parent::clean_up_global_scope();
     }
@@ -324,8 +326,9 @@ class EE_UnitTestCase extends WP_UnitTestCase
      */
     public function defineAdminConstants()
     {
-        if (!defined('EE_ADMIN_PAGES'))
+        if (!defined('EE_ADMIN_PAGES')){
             define('EE_ADMIN_PAGES', EE_TESTS_DIR . 'mocks/admin');
+        }
     }
 
 
@@ -493,13 +496,13 @@ class EE_UnitTestCase extends WP_UnitTestCase
         $month = (int)$now->format('n');
         $day = (int)$now->format('j');
         // determine how to increment or decrement the year and month
-        if ($adding_interval && $month == 12) {
+        if ($adding_interval && $month === 12) {
             // adding a month to december?
             $year++;
             $month = 1;
         } else if ($adding_interval) {
             $month++;
-        } else if ($month == 1) {
+        } else if ($month === 1) {
             $year--;
             $month = 12;
         } else {
@@ -706,11 +709,11 @@ class EE_UnitTestCase extends WP_UnitTestCase
      */
     public function assertArrayContains($item, $haystack)
     {
-        $in_there = in_array($item, $haystack);
+        $in_there = in_array($item, $haystack, true);
         if ($in_there) {
             $this->assertTrue(true);
         } else {
-            $this->assertTrue($in_there, sprintf(__('Array %1$s does not contain %2$s', "event_espresso"), print_r($haystack, true), print_r($item, true)));
+            $this->assertTrue($in_there, sprintf(__('Array %1$s does not contain %2$s', 'event_espresso'), print_r($haystack, true), print_r($item, true)));
         }
     }
 
@@ -721,7 +724,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
      */
     public function assertArrayDoesNotContain($item, $haystack)
     {
-        $not_in_there = !in_array($item, $haystack);
+        $not_in_there = !in_array($item, $haystack, true);
         if ($not_in_there) {
             $this->assertTrue($not_in_there);
         } else {
@@ -739,7 +742,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
         if ($option) {
             $this->assertTrue(true);
         } else {
-            $this->assertNotNull($option, sprintf(__('The WP Option "%s" does not exist but should', "event_espresso"), $option_name));
+            $this->assertNotNull($option, sprintf(__('The WP Option "%s" does not exist but should', 'event_espresso'), $option_name));
         }
     }
 
@@ -751,17 +754,21 @@ class EE_UnitTestCase extends WP_UnitTestCase
     {
         $option = get_option($option_name, NULL);
         if ($option) {
-            $this->assertNull($option, sprintf(__('The WP Option "%s" exists but shouldn\'t', "event_espresso"), $option_name));
+            $this->assertNull($option, sprintf(__('The WP Option "%s" exists but shouldn\'t', 'event_espresso'), $option_name));
         } else {
             $this->assertTrue(true);
         }
     }
 
+
+
     /**
      * Compares two EE model objects by just looking at their field's values. If you want strict comparison just use ordinary '==='.
      * If you pass it two arrays of EE objects, that works too
+     *
      * @param EE_Base_Class|EE_Base_Class[] $expected_object
      * @param EE_Base_Class|EE_Base_Class[] $actual_object
+     * @throws \EE_Error
      */
     public function assertEEModelObjectsEquals($expected_object, $actual_object)
     {
@@ -856,7 +863,6 @@ class EE_UnitTestCase extends WP_UnitTestCase
 
             }
         }
-
         //set any other fields which haven't yet been set
         foreach ($model->field_settings() as $field_name => $field) {
             $value = NULL;
@@ -867,6 +873,8 @@ class EE_UnitTestCase extends WP_UnitTestCase
                         'EVT_timezone_string',
                         'PAY_redirect_url',
                         'PAY_redirect_args',
+                        'TKT_reserved',
+                        'DTT_reserved',
                         'parent'
                     ),
                     true
@@ -972,11 +980,13 @@ class EE_UnitTestCase extends WP_UnitTestCase
     protected function _pretend_addon_hook_time()
     {
         global $wp_actions;
-        unset($wp_actions['AHEE__EE_System___detect_if_activation_or_upgrade__begin']);
-        unset($wp_actions['FHEE__EE_System__parse_model_names']);
-        unset($wp_actions['FHEE__EE_System__parse_implemented_model_names']);
+        unset(
+            $wp_actions['AHEE__EE_System___detect_if_activation_or_upgrade__begin'],
+            $wp_actions['FHEE__EE_System__parse_model_names'],
+            $wp_actions['FHEE__EE_System__parse_implemented_model_names'],
+            $wp_actions['AHEE__EE_System__register_shortcodes_modules_and_widgets']
+        );
         $wp_actions['AHEE__EE_System__load_espresso_addons'] = 1;
-        unset($wp_actions['AHEE__EE_System__register_shortcodes_modules_and_widgets']);
     }
 
     /**
@@ -999,12 +1009,12 @@ class EE_UnitTestCase extends WP_UnitTestCase
      * Makes a complete transaction record with all associated data (ie, its line items,
      * registrations, tickets, datetimes, events, attendees, questions, answers, etc).
      *
-     * @param array $options {
+     * @param array $options         {
+     * 	@type int    $ticket_types    the number of different ticket types in this transaction. Default 1
+     * 	@type int    $taxable_tickets how many of those ticket types should be taxable. Default EE_INF
+     * }
      * @return EE_Transaction
-     * @throws EE_Error
-     * @throws PHPUnit_Framework_Exception
-     * @internal param int $ticket_types the number of different ticket types in this transaction. Default 1
-     * @internal param int $taxable_tickets how many of those ticket types should be taxable. Default EE_INF
+     * @throws \EE_Error
      */
     protected function new_typical_transaction($options = array())
     {
@@ -1047,7 +1057,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
                 );
                 $sum_of_sub_prices = 0;
                 for ($j = 1; $j <= $fixed_ticket_price_modifiers; $j++) {
-                    if ($j == $fixed_ticket_price_modifiers) {
+                    if ($j === $fixed_ticket_price_modifiers) {
                         $price_amount = $ticket->price() - $sum_of_sub_prices;
                     } else {
                         $price_amount = $i * 10 / $fixed_ticket_price_modifiers;
@@ -1204,7 +1214,6 @@ class EE_UnitTestCase extends WP_UnitTestCase
 
         //resave ticket to account for possible field value changes
         $ticket->save();
-
         return $ticket;
     }
 
