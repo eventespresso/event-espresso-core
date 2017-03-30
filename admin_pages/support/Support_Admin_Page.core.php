@@ -22,7 +22,7 @@ class Support_Admin_Page extends EE_Admin_Page
     protected function _init_page_props()
     {
         $this->page_slug = EE_SUPPORT_PG_SLUG;
-        $this->page_label = __('Help & Support', 'event_espresso');
+        $this->page_label = esc_html__('Help & Support', 'event_espresso');
         $this->_admin_base_url = EE_SUPPORT_ADMIN_URL;
         $this->_admin_base_path = EE_SUPPORT_ADMIN;
     }
@@ -68,7 +68,7 @@ class Support_Admin_Page extends EE_Admin_Page
         $this->_page_config = array(
             'default'    => array(
                 'nav'           => array(
-                    'label' => __('Support', 'event_espresso'),
+                    'label' => esc_html__('Support', 'event_espresso'),
                     'order' => 30,
                 ),
                 'metaboxes'     => array_merge($this->_default_espresso_metaboxes, array('_support_boxes')),
@@ -76,7 +76,7 @@ class Support_Admin_Page extends EE_Admin_Page
             ),
             'developers' => array(
                 'nav'           => array(
-                    'label' => __('Developers', 'event_espresso'),
+                    'label' => esc_html__('Developers', 'event_espresso'),
                     'order' => 50,
                 ),
                 'metaboxes'     => $this->_default_espresso_metaboxes,
@@ -84,7 +84,7 @@ class Support_Admin_Page extends EE_Admin_Page
             ),
             'shortcodes' => array(
                 'nav'           => array(
-                    'label' => __('Shortcodes', 'event_espresso'),
+                    'label' => esc_html__('Shortcodes', 'event_espresso'),
                     'order' => 60,
                 ),
                 'metaboxes'     => array_merge($this->_default_espresso_metaboxes, array('_shortcodes_boxes')),
@@ -181,12 +181,12 @@ class Support_Admin_Page extends EE_Admin_Page
         $boxes = apply_filters(
             'FHEE__Support_Admin_Page___resources_boxes__boxes_array',
             array(
-                'favorite_theme_developers' => __('Favorite Theme Developers', 'event_espresso'),
-                'highly_recommended_themes' => __('Highly Recommended Themes', 'event_espresso'),
-                'hire_developer'            => __('Hire a Developer', 'event_espresso'),
-                'partners'                  => __('Partners', 'event_espresso'),
-                'recommended_plugins'       => __('Recommended Plugins', 'event_espresso'),
-                'other_resources'           => __('Other Resources', 'event_espresso'),
+                'favorite_theme_developers' => esc_html__('Favorite Theme Developers', 'event_espresso'),
+                'highly_recommended_themes' => esc_html__('Highly Recommended Themes', 'event_espresso'),
+                'hire_developer'            => esc_html__('Hire a Developer', 'event_espresso'),
+                'partners'                  => esc_html__('Partners', 'event_espresso'),
+                'recommended_plugins'       => esc_html__('Recommended Plugins', 'event_espresso'),
+                'other_resources'           => esc_html__('Other Resources', 'event_espresso'),
             )
         );
         foreach ($boxes as $box => $label) {
@@ -215,12 +215,12 @@ class Support_Admin_Page extends EE_Admin_Page
         $boxes = apply_filters(
             'FHEE__Support_Admin_Page___shortcodes_boxes__boxes_array',
             array(
-                'shortcodes_event_listings'  => __('Event Listings', 'event_espresso'),
-                'shortcodes_ticket_selector' => __('Event Ticket Selector', 'event_espresso'),
-                'shortcodes_category'        => __('Event Categories', 'event_espresso'),
-                'shortcodes_attendee'        => __('Event Attendees', 'event_espresso')
-                /*'shortcodes_single_events' => __('Single Events', 'event_espresso'),*/
-                /*'shortcodes_attendee_listings' => __('Attendee Listings', 'event_espresso'),*/
+                'shortcodes_event_listings'  => esc_html__('Event Listings', 'event_espresso'),
+                'shortcodes_ticket_selector' => esc_html__('Event Ticket Selector', 'event_espresso'),
+                'shortcodes_category'        => esc_html__('Event Categories', 'event_espresso'),
+                'shortcodes_attendee'        => esc_html__('Event Attendees', 'event_espresso')
+                /*'shortcodes_single_events' => esc_html__('Single Events', 'event_espresso'),*/
+                /*'shortcodes_attendee_listings' => esc_html__('Attendee Listings', 'event_espresso'),*/
             )
         );
         foreach ($boxes as $box => $label) {
@@ -249,8 +249,8 @@ class Support_Admin_Page extends EE_Admin_Page
         $boxes = apply_filters(
             'FHEE__Support_Admin_Page___support_boxes__boxes_array',
             array(
-                'contact_support'       => __('Contact Support', 'event_espresso'),
-                'important_information' => __('Important Information', 'event_espresso'),
+                'contact_support'       => esc_html__('Contact Support', 'event_espresso'),
+                'important_information' => esc_html__('Important Information', 'event_espresso'),
             )
         );
         foreach ($boxes as $box => $label) {
