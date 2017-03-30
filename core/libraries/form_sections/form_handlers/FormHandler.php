@@ -425,7 +425,8 @@ abstract class FormHandler implements FormHandlerInterface{
 					FormHandler::ADD_FORM_TAGS_ONLY,
 					FormHandler::ADD_FORM_SUBMIT_ONLY,
 					FormHandler::DO_NOT_SETUP_FORM
-				)
+				),
+                true
 			)
 		) {
 			throw new DomainException(
@@ -465,7 +466,6 @@ abstract class FormHandler implements FormHandlerInterface{
 	 */
 	public function enqueueStylesAndScripts() {
 		$this->form( false )->enqueue_js();
-
 	}
 
 
