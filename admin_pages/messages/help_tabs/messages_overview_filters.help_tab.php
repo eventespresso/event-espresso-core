@@ -10,4 +10,5 @@
 <li>
 <strong><?php esc_html_e('Filter by Message Types', 'event_espresso'); ?></strong><br />
 <?php esc_html_e('Select a message type and then click the button to enable that filter.', 'event_espresso'); ?>
+</li>
 </ul>
