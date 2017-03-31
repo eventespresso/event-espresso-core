@@ -1,9 +1,8 @@
 <p><strong><?php esc_html_e('Messages Table Column Headings', 'event_espresso'); ?></strong></p>
-<p>
 <ul>
 <li>
 <strong><?php esc_html_e('Message Type', 'event_espresso'); ?></strong><br />
-<?php esc_html_e('The following message types are available: Registration Approved, Registration Pending Payment, Not Approved Registration, Registration Declined, Registration Cancelled, Registration Multi-status Summary, Payment Received, Payment Reminder, Payment Failed, Payment Declined, Payment Cancelled, Refund Issued, Batch, Invoice, Receipt. Additional message types are introduced through add-ons for Event Espresso.', 'event_espresso'); ?>
+<?php esc_html_e('Shows message types that are available.', 'event_espresso'); ?>
 </li>
 <li>
 <strong><?php esc_html_e('Messenger', 'event_espresso'); ?></strong><br />
@@ -14,4 +13,3 @@
 <?php esc_html_e('The description for the Message Type.', 'event_espresso'); ?>
 </li>
 </ul>
-</p>
