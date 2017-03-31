@@ -7,7 +7,9 @@
 }
 
 .tkt-slctr-tbl {
+    border-collapse: collapse;
 	margin-bottom: 1.5em;
+    width: 99%;
 }
 
 /* span.ui-icon { float:none !important; }*/
@@ -297,8 +299,19 @@
 	box-radius: 0 !important;
 }
 
-.ticket-selector-submit-btn {
+.ticket-selector-submit-btn,
+.ticket-selector-submit-btn-wrap {
 	float: right;
+}
+.ticket-selector-submit-btn-wrap {
+	display:inline-block;
+}
+.ticket-selector-disabled-submit-btn-msg {
+	display: none;
+	margin: .25em 1.5em;
+	font-size: .75em;
+	line-height: 1.4em;
+	letter-spacing: .25px;
 }
 
 .ee-event-expired-notice {
@@ -353,6 +366,27 @@
 	position: relative;
 	text-align: center;
 	top: 0;
+}
+
+
+.datetime_selector-dv {
+    position: relative;
+}
+.select-wrap-dv {
+    display: inline-block;
+    position: relative;
+}
+.datetime_selector-lbl {
+    display: block;
+}
+
+.datetime_selector-lbl .dashicons {
+    position: relative;
+    top: -2px;
+}
+
+.ee-hidden-ticket-tr {
+    display: none;
 }
 
 

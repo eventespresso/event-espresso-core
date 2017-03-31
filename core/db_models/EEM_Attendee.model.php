@@ -220,6 +220,16 @@ class EEM_Attendee extends EEM_CPT_Base
 
 
     /**
+     * Gets mapping from esp_question.QST_system values to their corresponding attendee field names
+     * @return array
+     */
+    public function system_question_to_attendee_field_mapping(){
+        return $this->_system_question_to_attendee_field_name;
+    }
+
+
+
+    /**
      * Gets all the attendees for a transaction (by using the esp_registration as a join table)
      *
      * @param EE_Transaction /int $transaction_id_or_obj EE_Transaction or its ID

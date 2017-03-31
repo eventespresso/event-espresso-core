@@ -33,7 +33,7 @@ class EE_Datepicker_Input extends EE_Form_Input_Base{
 	 */
 	public static function enqueue_styles_and_scripts() {
 		// load css
-		wp_register_style( 'espresso-ui-theme', EE_GLOBAL_ASSETS_URL . 'css/espresso-ui-theme/jquery-ui-1.10.3.custom.min.css', array(), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_register_style( 'espresso-ui-theme', EE_GLOBAL_ASSETS_URL . 'css/espresso-ui-theme/jquery-ui-1.10.3.custom.min.css', array(), EVENT_ESPRESSO_VERSION );
 		wp_enqueue_style( 'espresso-ui-theme');
 	}
 

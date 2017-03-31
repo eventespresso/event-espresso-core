@@ -489,6 +489,80 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
     }
 
 
+    /**
+     * Deletes old messages meeting certain criteria for removal from the database.
+     * By default, this will delete messages that:
+     * - are older than the value of the delete_threshold in months.
+     * - have a STS_ID other than EEM_Message::status_idle
+     *
+     * @param int $delete_threshold  This integer will be used to set the boundary for what messages are deleted in months.
+     * @return bool|false|int Either the number of records affected or false if there was an error (you can call
+     *                         $wpdb->last_error to find out what the error was.
+     */
+    public function delete_old_messages($delete_threshold = 6)
+    {
+        $number_deleted = 0;
+        /**
+         * Allows code to change the boundary for what messages are kept.
+         * Uses the value of the `delete_threshold` variable by default.
+         *
+         * @param int $seconds seconds that will be subtracted from the timestamp for now.
+         * @return int
+         */
+        $time_to_leave_alone = absint(
+            apply_filters(
+                'FHEE__EEM_Message__delete_old_messages__time_to_leave_alone',
+                ((int) $delete_threshold) * MONTH_IN_SECONDS
+            )
+        );
+
+
+        /**
+         * Allows code to change what message stati are ignored when deleting.
+         * Defaults to only ignore EEM_Message::status_idle messages.
+         *
+         * @param string $message_stati_to_keep  An array of message statuses that will be ignored when deleting.
+         */
+        $message_stati_to_keep = (array) apply_filters(
+            'FHEE__EEM_Message__delete_old_messages__message_stati_to_keep',
+            array(
+                EEM_Message::status_idle
+            )
+        );
+
+        //first get all the ids of messages being deleted
+        $message_ids_to_delete = EEM_Message::instance()->get_col(
+            array(
+                0 => array(
+                    'STS_ID' => array('NOT_IN', $message_stati_to_keep),
+                    'MSG_modified' => array('<', time() - $time_to_leave_alone)
+                )
+            )
+        );
+
+        if(! empty($message_ids_to_delete) && is_array($message_ids_to_delete)) {
+            global $wpdb;
+            $number_deleted = $wpdb->query('
+                DELETE
+                FROM ' . $this->table() . '
+                WHERE
+                    MSG_ID IN (' . implode(",", $message_ids_to_delete) . ')
+            ');
+        }
+
+        /**
+         * This will get called if the number of records deleted 0 or greater.  So a successful deletion is one where
+         * there were no errors.  An unsuccessful deletion is where there were errors.  Keep that in mind for the actions
+         * below.
+         */
+        if ($number_deleted !== false) {
+            do_action('AHEE__EEM_Message__delete_old_messages__after_successful_deletion', $message_ids_to_delete, $number_deleted);
+        } else {
+            do_action('AHEE__EEM_Message__delete_old_messages__after_deletion_fail', $message_ids_to_delete, $number_deleted);
+        }
+        return $number_deleted;
+    }
+
 }
 // End of file EEM_Message.model.php
 // Location: /includes/models/EEM_Message.model.php

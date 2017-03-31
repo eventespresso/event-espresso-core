@@ -842,23 +842,23 @@ class EE_Error extends Exception {
 
 			$notices = '<div id="espresso-notices">';
 
-			$close = is_admin() ? '' : '<a class="close-espresso-notice hide-if-no-js">&times;</a>';
+			$close = is_admin() ? '' : '<a class="close-espresso-notice hide-if-no-js"><span class="dashicons dashicons-no"></span></a>';
 
-			if ($success_messages != '') {
+			if ($success_messages !== '') {
 				$css_id = is_admin() ? 'message' : 'espresso-notices-success';
 				$css_class = is_admin() ? 'updated fade' : 'success fade-away';
 				//showMessage( $success_messages );
 				$notices .= '<div id="' . $css_id . '" class="espresso-notices ' . $css_class . '" style="display:none;"><p>' . $success_messages . '</p>' . $close . '</div>';
 			}
 
-			if ($attention_messages != '') {
+			if ($attention_messages !== '') {
 				$css_id = is_admin() ? 'message' : 'espresso-notices-attention';
 				$css_class = is_admin() ? 'updated ee-notices-attention' : 'attention fade-away';
 				//showMessage( $error_messages, TRUE );
 				$notices .= '<div id="' . $css_id . '" class="espresso-notices ' . $css_class . '" style="display:none;"><p>' . $attention_messages . '</p>' . $close . '</div>';
 			}
 
-			if ($error_messages != '') {
+			if ($error_messages !== '') {
 				$css_id = is_admin() ? 'message' : 'espresso-notices-error';
 				$css_class = is_admin() ? 'error' : 'error fade-away';
 				//showMessage( $error_messages, TRUE );
@@ -974,7 +974,7 @@ class EE_Error extends Exception {
 	 * @return string
 	 */
 	public static function display_persistent_admin_notices( $pan_name = '', $pan_message = '', $return_url = '' ) {
-		if ( ! empty( $pan_name ) && ! empty( $pan_message )) {
+		if ( ! empty( $pan_name ) && ! empty( $pan_message )&& ! is_array( $pan_message )) {
 			$args = array(
 				'nag_notice' => $pan_name,
 				'return_url' => urlencode( $return_url ),

@@ -305,7 +305,7 @@ class EEW_Upcoming_Events  extends WP_Widget {
 				// start to build our where clause
 				$where = array(
 //					'Datetime.DTT_is_primary' => 1,
-					'status' => 'publish'
+					'status' => array( 'IN', array( 'publish', 'sold_out' ) )
 				);
 				// add category
 				if ( $category ) {
@@ -316,6 +316,8 @@ class EEW_Upcoming_Events  extends WP_Widget {
 				if ( ! $show_expired ) {
 					$where['Datetime.DTT_EVT_end'] = array( '>=', EEM_Datetime::instance()->current_time_for_query( 'DTT_EVT_end' ) );
 				}
+				// allow $where to be filtered
+				$where = apply_filters( 'FHEE__EEW_Upcoming_Events__widget__where', $where, $category, $show_expired );
 				// run the query
 				$events = EE_Registry::instance()->load_model( 'Event' )->get_all( array(
 					$where,

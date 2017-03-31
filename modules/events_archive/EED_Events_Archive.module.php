@@ -1,4 +1,9 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+<?php
+
+use EventEspresso\core\libraries\iframe_display\EventListIframeEmbedButton;
+use EventEspresso\modules\events_archive\EventsArchiveIframe;
+
+if ( ! defined( 'EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 /**
  * Event Espresso
  *
@@ -32,7 +37,19 @@ class EED_Events_Archive  extends EED_Module {
 	 */
 	protected static $using_get_the_excerpt = false;
 
-	/**
+    /**
+     * Used to flag when the event list is being called from an external iframe.
+     *
+     * @var bool $iframe
+     */
+    protected static $iframe = false;
+
+    /**
+	 * @var \EventEspresso\core\libraries\iframe_display\EventListIframeEmbedButton $_iframe_embed_button
+	 */
+	private static $_iframe_embed_button;
+
+    /**
 	 * @type EE_Template_Part_Manager $template_parts
 	 */
 	protected $template_parts;
@@ -57,6 +74,7 @@ class EED_Events_Archive  extends EED_Module {
 	public static function set_hooks() {
 		EE_Config::register_route( EE_Registry::instance()->CFG->core->event_cpt_slug, 'Events_Archive', 'run' );
 		EE_Config::register_route( 'event_list', 'Events_Archive', 'event_list' );
+		EE_Config::register_route( 'iframe', 'Events_Archive', 'event_list_iframe', 'event_list' );
 		add_action( 'wp_loaded', array( 'EED_Events_Archive', 'set_definitions' ), 2 );
 	}
 
@@ -68,6 +86,13 @@ class EED_Events_Archive  extends EED_Module {
 	 */
 	public static function set_hooks_admin() {
 		add_action( 'wp_loaded', array( 'EED_Events_Archive', 'set_definitions' ), 2 );
+		// hook into the end of the \EE_Admin_Page::_load_page_dependencies()
+		// to load assets for "espresso_events" page on the "default" route (action)
+		add_action(
+			'FHEE__EE_Admin_Page___load_page_dependencies__after_load__espresso_events__default',
+			array( 'EED_Events_Archive', 'event_list_iframe_embed_button' ),
+			10
+		);
 	}
 
 
@@ -87,9 +112,7 @@ class EED_Events_Archive  extends EED_Module {
 
 
 	/**
-	 *    set_config
-	 *
-	 * @return \EE_Events_Archive_Config
+	 * set up EE_Events_Archive_Config
 	 */
 	protected function set_config(){
 		$this->set_config_section( 'template_settings' );
@@ -98,6 +121,29 @@ class EED_Events_Archive  extends EED_Module {
 	}
 
 
+
+	/**
+	 * @return EventListIframeEmbedButton
+	 */
+	public static function get_iframe_embed_button() {
+		if ( ! self::$_iframe_embed_button instanceof EventListIframeEmbedButton ) {
+			self::$_iframe_embed_button = new EventListIframeEmbedButton();
+		}
+		return self::$_iframe_embed_button;
+	}
+
+
+
+	/**
+	 * event_list_iframe_embed_button
+	 *
+	 * @return    void
+	 * @throws \EE_Error
+	 */
+	public static function event_list_iframe_embed_button() {
+		$iframe_embed_button = \EED_Events_Archive::get_iframe_embed_button();
+		$iframe_embed_button->addEmbedButton();
+	}
 
 	/**
 	 *    initialize_template_parts
@@ -183,6 +229,40 @@ class EED_Events_Archive  extends EED_Module {
 		$this->set_config();
 		// load other required components
 		$this->load_event_list_assets();
+	}
+
+
+
+    /**
+     * @access    public
+     * @return    void
+     * @throws \EE_Error
+     * @throws \DomainException
+     */
+	public function event_list_iframe() {
+        \EED_Events_Archive::$iframe = true;
+		$event_list_iframe = new EventsArchiveIframe( $this );
+		$event_list_iframe->display();
+	}
+
+
+
+    /**
+     * @access public
+     * @return string
+     */
+	public static function is_iframe() {
+        return \EED_Events_Archive::$iframe;
+	}
+
+
+
+    /**
+     * @access public
+     * @return string
+     */
+	public static function link_target() {
+        return \EED_Events_Archive::$iframe ? ' target="_blank"' : '';
 	}
 
 
@@ -520,7 +600,7 @@ class EED_Events_Archive  extends EED_Module {
 	 *  @return 	void
 	 */
 	public function load_event_list_assets() {
-		do_action( 'AHEE__EED_Events_Archive__before_load_assets' );
+        do_action( 'AHEE__EED_Events_Archive__before_load_assets' );
 		add_filter( 'FHEE_load_EE_Session', '__return_true' );
 		add_filter( 'FHEE__EED_Ticket_Selector__load_tckt_slctr_assets', '__return_true' );
 		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 10 );

@@ -1,8 +1,7 @@
-<?php use EventEspresso\core\domain\entities\DbSafeDateTime;
+<?php
+use EventEspresso\core\domain\entities\DbSafeDateTime;
 
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
+defined('EVENT_ESPRESSO_VERSION') || exit;
 
 /**
  * EE_Datetime_Field
@@ -149,16 +148,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base
 
         parent::__construct($table_column, $nice_name, $nullable, $default_value);
         $this->set_timezone($timezone_string);
-
-    }
-
-
-    /**
-     * @return string
-     */
-    public function get_wpdb_data_type()
-    {
-        return '%s';
+        $this->setSchemaFormat('date-time');
     }
 
 
@@ -767,4 +757,11 @@ class EE_Datetime_Field extends EE_Model_Field_Base
     }
 
 
+    public function getSchemaDescription()
+    {
+        return sprintf(
+            esc_html__('%s - the value for this field is in the timezone of the site.', 'event_espresso'),
+            $this->get_nicename()
+        );
+    }
 }

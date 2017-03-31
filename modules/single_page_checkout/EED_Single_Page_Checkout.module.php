@@ -420,7 +420,7 @@ class EED_Single_Page_Checkout extends EED_Module
         // and remove the page id from the query args (we will re-add it later)
         unset($query_args['page_id']);
         // now strip all query args from current request URI
-        $current_request_uri = remove_query_arg(array_flip($query_args), $current_request_uri);
+        $current_request_uri = remove_query_arg(array_keys($query_args), $current_request_uri);
         // and re-add the page id if it was set
         if ($page_id) {
             $current_request_uri = add_query_arg('page_id', $page_id, $current_request_uri);
@@ -608,17 +608,29 @@ class EED_Single_Page_Checkout extends EED_Module
         // returning to edit ?
         $this->checkout->reg_url_link = EE_Registry::instance()->REQ->get('e_reg_url_link', '');
         // or some other kind of revisit ?
-        $this->checkout->revisit = EE_Registry::instance()->REQ->get('revisit', false);
+        $this->checkout->revisit = filter_var(
+            EE_Registry::instance()->REQ->get('revisit', false),
+            FILTER_VALIDATE_BOOLEAN
+        );
         // and whether or not to generate a reg form for this request
-        $this->checkout->generate_reg_form = EE_Registry::instance()->REQ->get('generate_reg_form', true);        // TRUE 	FALSE
+        $this->checkout->generate_reg_form = filter_var(
+            EE_Registry::instance()->REQ->get('generate_reg_form', true),
+            FILTER_VALIDATE_BOOLEAN
+        );
         // and whether or not to process a reg form submission for this request
-        $this->checkout->process_form_submission = EE_Registry::instance()->REQ->get(
-            'process_form_submission',
-            $this->checkout->action === 'process_reg_step'
-        ); // TRUE 	FALSE
-        $this->checkout->process_form_submission = $this->checkout->action !== 'display_spco_reg_step'
-            ? $this->checkout->process_form_submission
-            : false;        // TRUE 	FALSE
+        $this->checkout->process_form_submission = filter_var(
+            EE_Registry::instance()->REQ->get(
+                'process_form_submission',
+                $this->checkout->action === 'process_reg_step'
+            ),
+            FILTER_VALIDATE_BOOLEAN
+        );
+        $this->checkout->process_form_submission = filter_var(
+            $this->checkout->action !== 'display_spco_reg_step'
+                ? $this->checkout->process_form_submission
+                : false,
+            FILTER_VALIDATE_BOOLEAN
+        );
         // $this->_display_request_vars();
     }
 
@@ -674,7 +686,7 @@ class EED_Single_Page_Checkout extends EED_Module
      *
      * @access    private
      * @throws EE_Error
-     * @return    array
+     * @return    string
      */
     private function _get_first_step()
     {
@@ -694,6 +706,7 @@ class EED_Single_Page_Checkout extends EED_Module
      */
     private function _load_and_instantiate_reg_steps()
     {
+        do_action('AHEE__Single_Page_Checkout___load_and_instantiate_reg_steps__start', $this->checkout);
         // have reg_steps already been instantiated ?
         if (
             empty($this->checkout->reg_steps)
@@ -759,6 +772,13 @@ class EED_Single_Page_Checkout extends EED_Module
                 $this->checkout->reg_url_link
                 && $this->checkout->step !== $reg_step['slug']
                 && $reg_step['slug'] !== 'finalize_registration'
+                // normally at this point we would NOT load the reg step, but this filter can change that
+                && apply_filters(
+                    'FHEE__Single_Page_Checkout___load_and_instantiate_reg_step__bypass_reg_step',
+                    true,
+                    $reg_step,
+                    $this->checkout
+                )
             ) {
                 return true;
             }
@@ -1410,8 +1430,12 @@ class EED_Single_Page_Checkout extends EED_Module
         wp_register_script('jquery_plugin', EE_THIRD_PARTY_URL . 'jquery	.plugin.min.js', array('jquery'), '1.0.1', true);
         wp_register_script('jquery_countdown', EE_THIRD_PARTY_URL . 'jquery	.countdown.min.js', array('jquery_plugin'), '2.0.2', true);
         wp_register_script('single_page_checkout', SPCO_JS_URL . 'single_page_checkout.js', array('espresso_core', 'underscore', 'ee_form_section_validation', 'jquery_countdown'), EVENT_ESPRESSO_VERSION, true);
-        $this->checkout->registration_form->enqueue_js();
-        $this->checkout->current_step->reg_form->enqueue_js();
+        if ($this->checkout->registration_form instanceof EE_Form_Section_Proper) {
+            $this->checkout->registration_form->enqueue_js();
+        }
+        if ($this->checkout->current_step->reg_form instanceof EE_Form_Section_Proper) {
+            $this->checkout->current_step->reg_form->enqueue_js();
+        }
         wp_enqueue_script('single_page_checkout');
         /**
          * global action hook for enqueueing styles and scripts with
