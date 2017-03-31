@@ -203,7 +203,6 @@ class EEM_Registration extends EEM_Soft_Delete_Base
             array(
                 EEM_Registration::status_id_approved,
                 EEM_Registration::status_id_pending_payment,
-                EEM_Registration::status_id_wait_list,
             )
         );
     }
