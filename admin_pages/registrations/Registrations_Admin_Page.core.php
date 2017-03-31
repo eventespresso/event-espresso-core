@@ -290,6 +290,12 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 'capability' => 'ee_edit_registration',
                 'obj_id'     => $reg_id,
             ),
+            'wait_list_registration' => array(
+                'func'       => 'wait_list_registration',
+                'noheader'   => true,
+                'capability' => 'ee_edit_registration',
+                'obj_id'     => $reg_id,
+            ),
             'contact_list'                       => array(
                 'func'       => '_attendee_contact_list_table',
                 'capability' => 'ee_read_contacts',
@@ -650,41 +656,42 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             'cancel_registration'     => 'cancelled_registration',
         );
         /** setup reg status bulk actions **/
-        $def_reg_status_actions['approve_registration'] = __('Approve Registrations', 'event_espresso');
-        if (in_array($match_array['approve_registration'], $active_mts)
-            && EE_Registry::instance()->CAP->current_user_can('ee_send_message', 'batch_send_messages')
-        ) {
-            $def_reg_status_actions['approve_and_notify_registration'] = __('Approve and Notify Registrations',
-                'event_espresso');
+        $def_reg_status_actions['approve_registration'] = __('Set Registrations to "Approved"', 'event_espresso');
+        $def_reg_status_actions['decline_registration'] = __('Set Registrations to "Declined"', 'event_espresso');
+        $def_reg_status_actions['pending_registration'] = __('Set Registrations to "Pending Payment"', 'event_espresso');
+        $def_reg_status_actions['no_approve_registration'] = __('Set Registrations to "Not Approved"', 'event_espresso');
+        $def_reg_status_actions['cancel_registration'] = __('Set Registrations to "Cancelled"', 'event_espresso');
+
+        if (EE_Registry::instance()->CAP->current_user_can('ee_send_message', 'batch_send_messages')) {
+            if (in_array($match_array['approve_registration'], $active_mts, true)) {
+                $def_reg_status_actions['approve_and_notify_registration'] = __('Set Registrations to "Approved" and Notify',
+                    'event_espresso');
+            }
+            if (in_array($match_array['decline_registration'], $active_mts, true)) {
+                $def_reg_status_actions['decline_and_notify_registration'] = __('Set Registrations to "Declined" and Notify',
+                    'event_espresso');
+            }
+            if (in_array($match_array['pending_registration'], $active_mts, true)) {
+                $def_reg_status_actions['pending_and_notify_registration'] = __('Set Registrations to "Pending Payment" and Notify',
+                    'event_espresso');
+            }
+            if (in_array($match_array['no_approve_registration'], $active_mts, true)) {
+                $def_reg_status_actions['no_approve_and_notify_registration'] = __('Set Registrations to "Not Approved" and Notify',
+                    'event_espresso');
+            }
+            if (in_array($match_array['cancel_registration'], $active_mts, true)) {
+                $def_reg_status_actions['cancel_and_notify_registration'] = __('Set Registrations to "Cancelled" and Notify',
+                    'event_espresso');
+            }
         }
-        $def_reg_status_actions['decline_registration'] = __('Decline Registrations', 'event_espresso');
-        if (in_array($match_array['decline_registration'], $active_mts)
-            && EE_Registry::instance()->CAP->current_user_can('ee_send_message', 'batch_send_messages')
-        ) {
-            $def_reg_status_actions['decline_and_notify_registration'] = __('Decline and Notify Registrations',
-                'event_espresso');
-        }
-        $def_reg_status_actions['pending_registration'] = __('Set Registrations to Pending Payment', 'event_espresso');
-        if (in_array($match_array['pending_registration'], $active_mts)
-            && EE_Registry::instance()->CAP->current_user_can('ee_send_message', 'batch_send_messages')
-        ) {
-            $def_reg_status_actions['pending_and_notify_registration'] = __('Set Registrations to Pending Payment and Notify',
-                'event_espresso');
-        }
-        $def_reg_status_actions['no_approve_registration'] = __('Set Registrations to Not Approved', 'event_espresso');
-        if (in_array($match_array['no_approve_registration'], $active_mts)
-            && EE_Registry::instance()->CAP->current_user_can('ee_send_message', 'batch_send_messages')
-        ) {
-            $def_reg_status_actions['no_approve_and_notify_registration'] = __('Set Registrations to Not Approved and Notify',
-                'event_espresso');
-        }
-        $def_reg_status_actions['cancel_registration'] = __('Cancel Registrations', 'event_espresso');
-        if (in_array($match_array['cancel_registration'], $active_mts)
-            && EE_Registry::instance()->CAP->current_user_can('ee_send_message', 'batch_send_messages')
-        ) {
-            $def_reg_status_actions['cancel_and_notify_registration'] = __('Cancel Registrations and Notify',
-                'event_espresso');
-        }
+        $def_reg_status_actions = apply_filters(
+            'FHEE__Registrations_Admin_Page___set_list_table_views_default__def_reg_status_actions_array',
+            $def_reg_status_actions,
+            $active_mts
+        );
+
+        ksort($def_reg_status_actions);
+
         $this->_views = array(
             'all'   => array(
                 'slug'        => 'all',
@@ -1610,7 +1617,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 break;
             case EEM_Registration::status_id_wait_list :
             case EEH_Template::pretty_status(EEM_Registration::status_id_wait_list, false, 'sentence') :
-                $this->waitlist_registration($notify);
+                $this->wait_list_registration($notify);
                 break;
             case EEM_Registration::status_id_incomplete :
             default :
@@ -1694,7 +1701,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @param bool $notify whether or not to notify the registrant about their status change.
      * @return void
      */
-    protected function waitlist_registration($notify = false)
+    protected function wait_list_registration($notify = false)
     {
         $this->_reg_status_change_return(EEM_Registration::status_id_wait_list, $notify);
     }
