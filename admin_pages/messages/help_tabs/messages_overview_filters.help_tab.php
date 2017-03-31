@@ -4,10 +4,10 @@
 </p>
 <ul>
 <li>
-<strong><?php esc_html_e('Filter by Email', 'event_espresso'); ?></strong><br />
-<?php esc_html_e('This is a default filter that is included as part of the other filters below.', 'event_espresso'); ?>
+<strong><?php esc_html_e('Filter by Messengers', 'event_espresso'); ?></strong><br />
+<?php esc_html_e('Select a messenger type and then click the button to enable that filter.', 'event_espresso'); ?>
 </li>
 <li>
 <strong><?php esc_html_e('Filter by Message Types', 'event_espresso'); ?></strong><br />
-<?php esc_html_e('Select a specific message type and then click the button to enable that filter.', 'event_espresso'); ?>
+<?php esc_html_e('Select a message type and then click the button to enable that filter.', 'event_espresso'); ?>
 </ul>
