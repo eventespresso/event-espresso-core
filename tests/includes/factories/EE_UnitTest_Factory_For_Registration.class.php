@@ -1,6 +1,7 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
 
-
+use EventEspresso\core\domain\entities\RegUrlLink;
+use EventEspresso\core\domain\entities\RegCode;
 
 /**
  * EE Factory Class for registrations
@@ -81,9 +82,24 @@ class EE_UnitTest_Factory_For_Registration extends WP_UnitTest_Factory_For_Thing
 		//transaction
 		$this->_transaction = empty( $args[ 'TXN_ID' ] ) ? $this->factory->transaction->create() : EEM_Transaction::instance()->get_one_by_ID( $args[ 'TXN_ID' ] );
 		$this->_transaction = empty( $this->_transaction ) ? $this->factory->transaction->create() : $this->_transaction;
+		//set line item
+        $total_line_item = EEH_Line_Item::create_total_line_item($this->_transaction->ID());
+        $total_line_item->save_this_and_descendants_to_txn($this->_transaction->ID());
 		//ticket
 		$this->_ticket = empty( $args[ 'TKT_ID' ] ) ? $this->factory->ticket_chained->create() : EEM_Ticket::instance()->get_one_by_ID( $args[ 'TKT_ID' ] );
 		$this->_ticket = empty( $this->_ticket ) ? $this->factory->ticket_chained->create() : $this->_ticket;
+
+		//set price on ticket
+        $this->_ticket->set_price(10);
+        /** @var EE_Price $price */
+		$price = $this->factory->price_chained->create();
+        $price->set_amount(10);
+        $this->_ticket->_add_relation_to($price, 'Price');
+        $this->_ticket->save();
+		EEH_Line_Item::add_ticket_purchase($total_line_item, $this->_ticket);
+		$this->_transaction->set_total($total_line_item->total());
+		$this->_transaction->save();
+
 		//attendee
 		$this->_attendee = empty( $args[ 'ATT_ID' ] ) ? $this->factory->attendee->create() : EEM_Attendee::instance()->get_one_by_ID( $args[ 'ATT_ID' ] );
 		$this->_attendee = empty( $this->_attendee ) ? $this->factory->attendee->create() : $this->_attendee;
@@ -166,10 +182,15 @@ class EE_UnitTest_Factory_For_Registration extends WP_UnitTest_Factory_For_Thing
 		$registration = $this->_maybe_chained( $registration, $args );
 		//only run finalize if $chained because it requires EE_Transaction
 		if ( $this->_chained ) {
-			$p = EE_Registration_Processor::instance();
 			$att_nmbr++;
-			$registration->set_reg_url_link( $p->generate_reg_url_link( $att_nmbr, md5( 'ticket' . $registrationID . time() ) ) );
-			$registration->set_reg_code( $p->generate_reg_code( $registration ) );
+			$registration->set_reg_url_link( new RegUrlLink( $att_nmbr, md5( 'ticket' . $registrationID . time() ) ) );
+			$registration->set_reg_code(
+			    new RegCode(
+                        RegUrlLink::fromRegistration($registration),
+                        $registration->transaction(),
+                        $registration->ticket()
+                )
+            );
 			$registration->save();
 		}
 		return $registrationID ? $registration : false;
