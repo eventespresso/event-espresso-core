@@ -15,6 +15,9 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
  */
 class EE_Int_Normalization_Test extends EE_UnitTestCase{
 
+    /**
+     * @group 10643
+     */
 	public function test_normalize(){
 		$strategy = new EE_Int_Normalization();
 		$input = new EE_Text_Input();
@@ -53,6 +56,19 @@ class EE_Int_Normalization_Test extends EE_UnitTestCase{
 			$this->assertTrue( TRUE );
 		}
 	}
+
+    /**
+     * @group 10643
+     */
+	public function unnormalize(){
+        $strategy = new EE_Int_Normalization();
+        $input = new EE_Text_Input();
+        $this->assertEquals( '', $strategy->unnormalize(''));
+        $this->assertEquals( '', $strategy->unnormalize(null));
+        $this->assertEquals( '100', $strategy->unnormalize(100));
+        $this->assertEquals( '0', $strategy->unnormalize(0));
+        $this->assertEquals( '-1', $strategy->unnormalize('-1'));
+    }
 }
 
 // End of file EE_Int_Normalization_Test.php
