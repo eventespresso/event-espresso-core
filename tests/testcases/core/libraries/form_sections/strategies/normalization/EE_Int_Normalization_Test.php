@@ -15,6 +15,9 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
  */
 class EE_Int_Normalization_Test extends EE_UnitTestCase{
 
+    /**
+     * @group 10586
+     */
 	public function test_normalize(){
 		$strategy = new EE_Int_Normalization();
 		$input = new EE_Text_Input();
@@ -23,6 +26,7 @@ class EE_Int_Normalization_Test extends EE_UnitTestCase{
 		$this->assertEquals( 10, $strategy->normalize( '10' ) );
 		$this->assertEquals( 1000, $strategy->normalize( '1,000' ) );
 		$this->assertEquals( 1000, $strategy->normalize( ' 1 000 ' ) );
+        $this->assertEquals( -1, $strategy->normalize( '-1' ) );
 
 		try{
 			$strategy->normalize( '10.00' );

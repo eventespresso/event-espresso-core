@@ -29,8 +29,26 @@ class EE_Int_Normalization extends EE_Normalization_Strategy_Base{
 		$thousands_separator = EE_Config::instance()->currency->thsnds;
 		$value_to_normalize = str_replace( $thousands_separator, "", $value_to_normalize );
 		$value_to_normalize = str_replace( array(" ","\t"), '', $value_to_normalize );
-		if ( preg_match( '/^\d+$/', $value_to_normalize )) {
-			return intval( $value_to_normalize );
+		$matches = array();
+		if ( preg_match( '/^(-?)(\d+)$/', $value_to_normalize, $matches )) {
+		    if(count($matches) !== 3){
+                throw new EE_Validation_Error(
+                    sprintf( __( 'The integer value of "%1$s" could not be determined.', 'event_espresso'),
+                    $value_to_normalize )
+                );
+            }
+            if( $matches[1] === '-'){
+		       $negate = true;
+		       $digits = $matches[2];
+            } else{
+		        $negate = false;
+		        $digits = $matches[2];
+            }
+			$digits =  intval( $digits ) ;
+		    if( $negate ){
+		        $digits *= -1;
+            }
+            return $digits;
 		} else {
 			//find if this input has a int validation strategy
 			//in which case, use its message
