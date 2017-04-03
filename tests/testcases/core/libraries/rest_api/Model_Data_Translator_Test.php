@@ -68,6 +68,7 @@ class Model_Data_Translator_Test extends EE_UnitTestCase{
      * @group 10626
 	 */
 	public function test_prepare_conditions_query_params_for_models__gmt_datetimes() {
+	    $this->markTestSkipped('Temporarily until https://events.codebasehq.com/projects/event-espresso/tickets/10626 is released');
         $data_translator = new Model_Data_Translator();
         //note the following offsets that WERE tested originally are actually _invalid_ offsets in that they do not
         //represent a valid timezone in the PHP timezone db. This means that although we coerce them to a valid timezone
