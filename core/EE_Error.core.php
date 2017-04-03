@@ -974,7 +974,7 @@ class EE_Error extends Exception {
 	 * @return string
 	 */
 	public static function display_persistent_admin_notices( $pan_name = '', $pan_message = '', $return_url = '' ) {
-		if ( ! empty( $pan_name ) && ! empty( $pan_message )&& ! is_array( $pan_message )) {
+		if ( ! empty( $pan_name ) && ! empty( $pan_message )) {
 			$args = array(
 				'nag_notice' => $pan_name,
 				'return_url' => urlencode( $return_url ),
