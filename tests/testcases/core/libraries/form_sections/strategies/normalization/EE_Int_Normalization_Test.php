@@ -60,7 +60,7 @@ class EE_Int_Normalization_Test extends EE_UnitTestCase{
     /**
      * @group 10643
      */
-	public function unnormalize(){
+	public function test_unnormalize(){
         $strategy = new EE_Int_Normalization();
         $input = new EE_Text_Input();
         $this->assertEquals( '', $strategy->unnormalize(''));
