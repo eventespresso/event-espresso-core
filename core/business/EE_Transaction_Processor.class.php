@@ -313,8 +313,17 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 		}
 		try {
 			$transaction = $this->get_transaction_for_registration( $registration );
-			$ticket_line_item = $this->get_ticket_line_item_for_transaction_registration( $transaction, $registration );
-			EEH_Line_Item::cancel_ticket_line_item( $ticket_line_item );
+			if (
+			    apply_filters(
+                    'FHEE__EE_Transaction_Processor__update_transaction_after_canceled_or_declined_registration__cancel_ticket_line_item',
+                    true,
+                    $registration,
+                    $transaction
+                )
+            ){
+                $ticket_line_item = $this->get_ticket_line_item_for_transaction_registration( $transaction, $registration );
+                EEH_Line_Item::cancel_ticket_line_item( $ticket_line_item );
+			}
 		} catch ( EE_Error $e ) {
 			EE_Error::add_error(
 				sprintf(
