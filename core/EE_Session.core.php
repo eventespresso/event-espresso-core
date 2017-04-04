@@ -529,7 +529,7 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
          try {
              // we're using WP's Transient API to store session data using the PHP session ID as the option name
              $session_data = $this->cache_storage->get($ssn_key, false);
-	         if ($session_data === false) {
+	         if (empty($session_data)) {
 		         return array();
              }
              if (apply_filters('FHEE__EE_Session___perform_session_id_hash_check', WP_DEBUG)) {
