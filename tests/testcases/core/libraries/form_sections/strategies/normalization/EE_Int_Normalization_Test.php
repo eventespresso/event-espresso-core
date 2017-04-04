@@ -16,49 +16,83 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
 class EE_Int_Normalization_Test extends EE_UnitTestCase{
 
     /**
-     * @group 10586
+     * @var EE_Float_Normalization
      */
-	public function test_normalize(){
-		$strategy = new EE_Int_Normalization();
-		$input = new EE_Text_Input();
-		$strategy->_construct_finalize( $input );
-        $this->assertEquals( null, $strategy->normalize( '' ) );
-        $this->assertEquals( null, $strategy->normalize( ' ' ) );
-		$this->assertEquals( 10, $strategy->normalize( '10' ) );
-		$this->assertEquals( 10, $strategy->normalize( '10' ) );
-		$this->assertEquals( 1000, $strategy->normalize( '1,000' ) );
-		$this->assertEquals( 1000, $strategy->normalize( ' 1 000 ' ) );
-        $this->assertEquals( -1, $strategy->normalize( '-1' ) );
+    protected $_strategy;
 
-		try{
-			$strategy->normalize( '10.00' );
-			$this->assertTrue( FALSE );
-		}catch( EE_Validation_Error $e){
-			$this->assertTrue( TRUE );
-		}
 
-		try{
-			$strategy->normalize( 'one hundred' );
-			$this->assertTrue( FALSE );
-		}catch( EE_Validation_Error $e){
-			$this->assertTrue( TRUE );
-		}
+    public function setUp(){
+        parent::setUp();
+        $this->_strategy = new EE_Int_Normalization();
+        $input = new EE_Text_Input();
+        $this->_strategy->_construct_finalize( $input );
+    }
 
-		try{
-			$strategy->normalize( '$10' );
-			$this->assertTrue( FALSE );
-		}catch( EE_Validation_Error $e){
-			$this->assertTrue( TRUE );
-		}
 
-		$this->assertEquals( 10, $strategy->normalize( 10 ) );
-		try{
-			$strategy->normalize( array() );
-			$this->assertTrue( FALSE );
-		}catch(EE_Validation_Error $e){
-			$this->assertTrue( TRUE );
-		}
-	}
+    /**
+     * Data Provider for OK float inputs
+     * @return array{
+     *              array{
+     *                  $0 the expected integer
+     *                  $1 the input value
+     *              }
+     *          }
+     */
+    public function ok_float_inputs(){
+        return array(
+            array(null,''),
+            array(null,' '),
+            array(10, '10'),
+            array(10, '10'),
+            array(1000,'1,000'),
+            array(1000,' 1 000'),
+            array(-1,'-1'),
+            array(-1,'- 1'),
+            array(10,10)
+        );
+    }
+
+
+
+    /**
+     * @group 10586
+     * @dataProvider ok_float_inputs
+     * @param $output
+     * @param $input
+     * @throws EE_Validation_Error
+     */
+    public function test_normalize_ok($output, $input){
+        $this->assertEquals( $output, $this->_strategy->normalize($input));
+    }
+
+
+    /**
+     * Data Provider for bad float inputs
+     * @return array of arrays with the invalid inputs
+     */
+    public function bad_float_inputs(){
+        return array(
+            array('20 guineas'),
+            array('5 quid 6 pence'),
+            array('10.00'),
+            array('$10'),
+            array('one hundred'),
+            array(array()),
+        );
+    }
+
+
+
+    /**
+     * @group        10586
+     * @dataProvider bad_float_inputs
+     * @expectedException EE_Validation_Error
+     * @param $input
+     * @throws EE_Validation_Error
+     */
+    public function test_bad_float_inputs($input){
+        $this->_strategy->normalize( $input );
+    }
 }
 
 // End of file EE_Int_Normalization_Test.php
