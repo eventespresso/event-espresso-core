@@ -15,33 +15,26 @@ class EE_Float_Normalization extends EE_Normalization_Strategy_Base{
 	 * @throws \EE_Validation_Error
 	 */
 	public function normalize($value_to_normalize) {
-		if($value_to_normalize === NULL){
-			return 0.00;
+        if ($value_to_normalize === null || $value_to_normalize === '') {
+            return 0.00;
 		}
-		if( is_float($value_to_normalize)
-            || is_integer($value_to_normalize)){
-		    return floatval($value_to_normalize);
+		if(is_float($value_to_normalize) || is_int($value_to_normalize)){
+		    return (float) $value_to_normalize;
         }
 		if(is_string($value_to_normalize)) {
-            $normalized_value = str_replace(array(" ", EE_Config::instance()->currency->thsnds), "",
-                $value_to_normalize);
-            //normalize it so periods are decimal marks (we don't care where you're from: we're talking PHP now)
-            $normalized_value = str_replace(EE_Config::instance()->currency->dec_mrk, ".", $normalized_value);
+            $normalized_value = EEH_Money::strip_localized_money_formatting($value_to_normalize);
             if (preg_match('/(-?)([\d.]+)/', $normalized_value, $matches)) {
-                if(count($matches) === 3){
-                    if( $matches[1] === '-'){
-                        $negate = true;
-                        $number = $matches[2];
-                    } else{
-                        $negate = false;
-                        $number = $matches[2];
-                    }
-                    $number =  floatval( $number ) ;
-                    if( $negate ){
-                        $number *= -1;
-                    }
-                    return $number;
+                if (count($matches) !== 3) {
+                    throw new EE_Validation_Error(
+                        sprintf(__('The float value of "%1$s" could not be determined.', 'event_espresso'),
+                            $value_to_normalize)
+                    );
                 }
+                // if first match is the negative sign,
+                // then the number needs to be multiplied by -1 to remain negative
+                return $matches[1] === '-'
+                    ? (float) $matches[2] * -1
+                    : (float) $matches[2];
             }
         }
 
@@ -70,9 +63,8 @@ class EE_Float_Normalization extends EE_Normalization_Strategy_Base{
 	public function unnormalize($normalized_value) {
 		if( empty( $normalized_value ) ){
 			return '0.00';
-		}else{
-			return "$normalized_value";
 		}
+		return "$normalized_value";
 	}
 }
 
