@@ -38,7 +38,7 @@ class EE_Float_Normalization_Test extends EE_UnitTestCase{
      *              }
      *          }
      */
-    public function test_ok_float_inputs(){
+    public function ok_float_inputs(){
         return array(
             array(10, '10'),
             array(10, '10'),
@@ -58,6 +58,7 @@ class EE_Float_Normalization_Test extends EE_UnitTestCase{
 
 
     /**
+     * @group 10586
      * @dataProvider ok_float_inputs
      * @param $output
      * @param $input
