@@ -22,11 +22,11 @@ class EE_Int_Normalization extends EE_Normalization_Strategy_Base
      */
     public function normalize($value_to_normalize)
     {
-        if ($value_to_normalize === null || $value_to_normalize === '') {
+        if ($value_to_normalize === null) {
             return null;
         }
         if (is_int($value_to_normalize) || is_float($value_to_normalize)) {
-            return $value_to_normalize;
+            return (int)$value_to_normalize;
         }
         if (! is_string($value_to_normalize)) {
             throw new EE_Validation_Error(
@@ -38,6 +38,9 @@ class EE_Int_Normalization extends EE_Normalization_Strategy_Base
             );
         }
         $value_to_normalize = EEH_Money::strip_localized_money_formatting($value_to_normalize);
+        if($value_to_normalize === ''){
+            return null;
+        }
         $matches = array();
         if (preg_match('/^(-?)(\d+)$/', $value_to_normalize, $matches)) {
             if (count($matches) !== 3) {

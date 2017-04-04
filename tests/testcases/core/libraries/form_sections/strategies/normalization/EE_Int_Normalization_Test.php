@@ -22,6 +22,8 @@ class EE_Int_Normalization_Test extends EE_UnitTestCase{
 		$strategy = new EE_Int_Normalization();
 		$input = new EE_Text_Input();
 		$strategy->_construct_finalize( $input );
+        $this->assertEquals( null, $strategy->normalize( '' ) );
+        $this->assertEquals( null, $strategy->normalize( ' ' ) );
 		$this->assertEquals( 10, $strategy->normalize( '10' ) );
 		$this->assertEquals( 10, $strategy->normalize( '10' ) );
 		$this->assertEquals( 1000, $strategy->normalize( '1,000' ) );

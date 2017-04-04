@@ -40,6 +40,8 @@ class EE_Float_Normalization_Test extends EE_UnitTestCase{
      */
     public function ok_float_inputs(){
         return array(
+            array(null,''),
+            array(null,' '),
             array(10, '10'),
             array(10, '10'),
             array(1000,'1,000'),
