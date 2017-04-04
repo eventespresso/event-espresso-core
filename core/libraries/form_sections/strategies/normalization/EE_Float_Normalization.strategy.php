@@ -21,21 +21,28 @@ class EE_Float_Normalization extends EE_Normalization_Strategy_Base{
 		if(is_float($value_to_normalize) || is_int($value_to_normalize)){
 		    return (float) $value_to_normalize;
         }
-		if(is_string($value_to_normalize)) {
-            $normalized_value = EEH_Money::strip_localized_money_formatting($value_to_normalize);
-            if (preg_match('/(-?)([\d.]+)/', $normalized_value, $matches)) {
-                if (count($matches) !== 3) {
-                    throw new EE_Validation_Error(
-                        sprintf(__('The float value of "%1$s" could not be determined.', 'event_espresso'),
-                            $value_to_normalize)
-                    );
-                }
-                // if first match is the negative sign,
-                // then the number needs to be multiplied by -1 to remain negative
-                return $matches[1] === '-'
-                    ? (float) $matches[2] * -1
-                    : (float) $matches[2];
+        if (! is_string($value_to_normalize)) {
+            throw new EE_Validation_Error(
+                sprintf(
+                    __('The value "%s" must be a string submitted for normalization, it was %s', 'event_espresso'),
+                    print_r($value_to_normalize, true),
+                    gettype($value_to_normalize)
+                )
+            );
+        }
+        $normalized_value = EEH_Money::strip_localized_money_formatting($value_to_normalize);
+        if (preg_match('/(-?)([\d.]+)/', $normalized_value, $matches)) {
+            if (count($matches) !== 3) {
+                throw new EE_Validation_Error(
+                    sprintf(__('The float value of "%1$s" could not be determined.', 'event_espresso'),
+                        $value_to_normalize)
+                );
             }
+            // if first match is the negative sign,
+            // then the number needs to be multiplied by -1 to remain negative
+            return $matches[1] === '-'
+                ? (float) $matches[2] * -1
+                : (float) $matches[2];
         }
 
         //find if this input has a float validation strategy
