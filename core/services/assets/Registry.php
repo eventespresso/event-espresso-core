@@ -91,8 +91,8 @@ class Registry
         }
         if (! is_admin()) {
             $this->loadCoreCss();
-            $this->loadCoreJs();
         }
+        $this->loadCoreJs();
         $this->loadJqueryValidate();
         $this->loadAccountingJs();
         $this->loadQtipJs();
@@ -308,7 +308,6 @@ class Registry
             EVENT_ESPRESSO_VERSION,
             true
         );
-        wp_enqueue_script('espresso_core');
         wp_localize_script('espresso_core', 'eei18n', EE_Registry::$i18n_js_strings);
     }
 
@@ -316,25 +315,21 @@ class Registry
 
     private function loadJqueryValidate()
     {
-        // jquery_validate loading is turned OFF by default, but prior to the wp_enqueue_scripts hook,
-        // can be turned back on again via:  add_filter( 'FHEE_load_jquery_validate', '__return_true' );
-        if (apply_filters('FHEE_load_jquery_validate', false)) {
-            // register jQuery Validate and additional methods
-            wp_register_script(
-                'jquery-validate',
-                EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.min.js',
-                array('jquery'),
-                '1.15.0',
-                true
-            );
-            wp_register_script(
-                'jquery-validate-extra-methods',
-                EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.additional-methods.min.js',
-                array('jquery', 'jquery-validate'),
-                '1.15.0',
-                true
-            );
-        }
+        // register jQuery Validate and additional methods
+        wp_register_script(
+            'jquery-validate',
+            EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.min.js',
+            array('jquery'),
+            '1.15.0',
+            true
+        );
+        wp_register_script(
+            'jquery-validate-extra-methods',
+            EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.additional-methods.min.js',
+            array('jquery', 'jquery-validate'),
+            '1.15.0',
+            true
+        );
     }
 
 
@@ -343,45 +338,42 @@ class Registry
     {
         //accounting.js library
         // @link http://josscrowcroft.github.io/accounting.js/
-        if (apply_filters('FHEE_load_accounting_js', false)) {
-            wp_register_script(
-                'ee-accounting',
-                EE_GLOBAL_ASSETS_URL . 'scripts/ee-accounting-config.js',
-                array('ee-accounting-core'),
-                EVENT_ESPRESSO_VERSION,
-                true
-            );
-            wp_register_script(
-                'ee-accounting-core',
-                EE_THIRD_PARTY_URL . 'accounting/accounting.js',
-                array('underscore'),
-                '0.3.2',
-                true
-            );
-            wp_enqueue_script('ee-accounting');
-            wp_localize_script(
-                'ee-accounting',
-                'EE_ACCOUNTING_CFG',
-                array(
-                    'currency' => array(
-                        'symbol'    => $this->currency_config->sign,
-                        'format'    => array(
-                            'pos'  => $this->currency_config->sign_b4 ? '%s%v' : '%v%s',
-                            'neg'  => $this->currency_config->sign_b4 ? '- %s%v' : '- %v%s',
-                            'zero' => $this->currency_config->sign_b4 ? '%s--' : '--%s',
-                        ),
-                        'decimal'   => $this->currency_config->dec_mrk,
-                        'thousand'  => $this->currency_config->thsnds,
-                        'precision' => $this->currency_config->dec_plc,
+        wp_register_script(
+            'ee-accounting-core',
+            EE_THIRD_PARTY_URL . 'accounting/accounting.js',
+            array('underscore'),
+            '0.3.2',
+            true
+        );
+        wp_register_script(
+            'ee-accounting',
+            EE_GLOBAL_ASSETS_URL . 'scripts/ee-accounting-config.js',
+            array('ee-accounting-core'),
+            EVENT_ESPRESSO_VERSION,
+            true
+        );
+        wp_localize_script(
+            'ee-accounting',
+            'EE_ACCOUNTING_CFG',
+            array(
+                'currency' => array(
+                    'symbol'    => $this->currency_config->sign,
+                    'format'    => array(
+                        'pos'  => $this->currency_config->sign_b4 ? '%s%v' : '%v%s',
+                        'neg'  => $this->currency_config->sign_b4 ? '- %s%v' : '- %v%s',
+                        'zero' => $this->currency_config->sign_b4 ? '%s--' : '--%s',
                     ),
-                    'number'   => array(
-                        'precision' => 0,
-                        'thousand'  => $this->currency_config->thsnds,
-                        'decimal'   => $this->currency_config->dec_mrk,
-                    ),
-                )
-            );
-        }
+                    'decimal'   => $this->currency_config->dec_mrk,
+                    'thousand'  => $this->currency_config->thsnds,
+                    'precision' => $this->currency_config->dec_plc,
+                ),
+                'number'   => array(
+                    'precision' => 0,
+                    'thousand'  => $this->currency_config->thsnds,
+                    'decimal'   => $this->currency_config->dec_mrk,
+                ),
+            )
+        );
     }
 
 
