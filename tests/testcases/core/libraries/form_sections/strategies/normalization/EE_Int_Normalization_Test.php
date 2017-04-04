@@ -60,3 +60,4 @@ class EE_Int_Normalization_Test extends EE_UnitTestCase{
 }
 
 // End of file EE_Int_Normalization_Test.php
+// Location: tests/testcases/core/libraries/form_sections/strategies/normalization/EE_Int_Normalization_Test.php

@@ -61,6 +61,7 @@ class EE_Float_Normalization_Test extends EE_UnitTestCase{
      * @dataProvider ok_float_inputs
      * @param $output
      * @param $input
+     * @throws EE_Validation_Error
      */
     public function test_normalize_ok($output, $input){
         $this->assertEquals( $output, $this->_strategy->normalize($input));
@@ -81,9 +82,11 @@ class EE_Float_Normalization_Test extends EE_UnitTestCase{
 
 
     /**
-     * @group 10586
+     * @group        10586
      * @dataProvider bad_float_inputs
      * @expectedException EE_Validation_Error
+     * @param $input
+     * @throws EE_Validation_Error
      */
 	public function test_bad_float_inputs($input){
         $this->_strategy->normalize( $input );
@@ -91,3 +94,4 @@ class EE_Float_Normalization_Test extends EE_UnitTestCase{
 }
 
 // End of file EE_Float_Normalization_Test.php
+// Location: tests/testcases/core/libraries/form_sections/strategies/normalization/EE_Float_Normalization_Test.php
