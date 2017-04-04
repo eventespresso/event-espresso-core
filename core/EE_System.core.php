@@ -812,7 +812,6 @@ final class EE_System
     public function set_hooks_for_core()
     {
         $this->_deactivate_incompatible_addons();
-        $this->registry->create('EventEspresso\core\services\assets\Registry');
         do_action('AHEE__EE_System__set_hooks_for_core');
     }
 
@@ -910,6 +909,8 @@ final class EE_System
         do_action('AHEE__EE_System__core_loaded_and_ready');
         do_action('AHEE__EE_System__set_hooks_for_shortcodes_modules_and_addons');
         $this->registry->load_core('Session');
+        $this->registry->create('EventEspresso\core\services\assets\Registry');
+        wp_enqueue_script('espresso_core');
     }
 
 
