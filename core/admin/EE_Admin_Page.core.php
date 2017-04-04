@@ -1541,12 +1541,10 @@ abstract class EE_Admin_Page extends EE_Base
         wp_enqueue_style('ee-admin-css');
         /** SCRIPTS **/
         //register all scripts
-        wp_register_script('espresso_core', EE_GLOBAL_ASSETS_URL . 'scripts/espresso_core.js', array('jquery'), EVENT_ESPRESSO_VERSION, true);
         wp_register_script('ee-dialog', EE_ADMIN_URL . 'assets/ee-dialog-helper.js', array('jquery', 'jquery-ui-draggable'), EVENT_ESPRESSO_VERSION, true);
         wp_register_script('ee_admin_js', EE_ADMIN_URL . 'assets/ee-admin-page.js', array('espresso_core', 'ee-parse-uri', 'ee-dialog'), EVENT_ESPRESSO_VERSION, true);
         wp_register_script('jquery-ui-timepicker-addon', EE_GLOBAL_ASSETS_URL . 'scripts/jquery-ui-timepicker-addon.js', array('jquery-ui-datepicker', 'jquery-ui-slider'), EVENT_ESPRESSO_VERSION, true);
-        // register jQuery Validate - see /includes/functions/wp_hooks.php
-        add_filter('FHEE_load_jquery_validate', '__return_true');
+        wp_enqueue_script('jquery-validate');
         add_filter('FHEE_load_joyride', '__return_true');
         //script for sorting tables
         wp_register_script('espresso_ajax_table_sorting', EE_ADMIN_URL . "assets/espresso_ajax_table_sorting.js", array('ee_admin_js', 'jquery-ui-sortable'), EVENT_ESPRESSO_VERSION, true);
@@ -1642,10 +1640,6 @@ abstract class EE_Admin_Page extends EE_Base
         EE_Registry::$i18n_js_strings['Thu'] = __('Thu', 'event_espresso');
         EE_Registry::$i18n_js_strings['Fri'] = __('Fri', 'event_espresso');
         EE_Registry::$i18n_js_strings['Sat'] = __('Sat', 'event_espresso');
-        //setting on espresso_core instead of ee_admin_js because espresso_core is enqueued by the maintenance
-        //admin page when in maintenance mode and ee_admin_js is not loaded then.  This works everywhere else because
-        //espresso_core is listed as a dependency of ee_admin_js.
-        wp_localize_script('espresso_core', 'eei18n', EE_Registry::$i18n_js_strings);
     }
 
 
