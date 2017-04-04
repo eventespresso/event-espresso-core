@@ -272,6 +272,9 @@ class Registry
 
 
 
+    /**
+     * registers core default stylesheets
+     */
     private function loadCoreCss()
     {
         if ($this->template_config->enable_default_style) {
@@ -298,6 +301,9 @@ class Registry
 
 
 
+    /**
+     * registers core default javascript
+     */
     private function loadCoreJs()
     {
         // load core js
@@ -313,6 +319,9 @@ class Registry
 
 
 
+    /**
+     * registers jQuery Validate for form validation
+     */
     private function loadJqueryValidate()
     {
         // register jQuery Validate and additional methods
@@ -334,6 +343,9 @@ class Registry
 
 
 
+    /**
+     * registers accounting.js for performing client-side calculations
+     */
     private function loadAccountingJs()
     {
         //accounting.js library
@@ -378,6 +390,9 @@ class Registry
 
 
 
+    /**
+     * registers assets for cleaning your ears
+     */
     private function loadQtipJs()
     {
         // qtip is turned OFF by default, but prior to the wp_enqueue_scripts hook,
