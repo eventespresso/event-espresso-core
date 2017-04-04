@@ -3,19 +3,18 @@ namespace EventEspresso\core\services\container;
 
 use EventEspresso\core\exceptions\InvalidClassException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
-use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\exceptions\InvalidIdentifierException;
-use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\collections\Collection;
 use EventEspresso\core\services\collections\CollectionInterface;
 use EventEspresso\core\services\collections\LooseCollection;
-use EventEspresso\core\services\container\exceptions\InstantiationException;
 use EventEspresso\core\services\container\exceptions\InvalidServiceException;
 use EventEspresso\core\services\container\exceptions\ServiceExistsException;
 use EventEspresso\core\services\container\exceptions\ServiceNotFoundException;
 use OutOfBoundsException;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
+if ( ! defined('EVENT_ESPRESSO_VERSION')) {
+    exit('No direct script access allowed');
+}
 
 
 
@@ -40,14 +39,14 @@ class CoffeeShop implements CoffeePotInterface
      *
      * @var array $filters
      */
-    private $filters;
+    private $filters = array();
 
     /**
      * These are the classes that will actually build the objects (to order of course)
      *
      * @var array $coffee_makers
      */
-    private $coffee_makers;
+    private $coffee_makers = array();
 
     /**
      * where the instantiated "singleton" objects are stored
@@ -74,8 +73,6 @@ class CoffeeShop implements CoffeePotInterface
 
     /**
      * CoffeeShop constructor
-     *
-     * @throws InvalidInterfaceException
      */
     public function __construct()
     {
@@ -83,7 +80,7 @@ class CoffeeShop implements CoffeePotInterface
         $this->filters = array();
         // create collection for storing shared services
         $this->carafe = new LooseCollection( '' );
-        // create collection for storing recipes that tell us how to build services and entities
+        // create collection for storing recipes that tell how to build services and entities
         $this->recipes = new Collection('EventEspresso\core\services\container\RecipeInterface');
         // create collection for storing closures for constructing new entities
         $this->reservoir = new Collection('Closure');
@@ -102,7 +99,6 @@ class CoffeeShop implements CoffeePotInterface
      * @param string $identifier  Identifier of the entry to look for.
      *                            Typically a Fully Qualified Class Name
      * @return boolean
-     * @throws InvalidIdentifierException
      */
     public function has($identifier)
     {
@@ -118,7 +114,6 @@ class CoffeeShop implements CoffeePotInterface
      * @param  string $identifier Identifier for the entity class to be constructed.
      *                            Typically a Fully Qualified Class Name
      * @return mixed
-     * @throws InvalidIdentifierException
      * @throws ServiceNotFoundException No service was found for this identifier.
      */
     public function get($identifier)
@@ -146,61 +141,14 @@ class CoffeeShop implements CoffeePotInterface
      * @param array   $arguments  an array of arguments to be passed to the entity constructor
      * @param string  $type
      * @return mixed
-     * @throws OutOfBoundsException
-     * @throws InstantiationException
-     * @throws InvalidDataTypeException
-     * @throws InvalidClassException
-     * @throws InvalidIdentifierException
-     * @throws ServiceExistsException
      * @throws ServiceNotFoundException No service was found for this identifier.
      */
     public function brew($identifier, $arguments = array(), $type = '')
     {
         // resolve any class aliases that may exist
         $identifier = $this->filterIdentifier($identifier);
-        // is a shared service being requested and already exists in the carafe?
-        $brewed = $this->getShared($identifier, $type);
-        // then return whatever was found
-        if($brewed !== false) {
-            return $brewed;
-        }
-        // if the reservoir doesn't have a closure already for the requested identifier,
-        // then neither a shared service nor a closure for making entities has been built yet
-        if (! $this->reservoir->has($identifier)) {
-            // so let's brew something up and add it to the proper collection
-            $brewed = $this->makeCoffee($identifier, $arguments, $type);
-        }
-        // did the requested class only require loading, and if so, was that successful?
-        if($this->brewedLoadOnly($brewed, $identifier, $type) === true) {
-            return true;
-        }
-        // was the brewed item a callable factory function ?
-        if (is_callable($brewed)) {
-            // then instantiate a new entity from the cached closure
-            return $brewed($arguments);
-        }
-        if ($brewed) {
-            // requested object was a shared entity, so attempt to get it from the carafe again
-            // because if it wasn't there before, then it should have just been brewed and added,
-            // but if it still isn't there, then this time the thrown ServiceNotFoundException will not be caught
-            return $this->get($identifier);
-        }
-        // if identifier is for a non-shared entity,
-        // then either a cached closure already existed, or was just brewed
-        return $this->brewedClosure($identifier, $arguments);
-    }
-
-
-
-    /**
-     * @param string $identifier
-     * @param string $type
-     * @return bool|mixed
-     * @throws InvalidIdentifierException
-     */
-    protected function getShared($identifier, $type)
-    {
         try {
+            // is a shared service being requested?
             if (empty($type) || $type === CoffeeMaker::BREW_SHARED) {
                 // if a shared service was requested and an instance is in the carafe, then return it
                 return $this->get($identifier);
@@ -209,65 +157,30 @@ class CoffeeShop implements CoffeePotInterface
             // if not then we'll just catch the ServiceNotFoundException but not do anything just yet,
             // and instead, attempt to build whatever was requested
         }
-        return false;
-    }
-
-
-
-    /**
-     * @param mixed  $brewed
-     * @param string $identifier
-     * @param string $type
-     * @return bool
-     * @throws InvalidClassException
-     * @throws InvalidDataTypeException
-     * @throws InvalidIdentifierException
-     * @throws OutOfBoundsException
-     * @throws ServiceExistsException
-     * @throws ServiceNotFoundException
-     */
-    protected function brewedLoadOnly($brewed, $identifier, $type)
-    {
-        if ($type === CoffeeMaker::BREW_LOAD_ONLY) {
-            if ($brewed !== true) {
-                throw new ServiceNotFoundException(
-                    sprintf(
-                        esc_html__(
-                            'The "%1$s" class could not be loaded.',
-                            'event_espresso'
-                        ),
-                        $identifier
-                    )
-                );
-            }
-            return true;
+        $brewed = false;
+        // if the reservoir doesn't have a closure already for the requested identifier,
+        // then neither a shared service nor a closure for making entities has been built yet
+        if ( ! $this->reservoir->has($identifier)) {
+            // so let's brew something up and add it to the proper collection
+            $brewed = $this->makeCoffee($identifier, $arguments, $type);
         }
-        return false;
-    }
-
-
-
-    /**
-     * @param string $identifier
-     * @param array  $arguments
-     * @return mixed
-     * @throws InstantiationException
-     */
-    protected function brewedClosure($identifier, array $arguments)
-    {
-        $closure = $this->reservoir->get($identifier);
-        if (empty($closure)) {
-            throw new InstantiationException(
-                sprintf(
-                    esc_html__(
-                        'Could not brew an instance of "%1$s".',
-                        'event_espresso'
-                    ),
-                    $identifier
-                )
-            );
+        // was the brewed item a callable factory function ?
+        if (is_callable($brewed)) {
+            // then instantiate a new entity from the cached closure
+            $entity = $brewed($arguments);
+        } else if ($brewed) {
+            // requested object was a shared entity, so attempt to get it from the carafe again
+            // because if it wasn't there before, then it should have just been brewed and added,
+            // but if it still isn't there, then this time
+            // the thrown ServiceNotFoundException will not be caught
+            $entity = $this->get($identifier);
+        } else {
+            // if identifier is for a non-shared entity,
+            // then either a cached closure already existed, or was just brewed
+            $closure = $this->reservoir->get($identifier);
+            $entity = $closure($arguments);
         }
-        return $closure($arguments);
+        return $entity;
     }
 
 
@@ -276,8 +189,6 @@ class CoffeeShop implements CoffeePotInterface
      * @param CoffeeMakerInterface $coffee_maker
      * @param string               $type
      * @return bool
-     * @throws InvalidIdentifierException
-     * @throws InvalidEntityException
      */
     public function addCoffeeMaker(CoffeeMakerInterface $coffee_maker, $type)
     {
@@ -291,8 +202,6 @@ class CoffeeShop implements CoffeePotInterface
      * @param string   $identifier
      * @param callable $closure
      * @return callable|null
-     * @throws InvalidIdentifierException
-     * @throws InvalidDataTypeException
      */
     public function addClosure($identifier, $closure)
     {
@@ -309,15 +218,17 @@ class CoffeeShop implements CoffeePotInterface
 
 
     /**
-     * @param string $identifier
+     * @param string   $identifier
      * @return boolean
-     * @throws InvalidIdentifierException
      */
     public function removeClosure($identifier)
     {
         $identifier = $this->processIdentifier($identifier);
         if ($this->reservoir->has($identifier)) {
-            return $this->reservoir->remove($this->reservoir->get($identifier));
+            $this->reservoir->remove($this->reservoir->get($identifier));
+            if ( ! $this->reservoir->has($identifier)) {
+                return true;
+            }
         }
         return false;
     }
@@ -327,10 +238,8 @@ class CoffeeShop implements CoffeePotInterface
     /**
      * @param  string $identifier Identifier for the entity class that the service applies to
      *                            Typically a Fully Qualified Class Name
-     * @param mixed   $service
+     * @param mixed  $service
      * @return bool
-     * @throws \EventEspresso\core\services\container\exceptions\InvalidServiceException
-     * @throws InvalidIdentifierException
      */
     public function addService($identifier, $service)
     {
@@ -344,13 +253,15 @@ class CoffeeShop implements CoffeePotInterface
     /**
      * @param string $identifier
      * @return boolean
-     * @throws InvalidIdentifierException
      */
     public function removeService($identifier)
     {
         $identifier = $this->processIdentifier($identifier);
         if ($this->carafe->has($identifier)) {
-            return $this->carafe->remove($this->carafe->get($identifier));
+            $this->carafe->remove($this->carafe->get($identifier));
+            if ( ! $this->carafe->has($identifier)) {
+                return true;
+            }
         }
         return false;
     }
@@ -362,7 +273,6 @@ class CoffeeShop implements CoffeePotInterface
      *
      * @param RecipeInterface $recipe
      * @return mixed
-     * @throws InvalidIdentifierException
      */
     public function addRecipe(RecipeInterface $recipe)
     {
@@ -376,13 +286,17 @@ class CoffeeShop implements CoffeePotInterface
     /**
      * @param string $identifier The Recipe's identifier
      * @return boolean
-     * @throws InvalidIdentifierException
      */
     public function removeRecipe($identifier)
     {
         $identifier = $this->processIdentifier($identifier);
         if ($this->recipes->has($identifier)) {
-            return $this->recipes->remove($this->recipes->get($identifier));
+            $this->recipes->remove(
+                $this->recipes->get($identifier)
+            );
+            if ( ! $this->recipes->has($identifier)) {
+                return true;
+            }
         }
         return false;
     }
@@ -394,10 +308,8 @@ class CoffeeShop implements CoffeePotInterface
      *
      * @param  string $identifier Identifier for the entity class that the recipe applies to
      *                            Typically a Fully Qualified Class Name
-     * @param string  $type
+     * @param string $type
      * @return RecipeInterface
-     * @throws OutOfBoundsException
-     * @throws InvalidIdentifierException
      */
     public function getRecipe($identifier, $type = '')
     {
@@ -465,10 +377,6 @@ class CoffeeShop implements CoffeePotInterface
      * @param array  $arguments
      * @param string $type
      * @return mixed
-     * @throws InvalidDataTypeException
-     * @throws InvalidClassException
-     * @throws OutOfBoundsException
-     * @throws InvalidIdentifierException
      * @throws ServiceExistsException
      */
     private function makeCoffee($identifier, $arguments = array(), $type = '')
@@ -527,7 +435,6 @@ class CoffeeShop implements CoffeePotInterface
     /**
      * @param string $type
      * @return CoffeeMakerInterface
-     * @throws OutOfBoundsException
      * @throws InvalidDataTypeException
      * @throws InvalidClassException
      */
@@ -608,7 +515,7 @@ class CoffeeShop implements CoffeePotInterface
      * @param  string $identifier Identifier for the entity class that the service applies to
      *                            Typically a Fully Qualified Class Name
      * @param mixed  $service
-     * @return mixed
+     * @return object
      * @throws InvalidServiceException
      */
     private function validateService($identifier, $service)
