@@ -24,21 +24,41 @@ class EEH_Money extends EEH_Base  {
 
 
 	/**
-	 * This converts an incoming localized money value into a standard float item (to three decimal places)
+	 * This removes all localized money formatting from the incoming value
 	 *
-	 * @param int|string $incoming_value
+	 * @param int|float|string $money_value
 	 * @return float
 	 */
-	public static function convert_to_float_from_localized_money( $incoming_value ) {
-		//remove thousands separator
-		$money_value = str_replace( EE_Registry::instance()->CFG->currency->thsnds, '', $incoming_value );
+	public static function strip_localized_money_formatting($money_value ) {
+		return str_replace(
+		    array(
+                ' ',
+                "\t",
+                "\n",
+		        EE_Registry::instance()->CFG->currency->thsnds,
+                EE_Registry::instance()->CFG->currency->dec_mrk,
+            ),
+            array(
+                '', // remove spaces
+                '', // remove tabs
+                '', // remove newlines
+                '', // remove thousands separator
+                '.', // convert decimal mark to what PHP expects
+            ),
+            $money_value
+        );
+	}
 
-		//replace decimal place with standard decimal.
-		$money_value = str_replace( EE_Registry::instance()->CFG->currency->dec_mrk, '.', $money_value );
 
+	/**
+	 * This converts an incoming localized money value into a standard float item (to three decimal places)
+	 *
+	 * @param int|string $money_value
+	 * @return float
+	 */
+	public static function convert_to_float_from_localized_money($money_value ) {
 		//float it! and round to three decimal places
-		$money_value = round ( (float) $money_value, 3 );
-		return $money_value;
+        return round ( (float) EEH_Money::strip_localized_money_formatting($money_value), 3 );
 	}
 
 
