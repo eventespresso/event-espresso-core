@@ -18,7 +18,7 @@ class EE_Int_Normalization extends EE_Normalization_Strategy_Base{
         if ($value_to_normalize === null || $value_to_normalize === '') {
             return null;
         }
-        if( is_int( $value_to_normalize ) ){
+        if( is_int( $value_to_normalize ) || is_float($value_to_normalize) ){
 			return $value_to_normalize;
 		}
 		if( ! is_string( $value_to_normalize )){
