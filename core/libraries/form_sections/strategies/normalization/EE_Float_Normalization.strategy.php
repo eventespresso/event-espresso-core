@@ -42,17 +42,13 @@ class EE_Float_Normalization extends EE_Normalization_Strategy_Base
             return null;
         }
         if (preg_match('/(-?)([\d.]+)/', $normalized_value, $matches)) {
-            if (count($matches) !== 3) {
-                throw new EE_Validation_Error(
-                    sprintf(__('The float value of "%1$s" could not be determined.', 'event_espresso'),
-                        $value_to_normalize)
-                );
+            if (count($matches) === 3) {
+                // if first match is the negative sign,
+                // then the number needs to be multiplied by -1 to remain negative
+                return $matches[1] === '-'
+                    ? (float)$matches[2] * -1
+                    : (float)$matches[2];
             }
-            // if first match is the negative sign,
-            // then the number needs to be multiplied by -1 to remain negative
-            return $matches[1] === '-'
-                ? (float)$matches[2] * -1
-                : (float)$matches[2];
         }
         //find if this input has a float validation strategy
         //in which case, use its message
