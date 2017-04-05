@@ -48,7 +48,12 @@ class EE_Int_Normalization_Test extends EE_UnitTestCase{
             array(1000,' 1 000'),
             array(-1,'-1'),
             array(-1,'- 1'),
-            array(10,10)
+            array(10,10),
+            array(20,'20 guineas'),
+            array(10,'10.00'),
+            array(10,'$10'),
+            array(56, '5 quid 6 pence'),
+            array(null, 'one hundred'),
         );
     }
 
@@ -57,12 +62,12 @@ class EE_Int_Normalization_Test extends EE_UnitTestCase{
     /**
      * @group 10586
      * @dataProvider ok_float_inputs
-     * @param $output
+     * @param $expected
      * @param $input
      * @throws EE_Validation_Error
      */
-    public function test_normalize_ok($output, $input){
-        $this->assertEquals( $output, $this->_strategy->normalize($input));
+    public function test_normalize_ok($expected, $input){
+        $this->assertEquals($expected, $this->_strategy->normalize($input));
     }
 
 
@@ -72,12 +77,8 @@ class EE_Int_Normalization_Test extends EE_UnitTestCase{
      */
     public function bad_float_inputs(){
         return array(
-            array('20 guineas'),
-            array('5 quid 6 pence'),
-            array('10.00'),
-            array('$10'),
-            array('one hundred'),
             array(array()),
+            array(new stdClass()),
         );
     }
 
