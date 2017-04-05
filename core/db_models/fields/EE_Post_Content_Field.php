@@ -48,22 +48,15 @@ class EE_Post_Content_Field extends EE_Text_Field_Base
      * @param string $value_on_field_to_be_outputted
      * @param string   $schema possible values: 'form_input' or null (if null, will run through 'the_content')
      * @return string
+     * @throws EE_Error when WP_DEBUG is on and recursive calling is detected
      */
     public function prepare_for_pretty_echoing($value_on_field_to_be_outputted, $schema = null)
     {
         switch($schema){
             case 'form_input':
                 return parent::prepare_for_pretty_echoing($value_on_field_to_be_outputted, $schema);
-            case 'the_content_wp_core_only':
-                return apply_filters(
-                    'the_content_wp_core_only',
-                    parent::prepare_for_pretty_echoing(
-                        $value_on_field_to_be_outputted,
-                        $schema
-                    )
-                );
             case 'the_content':
-            default:
+
                 if(doing_filter( 'the_content')){
                     if( defined('WP_DEBUG') && WP_DEBUG){
                         throw new EE_Error(
@@ -86,6 +79,16 @@ class EE_Post_Content_Field extends EE_Text_Field_Base
                         $schema
                     )
                 );
+            case 'the_content_wp_core_only':
+            default:
+                self::_ensure_filters_setup();
+                return apply_filters(
+                    'the_content_wp_core_only',
+                    parent::prepare_for_pretty_echoing(
+                        $value_on_field_to_be_outputted,
+                        $schema
+                    )
+                );
         }
     }
 
@@ -97,14 +100,12 @@ class EE_Post_Content_Field extends EE_Text_Field_Base
     protected static function _ensure_filters_setup()
     {
         if( !self::$_added_the_content_basic_filters){
-            add_filter('the_content_wp_core_only', 'run_shortcode', 8);
-            add_filter('the_content_wp_core_only', 'autoembed', 8);
             add_filter('the_content_wp_core_only', 'wptexturize', 10);
             add_filter('the_content_wp_core_only', 'wpautop', 10);
             add_filter('the_content_wp_core_only', 'shortcode_unautop', 10);
-            add_filter('the_content_wp_core_only', 'prepend_attachment ', 10);
+            add_filter('the_content_wp_core_only', 'prepend_attachment', 10);
             add_filter('the_content_wp_core_only', 'wp_make_content_images_responsive', 10);
-            add_filter('the_content_wp_core_only', 'do_shortcode ', 11);
+            add_filter('the_content_wp_core_only', 'do_shortcode', 11);
             add_filter('the_content_wp_core_only', 'convert_smilies', 20);
             self::$_added_the_content_basic_filters = true;
         }
