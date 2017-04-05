@@ -100,6 +100,8 @@ class EE_Post_Content_Field extends EE_Text_Field_Base
     protected static function _ensure_filters_setup()
     {
         if( !self::$_added_the_content_basic_filters){
+            add_filter('the_content_wp_core_only', array( $GLOBALS['wp_embed'], 'run_shortcode'), 8);
+            add_filter('the_content_wp_core_only', array( $GLOBALS['wp_embed'], 'autoembed'), 8);
             add_filter('the_content_wp_core_only', 'wptexturize', 10);
             add_filter('the_content_wp_core_only', 'wpautop', 10);
             add_filter('the_content_wp_core_only', 'shortcode_unautop', 10);
