@@ -90,7 +90,7 @@ class EE_Int_Normalization extends EE_Normalization_Strategy_Base
      */
     public function unnormalize($normalized_value)
     {
-        if ($normalized_value === null) {
+        if ($normalized_value === null || $normalized_value === '') {
             return '';
         }
         if (empty($normalized_value)) {
