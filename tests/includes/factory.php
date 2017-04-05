@@ -1397,7 +1397,7 @@ class EE_UnitTest_Factory_For_Attendee extends WP_UnitTest_Factory_For_Thing {
 			'ATT_city' => 'Some Town',
 			'ATT_zip' => new WP_UnitTest_Generator_Sequence('00000%s'),
 			'ATT_email' => new WP_UnitTest_Generator_Sequence('llamasrule%s@llama.lm'),
-			'ATT_phone' => new WP_UnitTest_Generator_Sequence('%s%s%s-%s%s%s-%s%s%s%s')
+			'ATT_phone' => new WP_UnitTest_Generator_Sequence('1%$s1%$s1%$s-1%$s1%$s1%$s-1%$s1%$s1%$s1%$s')
 			);
 	}
 
