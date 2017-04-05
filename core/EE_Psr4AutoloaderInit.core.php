@@ -1,8 +1,4 @@
-<?php
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
+<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
 /**
  * Class EE_Psr4AutoloaderInit
  *
@@ -23,24 +19,23 @@ class EE_Psr4AutoloaderInit {
 	 */
 	protected static $psr4_loader;
 
-
-
 	/**
-	 * @return \EventEspresso\core\Psr4Autoloader
+	 * @access    public
 	 */
-	public function initializeAutoloader() {
-        static $initialized = false;
-        if ( ! $initialized) {
-            // instantiate PSR4 autoloader
-            EE_Psr4AutoloaderInit::$psr4_loader = new \EventEspresso\core\Psr4Autoloader();
-            // register the autoloader
-            EE_Psr4AutoloaderInit::$psr4_loader->register();
-            // register the base directories for the namespace prefix
-            EE_Psr4AutoloaderInit::$psr4_loader->addNamespace('EventEspresso', EE_PLUGIN_DIR_PATH);
-            EE_Psr4AutoloaderInit::$psr4_loader->addNamespace('EventEspressoBatchRequest', EE_LIBRARIES . 'batch');
-            $initialized = true;
-        }
-    }
+	public function __construct() {
+		static $initialized = false;
+		if ( ! $initialized ) {
+			// instantiate PSR4 autoloader
+			espresso_load_required( 'Psr4Autoloader', EE_CORE . 'Psr4Autoloader.php' );
+			EE_Psr4AutoloaderInit::$psr4_loader = new \EventEspresso\core\Psr4Autoloader();
+			// register the autoloader
+			EE_Psr4AutoloaderInit::$psr4_loader->register();
+			// register the base directories for the namespace prefix
+			EE_Psr4AutoloaderInit::$psr4_loader->addNamespace( 'EventEspresso', EE_PLUGIN_DIR_PATH );
+			EE_Psr4AutoloaderInit::$psr4_loader->addNamespace( 'EventEspressoBatchRequest', EE_LIBRARIES . 'batch' );
+			$initialized = true;
+		}
+	}
 
 
 

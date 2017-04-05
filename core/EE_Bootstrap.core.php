@@ -1,7 +1,4 @@
-<?php
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
+<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
 /**
  * Class EE_Bootstrap
  *
@@ -29,32 +26,22 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 
 class EE_Bootstrap {
 
-    /**
-     * @var EE_Request $request
-     */
-    protected $request;
-
-    /**
-     * @var EE_Response $response
-     */
-    protected $response;
-
-    /**
-	 * @var EE_Request_Stack_Builder $request_stack_builder
+	/**
+	 * @access 	protected
+	 * @type 	EE_Request_Stack_Builder $_request_stack_builder
 	 */
-	protected $request_stack_builder = null;
+	protected $_request_stack_builder = null;
 
 	/**
-	 * @var EE_Request_Stack $_request_stack
+	 * @access 	protected
+	 * @type 	EE_Request_Stack $_request_stack
 	 */
-	protected $request_stack = null;
+	protected $_request_stack = null;
 
 
 
-	public function __construct(EE_Request $request, EE_Response $response) {
-        $this->request = $request;
-        $this->response = $response;
-        // construct request stack and run middleware apps as soon as all WP plugins are loaded
+	public function __construct() {
+		// construct request stack and run middleware apps as soon as all WP plugins are loaded
 		add_action( 'plugins_loaded', array( $this, 'run_request_stack' ), 0 );
 		// set framework for the rest of EE to hook into when loading
 		add_action( 'plugins_loaded', array( 'EE_Bootstrap', 'load_espresso_addons' ), 1 );
@@ -73,12 +60,15 @@ class EE_Bootstrap {
 	public function run_request_stack() {
 		$this->load_autoloader();
 		$this->set_autoloaders_for_required_files();
-		$this->request_stack_builder = $this->build_request_stack();
-		$this->request_stack = $this->request_stack_builder->resolve(
-		    new EE_Load_Espresso_Core()
-        );
-		$this->request_stack->handle_request($this->request, $this->response);
-		$this->request_stack->handle_response();
+		$this->_request_stack_builder = $this->build_request_stack();
+		$this->_request_stack = $this->_request_stack_builder->resolve(
+			new EE_Load_Espresso_Core()
+		);
+		$this->_request_stack->handle_request(
+			new EE_Request( $_GET, $_POST, $_COOKIE ),
+			new EE_Response()
+		);
+		$this->_request_stack->handle_response();
 	}
 
 
@@ -94,21 +84,19 @@ class EE_Bootstrap {
 
 
 
-    /**
-     * load_required_files
-     *
-     * @throws \EE_Error
-     */
+	/**
+	 * load_required_files
+	 */
 	protected function set_autoloaders_for_required_files() {
 		// load interfaces
-        EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_CORE . 'interfaces', true);
-        // load helpers
+		espresso_load_required( 'EEI_Interfaces', EE_CORE . 'interfaces' . DS . 'EEI_Interfaces.php' );
+		// load helpers
 		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_HELPERS );
 		// load request stack
 		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_CORE . 'request_stack' . DS );
 		// load middleware
 		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_CORE . 'middleware' . DS );
-    }
+	}
 
 
 

@@ -10,8 +10,8 @@ use \EventEspresso\core\services\formatters\FormatterInterface;
  * This has been designed in a way so that other WP Plugins
  * can use this class for processing payments, and theoretically any of its children,
  * provided they implement the interfaces it uses.
- * The necessary interfaces to be implemented are found in:
- *  /core/interfaces/payments/  and  /core/interfaces/
+ * The necessary interfaces to be implemented are contained in:
+ * core/libraries/payment_methods/EEI_Payment_Method_Interfaces.php and EEI_Interfaces.
  * After constructing a gateway object, you need to set all the properties which reference many of the
  * needed helpers and models (see all the methods starting with "set_",
  * eg seg_line_item_helper which should be passed an object which implements EEHI_Line_Item_Helper; etc).
@@ -365,7 +365,7 @@ abstract class EE_Gateway{
 		//maybe update the transaction or line items or registrations
 		//but most gateways don't need to do this, because they only update the payment
 	}
-
+	
 	/**
 	 * Gets the first event for this payment (it's possible that it could be for multiple)
 	 * @param EEI_Payment $payment
@@ -375,7 +375,7 @@ abstract class EE_Gateway{
 	protected function _get_first_event_for_payment( EEI_Payment $payment ) {
 		return $payment->get_first_event();
 	}
-
+	
 	/**
 	 * Gets the name of the first event for which is being paid
 	 * @param EEI_Payment $payment
@@ -403,7 +403,7 @@ abstract class EE_Gateway{
 	protected function _format_partial_payment_line_item_desc( EEI_Payment $payment ) {
 		return $this->_get_gateway_formatter()->formatPartialPaymentLineItemDesc($payment);
 	}
-
+	
 	/**
      * Gets the name to use for a line item when sending line items to the gateway
      * @deprecated since 4.9.31 instead use $this->_get_gateway_formatter()->formatLineItemName($line_item,$payment)
@@ -414,7 +414,7 @@ abstract class EE_Gateway{
 	protected function _format_line_item_name( EEI_Line_Item $line_item, EEI_Payment $payment ) {
 		return $this->_get_gateway_formatter()->formatLineItemName($line_item,$payment);
 	}
-
+	
 	/**
 	 * Gets the description to use for a line item when sending line items to the gateway
      * @deprecated since 4.9.31 instead use $this->_get_gateway_formatter()->formatLineItemDesc($line_item, $payment))
@@ -425,7 +425,7 @@ abstract class EE_Gateway{
 	protected function _format_line_item_desc( EEI_Line_Item $line_item, EEI_Payment $payment ) {
 		return $this->_get_gateway_formatter()->formatLineItemDesc($line_item, $payment);
 	}
-
+	
 	/**
 	 * Gets the order description that should generlly be sent to gateways
      * @deprecated since 4.9.31 instead use $this->_get_gateway_formatter()->formatOrderDescription($payment)

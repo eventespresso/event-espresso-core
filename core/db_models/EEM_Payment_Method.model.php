@@ -344,7 +344,7 @@ class EEM_Payment_Method extends EEM_Base {
 		//give addons a chance to override what payment methods are chosen based on the transaction
 		return apply_filters(
 			'FHEE__EEM_Payment_Method__get_all_for_transaction__payment_methods',
-			$this->get_all_active( $scope ),
+			$this->get_all_active( $scope, array( 'group_by' => 'PMD_type' ) ),
 			$transaction,
 			$scope
 		);

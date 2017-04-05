@@ -180,7 +180,7 @@ class ExceptionStackTraceDisplay {
 		<br />';
 			}
 		// remove last linebreak
-		$output = substr( $output, 0, -7 );
+		$output = substr( $output, 0, count( $output ) - 7 );
 		if ( ! WP_DEBUG ) {
 			$output .= '
 	</p>';
@@ -297,7 +297,7 @@ class ExceptionStackTraceDisplay {
 	 *
 	 * @return string
 	 */
-	private function exceptionStyles() {
+	private static function exceptionStyles() {
 		return '
 <style type="text/css">
 	#ee-error-message {
@@ -363,7 +363,7 @@ class ExceptionStackTraceDisplay {
 	 * _print_scripts
 	 *
 	 * @param bool $force_print
-	 * @return string
+	 * @return string|void
 	 */
 	private function printScripts( $force_print = false ) {
 		if ( ! $force_print  && ( did_action( 'admin_enqueue_scripts' ) || did_action( 'wp_enqueue_scripts' ) ) ) {
