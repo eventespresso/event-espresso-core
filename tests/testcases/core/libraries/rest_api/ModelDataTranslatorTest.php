@@ -212,12 +212,20 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
     public function dataProviderForTestPrepareFieldValuesForJson()
     {
         $field = new EE_Maybe_Serialized_Simple_HTML_Field('whatever', 'whatever', true);
+        $datetime_field = new EE_Datetime_Field('whatever2', 'whatever2', true, EE_Datetime_Field::now);
         return array(
             array(null, new stdClass(), $field),
             array(array('obj' => null), array('obj' => new stdClass()), $field),
             array(array('foo' => 'bar'), array('foo' => 'bar'), $field),
             array(1, 1, $field),
             array('stringy', 'stringy', $field),
+            array(
+                '2016-01-03T00:00:00',
+                new \EventEspresso\core\domain\entities\DbSafeDateTime(
+                    '2016-01-03 00:00:00',
+                    new DateTimeZone('UTC')),
+                $datetime_field
+            )
         );
     }
 

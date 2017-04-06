@@ -679,6 +679,7 @@ class Read extends Base
      * @param EE_Model_Field_Base $field_obj
      * @param mixed $value as it's stored on a model object
      * @param string $format valid values are 'normal' (default), 'pretty', 'datetime_obj'
+     * @return mixed
      */
     protected function prepareFieldObjValueForJson(EE_Model_Field_Base $field_obj, $value, $format = 'normal'){
         switch($format){

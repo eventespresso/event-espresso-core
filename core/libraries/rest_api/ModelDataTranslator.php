@@ -93,28 +93,23 @@ class ModelDataTranslator
      */
     public static function prepareFieldValuesForJson($field_obj, $original_value_maybe_array, $request_version)
     {
-        //temporarily make sure the original value is an array. This just facilitates processing
-        $values_ready_for_walk = (array)$original_value_maybe_array;
-        array_walk_recursive(
-            $values_ready_for_walk,
-            function(&$value) use ($field_obj, $request_version){
-                //we don't send serialized data over the REST API. Sorry.
-                if(is_serialized($value) || is_object( $value)){
-                    $value = null;
-                }else {
-                    $value = ModelDataTranslator::prepareFieldValueForJson(
-                        $field_obj,
-                        $value,
-                        $request_version
-                    );
-                }
+        if(is_array($original_value_maybe_array)){
+            $new_value = array();
+            foreach( $original_value_maybe_array as $key => $value){
+                $new_value[$key] = ModelDataTranslator::prepareFieldValuesForJson($field_obj,$value, $request_version);
             }
-        );
-        //if the input wasn't an array, make sure we don't return an array
-        if (! is_array($original_value_maybe_array)) {
-            $values_ready_for_walk = reset($values_ready_for_walk);
+        }else{
+            $new_value = ModelDataTranslator::prepareFieldValueForJson(
+                $field_obj,
+                $original_value_maybe_array,
+                $request_version
+            );
         }
-        return $values_ready_for_walk;
+        //are we about to send an object? just don't. We have no good way to represent it in JSON.
+        if(is_serialized($new_value) || is_object( $new_value)){
+            $new_value = null;
+        }
+        return $new_value;
     }
 
 
