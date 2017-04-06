@@ -147,11 +147,15 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
 
     /**
      * @dataProvider dataProviderForTestPrepareFieldValueFromJsonOk
-     * @param $expected_result
-     * @param $inputted_json_value
+     * @param mixed $expected_result
+     * @param mixed $inputted_json_value
+     * @param EE_Model_Field_Base $field_obj
      * @group        9222
      */
-    public function testPrepareFieldValueFromJsonOk($expected_result, $inputted_json_value, $field_obj)
+    public function testPrepareFieldValueFromJsonOk(
+        $expected_result,
+            $inputted_json_value,
+            EE_Model_Field_Base $field_obj)
     {
         $this->assertEquals(
             $expected_result,
@@ -189,14 +193,49 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
     /**
      * @dataProvider dataProviderForTestPrepareFieldValueFromJsonBad
      * @expectedException EventEspresso\core\libraries\rest_api\RestException
-     * @param $expected_result
-     * @param $inputted_json_value
-     * @group        9222
+     * @param mixed $expected_result
+     * @param mixed $inputted_json_value
+     * @param EE_Model_Field_Base $field_obj
+     * @group 9222
      */
-    public function testPrepareFieldValueFromJsonBad($inputted_json_value, $field_obj)
+    public function testPrepareFieldValueFromJsonBad($inputted_json_value, EE_Model_Field_Base $field_obj)
     {
         //ok duck and cover! It's gonna blow!
         ModelDataTranslator::prepareFieldValueFromJson($field_obj, $inputted_json_value, '4.8.36');
+    }
+
+
+
+    /**
+     * @return array 1st item is the expected value, 2nd is the input, 3rd is the field object to use
+     */
+    public function dataProviderForTestPrepareFieldValuesForJson()
+    {
+        $field = new EE_Maybe_Serialized_Simple_HTML_Field('whatever', 'whatever', true);
+        return array(
+            array(null, new stdClass(), $field),
+            array(array('obj' => null), array('obj' => new stdClass()), $field),
+            array(array('foo' => 'bar'), array('foo' => 'bar'), $field),
+            array(1, 1, $field),
+            array('stringy', 'stringy', $field),
+        );
+    }
+
+
+
+    /**
+     * @group        9222
+     * @dataProvider dataProviderForTestPrepareFieldValuesForJson
+     * @param                     $expected
+     * @param                     $input
+     * @param EE_Model_Field_Base $field_obj
+     */
+    public function testPrepareFieldValuesForJson($expected, $input, $field_obj)
+    {
+        $this->assertEquals(
+            $expected,
+            ModelDataTranslator::prepareFieldValuesForJson($field_obj, $input, '4.8.36')
+        );
     }
 }
 
