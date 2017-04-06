@@ -160,9 +160,36 @@ class ModelDataTranslator
                 );
             $new_value = rest_parse_date($original_value . $offset_sign . $offset_string);
         } else {
+            //walk through the submitted data and double-check for serialized PHP. We never accept serialized PHP. No
+            // way Jose.
+            $original_value_as_array = (array)$original_value;
+            array_walk_recursive(
+                $original_value_as_array,
+                function($value,$key){
+                    ModelDataTranslator::throwExceptionIfSerialized($value);
+                    ModelDataTranslator::throwExceptionIfSerialized($key);
+                }
+            );
             $new_value = $original_value;
         }
         return $new_value;
+    }
+
+
+
+    /**
+     * Throws a RESTException if $value is a string of serialized PHP. Otherwise does nothing.
+     * @param mixed $value
+     * @throws RestException
+     */
+    protected static function throwExceptionIfSerialized($value)
+    {
+        if( is_serialized($value)){
+            throw new RestException(
+                'serialized_data_submission_prohibited',
+                esc_html__('You tried to submit a string of serialized text. Serialized PHP is prohibited over the EE4 REST API.', 'event_espresso')
+            );
+        }
     }
 
 

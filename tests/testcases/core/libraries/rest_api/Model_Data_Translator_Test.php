@@ -1,6 +1,6 @@
 <?php
-
 use EventEspresso\core\libraries\rest_api\ModelDataTranslator;
+
 /**
  *
  * Class Model_Data_Translator_Test
@@ -18,16 +18,7 @@ if( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
 }
 
-class Model_Data_Translator_Test extends EE_UnitTestCase{
-
-	public function setUp() {
-		parent::setUp();
-		if ( ! class_exists( 'WP_Rest_Request' ) ) {
-			$this->markTestSkipped(
-				'Test being run on a version of WP that does not have the REST framework installed'
-			);
-		}
-	}
+class Model_Data_Translator_Test extends  EE_REST_TestCase{
 
 	public function test_prepare_query_params_for_rest_api() {
 		$mysql_date = '2015-01-01 00:00:00';
@@ -115,6 +106,73 @@ class Model_Data_Translator_Test extends EE_UnitTestCase{
 			'Event.EVT_created',
 			ModelDataTranslator::removeGmtFromFieldName( 'Event.EVT_created' ) );
 	}
+
+
+
+    /**
+     * @return array first item is the expected value, 2nd is the input, 3rd is the field object to use
+     */
+	public function dataProviderForTestPrepareFieldValueFromJsonOk(){
+        $serialized_field = new EE_Maybe_Serialized_Simple_HTML_Field('whatever','Whatever',true);
+	    return array(
+	        array('1', '1', $serialized_field),
+            array('stringy', 'stringy', $serialized_field),
+            array(array('foo'=>'bar'),array('foo'=>'bar'), $serialized_field),
+        );
+    }
+
+
+
+    /**
+     * @dataProvider dataProviderForTestPrepareFieldValueFromJsonOk
+     * @param $expected_result
+     * @param $inputted_json_value
+     * @group 9222
+     */
+	public function testPrepareFieldValueFromJsonOk( $expected_result, $inputted_json_value, $field_obj){
+        $this->assertEquals(
+            $expected_result,
+            ModelDataTranslator::prepareFieldValueFromJson(
+                $field_obj,
+                $inputted_json_value,
+                '4.8.36'
+            )
+        );
+    }
+
+
+
+    /**
+     * @return array where the first item is value that would be retrieved from the request which should throw an
+     * exception. The 2nd item is an EE_Model_Field_Base child
+     */
+    public function dataProviderForTestPrepareFieldValueFromJsonBad(){
+        $serializable_field = new EE_Maybe_Serialized_Simple_HTML_Field('whatever','Whatever',true);
+        $text_field = new EE_Plain_Text_Field('whatever','whatever',true);
+        return array(
+            array('s:6:"foobar";', $serializable_field),//that's a serialized string alright!
+            array('O:4:"Evil":0:{}', $serializable_field),//that's a string with a serialized object of class "Evil"
+            array(array('s:6:"foobar";'), $serializable_field),//that's an array with a serialized string in it
+            array(array('s:6:"foobar";' => 1), $serializable_field),//that's an array with a serialized string as a key
+            array('O:4:"Evil":0:{}', $text_field),//double-check we don't even accept serialized text even on normal
+            // text fields. Theoretically these won't get unserialized, but I don't see much need for anyone to ever
+            // submit this kind of malicious junk, and having them sit around in our DB is dangerous
+        );
+    }
+
+
+
+    /**
+     * @dataProvider dataProviderForTestPrepareFieldValueFromJsonBad
+     * @expectedException EventEspresso\core\libraries\rest_api\RestException
+     * @param $expected_result
+     * @param $inputted_json_value
+     * @group 9222
+     */
+    public function testPrepareFieldValueFromJsonBad( $inputted_json_value, $field_obj){
+        //ok duck and cover! It's gonna blow!
+        ModelDataTranslator::prepareFieldValueFromJson($field_obj, $inputted_json_value, '4.8.36');
+    }
 }
 
 // Location: tests/testcases/core/libraries/rest_api/Model_Data_Translator_Test.php
