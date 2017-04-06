@@ -1,6 +1,7 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api\controllers\model;
 
+use EE_Model_Field_Base;
 use Exception;
 use WP_Error;
 use WP_REST_Request;
@@ -157,11 +158,11 @@ class Read extends Base
      * response.
      *
      * @param                      $field_name
-     * @param \EE_Model_Field_Base $field
+     * @param EE_Model_Field_Base $field
      * @param array                $schema
      * @return array
      */
-    protected function translateDefaultsForRestResponse($field_name, \EE_Model_Field_Base $field, array $schema)
+    protected function translateDefaultsForRestResponse($field_name, EE_Model_Field_Base $field, array $schema)
     {
         if (isset($schema['properties'][$field_name]['default'])) {
             if (is_array($schema['properties'][$field_name]['default'])) {
@@ -193,11 +194,11 @@ class Read extends Base
      * needs to be added to the schema.
      *
      * @param                      $field_name
-     * @param \EE_Model_Field_Base $field
+     * @param EE_Model_Field_Base $field
      * @param array                $schema
      * @return array
      */
-    protected function maybeAddExtraFieldsToSchema($field_name, \EE_Model_Field_Base $field, array $schema)
+    protected function maybeAddExtraFieldsToSchema($field_name, EE_Model_Field_Base $field, array $schema)
     {
         if ($field instanceof EE_Datetime_Field) {
             $schema['properties'][$field_name . '_gmt'] = $field->getSchema();
@@ -643,41 +644,61 @@ class Read extends Base
             $this->isSubclassOfOne($field_obj, $this->getModelVersionInfo()->fieldsThatHaveRenderedFormat())
             ) {
                 $result[$field_name] = array(
-                    'raw'      => $field_obj->prepare_for_get($field_value),
-                    'rendered' => $field_obj->prepare_for_pretty_echoing($field_value),
+                    'raw'      => $this->prepareFieldObjValueForJson($field_obj, $field_value),
+                    'rendered' => $this->prepareFieldObjValueForJson($field_obj, $field_value, 'pretty'),
                 );
             } elseif (
             $this->isSubclassOfOne($field_obj, $this->getModelVersionInfo()->fieldsThatHavePrettyFormat())
             ) {
                 $result[$field_name] = array(
-                    'raw'    => $field_obj->prepare_for_get($field_value),
-                    'pretty' => $field_obj->prepare_for_pretty_echoing($field_value),
+                    'raw'    => $this->prepareFieldObjValueForJson($field_obj, $field_value),
+                    'pretty' => $this->prepareFieldObjValueForJson($field_obj, $field_value, 'pretty'),
                 );
             } elseif ($field_obj instanceof \EE_Datetime_Field) {
                 if ($field_value instanceof \DateTime) {
                     $timezone = $field_value->getTimezone();
                     $field_value->setTimezone(new \DateTimeZone('UTC'));
-                    $result[$field_name . '_gmt'] = ModelDataTranslator::prepareFieldValueForJson(
-                        $field_obj,
-                        $field_value,
-                        $this->getModelVersionInfo()->requestedVersion()
-                    );
+                    $result[$field_name . '_gmt'] = $this->prepareFieldObjValueForJson($field_obj, $field_value, 'datetime_obj');
                     $field_value->setTimezone($timezone);
-                    $result[$field_name] = ModelDataTranslator::prepareFieldValueForJson(
-                        $field_obj,
-                        $field_value,
-                        $this->getModelVersionInfo()->requestedVersion()
-                    );
+                    $result[$field_name] = $this->prepareFieldObjValueForJson($field_obj, $field_value, 'datetime_obj');
                 }
             } else {
-                $result[$field_name] = ModelDataTranslator::prepareFieldValueForJson(
-                    $field_obj,
-                    $field_obj->prepare_for_get($field_value),
-                    $this->getModelVersionInfo()->requestedVersion()
-                );
+                $result[$field_name] = $this->prepareFieldObjValueForJson($field_obj, $field_value);
             }
         }
         return $result;
+    }
+
+
+
+    /**
+     * Takes a value all the way from the model object's representation, to the
+     * user-facing PHP representation, to the REST API representation. (Assumes you've already taken from the DB
+     * representation using $field_obj->prepare_for_set_from_db())
+     *
+     * @param EE_Model_Field_Base $field_obj
+     * @param mixed $value as it's stored on a model object
+     * @param string $format valid values are 'normal' (default), 'pretty', 'datetime_obj'
+     */
+    protected function prepareFieldObjValueForJson(EE_Model_Field_Base $field_obj, $value, $format = 'normal'){
+        switch($format){
+            case 'datetime_obj':
+                //leave the value as-is. It should already be a DateTime object
+                break;
+            case 'pretty':
+                $value = $field_obj->prepare_for_pretty_echoing($value);
+                break;
+            case 'normal':
+            default:
+                $value = $field_obj->prepare_for_get($value);
+                break;
+
+        }
+        return ModelDataTranslator::prepareFieldValuesForJson(
+            $field_obj,
+            $value,
+            $this->getModelVersionInfo()->requestedVersion()
+        );
     }
 
 
