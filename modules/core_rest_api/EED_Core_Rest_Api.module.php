@@ -597,15 +597,15 @@ class EED_Core_Rest_Api extends \EED_Module
         $params_for_delete = array(
             'allow_blocking' => array(
                 'required' => false,
-                'default' => true
+                'default' => true,
+                'type' => 'boolean'
             )
         );
-        if( $model instanceof \EEM_Soft_Delete_Base ){
-            $params_for_delete['force'] = array(
-                'required' => false,
-                'default' => false
-            );
-        }
+        $params_for_delete['force'] = array(
+            'required' => false,
+            'default' => false,
+            'type' => 'boolean'
+        );
 
         return apply_filters(
             'FHEE__EED_Core_Rest_Api___get_delete_query_params',

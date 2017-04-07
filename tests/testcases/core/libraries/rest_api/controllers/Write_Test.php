@@ -60,6 +60,7 @@ class Write_Test extends \EE_REST_TestCase
 
     /**
      * @group 9222
+     * @group current
      */
     public function test_insert_utc_and_relative_times()
     {
@@ -112,6 +113,34 @@ class Write_Test extends \EE_REST_TestCase
         $response_data = $response->get_data();
         $this->assertTrue(empty($response_data['code']));
         $this->assertEquals('2016-01-03T00:00:00', $response_data['DTT_EVT_start']);
+    }
+
+    /**
+     * @group 9222
+     */
+    public function test_insert__then_use_querystring()
+    {
+        $this->_authenticate_an_admin();
+        $event = $this->new_model_obj_with_dependencies('Event');
+        $req = new \WP_REST_Request(
+            'POST',
+            '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/datetimes'
+        );
+        $req->set_body_params(
+            array(
+                'EVT_ID' => $event->ID(),
+                'DTT_EVT_start_gmt' => '2016-01-02T00:00:00',
+            )
+        );
+        $req->set_query_params(
+            array(
+                'include' => 'Event.EVT_ID'
+            )
+        );
+        $response = rest_do_request($req);
+        $response_data = $response->get_data();
+        $this->assertTrue(empty($response_data['code']));
+        $this->assertEquals($event->ID(), $response_data['Event']['EVT_ID']);
     }
 
 

@@ -201,7 +201,7 @@ class Write extends Base
                 sprintf(__('Could not insert new %1$s', 'event_espresso'), $model->get_this_model_name())
             );
         }
-        return $this->returnModelObjAsJsonResponse($model_obj);
+        return $this->returnModelObjAsJsonResponse($model_obj, $request);
     }
 
 
@@ -243,7 +243,7 @@ class Write extends Base
         );
         $model_obj = $model->get_one_by_ID($obj_id);
         $model_obj->save($model_data);
-        return $this->returnModelObjAsJsonResponse($model_obj);
+        return $this->returnModelObjAsJsonResponse($model_obj, $request);
     }
 
 
@@ -293,10 +293,11 @@ class Write extends Base
     /**
      * Returns an array ready to be converted into a JSON response, based solely on the model object
      *
-     * @param \EE_Base_Class $model_obj
+     * @param EE_Base_Class $model_obj
+     * @param WP_REST_Request $request
      * @return array ready for a response
      */
-    protected function returnModelObjAsJsonResponse(EE_Base_Class $model_obj)
+    protected function returnModelObjAsJsonResponse(EE_Base_Class $model_obj, WP_REST_Request $request)
     {
         $model = $model_obj->get_model();
         //create an array exactly like the wpdb results row, so we can pass it to controllers/model/Read::create_entity_from_wpdb_result()
@@ -312,9 +313,13 @@ class Write extends Base
         $read_controller = new Read();
         $read_controller->setRequestedVersion($this->getRequestedVersion());
         //the simulates request really doesn't need any info downstream
-        $simulated_request = new WP_REST_Request('GET');
-        return $read_controller->createEntityFromWpdbResult($model_obj->get_model(), $simulated_db_row,
-            $simulated_request);
+        $simualted_request = new WP_REST_Request('GET');
+        $simualted_request->set_query_params($request->get_query_params());
+        return $read_controller->createEntityFromWpdbResult(
+            $model_obj->get_model(),
+            $simulated_db_row,
+            $simualted_request
+        );
     }
 
 
