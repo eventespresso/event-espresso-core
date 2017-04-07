@@ -136,6 +136,15 @@ will request a collection events, and will return a response something like this
 
 Some fields in Event Espresso can represent infinity, which isn't part of the JSON specification. So when fields have this value, they will instead return the special value: -1 for any requests to EE namespaces before 4.8.36, and NULL for requests to EE namespace 4.8.36 or later (this change was made because -1 can be ambiguous).
 
+###Serialized PHP Objects in Responses Replaced with Null
+
+There are some database columns where we store serialized PHP objects, but when reading that data over the EE4 REST 
+API, those serialized PHP objects are replaced with `null`. This is because there is no good way to represent them in
+JSON anyway. Also, we plan to remove these serialized PHP objects from our database (for this reason, and others). So
+ you should not encounter this situation very frequently, and even less frequently in the future. 
+ 
+However, we will continue to store serialized arrays in our database. These are represented as JSON objects or arrays.
+
 ### Datetimes and Timezones
 Since 4.9.0, all datetimes returned in the EE4 REST API are in the site's default timezone (see the [site_info endpoint](https://github.com/eventespresso/event-espresso-core/blob/master/docs/C--REST-API/ee4-rest-api-introduction.md#site-info)  to find which timezone that is). This is usually the timezone you want to display to users, and their input to you will usually be in this timezone too.
 
