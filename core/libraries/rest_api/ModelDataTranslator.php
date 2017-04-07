@@ -162,14 +162,7 @@ class ModelDataTranslator
         } else {
             //walk through the submitted data and double-check for serialized PHP. We never accept serialized PHP. No
             // way Jose.
-            $original_value_as_array = (array)$original_value;
-            array_walk_recursive(
-                $original_value_as_array,
-                function($value,$key){
-                    ModelDataTranslator::throwExceptionIfSerialized($value);
-                    ModelDataTranslator::throwExceptionIfSerialized($key);
-                }
-            );
+            ModelDataTranslator::throwExceptionIfContainsSerializedData($original_value);
             $new_value = $original_value;
         }
         return $new_value;
@@ -178,17 +171,29 @@ class ModelDataTranslator
 
 
     /**
-     * Throws a RESTException if $value is a string of serialized PHP. Otherwise does nothing.
-     * @param mixed $value
+     * Throws an exception if $data is a serialized PHP string (or somehow an actualy PHP object, although I don't
+     * think that can happen). If $data is an array, recurses into its keys and values
+     * @param mixed $data
      * @throws RestException
+     * @return void
      */
-    protected static function throwExceptionIfSerialized($value)
+    protected static function throwExceptionIfContainsSerializedData($data)
     {
-        if( is_serialized($value)){
-            throw new RestException(
-                'serialized_data_submission_prohibited',
-                esc_html__('You tried to submit a string of serialized text. Serialized PHP is prohibited over the EE4 REST API.', 'event_espresso')
-            );
+        if (is_array($data)) {
+            foreach ($data as $key => $value) {
+                ModelDataTranslator::throwExceptionIfContainsSerializedData($key);
+                ModelDataTranslator::throwExceptionIfContainsSerializedData($value);
+            }
+        } else {
+            if (is_serialized($data) || is_object($data)) {
+                throw new RestException(
+                    'serialized_data_submission_prohibited',
+                    esc_html__(
+                        'You tried to submit a string of serialized text. Serialized PHP is prohibited over the EE4 REST API.',
+                        'event_espresso'
+                    )
+                );
+            }
         }
     }
 
