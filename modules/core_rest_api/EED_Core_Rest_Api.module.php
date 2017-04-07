@@ -570,9 +570,13 @@ class EED_Core_Rest_Api extends \EED_Module
                 ),
                 'calculate' => array(
                     'required' => false,
-                    'default'  => '',
+                    'default'  => null,
                     'enum'     => self::$_field_calculator->retrieveCalculatedFieldsForModel($model),
-                    'type' => 'string'
+                    'type' => 'string',
+                    //because we accept a CSV'd list of the enumerated strings, WP core validation and sanitization
+                    //freaks out. We'll just validate this argument while handling the request
+                    'validate_callback' => null,
+                    'sanitize_callback' => null,
                 ),
             ),
             $model,
