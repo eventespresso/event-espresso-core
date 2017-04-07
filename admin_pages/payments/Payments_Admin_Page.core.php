@@ -450,16 +450,12 @@ class Payments_Admin_Page extends EE_Admin_Page
                 'subsections'     => apply_filters(
                     'FHEE__Payments_Admin_Page___generate_payment_method_settings_form__form_subsections',
                     array(
-                        'pci_dss_compliance_' . $payment_method->slug() => $this->_pci_dss_compliance($payment_method),
-                        'currency_support_'
-                        . $payment_method->slug()                       => $this->_currency_support($payment_method),
-                        'payment_method_settings_'
-                        . $payment_method->slug()                       => $this->_payment_method_settings($payment_method),
-                        'update_'
-                        . $payment_method->slug()                       => $this->_update_payment_method_button($payment_method),
-                        'deactivate_'
-                        . $payment_method->slug()                       => $this->_deactivate_payment_method_button($payment_method),
-                        'fine_print_' . $payment_method->slug()         => $this->_fine_print(),
+                        'pci_dss_compliance'      => $this->_pci_dss_compliance($payment_method),
+                        'currency_support'        => $this->_currency_support($payment_method),
+                        'payment_method_settings' => $this->_payment_method_settings($payment_method),
+                        'update'                  => $this->_update_payment_method_button($payment_method),
+                        'deactivate'              => $this->_deactivate_payment_method_button($payment_method),
+                        'fine_print'              => $this->_fine_print(),
                     ),
                     $payment_method
                 ),
@@ -803,14 +799,13 @@ class Payments_Admin_Page extends EE_Admin_Page
             }
             $correct_pmt_form_to_use->receive_form_submission($this->_req_data);
             if ($correct_pmt_form_to_use->is_valid()) {
-                $subsection_name = 'payment_method_settings_' . $payment_method->slug();
-                $payment_settings_subform = $correct_pmt_form_to_use->get_subsection($subsection_name);
+                $payment_settings_subform = $correct_pmt_form_to_use->get_subsection('payment_method_settings');
                 if (! $payment_settings_subform instanceof EE_Payment_Method_Form) {
                     throw new EE_Error(
                         sprintf(
                             __('The payment method could not be saved because the form sections were misnamed. We expected to find %1$s, but did not.',
                                 'event_espresso'),
-                            $subsection_name
+                            'payment_method_settings'
                         )
                     );
                 }

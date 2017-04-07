@@ -1,7 +1,5 @@
 <?php
 
-
-
 /**
  * For containing info about a non-field form section, which contains other form sections/fields.
  * Relies heavily on the script form_section_validation.js for client-side validation, mostly
@@ -115,9 +113,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
         $this->_layout_strategy->_construct_finalize($this);
         //ok so we are definitely going to want the forms JS,
         //so enqueue it or remember to enqueue it during wp_enqueue_scripts
-        if (did_action('wp_enqueue_scripts')
-            || did_action('admin_enqueue_scripts')
-        ) {
+        if (did_action('wp_enqueue_scripts') || did_action('admin_enqueue_scripts')) {
             //ok so they've constructed this object after when they should have.
             //just enqueue the generic form scripts and initialize the form immediately in the JS
             \EE_Form_Section_Proper::wp_enqueue_scripts(true);
@@ -126,6 +122,19 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
             add_action('admin_enqueue_scripts', array('EE_Form_Section_Proper', 'wp_enqueue_scripts'));
         }
         add_action('wp_footer', array($this, 'ensure_scripts_localized'), 1);
+
+        /**
+         * Gives other plugins a chance to hook in before construct finalize is called. The form probably doesn't
+         * yet have a parent form section. Since 4.9.32, when this action was introduced, this is the best place to
+         * add a subsection onto a form, assuming you don't care what the form section's name, HTML ID, or HTML name etc are.
+         * Also see AHEE__EE_Form_Section_Proper___construct_finalize__end
+         * @since 4.9.32
+         * @param EE_Form_Section_Proper $this before __construct is done, but all of its logic, except maybe calling
+         *                                      _construct_finalize has been done
+         * @param array $options_array options passed into the constructor
+         */
+        do_action('AHEE__EE_Form_Input_Base___construct__before_construct_finalize_called', $this, $options_array);
+
         if (isset($options_array['name'])) {
             $this->_construct_finalize(null, $options_array['name']);
         }
@@ -160,6 +169,17 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
                 );
             }
         }
+        /**
+         * Action performed just after form has been given a name (and HTML ID etc) and is fully constructed.
+         * If you have code that should modify the form and needs it and its subsections to have a name, HTML ID (or other attributes derived
+         * from the name like the HTML label id, etc), this is where it should be done.
+         * This might only happen just before displaying the form, or just before it receives form submission data.
+         * If you need to modify the form or its subsections before _construct_finalize is called on it (and we've
+         * ensured it has a name, HTML IDs, etc
+         * @param EE_Form_Section_Proper $this
+         * @param EE_Form_Section_Proper|null $parent_form_section
+         * @param string $name
+         */
         do_action('AHEE__EE_Form_Section_Proper___construct_finalize__end', $this, $parent_form_section, $name);
     }
 
@@ -334,7 +354,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      */
     public function populate_defaults($default_data)
     {
-        foreach ($this->subsections() as $subsection_name => $subsection) {
+        foreach ($this->subsections(false) as $subsection_name => $subsection) {
             if (isset($default_data[$subsection_name])) {
                 if ($subsection instanceof EE_Form_Input_Base) {
                     $subsection->set_default($default_data[$subsection_name]);
@@ -567,7 +587,9 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
         if ($display_previously_submitted_data) {
             $this->populate_from_session();
         }
-        return $this->_layout_strategy->layout_form();
+        return $this->_form_html_filter
+            ? $this->_form_html_filter->filterHtml($this->_layout_strategy->layout_form(), $this)
+            : $this->_layout_strategy->layout_form();
     }
 
 
@@ -923,11 +945,19 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      * Consider using inputs() or subforms()
      * if you only want form inputs or proper form sections.
      *
+     * @param boolean $require_construction_to_be_finalized most client code should
+     *                                                      leave this as TRUE so that the inputs will be properly
+     *                                                      configured. However, some client code may be ok with
+     *                                                      construction finalize being called later
+     *                                                      (realizing that the subsections' html names might not be
+     *                                                      set yet, etc.)
      * @return EE_Form_Section_Proper[]
      */
-    public function subsections()
+    public function subsections($require_construction_to_be_finalized = true)
     {
-        $this->ensure_construct_finalized_called();
+        if ($require_construction_to_be_finalized) {
+            $this->ensure_construct_finalized_called();
+        }
         return $this->_subsections;
     }
 

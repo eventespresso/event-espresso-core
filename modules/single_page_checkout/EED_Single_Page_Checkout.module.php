@@ -420,7 +420,7 @@ class EED_Single_Page_Checkout extends EED_Module
         // and remove the page id from the query args (we will re-add it later)
         unset($query_args['page_id']);
         // now strip all query args from current request URI
-        $current_request_uri = remove_query_arg(array_flip($query_args), $current_request_uri);
+        $current_request_uri = remove_query_arg(array_keys($query_args), $current_request_uri);
         // and re-add the page id if it was set
         if ($page_id) {
             $current_request_uri = add_query_arg('page_id', $page_id, $current_request_uri);
@@ -706,6 +706,7 @@ class EED_Single_Page_Checkout extends EED_Module
      */
     private function _load_and_instantiate_reg_steps()
     {
+        do_action('AHEE__Single_Page_Checkout___load_and_instantiate_reg_steps__start', $this->checkout);
         // have reg_steps already been instantiated ?
         if (
             empty($this->checkout->reg_steps)
@@ -771,6 +772,13 @@ class EED_Single_Page_Checkout extends EED_Module
                 $this->checkout->reg_url_link
                 && $this->checkout->step !== $reg_step['slug']
                 && $reg_step['slug'] !== 'finalize_registration'
+                // normally at this point we would NOT load the reg step, but this filter can change that
+                && apply_filters(
+                    'FHEE__Single_Page_Checkout___load_and_instantiate_reg_step__bypass_reg_step',
+                    true,
+                    $reg_step,
+                    $this->checkout
+                )
             ) {
                 return true;
             }

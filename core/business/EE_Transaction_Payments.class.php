@@ -232,12 +232,9 @@ class EE_Transaction_Payments {
 					$registration = $registration_payment->registration();
 					if ( $registration instanceof EE_Registration ) {
 						$registration->set_paid( $registration->paid() - $amount_paid );
-						if ( $registration->save() ) {
-							if ( $registration_payment->delete() ) {
-								$registration->_remove_relation_to( $payment, 'Payment' );
-								$payment->_remove_relation_to( $registration, 'Registration' );
-							}
-							$save_payment = true;
+						if ($registration->save() !== false) {
+						    $registration_payment->delete_permanently();
+                            $save_payment = true;
 						}
 					} else {
 						EE_Error::add_error(
