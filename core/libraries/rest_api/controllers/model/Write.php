@@ -350,6 +350,7 @@ class Write extends Base
                 'include' => $request->get_param('include'),
             )
         );
+        $get_request->set_query_params($request->get_query_params());
         $read_controller = new Read();
         $read_controller->setRequestedVersion($this->getRequestedVersion());
         return $read_controller->getEntityFromModel($model, $get_request);
