@@ -76,11 +76,11 @@ To create a new entry, send a `POST` request to the resource's collection route.
 You only need to provide the arguments which have `required: true` (see (Discovering What Arguments I Need to Provide)[##Discovering What Arguments I Need to Provide]).
 
 For example, here is a screenshot from Postman, where a POST request created a new answer with value "Alderan" 
-![POSTing an Answer with a String value](https://drive.google.com/a/eventespresso.com/file/d/0B5P8GXTvZgfManNhMjVVR1ZGNXM/view?usp=sharing)
+![POSTing an Answer with a String value](../images/postman-post-single-value.JPG)
 
 Here is another screenshot from Postman, where a POST request created a new answer with two values: "option1" and 
 "option2":
-![POSTing an Answer with an Array of values](https://drive.google.com/file/d/0B5P8GXTvZgfMWHlOelY1Yk1aaUU/view?usp=sharing)
+![POSTing an Answer with an Array of values](../images/postman-post-multiple-values.JPG)
 
 After a successfully posting a new item, it is immediately returned in the response. Note: you can include a querystring on these requests too, to modify
 what data is returned, just like a normal GET request. See [our section on reading data](ee4-rest-api-reading-data.md).
@@ -93,7 +93,7 @@ To update an entity, send a `PUT` or `PATCH` request to the entity's route. E.g.
  Also importantly: you do not have to provide all arguments when updating an entity. Any arguments not provided with no be updated. 
  
 For example, here we only update the answer's `ANS_value`, while leaving the `REG_ID` and `QST_ID` unchanged:
-![PUTting an Answer](https://drive.google.com/file/d/0B5P8GXTvZgfMcmRoUUJBc0NzZWs/view?usp=sharing)
+![PUTting an Answer](../images/postman-put.JPG)
 
 ** Gotcha! ** `PUT` and `DELETE` requests need to use the `x-www-form-urlencoded` option. See [the related GitHub](https://github.com/WP-API/WP-API/issues/2451).
 
@@ -107,7 +107,7 @@ To trash/archive/soft-delete an entity, send a `DELETE` request to teh entity's 
  
 For example, here is a request that trashed an event:
  
- ![Trashed Event](https://drive.google.com/file/d/0B5P8GXTvZgfMRGVBR1JweXgzaDg/view?usp=sharing)
+ ![Trashed Event](../images/postman-delete.JPG)
 
 Notice that the response returns the updated entity. This is different from permanent deletions.
  
@@ -123,7 +123,7 @@ On events, venues, and attendees, "trashing" an event changes their status to "t
 If you want to permanently delete the entity, you need to 
 provide the `force` argument and set it to `true` ("permanent" may have been a better name for this argument, but we used this for sake of consistency with the WP API's core routes).
 
-![Delted Event](https://drive.google.com/file/d/0B5P8GXTvZgfMRWNRMVA1dnBYRk0/view?usp=sharing)
+![Deleted Event](../images/postman-delete-force.JPG)
 
 Notice that the response contains `success`, indicating whether the entity was successfully removed from the database or not. It also contains `previous`, which is the entity
 before it was deleted (which no longer exists).
