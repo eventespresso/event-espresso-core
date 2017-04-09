@@ -1,7 +1,7 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api;
 
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
+if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
 
@@ -236,8 +236,8 @@ class Model_Data_Translator
                 $model
             );
             //double-check is it a *_gmt field?
-            if ( ! $field instanceof \EE_Model_Field_Base
-                 && Model_Data_Translator::is_gmt_date_field_name($query_param_sans_stars)
+            if (! $field instanceof \EE_Model_Field_Base
+                && Model_Data_Translator::is_gmt_date_field_name($query_param_sans_stars)
             ) {
                 //yep, take off '_gmt', and find the field
                 $query_param_key = Model_Data_Translator::remove_gmt_from_field_name($query_param_sans_stars);
@@ -302,7 +302,7 @@ class Model_Data_Translator
      */
     public static function remove_gmt_from_field_name($field_name)
     {
-        if ( ! Model_Data_Translator::is_gmt_date_field_name($field_name)) {
+        if (! Model_Data_Translator::is_gmt_date_field_name($field_name)) {
             return $field_name;
         }
         $query_param_sans_stars = Model_Data_Translator::remove_stars_and_anything_after_from_condition_query_param_key($field_name);
