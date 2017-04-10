@@ -2453,6 +2453,14 @@ class EE_Registration_Config extends EE_Config_Base
     protected $track_invalid_checkout_access = true;
 
 
+    /**
+     * For new events, this will be the default value for the maximum number of tickets (equivalent to maximum number of
+     * registrations)
+     * @var int
+     */
+    protected $default_maximum_number_of_tickets;
+
+
 
     /**
      *    class constructor
@@ -2477,6 +2485,7 @@ class EE_Registration_Config extends EE_Config_Base
         $this->recaptcha_publickey = null;
         $this->recaptcha_privatekey = null;
         $this->recaptcha_width = 500;
+        $this->default_maximum_number_of_tickets = 10;
     }
 
 
