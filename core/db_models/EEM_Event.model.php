@@ -229,7 +229,7 @@ class EEM_Event extends EEM_CPT_Base
                 true,
                 self::$_default_additional_limit
             );
-            self::$_instance->_fields['Event_Meta']['EVT_additional_limit']->construct_finalize(
+            self::$_instance->_fields['Event_Meta']['EVT_additional_limit']->_construct_finalize(
                 'Event_Meta',
                 'EVT_additional_limit',
                 'EEM_Event'
