@@ -95,7 +95,7 @@ To update an entity, send a `PUT` or `PATCH` request to the entity's route. E.g.
 For example, here we only update the answer's `ANS_value`, while leaving the `REG_ID` and `QST_ID` unchanged:
 ![PUTting an Answer](../images/postman-put.JPG)
 
-** Gotcha! ** `PUT` and `DELETE` requests need to use the `x-www-form-urlencoded` option. See [the related GitHub](https://github.com/WP-API/WP-API/issues/2451).
+**Gotcha!** `PUT` and `DELETE` requests need to use the `x-www-form-urlencoded` option. See [the related GitHub issue](https://github.com/WP-API/WP-API/issues/2451).
 
 # Deleting
 
@@ -118,7 +118,7 @@ On events, venues, and attendees, "trashing" an event changes their status to "t
  
  However, not all EE4 resources can be trashed. For these you need to specify a permanent deletion, as explained below.
  
- ## Permanent/Hard Deleting
+## Permanent/Hard Deleting
  
 If you want to permanently delete the entity, you need to 
 provide the `force` argument and set it to `true` ("permanent" may have been a better name for this argument, but we used this for sake of consistency with the WP API's core routes).
