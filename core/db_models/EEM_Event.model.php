@@ -41,6 +41,13 @@ class EEM_Event extends EEM_CPT_Base
 
 
     /**
+     * This is the default for the additional limit field.
+     * @var int
+     */
+    protected static $_default_additional_limit = 10;
+
+
+    /**
      * private instance of the Event object
      *
      * @var EEM_Event
@@ -147,8 +154,12 @@ class EEM_Event extends EEM_CPT_Base
                     __('Display Ticket Selector Flag', 'event_espresso'), false, 1),
                 'EVT_visible_on'                  => new EE_Datetime_Field('EVT_visible_on',
                     __('Event Visible Date', 'event_espresso'), true, EE_Datetime_Field::now),
-                'EVT_additional_limit'            => new EE_Integer_Field('EVT_additional_limit',
-                    __('Limit of Additional Registrations on Same Transaction', 'event_espresso'), true, 10),
+                'EVT_additional_limit'            => new EE_Integer_Field(
+                    'EVT_additional_limit',
+                    __('Limit of Additional Registrations on Same Transaction', 'event_espresso'),
+                    true,
+                    self::$_default_additional_limit
+                ),
                 'EVT_default_registration_status' => new EE_Enum_Text_Field(
                     'EVT_default_registration_status',
                     __('Default Registration Status on this Event', 'event_espresso'), false,
@@ -201,6 +212,30 @@ class EEM_Event extends EEM_CPT_Base
             self::$_instance->_fields['Event_Meta']['EVT_default_registration_status']->_construct_finalize('Event_Meta',
                 'EVT_default_registration_status', 'EEM_Event');
         }
+    }
+
+
+    /**
+     * Used to override the default for the additional limit field.
+     * @param $additional_limit
+     */
+    public static function set_default_additional_limit($additional_limit)
+    {
+        self::$_default_additional_limit = (int) $additional_limit;
+        if (self::$_instance instanceof EEM_Event) {
+            self::$_instance->_fields['Event_Meta']['EVT_additional_limit'] = new EE_Integer_Field(
+                'EVT_additional_limit',
+                __('Limit of Additional Registrations on Same Transaction', 'event_espresso'),
+                true,
+                self::$_default_additional_limit
+            );
+            self::$_instance->_fields['Event_Meta']['EVT_additional_limit']->construct_finalize(
+                'Event_Meta',
+                'EVT_additional_limit',
+                'EEM_Event'
+            );
+        }
+
     }
 
 
