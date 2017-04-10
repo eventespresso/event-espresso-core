@@ -45,7 +45,7 @@ class EE_Int_Normalization extends EE_Normalization_Strategy_Base
                 )
             );
         }
-        $value_to_normalize = (int)filter_var(
+        $value_to_normalize = filter_var(
             $value_to_normalize,
             FILTER_SANITIZE_NUMBER_FLOAT,
             FILTER_FLAG_ALLOW_FRACTION
