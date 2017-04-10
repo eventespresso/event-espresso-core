@@ -15,6 +15,14 @@
 class EE_Int_Normalization extends EE_Normalization_Strategy_Base
 {
 
+    /*
+     * regex pattern that matches for the following:
+     *      * optional negative sign
+     *      * one or more digits
+     */
+    const REGEX = '/^(-?)(\d+)$/';
+
+
     /**
      * @param string $value_to_normalize
      * @return int|mixed|string
@@ -37,12 +45,16 @@ class EE_Int_Normalization extends EE_Normalization_Strategy_Base
                 )
             );
         }
-        $value_to_normalize = EEH_Money::strip_localized_money_formatting($value_to_normalize);
+        $value_to_normalize = (int)filter_var(
+            $value_to_normalize,
+            FILTER_SANITIZE_NUMBER_FLOAT,
+            FILTER_FLAG_ALLOW_FRACTION
+        );
         if($value_to_normalize === ''){
             return null;
         }
         $matches = array();
-        if (preg_match('/^(-?)(\d+)$/', $value_to_normalize, $matches)) {
+        if (preg_match(EE_Int_Normalization::REGEX, $value_to_normalize, $matches)) {
             if (count($matches) === 3) {
                 // if first match is the negative sign,
                 // then the number needs to be multiplied by -1 to remain negative
@@ -78,7 +90,7 @@ class EE_Int_Normalization extends EE_Normalization_Strategy_Base
      */
     public function unnormalize($normalized_value)
     {
-        if ($normalized_value === null) {
+        if ($normalized_value === null || $normalized_value === '') {
             return '';
         }
         if (empty($normalized_value)) {

@@ -15,6 +15,14 @@
 class EE_Float_Normalization extends EE_Normalization_Strategy_Base
 {
 
+    /*
+     * regex pattern that matches for the following:
+     *      * optional negative sign
+     *      * one or more digits or decimals
+     */
+    const REGEX = '/^(-?)([\d.]+)$/';
+
+
     /**
      * @param string $value_to_normalize
      * @return float
@@ -37,11 +45,15 @@ class EE_Float_Normalization extends EE_Normalization_Strategy_Base
                 )
             );
         }
-        $normalized_value = EEH_Money::strip_localized_money_formatting($value_to_normalize);
+        $normalized_value = filter_var(
+            $value_to_normalize,
+            FILTER_SANITIZE_NUMBER_FLOAT,
+            FILTER_FLAG_ALLOW_FRACTION
+        );
         if($normalized_value === ''){
             return null;
         }
-        if (preg_match('/(-?)([\d.]+)/', $normalized_value, $matches)) {
+        if (preg_match(EE_Float_Normalization::REGEX, $normalized_value, $matches)) {
             if (count($matches) === 3) {
                 // if first match is the negative sign,
                 // then the number needs to be multiplied by -1 to remain negative
@@ -80,7 +92,7 @@ class EE_Float_Normalization extends EE_Normalization_Strategy_Base
         if (empty($normalized_value)) {
             return '0.00';
         }
-        return "$normalized_value";
+        return "{$normalized_value}";
     }
 }
 
