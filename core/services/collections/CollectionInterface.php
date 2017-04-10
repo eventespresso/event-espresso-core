@@ -159,6 +159,12 @@ interface CollectionInterface {
 	public function removeAt( $index ) ;
 
 
+
+    /**
+     * Removes ALL objects from the Collection
+     */
+    public function reset();
+
 }
 // End of file CollectionInterface.php
 // Location: /CollectionInterface.php
