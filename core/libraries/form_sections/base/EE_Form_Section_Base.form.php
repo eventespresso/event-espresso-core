@@ -1,4 +1,6 @@
 <?php
+use EventEspresso\core\libraries\form_sections\strategies\filter\FormHtmlFilter;
+
 if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
@@ -78,6 +80,13 @@ abstract class EE_Form_Section_Base
      */
     protected $_construction_finalized;
 
+    /**
+     * Strategy for parsing the form HTML upon display
+     *
+     * @var FormHtmlFilter
+     */
+    protected $_form_html_filter;
+
 
 
     /**
@@ -94,6 +103,10 @@ abstract class EE_Form_Section_Base
             if (property_exists($this, $key) && empty($this->{$key})) {
                 $this->{$key} = $value;
             }
+        }
+        // set parser which allows the form section's rendered HTML to be filtered
+        if (isset($options_array['form_html_filter']) && $options_array['form_html_filter'] instanceof FormHtmlFilter) {
+            $this->_form_html_filter = $options_array['form_html_filter'];
         }
     }
 

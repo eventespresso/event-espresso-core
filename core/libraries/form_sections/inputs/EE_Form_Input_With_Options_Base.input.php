@@ -104,6 +104,7 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base
         //d( $this->_options );
         $select_option_keys = array_keys($this->_options);
         // attempt to determine data type for values in order to set normalization type
+        //purposefully only
         if (
             count($this->_options) === 2
             && (
@@ -114,15 +115,20 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base
             // values appear to be boolean, like TRUE, FALSE, 1, 0
             $normalization = new EE_Boolean_Normalization();
         } else {
-            //are ALL the options ints? If so use int validation
+            //are ALL the options ints (even if we're using a multi-dimensional array)? If so use int validation
             $all_ints = true;
-            foreach ($select_option_keys as $value) {
-                //allow for a default value which may be empty.
-                if ( ! is_int($value) && $value !== '' && $value !== null) {
-                    $all_ints = false;
-                    break;
+            array_walk_recursive(
+                $this->_options,
+                function($value,$key) use (&$all_ints){
+                    //is this a top-level key? ignore it
+                    if(! is_array($value)
+                        && ! is_int($key)
+                       && $key !== ''
+                       && $key !== null){
+                        $all_ints = false;
+                    }
                 }
-            }
+            );
             if ($all_ints) {
                 $normalization = new EE_Int_Normalization();
             } else {
