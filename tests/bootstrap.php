@@ -46,6 +46,9 @@ EE_Dependency_Map::register_dependencies(
 EE_Dependency_Map::register_class_loader( 'Session_Mock' );
 EE_Registry::instance()->SSN = EE_Registry::instance()->load_core( 'EE_Session_Mock' );
 
+// turn off caching for any loaders in use
+add_filter('FHEE__EventEspresso\core\services\loaders\CachingLoader__load__bypass_cache', '__return_true', 1);
+
 //Load the EE_specific testing tools
 require EE_TESTS_DIR . 'includes/EE_UnitTestCase.class.php';
 require EE_TESTS_DIR . 'includes/EE_REST_TestCase.php';
