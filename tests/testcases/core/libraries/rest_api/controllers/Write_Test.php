@@ -140,7 +140,7 @@ class Write_Test extends \EE_REST_TestCase
         $response = rest_do_request($req);
         $response_data = $response->get_data();
         $this->assertTrue(empty($response_data['code']));
-        $this->assertEquals($event->ID(), $response_data['Event']['EVT_ID']);
+        $this->assertEquals($event->ID(), $response_data['event']['EVT_ID']);
     }
 
 
