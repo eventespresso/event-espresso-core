@@ -2259,35 +2259,65 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      */
     protected function _default_event_settings()
     {
-        $this->_template_args['values'] = $this->_yes_no_values;
-        $this->_template_args['reg_status_array'] = EEM_Registration::reg_status_array(
-        // exclude array
+        $this->_set_add_edit_form_tags('update_default_event_settings');
+        $this->_set_publish_post_box_vars(null, false, false, null, false);
+        $this->_template_args['admin_page_content'] = $this->_default_event_settings_form()->get_html();
+        $this->display_admin_page_with_sidebar();
+    }
+
+
+
+
+    protected function _default_event_settings_form()
+    {
+        $registration_config = EE_Registry::instance()->CFG->registration;
+        $registration_stati_for_selection = EEM_Registration::reg_status_array(
+        //exclude
             array(
                 EEM_Registration::status_id_cancelled,
                 EEM_Registration::status_id_declined,
                 EEM_Registration::status_id_incomplete,
                 EEM_Registration::status_id_wait_list,
             ),
-            // translated
             true
         );
-        $this->_template_args['default_reg_status'] = isset(
-                                                          EE_Registry::instance()->CFG->registration->default_STS_ID
-                                                      )
-                                                      && array_key_exists(
-                                                          EE_Registry::instance()->CFG->registration->default_STS_ID,
-                                                          $this->_template_args['reg_status_array']
-                                                      )
-            ? sanitize_text_field(EE_Registry::instance()->CFG->registration->default_STS_ID)
-            : EEM_Registration::status_id_pending_payment;
-        $this->_set_add_edit_form_tags('update_default_event_settings');
-        $this->_set_publish_post_box_vars(null, false, false, null, false);
-        $this->_template_args['admin_page_content'] = EEH_Template::display_template(
-            EVENTS_TEMPLATE_PATH . 'event_settings.template.php',
-            $this->_template_args,
-            true
+        return new EE_Form_Section_Proper(
+            array(
+                'name' => 'update_default_event_settings',
+                'html_id' => 'update_default_event_settings',
+                'html_class' => 'form-table',
+                'layout_strategy' => new EE_Admin_Two_Column_Layout(),
+                'subsections' => apply_filters(
+                    'FHEE__Events_Admin_Page___default_event_settings_form__form_subsections',
+                    array(
+                        'default_reg_status' => new EE_Select_Input(
+                            $registration_stati_for_selection,
+                            array(
+                                'default' => isset($registration_config->default_STS_ID)
+                                             && array_key_exists(
+                                                $registration_config->default_STS_ID,
+                                                $registration_stati_for_selection
+                                             )
+                                            ? sanitize_text_field($registration_config->default_STS_ID)
+                                            : EEM_Registration::status_id_pending_payment,
+                                'html_label_text' => esc_html__('Default Registration Status', 'event_espresso')
+                                                    . EEH_Template::get_help_tab_link(
+                                                        'default_settings_status_help_tab'
+                                                    ),
+                                'html_help_text' => esc_html__(
+                                    'This setting allows you to preselect what the default registration status setting '
+                                    . 'is when creating an event.  Note that changing this setting does NOT '
+                                    . 'retroactively apply it to existing events.',
+                                    'event_espresso'
+                                )
+                            )
+                        ),
+                        //@todo need number input merged in before I use this.
+                        //'default_max_tickets' =>
+                    )
+                )
+            )
         );
-        $this->display_admin_page_with_sidebar();
     }
 
 
@@ -2300,18 +2330,24 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      */
     protected function _update_default_event_settings()
     {
-        EE_Config::instance()->registration->default_STS_ID = isset($this->_req_data['default_reg_status'])
-            ? sanitize_text_field($this->_req_data['default_reg_status'])
-            : EEM_Registration::status_id_pending_payment;
-        $what = 'Default Event Settings';
-        $success = $this->_update_espresso_configuration(
-            $what,
-            EE_Config::instance(),
-            __FILE__,
-            __FUNCTION__,
-            __LINE__
-        );
-        $this->_redirect_after_action($success, $what, 'updated', array('action' => 'default_event_settings'));
+        $registration_config = EE_Registry::instance()->CFG->registration;
+        $form = $this->_default_event_settings_form();
+        if ($form->was_submitted()) {
+            $form->receive_form_submission();
+            if ($form->is_valid()) {
+                $valid_data = $form->valid_data();
+                if (isset($valid_data['default_reg_status'])) {
+                    $registration_config->default_STS_ID = $valid_data['default_reg_status'];
+                }
+                //update because data was valid!
+                EE_Registry::instance()->CFG->update_espresso_config();
+                EE_Error::overwrite_success();
+                EE_Error::add_success(
+                    __('Default Event Settings were updated', 'event_espresso')
+                );
+            }
+        }
+        $this->_redirect_after_action(0, '', '', array('action' => 'default_event_settings'), true);
     }
 
 
