@@ -1014,7 +1014,11 @@ class EE_Message_Resource_Manager
         //loop through list of active message types and verify they are installed.
         foreach ($list_of_active_message_type_names as $message_type_name) {
             if (! isset($installed_message_types[$message_type_name])) {
-                $this->deactivate_message_type($message_type_name);
+                $this->remove_message_type_has_been_activated_from_all_messengers(
+                    $message_type_name,
+                    true
+                );
+                $this->deactivate_message_type($message_type_name, false);
                 $all_message_types_valid = false;
             }
         }
