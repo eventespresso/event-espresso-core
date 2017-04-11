@@ -1032,6 +1032,60 @@ class EE_Message_Resource_Manager
         return isset($has_activated[$messenger_name])
                && in_array($message_type_name, $has_activated[$messenger_name]);
     }
+
+
+    /**
+     * This method unsets a message type from the given messenger has activated option.
+     *
+     * @param string $message_type_name
+     * @param string $messenger_name
+     * @param bool   $consider_current_state  Whether to consider whether the  message type is currently active or not.
+     *                                        If it is currently active, then remove.  Otherwise leave it alone.
+     */
+    public function remove_message_type_has_been_activated_for_messenger(
+        $message_type_name,
+        $messenger_name,
+        $consider_current_state = false
+    ) {
+        if ($consider_current_state
+            && ! $this->is_message_type_active_for_messenger($messenger_name, $message_type_name)
+        ) {
+            //when consider current state is true, this means we don't want to change anything on the "has_activated"
+            //record if the message type is currently active for this messenger.  This is used when we want to retain
+            //the record for user initiated inactivations of the message type.
+            return;
+        }
+        $has_activated = $this->get_has_activated_messengers_option();
+        $key_for_message_type = isset($has_activated[$messenger_name])
+            ? array_search($message_type_name, $has_activated[$messenger_name], true)
+            : false;
+        if ($key_for_message_type !== false) {
+            unset($has_activated[$messenger_name][$key_for_message_type]);
+            $this->update_has_activated_messengers_option($has_activated);
+            //reset the internal cached property
+            $this->get_has_activated_messengers_option(true);
+        }
+    }
+
+
+    /**
+     * Removes a message type active record from all messengers it is attached to.
+     * @param      $message_type_name
+     * @param bool $consider_current_state  Whether to consider whether the  message type is currently active or not.
+     *                                      If it is currently active, then remove.  Otherwise leave it alone.
+     */
+    public function remove_message_type_has_been_activated_from_all_messengers(
+        $message_type_name,
+        $consider_current_state = false
+    ) {
+        foreach(array_keys($this->get_has_activated_messengers_option()) as $messenger_name) {
+            $this->remove_message_type_has_been_activated_for_messenger(
+                $message_type_name,
+                $messenger_name,
+                $consider_current_state
+            );
+        }
+    }
 }
 // End of file EE_Message_Resource_Manager.lib.php
 // Location: /EE_Message_Resource_Manager.lib.php
