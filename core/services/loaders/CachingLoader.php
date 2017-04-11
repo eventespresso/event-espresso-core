@@ -1,0 +1,133 @@
+<?php
+
+namespace EventEspresso\core\services\loaders;
+
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidEntityException;
+use EventEspresso\core\services\collections\CollectionInterface;
+use EventEspresso\core\services\container\exceptions\ServiceNotFoundException;
+
+defined('EVENT_ESPRESSO_VERSION') || exit;
+
+
+
+/**
+ * Class CachingLoader
+ * caches objects returned by the decorated loader
+ *
+ * @package       Event Espresso
+ * @author        Brent Christensen
+ * @since         $VID:$
+ */
+class CachingLoader extends LoaderDecorator
+{
+
+    /**
+     * @var CollectionInterface $cache
+     */
+    protected $cache;
+
+    /**
+     * @var string $identifier
+     */
+    protected $identifier;
+
+
+
+    /**
+     * CachingLoader constructor.
+     *
+     * @param LoaderInterface     $loader
+     * @param CollectionInterface $cache
+     * @param string              $identifier
+     * @throws InvalidDataTypeException
+     */
+    public function __construct(LoaderInterface $loader, CollectionInterface $cache, $identifier = '')
+    {
+        parent::__construct($loader);
+        $this->cache = $cache;
+        $this->identifier = $this->setIdentifier($identifier);
+        if ($this->identifier !== '') {
+            // to only clear this cache, and assuming an identifier has been set, simply do the following:
+            // do_action('AHEE__EventEspresso\core\services\loaders\CachingLoader__resetCache__IDENTIFIER');
+            // where "IDENTIFIER" = the string that was set during construction
+            add_action(
+                "AHEE__EventEspresso\\core\\services\\loaders\\CachingLoader__resetCache__{$identifier}",
+                array($this, 'resetCache')
+            );
+        }
+        // to clear ALL caches, simply do the following:
+        // do_action('AHEE__EventEspresso\core\services\loaders\CachingLoader__resetCache');
+        add_action(
+            'AHEE__EventEspresso\core\services\loaders\CachingLoader__resetCache',
+            array($this, 'resetCache')
+        );
+    }
+
+
+
+    /**
+     * @return string
+     */
+    public function identifier()
+    {
+        return $this->identifier;
+    }
+
+
+
+    /**
+     * @param string $identifier
+     * @throws InvalidDataTypeException
+     */
+    public function setIdentifier($identifier)
+    {
+        if ( ! is_string($identifier)) {
+            throw new InvalidDataTypeException('$identifier', $identifier, 'string');
+        }
+        $this->identifier = $identifier;
+    }
+
+
+
+    /**
+     * @param string $fqcn
+     * @param array  $arguments
+     * @return mixed
+     * @throws InvalidEntityException
+     * @throws ServiceNotFoundException
+     */
+    public function load($fqcn, $arguments = array())
+    {
+        $fqcn = ltrim($fqcn, '\\');
+        // caching can be turned off via the following code:
+        // add_filter('FHEE__EventEspresso\core\services\loaders\CachingLoader__load__bypass_cache', '__return_true');
+        if(
+            apply_filters(
+                'FHEE__EventEspresso\core\services\loaders\CachingLoader__load__bypass_cache',
+                false,
+                $this
+            )
+        ){
+            return $this->loader->load($fqcn, $arguments);
+        }
+        $identifier = md5($fqcn . serialize($arguments));
+        if($this->cache->has($identifier)){
+            return $this->cache->get($identifier);
+        }
+        $object = $this->loader->load($fqcn, $arguments);
+        $this->cache->add($object, $identifier);
+        return $object;
+    }
+
+
+
+    public function resetCache()
+    {
+        $this->cache->reset();
+    }
+
+
+}
+// End of file CachingLoader.php
+// Location: EventEspresso\core\services\loaders/CachingLoader.php
