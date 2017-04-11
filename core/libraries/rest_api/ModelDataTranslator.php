@@ -105,10 +105,6 @@ class ModelDataTranslator
                 $request_version
             );
         }
-        //are we about to send an object? just don't. We have no good way to represent it in JSON.
-        if(is_serialized($new_value) || is_object( $new_value)){
-            $new_value = null;
-        }
         return $new_value;
     }
 
@@ -243,6 +239,10 @@ class ModelDataTranslator
             $new_value = mysql_to_rfc3339($new_value);
         } else {
             $new_value = $original_value;
+        }
+        //are we about to send an object? just don't. We have no good way to represent it in JSON.
+        if(is_serialized($new_value) || is_object( $new_value)){
+            $new_value = null;
         }
         return apply_filters('FHEE__EventEspresso\core\libraries\rest_api\Model_Data_Translator__prepare_field_for_rest_api',
             $new_value,
