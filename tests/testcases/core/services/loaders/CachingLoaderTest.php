@@ -71,17 +71,20 @@ class CachingLoaderTest extends EE_UnitTestCase
      * @group LoaderTest
      */
     public function testPersistenceBetweenTests(){
-        $fqcn = '\EventEspresso\core\services\address\formatters\AddressFormatter';
-        $object5 = self::$loader->load($fqcn);
-        $this->assertEquals(self::$obj3ID, spl_object_hash($object5));
-        // we don't want to mess up other tests, so turn caching off again by removing the filter we added
-        remove_filter(
-            'FHEE__EventEspresso\core\services\loaders\CachingLoader__load__bypass_cache',
-            '__return_false'
-        );
-        // this time we should get a new object instead of the same one as before
-        $object6 = self::$loader->load($fqcn);
-        $this->assertNotEquals(self::$obj3ID, spl_object_hash($object6));
+        global $wp_version;
+        if (version_compare($wp_version, '4.1', '>')) {
+            $fqcn = '\EventEspresso\core\services\address\formatters\AddressFormatter';
+            $object5 = self::$loader->load($fqcn);
+            $this->assertEquals(self::$obj3ID, spl_object_hash($object5));
+            // we don't want to mess up other tests, so turn caching off again by removing the filter we added
+            remove_filter(
+                'FHEE__EventEspresso\core\services\loaders\CachingLoader__load__bypass_cache',
+                '__return_false'
+            );
+            // this time we should get a new object instead of the same one as before
+            $object6 = self::$loader->load($fqcn);
+            $this->assertNotEquals(self::$obj3ID, spl_object_hash($object6));
+        }
     }
 
 
