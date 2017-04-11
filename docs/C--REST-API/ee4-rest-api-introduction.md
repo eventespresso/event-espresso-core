@@ -26,9 +26,9 @@ If your application needs to write or delete EE4 data, or if it needs to read da
 
 Again, because the EE4 REST API is built on the WP REST API, discovering what URLs (endpoints) are available for sending requests to is quite simple. Please [read their documentation](http://v2.wp-api.org/guide/discovery/ on endpoint discovery.
 
-Want to see what the current EE4 REST API looks like? Go ahead and send a request to http://demoee.org/demo/wp-json and see for yourself.
+Want to see what the current EE4 REST API looks like? Go ahead and send a request to http://demoee.org/wp-json and see for yourself.
 
-Note: throughout the rest of this article you will see URIs to a particular server that's setup to use the EE4 REST API: demoee.org/demo, where the WP JSON API works at demoee.org/demo/wp-json. This is just for ease of learning about the EE4 REST API, obviously your application will want to use data from your server. So for example, if your site's url is mygreatthing.com, the WP JSON API would work at mygreatthing.com/wp-json.
+Note: throughout the rest of this article you will see URIs to a particular server that's setup to use the EE4 REST API: demoee.org, where the WP JSON API works at demoee.org/wp-json. This is just for ease of learning about the EE4 REST API, obviously your application will want to use data from your server. So for example, if your site's url is mygreatthing.com, the WP JSON API would work at mygreatthing.com/wp-json.
 
 ##Event Espresso Data in the WP API Index
 
@@ -115,9 +115,9 @@ This route is expected to contain more information in the future, as required.
 
 The "resources" in the Event Espresso REST API are built around the [EE4 models](../G--Model-System/model-querying). In the REST APIs we talk about "resources", but in PHP code we talk about models, but they represent the same thing. Each resource/model has fields and relations to other resources.
 
-Resources are the protoypes, and entities are the specific instances (just like models are the prototype, and model objects specific instances). Eg, "events" is a resource queryable on http://demoee.org/demo/wp-json/ee/v4.8.29/events which returns specific "event" entities.
+Resources are the protoypes, and entities are the specific instances (just like models are the prototype, and model objects specific instances). Eg, "events" is a resource queryable on http://demoee.org/wp-json/ee/v4.8.29/events which returns specific "event" entities.
 
-To see what entities exist, send a request to http://demoee.org/demo/wp-json/ee/v4.8.29/resources, or just [click this link](http://demoee.org/demo/wp-json/ee/v4.8.29/resources) to see the resources from one of our servers.
+To see what entities exist, send a request to http://demoee.org/wp-json/ee/v4.8.29/resources, or just [click this link](http://demoee.org/wp-json/ee/v4.8.29/resources) to see the resources from one of our servers.
 
 Here is an excerpt:
 

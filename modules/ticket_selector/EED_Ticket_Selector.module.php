@@ -243,10 +243,21 @@ class EED_Ticket_Selector extends  EED_Module {
 	public static function load_tckt_slctr_assets() {
 		if ( apply_filters( 'FHEE__EED_Ticket_Selector__load_tckt_slctr_assets', FALSE ) ) {
             // add some style
-			wp_register_style('ticket_selector', TICKET_SELECTOR_ASSETS_URL . 'ticket_selector.css');
-			wp_enqueue_style('ticket_selector');
-			// make it dance
-			wp_register_script('ticket_selector', TICKET_SELECTOR_ASSETS_URL . 'ticket_selector.js', array('espresso_core'), '', TRUE);
+            wp_register_style(
+                'ticket_selector', 
+                TICKET_SELECTOR_ASSETS_URL . 'ticket_selector.css',
+                array(),
+                EVENT_ESPRESSO_VERSION
+            );
+            wp_enqueue_style('ticket_selector');
+            // make it dance
+            wp_register_script(
+                'ticket_selector', 
+                TICKET_SELECTOR_ASSETS_URL . 'ticket_selector.js', 
+                array('espresso_core'), 
+                EVENT_ESPRESSO_VERSION, 
+                TRUE
+            );
 			wp_enqueue_script('ticket_selector');
             require_once( EE_LIBRARIES.'form_sections/strategies/display/EE_Checkbox_Dropdown_Selector_Display_Strategy.strategy.php');
             \EE_Checkbox_Dropdown_Selector_Display_Strategy::enqueue_styles_and_scripts();
