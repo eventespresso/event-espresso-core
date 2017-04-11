@@ -27,7 +27,7 @@ class CoreLoaderTest extends EE_UnitTestCase
     public function testBadConstruct()
     {
         try {
-            $this->loader = new CoreLoader();
+            $this->loader = new CoreLoader(new stdClass());
             $this->fail('EventEspresso\core\services\loaders\CoreLoader should have thrown an InvalidArgumentException');
         } catch (Exception $e) {
             $this->assertTrue(true);
