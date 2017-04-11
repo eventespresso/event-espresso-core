@@ -880,9 +880,12 @@ class EE_Message_Resource_Manager
     /**
      * Deactivates a message type (note this will deactivate across all messenger's it is active on.
      *
-     * @param  string $message_type_name name of message type being deactivated
+     * @param  string $message_type_name     name of message type being deactivated
+     * @param bool    $set_has_active_record By default we always record the has_active record when deactivating a message
+     *                                       type.  However, this can be overridden if we don't want this set (usually when
+     *                                       this is called as a part of deregistration of a custom message type)
      */
-    public function deactivate_message_type($message_type_name)
+    public function deactivate_message_type($message_type_name, $set_has_active_record = true)
     {
         $this->_initialize_collections();
         if ($message_type_name instanceof EE_message_type) {
@@ -895,8 +898,10 @@ class EE_Message_Resource_Manager
 
             //we always record (even on deactivation) that a message type has been activated because there should at
             //least be a record in the "has_activated" option that it WAS active at one point.
-            $messenger = $this->get_messenger($messenger_name);
-            $this->_set_messenger_has_activated_message_type($messenger, $message_type_name);
+            if ($set_has_active_record) {
+                $messenger = $this->get_messenger($messenger_name);
+                $this->_set_messenger_has_activated_message_type($messenger, $message_type_name);
+            }
         }
         $this->_message_template_group_model->deactivate_message_template_groups_for('', $message_type_name);
         $this->update_active_messengers_option();
