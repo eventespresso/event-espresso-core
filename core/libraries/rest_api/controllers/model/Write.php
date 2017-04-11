@@ -313,12 +313,12 @@ class Write extends Base
         $read_controller = new Read();
         $read_controller->setRequestedVersion($this->getRequestedVersion());
         //the simulates request really doesn't need any info downstream
-        $simualted_request = new WP_REST_Request('GET');
-        $simualted_request->set_query_params($request->get_query_params());
+        $simulated_request = new WP_REST_Request('GET');
+        $simulated_request->set_query_params($request->get_query_params());
         return $read_controller->createEntityFromWpdbResult(
             $model_obj->get_model(),
             $simulated_db_row,
-            $simualted_request
+            $simulated_request
         );
     }
 
