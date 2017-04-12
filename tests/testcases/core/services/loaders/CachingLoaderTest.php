@@ -67,8 +67,8 @@ class CachingLoaderTest extends EE_UnitTestCase
      * @param string $obj3ID
      */
     public function testPersistenceBetweenTests($obj3ID){
-        // global $wp_version;
-        // if (version_compare($wp_version, '4.1', '>')) {
+        global $wp_version;
+        if (version_compare($wp_version, '4.1', '>')) {
             $fqcn = '\EventEspresso\core\services\address\formatters\AddressFormatter';
             $object5 = self::$loader->load($fqcn);
             $this->assertEquals($obj3ID, spl_object_hash($object5));
@@ -80,7 +80,7 @@ class CachingLoaderTest extends EE_UnitTestCase
             // this time we should get a new object instead of the same one as before
             $object6 = self::$loader->load($fqcn);
             $this->assertNotEquals($obj3ID, spl_object_hash($object6));
-        // }
+        }
     }
 
 
