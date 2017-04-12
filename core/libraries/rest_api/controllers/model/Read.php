@@ -679,7 +679,7 @@ class Read extends Base
                 );
             } elseif ($this->isSubclassOfOne(
                 $field_obj,
-                    $this->getModelVersionInfo()->fieldsThatHavePrettyFormat()
+                $this->getModelVersionInfo()->fieldsThatHavePrettyFormat()
             )) {
                 $result[$field_name] = array(
                     'raw'    => $this->prepareFieldObjValueForJson($field_obj, $field_value),
