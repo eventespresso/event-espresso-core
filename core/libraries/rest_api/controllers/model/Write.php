@@ -1,7 +1,6 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api\controllers\model;
 
-
 use \WP_REST_Request;
 use \WP_REST_Response;
 use EventEspresso\core\libraries\rest_api\Capabilities;
@@ -62,8 +61,10 @@ class Write extends Base
                     new \WP_Error(
                         'endpoint_parsing_error',
                         sprintf(
-                            __('There is no model for endpoint %s. Please contact event espresso support',
-                                'event_espresso'),
+                            __(
+                                'There is no model for endpoint %s. Please contact event espresso support',
+                                'event_espresso'
+                            ),
                             $model_name_singular
                         )
                     )
@@ -101,8 +102,10 @@ class Write extends Base
                     new \WP_Error(
                         'endpoint_parsing_error',
                         sprintf(
-                            __('There is no model for endpoint %s. Please contact event espresso support',
-                                'event_espresso'),
+                            __(
+                                'There is no model for endpoint %s. Please contact event espresso support',
+                                'event_espresso'
+                            ),
                             $model_name_singular
                         )
                     )
@@ -140,8 +143,10 @@ class Write extends Base
                     new \WP_Error(
                         'endpoint_parsing_error',
                         sprintf(
-                            __('There is no model for endpoint %s. Please contact event espresso support',
-                                'event_espresso'),
+                            __(
+                                'There is no model for endpoint %s. Please contact event espresso support',
+                                'event_espresso'
+                            ),
                             $model_name_singular
                         )
                     )
@@ -176,8 +181,12 @@ class Write extends Base
             throw new RestException(
                 'rest_cannot_create_' . EEH_Inflector::pluralize_and_lower(($model->get_this_model_name())),
                 sprintf(
-                    esc_html__('For now, only those with the admin capability to "%1$s" are allowed to use the REST API to insert data into Event Espresso.',
-                        'event_espresso'),
+                    esc_html__(
+                        // @codingStandardsIgnoreStart
+                        'For now, only those with the admin capability to "%1$s" are allowed to use the REST API to insert data into Event Espresso.',
+                        // @codingStandardsIgnoreEnd
+                        'event_espresso'
+                    ),
                     $default_cap_to_check_for
                 ),
                 array('status' => 403)
@@ -189,10 +198,12 @@ class Write extends Base
             $model,
             $this->getModelVersionInfo()->requestedVersion()
         );
-        $model_obj = EE_Registry::instance()
-                                ->load_class($model->get_this_model_name(),
-                                    array($model_data, $model->get_timezone()),
-                                    false, false);
+        $model_obj = EE_Registry::instance()->load_class(
+            $model->get_this_model_name(),
+            array($model_data, $model->get_timezone()),
+            false,
+            false
+        );
         $model_obj->save();
         $new_id = $model_obj->ID();
         if (! $new_id) {
@@ -222,8 +233,12 @@ class Write extends Base
             throw new RestException(
                 'rest_cannot_edit_' . EEH_Inflector::pluralize_and_lower(($model->get_this_model_name())),
                 sprintf(
-                    esc_html__('For now, only those with the admin capability to "%1$s" are allowed to use the REST API to update data into Event Espresso.',
-                        'event_espresso'),
+                    esc_html__(
+                        // @codingStandardsIgnoreStart
+                        'For now, only those with the admin capability to "%1$s" are allowed to use the REST API to update data into Event Espresso.',
+                        // @codingStandardsIgnoreEnd
+                        'event_espresso'
+                    ),
                     $default_cap_to_check_for
                 ),
                 array('status' => 403)
@@ -264,8 +279,11 @@ class Write extends Base
         if ($requested_permanent_delete) {
             $read_controller = new Read();
             $read_controller->setRequestedVersion($this->getRequestedVersion());
-            $original_entity = $read_controller->getOneOrReportPermissionError($model, $request,
-                EEM_Base::caps_delete);
+            $original_entity = $read_controller->getOneOrReportPermissionError(
+                $model,
+                $request,
+                EEM_Base::caps_delete
+            );
             $deleted = (bool)$model->delete_permanently_by_ID($obj_id, $requested_allow_blocking);
             return array(
                 'deleted'  => $deleted,
@@ -300,7 +318,8 @@ class Write extends Base
     protected function returnModelObjAsJsonResponse(EE_Base_Class $model_obj, WP_REST_Request $request)
     {
         $model = $model_obj->get_model();
-        //create an array exactly like the wpdb results row, so we can pass it to controllers/model/Read::create_entity_from_wpdb_result()
+        //create an array exactly like the wpdb results row,
+        // so we can pass it to controllers/model/Read::create_entity_from_wpdb_result()
         $simulated_db_row = array();
         foreach ($model->field_settings() as $field_name => $field_obj) {
             if ($field_obj instanceof EE_Datetime_Field) {
@@ -356,6 +375,4 @@ class Write extends Base
         return $read_controller->getEntityFromModel($model, $get_request);
     }
 }
-
-
 // End of file Read.php

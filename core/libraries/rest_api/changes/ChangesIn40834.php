@@ -17,7 +17,7 @@ class ChangesIn40834 extends ChangesInBase
      */
     public function setHooks()
     {
-        //set a hook to remove the checkout/checkout endpoints if the request 
+        //set a hook to remove the checkout/checkout endpoints if the request
         //is for lower than 4.8.33
         add_filter(
             'FHEE__EventEspresso\core\libraries\rest_api\controllers\Base___get_response_headers',
@@ -33,8 +33,9 @@ class ChangesIn40834 extends ChangesInBase
      * Removes the checkin and checkout endpoints from the index for requests
      * to api versions lowers than 4.8.33
      *
-     * @param array                                                  $routes_on_this_version
-     * @param Base $controller
+     * @param array  $response_headers
+     * @param Base   $controller
+     * @param string $requested_version
      * @return array like $routes_on_this_version
      */
     public function removeResponseHeaders($response_headers, $controller, $requested_version)

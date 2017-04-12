@@ -20,7 +20,8 @@ use EEM_Base;
 use EEM_CPT_Base;
 
 if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');}
+    exit('No direct script access allowed');
+}
 
 
 
@@ -40,7 +41,7 @@ class Read extends Base
     /**
      * @var CalculatedModelFields
      */
-    protected $_fields_calculator;
+    protected $fields_calculator;
 
 
 
@@ -50,7 +51,7 @@ class Read extends Base
     public function __construct()
     {
         parent::__construct();
-        $this->_fields_calculator = new CalculatedModelFields();
+        $this->fields_calculator = new CalculatedModelFields();
     }
 
 
@@ -75,8 +76,10 @@ class Read extends Base
                     new WP_Error(
                         'endpoint_parsing_error',
                         sprintf(
-                            __('There is no model for endpoint %s. Please contact event espresso support',
-                                'event_espresso'),
+                            __(
+                                'There is no model for endpoint %s. Please contact event espresso support',
+                                'event_espresso'
+                            ),
                             $model_name_singular
                         )
                     )
@@ -168,11 +171,12 @@ class Read extends Base
             if (is_array($schema['properties'][$field_name]['default'])) {
                 foreach ($schema['properties'][$field_name]['default'] as $default_key => $default_value) {
                     if ($default_key === 'raw') {
-                        $schema['properties'][$field_name]['default'][$default_key] = ModelDataTranslator::prepareFieldValueForJson(
-                            $field,
-                            $default_value,
-                            $this->getModelVersionInfo()->requestedVersion()
-                        );
+                        $schema['properties'][$field_name]['default'][$default_key] =
+                            ModelDataTranslator::prepareFieldValueForJson(
+                                $field,
+                                $default_value,
+                                $this->getModelVersionInfo()->requestedVersion()
+                            );
                     }
                 }
             } else {
@@ -252,8 +256,10 @@ class Read extends Base
                     new WP_Error(
                         'endpoint_parsing_error',
                         sprintf(
-                            __('There is no model for endpoint %s. Please contact event espresso support',
-                                'event_espresso'),
+                            __(
+                                'There is no model for endpoint %s. Please contact event espresso support',
+                                'event_espresso'
+                            ),
                             $model_name_singular
                         )
                     )
@@ -298,8 +304,10 @@ class Read extends Base
                     new WP_Error(
                         'endpoint_parsing_error',
                         sprintf(
-                            __('There is no model for endpoint %s. Please contact event espresso support',
-                                'event_espresso'),
+                            __(
+                                'There is no model for endpoint %s. Please contact event espresso support',
+                                'event_espresso'
+                            ),
                             $main_model_name_singular
                         )
                     )
@@ -317,8 +325,10 @@ class Read extends Base
                     new WP_Error(
                         'endpoint_parsing_error',
                         sprintf(
-                            __('There is no model for endpoint %s. Please contact event espresso support',
-                                'event_espresso'),
+                            __(
+                                'There is no model for endpoint %s. Please contact event espresso support',
+                                'event_espresso'
+                            ),
                             $related_model_name_singular
                         )
                     )
@@ -405,14 +415,15 @@ class Read extends Base
             'limit' => 1,
         );
         if ($model instanceof \EEM_Soft_Delete_Base) {
-            $primary_model_query_params = $model->alter_query_params_so_deleted_and_undeleted_items_included($primary_model_query_params);
+            $primary_model_query_params = $model->alter_query_params_so_deleted_and_undeleted_items_included(
+                $primary_model_query_params
+            );
         }
         $restricted_query_params = $primary_model_query_params;
         $restricted_query_params['caps'] = $context;
         $this->setDebugInfo('main model query params', $restricted_query_params);
         $this->setDebugInfo('missing caps', Capabilities::getMissingPermissionsString($related_model, $context));
-        if (
-        ! (
+        if (! (
             Capabilities::currentUserHasPartialAccessTo($related_model, $context)
             && $model->exists($restricted_query_params)
         )
@@ -420,13 +431,17 @@ class Read extends Base
             if ($relation instanceof EE_Belongs_To_Relation) {
                 $related_model_name_maybe_plural = strtolower($related_model->get_this_model_name());
             } else {
-                $related_model_name_maybe_plural = EEH_Inflector::pluralize_and_lower($related_model->get_this_model_name());
+                $related_model_name_maybe_plural = EEH_Inflector::pluralize_and_lower(
+                    $related_model->get_this_model_name()
+                );
             }
             return new WP_Error(
                 sprintf('rest_%s_cannot_list', $related_model_name_maybe_plural),
                 sprintf(
-                    __('Sorry, you are not allowed to list %1$s related to %2$s. Missing permissions: %3$s',
-                        'event_espresso'),
+                    __(
+                        'Sorry, you are not allowed to list %1$s related to %2$s. Missing permissions: %3$s',
+                        'event_espresso'
+                    ),
                     $related_model_name_maybe_plural,
                     $relation->get_this_model()->get_this_model_name(),
                     implode(
@@ -503,8 +518,12 @@ class Read extends Base
         if (! $relation->get_this_model()->has_primary_key_field()) {
             throw new EE_Error(
                 sprintf(
-                    __('Read::get_entities_from_relation should only be called from a model with a primary key, it was called from %1$s',
-                        'event_espresso'),
+                    __(
+                        // @codingStandardsIgnoreStart
+                        'Read::get_entities_from_relation should only be called from a model with a primary key, it was called from %1$s',
+                        // @codingStandardsIgnoreEnd
+                        'event_espresso'
+                    ),
                     $relation->get_this_model()->get_this_model_name()
                 )
             );
@@ -534,8 +553,10 @@ class Read extends Base
     protected function setHeadersFromQueryParams($model, $query_params)
     {
         $this->setDebugInfo('model query params', $query_params);
-        $this->setDebugInfo('missing caps',
-            Capabilities::getMissingPermissionsString($model, $query_params['caps']));
+        $this->setDebugInfo(
+            'missing caps',
+            Capabilities::getMissingPermissionsString($model, $query_params['caps'])
+        );
         //normally the limit to a 2-part array, where the 2nd item is the limit
         if (! isset($query_params['limit'])) {
             $query_params['limit'] = EED_Core_Rest_Api::get_default_query_limit();
@@ -587,8 +608,14 @@ class Read extends Base
         $entity_array = $this->addExtraFields($model, $db_row, $entity_array);
         $entity_array['_links'] = $this->getEntityLinks($model, $db_row, $entity_array);
         $entity_array['_calculated_fields'] = $this->getEntityCalculations($model, $db_row, $rest_request);
-        $entity_array = apply_filters('FHEE__Read__create_entity_from_wpdb_results__entity_before_including_requested_models',
-            $entity_array, $model, $rest_request->get_param('caps'), $rest_request, $this);
+        $entity_array = apply_filters(
+            'FHEE__Read__create_entity_from_wpdb_results__entity_before_including_requested_models',
+            $entity_array,
+            $model,
+            $rest_request->get_param('caps'),
+            $rest_request,
+            $this
+        );
         $entity_array = $this->includeRequestedModels($model, $rest_request, $entity_array, $db_row);
         $entity_array = apply_filters(
             'FHEE__Read__create_entity_from_wpdb_results__entity_before_inaccessible_field_removal',
@@ -633,23 +660,27 @@ class Read extends Base
     protected function createBareEntityFromWpdbResults(EEM_Base $model, $db_row)
     {
         $result = $model->deduce_fields_n_values_from_cols_n_values($db_row);
-        $result = array_intersect_key($result,
-            $this->getModelVersionInfo()->fieldsOnModelInThisVersion($model));
+        $result = array_intersect_key(
+            $result,
+            $this->getModelVersionInfo()->fieldsOnModelInThisVersion($model)
+        );
         foreach ($result as $field_name => $raw_field_value) {
             $field_obj = $model->field_settings_for($field_name);
             $field_value = $field_obj->prepare_for_set_from_db($raw_field_value);
             if ($this->isSubclassOfOne($field_obj, $this->getModelVersionInfo()->fieldsIgnored())) {
                 unset($result[$field_name]);
-            } elseif (
-            $this->isSubclassOfOne($field_obj, $this->getModelVersionInfo()->fieldsThatHaveRenderedFormat())
-            ) {
+            } elseif ($this->isSubclassOfOne(
+                $field_obj,
+                $this->getModelVersionInfo()->fieldsThatHaveRenderedFormat()
+            )) {
                 $result[$field_name] = array(
                     'raw'      => $this->prepareFieldObjValueForJson($field_obj, $field_value),
                     'rendered' => $this->prepareFieldObjValueForJson($field_obj, $field_value, 'pretty'),
                 );
-            } elseif (
-            $this->isSubclassOfOne($field_obj, $this->getModelVersionInfo()->fieldsThatHavePrettyFormat())
-            ) {
+            } elseif ($this->isSubclassOfOne(
+                $field_obj,
+                    $this->getModelVersionInfo()->fieldsThatHavePrettyFormat()
+            )) {
                 $result[$field_name] = array(
                     'raw'    => $this->prepareFieldObjValueForJson($field_obj, $field_value),
                     'pretty' => $this->prepareFieldObjValueForJson($field_obj, $field_value, 'pretty'),
@@ -658,7 +689,11 @@ class Read extends Base
                 if ($field_value instanceof \DateTime) {
                     $timezone = $field_value->getTimezone();
                     $field_value->setTimezone(new \DateTimeZone('UTC'));
-                    $result[$field_name . '_gmt'] = $this->prepareFieldObjValueForJson($field_obj, $field_value, 'datetime_obj');
+                    $result[$field_name . '_gmt'] = $this->prepareFieldObjValueForJson(
+                        $field_obj,
+                        $field_value,
+                        'datetime_obj'
+                    );
                     $field_value->setTimezone($timezone);
                     $result[$field_name] = $this->prepareFieldObjValueForJson($field_obj, $field_value, 'datetime_obj');
                 }
@@ -681,8 +716,9 @@ class Read extends Base
      * @param string $format valid values are 'normal' (default), 'pretty', 'datetime_obj'
      * @return mixed
      */
-    protected function prepareFieldObjValueForJson(EE_Model_Field_Base $field_obj, $value, $format = 'normal'){
-        switch($format){
+    protected function prepareFieldObjValueForJson(EE_Model_Field_Base $field_obj, $value, $format = 'normal')
+    {
+        switch ($format) {
             case 'datetime_obj':
                 //leave the value as-is. It should already be a DateTime object
                 break;
@@ -693,7 +729,6 @@ class Read extends Base
             default:
                 $value = $field_obj->prepare_for_get($value);
                 break;
-
         }
         return ModelDataTranslator::prepareFieldValuesForJson(
             $field_obj,
@@ -890,7 +925,7 @@ class Read extends Base
             try {
                 $calculated_fields_to_return->$field_to_calculate = ModelDataTranslator::prepareFieldValueForJson(
                     null,
-                    $this->_fields_calculator->retrieveCalculatedFieldValue(
+                    $this->fields_calculator->retrieveCalculatedFieldValue(
                         $model,
                         $field_to_calculate,
                         $wpdb_row,
@@ -1009,13 +1044,11 @@ class Read extends Base
         if (! $default_query_params) {
             $default_query_params = EEM_Base::default_where_conditions_all;
         }
-        if (
-        in_array(
+        if (in_array(
             $default_query_params,
             $valid_default_where_conditions_for_api_calls,
             true
-        )
-        ) {
+        )) {
             return $default_query_params;
         } else {
             return EEM_Base::default_where_conditions_all;
@@ -1101,8 +1134,12 @@ class Read extends Base
                 if ($this->debug_mode && (! is_numeric($limit_part) || count($sanitized_limit) > 2)) {
                     throw new EE_Error(
                         sprintf(
-                            __('An invalid limit filter was provided. It was: %s. If the EE4 JSON REST API weren\'t in debug mode, this message would not appear.',
-                                'event_espresso'),
+                            __(
+                                // @codingStandardsIgnoreStart
+                                'An invalid limit filter was provided. It was: %s. If the EE4 JSON REST API weren\'t in debug mode, this message would not appear.',
+                                // @codingStandardsIgnoreEnd
+                                'event_espresso'
+                            ),
                             wp_json_encode($query_parameters['limit'])
                         )
                     );
@@ -1119,7 +1156,9 @@ class Read extends Base
             $model_query_params['caps'] = EEM_Base::caps_read;
         }
         if (isset($query_parameters['default_where_conditions'])) {
-            $model_query_params['default_where_conditions'] = $this->validateDefaultQueryParams($query_parameters['default_where_conditions']);
+            $model_query_params['default_where_conditions'] = $this->validateDefaultQueryParams(
+                $query_parameters['default_where_conditions']
+            );
         }
         return apply_filters('FHEE__Read__create_model_query_params', $model_query_params, $query_parameters, $model);
     }
@@ -1150,7 +1189,7 @@ class Read extends Base
 
 
     /**
-     * @deprecated
+     * @deprecated instead use ModelDataTranslator::prepareFieldValuesFromJson()
      * @param $model
      * @param $query_params
      * @return array
@@ -1184,7 +1223,7 @@ class Read extends Base
     {
         if (is_string($string_to_explode)) {
             $exploded_contents = explode(',', $string_to_explode);
-        } else if (is_array($string_to_explode)) {
+        } elseif (is_array($string_to_explode)) {
             $exploded_contents = $string_to_explode;
         } else {
             $exploded_contents = array();
@@ -1201,13 +1240,13 @@ class Read extends Base
                     //if not, then its what we're looking for
                     $contents_with_prefix[] = $item;
                 }
-            } else if (strpos($item, $prefix . '.') === 0) {
+            } elseif (strpos($item, $prefix . '.') === 0) {
                 //this item has the prefix and a period, grab it
                 $contents_with_prefix[] = substr(
                     $item,
                     strpos($item, $prefix . '.') + strlen($prefix . '.')
                 );
-            } else if ($item === $prefix) {
+            } elseif ($item === $prefix) {
                 //this item is JUST the prefix
                 //so let's grab everything after, which is a blank string
                 $contents_with_prefix[] = '';
@@ -1257,8 +1296,7 @@ class Read extends Base
             //look for ones with no period
             foreach ($includes as $field_to_include) {
                 $field_to_include = trim($field_to_include);
-                if (
-                    strpos($field_to_include, '.') === false
+                if (strpos($field_to_include, '.') === false
                     && ! $this->getModelVersionInfo()->isModelNameInThisVersion($field_to_include)
                 ) {
                     $extracted_fields_to_include[] = $field_to_include;
@@ -1290,11 +1328,12 @@ class Read extends Base
         $restricted_query_params['caps'] = $context;
         $this->setDebugInfo('model query params', $restricted_query_params);
         $model_rows = $model->get_all_wpdb_results($restricted_query_params);
-        if (! empty ($model_rows)) {
+        if (! empty($model_rows)) {
             return $this->createEntityFromWpdbResult(
                 $model,
                 array_shift($model_rows),
-                $request);
+                $request
+            );
         } else {
             //ok let's test to see if we WOULD have found it, had we not had restrictions from missing capabilities
             $lowercase_model_name = strtolower($model->get_this_model_name());

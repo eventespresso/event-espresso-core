@@ -117,7 +117,7 @@ class CalculatedModelFields
     /**
      * Retrieves the value for this calculation
      *
-     * @param EEM_Base                                               type $model
+     * @param EEM_Base                                                $model
      * @param string                                                  $field_name
      * @param array                                                   $wpdb_row
      * @param \WP_REST_Request

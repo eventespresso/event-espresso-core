@@ -41,7 +41,8 @@ class RestException extends \EE_Error
         parent::__construct(
             $message,
             $http_status_number,
-            $previous);
+            $previous
+        );
         $this->wp_error_data = $wp_error_data;
         $this->wp_error_code = $string_code;
     }

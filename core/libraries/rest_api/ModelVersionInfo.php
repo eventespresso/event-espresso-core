@@ -301,8 +301,7 @@ class ModelVersionInfo
             $current_fields = $model->field_settings();
             //remove all fields that have been added since
             foreach ($changes as $version => $changes_in_version) {
-                if (
-                    isset($changes_in_version[$model->get_this_model_name()])
+                if (isset($changes_in_version[$model->get_this_model_name()])
                     && $changes_in_version[$model->get_this_model_name()] !== ModelVersionInfo::MODEL_ADDED
                 ) {
                     $current_fields = array_diff_key(
@@ -482,7 +481,6 @@ class ModelVersionInfo
             $model
         );
     }
-
 }
 
 // End of file Model_Version_Info.php

@@ -47,8 +47,12 @@ class Datetime extends Calculations_Base
         } else {
             throw new \EE_Error(
                 sprintf(
-                    __('Cannot calculate spaces_remaining_considering_tickets because the datetime with ID %1$s (from database row %2$s) was not found',
-                        'event_espresso'),
+                    __(
+                        // @codingStandardsIgnoreStart
+                        'Cannot calculate spaces_remaining_considering_tickets because the datetime with ID %1$s (from database row %2$s) was not found',
+                        // @codingStandardsIgnoreEnd
+                        'event_espresso'
+                    ),
                     $wpdb_row['Datetime.DTT_ID'],
                     print_r($wpdb_row, true)
                 )
@@ -73,8 +77,12 @@ class Datetime extends Calculations_Base
         if (! is_array($wpdb_row) || ! isset($wpdb_row['Datetime.DTT_ID'])) {
             throw new \EE_Error(
                 sprintf(
-                    __('Cannot calculate registrations_checked_in_count because the database row %1$s does not have an entry for "Datetime.DTT_ID"',
-                        'event_espresso'),
+                    __(
+                        // @codingStandardsIgnoreStart
+                        'Cannot calculate registrations_checked_in_count because the database row %1$s does not have an entry for "Datetime.DTT_ID"',
+                        // @codingStandardsIgnoreEnd
+                        'event_espresso'
+                    ),
                     print_r($wpdb_row, true)
                 )
             );
@@ -101,8 +109,12 @@ class Datetime extends Calculations_Base
         if (! is_array($wpdb_row) || ! isset($wpdb_row['Datetime.DTT_ID'])) {
             throw new \EE_Error(
                 sprintf(
-                    __('Cannot calculate registrations_checked_out_count because the database row %1$s does not have an entry for "Datetime.DTT_ID"',
-                        'event_espresso'),
+                    __(
+                        // @codingStandardsIgnoreStart
+                        'Cannot calculate registrations_checked_out_count because the database row %1$s does not have an entry for "Datetime.DTT_ID"',
+                        // @codingStandardsIgnoreEnd
+                        'event_espresso'
+                    ),
                     print_r($wpdb_row, true)
                 )
             );
@@ -130,8 +142,12 @@ class Datetime extends Calculations_Base
         if (! is_array($wpdb_row) || ! isset($wpdb_row['Datetime.DTT_ID'])) {
             throw new \EE_Error(
                 sprintf(
-                    __('Cannot calculate spots_taken_pending_payment because the database row %1$s does not have an entry for "Datetime.DTT_ID"',
-                        'event_espresso'),
+                    __(
+                        // @codingStandardsIgnoreStart
+                        'Cannot calculate spots_taken_pending_payment because the database row %1$s does not have an entry for "Datetime.DTT_ID"',
+                        // @codingStandardsIgnoreEnd
+                        'event_espresso'
+                    ),
                     print_r($wpdb_row, true)
                 )
             );

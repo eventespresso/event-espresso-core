@@ -30,14 +30,18 @@ class Base
     /**
      * @deprecated use all-caps version
      */
+    // @codingStandardsIgnoreStart
     const header_prefix_for_ee = 'X-EE-';
+    // @codingStandardsIgnoreEnd
 
     const HEADER_PREFIX_FOR_EE = 'X-EE-';
 
     /**
      * @deprecated use all-caps version instead
      */
+    // @codingStandardsIgnoreStart
     const header_prefix_for_wp = 'X-WP-';
+    // @codingStandardsIgnoreEnd
 
     const HEADER_PREFIX_FOR_WP = 'X-WP-';
 
@@ -133,7 +137,8 @@ class Base
      */
     protected function getResponseHeaders()
     {
-        return apply_filters('FHEE__EventEspresso\core\libraries\rest_api\controllers\Base___get_response_headers',
+        return apply_filters(
+            'FHEE__EventEspresso\core\libraries\rest_api\controllers\Base___get_response_headers',
             $this->response_headers,
             $this,
             $this->requested_version
@@ -155,7 +160,8 @@ class Base
             foreach ($notices_during_checkin['errors'] as $error_code => $error_message) {
                 $wp_error_response->add(
                     sanitize_key($error_code),
-                    strip_tags($error_message));
+                    strip_tags($error_message)
+                );
             }
         }
         return $wp_error_response;
@@ -325,9 +331,7 @@ class Base
     {
         $indexed_matches = array();
         $success = preg_match($regex, $route, $matches);
-        if (
-        is_array($matches)
-        ) {
+        if (is_array($matches)) {
             //skip the overall regex match. Who cares
             for ($i = 1; $i <= count($match_keys); $i++) {
                 if (! isset($matches[$i])) {

@@ -30,14 +30,12 @@ class Capabilities
      */
     public static function currentUserHasPartialAccessTo($model, $model_context = EEM_Base::caps_read)
     {
-        if (
-        apply_filters(
+        if (apply_filters(
             'FHEE__Capabilities__current_user_has_partial_access_to__override_begin',
             false,
             $model,
             $model
-        )
-        ) {
+        )) {
             return true;
         }
         foreach ($model->caps_missing($model_context) as $capability_name => $restriction_obj) {
@@ -45,14 +43,12 @@ class Capabilities
                 return false;
             }
         }
-        if (
-        apply_filters(
+        if (apply_filters(
             'FHEE__Capabilities__current_user_has_partial_access_to__override_end',
             false,
             $model,
             $model
-        )
-        ) {
+        )) {
             return false;
         }
         return true;
@@ -117,8 +113,7 @@ class Capabilities
             );
         }
         //we only care to do this for frontend reads and when the user can't edit the item
-        if (
-            $request_type !== EEM_Base::caps_read
+        if ($request_type !== EEM_Base::caps_read
             || $model->exists(
                 $model->alter_query_params_to_restrict_by_ID(
                     $primary_key_string,
@@ -132,8 +127,7 @@ class Capabilities
             return $entity;
         }
         foreach ($model->field_settings() as $field_name => $field_obj) {
-            if (
-                $model_version_info->fieldHasRenderedFormat($field_obj)
+            if ($model_version_info->fieldHasRenderedFormat($field_obj)
                 && isset($entity[$field_name])
                 && is_array($entity[$field_name])
                 && isset($entity[$field_name]['raw'])

@@ -1,5 +1,5 @@
-<?php namespace EventEspresso\core\libraries\rest_api\controllers\rpc;
-
+<?php
+namespace EventEspresso\core\libraries\rest_api\controllers\rpc;
 
 use WP_Error;
 use WP_REST_Response;
@@ -68,8 +68,10 @@ class Checkin extends Base
                 new WP_Error(
                     'rest_registration_toggle_checkin_invalid_id',
                     sprintf(
-                        __('You cannot checkin registration with ID %1$s because it doesn\'t exist.',
-                            'event_espresso'),
+                        __(
+                            'You cannot checkin registration with ID %1$s because it doesn\'t exist.',
+                            'event_espresso'
+                        ),
                         $reg_id
                     ),
                     array('status' => 422)
@@ -96,8 +98,10 @@ class Checkin extends Base
                 return $this->sendResponse(
                     new WP_Error(
                         'rest_toggle_checkin_failed',
-                        __('Registration check-in failed because the registration is not approved. You may attempt to force checking in though.',
-                            'event_espresso')
+                        __(
+                            'Registration check-in failed because the registration is not approved. You may attempt to force checking in though.',
+                            'event_espresso'
+                        )
                     )
                 );
             }
@@ -124,8 +128,12 @@ class Checkin extends Base
                 new WP_Error(
                     'rest_toggle_checkin_error',
                     sprintf(
-                        __('Supposedly we created a new checkin object for registration %1$s at datetime %2$s, but we can\'t find it.',
-                            'event_espresso'),
+                        __(
+                            // @codingStandardsIgnoreStart
+                            'Supposedly we created a new checkin object for registration %1$s at datetime %2$s, but we can\'t find it.',
+                            // @codingStandardsIgnoreEnd
+                            'event_espresso'
+                        ),
                         $reg_id,
                         $dtt_id
                     )

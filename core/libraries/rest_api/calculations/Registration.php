@@ -30,7 +30,7 @@ class Registration extends Calculations_Base
      * @param array            $wpdb_row
      * @param \WP_REST_Request $request
      * @param Base             $controller
-     * @return int
+     * @return array
      * @throws \EE_Error
      */
     public static function datetimeCheckinStati($wpdb_row, $request, $controller)
@@ -44,8 +44,12 @@ class Registration extends Calculations_Base
         ) {
             throw new \EE_Error(
                 sprintf(
-                    __('Cannot calculate datetime_checkin_stati because the registration with ID %1$s (from database row %2$s) was not found',
-                        'event_espresso'),
+                    __(
+                        // @codingStandardsIgnoreStart
+                        'Cannot calculate datetime_checkin_stati because the registration with ID %1$s (from database row %2$s) was not found',
+                        // @codingStandardsIgnoreEnd
+                        'event_espresso'
+                    ),
                     $wpdb_row['Registration.REG_ID'],
                     print_r($wpdb_row, true)
                 )

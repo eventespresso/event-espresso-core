@@ -89,10 +89,15 @@ class Meta extends Base
                 );
                 $fields_json[$field_json['name']] = $field_json;
             }
-            $fields_json = array_merge($fields_json,
-                $this->getModelVersionInfo()->extraResourcePropertiesForModel($model));
-            $response[$model_name]['fields'] = apply_filters('FHEE__Meta__handle_request_models_meta__fields',
-                $fields_json, $model);
+            $fields_json = array_merge(
+                $fields_json,
+                $this->getModelVersionInfo()->extraResourcePropertiesForModel($model)
+            );
+            $response[$model_name]['fields'] = apply_filters(
+                'FHEE__Meta__handle_request_models_meta__fields',
+                $fields_json,
+                $model
+            );
             $relations_json = array();
             foreach ($model->relation_settings() as $relation_name => $relation_obj) {
                 $relation_json = array(
@@ -102,8 +107,11 @@ class Meta extends Base
                 );
                 $relations_json[$relation_name] = $relation_json;
             }
-            $response[$model_name]['relations'] = apply_filters('FHEE__Meta__handle_request_models_meta__relations',
-                $relations_json, $model);
+            $response[$model_name]['relations'] = apply_filters(
+                'FHEE__Meta__handle_request_models_meta__relations',
+                $relations_json,
+                $model
+            );
         }
         return $response;
     }
@@ -129,7 +137,9 @@ class Meta extends Base
         }
         $response_data['ee'] = array(
             'version'              => EEM_System_Status::instance()->get_ee_version(),
+            // @codingStandardsIgnoreStart
             'documentation_url'    => 'https://github.com/eventespresso/event-espresso-core/tree/master/docs/C--REST-API',
+            // @codingStandardsIgnoreEnd
             'addons'               => $addons,
             'maintenance_mode'     => EE_Maintenance_Mode::instance()->real_level(),
             'served_core_versions' => array_keys(EED_Core_Rest_Api::versions_served()),

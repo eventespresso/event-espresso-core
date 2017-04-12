@@ -127,7 +127,9 @@ class ChangesIn40836 extends ChangesInBase
                         Base::HEADER_PREFIX_FOR_WP . 'Total',
                         Base::HEADER_PREFIX_FOR_WP . 'TotalPages',
                         Base::HEADER_PREFIX_FOR_WP . 'PageSize',
-                    )));
+                    )
+                )
+            );
         }
         return $headers;
     }
@@ -189,6 +191,5 @@ class ChangesIn40836 extends ChangesInBase
         }
         return $new_value;
     }
-
 }
 

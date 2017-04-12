@@ -1,7 +1,6 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api\controllers\config;
 
-
 use WP_REST_Request;
 use WP_Error;
 use EE_Config;
@@ -68,14 +67,18 @@ class Read
     {
         global $wp_json_basic_auth_success, $wp_json_basic_auth_received_data;
         $insecure_usage_of_basic_auth = apply_filters(
+            // @codingStandardsIgnoreStart
             'EventEspresso__core__libraries__rest_api__controllers__config__handle_request_site_info__insecure_usage_of_basic_auth',
+            // @codingStandardsIgnoreEnd
             $wp_json_basic_auth_success && ! is_ssl(),
             $request
         );
         if ($insecure_usage_of_basic_auth) {
             $warning = sprintf(
-                esc_html__('Your data is not secured with SSL. %1$sPlease see our recommendations.%2$s',
-                    'event_espresso'),
+                esc_html__(
+                    'Your data is not secured with SSL. %1$sPlease see our recommendations.%2$s',
+                    'event_espresso'
+                ),
                 '<a href="https://eventespresso.com/wiki/rest-api-security-recommendations/">',
                 '</a>'
             );

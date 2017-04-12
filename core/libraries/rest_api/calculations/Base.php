@@ -32,8 +32,12 @@ class Base
             throw new RestException(
                 'permission_denied',
                 sprintf(
-                    __('Permission denied, you cannot calculate %1$s on %2$s because you do not have the capability "%3$s"',
-                        'event_espresso'),
+                    __(
+                        // @codingStandardsIgnoreStart
+                        'Permission denied, you cannot calculate %1$s on %2$s because you do not have the capability "%3$s"',
+                        // @codingStandardsIgnoreEnd
+                        'event_espresso'
+                    ),
                     $attempted_calculation,
                     EEH_Inflector::pluralize_and_lower(self::getResourceName()),
                     $required_permission

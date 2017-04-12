@@ -1,6 +1,7 @@
 <?php namespace EventEspresso\core\libraries\rest_api\changes;
 
 use EE_Error;
+
 /*
  * Class for tracking what changes are made to the API and when. It's almost like
  * on-the-fly-migrations.
@@ -107,4 +108,3 @@ abstract class ChangesInBase
         return $this->version;
     }
 }
-

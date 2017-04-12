@@ -50,8 +50,12 @@ class Event extends Calculations_Base
         } else {
             throw new EE_Error(
                 sprintf(
-                    __('Cannot calculate optimum_sales_at_start because the event with ID %1$s (from database row %2$s) was not found',
-                        'event_espresso'),
+                    __(
+                        // @codingStandardsIgnoreStart
+                        'Cannot calculate optimum_sales_at_start because the event with ID %1$s (from database row %2$s) was not found',
+                        // @codingStandardsIgnoreEnd
+                        'event_espresso'
+                    ),
                     $wpdb_row['Event_CPT.ID'],
                     print_r($wpdb_row, true)
                 )
@@ -84,7 +88,10 @@ class Event extends Calculations_Base
         } else {
             throw new EE_Error(
                 sprintf(
-                    __('Cannot calculate optimum_sales_now because the event with ID %1$s (from database row %2$s) was not found',
+                    __(
+                        // @codingStandardsIgnoreStart
+                        'Cannot calculate optimum_sales_now because the event with ID %1$s (from database row %2$s) was not found',
+                        // @codingStandardsIgnoreEnd
                         'event_espresso'),
                     $wpdb_row['Event_CPT.ID'],
                     print_r($wpdb_row, true)
@@ -117,8 +124,12 @@ class Event extends Calculations_Base
         } else {
             throw new EE_Error(
                 sprintf(
-                    __('Cannot calculate spaces_remaining because the event with ID %1$s (from database row %2$s) was not found',
-                        'event_espresso'),
+                    __(
+                        // @codingStandardsIgnoreStart
+                        'Cannot calculate spaces_remaining because the event with ID %1$s (from database row %2$s) was not found',
+                        // @codingStandardsIgnoreEnd
+                        'event_espresso'
+                    ),
                     $wpdb_row['Event_CPT.ID'],
                     print_r($wpdb_row, true)
                 )
@@ -143,8 +154,12 @@ class Event extends Calculations_Base
         if (! is_array($wpdb_row) || ! isset($wpdb_row['Event_CPT.ID'])) {
             throw new EE_Error(
                 sprintf(
-                    __('Cannot calculate spots_taken because the database row %1$s does not have an entry for "Event_CPT.ID"',
-                        'event_espresso'),
+                    __(
+                        // @codingStandardsIgnoreStart
+                        'Cannot calculate spots_taken because the database row %1$s does not have an entry for "Event_CPT.ID"',
+                        // @codingStandardsIgnoreEnd
+                        'event_espresso'
+                    ),
                     print_r($wpdb_row, true)
                 )
             );
@@ -179,8 +194,12 @@ class Event extends Calculations_Base
         if (! is_array($wpdb_row) || ! isset($wpdb_row['Event_CPT.ID'])) {
             throw new EE_Error(
                 sprintf(
-                    __('Cannot calculate spots_taken_pending_payment because the database row %1$s does not have an entry for "Event_CPT.ID"',
-                        'event_espresso'),
+                    __(
+                        // @codingStandardsIgnoreStart
+                        'Cannot calculate spots_taken_pending_payment because the database row %1$s does not have an entry for "Event_CPT.ID"',
+                        // @codingStandardsIgnoreEnd
+                        'event_espresso'
+                    ),
                     print_r($wpdb_row, true)
                 )
             );
@@ -216,8 +235,12 @@ class Event extends Calculations_Base
         if (! is_array($wpdb_row) || ! isset($wpdb_row['Event_CPT.ID'])) {
             throw new EE_Error(
                 sprintf(
-                    __('Cannot calculate registrations_checked_in_count because the database row %1$s does not have an entry for "Event_CPT.ID"',
-                        'event_espresso'),
+                    __(
+                        // @codingStandardsIgnoreStart
+                        'Cannot calculate registrations_checked_in_count because the database row %1$s does not have an entry for "Event_CPT.ID"',
+                        // @codingStandardsIgnoreEnd
+                        'event_espresso'
+                    ),
                     print_r($wpdb_row, true)
                 )
             );
@@ -244,7 +267,10 @@ class Event extends Calculations_Base
         if (! is_array($wpdb_row) || ! isset($wpdb_row['Event_CPT.ID'])) {
             throw new EE_Error(
                 sprintf(
-                    __('Cannot calculate registrations_checked_out_count because the database row %1$s does not have an entry for "Event_CPT.ID"',
+                    __(
+                        // @codingStandardsIgnoreStart
+                        'Cannot calculate registrations_checked_out_count because the database row %1$s does not have an entry for "Event_CPT.ID"',
+                        // @codingStandardsIgnoreEnd
                         'event_espresso'),
                     print_r($wpdb_row, true)
                 )

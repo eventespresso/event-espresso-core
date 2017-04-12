@@ -12,11 +12,11 @@ class ChangesIn40833 extends ChangesInBase
      */
     public function setHooks()
     {
-        //set a hook to remove the checkout/checkout endpoints if the request 
+        //set a hook to remove the checkout/checkout endpoints if the request
         //is for lower than 4.8.33
         add_filter(
             'FHEE__EED_Core_Rest_Api___register_rpc_routes__this_versions_routes',
-            array($this, 'removeCheckinRoutesEarlierThan4_8_33'),
+            array($this, 'removeCheckinRoutesEarlierThan4833'),
             10,
             2
         );
@@ -38,7 +38,7 @@ class ChangesIn40833 extends ChangesInBase
      * @param string $version
      * @return array like $routes_on_this_version
      */
-    public function removeCheckinRoutesEarlierThan4_8_33($routes_on_this_version, $version)
+    public function removeCheckinRoutesEarlierThan4833($routes_on_this_version, $version)
     {
         if ($this->appliesToVersion($version)) {
             unset($routes_on_this_version['registrations/(?P<REG_ID>\d+)/toggle_checkin_for_datetime/(?P<DTT_ID>\d+)']);
