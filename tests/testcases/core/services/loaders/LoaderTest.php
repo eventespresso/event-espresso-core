@@ -43,7 +43,7 @@ class LoaderTest extends EE_UnitTestCase
     public function testNewLoader()
     {
         // first turn caching on
-        add_filter('FHEE__EventEspresso\core\services\loaders\CachingLoader__load__bypass_cache', '__return_false');
+        add_filter('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache', '__return_false');
         $fqcn = '\EventEspresso\core\services\address\formatters\AddressFormatter';
         $object = self::$loader->load($fqcn, array(), false);
         $this->assertInstanceOf(
@@ -61,7 +61,7 @@ class LoaderTest extends EE_UnitTestCase
         $this->assertNotEquals($obj1ID, spl_object_hash($object2));
         // we don't want to mess up other tests, so turn caching off again by removing the filter we added
         remove_filter(
-            'FHEE__EventEspresso\core\services\loaders\CachingLoader__load__bypass_cache',
+            'FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache',
             '__return_false'
         );
     }
@@ -74,7 +74,7 @@ class LoaderTest extends EE_UnitTestCase
     public function testSharedLoader()
     {
         // first turn caching on
-        add_filter('FHEE__EventEspresso\core\services\loaders\CachingLoader__load__bypass_cache', '__return_false');
+        add_filter('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache', '__return_false');
         $fqcn = '\EventEspresso\core\services\address\formatters\AddressFormatter';
         $object3 = self::$loader->load($fqcn);
         $this->assertInstanceOf(
@@ -92,7 +92,7 @@ class LoaderTest extends EE_UnitTestCase
         $this->assertEquals($obj3ID, spl_object_hash($object4));
         // we don't want to mess up other tests, so turn caching off again by removing the filter we added
         remove_filter(
-            'FHEE__EventEspresso\core\services\loaders\CachingLoader__load__bypass_cache',
+            'FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache',
             '__return_false'
         );
     }
