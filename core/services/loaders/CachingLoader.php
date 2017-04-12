@@ -52,14 +52,14 @@ class CachingLoader extends LoaderDecorator
             // do_action('AHEE__EventEspresso\core\services\loaders\CachingLoader__resetCache__IDENTIFIER');
             // where "IDENTIFIER" = the string that was set during construction
             add_action(
-                "AHEE__EventEspresso\\core\\services\\loaders\\CachingLoader__resetCache__{$identifier}",
+                "AHEE__EventEspresso_core_services_loaders_CachingLoader__resetCache__{$identifier}",
                 array($this, 'resetCache')
             );
         }
         // to clear ALL caches, simply do the following:
         // do_action('AHEE__EventEspresso\core\services\loaders\CachingLoader__resetCache');
         add_action(
-            'AHEE__EventEspresso\core\services\loaders\CachingLoader__resetCache',
+            'AHEE__EventEspresso_core_services_loaders_CachingLoader__resetCache',
             array($this, 'resetCache')
         );
     }
@@ -80,7 +80,7 @@ class CachingLoader extends LoaderDecorator
      * @param string $identifier
      * @throws InvalidDataTypeException
      */
-    public function setIdentifier($identifier)
+    private function setIdentifier($identifier)
     {
         if ( ! is_string($identifier)) {
             throw new InvalidDataTypeException('$identifier', $identifier, 'string');
@@ -104,7 +104,7 @@ class CachingLoader extends LoaderDecorator
         // add_filter('FHEE__EventEspresso\core\services\loaders\CachingLoader__load__bypass_cache', '__return_true');
         if(
             apply_filters(
-                'FHEE__EventEspresso\core\services\loaders\CachingLoader__load__bypass_cache',
+                'FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache',
                 false,
                 $this
             )
@@ -127,7 +127,7 @@ class CachingLoader extends LoaderDecorator
      */
     public function reset()
     {
-        $this->cache->reset();
+        $this->cache->detachAll();
         $this->loader->reset();
     }
 
