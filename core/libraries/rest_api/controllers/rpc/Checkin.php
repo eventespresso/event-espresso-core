@@ -99,7 +99,9 @@ class Checkin extends Base
                     new WP_Error(
                         'rest_toggle_checkin_failed',
                         __(
+                            // @codingStandardsIgnoreStart
                             'Registration check-in failed because the registration is not approved. You may attempt to force checking in though.',
+                            // @codingStandardsIgnoreEnd
                             'event_espresso'
                         )
                     )

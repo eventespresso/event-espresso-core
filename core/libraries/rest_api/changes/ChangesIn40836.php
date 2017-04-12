@@ -192,4 +192,3 @@ class ChangesIn40836 extends ChangesInBase
         return $new_value;
     }
 }
-

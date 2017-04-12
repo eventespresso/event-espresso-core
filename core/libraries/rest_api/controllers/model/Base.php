@@ -4,6 +4,7 @@ namespace EventEspresso\core\libraries\rest_api\controllers\model;
 use EventEspresso\core\libraries\rest_api\controllers\Base as Controller_Base;
 use EventEspresso\core\libraries\rest_api\ModelVersionInfo;
 use EE_Error;
+
 if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }

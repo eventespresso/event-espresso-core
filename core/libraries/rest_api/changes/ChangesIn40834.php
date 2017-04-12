@@ -48,4 +48,3 @@ class ChangesIn40834 extends ChangesInBase
         return $response_headers;
     }
 }
-

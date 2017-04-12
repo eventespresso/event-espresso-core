@@ -63,4 +63,3 @@ class ChangesIn40833 extends ChangesInBase
         return $headers_from_ee_notices;
     }
 }
-

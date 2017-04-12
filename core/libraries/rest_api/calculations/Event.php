@@ -92,7 +92,8 @@ class Event extends Calculations_Base
                         // @codingStandardsIgnoreStart
                         'Cannot calculate optimum_sales_now because the event with ID %1$s (from database row %2$s) was not found',
                         // @codingStandardsIgnoreEnd
-                        'event_espresso'),
+                        'event_espresso'
+                    ),
                     $wpdb_row['Event_CPT.ID'],
                     print_r($wpdb_row, true)
                 )
@@ -271,7 +272,8 @@ class Event extends Calculations_Base
                         // @codingStandardsIgnoreStart
                         'Cannot calculate registrations_checked_out_count because the database row %1$s does not have an entry for "Event_CPT.ID"',
                         // @codingStandardsIgnoreEnd
-                        'event_espresso'),
+                        'event_espresso'
+                    ),
                     print_r($wpdb_row, true)
                 )
             );

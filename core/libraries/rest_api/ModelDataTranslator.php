@@ -339,11 +339,12 @@ class ModelDataTranslator
                     //only being HTML inside.
                     // Only allow trusted users to do that
                     if ($writing
-                       && ! $field instanceof EE_Maybe_Serialized_Simple_HTML_Field
-                       && ! EE_Capabilities::instance()->current_user_can(
-                           'unfiltered_html',
+                        && ! $field instanceof EE_Maybe_Serialized_Simple_HTML_Field
+                        && ! EE_Capabilities::instance()->current_user_can(
+                            'unfiltered_html',
                             'rest_api_check_if_can_write_serialized_data'
-                        )){
+                        )
+                    ) {
                         //in debug mode, throw an exception. Otherwise fail silently
                         if (defined('EE_REST_API_DEBUG_MODE') && EE_REST_API_DEBUG_MODE) {
                             throw new RestException(
@@ -423,9 +424,9 @@ class ModelDataTranslator
             } elseif (! $writing) {
                 //so it's not for a field, assume it's a logic query param key
                 $query_param_for_models[$query_param_key] = ModelDataTranslator::prepareConditionsQueryParamsForModels(
-                  $query_param_value,
-                  $model,
-                  $requested_version
+                    $query_param_value,
+                    $model,
+                    $requested_version
                 );
             }
         }
@@ -444,10 +445,10 @@ class ModelDataTranslator
     public static function isGmtDateFieldName($field_name)
     {
         return substr(
-                   ModelDataTranslator::removeStarsAndAnythingAfterFromConditionQueryParamKey($field_name),
-                   -4,
-                   4
-               ) === '_gmt';
+            ModelDataTranslator::removeStarsAndAnythingAfterFromConditionQueryParamKey($field_name),
+            -4,
+            4
+        ) === '_gmt';
     }
 
 
@@ -463,7 +464,9 @@ class ModelDataTranslator
         if (! ModelDataTranslator::isGmtDateFieldName($field_name)) {
             return $field_name;
         }
-        $query_param_sans_stars = ModelDataTranslator::removeStarsAndAnythingAfterFromConditionQueryParamKey($field_name);
+        $query_param_sans_stars = ModelDataTranslator::removeStarsAndAnythingAfterFromConditionQueryParamKey(
+            $field_name
+        );
         $query_param_sans_gmt_and_sans_stars = substr(
             $query_param_sans_stars,
             0,
@@ -562,8 +565,13 @@ class ModelDataTranslator
                 $requested_version
             );
         }
-        return apply_filters('FHEE__EventEspresso\core\libraries\rest_api\Model_Data_Translator__prepare_query_params_for_rest_api',
-            $rest_query_params, $model_query_params, $model, $requested_version);
+        return apply_filters(
+            'FHEE__EventEspresso\core\libraries\rest_api\Model_Data_Translator__prepare_query_params_for_rest_api',
+            $rest_query_params,
+            $model_query_params,
+            $model,
+            $requested_version
+        );
     }
 
 
@@ -596,18 +604,27 @@ class ModelDataTranslator
                     $translated_value = array($op);
                     if (isset($query_param_value[1])) {
                         $value = $query_param_value[1];
-                        $translated_value[1] = ModelDataTranslator::prepareFieldValuesForJson($field, $value,
-                            $requested_version);
+                        $translated_value[1] = ModelDataTranslator::prepareFieldValuesForJson(
+                            $field,
+                            $value,
+                            $requested_version
+                        );
                     }
                 } else {
-                    $translated_value = ModelDataTranslator::prepareFieldValueForJson($field, $query_param_value,
-                        $requested_version);
+                    $translated_value = ModelDataTranslator::prepareFieldValueForJson(
+                        $field,
+                        $query_param_value,
+                        $requested_version
+                    );
                 }
                 $query_param_for_models[$query_param_key] = $translated_value;
             } else {
                 //so it's not for a field, assume it's a logic query param key
-                $query_param_for_models[$query_param_key] = ModelDataTranslator::prepareConditionsQueryParamsForRestApi($query_param_value,
-                    $model, $requested_version);
+                $query_param_for_models[$query_param_key] = ModelDataTranslator::prepareConditionsQueryParamsForRestApi(
+                    $query_param_value,
+                    $model,
+                    $requested_version
+                );
             }
         }
         return $query_param_for_models;
@@ -646,8 +663,15 @@ class ModelDataTranslator
         //which will help us find the database table and column
         $query_param_parts = explode('.', $query_param_name);
         if (empty($query_param_parts)) {
-            throw new EE_Error(sprintf(__('_extract_column_name is empty when trying to extract column and table name from %s',
-                'event_espresso'), $query_param_name));
+            throw new EE_Error(
+                sprintf(
+                    __(
+                        '_extract_column_name is empty when trying to extract column and table name from %s',
+                        'event_espresso'
+                    ),
+                    $query_param_name
+                )
+            );
         }
         $number_of_parts = count($query_param_parts);
         $last_query_param_part = $query_param_parts[count($query_param_parts) - 1];
@@ -664,5 +688,4 @@ class ModelDataTranslator
             return null;
         }
     }
-
 }

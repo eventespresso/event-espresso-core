@@ -10,7 +10,6 @@ use EED_Core_Rest_Api;
 use EEM_System_Status;
 use EventEspresso\core\libraries\rest_api\ModelDataTranslator;
 
-
 if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }

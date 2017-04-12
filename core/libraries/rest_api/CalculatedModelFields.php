@@ -3,7 +3,6 @@ namespace EventEspresso\core\libraries\rest_api;
 
 use EEM_Base;
 use EventEspresso\core\libraries\rest_api\controllers\Base;
-use EventEspresso\core\libraries\rest_api\RestException;
 use EEH_Inflector;
 
 /**
