@@ -353,9 +353,9 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 
 
      /**
-      * Removes ALL objects from the Collection
+      * detaches ALL objects from the Collection
       */
-     public function reset()
+     public function detachAll()
      {
          $this->rewind();
          while ($this->valid()) {

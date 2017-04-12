@@ -161,9 +161,9 @@ interface CollectionInterface {
 
 
     /**
-     * Removes ALL objects from the Collection
+     * detaches ALL objects from the Collection
      */
-    public function reset();
+    public function detachAll();
 
 }
 // End of file CollectionInterface.php
