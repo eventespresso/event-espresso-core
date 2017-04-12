@@ -5,7 +5,7 @@ Besides the constructor and those two methods, there is nothing else you need to
 | Property Name | Description |
 | ------------- | ----------- |
 `_currencies_supported` | An array of 3-letter currency codes defining all the currencies this gateway supports. If the gateway supports ALL currencies, instead assign this to be the class constant EE_Gateway::all_currencies_supported
-`_supports_sending_refunds` | Boolean value indicating whether or not this gateway can SEND refund requests. If so, it shoudl implement override the method "do_direct_refund"
+`_supports_sending_refunds` | Boolean value indicating whether or not this gateway can SEND refund requests. If so, it should implement override the method "do_direct_refund"
 `_supports_receiving_refunds` | Boolean indicating whether or not this gateway can RECEIVE refund requests via Instant Payment Notifications from the payment processing site.
 
 > Note: for each of the "extra_meta_inputs" defined in your payment method's settings form, you should add a property to the gateway class with the same name, prefixed with an underscore. These properties will automatically have the values of those "extra_meta_inputs" put on them. Eg, if your form defined an "extra_meta_input" of "account_num", you should add a property onto your gateway class entitled `protected $_account_num;`
@@ -38,7 +38,7 @@ These gateways need to set up information about how to redirect the customer to 
 set_redirection_info( $payment, $billing_info = array(), $return_url = NULL, $notify_url = NULL, $cancel_url = NULL)
 ```
 
-This method sets the needed data to redirect the user to the Payment Gateway. It should update the `$payment` which is passed to it (which is an instance of `EE_Payment`) with this info. Specifically, it should set the URL the customer should be sent to by using `EE_Payment::set_redirect_url()`, and it should send an array of key-value pairs for all the inputs in the redirection form using `EE_Payment::set_redirect_args()`.
+This method sets the needed data to redirect the user to the Payment Gateway. It should update the `$payment` which is passed to it (which is an instance of `EE_Payment`) with this info. Specifically, it should set the URL the customer should be sent to by using `EE_Payment::set_redirect_url()` (which sets the field `PAY_redirect_url`)), and it should send an array of key-value pairs for all the inputs in the redirection form using `EE_Payment::set_redirect_args()` (which sets the `PAY_redirect_args` field).
 
 To do this, it will probably want to make use of the `EE_Payment::amount()` to set the amount, and other related data.
 
@@ -49,6 +49,14 @@ The `$return_url` is the URL the customer should be sent back to after payment w
 The `$notify_url` is the URL IPNs should be sent to which you may need to pass to the Payment Gateway.
 
 The `$cancel_url` is the URL the customer should be sent to if they decide to cancel their purchase after they arrive at the Payment Gateway.
+
+Note about the payment's status: the `$payment` passed into this method will initially have a failed status ("PFL"). This is on purpose, in case somehow the request dies
+before completion, in which case the failed status is accurate. Currently, before redirecting the user to `PAY_redirect_url`, the payment is updated to the pending status ("PPN"). 
+
+So during this method you don't need to worry about changing the payment's status from failed to pending, as that will be taken care of for you elsewhere. You only need to set the payment's `PAY_redirect_url` and `PAY_redirect_args`.
+
+Note about the `txn_id_chq_nmbr`: most gateways let you either set a unique string identifying the transaction currently taking place between your code and the gateway. Some will instead assign a unique string to it automatically and inform you of it. Either way, you should put that unique string into the payment's `PAY_txn_id_chq_nmbr`. It will be useful later on when you need to identify the payment based on data from the gateway. 
+You can use `$payment->set_txn_id_chq_nmbr()` method for this.
 
 ### `handle_payment_update`
 
@@ -136,3 +144,39 @@ $discount_amount = $this->_sum_items_and_taxes($transaction) - $transaction->tot
 ```
 
 For more details, use /payment_methods/Paypal_Standard/EEG_Paypal_Standard.gateway.php as an example.
+
+## A Note on Character Encoding in Requests
+Some gateway servers, like Authorize.net, don't use UTF-8 character encoding for their text. This means that your request data
+sent to their server, which is normally sent in UTF-8, might appear garbled or invalid in their system. (This is, of course, an issue with any other servers).
+Some characters are the same in all character encodings (mostly just letters commonly used in English, the ASCII characters set), but some are totally different. So
+you might only notice these issues if you send accented characters (e.g., À or ü) or emojis  (e.g. 😀 or 😤).
+
+The lazy way to fix this is to remove all non-ASCII characters. We have provided a helper for doing this to gateways.
+For example, anywhere inside your gateway class, you can call 
+
+```
+$ascii_only_string = $this->_get_unsupported_character_remover()->format($utf8_string);
+```
+
+You can also use the `formatArray` method on arrays.
+
+However, this will also remove characters that the gateway's server might be fine with too.
+
+So preferably you need to find what character encoding the gateway's server uses for API communication. If it uses
+Windows-1252, a.k.a. CP-1252, a.k.a. ISO-8859-1, you can set the gateway up to use another formatter class. The following
+payment method type class does that for its gateway:
+
+```
+class EE_PMT_Example extends EE_PMT_Base{
+  public function __construct($pm_instance = NULL) {
+        parent::__construct($pm_instance);
+        $this->_gateway->set_unsupported_character_remover(new \EventEspresso\core\services\formatters\Windows1252());
+	}
+  ...
+}
+```
+Then in your gateway class, when you call `$this->_get_unsupported_character_remover()->format($utf8_string)` it will convert the incoming
+string to Windows-1252 instead of ASCII.
+
+You can of course create your own Formatter classes that convert to other formats, just make sure they implement `\EventEspresso\core\services\formatters\FormatterInterface`.
+ See the files `/core/services/formatters` for examples. 

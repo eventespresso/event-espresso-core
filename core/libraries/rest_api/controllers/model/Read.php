@@ -86,11 +86,12 @@ class Read extends Base
     }
 
 
+
     /**
      * Prepares and returns schema for any OPTIONS request.
      *
-     * @param string $model_name  Something like `Event` or `Registration`
-     * @param string $version     The API endpoint version being used.
+     * @param string $model_name Something like `Event` or `Registration`
+     * @param string $version    The API endpoint version being used.
      * @return array
      */
     public static function handle_schema_request($model_name, $version)
@@ -120,6 +121,7 @@ class Read extends Base
     }
 
 
+
     /**
      * This loops through each field in the given schema for the model and does the following:
      * - add any extra fields that are REST API specific and related to existing fields.
@@ -131,15 +133,16 @@ class Read extends Base
      */
     protected function _customize_schema_for_rest_response(\EEM_Base $model, array $schema)
     {
-       foreach ($this->get_model_version_info()->fields_on_model_in_this_version($model) as $field_name => $field) {
-           $schema = $this->_translate_defaults_for_rest_response(
-               $field_name,
-               $field,
-               $this->_maybe_add_extra_fields_to_schema($field_name, $field, $schema)
+        foreach ($this->get_model_version_info()->fields_on_model_in_this_version($model) as $field_name => $field) {
+            $schema = $this->_translate_defaults_for_rest_response(
+                $field_name,
+                $field,
+                $this->_maybe_add_extra_fields_to_schema($field_name, $field, $schema)
             );
-       }
-       return $schema;
+        }
+        return $schema;
     }
+
 
 
     /**
@@ -154,14 +157,27 @@ class Read extends Base
     protected function _translate_defaults_for_rest_response($field_name, \EE_Model_Field_Base $field, array $schema)
     {
         if (isset($schema['properties'][$field_name]['default'])) {
-            $schema['properties'][$field_name]['default'] = Model_Data_Translator::prepare_field_value_for_json(
-                $field,
-                $schema['properties'][$field_name]['default'],
-                $this->get_model_version_info()->requested_version()
-            );
+            if (is_array($schema['properties'][$field_name]['default'])) {
+                foreach ($schema['properties'][$field_name]['default'] as $default_key => $default_value) {
+                    if ($default_key === 'raw') {
+                        $schema['properties'][$field_name]['default'][$default_key] = Model_Data_Translator::prepare_field_value_for_json(
+                            $field,
+                            $default_value,
+                            $this->get_model_version_info()->requested_version()
+                        );
+                    }
+                }
+            } else {
+                $schema['properties'][$field_name]['default'] = Model_Data_Translator::prepare_field_value_for_json(
+                    $field,
+                    $schema['properties'][$field_name]['default'],
+                    $this->get_model_version_info()->requested_version()
+                );
+            }
         }
         return $schema;
     }
+
 
 
     /**
@@ -189,15 +205,16 @@ class Read extends Base
 
 
 
-
     /**
      * Used to figure out the route from the request when a `WP_REST_Request` object is not available
+     *
      * @return string
      */
-    protected function get_route_from_request() {
+    protected function get_route_from_request()
+    {
         if (isset($GLOBALS['wp'])
             && $GLOBALS['wp'] instanceof \WP
-            && isset($GLOBALS['wp']->query_vars['rest_route'] )
+            && isset($GLOBALS['wp']->query_vars['rest_route'])
         ) {
             return $GLOBALS['wp']->query_vars['rest_route'];
         } else {
@@ -553,6 +570,8 @@ class Read extends Base
         $entity_array = $this->_add_extra_fields($model, $db_row, $entity_array);
         $entity_array['_links'] = $this->_get_entity_links($model, $db_row, $entity_array);
         $entity_array['_calculated_fields'] = $this->_get_entity_calculations($model, $db_row, $rest_request);
+        $entity_array = apply_filters('FHEE__Read__create_entity_from_wpdb_results__entity_before_including_requested_models',
+            $entity_array, $model, $rest_request->get_param('caps'), $rest_request, $this);
         $entity_array = $this->_include_requested_models($model, $rest_request, $entity_array, $db_row);
         $entity_array = apply_filters(
             'FHEE__Read__create_entity_from_wpdb_results__entity_before_inaccessible_field_removal',

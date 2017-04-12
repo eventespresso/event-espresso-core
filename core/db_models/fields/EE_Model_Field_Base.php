@@ -338,6 +338,42 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
     }
 
 
+
+    /**
+     * By default this returns the scalar default value that was sent in on the class prepped according to the class type
+     * as the default.  However, when there are schema properties, then the default property is setup to mirror the
+     * property keys and correctly prepare the default according to that expected property value.
+     * The getSchema method validates whether the schema for default is setup correctly or not according to the schema type
+     *
+     * @return mixed
+     */
+    public function getSchemaDefault()
+    {
+        $default_value = $this->prepare_for_use_in_db($this->prepare_for_set($this->get_default_value()));
+        $schema_properties = $this->getSchemaProperties();
+
+        //if this schema has properties than shape the default value to match the properties shape.
+        if ($schema_properties) {
+            $value_to_return = array();
+            foreach ($schema_properties as $property_key => $property_schema) {
+                switch ($property_key) {
+                    case 'pretty':
+                    case 'rendered':
+                        $value_to_return[$property_key] = $this->prepare_for_pretty_echoing($this->prepare_for_set($default_value));
+                        break;
+                    default:
+                        $value_to_return[$property_key] = $default_value;
+                        break;
+                }
+            }
+            $default_value = $value_to_return;
+        }
+        return $default_value;
+    }
+
+
+
+
     /**
      * If a child class has enum values, they should override this method and provide a simple array
      * of the enum values.
@@ -494,7 +530,7 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
             'description' => $this->getSchemaDescription(),
             'type' => $this->getSchemaType(),
             'readonly' => $this->getSchemaReadonly(),
-            'default' => $this->get_default_value()
+            'default' => $this->getSchemaDefault()
         );
 
         //optional properties of the schema

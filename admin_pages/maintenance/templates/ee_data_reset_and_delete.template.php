@@ -11,6 +11,15 @@
 </h2>
 <br />
 
+<div class="padding">
+	<h4 class="espresso-header"><span class="dashicons dashicons-update ee-icon-size-22"></span><?php esc_html_e('Reset Ticket and Datetime Reserved Counts', 'event_espresso');?></h4>
+	<p><?php esc_html_e('Use this to reset the counts for ticket and datetime reservations.', 'event_espresso');?></p>
+	<div class="float-right"><?php echo $reset_reservations_button; ?></div>
+	<div class="clear"></div>
+</div>
+<br />
+<br />
+
 <!-- reset DB url is here. Just need to make it look pretty and unhide it-->
 <div class="padding">
 	<h4 class="espresso-header"><span class="dashicons dashicons-update ee-icon-size-22"></span><?php esc_html_e('Reset Event Espresso Capabilities', 'event_espresso');?></h4>
