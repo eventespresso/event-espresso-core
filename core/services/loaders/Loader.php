@@ -48,11 +48,37 @@ class Loader implements LoaderInterface
      */
     public function __construct(LoaderInterface $new_loader = null, LoaderInterface $shared_loader = null)
     {
+        $this->new_loader = $this->setupNewLoader($new_loader);
+        $this->shared_loader = $this->setupSharedLoader($shared_loader);
+    }
+
+
+
+    /**
+     * @param LoaderInterface|null $new_loader
+     * @return CoreLoader|LoaderInterface
+     * @throws InvalidArgumentException
+     */
+    private function setupNewLoader(LoaderInterface $new_loader = null)
+    {
         // if not already generated, create a standard loader
         if (! $new_loader instanceof LoaderInterface) {
             $new_loader = new CoreLoader(EE_Registry::instance());
         }
-        $this->new_loader = $new_loader;
+        return $new_loader;
+    }
+
+
+
+    /**
+     * @param LoaderInterface|null $shared_loader
+     * @return CoreLoader|LoaderInterface
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
+     */
+    private function setupSharedLoader(LoaderInterface $shared_loader = null)
+    {
         // if not already generated, create a caching loader
         if (! $shared_loader instanceof LoaderInterface) {
             $shared_loader = new CachingLoader(
@@ -60,7 +86,7 @@ class Loader implements LoaderInterface
                 new LooseCollection('')
             );
         }
-        $this->shared_loader = $shared_loader;
+        return $shared_loader;
     }
 
 
@@ -96,6 +122,41 @@ class Loader implements LoaderInterface
         return $shared
             ? $this->getSharedLoader()->load($fqcn, $arguments)
             : $this->getNewLoader()->load($fqcn, $arguments);
+    }
+
+
+
+    /**
+     * @param string $fqcn
+     * @param array  $arguments
+     * @return mixed
+     */
+    public function getNew($fqcn, $arguments = array())
+    {
+        return $this->getNewLoader()->load($fqcn, $arguments);
+    }
+
+
+
+    /**
+     * @param string $fqcn
+     * @param array  $arguments
+     * @return mixed
+     */
+    public function getShared($fqcn, $arguments = array())
+    {
+        return $this->getSharedLoader()->load($fqcn, $arguments);
+    }
+
+
+
+    /**
+     * calls reset() on loaders if that method exists
+     */
+    public function reset()
+    {
+        $this->new_loader->reset();
+        $this->shared_loader->reset();
     }
 
 }
