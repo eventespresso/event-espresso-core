@@ -53,14 +53,14 @@ class CachingLoader extends LoaderDecorator
             // where "IDENTIFIER" = the string that was set during construction
             add_action(
                 "AHEE__EventEspresso_core_services_loaders_CachingLoader__resetCache__{$identifier}",
-                array($this, 'resetCache')
+                array($this, 'reset')
             );
         }
         // to clear ALL caches, simply do the following:
-        // do_action('AHEE__EventEspresso\core\services\loaders\CachingLoader__resetCache');
+        // do_action('AHEE__EventEspresso_core_services_loaders_CachingLoader__resetCache');
         add_action(
             'AHEE__EventEspresso_core_services_loaders_CachingLoader__resetCache',
-            array($this, 'resetCache')
+            array($this, 'reset')
         );
     }
 
@@ -101,7 +101,7 @@ class CachingLoader extends LoaderDecorator
     {
         $fqcn = ltrim($fqcn, '\\');
         // caching can be turned off via the following code:
-        // add_filter('FHEE__EventEspresso\core\services\loaders\CachingLoader__load__bypass_cache', '__return_true');
+        // add_filter('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache', '__return_true');
         if(
             apply_filters(
                 'FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache',
