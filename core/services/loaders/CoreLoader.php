@@ -64,6 +64,18 @@ class CoreLoader implements LoaderInterface
             : $this->generator->brew($fqcn, $arguments);
     }
 
+
+
+    /**
+     * calls reset() on generator if method exists
+     */
+    public function reset()
+    {
+        if (method_exists($this->generator, 'reset')) {
+            $this->generator->reset();
+        }
+    }
+
 }
 // End of file CoreLoader.php
 // Location: core/services/loaders/CoreLoader.php
