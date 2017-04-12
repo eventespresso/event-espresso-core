@@ -122,9 +122,13 @@ class CachingLoader extends LoaderDecorator
 
 
 
-    public function resetCache()
+    /**
+     * empties cache and calls reset() on loader if method exists
+     */
+    public function reset()
     {
         $this->cache->reset();
+        $this->loader->reset();
     }
 
 
