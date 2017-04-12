@@ -276,6 +276,9 @@ class Maintenance_Admin_Page extends EE_Admin_Page
                     'next_db_state'    => isset($current_script) ? sprintf(__("EE%s (%s)", 'event_espresso'),
                         $new_version, $plugin_slug) : null,
                 ));
+            } else {
+                $this->_template_args['current_db_state'] = null;
+                $this->_template_args['next_db_state'] = null;
             }
             $this->_template_path = EE_MAINTENANCE_TEMPLATE_PATH . 'ee_migration_page.template.php';
             $this->_template_args = array_merge(
