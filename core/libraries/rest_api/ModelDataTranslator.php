@@ -90,6 +90,7 @@ class ModelDataTranslator
      * @param mixed                $original_value_maybe_array
      * @param string               $request_version (eg 4.8.36)
      * @return array
+     * @throws SerializedPHPObjectDetected if we find a serialized PHP object while preparing data for JSON
      */
     public static function prepareFieldValuesForJson($field_obj, $original_value_maybe_array, $request_version)
     {
@@ -225,6 +226,7 @@ class ModelDataTranslator
      * @param mixed                $original_value
      * @param string               $requested_version
      * @return mixed
+     * @throws SerializedPHPObjectDetected if we find an object while preparing data for JSON
      */
     public static function prepareFieldValueForJson($field_obj, $original_value, $requested_version)
     {
@@ -243,8 +245,8 @@ class ModelDataTranslator
             $new_value = $original_value;
         }
         //are we about to send an object? just don't. We have no good way to represent it in JSON.
-        if (is_serialized($new_value) || is_object($new_value)) {
-            $new_value = null;
+        if (is_object($new_value)) {
+            throw new SerializedPHPObjectDetected($new_value);
         }
         return apply_filters(
             'FHEE__EventEspresso\core\libraries\rest_api\Model_Data_Translator__prepare_field_for_rest_api',
@@ -585,6 +587,8 @@ class ModelDataTranslator
      * @param string    $requested_version                  eg "4.8.36"
      * @return array ready for use in the rest api query params
      * @throws EE_Error
+     * @throws SerializedPHPObjectDetected if somehow a PHP object were in the query params' values,
+     *                                     (which would be really unusual)
      */
     public static function prepareConditionsQueryParamsForRestApi(
         $inputted_query_params_of_this_type,

@@ -2,6 +2,7 @@
 namespace EventEspresso\core\libraries\rest_api\controllers\model;
 
 use EE_Model_Field_Base;
+use EventEspresso\core\libraries\rest_api\SerializedPHPObjectDetected;
 use Exception;
 use WP_Error;
 use WP_REST_Request;
@@ -667,38 +668,49 @@ class Read extends Base
         foreach ($result as $field_name => $raw_field_value) {
             $field_obj = $model->field_settings_for($field_name);
             $field_value = $field_obj->prepare_for_set_from_db($raw_field_value);
-            if ($this->isSubclassOfOne($field_obj, $this->getModelVersionInfo()->fieldsIgnored())) {
-                unset($result[$field_name]);
-            } elseif ($this->isSubclassOfOne(
-                $field_obj,
-                $this->getModelVersionInfo()->fieldsThatHaveRenderedFormat()
-            )) {
-                $result[$field_name] = array(
-                    'raw'      => $this->prepareFieldObjValueForJson($field_obj, $field_value),
-                    'rendered' => $this->prepareFieldObjValueForJson($field_obj, $field_value, 'pretty'),
-                );
-            } elseif ($this->isSubclassOfOne(
-                $field_obj,
-                $this->getModelVersionInfo()->fieldsThatHavePrettyFormat()
-            )) {
-                $result[$field_name] = array(
-                    'raw'    => $this->prepareFieldObjValueForJson($field_obj, $field_value),
-                    'pretty' => $this->prepareFieldObjValueForJson($field_obj, $field_value, 'pretty'),
-                );
-            } elseif ($field_obj instanceof \EE_Datetime_Field) {
-                if ($field_value instanceof \DateTime) {
-                    $timezone = $field_value->getTimezone();
-                    $field_value->setTimezone(new \DateTimeZone('UTC'));
-                    $result[$field_name . '_gmt'] = $this->prepareFieldObjValueForJson(
-                        $field_obj,
-                        $field_value,
-                        'datetime_obj'
+            try {
+                if ($this->isSubclassOfOne($field_obj, $this->getModelVersionInfo()->fieldsIgnored())) {
+                    unset($result[$field_name]);
+                } elseif ($this->isSubclassOfOne(
+                    $field_obj,
+                    $this->getModelVersionInfo()->fieldsThatHaveRenderedFormat()
+                )
+                ) {
+                    $result[$field_name] = array(
+                        'raw'      => $this->prepareFieldObjValueForJson($field_obj, $field_value),
+                        'rendered' => $this->prepareFieldObjValueForJson($field_obj, $field_value, 'pretty'),
                     );
-                    $field_value->setTimezone($timezone);
-                    $result[$field_name] = $this->prepareFieldObjValueForJson($field_obj, $field_value, 'datetime_obj');
+                } elseif ($this->isSubclassOfOne(
+                    $field_obj,
+                    $this->getModelVersionInfo()->fieldsThatHavePrettyFormat()
+                )
+                ) {
+                    $result[$field_name] = array(
+                        'raw'    => $this->prepareFieldObjValueForJson($field_obj, $field_value),
+                        'pretty' => $this->prepareFieldObjValueForJson($field_obj, $field_value, 'pretty'),
+                    );
+                } elseif ($field_obj instanceof \EE_Datetime_Field) {
+                    if ($field_value instanceof \DateTime) {
+                        $timezone = $field_value->getTimezone();
+                        $field_value->setTimezone(new \DateTimeZone('UTC'));
+                        $result[$field_name . '_gmt'] = $this->prepareFieldObjValueForJson(
+                            $field_obj,
+                            $field_value,
+                            'datetime_obj'
+                        );
+                        $field_value->setTimezone($timezone);
+                        $result[$field_name] = $this->prepareFieldObjValueForJson(
+                            $field_obj,
+                            $field_value,
+                            'datetime_obj'
+                        );
+                    }
+                } else {
+                    $result[$field_name] = $this->prepareFieldObjValueForJson($field_obj, $field_value);
                 }
-            } else {
-                $result[$field_name] = $this->prepareFieldObjValueForJson($field_obj, $field_value);
+            } catch (SerializedPHPObjectDetected $e) {
+                //so the value had a PHP object in it. Well exclude it from the response then. That will make it obvious
+                //to API clients that we're not showing them something.
             }
         }
         return $result;
@@ -715,6 +727,7 @@ class Read extends Base
      * @param mixed $value as it's stored on a model object
      * @param string $format valid values are 'normal' (default), 'pretty', 'datetime_obj'
      * @return mixed
+     * @throws SerializedPHPObjectDetected if $value contains a PHP object
      */
     protected function prepareFieldObjValueForJson(EE_Model_Field_Base $field_obj, $value, $format = 'normal')
     {

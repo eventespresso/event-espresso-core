@@ -1,6 +1,7 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api\controllers\model;
 
+use EventEspresso\core\libraries\rest_api\SerializedPHPObjectDetected;
 use Exception;
 use EE_Boolean_Field;
 use EE_Maintenance_Mode;

@@ -215,8 +215,6 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
         $field = new EE_Maybe_Serialized_Simple_HTML_Field('whatever', 'whatever', true);
         $datetime_field = new EE_Datetime_Field('whatever2', 'whatever2', true, EE_Datetime_Field::now);
         return array(
-            array(null, new stdClass(), $field),
-            array(array('obj' => null), array('obj' => new stdClass()), $field),
             array(array('foo' => 'bar'), array('foo' => 'bar'), $field),
             array(1, 1, $field),
             array('stringy', 'stringy', $field),
@@ -224,7 +222,8 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
                 '2016-01-03T00:00:00',
                 new \EventEspresso\core\domain\entities\DbSafeDateTime(
                     '2016-01-03 00:00:00',
-                    new DateTimeZone('UTC')),
+                    new DateTimeZone('UTC')
+                ),
                 $datetime_field
             )
         );
@@ -246,6 +245,32 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
             ModelDataTranslator::prepareFieldValuesForJson($field_obj, $input, '4.8.36')
         );
     }
+
+    /**
+     * @return array 1st item is the expected value, 2nd is the input, 3rd is the field object to use
+     */
+    public function dataProviderForTestPrepareFieldValuesForJsonBad()
+    {
+        $field = new EE_Maybe_Serialized_Simple_HTML_Field('whatever', 'whatever', true);
+        return array(
+            array(new stdClass(), $field),
+            array(array('obj' => new stdClass()), $field)
+        );
+    }
+
+    /**
+     * @group        9222
+     * @dataProvider dataProviderForTestPrepareFieldValuesForJsonBad
+     * @expectedException EventEspresso\core\libraries\rest_api\SerializedPHPObjectDetected
+     * @param                     $input
+     * @param EE_Model_Field_Base $field_obj
+     */
+    public function testPrepareFieldValuesForJsonBad($input, $field_obj)
+    {
+        //duck and cover! it's gonna blow!
+        ModelDataTranslator::prepareFieldValuesForJson($field_obj, $input, '4.8.36');
+    }
+
 }
 
 // Location: tests/testcases/core/libraries/rest_api/Model_Data_Translator_Test.php
