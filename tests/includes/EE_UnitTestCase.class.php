@@ -78,6 +78,8 @@ class EE_UnitTestCase extends WP_UnitTestCase
 
     public function setUp()
     {
+        // turn off caching for any loaders in use
+        add_filter('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache', '__return_true', 1);
         // echo ' ' . $this->getName() . "()\n";
         //save the hooks state before WP_UnitTestCase actually gets its hands on it...
         //as it immediately adds a few hooks we might not want to backup
@@ -167,6 +169,12 @@ class EE_UnitTestCase extends WP_UnitTestCase
             // it won't be entirely accurate, but might help
             // throw new Exception( $error_message );
         }
+        // turn caching back on for any loaders in use
+        remove_filter(
+            'FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache',
+            '__return_true',
+            1
+        );
     }
 
     /**

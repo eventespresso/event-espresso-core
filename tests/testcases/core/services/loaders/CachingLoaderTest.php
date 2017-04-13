@@ -14,12 +14,6 @@ class CachingLoaderTest extends EE_UnitTestCase
     private static $loader;
 
 
-    /**
-     * @var string $obj3ID
-     */
-    private static $obj3ID;
-
-
 
     public function __construct()
     {
@@ -55,33 +49,38 @@ class CachingLoaderTest extends EE_UnitTestCase
         $object2 = self::$loader->load($fqcn);
         $this->assertNotEquals($obj1ID, spl_object_hash($object2));
         // now turn caching on
-        add_filter('FHEE__EventEspresso\core\services\loaders\CachingLoader__load__bypass_cache', '__return_false');
+        add_filter('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache', '__return_false');
         $object3 = self::$loader->load($fqcn);
         $obj3ID = spl_object_hash($object3);
         $object4 = self::$loader->load($fqcn);
         $this->assertEquals($obj3ID, spl_object_hash($object4));
         // we want to know if cached items persist between unit tests,
-        // so let's cache the ID for the last object
-        self::$obj3ID = $obj3ID;
+        // so let's return the ID for the last object to tests that depend on this one
+        return $obj3ID;
     }
 
 
 
     /**
-     * @group LoaderTest
+     * @depends testLoad
+     * @group   LoaderTest
+     * @param string $obj3ID
      */
-    public function testPersistenceBetweenTests(){
-        $fqcn = '\EventEspresso\core\services\address\formatters\AddressFormatter';
-        $object5 = self::$loader->load($fqcn);
-        $this->assertEquals(self::$obj3ID, spl_object_hash($object5));
-        // we don't want to mess up other tests, so turn caching off again by removing the filter we added
-        remove_filter(
-            'FHEE__EventEspresso\core\services\loaders\CachingLoader__load__bypass_cache',
-            '__return_false'
-        );
-        // this time we should get a new object instead of the same one as before
-        $object6 = self::$loader->load($fqcn);
-        $this->assertNotEquals(self::$obj3ID, spl_object_hash($object6));
+    public function testPersistenceBetweenTests($obj3ID){
+        global $wp_version;
+        if (version_compare($wp_version, '4.1', '>')) {
+            $fqcn = '\EventEspresso\core\services\address\formatters\AddressFormatter';
+            $object5 = self::$loader->load($fqcn);
+            $this->assertEquals($obj3ID, spl_object_hash($object5));
+            // we don't want to mess up other tests, so turn caching off again by removing the filter we added
+            remove_filter(
+                'FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache',
+                '__return_false'
+            );
+            // this time we should get a new object instead of the same one as before
+            $object6 = self::$loader->load($fqcn);
+            $this->assertNotEquals($obj3ID, spl_object_hash($object6));
+        }
     }
 
 
@@ -91,7 +90,7 @@ class CachingLoaderTest extends EE_UnitTestCase
      */
     public function testResetCache(){
         // turn caching on again
-        add_filter('FHEE__EventEspresso\core\services\loaders\CachingLoader__load__bypass_cache', '__return_false');
+        add_filter('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache', '__return_false');
         // add a few different objects this time, but confirm that they are getting cached
         $fqcn7 = '\EventEspresso\core\services\address\formatters\AddressFormatter';
         $object7 = self::$loader->load($fqcn7);
@@ -107,7 +106,7 @@ class CachingLoaderTest extends EE_UnitTestCase
         $this->assertEquals(spl_object_hash($object9), spl_object_hash(self::$loader->load($fqcn9)));
         $this->assertCount(3, self::$loader->getCache());
         // now reset the cache using the do_action()
-        do_action('AHEE__EventEspresso\core\services\loaders\CachingLoader__resetCache');
+        do_action('AHEE__EventEspresso_core_services_loaders_CachingLoader__resetCache');
         $this->assertCount(0, self::$loader->getCache());
         // confirm that reloading the same FCQNs as above results in new objects
         $this->assertNotEquals(spl_object_hash($object7), spl_object_hash(self::$loader->load($fqcn7)));

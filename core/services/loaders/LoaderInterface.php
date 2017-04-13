@@ -16,6 +16,13 @@ interface LoaderInterface
      */
     public function load($fqcn, $arguments = array());
 
+
+
+    /**
+     * calls reset() on loader if method exists
+     */
+    public function reset();
+
 }
 // End of file LoaderInterface.php
 // Location: core/services/loaders/LoaderInterface.php
