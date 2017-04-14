@@ -4,6 +4,17 @@ use EventEspresso\core\services\loaders\CoreLoader;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\tests\mocks\core\services\loaders\CachingLoaderMock;
 
+/**
+ * CachingLoaderTest
+ * Tests CachingLoader
+ *
+ * @package EventEspresso\tests
+ * @subpackage \testcases
+ * @author  Brent Christenson
+ * @since   4.9.38.rc
+ * @group LoaderTest
+ * @group CachingLoaderTest
+ */
 class CachingLoaderTest extends EE_UnitTestCase
 {
 
