@@ -613,7 +613,11 @@ class EE_Register_Addon implements EEI_Plugin_API
             //to find if THIS is the addon that was activated,
             //just check if we have already registered it or not
             //(as the newly-activated addon wasn't around the first time addons were registered)
-            if (! isset(self::$_settings[$addon_name])) {
+            if (! isset(self::$_settings[$addon_name])
+                || (isset(self::$_settings[$addon_name])
+                    && ! isset(self::$_settings[$addon_name]['class_name'])
+                )
+            ) {
                 self::$_settings[$addon_name] = $addon_settings;
                 $addon                        = self::_load_and_init_addon_class($addon_name);
                 $addon->set_activation_indicator_option();
