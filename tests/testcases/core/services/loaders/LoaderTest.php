@@ -24,13 +24,11 @@ class LoaderTest extends EE_UnitTestCase
 
 
 
-    /**
-     * LoaderTest constructor.
-     */
-    public function __construct()
+
+    public function setUp()
     {
         self::$loader = new Loader();
-        parent::__construct();
+        parent::setUp();
     }
 
 
