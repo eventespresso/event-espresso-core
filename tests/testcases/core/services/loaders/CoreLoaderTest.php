@@ -2,6 +2,17 @@
 use EventEspresso\core\services\loaders\CoreLoader;
 use EventEspresso\core\services\loaders\LoaderInterface;
 
+/**
+ * CoreLoaderTest
+ * Tests CoreLoader
+ *
+ * @package    EventEspresso\tests
+ * @subpackage \testcases
+ * @author     Brent Christenson
+ * @since      4.9.38.rc
+ * @group      LoaderTest
+ * @group      CoreLoaderTest
+ */
 class CoreLoaderTest extends EE_UnitTestCase
 {
 
@@ -22,7 +33,7 @@ class CoreLoaderTest extends EE_UnitTestCase
 
 
     /**
-     * @group LoaderTest
+     * testBadConstruct
      */
     public function testBadConstruct()
     {
@@ -37,7 +48,7 @@ class CoreLoaderTest extends EE_UnitTestCase
 
 
     /**
-     * @group LoaderTest
+     * testLoad
      */
     public function testLoad()
     {
