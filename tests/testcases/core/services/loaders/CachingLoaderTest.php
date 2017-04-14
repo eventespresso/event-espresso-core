@@ -38,6 +38,11 @@ class CachingLoaderTest extends EE_UnitTestCase
         }
         parent::setUp();
     }
+
+
+    private function getFcqnForTest()
+    {
+        return '\EventEspresso\core\services\address\formatters\AddressFormatter';
     }
 
 
