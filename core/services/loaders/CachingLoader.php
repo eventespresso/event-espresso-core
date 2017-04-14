@@ -46,7 +46,7 @@ class CachingLoader extends LoaderDecorator
     {
         parent::__construct($loader);
         $this->cache = $cache;
-        $this->identifier = $this->setIdentifier($identifier);
+        $this->setIdentifier($identifier);
         if ($this->identifier !== '') {
             // to only clear this cache, and assuming an identifier has been set, simply do the following:
             // do_action('AHEE__EventEspresso\core\services\loaders\CachingLoader__resetCache__IDENTIFIER');
