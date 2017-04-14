@@ -26,15 +26,18 @@ class CachingLoaderTest extends EE_UnitTestCase
 
 
 
-    public function __construct()
+    public function setUp()
     {
-        parent::__construct();
-        if(! self::$loader instanceof LoaderInterface) {
+        //caching is turned off by default in the parent test case.  For tests in here where we're doing a number of
+        //different persistence tests
+        if (! self::$loader instanceof LoaderInterface) {
             self::$loader = new CachingLoaderMock(
                 new CoreLoader(EE_Registry::instance()),
                 new LooseCollection('')
             );
         }
+        parent::setUp();
+    }
     }
 
 
