@@ -263,7 +263,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
 				PRIMARY KEY  (LIN_ID),
 				KEY LIN_code (LIN_code(191)),
 				KEY TXN_ID (TXN_ID)";
-        $this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB');
+        $this->_table_is_changed_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
         $table_name = 'esp_log';
         $sql = "LOG_ID int(11) NOT NULL AUTO_INCREMENT,
 				LOG_time datetime DEFAULT NULL,
@@ -355,7 +355,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
 				PRIMARY KEY  (PAY_ID),
 				KEY PAY_timestamp (PAY_timestamp),
 				KEY TXN_ID (TXN_ID)";
-        $this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB ');
+        $this->_table_is_changed_in_this_version($table_name, $sql, 'ENGINE=InnoDB ');
         $table_name = 'esp_payment_method';
         $sql = "PMD_ID int(11) NOT NULL AUTO_INCREMENT,
 				PMD_type varchar(124) DEFAULT NULL,
@@ -451,7 +451,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
 				KEY TKT_ID (TKT_ID),
 				KEY EVT_ID (EVT_ID),
 				KEY STS_ID (STS_ID)";
-        $this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB ');
+        $this->_table_is_changed_in_this_version($table_name, $sql, 'ENGINE=InnoDB ');
         $table_name = 'esp_registration_payment';
         $sql = "RPY_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 					  REG_ID int(10) unsigned NOT NULL,
@@ -460,7 +460,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
 					  PRIMARY KEY  (RPY_ID),
 					  KEY REG_ID (REG_ID),
 					  KEY PAY_ID (PAY_ID)";
-        $this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB ');
+        $this->_table_is_changed_in_this_version($table_name, $sql, 'ENGINE=InnoDB ');
         $table_name = 'esp_state';
         $sql = "STA_ID smallint(5) unsigned NOT NULL AUTO_INCREMENT,
 				CNT_ISO varchar(2) NOT NULL,
@@ -494,7 +494,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
 				PRIMARY KEY  (TXN_ID),
 				KEY TXN_timestamp (TXN_timestamp),
 				KEY STS_ID (STS_ID)";
-        $this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB');
+        $this->_table_is_changed_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
         $table_name = 'esp_venue_meta';
         $sql = "VNUM_ID int(11) NOT NULL AUTO_INCREMENT,
 			VNU_ID bigint(20) unsigned NOT NULL DEFAULT 0,
@@ -531,7 +531,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
 				PRC_parent int(10) unsigned DEFAULT 0,
 				PRIMARY KEY  (PRC_ID),
 				KEY PRT_ID (PRT_ID)";
-        $this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB');
+        $this->_table_is_changed_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
         $table_name = "esp_price_type";
         $sql = "PRT_ID tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
 				PRT_name varchar(45) NOT NULL,
