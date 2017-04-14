@@ -171,11 +171,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
             // throw new Exception( $error_message );
         }
         // turn caching back on for any loaders in use
-        remove_filter(
-            'FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache',
-            '__return_true',
-            1
-        );
+        remove_all_filters('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache');
     }
 
     /**
