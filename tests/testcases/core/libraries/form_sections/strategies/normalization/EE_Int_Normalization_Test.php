@@ -38,7 +38,7 @@ class EE_Int_Normalization_Test extends EE_UnitTestCase{
      *              }
      *          }
      */
-    public function ok_float_inputs(){
+    public function ok_int_inputs(){
         return array(
             array(null,''),
             array(null,' '),
@@ -51,6 +51,8 @@ class EE_Int_Normalization_Test extends EE_UnitTestCase{
             array(10,10),
             array(20,'20 guineas'),
             array(10,'10.00'),
+            array(10,'10.0'),
+            array(10,'10.00000'),
             array(10,'$10'),
             array(56, '5 quid 6 pence'),
             array(null, 'one hundred'),
@@ -61,7 +63,7 @@ class EE_Int_Normalization_Test extends EE_UnitTestCase{
 
     /**
      * @group 10586
-     * @dataProvider ok_float_inputs
+     * @dataProvider ok_int_inputs
      * @param $expected
      * @param $input
      * @throws EE_Validation_Error
@@ -75,10 +77,12 @@ class EE_Int_Normalization_Test extends EE_UnitTestCase{
      * Data Provider for bad float inputs
      * @return array of arrays with the invalid inputs
      */
-    public function bad_float_inputs(){
+    public function bad_int_inputs(){
         return array(
             array(array()),
             array(new stdClass()),
+            array('10.01'),
+            array('10.')
         );
     }
 
@@ -86,7 +90,7 @@ class EE_Int_Normalization_Test extends EE_UnitTestCase{
 
     /**
      * @group        10586
-     * @dataProvider bad_float_inputs
+     * @dataProvider bad_int_inputs
      * @expectedException EE_Validation_Error
      * @param $input
      * @throws EE_Validation_Error

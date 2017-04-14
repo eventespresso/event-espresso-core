@@ -20,7 +20,7 @@ class EE_Int_Normalization extends EE_Normalization_Strategy_Base
      *      * optional negative sign
      *      * one or more digits
      */
-    const REGEX = '/^(-?)(\d+)$/';
+    const REGEX = '/^(-?)(\d+)(?:\.0+)?$/';
 
 
     /**
@@ -50,7 +50,7 @@ class EE_Int_Normalization extends EE_Normalization_Strategy_Base
             FILTER_SANITIZE_NUMBER_FLOAT,
             FILTER_FLAG_ALLOW_FRACTION
         );
-        if($value_to_normalize === ''){
+        if ($value_to_normalize === '') {
             return null;
         }
         $matches = array();
@@ -72,7 +72,7 @@ class EE_Int_Normalization extends EE_Normalization_Strategy_Base
             }
         }
         //this really shouldn't ever happen because fields with a int normalization strategy
-        //should also have a int validation strategy, but in case it doesnt use the default
+        //should also have a int validation strategy, but in case it doesn't use the default
         if (! $validation_error_message) {
             $default_validation_strategy = new EE_Int_Validation_Strategy();
             $validation_error_message = $default_validation_strategy->get_validation_error_message();
