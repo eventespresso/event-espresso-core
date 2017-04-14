@@ -34,7 +34,7 @@ class LoaderTest extends EE_UnitTestCase
 
 
     /**
-     * @group LoaderTest
+     * testNewLoader
      */
     public function testNewLoader()
     {
@@ -60,7 +60,7 @@ class LoaderTest extends EE_UnitTestCase
 
 
     /**
-     * @group LoaderTest
+     * testSharedLoader
      */
     public function testSharedLoader()
     {
