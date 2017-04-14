@@ -1,5 +1,7 @@
 <?php
+use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\services\collections\LooseCollection;
+use EventEspresso\core\services\container\exceptions\ServiceNotFoundException;
 use EventEspresso\core\services\loaders\CoreLoader;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\tests\mocks\core\services\loaders\CachingLoaderMock;
@@ -20,7 +22,7 @@ class CachingLoaderTest extends EE_UnitTestCase
 
 
     /**
-     * @var LoaderInterface $loader
+     * @var CachingLoaderMock $loader
      */
     private static $loader;
 
@@ -40,7 +42,7 @@ class CachingLoaderTest extends EE_UnitTestCase
     }
 
 
-    private function getFcqnForTest()
+    private function getFqcnForTest()
     {
         return '\EventEspresso\core\services\address\formatters\AddressFormatter';
     }
@@ -52,39 +54,43 @@ class CachingLoaderTest extends EE_UnitTestCase
      */
     public function testLoadCachingOff()
     {
-        $object = self::$loader->load($this->getFcqnForTest());
+        $object = self::$loader->load($this->getFqcnForTest());
         $this->assertInstanceOf(
-            $this->getFcqnForTest(),
+            $this->getFqcnForTest(),
             $object,
             sprintf(
                 '%1$s is not an instance of %2$s',
                 is_object($object) ? get_class($object) : print_r($object, true),
-                $this->getFcqnForTest()
+                $this->getFqcnForTest()
             )
         );
         $obj1ID = spl_object_hash($object);
         // none of these objects are getting cached because it is turned off for unit testing
-        $object2 = self::$loader->load($this->getFcqnForTest());
+        $object2 = self::$loader->load($this->getFqcnForTest());
         $obj2ID = spl_object_hash($object2);
         $this->assertNotEquals($obj1ID, $obj2ID);
 
         //this time let's load the object with caching turned on so it gets in the cache and we'll send that objects
         //hash along for the persistence test.
         add_filter('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache', '__return_false', 10);
-        return spl_object_hash(self::$loader->load($this->getFcqnForTest()));
+        return spl_object_hash(self::$loader->load($this->getFqcnForTest()));
     }
+
 
 
     /**
      * This tests persistence with caching on.
-     * @param string $object_hash  hash provided of object loaded in previous test.
+     *
+     * @param string $object_hash hash provided of object loaded in previous test.
+     * @throws InvalidEntityException
+     * @throws ServiceNotFoundException
      * @depends testLoadCachingOff
      */
     public function testLoadCachingOn($object_hash)
     {
         //turn caching on.
         add_filter('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache', '__return_false', 10);
-        $new_object = self::$loader->load($this->getFcqnForTest());
+        $new_object = self::$loader->load($this->getFqcnForTest());
         $this->assertEquals($object_hash, spl_object_hash($new_object));
     }
 
