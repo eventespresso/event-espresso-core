@@ -136,12 +136,13 @@ will request a collection events, and will return a response something like this
 
 Some fields in Event Espresso can represent infinity, which isn't part of the JSON specification. So when fields have this value, they will instead return the special value: -1 for any requests to EE namespaces before 4.8.36, and NULL for requests to EE namespace 4.8.36 or later (this change was made because -1 can be ambiguous).
 
-###Serialized PHP Objects in Responses Replaced with Null
+###Serialized PHP Objects in Responses Are Removed
 
 There are some database columns where we store serialized PHP objects, but when reading that data over the EE4 REST 
-API, those serialized PHP objects are replaced with `null`. This is because there is no good way to represent them in
-JSON anyway. Also, we plan to remove these serialized PHP objects from our database (for this reason, and others). So
- you should not encounter this situation very frequently, and even less frequently in the future. 
+API, entity properties containing a PHP object are removed entirely from responses. E.g., if you're reading answers, and one of those answers' `ANS_value` contains a serialized PHP object in the EE
+ database, that answer entity will not have an `ANS_value` property. So you should check entities have the normal properties before using them. 
+ We do this because there is no good way to represent PHP objects in JSON anyway. Also, we plan to remove these serialized PHP objects from our database (for this reason, and others). So
+ you should not encounter this situation very frequently right now, and even less frequently in the future. 
  
 However, we will continue to store serialized arrays in our database. These are represented as JSON objects or arrays.
 
