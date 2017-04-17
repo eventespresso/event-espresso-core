@@ -665,9 +665,8 @@ class Read extends Base
             $result,
             $this->getModelVersionInfo()->fieldsOnModelInThisVersion($model)
         );
-        foreach ($result as $field_name => $raw_field_value) {
+        foreach ($result as $field_name => $field_value) {
             $field_obj = $model->field_settings_for($field_name);
-            $field_value = $field_obj->prepare_for_set_from_db($raw_field_value);
             try {
                 if ($this->isSubclassOfOne($field_obj, $this->getModelVersionInfo()->fieldsIgnored())) {
                     unset($result[$field_name]);
@@ -690,21 +689,20 @@ class Read extends Base
                         'pretty' => $this->prepareFieldObjValueForJson($field_obj, $field_value, 'pretty'),
                     );
                 } elseif ($field_obj instanceof \EE_Datetime_Field) {
-                    if ($field_value instanceof \DateTime) {
-                        $timezone = $field_value->getTimezone();
-                        $field_value->setTimezone(new \DateTimeZone('UTC'));
-                        $result[$field_name . '_gmt'] = $this->prepareFieldObjValueForJson(
-                            $field_obj,
-                            $field_value,
-                            'datetime_obj'
-                        );
-                        $field_value->setTimezone($timezone);
-                        $result[$field_name] = $this->prepareFieldObjValueForJson(
-                            $field_obj,
-                            $field_value,
-                            'datetime_obj'
-                        );
-                    }
+                    $field_value = $field_obj->prepare_for_set_from_db($field_value);
+                    $timezone = $field_value->getTimezone();
+                    $field_value->setTimezone(new \DateTimeZone('UTC'));
+                    $result[$field_name . '_gmt'] = ModelDataTranslator::prepareFieldValuesForJson(
+                        $field_obj,
+                        $field_value,
+                        $this->getModelVersionInfo()->requestedVersion()
+                    );
+                    $field_value->setTimezone($timezone);
+                    $result[$field_name] = ModelDataTranslator::prepareFieldValuesForJson(
+                        $field_obj,
+                        $field_value,
+                        $this->getModelVersionInfo()->requestedVersion()
+                    );
                 } else {
                     $result[$field_name] = $this->prepareFieldObjValueForJson($field_obj, $field_value);
                 }
@@ -719,7 +717,7 @@ class Read extends Base
 
 
     /**
-     * Takes a value all the way from the model object's representation, to the
+     * Takes a value all the way from the DB representation, to the model object's representation, to the
      * user-facing PHP representation, to the REST API representation. (Assumes you've already taken from the DB
      * representation using $field_obj->prepare_for_set_from_db())
      *
@@ -731,10 +729,8 @@ class Read extends Base
      */
     protected function prepareFieldObjValueForJson(EE_Model_Field_Base $field_obj, $value, $format = 'normal')
     {
+        $value = $field_obj->prepare_for_set_from_db($value);
         switch ($format) {
-            case 'datetime_obj':
-                //leave the value as-is. It should already be a DateTime object
-                break;
             case 'pretty':
                 $value = $field_obj->prepare_for_pretty_echoing($value);
                 break;
