@@ -609,10 +609,7 @@ class EED_Core_Rest_Api extends \EED_Module
 
         return apply_filters(
             'FHEE__EED_Core_Rest_Api___get_delete_query_params',
-            array_merge(
-                $this->_get_response_selection_query_params($model,$version),
-                $params_for_delete
-            ),
+            $params_for_delete,
             $model,
             $version
         );

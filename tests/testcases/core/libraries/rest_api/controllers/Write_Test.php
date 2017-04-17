@@ -116,6 +116,10 @@ class Write_Test extends \EE_REST_TestCase
     }
 
     /**
+     * Originally I wanted to allow providing selection parameters on write requests, and this
+     * test verified we could do that. However, Darren had some issues with that, and so
+     * rather than discuss it further it was removed. So this test now verifies we DON'T
+     * use selection parameters on write requests.
      * @group 9222
      */
     public function test_insert__then_use_querystring()
@@ -132,6 +136,8 @@ class Write_Test extends \EE_REST_TestCase
                 'DTT_EVT_start_gmt' => '2016-01-02T00:00:00',
             )
         );
+        //it's a free country, so you can provide a query string
+        //with parameters for reading in it; but we will ignore it.
         $req->set_query_params(
             array(
                 'include' => 'Event.EVT_ID'
@@ -140,7 +146,10 @@ class Write_Test extends \EE_REST_TestCase
         $response = rest_do_request($req);
         $response_data = $response->get_data();
         $this->assertTrue(empty($response_data['code']));
-        $this->assertEquals($event->ID(), $response_data['event']['EVT_ID']);
+        $this->assertTrue(isset($response_data['DTT_ID']));
+        //we should NOT include the datetime's related event, because we said we weren't going
+        //to use READ parameters on WRITE queries like this
+        $this->assertTrue(empty($response_data['event']['EVT_ID']));
     }
 
 
@@ -211,6 +220,7 @@ class Write_Test extends \EE_REST_TestCase
 
     /**
      * @group 9222
+     * @grop current
      */
     public function test_delete__permanent()
     {

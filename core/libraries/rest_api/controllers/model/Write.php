@@ -279,11 +279,26 @@ class Write extends Base
         if ($requested_permanent_delete) {
             $read_controller = new Read();
             $read_controller->setRequestedVersion($this->getRequestedVersion());
-            $original_entity = $read_controller->getOneOrReportPermissionError(
-                $model,
-                $request,
-                EEM_Base::caps_delete
+            $simulated_get_request = new WP_REST_Request('GET', $request->get_route());
+            $simulated_get_request->set_url_params($request->get_url_params());
+            $simulated_get_request->set_query_params(
+                array(
+                    'caps' => EEM_Base::caps_delete
+                )
             );
+            //not just grab the entity, but also use sendResponse to verify in case there's an error retrieving it
+            $original_response = $read_controller->sendResponse(
+                $read_controller->getOneOrReportPermissionError(
+                    $model,
+                    $simulated_get_request,
+                    EEM_Base::caps_delete
+                )
+            );
+            if ($original_response instanceof WP_REST_Response) {
+                $original_entity = $original_response->get_data();
+            } else {
+                $original_entity = null;
+            }
             $deleted = (bool)$model->delete_permanently_by_ID($obj_id, $requested_allow_blocking);
             return array(
                 'deleted'  => $deleted,
@@ -333,7 +348,6 @@ class Write extends Base
         $read_controller->setRequestedVersion($this->getRequestedVersion());
         //the simulates request really doesn't need any info downstream
         $simulated_request = new WP_REST_Request('GET');
-        $simulated_request->set_query_params($request->get_query_params());
         return $read_controller->createEntityFromWpdbResult(
             $model_obj->get_model(),
             $simulated_db_row,
@@ -369,7 +383,6 @@ class Write extends Base
                 'include' => $request->get_param('include'),
             )
         );
-        $get_request->set_query_params($request->get_query_params());
         $read_controller = new Read();
         $read_controller->setRequestedVersion($this->getRequestedVersion());
         return $read_controller->getEntityFromModel($model, $get_request);
