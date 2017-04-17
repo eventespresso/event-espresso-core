@@ -2,7 +2,7 @@
 namespace EventEspresso\core\libraries\rest_api;
 
 /**
- * Class Exception
+ * Class ObjectDetectedException
  * similar to EE's EE_Error, except has space to hold the "data" we
  * want to eventually pass to WP_Error
  *
@@ -31,10 +31,14 @@ class ObjectDetectedException extends Exception
     public function __construct($triggering_object)
     {
         $this->triggering_object = $triggering_object;
-        $class_type = is_object($triggering_object) ? get_class($triggering_object) : esc_html__('Unknown', 'event_espresso');
+        $class_type = is_object($triggering_object)
+            ? get_class($triggering_object)
+            : esc_html__('Unknown', 'event_espresso');
         parent::__construct(
             sprintf(
-                esc_html__('Serialized %1$s detected.', 'event_espresso'),
+                // @codingStandardsIgnoreStart
+                esc_html__('PHP Object of class %1$s detected in REST API data. This cannot be represented in JSON.', 'event_espresso'),
+                // @codingStandardsIgnoreEnd
                 $class_type
             )
         );
