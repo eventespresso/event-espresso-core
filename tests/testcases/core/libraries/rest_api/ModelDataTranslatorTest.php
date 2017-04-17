@@ -261,7 +261,7 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
     /**
      * @group        9222
      * @dataProvider dataProviderForTestPrepareFieldValuesForJsonBad
-     * @expectedException EventEspresso\core\libraries\rest_api\SerializedPHPObjectDetected
+     * @expectedException EventEspresso\core\libraries\rest_api\ObjectDetectedException
      * @param                     $input
      * @param EE_Model_Field_Base $field_obj
      */

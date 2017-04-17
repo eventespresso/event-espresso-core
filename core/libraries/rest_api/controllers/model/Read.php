@@ -2,7 +2,7 @@
 namespace EventEspresso\core\libraries\rest_api\controllers\model;
 
 use EE_Model_Field_Base;
-use EventEspresso\core\libraries\rest_api\SerializedPHPObjectDetected;
+use EventEspresso\core\libraries\rest_api\ObjectDetectedException;
 use Exception;
 use WP_Error;
 use WP_REST_Request;
@@ -708,7 +708,7 @@ class Read extends Base
                 } else {
                     $result[$field_name] = $this->prepareFieldObjValueForJson($field_obj, $field_value);
                 }
-            } catch (SerializedPHPObjectDetected $e) {
+            } catch (ObjectDetectedException $e) {
                 //so the value had a PHP object in it. Well exclude it from the response then. That will make it obvious
                 //to API clients that we're not showing them something.
             }
@@ -727,7 +727,7 @@ class Read extends Base
      * @param mixed $value as it's stored on a model object
      * @param string $format valid values are 'normal' (default), 'pretty', 'datetime_obj'
      * @return mixed
-     * @throws SerializedPHPObjectDetected if $value contains a PHP object
+     * @throws ObjectDetectedException if $value contains a PHP object
      */
     protected function prepareFieldObjValueForJson(EE_Model_Field_Base $field_obj, $value, $format = 'normal')
     {

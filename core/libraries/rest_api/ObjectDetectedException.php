@@ -20,7 +20,7 @@ if (! defined('EVENT_ESPRESSO_VERSION')) {
 
 
 
-class SerializedPHPObjectDetected extends Exception
+class ObjectDetectedException extends Exception
 {
 
     /**
