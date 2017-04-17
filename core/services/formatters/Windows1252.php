@@ -30,7 +30,9 @@ class Windows1252 extends FormatterBase
     {
         //in case an int or float etc was passed in
         $input = (string)$input;
-        $input = iconv('utf-8','cp1252//TRANSLIT', $input);
+        if (defined('iconv')) {
+            $input = iconv('utf-8', 'cp1252//TRANSLIT', $input);
+        }
         return $input;
     }
 }
