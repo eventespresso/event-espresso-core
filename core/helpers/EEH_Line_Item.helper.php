@@ -102,7 +102,7 @@ class EEH_Line_Item {
 			'FHEE__EEH_Line_Item__add_percentage_based_item__line_item',
 			$line_item
 		);
-		return self::add_item( $parent_line_item, $line_item );
+		return $parent_line_item->add_child_line_item($line_item, false);
 	}
 
 
