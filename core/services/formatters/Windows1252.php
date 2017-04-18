@@ -32,16 +32,16 @@ class Windows1252 extends FormatterBase
         $input = (string)$input;
         if (function_exists('iconv')) {
             $input = iconv('utf-8', 'cp1252//TRANSLIT', $input);
-        } elseif (defined('WP_DEBUG') && WP_DEBUG) {
+        } elseif ( WP_DEBUG) {
             trigger_error(
                 sprintf(
                     // @codingStandardsIgnoreStart
-                    __('%1$s could not format the string "%2$s" because the function "%3$s" does not exist. Please verify PHP is installed with this function, see %4$s', 'event_espresso'),
+                    esc_html__('%1$s could not format the string "%2$s" because the function "%3$s" does not exist. Please verify PHP is installed with this function, see %4$s', 'event_espresso'),
                     // @codingStandardsIgnoreEnd
                     get_class($this),
                     $input,
                     'iconv',
-                    'http://php.net/manual/en/iconv.installation.php'
+                    '<a href="http://php.net/manual/en/iconv.installation.php">http://php.net/manual/en/iconv.installation.php</a>'
                 )
             );
         }
