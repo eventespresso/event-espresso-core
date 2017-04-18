@@ -18,6 +18,25 @@ class EE_Message_Resource_Manager
 {
 
     /**
+     * This option in the database is used to keep a record of message types that have been activated for a messenger
+     * at some point in the history of the site.  It is utilized by the implementation of the 'force' flag in
+     * EE_Register_Message_Type.  The force flag is an indication of whether a message type should be activated by
+     * default when the message type is registered.  However, if a user has explicitly deactivated a message type, then
+     * the force flag is ignored.  The method by which the code knows whether to ignore this flag is via this option.
+     * Note, that this is NOT a historical record.  Its entirely possible for a message type to have been activated for
+     * a messenger and yet not have a record in this option.  This occurs when a message type is inactivated through an
+     * automated process (when an add-on registering the message type deactivates, or when some other code calls the
+     * EE_Registery_Message_Type::deregister method) and the related record(s) is(are) removed from this option to ensure
+     * the "force" flag is respected if that message type is later re-registered.
+     *
+     * This option should NOT be used to determine the current "active" state of a message type for a given messenger.
+     *
+     * The name of this option (and related methods/properties) is due to matching the original intended purpose for the
+     * option that got superseded by later behaviour requirements.
+     */
+    const HAS_ACTIVATED_MESSAGE_TYPE_FOR_MESSENGER_OPTION_NAME = 'ee_has_activated_messenger';
+
+    /**
      * @type boolean $_initialized
      */
     protected $_initialized = false;
@@ -80,6 +99,8 @@ class EE_Message_Resource_Manager
      * This holds the array of messengers and their corresponding message types that have
      * been activated on a site at some point.  This is an important record that helps the messages system
      * not accidentally reactivate something that was intentionally deactivated by a user.
+     *
+     * @see phpdocs on EE_Message_Resource_Manager::HAS_ACTIVATED_MESSAGE_TYPE_FOR_MESSENGER_OPTION_NAME for more details.
      *
      * @type array
      */
@@ -496,9 +517,10 @@ class EE_Message_Resource_Manager
 
 
     /**
-     * Used to return active messengers array stored in the wp options table.
+     * Used to return has activated message types for messengers array stored in the wp options table.
      * If no value is present in the option then an empty array is returned.
      * The value is cached on the $_has_activated_messengers_and_message_types property for future calls.
+     * @see phpdocs on EE_Message_Resource_Manager::HAS_ACTIVATED_MESSAGE_TYPE_FOR_MESSENGER_OPTION_NAME for more details.
      *
      * @param   bool $reset Used to indicate that any cached value should be ignored.
      * @return array
@@ -506,14 +528,16 @@ class EE_Message_Resource_Manager
     public function get_has_activated_messengers_option($reset = false)
     {
         if ($reset || empty($this->_has_activated_messengers_and_message_types)) {
-            $this->_has_activated_messengers_and_message_types = get_option('ee_has_activated_messenger', array());
+            $this->_has_activated_messengers_and_message_types = get_option(self::HAS_ACTIVATED_MESSAGE_TYPE_FOR_MESSENGER_OPTION_NAME, array());
         }
         return $this->_has_activated_messengers_and_message_types;
     }
 
 
     /**
-     * Used to update the active messengers array stored in the wp options table.
+     * Used to update the has activated option in the db.
+     *
+     * @see phpdocs on EE_Message_Resource_Manager::HAS_ACTIVATED_MESSAGE_TYPE_FOR_MESSENGER_OPTION_NAME for more details.
      *
      * @param array $has_activated_messengers Incoming data to save.  If empty, then the internal cached property
      *                                        representing this data is used.
@@ -528,7 +552,7 @@ class EE_Message_Resource_Manager
         $has_activated_messengers = empty($has_activated_messengers)
             ? $this->_has_activated_messengers_and_message_types
             : $has_activated_messengers;
-        return update_option('ee_has_activated_messenger', $has_activated_messengers);
+        return update_option(self::HAS_ACTIVATED_MESSAGE_TYPE_FOR_MESSENGER_OPTION_NAME, $has_activated_messengers);
     }
 
 
@@ -805,6 +829,8 @@ class EE_Message_Resource_Manager
      * Updates the internal cached _has_activated_messengers_and_message_types property with the given messenger
      * and message type.
      *
+     * @see phpdocs on EE_Message_Resource_Manager::HAS_ACTIVATED_MESSAGE_TYPE_FOR_MESSENGER_OPTION_NAME for more details.
+     *
      * @access protected
      * @param \EE_messenger $messenger
      * @param string        $message_type_name
@@ -1031,6 +1057,8 @@ class EE_Message_Resource_Manager
      * activated for the given messenger.  This can be called by client code on plugin updates etc to determine whether
      * to attempt automatically reactivating message types that should be activated by default or not.
      *
+     * @see phpdocs on EE_Message_Resource_Manager::HAS_ACTIVATED_MESSAGE_TYPE_FOR_MESSENGER_OPTION_NAME for more details.
+     *
      * @param $message_type_name
      * @param $messenger_name
      * @return bool
@@ -1045,6 +1073,8 @@ class EE_Message_Resource_Manager
 
     /**
      * This method unsets a message type from the given messenger has activated option.
+     *
+     * @see phpdocs on EE_Message_Resource_Manager::HAS_ACTIVATED_MESSAGE_TYPE_FOR_MESSENGER_OPTION_NAME for more details.
      *
      * @param string $message_type_name
      * @param string $messenger_name
@@ -1079,6 +1109,9 @@ class EE_Message_Resource_Manager
 
     /**
      * Removes a message type active record from all messengers it is attached to.
+     *
+     * @see phpdocs on EE_Message_Resource_Manager::HAS_ACTIVATED_MESSAGE_TYPE_FOR_MESSENGER_OPTION_NAME for more details.
+     *
      * @param      $message_type_name
      * @param bool $consider_current_state  Whether to consider whether the  message type is currently active or not.
      *                                      If it is currently active, then remove.  Otherwise leave it alone.
