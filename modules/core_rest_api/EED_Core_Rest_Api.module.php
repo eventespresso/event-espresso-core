@@ -5,6 +5,7 @@ use EventEspresso\core\libraries\rest_api\controllers\model\Read as ModelRead;
 use EventEspresso\core\libraries\rest_api\changes\ChangesInBase;
 use EventEspresso\core\libraries\rest_api\ModelDataTranslator;
 use EventEspresso\core\libraries\rest_api\ModelVersionInfo;
+use EventEspresso\core\libraries\rest_api\ObjectDetectedException;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -688,6 +689,8 @@ class EED_Core_Rest_Api extends \EED_Module
      * @param boolean                                                $create whether this is for request to create (in which case we need
      * all required params) or just to update (in which case we don't need those on every request)
      * @return array
+     * @throws ObjectDetectedException if a default value has a PHP object, which should never do (and if we
+     * did, let's know about it ASAP, so let the exception bubble up)
      */
     protected function _get_write_params(
         $model_name,

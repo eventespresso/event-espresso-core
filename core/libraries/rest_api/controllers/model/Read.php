@@ -165,6 +165,8 @@ class Read extends Base
      * @param EE_Model_Field_Base $field
      * @param array                $schema
      * @return array
+     * @throws ObjectDetectedException if a default value has a PHP object, which should never do (and if we
+     * did, let's know about it ASAP, so let the exception bubble up)
      */
     protected function translateDefaultsForRestResponse($field_name, EE_Model_Field_Base $field, array $schema)
     {
@@ -401,6 +403,7 @@ class Read extends Base
      * @param \EE_Model_Relation_Base $relation
      * @param WP_REST_Request        $request
      * @return WP_Error|array
+     * @throws RestException
      */
     protected function getEntitiesFromRelationUsingModelQueryParams($primary_model_query_params, $relation, $request)
     {
@@ -657,6 +660,7 @@ class Read extends Base
      * @param EEM_Base $model
      * @param array     $db_row
      * @return array entity mostly ready for converting to JSON and sending in the response
+     *
      */
     protected function createBareEntityFromWpdbResults(EEM_Base $model, $db_row)
     {
@@ -921,6 +925,8 @@ class Read extends Base
      * @param array            $wpdb_row
      * @param WP_REST_Request $rest_request
      * @return \stdClass the _calculations item in the entity
+     * @throws ObjectDetectedException if a default value has a PHP object, which should never do (and if we
+     * did, let's know about it ASAP, so let the exception bubble up)
      */
     protected function getEntityCalculations($model, $wpdb_row, $rest_request)
     {
@@ -1077,6 +1083,7 @@ class Read extends Base
      * @return array like what EEM_Base::get_all() expects or FALSE to indicate
      *                                    that absolutely no results should be returned
      * @throws EE_Error
+     * @throws RestException
      */
     public function createModelQueryParams($model, $query_parameters)
     {

@@ -50,6 +50,8 @@ class Meta extends Base
     /*
      * Gets the model metadata resource entity
      * @return array for JSON response, describing all the models available in teh requested version
+     * @throws ObjectDetectedException if a default value has a PHP object, which should never do (and if we
+     * did, let's know about it ASAP, so let the exception bubble up)
      */
     protected function getModelsMetadataEntity()
     {

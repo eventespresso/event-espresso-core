@@ -14,6 +14,7 @@ use \EEM_Soft_Delete_Base;
 use EE_Restriction_Generator_Base;
 use EED_Core_Rest_Api;
 use EEH_Inflector;
+use EE_Error;
 
 if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
@@ -171,7 +172,8 @@ class Write extends Base
      * @param EEM_Base        $model
      * @param WP_REST_Request $request
      * @return array
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws RestException
      */
     public function insert(EEM_Base $model, WP_REST_Request $request)
     {
@@ -223,7 +225,7 @@ class Write extends Base
      * @param EEM_Base        $model
      * @param WP_REST_Request $request
      * @return array
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function update(EEM_Base $model, WP_REST_Request $request)
     {
@@ -269,7 +271,7 @@ class Write extends Base
      * @param EEM_Base        $model
      * @param WP_REST_Request $request
      * @return array of either the soft-deleted item, or
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function delete(EEM_Base $model, WP_REST_Request $request)
     {

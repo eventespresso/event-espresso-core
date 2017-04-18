@@ -52,7 +52,7 @@ class ModelDataTranslator
      * @param string               $requested_version
      * @param string               $timezone_string treat values as being in this timezone
      * @return mixed
-     * @throws \DomainException
+     * @throws RestException
      */
     public static function prepareFieldValuesFromJson(
         $field_obj,
@@ -120,7 +120,7 @@ class ModelDataTranslator
      * @param string               $requested_version
      * @param string               $timezone_string treat values as being in this timezone
      * @return mixed
-     * @throws \DomainException
+     * @throws RestException
      */
     public static function prepareFieldValueFromJson(
         $field_obj,
@@ -270,7 +270,7 @@ class ModelDataTranslator
      *                         If we're writing to the DB, we don't expect any operators, or any logic query parameters,
      *                         and we also won't accept serialized data unless the current user has unfiltered_html.
      * @return array
-     * @throws \DomainException
+     * @throws RestException
      * @throws EE_Error
      */
     public static function prepareConditionsQueryParamsForModels(
