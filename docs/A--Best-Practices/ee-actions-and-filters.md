@@ -5,13 +5,16 @@ Event Espresso family of plugins make use of the WordPress event driven plugin a
 ## Naming convention for Actions and Filters within classes or functions.
 
 ### Action Hooks: 
-`AHEE__{CLASS NAME}{METHOD}{location within method}`
 
+ * EE action hook names are prefixed with `"AHEE__"` (**A**ction **H**ook **E**vent **E**spresso)
+     - this allows searching for `"AHEE__"` to find all EE related action hooks (or `"HEE__"` for ALL hooks)
+ * EE action hooks are in the format `"AHEE__{FullyQualifiedClassName}__{MethodName}__{location within method}"`
   * `AHEE` = Action Hook Event Espresso
   * `__` = double underscore separator
   * `{CLASS NAME}` = the name of the class the hook is in
   * `{METHOD}` = the name of the method/function the hook is in
   * `{location within method}` = where the hook is within the method, either literally (e.g.: begin or end) or pertaining to what's happening programatically (e.g. before_loading_modules)
+ * if a hook name uses a "\Fully\Qualified\ClassName" that contains a namespace and therefore has backslashes `\` in it, then the backslashes should be converted to underscores `_`
 
 Example:
 
@@ -20,13 +23,15 @@ Example:
 
 ### Filter Hooks: 
 
-`FHEE__{CLASS NAME}{METHOD}{name of variable being filtered}`
-
+ * EE filter hook names are prefixed with `"FHEE__"` (**F**ilter **H**ook **E**vent **E**spresso)
+     - this allows searching for `"FHEE__"` to find all EE related filter hooks (or `"HEE__"` for ALL hooks)
+ * EE filter hooks are in the format `"FHEE__{FullyQualifiedClassName}__{MethodName}__{variable_being_filtered}"`
 * `FHEE` = Filter Hook Event Espresso
 * `__` = double underscore separator
 * `{CLASS NAME}` = the name of the class the hook is in
 * `{METHOD}` = the name of the class function the hook is in
 * `{name of variable being filtered}` = what’s being filtered (ie: if the variable was `$my_array`, then the hook would end with `__my_array` )
+ * if a hook name uses a "\Fully\Qualified\ClassName" that contains a namespace and therefore has backslashes `\` in it, then the backslashes should be converted to underscores `_`
 
 Example:
 
