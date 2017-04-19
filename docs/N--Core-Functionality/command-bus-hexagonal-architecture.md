@@ -220,7 +220,7 @@ from there, it's simply a matter of retrieving data from the Command DTO using i
         }
         $int = $command->getIntProperty();
         $string = $command->getStringProperty();
-        return New Thing($int, $string);
+        return new Thing($int, $string);
     }
     
 ```
@@ -271,7 +271,7 @@ class CreateThingCommandHandler extends CommandHandler
             $existing_thing->setString($string);
             return $existing_thing;
         }
-        return New Thing($int, $string);
+        return new Thing($int, $string);
     }
 
 }    
