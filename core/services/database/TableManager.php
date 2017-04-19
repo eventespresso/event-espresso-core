@@ -142,6 +142,8 @@ class TableManager extends \EE_Base
         foreach ($table_names as $table_name) {
             $table_name = $this->getTableAnalysis()->ensureTableNameHasPrefix($table_name);
             if ($this->getTableAnalysis()->tableExists($table_name)) {
+                //make sure we only have a unique strings in the array.
+                $tables_to_delete = array_unique($tables_to_delete);
                 $tables_to_delete[] = $table_name;
             }
         }
