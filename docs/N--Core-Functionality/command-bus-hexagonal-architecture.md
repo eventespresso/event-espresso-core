@@ -220,7 +220,7 @@ from there, it's simply a matter of retrieving data from the Command DTO using i
         }
         $int = $command->getIntProperty();
         $string = $command->getStringProperty();
-        return New Thing($int, $string);
+        return new Thing($int, $string);
     }
     
 ```
@@ -271,7 +271,7 @@ class CreateThingCommandHandler extends CommandHandler
             $existing_thing->setString($string);
             return $existing_thing;
         }
-        return New Thing($int, $string);
+        return new Thing($int, $string);
     }
 
 }    
@@ -411,4 +411,25 @@ $CommandHandlerManager->addCommandHandler(
 
 would result in the alternate CommandHandler being used to process that Command.
 
+This can be used to provide additional behaviour to an existing Command Handler by extending the existing class:
 
+```php
+
+class DoSomethingCommandHandler extends CreateThingCommandHandler
+{
+
+    /**
+     * @param  CommandInterface $command
+     * @return mixed
+     * @throws InvalidArgumentException
+     */
+    public function handle(CommandInterface $command)
+    {
+       $thing = parent::handle($command);
+       doSomething($thing);
+       return thing ;
+    }
+
+}    
+
+```
