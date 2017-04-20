@@ -541,7 +541,7 @@ jQuery(document).ready(function($){
     //conditionally initialize the form (other code may want to control this though)
 	if(
 		typeof( ee_form_section_validation_init ) !== 'undefined'
-		&& ee_form_section_validation_init.init === true
+		&& ee_form_section_validation_init.init === '1'
 		&& typeof( ee_form_section_vars ) !== 'undefined'
 	) {
 		EEFV.initialize( ee_form_section_vars.form_data );
