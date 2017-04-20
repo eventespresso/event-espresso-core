@@ -48,6 +48,7 @@ jQuery(document).ready(function($){
                     error.appendTo(input.parent());
                 }
             });
+            EEFV.add_custom_validators();
         },
 
 
@@ -60,7 +61,6 @@ jQuery(document).ready(function($){
 			EEFV.initialize_select_reveal_inputs( form_data );
 			EEFV.validation_rules_array = form_data;
 			EEFV.setup_validation_rules( form_data );
-			EEFV.add_custom_validators();
 			//add a trigger so anyone can know when forms are getting re-initialized
 			$(document).trigger( 'EEFV:initialize', form_data );
 			//let's execute a trigger for each form in the localized data. This way
