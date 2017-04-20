@@ -14,6 +14,7 @@ Things the reviewer might be looking for, includes, but is not limited to the fo
       * [ ] use of ` esc_html__() ` or similar for translations
       * [ ] follows PSR formatting guidelines
       * [ ] all classes, methods and functions are properly documented via phpdocs
+      * [ ] class constants instead of hardcoded strings used for keys and identifiers
  * [ ] Code is free of syntax errors
  * [ ] Code does not appear to introduce any backwards incompatibilities
  * [ ] Unit tests have been written (where and if applicable)
