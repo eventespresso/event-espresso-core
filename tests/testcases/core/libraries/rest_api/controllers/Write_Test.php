@@ -299,6 +299,35 @@ class Write_Test extends \EE_REST_TestCase
 
 
     /**
+     * For some reason, inserting questions had a unique warning.
+     *
+     * Specifically inserting a question producted:
+     *     Warning: Invalid argument supplied for foreach() in
+           .../event-espresso-core/core/libraries/rest_api/ModelDataTranslator.php on line 284
+     *
+     * @group 9222
+     */
+    public function test_insert__question()
+    {
+        $this->_authenticate_an_admin();
+        $req = new \WP_REST_Request(
+            'POST',
+            '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/questions/'
+        );
+        $req->set_body_params(
+            array(
+                'QST_name' => 'restorama',
+            )
+        );
+        $response = rest_do_request($req);
+        $response_data = $response->get_data();
+        //verify there was no error code
+        $this->assertTrue(empty($response_data['code']));
+        $this->assertTrue(isset($response_data['QST_ID']));
+    }
+
+
+    /**
      * Authenticates an admin with capabilities to use the API
      *
      * @param array $caps
