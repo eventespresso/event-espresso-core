@@ -33,6 +33,22 @@ jQuery(document).ready(function($){
 		// current form to be validated
 		form_validators : {},
 
+        /**
+         * Set some settings common for EE form validation, that don't need
+         * to be set every time we initialize (or re-initialize) a form
+         */
+        set_validation_defaults : function() {
+
+            // jQuery validation object
+            $.validator.setDefaults({
+                erroPlacement: function (error, input) {
+                    //remove error inputs added server-side,
+                    //this new error overrides it
+                    input.siblings('label.error').remove();
+                    error.appendTo(input.parent());
+                }
+            });
+        },
 
 
 		/**
@@ -196,21 +212,12 @@ jQuery(document).ready(function($){
 						if ( typeof EEFV.form_validators[ form_id ] !== 'undefined' ) {
 							EEFV.resetForm(EEFV.form_validators[ form_id ]);
 						}
-                        var validation_options = {};
-						// check if we are on the reg checkout page
-                        if (typeof SPCO === 'undefined') {
-                            validation_options.errorPlacement = function (error, input) {
-                                //remove error inputs added server-side,
-                                //this new error overrides it
-                                input.siblings('label.error').remove();
-                                error.appendTo(input.parent());
-                            };
-                        }
+
                         // remove the non-js-generated server-side validation errors
                         // because we will allow jquery validate to populate them
                         // need to call validate() before doing anything else, i know, seems counter intuitive...
                         // but let SPCO set it's own defaults
-                        EEFV.form_validators[form_id] = html_form.validate(validation_options);
+                        EEFV.form_validators[form_id] = html_form.validate();
 						// now add form section's validation rules
 						EEFV.add_rules( form_data.form_section_id, form_data.validation_rules );
 						// and cache incoming form sections and rules so that they can be later removed if necessary
@@ -529,6 +536,9 @@ jQuery(document).ready(function($){
 
 	};
 	// end of EEFV object
+    //always setup default validation stuff
+    EEFV.set_validation_defaults();
+    //conditionally initialize the form (other code may want to control this though)
 	if(
 		typeof( ee_form_section_validation_init ) !== 'undefined'
 		&& ee_form_section_validation_init.init === true
