@@ -198,7 +198,8 @@ class Write extends Base
         $model_data = ModelDataTranslator::prepareConditionsQueryParamsForModels(
             $submitted_json_data,
             $model,
-            $this->getModelVersionInfo()->requestedVersion()
+            $this->getModelVersionInfo()->requestedVersion(),
+            true
         );
         $model_obj = EE_Registry::instance()->load_class(
             $model->get_this_model_name(),
@@ -256,7 +257,8 @@ class Write extends Base
         $model_data = ModelDataTranslator::prepareConditionsQueryParamsForModels(
             $this->getBodyParams($request),
             $model,
-            $this->getModelVersionInfo()->requestedVersion()
+            $this->getModelVersionInfo()->requestedVersion(),
+            true
         );
         $model_obj = $model->get_one_by_ID($obj_id);
         $model_obj->save($model_data);
