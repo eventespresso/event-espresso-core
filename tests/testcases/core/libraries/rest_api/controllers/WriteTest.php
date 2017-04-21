@@ -14,12 +14,10 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  * @since          $VID:$
  * @group          rest_api
  */
-class Write_Test extends \EE_REST_TestCase
+class WriteTest extends \EE_REST_TestCase
 {
 
-    /**
-     */
-    public function test_no_insert_if_no_caps()
+    public function testNoInsertIfNoCaps()
     {
         $request = new \WP_REST_Request('POST', '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events');
         $request->set_body_params(
@@ -38,7 +36,7 @@ class Write_Test extends \EE_REST_TestCase
      * Verifies that even if the current user can edit events, they shouldn't be able
      * to insert until we've sorted that code out
      */
-    public function test_no_insert_limited_user()
+    public function testNoInsertLimitedUser()
     {
         $user = $this->factory->user->create_and_get(array('role' => 'subscriber'));
         $user->add_cap('ee_edit_events');
@@ -62,11 +60,11 @@ class Write_Test extends \EE_REST_TestCase
      * @group 9222
      * @group current
      */
-    public function test_insert_utc_and_relative_times()
+    public function testInsertUtcAndRelativeTimes()
     {
         //let's set a different WP timezone.
         update_option('gmt_offset', '-1');
-        $this->_authenticate_an_admin();
+        $this->authenticateAnAdmin();
         $req = new \WP_REST_Request(
             'POST',
             '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/datetimes'
@@ -94,11 +92,11 @@ class Write_Test extends \EE_REST_TestCase
      * ignore the gmt datetime. See https://core.trac.wordpress.org/ticket/39954
      * @group 9222
      */
-    public function test_insert_utc_and_relative_duplicate()
+    public function testInsertUtcAndRelativeDuplicate()
     {
         //let's set a different WP timezone.
         update_option('gmt_offset', '-1');
-        $this->_authenticate_an_admin();
+        $this->authenticateAnAdmin();
         $req = new \WP_REST_Request(
             'POST',
             '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/datetimes'
@@ -122,9 +120,9 @@ class Write_Test extends \EE_REST_TestCase
      * use selection parameters on write requests.
      * @group 9222
      */
-    public function test_insert__then_use_querystring()
+    public function testInsertThenUseQuerystring()
     {
-        $this->_authenticate_an_admin();
+        $this->authenticateAnAdmin();
         $event = $this->new_model_obj_with_dependencies('Event');
         $req = new \WP_REST_Request(
             'POST',
@@ -157,9 +155,9 @@ class Write_Test extends \EE_REST_TestCase
     /**
      * @group 9222
      */
-    public function test_update_only_some_fields()
+    public function testUpdateOnlySomeFields()
     {
-        $this->_authenticate_an_admin();
+        $this->authenticateAnAdmin();
         $original_reg_limit = 25;
         $original_sold = 100;
         $datetime = $this->new_model_obj_with_dependencies(
@@ -194,9 +192,9 @@ class Write_Test extends \EE_REST_TestCase
     /**
      * @group 9222
      */
-    public function test_delete__trashed()
+    public function testDeleteTrashed()
     {
-        $this->_authenticate_an_admin();
+        $this->authenticateAnAdmin();
         $datetime = $this->new_model_obj_with_dependencies(
             'Datetime',
             array(
@@ -222,9 +220,9 @@ class Write_Test extends \EE_REST_TestCase
      * @group 9222
      * @grop current
      */
-    public function test_delete__permanent()
+    public function testDeletePermanent()
     {
-        $this->_authenticate_an_admin();
+        $this->authenticateAnAdmin();
         $datetime_count_before_insertion = \EEM_Datetime::instance()->count_deleted_and_undeleted();
         $datetime = $this->new_model_obj_with_dependencies('Datetime');
         $req = new \WP_REST_Request(
@@ -252,9 +250,9 @@ class Write_Test extends \EE_REST_TestCase
      *
      * @group 9222
      */
-    public function test_delete__not_allowed_on_non_soft_delete_model()
+    public function testDeleteNotAllowedOnNonSoftDeleteModel()
     {
-        $this->_authenticate_an_admin();
+        $this->authenticateAnAdmin();
         $payment = $this->new_model_obj_with_dependencies('Payment');
         $payment_count_before_deletion = \EEM_Payment::instance()->count();
         $req = new \WP_REST_Request(
@@ -273,9 +271,9 @@ class Write_Test extends \EE_REST_TestCase
      *
      * @group 9222
      */
-    public function test_delete__non_soft_delete_model()
+    public function testDeleteNonSoftDeleteModel()
     {
-        $this->_authenticate_an_admin();
+        $this->authenticateAnAdmin();
         $payment = $this->new_model_obj_with_dependencies('Payment');
         $payment_count_before_deletion = \EEM_Payment::instance()->count();
         $req = new \WP_REST_Request(
@@ -303,9 +301,9 @@ class Write_Test extends \EE_REST_TestCase
      *
      * @group 9222
      */
-    public function test_insert__invalid_param_provided()
+    public function testInsertInvalidParamProvided()
     {
-        $this->_authenticate_an_admin();
+        $this->authenticateAnAdmin();
         $req = new \WP_REST_Request(
             'POST',
             '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/questions'
@@ -329,7 +327,7 @@ class Write_Test extends \EE_REST_TestCase
      * @param array $caps
      * @return \WP_User
      */
-    protected function _authenticate_an_admin()
+    protected function authenticateAnAdmin()
     {
         global $current_user;
         //setup our user and set as current user.
