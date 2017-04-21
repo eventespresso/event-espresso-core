@@ -162,13 +162,11 @@ class CoreLoader
      */
     public function registerPsr4Path(array $maps)
     {
-        add_action('plugins_loaded', function () use ($maps) {
-            foreach ($maps as $prefix => $base_dir) {
-                EE_Psr4AutoloaderInit::psr4_loader()->addNameSpace(
-                    $prefix,
-                    $base_dir
-                );
-            }
-        }, 1);
+        foreach ($maps as $prefix => $base_dir) {
+            EE_Psr4AutoloaderInit::psr4_loader()->addNameSpace(
+                $prefix,
+                $base_dir
+            );
+        }
     }
 }
