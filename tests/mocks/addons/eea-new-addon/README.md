@@ -6,7 +6,9 @@ New EE4 Add-on Starter Template
 [![License](https://img.shields.io/badge/License-GPLv2-blue.svg?style=flat)](https://www.gnu.org/licenses/gpl-2.0.html)
 [![Event Espresso Addon](https://img.shields.io/badge/Addon%20For-Event%20Espresso-blue.svg)](https://github.com/eventespresso/event-espresso-core)
 
-This add-on adds some extra groovy features to [Event Espresso](https://eventespresso.com)
+This add-on adds some extra groovy features to [Event Espresso](https://eventespresso.com).
+
+> Note, there is **no usage support** provided here.  Please read the entire contents of this document before posting any issues.  If we encounter issues that give evidence of this document not having been read the issue _will be closed_.
 
 | **Some Links**|     |
 |---- | --- |
@@ -45,3 +47,13 @@ For all testers of this add-on, please take note of the following when reporting
 1. Don't "bump" bug reports if we don't respond right away.  We see every report coming in, but we'll only reply if we need clarification or if we think its invalid.  Otherwise, we're likely working on a fix and the issue will be updated when the fix is complete.
 
 ### Pull Requests
+One of the reasons we created this private repo on GitHub is because we wanted to open up EE development to 3rd party developers who might want to contribute to the codebase. GitHub makes this really easy to do so via pull requests.  If you don't know what pull requests are, please read up on them via the GitHub help/documentation.
+
+Here's how we deal with pull requests for our repo:
+
+1. Any new FEATURES in a pull request should be based off of the *master* branch. If your feature pull request is based off any other branch it will not be considered.
+2. Any BUGFIX pull requests should be based off of the branch the bug was found.  Please verify if it is in master before submitting the pull request.  If it is in reproducible on master, then the pull-request should be based off of master.
+3. We greatly appreciate any pull-requests submitted for consideration, but please understand we are very selective in what we decide to include in our official add-ons.  If the "feature" is something that expands too much on our design decisions for this add-on then we may suggest you develop your pull request into a different add-on for EE.
+
+
+You may find [our post on contributing to open source software](https://eventespresso.com/2017/02/5-tips-for-contributing-to-open-source-software-like-event-espresso/) helpful.
