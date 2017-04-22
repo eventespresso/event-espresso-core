@@ -5,7 +5,7 @@ New EE4 Add-on Starter Template
 [![Travis](https://travis-ci.org/eventespresso/eea-new-addon.svg?branch=master)](https://travis-ci.org/eventespresso/eea-new-addon)
 [![License](https://img.shields.io/badge/License-GPLv2-blue.svg?style=flat)](https://www.gnu.org/licenses/gpl-2.0.html)
 [![Event Espresso Addon](https://img.shields.io/badge/Addon%20For-Event%20Espresso-blue.svg)](https://github.com/eventespresso/event-espresso-core)
-[![Requires EE Core Version:](https://img.shields.io/badge/requires%20EE%20core-4.9.37.p-red.svg)](https://github.com/eventespresso/event-espresso-core/releases/tag/4.9.37.p)
+[![Minimum EE Core Version:](https://img.shields.io/badge/Minimum%20EE%20core%20ver-4.9.37.p-red.svg)](https://github.com/eventespresso/event-espresso-core/releases/tag/4.9.37.p)
 
 This add-on adds some extra groovy features to [Event Espresso](https://eventespresso.com).
 
