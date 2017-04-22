@@ -91,7 +91,7 @@ class CoreLoader
         tests_add_filter('FHEE__EE_Error__get_error__show_normal_exceptions', '__return_true');
 
         // Bootstrap EE
-        require dirname(__FILE__) . '/../../espresso.php';
+        require EE_PLUGIN_DIR . 'espresso.php';
     }
 
 
