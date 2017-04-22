@@ -25,7 +25,7 @@ machine:
 ## Customize dependencies
 dependencies:
   pre:
-    - . $plugin_loc/tests/bin/circle-build.sh
+    - . $plugin_loc/tests/bin/setup-addon-tests.sh
 
 ##tests override.
 test:
