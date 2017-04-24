@@ -66,7 +66,6 @@ class EEM_Base_Using_Mock_Model_Test extends EE_UnitTestCase
 
 
     /**
-     * @group current
      */
     public function test_get_all(){
         //there should be nothing in here
@@ -84,7 +83,6 @@ class EEM_Base_Using_Mock_Model_Test extends EE_UnitTestCase
 
 
     /**
-     * @group current
      */
     public function test_get_qualified_columns_for_all_fields__as_string(){
         $this->assertEquals(
@@ -94,7 +92,6 @@ class EEM_Base_Using_Mock_Model_Test extends EE_UnitTestCase
     }
 
     /**
-     * @group current
      */
     public function test_get_qualified_columns_for_all_fields__as_array(){
         $this->assertEquals(
@@ -107,7 +104,6 @@ class EEM_Base_Using_Mock_Model_Test extends EE_UnitTestCase
     }
 
     /**
-     * @group current
      */
     public function test_get_qualified_columns_for_all_fields__with_prefix(){
         $this->assertEquals(
@@ -122,7 +118,6 @@ class EEM_Base_Using_Mock_Model_Test extends EE_UnitTestCase
     /**
      * Make up a really long model chain. It doesn't need to be actual model names (at least right now; if that
      * ever becomes a requirement then we'll need to hae EEM_Mock actually related to some more mock models)
-     * @group current
      */
     public function test_get_qualified_columns_for_all_fields__with_big_prefix(){
         $this->assertEquals(

@@ -6,14 +6,14 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
 
 /**
  *
- * EE_Int_Normalization_Test
+ * EE_Float_Normalization_Test
  *
  * @package			Event Espresso
  * @subpackage
  * @author				Mike Nelson
  *
  */
-class EE_Int_Normalization_Test extends EE_UnitTestCase{
+class EE_Float_Normalization_Test extends EE_UnitTestCase{
 
     /**
      * @var EE_Float_Normalization
@@ -23,7 +23,7 @@ class EE_Int_Normalization_Test extends EE_UnitTestCase{
 
     public function setUp(){
         parent::setUp();
-        $this->_strategy = new EE_Int_Normalization();
+        $this->_strategy = new EE_Float_Normalization();
         $input = new EE_Text_Input();
         $this->_strategy->_construct_finalize( $input );
     }
@@ -33,12 +33,12 @@ class EE_Int_Normalization_Test extends EE_UnitTestCase{
      * Data Provider for OK float inputs
      * @return array{
      *              array{
-     *                  $0 the expected integer
+     *                  $0 the expected float
      *                  $1 the input value
      *              }
      *          }
      */
-    public function ok_int_inputs(){
+    public function ok_float_inputs(){
         return array(
             array(null,''),
             array(null,' '),
@@ -46,24 +46,23 @@ class EE_Int_Normalization_Test extends EE_UnitTestCase{
             array(10, '10'),
             array(1000,'1,000'),
             array(1000,' 1 000'),
+            array(10,'$10'),
+            array(1,'1.00'),
+            array(1000,' 1, 000.00'),
             array(-1,'-1'),
             array(-1,'- 1'),
-            array(10,10),
             array(20,'20 guineas'),
-            array(10,'10.00'),
-            array(10,'10.0'),
-            array(10,'10.00000'),
-            array(10,'$10'),
+            array(10,10.00),
             array(56, '5 quid 6 pence'),
             array(null, 'one hundred'),
-        );
+       );
     }
 
 
 
     /**
      * @group 10586
-     * @dataProvider ok_int_inputs
+     * @dataProvider ok_float_inputs
      * @param $expected
      * @param $input
      * @throws EE_Validation_Error
@@ -77,12 +76,10 @@ class EE_Int_Normalization_Test extends EE_UnitTestCase{
      * Data Provider for bad float inputs
      * @return array of arrays with the invalid inputs
      */
-    public function bad_int_inputs(){
+    public function bad_float_inputs(){
         return array(
             array(array()),
             array(new stdClass()),
-            array('10.01'),
-            array('10.')
         );
     }
 
@@ -90,15 +87,15 @@ class EE_Int_Normalization_Test extends EE_UnitTestCase{
 
     /**
      * @group        10586
-     * @dataProvider bad_int_inputs
+     * @dataProvider bad_float_inputs
      * @expectedException EE_Validation_Error
      * @param $input
      * @throws EE_Validation_Error
      */
-    public function test_bad_float_inputs($input){
+	public function test_bad_float_inputs($input){
         $this->_strategy->normalize( $input );
-    }
+	}
 }
 
-// End of file EE_Int_Normalization_Test.php
-// Location: tests/testcases/core/libraries/form_sections/strategies/normalization/EE_Int_Normalization_Test.php
+// End of file EE_Float_Normalization_Test.php
+// Location: tests/testcases/core/libraries/form_sections/strategies/normalization/EE_Float_Normalization_Test.php
