@@ -78,8 +78,6 @@ class EE_UnitTestCase extends WP_UnitTestCase
 
     public function setUp()
     {
-        // turn off caching for any loaders in use
-        add_filter('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache', '__return_true', 1);
         // echo ' ' . $this->getName() . "()\n";
         //save the hooks state before WP_UnitTestCase actually gets its hands on it...
         //as it immediately adds a few hooks we might not want to backup
@@ -104,6 +102,9 @@ class EE_UnitTestCase extends WP_UnitTestCase
         add_filter('FHEE__EEH_Activation__create_table__short_circuit', '__return_true');
         add_filter('FHEE__EEH_Activation__add_column_if_it_doesnt_exist__short_circuit', '__return_true');
         add_filter('FHEE__EEH_Activation__drop_index__short_circuit', '__return_true');
+
+        // turn off caching for any loaders in use
+        add_filter('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache', '__return_true');
 
         // load factories
         EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_TESTS_DIR . 'includes' . DS . 'factories');
@@ -170,11 +171,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
             // throw new Exception( $error_message );
         }
         // turn caching back on for any loaders in use
-        remove_filter(
-            'FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache',
-            '__return_true',
-            1
-        );
+        remove_all_filters('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache');
     }
 
     /**
