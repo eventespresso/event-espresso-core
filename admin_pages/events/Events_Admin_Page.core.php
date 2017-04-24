@@ -403,6 +403,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                         'title'    => esc_html__('Default Registration Status', 'event_espresso'),
                         'filename' => 'events_default_settings_status',
                     ),
+                    'default_maximum_tickets_help_tab' => array(
+                        'title' => esc_html__('Default Maximum Tickets Per Order', 'event_espresso'),
+                        'filename' => 'events_default_settings_max_tickets',
+                    )
                 ),
                 'help_tour'     => array('Event_Default_Settings_Help_Tour'),
                 'require_nonce' => false,
@@ -2305,15 +2309,28 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                                                         'default_settings_status_help_tab'
                                                     ),
                                 'html_help_text' => esc_html__(
-                                    'This setting allows you to preselect what the default registration status setting '
-                                    . 'is when creating an event.  Note that changing this setting does NOT '
-                                    . 'retroactively apply it to existing events.',
+                                    'This setting allows you to preselect what the default registration status setting is when creating an event.  Note that changing this setting does NOT retroactively apply it to existing events.',
                                     'event_espresso'
                                 )
                             )
                         ),
-                        //@todo need number input merged in before I use this.
-                        //'default_max_tickets' =>
+                        'default_max_tickets' => new EE_Integer_Input(
+                            array(
+                                'default' => isset($registration_config->default_maximum_number_of_tickets)
+                                    ? $registration_config->default_maximum_number_of_tickets
+                                    : EEM_Event::get_default_additional_limit(),
+                                'html_label_text' => esc_html__(
+                                    'Default Maximum Tickets Allowed Per Order:',
+                                    'event_espresso'
+                                ) . EEH_Template::get_help_tab_link(
+                                    'default_maximum_tickets_help_tab"'
+                                    ),
+                                'html_help_text' => esc_html__(
+                                    'This setting allows you to indicate what will be the default for the maximum number of tickets per order when creating new events.',
+                                    'event_espresso'
+                                )
+                            )
+                        )
                     )
                 )
             )
@@ -2338,6 +2355,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 $valid_data = $form->valid_data();
                 if (isset($valid_data['default_reg_status'])) {
                     $registration_config->default_STS_ID = $valid_data['default_reg_status'];
+                }
+                if (isset($valid_data['default_max_tickets'])) {
+                    $registration_config->default_maximum_number_of_tickets = $valid_data['default_max_tickets'];
                 }
                 //update because data was valid!
                 EE_Registry::instance()->CFG->update_espresso_config();
