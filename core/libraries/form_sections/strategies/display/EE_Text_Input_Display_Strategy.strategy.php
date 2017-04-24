@@ -23,7 +23,7 @@ class EE_Text_Input_Display_Strategy extends EE_Display_Strategy_Base{
 	/**
 	 * @param string $type
 	 */
-	function __construct( $type = 'text' ) {
+	public function __construct( $type = 'text' ) {
 		$this->_type = $type;
 		parent::__construct();
 	}
@@ -34,9 +34,9 @@ class EE_Text_Input_Display_Strategy extends EE_Display_Strategy_Base{
 	 * Gets the html "type" attribute's value
 	 * @return string
 	 */
-	function get_type(){
+    public function get_type(){
 		if (
-			$this->_type == 'email'
+			$this->_type === 'email'
 			&& ! apply_filters( 'FHEE__EE_Text_Input_Display_Strategy__use_html5_email', false )
 		) {
 			return 'text';
@@ -50,7 +50,7 @@ class EE_Text_Input_Display_Strategy extends EE_Display_Strategy_Base{
 	 *
 	 * @return string of html to display the field
 	 */
-	function display(){
+    public function display(){
 		$input = '<input type="'. $this->get_type() .'"';
 		$input .= ' name="' . $this->_input->html_name() . '"';
 		$input .= ' id="' . $this->_input->html_id() . '"';
