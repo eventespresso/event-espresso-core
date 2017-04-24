@@ -255,6 +255,15 @@ class EEM_Event extends EEM_CPT_Base
     }
 
 
+    /**
+     * Return what is currently set as the default additional limit for the event.
+     * @return int
+     */
+    public static function get_default_additional_limit()
+    {
+        return apply_filters('FHEE__EEM_Event__get_default_additional_limit', self::$_default_additional_limit);
+    }
+
 
     /**
      * get_question_groups
