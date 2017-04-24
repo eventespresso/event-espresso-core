@@ -2337,6 +2337,15 @@ class EE_Registration_Config extends EE_Config_Base
      */
     public $default_STS_ID;
 
+
+    /**
+     * For new events, this will be the default value for the maximum number of tickets (equivalent to maximum number of
+     * registrations)
+     * @var int
+     */
+    public $default_maximum_number_of_tickets;
+
+
     /**
      * level of validation to apply to email addresses
      *
@@ -2451,14 +2460,6 @@ class EE_Registration_Config extends EE_Config_Base
      * @var boolean $track_invalid_checkout_access
      */
     protected $track_invalid_checkout_access = true;
-
-
-    /**
-     * For new events, this will be the default value for the maximum number of tickets (equivalent to maximum number of
-     * registrations)
-     * @var int
-     */
-    protected $default_maximum_number_of_tickets;
 
 
 
