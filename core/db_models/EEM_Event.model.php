@@ -163,9 +163,9 @@ class EEM_Event extends EEM_CPT_Base
                     esc_html__('Display Ticket Selector Flag', 'event_espresso'), false, 1),
                 'EVT_visible_on'                  => new EE_Datetime_Field('EVT_visible_on',
                     esc_html__('Event Visible Date', 'event_espresso'), true, EE_Datetime_Field::now),
-                'EVT_additional_limit'            => new EE_Integer_Field('EVT_additional_limit',
+                'EVT_additional_limit'            => new EE_Integer_Field(
                     'EVT_additional_limit',
-                    esc_html__('Limit of Additional Registrations on Same Transaction', 'event_espresso'), true, self::$_default_additional_limit),
+                    esc_html__('Limit of Additional Registrations on Same Transaction', 'event_espresso'),
                     true,
                     self::$_default_additional_limit
                 ),
@@ -222,8 +222,12 @@ class EEM_Event extends EEM_CPT_Base
                 $default_reg_status,
                 EEM_Registration::reg_status_array()
             );
-            self::$_instance->_fields['Event_Meta']['EVT_default_registration_status']->_construct_finalize('Event_Meta',
-                'EVT_default_registration_status', 'EEM_Event');
+            $default_reg_status->_construct_finalize(
+                'Event_Meta',
+                'EVT_default_registration_status',
+                'EEM_Event'
+            );
+            self::$_instance->_fields['Event_Meta']['EVT_default_registration_status'] = $default_reg_status;
         }
     }
 
@@ -247,9 +251,7 @@ class EEM_Event extends EEM_CPT_Base
                 'EVT_additional_limit',
                 'EEM_Event'
             );
-            self::$_instance->_fields['Event_Meta']['EVT_default_registration_status'] = $default_reg_status;
         }
-
     }
 
 
