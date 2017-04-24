@@ -41,7 +41,7 @@ jQuery(document).ready(function($){
 
             // jQuery validation object
             $.validator.setDefaults({
-                erroPlacement: function (error, input) {
+                errorPlacement: function (error, input) {
                     //remove error inputs added server-side,
                     //this new error overrides it
                     input.siblings('label.error').remove();
