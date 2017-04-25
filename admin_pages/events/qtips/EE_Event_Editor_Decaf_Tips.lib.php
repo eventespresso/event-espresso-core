@@ -55,6 +55,11 @@ class EE_Event_Editor_Decaf_Tips extends EE_Qtip_Config {
 				'target' => '.DTT_sold_label',
 				'content' => $this->_get_event_datetime_DTT_sold_label_info()
 				),
+			17 => array(
+				'content_id' => 'dtt-reserved-label',
+				'target' => '.DTT_reserved_label',
+				'content' => $this->_get_event_datetime_DTT_reserved_label_info()
+				),
 			20 => array(
 				'content_id' => 'tkt-name-label',
 				'target' => '.TKT_name_label',
@@ -84,6 +89,11 @@ class EE_Event_Editor_Decaf_Tips extends EE_Qtip_Config {
 				'content_id' => 'tkt-sold-label',
 				'target' => '.TKT_sold_label',
 				'content' => $this->_get_event_ticket_TKT_sold_label_info()
+				),
+			47 => array(
+				'content_id' => 'tkt-reserved-label',
+				'target' => '.TKT_reserved_label',
+				'content' => $this->_get_event_ticket_TKT_reserved_label_info()
 				),
 			50 => array(
 				'content_id' => 'tkt-regs-label',
@@ -173,6 +183,9 @@ class EE_Event_Editor_Decaf_Tips extends EE_Qtip_Config {
 	private function _get_event_datetime_DTT_sold_label_info() {
 		return __('This shows the number of tickets that have been sold that have access to this event datetime.', 'event_espresso');
 	}
+	private function _get_event_datetime_DTT_reserved_label_info() {
+		return __('This shows the number of reserved tickets that have access to this event datetime.', 'event_espresso');
+	}
 	private function _get_event_ticket_TKT_name_label_info() {
 		return __('This is the name of this ticket option.', 'event_espresso');
 	}
@@ -190,6 +203,9 @@ class EE_Event_Editor_Decaf_Tips extends EE_Qtip_Config {
 	}
 	private function _get_event_ticket_TKT_sold_label_info() {
 		return __('This shows the number of tickets that have been sold for this ticket.', 'event_espresso');
+	}
+	private function _get_event_ticket_TKT_reserved_label_info() {
+		return __('This shows the number of tickets that are reserved for this ticket.', 'event_espresso');
 	}
 	private function _get_event_ticket_TKT_regs_label_info() {
 		return __('This shows the number of registrations that have occurred from ticket sales.', 'event_espresso');
