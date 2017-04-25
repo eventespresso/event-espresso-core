@@ -19,27 +19,27 @@ class CreateThingCommand extends Command
 {
 
     /**
-     * @var int $int_property
+     * @var ClassA $object_A
      */
-    private $int_property;
+    private $object_A;
 
 
     /**
-     * @var string $int_property
+     * @var ClassB $object_B
      */
-    private $string_property;
+    private $object_B;
 
 
     /**
      * CreateThingCommand constructor.
      *
-     * @param $int_property
-     * @param $string_property
+     * @param ClassA $object_A
+     * @param ClassB $object_B
      */
-    public function __construct($int_property, $string_property)
+    public function __construct($object_A, $object_B)
     {
-        $this->int_property = $int_property;
-        $this->string_property = $string_property;
+        $this->object_A = $object_A;
+        $this->object_B = $object_B;
     }
 
 }
@@ -51,20 +51,20 @@ Data is therefore accessed via getters:
 ```php
 
     /**
-     * @return int
+     * @return ClassA
      */
-    public function getIntProperty()
+    public function getObjectA()
     {
-        return $this->int_property;
+        return $this->object_A;
     }
 
 
     /**
-     * @return string
+     * @return ClassB
      */
-    public function getStringProperty()
+    public function getObjectB()
     {
-        return $this->string_property;
+        return $this->object_B;
     }
 
 ```
@@ -76,38 +76,58 @@ now that said, private setters are still recommended as a way to encapsulate val
     /**
      * CreateThingCommand constructor.
      *
-     * @param $int_property
-     * @param $string_property
+     * @param ObjectA $object_A
+     * @param ObjectB $object_B
      * @throws InvalidArgumentException
      */
-    public function __construct($int_property, $string_property)
+    public function __construct($object_A, $object_B)
     {
-        $this->setIntProperty($int_property);
-        $this->setStringProperty($string_property);
+        $this->setObjectA($object_A);
+        $this->setObjectB($object_B);
     }
     
 
     /**
-     * @param int $int_property
+     * @param ClassA $object_A
      */
-    private function setIntProperty($int_property)
+    private function setObjectA($object_A)
     {
-        $this->int_property = absint($int_property);
+         if(! $object_A instanceof ClassA){
+             throw new InvalidArgumentException();
+         }
+       $this->object_A = $object_A;
     }
 
 
     /**
-     * @param string $string_property
+     * @param ClassB $object_B
      * @throws InvalidArgumentException
      */
-    private function setStringProperty($string_property)
+    private function setObjectB($object_B)
     {
-        if(! is_string($string_property)){
+        if(! $object_B instanceof ClassB){
             throw new InvalidArgumentException();
         }
-        $this->string_property = $string_property;
+        $this->object_B = $object_B;
     }
     
+```
+
+Although, if passing objects, you can also just type hint for them in the constructor:
+
+```php
+   /**
+     * CreateThingCommand constructor.
+     *
+     * @param $object_A
+     * @param $object_B
+     * @throws InvalidArgumentException
+     */
+    public function __construct(ObjectA $object_A, ObjectB $object_B)
+    {
+        $this->setObjectA($object_A);
+        $this->setObjectB($object_B);
+    }
 ```
 
 And that's all there is to creating a basic Command DTO. 
@@ -146,8 +166,11 @@ class ClientCode {
      */
     public function getThing()
     {
+        $object_model = get_object_model();
+        $object_A = $object_model->find_by_id($GET['object_a_id']);
+        $object_B = $object_model->find_by_id($GET['object_b_id']);
         return $this->command_bus->execute(
-            new CreateThingCommand(1, 'string')
+            new CreateThingCommand($object_A, $object_B)
         );
     }
 
@@ -156,6 +179,19 @@ class ClientCode {
 ```
 
 EZ PZ. The CommandBus class will take care of delivering the Command to the corresponding Command Handler and capture any results that are returned.
+
+> uh... ya ok... but how do I get an instance of CommandBus in the first place to pass to my client code class constructor?
+
+Currently we are still using the EE_Registry legacy class for loading throughout most of core, but will eventually be switching over to using the CoffeeShop DI container. Both classes are capable of automatically injecting dependencies into your classes. If you are using **\Fully\Qualified\ClassNames** then you can use `EE_Registry::create()` for generating your client code classes and their dependencies will get automatically injected:
+
+```php
+$my_class = EE_Registry::instance()->create('\Vendor\namespace\ClientCode');
+
+```
+
+For more information, plz see :
+- [Legacy Dependency Injection](legacy-dependency-injection.md)
+- [Dependency Injection and the CoffeeShop DI container](dependency-injection-coffeepot.md)
 
 ### Anatomy of a Command Handler
 
@@ -218,9 +254,9 @@ from there, it's simply a matter of retrieving data from the Command DTO using i
         if (! $command instanceof CreateThingCommand) {
             throw new InvalidArgumentException();
         }
-        $int = $command->getIntProperty();
-        $string = $command->getStringProperty();
-        return new Thing($int, $string);
+        $object_A = $command->getObjectA();
+        $object_B = $command->getObjectB();
+        return new Thing($object_A, $object_B);
     }
     
 ```
@@ -264,14 +300,17 @@ class CreateThingCommandHandler extends CommandHandler
         if (! $command instanceof CreateThingCommand) {
             throw new InvalidArgumentException();
         }
-        $int = $command->getIntProperty();
-        $string = $command->getStringProperty();
-        $existing_thing = $this->thing_model->find_by_id($int);
+        $object_A = $command->getObjectA();
+        $object_B = $command->getObjectB();
+        // in the weird world of this example, the ID for Thing objects 
+        // is created by combining the IDs from object A and object B
+        $existing_thing = $this->thing_model->find_by_id($object_A->ID . '.' . $object_B->ID);
         if ($existing_thing instanceof Thing) {
-            $existing_thing->setString($string);
+            $existing_thing->setObjectA($object_A);
+            $existing_thing->setObjectB($object_B);
             return $existing_thing;
         }
-        return new Thing($int, $string);
+        return new Thing($object_A, $object_B);
     }
 
 }    
@@ -317,7 +356,11 @@ The CapCheck object can also be set after the Command is created via a setter:
      */
     public function getThing()
     {
-        $create_thing_command = new CreateThingCommand(1, 'string');
+        $object_model = get_object_model();
+        $object_A = $object_model->find_by_id($GET['object_a_id']);
+        $object_B = $object_model->find_by_id($GET['object_b_id']);
+
+        $create_thing_command = new CreateThingCommand($object_A, $object_B);
         $create_thing_command->setCapCheck(
             new CapCheck('ee_create_thing', 'create_new_thing')
         );
@@ -343,17 +386,19 @@ Well you could, but you would have to do all of the following:
  You would need to duplicate ALL of the above logic for every request type or client that you wanted to support. The Command Bus allows you to place all of your business logic in one easy to access place that can be used from virtually anywhere. To support this even further, it is not uncommon to add static factory methods to your Commands to facilitate their creation using specific source data. So for example, you may have a static method for generating a Command using data from an HTTP GET request:
  
  ```php
-
+    
     /**
-     * @return CreateThingCommand
-     * @throws InvalidArgumentException
-     */
-    public static function fromHttpGetRequest()
+    * @param  int $object_a_id
+    * @param  int $object_b_id
+    * @return CreateThingCommand
+    * @throws InvalidArgumentException
+    */
+    public static function fromObjectIds($object_a_id, $object_b_id)
     {
-        return new self(
-            isset($_GET['int']) ? $_GET['int'] : 0,
-            isset($_GET['string']) ? $_GET['string'] : ''
-        );
+        $object_model = get_object_model();
+        $object_A = $object_model->find_by_id($object_a_id);
+        $object_B = $object_model->find_by_id($object_b_id);
+        return new self($object_A, $object_B);
     }
 
 ```
@@ -361,20 +406,23 @@ Well you could, but you would have to do all of the following:
 then in client code:
 
 ```php
-
+    
     /**
-     * @return Thing
-     */
+    * @return Thing
+    */
     public function getThingFromHttpGetRequest()
     {
         return $this->command_bus->execute(
-            CreateThingCommand::fromHttpGetRequest()
+            CreateThingCommand::fromObjectIds(
+                isset($_GET['object_a_id']) ? $GET['object_a_id'] : 0,
+                isset($_GET['object_b_id']) ? $GET['object_b_id'] : 0
+            )
         );
     }
 
 ```
 
-As you can see, as long as the correct parameters were present in the $_GET super global, this Command could be created from anywhere, which helps to reduce code duplication. 
+As you can see, as long as valid IDs are provided, this Command could be created from anywhere, which helps to reduce code duplication. 
 
 > Ya okay, I can see how that would be helpful, but... what if I wanted to use an existing Command, but needed to implement some different logic in the Command Handler? Cuz I like to do things MY WAY!!!
 
