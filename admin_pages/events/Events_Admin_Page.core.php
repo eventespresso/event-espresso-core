@@ -2254,12 +2254,12 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     }
 
 
-
     /**
      *    _default_event_settings
      *    This generates the Default Settings Tab
      *
      * @return void
+     * @throws \EE_Error
      */
     protected function _default_event_settings()
     {
@@ -2270,8 +2270,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     }
 
 
-
-
+    /**
+     * Return the form for event settings.
+     * @return \EE_Form_Section_Proper
+     */
     protected function _default_event_settings_form()
     {
         $registration_config = EE_Registry::instance()->CFG->registration;
@@ -2338,12 +2340,12 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     }
 
 
-
     /**
      * _update_default_event_settings
      *
      * @access protected
      * @return void
+     * @throws \EE_Error
      */
     protected function _update_default_event_settings()
     {
