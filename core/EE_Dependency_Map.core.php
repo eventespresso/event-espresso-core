@@ -71,8 +71,8 @@ class EE_Dependency_Map
     /**
      * EE_Dependency_Map constructor.
      *
-     * @param  \EE_Request  $request
-     * @param  \EE_Response $response
+     * @param EE_Request  $request
+     * @param EE_Response $response
      */
     protected function __construct(EE_Request $request, EE_Response $response)
     {
@@ -98,9 +98,9 @@ class EE_Dependency_Map
     /**
      * @singleton method used to instantiate class object
      * @access    public
-     * @param  \EE_Request  $request
-     * @param  \EE_Response $response
-     * @return \EE_Dependency_Map instance
+     * @param EE_Request  $request
+     * @param EE_Response $response
+     * @return EE_Dependency_Map
      */
     public static function instance(EE_Request $request = null, EE_Response $response = null)
     {
@@ -140,7 +140,7 @@ class EE_Dependency_Map
      * @param string $class_name
      * @param string $loader
      * @return bool
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public static function register_class_loader($class_name, $loader = 'load_core')
     {
