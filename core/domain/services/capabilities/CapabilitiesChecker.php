@@ -1,8 +1,11 @@
 <?php
 namespace EventEspresso\core\domain\services\capabilities;
 
+use CapabilitiesCheckerInterface;
+use EE_Capabilities;
 use EventEspresso\core\exceptions\InsufficientPermissionsException;
 use EventEspresso\core\exceptions\InvalidClassException;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
 
 if ( ! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
@@ -12,17 +15,17 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) {
 
 /**
  * Class CapabilitiesChecker
- * Description
+ * Processes CapCheck objects to determine if the current user has the required capabilities or not
  *
  * @package       Event Espresso
  * @author        Brent Christensen
  * @since         4.9.0
  */
-class CapabilitiesChecker
+class CapabilitiesChecker implements CapabilitiesCheckerInterface
 {
 
     /**
-     * @type \EE_Capabilities $capabilities
+     * @type EE_Capabilities $capabilities
      */
     private $capabilities;
 
@@ -31,9 +34,9 @@ class CapabilitiesChecker
     /**
      * CapabilitiesChecker constructor
      *
-     * @param \EE_Capabilities $capabilities
+     * @param EE_Capabilities $capabilities
      */
-    public function __construct(\EE_Capabilities $capabilities)
+    public function __construct(EE_Capabilities $capabilities)
     {
         $this->capabilities = $capabilities;
     }
@@ -41,7 +44,7 @@ class CapabilitiesChecker
 
 
     /**
-     * @return \EE_Capabilities
+     * @return EE_Capabilities
      */
     protected function capabilities()
     {
@@ -99,6 +102,9 @@ class CapabilitiesChecker
      * @param string $context    - what the user is attempting to do, like: 'Edit Registration'
      * @param int    $ID         - (optional) ID for item where current_user_can is being called from
      * @return bool
+     * @throws InvalidDataTypeException
+     * @throws InsufficientPermissionsException
+     * @throws InvalidClassException
      */
     public function process($capability, $context, $ID = 0)
     {
@@ -109,4 +115,4 @@ class CapabilitiesChecker
 
 }
 // End of file CapabilitiesChecker.php
-// Location: /CapabilitiesChecker.php
+// Location: core/domain/services/capabilities/CapabilitiesChecker.php
