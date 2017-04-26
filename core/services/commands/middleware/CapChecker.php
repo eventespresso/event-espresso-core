@@ -1,8 +1,8 @@
 <?php
 namespace EventEspresso\core\services\commands\middleware;
 
+use CapabilitiesCheckerInterface;
 use Closure;
-use EventEspresso\core\domain\services\capabilities\CapabilitiesChecker;
 use EventEspresso\core\services\commands\CommandInterface;
 use EventEspresso\core\services\commands\CommandRequiresCapCheckInterface;
 
@@ -28,7 +28,7 @@ class CapChecker implements CommandBusMiddlewareInterface
 {
 
     /**
-     * @type CapabilitiesChecker $capabilities_checker
+     * @type CapabilitiesCheckerInterface $capabilities_checker
      */
     private $capabilities_checker;
 
@@ -37,9 +37,9 @@ class CapChecker implements CommandBusMiddlewareInterface
     /**
      * CapChecker constructor
      *
-     * @param CapabilitiesChecker $capabilities_checker
+     * @param CapabilitiesCheckerInterface $capabilities_checker
      */
-    public function __construct(CapabilitiesChecker $capabilities_checker)
+    public function __construct(CapabilitiesCheckerInterface $capabilities_checker)
     {
         $this->capabilities_checker = $capabilities_checker;
     }
