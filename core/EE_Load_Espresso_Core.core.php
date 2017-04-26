@@ -57,17 +57,17 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_
 
 
 
-	/**
-	 *    handle
-	 *    sets hooks for running rest of system
-	 *    provides "AHEE__EE_System__construct__complete" hook for EE Addons to use as their starting point
-	 *    starting EE Addons from any other point may lead to problems
-	 *
-	 * @access 	public
-	 * @param 	EE_Request 	$request
-	 * @param 	EE_Response $response
-	 * @return 	EE_Response
-	 */
+    /**
+     * handle
+     * sets hooks for running rest of system
+     * provides "AHEE__EE_System__construct__complete" hook for EE Addons to use as their starting point
+     * starting EE Addons from any other point may lead to problems
+     *
+     * @param EE_Request  $request
+     * @param EE_Response $response
+     * @return EE_Response
+     * @throws EE_Error
+     */
 	public function handle_request( EE_Request $request, EE_Response $response ) {
 		$this->request = $request;
 		$this->response = $response;
@@ -87,11 +87,14 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_
 			'CommandBusInterface',
 			array(
 				null,
-				$this->registry->create( 'CapChecker' )
+				array(
+				    $this->registry->create( 'CapChecker' ),
+				    $this->registry->create( 'AddActionHook' ),
+                )
 			),
 			true
 		);
-		// workarounds for PHP < 5.3
+        // workarounds for PHP < 5.3
 		$this->_load_class_tools();
 		// load interfaces
 		espresso_load_required( 'EEI_Payment_Method_Interfaces', EE_LIBRARIES . 'payment_methods' . DS . 'EEI_Payment_Method_Interfaces.php' );

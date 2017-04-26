@@ -519,6 +519,7 @@ class EE_Dependency_Map {
 			'CommandHandlerManagerInterface'                                      => 'EventEspresso\core\services\commands\CommandHandlerManagerInterface',
 			'EventEspresso\core\services\commands\CommandHandlerManagerInterface' => 'EventEspresso\core\services\commands\CommandHandlerManager',
 			'CapChecker'                                                          => 'EventEspresso\core\services\commands\middleware\CapChecker',
+			'AddActionHook'                                                       => 'EventEspresso\core\services\commands\middleware\AddActionHook',
 			'CapabilitiesChecker'                                                 => 'EventEspresso\core\domain\services\capabilities\CapabilitiesChecker',
 			'CreateRegistrationService'                                           => 'EventEspresso\core\domain\services\registration\CreateRegistrationService',
 			'CreateRegCodeCommandHandler'                                         => 'EventEspresso\core\services\commands\registration\CreateRegCodeCommand',
