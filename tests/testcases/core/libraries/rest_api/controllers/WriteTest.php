@@ -297,8 +297,7 @@ class WriteTest extends \EE_REST_TestCase
 
 
     /**
-     * Test that we are ok even if a bad parameter is sent. It should just get ignored
-     *
+     * Test that we tell API clients when they are using a bad parameter
      * @group 9222
      */
     public function testInsertInvalidParamProvided()
@@ -316,8 +315,8 @@ class WriteTest extends \EE_REST_TestCase
         $response = rest_do_request($req);
         $response_data = $response->get_data();
         //verify there was no error code
-        $this->assertTrue(empty($response_data['code']));
-        $this->assertTrue(isset($response_data['QST_ID']));
+        $this->assertTrue(isset($response_data['code']));
+        $this->assertEquals('invalid_field', $response_data['code']);
     }
 
 

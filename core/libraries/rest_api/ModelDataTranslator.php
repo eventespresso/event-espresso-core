@@ -423,13 +423,47 @@ class ModelDataTranslator
                     continue;
                 }
                 $query_param_for_models[$query_param_key] = $translated_value;
-            } elseif (! $writing) {
-                //so it's not for a field, assume it's a logic query param key
-                $query_param_for_models[$query_param_key] = ModelDataTranslator::prepareConditionsQueryParamsForModels(
-                    $query_param_value,
-                    $model,
-                    $requested_version
-                );
+            } else {
+                //so this param doesn't correspond to a field eh?
+                if ($writing) {
+                    //always tell API clients about invalid parameters when they're creating data. Otherwise,
+                    //they are probably going to create borked data
+                    throw new RestException(
+                        'invalid_field',
+                        sprintf(
+                            esc_html__('You have provided an invalid parameter: "%1$s"', 'event_espresso'),
+                            $query_param_key
+                        )
+                    );
+                } else {
+                    //so it's not for a field, is it a logic query param key?
+                    if (in_array(
+                        $query_param_sans_stars,
+                        $model->logic_query_param_keys()
+                    )) {
+                        $query_param_for_models[$query_param_key] = ModelDataTranslator::prepareConditionsQueryParamsForModels(
+                            $query_param_value,
+                            $model,
+                            $requested_version
+                        );
+                    } elseif (defined('EE_REST_API_DEBUG_MODE') && EE_REST_API_DEBUG_MODE) {
+                        //only tell API clients they got it wrong if we're in debug mode
+                        //otherwise try our best ot fulfill their request by ignoring this invalid data
+                        throw new RestException(
+                            'invalid_parameter',
+                            sprintf(
+                                esc_html__(
+                                    'You provided an invalid parameter, with key "%1$s"',
+                                    'event_espresso'
+                                ),
+                                $query_param_sans_stars
+                            ),
+                            array(
+                                'status' => 400,
+                            )
+                        );
+                    }
+                }
             }
         }
         return $query_param_for_models;

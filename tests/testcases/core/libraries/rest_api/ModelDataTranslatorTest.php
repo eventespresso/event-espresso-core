@@ -271,6 +271,73 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
         ModelDataTranslator::prepareFieldValuesForJson($field_obj, $input, '4.8.36');
     }
 
+
+
+    /**
+     * @return array {
+     * @type array $0 input
+     * @type string $1 the model's name
+     * @type boolean $2 whether to consider this data as if it's being used for writing, or not
+     */
+    public function dataProviderForTestPrepareConditionsQueryParamsForModelsBad(){
+        return array(
+            //case 1: invalid key while reading
+            array(
+                array(
+                    'invalidkey' => 'whatever'
+                ),
+                'Event',
+                false
+            ),
+            //case 2: invalid key while writing
+            array(
+                array(
+                    'invalidkey' => 'whatever'
+                ),
+                'Registration',
+                true
+            ),
+            //case 3: logic parameter while writing
+            array(
+                array(
+                    'OR' => array(
+                        'EVT_name' => 'party'
+                    )
+                ),
+                'Event',
+                true
+            ),
+            //case 4: nested invalid key while reading
+            array(
+                array(
+                    'or*allyourbase' => array(
+                        'EVT_ID' => 123,
+                        'invalidnestedkey' => 'foobar'
+                    )
+                ),
+                'Event',
+                false
+            )
+        );
+    }
+
+
+
+    /**
+     * I haven't written any tests for checking valid input as that's covered quite well elsewhere
+     * @param array $input array of data sent to REST API
+     * @param string $model_name eg 'Event'
+     * @param boolean $writing
+     * @group        9222
+     * @dataProvider dataProviderForTestPrepareConditionsQueryParamsForModelsBad
+     * @expectedException EventEspresso\core\libraries\rest_api\RestException
+     */
+    public function testPrepareConditionsQueryParamsForModelsBad( $input, $model_name, $writing){
+        $model = EE_Registry::instance()->load_model($model_name);
+        //run for cover! it's going to error!
+        ModelDataTranslator::prepareConditionsQueryParamsForModels($input,$model,'4.8.36', $writing);
+    }
+
 }
 
 // Location: tests/testcases/core/libraries/rest_api/Model_Data_Translator_Test.php
