@@ -28,10 +28,15 @@ class AddActionHook implements CommandBusMiddlewareInterface
     public function handle(CommandInterface $command, Closure $next)
     {
         do_action(
-            'AHEE__EventEspresso_core_services_commands_middleware_AddActionHook__handle__command',
+            'AHEE__EventEspresso_core_services_commands_middleware_AddActionHook__handle__before',
             $command
         );
-        return $next($command);
+        $results = $next($command);
+        do_action(
+            'AHEE__EventEspresso_core_services_commands_middleware_AddActionHook__handle__after',
+            $command
+        );
+        return $results;
     }
 }
 // End of file AddActionHook.php
