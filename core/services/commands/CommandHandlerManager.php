@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\services\commands;
 
+use DomainException;
 use EE_Registry;
 
 if (! defined('EVENT_ESPRESSO_VERSION')) {
@@ -90,6 +91,7 @@ class CommandHandlerManager implements CommandHandlerManagerInterface
      * @param CommandInterface $command
      * @param CommandBus       $command_bus
      * @return mixed
+     * @throws DomainException
      * @throws CommandHandlerNotFoundException
      */
     public function getCommandHandler(CommandInterface $command, CommandBus $command_bus = null)
@@ -108,7 +110,15 @@ class CommandHandlerManager implements CommandHandlerManagerInterface
         } else if (class_exists($command_handler)) {
             $handler = $this->registry->create($command_handler);
         }
-        if ($handler instanceof CompositeCommandHandler && $command_bus instanceof CommandBus) {
+        if ($handler instanceof CompositeCommandHandler) {
+            if (! $command_bus instanceof CommandBus) {
+                throw new DomainException(
+                    esc_html__(
+                        'CompositeCommandHandler classes require an instance of the CommandBus.',
+                        'event_espresso'
+                    )
+                );
+            }
             $handler->setCommandBus($command_bus);
         }
         if ($handler instanceof CommandHandlerInterface) {
