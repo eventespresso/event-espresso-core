@@ -96,7 +96,7 @@ class CommandHandlerManager implements CommandHandlerManagerInterface
     {
         $command_name = get_class($command);
         $command_handler = apply_filters(
-            'FHEE__EventEspresso\core\services\commands\CommandHandlerManager__getCommandHandler__command_handler',
+            'FHEE__EventEspresso_core_services_commands_CommandHandlerManager__getCommandHandler__command_handler',
             str_replace('Command', 'CommandHandler', $command_name),
             $command
         );
