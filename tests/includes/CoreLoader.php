@@ -91,7 +91,7 @@ class CoreLoader
         tests_add_filter('FHEE__EE_Error__get_error__show_normal_exceptions', '__return_true');
 
         // Bootstrap EE
-        require dirname(__FILE__) . '/../../espresso.php';
+        require EE_PLUGIN_DIR . 'espresso.php';
     }
 
 
@@ -162,13 +162,11 @@ class CoreLoader
      */
     public function registerPsr4Path(array $maps)
     {
-        add_action('plugins_loaded', function () use ($maps) {
-            foreach ($maps as $prefix => $base_dir) {
-                EE_Psr4AutoloaderInit::psr4_loader()->addNameSpace(
-                    $prefix,
-                    $base_dir
-                );
-            }
-        }, 1);
+        foreach ($maps as $prefix => $base_dir) {
+            EE_Psr4AutoloaderInit::psr4_loader()->addNameSpace(
+                $prefix,
+                $base_dir
+            );
+        }
     }
 }
