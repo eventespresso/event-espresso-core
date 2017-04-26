@@ -141,7 +141,10 @@ class EE_Dependency_Map {
 	 */
 	public static function register_class_loader( $class_name, $loader = 'load_core' ) {
 		// check that loader method starts with "load_" and exists in EE_Registry
-		if ( strpos( $loader, 'load_' ) !== 0 || ! method_exists( 'EE_Registry', $loader ) ) {
+		if (
+		    ! is_callable($loader)
+            && (strpos( $loader, 'load_' ) !== 0 || ! method_exists( 'EE_Registry', $loader ))
+        ) {
 			throw new EE_Error(
 				sprintf(
 					__( '"%1$s" is not a valid loader method on EE_Registry.', 'event_espresso' ),
@@ -189,7 +192,7 @@ class EE_Dependency_Map {
 	 */
 	public function has_dependency_for_class( $class_name = '', $dependency = '' ) {
 		$dependency = $this->get_alias( $dependency );
-		return isset( $this->_dependency_map[ $class_name ], $this->_dependency_map[ $class_name ][ $dependency ] )
+        return isset( $this->_dependency_map[ $class_name ], $this->_dependency_map[ $class_name ][ $dependency ] )
 			? true
 			: false;
 	}
@@ -232,49 +235,65 @@ class EE_Dependency_Map {
 
 
 
-	/**
-	 * adds an alias for a classname
-	 *
-	 * @param string $class_name
-	 * @param string $alias
-	 */
-	public function add_alias( $class_name, $alias ) {
+    /**
+     * adds an alias for a classname
+     *
+     * @param string $class_name    the class name that should be used (concrete class to replace interface)
+     * @param string $alias         the class name that would be type hinted for (abstract parent or interface)
+     * @param string $for_class     the class that has the dependency (is type hinting for the interface)
+     */
+	public function add_alias( $class_name, $alias, $for_class = '' ) {
+	    if ($for_class !== '') {
+            if ( ! isset($this->_aliases[$for_class])) {
+                $this->_aliases[$for_class] = array();
+            }
+            $this->_aliases[$for_class][$class_name] = $alias;
+        }
 		$this->_aliases[ $class_name ] = $alias;
 	}
 
 
 
-	/**
-	 * returns TRUE if the provided class name has an alias
-	 *
-	 * @param string $class_name
-	 * @return boolean
-	 */
-	public function has_alias( $class_name = '' ) {
-		return isset( $this->_aliases[ $class_name ] ) ? true : false;
+    /**
+     * returns TRUE if the provided class name has an alias
+     *
+     * @param string $class_name
+     * @param string $for_class
+     * @return bool
+     */
+	public function has_alias( $class_name = '', $for_class = '' ) {
+	    if (isset($this->_aliases[$for_class], $this->_aliases[$for_class][$class_name])) {
+	        return true;
+        }
+		return isset( $this->_aliases[ $class_name ] ) && ! is_array( $this->_aliases[ $class_name ] ) ? true : false;
 	}
 
 
 
-	/**
-	 * returns alias for class name if one exists, otherwise returns the original classname
-	 * functions recursively, so that multiple aliases can be used to drill down to a classname
-	 *  for example:
-	 *      if the following two entries were added to the _aliases array:
-	 *          array(
-	 *              'interface_alias'           => 'some\namespace\interface'
-	 *              'some\namespace\interface'  => 'some\namespace\classname'
-	 *          )
-	 *      then one could use EE_Registry::instance()->create( 'interface_alias' )
-	 *      to load an instance of 'some\namespace\classname'
-	 *
-	 * @param string $class_name
-	 * @return string
-	 */
-	public function get_alias( $class_name = '' ) {
-		return $this->has_alias( $class_name )
-			? $this->get_alias( $this->_aliases[ $class_name ] )
-			: $class_name;
+    /**
+     * returns alias for class name if one exists, otherwise returns the original classname
+     * functions recursively, so that multiple aliases can be used to drill down to a classname
+     *  for example:
+     *      if the following two entries were added to the _aliases array:
+     *          array(
+     *              'interface_alias'           => 'some\namespace\interface'
+     *              'some\namespace\interface'  => 'some\namespace\classname'
+     *          )
+     *      then one could use EE_Registry::instance()->create( 'interface_alias' )
+     *      to load an instance of 'some\namespace\classname'
+     *
+     * @param string $class_name
+     * @param string $for_class
+     * @return string
+     */
+	public function get_alias( $class_name = '', $for_class = '' ) {
+	    if(! $this->has_alias($class_name, $for_class)) {
+	        return $class_name;
+        }
+        if ($for_class !== '') {
+            return $this->get_alias($this->_aliases[$for_class][$class_name], $for_class);
+        }
+        return $this->get_alias( $this->_aliases[ $class_name ] );
 	}
 
 
