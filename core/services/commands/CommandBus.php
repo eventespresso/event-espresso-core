@@ -107,11 +107,16 @@ class CommandBus implements CommandBusInterface
         if (! $command instanceof CommandInterface) {
             throw new InvalidDataTypeException(__METHOD__ . '( $command )', $command, 'CommandInterface');
         }
-        // expose the command to any CommandBus middleware classes
-        // so that they can execute their logic on the command
-        $middleware = function ($command) {
-            // do nothing, just need an empty shell to pass along as the last middleware
+        // we're going to add the Command Handler as a callable
+        // that will get run at the end of our middleware stack
+        // can't pass $this to a Closure, so use a named variable
+        $command_bus = $this;
+        $middleware = function ($command) use ($command_bus) {
+            return $this->command_handler_manager
+                ->getCommandHandler($command, $command_bus)
+                ->handle($command);
         };
+        // now build the rest of the middleware stack
         while ($command_bus_middleware = array_pop($this->command_bus_middleware)) {
             if (! $command_bus_middleware instanceof CommandBusMiddlewareInterface) {
                 throw new InvalidCommandBusMiddlewareException($command_bus_middleware);
@@ -119,11 +124,9 @@ class CommandBus implements CommandBusInterface
             $middleware = function ($command) use ($command_bus_middleware, $middleware) {
                 return $command_bus_middleware->handle($command, $middleware);
             };
-            $middleware($command, $middleware);
         }
-        return $this->command_handler_manager
-            ->getCommandHandler($command, $this)
-            ->handle($command);
+        // and finally, pass the command into the stack and return the results
+        return $middleware($command);
     }
 
 
