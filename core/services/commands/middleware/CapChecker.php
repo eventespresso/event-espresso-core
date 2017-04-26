@@ -1,6 +1,7 @@
 <?php
 namespace EventEspresso\core\services\commands\middleware;
 
+use Closure;
 use EventEspresso\core\domain\services\capabilities\CapabilitiesChecker;
 use EventEspresso\core\services\commands\CommandInterface;
 use EventEspresso\core\services\commands\CommandRequiresCapCheckInterface;
@@ -47,10 +48,12 @@ class CapChecker implements CommandBusMiddlewareInterface
 
     /**
      * @param CommandInterface $command
-     * @param \Closure         $next
+     * @param Closure         $next
      * @return mixed
+     * @throws \EventEspresso\core\exceptions\InsufficientPermissionsException
+     * @throws \EventEspresso\core\exceptions\InvalidClassException
      */
-    public function handle(CommandInterface $command, \Closure $next)
+    public function handle(CommandInterface $command, Closure $next)
     {
         if ( $command instanceof CommandRequiresCapCheckInterface) {
             $this->capabilities_checker->processCapCheck(
