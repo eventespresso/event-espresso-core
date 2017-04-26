@@ -1,11 +1,12 @@
 <?php
+
 namespace EventEspresso\core\services\commands;
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\services\commands\middleware\CommandBusMiddlewareInterface;
 use EventEspresso\core\services\commands\middleware\InvalidCommandBusMiddlewareException;
 
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
+if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
 
@@ -96,12 +97,14 @@ class CommandBus implements CommandBusInterface
 
 
     /**
-     * @param \EventEspresso\core\services\commands\CommandInterface $command
+     * @param CommandInterface $command
      * @return mixed
+     * @throws InvalidDataTypeException
+     * @throws InvalidCommandBusMiddlewareException
      */
     public function execute($command)
     {
-        if ( ! $command instanceof CommandInterface) {
+        if (! $command instanceof CommandInterface) {
             throw new InvalidDataTypeException(__METHOD__ . '( $command )', $command, 'CommandInterface');
         }
         // expose the command to any CommandBus middleware classes
@@ -110,7 +113,7 @@ class CommandBus implements CommandBusInterface
             // do nothing, just need an empty shell to pass along as the last middleware
         };
         while ($command_bus_middleware = array_pop($this->command_bus_middleware)) {
-            if ( ! $command_bus_middleware instanceof CommandBusMiddlewareInterface) {
+            if (! $command_bus_middleware instanceof CommandBusMiddlewareInterface) {
                 throw new InvalidCommandBusMiddlewareException($command_bus_middleware);
             }
             $middleware = function ($command) use ($command_bus_middleware, $middleware) {
@@ -119,7 +122,7 @@ class CommandBus implements CommandBusInterface
             $middleware($command, $middleware);
         }
         return $this->command_handler_manager
-            ->getCommandHandler($command)
+            ->getCommandHandler($command, $this)
             ->handle($command);
     }
 
