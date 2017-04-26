@@ -76,7 +76,9 @@ class Read
         if ($insecure_usage_of_basic_auth) {
             $warning = sprintf(
                 esc_html__(
-                    'Your data is not secured with SSL. %1$sPlease see our recommendations.%2$s',
+                    // @codingStandardsIgnoreStart
+                    'Notice: We strongly recommend installing an SSL Certificate on your website to keep your data secure. %1$sPlease see our recommendations.%2$s',
+                    // @codingStandardsIgnoreEnd
                     'event_espresso'
                 ),
                 '<a href="https://eventespresso.com/wiki/rest-api-security-recommendations/">',

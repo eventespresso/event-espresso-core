@@ -147,6 +147,8 @@ class TableManager extends \EE_Base
         }
         if( ! empty( $tables_to_delete ) ) {
             global $wpdb;
+            //make sure we only have a unique strings in the array.
+            $tables_to_delete = array_unique($tables_to_delete);
             $wpdb->query('DROP TABLE ' . implode(', ', $tables_to_delete));
         }
         return $tables_to_delete;
