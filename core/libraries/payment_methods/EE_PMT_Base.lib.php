@@ -2,6 +2,8 @@
 EE_Registry::instance()->load_lib('Gateway');
 EE_Registry::instance()->load_lib('Onsite_Gateway');
 EE_Registry::instance()->load_lib('Offsite_Gateway');
+use \EventEspresso\core\services\payment_methods\gateways\GatewayDataFormatter;
+use \EventEspresso\core\services\formatters\AsciiOnly;
 /**
  *
  * Class EE_PMT_Base
@@ -104,6 +106,9 @@ abstract class EE_PMT_Base{
 			$this->_gateway->set_template_helper( new EEH_Template() );
 			$this->_gateway->set_line_item_helper( new EEH_Line_Item() );
 			$this->_gateway->set_money_helper( new EEH_Money() );
+            $this->_gateway->set_gateway_data_formatter(new GatewayDataFormatter());
+            $this->_gateway->set_unsupported_character_remover(new AsciiOnly());
+            do_action( 'AHEE__EE_PMT_Base___construct__done_initializing_gateway_class',$this,$this->_gateway);
 		}
 		if ( ! isset( $this->_has_billing_form ) ) {
 			// by default, On Site gateways have a billing form
@@ -217,7 +222,6 @@ abstract class EE_PMT_Base{
 		if( ! $this->_settings_form){
 			$this->_settings_form = $this->generate_new_settings_form();
 			$this->_settings_form->set_payment_method_type( $this );
-			$this->_settings_form->_construct_finalize(NULL, NULL );
 			//if we have already assigned a model object to this pmt, make
 			//sure its reflected in teh form we just generated
 			if($this->_pm_instance){

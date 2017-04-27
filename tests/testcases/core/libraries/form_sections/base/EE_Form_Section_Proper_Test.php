@@ -339,7 +339,7 @@ class EE_Form_Section_Proper_Test extends EE_UnitTestCase{
 						array(
 							'subsections' => array(
 								'bottom_input1' => new EE_Phone_Input(),
-								'bottom_radio' => new EE_Radio_Button_Input(
+								'bottom_checkbox' => new EE_Checkbox_Multi_Input(
 									array(
 										'op1' => 'option1',
 										'op2' => 'option2',
@@ -349,13 +349,19 @@ class EE_Form_Section_Proper_Test extends EE_UnitTestCase{
 							)
 						)
 					),
-					'middle_radio' => new EE_Radio_Button_Input(
+					'middle_checkbox' => new EE_Checkbox_Multi_Input(
 						array(
 							'op1' => 'option1',
 							'op2' => 'option2',
 							'op3' => 'option3'
 						)
-					)
+					),
+                    'middle_radio' => new EE_Radio_Button_Input(
+                        array(
+                            'op1' => 'option1',
+                            'op2' => 'option2'
+                        )
+                    )
 				)
 			)
 		);
@@ -364,15 +370,16 @@ class EE_Form_Section_Proper_Test extends EE_UnitTestCase{
 			'top' => array(
 				'middle' => array(
 					'bottom_input1' => 'not-a-phone-number',
-					'bottom_radio' => array(
+					'bottom_checkbox' => array(
 						'op2',
 						'not-existent-op'
 					)
 				),
-				'middle_radio' => array(
+				'middle_checkbox' => array(
 					'op2',
 					'not-existent-op'
-				)
+				),
+                'middle_radio' => 'op1'
 			)
 		);
 		$form->receive_form_submission( 

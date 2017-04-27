@@ -7,5 +7,4 @@
  */
 abstract class EE_Foreign_Key_Field_Base extends EE_Field_With_Model_Name
 {
-    //all needed functionality inherited from parent
 }

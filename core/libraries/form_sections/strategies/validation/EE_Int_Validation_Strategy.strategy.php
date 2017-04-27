@@ -33,7 +33,14 @@ class EE_Int_Validation_Strategy extends EE_Validation_Strategy_Base{
 	 * @return array
 	 */
 	function get_jquery_validation_rule_array(){
-		return array('digits'=>true, 'messages' => array( 'digits' => $this->get_validation_error_message() ) );
+        return array(
+            'number'=>true,
+            'step' => 1,
+            'messages' => array(
+                'number' => $this->get_validation_error_message(),
+                'step' => $this->get_validation_error_message()
+            )
+        );
 	}
 }
 

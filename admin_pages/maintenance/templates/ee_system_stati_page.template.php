@@ -48,14 +48,10 @@ function ee_resurse_into_array($data) {
 }
 ?>
 <h1>
-	<?php _e("System Information", "event_espresso");?>
+	<?php _e("System Information", "event_espresso");?> <a href="<?php echo $download_system_status_url;?>" class="button-secondary"><?php esc_html_e( 'Download to File', 'event_espresso' );?></a>
 </h1>
 <div class="padding">
-	<h2><?php _e("Raw System Data", "event_espresso");?></h2>
-	<textarea class="system_status_info">
-		<?php print_r($system_stati)?>
-	</textarea>
-	<h2><?php _e("System Data (formatted)", "event_espresso");?></h2>
+
 	<table class="widefat">
 		<?php
 		foreach ($system_stati as $status_category_slug => $data) {

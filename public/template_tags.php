@@ -296,7 +296,7 @@ if ( ! function_exists( 'espresso_event_reg_button' )) {
 			$class = 'ee-grey';
 		}
 		?>
-		<a class="ee-button ee-register-button <?php echo $class; ?>" href="<?php espresso_event_link_url(); ?>">
+		<a class="ee-button ee-register-button <?php echo $class; ?>" href="<?php espresso_event_link_url(); ?>"<?php echo \EED_Events_Archive::link_target(); ?>>
 			<?php echo $btn_text; ?>
 		</a>
 	<?php
@@ -487,8 +487,8 @@ if ( ! function_exists( 'espresso_list_of_event_dates' )) {
 					$datetime_name = $datetime->name();
 					$html .= ! empty( $datetime_name ) ? '<strong>' . $datetime_name . '</strong>' : '';
 					$html .= ! empty( $datetime_name )  && $add_breaks ? '<br />' : '';
-					$html .= '<span class="dashicons dashicons-calendar"></span>' . $datetime->date_range( $date_format ) . '<br/>';
-					$html .= '<span class="dashicons dashicons-clock"></span>' . $datetime->time_range( $time_format );
+					$html .= '<span class="dashicons dashicons-calendar"></span><span class="ee-event-datetimes-li-daterange">' . $datetime->date_range( $date_format ) . '</span><br/>';
+					$html .= '<span class="dashicons dashicons-clock"></span><span class="ee-event-datetimes-li-timerange">' . $datetime->time_range( $time_format ) . '</span>';
 					$datetime_description = $datetime->description();
 					$html .= ! empty( $datetime_description )  && $add_breaks ? '<br />' : '';
 					$html .= ! empty( $datetime_description ) ? ' - ' . $datetime_description : '';
