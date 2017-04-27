@@ -2,6 +2,7 @@
 use EventEspresso\core\services\commands\CommandBus;
 use EventEspresso\core\services\commands\middleware\CapChecker;
 use EventEspresso\tests\mocks\core\domain\services\capabilities\CapabilitiesCheckerMock;
+use EventEspresso\tests\mocks\core\services\commands\MockCommand;
 use EventEspresso\tests\mocks\core\services\commands\MockCommandHandler;
 use EventEspresso\tests\mocks\core\services\commands\RequiresCapCheckMockCommand;
 
