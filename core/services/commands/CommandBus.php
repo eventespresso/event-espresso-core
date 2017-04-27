@@ -32,22 +32,6 @@ if (! defined('EVENT_ESPRESSO_VERSION')) {
  *              new SomeEntity( $data_from_API_request )
  *          )
  *      );
- * Event Espresso CommandBus Commands, however, are self executing,
- * meaning they are capable of routing themselves to the CommandBus,
- * because they possess their own internal reference to it.
- * So as long as your client code has a reference to the EE_Registry,
- * it can use the create() method to generate the required Command objects,
- * which will automatically handle resolving their dependency on the CommandBus.
- * This means you can simply do the following in your client code:
- *      $result = $this->registry
- *          ->create(
- *              'Vendor\some\namespace\to\MyCommand',
- *              array( $request_data )
- *          )
- *          ->execute();
- * without having to inject the CommandBus,
- * because you will likely have a reference to EE_Registry
- * (or DI container) in your client code already
  *
  * @package       Event Espresso
  * @author        Brent Christensen
