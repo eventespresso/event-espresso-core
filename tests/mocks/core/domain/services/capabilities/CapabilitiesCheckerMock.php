@@ -2,7 +2,7 @@
 
 namespace EventEspresso\tests\mocks\core\domain\services\capabilities;
 
-use CapabilitiesCheckerInterface;
+use EventEspresso\core\domain\services\capabilities\CapabilitiesCheckerInterface;
 use EventEspresso\core\domain\services\capabilities\CapCheckInterface;
 use EventEspresso\core\exceptions\InsufficientPermissionsException;
 use EventEspresso\core\exceptions\InvalidClassException;
@@ -22,19 +22,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 class CapabilitiesCheckerMock implements CapabilitiesCheckerInterface
 {
 
-    protected $cap_check_passes = true;
-
-
-
-    /**
-     * @param bool $cap_check_passes
-     */
-    public function setCapCheckPasses($cap_check_passes)
-    {
-        $this->cap_check_passes = filter_var($cap_check_passes, FILTER_VALIDATE_BOOLEAN);
-    }
-
-
+    public $cap_check_passes = true;
 
     /**
      * Verifies that the current user has ALL of the capabilities listed in the CapCheck DTO.
@@ -47,7 +35,10 @@ class CapabilitiesCheckerMock implements CapabilitiesCheckerInterface
      */
     public function processCapCheck($cap_check)
     {
-        return $this->cap_check_passes;
+        if(! $this->cap_check_passes) {
+            throw new InsufficientPermissionsException($cap_check->context());
+        }
+        return true;
     }
 
 
@@ -62,7 +53,7 @@ class CapabilitiesCheckerMock implements CapabilitiesCheckerInterface
      */
     public function process($capability, $context, $ID = 0)
     {
-        return $this->cap_check_passes;
+        return $this->processCapCheck(new CapCheckMock());
     }
 }
 // End of file CapabilitiesCheckerMock.php
