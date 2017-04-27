@@ -155,9 +155,9 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
      */
     public function testPrepareFieldValueFromJsonOk(
         $expected_result,
-            $inputted_json_value,
-            EE_Model_Field_Base $field_obj)
-    {
+        $inputted_json_value,
+        EE_Model_Field_Base $field_obj
+    ) {
         $this->assertEquals(
             $expected_result,
             ModelDataTranslator::prepareFieldValueFromJson(
@@ -630,10 +630,22 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
      * @group        9222
      * @dataProvider dataProviderForTestPrepareConditionsQueryParamsForModelsGood
      */
-    public function testPrepareConditionsQueryParamsForModelsGood( $expected_output, $input, $model_name, $writing){
+    public function testPrepareConditionsQueryParamsForModelsGood(
+        $expected_output,
+        $input,
+        $model_name,
+        $writing
+    ) {
         $model = EE_Registry::instance()->load_model($model_name);
-        //run for cover! it's going to error!
-        ModelDataTranslator::prepareConditionsQueryParamsForModels($input,$model,'4.8.36', $writing);
+        $this->assertEquals(
+            $expected_output,
+            ModelDataTranslator::prepareConditionsQueryParamsForModels(
+                $input,
+                $model,
+                '4.8.36',
+                $writing
+            )
+        );
     }
 
 }
