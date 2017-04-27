@@ -19,14 +19,16 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 class CapCheckMock implements CapCheckInterface
 {
 
-
+    public $capability = 'mock_capability';
+    public $context = 'unit testing capability checks';
+    public $ID = 1234;
 
     /**
      * @return string
      */
     public function capability()
     {
-        return 'mock_capability';
+        return $this->capability;
     }
 
 
@@ -36,7 +38,7 @@ class CapCheckMock implements CapCheckInterface
      */
     public function context()
     {
-        return 'unit testing capability checks';
+        return $this->context;
     }
 
 
@@ -46,7 +48,7 @@ class CapCheckMock implements CapCheckInterface
      */
     public function ID()
     {
-        return 1234;
+        return $this->ID;
     }
 }
 // End of file CapCheckMock.php
