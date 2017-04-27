@@ -25,9 +25,9 @@ class CommandHandlerManager implements CommandHandlerManagerInterface
 {
 
     /**
-     * @var CommandHandlerInterface[] $commandHandlers
+     * @var CommandHandlerInterface[] $command_handlers
      */
-    private $commandHandlers;
+    protected $command_handlers;
 
     /**
      * @type EE_Registry $registry
@@ -82,19 +82,19 @@ class CommandHandlerManager implements CommandHandlerManagerInterface
         if (empty($command)) {
             throw new InvalidCommandHandlerException($command);
         }
-        $this->commandHandlers[$command] = $command_handler;
+        $this->command_handlers[$command] = $command_handler;
     }
 
 
 
     /**
      * @param CommandInterface $command
-     * @param CommandBus       $command_bus
+     * @param CommandBusInterface       $command_bus
      * @return mixed
      * @throws DomainException
      * @throws CommandHandlerNotFoundException
      */
-    public function getCommandHandler(CommandInterface $command, CommandBus $command_bus = null)
+    public function getCommandHandler(CommandInterface $command, CommandBusInterface $command_bus = null)
     {
         $command_name = get_class($command);
         $command_handler = apply_filters(
@@ -105,13 +105,13 @@ class CommandHandlerManager implements CommandHandlerManagerInterface
         $handler = null;
         // has a command handler already been set for this class ?
         // if not, can we find one via the FQCN ?
-        if (isset($this->commandHandlers[$command_name])) {
-            $handler = $this->commandHandlers[$command_name];
+        if (isset($this->command_handlers[$command_name])) {
+            $handler = $this->command_handlers[$command_name];
         } else if (class_exists($command_handler)) {
             $handler = $this->registry->create($command_handler);
         }
         if ($handler instanceof CompositeCommandHandler) {
-            if (! $command_bus instanceof CommandBus) {
+            if (! $command_bus instanceof CommandBusInterface) {
                 throw new DomainException(
                     esc_html__(
                         'CompositeCommandHandler classes require an instance of the CommandBus.',
