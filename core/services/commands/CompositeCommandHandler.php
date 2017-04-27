@@ -26,6 +26,25 @@ abstract class CompositeCommandHandler extends CommandHandler
      */
     private $command_bus;
 
+    /**
+     * @type CommandFactoryInterface $command_factory
+     */
+    private $command_factory;
+
+
+
+    /**
+     * CompositeCommandHandler constructor.
+     *
+     * @param CommandBusInterface     $command_bus
+     * @param CommandFactoryInterface $command_factory
+     */
+    public function __construct(CommandBusInterface $command_bus, CommandFactoryInterface $command_factory)
+    {
+        $this->command_bus = $command_bus;
+        $this->command_factory = $command_factory;
+    }
+
 
 
     /**
@@ -44,6 +63,16 @@ abstract class CompositeCommandHandler extends CommandHandler
     public function commandBus()
     {
         return $this->command_bus;
+    }
+
+
+
+    /**
+     * @return CommandFactoryInterface
+     */
+    public function commandFactory()
+    {
+        return $this->command_factory;
     }
 
 
