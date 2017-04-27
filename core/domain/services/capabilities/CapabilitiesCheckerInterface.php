@@ -1,5 +1,7 @@
 <?php
-use EventEspresso\core\domain\services\capabilities\CapCheckInterface;
+
+namespace EventEspresso\core\domain\services\capabilities;
+
 use EventEspresso\core\exceptions\InsufficientPermissionsException;
 use EventEspresso\core\exceptions\InvalidClassException;
 
