@@ -4,6 +4,14 @@ namespace EventEspresso\core\domain;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed');
 
+/**
+ * ConstantsAbstract
+ * A container for all constants used in this domain.
+ *
+ * @package EventEspresso\core\domain
+ * @author  Darren Ethier
+ * @since   1.0.0
+ */
 abstract class ConstantsAbstract
 {
     /**
