@@ -1,8 +1,8 @@
 <?php
 namespace EventEspresso\core\services\commands\middleware;
 
-use CapabilitiesCheckerInterface;
 use Closure;
+use EventEspresso\core\domain\services\capabilities\CapabilitiesCheckerInterface;
 use EventEspresso\core\services\commands\CommandInterface;
 use EventEspresso\core\services\commands\CommandRequiresCapCheckInterface;
 
