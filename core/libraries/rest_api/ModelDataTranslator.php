@@ -174,7 +174,7 @@ class ModelDataTranslator
      * @throws RestException
      * @return void
      */
-    protected static function throwExceptionIfContainsSerializedData($data)
+    public static function throwExceptionIfContainsSerializedData($data)
     {
         if (is_array($data)) {
             foreach ($data as $key => $value) {
@@ -374,21 +374,104 @@ class ModelDataTranslator
                     // HTML, or it's a serialized input and the user is allowed to write serialized input
                     $translated_value = $query_param_value;
                 } elseif (! $writing && is_array($query_param_value)) {
+                    if( ! \EEH_Array::is_array_numerically_and_sequentially_indexed($query_param_value)){
+                        if (defined('EE_REST_API_DEBUG_MODE') && EE_REST_API_DEBUG_MODE) {
+                            throw new RestException(
+                                'numerically_indexed_array_of_values_only',
+                                sprintf(
+                                    esc_html__(
+                                        'The array provided for the parameter "%1$s" should be numerically indexed.',
+                                        'event_espresso'
+                                    ),
+                                    $query_param_key
+                                ),
+                                array(
+                                    'status' => 400,
+                                )
+                            );
+                        }
+                    }
                     //did they specify an operator?
-                    if (isset($query_param_value[0], $query_param_value[1])
+                    if (isset($query_param_value[0])
                         && isset($valid_operators[$query_param_value[0]])
                     ) {
                         $op = $query_param_value[0];
-                        $value = $query_param_value[1];
-                        $translated_value = array(
-                            $op,
-                            ModelDataTranslator::prepareFieldValuesFromJson(
+                        $translated_value = array($op);
+                        if (array_key_exists($op, $model->valid_in_style_operators())
+                            && isset($query_param_value[1])
+                            && ! isset($query_param_value[2])
+                        ) {
+                            $translated_value[] = ModelDataTranslator::prepareFieldValuesFromJson(
                                 $field,
-                                $value,
+                                $query_param_value[1],
                                 $requested_version,
                                 $timezone
+                            );
+                        } elseif (array_key_exists($op, $model->valid_between_style_operators())
+                            && isset($query_param_value[1], $query_param_value[2])
+                            && !isset($query_param_value[3])
+                        ) {
+                            $translated_value[] = ModelDataTranslator::prepareFieldValuesFromJson(
+                                $field,
+                                $query_param_value[1],
+                                $requested_version,
+                                $timezone
+                            );
+                            $translated_value[] = ModelDataTranslator::prepareFieldValuesFromJson(
+                                $field,
+                                $query_param_value[2],
+                                $requested_version,
+                                $timezone
+                            );
+                        } elseif (array_key_exists($op, $model->valid_like_style_operators())
+                            && isset($query_param_value[1])
+                            && ! isset($query_param_value[2])
+                        ) {
+                            //we want to leave this value mostly-as-is (eg don't force it to be a float
+                            //or a boolean or an enum value. Leave it as-is with wildcards etc)
+                            //but do verify it at least doesn't have any serialized data
+                            ModelDataTranslator::throwExceptionIfContainsSerializedData($query_param_value[1]);
+                            $translated_value[] = $query_param_value[1];
+                        } elseif (array_key_exists($op, $model->valid_null_style_operators())
+                            && !isset($query_param_value[1])) {
+                            //no arguments should have been provided, so don't look for any
+                        } elseif (isset($query_param_value[1])
+                            && !isset($query_param_value[2])
+                            && ! array_key_exists($op,
+                                array_merge(
+                                    $model->valid_in_style_operators(),
+                                    $model->valid_null_style_operators(),
+                                    $model->valid_like_style_operators(),
+                                    $model->valid_between_style_operators()
+                                )
                             )
-                        );
+                        ) {
+                            //it's a valid operator, but none of the exceptions. Treat it normally.
+                            $translated_value[] = ModelDataTranslator::prepareFieldValuesFromJson(
+                                $field,
+                                $query_param_value[1],
+                                $requested_version,
+                                $timezone
+                            );
+                        } else {
+                            //so they provided a valid operator, but wrong number of arguments
+                            if (defined('EE_REST_API_DEBUG_MODE') && EE_REST_API_DEBUG_MODE) {
+                                throw new RestException(
+                                    'wrong_number_of_arguments',
+                                    sprintf(
+                                        esc_html__(
+                                            'The operator you provided, "%1$s" had the wrong number of arguments',
+                                            'event_espresso'
+                                        ),
+                                        $op
+                                    ),
+                                    array(
+                                        'status' => 400,
+                                    )
+                                );
+                            }
+                            $translated_value = null;
+                        }
                     } else {
                         //so they didn't provide a valid operator
                         if (defined('EE_REST_API_DEBUG_MODE') && EE_REST_API_DEBUG_MODE) {
@@ -407,6 +490,7 @@ class ModelDataTranslator
                                 )
                             );
                         }
+                        //if we aren't in debug mode, then just try our best to fulfill the user's request
                         $translated_value = null;
                     }
                 } else {
@@ -417,9 +501,14 @@ class ModelDataTranslator
                         $timezone
                     );
                 }
-                if (isset($query_param_for_models[$query_param_key]) && $is_gmt_datetime_field) {
+                if (
+                    (isset($query_param_for_models[$query_param_key]) && $is_gmt_datetime_field)
+                    ||
+                    $translated_value === null
+                ) {
                     //they have already provided a non-gmt field, ignore the gmt one. That's what WP core
                     //currently does (they might change it though). See https://core.trac.wordpress.org/ticket/39954
+                    //OR we couldn't create a translated value from their input
                     continue;
                 }
                 $query_param_for_models[$query_param_key] = $translated_value;
@@ -427,7 +516,7 @@ class ModelDataTranslator
                 //so this param doesn't correspond to a field eh?
                 if ($writing) {
                     //always tell API clients about invalid parameters when they're creating data. Otherwise,
-                    //they are probably going to create borked data
+                    //they are probably going to create invalid data
                     throw new RestException(
                         'invalid_field',
                         sprintf(

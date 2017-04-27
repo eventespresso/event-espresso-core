@@ -279,12 +279,23 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
      * @type string $1 the model's name
      * @type boolean $2 whether to consider this data as if it's being used for writing, or not
      */
-    public function dataProviderForTestPrepareConditionsQueryParamsForModelsBad(){
+    public function dataProviderForTestPrepareConditionsQueryParamsForModelsBad()
+    {
         return array(
+            //case 0: array isn't numerically indexed
+            array(
+                array(
+                    'EVT_ID' => array(
+                        'what_is_this_key_doing_here' => 'its_borked'
+                    )
+                ),
+                'Event',
+                false
+            ),
             //case 1: invalid key while reading
             array(
                 array(
-                    'invalidkey' => 'whatever'
+                    'invalid_key' => 'whatever'
                 ),
                 'Event',
                 false
@@ -292,7 +303,7 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
             //case 2: invalid key while writing
             array(
                 array(
-                    'invalidkey' => 'whatever'
+                    'invalid_key' => 'whatever'
                 ),
                 'Registration',
                 true
@@ -312,7 +323,102 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
                 array(
                     'or*allyourbase' => array(
                         'EVT_ID' => 123,
-                        'invalidnestedkey' => 'foobar'
+                        'invalid_nested_key' => 'foobar'
+                    )
+                ),
+                'Event',
+                false
+            ),
+            //case 5: too few arguments for in operator
+            array(
+                array(
+                    'EVT_ID' => array('IN')
+                ),
+                'Event',
+                false
+            ),
+            //case 6: too many arguments for in operator
+            array(
+                array(
+                    'EVT_ID' => array('IN', array('thingy'),'what_is_this_doing_here')
+                ),
+                'Event',
+                false
+            ),
+            //case 7: too few arguments for between operator
+            array(
+                array(
+                    'EVT_created' => array(
+                        'BETWEEN',
+                        '2017-01-01T00:00:00'
+                    )
+                ),
+                'Event',
+                false
+            ),
+            //case 8: too many arguments for between operator
+            array(
+                array(
+                    'EVT_created' => array(
+                        'between',
+                        '2017-01-01T00:00:00',
+                        '2018-01-01T00:00:00',
+                        'extra_junk'
+                    )
+                ),
+                'Event',
+                false
+            ),
+            //case 9: too few arguments for like operator
+            array(
+                array(
+                    'EVT_name' => array(
+                        'LIKE'
+                    )
+                ),
+                'Event',
+                false
+            ),
+            //case 10: too many arguments for like operator
+            array(
+                array(
+                    'EVT_name' => array(
+                        'LIKE',
+                        'foobar',
+                        'something_extra'
+                    )
+                ),
+                'Event',
+                false
+            ),
+            //case 11: too few arguments for normal operator
+            array(
+                array(
+                    'EVT_ID' => array(
+                        '>'
+                    )
+                ),
+                'Event',
+                false
+            ),
+            //case 12: too many arguments for normal operator
+            array(
+                array(
+                    'EVT_ID' => array(
+                        '<',
+                        123,
+                        23452343
+                    )
+                ),
+                'Event',
+                false
+            ),
+            //case 13: too many arguments for null operator
+            array(
+                array(
+                    'EVT_ID' => array(
+                        'IS_NULL',
+                        'what_is_this_extra_arg'
                     )
                 ),
                 'Event',
@@ -324,7 +430,6 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
 
 
     /**
-     * I haven't written any tests for checking valid input as that's covered quite well elsewhere
      * @param array $input array of data sent to REST API
      * @param string $model_name eg 'Event'
      * @param boolean $writing
@@ -332,7 +437,200 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
      * @dataProvider dataProviderForTestPrepareConditionsQueryParamsForModelsBad
      * @expectedException EventEspresso\core\libraries\rest_api\RestException
      */
-    public function testPrepareConditionsQueryParamsForModelsBad( $input, $model_name, $writing){
+    public function testPrepareConditionsQueryParamsForModelsBad($input, $model_name, $writing)
+    {
+        $model = EE_Registry::instance()->load_model($model_name);
+        //run for cover! it's going to error!
+        ModelDataTranslator::prepareConditionsQueryParamsForModels(
+            $input,
+            $model,
+            '4.8.36',
+            $writing
+        );
+    }
+
+
+
+    /**
+     * @return array {
+     * @type array $0 expected output
+     * @type array $1 input
+     * @type string $2 model name, eg 'Event'
+     * @type boolean $3 whether it's data for writing, or just conditions
+     */
+    public function dataProviderForTestPrepareConditionsQueryParamsForModelsGood()
+    {
+        return array(
+            //reading-style tests
+            //case 0: empty
+            array(
+                array(),
+                array(),
+                'Event',
+                false
+            ),
+            //case 1: simple
+            array(
+                array('EVT_name' => 'foobar'),
+                array('EVT_name' => 'foobar'),
+                'Event',
+                false
+            ),
+            //case 2: with nested logic
+            array(
+                array(
+                    'or' => array(
+                        'EVT_desc' => 'foobar',
+                        'EVT_short_desc' => 'foobar'
+                    ),
+                    'NOT*' => array(
+                        'EVT_name' => 'foobar'
+                    )
+                ),
+                array(
+                    'or' => array(
+                        'EVT_desc' => 'foobar',
+                        'EVT_short_desc' => 'foobar'
+                    ),
+                    'NOT*' => array(
+                        'EVT_name' => 'foobar'
+                    )
+                ),
+                'Event',
+                false
+            ),
+            //case 3: with a between operator
+            array(
+                array(
+                    'EVT_created' => array(
+                        'between',
+                        rest_parse_date('2015-01-01 00:00:00'),
+                        rest_parse_date('2016-01-01 00:00:00')
+                    )
+                ),
+                array(
+                    'EVT_created' => array(
+                        'between',
+                        '2015-01-01T00:00:00',
+                        '2016-01-01T00:00:00'
+                    )
+                ),
+                'Event',
+                false
+            ),
+            //case 4: with an "in" operator
+            array(
+                array(
+                    'TKT_uses' => array(
+                        'IN',
+                        array(
+                            12,
+                            13,
+                            EE_INF
+                        )
+                    )
+                ),
+                array(
+                    'TKT_uses' => array(
+                        'IN',
+                        array(
+                            '12',
+                            '13',
+                            ''
+                        )
+                    )
+                ),
+                'Ticket',
+                false
+            ),
+            //case 5: with a "like" operator
+            array(
+                array(
+                    'PAY_details' => array(
+                        'LIKE',
+                        '%foobar%'
+                    )
+                ),
+                array(
+                    'PAY_details' => array(
+                        'LIKE',
+                        '%foobar%'
+                    )
+                ),
+                'Payment',
+                false
+            ),
+            //case 6: with a "null" operator
+            array(
+                array(
+                    'EVT_name' => array('IS_NULL')
+                ),
+                array(
+                    'EVT_name' => array('IS_NULL')
+                ),
+                'Event',
+                false
+            ),
+            //case 7: with various other operators
+            array(
+                array(
+                    'RPY_amount' => array(
+                        '<',
+                        19
+                    ),
+                    'REG_ID' => array(
+                        '!=',
+                        12
+                    ),
+                ),
+                array(
+                    'RPY_amount' => array(
+                        '<',
+                        '19'
+                    ),
+                    'REG_ID' => array(
+                        '!=',
+                        '12'
+                    ),
+                ),
+                'Registration_Payment',
+                false
+            ),
+            //case 8: using related fields
+            array(
+                array(
+                    'Ticket.Datetime.DTT_reg_limit' => 12
+                ),
+                array(
+                    'Ticket.Datetime.DTT_reg_limit' => '12'
+                ),
+                'Registration',
+                false
+            ),
+            //writing-style tests
+            //case 8: with valid fields
+            array(
+                array(
+                    'TKT_uses' => EE_INF
+                ),
+                array(
+                    'TKT_uses' => ''
+                ),
+                'Ticket',
+                true
+            )
+        );
+    }
+
+    /**
+     * @param array $expected_output
+     * @param array $input array of data sent to REST API
+     * @param string $model_name eg 'Event'
+     * @param boolean $writing
+     * @group        9222
+     * @dataProvider dataProviderForTestPrepareConditionsQueryParamsForModelsGood
+     */
+    public function testPrepareConditionsQueryParamsForModelsGood( $expected_output, $input, $model_name, $writing){
         $model = EE_Registry::instance()->load_model($model_name);
         //run for cover! it's going to error!
         ModelDataTranslator::prepareConditionsQueryParamsForModels($input,$model,'4.8.36', $writing);

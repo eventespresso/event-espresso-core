@@ -868,6 +868,7 @@ class Read_Test extends \EE_REST_TestCase
 
     /**
      * @group 9389
+     * @group 9222
      */
     public function test_handle_request_get_all__automatic_group_by()
     {

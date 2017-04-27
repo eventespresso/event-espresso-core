@@ -337,6 +337,11 @@ abstract class EEM_Base extends EE_Base
     protected $_between_style_operators = array('BETWEEN');
 
     /**
+     * Operators that work like SQL's like: input should be assumed to be a string, already prepared for a LIKE query.
+     * @var array
+     */
+    protected $_like_style_operators = array('LIKE', 'NOT LIKE');
+    /**
      * operators that are used for handling NUll and !NULL queries.  Typically used for when checking if a row exists
      * on a join table.
      *
@@ -4083,13 +4088,13 @@ abstract class EEM_Base extends EE_Base
         //check to see if the value is actually another field
         if (is_array($op_and_value) && isset($op_and_value[2]) && $op_and_value[2] == true) {
             return $operator . SP . $this->_deduce_column_name_from_query_param($value);
-        } elseif (in_array($operator, $this->_in_style_operators) && is_array($value)) {
+        } elseif (in_array($operator, $this->valid_in_style_operators()) && is_array($value)) {
             //in this case, the value should be an array, or at least a comma-separated list
             //it will need to handle a little differently
             $cleaned_value = $this->_construct_in_value($value, $field_obj);
             //note: $cleaned_value has already been run through $wpdb->prepare()
             return $operator . SP . $cleaned_value;
-        } elseif (in_array($operator, $this->_between_style_operators) && is_array($value)) {
+        } elseif (in_array($operator, $this->valid_between_style_operators()) && is_array($value)) {
             //the value should be an array with count of two.
             if (count($value) !== 2) {
                 throw new EE_Error(
@@ -4104,7 +4109,7 @@ abstract class EEM_Base extends EE_Base
             }
             $cleaned_value = $this->_construct_between_value($value, $field_obj);
             return $operator . SP . $cleaned_value;
-        } elseif (in_array($operator, $this->_null_style_operators)) {
+        } elseif (in_array($operator, $this->valid_null_style_operators())) {
             if ($value !== null) {
                 throw new EE_Error(
                     sprintf(
@@ -4118,13 +4123,13 @@ abstract class EEM_Base extends EE_Base
                 );
             }
             return $operator;
-        } elseif ($operator === 'LIKE' && ! is_array($value)) {
+        } elseif (in_array($operator, $this->valid_like_style_operators()) && ! is_array($value)) {
             //if the operator is 'LIKE', we want to allow percent signs (%) and not
             //remove other junk. So just treat it as a string.
             return $operator . SP . $this->_wpdb_prepare_using_field($value, '%s');
-        } elseif (! in_array($operator, $this->_in_style_operators) && ! is_array($value)) {
+        } elseif (! in_array($operator, $this->valid_in_style_operators()) && ! is_array($value)) {
             return $operator . SP . $this->_wpdb_prepare_using_field($value, $field_obj);
-        } elseif (in_array($operator, $this->_in_style_operators) && ! is_array($value)) {
+        } elseif (in_array($operator, $this->valid_in_style_operators()) && ! is_array($value)) {
             throw new EE_Error(
                 sprintf(
                     __(
@@ -4135,7 +4140,7 @@ abstract class EEM_Base extends EE_Base
                     $operator
                 )
             );
-        } elseif (! in_array($operator, $this->_in_style_operators) && is_array($value)) {
+        } elseif (! in_array($operator, $this->valid_in_style_operators()) && is_array($value)) {
             throw new EE_Error(
                 sprintf(
                     __(
@@ -5559,6 +5564,50 @@ abstract class EEM_Base extends EE_Base
     }
 
 
+
+    /**
+     * Gets the between-style operators (take 2 arguments).
+     * @return array keys are accepted strings, values are the SQL they are converted to
+     */
+    public function valid_between_style_operators(){
+        return array_intersect(
+            $this->valid_operators(),
+            $this->_between_style_operators
+        );
+    }
+
+    /**
+     * Gets the "like"-style operators (take a single argument, but it may contain wildcards)
+     * @return array keys are accepted strings, values are the SQL they are converted to
+     */
+    public function valid_like_style_operators(){
+        return array_intersect(
+            $this->valid_operators(),
+            $this->_like_style_operators
+        );
+    }
+
+    /**
+     * Gets the "in"-style operators
+     * @return array keys are accepted strings, values are the SQL they are converted to
+     */
+    public function valid_in_style_operators(){
+        return array_intersect(
+            $this->valid_operators(),
+            $this->_in_style_operators
+        );
+    }
+
+    /**
+     * Gets the "null"-style operators (accept no arguments)
+     * @return array keys are accepted strings, values are the SQL they are converted to
+     */
+    public function valid_null_style_operators(){
+        return array_intersect(
+            $this->valid_operators(),
+            $this->_null_style_operators
+        );
+    }
 
     /**
      * Gets an array where keys are the primary keys and values are their 'names'
