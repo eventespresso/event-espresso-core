@@ -96,7 +96,7 @@ class CommandBus implements CommandBusInterface
         // can't pass $this to a Closure, so use a named variable
         $command_bus = $this;
         $middleware = function ($command) use ($command_bus) {
-            return $this->command_handler_manager
+            return $command_bus->command_handler_manager
                 ->getCommandHandler($command, $command_bus)
                 ->handle($command);
         };
