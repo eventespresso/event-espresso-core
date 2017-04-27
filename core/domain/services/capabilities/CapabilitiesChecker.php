@@ -1,7 +1,6 @@
 <?php
 namespace EventEspresso\core\domain\services\capabilities;
 
-use CapabilitiesCheckerInterface;
 use EE_Capabilities;
 use EventEspresso\core\exceptions\InsufficientPermissionsException;
 use EventEspresso\core\exceptions\InvalidClassException;
