@@ -151,7 +151,7 @@ class EE_Dependency_Map
         ) {
             throw new EE_Error(
                 sprintf(
-                    __('"%1$s" is not a valid loader method on EE_Registry.', 'event_espresso'),
+                    esc_html__('"%1$s" is not a valid loader method on EE_Registry.', 'event_espresso'),
                     $loader
                 )
             );
@@ -274,10 +274,11 @@ class EE_Dependency_Map
      */
     public function has_alias($class_name = '', $for_class = '')
     {
-        if (isset($this->_aliases[$for_class], $this->_aliases[$for_class][$class_name])) {
-            return true;
-        }
-        return isset($this->_aliases[$class_name]) && ! is_array($this->_aliases[$class_name]) ? true : false;
+        return isset($this->_aliases[$for_class], $this->_aliases[$for_class][$class_name])
+               || (
+                   isset($this->_aliases[$class_name])
+                   && ! is_array($this->_aliases[$class_name])
+               );
     }
 
 
