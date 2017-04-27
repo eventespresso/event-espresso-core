@@ -144,8 +144,14 @@ class EE_Dependency_Map
      */
     public static function register_class_loader($class_name, $loader = 'load_core')
     {
-        // check that loader method starts with "load_" and exists in EE_Registry
-        if (strpos($loader, 'load_') !== 0 || ! method_exists('EE_Registry', $loader)) {
+        // check that loader is callable or method starts with "load_" and exists in EE_Registry
+        if (
+            ! is_callable($loader)
+            && (
+                strpos($loader, 'load_') !== 0
+                || ! method_exists('EE_Registry', $loader)
+            )
+        ) {
             throw new EE_Error(
                 sprintf(
                     __('"%1$s" is not a valid loader method on EE_Registry.', 'event_espresso'),
@@ -531,6 +537,8 @@ class EE_Dependency_Map
             'CapChecker'                                                          => 'EventEspresso\core\services\commands\middleware\CapChecker',
             'AddActionHook'                                                       => 'EventEspresso\core\services\commands\middleware\AddActionHook',
             'CapabilitiesChecker'                                                 => 'EventEspresso\core\domain\services\capabilities\CapabilitiesChecker',
+            'CapabilitiesCheckerInterface'                                        => 'EventEspresso\core\domain\services\capabilities\CapabilitiesChecker',
+            'EventEspresso\core\domain\services\capabilities\CapabilitiesCheckerInterface' => 'EventEspresso\core\domain\services\capabilities\CapabilitiesChecker',
             'CreateRegistrationService'                                           => 'EventEspresso\core\domain\services\registration\CreateRegistrationService',
             'CreateRegCodeCommandHandler'                                         => 'EventEspresso\core\services\commands\registration\CreateRegCodeCommand',
             'CreateRegUrlLinkCommandHandler'                                      => 'EventEspresso\core\services\commands\registration\CreateRegUrlLinkCommand',
