@@ -22,16 +22,16 @@ abstract class CompositeCommandHandler extends CommandHandler
 {
 
     /**
-     * @type CommandBus $command_bus
+     * @type CommandBusInterface $command_bus
      */
     private $command_bus;
 
 
 
     /**
-     * @param CommandBus $command_bus
+     * @param CommandBusInterface $command_bus
      */
-    public function setCommandBus(CommandBus $command_bus)
+    public function setCommandBus(CommandBusInterface $command_bus)
     {
         $this->command_bus = $command_bus;
     }
@@ -39,7 +39,7 @@ abstract class CompositeCommandHandler extends CommandHandler
 
 
     /**
-     * @return CommandBus
+     * @return CommandBusInterface
      */
     public function commandBus()
     {
