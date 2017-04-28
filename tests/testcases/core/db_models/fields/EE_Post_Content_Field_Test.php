@@ -44,4 +44,44 @@ class EE_Post_Content_Field_Test extends EE_UnitTestCase
     {
         $this->assertEquals('%s', $this->_field->get_wpdb_data_type());
     }
+
+
+
+    /**
+     * @group 8405
+     */
+    public function test_prepare_for_pretty_echoing(){
+        //use a simple mock shortcode to verify it gets replaced
+        add_shortcode(
+            'mock',
+            function(){
+                return 'replacement';
+            }
+        );
+        $this->assertTrue(
+            strpos(
+                $this->_field->prepare_for_pretty_echoing('This is the shortcode: [mock]'),
+                'This is the shortcode: replacement'
+            ) !== false
+        );
+    }
+
+    /**
+     * @group 8405
+     */
+    public function test_prepare_for_get(){
+        //use a simple mock shortcode to verify it DOESN'T get replaced
+        add_shortcode(
+            'mock',
+            function(){
+                return 'replacement';
+            }
+        );
+        $this->assertTrue(
+            strpos(
+                $this->_field->prepare_for_get('This is the shortcode: [mock]'),
+                'This is the shortcode: replacement'
+            ) === false
+        );
+    }
 }
