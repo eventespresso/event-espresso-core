@@ -201,7 +201,7 @@ class EED_Add_New_State extends EED_Module
                                 'FHEE__EED_Add_New_State__display_add_new_state_micro_form__click_here_link',
                                 EEH_HTML::link(
                                     '',
-                                     esc_html__('click here to add a new state/province', 'event_espresso'),
+                                     esc_html__('click here to add a new State/Province', 'event_espresso'),
                                     '',
                                     'display-' . $input->html_id(),
                                     'ee-form-add-new-state-lnk display-the-hidden smaller-text hide-if-no-js',
@@ -216,15 +216,15 @@ class EED_Add_New_State extends EED_Module
                                 'FHEE__EED_Add_New_State__display_add_new_state_micro_form__add_new_state_micro_form',
                                 EEH_HTML::div('', $input->html_id() . '-dv', 'ee-form-add-new-state-dv',
                                     'display: none;') .
-                                EEH_HTML::h6( esc_html__('Is your state/province missing from the dropdown menu above? You can add it by completing the following steps:',
+                                EEH_HTML::h6( esc_html__('Is your State/Province missing from the dropdown menu above? You can add it by completing the following steps:',
                                     'event_espresso')) .
                                 EEH_HTML::ul() .
-                                EEH_HTML::li( esc_html__('first select the Country that your State/Province belongs to',
+                                EEH_HTML::li( esc_html__('First select your Country from the dropdown menu below',
                                     'event_espresso')) .
-                                EEH_HTML::li( esc_html__('enter the name of your State/Province', 'event_espresso')) .
-                                EEH_HTML::li( esc_html__('enter a two to six letter abbreviation for the name of your State/Province',
+                                EEH_HTML::li( esc_html__('Enter the name of your State/Province', 'event_espresso')) .
+                                EEH_HTML::li( esc_html__('Enter the abbreviation (usually two to six letters) for your State/Province',
                                     'event_espresso')) .
-                                EEH_HTML::li( esc_html__('click the ADD button', 'event_espresso')) .
+                                EEH_HTML::li( esc_html__('Then click the ADD button', 'event_espresso')) .
                                 EEH_HTML::ulx()
                             )
                         ),
@@ -235,7 +235,7 @@ class EED_Add_New_State extends EED_Module
                                 'html_name'       => $country_name,
                                 'html_id'         => str_replace('state', 'nsmf_new_state_country', $input->html_id()),
                                 'html_class'      => $input->html_class() . ' new-state-country',
-                                'html_label_text' =>  esc_html__('New State/Province Country', 'event_espresso'),
+                                'html_label_text' =>  esc_html__('Select your Country', 'event_espresso'),
                                 'default'         => EE_Registry::instance()->REQ->get($country_name, ''),
                                 'required'        => false,
                             )
@@ -246,7 +246,7 @@ class EED_Add_New_State extends EED_Module
                                 'html_name'       => $state_name,
                                 'html_id'         => str_replace('state', 'nsmf_new_state_name', $input->html_id()),
                                 'html_class'      => $input->html_class() . ' new-state-state',
-                                'html_label_text' =>  esc_html__('New State/Province Name', 'event_espresso'),
+                                'html_label_text' =>  esc_html__(' Enter the Name for your State/Province', 'event_espresso'),
                                 'default'         => EE_Registry::instance()->REQ->get($state_name, ''),
                                 'required'        => false,
                             )
@@ -259,7 +259,7 @@ class EED_Add_New_State extends EED_Module
                                 'html_id'               => str_replace('state', 'nsmf_new_state_abbrv',
                                     $input->html_id()),
                                 'html_class'            => $input->html_class() . ' new-state-abbrv',
-                                'html_label_text'       =>  esc_html__('New State/Province Abbreviation', 'event_espresso'),
+                                'html_label_text'       =>  esc_html__('Enter the Abbreviation for your State/Province*', 'event_espresso'),
                                 'html_other_attributes' => 'size="24"',
                                 'default'               => EE_Registry::instance()->REQ->get($abbrv_name, ''),
                                 'required'              => false,
@@ -289,23 +289,29 @@ class EED_Add_New_State extends EED_Module
                                 .
                                 EEH_HTML::div('', '', 'small-text')
                                 .
-                                EEH_HTML::strong( esc_html__('Don\'t know your State/Province Abbreviation?', 'event_espresso'))
+                                EEH_HTML::strong( esc_html__('* Don\'t know your State/Province Abbreviation?', 'event_espresso'))
                                 .
                                 EEH_HTML::br()
                                 .
                                 sprintf(
                                      esc_html__('You can look here: %s, for a list of Countries and links to their State/Province Abbreviations ("Subdivisions assigned codes" column).',
                                         'event_espresso'),
-                                    EEH_HTML::link('http://en.wikipedia.org/wiki/ISO_3166-2',
-                                        'http://en.wikipedia.org/wiki/ISO_3166-2', '', '',
-                                        'ee-form-add-new-state-wiki-lnk')
+                                    EEH_HTML::link(
+                                        'http://en.wikipedia.org/wiki/ISO_3166-2',
+                                        'http://en.wikipedia.org/wiki/ISO_3166-2',
+                                        '',
+                                        '',
+                                        'ee-form-add-new-state-wiki-lnk',
+                                        '',
+                                        'target="_blank"'
+                                    )
                                 )
                                 .
                                 EEH_HTML::divx()
                                 .
                                 EEH_HTML::br()
                                 .
-                                EEH_HTML::link('',  esc_html__('cancel new state/province', 'event_espresso'), '',
+                                EEH_HTML::link('',  esc_html__('cancel new State/Province', 'event_espresso'), '',
                                     'hide-' . $input->html_id(), 'ee-form-cancel-new-state-lnk smaller-text', '',
                                     'data-target="' . $input->html_id() . '"')
                                 .
