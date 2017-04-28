@@ -641,11 +641,24 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 	/**
 	 * Gets the primary registration only
 	 *
-	 * @return EE_Registration
+	 * @return EE_Base_Class|EE_Registration
 	 * @throws \EE_Error
 	 */
 	public function primary_registration() {
-		return $this->get_first_related( 'Registration', array( array( 'REG_count' => EEM_Registration::PRIMARY_REGISTRANT_COUNT ) ) );
+        $registrations = (array) $this->get_many_related(
+            'Registration', array(array('REG_count' => EEM_Registration::PRIMARY_REGISTRANT_COUNT))
+        );
+        foreach ($registrations as $registration) {
+            // valid registration that is NOT cancelled or declined ?
+            if(
+                $registration instanceof EE_Registration
+                && ! in_array($registration->status_ID(), EEM_Registration::closed_reg_statuses(), true)
+            ) {
+                return $registration;
+            }
+        }
+        // nothing valid found, so just return first thing from array of results
+        return reset($registrations);
 	}
 
 

@@ -341,7 +341,8 @@
 }
 
 
-.ee-ticket-sortable, .ee-dtt-sortable {
+.ee-ticket-sortable .sortable-drag-handle, 
+.ee-dtt-sortable .sortable-drag-handle {
     cursor: move;
 }
 

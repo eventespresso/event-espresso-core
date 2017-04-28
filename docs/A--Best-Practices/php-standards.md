@@ -1,10 +1,69 @@
-# PHP Standards for EE
+# PHP Standards for Event Espresso
 
-Generally speaking, our php coding standards closely mirror the [WordPress PHP Coding Standards](http://make.wordpress.org/core/handbook/coding-standards/php/).  We won't repeat all those here but emphasis, modifications, and additions are listed below.
+Previously, our php coding standards closely mirrored the [WordPress PHP Coding Standards](http://make.wordpress.org/core/handbook/coding-standards/php/).  We won't repeat all those here but emphasis, modifications, and additions are listed below. There is still some really old code in Event Espresso 4 that does not conform to these standards.
 
-> Keep in mind that we are fully aware there is still code in Event Espresso 4 that does not conform to these standards.  They are a target for improvement over time!
+We have recently decided however to deviate from the above to follow coding standards, methodologies, and guidelines that comply with the greater PHP community. This means following [PHP Standards Recommendations](http://www.php-fig.org/psr/) and pursuing [modern day best practices](http://www.phptherightway.com/)
+
+All code following the previous WordPress methodologies is now considered legacy code and will continue to follow those particular guidelines until it is replaced. All new classes and files will follow modern day best practices, including namespacing and PSR compliance.
+
 
 ## General Code Guidelines
+
+ * Event Espresso supports PHP 5.3+ and WordPress 4.1+ so all functions and code used should be available in those libraries.
+ * Class, Interface, Method, and Function names should be clear and concise
+ * Methods and Functions should use suitable type hinting where applicable
+ * Data types should be used consistently and avoid type switching as much as possible<br>
+     ex: if an optional method parameter is intended to be a string, 
+         then use `""` (empty string) for the default instead of `null` or `false` 
+         This is especially important for return types in order to minimize the amount of type checking that client 
+         code has to perform after receiving a value from a method
+ * ALL user viewable strings should be translated using ` esc_html__() ` or a suitable equivalent
+ * All comparisons should be using type safe equivalents<br>
+    ex: `===` vs `==` or `in_array($int, $array, true)` vs `in_array($int, $array)`
+    
+    
+### Formatting Overview
+
+ * all non-legacy files are formatted according to the PSR specifications
+ * names for non-legacy classes and interfaces follow StudlyCaps formatting
+ * names for non-legacy methods and functions follow camelCase formatting
+ * names for variables follow snake_case formatting
+ * classes and interfaces have phpdoc comment blocks that contain:
+     * a brief description of their purpose
+     * an @package tag to indicate the vendor or plugin that the code belongs to
+     * an @author tag to indicate the specific dev that first created the class
+     * an @since tag listing the version that the code was first added
+ * methods and functions have phpdoc comment blocks that contain:
+     * a brief description of their purpose (not always necessary for really simple/small blocks of code)
+     * a list of all parameters and their datatypes
+     * an @return tag if applicable
+     * an @throws tag for each exception type that could be thrown as a result of calling the function
+     
+     
+### Design and Architecture
+
+ * classes, methods, or functions should not be too large. Extract logic into more granular chunks if need be
+ * dependencies that are required by a class should be injected into the constructor
+ * optional dependencies can be injected into the constructor or via setters
+ * static state should be avoided like the plague
+ * non-legacy classes should follow PSR-4 compatible namespacing
+ * use `use` statements for all classnames in a file and simplify namespaces in phpdocs 
+ * can design patterns be utilized to provide a more eloquent versatile solution?
+ * code should be DRY and not duplicate existing code
+ * code should strive to follow the S.O.L.I.D. principles:
+     * **S** - Single Responsibility Principle: each class should focus on doing ONE thing only and all functionality should be related to that one thing
+     * **O** - Open-Closed Principle: Class internals should be hidden as much as possible. To add new functionality, write new class extensions instead of modifying existing code, ie: substitute OldClass with OldClassPlusLasers (which extends OldClass). Interfaces allow the substitution.
+     * **L** - Liskov Substitution Principle: parent/child classes should be interchangeable, ie: OldClass parent or OldClassPlusLasers child class should both be usable by classes implementing their interface
+     * **I** - Interface Segregation Principle: avoid big interfaces, use multiple smaller ones describing more granular behaviour so that classes don't have to implement methods they don't support.
+     * **D** - Dependency Inversion Principle: inject dependencies into classes so they can be externally controlled. Required dependencies should use constructor injection, and optional dependencies can use setter injection.
+ 
+
+### Backwards Compatibility
+
+ * code should strive to be backwards compatible
+ * classes, interfaces, methods, or functions that are no longer required should be deprecated instead of removed, and logic should be forwarded to replacements where applicable
+
+
 
 ### Yoda Conditionals.
 
@@ -49,8 +108,8 @@ Class Naming
 
 All classes for Event Espresso should be prefixed with `EE_`.  An example of this in use is the `EE_Base_Class`.  Note, there are some other important naming schemas related to classes:
 
-| Type of Class | Naming Schema | Description | Example |
-| ------------- | ------------- | ----------- | ------- |
+Type of Class | Naming Schema | Description | Example 
+------------- | ------------- | ----------- | ------- 
 Regular | EE_{class_name} | This is a class that is not a part of any system or library OR a core class. | EE_Registry
 DB Model | EEM_{class_name} | These are part of the EE model system. | EEM_Event
 DB Model Object (entity) | EE_{class_name} | These are part of the EE Model system. You can differentiate these from Regular classes in that Model Objects always extend the `EE_Base_Class` | EE_Event
@@ -75,8 +134,8 @@ All public properties or methods are not prefixed with an underscore.  Example p
 
 ### File Naming Schema
 
-| File Type | Schema | Description | Example | 
-| --------- | ------ | ----------- | ------- |
+File Type | Schema | Description | Example 
+--------- | ------ | ----------- | ------- 
 Regular | .php | As with normal php rules. All php files end with the `.php` extension | espresso.php
 Core | .core.php | Core Classes (usually parent or "main" classes) | EE_Error.core.php
 Template | template.php | Any template related code goes into a file with this extension | whats_new.template.php
@@ -111,8 +170,7 @@ For readability, put 5 lines of white space between functions/methods.
 Always put spaces after commas and on both sides of logical and assignment operators.
 
 ```php
-<?php
-$x == 23
+$x === 23
 $foo && $bar
 ! $foo
 array( 1, 2, 3 )
@@ -121,7 +179,6 @@ array( 1, 2, 3 )
 Put spaces on both sides of the opening and closing parenthesis of `if`, `else if`, `foreach`, `for`, and `switch` blocks.
 
 ```php
-<?php
 foreach ( $foo as $bar ) { 
       ...
 }

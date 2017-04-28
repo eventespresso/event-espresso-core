@@ -35,7 +35,7 @@
 	<td>
 		<span data-context="datetime" data-datetime-row="<?php echo $dtt_row; ?>" class="datetime-tickets-sold ee-numeric"><?php echo $dtt_sold; ?></span>
 	</td>
-    <?php if (WP_DEBUG): // for now we are only showing reserved counts if WP_DEBUG is on?>
+    <?php if (apply_filters('FHEE__event_tickets_metabox__dtt_reserved', true)): ?>
         <td>
             <span class="datetime-tickets-reserved ee-numeric"><?php echo $dtt_reserved; ?></span>
         </td>
