@@ -1,4 +1,5 @@
 <?php
+
 namespace EventEspresso\core\domain\services\capabilities;
 
 use EE_Capabilities;
@@ -6,7 +7,7 @@ use EventEspresso\core\exceptions\InsufficientPermissionsException;
 use EventEspresso\core\exceptions\InvalidClassException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
+if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
 
@@ -63,14 +64,14 @@ class CapabilitiesChecker implements CapabilitiesCheckerInterface
      */
     public function processCapCheck($cap_check)
     {
-        if (is_array($cap_check)){
+        if (is_array($cap_check)) {
             foreach ($cap_check as $check) {
                 $this->processCapCheck($check);
             }
             return true;
         }
         // at this point, $cap_check should be an individual instance of CapCheck
-        if ( ! $cap_check instanceof CapCheckInterface) {
+        if (! $cap_check instanceof CapCheckInterface) {
             throw new InvalidClassException(
                 '\EventEspresso\core\domain\services\capabilities\CapCheckInterface'
             );
@@ -79,14 +80,14 @@ class CapabilitiesChecker implements CapabilitiesCheckerInterface
         if ($cap_check instanceof PublicCapabilities) {
             return true;
         }
-        $capabilities = (array) $cap_check->capability();
+        $capabilities = (array)$cap_check->capability();
         foreach ($capabilities as $capability) {
             if (
-                ! $this->capabilities()->current_user_can(
-                    $capability,
-                    $cap_check->context(),
-                    $cap_check->ID()
-                )
+            ! $this->capabilities()->current_user_can(
+                $capability,
+                $cap_check->context(),
+                $cap_check->ID()
+            )
             ) {
                 throw new InsufficientPermissionsException($cap_check->context());
             }
