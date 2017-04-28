@@ -374,7 +374,7 @@ class ModelDataTranslator
                     // HTML, or it's a serialized input and the user is allowed to write serialized input
                     $translated_value = $query_param_value;
                 } elseif (! $writing && is_array($query_param_value)) {
-                    if( ! \EEH_Array::is_array_numerically_and_sequentially_indexed($query_param_value)){
+                    if (! \EEH_Array::is_array_numerically_and_sequentially_indexed($query_param_value)) {
                         if (defined('EE_REST_API_DEBUG_MODE') && EE_REST_API_DEBUG_MODE) {
                             throw new RestException(
                                 'numerically_indexed_array_of_values_only',
@@ -437,7 +437,8 @@ class ModelDataTranslator
                             //no arguments should have been provided, so don't look for any
                         } elseif (isset($query_param_value[1])
                             && !isset($query_param_value[2])
-                            && ! array_key_exists($op,
+                            && ! array_key_exists(
+                                $op,
                                 array_merge(
                                     $model->valid_in_style_operators(),
                                     $model->valid_null_style_operators(),

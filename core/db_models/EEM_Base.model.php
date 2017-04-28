@@ -5569,7 +5569,8 @@ abstract class EEM_Base extends EE_Base
      * Gets the between-style operators (take 2 arguments).
      * @return array keys are accepted strings, values are the SQL they are converted to
      */
-    public function valid_between_style_operators(){
+    public function valid_between_style_operators()
+    {
         return array_intersect(
             $this->valid_operators(),
             $this->_between_style_operators
@@ -5580,7 +5581,8 @@ abstract class EEM_Base extends EE_Base
      * Gets the "like"-style operators (take a single argument, but it may contain wildcards)
      * @return array keys are accepted strings, values are the SQL they are converted to
      */
-    public function valid_like_style_operators(){
+    public function valid_like_style_operators()
+    {
         return array_intersect(
             $this->valid_operators(),
             $this->_like_style_operators
@@ -5591,7 +5593,8 @@ abstract class EEM_Base extends EE_Base
      * Gets the "in"-style operators
      * @return array keys are accepted strings, values are the SQL they are converted to
      */
-    public function valid_in_style_operators(){
+    public function valid_in_style_operators()
+    {
         return array_intersect(
             $this->valid_operators(),
             $this->_in_style_operators
@@ -5602,7 +5605,8 @@ abstract class EEM_Base extends EE_Base
      * Gets the "null"-style operators (accept no arguments)
      * @return array keys are accepted strings, values are the SQL they are converted to
      */
-    public function valid_null_style_operators(){
+    public function valid_null_style_operators()
+    {
         return array_intersect(
             $this->valid_operators(),
             $this->_null_style_operators
