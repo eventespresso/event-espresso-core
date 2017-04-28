@@ -2245,6 +2245,15 @@ class EE_Registration_Config extends EE_Config_Base
      */
     public $default_STS_ID;
 
+
+    /**
+     * For new events, this will be the default value for the maximum number of tickets (equivalent to maximum number of
+     * registrations)
+     * @var int
+     */
+    public $default_maximum_number_of_tickets;
+
+
     /**
      * level of validation to apply to email addresses
      *
@@ -2385,6 +2394,7 @@ class EE_Registration_Config extends EE_Config_Base
         $this->recaptcha_publickey = null;
         $this->recaptcha_privatekey = null;
         $this->recaptcha_width = 500;
+        $this->default_maximum_number_of_tickets = 10;
     }
 
 
@@ -2397,16 +2407,28 @@ class EE_Registration_Config extends EE_Config_Base
     public function do_hooks()
     {
         add_action('AHEE__EE_Config___load_core_config__end', array($this, 'set_default_reg_status_on_EEM_Event'));
+        add_action('AHEE__EE_Config___load_core_config__end', array($this, 'set_default_max_ticket_on_EEM_Event'));
     }
 
 
 
     /**
-     * @return void
+     * Hooked into `AHEE__EE_Config___load_core_config__end` to ensure the default for the EVT_default_registration_status
+     * field matches the config setting for default_STS_ID.
      */
     public function set_default_reg_status_on_EEM_Event()
     {
         EEM_Event::set_default_reg_status($this->default_STS_ID);
+    }
+
+
+    /**
+     * Hooked into `AHEE__EE_Config___load_core_config__end` to ensure the default for the EVT_additional_limit field
+     * for Events matches the config setting for default_maximum_number_of_tickets
+     */
+    public function set_default_max_ticket_on_EEM_Event()
+    {
+        EEM_Event::set_default_additional_limit($this->default_maximum_number_of_tickets);
     }
 
 
