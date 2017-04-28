@@ -388,8 +388,11 @@ class RegistrationsReport extends JobHandlerFile
                             'ANS_value', $answer_row['Answer.ANS_value']));
                     }
                 }
-                $registrations_csv_ready_array[] = apply_filters('FHEE__EE_Export__report_registrations__reg_csv_array',
-                    $reg_csv_array, $reg_row);
+                $registrations_csv_ready_array[] = apply_filters(
+                    'FHEE__EE_Export__report_registrations__reg_csv_array',
+                    $reg_csv_array,
+                    $reg_row
+                );
             }
         }
         //if we couldn't export anything, we want to at least show the column headers
