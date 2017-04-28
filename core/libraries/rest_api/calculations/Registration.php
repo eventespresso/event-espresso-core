@@ -53,6 +53,7 @@ class Registration extends Calculations_Base
                 array(
                     'Ticket.TKT_ID' => $reg->ticket_ID(),
                 ),
+                'default_where_conditions' => \EEM_Base::default_where_conditions_minimum_all
             )
         );
         $checkin_stati = array();

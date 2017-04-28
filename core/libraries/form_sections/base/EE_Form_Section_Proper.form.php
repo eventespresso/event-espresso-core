@@ -1,7 +1,5 @@
 <?php
 
-
-
 /**
  * For containing info about a non-field form section, which contains other form sections/fields.
  * Relies heavily on the script form_section_validation.js for client-side validation, mostly
@@ -115,9 +113,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
         $this->_layout_strategy->_construct_finalize($this);
         //ok so we are definitely going to want the forms JS,
         //so enqueue it or remember to enqueue it during wp_enqueue_scripts
-        if (did_action('wp_enqueue_scripts')
-            || did_action('admin_enqueue_scripts')
-        ) {
+        if (did_action('wp_enqueue_scripts') || did_action('admin_enqueue_scripts')) {
             //ok so they've constructed this object after when they should have.
             //just enqueue the generic form scripts and initialize the form immediately in the JS
             \EE_Form_Section_Proper::wp_enqueue_scripts(true);
@@ -591,7 +587,9 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
         if ($display_previously_submitted_data) {
             $this->populate_from_session();
         }
-        return $this->_layout_strategy->layout_form();
+        return $this->_form_html_filter
+            ? $this->_form_html_filter->filterHtml($this->_layout_strategy->layout_form(), $this)
+            : $this->_layout_strategy->layout_form();
     }
 
 
@@ -643,7 +641,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
         wp_localize_script(
             'ee_form_section_validation',
             'ee_form_section_validation_init',
-            array('init' => $init_form_validation_automatically ? true : false)
+            array('init' => $init_form_validation_automatically ? '1' : '0')
         );
     }
 
