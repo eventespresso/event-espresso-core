@@ -1,4 +1,5 @@
 <?php
+
 if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
@@ -214,7 +215,6 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_
 
 
     /**
-     * handle_response
      * called after the request stack has been fully processed
      * if any of the middleware apps has requested the plugin be deactivated, then we do that now
      *
