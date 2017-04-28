@@ -460,6 +460,9 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
      */
     public function dataProviderForTestPrepareConditionsQueryParamsForModelsGood()
     {
+        if( ! function_exists('rest_parse_date')){
+            return array();
+        }
         return array(
             //reading-style tests
             //case 0: empty
