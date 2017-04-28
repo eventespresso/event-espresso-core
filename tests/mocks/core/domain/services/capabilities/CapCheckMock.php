@@ -19,8 +19,19 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 class CapCheckMock implements CapCheckInterface
 {
 
+    /**
+     * @var string $capability
+     */
     public $capability = 'mock_capability';
+
+    /**
+     * @var string $context
+     */
     public $context = 'unit testing capability checks';
+
+    /**
+     * @var int|string $ID
+     */
     public $ID = 1234;
 
     /**
@@ -51,5 +62,3 @@ class CapCheckMock implements CapCheckInterface
         return $this->ID;
     }
 }
-// End of file CapCheckMock.php
-// Location: EventEspresso\tests\mocks\core\domain\services\capabilities/CapCheckMock.php
