@@ -23,6 +23,7 @@ class EE_Float_Normalization extends EE_Normalization_Strategy_Base
     const REGEX = '/^(-?)([\d.]+)$/';
 
 
+
     /**
      * @param string $value_to_normalize
      * @return float
@@ -50,7 +51,7 @@ class EE_Float_Normalization extends EE_Normalization_Strategy_Base
             FILTER_SANITIZE_NUMBER_FLOAT,
             FILTER_FLAG_ALLOW_FRACTION
         );
-        if($normalized_value === ''){
+        if ($normalized_value === '') {
             return null;
         }
         if (preg_match(EE_Float_Normalization::REGEX, $normalized_value, $matches)) {
@@ -95,5 +96,4 @@ class EE_Float_Normalization extends EE_Normalization_Strategy_Base
         return "{$normalized_value}";
     }
 }
-
 // End of file EE_Float_Normalization.strategy.php
