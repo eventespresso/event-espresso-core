@@ -174,5 +174,23 @@ class EEM_Change_Log extends EEM_Base{
 
 
 
+    /**
+     * Executes a database query to delete gateway logs. Does not affect model objects, so if you attempt to use
+     * models after this, they may be out-of-sync with the database
+     * @param DateTime $datetime
+     * @return false|int
+     */
+	public function delete_gateway_logs_older_than(DateTime $datetime ) {
+	    global $wpdb;
+        return $wpdb->query(
+            $wpdb->prepare(
+                'DELETE FROM ' . $this->table() . ' WHERE LOG_type = %s AND LOG_time < %s',
+                EEM_Change_Log::type_gateway,
+                $datetime->format(EE_Datetime_Field::mysql_timestamp_format)
+            )
+        );
+    }
+
+
 }
 // End of file EEM_Change_Log.model.php

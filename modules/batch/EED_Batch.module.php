@@ -117,7 +117,7 @@ class EED_Batch extends EED_Module{
 	 */
 	public function enqueue_scripts_styles_batch_create() {	
 		$job_response = $this->_enqueue_batch_job_scripts_and_styles_and_start_job();
-		wp_enqueue_script( 'batch_runner_init', BATCH_URL . '/assets/batch_runner_init.js', array( 'batch_runner' ), EVENT_ESPRESSO_VERSION, true );
+		wp_enqueue_script( 'batch_runner_init', BATCH_URL . 'assets/batch_runner_init.js', array( 'batch_runner' ), EVENT_ESPRESSO_VERSION, true );
 		wp_localize_script( 'batch_runner_init', 'ee_job_response', $job_response->to_array() );
 		wp_localize_script( 'batch_runner_init', 'ee_job_i18n', 
 			array(
@@ -131,7 +131,7 @@ class EED_Batch extends EED_Module{
 	public function enqueue_scripts_styles_batch_file_create() {
 		//creates a job based on the request variable
 		$job_response = $this->_enqueue_batch_job_scripts_and_styles_and_start_job();
-		wp_enqueue_script( 'batch_file_runner_init', BATCH_URL . '/assets/batch_file_runner_init.js', array( 'batch_runner' ), EVENT_ESPRESSO_VERSION, true );
+		wp_enqueue_script( 'batch_file_runner_init', BATCH_URL . 'assets/batch_file_runner_init.js', array( 'batch_runner' ), EVENT_ESPRESSO_VERSION, true );
 		wp_localize_script( 'batch_file_runner_init', 'ee_job_response', $job_response->to_array() );
 		wp_localize_script( 'batch_file_runner_init', 'ee_job_i18n', 
 				array(
@@ -154,7 +154,15 @@ class EED_Batch extends EED_Module{
 		wp_enqueue_style( 'progress_bar', EE_PLUGIN_DIR_URL . 'core/libraries/batch/Assets/progress_bar.css', array(), EVENT_ESPRESSO_VERSION );
 		wp_enqueue_script( 'batch_runner', EE_PLUGIN_DIR_URL . 'core/libraries/batch/Assets/batch_runner.js', array( 'progress_bar' ));
 		//just copy the bits of EE admin's eei18n that we need in the JS
-		wp_localize_script( 'batch_runner', 'eei18n', array( 'ajax_url' => WP_AJAX_URL, 'is_admin' => (bool)is_admin() ) );
+		wp_localize_script(
+		    'batch_runner',
+            'eei18n',
+            array(
+                'ajax_url' => WP_AJAX_URL,
+                'is_admin' => (bool)is_admin(),
+                'error_message' => esc_html__('An error occurred and the job has been stopped.', 'event_espresso')
+            )
+        );
 		$job_handler_classname = stripslashes( $_GET[ 'job_handler' ] );
 		$request_data = array_diff_key( 
 				$_REQUEST, 

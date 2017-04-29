@@ -242,16 +242,17 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 
 
 
-	/**
-	 * update_transaction_after_registration_reopened
-	 * readjusts TXN and Line Item totals after a registration is changed from
-	 * cancelled or declined to another reg status such as pending payment or approved
-	 *
-	 * @param \EE_Registration $registration
-	 * @param array            $closed_reg_statuses
-	 * @param bool             $update_txn
-	 * @return bool
-	 */
+    /**
+     * update_transaction_after_registration_reopened
+     * readjusts TXN and Line Item totals after a registration is changed from
+     * cancelled or declined to another reg status such as pending payment or approved
+     *
+     * @param \EE_Registration $registration
+     * @param array            $closed_reg_statuses
+     * @param bool             $update_txn
+     * @return bool
+     * @throws \EE_Error
+     */
 	public function update_transaction_after_reinstating_canceled_registration(
 		EE_Registration $registration,
 		$closed_reg_statuses = array(),
@@ -259,7 +260,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	) {
 		// these reg statuses should not be considered in any calculations involving monies owing
 		$closed_reg_statuses = ! empty( $closed_reg_statuses ) ? $closed_reg_statuses : EEM_Registration::closed_reg_statuses();
-		if ( in_array( $registration->status_ID(), $closed_reg_statuses ) ) {
+		if ( in_array( $registration->status_ID(), $closed_reg_statuses, true ) ) {
 			return false;
 		}
 		try {
@@ -307,13 +308,22 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	) {
 		// these reg statuses should not be considered in any calculations involving monies owing
 		$closed_reg_statuses = ! empty( $closed_reg_statuses ) ? $closed_reg_statuses : EEM_Registration::closed_reg_statuses();
-		if ( ! in_array( $registration->status_ID(), $closed_reg_statuses ) ) {
+		if ( ! in_array( $registration->status_ID(), $closed_reg_statuses, true ) ) {
 			return false;
 		}
 		try {
 			$transaction = $this->get_transaction_for_registration( $registration );
-			$ticket_line_item = $this->get_ticket_line_item_for_transaction_registration( $transaction, $registration );
-			EEH_Line_Item::cancel_ticket_line_item( $ticket_line_item );
+			if (
+			    apply_filters(
+                    'FHEE__EE_Transaction_Processor__update_transaction_after_canceled_or_declined_registration__cancel_ticket_line_item',
+                    true,
+                    $registration,
+                    $transaction
+                )
+            ){
+                $ticket_line_item = $this->get_ticket_line_item_for_transaction_registration( $transaction, $registration );
+                EEH_Line_Item::cancel_ticket_line_item( $ticket_line_item );
+			}
 		} catch ( EE_Error $e ) {
 			EE_Error::add_error(
 				sprintf(

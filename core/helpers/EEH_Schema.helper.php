@@ -24,6 +24,11 @@ class EEH_Schema {
      */
     public static function add_json_linked_data_for_event(\EE_Event $event)
     {
+    	//Check we have a valid datetime for the event
+    	if(! $event->primary_datetime() instanceof EE_Datetime) {
+    		return;
+    	}
+
         $template_args = array(
             'event_permalink' => '',
             'event_name' => '',
@@ -239,6 +244,12 @@ class EEH_Schema {
 	 * @return string (link)
 	 */
 	public static function url( $url = null, $text = null, $attributes = array() ) {
+		//Check the URL includes a scheme
+		$parsed_url = parse_url($url);
+		if ( empty($parsed_url['scheme']) ) {
+		    $url = 'http://' . ltrim($url, '/');
+		}
+
 		$atts = '';
 		foreach ( $attributes as $attribute => $value ) {
 			$atts .= ' ' . $attribute . '="' . $value . '"';

@@ -165,7 +165,6 @@
 .ee-edit-editing {
     background-color: #f8f8f8;
     height: 40px;
-    padding-right: 5px;
     border-top: 1px solid #EEEEEE;
     border-left: 1px solid #EEEEEE;
     border-right: 1px solid #EEEEEE;
@@ -190,10 +189,21 @@
 .datetime-edit-table .ee-lock-icon:before,
 .datetime-edit-table .dashicons-groups:before {
     font-size: 18px;
-    margin-left: 9px;
-    margin-right: 0;
+    margin-left: 4px;
+    margin-right: 4px;
     padding: 0;
+    text-align: center;
 	vertical-align: middle;
+}
+
+.ee-edit-editing .ticket-icon:before,
+.ee-edit-editing .clone-icon:before,
+.ee-edit-editing .trash-icon:before,
+.ee-edit-editing .gear-icon:before,
+.ee-edit-editing .datetime-edit-table .ee-lock-icon:before,
+.ee-edit-editing .datetime-edit-table .dashicons-groups:before {
+    margin-left: 3px;
+    margin-right: 3px;
 }
 
 .datetime-edit-table .dashicons-groups:before {
@@ -331,7 +341,8 @@
 }
 
 
-.ee-ticket-sortable, .ee-dtt-sortable {
+.ee-ticket-sortable .sortable-drag-handle, 
+.ee-dtt-sortable .sortable-drag-handle {
     cursor: move;
 }
 
@@ -383,20 +394,26 @@
 }
 
 /* Sold, REgs */
-.ticket-table tbody .ticket-row td:nth-child(7), .ticket-table tbody .ticket-row td:nth-child(8) {
+.ticket-table tbody .ticket-row td:nth-child(7),
+.ticket-table tbody .ticket-row td:nth-child(8),
+.ticket-table tbody .ticket-row.ee-wp-debug td:nth-child(9) {
     text-align: right;
     padding-right: 1em;
     width: 4%;
 }
 
 /* Actions */
-.ticket-table tbody .ticket-row td:nth-child(9) {
+.ticket-table tbody .ticket-row td:last-child {
     width: 20%;
     min-width: 120px;
 }
 
 
-.ticket-table .ticket-display-row-TKT_sold, .ticket-table .ticket-display-row-TKT_registrations, .datetime-tickets-sold {
+.ticket-table .ticket-display-row-TKT_sold,
+.ticket-table .ticket-display-row-TKT_reserved,
+.ticket-table .ticket-display-row-TKT_registrations,
+.datetime-tickets-sold,
+.datetime-tickets-reserved {
     display:block;
     margin-top: 4px;
 }

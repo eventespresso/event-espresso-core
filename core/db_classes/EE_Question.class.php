@@ -500,7 +500,9 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable 
 			$answer = EEM_Answer::instance()->get_registration_question_answer_object( $registration, $this->ID() );
 		}
 		// has this question been answered ?
-		if ( $answer instanceof EE_Answer ) {
+		if ( $answer instanceof EE_Answer
+             && $answer->value() !== ''
+        ) {
 			//answer gets htmlspecialchars called on it, undo that please
 			//because the form input's display strategy may call esc_attr too
 			//which also does html special characters
@@ -587,12 +589,10 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable 
 				$result = new EE_Phone_Input( $input_constructor_args );
 				break;
 			case EEM_Question::QST_type_int :
-				$input_constructor_args[ 'validation_strategies' ][] = new EE_Int_Validation_Strategy();
-				$result = new EE_Text_Input( $input_constructor_args );
+				$result = new EE_Integer_Input( $input_constructor_args );
 				break;
 			case EEM_Question::QST_type_decimal :
-				$input_constructor_args[ 'validation_strategies' ][] = new EE_Float_Validation_Strategy();
-				$result = new EE_Text_Input( $input_constructor_args );
+				$result = new EE_Float_Input( $input_constructor_args );
 				break;
 			case EEM_Question::QST_type_url :
 				$input_constructor_args[ 'validation_strategies' ][] = new EE_URL_Validation_Strategy();
