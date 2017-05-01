@@ -8,7 +8,7 @@
   Version:			4.9.38.rc.041
   Author:			Event Espresso
   Author URI: 		http://eventespresso.com/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=wordpress_plugins_page&utm_content=support_link
-  License: 		    GPLv2
+  License: 		     GPLv2
   Text Domain: 		 event_espresso
   GitHub Plugin URI: https://github.com/eventespresso/event-espresso-core
   Copyright 		(c) 2008-2017 Event Espresso  All Rights Reserved.
