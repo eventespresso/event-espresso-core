@@ -100,7 +100,7 @@ class EE_Dependency_Map
      * @access    public
      * @param EE_Request  $request
      * @param EE_Response $response
-     * @return EE_Dependency_Map instance
+     * @return EE_Dependency_Map
      */
     public static function instance(EE_Request $request = null, EE_Response $response = null)
     {
@@ -144,10 +144,13 @@ class EE_Dependency_Map
      */
     public static function register_class_loader($class_name, $loader = 'load_core')
     {
-        // check that loader method starts with "load_" and exists in EE_Registry
+        // check that loader is callable or method starts with "load_" and exists in EE_Registry
         if (
             ! is_callable($loader)
-            && (strpos($loader, 'load_') !== 0 || ! method_exists('EE_Registry', $loader))
+            && (
+                strpos($loader, 'load_') !== 0
+                || ! method_exists('EE_Registry', $loader)
+            )
         ) {
             throw new EE_Error(
                 sprintf(
@@ -552,7 +555,10 @@ class EE_Dependency_Map
             'CommandHandlerManagerInterface'                                      => 'EventEspresso\core\services\commands\CommandHandlerManagerInterface',
             'EventEspresso\core\services\commands\CommandHandlerManagerInterface' => 'EventEspresso\core\services\commands\CommandHandlerManager',
             'CapChecker'                                                          => 'EventEspresso\core\services\commands\middleware\CapChecker',
+            'AddActionHook'                                                       => 'EventEspresso\core\services\commands\middleware\AddActionHook',
             'CapabilitiesChecker'                                                 => 'EventEspresso\core\domain\services\capabilities\CapabilitiesChecker',
+            'CapabilitiesCheckerInterface'                                        => 'EventEspresso\core\domain\services\capabilities\CapabilitiesChecker',
+            'EventEspresso\core\domain\services\capabilities\CapabilitiesCheckerInterface' => 'EventEspresso\core\domain\services\capabilities\CapabilitiesChecker',
             'CreateRegistrationService'                                           => 'EventEspresso\core\domain\services\registration\CreateRegistrationService',
             'CreateRegCodeCommandHandler'                                         => 'EventEspresso\core\services\commands\registration\CreateRegCodeCommand',
             'CreateRegUrlLinkCommandHandler'                                      => 'EventEspresso\core\services\commands\registration\CreateRegUrlLinkCommand',
