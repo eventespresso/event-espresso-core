@@ -388,6 +388,19 @@ class RegistrationsReport extends JobHandlerFile
                             'ANS_value', $answer_row['Answer.ANS_value']));
                     }
                 }
+                /**
+                 * Filter to change the contents of each row of the registrations report CSV file.
+                 *
+                 * This can be used to add or remote columns from the CSV file, or change their values.                 *
+                 * Note: it has this name because originally that's where this filter resided,
+                 * and we've left its name as-is for backward compatibility.
+                 * Note when using: all rows in the CSV should have the same columns.
+                 *
+                 * @param array $reg_csv_array keys are column-header names, and values are that columns' value
+                 *                             in this row
+                 * @param array $reg_row is the row from the database's wp_esp_registration table
+                 *
+                 */
                 $registrations_csv_ready_array[] = apply_filters(
                     'FHEE__EE_Export__report_registrations__reg_csv_array',
                     $reg_csv_array,
