@@ -23,6 +23,7 @@ class EE_Int_Normalization extends EE_Normalization_Strategy_Base
     const REGEX = '/^(-?)(\d+)(?:\.0+)?$/';
 
 
+
     /**
      * @param string $value_to_normalize
      * @return int|mixed|string
@@ -99,5 +100,4 @@ class EE_Int_Normalization extends EE_Normalization_Strategy_Base
         return "$normalized_value";
     }
 }
-
 // End of file EE_Int_Normalization.strategy.php
