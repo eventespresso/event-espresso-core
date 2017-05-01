@@ -1,4 +1,8 @@
 <?php
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\loaders\LoaderInterface;
+
 if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
@@ -50,6 +54,10 @@ class EE_Dependency_Map
      */
     protected $_response;
 
+    /**
+     * @type LoaderInterface $loader
+     */
+    protected $loader;
 
     /**
      * @type array $_dependency_map
@@ -85,6 +93,9 @@ class EE_Dependency_Map
 
 
     /**
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
      */
     public function initialize()
     {
@@ -109,6 +120,16 @@ class EE_Dependency_Map
             self::$_instance = new EE_Dependency_Map($request, $response);
         }
         return self::$_instance;
+    }
+
+
+
+    /**
+     * @param LoaderInterface $loader
+     */
+    public function setLoader(LoaderInterface $loader)
+    {
+        $this->loader = $loader;
     }
 
 
@@ -381,12 +402,12 @@ class EE_Dependency_Map
             'EventEspresso\core\services\commands\CommandBus'                                                             => array(
                 'EventEspresso\core\services\commands\CommandHandlerManager' => EE_Dependency_Map::load_from_cache,
             ),
-            'EventEspresso\services\commands\CommandHandler'                                                              => array(
-                'EE_Registry'         => EE_Dependency_Map::load_from_cache,
-                'CommandBusInterface' => EE_Dependency_Map::load_from_cache,
-            ),
             'EventEspresso\core\services\commands\CommandHandlerManager'                                                  => array(
-                'EE_Registry' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\loaders\Loader' => EE_Dependency_Map::load_from_cache,
+            ),
+            'EventEspresso\core\services\commands\CompositeCommandHandler'                                                              => array(
+                'EventEspresso\core\services\commands\CommandBus'     => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\commands\CommandFactory' => EE_Dependency_Map::load_from_cache,
             ),
             'EventEspresso\core\services\commands\middleware\CapChecker'                                                  => array(
                 'EventEspresso\core\domain\services\capabilities\CapabilitiesChecker' => EE_Dependency_Map::load_from_cache,
@@ -494,6 +515,7 @@ class EE_Dependency_Map
         //be used in a closure.
         $request = &$this->_request;
         $response = &$this->_response;
+        $loader = &$this->loader;
         $this->_class_loaders = array(
             //load_core
             'EE_Capabilities'                      => 'load_core',
@@ -538,6 +560,9 @@ class EE_Dependency_Map
                 }
                 return null;
             },
+            'EventEspresso\core\services\loaders\Loader' => function () use (&$loader) {
+                return $loader;
+            },
         );
     }
 
@@ -557,7 +582,7 @@ class EE_Dependency_Map
             'CapChecker'                                                          => 'EventEspresso\core\services\commands\middleware\CapChecker',
             'AddActionHook'                                                       => 'EventEspresso\core\services\commands\middleware\AddActionHook',
             'CapabilitiesChecker'                                                 => 'EventEspresso\core\domain\services\capabilities\CapabilitiesChecker',
-            'CapabilitiesCheckerInterface'                                        => 'EventEspresso\core\domain\services\capabilities\CapabilitiesChecker',
+            'CapabilitiesCheckerInterface'                                        => 'EventEspresso\core\domain\services\capabilities\CapabilitiesCheckerInterface',
             'EventEspresso\core\domain\services\capabilities\CapabilitiesCheckerInterface' => 'EventEspresso\core\domain\services\capabilities\CapabilitiesChecker',
             'CreateRegistrationService'                                           => 'EventEspresso\core\domain\services\registration\CreateRegistrationService',
             'CreateRegCodeCommandHandler'                                         => 'EventEspresso\core\services\commands\registration\CreateRegCodeCommand',
@@ -572,6 +597,10 @@ class EE_Dependency_Map
             'TableAnalysis'                                                       => 'EventEspresso\core\services\database\TableAnalysis',
             'CreateTransactionCommandHandler'                                     => 'EventEspresso\core\services\commands\transaction\CreateTransactionCommandHandler',
             'CreateAttendeeCommandHandler'                                        => 'EventEspresso\core\services\commands\attendee\CreateAttendeeCommandHandler',
+            'LoaderInterface'                                                     => 'EventEspresso\core\services\loaders\LoaderInterface',
+            'EventEspresso\core\services\loaders\LoaderInterface'                 => 'EventEspresso\core\services\loaders\Loader',
+            'CommandFactoryInterface'                                             => 'EventEspresso\core\services\commands\CommandFactoryInterface',
+            'EventEspresso\core\services\commands\CommandFactoryInterface'        => 'EventEspresso\core\services\commands\CommandFactory',
         );
     }
 

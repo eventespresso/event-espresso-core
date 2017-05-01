@@ -25,13 +25,13 @@ class Loader implements LoaderInterface
 
 
     /**
-     * @var LoaderInterface $new_loader
+     * @var LoaderDecoratorInterface $new_loader
      */
     private $new_loader;
 
 
     /**
-     * @var LoaderInterface $shared_loader
+     * @var LoaderDecoratorInterface $shared_loader
      */
     private $shared_loader;
 
@@ -40,13 +40,13 @@ class Loader implements LoaderInterface
     /**
      * Loader constructor.
      *
-     * @param LoaderInterface|null $new_loader
-     * @param LoaderInterface|null $shared_loader
+     * @param LoaderDecoratorInterface|null $new_loader
+     * @param LoaderDecoratorInterface|null $shared_loader
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      */
-    public function __construct(LoaderInterface $new_loader = null, LoaderInterface $shared_loader = null)
+    public function __construct(LoaderDecoratorInterface $new_loader = null, LoaderDecoratorInterface $shared_loader = null)
     {
         $this->new_loader = $this->setupNewLoader($new_loader);
         $this->shared_loader = $this->setupSharedLoader($shared_loader);
@@ -55,14 +55,14 @@ class Loader implements LoaderInterface
 
 
     /**
-     * @param LoaderInterface|null $new_loader
-     * @return CoreLoader|LoaderInterface
+     * @param LoaderDecoratorInterface|null $new_loader
+     * @return CoreLoader|LoaderDecoratorInterface
      * @throws InvalidArgumentException
      */
-    private function setupNewLoader(LoaderInterface $new_loader = null)
+    private function setupNewLoader(LoaderDecoratorInterface $new_loader = null)
     {
         // if not already generated, create a standard loader
-        if (! $new_loader instanceof LoaderInterface) {
+        if (! $new_loader instanceof LoaderDecoratorInterface) {
             $new_loader = new CoreLoader(EE_Registry::instance());
         }
         return $new_loader;
@@ -71,16 +71,16 @@ class Loader implements LoaderInterface
 
 
     /**
-     * @param LoaderInterface|null $shared_loader
-     * @return CoreLoader|LoaderInterface
+     * @param LoaderDecoratorInterface|null $shared_loader
+     * @return CoreLoader|LoaderDecoratorInterface
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException
      */
-    private function setupSharedLoader(LoaderInterface $shared_loader = null)
+    private function setupSharedLoader(LoaderDecoratorInterface $shared_loader = null)
     {
         // if not already generated, create a caching loader
-        if (! $shared_loader instanceof LoaderInterface) {
+        if (! $shared_loader instanceof LoaderDecoratorInterface) {
             $shared_loader = new CachingLoader(
                 new CoreLoader(EE_Registry::instance()),
                 new LooseCollection('')
@@ -92,7 +92,7 @@ class Loader implements LoaderInterface
 
 
     /**
-     * @return LoaderInterface
+     * @return LoaderDecoratorInterface
      */
     public function getNewLoader()
     {
@@ -102,7 +102,7 @@ class Loader implements LoaderInterface
 
 
     /**
-     * @return LoaderInterface
+     * @return LoaderDecoratorInterface
      */
     public function getSharedLoader()
     {

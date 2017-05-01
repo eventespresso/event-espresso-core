@@ -1,4 +1,5 @@
 <?php
+
 namespace EventEspresso\core\domain\services\capabilities;
 
 use EE_Capabilities;
@@ -6,7 +7,7 @@ use EventEspresso\core\exceptions\InsufficientPermissionsException;
 use EventEspresso\core\exceptions\InvalidClassException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
+if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
 
@@ -70,7 +71,7 @@ class CapabilitiesChecker implements CapabilitiesCheckerInterface
             return true;
         }
         // at this point, $cap_check should be an individual instance of CapCheck
-        if ( ! $cap_check instanceof CapCheckInterface) {
+        if (! $cap_check instanceof CapCheckInterface) {
             throw new InvalidClassException(
                 '\EventEspresso\core\domain\services\capabilities\CapCheckInterface'
             );

@@ -6,8 +6,6 @@ use EventEspresso\core\exceptions\InsufficientPermissionsException;
 use EventEspresso\core\exceptions\InvalidClassException;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
-// End of file CapabilitiesCheckerInterface.php
-// Location: ${NAMESPACE}/CapabilitiesCheckerInterface.php namespace EventEspresso\core\domain\services\capabilities;
 
 
 

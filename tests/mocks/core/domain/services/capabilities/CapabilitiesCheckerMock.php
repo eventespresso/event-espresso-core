@@ -22,6 +22,9 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 class CapabilitiesCheckerMock implements CapabilitiesCheckerInterface
 {
 
+    /**
+     * @var boolean $cap_check_passes
+     */
     public $cap_check_passes = true;
 
     /**
