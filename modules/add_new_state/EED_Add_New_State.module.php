@@ -198,7 +198,7 @@ class EED_Add_New_State extends EED_Module
                 array(
                     'name'            => 'new_state_micro_form',
                     'html_id'         => 'new_state_micro_form',
-                    'layout_strategy' => new EE_No_Layout(),
+                    'layout_strategy' => new EE_Div_Per_Section_Layout(),
                     'subsections'     => array(
                         // add hidden input to indicate that a new state is being added
                         'add_new_state'               => new EE_Hidden_Input(
