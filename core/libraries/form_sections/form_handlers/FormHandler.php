@@ -1,6 +1,9 @@
 <?php
 namespace EventEspresso\core\libraries\form_sections\form_handlers;
 
+use EE_Error;
+use EE_Form_Section_HTML;
+use EE_Registry;
 use EE_Submit_Input;
 use EEH_HTML;
 use InvalidArgumentException;
@@ -108,12 +111,12 @@ abstract class FormHandler implements FormHandlerInterface{
 	/**
 	 * the absolute top level form section being used on the page
 	 *
-	 * @var \EE_Form_Section_Proper $form
+	 * @var EE_Form_Section_Proper $form
 	 */
 	private $form;
 
 	/**
-	 * @var \EE_Registry $registry
+	 * @var EE_Registry $registry
 	 */
 	protected $registry;
 
@@ -127,10 +130,10 @@ abstract class FormHandler implements FormHandlerInterface{
      * @param string       $slug
      * @param string       $form_action
      * @param string       $form_config
-     * @param \EE_Registry $registry
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \DomainException
-     * @throws \InvalidArgumentException
+     * @param EE_Registry $registry
+     * @throws InvalidDataTypeException
+     * @throws DomainException
+     * @throws InvalidArgumentException
      */
 	public function __construct(
 		$form_name,
@@ -138,7 +141,7 @@ abstract class FormHandler implements FormHandlerInterface{
 		$slug,
 		$form_action = '',
 		$form_config = FormHandler::ADD_FORM_TAGS_AND_SUBMIT,
-		\EE_Registry $registry
+		EE_Registry $registry
 	) {
 		$this->setFormName( $form_name );
 		$this->setAdminName( $admin_name );
@@ -167,9 +170,9 @@ abstract class FormHandler implements FormHandlerInterface{
 
 	/**
 	 * @param bool $for_display
-	 * @return \EE_Form_Section_Proper
-	 * @throws \EE_Error
-	 * @throws \LogicException
+	 * @return EE_Form_Section_Proper
+	 * @throws EE_Error
+	 * @throws LogicException
 	 */
 	public function form( $for_display = false ) {
         if ( ! $this->formIsValid() ) {
@@ -195,12 +198,12 @@ abstract class FormHandler implements FormHandlerInterface{
 	 * @throws LogicException
 	 */
 	public function formIsValid() {
-        if ( ! $this->form instanceof \EE_Form_Section_Proper ) {
+        if ( ! $this->form instanceof EE_Form_Section_Proper) {
 			static $generated = false;
 			if ( ! $generated ) {
 				$generated = true;
 				$form = $this->generate();
-                if ( $form instanceof \EE_Form_Section_Proper) {
+                if ($form instanceof EE_Form_Section_Proper) {
                     $this->setForm($form);
                 }
 			}
@@ -216,7 +219,7 @@ abstract class FormHandler implements FormHandlerInterface{
 	 * @throws LogicException
 	 */
 	public function verifyForm() {
-		if ( $this->form instanceof \EE_Form_Section_Proper ) {
+		if ($this->form instanceof EE_Form_Section_Proper) {
 			return true;
 		}
 		throw new LogicException(
@@ -230,9 +233,9 @@ abstract class FormHandler implements FormHandlerInterface{
 
 
 	/**
-	 * @param \EE_Form_Section_Proper $form
+	 * @param EE_Form_Section_Proper $form
 	 */
-	public function setForm( \EE_Form_Section_Proper $form ) {
+	public function setForm( EE_Form_Section_Proper $form ) {
 		$this->form = $form;
 	}
 
@@ -339,8 +342,8 @@ abstract class FormHandler implements FormHandlerInterface{
 
     /**
      * @param string $submit_btn_text
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidArgumentException
      */
 	public function setSubmitBtnText( $submit_btn_text ) {
 		if ( ! is_string( $submit_btn_text ) ) {
@@ -382,8 +385,8 @@ abstract class FormHandler implements FormHandlerInterface{
 
 	/**
 	 * @param array $form_args
-	 * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-	 * @throws \InvalidArgumentException
+	 * @throws InvalidDataTypeException
+	 * @throws InvalidArgumentException
 	 */
 	public function addFormActionArgs( $form_args = array() ) {
 		if ( is_object( $form_args ) ) {
@@ -451,7 +454,7 @@ abstract class FormHandler implements FormHandlerInterface{
 	 * @return boolean
 	 */
 	public function initialize() {
-		$this->form_has_errors = \EE_Error::has_error( true );
+		$this->form_has_errors = EE_Error::has_error( true );
 		return true;
 	}
 
@@ -462,7 +465,7 @@ abstract class FormHandler implements FormHandlerInterface{
 	 *
 	 * @return void
 	 * @throws LogicException
-	 * @throws \EE_Error
+	 * @throws EE_Error
 	 */
 	public function enqueueStylesAndScripts() {
 		$this->form( false )->enqueue_js();
@@ -483,7 +486,7 @@ abstract class FormHandler implements FormHandlerInterface{
 	 * creates and returns an EE_Submit_Input labeled "Submit"
 	 *
 	 * @param string $text
-	 * @return \EE_Submit_Input
+	 * @return EE_Submit_Input
 	 */
 	public function generateSubmitButton( $text = '' ) {
 		$text = ! empty( $text ) ? $text : $this->submitBtnText();
@@ -506,8 +509,8 @@ abstract class FormHandler implements FormHandlerInterface{
 	 *
 	 * @param string $text
 	 * @return void
-	 * @throws \LogicException
-	 * @throws \EE_Error
+	 * @throws LogicException
+	 * @throws EE_Error
 	 */
 	public function appendSubmitButton( $text = '' ) {
 		if ( $this->form->subsection_exists( $this->slug() . '-submit-btn' ) ) {
@@ -526,7 +529,7 @@ abstract class FormHandler implements FormHandlerInterface{
 	 * creates and returns an EE_Submit_Input labeled "Cancel"
 	 *
 	 * @param string $text
-	 * @return \EE_Submit_Input
+	 * @return EE_Submit_Input
 	 */
 	public function generateCancelButton( $text = '' ) {
 		$cancel_button = new EE_Submit_Input(
@@ -549,12 +552,12 @@ abstract class FormHandler implements FormHandlerInterface{
 	 * appends a float clearing div onto end of form
 	 *
 	 * @return void
-	 * @throws \EE_Error
+	 * @throws EE_Error
 	 */
 	public function clearFormButtonFloats() {
 		$this->form->add_subsections(
 			array(
-				'clear-submit-btn-float' => new \EE_Form_Section_HTML(
+				'clear-submit-btn-float' => new EE_Form_Section_HTML(
 					EEH_HTML::div( '', '', 'clear-float' ) . EEH_HTML::divx()
 				)
 			),
@@ -571,7 +574,7 @@ abstract class FormHandler implements FormHandlerInterface{
 	 *
 	 * @return string
 	 * @throws LogicException
-	 * @throws \EE_Error
+	 * @throws EE_Error
 	 */
 	public function display() {
         $form_html = apply_filters(
@@ -607,8 +610,8 @@ abstract class FormHandler implements FormHandlerInterface{
 	 *
 	 * @param array $submitted_form_data
 	 * @return array
-	 * @throws \EE_Error
-	 * @throws \LogicException
+	 * @throws EE_Error
+	 * @throws LogicException
 	 * @throws InvalidFormSubmissionException
 	 */
 	public function process( $submitted_form_data = array() ) {
