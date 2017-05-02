@@ -610,10 +610,15 @@ class EE_Register_Addon implements EEI_Plugin_API
     {
         // this is an activation request
         if (did_action('activate_plugin')) {
-            //to find if THIS is the addon that was activated,
-            //just check if we have already registered it or not
-            //(as the newly-activated addon wasn't around the first time addons were registered)
-            if (! isset(self::$_settings[$addon_name])) {
+            //to find if THIS is the addon that was activated, just check if we have already registered it or not
+            //(as the newly-activated addon wasn't around the first time addons were registered).
+            //Note: the presence of pue_options in the addon registration options will initialize the $_settings
+            //property for the add-on, but the add-on is only partially initialized.  Hence, the additional check.
+            if (! isset(self::$_settings[$addon_name])
+                || (isset(self::$_settings[$addon_name])
+                    && ! isset(self::$_settings[$addon_name]['class_name'])
+                )
+            ) {
                 self::$_settings[$addon_name] = $addon_settings;
                 $addon                        = self::_load_and_init_addon_class($addon_name);
                 $addon->set_activation_indicator_option();
