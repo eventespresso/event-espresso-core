@@ -2366,9 +2366,9 @@ abstract class EE_Base_Class
      * A $previous_value can be specified in case there are many meta rows with the same key
      *
      * @param string $meta_key
-     * @param string $meta_value
-     * @param string $previous_value
-     * @return int records updated (or BOOLEAN if we actually ended up inserting the extra meta row)
+     * @param mixed  $meta_value
+     * @param mixed  $previous_value
+     * @return bool|int # of records updated (or BOOLEAN if we actually ended up inserting the extra meta row)
      * @throws \EE_Error
      * NOTE: if the values haven't changed, returns 0
      */
@@ -2387,12 +2387,11 @@ abstract class EE_Base_Class
         $existing_rows_like_that = EEM_Extra_Meta::instance()->get_all($query_params);
         if ( ! $existing_rows_like_that) {
             return $this->add_extra_meta($meta_key, $meta_value);
-        } else {
-            foreach ($existing_rows_like_that as $existing_row) {
-                $existing_row->save(array('EXM_value' => $meta_value));
-            }
-            return count($existing_rows_like_that);
         }
+        foreach ($existing_rows_like_that as $existing_row) {
+            $existing_row->save(array('EXM_value' => $meta_value));
+        }
+        return count($existing_rows_like_that);
     }
 
 
