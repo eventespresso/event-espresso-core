@@ -393,6 +393,9 @@ class EE_Dependency_Map
                 'EventEspresso\core\services\commands\CommandBus'     => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\commands\CommandFactory' => EE_Dependency_Map::load_from_cache,
             ),
+            'EventEspresso\core\services\commands\CommandFactory'                                                              => array(
+                'EventEspresso\core\services\loaders\Loader' => EE_Dependency_Map::load_from_cache,
+            ),
             'EventEspresso\core\services\commands\middleware\CapChecker'                                                  => array(
                 'EventEspresso\core\domain\services\capabilities\CapabilitiesChecker' => EE_Dependency_Map::load_from_cache,
             ),
