@@ -403,7 +403,7 @@ class EEG_Aim extends EE_Onsite_Gateway{
 	 */
 	private function _log_and_clean_response($response_obj,$payment){
 		$response_obj->account_number = '';
-		$this->log(array('AIM Response received:'=>$response_obj),$payment);
+		$this->log(array('AIM Response received:'=>(array)$response_obj),$payment);
 		return $response_obj;
 	}
 
