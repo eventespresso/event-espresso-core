@@ -406,7 +406,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway {
 	 *	@return array
 	 */
 	public function _ppExpress_check_response( $request_response ) {
-		if (empty($request_response['body']) || is_wp_error( $request_response ) ) {
+		if ( is_wp_error( $request_response ) || empty($request_response['body']) ) {
             // If we got here then there was an error in this request.
             return array('status' => false, 'args' => $request_response);
         }
