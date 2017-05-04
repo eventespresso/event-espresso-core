@@ -79,12 +79,18 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_
         $OpenCoffeeShop = new EventEspresso\core\services\container\OpenCoffeeShop();
         $OpenCoffeeShop->addRecipes();
         // $CoffeeShop = $OpenCoffeeShop->CoffeeShop();
-        // create and cache the CommandBus, and also add the CapChecker middleware
+        // create and cache the CommandBus, and also add middleware
         $this->registry->create(
             'CommandBusInterface',
             array(
                 null,
-                $this->registry->create('CapChecker'),
+                apply_filters(
+                    'FHEE__EE_Load_Espresso_Core__handle_request__CommandBus_middleware',
+                    array(
+                        $this->registry->create('CapChecker'),
+                        $this->registry->create('AddActionHook'),
+                    )
+                ),
             ),
             true
         );
