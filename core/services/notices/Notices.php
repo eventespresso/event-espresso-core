@@ -1,37 +1,37 @@
 <?php
 
-namespace EventEspresso\core\services\commands\notices;
+namespace EventEspresso\core\services\notices;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
 
 /**
- * Class CommandHandlerNotices
- * Container for holding multiple CommandHandlerNotice objects until they can be processed
+ * Class Notices
+ * Container for holding multiple Notice objects until they can be processed
  *
  * @package       Event Espresso
  * @author        Brent Christensen
  * @since         $VID:$
  */
-class CommandHandlerNotices
+class Notices implements NoticesInterface
 {
 
 
     /**
-     * @var CommandHandlerNotice[] $attention
+     * @var Notice[] $attention
      */
     private $attention = array();
 
 
     /**
-     * @var CommandHandlerNotice[] $error
+     * @var Notice[] $error
      */
     private $error = array();
 
 
     /**
-     * @var CommandHandlerNotice[] $success
+     * @var Notice[] $success
      */
     private $success = array();
 
@@ -45,7 +45,7 @@ class CommandHandlerNotices
      */
     public function addAttention($notice, $file = '', $func = '', $line = '')
     {
-        $this->attention[] = new CommandHandlerNotice(CommandHandlerNotice::ATTENTION, $notice, $file, $func, $line);
+        $this->attention[] = new Notice(Notice::ATTENTION, $notice, $file, $func, $line);
     }
 
 
@@ -58,7 +58,7 @@ class CommandHandlerNotices
      */
     public function addError($notice, $file, $func, $line)
     {
-        $this->error[] = new CommandHandlerNotice(CommandHandlerNotice::ERROR, $notice, $file, $func, $line);
+        $this->error[] = new Notice(Notice::ERROR, $notice, $file, $func, $line);
     }
 
 
@@ -71,7 +71,7 @@ class CommandHandlerNotices
      */
     public function addSuccess($notice, $file = '', $func = '', $line = '')
     {
-        $this->success[] = new CommandHandlerNotice(CommandHandlerNotice::SUCCESS, $notice, $file, $func, $line);
+        $this->success[] = new Notice(Notice::SUCCESS, $notice, $file, $func, $line);
     }
 
 
@@ -137,7 +137,7 @@ class CommandHandlerNotices
 
 
     /**
-     * @return CommandHandlerNotice[]
+     * @return Notice[]
      */
     public function getAttention()
     {
@@ -147,7 +147,7 @@ class CommandHandlerNotices
 
 
     /**
-     * @return CommandHandlerNotice[]
+     * @return Notice[]
      */
     public function getError()
     {
@@ -157,7 +157,7 @@ class CommandHandlerNotices
 
 
     /**
-     * @return CommandHandlerNotice[]
+     * @return Notice[]
      */
     public function getSuccess()
     {
