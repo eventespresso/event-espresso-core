@@ -31,7 +31,7 @@
 <br />
 
 <div class="padding">
-	<h4 class="espresso-header"><span class="dashicons dashicons-update ee-icon-size-22"></span><?php esc_html_e('Reset Event Espresso Tables', 'event_espresso');?></h4>
+	<h4 class="espresso-header"><span class="dashicons dashicons-update ee-icon-size-22"></span><?php esc_html_e('Reset Event Espresso Data', 'event_espresso');?></h4>
 	<p><?php esc_html_e('Use this to reset Event Espresso Data and return your site to how it was just after first activating Event Espresso.', 'event_espresso');?></p>
 	<div class="float-right"><a class="button button-primary" href="<?php echo $reset_db_url;?>"><?php esc_html_e('Reset Event Espresso Tables', 'event_espresso');?></a></div>
 	<div class="clear"></div>
@@ -40,7 +40,7 @@
 <br />
 
 <div class="padding">
-	<h4 class="espresso-header"><span class="dashicons dashicons-post-trash ee-icon-size-22"></span><?php esc_html_e('Permanently Delete ALL Event Espresso Tables and Data', 'event_espresso');?></h4>
+	<h4 class="espresso-header"><span class="dashicons dashicons-post-trash ee-icon-size-22"></span><?php esc_html_e('Permanently Delete ALL Event Espresso Data', 'event_espresso');?></h4>
 	<p><?php esc_html_e('If you know for certain that you will no longer be using Event Espresso and you wish to remove ALL traces of the plugin from your system, then perform the following steps.', 'event_espresso');?></p>
 	<p class="important-notice"><?php printf( esc_html__('Please note: %sThis is permanent and can NOT be undone.%s', 'event_espresso'), '<strong>', '</strong>' ); ?><br/></p>
 	<ol>
