@@ -1,6 +1,6 @@
 <?php
 
-namespace EventEspresso\core\services\commands\notices;
+namespace EventEspresso\core\services\notices;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -8,17 +8,17 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 
 /**
  * Class ConvertNotices
- * Converts notifications in a CommandHandlerNotices into another format such as EE_Error notifications
+ * Converts notifications in a NoticesInterface container into another format such as EE_Error notifications
  *
  * @package       Event Espresso
  * @author        Brent Christensen
  * @since         $VID:$
  */
-abstract class ConvertNotices
+abstract class ConvertNotices implements ConvertNoticesInterface
 {
 
     /**
-     * @var CommandHandlerNotices $notices
+     * @var NoticesInterface $notices
      */
     private $notices;
 
@@ -34,10 +34,10 @@ abstract class ConvertNotices
     /**
      * ConvertNotices constructor.
      *
-     * @param CommandHandlerNotices $notices
-     * @param bool                  $throw_exceptions
+     * @param NoticesInterface $notices
+     * @param bool             $throw_exceptions
      */
-    public function __construct(CommandHandlerNotices $notices, $throw_exceptions = false)
+    public function __construct(NoticesInterface $notices, $throw_exceptions = false)
     {
         $this->notices = $notices;
         $this->throw_exceptions = $throw_exceptions;
@@ -46,7 +46,7 @@ abstract class ConvertNotices
 
 
     /**
-     * @return CommandHandlerNotices
+     * @return NoticesInterface
      */
     public function getNotices()
     {
@@ -66,7 +66,7 @@ abstract class ConvertNotices
 
 
     /**
-     * Converts CommandHandlerNotice objects into other format
+     * Converts NoticesInterface objects into other format
      */
     abstract public function process();
 
