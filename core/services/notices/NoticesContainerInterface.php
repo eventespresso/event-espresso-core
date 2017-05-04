@@ -6,14 +6,14 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
 /**
- * NoticesInterface
+ * NoticesContainerInterface
  * Container for holding multiple Notice objects until they can be processed
  *
  * @package       Event Espresso
  * @author        Brent Christensen
  * @since         $VID:$
  */
-interface NoticesInterface
+interface NoticesContainerInterface
 {
 
     /**
@@ -89,21 +89,21 @@ interface NoticesInterface
 
 
     /**
-     * @return Notice[]
+     * @return NoticeInterface[]
      */
     public function getAttention();
 
 
 
     /**
-     * @return Notice[]
+     * @return NoticeInterface[]
      */
     public function getError();
 
 
 
     /**
-     * @return Notice[]
+     * @return NoticeInterface[]
      */
     public function getSuccess();
 }

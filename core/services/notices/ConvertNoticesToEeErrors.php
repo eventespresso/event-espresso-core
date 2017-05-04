@@ -10,13 +10,13 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 
 /**
  * Class ConvertNoticesToEeErrors
- * Converts notifications in a Notices into EE_Error notifications
+ * Converts notifications in a NoticesContainer into EE_Error notifications
  *
  * @package       Event Espresso
  * @author        Brent Christensen
  * @since         $VID:$
  */
-class ConvertNoticesToEeErrors extends ConvertNotices
+class ConvertNoticesToEeErrors extends NoticeConverter
 {
 
     /**

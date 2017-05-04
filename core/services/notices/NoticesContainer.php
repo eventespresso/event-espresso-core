@@ -7,31 +7,31 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
 /**
- * Class Notices
+ * Class NoticesContainer
  * Container for holding multiple Notice objects until they can be processed
  *
  * @package       Event Espresso
  * @author        Brent Christensen
  * @since         $VID:$
  */
-class Notices implements NoticesInterface
+class NoticesContainer implements NoticesContainerInterface
 {
 
 
     /**
-     * @var Notice[] $attention
+     * @var NoticeInterface[] $attention
      */
     private $attention = array();
 
 
     /**
-     * @var Notice[] $error
+     * @var NoticeInterface[] $error
      */
     private $error = array();
 
 
     /**
-     * @var Notice[] $success
+     * @var NoticeInterface[] $success
      */
     private $success = array();
 
@@ -137,7 +137,7 @@ class Notices implements NoticesInterface
 
 
     /**
-     * @return Notice[]
+     * @return NoticeInterface[]
      */
     public function getAttention()
     {
@@ -147,7 +147,7 @@ class Notices implements NoticesInterface
 
 
     /**
-     * @return Notice[]
+     * @return NoticeInterface[]
      */
     public function getError()
     {
@@ -157,7 +157,7 @@ class Notices implements NoticesInterface
 
 
     /**
-     * @return Notice[]
+     * @return NoticeInterface[]
      */
     public function getSuccess()
     {

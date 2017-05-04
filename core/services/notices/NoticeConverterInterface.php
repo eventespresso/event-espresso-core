@@ -7,18 +7,18 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
 /**
- * Class ConvertNotices
- * Converts notifications in a NoticesInterface container into another format such as EE_Error notifications
+ * Class NoticeConverter
+ * Converts notifications in a NoticesContainerInterface container into another format such as EE_Error notifications
  *
  * @package       Event Espresso
  * @author        Brent Christensen
  * @since         $VID:$
  */
-interface ConvertNoticesInterface
+interface NoticeConverterInterface
 {
 
     /**
-     * @return NoticesInterface
+     * @return NoticesContainerInterface
      */
     public function getNotices();
 
@@ -32,7 +32,7 @@ interface ConvertNoticesInterface
 
 
     /**
-     * Converts NoticesInterface objects into other format
+     * Converts NoticesContainerInterface objects into other format
      */
     public function process();
 }
