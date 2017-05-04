@@ -259,7 +259,13 @@ class EEG_Aim extends EE_Onsite_Gateway{
                     $payment->set_status($payment_status);
                     //make sure we interpret the AMT as a float, not an international string (where periods are thousand separators)
                     $payment->set_amount( (float) $response->amount );
-                    $payment->set_gateway_response(sprintf("%s (code: %s)",$response->response_reason_text,$response->response_reason_code));
+                    $payment->set_gateway_response(
+                        sprintf(
+                            esc_html__('%1$s (Reason Code: %2$s)', 'event_espresso'),
+                            $response->response_reason_text,
+                            $response->response_reason_code
+                        )
+                    );
                     if ($this->_debug_mode) {
                         $txn_id = $response->invoice_number;
                     } else {
