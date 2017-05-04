@@ -8,6 +8,12 @@ As Event Espresso grows in complexity, it has become more and more important to 
  
  Commands get created within your client code and passed to the Command Bus, which delivers the Command to it's corresponding Command Handler. The Command Handler executes it's business logic using the data provided by the Command, and then returns it's results to the Command Bus, which returns them to the client code where the Command was first passed to the Command Bus. This composition allows your business logic to be accessed by any kind of request type or client. This is why the Command Bus is a common apparatus in systems utilizing **Hexagonal Architecture**, AKA **Ports and Adapters**. Hexagonal Architecture is simply a way of visualizing multiple request types or clients, as "users" connecting to the different sides of a hexagon, which represents the business logic of a system.
  
+> Okay, but what kind of logic should be made into Commands ?
+
+When trying to decide on whether or not some particular business logic should be encapsulated within a Command, or whether it should be part of some other system, a really good metric for making that decision is whether or not the logic modifies the domain in any way.
+In other words, any logic that adds/edits/deletes data, or changes a domain entity in any way, should be converted into a Command. Even if that change is temporary, such as logging a user into a system.
+Logic that simply gathers data, and/or "couriers" it around within the system, and/or has no persisted changes, does not need to be encapsulated within a Command.
+ 
 ### Anatomy of a Command
  
  As stated above, Commands are simple DTOs where the only requirement is that they extend the ` \EventEspresso\core\services\commands\Command ` class and remain immutable by keeping all properties private and not providing any mechanism for changing any of the data they contain. Because of this, all data should be added via the constructor:
