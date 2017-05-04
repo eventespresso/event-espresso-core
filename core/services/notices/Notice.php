@@ -1,20 +1,20 @@
 <?php
 
-namespace EventEspresso\core\services\commands\notices;
+namespace EventEspresso\core\services\notices;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
 
 /**
- * Class CommandHandlerNotice
+ * Class Notice
  * DTO for temporarily holding notification information until it can be processed
  *
  * @package       Event Espresso
  * @author        Brent Christensen
  * @since         $VID:$
  */
-class CommandHandlerNotice
+class Notice
 {
 
     const ERROR = 'error';
@@ -53,7 +53,7 @@ class CommandHandlerNotice
 
 
     /**
-     * CommandHandlerNotice constructor.
+     * Notice constructor.
      *
      * @param string $type
      * @param string $message
