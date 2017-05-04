@@ -1,6 +1,6 @@
 <?php
 
-namespace EventEspresso\core\services\commands\notices;
+namespace EventEspresso\core\services\notices;
 
 use EE_Error;
 
@@ -10,7 +10,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 
 /**
  * Class ConvertNoticesToEeErrors
- * Converts notifications in a CommandHandlerNotices into EE_Error notifications
+ * Converts notifications in a Notices into EE_Error notifications
  *
  * @package       Event Espresso
  * @author        Brent Christensen
@@ -19,19 +19,15 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 class ConvertNoticesToEeErrors extends ConvertNotices
 {
 
-
-
     /**
-     * Converts CommandHandlerNotice objects into EE_Error notifications
+     * Converts Notice objects into EE_Error notifications
      *
      * @throws EE_Error
      */
     public function process()
     {
-        // \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
         if ($this->getNotices()->hasAttention()) {
             foreach ($this->getNotices()->getAttention() as $notice) {
-                // \EEH_Debug_Tools::printr($notice->message(), $notice->type(), __FILE__, __LINE__);
                 EE_Error::add_attention(
                     $notice->message(),
                     $notice->file(),
@@ -43,7 +39,6 @@ class ConvertNoticesToEeErrors extends ConvertNotices
         if ($this->getNotices()->hasError()) {
             $error_string = esc_html__('The following errors occurred:', 'event_espresso');
             foreach ($this->getNotices()->getError() as $notice) {
-                // \EEH_Debug_Tools::printr($notice->message(), $notice->type(), __FILE__, __LINE__);
                 if ($this->getThrowExceptions()) {
                     $error_string .= '<br />' . $notice->message();
                 } else {
@@ -61,7 +56,6 @@ class ConvertNoticesToEeErrors extends ConvertNotices
         }
         if ($this->getNotices()->hasSuccess()) {
             foreach ($this->getNotices()->getSuccess() as $notice) {
-                // \EEH_Debug_Tools::printr($notice->message(), $notice->type(), __FILE__, __LINE__);
                 EE_Error::add_success(
                     $notice->message(),
                     $notice->file(),
