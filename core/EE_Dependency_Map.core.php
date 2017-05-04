@@ -604,6 +604,8 @@ class EE_Dependency_Map
             'EventEspresso\core\services\loaders\LoaderInterface'                 => 'EventEspresso\core\services\loaders\Loader',
             'CommandFactoryInterface'                                             => 'EventEspresso\core\services\commands\CommandFactoryInterface',
             'EventEspresso\core\services\commands\CommandFactoryInterface'        => 'EventEspresso\core\services\commands\CommandFactory',
+            'NoticeConverterInterface'                                            => 'EventEspresso\core\services\notices\NoticeConverterInterface',
+            'EventEspresso\core\services\notices\NoticeConverterInterface'        => 'EventEspresso\core\services\notices\ConvertNoticesToEeErrors',
         );
     }
 
