@@ -20,7 +20,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  * @author        Brent Christensen
  * @since         $VID:$
  */
-class CoreLoader implements LoaderInterface
+class CoreLoader implements LoaderDecoratorInterface
 {
 
     /**
