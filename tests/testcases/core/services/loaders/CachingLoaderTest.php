@@ -3,7 +3,7 @@ use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\services\collections\LooseCollection;
 use EventEspresso\core\services\container\exceptions\ServiceNotFoundException;
 use EventEspresso\core\services\loaders\CoreLoader;
-use EventEspresso\core\services\loaders\LoaderInterface;
+use EventEspresso\core\services\loaders\LoaderDecorator;
 use EventEspresso\tests\mocks\core\services\loaders\CachingLoaderMock;
 
 /**
@@ -32,7 +32,7 @@ class CachingLoaderTest extends EE_UnitTestCase
     {
         //caching is turned off by default in the parent test case.  For tests in here where we're doing a number of
         //different persistence tests
-        if (! self::$loader instanceof LoaderInterface) {
+        if (! self::$loader instanceof LoaderDecorator) {
             self::$loader = new CachingLoaderMock(
                 new CoreLoader(EE_Registry::instance()),
                 new LooseCollection('')

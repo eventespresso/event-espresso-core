@@ -1,4 +1,5 @@
 <?php
+use EventEspresso\tests\mocks\core\services\commands\CommandBusMock;
 use EventEspresso\tests\mocks\core\services\commands\MockCommand;
 use EventEspresso\tests\mocks\core\services\commands\MockCompositeCommand;
 use EventEspresso\tests\mocks\core\services\commands\MockCompositeCommandHandler;
@@ -31,7 +32,7 @@ class CommandHandlerManagerTest extends EE_UnitTestCase
     {
         EE_Dependency_Map::register_dependencies(
             'EventEspresso\tests\testcases\core\services\commands\ExtendedCommandHandlerManager',
-            array('EE_Registry' => EE_Dependency_Map::load_from_cache,)
+            array('EventEspresso\core\services\loaders\Loader' => EE_Dependency_Map::load_from_cache,)
         );
         parent::setUp();
         $this->command_handler_manager = EE_Registry::instance()->create(
@@ -66,14 +67,21 @@ class CommandHandlerManagerTest extends EE_UnitTestCase
             'EventEspresso\tests\mocks\core\services\commands\MockCommandHandler',
             $command_handler
         );
-        // test CompositeCommandHandler
-        $command_bus = EE_Registry::instance()->create(
-            '\EventEspresso\tests\mocks\core\services\commands\CommandBusMock'
+    }
+
+
+
+    public function testGetCommandHandlerWithCompositeCommandHandler()
+    {
+        $this->command_handler_manager->addCommandHandler(
+            new MockCompositeCommandHandler(
+                new CommandBusMock(),
+                EE_Registry::instance()->create('EventEspresso\core\services\commands\CommandFactory')
+            ),
+            'EventEspresso\tests\mocks\core\services\commands\MockCompositeCommand'
         );
-        /** @var MockCompositeCommandHandler $composite_command_handler */
         $composite_command_handler = $this->command_handler_manager->getCommandHandler(
-            new MockCompositeCommand(),
-            $command_bus
+            new MockCompositeCommand()
         );
         $this->assertInstanceOf(
             'EventEspresso\tests\mocks\core\services\commands\MockCompositeCommandHandler',

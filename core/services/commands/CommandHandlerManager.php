@@ -3,7 +3,7 @@
 namespace EventEspresso\core\services\commands;
 
 use DomainException;
-use EE_Registry;
+use EventEspresso\core\services\loaders\LoaderInterface;
 
 if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
@@ -30,20 +30,20 @@ class CommandHandlerManager implements CommandHandlerManagerInterface
     protected $command_handlers;
 
     /**
-     * @type EE_Registry $registry
+     * @type LoaderInterface $loader
      */
-    private $registry;
+    private $loader;
 
 
 
     /**
      * CommandHandlerManager constructor
      *
-     * @param EE_Registry $registry
+     * @param LoaderInterface $loader
      */
-    public function __construct(EE_Registry $registry)
+    public function __construct(LoaderInterface $loader)
     {
-        $this->registry = $registry;
+        $this->loader = $loader;
     }
 
 
@@ -62,7 +62,7 @@ class CommandHandlerManager implements CommandHandlerManagerInterface
      *      but if you wanted to instead process that commend using:
      *      "Vendor\a\totally\different\namespace\for\DoSomethingCommandHandler"
      *      then the following code:
-     *      $CommandHandlerManager = EE_Registry::instance()->create( 'CommandHandlerManagerInterface' );
+     *      $CommandHandlerManager = $this->loader->getShared( 'CommandHandlerManagerInterface' );
      *      $CommandHandlerManager->addCommandHandler(
      *          new Vendor\a\totally\different\namespace\for\DoSomethingCommandHandler(),
      *          'Vendor\some\namespace\DoSomethingCommand'
@@ -108,9 +108,10 @@ class CommandHandlerManager implements CommandHandlerManagerInterface
         if (isset($this->command_handlers[$command_name])) {
             $handler = $this->command_handlers[$command_name];
         } else if (class_exists($command_handler)) {
-            $handler = $this->registry->create($command_handler);
+            $handler = $this->loader->getShared($command_handler);
         }
-        if ($handler instanceof CompositeCommandHandler) {
+        // if Handler requires an instance of the CommandBus, but that has not yet been set
+        if ($handler instanceof CompositeCommandHandler && ! $handler->commandBus() instanceof CommandBusInterface) {
             if (! $command_bus instanceof CommandBusInterface) {
                 throw new DomainException(
                     esc_html__(
