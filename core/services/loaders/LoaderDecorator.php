@@ -15,12 +15,12 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  * @author        Brent Christensen
  * @since         $VID:$
  */
-abstract class LoaderDecorator implements LoaderInterface
+abstract class LoaderDecorator implements LoaderDecoratorInterface
 {
 
 
     /**
-     * @var LoaderInterface $loader
+     * @var LoaderDecoratorInterface $loader
      */
     protected $loader;
 
@@ -29,9 +29,9 @@ abstract class LoaderDecorator implements LoaderInterface
     /**
      * LoaderDecorator constructor.
      *
-     * @param LoaderInterface $loader
+     * @param LoaderDecoratorInterface $loader
      */
-    public function __construct(LoaderInterface $loader)
+    public function __construct(LoaderDecoratorInterface $loader)
     {
         $this->loader = $loader;
     }
