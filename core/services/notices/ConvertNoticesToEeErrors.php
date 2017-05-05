@@ -22,14 +22,13 @@ class ConvertNoticesToEeErrors extends NoticeConverter
     /**
      * Converts Notice objects into EE_Error notifications
      *
-     * @param NoticesContainerInterface|null $notices
+     * @param NoticesContainerInterface $notices
      * @throws EE_Error
      */
-    public function process(NoticesContainerInterface $notices = null)
+    public function process(NoticesContainerInterface $notices)
     {
-        $notices = $notices instanceof NoticesContainerInterface
-            ? $notices
-            : $this->getNotices();
+        $this->setNotices($notices);
+        $notices = $this->getNotices();
         if ($notices->hasAttention()) {
             foreach ($notices->getAttention() as $notice) {
                 EE_Error::add_attention(
