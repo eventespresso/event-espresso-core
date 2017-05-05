@@ -27,7 +27,7 @@ class LoaderTest extends EE_UnitTestCase
 
     public function setUp()
     {
-        self::$loader = new Loader();
+        self::$loader = EE_Registry::instance()->create('EventEspresso\core\services\loaders\Loader');
         parent::setUp();
     }
 

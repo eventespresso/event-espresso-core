@@ -13,6 +13,11 @@ if [ -n "$EE_VERSION" ]; then
     CORE_TAG=$EE_VERSION
 fi
 
+# EE_BRANCH overrides EE_VERSION and RELEASE_BUILD
+if [ -n "$EE_BRANCH" ]; then
+    CORE_TAG=$EE_BRANCH
+fi
+
 #Make sure directory vars are set
 if [ -z "$plugin_loc" ]; then
     EE_TESTS_DIR="/tmp/event-espresso-core/tests"
@@ -42,8 +47,8 @@ function eeCoreSetup {
     local BRANCH=$1
     git clone https://github.com/eventespresso/event-espresso-core.git $event_espresso_core_dir
     cd $event_espresso_core_dir/tests
-    if [ "$BRANCH" = "master" ]; then
-        git checkout master
+    if [ "$BRANCH" = "master" ] || [ -n "$EE_BRANCH" ]; then
+        git checkout $BRANCH
     else
         git fetch --tags
         git checkout tags/$BRANCH -b $BRANCH
