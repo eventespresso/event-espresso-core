@@ -1,6 +1,8 @@
 <?php
 namespace EventEspresso\core\services\collections;
 
+use EventEspresso\core\exceptions\InvalidEntityException;
+
 if ( ! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
@@ -25,7 +27,6 @@ class LooseCollection extends Collection
      *
      * @access protected
      * @param  string $collection_interface
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
     protected function setCollectionInterface($collection_interface )
     {
@@ -44,10 +45,13 @@ class LooseCollection extends Collection
      * @param  mixed $object
      * @param  mixed $identifier
      * @return bool
-     * @throws \EventEspresso\core\exceptions\InvalidEntityException
+     * @throws InvalidEntityException
      */
     public function add($object, $identifier = null)
     {
+        if (! is_object($object)) {
+            throw new InvalidEntityException($object, 'object');
+        }
         $this->attach($object);
         $this->setIdentifier($object, $identifier);
         return $this->contains($object);

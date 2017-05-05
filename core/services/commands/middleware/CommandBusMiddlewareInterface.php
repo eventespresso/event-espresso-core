@@ -1,6 +1,7 @@
 <?php
 namespace EventEspresso\core\services\commands\middleware;
 
+use Closure;
 use EventEspresso\core\services\commands\CommandInterface;
 
 if ( ! defined('EVENT_ESPRESSO_VERSION')) {
@@ -19,10 +20,10 @@ interface CommandBusMiddlewareInterface
 
     /**
      * @param CommandInterface $command
-     * @param \Closure         $next
+     * @param Closure         $next
      * @return mixed
      */
-    public function handle(CommandInterface $command, \Closure $next);
+    public function handle(CommandInterface $command, Closure $next);
 
 }
 // End of file CommandBusMiddlewareInterface.php
