@@ -1,4 +1,7 @@
 <?php
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\loaders\LoaderInterface;
 
 if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
@@ -20,6 +23,11 @@ if (! defined('EVENT_ESPRESSO_VERSION')) {
  */
 class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_Core_App
 {
+
+    /**
+     * @type LoaderInterface $loader
+     */
+    protected $loader;
 
     /**
      * @var EE_Request $request
@@ -63,6 +71,9 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_
      * @param EE_Response $response
      * @return EE_Response
      * @throws EE_Error
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
      */
     public function handle_request(EE_Request $request, EE_Response $response)
     {
@@ -75,16 +86,24 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_
         do_action('EE_Load_Espresso_Core__handle_request__initialize_core_loading');
         // PSR4 Autoloaders
         $this->registry->load_core('EE_Psr4AutoloaderInit');
+        $this->loader = $this->registry->create('EventEspresso\core\services\loaders\Loader');
+        $this->dependency_map->setLoader($this->loader);
         // build DI container
         $OpenCoffeeShop = new EventEspresso\core\services\container\OpenCoffeeShop();
         $OpenCoffeeShop->addRecipes();
         // $CoffeeShop = $OpenCoffeeShop->CoffeeShop();
-        // create and cache the CommandBus, and also add the CapChecker middleware
+        // create and cache the CommandBus, and also add middleware
         $this->registry->create(
             'CommandBusInterface',
             array(
                 null,
-                $this->registry->create('CapChecker'),
+                apply_filters(
+                    'FHEE__EE_Load_Espresso_Core__handle_request__CommandBus_middleware',
+                    array(
+                        $this->registry->create('CapChecker'),
+                        $this->registry->create('AddActionHook'),
+                    )
+                ),
             ),
             true
         );
