@@ -1,6 +1,8 @@
 <?php
 namespace EventEspresso\core\exceptions;
 
+use Exception;
+
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
 }
@@ -19,22 +21,25 @@ class ExceptionStackTraceDisplay {
 
 
 
-	/**
-	 * @param \Exception $exception
-	 */
-	public function __construct( \Exception $exception ) {
-		if ( WP_DEBUG ) {
+    /**
+     * @param Exception $exception
+     * @throws Exception
+     */
+	public function __construct( Exception $exception ) {
+		if (WP_DEBUG && ! defined('EE_TESTS_DIR')) {
 			$this->displayException( $exception );
-		}
+		} else {
+            throw $exception;
+        }
 	}
 
 
 
 	/**
 	 * @access protected
-	 * @param \Exception $exception
+	 * @param Exception $exception
 	 */
-	protected function displayException( \Exception $exception ) {
+	protected function displayException( Exception $exception ) {
 
 		$error_code = '';
 		$trace_details = '';
