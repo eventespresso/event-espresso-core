@@ -37,7 +37,7 @@ abstract class NoticeConverter implements NoticeConverterInterface
      * @param NoticesContainerInterface $notices
      * @param bool                      $throw_exceptions
      */
-    public function __construct(NoticesContainerInterface $notices, $throw_exceptions = false)
+    public function __construct(NoticesContainerInterface $notices = null, $throw_exceptions = false)
     {
         $this->notices = $notices;
         $this->throw_exceptions = $throw_exceptions;
@@ -56,6 +56,16 @@ abstract class NoticeConverter implements NoticeConverterInterface
 
 
     /**
+     * @param NoticesContainerInterface $notices
+     */
+    public function setNotices(NoticesContainerInterface $notices)
+    {
+        $this->notices = $notices;
+    }
+
+
+
+    /**
      * @return bool
      */
     public function getThrowExceptions()
@@ -66,9 +76,13 @@ abstract class NoticeConverter implements NoticeConverterInterface
 
 
     /**
-     * Converts NoticesContainerInterface objects into other format
+     * @param bool $throw_exceptions
      */
-    abstract public function process();
+    public function setThrowExceptions($throw_exceptions)
+    {
+        $this->throw_exceptions = filter_var($throw_exceptions, FILTER_VALIDATE_BOOLEAN);
+    }
+
 
 
 }
