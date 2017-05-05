@@ -22,17 +22,26 @@ interface NoticeConverterInterface
      */
     public function getNotices();
 
+    /**
+     * @param NoticesContainerInterface $notices
+     */
+    public function setNotices(NoticesContainerInterface $notices);
 
+    /**
+     * @param bool $throw_exceptions
+     */
+    public function setThrowExceptions($throw_exceptions);
 
     /**
      * @return bool
      */
     public function getThrowExceptions();
 
-
-
     /**
      * Converts NoticesContainerInterface objects into other format
+     *
+     * @param NoticesContainerInterface|null $notices
+     * @return
      */
-    public function process();
+    public function process(NoticesContainerInterface $notices = null);
 }
