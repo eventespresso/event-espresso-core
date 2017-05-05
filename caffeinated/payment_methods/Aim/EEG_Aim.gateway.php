@@ -489,6 +489,7 @@ class EE_AuthorizeNetAIM_Response {
 	public $requested_amount;
 	public $balance_on_card;
 	public $response; // The response string from AuthorizeNet.
+    public $error_message;
 	private $_response_array = array(); // An array with the split response.
 
 	/**
