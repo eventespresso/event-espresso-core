@@ -1,8 +1,10 @@
 <?php
 namespace EventEspresso\core\services\shortcodes;
 
+use DomainException;
 use EventEspresso\core\domain\EnqueueAssetsInterface;
 // use EventEspresso\core\domain\SetHooksInterface;
+use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
 use EventEspresso\core\exceptions\InvalidClassException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidEntityException;
@@ -12,6 +14,7 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\collections\CollectionDetails;
 use EventEspresso\core\services\collections\CollectionInterface;
 use EventEspresso\core\services\collections\CollectionLoader;
+use Exception;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -118,6 +121,7 @@ class ShortcodesManager
 
     /**
      * @return void
+     * @throws DomainException
      * @throws InvalidInterfaceException
      * @throws InvalidIdentifierException
      * @throws InvalidFilePathException
@@ -127,11 +131,28 @@ class ShortcodesManager
      */
     public function registerShortcodes()
     {
-        $this->shortcodes = apply_filters(
-            'FHEE__EventEspresso_core_services_shortcodes_ShortcodesManager__registerShortcodes__shortcode_collection',
-            $this->getShortcodes()
-        );
-        $this->legacy_shortcodes_manager->registerShortcodes();
+        try {
+            $this->shortcodes = apply_filters(
+                'FHEE__EventEspresso_core_services_shortcodes_ShortcodesManager__registerShortcodes__shortcode_collection',
+                $this->getShortcodes()
+            );
+            if (! $this->shortcodes instanceof CollectionInterface) {
+                throw new InvalidEntityException(
+                    $this->shortcodes,
+                    'CollectionInterface',
+                    sprintf(
+                        esc_html__(
+                            'The "FHEE__EventEspresso_core_services_shortcodes_ShortcodesManager__registerShortcodes__shortcode_collection" filter must return a Collection of EspressoShortcode objects. "%1$s" was received instead.',
+                            'event_espresso'
+                        ),
+                        is_object($this->shortcodes) ? get_class($this->shortcodes) : gettype($this->shortcodes)
+                    )
+                );
+            }
+            $this->legacy_shortcodes_manager->registerShortcodes();
+        } catch (Exception $exception) {
+            new ExceptionStackTraceDisplay($exception);
+        }
     }
 
 
@@ -141,19 +162,23 @@ class ShortcodesManager
      */
     public function addShortcodes()
     {
-        // cycle thru shortcode folders
-        foreach ($this->shortcodes as $shortcode) {
-            /** @var ShortcodeInterface $shortcode */
-            if ( $shortcode instanceof EnqueueAssetsInterface) {
-                add_action('wp_enqueue_scripts', array($shortcode, 'registerScriptsAndStylesheets'), 10);
-                add_action('wp_enqueue_scripts', array($shortcode, 'enqueueStylesheets'), 11);
+        try {
+            // cycle thru shortcode folders
+            foreach ($this->shortcodes as $shortcode) {
+                /** @var ShortcodeInterface $shortcode */
+                if ( $shortcode instanceof EnqueueAssetsInterface) {
+                    add_action('wp_enqueue_scripts', array($shortcode, 'registerScriptsAndStylesheets'), 10);
+                    add_action('wp_enqueue_scripts', array($shortcode, 'enqueueStylesheets'), 11);
+                }
+                // add_shortcode() if it has not already been added
+                if ( ! shortcode_exists($shortcode->getTag())) {
+                    add_shortcode($shortcode->getTag(), array($shortcode, 'processShortcodeCallback'));
+                }
             }
-            // add_shortcode() if it has not already been added
-            if ( ! shortcode_exists($shortcode->getTag())) {
-                add_shortcode($shortcode->getTag(), array($shortcode, 'processShortcodeCallback'));
-            }
+            $this->legacy_shortcodes_manager->addShortcodes();
+        } catch (Exception $exception) {
+            new ExceptionStackTraceDisplay($exception);
         }
-        $this->legacy_shortcodes_manager->addShortcodes();
     }
 
 
@@ -200,6 +225,9 @@ class ShortcodesManager
     public function parseContentForShortcodes($content)
     {
         $has_shortcode = false;
+        if(empty($this->shortcodes)){
+            return $has_shortcode;
+        }
         foreach ($this->shortcodes as $shortcode) {
             /** @var ShortcodeInterface $shortcode */
             if (has_shortcode($content, $shortcode->getTag())) {
