@@ -34,12 +34,10 @@ abstract class NoticeConverter implements NoticeConverterInterface
     /**
      * NoticeConverter constructor.
      *
-     * @param NoticesContainerInterface $notices
      * @param bool                      $throw_exceptions
      */
-    public function __construct(NoticesContainerInterface $notices = null, $throw_exceptions = false)
+    public function __construct($throw_exceptions = false)
     {
-        $this->notices = $notices;
         $this->throw_exceptions = $throw_exceptions;
     }
 
@@ -58,7 +56,7 @@ abstract class NoticeConverter implements NoticeConverterInterface
     /**
      * @param NoticesContainerInterface $notices
      */
-    public function setNotices(NoticesContainerInterface $notices)
+    protected function setNotices(NoticesContainerInterface $notices)
     {
         $this->notices = $notices;
     }
