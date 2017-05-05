@@ -183,7 +183,8 @@ abstract class EspressoShortcode implements ShortcodeInterface
                 if ($callback === 'skip_sanitization') {
                     $attributes[$key] = $value;
                     continue;
-                } else if (function_exists($callback)) {
+                }
+                if (function_exists($callback)) {
                     $attributes[$key] = $callback($value);
                     continue;
                 }
