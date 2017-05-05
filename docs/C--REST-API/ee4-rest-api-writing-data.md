@@ -74,7 +74,7 @@ string, but some, like checkbox or multi-select inputs, take a JSON array).
 To create a new entry, send a `POST` request to the resource's collection route. Eg, to create a new answer entity, send it to `ee/v4.8.36/answers`.
 You only need to provide the arguments which have `required: true` (see (Discovering What Arguments I Need to Provide)[##Discovering What Arguments I Need to Provide]).
 
-For example, here is a screenshot from Postman, where a POST request created a new answer with value "Alderan" 
+For example, here is a screenshot from Postman, where a POST request created a new answer with value "Alderan":
 ![POSTing an Answer with a String value](../images/postman-post-single-value.JPG)
 
 Here is another screenshot from Postman, where a POST request created a new answer with two values: "option1" and 
