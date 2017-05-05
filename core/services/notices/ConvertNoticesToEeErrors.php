@@ -22,12 +22,16 @@ class ConvertNoticesToEeErrors extends NoticeConverter
     /**
      * Converts Notice objects into EE_Error notifications
      *
+     * @param NoticesContainerInterface|null $notices
      * @throws EE_Error
      */
-    public function process()
+    public function process(NoticesContainerInterface $notices = null)
     {
-        if ($this->getNotices()->hasAttention()) {
-            foreach ($this->getNotices()->getAttention() as $notice) {
+        $notices = $notices instanceof NoticesContainerInterface
+            ? $notices
+            : $this->getNotices();
+        if ($notices->hasAttention()) {
+            foreach ($notices->getAttention() as $notice) {
                 EE_Error::add_attention(
                     $notice->message(),
                     $notice->file(),
@@ -36,9 +40,9 @@ class ConvertNoticesToEeErrors extends NoticeConverter
                 );
             }
         }
-        if ($this->getNotices()->hasError()) {
+        if ($notices->hasError()) {
             $error_string = esc_html__('The following errors occurred:', 'event_espresso');
-            foreach ($this->getNotices()->getError() as $notice) {
+            foreach ($notices->getError() as $notice) {
                 if ($this->getThrowExceptions()) {
                     $error_string .= '<br />' . $notice->message();
                 } else {
@@ -54,8 +58,8 @@ class ConvertNoticesToEeErrors extends NoticeConverter
                 throw new EE_Error($error_string);
             }
         }
-        if ($this->getNotices()->hasSuccess()) {
-            foreach ($this->getNotices()->getSuccess() as $notice) {
+        if ($notices->hasSuccess()) {
+            foreach ($notices->getSuccess() as $notice) {
                 EE_Error::add_success(
                     $notice->message(),
                     $notice->file(),
