@@ -2123,37 +2123,4 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
     }
 
 
-
-    /**
-     * update event_datetimes
-     *
-     * @deprecated 4.9.39
-     * @param  EE_Event $event Event being updated
-     * @param  array    $data  the request data from the form
-     * @return EE_Datetime[]
-     * @throws EE_Error
-     */
-    public function update_dtts($event, $data)
-    {
-        return $this->_update_datetimes($event, $data);
-    }
-
-
-
-    /**
-     * update tickets
-     *
-     * @deprecated 4.9.39
-     * @param  EE_Event      $event           Event object being updated
-     * @param  EE_Datetime[] $saved_datetimes an array of datetime ids being updated
-     * @param  array         $data            incoming request data
-     * @return EE_Ticket[]
-     * @throws EE_Error
-     */
-    public function update_tkts($event, $saved_datetimes, $data)
-    {
-        return $this->_update_tickets($event, $saved_datetimes, $data);
-    }
-
-
 } //end class espresso_events_Pricing_Hooks
