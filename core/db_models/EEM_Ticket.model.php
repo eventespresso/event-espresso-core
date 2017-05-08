@@ -54,7 +54,8 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
                     'Ticket_Template'
                 ),
                 'TKT_name'        => new EE_Plain_Text_Field(
-                    'TKT_name', esc_html__('Ticket Name', 'event_espresso'),
+                    'TKT_name',
+                    esc_html__('Ticket Name', 'event_espresso'),
                     false,
                     ''
                 ),
@@ -68,13 +69,15 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
                     'TKT_start_date',
                     esc_html__('Start time/date of Ticket', 'event_espresso'),
                     false,
-                    EE_Datetime_Field::now, $timezone
+                    EE_Datetime_Field::now,
+                    $timezone
                 ),
                 'TKT_end_date'    => new EE_Datetime_Field(
                     'TKT_end_date',
                     esc_html__('End time/date of Ticket', 'event_espresso'),
                     false,
-                    EE_Datetime_Field::now, $timezone
+                    EE_Datetime_Field::now,
+                    $timezone
                 ),
                 'TKT_min'         => new EE_Integer_Field(
                     'TKT_min',
@@ -93,7 +96,7 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
                 ),
                 'TKT_price'       => new EE_Money_Field(
                     'TKT_price',
-                    'Final calculated price for ticket',
+                    esc_html__('Final calculated price for ticket', 'event_espresso'),
                     false,
                     0
                 ),
@@ -176,7 +179,10 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
                 ),
                 'TKT_parent'      => new EE_Integer_Field(
                     'TKT_parent',
-                    esc_html__('Indicates what TKT_ID is the parent of this TKT_ID (used in autosaves/revisions)'),
+                    esc_html__(
+                        'Indicates what TKT_ID is the parent of this TKT_ID (used in autosaves/revisions)',
+                        'event_espresso'
+                    ),
                     true,
                     0
                 ),
