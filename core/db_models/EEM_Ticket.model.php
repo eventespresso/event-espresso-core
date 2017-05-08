@@ -43,7 +43,7 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
             'Ticket' => new EE_Primary_Table('esp_ticket', 'TKT_ID'),
         );
         $this->_fields = array(
-            'Ticket' => [
+            'Ticket' => array(
                 'TKT_ID'          => new EE_Primary_Key_Int_Field(
                     'TKT_ID',
                     esc_html__('Ticket ID', 'event_espresso')
@@ -188,7 +188,7 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
                     true,
                     0
                 ),
-            ],
+            ),
         );
         $this->_model_relations = array(
             'Datetime'        => new EE_HABTM_Relation('Datetime_Ticket'),
