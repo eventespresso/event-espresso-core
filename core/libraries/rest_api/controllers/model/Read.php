@@ -713,6 +713,7 @@ class Read extends Base
             } catch (ObjectDetectedException $e) {
                 //so the value had a PHP object in it. Well exclude it from the response then. That will make it obvious
                 //to API clients that we're not showing them something.
+                unset($result[$field_name]);
             }
         }
         return $result;

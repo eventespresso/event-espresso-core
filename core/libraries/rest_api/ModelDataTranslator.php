@@ -245,7 +245,11 @@ class ModelDataTranslator
             $new_value = $original_value;
         }
         //are we about to send an object? just don't. We have no good way to represent it in JSON.
-        if (is_object($new_value)) {
+        // can't just check using is_object() because that missed PHP incomplete objects
+        if (! is_array($new_value)
+            && ! is_scalar($new_value)
+            && ! is_null($new_value)
+        ) {
             throw new ObjectDetectedException($new_value);
         }
         return apply_filters(
