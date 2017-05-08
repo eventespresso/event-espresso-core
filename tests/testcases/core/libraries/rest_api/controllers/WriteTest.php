@@ -192,6 +192,27 @@ class WriteTest extends \EE_REST_TestCase
     /**
      * @group 9222
      */
+    public function testNoDeleteIfNoCaps()
+    {
+        $datetime = $this->new_model_obj_with_dependencies(
+            'Datetime',
+            array(
+                'DTT_deleted' => false,
+            )
+        );
+        //double-check the datetime isn't trashed
+        $this->assertFalse($datetime->get('DTT_deleted'));
+        $request = new \WP_REST_Request('DELETE', '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/datetimes/' . $datetime->ID());
+        $response = rest_do_request($request);
+        $data = $response->get_data();
+        $this->assertEquals('rest_cannot_delete_datetimes', $data['code']);
+    }
+
+
+
+    /**
+     * @group 9222
+     */
     public function testDeleteTrashed()
     {
         $this->authenticateAnAdmin();
