@@ -277,6 +277,23 @@ class Write extends Base
      */
     public function delete(EEM_Base $model, WP_REST_Request $request)
     {
+        Capabilities::verifyAtLeastPartialAccessTo($model, EEM_Base::caps_delete, 'delete');
+        $default_cap_to_check_for = EE_Restriction_Generator_Base::get_default_restrictions_cap();
+        if (! current_user_can($default_cap_to_check_for)) {
+            throw new RestException(
+                'rest_cannot_delete_' . EEH_Inflector::pluralize_and_lower(($model->get_this_model_name())),
+                sprintf(
+                    esc_html__(
+                        // @codingStandardsIgnoreStart
+                        'For now, only those with the admin capability to "%1$s" are allowed to use the REST API to delete data into Event Espresso.',
+                        // @codingStandardsIgnoreEnd
+                        'event_espresso'
+                    ),
+                    $default_cap_to_check_for
+                ),
+                array('status' => 403)
+            );
+        }
         $obj_id = $request->get_param('id');
         $requested_permanent_delete = filter_var($request->get_param('force'), FILTER_VALIDATE_BOOLEAN);
         $requested_allow_blocking = filter_var($request->get_param('allow_blocking'), FILTER_VALIDATE_BOOLEAN);
