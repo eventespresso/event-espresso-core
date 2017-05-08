@@ -254,12 +254,14 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
         $field = new EE_Maybe_Serialized_Simple_HTML_Field('whatever', 'whatever', true);
         return array(
             array(new stdClass(), $field),
-            array(array('obj' => new stdClass()), $field)
+            array(array('obj' => new stdClass()), $field),
+            array(@unserialize('O:6:"Foobar":0:{}'), $field)
         );
     }
 
     /**
      * @group        9222
+     * @group current
      * @dataProvider dataProviderForTestPrepareFieldValuesForJsonBad
      * @expectedException EventEspresso\core\libraries\rest_api\ObjectDetectedException
      * @param                     $input
