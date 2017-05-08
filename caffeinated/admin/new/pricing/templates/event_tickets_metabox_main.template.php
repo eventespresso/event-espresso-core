@@ -19,7 +19,7 @@
 					<td><span class="DTT_EVT_end_label"><?php _e('Event End', 'event_espresso'); ?></span></td>
 					<td><span class="DTT_reg_limit_label"><?php _e('Limit', 'event_espresso'); ?></span></td>
 					<td><span class="DTT_sold_label"><?php _e('Sold', 'event_espresso'); ?></span></td>
-                    <?php if (WP_DEBUG):  // for now we are only showing reserved counts if WP_DEBUG is on?>
+                    <?php if (apply_filters('FHEE__event_tickets_metabox__dtt_reserved', true)): ?>
                         <td><span class="DTT_reserved_label"><?php _e('Rsrvd', 'event_espresso'); ?></span></td>
                     <?php endif; ?>
                     <td></td>
@@ -83,7 +83,7 @@
 						<td><span class="TKT_price_label"><?php _e('Price', 'event_espresso'); ?></span></td>
 						<td><span class="TKT_qty_label"><?php _e('Qty', 'event_espresso'); ?></span></td>
 						<td><span class="TKT_sold_label"><?php _e('Sold', 'event_espresso'); ?></span></td>
-                        <?php if (WP_DEBUG):  // for now we are only showing reserved counts if WP_DEBUG is on?>
+                        <?php if (apply_filters('FHEE__event_tickets_metabox__tkt_reserved', true)): ?>
                             <td><span class="TKT_reserved_label"><?php _e('Rsrvd', 'event_espresso'); ?></span></td>
                         <?php endif; ?>
                         <td colspan="2"><span class="TKT_regs_label"><?php _e('Regs', 'event_espresso'); ?></span></td>

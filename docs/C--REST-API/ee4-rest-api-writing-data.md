@@ -1,29 +1,28 @@
 # EE4 REST API: Writing Data
 
-This article gives an overview of how to write data to the EE4 REST API included in EE core. It would probably be 
-good to first [read the introduction and setup article](ee4-rest-api-introduction.md).
+This article gives an overview of how to write data to the EE4 REST API included in EE core. It would probably be a good idea first to read the documentation called, [EE4 REST API: An Introduction](ee4-rest-api-introduction.md).
 
 ## What Event Espresso Entities can I Write To?
 
-As of EE 4.9.36, you can create, update, and delete data using Event Espresso's models system. That's events, 
-registrations, attendees, venues, questions, etc. Basically all data used by Event Espresso, except configuration 
-data (that's stored in the WordPress options table; if you want to write to that, let us know in our Support Forums).
+As of EE 4.9.36, you can create, update, and delete data using Event Espresso's model system. That's events, 
+registrations, attendees, venues, questions, etc. All data used by Event Espresso, except configuration 
+data (that is stored in the WordPress options table; if you want to write to that, let us know in our Support Forums).
  
 There are lots of Event Espresso resources you can write to. To see exactly what routes and HTTP methods are available, 
 you can look through
- the [WP API index](https://developer.wordpress.org/rest-api/using-the-rest-api/discovery/) on your site. This also
+ the [WP API index](https://developer.wordpress.org/rest-api/using-the-rest-api/discovery/) on your site, which also
  tells you what arguments you can provide. [Here's the WP API index page for one of our demo sites.](http://demoee.org/wp-json)
  
 
 
 ## How to Send Arguments
 
-You can either send the arguments either in the url-encoded body of the requests, or as a JSON body. In the screenshots in this documentation, [Postman](https://www.getpostman.com/) is being used.
+You can either send the arguments either in the url-encoded body of the requests or as a JSON body. In the screenshots in this documentation, [Postman](https://www.getpostman.com/) is being used.
 
 
 ## Discovering What Arguments I Need to Provide
 
-When inspecting teh WP API index page, you can see the "arguments" allowable. E.g., see the following excerpt:
+When inspecting the WP API index page, you can see the "arguments" allowable. E.g., see the following excerpt:
 
 ```json
 "/ee/v4.8.36/answers": {
@@ -75,22 +74,22 @@ string, but some, like checkbox or multi-select inputs, take a JSON array).
 To create a new entry, send a `POST` request to the resource's collection route. Eg, to create a new answer entity, send it to `ee/v4.8.36/answers`.
 You only need to provide the arguments which have `required: true` (see (Discovering What Arguments I Need to Provide)[##Discovering What Arguments I Need to Provide]).
 
-For example, here is a screenshot from Postman, where a POST request created a new answer with value "Alderan" 
+For example, here is a screenshot from Postman, where a POST request created a new answer with value "Alderan":
 ![POSTing an Answer with a String value](../images/postman-post-single-value.JPG)
 
 Here is another screenshot from Postman, where a POST request created a new answer with two values: "option1" and 
 "option2":
 ![POSTing an Answer with an Array of values](../images/postman-post-multiple-values.JPG)
 
-After a successfully posting a new item, it is immediately returned in the response. Note: you can include a querystring on these requests too, to modify
-what data is returned, just like a normal GET request. See [our section on reading data](ee4-rest-api-reading-data.md).
+After a successfully posting a new item, it is immediately returned in the response. Note: you can include a query string on these requests too, to modify
+what data is returned, just like a standard GET request. See [our section on reading data](ee4-rest-api-reading-data.md).
 
 # Updating/Putting
 
-To update an entity, send a `PUT` or `PATCH` request to the entity's route. E.g., if you want to update answer with ID `123`, the request
+To update an entity, send a `PUT` or `PATCH` request to the entity's route. E.g., if you want to update the answer with ID `123`, the request
  would go to `ee/v4.8.36/answers/123`.
  
- Also importantly: you do not have to provide all arguments when updating an entity. Any arguments not provided with no be updated. 
+ Also importantly: you do not have to provide all arguments when updating an entity. Any arguments not provided, will not be updated. 
  
 For example, here we only update the answer's `ANS_value`, while leaving the `REG_ID` and `QST_ID` unchanged:
 ![PUTting an Answer](../images/postman-put.JPG)
@@ -103,7 +102,7 @@ There are two kinds of "delete"s: trashing/soft-deleting/archiving, and then har
 
 ## Trashing/Soft-Deleting/Archiving
 
-To trash/archive/soft-delete an entity, send a `DELETE` request to teh entity's route.
+To trash/archive/soft-delete an entity, send a `DELETE` request to the entity's route.
  
 For example, here is a request that trashed an event:
  
@@ -116,16 +115,16 @@ Yes, you could also use a `PUT` request to change the status too; this endpoint 
 On events, venues, and attendees, "trashing" an event changes their status to "trash". On resources with a `deleted` property (eg tickets, datetimes, and registrations), it will change it from `false`
  to `true`. 
  
- However, not all EE4 resources can be trashed. For these you need to specify a permanent deletion, as explained below.
+ However, not all EE4 resources can be trashed. For these, you need to specify a permanent deletion, as explained below.
  
 ## Permanent/Hard Deleting
  
-If you want to permanently delete the entity, you need to 
-provide the `force` argument and set it to `true` ("permanent" may have been a better name for this argument, but we used this for sake of consistency with the WP API's core routes).
+If you want to delete the entity permanently, you need to 
+provide the `force` argument and set it to `true` ("permanent" may have been a better name for this argument, but we used this for the sake of consistency with the WP API's core routes).
 
 ![Deleted Event](../images/postman-delete-force.JPG)
 
-Notice that the response contains `success`, indicating whether the entity was successfully removed from the database or not. It also contains `previous`, which is the entity
+Notice that the response contains `success`, indicating whether the entity was successfully removed from the database or not. It also includes `previous`, which is the entity
 before it was deleted (which no longer exists).
 
 ## Blocking Deletes
@@ -149,7 +148,7 @@ many datetimes, which can have many tickets, which can have many registrations f
 attendee, etc. This [venn diagram of EE4 models](https://github.com/eventespresso/event-espresso-core/blob/master/docs/images/models-venn-diagram.png)
 can help give you an overview of how our data is inter-related. But to get the details, you can send an `OPTIONS`
 HTTP request to a route you want to know more about, and inspect it's schema. [Learn more about using our REST API 
-schemas here.](ee4-rest-api-schema.md#relations). The properties which are marked as `foreign_key` indicate entities of this type depend on that related entity.
+schemas here](ee4-rest-api-schema.md#relations). The properties which are marked as `foreign_key` indicate entities of this type depend on that related entity.
 E.g., registrations have an `ATT_ID`, which is a foreign key to `Attendee`s, meaning registrations should point to related attendee records. So before you create
 a registration, either create a new attendee, or find the ID of an attendee ID you want to attribute this registration to.
 
@@ -157,7 +156,7 @@ a registration, either create a new attendee, or find the ID of an attendee ID y
 ## Dates and Times; provide GMT or non-GMT?
 
 When inserting or updating entities with datetime properties, you can either provide the GMT or non-GMT fields (if you provide both, the GMT field will be ignored, like
-it currently is with WP core API, although this behaviour may change if WP API changes). E.g., when creating a ticket, you can set its start date using either
+it currently is with WP core API, although this behavior may change if WP API changes). E.g., when creating a ticket, you can set its start date using either
 * `TKT_start_date`: the value you provide is assumed to be in the site's default timezone, or
 * `TKT_start_date_gmt`: the value you provide is assumed to be in GMT (a.k.a. UTC). 
 

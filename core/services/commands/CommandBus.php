@@ -1,11 +1,12 @@
 <?php
+
 namespace EventEspresso\core\services\commands;
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\services\commands\middleware\CommandBusMiddlewareInterface;
 use EventEspresso\core\services\commands\middleware\InvalidCommandBusMiddlewareException;
 
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
+if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
 
@@ -31,22 +32,6 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) {
  *              new SomeEntity( $data_from_API_request )
  *          )
  *      );
- * Event Espresso CommandBus Commands, however, are self executing,
- * meaning they are capable of routing themselves to the CommandBus,
- * because they possess their own internal reference to it.
- * So as long as your client code has a reference to the EE_Registry,
- * it can use the create() method to generate the required Command objects,
- * which will automatically handle resolving their dependency on the CommandBus.
- * This means you can simply do the following in your client code:
- *      $result = $this->registry
- *          ->create(
- *              'Vendor\some\namespace\to\MyCommand',
- *              array( $request_data )
- *          )
- *          ->execute();
- * without having to inject the CommandBus,
- * because you will likely have a reference to EE_Registry
- * (or DI container) in your client code already
  *
  * @package       Event Espresso
  * @author        Brent Christensen
@@ -96,31 +81,36 @@ class CommandBus implements CommandBusInterface
 
 
     /**
-     * @param \EventEspresso\core\services\commands\CommandInterface $command
+     * @param CommandInterface $command
      * @return mixed
+     * @throws InvalidDataTypeException
+     * @throws InvalidCommandBusMiddlewareException
      */
     public function execute($command)
     {
-        if ( ! $command instanceof CommandInterface) {
+        if (! $command instanceof CommandInterface) {
             throw new InvalidDataTypeException(__METHOD__ . '( $command )', $command, 'CommandInterface');
         }
-        // expose the command to any CommandBus middleware classes
-        // so that they can execute their logic on the command
-        $middleware = function ($command) {
-            // do nothing, just need an empty shell to pass along as the last middleware
+        // we're going to add the Command Handler as a callable
+        // that will get run at the end of our middleware stack
+        // can't pass $this to a Closure, so use a named variable
+        $command_bus = $this;
+        $middleware = function ($command) use ($command_bus) {
+            return $command_bus->getCommandHandlerManager()
+                ->getCommandHandler($command, $command_bus)
+                ->handle($command);
         };
+        // now build the rest of the middleware stack
         while ($command_bus_middleware = array_pop($this->command_bus_middleware)) {
-            if ( ! $command_bus_middleware instanceof CommandBusMiddlewareInterface) {
+            if (! $command_bus_middleware instanceof CommandBusMiddlewareInterface) {
                 throw new InvalidCommandBusMiddlewareException($command_bus_middleware);
             }
             $middleware = function ($command) use ($command_bus_middleware, $middleware) {
                 return $command_bus_middleware->handle($command, $middleware);
             };
-            $middleware($command, $middleware);
         }
-        return $this->command_handler_manager
-            ->getCommandHandler($command)
-            ->handle($command);
+        // and finally, pass the command into the stack and return the results
+        return $middleware($command);
     }
 
 
