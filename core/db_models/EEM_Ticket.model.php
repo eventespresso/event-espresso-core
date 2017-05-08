@@ -2,8 +2,6 @@
 
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 
-require_once(EE_MODELS . 'EEM_Soft_Delete_Base.model.php');
-require_once(EE_CLASSES . 'EE_Ticket.class.php');
 /**
  * Ticket Model
  *
