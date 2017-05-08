@@ -43,7 +43,7 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
             'Ticket' => new EE_Primary_Table('esp_ticket', 'TKT_ID'),
         );
         $this->_fields = array(
-            'Ticket' => array(
+            'Ticket' => [
                 'TKT_ID'          => new EE_Primary_Key_Int_Field(
                     'TKT_ID',
                     esc_html__('Ticket ID', 'event_espresso')
@@ -71,13 +71,15 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
                     'TKT_start_date',
                     esc_html__('Start time/date of Ticket', 'event_espresso'),
                     false,
-                    EE_Datetime_Field::now, $timezone
+                    EE_Datetime_Field::now,
+                    $timezone
                 ),
                 'TKT_end_date'    => new EE_Datetime_Field(
                     'TKT_end_date',
                     esc_html__('End time/date of Ticket', 'event_espresso'),
                     false,
-                    EE_Datetime_Field::now, $timezone
+                    EE_Datetime_Field::now,
+                    $timezone
                 ),
                 'TKT_min'         => new EE_Integer_Field(
                     'TKT_min',
@@ -87,7 +89,10 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
                 ),
                 'TKT_max'         => new EE_Infinite_Integer_Field(
                     'TKT_max',
-                    esc_html__('Maximum quantity of this ticket that can be purchased in one transaction', 'event_espresso'),
+                    esc_html__(
+                        'Maximum quantity of this ticket that can be purchased in one transaction',
+                        'event_espresso'
+                    ),
                     false,
                     EE_INF
                 ),
@@ -111,24 +116,34 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
                 ),
                 'TKT_reserved'    => new EE_Integer_Field(
                     'TKT_reserved',
-                    esc_html__('Quantity of this ticket that is reserved, but not yet fully purchased', 'event_espresso'),
+                    esc_html__(
+                        'Quantity of this ticket that is reserved, but not yet fully purchased',
+                        'event_espresso'
+                    ),
                     false,
                     0
                 ),
                 'TKT_uses'        => new EE_Infinite_Integer_Field(
                     'TKT_uses',
                     esc_html__('Number of datetimes this ticket can be used at', 'event_espresso'),
-                    false, EE_INF
+                    false,
+                    EE_INF
                 ),
                 'TKT_required'    => new EE_Boolean_Field(
                     'TKT_required',
-                    esc_html__("Flag indicating whether this ticket must be purchased with a transaction", "event_espresso"),
+                    esc_html__(
+                        'Flag indicating whether this ticket must be purchased with a transaction',
+                        'event_espresso'
+                    ),
                     false,
                     false
                 ),
                 'TKT_taxable'     => new EE_Boolean_Field(
                     'TKT_taxable',
-                    esc_html__("Flag indicating whether there is tax applied on this ticket", "event_espresso"),
+                    esc_html__(
+                        'Flag indicating whether there is tax applied on this ticket',
+                        'event_espresso'
+                    ),
                     false,
                     false
                 ),
@@ -166,11 +181,14 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
                 ),
                 'TKT_parent'      => new EE_Integer_Field(
                     'TKT_parent',
-                    esc_html__('Indicates what TKT_ID is the parent of this TKT_ID (used in autosaves/revisions)'),
+                    esc_html__(
+                        'Indicates what TKT_ID is the parent of this TKT_ID (used in autosaves/revisions)',
+                        'event_espresso'
+                    ),
                     true,
                     0
                 ),
-            ),
+            ],
         );
         $this->_model_relations = array(
             'Datetime'        => new EE_HABTM_Relation('Datetime_Ticket'),
