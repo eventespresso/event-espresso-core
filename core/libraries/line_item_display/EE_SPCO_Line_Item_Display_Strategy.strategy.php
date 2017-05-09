@@ -64,12 +64,13 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 
 
 
-	/**
-	 * @param EE_Line_Item  $line_item
-	 * @param array         $options
-	 * @param \EE_Line_Item $parent_line_item
-	 * @return mixed
-	 */
+    /**
+     * @param EE_Line_Item  $line_item
+     * @param array         $options
+     * @param \EE_Line_Item $parent_line_item
+     * @return mixed
+     * @throws \EE_Error
+     */
 	public function display_line_item( EE_Line_Item $line_item, $options = array(), EE_Line_Item $parent_line_item = null ) {
 
 		$html = '';
@@ -79,12 +80,11 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 			'odd' => false
 		);
 		$options = array_merge( $default_options, (array)$options );
-
-		switch( $line_item->type() ) {
+        switch( $line_item->type() ) {
 
 			case EEM_Line_Item::type_line_item:
 				$this->_show_taxes = $line_item->is_taxable() ? true : $this->_show_taxes;
-				if ( $line_item->OBJ_type() == 'Ticket' ) {
+				if ( $line_item->OBJ_type() === 'Ticket' ) {
 					// item row
 					$html .= $this->_ticket_row( $line_item, $options );
 				} else {
@@ -112,14 +112,31 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 				static $sub_total = 0;
 				$event_sub_total = 0;
 				$text = __( 'Sub-Total', 'event_espresso' );
-				if ( $line_item->OBJ_type() == 'Event' ) {
+				if ( $line_item->OBJ_type() === 'Event' ) {
 					$options[ 'event_id' ] = $event_id = $line_item->OBJ_ID();
 					if ( ! isset( $this->_events[ $options[ 'event_id' ] ] ) ) {
 						$event = EEM_Event::instance()->get_one_by_ID( $options[ 'event_id' ] );
-						if ( $event instanceof EE_Event ) {
-							if ( $event->default_registration_status() == EEM_Registration::status_id_not_approved ) {
-								return '';
-							}
+						// if event has default reg status of Not Approved, then don't display info on it
+						if (
+						    $event instanceof EE_Event
+                            && $event->default_registration_status() === EEM_Registration::status_id_not_approved
+                        ) {
+						    $display_event = false;
+						    // unless there are registrations for it that are returning to pay
+						    if (isset($options['registrations']) && is_array($options['registrations'])) {
+						        foreach($options['registrations'] as $registration) {
+						            if(! $registration instanceof EE_Registration) {
+						                continue;
+                                    }
+                                    $display_event = $registration->event_ID() === $options['event_id']
+                                                     && $registration->status_ID() !== EEM_Registration::status_id_not_approved
+                                        ? true
+                                        : $display_event;
+                                }
+                            }
+                            if(! $display_event) {
+                                return '';
+                            }
 						}
 						$this->_events[ $options[ 'event_id' ] ] = 0;
 						$html .= $this->_event_row( $line_item );
@@ -127,7 +144,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 					}
 				}
 				$child_line_items = $line_item->children();
-				// loop thru children
+                // loop thru children
 				foreach( $child_line_items as $child_line_item ) {
 					// recursively feed children back into this method
 					$html .= $this->display_line_item( $child_line_item, $options );
@@ -137,17 +154,17 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 				if (
 					(
 						// event subtotals
-						$line_item->code() != 'pre-tax-subtotal' &&
+						$line_item->code() !== 'pre-tax-subtotal' &&
 						count( $child_line_items ) > 1
 					)
 					||
 					(
 						// pre-tax subtotals
-						$line_item->code() == 'pre-tax-subtotal' &&
+						$line_item->code() === 'pre-tax-subtotal' &&
 						count( $this->_events ) > 1
 					)
 				) {
-					$options['sub_total'] = $line_item->OBJ_type() == 'Event' ? $event_sub_total : $sub_total;
+					$options['sub_total'] = $line_item->OBJ_type() === 'Event' ? $event_sub_total : $sub_total;
 					$html .= $this->_sub_total_row( $line_item, $text, $options );
 				}
 				break;
@@ -177,7 +194,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 				$children = $line_item->children();
 				// loop thru all non-tax child line items
 				foreach( $children as $child_line_item ) {
-					if ( $child_line_item->type() != EEM_Line_Item::type_tax_sub_total ) {
+					if ( $child_line_item->type() !== EEM_Line_Item::type_tax_sub_total ) {
 						// recursively feed children back into this method
 						$html .= $this->display_line_item( $child_line_item, $options );
 					}
@@ -185,7 +202,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 
 				// now loop thru  tax child line items
 				foreach( $children as $child_line_item ) {
-					if ( $child_line_item->type() == EEM_Line_Item::type_tax_sub_total ) {
+					if ( $child_line_item->type() === EEM_Line_Item::type_tax_sub_total ) {
 						// recursively feed children back into this method
 						$html .= $this->display_line_item( $child_line_item, $options );
 					}
