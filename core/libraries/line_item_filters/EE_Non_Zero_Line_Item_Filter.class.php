@@ -21,7 +21,7 @@ class EE_Non_Zero_Line_Item_Filter extends EE_Line_Item_Filter_Base {
 	 * EE_Non_Zero_Line_Item_Filter constructor.
 	 */
 	public function __construct() {
-	}
+    }
 
 
 
@@ -32,7 +32,7 @@ class EE_Non_Zero_Line_Item_Filter extends EE_Line_Item_Filter_Base {
 	 * @return \EEI_Line_Item
 	 */
 	public function process( EEI_Line_Item $line_item ) {
-		$non_zero_line_item = $this->_filter_zero_line_item( $line_item );
+        $non_zero_line_item = $this->_filter_zero_line_item( $line_item );
 		if ( ! $non_zero_line_item instanceof EEI_Line_Item ) {
 			return null;
 		}
@@ -48,11 +48,15 @@ class EE_Non_Zero_Line_Item_Filter extends EE_Line_Item_Filter_Base {
 					continue;
 				}
 				if (
-					( $child_line_item instanceof EEI_Line_Item &&
-					$child_line_item->type() === EEM_Line_Item::type_line_item &&
-					$child_line_item->OBJ_type() === 'Ticket' ) ||
-					( $child_line_item instanceof EEI_Line_Item &&
-					 $child_line_item->type() === EEM_Line_Item::type_sub_total )
+                    (
+                        $child_line_item instanceof EEI_Line_Item
+                        && $child_line_item->type() === EEM_Line_Item::type_sub_total
+                    ) || (
+					    $child_line_item instanceof EEI_Line_Item
+                        && $child_line_item->type() === EEM_Line_Item::type_line_item
+                        && $child_line_item->OBJ_type() === 'Ticket'
+                    )
+
 				) {
 					$ticket_or_subtotals_with_tkt_children_count++;
 				}
@@ -60,9 +64,8 @@ class EE_Non_Zero_Line_Item_Filter extends EE_Line_Item_Filter_Base {
 			// if this is an event subtotal with NO ticket children
 			// we basically want to ignore it
 			return $this->_filter_zero_subtotal_line_item( $non_zero_line_item, $ticket_or_subtotals_with_tkt_children_count );
-		}else{
-			return $non_zero_line_item;
 		}
+		return $non_zero_line_item;
 	}
 
 
@@ -77,7 +80,7 @@ class EE_Non_Zero_Line_Item_Filter extends EE_Line_Item_Filter_Base {
 		if (
 			$line_item->type() === EEM_Line_Item::type_line_item &&
 			$line_item->OBJ_type() === 'Ticket' &&
-			$line_item->quantity() == 0
+            (int)$line_item->quantity() === 0
 		) {
 			return null;
 		}
@@ -95,8 +98,8 @@ class EE_Non_Zero_Line_Item_Filter extends EE_Line_Item_Filter_Base {
 	 */
 	protected function _filter_zero_subtotal_line_item( EEI_Line_Item $line_item, $ticket_children = 0 ) {
 		if (
-			$line_item->type() === EEM_Line_Item::type_sub_total &&
-			$ticket_children === 0
+            (int)$ticket_children === 0
+			&& $line_item->type() === EEM_Line_Item::type_sub_total
 		) {
 			return null;
 		}
