@@ -1,11 +1,12 @@
 <?php
+
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 
 
 
 /**
  * EES_Espresso_Events
- * processes [ESPRESSO_EVENTS] shortcode
+ * processes the [ESPRESSO_EVENTS] shortcode
  *
  * @package            Event Espresso
  * @subpackage         /shortcodes/
@@ -294,7 +295,5 @@ class EE_Event_List_Query extends WP_Query
         $event_list_css .= ! empty($this->_category_slug) ? $this->_category_slug : '';
         return $event_list_css;
     }
-
-
 
 }
