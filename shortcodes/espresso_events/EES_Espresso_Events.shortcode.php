@@ -74,6 +74,7 @@ class EES_Espresso_Events  extends EES_Shortcode {
 	 * 	[ESPRESSO_EVENTS category_slug="free-events"]
 	 * 	[ESPRESSO_EVENTS order_by="start_date,id"]
 	 * 	[ESPRESSO_EVENTS sort="ASC"]
+	 * 	[ESPRESSO_EVENTS show_title=true]
 	 *
 	 *  @access 	public
 	 *  @param 	array 	$attributes
@@ -94,6 +95,7 @@ class EES_Espresso_Events  extends EES_Shortcode {
 			'category_slug' => NULL,
 			'order_by' => 'start_date',
 			'sort' => 'ASC',
+			'show_title' => TRUE,
 			'fallback_shortcode_processor' => FALSE
 		);
 		// allow the defaults to be filtered
@@ -165,6 +167,7 @@ class EE_Event_List_Query extends WP_Query {
 	private $_category_slug = NULL;
 	private $_order_by = NULL;
 	private $_sort = NULL;
+	private $_show_title = TRUE;
 
 
 
@@ -191,9 +194,11 @@ class EE_Event_List_Query extends WP_Query {
 		// set params that will get used by the filters
 		EEH_Event_Query::set_query_params( $this->_month, $this->_category_slug, $this->_show_expired, $this->_order_by, $this->_sort );
 		// first off, let's remove any filters from previous queries
+		remove_filter( 'FHEE__archive_espresso_events_template__show_header', array( $this, 'show_event_list_title' ) );
 		remove_filter( 'FHEE__archive_espresso_events_template__upcoming_events_h1', array( $this, 'event_list_title' ));
 		remove_all_filters( 'FHEE__content_espresso_events__event_class' );
 		// Event List Title ?
+		add_filter( 'FHEE__archive_espresso_events_template__show_header', array( $this, 'show_event_list_title' ) );
 		add_filter( 'FHEE__archive_espresso_events_template__upcoming_events_h1', array( $this, 'event_list_title' ), 10, 1 );
 		// add the css class
 		add_filter( 'FHEE__content_espresso_events__event_class', array( $this, 'event_list_css' ), 10, 1 );
@@ -230,6 +235,18 @@ class EE_Event_List_Query extends WP_Query {
 	}
 
 
+	/**
+	 * show_event_list_title
+	 *
+	 * @param bool $show_title
+	 * @return boolean
+	 */
+	public function show_event_list_title( $show_title = TRUE ) {
+		return filter_var(
+			$this->_show_title,
+			FILTER_VALIDATE_BOOLEAN
+		);
+	}
 
 	/**
      * event_list_css
