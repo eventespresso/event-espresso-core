@@ -11,8 +11,8 @@
  * @ version		4+
  */
 
- if ( have_posts() ) : ?>
-
+ if ( have_posts() ) : 
+	if ( apply_filters( 'FHEE__archive_espresso_events_template__show_header', true ) ) : ?>
 	<header class="page-header">
 		<h1 class="page-title">
 			<?php
@@ -35,6 +35,7 @@
 	</header><!-- .page-header -->
 
 	<?php
+	endif;
 		// allow other stuff
 		do_action( 'AHEE__archive_espresso_events_template__before_loop' );
 		// Start the Loop.
