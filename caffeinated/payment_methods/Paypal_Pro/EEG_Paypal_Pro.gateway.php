@@ -103,7 +103,7 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
             throw new EE_Error(esc_html__('No attendee on primary registration while paying with PayPal Pro.',
                 'event_espresso'));
         }
-		$order_description  = $this->_format_order_description( $payment );
+		$order_description  = substr( $this->_format_order_description( $payment ), 0,127 );
 		//charge for the full amount. Show itemized list
 		if( $this->_can_easily_itemize_transaction_for( $payment ) ){
 			$item_num = 1;
