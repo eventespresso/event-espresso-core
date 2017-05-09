@@ -26,6 +26,10 @@ class EEH_Money extends EEH_Base  {
     /**
      * This removes all localized money formatting from the incoming value
      *
+     * Note: uses this site's currency settings for deciding what is considered a
+     * "thousands separator" (usually the character "," )
+     * and what is a "decimal mark" (usually the character ".")
+     *
      * @param int|float|string $money_value
      * @param string           $CNT_ISO
      * @return float
@@ -56,6 +60,11 @@ class EEH_Money extends EEH_Base  {
 
     /**
      * This converts an incoming localized money value into a standard float item (to three decimal places)
+     *
+     * Only use this if you know the $money_value follows your currency configuration's
+     * settings. Note: this uses this site's currency settings for deciding what is considered a
+     * "thousands separator" (usually the character "," )
+     * and what is a "decimal mark" (usually the character ".")
      *
      * @param int|string $money_value
      * @return float
