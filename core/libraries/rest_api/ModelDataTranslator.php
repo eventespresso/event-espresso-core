@@ -246,10 +246,7 @@ class ModelDataTranslator
         }
         //are we about to send an object? just don't. We have no good way to represent it in JSON.
         // can't just check using is_object() because that missed PHP incomplete objects
-        if (! is_array($new_value)
-            && ! is_scalar($new_value)
-            && ! is_null($new_value)
-        ) {
+        if (! ModelDataTranslator::isRepresentableInJson($new_value)) {
             throw new ObjectDetectedException($new_value);
         }
         return apply_filters(
@@ -819,5 +816,20 @@ class ModelDataTranslator
         } catch (EE_Error $e) {
             return null;
         }
+    }
+
+
+
+    /**
+     * Returns true if $data can be easily represented in JSON.
+     * Basically, objects and resources can't be represented in JSON easily.
+     * @param mixed $data
+     * @return bool
+     */
+    protected static function isRepresentableInJson($data)
+    {
+        return is_scalar($data)
+               || is_array($data)
+               || is_null($data);
     }
 }
