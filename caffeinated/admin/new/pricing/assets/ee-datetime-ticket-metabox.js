@@ -1973,6 +1973,7 @@ jQuery(document).ready(function($) {
 	 */
 	$('.ticket-table').sortable({
 		cursor: 'move',
+		handle: '.sortable-drag-handle',
 		items: '.ee-ticket-sortable',
 		update: function(event,ui) {
 			tktHelper.changeTKTorder();
@@ -1982,6 +1983,7 @@ jQuery(document).ready(function($) {
 
 	$('#datetime-editing-dtts-table').sortable({
 		cursor: 'move',
+		handle: '.sortable-drag-handle',
 		items: '.ee-dtt-sortable',
 		update: function(event,ui) {
 			tktHelper.changeDTTorder();
