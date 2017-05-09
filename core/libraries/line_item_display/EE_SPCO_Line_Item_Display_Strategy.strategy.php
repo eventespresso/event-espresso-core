@@ -120,7 +120,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
             case EEM_Line_Item::type_sub_total:
                 static $sub_total = 0;
                 $event_sub_total = 0;
-                $text = __('Sub-Total', 'event_espresso');
+                $text = esc_html__('Sub-Total', 'event_espresso');
                 if ($line_item->OBJ_type() === 'Event') {
                     $options['event_id'] = $event_id = $line_item->OBJ_ID();
                     if (! isset($this->_events[$options['event_id']])) {
@@ -149,7 +149,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
                         }
                         $this->_events[$options['event_id']] = 0;
                         $html .= $this->_event_row($line_item);
-                        $text = __('Event Sub-Total', 'event_espresso');
+                        $text = esc_html__('Event Sub-Total', 'event_espresso');
                     }
                 }
                 $child_line_items = $line_item->children();
@@ -188,7 +188,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
                         $html .= $this->display_line_item($child_line_item, $options, $line_item);
                     }
                     if (count($child_line_items) > 1) {
-                        $this->_taxes_html .= $this->_total_tax_row($line_item, __('Tax Total', 'event_espresso'));
+                        $this->_taxes_html .= $this->_total_tax_row($line_item, esc_html__('Tax Total', 'event_espresso'));
                     }
                 }
                 break;
@@ -210,7 +210,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
                     }
                 }
                 $html .= $this->_taxes_html;
-                $html .= $this->_total_row($line_item, __('Total', 'event_espresso'));
+                $html .= $this->_total_row($line_item, esc_html__('Total', 'event_espresso'));
                 $html .= $this->_payments_and_amount_owing_rows($line_item, $options);
                 break;
         }
@@ -417,7 +417,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         // name && desc
         $name_and_desc = $line_item->name();
         $name_and_desc .= '<span class="smaller-text lt-grey-text" style="margin:0 0 0 2em;">'
-                          . __(' * taxable items', 'event_espresso') . '</span>';
+                          . esc_html__(' * taxable items', 'event_espresso') . '</span>';
         $name_and_desc .= $options['show_desc'] ? '<br/>' . $line_item->desc() : '';
         // name td
         $html .= EEH_HTML::td( /*__FUNCTION__ .*/
@@ -572,7 +572,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
                         $payment_desc = '';
                         if ($payment instanceof EE_Payment) {
                             $payment_desc = sprintf(
-                                __('Payment%1$s Received: %2$s', 'event_espresso'),
+                                esc_html__('Payment%1$s Received: %2$s', 'event_espresso'),
                                 $payment->txn_id_chq_nmbr() !== ''
                                     ? ' <span class="small-text">(#' . $payment->txn_id_chq_nmbr() . ')</span> '
                                     : '',
@@ -602,7 +602,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
                     $html .= EEH_HTML::tr('', '', 'total_tr odd');
                     // total td
                     $html .= EEH_HTML::td(
-                        __('Amount Owing', 'event_espresso'),
+                        esc_html__('Amount Owing', 'event_espresso'),
                         '', 'total_currency total jst-rght', '', ' colspan="3"'
                     );
                     // total td
