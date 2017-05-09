@@ -45,11 +45,12 @@ class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Bas
 
 
 
-	/**
-	 * EE_Billable_Line_Item_Filter constructor.
-	 *
-	 * @param EE_Registration[] $registrations
-	 */
+    /**
+     * EE_Billable_Line_Item_Filter constructor.
+     *
+     * @param EE_Registration[] $registrations
+     * @throws EE_Error
+     */
 	public function __construct( $registrations ) {
 		$this->_registrations = $registrations;
 		$this->_calculate_registrations_per_line_item_code( $registrations );
@@ -59,12 +60,13 @@ class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Bas
 
 
 
-	/**
-	 * sets the _line_item_registrations from the provided registrations
-	 *
-	 * @param EE_Registration[] $registrations
-	 * @return void
-	 */
+    /**
+     * sets the _line_item_registrations from the provided registrations
+     *
+     * @param EE_Registration[] $registrations
+     * @return void
+     * @throws EE_Error
+     */
 	protected function _calculate_registrations_per_line_item_code( $registrations ) {
 		foreach ( $registrations as $registration ) {
 			$line_item_code = EEM_Line_Item::instance()->get_var(
@@ -85,16 +87,17 @@ class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Bas
 
 
 
-	/**
-	 * Creates a duplicate of the line item tree, except only includes billable items
-	 * and the portion of line items attributed to billable things
-	 *
-	 * @param EEI_Line_Item $line_item
-	 * @return \EEI_Line_Item
-	 */
+    /**
+     * Creates a duplicate of the line item tree, except only includes billable items
+     * and the portion of line items attributed to billable things
+     *
+     * @param EEI_Line_Item $line_item
+     * @return \EEI_Line_Item
+     * @throws EE_Error
+     */
 	public function process( EEI_Line_Item $line_item ) {
 		$this->_adjust_line_item_quantity( $line_item );
-		if ( ! $line_item->children() ) {
+        if ( ! $line_item->children() ) {
 			return $line_item;
 		}
 		//the original running total (taking ALL tickets into account)
@@ -125,41 +128,38 @@ class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Bas
 					$child_line_item->set_unit_price( $child_line_item->total() / $child_line_item->quantity() );
 				}
 			} else if (
-				$line_item->type() === EEM_Line_Item::type_line_item
+                //make sure this item's quantity and total matches its parent
+                $line_item->type() === EEM_Line_Item::type_line_item
 				&& $line_item->OBJ_type() === 'Ticket'
-			) {
-				//make sure this item's quantity and total matches its parent
-				if (
-					// but not if it's a percentage modifier
-					! $child_line_item->is_percent()
-					&& ! (
-						// or a cancellation
-						$child_line_item->is_cancelled()
-						&& ! (
-							// unless it IS a cancellation and the current registration is cancelled
-							$child_line_item->is_cancelled()
-							&& $this->_current_registration instanceof EE_Registration
-							&& in_array( $this->_current_registration->status_ID(), $this->_closed_reg_statuses )
-						)
-					)
-				) {
-					$child_line_item->set_quantity( $line_item->quantity() );
-					$child_line_item->set_total( $child_line_item->unit_price() * $child_line_item->quantity() );
-				}
+                // but not if it's a percentage modifier
+                && ! $child_line_item->is_percent()
+                && ! (
+                    // or a cancellation
+                    $child_line_item->is_cancelled()
+                    && ! (
+                        // unless it IS a cancellation and the current registration is cancelled
+                        $child_line_item->is_cancelled()
+                        && $this->_current_registration instanceof EE_Registration
+                        && in_array( $this->_current_registration->status_ID(), $this->_closed_reg_statuses, true )
+                    )
+                )
+            ) {
+                $child_line_item->set_quantity( $line_item->quantity() );
+                $child_line_item->set_total( $child_line_item->unit_price() * $child_line_item->quantity() );
 			}
-			$running_total_of_children += $original_li_total;
-			$running_total_of_children_under_consideration += $child_line_item->total();
-			if ( $child_line_item->OBJ_type() == 'Ticket' ) {
-				$total_child_ticket_quantity += $child_line_item->quantity();
-			}
-		}
+            $running_total_of_children += $original_li_total;
+            $running_total_of_children_under_consideration += $child_line_item->total();
+            if ( $child_line_item->OBJ_type() === 'Ticket' ) {
+                $total_child_ticket_quantity += $child_line_item->quantity();
+            }
+        }
 		$line_item->set_total( $running_total_of_children_under_consideration );
 		if ( $line_item->quantity() ) {
 			$line_item->set_unit_price( $running_total_of_children_under_consideration / $line_item->quantity() );
 		} else {
 			$line_item->set_unit_price( 0 );
 		}
-		if ( $line_item->OBJ_type() == 'Event' ) {
+		if ( $line_item->OBJ_type() === 'Event' ) {
 			$line_item->set_quantity( $total_child_ticket_quantity );
 		}
 		return $line_item;
@@ -176,7 +176,7 @@ class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Bas
 	 */
 	protected function _adjust_line_item_quantity( EEI_Line_Item $line_item ) {
 		// is this a ticket ?
-		if ( $line_item->type() === EEM_Line_Item::type_line_item && $line_item->OBJ_type() == 'Ticket' ) {
+		if ( $line_item->type() === EEM_Line_Item::type_line_item && $line_item->OBJ_type() === 'Ticket' ) {
 			$this->_current_registration = null;
 			$quantity = 0;
 			// if this ticket is billable at this moment, then we should have a positive quantity
