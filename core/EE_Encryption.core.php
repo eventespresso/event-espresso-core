@@ -22,9 +22,14 @@ class EE_Encryption
     const ENCRYPTION_OPTION_KEY = 'ee_encryption_key';
 
     /**
-     * the OPENSSL encryption method used
+     * the OPENSSL cipher method used
      */
-    const OPENSSL_ENCRYPTION_METHOD = 'aes-256-ctr';
+    const OPENSSL_CIPHER_METHOD = 'aes-256-ctr';
+
+    /**
+     * the OPENSSL digest method used
+     */
+    const OPENSSL_DIGEST_METHOD = 'sha512';
 
     /**
      * separates the encrypted text from the initialization vector
@@ -245,7 +250,7 @@ class EE_Encryption
             return $text_string;
         }
         // get initialization vector size
-        $iv_size = openssl_cipher_iv_length(EE_Encryption::OPENSSL_ENCRYPTION_METHOD);
+        $iv_size = openssl_cipher_iv_length(EE_Encryption::OPENSSL_CIPHER_METHOD);
         // generate initialization vector
         $iv = openssl_random_pseudo_bytes($iv_size, $is_strong);
         if ($iv === false || $is_strong === false) {
@@ -256,8 +261,8 @@ class EE_Encryption
         // encrypt it
         $encrypted_text = openssl_encrypt(
             $text_string,
-            EE_Encryption::OPENSSL_ENCRYPTION_METHOD,
-            $this->get_encryption_key(),
+            EE_Encryption::OPENSSL_CIPHER_METHOD,
+            openssl_digest($this->get_encryption_key(), EE_Encryption::OPENSSL_DIGEST_METHOD),
             0,
             $iv
         );
@@ -289,7 +294,7 @@ class EE_Encryption
             : $encrypted_text;
         $encrypted_components = explode(
             EE_Encryption::OPENSSL_IV_DELIMITER,
-            base64_decode($encrypted_text),
+            $encrypted_text,
             2
         );
         // check that iv exists, and if not, maybe text was encoded using mcrypt?
@@ -299,8 +304,8 @@ class EE_Encryption
         // decrypt it
         $decrypted_text = openssl_decrypt(
             $encrypted_components[0],
-            EE_Encryption::OPENSSL_ENCRYPTION_METHOD,
-            $this->get_encryption_key(),
+            EE_Encryption::OPENSSL_CIPHER_METHOD,
+            openssl_digest($this->get_encryption_key(), EE_Encryption::OPENSSL_DIGEST_METHOD),
             0,
             $encrypted_components[1]
         );
