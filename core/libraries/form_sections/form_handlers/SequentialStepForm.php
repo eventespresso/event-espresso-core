@@ -121,7 +121,7 @@ abstract class SequentialStepForm extends FormHandler implements SequentialStepF
         $order = absint($order);
         if (! $order > 0) {
             throw new InvalidArgumentException(
-                __('The form order property must be a positive integer.', 'event_espresso')
+                esc_html__('The form order property must be a positive integer.', 'event_espresso')
             );
         }
         $this->order = $order;
@@ -153,7 +153,7 @@ abstract class SequentialStepForm extends FormHandler implements SequentialStepF
         }
         if (empty($redirect_url)) {
             throw new InvalidArgumentException(
-                __('The redirect URL can not be an empty string.', 'event_espresso')
+                esc_html__('The redirect URL can not be an empty string.', 'event_espresso')
             );
         }
         $this->redirect_url = $redirect_url;
@@ -177,7 +177,7 @@ abstract class SequentialStepForm extends FormHandler implements SequentialStepF
         }
         if (empty($redirect_args)) {
             throw new InvalidArgumentException(
-                __('The redirect argument can not be an empty array.', 'event_espresso')
+                esc_html__('The redirect argument can not be an empty array.', 'event_espresso')
             );
         }
         $this->redirect_args = array_merge($this->redirect_args, (array)$redirect_args);
@@ -201,7 +201,7 @@ abstract class SequentialStepForm extends FormHandler implements SequentialStepF
         }
         if (empty($redirect_arg_keys_to_remove)) {
             throw new InvalidArgumentException(
-                __('The $redirect_arg_keys_to_remove argument can not be an empty array.', 'event_espresso')
+                esc_html__('The $redirect_arg_keys_to_remove argument can not be an empty array.', 'event_espresso')
             );
         }
         foreach ($redirect_arg_keys_to_remove as $redirect_arg_key) {

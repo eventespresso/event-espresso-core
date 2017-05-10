@@ -156,7 +156,7 @@ abstract class SequentialStepFormManager
         }
         if (empty($base_url)) {
             throw new InvalidArgumentException(
-                __('The base URL can not be an empty string.', 'event_espresso')
+                esc_html__('The base URL can not be an empty string.', 'event_espresso')
             );
         }
         $this->base_url = $base_url;
@@ -229,7 +229,7 @@ abstract class SequentialStepFormManager
                 $current_step_slug,
                 $this->defaultFormStep(),
                 $message = sprintf(
-                    __(
+                    esc_html__(
                         'The "%1$s" form step could not be set.',
                         'event_espresso'
                     ),
@@ -497,8 +497,8 @@ abstract class SequentialStepFormManager
         $this->form_steps = $this->getFormStepsCollection();
         $this->setCurrentStepFromRequest();
         $form_step = $this->getCurrentStep();
-        if ($form_step->submitBtnText() === __('Submit', 'event_espresso')) {
-            $form_step->setSubmitBtnText(__('Next Step', 'event_espresso'));
+        if ($form_step->submitBtnText() === esc_html__('Submit', 'event_espresso')) {
+            $form_step->setSubmitBtnText(esc_html__('Next Step', 'event_espresso'));
         }
         if ($for_display && $form_step->displayable()) {
             $this->progress_step_manager = $this->generateProgressSteps(
@@ -622,21 +622,21 @@ abstract class SequentialStepFormManager
     {
         $redirect_step = $current_step;
         switch ($current_step->redirectTo()) {
-            case SequentialStepForm::REDIRECT_TO_OTHER :
+            case SequentialStepForm::REDIRECT_TO_OTHER:
                 // going somewhere else, so just check out now
                 wp_safe_redirect($redirect_step->redirectUrl());
                 exit();
                 break;
-            case SequentialStepForm::REDIRECT_TO_PREV_STEP :
+            case SequentialStepForm::REDIRECT_TO_PREV_STEP:
                 $redirect_step = $this->form_steps->previous();
                 break;
-            case SequentialStepForm::REDIRECT_TO_NEXT_STEP :
+            case SequentialStepForm::REDIRECT_TO_NEXT_STEP:
                 $this->form_steps->next();
                 if ($this->form_steps->valid()) {
                     $redirect_step = $this->form_steps->current();
                 }
                 break;
-            case SequentialStepForm::REDIRECT_TO_CURRENT_STEP :
+            case SequentialStepForm::REDIRECT_TO_CURRENT_STEP:
             default :
                 // $redirect_step is already set
         }
