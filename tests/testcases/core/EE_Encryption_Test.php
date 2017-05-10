@@ -26,6 +26,7 @@ class EE_Encryption_Test extends EE_UnitTestCase
 
     public function setUp()
     {
+        parent::setUp();
         $this->encryption = EE_Encryption::instance();
     }
 
