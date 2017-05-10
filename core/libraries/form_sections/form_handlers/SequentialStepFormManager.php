@@ -498,9 +498,15 @@ abstract class SequentialStepFormManager {
 	/**
 	 * @param bool $return_as_string
 	 * @return string
-	 */
-	public function displayProgressSteps( $return_as_string = true ) {
-		$progress_steps = apply_filters(
+     * @throws InvalidDataTypeException
+     */
+    public function displayProgressSteps($return_as_string = true)
+    {
+        $form_step = $this->getCurrentStep();
+        if (! $form_step->displayable()) {
+            return '';
+        }
+        $progress_steps = apply_filters(
 			'FHEE__EventEspresso_core_libraries_form_sections_form_handlers_SequentialStepFormManager__displayProgressSteps__before_steps',
 			''
 		);
