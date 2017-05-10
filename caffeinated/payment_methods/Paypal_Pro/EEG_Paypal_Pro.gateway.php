@@ -77,30 +77,42 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway
 
     /**
      * @param EEI_Payment $payment
-     * @param array       $billing_info     {
-     * @type              $credit_card      string
-     * @type              $credit_card_type string
-     * @type              $exp_month        string always 2 characters
-     * @type              $exp_year         string always 4 characters
-     * @type              $cvv              string
-     *                                      } @see parent::do_direct_payment for more info
-     * @return \EE_Payment|\EEI_Payment
+     * @param array       $billing_info {
+     * @type string $credit_card
+     * @type string $credit_card_type
+     * @type string $exp_month always 2 characters
+     * @type string $exp_year always 4 characters
+     * @type string $cvv
+     * }
+     * @see      parent::do_direct_payment for more info
+     * @return EE_Payment|EEI_Payment
+     * @throws EE_Error
      */
     public function do_direct_payment($payment, $billing_info = null)
     {
         $transaction = $payment->transaction();
         if (! $transaction instanceof EEI_Transaction) {
-            throw new EE_Error(esc_html__('No transaction for payment while paying with PayPal Pro.', 'event_espresso'));
+            throw new EE_Error(
+                esc_html__('No transaction for payment while paying with PayPal Pro.', 'event_espresso')
+            );
         }
         $primary_registrant = $transaction->primary_registration();
         if (! $primary_registrant instanceof EEI_Registration) {
-            throw new EE_Error(esc_html__('No primary registration on transaction while paying with PayPal Pro.',
-                'event_espresso'));
+            throw new EE_Error(
+                esc_html__(
+                    'No primary registration on transaction while paying with PayPal Pro.',
+                    'event_espresso'
+                )
+            );
         }
         $attendee = $primary_registrant->attendee();
         if (! $attendee instanceof EEI_Attendee) {
-            throw new EE_Error(esc_html__('No attendee on primary registration while paying with PayPal Pro.',
-                'event_espresso'));
+            throw new EE_Error(
+                esc_html__(
+                    'No attendee on primary registration while paying with PayPal Pro.',
+                    'event_espresso'
+                )
+            );
         }
         $order_description = substr($this->_format_order_description($payment), 0, 127);
         //charge for the full amount. Show itemized list
@@ -174,7 +186,7 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway
         // Populate data arrays with order data.
         $DPFields = array(
             // How you want to obtain payment ?
-            // Authorization indidicates the payment is a basic auth subject to settlement with Auth & Capture.
+            // Authorization indicates the payment is a basic auth subject to settlement with Auth & Capture.
             // Sale indicates that this is a final sale for which you are requesting payment.  Default is Sale.
             'paymentaction'    => 'Sale',
             // Required.  IP address of the payer's browser.
@@ -184,7 +196,8 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway
         );
         $CCDetails = array(
             // Required. Type of credit card.  Visa, MasterCard, Discover, Amex, Maestro, Solo.
-            // If Maestro or Solo, the currency code must be GBP.  In addition, either start date or issue number must be specified.
+            // If Maestro or Solo, the currency code must be GBP.
+            //  In addition, either start date or issue number must be specified.
             'creditcardtype' => $billing_info['credit_card_type'],
             // Required.  Credit card number.  No spaces or punctuation.
             'acct'           => $billing_info['credit_card'],
@@ -229,35 +242,54 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway
             // Required.  Postal code of payer.
             'zip'         => $billing_info['zip'],
         );
-        //check if the registration info contains the needed fields for paypal pro (see https://developer.paypal.com/docs/classic/api/merchant/DoDirectPayment_API_Operation_NVP/)
+        //check if the registration info contains the needed fields for paypal pro
+        //(see https://developer.paypal.com/docs/classic/api/merchant/DoDirectPayment_API_Operation_NVP/)
         if ($attendee->address() && $attendee->city() && $attendee->country_ID()) {
             $use_registration_address_info = true;
         } else {
             $use_registration_address_info = false;
         }
-        //so if the attendee has enough data to fill out PayPal Pro's shipping info, use it. If not, use the billing info again
+        //so if the attendee has enough data to fill out PayPal Pro's shipping info, use it.
+        // If not, use the billing info again
         $ShippingAddress = array(
-            'shiptoname'     => substr($use_registration_address_info ? $attendee->full_name() : $billing_info['first_name'] . ' ' . $billing_info['last_name'], 0, 32),
-            'shiptostreet'   => substr($use_registration_address_info ? $attendee->address() : $billing_info['address'], 0, 100),
-            'shiptostreet2'  => substr($use_registration_address_info ? $attendee->address2() : $billing_info['address2'], 0, 100),
-            'shiptocity'     => substr($use_registration_address_info ? $attendee->city() : $billing_info['city'], 0, 40),
-            'state'          => substr($use_registration_address_info ? $attendee->state_name() : $billing_info['state'], 0, 40),
-            'shiptocountry'  => $use_registration_address_info ? $attendee->country_ID() : $billing_info['country'],
-            'shiptozip'      => substr($use_registration_address_info ? $attendee->zip() : $billing_info['zip'], 0, 20),
-            'shiptophonenum' => substr($use_registration_address_info ? $attendee->phone() : $billing_info['phone'], 0, 20),
+            'shiptoname'     => substr($use_registration_address_info
+                ? $attendee->full_name()
+                : $billing_info['first_name'] . ' ' . $billing_info['last_name'], 0, 32),
+            'shiptostreet'   => substr($use_registration_address_info
+                ? $attendee->address()
+                : $billing_info['address'], 0, 100),
+            'shiptostreet2'  => substr($use_registration_address_info
+                ? $attendee->address2() : $billing_info['address2'], 0, 100),
+            'shiptocity'     => substr($use_registration_address_info
+                ? $attendee->city()
+                : $billing_info['city'], 0, 40),
+            'state'          => substr($use_registration_address_info
+                ? $attendee->state_name()
+                : $billing_info['state'], 0, 40),
+            'shiptocountry'  => $use_registration_address_info
+                ? $attendee->country_ID()
+                : $billing_info['country'],
+            'shiptozip'      => substr($use_registration_address_info
+                ? $attendee->zip()
+                : $billing_info['zip'], 0, 20),
+            'shiptophonenum' => substr($use_registration_address_info
+                ? $attendee->phone()
+                : $billing_info['phone'], 0, 20),
         );
         $PaymentDetails = array(
             // Required.  Total amount of order, including shipping, handling, and tax.
             'amt'          => $this->format_currency($payment->amount()),
             // Required.  Three-letter currency code.  Default is USD.
             'currencycode' => $payment->currency_code(),
-            // Required if you include itemized cart details. (L_AMTn, etc.)  Subtotal of items not including S&H, or tax.
+            // Required if you include itemized cart details. (L_AMTn, etc.)
+            //Subtotal of items not including S&H, or tax.
             'itemamt'      => $this->format_currency($item_amount),//
             // Total shipping costs for the order.  If you specify shippingamt, you must also specify itemamt.
             'shippingamt'  => '',
             // Total handling costs for the order.  If you specify handlingamt, you must also specify itemamt.
             'handlingamt'  => '',
-            // Required if you specify itemized cart tax details. Sum of tax for all items on the order.  Total sales tax.
+            // Required if you specify itemized cart tax details.
+            // Sum of tax for all items on the order.  Total sales tax.
             'taxamt'       => $this->format_currency($tax_amount),
             // Description of the order the customer is purchasing.  127 char max.
             'desc'         => $order_description,
@@ -296,11 +328,16 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway
                 } else {
                     $payment->set_status($this->_pay_model->declined_status());
                 }
-                //make sure we interpret the AMT as a float, not an international string (where periods are thousand separators)
+                //make sure we interpret the AMT as a float, not an international string
+                // (where periods are thousand separators)
                 $payment->set_amount(isset($PayPalResult['AMT']) ? floatval($PayPalResult['AMT']) : 0);
                 $payment->set_gateway_response($message);
-                $payment->set_txn_id_chq_nmbr(isset($PayPalResult['TRANSACTIONID']) ? $PayPalResult['TRANSACTIONID'] : null);
-                $primary_registration_code = $primary_registrant instanceof EE_Registration ? $primary_registrant->reg_code() : '';
+                $payment->set_txn_id_chq_nmbr(isset($PayPalResult['TRANSACTIONID'])
+                    ? $PayPalResult['TRANSACTIONID']
+                    : null);
+                $primary_registration_code = $primary_registrant instanceof EE_Registration
+                    ? $primary_registrant->reg_code()
+                    : '';
                 $payment->set_extra_accntng($primary_registration_code);
                 $payment->set_details($PayPalResult);
             }
@@ -320,7 +357,7 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway
      *
      * @param array       $request
      * @param EEI_Payment $payment
-     * @return array
+     * @return void
      */
     private function _log_clean_request($request, $payment)
     {
@@ -487,7 +524,7 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway
             // value
             $valuepos = strpos($NVPString, '&') ? strpos($NVPString, '&') : strlen($NVPString);
             $valval = substr($NVPString, $keypos + 1, $valuepos - $keypos - 1);
-            // decoding the respose
+            // decoding the response
             $proArray[$keyval] = urldecode($valval);
             $NVPString = substr($NVPString, $valuepos + 1, strlen($NVPString));
         }
@@ -523,9 +560,15 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway
         $n = 0;
         while (isset($DataArray['L_ERRORCODE' . $n . ''])) {
             $LErrorCode = isset($DataArray['L_ERRORCODE' . $n . '']) ? $DataArray['L_ERRORCODE' . $n . ''] : '';
-            $LShortMessage = isset($DataArray['L_SHORTMESSAGE' . $n . '']) ? $DataArray['L_SHORTMESSAGE' . $n . ''] : '';
-            $LLongMessage = isset($DataArray['L_LONGMESSAGE' . $n . '']) ? $DataArray['L_LONGMESSAGE' . $n . ''] : '';
-            $LSeverityCode = isset($DataArray['L_SEVERITYCODE' . $n . '']) ? $DataArray['L_SEVERITYCODE' . $n . ''] : '';
+            $LShortMessage = isset($DataArray['L_SHORTMESSAGE' . $n . ''])
+                ? $DataArray['L_SHORTMESSAGE' . $n . '']
+                : '';
+            $LLongMessage = isset($DataArray['L_LONGMESSAGE' . $n . ''])
+                ? $DataArray['L_LONGMESSAGE' . $n . '']
+                : '';
+            $LSeverityCode = isset($DataArray['L_SEVERITYCODE' . $n . ''])
+                ? $DataArray['L_SEVERITYCODE' . $n . '']
+                : '';
             $CurrentItem = array(
                 'L_ERRORCODE'    => $LErrorCode,
                 'L_SHORTMESSAGE' => $LShortMessage,
@@ -568,8 +611,5 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway
         }
         return $error;
     }
-
-
-
 }
 // End of file EEG_Paypal_Pro.gateway.php
