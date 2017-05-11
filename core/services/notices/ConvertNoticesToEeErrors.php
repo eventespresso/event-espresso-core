@@ -67,6 +67,7 @@ class ConvertNoticesToEeErrors extends NoticeConverter
                 );
             }
         }
+        $this->clearNotices();
     }
 
 
