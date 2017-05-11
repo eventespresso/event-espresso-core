@@ -107,7 +107,11 @@ class AttendeesReport extends JobHandlerFile {
 					$csv_row[ $field_obj->get_nicename() ] = $attendee_row[ $field_obj->get_qualified_column() ];
 				}
 			}
-			$csv_data[] = $csv_row;
+			$csv_data[] = apply_filters(
+			    'FHEE___EventEspresso_core_libraries_batch_JobHandlers_AttendeesReport__get_csv_data__row',
+                $csv_row,
+                $attendee_row
+            );
 		}
 		return $csv_data;
 	}
