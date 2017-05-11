@@ -51,18 +51,33 @@ class EE_Encryption
     /**
      * @var boolean $_use_openssl_encrypt
      */
-    protected $_use_openssl_encrypt = true;
+    protected $_use_openssl_encrypt = false;
+
+    /**
+     * @var boolean $_use_mcrypt
+     */
+    protected $_use_mcrypt = false;
+
+    /**
+     * @var boolean $_use_base64_encode
+     */
+    protected $_use_base64_encode = false;
 
 
 
     /**
-     * private constructor to prevent direct creation
+     * protected constructor to prevent direct creation
      */
-    private function __construct()
+    protected function __construct()
     {
         define('ESPRESSO_ENCRYPT', true);
-        if (! function_exists('openssl_encrypt')) {
-            $this->_use_openssl_encrypt = false;
+        if (function_exists('openssl_encrypt')) {
+            $this->_use_openssl_encrypt = true;
+        } else if (function_exists('mcrypt_encrypt')) {
+            $this->_use_mcrypt = true;
+        }
+        if (function_exists('base64_encode')) {
+            $this->_use_base64_encode = true;
         }
     }
 
@@ -138,6 +153,7 @@ class EE_Encryption
      *
      * @param string $encrypted_text - the text to be decrypted
      * @return string
+     * @throws \RuntimeException
      */
     public function decrypt($encrypted_text = '')
     {
@@ -148,6 +164,8 @@ class EE_Encryption
         // if PHP's mcrypt functions are installed then we'll use them
         if ($this->_use_openssl_encrypt) {
             $decrypted_text = $this->openssl_decrypt($encrypted_text);
+        } else if ($this->_use_mcrypt) {
+            $decrypted_text = $this->m_decrypt($encrypted_text);
         } else {
             $decrypted_text = $this->acme_decrypt($encrypted_text);
         }
@@ -166,7 +184,7 @@ class EE_Encryption
     public function base64_string_encode($text_string = '')
     {
         // you give me nothing??? GET OUT !
-        if (empty($text_string) || ! function_exists('base64_encode')) {
+        if (empty($text_string) || ! $this->_use_base64_encode) {
             return $text_string;
         }
         // encode
@@ -204,7 +222,7 @@ class EE_Encryption
     public function base64_url_encode($text_string = '')
     {
         // you give me nothing??? GET OUT !
-        if (empty($text_string) || ! function_exists('base64_encode')) {
+        if (empty($text_string) || ! $this->_use_base64_encode) {
             return $text_string;
         }
         // encode
@@ -243,7 +261,7 @@ class EE_Encryption
      * @return string
      * @throws RuntimeException
      */
-    private function openssl_encrypt($text_string = '')
+    protected function openssl_encrypt($text_string = '')
     {
         // you give me nothing??? GET OUT !
         if (empty($text_string)) {
@@ -269,7 +287,7 @@ class EE_Encryption
         // append the initialization vector
         $encrypted_text .= EE_Encryption::OPENSSL_IV_DELIMITER . $iv;
         // trim and maybe encode
-        return function_exists('base64_encode')
+        return $this->_use_base64_encode
             ? trim(base64_encode($encrypted_text))
             : trim($encrypted_text);
     }
@@ -281,8 +299,9 @@ class EE_Encryption
      *
      * @param string $encrypted_text the text to be decrypted
      * @return string
+     * @throws \RuntimeException
      */
-    private function openssl_decrypt($encrypted_text = '')
+    protected function openssl_decrypt($encrypted_text = '')
     {
         // you give me nothing??? GET OUT !
         if (empty($encrypted_text)) {
@@ -298,7 +317,7 @@ class EE_Encryption
             2
         );
         // check that iv exists, and if not, maybe text was encoded using mcrypt?
-        if (! isset($encrypted_components[1]) && function_exists('mcrypt_encrypt')) {
+        if (! isset($encrypted_components[1]) && $this->_use_mcrypt) {
             return $this->m_decrypt($encrypted_text);
         }
         // decrypt it
@@ -316,47 +335,13 @@ class EE_Encryption
 
 
     /**
-     * decrypts data that has been encrypted with PHP's mcrypt functions
-     *
-     * @deprecated 4.9.39
-     * @param string $encrypted_text the text to be decrypted
-     * @return string
-     */
-    private function m_decrypt($encrypted_text = '')
-    {
-        // you give me nothing??? GET OUT !
-        if (empty($encrypted_text)) {
-            return $encrypted_text;
-        }
-        // decode
-        $encrypted_text = $this->valid_base_64($encrypted_text)
-            ? base64_decode($encrypted_text)
-            : $encrypted_text;
-        // get the initialization vector size
-        $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
-        $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
-        // decrypt it
-        $decrypted_text = mcrypt_decrypt(
-            MCRYPT_RIJNDAEL_256,
-            $this->get_encryption_key(),
-            $encrypted_text,
-            MCRYPT_MODE_ECB,
-            $iv
-        );
-        $decrypted_text = trim($decrypted_text);
-        return $decrypted_text;
-    }
-
-
-
-    /**
      * encrypts data for acme servers that didn't bother to install PHP mcrypt
      *
      * @see http://stackoverflow.com/questions/800922/how-to-encrypt-string-without-mcrypt-library-in-php
      * @param string $text_string the text to be decrypted
      * @return string
      */
-    private function acme_encrypt($text_string = '')
+    protected function acme_encrypt($text_string = '')
     {
         // you give me nothing??? GET OUT !
         if (empty($text_string)) {
@@ -370,7 +355,7 @@ class EE_Encryption
             $temp = ord($v) + ord($key_bits[$k]);
             $string_bits[$k] = chr($temp > 255 ? ($temp - 256) : $temp);
         }
-        return function_exists('base64_encode')
+        return $this->_use_base64_encode
             ? base64_encode(implode('', $string_bits))
             : implode('', $string_bits);
     }
@@ -384,7 +369,7 @@ class EE_Encryption
      * @param string $encrypted_text the text to be decrypted
      * @return string
      */
-    private function acme_decrypt($encrypted_text = '')
+    protected function acme_decrypt($encrypted_text = '')
     {
         // you give me nothing??? GET OUT !
         if (empty($encrypted_text)) {
@@ -412,10 +397,10 @@ class EE_Encryption
      * @param $string
      * @return bool
      */
-    private function valid_base_64($string)
+    protected function valid_base_64($string)
     {
         // ensure data is a string
-        if (! is_string($string) || ! function_exists('base64_decode')) {
+        if (! is_string($string) || ! $this->_use_base64_encode) {
             return false;
         }
         $decoded = base64_decode($string, true);
@@ -452,6 +437,84 @@ class EE_Encryption
     }
 
 
+
+    /**
+     * encrypts data using PHP's mcrypt functions
+     *
+     * @deprecated 4.9.39
+     * @param string $text_string
+     * @internal   param $string - the text to be encrypted
+     * @return string
+     * @throws \RuntimeException
+     */
+    protected function m_encrypt($text_string = '')
+    {
+        // you give me nothing??? GET OUT !
+        if (empty($text_string)) {
+            return $text_string;
+        }
+        // get the initialization vector size
+        $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
+        // initialization vector
+        $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
+        if ($iv === false) {
+            throw new RuntimeException(
+                esc_html__('Failed to generate mcrypt initialization vector.', 'event_espresso')
+            );
+        }
+        // encrypt it
+        $encrypted_text = mcrypt_encrypt(
+            MCRYPT_RIJNDAEL_256,
+            $this->get_encryption_key(),
+            $text_string,
+            MCRYPT_MODE_ECB,
+            $iv
+        );
+        // trim and maybe encode
+        return $this->_use_base64_encode
+            ? trim(base64_encode($encrypted_text))
+            : trim($encrypted_text);
+    }
+
+
+
+    /**
+     * decrypts data that has been encrypted with PHP's mcrypt functions
+     *
+     * @deprecated 4.9.39
+     * @param string $encrypted_text the text to be decrypted
+     * @return string
+     * @throws \RuntimeException
+     */
+    protected function m_decrypt($encrypted_text = '')
+    {
+        // you give me nothing??? GET OUT !
+        if (empty($encrypted_text)) {
+            return $encrypted_text;
+        }
+        // decode
+        $encrypted_text = $this->valid_base_64($encrypted_text)
+            ? base64_decode($encrypted_text)
+            : $encrypted_text;
+        // get the initialization vector size
+        $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
+        $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
+        if ($iv === false) {
+            throw new RuntimeException(
+                esc_html__('Failed to generate mcrypt initialization vector.', 'event_espresso')
+            );
+        }
+        // decrypt it
+        $decrypted_text = mcrypt_decrypt(
+            MCRYPT_RIJNDAEL_256,
+            $this->get_encryption_key(),
+            $encrypted_text,
+            MCRYPT_MODE_ECB,
+            $iv
+        );
+        $decrypted_text = trim($decrypted_text);
+        return $decrypted_text;
+    }
 
 }
 /* End of file EE_Encryption.class.php */
