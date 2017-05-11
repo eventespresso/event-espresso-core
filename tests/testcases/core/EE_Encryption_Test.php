@@ -16,9 +16,7 @@ class EE_Encryption_Test extends EE_UnitTestCase
 
 
     /**
-     * EE_Encryption object
-     *
-     * @var EE_Encryption
+     * @var EE_Encryption_Mock $encryption
      */
     protected $encryption;
 
@@ -27,7 +25,8 @@ class EE_Encryption_Test extends EE_UnitTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->encryption = EE_Encryption::instance();
+        require_once EE_TESTS_DIR . 'mocks' . DS . 'core' . DS . 'EE_Encryption_Mock.php';
+        $this->encryption = EE_Encryption_Mock::instance();
     }
 
 
@@ -50,6 +49,69 @@ class EE_Encryption_Test extends EE_UnitTestCase
 
 
     /**
+     * @return string
+     */
+    private function getString()
+    {
+        return 'LPT: Change all of your passwords to "incorrect" so that your computer just tells you when you forget!';
+    }
+
+
+
+    /**
+     * @return array
+     */
+    private function getArrayData()
+    {
+        $array = array();
+        $array_size = mt_rand(5, 10);
+        for ($x = 0; $x <= $array_size; $x++) {
+            $key = mt_rand(0, 1) ? trim($this->generateRandomString(mt_rand(5, 10))) : count($array);
+            $array[$key] = $this->generateRandomString(mt_rand(10, 50));
+        }
+        return $array;
+    }
+
+
+
+    /**
+     * @return stdClass
+     */
+    private function getObjectData()
+    {
+        $object = new stdClass();
+        $array_size = mt_rand(5, 10);
+        for ($x = 0; $x <= $array_size; $x++) {
+            $property = trim($this->generateRandomString(mt_rand(5, 10)));
+            $object->{$property} = $this->generateRandomString(mt_rand(10, 50));
+        }
+        return $object;
+    }
+
+
+
+    /**
+     * @param string $encrypt
+     * @param string $decrypt
+     * @param        $data
+     */
+    private function runEncryptionTest($encrypt, $decrypt, $data)
+    {
+        $this->assertEquals(
+            $data,
+            unserialize(
+                $this->encryption->{$decrypt}(
+                    $this->encryption->{$encrypt}(
+                        serialize($data)
+                    )
+                )
+            )
+        );
+    }
+
+
+
+    /**
      * @return void
      */
     public function testGetEncryptionKey()
@@ -67,36 +129,13 @@ class EE_Encryption_Test extends EE_UnitTestCase
      * @return void
      * @throws RuntimeException
      */
-    public function testEncryptionWithStrings()
+    public function testOpensslEncryptionWithStrings()
     {
-        $string = 'LPT: Change all of your passwords to "incorrect" so that your computer just tells you when you forget!';
         $this->assertEquals(
-            $string,
-            $this->encryption->decrypt($this->encryption->encrypt($string))
-        );
-    }
-
-
-
-    /**
-     * @return void
-     * @throws RuntimeException
-     */
-    public function testEncryptionWithArrays()
-    {
-        $array = array();
-        $array_size = mt_rand(5, 10);
-        for ($x = 0; $x <= $array_size; $x++) {
-            $key = mt_rand(0, 1) ? trim($this->generateRandomString(mt_rand(5, 10))) : count($array);
-            $array[$key] = $this->generateRandomString(mt_rand(10, 50));
-        }
-        $this->assertEquals(
-            $array,
-            unserialize(
-                $this->encryption->decrypt(
-                    $this->encryption->encrypt(
-                        serialize($array)
-                    )
+            $this->getString(),
+            $this->encryption->openssl_decrypt(
+                $this->encryption->openssl_encrypt(
+                    $this->getString()
                 )
             )
         );
@@ -108,23 +147,123 @@ class EE_Encryption_Test extends EE_UnitTestCase
      * @return void
      * @throws RuntimeException
      */
-    public function testEncryptionWithObjects()
+    public function testMcryptEncryptionWithStrings()
     {
-        $object = new stdClass();
-        $array_size = mt_rand(5, 10);
-        for ($x = 0; $x <= $array_size; $x++) {
-            $property = trim($this->generateRandomString(mt_rand(5, 10)));
-            $object->{$property} = $this->generateRandomString(mt_rand(10, 50));
-        }
         $this->assertEquals(
-            $object,
-            unserialize(
-                $this->encryption->decrypt(
-                    $this->encryption->encrypt(
-                        serialize($object)
-                    )
+            $this->getString(),
+            $this->encryption->m_decrypt(
+                $this->encryption->m_encrypt(
+                    $this->getString()
                 )
             )
+        );
+    }
+
+
+
+    /**
+     * @return void
+     * @throws RuntimeException
+     */
+    public function testAcmeEncryptionWithStrings()
+    {
+        $this->assertEquals(
+            $this->getString(),
+            $this->encryption->acme_decrypt(
+                $this->encryption->acme_encrypt(
+                    $this->getString()
+                )
+            )
+        );
+    }
+
+
+
+    /**
+     * @return void
+     * @throws RuntimeException
+     */
+    public function testOpensslEncryptionWithArrays()
+    {
+        $this->runEncryptionTest(
+            'openssl_encrypt',
+            'openssl_decrypt',
+            $this->getArrayData()
+        );
+    }
+
+
+
+    /**
+     * @return void
+     * @throws RuntimeException
+     */
+    public function testMcryptEncryptionWithArrays()
+    {
+        $this->runEncryptionTest(
+            'm_encrypt',
+            'm_decrypt',
+            $this->getArrayData()
+        );
+    }
+
+
+
+    /**
+     * @return void
+     * @throws RuntimeException
+     */
+    public function testAcmeEncryptionWithArrays()
+    {
+        $this->runEncryptionTest(
+            'acme_encrypt',
+            'acme_decrypt',
+            $this->getArrayData()
+        );
+    }
+
+
+
+    /**
+     * @return void
+     * @throws RuntimeException
+     */
+    public function testOpensslEncryptionWithObjects()
+    {
+        $this->runEncryptionTest(
+            'openssl_encrypt',
+            'openssl_decrypt',
+            $this->getObjectData()
+        );
+    }
+
+
+
+    /**
+     * @return void
+     * @throws RuntimeException
+     */
+    public function testMcryptEncryptionWithObjects()
+    {
+        $this->runEncryptionTest(
+            'm_encrypt',
+            'm_decrypt',
+            $this->getObjectData()
+        );
+    }
+
+
+
+    /**
+     * @return void
+     * @throws RuntimeException
+     */
+    public function testAcmeEncryptionWithObjects()
+    {
+        $this->runEncryptionTest(
+            'acme_encrypt',
+            'acme_decrypt',
+            $this->getObjectData()
         );
     }
 
@@ -135,10 +274,13 @@ class EE_Encryption_Test extends EE_UnitTestCase
      */
     public function testBase64StringEncoding()
     {
-        $string = 'LPT: Change all of your passwords to "incorrect" so that your computer just tells you when you forget!';
         $this->assertEquals(
-            $string,
-            $this->encryption->base64_string_decode($this->encryption->base64_string_encode($string))
+            $this->getString(),
+            $this->encryption->base64_string_decode(
+                $this->encryption->base64_string_encode(
+                    $this->getString()
+                )
+            )
         );
     }
 
@@ -152,7 +294,30 @@ class EE_Encryption_Test extends EE_UnitTestCase
         $url = 'http://eventespresso.com';
         $this->assertEquals(
             $url,
-            $this->encryption->base64_url_decode($this->encryption->base64_url_encode($url))
+            $this->encryption->base64_url_decode(
+                $this->encryption->base64_url_encode($url)
+            )
+        );
+    }
+
+
+
+    /**
+     * @throws PHPUnit_Framework_AssertionFailedError
+     */
+    public function testValidBase64()
+    {
+        $this->assertTrue(
+            $this->encryption->valid_base_64(
+                $this->encryption->base64_string_encode(
+                    $this->getString()
+                )
+            )
+        );
+        $this->assertFalse(
+            $this->encryption->valid_base_64(
+                $this->getString()
+            )
         );
     }
 
