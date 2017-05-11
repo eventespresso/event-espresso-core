@@ -680,9 +680,10 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
      * @access protected
      * @param int  $id The id to retrieve the model object for. If empty we set a default object.
      * @param bool $ignore_route_check
-     * @throws \EE_Error
+     * @param string $req_type whether the current route is for inserting, updating, or deleting the CPT
+     * @throws EE_Error
      */
-    protected function _set_model_object($id = null, $ignore_route_check = false)
+    protected function _set_model_object($id = null, $ignore_route_check = false, $req_type = '')
     {
         $model = null;
         if (
@@ -711,7 +712,11 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         if ($model instanceof EEM_Base) {
             $this->_cpt_model_obj = ! empty($id) ? $model->get_one_by_ID($id) : $model->create_default_object();
         }
-        do_action('AHEE__EE_Admin_Page_CPT__set_model_object__after_set_object');
+        do_action(
+            'AHEE__EE_Admin_Page_CPT__set_model_object__after_set_object',
+            $this->_cpt_model_obj,
+            $req_type
+        );
     }
 
 
@@ -783,7 +788,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
      */
     public function before_trash_cpt_item($post_id)
     {
-        $this->_set_model_object($post_id, true);
+        $this->_set_model_object($post_id, true, 'trash');
         //if our cpt object isn't existent then get out immediately.
         if ( ! $this->_cpt_model_obj instanceof EE_CPT_Base || $this->_cpt_model_obj->ID() !== $post_id) {
             return;
@@ -802,7 +807,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
      */
     public function before_restore_cpt_item($post_id)
     {
-        $this->_set_model_object($post_id, true);
+        $this->_set_model_object($post_id, true, 'restore');
         //if our cpt object isn't existent then get out immediately.
         if ( ! $this->_cpt_model_obj instanceof EE_CPT_Base || $this->_cpt_model_obj->ID() !== $post_id) {
             return;
@@ -821,7 +826,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
      */
     public function before_delete_cpt_item($post_id)
     {
-        $this->_set_model_object($post_id, true);
+        $this->_set_model_object($post_id, true, 'delete');
         //if our cpt object isn't existent then get out immediately.
         if ( ! $this->_cpt_model_obj instanceof EE_CPT_Base || $this->_cpt_model_obj->ID() !== $post_id) {
             return;
@@ -924,7 +929,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         ) {
             return;
         }
-        $this->_set_model_object($post_id, true);
+        $this->_set_model_object($post_id, true, 'insert_update');
         //if our cpt object is not instantiated and its NOT the same post_id as what is triggering this callback, then exit.
         if ($update
             && (
