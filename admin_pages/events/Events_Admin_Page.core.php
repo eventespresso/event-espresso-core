@@ -65,7 +65,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         );
         add_action(
             'AHEE__EE_Admin_Page_CPT__set_model_object__after_set_object',
-            array($this, 'verify_event_edit')
+            array($this, 'verify_event_edit'), 10, 2
         );
     }
 
@@ -654,12 +654,17 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      * warning (via EE_Error::add_error());
      *
      * @param  EE_Event $event Event object
-     * @access public
+     * @param string    $req_type
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @access public
      */
-    public function verify_event_edit($event = null)
+    public function verify_event_edit($event = null, $req_type = '')
     {
+        // don't need to do this when processing
+        if(!empty($req_type)) {
+            return;
+        }
         // no event?
         if (empty($event)) {
             // set event
