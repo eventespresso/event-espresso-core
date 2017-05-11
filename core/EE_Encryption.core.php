@@ -70,7 +70,9 @@ class EE_Encryption
      */
     protected function __construct()
     {
-        define('ESPRESSO_ENCRYPT', true);
+        if (! defined('ESPRESSO_ENCRYPT')) {
+            define('ESPRESSO_ENCRYPT', true);
+        }
         if (function_exists('openssl_encrypt')) {
             $this->_use_openssl_encrypt = true;
         } else if (function_exists('mcrypt_encrypt')) {
@@ -153,7 +155,7 @@ class EE_Encryption
      *
      * @param string $encrypted_text - the text to be decrypted
      * @return string
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     public function decrypt($encrypted_text = '')
     {
@@ -299,7 +301,7 @@ class EE_Encryption
      *
      * @param string $encrypted_text the text to be decrypted
      * @return string
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     protected function openssl_decrypt($encrypted_text = '')
     {
@@ -445,7 +447,7 @@ class EE_Encryption
      * @param string $text_string
      * @internal   param $string - the text to be encrypted
      * @return string
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     protected function m_encrypt($text_string = '')
     {
@@ -484,7 +486,7 @@ class EE_Encryption
      * @deprecated 4.9.39
      * @param string $encrypted_text the text to be decrypted
      * @return string
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     protected function m_decrypt($encrypted_text = '')
     {
