@@ -129,16 +129,31 @@ class EE_Encryption_Test extends EE_UnitTestCase
      * @return void
      * @throws RuntimeException
      */
-    public function testOpensslEncryptionWithStrings()
+    public function testOpensslEncryption()
     {
-        $this->assertEquals(
-            $this->getString(),
-            $this->encryption->openssl_decrypt(
-                $this->encryption->openssl_encrypt(
-                    $this->getString()
+        if (function_exists('openssl_encrypt')) {
+            // with strings
+            $this->assertEquals(
+                $this->getString(),
+                $this->encryption->openssl_decrypt(
+                    $this->encryption->openssl_encrypt(
+                        $this->getString()
+                    )
                 )
-            )
-        );
+            );
+            // with arrays
+            $this->runEncryptionTest(
+                'openssl_encrypt',
+                'openssl_decrypt',
+                $this->getArrayData()
+            );
+            // with objects
+            $this->runEncryptionTest(
+                'openssl_encrypt',
+                'openssl_decrypt',
+                $this->getObjectData()
+            );
+        }
     }
 
 
@@ -147,16 +162,31 @@ class EE_Encryption_Test extends EE_UnitTestCase
      * @return void
      * @throws RuntimeException
      */
-    public function testMcryptEncryptionWithStrings()
+    public function testMcryptEncryption()
     {
-        $this->assertEquals(
-            $this->getString(),
-            $this->encryption->m_decrypt(
-                $this->encryption->m_encrypt(
-                    $this->getString()
+        if (
+            function_exists('mcrypt_encrypt')
+            && version_compare(PHP_VERSION, '7.1', '<')
+        ) {
+            $this->assertEquals(
+                $this->getString(),
+                $this->encryption->m_decrypt(
+                    $this->encryption->m_encrypt(
+                        $this->getString()
+                    )
                 )
-            )
-        );
+            );
+            $this->runEncryptionTest(
+                'm_encrypt',
+                'm_decrypt',
+                $this->getArrayData()
+            );
+            $this->runEncryptionTest(
+                'm_encrypt',
+                'm_decrypt',
+                $this->getObjectData()
+            );
+        }
     }
 
 
@@ -165,7 +195,7 @@ class EE_Encryption_Test extends EE_UnitTestCase
      * @return void
      * @throws RuntimeException
      */
-    public function testAcmeEncryptionWithStrings()
+    public function testAcmeEncryption()
     {
         $this->assertEquals(
             $this->getString(),
@@ -175,91 +205,11 @@ class EE_Encryption_Test extends EE_UnitTestCase
                 )
             )
         );
-    }
-
-
-
-    /**
-     * @return void
-     * @throws RuntimeException
-     */
-    public function testOpensslEncryptionWithArrays()
-    {
-        $this->runEncryptionTest(
-            'openssl_encrypt',
-            'openssl_decrypt',
-            $this->getArrayData()
-        );
-    }
-
-
-
-    /**
-     * @return void
-     * @throws RuntimeException
-     */
-    public function testMcryptEncryptionWithArrays()
-    {
-        $this->runEncryptionTest(
-            'm_encrypt',
-            'm_decrypt',
-            $this->getArrayData()
-        );
-    }
-
-
-
-    /**
-     * @return void
-     * @throws RuntimeException
-     */
-    public function testAcmeEncryptionWithArrays()
-    {
         $this->runEncryptionTest(
             'acme_encrypt',
             'acme_decrypt',
             $this->getArrayData()
         );
-    }
-
-
-
-    /**
-     * @return void
-     * @throws RuntimeException
-     */
-    public function testOpensslEncryptionWithObjects()
-    {
-        $this->runEncryptionTest(
-            'openssl_encrypt',
-            'openssl_decrypt',
-            $this->getObjectData()
-        );
-    }
-
-
-
-    /**
-     * @return void
-     * @throws RuntimeException
-     */
-    public function testMcryptEncryptionWithObjects()
-    {
-        $this->runEncryptionTest(
-            'm_encrypt',
-            'm_decrypt',
-            $this->getObjectData()
-        );
-    }
-
-
-
-    /**
-     * @return void
-     * @throws RuntimeException
-     */
-    public function testAcmeEncryptionWithObjects()
-    {
         $this->runEncryptionTest(
             'acme_encrypt',
             'acme_decrypt',
