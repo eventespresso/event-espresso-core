@@ -72,6 +72,7 @@ class EES_Espresso_Events extends EES_Shortcode
      *    [ESPRESSO_EVENTS category_slug="free-events"]
      *    [ESPRESSO_EVENTS order_by="start_date,id"]
      *    [ESPRESSO_EVENTS sort="ASC"]
+     *    [ESPRESSO_EVENTS show_title=true]
      *
      * @access    public
      * @param    array $attributes
@@ -93,6 +94,7 @@ class EES_Espresso_Events extends EES_Shortcode
             'category_slug'                => null,
             'order_by'                     => 'start_date',
             'sort'                         => 'ASC',
+            'show_title'                   => true,
             'fallback_shortcode_processor' => false,
         );
         // allow the defaults to be filtered
@@ -173,6 +175,8 @@ class EE_Event_List_Query extends WP_Query
 
     private $_sort          = null;
 
+    private $_show_title    = true;
+
 
 
     /**
@@ -206,11 +210,19 @@ class EE_Event_List_Query extends WP_Query
         );
         // first off, let's remove any filters from previous queries
         remove_filter(
+            'FHEE__archive_espresso_events_template__show_header',
+            array($this, 'show_event_list_title')
+        );
+        remove_filter(
             'FHEE__archive_espresso_events_template__upcoming_events_h1',
             array($this, 'event_list_title')
         );
         remove_all_filters('FHEE__content_espresso_events__event_class');
         // Event List Title ?
+        add_filter(
+            'FHEE__archive_espresso_events_template__show_header',
+            array($this, 'show_event_list_title')
+        );
         add_filter(
             'FHEE__archive_espresso_events_template__upcoming_events_h1',
             array($this, 'event_list_title')
@@ -254,6 +266,22 @@ class EE_Event_List_Query extends WP_Query
 
 
     /**
+     * show_event_list_title
+     *
+     * @param bool $show_title
+     * @return boolean
+     */
+    public function show_event_list_title($show_title = true)
+    {
+        return filter_var(
+            $this->_show_title,
+            FILTER_VALIDATE_BOOLEAN
+        );
+    }
+
+
+
+    /**
      * event_list_css
      *
      * @param string $event_list_css
@@ -267,7 +295,5 @@ class EE_Event_List_Query extends WP_Query
         $event_list_css .= ! empty($this->_category_slug) ? $this->_category_slug : '';
         return $event_list_css;
     }
-
-
 
 }
