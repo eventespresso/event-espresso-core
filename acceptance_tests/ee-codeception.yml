@@ -1,0 +1,4 @@
+external_plugins:
+  - wp-crontrol
+core:
+  - Test
