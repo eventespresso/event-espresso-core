@@ -83,4 +83,13 @@ abstract class NoticeConverter implements NoticeConverterInterface
 
 
 
+    /**
+     * @return void;
+     */
+    public function clearNotices()
+    {
+        $this->notices = null;
+    }
+
+
 }

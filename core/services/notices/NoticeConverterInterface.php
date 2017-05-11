@@ -40,4 +40,10 @@ interface NoticeConverterInterface
      */
     public function process(NoticesContainerInterface $notices);
 
+    /**
+     * @return void;
+     */
+    public function clearNotices();
+
+
 }
