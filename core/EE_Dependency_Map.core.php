@@ -175,7 +175,7 @@ class EE_Dependency_Map
         ) {
             throw new EE_Error(
                 sprintf(
-                    __('"%1$s" is not a valid loader method on EE_Registry.', 'event_espresso'),
+                    esc_html__('"%1$s" is not a valid loader method on EE_Registry.', 'event_espresso'),
                     $loader
                 )
             );
@@ -272,11 +272,18 @@ class EE_Dependency_Map
     /**
      * adds an alias for a classname
      *
-     * @param string $class_name
-     * @param string $alias
+     * @param string $class_name the class name that should be used (concrete class to replace interface)
+     * @param string $alias      the class name that would be type hinted for (abstract parent or interface)
+     * @param string $for_class  the class that has the dependency (is type hinting for the interface)
      */
-    public function add_alias($class_name, $alias)
+    public function add_alias($class_name, $alias, $for_class = '')
     {
+        if ($for_class !== '') {
+            if (! isset($this->_aliases[$for_class])) {
+                $this->_aliases[$for_class] = array();
+            }
+            $this->_aliases[$for_class][$class_name] = $alias;
+        }
         $this->_aliases[$class_name] = $alias;
     }
 
@@ -286,11 +293,16 @@ class EE_Dependency_Map
      * returns TRUE if the provided class name has an alias
      *
      * @param string $class_name
-     * @return boolean
+     * @param string $for_class
+     * @return bool
      */
-    public function has_alias($class_name = '')
+    public function has_alias($class_name = '', $for_class = '')
     {
-        return isset($this->_aliases[$class_name]) ? true : false;
+        return isset($this->_aliases[$for_class], $this->_aliases[$for_class][$class_name])
+               || (
+                   isset($this->_aliases[$class_name])
+                   && ! is_array($this->_aliases[$class_name])
+               );
     }
 
 
@@ -308,13 +320,18 @@ class EE_Dependency_Map
      *      to load an instance of 'some\namespace\classname'
      *
      * @param string $class_name
+     * @param string $for_class
      * @return string
      */
-    public function get_alias($class_name = '')
+    public function get_alias($class_name = '', $for_class = '')
     {
-        return $this->has_alias($class_name)
-            ? $this->get_alias($this->_aliases[$class_name])
-            : $class_name;
+        if (! $this->has_alias($class_name, $for_class)) {
+            return $class_name;
+        }
+        if ($for_class !== '') {
+            return $this->get_alias($this->_aliases[$for_class][$class_name], $for_class);
+        }
+        return $this->get_alias($this->_aliases[$class_name]);
     }
 
 
