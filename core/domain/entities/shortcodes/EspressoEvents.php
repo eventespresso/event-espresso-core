@@ -12,7 +12,18 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 
 /**
  * Class EspressoEvents
- * ESPRESSO_EVENTS shortcode
+ * processes the [ESPRESSO_EVENTS] shortcode and returns a list of events
+ * usage:
+ *    [ESPRESSO_EVENTS]
+ *    [ESPRESSO_EVENTS title="My Super Event"]
+ *    [ESPRESSO_EVENTS limit=5]
+ *    [ESPRESSO_EVENTS css_class="my-custom-class"]
+ *    [ESPRESSO_EVENTS month="April 2014"]
+ *    [ESPRESSO_EVENTS show_expired=true]
+ *    [ESPRESSO_EVENTS category_slug="free-events"]
+ *    [ESPRESSO_EVENTS order_by="start_date,id"]
+ *    [ESPRESSO_EVENTS sort="ASC"]
+ *    [ESPRESSO_EVENTS show_title=true]
  *
  * @package       Event Espresso
  * @author        Brent Christensen
@@ -119,6 +130,7 @@ class EspressoEvents extends EspressoShortcode
                     'category_slug' => '',
                     'order_by'      => 'start_date',
                     'sort'          => 'ASC',
+                    'show_title'    => true,
                 )
             ),
             $attributes

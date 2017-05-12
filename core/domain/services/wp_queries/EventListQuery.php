@@ -59,6 +59,11 @@ class EventListQuery extends WP_Query
      */
     private $sort;
 
+    /**
+     * @var boolean $show_title
+     */
+    private $show_title = true;
+
 
 
     /**
@@ -119,11 +124,19 @@ class EventListQuery extends WP_Query
     {
         // first off, let's remove any filters from previous queries
         remove_filter(
+            'FHEE__archive_espresso_events_template__show_header',
+            array($this, 'show_event_list_title')
+        );
+        remove_filter(
             'FHEE__archive_espresso_events_template__upcoming_events_h1',
             array($this, 'event_list_title')
         );
         remove_all_filters('FHEE__content_espresso_events__event_class');
         // Event List Title ?
+        add_filter(
+            'FHEE__archive_espresso_events_template__show_header',
+            array($this, 'show_event_list_title')
+        );
         add_filter(
             'FHEE__archive_espresso_events_template__upcoming_events_h1',
             array($this, 'event_list_title'),
@@ -156,6 +169,21 @@ class EventListQuery extends WP_Query
                 'paged'                  => $paged,
                 'offset'                 => ($paged - 1) * $this->limit,
             )
+        );
+    }
+
+
+
+    /**
+     * show_event_list_title
+     *
+     * @return boolean
+     */
+    public function show_event_list_title()
+    {
+        return filter_var(
+            $this->show_title,
+            FILTER_VALIDATE_BOOLEAN
         );
     }
 
