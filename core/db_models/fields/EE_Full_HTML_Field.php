@@ -1,7 +1,6 @@
 <?php
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
-
 /**
  * EE_Full_HTML_Field
  * Any HTML can be stored in this field for any user. Note: regardless of the users'

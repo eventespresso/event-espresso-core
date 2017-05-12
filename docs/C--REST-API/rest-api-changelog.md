@@ -3,10 +3,6 @@
 
 This is a log of client-facing changes made to the EE4 REST API (ie, changes to internal implementations aren't listed here, just changes that affect consumers of the API). For a complete list of changes to EE4, please see [the EE4 changelog](https://eventespresso.com/wiki/ee4-changelog/)
 
-## 4.9.37
-- Added support for `POST`, `PUT`, and `DELETE` requests
-- When returning PHP objects in JSON format, `null` is returned instead of trying to typecast the object to a JSON array
-
 ## 4.9.18
 - Added support for `force_show_ee_namespace` query parameter in order to show different EE namespaces in the WP Index
 

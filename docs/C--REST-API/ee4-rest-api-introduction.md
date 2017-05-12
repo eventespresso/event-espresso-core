@@ -12,18 +12,6 @@ Example applications of the EE4 REST API could include:
 
 If you'd like a more hands-on tutorial, checkout [Building an EE4 Addon that uses Angular.js and the EE4 REST API](building-an-ee4-addon-that-uses-angular-js-and-the-ee4-json-rest-api.md).
 
-## Development
-While developing with the EE4 REST API, it is recommended you define the following inside WordPress's `wp-config.php` file:
-
-```php
-define('EE_REST_API_DEBUG_MODE',true);
-```
-
-This will help make sure you are made aware of any warnings or errors that happen, and it will also ensure that if you add any new endpoints, they will be made available immediately (otherwise we 
-cache our registered routes, and only refresh the cache on updates or reactivations of EE). 
-
-Live sites, on the other hand, should set this to `false`, to improve speed, and avoid showing error messages to site visitors.
-
 ## Authentication
 
 Some of the EE4 REST API data is public and requires no authentication, but much of it is protected and requires authentication. Because the EE4 REST API is built on the WP REST API, the authentication process is identical: once you authenticate with the WP JSON REST API, you are also authenticated with the EE4 JSON REST API. So we suggest you [read their documentation on authentication](https://developer.wordpress.org/rest-api/using-the-rest-api/authentication/).

@@ -237,17 +237,6 @@ class EEH_Inflector{
         return str_replace(' ', '', ucwords(preg_replace('/[^A-Z^a-z^0-9]+/', ' ', $word)));
     }
 
-
-
-    /**
-     * Camelizes all but the first word. This is handy converting a method which followed EE4 legacy naming convention
-     * with the new PSR-based naming conventions
-     * @param $word
-     * @return string
-     */
-    public static function camelize_all_but_first($word){
-        return lcfirst(EEH_Inflector::camelize($word));
-    }
     // }}}
     // {{{ underscore()
 

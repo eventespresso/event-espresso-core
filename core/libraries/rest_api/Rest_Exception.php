@@ -17,34 +17,26 @@ if (! defined('EVENT_ESPRESSO_VERSION')) {
 
 
 
-class RestException extends \EE_Error
+class Rest_Exception extends \EE_Error
 {
 
     /**
      * @var array
      */
-    protected $wp_error_data = array();
+    protected $_wp_error_data = array();
 
-    protected $wp_error_code = '';
+    protected $_wp_error_code = '';
 
 
 
     public function __construct($string_code, $message, $wp_error_data = array(), $previous = null)
     {
-        if (is_array($wp_error_data)
-            && isset($wp_error_data['status'])
-        ) {
-            $http_status_number = $wp_error_data['status'];
-        } else {
-            $http_status_number = 500;
-        }
         parent::__construct(
             $message,
-            $http_status_number,
-            $previous
-        );
-        $this->wp_error_data = $wp_error_data;
-        $this->wp_error_code = $string_code;
+            500,
+            $previous);
+        $this->_wp_error_data = $wp_error_data;
+        $this->_wp_error_code = $string_code;
     }
 
 
@@ -54,9 +46,9 @@ class RestException extends \EE_Error
      *
      * @return array
      */
-    public function getData()
+    public function get_data()
     {
-        return $this->wp_error_data;
+        return $this->_wp_error_data;
     }
 
 
@@ -66,8 +58,8 @@ class RestException extends \EE_Error
      *
      * @return string
      */
-    public function getStringCode()
+    public function get_string_code()
     {
-        return $this->wp_error_code;
+        return $this->_wp_error_code;
     }
 }

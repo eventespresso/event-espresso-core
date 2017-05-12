@@ -25,9 +25,6 @@ There are a few endpoints in the EE4 REST API that really don't follow the REST 
 - [EE4 REST API: RPC Style Endpoints Table of Contents](ee4-rest-api-rpc-style-endpoints.md)
 - [/checkin](ee4-rest-api-rpc-checkin.md)
 
-### Write Endpoints
-
-- [EE4 REST API: WRITE endpoints](ee4-rest-api-writing-data.md) (POST, PUT, and DELETE requests)
 ### Libraries/Tools
 
 There are some handy libraries and tools that have been built that integrate with the REST API.

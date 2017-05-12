@@ -1,12 +1,11 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api;
 
-use EEM_Base;
 use EventEspresso\core\libraries\rest_api\controllers\Base;
-use EEH_Inflector;
+use EventEspresso\core\libraries\rest_api\Rest_Exception;
 
 /**
- * Class CalculatedModelFields
+ * Class Calculationshelpers
  * Class for defining which model fields can be calculated, and performing those calculations
  * as requested
  *
@@ -21,13 +20,13 @@ if (! defined('EVENT_ESPRESSO_VERSION')) {
 
 
 
-class CalculatedModelFields
+class Calculated_Model_Fields
 {
 
     /**
      * @var array
      */
-    protected $mapping;
+    protected $_mapping;
 
 
 
@@ -35,7 +34,7 @@ class CalculatedModelFields
      * @param bool $refresh
      * @return array top-level-keys are model names (eg "Event")
      * next-level are the calculated field names AND method names on classes
-     * which perform calculations, values are the fully qualified classnames which do the calculations
+     * which perform calculations, values are the fully qualified classnames which do the calculationss
      * These callbacks should accept as arguments:
      * the wpdb row results,
      * the WP_Request object,
@@ -43,10 +42,10 @@ class CalculatedModelFields
      */
     public function mapping($refresh = false)
     {
-        if (! $this->mapping || $refresh) {
-            $this->mapping = $this->generateNewMapping();
+        if (! $this->_mapping || $refresh) {
+            $this->_mapping = $this->_generate_new_mapping();
         }
-        return $this->mapping;
+        return $this->_mapping;
     }
 
 
@@ -56,7 +55,7 @@ class CalculatedModelFields
      *
      * @return array
      */
-    protected function generateNewMapping()
+    protected function _generate_new_mapping()
     {
         $rest_api_calculations_namespace = 'EventEspresso\core\libraries\rest_api\calculations\\';
         $event_calculations_class = $rest_api_calculations_namespace . 'Event';
@@ -98,10 +97,10 @@ class CalculatedModelFields
     /**
      * Gets the known calculated fields for model
      *
-     * @param EEM_Base $model
+     * @param \EEM_Base $model
      * @return array allowable values for this field
      */
-    public function retrieveCalculatedFieldsForModel(EEM_Base $model)
+    public function retrieve_calculated_fields_for_model(\EEM_Base $model)
     {
         $mapping = $this->mapping();
         if (isset($mapping[$model->get_this_model_name()])) {
@@ -116,7 +115,7 @@ class CalculatedModelFields
     /**
      * Retrieves the value for this calculation
      *
-     * @param EEM_Base                                                $model
+     * @param \EEM_Base                                               type $model
      * @param string                                                  $field_name
      * @param array                                                   $wpdb_row
      * @param \WP_REST_Request
@@ -124,8 +123,8 @@ class CalculatedModelFields
      * @return mixed|null
      * @throws \EE_Error
      */
-    public function retrieveCalculatedFieldValue(
-        EEM_Base $model,
+    public function retrieve_calculated_field_value(
+        \EEM_Base $model,
         $field_name,
         $wpdb_row,
         $rest_request,
@@ -136,10 +135,9 @@ class CalculatedModelFields
             && isset($mapping[$model->get_this_model_name()][$field_name])
         ) {
             $classname = $mapping[$model->get_this_model_name()][$field_name];
-            $class_method_name = EEH_Inflector::camelize_all_but_first($field_name);
-            return call_user_func(array($classname, $class_method_name), $wpdb_row, $rest_request, $controller);
+            return call_user_func(array($classname, $field_name), $wpdb_row, $rest_request, $controller);
         }
-        throw new RestException(
+        throw new Rest_Exception(
             'calculated_field_does_not_exist',
             sprintf(
                 __('There is no calculated field %1$s on resource %2$s', 'event_espresso'),
