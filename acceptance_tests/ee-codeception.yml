@@ -1,5 +1,2 @@
-external_plugins:
-  - wp-crontrol
-  - organize-series
 core:
-  - Test
+  - BaseCoreAdmin
