@@ -178,7 +178,7 @@ class EEG_Aim extends EE_Onsite_Gateway{
 	 *	@type $exp_year string
 	 *	@see parent::do_direct_payment
 	 * }
-	 * @return EE_Payment updated
+	 * @return EEI_Payment updated
 	 */
 
 	public function do_direct_payment($payment, $billing_info = null) {
@@ -251,17 +251,28 @@ class EEG_Aim extends EE_Onsite_Gateway{
 			$this->type = "AUTH_CAPTURE";
 			$response = $this->_sendRequest($payment);
 			if (!empty($response)){
-				if ($this->_debug_mode) {
-					$txn_id = $response->invoice_number;
-				} else {
-					$txn_id = $response->transaction_id;
-				}
-				$payment_status = $response->approved ? $this->_pay_model->approved_status() : $this->_pay_model->declined_status();
-				$payment->set_status($payment_status);
-				//make sure we interpret the AMT as a float, not an international string (where periods are thousand separators)
-				$payment->set_amount( (float) $response->amount );
-				$payment->set_gateway_response(sprintf("%s (code: %s)",$response->response_reason_text,$response->response_reason_code));
-				$payment->set_txn_id_chq_nmbr( $txn_id );
+				if ($response->error_message) {
+                    $payment->set_status($this->_pay_model->failed_status());
+                    $payment->set_gateway_response($response->error_message);
+                } else {
+                    $payment_status = $response->approved ? $this->_pay_model->approved_status() : $this->_pay_model->declined_status();
+                    $payment->set_status($payment_status);
+                    //make sure we interpret the AMT as a float, not an international string (where periods are thousand separators)
+                    $payment->set_amount( (float) $response->amount );
+                    $payment->set_gateway_response(
+                        sprintf(
+                            esc_html__('%1$s (Reason Code: %2$s)', 'event_espresso'),
+                            $response->response_reason_text,
+                            $response->response_reason_code
+                        )
+                    );
+                    if ($this->_debug_mode) {
+                        $txn_id = $response->invoice_number;
+                    } else {
+                        $txn_id = $response->transaction_id;
+                    }
+                    $payment->set_txn_id_chq_nmbr( $txn_id );
+                }
 				$payment->set_extra_accntng($primary_registrant->reg_code());
 				$payment->set_details(print_r($response,true));
 			} else {
@@ -398,7 +409,7 @@ class EEG_Aim extends EE_Onsite_Gateway{
 	 */
 	private function _log_and_clean_response($response_obj,$payment){
 		$response_obj->account_number = '';
-		$this->log(array('AIM Response received:'=>$response_obj),$payment);
+		$this->log(array('AIM Response received:'=>(array)$response_obj),$payment);
 		return $response_obj;
 	}
 
@@ -478,6 +489,7 @@ class EE_AuthorizeNetAIM_Response {
 	public $requested_amount;
 	public $balance_on_card;
 	public $response; // The response string from AuthorizeNet.
+    public $error_message;
 	private $_response_array = array(); // An array with the split response.
 
 	/**
@@ -508,7 +520,10 @@ class EE_AuthorizeNetAIM_Response {
 			if (count($this->_response_array) < 10) {
 				$this->approved = false;
 				$this->error = true;
-				$this->error_message = "Unrecognized response from AuthorizeNet: $response";
+				$this->error_message = sprintf(
+				    esc_html__('Unrecognized response from Authorize.net: %1$s', 'event_espresso'),
+                    esc_html($response)
+                );
 				return;
 			}
 
@@ -565,22 +580,13 @@ class EE_AuthorizeNetAIM_Response {
 			$this->declined = ($this->response_code === self::DECLINED);
 			$this->error = ($this->response_code === self::ERROR);
 			$this->held = ($this->response_code === self::HELD);
-
-			if ($this->error || $this->declined || $this->held) {
-				$this->error_message = '<p><strong class="credit_card_failure">Attention: your transaction was declined for the following reason(s):</strong><br />' . $this->response_reason_text . '<br /><span class="response_code">Response Code: ' . $this->response_code . '<br /></span><span class="response_subcode">Response Subcode: ' . $this->response_subcode . '</span></p><p>To try again, <a href="#payment_options">please click here</a>.</p> ';
-
-
-				/* $this->error_message = "AuthorizeNet Error:
-				  Response Code: ".$this->response_code."
-				  Response Subcode: ".$this->response_subcode."
-				  Response Reason Code: ".$this->response_reason_code."
-				  Response Reason Text: ".$this->response_reason_text."
-				  "; */
-			}
 		} else {
 			$this->approved = false;
 			$this->error = true;
-			$this->error_message = "Error connecting to AuthorizeNet";
+			$this->error_message = esc_html__(
+			    'Error connecting to Authorize.net',
+                'event_espresso'
+            );
 		}
 	}
 

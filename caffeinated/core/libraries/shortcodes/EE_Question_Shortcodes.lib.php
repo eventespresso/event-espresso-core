@@ -78,7 +78,7 @@ class EE_Question_Shortcodes extends EE_Shortcodes
                     return ''; //get out because we can't figure out what the question is.
                 }
                 
-                return $question->get_pretty('QST_display_text', 'no_wpautop');
+                return $question->get('QST_display_text');
                 break;
             
             case '[ANSWER]' :

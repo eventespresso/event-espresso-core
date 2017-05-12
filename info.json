@@ -5,7 +5,7 @@
   "wpOrgSlug": "event-espresso-decaf",
   "wpOrgMainFileSlug": "espresso",
   "wpOrgUser": "eventespresso",
-  "wpOrgRelease": "4.9.37.p",
+  "wpOrgRelease": "4.9.38.p",
   "name": "Event Espresso Core",
   "archiveBaseUrl": "http:\/\/build.eventespresso.com\/",
   "archiveBasePath": "~\/www\/build\/",
@@ -13,6 +13,7 @@
   "srcBuildFolderName": "event-espresso-core",
   "releaseFilesRemove": [
     "src\/tests\/**",
+	"src\/acceptance_tests\/**",
     "src\/docs\/**",
     "src\/info.json",
     "src\/circle.yml",
