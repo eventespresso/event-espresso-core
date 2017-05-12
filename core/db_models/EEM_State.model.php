@@ -158,6 +158,31 @@ class EEM_State extends EEM_Base {
 		return FALSE;
 	}
 
+
+
+	/**
+	*		delete  a single state from db via their ID
+	*
+	* 		@access		public
+	* 		@param		$STA_ID
+	*		@return 		mixed		array on success, FALSE on fail
+	*/
+	public function delete_by_ID( $STA_ID = FALSE ) {
+
+		if ( ! $STA_ID ) {
+			return FALSE;
+		}
+
+		// retrieve a particular transaction
+		$where_cols_n_values = array( array( 'STA_ID' => $STA_ID ));
+		if ( $answer = $this->delete ( $where_cols_n_values )) {
+			return TRUE;
+		} else {
+			return FALSE;
+		}
+
+	}
+
 	/**
 	 * Gets the state's name by its ID
 	 * @param string $state_ID

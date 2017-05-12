@@ -1,5 +1,5 @@
 <?php
-use EventEspresso\core\libraries\rest_api\ModelDataTranslator;
+use EventEspresso\core\libraries\rest_api\Model_Data_Translator;
 
 if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
 /**
@@ -94,17 +94,17 @@ class EE_Select_Ajax_Model_Rest_Input extends EE_Form_Input_With_Options_Base{
 		);
 		//get resource endpoint
 		$rest_controller = new EventEspresso\core\libraries\rest_api\controllers\model\Read();
-		$rest_controller->setRequestedVersion( EED_Core_Rest_Api::latest_rest_api_version() );
+		$rest_controller->set_requested_version( EED_Core_Rest_Api::latest_rest_api_version() );
 		$default_select2_args = array(
 			'ajax' => array(
-				'url' => $rest_controller->getVersionedLinkTo(
+				'url' => $rest_controller->get_versioned_link_to(
 					EEH_Inflector::pluralize_and_lower( $this->_model_name )
 				),
 				'dataType' => 'json',
 				'delay' => '250',
 				'data_interface' => 'EE_Select2_REST_API_Interface',
 				'data_interface_args' => array(
-					'default_query_params' => (object)ModelDataTranslator::prepareQueryParamsForRestApi(
+					'default_query_params' => (object)Model_Data_Translator::prepare_query_params_for_rest_api(
 						$query_params,
 						$model
 					),

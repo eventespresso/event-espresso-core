@@ -1,7 +1,5 @@
 <?php namespace EventEspresso\core\libraries\rest_api\changes;
 
-use EE_Error;
-
 /*
  * Class for tracking what changes are made to the API and when. It's almost like
  * on-the-fly-migrations.
@@ -31,7 +29,7 @@ use EE_Error;
  * If so, they will be automatically loaded on all rest api requests, and their
  * "set_hooks" method will be called automatically during "rest_api_init"
  */
-abstract class ChangesInBase
+abstract class Changes_In_Base
 {
 
     /**
@@ -39,7 +37,7 @@ abstract class ChangesInBase
      *
      * @var string
      */
-    protected $version = null;
+    protected $_version = null;
 
 
 
@@ -52,7 +50,7 @@ abstract class ChangesInBase
      *
      * @return void
      */
-    abstract public function setHooks();
+    abstract public function set_hooks();
 
 
 
@@ -66,7 +64,7 @@ abstract class ChangesInBase
      * @return boolean true: this class' name indicates its filters and actions
      *                                  should take effect. False: this class' name indicates it shouldn't do anything
      */
-    public function appliesToVersion($requested_version)
+    public function applies_to_version($requested_version)
     {
         if ($this->version() > $requested_version) {
             return true;
@@ -82,20 +80,20 @@ abstract class ChangesInBase
      * by the callbacks of this class.
      *
      * @return string eg "4.8.33"
-     * @throws EE_Error
+     * @throws \EE_Error
      */
     public function version()
     {
-        if ($this->version === null) {
+        if ($this->_version === null) {
             $matches = array();
-            $regex = '~ChangesIn(\d)(\d\d)(\d\d)$~';
+            $regex = '~Changes_In_(.*)_(.*)_(.*)$~';
             $success = preg_match(
                 $regex,
                 get_class($this),
                 $matches
             );
             if (! $success) {
-                throw new EE_Error(
+                throw new \EE_Error(
                     sprintf(
                         __('The class %1$s was misnamed. It name should match the regex "%2$s"', 'event_espresso'),
                         get_class($this),
@@ -103,8 +101,9 @@ abstract class ChangesInBase
                     )
                 );
             }
-            $this->version = (int)$matches[1] . '.' . (int)$matches[2] . '.' . (int)$matches[3];
+            $this->_version = $matches[1] . '.' . $matches[2] . '.' . $matches[3];
         }
-        return $this->version;
+        return $this->_version;
     }
 }
+

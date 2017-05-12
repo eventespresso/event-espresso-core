@@ -3,11 +3,6 @@
 
 This is a log of client-facing changes made to the EE4 REST API (ie, changes to internal implementations aren't listed here, just changes that affect consumers of the API). For a complete list of changes to EE4, please see [the EE4 changelog](https://eventespresso.com/wiki/ee4-changelog/)
 
-## 4.9.38
-- Added support for `POST`ing, `PUT`ing, and `DELETE`ing EE4 model data
-- JSON entities with properties containing PHP objects are REMOVED entirely from responses.
-- Serialized data is no longer accepted when querying
-
 ## 4.9.18
 - Added support for `force_show_ee_namespace` query parameter in order to show different EE namespaces in the WP Index
 
