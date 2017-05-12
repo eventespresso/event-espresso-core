@@ -126,67 +126,67 @@ class EE_Encryption_Test extends EE_UnitTestCase
 
 
     /**
+     * @requires function openssl_encrypt
      * @return void
      * @throws RuntimeException
      */
     public function testOpensslEncryption()
     {
-        if (function_exists('openssl_encrypt')) {
-            // with strings
-            $this->assertEquals(
-                $this->getString(),
-                $this->encryption->openssl_decrypt(
-                    $this->encryption->openssl_encrypt(
-                        $this->getString()
-                    )
+        // with strings
+        $this->assertEquals(
+            $this->getString(),
+            $this->encryption->openssl_decrypt(
+                $this->encryption->openssl_encrypt(
+                    $this->getString()
                 )
-            );
-            // with arrays
-            $this->runEncryptionTest(
-                'openssl_encrypt',
-                'openssl_decrypt',
-                $this->getArrayData()
-            );
-            // with objects
-            $this->runEncryptionTest(
-                'openssl_encrypt',
-                'openssl_decrypt',
-                $this->getObjectData()
-            );
-        }
+            )
+        );
+        // with arrays
+        $this->runEncryptionTest(
+            'openssl_encrypt',
+            'openssl_decrypt',
+            $this->getArrayData()
+        );
+        // with objects
+        $this->runEncryptionTest(
+            'openssl_encrypt',
+            'openssl_decrypt',
+            $this->getObjectData()
+        );
     }
 
 
 
     /**
+     * @requires function mcrypt_encrypt
      * @return void
      * @throws RuntimeException
      */
     public function testMcryptEncryption()
     {
-        if (
-            function_exists('mcrypt_encrypt')
-            && version_compare(PHP_VERSION, '7.1', '<')
-        ) {
-            $this->assertEquals(
-                $this->getString(),
-                $this->encryption->m_decrypt(
-                    $this->encryption->m_encrypt(
-                        $this->getString()
-                    )
-                )
-            );
-            $this->runEncryptionTest(
-                'm_encrypt',
-                'm_decrypt',
-                $this->getArrayData()
-            );
-            $this->runEncryptionTest(
-                'm_encrypt',
-                'm_decrypt',
-                $this->getObjectData()
+        if (version_compare(PHP_VERSION, '7.1', '>=')) {
+            $this->markTestSkipped(
+                'The mcrypt extension is deprecated in PHP version 7.1 and therefore can not be tested.'
             );
         }
+        $this->assertEquals(
+            $this->getString(),
+            $this->encryption->m_decrypt(
+                $this->encryption->m_encrypt(
+                    $this->getString()
+                )
+            )
+        );
+        $this->runEncryptionTest(
+            'm_encrypt',
+            'm_decrypt',
+            $this->getArrayData()
+        );
+        $this->runEncryptionTest(
+            'm_encrypt',
+            'm_decrypt',
+            $this->getObjectData()
+        );
     }
 
 
