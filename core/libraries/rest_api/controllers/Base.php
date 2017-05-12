@@ -1,7 +1,14 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api\controllers;
 
-use EventEspresso\core\libraries\rest_api\Rest_Exception;
+use Exception;
+use WP_Error;
+use WP_REST_Response;
+use EventEspresso\core\libraries\rest_api\RestException;
+
+use EE_Error;
+use EED_Core_Rest_Api;
+use EEH_Inflector;
 
 if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
@@ -20,43 +27,57 @@ if (! defined('EVENT_ESPRESSO_VERSION')) {
 class Base
 {
 
+    /**
+     * @deprecated use all-caps version
+     */
+    // @codingStandardsIgnoreStart
     const header_prefix_for_ee = 'X-EE-';
+    // @codingStandardsIgnoreEnd
 
+    const HEADER_PREFIX_FOR_EE = 'X-EE-';
+
+    /**
+     * @deprecated use all-caps version instead
+     */
+    // @codingStandardsIgnoreStart
     const header_prefix_for_wp = 'X-WP-';
+    // @codingStandardsIgnoreEnd
+
+    const HEADER_PREFIX_FOR_WP = 'X-WP-';
 
     /**
      * Contains debug info we'll send back in the response headers
      *
      * @var array
      */
-    protected $_debug_info = array();
+    protected $debug_info = array();
 
     /**
      * Indicates whether or not the API is in debug mode
      *
      * @var boolean
      */
-    protected $_debug_mode = false;
+    protected $debug_mode = false;
 
     /**
      * Indicates the version that was requested
      *
      * @var string
      */
-    protected $_requested_version;
+    protected $requested_version;
 
     /**
      * flat array of headers to send in the response
      *
      * @var array
      */
-    protected $_response_headers = array();
+    protected $response_headers = array();
 
 
 
     public function __construct()
     {
-        $this->_debug_mode = defined('EE_REST_API_DEBUG_MODE') ? EE_REST_API_DEBUG_MODE : false;
+        $this->debug_mode = defined('EE_REST_API_DEBUG_MODE') ? EE_REST_API_DEBUG_MODE : false;
     }
 
 
@@ -66,9 +87,9 @@ class Base
      *
      * @param string $version eg '4.8'
      */
-    public function set_requested_version($version)
+    public function setRequestedVersion($version)
     {
-        $this->_requested_version = $version;
+        $this->requested_version = $version;
     }
 
 
@@ -79,9 +100,9 @@ class Base
      * @param string       $key
      * @param string|array $info
      */
-    protected function _set_debug_info($key, $info)
+    protected function setDebugInfo($key, $info)
     {
-        $this->_debug_info[$key] = $info;
+        $this->debug_info[$key] = $info;
     }
 
 
@@ -95,15 +116,15 @@ class Base
      * @param boolean      $use_ee_prefix whether to use the EE prefix on the header, or fallback to
      *                                    the standard WP one
      */
-    protected function _set_response_header($header_key, $value, $use_ee_prefix = true)
+    protected function setResponseHeader($header_key, $value, $use_ee_prefix = true)
     {
         if (is_array($value)) {
             foreach ($value as $value_key => $value_value) {
-                $this->_set_response_header($header_key . '[' . $value_key . ']', $value_value);
+                $this->setResponseHeader($header_key . '[' . $value_key . ']', $value_value);
             }
         } else {
-            $prefix = $use_ee_prefix ? Base::header_prefix_for_ee : Base::header_prefix_for_wp;
-            $this->_response_headers[$prefix . $header_key] = $value;
+            $prefix = $use_ee_prefix ? Base::HEADER_PREFIX_FOR_EE : Base::HEADER_PREFIX_FOR_WP;
+            $this->response_headers[$prefix . $header_key] = $value;
         }
     }
 
@@ -114,12 +135,13 @@ class Base
      *
      * @return array
      */
-    protected function _get_response_headers()
+    protected function getResponseHeaders()
     {
-        return apply_filters('FHEE__EventEspresso\core\libraries\rest_api\controllers\Base___get_response_headers',
-            $this->_response_headers,
+        return apply_filters(
+            'FHEE__EventEspresso\core\libraries\rest_api\controllers\Base___get_response_headers',
+            $this->response_headers,
             $this,
-            $this->_requested_version
+            $this->requested_version
         );
     }
 
@@ -128,17 +150,18 @@ class Base
     /**
      * Adds error notices from EE_Error onto the provided \WP_Error
      *
-     * @param \WP_Error $wp_error_response
-     * @return \WP_Error
+     * @param WP_Error $wp_error_response
+     * @return WP_Error
      */
-    protected function _add_ee_errors_to_response(\WP_Error $wp_error_response)
+    protected function addEeErrorsToResponse(WP_Error $wp_error_response)
     {
-        $notices_during_checkin = \EE_Error::get_raw_notices();
+        $notices_during_checkin = EE_Error::get_raw_notices();
         if (! empty($notices_during_checkin['errors'])) {
             foreach ($notices_during_checkin['errors'] as $error_code => $error_message) {
                 $wp_error_response->add(
                     sanitize_key($error_code),
-                    strip_tags($error_message));
+                    strip_tags($error_message)
+                );
             }
         }
         return $wp_error_response;
@@ -153,27 +176,27 @@ class Base
      * what exactly was the Models query that got run, what capabilities came into play, what fields were omitted from
      * the response, others?
      *
-     * @param array|\WP_Error|\Exception $response
-     * @return \WP_REST_Response
+     * @param array|WP_Error|Exception|RestException $response
+     * @return WP_REST_Response
      */
-    public function send_response($response)
+    public function sendResponse($response)
     {
-        if ($response instanceof Rest_Exception) {
-            $response = new \WP_Error($response->get_string_code(), $response->getMessage(), $response->get_data());
+        if ($response instanceof RestException) {
+            $response = new WP_Error($response->getStringCode(), $response->getMessage(), $response->getData());
         }
-        if ($response instanceof \Exception) {
+        if ($response instanceof Exception) {
             $code = $response->getCode() ? $response->getCode() : 'error_occurred';
-            $response = new \WP_Error($code, $response->getMessage());
+            $response = new WP_Error($code, $response->getMessage());
         }
-        if ($response instanceof \WP_Error) {
-            $response = $this->_add_ee_errors_to_response($response);
-            $rest_response = $this->_create_rest_response_from_wp_error($response);
+        if ($response instanceof WP_Error) {
+            $response = $this->addEeErrorsToResponse($response);
+            $rest_response = $this->createRestResponseFromWpError($response);
         } else {
-            $rest_response = new \WP_REST_Response($response, 200);
+            $rest_response = new WP_REST_Response($response, 200);
         }
         $headers = array();
-        if ($this->_debug_mode && is_array($this->_debug_info)) {
-            foreach ($this->_debug_info as $debug_key => $debug_info) {
+        if ($this->debug_mode && is_array($this->debug_info)) {
+            foreach ($this->debug_info as $debug_key => $debug_info) {
                 if (is_array($debug_info)) {
                     $debug_info = wp_json_encode($debug_info);
                 }
@@ -182,8 +205,8 @@ class Base
         }
         $headers = array_merge(
             $headers,
-            $this->_get_response_headers(),
-            $this->_get_headers_from_ee_notices()
+            $this->getResponseHeaders(),
+            $this->getHeadersFromEeNotices()
         );
         $rest_response->set_headers($headers);
         return $rest_response;
@@ -196,10 +219,10 @@ class Base
      * Mostly this is just a copy-and-paste from \WP_REST_Server::error_to_response
      * (which is protected)
      *
-     * @param \WP_Error $wp_error
-     * @return \WP_REST_Response
+     * @param WP_Error $wp_error
+     * @return WP_REST_Response
      */
-    protected function _create_rest_response_from_wp_error(\WP_Error $wp_error)
+    protected function createRestResponseFromWpError(WP_Error $wp_error)
     {
         $error_data = $wp_error->get_error_data();
         if (is_array($error_data) && isset($error_data['status'])) {
@@ -223,7 +246,7 @@ class Base
             array_shift($errors);
             $data['additional_errors'] = $errors;
         }
-        return new \WP_REST_Response($data, $status);
+        return new WP_REST_Response($data, $status);
     }
 
 
@@ -233,17 +256,17 @@ class Base
      *
      * @return array
      */
-    protected function _get_headers_from_ee_notices()
+    protected function getHeadersFromEeNotices()
     {
         $headers = array();
-        $notices = \EE_Error::get_raw_notices();
+        $notices = EE_Error::get_raw_notices();
         foreach ($notices as $notice_type => $sub_notices) {
             if (! is_array($sub_notices)) {
                 continue;
             }
             foreach ($sub_notices as $notice_code => $sub_notice) {
                 $headers['X-EE4-Notices-'
-                         . \EEH_Inflector::humanize($notice_type)
+                         . EEH_Inflector::humanize($notice_type)
                          . '['
                          . $notice_code
                          . ']'] = strip_tags($sub_notice);
@@ -252,7 +275,7 @@ class Base
         return apply_filters(
             'FHEE__EventEspresso\core\libraries\rest_api\controllers\Base___get_headers_from_ee_notices__return',
             $headers,
-            $this->_requested_version,
+            $this->requested_version,
             $notices
         );
     }
@@ -262,22 +285,27 @@ class Base
     /**
      * Finds which version of the API was requested given the route, and returns it.
      * eg in a request to "mysite.com/wp-json/ee/v4.8.29/events/123" this would return
-     * "4.8.29"
+     * "4.8.29".
+     * We should know hte requested version in this model though, so if no route is
+     * provided just use what we set earlier
      *
      * @param string $route
      * @return string
      */
-    public function get_requested_version($route = null)
+    public function getRequestedVersion($route = null)
     {
-        $matches = $this->parse_route(
+        if ($route === null) {
+            return $this->requested_version;
+        }
+        $matches = $this->parseRoute(
             $route,
-            '~' . \EED_Core_Rest_Api::ee_api_namespace_for_regex . '~',
+            '~' . EED_Core_Rest_Api::ee_api_namespace_for_regex . '~',
             array('version')
         );
         if (isset($matches['version'])) {
             return $matches['version'];
         } else {
-            return \EED_Core_Rest_Api::latest_rest_api_version();
+            return EED_Core_Rest_Api::latest_rest_api_version();
         }
     }
 
@@ -297,15 +325,13 @@ class Base
      *                           becomes the first key of the return value, etc. Eg passing in $match_keys of
      *                           array( 'model', 'id' ), will, if the regex is successful, will return
      *                           array( 'model' => 'foo', 'id' => 'bar' )
-     * @throws \EE_Error if it couldn't be parsed
+     * @throws EE_Error if it couldn't be parsed
      */
-    public function parse_route($route, $regex, $match_keys)
+    public function parseRoute($route, $regex, $match_keys)
     {
         $indexed_matches = array();
         $success = preg_match($regex, $route, $matches);
-        if (
-        is_array($matches)
-        ) {
+        if (is_array($matches)) {
             //skip the overall regex match. Who cares
             for ($i = 1; $i <= count($match_keys); $i++) {
                 if (! isset($matches[$i])) {
@@ -316,12 +342,34 @@ class Base
             }
         }
         if (! $success) {
-            throw new \EE_Error(
+            throw new EE_Error(
                 __('We could not parse the URL. Please contact Event Espresso Support', 'event_espresso'),
                 'endpoint_parsing_error'
             );
         }
         return $indexed_matches;
+    }
+
+
+
+    /**
+     * Gets the body's params (either from JSON or parsed body), which EXCLUDES the GET params and URL params
+     *
+     * @param \WP_REST_Request $request
+     * @return array
+     */
+    protected function getBodyParams(\WP_REST_Request $request)
+    {
+        //$request->get_params();
+        return array_merge(
+            (array)$request->get_body_params(),
+            (array)$request->get_json_params()
+        );
+        // return array_diff_key(
+        //    $request->get_params(),
+        //     $request->get_url_params(),
+        //     $request->get_query_params()
+        // );
     }
 }
 

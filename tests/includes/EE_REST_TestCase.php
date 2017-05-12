@@ -14,6 +14,10 @@ abstract class EE_REST_TestCase extends EE_UnitTestCase
 
     public function setUp()
     {
+        //let's know about any errors
+        if (!defined('EE_REST_API_DEBUG_MODE')) {
+            define('EE_REST_API_DEBUG_MODE', true);
+        }
         parent::setUp();
         if (! class_exists('WP_Rest_Request')
             || ! class_exists('Spy_REST_Server')) {
