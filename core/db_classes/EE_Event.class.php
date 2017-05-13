@@ -248,6 +248,24 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 
 
     /**
+     * get all unexpired untrashed tickets
+     *
+     * @return bool|EE_Ticket[]
+     * @throws EE_Error
+     */
+    public function active_tickets()
+    {
+        return $this->tickets(array(
+            array(
+                'TKT_end_date' => array('>=', EEM_Ticket::instance()->current_time_for_query('TKT_end_date')),
+                'TKT_deleted'  => false,
+            ),
+        ));
+    }
+
+
+
+    /**
      * @return bool
      * @throws \EE_Error
      */
@@ -860,6 +878,33 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 
 
     /**
+     * calculate spaces remaining based on "saleable" tickets
+     *
+     * @param array $tickets
+     * @return int
+     * @throws EE_Error
+     */
+    public function spaces_remaining($tickets = array())
+    {
+        // get all unexpired untrashed tickets if nothing was passed
+        $tickets = ! empty($tickets) ? $tickets : $this->active_tickets();
+        // set initial value
+        $spaces_remaining = 0;
+        foreach ($tickets as $ticket) {
+            if ($ticket instanceof EE_Ticket) {
+                $spaces_remaining += $ticket->qty('saleable');
+            }
+        }
+        return (int) apply_filters(
+            'FHEE_EE_Event__spaces_remaining',
+            $spaces_remaining,
+            $this,
+            $tickets
+        );
+    }
+
+
+    /**
      *    perform_sold_out_status_check
      *    checks all of this events's datetime  reg_limit - sold values to determine if ANY datetimes have spaces available...
      *    if NOT, then the event status will get toggled to 'sold_out'
@@ -871,29 +916,12 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     public function perform_sold_out_status_check()
     {
         // get all unexpired untrashed tickets
-        $tickets = $this->tickets(array(
-            array(
-                'TKT_end_date' => array('>=', EEM_Ticket::instance()->current_time_for_query('TKT_end_date')),
-                'TKT_deleted'  => false,
-            ),
-        ));
+        $tickets = $this->active_tickets();
         // if all the tickets are just expired, then don't update the event status to sold out
         if (empty($tickets)) {
             return true;
         }
-        // set initial value
-        $spaces_remaining = 0;
-        foreach ($tickets as $ticket) {
-            if ($ticket instanceof EE_Ticket) {
-                $spaces_remaining += $ticket->qty('saleable');
-            }
-        }
-        $spaces_remaining = apply_filters(
-            'FHEE_EE_Event__perform_sold_out_status_check__spaces_remaining',
-            $spaces_remaining,
-            $this,
-            $tickets
-        );
+        $spaces_remaining = $this->spaces_remaining($tickets);
         if ($spaces_remaining < 1) {
             $this->set_status(EEM_Event::sold_out);
             $this->save();
@@ -937,16 +965,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
             return 0;
         }
         //subtract total approved registrations from spaces available to get how many are remaining.
-        $spots_taken = EEM_Registration::instance()->count(
-            array(
-                array(
-                    'EVT_ID' => $this->ID(),
-                    'STS_ID' => EEM_Registration::status_id_approved,
-                ),
-            ),
-            'REG_ID',
-            true
-        );
+        $spots_taken = EEM_Registration::instance()->event_reg_count_for_status($this);
         $spaces_remaining = $spaces_available - $spots_taken;
         return $spaces_remaining > 0 ? $spaces_remaining : 0;
     }
