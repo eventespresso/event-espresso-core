@@ -884,7 +884,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
      * @return int
      * @throws EE_Error
      */
-    public function spaces_remaining($tickets = array())
+    public function spaces_remaining($tickets = array(), $filtered = true)
     {
         // get all unexpired untrashed tickets if nothing was passed
         $tickets = ! empty($tickets) ? $tickets : $this->active_tickets();
@@ -895,12 +895,14 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
                 $spaces_remaining += $ticket->qty('saleable');
             }
         }
-        return (int) apply_filters(
-            'FHEE_EE_Event__spaces_remaining',
-            $spaces_remaining,
-            $this,
-            $tickets
-        );
+        return $filtered
+            ? (int) apply_filters(
+                'FHEE_EE_Event__spaces_remaining',
+                $spaces_remaining,
+                $this,
+                $tickets
+            )
+            : $spaces_remaining;
     }
 
 

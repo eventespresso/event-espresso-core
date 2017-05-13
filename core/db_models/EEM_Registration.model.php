@@ -190,6 +190,29 @@ class EEM_Registration extends EEM_Soft_Delete_Base
 
 
     /**
+     * a filterable list of registration statuses
+     *
+     * @return array
+     */
+    public static function reg_statuses()
+    {
+        return apply_filters(
+            'FHEE__EEM_Registration__reg_statuses',
+            array(
+                EEM_Registration::status_id_approved,
+                EEM_Registration::status_id_pending_payment,
+                EEM_Registration::status_id_wait_list,
+                EEM_Registration::status_id_not_approved,
+                EEM_Registration::status_id_incomplete,
+                EEM_Registration::status_id_cancelled,
+                EEM_Registration::status_id_declined,
+            )
+        );
+    }
+
+
+
+    /**
      * reg_statuses_that_allow_payment
      * a filterable list of registration statuses that allow a registrant to make a payment
      *
@@ -780,6 +803,35 @@ class EEM_Registration extends EEM_Soft_Delete_Base
     }
 
 
+
+    /**
+     * returns a count of registrations for the supplied event having the status as specified
+     *
+     * @param EE_Event $event
+     * @param string   $status
+     * @return int
+     * @throws EE_Error
+     */
+    public function event_reg_count_for_status(EE_Event $event, $status = EEM_Registration::status_id_approved)
+    {
+        $status = in_array(
+            $status,
+            EEM_Registration::reg_statuses(),
+            true
+        )
+            ? $status
+            : EEM_Registration::status_id_approved;
+        return $this->count(
+            array(
+                array(
+                    'EVT_ID' => $event->ID(),
+                    'STS_ID' => $status,
+                ),
+            ),
+            'REG_ID',
+            true
+        );
+    }
 
 }
 // End of file EEM_Registration.model.php
