@@ -4553,12 +4553,13 @@ abstract class EEM_Base extends EE_Base
      * fields
      *
      * @param string $fieldName
+     * @param boolean $include_db_only_fields
      * @throws EE_Error
      * @return EE_Model_Field_Base
      */
-    public function field_settings_for($fieldName)
+    public function field_settings_for($fieldName, $include_db_only_fields = true)
     {
-        $fieldSettings = $this->field_settings(true);
+        $fieldSettings = $this->field_settings($include_db_only_fields);
         if (! array_key_exists($fieldName, $fieldSettings)) {
             throw new EE_Error(sprintf(__("There is no field/column '%s' on '%s'", 'event_espresso'), $fieldName,
                 get_class($this)));
