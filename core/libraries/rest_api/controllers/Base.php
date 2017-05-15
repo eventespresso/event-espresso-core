@@ -78,6 +78,8 @@ class Base
     public function __construct()
     {
         $this->debug_mode = defined('EE_REST_API_DEBUG_MODE') ? EE_REST_API_DEBUG_MODE : false;
+        //we are handling a REST request. Don't show a fancy HTML error message is any error comes up
+        add_filter('FHEE__EE_Error__get_error__show_normal_exceptions', '__return_true');
     }
 
 
