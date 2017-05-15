@@ -10,8 +10,6 @@ use Page\MessagesAdmin as MessagesPage;
  */
 trait MessagesAdmin
 {
-    use BaseCoreAdmin;
-
     /**
      * @param string $additional_params Any additional request parameters for the generated url should be included as
      *                                  a string.
