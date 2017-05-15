@@ -60,19 +60,19 @@ class Custom_Messages_Template_List_Table extends EE_Admin_List_Table
     protected function _set_properties()
     {
         $this->_wp_list_args = array(
-            'singular' => __('Message Template Group', 'event_espresso'),
-            'plural'   => __('Message Template', 'event_espresso'),
+            'singular' => esc_html__('Message Template Group', 'event_espresso'),
+            'plural'   => esc_html__('Message Template', 'event_espresso'),
             'ajax'     => true, //for now,
             'screen'   => $this->get_admin_page()->get_current_screen()->id,
         );
 
         $this->_columns = array(
             'cb'           => '<input type="checkbox" />',
-            'name'         => __('Template Name', 'event_espresso'),
-            'message_type' => __('Message Type', 'event_espresso'),
-            'messenger'    => __('Messenger', 'event_espresso'),
-            'description'  => __('Description', 'event_espresso'),
-            'events'       => __('Events', 'event_espresso'),
+            'name'         => esc_html__('Template Name', 'event_espresso'),
+            'message_type' => esc_html__('Message Type', 'event_espresso'),
+            'messenger'    => esc_html__('Messenger', 'event_espresso'),
+            'description'  => esc_html__('Description', 'event_espresso'),
+            'events'       => esc_html__('Events', 'event_espresso'),
             //count of events using this template.
             'actions'      => ''
         );
@@ -166,7 +166,7 @@ class Custom_Messages_Template_List_Table extends EE_Admin_List_Table
     {
         if ($this->_view !== 'trashed') {
             printf(
-                __(
+                esc_html__(
                     '%sNo Custom Templates found.%s To create your first custom message template, go to the "Default Message Templates" tab and click the "Create Custom" button next to the template you want to use as a base for the new one.',
                     'event_espresso'
                 ),
@@ -229,7 +229,7 @@ class Custom_Messages_Template_List_Table extends EE_Admin_List_Table
             return sprintf(
                 '<p><a href="%s" class="button button-small">%s</a></p>',
                 $create_link,
-                __('Create Custom', 'event_espresso')
+                esc_html__('Create Custom', 'event_espresso')
             );
         }
         return '';
@@ -257,7 +257,7 @@ class Custom_Messages_Template_List_Table extends EE_Admin_List_Table
             )
         ) {
             $edit_lnk_url    = EE_Admin_Page::add_query_args_and_nonce(array(
-                'action' => 'edit_message_template',
+                'action' => 'edit_m`es`sage_template',
                 'id'     => $item->GRP_ID(),
             ), EE_MSG_ADMIN_URL);
             $actions['edit'] = '<a href="' . $edit_lnk_url . '"'
@@ -265,7 +265,7 @@ class Custom_Messages_Template_List_Table extends EE_Admin_List_Table
                                . ' title="'
                                . esc_attr__('Edit Template', 'event_espresso')
                                . '">'
-                               . __('Edit', 'event_espresso')
+                               . esc_html__('Edit', 'event_espresso')
                                . '</a>';
         }
 
@@ -311,7 +311,7 @@ class Custom_Messages_Template_List_Table extends EE_Admin_List_Table
                                 . '" title="'
                                 . esc_attr__('Move Template Group to Trash', 'event_espresso')
                                 . '">'
-                                . __('Move to Trash', 'event_espresso')
+                                . esc_html__('Move to Trash', 'event_espresso')
                                 . '</a>';
         } else {
             if (EE_Registry::instance()->CAP->current_user_can(
@@ -324,7 +324,7 @@ class Custom_Messages_Template_List_Table extends EE_Admin_List_Table
                                       . '" title="'
                                       . esc_attr__('Restore Message Template', 'event_espresso')
                                       . '">'
-                                      . __('Restore', 'event_espresso') . '</a>';
+                                      . esc_html__('Restore', 'event_espresso') . '</a>';
             }
 
             if ($this->_view == 'trashed'
@@ -338,7 +338,7 @@ class Custom_Messages_Template_List_Table extends EE_Admin_List_Table
                                      . '" title="'
                                      . esc_attr__('Delete Template Group Permanently', 'event_espresso')
                                      . '">'
-                                     . __('Delete Permanently', 'event_espresso')
+                                     . esc_html__('Delete Permanently', 'event_espresso')
                                      . '</a>';
             }
         }
@@ -383,7 +383,7 @@ class Custom_Messages_Template_List_Table extends EE_Admin_List_Table
                            $item->ID()
                        )
             ? sprintf(
-                __('<strong>%s:</strong> ', 'event_espresso'),
+                '<strong>%s:</strong> ',
                 ucwords($c_label['plural'])
             )
               . implode(' | ', $ctxt)
