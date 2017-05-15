@@ -1,19 +1,7 @@
 <?php
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('NO direct script access allowed');
-}
+defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed');
 
 /**
- * Event Espresso
- * Event Registration and Management Plugin for WordPress
- *
- * @package         Event Espresso
- * @author          Seth Shoultes
- * @copyright    (c)2009-2012 Event Espresso All Rights Reserved.
- * @license         http://eventespresso.com/support/terms-conditions/  *see Plugin Licensing *
- * @link            http://www.eventespresso.com
- * @version         4.0
- * ------------------------------------------------------------------------
  * Messages_Template_List_Table
  * extends EE_Admin_List_Table class
  * @package         Event Espresso
@@ -24,7 +12,11 @@ if (! defined('EVENT_ESPRESSO_VERSION')) {
 class Custom_Messages_Template_List_Table extends EE_Admin_List_Table
 {
 
-
+    /**
+     * Custom_Messages_Template_List_Table constructor.
+     *
+     * @param EE_Admin_Page $admin_page
+     */
     public function __construct($admin_page)
     {
         //Set parent defaults
@@ -40,16 +32,31 @@ class Custom_Messages_Template_List_Table extends EE_Admin_List_Table
         return $this->_admin_page;
     }
 
-
+    /**
+     * Setup initial data.
+     */
     protected function _setup_data()
     {
-        $this->_data           = $this->get_admin_page()->get_message_templates($this->_per_page, $this->_view, false,
-            false, false);
-        $this->_all_data_count = $this->get_admin_page()->get_message_templates($this->_per_page, $this->_view, true,
-            true, false);
+        $this->_data           = $this->get_admin_page()->get_message_templates(
+            $this->_per_page,
+            $this->_view,
+            false,
+            false,
+            false
+        );
+        $this->_all_data_count = $this->get_admin_page()->get_message_templates(
+            $this->_per_page,
+            $this->_view,
+            true,
+            true,
+            false
+        );
     }
 
 
+    /**
+     * Set initial properties
+     */
     protected function _set_properties()
     {
         $this->_wp_list_args = array(
@@ -68,12 +75,10 @@ class Custom_Messages_Template_List_Table extends EE_Admin_List_Table
             'events'       => __('Events', 'event_espresso'),
             //count of events using this template.
             'actions'      => ''
-            //'messages_sent' => __( 'Total Sent', 'event_espresso' ) //todo this will come later when we've got message tracking in place.
         );
 
         $this->_sortable_columns = array(
             'messenger' => array('MTP_messenger' => true),
-            //'message_type' => array( 'MTP_message_type' => FALSE )
         );
 
         $this->_hidden_columns = array();
@@ -134,11 +139,19 @@ class Custom_Messages_Template_List_Table extends EE_Admin_List_Table
     }
 
 
+    /**
+     * Set the view counts on the _views property
+     */
     protected function _add_view_counts()
     {
         foreach ($this->_views as $view => $args) {
-            $this->_views[$view]['count'] = $this->get_admin_page()->get_message_templates($this->_per_page, $view,
-                true, true, false);
+            $this->_views[$view]['count'] = $this->get_admin_page()->get_message_templates(
+                $this->_per_page,
+                $view,
+                true,
+                true,
+                false
+            );
         }
     }
 
@@ -152,37 +165,60 @@ class Custom_Messages_Template_List_Table extends EE_Admin_List_Table
     public function no_items()
     {
         if ($this->_view !== 'trashed') {
-            printf(__('%sNo Custom Templates found.%s To create your first custom message template, go to the "Default Message Templates" tab and click the "Create Custom" button next to the template you want to use as a base for the new one.',
-                'event_espresso'), '<strong>', '</strong>');
+            printf(
+                __(
+                    '%sNo Custom Templates found.%s To create your first custom message template, go to the "Default Message Templates" tab and click the "Create Custom" button next to the template you want to use as a base for the new one.',
+                    'event_espresso'
+                ),
+                '<strong>',
+                '</strong>'
+            );
         } else {
             parent::no_items();
         }
     }
 
 
+    /**
+     * @param EE_Message_Template_Group $item
+     * @return string
+     */
     public function column_cb($item)
     {
         return sprintf('<input type="checkbox" name="checkbox[%s] value="1" />', $item->GRP_ID());
     }
 
 
+    /**
+     * @param EE_Message_Template_Group $item
+     * @return string
+     */
     function column_name($item)
     {
         return '<p>' . $item->name() . '</p>';
     }
 
 
+    /**
+     * @param EE_Message_Template_Group $item
+     * @return string
+     */
     function column_description($item)
     {
         return '<p>' . $item->description() . '</p>';
     }
 
 
+    /**
+     * @param EE_Message_Template_Group $item
+     * @return string
+     */
     function column_actions($item)
     {
-        if (EE_Registry::instance()->CAP->current_user_can('ee_edit_messages',
-            'espresso_messages_add_new_message_template')
-        ) {
+        if (EE_Registry::instance()->CAP->current_user_can(
+            'ee_edit_messages',
+            'espresso_messages_add_new_message_template'
+        )) {
             $create_args = array(
                 'GRP_ID'       => $item->ID(),
                 'messenger'    => $item->messenger(),
@@ -190,39 +226,64 @@ class Custom_Messages_Template_List_Table extends EE_Admin_List_Table
                 'action'       => 'add_new_message_template',
             );
             $create_link = EE_Admin_Page::add_query_args_and_nonce($create_args, EE_MSG_ADMIN_URL);
-            return sprintf('<p><a href="%s" class="button button-small">%s</a></p>', $create_link,
-                __('Create Custom', 'event_espresso'));
+            return sprintf(
+                '<p><a href="%s" class="button button-small">%s</a></p>',
+                $create_link,
+                __('Create Custom', 'event_espresso')
+            );
         }
         return '';
     }
 
 
-    /*function column_cb($item) {
-        return sprintf( '<input type="checkbox" name="checkbox[%1$s]" />', $item->GRP_ID() );
-    }/**/
-
+    /**
+     * Return the content for the messenger column
+     * @param EE_Message_Template_Group $item
+     * @return string
+     */
     function column_messenger($item)
     {
 
         //Build row actions
         $actions = array();
+        $edit_lnk_url = '';
 
         // edit link but only if item isn't trashed.
-        if (! $item->get('MTP_deleted') && EE_Registry::instance()->CAP->current_user_can('ee_edit_message',
-                'espresso_messages_edit_message_template', $item->ID())
+        if (! $item->get('MTP_deleted')
+            && EE_Registry::instance()->CAP->current_user_can(
+                'ee_edit_message',
+                'espresso_messages_edit_message_template',
+                $item->ID()
+            )
         ) {
             $edit_lnk_url    = EE_Admin_Page::add_query_args_and_nonce(array(
                 'action' => 'edit_message_template',
                 'id'     => $item->GRP_ID(),
             ), EE_MSG_ADMIN_URL);
-            $actions['edit'] = '<a href="' . $edit_lnk_url . '" title="' . esc_attr__('Edit Template',
-                    'event_espresso') . '">' . __('Edit', 'event_espresso') . '</a>';
+            $actions['edit'] = '<a href="'
+                               . $edit_lnk_url
+                               . '" title="'
+                               . esc_attr__('Edit Template', 'event_espresso')
+                               . '">'
+                               . __('Edit', 'event_espresso')
+                               . '</a>';
         }
 
-        $name_link     = ! $item->get('MTP_deleted') && EE_Registry::instance()->CAP->current_user_can('ee_edit_message',
-            'espresso_messages_edit_message_template',
-            $item->ID()) ? '<a href="' . $edit_lnk_url . '" title="' . esc_attr__('Edit Template',
-                'event_espresso') . '">' . ucwords($item->messenger_obj()->label['singular']) . '</a>' : ucwords($item->messenger_obj()->label['singular']);
+        $name_link     = ! $item->get('MTP_deleted')
+                         && EE_Registry::instance()->CAP->current_user_can(
+                             'ee_edit_message',
+                             'espresso_messages_edit_message_template',
+                             $item->ID()
+                         )
+                        && $edit_lnk_url
+            ? '<a href="'
+              . $edit_lnk_url
+              . '" title="'
+              . esc_attr__('Edit Template', 'event_espresso')
+              . '">'
+              . ucwords($item->messenger_obj()->label['singular'])
+              . '</a>'
+            : ucwords($item->messenger_obj()->label['singular']);
         $trash_lnk_url = EE_Admin_Page::add_query_args_and_nonce(array('action'   => 'trash_message_template',
                                                                        'id'       => $item->GRP_ID(),
                                                                        'noheader' => true,
@@ -238,24 +299,47 @@ class Custom_Messages_Template_List_Table extends EE_Admin_List_Table
                                                                         'noheader' => true,
         ), EE_MSG_ADMIN_URL);
 
-        if (! $item->get('MTP_deleted') && EE_Registry::instance()->CAP->current_user_can('ee_delete_message',
-                'espresso_messages_trash_message_template', $item->ID())
+        if (! $item->get('MTP_deleted')
+            && EE_Registry::instance()->CAP->current_user_can(
+                'ee_delete_message',
+                'espresso_messages_trash_message_template',
+                $item->ID()
+            )
         ) {
-            $actions['trash'] = '<a href="' . $trash_lnk_url . '" title="' . esc_attr__('Move Template Group to Trash',
-                    'event_espresso') . '">' . __('Move to Trash', 'event_espresso') . '</a>';
+            $actions['trash'] = '<a href="'
+                                . $trash_lnk_url
+                                . '" title="'
+                                . esc_attr__('Move Template Group to Trash', 'event_espresso')
+                                . '">'
+                                . __('Move to Trash', 'event_espresso')
+                                . '</a>';
         } else {
-            if (EE_Registry::instance()->CAP->current_user_can('ee_delete_message',
-                'espresso_messages_restore_message_template', $item->ID())
-            ) {
-                $actions['restore'] = '<a href="' . $restore_lnk_url . '" title="' . esc_attr__('Restore Message Template',
-                        'event_espresso') . '">' . __('Restore', 'event_espresso') . '</a>';
+            if (EE_Registry::instance()->CAP->current_user_can(
+                'ee_delete_message',
+                'espresso_messages_restore_message_template',
+                $item->ID()
+            )) {
+                $actions['restore'] = '<a href="'
+                                      . $restore_lnk_url
+                                      . '" title="'
+                                      . esc_attr__('Restore Message Template', 'event_espresso')
+                                      . '">'
+                                      . __('Restore', 'event_espresso') . '</a>';
             }
 
-            if ($this->_view == 'trashed' && EE_Registry::instance()->CAP->current_user_can('ee_delete_message',
-                    'espresso_messages_delete_message_template', $item->ID())
-            ) {
-                $actions['delete'] = '<a href="' . $delete_lnk_url . '" title="' . esc_attr__('Delete Template Group Permanently',
-                        'event_espresso') . '">' . __('Delete Permanently', 'event_espresso') . '</a>';
+            if ($this->_view == 'trashed'
+                && EE_Registry::instance()->CAP->current_user_can(
+                    'ee_delete_message',
+                    'espresso_messages_delete_message_template',
+                    $item->ID()
+                )) {
+                $actions['delete'] = '<a href="'
+                                     . $delete_lnk_url
+                                     . '" title="'
+                                     . esc_attr__('Delete Template Group Permanently', 'event_espresso')
+                                     . '">'
+                                     . __('Delete Permanently', 'event_espresso')
+                                     . '</a>';
             }
         }
 
@@ -265,26 +349,49 @@ class Custom_Messages_Template_List_Table extends EE_Admin_List_Table
         $ctxt              = array();
         $context_templates = $item->context_templates();
         foreach ($context_templates as $context => $template_fields) {
-            $mtp_to        = ! empty($context_templates[$context]['to']) && $context_templates[$context]['to'] instanceof EE_Message_Template ? $context_templates[$context]['to']->get('MTP_content') : null;
-            $inactive      = empty($mtp_to) && ! empty($context_templates[$context]['to']) ? ' class="mtp-inactive"' : '';
+            $mtp_to        = ! empty($context_templates[$context]['to'])
+                             && $context_templates[$context]['to'] instanceof EE_Message_Template
+                ? $context_templates[$context]['to']->get('MTP_content')
+                : null;
+            $inactive      = empty($mtp_to) && ! empty($context_templates[$context]['to'])
+                ? ' class="mtp-inactive"'
+                : '';
             $context_title = ucwords($c_configs[$context]['label']);
             $edit_link     = EE_Admin_Page::add_query_args_and_nonce(array('action'  => 'edit_message_template',
                                                                            'id'      => $item->GRP_ID(),
                                                                            'context' => $context,
             ), EE_MSG_ADMIN_URL);
-            $ctxt[]        = EE_Registry::instance()->CAP->current_user_can('ee_edit_message',
+            $ctxt[]        = EE_Registry::instance()->CAP->current_user_can(
+                'ee_edit_message',
                 'espresso_messages_edit_message_template',
-                $item->ID()) ? '<a' . $inactive . ' href="' . $edit_link . '" title="' . esc_attr__('Edit Context',
-                    'event_espresso') . '">' . $context_title . '</a>' : $context_title;
+                $item->ID()
+            )
+                ? '<a'
+                  . $inactive
+                  . ' href="' . $edit_link . '"'
+                  . ' title="' . esc_attr__('Edit Context', 'event_espresso') . '">'
+                  . $context_title
+                  . '</a>'
+                : $context_title;
         }
 
-        $ctx_content = ! $item->get('MTP_deleted') && EE_Registry::instance()->CAP->current_user_can('ee_edit_message',
-            'espresso_messages_edit_message_template', $item->ID()) ? sprintf(__('<strong>%s:</strong> ',
-                'event_espresso'), ucwords($c_label['plural'])) . implode(' | ', $ctxt) : '';
+        $ctx_content = ! $item->get('MTP_deleted')
+                       && EE_Registry::instance()->CAP->current_user_can(
+                           'ee_edit_message',
+                           'espresso_messages_edit_message_template',
+                           $item->ID()
+                       )
+            ? sprintf(
+                __('<strong>%s:</strong> ', 'event_espresso'),
+                ucwords($c_label['plural'])
+            )
+              . implode(' | ', $ctxt)
+            : '';
 
 
         //Return the name contents
-        return sprintf('%1$s <span style="color:silver">(id:%2$s)</span><br />%3$s%4$s',
+        return sprintf(
+            '%1$s <span style="color:silver">(id:%2$s)</span><br />%3$s%4$s',
             /* $1%s */
             $name_link,
             /* $2%s */
@@ -300,7 +407,7 @@ class Custom_Messages_Template_List_Table extends EE_Admin_List_Table
      * column_events
      * This provides a count of events using this custom template
      *
-     * @param  array $item message_template group data
+     * @param  EE_Message_Template_Group $item message_template group data
      * @return string column output
      */
     function column_events($item)
@@ -311,19 +418,12 @@ class Custom_Messages_Template_List_Table extends EE_Admin_List_Table
     /**
      * column_message_type
      *
-     * @param  object $item message info for the row
+     * @param  EE_Message_Template_Group $item message info for the row
      * @return string       message_type name
      */
     function column_message_type($item)
     {
         return ucwords($item->message_type_obj()->label['singular']);
-    }
-
-
-    function column_messages_sent($item)
-    {
-        //todo: we need to obtain the messages sent and the link to the messages report table and output
-        return __('feature in progress', 'event_espresso');
     }
 
 
