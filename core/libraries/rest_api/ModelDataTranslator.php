@@ -812,7 +812,7 @@ class ModelDataTranslator
             $model = \EE_Registry::instance()->load_model($query_param_parts[$number_of_parts - 2]);
         }
         try {
-            return $model->field_settings_for($field_name);
+            return $model->field_settings_for($field_name, false);
         } catch (EE_Error $e) {
             return null;
         }
