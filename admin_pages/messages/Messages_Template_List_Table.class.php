@@ -47,16 +47,16 @@ class Messages_Template_List_Table extends EE_Admin_List_Table
     protected function _set_properties()
     {
         $this->_wp_list_args = array(
-            'singular' => __('Message Template Group', 'event_espresso'),
-            'plural'   => __('Message Template', 'event_espresso'),
+            'singular' => esc_html__('Message Template Group', 'event_espresso'),
+            'plural'   => esc_html__('Message Template', 'event_espresso'),
             'ajax'     => true, //for now,
             'screen'   => $this->get_admin_page()->get_current_screen()->id,
         );
         $this->_columns      = array(
             //'cb' => '<input type="checkbox" />', //no deleting default (global) templates!
-            'message_type' => __('Message Type', 'event_espresso'),
-            'messenger'    => __('Messenger', 'event_espresso'),
-            'description'  => __('Description', 'event_espresso'),
+            'message_type' => esc_html__('Message Type', 'event_espresso'),
+            'messenger'    => esc_html__('Messenger', 'event_espresso'),
+            'description'  => esc_html__('Description', 'event_espresso'),
         );
 
         $this->_sortable_columns = array(
@@ -183,7 +183,7 @@ class Messages_Template_List_Table extends EE_Admin_List_Table
             $actions['edit'] = '<a href="' . $edit_lnk_url . '"'
                                . ' class="' . $item->message_type() . '-edit-link"'
                                . ' title="' . esc_attr__('Edit Template Group', 'event_espresso') . '">'
-                               . __('Edit', 'event_espresso')
+                               . esc_html__('Edit', 'event_espresso')
                                . '</a>';
         }
 
