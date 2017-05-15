@@ -83,22 +83,22 @@ class EE_PMT_Invoice extends EE_PMT_Base{
 						'validation_strategies' => array( new EE_Full_HTML_Validation_Strategy() ),
 					)),
 					'pdf_instructions'=>new EE_Text_Area_Input(array(
-						'html_label_text'=>  sprintf(esc_html__("Instructions %s", "event_espresso"),  $this->get_help_tab_link()),
+						'html_label_text'=>  sprintf( esc_html__("Instructions %s", "event_espresso"),  $this->get_help_tab_link()),
 						'default'=>  esc_html__("Please send this invoice with payment attached to the address above, or use the payment link below. Payment must be received within 48 hours of event date.", 'event_espresso'),
 						'validation_strategies' => array( new EE_Full_HTML_Validation_Strategy() ),
 					)),
 					'pdf_logo_image'=>new EE_Admin_File_Uploader_Input(array(
-						'html_label_text'=>  sprintf(esc_html__("Logo Image %s", "event_espresso"),  $this->get_help_tab_link()),
+						'html_label_text'=>  sprintf( esc_html__("Logo Image %s", "event_espresso"),  $this->get_help_tab_link()),
 						'default'=>  EE_Config::instance()->organization->logo_url,
 						'html_help_text'=>  esc_html__("(Logo for the top left of the invoice)", 'event_espresso'),
 					)),
 					$confirmation_text_input_name =>new EE_Text_Area_Input(array(
-						'html_label_text'=>  sprintf(esc_html__("Confirmation Text %s", "event_espresso"),  $this->get_help_tab_link()),
+						'html_label_text'=>  sprintf( esc_html__("Confirmation Text %s", "event_espresso"),  $this->get_help_tab_link()),
 						'default'=>  esc_html__("Payment must be received within 48 hours of event date. Details about where to send the payment are included on the invoice.", 'event_espresso'), 
 						'validation_strategies' => array( new EE_Full_HTML_Validation_Strategy() ),
 					)),
 					'page_extra_info'=>new EE_Text_Area_Input(array(
-						'html_label_text'=>  sprintf(esc_html__("Extra Info %s", "event_espresso"),  $this->get_help_tab_link()),
+						'html_label_text'=>  sprintf( esc_html__("Extra Info %s", "event_espresso"),  $this->get_help_tab_link()),
 						'validation_strategies' => array( new EE_Full_HTML_Validation_Strategy() ),
 					)),
 				),
