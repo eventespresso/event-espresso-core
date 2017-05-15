@@ -94,7 +94,7 @@ class EE_PMT_Invoice extends EE_PMT_Base{
 					)),
 					$confirmation_text_input_name =>new EE_Text_Area_Input(array(
 						'html_label_text'=>  sprintf(__("Confirmation Text %s", "event_espresso"),  $this->get_help_tab_link()),
-						'default'=>  __("Payment must be received within 48 hours of event date.  Details about where to send payment is included on the invoice.", 'event_espresso'),
+						'default'=>  __("Payment must be received within 48 hours of event date. Details about where to send the payment are included on the invoice.", 'event_espresso'), 
 						'validation_strategies' => array( new EE_Full_HTML_Validation_Strategy() ),
 					)),
 					'page_extra_info'=>new EE_Text_Area_Input(array(
