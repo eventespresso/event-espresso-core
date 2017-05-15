@@ -261,7 +261,6 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
 
     /**
      * @group        9222
-     * @group current
      * @dataProvider dataProviderForTestPrepareFieldValuesForJsonBad
      * @expectedException EventEspresso\core\libraries\rest_api\ObjectDetectedException
      * @param                     $input

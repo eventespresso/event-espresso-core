@@ -58,7 +58,6 @@ class WriteTest extends \EE_REST_TestCase
 
     /**
      * @group 9222
-     * @group current
      */
     public function testInsertUtcAndRelativeTimes()
     {
@@ -331,6 +330,31 @@ class WriteTest extends \EE_REST_TestCase
         $req->set_body_params(
             array(
                 'non-existent-field-name' => 'restorama',
+            )
+        );
+        $response = rest_do_request($req);
+        $response_data = $response->get_data();
+        //verify there was no error code
+        $this->assertTrue(isset($response_data['code']));
+        $this->assertEquals('invalid_field', $response_data['code']);
+    }
+
+    /**
+     * Test that we tell API clients when they are using a bad parameter
+     * @group 9222
+     * @group current
+     */
+    public function testInsertPostType()
+    {
+        $this->authenticateAnAdmin();
+        $req = new \WP_REST_Request(
+            'POST',
+            '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events'
+        );
+        $req->set_body_params(
+            array(
+                'post_type' => 'not-event',
+                'EVT_name' => 'foobar'
             )
         );
         $response = rest_do_request($req);
