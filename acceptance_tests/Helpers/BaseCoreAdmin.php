@@ -12,10 +12,18 @@ use Page\CoreAdmin;
  */
 trait BaseCoreAdmin
 {
-    public function amOnEventEspressoAdminPage($page = '', $action = '')
+    public function amOnEventEspressoAdminPage($page = '', $action = '', $additional_params = '')
     {
-        /** @var \EventEspressoAcceptanceTester $I */
-        $I = $this;
-        $I->amOnPage(CoreAdmin::adminUrl($page, $action));
+        $this->actor()->amOnAdminPage(CoreAdmin::adminUrl($page, $action, $additional_params));
+    }
+
+
+    /**
+     * @return \EventEspressoAcceptanceTester;
+     */
+    protected function actor()
+    {
+        /** @var \EventEspressoAcceptanceTester $this */
+        return $this;
     }
 }
