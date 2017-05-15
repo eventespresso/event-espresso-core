@@ -181,6 +181,7 @@ class Messages_Template_List_Table extends EE_Admin_List_Table
                 EE_MSG_ADMIN_URL
             );
             $actions['edit'] = '<a href="' . $edit_lnk_url . '"'
+                               . ' class="' . $item->message_type() . '-edit-link"'
                                . ' title="' . esc_attr__('Edit Template Group', 'event_espresso') . '">'
                                . __('Edit', 'event_espresso')
                                . '</a>';
@@ -224,6 +225,7 @@ class Messages_Template_List_Table extends EE_Admin_List_Table
             )
                 ? '<a' . $inactive
                   . ' href="' . $edit_link . '"'
+                  . ' class="' . $item->message_type() . '-' . $context . '-edit-link"'
                   . ' title="' . esc_attr__('Edit Context', 'event_espresso') . '">'
                   . $context_title
                   . '</a>'
