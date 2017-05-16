@@ -468,7 +468,8 @@ class EED_Core_Rest_Api extends \EED_Module
             );
             if( apply_filters(
                 'FHEE__EED_Core_Rest_Api___get_model_route_data_for_version__add_write_endpoints',
-                $this->_should_have_write_endpoints($model)
+                $this->_should_have_write_endpoints($model),
+                $model
             )){
                 $model_routes[$plural_model_route][] = array(
                     'callback'        => array(
