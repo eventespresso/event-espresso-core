@@ -124,7 +124,7 @@ class EE_Registry
     /**
      *    $models
      * @access    public
-     * @var    EEM_Base[] $models keys are 'short names' (eg Event), values are class names (eg 'EEM_Event')
+     * @var    string[] $models keys are 'short names' (eg Event), values are class names (eg 'EEM_Event')
      */
     public $models = array();
 

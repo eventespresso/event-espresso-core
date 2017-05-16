@@ -382,6 +382,30 @@ class EED_Core_Rest_Api extends \EED_Module
 
 
     /**
+     * Decides whether or not to add write endpoints for this model.
+     *
+     * Currently, this defaults to exclude all global tables and models
+     * which would allow inserting WP core data (we don't want to duplicate
+     * what WP API does, as it's unnecessary, extra work, and potentially extra bugs)
+     * @param EEM_Base $model
+     * @return bool
+     */
+    protected function _should_have_write_endpoints(EEM_Base $model)
+    {
+        if ($model->is_wp_core_model()){
+            return false;
+        }
+        foreach($model->get_tables() as $table){
+            if( $table->is_global()){
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+
+    /**
      * Gets the route data for EE models in the specified version
      *
      * @param string  $version
@@ -422,16 +446,6 @@ class EED_Core_Rest_Api extends \EED_Module
                         'self' => rest_url(EED_Core_Rest_Api::ee_api_namespace . $version . $singular_model_route),
                     ),
                 ),
-                array(
-                    'callback'        => array(
-                        'EventEspresso\core\libraries\rest_api\controllers\model\Write',
-                        'handleRequestInsert',
-                    ),
-                    'callback_args'   => array($version, $model_name),
-                    'methods'         => WP_REST_Server::CREATABLE,
-                    'hidden_endpoint' => $hidden_endpoint,
-                    'args'            => $this->_get_write_params($model_name, $model_version_info, true),
-                ),
                 'schema' => array(
                     'schema_callback' => array(
                         'EventEspresso\core\libraries\rest_api\controllers\model\Read',
@@ -451,27 +465,47 @@ class EED_Core_Rest_Api extends \EED_Module
                     'hidden_endpoint' => $hidden_endpoint,
                     'args'            => $this->_get_response_selection_query_params($model, $version),
                 ),
-                array(
-                    'callback'        => array(
-                        'EventEspresso\core\libraries\rest_api\controllers\model\Write',
-                        'handleRequestUpdate',
-                    ),
-                    'callback_args'   => array($version, $model_name),
-                    'methods'         => WP_REST_Server::EDITABLE,
-                    'hidden_endpoint' => $hidden_endpoint,
-                    'args'            => $this->_get_write_params($model_name, $model_version_info, false),
-                ),
-                array(
-                    'callback'        => array(
-                        'EventEspresso\core\libraries\rest_api\controllers\model\Write',
-                        'handleRequestDelete',
-                    ),
-                    'callback_args'   => array($version, $model_name),
-                    'methods'         => WP_REST_Server::DELETABLE,
-                    'hidden_endpoint' => $hidden_endpoint,
-                    'args'            => $this->_get_delete_query_params($model, $version),
-                ),
             );
+            if( apply_filters(
+                'FHEE__EED_Core_Rest_Api___get_model_route_data_for_version__add_write_endpoints',
+                $this->_should_have_write_endpoints($model)
+            )){
+                $model_routes[$plural_model_route][] = array(
+                    'callback'        => array(
+                        'EventEspresso\core\libraries\rest_api\controllers\model\Write',
+                        'handleRequestInsert',
+                    ),
+                    'callback_args'   => array($version, $model_name),
+                    'methods'         => WP_REST_Server::CREATABLE,
+                    'hidden_endpoint' => $hidden_endpoint,
+                    'args'            => $this->_get_write_params($model_name, $model_version_info, true),
+                );
+                $model_routes[$singular_model_route] = array_merge(
+                    $model_routes[$singular_model_route],
+                    array(
+                        array(
+                            'callback'        => array(
+                                'EventEspresso\core\libraries\rest_api\controllers\model\Write',
+                                'handleRequestUpdate',
+                            ),
+                            'callback_args'   => array($version, $model_name),
+                            'methods'         => WP_REST_Server::EDITABLE,
+                            'hidden_endpoint' => $hidden_endpoint,
+                            'args'            => $this->_get_write_params($model_name, $model_version_info, false),
+                        ),
+                        array(
+                            'callback'        => array(
+                                'EventEspresso\core\libraries\rest_api\controllers\model\Write',
+                                'handleRequestDelete',
+                            ),
+                            'callback_args'   => array($version, $model_name),
+                            'methods'         => WP_REST_Server::DELETABLE,
+                            'hidden_endpoint' => $hidden_endpoint,
+                            'args'            => $this->_get_delete_query_params($model, $version),
+                        )
+                    )
+                );
+            }
             foreach ($model->relation_settings() as $relation_name => $relation_obj) {
                 $related_model_name_endpoint_part = ModelRead::getRelatedEntityName(
                     $relation_name,
