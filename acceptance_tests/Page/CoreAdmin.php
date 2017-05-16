@@ -16,6 +16,9 @@ class CoreAdmin
     const URL_PREFIX = 'admin.php?page=';
 
 
+    const ADMIN_LIST_TABLE_NEXT_PAGE_CLASS = '.next-page';
+
+
     /**
      * Get the EE admin url for the given properties.
      * Note, this is JUST the endpoint for the admin route.  It is expected that the actor/test would be calling this
@@ -33,4 +36,5 @@ class CoreAdmin
         $url .= $additional_params ? '&' . ltrim('&', ltrim('?', $additional_params)) : '';
         return $url;
     }
+
 }

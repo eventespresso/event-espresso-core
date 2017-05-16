@@ -54,8 +54,8 @@ class MessagesAdmin extends CoreAdmin
     public static function editMessageTemplateClassByMessageType($message_type_slug, $context = '')
     {
         return $context
-            ? $message_type_slug . '-' . $context . '-edit-link'
-            : $message_type_slug . '-edit-link';
+            ? '.' . $message_type_slug . '-' . $context . '-edit-link'
+            : '.' . $message_type_slug . '-edit-link';
     }
 
 }
