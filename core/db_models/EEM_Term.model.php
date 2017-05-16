@@ -43,6 +43,7 @@ class EEM_Term extends EEM_Base
         $this->_model_relations = array(
             'Term_Taxonomy' => new EE_Has_Many_Relation(),
         );
+        $this->_wp_core_model = true;
         $path_to_tax_model = 'Term_Taxonomy';
         $this->_cap_restriction_generators[EEM_Base::caps_read] = new EE_Restriction_Generator_Public();
         $this->_cap_restriction_generators[EEM_Base::caps_read_admin] = new EE_Restriction_Generator_Taxonomy_Protected(

@@ -272,7 +272,11 @@ abstract class EEM_Base extends EE_Base
     /**
      * Whether or not this model is based off a table in WP core only (CPTs should set
      * this to FALSE, but if we were to make an EE_WP_Post model, it should set this to true).
-     *
+     * This should be true for models that deal with data that should exist independent of EE.
+     * For example, if the model can read and insert data that isn't used by EE, this should be true.
+     * It would be false, however, if you could guarantee the model would only interact with EE data,
+     * even if it uses a WP core table (eg event and venue models set this to false for that reason:
+     * they can only read and insert events and venues custom post types, not arbitrary post types)
      * @var boolean
      */
     protected $_wp_core_model = false;
