@@ -5,11 +5,11 @@
   Plugin Name:		Event Espresso
   Plugin URI:  		http://eventespresso.com/pricing/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=wordpress_plugins_page&utm_content=support_link
   Description: 		Manage your events from your WordPress dashboard. Reduce your admin, reduce your costs make your life easier! | <a href="admin.php?page=espresso_support&action=contact_support">Support</a>
-  Version:			4.9.37.rc.006
+  Version:			4.9.39.rc.033
   Author:			Event Espresso
   Author URI: 		http://eventespresso.com/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=wordpress_plugins_page&utm_content=support_link
-  License: 		    GPLv2
-  Text Domain: 		event_espresso
+  License: 		     GPLv2
+  Text Domain: 		 event_espresso
   GitHub Plugin URI: https://github.com/eventespresso/event-espresso-core
   Copyright 		(c) 2008-2017 Event Espresso  All Rights Reserved.
 
@@ -101,7 +101,7 @@ if (function_exists('espresso_version')) {
          */
         function espresso_version()
         {
-            return apply_filters('FHEE__espresso__espresso_version', '4.9.37.rc.006');
+            return apply_filters('FHEE__espresso__espresso_version', '4.9.39.rc.033');
         }
 
         // define versions

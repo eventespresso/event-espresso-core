@@ -260,7 +260,13 @@ class EE_Register_Message_Type implements EEI_Plugin_API
             //let's make sure that we remove any place this message type was made active
             /** @var EE_Message_Resource_Manager $Message_Resource_Manager */
             $Message_Resource_Manager = EE_Registry::instance()->load_lib('Message_Resource_Manager');
-            $Message_Resource_Manager->deactivate_message_type($message_type_name);
+            //ensures that if this message type is registered again that it retains its previous active state vs
+            //remaining inactive.
+            $Message_Resource_Manager->remove_message_type_has_been_activated_from_all_messengers(
+                $message_type_name,
+                true
+            );
+            $Message_Resource_Manager->deactivate_message_type($message_type_name, false);
             unset(self::$_ee_message_type_registry[$message_type_name]);
         }
     }

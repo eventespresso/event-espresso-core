@@ -235,9 +235,9 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class {
 
 	/**
 	 * This returns the context_label for contexts as set in the message type object
-	 *
+	 * Note this is an array with singular and plural keys
 	 * @access public
-	 * @return string label for "context"
+	 * @return array labels for "context"
 	 */
 	public function context_label() {
 		$obj = $this->message_type_obj();

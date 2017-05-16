@@ -586,6 +586,7 @@ class EE_Registry
         $load_only = false,
         $addon = false
     ) {
+        $class_name = ltrim($class_name, '\\');
         $class_name = $this->_dependency_map->get_alias($class_name);
         if ( ! class_exists($class_name)) {
             // maybe the class is registered with a preceding \
@@ -648,6 +649,7 @@ class EE_Registry
         $cache = true,
         $load_only = false
     ) {
+        $class_name = ltrim($class_name, '\\');
         // strip php file extension
         $class_name = str_replace('.php', '', trim($class_name));
         // does the class have a prefix ?

@@ -1,4 +1,4 @@
-#Using WordPress REST API oAuth Client and oAuth Server
+# Using WordPress REST API oAuth Client and oAuth Server
 If you're interested in using WP API and its oAuth Server (which, besides Cookie Authentication, is the only recommended way of interacting with the WP API),
 then [you should use the WP API oAuth Server.](https://developer.wordpress.org/rest-api/using-the-rest-api/authentication/)
 
@@ -21,8 +21,8 @@ For this tutorial I'm going to assume you put it in /wp-content/plugins and name
 6. Now direct your browser to `http://src.wordpress-develop.dev/wp-content/plugins/wp-api-oauth-client/www`.
 7. Enter `http://src.wordpress-develop.dev` in the "Address to start discovery", [like this](https://drive.google.com/file/d/0B2KCao4zFjaxMHFfTkNicFdLOXc/view?usp=drivesdk).
 8. [Enter the "Client Key" and "Client Secret"](https://drive.google.com/file/d/0B2KCao4zFjaxQXpSbWRydmJqRm8/view?usp=drivesdk) you noted earlier and submit the form. (This step won't work if you have Basic Auth or the current version of Event Espresso 4 active)
-9. [Authorize!](https://drive.google.com/file/d/0B2KCao4zFjaxRVh3VjZ5UWV2aE0/view?usp=drivesdk)
-10.[Bask in how it's working](https://drive.google.com/file/d/0B2KCao4zFjaxWDloV2MyaWRtUEU/view?usp=drivesdk)
+9. [Authorize!](https://drive.google.com/file/d/0B2KCao4zFjaxRVh3VjZ5UWV2aE0/view?usp=drivesdk).
+10.[Bask in how it's working](https://drive.google.com/file/d/0B2KCao4zFjaxWDloV2MyaWRtUEU/view?usp=drivesdk).
 
 
 

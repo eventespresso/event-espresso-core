@@ -63,11 +63,6 @@ final class EE_Admin {
 		// load EE_Request_Handler early
 		add_action( 'AHEE__EE_System__core_loaded_and_ready', array( $this, 'get_request' ));
 		add_action( 'AHEE__EE_System__initialize_last', array( $this, 'init' ));
-		// post shortcode tracking
-		add_action(
-			'AHEE__EE_System__initialize_last',
-			array( 'EventEspresso\core\admin\PostShortcodeTracking', 'set_hooks_admin' )
-		);
 		add_action( 'AHEE__EE_Admin_Page__route_admin_request', array( $this, 'route_admin_request' ), 100, 2 );
 		add_action( 'wp_loaded', array( $this, 'wp_loaded' ), 100 );
 		add_action( 'admin_init', array( $this, 'admin_init' ), 100 );
@@ -737,13 +732,9 @@ final class EE_Admin {
 	public static function parse_post_content_on_save( $post_ID, $post ) {
 		EE_Error::doing_it_wrong(
 			__METHOD__,
-			__(
-				'Usage is deprecated. Use EventEspresso\core\admin\PostShortcodeTracking::parse_post_content_on_save() instead.',
-				'event_espresso'
-			),
+			__('Usage is deprecated', 'event_espresso'),
 			'4.8.41'
 		);
-		EventEspresso\core\admin\PostShortcodeTracking::parse_post_content_on_save( $post_ID, $post );
 	}
 
 
@@ -759,13 +750,9 @@ final class EE_Admin {
 	public function reset_page_for_posts_on_change( $option, $old_value, $value ) {
 		EE_Error::doing_it_wrong(
 			__METHOD__,
-			__(
-				'Usage is deprecated. Use EventEspresso\core\admin\PostShortcodeTracking::parse_post_content_on_save() instead.',
-				'event_espresso'
-			),
+			__('Usage is deprecated', 'event_espresso'),
 			'4.8.41'
 		);
-		EventEspresso\core\admin\PostShortcodeTracking::reset_page_for_posts_on_change( $option, $old_value, $value );
 	}
 
 }
