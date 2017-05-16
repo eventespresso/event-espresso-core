@@ -118,7 +118,10 @@ class CoreLoader
         );
         EE_Dependency_Map::register_dependencies(
             'EE_Session_Mock',
-            array('EE_Encryption' => EE_Dependency_Map::load_from_cache)
+            array(
+                'EventEspresso\core\services\cache\TransientCacheStorage' => EE_Dependency_Map::load_from_cache,
+                'EE_Encryption'                                           => EE_Dependency_Map::load_from_cache
+            )
         );
         EE_Dependency_Map::register_class_loader('Session_Mock');
         EE_Registry::instance()->SSN = EE_Registry::instance()->load_core('EE_Session_Mock');

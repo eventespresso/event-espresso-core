@@ -1,19 +1,6 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
-//echo '<br/><h6 style="color:#2EA2CC;">' . __FILE__ . ' &nbsp; <span style="font-weight:normal;color:#E76700"> Line #: ' . __LINE__ . '</span></h6>';
-/**
- * Event Espresso
- *
- * Event Registration and Ticketing Management Plugin for WordPress
- *
- * @ package			Event Espresso
- * @ author			    Event Espresso
- * @ copyright		(c) 2008-2014 Event Espresso  All Rights Reserved.
- * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link					http://www.eventespresso.com
- * @ version		 	$VID:$
- *
- * ------------------------------------------------------------------------
- */
+<?php
+defined('EVENT_ESPRESSO_VERSION') || exit();
+
 
 
 
@@ -1154,8 +1141,6 @@ if ( ! function_exists( 'espresso_edit_venue_link' )) {
 		return EEH_Venue_View::edit_venue_link( $VNU_ID );
 	}
 }
-
-
 
 
 
