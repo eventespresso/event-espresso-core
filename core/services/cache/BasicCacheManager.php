@@ -83,6 +83,7 @@ class BasicCacheManager implements CacheManagerInterface
     {
         $content = '';
         // how long should we cache this content for? 0 means no caching.
+        $expiration = WP_DEBUG !== true ? $expiration : 0;
         $expiration = absint(
             apply_filters(
                 'FHEE__CacheManager__get__cache_expiration',
