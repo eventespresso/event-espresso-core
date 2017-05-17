@@ -175,146 +175,6 @@ class EEH_Debug_Tools{
 	}
 
 
-
-	/**
-	 * reset_times
-	 */
-	public function reset_times(){
-		$this->_times = array();
-	}
-
-
-
-	/**
-	 * 	start_timer
-	 * @param null $timer_name
-	 */
-	public function start_timer( $timer_name = NULL ){
-		$this->_start_times[$timer_name] = microtime( TRUE );
-	}
-
-
-
-	/**
-	 * stop_timer
-	 * @param string $timer_name
-	 */
-	public function stop_timer( $timer_name = '' ){
-		$timer_name = $timer_name !== '' ? $timer_name : get_called_class();
-		if( isset( $this->_start_times[ $timer_name ] ) ){
-			$start_time = $this->_start_times[ $timer_name ];
-			unset( $this->_start_times[ $timer_name ] );
-		}else{
-			$start_time = array_pop( $this->_start_times );
-		}
-		$this->_times[ $timer_name ] =  number_format( microtime( true ) - $start_time, 8 );
-	}
-
-
-	/**
-	 * Measure the memory usage by PHP so far.
-	 * @param string $label The label to show for this time eg "Start of calling Some_Class::some_function"
-	 * @param boolean $output_now whether to echo now, or wait until EEH_Debug_Tools::show_times() is called
-	 * @return void
-	 */
-	public function measure_memory( $label, $output_now = false ) {
-		$memory_used = $this->convert( memory_get_peak_usage( true ) );
-		$this->_memory_usage_points[ $label ] = $memory_used;
-		if( $output_now ) {
-			echo "\r\n<br>$label : $memory_used";
-		}
-	}
-
-	/**
-	 * Converts a measure of memory bytes into the most logical units (eg kb, mb, etc)
-	 * @param int $size
-	 * @return string
-	 */
-	public function convert( $size ) {
-		$unit=array('b','kb','mb','gb','tb','pb');
-		return @round( $size / pow( 1024, $i = floor( log( $size, 1024 ) ) ), 2 ) . ' ' . $unit[ absint( $i ) ];
-	}
-
-
-
-	/**
-	 * show_times
-	 * @param bool $output_now
-	 * @return string
-	 */
-	public function show_times($output_now=true){
-		$output = '';
-		if ( ! empty( $this->_times )) {
-			$total = 0;
-			$output .= '<h2 style="margin:1em .5em 0;">Times:</h2>';
-			$output .= '<span style="color:#9999CC; font-size:.8em; margin:0 1.5em 0;">( in milliseconds )</span><br />';
-			foreach( $this->_times as $timer_name => $total_time ) {
-				$output .= $this->format_time( $timer_name, $total_time );
-				$total += $total_time;
-			}
-			$output .= '<br />';
-			$output .= '<h4 style="margin:1em .5em 0;">TOTAL TIME</h4>';
-			$output .= $this->format_time( '', $total );
-			$output .= '<br />';
-		}
-		if ( ! empty( $this->_memory_usage_points )) {
-			$output .= '<h2 style="margin:1em .5em 0;">Memory</h2>' . implode( '<br />', $this->_memory_usage_points );
-		}
-		if( $output_now ){
-			echo $output;
-			return '';
-		}
-		return $output;
-	}
-
-
-
-	/**
-	 * @param string $timer_name
-	 * @param float $total_time
-	 * @return string
-	 */
-	public function format_time( $timer_name, $total_time ) {
-		$total_time = $total_time * 1000;
-		switch ( $total_time ) {
-			case $total_time < 0.01 :
-				$color = '#8A549A';
-				$bold = 'normal';
-				break;
-			case $total_time < 0.1 :
-				$color = '#00B1CA';
-				$bold = 'normal';
-				break;
-			case $total_time < 1 :
-				$color = '#70CC50';
-				$bold = 'normal';
-				break;
-			case $total_time < 10 :
-				$color = '#FCC600';
-				$bold = 'bold';
-				break;
-			case $total_time < 100 :
-				$color = '#E76700';
-				$bold = 'bold';
-				break;
-			default :
-				$color = '#E44064';
-				$bold = 'bold';
-				break;
-		}
-		return '<span style="min-width: 10px; margin:0 1em; color:'
-			. $color
-			. '; font-weight:'
-			. $bold
-			. '; font-size:1.2em;">'
-			. str_pad( number_format( $total_time, 5 ), 11, '0', STR_PAD_LEFT )
-			. '</span> '
-			. $timer_name
-			. '<br />';
-	}
-
-
-
 	/**
 	 * 	captures plugin activation errors for debugging
 	 *
@@ -624,6 +484,91 @@ class EEH_Debug_Tools{
 		}
 	}
 
+
+
+	/******************** deprecated ********************/
+
+
+
+    /**
+     * @deprecated 4.9.39.rc.034
+     */
+    public function reset_times()
+    {
+        \EventEspresso\core\services\Benchmark::resetTimes();
+    }
+
+
+
+    /**
+     * @deprecated 4.9.39.rc.034
+     * @param null $timer_name
+     */
+    public function start_timer($timer_name = null)
+    {
+        \EventEspresso\core\services\Benchmark::startTimer($timer_name);
+    }
+
+
+
+    /**
+     * @deprecated 4.9.39.rc.034
+     * @param string $timer_name
+     */
+    public function stop_timer($timer_name = '')
+    {
+        \EventEspresso\core\services\Benchmark::stopTimer($timer_name);
+    }
+
+
+
+    /**
+     * @deprecated 4.9.39.rc.034
+     * @param string  $label      The label to show for this time eg "Start of calling Some_Class::some_function"
+     * @param boolean $output_now whether to echo now, or wait until EEH_Debug_Tools::show_times() is called
+     * @return void
+     */
+    public function measure_memory($label, $output_now = false)
+    {
+        \EventEspresso\core\services\Benchmark::measureMemory($label, $output_now);
+    }
+
+
+
+    /**
+     * @deprecated 4.9.39.rc.034
+     * @param int $size
+     * @return string
+     */
+    public function convert($size)
+    {
+        return \EventEspresso\core\services\Benchmark::convert($size);
+    }
+
+
+
+    /**
+     * @deprecated 4.9.39.rc.034
+     * @param bool $output_now
+     * @return string
+     */
+    public function show_times($output_now = true)
+    {
+        return \EventEspresso\core\services\Benchmark::displayResults($output_now);
+    }
+
+
+
+    /**
+     * @deprecated 4.9.39.rc.034
+     * @param string $timer_name
+     * @param float  $total_time
+     * @return string
+     */
+    public function format_time($timer_name, $total_time)
+    {
+        return \EventEspresso\core\services\Benchmark::formatTime($timer_name, $total_time);
+    }
 
 
 
