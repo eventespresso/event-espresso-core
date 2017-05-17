@@ -142,11 +142,8 @@ class Benchmark
             return '';
         }
         $output = '';
-        $margin = is_admin() ? ' margin:2em 2em 2em 180px;' : ' margin:2em;';
         if (! empty(Benchmark::$times)) {
             $total = 0;
-            $output .= '<div style="border:1px solid #dddddd; background-color:#ffffff;' . $margin . ' padding:2em;">';
-            $output .= '<h4>BENCHMARKING</h4>';
             $output .= '<span style="color:#999999; font-size:.8em;">( time in milliseconds )</span><br />';
             foreach (Benchmark::$times as $timer_name => $total_time) {
                 $output .= Benchmark::formatTime($timer_name, $total_time) . '<br />';
@@ -168,7 +165,15 @@ class Benchmark
         if (! empty(Benchmark::$memory_usage)) {
             $output .= '<h5>Memory</h5>' . implode('<br />', Benchmark::$memory_usage);
         }
-        $output .= '</div><br />';
+        if (empty($output)) {
+            return '';
+        }
+        $output = '<div style="border:1px solid #dddddd; background-color:#ffffff;'
+                  . (is_admin() ? ' margin:2em 2em 2em 180px;' : ' margin:2em;')
+                  . ' padding:2em;">'
+                  . '<h4>BENCHMARKING</h4>'
+                  . $output
+                  . '</div>';
         if ($echo) {
             echo $output;
             return '';
