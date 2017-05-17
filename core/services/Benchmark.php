@@ -159,7 +159,7 @@ class Benchmark
             $output .= '<span style="color:deepskyblue">Like...no way man!</span><br />';
             $output .= '<span style="color:limegreen">Like...groovy!</span><br />';
             $output .= '<span style="color:gold">Ruh Oh</span><br />';
-            $output .= '<span style="color:orange">Zoinks!</span><br />';
+            $output .= '<span style="color:darkorange">Zoinks!</span><br />';
             $output .= '<span style="color:red">Like...HEEELLLP</span><br />';
         }
         if (! empty(Benchmark::$memory_usage)) {
@@ -206,23 +206,23 @@ class Benchmark
     {
         $total_time *= 1000;
         switch ($total_time) {
-            case $total_time > 6250 :
+            case $total_time > 12500 :
                 $color = 'red';
                 $bold = 'bold';
                 break;
-            case $total_time > 1250 :
-                $color = 'orange';
+            case $total_time > 2500 :
+                $color = 'darkorange';
                 $bold = 'bold';
                 break;
-            case $total_time > 250 :
-                $color = 'yellow';
+            case $total_time > 500 :
+                $color = 'gold';
                 $bold = 'bold';
                 break;
-            case $total_time > 50 :
+            case $total_time > 100 :
                 $color = 'limegreen';
                 $bold = 'normal';
                 break;
-            case $total_time > 10 :
+            case $total_time > 20 :
                 $color = 'deepskyblue';
                 $bold = 'normal';
                 break;
