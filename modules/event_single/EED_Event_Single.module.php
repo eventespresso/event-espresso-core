@@ -1,27 +1,21 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+<?php
+
+defined('EVENT_ESPRESSO_VERSION') ||  exit('No direct script access allowed');
+
+
 /**
- * Event Espresso
- *
- * Event Registration and Management Plugin for WordPress
- *
- * @ package			Event Espresso
- * @ author			Seth Shoultes
- * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link				http://www.eventespresso.com
- * @ version		 	4.0
- *
- * ------------------------------------------------------------------------
- *
  * Event Details
  *
  * @package		Event Espresso
  * @subpackage	/modules/event_details/
  * @author		Brent Christensen
- *
- * ------------------------------------------------------------------------
  */
 class EED_Event_Single  extends EED_Module {
+
+    const EVENT_DETAILS_PRIORITY = 10;
+    const EVENT_DATETIMES_PRIORITY = 11;
+    const EVENT_TICKETS_PRIORITY = 12;
+    const EVENT_VENUES_PRIORITY = 13;
 
 	/**
 	 * @type bool $using_get_the_excerpt
@@ -37,7 +31,7 @@ class EED_Event_Single  extends EED_Module {
 
 
 	/**
-	 * @return EED_Event_Single
+	 * @return EED_Module|EED_Event_Single
 	 */
 	public static function instance() {
 		return parent::get_instance( __CLASS__ );
@@ -188,7 +182,11 @@ class EED_Event_Single  extends EED_Module {
 			// then add extra event data via hooks
 			add_action( 'loop_start', array( 'EED_Event_Single', 'loop_start' ));
 			add_filter( 'get_the_excerpt', array( 'EED_Event_Single', 'get_the_excerpt' ), 1, 1 );
-			add_filter( 'the_content', array( 'EED_Event_Single', 'event_details' ), 1 );
+			add_filter(
+			    'the_content',
+                array( 'EED_Event_Single', 'event_details' ),
+                EED_Event_Single::EVENT_DETAILS_PRIORITY
+            );
 			add_action( 'loop_end', array( 'EED_Event_Single', 'loop_end' ));
 			// don't display entry meta because the existing theme will take car of that
 			add_filter( 'FHEE__content_espresso_events_details_template__display_entry_meta', '__return_false' );
@@ -282,11 +280,19 @@ class EED_Event_Single  extends EED_Module {
 			if ( EE_Registry::instance()->CFG->template_settings->EED_Event_Single->use_sortable_display_order ) {
 				// we need to first remove this callback from being applied to the_content()
 				// (otherwise it will recurse and blow up the interweb)
-				remove_filter( 'the_content', array( 'EED_Event_Single', 'event_details' ), 1 );
+				remove_filter(
+				    'the_content',
+                    array( 'EED_Event_Single', 'event_details' ),
+                    EED_Event_Single::EVENT_DETAILS_PRIORITY
+                );
 				EED_Event_Single::instance()->template_parts = EED_Event_Single::instance()->initialize_template_parts();
 				$content = EEH_Template::locate_template( 'content-espresso_events-details.php' );
 				$content = EED_Event_Single::instance()->template_parts->apply_template_part_filters( $content );
-				add_filter( 'the_content', array( 'EED_Event_Single', 'event_details' ), 1 );
+				add_filter(
+				    'the_content',
+                    array( 'EED_Event_Single', 'event_details' ),
+                    EED_Event_Single::EVENT_DETAILS_PRIORITY
+                );
 			} else {
 				$content = EED_Event_Single::use_filterable_display_order();
 			}
@@ -305,21 +311,58 @@ class EED_Event_Single  extends EED_Module {
 	protected static function use_filterable_display_order() {
 		// since the 'content-espresso_events-details.php' template might be used directly from within a theme,
 		// it uses the_content() for displaying the $post->post_content
-		// so in order to load a template that uses the_content() from within a callback being used to filter the_content(),
-		// we need to first remove this callback from being applied to the_content() (otherwise it will recurse and blow up the interweb)
-		remove_filter( 'the_content', array( 'EED_Event_Single', 'event_details' ), 1 );
+		// so in order to load a template that uses the_content()
+        // from within a callback being used to filter the_content(),
+		// we need to first remove this callback from being applied to the_content()
+        // (otherwise it will recurse and blow up the interweb)
+		remove_filter(
+		    'the_content',
+            array( 'EED_Event_Single', 'event_details' ),
+            EED_Event_Single::EVENT_DETAILS_PRIORITY
+        );
 		//now add additional content
-		add_filter( 'the_content', array( 'EED_Event_Single', 'event_datetimes' ), 2, 1 );
-		add_filter( 'the_content', array( 'EED_Event_Single', 'event_tickets' ), 3, 1 );
-		add_filter( 'the_content', array( 'EED_Event_Single', 'event_venues' ), 4, 1 );
+		add_filter(
+		    'the_content',
+            array( 'EED_Event_Single', 'event_datetimes' ),
+            EED_Event_Single::EVENT_DATETIMES_PRIORITY,
+            1
+        );
+		add_filter(
+		    'the_content',
+            array( 'EED_Event_Single', 'event_tickets' ),
+            EED_Event_Single::EVENT_TICKETS_PRIORITY,
+            1
+        );
+		add_filter(
+		    'the_content',
+            array( 'EED_Event_Single', 'event_venues' ),
+            EED_Event_Single::EVENT_VENUES_PRIORITY,
+            1
+        );
 		do_action( 'AHEE__EED_Event_Single__use_filterable_display_order__after_add_filters' );
 		// now load our template
 		$content = EEH_Template::locate_template( 'content-espresso_events-details.php' );
 		//now add our filter back in, plus some others
-		add_filter( 'the_content', array( 'EED_Event_Single', 'event_details' ), 1 );
-		remove_filter( 'the_content', array( 'EED_Event_Single', 'event_datetimes' ), 2 );
-		remove_filter( 'the_content', array( 'EED_Event_Single', 'event_tickets' ), 3 );
-		remove_filter( 'the_content', array( 'EED_Event_Single', 'event_venues' ), 4 );
+		add_filter(
+		    'the_content',
+            array( 'EED_Event_Single', 'event_details' ),
+            EED_Event_Single::EVENT_DETAILS_PRIORITY
+        );
+		remove_filter(
+		    'the_content',
+            array( 'EED_Event_Single', 'event_datetimes' ),
+            EED_Event_Single::EVENT_DATETIMES_PRIORITY
+        );
+		remove_filter(
+		    'the_content',
+            array( 'EED_Event_Single', 'event_tickets' ),
+            EED_Event_Single::EVENT_TICKETS_PRIORITY
+        );
+		remove_filter(
+		    'the_content',
+            array( 'EED_Event_Single', 'event_venues' ),
+            EED_Event_Single::EVENT_VENUES_PRIORITY
+        );
 		do_action( 'AHEE__EED_Event_Single__use_filterable_display_order__after_remove_filters' );
 		// we're not returning the $content directly because the template we are loading uses the_content (or the_excerpt)
 		return $content;
