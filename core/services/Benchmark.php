@@ -184,7 +184,7 @@ class Benchmark
      * @param int $size
      * @return string
      */
-    protected static function convert($size)
+    public static function convert($size)
     {
         $unit = array('b', 'kb', 'mb', 'gb', 'tb', 'pb');
         return round($size / pow(1024, $i = floor(log($size, 1024))), 2) . ' ' . $unit[absint($i)];
@@ -197,7 +197,7 @@ class Benchmark
      * @param float  $total_time
      * @return string
      */
-    protected static function formatTime($timer_name, $total_time)
+    public static function formatTime($timer_name, $total_time)
     {
         $total_time *= 1000;
         switch ($total_time) {
