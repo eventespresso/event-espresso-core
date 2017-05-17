@@ -359,7 +359,7 @@ class WriteTest extends \EE_REST_TestCase
         );
         $response = rest_do_request($req);
         $response_data = $response->get_data();
-        //verify there was no error code
+        //verify there was an error code; we're not allowed to pass in post_type
         $this->assertTrue(isset($response_data['code']));
         $this->assertEquals('invalid_field', $response_data['code']);
     }

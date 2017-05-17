@@ -15,7 +15,7 @@
  * @ version            $VID:$
  * ------------------------------------------------------------------------
  */
-class EED_Core_Rest_Api_Test extends EE_UnitTestCase
+class EED_Core_Rest_Api_Test extends EE_REST_TestCase
 {
 
     /**
