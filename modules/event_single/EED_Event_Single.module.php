@@ -12,10 +12,10 @@ defined('EVENT_ESPRESSO_VERSION') ||  exit('No direct script access allowed');
  */
 class EED_Event_Single  extends EED_Module {
 
-    const EVENT_DETAILS_PRIORITY = 10;
-    const EVENT_DATETIMES_PRIORITY = 11;
-    const EVENT_TICKETS_PRIORITY = 12;
-    const EVENT_VENUES_PRIORITY = 13;
+    const EVENT_DETAILS_PRIORITY = 100;
+    const EVENT_DATETIMES_PRIORITY = 110;
+    const EVENT_TICKETS_PRIORITY = 120;
+    const EVENT_VENUES_PRIORITY = 130;
 
 	/**
 	 * @type bool $using_get_the_excerpt
