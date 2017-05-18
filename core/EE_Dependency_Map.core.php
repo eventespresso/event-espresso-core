@@ -141,6 +141,7 @@ class EE_Dependency_Map
      */
     public static function register_dependencies($class, $dependencies)
     {
+        $class = trim($class,'\\');
         if (! isset(self::$_instance->_dependency_map[$class])) {
             // we need to make sure that any aliases used when registering a dependency
             // get resolved to the correct class name
