@@ -49,7 +49,7 @@ class EEM_WP_User extends EEM_Base
                 ),
                 'user_pass'           => new EE_Plain_Text_Field(
                     'user_pass',
-                    _('User Password', 'event_espresso'),
+                    __('User Password', 'event_espresso'),
                     false,
                     ''
                 ),
