@@ -896,7 +896,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
             }
         }
         return $filtered
-            ? (int) apply_filters(
+            ? apply_filters(
                 'FHEE_EE_Event__spaces_remaining',
                 $spaces_remaining,
                 $this,
