@@ -150,7 +150,7 @@ abstract class FormHandler implements FormHandlerInterface
         $this->setSlug($slug);
         $this->setFormAction($form_action);
         $this->setFormConfig($form_config);
-        $this->setSubmitBtnText(__('Submit', 'event_espresso'));
+        $this->setSubmitBtnText(esc_html__('Submit', 'event_espresso'));
         $this->registry = $registry;
     }
 
@@ -230,7 +230,7 @@ abstract class FormHandler implements FormHandlerInterface
         }
         throw new LogicException(
             sprintf(
-                __('The "%1$s" form is invalid or missing', 'event_espresso'),
+                esc_html__('The "%1$s" form is invalid or missing', 'event_espresso'),
                 $this->form_name
             )
         );
@@ -368,7 +368,7 @@ abstract class FormHandler implements FormHandlerInterface
         }
         if (empty($submit_btn_text)) {
             throw new InvalidArgumentException(
-                __('Can not set Submit button text because an empty string was provided.', 'event_espresso')
+                esc_html__('Can not set Submit button text because an empty string was provided.', 'event_espresso')
             );
         }
         $this->submit_btn_text = $submit_btn_text;
@@ -418,7 +418,7 @@ abstract class FormHandler implements FormHandlerInterface
         }
         if (empty($form_args)) {
             throw new InvalidArgumentException(
-                __('The redirect arguments can not be an empty array.', 'event_espresso')
+                esc_html__('The redirect arguments can not be an empty array.', 'event_espresso')
             );
         }
         $this->form_args = array_merge($this->form_args, $form_args);
@@ -456,7 +456,7 @@ abstract class FormHandler implements FormHandlerInterface
         ) {
             throw new DomainException(
                 sprintf(
-                    __('"%1$s" is not a valid value for the form config. Please use one of the class constants on \EventEspresso\core\libraries\form_sections\form_handlers\Form',
+                    esc_html__('"%1$s" is not a valid value for the form config. Please use one of the class constants on \EventEspresso\core\libraries\form_sections\form_handlers\Form',
                         'event_espresso'),
                     $form_config
                 )
@@ -567,7 +567,7 @@ abstract class FormHandler implements FormHandlerInterface
                 'html_class'            => 'ee-cancel-form',
                 'html_label'            => '&nbsp;',
                 'other_html_attributes' => ' rel="' . $this->slug() . '"',
-                'default'               => ! empty($text) ? $text : __('Cancel', 'event_espresso'),
+                'default'               => ! empty($text) ? $text : esc_html__('Cancel', 'event_espresso'),
             )
         );
         $cancel_button->set_button_css_attributes(false);
@@ -654,7 +654,7 @@ abstract class FormHandler implements FormHandlerInterface
             throw new InvalidFormSubmissionException(
                 $this->form_name,
                 sprintf(
-                    __(
+                    esc_html__(
                         'The "%1$s" form is invalid. Please correct the following errors and resubmit: %2$s %3$s',
                         'event_espresso'
                     ),
