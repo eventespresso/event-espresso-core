@@ -20,7 +20,6 @@ class EED_Core_Rest_Api_Test extends EE_REST_TestCase
 
     /**
      * @group 9222
-     * @group current
      */
     public function test_get_ee_route_data()
     {

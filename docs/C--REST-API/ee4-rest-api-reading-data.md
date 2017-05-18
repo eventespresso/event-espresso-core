@@ -139,12 +139,40 @@ Some fields in Event Espresso can represent infinity, which isn't part of the JS
 ###Serialized PHP Objects in Responses Are Removed
 
 There are some database columns where we store serialized PHP objects, but when reading that data over the EE4 REST 
-API, entity properties containing a PHP object are removed entirely from responses. E.g., if you're reading answers, and one of those answers' `ANS_value` contains a serialized PHP object in the EE
- database, that answer entity will not have an `ANS_value` property. So you should check entities have the normal properties before using them. 
- We do this because there is no good way to represent PHP objects in JSON anyway. Also, we plan to remove these serialized PHP objects from our database (for this reason, and others). So
- you should not encounter this situation very frequently right now, and even less frequently in the future. 
- 
-However, we will continue to store serialized arrays in our database. These are represented as JSON objects or arrays.
+API, we replace these values with a JSON "error" object containing keys "error_code", and "error_message".
+E.g., normally answer entities look like this
+
+```json
+{
+  "ANS_ID": 1,
+  "ANS_value": [
+    "b",
+    "c"
+  ],
+...
+}
+```
+or
+```json
+{
+  "ANS_ID": 2,
+  "ANS_value": "foobar",
+...
+}
+```
+
+but if the answer somehow contains a serialized PHP object in the database in its "ANS_value" column, "ANS_value" will be 
+replaced with a JSON error object, like this
+```json
+{
+"ANS_ID": 3,
+  "ANS_value": {
+    "error_code": "php_object_not_return",
+    "error_message": "The value of this field in the database is a PHP object, which can&#039;t be represented in JSON."
+  },
+  ...
+}
+```
 
 ### Datetimes and Timezones
 Since 4.9.0, all datetimes returned in the EE4 REST API are in the site's default timezone (see the [site_info endpoint](https://github.com/eventespresso/event-espresso-core/blob/master/docs/C--REST-API/ee4-rest-api-introduction.md#site-info)  to find which timezone that is). This is usually the timezone you want to display to users, and their input to you will usually be in this timezone too.

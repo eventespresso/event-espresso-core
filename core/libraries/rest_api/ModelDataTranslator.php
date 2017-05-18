@@ -60,7 +60,9 @@ class ModelDataTranslator
         $requested_version,
         $timezone_string = 'UTC'
     ) {
-        if (is_array($original_value_maybe_array)) {
+        if (is_array($original_value_maybe_array)
+            && ! $field_obj instanceof EE_Serialized_Text_Field
+        ) {
             $new_value_maybe_array = array();
             foreach ($original_value_maybe_array as $array_key => $array_item) {
                 $new_value_maybe_array[$array_key] = ModelDataTranslator::prepareFieldValueFromJson(
@@ -90,7 +92,6 @@ class ModelDataTranslator
      * @param mixed                $original_value_maybe_array
      * @param string               $request_version (eg 4.8.36)
      * @return array
-     * @throws ObjectDetectedException if we find a serialized PHP object while preparing data for JSON
      */
     public static function prepareFieldValuesForJson($field_obj, $original_value_maybe_array, $request_version)
     {
@@ -128,6 +129,23 @@ class ModelDataTranslator
         $requested_version,
         $timezone_string = 'UTC' // UTC
     ) {
+        //check if they accidentally submitted an error value. If so throw an exception
+        if (is_array($original_value)
+            && isset($original_value['error_code'], $original_value['error_message'])) {
+            throw new RestException(
+                'rest_submitted_error_value',
+                sprintf(
+                    esc_html__(
+                        'You tried to submit a JSON error object as a value for %1$s. That\'s not allowed.',
+                        'event_espresso'
+                    ),
+                    $field_obj->get_name()
+                ),
+                array(
+                    'status' => 400,
+                )
+            );
+        }
         $timezone_string = $timezone_string !== '' ? $timezone_string : get_option('timezone_string', '');
         $new_value = null;
         if ($field_obj instanceof EE_Infinite_Integer_Field
@@ -226,7 +244,6 @@ class ModelDataTranslator
      * @param mixed                $original_value
      * @param string               $requested_version
      * @return mixed
-     * @throws ObjectDetectedException if we find an object while preparing data for JSON
      */
     public static function prepareFieldValueForJson($field_obj, $original_value, $requested_version)
     {
@@ -247,7 +264,10 @@ class ModelDataTranslator
         //are we about to send an object? just don't. We have no good way to represent it in JSON.
         // can't just check using is_object() because that missed PHP incomplete objects
         if (! ModelDataTranslator::isRepresentableInJson($new_value)) {
-            throw new ObjectDetectedException($new_value);
+            $new_value = array(
+                'error_code' => 'php_object_not_return',
+                'error_message' => esc_html__('The value of this field in the database is a PHP object, which can\'t be represented in JSON.', 'event_espresso')
+            );
         }
         return apply_filters(
             'FHEE__EventEspresso\core\libraries\rest_api\Model_Data_Translator__prepare_field_for_rest_api',
@@ -338,6 +358,7 @@ class ModelDataTranslator
                             continue;
                         }
                     }
+
                     //writing serialized data to the DB is sensitive stuff (especially if it's not restricted to
                     //only being HTML inside.
                     // Only allow trusted users to do that

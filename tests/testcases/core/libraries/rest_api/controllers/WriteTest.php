@@ -342,7 +342,6 @@ class WriteTest extends \EE_REST_TestCase
     /**
      * Test that we tell API clients when they are using a bad parameter
      * @group 9222
-     * @group current
      */
     public function testInsertPostType()
     {

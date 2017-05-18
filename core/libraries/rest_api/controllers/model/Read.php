@@ -671,49 +671,43 @@ class Read extends Base
         );
         foreach ($result as $field_name => $field_value) {
             $field_obj = $model->field_settings_for($field_name);
-            try {
-                if ($this->isSubclassOfOne($field_obj, $this->getModelVersionInfo()->fieldsIgnored())) {
-                    unset($result[$field_name]);
-                } elseif ($this->isSubclassOfOne(
-                    $field_obj,
-                    $this->getModelVersionInfo()->fieldsThatHaveRenderedFormat()
-                )
-                ) {
-                    $result[$field_name] = array(
-                        'raw'      => $this->prepareFieldObjValueForJson($field_obj, $field_value),
-                        'rendered' => $this->prepareFieldObjValueForJson($field_obj, $field_value, 'pretty'),
-                    );
-                } elseif ($this->isSubclassOfOne(
-                    $field_obj,
-                    $this->getModelVersionInfo()->fieldsThatHavePrettyFormat()
-                )
-                ) {
-                    $result[$field_name] = array(
-                        'raw'    => $this->prepareFieldObjValueForJson($field_obj, $field_value),
-                        'pretty' => $this->prepareFieldObjValueForJson($field_obj, $field_value, 'pretty'),
-                    );
-                } elseif ($field_obj instanceof \EE_Datetime_Field) {
-                    $field_value = $field_obj->prepare_for_set_from_db($field_value);
-                    $timezone = $field_value->getTimezone();
-                    $field_value->setTimezone(new \DateTimeZone('UTC'));
-                    $result[$field_name . '_gmt'] = ModelDataTranslator::prepareFieldValuesForJson(
-                        $field_obj,
-                        $field_value,
-                        $this->getModelVersionInfo()->requestedVersion()
-                    );
-                    $field_value->setTimezone($timezone);
-                    $result[$field_name] = ModelDataTranslator::prepareFieldValuesForJson(
-                        $field_obj,
-                        $field_value,
-                        $this->getModelVersionInfo()->requestedVersion()
-                    );
-                } else {
-                    $result[$field_name] = $this->prepareFieldObjValueForJson($field_obj, $field_value);
-                }
-            } catch (ObjectDetectedException $e) {
-                //so the value had a PHP object in it. Well exclude it from the response then. That will make it obvious
-                //to API clients that we're not showing them something.
+            if ($this->isSubclassOfOne($field_obj, $this->getModelVersionInfo()->fieldsIgnored())) {
                 unset($result[$field_name]);
+            } elseif ($this->isSubclassOfOne(
+                $field_obj,
+                $this->getModelVersionInfo()->fieldsThatHaveRenderedFormat()
+            )
+            ) {
+                $result[$field_name] = array(
+                    'raw'      => $this->prepareFieldObjValueForJson($field_obj, $field_value),
+                    'rendered' => $this->prepareFieldObjValueForJson($field_obj, $field_value, 'pretty'),
+                );
+            } elseif ($this->isSubclassOfOne(
+                $field_obj,
+                $this->getModelVersionInfo()->fieldsThatHavePrettyFormat()
+            )
+            ) {
+                $result[$field_name] = array(
+                    'raw'    => $this->prepareFieldObjValueForJson($field_obj, $field_value),
+                    'pretty' => $this->prepareFieldObjValueForJson($field_obj, $field_value, 'pretty'),
+                );
+            } elseif ($field_obj instanceof \EE_Datetime_Field) {
+                $field_value = $field_obj->prepare_for_set_from_db($field_value);
+                $timezone = $field_value->getTimezone();
+                $field_value->setTimezone(new \DateTimeZone('UTC'));
+                $result[$field_name . '_gmt'] = ModelDataTranslator::prepareFieldValuesForJson(
+                    $field_obj,
+                    $field_value,
+                    $this->getModelVersionInfo()->requestedVersion()
+                );
+                $field_value->setTimezone($timezone);
+                $result[$field_name] = ModelDataTranslator::prepareFieldValuesForJson(
+                    $field_obj,
+                    $field_value,
+                    $this->getModelVersionInfo()->requestedVersion()
+                );
+            } else {
+                $result[$field_name] = $this->prepareFieldObjValueForJson($field_obj, $field_value);
             }
         }
         return $result;

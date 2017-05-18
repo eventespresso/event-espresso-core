@@ -177,7 +177,9 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
     public function dataProviderForTestPrepareFieldValueFromJsonBad()
     {
         $serializable_field = new EE_Maybe_Serialized_Simple_HTML_Field('whatever', 'Whatever', true);
+        $serializable_field->_construct_finalize('Foobar', 'test_serialized_field','Foobar');
         $text_field = new EE_Plain_Text_Field('whatever', 'whatever', true);
+        $text_field->_construct_finalize('Foobar', 'test_text_field','Foobar');
         return array(
             array('s:6:"foobar";', $serializable_field),//that's a serialized string alright!
             array('O:4:"Evil":0:{}', $serializable_field),//that's a string with a serialized object of class "Evil"
@@ -186,6 +188,16 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
             array('O:4:"Evil":0:{}', $text_field),//double-check we don't even accept serialized text even on normal
             // text fields. Theoretically these won't get unserialized, but I don't see much need for anyone to ever
             // submit this kind of malicious junk, and having them sit around in our DB is dangerous
+            array(
+                array(
+                  'error_code' => 'php_object_not_return',
+                  'error_message' => esc_html__(
+                      'The value of this field in the database is a PHP object, which can\'t be represented in JSON.',
+                      'event_espresso'
+                  )
+                ),
+                $serializable_field
+            )
         );
     }
 
@@ -198,6 +210,7 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
      * @param mixed $inputted_json_value
      * @param EE_Model_Field_Base $field_obj
      * @group 9222
+     * @group current
      */
     public function testPrepareFieldValueFromJsonBad($inputted_json_value, EE_Model_Field_Base $field_obj)
     {
@@ -214,6 +227,13 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
     {
         $field = new EE_Maybe_Serialized_Simple_HTML_Field('whatever', 'whatever', true);
         $datetime_field = new EE_Datetime_Field('whatever2', 'whatever2', true, EE_Datetime_Field::now);
+        $error_response = array(
+            'error_code' => 'php_object_not_return',
+            'error_message' => esc_html__(
+                'The value of this field in the database is a PHP object, which can\'t be represented in JSON.',
+                'event_espresso'
+            )
+        );
         return array(
             array(array('foo' => 'bar'), array('foo' => 'bar'), $field),
             array(1, 1, $field),
@@ -225,7 +245,10 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
                     new DateTimeZone('UTC')
                 ),
                 $datetime_field
-            )
+            ),
+            array($error_response, new stdClass(), $field),
+            array(array('obj'=> $error_response), array('obj' => new stdClass()), $field),
+            array($error_response, @unserialize('O:6:"Foobar":0:{}'), $field)
         );
     }
 
@@ -244,32 +267,6 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
             $expected,
             ModelDataTranslator::prepareFieldValuesForJson($field_obj, $input, '4.8.36')
         );
-    }
-
-    /**
-     * @return array 1st item is the expected value, 2nd is the input, 3rd is the field object to use
-     */
-    public function dataProviderForTestPrepareFieldValuesForJsonBad()
-    {
-        $field = new EE_Maybe_Serialized_Simple_HTML_Field('whatever', 'whatever', true);
-        return array(
-            array(new stdClass(), $field),
-            array(array('obj' => new stdClass()), $field),
-            array(@unserialize('O:6:"Foobar":0:{}'), $field)
-        );
-    }
-
-    /**
-     * @group        9222
-     * @dataProvider dataProviderForTestPrepareFieldValuesForJsonBad
-     * @expectedException EventEspresso\core\libraries\rest_api\ObjectDetectedException
-     * @param                     $input
-     * @param EE_Model_Field_Base $field_obj
-     */
-    public function testPrepareFieldValuesForJsonBad($input, $field_obj)
-    {
-        //duck and cover! it's gonna blow!
-        ModelDataTranslator::prepareFieldValuesForJson($field_obj, $input, '4.8.36');
     }
 
 

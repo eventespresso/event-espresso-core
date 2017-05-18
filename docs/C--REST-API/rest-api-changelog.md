@@ -5,7 +5,7 @@ This is a log of client-facing changes made to the EE4 REST API (ie, changes to 
 
 ## 4.9.38
 - Added support for `POST`ing, `PUT`ing, and `DELETE`ing EE4 model data
-- JSON entities with properties containing PHP objects are REMOVED entirely from responses.
+- PHP objects in JSON responses are replaced with JSON objects with properties "error_code" and "error_message"
 - Serialized data is no longer accepted when querying
 
 ## 4.9.18
