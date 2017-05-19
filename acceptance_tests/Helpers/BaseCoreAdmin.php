@@ -12,6 +12,13 @@ use Page\CoreAdmin;
  */
 trait BaseCoreAdmin
 {
+
+    /**
+     * Core method for going to an Event Espresso Admin page.
+     * @param string $page
+     * @param string $action
+     * @param string $additional_params
+     */
     public function amOnEventEspressoAdminPage($page = '', $action = '', $additional_params = '')
     {
         $this->actor()->amOnAdminPage(CoreAdmin::adminUrl($page, $action, $additional_params));
@@ -19,6 +26,7 @@ trait BaseCoreAdmin
 
 
     /**
+     * Helper method for returning an instance of the Actor.  Intended to help with IDE fill out of methods.
      * @return \EventEspressoAcceptanceTester;
      */
     protected function actor()
