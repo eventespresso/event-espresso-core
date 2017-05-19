@@ -27,6 +27,13 @@ class CoreAdmin
 
 
     /**
+     * The selector for the search input submit button on list table pages
+     * @var string
+     */
+    const LIST_TABLE_SEARCH_SUBMIT_SELECTOR = '#search-submit';
+
+
+    /**
      * Get the EE admin url for the given properties.
      * Note, this is JUST the endpoint for the admin route.  It is expected that the actor/test would be calling this
      * with `amOnAdminPage` action.
