@@ -102,7 +102,7 @@ class Registry
 
     /**
      * Call back for the script print in frontend and backend.
-     * Used to call wp_localize_scripts so that data can be added throughout the runtime until this later hookpoint.
+     * Used to call wp_localize_scripts so that data can be added throughout the runtime until this later hook point.
      *
      * @since 4.9.31.rc.015
      */
@@ -289,7 +289,7 @@ class Registry
                 EVENT_ESPRESSO_VERSION
             );
             //Load custom style sheet if available
-            if (isset($this->template_config->custom_style_sheet)) {
+            if ($this->template_config->custom_style_sheet !== null) {
                 wp_register_style(
                     'espresso_custom_css',
                     EVENT_ESPRESSO_UPLOAD_URL . 'css/' . $this->template_config->custom_style_sheet,
