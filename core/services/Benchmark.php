@@ -39,7 +39,7 @@ class Benchmark
      */
     public static function doNotRun()
     {
-        return WP_DEBUG !== true || (defined('DOING_AJAX') && DOING_AJAX);
+        return ! WP_DEBUG || (defined('DOING_AJAX') && DOING_AJAX);
     }
 
 
