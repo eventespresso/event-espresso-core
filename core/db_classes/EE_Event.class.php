@@ -896,6 +896,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
      *
      * @uses EE_Event::total_available_spaces()
      * @return float|int  (EE_INF is returned as float)
+     * @throws InvalidArgumentException
      * @throws InvalidStatusException
      * @throws EE_Error
      */
@@ -908,7 +909,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
             return 0;
         }
         //subtract total approved registrations from spaces available to get how many are remaining.
-        $spots_taken = EEM_Registration::instance()->event_reg_count_for_statuses($this);
+        $spots_taken = EEM_Registration::instance()->event_reg_count_for_statuses($this->ID());
         $spaces_remaining = $spaces_available - $spots_taken;
         return $spaces_remaining > 0 ? $spaces_remaining : 0;
     }
