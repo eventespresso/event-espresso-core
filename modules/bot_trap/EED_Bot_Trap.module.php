@@ -124,7 +124,7 @@ class EED_Bot_Trap  extends EED_Module {
 			$html .= $time;
 		}
 		$html .= '"/>';
-		$html .= '</div>';
+		$html .= '</div><!-- .tkt-slctr-request-processor-dv -->';
 		echo $html;
 	}
 

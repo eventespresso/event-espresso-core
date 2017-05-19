@@ -1,25 +1,14 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+<?php
+use EventEspresso\core\services\shortcodes\LegacyShortcodesManager;
+
+defined('EVENT_ESPRESSO_VERSION') || exit();
 /**
- * Event Espresso
- *
- * Event Registration and Management Plugin for WordPress
- *
- * @ package			Event Espresso
- * @ author				Event Espresso
- * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link					http://www.eventespresso.com
- * @ version		 	4.0
- *
- * ------------------------------------------------------------------------
- *
  * EES_Shortcode
  *
- * @package			Event Espresso
+ * @deprecated  4.9.26
+ * @package     Event Espresso
  * @subpackage	/shortcodes/
- * @author				Brent Christensen
- *
- * ------------------------------------------------------------------------
+ * @author      Brent Christensen
  */
 abstract class EES_Shortcode extends EE_Base {
 
@@ -28,6 +17,22 @@ abstract class EES_Shortcode extends EE_Base {
 	 * @var 	array $_attributes
 	 */
 	protected $_attributes = array();
+
+
+
+    /**
+     * class constructor - should ONLY be instantiated by EE_Front_Controller
+     */
+    final public function __construct()
+    {
+        $shortcode = LegacyShortcodesManager::generateShortcodeTagFromClassName(get_class($this));
+        // assign shortcode to the preferred callback, which overwrites the "fallback shortcode processor" assigned earlier
+        add_shortcode($shortcode, array($this, 'process_shortcode'));
+        // make sure system knows this is an EE page
+        EE_Registry::instance()->REQ->set_espresso_page(true);
+    }
+
+
 
 	/**
 	 * run - initial shortcode module setup called during "parse_request" hook by
@@ -127,18 +132,6 @@ abstract class EES_Shortcode extends EE_Base {
 	}
 
 
-
-	/**
-	 * class constructor - should ONLY be instantiated by EE_Front_Controller
-	 */
-	final public function __construct() {
-		// get classname, remove EES_prefix, and convert to UPPERCASE
-		$shortcode = strtoupper( str_replace( 'EES_', '', get_class( $this )));
-		// assign shortcode to the preferred callback, which overwrites the "fallback shortcode processor" assigned earlier
-		add_shortcode( $shortcode, array( $this, 'process_shortcode' ));
-		// make sure system knows this is an EE page
-		EE_Registry::instance()->REQ->set_espresso_page( TRUE );
-	}
 
 
 
