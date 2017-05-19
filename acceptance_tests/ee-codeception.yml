@@ -1,6 +1,5 @@
 core:
   - BaseCoreAdmin
-  - MessagesAdmin
   - Checkout
   - EventsAdmin
   - MessagesAdmin
