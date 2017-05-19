@@ -13,28 +13,31 @@ namespace Page;
 class CoreAdmin
 {
 
+    /**
+     * @var string
+     */
     const URL_PREFIX = 'admin.php?page=';
 
 
     /**
-     * Absolute url to admin for the testing site. eg. `http://www.example.com/wp-admin
-     * This should be set by anything using this Page object by calling setAdminPath($admin_path) first.
+     * This is the selector for the next page button on list tables.
      * @var string
      */
-    private static $root_admin_url ='';
+    const ADMIN_LIST_TABLE_NEXT_PAGE_CLASS = '.next-page';
+
 
     /**
-     * Set the root admin url for all admin pages.
-     * @param $admin_url
+     * The selector for the search input submit button on list table pages
+     * @var string
      */
-    public static function setRootAdminUrl($admin_url)
-    {
-        self::$root_admin_url = self::trailingSlashIt($admin_url);
-    }
+    const LIST_TABLE_SEARCH_SUBMIT_SELECTOR = '#search-submit';
 
 
     /**
      * Get the EE admin url for the given properties.
+     * Note, this is JUST the endpoint for the admin route.  It is expected that the actor/test would be calling this
+     * with `amOnAdminPage` action.
+     *
      * @param string $page
      * @param string $action
      * @param string $additional_params
@@ -42,52 +45,10 @@ class CoreAdmin
      */
     public static function adminUrl($page = 'espresso_events', $action = 'default', $additional_params = '')
     {
-        $url = self::rootAdminUrl() . self::URL_PREFIX . $page;
+        $url = self::URL_PREFIX . $page;
         $url .= $action ? '&action=' . $action : '';
         $url .= $additional_params ? '&' . ltrim('&', ltrim('?', $additional_params)) : '';
         return $url;
-    }
-
-
-    /**
-     * Get what is set for the root_admin_url property.
-     * @return string
-     */
-    protected static function rootAdminUrl()
-    {
-        return self::$root_admin_url;
-    }
-
-
-    /**
-     * Appends a trailing slash.
-     *
-     * Will remove trailing forward and backslashes if it exists already before adding
-     * a trailing forward slash. This prevents double slashing a string or path.
-     *
-     * The primary use of this is for paths and thus should be used for paths. It is
-     * not restricted to paths and offers no specific path support.
-     *
-     * @param string $string What to add the trailing slash to.
-     * @return string String with trailing slash added.
-     */
-    public static function trailingSlashIt($string)
-    {
-        return self::unTrailingSlashIt($string) . '/';
-    }
-
-    /**
-     * Removes trailing forward slashes and backslashes if they exist.
-     *
-     * The primary use of this is for paths and thus should be used for paths. It is
-     * not restricted to paths and offers no specific path support.
-     *
-     * @param string $string What to remove the trailing slashes from.
-     * @return string String without the trailing slashes.
-     */
-    public static function unTrailingSlashit($string)
-    {
-        return rtrim($string, '/\\');
     }
 
 }

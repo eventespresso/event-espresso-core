@@ -297,7 +297,7 @@ class CollectionDetails implements CollectionDetailsInterface {
 
 	/**
 	 * @access public
-	 * @return array
+	 * @return string
 	 */
 	public function getFileMask() {
 		return $this->file_mask;

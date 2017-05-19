@@ -1,2 +1,6 @@
 core:
   - BaseCoreAdmin
+  - Checkout
+  - EventsAdmin
+  - MessagesAdmin
+  - TicketSelector

@@ -118,7 +118,7 @@ class CollectionLoader {
 		$this->file_locator->locate( $this->collection_details->getCollectionPaths() );
 		// filter the results
 		$filepaths = (array) apply_filters(
-			"FHEE__CollectionLoader__loadAllFromFilepath__filepaths",
+			'FHEE__CollectionLoader__loadAllFromFilepath__filepaths',
 			$this->file_locator->getFilePaths(),
 			$this->collection_details->collectionName(),
 			$this->collection_details
@@ -175,7 +175,7 @@ class CollectionLoader {
 	 */
 	protected function addEntityToCollection( $entity, $identifier ) {
 		do_action(
-			"FHEE__CollectionLoader__addEntityToCollection__entity",
+			'FHEE__CollectionLoader__addEntityToCollection__entity',
 			$entity,
 			$this->collection_details->collectionName(),
 			$this->collection_details
@@ -183,7 +183,7 @@ class CollectionLoader {
 		$identifier = $this->setIdentifier( $entity, $identifier );
 		if ( $this->collection->has( $identifier ) ) {
 			do_action(
-				"FHEE__CollectionLoader__addEntityToCollection__entity_already_added",
+				'FHEE__CollectionLoader__addEntityToCollection__entity_already_added',
 				$this,
 				$this->collection_details->collectionName(),
 				$this->collection_details
@@ -192,7 +192,7 @@ class CollectionLoader {
 		}
 		if( $this->collection->add( $entity, $identifier ) ) {
 			do_action(
-				"FHEE__CollectionLoader__addEntityToCollection__entity_added",
+				'FHEE__CollectionLoader__addEntityToCollection__entity_added',
 				$this,
 				$this->collection_details->collectionName(),
 				$this->collection_details
@@ -200,7 +200,7 @@ class CollectionLoader {
 			return CollectionLoader::ENTITY_ADDED;
 		} else {
 			do_action(
-				"FHEE__CollectionLoader__addEntityToCollection__entity_not_added",
+				'FHEE__CollectionLoader__addEntityToCollection__entity_not_added',
 				$this,
 				$this->collection_details->collectionName(),
 				$this->collection_details
@@ -221,28 +221,39 @@ class CollectionLoader {
 	 * @throws \EventEspresso\core\exceptions\InvalidEntityException
 	 */
 	protected function setIdentifier( $entity, $identifier ) {
-		if ( $this->collection_details->identifierType() === CollectionDetails::ID_OBJECT_HASH ) {
-			$identifier = spl_object_hash( $entity );
-		} elseif ( $this->collection_details->identifierType() === CollectionDetails::ID_CALLBACK_METHOD ) {
-			$identifier_callback = $this->collection_details->identifierCallback();
-			if ( ! method_exists( $entity, $identifier_callback ) ) {
-				throw new InvalidEntityException(
-					$entity,
-					$this->collection_details->getCollectionInterface(),
-					sprintf(
-						__(
-							'The current collection is configured to use a method named "%1$s" when setting or retrieving objects. The supplied entity is an instance of "%2$s", but does not contain this method.',
-							'event_espresso'
-						),
-						$identifier_callback,
-						get_class( $entity )
-					)
-				);
-			}
-			$identifier = $entity->{$identifier_callback}();
-		}
+	    switch($this->collection_details->identifierType()) {
+	        // every unique object gets added to the collection, but not duplicates of the exact same object
+            case CollectionDetails::ID_OBJECT_HASH :
+                $identifier = spl_object_hash($entity);
+                break;
+            // only one entity per class can be added to collection, like a singleton
+            case CollectionDetails::ID_CLASS_NAME :
+                $identifier = get_class($entity);
+                break;
+            // objects added to the collection based on entity callback, so the entity itself decides
+            case CollectionDetails::ID_CALLBACK_METHOD :
+                $identifier_callback = $this->collection_details->identifierCallback();
+                if ( ! method_exists($entity, $identifier_callback)) {
+                    throw new InvalidEntityException(
+                        $entity,
+                        $this->collection_details->getCollectionInterface(),
+                        sprintf(
+                            __(
+                                'The current collection is configured to use a method named "%1$s" when setting or retrieving objects. The supplied entity is an instance
+                                of "%2$s", but does not contain this method.',
+                                'event_espresso'
+                            ),
+                            $identifier_callback,
+                            get_class($entity)
+                        )
+                    );
+                }
+                $identifier = $entity->{$identifier_callback}();
+                break;
+
+        }
 		return apply_filters(
-			"FHEE__CollectionLoader__addEntityToCollection__identifier",
+			'FHEE__CollectionLoader__addEntityToCollection__identifier',
 			$identifier,
 			$this->collection_details->collectionName(),
 			$this->collection_details
@@ -262,7 +273,7 @@ class CollectionLoader {
 	protected function loadFromFQCNs() {
 		$FQCNs = $this->collection_details->getCollectionFQCNs();
 		$FQCNs = (array) apply_filters(
-			"FHEE__CollectionLoader__loadAllFromFQCNs__FQCNs",
+			'FHEE__CollectionLoader__loadAllFromFQCNs__FQCNs',
 			$FQCNs,
 			$this->collection_details->collectionName(),
 			$this->collection_details

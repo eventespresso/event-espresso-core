@@ -1,4 +1,6 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+<?php use EventEspresso\widgets\EspressoWidget;
+
+if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 /**
  * Event Espresso
  *
@@ -21,22 +23,16 @@
  *
  * ------------------------------------------------------------------------
  */
-class EEW_Upcoming_Events  extends WP_Widget {
+class EEW_Upcoming_Events extends EspressoWidget {
 
 
 	/**
 	 * Register widget with WordPress.
 	 */
-	function __construct() {
+	public function __construct() {
 		parent::__construct(
-			'ee-upcoming-events-widget',
 			__( 'Event Espresso Upcoming Events', 'event_espresso' ),
-			 array( 'description' => __( 'A widget to display your upcoming events.', 'event_espresso' )),
-			array(
-				'width' => 300,
-				'height' => 350,
-				'id_base' => 'ee-upcoming-events-widget'
-			)
+			 array( 'description' => __( 'A widget to display your upcoming events.', 'event_espresso' ))
 		);
 	}
 
