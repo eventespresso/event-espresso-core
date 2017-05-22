@@ -58,7 +58,8 @@ class Maintenance_Admin_Page extends EE_Admin_Page
         $this->_admin_page_title = EE_MAINTENANCE_LABEL;
         $this->_labels = array(
             'buttons' => array(
-                'reset_capabilities' => __('Reset Event Espresso Capabilities', 'event_espresso'),
+                'reset_reservations' => esc_html__('Reset Ticket and Datetime Reserved Counts', 'event_espresso'),
+                'reset_capabilities' => esc_html__('Reset Event Espresso Capabilities', 'event_espresso'),
             ),
         );
     }
@@ -80,6 +81,11 @@ class Maintenance_Admin_Page extends EE_Admin_Page
             'system_status'                       => array(
                 'func'       => '_system_status',
                 'capability' => 'manage_options',
+            ),
+            'download_system_status' => array(
+                'func'       => '_download_system_status',
+                'capability' => 'manage_options',
+                'noheader'   => true,
             ),
             'send_migration_crash_report'         => array(
                 'func'       => '_send_migration_crash_report',
@@ -116,6 +122,11 @@ class Maintenance_Admin_Page extends EE_Admin_Page
                 'capability' => 'manage_options',
                 'noheader'   => true,
             ),
+            'reset_reservations'                  => array(
+                'func'       => '_reset_reservations',
+                'capability' => 'manage_options',
+                'noheader'   => true,
+            ),
             'reset_capabilities'                  => array(
                 'func'       => '_reset_capabilities',
                 'capability' => 'manage_options',
@@ -136,21 +147,21 @@ class Maintenance_Admin_Page extends EE_Admin_Page
         $this->_page_config = array(
             'default'       => array(
                 'nav'           => array(
-                    'label' => __('Maintenance', 'event_espresso'),
+                    'label' => esc_html__('Maintenance', 'event_espresso'),
                     'order' => 10,
                 ),
                 'require_nonce' => false,
             ),
             'data_reset'    => array(
                 'nav'           => array(
-                    'label' => __('Reset/Delete Data', 'event_espresso'),
+                    'label' => esc_html__('Reset/Delete Data', 'event_espresso'),
                     'order' => 20,
                 ),
                 'require_nonce' => false,
             ),
             'system_status' => array(
                 'nav'           => array(
-                    'label' => __("System Information", "event_espresso"),
+                    'label' => esc_html__("System Information", "event_espresso"),
                     'order' => 30,
                 ),
                 'require_nonce' => false,
@@ -265,6 +276,9 @@ class Maintenance_Admin_Page extends EE_Admin_Page
                     'next_db_state'    => isset($current_script) ? sprintf(__("EE%s (%s)", 'event_espresso'),
                         $new_version, $plugin_slug) : null,
                 ));
+            } else {
+                $this->_template_args['current_db_state'] = null;
+                $this->_template_args['next_db_state'] = null;
             }
             $this->_template_path = EE_MAINTENANCE_TEMPLATE_PATH . 'ee_migration_page.template.php';
             $this->_template_args = array_merge(
@@ -284,6 +298,8 @@ class Maintenance_Admin_Page extends EE_Admin_Page
                     //flag to change wording to indicating that we're only CONTINUING a migration script (somehow it got interrupted0
                     'reset_db_page_link'                     => EE_Admin_Page::add_query_args_and_nonce(array('action' => 'reset_db'),
                         EE_MAINTENANCE_ADMIN_URL),
+                    'data_reset_page'                        => EE_Admin_Page::add_query_args_and_nonce(array('action' => 'data_reset'),
+                        EE_MAINTENANCE_ADMIN_URL),
                     'update_migration_script_page_link'      => EE_Admin_Page::add_query_args_and_nonce(array('action' => 'change_maintenance_level'),
                         EE_MAINTENANCE_ADMIN_URL),
                     'ultimate_db_state'                      => sprintf(__("EE%s", 'event_espresso'),
@@ -293,10 +309,10 @@ class Maintenance_Admin_Page extends EE_Admin_Page
             //make sure we have the form fields helper available. It usually is, but sometimes it isn't
             //localize script stuff
             wp_localize_script('ee-maintenance', 'ee_maintenance', array(
-                'migrating'                        => __("Migrating...", "event_espresso"),
-                'next'                             => __("Next", "event_espresso"),
-                'fatal_error'                      => __("A Fatal Error Has Occurred", "event_espresso"),
-                'click_next_when_ready'            => __("The current Migration has ended. Click 'next' when ready to proceed",
+                'migrating'                        => esc_html__("Updating Database...", "event_espresso"),
+                'next'                             => esc_html__("Next", "event_espresso"),
+                'fatal_error'                      => esc_html__("A Fatal Error Has Occurred", "event_espresso"),
+                'click_next_when_ready'            => esc_html__("The current Database Update has ended. Click 'next' when ready to proceed",
                     "event_espresso"),
                 'status_no_more_migration_scripts' => EE_Data_Migration_Manager::status_no_more_migration_scripts,
                 'status_fatal_error'               => EE_Data_Migration_Manager::status_fatal_error,
@@ -304,6 +320,13 @@ class Maintenance_Admin_Page extends EE_Admin_Page
             ));
         }
         $this->_template_args['most_recent_migration'] = $most_recent_migration;//the actual most recently ran migration
+        //now render the migration options part, and put it in a variable
+        $migration_options_template_file = apply_filters(
+            'FHEE__ee_migration_page__migration_options_template',
+            EE_MAINTENANCE_TEMPLATE_PATH . 'migration_options_from_ee4.template.php'
+        );
+        $migration_options_html = EEH_Template::display_template($migration_options_template_file, $this->_template_args,true);
+        $this->_template_args['migration_options_html'] = $migration_options_html;
         $this->_template_args['admin_page_content'] = EEH_Template::display_template($this->_template_path,
             $this->_template_args, true);
         $this->display_admin_page_with_sidebar();
@@ -336,11 +359,11 @@ class Maintenance_Admin_Page extends EE_Admin_Page
 
 
     /**
-     * changes the maintenance level, provided there are still no migration scripts that shoudl run
+     * changes the maintenance level, provided there are still no migration scripts that should run
      */
     public function _change_maintenance_level()
     {
-        $new_level = intval($this->_req_data['maintenance_mode_level']);
+        $new_level = absint($this->_req_data['maintenance_mode_level']);
         if ( ! EE_Data_Migration_Manager::instance()->check_for_applicable_data_migration_scripts()) {
             EE_Maintenance_Mode::instance()->set_maintenance_level($new_level);
             $success = true;
@@ -348,7 +371,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page
             EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
             $success = false;
         }
-        $this->_redirect_after_action($success, 'Maintenance Mode', __("Updated", "event_espresso"));
+        $this->_redirect_after_action($success, 'Maintenance Mode', esc_html__("Updated", "event_espresso"));
     }
 
 
@@ -357,10 +380,19 @@ class Maintenance_Admin_Page extends EE_Admin_Page
      * a tab with options for resetting and/or deleting EE data
      *
      * @throws \EE_Error
+     * @throws \DomainException
      */
     public function _data_reset_and_delete()
     {
         $this->_template_path = EE_MAINTENANCE_TEMPLATE_PATH . 'ee_data_reset_and_delete.template.php';
+        $this->_template_args['reset_reservations_button'] = $this->get_action_link_or_button(
+            'reset_reservations',
+            'reset_reservations',
+            array(),
+            'button button-primary',
+            '',
+            false
+        );
         $this->_template_args['reset_capabilities_button'] = $this->get_action_link_or_button(
             'reset_capabilities',
             'reset_capabilities',
@@ -383,6 +415,28 @@ class Maintenance_Admin_Page extends EE_Admin_Page
             true
         );
         $this->display_admin_page_with_sidebar();
+    }
+
+
+
+    protected function _reset_reservations()
+    {
+        if(\EED_Ticket_Sales_Monitor::reset_reservation_counts()) {
+            EE_Error::add_success(
+                __(
+                    'Ticket and datetime reserved counts have been successfully reset.',
+                    'event_espresso'
+                )
+            );
+        } else {
+            EE_Error::add_success(
+                __(
+                    'Ticket and datetime reserved counts were correct and did not need resetting.',
+                    'event_espresso'
+                )
+            );
+        }
+        $this->_redirect_after_action(true, '', '', array('action' => 'data_reset'), true);
     }
 
 
@@ -417,9 +471,29 @@ class Maintenance_Admin_Page extends EE_Admin_Page
     {
         $this->_template_path = EE_MAINTENANCE_TEMPLATE_PATH . 'ee_system_stati_page.template.php';
         $this->_template_args['system_stati'] = EEM_System_Status::instance()->get_system_stati();
+        $this->_template_args['download_system_status_url'] = EE_Admin_Page::add_query_args_and_nonce(
+            array(
+                'action' => 'download_system_status',
+            ),
+            EE_MAINTENANCE_ADMIN_URL
+        );
         $this->_template_args['admin_page_content'] = EEH_Template::display_template($this->_template_path,
             $this->_template_args, true);
         $this->display_admin_page_with_sidebar();
+    }
+
+    /**
+     * Downloads an HTML file of the system status that can be easily stored or emailed
+     */
+    public function _download_system_status()
+    {
+        $status_info = EEM_System_Status::instance()->get_system_stati();
+        header( 'Content-Disposition: attachment' );
+        header( "Content-Disposition: attachment; filename=system_status_" . sanitize_key( site_url() ) . ".html" );
+        echo "<style>table{border:1px solid darkgrey;}td{vertical-align:top}</style>";
+        echo "<h1>System Information for " . site_url() . "</h1>";
+        echo EEH_Template::layout_array_as_table( $status_info );
+        die;
     }
 
 
@@ -440,8 +514,8 @@ class Maintenance_Admin_Page extends EE_Admin_Page
         } catch (Exception $e) {
             $success = false;
         }
-        $this->_redirect_after_action($success, __("Migration Crash Report", "event_espresso"),
-            __("sent", "event_espresso"),
+        $this->_redirect_after_action($success, esc_html__("Migration Crash Report", "event_espresso"),
+            esc_html__("sent", "event_espresso"),
             array('success' => $success, 'action' => 'confirm_migration_crash_report_sent'));
     }
 
@@ -527,7 +601,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page
         //set the db state to something that will require migrations
         update_option(EE_Data_Migration_Manager::current_database_state, '3.1.36.0');
         EE_Maintenance_Mode::instance()->set_maintenance_level(EE_Maintenance_Mode::level_2_complete_maintenance);
-        $this->_redirect_after_action(true, __("Database", 'event_espresso'), __("reset", 'event_espresso'));
+        $this->_redirect_after_action(true, esc_html__("Database", 'event_espresso'), esc_html__("reset", 'event_espresso'));
     }
 
 

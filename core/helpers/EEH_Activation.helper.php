@@ -59,18 +59,16 @@ class EEH_Activation implements ResettableInterface
     private static $table_manager;
 
 
-
     /**
      * @return \EventEspresso\core\services\database\TableAnalysis
      */
     public static function getTableAnalysis()
     {
-        if ( ! self::$table_analysis instanceof \EventEspresso\core\services\database\TableAnalysis) {
+        if (! self::$table_analysis instanceof \EventEspresso\core\services\database\TableAnalysis) {
             self::$table_analysis = EE_Registry::instance()->create('TableAnalysis', array(), true);
         }
         return self::$table_analysis;
     }
-
 
 
     /**
@@ -78,12 +76,11 @@ class EEH_Activation implements ResettableInterface
      */
     public static function getTableManager()
     {
-        if ( ! self::$table_manager instanceof \EventEspresso\core\services\database\TableManager) {
+        if (! self::$table_manager instanceof \EventEspresso\core\services\database\TableManager) {
             self::$table_manager = EE_Registry::instance()->create('TableManager', array(), true);
         }
         return self::$table_manager;
     }
-
 
 
     /**
@@ -99,7 +96,6 @@ class EEH_Activation implements ResettableInterface
     {
         return \EEH_Activation::getTableAnalysis()->ensureTableNameHasPrefix($table_name);
     }
-
 
 
     /**
@@ -119,7 +115,6 @@ class EEH_Activation implements ResettableInterface
     }
 
 
-
     /**
      * Sets the database schema and creates folders. This should
      * be called on plugin activation and reactivation
@@ -130,10 +125,9 @@ class EEH_Activation implements ResettableInterface
     public static function initialize_db_and_folders()
     {
         $good_filesystem = EEH_Activation::create_upload_directories();
-        $good_db = EEH_Activation::create_database_tables();
+        $good_db         = EEH_Activation::create_database_tables();
         return $good_filesystem && $good_db;
     }
-
 
 
     /**
@@ -151,11 +145,13 @@ class EEH_Activation implements ResettableInterface
             return;
         }
         EEH_Activation::$_initialized_db_content_already_in_this_request = true;
+
         EEH_Activation::initialize_system_questions();
         EEH_Activation::insert_default_status_codes();
         EEH_Activation::generate_default_message_templates();
         EEH_Activation::create_no_ticket_prices_array();
         EE_Registry::instance()->CAP->init_caps();
+
         EEH_Activation::validate_messages_system();
         EEH_Activation::insert_default_payment_methods();
         //in case we've
@@ -169,7 +165,6 @@ class EEH_Activation implements ResettableInterface
         //which users really won't care about on initial activation
         EE_Error::overwrite_success();
     }
-
 
 
     /**
@@ -189,9 +184,10 @@ class EEH_Activation implements ResettableInterface
             'FHEE__EEH_Activation__get_cron_tasks',
             array(
                 'AHEE__EE_Cron_Tasks__clean_up_junk_transactions'      => 'hourly',
-                //				'AHEE__EE_Cron_Tasks__finalize_abandoned_transactions' => EEH_Activation::cron_task_no_longer_in_use, actually this is still in use
+//				'AHEE__EE_Cron_Tasks__finalize_abandoned_transactions' => EEH_Activation::cron_task_no_longer_in_use, actually this is still in use
                 'AHEE__EE_Cron_Tasks__update_transaction_with_payment' => EEH_Activation::cron_task_no_longer_in_use,
                 //there may have been a bug which prevented from these cron tasks from getting unscheduled, so we might want to remove these for a few updates
+                'AHEE_EE_Cron_Tasks__clean_out_old_gateway_logs'       => 'daily',
             )
         );
         if ($which_to_include === 'old') {
@@ -218,7 +214,6 @@ class EEH_Activation implements ResettableInterface
     }
 
 
-
     /**
      * Ensure cron tasks are setup (the removal of crons should be done by remove_crons())
      *
@@ -226,13 +221,26 @@ class EEH_Activation implements ResettableInterface
      */
     public static function create_cron_tasks()
     {
+
         foreach (EEH_Activation::get_cron_tasks('current') as $hook_name => $frequency) {
-            if ( ! wp_next_scheduled($hook_name)) {
-                wp_schedule_event(time(), $frequency, $hook_name);
+            if (! wp_next_scheduled($hook_name)) {
+                /**
+                 * This allows client code to define the initial start timestamp for this schedule.
+                 */
+                if (is_array($frequency)
+                    && count($frequency) === 2
+                    && isset($frequency[0], $frequency[1])
+                ) {
+                    $start_timestamp = $frequency[0];
+                    $frequency = $frequency[1];
+                } else {
+                    $start_timestamp = time();
+                }
+                wp_schedule_event($start_timestamp, $frequency, $hook_name);
             }
         }
-    }
 
+    }
 
 
     /**
@@ -244,8 +252,8 @@ class EEH_Activation implements ResettableInterface
     public static function remove_cron_tasks($remove_all = true)
     {
         $cron_tasks_to_remove = $remove_all ? 'all' : 'old';
-        $crons = _get_cron_array();
-        $crons = is_array($crons) ? $crons : array();
+        $crons                = _get_cron_array();
+        $crons                = is_array($crons) ? $crons : array();
         /* reminder of what $crons look like:
          * Top-level keys are timestamps, and their values are arrays.
          * The 2nd level arrays have keys with each of the cron task hook names to run at that time
@@ -283,7 +291,6 @@ class EEH_Activation implements ResettableInterface
     }
 
 
-
     /**
      *    CPT_initialization
      *    registers all EE CPTs ( Custom Post Types ) then flushes rewrite rules so that all endpoints exist
@@ -314,13 +321,17 @@ class EEH_Activation implements ResettableInterface
     public static function reset_and_update_config()
     {
         do_action('AHEE__EE_Config___load_core_config__start', array('EEH_Activation', 'load_calendar_config'));
-        add_filter('FHEE__EE_Config___load_core_config__config_settings', array('EEH_Activation', 'migrate_old_config_data'), 10, 3);
+        add_filter(
+            'FHEE__EE_Config___load_core_config__config_settings',
+            array('EEH_Activation', 'migrate_old_config_data'),
+            10,
+            3
+        );
         //EE_Config::reset();
-        if ( ! EE_Config::logging_enabled()) {
+        if (! EE_Config::logging_enabled()) {
             delete_option(EE_Config::LOG_NAME);
         }
     }
-
 
 
     /**
@@ -391,7 +402,6 @@ class EEH_Activation implements ResettableInterface
     }
 
 
-
     /**
      * deactivate_event_espresso
      *
@@ -406,6 +416,8 @@ class EEH_Activation implements ResettableInterface
             deactivate_plugins(EE_PLUGIN_BASENAME, true);
         }
     }
+
+
 
 
 
@@ -461,15 +473,14 @@ class EEH_Activation implements ResettableInterface
                     $critical_page = EEH_Activation::create_critical_page($critical_page);
                     // REALLY? Still nothing ??!?!?
                     if ($critical_page['post'] === null) {
-                        $msg = __('The Event Espresso critical page configuration settings could not be updated.', 'event_espresso');
+                        $msg = __(
+                            'The Event Espresso critical page configuration settings could not be updated.',
+                            'event_espresso'
+                        );
                         EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
                         break;
                     }
                 }
-            }
-            // track post_shortcodes
-            if ($critical_page['post']) {
-                EEH_Activation::_track_critical_page_post_shortcodes($critical_page);
             }
             // check that Post ID matches critical page ID in config
             if (
@@ -478,8 +489,11 @@ class EEH_Activation implements ResettableInterface
             ) {
                 //update Config with post ID
                 $EE_Core_Config->{$critical_page['id']} = $critical_page['post']->ID;
-                if ( ! EE_Config::instance()->update_espresso_config(false, false)) {
-                    $msg = __('The Event Espresso critical page configuration settings could not be updated.', 'event_espresso');
+                if (! EE_Config::instance()->update_espresso_config(false, false)) {
+                    $msg = __(
+                        'The Event Espresso critical page configuration settings could not be updated.',
+                        'event_espresso'
+                    );
                     EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
                 }
             }
@@ -492,8 +506,15 @@ class EEH_Activation implements ResettableInterface
         }
         if ($critical_page_problem) {
             $msg = sprintf(
-                __('A potential issue has been detected with one or more of your Event Espresso pages. Go to %s to view your Event Espresso pages.', 'event_espresso'),
-                '<a href="' . admin_url('admin.php?page=espresso_general_settings&action=critical_pages') . '">' . __('Event Espresso Critical Pages Settings', 'event_espresso') . '</a>'
+                __(
+                    'A potential issue has been detected with one or more of your Event Espresso pages. Go to %s to view your Event Espresso pages.',
+                    'event_espresso'
+                ),
+                '<a href="'
+                . admin_url('admin.php?page=espresso_general_settings&action=critical_pages')
+                . '">'
+                . __('Event Espresso Critical Pages Settings', 'event_espresso')
+                . '</a>'
             );
             EE_Error::add_persistent_admin_notice('critical_page_problem', $msg);
         }
@@ -508,7 +529,8 @@ class EEH_Activation implements ResettableInterface
      * Returns the first post which uses the specified shortcode
      *
      * @param string $ee_shortcode usually one of the critical pages shortcodes, eg
-     *                             ESPRESSO_THANK_YOU. So we will search fora post with the content "[ESPRESSO_THANK_YOU"
+     *                             ESPRESSO_THANK_YOU. So we will search fora post with the content
+     *                             "[ESPRESSO_THANK_YOU"
      *                             (we don't search for the closing shortcode bracket because they might have added
      *                             parameter to the shortcode
      * @return WP_Post or NULl
@@ -523,9 +545,7 @@ class EEH_Activation implements ResettableInterface
         } else {
             return null;
         }
-        //		return $post_id;
     }
-
 
 
     /**
@@ -538,6 +558,7 @@ class EEH_Activation implements ResettableInterface
      */
     public static function create_critical_page($critical_page)
     {
+
         $post_args = array(
             'post_title'     => $critical_page['name'],
             'post_status'    => 'publish',
@@ -545,8 +566,9 @@ class EEH_Activation implements ResettableInterface
             'comment_status' => 'closed',
             'post_content'   => '[' . $critical_page['code'] . ']',
         );
+
         $post_id = wp_insert_post($post_args);
-        if ( ! $post_id) {
+        if (! $post_id) {
             $msg = sprintf(
                 __('The Event Espresso  critical page entitled "%s" could not be created.', 'event_espresso'),
                 $critical_page['name']
@@ -555,58 +577,18 @@ class EEH_Activation implements ResettableInterface
             return $critical_page;
         }
         // get newly created post's details
-        if ( ! $critical_page['post'] = get_post($post_id)) {
+        if (! $critical_page['post'] = get_post($post_id)) {
             $msg = sprintf(
                 __('The Event Espresso critical page entitled "%s" could not be retrieved.', 'event_espresso'),
                 $critical_page['name']
             );
             EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
         }
+
         return $critical_page;
+
     }
 
-
-
-    /**
-     *    This function adds a critical page's shortcode to the post_shortcodes array
-     *
-     * @access private
-     * @static
-     * @param array $critical_page
-     * @return void
-     */
-    private static function _track_critical_page_post_shortcodes($critical_page = array())
-    {
-        // check the goods
-        if ( ! $critical_page['post'] instanceof WP_Post) {
-            $msg = sprintf(
-                __('The Event Espresso critical page shortcode for the page %s can not be tracked because it is not a WP_Post object.', 'event_espresso'),
-                $critical_page['name']
-            );
-            EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
-            return;
-        }
-        $EE_Core_Config = EE_Registry::instance()->CFG->core;
-        // map shortcode to post
-        $EE_Core_Config->post_shortcodes[$critical_page['post']->post_name][$critical_page['code']] = $critical_page['post']->ID;
-        // and make sure it's NOT added to the WP "Posts Page"
-        // name of the WP Posts Page
-        $posts_page = EE_Config::get_page_for_posts();
-        if (isset($EE_Core_Config->post_shortcodes[$posts_page])) {
-            unset($EE_Core_Config->post_shortcodes[$posts_page][$critical_page['code']]);
-        }
-        if ($posts_page !== 'posts' && isset($EE_Core_Config->post_shortcodes['posts'])) {
-            unset($EE_Core_Config->post_shortcodes['posts'][$critical_page['code']]);
-        }
-        // update post_shortcode CFG
-        if ( ! EE_Config::instance()->update_espresso_config(false, false)) {
-            $msg = sprintf(
-                __('The Event Espresso critical page shortcode for the %s page could not be configured properly.', 'event_espresso'),
-                $critical_page['name']
-            );
-            EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
-        }
-    }
 
 
 
@@ -626,12 +608,19 @@ class EEH_Activation implements ResettableInterface
         }/**/
         $role_to_check = apply_filters('FHEE__EEH_Activation__get_default_creator_id__role_to_check', 'administrator');
         //let's allow pre_filtering for early exits by alternative methods for getting id.  We check for truthy result and if so then exit early.
-        $pre_filtered_id = apply_filters('FHEE__EEH_Activation__get_default_creator_id__pre_filtered_id', false, $role_to_check);
+        $pre_filtered_id = apply_filters(
+            'FHEE__EEH_Activation__get_default_creator_id__pre_filtered_id',
+            false,
+            $role_to_check
+        );
         if ($pre_filtered_id !== false) {
             return (int)$pre_filtered_id;
         }
         $capabilities_key = \EEH_Activation::getTableAnalysis()->ensureTableNameHasPrefix('capabilities');
-        $query = $wpdb->prepare("SELECT user_id FROM $wpdb->usermeta WHERE meta_key = '$capabilities_key' AND meta_value LIKE %s ORDER BY user_id ASC LIMIT 0,1", '%' . $role_to_check . '%');
+        $query = $wpdb->prepare(
+            "SELECT user_id FROM $wpdb->usermeta WHERE meta_key = '$capabilities_key' AND meta_value LIKE %s ORDER BY user_id ASC LIMIT 0,1",
+            '%' . $role_to_check . '%'
+        );
         $user_id = $wpdb->get_var($query);
         $user_id = apply_filters('FHEE__EEH_Activation_Helper__get_default_creator_id__user_id', $user_id);
         if ($user_id && (int)$user_id) {
@@ -652,13 +641,14 @@ class EEH_Activation implements ResettableInterface
      * @access public
      * @static
      * @param string  $table_name              without the $wpdb->prefix
-     * @param string  $sql                     SQL for creating the table (contents between brackets in an SQL create table query)
+     * @param string  $sql                     SQL for creating the table (contents between brackets in an SQL create
+     *                                         table query)
      * @param string  $engine                  like 'ENGINE=MyISAM' or 'ENGINE=InnoDB'
      * @param boolean $drop_pre_existing_table set to TRUE when you want to make SURE the table is completely empty
-     *                                         and new once this function is done (ie, you really do want to CREATE a table, and
-     *                                         expect it to be empty once you're done)
-     *                                         leave as FALSE when you just want to verify the table exists and matches this definition (and if it
-     *                                         HAS data in it you want to leave it be)
+     *                                         and new once this function is done (ie, you really do want to CREATE a
+     *                                         table, and expect it to be empty once you're done) leave as FALSE when
+     *                                         you just want to verify the table exists and matches this definition
+     *                                         (and if it HAS data in it you want to leave it be)
      * @return void
      * @throws EE_Error if there are database errors
      */
@@ -682,15 +672,17 @@ class EEH_Activation implements ResettableInterface
                 \EEH_Activation::getTableManager()->dropTable($wp_table_name);
             } else if ( ! $deleted_safely) {
                 // so we should be more cautious rather than just dropping tables so easily
-                EE_Error::add_persistent_admin_notice(
-                    'bad_table_' . $wp_table_name . '_detected',
-                    sprintf(__('Database table %1$s exists when it shouldn\'t, and may contain erroneous data. If you have previously restored your database from a backup that didn\'t remove the old tables, then we recommend adding %2$s to your %3$s file then restore to that backup again. This will clear out the invalid data from %1$s. Afterwards you should undo that change from your %3$s file. %4$sIf you cannot edit %3$s, you should remove the data from %1$s manually then restore to the backup again.',
-                        'event_espresso'),
+                error_log(
+                    sprintf(
+                        __(
+                            'It appears that database table "%1$s" exists when it shouldn\'t, and therefore may contain erroneous data. If you have previously restored your database from a backup that didn\'t remove the old tables, then we recommend: %2$s 1. create a new COMPLETE backup of your database, %2$s 2. delete ALL tables from your database, %2$s 3. restore to your previous backup. %2$s If, however, you have not restored to a backup, then somehow your "%3$s" WordPress option could not be read. You can probably ignore this message, but should investigate why that option is being removed.',
+                            'event_espresso'
+                        ),
                         $wp_table_name,
-                        "<pre>define( 'EE_DROP_BAD_TABLES', TRUE );</pre>",
-                        '<b>wp-config.php</b>',
-                        '<br/>'),
-                    true);
+                        '<br/>',
+                        'espresso_db_update'
+                    )
+                );
             }
         }
         $engine = str_replace('ENGINE=', '', $engine);
@@ -712,11 +704,13 @@ class EEH_Activation implements ResettableInterface
      *                            'VARCHAR(10)'
      * @return bool|int
      */
-    public static function add_column_if_it_doesnt_exist($table_name, $column_name, $column_info = 'INT UNSIGNED NOT NULL')
-    {
+    public static function add_column_if_it_doesnt_exist(
+        $table_name,
+        $column_name,
+        $column_info = 'INT UNSIGNED NOT NULL'
+    ) {
         return \EEH_Activation::getTableManager()->addColumn($table_name, $column_name, $column_info);
     }
-
 
 
     /**
@@ -735,7 +729,6 @@ class EEH_Activation implements ResettableInterface
     }
 
 
-
     /**
      * db_table_is_empty
      *
@@ -749,7 +742,6 @@ class EEH_Activation implements ResettableInterface
     {
         return \EEH_Activation::getTableAnalysis()->tableIsEmpty($table_name);
     }
-
 
 
     /**
@@ -769,7 +761,6 @@ class EEH_Activation implements ResettableInterface
     }
 
 
-
     /**
      * delete_unused_db_table
      *
@@ -783,7 +774,6 @@ class EEH_Activation implements ResettableInterface
     {
         return \EEH_Activation::getTableManager()->dropTable($table_name);
     }
-
 
 
     /**
@@ -827,13 +817,28 @@ class EEH_Activation implements ResettableInterface
                         EE_Error::add_error($error, __FILE__, __FUNCTION__, __LINE__);
                     }
                 } else {
-                    EE_Error::add_error(__('There were errors creating the Event Espresso database tables and Event Espresso has been deactivated. To view the errors, please enable WP_DEBUG in your wp-config.php file.', 'event_espresso'));
+                    EE_Error::add_error(
+                        __(
+                            'There were errors creating the Event Espresso database tables and Event Espresso has been 
+                            deactivated. To view the errors, please enable WP_DEBUG in your wp-config.php file.',
+                            'event_espresso'
+                        )
+                    );
                 }
                 return false;
             }
             EE_Data_Migration_Manager::instance()->update_current_database_state_to();
         } else {
-            EE_Error::add_error(__('Could not determine most up-to-date data migration script from which to pull database schema structure. So database is probably not setup properly', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__);
+            EE_Error::add_error(
+                __(
+                    'Could not determine most up-to-date data migration script from which to pull database schema
+                     structure. So database is probably not setup properly',
+                    'event_espresso'
+                ),
+                __FILE__,
+                __FUNCTION__,
+                __LINE__
+            );
             return false;
         }
         return true;
@@ -865,7 +870,7 @@ class EEH_Activation implements ResettableInterface
             // reset values array
             $QSG_values = array();
             // if we don't have what we should have (but use $QST_system as as string because that's what we got from the db)
-            if ( ! in_array("$QSG_system", $question_groups)) {
+            if (! in_array("$QSG_system", $question_groups)) {
                 // add it
                 switch ($QSG_system) {
                     case 1:
@@ -894,7 +899,7 @@ class EEH_Activation implements ResettableInterface
                         break;
                 }
                 // make sure we have some values before inserting them
-                if ( ! empty($QSG_values)) {
+                if (! empty($QSG_values)) {
                     // insert system question
                     $wpdb->insert(
                         $table_name,
@@ -931,7 +936,7 @@ class EEH_Activation implements ResettableInterface
             // reset values array
             $QST_values = array();
             // if we don't have what we should have
-            if ( ! in_array($QST_system, $questions)) {
+            if (! in_array($QST_system, $questions)) {
                 // add it
                 switch ($QST_system) {
                     case 'fname':
@@ -1024,7 +1029,7 @@ class EEH_Activation implements ResettableInterface
                             'QST_deleted'       => 0,
                         );
                         break;
-                    case 'country' :
+                    case 'country':
                         $QST_values = array(
                             'QST_display_text'  => __('Country', 'event_espresso'),
                             'QST_admin_label'   => __('Country - System Question', 'event_espresso'),
@@ -1083,7 +1088,7 @@ class EEH_Activation implements ResettableInterface
                         );
                         break;
                 }
-                if ( ! empty($QST_values)) {
+                if (! empty($QST_values)) {
                     // insert system question
                     $wpdb->insert(
                         $table_name,
@@ -1100,7 +1105,8 @@ class EEH_Activation implements ResettableInterface
                     if (isset($QSG_IDs[$system_question_we_want])) {
                         $QSG_ID = $QSG_IDs[$system_question_we_want];
                     } else {
-                        $id_col = EEM_Question_Group::instance()->get_col(array(array('QSG_system' => $system_question_we_want)));
+                        $id_col = EEM_Question_Group::instance()
+                                                    ->get_col(array(array('QSG_system' => $system_question_we_want)));
                         if (is_array($id_col)) {
                             $QSG_ID = reset($id_col);
                         } else {
@@ -1109,7 +1115,11 @@ class EEH_Activation implements ResettableInterface
                                 __FILE__,
                                 __FUNCTION__,
                                 sprintf(
-                                    __('Could not associate question %1$s to a question group because no system question group existed', 'event_espresso'),
+                                    __(
+                                        'Could not associate question %1$s to a question group because no system question
+                                         group existed',
+                                        'event_espresso'
+                                    ),
                                     $QST_ID),
                                 'error');
                             continue;
@@ -1131,7 +1141,6 @@ class EEH_Activation implements ResettableInterface
     }
 
 
-
     /**
      * Makes sure the default payment method (Invoice) is active.
      * This used to be done automatically as part of constructing the old gateways config
@@ -1140,15 +1149,13 @@ class EEH_Activation implements ResettableInterface
      */
     public static function insert_default_payment_methods()
     {
-        if ( ! EEM_Payment_Method::instance()->count_active(EEM_Payment_Method::scope_cart)) {
+        if (! EEM_Payment_Method::instance()->count_active(EEM_Payment_Method::scope_cart)) {
             EE_Registry::instance()->load_lib('Payment_Method_Manager');
             EE_Payment_Method_Manager::instance()->activate_a_payment_method_of_type('Invoice');
         } else {
             EEM_Payment_Method::instance()->verify_button_urls();
         }
     }
-
-
 
     /**
      * insert_default_status_codes
@@ -1159,11 +1166,16 @@ class EEH_Activation implements ResettableInterface
      */
     public static function insert_default_status_codes()
     {
+
         global $wpdb;
+
         if (\EEH_Activation::getTableAnalysis()->tableExists(EEM_Status::instance()->table())) {
+
             $table_name = EEM_Status::instance()->table();
-            $SQL = "DELETE FROM $table_name WHERE STS_ID IN ( 'ACT', 'NAC', 'NOP', 'OPN', 'CLS', 'PND', 'ONG', 'SEC', 'DRF', 'DEL', 'DEN', 'EXP', 'RPP', 'RCN', 'RDC', 'RAP', 'RNA', 'RWL', 'TAB', 'TIN', 'TFL', 'TCM', 'TOP', 'PAP', 'PCN', 'PFL', 'PDC', 'EDR', 'ESN', 'PPN', 'RIC', 'MSN', 'MFL', 'MID', 'MRS', 'MIC' );";
+
+            $SQL = "DELETE FROM $table_name WHERE STS_ID IN ( 'ACT', 'NAC', 'NOP', 'OPN', 'CLS', 'PND', 'ONG', 'SEC', 'DRF', 'DEL', 'DEN', 'EXP', 'RPP', 'RCN', 'RDC', 'RAP', 'RNA', 'RWL', 'TAB', 'TIN', 'TFL', 'TCM', 'TOP', 'PAP', 'PCN', 'PFL', 'PDC', 'EDR', 'ESN', 'PPN', 'RIC', 'MSN', 'MFL', 'MID', 'MRS', 'MIC', 'MDO', 'MEX' );";
             $wpdb->query($SQL);
+
             $SQL = "INSERT INTO $table_name
 					(STS_ID, STS_code, STS_type, STS_can_edit, STS_desc, STS_open) VALUES
 					('ACT', 'ACTIVE', 'event', 0, NULL, 1),
@@ -1199,13 +1211,16 @@ class EEH_Activation implements ResettableInterface
 					('ESN', 'SENT', 'email', 0, NULL, 1),
 					('MSN', 'SENT', 'message', 0, NULL, 0),
 					('MFL', 'FAIL', 'message', 0, NULL, 0),
+					('MDO', 'DEBUG_ONLY', 'message', 0, NULL, 0),
+					('MEX', 'MESSENGER_EXECUTING', 'message', 0, NULL, 0),
 					('MID', 'IDLE', 'message', 0, NULL, 1),
 					('MRS', 'RESEND', 'message', 0, NULL, 1),
 					('MIC', 'INCOMPLETE', 'message', 0, NULL, 0);";
             $wpdb->query($SQL);
-        }
-    }
 
+        }
+
+    }
 
 
     /**
@@ -1252,8 +1267,6 @@ class EEH_Activation implements ResettableInterface
         return true;
     }
 
-
-
     /**
      * Whether the upload directories need to be fixed or not.
      * If EE is installed but filesystem access isn't initially available,
@@ -1267,7 +1280,6 @@ class EEH_Activation implements ResettableInterface
     {
         return get_option(EEH_Activation::upload_directories_incomplete_option_name, false);
     }
-
 
 
     /**
@@ -1329,7 +1341,10 @@ class EEH_Activation implements ResettableInterface
                 // (otherwise we might reactivate something user's intentionally deactivated.)
                 // we also skip if the message type is not installed.
                 if (
-                    $message_resource_manager->has_message_type_been_activated_for_messenger($default_message_type_name_for_messenger, $active_messenger->name)
+                    $message_resource_manager->has_message_type_been_activated_for_messenger(
+                        $default_message_type_name_for_messenger,
+                        $active_messenger->name
+                    )
                     || $message_resource_manager->is_message_type_active_for_messenger(
                         $active_messenger->name,
                         $default_message_type_name_for_messenger
@@ -1383,7 +1398,10 @@ class EEH_Activation implements ResettableInterface
             foreach ($default_message_type_names_for_messenger as $key => $name) {
                 if (
                     ! isset($installed_message_types[$name])
-                    || $message_resource_manager->has_message_type_been_activated_for_messenger($name, $messenger_to_generate->name)
+                    || $message_resource_manager->has_message_type_been_activated_for_messenger(
+                        $name,
+                        $messenger_to_generate->name
+                    )
                 ) {
                     unset($default_message_type_names_for_messenger[$key]);
                 }
@@ -1412,7 +1430,6 @@ class EEH_Activation implements ResettableInterface
     }
 
 
-
     /**
      * This returns the default messengers to generate templates for on activation of EE.
      * It considers:
@@ -1426,9 +1443,10 @@ class EEH_Activation implements ResettableInterface
     protected static function _get_default_messengers_to_generate_on_activation(
         EE_Message_Resource_Manager $message_resource_manager
     ) {
-        $active_messengers = $message_resource_manager->active_messengers();
+        $active_messengers    = $message_resource_manager->active_messengers();
         $installed_messengers = $message_resource_manager->installed_messengers();
-        $has_activated = $message_resource_manager->get_has_activated_messengers_option();
+        $has_activated        = $message_resource_manager->get_has_activated_messengers_option();
+
         $messengers_to_generate = array();
         foreach ($installed_messengers as $installed_messenger) {
             //if installed messenger is a messenger that should be activated on install
@@ -1445,7 +1463,6 @@ class EEH_Activation implements ResettableInterface
         }
         return $messengers_to_generate;
     }
-
 
 
     /**
@@ -1468,7 +1485,6 @@ class EEH_Activation implements ResettableInterface
     }
 
 
-
     /**
      * create_no_ticket_prices_array
      *
@@ -1481,11 +1497,10 @@ class EEH_Activation implements ResettableInterface
         // this creates an array for tracking events that have no active ticket prices created
         // this allows us to warn admins of the situation so that it can be corrected
         $espresso_no_ticket_prices = get_option('ee_no_ticket_prices', false);
-        if ( ! $espresso_no_ticket_prices) {
+        if (! $espresso_no_ticket_prices) {
             add_option('ee_no_ticket_prices', array(), '', false);
         }
     }
-
 
 
     /**
@@ -1498,7 +1513,6 @@ class EEH_Activation implements ResettableInterface
     public static function plugin_deactivation()
     {
     }
-
 
 
     /**
@@ -1522,15 +1536,13 @@ class EEH_Activation implements ResettableInterface
             }
         }
         //get all our CPTs
-        $query = "SELECT ID FROM {$wpdb->posts} WHERE post_type IN (" . implode(",", $ee_post_types) . ")";
+        $query   = "SELECT ID FROM {$wpdb->posts} WHERE post_type IN (" . implode(",", $ee_post_types) . ")";
         $cpt_ids = $wpdb->get_col($query);
         //delete each post meta and term relations too
         foreach ($cpt_ids as $post_id) {
             wp_delete_post($post_id, true);
         }
     }
-
-
 
     /**
      * Deletes all EE custom tables
@@ -1547,7 +1559,8 @@ class EEH_Activation implements ResettableInterface
                 if ($model_obj instanceof EEM_Base) {
                     foreach ($model_obj->get_tables() as $table) {
                         if (strpos($table->get_table_name(), 'esp_')
-                            && (
+                            &&
+                            (
                                 is_main_site()//main site? nuke them all
                                 || ! $table->is_global()//not main site,but not global either. nuke it
                             )
@@ -1558,6 +1571,7 @@ class EEH_Activation implements ResettableInterface
                 }
             }
         }
+
         //there are some tables whose models were removed.
         //they should be removed when removing all EE core's data
         $tables_without_models = array(
@@ -1637,6 +1651,7 @@ class EEH_Activation implements ResettableInterface
             'ee_pers_admin_notices'              => true,
             'ee_job_parameters_'                 => false,
             'ee_upload_directories_incomplete'   => true,
+            'ee_verified_db_collations'          => true,
         );
         if (is_main_site()) {
             $wp_options_to_delete['ee_network_config'] = true;
@@ -1680,8 +1695,6 @@ class EEH_Activation implements ResettableInterface
         }
     }
 
-
-
     /**
      * Gets the mysql error code from the last used query by wpdb
      *
@@ -1697,8 +1710,6 @@ class EEH_Activation implements ResettableInterface
         }
     }
 
-
-
     /**
      * Checks that the database table exists. Also works on temporary tables (for unit tests mostly).
      *
@@ -1712,14 +1723,12 @@ class EEH_Activation implements ResettableInterface
         return \EEH_Activation::getTableAnalysis()->tableExists($table_name);
     }
 
-
-
     /**
      * Resets the cache on EEH_Activation
      */
     public static function reset()
     {
-        self::$_default_creator_id = null;
+        self::$_default_creator_id                             = null;
         self::$_initialized_db_content_already_in_this_request = false;
     }
 }

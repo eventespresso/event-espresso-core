@@ -274,7 +274,7 @@ class EE_Maintenance_Mode implements ResettableInterface {
 			printf(
 				__( '%sclose%sEvent Registration is currently disabled because Event Espresso has been placed into Maintenance Mode. To change Maintenance Mode settings, click here %sEE Maintenance Mode Admin Page%s', 'event_espresso' ),
 				'<div id="ee-m-mode-admin-notice-dv" class="ee-really-important-notice-dv"><a class="close-espresso-notice" title="',
-				'">&times;</a><p>',
+				'"><span class="dashicons dashicons-no"></span></a><p>',
 				' &raquo; <a href="' . add_query_arg( array( 'page' => 'espresso_maintenance_settings' ), admin_url( 'admin.php' )) . '">',
 				'</a></p></div>'
 			);
@@ -304,7 +304,7 @@ class EE_Maintenance_Mode implements ResettableInterface {
 	final function __wakeup() {}
 //	final function __toString() {}
 	final function __invoke() {}
-	final function __set_state() {}
+	final static function __set_state() {}
 	final function __clone() {}
 	final static function __callStatic($a,$b) {}
 

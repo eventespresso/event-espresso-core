@@ -10,7 +10,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * example child class: adds a class called EEME_Sample_Attendee which adds an extra table for
  * meta info that we want to use for frequent querying (otherwise we could just use the extra meta features),
  * and adds a field named 'ATT_foobar' on the Attendee model,
- * which is actually a foreing key to transactions, and
+ * which is actually a foreign key to transactions, and
  * a relation to transactions, and a function called new_func() onto EEM_Attendee which
  * gets all attendees which have a direct relation to the specified transaction.
  * For example,
@@ -71,7 +71,10 @@ abstract class EEME_Base {
 	 */
 	public function __construct(){
 		if( ! $this->_model_name_extended){
-			throw new EE_Error(sprintf(__("When declaring a model extension, you must define its _model_name_extended property. It should be a model name like 'Attendee' or 'Event'", "event_espresso")));
+            throw new EE_Error(
+                __( "When declaring a model extension, you must define its _model_name_extended property. It should be a model name like 'Attendee' or 'Event'",
+                "event_espresso" )
+            );
 		}
 		$construct_end_action = 'AHEE__EEM_'.$this->_model_name_extended.'__construct__end';
 		if ( did_action( $construct_end_action )) {
@@ -90,26 +93,50 @@ abstract class EEME_Base {
 		$this->_register_extending_methods();
 	}
 
-	public function add_extra_tables_on_filter( $existing_tables ){
-		$tables = array_merge( $existing_tables, $this->_extra_tables );
-		return $tables;
+
+
+    /**
+     * @param array $existing_tables
+     * @return array
+     */
+    public function add_extra_tables_on_filter( $existing_tables ){
+        return array_merge( (array)$existing_tables, $this->_extra_tables );
 	}
-	public function add_extra_fields_on_filter($existing_fields){
+
+
+
+    /**
+     * @param array $existing_fields
+     * @return array
+     */
+    public function add_extra_fields_on_filter( $existing_fields ){
 		if( $this->_extra_fields){
 			foreach($this->_extra_fields as $table_alias => $fields){
 				if( ! isset( $existing_fields[ $table_alias ] ) ){
 					$existing_fields[ $table_alias ] = array();
 				}
-				$existing_fields[$table_alias] = array_merge($existing_fields[$table_alias],$this->_extra_fields[$table_alias]);
+				$existing_fields[$table_alias] = array_merge(
+                    (array)$existing_fields[$table_alias],
+                    $this->_extra_fields[$table_alias]
+                );
 
 			}
 		}
 		return $existing_fields;
 	}
-	public function add_extra_relations_on_filter($existing_relations){
-		$relations =  array_merge($existing_relations,$this->_extra_relations);
-		return $relations;
+
+
+
+    /**
+     * @param array $existing_relations
+     * @return array
+     */
+    public function add_extra_relations_on_filter( $existing_relations ){
+        return  array_merge((array)$existing_relations,$this->_extra_relations);
 	}
+
+
+
 	/**
 	 * scans the child of EEME_Base for functions starting with ext_, and magically makes them functions on the
 	 * model extended. (Internally uses filters, and the __call magic method)
@@ -141,30 +168,49 @@ abstract class EEME_Base {
 				remove_filter($callback_name,array($this,self::dynamic_callback_method_prefix.$method_name_on_model),10);
 			}
 		}
-		$model_to_reset = 'EEM_' . $this->_model_name_extended;
+        /** @var EEM_Base $model_to_reset */
+        $model_to_reset = 'EEM_' . $this->_model_name_extended;
 		if ( class_exists( $model_to_reset ) ) {
 			$model_to_reset::reset();
 		}
 	}
 
 
-	public function __call($callback_method_name,$args){
+
+    /**
+     * @param string $callback_method_name
+     * @param array  $args
+     * @return mixed
+     * @throws EE_Error
+     */
+    public function __call( $callback_method_name, $args){
 		if(strpos($callback_method_name, self::dynamic_callback_method_prefix) === 0){
 			//it's a dynamic callback for a method name
 			$method_called_on_model = str_replace(self::dynamic_callback_method_prefix, '', $callback_method_name);
-			$original_return_val = $args[0];
-			$model_called = $args[1];
+			list( $original_return_val, $model_called, $args_provided_to_method_on_model ) = (array) $args;
 			$this->_ = $model_called;
-			$args_provided_to_method_on_model = $args[2];
 			$extending_method = self::extending_method_prefix.$method_called_on_model;
 			if(method_exists($this, $extending_method)){
 				return call_user_func_array(array($this,$extending_method), $args_provided_to_method_on_model);
 			}else{
-				throw new EE_Error(sprintf(__("An odd error occurred. Model '%s' had a method called on it that it didn't recognize. So it passed it onto the model extension '%s' (because it had a function named '%s' which should be able to handle it), but the function '%s' doesnt exist!)", "event_espresso"),$this->_model_name_extended,get_class($this),$extending_method,$extending_method));
+				throw new EE_Error(
+				    sprintf(
+				        __("An odd error occurred. Model '%s' had a method called on it that it didn't recognize. So it passed it onto the model extension '%s' (because it had a function named '%s' which should be able to handle it), but the function '%s' doesnt exist!)", "event_espresso"),
+                        $this->_model_name_extended,
+                        get_class($this),
+                        $extending_method,$extending_method
+                    )
+                );
 			}
 
 		}else{
-			throw new EE_Error(sprintf(__("There is no method named '%s' on '%s'", "event_espresso"),$callback_method_name,get_class($this)));
+			throw new EE_Error(
+			    sprintf(
+			        __("There is no method named '%s' on '%s'", "event_espresso"),
+                    $callback_method_name,
+                    get_class($this)
+                )
+            );
 		}
 	}
 

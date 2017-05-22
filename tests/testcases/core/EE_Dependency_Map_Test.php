@@ -7,6 +7,7 @@
  * @author 				Darren Ethier
  * @since 				4.9.0
  * @group 				core
+ * @group 				DepMap
  *
  */
 class EE_Dependency_Map_Test extends EE_UnitTestCase {
@@ -36,15 +37,16 @@ class EE_Dependency_Map_Test extends EE_UnitTestCase {
 
 
 
-	/**
-	 * @param        $dependencies_or_load
-	 * @param string $classname
-	 */
+    /**
+     * @param        $dependencies_or_load
+     * @param string $classname
+     * @throws PHPUnit_Framework_AssertionFailedError
+     */
 	public function validate_core_dependency_map( $dependencies_or_load, $classname = '' ) {
 		if ( is_array( $dependencies_or_load ) ) {
-			foreach ( $dependencies_or_load as $classname => $dependency ) {
+			foreach ( $dependencies_or_load as $class_name => $dependency ) {
 				if ( $dependency !== null ) {
-					$this->validate_core_dependency_map( $dependency, $classname );
+					$this->validate_core_dependency_map( $dependency, $class_name );
 				}
 			}
 		} else {
@@ -117,33 +119,71 @@ class EE_Dependency_Map_Test extends EE_UnitTestCase {
 
 
 	public function test_register_class_loader() {
-		$this->_dependency_map->register_class_loader( 'Dummy_Class', 'load_lib' );
+        EE_Dependency_Map::register_class_loader( 'Dummy_Class', 'load_lib' );
 		$actual_class_loader = $this->_dependency_map->class_loader( 'Dummy_Class' );
 		$this->assertNotEmpty( $actual_class_loader );
 		$this->assertEquals( 'load_lib', $actual_class_loader );
 
 		$this->setExpectedException(
 			'EE_Error',
-			'"dummy_loader" is not a valid loader method on EE_Registry.'
+			esc_html__('"dummy_loader" is not a valid loader method on EE_Registry.', 'event_espresso')
 		);
-
-		$this->_dependency_map->register_class_loader( 'Dummy_Class', 'dummy_loader' );
+        EE_Dependency_Map::register_class_loader( 'Dummy_Class', 'dummy_loader' );
 	}
 
 
 
 	public function test_register_dependency() {
 		//test a successful registration.
-		$registered = $this->_dependency_map->register_dependencies( 'Dummy_Class', array( 'EE_Something', 'EE_Something_Else' ) );
+		$registered = EE_Dependency_Map::register_dependencies( 'Dummy_Class', array( 'EE_Something', 'EE_Something_Else' ) );
 		$this->assertTrue( $registered );
 		$actual_dependency_map = $this->_dependency_map->dependency_map();
 		$this->assertTrue( isset( $actual_dependency_map['Dummy_Class'] ) );
 		$this->assertEquals( array( 'EE_Something', 'EE_Something_Else' ), $actual_dependency_map['Dummy_Class'] );
 
 		//test a unsuccessful registration (cannot override an existing dependency.
-		$registered = $this->_dependency_map->register_dependencies( 'Dummy_Class', array() );
+		$registered = EE_Dependency_Map::register_dependencies( 'Dummy_Class', array() );
 		$this->assertFalse( $registered );
 	}
+
+
+
+    /**
+     * can't easily extend EE_Dep_Map so
+     * just going to test all three methods together
+     * */
+    public function test_add_has_get_alias()
+    {
+        $interface = 'Dummy_Interface';
+        $class_name = 'Dummy_Class';
+        $this->assertFalse($this->_dependency_map->has_alias($class_name));
+        $this->_dependency_map->add_alias($class_name, $interface);
+        $this->assertTrue($this->_dependency_map->has_alias($class_name));
+        $this->assertEquals(
+            $interface,
+            $this->_dependency_map->get_alias($class_name)
+        );
+    }
+
+
+
+    /**
+     * can't easily extend EE_Dep_Map so
+     * just going to test all three methods together
+     * */
+    public function test_add_has_get_alias_for_class()
+    {
+        $interface = 'Dummy_Interface_2';
+        $class_name = 'Dummy_Class_2';
+        $for_class = 'Other_Class';
+        $this->assertFalse($this->_dependency_map->has_alias($class_name, $for_class));
+        $this->_dependency_map->add_alias($class_name, $interface, $for_class);
+        $this->assertTrue($this->_dependency_map->has_alias($class_name, $for_class));
+        $this->assertEquals(
+            $interface,
+            $this->_dependency_map->get_alias($class_name, $for_class)
+        );
+    }
 
 
 

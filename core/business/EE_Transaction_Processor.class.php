@@ -177,21 +177,24 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 
 
 
-	/**
-	 * update_transaction_and_registrations_after_checkout_or_payment
-	 * cycles thru related registrations and calls update_registration_after_checkout_or_payment() on each
-	 *
-	 * @param EE_Transaction     $transaction
-	 * @param \EE_Payment | NULL $payment
-	 * @param array              $registration_query_params    array of query WHERE params to use
-	 *                                                         when retrieving cached registrations from a transaction
-	 * @throws \EE_Error
-	 * @return array
-	 */
+    /**
+     * update_transaction_and_registrations_after_checkout_or_payment
+     * cycles thru related registrations and calls update_registration_after_checkout_or_payment() on each
+     *
+     * @param EE_Transaction $transaction
+     * @param \EE_Payment | NULL $payment
+     * @param array              $registration_query_params    array of query WHERE params to use
+     *                                                         when retrieving cached registrations from a transaction
+     * @param bool $trigger_notifications                      whether or not to call
+     *                                                         \EE_Registration_Processor::trigger_registration_update_notifications()
+     * @return array
+     * @throws \EE_Error
+     */
 	public function update_transaction_and_registrations_after_checkout_or_payment(
 		EE_Transaction $transaction,
 		$payment = null,
-		$registration_query_params = array()
+		$registration_query_params = array(),
+        $trigger_notifications = true
 	) {
 		// make sure some query params are set for retrieving registrations
 		$this->_set_registration_query_params( $registration_query_params );
@@ -220,15 +223,16 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 			$this->_registration_query_params,
 			$update_params
 		);
-
-		// send messages
-		/** @type EE_Registration_Processor $registration_processor */
-		$registration_processor = EE_Registry::instance()->load_class( 'Registration_Processor' );
-		$registration_processor->trigger_registration_update_notifications(
-			$transaction->primary_registration(),
-			$update_params
-		);
-		do_action(
+		if ($trigger_notifications) {
+            // send messages
+            /** @type EE_Registration_Processor $registration_processor */
+            $registration_processor = EE_Registry::instance()->load_class('Registration_Processor');
+            $registration_processor->trigger_registration_update_notifications(
+                $transaction->primary_registration(),
+                $update_params
+            );
+        }
+        do_action(
 			'AHEE__EE_Transaction_Processor__update_transaction_and_registrations_after_checkout_or_payment',
 			$transaction,
 			$update_params
@@ -238,16 +242,17 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 
 
 
-	/**
-	 * update_transaction_after_registration_reopened
-	 * readjusts TXN and Line Item totals after a registration is changed from
-	 * cancelled or declined to another reg status such as pending payment or approved
-	 *
-	 * @param \EE_Registration $registration
-	 * @param array            $closed_reg_statuses
-	 * @param bool             $update_txn
-	 * @return bool
-	 */
+    /**
+     * update_transaction_after_registration_reopened
+     * readjusts TXN and Line Item totals after a registration is changed from
+     * cancelled or declined to another reg status such as pending payment or approved
+     *
+     * @param \EE_Registration $registration
+     * @param array            $closed_reg_statuses
+     * @param bool             $update_txn
+     * @return bool
+     * @throws \EE_Error
+     */
 	public function update_transaction_after_reinstating_canceled_registration(
 		EE_Registration $registration,
 		$closed_reg_statuses = array(),
@@ -255,7 +260,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	) {
 		// these reg statuses should not be considered in any calculations involving monies owing
 		$closed_reg_statuses = ! empty( $closed_reg_statuses ) ? $closed_reg_statuses : EEM_Registration::closed_reg_statuses();
-		if ( in_array( $registration->status_ID(), $closed_reg_statuses ) ) {
+		if ( in_array( $registration->status_ID(), $closed_reg_statuses, true ) ) {
 			return false;
 		}
 		try {
@@ -303,13 +308,22 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	) {
 		// these reg statuses should not be considered in any calculations involving monies owing
 		$closed_reg_statuses = ! empty( $closed_reg_statuses ) ? $closed_reg_statuses : EEM_Registration::closed_reg_statuses();
-		if ( ! in_array( $registration->status_ID(), $closed_reg_statuses ) ) {
+		if ( ! in_array( $registration->status_ID(), $closed_reg_statuses, true ) ) {
 			return false;
 		}
 		try {
 			$transaction = $this->get_transaction_for_registration( $registration );
-			$ticket_line_item = $this->get_ticket_line_item_for_transaction_registration( $transaction, $registration );
-			EEH_Line_Item::cancel_ticket_line_item( $ticket_line_item );
+			if (
+			    apply_filters(
+                    'FHEE__EE_Transaction_Processor__update_transaction_after_canceled_or_declined_registration__cancel_ticket_line_item',
+                    true,
+                    $registration,
+                    $transaction
+                )
+            ){
+                $ticket_line_item = $this->get_ticket_line_item_for_transaction_registration( $transaction, $registration );
+                EEH_Line_Item::cancel_ticket_line_item( $ticket_line_item );
+			}
 		} catch ( EE_Error $e ) {
 			EE_Error::add_error(
 				sprintf(

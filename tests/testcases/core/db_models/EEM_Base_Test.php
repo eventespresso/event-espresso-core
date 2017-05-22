@@ -141,10 +141,10 @@ class EEM_Base_Test extends EE_UnitTestCase
         $att3 = EEM_Attendee::instance()->insert(array('ATT_fname' => 'three'));
         $att4 = EEM_Attendee::instance()->insert(array('ATT_fname' => 'four'));
         $all = EEM_Attendee::instance()->get_col();
-        $this->assertArrayContains($att1, $all);
-        $this->assertArrayContains($att2, $all);
-        $this->assertArrayContains($att3, $all);
-        $this->assertArrayContains($att4, $all);
+        $this->assertArrayContains((string)$att1, $all);
+        $this->assertArrayContains((string)$att2, $all);
+        $this->assertArrayContains((string)$att3, $all);
+        $this->assertArrayContains((string)$att4, $all);
         $just_two_and_threes_names = EEM_Attendee::instance()->get_col(array(
             array(
                 'ATT_fname' => array(
@@ -368,7 +368,7 @@ class EEM_Base_Test extends EE_UnitTestCase
         $formatted_string = EEM_Datetime::instance()->current_time_for_query('DTT_EVT_start');
         $this->assertDateWithinOneMinute($timezoneTest->format('Y-m-d H:i:s'), $formatted_string, 'Y-m-d H:i:s');
         $unix_timestamp = EEM_Datetime::instance()->current_time_for_query('DTT_EVT_start', true);
-        $this->assertEquals($timezoneTest->format('U'), $unix_timestamp);
+        $this->assertDateWithinOneMinute($timezoneTest->format('U'), $unix_timestamp, 'U');
     }
 
 
@@ -1019,6 +1019,20 @@ class EEM_Base_Test extends EE_UnitTestCase
         EEM_Base::set_model_query_blog_id(1);
     }
 
+
+
+    /**
+     * @group 9566
+     */
+    public function test_is_logic_query_param_key(){
+        $this->assertTrue( EEM_Answer::instance()->is_logic_query_param_key( 'OR' ) );
+        $this->assertTrue( EEM_Answer::instance()->is_logic_query_param_key( 'NOT*' ) );
+        $this->assertTrue( EEM_Answer::instance()->is_logic_query_param_key( 'AND*other-condition' ) );
+        $this->assertFalse( EEM_Answer::instance()->is_logic_query_param_key( 'ATT_fname' ) );
+        $this->assertFalse( EEM_Answer::instance()->is_logic_query_param_key( 'Registration.REG_date' ) );
+        $this->assertFalse( EEM_Answer::instance()->is_logic_query_param_key( 'ORG_name' ) );
+
+    }
 
 }
 

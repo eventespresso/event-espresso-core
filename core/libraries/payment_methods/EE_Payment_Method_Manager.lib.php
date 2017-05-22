@@ -293,13 +293,15 @@ class EE_Payment_Method_Manager implements ResettableInterface
             $message_resource_manager = EE_Registry::instance()->load_lib('Message_Resource_Manager');
             $message_resource_manager->ensure_message_type_is_active('invoice', 'html');
             $message_resource_manager->ensure_messenger_is_active('pdf');
-            EE_Error::add_attention(
+            EE_Error::add_persistent_admin_notice(
+                'invoice_pm_requirements_notice',
                 sprintf(
-                    __('Note, when the invoice payment method is activated, the invoice message type, html messenger, and pdf messenger are activated as well for the %1$smessages system%2$s.',
+                    __('The Invoice payment method has been activated. It requires the invoice message type, html messenger, and pdf messenger be activated as well for the %1$smessages system%2$s, so it has been automatically verified that they are also active.',
                         'event_espresso'),
                     '<a href="' . admin_url('admin.php?page=espresso_messages') . '">',
                     '</a>'
-                )
+                ),
+                true
             );
         }
         return $payment_method;

@@ -76,11 +76,6 @@ final class EE_Admin implements InterminableInterface {
 		// load EE_Request_Handler early
 		add_action( 'AHEE__EE_System__core_loaded_and_ready', array( $this, 'get_request' ));
 		add_action( 'AHEE__EE_System__initialize_last', array( $this, 'init' ));
-		// post shortcode tracking
-		add_action(
-			'AHEE__EE_System__initialize_last',
-			array( 'EventEspresso\core\admin\PostShortcodeTracking', 'set_hooks_admin' )
-		);
 		add_action( 'AHEE__EE_Admin_Page__route_admin_request', array( $this, 'route_admin_request' ), 100, 2 );
 		add_action( 'wp_loaded', array( $this, 'wp_loaded' ), 100 );
 		add_action( 'admin_init', array( $this, 'admin_init' ), 100 );
@@ -492,13 +487,12 @@ final class EE_Admin implements InterminableInterface {
 
 
 		/**
-		 * This code is for removing any set EE critical pages from the "Static Page" option dropdowns on the
-		 * 'options-reading.php' core WordPress admin settings page.  This is for user-proofing.
+		 * This code excludes EE critical pages anywhere `wp_dropdown_pages` is used to create a dropdown for selecting
+         * critical pages.  The only place critical pages need included in a generated dropdown is on the "Critical Pages"
+         * tab in the EE General Settings Admin page.
+         * This is for user-proofing.
 		 */
-		global $pagenow;
-		if ( $pagenow === 'options-reading.php' ) {
-			add_filter( 'wp_dropdown_pages', array( $this, 'modify_dropdown_pages' ) );
-		}
+        add_filter( 'wp_dropdown_pages', array( $this, 'modify_dropdown_pages' ) );
 
 	}
 
@@ -638,11 +632,13 @@ final class EE_Admin implements InterminableInterface {
 
 
 
-	/**
-	 * @param $elements
-	 * @return array
-	 */
-	public function dashboard_glance_items( $elements ) {
+    /**
+     * @param array $elements
+     * @return array
+     * @throws \EE_Error
+     */
+	public function dashboard_glance_items($elements) {
+        $elements = is_array($elements) ? $elements : array($elements);
 		$events = EEM_Event::instance()->count();
 		$items['events']['url'] = EE_Admin_Page::add_query_args_and_nonce( array('page' => 'espresso_events'), admin_url('admin.php') );
 		$items['events']['text'] = sprintf( _n( '%s Event', '%s Events', $events ), number_format_i18n( $events ) );
@@ -658,7 +654,7 @@ final class EE_Admin implements InterminableInterface {
 		$items['registrations']['text'] = sprintf( _n( '%s Registration', '%s Registrations', $registrations ), number_format_i18n($registrations) );
 		$items['registrations']['title'] = __('Click to view all registrations', 'event_espresso');
 
-		$items = apply_filters( 'FHEE__EE_Admin__dashboard_glance_items__items', $items );
+		$items = (array) apply_filters( 'FHEE__EE_Admin__dashboard_glance_items__items', $items );
 
 		foreach ( $items as $type => $item_properties ) {
 			$elements[] = sprintf( '<a class="ee-dashboard-link-' . $type . '" href="%s" title="%s">%s</a>', $item_properties['url'], $item_properties['title'], $item_properties['text'] );
@@ -787,13 +783,9 @@ final class EE_Admin implements InterminableInterface {
 	public static function parse_post_content_on_save( $post_ID, $post ) {
 		EE_Error::doing_it_wrong(
 			__METHOD__,
-			__(
-				'Usage is deprecated. Use EventEspresso\core\admin\PostShortcodeTracking::parse_post_content_on_save() instead.',
-				'event_espresso'
-			),
+			__('Usage is deprecated', 'event_espresso'),
 			'4.8.41'
 		);
-		EventEspresso\core\admin\PostShortcodeTracking::parse_post_content_on_save( $post_ID, $post );
 	}
 
 
@@ -809,13 +801,9 @@ final class EE_Admin implements InterminableInterface {
 	public function reset_page_for_posts_on_change( $option, $old_value, $value ) {
 		EE_Error::doing_it_wrong(
 			__METHOD__,
-			__(
-				'Usage is deprecated. Use EventEspresso\core\admin\PostShortcodeTracking::parse_post_content_on_save() instead.',
-				'event_espresso'
-			),
+			__('Usage is deprecated', 'event_espresso'),
 			'4.8.41'
 		);
-		EventEspresso\core\admin\PostShortcodeTracking::reset_page_for_posts_on_change( $option, $old_value, $value );
 	}
 
 }

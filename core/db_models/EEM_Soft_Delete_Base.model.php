@@ -109,6 +109,17 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 		return $query_params;
 	}
 
+
+
+    /**
+     * Alters the query params so that only trashed/soft-deleted items are considered
+     * @param array $query_params like EEM_Base::get_all's $query_params
+     * @return array like EEM_Base::get_all's $query_params
+     */
+	public function alter_query_params_so_only_trashed_items_included($query_params){
+	    return $this->_alter_query_params_so_only_trashed_items_included($query_params);
+    }
+
 	/**
 	 * Alters the query params so each item's deleted status is ignored.
 	 * @param array $query_params

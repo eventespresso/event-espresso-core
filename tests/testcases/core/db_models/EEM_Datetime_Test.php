@@ -16,11 +16,11 @@
  */
 class EEM_Datetime_Test extends EE_UnitTestCase {
 
-	public function setUp() {
-		//set timezone string.  NOTE, this is purposely a high positive timezone string because it works better for testing expiry times.
-		update_option( 'timezone_string', 'Australia/Sydney' );
-		parent::setUp();
-	}
+    public function setUp() {
+        parent::setUp();
+        //set timezone string.  NOTE, this is purposely a high positive timezone string because it works better for testing expiry times.
+        update_option( 'timezone_string', 'Australia/Sydney' );
+    }
 
 
 	public function tearDown(){

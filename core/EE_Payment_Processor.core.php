@@ -68,8 +68,8 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
 
 
     /**
-     * Using the selected gateway, processes the payment for that transaction, and updates the transaction appropriately.
-     * Saves the payment that is generated
+     * Using the selected gateway, processes the payment for that transaction, and updates the transaction
+     * appropriately. Saves the payment that is generated
      *
      * @param EE_Payment_Method    $payment_method
      * @param EE_Transaction       $transaction
@@ -481,7 +481,7 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
                 add_filter('FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true');
                 $do_action = 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__no_payment_made';
             }
-            if ($payment->status() !== EEM_Payment::status_id_failed) {
+            if ($payment instanceof EE_Payment && $payment->status() !== EEM_Payment::status_id_failed) {
                 /** @type EE_Transaction_Payments $transaction_payments */
                 $transaction_payments = EE_Registry::instance()->load_class('Transaction_Payments');
                 // set new value for total paid
@@ -584,8 +584,11 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
      * @return float
      * @throws \EE_Error
      */
-    public function process_registration_payment(EE_Registration $registration, EE_Payment $payment, $available_payment_amount = 0.00)
-    {
+    public function process_registration_payment(
+        EE_Registration $registration,
+        EE_Payment $payment,
+        $available_payment_amount = 0.00
+    ) {
         $owing = $registration->final_price() - $registration->paid();
         if ($owing > 0) {
             // don't allow payment amount to exceed the available payment amount, OR the amount owing
@@ -611,8 +614,11 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
      * @return void
      * @throws \EE_Error
      */
-    protected function _apply_registration_payment(EE_Registration $registration, EE_Payment $payment, $payment_amount = 0.00)
-    {
+    protected function _apply_registration_payment(
+        EE_Registration $registration,
+        EE_Payment $payment,
+        $payment_amount = 0.00
+    ) {
         // find any existing reg payment records for this registration and payment
         $existing_reg_payment = EEM_Registration_Payment::instance()->get_one(
             array(array('REG_ID' => $registration->ID(), 'PAY_ID' => $payment->ID()))
@@ -641,8 +647,11 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
      * @return float
      * @throws \EE_Error
      */
-    public function process_registration_refund(EE_Registration $registration, EE_Payment $payment, $available_refund_amount = 0.00)
-    {
+    public function process_registration_refund(
+        EE_Registration $registration,
+        EE_Payment $payment,
+        $available_refund_amount = 0.00
+    ) {
         //EEH_Debug_Tools::printr( $payment->amount(), '$payment->amount()', __FILE__, __LINE__ );
         if ($registration->paid() > 0) {
             // ensure $available_refund_amount is NOT negative

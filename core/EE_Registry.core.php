@@ -1,10 +1,10 @@
 <?php
+
 use EventEspresso\core\interfaces\InterminableInterface;
 use EventEspresso\core\interfaces\ResettableInterface;
+use EventEspresso\core\services\assets\Registry;
 
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
+defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
 
@@ -109,6 +109,13 @@ class EE_Registry implements ResettableInterface
      */
     public $MRM = null;
 
+
+    /**
+     * Holds the Assets Registry instance
+     * @var Registry
+     */
+    public $AssetsRegistry = null;
+
     /**
      *    $addons - StdClass object for holding addons which have registered themselves to work with EE core
      *
@@ -155,6 +162,7 @@ class EE_Registry implements ResettableInterface
      */
     public $non_abstract_db_models = array();
 
+
     /**
      *    $i18n_js_strings - internationalization for JS strings
      *    usage:   EE_Registry::i18n_js_strings['string_key'] = __( 'string to translate.', 'event_espresso' );
@@ -164,6 +172,7 @@ class EE_Registry implements ResettableInterface
      * @var    array
      */
     public static $i18n_js_strings = array();
+
 
     /**
      *    $main_file - path to espresso.php
@@ -273,6 +282,7 @@ class EE_Registry implements ResettableInterface
      */
     public function init()
     {
+        $this->AssetsRegistry = new Registry();
         // Get current page protocol
         $protocol = isset($_SERVER['HTTPS']) ? 'https://' : 'http://';
         // Output admin-ajax.php URL with same protocol as current page
@@ -579,6 +589,7 @@ class EE_Registry implements ResettableInterface
         $load_only = false,
         $addon = false
     ) {
+        $class_name = ltrim($class_name, '\\');
         $class_name = $this->_dependency_map->get_alias($class_name);
         if ( ! class_exists($class_name)) {
             // maybe the class is registered with a preceding \
@@ -641,6 +652,7 @@ class EE_Registry implements ResettableInterface
         $cache = true,
         $load_only = false
     ) {
+        $class_name = ltrim($class_name, '\\');
         // strip php file extension
         $class_name = str_replace('.php', '', trim($class_name));
         // does the class have a prefix ?
@@ -1228,6 +1240,9 @@ class EE_Registry implements ResettableInterface
         $instance->CFG = $instance->CFG->reset($hard, $reinstantiate);
         $instance->CART = null;
         $instance->MRM = null;
+        $instance->AssetsRegistry = new Registry();
+        //messages reset
+        EED_Messages::reset();
         //handle of objects cached on LIB
         foreach (array('LIB', 'modules', 'shortcodes') as $cache) {
             foreach ($instance->{$cache} as $class_name => $class) {
@@ -1362,7 +1377,7 @@ class EE_Registry implements ResettableInterface
 
 
 
-    final function __set_state()
+    final static function __set_state()
     {
     }
 

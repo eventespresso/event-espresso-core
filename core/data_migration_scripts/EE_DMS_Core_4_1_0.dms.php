@@ -52,7 +52,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
      */
     public function __construct(TableManager $table_manager = null, TableAnalysis $table_analysis = null)
     {
-        $this->_pretty_name = __("Data Migration to Event Espresso 4.1.0P", "event_espresso");
+        $this->_pretty_name = esc_html__("Data Migration from Event Espresso 3 to Event Espresso 4.1.0", "event_espresso");
         $this->_priority = 10;
         $this->_migration_stages = array(
                 new EE_DMS_4_1_0_org_options(),
@@ -112,13 +112,6 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
 //			echo "$version_string doesnt apply";
             return false;
         }
-    }
-
-
-
-    public function pretty_name()
-    {
-        return __("Core Data Migration to version 4.1.0", "event_espresso");
     }
 
 
@@ -859,11 +852,11 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
             $price_types_exist = $wpdb->get_var($SQL);
             if ( ! $price_types_exist) {
                 $SQL = "INSERT INTO $price_type_table ( PRT_ID, PRT_name, PBT_ID, PRT_is_percent, PRT_order, PRT_deleted ) VALUES
-							(1, '" . __('Base Price', 'event_espresso') . "', 1,  0, 0, 0),
-							(2, '" . __('Percent Discount', 'event_espresso') . "', 2,  1, 20, 0),
-							(3, '" . __('Fixed Discount', 'event_espresso') . "', 2,  0, 30, 0),
-							(4, '" . __('Percent Surcharge', 'event_espresso') . "', 3,  1, 40, 0),
-							(5, '" . __('Fixed Surcharge', 'event_espresso') . "', 3,  0, 50, 0);";
+							(1, '" . esc_html__('Base Price', 'event_espresso') . "', 1,  0, 0, 0),
+							(2, '" . esc_html__('Percent Discount', 'event_espresso') . "', 2,  1, 20, 0),
+							(3, '" . esc_html__('Fixed Discount', 'event_espresso') . "', 2,  0, 30, 0),
+							(4, '" . esc_html__('Percent Surcharge', 'event_espresso') . "', 3,  1, 40, 0),
+							(5, '" . esc_html__('Fixed Surcharge', 'event_espresso') . "', 3,  0, 50, 0);";
                 $SQL = apply_filters('FHEE__EE_DMS_4_1_0__insert_default_price_types__SQL', $SQL);
                 $wpdb->query($SQL);
             }
@@ -919,7 +912,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
                 $SQL = "INSERT INTO $ticket_table
 					( TKT_ID, TTM_ID, TKT_name, TKT_description, TKT_qty, TKT_sold, TKT_uses, TKT_min, TKT_max, TKT_price, TKT_start_date, TKT_end_date, TKT_taxable, TKT_order, TKT_row, TKT_is_default, TKT_parent, TKT_deleted ) VALUES
 					( 1, 0, '"
-                       . __("Free Ticket", "event_espresso")
+                       . esc_html__("Free Ticket", "event_espresso")
                        . "', '', 100, 0, -1, 0, -1, 0.00, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, 0, 1, 1, 0, 0);";
                 $SQL = apply_filters('FHEE__EE_DMS_4_1_0__insert_default_tickets__SQL', $SQL);
                 $wpdb->query($SQL);
@@ -954,7 +947,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
     public function get_or_create_country($country_name)
     {
         if ( ! $country_name) {
-            throw new EE_Error(__("Could not get a country because country name is blank", "event_espresso"));
+            throw new EE_Error(esc_html__("Could not get a country because country name is blank", "event_espresso"));
         }
         global $wpdb;
         $country_table = $wpdb->prefix . "esp_country";
@@ -1052,7 +1045,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
     public function get_or_create_state($state_name, $country_name = '')
     {
         if ( ! $state_name) {
-            throw new EE_Error(__("Could not get-or-create state because no state name was provided",
+            throw new EE_Error(esc_html__("Could not get-or-create state because no state name was provided",
                     "event_espresso"));
         }
         try {
@@ -1445,7 +1438,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
             if ($attachment_post_id) {
                 update_post_meta($new_cpt_id, '_thumbnail_id', $attachment_post_id);
             } else {
-                $migration_stage->add_error(sprintf(__("Could not update event image %s for CPT with ID %d, but attachments post ID is %d",
+                $migration_stage->add_error(sprintf(esc_html__("Could not update event image %s for CPT with ID %d, but attachments post ID is %d",
                         "event_espresso"), $guid, $new_cpt_id, $attachment_post_id));
             }
         }
@@ -1490,7 +1483,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
     private function _create_image_attachment_from_GUID($guid, EE_Data_Migration_Script_Stage $migration_stage)
     {
         if ( ! $guid) {
-            $migration_stage->add_error(sprintf(__("Cannot create image attachment for a blank GUID!",
+            $migration_stage->add_error(sprintf(esc_html__("Cannot create image attachment for a blank GUID!",
                     "event_espresso")));
             return 0;
         }
@@ -1500,13 +1493,13 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
         if (strpos($guid, $wp_upload_dir['url']) === false) {
             //image is located remotely. download it and place it in the uploads directory
             if ( ! is_readable($guid)) {
-                $migration_stage->add_error(sprintf(__("Could not create image attachment from non-existent file: %s",
+                $migration_stage->add_error(sprintf(esc_html__("Could not create image attachment from non-existent file: %s",
                         "event_espresso"), $guid));
                 return 0;
             }
             $contents = file_get_contents($guid);
             if ($contents === false) {
-                $migration_stage->add_error(sprintf(__("Could not read image at %s, and therefore couldnt create an attachment post for it.",
+                $migration_stage->add_error(sprintf(esc_html__("Could not read image at %s, and therefore couldnt create an attachment post for it.",
                         "event_espresso"), $guid));
                 return false;
             }
@@ -1527,7 +1520,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
         );
         $attach_id = wp_insert_attachment($attachment, $guid);
         if ( ! $attach_id) {
-            $migration_stage->add_error(sprintf(__("Could not create image attachment post from image '%s'. Attachment data was %s.",
+            $migration_stage->add_error(sprintf(esc_html__("Could not create image attachment post from image '%s'. Attachment data was %s.",
                     "event_espresso"), $guid, $this->_json_encode($attachment)));
             return $attach_id;
         }
@@ -1536,13 +1529,13 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
         require_once(ABSPATH . 'wp-admin/includes/image.php');
         $attach_data = wp_generate_attachment_metadata($attach_id, $local_filepath);
         if ( ! $attach_data) {
-            $migration_stage->add_error(sprintf(__("Coudl not genereate attachment metadata for attachment post %d with filepath %s and GUID %s. Please check the file was downloaded properly.",
+            $migration_stage->add_error(sprintf(esc_html__("Coudl not genereate attachment metadata for attachment post %d with filepath %s and GUID %s. Please check the file was downloaded properly.",
                     "event_espresso"), $attach_id, $local_filepath, $guid));
             return $attach_id;
         }
         $metadata_save_result = wp_update_attachment_metadata($attach_id, $attach_data);
         if ( ! $metadata_save_result) {
-            $migration_stage->add_error(sprintf(__("Could not update attachment metadata for attachment %d with data %s",
+            $migration_stage->add_error(sprintf(esc_html__("Could not update attachment metadata for attachment %d with data %s",
                     "event_espresso"), $attach_id, $this->_json_encode($attach_data)));
         }
         return $attach_id;
@@ -1589,7 +1582,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
             $timezone = $this->_get_wp_timezone();
         }
         if ( ! $timezone) {
-            $stage->add_error(sprintf(__("Could not find timezone given %s for %s", "event_espresso"), $original_tz,
+            $stage->add_error(sprintf(esc_html__("Could not find timezone given %s for %s", "event_espresso"), $original_tz,
                     $row_of_data));
             $timezone = 'UTC';
         }
@@ -1597,7 +1590,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
             $date_obj = new DateTime($DATETIME_string, new DateTimeZone($timezone));
             $date_obj->setTimezone(new DateTimeZone('UTC'));
         } catch (Exception $e) {
-            $stage->add_error(sprintf(__("Could not convert time string '%s' using timezone '%s' into a proper DATETIME. Using current time instead.",
+            $stage->add_error(sprintf(esc_html__("Could not convert time string '%s' using timezone '%s' into a proper DATETIME. Using current time instead.",
                     "event_espresso"), $DATETIME_string, $timezone));
             $date_obj = new DateTime();
         }
@@ -1714,6 +1707,10 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
                 10,
                 2
         );
+        add_filter(
+                'FHEE__ee_migration_page__migration_options_template',
+                array($this,'use_migration_options_from_ee3_template')
+        );
     }
 
 
@@ -1725,7 +1722,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
             $ultimate_db_state = null
     ) {
         return str_replace(array($current_db_state, $next_db_state, $ultimate_db_state),
-                array(__('EE3', 'event_espresso'), __('EE4', 'event_espresso'), __("EE4", 'event_espresso')),
+                array(esc_html__('EE3', 'event_espresso'), esc_html__('EE4', 'event_espresso'), esc_html__("EE4", 'event_espresso')),
                 $old_content);
     }
 
@@ -1733,7 +1730,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
 
     public function _migration_page_hook_simplify_next_db_state($old_content, $next_db_state)
     {
-        return str_replace($next_db_state, __("EE4", 'event_espresso'), $old_content);
+        return str_replace($next_db_state, esc_html__("EE4", 'event_espresso'), $old_content);
     }
 
 
@@ -1741,7 +1738,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
     public function _migration_page_hook_option_1_extra_details()
     {
         ?>
-        <p><?php printf(__("Note: many of your EE3 shortcodes will be changed to EE4 shortcodes during this migration (among many other things). Should you revert to EE3, then you should restore to your backup or manually change the EE4 shortcodes back to their EE3 equivalents",
+        <p><?php printf(esc_html__("Note: many of your EE3 shortcodes will be changed to EE4 shortcodes during this migration (among many other things). Should you revert to EE3, then you should restore to your backup or manually change the EE4 shortcodes back to their EE3 equivalents",
             "event_espresso")); ?></p><?php
     }
 
@@ -1755,5 +1752,18 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
         <br/><?php _e("Unless an addon's description on our website explicitly states that it is compatible with EE4, you should consider it incompatible and know that it WILL NOT WORK correctly with this new version of Event Espresso 4 (EE4). As well, any data for incompatible addons will NOT BE MIGRATED until an updated EE4 compatible version of the addon is available. If you want, or need to keep using your EE3 addons, you should simply continue using EE3 until EE4 compatible versions of your addons become available. To continue using EE3 for now, just deactivate EE4 and reactivate EE3.",
             "event_espresso"); ?>
         </p><?php
+    }
+
+
+
+    /**
+     * When showing the migration options, show more options and info than normal (ie, give folks the option
+     * to start using EE4 without migrating. From EE3 that's fine, because it doesn't actually remove any data, because
+     * EE4 doesn't have any yet. But when migrating from EE4 it would remove old data, so its not a great idea).
+     * @param $template_filepath
+     * @return string
+     */
+    public function use_migration_options_from_ee3_template( $template_filepath ) {
+        return EE_MAINTENANCE_TEMPLATE_PATH . 'migration_options_from_ee3.template.php';
     }
 }

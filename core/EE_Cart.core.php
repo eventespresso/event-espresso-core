@@ -14,6 +14,7 @@ do_action('AHEE_log', __FILE__, __FUNCTION__, '');
  * This data is used for generating the Transaction and Registrations, and the
  * Line Items on cart are themselves saved for creating a persistent snapshot of
  * what was purchased and for how much.
+ * @ version        2.0
  *
  * @version        2.0
  * @subpackage     includes/core/EE_Cart.core.php
@@ -205,6 +206,9 @@ class EE_Cart implements ResettableInterface
      */
     public function get_tickets()
     {
+        if ($this->_grand_total === null ) {
+            return array();
+        }
         return EEH_Line_Item::get_ticket_line_items($this->_grand_total);
     }
 

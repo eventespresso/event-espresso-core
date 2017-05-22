@@ -24,7 +24,7 @@ jQuery(document).ready(function($){
 	 */
 	EEFV = {
 
-		// validation rules from the eei18n localized JSON array
+        // validation rules from the eei18n localized JSON array
 		validation_rules_array : ee_form_section_vars.form_data,
 		// what level of email validation is required ?
 		email_validation_level : ee_form_section_vars.email_validation_level,
@@ -33,6 +33,23 @@ jQuery(document).ready(function($){
 		// current form to be validated
 		form_validators : {},
 
+        /**
+         * Set some settings common for EE form validation, that don't need
+         * to be set every time we initialize (or re-initialize) a form
+         */
+        set_validation_defaults : function() {
+
+            // jQuery validation object
+            $.validator.setDefaults({
+                errorPlacement: function (error, input) {
+                    //remove error inputs added server-side,
+                    //this new error overrides it
+                    input.siblings('label.error').remove();
+                    error.appendTo(input.parent());
+                }
+            });
+            EEFV.add_custom_validators();
+        },
 
 
 		/**
@@ -40,22 +57,21 @@ jQuery(document).ready(function($){
 		 *  @param {object} form_data
 		 */
 		initialize : function( form_data ) {
-			EEFV.initialize_datepicker_inputs();
+            EEFV.initialize_datepicker_inputs();
 			EEFV.initialize_select_reveal_inputs( form_data );
 			EEFV.validation_rules_array = form_data;
 			EEFV.setup_validation_rules( form_data );
-			EEFV.add_custom_validators();
 			//add a trigger so anyone can know when forms are getting re-initialized
-			jQuery(document).trigger( 'EEFV:initialize', form_data );
+			$(document).trigger( 'EEFV:initialize', form_data );
 			//let's execute a trigger for each form in the localized data. This way
 			//client code doesn't need to manually loop over it all
 			$.each( form_data, function( html_id, form_data_for_specific_section ){
-				jQuery(document).trigger( 
-					'EEFV:initialize_specific_form', 
-					{ 
-						'html_id' : html_id, 
-						'form_data' : form_data_for_specific_section 
-					} 
+				$(document).trigger(
+					'EEFV:initialize_specific_form',
+					{
+						'html_id' : html_id,
+						'form_data' : form_data_for_specific_section
+					}
 				);
 			});
 		},
@@ -194,20 +210,14 @@ jQuery(document).ready(function($){
 						}
 						// if the form already exists, then let's reset it
 						if ( typeof EEFV.form_validators[ form_id ] !== 'undefined' ) {
-							EEFV.form_validators[ form_id ].resetForm();
+							EEFV.resetForm(EEFV.form_validators[ form_id ]);
 						}
-						// remove the non-js-generated server-side validation errors
-						// because we will allow jquery validate to populate them
-						// need to call validate() before doing anything else, i know, seems counter intuitive...
-						EEFV.form_validators[ form_id ] = html_form.validate(
-							{
-								errorPlacement:function( error, input ) {
-									//remove error inputs added server-side,
-									//this new error overrides it
-									input.siblings('label.error').remove();
-									error.appendTo(input.parent());
-								}
-							});
+
+                        // remove the non-js-generated server-side validation errors
+                        // because we will allow jquery validate to populate them
+                        // need to call validate() before doing anything else, i know, seems counter intuitive...
+                        // but let SPCO set it's own defaults
+                        EEFV.form_validators[form_id] = html_form.validate();
 						// now add form section's validation rules
 						EEFV.add_rules( form_data.form_section_id, form_data.validation_rules );
 						// and cache incoming form sections and rules so that they can be later removed if necessary
@@ -284,7 +294,7 @@ jQuery(document).ready(function($){
 		 *	@function add_custom_validators
 		 */
 		add_custom_validators : function() {
-			//adds a method used for validation URLs, which isn't native to jquery validate
+            //adds a method used for validation URLs, which isn't native to jquery validate
 			$.validator.addMethod( "validUrl",
 				function( value, element ) {
 					if ( this.optional( element )){
@@ -327,6 +337,23 @@ jQuery(document).ready(function($){
 					return this.optional( element ) || regex.test( value );
 				};
 			}
+		},
+		/**
+		 * We can't use jquery validate's native resetForm() because jquery-form
+		 * also defines it and they conflict (ie, we want to call jquery validate's resetForm,
+		 * but we instead get jquery-form's resetForm, which is a totally different method),
+		 * so we're best off just avoiding using resetForm() entirely.
+		 * But this method does the same thing as jquery-validate's resetForm.
+		 * @param {object} form
+		 * @returns void
+		 */
+		resetForm: function( form ) {
+			form.invalid = {};
+			form.submitted = {};
+			form.prepareForm();
+			form.hideErrors();
+			var b = form.elements().removeData("previousValue").removeAttr("aria-invalid");
+			form.resetElements(b)
 		},
 
 
@@ -509,14 +536,16 @@ jQuery(document).ready(function($){
 
 	};
 	// end of EEFV object
+    //always setup default validation stuff
+    EEFV.set_validation_defaults();
+    //conditionally initialize the form (other code may want to control this though)
 	if(
-		typeof( ee_form_section_validation_init ) != 'undefined'
-		&& ee_form_section_validation_init.init == true
-		&& typeof( ee_form_section_vars ) != 'undefined'
+		typeof( ee_form_section_validation_init ) !== 'undefined'
+		&& ee_form_section_validation_init.init === '1'
+		&& typeof( ee_form_section_vars ) !== 'undefined'
 	) {
 		EEFV.initialize( ee_form_section_vars.form_data );
 	}
-
 });
 
 // example  ee_form_section_vars

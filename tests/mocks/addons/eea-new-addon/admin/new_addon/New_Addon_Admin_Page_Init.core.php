@@ -1,17 +1,5 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 /**
-* Event Espresso
-*
-* Event Registration and Management Plugin for WordPress
-*
-* @ package 		Event Espresso
-* @ author			Seth Shoultes
-* @ copyright 	(c) 2008-2011 Event Espresso  All Rights Reserved.
-* @ license 		{@link http://eventespresso.com/support/terms-conditions/}   * see Plugin Licensing *
-* @ link 				{@link http://www.eventespresso.com}
-* @ since		 	$VID:$
-*
-* ------------------------------------------------------------------------
 *
 * New_Addon_Admin_Page_Init class
 *
