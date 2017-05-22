@@ -13,10 +13,24 @@ namespace Page;
 class CoreAdmin
 {
 
+    /**
+     * @var string
+     */
     const URL_PREFIX = 'admin.php?page=';
 
 
+    /**
+     * This is the selector for the next page button on list tables.
+     * @var string
+     */
     const ADMIN_LIST_TABLE_NEXT_PAGE_CLASS = '.next-page';
+
+
+    /**
+     * The selector for the search input submit button on list table pages
+     * @var string
+     */
+    const LIST_TABLE_SEARCH_SUBMIT_SELECTOR = '#search-submit';
 
 
     /**
