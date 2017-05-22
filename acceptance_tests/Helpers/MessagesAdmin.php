@@ -76,7 +76,7 @@ trait MessagesAdmin
         $text_to_check_for,
         $field,
         $message_type_label,
-        $message_status = self::MESSAGE_STATUS_SENT,
+        $message_status = MessagesPage::MESSAGE_STATUS_SENT,
         $messenger = 'Email',
         $context = 'Event Admin'
     ) {

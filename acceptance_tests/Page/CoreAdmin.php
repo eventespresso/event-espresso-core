@@ -27,6 +27,34 @@ class CoreAdmin
 
 
     /**
+     * The selector for the search input submit button on list table pages
+     * @var string
+     */
+    const LIST_TABLE_SEARCH_SUBMIT_SELECTOR = '#search-submit';
+
+
+    /**
+     * Selector for the screen options dropdown.
+     * @var string
+     */
+    const WP_SCREEN_SETTINGS_LINK_SELECTOR = '#show-settings-link';
+
+
+    /**
+     * Selector for the per page field setting selector (found within screen options dropdown)
+     * @var string
+     */
+    const WP_SCREEN_SETTINGS_PER_PAGE_FIELD_SELECTOR = '.screen-per-page';
+
+
+    /**
+     * Selector for apply screen options settings.
+     * @var string
+     */
+    const WP_SCREEN_OPTIONS_APPLY_SETTINGS_BUTTON_SELECTOR = '#screen-options-apply';
+
+
+    /**
      * Get the EE admin url for the given properties.
      * Note, this is JUST the endpoint for the admin route.  It is expected that the actor/test would be calling this
      * with `amOnAdminPage` action.
