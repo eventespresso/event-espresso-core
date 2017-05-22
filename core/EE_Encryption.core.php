@@ -73,9 +73,9 @@ class EE_Encryption
         if (! defined('ESPRESSO_ENCRYPT')) {
             define('ESPRESSO_ENCRYPT', true);
         }
-        if (function_exists('openssl_encrypt')) {
+        if (extension_loaded('openssl')) {
             $this->_use_openssl_encrypt = true;
-        } else if (function_exists('mcrypt_encrypt')) {
+        } else if (extension_loaded('mcrypt')) {
             $this->_use_mcrypt = true;
         }
         if (function_exists('base64_encode')) {
