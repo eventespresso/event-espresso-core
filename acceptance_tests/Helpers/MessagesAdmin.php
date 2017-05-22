@@ -58,4 +58,48 @@ trait MessagesAdmin
         $this->actor()->click(MessagesPage::editMessageTemplateClassByMessageType($message_type_slug, $context));
     }
 
+
+    /**
+     * Use this action to verify that the count for the given text in the specified field is as expected.  For example
+     * filling the condition of, "There should only be 1 instance of `someaddress@email.com` in all the 'to' column.
+     *
+     * @param int    $expected_occurence_count
+     * @param string $text_to_check_for
+     * @param string $field
+     * @param string $message_type_label
+     * @param string $message_status
+     * @param string $messenger
+     * @param string $context
+     */
+    public function verifyMatchingCountofTextInMessageActivityListTableFor(
+        $expected_occurence_count,
+        $text_to_check_for,
+        $field,
+        $message_type_label,
+        $message_status = MessagesPage::MESSAGE_STATUS_SENT,
+        $messenger = 'Email',
+        $context = 'Event Admin'
+    ) {
+        $elements = $this->actor()->grabMultiple(MessagesPage::messagesActivityListTableCellSelectorFor(
+            $field,
+            $message_type_label,
+            $message_status,
+            $messenger,
+            $context,
+            $text_to_check_for
+        ));
+        $actual_count = count($elements);
+        $this->actor()->assertEquals(
+            $expected_occurence_count,
+            $actual_count,
+            sprintf(
+                'Expected %s of the %s text for the %s field but there were actually %s counted.',
+                $expected_occurence_count,
+                $text_to_check_for,
+                $field,
+                $actual_count
+            )
+        );
+    }
+
 }
