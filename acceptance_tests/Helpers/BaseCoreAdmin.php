@@ -34,4 +34,18 @@ trait BaseCoreAdmin
         /** @var \EventEspressoAcceptanceTester $this */
         return $this;
     }
+
+
+    /**
+     * Use this to set the per page option for a list table page.
+     * Assumes you are on a page that has this field exposed.
+     * @param int|string $per_page_value
+     */
+    public function setPerPageOptionForScreen($per_page_value)
+    {
+        $this->actor()->click(CoreAdmin::WP_SCREEN_SETTINGS_LINK_SELECTOR);
+        $this->actor()->fillField(CoreAdmin::WP_SCREEN_SETTINGS_PER_PAGE_FIELD_SELECTOR, $per_page_value);
+        $this->actor()->click(CoreAdmin::WP_SCREEN_OPTIONS_APPLY_SETTINGS_BUTTON_SELECTOR);
+        $this->actor()->wait(8);
+    }
 }

@@ -48,6 +48,14 @@ class EventsAdmin extends CoreAdmin
 
 
     /**
+     * Selector for the search input on the event list table page.
+     * @var string
+     */
+    const EVENT_LIST_TABLE_SEARCH_INPUT_SELECTOR = '#toplevel_page_espresso_events-search-input';
+
+
+
+    /**
      * @param string $additional_params
      * @return string
      */
@@ -112,5 +120,30 @@ class EventsAdmin extends CoreAdmin
     public static function eventEditorTicketFieldSelectorForFieldInDisplayRow($field_name, $row_number = 1)
     {
         return "//tr[@id='display-ticketrow-$row_number']/td[2]/input[@class='edit-ticket-$field_name ee-large-text-inp']";
+    }
+
+
+    /**
+     * Returns the selector for the event title edit link in the events list table for the given Event Title.
+     * @param string $event_title
+     * @return string
+     */
+    public static function eventListTableEventTitleEditLinkSelectorForTitle($event_title)
+    {
+        return "//td[contains(@class, 'column-name')]/strong/a[text()='$event_title']";
+    }
+
+
+    public static function eventListTableEventIdSelectorForTitle($event_title)
+    {
+        return "//td[contains(@class, 'column-name')]/strong/a[text()='$event_title']"
+            . "//ancestor::tr/th[contains(@class, 'check-column')]/input";
+    }
+
+
+    public static function eventListTableEventTitleViewLinkSelectorForTitle($event_title)
+    {
+        return "//td[contains(@class, 'column-name')]/strong/a[text()='$event_title']"
+            . "//ancestor::td//span[@class='view']/a";
     }
 }
