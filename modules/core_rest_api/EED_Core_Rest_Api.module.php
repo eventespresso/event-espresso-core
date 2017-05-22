@@ -421,6 +421,7 @@ class EED_Core_Rest_Api extends \EED_Module
         //let's not bother having endpoints for extra metas
         unset($models_to_register['Extra_Meta']);
         unset($models_to_register['Extra_Join']);
+        unset($models_to_register['Post_Meta']);
         $model_routes = array();
         foreach ($models_to_register as $model_name => $model_classname) {
             $model = \EE_Registry::instance()->load_model($model_name);
