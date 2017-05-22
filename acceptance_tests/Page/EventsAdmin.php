@@ -137,7 +137,7 @@ class EventsAdmin extends CoreAdmin
     public static function eventListTableEventIdSelectorForTitle($event_title)
     {
         return "//td[contains(@class, 'column-name')]/strong/a[text()='$event_title']"
-            . "//ancestor::tr/td[contains(@class, 'column-id')]/text()";
+            . "//ancestor::tr/th[contains(@class, 'check-column')]/input";
     }
 
 
