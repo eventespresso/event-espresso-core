@@ -166,8 +166,6 @@ class EE_Encryption
         // if PHP's mcrypt functions are installed then we'll use them
         if ($this->_use_openssl_encrypt) {
             $decrypted_text = $this->openssl_decrypt($encrypted_text);
-        } else if ($this->_use_mcrypt) {
-            $decrypted_text = $this->m_decrypt($encrypted_text);
         } else {
             $decrypted_text = $this->acme_decrypt($encrypted_text);
         }
