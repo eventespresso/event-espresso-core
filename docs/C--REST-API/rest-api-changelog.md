@@ -7,6 +7,7 @@ This is a log of client-facing changes made to the EE4 REST API (ie, changes to 
 - Added support for `POST`ing, `PUT`ing, and `DELETE`ing EE4 model data
 - PHP objects in JSON responses are replaced with JSON objects with properties "error_code" and "error_message"
 - Serialized data is no longer accepted when querying
+- removed the routes for "post_metas", e.g. "/wp-json/ee/v4.8.36/post_metas" as it was a security concern
 
 ## 4.9.18
 - Added support for `force_show_ee_namespace` query parameter in order to show different EE namespaces in the WP Index
