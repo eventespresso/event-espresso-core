@@ -269,6 +269,7 @@ class EE_Encryption
         if (empty($text_string)) {
             return $text_string;
         }
+        \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
         // get initialization vector size
         $iv_size = openssl_cipher_iv_length(EE_Encryption::OPENSSL_CIPHER_METHOD);
         // generate initialization vector
@@ -309,6 +310,7 @@ class EE_Encryption
         if (empty($encrypted_text)) {
             return $encrypted_text;
         }
+        \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
         // decode
         $encrypted_text = $this->valid_base_64($encrypted_text)
             ? base64_decode($encrypted_text)
@@ -349,6 +351,7 @@ class EE_Encryption
         if (empty($text_string)) {
             return $text_string;
         }
+        \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
         $key_bits = str_split(
             str_pad('', strlen($text_string), $this->get_encryption_key(), STR_PAD_RIGHT)
         );
@@ -377,6 +380,7 @@ class EE_Encryption
         if (empty($encrypted_text)) {
             return $encrypted_text;
         }
+        \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
         // decode the data ?
         $encrypted_text = $this->valid_base_64($encrypted_text)
             ? base64_decode($encrypted_text)
@@ -494,6 +498,7 @@ class EE_Encryption
         if (empty($encrypted_text)) {
             return $encrypted_text;
         }
+        \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
         // decode
         $encrypted_text = $this->valid_base_64($encrypted_text)
             ? base64_decode($encrypted_text)
