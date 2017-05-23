@@ -964,10 +964,10 @@ class Read extends Base
     public function getVersionedLinkTo($link_part_after_version_and_slash)
     {
         return rest_url(
-            EED_Core_Rest_Api::ee_api_namespace
-            . $this->getModelVersionInfo()->requestedVersion()
-            . '/'
-            . $link_part_after_version_and_slash
+            EED_Core_Rest_Api::get_versioned_route_to(
+                $link_part_after_version_and_slash,
+                $this->getModelVersionInfo()->requestedVersion()
+            )
         );
     }
 

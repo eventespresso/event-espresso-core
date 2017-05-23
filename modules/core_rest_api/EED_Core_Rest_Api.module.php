@@ -430,8 +430,8 @@ class EED_Core_Rest_Api extends \EED_Module
                 continue;
             }
             //yes we could just register one route for ALL models, but then they wouldn't show up in the index
-            $plural_model_route = EEH_Inflector::pluralize_and_lower($model_name);
-            $singular_model_route = $plural_model_route . '/(?P<id>\d+)';
+            $plural_model_route = EED_Core_Rest_Api::get_plural_route_to($model_name);
+            $singular_model_route = EED_Core_Rest_Api::get_singular_route_to($model_name, '(?P<id>\d+)');
             $model_routes[$plural_model_route] = array(
                 array(
                     'callback'        => array(
@@ -508,7 +508,10 @@ class EED_Core_Rest_Api extends \EED_Module
                 );
             }
             foreach ($model->relation_settings() as $relation_name => $relation_obj) {
-                $related_model_name_endpoint_part = ModelRead::getRelatedEntityName(
+
+                $related_route = EED_Core_Rest_Api::get_related_route_to(
+                    $model_name,
+                    '(?P<id>\d+)',
                     $relation_name,
                     $relation_obj
                 );
@@ -524,10 +527,73 @@ class EED_Core_Rest_Api extends \EED_Module
                         'args'            => $this->_get_read_query_params($relation_obj->get_other_model(), $version),
                     ),
                 );
-                $model_routes[$singular_model_route . '/' . $related_model_name_endpoint_part] = $endpoints;
+                $model_routes[$related_route] = $endpoints;
             }
         }
         return $model_routes;
+    }
+
+
+
+    /**
+     * Gets the relative URI to a model's REST API plural route, after the EE4 versioned namespace,
+     * excluding the preceding slash.
+     * Eg you pass get_plural_route_to('Event') = 'events'
+     * @param string $model_name eg Event or Venue
+     * @return string
+     */
+    public static function get_plural_route_to($model_name)
+    {
+        return EEH_Inflector::pluralize_and_lower($model_name);
+    }
+
+
+
+    /**
+     * Gets the relative URI to a model's REST API singular route, after the EE4 versioned namespace,
+     * excluding the preceding slash.
+     * Eg you pass get_plural_route_to('Event', 12) = 'events/12'
+     * @param string $model_name eg Event or Venue
+     * @param string $id
+     * @return string
+     */
+    public static function get_singular_route_to($model_name, $id)
+    {
+        return EEH_Inflector::pluralize_and_lower($model_name) . '/' . $id;
+    }
+
+
+    /**
+     * Gets the relative URI to a model's REST API singular route, after the EE4 versioned namespace,
+     * excluding the preceding slash.
+     * Eg you pass get_plural_route_to('Event', 12) = 'events/12'
+     *
+     * @param string                $model_name eg Event or Venue
+     * @param string                $id
+     * @param string                $related_model_name
+     * @param EE_Model_Relation_Base $relation_obj
+     * @return string
+     */
+    public function get_related_route_to($model_name, $id, $related_model_name, $relation_obj)
+    {
+        $related_model_name_endpoint_part = ModelRead::getRelatedEntityName(
+            $related_model_name,
+            $relation_obj
+        );
+        return EED_Core_Rest_Api::get_singular_route_to($model_name, $id) . '/' . $related_model_name_endpoint_part;
+    }
+
+
+
+    /**
+     * Adds onto the $relative_route the EE4 REST API versioned namespace.
+     * Eg if given '4.8.36' and 'events', will return 'ee/v4.8.36/events'
+     * @param string $relative_route
+     * @param string $version
+     * @return string
+     */
+    public static function get_versioned_route_to($relative_route, $version = '4.8.36'){
+        return '/' . EED_Core_Rest_Api::ee_api_namespace . $version . '/' . $relative_route;
     }
 
 
