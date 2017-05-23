@@ -1,4 +1,7 @@
-<?php use EventEspresso\core\interfaces\InterminableInterface;
+<?php
+
+use EventEspresso\core\interfaces\InterminableInterface;
+use EventEspresso\core\services\database\TableAnalysis;
 
 if ( ! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');

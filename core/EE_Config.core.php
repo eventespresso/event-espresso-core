@@ -14,7 +14,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
  * @subpackage  core/
  * @author      Brent Christensen
  */
-final class EE_Config implements EventEspresso\core\interfaces\ResettableInterface {
+final class EE_Config implements ResettableInterface
 {
 
     const OPTION_NAME        = 'ee_config';
