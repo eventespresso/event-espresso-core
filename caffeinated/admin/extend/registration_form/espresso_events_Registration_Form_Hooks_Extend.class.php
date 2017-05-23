@@ -44,18 +44,30 @@ class espresso_events_Registration_Form_Hooks_Extend extends espresso_events_Reg
 	 * @return void
 	 */
 	protected function _extend_properties() {
-		$new_metaboxes = array(
-			1 => array(
-				'page_route' => array('create_new', 'edit'),
-				'func' => 'additional_questions',
-				'label' => __('Questions for Additional Registrants', 'event_espresso'),
-				'priority' => 'default',
-				'context' => 'side'
-				)
-			);
-
-		$this->_metaboxes = array_merge( $this->_metaboxes, $new_metaboxes);
-	}
+        $this->_metaboxes = array_merge(
+            $this->_metaboxes,
+            array(
+                1 => array(
+                    'page_route' => array('create_new', 'edit'),
+                    'func'       => 'additional_questions',
+                    'label'      => __('Questions for Additional Registrants', 'event_espresso'),
+                    'priority'   => 'default',
+                    'context'    => 'side',
+                ),
+            )
+        );
+        $this->_scripts_styles = array(
+            'registers' => array(
+                'extended-event-editor' => array(
+                    'url'     => EE_CORE_CAF_ADMIN_EXTEND_URL . 'registration_form/assets/event-editor-question-groups.js',
+                    'depends' => array('jquery')
+                )
+            ),
+            'enqueues'  => array(
+                'extended-event-editor' => array('edit', 'create_new')
+            ),
+        );
+    }
 
 
 
@@ -112,6 +124,12 @@ class espresso_events_Registration_Form_Hooks_Extend extends espresso_events_Reg
 						<input value="' . $QSG->ID() . '" type="checkbox" name="add_attendee_question_groups[' . $QSG->ID() . ']"' . $checked . ' />
 						<a href="' . $edit_link . '" title="' . sprintf( esc_attr__( 'Edit %s Group', 'event_espresso' ),  $QSG->get('QSG_name') ) . '" target="_blank">' . $QSG->get('QSG_name') . '</a>
 					</p>';
+                    if ($QSG->ID() === 2) {
+                        $html .= '
+					<p id="question-group-requirements-notice-pg" class="important-notice small-text" style="display: none;">
+					    '. esc_html__('The Personal Information question group is required whenever the Address Information question group is activated.', 'event_espresso').'
+					</p>';
+                    }
 				}
 				$html .= count( $QSGs ) > 10 ? '</div>' : '';
 

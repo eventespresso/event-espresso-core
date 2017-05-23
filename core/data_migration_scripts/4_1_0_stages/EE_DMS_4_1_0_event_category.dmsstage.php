@@ -57,7 +57,7 @@ class EE_DMS_4_1_0_event_category extends EE_Data_Migration_Script_Stage{
 		global $wpdb;
 		$this->_old_table = $wpdb->prefix."events_category_rel";
 		$this->_new_table = $wpdb->prefix."term_relationships";
-		$this->_pretty_name = __("Event to Cateogry (4.1 Term Relationships)", "event_espresso");
+		$this->_pretty_name = __("Event to Category (4.1 Term Relationships)", "event_espresso");
 		parent::__construct();
 	}
 

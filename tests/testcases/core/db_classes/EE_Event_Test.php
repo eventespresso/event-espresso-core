@@ -106,8 +106,18 @@ class EE_Event_Test extends EE_UnitTestCase{
 		) );
 		$d_upcoming->_add_relation_to( $t, 'Ticket' );
 		$d_upcoming->save();
+
+		// add tickets
+		$ticket_1 = $this->new_model_obj_with_dependencies( 'Ticket', array( 'TKT_qty' => '10', 'TKT_sold' => '5', 'TKT_reserved' => '0' ) );
+		$d_now->_add_relation_to( $ticket_1, 'Ticket' );
+		$ticket_2 = $this->new_model_obj_with_dependencies( 'Ticket', array( 'TKT_qty' => '10', 'TKT_sold' => '5', 'TKT_reserved' => '0' ) );
+		$d_exp->_add_relation_to( $ticket_2, 'Ticket' );
+		$ticket_3 = $this->new_model_obj_with_dependencies( 'Ticket', array( 'TKT_qty' => '10', 'TKT_sold' => '5', 'TKT_reserved' => '0' ) );
+		$d_upcoming->_add_relation_to( $ticket_3, 'Ticket' );
+
+		//test
 		$this->assertEquals(EE_Datetime::active,$e->get_active_status( true ));
-		$e->_remove_relation_to($d_now, 'Datetime');
+	$e->_remove_relation_to($d_now, 'Datetime');
 		$this->assertEquals(EE_Datetime::upcoming,$e->get_active_status( true ));
 		$e->_remove_relation_to($d_upcoming, 'Datetime');
 		$this->assertEquals(EE_Datetime::expired,$e->get_active_status( true ));
@@ -354,4 +364,4 @@ class EE_Event_Test extends EE_UnitTestCase{
 
 }
 // End of file EE_Event_Test.php
-// Location: tests/testcases/core/db_classes/EE_Event_Test.php
+// Location: /tests/testcases/core/db_classes/EE_Event_Test.php

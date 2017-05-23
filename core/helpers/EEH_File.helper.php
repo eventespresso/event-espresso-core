@@ -324,8 +324,10 @@ class EEH_File extends EEH_Base implements EEHI_File {
 		//find the last DS, ignoring a DS on the very end
 		//eg if given "/var/something/somewhere/", we want to get "somewhere"'s
 		//parent folder, "/var/something/"
-		$ds = strlen($file_or_folder_path) > 1 ? strrpos( $file_or_folder_path, DS, -2 ) : $file_or_folder_path;
-		return substr( $file_or_folder_path, 0, $ds + 1 );
+		$ds = strlen($file_or_folder_path) > 1
+            ? strrpos($file_or_folder_path, DS, -2)
+            : strlen($file_or_folder_path);
+		return substr($file_or_folder_path, 0, $ds + 1);
 	}
 
 	// public static function ensure_folder_exists_recursively( $folder ) {

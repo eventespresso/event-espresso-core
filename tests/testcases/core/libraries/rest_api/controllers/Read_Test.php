@@ -15,15 +15,10 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @group rest_api
  *
  */
-class Read_Test extends \EE_UnitTestCase{
+class Read_Test extends \EE_REST_TestCase{
 
 	public function setUp() {
 		parent::setUp();
-		if ( ! class_exists( 'WP_Rest_Request' ) ) {
-			$this->markTestSkipped(
-				'Test being run on a version of WP that does not have the REST framework installed'
-			);
-		}
 	}
 
 	public function test_explode_and_get_items_prefixed_with__basic(){
@@ -79,9 +74,14 @@ class Read_Test extends \EE_UnitTestCase{
 		);
 	}
 
+
+
+    /**
+     * @group 10526
+     */
 	public function test_handle_request_get_one__event_includes() {
 		$event = $this->new_model_obj_with_dependencies( 'Event', array( 'status' => 'publish' ) );
-		$req = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.29/events/' . $event->ID() );
+		$req = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events/' . $event->ID() );
 		$req->set_url_params(
 				array(
 					'id' => $event->ID()
@@ -102,6 +102,35 @@ class Read_Test extends \EE_UnitTestCase{
 			$result
 		);
 	}
+
+    /**
+     * Verifies 'featured_image_url' isn't added to all 4.8.29 requests. We had a bug introduced in 4.8.36
+     * where requests to 4.8.29 added 'featured_image_url' all the time
+     * @group 10526
+     */
+    public function test_handle_request_get_one_4_8_29__event_includes() {
+        $event = $this->new_model_obj_with_dependencies( 'Event', array( 'status' => 'publish' ) );
+        $req = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.29/events/' . $event->ID() );
+        $req->set_url_params(
+            array(
+                'id' => $event->ID()
+            )
+        );
+        $req->set_query_params(
+            array(
+                'include' =>  'EVT_ID,EVT_name'
+            )
+        );
+        $response = Read::handle_request_get_one( $req );
+        $result = $response->get_data();
+        $this->assertEquals(
+            array (
+                'EVT_ID' => $event->ID(),
+                'EVT_name' => $event->name(),
+            ),
+            $result
+        );
+    }
 
 	public function test_handle_request_get_one__event_includes_two_related_models() {
 		$event = $this->new_model_obj_with_dependencies( 'Event', array( 'status' => 'publish' ) );
@@ -133,10 +162,15 @@ class Read_Test extends \EE_UnitTestCase{
 		);
 	}
 
+
+
+    /**
+     * @group 10526
+     */
 	public function test_handle_request_get_one__event_include_non_model_field() {
 		$this->set_current_user_to_new();
 		$event = $this->new_model_obj_with_dependencies( 'Event' );
-		$req = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.29/events/' . $event->ID() );
+		$req = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events/' . $event->ID() );
 		$req->set_url_params(
 				array(
 					'id' => $event->ID()
@@ -173,22 +207,29 @@ class Read_Test extends \EE_UnitTestCase{
 		$this->set_current_user_to_new();
 		$limit_on_datetime = 100;
 		$limit_on_ticket = 50;
+		/** @var \EE_Event $event */
 		$event = $this->new_model_obj_with_dependencies( 'Event' );
+		/** @var \EE_Datetime $dtt */
 		$dtt = $this->new_model_obj_with_dependencies(
 			'Datetime',
 			array(
 				'DTT_reg_limit' => $limit_on_datetime,
-				'EVT_ID' => $event->ID()
+				'EVT_ID' => $event->ID(),
+				'DTT_sold' => 0,
+				'DTT_reserved' => 0,
 			)
 		);
+		/** @var \EE_Ticket $tkt */
 		$tkt = $this->new_model_obj_with_dependencies(
 			'Ticket',
 			array(
-				'TKT_qty' => $limit_on_ticket
+				'TKT_qty' => $limit_on_ticket,
+				'TKT_sold' => 0,
+				'TKT_reserved' => 0,
 			)
 		);
 		$tkt->_add_relation_to( $dtt, 'Datetime' );
-		$reg1 = $this->new_model_obj_with_dependencies(
+		$this->new_model_obj_with_dependencies(
 			'Registration',
 			array(
 				'EVT_ID' => $event->ID(),
@@ -212,7 +253,7 @@ class Read_Test extends \EE_UnitTestCase{
 		$result = $response->get_data();
 		$this->assertTrue( isset( $result[ 'EVT_ID' ] ) );
 		//check that the requested calculated fields were added.
-		//Seeing how these calculated fields just wrap other EE methods (which sould already be tested)
+		//Seeing how these calculated fields just wrap other EE methods (which should already be tested)
 		//the emphasis here is just on whether or not they get included properly, not exhaustively
 		//testing the calculations themselves
 		$this->assertTrue( isset( $result[ '_calculated_fields' ] ) );
@@ -245,7 +286,7 @@ class Read_Test extends \EE_UnitTestCase{
 		$original_gmt_offset = get_option( 'gmt_offset' );
 		\EED_Core_Rest_Api::set_hooks_for_changes();
 		//set a weird timezone
-		update_option( 'gmt_offset', '-04:30' );
+		update_option( 'gmt_offset', -4.5 );
 		$this->set_current_user_to_new();
 		$current_time_mysql_gmt = current_time( 'Y-m-d\TH:i:s', true );
 		$current_time_mysql =  current_time( 'Y-m-d\TH:i:s' );
@@ -613,6 +654,7 @@ class Read_Test extends \EE_UnitTestCase{
 
 	/**
 	 * @group 9406
+     * @group 10526
 	 */
 	public function test_handle_request_get_all__set_headers(){
 		$datetimes_created = 65;
@@ -621,9 +663,9 @@ class Read_Test extends \EE_UnitTestCase{
 			$this->new_model_obj_with_dependencies( 'Datetime', array( 'EVT_ID' => $event->ID() ) );
 		}
    		$this->assertEquals( $datetimes_created, \EEM_Datetime::instance()->count( array( 'caps' => \EEM_Base::caps_read ) ) );
-		//request all datetimes
+		//request all datetimes from 4.8.36 (where the headers got added)
 		$response = Read::handle_request_get_all(
-			new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.34/datetimes' )
+			new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/datetimes' )
 		);
 		$this->assertInstanceOf( 'WP_REST_Response', $response );
 		$headers = $response->get_headers();
@@ -649,7 +691,6 @@ class Read_Test extends \EE_UnitTestCase{
 	 * Creates a new wp user with the specified role and makes them the new current user
 	 *
 	 * @global \WP_User $current_user
-	 * @param string $role
 	 * @return \WP_User
 	 */
 	public function set_current_user_to_new(){
@@ -754,7 +795,105 @@ class Read_Test extends \EE_UnitTestCase{
 		$response = Read::handle_request_get_all( $request );
 		$this->assertEmpty( $response->get_data() );
 	}
-}
 
+    /**
+     * Test that when we set the minimum_others where conditions, we don't find trashed cpt items
+     * for the current model (because we use normal default where conditions for main model), but not for related
+     * trashed models (because they only use their minimum where conditions)
+     *
+     *@group 10260
+     */
+    public function test_handle_request_get_all__use_minimum_others_where_conditions()
+    {
+        $this->assertEquals(0, \EEM_Event::instance()->count(array('default_where_conditions' => 'none')));
+        $e_normal = $this->new_model_obj_with_dependencies('Event',
+            array('status' => \EEM_CPT_Base::post_status_publish));
+        $e_normal_but_with_trashed_v = $this->new_model_obj_with_dependencies('Event',
+            array('status' => \EEM_CPT_Base::post_status_publish));
+        $e_trashed = $this->new_model_obj_with_dependencies('Event',
+            array('status' => \EEM_CPT_Base::post_status_trashed));
+        $v_normal = $this->new_model_obj_with_dependencies('Venue',
+            array('status' => \EEM_CPT_Base::post_status_publish));
+        $v_trashed = $this->new_model_obj_with_dependencies('Venue',
+            array('status' => \EEM_CPT_Base::post_status_trashed));
+        //associate them
+        $e_normal->_add_relation_to($v_normal, 'Venue');
+        $e_normal_but_with_trashed_v->_add_relation_to($v_trashed, 'Venue');
+        $e_trashed->_add_relation_to($v_normal, 'Venue');
+        //now verify we get what we wanted...
+        $request = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events' );
+        $request->set_query_params(
+            array(
+                'order_by' => array( 'Venue.VNU_ID' => 'ASC' ),
+                'default_where_conditions' => 'full_this_minimum_others'
+            )
+        );
+        $response = Read::handle_request_get_all( $request );
+        //we should find the normal event, and the event for the trashed venue
+        $this->assertCount(2, $response->data);
+    }
+
+
+    /**
+     * This tests getting schema object returned for an options request on a valid collection endpoint.
+     * @group rest_schema_request
+     */
+    public function test_handle_schema_request()
+    {
+        $request = new \WP_REST_Request( 'OPTIONS', '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events');
+        $response = rest_do_request($request);
+        $data = $response->get_data();
+        //verify there is a schema array
+        $this->assertArrayHasKey('schema', $data);
+
+        //verify schema has a `$schema` key
+        $this->assertArrayHasKey('$schema', $data['schema']);
+
+        //verify there is a title and it is "Event"
+        $this->assertArrayHasKey('title', $data['schema']);
+        $this->assertEquals('Event', $data['schema']['title']);
+
+        //verify there is a properties array in the schema and a few of the common fields are there (including that the
+        //EVT_ID field has `primary_key` flag set to true.
+        $this->assertArrayHasKey('properties', $data['schema']);
+        $this->assertArrayHasKey('EVT_ID', $data['schema']['properties']);
+        $this->assertArrayHasKey('primary_key', $data['schema']['properties']['EVT_ID']);
+        $this->assertTrue($data['schema']['properties']['EVT_ID']['primary_key']);
+        $this->assertArrayHasKey('EVT_desc', $data['schema']['properties']);
+
+        //finally let's verify that a relation that should be in the events schema (datetimes!) is present and that its
+        //relation items are correct.
+        $this->assertArrayHasKey('datetimes', $data['schema']['properties']);
+        $datetimes_array = $data['schema']['properties']['datetimes'];
+        $this->assertArrayHasKey('description', $datetimes_array);
+        $this->assertArrayHasKey('type', $datetimes_array);
+        $this->assertEquals('array', $datetimes_array['type']);
+        $this->assertArrayHasKey('relation', $datetimes_array);
+        $this->assertTrue($datetimes_array['relation']);
+        $this->assertArrayHasKey('relation_type', $datetimes_array);
+        $this->assertEquals('EE_Has_Many_Relation',$datetimes_array['relation_type']);
+        $this->assertArrayHasKey('readonly', $datetimes_array);
+        $this->assertTrue($datetimes_array['readonly']);
+    }
+
+
+    /**
+     * @group rest_schema_request
+     */
+    public function test_handle_schema_request_returning_defaults() {
+        $request = new \WP_REST_Request( 'OPTIONS', '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/prices');
+        $response = rest_do_request($request);
+        $data = $response->get_data();
+        //verify that defaults are in the schema and in the correct format.
+        $PRC_amount_defaults = $data['schema']['properties']['PRC_amount']['default'];
+
+        $this->assertTrue(is_array($PRC_amount_defaults));
+        $this->assertArrayHasKey('raw', $PRC_amount_defaults);
+        $this->assertArrayHasKey('pretty', $PRC_amount_defaults);
+        $this->assertEquals((float) 0, $PRC_amount_defaults['raw']);
+        $this->assertEquals('$0.00 <span class="currency-code">(USD)</span>', $PRC_amount_defaults['pretty']);
+    }
+
+}
 // End of file Read_Test.php
 // Location: testcases/core/libraries/rest_api/controllers/Read_Test.php

@@ -143,10 +143,32 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
                 ),
             );
         }
+        $this->_bottom_buttons['report_filtered'] = array(
+            'route'         => 'registrations_report',
+            'extra_request' => array(
+                'use_filters' => true,
+                'filters'     => array_diff_key($this->_req_data, array_flip(array(
+                            'page',
+                            'action',
+                            'default_nonce',
+                        ))),
+                'return_url'  => urlencode("//{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}"),
+            ),
+        );
         $this->_primary_column = '_REG_ID';
         $this->_sortable_columns = array(
             '_REG_date'     => array('_REG_date' => true),   //true means its already sorted
-            'ATT_fname'     => array('ATT_fname' => false),
+            /**
+             * Allows users to change the default sort if they wish.
+             * Returning a falsey on this filter will result in the default sort to be by firstname rather than last name.
+             */
+            'ATT_fname'     => array(
+                    'FHEE__EE_Registrations_List_Table___set_properties__default_sort_by_registration_last_name',
+                    true,
+                    $this
+                )
+                ? array('ATT_lname' => false)
+                : array('ATT_fname' => false),
             'event_name'    => array('event_name' => false),
             'DTT_EVT_start' => array('DTT_EVT_start' => false),
             '_REG_ID'       => array('_REG_ID' => false),

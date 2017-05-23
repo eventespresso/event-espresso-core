@@ -436,6 +436,17 @@ class EE_Caf_Messages
     }
     
     
+    /**
+     * Callback for FHEE__EE_Recipient_List_Shortcodes__parser_after filter (dynamic filter).
+     *
+     * @param string         $parsed           The original parsed content for the shortcode
+     * @param string         $shortcode        The shortcode being parsed
+     * @param array          $data             The shortcode parser data array
+     * @param array          $extra_data       The shortcode parser extra data array
+     * @param \EE_Shortcodes $shortcode_parser Shortcode parser.
+     *
+     * @return string
+     */
     public function additional_recipient_details_parser($parsed, $shortcode, $data, $extra_data, $shortcode_parser)
     {
         
@@ -462,6 +473,7 @@ class EE_Caf_Messages
                 
                 //if the context is main_content then get all answers for all registrations on this attendee
                 if ($data['data'] instanceof EE_Messages_Addressee) {
+                    
                     foreach ($registrations_on_attendee as $reg) {
                         if ($reg instanceof EE_Registration) {
                             $anss = ! empty($recipient->registrations[$reg->ID()]['ans_objs']) ? $recipient->registrations[$reg->ID()]['ans_objs'] : array();
@@ -489,20 +501,22 @@ class EE_Caf_Messages
                     }
                 }
                 
-                $question_list    = '';
-                $shortcode_helper = $shortcode_parser->get_shortcode_helper();
-                foreach ($answers as $answer) {
-                    if ($answer instanceof EE_Answer) {
-                        $question = $answer->question();
-                        if ( ! $question instanceof EE_Question || ($question instanceof EE_Question && $question->admin_only())) {
-                            continue;
-                        }
-                        $question_list .= $shortcode_helper->parse_question_list_template($template, $answer,
-                            $valid_shortcodes, $extra_data);
-                    }
+                $questions = $questions = isset($recipient->questions) ? $recipient->questions : array();
+                
+                //if $extra_data does not have a 'data' key then let's make sure we add it and set the EE_Messages_Addressee
+                //object on it.
+                if ( ! isset( $extra_data['data'] ) ) {
+                    $extra_data['data'] = $recipient;
                 }
                 
-                return $question_list;
+                return $this->_parse_question_list_for_primary_or_recipient_registration(
+                    $shortcode_parser,
+                    $questions,
+                    $answers,
+                    $template,
+                    $valid_shortcodes,
+                    $extra_data
+                );
                 break;
             
             default :
@@ -521,6 +535,17 @@ class EE_Caf_Messages
     }
     
     
+    /**
+     * Callback for FHEE__EE_Primary_Registration_List_Shortcodes__parser_after filter (dynamic filter).
+     *
+     * @param string         $parsed           The original parsed content for the shortcode
+     * @param string         $shortcode        The shortcode being parsed
+     * @param array          $data             The shortcode parser data array
+     * @param array          $extra_data       The shortcode parser extra data array
+     * @param \EE_Shortcodes $shortcode_parser Shortcode parser.
+     *
+     * @return string
+     */
     public function additional_primary_registration_details_parser(
         $parsed,
         $shortcode,
@@ -539,31 +564,29 @@ class EE_Caf_Messages
             return $parsed;
         }
         
-        $send_data = ! $data['data'] instanceof EE_Messages_Addressee ? $extra_data : $data;
-        
         switch ($shortcode) {
-            case '[RECIPIENT_QUESTION_LIST]' :
+            case '[PRIMARY_REGISTRANT_QUESTION_LIST]' :
                 if ( ! $recipient->primary_att_obj instanceof EE_Attendee || ! $recipient->primary_reg_obj instanceof EE_Registration) {
                     return '';
                 }
                 $registration     = $recipient->primary_reg_obj;
                 $template         = is_array($data['template']) && isset($data['template']['question_list']) ? $data['template']['question_list'] : $extra_data['template']['question_list'];
                 $valid_shortcodes = array('question');
-                $shortcode_helper = $shortcode_parser->get_shortcode_helper();
                 $answers          = $recipient->registrations[$registration->ID()]['ans_objs'];
-                $question_list    = '';
-                foreach ($answers as $answer) {
-                    if ($answer instanceof EE_Answer) {
-                        $question = $answer->question();
-                        if ($question instanceof EE_Question and $question->admin_only()) {
-                            continue;
-                        }
-                        $question_list .= $shortcode_helper->parse_question_list_template($template, $answer,
-                            $valid_shortcodes, $send_data);
-                    }
+                $questions = isset($recipient->questions) ? $recipient->questions : array();
+                //if $extra_data does not have a 'data' key then let's make sure we add it and set the EE_Messages_Addressee
+                //object on it.
+                if ( ! isset( $extra_data['data'] ) ){
+                    $extra_data['data'] = $recipient;
                 }
-                
-                return $question_list;
+                return $this->_parse_question_list_for_primary_or_recipient_registration(
+                    $shortcode_parser,
+                    $questions,
+                    $answers,
+                    $template,
+                    $valid_shortcodes,
+                    $extra_data
+                );
                 break;
             
             default :
@@ -589,7 +612,8 @@ class EE_Caf_Messages
                 EE_CAF_LIBRARIES . 'messages/message_type/newsletter/'
             ),
             'messengers_to_activate_with' => array('email'),
-            'messengers_to_validate_with' => array('email')
+            'messengers_to_validate_with' => array('email'),
+            'messengers_supporting_default_template_pack_with' => array('email')
         );
         EE_Register_Message_Type::register('newsletter', $setup_args);
         
@@ -598,7 +622,8 @@ class EE_Caf_Messages
             'mtfilename'                  => 'EE_Payment_Reminder_message_type.class.php',
             'autoloadpaths'               => array(EE_CAF_LIBRARIES . 'messages/message_type/payment_reminder/'),
             'messengers_to_activate_with' => array('email'),
-            'messengers_to_validate_with' => array('email')
+            'messengers_to_validate_with' => array('email'),
+            'messengers_supporting_default_template_pack_with' => array('email')
         );
         EE_Register_Message_Type::register('payment_reminder', $setup_args);
         
@@ -607,7 +632,8 @@ class EE_Caf_Messages
             'mtfilename'                  => 'EE_Payment_Declined_message_type.class.php',
             'autoloadpaths'               => array(EE_CAF_LIBRARIES . 'messages/message_type/payment_declined/'),
             'messengers_to_activate_with' => array('email'),
-            'messengers_to_validate_with' => array('email')
+            'messengers_to_validate_with' => array('email'),
+            'messengers_supporting_default_template_pack_with' => array('email')
         );
         EE_Register_Message_Type::register('payment_declined', $setup_args);
         
@@ -616,7 +642,8 @@ class EE_Caf_Messages
             'mtfilename'                  => 'EE_Declined_Registration_message_type.class.php',
             'autoloadpaths'               => array(EE_CAF_LIBRARIES . 'messages/message_type/declined_registration/'),
             'messengers_to_activate_with' => array('email'),
-            'messengers_to_validate_with' => array('email')
+            'messengers_to_validate_with' => array('email'),
+            'messengers_supporting_default_template_pack_with' => array('email')
         );
         EE_Register_Message_Type::register('declined_registration', $setup_args);
         
@@ -625,7 +652,8 @@ class EE_Caf_Messages
             'mtfilename'                  => 'EE_Cancelled_Registration_message_type.class.php',
             'autoloadpaths'               => array(EE_CAF_LIBRARIES . 'messages/message_type/cancelled_registration/'),
             'messengers_to_activate_with' => array('email'),
-            'messengers_to_validate_with' => array('email')
+            'messengers_to_validate_with' => array('email'),
+            'messengers_supporting_default_template_pack_with' => array('email')
         );
         EE_Register_Message_Type::register('cancelled_registration', $setup_args);
         
@@ -635,7 +663,8 @@ class EE_Caf_Messages
             'mtfilename'                  => 'EE_Payment_Failed_message_type.class.php',
             'autoloadpaths'               => array(EE_CAF_LIBRARIES . 'messages/message_type/payment_failed/'),
             'messengers_to_activate_with' => array('email'),
-            'messengers_to_validate_with' => array('email')
+            'messengers_to_validate_with' => array('email'),
+            'messengers_supporting_default_template_pack_with' => array('email')
         );
         EE_Register_Message_Type::register('payment_failed', $setup_args);
         
@@ -644,7 +673,8 @@ class EE_Caf_Messages
             'mtfilename'                  => 'EE_Payment_Cancelled_message_type.class.php',
             'autoloadpaths'               => array(EE_CAF_LIBRARIES . 'messages/message_type/payment_cancelled/'),
             'messengers_to_activate_with' => array('email'),
-            'messengers_to_validate_with' => array('email')
+            'messengers_to_validate_with' => array('email'),
+            'messengers_supporting_default_template_pack_with' => array('email')
         );
         EE_Register_Message_Type::register('payment_cancelled', $setup_args);
     }
@@ -668,5 +698,53 @@ class EE_Caf_Messages
             'list_type_shortcodes'          => array('[NEWSLETTER_CONTENT]')
         );
         EE_Register_Messages_Shortcode_Library::register('newsletter', $setup_args);
+    }
+    
+    
+    /**
+     * Parses a question list shortcode using given data and template
+     *
+     * @param \EE_Shortcodes $shortcode_parser
+     * @param EE_Question[]  $questions        An array of questions indexed by answer id.
+     * @param EE_Answer[]    $answers          An array of answer objects
+     * @param string         $template         Template content to be parsed.
+     * @param array          $valid_shortcodes Valid shortcodes for the template being parsed.
+     * @param array          $extra_data       Extra data that might be used when parsing the template.
+     */
+    protected function _parse_question_list_for_primary_or_recipient_registration(
+        $shortcode_parser,
+        $questions,
+        $answers,
+        $template,
+        $valid_shortcodes,
+        $extra_data
+    ) {
+        $question_list = '';
+        /** @var EEH_Parse_Shortcodes $shortcode_helper */
+        $shortcode_helper = $shortcode_parser->get_shortcode_helper();
+        foreach ($answers as $answer) {
+            if ($answer instanceof EE_Answer) {
+                //first see if the question is in our $questions array. If not then try to get from answer object.
+                $question = isset($questions[$answer->ID()]) ? $questions[$answer->ID()] : null;
+                $question = ! $question instanceof EE_Question ? $answer->question() : $question;
+                if (
+                    ! $question instanceof EE_Question
+                    || (
+                        $question instanceof EE_Question
+                        && $question->admin_only()
+                    )
+                ) {
+                    continue;
+                }
+                $question_list .= $shortcode_helper->parse_question_list_template(
+                    $template,
+                    $answer,
+                    $valid_shortcodes,
+                    $extra_data
+                );
+            }
+        }
+        
+        return $question_list;
     }
 }

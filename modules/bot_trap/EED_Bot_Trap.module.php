@@ -124,7 +124,7 @@ class EED_Bot_Trap  extends EED_Module {
 			$html .= $time;
 		}
 		$html .= '"/>';
-		$html .= '</div>';
+		$html .= '</div><!-- .tkt-slctr-request-processor-dv -->';
 		echo $html;
 	}
 
@@ -194,7 +194,7 @@ class EED_Bot_Trap  extends EED_Module {
 		$redirect_url = apply_filters('FHEE__EED_Bot_Trap__process_bot_trap__redirect_url', $redirect_url);
         // if AJAX, return the redirect URL
         if (defined('DOING_AJAX') && DOING_AJAX) {
-            echo json_encode(
+            echo wp_json_encode(
                 array_merge(
                     \EE_Error::get_notices(false),
                     array(

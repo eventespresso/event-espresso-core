@@ -96,8 +96,11 @@ class EE_Question_List_Shortcodes extends EE_Shortcodes
         $template         = empty($template) && isset($this->_extra_data['template']['question_list']) ? $this->_extra_data['template']['question_list'] : $template;
         $ans_result       = '';
         $answers          = ! empty($this->_extra_data['data']->registrations[$reg_obj->ID()]['ans_objs']) ? $this->_extra_data['data']->registrations[$reg_obj->ID()]['ans_objs'] : array();
+        $questions        = ! empty($this->_extra_data['data']->questions) ? $this->_extra_data['data']->questions : array();
         foreach ($answers as $answer) {
-            $question = $answer->question();
+            //first see if the question is in our $questions array.  If not then try to get from answer object
+            $question = isset($questions[ $answer->ID() ]) ? $questions[ $answer->ID() ] : null;
+            $question = ! $question instanceof EE_Question ? $answer->question() : $question;
             if ($question instanceof EE_Question and $question->admin_only()) {
                 continue;
             }
