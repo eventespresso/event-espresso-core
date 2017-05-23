@@ -71,8 +71,7 @@ class Read extends Base
         $controller = new Read();
         try {
             $controller->setRequestedVersion($version);
-            $model_name_singular = EEH_Inflector::singularize_and_upper($model_name);
-            if (! $controller->getModelVersionInfo()->isModelNameInThisVersion($model_name_singular)) {
+            if (! $controller->getModelVersionInfo()->isModelNameInThisVersion($model_name)) {
                 return $controller->sendResponse(
                     new WP_Error(
                         'endpoint_parsing_error',
@@ -81,14 +80,14 @@ class Read extends Base
                                 'There is no model for endpoint %s. Please contact event espresso support',
                                 'event_espresso'
                             ),
-                            $model_name_singular
+                            $model_name
                         )
                     )
                 );
             }
             return $controller->sendResponse(
                 $controller->getEntitiesFromModel(
-                    $controller->getModelVersionInfo()->loadModel($model_name_singular),
+                    $controller->getModelVersionInfo()->loadModel($model_name),
                     $request
                 )
             );
@@ -253,8 +252,7 @@ class Read extends Base
         $controller = new Read();
         try {
             $controller->setRequestedVersion($version);
-            $model_name_singular = EEH_Inflector::singularize_and_upper($model_name);
-            if (! $controller->getModelVersionInfo()->isModelNameInThisVersion($model_name_singular)) {
+            if (! $controller->getModelVersionInfo()->isModelNameInThisVersion($model_name)) {
                 return $controller->sendResponse(
                     new WP_Error(
                         'endpoint_parsing_error',
@@ -263,14 +261,14 @@ class Read extends Base
                                 'There is no model for endpoint %s. Please contact event espresso support',
                                 'event_espresso'
                             ),
-                            $model_name_singular
+                            $model_name
                         )
                     )
                 );
             }
             return $controller->sendResponse(
                 $controller->getEntityFromModel(
-                    $controller->getModelVersionInfo()->loadModel($model_name_singular),
+                    $controller->getModelVersionInfo()->loadModel($model_name),
                     $request
                 )
             );
@@ -301,8 +299,7 @@ class Read extends Base
         $controller = new Read();
         try {
             $controller->setRequestedVersion($version);
-            $main_model_name_singular = EEH_Inflector::singularize_and_upper($model_name);
-            if (! $controller->getModelVersionInfo()->isModelNameInThisVersion($main_model_name_singular)) {
+            if (! $controller->getModelVersionInfo()->isModelNameInThisVersion($model_name)) {
                 return $controller->sendResponse(
                     new WP_Error(
                         'endpoint_parsing_error',
@@ -316,14 +313,8 @@ class Read extends Base
                     )
                 );
             }
-            $main_model = $controller->getModelVersionInfo()->loadModel($main_model_name_singular);
-            //assume the related model name is plural and try to find the model's name
-            $related_model_name_singular = EEH_Inflector::singularize_and_upper($related_model_name);
-            if (! $controller->getModelVersionInfo()->isModelNameInThisVersion($related_model_name_singular)) {
-                //so the word didn't singularize well. Maybe that's just because it's a singular word?
-                $related_model_name_singular = EEH_Inflector::humanize($related_model_name);
-            }
-            if (! $controller->getModelVersionInfo()->isModelNameInThisVersion($related_model_name_singular)) {
+            $main_model = $controller->getModelVersionInfo()->loadModel($model_name);
+            if (! $controller->getModelVersionInfo()->isModelNameInThisVersion($related_model_name)) {
                 return $controller->sendResponse(
                     new WP_Error(
                         'endpoint_parsing_error',
@@ -332,7 +323,7 @@ class Read extends Base
                                 'There is no model for endpoint %s. Please contact event espresso support',
                                 'event_espresso'
                             ),
-                            $related_model_name_singular
+                            $related_model_name
                         )
                     )
                 );
@@ -340,7 +331,7 @@ class Read extends Base
             return $controller->sendResponse(
                 $controller->getEntitiesFromRelation(
                     $request->get_param('id'),
-                    $main_model->related_settings_for($related_model_name_singular),
+                    $main_model->related_settings_for($related_model_name),
                     $request
                 )
             );
