@@ -31,7 +31,8 @@ class EED_Core_Rest_Api_Test extends EE_REST_TestCase
                     $model_name,
                     array(
                         'Extra_Join',
-                        'Extra_Meta'
+                        'Extra_Meta',
+                        'Post_Meta'
                     )
                 )){
                     //skip extra join and meta models, they're only accessible via their relations
