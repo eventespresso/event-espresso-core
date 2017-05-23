@@ -52,4 +52,17 @@ abstract class EE_REST_TestCase extends EE_UnitTestCase
 
         return $url;
     }
+
+    /**
+     * Creates a new wp admin user and sets them to the new current user
+     *
+     * @global \WP_User $current_user
+     * @return \WP_User
+     */
+    public function authenticate_as_admin()
+    {
+        global $current_user;
+        $current_user = $this->wp_admin_with_ee_caps();
+        return $current_user;
+    }
 }
