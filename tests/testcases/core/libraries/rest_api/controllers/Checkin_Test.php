@@ -5,6 +5,7 @@ namespace EventEspresso\core\libraries\rest_api\controllers\rpc;
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
+ * @group rest_api
  */
 class Checkin_Test extends \EE_UnitTestCase {
 
