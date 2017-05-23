@@ -36,6 +36,11 @@ class EE_Encryption
      */
     const OPENSSL_IV_DELIMITER = ':iv:';
 
+    /**
+     * appended to text encrypted using the acme encryption
+     */
+    const ACME_ENCRYPTION_FLAG = '::ae';
+
 
 
     /**
@@ -267,7 +272,6 @@ class EE_Encryption
         if (empty($text_string)) {
             return $text_string;
         }
-        \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
         // get initialization vector size
         $iv_size = openssl_cipher_iv_length(EE_Encryption::OPENSSL_CIPHER_METHOD);
         // generate initialization vector
@@ -308,7 +312,6 @@ class EE_Encryption
         if (empty($encrypted_text)) {
             return $encrypted_text;
         }
-        \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
         // decode
         $encrypted_text = $this->valid_base_64($encrypted_text)
             ? base64_decode($encrypted_text)
@@ -349,7 +352,6 @@ class EE_Encryption
         if (empty($text_string)) {
             return $text_string;
         }
-        \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
         $key_bits = str_split(
             str_pad('', strlen($text_string), $this->get_encryption_key(), STR_PAD_RIGHT)
         );
@@ -358,9 +360,11 @@ class EE_Encryption
             $temp = ord($v) + ord($key_bits[$k]);
             $string_bits[$k] = chr($temp > 255 ? ($temp - 256) : $temp);
         }
+        $encrypted_text = implode('', $string_bits);
+        $encrypted_text .= EE_Encryption::ACME_ENCRYPTION_FLAG;
         return $this->_use_base64_encode
-            ? base64_encode(implode('', $string_bits))
-            : implode('', $string_bits);
+            ? base64_encode($encrypted_text)
+            : $encrypted_text;
     }
 
 
@@ -378,11 +382,13 @@ class EE_Encryption
         if (empty($encrypted_text)) {
             return $encrypted_text;
         }
-        \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
         // decode the data ?
         $encrypted_text = $this->valid_base_64($encrypted_text)
             ? base64_decode($encrypted_text)
             : $encrypted_text;
+        if (strpos($encrypted_text, EE_Encryption::ACME_ENCRYPTION_FLAG) === false && $this->_use_mcrypt) {
+            return $this->m_decrypt($encrypted_text);
+        }
         $key_bits = str_split(
             str_pad('', strlen($encrypted_text), $this->get_encryption_key(), STR_PAD_RIGHT)
         );
@@ -496,7 +502,6 @@ class EE_Encryption
         if (empty($encrypted_text)) {
             return $encrypted_text;
         }
-        \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
         // decode
         $encrypted_text = $this->valid_base_64($encrypted_text)
             ? base64_decode($encrypted_text)
