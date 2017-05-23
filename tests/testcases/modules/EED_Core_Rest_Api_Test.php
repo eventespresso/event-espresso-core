@@ -39,8 +39,8 @@ class EED_Core_Rest_Api_Test extends EE_REST_TestCase
                     continue;
                 }
                 $model = EE_Registry::instance()->load_model($model_name);
-                $plural_model_route = EEH_Inflector::pluralize_and_lower($model_name);
-                $singular_model_route = $plural_model_route . '/(?P<id>\d+)';
+                $plural_model_route = EED_Core_Rest_Api::get_plural_route_to($model_name);
+                $singular_model_route = EED_Core_Rest_Api::get_singular_route_to($model_name, '/(?P<id>\d+)');
                 //currently, we expose models even for wp core routes to reading (we have plans to change this though)
                 //on https://events.codebasehq.com/projects/event-espresso/tickets/9583
                 $this->assertArrayHasKey(
@@ -88,6 +88,69 @@ class EED_Core_Rest_Api_Test extends EE_REST_TestCase
                 }
             }
         }
+    }
+
+    public function dataProviderForTestGetAllPluralRoutes(){
+        $non_abstract_db_models = array_keys(EE_Registry::instance()->non_abstract_db_models);
+        $models_with_plural_routes = array_diff($non_abstract_db_models, array('Extra_Meta','Extra_Join','Post_Meta'));
+        $unit_test_data = array();
+        foreach($models_with_plural_routes as $model_name){
+            $model = EE_Registry::instance()->load_model($model_name);
+            //lets only verify requests for models with primary keus.
+            if($model->has_primary_key_field()) {
+                $unit_test_data[] = array($model);
+            }
+        }
+        return $unit_test_data;
+    }
+
+
+    /**
+     * Verifies that, for each model from the data provider, we can query its GET routes
+     * @dataProvider dataProviderForTestGetAllPluralRoutes
+     * @group big_rest_tests
+     */
+    public function testGetAllPluralRoutes(EEM_Base $model){
+        $this->authenticate_as_admin();
+        //make sure there's an entry for this model. We will use it in an assertion later
+        $model_obj = $model->get_one();
+        if(! $model_obj instanceof EE_Base_Class){
+            $model_obj = $this->new_model_obj_with_dependencies($model->get_this_model_name());
+            //ticket templates are a special exception
+            if($model instanceof EEM_Ticket_Template){
+                $ticket = $this->new_model_obj_with_dependencies('Ticket');
+                $model_obj->_add_relation_to($ticket,'Ticket');
+            }
+        }
+        $route = EED_Core_Rest_Api::get_versioned_route_to(
+            EED_Core_Rest_Api::get_plural_route_to($model->get_this_model_name()),
+            '4.8.36'
+        );
+        $response = rest_do_request(
+            new WP_REST_Request(
+                'GET',
+                $route
+            )
+        );
+        $response_data = $response->get_data();
+        $this->assertNotFalse($response_data);
+        $this->assertArrayNotHasKey(
+            'code',
+            $response_data,
+            sprintf('Got error response "%1$s" while querying route "%2$s"',
+                wp_json_encode($response_data),
+                $route
+            )
+        );
+        //verify we find the item we identified using the models
+        $contains_item = false;
+        foreach($response_data as $datum){
+            if( $datum[$model->primary_key_name()] == $model_obj->ID()){
+                $contains_item = true;
+                break;
+            }
+        }
+        $this->assertTrue($contains_item);
     }
 }
 // End of file EE_CheckoutTest.php

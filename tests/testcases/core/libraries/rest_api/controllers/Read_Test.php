@@ -201,7 +201,7 @@ class Read_Test extends \EE_REST_TestCase
      */
     public function test_handle_request_get_one__event_include_non_model_field()
     {
-        $this->set_current_user_to_new();
+        $this->authenticate_as_admin();
         $event = $this->new_model_obj_with_dependencies('Event');
         $req = new \WP_REST_Request('GET',
             '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events/' . $event->ID());
@@ -245,7 +245,7 @@ class Read_Test extends \EE_REST_TestCase
      */
     public function test_handle_request_get_one__event_calculate_stuff()
     {
-        $this->set_current_user_to_new();
+        $this->authenticate_as_admin();
         $limit_on_datetime = 100;
         $limit_on_ticket = 50;
         /** @var \EE_Event $event */
@@ -331,7 +331,7 @@ class Read_Test extends \EE_REST_TestCase
         \EED_Core_Rest_Api::set_hooks_for_changes();
         //set a weird timezone
         update_option('gmt_offset', -4.5);
-        $this->set_current_user_to_new();
+        $this->authenticate_as_admin();
         $current_time_mysql_gmt = current_time('Y-m-d\TH:i:s', true);
         $current_time_mysql = current_time('Y-m-d\TH:i:s');
         //these model objects were instantiated when the tests started, so their
@@ -568,7 +568,7 @@ class Read_Test extends \EE_REST_TestCase
 
     public function test_handle_request_get_one__registration_include_attendee()
     {
-        $this->set_current_user_to_new();
+        $this->authenticate_as_admin();
         $r = $this->new_model_obj_with_dependencies('Registration');
         $req = new \WP_REST_Request(
             'GET',
@@ -593,7 +593,7 @@ class Read_Test extends \EE_REST_TestCase
 
     public function test_handle_request_get_one__registration_include_answers_and_questions_use_star()
     {
-        $this->set_current_user_to_new();
+        $this->authenticate_as_admin();
         $r = $this->new_model_obj_with_dependencies('Registration');
         $this->new_model_obj_with_dependencies('Answer', array('REG_ID' => $r->ID()));
         $req = new \WP_REST_Request('GET',
@@ -622,7 +622,7 @@ class Read_Test extends \EE_REST_TestCase
 
     public function test_handle_request_get_one__registration_include_answers_and_questions()
     {
-        $this->set_current_user_to_new();
+        $this->authenticate_as_admin();
         $r = $this->new_model_obj_with_dependencies('Registration');
         $this->new_model_obj_with_dependencies('Answer', array('REG_ID' => $r->ID()));
         $req = new \WP_REST_Request('GET',
@@ -651,7 +651,7 @@ class Read_Test extends \EE_REST_TestCase
 
     public function test_handle_request_get_one__registration_include_answers_and_question_bare_min_from_each()
     {
-        $this->set_current_user_to_new();
+        $this->authenticate_as_admin();
         $r = $this->new_model_obj_with_dependencies('Registration');
         $this->new_model_obj_with_dependencies('Answer', array('REG_ID' => $r->ID()));
         $req = new \WP_REST_Request('GET',
@@ -761,21 +761,6 @@ class Read_Test extends \EE_REST_TestCase
         $user = $this->factory->user->create_and_get();
         $user->add_role($role);
         return $user;
-    }
-
-
-
-    /**
-     * Creates a new wp user with the specified role and makes them the new current user
-     *
-     * @global \WP_User $current_user
-     * @return \WP_User
-     */
-    public function set_current_user_to_new()
-    {
-        global $current_user;
-        $current_user = $this->wp_admin_with_ee_caps();
-        return $current_user;
     }
 
 
@@ -996,7 +981,7 @@ class Read_Test extends \EE_REST_TestCase
      */
     public function test_handle_request_get_all__duplicate_query_fields_specified()
     {
-        $this->set_current_user_to_new();
+        $this->authenticate_as_admin();
         //we aren't testing whether the timezone offset is being applied, we are just testing
         //to see whether the gmt or non-gmt time is being used
         $e = $this->new_model_obj_with_dependencies('Event',array('status' => 'publish'));
@@ -1051,7 +1036,7 @@ class Read_Test extends \EE_REST_TestCase
      * @group current
      */
     public function testHandleRequestGetRelatedExtraMeta(){
-        $this->set_current_user_to_new();
+        $this->authenticate_as_admin();
         $e1 = $this->new_model_obj_with_dependencies('Event');
         $request = new \WP_REST_Request(
             'GET',
