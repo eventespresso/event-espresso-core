@@ -147,12 +147,15 @@ class EED_Bot_Trap  extends EED_Module {
 		$bot_trap_timestamp = isset( $_REQUEST[ 'tkt-slctr-request-processor-token' ] )
             ? sanitize_text_field( $_REQUEST[ 'tkt-slctr-request-processor-token' ] )
             : '';
+            \EEH_Debug_Tools::printr($bot_trap_timestamp, '$bot_trap_timestamp', __FILE__, __LINE__);
 		// decrypt and convert to absolute  integer
 		if ( EE_Registry::instance()->CFG->registration->use_encryption ) {
 			EE_Registry::instance()->load_core( 'EE_Encryption' );
 			$bot_trap_timestamp = absint( EE_Encryption::instance()->decrypt( $bot_trap_timestamp ) );
+            \EEH_Debug_Tools::printr($bot_trap_timestamp, '$bot_trap_timestamp', __FILE__, __LINE__);
 		} else {
 			$bot_trap_timestamp = absint( $bot_trap_timestamp );
+            \EEH_Debug_Tools::printr($bot_trap_timestamp, '$bot_trap_timestamp', __FILE__, __LINE__);
 		}
 		// ticket form submitted too impossibly fast ( after now ) or more than an hour later ???
 		$suspicious_timing = $bot_trap_timestamp > time() || $bot_trap_timestamp < ( time() - HOUR_IN_SECONDS )
