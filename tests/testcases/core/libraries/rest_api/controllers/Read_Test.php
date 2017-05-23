@@ -1047,26 +1047,19 @@ class Read_Test extends \EE_REST_TestCase
 
 
     /**
-     * This is to test a bug where getting related models with a space in their name was having a "parsing error"
+     * This is to test a bug where getting extra metas were having a parsing error
      * @group current
      */
-    public function testHandleRequestGetRelatedWithSpaceInName(){
+    public function testHandleRequestGetRelatedExtraMeta(){
         $this->set_current_user_to_new();
         $e1 = $this->new_model_obj_with_dependencies('Event');
-        $qg = EEM_Question_Group::instance()->get_one();
-        $e1->_add_relation_to($qg,'Question_Group');
-
         $request = new \WP_REST_Request(
             'GET',
-            '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events/' . $e1->ID() . '/question_groups'
+            '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events/' . $e1->ID() . '/extra_metas'
         );
         $response = rest_do_request($request);
         $response_data = $response->get_data();
-        $this->assertFalse(empty($response_data));
         $this->assertTrue(empty($response_data['code']));
-
-        $this->assertEquals(1, count($response_data));
-        $this->assertEquals($qg->ID(),$response_data[0]['QSG_ID']);
     }
 }
 // End of file Read_Test.php
