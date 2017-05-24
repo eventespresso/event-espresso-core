@@ -92,14 +92,19 @@ class EEM_Change_Log extends EEM_Base{
 							self::type_gateway=> __("Gateway Interaction (IPN or Direct Payment)", 'event_espresso'),
 							)),
 				'LOG_message'=>new EE_Maybe_Serialized_Text_Field('LOG_message', __("Log Message (body)", 'event_espresso'), true),
+				/*
+				 * Note: when querying for a change log's user, the OBJ_ID and OBJ_type fields are used, not the LOG_wp_user field.
+				 * E.g., `EEM_Change_Log::instance()->get_all(array(array('WP_User.ID'=>1)))` will actually return all log rows where
+				 * OBJ_ID=1 and OBJ_type=WP_User, NOT log rows where LOG_wp_user=1. I.e. it's returning all log entries which affected user 1,
+				 * not all log entries done by user 1. If you want the latter, you can't use the model's magic joining. E.g, you would need to do
+				 * `EEM_Change_Log::instance()->get_all(array(array('LOG_wp_user' => 1)))`.
+				 */
 				'LOG_wp_user' => new EE_WP_User_Field('LOG_wp_user', __("User who was logged in while this occurred", 'event_espresso'), true ),
 
 			));
 		$this->_model_relations = array();
 		foreach($models_this_can_attach_to as $model){
-			if( $model == 'WP_User' ){
-				$this->_model_relations[ $model ] = new EE_Belongs_To_Relation();
-			}elseif( $model != 'Change_Log' ) {
+			if( $model != 'Change_Log' ) {
 				$this->_model_relations[$model] = new EE_Belongs_To_Any_Relation();
 			}
 		}

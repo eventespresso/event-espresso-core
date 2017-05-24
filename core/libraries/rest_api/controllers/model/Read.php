@@ -308,7 +308,7 @@ class Read extends Base
                                 'There is no model for endpoint %s. Please contact event espresso support',
                                 'event_espresso'
                             ),
-                            $main_model_name_singular
+                            $model_name
                         )
                     )
                 );

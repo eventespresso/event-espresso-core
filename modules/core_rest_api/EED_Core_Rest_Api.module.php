@@ -405,6 +405,27 @@ class EED_Core_Rest_Api extends \EED_Module
 
 
     /**
+     * Gets the names of all models which should have plural routes (eg `ee/v4.8.36/events`)
+     * in this versioned namespace of EE4
+     * @param $version
+     * @return array keys are model names (eg 'Event') and values ar etheir classnames (eg 'EEM_Event')
+     */
+    public static function model_names_with_plural_routes($version){
+        $model_version_info = new ModelVersionInfo($version);
+        $models_to_register = $model_version_info->modelsForRequestedVersion();
+        //let's not bother having endpoints for extra metas
+        unset($models_to_register['Extra_Meta']);
+        unset($models_to_register['Extra_Join']);
+        unset($models_to_register['Post_Meta']);
+        return apply_filters(
+            'FHEE__EED_Core_REST_API___register_model_routes',
+            $models_to_register
+        );
+    }
+
+
+
+    /**
      * Gets the route data for EE models in the specified version
      *
      * @param string  $version
@@ -413,17 +434,9 @@ class EED_Core_Rest_Api extends \EED_Module
      */
     protected function _get_model_route_data_for_version($version, $hidden_endpoint = false)
     {
-        $model_version_info = new ModelVersionInfo($version);
-        $models_to_register = apply_filters(
-            'FHEE__EED_Core_REST_API___register_model_routes',
-            $model_version_info->modelsForRequestedVersion()
-        );
-        //let's not bother having endpoints for extra metas
-        unset($models_to_register['Extra_Meta']);
-        unset($models_to_register['Extra_Join']);
-        unset($models_to_register['Post_Meta']);
         $model_routes = array();
-        foreach ($models_to_register as $model_name => $model_classname) {
+        $model_version_info = new ModelVersionInfo($version);
+        foreach ($this->model_names_with_plural_routes($version) as $model_name => $model_classname) {
             $model = \EE_Registry::instance()->load_model($model_name);
             //if this isn't a valid model then let's skip iterate to the next item in the loop.
             if (! $model instanceof EEM_Base) {
@@ -431,7 +444,7 @@ class EED_Core_Rest_Api extends \EED_Module
             }
             //yes we could just register one route for ALL models, but then they wouldn't show up in the index
             $plural_model_route = EED_Core_Rest_Api::get_plural_route_to($model_name);
-            $singular_model_route = EED_Core_Rest_Api::get_singular_route_to($model_name, '(?P<id>\d+)');
+            $singular_model_route = EED_Core_Rest_Api::get_singular_route_to($model_name, '(?P<id>[^\/]+)');
             $model_routes[$plural_model_route] = array(
                 array(
                     'callback'        => array(
@@ -511,8 +524,7 @@ class EED_Core_Rest_Api extends \EED_Module
 
                 $related_route = EED_Core_Rest_Api::get_related_route_to(
                     $model_name,
-                    '(?P<id>\d+)',
-                    $relation_name,
+                    '(?P<id>[^\/]+)',
                     $relation_obj
                 );
                 $endpoints = array(
@@ -570,14 +582,13 @@ class EED_Core_Rest_Api extends \EED_Module
      *
      * @param string                $model_name eg Event or Venue
      * @param string                $id
-     * @param string                $related_model_name
      * @param EE_Model_Relation_Base $relation_obj
      * @return string
      */
-    public function get_related_route_to($model_name, $id, $related_model_name, $relation_obj)
+    public static function get_related_route_to($model_name, $id, $relation_obj)
     {
         $related_model_name_endpoint_part = ModelRead::getRelatedEntityName(
-            $related_model_name,
+            $relation_obj->get_other_model()->get_this_model_name(),
             $relation_obj
         );
         return EED_Core_Rest_Api::get_singular_route_to($model_name, $id) . '/' . $related_model_name_endpoint_part;

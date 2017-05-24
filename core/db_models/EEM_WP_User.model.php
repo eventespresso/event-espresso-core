@@ -93,7 +93,8 @@ class EEM_WP_User extends EEM_Base
         );
         $this->_model_relations = array(
             'Attendee'       => new EE_Has_Many_Relation(),
-            'Change_Log'     => new EE_Has_Many_Relation(),
+            // all models are related to the change log
+            // 'Change_Log'     => new EE_Has_Many_Relation(),
             'Event'          => new EE_Has_Many_Relation(),
             'Payment_Method' => new EE_Has_Many_Relation(),
             'Price'          => new EE_Has_Many_Relation(),
