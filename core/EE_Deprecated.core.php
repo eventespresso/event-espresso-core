@@ -991,6 +991,21 @@ class EE_Generic_Address extends \EventEspresso\core\domain\entities\GenericAddr
 
 
 
+function ee_deprecate_AHEE__EE_Brewing_Regular__construct__complete() {
+    if (has_action('AHEE__EE_Brewing_Regular__construct__complete')) {
+        EE_Error::doing_it_wrong(
+            'Action Hook: AHEE__EE_Brewing_Regular__construct__complete',
+            esc_html__(
+                'This action has been replaced by `AHEE__EE_Brewing_Regular__construct_finished` which executes at plugins_loaded priority 1. Your callback hooking into this action is still being executed at plugins_loaded priority level 5 but no longer immediately at the end of the EE_Brewing_Regular::construct.',
+                'event_espresso'
+            ),
+            '4.9.22.p'
+        );
+    }
+    do_action( 'AHEE__EE_Brewing_Regular__construct__complete' );
+}
+add_action( 'AHEE__EE_System__load_core_configuration__complete', 'ee_deprecate_AHEE__EE_Brewing_Regular__construct__complete' );
+
 
 add_filter(
 	'FHEE__EventEspresso_modules_events_archive_EventsArchiveIframe__display__css',
