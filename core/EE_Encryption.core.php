@@ -389,6 +389,7 @@ class EE_Encryption
         if (strpos($encrypted_text, EE_Encryption::ACME_ENCRYPTION_FLAG) === false && $this->_use_mcrypt) {
             return $this->m_decrypt($encrypted_text);
         }
+        $encrypted_text = substr($encrypted_text, 0, -4);
         $key_bits = str_split(
             str_pad('', strlen($encrypted_text), $this->get_encryption_key(), STR_PAD_RIGHT)
         );
