@@ -901,6 +901,8 @@ class EE_UnitTestCase extends WP_UnitTestCase
                 $value = $auto_made_thing_seed;
             } elseif ($field instanceof EE_Primary_Key_String_Field) {
                 $value = "$auto_made_thing_seed";
+            } elseif ($field instanceof EE_Email_Field){
+                $value = $auto_made_thing_seed . 'ee@ee' . $auto_made_thing_seed . '.dev';
             } elseif ($field instanceof EE_Text_Field_Base) {
                 $value = $auto_made_thing_seed . '_' . $field_name;
             }
