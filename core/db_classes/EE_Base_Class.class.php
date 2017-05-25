@@ -1111,6 +1111,9 @@ abstract class EE_Base_Class
 
 
     /**
+     * Gets a pretty view of the field's value. $extra_cache_ref can specify different formats for this.
+     * The $extra_cache_ref will be passed to the model field's prepare_for_pretty_echoing, so consult the field's class
+     * to see what options are available.
      * @param string $field_name
      * @param string $extra_cache_ref This allows the user to specify an extra cache ref for the given property
      *                                (in cases where the same property may be used for different outputs

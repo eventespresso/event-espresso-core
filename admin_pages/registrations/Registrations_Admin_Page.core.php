@@ -928,6 +928,13 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             $this->_req_data['status'] = 'today';
         }
         $query_params = $this->_get_registration_query_parameters($this->_req_data, $per_page, $count);
+        /**
+         * Override the default groupby added by EEM_Base so that sorts with multiple order bys work as expected
+         * @link https://events.codebasehq.com/projects/event-espresso/tickets/10093
+         * @see EEM_Base::get_all()
+         */
+        $query_params['group_by'] = '';
+
         return $count
             ? EEM_Registration::instance()->count($query_params)
             /** @type EE_Registration[] */
@@ -1212,10 +1219,10 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 $orderby_field = 'STS_ID';
                 break;
             case 'ATT_fname':
-                //just for spite, we're going to order it by their LAST name, NOT their first name. Now who's the boss?
-                //jk, we don't want to break existing links, and customers preferred ordering by last name
-                //besides, from the UI, its ambiguous as to whether we will order by first or last name
-                $orderby_field = 'Attendee.ATT_lname';
+                $orderby_field = array('Attendee.ATT_fname', 'Attendee.ATT_lname');
+                break;
+            case 'ATT_lname' :
+                $orderby_field = array('Attendee.ATT_lname', 'Attendee.ATT_fname');
                 break;
             case 'event_name':
                 $orderby_field = 'Event.EVT_name';
@@ -1231,7 +1238,13 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         $order = ! empty($this->_req_data['order'])
             ? sanitize_text_field($this->_req_data['order'])
             : 'DESC';
-        return array('order_by' => array($orderby_field => $order));
+
+        //mutate orderby_field
+        $orderby_field = array_combine(
+                (array) $orderby_field,
+                array_fill(0, count($orderby_field), $order)
+            );
+        return array('order_by' => $orderby_field);
     }
 
 
@@ -2096,78 +2109,73 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     }
 
 
+
     /**
      * trash or restore registrations
      *
      * @param  boolean $trash whether to archive or restore
      * @access protected
      * @return void
+     * @throws \EE_Error
      */
     protected function _trash_or_restore_registrations($trash = true)
     {
-        $REGM    = EEM_Registration::instance();
-        $success = 1;
-        $error   = 0;
-        $tickets = array();
-        $dtts    = array();
         //if empty _REG_ID then get out because there's nothing to do
         if (empty($this->_req_data['_REG_ID'])) {
-            $msg = $trash
-                ? __('In order to trash registrations you must select which ones you wish to trash by clicking the checkboxes.',
-                    'event_espresso')
-                : __('In order to restore registrations you must select which ones you wish to restore by clicking the checkboxes.',
-                    'event_espresso');
-            EE_Error::add_error($msg, __FILE__, __LINE__, __FUNCTION__);
+            EE_Error::add_error(
+                sprintf(
+                    esc_html__(
+                        'In order to %1$s registrations you must select which ones you wish to %1$s by clicking the checkboxes.',
+                        'event_espresso'
+                    ),
+                    $trash ? 'trash' : 'restore'
+                ),
+                __FILE__, __LINE__, __FUNCTION__
+            );
             $this->_redirect_after_action(false, '', '', array(), true);
         }
+        $success = 0;
+        $overwrite_msgs = false;
         //Checkboxes
-        if ( ! empty($this->_req_data['_REG_ID']) && is_array($this->_req_data['_REG_ID'])) {
-            // if array has more than one element than success message should be plural
-            $success = count($this->_req_data['_REG_ID']) > 1 ? 2 : 1;
-            // cycle thru checkboxes
-            while (list($ind, $REG_ID) = each($this->_req_data['_REG_ID'])) {
-                /** @var EE_Registration $REG */
-                $REG           = $REGM->get_one_by_ID($REG_ID);
-                $payment_count = $REG->get_first_related('Transaction')->count_related('Payment');
-                if ($payment_count > 0) {
-                    $name    = $REG->attendee() instanceof EE_Attendee ? $REG->attendee()->full_name()
-                        : __('Unknown Attendee', 'event_espresso');
-                    $error   = 1;
-                    $success = 0;
-                    EE_Error::add_error(sprintf(__('The registration for %s could not be trashed because it has payments attached to the related transaction.  If you wish to trash this registration you must first delete the payments on the related transaction.',
-                        'event_espresso'), $name), __FILE__, __FUNCTION__, __LINE__);
-                    continue; //can't trash this registration because it has payments.
-                }
-                $ticket                 = $REG->get_first_related('Ticket');
-                $tickets[$ticket->ID()] = $ticket;
-                $dtt                    = $ticket->get_many_related('Datetime');
-                $dtts                   = array_merge($dtts, $dtt);
-                $updated                = $trash ? $REG->delete() : $REG->restore();
-                if ( ! $updated) {
-                    $success = 0;
-                } else {
-                    $success = 2;
-                }/**/
+        if ( ! is_array($this->_req_data['_REG_ID'])) {
+            $this->_req_data['_REG_ID'] = array($this->_req_data['_REG_ID']);
+        }
+        $reg_count = count($this->_req_data['_REG_ID']);
+        // cycle thru checkboxes
+        foreach ($this->_req_data['_REG_ID'] as $REG_ID) {
+            /** @var EE_Registration $REG */
+            $REG = EEM_Registration::instance()->get_one_by_ID($REG_ID);
+            $payments = $REG->registration_payments();
+            if (! empty($payments)) {
+                $name = $REG->attendee() instanceof EE_Attendee
+                    ? $REG->attendee()->full_name()
+                    : __('Unknown Attendee', 'event_espresso');
+                $overwrite_msgs = true;
+                EE_Error::add_error(
+                    sprintf(
+                        __(
+                            'The registration for %s could not be trashed because it has payments attached to the related transaction.  If you wish to trash this registration you must first delete the payments on the related transaction.',
+                            'event_espresso'
+                        ),
+                        $name
+                    ),
+                    __FILE__, __FUNCTION__, __LINE__
+                );
+                //can't trash this registration because it has payments.
+                continue;
             }
-        } else {
-            // grab single id and delete
-            $REG_ID                 = absint($this->_req_data['_REG_ID']);
-            $REG                    = $REGM->get_one_by_ID($REG_ID);
-            $ticket                 = $REG->get_first_related('Ticket');
-            $tickets[$ticket->ID()] = $ticket;
-            $dtts                   = $ticket->get_many_related('Datetime');
-            $updated                = $trash ? $REG->delete() : $REG->restore();
-            if ( ! $updated) {
-                $success = 0;
+            $updated = $trash ? $REG->delete() : $REG->restore();
+            if ($updated) {
+                $success++;
             }
         }
-        //now let's update counts
-        EEM_Ticket::instance()->update_tickets_sold($tickets);
-        EEM_Datetime::instance()->update_sold($dtts);
-        $what           = $success > 1 ? __('Registrations', 'event_espresso') : __('Registration', 'event_espresso');
-        $action_desc    = $trash ? __('moved to the trash', 'event_espresso') : __('restored', 'event_espresso');
-        $overwrite_msgs = $error ? true : false;
-        $this->_redirect_after_action($success, $what, $action_desc, array('action' => 'default'), $overwrite_msgs);
+        $this->_redirect_after_action(
+            $success === $reg_count, // were ALL registrations affected?
+            $success > 1 ? __('Registrations', 'event_espresso') : __('Registration', 'event_espresso'),
+            $trash ? __('moved to the trash', 'event_espresso') : __('restored', 'event_espresso'),
+            array('action' => 'default'),
+            $overwrite_msgs
+        );
     }
 
 

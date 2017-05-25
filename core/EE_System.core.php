@@ -1,4 +1,7 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) {
+<?php use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
+use EventEspresso\core\services\shortcodes\ShortcodesManager;
+
+if ( ! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
 
@@ -185,9 +188,6 @@ final class EE_System
         EEH_Autoloader::instance()->register_autoloaders_for_each_file_in_folder(EE_LIBRARIES . 'plugin_api');
         //load and setup EE_Capabilities
         $this->registry->load_core('Capabilities');
-        //caps need to be initialized on every request so that capability maps are set.
-        //@see https://events.codebasehq.com/projects/event-espresso/tickets/8674
-        $this->registry->CAP->init_caps();
         do_action('AHEE__EE_System__load_espresso_addons');
         //if the WP API basic auth plugin isn't already loaded, load it now.
         //We want it for mobile apps. Just include the entire plugin
@@ -207,7 +207,27 @@ final class EE_System
         ) {
             include_once EE_THIRD_PARTY . 'wp-api-basic-auth' . DS . 'basic-auth.php';
         }
+        $this->_maybe_brew_regular();
         do_action('AHEE__EE_System__load_espresso_addons__complete');
+
+        //caps need to be initialized on every request so that capability maps are set.
+        //@see https://events.codebasehq.com/projects/event-espresso/tickets/8674
+        $this->registry->CAP->init_caps();
+    }
+
+
+
+    /**
+     * The purpose of this method is to simply check for a file named "caffeinated/brewing_regular.php" for any hooks
+     * that need to be setup before our EE_System launches.
+     *
+     * @return void
+     */
+    private function _maybe_brew_regular()
+    {
+        if (( ! defined('EE_DECAF') || EE_DECAF !== true) && is_readable(EE_CAFF_PATH . 'brewing_regular.php')) {
+            require_once EE_CAFF_PATH . 'brewing_regular.php';
+        }
     }
 
 
@@ -672,8 +692,6 @@ final class EE_System
         }
         // get model names
         $this->_parse_model_names();
-        //load caf stuff a chance to play during the activation process too.
-        $this->_maybe_brew_regular();
         do_action('AHEE__EE_System__load_core_configuration__complete', $this);
     }
 
@@ -708,21 +726,6 @@ final class EE_System
 
 
     /**
-     * The purpose of this method is to simply check for a file named "caffeinated/brewing_regular.php" for any hooks
-     * that need to be setup before our EE_System launches.
-     *
-     * @return void
-     */
-    private function _maybe_brew_regular()
-    {
-        if (( ! defined('EE_DECAF') || EE_DECAF !== true) && is_readable(EE_CAFF_PATH . 'brewing_regular.php')) {
-            require_once EE_CAFF_PATH . 'brewing_regular.php';
-        }
-    }
-
-
-
-    /**
      * register_shortcodes_modules_and_widgets
      * generate lists of shortcodes and modules, then verify paths and classes
      * This is hooked into 'AHEE__EE_Bootstrap__register_shortcodes_modules_and_widgets'
@@ -733,6 +736,15 @@ final class EE_System
      */
     public function register_shortcodes_modules_and_widgets()
     {
+        try {
+            // load, register, and add shortcodes the new way
+            new ShortcodesManager(
+            // and the old way, but we'll put it under control of the new system
+                EE_Config::getLegacyShortcodesManager()
+            );
+        } catch (Exception $exception) {
+            new ExceptionStackTraceDisplay($exception);
+        }
         do_action('AHEE__EE_System__register_shortcodes_modules_and_widgets');
         // check for addons using old hookpoint
         if (has_action('AHEE__EE_System__register_shortcodes_modules_and_addons')) {
@@ -889,7 +901,7 @@ final class EE_System
         // let's get it started
         if ( ! is_admin() && ! EE_Maintenance_Mode::instance()->level()) {
             do_action('AHEE__EE_System__load_controllers__load_front_controllers');
-            $this->registry->load_core('Front_Controller', array(), false, true);
+            $this->registry->load_core('Front_Controller');
         } else if ( ! EE_FRONT_AJAX) {
             do_action('AHEE__EE_System__load_controllers__load_admin_controllers');
             EE_Registry::instance()->load_core('Admin');
@@ -909,9 +921,12 @@ final class EE_System
     public function core_loaded_and_ready()
     {
         do_action('AHEE__EE_System__core_loaded_and_ready');
+        // load_espresso_template_tags
+        if (is_readable(EE_PUBLIC . 'template_tags.php')) {
+            require_once(EE_PUBLIC . 'template_tags.php');
+        }
         do_action('AHEE__EE_System__set_hooks_for_shortcodes_modules_and_addons');
         $this->registry->load_core('Session');
-        //		add_action( 'wp_loaded', array( $this, 'set_hooks_for_shortcodes_modules_and_addons' ), 1 );
     }
 
 

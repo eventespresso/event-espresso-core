@@ -147,8 +147,6 @@ class EEH_Activation
         EEH_Activation::insert_default_status_codes();
         EEH_Activation::generate_default_message_templates();
         EEH_Activation::create_no_ticket_prices_array();
-        EE_Registry::instance()->CAP->init_caps();
-
         EEH_Activation::validate_messages_system();
         EEH_Activation::insert_default_payment_methods();
         //in case we've
@@ -238,6 +236,7 @@ class EEH_Activation
         }
 
     }
+
 
 
     /**
@@ -417,7 +416,6 @@ class EEH_Activation
 
 
 
-
     /**
      * verify_default_pages_exist
      *
@@ -478,10 +476,6 @@ class EEH_Activation
                         break;
                     }
                 }
-            }
-            // track post_shortcodes
-            if ($critical_page['post']) {
-                EEH_Activation::_track_critical_page_post_shortcodes($critical_page);
             }
             // check that Post ID matches critical page ID in config
             if (
@@ -549,6 +543,7 @@ class EEH_Activation
     }
 
 
+
     /**
      *    This function generates a post for critical espresso pages
      *
@@ -590,61 +585,6 @@ class EEH_Activation
 
     }
 
-
-
-
-
-    /**
-     *    This function adds a critical page's shortcode to the post_shortcodes array
-     *
-     * @access private
-     * @static
-     * @param array $critical_page
-     * @return void
-     */
-    private static function _track_critical_page_post_shortcodes($critical_page = array())
-    {
-        // check the goods
-        if ( ! $critical_page['post'] instanceof WP_Post) {
-            $msg = sprintf(
-                __(
-                    'The Event Espresso critical page shortcode for the page %s can not be tracked because it is not a WP_Post object.',
-                    'event_espresso'
-                ),
-                $critical_page['name']
-            );
-            EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
-            return;
-        }
-        $EE_Core_Config = EE_Registry::instance()->CFG->core;
-        // map shortcode to post
-        $EE_Core_Config->post_shortcodes[$critical_page['post']->post_name][$critical_page['code']] = $critical_page['post']->ID;
-        // and make sure it's NOT added to the WP "Posts Page"
-        // name of the WP Posts Page
-        $posts_page = EE_Config::get_page_for_posts();
-        if (isset($EE_Core_Config->post_shortcodes[$posts_page])) {
-            unset($EE_Core_Config->post_shortcodes[$posts_page][$critical_page['code']]);
-        }
-        if ($posts_page !== 'posts' && isset($EE_Core_Config->post_shortcodes['posts'])) {
-            unset($EE_Core_Config->post_shortcodes['posts'][$critical_page['code']]);
-        }
-        // update post_shortcode CFG
-        EE_Config::instance()->update_espresso_config(false, false);
-        // verify that saved ID in the config matches the ID for the post the shortcode is on
-        if (
-            EE_Registry::instance()->CFG->core->post_shortcodes[$critical_page['post']->post_name][$critical_page['code']]
-            !== $critical_page['post']->ID
-        ) {
-            $msg = sprintf(
-                __(
-                    'The Event Espresso critical page shortcode for the %s page could not be configured properly.',
-                    'event_espresso'
-                ),
-                $critical_page['name']
-            );
-            EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
-        }
-    }
 
 
 

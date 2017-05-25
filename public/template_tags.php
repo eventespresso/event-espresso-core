@@ -1,19 +1,6 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
-//echo '<br/><h6 style="color:#2EA2CC;">' . __FILE__ . ' &nbsp; <span style="font-weight:normal;color:#E76700"> Line #: ' . __LINE__ . '</span></h6>';
-/**
- * Event Espresso
- *
- * Event Registration and Ticketing Management Plugin for WordPress
- *
- * @ package			Event Espresso
- * @ author			    Event Espresso
- * @ copyright		(c) 2008-2014 Event Espresso  All Rights Reserved.
- * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link					http://www.eventespresso.com
- * @ version		 	$VID:$
- *
- * ------------------------------------------------------------------------
- */
+<?php
+defined('EVENT_ESPRESSO_VERSION') || exit();
+
 
 
 
@@ -487,8 +474,8 @@ if ( ! function_exists( 'espresso_list_of_event_dates' )) {
 					$datetime_name = $datetime->name();
 					$html .= ! empty( $datetime_name ) ? '<strong>' . $datetime_name . '</strong>' : '';
 					$html .= ! empty( $datetime_name )  && $add_breaks ? '<br />' : '';
-					$html .= '<span class="dashicons dashicons-calendar"></span>' . $datetime->date_range( $date_format ) . '<br/>';
-					$html .= '<span class="dashicons dashicons-clock"></span>' . $datetime->time_range( $time_format );
+					$html .= '<span class="dashicons dashicons-calendar"></span><span class="ee-event-datetimes-li-daterange">' . $datetime->date_range( $date_format ) . '</span><br/>';
+					$html .= '<span class="dashicons dashicons-clock"></span><span class="ee-event-datetimes-li-timerange">' . $datetime->time_range( $time_format ) . '</span>';
 					$datetime_description = $datetime->description();
 					$html .= ! empty( $datetime_description )  && $add_breaks ? '<br />' : '';
 					$html .= ! empty( $datetime_description ) ? ' - ' . $datetime_description : '';
@@ -1154,8 +1141,6 @@ if ( ! function_exists( 'espresso_edit_venue_link' )) {
 		return EEH_Venue_View::edit_venue_link( $VNU_ID );
 	}
 }
-
-
 
 
 

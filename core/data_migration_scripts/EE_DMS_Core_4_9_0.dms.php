@@ -249,13 +249,13 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
 				TXN_ID int(11) DEFAULT NULL,
 				LIN_name varchar(245) NOT NULL DEFAULT '',
 				LIN_desc text DEFAULT NULL,
-				LIN_unit_price decimal(10,3) DEFAULT NULL,
-				LIN_percent decimal(10,3) DEFAULT NULL,
+				LIN_unit_price decimal(12,3) DEFAULT NULL,
+				LIN_percent decimal(12,3) DEFAULT NULL,
 				LIN_is_taxable tinyint(1) DEFAULT 0,
 				LIN_order int(10) DEFAULT 0,
 				LIN_parent int(10) DEFAULT 0,
 				LIN_type varchar(25) NOT NULL,
-				LIN_total decimal(10,3) DEFAULT NULL,
+				LIN_total decimal(12,3) DEFAULT NULL,
 				LIN_quantity int(10) DEFAULT NULL,
 				OBJ_ID int(11) DEFAULT NULL,
 				OBJ_type varchar(45) DEFAULT NULL,
@@ -263,7 +263,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
 				PRIMARY KEY  (LIN_ID),
 				KEY LIN_code (LIN_code(191)),
 				KEY TXN_ID (TXN_ID)";
-        $this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB');
+        $this->_table_is_changed_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
         $table_name = 'esp_log';
         $sql = "LOG_ID int(11) NOT NULL AUTO_INCREMENT,
 				LOG_time datetime DEFAULT NULL,
@@ -343,7 +343,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
 				STS_ID varchar(3) DEFAULT NULL,
 				PAY_timestamp datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
 				PAY_source varchar(45) DEFAULT NULL,
-				PAY_amount decimal(10,3) DEFAULT NULL,
+				PAY_amount decimal(12,3) DEFAULT NULL,
 				PMD_ID int(11) DEFAULT NULL,
 				PAY_gateway_response text,
 				PAY_txn_id_chq_nmbr varchar(100) DEFAULT NULL,
@@ -355,7 +355,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
 				PRIMARY KEY  (PAY_ID),
 				KEY PAY_timestamp (PAY_timestamp),
 				KEY TXN_ID (TXN_ID)";
-        $this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB ');
+        $this->_table_is_changed_in_this_version($table_name, $sql, 'ENGINE=InnoDB ');
         $table_name = 'esp_payment_method';
         $sql = "PMD_ID int(11) NOT NULL AUTO_INCREMENT,
 				PMD_type varchar(124) DEFAULT NULL,
@@ -434,8 +434,8 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
 				TKT_ID int(10) unsigned NOT NULL,
 				STS_ID varchar(3) NOT NULL DEFAULT 'RPP',
 				REG_date datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-				REG_final_price decimal(10,3) NOT NULL DEFAULT '0.00',
-				REG_paid decimal(10,3) NOT NULL DEFAULT '0.00',
+				REG_final_price decimal(12,3) NOT NULL DEFAULT '0.00',
+				REG_paid decimal(12,3) NOT NULL DEFAULT '0.00',
 				REG_session varchar(45) NOT NULL,
 				REG_code varchar(45) DEFAULT NULL,
 				REG_url_link varchar(64) DEFAULT NULL,
@@ -451,16 +451,16 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
 				KEY TKT_ID (TKT_ID),
 				KEY EVT_ID (EVT_ID),
 				KEY STS_ID (STS_ID)";
-        $this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB ');
+        $this->_table_is_changed_in_this_version($table_name, $sql, 'ENGINE=InnoDB ');
         $table_name = 'esp_registration_payment';
         $sql = "RPY_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 					  REG_ID int(10) unsigned NOT NULL,
 					  PAY_ID int(10) unsigned NULL,
-					  RPY_amount decimal(10,3) NOT NULL DEFAULT '0.00',
+					  RPY_amount decimal(12,3) NOT NULL DEFAULT '0.00',
 					  PRIMARY KEY  (RPY_ID),
 					  KEY REG_ID (REG_ID),
 					  KEY PAY_ID (PAY_ID)";
-        $this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB ');
+        $this->_table_is_changed_in_this_version($table_name, $sql, 'ENGINE=InnoDB ');
         $table_name = 'esp_state';
         $sql = "STA_ID smallint(5) unsigned NOT NULL AUTO_INCREMENT,
 				CNT_ISO varchar(2) NOT NULL,
@@ -484,8 +484,8 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
         $table_name = 'esp_transaction';
         $sql = "TXN_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 				TXN_timestamp datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-				TXN_total decimal(10,3) DEFAULT '0.00',
-				TXN_paid decimal(10,3) NOT NULL DEFAULT '0.00',
+				TXN_total decimal(12,3) DEFAULT '0.00',
+				TXN_paid decimal(12,3) NOT NULL DEFAULT '0.00',
 				STS_ID varchar(3) NOT NULL DEFAULT 'TOP',
 				TXN_session_data text,
 				TXN_hash_salt varchar(250) DEFAULT NULL,
@@ -494,7 +494,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
 				PRIMARY KEY  (TXN_ID),
 				KEY TXN_timestamp (TXN_timestamp),
 				KEY STS_ID (STS_ID)";
-        $this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB');
+        $this->_table_is_changed_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
         $table_name = 'esp_venue_meta';
         $sql = "VNUM_ID int(11) NOT NULL AUTO_INCREMENT,
 			VNU_ID bigint(20) unsigned NOT NULL DEFAULT 0,
@@ -520,7 +520,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
         $table_name = "esp_price";
         $sql = "PRC_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 				PRT_ID tinyint(3) unsigned NOT NULL,
-				PRC_amount decimal(10,3) NOT NULL DEFAULT '0.00',
+				PRC_amount decimal(12,3) NOT NULL DEFAULT '0.00',
 				PRC_name varchar(245) NOT NULL,
 				PRC_desc text,
 				PRC_is_default tinyint(1) unsigned NOT NULL DEFAULT '1',
@@ -531,7 +531,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
 				PRC_parent int(10) unsigned DEFAULT 0,
 				PRIMARY KEY  (PRC_ID),
 				KEY PRT_ID (PRT_ID)";
-        $this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB');
+        $this->_table_is_changed_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
         $table_name = "esp_price_type";
         $sql = "PRT_ID tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
 				PRT_name varchar(45) NOT NULL,
@@ -555,7 +555,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
 				TKT_required tinyint(2) unsigned NOT NULL DEFAULT '0',
 				TKT_min tinyint(2) unsigned NOT NULL DEFAULT '0',
 				TKT_max tinyint(2) NOT NULL DEFAULT '-1',
-				TKT_price decimal(10,3) NOT NULL DEFAULT '0.00',
+				TKT_price decimal(12,3) NOT NULL DEFAULT '0.00',
 				TKT_start_date datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
 				TKT_end_date datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
 				TKT_taxable tinyint(1) unsigned NOT NULL DEFAULT '0',
@@ -670,9 +670,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
             'esp_promotion_object',
         );
         foreach ($addon_tables as $table_name) {
-            if($this->_table_analysis->tableExists( $table_name )){
                 $tables_to_check[] = $table_name;
-            }
         }
         $this->_verify_db_collations_for_tables(array_unique($tables_to_check));
         //ok and now let's remember this was done (without needing to check the db schemas all over again)
@@ -711,7 +709,9 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
     {
         foreach ($tables_to_check as $table_name) {
             $table_name = $this->_table_analysis->ensureTableNameHasPrefix($table_name);
-            if ( ! apply_filters('FHEE__EE_DMS_Core_4_9_0__verify_db_collations__check_overridden', false, $table_name ) ) {
+            if ( ! apply_filters('FHEE__EE_DMS_Core_4_9_0__verify_db_collations__check_overridden', false, $table_name )
+                && $this->_get_table_analysis()->tableExists($table_name)
+            ) {
                 maybe_convert_table_to_utf8mb4($table_name);
             }
         }

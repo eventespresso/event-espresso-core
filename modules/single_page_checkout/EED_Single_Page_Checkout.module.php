@@ -108,8 +108,6 @@ class EED_Single_Page_Checkout extends EED_Module
     {
         EED_Single_Page_Checkout::set_definitions();
         if ( ! (defined('DOING_AJAX') && DOING_AJAX)) {
-            // hook into the top of pre_get_posts to set the reg step routing, which gives other modules or plugins a chance to modify the reg steps, but just before the routes get called
-            add_action('pre_get_posts', array('EED_Single_Page_Checkout', 'load_reg_steps'), 1);
             return;
         }
         // going to start an output buffer in case anything gets accidentally output that might disrupt our JSON response
@@ -216,6 +214,9 @@ class EED_Single_Page_Checkout extends EED_Module
      */
     public static function set_definitions()
     {
+        if(defined('SPCO_BASE_PATH')) {
+            return;
+        }
         define('SPCO_BASE_PATH', rtrim(str_replace(array('\\', '/'), DS, plugin_dir_path(__FILE__)), DS) . DS);
         define('SPCO_CSS_URL', plugin_dir_url(__FILE__) . 'css' . DS);
         define('SPCO_IMG_URL', plugin_dir_url(__FILE__) . 'img' . DS);
@@ -245,8 +246,7 @@ class EED_Single_Page_Checkout extends EED_Module
      * loads and instantiates each reg step based on the EE_Registry::instance()->CFG->registration->reg_steps array
      *
      * @access    private
-     * @throws EE_Error
-     * @return void
+     * @throws \EE_Error
      */
     public static function load_reg_steps()
     {
@@ -338,7 +338,7 @@ class EED_Single_Page_Checkout extends EED_Module
      */
     public static function registration_checkout_for_admin()
     {
-        EED_Single_Page_Checkout::load_reg_steps();
+        EED_Single_Page_Checkout::load_request_handler();
         EE_Registry::instance()->REQ->set('step', 'attendee_information');
         EE_Registry::instance()->REQ->set('action', 'display_spco_reg_step');
         EE_Registry::instance()->REQ->set('process_form_submission', false);
@@ -358,7 +358,7 @@ class EED_Single_Page_Checkout extends EED_Module
      */
     public static function process_registration_from_admin()
     {
-        EED_Single_Page_Checkout::load_reg_steps();
+        EED_Single_Page_Checkout::load_request_handler();
         EE_Registry::instance()->REQ->set('step', 'attendee_information');
         EE_Registry::instance()->REQ->set('action', 'process_reg_step');
         EE_Registry::instance()->REQ->set('process_form_submission', true);
@@ -420,7 +420,7 @@ class EED_Single_Page_Checkout extends EED_Module
         // and remove the page id from the query args (we will re-add it later)
         unset($query_args['page_id']);
         // now strip all query args from current request URI
-        $current_request_uri = remove_query_arg(array_flip($query_args), $current_request_uri);
+        $current_request_uri = remove_query_arg(array_keys($query_args), $current_request_uri);
         // and re-add the page id if it was set
         if ($page_id) {
             $current_request_uri = add_query_arg('page_id', $page_id, $current_request_uri);
@@ -434,16 +434,13 @@ class EED_Single_Page_Checkout extends EED_Module
 
 
     /**
-     *    run
-     *
-     * @access    public
-     * @param WP_Query $WP_Query
+     * @param WP_Query $wp_query
      * @return    void
      * @throws \EE_Error
      */
-    public static function init($WP_Query)
+    public static function init($wp_query)
     {
-        EED_Single_Page_Checkout::instance()->run($WP_Query);
+        EED_Single_Page_Checkout::instance()->run($wp_query);
     }
 
 
@@ -462,6 +459,7 @@ class EED_Single_Page_Checkout extends EED_Module
             return;
         }
         try {
+            EED_Single_Page_Checkout::load_reg_steps();
             $this->_verify_session();
             // setup the EE_Checkout object
             $this->checkout = $this->_initialize_checkout();
@@ -537,12 +535,13 @@ class EED_Single_Page_Checkout extends EED_Module
         // is session still valid ?
         if (EE_Registry::instance()->SSN->expired() && EE_Registry::instance()->REQ->get('e_reg_url_link', '') === '') {
             $this->checkout = new EE_Checkout();
-            EE_Registry::instance()->SSN->reset_cart();
-            EE_Registry::instance()->SSN->reset_checkout();
-            EE_Registry::instance()->SSN->reset_transaction();
+            EE_Registry::instance()->SSN->clear_session(__CLASS__, __FUNCTION__);
+            // EE_Registry::instance()->SSN->reset_cart();
+            // EE_Registry::instance()->SSN->reset_checkout();
+            // EE_Registry::instance()->SSN->reset_transaction();
             EE_Error::add_attention(EE_Registry::$i18n_js_strings['registration_expiration_notice'], __FILE__,
                 __FUNCTION__, __LINE__);
-            EE_Registry::instance()->SSN->reset_expired();
+            // EE_Registry::instance()->SSN->reset_expired();
         }
     }
 
@@ -706,6 +705,7 @@ class EED_Single_Page_Checkout extends EED_Module
      */
     private function _load_and_instantiate_reg_steps()
     {
+        do_action('AHEE__Single_Page_Checkout___load_and_instantiate_reg_steps__start', $this->checkout);
         // have reg_steps already been instantiated ?
         if (
             empty($this->checkout->reg_steps)
@@ -771,6 +771,13 @@ class EED_Single_Page_Checkout extends EED_Module
                 $this->checkout->reg_url_link
                 && $this->checkout->step !== $reg_step['slug']
                 && $reg_step['slug'] !== 'finalize_registration'
+                // normally at this point we would NOT load the reg step, but this filter can change that
+                && apply_filters(
+                    'FHEE__Single_Page_Checkout___load_and_instantiate_reg_step__bypass_reg_step',
+                    true,
+                    $reg_step,
+                    $this->checkout
+                )
             ) {
                 return true;
             }
@@ -1139,7 +1146,7 @@ class EED_Single_Page_Checkout extends EED_Module
                 // hmmm... maybe we have the wrong session because the user is opening multiple tabs ?
                 if (EED_Single_Page_Checkout::$_checkout_verified) {
                     // clear the session, mark the checkout as unverified, and try again
-                    EE_Registry::instance()->SSN->clear_session();
+                    EE_Registry::instance()->SSN->clear_session(__CLASS__, __FUNCTION__);
                     EED_Single_Page_Checkout::$_initialized = false;
                     EED_Single_Page_Checkout::$_checkout_verified = false;
                     $this->_initialize();
@@ -1156,7 +1163,7 @@ class EED_Single_Page_Checkout extends EED_Module
             }
         }
         // now that things have been kinda sufficiently verified,
-        // let's add the checkout to the session so that's available other systems
+        // let's add the checkout to the session so that it's available to other systems
         EE_Registry::instance()->SSN->set_checkout($this->checkout);
         return true;
     }
@@ -1223,7 +1230,11 @@ class EED_Single_Page_Checkout extends EED_Module
                     $this->checkout->current_step->set_valid_data(array());
                     // capture submitted form data
                     $this->checkout->current_step->reg_form->receive_form_submission(
-                        apply_filters('FHEE__Single_Page_Checkout___check_form_submission__request_params', EE_Registry::instance()->REQ->params(), $this->checkout)
+                        apply_filters(
+                            'FHEE__Single_Page_Checkout___check_form_submission__request_params',
+                            EE_Registry::instance()->REQ->params(),
+                            $this->checkout
+                        )
                     );
                     // validate submitted form data
                     if ( ! $this->checkout->continue_reg || ! $this->checkout->current_step->reg_form->is_valid()) {
@@ -1511,8 +1522,11 @@ class EED_Single_Page_Checkout extends EED_Module
                                     ),
                                     'cookies_not_set_msg'     => $cookies_not_set_msg,
                                     'registration_time_limit' => $this->checkout->get_registration_time_limit(),
-                                    'session_expiration'      =>
-                                        date('M d, Y H:i:s', EE_Registry::instance()->SSN->expiration() + (get_option('gmt_offset') * HOUR_IN_SECONDS)),
+                                    'session_expiration'      => gmdate(
+                                        'M d, Y H:i:s',
+                                        EE_Registry::instance()->SSN->expiration()
+                                        + (get_option('gmt_offset') * HOUR_IN_SECONDS)
+                                    ),
                                 ),
                             )
                         ),

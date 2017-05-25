@@ -127,8 +127,21 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
             ),
         );
 		$this->_sortable_columns = array(
-			//true means its already sorted
-			'ATT_name' => array( 'ATT_name' => true ),
+            /**
+             * Allows users to change the default sort if they wish.
+             * Returning a falsey on this filter will result in the default sort to be by firstname rather than last name.
+             *
+             * Note: usual naming conventions for filters aren't followed here so that just one filter can be used to
+             * change the sorts on any list table involving registration contacts.  If you want to only change the filter
+             * for a specific list table you can use the provided reference to this object instance.
+             */
+			'ATT_name' => array(
+                    'FHEE__EE_Registrations_List_Table___set_properties__default_sort_by_registration_last_name',
+                    true,
+                    $this
+                )
+                ? array( 'ATT_lname' => true )
+                : array( 'ATT_fname' => true ),
 			'Event'    => array( 'Event.EVT.Name' => false ),
 		);
 		$this->_hidden_columns = array();
@@ -187,9 +200,9 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 				if ( ! $evt->get_count_of_all_registrations() ) {
 					continue;
 				}
-				$evts[] = array(
+                                $evts[] = array(
 					'id'    => $evt->ID(),
-					'text'  => $evt->get( 'EVT_name' ),
+					'text'  => apply_filters('FHEE__EE_Event_Registrations___get_table_filters__event_name', $evt->get( 'EVT_name' ), $evt),
 					'class' => $evt->is_expired() ? 'ee-expired-event' : '',
 				);
 				if ( $evt->ID() === $current_EVT_ID && $evt->is_expired() ) {
@@ -343,7 +356,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 			'ee_edit_contacts',
 			'espresso_registrations_edit_attendee'
 		)
-			? '<a href="' . $edit_lnk_url . '" title="' . esc_attr__( 'Edit Contact', 'event_espresso' ) . '">'
+			? '<a href="' . $edit_lnk_url . '" title="' . esc_attr__( 'View Registration Details', 'event_espresso' ) . '">'
 			    . $item->attendee()->full_name()
 			    . '</a>'
 			: $item->attendee()->full_name();

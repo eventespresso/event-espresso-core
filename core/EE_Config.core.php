@@ -1,4 +1,6 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) {
+<?php use EventEspresso\core\services\shortcodes\LegacyShortcodesManager;
+
+if ( ! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
 
@@ -35,6 +37,11 @@ final class EE_Config
      * @var boolean $_logging_enabled
      */
     private static $_logging_enabled = false;
+
+    /**
+     * @var LegacyShortcodesManager $legacy_shortcodes_manager
+     */
+    private $legacy_shortcodes_manager;
 
     /**
      * An StdClass whose property names are addon slugs,
@@ -95,6 +102,14 @@ final class EE_Config
      */
     public $tax_settings;
 
+
+    /**
+     * Settings pertaining to global messages settings.
+     *
+     * @var EE_Messages_Config
+     */
+    public $messages;
+
     /**
      * @deprecated
      * @var EE_Gateway_Config
@@ -135,7 +150,7 @@ final class EE_Config
     public static function instance()
     {
         // check if class object is instantiated, and instantiated properly
-        if ( ! self::$_instance instanceof EE_Config) {
+        if (! self::$_instance instanceof EE_Config) {
             self::$_instance = new self();
         }
         return self::$_instance;
@@ -159,6 +174,7 @@ final class EE_Config
     {
         if (self::$_instance instanceof EE_Config) {
             if ($hard_reset) {
+                self::$_instance->legacy_shortcodes_manager = null;
                 self::$_instance->_addon_option_names = array();
                 self::$_instance->_initialize_config();
                 self::$_instance->update_espresso_config();
@@ -312,8 +328,10 @@ final class EE_Config
         $this->organization = $this->organization instanceof EE_Organization_Config
             ? $this->organization
             : new EE_Organization_Config();
-        $this->organization = apply_filters('FHEE__EE_Config___initialize_config__organization',
-            $this->organization);
+        $this->organization = apply_filters(
+            'FHEE__EE_Config___initialize_config__organization',
+            $this->organization
+        );
         $this->currency = $this->currency instanceof EE_Currency_Config
             ? $this->currency
             : new EE_Currency_Config();
@@ -321,8 +339,10 @@ final class EE_Config
         $this->registration = $this->registration instanceof EE_Registration_Config
             ? $this->registration
             : new EE_Registration_Config();
-        $this->registration = apply_filters('FHEE__EE_Config___initialize_config__registration',
-            $this->registration);
+        $this->registration = apply_filters(
+            'FHEE__EE_Config___initialize_config__registration',
+            $this->registration
+        );
         $this->admin = $this->admin instanceof EE_Admin_Config
             ? $this->admin
             : new EE_Admin_Config();
@@ -349,12 +369,16 @@ final class EE_Config
             : new EE_Tax_Config();
         $this->tax_settings = apply_filters('FHEE__EE_Config___initialize_config__tax_settings',
             $this->tax_settings);
+        $this->messages = apply_filters('FHEE__EE_Config__initialize_config__messages', $this->messages);
+        $this->messages = $this->messages instanceof EE_Messages_Config
+            ? $this->messages
+            : new EE_Messages_Config();
         $this->gateway = $this->gateway instanceof EE_Gateway_Config
             ? $this->gateway
             : new EE_Gateway_Config();
         $this->gateway = apply_filters('FHEE__EE_Config___initialize_config__gateway', $this->gateway);
+        $this->legacy_shortcodes_manager = null;
     }
-
 
 
     /**
@@ -452,8 +476,12 @@ final class EE_Config
         // hook into update_option because that happens AFTER the ( $value === $old_value ) conditional
         // but BEFORE the actual update occurs
         add_action('update_option', array($this, 'double_check_config_comparison'), 1, 3);
+        // don't want to persist legacy_shortcodes_manager, but don't want to lose it either
+        $legacy_shortcodes_manager = $this->legacy_shortcodes_manager;
+        $this->legacy_shortcodes_manager = null;
         // now update "ee_config"
         $saved = update_option(EE_Config::OPTION_NAME, $this);
+        $this->legacy_shortcodes_manager = $legacy_shortcodes_manager;
         EE_Config::log(EE_Config::OPTION_NAME);
         // if not saved... check if the hook we just added still exists;
         // if it does, it means one of two things:
@@ -539,7 +567,7 @@ final class EE_Config
                         break;
                     // TEST #2 : check that settings section exists
                     case 2 :
-                        if ( ! isset($this->{$section})) {
+                        if (! isset($this->{$section})) {
                             if ($display_errors) {
                                 throw new EE_Error(
                                     sprintf(
@@ -600,7 +628,7 @@ final class EE_Config
                         break;
                     // TEST #6 : verify config class is accessible
                     case 6 :
-                        if ( ! class_exists($config_class)) {
+                        if (! class_exists($config_class)) {
                             if ($display_errors) {
                                 throw new EE_Error(
                                     sprintf(
@@ -617,7 +645,7 @@ final class EE_Config
                         break;
                     // TEST #7 : check that config has even been set
                     case 7 :
-                        if ( ! isset($this->{$section}->{$name})) {
+                        if (! isset($this->{$section}->{$name})) {
                             if ($display_errors) {
                                 throw new EE_Error(
                                     sprintf(
@@ -635,7 +663,7 @@ final class EE_Config
                         break;
                     // TEST #8 : check that config is the requested type
                     case 8 :
-                        if ( ! $this->{$section}->{$name} instanceof $config_class) {
+                        if (! $this->{$section}->{$name} instanceof $config_class) {
                             if ($display_errors) {
                                 throw new EE_Error(
                                     sprintf(
@@ -654,7 +682,7 @@ final class EE_Config
                         break;
                     // TEST #9 : verify config object
                     case 9 :
-                        if ( ! $config_obj instanceof EE_Config_Base) {
+                        if (! $config_obj instanceof EE_Config_Base) {
                             if ($display_errors) {
                                 throw new EE_Error(
                                     sprintf(
@@ -725,17 +753,17 @@ final class EE_Config
         // ensure config class is set to something
         $config_class = $this->_set_config_class($config_class, $name);
         // run tests 1-4, 6, and 7 to verify all config params are set and valid
-        if ( ! $this->_verify_config_params($section, $name, $config_class, null, array(1, 2, 3, 4, 5, 6))) {
+        if (! $this->_verify_config_params($section, $name, $config_class, null, array(1, 2, 3, 4, 5, 6))) {
             return null;
         }
         $config_option_name = $this->_generate_config_option_name($section, $name);
         // if the config option name hasn't been added yet to the list of option names we're tracking, then do so now
-        if ( ! isset($this->_addon_option_names[$config_option_name])) {
+        if (! isset($this->_addon_option_names[$config_option_name])) {
             $this->_addon_option_names[$config_option_name] = $config_class;
             $this->update_addon_option_names();
         }
         // verify the incoming config object but suppress errors
-        if ( ! $this->_verify_config_params($section, $name, $config_class, $config_obj, array(9), false)) {
+        if (! $this->_verify_config_params($section, $name, $config_class, $config_obj, array(9), false)) {
             $config_obj = new $config_class();
         }
         if (get_option($config_option_name)) {
@@ -783,7 +811,7 @@ final class EE_Config
         // get class name of the incoming object
         $config_class = get_class($config_obj);
         // run tests 1-5 and 9 to verify config
-        if ( ! $this->_verify_config_params(
+        if (! $this->_verify_config_params(
             $section,
             $name,
             $config_class,
@@ -795,7 +823,7 @@ final class EE_Config
         }
         $config_option_name = $this->_generate_config_option_name($section, $name);
         // check if config object has been added to db by seeing if config option name is in $this->_addon_option_names array
-        if ( ! isset($this->_addon_option_names[$config_option_name])) {
+        if (! isset($this->_addon_option_names[$config_option_name])) {
             // save new config to db
             if ($this->set_config($section, $name, $config_class, $config_obj)) {
                 return true;
@@ -848,7 +876,7 @@ final class EE_Config
         // ensure config class is set to something
         $config_class = $this->_set_config_class($config_class, $name);
         // run tests 1-4, 6 and 7 to verify that all params have been set
-        if ( ! $this->_verify_config_params($section, $name, $config_class, null, array(1, 2, 3, 4, 5, 6))) {
+        if (! $this->_verify_config_params($section, $name, $config_class, null, array(1, 2, 3, 4, 5, 6))) {
             return null;
         }
         // now test if the requested config object exists, but suppress errors
@@ -929,7 +957,7 @@ final class EE_Config
      */
     public static function trim_log()
     {
-        if ( ! EE_Config::logging_enabled()) {
+        if (! EE_Config::logging_enabled()) {
             return;
         }
         $config_log = maybe_unserialize(get_option(EE_Config::LOG_NAME, array()));
@@ -954,7 +982,7 @@ final class EE_Config
     public static function get_page_for_posts()
     {
         $page_for_posts = get_option('page_for_posts');
-        if ( ! $page_for_posts) {
+        if (! $page_for_posts) {
             return 'posts';
         }
         /** @type WPDB $wpdb */
@@ -976,8 +1004,6 @@ final class EE_Config
      */
     public function register_shortcodes_and_modules()
     {
-        // allow shortcodes to register with WP and to set hooks for the rest of the system
-        EE_Registry::instance()->shortcodes = $this->_register_shortcodes();
         // allow modules to set hooks for the rest of the system
         EE_Registry::instance()->modules = $this->_register_modules();
     }
@@ -993,8 +1019,6 @@ final class EE_Config
      */
     public function initialize_shortcodes_and_modules()
     {
-        // allow shortcodes to set hooks for the rest of the system
-        $this->_initialize_shortcodes();
         // allow modules to set hooks for the rest of the system
         $this->_initialize_modules();
     }
@@ -1025,7 +1049,7 @@ final class EE_Config
                 'FHEE__EE_Config__register_widgets__widgets_to_register',
                 $widgets_to_register
             );
-            if ( ! empty($widgets_to_register)) {
+            if (! empty($widgets_to_register)) {
                 // cycle thru widget folders
                 foreach ($widgets_to_register as $widget_path) {
                     // add to list of installed widget modules
@@ -1078,7 +1102,7 @@ final class EE_Config
         // add class prefix
         $widget_class = 'EEW_' . $widget;
         // does the widget exist ?
-        if ( ! is_readable($widget_path . DS . $widget_class . $widget_ext)) {
+        if (! is_readable($widget_path . DS . $widget_class . $widget_ext)) {
             $msg = sprintf(
                 __(
                     'The requested %s widget file could not be found or is not readable due to file permissions. Please ensure the following path is correct: %s',
@@ -1093,7 +1117,7 @@ final class EE_Config
         // load the widget class file
         require_once($widget_path . DS . $widget_class . $widget_ext);
         // verify that class exists
-        if ( ! class_exists($widget_class)) {
+        if (! class_exists($widget_class)) {
             $msg = sprintf(__('The requested %s widget class does not exist.', 'event_espresso'), $widget_class);
             EE_Error::add_error($msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__);
             return;
@@ -1101,108 +1125,6 @@ final class EE_Config
         register_widget($widget_class);
         // add to array of registered widgets
         EE_Registry::instance()->widgets->{$widget_class} = $widget_path . DS . $widget_class . $widget_ext;
-    }
-
-
-
-    /**
-     *        _register_shortcodes
-     *
-     * @access private
-     * @return array
-     */
-    private function _register_shortcodes()
-    {
-        // grab list of installed shortcodes
-        $shortcodes_to_register = glob(EE_SHORTCODES . '*', GLOB_ONLYDIR);
-        // filter list of modules to register
-        $shortcodes_to_register = apply_filters(
-            'FHEE__EE_Config__register_shortcodes__shortcodes_to_register',
-            $shortcodes_to_register
-        );
-        if ( ! empty($shortcodes_to_register)) {
-            // cycle thru shortcode folders
-            foreach ($shortcodes_to_register as $shortcode_path) {
-                // add to list of installed shortcode modules
-                EE_Config::register_shortcode($shortcode_path);
-            }
-        }
-        // filter list of installed modules
-        return apply_filters(
-            'FHEE__EE_Config___register_shortcodes__installed_shortcodes',
-            EE_Registry::instance()->shortcodes
-        );
-    }
-
-
-
-    /**
-     *    register_shortcode - makes core aware of this shortcode
-     *
-     * @access    public
-     * @param    string $shortcode_path - full path up to and including shortcode folder
-     * @return    bool
-     */
-    public static function register_shortcode($shortcode_path = null)
-    {
-        do_action('AHEE__EE_Config__register_shortcode__begin', $shortcode_path);
-        $shortcode_ext = '.shortcode.php';
-        // make all separators match
-        $shortcode_path = str_replace(array('\\', '/'), DS, $shortcode_path);
-        // does the file path INCLUDE the actual file name as part of the path ?
-        if (strpos($shortcode_path, $shortcode_ext) !== false) {
-            // grab shortcode file name from directory name and break apart at dots
-            $shortcode_file = explode('.', basename($shortcode_path));
-            // take first segment from file name pieces and remove class prefix if it exists
-            $shortcode = strpos($shortcode_file[0], 'EES_') === 0
-                ? substr($shortcode_file[0], 4)
-                : $shortcode_file[0];
-            // sanitize shortcode directory name
-            $shortcode = sanitize_key($shortcode);
-            // now we need to rebuild the shortcode path
-            $shortcode_path = explode(DS, $shortcode_path);
-            // remove last segment
-            array_pop($shortcode_path);
-            // glue it back together
-            $shortcode_path = implode(DS, $shortcode_path) . DS;
-        } else {
-            // we need to generate the filename based off of the folder name
-            // grab and sanitize shortcode directory name
-            $shortcode = sanitize_key(basename($shortcode_path));
-            $shortcode_path = rtrim($shortcode_path, DS) . DS;
-        }
-        // create classname from shortcode directory or file name
-        $shortcode = str_replace(' ', '_', ucwords(str_replace('_', ' ', $shortcode)));
-        // add class prefix
-        $shortcode_class = 'EES_' . $shortcode;
-        // does the shortcode exist ?
-        if ( ! is_readable($shortcode_path . DS . $shortcode_class . $shortcode_ext)) {
-            $msg = sprintf(
-                __(
-                    'The requested %s shortcode file could not be found or is not readable due to file permissions. It should be in %s',
-                    'event_espresso'
-                ),
-                $shortcode_class,
-                $shortcode_path . DS . $shortcode_class . $shortcode_ext
-            );
-            EE_Error::add_error($msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__);
-            return false;
-        }
-        // load the shortcode class file
-        require_once($shortcode_path . $shortcode_class . $shortcode_ext);
-        // verify that class exists
-        if ( ! class_exists($shortcode_class)) {
-            $msg = sprintf(
-                __('The requested %s shortcode class does not exist.', 'event_espresso'),
-                $shortcode_class
-            );
-            EE_Error::add_error($msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__);
-            return false;
-        }
-        $shortcode = strtoupper($shortcode);
-        // add to array of registered shortcodes
-        EE_Registry::instance()->shortcodes->{$shortcode} = $shortcode_path . $shortcode_class . $shortcode_ext;
-        return true;
     }
 
 
@@ -1222,7 +1144,7 @@ final class EE_Config
             'FHEE__EE_Config__register_modules__modules_to_register',
             $modules_to_register
         );
-        if ( ! empty($modules_to_register)) {
+        if (! empty($modules_to_register)) {
             // loop through folders
             foreach ($modules_to_register as $module_path) {
                 /**TEMPORARILY EXCLUDE gateways from modules for time being**/
@@ -1284,7 +1206,7 @@ final class EE_Config
             $module_class = 'EED_' . $module;
         }
         // does the module exist ?
-        if ( ! is_readable($module_path . DS . $module_class . $module_ext)) {
+        if (! is_readable($module_path . DS . $module_class . $module_ext)) {
             $msg = sprintf(
                 __(
                     'The requested %s module file could not be found or is not readable due to file permissions.',
@@ -1298,7 +1220,7 @@ final class EE_Config
         // load the module class file
         require_once($module_path . $module_class . $module_ext);
         // verify that class exists
-        if ( ! class_exists($module_class)) {
+        if (! class_exists($module_class)) {
             $msg = sprintf(__('The requested %s module class does not exist.', 'event_espresso'), $module_class);
             EE_Error::add_error($msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__);
             return false;
@@ -1311,43 +1233,6 @@ final class EE_Config
             EE_Registry::instance()->modules->{$module_class}
         );
         return true;
-    }
-
-
-
-    /**
-     *    _initialize_shortcodes
-     *    allow shortcodes to set hooks for the rest of the system
-     *
-     * @access private
-     * @return void
-     */
-    private function _initialize_shortcodes()
-    {
-        // cycle thru shortcode folders
-        foreach (EE_Registry::instance()->shortcodes as $shortcode => $shortcode_path) {
-            // add class prefix
-            $shortcode_class = 'EES_' . $shortcode;
-            // fire the shortcode class's set_hooks methods in case it needs to hook into other parts of the system
-            // which set hooks ?
-            if (is_admin()) {
-                // fire immediately
-                call_user_func(array($shortcode_class, 'set_hooks_admin'));
-            } else {
-                // delay until other systems are online
-                add_action(
-                    'AHEE__EE_System__set_hooks_for_shortcodes_modules_and_addons',
-                    array($shortcode_class, 'set_hooks')
-                );
-                // convert classname to UPPERCASE and create WP shortcode.
-                $shortcode_tag = strtoupper($shortcode);
-                // but first check if the shortcode has already been added before assigning 'fallback_shortcode_processor'
-                if ( ! shortcode_exists($shortcode_tag)) {
-                    // NOTE: this shortcode declaration will get overridden if the shortcode is successfully detected in the post content in EE_Front_Controller->_initialize_shortcodes()
-                    add_shortcode($shortcode_tag, array($shortcode_class, 'fallback_shortcode_processor'));
-                }
-            }
-        }
     }
 
 
@@ -1395,7 +1280,7 @@ final class EE_Config
         do_action('AHEE__EE_Config__register_route__begin', $route, $module, $method_name);
         $module = str_replace('EED_', '', $module);
         $module_class = 'EED_' . $module;
-        if ( ! isset(EE_Registry::instance()->modules->{$module_class})) {
+        if (! isset(EE_Registry::instance()->modules->{$module_class})) {
             $msg = sprintf(__('The module %s has not been registered.', 'event_espresso'), $module);
             EE_Error::add_error($msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__);
             return false;
@@ -1405,7 +1290,7 @@ final class EE_Config
             EE_Error::add_error($msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__);
             return false;
         }
-        if ( ! method_exists('EED_' . $module, $method_name)) {
+        if (! method_exists('EED_' . $module, $method_name)) {
             $msg = sprintf(
                 __('A valid class method for the %s route has not been supplied.', 'event_espresso'),
                 $route
@@ -1466,7 +1351,7 @@ final class EE_Config
     public static function register_forward($route = null, $status = 0, $forward = null, $key = 'ee')
     {
         do_action('AHEE__EE_Config__register_forward', $route, $status, $forward);
-        if ( ! isset(EE_Config::$_module_route_map[$key][$route]) || empty($route)) {
+        if (! isset(EE_Config::$_module_route_map[$key][$route]) || empty($route)) {
             $msg = sprintf(
                 __('The module route %s for this forward has not been registered.', 'event_espresso'),
                 $route
@@ -1480,7 +1365,7 @@ final class EE_Config
             return false;
         }
         if (is_array($forward)) {
-            if ( ! isset($forward[1])) {
+            if (! isset($forward[1])) {
                 $msg = sprintf(
                     __('A class method for the %s forwarding route has not been supplied.', 'event_espresso'),
                     $route
@@ -1488,7 +1373,7 @@ final class EE_Config
                 EE_Error::add_error($msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__);
                 return false;
             }
-            if ( ! method_exists($forward[0], $forward[1])) {
+            if (! method_exists($forward[0], $forward[1])) {
                 $msg = sprintf(
                     __('The class method %s for the %s forwarding route is in invalid.', 'event_espresso'),
                     $forward[1],
@@ -1497,7 +1382,7 @@ final class EE_Config
                 EE_Error::add_error($msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__);
                 return false;
             }
-        } else if ( ! function_exists($forward)) {
+        } else if (! function_exists($forward)) {
             $msg = sprintf(
                 __('The function %s for the %s forwarding route is in invalid.', 'event_espresso'),
                 $forward,
@@ -1553,7 +1438,7 @@ final class EE_Config
     public static function register_view($route = null, $status = 0, $view = null, $key = 'ee')
     {
         do_action('AHEE__EE_Config__register_view__begin', $route, $status, $view);
-        if ( ! isset(EE_Config::$_module_route_map[$key][$route]) || empty($route)) {
+        if (! isset(EE_Config::$_module_route_map[$key][$route]) || empty($route)) {
             $msg = sprintf(
                 __('The module route %s for this view has not been registered.', 'event_espresso'),
                 $route
@@ -1561,7 +1446,7 @@ final class EE_Config
             EE_Error::add_error($msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__);
             return false;
         }
-        if ( ! is_readable($view)) {
+        if (! is_readable($view)) {
             $msg = sprintf(
                 __(
                     'The %s view file could not be found or is not readable due to file permissions.',
@@ -1617,6 +1502,45 @@ final class EE_Config
     }
 
 
+
+    /**
+     * @return LegacyShortcodesManager
+     */
+    public static function getLegacyShortcodesManager()
+    {
+
+        if ( ! EE_Config::instance()->legacy_shortcodes_manager instanceof LegacyShortcodesManager) {
+            EE_Config::instance()->legacy_shortcodes_manager = new LegacyShortcodesManager(
+                EE_Registry::instance()
+            );
+        }
+        return EE_Config::instance()->legacy_shortcodes_manager;
+    }
+
+
+
+    /**
+     * register_shortcode - makes core aware of this shortcode
+     *
+     * @deprecated 4.9.26
+     * @param    string $shortcode_path - full path up to and including shortcode folder
+     * @return    bool
+     */
+    public static function register_shortcode($shortcode_path = null)
+    {
+        EE_Error::doing_it_wrong(
+            __METHOD__,
+            __(
+                'Usage is deprecated. Use \EventEspresso\core\services\shortcodes\LegacyShortcodesManager::registerShortcode() as direct replacement, or better yet, please see the new \EventEspresso\core\services\shortcodes\ShortcodesManager class.',
+                'event_espresso'
+            ),
+            '4.9.26'
+        );
+        return EE_Config::instance()->getLegacyShortcodesManager()->registerShortcode($shortcode_path);
+    }
+
+
+
 }
 
 
@@ -1638,7 +1562,7 @@ class EE_Config_Base
      */
     public function get_pretty($property)
     {
-        if ( ! property_exists($this, $property)) {
+        if (! property_exists($this, $property)) {
             throw new EE_Error(
                 sprintf(
                     __(
@@ -1676,12 +1600,7 @@ class EE_Config_Base
     }
 
 
-    /**
-     *        @ override magic methods
-     *        @ return void
-     */
-    //	public function __get($a) { return apply_filters('FHEE__'.get_class($this).'__get__'.$a,$this->{$a}); }
-    //	public function __set($a,$b) { return apply_filters('FHEE__'.get_class($this).'__set__'.$a, $this->{$a} = $b ); }
+
     /**
      *        __isset
      *
@@ -1882,7 +1801,7 @@ class EE_Core_Config extends EE_Config_Base
      */
     public function reg_page_url()
     {
-        if ( ! $this->reg_page_url) {
+        if (! $this->reg_page_url) {
             $this->reg_page_url = add_query_arg(
                                       array('uts' => time()),
                                       get_permalink($this->reg_page_id)
@@ -1903,7 +1822,7 @@ class EE_Core_Config extends EE_Config_Base
      */
     public function txn_page_url($query_args = array())
     {
-        if ( ! $this->txn_page_url) {
+        if (! $this->txn_page_url) {
             $this->txn_page_url = get_permalink($this->txn_page_id);
         }
         if ($query_args) {
@@ -1925,7 +1844,7 @@ class EE_Core_Config extends EE_Config_Base
      */
     public function thank_you_page_url($query_args = array())
     {
-        if ( ! $this->thank_you_page_url) {
+        if (! $this->thank_you_page_url) {
             $this->thank_you_page_url = get_permalink($this->thank_you_page_id);
         }
         if ($query_args) {
@@ -1945,7 +1864,7 @@ class EE_Core_Config extends EE_Config_Base
      */
     public function cancel_page_url()
     {
-        if ( ! $this->cancel_page_url) {
+        if (! $this->cancel_page_url) {
             $this->cancel_page_url = get_permalink($this->cancel_page_id);
         }
         return $this->cancel_page_url;
@@ -2326,6 +2245,15 @@ class EE_Registration_Config extends EE_Config_Base
      */
     public $default_STS_ID;
 
+
+    /**
+     * For new events, this will be the default value for the maximum number of tickets (equivalent to maximum number of
+     * registrations)
+     * @var int
+     */
+    public $default_maximum_number_of_tickets;
+
+
     /**
      * level of validation to apply to email addresses
      *
@@ -2466,6 +2394,7 @@ class EE_Registration_Config extends EE_Config_Base
         $this->recaptcha_publickey = null;
         $this->recaptcha_privatekey = null;
         $this->recaptcha_width = 500;
+        $this->default_maximum_number_of_tickets = 10;
     }
 
 
@@ -2478,16 +2407,28 @@ class EE_Registration_Config extends EE_Config_Base
     public function do_hooks()
     {
         add_action('AHEE__EE_Config___load_core_config__end', array($this, 'set_default_reg_status_on_EEM_Event'));
+        add_action('AHEE__EE_Config___load_core_config__end', array($this, 'set_default_max_ticket_on_EEM_Event'));
     }
 
 
 
     /**
-     * @return void
+     * Hooked into `AHEE__EE_Config___load_core_config__end` to ensure the default for the EVT_default_registration_status
+     * field matches the config setting for default_STS_ID.
      */
     public function set_default_reg_status_on_EEM_Event()
     {
         EEM_Event::set_default_reg_status($this->default_STS_ID);
+    }
+
+
+    /**
+     * Hooked into `AHEE__EE_Config___load_core_config__end` to ensure the default for the EVT_additional_limit field
+     * for Events matches the config setting for default_maximum_number_of_tickets
+     */
+    public function set_default_max_ticket_on_EEM_Event()
+    {
+        EEM_Event::set_default_additional_limit($this->default_maximum_number_of_tickets);
     }
 
 
@@ -2512,6 +2453,7 @@ class EE_Registration_Config extends EE_Config_Base
             FILTER_VALIDATE_BOOLEAN
         );
     }
+
 
 
 }
@@ -2678,6 +2620,7 @@ class EE_Admin_Config extends EE_Config_Base
     {
         $this->encode_session_data = filter_var($encode_session_data, FILTER_VALIDATE_BOOLEAN);
     }
+
 
 
 }
@@ -3113,6 +3056,7 @@ class EE_Ticket_Selector_Config extends EE_Config_Base
 
 
 
+
     /**
      * @param int $datetime_selector_threshold
      */
@@ -3121,6 +3065,7 @@ class EE_Ticket_Selector_Config extends EE_Config_Base
         $datetime_selector_threshold = absint($datetime_selector_threshold);
         $this->datetime_selector_threshold = $datetime_selector_threshold ? $datetime_selector_threshold : 3;
     }
+
 
 
 }
@@ -3186,9 +3131,9 @@ class EE_Environment_Config extends EE_Config_Base
      */
     public function max_input_vars_limit_check($input_count = 0)
     {
-        if ( ! empty($this->php->max_input_vars)
-             && ($input_count >= $this->php->max_input_vars)
-             && (PHP_MAJOR_VERSION >= 5 && PHP_MINOR_VERSION >= 3 && PHP_RELEASE_VERSION >= 9)
+        if (! empty($this->php->max_input_vars)
+            && ($input_count >= $this->php->max_input_vars)
+            && (PHP_MAJOR_VERSION >= 5 && PHP_MINOR_VERSION >= 3 && PHP_RELEASE_VERSION >= 9)
         ) {
             return sprintf(
                 __(
@@ -3216,6 +3161,7 @@ class EE_Environment_Config extends EE_Config_Base
     {
         $this->_set_php_values();
     }
+
 
 
 }
@@ -3250,6 +3196,30 @@ class EE_Tax_Config extends EE_Config_Base
     }
 }
 
+
+/**
+ * Holds all global messages configuration options.
+ *
+ * @package    EventEspresso/core/
+ * @subpackage config
+ * @author     Darren Ethier
+ * @since      4.27.rc
+ */
+class EE_Messages_Config extends EE_Config_Base
+{
+
+    /**
+     * This is an integer representing the deletion threshold in months for when old messages will get deleted.
+     * A value of 0 represents never deleting.  Default is 0.
+     *
+     * @var integer
+     */
+    public $delete_threshold;
+
+    public function __construct() {
+        $this->delete_threshold = 0;
+    }
+}
 
 
 /**

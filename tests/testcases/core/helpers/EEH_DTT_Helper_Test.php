@@ -1,6 +1,6 @@
-<?php if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
+<?php
+
+defined('EVENT_ESPRESSO_VERSION') || exit;
 
 /**
  * EEH_DTT_Helper_Test
@@ -388,6 +388,28 @@ class EEH_DTT_Helper_Test extends EE_UnitTestCase
     }
 
 
+    /**
+     * @since 4.9.27.rc
+     * @group 10417
+     */
+    public function test_tomorrow()
+    {
+        $original_offset = get_option('gmt_offset');
+        $original_timezone_string = get_option('timezone_string');
+        //set timezone offset to -5 and timezonestring to ''
+        update_option('gmt_offset', '-5');
+        update_option('timezone_string', '');
+
+        //the `5` is not a typo here.  You may be thinking expected should be `-5` but the method we're testing converts
+        //offsets from negative to positive and from positive to negative so that the timestamp accurately represents
+        //midnight in that sites timezone as it exists in UTC+0 time.
+        $expected = strtotime('tomorrow') + (5*60*60);
+        $this->assertEquals($expected, EEH_DTT_Helper::tomorrow());
+
+        //restore
+        update_option('gmt_offset', $original_offset);
+        update_option('timezone_string', $original_timezone_string);
+    }
 }
 // End of file EEH_DTT_Helper_Test.php
 // Location: /EEH_DTT_Helper_Test.php

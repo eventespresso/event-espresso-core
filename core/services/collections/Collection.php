@@ -352,6 +352,21 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 
 
 
+     /**
+      * detaches ALL objects from the Collection
+      */
+     public function detachAll()
+     {
+         $this->rewind();
+         while ($this->valid()) {
+             $object = $this->current();
+             $this->next();
+             $this->detach($object);
+         }
+     }
+
+
+
  }
 // End of file Collection.php
 // Location: /Collection.php

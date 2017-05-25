@@ -4,6 +4,7 @@ namespace EventEspresso\core\entities\models;
 use EEM_Base;
 use EE_Model_Field_Base;
 use EE_Primary_Key_Field_Base;
+use EE_Primary_Key_Int_Field;
 use EE_Foreign_Key_Field_Base;
 use EE_Model_Relation_Base;
 use EEH_Inflector;
@@ -34,7 +35,8 @@ class JsonModelSchema
      *
      * @param \EEM_Base $model
      */
-    public function __construct(EEM_Base $model){
+    public function __construct(EEM_Base $model)
+    {
         $this->model = $model;
     }
 
@@ -71,6 +73,9 @@ class JsonModelSchema
             //if this is a primary key field add the primary key item
             if ($model_field instanceof EE_Primary_Key_Field_Base) {
                 $schema['properties'][$field]['primary_key'] = true;
+                if ($model_field instanceof EE_Primary_Key_Int_Field) {
+                    $schema['properties'][$field]['readonly'] = true;
+                }
             }
 
             //if this is a foreign key field add the foreign key item
