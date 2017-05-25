@@ -1,4 +1,4 @@
- <?php
+<?php
 use EventEspresso\core\services\shortcodes\LegacyShortcodesManager;
 use EventEspresso\widgets\EspressoWidget;
 
