@@ -48,7 +48,7 @@ trait MessagesAdmin
     }
 
 
-    public function activateMessageTypeForMessenger($message_type_slug, $messenger_slug)
+    public function activateMessageTypeForMessenger($message_type_slug, $messenger_slug = 'email')
     {
         $this->actor()->dragAndDrop(
             MessagesPage::draggableSettingsBoxSelectorForMessageTypeAndMessenger($message_type_slug, $messenger_slug),
