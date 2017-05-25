@@ -244,8 +244,9 @@ final class EE_Capabilities extends EE_Base
                 if ( ! $meta_map instanceof EE_Meta_Capability_Map) {
                     continue;
                 }
-                $meta_map->ensure_is_model();
-
+                if(!empty($args[0])){
+                    $meta_map->ensure_is_model();
+                }
                 $caps = $meta_map->map_meta_caps($caps, $cap, $user_id, $args);
             }
         }
