@@ -389,7 +389,7 @@ class EED_Core_Rest_Api extends \EED_Module
      * @param EEM_Base $model
      * @return bool
      */
-    protected function _should_have_write_endpoints(EEM_Base $model)
+    public static function should_have_write_endpoints(EEM_Base $model)
     {
         if ($model->is_wp_core_model()){
             return false;
@@ -481,7 +481,7 @@ class EED_Core_Rest_Api extends \EED_Module
             );
             if( apply_filters(
                 'FHEE__EED_Core_Rest_Api___get_model_route_data_for_version__add_write_endpoints',
-                $this->_should_have_write_endpoints($model),
+                $this->should_have_write_endpoints($model),
                 $model
             )){
                 $model_routes[$plural_model_route][] = array(
@@ -842,6 +842,12 @@ class EED_Core_Rest_Api extends \EED_Module
                 $field_obj->get_default_value(),
                 $model_version_info->requestedVersion()
             );
+            //we do our own validation and sanitization within the controller
+            $arg_info['sanitize_callback'] =
+                array(
+                    'EED_Core_Rest_Api',
+                    'default_sanitize_callback',
+                );
             $args_info[$field_name] = $arg_info;
             if ($field_obj instanceof EE_Datetime_Field) {
                 $gmt_arg_info = $arg_info;
@@ -857,6 +863,116 @@ class EED_Core_Rest_Api extends \EED_Module
             }
         }
         return $args_info;
+    }
+
+
+
+    /**
+     * Replacement for WP API's 'rest_parse_request_arg'. If the value is blank but not required, don't bother validating it.
+     * Also, it uses our email validation instead of WP API's default.
+     * @param                 $value
+     * @param WP_REST_Request $request
+     * @param                 $param
+     * @return bool|true|WP_Error
+     */
+    public static function default_sanitize_callback( $value, WP_REST_Request $request, $param)
+    {
+        $attributes = $request->get_attributes();
+        if (! isset($attributes['args'][$param])
+            || ! is_array($attributes['args'][$param])) {
+            $validation_result = true;
+        } else {
+            $args = $attributes['args'][$param];
+            if ((
+                    $value === ''
+                    || $value === null
+                )
+                && (! isset($args['required'])
+                    || $args['required'] === false
+                )
+            ) {
+                //not required and not provided? that's cool
+                $validation_result = true;
+            } elseif (isset($args['format'])
+                && $args['format'] === 'email'
+            ) {
+                if (! self::_validate_email($value)) {
+                    $validation_result = new WP_Error(
+                        'rest_invalid_param',
+                        esc_html__('The email address is not valid or does not exist.', 'event_espresso')
+                    );
+                } else {
+                    $validation_result = true;
+                }
+            } else {
+                $validation_result = rest_validate_value_from_schema($value, $args, $param);
+            }
+        }
+        if (is_wp_error($validation_result)) {
+            return $validation_result;
+        }
+        return rest_sanitize_request_arg($value, $request, $param);
+    }
+
+
+
+    /**
+     * Returns whether or not this email address is vaild. Copied from EE_Email_Valdiation_Strategy::_validate_email()
+     * @param $email
+     * @return bool
+     */
+    protected static function _validate_email($email){
+        $validation_level = isset( EE_Registry::instance()->CFG->registration->email_validation_level )
+            ? EE_Registry::instance()->CFG->registration->email_validation_level
+            : 'wp_default';
+        if ( ! preg_match( '/^.+\@\S+$/', $email ) ) { // \.\S+
+            // email not in correct {string}@{string} format
+            return false;
+        } else {
+            $atIndex = strrpos( $email, "@" );
+            $domain = substr( $email, $atIndex + 1 );
+            $local = substr( $email, 0, $atIndex );
+            $localLen = strlen( $local );
+            $domainLen = strlen( $domain );
+            if ( $localLen < 1 || $localLen > 64 ) {
+                // local part length exceeded
+                return false;
+            } else if ( $domainLen < 1 || $domainLen > 255 ) {
+                // domain part length exceeded
+                return false;
+            } else if ( $local[ 0 ] === '.' || $local[ $localLen - 1 ] === '.' ) {
+                // local part starts or ends with '.'
+                return false;
+            } else if ( preg_match( '/\\.\\./', $local ) ) {
+                // local part has two consecutive dots
+                return false;
+            } else if ( preg_match( '/\\.\\./', $domain ) ) {
+                // domain part has two consecutive dots
+                return false;
+            } else if ( $validation_level === 'wp_default' ) {
+                return is_email( $email );
+            } else if (
+                ( $validation_level === 'i18n' || $validation_level === 'i18n_dns' )
+                // plz see http://stackoverflow.com/a/24817336 re: the following regex
+                && ! preg_match(
+                    '/^(?!\.)((?!.*\.{2})[a-zA-Z0-9\x{0080}-\x{00FF}\x{0100}-\x{017F}\x{0180}-\x{024F}\x{0250}-\x{02AF}\x{0300}-\x{036F}\x{0370}-\x{03FF}\x{0400}-\x{04FF}\x{0500}-\x{052F}\x{0530}-\x{058F}\x{0590}-\x{05FF}\x{0600}-\x{06FF}\x{0700}-\x{074F}\x{0750}-\x{077F}\x{0780}-\x{07BF}\x{07C0}-\x{07FF}\x{0900}-\x{097F}\x{0980}-\x{09FF}\x{0A00}-\x{0A7F}\x{0A80}-\x{0AFF}\x{0B00}-\x{0B7F}\x{0B80}-\x{0BFF}\x{0C00}-\x{0C7F}\x{0C80}-\x{0CFF}\x{0D00}-\x{0D7F}\x{0D80}-\x{0DFF}\x{0E00}-\x{0E7F}\x{0E80}-\x{0EFF}\x{0F00}-\x{0FFF}\x{1000}-\x{109F}\x{10A0}-\x{10FF}\x{1100}-\x{11FF}\x{1200}-\x{137F}\x{1380}-\x{139F}\x{13A0}-\x{13FF}\x{1400}-\x{167F}\x{1680}-\x{169F}\x{16A0}-\x{16FF}\x{1700}-\x{171F}\x{1720}-\x{173F}\x{1740}-\x{175F}\x{1760}-\x{177F}\x{1780}-\x{17FF}\x{1800}-\x{18AF}\x{1900}-\x{194F}\x{1950}-\x{197F}\x{1980}-\x{19DF}\x{19E0}-\x{19FF}\x{1A00}-\x{1A1F}\x{1B00}-\x{1B7F}\x{1D00}-\x{1D7F}\x{1D80}-\x{1DBF}\x{1DC0}-\x{1DFF}\x{1E00}-\x{1EFF}\x{1F00}-\x{1FFF}\x{20D0}-\x{20FF}\x{2100}-\x{214F}\x{2C00}-\x{2C5F}\x{2C60}-\x{2C7F}\x{2C80}-\x{2CFF}\x{2D00}-\x{2D2F}\x{2D30}-\x{2D7F}\x{2D80}-\x{2DDF}\x{2F00}-\x{2FDF}\x{2FF0}-\x{2FFF}\x{3040}-\x{309F}\x{30A0}-\x{30FF}\x{3100}-\x{312F}\x{3130}-\x{318F}\x{3190}-\x{319F}\x{31C0}-\x{31EF}\x{31F0}-\x{31FF}\x{3200}-\x{32FF}\x{3300}-\x{33FF}\x{3400}-\x{4DBF}\x{4DC0}-\x{4DFF}\x{4E00}-\x{9FFF}\x{A000}-\x{A48F}\x{A490}-\x{A4CF}\x{A700}-\x{A71F}\x{A800}-\x{A82F}\x{A840}-\x{A87F}\x{AC00}-\x{D7AF}\x{F900}-\x{FAFF}\.!#$%&\'*+-\/=?^_`{|}~\-\d]+)@(?!\.)([a-zA-Z0-9\x{0080}-\x{00FF}\x{0100}-\x{017F}\x{0180}-\x{024F}\x{0250}-\x{02AF}\x{0300}-\x{036F}\x{0370}-\x{03FF}\x{0400}-\x{04FF}\x{0500}-\x{052F}\x{0530}-\x{058F}\x{0590}-\x{05FF}\x{0600}-\x{06FF}\x{0700}-\x{074F}\x{0750}-\x{077F}\x{0780}-\x{07BF}\x{07C0}-\x{07FF}\x{0900}-\x{097F}\x{0980}-\x{09FF}\x{0A00}-\x{0A7F}\x{0A80}-\x{0AFF}\x{0B00}-\x{0B7F}\x{0B80}-\x{0BFF}\x{0C00}-\x{0C7F}\x{0C80}-\x{0CFF}\x{0D00}-\x{0D7F}\x{0D80}-\x{0DFF}\x{0E00}-\x{0E7F}\x{0E80}-\x{0EFF}\x{0F00}-\x{0FFF}\x{1000}-\x{109F}\x{10A0}-\x{10FF}\x{1100}-\x{11FF}\x{1200}-\x{137F}\x{1380}-\x{139F}\x{13A0}-\x{13FF}\x{1400}-\x{167F}\x{1680}-\x{169F}\x{16A0}-\x{16FF}\x{1700}-\x{171F}\x{1720}-\x{173F}\x{1740}-\x{175F}\x{1760}-\x{177F}\x{1780}-\x{17FF}\x{1800}-\x{18AF}\x{1900}-\x{194F}\x{1950}-\x{197F}\x{1980}-\x{19DF}\x{19E0}-\x{19FF}\x{1A00}-\x{1A1F}\x{1B00}-\x{1B7F}\x{1D00}-\x{1D7F}\x{1D80}-\x{1DBF}\x{1DC0}-\x{1DFF}\x{1E00}-\x{1EFF}\x{1F00}-\x{1FFF}\x{20D0}-\x{20FF}\x{2100}-\x{214F}\x{2C00}-\x{2C5F}\x{2C60}-\x{2C7F}\x{2C80}-\x{2CFF}\x{2D00}-\x{2D2F}\x{2D30}-\x{2D7F}\x{2D80}-\x{2DDF}\x{2F00}-\x{2FDF}\x{2FF0}-\x{2FFF}\x{3040}-\x{309F}\x{30A0}-\x{30FF}\x{3100}-\x{312F}\x{3130}-\x{318F}\x{3190}-\x{319F}\x{31C0}-\x{31EF}\x{31F0}-\x{31FF}\x{3200}-\x{32FF}\x{3300}-\x{33FF}\x{3400}-\x{4DBF}\x{4DC0}-\x{4DFF}\x{4E00}-\x{9FFF}\x{A000}-\x{A48F}\x{A490}-\x{A4CF}\x{A700}-\x{A71F}\x{A800}-\x{A82F}\x{A840}-\x{A87F}\x{AC00}-\x{D7AF}\x{F900}-\x{FAFF}\-\.\d]+)((\.([a-zA-Z\x{0080}-\x{00FF}\x{0100}-\x{017F}\x{0180}-\x{024F}\x{0250}-\x{02AF}\x{0300}-\x{036F}\x{0370}-\x{03FF}\x{0400}-\x{04FF}\x{0500}-\x{052F}\x{0530}-\x{058F}\x{0590}-\x{05FF}\x{0600}-\x{06FF}\x{0700}-\x{074F}\x{0750}-\x{077F}\x{0780}-\x{07BF}\x{07C0}-\x{07FF}\x{0900}-\x{097F}\x{0980}-\x{09FF}\x{0A00}-\x{0A7F}\x{0A80}-\x{0AFF}\x{0B00}-\x{0B7F}\x{0B80}-\x{0BFF}\x{0C00}-\x{0C7F}\x{0C80}-\x{0CFF}\x{0D00}-\x{0D7F}\x{0D80}-\x{0DFF}\x{0E00}-\x{0E7F}\x{0E80}-\x{0EFF}\x{0F00}-\x{0FFF}\x{1000}-\x{109F}\x{10A0}-\x{10FF}\x{1100}-\x{11FF}\x{1200}-\x{137F}\x{1380}-\x{139F}\x{13A0}-\x{13FF}\x{1400}-\x{167F}\x{1680}-\x{169F}\x{16A0}-\x{16FF}\x{1700}-\x{171F}\x{1720}-\x{173F}\x{1740}-\x{175F}\x{1760}-\x{177F}\x{1780}-\x{17FF}\x{1800}-\x{18AF}\x{1900}-\x{194F}\x{1950}-\x{197F}\x{1980}-\x{19DF}\x{19E0}-\x{19FF}\x{1A00}-\x{1A1F}\x{1B00}-\x{1B7F}\x{1D00}-\x{1D7F}\x{1D80}-\x{1DBF}\x{1DC0}-\x{1DFF}\x{1E00}-\x{1EFF}\x{1F00}-\x{1FFF}\x{20D0}-\x{20FF}\x{2100}-\x{214F}\x{2C00}-\x{2C5F}\x{2C60}-\x{2C7F}\x{2C80}-\x{2CFF}\x{2D00}-\x{2D2F}\x{2D30}-\x{2D7F}\x{2D80}-\x{2DDF}\x{2F00}-\x{2FDF}\x{2FF0}-\x{2FFF}\x{3040}-\x{309F}\x{30A0}-\x{30FF}\x{3100}-\x{312F}\x{3130}-\x{318F}\x{3190}-\x{319F}\x{31C0}-\x{31EF}\x{31F0}-\x{31FF}\x{3200}-\x{32FF}\x{3300}-\x{33FF}\x{3400}-\x{4DBF}\x{4DC0}-\x{4DFF}\x{4E00}-\x{9FFF}\x{A000}-\x{A48F}\x{A490}-\x{A4CF}\x{A700}-\x{A71F}\x{A800}-\x{A82F}\x{A840}-\x{A87F}\x{AC00}-\x{D7AF}\x{F900}-\x{FAFF}]){2,63})+)$/u',
+                    $email
+                )
+            ) {
+                return false;
+            }
+            if ( $validation_level === 'i18n_dns' ) {
+                if ( ! checkdnsrr( $domain, "MX" ) ) {
+                    // domain not found in MX records
+                    return false;
+                } else if ( ! checkdnsrr( $domain, "A" ) ) {
+                    // domain not found in A records
+                    return false;
+                }
+            }
+        }
+        // you have successfully run the gauntlet young Padawan
+        return true;
     }
 
 
