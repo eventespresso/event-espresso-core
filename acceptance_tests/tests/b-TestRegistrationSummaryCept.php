@@ -18,8 +18,13 @@ $I->ensurePluginActive(
     'activated'
 );
 
-//k now we need to create a couple events to use for testing.
+//k now we need to make sure the registration multi-status message type is active because it isn't by default
 $I->loginAsAdmin();
+$I->amOnMessageSettingsPage();
+$I->activateMessageTypeForMessenger('registration_summary');
+
+
+//k now we need to create a couple events to use for testing.
 $I->amOnDefaultEventsListTablePage();
 $I->click(EventsAdmin::ADD_NEW_EVENT_BUTTON_SELECTOR);
 $I->fillField(EventsAdmin::EVENT_EDITOR_TITLE_FIELD_SELECTOR, 'Event RSM A');
