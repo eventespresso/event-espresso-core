@@ -33,6 +33,12 @@ class EventsAdmin extends CoreAdmin
      */
     const EVENT_EDITOR_PUBLISH_BUTTON_SELECTOR = "#publish";
 
+
+    /**
+     * @var string
+     */
+    const EVENT_EDITOR_DEFAULT_REGISTRATION_STATUS_FIELD_SELECTOR = '#EVT_default_registration_status';
+
     /**
      * Selector for the view link after publishing an event.
      * @var string
@@ -52,6 +58,7 @@ class EventsAdmin extends CoreAdmin
      * @var string
      */
     const EVENT_LIST_TABLE_SEARCH_INPUT_SELECTOR = '#toplevel_page_espresso_events-search-input';
+
 
 
 
@@ -137,7 +144,7 @@ class EventsAdmin extends CoreAdmin
     public static function eventListTableEventIdSelectorForTitle($event_title)
     {
         return "//td[contains(@class, 'column-name')]/strong/a[text()='$event_title']"
-            . "//ancestor::tr/td[contains(@class, 'column-id')]/text()";
+            . "//ancestor::tr/th[contains(@class, 'check-column')]/input";
     }
 
 
