@@ -29,6 +29,7 @@ $event_a_link = $I->observeLinkUrlAt(EventsAdmin::EVENT_EDITOR_VIEW_LINK_AFTER_P
 $event_a_id = $I->observeValueFromInputAt(EventsAdmin::EVENT_EDITOR_EVT_ID_SELECTOR);
 
 //do another event except we'll set the default reg status to not approved.
+$I->amOnDefaultEventsListTablePage();
 $I->click(EventsAdmin::ADD_NEW_EVENT_BUTTON_SELECTOR);
 $I->fillField(EventsAdmin::EVENT_EDITOR_TITLE_FIELD_SELECTOR, 'Event RSM B');
 $I->changeDefaultRegistrationStatusTo(RegistrationsAdmin::REGISTRATION_STATUS_NOT_APPROVED);
