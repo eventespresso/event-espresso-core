@@ -75,11 +75,6 @@ class EE_Payment_Method_Manager implements ResettableInterface
     {
         if ( ! $this->_payment_method_types || $force_recheck) {
             $this->_register_payment_methods();
-            //if in admin lets ensure caps are set.
-            if (is_admin()) {
-                add_filter('FHEE__EE_Capabilities__init_caps_map__caps', array($this, 'add_payment_method_caps'));
-                EE_Registry::instance()->CAP->init_caps();
-            }
         }
     }
 
