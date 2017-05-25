@@ -39,7 +39,7 @@ class EEM_Currency_Payment_Method extends EEM_Base{
 		$this->_fields = array(
 			'Currency_Payment_Method'=>array(
 				'CPM_ID'=>new EE_Primary_Key_Int_Field('CPM_ID', __('Currency to Payment Method LInk ID','event_espresso')),
-				'CUR_code'=>new EE_Foreign_Key_String_Field('CUR_code', __('Currency Code','event_espresso'), false, 0, 'Currency'),
+				'CUR_code'=>new EE_Foreign_Key_String_Field('CUR_code', __('Currency Code','event_espresso'), false, '', 'Currency'),
 				'PMD_ID'=>new EE_Foreign_Key_Int_Field('PMD_ID', __('Paymetn Method ID','event_espresso'), false, 0, 'Payment_Method')
 			)
 		);
