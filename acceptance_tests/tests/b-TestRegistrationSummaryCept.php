@@ -15,7 +15,7 @@ $I->wantTo('Test that the Registration Summary Message type works as expected.')
 //need the MER plugin active for this test (we'll deactivate it after).
 $I->ensurePluginActive(
     'event-espresso-mer-multi-event-registration',
-    'Plugin activated'
+    'activated'
 );
 
 //k now we need to create a couple events to use for testing.
