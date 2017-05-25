@@ -1,4 +1,6 @@
-<?php if (! defined('EVENT_ESPRESSO_VERSION')) {
+<?php use EventEspresso\core\libraries\rest_api\ModelDataTranslator;
+
+if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
 
@@ -319,6 +321,78 @@ class EEDCoreRestApiTest extends EE_REST_TestCase
             $model_obj->_add_relation_to($related_model_obj, $required_dependent_model_name);
         }
         return $model_obj;
+    }
+
+
+
+    /**
+     * @return array{
+     * @type EEM_Base $model
+     * }
+     */
+    public function dataProviderForTestInsertsRoutes()
+    {
+        $unit_test_data = array();
+        foreach (array_keys(EED_Core_Rest_Api::model_names_with_plural_routes('4.8.36')) as $model_name) {
+            $model = EE_Registry::instance()->load_model($model_name);
+            if (EED_Core_Rest_Api::should_have_write_endpoints($model)) {
+                //lets only verify requests for models with primary keys
+                if ($model->has_primary_key_field()) {
+                    $unit_test_data[$model_name] = array($model);
+                }
+            }
+        }
+        return $unit_test_data;
+    }
+
+
+
+    /**
+     * Verifies that, for each model from the data provider, we can use its INSERT routes
+     *
+     * @dataProvider dataProviderForTestInsertsRoutes
+     * @param EEM_Base $model
+     * @group big_rest_tests
+     */
+    public function testInsertsRoutes(EEM_Base $model)
+    {
+        $this->authenticate_as_admin();
+        $unsaved_model_obj = $this->new_model_obj_with_dependencies($model->get_this_model_name(),array(),false);
+
+        $route = EED_Core_Rest_Api::get_versioned_route_to(
+            EED_Core_Rest_Api::get_plural_route_to($model->get_this_model_name()),
+            '4.8.36'
+        );
+        $insert_values = array();
+        foreach($unsaved_model_obj->get_model()->field_settings() as $field_name => $field_obj){
+            $value_to_use = $field_obj instanceof EE_Datetime_Field
+                ? $unsaved_model_obj->get_DateTime_object($field_name)
+                : $unsaved_model_obj->get_raw($field_name);
+            $insert_values[$field_name] = ModelDataTranslator::prepareFieldValuesForJson(
+                  $field_obj,
+                $value_to_use,
+                '4.8.36'
+            );
+        }
+        $request = new WP_REST_Request(
+            'POST',
+            $route
+        );
+        $request->set_body_params($insert_values);
+        $response = rest_do_request(
+            $request
+        );
+        $response_data = $response->get_data();
+        $this->assertNotFalse($response_data);
+        $this->assertArrayNotHasKey(
+            'code',
+            $response_data,
+            sprintf(
+                'Got error response "%1$s" while POSTing to route "%2$s"',
+                wp_json_encode($response_data),
+                $route
+            )
+        );
     }
 }
 // End of file EEDCoreRestApiTest.php

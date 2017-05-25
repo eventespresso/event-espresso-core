@@ -1033,7 +1033,6 @@ class Read_Test extends \EE_REST_TestCase
 
     /**
      * This is to test a bug where getting extra metas were having a parsing error
-     * @group current
      */
     public function testHandleRequestGetRelatedExtraMeta(){
         $this->authenticate_as_admin();
