@@ -1,6 +1,7 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api\controllers\model;
 
+use EE_DB_Only_Field_Base;
 use \WP_REST_Request;
 use \WP_REST_Response;
 use EventEspresso\core\libraries\rest_api\Capabilities;
@@ -56,24 +57,9 @@ class Write extends Base
         $controller = new Write();
         try {
             $controller->setRequestedVersion($version);
-            $model_name_singular = EEH_Inflector::singularize_and_upper($model_name);
-            if (! $controller->getModelVersionInfo()->isModelNameInThisVersion($model_name_singular)) {
-                return $controller->sendResponse(
-                    new \WP_Error(
-                        'endpoint_parsing_error',
-                        sprintf(
-                            __(
-                                'There is no model for endpoint %s. Please contact event espresso support',
-                                'event_espresso'
-                            ),
-                            $model_name_singular
-                        )
-                    )
-                );
-            }
             return $controller->sendResponse(
                 $controller->insert(
-                    $controller->getModelVersionInfo()->loadModel($model_name_singular),
+                    $controller->getModelVersionInfo()->loadModel($model_name),
                     $request
                 )
             );
@@ -97,24 +83,9 @@ class Write extends Base
         $controller = new Write();
         try {
             $controller->setRequestedVersion($version);
-            $model_name_singular = EEH_Inflector::singularize_and_upper($model_name);
-            if (! $controller->getModelVersionInfo()->isModelNameInThisVersion($model_name_singular)) {
-                return $controller->sendResponse(
-                    new \WP_Error(
-                        'endpoint_parsing_error',
-                        sprintf(
-                            __(
-                                'There is no model for endpoint %s. Please contact event espresso support',
-                                'event_espresso'
-                            ),
-                            $model_name_singular
-                        )
-                    )
-                );
-            }
             return $controller->sendResponse(
                 $controller->update(
-                    $controller->getModelVersionInfo()->loadModel($model_name_singular),
+                    $controller->getModelVersionInfo()->loadModel($model_name),
                     $request
                 )
             );
@@ -138,24 +109,9 @@ class Write extends Base
         $controller = new Write();
         try {
             $controller->setRequestedVersion($version);
-            $model_name_singular = EEH_Inflector::singularize_and_upper($model_name);
-            if (! $controller->getModelVersionInfo()->isModelNameInThisVersion($model_name_singular)) {
-                return $controller->sendResponse(
-                    new \WP_Error(
-                        'endpoint_parsing_error',
-                        sprintf(
-                            __(
-                                'There is no model for endpoint %s. Please contact event espresso support',
-                                'event_espresso'
-                            ),
-                            $model_name_singular
-                        )
-                    )
-                );
-            }
             return $controller->sendResponse(
                 $controller->delete(
-                    $controller->getModelVersionInfo()->loadModel($model_name_singular),
+                    $controller->getModelVersionInfo()->loadModel($model_name),
                     $request
                 )
             );
@@ -357,8 +313,12 @@ class Write extends Base
         //create an array exactly like the wpdb results row,
         // so we can pass it to controllers/model/Read::create_entity_from_wpdb_result()
         $simulated_db_row = array();
-        foreach ($model->field_settings() as $field_name => $field_obj) {
-            if ($field_obj instanceof EE_Datetime_Field) {
+        foreach ($model->field_settings(true) as $field_name => $field_obj) {
+            //we need to reconstruct the normal wpdb results, including the db-only fields
+            //like a secondary table's primary key. The models expect those (but don't care what value they have)
+            if( $field_obj instanceof EE_DB_Only_Field_Base){
+                $raw_value = true;
+            } elseif ($field_obj instanceof EE_Datetime_Field) {
                 $raw_value = $model_obj->get_DateTime_object($field_name);
             } else {
                 $raw_value = $model_obj->get_raw($field_name);
