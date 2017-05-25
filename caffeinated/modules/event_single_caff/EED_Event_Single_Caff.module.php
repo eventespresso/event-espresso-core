@@ -111,26 +111,44 @@ class EED_Event_Single_Caff  extends EED_Event_Single {
 
 
 	/**
-	 *    update_template_settings
+	 * update_template_settings
 	 *
-	 * @access    	public
-	 * @param 		EE_Template_Config $CFG
-	 * @param 		array $REQ
-	 * @return    	EE_Event_Single_Config
+	 * @param EE_Template_Config $CFG
+	 * @param array $REQ
+	 * @return EE_Template_Config
 	 */
 	public static function update_template_settings( $CFG, $REQ ) {
-		$display_order_tickets = isset( $CFG->EED_Event_Single->display_order_tickets ) ? $CFG->EED_Event_Single->display_order_tickets : 100;
-		$display_order_datetimes = isset( $CFG->EED_Event_Single->display_order_datetimes ) ? $CFG->EED_Event_Single->display_order_datetimes : 110;
-		$display_order_event = isset( $CFG->EED_Event_Single->display_order_event ) ? $CFG->EED_Event_Single->display_order_event : 120;
-		$display_order_venue = isset( $CFG->EED_Event_Single->display_order_venue ) ? $CFG->EED_Event_Single->display_order_venue : 130;
+        $display_order_event = $CFG->EED_Event_Single->display_order_event !== null
+            ? $CFG->EED_Event_Single->display_order_event
+            : EED_Event_Single::EVENT_DETAILS_PRIORITY;
+		$display_order_datetimes = $CFG->EED_Event_Single->display_order_datetimes !== null
+            ? $CFG->EED_Event_Single->display_order_datetimes
+            : EED_Event_Single::EVENT_DATETIMES_PRIORITY;
+        $display_order_tickets = $CFG->EED_Event_Single->display_order_tickets !== null
+            ? $CFG->EED_Event_Single->display_order_tickets
+            : EED_Event_Single::EVENT_TICKETS_PRIORITY;
+		$display_order_venue = $CFG->EED_Event_Single->display_order_venue !== null
+            ? $CFG->EED_Event_Single->display_order_venue
+            : EED_Event_Single::EVENT_VENUES_PRIORITY;
 		$CFG->EED_Event_Single = new EE_Event_Single_Config();
-		$CFG->EED_Event_Single->display_status_banner_single = !empty( $REQ['display_status_banner_single'] ) && $REQ['display_status_banner_single'] ? TRUE : FALSE;
-		$CFG->EED_Event_Single->display_venue = ! empty( $REQ['display_venue'] ) && $REQ['display_venue'] ? TRUE : FALSE;
-		$CFG->EED_Event_Single->use_sortable_display_order = ! empty( $REQ[ 'EED_Events_Single_use_sortable_display_order' ] ) ? absint( $REQ[ 'EED_Events_Single_use_sortable_display_order' ] ) : 0;
-		$CFG->EED_Event_Single->display_order_tickets = $CFG->EED_Event_Single->use_sortable_display_order ? $display_order_tickets : 100;
-		$CFG->EED_Event_Single->display_order_datetimes = $CFG->EED_Event_Single->use_sortable_display_order ? $display_order_datetimes : 110;
-		$CFG->EED_Event_Single->display_order_event = $CFG->EED_Event_Single->use_sortable_display_order ? $display_order_event : 120;
-		$CFG->EED_Event_Single->display_order_venue = $CFG->EED_Event_Single->use_sortable_display_order ? $display_order_venue : 130;
+		$CFG->EED_Event_Single->display_status_banner_single = ! empty( $REQ['display_status_banner_single'] )
+            && $REQ['display_status_banner_single'];
+		$CFG->EED_Event_Single->display_venue = ! empty( $REQ['display_venue'] ) && $REQ['display_venue'];
+		$CFG->EED_Event_Single->use_sortable_display_order = ! empty( $REQ[ 'EED_Events_Single_use_sortable_display_order' ] )
+            ? absint( $REQ[ 'EED_Events_Single_use_sortable_display_order' ] )
+            : 0;
+		$CFG->EED_Event_Single->display_order_event = $CFG->EED_Event_Single->use_sortable_display_order
+            ? $display_order_event
+            : EED_Event_Single::EVENT_DETAILS_PRIORITY;
+		$CFG->EED_Event_Single->display_order_datetimes = $CFG->EED_Event_Single->use_sortable_display_order
+            ? $display_order_datetimes
+            : EED_Event_Single::EVENT_DATETIMES_PRIORITY;
+		$CFG->EED_Event_Single->display_order_tickets = $CFG->EED_Event_Single->use_sortable_display_order
+            ? $display_order_tickets
+            : EED_Event_Single::EVENT_TICKETS_PRIORITY;
+		$CFG->EED_Event_Single->display_order_venue = $CFG->EED_Event_Single->use_sortable_display_order
+            ? $display_order_venue
+            : EED_Event_Single::EVENT_VENUES_PRIORITY;
 		do_action( 'AHEE__EED_Event_Single__update_template_settings__after_update', $CFG, $REQ );
 		return $CFG;
 	}
@@ -150,7 +168,7 @@ class EED_Event_Single_Caff  extends EED_Event_Single {
 			$template_parts = explode( ',', trim( $template_parts, ',' ) );
 			foreach ( $template_parts as $key => $template_part ) {
 				$template_part = "display_order_$template_part";
-				$priority = ( $key * 10 ) + 100;
+				$priority = ( $key * 10 ) + EED_Event_Single::EVENT_DETAILS_PRIORITY;
 				EE_Registry::instance()->CFG->template_settings->EED_Event_Single->{$template_part} = $priority;
 				do_action( "AHEE__EED_Event_Single__update_event_single_order__$template_part", $priority );
 			}
