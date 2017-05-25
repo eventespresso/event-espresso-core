@@ -48,6 +48,15 @@ trait MessagesAdmin
     }
 
 
+    public function activateMessageTypeForMessenger($message_type_slug, $messenger_slug)
+    {
+        $this->actor()->dragAndDrop(
+            MessagesPage::draggableSettingsBoxSelectorForMessageTypeAndMessenger($message_type_slug, $messenger_slug),
+            MessagesPage::MESSAGES_SETTINGS_ACTIVE_MESSAGE_TYPES_CONTAINER_SELECTOR
+        );
+    }
+
+
     /**
      * Assumes you are already on the list table page that has the ui for editing the template.
      * @param string $message_type_slug
