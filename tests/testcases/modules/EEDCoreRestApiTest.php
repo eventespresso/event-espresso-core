@@ -31,7 +31,7 @@ class EEDCoreRestApiTest extends EE_REST_TestCase
             foreach (EED_Core_Rest_Api::model_names_with_plural_routes('4.8.36') as $model_name => $model_classname) {
                 $model = EE_Registry::instance()->load_model($model_name);
                 $plural_model_route = EED_Core_Rest_Api::get_plural_route_to($model_name);
-                $singular_model_route = EED_Core_Rest_Api::get_singular_route_to($model_name, '(?P<id>\d+)');
+                $singular_model_route = EED_Core_Rest_Api::get_singular_route_to($model_name, '(?P<id>[^\/]+)');
                 //currently, we expose models even for wp core routes to reading (we have plans to change this though)
                 //on https://events.codebasehq.com/projects/event-espresso/tickets/9583
                 $this->assertArrayHasKey(
