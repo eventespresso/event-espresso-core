@@ -5,4 +5,4 @@ core:
   - MessagesAdmin
   - TicketSelector
 external_plugins:
-  - 'https://github.com/eventespresso/ee4-mer/archive/master.zip'
+  - https://github.com/eventespresso/ee4-mer/archive/master.zip
