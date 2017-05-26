@@ -369,7 +369,7 @@ class EEDCoreRestApiTest extends EE_REST_TestCase
                 ? $unsaved_model_obj->get_DateTime_object($field_name)
                 : $unsaved_model_obj->get_raw($field_name);
             $insert_values[$field_name] = ModelDataTranslator::prepareFieldValuesForJson(
-                  $field_obj,
+                $field_obj,
                 $value_to_use,
                 '4.8.36'
             );
@@ -393,6 +393,54 @@ class EEDCoreRestApiTest extends EE_REST_TestCase
                 $route
             )
         );
+    }
+
+
+
+    /**
+     * Verifies that, for each model from the data provider, we can use its DELETE routes
+     *
+     * @dataProvider dataProviderForTestInsertsRoutes
+     * @param EEM_Base $model
+     * @group big_rest_tests
+     * @group current
+     */
+    public function testDeleteRoutes(EEM_Base $model)
+    {
+        $this->authenticate_as_admin();
+        $model_obj = $this->getAModelObjOfType($model);
+        $route = EED_Core_Rest_Api::get_versioned_route_to(
+            EED_Core_Rest_Api::get_singular_route_to($model->get_this_model_name(), $model_obj->ID()),
+            '4.8.36'
+        );
+
+        $request = new WP_REST_Request(
+            'DELETE',
+            $route
+        );
+        $request->set_body_params(
+            array(
+                'force' => true,
+                'allow_blocking' => false
+            )
+        );
+        $response = rest_do_request(
+            $request
+        );
+        $response_data = $response->get_data();
+        $this->assertNotFalse($response_data);
+        $this->assertArrayNotHasKey(
+            'code',
+            $response_data,
+            sprintf(
+                'Got error response "%1$s" while DELETEing on route "%2$s"',
+                wp_json_encode($response_data),
+                $route
+            )
+        );
+        var_dump($response_data);
+        $this->assertEquals(true,$response_data['deleted']);
+        $this->assertEquals($model_obj->ID(), $response_data['previous'][$model->primary_key_name()]);
     }
 }
 // End of file EEDCoreRestApiTest.php
