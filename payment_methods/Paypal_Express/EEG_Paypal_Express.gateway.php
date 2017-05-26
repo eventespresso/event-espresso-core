@@ -416,7 +416,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway {
             return array('status' => false, 'args' => $request_response);
         }
         if (
-            $response_args['ACK'] === 'Success'
+            in_array($response_args['ACK'], array('Success','SuccessWithWarning'))
             && (
                 isset($response_args['PAYERID'])
                 || isset($response_args['PAYMENTINFO_0_TRANSACTIONID'])
