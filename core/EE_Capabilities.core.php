@@ -995,6 +995,10 @@ class EE_Meta_Capability_Map_Edit extends EE_Meta_Capability_Map
         if ($cap !== $this->meta_cap) {
             return $caps;
         }
+
+        //cast $user_id to int for later explicit comparisons
+        $user_id = (int) $user_id;
+
         /** @var EE_Base_Class $obj */
         $obj = ! empty($args[0]) ? $this->_model->get_one_by_ID($args[0]) : null;
         //if no obj then let's just do cap
@@ -1004,7 +1008,7 @@ class EE_Meta_Capability_Map_Edit extends EE_Meta_Capability_Map
         }
         if ($obj instanceof EE_CPT_Base) {
             //if the item author is set and the user is the author...
-            if ($obj->wp_user() && $user_id == $obj->wp_user()) {
+            if ($obj->wp_user() && $user_id === $obj->wp_user()) {
                 if (empty($this->published_cap)) {
                     $caps[] = $cap;
                 } else {
@@ -1113,6 +1117,10 @@ class EE_Meta_Capability_Map_Read extends EE_Meta_Capability_Map
         if ($cap !== $this->meta_cap) {
             return $caps;
         }
+
+        //cast $user_id to int for later explicit comparisons
+        $user_id = (int) $user_id;
+
         $obj = ! empty($args[0]) ? $this->_model->get_one_by_ID($args[0]) : null;
         //if no obj then let's just do cap
         if (! $obj instanceof EE_Base_Class) {
@@ -1192,6 +1200,10 @@ class EE_Meta_Capability_Map_Messages_Cap extends EE_Meta_Capability_Map
         if ($cap !== $this->meta_cap) {
             return $caps;
         }
+
+        //cast $user_id to int for later explicit comparisons
+        $user_id = (int) $user_id;
+
         $obj = ! empty($args[0]) ? $this->_model->get_one_by_ID($args[0]) : null;
         //if no obj then let's just do cap
         if (! $obj instanceof EE_Message_Template_Group) {
