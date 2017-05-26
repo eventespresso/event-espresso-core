@@ -257,7 +257,7 @@ class Custom_Messages_Template_List_Table extends EE_Admin_List_Table
             )
         ) {
             $edit_lnk_url    = EE_Admin_Page::add_query_args_and_nonce(array(
-                'action' => 'edit_m`es`sage_template',
+                'action' => 'edit_message_template',
                 'id'     => $item->GRP_ID(),
             ), EE_MSG_ADMIN_URL);
             $actions['edit'] = '<a href="' . $edit_lnk_url . '"'
