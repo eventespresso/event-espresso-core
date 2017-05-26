@@ -71,6 +71,11 @@ class EE_Register_Capabilities implements EEI_Plugin_API {
 		add_filter( 'FHEE__EE_Capabilities__init_caps_map__caps', array( 'EE_Register_Capabilities', 'register_capabilities' ), 10 );
 		//add filter for cap maps
 		add_filter( 'FHEE__EE_Capabilities___set_meta_caps__meta_caps', array( 'EE_Register_Capabilities', 'register_cap_maps' ), 10 );
+		//init_role_caps to register new capabilities
+		if ( is_admin() ) {
+			EE_Registry::instance()->load_core( 'Capabilities' );
+			EE_Capabilities::instance()->init_caps();
+		}
 	}
 
 
