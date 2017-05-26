@@ -109,6 +109,7 @@ class Registry
     public function enqueueData()
     {
         wp_localize_script('eejs-core', 'eejs', array('data' => $this->jsdata));
+        wp_localize_script('espresso_core', 'eei18n', EE_Registry::$i18n_js_strings);
         $this->localizeAccountingJs();
     }
 
@@ -315,7 +316,6 @@ class Registry
             EVENT_ESPRESSO_VERSION,
             true
         );
-        wp_localize_script('espresso_core', 'eei18n', EE_Registry::$i18n_js_strings);
     }
 
 
