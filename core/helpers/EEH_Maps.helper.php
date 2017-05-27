@@ -164,6 +164,7 @@ class EEH_Maps
                 $text = $text == '' ? __('Map and Directions', 'event_espresso') : $text;
                 break;
 
+            case 'url_only':
             case 'url':
                 $text = $google_map;
                 break;
@@ -179,10 +180,10 @@ class EEH_Maps
                 return '<a class="a_map_image_link" href="' . $google_map . '" target="_blank">' . '<img class="map_image_link" id="venue_map_' . $id . '" ' . $map_image_class . ' src="' . htmlentities2($scheme . 'maps.googleapis.com/maps/api/staticmap?center=' . urlencode($address_string) . '&amp;zoom=14&amp;size=' . $map_w . 'x' . $map_h . '&amp;markers=color:green|label:|' . urlencode($address_string) . '&amp;sensor=false&amp;key=' . $api_key) . '" /></a>';
         }
 
-        return '<a href="' . $google_map . '" target="_blank">' . $text . '</a>';
+        return $type === 'url_only'
+            ? $text
+            : '<a href="' . $google_map . '" target="_blank">' . $text . '</a>';
     }
-
-
 }
 // End of file EEH_Maps.helper.php
 // Location: /helpers/EEH_Maps.helper.php
