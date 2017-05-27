@@ -1,7 +1,7 @@
 <?php
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
 
-/*
+/**
  * EE_Venue_Shortcodes
  * this is a child class for the EE_Shortcodes library.  The EE_Venue_Shortcodes lists all shortcodes related to venue
  * specific info. NOTE: if a method doesn't have any phpdoc commenting the details can be found in the comments in
@@ -47,6 +47,10 @@ class EE_Venue_Shortcodes extends EE_Shortcodes
                 'event_espresso'
             ),
             '[VENUE_ZIP]'               => esc_html__('The zip code for the venue address', 'event_espresso'),
+            '[GOOGLE_MAP_URL]'          => esc_html__(
+                'URL for the google map associated with the venue.',
+                'event_espresso'
+            ),
             '[GOOGLE_MAP_LINK]'         => esc_html__('Link to a google map for the venue', 'event_espresso'),
             '[GOOGLE_MAP_IMAGE]'        => esc_html__('Google map for venue wrapped in image tags', 'event_espresso'),
         );
@@ -110,6 +114,10 @@ class EE_Venue_Shortcodes extends EE_Shortcodes
                 return $this->_venue('formatted_address');
                 break;
 
+            case '[GOOGLE_MAP_URL]':
+                return $this->_venue('gmap_url');
+                break;
+
             case '[GOOGLE_MAP_LINK]':
                 return $this->_venue('gmap_link');
                 break;
@@ -132,9 +140,7 @@ class EE_Venue_Shortcodes extends EE_Shortcodes
      */
     private function _venue($field)
     {
-
         //we need the EE_Event object to get the venue.
-
         $this->_event = $this->_data instanceof EE_Event ? $this->_data : null;
 
         //if no event, then let's see if there is a reg_obj.  If there IS, then we'll try and grab the event from the reg_obj instead.
@@ -226,24 +232,41 @@ class EE_Venue_Shortcodes extends EE_Shortcodes
                 break;
 
             case 'gmap_link':
+            case 'gmap_url':
             case 'gmap_link_img':
-                $state   = $venue->state_obj();
-                $country = $venue->country_obj();
-                $atts    = array(
-                    'id'      => $venue->ID(),
-                    'address' => $venue->get('VNU_address'),
-                    'city'    => $venue->get('VNU_city'),
-                    'state'   => is_object($state) ? $state->get('STA_name') : '',
-                    'zip'     => $venue->get('VNU_zip'),
-                    'country' => is_object($country) ? $country->get('CNT_name') : '',
-                    'type'    => $field == 'gmap_link' ? 'url' : 'map',
-                    'map_w'   => 200,
-                    'map_h'   => 200,
-                );
-
+                $atts = $this->get_map_attributes($venue, $field);
                 return EEH_Maps::google_map_link($atts);
                 break;
         }
+        return '';
+    }
+
+
+    /**
+     * Generates the attributes for retrieving a google_map artifact.
+     * @param EE_Venue $venue
+     * @param string   $field
+     * @return array
+     * @throws EE_Error
+     */
+    protected function get_map_attributes(EE_Venue $venue, $field = 'gmap_link')
+    {
+        $state   = $venue->state_obj();
+        $country = $venue->country_obj();
+        $atts    = array(
+            'id'      => $venue->ID(),
+            'address' => $venue->get('VNU_address'),
+            'city'    => $venue->get('VNU_city'),
+            'state'   => is_object($state) ? $state->get('STA_name') : '',
+            'zip'     => $venue->get('VNU_zip'),
+            'country' => is_object($country) ? $country->get('CNT_name') : '',
+            'type'    => $field == 'gmap_link' ? 'url' : 'map',
+            'map_w'   => 200,
+            'map_h'   => 200,
+        );
+        if ($field === 'gmap_url') {
+            $atts['type'] = 'url_only';
+        }
+        return $atts;
     }
 }
-
