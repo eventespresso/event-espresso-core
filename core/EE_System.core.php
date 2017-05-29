@@ -13,11 +13,11 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) {
 
 /**
  * EE_System
+ * The backbone of the core application that the rest of the system builds off of once bootstrapping is complete
  *
  * @package        Event Espresso
  * @subpackage     core/
  * @author         Brent Christensen, Michael Nelson
- *                 ------------------------------------------------------------------------
  */
 final class EE_System implements ResettableInterface
 {
@@ -71,16 +71,12 @@ final class EE_System implements ResettableInterface
 
 
     /**
-     *    instance of the EE_System object
-     *
-     * @var    $_instance
-     * @access    private
+     * @var EE_System $_instance
      */
-    private static $_instance = null;
+    private static $_instance;
 
     /**
-     * @type  EE_Registry $Registry
-     * @access    protected
+     * @var EE_Registry $registry
      */
     protected $registry;
 
@@ -88,14 +84,14 @@ final class EE_System implements ResettableInterface
      * Stores which type of request this is, options being one of the constants on EE_System starting with req_type_*.
      * It can be a brand-new activation, a reactivation, an upgrade, a downgrade, or a normal request.
      *
-     * @var int
+     * @var int $_req_type
      */
     private $_req_type;
 
     /**
      * Whether or not there was a non-micro version change in EE core version during this request
      *
-     * @var boolean
+     * @var boolean $_major_version_change
      */
     private $_major_version_change = false;
 
@@ -104,8 +100,8 @@ final class EE_System implements ResettableInterface
     /**
      * @singleton method used to instantiate class object
      * @access    public
-     * @param  \EE_Registry $Registry
-     * @return \EE_System
+     * @param  EE_Registry $Registry
+     * @return EE_System
      */
     public static function instance(EE_Registry $Registry = null)
     {
@@ -143,7 +139,7 @@ final class EE_System implements ResettableInterface
      *    starting EE Addons from any other point may lead to problems
      *
      * @access private
-     * @param  \EE_Registry $Registry
+     * @param  EE_Registry $Registry
      */
     private function __construct(EE_Registry $Registry)
     {
@@ -180,10 +176,11 @@ final class EE_System implements ResettableInterface
      * this is hooked into both:
      *    'AHEE__EE_Bootstrap__load_core_configuration'
      *        which runs during the WP 'plugins_loaded' action at priority 5
-     *    and the WP 'activate_plugin' hookpoint
+     *    and the WP 'activate_plugin' hook point
      *
      * @access public
      * @return void
+     * @throws EE_Error
      */
     public function load_espresso_addons()
     {
@@ -198,15 +195,13 @@ final class EE_System implements ResettableInterface
         //also, don't load the basic auth when a plugin is getting activated, because
         //it could be the basic auth plugin, and it doesn't check if its methods are already defined
         //and causes a fatal error
-        if ( ! function_exists('json_basic_auth_handler')
-             && ! function_exists('json_basic_auth_error')
-             && ! (
+        if (
+            ! (isset($_GET['activate']) && $_GET['activate'] === 'true')
+            && ! function_exists('json_basic_auth_handler')
+            && ! function_exists('json_basic_auth_error')
+            && ! (
                 isset($_GET['action'])
-                && in_array($_GET['action'], array('activate', 'activate-selected'))
-            )
-             && ! (
-                isset($_GET['activate'])
-                && $_GET['activate'] === 'true'
+                && in_array($_GET['action'], array('activate', 'activate-selected'), true)
             )
         ) {
             include_once EE_THIRD_PARTY . 'wp-api-basic-auth' . DS . 'basic-auth.php';
@@ -328,9 +323,8 @@ final class EE_System implements ResettableInterface
      * information about what versions of EE have been installed and activated,
      * NOT necessarily the state of the database
      *
-     * @param null $espresso_db_update
-     * @internal param array $espresso_db_update_value the value of the WordPress option. If not supplied, fetches it
-     *           from the options table
+     * @param mixed $espresso_db_update the value of the WordPress option.
+     *                                            If not supplied, fetches it from the options table
      * @return array the correct value of 'espresso_db_upgrade', after saving it, if it needed correction
      */
     private function fix_espresso_db_upgrade_option($espresso_db_update = null)
@@ -387,12 +381,13 @@ final class EE_System implements ResettableInterface
      *                                       This is a resource-intensive job
      *                                       so we prefer to only do it when necessary
      * @return void
+     * @throws EE_Error
      */
     public function initialize_db_if_no_migrations_required($initialize_addons_too = false, $verify_schema = true)
     {
         $request_type = $this->detect_req_type();
         //only initialize system if we're not in maintenance mode.
-        if (EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance) {
+        if (EE_Maintenance_Mode::instance()->level() !== EE_Maintenance_Mode::level_2_complete_maintenance) {
             update_option('ee_flush_rewrite_rules', true);
             if ($verify_schema) {
                 EEH_Activation::initialize_db_and_folders();
@@ -420,6 +415,8 @@ final class EE_System implements ResettableInterface
 
     /**
      * Initializes the db for all registered addons
+     *
+     * @throws EE_Error
      */
     public function initialize_addons()
     {
@@ -443,7 +440,7 @@ final class EE_System implements ResettableInterface
         if ( ! $version_history) {
             $version_history = $this->fix_espresso_db_upgrade_option($version_history);
         }
-        if ($current_version_to_add == null) {
+        if ($current_version_to_add === null) {
             $current_version_to_add = espresso_version();
         }
         $version_history[$current_version_to_add][] = date('Y-m-d H:i:s', time());
@@ -469,7 +466,7 @@ final class EE_System implements ResettableInterface
         if ($this->_req_type === null) {
             $espresso_db_update = ! empty($espresso_db_update) ? $espresso_db_update
                 : $this->fix_espresso_db_upgrade_option();
-            $this->_req_type = $this->detect_req_type_given_activation_history($espresso_db_update,
+            $this->_req_type = EE_System::detect_req_type_given_activation_history($espresso_db_update,
                 'ee_espresso_activation', espresso_version());
             $this->_major_version_change = $this->_detect_major_version_change($espresso_db_update);
         }
@@ -514,13 +511,13 @@ final class EE_System implements ResettableInterface
 
     /**
      * Determines the request type for any ee addon, given three piece of info: the current array of activation
-     * histories (for core that' 'espresso_db_update' wp option); the name of the wordpress option which is temporarily
+     * histories (for core that' 'espresso_db_update' wp option); the name of the WordPress option which is temporarily
      * set upon activation of the plugin (for core it's 'ee_espresso_activation'); and the version that this plugin was
      * just activated to (for core that will always be espresso_version())
      *
      * @param array  $activation_history_for_addon     the option's value which stores the activation history for this
      *                                                 ee plugin. for core that's 'espresso_db_update'
-     * @param string $activation_indicator_option_name the name of the wordpress option that is temporarily set to
+     * @param string $activation_indicator_option_name the name of the WordPress option that is temporarily set to
      *                                                 indicate that this plugin was just activated
      * @param string $version_to_upgrade_to            the version that was just upgraded to (for core that will be
      *                                                 espresso_version())
@@ -621,9 +618,9 @@ final class EE_System implements ResettableInterface
                     $times_activated = array($times_activated);
                 }
                 foreach ($times_activated as $an_activation) {
-                    if ($an_activation != 'unknown-date' && $an_activation > $most_recently_active_version_activation) {
+                    if ($an_activation !== 'unknown-date' && $an_activation > $most_recently_active_version_activation) {
                         $most_recently_active_version = $version;
-                        $most_recently_active_version_activation = $an_activation == 'unknown-date'
+                        $most_recently_active_version_activation = $an_activation === 'unknown-date'
                             ? '1970-01-01 00:00:00' : $an_activation;
                     }
                 }
@@ -653,10 +650,10 @@ final class EE_System implements ResettableInterface
             )
         ) {
             $query_params = array('page' => 'espresso_about');
-            if (EE_System::instance()->detect_req_type() == EE_System::req_type_new_activation) {
+            if (EE_System::instance()->detect_req_type() === EE_System::req_type_new_activation) {
                 $query_params['new_activation'] = true;
             }
-            if (EE_System::instance()->detect_req_type() == EE_System::req_type_reactivation) {
+            if (EE_System::instance()->detect_req_type() === EE_System::req_type_reactivation) {
                 $query_params['reactivation'] = true;
             }
             $url = add_query_arg($query_params, admin_url('admin.php'));
@@ -673,6 +670,7 @@ final class EE_System implements ResettableInterface
      * which runs during the WP 'plugins_loaded' action at priority 5
      *
      * @return void
+     * @throws \ReflectionException
      */
     public function load_core_configuration()
     {
@@ -705,6 +703,7 @@ final class EE_System implements ResettableInterface
      * cycles through all of the models/*.model.php files, and assembles an array of model names
      *
      * @return void
+     * @throws ReflectionException
      */
     private function _parse_model_names()
     {
@@ -750,7 +749,7 @@ final class EE_System implements ResettableInterface
             new ExceptionStackTraceDisplay($exception);
         }
         do_action('AHEE__EE_System__register_shortcodes_modules_and_widgets');
-        // check for addons using old hookpoint
+        // check for addons using old hook point
         if (has_action('AHEE__EE_System__register_shortcodes_modules_and_addons')) {
             $this->_incompatible_addon_error();
         }
@@ -792,7 +791,7 @@ final class EE_System implements ResettableInterface
     /**
      * brew_espresso
      * begins the process of setting hooks for initializing EE in the correct order
-     * This is happening on the 'AHEE__EE_Bootstrap__brew_espresso' hookpoint
+     * This is happening on the 'AHEE__EE_Bootstrap__brew_espresso' hook point
      * which runs during the WP 'plugins_loaded' action at priority 9
      *
      * @return void
@@ -951,7 +950,7 @@ final class EE_System implements ResettableInterface
 
     /**
      * initialize_last
-     * this is run really late during the WP init hookpoint, and ensures that mostly everything else that needs to
+     * this is run really late during the WP init hook point, and ensures that mostly everything else that needs to
      * initialize has done so
      *
      * @access public
@@ -967,7 +966,7 @@ final class EE_System implements ResettableInterface
     /**
      * set_hooks_for_shortcodes_modules_and_addons
      * this is the best place for other systems to set callbacks for hooking into other parts of EE
-     * this happens at the very beginning of the wp_loaded hookpoint
+     * this happens at the very beginning of the wp_loaded hook point
      *
      * @access public
      * @return void
@@ -1049,9 +1048,10 @@ final class EE_System implements ResettableInterface
     public function espresso_toolbar_items(WP_Admin_Bar $admin_bar)
     {
         // if in full M-Mode, or its an AJAX request, or user is NOT an admin
-        if (EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_complete_maintenance
-            || defined('DOING_AJAX')
+        if (
+            defined('DOING_AJAX')
             || ! $this->registry->CAP->current_user_can('ee_read_ee', 'ee_admin_bar_menu_top_level')
+            || EE_Maintenance_Mode::instance()->level() === EE_Maintenance_Mode::level_2_complete_maintenance
         ) {
             return;
         }
@@ -1060,9 +1060,9 @@ final class EE_System implements ResettableInterface
         //we don't use the constants EVENTS_ADMIN_URL or REG_ADMIN_URL
         //because they're only defined in each of their respective constructors
         //and this might be a frontend request, in which case they aren't available
-        $events_admin_url = admin_url("admin.php?page=espresso_events");
-        $reg_admin_url = admin_url("admin.php?page=espresso_registrations");
-        $extensions_admin_url = admin_url("admin.php?page=espresso_packages");
+        $events_admin_url = admin_url('admin.php?page=espresso_events');
+        $reg_admin_url = admin_url('admin.php?page=espresso_registrations');
+        $extensions_admin_url = admin_url('admin.php?page=espresso_packages');
         //Top Level
         $admin_bar->add_menu(array(
             'id'    => 'espresso-toolbar',
@@ -1103,7 +1103,7 @@ final class EE_System implements ResettableInterface
                 ),
             ));
         }
-        if (is_single() && (get_post_type() == 'espresso_events')) {
+        if (is_single() && (get_post_type() === 'espresso_events')) {
             //Current post
             global $post;
             if ($this->registry->CAP->current_user_can('ee_edit_event',
@@ -1444,17 +1444,28 @@ final class EE_System implements ResettableInterface
      */
     public function wp_enqueue_scripts()
     {
-        // unlike other systems, EE_System_scripts loading is turned ON by default, but prior to the init hook, can be turned off via: add_filter( 'FHEE_load_EE_System_scripts', '__return_false' );
-        if (apply_filters('FHEE_load_EE_System_scripts', true)) {
-            // jquery_validate loading is turned OFF by default, but prior to the wp_enqueue_scripts hook, can be turned back on again via:  add_filter( 'FHEE_load_jquery_validate', '__return_true' );
-            if (apply_filters('FHEE_load_jquery_validate', false)) {
-                // register jQuery Validate and additional methods
-                wp_register_script('jquery-validate', EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.min.js',
-                    array('jquery'), '1.15.0', true);
-                wp_register_script('jquery-validate-extra-methods',
-                    EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.additional-methods.min.js',
-                    array('jquery', 'jquery-validate'), '1.15.0', true);
-            }
+        // unlike other systems, EE_System_scripts loading is turned ON by default,
+        // but prior to the init hook, can be turned off via:
+        //     add_filter( 'FHEE_load_EE_System_scripts', '__return_false' );
+        // jquery_validate loading is turned OFF by default,
+        // but prior to the wp_enqueue_scripts hook, can be turned back on again via:
+        //     add_filter( 'FHEE_load_jquery_validate', '__return_true' );
+        if (apply_filters('FHEE_load_EE_System_scripts', true) && apply_filters('FHEE_load_jquery_validate', false)) {
+            // register jQuery Validate and additional methods
+            wp_register_script(
+                'jquery-validate',
+                EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.min.js',
+                array('jquery'),
+                '1.15.0',
+                true
+            );
+            wp_register_script(
+                'jquery-validate-extra-methods',
+                EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.additional-methods.min.js',
+                array('jquery', 'jquery-validate'),
+                '1.15.0',
+                true
+            );
         }
     }
 
