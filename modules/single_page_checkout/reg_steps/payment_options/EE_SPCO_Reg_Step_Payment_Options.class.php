@@ -2454,13 +2454,14 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 
 
 
-	/**
-	 * _validate_return
-	 *
-	 * @access private
-	 * @return void
-	 * @throws \EE_Error
-	 */
+    /**
+     * _validate_return
+     *
+     * @access private
+     * @return void
+     * @throws \EventEspresso\core\exceptions\InvalidSessionDataException
+     * @throws \EE_Error
+     */
 	private function _validate_offsite_return() {
 		$TXN_ID = (int)EE_Registry::instance()->REQ->get( 'spco_txn', 0 );
 		if ( $TXN_ID !== $this->checkout->transaction->ID() ) {
@@ -2486,19 +2487,23 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				? $primary_registrant->session_ID()
 				: null;
 			// validate current Session ID and compare against valid TXN session ID
-			if ( EE_Session::instance()->id() === null ) {
+            if (
+                $invalid_TXN // if this is already true, then skip other checks
+                || EE_Session::instance()->id() === null
+                || (
+                    // WARNING !!!
+                    // this could be PayPal sending back duplicate requests (ya they do that)
+                    // or it **could** mean someone is simply registering AGAIN after having just done so
+                    // so now we need to determine if this current TXN looks valid or not
+                    // has this step even been started ?
+                    EE_Session::instance()->id() === $valid_TXN_SID
+                    && (
+                        // really? you're half way through this reg step, but you never started it ?
+                        $this->checkout->transaction->reg_step_completed($this->slug()) === false
+                    )
+                )
+            ) {
 				$invalid_TXN = true;
-			} else if ( EE_Session::instance()->id() === $valid_TXN_SID ) {
-				// WARNING !!!
-				// this could be PayPal sending back duplicate requests (ya they do that)
-				// or it **could** mean someone is simply registering AGAIN after having just done so
-				// so now we need to determine if this current TXN looks valid or not
-				// has this step even been started ?
-				if ( $this->checkout->transaction->reg_step_completed( $this->slug() === false )
-				) {
-					// really? you're half way through this reg step, but you never started it ?
-					$invalid_TXN = true;
-				}
 			}
 			if ( $invalid_TXN ) {
 				// is the valid TXN completed ?
