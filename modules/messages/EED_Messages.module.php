@@ -468,13 +468,23 @@ class EED_Messages extends EED_Module
             }
 
             $message_type    = EEH_MSG_Template::convert_reg_status_to_message_type($reg->status_ID());
-            $mtgs            = $mtgs + self::$_MSG_PROCESSOR->setup_mtgs_for_all_active_messengers($message_type,
-                    array($registration->transaction(), null, $reg->status_ID()));
+            $mtgs            = array_merge(
+                    $mtgs,
+                    self::$_MSG_PROCESSOR->setup_mtgs_for_all_active_messengers(
+                            $message_type,
+                            array($registration->transaction(), null, $reg->status_ID())
+                    )
+            );
             $statuses_sent[] = $reg->status_ID();
         }
 
-        $mtgs = $mtgs + self::$_MSG_PROCESSOR->setup_mtgs_for_all_active_messengers('registration_summary',
-                array($registration->transaction(), null));
+        $mtgs = array_merge(
+                $mtgs,
+                self::$_MSG_PROCESSOR->setup_mtgs_for_all_active_messengers(
+                        'registration_summary',
+                        array($registration->transaction(), null)
+                )
+        );
 
         //batch queue and initiate request
         self::$_MSG_PROCESSOR->batch_queue_for_generation_and_persist($mtgs);
