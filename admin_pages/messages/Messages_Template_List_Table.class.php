@@ -189,20 +189,21 @@ class Messages_Template_List_Table extends EE_Admin_List_Table
     }
 
 
-
     /**
      * Generate dropdown filter select input for messengers
      *
+     * @param bool $global
      * @return string
+     * @throws EE_Error
      */
-    protected function _get_messengers_dropdown_filter()
+    protected function _get_messengers_dropdown_filter($global = true)
     {
         $messenger_options                                   = array();
         $active_message_template_groups_grouped_by_messenger = EEM_Message_Template_Group::instance()->get_all(
             array(
                 array(
                     'MTP_is_active' => true,
-                    'MTP_is_global' => true,
+                    'MTP_is_global' => $global,
                 ),
                 'group_by' => 'MTP_messenger',
             )
@@ -224,9 +225,11 @@ class Messages_Template_List_Table extends EE_Admin_List_Table
     /**
      * Generate dropdown filter select input for message types
      *
+     * @param bool $global
      * @return string
+     * @throws EE_Error
      */
-    protected function _get_message_types_dropdown_filter()
+    protected function _get_message_types_dropdown_filter($global = true)
     {
         $message_type_options                                   = array();
         $active_message_template_groups_grouped_by_message_type = EEM_Message_Template_Group::instance()->get_all(
