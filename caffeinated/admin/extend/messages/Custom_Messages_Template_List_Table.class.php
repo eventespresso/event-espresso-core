@@ -231,4 +231,28 @@ class Custom_Messages_Template_List_Table extends Messages_Template_List_Table
         }
         return $actions;
     }
+
+
+    /**
+     * Generate dropdown filter select input for messengers
+     * @param bool $global
+     * @return string
+     * @throws EE_Error
+     */
+    protected function _get_messengers_dropdown_filter($global = true)
+    {
+        return parent::_get_messengers_dropdown_filter(false);
+    }
+
+
+    /**
+     * Generate dropdown filter select input for message types
+     * @param bool $global
+     * @return string
+     * @throws EE_Error
+     */
+    protected function _get_message_types_dropdown_filter($global = true)
+    {
+        return parent::_get_message_types_dropdown_filter(false);
+    }
 }
