@@ -260,7 +260,7 @@ class EE_Venue_Shortcodes extends EE_Shortcodes
             'state'   => is_object($state) ? $state->get('STA_name') : '',
             'zip'     => $venue->get('VNU_zip'),
             'country' => is_object($country) ? $country->get('CNT_name') : '',
-            'type'    => $field == 'gmap_link' ? 'url' : 'map',
+            'type'    => $field === 'gmap_link' ? 'url' : 'map',
             'map_w'   => 200,
             'map_h'   => 200,
         );
