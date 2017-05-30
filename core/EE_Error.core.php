@@ -809,7 +809,6 @@ class EE_Error extends Exception
             $error_messages .= implode(self::$_espresso_notices['errors'], '<br /><br />');
             $print_scripts = true;
         }
-        self::$_espresso_notices = array('success' => false, 'errors' => false, 'attention' => false);
         if ($format_output) {
             $notices = '<div id="espresso-notices">';
             $close = is_admin() ? ''
