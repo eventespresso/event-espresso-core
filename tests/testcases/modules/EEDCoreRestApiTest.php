@@ -302,15 +302,20 @@ class EEDCoreRestApiTest extends EE_REST_TestCase
      * (because capability conditions might join to that table)
      *
      * @param EEM_Base $model
+     * @param boolean  $reuse_existing_objs whether to use existing model objects of this type,
+     *                 or always create a new one
      * @return EE_Base_Class
      */
-    protected function getAModelObjOfType(EEM_Base $model)
+    protected function getAModelObjOfType(EEM_Base $model, $reuse_existing_objs = true)
     {
-        $model_obj = $model->get_one(
-            array(
-                'caps' => EEM_Base::caps_read,
-            )
-        );
+        $model_obj = null;
+        if ($reuse_existing_objs) {
+            $model_obj = $model->get_one(
+                array(
+                    'caps' => EEM_Base::caps_read,
+                )
+            );
+        }
         if (! $model_obj instanceof EE_Base_Class) {
             $model_obj = $this->new_model_obj_with_dependencies($model->get_this_model_name());
         }
@@ -408,7 +413,7 @@ class EEDCoreRestApiTest extends EE_REST_TestCase
     public function testDeleteRoutes(EEM_Base $model)
     {
         $this->authenticate_as_admin();
-        $model_obj = $this->getAModelObjOfType($model);
+        $model_obj = $this->getAModelObjOfType($model,false);
         $route = EED_Core_Rest_Api::get_versioned_route_to(
             EED_Core_Rest_Api::get_singular_route_to($model->get_this_model_name(), $model_obj->ID()),
             '4.8.36'
@@ -438,7 +443,6 @@ class EEDCoreRestApiTest extends EE_REST_TestCase
                 $route
             )
         );
-        var_dump($response_data);
         $this->assertEquals(true,$response_data['deleted']);
         $this->assertEquals($model_obj->ID(), $response_data['previous'][$model->primary_key_name()]);
     }
