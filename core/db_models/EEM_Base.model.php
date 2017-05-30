@@ -29,26 +29,6 @@
 abstract class EEM_Base extends EE_Base
 {
 
-    //admin posty
-    //basic -> grants access to mine -> if they don't have it, select none
-    //*_others -> grants access to others that arent private, and all mine -> if they don't have it, select mine
-    //*_private -> grants full access -> if dont have it, select all mine and others' non-private
-    //*_published -> grants access to published -> if they dont have it, select non-published
-    //*_global/default/system -> grants access to global items -> if they don't have it, select non-global
-    //publish_{thing} -> can change status TO publish; SPECIAL CASE
-    //frontend posty
-    //by default has access to published
-    //basic -> grants access to mine that arent published, and all published
-    //*_others ->grants access to others that arent private, all mine
-    //*_private -> grants full access
-    //frontend non-posty
-    //like admin posty
-    //category-y
-    //assign -> grants access to join-table
-    //(delete, edit)
-    //payment-method-y
-    //for each registered payment method,
-    //ee_payment_method_{pmttype} -> if they don't have it, select all where they aren't of that type
     /**
      * Flag to indicate whether the values provided to EEM_Base have already been prepared
      * by the model object or not (ie, the model object has used the field's _prepare_for_set function on the values).
@@ -95,7 +75,7 @@ abstract class EEM_Base extends EE_Base
      * and the value is an array. Each of those sub-arrays have keys of field names (eg 'ATT_ID', which should also be
      * variable names on the model objects (eg, EE_Attendee), and the keys should be children of EE_Model_Field
      *
-     * @var \EE_Model_Field_Base[] $_fields
+     * @var \EE_Model_Field_Base[][] $_fields
      */
     protected $_fields;
 
@@ -2036,7 +2016,14 @@ abstract class EEM_Base extends EE_Base
     {
         if ($this->has_primary_key_field()) {
             $primary_table = $this->_get_main_table();
+            $pt_pk_field = $this->get_field_by_column($primary_table->get_fully_qualified_pk_column());
             $other_tables = $this->_get_other_tables();
+            $ot_pk_fields = array();
+            $ot_fk_fields = array();
+            foreach($other_tables as $other_table_alias => $other_table_obj){
+                $ot_pk_fields[$other_table_alias] = $this->get_field_by_column($other_table_obj->get_fully_qualified_pk_column());
+                $ot_fk_fields[$other_table_alias] = $this->get_field_by_column($other_table_obj->get_fully_qualified_fk_column());
+            }
             $deletes = $query = array();
             foreach ($objects_for_deletion as $delete_object) {
                 //before we mark this object for deletion,
@@ -2051,24 +2038,39 @@ abstract class EEM_Base extends EE_Base
                 }
                 //primary table deletes
                 if (isset($delete_object[$primary_table->get_fully_qualified_pk_column()])) {
-                    $deletes[$primary_table->get_fully_qualified_pk_column()][] = $delete_object[$primary_table->get_fully_qualified_pk_column()];
+
+                    $deletes[$primary_table->get_fully_qualified_pk_column()][] = $this->_wpdb_prepare_using_field(
+                        $delete_object[$primary_table->get_fully_qualified_pk_column()],
+                        $pt_pk_field
+                    );
                 }
                 //other tables
                 if (! empty($other_tables)) {
-                    foreach ($other_tables as $ot) {
+                    foreach ($other_tables as $ot_alias => $ot) {
+                        $ot_pk_field = $ot_pk_fields[$ot_alias];
+                        $ot_fk_field = $ot_fk_fields[$ot_alias];
                         //first check if we've got the foreign key column here.
                         if (isset($delete_object[$ot->get_fully_qualified_fk_column()])) {
-                            $deletes[$ot->get_fully_qualified_pk_column()][] = $delete_object[$ot->get_fully_qualified_fk_column()];
+                            $deletes[$ot->get_fully_qualified_pk_column()][] = $this->_wpdb_prepare_using_field(
+                                $delete_object[$ot->get_fully_qualified_fk_column()],
+                                $ot_fk_field
+                            );
                         }
                         // wait! it's entirely possible that we'll have a the primary key
                         // for this table in here, if it's a foreign key for one of the other secondary tables
                         if (isset($delete_object[$ot->get_fully_qualified_pk_column()])) {
-                            $deletes[$ot->get_fully_qualified_pk_column()][] = $delete_object[$ot->get_fully_qualified_pk_column()];
+                            $deletes[$ot->get_fully_qualified_pk_column()][] = $this->_wpdb_prepare_using_field(
+                                $delete_object[$ot->get_fully_qualified_pk_column()],
+                                $ot_pk_field
+                            );
                         }
                         // finally, it is possible that the fk for this table is found
                         // in the fully qualified pk column for the fk table, so let's see if that's there!
                         if (isset($delete_object[$ot->get_fully_qualified_pk_on_fk_table()])) {
-                            $deletes[$ot->get_fully_qualified_pk_column()][] = $delete_object[$ot->get_fully_qualified_pk_column()];
+                            $deletes[$ot->get_fully_qualified_pk_column()][] = $this->_wpdb_prepare_using_field(
+                                $delete_object[$ot->get_fully_qualified_pk_column()],
+                                $ot_pk_field
+                            );
                         }
                     }
                 }
@@ -2102,6 +2104,28 @@ abstract class EEM_Base extends EE_Base
             throw new EE_Error(sprintf(__("Cannot delete objects of type %s because there is no primary key NOR combined key",
                 "event_espresso"), get_class($this)));
         }
+    }
+
+
+    /**
+     * Gets the model field by the fully qualified name
+     * @param string $qualified_column_name eg 'Event_CPT.post_name' or $field_obj->get_qualified_column()
+     * @return EE_Model_Field_Base
+     */
+    public function get_field_by_column($qualified_column_name)
+    {
+       foreach($this->field_settings(true) as $field_name => $field_obj){
+           if($field_obj->get_qualified_column() === $qualified_column_name){
+               return $field_obj;
+           }
+       }
+        throw new EE_Error(
+            sprintf(
+                esc_html__('Could not find a field on the model "%1$s" for qualified column "%2$s"', 'event_espresso'),
+                $this->get_this_model_name(),
+                $qualified_column_name
+            )
+        );
     }
 
 
@@ -3921,34 +3945,6 @@ abstract class EEM_Base extends EE_Base
             return '';
         }
     }
-
-
-
-    /**
-     * Gets the EE_Model_Field on the model indicated by $model_name and the $field_name.
-     * Eg, if called with _get_field_on_model('ATT_ID','Attendee'), it will return the EE_Primary_Key_Field on
-     * EEM_Attendee.
-     *
-     * @param string $field_name
-     * @param string $model_name
-     * @return EE_Model_Field_Base
-     * @throws EE_Error
-     */
-    protected function _get_field_on_model($field_name, $model_name)
-    {
-        $model_class = 'EEM_' . $model_name;
-        $model_filepath = $model_class . ".model.php";
-        if (is_readable($model_filepath)) {
-            require_once($model_filepath);
-            $model_instance = call_user_func($model_name . "::instance");
-            /* @var $model_instance EEM_Base */
-            return $model_instance->field_settings_for($field_name);
-        } else {
-            throw new EE_Error(sprintf(__('No model named %s exists, with classname %s and filepath %s',
-                'event_espresso'), $model_name, $model_class, $model_filepath));
-        }
-    }
-
 
 
     /**
