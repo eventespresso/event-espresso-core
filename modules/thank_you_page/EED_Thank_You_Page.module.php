@@ -339,6 +339,7 @@ class EED_Thank_You_Page extends EED_Module
             true
         );
         wp_enqueue_script('thank_you_page');
+        wp_enqueue_style('espresso_default');
     }
 
 
