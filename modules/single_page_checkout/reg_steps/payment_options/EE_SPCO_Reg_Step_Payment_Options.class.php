@@ -2495,12 +2495,10 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
                     // this could be PayPal sending back duplicate requests (ya they do that)
                     // or it **could** mean someone is simply registering AGAIN after having just done so
                     // so now we need to determine if this current TXN looks valid or not
-                    // has this step even been started ?
+                    // and whether this reg step has even been started ?
                     EE_Session::instance()->id() === $valid_TXN_SID
-                    && (
-                        // really? you're half way through this reg step, but you never started it ?
-                        $this->checkout->transaction->reg_step_completed($this->slug()) === false
-                    )
+                    // really? you're half way through this reg step, but you never started it ?
+                    && $this->checkout->transaction->reg_step_completed($this->slug()) === false
                 )
             ) {
 				$invalid_TXN = true;
