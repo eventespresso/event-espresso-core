@@ -58,6 +58,7 @@ class AdminToolBar
     {
         $this->capabilities = $capabilities;
         add_action('admin_bar_menu', array($this, 'espresso_toolbar_items'), 100);
+        $this->enqueueAssets();
     }
 
 
@@ -108,6 +109,22 @@ class AdminToolBar
         $this->addRegistrationOverviewThisMonthNotApproved();
         $this->addRegistrationOverviewThisMonthCancelled();
         $this->addExtensionsAndServices();
+    }
+
+
+
+    /**
+     * @return void
+     */
+    private function enqueueAssets()
+    {
+        wp_register_style(
+            'espresso-admin-toolbar',
+            EE_GLOBAL_ASSETS_URL . 'css/espresso-admin-toolbar.css',
+            array('dashicons'),
+            EVENT_ESPRESSO_VERSION
+        );
+        wp_enqueue_style('espresso-admin-toolbar');
     }
 
 
