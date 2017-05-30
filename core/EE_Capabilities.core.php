@@ -28,8 +28,8 @@ final class EE_Capabilities extends EE_Base
      * @var EE_Capabilities
      */
     private static $_instance;
-    
-    
+
+
     /**
      * This is a map of caps that correspond to a default WP_Role.
      * Array is indexed by Role and values are ee capabilities.
@@ -39,8 +39,8 @@ final class EE_Capabilities extends EE_Base
      * @var array
      */
     private $_caps_map = array();
-    
-    
+
+
     /**
      * This used to hold an array of EE_Meta_Capability_Map objects that define the granular capabilities mapped to for
      * a user depending on context.
@@ -48,8 +48,8 @@ final class EE_Capabilities extends EE_Base
      * @var EE_Meta_Capability_Map[]
      */
     private $_meta_caps = array();
-    
-    
+
+
     /**
      * singleton method used to instantiate class object
      *
@@ -65,8 +65,8 @@ final class EE_Capabilities extends EE_Base
         }
         return self::$_instance;
     }
-    
-    
+
+
     /**
      * private constructor
      *
@@ -77,8 +77,8 @@ final class EE_Capabilities extends EE_Base
     private function __construct()
     {
     }
-    
-    
+
+
     /**
      * This delays the initialization of the capabilities class until EE_System core is loaded and ready.
      *
@@ -98,8 +98,8 @@ final class EE_Capabilities extends EE_Base
             $this->_set_meta_caps();
         }
     }
-    
-    
+
+
     /**
      * This sets the meta caps property.
      * @since 4.5.0
@@ -116,8 +116,8 @@ final class EE_Capabilities extends EE_Base
             add_filter('map_meta_cap', array($this, 'map_meta_caps'), 10, 4);
         }
     }
-    
-    
+
+
     /**
      * This builds and returns the default meta_caps array only once.
      *
@@ -195,7 +195,7 @@ final class EE_Capabilities extends EE_Base
                 new EE_Meta_Capability_Map_Read(
                     'ee_read_payment_method',
                     array('Payment_Method', '', '', 'ee_read_others_payment_methods')),
-                
+
                 //deletes
                 new EE_Meta_Capability_Map_Delete(
                     'ee_delete_event',
@@ -247,8 +247,8 @@ final class EE_Capabilities extends EE_Base
         }
         return $default_meta_caps;
     }
-    
-    
+
+
     /**
      * This is the callback for the wp map_meta_caps() function which allows for ensuring certain caps that act as a
      * "meta" for other caps ( i.e. ee_edit_event is a meta for ee_edit_others_events ) work as expected.
@@ -273,6 +273,7 @@ final class EE_Capabilities extends EE_Base
                 if (! $meta_map instanceof EE_Meta_Capability_Map) {
                     continue;
                 }
+                // don't load models if there is no object ID in the args
                 if(!empty($args[0])){
                     $meta_map->ensure_is_model();
                 }
@@ -281,8 +282,8 @@ final class EE_Capabilities extends EE_Base
         }
         return $caps;
     }
-    
-    
+
+
     /**
      * This sets up and returns the initial capabilities map for Event Espresso
      *
@@ -606,8 +607,8 @@ final class EE_Capabilities extends EE_Base
         $caps = apply_filters('FHEE__EE_Capabilities__init_caps_map__caps', $caps);
         return $caps;
     }
-    
-    
+
+
     /**
      * This adds all the default caps to roles as registered in the _caps_map property.
      *
@@ -642,8 +643,8 @@ final class EE_Capabilities extends EE_Base
         update_option(self::option_name, $caps_set_before);
         do_action('AHEE__EE_Capabilities__init_role_caps__complete', $caps_set_before);
     }
-    
-    
+
+
     /**
      * This method sets a capability on a role.  Note this should only be done on activation, or if you have something
      * specific to prevent the cap from being added on every page load (adding caps are persistent to the db). Note.
@@ -678,8 +679,8 @@ final class EE_Capabilities extends EE_Base
         }
         return false;
     }
-    
-    
+
+
     /**
      * Functions similarly to add_cap_to_role except removes cap from given role.
      * Wrapper for $wp_role->remove_cap()
@@ -699,8 +700,8 @@ final class EE_Capabilities extends EE_Base
             $role->remove_cap($cap);
         }
     }
-    
-    
+
+
     /**
      * Wrapper for the native WP current_user_can() method.
      * This is provided as a handy method for a couple things:
@@ -725,8 +726,8 @@ final class EE_Capabilities extends EE_Base
             $id);
         return ! empty($id) ? current_user_can($filtered_cap, $id) : current_user_can($filtered_cap);
     }
-    
-    
+
+
     /**
      * This is a wrapper for the WP user_can() function and follows the same style as the other wrappers in this class.
      *
@@ -746,8 +747,8 @@ final class EE_Capabilities extends EE_Base
             $id);
         return ! empty($id) ? user_can($user, $filtered_cap, $id) : user_can($user, $filtered_cap);
     }
-    
-    
+
+
     /**
      * Wrapper for the native WP current_user_can_for_blog() method.
      * This is provided as a handy method for a couple things:
@@ -788,8 +789,8 @@ final class EE_Capabilities extends EE_Base
         );
         return $user_can;
     }
-    
-    
+
+
     /**
      * This helper method just returns an array of registered EE capabilities.
      * Note this array is filtered.  It is assumed that all available EE capabilities are assigned to the administrator
@@ -840,8 +841,8 @@ abstract class EE_Meta_Capability_Map
     public $others_cap = '';
 
     public $private_cap = '';
-    
-    
+
+
     /**
      * constructor.
      * Receives the setup arguments for the map.
@@ -885,7 +886,7 @@ abstract class EE_Meta_Capability_Map
         $this->others_cap = (string)$map_values[2];
         $this->private_cap = (string)$map_values[3];
     }
-    
+
     /**
      * Makes it so this object stops filtering caps
      */
@@ -893,8 +894,8 @@ abstract class EE_Meta_Capability_Map
     {
         remove_filter('map_meta_cap', array($this, 'map_meta_caps'), 10);
     }
-    
-    
+
+
     /**
      * This method ensures that the $model property is converted from the model name string to a proper EEM_Base class
      *
@@ -927,8 +928,8 @@ abstract class EE_Meta_Capability_Map
             );
         }
     }
-    
-    
+
+
     /**
      *
      * @see   EE_Meta_Capability_Map::_map_meta_caps() for docs on params.
@@ -945,8 +946,8 @@ abstract class EE_Meta_Capability_Map
     {
         return $this->_map_meta_caps($caps, $cap, $user_id, $args);
     }
-    
-    
+
+
     /**
      * This is the callback for the wp map_meta_caps() function which allows for ensuring certain caps that act as a
      * "meta" for other caps ( i.e. ee_edit_event is a meta for ee_edit_others_events ) work as expected.
@@ -976,7 +977,7 @@ abstract class EE_Meta_Capability_Map
  */
 class EE_Meta_Capability_Map_Edit extends EE_Meta_Capability_Map
 {
-    
+
     /**
      * This is the callback for the wp map_meta_caps() function which allows for ensuring certain caps that act as a
      * "meta" for other caps ( i.e. ee_edit_event is a meta for ee_edit_others_events ) work as expected.
@@ -1069,7 +1070,7 @@ class EE_Meta_Capability_Map_Edit extends EE_Meta_Capability_Map
  */
 class EE_Meta_Capability_Map_Delete extends EE_Meta_Capability_Map_Edit
 {
-    
+
     /**
      * This is the callback for the wp map_meta_caps() function which allows for ensuring certain caps that act as a
      * "meta" for other caps ( i.e. ee_edit_event is a meta for ee_edit_others_events ) work as expected.
@@ -1102,7 +1103,7 @@ class EE_Meta_Capability_Map_Delete extends EE_Meta_Capability_Map_Edit
  */
 class EE_Meta_Capability_Map_Read extends EE_Meta_Capability_Map
 {
-    
+
     /**
      * This is the callback for the wp map_meta_caps() function which allows for ensuring certain caps that act as a
      * "meta" for other caps ( i.e. ee_edit_event is a meta for ee_edit_others_events ) work as expected.
@@ -1187,7 +1188,7 @@ class EE_Meta_Capability_Map_Read extends EE_Meta_Capability_Map
  */
 class EE_Meta_Capability_Map_Messages_Cap extends EE_Meta_Capability_Map
 {
-    
+
     /**
      * This is the callback for the wp map_meta_caps() function which allows for ensuring certain caps that act as a
      * "meta" for other caps ( i.e. ee_edit_event is a meta for ee_edit_others_events ) work as expected.
@@ -1249,7 +1250,7 @@ class EE_Meta_Capability_Map_Messages_Cap extends EE_Meta_Capability_Map
  */
 class EE_Meta_Capability_Map_Registration_Form_Cap extends EE_Meta_Capability_Map
 {
-    
+
     /**
      * This is the callback for the wp map_meta_caps() function which allows for ensuring certain caps that act as a
      * "meta" for other caps ( i.e. ee_edit_event is a meta for ee_edit_others_events ) work as expected.
