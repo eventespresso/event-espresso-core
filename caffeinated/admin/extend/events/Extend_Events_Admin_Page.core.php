@@ -324,10 +324,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
             EVENT_ESPRESSO_VERSION,
             true
         );
-        /**
-         * load accounting js.
-         */
-        add_filter('FHEE_load_accounting_js', '__return_true');
+        wp_enqueue_script('ee-accounting');
         //styles
         wp_enqueue_style('espresso-ui-theme');
         wp_enqueue_script('event_editor_js');
@@ -666,8 +663,8 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
         }
         $this->_redirect_after_action(false, '', '', $redirect_args, true);
     }
-    
-    
+
+
     protected function _import_page()
     {
         $title                                      = esc_html__('Import', 'event_espresso');

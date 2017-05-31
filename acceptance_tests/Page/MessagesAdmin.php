@@ -52,6 +52,13 @@ class MessagesAdmin extends CoreAdmin
     const GLOBAL_MESSAGES_SETTINGS_SUBMIT_SELECTOR = '#global_messages_settings-update-settings-submit';
 
 
+    /**
+     * This is the container where active message types for a messenger are found/dragged to.
+     * @var string
+     */
+    const MESSAGES_SETTINGS_ACTIVE_MESSAGE_TYPES_CONTAINER_SELECTOR = '#active-message-types';
+
+
 
     /**
      * @param string $additional_params Any additional request parameters for the generated url should be included as
@@ -92,6 +99,15 @@ class MessagesAdmin extends CoreAdmin
     public static function messageSettingsUrl()
     {
         return self::adminUrl('espresso_messages', 'settings');
+    }
+
+
+
+    public static function draggableSettingsBoxSelectorForMessageTypeAndMessenger(
+        $message_type_slug,
+        $messenger_slug = 'email'
+    ) {
+        return "#$message_type_slug-messagetype-$messenger_slug";
     }
 
 
