@@ -176,7 +176,8 @@ class EEDCoreRestApiTest extends EE_REST_TestCase
         $this->assertArrayNotHasKey(
             'code',
             $response_data,
-            sprintf('Got error response "%1$s" while querying route "%2$s"',
+            sprintf(
+                'Got error response "%1$s" while querying route "%2$s"',
                 wp_json_encode($response_data),
                 $route
             )
@@ -216,7 +217,7 @@ class EEDCoreRestApiTest extends EE_REST_TestCase
      *
      * @dataProvider dataProviderForTestGetAllRelatedRoutes
      * @param EEM_Base $model
-     * $param EE_Model_Relation_Base $relation_obj
+     * @param EE_Model_Relation_Base $relation_obj
      * @group        big_rest_tests
      */
     public function testGetAllRelatedRoutes(EEM_Base $model, EE_Model_Relation_Base $relation_obj)
@@ -254,7 +255,7 @@ class EEDCoreRestApiTest extends EE_REST_TestCase
                 $route
             )
         );
-        if( $relation_obj instanceof EE_Belongs_To_Relation){
+        if ($relation_obj instanceof EE_Belongs_To_Relation){
             //only expect one result
             $this->assertEquals($related_model_obj->ID(), $response_data[$related_model->primary_key_name()]);
         } else {
@@ -362,14 +363,18 @@ class EEDCoreRestApiTest extends EE_REST_TestCase
     public function testInsertsRoutes(EEM_Base $model)
     {
         $this->authenticate_as_admin();
-        $unsaved_model_obj = $this->new_model_obj_with_dependencies($model->get_this_model_name(),array(),false);
+        $unsaved_model_obj = $this->new_model_obj_with_dependencies(
+            $model->get_this_model_name(),
+            array(),
+            false
+        );
 
         $route = EED_Core_Rest_Api::get_versioned_route_to(
             EED_Core_Rest_Api::get_plural_route_to($model->get_this_model_name()),
             '4.8.36'
         );
         $insert_values = array();
-        foreach($unsaved_model_obj->get_model()->field_settings() as $field_name => $field_obj){
+        foreach ($unsaved_model_obj->get_model()->field_settings() as $field_name => $field_obj) {
             $value_to_use = $field_obj instanceof EE_Datetime_Field
                 ? $unsaved_model_obj->get_DateTime_object($field_name)
                 : $unsaved_model_obj->get_raw($field_name);
@@ -412,7 +417,7 @@ class EEDCoreRestApiTest extends EE_REST_TestCase
     public function testDeleteRoutes(EEM_Base $model)
     {
         $this->authenticate_as_admin();
-        $model_obj = $this->getAModelObjOfType($model,false);
+        $model_obj = $this->getAModelObjOfType($model, false);
         $route = EED_Core_Rest_Api::get_versioned_route_to(
             EED_Core_Rest_Api::get_singular_route_to($model->get_this_model_name(), $model_obj->ID()),
             '4.8.36'
@@ -442,7 +447,7 @@ class EEDCoreRestApiTest extends EE_REST_TestCase
                 $route
             )
         );
-        $this->assertEquals(true,$response_data['deleted']);
+        $this->assertEquals(true, $response_data['deleted']);
         $this->assertEquals($model_obj->ID(), $response_data['previous'][$model->primary_key_name()]);
     }
 
@@ -457,7 +462,7 @@ class EEDCoreRestApiTest extends EE_REST_TestCase
     public function testUpdateRoutes(EEM_Base $model)
     {
         $this->authenticate_as_admin();
-        $model_obj = $this->getAModelObjOfType($model,false);
+        $model_obj = $this->getAModelObjOfType($model, false);
         $route = EED_Core_Rest_Api::get_versioned_route_to(
             EED_Core_Rest_Api::get_singular_route_to($model->get_this_model_name(), $model_obj->ID()),
             '4.8.36'
@@ -474,11 +479,11 @@ class EEDCoreRestApiTest extends EE_REST_TestCase
                 break;
             }
         }
-        if( $field_to_update instanceof EE_Boolean_Field){
+        if ($field_to_update instanceof EE_Boolean_Field) {
             $set_value = ! $model_obj->get($field_to_update->get_name());
         } elseif ($field_to_update instanceof EE_Integer_Field
             || $field_to_update instanceof EE_Float_Field
-            || $field_to_update instanceof EE_Foreign_Key_Int_Field){
+            || $field_to_update instanceof EE_Foreign_Key_Int_Field) {
             $set_value = $model_obj->get($field_to_update->get_name()) + 1;
         } elseif ($field_to_update instanceof EE_Datetime_Field) {
             $set_value = $model_obj->get_DateTime_object($field_to_update->get_name())->modify('+1 day');
@@ -487,7 +492,6 @@ class EEDCoreRestApiTest extends EE_REST_TestCase
             $set_value = 'NEW';
         } else {
             $set_value = 'new';
-
         }
         //double check the new value won't be the same as the old one
         $this->assertNotEquals(
@@ -501,7 +505,7 @@ class EEDCoreRestApiTest extends EE_REST_TestCase
                     $field_to_update,
                     $set_value,
                     '4.8.36'
-                    )
+                )
             )
         );
         $response = rest_do_request(
@@ -523,7 +527,7 @@ class EEDCoreRestApiTest extends EE_REST_TestCase
         } else {
             $current_value = $model_obj->get($field_to_update->get_name());
         }
-        $this->assertEquals($set_value,$current_value);
+        $this->assertEquals($set_value, $current_value);
         $this->assertEquals($model_obj->ID(), $response_data[$model->primary_key_name()]);
     }
 }
