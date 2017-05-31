@@ -408,7 +408,6 @@ class EEDCoreRestApiTest extends EE_REST_TestCase
      * @dataProvider dataProviderForTestInsertsRoutes
      * @param EEM_Base $model
      * @group big_rest_tests
-     * @group current
      */
     public function testDeleteRoutes(EEM_Base $model)
     {
@@ -445,6 +444,87 @@ class EEDCoreRestApiTest extends EE_REST_TestCase
         );
         $this->assertEquals(true,$response_data['deleted']);
         $this->assertEquals($model_obj->ID(), $response_data['previous'][$model->primary_key_name()]);
+    }
+
+
+    /**
+     * Verifies that, for each model from the data provider, we can use its DELETE routes
+     *
+     * @dataProvider dataProviderForTestInsertsRoutes
+     * @param EEM_Base $model
+     * @group big_rest_tests
+     */
+    public function testUpdateRoutes(EEM_Base $model)
+    {
+        $this->authenticate_as_admin();
+        $model_obj = $this->getAModelObjOfType($model,false);
+        $route = EED_Core_Rest_Api::get_versioned_route_to(
+            EED_Core_Rest_Api::get_singular_route_to($model->get_this_model_name(), $model_obj->ID()),
+            '4.8.36'
+        );
+
+        $request = new WP_REST_Request(
+            'PUT',
+            $route
+        );
+        $field_to_update = null;
+        foreach ($model->field_settings() as $field_obj) {
+            if (! $field_obj instanceof EE_Primary_Key_Field_Base) {
+                $field_to_update = $field_obj;
+                break;
+            }
+        }
+        if( $field_to_update instanceof EE_Boolean_Field){
+            $set_value = ! $model_obj->get($field_to_update->get_name());
+        } elseif ($field_to_update instanceof EE_Integer_Field
+            || $field_to_update instanceof EE_Float_Field
+            || $field_to_update instanceof EE_Foreign_Key_Int_Field){
+            $set_value = $model_obj->get($field_to_update->get_name()) + 1;
+        } elseif ($field_to_update instanceof EE_Datetime_Field) {
+            $set_value = $model_obj->get_DateTime_object($field_to_update->get_name())->modify('+1 day');
+        } elseif ($field_to_update instanceof EE_All_Caps_Text_Field
+            || $field_to_update instanceof EE_Foreign_Key_String_Field) {
+            $set_value = 'NEW';
+        } else {
+            $set_value = 'new';
+
+        }
+        //double check the new value won't be the same as the old one
+        $this->assertNotEquals(
+            $set_value,
+            $model_obj->get($field_to_update->get_name()),
+            $field_to_update->get_name()
+        );
+        $request->set_body_params(
+            array(
+                $field_to_update->get_name() => ModelDataTranslator::prepareFieldValuesForJson(
+                    $field_to_update,
+                    $set_value,
+                    '4.8.36'
+                    )
+            )
+        );
+        $response = rest_do_request(
+            $request
+        );
+        $response_data = $response->get_data();
+        $this->assertNotFalse($response_data);
+        $this->assertArrayNotHasKey(
+            'code',
+            $response_data,
+            sprintf(
+                'Got error response "%1$s" while PUTing on route "%2$s"',
+                wp_json_encode($response_data),
+                $route
+            )
+        );
+        if ($field_to_update instanceof EE_Datetime_Field) {
+            $current_value = $model_obj->get_DateTime_object($field_to_update->get_name());
+        } else {
+            $current_value = $model_obj->get($field_to_update->get_name());
+        }
+        $this->assertEquals($set_value,$current_value);
+        $this->assertEquals($model_obj->ID(), $response_data[$model->primary_key_name()]);
     }
 }
 // End of file EEDCoreRestApiTest.php
