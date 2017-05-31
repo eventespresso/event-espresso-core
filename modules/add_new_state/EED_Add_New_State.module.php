@@ -237,7 +237,7 @@ class EED_Add_New_State extends EED_Module
                                     'display: none;') .
                                 EEH_HTML::h6(
                                     esc_html__(
-                                        'If your State/Province does not appear in the list above, you can easily add it by doing the following:',
+                                        'Is your state/province missing from the dropdown menu above? You can add it by completing the following steps:',
                                         'event_espresso'
                                     )
                                 ) .
