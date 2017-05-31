@@ -62,7 +62,7 @@ class EE_Brewing_Regular extends EE_BASE implements InterminableInterface
                 array($this, 'caf_payment_methods')
             );
             // caffeinated constructed
-            do_action('AHEE__EE_Brewing_Regular__construct__finished');
+            do_action('AHEE__EE_Brewing_Regular__construct__complete');
             //seeing how this is caf, which isn't put on WordPress.org, we can have affiliate links without a disclaimer
             add_filter('FHEE__ee_show_affiliate_links', '__return_false');
         }

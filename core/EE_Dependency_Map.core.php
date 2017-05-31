@@ -404,14 +404,18 @@ class EE_Dependency_Map
             'EventEspresso\core\services\commands\CommandBus'                                                             => array(
                 'EventEspresso\core\services\commands\CommandHandlerManager' => EE_Dependency_Map::load_from_cache,
             ),
+            'EventEspresso\services\commands\CommandHandler'                                                              => array(
+                'EE_Registry'         => EE_Dependency_Map::load_from_cache,
+                'CommandBusInterface' => EE_Dependency_Map::load_from_cache,
+            ),
             'EventEspresso\core\services\commands\CommandHandlerManager'                                                  => array(
                 'EventEspresso\core\services\loaders\Loader' => EE_Dependency_Map::load_from_cache,
             ),
-            'EventEspresso\core\services\commands\CompositeCommandHandler'                                                              => array(
+            'EventEspresso\core\services\commands\CompositeCommandHandler'                                                => array(
                 'EventEspresso\core\services\commands\CommandBus'     => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\commands\CommandFactory' => EE_Dependency_Map::load_from_cache,
             ),
-            'EventEspresso\core\services\commands\CommandFactory'                                                              => array(
+            'EventEspresso\core\services\commands\CommandFactory'                                                         => array(
                 'EventEspresso\core\services\loaders\Loader' => EE_Dependency_Map::load_from_cache,
             ),
             'EventEspresso\core\services\commands\middleware\CapChecker'                                                  => array(
@@ -489,6 +493,10 @@ class EE_Dependency_Map
             'EE_DMS_Core_4_9_0'                                                                                           => array(
                 'EventEspresso\core\services\database\TableAnalysis' => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\database\TableManager'  => EE_Dependency_Map::load_from_cache,
+            ),
+            'EventEspresso\core\services\assets\Registry'                                                                 => array(
+                'EE_Template_Config' => EE_Dependency_Map::load_from_cache,
+                'EE_Currency_Config' => EE_Dependency_Map::load_from_cache,
             ),
             'EventEspresso\core\domain\entities\shortcodes\EspressoCancelled'                                             => array(
                 'EventEspresso\core\services\cache\PostRelatedCacheManager' => EE_Dependency_Map::load_from_cache,
@@ -572,10 +580,20 @@ class EE_Dependency_Map
             'EE_Messages_Data_Handler_Collection'  => 'load_lib',
             'EE_Message_Template_Group_Collection' => 'load_lib',
             'EE_Messages_Generator'                => function () {
-                return EE_Registry::instance()->load_lib('Messages_Generator', array(), false, false);
+                return EE_Registry::instance()->load_lib(
+                    'Messages_Generator',
+                    array(),
+                    false,
+                    false
+                );
             },
             'EE_Messages_Template_Defaults'        => function ($arguments = array()) {
-                return EE_Registry::instance()->load_lib('Messages_Template_Defaults', $arguments, false, false);
+                return EE_Registry::instance()->load_lib(
+                    'Messages_Template_Defaults',
+                    $arguments,
+                    false,
+                    false
+                );
             },
             //load_model
             'EEM_Message_Template_Group'           => 'load_model',
@@ -586,6 +604,12 @@ class EE_Dependency_Map
                     return new EEH_Parse_Shortcodes();
                 }
                 return null;
+            },
+            'EE_Template_Config'                   => function () {
+                return EE_Config::instance()->template_settings;
+            },
+            'EE_Currency_Config'                   => function () {
+                return EE_Config::instance()->currency;
             },
             'EventEspresso\core\services\loaders\Loader' => function () use (&$loader) {
                 return $loader;
