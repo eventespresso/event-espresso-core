@@ -39,13 +39,13 @@ class espresso_events_Pricing_Hooks_Mock extends espresso_events_Pricing_Hooks {
 
 
 	public function update_dtts( $evt_obj, $data ) {
-		return $this->_update_dtts( $evt_obj, $data );
+		return $this->_update_datetimes( $evt_obj, $data );
 	}
 
 
 
 	public function update_tkts( $evtobj, $saved_dtts, $data ) {
-		return $this->_update_tkts( $evtobj, $saved_dtts, $data );
+		return $this->_update_tickets( $evtobj, $saved_dtts, $data );
 	}
 
 
