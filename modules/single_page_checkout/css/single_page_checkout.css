@@ -455,3 +455,20 @@
 	background:#ccc !important;
 	box-shadow:none !important;
 }
+
+.sub-item-row {
+	font-size:.9em;
+}
+
+
+
+/*** SMALL SCREENS ***/
+/*** INPUTS ***/
+@media screen and (max-width: 500px) {
+	#ee-single-page-checkout-dv .medium-lbl {
+		min-width: 100%;
+	}
+	#ee-single-page-checkout-dv .big-lbl {
+		min-width: 100%;
+	}
+}

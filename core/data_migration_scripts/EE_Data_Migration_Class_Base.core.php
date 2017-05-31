@@ -1,4 +1,7 @@
 <?php
+use EventEspresso\core\services\database\TableAnalysis;
+use EventEspresso\core\services\database\TableManager;
+
 if ( ! defined('EVENT_ESPRESSO_VERSION')) {
 	exit('No direct script access allowed');
 }
@@ -18,39 +21,60 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) {
 
 
 abstract class EE_Data_Migration_Class_Base{
+
 	/**
 	 * @var $records_to_migrate int count of all that have been migrated
 	 */
 	protected $_records_to_migrate = 0;
+
 	/**
 	 *
 	 * @var $records_migrated int
 	 */
 	protected $_records_migrated = 0;
 
-
 	/**
 	 * Whether this migration script is done or not. This COULD be deduced by
 	 * _records_to_migrate and _records_migrated, but that might nto be accurate
+	 *
 	 * @var string one of EE_Data_migration_Manager::status_* constants
 	 */
 	protected $_status = null;
+
 	/**
-	 *internationalized name of this class. Convention is to NOT restate that
+	 * internationalized name of this class. Convention is to NOT restate that
 	 * this class if a migration script or a migration script stage
+	 *
 	 * @var string (i18ned)
 	 */
 	protected $_pretty_name = null;
+
 	/**
-	 *
 	 * @var array
 	 */
 	protected $_errors = array();
+
+	/**
+	 * @var \EventEspresso\core\services\database\TableManager $table_manager
+	 */
+	protected $_table_manager;
+
+	/**
+	 * @var \EventEspresso\core\services\database\TableAnalysis $table_analysis
+	 */
+	protected $_table_analysis;
+
+
+
 	/**
 	 * Just initializes the status of the migration
-	 * @throws EE_Error
+	 *
+	 * @param TableManager  $table_manager
+	 * @param TableAnalysis $table_analysis
 	 */
-	public function __construct(){
+	public function __construct( TableManager $table_manager = null, TableAnalysis $table_analysis = null ){
+		$this->_table_manager = $table_manager;
+		$this->_table_analysis = $table_analysis;
 		$this->set_status(EE_Data_Migration_Manager::status_continue);
 	}
 
@@ -276,7 +300,43 @@ abstract class EE_Data_Migration_Class_Base{
 				$fields_to_include[$name] = $value;
 			}
 		}
-		return json_encode($fields_to_include);
+		return wp_json_encode($fields_to_include);
+	}
+	
+	/**
+	 * Gets the table manager (or throws an exception if it cannot be retrieved)
+	 * @return TableManager
+	 * @throws EE_Error
+	 */
+	protected function _get_table_manager() {
+		if( $this->_table_manager instanceof TableManager ) {
+			return $this->_table_manager;
+		} else {
+			throw new EE_Error( 
+				sprintf( 
+					__( 'Table manager on migration class %1$s is not set properly.', 'event_espresso'), 
+					get_class( $this ) 
+				) 	
+			);
+		}
+	}
+	
+	/**
+	 * Gets the injected table analyzer, or throws an exception
+	 * @return TableAnalysis
+	 * @throws EE_Error
+	 */
+	protected function _get_table_analysis() {
+		if( $this->_table_analysis instanceof TableAnalysis ) {
+			return $this->_table_analysis;
+		} else {
+			throw new EE_Error( 
+				sprintf( 
+					__( 'Table analysis class on migration class %1$s is not set properly.', 'event_espresso'), 
+					get_class( $this ) 
+				) 
+			);
+		}
 	}
 }
 // end of file: /core/EE_Data_Migration_Class_Base.core.php

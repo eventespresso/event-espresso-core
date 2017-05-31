@@ -39,73 +39,86 @@ class EE_Attendee_Shortcodes extends EE_Shortcodes {
 
 
 
-    /**
-     * EE_Attendee_Shortcodes constructor.
-     */
-    public function __construct() {
+	/**
+	 * EE_Attendee_Shortcodes constructor.
+	*/
+	public function __construct() {
 		parent::__construct();
 	}
 
 
 
 	protected function _init_props() {
-		$this->label = __('Attendee Shortcodes', 'event_espresso');
-		$this->description = __('All shortcodes specific to attendee related data', 'event_espresso');
+		$this->label = esc_html__( 'Attendee Shortcodes', 'event_espresso' );
+		$this->description = esc_html__( 'All shortcodes specific to attendee related data', 'event_espresso' );
 		$this->_shortcodes = array(
-			'[FNAME]' => __('First Name of an attendee.', 'event_espresso'),
-			'[LNAME]' => __('Last Name of an attendee.', 'event_espresso'),
-			'[ATTENDEE_EMAIL]' => __('Email address for the attendee.', 'event_espresso'),
-			'[EDIT_ATTENDEE_LINK]' => __('Edit Registration Link (typically you\'d only use this for messages going to event administrators)', 'event_espresso'),
-			'[REGISTRATION_CODE]' => __('Unique Registration Code for the registration', 'event_espresso'),
-			'[REGISTRATION_STATUS_ID]' => __('Parses to the registration status for the attendee', 'event_espresso'),
-			'[REGISTRATION_STATUS_LABEL]' => __('Parses to the status label for the registrant', 'event_espresso'),
-			'[FRONTEND_EDIT_REG_LINK]' => __('Generates a link for the given registration to edit this registration details on the frontend.', 'event_espresso'),
-			'[PHONE_NUMBER]' => __('The Phone Number for the Registration.', 'event_espresso'),
-			'[ADDRESS]' => __('The Address for the Registration', 'event_espresso'),
-			'[ADDRESS2]' => __('Whatever was in the address 2 field for the registration.', 'event_espresso'),
-			'[CITY]' => __('The city for the registration.', 'event_espresso'),
-			'[ZIP_PC]' => __('The ZIP (or Postal) Code for the Registration.', 'event_espresso'),
-			'[ADDRESS_STATE]' => __('The state/province for the registration.', 'event_espresso' ),
-			'[COUNTRY]' => __('The country for the registration.', 'event_espresso')
+			'[FNAME]' => esc_html__( 'First Name of an attendee.', 'event_espresso' ),
+			'[LNAME]' => esc_html__( 'Last Name of an attendee.', 'event_espresso' ),
+			'[ATTENDEE_EMAIL]' => esc_html__( 'Email address for the attendee.', 'event_espresso' ),
+			'[EDIT_ATTENDEE_LINK]' => esc_html__( 'Edit Registration Link (typically you\'d only use this for messages going to event administrators)', 'event_espresso' ),
+			'[REGISTRATION_ID]' => esc_html__( 'Unique Registration ID for the registration', 'event_espresso' ),
+			'[REGISTRATION_CODE]' => esc_html__( 'Unique Registration Code for the registration', 'event_espresso' ),
+			'[REGISTRATION_STATUS_ID]' => esc_html__( 'Parses to the registration status for the attendee', 'event_espresso' ),
+			'[REGISTRATION_STATUS_LABEL]' => esc_html__( 'Parses to the status label for the registrant', 'event_espresso' ),
+			'[REGISTRATION_TOTAL_AMOUNT_PAID]' => esc_html__( 'Parses to the total amount paid for this registration.', 'event_espresso' ),
+			'[FRONTEND_EDIT_REG_LINK]' => esc_html__( 'Generates a link for the given registration to edit this registration details on the frontend.', 'event_espresso' ),
+			'[PHONE_NUMBER]' => esc_html__( 'The Phone Number for the Registration.', 'event_espresso' ),
+			'[ADDRESS]' => esc_html__( 'The Address for the Registration', 'event_espresso' ),
+			'[ADDRESS2]' => esc_html__( 'Whatever was in the address 2 field for the registration.', 'event_espresso' ),
+			'[CITY]' => esc_html__( 'The city for the registration.', 'event_espresso' ),
+			'[ZIP_PC]' => esc_html__( 'The ZIP (or Postal) Code for the Registration.', 'event_espresso' ),
+			'[ADDRESS_STATE]' => esc_html__( 'The state/province for the registration.', 'event_espresso' ),
+			'[COUNTRY]' => esc_html__( 'The country for the registration.', 'event_espresso' )
 			);
 	}
 
 
 
-    /**
-     * handles shortcode parsing
-     *
-     * @access protected
-     * @param  string $shortcode the shortcode to be parsed.
-     * @return string
-     * @throws \EE_Error
-     */
-    protected function _parser( $shortcode ) {
+	/**
+	 * handles shortcode parsing
+	 *
+	 * @access protected
+	 * @param  string $shortcode the shortcode to be parsed.
+	 * @return string
+	 * @throws \EE_Error
+	 */
+	protected function _parser( $shortcode ) {
 
 
-		$this->_xtra = !empty($this->_extra_data ) && $this->_extra_data['data'] instanceof EE_Messages_Addressee ? $this->_extra_data['data'] : NULL;
+		$this->_xtra = ! empty( $this->_extra_data ) && $this->_extra_data['data'] instanceof EE_Messages_Addressee
+			? $this->_extra_data['data']
+			: null;
 
 		//incoming object should only be a registration object.
-		$registration = ! $this->_data instanceof EE_Registration ? NULL : $this->_data;
+		$registration = ! $this->_data instanceof EE_Registration
+			? null
+			: $this->_data;
 
 		if ( ! $registration instanceof EE_Registration ) {
 			//let's attempt to get the txn_id for the error message.
-			$txn_id = isset( $this->_xtra->txn ) && $this->_xtra->txn instanceof EE_Transaction ? $this->_xtra->txn->ID() : __('Unknown', 'event_espresso' );
-            $msg = __('There is no EE_Registration object in the data sent to the EE_Attendee Shortcode Parser for the messages system.',
-                    'event_espresso');
-            $dev_msg = sprintf(__('The transaction ID for this request is: %s', 'event_espresso'), $txn_id);
+			$txn_id = isset( $this->_xtra->txn ) && $this->_xtra->txn instanceof EE_Transaction
+				? $this->_xtra->txn->ID()
+				: esc_html__( 'Unknown', 'event_espresso' );
+			$msg = esc_html__( 'There is no EE_Registration object in the data sent to the EE_Attendee Shortcode Parser for the messages system.', 'event_espresso' );
+			$dev_msg = sprintf(
+				esc_html__( 'The transaction ID for this request is: %s', 'event_espresso' ),
+				$txn_id
+			);
 			throw new EE_Error( "{$msg}||{$msg} {$dev_msg}" );
 		}
 
 		//attendee obj for this registration
-		$attendee = isset( $this->_xtra->registrations[$registration->ID()]['att_obj'] ) ?  $this->_xtra->registrations[$registration->ID()]['att_obj'] : null ;
+		$attendee = isset( $this->_xtra->registrations[ $registration->ID() ]['att_obj'] )
+			?  $this->_xtra->registrations[ $registration->ID() ]['att_obj']
+			: null ;
 
 		if ( ! $attendee instanceof EE_Attendee ) {
-            $msg = __('There is no EE_Attendee object in the data sent to the EE_Attendee_Shortcode parser for the messages system.',
-                'event_espresso');
-            $dev_msg = sprintf(__('The registration ID for this request is: %s', 'event_espresso'),
-                $registration->ID());
-			throw new EE_Error("{$msg}||{$msg} {$dev_msg}");
+			$msg = esc_html__( 'There is no EE_Attendee object in the data sent to the EE_Attendee_Shortcode parser for the messages system.', 'event_espresso' );
+			$dev_msg = sprintf(
+				esc_html__( 'The registration ID for this request is: %s', 'event_espresso' ),
+				$registration->ID()
+			);
+			throw new EE_Error( "{$msg}||{$msg} {$dev_msg}" );
 		}
 
 		switch ( $shortcode ) {
@@ -128,6 +141,10 @@ class EE_Attendee_Shortcodes extends EE_Shortcodes {
 
 			case '[REGISTRATION_CODE]' :
 				return $registration->reg_code();
+				break;
+
+			case '[REGISTRATION_ID]' :
+				return $registration->ID();
 				break;
 
 			case '[FRONTEND_EDIT_REG_LINK]' :
@@ -170,6 +187,10 @@ class EE_Attendee_Shortcodes extends EE_Shortcodes {
 
 			case '[REGISTRATION_STATUS_LABEL]' :
 				return $registration->pretty_status();
+				break;
+
+			case '[REGISTRATION_TOTAL_AMOUNT_PAID]' :
+				return $registration->pretty_paid();
 				break;
 
 		}

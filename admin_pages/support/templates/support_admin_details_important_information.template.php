@@ -26,29 +26,11 @@
   ?>
   <a href="<?php echo $system_status_link; ?>" class="button-secondary right"><?php _e('System Information', 'event_espresso'); ?></a>
 	<div class="localhost-information">
-		<dl>
-			<dt>
-<?php _e('WordPress Version:', 'event_espresso'); ?>
-			</dt>
-			<dd><?php echo $wp_version; ?></dd>
-			<dt>
-<?php _e('PHP Version:', 'event_espresso'); ?>
-			</dt>
-			<dd><?php echo phpversion(); ?></dd>
-			<dt>
-<?php _e('MySQL Version:', 'event_espresso'); ?>
-			</dt>
-			<dd><?php echo $wpdb->db_version(); ?></dd>
-			<dt>Event Espresso Version:</dt>
-			<dd><?php echo EVENT_ESPRESSO_VERSION ?></dd>
-			<dt>
-<?php _e('WordPress Address (URL):', 'event_espresso'); ?>
-			</dt>
-			<dd><?php echo site_url(); ?></dd>
-			<dt>
-<?php _e('Site address (URL):', 'event_espresso'); ?>
-			</dt>
-			<dd><?php echo home_url(); ?></dd>
-		</dl>
+	<p><strong><?php esc_html_e('WordPress Version:', 'event_espresso'); ?></strong>&nbsp;<?php echo $wp_version; ?></p>
+	<p><strong><?php esc_html_e('PHP Version:', 'event_espresso'); ?></strong>&nbsp;<?php echo phpversion(); ?></p>
+	<p><strong><?php esc_html_e('MySQL Version:', 'event_espresso'); ?></strong>&nbsp;<?php echo $wpdb->db_version(); ?></p>
+	<p><strong><?php esc_html_e('Event Espresso Version:', 'event_espresso'); ?></strong>&nbsp;<?php echo EVENT_ESPRESSO_VERSION ?></p>
+	<p><strong><?php esc_html_e('WordPress Address (URL):', 'event_espresso'); ?></strong>&nbsp;<?php echo site_url(); ?></p>
+	<p><strong><?php esc_html_e('Site address (URL):', 'event_espresso'); ?></strong>&nbsp;<?php echo home_url(); ?>
 	</div>
 </div>

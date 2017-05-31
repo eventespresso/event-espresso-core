@@ -9,7 +9,7 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
  * EE_PMT_Mijireh_Test
  * Uses a filter to intercept HTTP requests that WOULD be sent to mijireh's server,
  * and instead handle them locally. If you want to run the live tests, run the group "live",
- * which will also run a test method on this testcase that will check some of our simulated responeses
+ * which will also run a test method on this testcase that will check some of our simulated responses
  * match mijireh's authentic ones
  * @package			Event Espresso
  * @subpackage
@@ -29,6 +29,7 @@ class EE_PMT_Mijireh_Test extends EE_UnitTestCase{
 	const cancel_url = 'http://mysite.com/cancel';
 	const mijireh_checkout_url_start = 'https://secure.mijireh.com/checkout/';
 	const access_key = '789a0b32d3d20d20514791a4';
+
 	public function __construct($name = NULL, array $data = array(), $dataName = '') {
 		parent::__construct($name, $data, $dataName);
 		$this->_test_settings = array(
@@ -40,7 +41,9 @@ class EE_PMT_Mijireh_Test extends EE_UnitTestCase{
 	public function setUp(){
 		parent::setUp();
 		//make sure caf payment methods are registered
-		new EE_Brewing_Regular();
+		new EE_Brewing_Regular(
+			EE_Registry::instance()->create( 'TableAnalysis', array(), true )
+		);
 		EE_Payment_Method_Manager::reset();
 	}
 
@@ -234,7 +237,7 @@ class EE_PMT_Mijireh_Test extends EE_UnitTestCase{
 				  'x-runtime' => '0.008036',
 				  'x-rack-cache' => 'invalidate, pass',
 				),
-				'body' => json_encode( $missing_keys ),
+				'body' => wp_json_encode( $missing_keys ),
 				'response' => array (
 				  'code' => 400,
 				  'message' => 'Bad Request',
@@ -273,7 +276,7 @@ class EE_PMT_Mijireh_Test extends EE_UnitTestCase{
 			'meta_data' => array(),
 		);
 		$response_body = array_merge( $response_body, $req_body );
-		$response_body_encoded = json_encode( $response_body );
+		$response_body_encoded = wp_json_encode( $response_body );
 		return array (
 			'headers' => array (
 			  'server' => 'nginx/1.6.2',
@@ -316,7 +319,10 @@ class EE_PMT_Mijireh_Test extends EE_UnitTestCase{
 		$rargs =  json_decode( $p->details() );
 		$mijireh_items = $rargs->items;
 		$first_mijireh_item = array_shift( $mijireh_items );
-		$this->assertEquals( $t->primary_registration()->ticket()->name(), $first_mijireh_item->name );
+		$this->assertEquals( 
+			$t->primary_registration()->ticket()->name() . ' for ' . $t->primary_registration()->event_name(), 
+			$first_mijireh_item->name 
+		);
 		$this->assertEquals( $t->primary_registration()->ticket()->price(), $first_mijireh_item->price );
 		$this->assertEquals( 1, $first_mijireh_item->quantity );
 		$this->assertEquals( $t->tax_total(), $rargs->tax );

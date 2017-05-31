@@ -84,11 +84,13 @@ class EEM_Line_Item extends EEM_Base {
 	/**
 	 * When a line item is cancelled, a sub-line-item of type 'cancellation'
 	 * should be created, indicating the quantity that were cancelled
-	 * (because a line item could have a quantity of 4, and its cancellation item
-	 * could be for 3, indicating that there is still 1 item purchased).
+	 * (because a line item could have a quantity of 1, and its cancellation item
+	 * could be for 3, indicating that originally 4 were purchased, but 3 have been
+	 * cancelled, and only one remains).
 	 * When items are refunded, a cancellation line item should be made, which points
 	 * to teh payment model object which actually refunded the payment.
-	 * Cancellations should NOT have any children line items.
+	 * Cancellations should NOT have any children line items; the should NOT affect
+	 * any calculations, and are only meant as a record that cancellations have occurred.
 	 */
 	const type_cancellation = 'cancellation';
 
@@ -137,7 +139,7 @@ class EEM_Line_Item extends EEM_Base {
 				),
 				'OBJ_ID' 					=> new EE_Foreign_Key_Int_Field( 'OBJ_ID', __( 'ID of Item purchased.', 'event_espresso' ), TRUE, NULL, $line_items_can_be_for ),
 				'OBJ_type'				=>new EE_Any_Foreign_Model_Name_Field( 'OBJ_type', __( "Model Name this Line Item is for", "event_espresso" ), TRUE, NULL, $line_items_can_be_for ),
-				'LIN_timestamp' => new EE_Datetime_Field('LIN_timestamp', __('When the line item was created','event_espresso'), false, time(), $timezone ),
+				'LIN_timestamp' => new EE_Datetime_Field('LIN_timestamp', __('When the line item was created','event_espresso'), false, EE_Datetime_Field::now, $timezone ),
 			)
 		);
 		$this->_model_relations = array(
@@ -173,7 +175,7 @@ class EEM_Line_Item extends EEM_Base {
 	 * Gets all line items unrelated to tickets that are normal line items
 	 * (eg shipping, promotions, and miscellaneous other stuff should probably fit in this category)
 	 * @param EE_Transaction|int $transaction
-	 * @return \EE_Base_Class[]
+	 * @return EE_Line_Item[]
 	 */
 	public function get_all_non_ticket_line_items_for_transaction( $transaction ) {
 		$transaction = EEM_Transaction::instance()->ensure_is_ID( $transaction );
@@ -204,7 +206,7 @@ class EEM_Line_Item extends EEM_Base {
 				LEFT JOIN ' . EEM_Transaction::instance()->table(). ' t ON li.TXN_ID = t.TXN_ID
 				WHERE t.TXN_ID IS NULL AND li.LIN_timestamp < %s',
 				// use GMT time because that's what TXN_timestamps are in
-				gmdate(  'Y-m-d H:i:s', time() - $time_to_leave_alone )
+				date(  'Y-m-d H:i:s', time() - $time_to_leave_alone )
 				);
 		return $wpdb->query( $query );
 	}
@@ -248,6 +250,42 @@ class EEM_Line_Item extends EEM_Base {
 			$query_params['TXN_ID'] = $TXN_ID;
 		}
 		return $this->get_all( array( $query_params ));
+	}
+
+
+
+	/**
+	 * get_all_ticket_line_items_for_transaction
+	 *
+	 * @param EE_Transaction $transaction
+	 * @return EE_Line_Item[]
+	 */
+	public function get_all_ticket_line_items_for_transaction( EE_Transaction $transaction ) {
+		return $this->get_all( array(
+		   array(
+			   'TXN_ID'   => $transaction->ID(),
+			   'OBJ_type' => 'Ticket',
+		   )
+	   ) );
+	}
+
+
+
+	/**
+	 * get_ticket_line_item_for_transaction
+	 *
+	 * @param int $TXN_ID
+	 * @param int $TKT_ID
+	 * @return \EE_Line_Item
+	 */
+	public function get_ticket_line_item_for_transaction( $TXN_ID, $TKT_ID ) {
+		return $this->get_one( array(
+		   array(
+			   'TXN_ID'   => EEM_Transaction::instance()->ensure_is_ID( $TXN_ID ),
+			   'OBJ_ID'   => $TKT_ID,
+			   'OBJ_type' => 'Ticket',
+		   )
+	   ) );
 	}
 
 
@@ -300,7 +338,7 @@ class EEM_Line_Item extends EEM_Base {
 	 * which would happen if some of the registrations had a price modifier while others didn't.
 	 * In order to support that, we'd probably need a LIN_ID on registrations or something.
 	 * @param EE_Registration $registration
-	 * @return EEM_Line_ITem
+	 * @return EE_Line_ITem
 	 */
 	public function get_line_item_for_registration( EE_Registration $registration ) {
 		return $this->get_one( $this->line_item_for_registration_query_params( $registration ));
@@ -321,6 +359,65 @@ class EEM_Line_Item extends EEM_Base {
 			)
 		) );
 	}
+
+
+
+    /**
+     * @return EE_Base_Class[]|EE_Line_Item[]
+     * @throws \EE_Error
+     */
+    public function get_total_line_items_with_no_transaction()
+    {
+        return $this->get_total_line_items_for_carts();
+    }
+
+
+
+    /**
+     * @return EE_Base_Class[]|EE_Line_Item[]
+     * @throws \EE_Error
+     */
+    public function get_total_line_items_for_active_carts()
+    {
+        return $this->get_total_line_items_for_carts(false);
+    }
+
+
+
+    /**
+     * @return EE_Base_Class[]|EE_Line_Item[]
+     * @throws \EE_Error
+     */
+    public function get_total_line_items_for_expired_carts()
+    {
+        return $this->get_total_line_items_for_carts(true);
+    }
+
+
+
+    /**
+     * Returns an array of grand total line items where the TXN_ID is 0.
+     * If $expired is set to true, then only line items for expired sessions will be returned.
+     * If $expired is set to false, then only line items for active sessions will be returned.
+     *
+     * @param bool|null $expired
+     * @return EE_Base_Class[]|EE_Line_Item[]
+     * @throws \EE_Error
+     */
+    private function get_total_line_items_for_carts($expired = null)
+    {
+        $where_params = array(
+            'TXN_ID'        => 0,
+            'LIN_type'      => 'total',
+        );
+        if ($expired !== null) {
+            $where_params['LIN_timestamp'] = array(
+                $expired ? '<=' : '>',
+                time() - EE_Registry::instance()->SSN->lifespan(),
+            );
+        }
+        return $this->get_all(array($where_params));
+    }
 
 
 

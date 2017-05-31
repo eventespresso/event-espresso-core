@@ -189,7 +189,8 @@ abstract class EE_Admin_Hooks extends EE_Base {
 
 	/**
 	 * This holds the EE_Admin_Page object from the calling admin page that this object hooks into.
-	 * @var EE_Admin_Page object
+	 *
+	 * @var EE_Admin_Page|EE_Admin_Page_CPT
 	 */
 	protected $_adminpage_obj;
 

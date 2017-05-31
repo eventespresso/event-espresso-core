@@ -23,11 +23,6 @@
 	background: transparent url(images/sprocket_s_light.png) no-repeat left;
 }
 
-img.ee_media_image{
-	max-width:140px;
-	max-height:95px;
-}
-
 .form-table {
 	width: 100%;
 }

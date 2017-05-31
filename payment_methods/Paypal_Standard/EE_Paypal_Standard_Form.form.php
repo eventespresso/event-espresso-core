@@ -49,19 +49,19 @@ class EE_Paypal_Standard_Form extends EE_Payment_Method_Form {
 						EE_PMT_Paypal_Standard::shipping_info_none     => __( "Do not prompt for an address", 'event_espresso' ),
 						EE_PMT_Paypal_Standard::shipping_info_optional => __( "Prompt for an address, but do not require it", 'event_espresso' ),
 						EE_PMT_Paypal_Standard::shipping_info_required => __( "Prompt for an address, and require it", 'event_espresso' )
-					) ),
-				),
-				'before_form_content_template' => $payment_method_type->file_folder() . DS . 'templates' . DS . 'paypal_standard_settings_before_form.template.php',
+					) )
+				)
 			)
 		);
 	}
 
 
 
-	/**
-	 * @param array $req_data
-	 */
-	protected function _normalize( $req_data ) {
+    /**
+     * @param array $req_data
+     * @throws EE_Error
+     */
+    public function _normalize( $req_data ) {
 		parent::_normalize( $req_data );
 		$paypal_calculates_shipping = $this->get_input_value( 'paypal_shipping' );
 		$paypal_calculates_taxes = $this->get_input_value( 'paypal_taxes' );

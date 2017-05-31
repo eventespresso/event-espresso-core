@@ -279,7 +279,7 @@
 					<div class="txn-admin-apply-payment-date-dv admin-modal-dialog-row">
 						<div class="validation-notice-dv"><?php _e( 'The following is  a required field', 'event_espresso' );?></div>
 						<label for="txn-admin-payment-date-inp" class=""><?php _e( 'Payment Date', 'event_espresso' );?></label>
-						<input name="[date]txn_admin_payment" id="txn-admin-payment-date-inp" class="txn-admin-apply-payment-inp required" type="text" value="<?php echo date( 'Y-m-d g:i a', current_time( 'timestamp' )); ?>"/>
+						<input name="txn_admin_payment[date]" id="txn-admin-payment-date-inp" class="txn-admin-apply-payment-inp required" type="text" value="<?php echo date( 'Y-m-d g:i a', current_time( 'timestamp' )); ?>"/>
 						<p class="description"><?php _e( 'The date the payment was actually made on', 'event_espresso' );?></p>
 					</div>
 
@@ -496,7 +496,7 @@
 						<?php foreach ( $delivered_messages[ $TXN_ID ] as $timestamp => $delivered_message ) :
 							?>
 							<tr>
-								<td class="jst-left"><?php echo gmdate( get_option('date_format') . ' ' . get_option('time_format'), ( $timestamp + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) ) );?></td>
+								<td class="jst-left"><?php echo date( get_option('date_format') . ' ' . get_option('time_format'), ( $timestamp + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) ) );?></td>
 								<td class="jst-left"><?php echo isset( $delivered_message['message_type'] ) ? $delivered_message['message_type'] : '';?></td>
 								<td class="jst-left"><?php echo isset( $delivered_message['pay_status'] ) ? $delivered_message['pay_status'] : '';?></td>
 								<td class="jst-left"><?php echo isset( $delivered_message['txn_status'] ) ? $delivered_message['txn_status'] : '';?></td>

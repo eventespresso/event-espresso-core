@@ -158,19 +158,24 @@ class EE_Register_Model_Extensions_Test extends EE_UnitTestCase{
 		EE_Register_Model_Extensions::deregister( $this->_model_group );
 	}
 
+
+
 	/**
 	 * OK's the creation of the esp_new_addon table, because this hooks in AFTER EE_UNitTestCase's callback on this same hook
-	 * @global type $wpdb
-	 * @param array $whitelisted_tables
+	 *
+	 * @param bool   $short_circuit
+	 * @param string $table_name
+	 * @param string $create_sql
 	 * @return array
 	 */
-	public function dont_short_circuit_mock_table( $short_circuit = FALSE, $table_name = '', $create_sql = '' ){
-		if( $table_name == 'esp_mock_attendee_meta' && ! EEH_Activation::table_exists( $table_name) ){
-//			echo "\r\n\r\nDONT shortcircuit $sql";
+	public function dont_short_circuit_mock_table( $short_circuit = false, $table_name = '', $create_sql = '' ){
+		$table_analysis = EE_Registry::instance()->create( 'TableAnalysis', array(), true );
+		if( $table_name == 'esp_mock_attendee_meta' && ! $table_analysis->tableExists( $table_name) ){
+//			echo "\r\n\r\nDONT short circuit $sql";
 			//it's not altering. it's ok to allow this
-			return FALSE;
+			return false;
 		}else{
-//			echo "3\r\n\r\nshort circuit:$sql";
+//			echo "3\r\n\r\n short circuit:$sql";
 			return $short_circuit;
 		}
 	}

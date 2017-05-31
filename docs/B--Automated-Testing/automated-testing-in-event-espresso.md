@@ -16,6 +16,8 @@ Navigate to where you have the `wordpress-develop` directory setup in your syste
 ~:$ cd src/wp-content && git clone git@github.com:eventespresso/event-espresso-core.git event-espresso-core && cd event-espresso-core && git checkout -b MASTER origin/MASTER
 ```
 
+> NOTE: alternatively, you can define the environment variable `WP_TESTS_DIR` that points to the `/tests/phpunit` directory in the `wordpress-develop` install which should then allow you to run EE unit tests wherever you have EE installed on that same server.
+
 After this, Event Espresso should be installed correctly.
 
 ## 3. Running the Tests

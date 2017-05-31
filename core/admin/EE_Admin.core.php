@@ -63,11 +63,6 @@ final class EE_Admin {
 		// load EE_Request_Handler early
 		add_action( 'AHEE__EE_System__core_loaded_and_ready', array( $this, 'get_request' ));
 		add_action( 'AHEE__EE_System__initialize_last', array( $this, 'init' ));
-		// post shortcode tracking
-		add_action(
-			'AHEE__EE_System__initialize_last',
-			array( 'EventEspresso\core\admin\PostShortcodeTracking', 'set_hooks_admin' )
-		);
 		add_action( 'AHEE__EE_Admin_Page__route_admin_request', array( $this, 'route_admin_request' ), 100, 2 );
 		add_action( 'wp_loaded', array( $this, 'wp_loaded' ), 100 );
 		add_action( 'admin_init', array( $this, 'admin_init' ), 100 );
@@ -477,13 +472,12 @@ final class EE_Admin {
 
 
 		/**
-		 * This code is for removing any set EE critical pages from the "Static Page" option dropdowns on the
-		 * 'options-reading.php' core WordPress admin settings page.  This is for user-proofing.
+		 * This code excludes EE critical pages anywhere `wp_dropdown_pages` is used to create a dropdown for selecting
+         * critical pages.  The only place critical pages need included in a generated dropdown is on the "Critical Pages"
+         * tab in the EE General Settings Admin page.
+         * This is for user-proofing.
 		 */
-		global $pagenow;
-		if ( $pagenow === 'options-reading.php' ) {
-			add_filter( 'wp_dropdown_pages', array( $this, 'modify_dropdown_pages' ) );
-		}
+        add_filter( 'wp_dropdown_pages', array( $this, 'modify_dropdown_pages' ) );
 
 	}
 
@@ -529,11 +523,6 @@ final class EE_Admin {
 		wp_enqueue_script('ee-inject-wp', EE_ADMIN_URL . 'assets/ee-cpt-wp-injects.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE);
 		// register cookie script for future dependencies
 		wp_register_script('jquery-cookie', EE_THIRD_PARTY_URL . 'joyride/jquery.cookie.js', array('jquery'), '2.1', TRUE );
-		// jquery_validate loading is turned OFF by default, but prior to the admin_enqueue_scripts hook, can be turned back on again via:  add_filter( 'FHEE_load_jquery_validate', '__return_true' );
-		if ( apply_filters( 'FHEE_load_jquery_validate', FALSE ) ) {
-			// register jQuery Validate
-			wp_register_script('jquery-validate', EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.min.js', array('jquery'), '1.15.0', TRUE);
-		}
 		//joyride is turned OFF by default, but prior to the admin_enqueue_scripts hook, can be turned back on again vai: add_filter('FHEE_load_joyride', '__return_true' );
 		if ( apply_filters( 'FHEE_load_joyride', FALSE ) ) {
 			//joyride style
@@ -545,37 +534,6 @@ final class EE_Admin {
 			// wanna go for a joyride?
 			wp_enqueue_style('ee-joyride-css');
 			wp_enqueue_script('jquery-joyride');
-		}
-		//qtip is turned OFF by default, but prior to the admin_enqueue_scripts hook, can be turned back on again via: add_filter('FHEE_load_qtips', '__return_true' );
-		if ( apply_filters( 'FHEE_load_qtip', FALSE ) ) {
-			EEH_Qtip_Loader::instance()->register_and_enqueue();
-		}
-		//accounting.js library
-		// @link http://josscrowcroft.github.io/accounting.js/
-		if ( apply_filters( 'FHEE_load_accounting_js', FALSE ) ) {
-			wp_register_script( 'ee-accounting', EE_GLOBAL_ASSETS_URL . 'scripts/ee-accounting-config.js', array('ee-accounting-core'), EVENT_ESPRESSO_VERSION, TRUE );
-			wp_register_script( 'ee-accounting-core', EE_THIRD_PARTY_URL . 'accounting/accounting.js', array('underscore'), '0.3.2', TRUE );
-			wp_enqueue_script( 'ee-accounting' );
-			// array of settings to get converted to JSON array via wp_localize_script
-			$currency_config = array(
-				'currency' => array(
-					'symbol' => EE_Registry::instance()->CFG->currency->sign,
-					'format' => array(
-						'pos' => EE_Registry::instance()->CFG->currency->sign_b4 ? '%s%v' : '%v%s',
-						'neg' => EE_Registry::instance()->CFG->currency->sign_b4 ? '- %s%v' : '- %v%s',
-						'zero' => EE_Registry::instance()->CFG->currency->sign_b4 ? '%s--' : '--%s'
-						 ),
-					'decimal' => EE_Registry::instance()->CFG->currency->dec_mrk,
-					'thousand' => EE_Registry::instance()->CFG->currency->thsnds,
-					'precision' => EE_Registry::instance()->CFG->currency->dec_plc
-					),
-				'number' => array(
-					'precision' => EE_Registry::instance()->CFG->currency->dec_plc,
-					'thousand' => EE_Registry::instance()->CFG->currency->thsnds,
-					'decimal' => EE_Registry::instance()->CFG->currency->dec_mrk
-					)
-				);
-			wp_localize_script('ee-accounting', 'EE_ACCOUNTING_CFG', $currency_config);
 		}
 	}
 
@@ -623,11 +581,13 @@ final class EE_Admin {
 
 
 
-	/**
-	 * @param $elements
-	 * @return array
-	 */
-	public function dashboard_glance_items( $elements ) {
+    /**
+     * @param array $elements
+     * @return array
+     * @throws \EE_Error
+     */
+	public function dashboard_glance_items($elements) {
+        $elements = is_array($elements) ? $elements : array($elements);
 		$events = EEM_Event::instance()->count();
 		$items['events']['url'] = EE_Admin_Page::add_query_args_and_nonce( array('page' => 'espresso_events'), admin_url('admin.php') );
 		$items['events']['text'] = sprintf( _n( '%s Event', '%s Events', $events ), number_format_i18n( $events ) );
@@ -643,7 +603,7 @@ final class EE_Admin {
 		$items['registrations']['text'] = sprintf( _n( '%s Registration', '%s Registrations', $registrations ), number_format_i18n($registrations) );
 		$items['registrations']['title'] = __('Click to view all registrations', 'event_espresso');
 
-		$items = apply_filters( 'FHEE__EE_Admin__dashboard_glance_items__items', $items );
+		$items = (array) apply_filters( 'FHEE__EE_Admin__dashboard_glance_items__items', $items );
 
 		foreach ( $items as $type => $item_properties ) {
 			$elements[] = sprintf( '<a class="ee-dashboard-link-' . $type . '" href="%s" title="%s">%s</a>', $item_properties['url'], $item_properties['title'], $item_properties['text'] );
@@ -732,11 +692,7 @@ final class EE_Admin {
 	 *  @return 	string
 	 */
 	public function espresso_admin_footer() {
-		return sprintf(
-			__( 'Event Registration and Ticketing Powered by %sEvent Registration Powered by Event Espresso%s', 'event_espresso' ),
-			'<a href="https://eventespresso.com/" title="',
-			'">' . EVENT_ESPRESSO_POWERED_BY . '</a>'
-		);
+		return \EEH_Template::powered_by_event_espresso( 'aln-cntr', '', array( 'utm_content' => 'admin_footer' ));
 	}
 
 
@@ -776,13 +732,9 @@ final class EE_Admin {
 	public static function parse_post_content_on_save( $post_ID, $post ) {
 		EE_Error::doing_it_wrong(
 			__METHOD__,
-			__(
-				'Usage is deprecated. Use EventEspresso\core\admin\PostShortcodeTracking::parse_post_content_on_save() instead.',
-				'event_espresso'
-			),
+			__('Usage is deprecated', 'event_espresso'),
 			'4.8.41'
 		);
-		EventEspresso\core\admin\PostShortcodeTracking::parse_post_content_on_save( $post_ID, $post );
 	}
 
 
@@ -798,13 +750,9 @@ final class EE_Admin {
 	public function reset_page_for_posts_on_change( $option, $old_value, $value ) {
 		EE_Error::doing_it_wrong(
 			__METHOD__,
-			__(
-				'Usage is deprecated. Use EventEspresso\core\admin\PostShortcodeTracking::parse_post_content_on_save() instead.',
-				'event_espresso'
-			),
+			__('Usage is deprecated', 'event_espresso'),
 			'4.8.41'
 		);
-		EventEspresso\core\admin\PostShortcodeTracking::reset_page_for_posts_on_change( $option, $old_value, $value );
 	}
 
 }

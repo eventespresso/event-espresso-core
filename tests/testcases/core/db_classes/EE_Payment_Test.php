@@ -49,7 +49,7 @@ class EE_Payment_Test extends EE_UnitTestCase{
 	 */
 	function test_set_details(){
 		$p = $this->new_model_obj_with_dependencies( 'Payment' );
-		$cookie = new WP_HTTP_Cookie( array(
+		$cookie = new WP_Http_Cookie( array(
 					'name' => 'something',
 					'value' => 'somethingelse'
 				));
@@ -71,8 +71,8 @@ class EE_Payment_Test extends EE_UnitTestCase{
 		$details_to_set['body'] = 'hello';
 		$this->assertEquals( $details_to_set, $p->details() );
 	}
-	
-	
+
+
 	/**
 	 * @group 9245
 	 */
@@ -86,13 +86,13 @@ class EE_Payment_Test extends EE_UnitTestCase{
 			$html_form
 		);
 		foreach( $redirect_args as $name => $value ) {
-			$this->assertContains( 
+			$this->assertContains(
 				'<input type="hidden" name="' . $name . '" value="' . esc_attr( $value ) . '"/>',
-				$html_form 
+				$html_form
 			);
 		}
 	}
-	
+
 	/**
 	 * @group 9245
 	 */
@@ -100,19 +100,19 @@ class EE_Payment_Test extends EE_UnitTestCase{
 		$redirect_url = 'http://somesite.com';
 		$redirect_args = array( 'arg1' => 'a', 'arg2' => 'b' );
 		$redirect_url_combined = $redirect_url .'?' . http_build_query( $redirect_args );
-		$p = $this->new_model_obj_with_dependencies( 'Payment', 
-			array( 
-				'PAY_redirect_url' => $redirect_url_combined, 
+		$p = $this->new_model_obj_with_dependencies( 'Payment',
+			array(
+				'PAY_redirect_url' => $redirect_url_combined,
 				'PAY_redirect_args' => false //we want it to be a GET request, so leave this blank
-			) 
+			)
 		);
 		$html_form = $p->redirect_form();
-		$this->assertContains( 
-			'<form method="GET" name="gateway_form" action="' . $redirect_url . '">', 
+		$this->assertContains(
+			'<form method="GET" name="gateway_form" action="' . $redirect_url . '">',
 			$html_form );
 		foreach( $redirect_args as $name => $value ) {
-			$this->assertContains( 
-				'<input type="hidden" name="' . $name . '" value="' . esc_attr( $value ) . '"/>', 
+			$this->assertContains(
+				'<input type="hidden" name="' . $name . '" value="' . esc_attr( $value ) . '"/>',
 				$html_form);
 		}
 	}

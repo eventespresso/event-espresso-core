@@ -190,6 +190,24 @@ class EEH_Array_Test extends EE_UnitTestCase {
 		next( $fruits );
 		$this->assertEquals( 4, key( $fruits ) );
 	}
+	
+	/**
+	 * @group 9784
+	 */
+	public function test_convert_array_values_to_keys() {
+		$arr = array( 'top', 'middle', 'bottom' );
+		$val = 'value';
+		$this->assertEquals(
+			array( 
+				'top' => array(
+					'middle' => array(
+						'bottom' => 'value'
+					)
+				)
+			),
+			EEH_Array::convert_array_values_to_keys( $arr, $val) 
+		);
+	}
 
 }
 

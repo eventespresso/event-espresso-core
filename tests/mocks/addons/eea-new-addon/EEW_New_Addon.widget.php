@@ -1,19 +1,5 @@
 <?php if ( ! defined( 'EVENT_ESPRESSO_VERSION' )) { exit(); }
-/* ------------------------------------------------------------------------
- *
- * Event Espresso
- *
- * Event Registration and Management Plugin for WordPress
- *
- * @ package			Event Espresso
- * @ author				Event Espresso
- * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link					http://www.eventespresso.com
- * @ version		 	4.3
- *
- * ------------------------------------------------------------------------
- *
+/*
  * EEW_New_Addon
  * Displays a List of New_Addon in the Sidebar
  *

@@ -1,3 +1,20 @@
+#espresso-default-admin {
+    padding-top: 10px;
+    min-width: 763px;
+}
+#espresso-default-admin .postbox-container {
+    width: 100%;
+}
+#espresso-default-admin #post-body.columns-2 {
+    margin-right: 300px;
+}
+
+@media only screen and (max-width: 850px) {
+    #espresso-default-admin #post-body.columns-2 {
+        margin: 0;
+    }
+}
+
 .espresso-admin .add-new-h2,
 .espresso-admin .add-new-h2:active { margin-left:20px; top:0; }
 
@@ -69,8 +86,17 @@
 }
 
 .ee-info-box {
-	padding    : 2em 1.5em; margin : 2em 0 1em;
-	background : #F0F8FB; border : 1px solid lightblue; border-radius : 3px;
+	background: #FFFFFF;
+	border: 1px solid lightblue;
+	margin: 0 0 1em;
+	padding: 1em 2em;
+}
+.ee-info-box h4 {
+	color: #0073AA;
+	margin: .5em 0 .25em;
+}
+.ee-info-box p {
+	margin: 0 0 1em;
 }
 
 .admin-state,
@@ -137,10 +163,6 @@ table .espresso-radio-btn-options-ul .medium-lbl,
 table .espresso-radio-btn-options-ul .big-lbl,
 .inside table .espresso-radio-btn-options-ul .big-lbl {
 	display : inline-block; width : 99%; min-width : 486px;
-}
-
-.ee_media_url {
-	width: 90% !important;
 }
 
 #admin-page-header { clear : both; padding : .25em 0 0; }
@@ -295,8 +317,6 @@ table .espresso-radio-btn-options-ul .big-lbl,
 .edited-input { border : 1px solid #D54E21 !important; }
 .reminder-spn { display : inline-block; color : #D54E21; line-height : 1em; }
 
-.hide-if-no-js { display : none; }
-
 /**override .hide-if-no-js for feature image boxes**/
 #postimagediv .hide-if-no-js {
 	display : inherit;
@@ -373,6 +393,35 @@ label.error { display : block; color : #FE2A00 !important; }
 	margin-left : 2em; margin-right : 2em;
 }
 
+.espresso-admin .button .dashicons::before {
+	position: relative;
+	font-size: 20px;
+	top:0;
+	vertical-align: middle;
+}
+
+.espresso-admin .button .dashicons-email-alt::before {
+	top:1px;
+}
+
+.ee-composite-dashicon {
+	position: relative;
+}
+.ee-composite-dashicon span {
+	position: relative;
+	z-index: 10;
+}
+.ee-composite-dashicon .ee-icon + .ee-icon,
+.ee-composite-dashicon .ee-icon + .dashicons,
+.ee-composite-dashicon .dashicons + .ee-icon,
+.ee-composite-dashicon .dashicons + .dashicons {
+	margin-left:-17px !important;
+}
+.ee-composite-dashicon span:nth-child(even) {
+	color:#222;
+	text-shadow: -1px -1px 1px #fff;
+	z-index: 20;
+}
 
 .help-tab-content img {
 	border : 2px solid #E7E7E7;
@@ -409,6 +458,16 @@ label.error { display : block; color : #FE2A00 !important; }
 
 .ee-list-table-legend-container h4 {
 	margin-bottom : 5px;
+}
+
+.list-table-bottom-buttons a.button-secondary, .list-table-bottom-buttons button.button-secondary {
+	display: inline-block;
+	margin: inherit;
+}
+
+.ee-list-table-legend-container h4.status-legend-title {
+	margin-top: 5px;
+	font-size: 1.4em;
 }
 
 .qtip-content .ee-list-table-legend {
@@ -963,4 +1022,106 @@ input.ee-register-button {
 .admin-report-chart-dv {
 	background: #fff;
 	padding: 10px;
+}
+
+/******************* RESPONSIVE TABLES ****************** */
+.ee-responsive-table {
+	width: 100%;
+	border-collapse: collapse;
+	margin: 1em 0 2em;
+}
+
+/* Zebra striping */
+.ee-responsive-table tr:nth-of-type(even) {
+	background: #f9f9f9;
+}
+
+.ee-responsive-table th {
+	background: #ddd;
+	color: #444;
+	font-weight: bold;
+	text-align: center;
+}
+
+.ee-responsive-table th,
+.ee-responsive-table td {
+	padding: 6px;
+	border: 1px solid #eee;
+}
+
+.ee-responsive-table td {
+	color: #777;
+	text-align: left;
+}
+
+@media only screen and (max-width: 760px),
+(min-device-width: 768px) and (max-device-width: 1024px) {
+
+	/* Force table to not be like tables anymore */
+	.ee-responsive-table,
+	.ee-responsive-table thead,
+	.ee-responsive-table tbody,
+	.ee-responsive-table th,
+	.ee-responsive-table td,
+	.ee-responsive-table tr {
+		display: block;
+	}
+
+	/* Hide table headers (but not display: none;, for accessibility) */
+	.ee-responsive-table thead tr {
+		position: absolute;
+		top: -9999px;
+		left: -9999px;
+	}
+
+	.ee-responsive-table tr {
+		border: 1px solid #ccc;
+	}
+
+	.ee-responsive-table td {
+		/* Behave  like a "row" */
+		border: none;
+		border-bottom: 1px solid #eee;
+		position: relative;
+		padding-left: 50%;
+	}
+
+	.ee-responsive-table td:before {
+		/* Now like a table header */
+		position: absolute;
+		/* Top/left values mimic padding */
+		top: 6px;
+		left: 6px;
+		width: 45%;
+		padding-right: 10px;
+		white-space: nowrap;
+	}
+
+	/*
+	Label the data
+	*/
+	.ee-responsive-table td:before {
+		content: attr(data-th) ": ";
+	}
+}
+
+/* Media File Uploader Input */
+.ee_media_url{
+    float: left;
+    width: 90% !important;
+}
+.ee_media_upload img {
+    margin:8px 3px 0;
+    vertical-align: middle;
+}
+.ee_media_image {
+    max-width: 240px;
+    max-height: 240px;
+}
+
+@media screen and (max-width: 782px){
+    .ee_media_upload img {
+        margin: 14px 3px 0;
+        vertical-align: middle;
+    }
 }

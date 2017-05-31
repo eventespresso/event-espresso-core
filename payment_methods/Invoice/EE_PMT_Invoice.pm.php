@@ -35,8 +35,11 @@ class EE_PMT_Invoice extends EE_PMT_Base{
 	 * @return EE_PMT_Invoice
 	 */
 	public function __construct($pm_instance = NULL) {
-		$this->_pretty_name = __("Invoice", 'event_espresso');
-		$this->_default_description = __( 'After clicking "Finalize Registration", you will be given instructions on how to access your invoice and complete your payment.', 'event_espresso' );
+		$this->_pretty_name = esc_html__("Invoice", 'event_espresso');
+		$this->_default_description = sprintf(
+			esc_html__( 'After clicking "Finalize Registration", you will be given instructions on how to access your invoice and complete your payment.%sPlease note that event spaces will not be reserved until payment is received in full, and any remaining tickets could be sold to others in the meantime.', 'event_espresso' ),
+			'<br />'
+		);
 		parent::__construct($pm_instance);
 		$this->_default_button_url = $this->file_url().'lib'.DS.'invoice-logo.png';
 	}
@@ -65,35 +68,35 @@ class EE_PMT_Invoice extends EE_PMT_Base{
 //				'payment_method_type' => $this,
 				'extra_meta_inputs'=>array(
 					$pdf_payee_input_name => new EE_Text_Input(array(
-						'html_label_text' => sprintf( __( 'Payee Name %s', 'event_espresso' ), $this->get_help_tab_link())
+						'html_label_text' => sprintf( esc_html__( 'Payee Name %s', 'event_espresso' ), $this->get_help_tab_link())
 					)),
 					'pdf_payee_email' => new EE_Email_Input(array(
-						'html_label_text' => sprintf( __( 'Payee Email %s', 'event_espresso' ), $this->get_help_tab_link()),
+						'html_label_text' => sprintf( esc_html__( 'Payee Email %s', 'event_espresso' ), $this->get_help_tab_link()),
 					)),
 					'pdf_payee_tax_number' => new EE_Text_Input(array(
-						'html_label_text' => sprintf( __( 'Payee Tax Number %s', 'event_espresso' ), $this->get_help_tab_link()),
+						'html_label_text' => sprintf( esc_html__( 'Payee Tax Number %s', 'event_espresso' ), $this->get_help_tab_link()),
 						)),
 					'pdf_payee_address' => new EE_Text_Area_Input( array(
-						'html_label_text' => sprintf( __( 'Payee Address %s', 'event_espresso' ), $this->get_help_tab_link() ),
+						'html_label_text' => sprintf( esc_html__( 'Payee Address %s', 'event_espresso' ), $this->get_help_tab_link() ),
 						'validation_strategies' => array( new EE_Full_HTML_Validation_Strategy() ),
 					)),
 					'pdf_instructions'=>new EE_Text_Area_Input(array(
-						'html_label_text'=>  sprintf(__("Instructions %s", "event_espresso"),  $this->get_help_tab_link()),
-						'default'=>  __("Please send this invoice with payment attached to the address above, or use the payment link below. Payment must be received within 48 hours of event date.", 'event_espresso'),
+						'html_label_text'=>  sprintf(esc_html__("Instructions %s", "event_espresso"),  $this->get_help_tab_link()),
+						'default'=>  esc_html__("Please send this invoice with payment attached to the address above, or use the payment link below. Payment must be received within 48 hours of event date.", 'event_espresso'),
 						'validation_strategies' => array( new EE_Full_HTML_Validation_Strategy() ),
 					)),
 					'pdf_logo_image'=>new EE_Admin_File_Uploader_Input(array(
-						'html_label_text'=>  sprintf(__("Logo Image %s", "event_espresso"),  $this->get_help_tab_link()),
+						'html_label_text'=>  sprintf(esc_html__("Logo Image %s", "event_espresso"),  $this->get_help_tab_link()),
 						'default'=>  EE_Config::instance()->organization->logo_url,
-						'html_help_text'=>  __("(Logo for the top left of the invoice)", 'event_espresso'),
+						'html_help_text'=>  esc_html__("(Logo for the top left of the invoice)", 'event_espresso'),
 					)),
 					$confirmation_text_input_name =>new EE_Text_Area_Input(array(
-						'html_label_text'=>  sprintf(__("Confirmation Text %s", "event_espresso"),  $this->get_help_tab_link()),
-						'default'=>  __("Payment must be received within 48 hours of event date.  Details about where to send payment is included on the invoice.", 'event_espresso'),
+						'html_label_text'=>  sprintf(esc_html__("Confirmation Text %s", "event_espresso"),  $this->get_help_tab_link()),
+						'default'=>  esc_html__("Payment must be received within 48 hours of event date. Details about where to send the payment are included on the invoice.", 'event_espresso'), 
 						'validation_strategies' => array( new EE_Full_HTML_Validation_Strategy() ),
 					)),
 					'page_extra_info'=>new EE_Text_Area_Input(array(
-						'html_label_text'=>  sprintf(__("Extra Info %s", "event_espresso"),  $this->get_help_tab_link()),
+						'html_label_text'=>  sprintf(esc_html__("Extra Info %s", "event_espresso"),  $this->get_help_tab_link()),
 						'validation_strategies' => array( new EE_Full_HTML_Validation_Strategy() ),
 					)),
 				),
@@ -123,7 +126,7 @@ class EE_PMT_Invoice extends EE_PMT_Base{
 	public function help_tabs_config(){
 		return array(
 			$this->get_help_tab_name() => array(
-				'title' => __('Invoice Settings', 'event_espresso'),
+				'title' => esc_html__('Invoice Settings', 'event_espresso'),
 				'filename' => 'payment_methods_overview_invoice'
 			),
 		);

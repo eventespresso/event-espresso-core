@@ -1,4 +1,10 @@
 <?php if ( ! defined( 'EVENT_ESPRESSO_VERSION' )) { exit(); }
+
+// define the plugin directory path and URL
+define( 'EE_NEW_PAYMENT_METHOD_BASENAME', plugin_basename( EE_NEW_PAYMENT_METHOD_PLUGIN_FILE ));
+define( 'EE_NEW_PAYMENT_METHOD_PATH', plugin_dir_path( __FILE__ ));
+define( 'EE_NEW_PAYMENT_METHOD_URL', plugin_dir_url( __FILE__ ));
+
 /**
  * ------------------------------------------------------------------------
  *
@@ -11,10 +17,6 @@
  *
  * ------------------------------------------------------------------------
  */
-// define the plugin directory path and URL
-define( 'EE_NEW_PAYMENT_METHOD_BASENAME', plugin_basename( EE_NEW_PAYMENT_METHOD_PLUGIN_FILE ));
-define( 'EE_NEW_PAYMENT_METHOD_PATH', plugin_dir_path( __FILE__ ));
-define( 'EE_NEW_PAYMENT_METHOD_URL', plugin_dir_url( __FILE__ ));
 Class  EE_New_Payment_Method extends EE_Addon {
 
 	/**

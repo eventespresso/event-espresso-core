@@ -1,4 +1,6 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+<?php use EventEspresso\widgets\EspressoWidget;
+
+if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 /**
  * Event Espresso
  *
@@ -21,22 +23,16 @@
  *
  * ------------------------------------------------------------------------
  */
-class EEW_Upcoming_Events  extends WP_Widget {
+class EEW_Upcoming_Events extends EspressoWidget {
 
 
 	/**
 	 * Register widget with WordPress.
 	 */
-	function __construct() {
+	public function __construct() {
 		parent::__construct(
-			'ee-upcoming-events-widget',
 			__( 'Event Espresso Upcoming Events', 'event_espresso' ),
-			 array( 'description' => __( 'A widget to display your upcoming events.', 'event_espresso' )),
-			array(
-				'width' => 300,
-				'height' => 350,
-				'id_base' => 'ee-upcoming-events-widget'
-			)
+			 array( 'description' => __( 'A widget to display your upcoming events.', 'event_espresso' ))
 		);
 	}
 
@@ -305,7 +301,7 @@ class EEW_Upcoming_Events  extends WP_Widget {
 				// start to build our where clause
 				$where = array(
 //					'Datetime.DTT_is_primary' => 1,
-					'status' => 'publish'
+					'status' => array( 'IN', array( 'publish', 'sold_out' ) )
 				);
 				// add category
 				if ( $category ) {
@@ -316,6 +312,8 @@ class EEW_Upcoming_Events  extends WP_Widget {
 				if ( ! $show_expired ) {
 					$where['Datetime.DTT_EVT_end'] = array( '>=', EEM_Datetime::instance()->current_time_for_query( 'DTT_EVT_end' ) );
 				}
+				// allow $where to be filtered
+				$where = apply_filters( 'FHEE__EEW_Upcoming_Events__widget__where', $where, $category, $show_expired );
 				// run the query
 				$events = EE_Registry::instance()->load_model( 'Event' )->get_all( array(
 					$where,

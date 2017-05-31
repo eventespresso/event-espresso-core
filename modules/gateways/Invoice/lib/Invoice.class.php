@@ -1,6 +1,11 @@
 <?php
 
-//Creates the invoice pdf
+/**
+ * Class Invoice
+ *
+ * @deprecated 4.9.13
+ * @package       Event Espresso
+ */
 class Invoice {
 
 	/**
@@ -19,8 +24,25 @@ class Invoice {
 	 */
 	private $invoice_payment_method;
 	private $EE;
-	public function __construct($url_link = 0) {
 
+
+
+	/**
+	 * Invoice constructor.
+	 *
+	 * @deprecated 4.9.13
+	 * @param int $url_link
+	 */
+	public function __construct($url_link = 0) {
+		EE_Error::doing_it_wrong(
+			__CLASS__,
+			esc_html__(
+				'This class has been deprecated and replaced by the new Messages library.',
+				'event_espresso'
+			),
+			'4.9.12',
+			'5.0.0'
+		);
 		if ( $this->registration = EE_Registry::instance()->load_model( 'Registration' )->get_registration_for_reg_url_link( $url_link)) {
 			$this->transaction = $this->registration->transaction();
 

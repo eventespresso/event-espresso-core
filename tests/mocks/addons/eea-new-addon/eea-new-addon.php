@@ -1,6 +1,6 @@
 <?php
 /*
-  Plugin Name: Event Espresso - New Addon (EE4.x+)
+  Plugin Name: Event Espresso - New Addon (EE 4.x+)
   Plugin URI: http://www.eventespresso.com
   Description: The Event Espresso New Addon adds NEW stuff to Event Espresso.
   Version: 1.0.0.dev.000

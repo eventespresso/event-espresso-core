@@ -1,12 +1,17 @@
 <?php
+/** @var string $admin_page_wrapper_div_id */
+/** @var string $post_body_content */
+/** @var string|WP_Screen $current_page */
 global $post_type, $post;
 //action for registering metaboxes
 do_action( 'add_meta_boxes', $post_type, $post );
 ?>
+<?php if ( ! empty($admin_page_header)) : ?>
 <div id="admin-page-header">
-	<?php echo $admin_page_header; ?>
+    <?php echo $admin_page_header; ?>
 </div>
-<div id="poststuff">
+<?php endif; ?>
+<div id="<?php echo $admin_page_wrapper_div_id; ?>">
 		<!-- admin-page-header -->
 	<div id="post-body" class="metabox-holder columns-2">
 
@@ -27,8 +32,9 @@ do_action( 'add_meta_boxes', $post_type, $post );
 			<?php do_meta_boxes( $current_page, 'advanced', NULL ); ?>
 		</div>
 		<!-- postbox-container-2 -->
+        <div class="clear"></div>
 
 	</div>
 	<!-- post-body -->
 </div>
-<!-- poststuff -->
+<!-- <?php echo $admin_page_wrapper_div_id; ?> -->

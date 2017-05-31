@@ -10,90 +10,119 @@ interface EEI_Payment extends EEI_Base{
 	/**
 	 * @return string indicating which the payment is approved, pending, cancelled or failed
 	 */
-	function status();
+	public function status();
 	/**
 	 * @return float returns the amount the payment is for (whether or not its approved)
 	 */
-	function amount();
+	public function amount();
 	/**
 	 * @return string of the currency for this payment
 	 */
-	function currency_code();
+	public function currency_code();
 
 	/**
 	 * The gateway transaction's ID, usually assigned by the
 	 * payment provider
 	 * @return string
 	 */
-	function txn_id_chq_nmbr();
+	public function txn_id_chq_nmbr();
 
 	/**
 	 *
 	 * @param string $status
 	 */
-	function set_status($status);
+	public function set_status($status);
 
 	/**
 	 * Sets the response from the gateway, which is displayable to the user.
 	 * Eg, 'payment was approved', 'payment failed because invalid date', etc.
 	 * @param string $response
 	 */
-	function set_gateway_response($response);
+	public function set_gateway_response($response);
 
 	/**
 	 * Sets the response details, usually the entire contents of an IPN request,
 	 * or data about the direct payment data sent
 	 * @param mixed $response_details
 	 */
-	function set_details($response_details);
+	public function set_details($response_details);
 
 	/**
 	 * Returns whatever the details were set to be, which could be an array, object, string, integer, whatever.
 	 * @return mixed
 	 */
-	function details();
+	public function details();
 
 	/**
 	 * Sets the URl to redirect to, to process payment
 	 * @param string $url
 	 */
-	function set_redirect_url($url);
+	public function set_redirect_url($url);
 
 	/**
 	 * Sets the argument which should be passed to the redirect url (ie, usually POST variables)
 	 * @param array $args
 	 */
-	function set_redirect_args($args);
+	public function set_redirect_args($args);
 
 	/**
 	 * Gets redirect_args
 	 * @return array
 	 */
-	function redirect_args();
+	public function redirect_args();
 
 	/**
 	 *
 	 * @return EEI_Transaction
 	 */
-	function transaction();
+	public function transaction();
+
 	/**
 	 * Sets the amount for this payment
 	 * @param float $amount
 	 */
-	function set_amount($amount);
+	public function set_amount($amount);
 
 	/**
 	 * Sets the ID of the gateway transaction
 	 * @param string $txn_id
 	 */
-	function set_txn_id_chq_nmbr($txn_id);
+	public function set_txn_id_chq_nmbr($txn_id);
 
 	/**
 	 * Sets a string for some extra accounting info
 	 * @param string $extra_accounting_info
 	 */
-	function set_extra_accntng($extra_accounting_info);
+	public function set_extra_accntng($extra_accounting_info);
 
+    /**
+     * Gets the first event for this payment (it's possible that it could be for multiple)
+     *
+     * @param EE_Payment $payment
+     * @return EE_Event|null
+     */
+    public function get_first_event();
+
+    /**
+     * Gets the name of the first event for which is being paid
+     *
+     * @param EE_Payment $payment
+     * @return string
+     */
+    public function get_first_event_name();
+
+    /**
+     * Returns the payment's transaction's primary registration
+     *
+     * @return EE_Registration|null
+     */
+    public function get_primary_registration();
+
+    /**
+     * Gets the payment's transaction's primary registration's attendee, or null
+     * @return EE_Attendee|null
+     */
+    public function get_primary_attendee();
 }
 
 
@@ -111,23 +140,23 @@ interface EEMI_Payment {
 	/**
 	 * returns a string for the approved status
 	 */
-	function approved_status();
+	public function approved_status();
 	/**
 	 * returns a string for the pending status
 	 */
-	function pending_status();
+	public function pending_status();
 	/**
 	 * returns a string for the cancelled status
 	 */
-	function cancelled_status();
+	public function cancelled_status();
 	/**
 	 * returns a string for the failed status
 	 */
-	function failed_status();
+	public function failed_status();
 	/**
 	 * returns a string for the declined status
 	 */
-	function declined_status();
+	public function declined_status();
 
 
 	/**
@@ -141,7 +170,7 @@ interface EEMI_Payment {
 	 * @param int $txn_id
 	 * @return EEI_Payment
 	 */
-	function get_payment_by_txn_id_chq_nmbr($txn_id);
+	public function get_payment_by_txn_id_chq_nmbr($txn_id);
 }
 
 
@@ -171,9 +200,16 @@ interface EEMI_Payment_Log {
 	 * @param string $model_name
 	 * @return EE_Log
 	 */
-	function gateway_log($message,$id,$model_name);
+	public function gateway_log($message,$id,$model_name);
 }
 
+
+/**
+ * Interface for an event being registered for
+ */
+interface EEI_Event {
+	public function name();
+}
 
 
 // End of file EEI_Payment_Method_Interfaces.php

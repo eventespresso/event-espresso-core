@@ -169,6 +169,15 @@
     background-color: #E44064;
 }
 
+/** status failed **/
+.msg-status-MEX,
+.msg-status-MEX .check-column {
+    border-left-color: #ff6faa;
+}
+.ee-status-legend-MEX {
+    background-color: #ff6faa;
+}
+
 .msg-status-MDO,
 .msg-status-MDO .check-column {
     border-left-color: #D2D405;

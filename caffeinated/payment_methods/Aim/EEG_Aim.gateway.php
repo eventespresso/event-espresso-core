@@ -178,7 +178,7 @@ class EEG_Aim extends EE_Onsite_Gateway{
 	 *	@type $exp_year string
 	 *	@see parent::do_direct_payment
 	 * }
-	 * @return EE_Payment updated
+	 * @return EEI_Payment updated
 	 */
 
 	public function do_direct_payment($payment, $billing_info = null) {
@@ -189,21 +189,28 @@ class EEG_Aim extends EE_Onsite_Gateway{
 
 			$item_num = 1;
 			$transaction = $payment->transaction();
-			$order_description = '';
+			$order_description = $this->_format_order_description( $payment );
 			$primary_registrant = $transaction->primary_registration();
 			//if we're are charging for the full amount, show the normal line items
 			//and the itemized total adds up properly
 			if( $this->_can_easily_itemize_transaction_for( $payment ) ){
 				$total_line_item = $transaction->total_line_item();
 				foreach ($total_line_item->get_items() as $line_item) {
-					$this->addLineItem($item_num++, $line_item->name(), $line_item->desc(), $line_item->quantity(), $line_item->unit_price(), 'N');
+					if( $line_item->quantity() == 0 ){
+						continue;
+					}
+					$this->addLineItem(
+						$item_num++, 
+						$this->_format_line_item_name( $line_item, $payment ), 
+						$this->_format_line_item_desc( $line_item, $payment ), 
+						$line_item->quantity(),
+						$line_item->unit_price(), 
+						'N');
 					$order_description .= $line_item->desc().', ';
 				}
 				foreach($total_line_item->tax_descendants() as $tax_line_item){
 					$this->addLineItem($item_num++, $tax_line_item->name(), $tax_line_item->desc(), 1, $tax_line_item->total(), 'N');
 				}
-			}else{//partial payment
-				$order_description = sprintf(__("Payment of %s for %s", "event_espresso"),$payment->amount(),$primary_registrant->reg_code());
 			}
 
 
@@ -244,17 +251,28 @@ class EEG_Aim extends EE_Onsite_Gateway{
 			$this->type = "AUTH_CAPTURE";
 			$response = $this->_sendRequest($payment);
 			if (!empty($response)){
-				if ($this->_debug_mode) {
-					$txn_id = $response->invoice_number;
-				} else {
-					$txn_id = $response->transaction_id;
-				}
-				$payment_status = $response->approved ? $this->_pay_model->approved_status() : $this->_pay_model->declined_status();
-				$payment->set_status($payment_status);
-				//make sure we interpret the AMT as a float, not an international string (where periods are thousand separators)
-				$payment->set_amount( (float) $response->amount );
-				$payment->set_gateway_response(sprintf("%s (code: %s)",$response->response_reason_text,$response->response_reason_code));
-				$payment->set_txn_id_chq_nmbr( $txn_id );
+				if ($response->error_message) {
+                    $payment->set_status($this->_pay_model->failed_status());
+                    $payment->set_gateway_response($response->error_message);
+                } else {
+                    $payment_status = $response->approved ? $this->_pay_model->approved_status() : $this->_pay_model->declined_status();
+                    $payment->set_status($payment_status);
+                    //make sure we interpret the AMT as a float, not an international string (where periods are thousand separators)
+                    $payment->set_amount( (float) $response->amount );
+                    $payment->set_gateway_response(
+                        sprintf(
+                            esc_html__('%1$s (Reason Code: %2$s)', 'event_espresso'),
+                            $response->response_reason_text,
+                            $response->response_reason_code
+                        )
+                    );
+                    if ($this->_debug_mode) {
+                        $txn_id = $response->invoice_number;
+                    } else {
+                        $txn_id = $response->transaction_id;
+                    }
+                    $payment->set_txn_id_chq_nmbr( $txn_id );
+                }
 				$payment->set_extra_accntng($primary_registrant->reg_code());
 				$payment->set_details(print_r($response,true));
 			} else {
@@ -299,7 +317,6 @@ class EEG_Aim extends EE_Onsite_Gateway{
 	}
 
 
-
 	/**
 	 * Set an individual name/value pair. This will append x_ to the name
 	 * before posting.
@@ -330,16 +347,17 @@ class EEG_Aim extends EE_Onsite_Gateway{
 		$this->_x_post_fields['tran_key'] = $this->_transaction_key;
 		$x_keys = array();
 		foreach ($this->_x_post_fields as $key => $value) {
-			$x_keys[] = "x_$key=" . urlencode($value);
+			$x_keys[] = "x_$key=" . urlencode($this->_get_unsupported_character_remover()->format($value));
 		}
 		// Add line items
 		foreach ($this->_additional_line_items as $key => $value) {
-			$x_keys[] =  "x_line_item=" . urlencode($value);
+			$x_keys[] =  "x_line_item=" . urlencode($this->_get_unsupported_character_remover()->format($value));
 		}
 		$this->_log_clean_request($x_keys, $payment);
 		$post_url = $this->_get_server_url();
 		$curl_request = curl_init($post_url);
-		curl_setopt($curl_request, CURLOPT_POSTFIELDS, implode("&",$x_keys));
+        $post_body = implode("&",$x_keys);
+		curl_setopt($curl_request, CURLOPT_POSTFIELDS, $post_body);
 		curl_setopt($curl_request, CURLOPT_HEADER, 0);
 		curl_setopt($curl_request, CURLOPT_TIMEOUT, 45);
 		curl_setopt($curl_request, CURLOPT_RETURNTRANSFER, 1);
@@ -391,7 +409,7 @@ class EEG_Aim extends EE_Onsite_Gateway{
 	 */
 	private function _log_and_clean_response($response_obj,$payment){
 		$response_obj->account_number = '';
-		$this->log(array('AIM Response received:'=>$response_obj),$payment);
+		$this->log(array('AIM Response received:'=>(array)$response_obj),$payment);
 		return $response_obj;
 	}
 
@@ -471,6 +489,7 @@ class EE_AuthorizeNetAIM_Response {
 	public $requested_amount;
 	public $balance_on_card;
 	public $response; // The response string from AuthorizeNet.
+    public $error_message;
 	private $_response_array = array(); // An array with the split response.
 
 	/**
@@ -501,7 +520,10 @@ class EE_AuthorizeNetAIM_Response {
 			if (count($this->_response_array) < 10) {
 				$this->approved = false;
 				$this->error = true;
-				$this->error_message = "Unrecognized response from AuthorizeNet: $response";
+				$this->error_message = sprintf(
+				    esc_html__('Unrecognized response from Authorize.net: %1$s', 'event_espresso'),
+                    esc_html($response)
+                );
 				return;
 			}
 
@@ -558,22 +580,13 @@ class EE_AuthorizeNetAIM_Response {
 			$this->declined = ($this->response_code === self::DECLINED);
 			$this->error = ($this->response_code === self::ERROR);
 			$this->held = ($this->response_code === self::HELD);
-
-			if ($this->error || $this->declined || $this->held) {
-				$this->error_message = '<p><strong class="credit_card_failure">Attention: your transaction was declined for the following reason(s):</strong><br />' . $this->response_reason_text . '<br /><span class="response_code">Response Code: ' . $this->response_code . '<br /></span><span class="response_subcode">Response Subcode: ' . $this->response_subcode . '</span></p><p>To try again, <a href="#payment_options">please click here</a>.</p> ';
-
-
-				/* $this->error_message = "AuthorizeNet Error:
-				  Response Code: ".$this->response_code."
-				  Response Subcode: ".$this->response_subcode."
-				  Response Reason Code: ".$this->response_reason_code."
-				  Response Reason Text: ".$this->response_reason_text."
-				  "; */
-			}
 		} else {
 			$this->approved = false;
 			$this->error = true;
-			$this->error_message = "Error connecting to AuthorizeNet";
+			$this->error_message = esc_html__(
+			    'Error connecting to Authorize.net',
+                'event_espresso'
+            );
 		}
 	}
 

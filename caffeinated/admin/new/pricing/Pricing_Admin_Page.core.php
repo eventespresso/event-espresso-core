@@ -184,8 +184,17 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 					'noheader' => TRUE,
 					'capability' => 'ee_delete_default_price_type',
 					'obj_id' => $prt_id
-				)
-		);
+				),
+            'tax_settings' => array(
+                'func'       => '_tax_settings',
+                'capability' => 'manage_options'
+            ),
+            'update_tax_settings' => array(
+                'func'       => '_update_tax_settings',
+                'capability' => 'manage_options',
+                'noheader'   => true
+            ),
+        );
 	}
 
 
@@ -306,8 +315,26 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 					'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_price_type_details_meta_boxes' ),
 
 					'require_nonce' => FALSE
-				)
-		);
+				),
+            'tax_settings' => array(
+                'nav'           => array(
+                    'label' => esc_html__('Tax Settings', 'event_espresso'),
+                    'order' => 40
+                ),
+                'labels'        => array(
+                    'publishbox' => esc_html__('Update Tax Settings', 'event_espresso')
+                ),
+                'metaboxes'     => array_merge($this->_default_espresso_metaboxes, array('_publish_post_box')),
+                // 'help_tabs'     => array(
+                //     'registration_form_reg_form_settings_help_tab' => array(
+                //         'title'    => esc_html__('Registration Form Settings', 'event_espresso'),
+                //         'filename' => 'registration_form_reg_form_settings'
+                //     ),
+                // ),
+                // 'help_tour'     => array('Registration_Form_Settings_Help_Tour'),
+                'require_nonce' => true
+            )
+        );
 	}
 
 
@@ -437,7 +464,12 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	*		@return void
 	*/
 	protected function _price_overview_list_table() {
-		$this->_admin_page_title .= $this->get_action_link_or_button('add_new_price', 'add', array(), 'add-new-h2');
+		$this->_admin_page_title .= ' ' . $this->get_action_link_or_button(
+		    'add_new_price',
+            'add',
+            array(),
+            'add-new-h2'
+        );
 		$this->admin_page_title .= $this->_learn_more_about_pricing_link();
 		$this->_search_btn_label = __('Default Prices', 'event_espresso');
 		$this->display_admin_list_table_page_with_no_sidebar();
@@ -870,7 +902,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 
 		$errors = ! $success ? __( 'An error occurred. The price order was not updated.', 'event_espresso' ) : FALSE;
 
-		echo json_encode( array( 'return_data' => FALSE, 'success' => $success, 'errors' => $errors ));
+		echo wp_json_encode( array( 'return_data' => FALSE, 'success' => $success, 'errors' => $errors ));
 		die();
 	}
 
@@ -894,7 +926,12 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	*		@return void
 	*/
 	protected function _price_types_overview_list_table() {
-		$this->_admin_page_title .= $this->get_action_link_or_button('add_new_price_type', 'add_type', array(), 'add-new-h2');
+		$this->_admin_page_title .= ' ' . $this->get_action_link_or_button(
+		    'add_new_price_type',
+            'add_type',
+            array(),
+            'add-new-h2'
+        );
 		$this->admin_page_title .= $this->_learn_more_about_pricing_link();
 		$this->_search_btn_label = __('Price Types', 'event_espresso');
 		$this->display_admin_list_table_page_with_no_sidebar();
@@ -1255,6 +1292,123 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		return '<a class="hidden" style="margin:0 20px; cursor:pointer; font-size:12px;" >' . __('learn more about how pricing works', 'event_espresso') . '</a>';
 	}
 
+
+
+    protected function _tax_settings() {
+        $this->_set_add_edit_form_tags('update_tax_settings');
+        $this->_set_publish_post_box_vars(null, false, false, null, false);
+        $this->_template_args['admin_page_content'] = $this->tax_settings_form()->get_html();
+        $this->display_admin_page_with_sidebar();
+    }
+
+
+
+    /**
+     * @return \EE_Form_Section_Proper
+     * @throws \EE_Error
+     */
+    protected function tax_settings_form() {
+        return new EE_Form_Section_Proper(
+            array(
+                'name'            => 'tax_settings_form',
+                'html_id'         => 'tax_settings_form',
+                'layout_strategy' => new EE_Div_Per_Section_Layout(),
+                'subsections'     => apply_filters(
+                    'FHEE__Pricing_Admin_Page__tax_settings_form__form_subsections',
+                    array(
+                        'tax_settings'     => new EE_Form_Section_Proper(
+	                        array(
+		                        'name'            => 'tax_settings_tbl',
+		                        'html_id'         => 'tax_settings_tbl',
+		                        'html_class'      => 'form-table',
+		                        'layout_strategy' => new EE_Admin_Two_Column_Layout(),
+		                        'subsections'     => array(
+			                        'prices_displayed_including_taxes' => new EE_Yes_No_Input(
+				                        array(
+					                        'html_label_text'         => __(
+						                        "Show Prices With Taxes Included?",
+						                        'event_espresso'
+					                        ),
+					                        'html_help_text'          => __(
+						                        'Indicates whether or not to display prices with the taxes included',
+						                        'event_espresso'
+					                        ),
+					                        'default'                 => isset(
+					                            EE_Registry::instance()
+							                        ->CFG
+							                        ->tax_settings
+							                        ->prices_displayed_including_taxes
+					                        )
+						                        ? EE_Registry::instance()
+							                        ->CFG
+							                        ->tax_settings
+							                        ->prices_displayed_including_taxes
+						                        : true,
+					                        'display_html_label_text' => false
+				                        )
+			                        ),
+		                        )
+	                        )
+                        )
+                    )
+                )
+            )
+        );
+    }
+
+
+
+	/**
+	 * _update_tax_settings
+	 *
+	 * @since 4.9.13
+	 * @return void
+	 */
+	public function _update_tax_settings() {
+		if ( ! isset( EE_Registry::instance()->CFG->tax_settings ) ) {
+			EE_Registry::instance()->CFG->tax_settings = new EE_Tax_Config();
+		}
+		try {
+			$tax_form = $this->tax_settings_form();
+			//check for form submission
+			if ( $tax_form->was_submitted() ) {
+				//capture form data
+				$tax_form->receive_form_submission();
+				//validate form data
+				if ( $tax_form->is_valid() ) {
+					//grab validated data from form
+					$valid_data = $tax_form->valid_data();
+					//set data on config
+					EE_Registry::instance()
+						->CFG
+						->tax_settings
+						->prices_displayed_including_taxes
+						= $valid_data['tax_settings']['prices_displayed_including_taxes'];
+				} else {
+					if ( $tax_form->submission_error_message() !== '' ) {
+						EE_Error::add_error(
+							$tax_form->submission_error_message(),
+							__FILE__,
+							__FUNCTION__,
+							__LINE__
+						);
+					}
+				}
+			}
+		} catch ( EE_Error $e ) {
+			EE_Error::add_error( $e->get_error(), __FILE__, __FUNCTION__, __LINE__ );
+		}
+
+		$what = 'Tax Settings';
+		$success = $this->_update_espresso_configuration(
+			$what,
+			EE_Registry::instance()->CFG->tax_settings,
+			__FILE__,
+			__FUNCTION__,
+			__LINE__
+		);
+		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'tax_settings' ) );
+	}
 
 
 

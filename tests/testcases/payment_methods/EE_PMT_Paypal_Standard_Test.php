@@ -30,10 +30,10 @@ class EE_PMT_Paypal_Standard_Test extends EE_UnitTestCase{
 	const cancel_url = 'http://mysite.com/cancel';
 
 	public function setUp(){
+        parent::setUp();
 		EEM_Payment::reset();
 		EEM_Transaction::reset();
 //		EEM_Payment_Method::reset();
-		parent::setUp();
 	}
 	public function __construct($name = NULL, array $data = array(), $dataName = '') {
 		parent::__construct($name, $data, $dataName);

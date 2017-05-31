@@ -24,11 +24,20 @@ class EE_Addon_Test extends EE_UnitTestCase{
 	 */
 	protected $_addon = NULL;
 	protected $_main_file_path;
+    protected $_table_analysis;
+    protected $_table_manager;
+    /**
+     * Names of the temporary tables added by the add-on
+     * @var array
+     */
+    protected $_temp_tables_added_by_addon = array( 'esp_new_addon_thing', 'esp_new_addon_attendee_meta' );
 	public function __construct($name = NULL, array $data = array(), $dataName = '') {
 		$this->_main_file_path = EE_TESTS_DIR . 'mocks/addons/eea-new-addon/eea-new-addon.php';
 		require_once $this->_main_file_path;
 		//loading that file adds a hook, but we want to control when it hooks in
 		remove_action( 'AHEE__EE_System__load_espresso_addons', 'load_espresso_new_addon' );
+        $this->_table_analysis = new \EventEspresso\core\services\database\TableAnalysis();
+        $this->_table_manager = new \EventEspresso\core\services\database\TableManager( $this->_table_analysis );
 		parent::__construct($name, $data, $dataName);
 	}
 	public function setUp(){
@@ -45,19 +54,31 @@ class EE_Addon_Test extends EE_UnitTestCase{
 		add_filter( 'FHEE__EEH_Activation__create_table__short_circuit', array( $this, 'dont_short_circuit_new_addon_table' ), 20, 3 );
 	}
 
+	public function tearDown(){
+        //drop all the temporary tables we created during this test, because each subsequent test expects them to be gone
+        $this->_table_manager->dropTables( $this->_temp_tables_added_by_addon );
+        parent::tearDown();
+    }
+
+
+
 	/**
 	 * OK's the creation of the esp_new_addon table, because this hooks in AFTER EE_UNitTestCase's callback on this same hook
-	 * @global type $wpdb
-	 * @param array $whitelisted_tables
-	 * @return array
+	 *
+	 * @param bool $short_circuit
+	 * @param string $table_name
+	 * @param string $create_sql
+	 * @return boolean
 	 */
-	public function dont_short_circuit_new_addon_table( $short_circuit = FALSE, $table_name = '', $create_sql = '' ){
-		if( in_array( $table_name, array( 'esp_new_addon_thing', 'esp_new_addon_attendee_meta' ) ) && !EEH_Activation::table_exists( $table_name) ){
-//			echo "\r\n\r\nDONT shortcircuit $sql";
+	public function dont_short_circuit_new_addon_table( $short_circuit = false, $table_name = '', $create_sql = '' ){
+		if (
+			in_array( $table_name, $this->_temp_tables_added_by_addon )
+		) {
+//			echo "\r\n\r\nDONT short circuit $sql";
 			//it's not altering. it's ok to allow this
-			return FALSE;
+			return false;
 		}else{
-//			echo "3\r\n\r\nshort circuit:$sql";
+//			echo "3\r\n\r\n short circuit:$sql";
 			return $short_circuit;
 		}
 	}

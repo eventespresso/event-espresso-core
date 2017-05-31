@@ -174,7 +174,7 @@ abstract class EE_Test_Scenario {
 			for ( $x = 1; $x <= $qty; $x++ ) {
 				$registration = EE_Registration::new_instance(
 					array(
-						'STS_ID'   => EEM_Registration::status_id_approved,
+						'STS_ID'   => EEM_Registration::status_id_pending_payment,
 						'REG_date' => time() - DAY_IN_SECONDS,
 						'REG_code' => $transaction->ID() . "-" . $ticket->ID() . "-$x-test",
 						'TXN_ID'   => $transaction->ID(),
@@ -182,6 +182,9 @@ abstract class EE_Test_Scenario {
 						'TKT_ID'   => $ticket->ID(),
 					)
 				);
+				$registration->save();
+				// upgrade status to RAP so that ticket and datetime sold values get incremented
+				$registration->set_status( EEM_Registration::status_id_approved );
 				$registration->save();
 			}
 		}

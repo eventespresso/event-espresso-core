@@ -1,5 +1,8 @@
 <?php
 
+use EventEspresso\core\services\database\TableManager;
+use EventEspresso\core\services\database\TableAnalysis;
+
 /**
  *
  * Class which determines what data migration files CAN be run, and compares
@@ -97,6 +100,7 @@ class EE_Data_Migration_Manager{
 	 * @var array
 	 */
 	private $_data_migration_class_to_filepath_map;
+
 	/**
 	 * the following 4 properties are fully set on construction.
 	 * Note: the first two apply to whether to continue running ALL migration scripts (ie, even though we're finished
@@ -104,16 +108,31 @@ class EE_Data_Migration_Manager{
 	 * data migration script
 	 * @var array
 	 */
-	var $stati_that_indicate_to_continue_migrations = array();
-	var $stati_that_indicate_to_stop_migrations = array();
-	var $stati_that_indicate_to_continue_single_migration_script = array();
-	var $stati_that_indicate_to_stop_single_migration_script = array();
+	public $stati_that_indicate_to_continue_migrations = array();
+
+	public $stati_that_indicate_to_stop_migrations = array();
+
+	public $stati_that_indicate_to_continue_single_migration_script = array();
+
+	public $stati_that_indicate_to_stop_single_migration_script = array();
+
+	/**
+	 * @var \EventEspresso\core\services\database\TableManager $table_manager
+	 */
+	protected $_table_manager;
+
+	/**
+	 * @var \EventEspresso\core\services\database\TableAnalysis $table_analysis
+	 */
+	protected $_table_analysis;
 
 	/**
      * 	@var EE_Data_Migration_Manager $_instance
 	 * 	@access 	private
      */
 	private static $_instance = NULL;
+
+
 
 	/**
 	 *@singleton method used to instantiate class object
@@ -166,6 +185,8 @@ class EE_Data_Migration_Manager{
 		EE_Registry::instance()->load_core( 'DMS_Unknown_1_0_0', array(), TRUE );
 		EE_Registry::instance()->load_core( 'Data_Migration_Script_Stage', array(), TRUE );
 		EE_Registry::instance()->load_core( 'Data_Migration_Script_Stage_Table', array(), TRUE );
+		$this->_table_manager = EE_Registry::instance()->create( 'TableManager', array(), true );
+		$this->_table_analysis = EE_Registry::instance()->create( 'TableAnalysis', array(), true );
 	}
 
 
@@ -396,7 +417,7 @@ class EE_Data_Migration_Manager{
 						! isset($scripts_ran[$script_converts_plugin_slug][$script_converts_to_version])){
 					//we haven't ran this conversion script before
 					//now check if it applies... note that we've added an autoloader for it on get_all_data_migration_scripts_available
-					$script = new $classname;
+					$script = new $classname( $this->_get_table_manager(), $this->_get_table_analysis() );
 					/* @var $script EE_Data_Migration_Script_Base */
 					$can_migrate = $script->can_migrate_from_version($theoretical_database_state);
 					if($can_migrate){
@@ -697,18 +718,20 @@ class EE_Data_Migration_Manager{
 		}
 	}
 
-	/**
-	 * Gets all the data migration scripts available in the core folder and folders
-	 * in addons. Has the side effect of adding them for autoloading
-	 * @return array keys are expected classnames, values are their filepaths
-	 */
+
+
+    /**
+     * Gets all the data migration scripts available in the core folder and folders
+     * in addons. Has the side effect of adding them for autoloading
+     *
+     * @return array keys are expected classnames, values are their filepaths
+     * @throws \EE_Error
+     */
 	public function get_all_data_migration_scripts_available(){
 		if( ! $this->_data_migration_class_to_filepath_map){
 			$this->_data_migration_class_to_filepath_map = array();
 			foreach($this->get_data_migration_script_folders() as $folder_path){
-				if($folder_path[count($folder_path-1)] != DS ){
-					$folder_path.= DS;
-				}
+                $folder_path = EEH_File::end_with_directory_separator($folder_path);
 				$files = glob( $folder_path. '*.dms.php' );
 
 				if ( empty( $files ) ) {
@@ -717,14 +740,23 @@ class EE_Data_Migration_Manager{
 
 				foreach($files as $file){
 					$pos_of_last_slash = strrpos($file,DS);
-					$classname = str_replace(".dms.php","", substr($file, $pos_of_last_slash+1));
+					$classname = str_replace('.dms.php', '', substr($file, $pos_of_last_slash + 1));
 					$migrates_to = $this->script_migrates_to_version( $classname );
 					$slug = $migrates_to[ 'slug' ];
 					//check that the slug as contained in the DMS is associated with
 					//the slug of an addon or core
-					if( $slug != 'Core' ){
+					if( $slug !== 'Core' ){
 						if( ! EE_Registry::instance()->get_addon_by_name( $slug ) ) {
-							EE_Error::doing_it_wrong(__FUNCTION__, sprintf( __( 'The data migration script "%s" migrates the "%s" data, but there is no EE addon with that name. There is only: %s. ', 'event_espresso' ),$classname,$slug,implode(",", array_keys( EE_Registry::instance()->get_addons_by_name() ) ) ), '4.3.0.alpha.019' );
+							EE_Error::doing_it_wrong(
+							    __FUNCTION__,
+                                sprintf(
+                                    __( 'The data migration script "%s" migrates the "%s" data, but there is no EE addon with that name. There is only: %s. ', 'event_espresso' ),
+                                    $classname,
+                                    $slug,
+                                    implode(', ', array_keys( EE_Registry::instance()->get_addons_by_name() ) )
+                                ),
+                                '4.3.0.alpha.019'
+                            );
 						}
 					}
 					$this->_data_migration_class_to_filepath_map[$classname] = $file;
@@ -926,7 +958,7 @@ class EE_Data_Migration_Manager{
 		}elseif( $last_ran_script instanceof EE_Data_Migration_Script_Base ) {
 			$last_ran_script->reattempt();
 		}else{
-			throw new EE_Error( sprintf( __( 'Unable to reattempt the last ran migration script because it was not a valid migration script. || It was %s', 'event_espresso' ), print_r( $last_ran_script ) ) );
+			throw new EE_Error( sprintf( __( 'Unable to reattempt the last ran migration script because it was not a valid migration script. || It was %s', 'event_espresso' ), print_r( $last_ran_script, true ) ) );
 		}
 		return $this->_save_migrations_ran();
 	}
@@ -998,5 +1030,41 @@ class EE_Data_Migration_Manager{
 	 */
 	public function get_db_initialization_queue(){
 		return get_option ( self::db_init_queue_option_name, array() );
+	}
+
+	/**
+	 * Gets the injected table analyzer, or throws an exception
+	 * @return TableAnalysis
+	 * @throws \EE_Error
+	 */
+	protected function _get_table_analysis() {
+		if( $this->_table_analysis instanceof TableAnalysis ) {
+			return $this->_table_analysis;
+		} else {
+			throw new \EE_Error(
+				sprintf(
+					__( 'Table analysis class on class %1$s is not set properly.', 'event_espresso'),
+					get_class( $this )
+				)
+			);
+		}
+	}
+
+	/**
+	 * Gets the injected table manager, or throws an exception
+	 * @return TableManager
+	 * @throws \EE_Error
+	 */
+	protected function _get_table_manager() {
+		if( $this->_table_manager instanceof TableManager ) {
+			return $this->_table_manager;
+		} else {
+			throw new \EE_Error(
+				sprintf(
+					__( 'Table manager class on class %1$s is not set properly.', 'event_espresso'),
+					get_class( $this )
+				)
+			);
+		}
 	}
 }

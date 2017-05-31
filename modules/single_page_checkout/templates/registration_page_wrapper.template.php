@@ -1,22 +1,19 @@
 <div id="ee-single-page-checkout-dv" class="">
-	<?php if ( apply_filters(
-			'FHEE__registration_page_wrapper_template__display_time_limit',
-			FALSE ) ) { ?>
-	<p id="spco-registration-time-limit-pg" class="spco-steps-pg ee-attention important-notice">
+<?php
+if ( ! $empty_cart ) {
+	if ( apply_filters( 'FHEE__registration_page_wrapper_template__display_time_limit', false ) ) { ?>
+	<p id="spco-registration-time-limit-pg" class="spco-steps-pg ee-attention important-notice" style="display: none;">
 		<?php echo sprintf(
 			apply_filters(
 				'FHEE__registration_page_wrapper_template___time_limit',
-				__('You have %1$s to complete your registration.', 'event_espresso')
+				__( 'You have %1$s to complete your registration.', 'event_espresso' )
 			),
-			'<span id="spco-registration-time-limit-spn" class="spco-registration-time-limit-spn">' . $registration_time_limit	. '</span>'
+			'<span id="spco-registration-time-limit-spn" class="spco-registration-time-limit-spn">' . $registration_time_limit . '</span>'
 		);
 		?>
-		<span id="spco-registration-expiration-spn" class=""
-			  style="display:none;"><?php echo $session_expiration; ?></span>
+		<span id="spco-registration-expiration-spn" class="" style="display:none;"></span>
 	</p>
-	<?php } ?>
-	<?php
-if ( ! $empty_cart ) {
+<?php }
 	if ( ! $revisit && apply_filters( 'FHEE__registration_page_wrapper_template__steps_display', TRUE )) {
 ?>
 	<h2 id="spco-steps-big-hdr" class="spco-steps-big-hdr"><?php _e(' Steps', 'event_espresso'); ?></h2>
@@ -66,10 +63,15 @@ if ( ! $empty_cart ) {
 		}
 	}
 	do_action( 'AHEE__SPCO__after_registration_steps' );
+    printf(
+        esc_html__('%1$scancel registration%2$s', 'event_espresso'),
+        '<a class="small-text float-right" href="' . $cancel_page_url . '">',
+        '</a><br class="clear"/><br />'
+    );
 
 } else {
 ?>
-	<h3 id="spco-empty-cart-hdr" class="spco-step-title-hdr"><?php _e('Nothing in your Event Queue', 'event_espresso'); ?></h3>
+	<h3 id="spco-empty-cart-hdr" class="spco-step-title-hdr"><?php esc_html_e('Nothing in your Event Queue', 'event_espresso'); ?></h3>
 	<p><?php echo $empty_msg; ?></p>
 	<?php echo $cookies_not_set_msg; ?>
 <?php

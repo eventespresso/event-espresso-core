@@ -1,4 +1,7 @@
 <?php
+/**
+ * @deprecated 4.9.13
+ */
 /* @var $events_for_txn EE_Event[] */
 $events_for_txn;
 /* @var $ticket_line_items_per_event EE_Line_Item[] */
@@ -278,12 +281,6 @@ $tax_total_line_item;
 						</tr>
 					<?php }?>
 				</table>
-				<?php } ?>
-
-				<?php if($shameless_plug){?>
-				<div class='aln-cntr'><?php
-					printf(__("Powered by %sEvent Espresso %s", "event_espresso"),"<a href='https://eventespresso.com'>","</a>");
-				?></div>
 				<?php } ?>
 			</div>
 		</div>

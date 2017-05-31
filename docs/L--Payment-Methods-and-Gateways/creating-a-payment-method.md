@@ -1,5 +1,7 @@
 # Creating a Payment Method
 
+This section describes how to develop a payment method from scratch, and is useful knowledge. However, when it comes time to actually build it, you should read [How to Build a Payment Method using the Skeleton Folder](https://github.com/eventespresso/event-espresso-core/blob/master/docs/D--Addon-API/using-new-payment-method-addon-skeleton.md) to get a jump-start.
+
 ## Payment Method Properties to Set
 
 To create your own Payment Method, you create a class which extends `EE_PMT_Base` (found in core/libraries/payment_methods).
@@ -96,8 +98,10 @@ This generates a `EE_Billing_Attendee_Info_Form` and adds some credit card-relat
 
 If you'd like to learn more about how to customize this form (eg, adding other inputs, changing client-side and server-side validation, or change its display) please [read our EE4 Form Documentation](../J--EE4-Forms-System/ee-forms-system-overview.md).
 
-## Admin Help Tabs
+## Recommended Template Files
+It is recommended you have template files for admin help tabs and admin payment method introductions.
 
+### Admin Help Tab Template
 All payment methods should have a help tab. To define a help tab, you'll just need to create a folder named "help_tabs" and put a template file in it, and override `EE_PMT_Base::help_tab_config()`. For example, Paypal Standard has a template file named "payment_methods_overview_paypalstandard" and the help_tabs_config method is:
 
 ```php
@@ -112,3 +116,8 @@ public function help_tabs_config(){
 ```
 
 The help tab is a good place to describe any particulars of how to setup your payment method and any special considerations.
+
+### Introduction Template
+This should be a paragraph, or so, of text describing the payment method's requirements, functionality, and preferably a link to sign up for the gateway.
+
+To add this, you just need to add a template file with the correct name and in the correct spot, and EE will take care of showing it at the right time. For example, if your payment method is in a folder named `Secure_Pay`, and your main payment method file is in `eea-secure-pay/payment_methods/Secure_Pay/EE_PMT_Secure_Pay.pm.php`, then you would add a folder named `templates` next to it, with a file named `secure_pay_intro.template.php`, eg `eea-secure-pay/payment_methods/Secure_Pay/templates/secure_pay_intro.template.php`. That is, the new file should be named `{system_name}_intro.template.php`, where `{system_name}` is the same name as the payment method's folder, in lowercase.

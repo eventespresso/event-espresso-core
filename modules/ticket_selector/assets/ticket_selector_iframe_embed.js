@@ -35,12 +35,12 @@ jQuery(document).ready(function($) {
 				}
 			}
 		}
-
-		if ( has_selection > 0 ) {
+		var $eventCart = $( 'input[name="event_cart"]' );
+		if ( has_selection > 0 || ( $eventCart.length && $eventCart.val() === 'view' ) ) {
 			return true;
 		} else {
 			e.preventDefault();
-			alert( EEDTicketSelectorMsg.zeroSelected );
+			alert( eei18n.EEDTicketSelectorMsg );
 			return false;
 		}
 	});

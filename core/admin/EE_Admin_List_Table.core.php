@@ -1,248 +1,210 @@
 <?php
-if (!defined('EVENT_ESPRESSO_VERSION') )
-	exit('NO direct script access allowed');
+if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
+	exit( 'NO direct script access allowed' );
+}
+if ( ! class_exists( 'WP_List_Table' ) ) {
+	require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
+}
+
 
 
 /**
- * Event Espresso
- *
- * Event Registration and Management Plugin for Wordpress
- *
- * @package		Event Espresso
- * @author		Seth Shoultes
- * @copyright	(c)2009-2012 Event Espresso All Rights Reserved.
- * @license		http://eventespresso.com/support/terms-conditions/  ** see Plugin Licensing **
- * @link		http://www.eventespresso.com
- * @version		4.0
- *
- * ------------------------------------------------------------------------
- *
  * EE_Admin_Page_list
+ * Base list table class for EE_Admin_Page list tables.
+ * The various child classes would just have to extend this class to add their own columns etc.
+ * A good resource for implementing WP_List_Table api is:
  *
- * Base list table class for EE_Admin_Page list tables.  The various child classes would just have to extend this class to add their own columns etc.
- *
- * A good resource for implementing WP_List_Table api is: @link http://wpengineer.com/2426/wp_list_table-a-step-by-step-guide/
- *
- * @package		EE_Admin_Page_list
+ * @link           http://wpengineer.com/2426/wp_list_table-a-step-by-step-guide/
+ * @package        EE_Admin_Page_list
  * @subpackage	includes/core/admin/EE_Admin_Page_list.core.php
  * @abstract
  * @author		Darren Ethier
- *
- * ------------------------------------------------------------------------
  */
-
-if ( ! class_exists( 'WP_List_Table' )) {
-    require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
-}
-
 abstract class EE_Admin_List_Table extends WP_List_Table {
 
 	/**
-	 * $_data
 	 * holds the data that will be processed for the table
-	 * @var array of objects
+	 *
+	 * @var array $_data
 	 */
 	protected $_data;
 
 
 	/**
-	 * _all_data_count
 	 * This holds the value of all the data available for the given view (for all pages).
-	 * @var int
+	 *
+	 * @var int $_all_data_count
 	 */
 	protected $_all_data_count;
 
 
 
-
 	/**
 	 * Will contain the count of trashed items for the view label.
-	 * @var int
+	 *
+	 * @var int $_trashed_count
 	 */
 	protected $_trashed_count;
 
 
 
 	/**
-	 * _screen
 	 * This is what will be referenced as the slug for the current screen
-	 * @var string
+	 *
+	 * @var string $_screen
 	 */
 	protected $_screen;
 
 
 
-
 	/**
-	 * _admin_page
+	 * this is the EE_Admin_Page object
 	 *
-	 * @var EE_Admin_Page  this is the EE_Admin_Page object
+	 * @var EE_Admin_Page $_admin_page
 	 */
 	protected $_admin_page;
 
 
 	/**
-	 * _view
 	 * The current view
-	 * @var string
+	 *
+	 * @var string $_view
 	 */
 	protected $_view;
 
 
 
 	/**
-	 * _views
 	 * array of possible views for this table
-	 * @var array
+	 *
+	 * @var array $_views
 	 */
 	protected $_views;
 
 
 	/**
-	 * _wp_list_args
 	 * An array of key => value pairs containing information about the current table
 	 * array(
-	 * 		'plural' => 'plural label',
-	 * 		'singular' => 'singular label',
-	 * 		'ajax' => false, //whether to use ajax or not
-	 * 		'screen' => null, //string used to reference what screen this is (WP_List_table converts to screen object)
+	 *        'plural' => 'plural label',
+	 *        'singular' => 'singular label',
+	 *        'ajax' => false, //whether to use ajax or not
+	 *        'screen' => null, //string used to reference what screen this is
+	 *        (WP_List_table converts to screen object)
 	 * )
-	 * @var array
+	 *
+	 * @var array $_wp_list_args
 	 */
 	protected $_wp_list_args;
 
 	/**
-	 * _columns
 	 * an array of column names
 	 * array(
-	 * 	'internal-name' => 'Title'
+	 *    'internal-name' => 'Title'
 	 * )
-	 * @var array
+	 *
+	 * @var array $_columns
 	 */
 	protected $_columns;
 
-
-
 	/**
-	 * _column_headers
-	 * array of column headers for the columns
-	 * @var array
-	 */
-	protected $_column_headers;
-
-
-	/**
-	 * _sortable_columns
 	 * An array of sortable columns
 	 * array(
-	 * 	'internal-name' => 'orderby' //or
-	 * 	'internal-name' => array( 'orderby', true )
+	 *    'internal-name' => 'orderby' //or
+	 *    'internal-name' => array( 'orderby', true )
 	 * )
-	 * @var array
+	 *
+	 * @var array $_sortable_columns
 	 */
 	protected $_sortable_columns;
 
-
 	/**
-	 * _ajax_sorting_callback
 	 * callback method used to perform AJAX row reordering
-	 * @var string
+	 *
+	 * @var string $_ajax_sorting_callback
 	 */
-	protected $_ajax_sorting_callback = NULL;
-
-
+	protected $_ajax_sorting_callback;
 
 	/**
-	 * _hidden_columns
 	 * An array of hidden columns (if needed)
-	 * @var array  array('internal-name', 'internal-name')
+	 * array('internal-name', 'internal-name')
+	 *
+	 * @var array $_hidden_columns
 	 */
 	protected $_hidden_columns;
 
-
-
-
-
 	/**
-	 * _per_page
 	 * holds the per_page value
-	 * @var int
+	 *
+	 * @var int $_per_page
 	 */
 	protected $_per_page;
 
-
-
-
 	/**
-	 * _current_page
 	 * holds what page number is currently being viewed
-	 * @var int
+	 *
+	 * @var int $_current_page
 	 */
 	protected $_current_page;
 
-
-
-
-
-
 	/**
-	 * _nonce_action_ref
 	 * the reference string for the nonce_action
 	 *
-	 * @var string
+	 * @var string $_nonce_action_ref
 	 */
 	protected $_nonce_action_ref;
 
-
-
-
-
 	/**
-	 * _req_data
 	 * property to hold incoming request data (as set by the admin_page_core)
-	 * @var array
+	 *
+	 * @var array $_req_data
 	 */
 	protected $_req_data;
 
 
 
-	// yes / no array for admin form fields
+	/**
+	 * yes / no array for admin form fields
+	 *
+	 * @var array $_yes_no
+	 */
 	protected $_yes_no = array();
 
 	/**
 	 * Array describing buttons that should appear at the bottom of the page
-	 * Keys are strings that represent the button's function (specifically a key in _labels['buttons']), and the values are another array with the following keys
+	 * Keys are strings that represent the button's function (specifically a key in _labels['buttons']),
+	 * and the values are another array with the following keys
 	 * array(
-	 * 	'route' => 'page_route',
-	 * 	'extra_request' => array('evt_id' => 1 ); //extra request vars that need to be included in the button.
+	 *    'route' => 'page_route',
+	 *    'extra_request' => array('evt_id' => 1 ); //extra request vars that need to be included in the button.
 	 * )
+	 *
 	 * @var array $_bottom_buttons
 	 */
 	protected $_bottom_buttons = array();
 
 
 	/**
-	 * Used to indicate what should be the primary column for the list table. If not present then falls back to what WP calculates
+	 * Used to indicate what should be the primary column for the list table.
+	 * If not present then falls back to what WP calculates
 	 * as the primary column.
-	 * @type string
+	 *
+	 * @type string $_primary_column
 	 */
 	protected $_primary_column = '';
 
 
 
-
 	/**
 	 * Used to indicate whether the table has a checkbox column or not.
-	 * @type bool
+	 *
+	 * @type bool $_has_checkbox_column
 	 */
 	protected $_has_checkbox_column = false;
 
 
 
-
 	/**
-	 * constructor
-	 * @param EE_Admin_Page $admin_page we use this for obtaining everything we need in the list table.
+	 * @param \EE_Admin_Page $admin_page we use this for obtaining everything we need in the list table
 	 */
 	public function __construct( EE_Admin_Page $admin_page ) {
 		$this->_admin_page = $admin_page;
@@ -383,9 +345,9 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 
 		$sortable = array();
 		foreach ( $_sortable as $id => $data ) {
-			if ( empty( $data ) )
+			if ( empty( $data ) ) {
 				continue;
-
+			}
 			//fix for offset errors with WP_List_Table default get_columninfo()
 			if ( is_array($data) ) {
 				$_data[0] = key($data);
@@ -396,9 +358,9 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 
 			$data = (array) $data;
 
-			if ( !isset( $data[1] ) )
+			if ( !isset( $data[1] ) ) {
 				$_data[1] = false;
-
+			}
 
 			$sortable[$id] = $_data;
 		}
@@ -413,7 +375,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	 */
 	protected function get_primary_column_name() {
 		foreach( class_parents( $this ) as $parent ) {
-			if ( method_exists( $parent, 'get_primary_column_name' ) && $parent == 'WP_List_Table' ) {
+			if ( $parent === 'WP_List_Table' && method_exists( $parent, 'get_primary_column_name' ) ) {
 				return parent::get_primary_column_name();
 			}
 		}
@@ -425,14 +387,14 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	/**
 	 * Added for WP4.1 backward compat (@see https://events.codebasehq.com/projects/event-espresso/tickets/8814)
 	 *
-	 * @param object $item
+	 * @param EE_Base_Class $item
 	 * @param string $column_name
 	 * @param string $primary
 	 * @return string
 	 */
 	protected function handle_row_actions( $item, $column_name, $primary ) {
 		foreach( class_parents( $this ) as $parent ) {
-			if ( method_exists( $parent, 'handle_row_actions' ) && $parent == 'WP_List_Table' ) {
+			if ( $parent === 'WP_List_Table' && method_exists( $parent, 'handle_row_actions' ) ) {
 				return parent::handle_row_actions( $item, $column_name, $primary );
 			}
 		}
@@ -452,13 +414,14 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 		$actions = array();
 		//the _views property should have the bulk_actions, so let's go through and extract them into a properly formatted array for the wp_list_table();
 		foreach ( $this->_views as $view => $args) {
-			if ( isset( $args['bulk_action']) && is_array($args['bulk_action']) && $this->_view == $view )
+			if ( $this->_view === $view  && isset( $args['bulk_action']) && is_array($args['bulk_action']) ) {
 				//each bulk action will correspond with a admin page route, so we can check whatever the capability is for that page route and skip adding the bulk action if no access for the current logged in user.
 				foreach ( $args['bulk_action'] as $route =>$label ) {
 					if ( $this->_admin_page->check_user_access( $route, true ) ) {
 						$actions[$route] = $label;
 					}
 				}
+			}
 		}
 		return $actions;
 	}
@@ -504,8 +467,9 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 
 
 
-
-
+	/**
+	 *
+	 */
 	public function prepare_items() {
 
 		$this->_set_column_info();
@@ -526,12 +490,10 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 
 	/**
 	 * This column is the default for when there is no defined column method for a registered column.
-	 *
 	 * This can be overridden by child classes, but allows for hooking in for custom columns.
 	 *
-	 * @param object $item
-	 * @param string $column_name The column being called.
-	 *
+	 * @param EE_Base_Class $item
+	 * @param string        $column_name The column being called.
 	 * @return string html content for the column
 	 */
 	public function column_default( $item, $column_name ) {
@@ -549,6 +511,16 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 
 
 
+	/**
+	 * Get a list of columns. The format is:
+	 * 'internal-name' => 'Title'
+	 *
+	 * @since 3.1.0
+	 * @access public
+	 * @abstract
+	 *
+	 * @return array
+	 */
 	public function get_columns() {
 		/**
 		 * Dynamic hook allowing for adding additional columns in this list table.
@@ -564,13 +536,24 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 		return $columns;
 	}
 
+
+
+	/**
+	 * Get an associative array ( id => link ) with the list
+	 * of views available on this table.
+	 *
+	 * @since 3.1.0
+	 * @access protected
+	 *
+	 * @return array
+	 */
 	public function get_views() {
 		return $this->_views;
 	}
 
 	public function display_views() {
 		$views = $this->get_views();
-		$assembled_views = '';
+		$assembled_views = array();
 
 		if ( empty( $views )) {
 			return;
@@ -578,12 +561,12 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 		echo "<ul class='subsubsub'>\n";
 		foreach ( $views as $view ) {
 			$count = isset($view['count'] ) && !empty($view['count']) ? absint( $view['count'] )  : 0;
-			if ( isset( $view['slug'] ) && isset( $view['class'] ) && isset( $view['url'] ) && isset( $view['label']) ) {
+			if ( isset( $view['slug'], $view['class'], $view['url'], $view['label']) ) {
 				$assembled_views[ $view['slug'] ] = "\t<li class='" . $view['class'] . "'>" . '<a href="' . $view['url'] . '">' . $view['label'] . '</a> <span class="count">(' . $count . ')</span>';
 			}
 		}
 
-		echo is_array( $assembled_views) && ! empty( $assembled_views ) ? implode( " |</li>\n", $assembled_views ) . "</li>\n" : '';
+		echo ! empty( $assembled_views ) ? implode( " |</li>\n", $assembled_views ) . "</li>\n" : '';
 		echo "</ul>";
 	}
 
@@ -593,8 +576,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	 *
 	 * @since 4.1
 	 * @access public
-	 *
-	 * @param object $item The current item
+	 * @param EE_Base_Class $item The current item
 	 */
 	public function single_row( $item ) {
 		$row_class = $this->_get_row_class( $item );
@@ -607,12 +589,13 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	/**
 	 * This simply sets up the row class for the table rows.
 	 * Allows for easier overriding of child methods for setting up sorting.
-	 * @param  object $item the current item
+	 *
+	 * @param  EE_Base_Class $item the current item
 	 * @return string
 	 */
 	protected function _get_row_class( $item ) {
 		static $row_class = '';
-		$row_class = ( $row_class == '' ? 'alternate' : '' );
+		$row_class = ( $row_class === '' ? 'alternate' : '' );
 
 		$new_row_class = $row_class;
 
@@ -625,14 +608,27 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 
 
 
+	/**
+	 * @return array
+	 */
 	public function get_sortable_columns() {
 		return (array) $this->_sortable_columns;
 	}
 
+
+
+	/**
+	 * @return string
+	 */
 	public function get_ajax_sorting_callback() {
 		return $this->_ajax_sorting_callback;
 	}
 
+
+
+	/**
+	 * @return array
+	 */
 	public function get_hidden_columns() {
 		$user_id = get_current_user_id();
 		$has_default = get_user_option('default'. $this->screen->id . 'columnshidden', $user_id);
@@ -641,8 +637,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 			update_user_option($user_id, 'manage' . $this->screen->id . 'columnshidden', $this->_hidden_columns, TRUE );
 		}
 		$ref = 'manage' . $this->screen->id . 'columnshidden';
-		$saved_columns = (array) get_user_option( $ref, $user_id );
-		return $saved_columns;
+		return (array) get_user_option( $ref, $user_id );
 	}
 
 
@@ -653,8 +648,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	 * column.
 	 *
 	 * @since 3.1.0
-	 *
-	 * @param object $item The current item
+	 * @param EE_Base_Class $item The current item
 	 */
 	public function single_row_columns( $item ) {
 		list( $columns, $hidden, $sortable, $primary ) = $this->get_column_info();
@@ -672,7 +666,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 			$style = ! $use_hidden_class && in_array( $column_name, $hidden ) ? ' style="display:none;"' : '';
 
 			$classes = $column_name . ' column-' . $column_name.$hidden_class;
-			if ( $primary == $column_name ) {
+			if ( $primary === $column_name ) {
 				$classes .= ' has-row-actions column-primary';
 			}
 
@@ -682,7 +676,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 
 			$attributes = "$class$style$data";
 
-			if ( 'cb' === $column_name ) {
+			if ( $column_name === 'cb' ) {
 				echo '<th scope="row" class="check-column">';
 				echo apply_filters( 'FHEE__EE_Admin_List_Table__single_row_columns__column_cb_content', $this->column_cb( $item ), $item, $this );
 				echo '</th>';
@@ -704,17 +698,30 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 
 
 
+	/**
+	 * Extra controls to be displayed between bulk actions and pagination
+	 *
+	 * @access public
+	 * @param string $which
+	 * @throws \EE_Error
+	 */
 	public function extra_tablenav( $which ) {
-		if ( $which == 'top' ) {
+		if ( $which === 'top' ) {
 			$this->_filters();
 			echo $this->_get_hidden_fields();
-			echo '<br class="clear">';
-		}else{
+		} else {
 			echo '<div class="list-table-bottom-buttons alignleft actions">';
-			foreach($this->_bottom_buttons as $type => $action){
+			foreach ( $this->_bottom_buttons as $type => $action ){
 				$route = isset( $action['route'] ) ? $action['route'] : '';
 				$extra_request = isset( $action['extra_request'] ) ? $action['extra_request'] : '';
-				echo $this->_admin_page->get_action_link_or_button($route, $type, $extra_request);
+				echo $this->_admin_page->get_action_link_or_button(
+					$route,
+					$type,
+					$extra_request,
+					'button button-secondary',
+					'',
+					false
+				);
 			}
 			do_action( 'AHEE__EE_Admin_List_Table__extra_tablenav__after_bottom_buttons', $this, $this->_screen );
 			echo '</div>';
@@ -722,10 +729,17 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 		//echo $this->_entries_per_page_dropdown;
 	}
 
-	public function get_column_actions($item) {
-		return $this->_get_column_actions($item);
-	}
 
+
+	/**
+	 * Get an associative array ( option_name => option_title ) with the list
+	 * of bulk actions available on this table.
+	 *
+	 * @since 3.1.0
+	 * @access protected
+	 *
+	 * @return array
+	 */
 	public function get_bulk_actions() {
 		return (array) $this->_get_bulk_actions();
 	}
@@ -752,18 +766,17 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	 * to use this method for generating their actions content so that it's
 	 * filterable by plugins
 	 *
-	 * @param string $action_container what are the html container
-	 *                                 		          elements for this actions string?
-	 * @param string $action_class     What class is for the container
-	 *                                 		       element.
-	 * @param string $action_items     The contents for the action items
-	 *                                 		       container.  This is filtered before
-	 *                                 		       returned.
-	 * @param string $action_id           What id (optional) is used for the
-	 *                                    	        container element.
-	 * @param object $item                 The object for the column displaying
-	 *                                     	       the actions.
-	 *
+	 * @param string        $action_container           what are the html container
+	 *                                                  elements for this actions string?
+	 * @param string        $action_class               What class is for the container
+	 *                                                  element.
+	 * @param string        $action_items               The contents for the action items
+	 *                                                  container.  This is filtered before
+	 *                                                  returned.
+	 * @param string        $action_id                  What id (optional) is used for the
+	 *                                                  container element.
+	 * @param EE_Base_Class $item                       The object for the column displaying
+	 *                                                  the actions.
 	 * @return string The assembled action elements container.
 	 */
 	protected function _action_string( $action_items, $item, $action_container = 'ul', $action_class = '', $action_id = '' ) {
@@ -771,8 +784,20 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 		$action_class = ! empty( $action_class ) ? ' class="' . $action_class . '"' : '';
 		$action_id = ! empty( $action_id ) ? ' id="' . $action_id . '"' : '';
 		$content .= ! empty( $action_container ) ? '<' . $action_container . $action_class . $action_id . '>' : '';
-		$content .= apply_filters( 'FHEE__EE_Admin_List_Table___action_string__action_items', $action_items, $item, $this );
-		$content .= ! empty( $container ) ? '</' . $container . '>' : '';
+        try {
+            $content .= apply_filters(
+                'FHEE__EE_Admin_List_Table___action_string__action_items',
+                $action_items,
+                $item,
+                $this
+            );
+        } catch (\Exception $e) {
+            if (WP_DEBUG) {
+                \EE_Error::add_error( $e->getMessage(), __FILE__, __FUNCTION__, __LINE__ );
+            }
+            $content .= $action_items;
+        }
+		$content .= ! empty( $action_container ) ? '</' . $action_container . '>' : '';
 		return $content;
 	}
 }

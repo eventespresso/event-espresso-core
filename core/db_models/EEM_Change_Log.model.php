@@ -79,7 +79,7 @@ class EEM_Change_Log extends EEM_Base{
 		$this->_fields = array(
 			'Log'=>array(
 				'LOG_ID'=> new EE_Primary_Key_Int_Field('LOG_ID', __('Log ID','event_espresso')),
-				'LOG_time'=>new EE_Datetime_Field('LOG_time', __("Log Time", 'event_espresso'), false, time()),
+				'LOG_time'=>new EE_Datetime_Field('LOG_time', __("Log Time", 'event_espresso'), false, EE_Datetime_Field::now ),
 				'OBJ_ID'=>new EE_Foreign_Key_String_Field('OBJ_ID', __("Object ID (int or string)", 'event_espresso'), true, NULL,$models_this_can_attach_to),
 				'OBJ_type'=>new EE_Any_Foreign_Model_Name_Field('OBJ_type', __("Object Type", 'event_espresso'), true, NULL, $models_this_can_attach_to),
 				'LOG_type'=>new EE_Enum_Text_Field('LOG_type', __("Type of log entry", "event_espresso"), false, self::type_debug,
@@ -172,6 +172,24 @@ class EEM_Change_Log extends EEM_Base{
 		return $this->_get_all_wpdb_results($query_params);
 	}
 
+
+
+    /**
+     * Executes a database query to delete gateway logs. Does not affect model objects, so if you attempt to use
+     * models after this, they may be out-of-sync with the database
+     * @param DateTime $datetime
+     * @return false|int
+     */
+	public function delete_gateway_logs_older_than(DateTime $datetime ) {
+	    global $wpdb;
+        return $wpdb->query(
+            $wpdb->prepare(
+                'DELETE FROM ' . $this->table() . ' WHERE LOG_type = %s AND LOG_time < %s',
+                EEM_Change_Log::type_gateway,
+                $datetime->format(EE_Datetime_Field::mysql_timestamp_format)
+            )
+        );
+    }
 
 
 }

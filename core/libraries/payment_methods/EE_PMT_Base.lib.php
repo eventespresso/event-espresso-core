@@ -2,6 +2,8 @@
 EE_Registry::instance()->load_lib('Gateway');
 EE_Registry::instance()->load_lib('Onsite_Gateway');
 EE_Registry::instance()->load_lib('Offsite_Gateway');
+use \EventEspresso\core\services\payment_methods\gateways\GatewayDataFormatter;
+use \EventEspresso\core\services\formatters\AsciiOnly;
 /**
  *
  * Class EE_PMT_Base
@@ -104,6 +106,9 @@ abstract class EE_PMT_Base{
 			$this->_gateway->set_template_helper( new EEH_Template() );
 			$this->_gateway->set_line_item_helper( new EEH_Line_Item() );
 			$this->_gateway->set_money_helper( new EEH_Money() );
+            $this->_gateway->set_gateway_data_formatter(new GatewayDataFormatter());
+            $this->_gateway->set_unsupported_character_remover(new AsciiOnly());
+            do_action( 'AHEE__EE_PMT_Base___construct__done_initializing_gateway_class',$this,$this->_gateway);
 		}
 		if ( ! isset( $this->_has_billing_form ) ) {
 			// by default, On Site gateways have a billing form
@@ -217,7 +222,6 @@ abstract class EE_PMT_Base{
 		if( ! $this->_settings_form){
 			$this->_settings_form = $this->generate_new_settings_form();
 			$this->_settings_form->set_payment_method_type( $this );
-			$this->_settings_form->_construct_finalize(NULL, NULL );
 			//if we have already assigned a model object to this pmt, make
 			//sure its reflected in teh form we just generated
 			if($this->_pm_instance){
@@ -277,10 +281,17 @@ abstract class EE_PMT_Base{
 		//if we know who the attendee is, and this is a billing form
 		//that uses attendee info, populate it
 		if (
-			$this->_billing_form instanceof EE_Billing_Attendee_Info_Form &&
-			$transaction instanceof EE_Transaction &&
-			$transaction->primary_registration() instanceof EE_Registration &&
-			$transaction->primary_registration()->attendee() instanceof EE_Attendee
+            apply_filters(
+                'FHEE__populate_billing_form_fields_from_attendee',
+                (
+                    $this->_billing_form instanceof EE_Billing_Attendee_Info_Form
+                    && $transaction instanceof EE_Transaction
+                    && $transaction->primary_registration() instanceof EE_Registration
+                    && $transaction->primary_registration()->attendee() instanceof EE_Attendee
+                ),
+                $this->_billing_form,
+                $transaction
+            )
 		){
 			$this->_billing_form->populate_from_attendee( $transaction->primary_registration()->attendee() );
 		}
@@ -708,6 +719,20 @@ abstract class EE_PMT_Base{
 		if( $this->_gateway instanceof EE_Gateway ){
 			$this->_gateway->update_txn_based_on_payment( $payment );
 		}
+	}
+
+	/**
+	 * Returns a string of HTML describing this payment method type for an admin,
+	 * primarily intended for them to read before activating it.
+	 * The easiest way to set this is to create a folder 'templates' alongside
+	 * your EE_PMT_{System_Name} file, and in it create a file named "{system_name}_intro.template.php".
+	 * Eg, if your payment method file is named "EE_PMT_Foo_Bar.pm.php",
+	 * then you'd create a file named "templates" in the same folder as it, and name the file
+	 * "foo_bar_intro.template.php", and its content will be returned by this method
+	 * @return string
+	 */
+	public function introductory_html() {
+		return EEH_Template::locate_template( $this->file_folder() . 'templates' . DS . strtolower( $this->system_name() ) . '_intro.template.php', array( 'pmt_obj' => $this, 'pm_instance' => $this->_pm_instance ) );
 	}
 
 

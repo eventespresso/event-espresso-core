@@ -132,7 +132,7 @@ class EE_Datetime_Test extends EE_UnitTestCase{
 		);/**/
 		//setup some dates we'll use for testing with.
 		$timezone = new DateTimeZone( 'America/Toronto' );
-		$upcoming_start_date = new DateTime( "now +2hours", $timezone );
+		$upcoming_start_date = new DateTime( "now +1day", $timezone );
 		$past_start_date = new DateTime( "now -2days", $timezone );
 		$upcoming_end_date = new DateTime( "now +2days", $timezone );
 		$current = new DateTime( "now", $timezone );

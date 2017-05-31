@@ -28,7 +28,6 @@ class espresso_Tests extends EE_UnitTestCase {
 		$this->assertTrue( defined('EE_MIN_WP_VER_REQUIRED') );
 		$this->assertTrue( defined('EE_MIN_WP_VER_RECOMMENDED') );
 		$this->assertTrue( defined('EE_MIN_PHP_VER_RECOMMENDED') );
-		$this->assertTrue( defined('EVENT_ESPRESSO_POWERED_BY') );
 		$this->assertTrue( defined('EVENT_ESPRESSO_MAIN_FILE') );
 		$this->assertTrue( defined('DS') );
 		$this->assertTrue( defined('PS') );

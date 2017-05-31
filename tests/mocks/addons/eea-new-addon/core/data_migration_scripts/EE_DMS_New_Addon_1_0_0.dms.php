@@ -51,8 +51,8 @@ class EE_DMS_New_Addon_1_0_0 extends EE_Data_Migration_Script_Base{
 
 			}
 		} else {
-			/* apparently this EE4 addon was never installed prevously.
-			 * If there was an EE3 equivalent, you could use EEH_Activation::table_exists(),
+			/* apparently this EE4 addon was never installed previously.
+			 * If there was an EE3 equivalent, you could use \EventEspresso\core\services\database\TableAnalysis::tableExists(),
 			 * and EE_Data_Migration_Manager::get_migration_ran() to see if the old
 			 * EE3 tables exist and if the core DMS migrated core data from EE3.
 			 * If so, you probably want to migrate (return TRUE).

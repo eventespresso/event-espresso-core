@@ -381,9 +381,11 @@ class EED_Events_Archive_Filters  extends EED_Module {
 		$SQL= '';
 		if ( ! empty( $month )) {
 			// event start date is LESS than the end of the month ( so nothing that doesn't start until next month )
-			$SQL = ' AND ' . EEM_Datetime::instance()->table() . '.DTT_EVT_start <= "' . date('Y-m-t 23:59:59', strtotime( $month )) . '"';
+			$SQL = ' AND ' . EEM_Datetime::instance()->table() . '.DTT_EVT_start';
+			$SQL .= ' <= "' . date('Y-m-t 23:59:59', \EEH_DTT_Helper::first_of_month_timestamp($month)) . '"';
 			// event end date is GREATER than the start of the month ( so nothing that ended before this month )
-			$SQL .= ' AND ' . EEM_Datetime::instance()->table() . '.DTT_EVT_end >= "' . date('Y-m-d 0:0:00', strtotime( $month )) . '" ';
+			$SQL .= ' AND ' . EEM_Datetime::instance()->table() . '.DTT_EVT_end';
+			$SQL .= ' >= "' . date('Y-m-d 0:0:00', \EEH_DTT_Helper::first_of_month_timestamp($month)) . '" ';
 		}
 		return $SQL;
 	}
@@ -587,8 +589,9 @@ class EED_Events_Archive_Filters  extends EED_Module {
 	 */
 	private function _load_assests() {
 		do_action( 'AHEE__EED_Events_Archive_Filters__before_load_assests' );
-		add_filter( 'FHEE_load_css', '__return_true' );
-		add_filter( 'FHEE_load_EE_Session', '__return_true' );
+        wp_enqueue_style('espresso_default');
+        wp_enqueue_style('espresso_custom_css');
+        add_filter( 'FHEE_load_EE_Session', '__return_true' );
 		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 10 );
 		if ( EE_Registry::instance()->CFG->map_settings->use_google_maps ) {
 			add_action('wp_enqueue_scripts', array( 'EEH_Maps', 'espresso_google_map_js' ), 11 );

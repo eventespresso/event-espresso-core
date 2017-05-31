@@ -78,11 +78,11 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 	 * @return EE_Soft_Delete_Base_Class
 	 */
 	public function get_one_by_ID_but_ignore_deleted($id){
-		return $this->get_one( 
-			$this->alter_query_params_to_restrict_by_ID( 
+		return $this->get_one(
+			$this->alter_query_params_to_restrict_by_ID(
 				$id,
-				array( 'default_where_conditions' => 'default' ) 
-			) 
+				array( 'default_where_conditions' => 'default' )
+			)
 		);
 	}
 
@@ -109,6 +109,17 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 		return $query_params;
 	}
 
+
+
+    /**
+     * Alters the query params so that only trashed/soft-deleted items are considered
+     * @param array $query_params like EEM_Base::get_all's $query_params
+     * @return array like EEM_Base::get_all's $query_params
+     */
+	public function alter_query_params_so_only_trashed_items_included($query_params){
+	    return $this->_alter_query_params_so_only_trashed_items_included($query_params);
+    }
+
 	/**
 	 * Alters the query params so each item's deleted status is ignored.
 	 * @param array $query_params
@@ -131,7 +142,7 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 	}
 
 	/**
-	 * Counts all deleeted and undeleted items
+	 * Counts all deleted and undeleted items
 	 * @param array $query_params like EEM_Base::get_all
 	 * @param string $field_to_count
 	 * @param bool 	 $distinct if we want to only count the distinct values for the column then you can trigger that by the setting $distinct to TRUE;
@@ -157,7 +168,7 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 	 * Sums all the deleted and undeleted items.
 	 * @param array $query_params lik eEEM_Base::get_all
 	 * @param string $field_to_sum
-	 * @reutrn int
+	 * @return int
 	 */
 	public function sum_deleted_and_undeleted($query_params = null, $field_to_sum = null){
 		$query_params = $this->_alter_query_params_so_deleted_and_undeleted_items_included($query_params);
@@ -214,7 +225,7 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 	/**
 	 * For deleting or restoring a particular item. Note that this model is a SOFT-DELETABLE model! However,
 	 * this function will ignore whether the items have been soft-deleted or not.
-	 * @param boolean $delete true for deletem, false for restore
+	 * @param boolean $delete true for delete, false for restore
 	 * @param mixed $ID int if primary key is an int, string otherwise
 	 * @return boolean
 	 */
@@ -222,10 +233,10 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 		if ( ! $ID ) {
 			return FALSE;
 		}
-		if ( 
+		if (
 			$this->delete_or_restore(
-				$delete, 
-				$this->alter_query_params_to_restrict_by_ID( $ID ) 
+				$delete,
+				$this->alter_query_params_to_restrict_by_ID( $ID )
 			)
 		) {
 			return TRUE;
@@ -251,7 +262,7 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 	}
 
 	/**
-	 * 'Undeletes' the chosen items. Note that this model is a SOFT-DELETABLE model! That means that, by default, trashed/soft-deleted
+	 * 'Un-deletes' the chosen items. Note that this model is a SOFT-DELETABLE model! That means that, by default, trashed/soft-deleted
 	 * items are ignored in queries. However, this particular function ignores whether the items have been soft-deleted or not.
 	 * @param array $query_params like EEM_Base::get_all
 	 * @return boolean
@@ -278,7 +289,7 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 	/**
 	 * Updates all the items of this model which match the $query params, regardless of whether
 	 * they've been soft-deleted or not
-	 * @param array $field_n_values like EEM_Base::update's $fields_n_value
+	 * @param array $fields_n_values like EEM_Base::update's $fields_n_value
 	 * @param array $query_params like EEM_base::get_all's $query_params
 	 * @param boolean $keep_model_objs_in_sync if TRUE, makes sure we ALSO update model objects
 	 * in this model's entity map according to $fields_n_values that match $query_params. This
