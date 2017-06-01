@@ -5,7 +5,9 @@ use EventEspresso\core\domain\RequiresDependencyMapInterface;
 use EventEspresso\core\domain\RequiresDomainInterface;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\activation\ActivationHistory;
 use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\RequestType;
 use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 /**
@@ -25,30 +27,9 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
     const ee_addon_version_history_option_prefix = 'ee_version_history_';
 
     /**
-     * @var $_version
-     * @type string
+     * @var ActivationHistory $activation_history
      */
-    protected $_version = '';
-
-    /**
-     * @var $_min_core_version
-     * @type string
-     */
-    protected $_min_core_version = '';
-
-    /**
-     * derived from plugin 'main_file_path using plugin_basename()
-     *
-     * @type string $_plugin_basename
-     */
-    protected $_plugin_basename = '';
-
-    /**
-     * A non-internationalized name to identify this addon for use in URLs, etc
-     *
-     * @type string $_plugin_slug
-     */
-    protected $_plugin_slug = '';
+    private $activation_history;
 
     /**
      * A non-internationalized name to identify this addon. Eg 'Calendar','MailChimp',etc/
@@ -56,43 +37,6 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
      * @type string _addon_name
      */
     protected $_addon_name = '';
-
-    /**
-     * one of the EE_System::req_type_* constants
-     *
-     * @type int $_req_type
-     */
-    protected $_req_type;
-
-    /**
-     * page slug to be used when generating the "Settings" link on the WP plugin page
-     *
-     * @type string $_plugin_action_slug
-     */
-    protected $_plugin_action_slug = '';
-
-    /**
-     * if not empty, inserts a new table row after this plugin's row on the WP Plugins page
-     * that can be used for adding upgrading/marketing info
-     *
-     * @type array $_plugins_page_row
-     */
-    protected $_plugins_page_row = array();
-
-
-    /**
-     *    filepath to the main file, which can be used for register_activation_hook, register_deactivation_hook, etc.
-     *
-     * @type string
-     */
-    protected $_main_plugin_file;
-
-    /**
-     *    This is the slug used to identify this add-on within the plugin update engine.
-     *
-     * @type string
-     */
-    protected $pue_slug;
 
 
     /**
@@ -106,12 +50,80 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
      */
     private $domain;
 
+    /**
+     * filepath to the main file, which can be used for register_activation_hook, register_deactivation_hook, etc.
+     *
+     * @type string
+     */
+    protected $_main_plugin_file;
+
 
     /**
-     * @param EE_Dependency_Map $dependency_map [optional]
-     * @param DomainInterface   $domain         [optional]
+     * @var $_min_core_version
+     * @type string
      */
-    public function __construct(EE_Dependency_Map $dependency_map = null, DomainInterface $domain = null)
+    protected $_min_core_version = '';
+
+    /**
+     * page slug to be used when generating the "Settings" link on the WP plugin page
+     *
+     * @type string $_plugin_action_slug
+     */
+    protected $_plugin_action_slug = '';
+
+    /**
+     * derived from plugin 'main_file_path using plugin_basename()
+     *
+     * @type string $_plugin_basename
+     */
+    protected $_plugin_basename = '';
+
+    /**
+     * if not empty, inserts a new table row after this plugin's row on the WP Plugins page
+     * that can be used for adding upgrading/marketing info
+     *
+     * @type array $_plugins_page_row
+     */
+    protected $_plugins_page_row = [];
+
+    /**
+     * A non-internationalized name to identify this addon for use in URLs, etc
+     *
+     * @type string $_plugin_slug
+     */
+    protected $_plugin_slug = '';
+
+    /**
+     *    This is the slug used to identify this add-on within the plugin update engine.
+     *
+     * @type string
+     */
+    protected $pue_slug;
+
+    /**
+     * one of the EE_System::req_type_* constants
+     *
+     * @type int $_req_type
+     */
+    protected $_req_type;
+
+    /**
+     * @var RequestType $request_type
+     */
+    private $request_type;
+
+    /**
+     * @var $_version
+     * @type string
+     */
+    protected $_version = '';
+
+
+    /**
+     * @param EE_Dependency_Map|null $dependency_map [optional]
+     * @param DomainInterface|null   $domain         [optional]
+     */
+    public function __construct(?EE_Dependency_Map $dependency_map, ?DomainInterface $domain)
     {
         if ($dependency_map instanceof EE_Dependency_Map) {
             $this->setDependencyMap($dependency_map);
@@ -119,7 +131,7 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
         if ($domain instanceof DomainInterface) {
             $this->setDomain($domain);
         }
-        add_action('AHEE__EE_System__load_controllers__load_admin_controllers', array($this, 'admin_init'));
+        add_action('AHEE__EE_System__load_controllers__load_admin_controllers', [$this, 'admin_init']);
     }
 
 
@@ -135,7 +147,7 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
     /**
      * @return EE_Dependency_Map
      */
-    public function dependencyMap()
+    public function dependencyMap(): EE_Dependency_Map
     {
         return $this->dependency_map;
     }
@@ -149,10 +161,11 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
         $this->domain = $domain;
     }
 
+
     /**
      * @return DomainInterface
      */
-    public function domain()
+    public function domain(): DomainInterface
     {
         return $this->domain;
     }
@@ -172,7 +185,7 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
      *
      * @return string
      */
-    public function version()
+    public function version(): string
     {
         return $this->_version;
     }
@@ -192,7 +205,7 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
      *
      * @return string
      */
-    public function min_core_version()
+    public function min_core_version(): string
     {
         return $this->_min_core_version;
     }
@@ -202,11 +215,10 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
      * Sets addon_name
      *
      * @param string $addon_name
-     * @return bool
      */
-    public function set_name($addon_name)
+    public function set_name(string $addon_name)
     {
-        return $this->_addon_name = $addon_name;
+        $this->_addon_name = $addon_name;
     }
 
 
@@ -215,7 +227,7 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
      *
      * @return string
      */
-    public function name()
+    public function name(): string
     {
         return $this->_addon_name;
     }
@@ -224,7 +236,7 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
     /**
      * @return string
      */
-    public function plugin_basename()
+    public function plugin_basename(): string
     {
 
         return $this->_plugin_basename;
@@ -234,7 +246,7 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
     /**
      * @param string $plugin_basename
      */
-    public function set_plugin_basename($plugin_basename)
+    public function set_plugin_basename(string $plugin_basename)
     {
 
         $this->_plugin_basename = $plugin_basename;
@@ -244,7 +256,7 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
     /**
      * @return string
      */
-    public function plugin_slug()
+    public function plugin_slug(): string
     {
 
         return $this->_plugin_slug;
@@ -254,7 +266,7 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
     /**
      * @param string $plugin_slug
      */
-    public function set_plugin_slug($plugin_slug)
+    public function set_plugin_slug(string $plugin_slug)
     {
 
         $this->_plugin_slug = $plugin_slug;
@@ -264,7 +276,7 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
     /**
      * @return string
      */
-    public function plugin_action_slug()
+    public function plugin_action_slug(): string
     {
 
         return $this->_plugin_action_slug;
@@ -274,7 +286,7 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
     /**
      * @param string $plugin_action_slug
      */
-    public function set_plugin_action_slug($plugin_action_slug)
+    public function set_plugin_action_slug(string $plugin_action_slug)
     {
 
         $this->_plugin_action_slug = $plugin_action_slug;
@@ -284,7 +296,7 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
     /**
      * @return array
      */
-    public function get_plugins_page_row()
+    public function get_plugins_page_row(): array
     {
 
         return $this->_plugins_page_row;
@@ -292,65 +304,23 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
 
 
     /**
-     * @param array $plugins_page_row
+     * @param array|string $plugins_page_row
      */
-    public function set_plugins_page_row($plugins_page_row = array())
+    public function set_plugins_page_row($plugins_page_row = [])
     {
         // sigh.... check for example content that I stupidly merged to master and remove it if found
         if (
             ! is_array($plugins_page_row)
             && strpos($plugins_page_row, '<h3>Promotions Addon Upsell Info</h3>') !== false
         ) {
-            $plugins_page_row = array();
+            $plugins_page_row = [];
         }
         $this->_plugins_page_row = (array) $plugins_page_row;
     }
 
 
     /**
-     * Called when EE core detects this addon has been activated for the first time.
-     * If the site isn't in maintenance mode, should setup the addon's database
-     *
-     * @return void
-     * @throws EE_Error
-     */
-    public function new_install()
-    {
-        $classname = get_class($this);
-        do_action("AHEE__{$classname}__new_install");
-        do_action('AHEE__EE_Addon__new_install', $this);
-        EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
-        add_action(
-            'AHEE__EE_System__perform_activations_upgrades_and_migrations',
-            array($this, 'initialize_db_if_no_migrations_required')
-        );
-    }
-
-
-    /**
-     * Called when EE core detects this addon has been reactivated. When this happens,
-     * it's good to just check that your data is still intact
-     *
-     * @return void
-     * @throws EE_Error
-     */
-    public function reactivation()
-    {
-        $classname = get_class($this);
-        do_action("AHEE__{$classname}__reactivation");
-        do_action('AHEE__EE_Addon__reactivation', $this);
-        EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
-        add_action(
-            'AHEE__EE_System__perform_activations_upgrades_and_migrations',
-            array($this, 'initialize_db_if_no_migrations_required')
-        );
-    }
-
-
-    /**
      * Called when the registered deactivation hook for this addon fires.
-     *
-     * @throws EE_Error
      */
     public function deactivation()
     {
@@ -368,8 +338,8 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
      * initializing this addon's necessary initial data. This is called by default on new activations
      * and reactivations.
      *
-     * @param bool $verify_schema whether to verify the database's schema for this addon, or just its data.
-     *                               This is a resource-intensive job so we prefer to only do it when necessary
+     * @param boolean|string $verify_schema whether to verify the database's schema for this addon, or just its data.
+     *                                      This is a resource-intensive job so we prefer to only do it when necessary
      * @return void
      * @throws EE_Error
      * @throws InvalidInterfaceException
@@ -393,10 +363,10 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
             $this->initialize_default_data();
             // @todo: this will probably need to be adjusted in 4.4 as the array changed formats I believe
             EE_Data_Migration_Manager::instance()->update_current_database_state_to(
-                array(
+                [
                     'slug'    => $this->name(),
                     'version' => $this->version(),
-                )
+                ]
             );
             /* make sure core's data is a-ok
              * (at the time of writing, we especially want to verify all the caps are present
@@ -427,6 +397,9 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
      * data in them. The default is to actually use the most up-to-date data migration script
      * for this addon, and just use its schema_changes_before_migration() and schema_changes_after_migration()
      * methods to setup the db.
+     *
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function initialize_db()
     {
@@ -445,10 +418,10 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
         }
         // if not DMS was found that should be ok. This addon just doesn't require any database changes
         EE_Data_Migration_Manager::instance()->update_current_database_state_to(
-            array(
+            [
                 'slug'    => $this->name(),
                 'version' => $this->version(),
-            )
+            ]
         );
     }
 
@@ -479,212 +452,12 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
 
 
     /**
-     * EE Core detected that this addon has been upgraded. We should check if there
-     * are any new migration scripts, and if so put the site into maintenance mode until
-     * they're ran
-     *
-     * @return void
-     * @throws EE_Error
-     */
-    public function upgrade()
-    {
-        $classname = get_class($this);
-        do_action("AHEE__{$classname}__upgrade");
-        do_action('AHEE__EE_Addon__upgrade', $this);
-        EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
-        // also it's possible there is new default data that needs to be added
-        add_action(
-            'AHEE__EE_System__perform_activations_upgrades_and_migrations',
-            array($this, 'initialize_db_if_no_migrations_required')
-        );
-    }
-
-
-    /**
-     * If Core detects this addon has been downgraded, you may want to invoke some special logic here.
-     */
-    public function downgrade()
-    {
-        $classname = get_class($this);
-        do_action("AHEE__{$classname}__downgrade");
-        do_action('AHEE__EE_Addon__downgrade', $this);
-        // it's possible there's old default data that needs to be double-checked
-        add_action(
-            'AHEE__EE_System__perform_activations_upgrades_and_migrations',
-            array($this, 'initialize_db_if_no_migrations_required')
-        );
-    }
-
-
-    /**
-     * set_db_update_option_name
-     * Until we do something better, we'll just check for migration scripts upon
-     * plugin activation only. In the future, we'll want to do it on plugin updates too
-     *
-     * @return bool
-     */
-    public function set_db_update_option_name()
-    {
-        EE_Error::doing_it_wrong(
-            __FUNCTION__,
-            esc_html__(
-                'EE_Addon::set_db_update_option_name was renamed to EE_Addon::set_activation_indicator_option',
-                'event_espresso'
-            ),
-            '4.3.0.alpha.016'
-        );
-        // let's just handle this on the next request, ok? right now we're just not really ready
-        return $this->set_activation_indicator_option();
-    }
-
-
-    /**
-     * Returns the name of the activation indicator option
-     * (an option which is set temporarily to indicate that this addon was just activated)
-     *
-     * @deprecated since version 4.3.0.alpha.016
-     * @return string
-     */
-    public function get_db_update_option_name()
-    {
-        EE_Error::doing_it_wrong(
-            __FUNCTION__,
-            esc_html__(
-                'EE_Addon::get_db_update_option was renamed to EE_Addon::get_activation_indicator_option_name',
-                'event_espresso'
-            ),
-            '4.3.0.alpha.016'
-        );
-        return $this->get_activation_indicator_option_name();
-    }
-
-
-    /**
-     * When the addon is activated, this should be called to set a wordpress option that
-     * indicates it was activated. This is especially useful for detecting reactivations.
-     *
-     * @return bool
-     */
-    public function set_activation_indicator_option()
-    {
-        // let's just handle this on the next request, ok? right now we're just not really ready
-        return update_option($this->get_activation_indicator_option_name(), true);
-    }
-
-
-    /**
-     * Gets the name of the wp option which is used to temporarily indicate that this addon was activated
-     *
-     * @return string
-     */
-    public function get_activation_indicator_option_name()
-    {
-        return 'ee_activation_' . $this->name();
-    }
-
-
-    /**
-     * Used by EE_System to set the request type of this addon. Should not be used by addon developers
-     *
-     * @param int $req_type
-     */
-    public function set_req_type($req_type)
-    {
-        $this->_req_type = $req_type;
-    }
-
-
-    /**
-     * Returns the request type of this addon (ie, EE_System::req_type_normal, EE_System::req_type_new_activation,
-     * EE_System::req_type_reactivation, EE_System::req_type_upgrade, or EE_System::req_type_downgrade). This is set by
-     * EE_System when it is checking for new install or upgrades of addons
-     */
-    public function detect_req_type($redetect = false)
-    {
-        if ($this->_req_type === null || $redetect) {
-            $this->detect_activation_or_upgrade();
-        }
-        return $this->_req_type;
-    }
-
-
-    /**
-     * Detects the request type for this addon (whether it was just activated, upgrades, a normal request, etc.)
-     * Should only be called once per request
-     *
-     * @return void
-     * @throws EE_Error
-     */
-    public function detect_activation_or_upgrade()
-    {
-        $activation_history_for_addon = $this->get_activation_history();
-        $request_type = EE_System::detect_req_type_given_activation_history(
-            $activation_history_for_addon,
-            $this->get_activation_indicator_option_name(),
-            $this->version()
-        );
-        $this->set_req_type($request_type);
-        $classname = get_class($this);
-        switch ($request_type) {
-            case EE_System::req_type_new_activation:
-                do_action("AHEE__{$classname}__detect_activations_or_upgrades__new_activation");
-                do_action('AHEE__EE_Addon__detect_activations_or_upgrades__new_activation', $this);
-                $this->new_install();
-                $this->update_list_of_installed_versions($activation_history_for_addon);
-                break;
-            case EE_System::req_type_reactivation:
-                do_action("AHEE__{$classname}__detect_activations_or_upgrades__reactivation");
-                do_action('AHEE__EE_Addon__detect_activations_or_upgrades__reactivation', $this);
-                $this->reactivation();
-                $this->update_list_of_installed_versions($activation_history_for_addon);
-                break;
-            case EE_System::req_type_upgrade:
-                do_action("AHEE__{$classname}__detect_activations_or_upgrades__upgrade");
-                do_action('AHEE__EE_Addon__detect_activations_or_upgrades__upgrade', $this);
-                $this->upgrade();
-                $this->update_list_of_installed_versions($activation_history_for_addon);
-                break;
-            case EE_System::req_type_downgrade:
-                do_action("AHEE__{$classname}__detect_activations_or_upgrades__downgrade");
-                do_action('AHEE__EE_Addon__detect_activations_or_upgrades__downgrade', $this);
-                $this->downgrade();
-                $this->update_list_of_installed_versions($activation_history_for_addon);
-                break;
-            case EE_System::req_type_normal:
-            default:
-                break;
-        }
-
-        do_action("AHEE__{$classname}__detect_if_activation_or_upgrade__complete");
-    }
-
-    /**
-     * Updates the version history for this addon
-     *
-     * @param array  $version_history
-     * @param string $current_version_to_add
-     * @return bool success
-     */
-    public function update_list_of_installed_versions($version_history = null, $current_version_to_add = null)
-    {
-        if (! $version_history) {
-            $version_history = $this->get_activation_history();
-        }
-        if ($current_version_to_add === null) {
-            $current_version_to_add = $this->version();
-        }
-        $version_history[ $current_version_to_add ][] = date('Y-m-d H:i:s', time());
-        // resave
-        return update_option($this->get_activation_history_option_name(), $version_history);
-    }
-
-    /**
      * Gets the name of the wp option that stores the activation history
      * of this addon
      *
      * @return string
      */
-    public function get_activation_history_option_name()
+    public function get_activation_history_option_name(): string
     {
         return self::ee_addon_version_history_option_prefix . $this->name();
     }
@@ -695,9 +468,10 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
      *
      * @return array
      */
-    public function get_activation_history()
+    public function get_activation_history(): array
     {
-        return get_option($this->get_activation_history_option_name(), null);
+        $this->setup_activation_history();
+        return $this->activation_history->getVersionHistory();
     }
 
 
@@ -709,43 +483,47 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
         $this->_config_section = ! empty($config_section) ? $config_section : 'addons';
     }
 
+
     /**
      * Sets the filepath to the main plugin file
      *
      * @param string $filepath
      */
-    public function set_main_plugin_file($filepath)
+    public function set_main_plugin_file(string $filepath)
     {
         $this->_main_plugin_file = $filepath;
     }
 
+
     /**
-     * gets the filepath to teh main file
+     * gets the filepath to the main file
      *
      * @return string
      */
-    public function get_main_plugin_file()
+    public function get_main_plugin_file(): string
     {
         return $this->_main_plugin_file;
     }
 
+
     /**
-     * Gets the filename (no path) of the main file (the main file loaded
-     * by WP)
+     * Gets the filename (no path) of the main file
+     * (the main file loaded by WP)
      *
      * @return string
      */
-    public function get_main_plugin_file_basename()
+    public function get_main_plugin_file_basename(): string
     {
         return plugin_basename($this->get_main_plugin_file());
     }
+
 
     /**
      * Gets the folder name which contains the main plugin file
      *
      * @return string
      */
-    public function get_main_plugin_file_dirname()
+    public function get_main_plugin_file_dirname(): string
     {
         return dirname($this->get_main_plugin_file());
     }
@@ -760,8 +538,8 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
     {
         // is admin and not in M-Mode ?
         if (is_admin() && ! EE_Maintenance_Mode::instance()->level()) {
-            add_filter('plugin_action_links', array($this, 'plugin_action_links'), 10, 2);
-            add_filter('after_plugin_row_' . $this->_plugin_basename, array($this, 'after_plugin_row'), 10, 3);
+            add_filter('plugin_action_links', [$this, 'plugin_action_links'], 10, 2);
+            add_filter('after_plugin_row_' . $this->_plugin_basename, [$this, 'after_plugin_row'], 10, 3);
         }
     }
 
@@ -774,7 +552,7 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
      * @param $file
      * @return array
      */
-    public function plugin_action_links($links, $file)
+    public function plugin_action_links($links, $file): array
     {
         if ($file === $this->plugin_basename() && $this->plugin_action_slug() !== '') {
             // before other links
@@ -804,12 +582,10 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
         $after_plugin_row = '';
         $plugins_page_row = $this->get_plugins_page_row();
         if (! empty($plugins_page_row) && $plugin_file === $this->plugin_basename()) {
-            $class = $status ? 'active' : 'inactive';
-            $link_text = isset($plugins_page_row['link_text']) ? $plugins_page_row['link_text'] : '';
-            $link_url = isset($plugins_page_row['link_url']) ? $plugins_page_row['link_url'] : '';
-            $description = isset($plugins_page_row['description'])
-                ? $plugins_page_row['description']
-                : '';
+            $class       = $status ? 'active' : 'inactive';
+            $link_text   = $plugins_page_row['link_text'] ?? '';
+            $link_url    = $plugins_page_row['link_url'] ?? '';
+            $description = $plugins_page_row['description'] ?? '';
             if (! empty($link_text) && ! empty($link_url) && ! empty($description)) {
                 $after_plugin_row .= '<tr id="' . sanitize_title($plugin_file) . '-ee-addon" class="' . $class . '">';
                 $after_plugin_row .= '<th class="check-column" scope="row"></th>';
@@ -859,18 +635,228 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
         // cricket chirp... cricket chirp...
     }
 
+
     /**
      * @return string
      */
-    public function getPueSlug()
+    public function getPueSlug(): string
     {
         return $this->pue_slug;
     }
+
+
     /**
      * @param string $pue_slug
      */
-    public function setPueSlug($pue_slug)
+    public function setPueSlug(string $pue_slug)
     {
         $this->pue_slug = $pue_slug;
     }
+
+
+    /**
+     * ensures the activation history property is set
+     *
+     * @return void
+     */
+    public function setup_activation_history()
+    {
+        if (! $this->activation_history instanceof ActivationHistory) {
+            $this->setActivationHistory(
+                new ActivationHistory(
+                    $this->get_activation_history_option_name(),
+                    $this->get_activation_indicator_option_name(),
+                    $this->version()
+                )
+            );
+        }
+    }
+
+
+    /**
+     * Gets the ActivationHistory object for this addon
+     *
+     * @return ActivationHistory
+     */
+    public function getActivationHistory(): ActivationHistory
+    {
+        $this->setup_activation_history();
+        return $this->activation_history;
+    }
+
+
+    /**
+     * @param ActivationHistory $activation_history
+     */
+    public function setActivationHistory(ActivationHistory $activation_history)
+    {
+        $this->activation_history = $activation_history;
+    }
+
+
+    /**
+     * @return RequestType
+     */
+    public function getRequestType(): RequestType
+    {
+        return $this->request_type;
+    }
+
+
+    /**
+     * @param RequestType $request_type
+     */
+    public function setRequestType(RequestType $request_type)
+    {
+        $this->request_type = $request_type;
+    }
+
+
+
+    /******************************** DEPRECATED ***************************************/
+
+
+    /**
+     * @return void
+     * @deprecated 4.9.40
+     */
+    public function new_install()
+    {
+    }
+
+
+    /**
+     * @return void
+     * @deprecated 4.9.40
+     */
+    public function reactivation()
+    {
+    }
+
+
+    /**
+     * @return void
+     * @deprecated 4.9.40
+     */
+    public function upgrade()
+    {
+    }
+
+
+    /**
+     * @deprecated 4.9.40
+     */
+    public function downgrade()
+    {
+    }
+
+
+    /**
+     * set_db_update_option_name
+     * Until we do something better, we'll just check for migration scripts upon
+     * plugin activation only. In the future, we'll want to do it on plugin updates too
+     *
+     * @return bool
+     * @deprecated 4.3.0.alpha.016
+     */
+    public function set_db_update_option_name(): bool
+    {
+        EE_Error::doing_it_wrong(
+            __FUNCTION__,
+            __(
+                'EE_Addon::set_db_update_option_name was renamed to EE_Addon::set_activation_indicator_option',
+                'event_espresso'
+            ),
+            '4.3.0.alpha.016'
+        );
+        //let's just handle this on the next request, ok? right now we're just not really ready
+        return $this->set_activation_indicator_option();
+    }
+
+
+    /**
+     *
+     * Returns the name of the activation indicator option
+     * (an option which is set temporarily to indicate that this addon was just activated)
+     *
+     * @return string
+     * @deprecated 4.3.0.alpha.016
+     */
+    public function get_db_update_option_name(): string
+    {
+        EE_Error::doing_it_wrong(
+            __FUNCTION__,
+            __(
+                'EE_Addon::get_db_update_option was renamed to EE_Addon::get_activation_indicator_option_name',
+                'event_espresso'
+            ),
+            '4.3.0.alpha.016'
+        );
+        return $this->get_activation_indicator_option_name();
+    }
+
+
+    /**
+     * Gets the name of the wp option which is used to temporarily indicate that this addon was activated
+     *
+     * @return string
+     * @deprecated 4.3.0.alpha.016
+     */
+    public function get_activation_indicator_option_name(): string
+    {
+        return 'ee_activation_' . $this->name();
+    }
+
+
+    /**
+     * @return bool
+     * @deprecated 4.9.40
+     */
+    public function set_activation_indicator_option(): bool
+    {
+        $this->setup_activation_history();
+        return $this->activation_history->setActivationIndicator();
+    }
+
+
+    /**
+     * @param int $req_type
+     * @deprecated 4.9.40
+     */
+    public function set_req_type(int $req_type)
+    {
+    }
+
+
+    /**
+     * @deprecated 4.9.40
+     */
+    public function detect_req_type(): int
+    {
+        return $this->getRequestType()->requestType();
+    }
+
+
+    /**
+     * @return void
+     * @deprecated 4.9.40
+     */
+    public function detect_activation_or_upgrade()
+    {
+    }
+
+
+    /**
+     * @param array|null  $version_history
+     * @param string|null $current_version
+     * @return boolean success
+     * @deprecated 4.9.40
+     */
+    public function update_list_of_installed_versions(array $version_history = null, string $current_version = null): bool
+    {
+        $this->setup_activation_history();
+        return $this->activation_history->updateActivationHistory($version_history, $current_version);
+    }
+
+
 }

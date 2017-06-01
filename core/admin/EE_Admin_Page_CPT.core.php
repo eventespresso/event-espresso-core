@@ -796,6 +796,15 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         }
         // NOTE we ONLY want to run these hooks if we're on the right class for the given post type.  Otherwise we could see some really freaky things happen!
         if ($post_type && $post_type === $route_to_check) {
+            add_filter(
+                'FHEE__Events_Admin_Page___insert_update_cpt_item__event_update_callbacks',
+                function ($callbacks) {
+                    $callbacks[] = function (EE_Event $event, array $data) {
+                        explode($event, $event);
+                    };
+                    return $callbacks;
+                }
+            );
             // $post_id, $post
             add_action('save_post', [$this, 'insert_update'], 10, 3);
             // $post_id
