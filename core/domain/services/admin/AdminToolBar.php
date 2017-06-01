@@ -57,7 +57,7 @@ class AdminToolBar
     public function __construct(EE_Capabilities $capabilities)
     {
         $this->capabilities = $capabilities;
-        add_action('admin_bar_menu', array($this, 'espresso_toolbar_items'), 100);
+        add_action('admin_bar_menu', array($this, 'espressoToolbarItems'), 100);
         $this->enqueueAssets();
     }
 
@@ -70,7 +70,7 @@ class AdminToolBar
      * @param  WP_Admin_Bar $admin_bar
      * @return void
      */
-    public function espresso_toolbar_items(WP_Admin_Bar $admin_bar)
+    public function espressoToolbarItems(WP_Admin_Bar $admin_bar)
     {
         // if its an AJAX request, or user is NOT an admin, or in full M-Mode
         if (
