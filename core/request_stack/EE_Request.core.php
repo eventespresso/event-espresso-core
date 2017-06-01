@@ -1,4 +1,6 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) {
+<?php use EventEspresso\core\services\request\RequestType;
+
+if ( ! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
 
@@ -62,6 +64,10 @@ class EE_Request
      */
     private $_ip_address = '';
 
+    /**
+     * @var RequestType $request_type
+     */
+    private $request_type;
 
 
     /**
@@ -239,6 +245,22 @@ class EE_Request
             }
         }
         return $visitor_ip;
+    }
+
+    /**
+     * @return RequestType
+     */
+    public function getRequestType()
+    {
+        return $this->request_type;
+    }
+
+    /**
+     * @param RequestType $request_type
+     */
+    public function setRequestType(RequestType $request_type)
+    {
+        $this->request_type = $request_type;
     }
 
 
