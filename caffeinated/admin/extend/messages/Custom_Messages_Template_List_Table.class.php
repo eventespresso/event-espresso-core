@@ -98,7 +98,7 @@ class Custom_Messages_Template_List_Table extends Messages_Template_List_Table
      * @param EE_Message_Template_Group $item
      * @return string
      */
-    function column_name($item)
+    public function column_name($item)
     {
         return '<p>' . $item->name() . '</p>';
     }
@@ -108,7 +108,7 @@ class Custom_Messages_Template_List_Table extends Messages_Template_List_Table
      * @param EE_Message_Template_Group $item
      * @return string
      */
-    function column_actions($item)
+    public function column_actions($item)
     {
         if (EE_Registry::instance()->CAP->current_user_can(
             'ee_edit_messages',
@@ -154,7 +154,7 @@ class Custom_Messages_Template_List_Table extends Messages_Template_List_Table
      * @param  EE_Message_Template_Group $item message_template group data
      * @return string column output
      */
-    function column_events($item)
+    public function column_events($item)
     {
         return $item->count_events();
     }

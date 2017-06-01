@@ -115,7 +115,7 @@ class Messages_Template_List_Table extends EE_Admin_List_Table
      *
      * @return string (empty);
      */
-    function search_box($text, $input_id)
+    public function search_box($text, $input_id)
     {
         return '';
     }
@@ -151,7 +151,7 @@ class Messages_Template_List_Table extends EE_Admin_List_Table
      * @param EE_Message_Template_Group $item
      * @return string
      */
-    function column_description($item)
+    public function column_description($item)
     {
         return '<p>' . $item->message_type_obj()->description . '</p>';
     }
@@ -161,7 +161,7 @@ class Messages_Template_List_Table extends EE_Admin_List_Table
      * @param EE_Message_Template_Group $item
      * @return string
      */
-    function column_messenger($item)
+    public function column_messenger($item)
     {
         //Return the name contents
         return sprintf(
@@ -183,7 +183,7 @@ class Messages_Template_List_Table extends EE_Admin_List_Table
      * @param  EE_Message_Template_Group  $item message info for the row
      * @return string       message_type name
      */
-    function column_message_type($item)
+    public function column_message_type($item)
     {
         return ucwords($item->message_type_obj()->label['singular']);
     }
