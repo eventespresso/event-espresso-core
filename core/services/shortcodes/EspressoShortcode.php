@@ -32,6 +32,14 @@ abstract class EspressoShortcode implements ShortcodeInterface
      */
     private $cache_manager;
 
+    /**
+     * true if ShortcodeInterface::initializeShortcode() has been called
+     * if false, then that will get called before processing
+     *
+     * @var boolean $initialized
+     */
+    private $initialized = false;
+
 
 
     /**
@@ -42,6 +50,16 @@ abstract class EspressoShortcode implements ShortcodeInterface
     public function __construct(PostRelatedCacheManager $cache_manager)
     {
         $this->cache_manager = $cache_manager;
+    }
+
+
+
+    /**
+     * @return void
+     */
+    public function shortcodeHasBeenInitialized()
+    {
+        $this->initialized = true;
     }
 
 
@@ -92,6 +110,9 @@ abstract class EspressoShortcode implements ShortcodeInterface
             wp_json_encode($attributes),
             // Closure for generating content if cache is expired
             function () use ($shortcode, $attributes) {
+                if($shortcode->initialized === false){
+                    $shortcode->initializeShortcode();
+                }
                 return $shortcode->processShortcode($attributes);
             },
             // filterable cache expiration set by each shortcode
