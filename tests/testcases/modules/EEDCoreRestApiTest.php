@@ -30,8 +30,8 @@ class EEDCoreRestApiTest extends EE_REST_TestCase
         foreach ($ee_routes_for_each_version as $version => $ee_routes) {
             foreach (EED_Core_Rest_Api::model_names_with_plural_routes('4.8.36') as $model_name => $model_classname) {
                 $model = EE_Registry::instance()->load_model($model_name);
-                $plural_model_route = EED_Core_Rest_Api::get_plural_route_to($model_name);
-                $singular_model_route = EED_Core_Rest_Api::get_singular_route_to($model_name, '(?P<id>[^\/]+)');
+                $plural_model_route = EED_Core_Rest_Api::get_collection_route($model_name);
+                $singular_model_route = EED_Core_Rest_Api::get_entity_route($model_name, '(?P<id>[^\/]+)');
                 //currently, we expose models even for wp core routes to reading (we have plans to change this though)
                 //on https://events.codebasehq.com/projects/event-espresso/tickets/9583
                 $this->assertArrayHasKey(
@@ -88,7 +88,7 @@ class EEDCoreRestApiTest extends EE_REST_TestCase
      * @type EEM_Base $model
      * }
      */
-    public function dataProviderForTestGetAllPluralRoutes()
+    public function dataProviderForTestGetAllCollectionRoutes()
     {
         $unit_test_data = array();
         foreach (array_keys(EED_Core_Rest_Api::model_names_with_plural_routes('4.8.36')) as $model_name) {
@@ -106,17 +106,17 @@ class EEDCoreRestApiTest extends EE_REST_TestCase
     /**
      * Verifies that, for each model from the data provider, we can query its GET routes
      *
-     * @dataProvider dataProviderForTestGetAllPluralRoutes
+     * @dataProvider dataProviderForTestGetAllCollectionRoutes
      * @param EEM_Base $model
      * @group        big_rest_tests
      */
-    public function testGetAllPluralRoutes(EEM_Base $model)
+    public function testGetAllCollectionRoutes(EEM_Base $model)
     {
         $this->authenticate_as_admin();
         //make sure there's an entry for this model. We will use it in an assertion later
         $model_obj = $this->getAModelObjOfType($model);
         $route = EED_Core_Rest_Api::get_versioned_route_to(
-            EED_Core_Rest_Api::get_plural_route_to($model->get_this_model_name()),
+            EED_Core_Rest_Api::get_collection_route($model->get_this_model_name()),
             '4.8.36'
         );
         $response = rest_do_request(
@@ -152,17 +152,17 @@ class EEDCoreRestApiTest extends EE_REST_TestCase
     /**
      * Verifies that all our models' singular GET routes work
      *
-     * @dataProvider dataProviderForTestGetAllPluralRoutes
+     * @dataProvider dataProviderForTestGetAllCollectionRoutes
      * @param EEM_Base $model
      * @group        big_rest_tests
      */
-    public function testGetAllSingularRoutes(EEM_Base $model)
+    public function testGetAllEntityRoutes(EEM_Base $model)
     {
         $this->authenticate_as_admin();
         //make sure there's an entry for this model. We will use it in an assertion later
         $model_obj = $this->getAModelObjOfType($model);
         $route = EED_Core_Rest_Api::get_versioned_route_to(
-            EED_Core_Rest_Api::get_singular_route_to($model->get_this_model_name(), $model_obj->ID()),
+            EED_Core_Rest_Api::get_entity_route($model->get_this_model_name(), $model_obj->ID()),
             '4.8.36'
         );
         $response = rest_do_request(
@@ -229,7 +229,7 @@ class EEDCoreRestApiTest extends EE_REST_TestCase
         $model_obj->_add_relation_to($related_model_obj, $related_model->get_this_model_name());
 
         $route = EED_Core_Rest_Api::get_versioned_route_to(
-            EED_Core_Rest_Api::get_related_route_to(
+            EED_Core_Rest_Api::get_relation_route_via(
                 $model->get_this_model_name(),
                 $model_obj->ID(),
                 $relation_obj
@@ -370,7 +370,7 @@ class EEDCoreRestApiTest extends EE_REST_TestCase
         );
 
         $route = EED_Core_Rest_Api::get_versioned_route_to(
-            EED_Core_Rest_Api::get_plural_route_to($model->get_this_model_name()),
+            EED_Core_Rest_Api::get_collection_route($model->get_this_model_name()),
             '4.8.36'
         );
         $insert_values = array();
@@ -419,7 +419,7 @@ class EEDCoreRestApiTest extends EE_REST_TestCase
         $this->authenticate_as_admin();
         $model_obj = $this->getAModelObjOfType($model, false);
         $route = EED_Core_Rest_Api::get_versioned_route_to(
-            EED_Core_Rest_Api::get_singular_route_to($model->get_this_model_name(), $model_obj->ID()),
+            EED_Core_Rest_Api::get_entity_route($model->get_this_model_name(), $model_obj->ID()),
             '4.8.36'
         );
 
@@ -465,7 +465,7 @@ class EEDCoreRestApiTest extends EE_REST_TestCase
         $this->authenticate_as_admin();
         $model_obj = $this->getAModelObjOfType($model, false);
         $route = EED_Core_Rest_Api::get_versioned_route_to(
-            EED_Core_Rest_Api::get_singular_route_to($model->get_this_model_name(), $model_obj->ID()),
+            EED_Core_Rest_Api::get_entity_route($model->get_this_model_name(), $model_obj->ID()),
             '4.8.36'
         );
 

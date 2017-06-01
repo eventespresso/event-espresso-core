@@ -443,8 +443,8 @@ class EED_Core_Rest_Api extends \EED_Module
                 continue;
             }
             //yes we could just register one route for ALL models, but then they wouldn't show up in the index
-            $plural_model_route = EED_Core_Rest_Api::get_plural_route_to($model_name);
-            $singular_model_route = EED_Core_Rest_Api::get_singular_route_to($model_name, '(?P<id>[^\/]+)');
+            $plural_model_route = EED_Core_Rest_Api::get_collection_route($model_name);
+            $singular_model_route = EED_Core_Rest_Api::get_entity_route($model_name, '(?P<id>[^\/]+)');
             $model_routes[$plural_model_route] = array(
                 array(
                     'callback'        => array(
@@ -522,7 +522,7 @@ class EED_Core_Rest_Api extends \EED_Module
             }
             foreach ($model->relation_settings() as $relation_name => $relation_obj) {
 
-                $related_route = EED_Core_Rest_Api::get_related_route_to(
+                $related_route = EED_Core_Rest_Api::get_relation_route_via(
                     $model_name,
                     '(?P<id>[^\/]+)',
                     $relation_obj
@@ -554,7 +554,7 @@ class EED_Core_Rest_Api extends \EED_Module
      * @param string $model_name eg Event or Venue
      * @return string
      */
-    public static function get_plural_route_to($model_name)
+    public static function get_collection_route($model_name)
     {
         return EEH_Inflector::pluralize_and_lower($model_name);
     }
@@ -569,7 +569,7 @@ class EED_Core_Rest_Api extends \EED_Module
      * @param string $id
      * @return string
      */
-    public static function get_singular_route_to($model_name, $id)
+    public static function get_entity_route($model_name, $id)
     {
         return EEH_Inflector::pluralize_and_lower($model_name) . '/' . $id;
     }
@@ -585,13 +585,13 @@ class EED_Core_Rest_Api extends \EED_Module
      * @param EE_Model_Relation_Base $relation_obj
      * @return string
      */
-    public static function get_related_route_to($model_name, $id, $relation_obj)
+    public static function get_relation_route_via($model_name, $id, $relation_obj)
     {
         $related_model_name_endpoint_part = ModelRead::getRelatedEntityName(
             $relation_obj->get_other_model()->get_this_model_name(),
             $relation_obj
         );
-        return EED_Core_Rest_Api::get_singular_route_to($model_name, $id) . '/' . $related_model_name_endpoint_part;
+        return EED_Core_Rest_Api::get_entity_route($model_name, $id) . '/' . $related_model_name_endpoint_part;
     }
 
 
