@@ -1532,21 +1532,16 @@ abstract class EE_Admin_Page extends EE_Base
         if (WP_DEBUG) {
             add_action('admin_head', array($this, 'add_xdebug_style'));
         }
-        //register all styles
+        // register all styles
         wp_register_style('espresso-ui-theme', EE_GLOBAL_ASSETS_URL . 'css/espresso-ui-theme/jquery-ui-1.10.3.custom.min.css', array(), EVENT_ESPRESSO_VERSION);
         wp_register_style('ee-admin-css', EE_ADMIN_URL . 'assets/ee-admin-page.css', array(), EVENT_ESPRESSO_VERSION);
         //helpers styles
         wp_register_style('ee-text-links', EE_PLUGIN_DIR_URL . 'core/helpers/assets/ee_text_list_helper.css', array(), EVENT_ESPRESSO_VERSION);
-        //enqueue global styles
-        wp_enqueue_style('ee-admin-css');
         /** SCRIPTS **/
         //register all scripts
-        wp_register_script('espresso_core', EE_GLOBAL_ASSETS_URL . 'scripts/espresso_core.js', array('jquery'), EVENT_ESPRESSO_VERSION, true);
         wp_register_script('ee-dialog', EE_ADMIN_URL . 'assets/ee-dialog-helper.js', array('jquery', 'jquery-ui-draggable'), EVENT_ESPRESSO_VERSION, true);
         wp_register_script('ee_admin_js', EE_ADMIN_URL . 'assets/ee-admin-page.js', array('espresso_core', 'ee-parse-uri', 'ee-dialog'), EVENT_ESPRESSO_VERSION, true);
         wp_register_script('jquery-ui-timepicker-addon', EE_GLOBAL_ASSETS_URL . 'scripts/jquery-ui-timepicker-addon.js', array('jquery-ui-datepicker', 'jquery-ui-slider'), EVENT_ESPRESSO_VERSION, true);
-        // register jQuery Validate - see /includes/functions/wp_hooks.php
-        add_filter('FHEE_load_jquery_validate', '__return_true');
         add_filter('FHEE_load_joyride', '__return_true');
         //script for sorting tables
         wp_register_script('espresso_ajax_table_sorting', EE_ADMIN_URL . "assets/espresso_ajax_table_sorting.js", array('ee_admin_js', 'jquery-ui-sortable'), EVENT_ESPRESSO_VERSION, true);
@@ -1561,16 +1556,19 @@ abstract class EE_Admin_Page extends EE_Base
         wp_register_script('ee-datepicker', EE_ADMIN_URL . 'assets/ee-datepicker.js', array('jquery-ui-timepicker-addon', 'ee-moment'), EVENT_ESPRESSO_VERSION, true);
         //google charts
         wp_register_script('google-charts', 'https://www.gstatic.com/charts/loader.js', array(), EVENT_ESPRESSO_VERSION, false);
-        //enqueue global scripts
+        // ENQUEUE ALL BASICS BY DEFAULT
+        wp_enqueue_style('ee-admin-css');
+        wp_enqueue_script('ee_admin_js');
+        wp_enqueue_script('ee-accounting');
+        wp_enqueue_script('jquery-validate');
         //taking care of metaboxes
-        if ((isset($this->_route_config['metaboxes']) || isset($this->_route_config['has_metaboxes'])) && empty($this->_cpt_route)) {
+        if (
+            empty($this->_cpt_route)
+            && (isset($this->_route_config['metaboxes']) || isset($this->_route_config['has_metaboxes']))
+        ) {
             wp_enqueue_script('dashboard');
         }
-        //enqueue thickbox for ee help popups.  default is to enqueue unless its explicitly set to false since we're assuming all EE pages will have popups
-        if ( ! isset($this->_route_config['has_help_popups']) || (isset($this->_route_config['has_help_popups']) && $this->_route_config['has_help_popups'])) {
-            wp_enqueue_script('ee_admin_js');
-            wp_enqueue_style('ee-admin-css');
-        }
+        // LOCALIZED DATA
         //localize script for ajax lazy loading
         $lazy_loader_container_ids = apply_filters('FHEE__EE_Admin_Page_Core__load_global_scripts_styles__loader_containers', array('espresso_news_post_box_content'));
         wp_localize_script('ee_admin_js', 'eeLazyLoadingContainers', $lazy_loader_container_ids);
@@ -1642,10 +1640,6 @@ abstract class EE_Admin_Page extends EE_Base
         EE_Registry::$i18n_js_strings['Thu'] = __('Thu', 'event_espresso');
         EE_Registry::$i18n_js_strings['Fri'] = __('Fri', 'event_espresso');
         EE_Registry::$i18n_js_strings['Sat'] = __('Sat', 'event_espresso');
-        //setting on espresso_core instead of ee_admin_js because espresso_core is enqueued by the maintenance
-        //admin page when in maintenance mode and ee_admin_js is not loaded then.  This works everywhere else because
-        //espresso_core is listed as a dependency of ee_admin_js.
-        wp_localize_script('espresso_core', 'eei18n', EE_Registry::$i18n_js_strings);
     }
 
 

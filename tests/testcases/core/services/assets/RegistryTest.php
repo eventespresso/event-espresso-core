@@ -21,7 +21,10 @@ class RegistryTest extends EE_UnitTestCase
 
     public function setUp()
     {
-        $this->registry = new Registry();
+        $this->registry = new Registry(
+            EE_Config::instance()->template_settings,
+            EE_Config::instance()->currency
+        );
         parent::setUp();
     }
 

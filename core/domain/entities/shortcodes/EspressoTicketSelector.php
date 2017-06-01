@@ -55,6 +55,7 @@ class EspressoTicketSelector extends EspressoShortcode
     public function initializeShortcode()
     {
         add_filter('FHEE__EED_Ticket_Selector__load_tckt_slctr_assets', '__return_true');
+        $this->shortcodeHasBeenInitialized();
     }
 
 

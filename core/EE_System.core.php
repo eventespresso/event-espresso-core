@@ -803,8 +803,6 @@ final class EE_System
         add_action('init', array($this, 'core_loaded_and_ready'), 9);
         add_action('init', array($this, 'initialize'), 10);
         add_action('init', array($this, 'initialize_last'), 100);
-        add_action('wp_enqueue_scripts', array($this, 'wp_enqueue_scripts'), 100);
-        add_action('admin_enqueue_scripts', array($this, 'wp_enqueue_scripts'), 100);
         if (is_admin() && apply_filters('FHEE__EE_System__brew_espresso__load_pue', true)) {
             // pew pew pew
             $this->registry->load_core('PUE');
@@ -925,6 +923,8 @@ final class EE_System
         }
         do_action('AHEE__EE_System__set_hooks_for_shortcodes_modules_and_addons');
         $this->registry->load_core('Session');
+        $this->registry->create('EventEspresso\core\services\assets\Registry');
+        wp_enqueue_script('espresso_core');
     }
 
 
@@ -1045,33 +1045,6 @@ final class EE_System
         return array_merge($exclude_array, $this->registry->CFG->core->get_critical_pages_array());
     }
 
-
-
-
-
-
-    /***********************************************        WP_ENQUEUE_SCRIPTS HOOK         ***********************************************/
-    /**
-     *    wp_enqueue_scripts
-     *
-     * @access    public
-     * @return    void
-     */
-    public function wp_enqueue_scripts()
-    {
-        // unlike other systems, EE_System_scripts loading is turned ON by default, but prior to the init hook, can be turned off via: add_filter( 'FHEE_load_EE_System_scripts', '__return_false' );
-        if (apply_filters('FHEE_load_EE_System_scripts', true)) {
-            // jquery_validate loading is turned OFF by default, but prior to the wp_enqueue_scripts hook, can be turned back on again via:  add_filter( 'FHEE_load_jquery_validate', '__return_true' );
-            if (apply_filters('FHEE_load_jquery_validate', false)) {
-                // register jQuery Validate and additional methods
-                wp_register_script('jquery-validate', EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.min.js',
-                    array('jquery'), '1.15.0', true);
-                wp_register_script('jquery-validate-extra-methods',
-                    EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.additional-methods.min.js',
-                    array('jquery', 'jquery-validate'), '1.15.0', true);
-            }
-        }
-    }
 
 
 

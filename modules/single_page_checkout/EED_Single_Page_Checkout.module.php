@@ -1,4 +1,7 @@
-<?php use EventEspresso\core\domain\services\capabilities\PublicCapabilities;
+<?php
+
+use EventEspresso\core\domain\services\capabilities\PublicCapabilities;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidEntityException;
 
 if ( ! defined('EVENT_ESPRESSO_VERSION')) {
@@ -53,7 +56,7 @@ class EED_Single_Page_Checkout extends EED_Module
 
 
     /**
-     * @return EED_Single_Page_Checkout
+     * @return EED_Module|EED_Single_Page_Checkout
      */
     public static function instance()
     {
@@ -88,7 +91,7 @@ class EED_Single_Page_Checkout extends EED_Module
      *
      * @access    public
      * @return    void
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public static function set_hooks()
     {
@@ -102,7 +105,7 @@ class EED_Single_Page_Checkout extends EED_Module
      *
      * @access    public
      * @return    void
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public static function set_hooks_admin()
     {
@@ -110,7 +113,8 @@ class EED_Single_Page_Checkout extends EED_Module
         if ( ! (defined('DOING_AJAX') && DOING_AJAX)) {
             return;
         }
-        // going to start an output buffer in case anything gets accidentally output that might disrupt our JSON response
+        // going to start an output buffer in case anything gets accidentally output
+        // that might disrupt our JSON response
         ob_start();
         EED_Single_Page_Checkout::load_request_handler();
         EED_Single_Page_Checkout::load_reg_steps();
@@ -129,7 +133,7 @@ class EED_Single_Page_Checkout extends EED_Module
      *    process ajax request
      *
      * @param string $ajax_action
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public static function process_ajax_request($ajax_action)
     {
@@ -142,7 +146,7 @@ class EED_Single_Page_Checkout extends EED_Module
     /**
      *    ajax display registration step
      *
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public static function display_reg_step()
     {
@@ -154,7 +158,7 @@ class EED_Single_Page_Checkout extends EED_Module
     /**
      *    ajax process registration step
      *
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public static function process_reg_step()
     {
@@ -166,7 +170,7 @@ class EED_Single_Page_Checkout extends EED_Module
     /**
      *    ajax process registration step
      *
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public static function update_reg_step()
     {
@@ -180,7 +184,7 @@ class EED_Single_Page_Checkout extends EED_Module
      *
      * @access public
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public static function update_checkout()
     {
@@ -198,7 +202,7 @@ class EED_Single_Page_Checkout extends EED_Module
     public static function load_request_handler()
     {
         // load core Request_Handler class
-        if ( ! isset(EE_Registry::instance()->REQ)) {
+        if (EE_Registry::instance()->REQ !== null) {
             EE_Registry::instance()->load_core('Request_Handler');
         }
     }
@@ -210,14 +214,17 @@ class EED_Single_Page_Checkout extends EED_Module
      *
      * @access    public
      * @return    void
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public static function set_definitions()
     {
         if(defined('SPCO_BASE_PATH')) {
             return;
         }
-        define('SPCO_BASE_PATH', rtrim(str_replace(array('\\', '/'), DS, plugin_dir_path(__FILE__)), DS) . DS);
+        define(
+            'SPCO_BASE_PATH',
+            rtrim(str_replace(array('\\', '/'), DS, plugin_dir_path(__FILE__)), DS) . DS
+        );
         define('SPCO_CSS_URL', plugin_dir_url(__FILE__) . 'css' . DS);
         define('SPCO_IMG_URL', plugin_dir_url(__FILE__) . 'img' . DS);
         define('SPCO_JS_URL', plugin_dir_url(__FILE__) . 'js' . DS);
@@ -246,7 +253,7 @@ class EED_Single_Page_Checkout extends EED_Module
      * loads and instantiates each reg step based on the EE_Registry::instance()->CFG->registration->reg_steps array
      *
      * @access    private
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public static function load_reg_steps()
     {
@@ -269,12 +276,20 @@ class EED_Single_Page_Checkout extends EED_Module
                 EED_Single_Page_Checkout::$_reg_steps_array[$order] = $reg_step;
                 // register custom key route for each reg step
                 // ie: step=>"slug" - this is the entire reason we load the reg steps array now
-                EE_Config::register_route($reg_step['slug'], 'EED_Single_Page_Checkout', 'run', 'step');
+                EE_Config::register_route(
+                    $reg_step['slug'],
+                    'EED_Single_Page_Checkout',
+                    'run',
+                    'step'
+                );
                 // add AJAX or other hooks
                 if (isset($reg_step['has_hooks']) && $reg_step['has_hooks']) {
                     // setup autoloaders if necessary
                     if ( ! class_exists($reg_step['class_name'])) {
-                        EEH_Autoloader::register_autoloaders_for_each_file_in_folder($reg_step['file_path'], true);
+                        EEH_Autoloader::register_autoloaders_for_each_file_in_folder(
+                            $reg_step['file_path'],
+                            true
+                        );
                     }
                     if (is_callable($reg_step['class_name'], 'set_hooks')) {
                         call_user_func(array($reg_step['class_name'], 'set_hooks'));
@@ -334,7 +349,7 @@ class EED_Single_Page_Checkout extends EED_Module
      *
      * @access    public
      * @return    string
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public static function registration_checkout_for_admin()
     {
@@ -354,7 +369,7 @@ class EED_Single_Page_Checkout extends EED_Module
      *
      * @access public
      * @return \EE_Transaction
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public static function process_registration_from_admin()
     {
@@ -385,7 +400,7 @@ class EED_Single_Page_Checkout extends EED_Module
      * @access    public
      * @param WP_Query $WP_Query
      * @return    void
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function run($WP_Query)
     {
@@ -436,7 +451,7 @@ class EED_Single_Page_Checkout extends EED_Module
     /**
      * @param WP_Query $wp_query
      * @return    void
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public static function init($wp_query)
     {
@@ -471,7 +486,11 @@ class EED_Single_Page_Checkout extends EED_Module
                 return;
             }
             // filter continue_reg
-            $this->checkout->continue_reg = apply_filters('FHEE__EED_Single_Page_Checkout__init___continue_reg', true, $this->checkout);
+            $this->checkout->continue_reg = apply_filters(
+                'FHEE__EED_Single_Page_Checkout__init___continue_reg',
+                true,
+                $this->checkout
+            );
             // load the reg steps array
             if ( ! $this->_load_and_instantiate_reg_steps()) {
                 EED_Single_Page_Checkout::$_initialized = true;
@@ -533,14 +552,19 @@ class EED_Single_Page_Checkout extends EED_Module
             throw new EE_Error(__('The EE_Session class could not be loaded.', 'event_espresso'));
         }
         // is session still valid ?
-        if (EE_Registry::instance()->SSN->expired() && EE_Registry::instance()->REQ->get('e_reg_url_link', '') === '') {
+        if (
+            EE_Registry::instance()->SSN->expired()
+            && EE_Registry::instance()->REQ->get('e_reg_url_link', '') === ''
+        ) {
             $this->checkout = new EE_Checkout();
             EE_Registry::instance()->SSN->clear_session(__CLASS__, __FUNCTION__);
             // EE_Registry::instance()->SSN->reset_cart();
             // EE_Registry::instance()->SSN->reset_checkout();
             // EE_Registry::instance()->SSN->reset_transaction();
-            EE_Error::add_attention(EE_Registry::$i18n_js_strings['registration_expiration_notice'], __FILE__,
-                __FUNCTION__, __LINE__);
+            EE_Error::add_attention(
+                EE_Registry::$i18n_js_strings['registration_expiration_notice'],
+                __FILE__, __FUNCTION__, __LINE__
+            );
             // EE_Registry::instance()->SSN->reset_expired();
         }
     }
@@ -563,7 +587,12 @@ class EED_Single_Page_Checkout extends EED_Module
         // verify
         if ( ! $checkout instanceof EE_Checkout) {
             // instantiate EE_Checkout object for handling the properties of the current checkout process
-            $checkout = EE_Registry::instance()->load_file(SPCO_INC_PATH, 'EE_Checkout', 'class', array(), false);
+            $checkout = EE_Registry::instance()->load_file(
+                SPCO_INC_PATH,
+                'EE_Checkout',
+                'class', array(),
+                false
+            );
         } else {
             if ($checkout->current_step->is_final_step() && $checkout->exit_spco() === true) {
                 $this->unlock_transaction();
@@ -588,7 +617,7 @@ class EED_Single_Page_Checkout extends EED_Module
      *
      * @access    private
      * @return    void
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     private function _get_request_vars()
     {
@@ -670,7 +699,7 @@ class EED_Single_Page_Checkout extends EED_Module
      */
     private function _block_bots()
     {
-        $invalid_checkout_access = \EED_Invalid_Checkout_Access::getInvalidCheckoutAccess();
+        $invalid_checkout_access = EED_Invalid_Checkout_Access::getInvalidCheckoutAccess();
         if ($invalid_checkout_access->checkoutAccessIsInvalid($this->checkout)) {
             return true;
         }
@@ -744,7 +773,10 @@ class EED_Single_Page_Checkout extends EED_Module
             }
         }
         if (empty($this->checkout->reg_steps)) {
-            EE_Error::add_error(__('No Reg Steps were loaded..', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__);
+            EE_Error::add_error(
+                __('No Reg Steps were loaded..', 'event_espresso'),
+                __FILE__, __FUNCTION__, __LINE__
+            );
             return false;
         }
         // make reg step details available to JS
@@ -806,7 +838,10 @@ class EED_Single_Page_Checkout extends EED_Module
             if (WP_DEBUG) {
                 EE_Error::add_error(
                     sprintf(
-                        __('A registration step could not be loaded. One or more of the following data points is invalid:%4$s%5$sFile Path: %1$s%6$s%5$sClass Name: %2$s%6$s%5$sSlug: %3$s%6$s%7$s', 'event_espresso'),
+                        __(
+                            'A registration step could not be loaded. One or more of the following data points is invalid:%4$s%5$sFile Path: %1$s%6$s%5$sClass Name: %2$s%6$s%5$sSlug: %3$s%6$s%7$s',
+                            'event_espresso'
+                        ),
                         isset($reg_step['file_path']) ? $reg_step['file_path'] : '',
                         isset($reg_step['class_name']) ? $reg_step['class_name'] : '',
                         isset($reg_step['slug']) ? $reg_step['slug'] : '',
@@ -824,12 +859,14 @@ class EED_Single_Page_Checkout extends EED_Module
     }
 
 
-
     /**
      * _verify_transaction_and_get_registrations
      *
      * @access private
      * @return bool
+     * @throws InvalidDataTypeException
+     * @throws InvalidEntityException
+     * @throws EE_Error
      */
     private function _verify_transaction_and_get_registrations()
     {
@@ -869,17 +906,21 @@ class EED_Single_Page_Checkout extends EED_Module
     {
         /** @var $TXN_model EEM_Transaction */
         $TXN_model = EE_Registry::instance()->load_model('Transaction');
-        // because the reg_url_link is present in the request, this is a return visit to SPCO, so we'll get the transaction data from the db
+        // because the reg_url_link is present in the request,
+        // this is a return visit to SPCO, so we'll get the transaction data from the db
         $transaction = $TXN_model->get_transaction_from_reg_url_link($this->checkout->reg_url_link);
         // verify transaction
         if ($transaction instanceof EE_Transaction) {
             // and get the cart that was used for that transaction
             $this->checkout->cart = $this->_get_cart_for_transaction($transaction);
             return $transaction;
-        } else {
-            EE_Error::add_error(__('Your Registration and Transaction information could not be retrieved from the db.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__);
-            return null;
         }
+        EE_Error::add_error(
+            __('Your Registration and Transaction information could not be retrieved from the db.', 'event_espresso'),
+            __FILE__, __FUNCTION__, __LINE__
+        );
+        return null;
+
     }
 
 
@@ -918,7 +959,7 @@ class EED_Single_Page_Checkout extends EED_Module
      *
      * @access private
      * @return EE_Transaction
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     private function _get_cart_for_current_session_and_setup_new_transaction()
     {
@@ -934,7 +975,10 @@ class EED_Single_Page_Checkout extends EED_Module
             // and save TXN data to the cart
             $this->checkout->cart->get_grand_total()->save_this_and_descendants_to_txn($transaction->ID());
         } else {
-            EE_Error::add_error(__('A Valid Transaction could not be initialized.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__);
+            EE_Error::add_error(
+                __('A Valid Transaction could not be initialized.', 'event_espresso'),
+                __FILE__, __FUNCTION__, __LINE__
+            );
         }
         return $transaction;
     }
@@ -978,15 +1022,15 @@ class EED_Single_Page_Checkout extends EED_Module
     }
 
 
-
     /**
      * _get_registrations
      *
      * @access private
      * @param EE_Transaction $transaction
      * @return void
-     * @throws \EventEspresso\core\exceptions\InvalidEntityException
-     * @throws \EE_Error
+     * @throws InvalidDataTypeException
+     * @throws InvalidEntityException
+     * @throws EE_Error
      */
     private function _get_registrations(EE_Transaction $transaction)
     {
@@ -1014,7 +1058,8 @@ class EED_Single_Page_Checkout extends EED_Module
                 ) {
                     $this->checkout->primary_revisit = true;
                     break;
-                } else if ($this->checkout->revisit
+                }
+                if ($this->checkout->revisit
                            && $this->checkout->reg_url_link !== $registration->reg_url_link()
                 ) {
                     // but hide info if it doesn't belong to you
@@ -1026,15 +1071,15 @@ class EED_Single_Page_Checkout extends EED_Module
     }
 
 
-
     /**
      *    adds related EE_Registration objects for each ticket in the cart to the current EE_Transaction object
      *
      * @access private
      * @param EE_Transaction $transaction
      * @return    array
-     * @throws \EventEspresso\core\exceptions\InvalidEntityException
-     * @throws \EE_Error
+     * @throws InvalidDataTypeException
+     * @throws InvalidEntityException
+     * @throws EE_Error
      */
     private function _initialize_registrations(EE_Transaction $transaction)
     {
@@ -1050,16 +1095,15 @@ class EED_Single_Page_Checkout extends EED_Module
                 for ($x = 1; $x <= $line_item->quantity(); $x++) {
                     $att_nmbr++;
                     /** @var EventEspresso\core\services\commands\registration\CreateRegistrationCommand $CreateRegistrationCommand */
-                    $CreateRegistrationCommand = EE_Registry::instance()
-                                                            ->create(
-                                                                'EventEspresso\core\services\commands\registration\CreateRegistrationCommand',
-                                                                array(
-                                                                    $transaction,
-                                                                    $line_item,
-                                                                    $att_nmbr,
-                                                                    $this->checkout->total_ticket_count,
-                                                                )
-                                                            );
+                    $CreateRegistrationCommand = EE_Registry::instance()->create(
+                        'EventEspresso\core\services\commands\registration\CreateRegistrationCommand',
+                        array(
+                            $transaction,
+                            $line_item,
+                            $att_nmbr,
+                            $this->checkout->total_ticket_count,
+                        )
+                    );
                     // override capabilities for frontend registrations
                     if ( ! is_admin()) {
                         $CreateRegistrationCommand->setCapCheck(
@@ -1105,12 +1149,15 @@ class EED_Single_Page_Checkout extends EED_Module
      *
      * @access    private
      * @return    bool
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     private function _final_verifications()
     {
         // filter checkout
-        $this->checkout = apply_filters('FHEE__EED_Single_Page_Checkout___final_verifications__checkout', $this->checkout);
+        $this->checkout = apply_filters(
+            'FHEE__EED_Single_Page_Checkout___final_verifications__checkout',
+            $this->checkout
+        );
         //verify that current step is still set correctly
         if ( ! $this->checkout->current_step instanceof EE_SPCO_Reg_Step) {
             EE_Error::add_error(
@@ -1134,7 +1181,9 @@ class EED_Single_Page_Checkout extends EED_Module
                 return false;
             }
             $valid_registrant = null;
-            foreach ($this->checkout->transaction->registrations($this->checkout->reg_cache_where_params) as $registration) {
+            foreach (
+                $this->checkout->transaction->registrations($this->checkout->reg_cache_where_params) as $registration
+            ) {
                 if (
                     $registration instanceof EE_Registration
                     && $registration->reg_url_link() === $this->checkout->reg_url_link
@@ -1154,7 +1203,10 @@ class EED_Single_Page_Checkout extends EED_Module
                     return false;
                 }
                 EE_Error::add_error(
-                    __('We\'re sorry but there appears to be an error with the "reg_url_link" or the transaction itself. Please refresh the page and try again or contact support.', 'event_espresso'),
+                    __(
+                        'We\'re sorry but there appears to be an error with the "reg_url_link" or the transaction itself. Please refresh the page and try again or contact support.',
+                        'event_espresso'
+                    ),
                     __FILE__,
                     __FUNCTION__,
                     __LINE__
@@ -1177,7 +1229,7 @@ class EED_Single_Page_Checkout extends EED_Module
      *
      * @access    private
      * @param bool $reinitializing
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     private function _initialize_reg_steps($reinitializing = false)
     {
@@ -1203,7 +1255,10 @@ class EED_Single_Page_Checkout extends EED_Module
             }
         }
         // dynamically creates hook point like: AHEE__Single_Page_Checkout___initialize_reg_step__attendee_information
-        do_action("AHEE__Single_Page_Checkout___initialize_reg_step__{$this->checkout->current_step->slug()}", $this->checkout->current_step);
+        do_action(
+            "AHEE__Single_Page_Checkout___initialize_reg_step__{$this->checkout->current_step->slug()}",
+            $this->checkout->current_step
+        );
     }
 
 
@@ -1244,7 +1299,10 @@ class EED_Single_Page_Checkout extends EED_Module
                         if ($this->checkout->current_step->reg_form->submission_error_message() !== '') {
                             $submission_error_messages = array();
                             // bad, bad, bad registrant
-                            foreach ($this->checkout->current_step->reg_form->get_validation_errors_accumulated() as $validation_error) {
+                            foreach (
+                                $this->checkout->current_step->reg_form->get_validation_errors_accumulated()
+                                as $validation_error
+                            ) {
                                 if ($validation_error instanceof EE_Validation_Error) {
                                     $submission_error_messages[] = sprintf(
                                         __('%s : %s', 'event_espresso'),
@@ -1253,9 +1311,13 @@ class EED_Single_Page_Checkout extends EED_Module
                                     );
                                 }
                             }
-                            EE_Error::add_error(implode('<br />', $submission_error_messages), __FILE__, __FUNCTION__, __LINE__);
+                            EE_Error::add_error(
+                                implode('<br />', $submission_error_messages),
+                                __FILE__, __FUNCTION__, __LINE__
+                            );
                         }
-                        // well not really... what will happen is we'll just get redirected back to redo the current step
+                        // well not really... what will happen is
+                        // we'll just get redirected back to redo the current step
                         $this->go_to_next_step();
                         return false;
                     }
@@ -1274,7 +1336,7 @@ class EED_Single_Page_Checkout extends EED_Module
      *
      * @access private
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     private function _process_form_action()
     {
@@ -1284,14 +1346,23 @@ class EED_Single_Page_Checkout extends EED_Module
             case 'display_spco_reg_step' :
                 $this->checkout->redirect = false;
                 if (EE_Registry::instance()->REQ->ajax) {
-                    $this->checkout->json_response->set_reg_step_html($this->checkout->current_step->display_reg_form());
+                    $this->checkout->json_response->set_reg_step_html(
+                        $this->checkout->current_step->display_reg_form()
+                    );
                 }
                 break;
             default :
                 // meh... do one of those other steps first
-                if ( ! empty($this->checkout->action) && is_callable(array($this->checkout->current_step, $this->checkout->action))) {
-                    // dynamically creates hook point like: AHEE__Single_Page_Checkout__before_attendee_information__process_reg_step
-                    do_action("AHEE__Single_Page_Checkout__before_{$this->checkout->current_step->slug()}__{$this->checkout->action}", $this->checkout->current_step);
+                if (
+                    ! empty($this->checkout->action)
+                    && is_callable(array($this->checkout->current_step, $this->checkout->action))
+                ) {
+                    // dynamically creates hook point like:
+                    //   AHEE__Single_Page_Checkout__before_attendee_information__process_reg_step
+                    do_action(
+                        "AHEE__Single_Page_Checkout__before_{$this->checkout->current_step->slug()}__{$this->checkout->action}",
+                        $this->checkout->current_step
+                    );
                     // call action on current step
                     if (call_user_func(array($this->checkout->current_step, $this->checkout->action))) {
                         // good registrant, you get to proceed
@@ -1310,12 +1381,19 @@ class EED_Single_Page_Checkout extends EED_Module
                         // pack it up, pack it in...
                         $this->_setup_redirect();
                     }
-                    // dynamically creates hook point like: AHEE__Single_Page_Checkout__after_payment_options__process_reg_step
-                    do_action("AHEE__Single_Page_Checkout__after_{$this->checkout->current_step->slug()}__{$this->checkout->action}", $this->checkout->current_step);
+                    // dynamically creates hook point like:
+                    //  AHEE__Single_Page_Checkout__after_payment_options__process_reg_step
+                    do_action(
+                        "AHEE__Single_Page_Checkout__after_{$this->checkout->current_step->slug()}__{$this->checkout->action}",
+                        $this->checkout->current_step
+                    );
                 } else {
                     EE_Error::add_error(
                         sprintf(
-                            __('The requested form action "%s" does not exist for the current "%s" registration step.', 'event_espresso'),
+                            __(
+                                'The requested form action "%s" does not exist for the current "%s" registration step.',
+                                'event_espresso'
+                            ),
                             $this->checkout->action,
                             $this->checkout->current_step->name()
                         ),
@@ -1363,14 +1441,35 @@ class EED_Single_Page_Checkout extends EED_Module
     {
         EE_Registry::$i18n_js_strings['revisit'] = $this->checkout->revisit;
         EE_Registry::$i18n_js_strings['e_reg_url_link'] = $this->checkout->reg_url_link;
-        EE_Registry::$i18n_js_strings['server_error'] = __('An unknown error occurred on the server while attempting to process your request. Please refresh the page and try again or contact support.', 'event_espresso');
-        EE_Registry::$i18n_js_strings['invalid_json_response'] = __('An invalid response was returned from the server while attempting to process your request. Please refresh the page and try again or contact support.', 'event_espresso');
-        EE_Registry::$i18n_js_strings['validation_error'] = __('There appears to be a problem with the form validation configuration! Please check the admin settings or contact support.', 'event_espresso');
-        EE_Registry::$i18n_js_strings['invalid_payment_method'] = __('There appears to be a problem with the payment method configuration! Please refresh the page and try again or contact support.', 'event_espresso');
-        EE_Registry::$i18n_js_strings['reg_step_error'] = __('This registration step could not be completed. Please refresh the page and try again.', 'event_espresso');
-        EE_Registry::$i18n_js_strings['invalid_coupon'] = __('We\'re sorry but that coupon code does not appear to be valid. If this is incorrect, please contact the site administrator.', 'event_espresso');
+        EE_Registry::$i18n_js_strings['server_error'] = __(
+            'An unknown error occurred on the server while attempting to process your request. Please refresh the page and try again or contact support.',
+            'event_espresso'
+        );
+        EE_Registry::$i18n_js_strings['invalid_json_response'] = __(
+            'An invalid response was returned from the server while attempting to process your request. Please refresh the page and try again or contact support.',
+            'event_espresso'
+        );
+        EE_Registry::$i18n_js_strings['validation_error'] = __(
+            'There appears to be a problem with the form validation configuration! Please check the admin settings or contact support.',
+            'event_espresso'
+        );
+        EE_Registry::$i18n_js_strings['invalid_payment_method'] = __(
+            'There appears to be a problem with the payment method configuration! Please refresh the page and try again or contact support.',
+            'event_espresso'
+        );
+        EE_Registry::$i18n_js_strings['reg_step_error'] = __(
+            'This registration step could not be completed. Please refresh the page and try again.',
+            'event_espresso'
+        );
+        EE_Registry::$i18n_js_strings['invalid_coupon'] = __(
+            'We\'re sorry but that coupon code does not appear to be valid. If this is incorrect, please contact the site administrator.',
+            'event_espresso'
+        );
         EE_Registry::$i18n_js_strings['process_registration'] = sprintf(
-            __('Please wait while we process your registration.%sDo not refresh the page or navigate away while this is happening.%sThank you for your patience.', 'event_espresso'),
+            __(
+                'Please wait while we process your registration.%sDo not refresh the page or navigate away while this is happening.%sThank you for your patience.',
+                'event_espresso'
+            ),
             '<br/>',
             '<br/>'
         );
@@ -1406,12 +1505,16 @@ class EED_Single_Page_Checkout extends EED_Module
             '</a>',
             '</p>'
         );
-        EE_Registry::$i18n_js_strings['ajax_submit'] = apply_filters('FHEE__Single_Page_Checkout__translate_js_strings__ajax_submit', true);
+        EE_Registry::$i18n_js_strings['ajax_submit'] = apply_filters(
+            'FHEE__Single_Page_Checkout__translate_js_strings__ajax_submit',
+            true
+        );
         EE_Registry::$i18n_js_strings['session_extension'] = absint(
             apply_filters('FHEE__EE_Session__extend_expiration__seconds_added', 10 * MINUTE_IN_SECONDS)
         );
         EE_Registry::$i18n_js_strings['session_expiration'] = gmdate(
-            'M d, Y H:i:s', EE_Registry::instance()->SSN->expiration() + (get_option('gmt_offset') * HOUR_IN_SECONDS)
+            'M d, Y H:i:s',
+            EE_Registry::instance()->SSN->expiration() + (get_option('gmt_offset') * HOUR_IN_SECONDS)
         );
     }
 
@@ -1422,17 +1525,40 @@ class EED_Single_Page_Checkout extends EED_Module
      *
      * @access        public
      * @return        void
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function enqueue_styles_and_scripts()
     {
         // load css
-        wp_register_style('single_page_checkout', SPCO_CSS_URL . 'single_page_checkout.css', array(), EVENT_ESPRESSO_VERSION);
+        wp_register_style(
+            'single_page_checkout',
+            SPCO_CSS_URL . 'single_page_checkout.css',
+            array('espresso_default'),
+            EVENT_ESPRESSO_VERSION
+        );
         wp_enqueue_style('single_page_checkout');
         // load JS
-        wp_register_script('jquery_plugin', EE_THIRD_PARTY_URL . 'jquery	.plugin.min.js', array('jquery'), '1.0.1', true);
-        wp_register_script('jquery_countdown', EE_THIRD_PARTY_URL . 'jquery	.countdown.min.js', array('jquery_plugin'), '2.0.2', true);
-        wp_register_script('single_page_checkout', SPCO_JS_URL . 'single_page_checkout.js', array('espresso_core', 'underscore', 'ee_form_section_validation', 'jquery_countdown'), EVENT_ESPRESSO_VERSION, true);
+        wp_register_script(
+            'jquery_plugin',
+            EE_THIRD_PARTY_URL . 'jquery	.plugin.min.js',
+            array('jquery'),
+            '1.0.1',
+            true
+        );
+        wp_register_script(
+            'jquery_countdown',
+            EE_THIRD_PARTY_URL . 'jquery	.countdown.min.js',
+            array('jquery_plugin'),
+            '2.0.2',
+            true
+        );
+        wp_register_script(
+            'single_page_checkout',
+            SPCO_JS_URL . 'single_page_checkout.js',
+            array('espresso_core', 'underscore', 'ee_form_section_validation', 'jquery_countdown'),
+            EVENT_ESPRESSO_VERSION,
+            true
+        );
         if ($this->checkout->registration_form instanceof EE_Form_Section_Proper) {
             $this->checkout->registration_form->enqueue_js();
         }
@@ -1447,9 +1573,13 @@ class EED_Single_Page_Checkout extends EED_Module
         do_action('AHEE__EED_Single_Page_Checkout__enqueue_styles_and_scripts', $this);
         /**
          * dynamic action hook for enqueueing styles and scripts with spco calls.
-         * The hook will end up being something like AHEE__EED_Single_Page_Checkout__enqueue_styles_and_scripts__attendee_information
+         * The hook will end up being something like:
+         *      AHEE__EED_Single_Page_Checkout__enqueue_styles_and_scripts__attendee_information
          */
-        do_action('AHEE__EED_Single_Page_Checkout__enqueue_styles_and_scripts__' . $this->checkout->current_step->slug(), $this);
+        do_action(
+            'AHEE__EED_Single_Page_Checkout__enqueue_styles_and_scripts__' . $this->checkout->current_step->slug(),
+            $this
+        );
     }
 
 
@@ -1459,7 +1589,7 @@ class EED_Single_Page_Checkout extends EED_Module
      *
      * @access    private
      * @return    void
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     private function _display_spco_reg_form()
     {
@@ -1469,9 +1599,9 @@ class EED_Single_Page_Checkout extends EED_Module
         } else {
             // add powered by EE msg
             add_action('AHEE__SPCO__reg_form_footer', array('EED_Single_Page_Checkout', 'display_registration_footer'));
-            $empty_cart = count($this->checkout->transaction->registrations($this->checkout->reg_cache_where_params)) < 1
-                ? true
-                : false;
+            $empty_cart = count(
+                $this->checkout->transaction->registrations($this->checkout->reg_cache_where_params)
+            ) < 1;
             EE_Registry::$i18n_js_strings['empty_cart'] = $empty_cart;
             $cookies_not_set_msg = '';
             if ($empty_cart && ! isset($_COOKIE['ee_cookie_test'])) {
@@ -1513,9 +1643,13 @@ class EED_Single_Page_Checkout extends EED_Module
                                     'empty_msg'               => apply_filters(
                                         'FHEE__Single_Page_Checkout__display_spco_reg_form__empty_msg',
                                         sprintf(
-                                            __('You need to %1$sReturn to Events list%2$sselect at least one event%3$s before you can proceed with the registration process.',
-                                                'event_espresso'),
-                                            '<a href="' . get_post_type_archive_link('espresso_events') . '" title="',
+                                            __(
+                                                'You need to %1$sReturn to Events list%2$sselect at least one event%3$s before you can proceed with the registration process.',
+                                                'event_espresso'
+                                            ),
+                                            '<a href="'
+                                            . get_post_type_archive_link('espresso_events')
+                                            . '" title="',
                                             '">',
                                             '</a>'
                                         )
@@ -1595,7 +1729,7 @@ class EED_Single_Page_Checkout extends EED_Module
      *
      * @access    public
      * @return    void
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function unlock_transaction()
     {
@@ -1634,7 +1768,7 @@ class EED_Single_Page_Checkout extends EED_Module
      *
      * @access public
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function go_to_next_step()
     {
