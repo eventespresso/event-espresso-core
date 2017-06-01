@@ -90,7 +90,7 @@ class Custom_Messages_Template_List_Table extends Messages_Template_List_Table
      */
     public function column_cb($item)
     {
-        return sprintf('<input type="checkbox" name="checkbox[%s] value="1" />', $item->GRP_ID());
+        return sprintf('<input type="checkbox" name="checkbox[%s]" value="1" />', $item->GRP_ID());
     }
 
 
