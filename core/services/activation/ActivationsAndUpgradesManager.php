@@ -5,6 +5,7 @@ namespace EventEspresso\core\services\activation;
 use EE_Addon;
 use EE_Maintenance_Mode;
 use EE_System;
+use EEH_Activation;
 use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\services\request\RequestType;
 use InvalidArgumentException;
@@ -89,7 +90,7 @@ class ActivationsAndUpgradesManager
             $this->core_activation_history,
             $this->maintenance_mode
         );
-        $core_activation_handler->handleActivationRequestTypes();
+        $activation_detected = $core_activation_handler->handleActivationRequestTypes();
         foreach ($this->addons as $addon) {
             if ( ! $addon instanceof EE_Addon) {
                 throw new InvalidEntityException($addon, 'EE_Addon');
@@ -112,11 +113,31 @@ class ActivationsAndUpgradesManager
                 $addon_activation_history,
                 $this->maintenance_mode
             );
-            $addon_activation_handler->handleActivationRequestTypes();
+            $activation_detected = $addon_activation_handler->handleActivationRequestTypes()
+                ? true
+                : $activation_detected;
             $addon->setRequestType($addon_request_type);
+        }
+        if($activation_detected) {
+            add_action('init', array($this, 'performActivationsAndUpgrades'), 3);
         }
     }
 
+
+
+    /**
+     * @return void
+     */
+    public function performActivationsAndUpgrades()
+    {
+        // first check if we had previously attempted to setup EE's directories but failed
+        if (EEH_Activation::upload_directories_incomplete()) {
+            EEH_Activation::create_upload_directories();
+        }
+        do_action(
+            'AHEE__EventEspresso_core_services_activation_ActivationsAndUpgradesManager__performActivationsAndUpgrades'
+        );
+    }
 
 
 
