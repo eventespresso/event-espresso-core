@@ -54,6 +54,11 @@ class DetectActivationsAndUpgrades
      */
     private $system_activated;
 
+    /**
+     * @var boolean $activation_detected
+     */
+    private $activation_detected = false;
+
 
 
     /**
@@ -166,7 +171,7 @@ class DetectActivationsAndUpgrades
     /**
      * switches handling based on request type
      *
-     * @return void
+     * @return boolean
      */
     public function handleActivationRequestTypes()
     {
@@ -198,6 +203,7 @@ class DetectActivationsAndUpgrades
             $this->system_activated,
             $this
         );
+        return $this->activation_detected;
     }
 
 
@@ -313,6 +319,7 @@ class DetectActivationsAndUpgrades
      */
     private function handleCoreVersionChange()
     {
+        $this->activation_detected = true;
         $this->activation_history->updateActivationHistory();
     }
 }
