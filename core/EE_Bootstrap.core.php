@@ -1,4 +1,7 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
+<?php
+use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
+
+defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 /**
  * Class EE_Bootstrap
  *
@@ -30,18 +33,18 @@ class EE_Bootstrap {
 	 * @access 	protected
 	 * @type 	EE_Request_Stack_Builder $_request_stack_builder
 	 */
-	protected $_request_stack_builder = null;
+	protected $_request_stack_builder;
 
 	/**
 	 * @access 	protected
 	 * @type 	EE_Request_Stack $_request_stack
 	 */
-	protected $_request_stack = null;
+	protected $_request_stack;
 
 
 
 	public function __construct() {
-		// construct request stack and run middleware apps as soon as all WP plugins are loaded
+        // construct request stack and run middleware apps as soon as all WP plugins are loaded
 		add_action( 'plugins_loaded', array( $this, 'run_request_stack' ), 0 );
 		// set framework for the rest of EE to hook into when loading
 		add_action( 'plugins_loaded', array( 'EE_Bootstrap', 'load_espresso_addons' ), 1 );
@@ -53,22 +56,30 @@ class EE_Bootstrap {
 
 
 
-	/**
-	 * run_request_stack
-	 * construct request stack and run middleware apps
-	 */
+    /**
+     * run_request_stack
+     * construct request stack and run middleware apps
+     *
+     * @throws ReflectionException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     */
 	public function run_request_stack() {
-		$this->load_autoloader();
-		$this->set_autoloaders_for_required_files();
-		$this->_request_stack_builder = $this->build_request_stack();
-		$this->_request_stack = $this->_request_stack_builder->resolve(
-			new EE_Load_Espresso_Core()
-		);
-		$this->_request_stack->handle_request(
-			new EE_Request( $_GET, $_POST, $_COOKIE ),
-			new EE_Response()
-		);
-		$this->_request_stack->handle_response();
+        try {
+            $this->load_autoloader();
+            $this->set_autoloaders_for_required_files();
+            $this->_request_stack_builder = $this->build_request_stack();
+            $this->_request_stack = $this->_request_stack_builder->resolve(
+                new EE_Load_Espresso_Core()
+            );
+            $this->_request_stack->handle_request(
+                new EE_Request($_GET, $_POST, $_COOKIE),
+                new EE_Response()
+            );
+            $this->_request_stack->handle_response();
+        } catch (Exception $exception) {
+            new ExceptionStackTraceDisplay($exception);
+        }
 	}
 
 
@@ -84,9 +95,11 @@ class EE_Bootstrap {
 
 
 
-	/**
-	 * load_required_files
-	 */
+    /**
+     * load_required_files
+     *
+     * @throws EE_Error
+     */
 	protected function set_autoloaders_for_required_files() {
 		// load interfaces
 		espresso_load_required( 'EEI_Interfaces', EE_CORE . 'interfaces' . DS . 'EEI_Interfaces.php' );
@@ -100,19 +113,21 @@ class EE_Bootstrap {
 
 
 
-	/**
-	 * build_request_stack
-	 *
-	 * @return \EE_Request_Stack_Builder
-	 */
+    /**
+     * build_request_stack
+     *
+     * @return EE_Request_Stack_Builder
+     * @throws InvalidArgumentException
+     */
 	public function build_request_stack() {
 		$request_stack_builder = new EE_Request_Stack_Builder();
-		$stack_apps = apply_filters(
+        $stack_apps = apply_filters(
 			'FHEE__EE_Bootstrap__build_request_stack__stack_apps',
 			array(
 				'EE_Detect_Login',
 				'EE_Recommended_Versions',
 				'EE_Alpha_Banner_Warning',
+                'EventEspresso\core\domain\services\request\stack\middleware\DetectRequestType',
 			)
 		);
 		// load middleware onto stack : FILO (First In Last Out)
