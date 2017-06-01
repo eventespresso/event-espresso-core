@@ -114,10 +114,9 @@ class EE_Registry
     public $AssetsRegistry = null;
 
     /**
-     *    $addons - StdClass object for holding addons which have registered themselves to work with EE core
+     * StdClass object for holding addons which have registered themselves to work with EE core
      *
-     * @access    public
-     * @var    EE_Addon[]
+     * @var StdClass
      */
     public $addons = null;
 
