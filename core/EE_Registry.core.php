@@ -246,6 +246,7 @@ class EE_Registry
                 'EE_Request_Handler'                              => 'REQ',
                 'EE_Message_Resource_Manager'                     => 'MRM',
                 'EventEspresso\core\services\commands\CommandBus' => 'BUS',
+                'EventEspresso\core\services\assets\Registry'     => 'AssetsRegistry',
             )
         );
         // class library
@@ -279,7 +280,6 @@ class EE_Registry
      */
     public function init()
     {
-        $this->AssetsRegistry = new Registry();
         // Get current page protocol
         $protocol = isset($_SERVER['HTTPS']) ? 'https://' : 'http://';
         // Output admin-ajax.php URL with same protocol as current page
@@ -1234,7 +1234,8 @@ class EE_Registry
         $instance->CFG = EE_Config::reset($hard, $reinstantiate);
         $instance->CART = null;
         $instance->MRM = null;
-        $instance->AssetsRegistry = new Registry();
+        $instance->AssetsRegistry = null;
+        $instance->AssetsRegistry = $instance->create('EventEspresso\core\services\assets\Registry');
         //messages reset
         EED_Messages::reset();
         if ($reset_models) {
@@ -1252,7 +1253,7 @@ class EE_Registry
      * @override magic methods
      * @return void
      */
-    final function __destruct()
+    public final function __destruct()
     {
     }
 
@@ -1262,7 +1263,7 @@ class EE_Registry
      * @param $a
      * @param $b
      */
-    final function __call($a, $b)
+    public final function __call($a, $b)
     {
     }
 
@@ -1271,7 +1272,7 @@ class EE_Registry
     /**
      * @param $a
      */
-    final function __get($a)
+    public final function __get($a)
     {
     }
 
@@ -1281,7 +1282,7 @@ class EE_Registry
      * @param $a
      * @param $b
      */
-    final function __set($a, $b)
+    public final function __set($a, $b)
     {
     }
 
@@ -1290,7 +1291,7 @@ class EE_Registry
     /**
      * @param $a
      */
-    final function __isset($a)
+    public final function __isset($a)
     {
     }
 
@@ -1299,7 +1300,7 @@ class EE_Registry
     /**
      * @param $a
      */
-    final function __unset($a)
+    public final function __unset($a)
     {
     }
 
@@ -1308,14 +1309,14 @@ class EE_Registry
     /**
      * @return array
      */
-    final function __sleep()
+    public final function __sleep()
     {
         return array();
     }
 
 
 
-    final function __wakeup()
+    public final function __wakeup()
     {
     }
 
@@ -1324,26 +1325,27 @@ class EE_Registry
     /**
      * @return string
      */
-    final function __toString()
+    public final function __toString()
     {
         return '';
     }
 
 
 
-    final function __invoke()
+    public final function __invoke()
     {
     }
 
 
 
-    final static function __set_state()
+    public final static function __set_state($array = array())
     {
+        return EE_Registry::instance();
     }
 
 
 
-    final function __clone()
+    public final function __clone()
     {
     }
 
@@ -1353,7 +1355,7 @@ class EE_Registry
      * @param $a
      * @param $b
      */
-    final static function __callStatic($a, $b)
+    public final static function __callStatic($a, $b)
     {
     }
 

@@ -61,4 +61,14 @@ trait EventsAdmin
         $this->actor()->moveMouseOver(EventsPage::eventListTableEventTitleEditLinkSelectorForTitle($event_title));
         $this->actor()->click(EventsPage::eventListTableEventTitleViewLinkSelectorForTitle($event_title));
     }
+
+
+
+    public function changeDefaultRegistrationStatusTo($registration_status)
+    {
+        $this->actor()->selectOption(
+            EventsPage::EVENT_EDITOR_DEFAULT_REGISTRATION_STATUS_FIELD_SELECTOR,
+            $registration_status
+        );
+    }
 }

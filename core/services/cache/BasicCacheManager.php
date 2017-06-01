@@ -2,6 +2,7 @@
 namespace EventEspresso\core\services\cache;
 
 use Closure;
+use EEH_Debug_Tools;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -83,6 +84,7 @@ class BasicCacheManager implements CacheManagerInterface
     {
         $content = '';
         // how long should we cache this content for? 0 means no caching.
+        $expiration = ! WP_DEBUG ? $expiration : 0;
         $expiration = absint(
             apply_filters(
                 'FHEE__CacheManager__get__cache_expiration',
@@ -103,13 +105,13 @@ class BasicCacheManager implements CacheManagerInterface
             // save the new content if caching is enabled
             if ($expiration) {
                 if (BasicCacheManager::DEBUG) {
-                    \EEH_Debug_Tools::printr($cache_id, 'REFRESH CACHE', __FILE__, __LINE__);
+                    EEH_Debug_Tools::printr($cache_id, 'REFRESH CACHE', __FILE__, __LINE__);
                 }
                 $this->cache_storage->add($cache_id, $content, $expiration);
             }
         } else {
             if (BasicCacheManager::DEBUG) {
-                \EEH_Debug_Tools::printr($cache_id, 'CACHED CONTENT', __FILE__, __LINE__);
+                EEH_Debug_Tools::printr($cache_id, 'CACHED CONTENT', __FILE__, __LINE__);
             }
         }
         return $content;

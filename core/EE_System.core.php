@@ -188,6 +188,9 @@ final class EE_System
         EEH_Autoloader::instance()->register_autoloaders_for_each_file_in_folder(EE_LIBRARIES . 'plugin_api');
         //load and setup EE_Capabilities
         $this->registry->load_core('Capabilities');
+        //caps need to be initialized on every request so that capability maps are set.
+        //@see https://events.codebasehq.com/projects/event-espresso/tickets/8674
+        $this->registry->CAP->init_caps();
         do_action('AHEE__EE_System__load_espresso_addons');
         //if the WP API basic auth plugin isn't already loaded, load it now.
         //We want it for mobile apps. Just include the entire plugin
@@ -207,27 +210,7 @@ final class EE_System
         ) {
             include_once EE_THIRD_PARTY . 'wp-api-basic-auth' . DS . 'basic-auth.php';
         }
-        $this->_maybe_brew_regular();
         do_action('AHEE__EE_System__load_espresso_addons__complete');
-
-        //caps need to be initialized on every request so that capability maps are set.
-        //@see https://events.codebasehq.com/projects/event-espresso/tickets/8674
-        $this->registry->CAP->init_caps();
-    }
-
-
-
-    /**
-     * The purpose of this method is to simply check for a file named "caffeinated/brewing_regular.php" for any hooks
-     * that need to be setup before our EE_System launches.
-     *
-     * @return void
-     */
-    private function _maybe_brew_regular()
-    {
-        if (( ! defined('EE_DECAF') || EE_DECAF !== true) && is_readable(EE_CAFF_PATH . 'brewing_regular.php')) {
-            require_once EE_CAFF_PATH . 'brewing_regular.php';
-        }
     }
 
 
@@ -692,6 +675,8 @@ final class EE_System
         }
         // get model names
         $this->_parse_model_names();
+        //load caf stuff a chance to play during the activation process too.
+        $this->_maybe_brew_regular();
         do_action('AHEE__EE_System__load_core_configuration__complete', $this);
     }
 
@@ -721,6 +706,21 @@ final class EE_System
         $this->registry->models = apply_filters('FHEE__EE_System__parse_model_names', $model_names);
         $this->registry->non_abstract_db_models = apply_filters('FHEE__EE_System__parse_implemented_model_names',
             $non_abstract_db_models);
+    }
+
+
+
+    /**
+     * The purpose of this method is to simply check for a file named "caffeinated/brewing_regular.php" for any hooks
+     * that need to be setup before our EE_System launches.
+     *
+     * @return void
+     */
+    private function _maybe_brew_regular()
+    {
+        if (( ! defined('EE_DECAF') || EE_DECAF !== true) && is_readable(EE_CAFF_PATH . 'brewing_regular.php')) {
+            require_once EE_CAFF_PATH . 'brewing_regular.php';
+        }
     }
 
 
@@ -804,8 +804,6 @@ final class EE_System
         add_action('init', array($this, 'core_loaded_and_ready'), 9);
         add_action('init', array($this, 'initialize'), 10);
         add_action('init', array($this, 'initialize_last'), 100);
-        add_action('wp_enqueue_scripts', array($this, 'wp_enqueue_scripts'), 100);
-        add_action('admin_enqueue_scripts', array($this, 'wp_enqueue_scripts'), 100);
         add_action('admin_bar_menu', array($this, 'espresso_toolbar_items'), 100);
         if (is_admin() && apply_filters('FHEE__EE_System__brew_espresso__load_pue', true)) {
             // pew pew pew
@@ -927,6 +925,8 @@ final class EE_System
         }
         do_action('AHEE__EE_System__set_hooks_for_shortcodes_modules_and_addons');
         $this->registry->load_core('Session');
+        $this->registry->create('EventEspresso\core\services\assets\Registry');
+        wp_enqueue_script('espresso_core');
     }
 
 
@@ -1426,33 +1426,6 @@ final class EE_System
         return array_merge($exclude_array, $this->registry->CFG->core->get_critical_pages_array());
     }
 
-
-
-
-
-
-    /***********************************************        WP_ENQUEUE_SCRIPTS HOOK         ***********************************************/
-    /**
-     *    wp_enqueue_scripts
-     *
-     * @access    public
-     * @return    void
-     */
-    public function wp_enqueue_scripts()
-    {
-        // unlike other systems, EE_System_scripts loading is turned ON by default, but prior to the init hook, can be turned off via: add_filter( 'FHEE_load_EE_System_scripts', '__return_false' );
-        if (apply_filters('FHEE_load_EE_System_scripts', true)) {
-            // jquery_validate loading is turned OFF by default, but prior to the wp_enqueue_scripts hook, can be turned back on again via:  add_filter( 'FHEE_load_jquery_validate', '__return_true' );
-            if (apply_filters('FHEE_load_jquery_validate', false)) {
-                // register jQuery Validate and additional methods
-                wp_register_script('jquery-validate', EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.min.js',
-                    array('jquery'), '1.15.0', true);
-                wp_register_script('jquery-validate-extra-methods',
-                    EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.additional-methods.min.js',
-                    array('jquery', 'jquery-validate'), '1.15.0', true);
-            }
-        }
-    }
 
 
 
