@@ -350,7 +350,9 @@ class EE_Dependency_Map
                 'EE_Request' => EE_Dependency_Map::load_from_cache,
             ),
             'EE_System'                                                                                                   => array(
-                'EE_Registry' => EE_Dependency_Map::load_from_cache,
+                'EE_Registry'         => EE_Dependency_Map::load_from_cache,
+                'EE_Request'          => EE_Dependency_Map::load_from_cache,
+                'EE_Maintenance_Mode' => EE_Dependency_Map::load_from_cache,
             ),
             'EE_Session'                                                                                                  => array(
                 'EventEspresso\core\services\cache\TransientCacheStorage' => EE_Dependency_Map::load_from_cache,
@@ -555,6 +557,7 @@ class EE_Dependency_Map
         $loader = &$this->loader;
         $this->_class_loaders = array(
             //load_core
+            'EE_Maintenance_Mode'                  => 'load_core',
             'EE_Capabilities'                      => 'load_core',
             'EE_Encryption'                        => 'load_core',
             'EE_Front_Controller'                  => 'load_core',
