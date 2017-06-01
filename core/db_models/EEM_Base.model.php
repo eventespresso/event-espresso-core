@@ -640,28 +640,6 @@ abstract class EEM_Base extends EE_Base
 
 
     /**
-     * Generates the cap restrictions for the given context, or if they were
-     * already generated just gets what's cached
-     *
-     * @param string $context one of EEM_Base::valid_cap_contexts()
-     * @return EE_Default_Where_Conditions[]
-     */
-    protected function _generate_cap_restrictions($context)
-    {
-        if (isset($this->_cap_restriction_generators[$context])
-            && $this->_cap_restriction_generators[$context]
-               instanceof
-               EE_Restriction_Generator_Base
-        ) {
-            return $this->_cap_restriction_generators[$context]->generate_restrictions();
-        } else {
-            return array();
-        }
-    }
-
-
-
-    /**
      * Used to set the $_model_query_blog_id static property.
      *
      * @param int $blog_id  If provided then will set the blog_id for the models to this id.  If not provided then the
