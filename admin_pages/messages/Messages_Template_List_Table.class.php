@@ -73,6 +73,7 @@ class Messages_Template_List_Table extends EE_Admin_List_Table
      *
      * @param EE_Message_Template_Group $item
      * @return string
+     * @throws EE_Error
      */
     public function single_row($item)
     {
@@ -111,9 +112,11 @@ class Messages_Template_List_Table extends EE_Admin_List_Table
     }
 
     /**
-     * we're just removing the search box for message templates, not needed.
+     * We're just removing the search box for message templates, not needed.
      *
-     * @return string (empty);
+     * @param string $text
+     * @param string $input_id
+     * @return string ;
      */
     public function search_box($text, $input_id)
     {
