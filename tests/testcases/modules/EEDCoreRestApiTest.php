@@ -433,6 +433,7 @@ class EEDCoreRestApiTest extends EE_REST_TestCase
                 'allow_blocking' => false
             )
         );
+
         $response = rest_do_request(
             $request
         );

@@ -189,6 +189,52 @@ class WriteTest extends \EE_REST_TestCase
 
 
     /**
+     * Verifies that if we pass an invalid ID for a PUT, there is a proper REST API error
+     * (not just a model or PHP error)
+     * @group 9222
+     */
+    public function testUpdateInvalidID()
+    {
+        $this->authenticateAnAdmin();
+        $req = new \WP_REST_Request(
+            'PUT',
+            '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/datetimes/9999999'
+        );
+        //just update the reg limit, not the number sold
+        $req->set_body_params(
+            array(
+                'DTT_reg_limit' => 2,
+            )
+        );
+        $response = rest_do_request($req);
+        $response_data = $response->get_data();
+        //verify there was no error code
+        $this->assertEquals('rest_datetime_invalid_id', $response_data['code']);
+    }
+
+
+
+    /**
+     * Verifies that if we pass an invalid ID for a DELETE, there is a proper REST API error
+     * (not just a model or PHP error)
+     * @group 9222
+     */
+    public function testDeleteInvalidID()
+    {
+        $this->authenticateAnAdmin();
+        $req = new \WP_REST_Request(
+            'DELETE',
+            '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/datetimes/9999999'
+        );
+        $response = rest_do_request($req);
+        $response_data = $response->get_data();
+        //verify there was no error code
+        $this->assertEquals('rest_datetime_invalid_id', $response_data['code']);
+    }
+
+
+
+    /**
      * @group 9222
      */
     public function testNoDeleteIfNoCaps()

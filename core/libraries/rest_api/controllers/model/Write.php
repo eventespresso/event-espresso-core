@@ -217,6 +217,14 @@ class Write extends Base
             true
         );
         $model_obj = $model->get_one_by_ID($obj_id);
+        if (! $model_obj instanceof EE_Base_Class) {
+            $lowercase_model_name = strtolower($model->get_this_model_name());
+            throw new RestException(
+                sprintf('rest_%s_invalid_id', $lowercase_model_name),
+                sprintf(__('Invalid %s ID.', 'event_espresso'), $lowercase_model_name),
+                array('status' => 404)
+            );
+        }
         $model_obj->save($model_data);
         return $this->returnModelObjAsJsonResponse($model_obj, $request);
     }
@@ -251,40 +259,28 @@ class Write extends Base
             );
         }
         $obj_id = $request->get_param('id');
+        //this is where we would apply more fine-grained caps
+        $model_obj = $model->get_one_by_ID($obj_id);
+        if (! $model_obj instanceof EE_Base_Class) {
+            $lowercase_model_name = strtolower($model->get_this_model_name());
+            throw new RestException(
+                sprintf('rest_%s_invalid_id', $lowercase_model_name),
+                sprintf(__('Invalid %s ID.', 'event_espresso'), $lowercase_model_name),
+                array('status' => 404)
+            );
+        }
         $requested_permanent_delete = filter_var($request->get_param('force'), FILTER_VALIDATE_BOOLEAN);
         $requested_allow_blocking = filter_var($request->get_param('allow_blocking'), FILTER_VALIDATE_BOOLEAN);
         if ($requested_permanent_delete) {
-            $read_controller = new Read();
-            $read_controller->setRequestedVersion($this->getRequestedVersion());
-            $simulated_get_request = new WP_REST_Request('GET', $request->get_route());
-            $simulated_get_request->set_url_params($request->get_url_params());
-            $simulated_get_request->set_query_params(
-                array(
-                    'caps' => EEM_Base::caps_delete
-                )
-            );
-            //not just grab the entity, but also use sendResponse to verify in case there's an error retrieving it
-            $original_response = $read_controller->sendResponse(
-                $read_controller->getOneOrReportPermissionError(
-                    $model,
-                    $simulated_get_request,
-                    EEM_Base::caps_delete
-                )
-            );
-            if ($original_response instanceof WP_REST_Response) {
-                $original_entity = $original_response->get_data();
-            } else {
-                $original_entity = null;
-            }
             $deleted = (bool)$model->delete_permanently_by_ID($obj_id, $requested_allow_blocking);
             return array(
                 'deleted'  => $deleted,
-                'previous' => $original_entity,
+                'previous' => $this->returnModelObjAsJsonResponse($model_obj, $request),
             );
         } else {
             if ($model instanceof EEM_Soft_Delete_Base) {
                 $model->delete_by_ID($obj_id, $requested_allow_blocking);
-                return $this->getOneBasedOnRequest($model, $request, $obj_id);
+                return $this->returnModelObjAsJsonResponse($model_obj, $request);
             } else {
                 throw new RestException(
                     'rest_trash_not_supported',

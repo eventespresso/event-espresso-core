@@ -866,22 +866,28 @@ class EE_UnitTestCase extends WP_UnitTestCase
                 if (!isset($args[$fk->get_name()])) {
                     $args[$fk->get_name()] = $obj->ID();
                 }
-
             }
         }
         //set any other fields which haven't yet been set
         foreach ($model->field_settings() as $field_name => $field) {
-            $value = NULL;
-            if (in_array($field_name, array(
-                'EVT_timezone_string',
-                'PAY_redirect_url',
-                'PAY_redirect_args',
-                'TKT_reserved',
-                'DTT_reserved',
-                'parent'),
+            $value = null;
+            if (in_array(
+                $field_name,
+                array(
+                    'EVT_timezone_string',
+                    'PAY_redirect_url',
+                    'PAY_redirect_args',
+                    'TKT_reserved',
+                    'DTT_reserved',
+                    'parent',
+                    //don't make system questions etc
+                    'QST_system',
+                    'QSG_system',
+                    'QSO_system'
+                ),
                 true
             )) {
-                $value = NULL;
+                $value = null;
             } elseif ($field instanceof EE_Enum_Integer_Field ||
                 $field instanceof EE_Enum_Text_Field ||
                 $field instanceof EE_Boolean_Field ||
