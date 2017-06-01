@@ -84,8 +84,6 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_
         // central repository for classes
         $this->registry = $this->_load_registry();
         do_action('EE_Load_Espresso_Core__handle_request__initialize_core_loading');
-        // PSR4 Autoloaders
-        $this->registry->load_core('EE_Psr4AutoloaderInit');
         $this->loader = $this->registry->create('EventEspresso\core\services\loaders\Loader');
         $this->dependency_map->setLoader($this->loader);
         // build DI container
