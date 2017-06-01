@@ -1,5 +1,8 @@
 <?php
 
+use EventEspresso\core\services\request\RequestType;
+
+
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\interfaces\InterminableInterface;
@@ -42,6 +45,18 @@ class EE_Request implements LegacyRequestInterface, InterminableInterface
      * @var boolean $front_ajax
      */
     public $front_ajax = false;
+
+    /**
+     * IP address for request
+     *
+     * @var string $_ip_address
+     */
+    private $_ip_address = '';
+
+    /**
+     * @var RequestType $request_type
+     */
+    private $request_type;
 
 
     /**
@@ -332,6 +347,22 @@ class EE_Request implements LegacyRequestInterface, InterminableInterface
     public function setIsBot($is_bot)
     {
         $this->request()->setIsBot($is_bot);
+    }
+
+    /**
+     * @return RequestType
+     */
+    public function getRequestType()
+    {
+        return $this->request_type;
+    }
+
+    /**
+     * @param RequestType $request_type
+     */
+    public function setRequestType(RequestType $request_type)
+    {
+        $this->request_type = $request_type;
     }
 
 
