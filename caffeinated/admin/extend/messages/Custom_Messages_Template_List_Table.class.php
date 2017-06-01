@@ -214,7 +214,7 @@ class Custom_Messages_Template_List_Table extends Messages_Template_List_Table
                                       . esc_html__('Restore', 'event_espresso') . '</a>';
             }
 
-            if ($this->_view == 'trashed'
+            if ($this->_view === 'trashed'
                 && EE_Registry::instance()->CAP->current_user_can(
                     'ee_delete_message',
                     'espresso_messages_delete_message_template',
