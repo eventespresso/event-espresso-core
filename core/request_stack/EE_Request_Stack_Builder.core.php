@@ -26,64 +26,63 @@ class EE_Request_Stack_Builder {
 	 * EE_Request_Stack_Builder
 	 */
 	public function __construct() {
-		//$this->middleware_stack = new SplStack();
 		$this->_middleware_stack = array();
 	}
 
 
 
-	/**
-	 * Add an EE_Middleware class to the beginning of the middleware_stack
-	 * First parameter is the middleware classname,
-	 * any number of arguments can also be passed, and detected via func_get_args()
-	 *
-	 *
-	 * @ param $class_name
-	 * @ param $args
-	 *
-	 * @return EE_Request_Stack_Builder
-	 */
+    /**
+     * Add an EE_Middleware class to the beginning of the middleware_stack
+     * First parameter is the middleware classname,
+     * any number of arguments can also be passed, and detected via func_get_args()
+     *
+     *
+     * @ param $class_name
+     * @ param $args
+     *
+     * @return EE_Request_Stack_Builder
+     * @throws InvalidArgumentException
+     */
 	public function unshift( /*$class_name, $args*/ ) {
 		if ( func_num_args() === 0 ) {
-			throw new InvalidArgumentException( "Missing argument(s) when calling unshift" );
+			throw new InvalidArgumentException('Missing argument(s) when calling unshift');
 		}
-		$middleware = func_get_args();
-		//$this->middleware_stack->unshift( $middleware );
-		array_unshift( $this->_middleware_stack, $middleware );
+		array_unshift( $this->_middleware_stack, func_get_args() );
 		return $this;
 	}
 
 
 
-	/**
-	 * Add an EE_Middleware class to the end of the middleware_stack
-	 * First parameter is the middleware classname,
-	 * any number of arguments can also be passed, and detected via func_get_args()
-	 *
-	 *
-	 * @ param $class_name
-	 * @ param $args
-	 * @return EE_Request_Stack_Builder
-	 */
+    /**
+     * Add an EE_Middleware class to the end of the middleware_stack
+     * First parameter is the middleware classname,
+     * any number of arguments can also be passed, and detected via func_get_args()
+     *
+     *
+     * @ param $class_name
+     * @ param $args
+     *
+     * @return EE_Request_Stack_Builder
+     * @throws InvalidArgumentException
+     */
 	public function push( /*$class_name, $args...*/ ) {
 		if ( func_num_args() === 0 ) {
-			throw new InvalidArgumentException( "Missing argument(s) when calling push" );
+			throw new InvalidArgumentException('Missing argument(s) when calling push');
 		}
-		$middleware = func_get_args();
-		//$this->middleware_stack->push( $middleware );
-		array_push( $this->_middleware_stack, $middleware );
+        $this->_middleware_stack[] = func_get_args();
 		return $this;
 	}
 
 
 
-	/**
-	 * 	builds decorated middleware stack
-	 * by continuously injecting previous middleware app into the next
-	 *
-	 * @param EEI_Request_Decorator $application
-	 * @return EE_Request_Stack
-	 */
+    /**
+     *    builds decorated middleware stack
+     * by continuously injecting previous middleware app into the next
+     *
+     * @param EEI_Request_Decorator $application
+     * @return EE_Request_Stack
+     * @throws ReflectionException
+     */
 	public function resolve( EEI_Request_Decorator $application ) {
 		$middlewares = array( $application );
 		foreach ( $this->_middleware_stack as $middleware_args ) {
