@@ -1,4 +1,7 @@
-<?php if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
+<?php use EventEspresso\core\services\activation\ActivationHistory;
+use EventEspresso\core\services\request\RequestType;
+
+if ( !defined('EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
 }
 /**
@@ -89,9 +92,19 @@ abstract class EE_Addon extends EE_Configurable {
 	 */
 	protected $_plugins_page_row = array();
 
+    /**
+     * @var ActivationHistory $activation_history
+     */
+    private $activation_history;
+
+    /**
+     * @var RequestType $request_type
+     */
+    private $request_type;
 
 
-	/**
+
+    /**
 	 *    class constructor
 	 */
 	public function __construct() {
@@ -240,36 +253,6 @@ abstract class EE_Addon extends EE_Configurable {
 
 
 
-	/**
-	 * Called when EE core detects this addon has been activated for the first time.
-	 * If the site isn't in maintenance mode, should setup the addon's database
-	 * @return void
-	 */
-	public function new_install() {
-		$classname = get_class($this);
-		do_action("AHEE__{$classname}__new_install");
-		do_action('AHEE__EE_Addon__new_install', $this);
-		EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
-		add_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations', array( $this, 'initialize_db_if_no_migrations_required' ) );
-	}
-
-
-
-	/**
-	 * Called when EE core detects this addon has been reactivated. When this happens,
-	 * it's good to just check that your data is still intact
-	 * @return void
-	 */
-	public function reactivation() {
-		$classname = get_class($this);
-		do_action("AHEE__{$classname}__reactivation");
-		do_action('AHEE__EE_Addon__reactivation', $this);
-		EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
-		add_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations', array( $this, 'initialize_db_if_no_migrations_required' ) );
-	}
-
-
-
 	public function deactivation(){
 		$classname = get_class($this);
 //		echo "Deactivating $classname";die;
@@ -387,77 +370,6 @@ abstract class EE_Addon extends EE_Configurable {
 	}
 
 
-
-	/**
-	 * EE Core detected that this addon has been upgraded. We should check if there
-	 * are any new migration scripts, and if so put the site into maintenance mode until
-	 * they're ran
-	 * @return void
-	 */
-	public function upgrade() {
-		$classname = get_class($this);
-		do_action("AHEE__{$classname}__upgrade");
-		do_action('AHEE__EE_Addon__upgrade', $this);
-		EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
-		//also it's possible there is new default data that needs to be added
-		add_action(
-		    'AHEE__EE_System__perform_activations_upgrades_and_migrations', array( $this, 'initialize_db_if_no_migrations_required' )
-        );
-	}
-
-
-
-	/**
-	 * If Core detects this addon has been downgraded, you may want to invoke some special logic here.
-	 */
-	public function downgrade() {
-		$classname = get_class($this);
-		do_action("AHEE__{$classname}__downgrade");
-		do_action('AHEE__EE_Addon__downgrade', $this);
-		//it's possible there's old default data that needs to be double-checked
-		add_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations', array( $this, 'initialize_db_if_no_migrations_required' ) );
-	}
-
-
-
-	/**
-	 * set_db_update_option_name
-	 * Until we do something better, we'll just check for migration scripts upon
-	 * plugin activation only. In the future, we'll want to do it on plugin updates too
-	 * @return bool
-	 */
-	public function set_db_update_option_name(){
-		EE_Error::doing_it_wrong(__FUNCTION__, __('EE_Addon::set_db_update_option_name was renamed to EE_Addon::set_activation_indicator_option', 'event_espresso'), '4.3.0.alpha.016');
-		//let's just handle this on the next request, ok? right now we're just not really ready
-		return $this->set_activation_indicator_option();
-	}
-
-
-	/**
-	 *
-	 * Returns the name of the activation indicator option
-	 * (an option which is set temporarily to indicate that this addon was just activated)
-	 * @deprecated since version 4.3.0.alpha.016
-	 * @return string
-	 */
-	public function get_db_update_option_name() {
-		EE_Error::doing_it_wrong(__FUNCTION__, __('EE_Addon::get_db_update_option was renamed to EE_Addon::get_activation_indicator_option_name', 'event_espresso'), '4.3.0.alpha.016');
-		return $this->get_activation_indicator_option_name();
-	}
-
-
-
-	/**
-	 * When the addon is activated, this should be called to set a wordpress option that
-	 * indicates it was activated. This is especially useful for detecting reactivations.
-	 * @return bool
-	 */
-	public function set_activation_indicator_option() {
-		// let's just handle this on the next request, ok? right now we're just not really ready
-		return update_option( $this->get_activation_indicator_option_name(), TRUE );
-	}
-
-
 	/**
 	 * Gets the name of the wp option which is used to temporarily indicate that this addon was activated
 	 * @return string
@@ -467,94 +379,6 @@ abstract class EE_Addon extends EE_Configurable {
 	}
 
 
-
-
-	/**
-	 * Used by EE_System to set the request type of this addon. Should not be used by addon developers
-	 * @param int $req_type
-	 */
-	public function set_req_type( $req_type ) {
-		$this->_req_type = $req_type;
-	}
-
-
-
-	/**
-	 * Returns the request type of this addon (ie, EE_System::req_type_normal, EE_System::req_type_new_activation, EE_System::req_type_reactivation, EE_System::req_type_upgrade, or EE_System::req_type_downgrade). This is set by EE_System when it is checking for new install or upgrades
-	 * of addons
-	 */
-	public function detect_req_type() {
-		if( ! $this->_req_type ){
-			$this->detect_activation_or_upgrade();
-		}
-		return $this->_req_type;
-	}
-
-
-
-	/**
-	 * Detects the request type for this addon (whether it was just activated, upgrades, a normal request, etc.)
-	 * Should only be called once per request
-	 * @return void
-	 */
-	public function detect_activation_or_upgrade(){
-		$activation_history_for_addon = $this->get_activation_history();
-//		d($activation_history_for_addon);
-		$request_type = EE_System::detect_req_type_given_activation_history($activation_history_for_addon, $this->get_activation_indicator_option_name(), $this->version());
-		$this->set_req_type($request_type);
-		$classname = get_class($this);
-		switch($request_type){
-			case EE_System::req_type_new_activation:
-				do_action( "AHEE__{$classname}__detect_activations_or_upgrades__new_activation" );
-				do_action( 'AHEE__EE_Addon__detect_activations_or_upgrades__new_activation', $this );
-				$this->new_install();
-				$this->update_list_of_installed_versions( $activation_history_for_addon );
-				break;
-			case EE_System::req_type_reactivation:
-				do_action( "AHEE__{$classname}__detect_activations_or_upgrades__reactivation" );
-				do_action( 'AHEE__EE_Addon__detect_activations_or_upgrades__reactivation', $this );
-				$this->reactivation();
-				$this->update_list_of_installed_versions( $activation_history_for_addon );
-				break;
-			case EE_System::req_type_upgrade:
-				do_action( "AHEE__{$classname}__detect_activations_or_upgrades__upgrade" );
-				do_action( 'AHEE__EE_Addon__detect_activations_or_upgrades__upgrade', $this );
-				$this->upgrade();
-				$this->update_list_of_installed_versions($activation_history_for_addon );
-				break;
-			case EE_System::req_type_downgrade:
-				do_action( "AHEE__{$classname}__detect_activations_or_upgrades__downgrade" );
-				do_action( 'AHEE__EE_Addon__detect_activations_or_upgrades__downgrade', $this );
-				$this->downgrade();
-				$this->update_list_of_installed_versions($activation_history_for_addon );
-				break;
-			case EE_System::req_type_normal:
-			default:
-//				$this->_maybe_redirect_to_ee_about();
-				break;
-		}
-
-		do_action( "AHEE__{$classname}__detect_if_activation_or_upgrade__complete" );
-	}
-
-	/**
-	 * Updates the version history for this addon
-	 * @param array $version_history
-	 * @param string $current_version_to_add
-	 * @return boolean success
-	 */
-	public function update_list_of_installed_versions($version_history = NULL,$current_version_to_add = NULL) {
-		if( ! $version_history ) {
-			$version_history = $this->get_activation_history();
-		}
-		if( $current_version_to_add === NULL){
-			$current_version_to_add = $this->version();
-		}
-		$version_history[ $current_version_to_add ][] = date( 'Y-m-d H:i:s',time() );
-		// resave
-//		echo "updating list of installed versions:".$this->get_activation_history_option_name();d($version_history);
-		return update_option( $this->get_activation_history_option_name(), $version_history );
-	}
 
 	/**
 	 * Gets the name of the wp option that stores the activation history
@@ -572,7 +396,8 @@ abstract class EE_Addon extends EE_Configurable {
 	 * @return array
 	 */
 	public function get_activation_history(){
-		return get_option($this->get_activation_history_option_name(), NULL);
+        $this->setup_activation_history();
+		return $this->activation_history->getVersionHistory();
 	}
 
 
@@ -748,6 +573,210 @@ abstract class EE_Addon extends EE_Configurable {
     {
         // cricket chirp... cricket chirp...
 	}
+
+
+
+    /**
+     * ensures the activation history property is set
+     *
+     * @return void
+     */
+    public function setup_activation_history()
+    {
+        if (! $this->activation_history instanceof ActivationHistory) {
+            $this->setActivationHistory(
+                new ActivationHistory(
+                    $this->get_activation_history_option_name(),
+                    $this->get_activation_indicator_option_name(),
+                    $this->version()
+                )
+            );
+        }
+    }
+
+
+
+    /**
+     * Gets the ActivationHistory object for this addon
+     *
+     * @return ActivationHistory
+     */
+    public function getActivationHistory()
+    {
+        $this->setup_activation_history();
+        return $this->activation_history;
+    }
+
+
+
+    /**
+     * @param ActivationHistory $activation_history
+     */
+    public function setActivationHistory(ActivationHistory $activation_history)
+    {
+        $this->activation_history = $activation_history;
+    }
+
+
+
+    /**
+     * @return RequestType
+     */
+    public function getRequestType()
+    {
+        return $this->request_type;
+    }
+
+
+
+    /**
+     * @param RequestType $request_type
+     */
+    public function setRequestType($request_type)
+    {
+        $this->request_type = $request_type;
+    }
+
+
+
+    /******************************** DEPRECATED ***************************************/
+
+
+    /**
+     * @deprecated 4.9.40
+     * @return void
+     */
+    public function new_install()
+    {
+    }
+
+
+
+    /**
+     * @deprecated 4.9.40
+     * @return void
+     */
+    public function reactivation()
+    {
+    }
+
+
+
+    /**
+     * @deprecated 4.9.40
+     * @return void
+     */
+    public function upgrade()
+    {
+    }
+
+
+
+    /**
+     * @deprecated 4.9.40
+     */
+    public function downgrade()
+    {
+    }
+
+
+
+    /**
+     * set_db_update_option_name
+     * Until we do something better, we'll just check for migration scripts upon
+     * plugin activation only. In the future, we'll want to do it on plugin updates too
+     *
+     * @deprecated 4.3.0.alpha.016
+     * @return bool
+     */
+    public function set_db_update_option_name()
+    {
+        EE_Error::doing_it_wrong(
+            __FUNCTION__, __(
+            'EE_Addon::set_db_update_option_name was renamed to EE_Addon::set_activation_indicator_option',
+            'event_espresso'
+        ), '4.3.0.alpha.016'
+        );
+        //let's just handle this on the next request, ok? right now we're just not really ready
+        return $this->set_activation_indicator_option();
+    }
+
+
+
+    /**
+     *
+     * Returns the name of the activation indicator option
+     * (an option which is set temporarily to indicate that this addon was just activated)
+     *
+     * @deprecated 4.3.0.alpha.016
+     * @return string
+     */
+    public function get_db_update_option_name()
+    {
+        EE_Error::doing_it_wrong(
+            __FUNCTION__, __(
+            'EE_Addon::get_db_update_option was renamed to EE_Addon::get_activation_indicator_option_name',
+            'event_espresso'
+        ), '4.3.0.alpha.016'
+        );
+        return $this->get_activation_indicator_option_name();
+    }
+
+
+
+    /**
+     * @deprecated 4.9.40
+     * @return bool
+     */
+    public function set_activation_indicator_option()
+    {
+        $this->setup_activation_history();
+        return $this->activation_history->setActivationIndicator();
+    }
+
+
+
+    /**
+     * @deprecated 4.9.40
+     * @param int $req_type
+     */
+    public function set_req_type($req_type)
+    {
+    }
+
+
+
+    /**
+     * @deprecated 4.9.40
+     */
+    public function detect_req_type()
+    {
+        return $this->getRequestType()->requestType();
+    }
+
+
+
+    /**
+     * @deprecated 4.9.40
+     * @return void
+     */
+    public function detect_activation_or_upgrade()
+    {
+    }
+
+
+
+    /**
+     * @deprecated 4.9.40
+     * @param array  $version_history
+     * @param string $current_version
+     * @return boolean success
+     */
+    public function update_list_of_installed_versions($version_history = null, $current_version = null)
+    {
+        $this->setup_activation_history();
+        return $this->activation_history->updateActivationHistory($version_history, $current_version);
+    }
 
 
 }
