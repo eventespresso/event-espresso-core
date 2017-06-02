@@ -1994,13 +1994,19 @@ abstract class EEM_Base extends EE_Base
     {
         if ($this->has_primary_key_field()) {
             $primary_table = $this->_get_main_table();
-            $pt_pk_field = $this->get_field_by_column($primary_table->get_fully_qualified_pk_column());
+            $primary_table_pk_field = $this->get_field_by_column($primary_table->get_fully_qualified_pk_column());
             $other_tables = $this->_get_other_tables();
-            $ot_pk_fields = array();
-            $ot_fk_fields = array();
+            /**
+             * @var EE_Primary_Key_Field_Base[] $other_tables_pk_fields  keys are table aliases
+             */
+            $other_tables_pk_fields = array();
+            /**
+             * @var EE_Primary_Key_Field_Base[] $other_tables_fk_fields EE_Foreign_Key_Field_Base[] keys are table aliases
+             */
+            $other_tables_fk_fields = array();
             foreach($other_tables as $other_table_alias => $other_table_obj){
-                $ot_pk_fields[$other_table_alias] = $this->get_field_by_column($other_table_obj->get_fully_qualified_pk_column());
-                $ot_fk_fields[$other_table_alias] = $this->get_field_by_column($other_table_obj->get_fully_qualified_fk_column());
+                $other_tables_pk_fields[$other_table_alias] = $this->get_field_by_column($other_table_obj->get_fully_qualified_pk_column());
+                $other_tables_fk_fields[$other_table_alias] = $this->get_field_by_column($other_table_obj->get_fully_qualified_fk_column());
             }
             $deletes = $query = array();
             foreach ($objects_for_deletion as $delete_object) {
@@ -2019,35 +2025,35 @@ abstract class EEM_Base extends EE_Base
 
                     $deletes[$primary_table->get_fully_qualified_pk_column()][] = $this->_wpdb_prepare_using_field(
                         $delete_object[$primary_table->get_fully_qualified_pk_column()],
-                        $pt_pk_field
+                        $primary_table_pk_field
                     );
                 }
                 //other tables
                 if (! empty($other_tables)) {
-                    foreach ($other_tables as $ot_alias => $ot) {
-                        $ot_pk_field = $ot_pk_fields[$ot_alias];
-                        $ot_fk_field = $ot_fk_fields[$ot_alias];
+                    foreach ($other_tables as $other_table_alias => $other_table_obj) {
+                        $other_table_pk_field = $other_tables_pk_fields[$other_table_alias];
+                        $other_table_fk_field = $other_tables_fk_fields[$other_table_alias];
                         //first check if we've got the foreign key column here.
-                        if (isset($delete_object[$ot->get_fully_qualified_fk_column()])) {
-                            $deletes[$ot->get_fully_qualified_pk_column()][] = $this->_wpdb_prepare_using_field(
-                                $delete_object[$ot->get_fully_qualified_fk_column()],
-                                $ot_fk_field
+                        if (isset($delete_object[$other_table_obj->get_fully_qualified_fk_column()])) {
+                            $deletes[$other_table_obj->get_fully_qualified_pk_column()][] = $this->_wpdb_prepare_using_field(
+                                $delete_object[$other_table_obj->get_fully_qualified_fk_column()],
+                                $other_table_fk_field
                             );
                         }
                         // wait! it's entirely possible that we'll have a the primary key
                         // for this table in here, if it's a foreign key for one of the other secondary tables
-                        if (isset($delete_object[$ot->get_fully_qualified_pk_column()])) {
-                            $deletes[$ot->get_fully_qualified_pk_column()][] = $this->_wpdb_prepare_using_field(
-                                $delete_object[$ot->get_fully_qualified_pk_column()],
-                                $ot_pk_field
+                        if (isset($delete_object[$other_table_obj->get_fully_qualified_pk_column()])) {
+                            $deletes[$other_table_obj->get_fully_qualified_pk_column()][] = $this->_wpdb_prepare_using_field(
+                                $delete_object[$other_table_obj->get_fully_qualified_pk_column()],
+                                $other_table_pk_field
                             );
                         }
                         // finally, it is possible that the fk for this table is found
                         // in the fully qualified pk column for the fk table, so let's see if that's there!
-                        if (isset($delete_object[$ot->get_fully_qualified_pk_on_fk_table()])) {
-                            $deletes[$ot->get_fully_qualified_pk_column()][] = $this->_wpdb_prepare_using_field(
-                                $delete_object[$ot->get_fully_qualified_pk_column()],
-                                $ot_pk_field
+                        if (isset($delete_object[$other_table_obj->get_fully_qualified_pk_on_fk_table()])) {
+                            $deletes[$other_table_obj->get_fully_qualified_pk_column()][] = $this->_wpdb_prepare_using_field(
+                                $delete_object[$other_table_obj->get_fully_qualified_pk_column()],
+                                $other_table_pk_field
                             );
                         }
                     }
@@ -2060,20 +2066,21 @@ abstract class EEM_Base extends EE_Base
                 $query[] = $column . ' IN(' . implode(",", $values) . ')';
             }
             return ! empty($query) ? implode(' AND ', $query) : '';
-        } elseif (count($this->get_combined_primary_key_fields()) > 1) {
+        }
+        $combined_primary_key_fields = $this->get_combined_primary_key_fields();
+        if (count($combined_primary_key_fields) > 1) {
             $ways_to_identify_a_row = array();
-            $fields = $this->get_combined_primary_key_fields();
-            //note: because there' sno primary key, that means nothing else  can be pointing to this model, right?
+            //note: because there's no primary key, that means nothing else  can be pointing to this model, right?
             foreach ($objects_for_deletion as $delete_object) {
-                $values_for_each_cpk_for_a_row = array();
-                foreach ($fields as $cpk_field) {
-                    if ($cpk_field instanceof EE_Model_Field_Base) {
-                        $values_for_each_cpk_for_a_row[] = $cpk_field->get_qualified_column()
+                $combined_primary_key_row_values = array();
+                foreach ($combined_primary_key_fields as $field_in_combined_primary_key) {
+                    if ($field_in_combined_primary_key instanceof EE_Model_Field_Base) {
+                        $combined_primary_key_row_values[] = $field_in_combined_primary_key->get_qualified_column()
                                                            . "="
-                                                           . $delete_object[$cpk_field->get_qualified_column()];
+                                                           . $delete_object[$field_in_combined_primary_key->get_qualified_column()];
                     }
                 }
-                $ways_to_identify_a_row[] = "(" . implode(" AND ", $values_for_each_cpk_for_a_row) . ")";
+                $ways_to_identify_a_row[] = "(" . implode(" AND ", $combined_primary_key_row_values) . ")";
             }
             return implode(" OR ", $ways_to_identify_a_row);
         } else {
