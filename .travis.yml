@@ -58,7 +58,7 @@ before_script:
   - mysql --version
   - phpunit --version
   - phpenv versions
-script: cd tests; phpunit --exclude-group big_rest_tests;
+script: cd tests; phpunit;
 notifications:
   slack:
     rooms:
