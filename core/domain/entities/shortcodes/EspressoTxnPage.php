@@ -93,6 +93,7 @@ class EspressoTxnPage extends EspressoShortcode
                 exit;
             }
         }
+        $this->shortcodeHasBeenInitialized();
     }
 
 
