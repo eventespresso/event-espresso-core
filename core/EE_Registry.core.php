@@ -613,7 +613,8 @@ class EE_Registry
         }
         // instantiate the requested object
         $class_obj = $this->_create_object($class_name, $arguments, $addon, $from_db);
-        if ($this->_cache_on && $cache) {
+        // if caching is turned on OR this class is cached in a class property
+        if (($this->_cache_on && $cache) || isset($this->_class_abbreviations[ $class_name ])) {
             // save it for later... kinda like gum  { : $
             $this->_set_cached_class($class_obj, $class_name, $addon, $from_db);
         }
