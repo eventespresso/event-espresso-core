@@ -73,7 +73,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
 
     protected function _ajax_hooks()
     {
-        //todo: all hooks for events ajax goes in here.
+        add_action('wp_ajax_ee_save_timezone_setting', array($this, 'save_timezonestring_setting'));
     }
 
 
@@ -751,11 +751,15 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             EE_Error::add_attention(
                 sprintf(
                     __(
-                        'Your website\'s timezone is currently set to UTC + 0. We recommend updating your timezone to a city or region near you before you create an event. Your timezone can be updated through the %1$sGeneral Settings%2$s page.',
+                        'Your website\'s timezone is currently set to UTC + 0. We recommend updating your timezone to a city or region near you before you create an event. Change your timezone now:%1$s%2$s%3$sChange Timezone%4$s',
                         'event_espresso'
                     ),
-                    '<a href="' . admin_url('options-general.php') . '">',
-                    '</a>'
+                    '<br>',
+                    '<select id="timezone_string" name="timezone_string" aria-describedby="timezone-description">'
+                    . EEH_DTT_Helper::wp_timezone_choice('UTC', get_user_locale())
+                    . '</select>',
+                    '<button class="button button-secondary timezone-submit">',
+                    '</button><span class="spinner"></span>'
                 ),
                 __FILE__,
                 __FUNCTION__,
@@ -2642,9 +2646,31 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         return $categories;
     }
 
-
-
     /* end category stuff */
     /**************/
+
+
+    public function save_timezonestring_setting()
+    {
+        $timezone_string = isset($this->_req_data['timezone_selected'])
+            ? $this->_req_data['timezone_selected']
+            : '';
+        if  (empty($timezone_string) || ! EEH_DTT_Helper::validate_timezone($timezone_string, false))
+        {
+            EE_Error::add_error(
+                esc_html('An invalid timezone string submitted.', 'event_espresso'),
+                __FILE__, __FUNCTION__, __LINE__
+            );
+            $this->_template_args['error'] = true;
+            $this->_return_json();
+        }
+
+        update_option('timezone_string', $timezone_string);
+        EE_Error::add_success(
+            esc_html__('Your timezone string was updated.', 'event_espresso')
+        );
+        $this->_template_args['success'] = true;
+        $this->_return_json(true, array('action' => 'create_new'));
+    }
 }
 //end class Events_Admin_Page
