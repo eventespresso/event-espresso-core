@@ -39,6 +39,6 @@ dependencies:
 test:
   override:
     # comment out the below line to run a code coverage report.
-    - cd $plugin_tests_dir; phpunit --exclude-group big_rest_tests --log-junit $CIRCLE_TEST_REPORTS/phpunit/junit.xml
+    - cd $plugin_tests_dir; phpunit --log-junit $CIRCLE_TEST_REPORTS/phpunit/junit.xml
     ## LINE 2/2 to uncomment if you want to run a code coverage report.
     # - cd $plugin_tests_dir; phpunit --coverage-html $CIRCLE_ARTIFACTS
