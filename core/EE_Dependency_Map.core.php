@@ -350,7 +350,11 @@ class EE_Dependency_Map
                 'EE_Request' => EE_Dependency_Map::load_from_cache,
             ),
             'EE_System'                                                                                                   => array(
-                'EE_Registry' => EE_Dependency_Map::load_from_cache,
+                'EE_Registry'                                => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\loaders\Loader' => EE_Dependency_Map::load_from_cache,
+                'EE_Capabilities'                            => EE_Dependency_Map::load_from_cache,
+                'EE_Request'                                 => EE_Dependency_Map::load_from_cache,
+                'EE_Maintenance_Mode'                        => EE_Dependency_Map::load_from_cache,
             ),
             'EE_Session'                                                                                                  => array(
                 'EventEspresso\core\services\cache\TransientCacheStorage' => EE_Dependency_Map::load_from_cache,
