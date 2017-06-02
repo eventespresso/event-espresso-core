@@ -146,8 +146,13 @@ class ModelDataTranslator
                 )
             );
         }
+        //double-check for serialized PHP. We never accept serialized PHP. No way Jose.
+        ModelDataTranslator::throwExceptionIfContainsSerializedData($original_value);
         $timezone_string = $timezone_string !== '' ? $timezone_string : get_option('timezone_string', '');
         $new_value = null;
+        //walk through the submitted data and double-check for serialized PHP. We never accept serialized PHP. No
+        // way Jose.
+        ModelDataTranslator::throwExceptionIfContainsSerializedData($original_value);
         if ($field_obj instanceof EE_Infinite_Integer_Field
             && in_array($original_value, array(null, ''), true)
         ) {
@@ -175,9 +180,6 @@ class ModelDataTranslator
                 );
             $new_value = rest_parse_date($original_value . $offset_sign . $offset_string);
         } else {
-            //walk through the submitted data and double-check for serialized PHP. We never accept serialized PHP. No
-            // way Jose.
-            ModelDataTranslator::throwExceptionIfContainsSerializedData($original_value);
             $new_value = $original_value;
         }
         return $new_value;
@@ -331,71 +333,7 @@ class ModelDataTranslator
                 $timezone = $model->get_timezone();
             }
             if ($field instanceof EE_Model_Field_Base) {
-                if ($field instanceof EE_Serialized_Text_Field) {
-                    //ok it's serialized input. Careful it's not a string of serialized PHP! Unserializing that
-                    // is security breach, because it could be a serialized object who is set to execute something
-                    //on the magic method __wakeup!
-                    if (is_serialized($query_param_value)) {
-                        //someone's trying to submit serialized data! nasty!
-                        if (defined('EE_REST_API_DEBUG_MODE') && EE_REST_API_DEBUG_MODE) {
-                            throw new RestException(
-                                'rest_not_allowed_to_submit_serialized_php',
-                                sprintf(
-                                    esc_html__(
-                                        // @codingStandardsIgnoreStart
-                                        'You tried to provide serialized PHP inside parameter %1$s. Submitting serialized PHP via the REST API is not allowed.',
-                                        // @codingStandardsIgnoreEnd
-                                        'event_espresso'
-                                    ),
-                                    $field->get_name()
-                                ),
-                                array(
-                                    'status' => 400,
-                                )
-                            );
-                        } else {
-                            //pretend they didn't provide this parameter
-                            continue;
-                        }
-                    }
-
-                    //writing serialized data to the DB is sensitive stuff (especially if it's not restricted to
-                    //only being HTML inside.
-                    // Only allow trusted users to do that
-                    if ($writing
-                        && ! $field instanceof EE_Maybe_Serialized_Simple_HTML_Field
-                        && ! EE_Capabilities::instance()->current_user_can(
-                            'unfiltered_html',
-                            'rest_api_check_if_can_write_serialized_data'
-                        )
-                    ) {
-                        //in debug mode, throw an exception. Otherwise fail silently
-                        if (defined('EE_REST_API_DEBUG_MODE') && EE_REST_API_DEBUG_MODE) {
-                            throw new RestException(
-                                'rest_not_allowed_to_write_serialized_data',
-                                sprintf(
-                                    esc_html__(
-                                        // @codingStandardsIgnoreStart
-                                        'You are not allowed to write to the field %1$s because it is serialized data. You need the "%1$s" capability to do that',
-                                        // @codingStandardsIgnoreEnd
-                                        'event_espresso'
-                                    ),
-                                    $field->get_name(),
-                                    'unfiltered_html'
-                                ),
-                                array(
-                                    'status' => 400,
-                                )
-                            );
-                        } else {
-                            //pretend they didn't provide this parameter
-                            continue;
-                        }
-                    }
-                    //it's either a EE_Maybe_Serialized_Simple_HTML_Field, which we can rely on to remove harmful
-                    // HTML, or it's a serialized input and the user is allowed to write serialized input
-                    $translated_value = $query_param_value;
-                } elseif (! $writing && is_array($query_param_value)) {
+                if (! $writing && is_array($query_param_value)) {
                     if (! \EEH_Array::is_array_numerically_and_sequentially_indexed($query_param_value)) {
                         if (defined('EE_REST_API_DEBUG_MODE') && EE_REST_API_DEBUG_MODE) {
                             throw new RestException(
