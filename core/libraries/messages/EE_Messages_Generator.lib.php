@@ -1,6 +1,5 @@
-<?php if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
+<?php
+defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
 
 /**
  * This class is used for generating EE_Message objects with given info.
@@ -155,12 +154,17 @@ class EE_Messages_Generator
             }
 
             //don't persist debug_only messages if the messages system is not in debug mode.
-            if (
-                $msg->STS_ID() === EEM_Message::status_debug_only
+            if ($msg->STS_ID() === EEM_Message::status_debug_only
                 && ! EEM_Message::debug()
             ) {
-                do_action('AHEE__EE_Messages_Generator__generate__before_debug_delete', $msg, $this->_error_msg,
-                    $this->_current_messenger, $this->_current_message_type, $this->_current_data_handler);
+                do_action(
+                    'AHEE__EE_Messages_Generator__generate__before_debug_delete',
+                    $msg,
+                    $this->_error_msg,
+                    $this->_current_messenger,
+                    $this->_current_message_type,
+                    $this->_current_data_handler
+                );
                 $this->_generation_queue->get_message_repository()->delete();
                 $this->_generation_queue->get_message_repository()->set_current($next_msg);
                 continue;
@@ -172,18 +176,29 @@ class EE_Messages_Generator
                 if ($msg->STS_ID() !== EEM_Message::status_debug_only) {
                     $msg->set_STS_ID(EEM_Message::status_failed);
                 }
-                do_action('AHEE__EE_Messages_Generator__generate__processing_failed_message', $msg, $this->_error_msg,
-                    $this->_current_messenger, $this->_current_message_type, $this->_current_data_handler);
+                do_action(
+                    'AHEE__EE_Messages_Generator__generate__processing_failed_message',
+                    $msg,
+                    $this->_error_msg,
+                    $this->_current_messenger,
+                    $this->_current_message_type,
+                    $this->_current_data_handler
+                );
                 $msg->set_error_message(
-                    __('Message failed to generate for the following reasons: ')
+                    esc_html__('Message failed to generate for the following reasons: ', 'event_espresso')
                     . "\n"
                     . implode("\n", $this->_error_msg)
                 );
                 $msg->set_modified(time());
             } else {
-                do_action('AHEE__EE_Messages_Generator__generate__before_successful_generated_message_delete', $msg,
-                    $this->_error_msg, $this->_current_messenger, $this->_current_message_type,
-                    $this->_current_data_handler);
+                do_action(
+                    'AHEE__EE_Messages_Generator__generate__before_successful_generated_message_delete',
+                    $msg,
+                    $this->_error_msg,
+                    $this->_current_messenger,
+                    $this->_current_message_type,
+                    $this->_current_data_handler
+                );
                 //remove from db
                 $this->_generation_queue->get_message_repository()->delete();
             }
@@ -255,13 +270,19 @@ class EE_Messages_Generator
 
         //if no addressees then get out because there is nothing to generation (possible bad data).
         if (! $this->_valid_addressees($addressees)) {
-            do_action('AHEE__EE_Messages_Generator___generate__invalid_addressees',
-                $this->_generation_queue->get_message_repository()->current(), $addressees, $this->_current_messenger,
-                $this->_current_message_type, $this->_current_data_handler);
+            do_action(
+                'AHEE__EE_Messages_Generator___generate__invalid_addressees',
+                $this->_generation_queue->get_message_repository()->current(),
+                $addressees,
+                $this->_current_messenger,
+                $this->_current_message_type,
+                $this->_current_data_handler
+            );
             $this->_generation_queue->get_message_repository()->current()->set_STS_ID(EEM_Message::status_debug_only);
-            $this->_error_msg[] = __('This is not a critical error but an informational notice. Unable to generate messages EE_Messages_Addressee objects.  There were no attendees prepared by the data handler.
-			  Sometimes this is because messages only get generated for certain registration statuses. For example, the ticket notice message type only goes to approved registrations.',
-                'event_espresso');
+            $this->_error_msg[] = esc_html__(
+                'This is not a critical error but an informational notice. Unable to generate messages EE_Messages_Addressee objects.  There were no attendees prepared by the data handler. Sometimes this is because messages only get generated for certain registration statuses. For example, the ticket notice message type only goes to approved registrations.',
+                'event_espresso'
+            );
             return false;
         }
 
@@ -269,8 +290,10 @@ class EE_Messages_Generator
 
         //in the unlikely event there is no EE_Message_Template_Group available, get out!
         if (! $message_template_group instanceof EE_Message_Template_Group) {
-            $this->_error_msg[] = __('Unable to get the Message Templates for the Message being generated.  No message template group accessible.',
-                'event_espresso');
+            $this->_error_msg[] = esc_html__(
+                'Unable to get the Message Templates for the Message being generated.  No message template group accessible.',
+                'event_espresso'
+            );
             return false;
         }
 
@@ -332,8 +355,13 @@ class EE_Messages_Generator
         }
 
         //before going any further, let's see if its in the queue
-        $GRP = $this->_template_collection->get_by_key($this->_template_collection->get_key($this->_current_messenger->name,
-            $this->_current_message_type->name, $EVT_ID));
+        $GRP = $this->_template_collection->get_by_key(
+            $this->_template_collection->get_key(
+                $this->_current_messenger->name,
+                $this->_current_message_type->name,
+                $EVT_ID
+            )
+        );
 
         if ($GRP instanceof EE_Message_Template_Group) {
             return $GRP;
@@ -405,18 +433,21 @@ class EE_Messages_Generator
      * @param array                     $templates  formatted array of templates used for parsing data.
      * @param EE_Message_Template_Group $message_template_group
      * @return bool   true if message generation went a-ok.  false if some sort of exception occurred.  Note: The
-     *                method will attempt to generate ALL EE_Message objects and add to the _ready_queue.  Successfully
-     *                generated messages get added to the queue with EEM_Message::status_idle, unsuccessfully generated
-     *                messages will get added to the queue as EEM_Message::status_failed.  Very rarely should "false"
-     *                be returned from this method.
+     *                                              method will attempt to generate ALL EE_Message objects and add to
+     *                                              the _ready_queue.  Successfully generated messages get added to the
+     *                                              queue with EEM_Message::status_idle, unsuccessfully generated
+     *                                              messages will get added to the queue as EEM_Message::status_failed.
+     *                                               Very rarely should "false" be returned from this method.
      */
     protected function _assemble_messages($addressees, $templates, EE_Message_Template_Group $message_template_group)
     {
 
         //if templates are empty then get out because we can't generate anything.
         if (! $templates) {
-            $this->_error_msg[] = __('Unable to assemble messages because there are no templates retrieved for generating the messages with',
-                'event_espresso');
+            $this->_error_msg[] = esc_html__(
+                'Unable to assemble messages because there are no templates retrieved for generating the messages with',
+                'event_espresso'
+            );
             return false;
         }
 
@@ -517,19 +548,27 @@ class EE_Messages_Generator
                         $shortcodes,
                         $this->_current_message_type,
                         $this->_current_messenger,
-                        $message);
+                        $message
+                    );
                     $message->set_field_or_extra_meta($column_name, $content);
                 } catch (EE_Error $e) {
-                    $error_msg[] = sprintf(__('There was a problem generating the content for the field %s: %s',
-                        'event_espresso'), $field, $e->getMessage());
+                    $error_msg[] = sprintf(
+                        esc_html__(
+                            'There was a problem generating the content for the field %s: %s',
+                            'event_espresso'
+                        ),
+                        $field,
+                        $e->getMessage()
+                    );
                     $message->set_STS_ID(EEM_Message::status_failed);
                 }
             }
         }
 
         if ($message->STS_ID() === EEM_Message::status_failed) {
-            $error_msg = __('There were problems generating this message:', 'event_espresso') . "\n" . implode("\n",
-                    $error_msg);
+            $error_msg = esc_html__('There were problems generating this message:', 'event_espresso')
+                         . "\n"
+                         . implode("\n", $error_msg);
             $message->set_error_message($error_msg);
         } else {
             $message->set_STS_ID(EEM_Message::status_idle);
@@ -599,12 +638,16 @@ class EE_Messages_Generator
         /** @type EE_Message $message */
         $message = $this->_generation_queue->get_message_repository()->current();
         try {
-            $this->_current_messenger = $message->valid_messenger(true) ? $message->messenger_object() : null;
+            $this->_current_messenger = $message->valid_messenger(true)
+                ? $message->messenger_object()
+                : null;
         } catch (Exception $e) {
             $this->_error_msg[] = $e->getMessage();
         }
         try {
-            $this->_current_message_type = $message->valid_message_type(true) ? $message->message_type_object() : null;
+            $this->_current_message_type = $message->valid_message_type(true)
+                ? $message->message_type_object()
+                : null;
         } catch (Exception $e) {
             $this->_error_msg[] = $e->getMessage();
         }
@@ -615,9 +658,13 @@ class EE_Messages_Generator
         if (! $this->_generation_queue->get_message_repository()->get_generation_data()
             && (
                 ! $this->_generation_queue->get_message_repository()->is_preview()
-                && $this->_generation_queue->get_message_repository()->get_data_handler() !== 'EE_Messages_Preview_incoming_data')
+                && $this->_generation_queue->get_message_repository()->get_data_handler() !== 'EE_Messages_Preview_incoming_data'
+            )
         ) {
-            $this->_error_msg[] = __('There is no generation data for this message. Unable to generate.');
+            $this->_error_msg[] = esc_html__(
+                'There is no generation data for this message. Unable to generate.',
+                'event_espresso'
+            );
         }
 
         return empty($this->_error_msg);
@@ -654,8 +701,11 @@ class EE_Messages_Generator
         //First get the class name for the data handler (and also verifies it exists.
         if (! class_exists($data_handler_class_name)) {
             $this->_error_msg[] = sprintf(
-                __('The included data handler class name does not match any valid, accessible, "EE_Messages_incoming_data" classes.  Looking for %s.',
-                    'event_espresso'),
+                esc_html__(
+                    'The included data handler class name does not match any valid, accessible, "%1$s" classes.  Looking for %2$s.',
+                    'event_espresso'
+                ),
+                'EE_Messages_incoming_data',
                 $data_handler_class_name
             );
             return false;
@@ -684,8 +734,12 @@ class EE_Messages_Generator
     {
         //valid classname for the data handler.  Now let's setup the key for the data handler repository to see if there
         //is already a ready data handler in the repository.
-        $this->_current_data_handler = $this->_data_handler_collection->get_by_key($this->_data_handler_collection->get_key($data_handler_class_name,
-            $generating_data));
+        $this->_current_data_handler = $this->_data_handler_collection->get_by_key(
+            $this->_data_handler_collection->get_key(
+                $data_handler_class_name,
+                $generating_data
+            )
+        );
         if (! $this->_current_data_handler instanceof EE_Messages_incoming_data) {
             //no saved data_handler in the repo so let's set one up and add it to the repo.
             try {
@@ -739,8 +793,12 @@ class EE_Messages_Generator
 
         if ($data === false) {
             $message->set_STS_ID(EEM_Message::status_failed);
-            $message->set_error_message(__('Unable to prepare data for persistence to the database.',
-                'event_espresso'));
+            $message->set_error_message(
+                esc_html__(
+                    'Unable to prepare data for persistence to the database.',
+                    'event_espresso'
+                )
+            );
         } else {
             //make sure that the data handler is cached on the message as well
             $data['data_handler_class_name'] = $message_to_generate->get_data_handler_class_name();
@@ -748,6 +806,4 @@ class EE_Messages_Generator
 
         $this->_generation_queue->add($message, $data, $message_to_generate->preview(), $test_send);
     }
-
-
-} //end EE_Messages_Generator
+}
