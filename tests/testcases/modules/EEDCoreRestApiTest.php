@@ -359,6 +359,7 @@ class EEDCoreRestApiTest extends EE_REST_TestCase
      * @dataProvider dataProviderForTestInsertsRoutes
      * @param EEM_Base $model
      * @group big_rest_tests
+     * @group current
      */
     public function testInsertsRoutes(EEM_Base $model)
     {
