@@ -46,14 +46,8 @@ class EED_Events_Archive  extends EED_Module {
 	protected $template_parts;
 
 
-    /**
-     * @type boolean $template_loaded
-     */
-    protected $template_loaded = false;
 
-
-
-    /**
+	/**
 	 * @return EED_Events_Archive
 	 */
 	public static function instance() {
@@ -211,8 +205,7 @@ class EED_Events_Archive  extends EED_Module {
 		);
 		// check what template is loaded
 		add_filter( 'template_include',  array( $this, 'template_include' ), 999, 1 );
-        add_action('wp_head', array($this, 'template_include'), 999, 1 );
-    }
+	}
 
 
 
@@ -278,7 +271,7 @@ class EED_Events_Archive  extends EED_Module {
 	 */
 	public function template_include( $template = '' ) {
 		// don't add content filter for dedicated EE child themes or private posts
-		if ( ! $this->template_loaded && ! EEH_Template::is_espresso_theme() ) {
+		if ( ! EEH_Template::is_espresso_theme() ) {
 			/** @type EE_Events_Archive_Config $config */
 			$config = $this->config();
 			// add status banner ?
@@ -294,7 +287,7 @@ class EED_Events_Archive  extends EED_Module {
 			) {
 				// don't display entry meta because the existing theme will take care of that
 				add_filter( 'FHEE__EED_Events_Archive__template_include__events_list_active', '__return_true' );
-			    // load functions.php file for the theme (loaded by WP if using child theme)
+			// load functions.php file for the theme (loaded by WP if using child theme)
 				EEH_Template::load_espresso_theme_functions();
 				// because we don't know if the theme is using the_excerpt()
 				add_filter(
@@ -314,8 +307,7 @@ class EED_Events_Archive  extends EED_Module {
 				add_filter( 'FHEE__content_espresso_events_details_template__display_entry_meta', '__return_false' );
 			}
 		}
-        $this->template_loaded = true;
-        return $template;
+		return $template;
 	}
 
 
