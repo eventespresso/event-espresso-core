@@ -31,12 +31,6 @@ class EED_Event_Single extends EED_Module
 
 
     /**
-     * @type boolean $template_loaded
-     */
-    protected $template_loaded = false;
-
-
-    /**
      * @return EED_Module|EED_Event_Single
      */
     public static function instance()
@@ -147,7 +141,6 @@ class EED_Event_Single extends EED_Module
         $this->set_config();
         // check what template is loaded
         add_filter('template_include', array($this, 'template_include'), 999, 1);
-        add_filter('wp_head', array($this, 'template_include'), 999, 1);
         add_filter('FHEE__EED_Ticket_Selector__load_tckt_slctr_assets', '__return_true');
         // load css
         add_action('wp_enqueue_scripts', array($this, 'wp_enqueue_scripts'), 10);
@@ -162,9 +155,6 @@ class EED_Event_Single extends EED_Module
      */
     public function template_include($template)
     {
-        if($this->template_loaded) {
-            return $template;
-        }
         global $post;
         /** @type EE_Event_Single_Config $config */
         $config = $this->config();
@@ -195,7 +185,6 @@ class EED_Event_Single extends EED_Module
             // don't display entry meta because the existing theme will take car of that
             add_filter('FHEE__content_espresso_events_details_template__display_entry_meta', '__return_false');
         }
-        $this->template_loaded = true;
         return $template;
     }
 
