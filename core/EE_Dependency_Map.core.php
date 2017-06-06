@@ -526,8 +526,8 @@ class EE_Dependency_Map
                 'EventEspresso\core\services\cache\TransientCacheStorage' => EE_Dependency_Map::load_from_cache,
             ),
             'EventEspresso\core\services\validation\EmailValidationService' => array(
-                'EE_Config' => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\loaders\Loader' => EE_Dependency_Map::load_from_cache
+                'EE_Config'                                  => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\loaders\Loader' => EE_Dependency_Map::load_from_cache,
             )
         );
     }
@@ -659,7 +659,8 @@ class EE_Dependency_Map
             'EventEspresso\core\services\loaders\LoaderInterface'                           => 'EventEspresso\core\services\loaders\Loader',
             'CommandFactoryInterface'                                                       => 'EventEspresso\core\services\commands\CommandFactoryInterface',
             'EventEspresso\core\services\commands\CommandFactoryInterface'                  => 'EventEspresso\core\services\commands\CommandFactory',
-            'EventEspresso\core\domain\services\validation\EmailValidationServiceInterface' => 'EventEspresso\core\services\validation\EmailValidationService',
+            'EmailValidatorInterface'                                                       => 'EventEspresso\core\domain\services\validation\EmailValidatorInterface',
+            'EventEspresso\core\domain\services\validation\EmailValidatorInterface'         => 'EventEspresso\core\services\validation\EmailValidationService',
         );
     }
 
