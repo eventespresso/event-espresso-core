@@ -1,13 +1,5 @@
 <?php
 /**
- * Contains test class for /core/repositories/EE_Message_Template_Group_Collection.lib.php
- *
- * @since         4.9.0
- * @package       Event Espresso
- * @subpackage    tests
- */
-
-/**
  * All tests for the EE_Message_Template_Group_Collection class.
  *
  * @since         4.9.0
@@ -73,8 +65,8 @@ class EE_Message_Template_Group_Collection_Test extends EE_UnitTestCase
      */
     public function test_get_by_key(EE_Message_Template_Group_Collection $test_repo)
     {
-        $key_should_exist     = $test_repo->get_key('email', 'registration', 22);
-        $key_should_not_exist = $test_repo->get_key('email', 'registration', 15);
+        $key_should_exist     = $test_repo->getKey('email', 'registration', array(22));
+        $key_should_not_exist = $test_repo->getKey('email', 'registration', array(15));
         $this->assertNotInstanceOf('EE_Message_Template_Group', $test_repo->get_by_key($key_should_not_exist));
         $this->assertInstanceOf('EE_Message_Template_Group', $test_repo->get_by_key($key_should_exist));
     }
