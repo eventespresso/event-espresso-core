@@ -29,7 +29,7 @@ if ( ! $empty_cart ) {
 		?>
 		<div id="spco-step-<?php echo $slug; ?>-display-dv" class="spco-step-display-dv <?php echo $step_display_dv_class; ?> steps-<?php echo $total_steps; ?>">
 			<h4 id="spco-step-<?php echo $slug; ?>-display-hdr" class="spco-steps-display-hdr">
-				<span class="spco-step-big-nmbr"><?php echo $step_nmbr; ?></span>&nbsp;<span class="spco-step-name"><?php echo str_replace( '&nbsp;', '<br/>&nbsp;', $reg_step->name() ); ?></span>
+				<span class="spco-step-big-nmbr"><?php echo $step_nmbr; ?></span>&nbsp;<span class="spco-step-name"><?php echo str_replace( '&nbsp;', '<br/>&nbsp;', __($reg_step->name(), 'event_espresso') ); ?></span>
 			</h4>
 		</div>
 
