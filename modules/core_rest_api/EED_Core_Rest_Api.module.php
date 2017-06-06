@@ -926,10 +926,7 @@ class EED_Core_Rest_Api extends \EED_Module
     protected static function _validate_email($email){
         $loader = new Loader();
         $validation_service = $loader->getShared(
-            'EventEspresso\core\domain\services\validation\EmailValidationServiceInterface',
-            array(
-                EE_Config::instance()->registration->email_validation_level
-            )
+            'EventEspresso\core\domain\services\validation\EmailValidationServiceInterface'
         );
         try {
             $validation_service->validate($email);

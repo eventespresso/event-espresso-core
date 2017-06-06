@@ -525,6 +525,10 @@ class EE_Dependency_Map
             'EventEspresso\core\services\cache\PostRelatedCacheManager'                                                   => array(
                 'EventEspresso\core\services\cache\TransientCacheStorage' => EE_Dependency_Map::load_from_cache,
             ),
+            'EventEspresso\core\domain\services\validation\EmailValidationServiceInterface' => array(
+                'EE_Config' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\loaders\Loader' => EE_Dependency_Map::load_from_cache
+            )
         );
     }
 

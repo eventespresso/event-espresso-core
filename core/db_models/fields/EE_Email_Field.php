@@ -36,10 +36,7 @@ class EE_Email_Field extends EE_Text_Field_Base
     {
         $loader = new Loader();
         $validation_service = $loader->getShared(
-            'EventEspresso\core\domain\services\validation\EmailValidationServiceInterface',
-            array(
-                EE_Config::instance()->registration->email_validation_level
-            )
+            'EventEspresso\core\domain\services\validation\EmailValidationServiceInterface'
         );
         try {
             $validation_service->validate($email_address);

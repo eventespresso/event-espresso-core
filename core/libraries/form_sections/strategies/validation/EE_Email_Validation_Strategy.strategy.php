@@ -66,10 +66,7 @@ class EE_Email_Validation_Strategy extends EE_Text_Validation_Strategy
     {
         $loader = new Loader();
         $validation_service = $loader->getShared(
-            'EventEspresso\core\domain\services\validation\EmailValidationServiceInterface',
-            array(
-                EE_Config::instance()->registration->email_validation_level
-            )
+            'EventEspresso\core\domain\services\validation\EmailValidationServiceInterface'
         );
         try {
             $validation_service->validate($email);

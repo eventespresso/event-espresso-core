@@ -42,31 +42,37 @@ class Basic implements EmailValidationInterface
                 throw new EmailValidationException(
                     esc_html__('Email local-part (before the @) is required.', 'event_espresso')
                 );
-            } elseif ($localLen > 64) {
+            }
+            if ($localLen > 64) {
                 // local part length exceeded
                 throw new EmailValidationException(
                     esc_html__('Email local-part (before the @) is too long.', 'event_espresso')
                 );
-            } elseif ($domainLen < 1) {
+            }
+            if ($domainLen < 1) {
                 throw new EmailValidationException(
                     esc_html__('Email domain (after the @) is required.', 'event_espresso')
                 );
-            } elseif ($domainLen > 255) {
+            }
+            if ($domainLen > 255) {
                 // domain part length exceeded
                 throw new EmailValidationException(
-                    esc_html__('Email domain (after the @) is required.', 'event_espresso')
+                    esc_html__('Email domain (after the @) is too long.', 'event_espresso')
                 );
-            } elseif ($local[0] === '.') {
+            }
+            if ($local[0] === '.') {
                 // local part starts with '.'
                 throw new EmailValidationException(
                     esc_html__('Email local-part (before the @) must not begin with a period.', 'event_espresso')
                 );
-            } elseif ($local[$localLen - 1] === '.') {
+            }
+            if ($local[$localLen - 1] === '.') {
                 // local part starts or ends with '.'
                 throw new EmailValidationException(
                     esc_html__('Email local-part (before the @) must not end with a period.', 'event_espresso')
                 );
-            } elseif (preg_match('/\\.\\./', $local)) {
+            }
+            if (preg_match('/\\.\\./', $local)) {
                 // local part has two consecutive dots
                 throw new EmailValidationException(
                     esc_html__(
@@ -74,7 +80,8 @@ class Basic implements EmailValidationInterface
                         'event_espresso'
                     )
                 );
-            } elseif (preg_match('/\\.\\./', $domain)) {
+            }
+            if (preg_match('/\\.\\./', $domain)) {
                 // domain part has two consecutive dots
                 throw new EmailValidationException(
                     esc_html__('Email domain (after the @) must not have two consecutive periods.', 'event_espresso')

@@ -2,13 +2,11 @@
 
 namespace EventEspresso\core\services\validation;
 
-use EventEspresso\core\services\validation\strategies\Basic;
-use EventEspresso\core\services\validation\strategies\WordPress;
+use EE_Config;
+use EventEspresso\core\services\loaders\Loader;
 use EventEspresso\core\domain\services\validation\EmailValidationException;
 use EventEspresso\core\domain\services\validation\EmailValidationServiceInterface;
 use EventEspresso\core\domain\services\DomainService;
-use EventEspresso\core\services\validation\strategies\International;
-use EventEspresso\core\services\validation\strategies\InternationalDNS;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 
@@ -22,15 +20,20 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
  * @author         Mike Nelson
  * @since          $VID:$
  */
-class EmailValidationService extends DomainService implements EmailValidationServiceInterface
+class EmailValidationService implements EmailValidationServiceInterface
 {
 
 
 
     /**
-     * @var string $validation_level
+     * @var EE_Config $config
      */
-    protected $validation_level;
+    protected $config;
+
+    /**
+     * @var Loader $loader
+     */
+    protected $loader;
 
 
 
@@ -38,12 +41,13 @@ class EmailValidationService extends DomainService implements EmailValidationSer
      * EmailValidationService constructor.
      * Accepts an \EE_Config as an argument.
      *
-     * @param string $validation_level
+     * @param EE_Config $config
+     * @param Loader    $loader
      */
-    public function __construct($validation_level)
+    public function __construct(EE_Config $config, Loader $loader)
     {
-        $this->validation_level = $validation_level;
-        parent::__construct();
+        $this->config = $config;
+        $this->loader = $loader;
     }
 
 
@@ -59,19 +63,27 @@ class EmailValidationService extends DomainService implements EmailValidationSer
     public function validate($input)
     {
         //pick the correct validator according to the config
-        switch ($this->validation_level) {
+        switch ($this->config->registration->email_validation_level) {
             case 'basic':
-                $validator = new Basic();
+                $validator = $this->loader->getShared(
+                    'EventEspresso\core\services\validation\strategies\Basic'
+                );
                 break;
             case 'i18n':
-                $validator = new International();
+                $validator = $this->loader->getShared(
+                    'EventEspresso\core\services\validation\strategies\International'
+                ) ;
                 break;
             case 'i18n_dns':
-                $validator = new InternationalDNS();
+                $validator = $this->loader->getShared(
+                    'EventEspresso\core\services\validation\strategies\InternationalDNS'
+                ) ;
                 break;
             case 'wp_default':
             default:
-                $validator = new WordPress();
+                $validator = $this->loader->getShared(
+                    'EventEspresso\core\services\validation\strategies\WordPress'
+                ) ;
                 break;
         }
         return $validator->validate($input);

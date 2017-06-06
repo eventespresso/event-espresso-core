@@ -27,9 +27,8 @@ class WordPress extends Basic
      */
     public function validate($input)
     {
-        $valid = parent::validate($input);
-        $valid = is_email($input);
-        if( ! $valid){
+        parent::validate($input);
+        if( ! is_email($input)){
             throw new EmailValidationException(
                 esc_html__('The email address provided is not valid.', 'event_espresso')
             );

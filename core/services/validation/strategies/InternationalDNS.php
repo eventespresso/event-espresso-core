@@ -41,7 +41,8 @@ class InternationalDNS extends International
                     'event_espresso'
                 )
             );
-        } elseif (! checkdnsrr($domain, "A")) {
+        }
+        if (! checkdnsrr($domain, "A")) {
             // domain not found in A records
             throw new EmailValidationException(
                 __(

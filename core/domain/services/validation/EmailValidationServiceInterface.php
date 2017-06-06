@@ -2,7 +2,9 @@
 
 namespace EventEspresso\core\domain\services\validation;
 
+use EE_Config;
 use EventEspresso\core\domain\services\DomainServiceInterface;
+use EventEspresso\core\services\loaders\Loader;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 
@@ -22,9 +24,10 @@ interface EmailValidationServiceInterface extends DomainServiceInterface
     /**
      * EmailValidationService constructor.
      * Accepts an \EE_Config as an argument.
-     * @param string $validation_level one of: 'basic', 'wp_default', 'i18n', or '18n_dns'
+     * @param EE_Config $config
+     * @param Loader $loader
      */
-    public function __construct($validation_level);
+    public function __construct(EE_Config $config, Loader $loader);
 
     /**
      * Validates the email address. If it's invalid, an EmailValidationException
