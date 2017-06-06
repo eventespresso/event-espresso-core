@@ -248,10 +248,12 @@ class EE_Messages_Generator
      * _generating_queue.
      *
      * @return bool Whether the message was successfully generated or not.
+     * @throws EE_Error
      */
     protected function _generate()
     {
-        //double check verification has run and that everything is ready to work with (saves us having to validate everything again).
+        //double check verification has run and that everything is ready to work with (saves us having to validate
+        // everything again).
         if (! $this->_verified) {
             return false; //get out because we don't have a valid setup to work with.
         }
@@ -278,7 +280,9 @@ class EE_Messages_Generator
                 $this->_current_message_type,
                 $this->_current_data_handler
             );
-            $this->_generation_queue->get_message_repository()->current()->set_STS_ID(EEM_Message::status_debug_only);
+            $this->_generation_queue->get_message_repository()->current()->set_STS_ID(
+                EEM_Message::status_debug_only
+            );
             $this->_error_msg[] = esc_html__(
                 'This is not a critical error but an informational notice. Unable to generate messages EE_Messages_Addressee objects.  There were no attendees prepared by the data handler. Sometimes this is because messages only get generated for certain registration statuses. For example, the ticket notice message type only goes to approved registrations.',
                 'event_espresso'
@@ -310,7 +314,8 @@ class EE_Messages_Generator
      * Retrieves the message template group being used for generating messages.
      * Note: this also utilizes the EE_Message_Template_Group_Collection to avoid having to hit the db multiple times.
      *
-     * @return EE_Message_Template_Group | null
+     * @return EE_Message_Template_Group|null
+     * @throws EE_Error
      */
     protected function _get_message_template_group()
     {
@@ -612,7 +617,8 @@ class EE_Messages_Generator
      * @param EE_Messages_Addressee     $recipient
      * @param array                     $templates formatted array of templates used for parsing data.
      * @param EE_Message_Template_Group $message_template_group
-     * @return EE_Message | bool  (false is used when no EE_Message is generated)
+     * @return bool|EE_Message
+     * @throws EE_Error
      */
     protected function _setup_message_object(
         $context,
@@ -633,8 +639,8 @@ class EE_Messages_Generator
             'MSG_context'      => $context,
         );
 
-        //recipient id and type should be on the EE_Messages_Addressee object but if this is empty, let's try to grab the
-        //info from the att_obj found in the EE_Messages_Addressee object.
+        //recipient id and type should be on the EE_Messages_Addressee object but if this is empty, let's try to grab
+        // the info from the att_obj found in the EE_Messages_Addressee object.
         if (empty($recipient->recipient_id) || empty($recipient->recipient_type)) {
             $message_fields['MSG_recipient_ID']   = $recipient->att_obj instanceof EE_Attendee
                 ? $recipient->att_obj->ID()
@@ -656,7 +662,8 @@ class EE_Messages_Generator
             && ! $this->_generation_queue->get_message_repository()->is_preview()
             && ! $this->_current_messenger->allow_empty_to_field()
         ) {
-            //we silently exit here and do NOT record a fail because the message is "turned off" by having no "to" field.
+            //we silently exit here and do NOT record a fail because the message is "turned off" by having no "to"
+            //field.
             return false;
         }
         $error_msg = array();
@@ -786,7 +793,8 @@ class EE_Messages_Generator
         if (! $this->_generation_queue->get_message_repository()->get_generation_data()
             && (
                 ! $this->_generation_queue->get_message_repository()->is_preview()
-                && $this->_generation_queue->get_message_repository()->get_data_handler() !== 'EE_Messages_Preview_incoming_data'
+                && $this->_generation_queue->get_message_repository()->get_data_handler()
+                   !== 'EE_Messages_Preview_incoming_data'
             )
         ) {
             $this->_error_msg[] = esc_html__(
@@ -856,7 +864,9 @@ class EE_Messages_Generator
      * @param mixed  $generating_data           This is data expected by the instantiated data handler.
      * @param string $data_handler_class_name   This is the reference string indicating what data handler is being
      *                                          instantiated.
-     * @return void.
+     * @return void .
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _set_data_handler($generating_data, $data_handler_class_name)
     {
