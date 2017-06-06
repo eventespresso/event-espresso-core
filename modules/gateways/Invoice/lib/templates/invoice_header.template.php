@@ -9,7 +9,7 @@
 <title>[organization]<?php __(' Invoice #', 'event_espresso'); ?>[registration_code]<?php __(' for ', 'event_espresso'); ?>[name]</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <!-- Base Stylesheet do not change or remove -->
-<link rel="stylesheet" type="text/css" href="[base_url]base.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="[base_url]base.css" media="screen, print" />
 <!-- Print Style Sheet -->
 <link rel="stylesheet" type="text/css" href="[base_url]css/print/<?php echo str_replace('.css', '',$invoice_css); ?>_print.css" media="print" />
 <!-- Primary Style Sheet -->
