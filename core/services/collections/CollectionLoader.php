@@ -198,15 +198,14 @@ class CollectionLoader {
 				$this->collection_details
 			);
 			return CollectionLoader::ENTITY_ADDED;
-		} else {
-			do_action(
-				'FHEE__CollectionLoader__addEntityToCollection__entity_not_added',
-				$this,
-				$this->collection_details->collectionName(),
-				$this->collection_details
-			);
-			return CollectionLoader::ENTITY_NOT_ADDED;
 		}
+        do_action(
+            'FHEE__CollectionLoader__addEntityToCollection__entity_not_added',
+            $this,
+            $this->collection_details->collectionName(),
+            $this->collection_details
+        );
+        return CollectionLoader::ENTITY_NOT_ADDED;
 	}
 
 

@@ -98,7 +98,10 @@ class EspressoTicketSelector extends EspressoShortcode
         do_action('AHEE_event_details_before_post', $event_id);
         espresso_ticket_selector($event);
         do_action('AHEE_event_details_after_post');
-        return ob_get_clean();    }
+        return ob_get_clean();
+    }
+
+
 }
 // End of file EspressoTicketSelector.php
 // Location: EventEspresso\core\domain\entities\shortcodes/EspressoTicketSelector.php
