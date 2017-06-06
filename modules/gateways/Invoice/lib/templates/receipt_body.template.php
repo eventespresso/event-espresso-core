@@ -173,8 +173,8 @@ $tax_total_line_item;
 
 		<?php }?>
 		</div>
+		<?php if ($tax_total_line_item && $tax_total_line_item->get_total_tax() && $tax_total_line_item->children()){?>
 		<div class="taxes">
-			<?php if ($tax_total_line_item && $tax_total_line_item->children()){?>
 				<h3 class="section-title"><?php _e("Taxes",'event_espresso')?></h3>
 				<table class="invoice-amount">
 
@@ -204,9 +204,9 @@ $tax_total_line_item;
 					</tbody>
 
 				</table>
-			<?php }?>
 			<p><?php _e("* taxable items", "event_espresso");?></p>
 		</div>
+		<?php }?>
 		<div class="grand-total-dv">
 		<h2 class="grand-total"><?php printf(__("Grand Total: %s", "event_espresso"),EEH_Template::format_currency($total_cost));?></h2>
 		</div>
