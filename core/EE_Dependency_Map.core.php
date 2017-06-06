@@ -253,6 +253,10 @@ class EE_Dependency_Map
      */
     public function class_loader($class_name)
     {
+        // don't use loaders for FQCNs
+        if(strpos($class_name, '\\') !== false){
+            return '';
+        }
         $class_name = $this->get_alias($class_name);
         return isset($this->_class_loaders[$class_name]) ? $this->_class_loaders[$class_name] : '';
     }
@@ -521,9 +525,11 @@ class EE_Dependency_Map
             ),
             'EventEspresso\core\services\cache\BasicCacheManager'                                                         => array(
                 'EventEspresso\core\services\cache\TransientCacheStorage' => EE_Dependency_Map::load_from_cache,
+                'EE_Session'                                              => EE_Dependency_Map::load_from_cache,
             ),
             'EventEspresso\core\services\cache\PostRelatedCacheManager'                                                   => array(
                 'EventEspresso\core\services\cache\TransientCacheStorage' => EE_Dependency_Map::load_from_cache,
+                'EE_Session'                                              => EE_Dependency_Map::load_from_cache,
             ),
         );
     }
@@ -655,6 +661,7 @@ class EE_Dependency_Map
             'EventEspresso\core\services\loaders\LoaderInterface'                 => 'EventEspresso\core\services\loaders\Loader',
             'CommandFactoryInterface'                                             => 'EventEspresso\core\services\commands\CommandFactoryInterface',
             'EventEspresso\core\services\commands\CommandFactoryInterface'        => 'EventEspresso\core\services\commands\CommandFactory',
+            'EventEspresso\core\domain\services\session\SessionIdentifierInterface' => 'EE_Session',
         );
     }
 
