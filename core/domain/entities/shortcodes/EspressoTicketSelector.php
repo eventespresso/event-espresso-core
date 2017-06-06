@@ -81,7 +81,7 @@ class EspressoTicketSelector extends EspressoShortcode
             new ExceptionStackTraceDisplay(
                 new InvalidArgumentException(
                     sprintf(
-                        __(
+                        esc_html__(
                             'A valid Event ID is required to use the "%1$s" shortcode.%4$sAn Event with an ID of "%2$s" could not be found.%4$sPlease verify that the shortcode added to this post\'s content includes an "%3$s" argument and that it\'s value corresponds to a valid Event ID.',
                             'event_espresso'
                         ),
