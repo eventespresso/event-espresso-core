@@ -1,7 +1,5 @@
 <?php
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
+defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed');
 
 
 /**
@@ -16,6 +14,9 @@ class EE_Message_Template_Group_Collection extends EE_Object_Collection
 {
 
 
+    /**
+     * EE_Message_Template_Group_Collection constructor.
+     */
     public function __construct()
     {
         $this->interface = 'EE_Message_Template_Group';
@@ -55,9 +56,10 @@ class EE_Message_Template_Group_Collection extends EE_Object_Collection
         $this->rewind();
         while ($this->valid()) {
             if ($this->current()->ID() === $GRP_ID) {
-                $grp = $this->current();
+                /** @var EE_Message_Template_Group $message_template_group */
+                $message_template_group = $this->current();
                 $this->rewind();
-                return $grp;
+                return $message_template_group;
             }
             $this->next();
         }
@@ -92,13 +94,14 @@ class EE_Message_Template_Group_Collection extends EE_Object_Collection
         while ($this->valid()) {
             $data = $this->getInfo();
             if (isset($data['key']) && $data['key'] === $key) {
-                $handler = $this->current();
+                /** @var EE_Message_Template_Group $message_template_group */
+                $message_template_group = $this->current();
                 $this->rewind();
-                return $handler;
+                return $message_template_group;
             }
             $this->next();
         }
         return null;
     }
 
-} //end EE_Message_Template_Group_Collection
+}
