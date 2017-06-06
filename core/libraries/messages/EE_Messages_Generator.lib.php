@@ -314,86 +314,213 @@ class EE_Messages_Generator
      */
     protected function _get_message_template_group()
     {
+        //first see if there is a specific message template group requested (current message in the queue has a specific
+        //GRP_ID
+        $message_template_group = $this->_specific_message_template_group_from_queue();
+        if ($message_template_group instanceof EE_Message_Template_Group) {
+            return $message_template_group;
+        }
+
+        //get event_ids from the datahandler so we can check to see if there's already a message template group for them
+        //in the collection.
+        $event_ids              = $this->_get_event_ids_from_current_data_handler();
+        $message_template_group = $this->_template_collection->get_by_key(
+            $this->_template_collection->getKey(
+                $this->_current_messenger->name,
+                $this->_current_message_type->name,
+                $event_ids
+            )
+        );
+
+        //if we have a message template group then no need to hit the database, just return it.
+        if ($message_template_group instanceof EE_Message_Template_Group) {
+            return $message_template_group;
+        }
+
+        //okay made it here, so let's get the global group first for this messenger and message type to ensure
+        //there is no override set.
+        $global_message_template_group = $this->_get_global_message_template_group_for_current_messenger_and_message_type();
+
+        if ($global_message_template_group instanceof EE_Message_Template_Group
+            && $global_message_template_group->get('MTP_is_override')
+        ) {
+            return $global_message_template_group;
+        }
+
+        //if we're still here, that means there was no message template group for the events in the collection and
+        //the global message template group for the messenger and message type is not set for override.  So next step is
+        //to see if there is a common shared custom message template group for this set of events.
+        $message_template_group = $this->_get_shared_message_template_for_events($event_ids);
+        if ($message_template_group instanceof EE_Message_Template_Group) {
+            return $message_template_group;
+        }
+
+        //STILL here?  Okay that means the fallback is to just use the global message template group for this event set.
+        //So we'll cache the global group for this event set (so this logic doesn't have to be repeated in this request)
+        //and return it.
+        if ($global_message_template_group instanceof EE_Message_Template_Group) {
+            $this->_template_collection->add(
+                $global_message_template_group,
+                $event_ids
+            );
+            return $global_message_template_group;
+        }
+
+        //if we land here that means there's NO active message template group for this set.
+        //TODO this will be a good target for some optimization down the road.  Whenever there is no active message
+        //template group for a given event set then cache that result so we don't repeat the logic.  However, for now,
+        //this should likely bit hit rarely enough that it's not a significant issue.
+        return null;
+    }
+
+
+    /**
+     * This checks the current message in the queue and determines if there is a specific Message Template Group
+     * requested for that message.
+     *
+     * @return EE_Message_Template_Group|null
+     */
+    protected function _specific_message_template_group_from_queue()
+    {
         //is there a GRP_ID already on the EE_Message object?  If there is, then a specific template has been requested
         //so let's use that.
         $GRP_ID = $this->_generation_queue->get_message_repository()->current()->GRP_ID();
 
         if ($GRP_ID) {
             //attempt to retrieve from repo first
-            $GRP = $this->_template_collection->get_by_ID($GRP_ID);
-            if ($GRP instanceof EE_Message_Template_Group) {
-                return $GRP;  //got it!
+            $message_template_group = $this->_template_collection->get_by_ID($GRP_ID);
+            if ($message_template_group instanceof EE_Message_Template_Group) {
+                return $message_template_group;  //got it!
             }
 
             //nope don't have it yet.  Get from DB then add to repo if its not here, then that means the current GRP_ID
             //is not valid, so we'll continue on in the code assuming there's NO GRP_ID.
-            $GRP = EEM_Message_Template_Group::instance()->get_one_by_ID($GRP_ID);
-            if ($GRP instanceof EE_Message_Template_Group) {
-                $this->_template_collection->add($GRP);
-                return $GRP;
+            $message_template_group = EEM_Message_Template_Group::instance()->get_one_by_ID($GRP_ID);
+            if ($message_template_group instanceof EE_Message_Template_Group) {
+                $this->_template_collection->add($message_template_group);
+                return $message_template_group;
             }
         }
+        return null;
+    }
 
-        //whatcha still doing here?  Oh, no Message Template Group yet I see.  Okay let's see if we can get it for you.
 
-        //defaults
-        $EVT_ID = 0;
-
-        $template_qa = array(
-            'MTP_is_active'    => true,
-            'MTP_messenger'    => $this->_current_messenger->name,
-            'MTP_message_type' => $this->_current_message_type->name,
+    /**
+     * Returns whether the event ids passed in all share the same message template group for the current message type
+     * and messenger.
+     *
+     * @param array $event_ids
+     * @return bool true means they DO share the same message template group, false means they don't.
+     * @throws EE_Error
+     */
+    protected function _queue_shares_same_message_template_group_for_events(array $event_ids)
+    {
+        foreach ($this->_current_data_handler->events as $event) {
+            $event_ids[$event['ID']] = $event['ID'];
+        }
+        $count_of_message_template_groups = EEM_Message_Template_Group::instance()->count(
+            array(
+                array(
+                    'EVT_ID'           => array('IN', $event_ids),
+                    'MTP_messenger'    => $this->_current_messenger->name,
+                    'MTP_message_type' => $this->_current_message_type->name,
+                ),
+            ),
+            'GRP_ID',
+            true
         );
+        return $count_of_message_template_groups === 1;
+    }
 
-        //in vanilla EE we're assuming there's only one event.
-        //However, if there are multiple events then we'll just use the default templates instead of different
-        // templates per event (which could create problems).
-        if (count($this->_current_data_handler->events) === 1) {
-            foreach ($this->_current_data_handler->events as $event) {
-                $EVT_ID = $event['ID'];
+
+    /**
+     * This will get the shared message template group for events that are in the current data handler but ONLY if
+     * there's a single shared message template group among all the events.  Otherwise it returns null.
+     *
+     * @param array $event_ids
+     * @return EE_Message_Template_Group|null
+     * @throws EE_Error
+     */
+    protected function _get_shared_message_template_for_events(array $event_ids)
+    {
+        $message_template_group = null;
+        if ($this->_queue_shares_same_message_template_group_for_events($event_ids)) {
+            $message_template_group = EEM_Message_Template_Group::instance()->get_one(
+                array(
+                    array(
+                        'EVT_ID'           => array('IN', $event_ids),
+                        'MTP_messenger'    => $this->_current_messenger->name,
+                        'MTP_message_type' => $this->_current_message_type->name,
+                        'MTP_is_active'    => true,
+                    ),
+                    'group_by' => 'GRP_ID',
+                )
+            );
+            //store this in the collection if its valid
+            if ($message_template_group instanceof EE_Message_Template_Group) {
+                $this->_template_collection->add(
+                    $message_template_group,
+                    $event_ids
+                );
             }
         }
+        return $message_template_group;
+    }
 
-        //before going any further, let's see if its in the queue
-        $GRP = $this->_template_collection->get_by_key(
-            $this->_template_collection->get_key(
+
+    /**
+     * Retrieves the global message template group for the current messenger and message type.
+     *
+     * @return EE_Message_Template_Group|null
+     * @throws EE_Error
+     */
+    protected function _get_global_message_template_group_for_current_messenger_and_message_type()
+    {
+        //first check the collection (we use an array with 0 in it to represent global groups).
+        $global_message_template_group = $this->_template_collection->get_by_key(
+            $this->_template_collection->getKey(
                 $this->_current_messenger->name,
                 $this->_current_message_type->name,
-                $EVT_ID
+                array(0)
             )
         );
 
-        if ($GRP instanceof EE_Message_Template_Group) {
-            return $GRP;
+        //if we don't have a group lets hit the db.
+        if (! $global_message_template_group instanceof EE_Message_Template_Group) {
+            $global_message_template_group = EEM_Message_Template_Group::instance()->get_one(
+                array(
+                    array(
+                        'MTP_messenger'    => $this->_current_messenger->name,
+                        'MTP_message_type' => $this->_current_message_type->name,
+                        'MTP_is_active'    => true,
+                        'MTP_is_global'    => true,
+                    ),
+                )
+            );
+            //if we have a group, add it to the collection.
+            if ($global_message_template_group instanceof EE_Message_Template_Group) {
+                $this->_template_collection->add(
+                    $global_message_template_group,
+                    array(0)
+                );
+            }
         }
+        return $global_message_template_group;
+    }
 
-        //nope still no GRP?
-        //first we get the global template in case it has an override set.
-        $global_template_qa = array_merge(array('MTP_is_global' => true), $template_qa);
-        $global_GRP         = EEM_Message_Template_Group::instance()->get_one(array($global_template_qa));
 
-        //if this is an override, then we just return it.
-        if ($global_GRP instanceof EE_Message_Template_Group && $global_GRP->get('MTP_is_override')) {
-            $this->_template_collection->add($global_GRP, $EVT_ID);
-            return $global_GRP;
+    /**
+     * Returns an array of event ids for all the events within the current data handler.
+     *
+     * @return array
+     */
+    protected function _get_event_ids_from_current_data_handler()
+    {
+        $event_ids = array();
+        foreach ($this->_current_data_handler->events as $event) {
+            $event_ids[$event['ID']] = $event['ID'];
         }
-
-        //STILL here? Okay that means we want to see if there is event specific group and if there is we return it,
-        //otherwise we return the global group we retrieved.
-        if ($EVT_ID) {
-            $template_qa['Event.EVT_ID'] = $EVT_ID;
-        }
-
-        $GRP = EEM_Message_Template_Group::instance()->get_one(array($template_qa));
-        $GRP = $GRP instanceof EE_Message_Template_Group ? $GRP : $global_GRP;
-
-        if ($GRP instanceof EE_Message_Template_Group) {
-            $this->_template_collection->add($GRP, $EVT_ID);
-            return $GRP;
-        }
-
-        //nothing, nada, there ain't no group from what you fed the machine. (Getting here is a very hard thing to do).
-        return null;
+        return $event_ids;
     }
 
 
@@ -401,13 +528,14 @@ class EE_Messages_Generator
      *  Retrieves formatted array of template information for each context specific to the given
      *  EE_Message_Template_Group
      *
-     * @param   EE_Message_Template_Group
-     * @return  array   The returned array is in this structure:
+     * @param EE_Message_Template_Group $message_template_group
+     * @return array The returned array is in this structure:
      *                          array(
      *                          'field_name' => array(
      *                          'context' => 'content'
      *                          )
      *                          )
+     * @throws EE_Error
      */
     protected function _get_templates(EE_Message_Template_Group $message_template_group)
     {
@@ -428,15 +556,15 @@ class EE_Messages_Generator
     /**
      * Assembles new fully generated EE_Message objects and adds to _ready_queue
      *
-     * @param array                     $addressees Array of EE_Messages_Addressee objects indexed by message type
-     *                                              context.
-     * @param array                     $templates  formatted array of templates used for parsing data.
+     * @param array                     $addressees  Array of EE_Messages_Addressee objects indexed by message type
+     *                                               context.
+     * @param array                     $templates   formatted array of templates used for parsing data.
      * @param EE_Message_Template_Group $message_template_group
      * @return bool   true if message generation went a-ok.  false if some sort of exception occurred.  Note: The
-     *                                              method will attempt to generate ALL EE_Message objects and add to
-     *                                              the _ready_queue.  Successfully generated messages get added to the
-     *                                              queue with EEM_Message::status_idle, unsuccessfully generated
-     *                                              messages will get added to the queue as EEM_Message::status_failed.
+     *                                               method will attempt to generate ALL EE_Message objects and add to
+     *                                               the _ready_queue.  Successfully generated messages get added to the
+     *                                               queue with EEM_Message::status_idle, unsuccessfully generated
+     *                                               messages will get added to the queue as EEM_Message::status_failed.
      *                                               Very rarely should "false" be returned from this method.
      */
     protected function _assemble_messages($addressees, $templates, EE_Message_Template_Group $message_template_group)
