@@ -22,14 +22,6 @@ interface EmailValidationServiceInterface extends DomainServiceInterface
 {
 
     /**
-     * EmailValidationService constructor.
-     * Accepts an \EE_Config as an argument.
-     * @param EE_Config $config
-     * @param Loader $loader
-     */
-    public function __construct(EE_Config $config, Loader $loader);
-
-    /**
      * Validates the email address. If it's invalid, an EmailValidationException
      * is thrown that describes why its invalid.
      * @param string $input
