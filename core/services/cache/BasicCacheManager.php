@@ -2,7 +2,6 @@
 namespace EventEspresso\core\services\cache;
 
 use Closure;
-use EEH_Debug_Tools;
 use EventEspresso\core\domain\services\session\SessionIdentifierInterface;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
