@@ -54,7 +54,7 @@ class EspressoEvents extends EspressoShortcode
      */
     public function cacheExpiration()
     {
-        return MINUTE_IN_SECONDS * 15;
+        return MINUTE_IN_SECONDS * 5;
     }
 
 
