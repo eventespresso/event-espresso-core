@@ -22,7 +22,7 @@ class EE_Message_Template_Group_Collection_Test extends EE_UnitTestCase
     /**
      * @return EE_Message_Template_Group_Collection
      */
-    function test_add()
+    public function test_add()
     {
         //there should be a message template group in the db.  Let's get it.
         $message_template_group = EEM_Message_Template_Group::instance()->get_one(
@@ -55,7 +55,7 @@ class EE_Message_Template_Group_Collection_Test extends EE_UnitTestCase
      * @param EE_Message_Template_Group_Collection $test_repo
      * @return EE_Message_Template_Group_Collection
      */
-    function test_get_by_ID(EE_Message_Template_Group_Collection $test_repo)
+    public function test_get_by_ID(EE_Message_Template_Group_Collection $test_repo)
     {
         //get the object to remove.
         $mtpg = $test_repo->current();
@@ -71,7 +71,7 @@ class EE_Message_Template_Group_Collection_Test extends EE_UnitTestCase
      * @depends test_get_by_ID
      * @param EE_Message_Template_Group_Collection $test_repo
      */
-    function test_get_by_key(EE_Message_Template_Group_Collection $test_repo)
+    public function test_get_by_key(EE_Message_Template_Group_Collection $test_repo)
     {
         $key_should_exist     = $test_repo->get_key('email', 'registration', 22);
         $key_should_not_exist = $test_repo->get_key('email', 'registration', 15);
