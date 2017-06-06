@@ -26,15 +26,17 @@ class EE_Message_Template_Group_Collection extends EE_Object_Collection
     /**
      * Adds the Message Template Group object to the repository.
      *
-     * @param     $message_template_group
-     * @param int $EVT_ID    Some templates are specific to EVT, so this is provided as a way of
-     *                       indexing the template by key.
+     * @param           $message_template_group
+     * @param array|int $EVT_ID    Some templates are specific to EVT, so this is provided as a way of
+     *                         indexing the template by key.  If this template is shared among multiple events then
+     *                         include the events as an array.
      * @return bool
      */
-    public function add($message_template_group, $EVT_ID = null)
+    public function add($message_template_group, $EVT_ID = array())
     {
+        $EVT_ID = is_array($EVT_ID) ? $EVT_ID : (array) $EVT_ID;
         if ($message_template_group instanceof $this->interface) {
-            $data['key'] = $this->get_key(
+            $data['key'] = $this->getKey(
                 $message_template_group->messenger(),
                 $message_template_group->message_type(),
                 $EVT_ID
@@ -73,10 +75,28 @@ class EE_Message_Template_Group_Collection extends EE_Object_Collection
      * @param string $messenger    The EE_messenger->name
      * @param string $message_type The EE_message_type->name
      * @param int    $EVT_ID       Optional.  If the template is for a specific EVT then that should be included.
+     * @deprecated 4.9.40.rc.017  Use getKey instead.
      * @return string
      */
     public function get_key($messenger, $message_type, $EVT_ID = 0)
     {
+        $EVT_ID = (array) $EVT_ID;
+        return $this->getKey($messenger, $message_type, $EVT_ID);
+    }
+
+
+    /**
+     * Generates a hash used to identify a given Message Template Group
+     * @param string    $messenger      The EE_messenger->name
+     * @param string    $message_type   The EE_message_type->name
+     * @param array     $EVT_ID         Optional.  If the template is for a specific EVT_ID (or events) then that should
+     *                                  be included.
+     * @since 4.9.40.rc.017
+     * @return string
+     */
+    public function getKey($messenger, $message_type, array $EVT_ID = array())
+    {
+        $EVT_ID = implode(',', sort($EVT_ID));
         return md5($messenger . $message_type . $EVT_ID);
     }
 
