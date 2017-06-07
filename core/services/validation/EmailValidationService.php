@@ -3,10 +3,9 @@
 namespace EventEspresso\core\services\validation;
 
 use EE_Config;
-use EventEspresso\core\services\loaders\Loader;
 use EventEspresso\core\domain\services\validation\EmailValidationException;
-use EventEspresso\core\domain\services\validation\EmailValidationServiceInterface;
-use EventEspresso\core\domain\services\DomainService;
+use EventEspresso\core\domain\services\validation\EmailValidatorInterface;
+use EventEspresso\core\services\loaders\Loader;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 
@@ -14,16 +13,15 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 
 /**
  * Class EmailValidator
- * Description
+ * Loads the appropriate Email Validator as set in the Config
+ * and then validates the supplied email address
  *
  * @package        Event Espresso
  * @author         Mike Nelson
  * @since          $VID:$
  */
-class EmailValidationService implements EmailValidationServiceInterface
+class EmailValidationService implements EmailValidatorInterface
 {
-
-
 
     /**
      * @var EE_Config $config
@@ -56,11 +54,11 @@ class EmailValidationService implements EmailValidationServiceInterface
      * Validates the email address. If it's invalid, an EmailValidationException
      * is thrown that describes why its invalid.
      *
-     * @param $input
+     * @param string $email_address
      * @return boolean
      * @throws EmailValidationException
      */
-    public function validate($input)
+    public function validate($email_address)
     {
         //pick the correct validator according to the config
         switch ($this->config->registration->email_validation_level) {
@@ -86,8 +84,10 @@ class EmailValidationService implements EmailValidationServiceInterface
                 ) ;
                 break;
         }
-        return $validator->validate($input);
+        return $validator->validate($email_address);
     }
+
+
 }
 // End of file EmailValidator.php
 // Location: core\services\validation/EmailValidator.php

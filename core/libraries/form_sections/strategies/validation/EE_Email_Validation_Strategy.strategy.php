@@ -1,8 +1,12 @@
 <?php
 
-if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
 use EventEspresso\core\domain\services\validation\EmailValidationException;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\Loader;
+
+if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
+
 /**
  * Class EE_Email_Validation_Strategy
  *
@@ -32,7 +36,10 @@ class EE_Email_Validation_Strategy extends EE_Text_Validation_Strategy
      *
      * @param $normalized_value
      * @return bool
-     * @throws \EE_Validation_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Validation_Error
      */
     public function validate($normalized_value)
     {
@@ -60,13 +67,16 @@ class EE_Email_Validation_Strategy extends EE_Text_Validation_Strategy
      *
      * @param $email
      * @return bool of whether the email is valid or not
-     * @throws \EE_Validation_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Validation_Error
      */
     private function _validate_email($email)
     {
         $loader = new Loader();
         $validation_service = $loader->getShared(
-            'EventEspresso\core\domain\services\validation\EmailValidationServiceInterface'
+            'EventEspresso\core\domain\services\validation\EmailValidatorInterface'
         );
         try {
             $validation_service->validate($email);

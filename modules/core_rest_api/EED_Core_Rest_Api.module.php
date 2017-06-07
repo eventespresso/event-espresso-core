@@ -1,6 +1,7 @@
 <?php
 use EventEspresso\core\domain\services\validation\EmailValidationException;
-use EventEspresso\core\entities\models\JsonModelSchema;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\libraries\rest_api\CalculatedModelFields;
 use EventEspresso\core\libraries\rest_api\controllers\model\Read as ModelRead;
 use EventEspresso\core\libraries\rest_api\changes\ChangesInBase;
@@ -919,14 +920,18 @@ class EED_Core_Rest_Api extends \EED_Module
 
 
     /**
-     * Returns whether or not this email address is vaild. Copied from EE_Email_Valdiation_Strategy::_validate_email()
+     * Returns whether or not this email address is valid. Copied from EE_Email_Validation_Strategy::_validate_email()
+     *
      * @param $email
      * @return bool
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      */
     protected static function _validate_email($email){
         $loader = new Loader();
         $validation_service = $loader->getShared(
-            'EventEspresso\core\domain\services\validation\EmailValidationServiceInterface'
+            'EventEspresso\core\domain\services\validation\EmailValidatorInterface'
         );
         try {
             $validation_service->validate($email);
