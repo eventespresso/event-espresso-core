@@ -20,6 +20,11 @@ if (! defined('EVENT_ESPRESSO_VERSION')) {
 class EEDCoreRestApiTest extends EE_REST_TestCase
 {
 
+    public function setUp(){
+        echo $this->getName();
+        parent::setUp();
+    }
+
     /**
      * @group 9222
      */
@@ -30,8 +35,8 @@ class EEDCoreRestApiTest extends EE_REST_TestCase
         foreach ($ee_routes_for_each_version as $version => $ee_routes) {
             foreach (EED_Core_Rest_Api::model_names_with_plural_routes('4.8.36') as $model_name => $model_classname) {
                 $model = EE_Registry::instance()->load_model($model_name);
-                $plural_model_route = EED_Core_Rest_Api::get_collection_route($model_name);
-                $singular_model_route = EED_Core_Rest_Api::get_entity_route($model_name, '(?P<id>[^\/]+)');
+                $plural_model_route = EED_Core_Rest_Api::get_collection_route($model);
+                $singular_model_route = EED_Core_Rest_Api::get_entity_route($model, '(?P<id>[^\/]+)');
                 //currently, we expose models even for wp core routes to reading (we have plans to change this though)
                 //on https://events.codebasehq.com/projects/event-espresso/tickets/9583
                 $this->assertArrayHasKey(
@@ -116,7 +121,7 @@ class EEDCoreRestApiTest extends EE_REST_TestCase
         //make sure there's an entry for this model. We will use it in an assertion later
         $model_obj = $this->getAModelObjOfType($model);
         $route = EED_Core_Rest_Api::get_versioned_route_to(
-            EED_Core_Rest_Api::get_collection_route($model->get_this_model_name()),
+            EED_Core_Rest_Api::get_collection_route($model),
             '4.8.36'
         );
         $response = rest_do_request(
@@ -162,7 +167,7 @@ class EEDCoreRestApiTest extends EE_REST_TestCase
         //make sure there's an entry for this model. We will use it in an assertion later
         $model_obj = $this->getAModelObjOfType($model);
         $route = EED_Core_Rest_Api::get_versioned_route_to(
-            EED_Core_Rest_Api::get_entity_route($model->get_this_model_name(), $model_obj->ID()),
+            EED_Core_Rest_Api::get_entity_route($model, $model_obj->ID()),
             '4.8.36'
         );
         $response = rest_do_request(
@@ -230,7 +235,7 @@ class EEDCoreRestApiTest extends EE_REST_TestCase
 
         $route = EED_Core_Rest_Api::get_versioned_route_to(
             EED_Core_Rest_Api::get_relation_route_via(
-                $model->get_this_model_name(),
+                $model,
                 $model_obj->ID(),
                 $relation_obj
             ),
@@ -359,7 +364,6 @@ class EEDCoreRestApiTest extends EE_REST_TestCase
      * @dataProvider dataProviderForTestInsertsRoutes
      * @param EEM_Base $model
      * @group big_rest_tests
-     * @group current
      */
     public function testInsertsRoutes(EEM_Base $model)
     {
@@ -371,7 +375,7 @@ class EEDCoreRestApiTest extends EE_REST_TestCase
         );
 
         $route = EED_Core_Rest_Api::get_versioned_route_to(
-            EED_Core_Rest_Api::get_collection_route($model->get_this_model_name()),
+            EED_Core_Rest_Api::get_collection_route($model),
             '4.8.36'
         );
         $insert_values = array();
@@ -420,7 +424,7 @@ class EEDCoreRestApiTest extends EE_REST_TestCase
         $this->authenticate_as_admin();
         $model_obj = $this->getAModelObjOfType($model, false);
         $route = EED_Core_Rest_Api::get_versioned_route_to(
-            EED_Core_Rest_Api::get_entity_route($model->get_this_model_name(), $model_obj->ID()),
+            EED_Core_Rest_Api::get_entity_route($model, $model_obj->ID()),
             '4.8.36'
         );
 
@@ -466,7 +470,7 @@ class EEDCoreRestApiTest extends EE_REST_TestCase
         $this->authenticate_as_admin();
         $model_obj = $this->getAModelObjOfType($model, false);
         $route = EED_Core_Rest_Api::get_versioned_route_to(
-            EED_Core_Rest_Api::get_entity_route($model->get_this_model_name(), $model_obj->ID()),
+            EED_Core_Rest_Api::get_entity_route($model, $model_obj->ID()),
             '4.8.36'
         );
 

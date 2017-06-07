@@ -446,8 +446,8 @@ class EED_Core_Rest_Api extends \EED_Module
                 continue;
             }
             //yes we could just register one route for ALL models, but then they wouldn't show up in the index
-            $plural_model_route = EED_Core_Rest_Api::get_collection_route($model_name);
-            $singular_model_route = EED_Core_Rest_Api::get_entity_route($model_name, '(?P<id>[^\/]+)');
+            $plural_model_route = EED_Core_Rest_Api::get_collection_route($model);
+            $singular_model_route = EED_Core_Rest_Api::get_entity_route($model, '(?P<id>[^\/]+)');
             $model_routes[$plural_model_route] = array(
                 array(
                     'callback'        => array(
@@ -526,7 +526,7 @@ class EED_Core_Rest_Api extends \EED_Module
             foreach ($model->relation_settings() as $relation_name => $relation_obj) {
 
                 $related_route = EED_Core_Rest_Api::get_relation_route_via(
-                    $model_name,
+                    $model,
                     '(?P<id>[^\/]+)',
                     $relation_obj
                 );
@@ -554,12 +554,13 @@ class EED_Core_Rest_Api extends \EED_Module
      * Gets the relative URI to a model's REST API plural route, after the EE4 versioned namespace,
      * excluding the preceding slash.
      * Eg you pass get_plural_route_to('Event') = 'events'
-     * @param string $model_name eg Event or Venue
+     *
+     * @param EEM_Base $model
      * @return string
      */
-    public static function get_collection_route($model_name)
+    public static function get_collection_route(EEM_Base $model)
     {
-        return EEH_Inflector::pluralize_and_lower($model_name);
+        return EEH_Inflector::pluralize_and_lower($model->get_this_model_name());
     }
 
 
@@ -568,13 +569,14 @@ class EED_Core_Rest_Api extends \EED_Module
      * Gets the relative URI to a model's REST API singular route, after the EE4 versioned namespace,
      * excluding the preceding slash.
      * Eg you pass get_plural_route_to('Event', 12) = 'events/12'
-     * @param string $model_name eg Event or Venue
+     *
+     * @param EEM_Base $model eg Event or Venue
      * @param string $id
      * @return string
      */
-    public static function get_entity_route($model_name, $id)
+    public static function get_entity_route($model, $id)
     {
-        return EEH_Inflector::pluralize_and_lower($model_name) . '/' . $id;
+        return EED_Core_Rest_Api::get_collection_route($model). '/' . $id;
     }
 
 
@@ -583,18 +585,18 @@ class EED_Core_Rest_Api extends \EED_Module
      * excluding the preceding slash.
      * Eg you pass get_plural_route_to('Event', 12) = 'events/12'
      *
-     * @param string                $model_name eg Event or Venue
-     * @param string                $id
+     * @param EEM_Base                 $model eg Event or Venue
+     * @param string                 $id
      * @param EE_Model_Relation_Base $relation_obj
      * @return string
      */
-    public static function get_relation_route_via($model_name, $id, $relation_obj)
+    public static function get_relation_route_via(EEM_Base $model, $id, EE_Model_Relation_Base $relation_obj)
     {
         $related_model_name_endpoint_part = ModelRead::getRelatedEntityName(
             $relation_obj->get_other_model()->get_this_model_name(),
             $relation_obj
         );
-        return EED_Core_Rest_Api::get_entity_route($model_name, $id) . '/' . $related_model_name_endpoint_part;
+        return EED_Core_Rest_Api::get_entity_route($model, $id) . '/' . $related_model_name_endpoint_part;
     }
 
 
