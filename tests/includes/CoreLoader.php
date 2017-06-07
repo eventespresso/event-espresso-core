@@ -3,8 +3,6 @@
 namespace EETests\bootstrap;
 
 use EE_Dependency_Map;
-use EE_Request;
-use EE_Response;
 use EE_Registry;
 use EEH_Activation;
 use EE_Psr4AutoloaderInit;
@@ -89,46 +87,72 @@ class CoreLoader
         // and don't set cookies
         tests_add_filter('FHEE__EE_Front_Controller____construct__set_test_cookie', '__return_false');
         tests_add_filter('FHEE__EE_Error__get_error__show_normal_exceptions', '__return_true');
-
-        // Bootstrap EE
-        require EE_PLUGIN_DIR . 'espresso.php';
-    }
-
-
-    protected function postLoadWPandEE()
-    {
-        require_once EE_CORE . 'EE_Dependency_Map.core.php';
-        require_once EE_CORE . 'request_stack' . DS . 'EE_Request.core.php';
-        require_once EE_CORE . 'request_stack' . DS . 'EE_Response.core.php';
-        EE_Dependency_Map::instance(new EE_Request($_GET, $_POST, $_COOKIE), new EE_Response());
-        add_filter(
+        // we need to add these filters BEFORE the Registry is instantiated
+        tests_add_filter(
             'FHEE__EE_Registry____construct___class_abbreviations',
             function ($class_abbreviations = array()) {
                 $class_abbreviations['EE_Session_Mock'] = 'SSN';
                 return $class_abbreviations;
             }
         );
-        add_filter(
+        tests_add_filter(
             'FHEE__EE_Registry__load_core__core_paths',
             function ($core_paths = array()) {
                 $core_paths[] = EE_TESTS_DIR . 'mocks' . DS . 'core' . DS;
                 return $core_paths;
             }
         );
-        EE_Dependency_Map::register_dependencies(
-            'EE_Session_Mock',
-            array(
-                'EventEspresso\core\services\cache\TransientCacheStorage' => EE_Dependency_Map::load_from_cache,
-                'EE_Encryption'                                           => EE_Dependency_Map::load_from_cache
-            )
+        // and this stuff needs to happen just AFTER the Registry initializes
+        tests_add_filter(
+            'EE_Load_Espresso_Core__handle_request__initialize_core_loading',
+            array($this, 'setupDependencyMap'),
+            15
         );
-        EE_Dependency_Map::register_class_loader('Session_Mock');
-        EE_Registry::instance()->SSN = EE_Registry::instance()->load_core('EE_Session_Mock');
-
+        // Bootstrap EE
+        require EE_PLUGIN_DIR . 'espresso.php';
         //save wpdb queries in case we want to know what queries ran during a test
         if (! defined('SAVEQUERIES')) {
             define('SAVEQUERIES', true);
         }
+    }
+
+
+    public function setupDependencyMap()
+    {
+        EE_Dependency_Map::register_class_loader('EE_Session_Mock');
+        EE_Dependency_Map::register_dependencies(
+            'EE_Session_Mock',
+            array(
+                'EventEspresso\core\services\cache\TransientCacheStorage' => EE_Dependency_Map::load_from_cache,
+                'EE_Encryption'                                           => EE_Dependency_Map::load_from_cache,
+            )
+        );
+        EE_Dependency_Map::register_dependencies(
+            'EventEspresso\core\services\cache\BasicCacheManager',
+            array(
+                'EventEspresso\core\services\cache\TransientCacheStorage' => EE_Dependency_Map::load_from_cache,
+                'EE_Session_Mock' => EE_Dependency_Map::load_from_cache
+            ),
+            true
+        );
+        EE_Dependency_Map::register_dependencies(
+            'EventEspresso\core\services\cache\PostRelatedCacheManager',
+            array(
+                'EventEspresso\core\services\cache\TransientCacheStorage' => EE_Dependency_Map::load_from_cache,
+                'EE_Session_Mock' => EE_Dependency_Map::load_from_cache
+            ),
+            true
+        );
+        EE_Dependency_Map::instance()->add_alias(
+            'EventEspresso\core\domain\services\session\SessionIdentifierInterface',
+            'EE_Session_Mock'
+        );
+    }
+
+
+    public function postLoadWPandEE()
+    {
+        EE_Registry::instance()->SSN = EE_Registry::instance()->load_core('EE_Session_Mock');
     }
 
 
