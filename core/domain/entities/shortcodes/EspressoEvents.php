@@ -69,6 +69,7 @@ class EspressoEvents extends EspressoShortcode
     public function initializeShortcode()
     {
         EED_Events_Archive::instance()->event_list();
+        $this->shortcodeHasBeenInitialized();
     }
 
 

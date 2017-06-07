@@ -81,7 +81,7 @@ final class EE_Front_Controller
         add_action('wp', array($this, 'wp'), 5);
         // after headers sent but before any markup is output,
         // primarily used to process any content shortcodes
-        add_action('get_header', array($this, 'get_header'));
+        add_action('wp_head', array($this, 'wpHead'), 0);
         // header
         add_action('wp_head', array($this, 'header_meta_tag'), 5);
         add_action('wp_print_scripts', array($this, 'wp_print_scripts'), 10);
@@ -281,13 +281,13 @@ final class EE_Front_Controller
 
 
     /**
-     * callback for the WP "get_header" hook point
+     * callback for the "wp_head" hook point
      * checks sidebars for EE widgets
      * loads resources and assets accordingly
      *
      * @return void
      */
-    public function get_header()
+    public function wpHead()
     {
         global $wp_query;
         if (empty($wp_query->posts)){

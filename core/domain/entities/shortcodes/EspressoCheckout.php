@@ -57,6 +57,7 @@ class EspressoCheckout extends EspressoShortcode
     {
         global $wp_query;
         EED_Single_Page_Checkout::init($wp_query);
+        $this->shortcodeHasBeenInitialized();
     }
 
 
