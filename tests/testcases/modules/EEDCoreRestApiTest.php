@@ -20,11 +20,6 @@ if (! defined('EVENT_ESPRESSO_VERSION')) {
 class EEDCoreRestApiTest extends EE_REST_TestCase
 {
 
-    public function setUp(){
-        echo $this->getName();
-        parent::setUp();
-    }
-
     /**
      * @group 9222
      */
