@@ -21,12 +21,10 @@ if (! defined('EVENT_ESPRESSO_VERSION')) {
 class EE_Dependency_Map
 {
 
-
     /**
      * This means that the requested class dependency is not present in the dependency map
      */
     const not_registered = 0;
-
 
     /**
      * This instructs class loaders to ALWAYS return a newly instantiated object for the requested class.
@@ -38,6 +36,21 @@ class EE_Dependency_Map
      * IF a previously instantiated object does not exist, a new one will be created and added to the cache.
      */
     const load_from_cache = 2;
+
+    /**
+     * When registering a dependency,
+     * this indicates to keep any existing dependencies that already exist,
+     * and simply discard any new dependencies declared in the incoming data
+     */
+    const KEEP_EXISTING_DEPENDENCIES = 0;
+
+    /**
+     * When registering a dependency,
+     * this indicates to overwrite any existing dependencies that already exist using the incoming data
+     */
+    const OVERWRITE_DEPENDENCIES = 1;
+
+
 
     /**
      * @type EE_Dependency_Map $_instance
@@ -137,22 +150,59 @@ class EE_Dependency_Map
     /**
      * @param string $class
      * @param array  $dependencies
-     * @return boolean
+     * @param int    $overwrite
+     * @return bool
      */
-    public static function register_dependencies($class, $dependencies)
-    {
-        if (! isset(self::$_instance->_dependency_map[$class])) {
-            // we need to make sure that any aliases used when registering a dependency
-            // get resolved to the correct class name
-            foreach ((array)$dependencies as $dependency => $load_source) {
-                $alias = self::$_instance->get_alias($dependency);
+    public static function register_dependencies(
+        $class,
+        array $dependencies,
+        $overwrite = EE_Dependency_Map::KEEP_EXISTING_DEPENDENCIES
+    ) {
+        return self::$_instance->registerDependencies($class, $dependencies, $overwrite);
+    }
+
+
+
+    /**
+     * @param string $class
+     * @param array  $dependencies
+     * @param int    $overwrite
+     * @return bool
+     */
+    public function registerDependencies(
+        $class,
+        array $dependencies,
+        $overwrite = EE_Dependency_Map::KEEP_EXISTING_DEPENDENCIES
+    ) {
+        $registered = false;
+        if (empty(self::$_instance->_dependency_map[ $class ])) {
+            self::$_instance->_dependency_map[ $class ] = array();
+        }
+        // we need to make sure that any aliases used when registering a dependency
+        // get resolved to the correct class name
+        foreach ((array)$dependencies as $dependency => $load_source) {
+            $alias = self::$_instance->get_alias($dependency);
+            if (
+                $overwrite === EE_Dependency_Map::OVERWRITE_DEPENDENCIES
+                || ! isset(self::$_instance->_dependency_map[ $class ][ $alias ])
+            ) {
                 unset($dependencies[$dependency]);
                 $dependencies[$alias] = $load_source;
+                $registered = true;
             }
-            self::$_instance->_dependency_map[$class] = (array)$dependencies;
-            return true;
         }
-        return false;
+        // now add our two lists of dependencies together.
+        // using Union (+=) favours the arrays in precedence from left to right,
+        // so $dependencies is NOT overwritten because it is listed first
+        // ie: with A = B + C, entries in B take precedence over duplicate entries in C
+        // Union is way faster than array_merge() but should be used with caution...
+        // especially with numerically indexed arrays
+        $dependencies += self::$_instance->_dependency_map[ $class ];
+        // now we need to truncate
+        $dependency_count = count(self::$_instance->_dependency_map[ $class ]);
+        $dependency_count = $dependency_count ? $dependency_count : count($dependencies);
+        self::$_instance->_dependency_map[ $class ] = array_slice($dependencies, 0, $dependency_count);
+        return $registered;
     }
 
 
@@ -332,7 +382,7 @@ class EE_Dependency_Map
         if (! $this->has_alias($class_name, $for_class)) {
             return $class_name;
         }
-        if ($for_class !== '') {
+        if ($for_class !== '' && isset($this->_aliases[ $for_class ][ $class_name ])) {
             return $this->get_alias($this->_aliases[$for_class][$class_name], $for_class);
         }
         return $this->get_alias($this->_aliases[$class_name]);
