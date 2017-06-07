@@ -174,7 +174,7 @@ if ( ! function_exists( 'espresso_get_events' )) {
 		// grab params and merge with defaults, then extract
 		$params = array_merge( $default_espresso_events_params, $params );
 		// run the query
-		$events_query = new EE_Event_List_Query( $params );
+		$events_query = new EventEspresso\core\domain\services\wp_queries\EventListQuery( $params );
 		// assign results to a variable so we can return it
 		$events = $events_query->have_posts() ? $events_query->posts : array();
 		// but first reset the query and postdata

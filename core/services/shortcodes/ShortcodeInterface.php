@@ -28,6 +28,11 @@ interface ShortcodeInterface
      * this may be required for shortcodes that utilize a corresponding module,
      * and need to enqueue assets for that module
      *
+     * !!! IMPORTANT !!!
+     * After performing any logic within this method required for initialization
+     *         $this->shortcodeHasBeenInitialized();
+     * should be called to ensure that the shortcode is setup correctly.
+     *
      * @return void
      */
     public function initializeShortcode();
