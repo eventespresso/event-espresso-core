@@ -619,6 +619,7 @@ class EE_Dependency_Map
             'EventEspresso\core\services\loaders\Loader' => function () use (&$loader) {
                 return $loader;
             },
+            'EE_Config'                            => 'load_core'
         );
     }
 
