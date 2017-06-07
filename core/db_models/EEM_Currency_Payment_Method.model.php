@@ -14,6 +14,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
  * @ link					http://www.eventespresso.com
  * @ version		 	4.3
+ * @deprecated in 4.9.40 because this table is basically not used and inefficient
  *
  * ------------------------------------------------------------------------
  *
