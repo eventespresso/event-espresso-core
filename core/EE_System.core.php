@@ -742,6 +742,9 @@ final class EE_System
             // and the old way, but we'll put it under control of the new system
                 EE_Config::getLegacyShortcodesManager()
             );
+            // load deprecated EE_Event_List_Query class for backwards compatibility
+            // @see https://events.codebasehq.com/projects/event-espresso/tickets/10792
+            require_once EE_SHORTCODES . 'espresso_events' . DS . 'EE_Event_List_Query.php';
         } catch (Exception $exception) {
             new ExceptionStackTraceDisplay($exception);
         }
