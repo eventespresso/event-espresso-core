@@ -22,6 +22,7 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
 
     public function testPrepareQueryParamsForRestApi()
     {
+        \EventEspresso\core\services\Benchmark::measureMemory('    '.__FUNCTION__.'()', true);
         $mysql_date = '2015-01-01 00:00:00';
         $statuses_in_query = array(
             EEM_Registration::status_id_cancelled,
@@ -94,6 +95,7 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
 
     public function testIsGmtDateFieldName__success()
     {
+        \EventEspresso\core\services\Benchmark::measureMemory('    '.__FUNCTION__ . '()', true);
         $this->assertTrue(ModelDataTranslator::isGmtDateFieldName('Event.EVT_created_gmt'));
     }
 
@@ -101,6 +103,7 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
 
     public function testIsGmtDateFieldName__fail()
     {
+        \EventEspresso\core\services\Benchmark::measureMemory('    '.__FUNCTION__ . '()', true);
         $this->assertFalse(ModelDataTranslator::isGmtDateFieldName('Event.EVT_created'));
     }
 
@@ -108,6 +111,7 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
 
     public function testIsGmtDateFieldName__failTinyInput()
     {
+        \EventEspresso\core\services\Benchmark::measureMemory('    '.__FUNCTION__ . '()', true);
         $this->assertFalse(ModelDataTranslator::isGmtDateFieldName('foo'));
     }
 
@@ -115,6 +119,7 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
 
     public function testRemoveGmtFromFieldName()
     {
+        \EventEspresso\core\services\Benchmark::measureMemory('    '.__FUNCTION__ . '()', true);
         $this->assertEquals(
             'Event.EVT_created',
             ModelDataTranslator::removeGmtFromFieldName('Event.EVT_created_gmt'));
@@ -124,6 +129,7 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
 
     public function testRemoveGmtFromFieldName__noGmtAnyways()
     {
+        \EventEspresso\core\services\Benchmark::measureMemory('    '.__FUNCTION__ . '()', true);
         $this->assertEquals(
             'Event.EVT_created',
             ModelDataTranslator::removeGmtFromFieldName('Event.EVT_created'));
@@ -158,6 +164,7 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
         $inputted_json_value,
         EE_Model_Field_Base $field_obj
     ) {
+        \EventEspresso\core\services\Benchmark::measureMemory('    '.__FUNCTION__ . '()', true);
         $this->assertEquals(
             $expected_result,
             ModelDataTranslator::prepareFieldValueFromJson(
@@ -213,6 +220,7 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
      */
     public function testPrepareFieldValueFromJsonBad($inputted_json_value, EE_Model_Field_Base $field_obj)
     {
+        \EventEspresso\core\services\Benchmark::measureMemory('    '.__FUNCTION__ . '()', true);
         //ok duck and cover! It's gonna blow!
         ModelDataTranslator::prepareFieldValueFromJson($field_obj, $inputted_json_value, '4.8.36');
     }
@@ -262,6 +270,7 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
      */
     public function testPrepareFieldValuesForJson($expected, $input, $field_obj)
     {
+        \EventEspresso\core\services\Benchmark::measureMemory('    '.__FUNCTION__ . '()', true);
         $this->assertEquals(
             $expected,
             ModelDataTranslator::prepareFieldValuesForJson($field_obj, $input, '4.8.36')
@@ -436,6 +445,7 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
      */
     public function testPrepareConditionsQueryParamsForModelsBad($input, $model_name, $writing)
     {
+        \EventEspresso\core\services\Benchmark::measureMemory('    '.__FUNCTION__ . '()', true);
         $model = EE_Registry::instance()->load_model($model_name);
         //run for cover! it's going to error!
         ModelDataTranslator::prepareConditionsQueryParamsForModels(
@@ -636,6 +646,7 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
         $model_name,
         $writing
     ) {
+        \EventEspresso\core\services\Benchmark::measureMemory('    '.__FUNCTION__ . '()', true);
         $model = EE_Registry::instance()->load_model($model_name);
         $this->assertEquals(
             $expected_output,
