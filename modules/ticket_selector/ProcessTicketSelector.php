@@ -123,10 +123,6 @@ class ProcessTicketSelector
         }
         //if event id is valid
         $id = absint(\EE_Registry::instance()->REQ->get('tkt-slctr-event-id'));
-        // check nonce
-        if ( ! $this->processTicketSelectorNonce('process_ticket_selections', $id)) {
-            return false;
-        }
         //		d( \EE_Registry::instance()->REQ );
         self::$_available_spaces = array(
             'tickets'   => array(),
