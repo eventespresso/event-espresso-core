@@ -287,7 +287,6 @@ class EE_Payment_Method_Manager implements ResettableInterface
         }
         $payment_method->set_active();
         $payment_method->save();
-        $this->set_usable_currencies_on_payment_method($payment_method);
         if ($payment_method->type() === 'Invoice') {
             /** @type EE_Message_Resource_Manager $message_resource_manager */
             $message_resource_manager = EE_Registry::instance()->load_lib('Message_Resource_Manager');
@@ -369,16 +368,17 @@ class EE_Payment_Method_Manager implements ResettableInterface
 
     /**
      * Makes sure the payment method is related to the specified payment method
-     *
+     * @deprecated in 4.9.40 because the currency payment method table is being deprecated
      * @param EE_Payment_Method $payment_method
      * @return EE_Payment_Method
      * @throws \EE_Error
      */
     public function set_usable_currencies_on_payment_method($payment_method)
     {
-        foreach ($payment_method->get_all_usable_currencies() as $currency_obj) {
-            $payment_method->_add_relation_to($currency_obj, 'Currency');
-        }
+        EE_Error::doing_it_wrong(
+            'EE_Payment_Method_Manager::set_usable_currencies_on_payment_method',
+                esc_html__('We no longer define what currencies are usable by payment methods. Its not used nor efficient.', 'event_espresso'),
+            '4.9.40');
         return $payment_method;
     }
 
