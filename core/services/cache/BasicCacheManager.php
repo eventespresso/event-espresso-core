@@ -36,23 +36,16 @@ class BasicCacheManager implements CacheManagerInterface
      */
     private $cache_storage;
 
-    /**
-     * @var SessionIdentifierInterface $session
-     */
-    private $session;
-
 
 
     /**
      * BasicCacheManager constructor.
      *
      * @param CacheStorageInterface      $cache_storage [required]
-     * @param SessionIdentifierInterface $session
      */
-    public function __construct(CacheStorageInterface $cache_storage, SessionIdentifierInterface $session)
+    public function __construct(CacheStorageInterface $cache_storage)
     {
         $this->cache_storage = $cache_storage;
-        $this->session = $session;
     }
 
 
@@ -133,9 +126,7 @@ class BasicCacheManager implements CacheManagerInterface
      */
     private function generateCacheIdentifier($id_prefix, $cache_id)
     {
-        // let's make the cached content unique for this session
-        $cache_id .= $this->session->id();
-        // and for this "page"
+        // let's make the cached content unique for this "page"
         $cache_id .= filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
         // with these parameters
         $cache_id .= filter_input(INPUT_SERVER, 'QUERY_STRING', FILTER_SANITIZE_URL);
