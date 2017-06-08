@@ -23,6 +23,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * @package			Event Espresso
  * @subpackage
  * @author				Mike Nelson
+ * @deprecated in 4.9.40 because this model is basically not used and inefficient
  *
  * ------------------------------------------------------------------------
  */
