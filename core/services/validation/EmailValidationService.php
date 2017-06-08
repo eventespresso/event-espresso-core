@@ -2,7 +2,7 @@
 
 namespace EventEspresso\core\services\validation;
 
-use EE_Config;
+use EE_Registration_Config;
 use EventEspresso\core\domain\services\validation\EmailValidationException;
 use EventEspresso\core\domain\services\validation\EmailValidatorInterface;
 use EventEspresso\core\services\loaders\Loader;
@@ -24,9 +24,9 @@ class EmailValidationService implements EmailValidatorInterface
 {
 
     /**
-     * @var EE_Config $config
+     * @var EE_Registration_Config $registration_config
      */
-    protected $config;
+    protected $registration_config;
 
     /**
      * @var Loader $loader
@@ -39,12 +39,12 @@ class EmailValidationService implements EmailValidatorInterface
      * EmailValidationService constructor.
      * Accepts an \EE_Config as an argument.
      *
-     * @param EE_Config $config
+     * @param EE_Registration_Config $config
      * @param Loader    $loader
      */
-    public function __construct(EE_Config $config, Loader $loader)
+    public function __construct(EE_Registration_Config $config, Loader $loader)
     {
-        $this->config = $config;
+        $this->registration_config = $config;
         $this->loader = $loader;
     }
 
@@ -61,7 +61,7 @@ class EmailValidationService implements EmailValidatorInterface
     public function validate($email_address)
     {
         //pick the correct validator according to the config
-        switch ($this->config->registration->email_validation_level) {
+        switch ($this->registration_config->email_validation_level) {
             case 'basic':
                 $validator = $this->loader->getShared(
                     'EventEspresso\core\services\validation\strategies\Basic'

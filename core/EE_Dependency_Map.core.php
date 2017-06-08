@@ -526,8 +526,8 @@ class EE_Dependency_Map
                 'EventEspresso\core\services\cache\TransientCacheStorage' => EE_Dependency_Map::load_from_cache,
             ),
             'EventEspresso\core\services\validation\EmailValidationService' => array(
-                'EE_Config'                                  => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\loaders\Loader' => EE_Dependency_Map::load_from_cache,
+                'EE_Registration_Config'                                  => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\loaders\Loader'              => EE_Dependency_Map::load_from_cache,
             )
         );
     }
@@ -616,10 +616,12 @@ class EE_Dependency_Map
             'EE_Currency_Config'                   => function () {
                 return EE_Config::instance()->currency;
             },
+            'EE_Registration_Config'                   => function () {
+                return EE_Config::instance()->registration;
+            },
             'EventEspresso\core\services\loaders\Loader' => function () use (&$loader) {
                 return $loader;
             },
-            'EE_Config'                            => 'load_core'
         );
     }
 
