@@ -164,6 +164,14 @@ class EE_Dependency_Map
 
 
     /**
+     * assigns an array of class names and corresponding load sources (new or cached)
+     * to the class specified by the first parameter.
+     * IMPORTANT !!!
+     * The order of elements in the incoming $dependencies array MUST match
+     * the order of the constructor parameters for the class in question.
+     * This is especially important when overriding any existing dependencies aht are registered.
+     * the third parameter controls whether any duplicate dependencies are overwritten or not.
+     *
      * @param string $class
      * @param array  $dependencies
      * @param int    $overwrite
@@ -198,10 +206,16 @@ class EE_Dependency_Map
         // Union is way faster than array_merge() but should be used with caution...
         // especially with numerically indexed arrays
         $dependencies += self::$_instance->_dependency_map[ $class ];
-        // now we need to truncate
+        // now we need to ensure that the resulting dependencies
+        // array only has the entries that are required for the class
+        // so first count how many dependencies were originally registered for the class
         $dependency_count = count(self::$_instance->_dependency_map[ $class ]);
-        $dependency_count = $dependency_count ? $dependency_count : count($dependencies);
-        self::$_instance->_dependency_map[ $class ] = array_slice($dependencies, 0, $dependency_count);
+        // if that count is non-zero (meaning dependencies were already registered)
+        self::$_instance->_dependency_map[ $class ] = $dependency_count
+            // then truncate the  final array to match that count
+            ? array_slice($dependencies, 0, $dependency_count)
+            // otherwise just take the incoming array because nothing previously existed
+            : $dependencies;
         return $registered;
     }
 
@@ -211,10 +225,15 @@ class EE_Dependency_Map
      * @param string $class_name
      * @param string $loader
      * @return bool
-     * @throws EE_Error
+     * @throws DomainException
      */
     public static function register_class_loader($class_name, $loader = 'load_core')
     {
+        if (strpos($class_name, '\\') !== false) {
+            throw new DomainException(
+                esc_html__('Don\'t use class loaders for FQCNs.', 'event_espresso')
+            );
+        }
         // check that loader is callable or method starts with "load_" and exists in EE_Registry
         if (
             ! is_callable($loader)
@@ -223,9 +242,12 @@ class EE_Dependency_Map
                 || ! method_exists('EE_Registry', $loader)
             )
         ) {
-            throw new EE_Error(
+            throw new DomainException(
                 sprintf(
-                    esc_html__('"%1$s" is not a valid loader method on EE_Registry.', 'event_espresso'),
+                    esc_html__(
+                        '"%1$s" is not a valid loader method on EE_Registry.',
+                        'event_espresso'
+                    ),
                     $loader
                 )
             );
@@ -575,7 +597,6 @@ class EE_Dependency_Map
             ),
             'EventEspresso\core\services\cache\BasicCacheManager'                                                         => array(
                 'EventEspresso\core\services\cache\TransientCacheStorage' => EE_Dependency_Map::load_from_cache,
-                'EE_Session'                                              => EE_Dependency_Map::load_from_cache,
             ),
             'EventEspresso\core\services\cache\PostRelatedCacheManager'                                                   => array(
                 'EventEspresso\core\services\cache\TransientCacheStorage' => EE_Dependency_Map::load_from_cache,
