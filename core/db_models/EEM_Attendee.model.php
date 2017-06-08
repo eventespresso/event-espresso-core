@@ -1,4 +1,6 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) {
+<?php use EventEspresso\core\services\loaders\Loader;
+
+if ( ! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
 require_once(EE_MODELS . 'EEM_Base.model.php');
@@ -132,9 +134,12 @@ class EEM_Attendee extends EEM_CPT_Base
      *
      * @Constructor
      * @access protected
-     * @param null $timezone
+     * @param null   $timezone
+     * @param Loader $loader
+     * @throws EE_Error
+     * @throws \InvalidArgumentException
      */
-    protected function __construct($timezone = null)
+    protected function __construct($timezone = null, Loader $loader)
     {
         $this->singular_item = __('Attendee', 'event_espresso');
         $this->plural_item = __('Attendees', 'event_espresso');
@@ -183,7 +188,13 @@ class EEM_Attendee extends EEM_CPT_Base
                 'CNT_ISO'      => new EE_Foreign_Key_String_Field('CNT_ISO', __('Country', 'event_espresso'), true, '',
                     'Country'),
                 'ATT_zip'      => new EE_Plain_Text_Field('ATT_zip', __('ZIP/Postal Code', 'event_espresso'), true, ''),
-                'ATT_email'    => new EE_Email_Field('ATT_email', __('Email Address', 'event_espresso'), true, ''),
+                'ATT_email'    => new EE_Email_Field(
+                    'ATT_email',
+                    __('Email Address', 'event_espresso'),
+                    true,
+                    null,
+                    $loader
+                ),
                 'ATT_phone'    => new EE_Plain_Text_Field('ATT_phone', __('Phone', 'event_espresso'), true, ''),
             ),
         );
