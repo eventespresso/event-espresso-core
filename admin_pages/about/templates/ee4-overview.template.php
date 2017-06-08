@@ -21,6 +21,7 @@
 
 	<h2 class="about-headline-callout"><?php _e('Welcome to the Decaf (free) Version of Event Espresso 4!', 'event_espresso'); ?></h2>
 	<p>Manage your events from your WordPress dashboard. Reduce your admin, reduce your costs, make your life easier!</p>
+	<h2>Powering 40,000+ event websites; $100 million in ticket sales per year!</h2>
 	<p>Event Espresso is a <a href="http://eventespresso.com/?utm_source=wordpress_org&amp;utm_medium=link&amp;utm_campaign=plugin_description_tab&amp;utm_content=EE4+Decaf" rel="nofollow">WordPress event manager</a> which makes it easy for you to register attendees for classes, workshops, events, trainings, conferences or concerts, all from your WordPress website. Event Espresso events are created from the WordPress admin area. You can create signup forms to collect information about your attendees, accept payments, and create reports. The lite version of the plugin provides everything that you need to manage your event using WordPress.</p>
 	<div class="feature-section col three-col about-updates">
 		<div class="col-1">
@@ -76,7 +77,18 @@
 <hr>
 
 <div class="changelog about-event-espresso">
-	<h2 class="about-headline-callout"><?php _e('Espresso Arabica 2014, a child theme for events', 'event_espresso'); ?></h2>
+	<h2 class="about-headline-callout"><?php _e('People Like You Manage Event Registration with WordPress', 'event_espresso'); ?></h2>
+	<div class="feature-section col two-col">
+		<div class="grid_6">
+			<p>Trusted by thousands, Event Espresso is the best WordPress event online registration and ticketing manager plugin–and the best supported with full-time support. Turn your existing blog or website into a <strong>fully-featured event management website</strong> and a new way to make money. With Event Espresso you get it all; everything from custom registration forms and emails, seating limits, multiple price options and discount codes to printable tickets.</p>
+			<p>Event Espresso works perfectly for classes, workshops, fundraisers, sporting, trainings, conferences, networking, religion, social, non-profit, and nearly any other type of event.</p>
+		</div>
+			<div class="grid_6">
+			<p>Our online event registration software can <strong>make your organization more profitable and efficient</strong> by helping you save money on registration and ticketing fees, reduce the countless hours of time you spend manually processing registrations, create a “green” and paperless event registration process and you will be open for business to accept registrations and payment 24/7.</p>
+			<p>If you’re doing event registration and ticketing any other way then you’re wasting time and money. We offer packages and prices to fit any budget, so get started with your own online event registration and ticketing management system today.</p>
+		</div>
+	</div>
+
 	<div class="feature-section col one-col">
 		<div>
 			<h3><?php _e('Turn your blog into a complete event registration and management system', 'event_espresso'); ?></h3>

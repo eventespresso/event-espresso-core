@@ -102,6 +102,21 @@ div.TB-ee-frame a {
 	width: 80%;
 }
 
+.feature-section.col.three-col.about-updates > div {
+	float: left;
+	margin: 20px;
+	width: 300px;
+}
+
+.feature-section.col.two-col > div {
+	float: left;
+	margin: 20px;
+	width: 400px;
+}
+
+.about-wrap .feature-section {
+	padding-bottom: 0;
+}
 
 /******************* DASHICONS ****************** */
 
