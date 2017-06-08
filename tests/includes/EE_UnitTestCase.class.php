@@ -70,9 +70,18 @@ class EE_UnitTestCase extends WP_UnitTestCase
      *
      * @throws \EE_Error
      */
-    // public static function setUpBeforeClass() {
-    // 	parent::setUpBeforeClass();
-    // 	echo "\n\n" . get_called_class() . "\n";
+    public static function setUpBeforeClass() {
+    	parent::setUpBeforeClass();
+    	// echo "\n\n" . get_called_class() . "\n";
+        \EventEspresso\core\services\Benchmark::measureMemory(get_called_class(), true);
+    }
+
+
+
+    // public static function tearDownAfterClass()
+    // {
+    //     parent::tearDownAfterClass();
+    //     \EventEspresso\core\services\Benchmark::measureMemory(get_called_class(), true);
     // }
 
 
