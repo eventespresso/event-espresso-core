@@ -499,7 +499,6 @@ class DisplayTicketSelector
         EE_System::do_not_cache();
         $extra_params = $this->iframe ? ' target="_blank"' : '';
         $html = '<form method="POST" action="' . $checkout_url . '"' . $extra_params . '>';
-        $html .= wp_nonce_field( 'process_ticket_selections', 'process_ticket_selections_nonce_' . $ID, true, false );
         $html .= '<input type="hidden" name="ee" value="process_ticket_selections">';
         $html = apply_filters( 'FHEE__EE_Ticket_Selector__ticket_selector_form_open__html', $html, $this->event );
         return $html;
