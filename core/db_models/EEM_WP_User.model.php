@@ -1,4 +1,6 @@
-<?php if (! defined('EVENT_ESPRESSO_VERSION')) {
+<?php use EventEspresso\core\services\loaders\Loader;
+
+if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
 
@@ -27,10 +29,12 @@ class EEM_WP_User extends EEM_Base
     /**
      *    constructor
      *
-     * @param null $timezone
-     * @throws \EE_Error
+     * @param null   $timezone
+     * @param Loader $loader
+     * @throws EE_Error
+     * @throws \InvalidArgumentException
      */
-    protected function __construct($timezone = null)
+    protected function __construct($timezone = null, Loader $loader)
     {
         $this->singular_item = __('WP_User', 'event_espresso');
         $this->plural_item = __('WP_Users', 'event_espresso');
@@ -62,7 +66,9 @@ class EEM_WP_User extends EEM_Base
                 'user_email'          => new EE_Email_Field(
                     'user_email',
                     __('User Email', 'event_espresso'),
-                    false
+                    false,
+                    null,
+                    $loader
                 ),
                 'user_registered'     => new EE_Datetime_Field(
                     'user_registered',
@@ -114,6 +120,7 @@ class EEM_WP_User extends EEM_Base
         }
         //@todo: account for create_users controls whether they can create users at all
         parent::__construct($timezone);
+        $this->loader = $loader;
     }
 
 
