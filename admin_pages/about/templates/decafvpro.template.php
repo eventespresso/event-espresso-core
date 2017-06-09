@@ -1,44 +1,45 @@
-<h2 style="text-align: left;">Who uses Event Espresso?</h2>
-<p>Event Espresso is used by over 40,000 event organizers across the world. They host <a href="https://eventespresso.com/use-cases/conference-registration/?utm_source=wordpress_org&amp;utm_medium=link&amp;utm_campaign=decaf_about_page&amp;utm_content=Decaf+vs+Regular">conferences</a>, <a href="https://eventespresso.com/use-cases/paint-wine-party-ticketing-software/?utm_source=wordpress_org&amp;utm_medium=link&amp;utm_campaign=decaf_about_page&amp;utm_content=Decaf+vs+Regular">art classes</a>, training courses, concerts, fundraisers, workshops, <a href="https://eventespresso.com/use-cases/film-festival-ticketing-software/?utm_source=wordpress_org&amp;utm_medium=link&amp;utm_campaign=decaf_about_page&amp;utm_content=Decaf+vs+Regular">film festivals</a>, and more.</p>
-<p>We offer a free version of Event Espresso 4 called Decaf which is a good fit for basic events. Need more features like custom registration forms and advanced email notifications? <a href="https://eventespresso.com/pricing/?ee_ver=ee4&utm_source=wordpress_org&amp;utm_medium=link&amp;utm_campaign=decaf_about_page&amp;utm_content=Decaf+vs+Regular">Check out Event Espresso 4</a>.<br>
+<h2 style="text-align: left;"><?php esc_html_e( 'Who uses Event Espresso?', 'event_espresso'); ?></h2>
+<p><?php echo sprintf( esc_html__('Event Espresso is used by over 40,000 event organizers across the world. They host %sconferences%s, %sart classes%s, training courses, concerts, fundraisers, workshops, %sfilm festivals%s, and more.', 'event_espresso'), '<a href="https://eventespresso.com/use-cases/conference-registration/?utm_source=wordpress_org&amp;utm_medium=link&amp;utm_campaign=decaf_about_page&amp;utm_content=Decaf+vs+Regular">', '</a>', '<a href="https://eventespresso.com/use-cases/paint-wine-party-ticketing-software/?utm_source=wordpress_org&amp;utm_medium=link&amp;utm_campaign=decaf_about_page&amp;utm_content=Decaf+vs+Regular">', '</a>','<a href="https://eventespresso.com/use-cases/film-festival-ticketing-software/?utm_source=wordpress_org&amp;utm_medium=link&amp;utm_campaign=decaf_about_page&amp;utm_content=Decaf+vs+Regular">','</a>');?></p>
+<p><?php echo sprintf( esc_html__('We offer a free version of Event Espresso 4 called Decaf which is a good fit for basic events. Need more features like custom registration forms and advanced email notifications? %sCheck out Event Espresso 4%s.', 'event_espresso'),'<a href="https://eventespresso.com/pricing/?ee_ver=ee4&utm_source=wordpress_org&amp;utm_medium=link&amp;utm_campaign=decaf_about_page&amp;utm_content=Decaf+vs+Regular">','</a>');?><br>
 <?php
+
 /**
  * Features
  */
 
 $features = array(
 	'slider-options' => array(
-		'label'   	=> __( 'Handle multiple dates and pricing options', 'brilliance' ),
+		'label'   	=> esc_html__( 'Handle multiple dates and pricing options', 'event_espresso' ),
 		'decaf'     	=> '<span class="dashicons dashicons-no-alt"></span>',
 		'regular'	=> '<span class="dashicons dashicons-yes"></span></i>'
 	),
 	'woocommerce' => array(
-		'label'  	=> __( 'Create custom registration forms', 'brilliance' ),
+		'label'  	=> esc_html__( 'Create custom registration forms', 'event_espresso' ),
 		'decaf'     	=> '<span class="dashicons dashicons-no-alt"></span>',
 		'regular' 	=> '<span class="dashicons dashicons-yes"></span></i>'
 	),
 	'reorder-sections' => array(
-		'label'       => __( 'Customize advanced email notifications', 'brilliance' ),
+		'label'       => esc_html__( 'Customize advanced email notifications', 'event_espresso' ),
 		'decaf'     => '<span class="dashicons dashicons-no-alt"></span>',
 		'regular' => '<span class="dashicons dashicons-yes"></span></i>'
 	),
 	'custom-colors'    => array(
-		'label'       => __( 'Manage taxes', 'brilliance' ),
+		'label'       => esc_html__( 'Manage taxes', 'event_espresso' ),
 		'decaf'     => '<span class="dashicons dashicons-no-alt"></span>',
 		'regular' => '<span class="dashicons dashicons-yes"></span></i>'
 	),
 	'typography'       => array(
-		'label'       => __( 'Accept additional payment options', 'brilliance' ),
+		'label'       => esc_html__( 'Accept additional payment options', 'event_espresso' ),
 		'decaf'     => '<span class="dashicons dashicons-no-alt"></span>',
 		'regular' => '<span class="dashicons dashicons-yes"></span></i>'
 	),
 	'dedicated-support' => array(
-		'label'       => __( 'Compatibility with add-ons', 'brilliance' ),
+		'label'       => esc_html__( 'Compatibility with add-ons', 'event_espresso' ),
 		'decaf'     => '<span class="dashicons dashicons-no-alt"></span>',
 		'regular' => '<span class="dashicons dashicons-yes"></span></i>'
 	),
 	'security-updates' => array(
-		'label'       => __( 'Best in class support', 'brilliance' ),
+		'label'       => esc_html__( 'Best in class support', 'event_espresso' ),
 		'decaf'     => '<span class="dashicons dashicons-no-alt"></span>',
 		'regular' => '<span class="dashicons dashicons-yes"></span></i>'
 	),
@@ -49,8 +50,8 @@ $features = array(
         <thead>
         <tr>
             <th></th>
-            <th><?php _e( 'Decaf', 'brilliance' ) ?></th>
-            <th><?php _e( 'Regular', 'brilliance' ) ?></th>
+            <th><?php esc_html_e( 'Decaf', 'event_espresso' ) ?></th>
+            <th><?php esc_html_e( 'Regular', 'event_espresso' ) ?></th>
         </tr>
         </thead>
         <tbody>
@@ -72,7 +73,7 @@ $features = array(
         <tr>
             <td></td>
             <td colspan="2" class="text-right"><a href="https://eventespresso.com/pricing/?utm_source=wordpress_org&amp;utm_medium=link&amp;utm_campaign=decaf_about_page&amp;utm_content=Decaf+vs+Regular" target="_blank"
-                               class="button button-primary button-hero"><span class="dashicons dashicons-cart"></span><?php _e( 'Upgrade Now!', 'event_espresso' ) ?></a></td>
+                               class="button button-primary button-hero"><span class="dashicons dashicons-cart"></span><?php esc_html_e( 'Upgrade Now!', 'event_espresso' ) ?></a></td>
         </tr>
         </tbody>
     </table>

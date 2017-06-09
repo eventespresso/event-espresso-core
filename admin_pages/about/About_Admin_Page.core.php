@@ -20,7 +20,7 @@ class About_Admin_Page extends EE_Admin_Page {
 
 	protected function _init_page_props() {
 		$this->page_slug = EE_ABOUT_PG_SLUG;
-		$this->page_label = __('About Event Espresso', 'event_espresso');
+		$this->page_label = esc_html__('About Event Espresso', 'event_espresso');
 		$this->_admin_base_url = EE_ABOUT_ADMIN_URL;
 		$this->_admin_base_path = EE_ABOUT_ADMIN;
 	}
@@ -74,19 +74,19 @@ class About_Admin_Page extends EE_Admin_Page {
 			//'overview' => array(
 			'default' => array(
 				'nav' => array(
-					'label' => __('About', 'event_espresso'),
+					'label' => esc_html__('About', 'event_espresso'),
 					'order' => 20),
 				'require_nonce' => FALSE
 				),
 			'credits' => array(
 				'nav' => array(
-					'label' => __('Credits', 'event_espresso'),
+					'label' => esc_html__('Credits', 'event_espresso'),
 					'order' => 30),
 				'require_nonce' => FALSE
 				),
 			'decafvpro' => array(
 				'nav' => array(
-					'label' => __('Decaf vs Regular', 'event_espresso'),
+					'label' => esc_html__('Decaf vs Regular', 'event_espresso'),
 					'order' => 40),
 				'require_nonce' => FALSE
 				),
@@ -127,9 +127,9 @@ class About_Admin_Page extends EE_Admin_Page {
 		//Copied from _whats_new()
 		$steps = EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance ? $this->_get_started_steps() : FALSE;
 		$steps = $steps !== FALSE ? $steps : '';
-		$this->_admin_page_title = sprintf( __('Welcome to Event Espresso %s', 'event_espresso'), EVENT_ESPRESSO_VERSION );
+		$this->_admin_page_title = sprintf( esc_html__('Welcome to Event Espresso %s', 'event_espresso'), EVENT_ESPRESSO_VERSION );
 		$settings_message = $steps;
-		$this->_template_args['admin_page_subtitle'] = __('Thank you for choosing Event Espresso, the most powerful, and free, Event Management plugin for WordPress.', 'event_espresso' ) . $settings_message;
+		$this->_template_args['admin_page_subtitle'] = esc_html__('Thank you for choosing Event Espresso, the most powerful, and free, Event Management plugin for WordPress.', 'event_espresso' ) . $settings_message;
 		$template = EE_ABOUT_TEMPLATE_PATH . 'ee4-overview.template.php';
 		$this->_template_args['about_admin_page_content'] = EEH_Template::display_template( $template, $this->_template_args, TRUE );
 		$this->display_about_admin_page();
@@ -138,10 +138,10 @@ class About_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _get_started_steps() {
-		$steps = '<h2>'.__('Getting Started').'</h2>';
-		$step_one = '<p>'.sprintf( __('%sStep 1%s: Visit your %sOrganization Settings%s and add/update your details.', 'event_espresso'), '<strong>', '</strong>', '<a href="admin.php?page=espresso_general_settings">', '</a>') .'</strong></p>';
-		$step_two = '<p>'.sprintf( __('%sStep 2%s: Setup your %sPayment Methods%s.', 'event_espresso'), '<strong>', '</strong>', '<a href="admin.php?page=espresso_payment_settings">', '</a>') .'</strong></p>';
-		$step_three = '<p>'.sprintf( __('%sStep 3%s: Create your %sFirst Event%s.', 'event_espresso'), '<strong>', '</strong>', '<a href="admin.php?page=espresso_events&action=create_new">', '</a>') .'</strong></p>';
+		$steps = '<h2>'.esc_html__('Getting Started').'</h2>';
+		$step_one = '<p>'.sprintf( esc_html__('%sStep 1%s: Visit your %sOrganization Settings%s and add/update your details.', 'event_espresso'), '<strong>', '</strong>', '<a href="admin.php?page=espresso_general_settings">', '</a>') .'</strong></p>';
+		$step_two = '<p>'.sprintf( esc_html__('%sStep 2%s: Setup your %sPayment Methods%s.', 'event_espresso'), '<strong>', '</strong>', '<a href="admin.php?page=espresso_payment_settings">', '</a>') .'</strong></p>';
+		$step_three = '<p>'.sprintf( esc_html__('%sStep 3%s: Create your %sFirst Event%s.', 'event_espresso'), '<strong>', '</strong>', '<a href="admin.php?page=espresso_events&action=create_new">', '</a>') .'</strong></p>';
 
 		//done?
 		$done_step_one = EE_Registry::instance()->CFG->organization->address_1 == '123 Onna Road' ? FALSE : TRUE;
