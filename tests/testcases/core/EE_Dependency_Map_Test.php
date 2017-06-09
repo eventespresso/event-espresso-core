@@ -126,7 +126,7 @@ class EE_Dependency_Map_Test extends EE_UnitTestCase {
 
 		$this->setExpectedException(
 			'DomainException',
-			'"dummy_loader" is not a valid loader method on EE_Registry.'
+            esc_html__('"dummy_loader" is not a valid loader method on EE_Registry.', 'event_espresso')
 		);
         EE_Dependency_Map::register_class_loader( 'Dummy_Class', 'dummy_loader' );
 	}
