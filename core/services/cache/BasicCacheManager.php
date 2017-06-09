@@ -24,12 +24,6 @@ class BasicCacheManager implements CacheManagerInterface
      */
     const CACHE_PREFIX = 'ee_cache_';
 
-    /**
-     * set to true to monitor when content is being served from cache or not
-     *
-     * @type boolean
-     */
-    const DEBUG = false;
 
     /**
      * @var CacheStorageInterface $cache_storage
@@ -103,12 +97,12 @@ class BasicCacheManager implements CacheManagerInterface
             // save the new content if caching is enabled
             if ($expiration) {
                 $this->cache_storage->add($cache_id, $content, $expiration);
-                if (BasicCacheManager::DEBUG || WP_DEBUG) {
+                if (EE_DEBUG) {
                     $content .= $this->displayCacheNotice($cache_id, 'REFRESH CACHE');
                 }
             }
         } else {
-            if (BasicCacheManager::DEBUG || WP_DEBUG) {
+            if (EE_DEBUG) {
                 $content .= $this->displayCacheNotice($cache_id, 'CACHED CONTENT');
             }
         }
