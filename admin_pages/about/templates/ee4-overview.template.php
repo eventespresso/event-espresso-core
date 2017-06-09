@@ -105,7 +105,7 @@
 <hr>
 
 <h3><?php _e('Pick a theme, any theme', 'event_espresso'); ?></h3>
-	<p><?php  _e('We’ve made it super easy to integrate Event Espresso with almost any properly coded WordPress theme, including many of the thousands of themes available on WordPress.org.', 'event_espresso'); ?></p>
+	<p><?php  _e('We’ve made it super easy to integrate Event Espresso with almost any properly coded WordPress theme, including many of the thousands of themes available on WordPress.org. The image below shows the same Event Espresso ticketing page across three diffrent WordPress themes.', 'event_espresso'); ?></p>
 	<p><img class="about-overview-img" src="<?php echo EE_GLOBAL_ASSETS_URL; ?>images/screenshots/multiple-themes.jpg" /></p>
 <hr>
 
