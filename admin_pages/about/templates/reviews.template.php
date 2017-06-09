@@ -55,20 +55,6 @@
 	<hr />
 	<div class="feature-section col three-col about-updates">
 		<div class="col-1">
-			<h2><a href="https://wordpress.org/support/topic/event-espresso-2/">5 stars!</a></h2>	
-			<div class="wporg-ratings" title="5 out of 5 stars" style="color:#ffb900;"><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span></div>
-			<ul>
-				<li class="review-body">
-					<div class="even topic type-topic status-publish hentry">
-						<div class="review-topic-content">
-							<p>Event Espresso is very thoughtfully-designed software. There is continual development and improvement. New and enhanced features and capabilities have been added since we installed the 4.0 software a few years ago. The base software is expandable with many types of add-ons and, because EE offers the option to purchase add-ons individually, if only a few add-ons are needed, the software package remains very affordable for a non-profit organization. Of particular importance to me and my clients: EE has a super helpful and quick-to-respond support team. We have had a very good experience working with this software and support people.</p>	
-							<p class="review-user-nicename"><a href="https://wordpress.org/support/users/gtaffet/" title="View gtaffet's profile" class="bbp-author-name" rel="nofollow">gtaffet</a></p>					
-						</div><!-- .review-topic-content -->
-					</div>
-				</li><!-- .review-body -->
-			</ul>
-		</div>
-		<div class="col-2">
 			<h2><a href="https://wordpress.org/support/topic/great-for-educational-course-management/">Great for Educational Course Management</a></h2>	
 			<div class="wporg-ratings" title="5 out of 5 stars" style="color:#ffb900;"><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span></div>
 			<ul>
@@ -82,7 +68,7 @@
 				</li><!-- .review-body -->
 			</ul>
 		</div>
-		<div class="col-3 last-feature">
+		<div class="col-2">		
 			<h2><a href="https://wordpress.org/support/topic/awesome-plugin-speedy-support/">Awesome plugin, speedy support!</a></h2>	
 			<div class="wporg-ratings" title="5 out of 5 stars" style="color:#ffb900;"><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span></div>
 			<ul>
@@ -91,6 +77,20 @@
 						<div class="review-topic-content">
 							<p>We use Event Espresso with another plugin for our annual science meeting. We needed information regarding how to use registration information from EE to connect members account information to an abstract submission plugin. Each request for information was answered rapidly – the fastest response I have ever received from a plugin developer! Thanks!</p>		
 							<p class="review-user-nicename"><a href="https://wordpress.org/support/users/lumins/" title="View lumins's profile" class="bbp-author-name" rel="nofollow">lumins</a></p>
+						</div><!-- .review-topic-content -->
+					</div>
+				</li><!-- .review-body -->
+			</ul>
+		</div>
+		<div class="col-3 last-feature">
+			<h2><a href="https://wordpress.org/support/topic/there-is-only-1-event-registration-plugin/">There is only 1 Event Registration Plugin!</a></h2>	
+			<div class="wporg-ratings" title="5 out of 5 stars" style="color:#ffb900;"><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span></div>
+			<ul>
+				<li class="review-body">
+					<div class="even topic type-topic status-publish hentry">
+						<div class="review-topic-content">
+							<p>After using Event Espresso for several years, this is still the best event registration plugin around to date. The team at Event Espresso continue to be amazing, and I look forward to their next set of enhancements this year!</p>	
+							<p class="review-user-nicename"><a href="https://wordpress.org/support/users/10bradders10/" title="View 10bradders10's profile" class="bbp-author-name" rel="nofollow">10bradders10</a></p>					
 						</div><!-- .review-topic-content -->
 					</div>
 				</li><!-- .review-body -->
