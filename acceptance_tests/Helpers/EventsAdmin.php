@@ -50,10 +50,10 @@ trait EventsAdmin
 
 
     /**
-     * Navigates the user to the single event page (frontend view) for the given event title via clicking the "View" link
-     * for the event in the event list table.
-     *
+     * Navigates the user to the single event page (frontend view) for the given event title via clicking the "View"
+     * link for the event in the event list table.
      * Assumes the actor is already logged in and on the Event list table page.
+     *
      * @param string $event_title
      */
     public function amOnEventPageAfterClickingViewLinkInListTableForEvent($event_title)
@@ -63,12 +63,35 @@ trait EventsAdmin
     }
 
 
-
+    /**
+     * Use to change the default registration status for the event.
+     * Assumes the view is already on the event editor.
+     * @param $registration_status
+     */
     public function changeDefaultRegistrationStatusTo($registration_status)
     {
         $this->actor()->selectOption(
             EventsPage::EVENT_EDITOR_DEFAULT_REGISTRATION_STATUS_FIELD_SELECTOR,
             $registration_status
+        );
+    }
+
+
+    /**
+     * Use this from the context of the event editor to select the given custom template for a given message type and
+     * messenger.
+     *
+     * @param string $message_type_label  The visible label for the message type (eg Registration Approved)
+     * @param string $messenger_slug      The slug for the messenger (eg 'email')
+     * @param string $custom_template_label The visible label in the select input for the custom template you want
+     *                                      selected.
+     */
+    public function selectCustomTemplateFor($message_type_label, $messenger_slug, $custom_template_label)
+    {
+        $this->actor()->click(EventsPage::eventEditorNotificationsMetaBoxMessengerTabSelector($messenger_slug));
+        $this->actor()->selectOption(
+            EventsPage::eventEditorNotificationsMetaBoxSelectSelectorForMessageType($message_type_label),
+            $custom_template_label
         );
     }
 }
