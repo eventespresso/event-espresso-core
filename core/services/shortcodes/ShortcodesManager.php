@@ -3,7 +3,6 @@ namespace EventEspresso\core\services\shortcodes;
 
 use DomainException;
 use EventEspresso\core\domain\EnqueueAssetsInterface;
-// use EventEspresso\core\domain\SetHooksInterface;
 use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
 use EventEspresso\core\exceptions\InvalidClassException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
@@ -60,9 +59,10 @@ class ShortcodesManager
         );
         //  call add_shortcode() for all installed shortcodes
         add_action('AHEE__EE_System__core_loaded_and_ready', array($this, 'addShortcodes'));
-        // check content for shortcodes, the old way, and the more efficient new way
+        // check content for shortcodes the old way
         add_action('parse_query', array($this->legacy_shortcodes_manager, 'initializeShortcodes'), 5);
-        add_action('get_header', array($this, 'getHeader'));
+        // check content for shortcodes the NEW more efficient way
+        add_action('wp_head', array($this, 'wpHead'), 0);
     }
 
 
@@ -107,7 +107,7 @@ class ShortcodesManager
                 array('EventEspresso\core\domain\entities\shortcodes'),
                 // filepaths to classes to add
                 array(),
-                // filemask to use if parsing folder for files to add
+                // file mask to use if parsing folder for files to add
                 '',
                 // what to use as identifier for collection entities
                 // using CLASS NAME prevents duplicates (works like a singleton)
@@ -184,13 +184,13 @@ class ShortcodesManager
 
 
     /**
-     * callback for the WP "get_header" hook point
+     * callback for the "wp_head" hook point
      * checks posts for EE shortcodes, and initializes them,
      * then toggles filter switch that loads core default assets
      *
      * @return void
      */
-    public function getHeader()
+    public function wpHead()
     {
         global $wp_query;
         if (empty($wp_query->posts)) {

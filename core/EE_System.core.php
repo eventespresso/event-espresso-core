@@ -953,6 +953,7 @@ final class EE_System
      */
     public function core_loaded_and_ready()
     {
+        $this->registry->load_core('Session');
         do_action('AHEE__EE_System__core_loaded_and_ready');
         // load_espresso_template_tags
         if (is_readable(EE_PUBLIC . 'template_tags.php')) {
