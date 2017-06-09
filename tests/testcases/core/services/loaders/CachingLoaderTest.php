@@ -92,6 +92,7 @@ class CachingLoaderTest extends EE_UnitTestCase
         add_filter('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache', '__return_false', 10);
         $new_object = self::$loader->load($this->getFqcnForTest());
         $this->assertEquals($object_hash, spl_object_hash($new_object));
+        remove_all_filters('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache');
     }
 
 
@@ -124,5 +125,9 @@ class CachingLoaderTest extends EE_UnitTestCase
         $this->assertNotEquals(spl_object_hash($object7), spl_object_hash(self::$loader->load($fqcn7)));
         $this->assertNotEquals(spl_object_hash($object8), spl_object_hash(self::$loader->load($fqcn8)));
         $this->assertNotEquals(spl_object_hash($object9), spl_object_hash(self::$loader->load($fqcn9)));
+        remove_all_filters('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache');
     }
+
 }
+// Location: testcases/core/services/loaders/CachingLoaderTest.php
+

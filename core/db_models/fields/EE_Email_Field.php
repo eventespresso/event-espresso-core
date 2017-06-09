@@ -14,16 +14,27 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  */
 class EE_Email_Field extends EE_Text_Field_Base
 {
+
+    /**
+     * @var Loader $loader
+     */
+    private $loader;
+
+
+
     /**
      * @param string $table_column
-     * @param string $nicename
+     * @param string $nice_name
      * @param bool   $nullable
      * @param null   $default_value
+     * @param Loader $loader
+     * @throws InvalidArgumentException
      */
-    public function __construct($table_column, $nicename, $nullable, $default_value = null)
+    public function __construct($table_column, $nice_name, $nullable, $default_value = null, Loader $loader)
     {
-        parent::__construct($table_column, $nicename, $nullable, $default_value);
+        parent::__construct($table_column, $nice_name, $nullable, $default_value);
         $this->setSchemaFormat('email');
+        $this->loader = $loader;
     }
 
 
@@ -40,8 +51,7 @@ class EE_Email_Field extends EE_Text_Field_Base
      */
     public function prepare_for_set($email_address)
     {
-        $loader = new Loader();
-        $validation_service = $loader->getShared(
+        $validation_service = $this->loader->getShared(
             'EventEspresso\core\domain\services\validation\EmailValidatorInterface'
         );
         try {

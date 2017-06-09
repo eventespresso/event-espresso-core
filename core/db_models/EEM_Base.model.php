@@ -1,6 +1,5 @@
 <?php
-
-
+use EventEspresso\core\services\loaders\Loader;
 
 /**
  * Class EEM_Base
@@ -407,6 +406,12 @@ abstract class EEM_Base extends EE_Base
     protected $_entity_map;
 
     /**
+     * @var Loader $loader
+     */
+    private static $loader;
+
+
+    /**
      * constant used to show EEM_Base has not yet verified the db on this http request
      */
     const db_verified_none = 0;
@@ -526,7 +531,7 @@ abstract class EEM_Base extends EE_Base
          *
          * @var EE_Table_Base[] $_tables
          */
-        $this->_tables = apply_filters('FHEE__' . get_class($this) . '__construct__tables', $this->_tables);
+        $this->_tables = (array)apply_filters('FHEE__' . get_class($this) . '__construct__tables', $this->_tables);
         foreach ($this->_tables as $table_alias => $table_obj) {
             /** @var $table_obj EE_Table_Base */
             $table_obj->_construct_finalize_with_alias($table_alias);
@@ -541,7 +546,7 @@ abstract class EEM_Base extends EE_Base
          *
          * @param EE_Model_Field_Base[] $_fields
          */
-        $this->_fields = apply_filters('FHEE__' . get_class($this) . '__construct__fields', $this->_fields);
+        $this->_fields = (array)apply_filters('FHEE__' . get_class($this) . '__construct__fields', $this->_fields);
         $this->_invalidate_field_caches();
         foreach ($this->_fields as $table_alias => $fields_for_table) {
             if (! array_key_exists($table_alias, $this->_tables)) {
@@ -572,7 +577,7 @@ abstract class EEM_Base extends EE_Base
          *
          * @param EE_Model_Relation_Base[] $_model_relations
          */
-        $this->_model_relations = apply_filters('FHEE__' . get_class($this) . '__construct__model_relations',
+        $this->_model_relations = (array)apply_filters('FHEE__' . get_class($this) . '__construct__model_relations',
             $this->_model_relations);
         foreach ($this->_model_relations as $model_name => $relation_obj) {
             /** @var $relation_obj EE_Model_Relation_Base */
@@ -679,7 +684,7 @@ abstract class EEM_Base extends EE_Base
         // check if instance of Espresso_model already exists
         if (! static::$_instance instanceof static) {
             // instantiate Espresso_model
-            static::$_instance = new static($timezone);
+            static::$_instance = new static($timezone, self::getLoader());
         }
         //we might have a timezone set, let set_timezone decide what to do with it
         static::$_instance->set_timezone($timezone);
@@ -714,13 +719,21 @@ abstract class EEM_Base extends EE_Base
             }
             //and then directly call its constructor again, like we would if we
             //were creating a new one
-            static::$_instance->__construct($timezone);
+            static::$_instance->__construct($timezone, self::getLoader());
             return self::instance();
         }
         return null;
     }
 
 
+
+    private static function getLoader()
+    {
+        if(! self::$loader instanceof Loader) {
+            self::$loader = new Loader();
+        }
+        return self::$loader;
+    }
 
     /**
      * retrieve the status details from esp_status table as an array IF this model has the status table as a relation.

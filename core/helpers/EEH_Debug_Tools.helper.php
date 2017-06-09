@@ -420,7 +420,7 @@ class EEH_Debug_Tools
     protected static function heading($var_name = '', $heading_tag = 'h5', $margin = '')
     {
         if (defined('EE_TESTS_DIR')) {
-            return "\n\n{$var_name}";
+            return "\n{$var_name}";
         }
         $margin = "25px 0 0 {$margin}";
         return '<' . $heading_tag . ' style="color:#2EA2CC; margin:' . $margin . ';"><b>' . $var_name . '</b>';
@@ -463,8 +463,11 @@ class EEH_Debug_Tools
      */
     protected static function file_and_line($file, $line)
     {
+        if($file === '') {
+            return '';
+        }
         if (defined('EE_TESTS_DIR')) {
-            return "\n (" . $file . ' line no: ' . $line . ' ) ';
+            return "\n\t(" . $file . ' line no: ' . $line . ' ) ';
         }
         return '<br /><span style="font-size:9px;font-weight:normal;color:#666;line-height: 12px;">'
                . $file
@@ -517,8 +520,8 @@ class EEH_Debug_Tools
     public static function printr(
         $var,
         $var_name = '',
-        $file = __FILE__,
-        $line = __LINE__,
+        $file = '',
+        $line = 0,
         $heading_tag = 5,
         $die = false
     ) {
