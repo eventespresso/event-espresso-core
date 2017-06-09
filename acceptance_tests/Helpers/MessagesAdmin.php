@@ -95,7 +95,8 @@ trait MessagesAdmin
             $message_status,
             $messenger,
             $context,
-            $text_to_check_for
+            $text_to_check_for,
+            0
         ));
         $actual_count = count($elements);
         $this->actor()->assertEquals(
