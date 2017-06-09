@@ -426,7 +426,7 @@ class EE_Messages_Generator
         $count_of_message_template_groups = EEM_Message_Template_Group::instance()->count(
             array(
                 array(
-                    'EVT_ID'           => array('IN', $event_ids),
+                    'Event.EVT_ID'           => array('IN', $event_ids),
                     'MTP_messenger'    => $this->_current_messenger->name,
                     'MTP_message_type' => $this->_current_message_type->name,
                 ),
@@ -453,7 +453,7 @@ class EE_Messages_Generator
             $message_template_group = EEM_Message_Template_Group::instance()->get_one(
                 array(
                     array(
-                        'EVT_ID'           => array('IN', $event_ids),
+                        'Event.EVT_ID'           => array('IN', $event_ids),
                         'MTP_messenger'    => $this->_current_messenger->name,
                         'MTP_message_type' => $this->_current_message_type->name,
                         'MTP_is_active'    => true,
