@@ -89,15 +89,16 @@
 		</div>
 	</div>
 
-	<div class="feature-section col one-col">
+	<div class="feature-section col two-col">
 		<div>
 			<h3><?php _e('Turn your blog into a complete event registration and management system', 'event_espresso'); ?></h3>
 			<p><?php _e('Create a beautiful event page with ticket selection, venue details, and an integrated single page checkout system. With WordPress, Event Espresso, and Espresso Arabica 2014 (based on the "Twenty Fourteen" theme by WordPress), your events will certainly sell out faster than ever!', 'event_espresso'); ?></p>
 			<p><?php _e('With a striking design that does not compromise the simplicity of WordPress and Event Espresso 4, Espresso Arabica 2014 will be the best event theme on the market.', 'event_espresso'); ?></p>
 			<p><?php echo sprintf( __('%sLearn more >>%s', 'event_espresso'), '<a href="http://eventespresso.com/wiki/setup-event-espresso-arabica-theme/">', '</a>' ); ?></p>
 		</div>
+		<div><img src="<?php echo EE_GLOBAL_ASSETS_URL; ?>images/screenshots/single-event-page.jpg"></div>
 	</div>
-	<img src="<?php echo EE_GLOBAL_ASSETS_URL; ?>images/screenshots/single-event-page.jpg">
+	
 
 
 </div>
