@@ -164,12 +164,12 @@ class EE_Dependency_Map
 
 
     /**
-     * assigns an array of class names and corresponding load sources (new or cached)
+     * Assigns an array of class names and corresponding load sources (new or cached)
      * to the class specified by the first parameter.
      * IMPORTANT !!!
      * The order of elements in the incoming $dependencies array MUST match
      * the order of the constructor parameters for the class in question.
-     * This is especially important when overriding any existing dependencies aht are registered.
+     * This is especially important when overriding any existing dependencies that are registered.
      * the third parameter controls whether any duplicate dependencies are overwritten or not.
      *
      * @param string $class
