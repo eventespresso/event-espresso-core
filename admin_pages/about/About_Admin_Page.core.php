@@ -185,7 +185,7 @@ class About_Admin_Page extends EE_Admin_Page {
 
 	protected function _decafvpro() {
 		$this->_template_args['admin_page_title'] = sprintf( __('Welcome to Event Espresso %s', 'event_espresso'), EVENT_ESPRESSO_VERSION );
-		$this->_template_args['admin_page_subtitle'] = __('Thank you for choosing Event Espresso Decaf, the most powerful, and free, Event Management plugin for WordPress.', 'event_espresso');
+		$this->_template_args['admin_page_subtitle'] = sprintf(__('Event Espresso lets you focus on doing %swhat you love%s — %sorganizing your events%s', 'event_espresso'), '<em>', '</em>', '<strong>', '</strong>');
 		$template = EE_ABOUT_TEMPLATE_PATH . 'decafvpro.template.php';
 		$this->_template_args['about_admin_page_content'] = EEH_Template::display_template( $template, $this->_template_args, TRUE );
 		$this->display_about_admin_page();
