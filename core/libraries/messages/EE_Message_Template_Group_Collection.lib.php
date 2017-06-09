@@ -96,7 +96,8 @@ class EE_Message_Template_Group_Collection extends EE_Object_Collection
      */
     public function getKey($messenger, $message_type, array $EVT_ID = array())
     {
-        $EVT_ID = implode(',', sort($EVT_ID));
+        sort($EVT_ID);
+        $EVT_ID = implode(',', $EVT_ID);
         return md5($messenger . $message_type . $EVT_ID);
     }
 
