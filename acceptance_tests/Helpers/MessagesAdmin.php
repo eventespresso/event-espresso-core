@@ -95,7 +95,8 @@ trait MessagesAdmin
             $message_status,
             $messenger,
             $context,
-            $text_to_check_for
+            $text_to_check_for,
+            0
         ));
         $actual_count = count($elements);
         $this->actor()->assertEquals(
@@ -111,4 +112,126 @@ trait MessagesAdmin
         );
     }
 
+
+    /**
+     * This will create a custom message template for the given messenger and message type from the context of the
+     * default (global) message template list table.
+     * Also takes care of verifying the template was created.
+     * @param string $message_type_label
+     * @param string $messenger_label
+     */
+    public function createCustomMessageTemplateFromDefaultFor($message_type_label, $messenger_label)
+    {
+        $this->amOnDefaultMessageTemplateListTablePage();
+        $this->actor()->click(
+            MessagesPage::createCustomButtonForMessageTypeAndMessenger(
+                $message_type_label,
+                $messenger_label
+            )
+        );
+        $this->actor()->seeInField('#title', 'New Custom Template');
+    }
+
+
+    /**
+     * This switches the context of the current messages template to the given reference.
+     * @param string $context_reference  This should be the visible label for the option.
+     */
+    public function switchContextTo($context_reference)
+    {
+        $this->actor()->selectOption(MessagesPage::MESSAGES_CONTEXT_SWITCHER_SELECTOR, $context_reference);
+        $this->actor()->click(MessagesPage::MESSAGES_CONTEXT_SWITCHER_BUTTON_SELECTOR);
+        $this->actor()->waitForText($context_reference, 10, 'h1');
+    }
+
+
+    /**
+     * This takes care of clicking the View Message icon for the given parameters.
+     * Assumes you are already viewing the messages activity list table.
+     * @param        $message_type_label
+     * @param        $message_status
+     * @param string $messenger
+     * @param string $context
+     * @param int    $number_in_set
+     */
+    public function viewMessageInMessagesListTableFor(
+        $message_type_label,
+        $message_status = MessagesPage::MESSAGE_STATUS_SENT,
+        $messenger = 'Email',
+        $context = 'Event Admin',
+        $number_in_set = 1
+    ) {
+        $this->actor()->click(MessagesPage::messagesActivityListTableViewButtonSelectorFor(
+            $message_type_label,
+            $message_status,
+            $messenger,
+            $context,
+            $number_in_set
+        ));
+    }
+
+
+    /**
+     * Takes care of deleting a message matching the given parameters via the message activity list table.
+     * Assumes you are already viewing the messages activity list table.
+     * @param        $message_type_label
+     * @param        $message_status
+     * @param string $messenger
+     * @param string $context
+     * @param int    $number_in_set
+     */
+    public function deleteMessageInMessagesListTableFor(
+        $message_type_label,
+        $message_status = MessagesPage::MESSAGE_STATUS_SENT,
+        $messenger = 'Email',
+        $context = 'Event Admin',
+        $number_in_set = 1
+    ) {
+        $this->actor()->moveMouseOver(
+            MessagesPage::messagesActivityListTableCellSelectorFor(
+                'to',
+                $message_type_label,
+                $message_status,
+                $messenger,
+                $context,
+                '',
+                $number_in_set
+            )
+        );
+        $this->actor()->click(
+            MessagesPage::messagesActivityListTableDeleteActionSelectorFor(
+                $message_type_label,
+                $message_status,
+                $messenger,
+                $context,
+                $number_in_set
+            )
+        );
+        $this->actor()->waitForText('successfully deleted');
+    }
+
+
+    /**
+     * Assuming you have already triggered the view modal for a single message from the context of the message activity
+     * list table, this will take care of validating the given text is in that window.
+     * @param string $text_to_view
+     */
+    public function seeTextInViewMessageModal($text_to_view, $should_not_see = false)
+    {
+        $this->actor()->waitForElementVisible('.ee-admin-dialog-container-inner-content');
+        $this->actor()->switchToIframe('message-view-window');
+        $should_not_see ? $this->actor()->dontSee($text_to_view) : $this->actor()->see($text_to_view);
+        $this->actor()->switchToIframe();
+    }
+
+
+    /**
+     * Assuming you have already triggered the view modal for a single message from the context of the message activity
+     * list table, this will take care of validating the given text is NOT that window.
+     * @param string $text_to_view
+     */
+    public function dontSeeTextInViewMessageModal($text_to_view)
+    {
+        $this->seeTextInViewMessageModal($text_to_view, true);
+    }
 }
