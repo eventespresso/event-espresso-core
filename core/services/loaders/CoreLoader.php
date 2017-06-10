@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\services\loaders;
 
+use EE_Error;
 use EE_Registry;
 use EventEspresso\core\services\container\CoffeeShop;
 use EventEspresso\core\services\container\exceptions\ServiceNotFoundException;
@@ -55,35 +56,14 @@ class CoreLoader implements LoaderDecoratorInterface
      * @param string $fqcn
      * @param array  $arguments
      * @return mixed
+     * @throws EE_Error
      * @throws ServiceNotFoundException
      */
     public function load($fqcn, $arguments = array())
     {
-        $object = $this->generator instanceof EE_Registry
+        return $this->generator instanceof EE_Registry
             ? $this->generator->create($fqcn, $arguments)
             : $this->generator->brew($fqcn, $arguments);
-        // if we did NOT receive an instance of the requested object from EE_Registry
-        if(! $object instanceof $fqcn && $this->generator instanceof EE_Registry) {
-            // then we need to try some of these other loading methods
-            $alternate_loaders = array(
-                'load_core',
-                'load_class',
-                'load_model',
-                'load_helper',
-                'load_lib',
-                'load_model_class',
-                'load_service',
-                'load_dms',
-            );
-            foreach ($alternate_loaders as $alternate_loader) {
-                $object = $this->generator->{$alternate_loader}($fqcn, $arguments);
-                // but then break out of the loop as soon as we find what we are looking for
-                if ($object instanceof $fqcn) {
-                    break;
-                }
-            }
-        }
-        return $object;
     }
 
 
