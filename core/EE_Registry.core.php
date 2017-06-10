@@ -572,9 +572,10 @@ class EE_Registry
      *                                  and thus call a different method to instantiate
      * @param bool        $load_only    if true, will only load the file, but will NOT instantiate an object
      * @param bool|string $addon        if true, will cache the object in the EE_Registry->$addons array
-     * @return mixed                    null = failure to load or instantiate class object.
+     * @return mixed null = failure to load or instantiate class object.
      *                                  object = class loaded and instantiated successfully.
      *                                  bool = fail or success when $load_only is true
+     * @throws EE_Error
      */
     public function create(
         $class_name = false,
@@ -586,14 +587,14 @@ class EE_Registry
     ) {
         $class_name = ltrim($class_name, '\\');
         $class_name = $this->_dependency_map->get_alias($class_name);
-        if ( ! class_exists($class_name)) {
-            // maybe the class is registered with a preceding \
-            $class_name = strpos($class_name, '\\') !== 0 ? '\\' . $class_name : $class_name;
-            // still doesn't exist ?
-            if ( ! class_exists($class_name)) {
-                return null;
-            }
+        $class_exists = $this->loadOrVerifyClassExists($class_name);
+        // if a non-FQCN was passed, then verifyClassExists() might return an object
+        // or it could return null if the class just could not be found anywhere
+        if ($class_exists instanceof $class_name || $class_exists === null){
+            // either way, return the results
+            return $class_name;
         }
+        $class_name = $class_exists;
         // if we're only loading the class and it already exists, then let's just return true immediately
         if ($load_only) {
             return true;
@@ -623,6 +624,41 @@ class EE_Registry
 
 
     /**
+     * Recursively checks that a class exists and potentially attempts to load classes with non-FQCNs
+     *
+     * @param string $class_name
+     * @param int    $attempt
+     * @return mixed
+     */
+    private function loadOrVerifyClassExists($class_name, $attempt = 1) {
+        if (is_object($class_name) || class_exists($class_name)) {
+            return $class_name;
+        }
+        switch ($attempt) {
+            case 1:
+                // if it's a FQCN then maybe the class is registered with a preceding \
+                $class_name = strpos($class_name, '\\') !== false
+                    ? '\\' . ltrim($class_name, '\\')
+                    : $class_name;
+                break;
+            case 2:
+                //
+                $loader = $this->_dependency_map->class_loader($class_name);
+                if ($loader && method_exists($this, $loader)) {
+                    return $this->{$loader}($class_name);
+                }
+                break;
+            case 3:
+            default;
+                return null;
+        }
+        $attempt++;
+        return $this->loadOrVerifyClassExists($class_name, $attempt);
+    }
+
+
+
+    /**
      * instantiates, caches, and injects dependencies for classes
      *
      * @param array       $file_paths   an array of paths to folders to look in
@@ -634,9 +670,10 @@ class EE_Registry
      *                                  and thus call a different method to instantiate
      * @param bool        $cache        whether to cache the instantiated object for reuse
      * @param bool        $load_only    if true, will only load the file, but will NOT instantiate an object
-     * @return null|object|bool         null = failure to load or instantiate class object.
+     * @return bool|null|object null = failure to load or instantiate class object.
      *                                  object = class loaded and instantiated successfully.
      *                                  bool = fail or success when $load_only is true
+     * @throws EE_Error
      */
     protected function _load(
         $file_paths = array(),
