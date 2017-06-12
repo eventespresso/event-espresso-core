@@ -1,6 +1,6 @@
 <div class="changelog">
 	<h2 class="about-headline-callout"><?php _e('Rave Reviews About Event Espresso 4', 'event_espresso'); ?></h2>
-	<p>See what Event Espresso clients have to say about our software and support services that we provided for their organizations:</p>
+	<p>See what people have to say about the Event Espresso software and support services on <a href="http://evts.io/EEDecafFBReviews">Facebook</a>, <a href="http://evts.io/EEDecafReviews" target="_blank">WordPress.org</a> and <a href="https://eventespresso.com/about/testimonials/">EventEspresso.com</a>:</p>
 	<div class="feature-section col three-col about-updates">
 		<div class="col-1">
 			<h2><a href="https://wordpress.org/support/topic/incredible-customer-service-4/">Incredible Customer Service</a></h2>	
