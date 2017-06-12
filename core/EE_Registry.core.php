@@ -587,7 +587,7 @@ class EE_Registry
     ) {
         $class_name = ltrim($class_name, '\\');
         $class_name = $this->_dependency_map->get_alias($class_name);
-        $class_exists = $this->loadOrVerifyClassExists($class_name);
+        $class_exists = $this->loadOrVerifyClassExists($class_name, $arguments);
         // if a non-FQCN was passed, then verifyClassExists() might return an object
         // or it could return null if the class just could not be found anywhere
         if ($class_exists instanceof $class_name || $class_exists === null){
@@ -627,10 +627,11 @@ class EE_Registry
      * Recursively checks that a class exists and potentially attempts to load classes with non-FQCNs
      *
      * @param string $class_name
+     * @param array  $arguments
      * @param int    $attempt
      * @return mixed
      */
-    private function loadOrVerifyClassExists($class_name, $attempt = 1) {
+    private function loadOrVerifyClassExists($class_name, array $arguments, $attempt = 1) {
         if (is_object($class_name) || class_exists($class_name)) {
             return $class_name;
         }
@@ -645,7 +646,7 @@ class EE_Registry
                 //
                 $loader = $this->_dependency_map->class_loader($class_name);
                 if ($loader && method_exists($this, $loader)) {
-                    return $this->{$loader}($class_name);
+                    return $this->{$loader}($class_name, $arguments);
                 }
                 break;
             case 3:
@@ -653,7 +654,7 @@ class EE_Registry
                 return null;
         }
         $attempt++;
-        return $this->loadOrVerifyClassExists($class_name, $attempt);
+        return $this->loadOrVerifyClassExists($class_name, $arguments, $attempt);
     }
 
 
