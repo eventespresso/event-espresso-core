@@ -8,37 +8,37 @@
  */
 
 $features = array(
-	'slider-options' => array(
+	'pricing-options' => array(
 		'label'   	=> esc_html__( 'Handle multiple dates and pricing options', 'event_espresso' ),
 		'decaf'     	=> '<span class="dashicons dashicons-no-alt"></span>',
 		'regular'	=> '<span class="dashicons dashicons-yes"></span></i>'
 	),
-	'woocommerce' => array(
+	'custom-registration' => array(
 		'label'  	=> esc_html__( 'Create custom registration forms', 'event_espresso' ),
 		'decaf'     	=> '<span class="dashicons dashicons-no-alt"></span>',
 		'regular' 	=> '<span class="dashicons dashicons-yes"></span></i>'
 	),
-	'reorder-sections' => array(
+	'advanced-notifications' => array(
 		'label'       => esc_html__( 'Customize advanced email notifications', 'event_espresso' ),
 		'decaf'     => '<span class="dashicons dashicons-no-alt"></span>',
 		'regular' => '<span class="dashicons dashicons-yes"></span></i>'
 	),
-	'custom-colors'    => array(
+	'manage-taxes'    => array(
 		'label'       => esc_html__( 'Manage taxes', 'event_espresso' ),
 		'decaf'     => '<span class="dashicons dashicons-no-alt"></span>',
 		'regular' => '<span class="dashicons dashicons-yes"></span></i>'
 	),
 	'typography'       => array(
-		'label'       => esc_html__( 'Accept additional payment options', 'event_espresso' ),
+		'label'       => esc_html__( 'Additional payment methods available', 'event_espresso' ),
 		'decaf'     => '<span class="dashicons dashicons-no-alt"></span>',
 		'regular' => '<span class="dashicons dashicons-yes"></span></i>'
 	),
-	'dedicated-support' => array(
+	'add-on-compatibility' => array(
 		'label'       => esc_html__( 'Compatibility with add-ons', 'event_espresso' ),
 		'decaf'     => '<span class="dashicons dashicons-no-alt"></span>',
 		'regular' => '<span class="dashicons dashicons-yes"></span></i>'
 	),
-	'security-updates' => array(
+	'best-support' => array(
 		'label'       => esc_html__( 'Best in class support', 'event_espresso' ),
 		'decaf'     => '<span class="dashicons dashicons-no-alt"></span>',
 		'regular' => '<span class="dashicons dashicons-yes"></span></i>'
