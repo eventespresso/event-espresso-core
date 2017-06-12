@@ -35,6 +35,12 @@ class CommandBusTest extends EE_UnitTestCase
             'EventEspresso\tests\mocks\core\services\commands\CommandHandlerManagerMock',
             array('EE_Registry' => EE_Dependency_Map::load_from_cache,)
         );
+        // need to override the existing alias for the CommandHandlerManagerInterface
+        // or else the REAL class will still get used
+        EE_Dependency_Map::instance()->add_alias(
+            'EventEspresso\core\services\commands\CommandHandlerManagerInterface',
+            'EventEspresso\tests\mocks\core\services\commands\CommandHandlerManagerMock'
+        );
         parent::setUp();
     }
 
@@ -42,6 +48,11 @@ class CommandBusTest extends EE_UnitTestCase
 
     protected function setupCommandBus($middleware = array())
     {
+        // cleared cached version of CommandBus, else there is no way we are setting up a new one
+        EE_Registry::instance()->clear_cached_class('EventEspresso\core\services\commands\CommandBus');
+        // confirm that it is gone
+        $this->assertNull(EE_Registry::instance()->BUS);
+        // NOW setup a Bus that uses our Mocked CommandHandlerManager
         $this->command_bus = EE_Registry::instance()->create(
             'EventEspresso\core\services\commands\CommandBus',
             array(
