@@ -37,8 +37,8 @@ class EED_Venues_Archive  extends EED_Module {
 	 *  @return 	void
 	 */
 	public static function set_hooks() {
-		EE_Config::register_route( 'venues', 'Venues_Archive', 'run' );
-//		EE_Config::register_view( 'venues', 0, EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'archive-espresso_venues.php' );
+        $post_type = get_post_type_object('espresso_venues');
+        EE_Config::register_route(strtolower($post_type->labels->name), 'Venues_Archive', 'run' );
 	}
 
 	/**

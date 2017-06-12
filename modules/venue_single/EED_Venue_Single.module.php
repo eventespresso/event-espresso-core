@@ -37,8 +37,8 @@ class EED_Venue_Single  extends EED_Module {
 	 *  @return 	void
 	 */
 	public static function set_hooks() {
-		EE_Config::register_route( 'venue', 'Venue_Single', 'run' );
-//		EE_Config::register_view( 'venue', 0, EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'single-espresso_venues.php' );
+        $post_type = get_post_type_object('espresso_venues');
+        EE_Config::register_route(strtolower($post_type->labels->singular_name), 'Venue_Single', 'run' );
 	}
 
 	/**

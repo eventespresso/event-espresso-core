@@ -48,7 +48,8 @@ class EED_Event_Single extends EED_Module
     {
         add_filter('FHEE_run_EE_wp', '__return_true');
         add_action('wp_loaded', array('EED_Event_Single', 'set_definitions'), 2);
-        EE_Config::register_route(__('event', 'event_espresso'), 'Event_Single', 'run');
+        $post_type = get_post_type_object('espresso_events');
+        EE_Config::register_route(strtolower($post_type->labels->singular_name), 'Event_Single', 'run');
     }
 
     /**
