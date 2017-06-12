@@ -1055,7 +1055,8 @@ class EE_Event_List_Query
                 'Usage is deprecated. Please use \EventEspresso\core\domain\services\wp_queries\EventListQuery instead.',
                 'event_espresso'
             ),
-            '4.9.27'
+            '4.9.27',
+            '5.0.0'
         );
         new \EventEspresso\core\domain\services\wp_queries\EventListQuery($args);
     }
