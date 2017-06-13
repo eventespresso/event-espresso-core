@@ -159,7 +159,7 @@
 					<div class="even topic type-topic status-publish hentry">
 						<div class="review-topic-content">
 							<p>After using Event Espresso for several years, this is still the best event registration plugin around to date. The team at Event Espresso continue to be amazing, and I look forward to their next set of enhancements this year!</p>	
-							<p class="review-user-nicename"><a href="https://wordpress.org/support/users/10bradders10/" title="View 10bradders10's profile" class="bbp-author-avatar" rel="nofollow"><img alt="" src="https://secure.gravatar.com/avatar/a749fba1c0918f408f6760bc18197e62?s=100&amp;d=retro&amp;r=g" srcset="https://secure.gravatar.com/avatar/a749fba1c0918f408f6760bc18197e62?s=200&amp;d=retro&amp;r=g 2x" class="avatar avatar-100 photo" width="100" height="100"></a><a href="https://wordpress.org/support/users/10bradders10/" title="View 10bradders10's profile" class="bbp-author-name" rel="nofollow">10bradders10</a></p>					
+							<p class="review-user-nicename"><a href="https://wordpress.org/support/users/10bradders10/" title="View 10bradders10's profile" class="bbp-author-avatar" rel="nofollow"><img alt="" src="https://secure.gravatar.com/avatar/a749fba1c0918f408f6760bc18197e62?s=100&amp;d=retro&amp;r=g" srcset="https://secure.gravatar.com/avatar/a749fba1c0918f408f6760bc18197e62?s=200&amp;d=retro&amp;r=g 2x" class="avatar avatar-100 photo" width="100" height="100"></a><br><a href="https://wordpress.org/support/users/10bradders10/" title="View 10bradders10's profile" class="bbp-author-name" rel="nofollow">10bradders10</a></p>					
 						</div><!-- .review-topic-content -->
 					</div>
 				</li><!-- .review-body -->
