@@ -1157,7 +1157,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         $where = array();
         if ( ! empty($request['s'])) {
             $search_string = '%' . sanitize_text_field($request['s']) . '%';
-            $where['OR'] = array(
+            $where['OR*search_conditions'] = array(
                 'Event.EVT_name'                          => array('LIKE', $search_string),
                 'Event.EVT_desc'                          => array('LIKE', $search_string),
                 'Event.EVT_short_desc'                    => array('LIKE', $search_string),
@@ -1190,13 +1190,17 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      */
     protected function _get_where_conditions_for_registrations_query($request)
     {
-        return array_merge(
-            $this->_add_event_id_to_where_conditions($request),
-            $this->_add_category_id_to_where_conditions($request),
-            $this->_add_datetime_id_to_where_conditions($request),
-            $this->_add_registration_status_to_where_conditions($request),
-            $this->_add_date_to_where_conditions($request),
-            $this->_add_search_to_where_conditions($request)
+        return apply_filters(
+            'FHEE__Registrations_Admin_Page___get_where_conditions_for_registrations_query',
+            array_merge(
+                $this->_add_event_id_to_where_conditions($request),
+                $this->_add_category_id_to_where_conditions($request),
+                $this->_add_datetime_id_to_where_conditions($request),
+                $this->_add_registration_status_to_where_conditions($request),
+                $this->_add_date_to_where_conditions($request),
+                $this->_add_search_to_where_conditions($request)
+            ),
+            $request
         );
     }
 
