@@ -247,10 +247,10 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway {
 		if ( ! empty($this->_image_url) ) {
 			$token_request_dtls['LOGOIMG'] = $this->_image_url;
 		}
-		$token_request_dtls = apply_filters( 
-			'FHEE__EEG_Paypal_Express__set_redirection_info__arguments', 
-			$token_request_dtls, 
-			$this 
+		$token_request_dtls = apply_filters(
+			'FHEE__EEG_Paypal_Express__set_redirection_info__arguments',
+			$token_request_dtls,
+			$this
 		);
 		// Request PayPal token.
 		$token_request_response = $this->_ppExpress_request( $token_request_dtls, 'Payment Token', $payment );
@@ -416,20 +416,19 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway {
             return array('status' => false, 'args' => $request_response);
         }
         if (
-            $response_args['ACK'] === 'Success'
-            && (
+            (
                 isset($response_args['PAYERID'])
+                || isset($response_args['TOKEN'])
                 || isset($response_args['PAYMENTINFO_0_TRANSACTIONID'])
                 || (isset($response_args['PAYMENTSTATUS']) && $response_args['PAYMENTSTATUS'] === 'Completed')
-                || isset($response_args['TOKEN'])
             )
+            && in_array($response_args['ACK'], array('Success', 'SuccessWithWarning'), true)
         ) {
             // Response status OK, return response parameters for further processing.
             return array('status' => true, 'args' => $response_args);
-        } else {
-            $errors = $this->_get_errors($response_args);
-            return array('status' => false, 'args' => $errors);
         }
+        $errors = $this->_get_errors($response_args);
+        return array('status' => false, 'args' => $errors);
 	}
 
 

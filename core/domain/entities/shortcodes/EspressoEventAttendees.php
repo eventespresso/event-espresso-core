@@ -73,7 +73,7 @@ class EspressoEventAttendees extends EspressoShortcode
      */
     public function initializeShortcode()
     {
-        // required by interface, but nothing to do atm
+        $this->shortcodeHasBeenInitialized();
     }
 
 

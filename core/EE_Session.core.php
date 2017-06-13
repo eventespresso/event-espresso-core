@@ -1,4 +1,5 @@
-<?php use EventEspresso\core\exceptions\InvalidSessionDataException;
+<?php use EventEspresso\core\domain\services\session\SessionIdentifierInterface;
+use EventEspresso\core\exceptions\InvalidSessionDataException;
 use EventEspresso\core\services\cache\CacheStorageInterface;
 
 if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed');}
@@ -10,7 +11,8 @@ if (!defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed'
  * @subpackage includes/classes
  * @author     Brent Christensen
  */
- class EE_Session {
+ class EE_Session implements SessionIdentifierInterface
+ {
 
 	 const session_id_prefix = 'ee_ssn_';
 
