@@ -21,12 +21,10 @@ if (! defined('EVENT_ESPRESSO_VERSION')) {
 class EE_Dependency_Map
 {
 
-
     /**
      * This means that the requested class dependency is not present in the dependency map
      */
     const not_registered = 0;
-
 
     /**
      * This instructs class loaders to ALWAYS return a newly instantiated object for the requested class.
@@ -38,6 +36,21 @@ class EE_Dependency_Map
      * IF a previously instantiated object does not exist, a new one will be created and added to the cache.
      */
     const load_from_cache = 2;
+
+    /**
+     * When registering a dependency,
+     * this indicates to keep any existing dependencies that already exist,
+     * and simply discard any new dependencies declared in the incoming data
+     */
+    const KEEP_EXISTING_DEPENDENCIES = 0;
+
+    /**
+     * When registering a dependency,
+     * this indicates to overwrite any existing dependencies that already exist using the incoming data
+     */
+    const OVERWRITE_DEPENDENCIES = 1;
+
+
 
     /**
      * @type EE_Dependency_Map $_instance
@@ -137,22 +150,73 @@ class EE_Dependency_Map
     /**
      * @param string $class
      * @param array  $dependencies
-     * @return boolean
+     * @param int    $overwrite
+     * @return bool
      */
-    public static function register_dependencies($class, $dependencies)
-    {
-        if (! isset(self::$_instance->_dependency_map[$class])) {
-            // we need to make sure that any aliases used when registering a dependency
-            // get resolved to the correct class name
-            foreach ((array)$dependencies as $dependency => $load_source) {
-                $alias = self::$_instance->get_alias($dependency);
+    public static function register_dependencies(
+        $class,
+        array $dependencies,
+        $overwrite = EE_Dependency_Map::KEEP_EXISTING_DEPENDENCIES
+    ) {
+        return self::$_instance->registerDependencies($class, $dependencies, $overwrite);
+    }
+
+
+
+    /**
+     * Assigns an array of class names and corresponding load sources (new or cached)
+     * to the class specified by the first parameter.
+     * IMPORTANT !!!
+     * The order of elements in the incoming $dependencies array MUST match
+     * the order of the constructor parameters for the class in question.
+     * This is especially important when overriding any existing dependencies that are registered.
+     * the third parameter controls whether any duplicate dependencies are overwritten or not.
+     *
+     * @param string $class
+     * @param array  $dependencies
+     * @param int    $overwrite
+     * @return bool
+     */
+    public function registerDependencies(
+        $class,
+        array $dependencies,
+        $overwrite = EE_Dependency_Map::KEEP_EXISTING_DEPENDENCIES
+    ) {
+        $registered = false;
+        if (empty(self::$_instance->_dependency_map[ $class ])) {
+            self::$_instance->_dependency_map[ $class ] = array();
+        }
+        // we need to make sure that any aliases used when registering a dependency
+        // get resolved to the correct class name
+        foreach ((array)$dependencies as $dependency => $load_source) {
+            $alias = self::$_instance->get_alias($dependency);
+            if (
+                $overwrite === EE_Dependency_Map::OVERWRITE_DEPENDENCIES
+                || ! isset(self::$_instance->_dependency_map[ $class ][ $alias ])
+            ) {
                 unset($dependencies[$dependency]);
                 $dependencies[$alias] = $load_source;
+                $registered = true;
             }
-            self::$_instance->_dependency_map[$class] = (array)$dependencies;
-            return true;
         }
-        return false;
+        // now add our two lists of dependencies together.
+        // using Union (+=) favours the arrays in precedence from left to right,
+        // so $dependencies is NOT overwritten because it is listed first
+        // ie: with A = B + C, entries in B take precedence over duplicate entries in C
+        // Union is way faster than array_merge() but should be used with caution...
+        // especially with numerically indexed arrays
+        $dependencies += self::$_instance->_dependency_map[ $class ];
+        // now we need to ensure that the resulting dependencies
+        // array only has the entries that are required for the class
+        // so first count how many dependencies were originally registered for the class
+        $dependency_count = count(self::$_instance->_dependency_map[ $class ]);
+        // if that count is non-zero (meaning dependencies were already registered)
+        self::$_instance->_dependency_map[ $class ] = $dependency_count
+            // then truncate the  final array to match that count
+            ? array_slice($dependencies, 0, $dependency_count)
+            // otherwise just take the incoming array because nothing previously existed
+            : $dependencies;
+        return $registered;
     }
 
 
@@ -161,10 +225,15 @@ class EE_Dependency_Map
      * @param string $class_name
      * @param string $loader
      * @return bool
-     * @throws EE_Error
+     * @throws DomainException
      */
     public static function register_class_loader($class_name, $loader = 'load_core')
     {
+        if (strpos($class_name, '\\') !== false) {
+            throw new DomainException(
+                esc_html__('Don\'t use class loaders for FQCNs.', 'event_espresso')
+            );
+        }
         // check that loader is callable or method starts with "load_" and exists in EE_Registry
         if (
             ! is_callable($loader)
@@ -173,9 +242,12 @@ class EE_Dependency_Map
                 || ! method_exists('EE_Registry', $loader)
             )
         ) {
-            throw new EE_Error(
+            throw new DomainException(
                 sprintf(
-                    esc_html__('"%1$s" is not a valid loader method on EE_Registry.', 'event_espresso'),
+                    esc_html__(
+                        '"%1$s" is not a valid loader method on EE_Registry.',
+                        'event_espresso'
+                    ),
                     $loader
                 )
             );
@@ -253,6 +325,10 @@ class EE_Dependency_Map
      */
     public function class_loader($class_name)
     {
+        // don't use loaders for FQCNs
+        if(strpos($class_name, '\\') !== false){
+            return '';
+        }
         $class_name = $this->get_alias($class_name);
         return isset($this->_class_loaders[$class_name]) ? $this->_class_loaders[$class_name] : '';
     }
@@ -328,7 +404,7 @@ class EE_Dependency_Map
         if (! $this->has_alias($class_name, $for_class)) {
             return $class_name;
         }
-        if ($for_class !== '') {
+        if ($for_class !== '' && isset($this->_aliases[ $for_class ][ $class_name ])) {
             return $this->get_alias($this->_aliases[$for_class][$class_name], $for_class);
         }
         return $this->get_alias($this->_aliases[$class_name]);
@@ -524,6 +600,7 @@ class EE_Dependency_Map
             ),
             'EventEspresso\core\services\cache\PostRelatedCacheManager'                                                   => array(
                 'EventEspresso\core\services\cache\TransientCacheStorage' => EE_Dependency_Map::load_from_cache,
+                'EE_Session'                                              => EE_Dependency_Map::load_from_cache,
             ),
         );
     }
@@ -655,6 +732,7 @@ class EE_Dependency_Map
             'EventEspresso\core\services\loaders\LoaderInterface'                 => 'EventEspresso\core\services\loaders\Loader',
             'CommandFactoryInterface'                                             => 'EventEspresso\core\services\commands\CommandFactoryInterface',
             'EventEspresso\core\services\commands\CommandFactoryInterface'        => 'EventEspresso\core\services\commands\CommandFactory',
+            'EventEspresso\core\domain\services\session\SessionIdentifierInterface' => 'EE_Session',
         );
     }
 

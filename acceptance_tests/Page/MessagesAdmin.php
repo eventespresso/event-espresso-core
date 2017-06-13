@@ -156,7 +156,8 @@ class MessagesAdmin extends CoreAdmin
      * @param string $context
      * @param string $table_cell_content_for_field
      * @param int    $number_in_set   It's possible that the given parameters could match multiple items in the view.
-     *                                This allows you to indicate which item from the set to match.
+     *                                This allows you to indicate which item from the set to match.  If this is set to 0
+     *                                then all matches for the locator will be returned.
      * @return string
      */
     public static function messagesActivityListTableCellSelectorFor(
@@ -168,7 +169,7 @@ class MessagesAdmin extends CoreAdmin
         $table_cell_content_for_field = '',
         $number_in_set = 1
     ) {
-        $selector = '(';
+        $selector = $number_in_set > 0 ? '(' : '';
         $selector .= "//tr[contains(@class, 'msg-status-$message_status')]"
                      . "//td[contains(@class, 'message_type') and text()='$message_type_label']";
         if ($messenger) {
@@ -178,7 +179,7 @@ class MessagesAdmin extends CoreAdmin
         $selector .= $table_cell_content_for_field
             ? "/ancestor::tr/td[contains(@class, 'column-$field') and text()='$table_cell_content_for_field']"
             : "/ancestor::tr/td[contains(@class, 'column-$field')]";
-        $selector .= ")[$number_in_set]";
+        $selector .= $number_in_set > 0 ? ")[$number_in_set]" : '';
         return $selector;
     }
 
