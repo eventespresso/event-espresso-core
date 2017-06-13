@@ -2,18 +2,78 @@
 	<h2 class="about-headline-callout"><?php _e('Rave Reviews About Event Espresso 4', 'event_espresso'); ?></h2>
 	<p>See what people have to say about the Event Espresso software and support services on <a href="http://evts.io/EEDecafFBReviews">Facebook</a>, <a href="http://evts.io/EEDecafReviews" target="_blank">WordPress.org</a> and <a href="https://eventespresso.com/about/testimonials/">EventEspresso.com</a>:</p>
 	<div class="feature-section col three-col about-updates">
-		<div class="col-1">
-			<h2><a href="https://wordpress.org/support/topic/incredible-customer-service-4/">Incredible Customer Service</a></h2>	
+		<div class="col-1">		
+			<h2><a href="https://wordpress.org/support/topic/amazing-plugin-has-been-running-our-school-for-over-5-years-now/">Amazing Plugin – has been running our school for over 5 years now!</a></h2>	
+			<div class="wporg-ratings" title="5 out of 5 stars" style="color:#ffb900;"><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span></div>
+			<ul>
+				<li class="review-body">
+					<div class="eventopic type-topic status-publish hentry">
+						<div class="review-topic-content">
+							<p>I started using EE many years ago and we still use it everyday to run our school at <a href="https://portlandfashioninstitute.com" target="_blank" rel="nofollow">Portland Sewing</a>. For the cost, there is no other program out there that can do what this does. Their support people are awesome – as is their forum. And they continue to improve the application – you can vote for what features you’d like to add and they reach out to the community for feedback.</p>
+							<p>I highly recommend Event Espresso if you are looking to offer events, classes or really anything that you need to sell seats for. It’s not perfect, but what plugin is? The fact that we can get so much accomplished using this tool is amazing. </p>
+							<p>Thank you team EE (Josh, Garth, Tony &amp; Lorenzo!)</p>							
+							<p class="review-user-nicename"><a href="https://wordpress.org/support/users/sock2me/" title="View sock2me's profile" class="bbp-author-avatar" rel="nofollow"><img alt="" src="https://secure.gravatar.com/avatar/cfe09d3ea7d99f4fd4edc1a2dc5ac0ca?s=100&amp;d=retro&amp;r=g" srcset="https://secure.gravatar.com/avatar/cfe09d3ea7d99f4fd4edc1a2dc5ac0ca?s=200&amp;d=retro&amp;r=g 2x" class="avatar avatar-100 photo" width="100" height="100"></a><br><a href="https://wordpress.org/support/users/sock2me/" title="View sock2me's profile" class="bbp-author-name" rel="nofollow">sock2me</a></p>
+						</div><!-- .review-topic-content -->
+					</div>
+				</li><!-- .review-body -->
+			</ul>
+		</div>
+		<div class="col-2">
+			<h2><a href="https://wordpress.org/support/topic/elegant-event-management-for-wordpress/">Elegant event management for WordPress</a></h2>	
 			<div class="wporg-ratings" title="5 out of 5 stars" style="color:#ffb900;"><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span></div>
 			<ul>
 				<li class="review-body">
 					<div class="even topic type-topic status-publish hentry">
 						<div class="review-topic-content">
-							<p>I’ve been using Event Espresso for over 2 years for multiple websites which host a variety of events, classes, and conferences.  The software has been versatile, easy to use/customize to meet our needs, WordPress themes, and organization.</p>
-							<p>The customer service is hands down the best customer service I’ve interacted with in years.  On several occasions their customer service and support have assisted with their product, guidance, and helping to integrate their product with other software.</p>
-							<p>Recently after a billing kerfuffle, the Event Espresso customer service came to the rescue and kept my services from lapsing.  It’s service like this that will keep my organization coming back for years to come.</p>
-							<p>Thanks for the great speedy service!!</p>	
-							<p class="review-user-nicename"><a href="https://wordpress.org/support/users/yerx/" title="View Yerx's profile" class="bbp-author-name" rel="nofollow">Yerx</a></p>					
+							<p>We&#8217;ve been using and developing sites powered by Event Espresso for several years now. Event Espresso is our go-to for Event Management on WordPress for several reasons:</p>
+							<ol>
+							<li>The team behind the plugin provides outstanding support and are clearly committed to improving the state of Event Management on WordPress.</li>
+							<li>It&#8217;s a solid plugin with a robust codebase and APIs</li>
+							<li>It&#8217;s capable and flexible &#8211; we&#8217;ve used it for everything from concert ticket sales, conference management, calendar management for recovery centers, to walking food tours.</li>
+							<li>They support the WordPress Community in many ways.</li>
+							</ol>
+							<p>Thanks, EE Team &#8211; keep up the great work!</p>
+
+							<p class="review-user-nicename"><a href="https://wordpress.org/support/users/ivycat/" title="View ivycat's profile" class="bbp-author-avatar" rel="nofollow"><img alt="" src="https://secure.gravatar.com/avatar/f1c6ff76072edfd217215f3acd412c26?s=100&amp;d=retro&amp;r=g" srcset="https://secure.gravatar.com/avatar/f1c6ff76072edfd217215f3acd412c26?s=100&amp;d=retro&amp;r=g 2x" class="avatar avatar-100 photo" width="100" height="100"></a><br><a href="https://wordpress.org/support/users/ivycat/" title="View ivycat's profile" class="bbp-author-name" rel="nofollow">ivycat</a></p>					
+						</div><!-- .review-topic-content -->
+					</div>
+				</li><!-- .review-body -->
+			</ul>
+		</div>
+		<div class="col-3 last-feature">
+			<h2><a href="https://wordpress.org/support/topic/the-best-event-plugin-system-we-have-used/">The best event plugin system we have used!</a></h2>	
+			<div class="wporg-ratings" title="5 out of 5 stars" style="color:#ffb900;"><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span></div>
+			<ul>
+				<li class="review-body">
+					<div class="even topic type-topic status-publish hentry">
+						<div class="review-topic-content">
+							<p>We just closed registration for a girls/ladies conference at our church next month. This year we have over 400 registrants and only a few were mail-ins. Everyone else registered on our website, which is running Event Espresso 4. We had to close registration early because we are at capacity! We had fewer duplicate registrations this year than in years past using other software. We also received a lot of compliments on the “new system”. Registrants stated that it was much easier to use than in previous years.</p>	
+							<p class="review-user-nicename"><a href="https://wordpress.org/support/users/amandaleigh/" title="View amandaleigh's profile" class="bbp-author-avatar" rel="nofollow"><img alt="" src="https://secure.gravatar.com/avatar/a67b47893dd239775d360fd36527d44a?s=100&amp;d=retro&amp;r=g" srcset="https://secure.gravatar.com/avatar/a67b47893dd239775d360fd36527d44a?s=200&amp;d=retro&amp;r=g 2x" class="avatar avatar-100 photo" width="100" height="100"></a><br><a href="https://wordpress.org/support/users/amandaleigh/" title="View amandaleigh's profile" class="bbp-author-name" rel="nofollow">amandaleigh</a>
+				</p>					
+						</div><!-- .review-topic-content -->
+					</div>
+				</li><!-- .review-body -->
+			</ul>
+		</div>
+		
+	</div>
+	<div align="right"><a href="https://eventespresso.com/pricing/?utm_source=wordpress_org&amp;utm_medium=link&amp;utm_campaign=decaf_about_page&amp;utm_content=reviews+tab" target="_blank" class="button button-primary button-hero"><span class="dashicons dashicons-cart"></span><?php esc_html_e( 'Upgrade Now!', 'event_espresso' ) ?></a></div>
+	&nbsp;
+	<hr />
+	<div class="feature-section col three-col about-updates">
+		<div class="col-1">
+			<h2><a href="https://wordpress.org/support/topic/using-ee-for-duluth-folk-school-registration/">Using EE for Duluth Folk School Registration</a></h2>	
+			<div class="wporg-ratings" title="5 out of 5 stars" style="color:#ffb900;"><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span></div>
+			<ul>
+				<li class="review-body">
+					<div class="even topic type-topic status-publish hentry">
+						<div class="review-topic-content">
+							<p>We&#8217;ve been using Event Espresso for just over a year now, for the Duluth Folk School:<br />
+							<a href="https://duluthfolkschool.com/" rel="nofollow">https://duluthfolkschool.com/</a></p>
+							<p>EE has a lot of customisability, and solid customer payment options. For us, we bought the &#8216;all the add ons&#8217; option, since we&#8217;re using quite a few different add ons.</p>
+							<p>I do wish it were easier to customize some of the deeply buried text (EE calls them &#8220;People,&#8221; we call them &#8216;Instructors&#8217;, etc.), and I wish it were easier to integrate into our brick and mortar store, where we have inventory (people need two separate transactions if they want to buy a coffee and to register for a class).</p>
+							<p>Overall, it does a good job, and our customers have a pretty easy time figuring it all out. </p>							
+							<p class="review-user-nicename"><a href="https://wordpress.org/support/users/birchfinch/" title="View Bryan's profile" class="bbp-author-avatar" rel="nofollow"><img alt="" src="https://secure.gravatar.com/avatar/6e54429afbe010f3502d67dd19331d79?s=100&amp;d=retro&amp;r=g" srcset="https://secure.gravatar.com/avatar/6e54429afbe010f3502d67dd19331d79?s=200&amp;d=retro&amp;r=g 2x" class="avatar avatar-100 photo" width="100" height="100"></a><br><a href="https://wordpress.org/support/users/birchfinch/" title="View Bryan's profile" class="bbp-author-name" rel="nofollow">Bryan</a></p>					
 						</div><!-- .review-topic-content -->
 					</div>
 				</li><!-- .review-body -->
@@ -29,59 +89,68 @@
 							<p>Event Espresso was easy to setup and is easy to use. It’s also easy to style for individual websites. It has some really great features – events are simple to setup, events table(s) and calendar which can show colour coded events and simple payment integration. When we started, the plugin was in version 3 (EE3) and we’ve stuck with that however the latest version 4 (EE4) has been completely revamped and comes with added functionality.</p>
 							<p>The support staff have always been very helpful and will work with you when there are issues (even to the point of logging into the back-end of a site) to try to resolve any problems.</p>
 							<p>We look forward to continuing to work with Event Espresso.</p>		
-							<p class="review-user-nicename"><a href="https://wordpress.org/support/users/elainewildash/" title="View elainewildash's profile" class="bbp-author-name" rel="nofollow">elaine.wildash</a></p>
+							<p class="review-user-nicename"><a href="https://wordpress.org/support/users/elainewildash/" title="View elaine.wildash's profile" class="bbp-author-avatar" rel="nofollow"><img alt="" src="https://secure.gravatar.com/avatar/4df4c8f6032eea26398611cf5b76b727?s=100&amp;d=retro&amp;r=g" srcset="https://secure.gravatar.com/avatar/4df4c8f6032eea26398611cf5b76b727?s=200&amp;d=retro&amp;r=g 2x" class="avatar avatar-100 photo" width="100" height="100"></a><br><a href="https://wordpress.org/support/users/elainewildash/" title="View elaine.wildash's profile" class="bbp-author-name" rel="nofollow">elaine.wildash</a></p>
 						</div><!-- .review-topic-content -->
 					</div>
 				</li><!-- .review-body -->
 			</ul>
 		</div>
+
+		
 		<div class="col-3 last-feature">
-			<h2><a href="https://wordpress.org/support/topic/premium-ee4-full-of-features/">Premium EE4 full of features</a></h2>	
+			<h2><a href="https://wordpress.org/support/topic/event-espresso-to-the-max/">Event Espresso to the MAX!</a></h2>	
 			<div class="wporg-ratings" title="5 out of 5 stars" style="color:#ffb900;"><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span></div>
 			<ul>
 				<li class="review-body">
 					<div class="even topic type-topic status-publish hentry">
 						<div class="review-topic-content">
-							<p>Event Espresso 4 (paid) is feature-packed and really simple to use. The base program provides everything we need (though we did purchase a payment gateway) including multiple ticketing levels and the ability to collect highly detailed customer info through forms. I was impressed at how much can be done with just EE4 Premium in comparison to other programs. Would love to see more purchasable themes and add-ons for the event list pages, but the plugin itself is fantastic. Couldn’t recommend it more! </p>		
-							<p class="review-user-nicename"><a href="https://wordpress.org/support/users/dcaustralia/" title="View dcaustralia's profile" class="bbp-author-name" rel="nofollow">dcaustralia</a></p>
+							<p>I did a pretty exhaustive review of WordPress event management plugins and settled on Event Espresso for two reasons:</p>
+							<ol>
+								<li>It had the richest set of features and capabilities and;</li>
+								<li>Amazing support. Event Espresso is a superb product and I give it top marks.</li>
+							</ol>		
+							<p class="review-user-nicename"><a href="https://wordpress.org/support/users/rhj4/" title="View rhj4's profile" class="bbp-author-avatar" rel="nofollow"><img alt="" src="https://secure.gravatar.com/avatar/e6fc63d053d69a2afea8e5fb120e639f?s=100&amp;d=retro&amp;r=g" srcset="https://secure.gravatar.com/avatar/e6fc63d053d69a2afea8e5fb120e639f?s=200&amp;d=retro&amp;r=g 2x" class="avatar avatar-100 photo" width="100" height="100"></a><br><a href="https://wordpress.org/support/users/rhj4/" title="View rhj4's profile" class="bbp-author-name" rel="nofollow">rhj4</a></p>
 						</div><!-- .review-topic-content -->
 					</div>
 				</li><!-- .review-body -->
 			</ul>
 		</div>
+		
 	</div>
 	<div align="right"><a href="https://eventespresso.com/pricing/?utm_source=wordpress_org&amp;utm_medium=link&amp;utm_campaign=decaf_about_page&amp;utm_content=reviews+tab" target="_blank" class="button button-primary button-hero"><span class="dashicons dashicons-cart"></span><?php esc_html_e( 'Upgrade Now!', 'event_espresso' ) ?></a></div>
 	&nbsp;
 	<hr />
 	<div class="feature-section col three-col about-updates">
 		<div class="col-1">
-			<h2><a href="https://wordpress.org/support/topic/great-for-educational-course-management/">Great for Educational Course Management</a></h2>	
+			<h2><a href="https://wordpress.org/support/topic/a-comprehensive-event-management-plugin/">A comprehensive Event management plugin</a></h2>	
 			<div class="wporg-ratings" title="5 out of 5 stars" style="color:#ffb900;"><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span></div>
 			<ul>
 				<li class="review-body">
 					<div class="even topic type-topic status-publish hentry">
 						<div class="review-topic-content">
-							<p>Great product for managing our educational course offerings. We manage students, collect fees, create complex student information forms to collect data. Event Espresso provides maximum versatility for configuring each event uniquely. It lets us assign different managers to different courses, we manage by department… Garth and his team have added many features that we asked for over the years. [link removed] has been registering students for our courses since the beginning of Event Espresso, in 2008. Great product, keep up the good work!</p>		
-							<p class="review-user-nicename"><a href="https://wordpress.org/support/users/0rest0har/" title="View 0rest0har's profile" class="bbp-author-name" rel="nofollow">0rest0har</a></p>
+							<p>With 50+ features including multiple ticketing to Attendee Management and Events Calendar, Event Espresso is the most comprehensive Event Management plugin out there. Although it is a bit complicated and daunting for a non-technical user to configure and set up all the options, people at Event Espresso have done a great job in putting together an extensive documentation to help explain the process. Once you have got the hang of it, you will love it.</p>		
+							<p class="review-user-nicename"><a href="https://wordpress.org/support/users/wooninjas/" title="View Wooninjas's profile" class="bbp-author-avatar" rel="nofollow"><img alt="" src="https://secure.gravatar.com/avatar/a2424b8ddad190b94f44f2e769c0868a?s=100&amp;d=retro&amp;r=g" srcset="https://secure.gravatar.com/avatar/a2424b8ddad190b94f44f2e769c0868a?s=200&amp;d=retro&amp;r=g 2x" class="avatar avatar-100 photo" width="100" height="100"></a><br><a href="https://wordpress.org/support/users/wooninjas/" title="View Wooninjas's profile" class="bbp-author-name" rel="nofollow">Wooninjas</a></p>
 						</div><!-- .review-topic-content -->
 					</div>
 				</li><!-- .review-body -->
 			</ul>
 		</div>
-		<div class="col-2">		
-			<h2><a href="https://wordpress.org/support/topic/awesome-plugin-speedy-support/">Awesome plugin, speedy support!</a></h2>	
+		
+		<div class="col-2">
+			<h2><a href="https://wordpress.org/support/topic/event-espresso-does-it-all/">Event Espresso Does It All</a></h2>	
 			<div class="wporg-ratings" title="5 out of 5 stars" style="color:#ffb900;"><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span></div>
 			<ul>
 				<li class="review-body">
-					<div class="eventopic type-topic status-publish hentry">
+					<div class="even topic type-topic status-publish hentry">
 						<div class="review-topic-content">
-							<p>We use Event Espresso with another plugin for our annual science meeting. We needed information regarding how to use registration information from EE to connect members account information to an abstract submission plugin. Each request for information was answered rapidly – the fastest response I have ever received from a plugin developer! Thanks!</p>		
-							<p class="review-user-nicename"><a href="https://wordpress.org/support/users/lumins/" title="View lumins's profile" class="bbp-author-name" rel="nofollow">lumins</a></p>
+							<p>I researched a number of Event Ticketing plugins and Event Espresso was the only one that satisfied all my needs. You’ll especially appreciate the wide choice of payment processors you can use. Getting started, support quickly answered all my questions and now I use the forums when I need help.</p>		
+							<p class="review-user-nicename"><a href="https://wordpress.org/support/users/johnmacek/" title="View johnmacek's profile" class="bbp-author-avatar" rel="nofollow"><img alt="" src="https://secure.gravatar.com/avatar/5d33ca040695a043d93e8b3df3584f1d?s=100&amp;d=retro&amp;r=g" srcset="https://secure.gravatar.com/avatar/5d33ca040695a043d93e8b3df3584f1d?s=200&amp;d=retro&amp;r=g 2x" class="avatar avatar-100 photo" width="100" height="100"></a><br><a href="https://wordpress.org/support/users/johnmacek/" title="View johnmacek's profile" class="bbp-author-name" rel="nofollow">johnmacek</a></p>
 						</div><!-- .review-topic-content -->
 					</div>
 				</li><!-- .review-body -->
 			</ul>
 		</div>
+
 		<div class="col-3 last-feature">
 			<h2><a href="https://wordpress.org/support/topic/there-is-only-1-event-registration-plugin/">There is only 1 Event Registration Plugin!</a></h2>	
 			<div class="wporg-ratings" title="5 out of 5 stars" style="color:#ffb900;"><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span></div>
@@ -90,7 +159,7 @@
 					<div class="even topic type-topic status-publish hentry">
 						<div class="review-topic-content">
 							<p>After using Event Espresso for several years, this is still the best event registration plugin around to date. The team at Event Espresso continue to be amazing, and I look forward to their next set of enhancements this year!</p>	
-							<p class="review-user-nicename"><a href="https://wordpress.org/support/users/10bradders10/" title="View 10bradders10's profile" class="bbp-author-name" rel="nofollow">10bradders10</a></p>					
+							<p class="review-user-nicename"><a href="https://wordpress.org/support/users/10bradders10/" title="View 10bradders10's profile" class="bbp-author-avatar" rel="nofollow"><img alt="" src="https://secure.gravatar.com/avatar/a749fba1c0918f408f6760bc18197e62?s=100&amp;d=retro&amp;r=g" srcset="https://secure.gravatar.com/avatar/a749fba1c0918f408f6760bc18197e62?s=200&amp;d=retro&amp;r=g 2x" class="avatar avatar-100 photo" width="100" height="100"></a><a href="https://wordpress.org/support/users/10bradders10/" title="View 10bradders10's profile" class="bbp-author-name" rel="nofollow">10bradders10</a></p>					
 						</div><!-- .review-topic-content -->
 					</div>
 				</li><!-- .review-body -->
