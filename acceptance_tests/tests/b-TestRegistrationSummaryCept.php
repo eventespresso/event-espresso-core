@@ -120,8 +120,8 @@ $I->selectOption(TicketSelector::ticketOptionByEventIdSelector($event_a_id), '1'
 $I->click(TicketSelector::ticketSelectionSubmitSelectorByEventId($event_a_id));
 $I->waitForText('successfully added');
 $I->click('.cart-results-go-back-button');
-$I->amOnUrl($event_b_link);
-$I->see('Event RSM B');
+$I->amOnUrl($event_c_link);
+$I->see('Event RSM C');
 $I->selectOption(TicketSelector::ticketOptionByEventIdSelector($event_c_id), '1');
 $I->click(TicketSelector::ticketSelectionSubmitSelectorByEventId($event_c_id));
 $I->waitForText('successfully added');
@@ -146,13 +146,12 @@ $I->dontSee(
         'Primary Registrant'
     )
 );
-$I->dontSee(
+//there should still only be one admin multi-status summary thing.
+$I->verifyMatchingCountofTextInMessageActivityListTableFor(
+    1,
     'admin@example.com',
-    MessagesAdmin::messagesActivityListTableCellSelectorFor(
-        'to',
-        'Registration Multi-status Summary',
-        MessagesAdmin::MESSAGE_STATUS_SENT
-    )
+    'to',
+    'Registration Multi-status Summary'
 );
 
 //deactivate MER plugin so its not active for future tests
