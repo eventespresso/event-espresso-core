@@ -22,7 +22,7 @@
 				<label for="custom-message-template-description"><?php _e('Description:', 'event_espresso'); ?></label>
 				<textarea class="large-text" id="custom-message-template-description" name="custom_template_args[MTP_description]"></textarea>
 			</p>
-			<input id="custom-message-template-grpID" type="hidden" name="custom_template_args[GRP_ID] value="XXXGRP_IDXXX">
+			<input id="custom-message-template-grpID" type="hidden" name="custom_template_args[GRP_ID]" value="XXXGRP_IDXXX">
 			<div class="submit-button-container right">
 				<input type="submit" class="button button-primary" value="<?php _e('Create Template', 'event_espresso'); ?>">
 				<button type="button" class="button button-secondary cancel-create-template"><?php _e('Cancel', 'event_espresso'); ?></button>

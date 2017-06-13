@@ -3,7 +3,6 @@ namespace EventEspresso\core\services\shortcodes;
 
 use DomainException;
 use EventEspresso\core\domain\EnqueueAssetsInterface;
-// use EventEspresso\core\domain\SetHooksInterface;
 use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
 use EventEspresso\core\exceptions\InvalidClassException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
@@ -108,7 +107,7 @@ class ShortcodesManager
                 array('EventEspresso\core\domain\entities\shortcodes'),
                 // filepaths to classes to add
                 array(),
-                // filemask to use if parsing folder for files to add
+                // file mask to use if parsing folder for files to add
                 '',
                 // what to use as identifier for collection entities
                 // using CLASS NAME prevents duplicates (works like a singleton)

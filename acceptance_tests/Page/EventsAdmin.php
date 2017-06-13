@@ -126,7 +126,8 @@ class EventsAdmin extends CoreAdmin
      */
     public static function eventEditorTicketFieldSelectorForFieldInDisplayRow($field_name, $row_number = 1)
     {
-        return "//tr[@id='display-ticketrow-$row_number']/td[2]/input[@class='edit-ticket-$field_name ee-large-text-inp']";
+        return "//tr[@id='display-ticketrow-$row_number']"
+               . "/td[2]/input[@class='edit-ticket-$field_name ee-large-text-inp']";
     }
 
 
@@ -141,16 +142,53 @@ class EventsAdmin extends CoreAdmin
     }
 
 
+    /**
+     * Locator for for the ID column in the event list table for a given event title.
+     * @param string $event_title
+     * @return string
+     */
     public static function eventListTableEventIdSelectorForTitle($event_title)
     {
         return "//td[contains(@class, 'column-name')]/strong/a[text()='$event_title']"
-            . "//ancestor::tr/th[contains(@class, 'check-column')]/input";
+               . "//ancestor::tr/th[contains(@class, 'check-column')]/input";
     }
 
 
+    /**
+     * Locator for the view link in the row of an event list table for the given event title.
+     * @param string $event_title
+     * @return string
+     */
     public static function eventListTableEventTitleViewLinkSelectorForTitle($event_title)
     {
         return "//td[contains(@class, 'column-name')]/strong/a[text()='$event_title']"
-            . "//ancestor::td//span[@class='view']/a";
+               . "//ancestor::td//span[@class='view']/a";
+    }
+
+
+    /**
+     * Locator for the messenger tab in the Notifications metabox in the event editor.
+     * @param string $messenger_slug  The slug for the messenger (it's reference slug).
+     * @return string
+     */
+    public static function eventEditorNotificationsMetaBoxMessengerTabSelector($messenger_slug)
+    {
+        return "//div[@id='espresso_events_Messages_Hooks_Extend_messages_metabox_metabox']"
+               . "//a[@rel='ee-tab-$messenger_slug']";
+    }
+
+
+    /**
+     * Locator for the select input within the notifications metabox.
+     * Note, this assumes the tab content for the related messenger is already visible.
+     * @param string $message_type_label The message type label (visible string in the table) you want the selector for.
+     * @return string
+     */
+    public static function eventEditorNotificationsMetaBoxSelectSelectorForMessageType($message_type_label)
+    {
+        return "//div[@id='espresso_events_Messages_Hooks_Extend_messages_metabox_metabox']"
+               . "//table[@class='messages-custom-template-switcher']"
+               . "//tr/td[contains(.,'Registration Approved')]"
+               . "//ancestor::tr//select[contains(@class,'message-template-selector')]";
     }
 }
