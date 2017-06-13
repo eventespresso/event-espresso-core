@@ -11,37 +11,44 @@ $features = array(
 	'pricing-options' => array(
 		'label'   	=> esc_html__( 'Handle multiple dates and pricing options', 'event_espresso' ),
 		'decaf'     	=> '<span class="dashicons dashicons-no-alt"></span>',
-		'regular'	=> '<span class="dashicons dashicons-yes"></span></i>'
+		'regular'	=> '<span class="dashicons dashicons-yes"></span></i>',
+		'class'		=> 'alternate'
 	),
 	'custom-registration' => array(
 		'label'  	=> esc_html__( 'Create custom registration forms', 'event_espresso' ),
 		'decaf'     	=> '<span class="dashicons dashicons-no-alt"></span>',
-		'regular' 	=> '<span class="dashicons dashicons-yes"></span></i>'
+		'regular' 	=> '<span class="dashicons dashicons-yes"></span></i>',
+		'class'		=> 'none'
 	),
 	'advanced-notifications' => array(
 		'label'       => esc_html__( 'Customize advanced email notifications', 'event_espresso' ),
 		'decaf'     => '<span class="dashicons dashicons-no-alt"></span>',
-		'regular' => '<span class="dashicons dashicons-yes"></span></i>'
+		'regular' => '<span class="dashicons dashicons-yes"></span></i>',
+		'class'		=> 'alternate'
 	),
 	'manage-taxes'    => array(
 		'label'       => esc_html__( 'Manage taxes', 'event_espresso' ),
 		'decaf'     => '<span class="dashicons dashicons-no-alt"></span>',
-		'regular' => '<span class="dashicons dashicons-yes"></span></i>'
+		'regular' => '<span class="dashicons dashicons-yes"></span></i>',
+		'class'		=> 'none'
 	),
 	'typography'       => array(
 		'label'       => esc_html__( 'Additional payment methods available', 'event_espresso' ),
 		'decaf'     => '<span class="dashicons dashicons-no-alt"></span>',
-		'regular' => '<span class="dashicons dashicons-yes"></span></i>'
+		'regular' => '<span class="dashicons dashicons-yes"></span></i>',
+		'class'		=> 'alternate'
 	),
 	'add-on-compatibility' => array(
 		'label'       => esc_html__( 'Compatibility with add-ons', 'event_espresso' ),
 		'decaf'     => '<span class="dashicons dashicons-no-alt"></span>',
-		'regular' => '<span class="dashicons dashicons-yes"></span></i>'
+		'regular' => '<span class="dashicons dashicons-yes"></span></i>',
+		'class'		=> 'none'
 	),
 	'best-support' => array(
 		'label'       => esc_html__( 'Best in class support', 'event_espresso' ),
 		'decaf'     => '<span class="dashicons dashicons-no-alt"></span>',
-		'regular' => '<span class="dashicons dashicons-yes"></span></i>'
+		'regular' => '<span class="dashicons dashicons-yes"></span></i>',
+		'class'		=> 'alternate'
 	),
 );
 ?>
@@ -56,7 +63,7 @@ $features = array(
         </thead>
         <tbody>
 		<?php foreach ( $features as $feature ): ?>
-            <tr>
+            <tr class="<?php echo $feature['class']; ?>">
                 <td class="feature">
                     <h3>
 						<?php echo $feature['label']; ?>

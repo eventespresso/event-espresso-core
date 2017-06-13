@@ -118,7 +118,10 @@ div.TB-ee-frame a {
 	padding-bottom: 0;
 }
 /**** ee decaf reviews *****/
-
+.review-user-nicename {
+    float: right;
+    padding: 10px;
+}
 
 /**** ee decaf vs regular *****/
 .featured-section.features .row {
@@ -160,7 +163,7 @@ div.TB-ee-frame a {
 
 .featured-section .decaf-regular-table td {
     border-top: 1px solid #ccc;
-    padding: 20px 0 25px;
+    padding: 20px 0px 25px 10px;
 }
 
 .featured-section .decaf-regular-table h3 {
@@ -179,10 +182,12 @@ div.TB-ee-frame a {
 
 .featured-section .decaf-regular-table .dashicons-yes {
     color: #00A878;
+    font-size: 1.4em;
 }
 
 .featured-section .decaf-regular-table .dashicons-no-alt {
     color: #ff3439;
+    font-size: 1.4em;
 }
 
 .featured-section .decaf-regular-table .dashicons-before:before,
