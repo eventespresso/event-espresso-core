@@ -441,7 +441,7 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
         $this->_load_requirements();
         $where = $this->_admin_page->add_search_to_where_conditions($this->_admin_page->get_request_data());
         $this->assertCount(1,$where);
-        $this->assertArrayHasKey('OR',$where);
+        $this->assertArrayHasKey('OR*search_conditions',$where);
         $this->assertArrayHasKey('Event.EVT_name',$where['OR']);
         $this->assertTrue(is_array($where['OR']['Event.EVT_name']));
         $this->assertEquals('%gogogo%',$where['OR']['Event.EVT_name'][1]);
