@@ -918,13 +918,13 @@ final class EE_System
      */
     public function core_loaded_and_ready()
     {
+        $this->registry->load_core('Session');
         do_action('AHEE__EE_System__core_loaded_and_ready');
         // load_espresso_template_tags
         if (is_readable(EE_PUBLIC . 'template_tags.php')) {
             require_once(EE_PUBLIC . 'template_tags.php');
         }
         do_action('AHEE__EE_System__set_hooks_for_shortcodes_modules_and_addons');
-        $this->registry->load_core('Session');
         $this->registry->create('EventEspresso\core\services\assets\Registry');
         wp_enqueue_script('espresso_core');
     }
