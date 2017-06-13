@@ -121,6 +121,7 @@ div.TB-ee-frame a {
 .review-user-nicename {
     float: right;
     padding: 10px;
+    text-align: center;
 }
 
 /**** ee decaf vs regular *****/
