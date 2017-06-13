@@ -1039,8 +1039,13 @@ add_filter(
  *
  * @deprecated 4.9.40
  */
-class EE_Event_List_Query
+class EE_Event_List_Query extends WP_Query
 {
+
+    /**
+     * @var EventEspresso\core\domain\services\wp_queries\EventListQuery $event_list_query
+     */
+    private $event_list_query;
 
     /**
      * EE_Event_List_Query constructor.
@@ -1058,7 +1063,33 @@ class EE_Event_List_Query
             '4.9.27',
             '5.0.0'
         );
-        new \EventEspresso\core\domain\services\wp_queries\EventListQuery($args);
+        $this->event_list_query = new \EventEspresso\core\domain\services\wp_queries\EventListQuery($args);
+    }
+
+
+
+    /**
+     * event_list_title
+     *
+     * @param string $event_list_title
+     * @return string
+     */
+    public function event_list_title($event_list_title = '')
+    {
+        return $this->event_list_query->event_list_title($event_list_title);
+    }
+
+
+
+    /**
+     * event_list_css
+     *
+     * @param string $event_list_css
+     * @return string
+     */
+    public function event_list_css($event_list_css = '')
+    {
+        return $this->event_list_query->event_list_css($event_list_css);
     }
 
 }
