@@ -42,12 +42,25 @@ final class EE_Capabilities extends EE_Base
 
 
     /**
-     * This used to hold an array of EE_Meta_Capability_Map objects that define the granular capabilities mapped to for
-     * a user depending on context.
+     * This used to hold an array of EE_Meta_Capability_Map objects
+     * that define the granular capabilities mapped to for a user depending on context.
      *
      * @var EE_Meta_Capability_Map[]
      */
     private $_meta_caps = array();
+
+
+    /**
+     * @var boolean $initialized
+     */
+    private $initialized = false;
+
+
+    /**
+     * @var array $initialized_caps
+     */
+    private $initialized_caps = array();
+
 
 
     /**
@@ -67,16 +80,16 @@ final class EE_Capabilities extends EE_Base
     }
 
 
+
     /**
      * private constructor
      *
      * @since 4.5.0
-     *
-     * @return \EE_Capabilities
      */
     private function __construct()
     {
     }
+
 
 
     /**
@@ -86,36 +99,45 @@ final class EE_Capabilities extends EE_Base
      *                    actually REMOVE any capabilities from existing roles, it just resaves defaults roles and
      *                    ensures that they are up to date.
      *
-     *
      * @since 4.5.0
      * @return void
+     * @throws \EE_Error
      */
     public function init_caps($reset = false)
     {
-        if (EE_Maintenance_Mode::instance()->models_can_query()) {
+        if (
+            ($reset || ! $this->initialized)
+            && EE_Maintenance_Mode::instance()->models_can_query()
+        ) {
             $this->_caps_map = $this->_init_caps_map();
-            $this->init_role_caps($reset);
+            $this->init_role_caps($reset, $this->_caps_map);
             $this->_set_meta_caps();
+            $this->initialized = true;
         }
     }
 
 
+
     /**
      * This sets the meta caps property.
-     * @since 4.5.0
      *
+     * @since 4.5.0
      * @return void
+     * @throws EE_Error
      */
     private function _set_meta_caps()
     {
-        //make sure we're only ever initializing the default _meta_caps array once if it's empty.
-        $this->_meta_caps = $this->_get_default_meta_caps_array();
-        $this->_meta_caps = apply_filters('FHEE__EE_Capabilities___set_meta_caps__meta_caps', $this->_meta_caps);
+        // get default meta caps and filter the returned array
+        $this->_meta_caps = apply_filters(
+            'FHEE__EE_Capabilities___set_meta_caps__meta_caps',
+            $this->_get_default_meta_caps_array()
+        );
         //add filter for map_meta_caps but only if models can query.
         if (! has_filter('map_meta_cap', array($this, 'map_meta_caps'))) {
             add_filter('map_meta_cap', array($this, 'map_meta_caps'), 10, 4);
         }
     }
+
 
 
     /**
@@ -128,6 +150,7 @@ final class EE_Capabilities extends EE_Base
     private function _get_default_meta_caps_array()
     {
         static $default_meta_caps = array();
+        // make sure we're only ever initializing the default _meta_caps array once if it's empty.
         if (empty($default_meta_caps)) {
             $default_meta_caps = array(
                 //edits
@@ -194,8 +217,8 @@ final class EE_Capabilities extends EE_Base
                 ),
                 new EE_Meta_Capability_Map_Read(
                     'ee_read_payment_method',
-                    array('Payment_Method', '', '', 'ee_read_others_payment_methods')),
-
+                    array('Payment_Method', '', '', 'ee_read_others_payment_methods')
+                ),
                 //deletes
                 new EE_Meta_Capability_Map_Delete(
                     'ee_delete_event',
@@ -249,6 +272,7 @@ final class EE_Capabilities extends EE_Base
     }
 
 
+
     /**
      * This is the callback for the wp map_meta_caps() function which allows for ensuring certain caps that act as a
      * "meta" for other caps ( i.e. ee_edit_event is a meta for ee_edit_others_events ) work as expected.
@@ -274,7 +298,7 @@ final class EE_Capabilities extends EE_Base
                     continue;
                 }
                 // don't load models if there is no object ID in the args
-                if(!empty($args[0])){
+                if (! empty($args[0])) {
                     $meta_map->ensure_is_model();
                 }
                 $caps = $meta_map->map_meta_caps($caps, $cap, $user_id, $args);
@@ -282,6 +306,7 @@ final class EE_Capabilities extends EE_Base
         }
         return $caps;
     }
+
 
 
     /**
@@ -609,6 +634,7 @@ final class EE_Capabilities extends EE_Base
     }
 
 
+
     /**
      * This adds all the default caps to roles as registered in the _caps_map property.
      *
@@ -617,32 +643,60 @@ final class EE_Capabilities extends EE_Base
      * @param bool  $reset      allows for resetting the default capabilities saved on roles.  Note that this doesn't
      *                          actually REMOVE any capabilities from existing roles, it just resaves defaults roles
      *                          and ensures that they are up to date.
-     * @param array $custom_map Optional.  Can be used to send a custom map of roles and capabilities for setting them
+     * @param array $caps_map   Optional.  Can be used to send a custom map of roles and capabilities for setting them
      *                          up.  Note that this should ONLY be called on activation hook or some other one-time
      *                          task otherwise the caps will be added on every request.
      *
      * @return void
      */
-    public function init_role_caps($reset = false, $custom_map = array())
+    public function init_role_caps($reset = false, $caps_map = array())
     {
-        $caps_map = empty($custom_map) ? $this->_caps_map : $custom_map;
-        //first let's determine if these caps have already been set.
-        $caps_set_before = get_option(self::option_name, array());
-        //if not reset, see what caps are new for each role. if they're new, add them.
+        // if reset, then completely delete the cache option and clear the $initialized_caps property.
+        if ($reset) {
+            delete_option(self::option_name);
+            $this->initialized_caps = array();
+        }
+        // make sure caps map is set
+        $caps_map = empty($caps_map)
+            ? $this->_caps_map
+            : $caps_map;
+        // and filter the array so others can get in on the fun during resets
+        $caps_map = apply_filters(
+            'FHEE__EE_Capabilities__init_role_caps__caps_map',
+            $caps_map,
+            $reset
+        );
+        // unless resetting, get caps from db if we haven't already
+        $this->initialized_caps = $reset || ! empty($this->initialized_caps)
+            ? $this->initialized_caps
+            : get_option(self::option_name, array());
+        $update_initialized_caps = false;
+        // if not reset, see what caps are new for each role. if they're new, add them.
         foreach ($caps_map as $role => $caps_for_role) {
+            if (! is_array($caps_for_role)) {
+                continue;
+            }
             foreach ($caps_for_role as $cap) {
-                //first check we haven't already added this cap before, or it's a reset
-                if ($reset || ! isset($caps_set_before[ $role ]) || ! in_array($cap, $caps_set_before[ $role ])) {
+                // first check we haven't already added this cap before, or it's a reset
+                if (
+                    $reset
+                    || ! isset($this->initialized_caps[ $role ])
+                    || ! in_array($cap, $this->initialized_caps[ $role ], true)
+                ) {
                     if ($this->add_cap_to_role($role, $cap)) {
-                        $caps_set_before[ $role ][] = $cap;
+                        $this->initialized_caps[ $role ][] = $cap;
+                        $update_initialized_caps = true;
                     }
                 }
             }
         }
-        //now let's just save the cap that has been set.
-        update_option(self::option_name, $caps_set_before);
-        do_action('AHEE__EE_Capabilities__init_role_caps__complete', $caps_set_before);
+        // now let's just save the cap that has been set but only if there's been a change.
+        if ($update_initialized_caps) {
+            update_option(self::option_name, $this->initialized_caps);
+        }
+        do_action('AHEE__EE_Capabilities__init_role_caps__complete', $this->initialized_caps);
     }
+
 
 
     /**
@@ -681,6 +735,7 @@ final class EE_Capabilities extends EE_Base
     }
 
 
+
     /**
      * Functions similarly to add_cap_to_role except removes cap from given role.
      * Wrapper for $wp_role->remove_cap()
@@ -700,6 +755,7 @@ final class EE_Capabilities extends EE_Base
             $role->remove_cap($cap);
         }
     }
+
 
 
     /**
@@ -722,10 +778,18 @@ final class EE_Capabilities extends EE_Base
     {
         //apply filters (both a global on just the cap, and context specific.  Global overrides context specific)
         $filtered_cap = apply_filters('FHEE__EE_Capabilities__current_user_can__cap__' . $context, $cap, $id);
-        $filtered_cap = apply_filters('FHEE__EE_Capabilities__current_user_can__cap', $filtered_cap, $context, $cap,
-            $id);
-        return ! empty($id) ? current_user_can($filtered_cap, $id) : current_user_can($filtered_cap);
+        $filtered_cap = apply_filters(
+            'FHEE__EE_Capabilities__current_user_can__cap',
+            $filtered_cap,
+            $context,
+            $cap,
+            $id
+        );
+        return ! empty($id)
+            ? current_user_can($filtered_cap, $id)
+            : current_user_can($filtered_cap);
     }
+
 
 
     /**
@@ -743,10 +807,19 @@ final class EE_Capabilities extends EE_Base
     {
         //apply filters (both a global on just the cap, and context specific.  Global overrides context specific)
         $filtered_cap = apply_filters('FHEE__EE_Capabilities__user_can__cap__' . $context, $cap, $user, $id);
-        $filtered_cap = apply_filters('FHEE__EE_Capabilities__user_can__cap', $filtered_cap, $context, $cap, $user,
-            $id);
-        return ! empty($id) ? user_can($user, $filtered_cap, $id) : user_can($user, $filtered_cap);
+        $filtered_cap = apply_filters(
+            'FHEE__EE_Capabilities__user_can__cap',
+            $filtered_cap,
+            $context,
+            $cap,
+            $user,
+            $id
+        );
+        return ! empty($id)
+            ? user_can($user, $filtered_cap, $id)
+            : user_can($user, $filtered_cap);
     }
+
 
 
     /**
@@ -791,6 +864,7 @@ final class EE_Capabilities extends EE_Base
     }
 
 
+
     /**
      * This helper method just returns an array of registered EE capabilities.
      * Note this array is filtered.  It is assumed that all available EE capabilities are assigned to the administrator
@@ -809,9 +883,12 @@ final class EE_Capabilities extends EE_Base
         if (empty($role)) {
             return $capabilities;
         }
-        return isset($capabilities[ $role ]) ? $capabilities[ $role ] : array();
+        return isset($capabilities[ $role ])
+            ? $capabilities[ $role ]
+            : array();
     }
 }
+
 
 
 /**
