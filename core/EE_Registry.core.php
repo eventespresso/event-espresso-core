@@ -352,6 +352,7 @@ class EE_Registry
                 EE_ADMIN,
                 EE_CPTS,
                 EE_CORE . 'data_migration_scripts' . DS,
+                EE_CORE . 'capabilities' . DS,
                 EE_CORE . 'request_stack' . DS,
                 EE_CORE . 'middleware' . DS,
             )
