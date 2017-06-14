@@ -30,6 +30,8 @@ class EED_Venues_Archive  extends EED_Module {
 		return parent::get_instance( __CLASS__ );
 	}
 
+
+
 	/**
 	 * 	set_hooks - for hooking into EE Core, other modules, etc
 	 *
@@ -38,8 +40,13 @@ class EED_Venues_Archive  extends EED_Module {
 	 */
 	public static function set_hooks() {
         $post_type = get_post_type_object('espresso_venues');
-        EE_Config::register_route(strtolower($post_type->labels->name), 'Venues_Archive', 'run' );
-	}
+        $custom_post_types = EE_Register_CPTs::get_CPTs();
+        EE_Config::register_route(
+            $custom_post_types['espresso_venues']['plural_slug'],
+            'Venues_Archive',
+            'run'
+        );
+    }
 
 	/**
 	 * 	set_hooks_admin - for hooking into EE Admin Core, other modules, etc
