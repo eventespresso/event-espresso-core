@@ -459,8 +459,8 @@ class EE_Payment_Method_Manager
     protected function getPaymentMethodCaps()
     {
         $caps = array();
-        foreach ($this->payment_method_types() as $payment_method_type_obj) {
-            $caps['administrator'][] = $payment_method_type_obj->cap_name();
+        foreach ($this->payment_method_type_names() as $payment_method_name) {
+            $caps['administrator'][] = 'ee_payment_method_' . strtolower($payment_method_name);
         }
         return $caps;
     }
