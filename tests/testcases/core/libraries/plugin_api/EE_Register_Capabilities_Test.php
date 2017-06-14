@@ -95,7 +95,7 @@ class EE_Register_Capabilities_Test extends EE_UnitTestCase {
 		$this->_add_test_helper_filters();
 
 		EE_Registry::instance()->load_core( 'Capabilities' );
-		EE_Capabilities::instance()->init_caps();
+		EE_Capabilities::instance()->init_caps(true);
 
 		//remove filters that were added to prevent pollution in other tests
 		$this->_remove_test_helper_filters();
