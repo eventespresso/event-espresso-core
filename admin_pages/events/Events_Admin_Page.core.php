@@ -764,7 +764,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                     ),
                     '<br>',
                     '<select id="timezone_string" name="timezone_string" aria-describedby="timezone-description">'
-                    . EEH_DTT_Helper::wp_timezone_choice('UTC', get_user_locale())
+                    . EEH_DTT_Helper::wp_timezone_choice('UTC', EEH_DTT_Helper::get_user_locale())
                     . '</select>',
                     '<button class="button button-secondary timezone-submit">',
                     '</button><span class="spinner"></span>'

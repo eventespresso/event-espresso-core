@@ -1101,4 +1101,19 @@ class EEH_DTT_Helper
         return join("\n", $structure);
     }
 
+
+    /**
+     * Shim for the WP function `get_user_locale` that was added in WordPress 4.7.0
+     *
+     * @param int|WP_User $user_id
+     * @return string
+     */
+    public static function get_user_locale($user_id = 0)
+    {
+        if (function_exists('get_user_locale')) {
+            return get_user_locale($user_id);
+        }
+        return get_locale();
+    }
+
 }// end class EEH_DTT_Helper
