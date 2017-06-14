@@ -709,8 +709,6 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         add_filter('get_edit_post_link', array($this, 'modify_edit_post_link'), 10, 3);
         if ($post_type === $route_to_check) {
             add_filter('redirect_post_location', array($this, 'cpt_post_location_redirect'), 10, 2);
-            //catch trashed wp redirect
-            add_filter('wp_redirect', array($this, 'cpt_trash_post_location_redirect'), 10, 2);
         }
         //now let's filter redirect if we're on a revision page and the revision is for an event CPT.
         $revision = isset($this->_req_data['revision']) ? $this->_req_data['revision'] : null;
@@ -1183,30 +1181,6 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
             ),
             admin_url()
         );
-    }
-
-
-
-    /**
-     * This hooks into the wp_redirect filter and if trashed is detected, then we'll redirect to the appropriate EE
-     * route
-     *
-     * @param  string $location url
-     * @param  string $status   status
-     * @return string           url to redirect to
-     */
-    public function cpt_trash_post_location_redirect($location, $status)
-    {
-        if (isset($this->_req_data['action']) && $this->_req_data['action'] !== 'trash' && empty($this->_req_data['post'])) {
-            return $location;
-        }
-
-        $post              = get_post($this->_req_data['post']);
-        $query_args        = array('action' => 'default');
-        $this->_cpt_object = get_post_type_object($post->post_type);
-        EE_Error::add_success(sprintf(__('%s trashed.', 'event_espresso'), $this->_cpt_object->labels->singular_name));
-        $this->_process_notices($query_args, true);
-        return self::add_query_args_and_nonce($query_args, $this->_admin_base_url);
     }
 
 
