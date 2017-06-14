@@ -147,7 +147,6 @@ class EEH_Activation
         EEH_Activation::insert_default_status_codes();
         EEH_Activation::generate_default_message_templates();
         EEH_Activation::create_no_ticket_prices_array();
-        EE_Registry::instance()->CAP->init_caps();
 
         EEH_Activation::validate_messages_system();
         EEH_Activation::insert_default_payment_methods();
