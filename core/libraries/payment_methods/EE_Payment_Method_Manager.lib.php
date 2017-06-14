@@ -281,6 +281,7 @@ class EE_Payment_Method_Manager
      */
     public function activate_a_payment_method_of_type($payment_method_type)
     {
+        $this->maybe_register_payment_methods();
         $payment_method = EEM_Payment_Method::instance()->get_one_of_type($payment_method_type);
         if ( ! $payment_method instanceof EE_Payment_Method) {
             $pm_type_class = $this->payment_method_class_from_type($payment_method_type);
