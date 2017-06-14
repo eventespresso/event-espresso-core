@@ -83,16 +83,15 @@ class EE_Register_Capabilities implements EEI_Plugin_API
             'cap_maps' => isset($setup_args['capability_maps']) ? $setup_args['capability_maps'] : array(),
         );
         //set initial caps (note that EE_Capabilities takes care of making sure that the caps get added only once)
-        add_filter('FHEE__EE_Capabilities__init_caps_map__caps',
-            array('EE_Register_Capabilities', 'register_capabilities'), 10);
+        add_filter(
+            'FHEE__EE_Capabilities__init_caps_map__caps',
+            array('EE_Register_Capabilities', 'register_capabilities')
+        );
         //add filter for cap maps
-        add_filter('FHEE__EE_Capabilities___set_meta_caps__meta_caps',
-            array('EE_Register_Capabilities', 'register_cap_maps'), 10);
-        //init_role_caps to register new capabilities
-        if (is_admin()) {
-            EE_Registry::instance()->load_core('Capabilities');
-            EE_Capabilities::instance()->init_caps();
-        }
+        add_filter(
+            'FHEE__EE_Capabilities___set_meta_caps__meta_caps',
+            array('EE_Register_Capabilities', 'register_cap_maps')
+        );
     }
 
 
@@ -179,8 +178,7 @@ class EE_Register_Capabilities implements EEI_Plugin_API
         if (! empty(self::$_registry[$cap_reference])) {
             unset(self::$_registry[$cap_reference]);
         }
-
-        //re init caps to grab the changes due to removed caps.
-        EE_Capabilities::instance()->init_caps();
+        // re init caps to grab the changes due to removed caps.
+        EE_Capabilities::instance()->init_caps(true);
     }
 }
