@@ -24,12 +24,12 @@ class EE_Encryption
     /**
      * the OPENSSL cipher method used
      */
-    const OPENSSL_CIPHER_METHOD = 'aes-256-ctr';
+    const OPENSSL_CIPHER_METHOD = 'AES-128-CBC';
 
     /**
      * the OPENSSL digest method used
      */
-    const OPENSSL_DIGEST_METHOD = 'sha512';
+    const OPENSSL_DIGEST_METHOD = 'sha256';
 
     /**
      * separates the encrypted text from the initialization vector
