@@ -1151,7 +1151,6 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
     }
 
 
-
     /**
      * Modify the trash link on our cpt edit pages so it has the required query var for triggering redirect properly on
      * our routes.
@@ -1159,7 +1158,8 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
      * @param  string $delete_link  original delete link
      * @param  int    $post_id      id of cpt object
      * @param  bool   $force_delete whether this is forcing a hard delete instead of trash
-     * @return string               new delete link
+     * @return string new delete link
+     * @throws EE_Error
      */
     public function modify_delete_post_link($delete_link, $post_id, $force_delete)
     {
@@ -1170,7 +1170,19 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         ) {
             return $delete_link;
         }
-        return add_query_arg(array('current_route' => 'trash'), $delete_link);
+        $this->_set_model_object($this->_req_data['post'], true);
+        //returns something like `trash_event` or `trash_attendee` or `trash_venue`
+        $action = 'trash_' . str_replace('ee_', '', strtolower(get_class($this->_cpt_model_obj)));
+
+        return EE_Admin_Page::add_query_args_and_nonce(
+            array(
+                'page' => $this->_req_data['page'],
+                'action' => $action,
+                $this->_cpt_model_obj->get_model()->get_primary_key_field()->get_name()
+                    => $this->_req_data['post']
+            ),
+            admin_url()
+        );
     }
 
 
