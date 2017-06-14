@@ -80,7 +80,7 @@ final class EE_Front_Controller
         // before headers sent
         add_action('wp', array($this, 'wp'), 5);
         // primarily used to process any content shortcodes
-        add_action('template_redirect', array($this, 'templateRedirect'), 0);
+        add_action('template_redirect', array($this, 'templateRedirect'), 999);
         // header
         add_action('wp_head', array($this, 'header_meta_tag'), 5);
         add_action('wp_print_scripts', array($this, 'wp_print_scripts'), 10);

@@ -62,7 +62,7 @@ class ShortcodesManager
         // check content for shortcodes the old way
         add_action('parse_query', array($this->legacy_shortcodes_manager, 'initializeShortcodes'), 5);
         // check content for shortcodes the NEW more efficient way
-        add_action('template_redirect', array($this, 'templateRedirect'), 0);
+        add_action('template_redirect', array($this, 'templateRedirect'), 999);
     }
 
 
