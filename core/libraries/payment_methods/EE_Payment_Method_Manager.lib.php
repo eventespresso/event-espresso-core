@@ -35,6 +35,10 @@ class EE_Payment_Method_Manager
      */
     protected $_payment_method_types = array();
 
+    /**
+     * @var EE_PMT_Base[]
+     */
+    protected $payment_method_objects = array();
 
 
     /**
@@ -228,12 +232,15 @@ class EE_Payment_Method_Manager
      */
     public function payment_method_types($force_recheck = false)
     {
-        $this->maybe_register_payment_methods($force_recheck);
-        $pmt_objs = array();
-        foreach ($this->payment_method_type_names(true) as $classname) {
-            $pmt_objs[] = new $classname;
+        if ($force_recheck || empty($this->payment_method_objects)) {
+            $this->maybe_register_payment_methods($force_recheck);
+            foreach ($this->payment_method_type_names(true) as $classname) {
+                if (! isset($this->payment_method_objects[ $classname ])) {
+                    $this->payment_method_objects[ $classname ] = new $classname;
+                }
+            }
         }
-        return $pmt_objs;
+        return $this->payment_method_objects;
     }
 
 
