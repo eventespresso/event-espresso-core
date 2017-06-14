@@ -1042,10 +1042,11 @@ add_filter(
 class EE_Event_List_Query extends WP_Query
 {
 
-    /**
-     * @var EventEspresso\core\domain\services\wp_queries\EventListQuery $event_list_query
-     */
-    private $event_list_query;
+    private $title;
+
+    private $css_class;
+
+    private $category_slug;
 
     /**
      * EE_Event_List_Query constructor.
@@ -1063,7 +1064,25 @@ class EE_Event_List_Query extends WP_Query
             '4.9.27',
             '5.0.0'
         );
-        $this->event_list_query = new \EventEspresso\core\domain\services\wp_queries\EventListQuery($args);
+        $this->title = isset($args['title']) ? $args['title'] : '';
+        $this->css_class = isset($args['css_class']) ? $args['css_class'] : '';
+        $this->category_slug = isset($args['category_slug']) ? $args['category_slug'] : '';
+        $limit = isset($args['limit']) && absint($args['limit']) ? $args['limit'] : 10;
+        // the current "page" we are viewing
+        $paged = max(1, get_query_var('paged'));
+        // Force these args
+        $args = array_merge(
+            $args, array(
+            'post_type'              => 'espresso_events',
+            'posts_per_page'         => $limit,
+            'update_post_term_cache' => false,
+            'update_post_meta_cache' => false,
+            'paged'                  => $paged,
+            'offset'                 => ($paged - 1) * $limit
+        )
+        );
+        // run the query
+        parent::__construct($args);
     }
 
 
@@ -1076,7 +1095,10 @@ class EE_Event_List_Query extends WP_Query
      */
     public function event_list_title($event_list_title = '')
     {
-        return $this->event_list_query->event_list_title($event_list_title);
+        if (! empty($this->title)) {
+            return $this->title;
+        }
+        return $event_list_title;
     }
 
 
@@ -1089,7 +1111,19 @@ class EE_Event_List_Query extends WP_Query
      */
     public function event_list_css($event_list_css = '')
     {
-        return $this->event_list_query->event_list_css($event_list_css);
+        $event_list_css .= ! empty($event_list_css)
+            ? ' '
+            : '';
+        $event_list_css .= ! empty($this->css_class)
+            ? $this->css_class
+            : '';
+        $event_list_css .= ! empty($event_list_css)
+            ? ' '
+            : '';
+        $event_list_css .= ! empty($this->category_slug)
+            ? $this->category_slug
+            : '';
+        return $event_list_css;
     }
 
 }
