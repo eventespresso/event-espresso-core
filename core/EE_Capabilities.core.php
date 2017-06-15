@@ -50,9 +50,23 @@ final class EE_Capabilities extends EE_Base
     private $_meta_caps = array();
 
     /**
-     * @var boolean $initialized
+     * The internal $capabilities_map needs to be initialized before it can be used.
+     * This flag tracks whether that has happened or not.
+     * But for this to work, we need three states to indicate:
+     *      initialization has not occurred at all
+     *      initialization has started but is not complete
+     *      initialization is complete
+     * The reason this is needed is because the addCaps() method
+     * normally requires the $capabilities_map to be initialized,
+     * but is also used during the initialization process.
+     * So:
+     *      If initialized === null, init_caps() will be called before any other methods will run.
+     *      If initialized === false, then init_caps() is in the process of running it's logic.
+     *      If initialized === true, then init_caps() has completed the initialization process.
+     *
+     * @var boolean|null $initialized
      */
-    private $initialized = false;
+    private $initialized = null;
 
     /**
      * @var boolean $reset
@@ -98,20 +112,30 @@ final class EE_Capabilities extends EE_Base
      *                    ensures that they are up to date.
      *
      * @since 4.5.0
-     * @return void
+     * @return bool
      * @throws EE_Error
      */
     public function init_caps($reset = false)
     {
+        if(! EE_Maintenance_Mode::instance()->models_can_query()){
+            return false;
+        }
         $this->reset = filter_var($reset, FILTER_VALIDATE_BOOLEAN);
-        if (
-            ($this->reset || ! $this->initialized)
-            && EE_Maintenance_Mode::instance()->models_can_query()
-        ) {
+        // if reset, then completely delete the cache option and clear the $capabilities_map property.
+        if ($this->reset) {
+            $this->initialized = null;
+            $this->capabilities_map = array();
+            delete_option(self::option_name);
+        }
+        if ($this->initialized === null) {
+            $this->initialized = false;
             $this->addCaps($this->_init_caps_map());
             $this->_set_meta_caps();
             $this->initialized = true;
         }
+        // reset $this->reset so that it's not stuck on true if init_caps() gets called again
+        $this->reset = false;
+        return true;
     }
 
 
@@ -637,25 +661,51 @@ final class EE_Capabilities extends EE_Base
 
 
     /**
+     * @return bool
+     * @throws EE_Error
+     */
+    private function setupCapabilitiesMap()
+    {
+        // if the initialization process hasn't even started, then we need to call init_caps()
+        if($this->initialized === null) {
+            return $this->init_caps();
+        }
+        // unless resetting, get caps from db if we haven't already
+        $this->capabilities_map = $this->reset || ! empty($this->capabilities_map)
+            ? $this->capabilities_map
+            : get_option(self::option_name, array());
+        return true;
+    }
+
+
+
+    /**
+     * @param bool $update
+     * @return bool
+     */
+    private function updateCapabilitiesMap($update = true)
+    {
+        return $update ? update_option(self::option_name, $this->capabilities_map) : false;
+    }
+
+
+
+    /**
      * Adds capabilities to roles.
      *
      * @since 4.9.42
      * @param array $capabilities_to_add array of capabilities to add, indexed by roles.
      *                                   Note that this should ONLY be called on activation hook
      *                                   otherwise the caps will be added on every request.
-     * @return void
+     * @return bool
+     * @throws \EE_Error
      */
     public function addCaps(array $capabilities_to_add)
     {
-        // if reset, then completely delete the cache option and clear the $capabilities_map property.
-        if ($this->reset) {
-            delete_option(self::option_name);
-            $this->capabilities_map = array();
+        // don't do anything if the capabilities map can not be initialized
+        if (! $this->setupCapabilitiesMap()) {
+            return false;
         }
-        // unless resetting, get caps from db if we haven't already
-        $this->capabilities_map = $this->reset || ! empty($this->capabilities_map)
-            ? $this->capabilities_map
-            : get_option(self::option_name, array());
         // and filter the array so others can get in on the fun during resets
         $capabilities_to_add = apply_filters(
             'FHEE__EE_Capabilities__addCaps__capabilities_to_add',
@@ -666,30 +716,18 @@ final class EE_Capabilities extends EE_Base
         $update_capabilities_map = false;
         // if not reset, see what caps are new for each role. if they're new, add them.
         foreach ($capabilities_to_add as $role => $caps_for_role) {
-            if (! is_array($caps_for_role)) {
-                continue;
-            }
-            foreach ($caps_for_role as $cap) {
-                // first check we haven't already added this cap before, or it's a reset
-                if (
-                    $this->reset
-                    || ! isset($this->capabilities_map[ $role ])
-                    || ! in_array($cap, $this->capabilities_map[ $role ], true)
-                ) {
-                    if ($this->add_cap_to_role($role, $cap)) {
-                        $this->capabilities_map[ $role ][] = $cap;
+            if (is_array($caps_for_role)) {
+                foreach ($caps_for_role as $cap) {
+                    if ($this->add_cap_to_role($role, $cap, true, false)) {
                         $update_capabilities_map = true;
                     }
                 }
             }
         }
         // now let's just save the cap that has been set but only if there's been a change.
-        if ($update_capabilities_map) {
-            update_option(self::option_name, $this->capabilities_map);
-        }
-        do_action('AHEE__EE_Capabilities__addCaps__complete', $this->capabilities_map);
-        // reset $this->reset so that it's not stuck on true if init_role_caps() gets called again
-        $this->reset = false;
+        $updated = $this->updateCapabilitiesMap($update_capabilities_map);
+        do_action('AHEE__EE_Capabilities__addCaps__complete', $this->capabilities_map, $updated);
+        return $updated;
     }
 
 
@@ -697,42 +735,28 @@ final class EE_Capabilities extends EE_Base
     /**
      * Loops through the capabilities map and removes the role caps specified by the incoming array
      *
-     * @param array $caps_map   map of capabilities to be removed (indexed by roles)
+     * @param array $caps_map map of capabilities to be removed (indexed by roles)
+     * @return bool
+     * @throws \EE_Error
      */
     public function removeCaps($caps_map)
     {
-        // get caps from db if we haven't already
-        $this->capabilities_map = ! empty($this->capabilities_map)
-            ? $this->capabilities_map
-            : get_option(self::option_name, array());
+        // don't do anything if the capabilities map can not be initialized
+        if (! $this->setupCapabilitiesMap()) {
+            return false;
+        }
         $update_capabilities_map = false;
         foreach ($caps_map as $role => $caps_for_role) {
-            if (! is_array($caps_for_role)) {
-                continue;
-            }
-            $caps_to_remove = array();
-            foreach ($caps_for_role as $cap) {
-                // first check we haven't already added this cap before, or it's a reset
-                if (
-                    isset($this->capabilities_map[ $role ])
-                    && in_array($cap, $this->capabilities_map[ $role ], true)
-                    && $this->remove_cap_from_role($role, $cap)
-                ) {
-                    $caps_to_remove[] = $cap;
+            if (is_array($caps_for_role)) {
+                foreach ($caps_for_role as $cap) {
+                    if ($this->remove_cap_from_role($role, $cap, false)) {
+                        $update_capabilities_map = true;
+                    }
                 }
             }
-            if(! empty($caps_to_remove)) {
-                $this->capabilities_map[ $role ] = array_diff(
-                    $this->capabilities_map[ $role ],
-                    $caps_to_remove
-                );
-                $update_capabilities_map = true;
-            }
         }
-        // resave the caps if
-        if ($update_capabilities_map) {
-            update_option(self::option_name, $this->capabilities_map);
-        }
+        // maybe resave the caps
+        return $this->updateCapabilitiesMap($update_capabilities_map);
     }
 
 
@@ -743,31 +767,43 @@ final class EE_Capabilities extends EE_Base
      * this is a wrapper for $wp_role->add_cap()
      *
      * @see   wp-includes/capabilities.php
-     *
      * @since 4.5.0
-     *
-     * @param string $role  A WordPress role the capability is being added to
-     * @param string $cap   The capability being added to the role
-     * @param bool   $grant Whether to grant access to this cap on this role.
-     *
+     * @param string|WP_Role $role  A WordPress role the capability is being added to
+     * @param string         $cap   The capability being added to the role
+     * @param bool           $grant Whether to grant access to this cap on this role.
+     * @param bool           $update_capabilities_map
      * @return bool
+     * @throws \EE_Error
      */
-    public function add_cap_to_role($role, $cap, $grant = true)
+    public function add_cap_to_role($role, $cap, $grant = true, $update_capabilities_map = true)
     {
-        $role_object = get_role($role);
+        $role = $role instanceof WP_Role ? $role : get_role($role);
         //if the role isn't available then we create it.
-        if (! $role_object instanceof WP_Role) {
-            //if a plugin wants to create a specific role name then they should create the role before
-            //EE_Capabilities does.  Otherwise this function will create the role name from the slug:
+        if (! $role instanceof WP_Role) {
+            // if a plugin wants to create a specific role name then they should create the role before
+            // EE_Capabilities does.  Otherwise this function will create the role name from the slug:
             // - removes any `ee_` namespacing from the start of the slug.
             // - replaces `_` with ` ` (empty space).
             // - sentence case on the resulting string.
-            $role_label = ucwords(str_replace('_', ' ', str_replace('ee_', '', $role)));
-            $role_object = add_role($role, $role_label);
+            $role_label = ucwords(
+                str_replace('_', ' ', str_replace('ee_', '', $role))
+            );
+            $role = add_role($role, $role_label);
         }
-        if ($role_object instanceof WP_Role) {
-            $role_object->add_cap($cap, $grant);
-            return true;
+        if ($role instanceof WP_Role) {
+            // don't do anything if the capabilities map can not be initialized
+            if (! $this->setupCapabilitiesMap()) {
+                return false;
+            }
+            if (
+                ! isset($this->capabilities_map[ $role->name ])
+                || ! in_array($cap, $this->capabilities_map[ $role->name ], true)
+            ) {
+                $role->add_cap($cap, $grant);
+                $this->capabilities_map[ $role->name ][] = $cap;
+                $this->updateCapabilitiesMap($update_capabilities_map);
+                return true;
+            }
         }
         return false;
     }
@@ -780,17 +816,26 @@ final class EE_Capabilities extends EE_Base
      *
      * @see   wp-includes/capabilities.php
      * @since 4.5.0
-     *
-     * @param string $role A WordPress role the capability is being removed from.
-     * @param string $cap  The capability being removed
-     *
-     * @return boolean
+     * @param string|WP_Role $role A WordPress role the capability is being removed from.
+     * @param string         $cap  The capability being removed
+     * @param bool           $update_capabilities_map
+     * @return bool
+     * @throws \EE_Error
      */
-    public function remove_cap_from_role($role, $cap)
+    public function remove_cap_from_role($role, $cap, $update_capabilities_map = true)
     {
-        $role = get_role($role);
-        if ($role instanceof WP_Role) {
+        // don't do anything if the capabilities map can not be initialized
+        if (! $this->setupCapabilitiesMap()) {
+            return false;
+        }
+        $role = $role instanceof WP_Role ? $role :get_role($role);
+        if (
+            isset($this->capabilities_map[ $role->name ])
+            && ($index = array_search($cap, $this->capabilities_map[ $role->name ], true)) !== false
+        ) {
             $role->remove_cap($cap);
+            unset($this->capabilities_map[ $role->name ][ $index ]);
+            $this->updateCapabilitiesMap($update_capabilities_map);
             return true;
         }
         return false;
@@ -938,6 +983,7 @@ final class EE_Capabilities extends EE_Base
      *                          Note that this should ONLY be called on activation hook or some other one-time
      *                          task otherwise the caps will be added on every request.
      * @return void
+     * @throws EE_Error
      */
     public function init_role_caps($reset = false, $caps_map = array())
     {
