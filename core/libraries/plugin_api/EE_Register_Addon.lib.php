@@ -626,30 +626,29 @@ class EE_Register_Addon implements EEI_Plugin_API
                 // we know it was just activated and the request will end soon
             }
             return true;
-        } else {
-            // make sure this was called in the right place!
-            if (
-                ! did_action('AHEE__EE_System__load_espresso_addons')
-                || did_action('AHEE__EE_System___detect_if_activation_or_upgrade__begin')
-            ) {
-                EE_Error::doing_it_wrong(
-                    __METHOD__,
-                    sprintf(
-                        __(
-                            'An attempt to register an EE_Addon named "%s" has failed because it was not registered at the correct time.  Please use the "AHEE__EE_System__load_espresso_addons" hook to register addons.',
-                            'event_espresso'
-                        ),
-                        $addon_name
+        }
+        // make sure this was called in the right place!
+        if (
+            ! did_action('AHEE__EE_System__load_espresso_addons')
+            || did_action('AHEE__EE_System___detect_if_activation_or_upgrade__begin')
+        ) {
+            EE_Error::doing_it_wrong(
+                __METHOD__,
+                sprintf(
+                    __(
+                        'An attempt to register an EE_Addon named "%s" has failed because it was not registered at the correct time.  Please use the "AHEE__EE_System__load_espresso_addons" hook to register addons.',
+                        'event_espresso'
                     ),
-                    '4.3.0'
-                );
-            }
-            // make sure addon settings are set correctly without overwriting anything existing
-            if (isset(self::$_settings[$addon_name])) {
-                self::$_settings[$addon_name] += $addon_settings;
-            } else {
-                self::$_settings[$addon_name] = $addon_settings;
-            }
+                    $addon_name
+                ),
+                '4.3.0'
+            );
+        }
+        // make sure addon settings are set correctly without overwriting anything existing
+        if (isset(self::$_settings[$addon_name])) {
+            self::$_settings[$addon_name] += $addon_settings;
+        } else {
+            self::$_settings[$addon_name] = $addon_settings;
         }
         return false;
     }
@@ -825,8 +824,9 @@ class EE_Register_Addon implements EEI_Plugin_API
             EE_Register_Capabilities::register(
                 $addon_name,
                 array(
-                    'capabilities'    => self::$_settings[$addon_name]['capabilities'],
-                    'capability_maps' => self::$_settings[$addon_name]['capability_maps'],
+                    'capabilities'       => self::$_settings[$addon_name]['capabilities'],
+                    'capability_maps'    => self::$_settings[$addon_name]['capability_maps'],
+                    'for_payment_method' => ! empty(self::$_settings[ $addon_name ]['payment_method_paths']),
                 )
             );
         }
@@ -1043,7 +1043,10 @@ class EE_Register_Addon implements EEI_Plugin_API
                 ! empty(self::$_settings[$addon_name]['capabilities'])
                 || ! empty(self::$_settings[$addon_name]['capability_maps'])
             ) {
-                EE_Register_Capabilities::deregister($addon_name);
+                EE_Register_Capabilities::deregister(
+                    $addon_name,
+                    ! empty(self::$_settings[ $addon_name ]['payment_method_paths'])
+                );
             }
             //deregister custom_post_types for addon
             if (! empty(self::$_settings[$addon_name]['custom_post_types'])) {
