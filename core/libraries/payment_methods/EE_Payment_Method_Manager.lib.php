@@ -438,8 +438,7 @@ class EE_Payment_Method_Manager
         if ($this->payment_method_caps_initialized) {
             return;
         }
-        EE_Capabilities::instance()->init_role_caps(
-            false,
+        EE_Capabilities::instance()->addCaps(
             $this->getPaymentMethodCaps()
         );
         $this->payment_method_caps_initialized = true;
