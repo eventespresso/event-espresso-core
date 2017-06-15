@@ -1561,7 +1561,7 @@ class EEH_Activation
                                 || ! $table->is_global()//not main site,but not global either. nuke it
                             )
                         ) {
-                            $tables[] = $table->get_table_name();
+                            $tables[$table->get_table_name()] = $table->get_table_name();
                         }
                     }
                 }
@@ -1578,7 +1578,7 @@ class EEH_Activation
             'esp_rule',
         );
         foreach ($tables_without_models as $table) {
-            $tables[] = $table;
+            $tables[$table] = $table;
         }
         return \EEH_Activation::getTableManager()->dropTables($tables);
     }

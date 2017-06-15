@@ -329,7 +329,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 'capability' => 'ee_edit_contacts',
                 'obj_id'     => $att_id,
             ),
-            'trash_attendees'                    => array(
+            'trash_attendee'                    => array(
                 'func'       => '_trash_or_restore_attendees',
                 'args'       => array(
                     'trash' => true,
@@ -743,7 +743,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 'label'       => __('In Use', 'event_espresso'),
                 'count'       => 0,
                 'bulk_action' => array(
-                    'trash_attendees' => __('Move to Trash', 'event_espresso'),
+                    'trash_attendee' => __('Move to Trash', 'event_espresso'),
                 ),
             ),
         );

@@ -665,7 +665,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             $event = $this->_cpt_model_obj;
         }
         // STILL no event?
-        if (empty ($event)) {
+        if (! $event instanceof EE_Event) {
             return;
         }
         $orig_status = $event->status();
