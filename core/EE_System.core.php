@@ -215,6 +215,12 @@ final class EE_System
     public function loadCapabilities()
     {
         $this->registry->load_core('EE_Capabilities');
+        add_action(
+            'AHEE__EE_Capabilities__init_caps__before_initialization',
+            function() {
+                EE_Registry::instance()->load_lib('Payment_Method_Manager');
+            }
+        );
     }
 
 
