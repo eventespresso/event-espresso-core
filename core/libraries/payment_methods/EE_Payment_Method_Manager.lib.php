@@ -488,7 +488,7 @@ class EE_Payment_Method_Manager
     {
         if ($reset || ! $this->payment_method_caps_initialized) {
             $this->payment_method_caps_initialized = true;
-            return $caps + $this->getPaymentMethodCaps();
+            $caps = array_merge_recursive($caps, $this->getPaymentMethodCaps());
         }
         return $caps;
     }
