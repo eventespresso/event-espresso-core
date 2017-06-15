@@ -129,8 +129,16 @@ final class EE_Capabilities extends EE_Base
         }
         if ($this->initialized === null) {
             $this->initialized = false;
+            do_action(
+                'AHEE__EE_Capabilities__init_caps__before_initialization',
+                $this->reset
+            );
             $this->addCaps($this->_init_caps_map());
             $this->_set_meta_caps();
+            do_action(
+                'AHEE__EE_Capabilities__init_caps__after_initialization',
+                $this->capabilities_map
+            );
             $this->initialized = true;
         }
         // reset $this->reset so that it's not stuck on true if init_caps() gets called again
