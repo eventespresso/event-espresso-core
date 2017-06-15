@@ -13,7 +13,8 @@ class EE_Two_Column_Layout extends EE_Form_Section_Layout_Base
      */
     public function layout_form_begin($additional_args = array())
     {
-        return EEH_HTML::table(
+        return $this->display_form_wide_errors()
+        . EEH_HTML::table(
             '',
             $this->_form_section->html_id(),
             $this->_form_section->html_class(),
