@@ -104,7 +104,7 @@ class Benchmark
         if (Benchmark::doNotRun()) {
             return;
         }
-        $memory_used = Benchmark::convert(memory_get_peak_usage(true));
+        $memory_used = Benchmark::convert(memory_get_usage(true));
         Benchmark::$memory_usage[$label] = $memory_used;
         if ($output_now) {
             echo defined('EE_TESTS_DIR') ? "\r\n " : '<br />';
