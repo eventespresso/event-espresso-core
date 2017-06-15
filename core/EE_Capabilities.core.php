@@ -1,4 +1,5 @@
 <?php
+
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 
 
@@ -38,8 +39,7 @@ final class EE_Capabilities extends EE_Base
      *
      * @var array
      */
-    private $_caps_map = array();
-
+    private $capabilities_map = array();
 
     /**
      * This used to hold an array of EE_Meta_Capability_Map objects
@@ -49,17 +49,15 @@ final class EE_Capabilities extends EE_Base
      */
     private $_meta_caps = array();
 
-
     /**
      * @var boolean $initialized
      */
     private $initialized = false;
 
-
     /**
-     * @var array $initialized_caps
+     * @var boolean $reset
      */
-    private $initialized_caps = array();
+    private $reset = false;
 
 
 
@@ -101,16 +99,16 @@ final class EE_Capabilities extends EE_Base
      *
      * @since 4.5.0
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function init_caps($reset = false)
     {
+        $this->reset = filter_var($reset, FILTER_VALIDATE_BOOLEAN);
         if (
-            ($reset || ! $this->initialized)
+            ($this->reset || ! $this->initialized)
             && EE_Maintenance_Mode::instance()->models_can_query()
         ) {
-            $this->_caps_map = $this->_init_caps_map();
-            $this->init_role_caps($reset, $this->_caps_map);
+            $this->addCaps($this->_init_caps_map());
             $this->_set_meta_caps();
             $this->initialized = true;
         }
@@ -145,7 +143,7 @@ final class EE_Capabilities extends EE_Base
      *
      * @since  4.8.28.rc.012
      * @return array
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     private function _get_default_meta_caps_array()
     {
@@ -311,6 +309,8 @@ final class EE_Capabilities extends EE_Base
 
     /**
      * This sets up and returns the initial capabilities map for Event Espresso
+     * Note this array is filtered.
+     * It is assumed that all available EE capabilities are assigned to the administrator role.
      *
      * @since 4.5.0
      *
@@ -318,383 +318,421 @@ final class EE_Capabilities extends EE_Base
      */
     private function _init_caps_map()
     {
-        $caps = array(
-            'administrator'           => array(
-                //basic access
-                'ee_read_ee',
-                //gateways
-                /**
-                 * note that with payment method capabilities, although we've implemented
-                 * capability mapping which will be used for accessing payment methods owned by
-                 * other users.  This is not fully implemented yet in the payment method ui.
-                 * Currently only the "plural" caps are in active use.
-                 * (Specific payment method caps are in use as well).
-                 **/
-                'ee_manage_gateways',
-                'ee_read_payment_method',
-                'ee_read_payment_methods',
-                'ee_read_others_payment_methods',
-                'ee_edit_payment_method',
-                'ee_edit_payment_methods',
-                'ee_edit_others_payment_methods',
-                'ee_delete_payment_method',
-                'ee_delete_payment_methods',
-                //events
-                'ee_publish_events',
-                'ee_read_private_events',
-                'ee_read_others_events',
-                'ee_read_event',
-                'ee_read_events',
-                'ee_edit_event',
-                'ee_edit_events',
-                'ee_edit_published_events',
-                'ee_edit_others_events',
-                'ee_edit_private_events',
-                'ee_delete_published_events',
-                'ee_delete_private_events',
-                'ee_delete_event',
-                'ee_delete_events',
-                'ee_delete_others_events',
-                //event categories
-                'ee_manage_event_categories',
-                'ee_edit_event_category',
-                'ee_delete_event_category',
-                'ee_assign_event_category',
-                //venues
-                'ee_publish_venues',
-                'ee_read_venue',
-                'ee_read_venues',
-                'ee_read_others_venues',
-                'ee_read_private_venues',
-                'ee_edit_venue',
-                'ee_edit_venues',
-                'ee_edit_others_venues',
-                'ee_edit_published_venues',
-                'ee_edit_private_venues',
-                'ee_delete_venue',
-                'ee_delete_venues',
-                'ee_delete_others_venues',
-                'ee_delete_private_venues',
-                'ee_delete_published_venues',
-                //venue categories
-                'ee_manage_venue_categories',
-                'ee_edit_venue_category',
-                'ee_delete_venue_category',
-                'ee_assign_venue_category',
-                //contacts
-                'ee_read_contact',
-                'ee_read_contacts',
-                'ee_edit_contact',
-                'ee_edit_contacts',
-                'ee_delete_contact',
-                'ee_delete_contacts',
-                //registrations
-                'ee_read_registration',
-                'ee_read_registrations',
-                'ee_read_others_registrations',
-                'ee_edit_registration',
-                'ee_edit_registrations',
-                'ee_edit_others_registrations',
-                'ee_delete_registration',
-                'ee_delete_registrations',
-                //checkins
-                'ee_read_checkin',
-                'ee_read_others_checkins',
-                'ee_read_checkins',
-                'ee_edit_checkin',
-                'ee_edit_checkins',
-                'ee_edit_others_checkins',
-                'ee_delete_checkin',
-                'ee_delete_checkins',
-                'ee_delete_others_checkins',
-                //transactions && payments
-                'ee_read_transaction',
-                'ee_read_transactions',
-                'ee_edit_payments',
-                'ee_delete_payments',
-                //messages
-                'ee_read_message',
-                'ee_read_messages',
-                'ee_read_others_messages',
-                'ee_read_global_messages',
-                'ee_edit_global_messages',
-                'ee_edit_message',
-                'ee_edit_messages',
-                'ee_edit_others_messages',
-                'ee_delete_message',
-                'ee_delete_messages',
-                'ee_delete_others_messages',
-                'ee_delete_global_messages',
-                'ee_send_message',
-                //tickets
-                'ee_read_default_ticket',
-                'ee_read_default_tickets',
-                'ee_read_others_default_tickets',
-                'ee_edit_default_ticket',
-                'ee_edit_default_tickets',
-                'ee_edit_others_default_tickets',
-                'ee_delete_default_ticket',
-                'ee_delete_default_tickets',
-                'ee_delete_others_default_tickets',
-                //prices
-                'ee_edit_default_price',
-                'ee_edit_default_prices',
-                'ee_delete_default_price',
-                'ee_delete_default_prices',
-                'ee_edit_default_price_type',
-                'ee_edit_default_price_types',
-                'ee_delete_default_price_type',
-                'ee_delete_default_price_types',
-                'ee_read_default_prices',
-                'ee_read_default_price_types',
-                //registration form
-                'ee_edit_question',
-                'ee_edit_questions',
-                'ee_edit_system_questions',
-                'ee_read_questions',
-                'ee_delete_question',
-                'ee_delete_questions',
-                'ee_edit_question_group',
-                'ee_edit_question_groups',
-                'ee_read_question_groups',
-                'ee_edit_system_question_groups',
-                'ee_delete_question_group',
-                'ee_delete_question_groups',
-                //event_type taxonomy
-                'ee_assign_event_type',
-                'ee_manage_event_types',
-                'ee_edit_event_type',
-                'ee_delete_event_type',
-            ),
-            'ee_events_administrator' => array(
-                //core wp caps
-                'read',
-                'read_private_pages',
-                'read_private_posts',
-                'edit_users',
-                'edit_posts',
-                'edit_pages',
-                'edit_published_posts',
-                'edit_published_pages',
-                'edit_private_pages',
-                'edit_private_posts',
-                'edit_others_posts',
-                'edit_others_pages',
-                'publish_posts',
-                'publish_pages',
-                'delete_posts',
-                'delete_pages',
-                'delete_private_pages',
-                'delete_private_posts',
-                'delete_published_pages',
-                'delete_published_posts',
-                'delete_others_posts',
-                'delete_others_pages',
-                'manage_categories',
-                'manage_links',
-                'moderate_comments',
-                'unfiltered_html',
-                'upload_files',
-                'export',
-                'import',
-                'list_users',
-                'level_1', //required if user with this role shows up in author dropdowns
-                //basic ee access
-                'ee_read_ee',
-                //events
-                'ee_publish_events',
-                'ee_read_private_events',
-                'ee_read_others_events',
-                'ee_read_event',
-                'ee_read_events',
-                'ee_edit_event',
-                'ee_edit_events',
-                'ee_edit_published_events',
-                'ee_edit_others_events',
-                'ee_edit_private_events',
-                'ee_delete_published_events',
-                'ee_delete_private_events',
-                'ee_delete_event',
-                'ee_delete_events',
-                'ee_delete_others_events',
-                //event categories
-                'ee_manage_event_categories',
-                'ee_edit_event_category',
-                'ee_delete_event_category',
-                'ee_assign_event_category',
-                //venues
-                'ee_publish_venues',
-                'ee_read_venue',
-                'ee_read_venues',
-                'ee_read_others_venues',
-                'ee_read_private_venues',
-                'ee_edit_venue',
-                'ee_edit_venues',
-                'ee_edit_others_venues',
-                'ee_edit_published_venues',
-                'ee_edit_private_venues',
-                'ee_delete_venue',
-                'ee_delete_venues',
-                'ee_delete_others_venues',
-                'ee_delete_private_venues',
-                'ee_delete_published_venues',
-                //venue categories
-                'ee_manage_venue_categories',
-                'ee_edit_venue_category',
-                'ee_delete_venue_category',
-                'ee_assign_venue_category',
-                //contacts
-                'ee_read_contact',
-                'ee_read_contacts',
-                'ee_edit_contact',
-                'ee_edit_contacts',
-                'ee_delete_contact',
-                'ee_delete_contacts',
-                //registrations
-                'ee_read_registration',
-                'ee_read_registrations',
-                'ee_read_others_registrations',
-                'ee_edit_registration',
-                'ee_edit_registrations',
-                'ee_edit_others_registrations',
-                'ee_delete_registration',
-                'ee_delete_registrations',
-                //checkins
-                'ee_read_checkin',
-                'ee_read_others_checkins',
-                'ee_read_checkins',
-                'ee_edit_checkin',
-                'ee_edit_checkins',
-                'ee_edit_others_checkins',
-                'ee_delete_checkin',
-                'ee_delete_checkins',
-                'ee_delete_others_checkins',
-                //transactions && payments
-                'ee_read_transaction',
-                'ee_read_transactions',
-                'ee_edit_payments',
-                'ee_delete_payments',
-                //messages
-                'ee_read_message',
-                'ee_read_messages',
-                'ee_read_others_messages',
-                'ee_read_global_messages',
-                'ee_edit_global_messages',
-                'ee_edit_message',
-                'ee_edit_messages',
-                'ee_edit_others_messages',
-                'ee_delete_message',
-                'ee_delete_messages',
-                'ee_delete_others_messages',
-                'ee_delete_global_messages',
-                'ee_send_message',
-                //tickets
-                'ee_read_default_ticket',
-                'ee_read_default_tickets',
-                'ee_read_others_default_tickets',
-                'ee_edit_default_ticket',
-                'ee_edit_default_tickets',
-                'ee_edit_others_default_tickets',
-                'ee_delete_default_ticket',
-                'ee_delete_default_tickets',
-                'ee_delete_others_default_tickets',
-                //prices
-                'ee_edit_default_price',
-                'ee_edit_default_prices',
-                'ee_delete_default_price',
-                'ee_delete_default_prices',
-                'ee_edit_default_price_type',
-                'ee_edit_default_price_types',
-                'ee_delete_default_price_type',
-                'ee_delete_default_price_types',
-                'ee_read_default_prices',
-                'ee_read_default_price_types',
-                //registration form
-                'ee_edit_question',
-                'ee_edit_questions',
-                'ee_edit_system_questions',
-                'ee_read_questions',
-                'ee_delete_question',
-                'ee_delete_questions',
-                'ee_edit_question_group',
-                'ee_edit_question_groups',
-                'ee_read_question_groups',
-                'ee_edit_system_question_groups',
-                'ee_delete_question_group',
-                'ee_delete_question_groups',
-                //event_type taxonomy
-                'ee_assign_event_type',
-                'ee_manage_event_types',
-                'ee_edit_event_type',
-                'ee_delete_event_type',
+        return apply_filters(
+            'FHEE__EE_Capabilities__init_caps_map__caps',
+            array(
+                'administrator'           => array(
+                    //basic access
+                    'ee_read_ee',
+                    //gateways
+                    /**
+                     * note that with payment method capabilities, although we've implemented
+                     * capability mapping which will be used for accessing payment methods owned by
+                     * other users.  This is not fully implemented yet in the payment method ui.
+                     * Currently only the "plural" caps are in active use.
+                     * (Specific payment method caps are in use as well).
+                     **/
+                    'ee_manage_gateways',
+                    'ee_read_payment_method',
+                    'ee_read_payment_methods',
+                    'ee_read_others_payment_methods',
+                    'ee_edit_payment_method',
+                    'ee_edit_payment_methods',
+                    'ee_edit_others_payment_methods',
+                    'ee_delete_payment_method',
+                    'ee_delete_payment_methods',
+                    //events
+                    'ee_publish_events',
+                    'ee_read_private_events',
+                    'ee_read_others_events',
+                    'ee_read_event',
+                    'ee_read_events',
+                    'ee_edit_event',
+                    'ee_edit_events',
+                    'ee_edit_published_events',
+                    'ee_edit_others_events',
+                    'ee_edit_private_events',
+                    'ee_delete_published_events',
+                    'ee_delete_private_events',
+                    'ee_delete_event',
+                    'ee_delete_events',
+                    'ee_delete_others_events',
+                    //event categories
+                    'ee_manage_event_categories',
+                    'ee_edit_event_category',
+                    'ee_delete_event_category',
+                    'ee_assign_event_category',
+                    //venues
+                    'ee_publish_venues',
+                    'ee_read_venue',
+                    'ee_read_venues',
+                    'ee_read_others_venues',
+                    'ee_read_private_venues',
+                    'ee_edit_venue',
+                    'ee_edit_venues',
+                    'ee_edit_others_venues',
+                    'ee_edit_published_venues',
+                    'ee_edit_private_venues',
+                    'ee_delete_venue',
+                    'ee_delete_venues',
+                    'ee_delete_others_venues',
+                    'ee_delete_private_venues',
+                    'ee_delete_published_venues',
+                    //venue categories
+                    'ee_manage_venue_categories',
+                    'ee_edit_venue_category',
+                    'ee_delete_venue_category',
+                    'ee_assign_venue_category',
+                    //contacts
+                    'ee_read_contact',
+                    'ee_read_contacts',
+                    'ee_edit_contact',
+                    'ee_edit_contacts',
+                    'ee_delete_contact',
+                    'ee_delete_contacts',
+                    //registrations
+                    'ee_read_registration',
+                    'ee_read_registrations',
+                    'ee_read_others_registrations',
+                    'ee_edit_registration',
+                    'ee_edit_registrations',
+                    'ee_edit_others_registrations',
+                    'ee_delete_registration',
+                    'ee_delete_registrations',
+                    //checkins
+                    'ee_read_checkin',
+                    'ee_read_others_checkins',
+                    'ee_read_checkins',
+                    'ee_edit_checkin',
+                    'ee_edit_checkins',
+                    'ee_edit_others_checkins',
+                    'ee_delete_checkin',
+                    'ee_delete_checkins',
+                    'ee_delete_others_checkins',
+                    //transactions && payments
+                    'ee_read_transaction',
+                    'ee_read_transactions',
+                    'ee_edit_payments',
+                    'ee_delete_payments',
+                    //messages
+                    'ee_read_message',
+                    'ee_read_messages',
+                    'ee_read_others_messages',
+                    'ee_read_global_messages',
+                    'ee_edit_global_messages',
+                    'ee_edit_message',
+                    'ee_edit_messages',
+                    'ee_edit_others_messages',
+                    'ee_delete_message',
+                    'ee_delete_messages',
+                    'ee_delete_others_messages',
+                    'ee_delete_global_messages',
+                    'ee_send_message',
+                    //tickets
+                    'ee_read_default_ticket',
+                    'ee_read_default_tickets',
+                    'ee_read_others_default_tickets',
+                    'ee_edit_default_ticket',
+                    'ee_edit_default_tickets',
+                    'ee_edit_others_default_tickets',
+                    'ee_delete_default_ticket',
+                    'ee_delete_default_tickets',
+                    'ee_delete_others_default_tickets',
+                    //prices
+                    'ee_edit_default_price',
+                    'ee_edit_default_prices',
+                    'ee_delete_default_price',
+                    'ee_delete_default_prices',
+                    'ee_edit_default_price_type',
+                    'ee_edit_default_price_types',
+                    'ee_delete_default_price_type',
+                    'ee_delete_default_price_types',
+                    'ee_read_default_prices',
+                    'ee_read_default_price_types',
+                    //registration form
+                    'ee_edit_question',
+                    'ee_edit_questions',
+                    'ee_edit_system_questions',
+                    'ee_read_questions',
+                    'ee_delete_question',
+                    'ee_delete_questions',
+                    'ee_edit_question_group',
+                    'ee_edit_question_groups',
+                    'ee_read_question_groups',
+                    'ee_edit_system_question_groups',
+                    'ee_delete_question_group',
+                    'ee_delete_question_groups',
+                    //event_type taxonomy
+                    'ee_assign_event_type',
+                    'ee_manage_event_types',
+                    'ee_edit_event_type',
+                    'ee_delete_event_type',
+                ),
+                'ee_events_administrator' => array(
+                    //core wp caps
+                    'read',
+                    'read_private_pages',
+                    'read_private_posts',
+                    'edit_users',
+                    'edit_posts',
+                    'edit_pages',
+                    'edit_published_posts',
+                    'edit_published_pages',
+                    'edit_private_pages',
+                    'edit_private_posts',
+                    'edit_others_posts',
+                    'edit_others_pages',
+                    'publish_posts',
+                    'publish_pages',
+                    'delete_posts',
+                    'delete_pages',
+                    'delete_private_pages',
+                    'delete_private_posts',
+                    'delete_published_pages',
+                    'delete_published_posts',
+                    'delete_others_posts',
+                    'delete_others_pages',
+                    'manage_categories',
+                    'manage_links',
+                    'moderate_comments',
+                    'unfiltered_html',
+                    'upload_files',
+                    'export',
+                    'import',
+                    'list_users',
+                    'level_1', //required if user with this role shows up in author dropdowns
+                    //basic ee access
+                    'ee_read_ee',
+                    //events
+                    'ee_publish_events',
+                    'ee_read_private_events',
+                    'ee_read_others_events',
+                    'ee_read_event',
+                    'ee_read_events',
+                    'ee_edit_event',
+                    'ee_edit_events',
+                    'ee_edit_published_events',
+                    'ee_edit_others_events',
+                    'ee_edit_private_events',
+                    'ee_delete_published_events',
+                    'ee_delete_private_events',
+                    'ee_delete_event',
+                    'ee_delete_events',
+                    'ee_delete_others_events',
+                    //event categories
+                    'ee_manage_event_categories',
+                    'ee_edit_event_category',
+                    'ee_delete_event_category',
+                    'ee_assign_event_category',
+                    //venues
+                    'ee_publish_venues',
+                    'ee_read_venue',
+                    'ee_read_venues',
+                    'ee_read_others_venues',
+                    'ee_read_private_venues',
+                    'ee_edit_venue',
+                    'ee_edit_venues',
+                    'ee_edit_others_venues',
+                    'ee_edit_published_venues',
+                    'ee_edit_private_venues',
+                    'ee_delete_venue',
+                    'ee_delete_venues',
+                    'ee_delete_others_venues',
+                    'ee_delete_private_venues',
+                    'ee_delete_published_venues',
+                    //venue categories
+                    'ee_manage_venue_categories',
+                    'ee_edit_venue_category',
+                    'ee_delete_venue_category',
+                    'ee_assign_venue_category',
+                    //contacts
+                    'ee_read_contact',
+                    'ee_read_contacts',
+                    'ee_edit_contact',
+                    'ee_edit_contacts',
+                    'ee_delete_contact',
+                    'ee_delete_contacts',
+                    //registrations
+                    'ee_read_registration',
+                    'ee_read_registrations',
+                    'ee_read_others_registrations',
+                    'ee_edit_registration',
+                    'ee_edit_registrations',
+                    'ee_edit_others_registrations',
+                    'ee_delete_registration',
+                    'ee_delete_registrations',
+                    //checkins
+                    'ee_read_checkin',
+                    'ee_read_others_checkins',
+                    'ee_read_checkins',
+                    'ee_edit_checkin',
+                    'ee_edit_checkins',
+                    'ee_edit_others_checkins',
+                    'ee_delete_checkin',
+                    'ee_delete_checkins',
+                    'ee_delete_others_checkins',
+                    //transactions && payments
+                    'ee_read_transaction',
+                    'ee_read_transactions',
+                    'ee_edit_payments',
+                    'ee_delete_payments',
+                    //messages
+                    'ee_read_message',
+                    'ee_read_messages',
+                    'ee_read_others_messages',
+                    'ee_read_global_messages',
+                    'ee_edit_global_messages',
+                    'ee_edit_message',
+                    'ee_edit_messages',
+                    'ee_edit_others_messages',
+                    'ee_delete_message',
+                    'ee_delete_messages',
+                    'ee_delete_others_messages',
+                    'ee_delete_global_messages',
+                    'ee_send_message',
+                    //tickets
+                    'ee_read_default_ticket',
+                    'ee_read_default_tickets',
+                    'ee_read_others_default_tickets',
+                    'ee_edit_default_ticket',
+                    'ee_edit_default_tickets',
+                    'ee_edit_others_default_tickets',
+                    'ee_delete_default_ticket',
+                    'ee_delete_default_tickets',
+                    'ee_delete_others_default_tickets',
+                    //prices
+                    'ee_edit_default_price',
+                    'ee_edit_default_prices',
+                    'ee_delete_default_price',
+                    'ee_delete_default_prices',
+                    'ee_edit_default_price_type',
+                    'ee_edit_default_price_types',
+                    'ee_delete_default_price_type',
+                    'ee_delete_default_price_types',
+                    'ee_read_default_prices',
+                    'ee_read_default_price_types',
+                    //registration form
+                    'ee_edit_question',
+                    'ee_edit_questions',
+                    'ee_edit_system_questions',
+                    'ee_read_questions',
+                    'ee_delete_question',
+                    'ee_delete_questions',
+                    'ee_edit_question_group',
+                    'ee_edit_question_groups',
+                    'ee_read_question_groups',
+                    'ee_edit_system_question_groups',
+                    'ee_delete_question_group',
+                    'ee_delete_question_groups',
+                    //event_type taxonomy
+                    'ee_assign_event_type',
+                    'ee_manage_event_types',
+                    'ee_edit_event_type',
+                    'ee_delete_event_type',
+                )
             )
         );
-        $caps = apply_filters('FHEE__EE_Capabilities__init_caps_map__caps', $caps);
-        return $caps;
     }
 
 
 
     /**
-     * This adds all the default caps to roles as registered in the _caps_map property.
+     * Adds capabilities to roles.
      *
-     * @since 4.5.0
-     *
-     * @param bool  $reset      allows for resetting the default capabilities saved on roles.  Note that this doesn't
-     *                          actually REMOVE any capabilities from existing roles, it just resaves defaults roles
-     *                          and ensures that they are up to date.
-     * @param array $caps_map   Optional.  Can be used to send a custom map of roles and capabilities for setting them
-     *                          up.  Note that this should ONLY be called on activation hook or some other one-time
-     *                          task otherwise the caps will be added on every request.
-     *
+     * @since 4.9.42
+     * @param array $capabilities_to_add array of capabilities to add, indexed by roles.
+     *                                   Note that this should ONLY be called on activation hook
+     *                                   otherwise the caps will be added on every request.
      * @return void
      */
-    public function init_role_caps($reset = false, $caps_map = array())
+    public function addCaps(array $capabilities_to_add)
     {
-        // if reset, then completely delete the cache option and clear the $initialized_caps property.
-        if ($reset) {
+        // if reset, then completely delete the cache option and clear the $capabilities_map property.
+        if ($this->reset) {
             delete_option(self::option_name);
-            $this->initialized_caps = array();
+            $this->capabilities_map = array();
         }
-        // make sure caps map is set
-        $caps_map = empty($caps_map)
-            ? $this->_caps_map
-            : $caps_map;
-        // and filter the array so others can get in on the fun during resets
-        $caps_map = apply_filters(
-            'FHEE__EE_Capabilities__init_role_caps__caps_map',
-            $caps_map,
-            $reset
-        );
         // unless resetting, get caps from db if we haven't already
-        $this->initialized_caps = $reset || ! empty($this->initialized_caps)
-            ? $this->initialized_caps
+        $this->capabilities_map = $this->reset || ! empty($this->capabilities_map)
+            ? $this->capabilities_map
             : get_option(self::option_name, array());
-        $update_initialized_caps = false;
+        // and filter the array so others can get in on the fun during resets
+        $capabilities_to_add = apply_filters(
+            'FHEE__EE_Capabilities__addCaps__capabilities_to_add',
+            $capabilities_to_add,
+            $this->reset,
+            $this->capabilities_map
+        );
+        $update_capabilities_map = false;
         // if not reset, see what caps are new for each role. if they're new, add them.
-        foreach ($caps_map as $role => $caps_for_role) {
+        foreach ($capabilities_to_add as $role => $caps_for_role) {
             if (! is_array($caps_for_role)) {
                 continue;
             }
             foreach ($caps_for_role as $cap) {
                 // first check we haven't already added this cap before, or it's a reset
                 if (
-                    $reset
-                    || ! isset($this->initialized_caps[ $role ])
-                    || ! in_array($cap, $this->initialized_caps[ $role ], true)
+                    $this->reset
+                    || ! isset($this->capabilities_map[ $role ])
+                    || ! in_array($cap, $this->capabilities_map[ $role ], true)
                 ) {
                     if ($this->add_cap_to_role($role, $cap)) {
-                        $this->initialized_caps[ $role ][] = $cap;
-                        $update_initialized_caps = true;
+                        $this->capabilities_map[ $role ][] = $cap;
+                        $update_capabilities_map = true;
                     }
                 }
             }
         }
         // now let's just save the cap that has been set but only if there's been a change.
-        if ($update_initialized_caps) {
-            update_option(self::option_name, $this->initialized_caps);
+        if ($update_capabilities_map) {
+            update_option(self::option_name, $this->capabilities_map);
         }
-        do_action('AHEE__EE_Capabilities__init_role_caps__complete', $this->initialized_caps);
+        do_action('AHEE__EE_Capabilities__addCaps__complete', $this->capabilities_map);
+        // reset $this->reset so that it's not stuck on true if init_role_caps() gets called again
+        $this->reset = false;
+    }
+
+
+
+    /**
+     * Loops through the capabilities map and removes the role caps specified by the incoming array
+     *
+     * @param array $caps_map   map of capabilities to be removed (indexed by roles)
+     */
+    public function removeCaps($caps_map)
+    {
+        // get caps from db if we haven't already
+        $this->capabilities_map = ! empty($this->capabilities_map)
+            ? $this->capabilities_map
+            : get_option(self::option_name, array());
+        $update_capabilities_map = false;
+        foreach ($caps_map as $role => $caps_for_role) {
+            if (! is_array($caps_for_role)) {
+                continue;
+            }
+            $caps_to_remove = array();
+            foreach ($caps_for_role as $cap) {
+                // first check we haven't already added this cap before, or it's a reset
+                if (
+                    isset($this->capabilities_map[ $role ])
+                    && in_array($cap, $this->capabilities_map[ $role ], true)
+                    && $this->remove_cap_from_role($role, $cap)
+                ) {
+                    $caps_to_remove[] = $cap;
+                }
+            }
+            if(! empty($caps_to_remove)) {
+                $this->capabilities_map[ $role ] = array_diff(
+                    $this->capabilities_map[ $role ],
+                    $caps_to_remove
+                );
+                $update_capabilities_map = true;
+            }
+        }
+        // resave the caps if
+        if ($update_capabilities_map) {
+            update_option(self::option_name, $this->capabilities_map);
+        }
     }
 
 
@@ -746,14 +784,16 @@ final class EE_Capabilities extends EE_Base
      * @param string $role A WordPress role the capability is being removed from.
      * @param string $cap  The capability being removed
      *
-     * @return void
+     * @return boolean
      */
     public function remove_cap_from_role($role, $cap)
     {
         $role = get_role($role);
         if ($role instanceof WP_Role) {
             $role->remove_cap($cap);
+            return true;
         }
+        return false;
     }
 
 
@@ -867,26 +907,66 @@ final class EE_Capabilities extends EE_Base
 
     /**
      * This helper method just returns an array of registered EE capabilities.
-     * Note this array is filtered.  It is assumed that all available EE capabilities are assigned to the administrator
-     * role.
      *
      * @since 4.5.0
-     *
-     * @param string $role If empty then the entire role/capability map is returned.  Otherwise just the capabilities
-     *                     for the given role are returned.
-     *
+     * @param string $role If empty then the entire role/capability map is returned.
+     *                     Otherwise just the capabilities for the given role are returned.
      * @return array
+     * @throws EE_Error
      */
     public function get_ee_capabilities($role = 'administrator')
     {
-        $capabilities = $this->_init_caps_map();
-        if (empty($role)) {
-            return $capabilities;
+        if (! $this->initialized) {
+            $this->init_caps();
         }
-        return isset($capabilities[ $role ])
-            ? $capabilities[ $role ]
+        if (empty($role)) {
+            return $this->capabilities_map;
+        }
+        return isset($this->capabilities_map[ $role ])
+            ? $this->capabilities_map[ $role ]
             : array();
     }
+
+
+
+    /**
+     * @deprecated 4.9.42
+     * @param bool  $reset      If you need to reset Event Espresso's capabilities,
+     *                          then please use the init_caps() method with the "$reset" parameter set to "true"
+     * @param array $caps_map   Optional.
+     *                          Can be used to send a custom map of roles and capabilities for setting them up.
+     *                          Note that this should ONLY be called on activation hook or some other one-time
+     *                          task otherwise the caps will be added on every request.
+     * @return void
+     */
+    public function init_role_caps($reset = false, $caps_map = array())
+    {
+        // If this method is called directly and reset is set as 'true',
+        // then display a doing it wrong notice, because we want resets to go through init_caps()
+        // to guarantee that everything is set up correctly.
+        // This prevents the capabilities map getting reset incorrectly by direct calls to this method.
+        if ($reset) {
+            EE_Error::doing_it_wrong(
+                __METHOD__,
+                sprintf(
+                    esc_html__(
+                        'The "%1$s" parameter for the "%2$s" method is deprecated. If you need to reset Event Espresso\'s capabilities, then please use the "%3$s" method with the "%1$s" parameter set to "%4$s".',
+                        'event_espresso'
+                    ),
+                    '$reset',
+                    __METHOD__ . '()',
+                    'EE_Capabilities::init_caps()',
+                    'true'
+                ),
+                '4.9.42',
+                '5.0.0'
+            );
+        }
+        $this->addCaps($caps_map);
+    }
+
+
+
 }
 
 
