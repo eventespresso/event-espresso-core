@@ -53,7 +53,7 @@ class EE_Payment_Method_Manager
             $this->initializePaymentMethodCaps();
             // plus any time they get reset
             add_filter(
-                'FHEE__EE_Capabilities__init_role_caps__caps_map',
+                'FHEE__EE_Capabilities__addCaps__capabilities_to_add',
                 array($this, 'addPaymentMethodCapsDuringReset')
             );
         }
