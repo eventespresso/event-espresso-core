@@ -1043,10 +1043,7 @@ class EE_Register_Addon implements EEI_Plugin_API
                 ! empty(self::$_settings[$addon_name]['capabilities'])
                 || ! empty(self::$_settings[$addon_name]['capability_maps'])
             ) {
-                EE_Register_Capabilities::deregister(
-                    $addon_name,
-                    ! empty(self::$_settings[ $addon_name ]['payment_method_paths'])
-                );
+                EE_Register_Capabilities::deregister($addon_name);
             }
             //deregister custom_post_types for addon
             if (! empty(self::$_settings[$addon_name]['custom_post_types'])) {
