@@ -78,9 +78,14 @@ class EE_Register_Capabilities implements EEI_Plugin_API
                     'event_espresso'), $cap_reference), '4.5.0');
         }
         //some preliminary sanitization and setting to the $_registry property
-        self::$_registry[$cap_reference] = array(
-            'caps'     => isset($setup_args['capabilities']) && is_array($setup_args['capabilities']) ? $setup_args['capabilities'] : array(),
-            'cap_maps' => isset($setup_args['capability_maps']) ? $setup_args['capability_maps'] : array(),
+        self::$_registry[ $cap_reference ] = array(
+            'caps'               => isset($setup_args['capabilities']) && is_array($setup_args['capabilities'])
+                ? $setup_args['capabilities']
+                : array(),
+            'cap_maps'           => isset($setup_args['capability_maps'])
+                ? $setup_args['capability_maps']
+                : array(),
+            'for_payment_method' => (isset($setup_args['for_payment_method']) && $setup_args['for_payment_method']),
         );
         //set initial caps (note that EE_Capabilities takes care of making sure that the caps get added only once)
         add_filter(
@@ -92,7 +97,7 @@ class EE_Register_Capabilities implements EEI_Plugin_API
             'FHEE__EE_Capabilities___set_meta_caps__meta_caps',
             array('EE_Register_Capabilities', 'register_cap_maps')
         );
-        if (isset($setup_args['for_payment_method']) && $setup_args['for_payment_method']) {
+        if (self::$_registry[ $cap_reference ]['for_payment_method']) {
             EE_Registry::instance()->load_lib('Payment_Method_Manager');
         }
     }
@@ -179,15 +184,14 @@ class EE_Register_Capabilities implements EEI_Plugin_API
 
     /**
      * @param string $cap_reference
-     * @param bool   $for_payment_method
      * @throws EE_Error
      */
-    public static function deregister($cap_reference = '', $for_payment_method = false)
+    public static function deregister($cap_reference = '')
     {
-        if($for_payment_method) {
-            EE_Registry::instance()->load_lib('Payment_Method_Manager');
-        }
         if (! empty(self::$_registry[$cap_reference])) {
+            if (self::$_registry[ $cap_reference ]['for_payment_method']) {
+                EE_Registry::instance()->load_lib('Payment_Method_Manager');
+            }
             if (! empty(self::$_registry[ $cap_reference ]['caps'])) {
                 EE_Capabilities::instance()->removeCaps(self::$_registry[ $cap_reference ]['caps']);
             }
