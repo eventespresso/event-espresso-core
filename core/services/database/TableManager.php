@@ -142,7 +142,7 @@ class TableManager extends \EE_Base
         foreach ($table_names as $table_name) {
             $table_name = $this->getTableAnalysis()->ensureTableNameHasPrefix($table_name);
             if ($this->getTableAnalysis()->tableExists($table_name)) {
-                $tables_to_delete[] = $table_name;
+                $tables_to_delete[$table_name] = $table_name;
             }
         }
         if( ! empty( $tables_to_delete ) ) {
