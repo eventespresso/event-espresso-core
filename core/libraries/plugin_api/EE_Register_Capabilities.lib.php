@@ -84,7 +84,7 @@ class EE_Register_Capabilities implements EEI_Plugin_API
         );
         //set initial caps (note that EE_Capabilities takes care of making sure that the caps get added only once)
         add_filter(
-            'FHEE__EE_Capabilities__init_caps_map__caps',
+            'FHEE__EE_Capabilities__addCaps__capabilities_to_add',
             array('EE_Register_Capabilities', 'register_capabilities')
         );
         //add filter for cap maps
@@ -92,6 +92,9 @@ class EE_Register_Capabilities implements EEI_Plugin_API
             'FHEE__EE_Capabilities___set_meta_caps__meta_caps',
             array('EE_Register_Capabilities', 'register_cap_maps')
         );
+        if (isset($setup_args['for_payment_method']) && $setup_args['for_payment_method']) {
+            EE_Registry::instance()->load_lib('Payment_Method_Manager');
+        }
     }
 
 
@@ -105,7 +108,7 @@ class EE_Register_Capabilities implements EEI_Plugin_API
      */
     public static function register_capabilities($incoming_caps)
     {
-        foreach (self::$_registry as $ref => $caps_and_cap_map) {
+        foreach (self::$_registry as $cap_reference => $caps_and_cap_map) {
             $incoming_caps = array_merge_recursive($incoming_caps, $caps_and_cap_map['caps']);
         }
         return $incoming_caps;
@@ -173,12 +176,22 @@ class EE_Register_Capabilities implements EEI_Plugin_API
     }
 
 
-    public static function deregister($cap_reference = null)
+
+    /**
+     * @param string $cap_reference
+     * @param bool   $for_payment_method
+     * @throws EE_Error
+     */
+    public static function deregister($cap_reference = '', $for_payment_method = false)
     {
+        if($for_payment_method) {
+            EE_Registry::instance()->load_lib('Payment_Method_Manager');
+        }
         if (! empty(self::$_registry[$cap_reference])) {
+            if (! empty(self::$_registry[ $cap_reference ]['caps'])) {
+                EE_Capabilities::instance()->removeCaps(self::$_registry[ $cap_reference ]['caps']);
+            }
             unset(self::$_registry[$cap_reference]);
         }
-        // re init caps to grab the changes due to removed caps.
-        EE_Capabilities::instance()->init_caps(true);
     }
 }
