@@ -214,17 +214,6 @@ final class EE_System
      */
     public function loadCapabilities()
     {
-        $capabilities_classes = array(
-            'EE_Meta_Capability_Map',
-            'EE_Meta_Capability_Map_Edit',
-            'EE_Meta_Capability_Map_Delete',
-            'EE_Meta_Capability_Map_Read',
-            'EE_Meta_Capability_Map_Messages_Cap',
-            'EE_Meta_Capability_Map_Registration_Form_Cap',
-        );
-        foreach ($capabilities_classes as $capabilities_class) {
-            $this->registry->load_core($capabilities_class, array(), true);
-        }
         $this->registry->load_core('EE_Capabilities');
     }
 
