@@ -709,8 +709,6 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         add_filter('get_edit_post_link', array($this, 'modify_edit_post_link'), 10, 3);
         if ($post_type === $route_to_check) {
             add_filter('redirect_post_location', array($this, 'cpt_post_location_redirect'), 10, 2);
-            //catch trashed wp redirect
-            add_filter('wp_redirect', array($this, 'cpt_trash_post_location_redirect'), 10, 2);
         }
         //now let's filter redirect if we're on a revision page and the revision is for an event CPT.
         $revision = isset($this->_req_data['revision']) ? $this->_req_data['revision'] : null;
@@ -1151,7 +1149,6 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
     }
 
 
-
     /**
      * Modify the trash link on our cpt edit pages so it has the required query var for triggering redirect properly on
      * our routes.
@@ -1159,7 +1156,8 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
      * @param  string $delete_link  original delete link
      * @param  int    $post_id      id of cpt object
      * @param  bool   $force_delete whether this is forcing a hard delete instead of trash
-     * @return string               new delete link
+     * @return string new delete link
+     * @throws EE_Error
      */
     public function modify_delete_post_link($delete_link, $post_id, $force_delete)
     {
@@ -1170,31 +1168,19 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         ) {
             return $delete_link;
         }
-        return add_query_arg(array('current_route' => 'trash'), $delete_link);
-    }
+        $this->_set_model_object($this->_req_data['post'], true);
+        //returns something like `trash_event` or `trash_attendee` or `trash_venue`
+        $action = 'trash_' . str_replace('ee_', '', strtolower(get_class($this->_cpt_model_obj)));
 
-
-
-    /**
-     * This hooks into the wp_redirect filter and if trashed is detected, then we'll redirect to the appropriate EE
-     * route
-     *
-     * @param  string $location url
-     * @param  string $status   status
-     * @return string           url to redirect to
-     */
-    public function cpt_trash_post_location_redirect($location, $status)
-    {
-        if (isset($this->_req_data['action']) && $this->_req_data['action'] !== 'trash' && empty($this->_req_data['post'])) {
-            return $location;
-        }
-
-        $post              = get_post($this->_req_data['post']);
-        $query_args        = array('action' => 'default');
-        $this->_cpt_object = get_post_type_object($post->post_type);
-        EE_Error::add_success(sprintf(__('%s trashed.', 'event_espresso'), $this->_cpt_object->labels->singular_name));
-        $this->_process_notices($query_args, true);
-        return self::add_query_args_and_nonce($query_args, $this->_admin_base_url);
+        return EE_Admin_Page::add_query_args_and_nonce(
+            array(
+                'page' => $this->_req_data['page'],
+                'action' => $action,
+                $this->_cpt_model_obj->get_model()->get_primary_key_field()->get_name()
+                    => $this->_req_data['post']
+            ),
+            admin_url()
+        );
     }
 
 

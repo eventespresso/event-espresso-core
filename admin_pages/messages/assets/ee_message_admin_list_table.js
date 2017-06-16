@@ -4,7 +4,7 @@ jQuery(document).ready( function($) {
                e.preventDefault();
                e.stopPropagation();
                var height = $(this).hasClass( 'ee-message-action-link-view' ) ? parseInt( $(window).height() )*.75 + 'px' : '100%';
-               var content = '<iframe height="' + height + '" width="100%" src="' + $(this).parent().attr('href') + '">';
+               var content = '<iframe name="message-view-window" height="' + height + '" width="100%" src="' + $(this).parent().attr('href') + '">';
                dialogHelper.displayModal().addContent(content);
            }
     });
