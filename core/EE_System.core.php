@@ -1012,7 +1012,7 @@ final class EE_System
 
     /**
      * initialize_last
-     * this is run really late during the WP init hookpoint, and ensures that mostly everything else that needs to
+     * this is run really late during the WP init hook point, and ensures that mostly everything else that needs to
      * initialize has done so
      *
      * @access public
@@ -1028,6 +1028,7 @@ final class EE_System
 
     /**
      * @return void
+     * @throws EE_Error
      */
     public function addEspressoToolbar()
     {
