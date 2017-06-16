@@ -183,7 +183,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
                 (time() - EE_Registry::instance()->SSN->lifespan()) < $transaction->datetime(false, true)
             )
         ) {
-            $timestamp = __('TXN in progress...', 'event_espresso');
+            $timestamp = esc_html__('TXN in progress...', 'event_espresso');
         } else {
             $timestamp = $transaction->get_i18n_datetime('TXN_timestamp');
         }
@@ -256,7 +256,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
                    )
                    . '</span>';
         } else {
-            return '<span class="txn-overview-free-event-spn">' . __('free', 'event_espresso') . '</span>';
+            return '<span class="txn-overview-free-event-spn">' . esc_html__('free', 'event_espresso') . '</span>';
         }
     }
 
@@ -291,7 +291,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
         $payment_method      = $transaction->payment_method();
         $payment_method_name = $payment_method instanceof EE_Payment_Method
             ? $payment_method->admin_name()
-            : __('Unknown', 'event_espresso');
+            : esc_html__('Unknown', 'event_espresso');
         $transaction_paid_content = $transaction_paid !== 0 ? $transaction->get_pretty('TXN_paid') : $transaction_paid;
 
         $content = '<span class="' . $span_class . ' txn-pad-rght">'
@@ -300,7 +300,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
         if ($transaction_paid > 0) {
             $content .= '<br><span class="ee-status-text-small">'
                         . sprintf(
-                            __('...via %s', 'event_espresso'),
+                            esc_html__('...via %s', 'event_espresso'),
                             $payment_method_name
                         )
                         . '</span>';
@@ -339,8 +339,8 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
             return $content;
         }
         return $transaction->failed() || $transaction->is_abandoned()
-            ? __('no contact record.', 'event_espresso')
-            : __(
+            ? esc_html__('no contact record.', 'event_espresso')
+            : esc_html__(
                 'No contact record, because the transaction was abandoned or the registration process failed.',
                 'event_espresso'
             );
@@ -363,8 +363,8 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
                    . '</a>';
         } else {
             return $transaction->failed() || $transaction->is_abandoned()
-                ? __('no contact record.', 'event_espresso')
-                : __(
+                ? esc_html__('no contact record.', 'event_espresso')
+                : esc_html__(
                     'No contact record, because the transaction was abandoned or the registration process failed.',
                     'event_espresso'
                 );
@@ -402,7 +402,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
             )) {
                 $actions['filter_by_event'] = '<a href="' . $txn_by_event_lnk . '"'
                         . ' title="' . esc_attr__('Filter transactions by this event', 'event_espresso') . '">'
-                        . __('View Transactions for this event', 'event_espresso')
+                        . esc_html__('View Transactions for this event', 'event_espresso')
                         . '</a>';
             }
 
@@ -430,7 +430,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
                 $this->row_actions($actions)
             );
         } else {
-            return __(
+            return esc_html__(
                 'The event associated with this transaction via the primary registration cannot be retrieved.',
                 'event_espresso'
             );
