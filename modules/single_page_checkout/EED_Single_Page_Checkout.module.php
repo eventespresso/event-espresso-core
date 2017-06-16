@@ -552,9 +552,13 @@ class EED_Single_Page_Checkout extends EED_Module
             throw new EE_Error(__('The EE_Session class could not be loaded.', 'event_espresso'));
         }
         // is session still valid ?
-        if (
-            EE_Registry::instance()->SSN->expired()
-            && EE_Registry::instance()->REQ->get('e_reg_url_link', '') === ''
+        if (filter_var(
+                EE_Registry::instance()->REQ->get('clear_session', false),
+                FILTER_VALIDATE_BOOLEAN
+            )
+            || ( EE_Registry::instance()->SSN->expired()
+              && EE_Registry::instance()->REQ->get('e_reg_url_link', '') === ''
+            )
         ) {
             $this->checkout = new EE_Checkout();
             EE_Registry::instance()->SSN->clear_session(__CLASS__, __FUNCTION__);
