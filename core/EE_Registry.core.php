@@ -592,7 +592,7 @@ class EE_Registry
         // or it could return null if the class just could not be found anywhere
         if ($class_exists instanceof $class_name || $class_exists === null){
             // either way, return the results
-            return $class_name;
+            return $class_exists;
         }
         $class_name = $class_exists;
         // if we're only loading the class and it already exists, then let's just return true immediately
