@@ -24,6 +24,15 @@ abstract class EE_Form_Section_Layout_Base
 
 
     /**
+     *  __construct
+     */
+    function __construct()
+    {
+    }
+
+
+
+    /**
      * The form section on which this strategy is to perform
      *
      * @param EE_Form_Section_Proper $form
