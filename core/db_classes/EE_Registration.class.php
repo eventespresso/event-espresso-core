@@ -745,15 +745,18 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * Gets the URL of the thank you page with this registration REG_url_link added as
      * a query parameter
      *
+     * @param bool $clear_session Set to true when you want to clear the session on revisiting the
+     *                            payment overview url.
      * @return string
      * @throws EE_Error
      */
-    public function payment_overview_url()
+    public function payment_overview_url($clear_session = false)
     {
         return add_query_arg(array(
             'e_reg_url_link' => $this->reg_url_link(),
             'step'           => 'payment_options',
             'revisit'        => true,
+            'clear_session' => (bool) $clear_session
         ), EE_Registry::instance()->CFG->core->reg_page_url());
     }
 
