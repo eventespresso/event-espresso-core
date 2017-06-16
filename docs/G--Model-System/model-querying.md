@@ -133,7 +133,7 @@ Here are a few other examples to give you a taste for what the `EEM_Base::get_al
 EEM_Event::instance()->get_all(
     array(
        'limit' => 10,
-       'order_by' => array( 'EVT_visible_on' => 'DESC' )
+       'order_by' => array( 'EVT_visible_on' => 'DESC' ),
         array( 
             'EVT_visible_on' => array( '>', current_time() )
         )

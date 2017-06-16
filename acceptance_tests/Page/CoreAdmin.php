@@ -72,4 +72,25 @@ class CoreAdmin
         return $url;
     }
 
+
+    /**
+     * Returns the selector for the text tab switcher for a wp-editor instance.
+     * @param $field_reference
+     * @return string
+     */
+    public static function wpEditorTextTabSelector($field_reference)
+    {
+        return '#content-' . $field_reference . '-content-html';
+    }
+
+
+    /**
+     * Returns the selector for the textarea exposed when clicing the text tab switcher for a wp-editor instance.
+     * @param $field_reference
+     * @return string
+     */
+    public static function wpEditorTextAreaSelector($field_reference)
+    {
+        return '#content-' . $field_reference . '-content';
+    }
 }
