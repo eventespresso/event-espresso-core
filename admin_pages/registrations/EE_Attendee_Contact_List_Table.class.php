@@ -132,7 +132,7 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table {
 		if ( $this->_view == 'in_use' ) {
 			// trash attendee link
 			if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_contacts', 'espresso_registrations_trash_attendees' ) ) {
-				$trash_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'trash_attendees', 'ATT_ID'=>$item->ID() ), REG_ADMIN_URL );
+				$trash_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'trash_attendee', 'ATT_ID'=>$item->ID() ), REG_ADMIN_URL );
 				$actions['trash'] = '<a href="'.$trash_lnk_url.'" title="' . esc_attr__( 'Move Contact to Trash', 'event_espresso' ) . '">' . __( 'Trash', 'event_espresso' ) . '</a>';
 			}
 		} else {
