@@ -551,11 +551,12 @@ class EED_Single_Page_Checkout extends EED_Module
         if ( ! EE_Registry::instance()->SSN instanceof EE_Session) {
             throw new EE_Error(__('The EE_Session class could not be loaded.', 'event_espresso'));
         }
+        $clear_session_requested = filter_var(
+            EE_Registry::instance()->REQ->get('clear_session', false),
+            FILTER_VALIDATE_BOOLEAN
+        );
         // is session still valid ?
-        if (filter_var(
-                EE_Registry::instance()->REQ->get('clear_session', false),
-                FILTER_VALIDATE_BOOLEAN
-            )
+        if ($clear_session_requested
             || ( EE_Registry::instance()->SSN->expired()
               && EE_Registry::instance()->REQ->get('e_reg_url_link', '') === ''
             )
@@ -565,10 +566,12 @@ class EED_Single_Page_Checkout extends EED_Module
             // EE_Registry::instance()->SSN->reset_cart();
             // EE_Registry::instance()->SSN->reset_checkout();
             // EE_Registry::instance()->SSN->reset_transaction();
-            EE_Error::add_attention(
-                EE_Registry::$i18n_js_strings['registration_expiration_notice'],
-                __FILE__, __FUNCTION__, __LINE__
-            );
+            if (! $clear_session_requested) {
+                EE_Error::add_attention(
+                    EE_Registry::$i18n_js_strings['registration_expiration_notice'],
+                    __FILE__, __FUNCTION__, __LINE__
+                );
+            }
             // EE_Registry::instance()->SSN->reset_expired();
         }
     }
