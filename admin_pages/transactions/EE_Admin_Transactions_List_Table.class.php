@@ -79,15 +79,15 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
      * This simply sets up the row class for the table rows.
      * Allows for easier overriding of child methods for setting up sorting.
      *
-     * @param  EE_Transaction $item the current item
+     * @param  EE_Transaction $transaction the current item
      * @return string
      * @throws \EE_Error
      */
-    protected function _get_row_class($item)
+    protected function _get_row_class($transaction)
     {
-        $class = parent::_get_row_class($item);
+        $class = parent::_get_row_class($transaction);
         //add status class
-        $class .= ' ee-status-strip txn-status-' . $item->status_ID();
+        $class .= ' ee-status-strip txn-status-' . $transaction->status_ID();
         if ($this->_has_checkbox_column) {
             $class .= ' has-checkbox-column';
         }
@@ -148,44 +148,44 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
     /**
      *    column TXN_ID
      *
-     * @param \EE_Transaction $item
+     * @param \EE_Transaction $transaction
      * @return string
      * @throws \EE_Error
      */
-    public function column_TXN_ID(EE_Transaction $item)
+    public function column_TXN_ID(EE_Transaction $transaction)
     {
         $view_lnk_url = EE_Admin_Page::add_query_args_and_nonce(array(
             'action' => 'view_transaction',
-            'TXN_ID' => $item->ID(),
+            'TXN_ID' => $transaction->ID(),
         ), TXN_ADMIN_URL);
         $content      = '<a href="' . $view_lnk_url . '"'
                         . ' title="' . esc_attr__('Go to Transaction Details', 'event_espresso') . '">'
-                        . $item->ID()
+                        . $transaction->ID()
                         . '</a>';
 
         //txn timestamp
-        $content .= '  <span class="show-on-mobile-view-only">' . $this->_get_txn_timestamp($item) . '</span>';
+        $content .= '  <span class="show-on-mobile-view-only">' . $this->_get_txn_timestamp($transaction) . '</span>';
         return $content;
     }
 
 
     /**
-     * @param \EE_Transaction $item
+     * @param \EE_Transaction $transaction
      * @return string
      * @throws \EE_Error
      */
-    protected function _get_txn_timestamp(EE_Transaction $item)
+    protected function _get_txn_timestamp(EE_Transaction $transaction)
     {
         //txn timestamp
         // is TXN less than 2 hours old ?
-        if (($item->failed() || $item->is_abandoned())
+        if (($transaction->failed() || $transaction->is_abandoned())
             && (
-                (time() - EE_Registry::instance()->SSN->lifespan()) < $item->datetime(false, true)
+                (time() - EE_Registry::instance()->SSN->lifespan()) < $transaction->datetime(false, true)
             )
         ) {
             $timestamp = __('TXN in progress...', 'event_espresso');
         } else {
-            $timestamp = $item->get_i18n_datetime('TXN_timestamp');
+            $timestamp = $transaction->get_i18n_datetime('TXN_timestamp');
         }
         return $timestamp;
     }
@@ -194,16 +194,16 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
     /**
      *    column_cb
      *
-     * @param \EE_Transaction $item
+     * @param \EE_Transaction $transaction
      * @return string
      * @throws \EE_Error
      */
-    public function column_cb($item)
+    public function column_cb($transaction)
     {
         return sprintf(
             '<input type="checkbox" name="%1$s[]" value="%2$s" />',
             $this->_wp_list_args['singular'],
-            $item->ID()
+            $transaction->ID()
         );
     }
 
@@ -211,25 +211,25 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
     /**
      *    column_TXN_timestamp
      *
-     * @param \EE_Transaction $item
+     * @param \EE_Transaction $transaction
      * @return string
      * @throws \EE_Error
      */
-    public function column_TXN_timestamp(EE_Transaction $item)
+    public function column_TXN_timestamp(EE_Transaction $transaction)
     {
         $view_lnk_url = EE_Admin_Page::add_query_args_and_nonce(array(
             'action' => 'view_transaction',
-            'TXN_ID' => $item->ID(),
+            'TXN_ID' => $transaction->ID(),
         ), TXN_ADMIN_URL);
         $txn_date     = '<a href="' . $view_lnk_url . '"'
                         . ' title="'
-                        . esc_attr__('View Transaction Details for TXN #', 'event_espresso') . $item->ID() . '">'
-                        . $this->_get_txn_timestamp($item)
+                        . esc_attr__('View Transaction Details for TXN #', 'event_espresso') . $transaction->ID() . '">'
+                        . $this->_get_txn_timestamp($transaction)
                         . '</a>';
         //status
         $txn_date .= '<br><span class="ee-status-text-small">'
                      . EEH_Template::pretty_status(
-                         $item->status_ID(),
+                         $transaction->status_ID(),
                          false,
                          'sentence'
                      )
@@ -241,18 +241,18 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
     /**
      *    column_TXN_total
      *
-     * @param \EE_Transaction $item
+     * @param \EE_Transaction $transaction
      * @return string
      * @throws \EE_Error
      */
-    public function column_TXN_total(EE_Transaction $item)
+    public function column_TXN_total(EE_Transaction $transaction)
     {
-        if ($item->get('TXN_total') > 0) {
+        if ($transaction->get('TXN_total') > 0) {
             return '<span class="txn-pad-rght">'
                    . apply_filters(
                        'FHEE__EE_Admin_Transactions_List_Table__column_TXN_total__TXN_total',
-                       $item->get_pretty('TXN_total'),
-                       $item
+                       $transaction->get_pretty('TXN_total'),
+                       $transaction
                    )
                    . '</span>';
         } else {
@@ -264,14 +264,14 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
     /**
      *    column_TXN_paid
      *
-     * @param \EE_Transaction $item
+     * @param \EE_Transaction $transaction
      * @return mixed|string
      * @throws \EE_Error
      */
-    public function column_TXN_paid(EE_Transaction $item)
+    public function column_TXN_paid(EE_Transaction $transaction)
     {
-        $transaction_total = $item->get('TXN_total');
-        $transaction_paid  = $item->get('TXN_paid');
+        $transaction_total = $transaction->get('TXN_total');
+        $transaction_paid  = $transaction->get('TXN_paid');
 
         if (\EEH_Money::compare_floats($transaction_total, 0, '>')) {
             // monies owing
@@ -288,11 +288,11 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
             $transaction_paid = 0;
         }
 
-        $payment_method      = $item->payment_method();
+        $payment_method      = $transaction->payment_method();
         $payment_method_name = $payment_method instanceof EE_Payment_Method
             ? $payment_method->admin_name()
             : __('Unknown', 'event_espresso');
-        $transaction_paid_content = $transaction_paid !== 0 ? $item->get_pretty('TXN_paid') : $transaction_paid;
+        $transaction_paid_content = $transaction_paid !== 0 ? $transaction->get_pretty('TXN_paid') : $transaction_paid;
 
         $content = '<span class="' . $span_class . ' txn-pad-rght">'
                    . $transaction_paid_content
@@ -312,13 +312,13 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
     /**
      *    column_ATT_fname
      *
-     * @param \EE_Transaction $item
+     * @param \EE_Transaction $transaction
      * @return string
      * @throws \EE_Error
      */
-    public function column_ATT_fname(EE_Transaction $item)
+    public function column_ATT_fname(EE_Transaction $transaction)
     {
-        $primary_reg = $item->primary_registration();
+        $primary_reg = $transaction->primary_registration();
         $attendee    = $primary_reg->get_first_related('Attendee');
         if ($attendee instanceof EE_Attendee) {
             $edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce(array(
@@ -338,7 +338,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
             $content      .= '<br>' . $attendee->email();
             return $content;
         }
-        return $item->failed() || $item->is_abandoned()
+        return $transaction->failed() || $transaction->is_abandoned()
             ? __('no contact record.', 'event_espresso')
             : __(
                 'No contact record, because the transaction was abandoned or the registration process failed.',
@@ -350,19 +350,19 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
     /**
      *    column_ATT_email
      *
-     * @param \EE_Transaction $item
+     * @param \EE_Transaction $transaction
      * @return string
      * @throws \EE_Error
      */
-    public function column_ATT_email(EE_Transaction $item)
+    public function column_ATT_email(EE_Transaction $transaction)
     {
-        $attendee = $item->primary_registration()->get_first_related('Attendee');
+        $attendee = $transaction->primary_registration()->get_first_related('Attendee');
         if (! empty($attendee)) {
             return '<a href="mailto:' . $attendee->get('ATT_email') . '">'
                    . $attendee->get('ATT_email')
                    . '</a>';
         } else {
-            return $item->failed() || $item->is_abandoned()
+            return $transaction->failed() || $transaction->is_abandoned()
                 ? __('no contact record.', 'event_espresso')
                 : __(
                     'No contact record, because the transaction was abandoned or the registration process failed.',
@@ -375,14 +375,14 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
     /**
      *    column_event_name
      *
-     * @param \EE_Transaction $item
+     * @param \EE_Transaction $transaction
      * @return string
      * @throws \EE_Error
      */
-    public function column_event_name(EE_Transaction $item)
+    public function column_event_name(EE_Transaction $transaction)
     {
         $actions = array();
-        $event   = $item->primary_registration()->get_first_related('Event');
+        $event   = $transaction->primary_registration()->get_first_related('Event');
         if (! empty($event)) {
             $edit_event_url = EE_Admin_Page::add_query_args_and_nonce(
                 array('action' => 'edit', 'post' => $event->ID()),
@@ -441,125 +441,191 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
     /**
      *    column_actions
      *
-     * @param \EE_Transaction $item
+     * @param \EE_Transaction $transaction
      * @return string
      * @throws \EE_Error
      */
-    public function column_actions(EE_Transaction $item)
+    public function column_actions(EE_Transaction $transaction)
     {
-
-        $registration = $item->primary_registration();
-        $attendee     = $registration->attendee();
-
-        //Build row actions
-        $view_lnk_url          = EE_Admin_Page::add_query_args_and_nonce(array(
-            'action' => 'view_transaction',
-            'TXN_ID' => $item->ID(),
-        ), TXN_ADMIN_URL);
-        $dl_invoice_lnk_url    = $registration->invoice_url();
-        $dl_receipt_lnk_url    = $registration->receipt_url();
-        $view_reg_lnk_url      = EE_Admin_Page::add_query_args_and_nonce(array(
-            'action'  => 'view_registration',
-            '_REG_ID' => $registration->ID(),
-        ), REG_ADMIN_URL);
-        $send_pay_lnk_url      = EE_Admin_Page::add_query_args_and_nonce(array(
-            'action' => 'send_payment_reminder',
-            'TXN_ID' => $item->ID(),
-        ), TXN_ADMIN_URL);
-        $related_messages_link = EEH_MSG_Template::get_message_action_link(
-            'see_notifications_for',
-            null,
-            array('TXN_ID' => $item->ID())
+        return $this->_action_string(
+            $this->get_transaction_details_link($transaction)
+            . $this->get_invoice_link($transaction)
+            . $this->get_receipt_link($transaction)
+            . $this->get_primary_registration_details_link($transaction)
+            . $this->get_send_payment_reminder_trigger_link($transaction)
+            . $this->get_related_messages_link($transaction),
+            $transaction,
+            'ul',
+            'txn-overview-actions-ul'
         );
+    }
 
-        //Build row actions
-        $view_lnk = '
+
+    /**
+     * Get the transaction details link.
+     * @param EE_Transaction $transaction
+     * @return string
+     * @throws EE_Error
+     */
+    protected function get_transaction_details_link(EE_Transaction $transaction)
+    {
+        $url          = EE_Admin_Page::add_query_args_and_nonce(array(
+            'action' => 'view_transaction',
+            'TXN_ID' => $transaction->ID(),
+        ), TXN_ADMIN_URL);
+        return '
 			<li>
-				<a href="' . $view_lnk_url . '"'
+				<a href="' . $url . '"'
                     . ' title="' . esc_attr__('View Transaction Details', 'event_espresso') . '" class="tiny-text">
 					<span class="dashicons dashicons-cart"></span>
 				</a>
 			</li>';
+    }
 
-        $dl_invoice_lnk = '';
-        //only show invoice link if message type is active.
-        if ($attendee instanceof EE_Attendee && EEH_MSG_Template::is_mt_active('invoice')) {
-            $dl_invoice_lnk = '
-			<li>
-				<a title="' . esc_attr__('View Transaction Invoice', 'event_espresso') . '"'
-                    . ' target="_blank" href="' . $dl_invoice_lnk_url . '" class="tiny-text">
-					<span class="dashicons dashicons-media-spreadsheet ee-icon-size-18"></span>
-				</a>
-			</li>';
+
+    /**
+     * Get the invoice link for the given registration.
+     * @param EE_Transaction $transaction
+     * @return string
+     * @throws EE_Error
+     */
+    protected function get_invoice_link(EE_Transaction $transaction)
+    {
+        $registration = $transaction->primary_registration();
+        if ($registration instanceof EE_Registration) {
+            $url = $registration->invoice_url();
+            //only show invoice link if message type is active.
+            if ($registration->attendee() instanceof EE_Attendee
+                && EEH_MSG_Template::is_mt_active('invoice')
+            ) {
+                return '
+                <li>
+                    <a title="' . esc_attr__('View Transaction Invoice', 'event_espresso') . '"'
+                       . ' target="_blank" href="' . $url . '" class="tiny-text">
+                        <span class="dashicons dashicons-media-spreadsheet ee-icon-size-18"></span>
+                    </a>
+                </li>';
+            }
         }
+        return '';
+    }
 
-        $dl_receipt_lnk = '';
-        //only show receipt link if message type is active.
-        if ($attendee instanceof EE_Attendee && EEH_MSG_Template::is_mt_active('receipt')) {
-            $dl_receipt_lnk = '
+
+    /**
+     * Get the receipt link for the transaction.
+     * @param EE_Transaction $transaction
+     * @return string
+     * @throws EE_Error
+     */
+    protected function get_receipt_link(EE_Transaction $transaction)
+    {
+        $registration = $transaction->primary_registration();
+        if ($registration instanceof EE_Registration) {
+            $url = $registration->receipt_url();
+            //only show receipt link if message type is active.
+            if ($registration->attendee() instanceof EE_Attendee
+                && EEH_MSG_Template::is_mt_active('receipt')) {
+                return '
 			<li>
 				<a title="' . esc_attr__('View Transaction Receipt', 'event_espresso') . '"'
-                    . ' target="_blank" href="' . $dl_receipt_lnk_url . '" class="tiny-text">
+                                  . ' target="_blank" href="' . $url . '" class="tiny-text">
 					<span class="dashicons dashicons-media-default ee-icon-size-18"></span>
 				</a>
 			</li>';
+            }
         }
+        return '';
+    }
 
-        //only show payment reminder link if the message type is active.
-        if (EEH_MSG_Template::is_mt_active('payment_reminder')) {
-            $send_pay_lnk = $attendee instanceof EE_Attendee
-                            && EE_Registry::instance()->CAP->current_user_can(
-                                'ee_send_message',
-                                'espresso_transactions_send_payment_reminder'
-                            )
+
+    /**
+     * Get the link to view the details for the primary registration.
+     * @param EE_Transaction $transaction
+     * @return string
+     * @throws EE_Error
+     */
+    protected function get_primary_registration_details_link(EE_Transaction $transaction)
+    {
+        $registration = $transaction->primary_registration();
+        if ($registration instanceof EE_Registration) {
+            $url      = EE_Admin_Page::add_query_args_and_nonce(array(
+                'action'  => 'view_registration',
+                '_REG_ID' => $registration->ID(),
+            ), REG_ADMIN_URL);
+            return EE_Registry::instance()->CAP->current_user_can(
+                'ee_read_registration',
+                'espresso_registrations_view_registration',
+                $registration->ID()
+            )
                 ? '
 				<li>
-					<a href="' . $send_pay_lnk_url . '"'
-                         . ' title="' . esc_attr__('Send Payment Reminder', 'event_espresso') . '" class="tiny-text">
-						<span class="dashicons dashicons-email-alt"></span>
-					</a>
-				</li>'
-                : '';
-            $send_pay_lnk = $item->get('STS_ID') !== EEM_Transaction::complete_status_code
-                            && $item->get('STS_ID') !== EEM_Transaction::overpaid_status_code
-                ? $send_pay_lnk
-                : '';
-        } else {
-            $send_pay_lnk = '';
-        }
-
-        $view_reg_lnk = EE_Registry::instance()->CAP->current_user_can(
-            'ee_read_registration',
-            'espresso_registrations_view_registration',
-            $registration->ID()
-        )
-            ? '
-				<li>
-					<a href="' . $view_reg_lnk_url . '"'
-                        . ' title="' . esc_attr__('View Registration Details', 'event_espresso') . '" class="tiny-text">
+					<a href="' . $url . '"'
+                  . ' title="' . esc_attr__('View Registration Details', 'event_espresso') . '" class="tiny-text">
 						<span class="dashicons dashicons-clipboard"></span>
 					</a>
 				</li>'
-            : '';
+                : '';
+        }
+        return '';
+    }
 
-        $view_related_messages_lnk = '';
-        if (EE_Registry::instance()->CAP->current_user_can(
+
+    /**
+     * Get send payment reminder trigger link
+     * @param EE_Transaction $transaction
+     * @return string
+     * @throws EE_Error
+     */
+    protected function get_send_payment_reminder_trigger_link(EE_Transaction $transaction)
+    {
+        $registration = $transaction->primary_registration();
+        if ($registration instanceof EE_Registration
+            && $registration->attendee() instanceof EE_Attendee
+            && EEH_MSG_Template::is_mt_active('payment_reminder')
+            && ! in_array(
+                $transaction->get('STS_ID'),
+                array(EEM_Transaction::complete_status_code, EEM_Transaction::overpaid_status_code)
+            )
+            && EE_Registry::instance()->CAP->current_user_can(
+                'ee_send_message',
+                'espresso_transactions_send_payment_reminder'
+            )
+        ) {
+            $url = EE_Admin_Page::add_query_args_and_nonce(array(
+                'action' => 'send_payment_reminder',
+                'TXN_ID' => $transaction->ID(),
+            ), TXN_ADMIN_URL);
+            return  '
+            <li>
+                <a href="' . $url . '"'
+                  . ' title="' . esc_attr__('Send Payment Reminder', 'event_espresso') . '" class="tiny-text">
+                    <span class="dashicons dashicons-email-alt"></span>
+                </a>
+            </li>';
+        }
+        return '';
+    }
+
+
+
+    /**
+     * Get link to filtered view in the message activity list table of messages for this transaction.
+     * @param EE_Transaction $transaction
+     * @return string
+     * @throws EE_Error
+     */
+    protected function get_related_messages_link(EE_Transaction $transaction)
+    {
+        $url = EEH_MSG_Template::get_message_action_link(
+            'see_notifications_for',
+            null,
+            array('TXN_ID' => $transaction->ID())
+        );
+        return EE_Registry::instance()->CAP->current_user_can(
             'ee_read_global_messages',
             'view_filtered_messages'
-        )) {
-            $view_related_messages_lnk = '<li>' . $related_messages_link . '</li>';
-        }
-
-        return $this->_action_string(
-            $view_lnk
-            . $dl_invoice_lnk
-            . $dl_receipt_lnk
-            . $view_reg_lnk
-            . $send_pay_lnk
-            . $view_related_messages_lnk,
-            $item,
-            'ul',
-            'txn-overview-actions-ul'
-        );
+        )
+            ? '<li>' . $url . '</li>'
+            : '';
     }
 }
