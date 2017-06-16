@@ -453,6 +453,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
             . $this->get_receipt_link($transaction)
             . $this->get_primary_registration_details_link($transaction)
             . $this->get_send_payment_reminder_trigger_link($transaction)
+            . $this->get_payment_overview_link($transaction)
             . $this->get_related_messages_link($transaction),
             $transaction,
             'ul',
@@ -583,8 +584,9 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
             && $registration->attendee() instanceof EE_Attendee
             && EEH_MSG_Template::is_mt_active('payment_reminder')
             && ! in_array(
-                $transaction->get('STS_ID'),
-                array(EEM_Transaction::complete_status_code, EEM_Transaction::overpaid_status_code)
+                $transaction->status_ID(),
+                array(EEM_Transaction::complete_status_code, EEM_Transaction::overpaid_status_code),
+                true
             )
             && EE_Registry::instance()->CAP->current_user_can(
                 'ee_send_message',
@@ -627,5 +629,33 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
         )
             ? '<li>' . $url . '</li>'
             : '';
+    }
+
+
+    /**
+     * Return the link to make a payment on the frontend
+     * @param EE_Transaction $transaction
+     * @return string
+     * @throws EE_Error
+     */
+    protected function get_payment_overview_link(EE_Transaction $transaction)
+    {
+        $registration = $transaction->primary_registration();
+        if ($registration instanceof EE_Registration
+            && $transaction->status_ID() !== EEM_Transaction::complete_status_code
+            && $registration->owes_monies_and_can_pay()
+        ) {
+            return '
+            <li>
+                <a title="' . esc_attr__('Make payment from frontend.', 'event_espresso') . '"'
+                    . ' target="_blank" href="' . $registration->payment_overview_url(true) . '"'
+                    . ' class="tiny-text">
+                    <span class="dashicons dashicons-vault ee-icon-size-18"></span>
+                </a>
+            </li>
+            ';
+
+        }
+        return '';
     }
 }
