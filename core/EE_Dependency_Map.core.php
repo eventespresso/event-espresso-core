@@ -652,6 +652,7 @@ class EE_Dependency_Map
             'EE_System'                            => 'load_core',
             'EE_Maintenance_Mode'                  => 'load_core',
             'EE_Register_CPTs'                     => 'load_core',
+            'EE_Admin'                             => 'load_core',
             //load_lib
             'EE_Message_Resource_Manager'          => 'load_lib',
             'EE_Message_Type_Collection'           => 'load_lib',
