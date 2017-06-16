@@ -966,7 +966,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     public function pretty_status($show_icons = false)
     {
         $status = EEM_Status::instance()->localized_status(
-            array($this->status_ID() => __('unknown', 'event_espresso')),
+            array($this->status_ID() => esc_html__('unknown', 'event_espresso')),
             false,
             'sentence'
         );
@@ -1285,7 +1285,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
         // so registrant can NOT checkin
         if ($count_unique_dtt_checkins >= $max_uses) {
             EE_Error::add_error(
-                __(
+                esc_html__(
                     'Check-in denied because number of datetime uses for the ticket has been reached or exceeded.',
                     'event_espresso'
                 ),
@@ -1322,7 +1322,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
         } elseif (! $this->can_checkin($DTT_ID, $verify)) {
             EE_Error::add_error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'The given registration (ID:%1$d) can not be checked in to the given DTT_ID (%2$d), because the registration does not have access',
                         'event_espresso'
                     ),
@@ -1360,7 +1360,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
             if (WP_DEBUG) {
                 global $wpdb;
                 $error = sprintf(
-                    __(
+                    esc_html__(
                         'Registration check in update failed because of the following database error: %1$s%2$s',
                         'event_espresso'
                     ),
@@ -1368,7 +1368,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
                     $wpdb->last_error
                 );
             } else {
-                $error = __(
+                $error = esc_html__(
                     'Registration check in update failed because of an unknown database error',
                     'event_espresso'
                 );
@@ -1488,7 +1488,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
                     break;
             }
         }
-        return __("The check-in status could not be determined.", "event_espresso");
+        return esc_html__("The check-in status could not be determined.", "event_espresso");
     }
 
 
@@ -1549,7 +1549,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     {
         if (empty($REG_code)) {
             EE_Error::add_error(
-                __('REG_code can not be empty.', 'event_espresso'),
+                esc_html__('REG_code can not be empty.', 'event_espresso'),
                 __FILE__,
                 __FUNCTION__,
                 __LINE__
@@ -1561,7 +1561,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
         } else {
             EE_Error::doing_it_wrong(
                 __CLASS__ . '::' . __FUNCTION__,
-                __('Can not change a registration REG_code once it has been set.', 'event_espresso'),
+                esc_html__('Can not change a registration REG_code once it has been set.', 'event_espresso'),
                 '4.6.0'
             );
         }
@@ -1766,7 +1766,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     public function price_paid()
     {
         EE_Error::doing_it_wrong('EE_Registration::price_paid()',
-            __('This method is deprecated, please use EE_Registration::final_price() instead.', 'event_espresso'),
+            esc_html__('This method is deprecated, please use EE_Registration::final_price() instead.', 'event_espresso'),
             '4.7.0');
         return $this->final_price();
     }
@@ -1783,7 +1783,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     public function set_price_paid($REG_final_price = 0.00)
     {
         EE_Error::doing_it_wrong('EE_Registration::set_price_paid()',
-            __('This method is deprecated, please use EE_Registration::set_final_price() instead.', 'event_espresso'),
+            esc_html__('This method is deprecated, please use EE_Registration::set_final_price() instead.', 'event_espresso'),
             '4.7.0');
         $this->set_final_price($REG_final_price);
     }
@@ -1798,7 +1798,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     public function pretty_price_paid()
     {
         EE_Error::doing_it_wrong('EE_Registration::pretty_price_paid()',
-            __('This method is deprecated, please use EE_Registration::pretty_final_price() instead.',
+            esc_html__('This method is deprecated, please use EE_Registration::pretty_final_price() instead.',
                 'event_espresso'), '4.7.0');
         return $this->pretty_final_price();
     }
