@@ -219,11 +219,15 @@ class EE_Registry
      * @Constructor
      * @access protected
      * @param  \EE_Dependency_Map $dependency_map
-     * @return \EE_Registry
      */
     protected function __construct(\EE_Dependency_Map $dependency_map)
     {
         $this->_dependency_map = $dependency_map;
+        $this->LIB = new stdClass();
+        $this->addons = new stdClass();
+        $this->modules = new stdClass();
+        $this->shortcodes = new stdClass();
+        $this->widgets = new stdClass();
         add_action('EE_Load_Espresso_Core__handle_request__initialize_core_loading', array($this, 'initialize'));
     }
 
@@ -248,12 +252,6 @@ class EE_Registry
                 'EventEspresso\core\services\assets\Registry'     => 'AssetsRegistry',
             )
         );
-        // class library
-        $this->LIB = new stdClass();
-        $this->addons = new stdClass();
-        $this->modules = new stdClass();
-        $this->shortcodes = new stdClass();
-        $this->widgets = new stdClass();
         $this->load_core('Base', array(), true);
         // add our request and response objects to the cache
         $request_loader = $this->_dependency_map->class_loader('EE_Request');
@@ -573,9 +571,10 @@ class EE_Registry
      *                                  and thus call a different method to instantiate
      * @param bool        $load_only    if true, will only load the file, but will NOT instantiate an object
      * @param bool|string $addon        if true, will cache the object in the EE_Registry->$addons array
-     * @return mixed                    null = failure to load or instantiate class object.
+     * @return mixed null = failure to load or instantiate class object.
      *                                  object = class loaded and instantiated successfully.
      *                                  bool = fail or success when $load_only is true
+     * @throws EE_Error
      */
     public function create(
         $class_name = false,
@@ -587,14 +586,14 @@ class EE_Registry
     ) {
         $class_name = ltrim($class_name, '\\');
         $class_name = $this->_dependency_map->get_alias($class_name);
-        if ( ! class_exists($class_name)) {
-            // maybe the class is registered with a preceding \
-            $class_name = strpos($class_name, '\\') !== 0 ? '\\' . $class_name : $class_name;
-            // still doesn't exist ?
-            if ( ! class_exists($class_name)) {
-                return null;
-            }
+        $class_exists = $this->loadOrVerifyClassExists($class_name, $arguments);
+        // if a non-FQCN was passed, then verifyClassExists() might return an object
+        // or it could return null if the class just could not be found anywhere
+        if ($class_exists instanceof $class_name || $class_exists === null){
+            // either way, return the results
+            return $class_exists;
         }
+        $class_name = $class_exists;
         // if we're only loading the class and it already exists, then let's just return true immediately
         if ($load_only) {
             return true;
@@ -612,12 +611,49 @@ class EE_Registry
         }
         // instantiate the requested object
         $class_obj = $this->_create_object($class_name, $arguments, $addon, $from_db);
-        if ($this->_cache_on && $cache) {
+        // if caching is turned on OR this class is cached in a class property
+        if (($this->_cache_on && $cache) || isset($this->_class_abbreviations[ $class_name ])) {
             // save it for later... kinda like gum  { : $
             $this->_set_cached_class($class_obj, $class_name, $addon, $from_db);
         }
         $this->_cache_on = true;
         return $class_obj;
+    }
+
+
+
+    /**
+     * Recursively checks that a class exists and potentially attempts to load classes with non-FQCNs
+     *
+     * @param string $class_name
+     * @param array  $arguments
+     * @param int    $attempt
+     * @return mixed
+     */
+    private function loadOrVerifyClassExists($class_name, array $arguments, $attempt = 1) {
+        if (is_object($class_name) || class_exists($class_name)) {
+            return $class_name;
+        }
+        switch ($attempt) {
+            case 1:
+                // if it's a FQCN then maybe the class is registered with a preceding \
+                $class_name = strpos($class_name, '\\') !== false
+                    ? '\\' . ltrim($class_name, '\\')
+                    : $class_name;
+                break;
+            case 2:
+                //
+                $loader = $this->_dependency_map->class_loader($class_name);
+                if ($loader && method_exists($this, $loader)) {
+                    return $this->{$loader}($class_name, $arguments);
+                }
+                break;
+            case 3:
+            default;
+                return null;
+        }
+        $attempt++;
+        return $this->loadOrVerifyClassExists($class_name, $arguments, $attempt);
     }
 
 
@@ -634,9 +670,10 @@ class EE_Registry
      *                                  and thus call a different method to instantiate
      * @param bool        $cache        whether to cache the instantiated object for reuse
      * @param bool        $load_only    if true, will only load the file, but will NOT instantiate an object
-     * @return null|object|bool         null = failure to load or instantiate class object.
+     * @return bool|null|object null = failure to load or instantiate class object.
      *                                  object = class loaded and instantiated successfully.
      *                                  bool = fail or success when $load_only is true
+     * @throws EE_Error
      */
     protected function _load(
         $file_paths = array(),
@@ -698,6 +735,7 @@ class EE_Registry
 
 
 
+
     /**
      * _get_cached_class
      * attempts to find a cached version of the requested class
@@ -714,25 +752,62 @@ class EE_Registry
      */
     protected function _get_cached_class($class_name, $class_prefix = '')
     {
-        if (isset($this->_class_abbreviations[$class_name])) {
-            $class_abbreviation = $this->_class_abbreviations[$class_name];
-        } else {
-            // have to specify something, but not anything that will conflict
-            $class_abbreviation = 'FANCY_BATMAN_PANTS';
-        }
+        // have to specify something, but not anything that will conflict
+        $class_abbreviation = isset($this->_class_abbreviations[ $class_name ])
+            ? $this->_class_abbreviations[ $class_name ]
+            : 'FANCY_BATMAN_PANTS';
+        $class_name = str_replace('\\', '_', $class_name);
         // check if class has already been loaded, and return it if it has been
         if (isset($this->{$class_abbreviation}) && ! is_null($this->{$class_abbreviation})) {
             return $this->{$class_abbreviation};
-        } else if (isset ($this->{$class_name})) {
+        }
+        if (isset ($this->{$class_name})) {
             return $this->{$class_name};
-        } else if (isset ($this->LIB->{$class_name})) {
+        }
+        if (isset ($this->LIB->{$class_name})) {
             return $this->LIB->{$class_name};
-        } else if ($class_prefix == 'addon' && isset ($this->addons->{$class_name})) {
+        }
+        if ($class_prefix === 'addon' && isset ($this->addons->{$class_name})) {
             return $this->addons->{$class_name};
         }
         return null;
     }
 
+
+
+    /**
+     * removes a cached version of the requested class
+     *
+     * @param string $class_name
+     * @param boolean $addon
+     * @return boolean
+     */
+    public function clear_cached_class($class_name, $addon = false)
+    {
+        // have to specify something, but not anything that will conflict
+        $class_abbreviation = isset($this->_class_abbreviations[ $class_name ])
+            ? $this->_class_abbreviations[ $class_name ]
+            : 'FANCY_BATMAN_PANTS';
+        $class_name = str_replace('\\', '_', $class_name);
+        // check if class has already been loaded, and return it if it has been
+        if (isset($this->{$class_abbreviation}) && ! is_null($this->{$class_abbreviation})) {
+            $this->{$class_abbreviation} = null;
+            return true;
+        }
+        if (isset($this->{$class_name})) {
+            $this->{$class_name} = null;
+            return true;
+        }
+        if (isset($this->LIB->{$class_name})) {
+            unset($this->LIB->{$class_name});
+            return true;
+        }
+        if ($addon && isset($this->addons->{$class_name})) {
+            unset($this->addons->{$class_name});
+            return true;
+        }
+        return false;
+    }
 
 
     /**
@@ -984,6 +1059,10 @@ class EE_Registry
         foreach ($params as $index => $param) {
             // is this a dependency for a specific class ?
             $param_class = $param->getClass() ? $param->getClass()->name : null;
+            // BUT WAIT !!! This class may be an alias for something else (or getting replaced at runtime)
+            $param_class = $this->_dependency_map->has_alias($param_class, $class_name)
+                ? $this->_dependency_map->get_alias($param_class, $class_name)
+                : $param_class;
             if (
                 // param is not even a class
                 empty($param_class)
@@ -992,7 +1071,8 @@ class EE_Registry
             ) {
                 // so let's skip this argument and move on to the next
                 continue;
-            } else if (
+            }
+            if (
                 // parameter is type hinted as a class, exists as an incoming argument, AND it's the correct class
                 ! empty($param_class)
                 && isset($argument_keys[$index], $arguments[$argument_keys[$index]])
@@ -1000,7 +1080,8 @@ class EE_Registry
             ) {
                 // skip this argument and move on to the next
                 continue;
-            } else if (
+            }
+            if (
                 // parameter is type hinted as a class, and should be injected
                 ! empty($param_class)
                 && $this->_dependency_map->has_dependency_for_class($class_name, $param_class)
@@ -1047,7 +1128,7 @@ class EE_Registry
         // and grab it if it exists
         if ($cached_class instanceof $param_class) {
             $dependency = $cached_class;
-        } else if ($param_class != $class_name) {
+        } else if ($param_class !== $class_name) {
             // obtain the loader method from the dependency map
             $loader = $this->_dependency_map->class_loader($param_class);
             // is loader a custom closure ?
@@ -1057,7 +1138,7 @@ class EE_Registry
                 // set the cache on property for the recursive loading call
                 $this->_cache_on = $cache_on;
                 // if not, then let's try and load it via the registry
-                if (method_exists($this, $loader)) {
+                if ($loader && method_exists($this, $loader)) {
                     $dependency = $this->{$loader}($param_class);
                 } else {
                     $dependency = $this->create($param_class, array(), $cache_on);
@@ -1103,11 +1184,18 @@ class EE_Registry
         if (isset($this->_class_abbreviations[$class_name])) {
             $class_abbreviation = $this->_class_abbreviations[$class_name];
             $this->{$class_abbreviation} = $class_obj;
-        } else if (property_exists($this, $class_name)) {
+            return;
+        }
+        $class_name = str_replace('\\', '_', $class_name);
+        if (property_exists($this, $class_name)) {
             $this->{$class_name} = $class_obj;
-        } else if ($class_prefix == 'addon') {
+            return;
+        }
+        if ($class_prefix === 'addon') {
             $this->addons->{$class_name} = $class_obj;
-        } else if ( ! $from_db) {
+            return;
+        }
+        if ( ! $from_db) {
             $this->LIB->{$class_name} = $class_obj;
         }
     }
@@ -1128,7 +1216,8 @@ class EE_Registry
         $loader = self::instance()->_dependency_map->class_loader($classname);
         if ($loader instanceof Closure) {
             return $loader($arguments);
-        } else if (method_exists(EE_Registry::instance(), $loader)) {
+        }
+        if (method_exists(EE_Registry::instance(), $loader)) {
             return EE_Registry::instance()->{$loader}($classname, $arguments);
         }
         return null;

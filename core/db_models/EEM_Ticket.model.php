@@ -2,8 +2,6 @@
 
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 
-require_once(EE_MODELS . 'EEM_Soft_Delete_Base.model.php');
-require_once(EE_CLASSES . 'EE_Ticket.class.php');
 /**
  * Ticket Model
  *
@@ -251,14 +249,16 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
                 'TKT_start_date',
                 (int)$this->current_time_for_query('TKT_start_date', true)
             );
-            $ticket->set('TKT_end_date',
+            $ticket->set(
+                'TKT_end_date',
                 (int)$this->current_time_for_query('TKT_end_date', true) + MONTH_IN_SECONDS
             );
-            $ticket->set_end_time($this->convert_datetime_for_query(
-                'TKT_end_date',
-                '11:59 pm',
-                'g:i a',
-                $this->_timezone)
+            $ticket->set_end_time(
+                $this->convert_datetime_for_query(
+                    'TKT_end_date',
+                    '11:59 pm',
+                    'g:i a', $this->_timezone
+                )
             );
         }
         return $tickets;

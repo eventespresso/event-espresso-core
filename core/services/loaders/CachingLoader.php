@@ -116,7 +116,9 @@ class CachingLoader extends LoaderDecorator
             return $this->cache->get($identifier);
         }
         $object = $this->loader->load($fqcn, $arguments);
-        $this->cache->add($object, $identifier);
+        if($object instanceof $fqcn) {
+            $this->cache->add($object, $identifier);
+        }
         return $object;
     }
 

@@ -69,22 +69,6 @@
 			Josh Feck
 		</a>
 	</li>
-	<li class="wp-person" id="ee-person-drobinson">
-		<a href="<?php esp_gravatar_profile('dean@eventespresso.com'); ?>">
-			<?php echo esp_gravatar_image( 'dean@eventespresso.com', 'Dean Robinson' ); ?>
-		</a>
-		<a class="web" href="<?php esp_gravatar_profile('dean@eventespresso.com'); ?>">
-			Dean Robinson
-		</a>
-	</li>
-	<li class="wp-person" id="ee-person-jwilson">
-		<a href="<?php esp_gravatar_profile('jonathan@eventespresso.com'); ?>">
-			<?php echo esp_gravatar_image( 'jonathan@eventespresso.com', 'Jonathan Wilson' ); ?>
-		</a>
-		<a class="web" href="<?php esp_gravatar_profile('jonathan@eventespresso.com'); ?>">
-			Jonathan Wilson
-		</a>
-	</li>
 	<li class="wp-person" id="ee-person-twarwick">
 		<a href="<?php esp_gravatar_profile('tony@eventespresso.com'); ?>">
 			<?php echo esp_gravatar_image( 'tony@eventespresso.com', 'Tony Warwick' ); ?>
