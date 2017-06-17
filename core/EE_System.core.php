@@ -101,19 +101,9 @@ final class EE_System
     private $maintenance_mode;
 
     /**
-     * @var EE_Request $request
-     */
-    protected $request;
-
-    /**
-     * @var EE_Maintenance_Mode $maintenance_mode
-     */
-    protected $maintenance_mode;
-
-    /**
      * @var ActivationsAndUpgradesManager $activations_and_upgrades_manager
      */
-    protected $activations_and_upgrades_manager;
+    private $activations_and_upgrades_manager;
 
 
 
@@ -783,16 +773,6 @@ final class EE_System
      * @return void
      */
     public function detect_if_activation_or_upgrade()
-    {
-    }
-
-
-
-    /**
-     * @deprecated 4.9.40
-     * @return void
-     */
-    protected function _handle_core_version_change()
     {
     }
 
