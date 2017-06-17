@@ -270,7 +270,7 @@ final class EE_System
     {
         //first off: let's make sure to handle core
         $this->detect_if_activation_or_upgrade();
-        foreach (get_class_vars($this->registry->addons) as $addon) {
+        foreach (get_object_vars($this->registry->addons) as $addon) {
             if ($addon instanceof EE_Addon) {
                 //detect teh request type for that addon
                 $addon->detect_activation_or_upgrade();
@@ -449,7 +449,7 @@ final class EE_System
     public function initialize_addons()
     {
         //foreach registered addon, make sure its db is up-to-date too
-        foreach (get_class_vars($this->registry->addons) as $addon) {
+        foreach (get_object_vars($this->registry->addons) as $addon) {
             if($addon instanceof EE_Addon) {
                 $addon->initialize_db_if_no_migrations_required();
             }
