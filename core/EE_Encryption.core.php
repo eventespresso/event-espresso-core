@@ -27,7 +27,7 @@ class EE_Encryption
     const OPENSSL_CIPHER_METHOD = 'AES-128-CBC';
 
     /**
-     * the OPENSSL cipher method used
+     * WP "options_name" used to store a verified available cipher method
      */
     const OPENSSL_CIPHER_METHOD_OPTION_NAME = 'ee_openssl_cipher_method';
 
@@ -325,10 +325,11 @@ class EE_Encryption
 
     /**
      * Returns a cipher method that has been verified to work.
-     * First checks if the cached cipher has  been set already and if so, returns that.
+     * First checks if the cached cipher has been set already and if so, returns that.
      * Then tests the incoming default and returns that if it's good.
      * If not, then it retrieves the previously tested and saved cipher method.
-     * But if that doesn't exist, then
+     * But if that doesn't exist, then calls getAvailableCipherMethod()
+     * to see what is available on the server, and returns the results.
      *
      * @param string $cipher_method
      * @return string
@@ -344,7 +345,7 @@ class EE_Encryption
             // nope? okay let's get what we found in the past to work
             $cipher_method = get_option(EE_Encryption::OPENSSL_CIPHER_METHOD_OPTION_NAME, '');
             // oops... haven't tested available cipher methods yet
-            if($cipher_method === '') {
+            if($cipher_method === '' || openssl_cipher_iv_length($cipher_method) === false) {
                 $cipher_method = $this->getAvailableCipherMethod($cipher_method);
             }
         }
@@ -362,15 +363,14 @@ class EE_Encryption
     {
         // verify that the incoming cipher method can produce an initialization vector
         if (openssl_cipher_iv_length($cipher_method) === false) {
-            // nope? okay then get then check the list of available cipher methods
+            // nope? then check the next cipher in the list of available cipher methods
+            $cipher_method = next($this->cipher_methods);
             // what? there's no list? then generate that list and cache it,
-            // then rewind the list to the first item, which should match the default
             if (empty($this->cipher_methods)) {
                 $this->cipher_methods = openssl_get_cipher_methods();
-                reset($this->cipher_methods);
+                // then grab the first item from the list
+                $cipher_method = reset($this->cipher_methods);
             }
-            // advance to the next cipher in the list
-            $cipher_method = next($this->cipher_methods);
             if($cipher_method === false){
                 throw new RuntimeException(
                     esc_html__(
@@ -456,23 +456,16 @@ class EE_Encryption
      * Returns the NEXT element in the $digest_methods array.
      * If the $digest_methods array is empty, then we populate it
      * with the available values returned from openssl_get_md_methods().
-     * But first we will advance to the last element, so that when prev() is called,
-     * we'll get what was originally the second to last element.
-     * Why?
-     * Because the last elements returned by openssl_get_md_methods()
-     * are typically the newer SHA methods like SHA512, and we want to try them first.
-     * We've already tried SHA512 as the default set by the OPENSSL_DIGEST_METHOD constant,
-     * but that will get skipped as soon as prev() is called.
      *
      * @return string
      * @throws \RuntimeException
      */
     protected function getDigestMethod(){
+        $digest_method = prev($this->digest_methods);
         if (empty($this->digest_methods)) {
             $this->digest_methods = openssl_get_md_methods();
-            end($this->digest_methods);
+            $digest_method = end($this->digest_methods);
         }
-        $digest_method = prev($this->digest_methods);
         if ($digest_method === false) {
             throw new RuntimeException(
                 esc_html__(
