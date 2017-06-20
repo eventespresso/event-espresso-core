@@ -726,7 +726,10 @@ final class EE_Capabilities extends EE_Base
         foreach ($capabilities_to_add as $role => $caps_for_role) {
             if (is_array($caps_for_role)) {
                 foreach ($caps_for_role as $cap) {
-                    if ($this->add_cap_to_role($role, $cap, true, false)) {
+                    if (
+                        ! $this->capHasBeenAddedToRole($role, $cap)
+                        && $this->add_cap_to_role($role, $cap, true, false)
+                    ) {
                         $update_capabilities_map = true;
                     }
                 }
@@ -757,7 +760,10 @@ final class EE_Capabilities extends EE_Base
         foreach ($caps_map as $role => $caps_for_role) {
             if (is_array($caps_for_role)) {
                 foreach ($caps_for_role as $cap) {
-                    if ($this->remove_cap_from_role($role, $cap, false)) {
+                    if (
+                        $this->capHasBeenAddedToRole($role, $cap)
+                        && $this->remove_cap_from_role($role, $cap, false)
+                    ) {
                         $update_capabilities_map = true;
                     }
                 }
@@ -803,10 +809,7 @@ final class EE_Capabilities extends EE_Base
             if (! $this->setupCapabilitiesMap()) {
                 return false;
             }
-            if (
-                ! isset($this->capabilities_map[ $role->name ])
-                || ! in_array($cap, $this->capabilities_map[ $role->name ], true)
-            ) {
+            if (! $this->capHasBeenAddedToRole($role->name, $cap)) {
                 $role->add_cap($cap, $grant);
                 $this->capabilities_map[ $role->name ][] = $cap;
                 $this->updateCapabilitiesMap($update_capabilities_map);
@@ -837,14 +840,30 @@ final class EE_Capabilities extends EE_Base
             return false;
         }
         $role = $role instanceof WP_Role ? $role :get_role($role);
-        if (
-            isset($this->capabilities_map[ $role->name ])
-            && ($index = array_search($cap, $this->capabilities_map[ $role->name ], true)) !== false
-        ) {
+        if ($index = $this->capHasBeenAddedToRole($role->name, $cap, true)) {
             $role->remove_cap($cap);
             unset($this->capabilities_map[ $role->name ][ $index ]);
             $this->updateCapabilitiesMap($update_capabilities_map);
             return true;
+        }
+        return false;
+    }
+
+
+
+    /**
+     * @param string $role_name
+     * @param string $cap
+     * @param bool   $get_index
+     * @return bool|mixed
+     */
+    private function capHasBeenAddedToRole($role_name='', $cap='', $get_index = false)
+    {
+        if (
+            isset($this->capabilities_map[$role_name])
+            && ($index = array_search($cap, $this->capabilities_map[$role_name], true)) !== false
+        ) {
+            return $get_index ? $index : true;
         }
         return false;
     }
