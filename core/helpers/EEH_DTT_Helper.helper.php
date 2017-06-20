@@ -1089,15 +1089,6 @@ class EEH_DTT_Helper
             }
         }
 
-        // Do UTC
-        $structure[] = '<optgroup label="' . esc_attr__('UTC') . '">';
-        $selected    = '';
-        if ('UTC' === $selected_zone) {
-            $selected = 'selected="selected" ';
-        }
-        $structure[] = '<option ' . $selected . 'value="' . esc_attr('UTC') . '">' . __('UTC') . '</option>';
-        $structure[] = '</optgroup>';
-
         return join("\n", $structure);
     }
 
