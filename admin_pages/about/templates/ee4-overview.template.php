@@ -20,7 +20,7 @@
 	?>
 
 	<h2 class="about-headline-callout"><?php esc_html_e('Welcome to the Decaf (free) Version of Event Espresso 4!', 'event_espresso'); ?></h2>
-	<p>Manage your events from your WordPress dashboard. Reduce your admin, reduce your costs, make your life easier! This is the Decaf version of Event Espresso, but we also have <a href="?page=espresso_about&action=decafvpro">Event Espreso Regular</a> version and a hosted version (Saas) called <a href="https://eventsmart.com">Event Smart</a>.</p>
+	<p>Manage your events from your WordPress dashboard. Reduce your admin, reduce your costs, make your life easier! This is the Decaf version of Event Espresso, but we also have a premium version called <a href="?page=espresso_about&action=decafvpro">Event Espreso 4 Regular</a> and a hosted version called <a href="https://eventsmart.com">Event Smart</a> (SaaS).</p>
 	<h2>Powering 40,000+ event websites; $100 million in ticket sales per year!</h2>
 	<p>Event Espresso is a <a href="http://eventespresso.com/?utm_source=wordpress_org&amp;utm_medium=link&amp;utm_campaign=plugin_description_tab&amp;utm_content=EE4+Decaf" rel="nofollow">WordPress event manager</a> which makes it easy for you to register attendees for classes, workshops, events, trainings, conferences or concerts, all from your WordPress website. Event Espresso events are created from the WordPress admin area. You can create signup forms to collect information about your attendees, accept payments, and create reports. The lite version of the plugin provides everything that you need to manage your event using WordPress.</p>
 	<div class="feature-section col three-col about-updates">

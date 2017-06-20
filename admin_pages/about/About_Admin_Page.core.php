@@ -54,14 +54,15 @@ class About_Admin_Page extends EE_Admin_Page {
 				'func' => '_credits',
 				'capability' => 'manage_options'
 				),
-			'reviews' => array(
-				'func' => '_reviews',
-				'capability' => 'manage_options'
-				),
+			
 			'decafvpro' => array(
 				'func' => '_decafvpro',
 				'capability' => 'manage_options'
-				),			
+				),
+			'reviews' => array(
+				'func' => '_reviews',
+				'capability' => 'manage_options'
+				),		
 			);
 	}
 
@@ -88,15 +89,16 @@ class About_Admin_Page extends EE_Admin_Page {
 					'order' => 30),
 				'require_nonce' => FALSE
 				),
-			'reviews' => array(
-				'nav' => array(
-					'label' => esc_html__('Reviews', 'event_espresso'),
-					'order' => 40),
-				'require_nonce' => FALSE
-				),
+			
 			'decafvpro' => array(
 				'nav' => array(
 					'label' => esc_html__('Decaf vs Regular', 'event_espresso'),
+					'order' => 40),
+				'require_nonce' => FALSE
+				),
+			'reviews' => array(
+				'nav' => array(
+					'label' => esc_html__('Reviews', 'event_espresso'),
 					'order' => 50),
 				'require_nonce' => FALSE
 				),
@@ -193,14 +195,7 @@ class About_Admin_Page extends EE_Admin_Page {
 		$this->display_about_admin_page();
 	}
 
-	protected function _reviews() {
-		$this->_template_args['admin_page_title'] = __('Rave Reviews About Event Espresso 4', 'event_espresso');
-		$this->_template_args['admin_page_subtitle'] = __('At Event Espresso, customer satisfaction is our ultimate goal.', 'event_espresso');
-		$template = EE_ABOUT_TEMPLATE_PATH . 'reviews.template.php';
-		$this->_template_args['about_admin_page_content'] = EEH_Template::display_template( $template, $this->_template_args, TRUE );
-		$this->display_about_admin_page();
-	}
-
+	
 	protected function _decafvpro() {
 		$this->_template_args['admin_page_title'] = sprintf( __('Welcome to Event Espresso %s', 'event_espresso'), EVENT_ESPRESSO_VERSION );
 		$this->_template_args['admin_page_subtitle'] = sprintf(__('Event Espresso lets you focus on doing %swhat you love%s — %sorganizing your events%s', 'event_espresso'), '<em>', '</em>', '<strong>', '</strong>');
@@ -209,6 +204,13 @@ class About_Admin_Page extends EE_Admin_Page {
 		$this->display_about_admin_page();
 	}
 
+	protected function _reviews() {
+		$this->_template_args['admin_page_title'] = __('Rave Reviews About Event Espresso 4', 'event_espresso');
+		$this->_template_args['admin_page_subtitle'] = __('At Event Espresso, customer satisfaction is our ultimate goal.', 'event_espresso');
+		$template = EE_ABOUT_TEMPLATE_PATH . 'reviews.template.php';
+		$this->_template_args['about_admin_page_content'] = EEH_Template::display_template( $template, $this->_template_args, TRUE );
+		$this->display_about_admin_page();
+	}
 
 
 } //end Support_Admin_Page class
