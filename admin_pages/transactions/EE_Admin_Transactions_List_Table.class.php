@@ -650,7 +650,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
                 <a title="' . esc_attr__('Make payment from frontend.', 'event_espresso') . '"'
                     . ' target="_blank" href="' . $registration->payment_overview_url(true) . '"'
                     . ' class="tiny-text">
-                    <span class="dashicons dashicons-vault ee-icon-size-18"></span>
+                    <span class="dashicons dashicons-money ee-icon-size-18"></span>
                 </a>
             </li>
             ';
