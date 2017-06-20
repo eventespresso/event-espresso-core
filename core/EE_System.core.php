@@ -382,10 +382,10 @@ final class EE_System
                     //so it must be numerically-indexed, where values are versions installed...
                     //fix it!
                     $version_string = $should_be_array;
-                    $corrected_db_update[ $version_string ] = array('unknown-date');
+                    $corrected_db_update[$version_string] = array('unknown-date');
                 } else {
                     //ok it checks out
-                    $corrected_db_update[ $should_be_version_string ] = $should_be_array;
+                    $corrected_db_update[$should_be_version_string] = $should_be_array;
                 }
             }
             $espresso_db_update = $corrected_db_update;
@@ -450,7 +450,7 @@ final class EE_System
     {
         //foreach registered addon, make sure its db is up-to-date too
         foreach ($this->registry->addons as $addon) {
-            if($addon instanceof EE_Addon) {
+            if ($addon instanceof EE_Addon) {
                 $addon->initialize_db_if_no_migrations_required();
             }
         }
@@ -473,7 +473,7 @@ final class EE_System
         if ($current_version_to_add === null) {
             $current_version_to_add = espresso_version();
         }
-        $version_history[ $current_version_to_add ][] = date('Y-m-d H:i:s', time());
+        $version_history[$current_version_to_add][] = date('Y-m-d H:i:s', time());
         // re-save
         return update_option('espresso_db_update', $version_history);
     }
@@ -565,7 +565,7 @@ final class EE_System
         if ($activation_history_for_addon) {
             //it exists, so this isn't a completely new install
             //check if this version already in that list of previously installed versions
-            if (! isset($activation_history_for_addon[ $version_to_upgrade_to ])) {
+            if (! isset($activation_history_for_addon[$version_to_upgrade_to])) {
                 //it a version we haven't seen before
                 if ($version_is_higher === 1) {
                     $req_type = EE_System::req_type_upgrade;
@@ -652,7 +652,10 @@ final class EE_System
                     $times_activated = array($times_activated);
                 }
                 foreach ($times_activated as $an_activation) {
-                    if ($an_activation !== 'unknown-date' && $an_activation > $most_recently_active_version_activation) {
+                    if ($an_activation !== 'unknown-date'
+                        && $an_activation
+                           > $most_recently_active_version_activation
+                    ) {
                         $most_recently_active_version = $version;
                         $most_recently_active_version_activation = $an_activation === 'unknown-date'
                             ? '1970-01-01 00:00:00'
@@ -754,9 +757,9 @@ final class EE_System
             $short_name = str_replace('EEM_', '', $classname);
             $reflectionClass = new ReflectionClass($classname);
             if ($reflectionClass->isSubclassOf('EEM_Base') && ! $reflectionClass->isAbstract()) {
-                $non_abstract_db_models[ $short_name ] = $classname;
+                $non_abstract_db_models[$short_name] = $classname;
             }
-            $model_names[ $short_name ] = $classname;
+            $model_names[$short_name] = $classname;
         }
         $this->registry->models = apply_filters('FHEE__EE_System__parse_model_names', $model_names);
         $this->registry->non_abstract_db_models = apply_filters(
