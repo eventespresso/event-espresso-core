@@ -753,18 +753,18 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      */
     protected function _create_new_cpt_item()
     {
-        $gmt_offset = get_option('gmt_offset');
+        $has_timezone_string = get_option('timezone_string');
         //only nag them about setting their timezone if it's their first event, and they haven't already done it
-        if ($gmt_offset === '0' && ! EEM_Event::instance()->exists(array())) {
+        if (! $has_timezone_string && ! EEM_Event::instance()->exists(array())) {
             EE_Error::add_attention(
                 sprintf(
                     __(
-                        'Your website\'s timezone is currently set to UTC + 0. We recommend updating your timezone to a city or region near you before you create an event. Change your timezone now:%1$s%2$s%3$sChange Timezone%4$s',
+                        'Your website\'s timezone is currently set to a UTC offset. We recommend updating your timezone to a city or region near you before you create an event. Change your timezone now:%1$s%2$s%3$sChange Timezone%4$s',
                         'event_espresso'
                     ),
                     '<br>',
                     '<select id="timezone_string" name="timezone_string" aria-describedby="timezone-description">'
-                    . EEH_DTT_Helper::wp_timezone_choice('UTC', EEH_DTT_Helper::get_user_locale())
+                    . EEH_DTT_Helper::wp_timezone_choice('', EEH_DTT_Helper::get_user_locale())
                     . '</select>',
                     '<button class="button button-secondary timezone-submit">',
                     '</button><span class="spinner"></span>'
