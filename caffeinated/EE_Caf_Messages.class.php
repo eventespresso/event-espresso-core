@@ -570,6 +570,12 @@ class EE_Caf_Messages
                     return '';
                 }
                 $registration     = $recipient->primary_reg_obj;
+                $answers = isset($recipient->registrations[$registration->ID()]['ans_objs'])
+                    ? $recipient->registrations[$registration->ID()]['ans_objs']
+                    : array();
+                if (empty($answers)) {
+                    return '';
+                }
                 $template         = is_array($data['template']) && isset($data['template']['question_list']) ? $data['template']['question_list'] : $extra_data['template']['question_list'];
                 $valid_shortcodes = array('question');
                 $answers          = $recipient->registrations[$registration->ID()]['ans_objs'];
