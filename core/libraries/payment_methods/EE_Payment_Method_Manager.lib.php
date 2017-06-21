@@ -117,8 +117,12 @@ class EE_Payment_Method_Manager
         // grab list of installed modules
         $pm_to_register = glob(EE_PAYMENT_METHODS . '*', GLOB_ONLYDIR);
         // filter list of modules to register
-        $pm_to_register = apply_filters('FHEE__EE_Payment_Method_Manager__register_payment_methods__payment_methods_to_register',
-            $pm_to_register);
+        $pm_to_register = apply_filters(
+            'FHEE__EE_Payment_Method_Manager__register_payment_methods__payment_methods_to_register',
+            $pm_to_register
+        );
+        // remove any duplicates if that should happen for some reason
+        $pm_to_register = array_unique($pm_to_register);
         // loop through folders
         foreach ($pm_to_register as $pm_path) {
             $this->register_payment_method($pm_path);
@@ -127,8 +131,10 @@ class EE_Payment_Method_Manager
         // filter list of installed modules
         //keep them organized alphabetically by the payment method type's name
         ksort($this->_payment_method_types);
-        return apply_filters('FHEE__EE_Payment_Method_Manager__register_payment_methods__installed_payment_methods',
-            $this->_payment_method_types);
+        return apply_filters(
+            'FHEE__EE_Payment_Method_Manager__register_payment_methods__installed_payment_methods',
+            $this->_payment_method_types
+        );
     }
 
 
