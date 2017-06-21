@@ -94,6 +94,28 @@ class EE_Capabilities_Test extends EE_UnitTestCase
 
 
 
+    public function testAddNewCapabilitiesViaAddCaps()
+    {
+        global $wp_roles;
+        //check the current user is an admin
+        $user = $this->factory->user->create_and_get();
+        $this->assertInstanceOf('WP_User', $user);
+        $this->assertFalse($this->CAPS->user_can($user, 'ee_new_cap_2', 'test'));
+        // ok now add a new cap, but this time using addCaps
+         $this->CAPS->addCaps(array(self::ADMINISTRATOR_ROLE => array('ee_new_cap_2')));
+        //check it got added
+        $this->assertArrayContains('ee_new_cap_2', $this->CAPS->get_ee_capabilities(self::ADMINISTRATOR_ROLE));
+        $user->add_role(self::ADMINISTRATOR_ROLE);
+        $this->assertTrue($this->CAPS->user_can($user, 'ee_new_cap_2', 'test'));
+        //then check newly-created users get that new role
+        //refresh the roles' caps and the user object
+        $wp_roles = new WP_Roles();
+        $user_refreshed = get_user_by('id', $user->ID);
+        $this->assertTrue($this->CAPS->user_can($user_refreshed, 'ee_new_cap_2', 'test'));
+    }
+
+
+
     /**
      * @since 4.5.0
      */
@@ -160,13 +182,7 @@ class EE_Capabilities_Test extends EE_UnitTestCase
         // for whatever reason, this site wants to have all gateways
         // under control of someone other than the standard administrator
         // so they want to remove the 'ee_manage_gateways' cap from the above administrator role
-        add_filter(
-            'FHEE__EE_Capabilities__init_caps_map__caps',
-            array($this, 'removeManageGatewaysCapFromAdministrator')
-        );
-        // PLZ NOTE, that the above callback asserts that the cap has been filtered from the caps array
-        // let's re-initialize the caps to ensure our changes take effect
-        $this->CAPS->init_caps();
+        $this->CAPS->removeCaps(array(self::ADMINISTRATOR_ROLE => array('ee_manage_gateways')));
         $user = $this->setupAdminUserAndTestCapDoesNOtExist('ee_manage_gateways');
         $this->assertFalse(
             $this->CAPS->user_can($user, 'ee_manage_gateways', 'test'),
@@ -261,20 +277,29 @@ class EE_Capabilities_Test extends EE_UnitTestCase
                 ),
             )
         );
-        // to complete the fake PM registration, we need to hook into EE_Capabilities::init_caps_map()
-        // using EE_Payment_Method_Manager::add_payment_method_caps() as a callback
+        // to complete the fake PM registration, we need to reset  the EE_Payment_Method_Manager
         // which will take care of injecting all Payment Method caps into the default cap map
-        add_filter(
-            'FHEE__EE_Capabilities__init_caps_map__caps',
-            array(EE_Payment_Method_Manager::instance(), 'add_payment_method_caps')
-        );
-        // now let's re-initialize the caps to ensure our changes take effect
-        EE_Registry::instance()->CAP->init_caps();
+        // normally this would happen automatically
+        // but first we need to fake being in the admin
+        define('WP_ADMIN', true);
+        EE_Payment_Method_Manager::reset();
         // and confirm that the admin role now has that cap
         $this->assertTrue(
             $administrator_role->has_cap($mock_onsite_capability),
             'The admin user should have the "' . $mock_onsite_capability . '" capability!'
         );
+        // you would think that users would instantly inherit caps from their roles
+        $this->assertFalse(
+            $this->CAPS->user_can($user, $mock_onsite_capability, 'test'),
+            'The admin user should have the "' . $mock_onsite_capability . '" capability!'
+        );
+        // but it appears caps are added when the role is assigned
+        // that's really clever WordPress </sarcasm> what's the point of having roles then?
+        $user->remove_role(self::ADMINISTRATOR_ROLE);
+        // verify that no other roles exist that could be granting caps
+        $this->assertEmpty($user->roles);
+        // now make this user an administrator
+        $user->add_role(self::ADMINISTRATOR_ROLE);
         // then verify the user also has the cap
         $this->assertTrue(
             $this->CAPS->user_can($user, $mock_onsite_capability, 'test'),
