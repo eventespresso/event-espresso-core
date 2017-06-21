@@ -826,7 +826,6 @@ class EE_Register_Addon implements EEI_Plugin_API
                 array(
                     'capabilities'       => self::$_settings[$addon_name]['capabilities'],
                     'capability_maps'    => self::$_settings[$addon_name]['capability_maps'],
-                    'for_payment_method' => ! empty(self::$_settings[ $addon_name ]['payment_method_paths']),
                 )
             );
         }
@@ -1048,6 +1047,9 @@ class EE_Register_Addon implements EEI_Plugin_API
             //deregister custom_post_types for addon
             if (! empty(self::$_settings[$addon_name]['custom_post_types'])) {
                 EE_Register_CPT::deregister($addon_name);
+            }
+            if (! empty(self::$_settings[$addon_name]['payment_method_paths'])) {
+                EE_Register_Payment_Method::deregister($addon_name);
             }
             remove_action(
                 'deactivate_' . EE_Registry::instance()->addons->{$class_name}->get_main_plugin_file_basename(),
