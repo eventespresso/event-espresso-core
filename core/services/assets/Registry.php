@@ -110,7 +110,6 @@ class Registry
     {
         wp_localize_script('eejs-core', 'eejs', array('data' => $this->jsdata));
         wp_localize_script('espresso_core', 'eei18n', EE_Registry::$i18n_js_strings);
-        $this->localizeAccountingJs();
     }
 
 
@@ -365,6 +364,11 @@ class Registry
             EVENT_ESPRESSO_VERSION,
             true
         );
+        //accounting js has to have its data localized right with its registration because it `wp_localize_script` must
+        //be called BEFORE the script is enqueued.  So doing this localization in the the footer might be too late if
+        //a dependency (underscore) is loaded in the header (see problems that surfaced in
+        // https://events.codebasehq.com/projects/event-espresso/tickets/10817
+        $this->localizeAccountingJs();
     }
 
 
@@ -390,7 +394,7 @@ class Registry
                     'precision' => $this->currency_config->dec_plc,
                 ),
                 'number'   => array(
-                    'precision' => 0,
+                    'precision' => $this->currency_config->dec_plc,
                     'thousand'  => $this->currency_config->thsnds,
                     'decimal'   => $this->currency_config->dec_mrk,
                 ),
