@@ -277,9 +277,9 @@ class EE_Capabilities_Test extends EE_UnitTestCase
                 ),
             )
         );
-        // to complete the fake PM registration, we need to reset  the EE_Payment_Method_Manager
+        // to complete the fake PM registration, we need to reset the EE_Payment_Method_Manager
         // which will take care of injecting all Payment Method caps into the default cap map
-        // normally this would happen automatically
+        // normally we wouldn't do this because the PM would get registered before the caps get initialized
         // but first we need to fake being in the admin
         define('WP_ADMIN', true);
         EE_Payment_Method_Manager::reset();
@@ -288,20 +288,25 @@ class EE_Capabilities_Test extends EE_UnitTestCase
             $administrator_role->has_cap($mock_onsite_capability),
             'The admin user should have the "' . $mock_onsite_capability . '" capability!'
         );
-        // you would think that users would instantly inherit caps from their roles
-        $this->assertFalse(
+        // but it appears caps are only added when the role is assigned
+        // (that's really clever WordPress </sarcasm> what's the point of having roles then?)
+        // turns out we can call the protected _init_caps() method, to reset the caps
+        $user->_init_caps();
+        // then verify the user also has the cap
+        $this->assertTrue(
             $this->CAPS->user_can($user, $mock_onsite_capability, 'test'),
             'The admin user should have the "' . $mock_onsite_capability . '" capability!'
         );
-        // but it appears caps are added when the role is assigned
-        // that's really clever WordPress </sarcasm> what's the point of having roles then?
-        $user->remove_role(self::ADMINISTRATOR_ROLE);
-        // verify that no other roles exist that could be granting caps
-        $this->assertEmpty($user->roles);
-        // now make this user an administrator
-        $user->add_role(self::ADMINISTRATOR_ROLE);
-        // then verify the user also has the cap
-        $this->assertTrue(
+        // now deactivate the Mock Onsite PM
+        EE_Register_Payment_Method::deregister('onsite');
+        // and confirm that the admin role now has lost that cap
+        $this->assertFalse(
+            $administrator_role->has_cap($mock_onsite_capability),
+            'The admin user should NOT have the "' . $mock_onsite_capability . '" capability!'
+        );
+        $user->_init_caps();
+        // then verify the user also has also lost the cap
+        $this->assertFalse(
             $this->CAPS->user_can($user, $mock_onsite_capability, 'test'),
             'The admin user should have the "' . $mock_onsite_capability . '" capability!'
         );
