@@ -79,9 +79,8 @@ final class EE_Front_Controller
         add_action('pre_get_posts', array($this, 'pre_get_posts'), 10, 1);
         // before headers sent
         add_action('wp', array($this, 'wp'), 5);
-        // after headers sent but before any markup is output,
         // primarily used to process any content shortcodes
-        add_action('wp_head', array($this, 'wpHead'), 0);
+        add_action('template_redirect', array($this, 'templateRedirect'), 999);
         // header
         add_action('wp_head', array($this, 'header_meta_tag'), 5);
         add_action('wp_print_scripts', array($this, 'wp_print_scripts'), 10);
@@ -281,13 +280,13 @@ final class EE_Front_Controller
 
 
     /**
-     * callback for the "wp_head" hook point
+     * callback for the "template_redirect" hook point
      * checks sidebars for EE widgets
      * loads resources and assets accordingly
      *
      * @return void
      */
-    public function wpHead()
+    public function templateRedirect()
     {
         global $wp_query;
         if (empty($wp_query->posts)){

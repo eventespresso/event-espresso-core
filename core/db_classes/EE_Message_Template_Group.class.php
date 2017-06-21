@@ -247,8 +247,8 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class {
 
 
 	/**
-	 * This returns an array of EE_Message_Template objects indexed by context
-	 * @return EE_Message_Template[]
+	 * This returns an array of EE_Message_Template objects indexed by context and field.
+	 * @return array()
 	 */
 	public function context_templates() {
 		$mtps_arr = array();

@@ -3,7 +3,6 @@ namespace EventEspresso\core\services\shortcodes;
 
 use DomainException;
 use EventEspresso\core\domain\EnqueueAssetsInterface;
-// use EventEspresso\core\domain\SetHooksInterface;
 use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
 use EventEspresso\core\exceptions\InvalidClassException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
@@ -63,7 +62,7 @@ class ShortcodesManager
         // check content for shortcodes the old way
         add_action('parse_query', array($this->legacy_shortcodes_manager, 'initializeShortcodes'), 5);
         // check content for shortcodes the NEW more efficient way
-        add_action('wp_head', array($this, 'wpHead'), 0);
+        add_action('template_redirect', array($this, 'templateRedirect'), 999);
     }
 
 
@@ -108,7 +107,7 @@ class ShortcodesManager
                 array('EventEspresso\core\domain\entities\shortcodes'),
                 // filepaths to classes to add
                 array(),
-                // filemask to use if parsing folder for files to add
+                // file mask to use if parsing folder for files to add
                 '',
                 // what to use as identifier for collection entities
                 // using CLASS NAME prevents duplicates (works like a singleton)
@@ -185,13 +184,13 @@ class ShortcodesManager
 
 
     /**
-     * callback for the "wp_head" hook point
+     * callback for the "template_redirect" hook point
      * checks posts for EE shortcodes, and initializes them,
      * then toggles filter switch that loads core default assets
      *
      * @return void
      */
-    public function wpHead()
+    public function templateRedirect()
     {
         global $wp_query;
         if (empty($wp_query->posts)) {
