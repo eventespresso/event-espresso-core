@@ -124,6 +124,12 @@ div.TB-ee-frame a {
     text-align: center;
 }
 
+@media screen and (max-width : 1260px) {
+	.col-3 {
+	    clear: left;
+	}
+}
+
 /**** ee decaf vs regular *****/
 .featured-section.features .row {
     display: inline-block;
