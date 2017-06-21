@@ -20,9 +20,9 @@
 	?>
 
 	<h2 class="about-headline-callout"><?php esc_html_e('Welcome to the Decaf (free) Version of Event Espresso 4!', 'event_espresso'); ?></h2>
-	<p>Manage your events from your WordPress dashboard. Reduce your admin, reduce your costs, make your life easier! This is the Decaf version of Event Espresso, but we also have a premium version called <a href="?page=espresso_about&action=decafvpro">Event Espreso 4 Regular</a> and a hosted version called <a href="https://eventsmart.com">Event Smart</a> (SaaS).</p>
-	<h2>Powering 40,000+ event websites; $100 million in ticket sales per year!</h2>
-	<p>Event Espresso is a <a href="http://eventespresso.com/?utm_source=wordpress_org&amp;utm_medium=link&amp;utm_campaign=plugin_description_tab&amp;utm_content=EE4+Decaf" rel="nofollow">WordPress event manager</a> which makes it easy for you to register attendees for classes, workshops, events, trainings, conferences or concerts, all from your WordPress website. Event Espresso events are created from the WordPress admin area. You can create signup forms to collect information about your attendees, accept payments, and create reports. The lite version of the plugin provides everything that you need to manage your event using WordPress.</p>
+	<p><?php echo sprintf( esc_html__('Manage your events from your WordPress dashboard. Reduce your admin, reduce your costs, make your life easier! This is the Decaf version of Event Espresso, but we also have a premium version called %sEvent Espreso 4 Regular%s and a hosted version called %sEvent Smart%s (SaaS).', 'event_espresso'),'<a href="?page=espresso_about&action=decafvpro">','</a>','<a href="https://eventsmart.com//?utm_source=ee4_decaf&amp;utm_medium=link&amp;utm_campaign=espresso_about_tab&amp;utm_content=EE4+Decaf">','</a>'); ?></p>
+	<h2><?php esc_html_e('Powering 40,000+ event websites; $100 million in ticket sales per year!', 'event_espresso'); ?></h2>
+	<p><?php echo sprintf( esc_html__('Event Espresso is a %sWordPress event manager%s which makes it easy for you to register attendees for classes, workshops, events, trainings, conferences or concerts, all from your WordPress website. Event Espresso events are created from the WordPress admin area. You can create signup forms to collect information about your attendees, accept payments, and create reports. The Decaf (free) version of the plugin provides everything that you need to manage your event using WordPress.', 'event_espresso'),'<a href="http://eventespresso.com/?utm_source=wordpress_org&amp;utm_medium=link&amp;utm_campaign=plugin_description_tab&amp;utm_content=EE4+Decaf">','</a>'); ?></p>
 	<div class="feature-section col three-col about-updates">
 		<div class="col-1">
 			<img src="<?php echo EE_GLOBAL_ASSETS_URL; ?>images/screenshots/publish_meta_box.jpg">
@@ -47,10 +47,10 @@
 <div class="changelog">
 	<div class="feature-section col two-col">
 		<div>
-			<h3><?php  esc_html_e('Higher customer retention', 'event_espresso'); ?></h3>
-			<p><?php  esc_html_e('The Event Espresso 4 registration process is faster than ever. With quick ticket selections, single page check-out, and customizable notifications! Registration that can scale to your business needs.', 'event_espresso'); ?></p>
-			<h4><?php  _e('Ticket selection boxes on any post page or post', 'event_espresso'); ?></h4>
-			<p><?php  esc_html_e('Customers can easily register for classes, events, or conferences, in just a few simple steps. No matter how you use it, Event Espresso 4 will adapt to a multitude of different ticketing and pricing scenarios.', 'event_espresso'); ?></p>
+			<h3><?php esc_html_e('Higher customer retention', 'event_espresso'); ?></h3>
+			<p><?php esc_html_e('The Event Espresso 4 registration process is faster than ever. With quick ticket selections, single page check-out, and customizable notifications! Registration that can scale to your business needs.', 'event_espresso'); ?></p>
+			<h4><?php esc_html_e('Ticket selection boxes on any post page or post', 'event_espresso'); ?></h4>
+			<p><?php esc_html_e('Customers can easily register for classes, events, or conferences, in just a few simple steps. No matter how you use it, Event Espresso 4 will adapt to a multitude of different ticketing and pricing scenarios.', 'event_espresso'); ?></p>
 		</div>
 		<div class="last-feature about-colors-img">
 			<img src="<?php echo EE_GLOBAL_ASSETS_URL; ?>images/screenshots/registrtation-page-large.jpg">
