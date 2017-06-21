@@ -44,7 +44,7 @@ class EspressoTicketSelector extends EspressoShortcode
      */
     public function cacheExpiration()
     {
-        return MINUTE_IN_SECONDS;
+        return 0;
     }
 
 
