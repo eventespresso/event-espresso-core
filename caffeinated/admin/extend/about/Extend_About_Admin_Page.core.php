@@ -57,10 +57,10 @@ class Extend_About_Admin_Page extends About_Admin_Page {
 				'func' => '_credits',
 				'capability' => 'manage_options'
 				),
-			'decafvpro' => array(
+			/*'decafvpro' => array(
 				'func' => '_decafvpro',
 				'capability' => 'manage_options'
-				),
+				),*/
 			'reviews' => array(
 				'func' => '_reviews',
 				'capability' => 'manage_options'
@@ -92,12 +92,12 @@ class Extend_About_Admin_Page extends About_Admin_Page {
 					'order' => 30),
 				'require_nonce' => FALSE
 				),
-			'decafvpro' => array(
+			/*'decafvpro' => array(
 				'nav' => array(
 					'label' => esc_html__('Decaf vs Regular', 'event_espresso'),
 					'order' => 40),
 				'require_nonce' => FALSE
-				),
+				),*/
 			'reviews' => array(
 				'nav' => array(
 					'label' => esc_html__('Reviews', 'event_espresso'),

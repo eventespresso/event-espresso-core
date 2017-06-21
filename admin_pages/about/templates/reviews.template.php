@@ -60,7 +60,13 @@
 		</div>
 		
 	</div>
-	<div align="right"><a href="https://eventespresso.com/pricing/?utm_source=wordpress_org&amp;utm_medium=link&amp;utm_campaign=decaf_about_page&amp;utm_content=reviews+tab" target="_blank" class="button button-primary button-hero"><span class="dashicons dashicons-cart"></span><?php esc_html_e( 'Upgrade Now!', 'event_espresso' ) ?></a></div>
+	<?php
+		if ( !defined('EE_CAF_URL') ) {
+			?>
+			<div align="right"><a href="https://eventespresso.com/pricing/?utm_source=wordpress_org&amp;utm_medium=link&amp;utm_campaign=decaf_about_page&amp;utm_content=reviews+tab" target="_blank" class="button button-primary button-hero"><span class="dashicons dashicons-cart"></span><?php esc_html_e( 'Upgrade Now!', 'event_espresso' ) ?></a></div>
+			<?php
+		}
+	?>
 	&nbsp;
 	<hr />
 	<div class="feature-section col three-col about-updates">
@@ -117,7 +123,13 @@
 		</div>
 		
 	</div>
-	<div align="right"><a href="https://eventespresso.com/pricing/?utm_source=wordpress_org&amp;utm_medium=link&amp;utm_campaign=decaf_about_page&amp;utm_content=reviews+tab" target="_blank" class="button button-primary button-hero"><span class="dashicons dashicons-cart"></span><?php esc_html_e( 'Upgrade Now!', 'event_espresso' ) ?></a></div>
+	<?php
+		if ( !defined('EE_CAF_URL') ) {
+			?>
+			<div align="right"><a href="https://eventespresso.com/pricing/?utm_source=wordpress_org&amp;utm_medium=link&amp;utm_campaign=decaf_about_page&amp;utm_content=reviews+tab" target="_blank" class="button button-primary button-hero"><span class="dashicons dashicons-cart"></span><?php esc_html_e( 'Upgrade Now!', 'event_espresso' ) ?></a></div>
+			<?php
+		}
+	?>
 	&nbsp;
 	<hr />
 	<div class="feature-section col three-col about-updates">
@@ -166,5 +178,11 @@
 			</ul>
 		</div>
 	</div>
-	<div align="right"><a href="https://eventespresso.com/pricing/?utm_source=wordpress_org&amp;utm_medium=link&amp;utm_campaign=decaf_about_page&amp;utm_content=reviews+tab" target="_blank" class="button button-primary button-hero"><span class="dashicons dashicons-cart"></span><?php esc_html_e( 'Upgrade Now!', 'event_espresso' ) ?></a></div>
+	<?php
+		if ( !defined('EE_CAF_URL') ) {
+			?>
+			<div align="right"><a href="https://eventespresso.com/pricing/?utm_source=wordpress_org&amp;utm_medium=link&amp;utm_campaign=decaf_about_page&amp;utm_content=reviews+tab" target="_blank" class="button button-primary button-hero"><span class="dashicons dashicons-cart"></span><?php esc_html_e( 'Upgrade Now!', 'event_espresso' ) ?></a></div>
+			<?php
+		}
+	?>
 </div>
