@@ -146,7 +146,7 @@ class EE_Capabilities_Test extends EE_UnitTestCase
 
 
 
-    public function test_remove_capabilities()
+    public function testRemoveCapabilities()
     {
         /** @var WP_Role $administrator_role */
         $administrator_role = get_role(self::ADMINISTRATOR_ROLE);
@@ -159,53 +159,40 @@ class EE_Capabilities_Test extends EE_UnitTestCase
         // so they want to remove the 'ee_manage_gateways' cap from the above administrator role
         add_filter(
             'FHEE__EE_Capabilities__init_caps_map__caps',
-            array($this, 'remove_manage_gateways_cap_from_administrator')
+            array($this, 'removeManageGatewaysCapFromAdministrator')
         );
         // PLZ NOTE, that the above callback asserts that the cap has been filtered from the caps array
-        // let's reset the caps to ensure our changes take effect
-        $this->CAPS->init_caps(true);
-        /** @var WP_User $user */
-        $user = $this->factory->user->create_and_get();
-        $this->assertInstanceOf('WP_User', $user);
-        // verify they don't have the 'ee_manage_gateways' cap YET...
+        // let's re-initialize the caps to ensure our changes take effect
+        $this->CAPS->init_caps();
+        $user = $this->setupAdminUserAndTestCapDoesNOtExist('ee_manage_gateways');
         $this->assertFalse(
-            $this->CAPS->user_can($user, 'ee_manage_gateways', 'test')
-        );
-        // first remove the existing default role
-        $user->remove_role(self::SUBSCRIBER_ROLE);
-        // verify that no other roles exist that could be granting caps
-        $this->assertEmpty($user->roles);
-        // now make this user an administrator
-        $user->add_role(self::ADMINISTRATOR_ROLE);
-        $this->assertEquals(self::ADMINISTRATOR_ROLE, reset($user->roles));
-        // THIS SHOULD BE ASSERT FALSE TO PASS
-        $this->assertTrue(
-            $this->CAPS->user_can($user, 'ee_manage_gateways', 'test')
+            $this->CAPS->user_can($user, 'ee_manage_gateways', 'test'),
+            'The admin user should NOT have the "ee_manage_gateways" capability because it was removed!'
         );
         // WHAT?!?!?
         // we filtered the cap map array !!! why can't we remove that cap ?!?!!?
         // what about directly?
         $this->CAPS->remove_cap_from_role(self::ADMINISTRATOR_ROLE, 'ee_manage_gateways');
-        // THIS SHOULD BE ASSERT FALSE TO PASS
-        $this->assertTrue(
-            $this->CAPS->user_can($user, 'ee_manage_gateways', 'test')
+        $this->assertFalse(
+            $this->CAPS->user_can($user, 'ee_manage_gateways', 'test'),
+            'The admin user should NOT have the "ee_manage_gateways" capability because it was removed!'
         );
         // what if we try directly ?
         $administrator_role->remove_cap('ee_manage_gateways');
-        // THIS SHOULD BE ASSERT FALSE TO PASS
-        $this->assertTrue(
-            user_can($user, 'ee_manage_gateways')
+        $this->assertFalse(
+            user_can($user, 'ee_manage_gateways'),
+            'The admin user should NOT have the "ee_manage_gateways" capability because it was removed!'
         );
         // WOWZERS !!! what if we remove the cap directly from the role
         $administrator_role->remove_cap('ee_manage_gateways');
         $this->assertFalse(
-            $administrator_role->has_cap('ee_manage_gateways')
+            $administrator_role->has_cap('ee_manage_gateways'),
+            'The admin user should NOT have the "ee_manage_gateways" capability because it was removed!'
         );
     }
 
 
-
-    public function remove_manage_gateways_cap_from_administrator($existing_caps)
+    public function removeManageGatewaysCapFromAdministrator($existing_caps)
     {
         // first verify that the cap exists
         $this->assertTrue(
@@ -216,11 +203,80 @@ class EE_Capabilities_Test extends EE_UnitTestCase
                 unset($existing_caps[self::ADMINISTRATOR_ROLE][$key]);
             }
         }
-        // now verify that the it doesn't
+        // now verify that it doesn't
         $this->assertFalse(
             in_array('ee_manage_gateways', $existing_caps[self::ADMINISTRATOR_ROLE], true)
         );
         return $existing_caps;
+    }
+
+
+
+    private function setupAdminUserAndTestCapDoesNOtExist($cap_to_test = '')
+    {
+        /** @var WP_User $user */
+        $user = $this->factory->user->create_and_get();
+        $this->assertInstanceOf('WP_User', $user);
+        // verify they don't have the $cap_to_test YET...
+        $this->assertFalse(
+            $this->CAPS->user_can($user, $cap_to_test, 'test'),
+            'The admin user should NOT have the "'. $cap_to_test .'" capability YET!'
+        );
+        // first remove the existing default role
+        $user->remove_role(self::SUBSCRIBER_ROLE);
+        // verify that no other roles exist that could be granting caps
+        $this->assertEmpty($user->roles);
+        // now make this user an administrator
+        $user->add_role(self::ADMINISTRATOR_ROLE);
+        $this->assertEquals(self::ADMINISTRATOR_ROLE, reset($user->roles));
+        return $user;
+    }
+
+
+
+    public function testPaymentMethodCaps()
+    {
+        // we're going to fake the activation of the Mock_Onsite payment method
+        // which should bestow the following capability to administrators
+        $mock_onsite_capability = 'ee_payment_method_mock_onsite';
+        // first let's verify that admins do not currently have this cap
+        /** @var WP_Role $administrator_role */
+        $administrator_role = get_role(self::ADMINISTRATOR_ROLE);
+        $this->assertInstanceOf('WP_Role', $administrator_role);
+        // verify two ways that cap does not exist YET...
+        $this->assertFalse(isset($administrator_role->capabilities[$mock_onsite_capability]));
+        $this->assertFalse($administrator_role->has_cap($mock_onsite_capability));
+        // now create an admin user
+        $user = $this->setupAdminUserAndTestCapDoesNOtExist($mock_onsite_capability);
+        // and fake activation of the Mock Onsite Payment Method
+        $this->_pretend_addon_hook_time();
+        EE_Register_Payment_Method::register(
+            'onsite',
+            array(
+                'payment_method_paths' => array(
+                    EE_TESTS_DIR . 'mocks' . DS . 'payment_methods' . DS . 'Mock_Onsite',
+                ),
+            )
+        );
+        // to complete the fake PM registration, we need to hook into EE_Capabilities::init_caps_map()
+        // using EE_Payment_Method_Manager::add_payment_method_caps() as a callback
+        // which will take care of injecting all Payment Method caps into the default cap map
+        add_filter(
+            'FHEE__EE_Capabilities__init_caps_map__caps',
+            array(EE_Payment_Method_Manager::instance(), 'add_payment_method_caps')
+        );
+        // now let's re-initialize the caps to ensure our changes take effect
+        EE_Registry::instance()->CAP->init_caps();
+        // and confirm that the admin role now has that cap
+        $this->assertTrue(
+            $administrator_role->has_cap($mock_onsite_capability),
+            'The admin user should have the "' . $mock_onsite_capability . '" capability!'
+        );
+        // then verify the user also has the cap
+        $this->assertTrue(
+            $this->CAPS->user_can($user, $mock_onsite_capability, 'test'),
+            'The admin user should have the "' . $mock_onsite_capability . '" capability!'
+        );
     }
 
 
