@@ -61,7 +61,7 @@ class EE_Register_Capabilities implements EEI_Plugin_API
     public static function register($cap_reference = null, $setup_args = array())
     {
         //required fields MUST be present, so let's make sure they are.
-        if (! isset($cap_reference) || ! is_array($setup_args) || empty($setup_args['capabilities'])) {
+        if ($cap_reference === null || ! is_array($setup_args) || empty($setup_args['capabilities'])) {
             throw new EE_Error(
                 __('In order to register capabilities with EE_Register_Capabilities::register, you must include a unique name to reference the capabilities being registered, plus an array containing the following keys: "capabilities".',
                     'event_espresso')
@@ -85,7 +85,6 @@ class EE_Register_Capabilities implements EEI_Plugin_API
             'cap_maps'           => isset($setup_args['capability_maps'])
                 ? $setup_args['capability_maps']
                 : array(),
-            'for_payment_method' => (isset($setup_args['for_payment_method']) && $setup_args['for_payment_method']),
         );
         //set initial caps (note that EE_Capabilities takes care of making sure that the caps get added only once)
         add_filter(
@@ -97,9 +96,6 @@ class EE_Register_Capabilities implements EEI_Plugin_API
             'FHEE__EE_Capabilities___set_meta_caps__meta_caps',
             array('EE_Register_Capabilities', 'register_cap_maps')
         );
-        if (self::$_registry[ $cap_reference ]['for_payment_method']) {
-            EE_Registry::instance()->load_lib('Payment_Method_Manager');
-        }
     }
 
 
@@ -189,9 +185,6 @@ class EE_Register_Capabilities implements EEI_Plugin_API
     public static function deregister($cap_reference = '')
     {
         if (! empty(self::$_registry[$cap_reference])) {
-            if (self::$_registry[ $cap_reference ]['for_payment_method']) {
-                EE_Registry::instance()->load_lib('Payment_Method_Manager');
-            }
             if (! empty(self::$_registry[ $cap_reference ]['caps'])) {
                 EE_Capabilities::instance()->removeCaps(self::$_registry[ $cap_reference ]['caps']);
             }
