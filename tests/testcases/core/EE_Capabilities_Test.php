@@ -60,6 +60,8 @@ class EE_Capabilities_Test extends EE_UnitTestCase
         $this->assertEmpty($caps);
     }
 
+
+
     public function test_add_new_capabilities_via_filtering_init_caps()
     {
         global $wp_roles;
@@ -71,7 +73,8 @@ class EE_Capabilities_Test extends EE_UnitTestCase
         //ok now add another cap, and re-init stuff and verify it got added correctly
         //add a new cap
         add_filter('FHEE__EE_Capabilities__init_caps_map__caps', array($this, 'add_new_caps'));
-        $this->CAPS->init_caps();
+        // but we'll need to set the reset flag to true if we want to do things this way
+        $this->CAPS->init_caps(true);
         //check it got added
         $this->assertArrayContains('ee_new_cap', $this->CAPS->get_ee_capabilities(self::ADMINISTRATOR_ROLE));
         $user->add_role(self::ADMINISTRATOR_ROLE);
