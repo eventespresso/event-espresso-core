@@ -81,6 +81,10 @@ class EE_Register_Payment_Method implements EEI_Plugin_API {
         // If EE_Payment_Method_Manager::register_payment_methods has already been called,
         // then we need to add our caps for this payment method manually
         if (did_action('FHEE__EE_Payment_Method_Manager__register_payment_methods__registered_payment_methods')) {
+            // register payment methods directly
+            foreach (self::$_settings[$payment_method_id]['payment_method_paths'] as $payment_method_path) {
+                EE_Payment_Method_Manager::instance()->register_payment_method($payment_method_path);
+            }
             EE_Capabilities::instance()->addCaps(
                 self::getPaymentMethodCapabilities(self::$_settings[$payment_method_id])
             );
