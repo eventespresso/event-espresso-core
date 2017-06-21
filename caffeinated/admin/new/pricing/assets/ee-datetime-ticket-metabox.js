@@ -1643,9 +1643,9 @@ jQuery(document).ready(function($) {
 			$('.TKT-taxable-subtotal-amount', editTicketRow).val(subtotal);
 			$('.TKT-tax-percentage', editTicketRow ).each( function() {
 				id = $(this).attr('id').replace('TKT-tax-percentage-', '');
-				tax = accounting.unformat($(this).val());
-				tax = accounting.unformat(subtotal) * tax/100;
-				tax = accounting.formatNumber(tax);
+				tax = accounting.toFixed(accounting.unformat($(this).val()), 2);
+				tax = accounting.toFixed(accounting.unformat(subtotal), 2) * tax/100;
+				tax = accounting.formatNumber(tax, 2);
 				$('#TKT-tax-amount-' + id).val(tax);
 				$('#TKT-tax-amount-display-' + id).text(accounting.formatMoney(tax));
 			});
