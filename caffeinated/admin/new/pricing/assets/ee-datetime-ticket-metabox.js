@@ -1580,7 +1580,7 @@ jQuery(document).ready(function($) {
 				}
 			});
 
-			totals.subtotal = accounting.formatNumber( accounting.toFixed( runningtotal ) );
+			totals.subtotal = accounting.formatNumber( accounting.toFixed( runningtotal, 2 ), 2 );
 
 			//apply taxes?
 			if ( dotaxes && $('#edit-ticket-TKT_taxable-' + this.ticketRow + ':checked').length > 0 ) {
@@ -1591,7 +1591,7 @@ jQuery(document).ready(function($) {
 				});
 			}
 
-			totals.finalTotal = accounting.formatNumber( accounting.toFixed( runningtotal ) );
+			totals.finalTotal = accounting.formatNumber( accounting.toFixed( runningtotal, 2 ), 2 );
 
 			return totals;
 		},
