@@ -281,7 +281,7 @@ class EE_Capabilities_Test extends EE_UnitTestCase
         // which will take care of injecting all Payment Method caps into the default cap map
         // normally we wouldn't do this because the PM would get registered before the caps get initialized
         // but first we need to fake being in the admin
-        define('WP_ADMIN', true);
+        set_current_screen('edit-post');
         EE_Payment_Method_Manager::reset();
         // and confirm that the admin role now has that cap
         $this->assertTrue(
@@ -310,6 +310,7 @@ class EE_Capabilities_Test extends EE_UnitTestCase
             $this->CAPS->user_can($user, $mock_onsite_capability, 'test'),
             'The admin user should have the "' . $mock_onsite_capability . '" capability!'
         );
+        unset($GLOBALS['current_screen']);
     }
 
 
