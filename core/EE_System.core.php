@@ -926,7 +926,6 @@ final class EE_System
         }
         do_action('AHEE__EE_System__set_hooks_for_shortcodes_modules_and_addons');
         $this->registry->create('EventEspresso\core\services\assets\Registry');
-        wp_enqueue_script('espresso_core');
     }
 
 
