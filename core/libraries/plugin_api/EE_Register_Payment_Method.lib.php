@@ -124,7 +124,7 @@ class EE_Register_Payment_Method implements EEI_Plugin_API
      *
      * @param string $module_id the name for the module that was previously registered
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public static function deregister($module_id = null)
     {
@@ -143,14 +143,17 @@ class EE_Register_Payment_Method implements EEI_Plugin_API
      *
      * @param array $settings
      * @return array
+     * @throws EE_Error
      */
     private static function getPaymentMethodCapabilities(array $settings)
     {
         $payment_method_caps = array('administrator' => array());
         if (isset($settings['payment_method_paths'])) {
             foreach ($settings['payment_method_paths'] as $payment_method_path) {
-                $payment_method_caps['administrator'][] = 'ee_payment_method_'
-                                                          . strtolower(basename($payment_method_path));
+                $payment_method_caps = EE_Payment_Method_Manager::instance()->addPaymentMethodCap(
+                    $payment_method_caps,
+                    strtolower(basename($payment_method_path))
+                );
             }
         }
         return $payment_method_caps;
