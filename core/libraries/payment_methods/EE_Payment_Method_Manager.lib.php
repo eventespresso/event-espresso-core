@@ -18,10 +18,7 @@ class EE_Payment_Method_Manager
 {
 
     /**
-     *    instance of the EE_Payment_Method_Manager object
-     *
-     * @var    $_instance
-     * @access    private
+     * @var EE_Payment_Method_Manager $_instance
      */
     private static $_instance;
 
@@ -34,7 +31,6 @@ class EE_Payment_Method_Manager
 
     /**
      * @singleton method used to instantiate class object
-     * @access    public
      * @return EE_Payment_Method_Manager instance
      */
     public static function instance()
@@ -84,7 +80,7 @@ class EE_Payment_Method_Manager
 
 
     /**
-     *        register_payment_methods
+     * register_payment_methods
      *
      * @return array
      */
@@ -114,9 +110,8 @@ class EE_Payment_Method_Manager
 
 
     /**
-     *    register_payment_method- makes core aware of this payment method
+     * register_payment_method- makes core aware of this payment method
      *
-     * @access public
      * @param string $payment_method_path - full path up to and including payment method folder
      * @return boolean
      */
@@ -135,7 +130,7 @@ class EE_Payment_Method_Manager
         // does the module exist ?
         if (! is_readable($payment_method_path . DS . $module_class . $module_ext)) {
             $msg = sprintf(
-                __(
+                esc_html__(
                     'The requested %s payment method file could not be found or is not readable due to file permissions.',
                     'event_espresso'
                 ), $module
@@ -148,7 +143,7 @@ class EE_Payment_Method_Manager
         // verify that class exists
         if (! class_exists($module_class)) {
             $msg = sprintf(
-                __('The requested %s module class does not exist.', 'event_espresso'),
+                esc_html__('The requested %s module class does not exist.', 'event_espresso'),
                 $module_class
             );
             EE_Error::add_error($msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__);
@@ -261,8 +256,8 @@ class EE_Payment_Method_Manager
      * Activates a payment method of the given type.
      *
      * @param string $payment_method_type the PMT_type; for EE_PMT_Invoice this would be 'Invoice'
-     * @return \EE_Payment_Method
-     * @throws \EE_Error
+     * @return EE_Payment_Method
+     * @throws EE_Error
      */
     public function activate_a_payment_method_of_type($payment_method_type)
     {
@@ -281,7 +276,7 @@ class EE_Payment_Method_Manager
             } else {
                 throw new EE_Error(
                     sprintf(
-                        __(
+                        esc_html__(
                             'There is no payment method of type %1$s, so it could not be activated',
                             'event_espresso'
                         ),
@@ -300,7 +295,7 @@ class EE_Payment_Method_Manager
             EE_Error::add_persistent_admin_notice(
                 'invoice_pm_requirements_notice',
                 sprintf(
-                    __(
+                    esc_html__(
                         'The Invoice payment method has been activated. It requires the invoice message type, html messenger, and pdf messenger be activated as well for the %1$smessages system%2$s, so it has been automatically verified that they are also active.',
                         'event_espresso'
                     ),
@@ -321,7 +316,7 @@ class EE_Payment_Method_Manager
      * @global WP_User    $current_user
      * @param EE_PMT_Base $pm_type_obj
      * @return EE_Payment_Method
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function create_payment_method_of_type($pm_type_obj)
     {
@@ -348,7 +343,7 @@ class EE_Payment_Method_Manager
      *
      * @param EE_Payment_Method $payment_method
      * @return EE_Payment_Method
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function initialize_payment_method($payment_method)
     {
@@ -379,7 +374,7 @@ class EE_Payment_Method_Manager
      * @deprecated in 4.9.40 because the currency payment method table is being deprecated
      * @param EE_Payment_Method $payment_method
      * @return EE_Payment_Method
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function set_usable_currencies_on_payment_method($payment_method)
     {
@@ -409,7 +404,10 @@ class EE_Payment_Method_Manager
             __FILE__,
             __FUNCTION__,
             sprintf(
-                __('Payment method with slug %1$s is being deactivated by site admin', 'event_espresso'),
+                esc_html__(
+                    'Payment method with slug %1$s is being deactivated by site admin',
+                    'event_espresso'
+                ),
                 $payment_method_slug
             ),
             'payment_method_change'
