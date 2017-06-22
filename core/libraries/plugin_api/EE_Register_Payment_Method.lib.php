@@ -47,7 +47,7 @@ class EE_Register_Payment_Method implements EEI_Plugin_API
         //required fields MUST be present, so let's make sure they are.
         if (empty($payment_method_id) || ! is_array($setup_args) || empty($setup_args['payment_method_paths'])) {
             throw new EE_Error(
-                __(
+                esc_html__(
                     'In order to register Payment Methods with EE_Register_Payment_Method::register(), you must include a "payment_method_id" (a unique identifier for this set of modules), and an array containing the following keys: "payment_method_paths" (an array of full server paths to folders that contain modules, or to the module files themselves)',
                     'event_espresso'
                 )
@@ -58,14 +58,13 @@ class EE_Register_Payment_Method implements EEI_Plugin_API
             return;
         }
         //make sure this was called in the right place!
-        if (! did_action('AHEE__EE_System__load_espresso_addons')
-            || did_action(
-                'AHEE__EE_System__register_shortcodes_modules_and_widgets'
-            )
+        if (
+            ! did_action('AHEE__EE_System__load_espresso_addons')
+            || did_action('AHEE__EE_System__register_shortcodes_modules_and_widgets')
         ) {
             EE_Error::doing_it_wrong(
                 __METHOD__,
-                __(
+                esc_html__(
                     'An attempt to register modules has failed because it was not registered at the correct time.  Please use the "AHEE__EE_System__register_shortcodes_modules_and_widgets" hook to register modules.',
                     'event_espresso'
                 ),
