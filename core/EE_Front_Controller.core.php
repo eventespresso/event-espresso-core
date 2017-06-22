@@ -297,7 +297,7 @@ final class EE_Front_Controller
         // if we are already loading assets then just move along, otherwise check for widgets
         $load_assets = $load_assets ? $load_assets : $this->espresso_widgets_in_active_sidebars();
         if ( $load_assets){
-            add_action('wp_enqueue_scripts', array($this, 'enqueueAssets'));
+            add_action('wp_enqueue_scripts', array($this, 'enqueueAssets'), 999);
         }
     }
 
