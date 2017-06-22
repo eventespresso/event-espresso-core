@@ -18,6 +18,11 @@ class EE_Payment_Method_Manager
 {
 
     /**
+     * prefix added to all payment method capabilities names
+     */
+    const   CAPABILITIES_PREFIX= 'ee_payment_method_';
+
+    /**
      * @var EE_Payment_Method_Manager $_instance
      */
     private static $_instance;
@@ -496,9 +501,26 @@ class EE_Payment_Method_Manager
     {
         $caps = array();
         foreach ($this->payment_method_type_names() as $payment_method_name) {
-            $caps['administrator'][] = 'ee_payment_method_' . strtolower($payment_method_name);
+            $caps = $this->addPaymentMethodCap($caps, $payment_method_name);
         }
         return $caps;
+    }
+
+
+
+    /**
+     * @param array $payment_method_caps
+     * @param string $payment_method_name
+     * @return array
+     */
+    public function addPaymentMethodCap(array $payment_method_caps, $payment_method_name)
+    {
+        if(! isset($payment_method_caps['administrator'])) {
+            $payment_method_caps['administrator'] = array();
+        }
+        $payment_method_caps['administrator'][] = EE_Payment_Method_Manager::CAPABILITIES_PREFIX
+                                                  . strtolower($payment_method_name);
+        return $payment_method_caps;
     }
 
 
@@ -532,5 +554,7 @@ class EE_Payment_Method_Manager
     {
         return $caps;
     }
+
+
 
 }
