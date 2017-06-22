@@ -1,4 +1,5 @@
 <?php
+
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 
 
@@ -9,10 +10,10 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
  * Receives an array of module details and takes care of adding all of the necessary hooks and filters to integrate
  * with EE core
  *
- * @package            Event Espresso
- * @subpackage         plugin api
- * @since              4.5.0
- * @author             Mike Nelson
+ * @package               Event Espresso
+ * @subpackage            plugin api
+ * @since                 4.5.0
+ * @author                Mike Nelson
  */
 class EE_Register_Payment_Method implements EEI_Plugin_API
 {
