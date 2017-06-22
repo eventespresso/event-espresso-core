@@ -297,9 +297,7 @@ final class EE_Front_Controller
         // if we are already loading assets then just move along, otherwise check for widgets
         $load_assets = $load_assets ? $load_assets : $this->espresso_widgets_in_active_sidebars();
         if ( $load_assets){
-            wp_enqueue_style('espresso_default');
-            wp_enqueue_style('espresso_custom_css');
-            wp_enqueue_script('espresso_core');
+            add_action('wp_enqueue_scripts', array($this, 'enqueueAssets'));
         }
     }
 
@@ -392,6 +390,15 @@ final class EE_Front_Controller
         ) {
             \EEH_Schema::add_json_linked_data_for_event($post->EE_Event);
         }
+    }
+
+
+
+    public function enqueueAssets()
+    {
+        wp_enqueue_style('espresso_default');
+        wp_enqueue_style('espresso_custom_css');
+        wp_enqueue_script('espresso_core');
     }
 
 
