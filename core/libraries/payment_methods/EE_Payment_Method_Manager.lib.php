@@ -143,7 +143,6 @@ class EE_Payment_Method_Manager
     /**
      * register_payment_method- makes core aware of this payment method
      *
-     * @access public
      * @param string $payment_method_path - full path up to and including payment method folder
      * @return boolean
      */

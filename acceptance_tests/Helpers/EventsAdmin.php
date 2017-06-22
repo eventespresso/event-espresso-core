@@ -64,6 +64,31 @@ trait EventsAdmin
 
 
     /**
+     * This performs the click action on the gear icon that triggers the advanced settings view state.
+     * Assumes the actor is already logged in and editing an event.
+     *
+     * @param int $row_number  What ticket row to toggle open/close.
+     */
+    public function toggleAdvancedSettingsViewForTicketRow($row_number = 1)
+    {
+        $this->actor()->click(EventsPage::eventEditorTicketAdvancedDetailsSelector($row_number));
+    }
+
+
+    /**
+     * Toggles the TKT_is_taxable checkbox for the ticket in the given row.
+     * Assumes the actor is already logged in and editing an event and that the advanced settings view state for that
+     * ticket is "open".
+     *
+     * @param int $row_number  What ticket row to toggle the checkbox for.
+     */
+    public function toggleTicketIsTaxableForTicketRow($row_number = 1)
+    {
+        $this->actor()->click(EventsPage::eventEditorTicketTaxableCheckboxSelector($row_number));
+    }
+
+
+    /**
      * Use to change the default registration status for the event.
      * Assumes the view is already on the event editor.
      * @param $registration_status
