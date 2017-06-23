@@ -48,6 +48,7 @@ class EE_Payment_Method_Manager
      * EE_Payment_Method_Manager constructor.
      *
      * @throws EE_Error
+     * @throws DomainException
      */
     public function __construct()
     {
@@ -69,6 +70,7 @@ class EE_Payment_Method_Manager
     /**
      * @singleton method used to instantiate class object
      * @return EE_Payment_Method_Manager instance
+     * @throws DomainException
      * @throws EE_Error
      */
     public static function instance()
@@ -87,6 +89,7 @@ class EE_Payment_Method_Manager
      * Resets the instance and returns a new one
      *
      * @return EE_Payment_Method_Manager
+     * @throws DomainException
      * @throws EE_Error
      */
     public static function reset()
@@ -465,6 +468,7 @@ class EE_Payment_Method_Manager
      * upon EE_Payment_Method_Manager construction
      *
      * @throws EE_Error
+     * @throws DomainException
      */
     protected function initializePaymentMethodCaps()
     {
@@ -496,12 +500,13 @@ class EE_Payment_Method_Manager
      * registered properly using EE_Register_Payment_Method::register()
      *
      * @return array
+     * @throws DomainException
      */
     protected function getPaymentMethodCaps()
     {
         $caps = array();
         foreach ($this->payment_method_type_names() as $payment_method_name) {
-            $caps = $this->addPaymentMethodCap($caps, $payment_method_name);
+            $caps = $this->addPaymentMethodCap($payment_method_name,$caps);
         }
         return $caps;
     }
@@ -509,16 +514,37 @@ class EE_Payment_Method_Manager
 
 
     /**
-     * @param array $payment_method_caps
      * @param string $payment_method_name
+     * @param array  $payment_method_caps
+     * @param string $role
      * @return array
+     * @throws DomainException
      */
-    public function addPaymentMethodCap(array $payment_method_caps, $payment_method_name)
+    public function addPaymentMethodCap($payment_method_name, array $payment_method_caps, $role = 'administrator')
     {
-        if(! isset($payment_method_caps['administrator'])) {
-            $payment_method_caps['administrator'] = array();
+        if (empty($payment_method_name)) {
+            throw new DomainException(
+                esc_html__(
+                    'The name of a payment method must be specified to add capabilities.',
+                    'event_espresso'
+                )
+            );
         }
-        $payment_method_caps['administrator'][] = EE_Payment_Method_Manager::CAPABILITIES_PREFIX
+        if (empty($role)) {
+            throw new DomainException(
+                sprintf(
+                    esc_html__(
+                        'No role was supplied while trying to add capabilities for the %1$s payment method.',
+                        'event_espresso'
+                    ),
+                    $payment_method_name
+                )
+            );
+        }
+        if(! isset($payment_method_caps[$role])) {
+            $payment_method_caps[$role] = array();
+        }
+        $payment_method_caps[$role][] = EE_Payment_Method_Manager::CAPABILITIES_PREFIX
                                                   . strtolower($payment_method_name);
         return $payment_method_caps;
     }
@@ -533,6 +559,7 @@ class EE_Payment_Method_Manager
      * @param array $caps capabilities being filtered
      * @param bool  $reset
      * @return array
+     * @throws DomainException
      */
     public function addPaymentMethodCapsDuringReset(array $caps, $reset = false)
     {
