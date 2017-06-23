@@ -39,8 +39,9 @@ class EE_Register_Payment_Method implements EEI_Plugin_API
      *                                      }
      * @throws EE_Error
      * @type array payment_method_paths    an array of full server paths to folders containing any EE_PMT_Base
-     *       children, or to the EED_Module files themselves
+     *                                      children, or to the EED_Module files themselves
      * @return void
+     * @throws DomainException
      */
     public static function register($payment_method_id = null, $setup_args = array())
     {
@@ -124,6 +125,7 @@ class EE_Register_Payment_Method implements EEI_Plugin_API
      *
      * @param string $module_id the name for the module that was previously registered
      * @return void
+     * @throws DomainException
      * @throws EE_Error
      */
     public static function deregister($module_id = null)
@@ -143,6 +145,7 @@ class EE_Register_Payment_Method implements EEI_Plugin_API
      *
      * @param array $settings
      * @return array
+     * @throws DomainException
      * @throws EE_Error
      */
     private static function getPaymentMethodCapabilities(array $settings)
@@ -151,8 +154,8 @@ class EE_Register_Payment_Method implements EEI_Plugin_API
         if (isset($settings['payment_method_paths'])) {
             foreach ($settings['payment_method_paths'] as $payment_method_path) {
                 $payment_method_caps = EE_Payment_Method_Manager::instance()->addPaymentMethodCap(
-                    $payment_method_caps,
-                    strtolower(basename($payment_method_path))
+                    strtolower(basename($payment_method_path)),
+                    $payment_method_caps
                 );
             }
         }
