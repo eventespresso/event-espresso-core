@@ -223,8 +223,7 @@ class EE_Capabilities_Test extends EE_UnitTestCase
         /** @var WP_Role $administrator_role */
         $administrator_role = get_role(self::ADMINISTRATOR_ROLE);
         $this->assertInstanceOf('WP_Role', $administrator_role);
-        // verify two ways that cap exists
-        $this->assertTrue(isset($administrator_role->capabilities['ee_manage_gateways']));
+        // verify that cap exists
         $this->assertTrue($administrator_role->has_cap('ee_manage_gateways'));
         // for whatever reason, this site wants to have all gateways
         // under control of someone other than the standard administrator
@@ -318,7 +317,6 @@ class EE_Capabilities_Test extends EE_UnitTestCase
             $this->CAPS->user_can($user, $mock_onsite_capability, 'test'),
             'The admin user should have the "' . $mock_onsite_capability . '" capability!'
         );
-        unset($GLOBALS['current_screen']);
     }
 
 
