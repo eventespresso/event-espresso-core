@@ -442,13 +442,13 @@ abstract class EE_Admin_List_Table extends WP_List_Table
         }
         //add filter button at end
         echo '<input type="submit" class="button-secondary" value="'
-             . __('Filter', 'event_espresso')
+             . esc_html__('Filter', 'event_espresso')
              . '" id="post-query-submit" />';
         //add reset filters button at end
         echo '<a class="button button-secondary"  href="'
              . $this->_admin_page->get_current_page_view_url()
              . '" style="display:inline-block">'
-             . __('Reset Filters', 'event_espresso')
+             . esc_html__('Reset Filters', 'event_espresso')
              . '</a>';
     }
 
