@@ -767,7 +767,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table
      */
     public function get_bulk_actions()
     {
-        return (array)$this->_get_bulk_actions();
+        return (array) $this->_get_bulk_actions();
     }
 
     /**
