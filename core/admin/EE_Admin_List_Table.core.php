@@ -1,9 +1,9 @@
 <?php
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('NO direct script access allowed');
-}
+
+defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
+
 if (! class_exists('WP_List_Table')) {
-    require_once(ABSPATH . 'wp-admin/includes/class-wp-list-table.php');
+    require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 }
 
 
@@ -295,7 +295,8 @@ abstract class EE_Admin_List_Table extends WP_List_Table
 
         $bulk_actions = $this->_get_bulk_actions();
         foreach ($bulk_actions as $bulk_action => $label) {
-            $field .= '<input type="hidden" name="' . $bulk_action . '_nonce" value="' . wp_create_nonce($bulk_action . '_nonce') . '" />' . "\n";
+            $field .= '<input type="hidden" name="' . $bulk_action . '_nonce"'
+                . ' value="' . wp_create_nonce($bulk_action . '_nonce') . '" />' . "\n";
         }
 
         return $field;
@@ -398,10 +399,12 @@ abstract class EE_Admin_List_Table extends WP_List_Table
     protected function _get_bulk_actions()
     {
         $actions = array();
-        //the _views property should have the bulk_actions, so let's go through and extract them into a properly formatted array for the wp_list_table();
+        //the _views property should have the bulk_actions, so let's go through and extract them into a properly
+        // formatted array for the wp_list_table();
         foreach ($this->_views as $view => $args) {
             if ($this->_view === $view && isset($args['bulk_action']) && is_array($args['bulk_action'])) {
-                //each bulk action will correspond with a admin page route, so we can check whatever the capability is for that page route and skip adding the bulk action if no access for the current logged in user.
+                //each bulk action will correspond with a admin page route, so we can check whatever the capability is
+                // for that page route and skip adding the bulk action if no access for the current logged in user.
                 foreach ($args['bulk_action'] as $route => $label) {
                     if ($this->_admin_page->check_user_access($route, true)) {
                         $actions[$route] = $label;
@@ -424,8 +427,12 @@ abstract class EE_Admin_List_Table extends WP_List_Table
     private function _filters()
     {
         $classname = get_class($this);
-        $filters   = apply_filters("FHEE__{$classname}__filters", (array)$this->_get_table_filters(), $this,
-            $this->_screen);
+        $filters   = apply_filters(
+            "FHEE__{$classname}__filters",
+            (array) $this->_get_table_filters(),
+            $this,
+            $this->_screen
+        );
 
         if (empty($filters)) {
             return;
@@ -434,11 +441,15 @@ abstract class EE_Admin_List_Table extends WP_List_Table
             echo $filter;
         }
         //add filter button at end
-        echo '<input type="submit" class="button-secondary" value="' . __('Filter',
-                'event_espresso') . '" id="post-query-submit" />';
+        echo '<input type="submit" class="button-secondary" value="'
+             . __('Filter', 'event_espresso')
+             . '" id="post-query-submit" />';
         //add reset filters button at end
-        echo '<a class="button button-secondary"  href="' . $this->_admin_page->get_current_page_view_url() . '" style="display:inline-block">' . __('Reset Filters',
-                'event_espresso') . '</a>';
+        echo '<a class="button button-secondary"  href="'
+             . $this->_admin_page->get_current_page_view_url()
+             . '" style="display:inline-block">'
+             . __('Reset Filters', 'event_espresso')
+             . '</a>';
     }
 
 
@@ -497,8 +508,11 @@ abstract class EE_Admin_List_Table extends WP_List_Table
          * However, take note that if the top level menu label has been translated (i.e. "Event Espresso"). then the
          * hook prefix ("event-espresso") will be different.
          */
-        do_action('AHEE__EE_Admin_List_Table__column_' . $column_name . '__' . $this->screen->id, $item,
-            $this->_screen);
+        do_action(
+            'AHEE__EE_Admin_List_Table__column_' . $column_name . '__' . $this->screen->id,
+            $item,
+            $this->_screen
+        );
     }
 
 
@@ -541,6 +555,10 @@ abstract class EE_Admin_List_Table extends WP_List_Table
         return $this->_views;
     }
 
+
+    /**
+     * Generate the views html.
+     */
     public function display_views()
     {
         $views           = $this->get_views();
@@ -553,7 +571,9 @@ abstract class EE_Admin_List_Table extends WP_List_Table
         foreach ($views as $view) {
             $count = isset($view['count']) && ! empty($view['count']) ? absint($view['count']) : 0;
             if (isset($view['slug'], $view['class'], $view['url'], $view['label'])) {
-                $assembled_views[$view['slug']] = "\t<li class='" . $view['class'] . "'>" . '<a href="' . $view['url'] . '">' . $view['label'] . '</a> <span class="count">(' . $count . ')</span>';
+                $assembled_views[$view['slug']] = "\t<li class='" . $view['class'] . "'>"
+                                                  . '<a href="' . $view['url'] . '">' . $view['label'] . '</a>'
+                                                  . ' <span class="count">(' . $count . ')</span>';
             }
         }
 
@@ -630,7 +650,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table
             update_user_option($user_id, 'manage' . $this->screen->id . 'columnshidden', $this->_hidden_columns, true);
         }
         $ref = 'manage' . $this->screen->id . 'columnshidden';
-        return (array)get_user_option($ref, $user_id);
+        return (array) get_user_option($ref, $user_id);
     }
 
 
@@ -652,8 +672,8 @@ abstract class EE_Admin_List_Table extends WP_List_Table
         foreach ($columns as $column_name => $column_display_name) {
 
             /**
-             * With WordPress version 4.3.RC+ WordPress started using the hidden css class to control whether columns are
-             * hidden or not instead of using "display:none;".  This bit of code provides backward compat.
+             * With WordPress version 4.3.RC+ WordPress started using the hidden css class to control whether columns
+             * are hidden or not instead of using "display:none;".  This bit of code provides backward compat.
              */
             $hidden_class = $use_hidden_class && in_array($column_name, $hidden) ? ' hidden' : '';
             $style        = ! $use_hidden_class && in_array($column_name, $hidden) ? ' style="display:none;"' : '';
@@ -671,19 +691,32 @@ abstract class EE_Admin_List_Table extends WP_List_Table
 
             if ($column_name === 'cb') {
                 echo '<th scope="row" class="check-column">';
-                echo apply_filters('FHEE__EE_Admin_List_Table__single_row_columns__column_cb_content',
-                    $this->column_cb($item), $item, $this);
+                echo apply_filters(
+                    'FHEE__EE_Admin_List_Table__single_row_columns__column_cb_content',
+                    $this->column_cb($item),
+                    $item,
+                    $this
+                );
                 echo '</th>';
             } elseif (method_exists($this, 'column_' . $column_name)) {
                 echo "<td $attributes>";
-                echo apply_filters('FHEE__EE_Admin_List_Table__single_row_columns__column_' . $column_name . '__column_content',
-                    call_user_func(array($this, 'column_' . $column_name), $item), $item, $this);
+                echo apply_filters(
+                    'FHEE__EE_Admin_List_Table__single_row_columns__column_' . $column_name . '__column_content',
+                    call_user_func(array($this, 'column_' . $column_name), $item),
+                    $item,
+                    $this
+                );
                 echo $this->handle_row_actions($item, $column_name, $primary);
                 echo "</td>";
             } else {
                 echo "<td $attributes>";
-                echo apply_filters('FHEE__EE_Admin_List_Table__single_row_columns__column_default__column_content',
-                    $this->column_default($item, $column_name), $item, $column_name, $this);
+                echo apply_filters(
+                    'FHEE__EE_Admin_List_Table__single_row_columns__column_default__column_content',
+                    $this->column_default($item, $column_name),
+                    $item,
+                    $column_name,
+                    $this
+                );
                 echo $this->handle_row_actions($item, $column_name, $primary);
                 echo "</td>";
             }
@@ -737,9 +770,13 @@ abstract class EE_Admin_List_Table extends WP_List_Table
         return (array)$this->_get_bulk_actions();
     }
 
+    /**
+     * Processing bulk actions.
+     */
     public function process_bulk_action()
     {
-        //this is not used it is handled by the child EE_Admin_Page class (routes).  However, including here for reference in case there is a case where it gets used.
+        //this is not used it is handled by the child EE_Admin_Page class (routes).  However, including here for
+        //reference in case there is a case where it gets used.
     }
 
 
