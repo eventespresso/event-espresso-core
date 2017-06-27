@@ -4,7 +4,5 @@
  */
 ?>
 <li>
-	[DTT_NAME] <br />
-	[DATETIME_START] - [DATETIME_END] ([DATETIME_TIMEZONE]) <br />
-	<p class="ticket-note">[DTT_DESCRIPTION]</p>
+	[DATETIME_START] - [DATETIME_END] ([DATETIME_TIMEZONE])
 </li>
