@@ -846,10 +846,19 @@ class Messages_Admin_Page extends EE_Admin_Page
                 'slug'        => 'in_use',
                 'label'       => __('In Use', 'event_espresso'),
                 'count'       => 0,
-                'bulk_action' => array(
-                    'trash_message_template' => __('Move to Trash', 'event_espresso')
-                )
             )
+        );
+    }
+
+
+    /**
+     * Set views array for the Custom Template List Table
+     */
+    public function _set_list_table_views_custom_mtps()
+    {
+        $this->_set_list_table_views_global_mtps();
+        $this->_views['in_use']['bulk_action'] = array(
+                'trash_message_template' => esc_html__('Move to Trash', 'event_espresso')
         );
     }
     
