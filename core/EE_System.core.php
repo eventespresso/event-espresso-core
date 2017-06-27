@@ -1,4 +1,7 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) {
+<?php use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
+use EventEspresso\core\services\shortcodes\ShortcodesManager;
+
+if ( ! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
 
@@ -733,6 +736,15 @@ final class EE_System
      */
     public function register_shortcodes_modules_and_widgets()
     {
+        try {
+            // load, register, and add shortcodes the new way
+            new ShortcodesManager(
+            // and the old way, but we'll put it under control of the new system
+                EE_Config::getLegacyShortcodesManager()
+            );
+        } catch (Exception $exception) {
+            new ExceptionStackTraceDisplay($exception);
+        }
         do_action('AHEE__EE_System__register_shortcodes_modules_and_widgets');
         // check for addons using old hookpoint
         if (has_action('AHEE__EE_System__register_shortcodes_modules_and_addons')) {
@@ -792,8 +804,6 @@ final class EE_System
         add_action('init', array($this, 'core_loaded_and_ready'), 9);
         add_action('init', array($this, 'initialize'), 10);
         add_action('init', array($this, 'initialize_last'), 100);
-        add_action('wp_enqueue_scripts', array($this, 'wp_enqueue_scripts'), 100);
-        add_action('admin_enqueue_scripts', array($this, 'wp_enqueue_scripts'), 100);
         add_action('admin_bar_menu', array($this, 'espresso_toolbar_items'), 100);
         if (is_admin() && apply_filters('FHEE__EE_System__brew_espresso__load_pue', true)) {
             // pew pew pew
@@ -889,7 +899,7 @@ final class EE_System
         // let's get it started
         if ( ! is_admin() && ! EE_Maintenance_Mode::instance()->level()) {
             do_action('AHEE__EE_System__load_controllers__load_front_controllers');
-            $this->registry->load_core('Front_Controller', array(), false, true);
+            $this->registry->load_core('Front_Controller');
         } else if ( ! EE_FRONT_AJAX) {
             do_action('AHEE__EE_System__load_controllers__load_admin_controllers');
             EE_Registry::instance()->load_core('Admin');
@@ -908,10 +918,14 @@ final class EE_System
      */
     public function core_loaded_and_ready()
     {
-        do_action('AHEE__EE_System__core_loaded_and_ready');
-        do_action('AHEE__EE_System__set_hooks_for_shortcodes_modules_and_addons');
         $this->registry->load_core('Session');
-        //		add_action( 'wp_loaded', array( $this, 'set_hooks_for_shortcodes_modules_and_addons' ), 1 );
+        do_action('AHEE__EE_System__core_loaded_and_ready');
+        // load_espresso_template_tags
+        if (is_readable(EE_PUBLIC . 'template_tags.php')) {
+            require_once(EE_PUBLIC . 'template_tags.php');
+        }
+        do_action('AHEE__EE_System__set_hooks_for_shortcodes_modules_and_addons');
+        $this->registry->create('EventEspresso\core\services\assets\Registry', array(), true);
     }
 
 
@@ -1411,33 +1425,6 @@ final class EE_System
         return array_merge($exclude_array, $this->registry->CFG->core->get_critical_pages_array());
     }
 
-
-
-
-
-
-    /***********************************************        WP_ENQUEUE_SCRIPTS HOOK         ***********************************************/
-    /**
-     *    wp_enqueue_scripts
-     *
-     * @access    public
-     * @return    void
-     */
-    public function wp_enqueue_scripts()
-    {
-        // unlike other systems, EE_System_scripts loading is turned ON by default, but prior to the init hook, can be turned off via: add_filter( 'FHEE_load_EE_System_scripts', '__return_false' );
-        if (apply_filters('FHEE_load_EE_System_scripts', true)) {
-            // jquery_validate loading is turned OFF by default, but prior to the wp_enqueue_scripts hook, can be turned back on again via:  add_filter( 'FHEE_load_jquery_validate', '__return_true' );
-            if (apply_filters('FHEE_load_jquery_validate', false)) {
-                // register jQuery Validate and additional methods
-                wp_register_script('jquery-validate', EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.min.js',
-                    array('jquery'), '1.15.0', true);
-                wp_register_script('jquery-validate-extra-methods',
-                    EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.additional-methods.min.js',
-                    array('jquery', 'jquery-validate'), '1.15.0', true);
-            }
-        }
-    }
 
 
 

@@ -48,7 +48,6 @@ final class EE_Request_Handler {
 	 *
 	 * @access public
 	 * @param  EE_Request $request
-	 * @return \EE_Request_Handler
 	 */
 	public function __construct( EE_Request $request ) {
 		// grab request vars
@@ -149,7 +148,7 @@ final class EE_Request_Handler {
 			if ( ! is_numeric( $possible_post_name )) {
 				/** @type WPDB $wpdb */
 				global $wpdb;
-				$SQL = "SELECT ID from $wpdb->posts WHERE post_status='publish' AND post_name=%s";
+				$SQL = "SELECT ID from {$wpdb->posts} WHERE post_status='publish' AND post_name=%s";
 				$possible_post_name = $wpdb->get_var( $wpdb->prepare( $SQL, $possible_post_name ));
 				if ( $possible_post_name ) {
 					$post_name = $possible_post_name;
@@ -159,7 +158,7 @@ final class EE_Request_Handler {
 		if ( ! $post_name && $this->get( 'post_id' )) {
 			/** @type WPDB $wpdb */
 			global $wpdb;
-			$SQL = "SELECT post_name from $wpdb->posts WHERE post_status='publish' AND ID=%d";
+			$SQL = "SELECT post_name from {$wpdb->posts} WHERE post_status='publish' AND ID=%d";
 			$possible_post_name = $wpdb->get_var( $wpdb->prepare( $SQL, $this->get( 'post_id' )));
 			if( $possible_post_name ) {
 				$post_name = $possible_post_name;
@@ -189,7 +188,7 @@ final class EE_Request_Handler {
 	/**
 	 * Just a helper method for getting the url for the displayed page.
 	 * @param  WP $wp
-	 * @return bool|string|void
+	 * @return string
 	 */
 	public function get_current_page_permalink( $wp = null ) {
 		$post_id = $this->get_post_id_from_request( $wp );
@@ -238,23 +237,15 @@ final class EE_Request_Handler {
 				// kk we know this is an espresso page, but is it a specific post ?
 				if ( ! $this->get( 'post_name' ) ) {
 					// there's no specific post name set, so maybe it's one of our endpoints like www.domain.com/events
-					$post_name = isset( $post_type_CPT_endpoints[ $this->get( 'post_type' ) ] ) ? $post_type_CPT_endpoints[ $this->get( 'post_type' ) ] : null;
+					$post_name = isset( $post_type_CPT_endpoints[ $this->get( 'post_type' ) ] )
+                        ? $post_type_CPT_endpoints[ $this->get( 'post_type' ) ]
+                        : '';
 					// if the post type matches on of our then set the endpoint
 					if ( $post_name ) {
 						$this->set( 'post_name', $post_name );
 					}
 				}
 				return true;
-			}
-		}
-		if ( $this->get( 'post_name' )) {
-			// load all pages using espresso shortcodes
-			$post_shortcodes = isset( EE_Registry::instance()->CFG->core->post_shortcodes ) ? EE_Registry::instance()->CFG->core->post_shortcodes : array();
-			// make sure core pages are included
-			$espresso_pages = array_merge( $espresso_CPT_endpoints, $post_shortcodes );
-			// was a post name passed ?
-			if (  isset( $espresso_pages[ $this->get( 'post_name' ) ] )) {
-				 return true;
 			}
 		}
 		return false;
@@ -267,11 +258,10 @@ final class EE_Request_Handler {
 	 *
 	 * @access    public
 	 * @param null|bool $value
-	 * @return    mixed
+	 * @return    void
 	 */
 	public function set_espresso_page( $value = null ) {
-		$value = $value ? $value : $this->test_for_espresso_page();
-		$this->_params['is_espresso_page'] = $value;
+        $this->_params['is_espresso_page'] = ! empty($value) ? $value : $this->test_for_espresso_page();
 	}
 
 
@@ -456,14 +446,14 @@ final class EE_Request_Handler {
 
 
 	/**
-	 * @return bool
+	 * @return void
 	 */
 	public function __clone() {}
 
 
 
 	/**
-	 * @return bool
+	 * @return void
 	 */
 	public function __wakeup() {}
 

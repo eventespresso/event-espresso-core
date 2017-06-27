@@ -123,7 +123,7 @@ class Registration_Form_Questions_Overview_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _display_text_stop() {
-		return '<p>' . __('View available questions. You can reorder your questions by dragging and dropping them.', 'event_espresso') . '</p>';
+		return '<p>' . __('View available questions.', 'event_espresso') . '</p>';
 	}
 
 	protected function _admin_label_stop() {

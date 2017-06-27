@@ -1,0 +1,8 @@
+core:
+  - BaseCoreAdmin
+  - Checkout
+  - EventsAdmin
+  - MessagesAdmin
+  - TicketSelector
+external_plugins:
+  - https://github.com/eventespresso/ee4-mer/archive/master.zip

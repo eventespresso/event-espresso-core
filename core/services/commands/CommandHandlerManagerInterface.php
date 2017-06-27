@@ -1,8 +1,9 @@
 <?php
+
 namespace EventEspresso\core\services\commands;
 
-if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
-	exit( 'No direct script access allowed' );
+if (! defined('EVENT_ESPRESSO_VERSION')) {
+    exit('No direct script access allowed');
 }
 
 
@@ -15,18 +16,22 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 interface CommandHandlerManagerInterface
 {
 
-	/**
-	 * @param \EventEspresso\core\services\commands\CommandHandlerInterface $command_handler
-	 * @return mixed
-	 */
-	public function addCommandHandler( CommandHandlerInterface $command_handler );
+    /**
+     * @param CommandHandlerInterface $command_handler
+     * @param string $fqcn_for_command Fully Qualified ClassName for Command
+     * @return void
+     * @throws InvalidCommandHandlerException
+     */
+    public function addCommandHandler(CommandHandlerInterface $command_handler, $fqcn_for_command = '');
 
 
-	/**
-	 * @param \EventEspresso\core\services\commands\CommandInterface $command
-	 * @return mixed
-	 */
-	public function getCommandHandler( CommandInterface $command );
+
+    /**
+     * @param CommandInterface    $command
+     * @param CommandBusInterface $command_bus
+     * @return mixed
+     */
+    public function getCommandHandler(CommandInterface $command, CommandBusInterface $command_bus = null);
 
 }
 // End of file CommandHandlerManagerInterface.php

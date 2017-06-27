@@ -20,22 +20,22 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) {
  */
 class General_Settings_Admin_Page extends EE_Admin_Page
 {
-    
-    
+
+
     /**
      * _question_group
      * holds the specific question group object for the question group details screen
      * @var object
      */
     protected $_question_group;
-    
-    
+
+
     public function __construct($routing = true)
     {
         parent::__construct($routing);
     }
-    
-    
+
+
     protected function _init_page_props()
     {
         $this->page_slug        = GEN_SET_PG_SLUG;
@@ -43,8 +43,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page
         $this->_admin_base_url  = GEN_SET_ADMIN_URL;
         $this->_admin_base_path = GEN_SET_ADMIN;
     }
-    
-    
+
+
     protected function _ajax_hooks()
     {
         add_action('wp_ajax_espresso_display_country_settings', array($this, 'display_country_settings'));
@@ -52,8 +52,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page
         add_action('wp_ajax_espresso_delete_state', array($this, 'delete_state'), 10, 3);
         add_action('wp_ajax_espresso_add_new_state', array($this, 'add_new_state'));
     }
-    
-    
+
+
     protected function _define_page_props()
     {
         $this->_admin_page_title = GEN_SET_LABEL;
@@ -61,12 +61,12 @@ class General_Settings_Admin_Page extends EE_Admin_Page
             'publishbox' => __('Update Settings', 'event_espresso')
         );
     }
-    
-    
+
+
     protected function _set_page_routes()
     {
         $this->_page_routes = array(
-            
+
             'critical_pages'                => array(
                 'func'       => '_espresso_page_settings',
                 'capability' => 'manage_options'
@@ -80,47 +80,47 @@ class General_Settings_Admin_Page extends EE_Admin_Page
                 'func'       => '_your_organization_settings',
                 'capability' => 'manage_options',
             ),
-            
+
             'update_your_organization_settings' => array(
                 'func'       => '_update_your_organization_settings',
                 'capability' => 'manage_options',
                 'noheader'   => true,
             ),
-            
+
             'admin_option_settings' => array(
                 'func'       => '_admin_option_settings',
                 'capability' => 'manage_options',
             ),
-            
+
             'update_admin_option_settings' => array(
                 'func'       => '_update_admin_option_settings',
                 'capability' => 'manage_options',
                 'noheader'   => true,
             ),
-            
+
             'country_settings' => array(
                 'func'       => '_country_settings',
                 'capability' => 'manage_options'
             ),
-            
+
             'update_country_settings' => array(
                 'func'       => '_update_country_settings',
                 'capability' => 'manage_options',
                 'noheader'   => true,
             ),
-            
+
             'display_country_settings' => array(
                 'func'       => 'display_country_settings',
                 'capability' => 'manage_options',
                 'noheader'   => true,
             ),
-            
+
             'add_new_state' => array(
                 'func'       => 'add_new_state',
                 'capability' => 'manage_options',
                 'noheader'   => true,
             ),
-            
+
             'delete_state' => array(
                 'func'       => 'delete_state',
                 'capability' => 'manage_options',
@@ -128,8 +128,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page
             )
         );
     }
-    
-    
+
+
     protected function _set_page_config()
     {
         $this->_page_config = array(
@@ -194,16 +194,16 @@ class General_Settings_Admin_Page extends EE_Admin_Page
             )
         );
     }
-    
-    
+
+
     protected function _add_screen_options()
     {
     }
-    
+
     protected function _add_feature_pointers()
     {
     }
-    
+
     public function load_scripts_styles()
     {
         //styles
@@ -211,7 +211,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
         //scripts
         wp_enqueue_script('ee_admin_js');
     }
-    
+
     public function admin_init()
     {
         EE_Registry::$i18n_js_strings['invalid_server_response'] = __('An error occurred! Your request may have been processed, but a valid response from the server was not received. Please refresh the page and try again.',
@@ -224,16 +224,16 @@ class General_Settings_Admin_Page extends EE_Admin_Page
         EE_Registry::$i18n_js_strings['ajax_url']                = admin_url('admin-ajax.php?page=espresso_general_settings',
             $protocol);
     }
-    
+
     public function admin_notices()
     {
     }
-    
+
     public function admin_footer_scripts()
     {
     }
-    
-    
+
+
     public function load_scripts_styles_default()
     {
         //styles
@@ -251,9 +251,9 @@ class General_Settings_Admin_Page extends EE_Admin_Page
                 'event_espresso')
         );
         wp_localize_script('organization_settings', 'confirm_image_delete', $confirm_image_delete);
-        
+
     }
-    
+
     public function load_scripts_styles_country_settings()
     {
         //scripts
@@ -262,10 +262,10 @@ class General_Settings_Admin_Page extends EE_Admin_Page
         wp_register_style('organization-css', GEN_SET_ASSETS_URL . 'organization.css', array(), EVENT_ESPRESSO_VERSION);
         wp_enqueue_script('gen_settings_countries');
         wp_enqueue_style('organization-css');
-        
+
     }
-    
-    
+
+
     /*************        Espresso Pages        *************/
     /**
      * _espresso_page_settings
@@ -311,62 +311,61 @@ class General_Settings_Admin_Page extends EE_Admin_Page
             true
         );
         $this->display_admin_page_with_sidebar();
-        
+
     }
-    
+
     protected function _update_espresso_page_settings()
     {
-        // capture incoming request data
-        $reg_page_id       = isset($this->_req_data['reg_page_id']) ? absint($this->_req_data['reg_page_id']) : EE_Registry::instance()->CFG->core->reg_page_id;
-        $txn_page_id       = isset($this->_req_data['txn_page_id']) ? absint($this->_req_data['txn_page_id']) : EE_Registry::instance()->CFG->core->txn_page_id;
-        $thank_you_page_id = isset($this->_req_data['thank_you_page_id']) ? absint($this->_req_data['thank_you_page_id']) : EE_Registry::instance()->CFG->core->thank_you_page_id;
-        $cancel_page_id    = isset($this->_req_data['cancel_page_id']) ? absint($this->_req_data['cancel_page_id']) : EE_Registry::instance()->CFG->core->cancel_page_id;
-        // pack critical_pages into an array
-        $critical_pages = array(
-            'reg_page_id'       => $reg_page_id,
-            'txn_page_id'       => $txn_page_id,
-            'thank_you_page_id' => $thank_you_page_id,
-            'cancel_page_id'    => $cancel_page_id
+        // capture incoming request data && set page IDs
+        EE_Registry::instance()->CFG->core->reg_page_id = isset($this->_req_data['reg_page_id'])
+            ? absint($this->_req_data['reg_page_id'])
+            : EE_Registry::instance()->CFG->core->reg_page_id;
+        EE_Registry::instance()->CFG->core->txn_page_id = isset($this->_req_data['txn_page_id'])
+            ? absint($this->_req_data['txn_page_id'])
+            : EE_Registry::instance()->CFG->core->txn_page_id;
+        EE_Registry::instance()->CFG->core->thank_you_page_id = isset($this->_req_data['thank_you_page_id'])
+            ? absint($this->_req_data['thank_you_page_id'])
+            : EE_Registry::instance()->CFG->core->thank_you_page_id;
+        EE_Registry::instance()->CFG->core->cancel_page_id = isset($this->_req_data['cancel_page_id'])
+            ? absint($this->_req_data['cancel_page_id'])
+            : EE_Registry::instance()->CFG->core->cancel_page_id;
+
+        EE_Registry::instance()->CFG->core = apply_filters(
+            'FHEE__General_Settings_Admin_Page___update_espresso_page_settings__CFG_core',
+            EE_Registry::instance()->CFG->core,
+            $this->_req_data
         );
-        foreach ($critical_pages as $critical_page_name => $critical_page_id) {
-            // has the page changed ?
-            if (EE_Registry::instance()->CFG->core->{$critical_page_name} !== $critical_page_id) {
-                // grab post object for old page
-                $post = get_post(EE_Registry::instance()->CFG->core->{$critical_page_name});
-                // update post shortcodes for old page
-                EventEspresso\core\admin\PostShortcodeTracking::parse_post_content_on_save($critical_page_id, $post);
-                // grab post object for new page
-                $post = get_post($critical_page_id);
-                // update post shortcodes for new page
-                EventEspresso\core\admin\PostShortcodeTracking::parse_post_content_on_save($critical_page_id, $post);
-            }
-        }
-        // set page IDs
-        EE_Registry::instance()->CFG->core->reg_page_id       = $reg_page_id;
-        EE_Registry::instance()->CFG->core->txn_page_id       = $txn_page_id;
-        EE_Registry::instance()->CFG->core->thank_you_page_id = $thank_you_page_id;
-        EE_Registry::instance()->CFG->core->cancel_page_id    = $cancel_page_id;
-        
-        EE_Registry::instance()->CFG->core = apply_filters('FHEE__General_Settings_Admin_Page___update_espresso_page_settings__CFG_core',
-            EE_Registry::instance()->CFG->core, $this->_req_data);
-        
-        $what       = __('Critical Pages & Shortcodes', 'event_espresso');
-        $success    = $this->_update_espresso_configuration($what, EE_Registry::instance()->CFG->core, __FILE__,
-            __FUNCTION__, __LINE__);
-        $query_args = array(
-            'action' => 'critical_pages'
+        $what = __('Critical Pages & Shortcodes', 'event_espresso');
+        $this->_redirect_after_action(
+            // success
+            $this->_update_espresso_configuration(
+                $what,
+                EE_Registry::instance()->CFG->core,
+                __FILE__,
+                __FUNCTION__,
+                __LINE__
+            ),
+            // what
+            $what
+            ,
+            // action desc
+            '',
+            // query args
+            array(
+                'action' => 'critical_pages'
+            ),
+            true
         );
-        $this->_redirect_after_action(false, '', '', $query_args, true);
-        
+
     }
-    
-    
+
+
     /*************        Your Organization        *************/
-    
-    
+
+
     protected function _your_organization_settings()
     {
-        
+
         $this->_template_args['site_license_key']       = isset(EE_Registry::instance()->NET_CFG->core->site_license_key) ? EE_Registry::instance()->NET_CFG->core->get_pretty('site_license_key') : '';
         $this->_template_args['organization_name']      = isset(EE_Registry::instance()->CFG->organization->name) ? EE_Registry::instance()->CFG->organization->get_pretty('name') : '';
         $this->_template_args['organization_address_1'] = isset(EE_Registry::instance()->CFG->organization->address_1) ? EE_Registry::instance()->CFG->organization->get_pretty('address_1') : '';
@@ -386,7 +385,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
         $this->_template_args['organization_instagram'] = isset(EE_Registry::instance()->CFG->organization->instagram) ? EE_Registry::instance()->CFG->organization->get_pretty('instagram') : '';
         //UXIP settings
         $this->_template_args['ee_ueip_optin'] = isset(EE_Registry::instance()->CFG->core->ee_ueip_optin) ? EE_Registry::instance()->CFG->core->get_pretty('ee_ueip_optin') : true;
-        
+
         $STA_ID                         = isset(EE_Registry::instance()->CFG->organization->STA_ID) ? EE_Registry::instance()->CFG->organization->STA_ID : 4;
         $this->_template_args['states'] = new EE_Question_Form_Input(
             EE_Question::new_instance(array(
@@ -405,7 +404,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
                 'append_qstn_id' => false
             )
         );
-        
+
         $CNT_ISO                           = isset(EE_Registry::instance()->CFG->organization->CNT_ISO) ? EE_Registry::instance()->CFG->organization->CNT_ISO : 'US';
         $this->_template_args['countries'] = new EE_Question_Form_Input(
             EE_Question::new_instance(array(
@@ -424,23 +423,23 @@ class General_Settings_Admin_Page extends EE_Admin_Page
                 'append_qstn_id' => false
             )
         );
-        
+
         add_filter('FHEE__EEH_Form_Fields__label_html', array($this, 'country_form_field_label_wrap'), 10, 2);
         add_filter('FHEE__EEH_Form_Fields__input_html', array($this, 'country_form_field_input__wrap'), 10, 2);
-        
+
         //PUE verification stuff
         $ver_option_key                                    = 'puvererr_' . basename(EE_PLUGIN_BASENAME);
         $verify_fail                                       = get_option($ver_option_key);
         $this->_template_args['site_license_key_verified'] = $verify_fail || ! empty($verify_fail) || (empty($this->_template_args['site_license_key']) && empty($verify_fail)) ? '<span class="dashicons dashicons-admin-network ee-icon-color-ee-red ee-icon-size-20"></span>' : '<span class="dashicons dashicons-admin-network ee-icon-color-ee-green ee-icon-size-20"></span>';
-        
+
         $this->_set_add_edit_form_tags('update_your_organization_settings');
         $this->_set_publish_post_box_vars(null, false, false, null, false);
         $this->_template_args['admin_page_content'] = EEH_Template::display_template(GEN_SET_TEMPLATE_PATH . 'your_organization_settings.template.php',
             $this->_template_args, true);
-        
+
         $this->display_admin_page_with_sidebar();
     }
-    
+
     protected function _update_your_organization_settings()
     {
         if (is_main_site()) {
@@ -464,25 +463,25 @@ class General_Settings_Admin_Page extends EE_Admin_Page
         EE_Registry::instance()->CFG->organization->google    = isset($this->_req_data['organization_google']) ? esc_url_raw($this->_req_data['organization_google']) : EE_Registry::instance()->CFG->organization->google;
         EE_Registry::instance()->CFG->organization->instagram = isset($this->_req_data['organization_instagram']) ? esc_url_raw($this->_req_data['organization_instagram']) : EE_Registry::instance()->CFG->organization->instagram;
         EE_Registry::instance()->CFG->core->ee_ueip_optin     = isset($this->_req_data['ueip_optin']) && ! empty($this->_req_data['ueip_optin']) ? $this->_req_data['ueip_optin'] : EE_Registry::instance()->CFG->core->ee_ueip_optin;
-        
+
         EE_Registry::instance()->CFG->currency = new EE_Currency_Config(EE_Registry::instance()->CFG->organization->CNT_ISO);
-        
+
         EE_Registry::instance()->CFG = apply_filters('FHEE__General_Settings_Admin_Page___update_your_organization_settings__CFG',
             EE_Registry::instance()->CFG);
-        
+
         $what    = 'Your Organization Settings';
         $success = $this->_update_espresso_configuration($what, EE_Registry::instance()->CFG, __FILE__, __FUNCTION__,
             __LINE__);
-        
+
         $this->_redirect_after_action($success, $what, 'updated', array('action' => 'default'));
-        
+
     }
-    
-    
-    
+
+
+
     /*************        Admin Options        *************/
-    
-    
+
+
     /**
      * _admin_option_settings
      *
@@ -506,8 +505,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page
         $this->_set_publish_post_box_vars(null, false, false, null, false);
         $this->display_admin_page_with_sidebar();
     }
-    
-    
+
+
     /**
      * _update_admin_option_settings
      *
@@ -542,23 +541,23 @@ class General_Settings_Admin_Page extends EE_Admin_Page
             'updated',
             array('action' => 'admin_option_settings')
         );
-        
+
     }
-    
-    
+
+
     /*************        Countries        *************/
-    
-    
+
+
     protected function _country_settings()
     {
-        
+
         $CNT_ISO = isset(EE_Registry::instance()->CFG->organization->CNT_ISO) ? EE_Registry::instance()->CFG->organization->CNT_ISO : 'US';
         $CNT_ISO = isset($this->_req_data['country']) ? strtoupper(sanitize_text_field($this->_req_data['country'])) : $CNT_ISO;
-        
+
         //load field generator helper
-        
+
         $this->_template_args['values'] = $this->_yes_no_values;
-        
+
         $this->_template_args['countries'] = new EE_Question_Form_Input(
             EE_Question::new_instance(array(
                 'QST_ID'           => 0,
@@ -577,20 +576,20 @@ class General_Settings_Admin_Page extends EE_Admin_Page
             )
         );
 //		EEH_Debug_Tools::printr( $this->_template_args['countries'], 'countries  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-        
+
         add_filter('FHEE__EEH_Form_Fields__label_html', array($this, 'country_form_field_label_wrap'), 10, 2);
         add_filter('FHEE__EEH_Form_Fields__input_html', array($this, 'country_form_field_input__wrap'), 10, 2);
         $this->_template_args['country_details_settings'] = $this->display_country_settings();
         $this->_template_args['country_states_settings']  = $this->display_country_states();
-        
+
         $this->_set_add_edit_form_tags('update_country_settings');
         $this->_set_publish_post_box_vars(null, false, false, null, false);
         $this->_template_args['admin_page_content'] = EEH_Template::display_template(GEN_SET_TEMPLATE_PATH . 'countries_settings.template.php',
             $this->_template_args, true);
         $this->display_admin_page_with_no_sidebar();
     }
-    
-    
+
+
     /**
      *        display_country_settings
      *
@@ -602,12 +601,12 @@ class General_Settings_Admin_Page extends EE_Admin_Page
      */
     public function display_country_settings($CNT_ISO = '')
     {
-        
+
         $CNT_ISO = isset($this->_req_data['country']) ? strtoupper(sanitize_text_field($this->_req_data['country'])) : $CNT_ISO;
         if ( ! $CNT_ISO) {
             return '';
         }
-        
+
         // for ajax
         remove_all_filters('FHEE__EEH_Form_Fields__label_html');
         remove_all_filters('FHEE__EEH_Form_Fields__input_html');
@@ -725,7 +724,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
             $country_input_types);
         $country_details_settings       = EEH_Template::display_template(GEN_SET_TEMPLATE_PATH . 'country_details_settings.template.php',
             $this->_template_args, true);
-        
+
         if (defined('DOING_AJAX')) {
             $notices = EE_Error::get_notices(false, false, false);
             echo wp_json_encode(array(
@@ -737,10 +736,10 @@ class General_Settings_Admin_Page extends EE_Admin_Page
         } else {
             return $country_details_settings;
         }
-        
+
     }
-    
-    
+
+
     /**
      *        display_country_states
      *
@@ -752,9 +751,9 @@ class General_Settings_Admin_Page extends EE_Admin_Page
      */
     public function display_country_states($CNT_ISO = '')
     {
-        
+
         $CNT_ISO = isset($this->_req_data['country']) ? sanitize_text_field($this->_req_data['country']) : $CNT_ISO;
-        
+
         if ( ! $CNT_ISO) {
             return '';
         }
@@ -809,10 +808,10 @@ class General_Settings_Admin_Page extends EE_Admin_Page
 //		EEH_Debug_Tools::printr( $this->_template_args['states'], 'states  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
         $this->_template_args['add_new_state_url'] = EE_Admin_Page::add_query_args_and_nonce(array('action' => 'add_new_state'),
             GEN_SET_ADMIN_URL);
-        
+
         $state_details_settings = EEH_Template::display_template(GEN_SET_TEMPLATE_PATH . 'state_details_settings.template.php',
             $this->_template_args, true);
-        
+
         if (defined('DOING_AJAX')) {
             $notices = EE_Error::get_notices(false, false, false);
             echo wp_json_encode(array(
@@ -824,10 +823,10 @@ class General_Settings_Admin_Page extends EE_Admin_Page
         } else {
             return $state_details_settings;
         }
-        
+
     }
-    
-    
+
+
     /**
      *        add_new_state
      *
@@ -836,9 +835,9 @@ class General_Settings_Admin_Page extends EE_Admin_Page
      */
     public function add_new_state()
     {
-        
+
         $success = true;
-        
+
         $CNT_ISO = isset($this->_req_data['CNT_ISO']) ? strtoupper(sanitize_text_field($this->_req_data['CNT_ISO'])) : false;
         if ( ! $CNT_ISO) {
             EE_Error::add_error(__('No Country ISO code or an invalid Country ISO code was received.',
@@ -858,7 +857,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
                 __FUNCTION__, __LINE__);
             $success = false;
         }
-        
+
         if ($success) {
             $cols_n_values = array(
                 'CNT_ISO'    => $CNT_ISO,
@@ -869,7 +868,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
             $success       = EEM_State::instance()->insert($cols_n_values);
             EE_Error::add_success(__('The State was added successfully.', 'event_espresso'));
         }
-        
+
         if (defined('DOING_AJAX')) {
             $notices = EE_Error::get_notices(false, false, false);
             echo wp_json_encode(array_merge($notices, array('return_data' => $CNT_ISO)));
@@ -878,8 +877,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page
             $this->_redirect_after_action($success, 'State', 'added', array('action' => 'country_settings'));
         }
     }
-    
-    
+
+
     /**
      *        delete_state
      *
@@ -894,7 +893,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
         if ( ! $STA_ID) {
             EE_Error::add_error(__('No State ID or an invalid State ID was received.', 'event_espresso'), __FILE__,
                 __FUNCTION__, __LINE__);
-            
+
             return false;
         }
         $success = EEM_State::instance()->delete_by_ID($STA_ID);
@@ -912,8 +911,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page
             $this->_redirect_after_action($success, 'State', 'deleted', array('action' => 'country_settings'));
         }
     }
-    
-    
+
+
     /**
      *        _update_country_settings
      *
@@ -928,7 +927,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
         if ( ! $CNT_ISO) {
             EE_Error::add_error(__('No Country ISO code or an invalid Country ISO code was received.',
                 'event_espresso'), __FILE__, __FUNCTION__, __LINE__);
-            
+
             return;
         }
         $cols_n_values                    = array();
@@ -988,8 +987,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page
         $this->_redirect_after_action($success, 'Countries', 'updated',
             array('action' => 'country_settings', 'country' => $CNT_ISO));
     }
-    
-    
+
+
     /**
      *        form_form_field_label_wrap
      *
@@ -1007,8 +1006,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page
 					' . $label . '
 				</th>';
     }
-    
-    
+
+
     /**
      *        form_form_field_input__wrap
      *
@@ -1026,8 +1025,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page
 				</td>
 			</tr>';
     }
-    
-    
+
+
     /**
      *        form_form_field_label_wrap
      *
@@ -1042,8 +1041,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page
     {
         return $required_text;
     }
-    
-    
+
+
     /**
      *        form_form_field_input__wrap
      *
@@ -1059,17 +1058,17 @@ class General_Settings_Admin_Page extends EE_Admin_Page
 				<td class="general-settings-country-state-input-td">
 					' . $input . '
 				</td>';
-        
+
     }
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
     /***********/
-    
-    
+
+
     /**
      * displays edit and view links for critical EE pages
      *
@@ -1085,11 +1084,11 @@ class General_Settings_Admin_Page extends EE_Admin_Page
                 admin_url('post.php')) . '" >' . __('Edit', 'event_espresso') . '</a>';
         $links .= ' &nbsp;|&nbsp; ';
         $links .= '<a href="' . get_permalink($ee_page_id) . '" >' . __('View', 'event_espresso') . '</a>';
-        
+
         return $links;
     }
-    
-    
+
+
     /**
      * displays page and shortcode status for critical EE pages
      *
@@ -1099,7 +1098,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
      */
     public static function page_and_shortcode_status($ee_page, $shortcode)
     {
-        
+
         // page status
         if (isset($ee_page->post_status) && $ee_page->post_status == 'publish') {
             $pg_colour = 'green';
@@ -1108,7 +1107,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
             $pg_colour = 'red';
             $pg_status = sprintf(__('Page%sVisibility%sProblem', 'event_espresso'), '&nbsp;', '&nbsp;');
         }
-        
+
         // shortcode status
         if (isset($ee_page->post_content) && strpos($ee_page->post_content, $shortcode) !== false) {
             $sc_colour = 'green';
@@ -1117,12 +1116,12 @@ class General_Settings_Admin_Page extends EE_Admin_Page
             $sc_colour = 'red';
             $sc_status = sprintf(__('Shortcode%sProblem', 'event_espresso'), '&nbsp;');
         }
-        
+
         return '<span style="color:' . $pg_colour . '; margin-right:2em;"><strong>' . $pg_status . '</strong></span><span style="color:' . $sc_colour . '"><strong>' . $sc_status . '</strong></span>';
-        
+
     }
-    
-    
+
+
     /**
      * generates a dropdown of all parent pages - copied from WP core
      *
@@ -1137,7 +1136,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
         global $wpdb;
         $items = $wpdb->get_results($wpdb->prepare("SELECT ID, post_parent, post_title FROM $wpdb->posts WHERE post_parent = %d AND post_type = 'page' AND post_status != 'trash' ORDER BY menu_order",
             $parent));
-        
+
         if ($items) {
             foreach ($items as $item) {
                 $pad = str_repeat('&nbsp;', $level * 3);
@@ -1146,7 +1145,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
                 } else {
                     $current = '';
                 }
-                
+
                 echo "\n\t<option class='level-$level' value='$item->ID'$current>$pad " . esc_html($item->post_title) . "</option>";
                 parent_dropdown($default, $item->ID, $level + 1);
             }
@@ -1154,6 +1153,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page
             return false;
         }
     }
-    
-    
+
+
 } //ends Forms_Admin_Page class

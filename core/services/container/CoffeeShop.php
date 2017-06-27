@@ -439,9 +439,9 @@ class CoffeeShop implements CoffeePotInterface
     /**
      * adds class name aliases to list of filters
      *
-     * @param  string $identifier Identifier for the entity class that the alias applies to
-     *                            Typically a Fully Qualified Class Name
-     * @param  array  $aliases
+     * @param  string       $identifier Identifier for the entity class that the alias applies to
+     *                                  Typically a Fully Qualified Class Name
+     * @param  array|string $aliases
      * @return void
      * @throws InvalidIdentifierException
      */
