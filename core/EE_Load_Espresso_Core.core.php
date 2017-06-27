@@ -86,10 +86,6 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_
         do_action('EE_Load_Espresso_Core__handle_request__initialize_core_loading');
         $this->loader = $this->registry->create('EventEspresso\core\services\loaders\Loader');
         $this->dependency_map->setLoader($this->loader);
-        // build DI container
-        $OpenCoffeeShop = new EventEspresso\core\services\container\OpenCoffeeShop();
-        $OpenCoffeeShop->addRecipes();
-        // $CoffeeShop = $OpenCoffeeShop->CoffeeShop();
         // create and cache the CommandBus, and also add middleware
         $this->registry->create(
             'CommandBusInterface',
@@ -107,11 +103,6 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_
         );
         // workarounds for PHP < 5.3
         $this->_load_class_tools();
-        // load interfaces
-        espresso_load_required(
-            'EEI_Payment_Method_Interfaces',
-            EE_LIBRARIES . 'payment_methods' . DS . 'EEI_Payment_Method_Interfaces.php'
-        );
         // deprecated functions
         espresso_load_required('EE_Deprecated', EE_CORE . 'EE_Deprecated.core.php');
         // WP cron jobs
