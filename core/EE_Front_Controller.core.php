@@ -79,11 +79,8 @@ final class EE_Front_Controller
         add_action('pre_get_posts', array($this, 'pre_get_posts'), 10, 1);
         // before headers sent
         add_action('wp', array($this, 'wp'), 5);
-        // after headers sent but before any markup is output,
         // primarily used to process any content shortcodes
-        add_action('get_header', array($this, 'get_header'));
-        // load css and js
-        add_action('wp_enqueue_scripts', array($this, 'wp_enqueue_scripts'), 1);
+        add_action('template_redirect', array($this, 'templateRedirect'), 999);
         // header
         add_action('wp_head', array($this, 'header_meta_tag'), 5);
         add_action('wp_print_scripts', array($this, 'wp_print_scripts'), 10);
@@ -278,18 +275,18 @@ final class EE_Front_Controller
 
 
 
-    /***********************     GET_HEADER, WP_ENQUEUE_SCRIPTS && WP_HEAD HOOK     ***********************/
+    /***********************     GET_HEADER && WP_HEAD HOOK     ***********************/
 
 
 
     /**
-     * callback for the WP "get_header" hook point
+     * callback for the "template_redirect" hook point
      * checks sidebars for EE widgets
      * loads resources and assets accordingly
      *
      * @return void
      */
-    public function get_header()
+    public function templateRedirect()
     {
         global $wp_query;
         if (empty($wp_query->posts)){
@@ -300,8 +297,9 @@ final class EE_Front_Controller
         // if we are already loading assets then just move along, otherwise check for widgets
         $load_assets = $load_assets ? $load_assets : $this->espresso_widgets_in_active_sidebars();
         if ( $load_assets){
-            add_filter('FHEE_load_css', '__return_true');
-            add_filter('FHEE_load_js', '__return_true');
+            wp_enqueue_style('espresso_default');
+            wp_enqueue_style('espresso_custom_css');
+            wp_enqueue_script('espresso_core');
         }
     }
 
@@ -341,132 +339,6 @@ final class EE_Front_Controller
     }
 
 
-
-
-    /**
-     *    wp_enqueue_scripts
-     *
-     * @access    public
-     * @return    void
-     */
-    public function wp_enqueue_scripts()
-    {
-        // css is turned ON by default, but prior to the wp_enqueue_scripts hook, can be turned OFF  via:  add_filter( 'FHEE_load_css', '__return_false' );
-        if (apply_filters('FHEE_load_css', false)) {
-
-            $this->Registry->CFG->template_settings->enable_default_style = true;
-            //Load the ThemeRoller styles if enabled
-            if (isset($this->Registry->CFG->template_settings->enable_default_style) && $this->Registry->CFG->template_settings->enable_default_style) {
-
-                //Load custom style sheet if available
-                if (isset($this->Registry->CFG->template_settings->custom_style_sheet)) {
-                    wp_register_style('espresso_custom_css',
-                        EVENT_ESPRESSO_UPLOAD_URL . 'css/' . $this->Registry->CFG->template_settings->custom_style_sheet,
-                        EVENT_ESPRESSO_VERSION);
-                    wp_enqueue_style('espresso_custom_css');
-                }
-
-                if (is_readable(EVENT_ESPRESSO_UPLOAD_DIR . 'css/style.css')) {
-                    wp_register_style('espresso_default', EVENT_ESPRESSO_UPLOAD_DIR . 'css/espresso_default.css',
-                        array('dashicons'), EVENT_ESPRESSO_VERSION);
-                } else {
-                    wp_register_style('espresso_default', EE_GLOBAL_ASSETS_URL . 'css/espresso_default.css',
-                        array('dashicons'), EVENT_ESPRESSO_VERSION);
-                }
-                wp_enqueue_style('espresso_default');
-
-                if (is_readable(get_stylesheet_directory() . EE_Config::get_current_theme() . DS . 'style.css')) {
-                    wp_register_style('espresso_style',
-                        get_stylesheet_directory_uri() . EE_Config::get_current_theme() . DS . 'style.css',
-                        array('dashicons', 'espresso_default'));
-                } else {
-                    wp_register_style('espresso_style',
-                        EE_TEMPLATES_URL . EE_Config::get_current_theme() . DS . 'style.css',
-                        array('dashicons', 'espresso_default'));
-                }
-
-            }
-
-        }
-
-        // js is turned ON by default, but prior to the wp_enqueue_scripts hook, can be turned OFF  via:  add_filter( 'FHEE_load_js', '__return_false' );
-        if (apply_filters('FHEE_load_js', false)) {
-
-            wp_enqueue_script('jquery');
-            //let's make sure that all required scripts have been setup
-            if (function_exists('wp_script_is') && ! wp_script_is('jquery')) {
-                $msg = sprintf(
-                    __('%sJquery is not loaded!%sEvent Espresso is unable to load Jquery due to a conflict with your theme or another plugin.',
-                        'event_espresso'),
-                    '<em><br />',
-                    '</em>'
-                );
-                EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
-            }
-            // load core js
-            wp_register_script('espresso_core', EE_GLOBAL_ASSETS_URL . 'scripts/espresso_core.js', array('jquery'),
-                EVENT_ESPRESSO_VERSION, true);
-            wp_enqueue_script('espresso_core');
-            wp_localize_script('espresso_core', 'eei18n', EE_Registry::$i18n_js_strings);
-
-        }
-
-        //qtip is turned OFF by default, but prior to the wp_enqueue_scripts hook, can be turned back on again via: add_filter('FHEE_load_qtip', '__return_true' );
-        if (apply_filters('FHEE_load_qtip', false)) {
-            EEH_Qtip_Loader::instance()->register_and_enqueue();
-        }
-
-
-        //accounting.js library
-        // @link http://josscrowcroft.github.io/accounting.js/
-        if (apply_filters('FHEE_load_accounting_js', false)) {
-            $acct_js = EE_THIRD_PARTY_URL . 'accounting/accounting.js';
-            wp_register_script('ee-accounting', EE_GLOBAL_ASSETS_URL . 'scripts/ee-accounting-config.js',
-                array('ee-accounting-core'), EVENT_ESPRESSO_VERSION, true);
-            wp_register_script('ee-accounting-core', $acct_js, array('underscore'), '0.3.2', true);
-            wp_enqueue_script('ee-accounting');
-
-            $currency_config = array(
-                'currency' => array(
-                    'symbol'    => $this->Registry->CFG->currency->sign,
-                    'format'    => array(
-                        'pos'  => $this->Registry->CFG->currency->sign_b4 ? '%s%v' : '%v%s',
-                        'neg'  => $this->Registry->CFG->currency->sign_b4 ? '- %s%v' : '- %v%s',
-                        'zero' => $this->Registry->CFG->currency->sign_b4 ? '%s--' : '--%s',
-                    ),
-                    'decimal'   => $this->Registry->CFG->currency->dec_mrk,
-                    'thousand'  => $this->Registry->CFG->currency->thsnds,
-                    'precision' => $this->Registry->CFG->currency->dec_plc,
-                ),
-                'number'   => array(
-                    'precision' => 0,
-                    'thousand'  => $this->Registry->CFG->currency->thsnds,
-                    'decimal'   => $this->Registry->CFG->currency->dec_mrk,
-                ),
-            );
-            wp_localize_script('ee-accounting', 'EE_ACCOUNTING_CFG', $currency_config);
-        }
-
-        if ( ! function_exists('wp_head')) {
-            $msg = sprintf(
-                __('%sMissing wp_head() function.%sThe WordPress function wp_head() seems to be missing in your theme. Please contact the theme developer to make sure this is fixed before using Event Espresso.',
-                    'event_espresso'),
-                '<em><br />',
-                '</em>'
-            );
-            EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
-        }
-        if ( ! function_exists('wp_footer')) {
-            $msg = sprintf(
-                __('%sMissing wp_footer() function.%sThe WordPress function wp_footer() seems to be missing in your theme. Please contact the theme developer to make sure this is fixed before using Event Espresso.',
-                    'event_espresso'),
-                '<em><br />',
-                '</em>'
-            );
-            EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
-        }
-
-    }
 
 
     /**
@@ -513,10 +385,10 @@ final class EE_Front_Controller
     {
         global $post;
         if (
-            get_post_type() === 'espresso_events' 
-            && is_singular() 
-            && isset($post->EE_Event)
+            isset($post->EE_Event)
             && $post->EE_Event instanceof EE_Event
+            && get_post_type() === 'espresso_events'
+            && is_singular()
         ) {
             \EEH_Schema::add_json_linked_data_for_event($post->EE_Event);
         }

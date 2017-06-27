@@ -54,7 +54,7 @@ class EspressoEvents extends EspressoShortcode
      */
     public function cacheExpiration()
     {
-        return MINUTE_IN_SECONDS * 15;
+        return 0;
     }
 
 
@@ -69,6 +69,7 @@ class EspressoEvents extends EspressoShortcode
     public function initializeShortcode()
     {
         EED_Events_Archive::instance()->event_list();
+        $this->shortcodeHasBeenInitialized();
     }
 
 
@@ -97,8 +98,13 @@ class EspressoEvents extends EspressoShortcode
         // check what template is loaded and load filters accordingly
         EED_Events_Archive::instance()->template_include('loop-espresso_events.php');
         // load our template
-        $event_list = EEH_Template::locate_template('loop-espresso_events.php', array(), true, true);
-        // now reset the query and postdata
+        $event_list = EEH_Template::locate_template(
+            'loop-espresso_events.php',
+            array(),
+            true,
+            true
+        );
+        // now reset the query and post data
         wp_reset_query();
         wp_reset_postdata();
         EED_Events_Archive::remove_all_events_archive_filters();

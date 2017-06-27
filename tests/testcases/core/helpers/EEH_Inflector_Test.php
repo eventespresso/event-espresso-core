@@ -50,7 +50,7 @@ class EEH_Inflector_Test extends EE_UnitTestCase{
 		$this->assertEquals( 'Datetime_Ticket', EEH_Inflector::singularize_and_upper( 'datetime_tickets' ) );
 	}
 	public function test_singuralize_and_upper__three_words() {
-		$this->assertEquals( 'Currency_Payment_Method', EEH_Inflector::singularize_and_upper( 'currency_payment_methods' ) );
+		$this->assertEquals( 'Question_Group_Question', EEH_Inflector::singularize_and_upper( 'question_group_questions' ) );
 	}
 	public function test_singuralize_and_upper__funny_plural() {
 		$this->assertEquals( 'Term_Taxonomy', EEH_Inflector::singularize_and_upper( 'term_taxonomies' ) );

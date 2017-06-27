@@ -69,6 +69,7 @@ class EspressoThankYou extends EspressoShortcode
         }
         $this->is_thank_you_page = true;
         \EED_Thank_You_Page::instance()->load_resources();
+        $this->shortcodeHasBeenInitialized();
     }
 
 

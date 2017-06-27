@@ -118,6 +118,51 @@ class EventsAdmin extends CoreAdmin
     }
 
 
+    public static function eventEditorTicketPriceFieldSelector($row_number = 1)
+    {
+        return self::eventEditorTicketFieldSelectorForFieldInDisplayRow('TKT_base_price', $row_number);
+    }
+
+
+    public static function eventEditorTicketAdvancedDetailsSelector($row_number = 1)
+    {
+        return "//tr[@id='display-ticketrow-$row_number']//span[contains(@class, 'gear-icon')]";
+    }
+
+
+    public static function eventEditorTicketAdvancedDetailsSubtotalSelector($row_number = 1)
+    {
+        return "//span[@id='price-total-amount-$row_number']";
+    }
+
+
+    public static function eventEditorTicketAdvancedDetailsTotalSelector($row_number = 1)
+    {
+        return "//span[@id='price-total-amount-$row_number']";
+    }
+
+
+    public static function eventEditorTicketTaxableCheckboxSelector($row_number = 1)
+    {
+        return "//input[@id='edit-ticket-TKT_taxable-$row_number']";
+    }
+
+
+    /**
+     * This returns the xpath locater for the Tax amount display container within the advanced settings view for the
+     * given ticket (row) and the given tax id (PRC_ID).
+     *
+     * @param int $tax_id     The PRC_ID for the tax you want the locater for.  Note, this defaults to the default tax
+     *                        setup on a fresh install.
+     * @param int $row_number What row representing the ticket you want the locator for.
+     * @return string
+     */
+    public static function eventEditorTicketTaxAmountDisplayForTaxIdAndTicketRowSelector($tax_id = 2, $row_number = 1)
+    {
+        return "//span[@id='TKT-tax-amount-display-$tax_id-$row_number']";
+    }
+
+
     /**
      * Wrapper for getting the selector for a given field and given display row of a ticket in the event editor.
      * @param     $field_name
@@ -126,7 +171,7 @@ class EventsAdmin extends CoreAdmin
      */
     public static function eventEditorTicketFieldSelectorForFieldInDisplayRow($field_name, $row_number = 1)
     {
-        return "//tr[@id='display-ticketrow-$row_number']/td[2]/input[@class='edit-ticket-$field_name ee-large-text-inp']";
+        return "//tr[@id='display-ticketrow-$row_number']//input[contains(@class, 'edit-ticket-$field_name')]";
     }
 
 
@@ -141,16 +186,53 @@ class EventsAdmin extends CoreAdmin
     }
 
 
+    /**
+     * Locator for for the ID column in the event list table for a given event title.
+     * @param string $event_title
+     * @return string
+     */
     public static function eventListTableEventIdSelectorForTitle($event_title)
     {
         return "//td[contains(@class, 'column-name')]/strong/a[text()='$event_title']"
-            . "//ancestor::tr/th[contains(@class, 'check-column')]/input";
+               . "//ancestor::tr/th[contains(@class, 'check-column')]/input";
     }
 
 
+    /**
+     * Locator for the view link in the row of an event list table for the given event title.
+     * @param string $event_title
+     * @return string
+     */
     public static function eventListTableEventTitleViewLinkSelectorForTitle($event_title)
     {
         return "//td[contains(@class, 'column-name')]/strong/a[text()='$event_title']"
-            . "//ancestor::td//span[@class='view']/a";
+               . "//ancestor::td//span[@class='view']/a";
+    }
+
+
+    /**
+     * Locator for the messenger tab in the Notifications metabox in the event editor.
+     * @param string $messenger_slug  The slug for the messenger (it's reference slug).
+     * @return string
+     */
+    public static function eventEditorNotificationsMetaBoxMessengerTabSelector($messenger_slug)
+    {
+        return "//div[@id='espresso_events_Messages_Hooks_Extend_messages_metabox_metabox']"
+               . "//a[@rel='ee-tab-$messenger_slug']";
+    }
+
+
+    /**
+     * Locator for the select input within the notifications metabox.
+     * Note, this assumes the tab content for the related messenger is already visible.
+     * @param string $message_type_label The message type label (visible string in the table) you want the selector for.
+     * @return string
+     */
+    public static function eventEditorNotificationsMetaBoxSelectSelectorForMessageType($message_type_label)
+    {
+        return "//div[@id='espresso_events_Messages_Hooks_Extend_messages_metabox_metabox']"
+               . "//table[@class='messages-custom-template-switcher']"
+               . "//tr/td[contains(.,'Registration Approved')]"
+               . "//ancestor::tr//select[contains(@class,'message-template-selector')]";
     }
 }
