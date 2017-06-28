@@ -589,6 +589,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
             //save new dtt then add to event
             $new_dtt->set('DTT_ID', 0);
             $new_dtt->set('DTT_sold', 0);
+            $new_dtt->set_reserved(0);
             $new_dtt->save();
             $new_event->_add_relation_to($new_dtt, 'Datetime');
             $new_event->save();
