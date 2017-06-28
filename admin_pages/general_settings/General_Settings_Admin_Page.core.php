@@ -1226,11 +1226,18 @@ class General_Settings_Admin_Page extends EE_Admin_Page
             EE_Registry::instance()->CFG->currency = new EE_Currency_Config($CNT_ISO);
             EE_Registry::instance()->CFG->update_espresso_config();
         }
+
+        if ($success !== false) {
+            EE_Error::add_success(
+                esc_html__('Country Settings updated successfully.', 'event_espresso')
+            );
+        }
         $this->_redirect_after_action(
             $success,
-            'Countries',
-            'updated',
-            array('action' => 'country_settings', 'country' => $CNT_ISO)
+            '',
+            '',
+            array('action' => 'country_settings', 'country' => $CNT_ISO),
+            true
         );
     }
 
