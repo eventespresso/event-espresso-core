@@ -368,6 +368,9 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
      */
     private function _sub_item_row(EE_Line_Item $line_item, $options = array(), EE_Line_Item $parent_line_item = null)
     {
+        if($parent_line_item instanceof  EE_Line_Item && $line_item->name() === $parent_line_item->name()) {
+            return '';
+        }
         // start of row
         $html = EEH_HTML::tr('', '', 'item sub-item-row');
         // name && desc

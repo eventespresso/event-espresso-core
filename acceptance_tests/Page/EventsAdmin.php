@@ -35,6 +35,12 @@ class EventsAdmin extends CoreAdmin
 
 
     /**
+     * Selector for the save button in the event editor
+     */
+    const EVENT_EDITOR_SAVE_BUTTON_SELECTOR = "#save-post";
+
+
+    /**
      * @var string
      */
     const EVENT_EDITOR_DEFAULT_REGISTRATION_STATUS_FIELD_SELECTOR = '#EVT_default_registration_status';
@@ -118,6 +124,51 @@ class EventsAdmin extends CoreAdmin
     }
 
 
+    public static function eventEditorTicketPriceFieldSelector($row_number = 1)
+    {
+        return self::eventEditorTicketFieldSelectorForFieldInDisplayRow('TKT_base_price', $row_number);
+    }
+
+
+    public static function eventEditorTicketAdvancedDetailsSelector($row_number = 1)
+    {
+        return "//tr[@id='display-ticketrow-$row_number']//span[contains(@class, 'gear-icon')]";
+    }
+
+
+    public static function eventEditorTicketAdvancedDetailsSubtotalSelector($row_number = 1)
+    {
+        return "//span[@id='price-total-amount-$row_number']";
+    }
+
+
+    public static function eventEditorTicketAdvancedDetailsTotalSelector($row_number = 1)
+    {
+        return "//span[@id='price-total-amount-$row_number']";
+    }
+
+
+    public static function eventEditorTicketTaxableCheckboxSelector($row_number = 1)
+    {
+        return "//input[@id='edit-ticket-TKT_taxable-$row_number']";
+    }
+
+
+    /**
+     * This returns the xpath locater for the Tax amount display container within the advanced settings view for the
+     * given ticket (row) and the given tax id (PRC_ID).
+     *
+     * @param int $tax_id     The PRC_ID for the tax you want the locater for.  Note, this defaults to the default tax
+     *                        setup on a fresh install.
+     * @param int $row_number What row representing the ticket you want the locator for.
+     * @return string
+     */
+    public static function eventEditorTicketTaxAmountDisplayForTaxIdAndTicketRowSelector($tax_id = 2, $row_number = 1)
+    {
+        return "//span[@id='TKT-tax-amount-display-$tax_id-$row_number']";
+    }
+
+
     /**
      * Wrapper for getting the selector for a given field and given display row of a ticket in the event editor.
      * @param     $field_name
@@ -126,8 +177,7 @@ class EventsAdmin extends CoreAdmin
      */
     public static function eventEditorTicketFieldSelectorForFieldInDisplayRow($field_name, $row_number = 1)
     {
-        return "//tr[@id='display-ticketrow-$row_number']"
-               . "/td[2]/input[@class='edit-ticket-$field_name ee-large-text-inp']";
+        return "//tr[@id='display-ticketrow-$row_number']//input[contains(@class, 'edit-ticket-$field_name')]";
     }
 
 
