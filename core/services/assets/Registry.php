@@ -55,6 +55,8 @@ class Registry
         $this->currency_config = $currency_config;
         add_action('wp_enqueue_scripts', array($this, 'scripts'), 1);
         add_action('admin_enqueue_scripts', array($this, 'scripts'), 1);
+        add_action('wp_enqueue_scripts', array($this, 'enqueueData'), 2);
+        add_action('admin_enqueue_scripts', array($this, 'enqueueData'), 2);
         add_action('wp_print_footer_scripts', array($this, 'enqueueData'), 1);
         add_action('admin_print_footer_scripts', array($this, 'enqueueData'), 1);
     }
@@ -390,7 +392,7 @@ class Registry
                     'precision' => $this->currency_config->dec_plc,
                 ),
                 'number'   => array(
-                    'precision' => 0,
+                    'precision' => $this->currency_config->dec_plc,
                     'thousand'  => $this->currency_config->thsnds,
                     'decimal'   => $this->currency_config->dec_mrk,
                 ),
