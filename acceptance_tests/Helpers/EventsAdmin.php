@@ -33,6 +33,15 @@ trait EventsAdmin
 
 
     /**
+     * Triggers saving the Event.
+     */
+    public function saveEvent()
+    {
+        $this->actor()->click(EventsPage::EVENT_EDITOR_SAVE_BUTTON_SELECTOR);
+    }
+
+
+    /**
      * Navigates the actor to the event list table page and will attempt to edit the event for the given title.
      * First this will search using the given title and then attempt to edit from the results of the search.
      *
