@@ -527,10 +527,6 @@ class Messages_Admin_Page extends EE_Admin_Page
                         'title'    => __('Messengers', 'event_espresso'),
                         'filename' => 'messages_overview_messengers',
                     ),
-                    'messages_overview_other_help_tab'                          => array(
-                        'title'    => __('Messages Other', 'event_espresso'),
-                        'filename' => 'messages_overview_other',
-                    ),
                 ),
                 'help_tour'     => array('Messages_Overview_Help_Tour'),
                 'require_nonce' => false
@@ -584,6 +580,10 @@ class Messages_Admin_Page extends EE_Admin_Page
                     'message_preview_help_tab'    => array(
                         'title'    => __('Message Preview', 'event_espresso'),
                         'filename' => 'messages_preview'
+                    ),
+                    'messages_overview_other_help_tab'                          => array(
+                        'title'    => __('Messages Other', 'event_espresso'),
+                        'filename' => 'messages_overview_other',
                     ),
                 ),
                 'require_nonce' => false
