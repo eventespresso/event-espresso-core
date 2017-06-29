@@ -148,7 +148,7 @@ final class EE_Request_Handler {
 			if ( ! is_numeric( $possible_post_name )) {
 				/** @type WPDB $wpdb */
 				global $wpdb;
-				$SQL = "SELECT ID from {$wpdb->posts} WHERE post_status='publish' AND post_name=%s";
+				$SQL = "SELECT ID from {$wpdb->posts} WHERE post_status NOT IN ('auto-draft', 'inherit', 'trash') AND post_name=%s";
 				$possible_post_name = $wpdb->get_var( $wpdb->prepare( $SQL, $possible_post_name ));
 				if ( $possible_post_name ) {
 					$post_name = $possible_post_name;
@@ -158,7 +158,7 @@ final class EE_Request_Handler {
 		if ( ! $post_name && $this->get( 'post_id' )) {
 			/** @type WPDB $wpdb */
 			global $wpdb;
-			$SQL = "SELECT post_name from {$wpdb->posts} WHERE post_status='publish' AND ID=%d";
+			$SQL = "SELECT post_name from {$wpdb->posts} WHERE post_status NOT IN ('auto-draft', 'inherit', 'trash') AND ID=%d";
 			$possible_post_name = $wpdb->get_var( $wpdb->prepare( $SQL, $this->get( 'post_id' )));
 			if( $possible_post_name ) {
 				$post_name = $possible_post_name;
