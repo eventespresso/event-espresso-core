@@ -320,6 +320,21 @@ class EE_Capabilities_Test extends EE_UnitTestCase
     }
 
 
+
+    public function testAddNewRoleWhenAddingCap()
+    {
+        $this->CAPS->init_caps(true);
+        $jedi_master = 'ee_jedi_master';
+        /** @var WP_Role $jedi_master_role */
+        $jedi_master_role = get_role($jedi_master);
+        $this->assertNull($jedi_master_role);
+        $this->CAPS->add_cap_to_role($jedi_master, 'ee_use_the_force');
+        /** @var WP_Role $jedi_master_role */
+        $jedi_master_role = get_role($jedi_master);
+        $this->assertInstanceOf('WP_Role', $jedi_master_role);
+    }
+
+
 }
 // end EE_Capabilities_Test class
 // Location: testcases/core/EE_Capabilities_Test.php
