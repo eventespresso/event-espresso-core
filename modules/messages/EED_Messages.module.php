@@ -478,13 +478,15 @@ class EED_Messages extends EED_Module
             $statuses_sent[] = $reg->status_ID();
         }
 
-        $mtgs = array_merge(
+        if (count($statuses_sent) > 1) {
+            $mtgs = array_merge(
                 $mtgs,
                 self::$_MSG_PROCESSOR->setup_mtgs_for_all_active_messengers(
-                        'registration_summary',
-                        array($registration->transaction(), null)
+                    'registration_summary',
+                    array($registration->transaction(), null)
                 )
-        );
+            );
+        }
 
         //batch queue and initiate request
         self::$_MSG_PROCESSOR->batch_queue_for_generation_and_persist($mtgs);
