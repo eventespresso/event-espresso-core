@@ -118,7 +118,7 @@ class Registry
      */
     public function enqueueData()
     {
-        $this->removeAlreadyREgistereddataForScriptHandles();
+        $this->removeAlreadyRegisteredDataForScriptHandles();
         wp_localize_script('eejs-core', 'eejs', array('data' => $this->jsdata));
         wp_localize_script('espresso_core', 'eei18n', EE_Registry::$i18n_js_strings);
         $this->localizeAccountingJs();
