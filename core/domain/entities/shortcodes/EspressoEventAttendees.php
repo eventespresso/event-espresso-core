@@ -59,7 +59,7 @@ class EspressoEventAttendees extends EspressoShortcode
      */
     public function cacheExpiration()
     {
-        return HOUR_IN_SECONDS;
+        return 0;
     }
 
 
