@@ -417,6 +417,34 @@ abstract class EE_Admin_List_Table extends WP_List_Table
 
 
     /**
+     * Generate the table navigation above or below the table.
+     * Overrides the parent table nav in WP_List_Table so we can hide the bulk action div if there are no bulk actions.
+     *
+     * @since 4.9.44.rc.001
+     */
+    public function display_tablenav($which)
+    {
+        if ('top' === $which) {
+            wp_nonce_field('bulk-' . $this->_args['plural']);
+        }
+        ?>
+        <div class="tablenav <?php echo esc_attr($which); ?>">
+            <?php if ($this->_get_bulk_actions()) { ?>
+                <div class="alignleft actions bulkactions">
+                    <?php $this->bulk_actions(); ?>
+                </div>
+            <?php }
+            $this->extra_tablenav($which);
+            $this->pagination($which);
+            ?>
+
+            <br class="clear"/>
+        </div>
+        <?php
+    }
+
+
+    /**
      * _filters
      * This receives the filters array from children _get_table_filters() and assembles the string including the filter
      * button.
