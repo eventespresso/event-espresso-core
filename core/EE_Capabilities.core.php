@@ -66,7 +66,7 @@ final class EE_Capabilities extends EE_Base
      *
      * @var boolean|null $initialized
      */
-    private $initialized = null;
+    private $initialized;
 
     /**
      * @var boolean $reset
@@ -791,6 +791,8 @@ final class EE_Capabilities extends EE_Base
      */
     public function add_cap_to_role($role, $cap, $grant = true, $update_capabilities_map = true)
     {
+        // capture incoming value for $role because we may need it to create a new WP_Role
+        $orig_role = $role;
         $role = $role instanceof WP_Role ? $role : get_role($role);
         //if the role isn't available then we create it.
         if (! $role instanceof WP_Role) {
@@ -799,10 +801,8 @@ final class EE_Capabilities extends EE_Base
             // - removes any `ee_` namespacing from the start of the slug.
             // - replaces `_` with ` ` (empty space).
             // - sentence case on the resulting string.
-            $role_label = ucwords(
-                str_replace('_', ' ', str_replace('ee_', '', $role))
-            );
-            $role = add_role($role, $role_label);
+            $role_label = ucwords(str_replace(array('ee_', '_'), array('', ' '), $orig_role));
+            $role = add_role($orig_role, $role_label);
         }
         if ($role instanceof WP_Role) {
             // don't do anything if the capabilities map can not be initialized
