@@ -33,6 +33,15 @@ trait EventsAdmin
 
 
     /**
+     * Triggers saving the Event.
+     */
+    public function saveEvent()
+    {
+        $this->actor()->click(EventsPage::EVENT_EDITOR_SAVE_BUTTON_SELECTOR);
+    }
+
+
+    /**
      * Navigates the actor to the event list table page and will attempt to edit the event for the given title.
      * First this will search using the given title and then attempt to edit from the results of the search.
      *
@@ -60,6 +69,31 @@ trait EventsAdmin
     {
         $this->actor()->moveMouseOver(EventsPage::eventListTableEventTitleEditLinkSelectorForTitle($event_title));
         $this->actor()->click(EventsPage::eventListTableEventTitleViewLinkSelectorForTitle($event_title));
+    }
+
+
+    /**
+     * This performs the click action on the gear icon that triggers the advanced settings view state.
+     * Assumes the actor is already logged in and editing an event.
+     *
+     * @param int $row_number  What ticket row to toggle open/close.
+     */
+    public function toggleAdvancedSettingsViewForTicketRow($row_number = 1)
+    {
+        $this->actor()->click(EventsPage::eventEditorTicketAdvancedDetailsSelector($row_number));
+    }
+
+
+    /**
+     * Toggles the TKT_is_taxable checkbox for the ticket in the given row.
+     * Assumes the actor is already logged in and editing an event and that the advanced settings view state for that
+     * ticket is "open".
+     *
+     * @param int $row_number  What ticket row to toggle the checkbox for.
+     */
+    public function toggleTicketIsTaxableForTicketRow($row_number = 1)
+    {
+        $this->actor()->click(EventsPage::eventEditorTicketTaxableCheckboxSelector($row_number));
     }
 
 
