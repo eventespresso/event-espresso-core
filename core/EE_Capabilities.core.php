@@ -1202,6 +1202,11 @@ class EE_Meta_Capability_Map_Edit extends EE_Meta_Capability_Map
             return $caps;
         }
 
+        //okay it is a meta cap so let's first remove that cap from the $caps array.
+        if (($key = array_search($cap, $caps)) !== false) {
+            unset($caps[$key]);
+        }
+
         //cast $user_id to int for later explicit comparisons
         $user_id = (int) $user_id;
 
@@ -1209,21 +1214,16 @@ class EE_Meta_Capability_Map_Edit extends EE_Meta_Capability_Map
         $obj = ! empty($args[0]) ? $this->_model->get_one_by_ID($args[0]) : null;
         //if no obj then let's just do cap
         if (! $obj instanceof EE_Base_Class) {
-            $caps[] = $cap;
+            $caps[] = 'do_not_allow';
             return $caps;
         }
+        $caps[] = $cap . 's';
         if ($obj instanceof EE_CPT_Base) {
             //if the item author is set and the user is the author...
             if ($obj->wp_user() && $user_id === $obj->wp_user()) {
-                if (empty($this->published_cap)) {
-                    $caps[] = $cap;
-                } else {
-                    //if obj is published...
-                    if ($obj->status() === 'publish') {
-                        $caps[] = $this->published_cap;
-                    } else {
-                        $caps[] = $cap;
-                    }
+                //if obj is published...
+                if ($obj->status() === 'publish') {
+                    $caps[] = $this->published_cap;
                 }
             } else {
                 //the user is trying to edit someone else's obj
@@ -1248,9 +1248,7 @@ class EE_Meta_Capability_Map_Edit extends EE_Meta_Capability_Map
                     EE_Error::add_error($e->getMessage(), __FILE__, __FUNCTION__, __LINE__);
                 }
             }
-            if ($has_cap) {
-                $caps[] = $cap;
-            } else {
+            if (! $has_cap) {
                 if (! empty($this->others_cap)) {
                     $caps[] = $this->others_cap;
                 }
@@ -1328,50 +1326,60 @@ class EE_Meta_Capability_Map_Read extends EE_Meta_Capability_Map
             return $caps;
         }
 
+        //okay it is a meta cap so let's first remove that cap from the $caps array.
+        if (($key = array_search($cap, $caps)) !== false) {
+            unset($caps[$key]);
+        }
+
         //cast $user_id to int for later explicit comparisons
         $user_id = (int) $user_id;
 
         $obj = ! empty($args[0]) ? $this->_model->get_one_by_ID($args[0]) : null;
         //if no obj then let's just do cap
         if (! $obj instanceof EE_Base_Class) {
-            $caps[] = $cap;
+            $caps[] = 'do_not_allow';
             return $caps;
         }
+
+        $caps[] = $cap . 's';
         if ($obj instanceof EE_CPT_Base) {
             $status_obj = get_post_status_object($obj->status());
             if ($status_obj->public) {
-                $caps[] = $cap;
                 return $caps;
             }
-            //if the item author is set and the user is the author...
-            if ($obj->wp_user() && $obj->wp_user() === $user_id) {
-                $caps[] = $cap;
-            } elseif ($status_obj->private && ! empty($this->private_cap)) {
-                //the user is trying to view someone else's obj
+            //if the item author is set and the user is not the author...
+            if ($obj->wp_user() && $obj->wp_user() !== $user_id) {
+                if (! empty($this->others_cap)) {
+                    $caps[] = $this->others_cap;
+                }
+            }
+            //yes this means that if users created the private post, they are able to see it regardless of private cap.
+            if ($status_obj->private
+                && ! empty($this->private_cap)
+                && $obj->wp_user() !== $user_id
+            ) {
+                //the user is trying to view a private object for an object they don't own.
                 $caps[] = $this->private_cap;
-            } elseif (! empty($this->others_cap)) {
-                $caps[] = $this->others_cap;
-            } else {
-                $caps[] = $cap;
             }
         } else {
             //not a cpt object so handled differently
             $has_cap = false;
             try {
-                $has_cap = method_exists($obj, 'wp_user') && $obj->wp_user() && $obj->wp_user() === $user_id;
+                $has_cap = method_exists($obj, 'wp_user')
+                           && $obj->wp_user()
+                           && $obj->wp_user() === $user_id;
             } catch (Exception $e) {
                 if (WP_DEBUG) {
                     EE_Error::add_error($e->getMessage(), __FILE__, __FUNCTION__, __LINE__);
                 }
             }
-            if ($has_cap) {
-                $caps[] = $cap;
-            } elseif (! empty($this->private_cap)) {
-                $caps[] = $this->private_cap;
-            } elseif (! empty($this->others_cap)) {
-                $caps[] = $this->others_cap;
-            } else {
-                $caps[] = $cap;
+            if (! $has_cap) {
+                if (! empty($this->private_cap)) {
+                    $caps[] = $this->private_cap;
+                }
+                if (! empty($this->others_cap)) {
+                    $caps[] = $this->others_cap;
+                }
             }
         }
         return $caps;
@@ -1413,21 +1421,25 @@ class EE_Meta_Capability_Map_Messages_Cap extends EE_Meta_Capability_Map
             return $caps;
         }
 
+        //okay it is a meta cap so let's first remove that cap from the $caps array.
+        if (($key = array_search($cap, $caps)) !== false) {
+            unset($caps[$key]);
+        }
+
         //cast $user_id to int for later explicit comparisons
         $user_id = (int) $user_id;
 
         $obj = ! empty($args[0]) ? $this->_model->get_one_by_ID($args[0]) : null;
         //if no obj then let's just do cap
         if (! $obj instanceof EE_Message_Template_Group) {
-            $caps[] = $cap;
+            $caps[] = 'do_not_allow';
             return $caps;
         }
+        $caps[] = $cap . 's';
         $is_global = $obj->is_global();
         if ($obj->wp_user() && $obj->wp_user() === $user_id) {
             if ($is_global) {
                 $caps[] = $this->private_cap;
-            } else {
-                $caps[] = $cap;
             }
         } else {
             if ($is_global) {
@@ -1474,18 +1486,21 @@ class EE_Meta_Capability_Map_Registration_Form_Cap extends EE_Meta_Capability_Ma
         if ($cap !== $this->meta_cap) {
             return $caps;
         }
+        //okay it is a meta cap so let's first remove that cap from the $caps array.
+        if (($key = array_search($cap, $caps)) !== false) {
+            unset($caps[$key]);
+        }
         $obj = ! empty($args[0]) ? $this->_model->get_one_by_ID($args[0]) : null;
         //if no obj then let's just do cap
         if (! $obj instanceof EE_Base_Class) {
-            $caps[] = $cap;
+            $caps[] = 'do_not_allow';
             return $caps;
         }
+        $caps[] = $cap . 's';
         $is_system = $obj instanceof EE_Question_Group ? $obj->system_group() : false;
         $is_system = $obj instanceof EE_Question ? $obj->is_system_question() : $is_system;
         if ($is_system) {
             $caps[] = $this->private_cap;
-        } else {
-            $caps[] = $cap;
         }
         return $caps;
     }
