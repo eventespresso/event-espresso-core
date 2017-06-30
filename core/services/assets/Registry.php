@@ -41,6 +41,14 @@ class Registry
     protected $jsdata = array();
 
 
+    /**
+     * This keeps track of all scripts with registered data.  It is used to prevent duplicate data objects setup in the
+     * page source.
+     * @var array
+     */
+    protected $script_handles_with_data = array();
+
+
 
     /**
      * Registry constructor.
@@ -110,9 +118,12 @@ class Registry
      */
     public function enqueueData()
     {
+        $this->removeAlreadyRegisteredDataForScriptHandles();
         wp_localize_script('eejs-core', 'eejs', array('data' => $this->jsdata));
         wp_localize_script('espresso_core', 'eei18n', EE_Registry::$i18n_js_strings);
         $this->localizeAccountingJs();
+        $this->addRegisteredScriptHandlesWithData('eejs-core');
+        $this->addRegisteredScriptHandlesWithData('espresso_core');
     }
 
 
@@ -392,12 +403,13 @@ class Registry
                     'precision' => $this->currency_config->dec_plc,
                 ),
                 'number'   => array(
-                    'precision' => 0,
+                    'precision' => $this->currency_config->dec_plc,
                     'thousand'  => $this->currency_config->thsnds,
                     'decimal'   => $this->currency_config->dec_mrk,
                 ),
             )
         );
+        $this->addRegisteredScriptHandlesWithData('ee-accounting');
     }
 
 
@@ -415,6 +427,45 @@ class Registry
     }
 
 
+    /**
+     * This is used to set registered script handles that have data.
+     * @param string $script_handle
+     */
+    private function addRegisteredScriptHandlesWithData($script_handle)
+    {
+        $this->script_handles_with_data[$script_handle] = $script_handle;
+    }
+
+
+    /**
+     * Checks WP_Scripts for all of each script handle registered internally as having data and unsets from the
+     * Dependency stored in WP_Scripts if its set.
+     */
+    private function removeAlreadyRegisteredDataForScriptHandles()
+    {
+        if (empty($this->script_handles_with_data)) {
+            return;
+        }
+        foreach ($this->script_handles_with_data as $script_handle) {
+            $this->removeAlreadyRegisteredDataForScriptHandle($script_handle);
+        }
+    }
+
+
+    /**
+     * Removes any data dependency registered in WP_Scripts if its set.
+     * @param string $script_handle
+     */
+    private function removeAlreadyRegisteredDataForScriptHandle($script_handle)
+    {
+        if (isset($this->script_handles_with_data[$script_handle])) {
+            global $wp_scripts;
+            if ($wp_scripts->get_data($script_handle, 'data')) {
+                unset($wp_scripts->registered[$script_handle]->extra['data']);
+                unset($this->script_handles_with_data[$script_handle]);
+            }
+        }
+    }
 
 
 }
