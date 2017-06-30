@@ -392,7 +392,7 @@ class Registry
                     'precision' => $this->currency_config->dec_plc,
                 ),
                 'number'   => array(
-                    'precision' => 0,
+                    'precision' => $this->currency_config->dec_plc,
                     'thousand'  => $this->currency_config->thsnds,
                     'decimal'   => $this->currency_config->dec_mrk,
                 ),
