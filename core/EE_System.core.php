@@ -325,8 +325,8 @@ final class EE_System
     public function initialize_addons()
     {
         //foreach registered addon, make sure its db is up-to-date too
-        foreach (get_object_vars($this->registry->addons) as $addon) {
-            if($addon instanceof EE_Addon) {
+        foreach ($this->registry->addons as $addon) {
+            if ($addon instanceof EE_Addon) {
                 $addon->initialize_db_if_no_migrations_required();
             }
         }
@@ -422,9 +422,9 @@ final class EE_System
             $short_name = str_replace('EEM_', '', $classname);
             $reflectionClass = new ReflectionClass($classname);
             if ($reflectionClass->isSubclassOf('EEM_Base') && ! $reflectionClass->isAbstract()) {
-                $non_abstract_db_models[ $short_name ] = $classname;
+                $non_abstract_db_models[$short_name] = $classname;
             }
-            $model_names[ $short_name ] = $classname;
+            $model_names[$short_name] = $classname;
         }
         $this->registry->models = apply_filters('FHEE__EE_System__parse_model_names', $model_names);
         $this->registry->non_abstract_db_models = apply_filters(
@@ -640,7 +640,6 @@ final class EE_System
         }
         do_action('AHEE__EE_System__set_hooks_for_shortcodes_modules_and_addons');
         $this->loader->getShared('EventEspresso\core\services\assets\Registry');
-        wp_enqueue_script('espresso_core');
     }
 
 
