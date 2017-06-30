@@ -85,6 +85,14 @@
 			Lorenzo Caum
 		</a>
 	</li>
+	<li class="wp-person" id="ee-logan-lenz">
+		<a href="<?php esp_gravatar_profile('logan@eventespresso.com'); ?>">
+			<?php echo esp_gravatar_image( 'logan@eventespresso.com', 'Logan Lenz' ); ?>
+		</a>
+		<a class="web" href="<?php esp_gravatar_profile('logan@eventespresso.com'); ?>">
+			Logan Lenz
+		</a>
+	</li>
 
 </ul>
 <h3 class="wp-people-group"><?php _e('Contributor Recognition', 'event_espresso'); ?></h3>
