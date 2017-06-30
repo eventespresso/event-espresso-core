@@ -1138,7 +1138,12 @@ class EE_UnitTestCase extends WP_UnitTestCase
         // set datetimes, default = 1
         $datetimes = isset($options['datetimes']) ? $options['datetimes'] : 1;
 
-        $event = $this->new_model_obj_with_dependencies('Event');
+        /**
+         * Set the author to the current user. Forces in case a test switched the current user global (which wouldn't
+         * have updated in the model).
+         */
+        global $current_user;
+        $event = $this->new_model_obj_with_dependencies('Event', array('EVT_wp_user' => $current_user->ID));
         for ($i = 0; $i <= $datetimes; $i++) {
             $ddt = $this->new_model_obj_with_dependencies('Datetime', array('EVT_ID' => $event->ID()));
             $ticket->_add_relation_to($ddt, 'Datetime');
@@ -1153,21 +1158,25 @@ class EE_UnitTestCase extends WP_UnitTestCase
 
     /**
      * Creates a WP user with standard admin caps PLUS all EE CAPS (default)
+     *
      * @param array $ee_capabilities array of EE CAPS if you don't want the user to have ALL EE CAPS
      * @return WP_User
+     * @throws EE_Error
      */
     public function wp_admin_with_ee_caps($ee_capabilities = array())
     {
+        //if caps were provided then just add the caps to a default user role (non admin user).
+        if ($ee_capabilities) {
+            /** @type WP_User $user */
+            $user = $this->factory->user->create_and_get();
+            foreach ($ee_capabilities as $cap) {
+                $user->add_cap($cap);
+            }
+            return $user;
+        }
+        EE_Registry::instance()->CAP->init_caps(true);
         /** @type WP_User $user */
         $user = $this->factory->user->create_and_get(array('role' => 'administrator'));
-        $ee_capabilities = (array)$ee_capabilities;
-        if (empty($ee_capabilities)) {
-            EE_Registry::instance()->load_core('Capabilities');
-            $ee_capabilities = EE_Capabilities::instance()->get_ee_capabilities();
-        }
-        foreach ($ee_capabilities as $ee_capability) {
-            $user->add_cap($ee_capability);
-        }
         return $user;
     }
 
