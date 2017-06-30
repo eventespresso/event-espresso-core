@@ -13,7 +13,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  * @author  Brent Christensen
  * @since   4.9.44
  */
-class Domain
+class Domain extends DomainBase
 {
 
 }
