@@ -65,7 +65,6 @@ In this stage, verify that the following add-ons when activated successfully add
 Also test that when adding a custom payment method add-on, its capability gets added.  For this test just testing one payment add-on such as Stripe should be sufficient.  Remember that only the Administrator role gets the payment method caps.
 
 * [ ] Verify payment method add-on capability gets added when it is installed for the first time.
-    
 
 ## Stage Four of Testing
 
@@ -104,8 +103,8 @@ Also test that when adding a custom payment method add-on, its capability gets a
 * [ ] Test that the capabilities work for that user as expected considering they don't have the required filtered capabilities for certain actions.
 
   [1]: https://docs.google.com/a/eventespresso.com/spreadsheet/ccc?key=0Al0RhqTD8pDfdEhtcFhLdW9rTFdPOWtrODh3d1QyN1E&usp=drive_web#gid=4
-  
-  ## Stage Five of testing
+
+## Stage Five of testing
   
   This test is to verify that once the user edits capabilities on a role (i.e. removing capabilities that get added by default), on a version update, those capabilities do NOT get re-added.
   
@@ -113,8 +112,8 @@ Also test that when adding a custom payment method add-on, its capability gets a
   * Manually bump the version of EE core higher and do the same for the people add-on.
   * [ ] After reloading the admin, verify that there were no changes to the capabilities from before the version change for the Event Administrator role.
   * [ ] Do the same for a payment method add-on (such as stripe) (but this would have to be done on the Administrator role)
-  
-  ## Stage Six of testing
+
+## Stage Six of testing
   
   This is to test the reset capabilities tool.  After Stage Five testing, the Event Administrator role and the Administrator role (payment method cap) should have caps missing.  We want to test restoring the missing caps using the reset capabilities tool.  This tool is found in the Maintenance Admin Reset/Delete Data tab.
    
