@@ -1144,8 +1144,8 @@ class EE_UnitTestCase extends WP_UnitTestCase
         $datetimes = isset($options['datetimes']) ? $options['datetimes'] : 1;
 
         /**
-         * Set the author to the current user. Forces in case a test switched the current user global (which wouldn't
-         * have updated in the model).
+         * Set the author to the current user. This is done in case a running switched the current user global after
+         * after models were instantiated.
          */
         global $current_user;
         $event = $this->new_model_obj_with_dependencies('Event', array('EVT_wp_user' => $current_user->ID));
