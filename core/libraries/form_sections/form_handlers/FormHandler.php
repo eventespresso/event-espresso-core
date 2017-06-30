@@ -207,7 +207,11 @@ abstract class FormHandler implements FormHandlerInterface
             static $generated = false;
             if (! $generated) {
                 $generated = true;
-                $form = $this->generate();
+                $form = apply_filters(
+                    'FHEE__EventEspresso_core_libraries_form_sections_form_handlers_FormHandler__formIsValid__generated_form_object',
+                    $this->generate(),
+                    $this
+                );
                 if ($form instanceof EE_Form_Section_Proper) {
                     $this->setForm($form);
                 }

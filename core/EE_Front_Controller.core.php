@@ -297,9 +297,8 @@ final class EE_Front_Controller
         // if we are already loading assets then just move along, otherwise check for widgets
         $load_assets = $load_assets ? $load_assets : $this->espresso_widgets_in_active_sidebars();
         if ( $load_assets){
-            wp_enqueue_style('espresso_default');
-            wp_enqueue_style('espresso_custom_css');
-            wp_enqueue_script('espresso_core');
+            add_action('wp_enqueue_scripts', array($this, 'enqueueStyle'), 10);
+            add_action('wp_print_footer_scripts', array($this, 'enqueueScripts'), 10);
         }
     }
 
@@ -396,6 +395,14 @@ final class EE_Front_Controller
 
 
 
+    public function enqueueStyle()
+    {
+        wp_enqueue_style('espresso_default');
+        wp_enqueue_style('espresso_custom_css');
+    }
+
+
+
 
     /***********************************************        THE_CONTENT FILTER HOOK         **********************************************
 
@@ -420,11 +427,20 @@ final class EE_Front_Controller
     /***********************************************        WP_FOOTER         ***********************************************/
 
 
+
+    public function enqueueScripts()
+    {
+        wp_enqueue_script('espresso_core');
+    }
+
+
+
     /**
      * display_errors
      *
      * @access public
      * @return void
+     * @throws DomainException
      */
     public function display_errors()
     {
