@@ -199,7 +199,7 @@ abstract class EE_Form_Section_Layout_Base
     {
         $html = '';
         if ($this->_form_section->get_validation_errors()) {
-            $html .= "<div class='error'>";
+            $html .= "<div class='ee-form-wide-errors'>";
             //get all the errors on THIS form section (errors which aren't
             //for specific inputs, but instead for the entire form section)
             foreach ($this->_form_section->get_validation_errors() as $error) {
