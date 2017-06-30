@@ -35,6 +35,12 @@ class EventsAdmin extends CoreAdmin
 
 
     /**
+     * Selector for the save button in the event editor
+     */
+    const EVENT_EDITOR_SAVE_BUTTON_SELECTOR = "#save-post";
+
+
+    /**
      * @var string
      */
     const EVENT_EDITOR_DEFAULT_REGISTRATION_STATUS_FIELD_SELECTOR = '#EVT_default_registration_status';
