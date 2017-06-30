@@ -1,8 +1,8 @@
-<?php use EventEspresso\core\interfaces\ResettableInterface;
+<?php
 
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
+use EventEspresso\core\interfaces\ResettableInterface;
+
+defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 
 
 
@@ -20,15 +20,12 @@ class EE_Payment_Method_Manager implements ResettableInterface
 {
 
     /**
-     *    instance of the EE_Payment_Method_Manager object
-     *
-     * @var    $_instance
-     * @access    private
+     * @var EE_Payment_Method_Manager $_instance
      */
     private static $_instance;
 
     /**
-     * @var array keys are classnames without 'EE_PMT_', values are their filepaths
+     * @var array keys are class names without 'EE_PMT_', values are their filepaths
      */
     protected $_payment_method_types = array();
 
@@ -36,13 +33,12 @@ class EE_Payment_Method_Manager implements ResettableInterface
 
     /**
      * @singleton method used to instantiate class object
-     * @access    public
      * @return EE_Payment_Method_Manager instance
      */
     public static function instance()
     {
         // check if class object is instantiated, and instantiated properly
-        if ( ! self::$_instance instanceof EE_Payment_Method_Manager) {
+        if (! self::$_instance instanceof EE_Payment_Method_Manager) {
             self::$_instance = new self();
         }
         EE_Registry::instance()->load_lib('PMT_Base');
@@ -73,7 +69,7 @@ class EE_Payment_Method_Manager implements ResettableInterface
      */
     public function maybe_register_payment_methods($force_recheck = false)
     {
-        if ( ! $this->_payment_method_types || $force_recheck) {
+        if (! $this->_payment_method_types || $force_recheck) {
             $this->_register_payment_methods();
             //if in admin lets ensure caps are set.
             if (is_admin()) {
@@ -86,7 +82,7 @@ class EE_Payment_Method_Manager implements ResettableInterface
 
 
     /**
-     *        register_payment_methods
+     * register_payment_methods
      *
      * @return array
      */
@@ -95,8 +91,10 @@ class EE_Payment_Method_Manager implements ResettableInterface
         // grab list of installed modules
         $pm_to_register = glob(EE_PAYMENT_METHODS . '*', GLOB_ONLYDIR);
         // filter list of modules to register
-        $pm_to_register = apply_filters('FHEE__EE_Payment_Method_Manager__register_payment_methods__payment_methods_to_register',
-            $pm_to_register);
+        $pm_to_register = apply_filters(
+            'FHEE__EE_Payment_Method_Manager__register_payment_methods__payment_methods_to_register',
+            $pm_to_register
+        );
         // loop through folders
         foreach ($pm_to_register as $pm_path) {
             $this->register_payment_method($pm_path);
@@ -105,16 +103,17 @@ class EE_Payment_Method_Manager implements ResettableInterface
         // filter list of installed modules
         //keep them organized alphabetically by the payment method type's name
         ksort($this->_payment_method_types);
-        return apply_filters('FHEE__EE_Payment_Method_Manager__register_payment_methods__installed_payment_methods',
-            $this->_payment_method_types);
+        return apply_filters(
+            'FHEE__EE_Payment_Method_Manager__register_payment_methods__installed_payment_methods',
+            $this->_payment_method_types
+        );
     }
 
 
 
     /**
-     *    register_payment_method- makes core aware of this payment method
+     * register_payment_method- makes core aware of this payment method
      *
-     * @access public
      * @param string $payment_method_path - full path up to and including payment method folder
      * @return boolean
      */
@@ -127,27 +126,28 @@ class EE_Payment_Method_Manager implements ResettableInterface
         // grab and sanitize module name
         $module_dir = basename($payment_method_path);
         // create classname from module directory name
-        $module = str_replace(' ', '_', str_replace('_', ' ', $module_dir));
+        $module = str_replace(array('_', ' '), array(' ', '_'), $module_dir);
         // add class prefix
         $module_class = 'EE_PMT_' . $module;
         // does the module exist ?
-        if ( ! is_readable($payment_method_path . DS . $module_class . $module_ext)) {
-            $msg = sprintf(__('The requested %s payment method file could not be found or is not readable due to file permissions.',
-                'event_espresso'), $module);
+        if (! is_readable($payment_method_path . DS . $module_class . $module_ext)) {
+            $msg = sprintf(
+                esc_html__(
+                    'The requested %s payment method file could not be found or is not readable due to file permissions.',
+                    'event_espresso'
+                ), $module
+            );
             EE_Error::add_error($msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__);
             return false;
         }
-        if (WP_DEBUG === true) {
-            EEH_Debug_Tools::instance()->start_timer();
-        }
         // load the module class file
         require_once($payment_method_path . DS . $module_class . $module_ext);
-        if (WP_DEBUG === true) {
-            EEH_Debug_Tools::instance()->stop_timer("Requiring payment method $module_class");
-        }
         // verify that class exists
-        if ( ! class_exists($module_class)) {
-            $msg = sprintf(__('The requested %s module class does not exist.', 'event_espresso'), $module_class);
+        if (! class_exists($module_class)) {
+            $msg = sprintf(
+                esc_html__('The requested %s module class does not exist.', 'event_espresso'),
+                $module_class
+            );
             EE_Error::add_error($msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__);
             return false;
         }
@@ -161,7 +161,7 @@ class EE_Payment_Method_Manager implements ResettableInterface
     /**
      * Checks if a payment method has been registered, and if so includes it
      *
-     * @param string  $payment_method_name like 'Paypal_Pro', (ie classname without the prefix 'EEPM_')
+     * @param string  $payment_method_name like 'PayPal_Pro', (ie classname without the prefix 'EEPM_')
      * @param boolean $force_recheck       whether to force re-checking for new payment method types
      * @return boolean
      */
@@ -177,17 +177,16 @@ class EE_Payment_Method_Manager implements ResettableInterface
         if (isset($this->_payment_method_types[$payment_method_name])) {
             require_once($this->_payment_method_types[$payment_method_name]);
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
 
 
     /**
-     * Returns all the classnames of the various payment method types
+     * Returns all the class names of the various payment method types
      *
-     * @param boolean $with_prefixes TRUE: get payment method type classnames; false just their 'names'
+     * @param boolean $with_prefixes TRUE: get payment method type class names; false just their 'names'
      *                               (what you'd find in wp_esp_payment_method.PMD_type)
      * @param boolean $force_recheck whether to force re-checking for new payment method types
      * @return array
@@ -202,9 +201,8 @@ class EE_Payment_Method_Manager implements ResettableInterface
                 $payment_methods[] = $this->payment_method_class_from_type($classname);
             }
             return $payment_methods;
-        } else {
-            return array_keys($this->_payment_method_types);
         }
+        return array_keys($this->_payment_method_types);
     }
 
 
@@ -219,11 +217,11 @@ class EE_Payment_Method_Manager implements ResettableInterface
     public function payment_method_types($force_recheck = false)
     {
         $this->maybe_register_payment_methods($force_recheck);
-        $pmt_objs = array();
+        $payment_method_objects = array();
         foreach ($this->payment_method_type_names(true) as $classname) {
-            $pmt_objs[] = new $classname;
+            $payment_method_objects[] = new $classname;
         }
-        return $pmt_objs;
+        return $payment_method_objects;
     }
 
 
@@ -237,7 +235,7 @@ class EE_Payment_Method_Manager implements ResettableInterface
      */
     public function payment_method_type_sans_class_prefix($classname)
     {
-        return str_replace("EE_PMT_", "", $classname);
+        return str_replace('EE_PMT_', '', $classname);
     }
 
 
@@ -251,7 +249,7 @@ class EE_Payment_Method_Manager implements ResettableInterface
     public function payment_method_class_from_type($type)
     {
         $this->maybe_register_payment_methods();
-        return "EE_PMT_" . $type;
+        return 'EE_PMT_' . $type;
     }
 
 
@@ -260,19 +258,19 @@ class EE_Payment_Method_Manager implements ResettableInterface
      * Activates a payment method of the given type.
      *
      * @param string $payment_method_type the PMT_type; for EE_PMT_Invoice this would be 'Invoice'
-     * @return \EE_Payment_Method
-     * @throws \EE_Error
+     * @return EE_Payment_Method
+     * @throws EE_Error
      */
     public function activate_a_payment_method_of_type($payment_method_type)
     {
         $payment_method = EEM_Payment_Method::instance()->get_one_of_type($payment_method_type);
-        if ( ! $payment_method instanceof EE_Payment_Method) {
+        if (! $payment_method instanceof EE_Payment_Method) {
             $pm_type_class = $this->payment_method_class_from_type($payment_method_type);
             if (class_exists($pm_type_class)) {
                 /** @var $pm_type_obj EE_PMT_Base */
                 $pm_type_obj = new $pm_type_class;
                 $payment_method = EEM_Payment_Method::instance()->get_one_by_slug($pm_type_obj->system_name());
-                if ( ! $payment_method) {
+                if (! $payment_method) {
                     $payment_method = $this->create_payment_method_of_type($pm_type_obj);
                 }
                 $payment_method->set_type($payment_method_type);
@@ -280,8 +278,12 @@ class EE_Payment_Method_Manager implements ResettableInterface
             } else {
                 throw new EE_Error(
                     sprintf(
-                        __('There is no payment method of type %1$s, so it could not be activated', 'event_espresso'),
-                        $pm_type_class)
+                        esc_html__(
+                            'There is no payment method of type %1$s, so it could not be activated',
+                            'event_espresso'
+                        ),
+                        $pm_type_class
+                    )
                 );
             }
         }
@@ -295,8 +297,10 @@ class EE_Payment_Method_Manager implements ResettableInterface
             EE_Error::add_persistent_admin_notice(
                 'invoice_pm_requirements_notice',
                 sprintf(
-                    __('The Invoice payment method has been activated. It requires the invoice message type, html messenger, and pdf messenger be activated as well for the %1$smessages system%2$s, so it has been automatically verified that they are also active.',
-                        'event_espresso'),
+                    esc_html__(
+                        'The Invoice payment method has been activated. It requires the invoice message type, html messenger, and pdf messenger be activated as well for the %1$smessages system%2$s, so it has been automatically verified that they are also active.',
+                        'event_espresso'
+                    ),
                     '<a href="' . admin_url('admin.php?page=espresso_messages') . '">',
                     '</a>'
                 ),
@@ -314,7 +318,7 @@ class EE_Payment_Method_Manager implements ResettableInterface
      * @global WP_User    $current_user
      * @param EE_PMT_Base $pm_type_obj
      * @return EE_Payment_Method
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function create_payment_method_of_type($pm_type_obj)
     {
@@ -341,20 +345,20 @@ class EE_Payment_Method_Manager implements ResettableInterface
      *
      * @param EE_Payment_Method $payment_method
      * @return EE_Payment_Method
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function initialize_payment_method($payment_method)
     {
         $pm_type_obj = $payment_method->type_obj();
         $payment_method->set_description($pm_type_obj->default_description());
-        if ( ! $payment_method->button_url()) {
+        if (! $payment_method->button_url()) {
             $payment_method->set_button_url($pm_type_obj->default_button_url());
         }
         //now add setup its default extra meta properties
         $extra_metas = $pm_type_obj->settings_form()->extra_meta_inputs();
-        if ( ! empty($extra_metas)) {
+        if (! empty($extra_metas)) {
             //verify the payment method has an ID before adding extra meta
-            if ( ! $payment_method->ID()) {
+            if (! $payment_method->ID()) {
                 $payment_method->save();
             }
             foreach ($extra_metas as $meta_name => $input) {
@@ -368,17 +372,22 @@ class EE_Payment_Method_Manager implements ResettableInterface
 
     /**
      * Makes sure the payment method is related to the specified payment method
+     *
      * @deprecated in 4.9.40 because the currency payment method table is being deprecated
      * @param EE_Payment_Method $payment_method
      * @return EE_Payment_Method
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function set_usable_currencies_on_payment_method($payment_method)
     {
         EE_Error::doing_it_wrong(
             'EE_Payment_Method_Manager::set_usable_currencies_on_payment_method',
-                esc_html__('We no longer define what currencies are usable by payment methods. Its not used nor efficient.', 'event_espresso'),
-            '4.9.40');
+            esc_html__(
+                'We no longer define what currencies are usable by payment methods. Its not used nor efficient.',
+                'event_espresso'
+            ),
+            '4.9.40'
+        );
         return $payment_method;
     }
 
@@ -389,6 +398,7 @@ class EE_Payment_Method_Manager implements ResettableInterface
      *
      * @param string $payment_method_slug The slug for the payment method to deactivate.
      * @return int count of rows updated.
+     * @throws EE_Error
      */
     public function deactivate_payment_method($payment_method_slug)
     {
@@ -396,7 +406,10 @@ class EE_Payment_Method_Manager implements ResettableInterface
             __FILE__,
             __FUNCTION__,
             sprintf(
-                __('Payment method with slug %1$s is being deactivated by site admin', 'event_espresso'),
+                esc_html__(
+                    'Payment method with slug %1$s is being deactivated by site admin',
+                    'event_espresso'
+                ),
                 $payment_method_slug
             ),
             'payment_method_change'

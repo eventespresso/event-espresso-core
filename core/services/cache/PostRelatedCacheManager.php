@@ -1,6 +1,8 @@
 <?php
 namespace EventEspresso\core\services\cache;
 
+use EventEspresso\core\domain\services\session\SessionIdentifierInterface;
+
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
@@ -33,7 +35,7 @@ class PostRelatedCacheManager extends BasicCacheManager
     /**
      * PostRelatedCacheManager constructor.
      *
-     * @param CacheStorageInterface $cache_storage
+     * @param CacheStorageInterface      $cache_storage
      */
     public function __construct(CacheStorageInterface $cache_storage)
     {
