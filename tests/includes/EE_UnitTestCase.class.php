@@ -846,6 +846,12 @@ class EE_UnitTestCase extends WP_UnitTestCase
         foreach ($model->relation_settings() as $related_model_name => $relation) {
             if ($relation instanceof EE_Belongs_To_Any_Relation) {
                 continue;
+            } elseif ($related_model_name === 'WP_User' && get_current_user_id()) {
+                $fk = $model->get_foreign_key_to($related_model_name);
+                if (! isset($args[$fk->get_name()])) {
+                    $obj = \EEM_WP_User::instance()->get_one_by_ID(get_current_user_id());
+                    $args[$fk->get_name()] = $obj->ID();
+                }
             } elseif ($related_model_name === 'Country') {
                 //we already have lots of countries. lets not make any more
                 //what's more making them is tricky: the primary key needs to be a unique
@@ -866,7 +872,6 @@ class EE_UnitTestCase extends WP_UnitTestCase
                 if (!isset($args[$fk->get_name()])) {
                     $args[$fk->get_name()] = $obj->ID();
                 }
-
             }
         }
         //set any other fields which haven't yet been set
