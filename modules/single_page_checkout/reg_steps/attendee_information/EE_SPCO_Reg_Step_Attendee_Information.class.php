@@ -743,8 +743,15 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		$registrations = $this->checkout->transaction->registrations( $this->checkout->reg_cache_where_params );
 		// verify we got the goods
 		if ( empty( $registrations )) {
+		    //combine the old translated string with a new one, in order to not break translations
+		    $error_message = __( 'Your form data could not be applied to any valid registrations.', 'event_espresso' )
+                . ' ' . sprintf(
+                    esc_html__('Please return to the %1$sEvent List%2$s and reselect your tickets. You may want to contact the site administrator.', 'event_espresso'),
+                    '<a href="' . get_post_type_archive_link('espresso_events') . '" >',
+                    '</a>'
+                );
 			EE_Error::add_error(
-				__( 'Your form data could not be applied to any valid registrations.', 'event_espresso' ),
+                $error_message,
 				__FILE__,
 				__FUNCTION__,
 				__LINE__
