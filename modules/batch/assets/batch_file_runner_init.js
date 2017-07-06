@@ -63,10 +63,12 @@ jQuery(document).ready(function() {
             //first, let's just download the file
 			window.onbeforeunload = null;
 			window.location.href=response.data.file_url;
-			//ok, now that it's started downloading, we can restore the onbeforeunload callback
+			//ok, once it's started downloading, we can restore the onbeforeunload callback
             //it's possible someone might navigate away before the automatic redirect
-			runner.setup_clean_up_on_page_exit();
-			//ok now that we've started that, we can wait a few seconds before
+            setTimeout(function() {
+                runner.setup_clean_up_on_page_exit();
+            }, 500 );
+			//wait a few seconds for the file to download then start
             //cleaning up and redirecting the user
 			setTimeout(function() {
 				runner.cleanup_job();
