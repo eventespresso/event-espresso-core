@@ -991,21 +991,6 @@ class EE_Generic_Address extends \EventEspresso\core\domain\entities\GenericAddr
 
 
 
-function ee_deprecate_AHEE__EE_Brewing_Regular__construct__complete() {
-    if (has_action('AHEE__EE_Brewing_Regular__construct__complete')) {
-        EE_Error::doing_it_wrong(
-            'Action Hook: AHEE__EE_Brewing_Regular__construct__complete',
-            esc_html__(
-                'This action has been replaced by `AHEE__EE_Brewing_Regular__construct_finished` which executes at plugins_loaded priority 1. Your callback hooking into this action is still being executed at plugins_loaded priority level 5 but no longer immediately at the end of the EE_Brewing_Regular::construct.',
-                'event_espresso'
-            ),
-            '4.9.22.p'
-        );
-    }
-    do_action( 'AHEE__EE_Brewing_Regular__construct__complete' );
-}
-add_action( 'AHEE__EE_System__load_core_configuration__complete', 'ee_deprecate_AHEE__EE_Brewing_Regular__construct__complete' );
-
 
 add_filter(
 	'FHEE__EventEspresso_modules_events_archive_EventsArchiveIframe__display__css',
@@ -1047,3 +1032,98 @@ add_filter(
 		);
 	}
 );
+
+
+/**
+ * Class EE_Event_List_Query
+ *
+ * @deprecated 4.9.40
+ */
+class EE_Event_List_Query extends WP_Query
+{
+
+    private $title;
+
+    private $css_class;
+
+    private $category_slug;
+
+    /**
+     * EE_Event_List_Query constructor.
+     *
+     * @param array $args
+     */
+    public function __construct($args = array())
+    {
+        \EE_Error::doing_it_wrong(
+            __METHOD__,
+            __(
+                'Usage is deprecated. Please use \EventEspresso\core\domain\services\wp_queries\EventListQuery instead.',
+                'event_espresso'
+            ),
+            '4.9.27',
+            '5.0.0'
+        );
+        $this->title = isset($args['title']) ? $args['title'] : '';
+        $this->css_class = isset($args['css_class']) ? $args['css_class'] : '';
+        $this->category_slug = isset($args['category_slug']) ? $args['category_slug'] : '';
+        $limit = isset($args['limit']) && absint($args['limit']) ? $args['limit'] : 10;
+        // the current "page" we are viewing
+        $paged = max(1, get_query_var('paged'));
+        // Force these args
+        $args = array_merge(
+            $args, array(
+            'post_type'              => 'espresso_events',
+            'posts_per_page'         => $limit,
+            'update_post_term_cache' => false,
+            'update_post_meta_cache' => false,
+            'paged'                  => $paged,
+            'offset'                 => ($paged - 1) * $limit
+        )
+        );
+        // run the query
+        parent::__construct($args);
+    }
+
+
+
+    /**
+     * event_list_title
+     *
+     * @param string $event_list_title
+     * @return string
+     */
+    public function event_list_title($event_list_title = '')
+    {
+        if (! empty($this->title)) {
+            return $this->title;
+        }
+        return $event_list_title;
+    }
+
+
+
+    /**
+     * event_list_css
+     *
+     * @param string $event_list_css
+     * @return string
+     */
+    public function event_list_css($event_list_css = '')
+    {
+        $event_list_css .= ! empty($event_list_css)
+            ? ' '
+            : '';
+        $event_list_css .= ! empty($this->css_class)
+            ? $this->css_class
+            : '';
+        $event_list_css .= ! empty($event_list_css)
+            ? ' '
+            : '';
+        $event_list_css .= ! empty($this->category_slug)
+            ? $this->category_slug
+            : '';
+        return $event_list_css;
+    }
+
+}

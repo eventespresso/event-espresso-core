@@ -147,6 +147,8 @@ class EEH_Activation
         EEH_Activation::insert_default_status_codes();
         EEH_Activation::generate_default_message_templates();
         EEH_Activation::create_no_ticket_prices_array();
+        EE_Registry::instance()->CAP->init_caps();
+
         EEH_Activation::validate_messages_system();
         EEH_Activation::insert_default_payment_methods();
         //in case we've
@@ -236,7 +238,6 @@ class EEH_Activation
         }
 
     }
-
 
 
     /**
@@ -416,6 +417,7 @@ class EEH_Activation
 
 
 
+
     /**
      * verify_default_pages_exist
      *
@@ -541,7 +543,6 @@ class EEH_Activation
             return null;
         }
     }
-
 
 
     /**
@@ -1561,7 +1562,7 @@ class EEH_Activation
                                 || ! $table->is_global()//not main site,but not global either. nuke it
                             )
                         ) {
-                            $tables[] = $table->get_table_name();
+                            $tables[$table->get_table_name()] = $table->get_table_name();
                         }
                     }
                 }
@@ -1578,7 +1579,7 @@ class EEH_Activation
             'esp_rule',
         );
         foreach ($tables_without_models as $table) {
-            $tables[] = $table;
+            $tables[$table] = $table;
         }
         return \EEH_Activation::getTableManager()->dropTables($tables);
     }

@@ -117,7 +117,10 @@ class EED_Event_Single_Caff  extends EED_Event_Single {
 	 * @param array $REQ
 	 * @return EE_Template_Config
 	 */
-	public static function update_template_settings( $CFG, $REQ ) {
+	public static function update_template_settings(EE_Template_Config $CFG, $REQ ) {
+	    if(! $CFG->EED_Event_Single instanceof EE_Event_Single_Config){
+            $CFG->EED_Event_Single = new EE_Event_Single_Config();
+        }
         $display_order_event = $CFG->EED_Event_Single->display_order_event !== null
             ? $CFG->EED_Event_Single->display_order_event
             : EED_Event_Single::EVENT_DETAILS_PRIORITY;

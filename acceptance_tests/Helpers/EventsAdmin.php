@@ -33,6 +33,15 @@ trait EventsAdmin
 
 
     /**
+     * Triggers saving the Event.
+     */
+    public function saveEvent()
+    {
+        $this->actor()->click(EventsPage::EVENT_EDITOR_SAVE_BUTTON_SELECTOR);
+    }
+
+
+    /**
      * Navigates the actor to the event list table page and will attempt to edit the event for the given title.
      * First this will search using the given title and then attempt to edit from the results of the search.
      *
@@ -50,15 +59,73 @@ trait EventsAdmin
 
 
     /**
-     * Navigates the user to the single event page (frontend view) for the given event title via clicking the "View" link
-     * for the event in the event list table.
-     *
+     * Navigates the user to the single event page (frontend view) for the given event title via clicking the "View"
+     * link for the event in the event list table.
      * Assumes the actor is already logged in and on the Event list table page.
+     *
      * @param string $event_title
      */
     public function amOnEventPageAfterClickingViewLinkInListTableForEvent($event_title)
     {
         $this->actor()->moveMouseOver(EventsPage::eventListTableEventTitleEditLinkSelectorForTitle($event_title));
         $this->actor()->click(EventsPage::eventListTableEventTitleViewLinkSelectorForTitle($event_title));
+    }
+
+
+    /**
+     * This performs the click action on the gear icon that triggers the advanced settings view state.
+     * Assumes the actor is already logged in and editing an event.
+     *
+     * @param int $row_number  What ticket row to toggle open/close.
+     */
+    public function toggleAdvancedSettingsViewForTicketRow($row_number = 1)
+    {
+        $this->actor()->click(EventsPage::eventEditorTicketAdvancedDetailsSelector($row_number));
+    }
+
+
+    /**
+     * Toggles the TKT_is_taxable checkbox for the ticket in the given row.
+     * Assumes the actor is already logged in and editing an event and that the advanced settings view state for that
+     * ticket is "open".
+     *
+     * @param int $row_number  What ticket row to toggle the checkbox for.
+     */
+    public function toggleTicketIsTaxableForTicketRow($row_number = 1)
+    {
+        $this->actor()->click(EventsPage::eventEditorTicketTaxableCheckboxSelector($row_number));
+    }
+
+
+    /**
+     * Use to change the default registration status for the event.
+     * Assumes the view is already on the event editor.
+     * @param $registration_status
+     */
+    public function changeDefaultRegistrationStatusTo($registration_status)
+    {
+        $this->actor()->selectOption(
+            EventsPage::EVENT_EDITOR_DEFAULT_REGISTRATION_STATUS_FIELD_SELECTOR,
+            $registration_status
+        );
+    }
+
+
+    /**
+     * Use this from the context of the event editor to select the given custom template for a given message type and
+     * messenger.
+     *
+     * @param string $message_type_label  The visible label for the message type (eg Registration Approved)
+     * @param string $messenger_slug      The slug for the messenger (eg 'email')
+     * @param string $custom_template_label The visible label in the select input for the custom template you want
+     *                                      selected.
+     */
+    public function selectCustomTemplateFor($message_type_label, $messenger_slug, $custom_template_label)
+    {
+        $this->actor()->click(EventsPage::eventEditorNotificationsMetaBoxMessengerTabSelector($messenger_slug));
+        $this->actor()->selectOption(
+            EventsPage::eventEditorNotificationsMetaBoxSelectSelectorForMessageType($message_type_label),
+            $custom_template_label
+        );
     }
 }
