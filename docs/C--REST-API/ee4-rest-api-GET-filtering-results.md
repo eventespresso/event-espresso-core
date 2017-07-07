@@ -108,7 +108,7 @@ You may also provide an offset with a limit using this parameter, by just provid
 ```php
 //only find 5 events after the first 10
 http://demoee.org/wp-json/ee/v4.8.36/events?limit=10,5
-``
+```
 
 ## order_by
 
