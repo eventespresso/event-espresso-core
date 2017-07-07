@@ -38,36 +38,27 @@ class EE_Maintenance_Mode
      */
     const option_name_maintenance_mode = 'ee_maintenance_mode';
 
-    /**
-     *    EE_Maintenance_Mode Object
-     *
-     * @var EE_Maintenance_Mode $_instance
-     * @access    private
-     */
-    private static $_instance = null;
 
     /**
-     *    EE_Registry Object
-     *
-     * @var    EE_Registry $EE
-     * @access    protected
+     * @var EE_Maintenance_Mode $_instance
      */
-    protected $EE = null;
+    private static $_instance;
+
+    /**
+     * @var EE_Registry $EE
+     */
+    protected $EE;
 
 
 
     /**
      * @singleton method used to instantiate class object
-     * @access    public
      * @return EE_Maintenance_Mode
      */
     public static function instance()
     {
         // check if class object is instantiated
-        if (self::$_instance === null or ! is_object(self::$_instance) or ! (self::$_instance
-                                                                             instanceof
-                                                                             EE_Maintenance_Mode)
-        ) {
+        if (! self::$_instance instanceof EE_Maintenance_Mode) {
             self::$_instance = new self();
         }
         return self::$_instance;
@@ -90,10 +81,6 @@ class EE_Maintenance_Mode
 
     /**
      *private constructor to prevent direct creation
-     *
-     * @Constructor
-     * @access private
-     * @return EE_Maintenance_Mode
      */
     private function __construct()
     {
@@ -120,14 +107,14 @@ class EE_Maintenance_Mode
 
 
     /**
-     * Returns whether or not the models reportedly are able to run queries or not (ie, if the system
-     * thinks their tables are present and up-to-date).
+     * Returns whether or not the models reportedly are able to run queries or not
+     * (ie, if the system thinks their tables are present and up-to-date).
      *
      * @return boolean
      */
     public function models_can_query()
     {
-        return $this->real_level() != EE_Maintenance_Mode::level_2_complete_maintenance;
+        return $this->real_level() !== EE_Maintenance_Mode::level_2_complete_maintenance;
     }
 
 
@@ -144,17 +131,14 @@ class EE_Maintenance_Mode
      */
     public function level()
     {
-        $real_maintenance_mode_level = $this->real_level();
-        //if this is an admin request, we'll be honest... except if it's ajax, because that might be from the frontend
-        if ((! is_admin() || (defined('DOING_AJAX') && DOING_AJAX))
-            && //only on frontend or ajax requests
-            current_user_can('administrator')
-            && //when the user is an admin
-            $real_maintenance_mode_level == EE_Maintenance_Mode::level_1_frontend_only_maintenance
-        ) {//and we're in level 1
+        $maintenance_mode_level = $this->real_level();
+        // if this is an admin request, we'll be honest... except if it's ajax, because that might be from the frontend
+        if (
+            $maintenance_mode_level === EE_Maintenance_Mode::level_1_frontend_only_maintenance// we're in level 1
+            && ((defined('DOING_AJAX') && DOING_AJAX) || ! is_admin()) // on non-ajax frontend requests
+            && current_user_can('administrator') // when the user is an admin
+        ) {
             $maintenance_mode_level = EE_Maintenance_Mode::level_0_not_in_maintenance;
-        } else {
-            $maintenance_mode_level = $real_maintenance_mode_level;
         }
         return $maintenance_mode_level;
     }
@@ -172,14 +156,14 @@ class EE_Maintenance_Mode
         if (EE_Data_Migration_Manager::instance()->check_for_applicable_data_migration_scripts()) {
             update_option(self::option_name_maintenance_mode, self::level_2_complete_maintenance);
             return true;
-        } else if ($this->level() == self::level_2_complete_maintenance) {
+        }
+        if ($this->level() === self::level_2_complete_maintenance) {
             //we also want to handle the opposite: if the site is mm2, but there aren't any migrations to run
             //then we shouldn't be in mm2. (Maybe an addon got deactivated?)
             update_option(self::option_name_maintenance_mode, self::level_0_not_in_maintenance);
             return false;
-        } else {
-            return false;
         }
+        return false;
     }
 
 
@@ -193,49 +177,45 @@ class EE_Maintenance_Mode
     public function set_maintenance_level($level)
     {
         do_action('AHEE__EE_Maintenance_Mode__set_maintenance_level', $level);
-        update_option(self::option_name_maintenance_mode, intval($level));
+        update_option(self::option_name_maintenance_mode, (int)$level);
     }
 
 
 
     /**
-     *    disable_frontend_for_maintenance
+     * returns TRUE if M-Mode is engaged and the current request is not for the admin
      *
-     *   returns TRUE if M-Mode is engaged and the current request is not for the admin
-     *
-     * @access    public
      * @return    string
      */
     public static function disable_frontend_for_maintenance()
     {
-        return ! is_admin() && EE_Maintenance_Mode::instance()->level()
-            ? true
-            : false;
+        return (! is_admin() && EE_Maintenance_Mode::instance()->level());
     }
 
 
 
     /**
-     *    load_assets_required_for_m_mode
-     *
-     * @access    public
-     * @return    string
+     * @return void
      */
     public function load_assets_required_for_m_mode()
     {
-        if ($this->real_level() == EE_Maintenance_Mode::level_2_complete_maintenance
-            && ! wp_script_is(
-                'espresso_core', 'enqueued'
-            )
+        if (
+            $this->real_level() === EE_Maintenance_Mode::level_2_complete_maintenance
+            && ! wp_script_is('espresso_core')
         ) {
             wp_register_style(
-                'espresso_default', EE_GLOBAL_ASSETS_URL . 'css/espresso_default.css', array('dashicons'),
+                'espresso_default',
+                EE_GLOBAL_ASSETS_URL . 'css/espresso_default.css',
+                array('dashicons'),
                 EVENT_ESPRESSO_VERSION
             );
             wp_enqueue_style('espresso_default');
             wp_register_script(
-                'espresso_core', EE_GLOBAL_ASSETS_URL . 'scripts/espresso_core.js', array('jquery'),
-                EVENT_ESPRESSO_VERSION, true
+                'espresso_core',
+                EE_GLOBAL_ASSETS_URL . 'scripts/espresso_core.js',
+                array('jquery'),
+                EVENT_ESPRESSO_VERSION,
+                true
             );
             wp_enqueue_script('espresso_core');
         }
@@ -244,13 +224,10 @@ class EE_Maintenance_Mode
 
 
     /**
-     * template_include
-     *
      * replacement EE CPT template that displays message notifying site visitors
      * that EE has been temporarily placed into maintenance mode
      * does NOT get called on non-EE-CPT requests
      *
-     * @access    public
      * @return    string
      */
     public static function template_include()
@@ -262,14 +239,11 @@ class EE_Maintenance_Mode
 
 
     /**
-     *    the_content
+     * displays message notifying site visitors that EE has been temporarily
+     * placed into maintenance mode when post_type != EE CPT
      *
-     *    displays message notifying site visitors that EE has been temporarily placed into maintenance mode when
-     *    post_type != EE CPT
-     *
-     * @access    public
-     * @param    string $the_content
-     * @return    string
+     * @param string $the_content
+     * @return string
      */
     public function the_content($the_content)
     {
@@ -277,7 +251,7 @@ class EE_Maintenance_Mode
         if ($this->level() && strpos($the_content, '[ESPRESSO_') !== false) {
             // this can eventually be moved to a template, or edited via admin. But for now...
             $the_content = sprintf(
-                __(
+                esc_html__(
                     '%sMaintenance Mode%sEvent Registration has been temporarily closed while system maintenance is being performed. We\'re sorry for any inconveniences this may have caused. Please try back again later.%s',
                     'event_espresso'
                 ),
@@ -292,24 +266,20 @@ class EE_Maintenance_Mode
 
 
     /**
-     *    display_maintenance_mode_notice
-     *
-     *    displays message on frontend of site notifying admin that EE has been temporarily placed into maintenance mode
-     *
-     * @access    public
-     * @return    string
+     * displays message on frontend of site notifying admin that EE has been temporarily placed into maintenance mode
      */
     public function display_maintenance_mode_notice()
     {
         // check if M-mode is engaged and for EE shortcode
         if (
-            $this->real_level() && current_user_can('administrator') && ! is_admin()
-            && ! (defined('DOING_AJAX')
-                  && DOING_AJAX)
+            ! (defined('DOING_AJAX') && DOING_AJAX)
+            && $this->real_level()
+            && ! is_admin()
+            && current_user_can('administrator')
             && EE_Registry::instance()->REQ->is_espresso_page()
         ) {
             printf(
-                __(
+                esc_html__(
                     '%sclose%sEvent Registration is currently disabled because Event Espresso has been placed into Maintenance Mode. To change Maintenance Mode settings, click here %sEE Maintenance Mode Admin Page%s',
                     'event_espresso'
                 ),
@@ -322,83 +292,82 @@ class EE_Maintenance_Mode
             );
         }
     }
-// espresso-notices important-notice ee-attention
+    // espresso-notices important-notice ee-attention
 
 
 
     /**
-     *        @ override magic methods
-     *        @ return void
+     * override magic methods
      */
-    final function __destruct()
+    final public function __destruct()
     {
     }
 
 
 
-    final function __call($a, $b)
+    final public function __call($a, $b)
     {
     }
 
 
 
-    final function __get($a)
+    final public function __get($a)
     {
     }
 
 
 
-    final function __set($a, $b)
+    final public function __set($a, $b)
     {
     }
 
 
 
-    final function __isset($a)
+    final public function __isset($a)
     {
     }
 
 
 
-    final function __unset($a)
+    final public function __unset($a)
     {
     }
 
 
 
-    final function __sleep()
+    final public function __sleep()
     {
         return array();
     }
 
 
 
-    final function __wakeup()
+    final public function __wakeup()
     {
     }
 
 
 
-//	final function __toString() {}
-    final function __invoke()
+    final public function __invoke()
     {
     }
 
 
 
-    final static function __set_state()
+    final public static function __set_state($a = null)
+    {
+        return EE_Maintenance_Mode::instance();
+    }
+
+
+
+    final public function __clone()
     {
     }
 
 
 
-    final function __clone()
-    {
-    }
-
-
-
-    final static function __callStatic($a, $b)
+    final public static function __callStatic($a, $b)
     {
     }
 
