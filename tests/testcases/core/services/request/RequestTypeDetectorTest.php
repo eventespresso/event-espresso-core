@@ -32,6 +32,10 @@ class RequestTypeDetectorTest extends EE_UnitTestCase
 
 
 
+    /**
+     * RequestType isn't set until ActivationHistory::resolveFromActivationHistory() is called
+     * so confirm that no RequestType is set prior to that
+     */
     public function testGetRequestTypeNotSet()
     {
         /** @var ActivationHistoryExtendedMock $activation_history */
@@ -42,7 +46,10 @@ class RequestTypeDetectorTest extends EE_UnitTestCase
 
 
 
-    public function testGetRequestType()
+    /**
+     * set RequestType manually then check getter
+     */
+    public function testGetRequestTypeGetter()
     {
         /** @var ActivationHistoryExtendedMock $activation_history */
         $activation_history = ActivationTestsHelper::getActivationHistory();
@@ -56,6 +63,26 @@ class RequestTypeDetectorTest extends EE_UnitTestCase
 
 
 
+    /**
+     * check RequestType instance after calling resolveFromActivationHistory()
+     */
+    public function testGetRequestTypeAfterResolveFromActivationHistoryCalled()
+    {
+        /** @var ActivationHistoryExtendedMock $activation_history */
+        $activation_history = ActivationTestsHelper::getActivationHistory();
+        $detector = new RequestTypeDetectorExtendedMock($activation_history);
+        $detector->resolveFromActivationHistory();
+        PHPUnit_Framework_TestCase::assertInstanceOf(
+            'EventEspresso\core\services\activation\RequestType',
+            $detector->getRequestType()
+        );
+    }
+
+
+
+    /**
+     * check RequestType === NEW_ACTIVATION
+     */
     public function testResolveFromActivationHistoryNewActivation()
     {
         /** @var ActivationHistoryExtendedMock $activation_history */
@@ -72,7 +99,7 @@ class RequestTypeDetectorTest extends EE_UnitTestCase
 
 
     /**
-     * @group thisTest
+     * check RequestType === NORMAL
      */
     public function testResolveFromActivationHistoryNormalRequest()
     {
@@ -87,6 +114,9 @@ class RequestTypeDetectorTest extends EE_UnitTestCase
 
 
 
+    /**
+     * check RequestType === UPGRADE during non-activation request
+     */
     public function testResolveFromActivationHistoryUpgradeRequest()
     {
         $this->assertActivationDetails(
@@ -100,6 +130,9 @@ class RequestTypeDetectorTest extends EE_UnitTestCase
 
 
 
+    /**
+     * check RequestType === DOWNGRADE during non-activation request
+     */
     public function testResolveFromActivationHistoryDowngradeRequest()
     {
         $this->assertActivationDetails(
@@ -113,6 +146,9 @@ class RequestTypeDetectorTest extends EE_UnitTestCase
 
 
 
+    /**
+     * check RequestType === REACTIVATION
+     */
     public function testResolveFromActivationHistoryReActivation()
     {
         $this->assertActivationDetails(
@@ -126,6 +162,9 @@ class RequestTypeDetectorTest extends EE_UnitTestCase
 
 
 
+    /**
+     * check RequestType === UPGRADE during activation request
+     */
     public function testResolveFromActivationHistoryUpgradeActivation()
     {
         $this->assertActivationDetails(
@@ -138,6 +177,10 @@ class RequestTypeDetectorTest extends EE_UnitTestCase
     }
 
 
+
+    /**
+     * check RequestType === DOWNGRADE during activation request
+     */
     public function testResolveFromActivationHistoryDowngradeActivation()
     {
         $this->assertActivationDetails(
@@ -151,6 +194,9 @@ class RequestTypeDetectorTest extends EE_UnitTestCase
 
 
 
+    /**
+     * check RequestType === UPGRADE during non-activation request for new version
+     */
     public function testResolveFromActivationHistoryNewVersionUpgrade()
     {
         $this->assertActivationDetails(
@@ -164,6 +210,9 @@ class RequestTypeDetectorTest extends EE_UnitTestCase
 
 
 
+    /**
+     * check RequestType === DOWNGRADE during non-activation request for new version
+     */
     public function testResolveFromActivationHistoryNewVersionDowngrade()
     {
         $this->assertActivationDetails(
@@ -178,6 +227,8 @@ class RequestTypeDetectorTest extends EE_UnitTestCase
 
 
     /**
+     * Asserts RequestType instance, plus return values of isMajorVersionChange() and getRequestType()
+     *
      * @param RequestType $request_type
      * @param int         $expected_request_type
      * @param bool        $isMajorVersionChange
