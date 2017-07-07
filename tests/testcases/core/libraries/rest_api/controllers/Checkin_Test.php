@@ -24,6 +24,7 @@ class Checkin_Test extends \EE_UnitTestCase
 
 
 
+
     /*
      * we're doing stuff that we know will add error notices, so we don't care
      * if there are errors (that's part of these tests)
@@ -33,6 +34,7 @@ class Checkin_Test extends \EE_UnitTestCase
         \EE_Error::reset_notices();
         parent::tearDown();
     }
+
 
 
 
@@ -63,6 +65,7 @@ class Checkin_Test extends \EE_UnitTestCase
 
 
 
+
     public function test_handle_checkin__success()
     {
         $checkins_before = \EEM_Checkin::instance()->count();
@@ -75,6 +78,7 @@ class Checkin_Test extends \EE_UnitTestCase
         $data = $response->get_data();
         -
         $this->assertEquals($checkins_before + 1, \EEM_Checkin::instance()->count());
+
         $this->assertTrue(isset($data['CHK_ID']));
         $checkin_obj = \EEM_Checkin::instance()->get_one_by_ID($data['CHK_ID']);
         $this->assertEquals($reg->ID(), $checkin_obj->get('REG_ID'));
@@ -86,6 +90,7 @@ class Checkin_Test extends \EE_UnitTestCase
             'Y-m-d\TH:m:i+'
         );
     }
+
 
 
 
@@ -108,6 +113,7 @@ class Checkin_Test extends \EE_UnitTestCase
 
 
 
+
     //doesnt have permission
     public function test_handle_checkin__fail_no_permitted()
     {
@@ -122,6 +128,7 @@ class Checkin_Test extends \EE_UnitTestCase
         $this->assertTrue(isset($data['code']));
         $this->assertEquals('rest_user_cannot_toggle_checkin', $data['code']);
     }
+
 
 
 
@@ -160,6 +167,7 @@ class Checkin_Test extends \EE_UnitTestCase
         $this->assertTrue(isset($data['additional_errors']));
         $this->assertFalse(empty($data['additional_errors'][0]['message']));
     }
+
 
 
 
