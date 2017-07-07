@@ -1440,6 +1440,8 @@ class EEH_Activation
     protected static function _get_default_messengers_to_generate_on_activation(
         EE_Message_Resource_Manager $message_resource_manager
     ) {
+        // make sure EED_Messages is loaded because it sets the autoloaders
+        require_once EE_MODULES . 'messages' . DS . 'EED_Messages.module.php';
         $active_messengers    = $message_resource_manager->active_messengers();
         $installed_messengers = $message_resource_manager->installed_messengers();
         $has_activated        = $message_resource_manager->get_has_activated_messengers_option();
