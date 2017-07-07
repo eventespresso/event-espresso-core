@@ -27,6 +27,16 @@ class EE_NewAddonMock extends EE_Addon
     private static $addon_name = '';
 
     /**
+     * @var string $activation_indicator_option_name
+     */
+    private $activation_indicator_option_name;
+
+    /**
+     * @var string $activation_history_option_name
+     */
+    private $activation_history_option_name;
+
+    /**
      * This allows for triggering registration with specific options.
      *
      * @param string $addon_name
@@ -85,4 +95,50 @@ class EE_NewAddonMock extends EE_Addon
     {
         return self::$addon_name;
     }
+
+
+
+    /**
+     * override parent method for testing purposes
+     *
+     * @return string
+     */
+    public function get_activation_indicator_option_name()
+    {
+        return $this->activation_indicator_option_name;
+    }
+
+
+
+    /**
+     * @param string $activation_indicator_option_name
+     */
+    public function setActivationIndicatorOptionName($activation_indicator_option_name)
+    {
+        $this->activation_indicator_option_name = $activation_indicator_option_name;
+    }
+
+
+
+    /**
+     * override parent method for testing purposes
+     *
+     * @return string
+     */
+    public function get_activation_history_option_name()
+    {
+        return $this->activation_history_option_name;
+    }
+
+
+
+    /**
+     * @param string $activation_history_option_name
+     */
+    public function setActivationHistoryOptionName($activation_history_option_name)
+    {
+        $this->activation_history_option_name = $activation_history_option_name;
+    }
+
+
 }
