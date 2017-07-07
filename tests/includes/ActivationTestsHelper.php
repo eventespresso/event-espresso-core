@@ -8,7 +8,6 @@ use EventEspresso\core\services\activation\RequestType;
 use EventEspresso\tests\mocks\core\services\activation\ActivationHistoryExtendedMock;
 use EventEspresso\tests\mocks\core\services\request\RequestTypeDetectorExtendedMock;
 use InvalidArgumentException;
-use PHPUnit_Framework_TestCase;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
