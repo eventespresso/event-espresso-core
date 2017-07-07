@@ -29,7 +29,7 @@ class EE_System_Test extends EE_UnitTestCase{
 	/**
 	 * remember teh espresso_db_update's option before these tests
 	 */
-	function setUp() {
+	public function setUp() {
 		parent::setUp();
 		$this->_original_espresso_db_update = get_option('espresso_db_update');
 		$this->_original_db_state = get_option( EE_Data_Migration_Manager::current_database_state );
@@ -71,7 +71,7 @@ class EE_System_Test extends EE_UnitTestCase{
 	 * just tests the EE_System_Test::_add_to_version private method to make sure it's working
 	 * (because other tests depend on it)
 	 */
-	function test_add_to_version(){
+	public function test_add_to_version(){
 		$version = '4.3.2.alpha.001';
 		$version_to_add = '1.0.-1.1.1';
 		$new_version = $this->_add_to_version($version, $version_to_add);
@@ -80,7 +80,7 @@ class EE_System_Test extends EE_UnitTestCase{
 	/**
 	 * check things turn out as expected for NORMAL REQUEST
 	 */
-	function test_detect_activation_or_upgrade__normal(){
+	public function test_detect_activation_or_upgrade__normal(){
 		delete_option( 'ee_espresso_activation' );
 		$pretend_activation_history = array(
 			espresso_version() => array(current_time('mysql'))
@@ -99,7 +99,7 @@ class EE_System_Test extends EE_UnitTestCase{
 	/**
 	 * new activation
 	 */
-	function test_detect_activation_or_upgrade__new_install() {
+	public function test_detect_activation_or_upgrade__new_install() {
 		$this->_pretend_espresso_db_update_is(NULL);
 		//pretend the activation indicator option was set (because it's really unusual
 		//for a plugin to be activated without having WP call its activation hook)
@@ -156,7 +156,7 @@ class EE_System_Test extends EE_UnitTestCase{
 	 * tests we can detect an upgrade when the plugin is deactivated, then a new version of the plugin
 	 * is uploaded, and then activated (ie, the plugin's activation hook was fired)
 	 */
-	function test_detect_activation_or_upgrade__upgrade_upon_activation(){
+	public function test_detect_activation_or_upgrade__upgrade_upon_activation(){
 		$pretend_previous_version = $this->_add_to_version(espresso_version(),'0.-1.0.0.0');
 		$this->_pretend_espresso_db_update_is(array(
 				 $pretend_previous_version => array(current_time('mysql'))
@@ -179,7 +179,7 @@ class EE_System_Test extends EE_UnitTestCase{
 	 * tests we can detect an upgrade when the plugin files were automatically
 	 * updated (ie, the plugins' activation hook wasn't called)
 	 */
-	function test_detect_activation_or_upgrade__upgrade_upon_normal_request(){
+	public function test_detect_activation_or_upgrade__upgrade_upon_normal_request(){
 		$pretend_previous_version = $this->_add_to_version(espresso_version(),'0.-1.0.0.0');
 		$this->_pretend_espresso_db_update_is(array(
 				 $pretend_previous_version => array(current_time('mysql'))
@@ -193,7 +193,7 @@ class EE_System_Test extends EE_UnitTestCase{
 		$this->assertTimeIsAbout(current_time( 'timestamp' ), $current_activation_history[ espresso_version() ][ 0 ] );
 		$this->assertWPOptionDoesNotExist('ee_espresso_activation');
 	}
-	function test_detect_activation_or_upgrade__reactivation(){
+	public function test_detect_activation_or_upgrade__reactivation(){
 		$this->_pretend_espresso_db_update_is(array(
 				espresso_version() => array(current_time('mysql'))
 				));
@@ -207,7 +207,7 @@ class EE_System_Test extends EE_UnitTestCase{
 		$this->assertTimeIsAbout(current_time( 'timestamp' ), $current_activation_history[ espresso_version() ][ 1 ] );
 		$this->assertWPOptionDoesNotExist('ee_espresso_activation');
 	}
-	function test_detect_activation_or_upgrade__downgrade_upon_normal_request(){
+	public function test_detect_activation_or_upgrade__downgrade_upon_normal_request(){
 		$pretend_previous_version = $this->_add_to_version(espresso_version(),'0.1.0.0.0');
 		$this->_pretend_espresso_db_update_is(array(
 				 $pretend_previous_version => array(current_time('mysql'))
@@ -225,7 +225,7 @@ class EE_System_Test extends EE_UnitTestCase{
 	 * A new install would only occur on a non-activation request because the site was previously in maintenance mode
 	 *
 	 */
-	function test_detect_req_type_given_activation_history__on_normal_requests(){
+	public function test_detect_req_type_given_activation_history__on_normal_requests(){
 		$activation_history = array();
 
 		//detect brand new activation BUT we're in maintenance mode, so it will be basically ignored
@@ -261,7 +261,7 @@ class EE_System_Test extends EE_UnitTestCase{
 	 * tests that we are detecting activations correctly even when the same version has
 	 * been activated multiple times
 	 */
-	function test_detect_req_type_given_activation_history__multiple_activations(){
+	public function test_detect_req_type_given_activation_history__multiple_activations(){
 		$activation_history = array(
 			'3.1.36.5.P' => array( 'unknown-date' ),
 			'4.3.0.alpha.019' => array( '2014-06-09 18:10:35', ),
@@ -280,7 +280,7 @@ class EE_System_Test extends EE_UnitTestCase{
 	/**
 	 *
 	 */
-	function test_detect_req_type_given_activation_history__on_activation(){
+	public function test_detect_req_type_given_activation_history__on_activation(){
 		$activation_history = array();
 		update_option( 'test_activation_indicator_option', TRUE );
 
@@ -316,7 +316,7 @@ class EE_System_Test extends EE_UnitTestCase{
 	/**
 	 * @group 8154
 	 */
-	function test__new_version_is_higher(){
+	public function test__new_version_is_higher(){
 		$class = new ReflectionClass("EE_System");
 		$method = $class->getMethod("_new_version_is_higher");
 		$method->setAccessible(true);
@@ -339,13 +339,13 @@ class EE_System_Test extends EE_UnitTestCase{
 
 
 	/**
-	 * Sets the wordpress option 'espresso_db_update'
-	 * @param array $espresso_db_upgrade top-level-keys shoudl be version numbers,
+	 * Sets the WordPress option 'espresso_db_update'
+	 * @param array $espresso_db_upgrade top-level-keys should be version numbers,
 	 * and their values should be an array of mysql datetimes when that version was activated
 	 */
 	private function _pretend_espresso_db_update_is($espresso_db_upgrade){
 		if($espresso_db_upgrade === NULL){
-			delete_option('espresso_db_update',$espresso_db_upgrade);
+			delete_option('espresso_db_update' );
 		}else{
 			update_option( 'espresso_db_update',$espresso_db_upgrade );
 		}
@@ -371,7 +371,7 @@ class EE_System_Test extends EE_UnitTestCase{
 	/**
 	 * restore the epsresso_db_update option
 	 */
-	function tearDown() {
+	public function tearDown() {
 		update_option('espresso_db_update',$this->_original_espresso_db_update);
 		EE_System::reset()->detect_req_type();
 		EE_Data_Migration_Manager::reset();
