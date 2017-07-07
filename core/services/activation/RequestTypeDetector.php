@@ -1,8 +1,8 @@
 <?php
 
-namespace EventEspresso\core\services\request;
+namespace EventEspresso\core\services\activation;
 
-use EventEspresso\core\services\activation\ActivationHistory;
+use InvalidArgumentException;
 
 /**
  * Class DetectRequestType
@@ -13,39 +13,8 @@ use EventEspresso\core\services\activation\ActivationHistory;
  * @author        Michael Nelson, Brent Christensen
  * @since         4.9.40
  */
-class RequestType
+class RequestTypeDetector
 {
-
-
-    /**
-     * indicates this is a 'normal' request. Ie, not activation, nor upgrade, nor activation.
-     * So examples of this would be a normal GET request on the frontend or backend, or a POST, etc
-     */
-    const REQUEST_TYPE_NORMAL = 0;
-
-    /**
-     * Indicates this is a brand new installation of EE so we should install
-     * tables and default data etc
-     */
-    const REQUEST_TYPE_NEW_ACTIVATION = 1;
-
-    /**
-     * we've detected that EE has been reactivated (or EE was activated during maintenance mode,
-     * and we just exited maintenance mode). We MUST check the database is setup properly
-     * and that default data is setup too
-     */
-    const REQUEST_TYPE_REACTIVATION = 2;
-
-    /**
-     * indicates that EE has been upgraded since its previous request.
-     * We may have data migration scripts to call and will want to trigger maintenance mode
-     */
-    const REQUEST_TYPE_UPGRADE = 3;
-
-    /**
-     * TODO  will detect that EE has been DOWNGRADED. We probably don't want to run in this case...
-     */
-    const REQUEST_TYPE_DOWNGRADE = 4;
 
 
     /**
@@ -58,17 +27,9 @@ class RequestType
      * Stores which type of request this is, options being one of the REQUEST_TYPE_* constants above.
      * It can be a brand-new activation, a reactivation, an upgrade, a downgrade, or a normal request.
      *
-     * @var int $request_type
+     * @var RequestType $request_type
      */
-    private $request_type;
-
-
-    /**
-     * Whether or not there was a non-micro version change in EE core version during this request
-     *
-     * @var boolean
-     */
-    private $major_version_change = false;
+    protected $request_type;
 
 
 
@@ -84,35 +45,13 @@ class RequestType
 
 
 
-    /**
-     * @return ActivationHistory
-     */
-    public function getActivationHistory()
-    {
-        return $this->activation_history;
-    }
-
-
 
     /**
-     * @return int
+     * @return RequestType
      */
-    public function requestType()
+    public function getRequestType()
     {
         return $this->request_type;
-    }
-
-
-
-    /**
-     * Returns true if either the major or minor version of EE changed during this request.
-     * Eg 4.9.0.rc.001 to 4.10.0.rc.000, but not 4.9.0.rc.0001 to 4.9.1.rc.0001
-     *
-     * @return bool
-     */
-    public function isMajorVersionChange()
-    {
-        return $this->major_version_change;
     }
 
 
@@ -125,9 +64,12 @@ class RequestType
      *  (for core it's 'ee_espresso_activation');
      * and the version that this plugin was just activated to
      *  (for core that will always be espresso_version())
+     *
+     * @throws InvalidArgumentException
      */
     public function resolveFromActivationHistory() {
         $version_change = $this->versionChange();
+        // echo "\n " . 'Version Change: ' . $version_change;
         $version_history = $this->activation_history->getVersionHistory();
         if ($version_history) {
             // it exists, so this isn't a completely new install
@@ -135,40 +77,68 @@ class RequestType
             if (! isset($version_history[ $this->activation_history->getCurrentVersion() ])) {
                 // it's a version we haven't seen before
                 if ($version_change === 1) {
-                    $this->request_type = RequestType::REQUEST_TYPE_UPGRADE;
+                    $this->request_type = new RequestType(
+                        RequestType::UPGRADE,
+                        $this->detectMajorVersionChange()
+                    );
                 } else {
-                    $this->request_type = RequestType::REQUEST_TYPE_DOWNGRADE;
+                    $this->request_type = new RequestType(
+                        RequestType::DOWNGRADE,
+                        $this->detectMajorVersionChange()
+                    );
                 }
                 $this->activation_history->deleteActivationIndicator();
             } else {
                 // its not an update. maybe a reactivation?
                 if ($this->activation_history->getActivationIndicator()) {
                     if ($version_change === -1) {
-                        $this->request_type = RequestType::REQUEST_TYPE_DOWNGRADE;
+                        $this->request_type = new RequestType(
+                            RequestType::DOWNGRADE,
+                            $this->detectMajorVersionChange()
+                        );
                     } else if ($version_change === 0) {
                         // we've seen this version before, but it's an activation. must be a reactivation
-                        $this->request_type = RequestType::REQUEST_TYPE_REACTIVATION;
+                        $this->request_type = new RequestType(
+                            RequestType::REACTIVATION,
+                            $this->detectMajorVersionChange()
+                        );
                     } else {
                         // $version_change === 1
-                        $this->request_type = RequestType::REQUEST_TYPE_UPGRADE;
+                        $this->request_type = new RequestType(
+                            RequestType::UPGRADE,
+                            $this->detectMajorVersionChange()
+                        );
                     }
                     $this->activation_history->deleteActivationIndicator();
                 } else {
+
                     //we've seen this version before and the activation indicate doesn't show it was just activated
                     if ($version_change === -1) {
-                        $this->request_type = RequestType::REQUEST_TYPE_DOWNGRADE;
+                        $this->request_type = new RequestType(
+                            RequestType::DOWNGRADE,
+                            $this->detectMajorVersionChange()
+                        );
                     } else if ($version_change === 0) {
                         //we've seen this version before and it's not an activation. its normal request
-                        $this->request_type = RequestType::REQUEST_TYPE_NORMAL;
+                        $this->request_type = new RequestType(
+                            RequestType::NORMAL,
+                            $this->detectMajorVersionChange()
+                        );
                     } else {
                         //$version_change === 1
-                        $this->request_type = RequestType::REQUEST_TYPE_UPGRADE;
+                        $this->request_type = new RequestType(
+                            RequestType::UPGRADE,
+                            $this->detectMajorVersionChange()
+                        );
                     }
                 }
             }
         } else {
             //brand new install
-            $this->request_type = RequestType::REQUEST_TYPE_NEW_ACTIVATION;
+            $this->request_type = new RequestType(
+                RequestType::NEW_ACTIVATION,
+                $this->detectMajorVersionChange()
+            );
             $this->activation_history->deleteActivationIndicator();
         }
     }
@@ -198,13 +168,15 @@ class RequestType
      * Returns whether or not there was a non-micro version change (ie, change in either
      * the first or second number in the version. Eg 4.9.0.rc.001 to 4.10.0.rc.000,
      * but not 4.9.0.rc.0001 to 4.9.1.rc.0001
+     *
+     * @return boolean
      */
-    public function detectMajorVersionChange()
+    private function detectMajorVersionChange()
     {
         $previous_version = $this->activation_history->getMostRecentActiveVersion();
         $previous_version_parts = explode('.', $previous_version);
         $current_version_parts = explode('.', $this->activation_history->getCurrentVersion());
-        $this->major_version_change = isset(
+        return isset(
             $previous_version_parts[0],
             $previous_version_parts[1],
             $current_version_parts[0],
