@@ -118,7 +118,7 @@ class EE_Dependency_Map
      * @param ClassInterfaceCache|null $class_cache
      * @return EE_Dependency_Map
      */
-    public static function instance(ClassInterfaceCache $class_cache = null)
+    public static function instance(ClassInterfaceCache $class_cache = null): EE_Dependency_Map
     {
         // check if class object is instantiated, and instantiated properly
         if (
@@ -174,10 +174,10 @@ class EE_Dependency_Map
      * @return bool
      */
     public static function register_dependencies(
-        $class,
+        string $class,
         array $dependencies,
-        $overwrite = EE_Dependency_Map::KEEP_EXISTING_DEPENDENCIES
-    ) {
+        int $overwrite = EE_Dependency_Map::KEEP_EXISTING_DEPENDENCIES
+    ): bool {
         return self::$_instance->registerDependencies($class, $dependencies, $overwrite);
     }
 
@@ -197,10 +197,10 @@ class EE_Dependency_Map
      * @return bool
      */
     public function registerDependencies(
-        $class,
+        string $class,
         array $dependencies,
-        $overwrite = EE_Dependency_Map::KEEP_EXISTING_DEPENDENCIES
-    ) {
+        int $overwrite = EE_Dependency_Map::KEEP_EXISTING_DEPENDENCIES
+    ): bool {
         $class      = trim($class, '\\');
         $registered = false;
         if (empty(self::$_instance->_dependency_map[ $class ])) {
@@ -247,8 +247,11 @@ class EE_Dependency_Map
      * @return bool
      * @throws DomainException
      */
-    public static function register_class_loader($class_name, $loader = 'load_core', $overwrite = false)
-    {
+    public static function register_class_loader(
+        string $class_name,
+        string $loader = 'load_core',
+        bool $overwrite = false
+    ): bool {
         if (! $loader instanceof Closure && strpos($class_name, '\\') !== false) {
             throw new DomainException(
                 esc_html__('Don\'t use class loaders for FQCNs.', 'event_espresso')
@@ -284,7 +287,7 @@ class EE_Dependency_Map
     /**
      * @return array
      */
-    public function dependency_map()
+    public function dependency_map(): array
     {
         return $this->_dependency_map;
     }
@@ -296,7 +299,7 @@ class EE_Dependency_Map
      * @param string $class_name
      * @return boolean
      */
-    public function has($class_name = '')
+    public function has(string $class_name = ''): bool
     {
         // all legacy models have the same dependencies
         if (strpos($class_name, 'EEM_') === 0) {
@@ -313,7 +316,7 @@ class EE_Dependency_Map
      * @param string $dependency
      * @return bool
      */
-    public function has_dependency_for_class($class_name = '', $dependency = '')
+    public function has_dependency_for_class(string $class_name = '', string $dependency = ''): bool
     {
         // all legacy models have the same dependencies
         if (strpos($class_name, 'EEM_') === 0) {
@@ -331,7 +334,7 @@ class EE_Dependency_Map
      * @param string $dependency
      * @return int
      */
-    public function loading_strategy_for_class_dependency($class_name = '', $dependency = '')
+    public function loading_strategy_for_class_dependency(string $class_name = '', string $dependency = ''): int
     {
         // all legacy models have the same dependencies
         if (strpos($class_name, 'EEM_') === 0) {
@@ -348,7 +351,7 @@ class EE_Dependency_Map
      * @param string $class_name
      * @return string | Closure
      */
-    public function class_loader($class_name)
+    public function class_loader(string $class_name)
     {
         // all legacy models use load_model()
         if (strpos($class_name, 'EEM_') === 0) {
@@ -363,14 +366,14 @@ class EE_Dependency_Map
             return 'load_core';
         }
         $class_name = $this->getFqnForAlias($class_name);
-        return isset($this->_class_loaders[ $class_name ]) ? $this->_class_loaders[ $class_name ] : '';
+        return $this->_class_loaders[ $class_name ] ?? '';
     }
 
 
     /**
      * @return array
      */
-    public function class_loaders()
+    public function class_loaders(): array
     {
         return $this->_class_loaders;
     }
@@ -383,7 +386,7 @@ class EE_Dependency_Map
      * @param string $alias     the class name that would be type hinted for (abstract parent or interface)
      * @param string $for_class the class that has the dependency (is type hinting for the interface)
      */
-    public function add_alias($fqcn, $alias, $for_class = '')
+    public function add_alias(string $fqcn, string $alias, string $for_class = '')
     {
         $this->class_cache->addAlias($fqcn, $alias, $for_class);
     }
@@ -407,7 +410,7 @@ class EE_Dependency_Map
      * @param string $for_class
      * @return bool
      */
-    public function isAlias($fqn = '', $for_class = '')
+    public function isAlias(string $fqn = '', string $for_class = ''): bool
     {
         return $this->class_cache->isAlias($fqn, $for_class);
     }
@@ -429,7 +432,7 @@ class EE_Dependency_Map
      * @param string $for_class
      * @return string
      */
-    public function getFqnForAlias($alias = '', $for_class = '')
+    public function getFqnForAlias(string $alias = '', string $for_class = ''): string
     {
         return $this->class_cache->getFqnForAlias($alias, $for_class);
     }
@@ -920,6 +923,28 @@ class EE_Dependency_Map
                 'EventEspresso\core\services\shortcodes\LegacyShortcodesManager' => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\request\CurrentPage'                => EE_Dependency_Map::load_from_cache,
             ],
+            'EventEspresso\core\services\activation\ActivationsAndUpgradesManager'                                        => [
+                null,
+                'EventEspresso\core\services\loaders\Loader' => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\services\activation\ActivationHandler'                                                    => [
+                null,
+                null,
+                null,
+                'EE_Maintenance_Mode' => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\services\activation\InitializeCore'                                                       => [
+                null,
+                'EE_Capabilities'           => EE_Dependency_Map::load_from_cache,
+                'EE_Data_Migration_Manager' => EE_Dependency_Map::load_from_cache,
+                'EE_Maintenance_Mode'       => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\services\activation\InitializeAddon'                                                      => [
+                null,
+                'EE_Data_Migration_Manager' => EE_Dependency_Map::load_from_cache,
+                'EE_Maintenance_Mode'       => EE_Dependency_Map::load_from_cache,
+                'EE_Registry'               => EE_Dependency_Map::load_from_cache,
+            ],
         ];
     }
 
@@ -1160,7 +1185,7 @@ class EE_Dependency_Map
      * @return bool
      * @deprecated 4.9.62.p
      */
-    public function has_alias($fqn = '', $for_class = '')
+    public function has_alias(string $fqn = '', string $for_class = ''): bool
     {
         return $this->isAlias($fqn, $for_class);
     }
@@ -1184,7 +1209,7 @@ class EE_Dependency_Map
      * @return string
      * @deprecated 4.9.62.p
      */
-    public function get_alias($alias = '', $for_class = '')
+    public function get_alias(string $alias = '', string $for_class = ''): string
     {
         return $this->getFqnForAlias($alias, $for_class);
     }
