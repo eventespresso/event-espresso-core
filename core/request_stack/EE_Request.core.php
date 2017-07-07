@@ -1,8 +1,6 @@
-<?php use EventEspresso\core\services\request\RequestType;
+<?php
 
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
+defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 
 
 
@@ -12,62 +10,58 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) {
  * @package         Event Espresso
  * @subpackage      /core/
  * @author          Brent Christensen
- *                  ------------------------------------------------------------------------
  */
 class EE_Request
 {
 
     /**
-     * @access private
-     * @var    array $_get $_GET parameters
+     *  $_GET parameters
+     *
+     * @var array $_get
      */
-    private $_get = array();
+    private $_get;
 
     /**
-     * @access private
-     * @var    array $_post $_POST parameters
+     * $_POST parameters
+     *
+     * @var array $_post
      */
-    private $_post = array();
+    private $_post;
 
     /**
-     * @access private
-     * @var    array $_cookie $_COOKIE parameters
+     * $_COOKIE parameters
+     *
+     * @var array $_cookie
      */
-    private $_cookie = array();
+    private $_cookie;
 
     /**
-     * @access private
-     * @var    array $_params $_REQUEST parameters
+     * $_REQUEST parameters
+     *
+     * @var array $_params
      */
-    private $_params = array();
+    private $_params;
 
     /**
      * whether current request is via AJAX
      *
-     * @var    boolean
-     * @access public
+     * @var boolean $ajax
      */
-    public $ajax = false;
+    public $ajax;
 
     /**
      * whether current request is via AJAX from the frontend of the site
      *
-     * @var    boolean
-     * @access public
+     * @var boolean $front_ajax
      */
-    public $front_ajax = false;
+    public $front_ajax;
 
     /**
      * IP address for request
      *
      * @var string $_ip_address
      */
-    private $_ip_address = '';
-
-    /**
-     * @var RequestType $request_type
-     */
-    private $request_type;
+    private $_ip_address;
 
 
     /**
@@ -86,7 +80,7 @@ class EE_Request
         $this->_cookie = (array)$cookie;
         $this->_params = array_merge($this->_get, $this->_post);
         // AJAX ???
-        $this->ajax = defined('DOING_AJAX') ? true : false;
+        $this->ajax = defined('DOING_AJAX') && DOING_AJAX;
         $this->front_ajax = $this->is_set('ee_front_ajax') && (int)$this->get('ee_front_ajax') === 1;
         // grab user IP
         $this->_ip_address = $this->_visitor_ip();
@@ -247,21 +241,6 @@ class EE_Request
         return $visitor_ip;
     }
 
-    /**
-     * @return RequestType
-     */
-    public function getRequestType()
-    {
-        return $this->request_type;
-    }
-
-    /**
-     * @param RequestType $request_type
-     */
-    public function setRequestType(RequestType $request_type)
-    {
-        $this->request_type = $request_type;
-    }
 
 
 
