@@ -1,9 +1,11 @@
 <?php
 use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
 use EventEspresso\core\exceptions\InvalidEntityException;
+use EventEspresso\core\services\activation\ActivatableInterface;
+use EventEspresso\core\services\activation\ActivationHistory;
 use EventEspresso\core\services\activation\ActivationsAndUpgradesManager;
-use EventEspresso\core\services\request\RequestType;
 use EventEspresso\core\services\loaders\LoaderInterface;
+use EventEspresso\core\services\activation\RequestType;
 use EventEspresso\core\services\shortcodes\ShortcodesManager;
 
 
@@ -18,37 +20,37 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
  * @subpackage     core/
  * @author         Brent Christensen, Michael Nelson
  */
-final class EE_System
+final class EE_System implements ActivatableInterface
 {
 
 
     /**
      * @deprecated 4.9.40
-     * @see        \EventEspresso\core\services\request\RequestType
+     * @see        \EventEspresso\core\services\activation\RequestTypeDetector
      */
     const req_type_normal = 0;
 
     /**
      * @deprecated 4.9.40
-     * @see        \EventEspresso\core\services\request\RequestType
+     * @see        \EventEspresso\core\services\activation\RequestTypeDetector
      */
     const req_type_new_activation = 1;
 
     /**
      * @deprecated 4.9.40
-     * @see        \EventEspresso\core\services\request\RequestType
+     * @see        \EventEspresso\core\services\activation\RequestTypeDetector
      */
     const req_type_reactivation = 2;
 
     /**
      * @deprecated 4.9.40
-     * @see        \EventEspresso\core\services\request\RequestType
+     * @see        \EventEspresso\core\services\activation\RequestTypeDetector
      */
     const req_type_upgrade = 3;
 
     /**
      * @deprecated 4.9.40
-     * @see        \EventEspresso\core\services\request\RequestType
+     * @see        \EventEspresso\core\services\activation\RequestTypeDetector
      */
     const req_type_downgrade = 4;
 
@@ -65,7 +67,7 @@ final class EE_System
 
     /**
      * @deprecated 4.9.40
-     * @see        \EventEspresso\core\services\request\RequestType
+     * @see        \EventEspresso\core\services\activation\RequestTypeDetector
      */
     const addon_activation_history_option_prefix = 'ee_addon_activation_history_';
 
@@ -91,11 +93,6 @@ final class EE_System
     private $capabilities;
 
     /**
-     * @var EE_Request $request
-     */
-    private $request;
-
-    /**
      * @var EE_Maintenance_Mode $maintenance_mode
      */
     private $maintenance_mode;
@@ -105,27 +102,42 @@ final class EE_System
      */
     private $activations_and_upgrades_manager;
 
+    /**
+     * @var ActivationHistory $activation_history
+     */
+    private $activation_history;
+
+    /**
+     * @var \EventEspresso\core\services\activation\RequestType $request_type
+     */
+    private $request_type;
+
+    /**
+     * @var bool $activation_detected
+     */
+    private $activation_detected = false;
+
 
 
     /**
      * @singleton method used to instantiate class object
      * @param EE_Registry|null         $registry
      * @param LoaderInterface|null     $loader
-     * @param EE_Capabilities|null     $capabilities
-     * @param EE_Request|null          $request
      * @param EE_Maintenance_Mode|null $maintenance_mode
      * @return EE_System
      */
     public static function instance(
         EE_Registry $registry = null,
         LoaderInterface $loader = null,
-        EE_Capabilities $capabilities = null,
-        EE_Request $request = null,
         EE_Maintenance_Mode $maintenance_mode = null
     ) {
         // check if class object is instantiated
         if (! self::$_instance instanceof EE_System) {
-            self::$_instance = new self($registry, $loader, $capabilities, $request, $maintenance_mode);
+            self::$_instance = new self(
+                $registry,
+                $loader,
+                $maintenance_mode
+            );
         }
         return self::$_instance;
     }
@@ -136,7 +148,9 @@ final class EE_System
      * resets the instance and returns it
      *
      * @return EE_System
+     * @throws DomainException
      * @throws InvalidArgumentException
+     * @throws InvalidEntityException
      */
     public static function reset()
     {
@@ -158,21 +172,15 @@ final class EE_System
      *
      * @param EE_Registry         $registry
      * @param LoaderInterface     $loader
-     * @param EE_Capabilities     $capabilities
-     * @param EE_Request          $request
      * @param EE_Maintenance_Mode $maintenance_mode
      */
     private function __construct(
         EE_Registry $registry,
         LoaderInterface $loader,
-        EE_Capabilities $capabilities,
-        EE_Request $request,
         EE_Maintenance_Mode $maintenance_mode
     ) {
         $this->registry = $registry;
         $this->loader = $loader;
-        $this->capabilities = $capabilities;
-        $this->request = $request;
         $this->maintenance_mode = $maintenance_mode;
         do_action('AHEE__EE_System__construct__begin', $this);
         // allow addons to load first so that they can register autoloaders, set hooks for running DMS's, etc
@@ -205,6 +213,46 @@ final class EE_System
 
 
     /**
+     * Gets the ActivationHistory object for this addon
+     *
+     * @return ActivationHistory
+     */
+    public function getActivationHistory()
+    {
+        return $this->activation_history;
+    }
+
+
+
+    /**
+     * @param ActivationHistory $activation_history
+     */
+    public function setActivationHistory(ActivationHistory $activation_history)
+    {
+        $this->activation_history = $activation_history;
+    }
+
+
+
+    /**
+     * @return RequestType
+     */
+    public function getRequestType()
+    {
+        return $this->request_type;
+    }
+
+
+
+    /**
+     * @param RequestType $request_type
+     */
+    public function setRequestType(RequestType $request_type)
+    {
+        $this->request_type = $request_type;
+    }
+
+    /**
      * load_espresso_addons
      * allow addons to load first so that they can set hooks for running DMS's, etc
      * this is hooked into both:
@@ -222,6 +270,7 @@ final class EE_System
         EEH_Autoloader::instance()->register_autoloaders_for_each_file_in_folder(EE_LIBRARIES . 'plugin_api');
         //caps need to be initialized on every request so that capability maps are set.
         //@see https://events.codebasehq.com/projects/event-espresso/tickets/8674
+        $this->capabilities = $this->loader->getShared('EE_Capabilities');
         $this->capabilities->init_caps();
         do_action('AHEE__EE_System__load_espresso_addons');
         //if the WP API basic auth plugin isn't already loaded, load it now.
@@ -256,113 +305,29 @@ final class EE_System
      * which runs during the WP 'plugins_loaded' action at priority 3
      *
      * @return void
+     * @throws DomainException
      * @throws InvalidArgumentException
      * @throws InvalidEntityException
      */
     public function detect_activations_or_upgrades()
     {
-        $this->activations_and_upgrades_manager = new ActivationsAndUpgradesManager(
-            $this,
-            $this->request->getRequestType()->getActivationHistory(),
-            $this->request->getRequestType(),
-            $this->maintenance_mode,
-            get_object_vars($this->registry->addons)
+        if(
+            (defined('DOING_AJAX') && DOING_AJAX)
+            || (defined('REST_REQUEST') && REST_REQUEST)
+        ) {
+            return;
+        }
+        // \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
+        $this->activations_and_upgrades_manager = $this->loader->getShared(
+            'EventEspresso\core\services\activation\ActivationsAndUpgradesManager',
+            array(
+                array_merge(
+                    array($this),
+                    get_object_vars($this->registry->addons)
+                )
+            )
         );
-        $this->activations_and_upgrades_manager->detectActivationsAndUpgrades();
-    }
-
-
-
-    /**
-     * Does the traditional work of setting up the plugin's database and adding default data.
-     * If migration script/process did not exist, this is what would happen on every activation/reactivation/upgrade.
-     * NOTE: if we're in maintenance mode (which would be the case if we detect there are data
-     * migration scripts that need to be run and a version change happens), enqueues core for database initialization,
-     * so that it will be done when migrations are finished
-     *
-     * @param boolean $initialize_addons_too if true, we double-check addons' database tables etc too;
-     * @param boolean $verify_schema         if true will re-check the database tables have the correct schema.
-     *                                       This is a resource-intensive job
-     *                                       so we prefer to only do it when necessary
-     * @return void
-     * @throws EE_Error
-     */
-    public function initialize_db_if_no_migrations_required($initialize_addons_too = false, $verify_schema = true)
-    {
-        $request_type = $this->request->getRequestType()->requestType();
-        //only initialize system if we're not in maintenance mode.
-        if ($this->maintenance_mode->level() !== EE_Maintenance_Mode::level_2_complete_maintenance) {
-            update_option('ee_flush_rewrite_rules', true);
-            if ($verify_schema) {
-                EEH_Activation::initialize_db_and_folders();
-            }
-            EEH_Activation::initialize_db_content();
-            EEH_Activation::system_initialization();
-            if ($initialize_addons_too) {
-                $this->initialize_addons();
-            }
-        } else {
-            EE_Data_Migration_Manager::instance()->enqueue_db_initialization_for('Core');
-        }
-        if ($request_type === RequestType::REQUEST_TYPE_NEW_ACTIVATION
-            || $request_type === RequestType::REQUEST_TYPE_REACTIVATION
-            || (
-                $request_type === RequestType::REQUEST_TYPE_UPGRADE
-                && $this->request->getRequestType()->isMajorVersionChange()
-            )
-        ) {
-            add_action('AHEE__EE_System__initialize_last', array($this, 'redirect_to_about_ee'), 9);
-        }
-    }
-
-
-
-    /**
-     * Initializes the db for all registered addons
-     *
-     * @throws EE_Error
-     */
-    public function initialize_addons()
-    {
-        //foreach registered addon, make sure its db is up-to-date too
-        foreach ($this->registry->addons as $addon) {
-            if ($addon instanceof EE_Addon) {
-                $addon->initialize_db_if_no_migrations_required();
-            }
-        }
-    }
-
-
-
-    /**
-     * This redirects to the about EE page after activation
-     *
-     * @return void
-     */
-    public function redirect_to_about_ee()
-    {
-        $notices = EE_Error::get_notices(false);
-        //if current user is an admin and it's not an ajax or rest request
-        if (
-            ! (defined('DOING_AJAX') && DOING_AJAX)
-            && ! (defined('REST_REQUEST') && REST_REQUEST)
-            && ! isset($notices['errors'])
-            && apply_filters(
-                'FHEE__EE_System__redirect_to_about_ee__do_redirect',
-                $this->capabilities->current_user_can('manage_options', 'espresso_about_default')
-            )
-        ) {
-            $query_params = array('page' => 'espresso_about');
-            $request_type = $this->request->getRequestType()->requestType();
-            if ($request_type === RequestType::REQUEST_TYPE_NEW_ACTIVATION) {
-                $query_params['new_activation'] = true;
-            } else if ($request_type === RequestType::REQUEST_TYPE_REACTIVATION) {
-                $query_params['reactivation'] = true;
-            }
-            $url = add_query_arg($query_params, admin_url('admin.php'));
-            wp_safe_redirect($url);
-            exit();
-        }
+        $this->activation_detected = $this->activations_and_upgrades_manager->detectActivationsAndUpgrades();
     }
 
 
@@ -443,7 +408,11 @@ final class EE_System
      */
     private function _maybe_brew_regular()
     {
-        if ((! defined('EE_DECAF') || EE_DECAF !== true) && is_readable(EE_CAFF_PATH . 'brewing_regular.php')) {
+        if (
+            ! $this->activation_detected
+            && (! defined('EE_DECAF') || EE_DECAF !== true)
+            && is_readable(EE_CAFF_PATH . 'brewing_regular.php')
+        ) {
             require_once EE_CAFF_PATH . 'brewing_regular.php';
         }
     }
@@ -461,6 +430,14 @@ final class EE_System
      */
     public function register_shortcodes_modules_and_widgets()
     {
+        if ($this->activation_detected) {
+            return;
+        }
+        // check for addons using old hook point
+        if (has_action('AHEE__EE_System__register_shortcodes_modules_and_addons')) {
+            $this->_incompatible_addon_error();
+        }
+        do_action('AHEE__EE_System__register_shortcodes_modules_and_widgets');
         try {
             // load, register, and add shortcodes the new way
             new ShortcodesManager(
@@ -469,11 +446,6 @@ final class EE_System
             );
         } catch (Exception $exception) {
             new ExceptionStackTraceDisplay($exception);
-        }
-        do_action('AHEE__EE_System__register_shortcodes_modules_and_widgets');
-        // check for addons using old hook point
-        if (has_action('AHEE__EE_System__register_shortcodes_modules_and_addons')) {
-            $this->_incompatible_addon_error();
         }
     }
 
@@ -528,6 +500,10 @@ final class EE_System
      */
     public function brew_espresso()
     {
+        if ($this->activation_detected) {
+            add_action('init', array($this, 'perform_activations_upgrades_and_migrations'), 3);
+            return;
+        }
         do_action('AHEE__EE_System__brew_espresso__begin', $this);
         // load some final core systems
         add_action('init', array($this, 'set_hooks_for_core'), 1);
@@ -554,30 +530,20 @@ final class EE_System
      */
     public function set_hooks_for_core()
     {
-        $this->_deactivate_incompatible_addons();
         do_action('AHEE__EE_System__set_hooks_for_core');
     }
 
 
 
     /**
-     * Using the information gathered in EE_System::_incompatible_addon_error,
-     * deactivates any addons considered incompatible with the current version of EE
+     *    perform_activations_upgrades_and_migrations
+     *
+     * @access public
+     * @return    void
      */
-    private function _deactivate_incompatible_addons()
+    public function perform_activations_upgrades_and_migrations()
     {
-        $incompatible_addons = get_option('ee_incompatible_addons', array());
-        if (! empty($incompatible_addons)) {
-            $active_plugins = get_option('active_plugins', array());
-            foreach ($active_plugins as $active_plugin) {
-                foreach ($incompatible_addons as $incompatible_addon) {
-                    if (strpos($active_plugin, $incompatible_addon) !== false) {
-                        unset($_GET['activate']);
-                        espresso_deactivate_plugin($active_plugin);
-                    }
-                }
-            }
-        }
+        do_action('AHEE__EE_System__perform_activations_upgrades_and_migrations');
     }
 
 
@@ -794,7 +760,7 @@ final class EE_System
      */
     public function detect_req_type($espresso_db_update = null)
     {
-        return $this->request->getRequestType()->requestType();
+        return $this->getRequestType()->getRequestType();
     }
 
 
@@ -805,7 +771,7 @@ final class EE_System
      */
     public function is_major_version_change()
     {
-        return $this->request->getRequestType()->isMajorVersionChange();
+        return $this->getRequestType()->isMajorVersionChange();
     }
 
 
@@ -822,7 +788,30 @@ final class EE_System
         $activation_indicator_option_name,
         $version_to_upgrade_to
     ) {
-        return EE_System::instance()->request->getRequestType()->requestType();
+        return EE_System::instance()->getRequestType()->getRequestType();
+    }
+
+
+
+    /**
+     * @deprecated 4.9.40
+     * @param boolean $initialize_addons_too
+     * @param boolean $verify_schema
+     * @return void
+     * @throws EE_Error
+     */
+    public function initialize_db_if_no_migrations_required($initialize_addons_too = false, $verify_schema = true)
+    {
+    }
+
+
+
+    /**
+     * @deprecated 4.9.40
+     * @throws EE_Error
+     */
+    public function initialize_addons()
+    {
     }
 
 
@@ -831,7 +820,7 @@ final class EE_System
      * @deprecated 4.9.40
      * @return void
      */
-    public function perform_activations_upgrades_and_migrations()
+    public function redirect_to_about_ee()
     {
     }
 
