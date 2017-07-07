@@ -50,6 +50,8 @@
 		<li><?php  printf( esc_html__('First, click the button below to permanently delete all Event Espresso tables, records, and options from your WordPress database . If you receive a "500 Internal Server Error" or a blank white screen, it means the server has timed out due to the large number of records being updated. This is not a cause for concern. Simply %1$srefresh the page%2$s and the Database Update will continue where it left off.', 'event_espresso'), '<strong>', '</strong>' );?></li>
 		<li><?php printf( esc_html__('Then, locate Event Espresso on the WordPress Plugins page, and click on %sDelete%s', 'event_espresso'), '<strong>', '</strong>' ); ?></li>
         <li><?php printf( esc_html__('Once you are on the Delete Plugin page, click on %sYes, Delete these files and data%s', 'event_espresso'), '<strong>', '</strong>' ); ?></li>
+		<li><?php printf( esc_html__('Note: Event Espresso 4 categories are %snot%s deleted by this script', 'event_espresso'), '<strong>', '</strong>' ); ?>
+		<br><a href="<?php echo admin_url('edit-tags.php?taxonomy=espresso_event_categories'); ?>"><?php esc_html_e('You can go here to delete Event Espresso categories', 'event_espresso'); ?></a></li>
 	</ol>
 	<div class="float-right"><a href="<?php echo $delete_db_url; ?>" id="delete-all-data-btn" class="button-primary"><?php esc_html_e('Permanently Delete All Event Espresso Data', 'event_espresso');?></a></div>
 	<div class="clear"></div>
