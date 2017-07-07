@@ -1,4 +1,5 @@
 <?php
+use EventEspresso\core\services\activation\ActivationHistory;
 
 if (!defined('EVENT_ESPRESSO_VERSION')) {
 	exit('No direct script access allowed');
@@ -90,14 +91,19 @@ class EE_Addon_Test extends EE_UnitTestCase{
 	}
 
 	public function test_update_list_of_installed_versions(){
-		$initial_activation_history = $this->_addon->get_activation_history();
-		$this->assertEmpty( $initial_activation_history );
+		// $initial_activation_history = $this->_addon->get_activation_history();
+		$addon_activation_history = new ActivationHistory(
+            $this->_addon->get_activation_history_option_name(),
+            $this->_addon->get_activation_indicator_option_name(),
+            $this->_addon->version()
+        );
+		$this->assertEmpty($addon_activation_history->getVersionHistory() );
 		$now_string =  substr( date( 'Y-m-d H:i:s', time() ), 0, -1);
 		//now update the list
-		$this->_addon->update_list_of_installed_versions( $initial_activation_history, '2.0.0' );
+        $addon_activation_history->updateActivationHistory(null, '2.0.0');
 		//now let's try adding more to it
-		$this->_addon->update_list_of_installed_versions( $initial_activation_history, '3.0.0' );
-		$new_activation_history = $this->_addon->get_activation_history();
+        $addon_activation_history->updateActivationHistory(null, '3.0.0');
+        $new_activation_history = $this->_addon->get_activation_history();
 		$version_number = key($new_activation_history);
 		$times_installed = array_shift($new_activation_history);
 		$this->assertEquals('2.0.0',$version_number);
@@ -123,9 +129,4 @@ class EE_Addon_Test extends EE_UnitTestCase{
 	public function test_get_main_plugin_file_dirname(){
 		$this->assertEquals( dirname($this->_main_file_path ), $this->_addon->get_main_plugin_file_dirname() );
 	}
-
-
-
 }
-
-// End of file EE_Addon_Test.php
