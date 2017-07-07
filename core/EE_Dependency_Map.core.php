@@ -229,7 +229,7 @@ class EE_Dependency_Map
      */
     public static function register_class_loader($class_name, $loader = 'load_core')
     {
-        if (strpos($class_name, '\\') !== false) {
+        if (! $loader instanceof Closure && strpos($class_name, '\\') !== false) {
             throw new DomainException(
                 esc_html__('Don\'t use class loaders for FQCNs.', 'event_espresso')
             );
@@ -428,8 +428,6 @@ class EE_Dependency_Map
             'EE_System'                                                                                                   => array(
                 'EE_Registry'                                => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\loaders\Loader' => EE_Dependency_Map::load_from_cache,
-                'EE_Capabilities'                            => EE_Dependency_Map::load_from_cache,
-                'EE_Request'                                 => EE_Dependency_Map::load_from_cache,
                 'EE_Maintenance_Mode'                        => EE_Dependency_Map::load_from_cache,
             ),
             'EE_Session'                                                                                                  => array(
@@ -602,8 +600,30 @@ class EE_Dependency_Map
             'EventEspresso\core\services\cache\BasicCacheManager'                                                         => array(
                 'EventEspresso\core\services\cache\TransientCacheStorage' => EE_Dependency_Map::load_from_cache,
             ),
-            'EventEspresso\core\services\cache\PostRelatedCacheManager'                                                   => array(
+            'EventEspresso\core\services\cache\PostRelatedCacheManager'            => array(
                 'EventEspresso\core\services\cache\TransientCacheStorage' => EE_Dependency_Map::load_from_cache,
+            ),
+            'EventEspresso\core\services\activation\ActivationsAndUpgradesManager' => array(
+                null,
+                'EventEspresso\core\services\loaders\Loader' => EE_Dependency_Map::load_from_cache,
+            ),
+            'EventEspresso\core\services\activation\ActivationHandler'             => array(
+                null,
+                null,
+                null,
+                'EE_Maintenance_Mode' => EE_Dependency_Map::load_from_cache,
+            ),
+            'EventEspresso\core\services\activation\InitializeCore'                => array(
+                null,
+                'EE_Capabilities'           => EE_Dependency_Map::load_from_cache,
+                'EE_Data_Migration_Manager' => EE_Dependency_Map::load_from_cache,
+                'EE_Maintenance_Mode'       => EE_Dependency_Map::load_from_cache,
+            ),
+            'EventEspresso\core\services\activation\InitializeAddon' => array(
+                null,
+                'EE_Data_Migration_Manager' => EE_Dependency_Map::load_from_cache,
+                'EE_Maintenance_Mode'       => EE_Dependency_Map::load_from_cache,
+                'EE_Registry'               => EE_Dependency_Map::load_from_cache,
             ),
         );
     }
@@ -635,7 +655,6 @@ class EE_Dependency_Map
         $loader = &$this->loader;
         $this->_class_loaders = array(
             //load_core
-            'EE_Maintenance_Mode'                  => 'load_core',
             'EE_Capabilities'                      => 'load_core',
             'EE_Encryption'                        => 'load_core',
             'EE_Front_Controller'                  => 'load_core',
@@ -653,6 +672,7 @@ class EE_Dependency_Map
             'EE_Maintenance_Mode'                  => 'load_core',
             'EE_Register_CPTs'                     => 'load_core',
             'EE_Admin'                             => 'load_core',
+            'EE_Data_Migration_Manager'            => 'load_core',
             //load_lib
             'EE_Message_Resource_Manager'          => 'load_lib',
             'EE_Message_Type_Collection'           => 'load_lib',
