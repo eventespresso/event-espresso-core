@@ -646,8 +646,13 @@ class Maintenance_Admin_Page extends EE_Admin_Page
         // make sure when we reset the registry's config that it
         // switches to using the new singleton
         EE_Registry::instance()->CFG = EE_Registry::instance()->CFG->reset(true);
-        EE_System::instance()->initialize_db_if_no_migrations_required(true);
-        EE_System::instance()->redirect_to_about_ee();
+        /** @var EventEspresso\core\services\activation\InitializeCore $initialize_core */
+        $initialize_core = EE_Registry::instance()->create(
+            'EventEspresso\core\services\activation\InitializeCore',
+            array(true)
+        );
+        $initialize_core->initialize();
+        $initialize_core->redirectToAboutPage();
     }
 
 
