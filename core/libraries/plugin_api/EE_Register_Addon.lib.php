@@ -267,7 +267,7 @@ class EE_Register_Addon implements EEI_Plugin_API
         \EE_Register_Addon::_register_payment_methods($addon_name);
         // load and instantiate main addon class
         $addon = \EE_Register_Addon::_load_and_init_addon_class($addon_name);
-        $addon->after_registration();
+        add_action('AHEE__EE_System__set_hooks_for_core', array($addon, 'after_registration'));
     }
 
 
@@ -614,9 +614,10 @@ class EE_Register_Addon implements EEI_Plugin_API
             //(as the newly-activated addon wasn't around the first time addons were registered).
             //Note: the presence of pue_options in the addon registration options will initialize the $_settings
             //property for the add-on, but the add-on is only partially initialized.  Hence, the additional check.
-            if (! isset(self::$_settings[$addon_name])
-                || (isset(self::$_settings[$addon_name])
-                    && ! isset(self::$_settings[$addon_name]['class_name'])
+            if (
+                ! isset(self::$_settings[$addon_name])
+                || (
+                    isset(self::$_settings[$addon_name]) && ! isset(self::$_settings[$addon_name]['class_name'])
                 )
             ) {
                 self::$_settings[$addon_name] = $addon_settings;
@@ -626,30 +627,29 @@ class EE_Register_Addon implements EEI_Plugin_API
                 // we know it was just activated and the request will end soon
             }
             return true;
-        } else {
-            // make sure this was called in the right place!
-            if (
-                ! did_action('AHEE__EE_System__load_espresso_addons')
-                || did_action('AHEE__EE_System___detect_if_activation_or_upgrade__begin')
-            ) {
-                EE_Error::doing_it_wrong(
-                    __METHOD__,
-                    sprintf(
-                        __(
-                            'An attempt to register an EE_Addon named "%s" has failed because it was not registered at the correct time.  Please use the "AHEE__EE_System__load_espresso_addons" hook to register addons.',
-                            'event_espresso'
-                        ),
-                        $addon_name
+        }
+        // make sure this was called in the right place!
+        if (
+            ! did_action('AHEE__EE_System__load_espresso_addons')
+            || has_filter('AHEE__EE_System__perform_activations_upgrades_and_migrations')
+        ) {
+            EE_Error::doing_it_wrong(
+                __METHOD__,
+                sprintf(
+                    __(
+                        'An attempt to register an EE_Addon named "%s" has failed because it was not registered at the correct time.  Please use the "AHEE__EE_System__load_espresso_addons" hook to register addons.',
+                        'event_espresso'
                     ),
-                    '4.3.0'
-                );
-            }
-            // make sure addon settings are set correctly without overwriting anything existing
-            if (isset(self::$_settings[$addon_name])) {
-                self::$_settings[$addon_name] += $addon_settings;
-            } else {
-                self::$_settings[$addon_name] = $addon_settings;
-            }
+                    $addon_name
+                ),
+                '4.3.0'
+            );
+        }
+        // make sure addon settings are set correctly without overwriting anything existing
+        if (isset(self::$_settings[$addon_name])) {
+            self::$_settings[$addon_name] += $addon_settings;
+        } else {
+            self::$_settings[$addon_name] = $addon_settings;
         }
         return false;
     }
