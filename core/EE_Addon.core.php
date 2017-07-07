@@ -1,24 +1,10 @@
-<?php use EventEspresso\core\services\activation\ActivationHistory;
-use EventEspresso\core\services\request\RequestType;
+<?php
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\services\activation\ActivationHistory;
+use EventEspresso\core\services\activation\ActivatableInterface;
+use EventEspresso\core\services\activation\RequestType;
 
-if ( !defined('EVENT_ESPRESSO_VERSION' ) ) {
-	exit( 'No direct script access allowed' );
-}
-/**
- *
- * Event Espresso
- *
- * Event Registration and Ticketing Management Plugin for WordPress
- *
- * @ package 		Event Espresso
- * @ author 		Event Espresso
- * @ copyright 	(c) 2008-2014 Event Espresso  All Rights Reserved.
- * @ license 		http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link 				http://www.eventespresso.com
- * @ since 			4.3
- *
- */
-
+defined('EVENT_ESPRESSO_VERSION' ) || exit( 'No direct script access allowed' );
 
 
 /**
@@ -30,7 +16,7 @@ if ( !defined('EVENT_ESPRESSO_VERSION' ) ) {
  * @subpackage 	core
  * @author 				Michael Nelson, Brent Christensen
  */
-abstract class EE_Addon extends EE_Configurable {
+abstract class EE_Addon extends EE_Configurable implements ActivatableInterface {
 
 
 	/**
@@ -241,7 +227,7 @@ abstract class EE_Addon extends EE_Configurable {
 
 
 	/**
-	 * @param array $plugins_page_row
+	 * @param array|string $plugins_page_row
 	 */
 	public function set_plugins_page_row( $plugins_page_row = array() ) {
 		// sigh.... check for example content that I stupidly merged to master and remove it if found
@@ -265,111 +251,6 @@ abstract class EE_Addon extends EE_Configurable {
 
 
 
-    /**
-     * Takes care of double-checking that we're not in maintenance mode, and then
-     * initializing this addon's necessary initial data. This is called by default on new activations
-     * and reactivations
-     *
-     * @param boolean $verify_schema whether to verify the database's schema for this addon, or just its data.
-     *                               This is a resource-intensive job so we prefer to only do it when necessary
-     * @return void
-     * @throws \EE_Error
-     */
-	public function initialize_db_if_no_migrations_required( $verify_schema = true ) {
-		if( $verify_schema === '' ) {
-			//wp core bug imo: if no args are passed to `do_action('some_hook_name')` besides the hook's name
-			//(ie, no 2nd or 3rd arguments), instead of calling the registered callbacks with no arguments, it
-			//calls them with an argument of an empty string (ie ""), which evaluates to false
-			//so we need to treat the empty string as if nothing had been passed, and should instead use the default
-			$verify_schema = true;
-		}
-		if ( EE_Maintenance_Mode::instance()->level() !== EE_Maintenance_Mode::level_2_complete_maintenance ) {
-			if( $verify_schema ) {
-				$this->initialize_db();
-			}
-			$this->initialize_default_data();
-			//@todo: this will probably need to be adjusted in 4.4 as the array changed formats I believe
-			EE_Data_Migration_Manager::instance()->update_current_database_state_to(
-			    array(
-			        'slug' => $this->name(),
-                    'version' => $this->version()
-                )
-            );
-			/* make sure core's data is a-ok
-			 * (at the time of writing, we especially want to verify all the caps are present
-			 * because payment method type capabilities are added dynamically, and it's
-			 * possible this addon added a payment method. But it's also possible
-			 * other data needs to be verified)
-			 */
-			EEH_Activation::initialize_db_content();
-			update_option( 'ee_flush_rewrite_rules', TRUE );
-			//in case there are lots of addons being activated at once, let's force garbage collection
-			//to help avoid memory limit errors
-			//EEH_Debug_Tools::instance()->measure_memory( 'db content initialized for ' . get_class( $this), true );
-			gc_collect_cycles();
-		}else{
-			//ask the data migration manager to init this addon's data
-			//when migrations are finished because we can't do it now
-			EE_Data_Migration_Manager::instance()->enqueue_db_initialization_for( $this->name() );
-		}
-	}
-
-
-
-	/**
-	 * Used to setup this addon's database tables, but not necessarily any default
-	 * data in them. The default is to actually use the most up-to-date data migration script
-	 * for this addon, and just use its schema_changes_before_migration() and schema_changes_after_migration()
-	 * methods to setup the db.
-	 */
-	public function initialize_db() {
-		//find the migration script that sets the database to be compatible with the code
-		$current_dms_name = EE_Data_Migration_Manager::instance()->get_most_up_to_date_dms( $this->name() );
-		if( $current_dms_name ){
-			$current_data_migration_script = EE_Registry::instance()->load_dms( $current_dms_name );
-			$current_data_migration_script->set_migrating( FALSE );
-			$current_data_migration_script->schema_changes_before_migration();
-			$current_data_migration_script->schema_changes_after_migration();
-			if ( $current_data_migration_script->get_errors() ) {
-				foreach( $current_data_migration_script->get_errors() as $error ) {
-					EE_Error::add_error( $error, __FILE__, __FUNCTION__, __LINE__ );
-				}
-			}
-		}
-		//if not DMS was found that should be ok. This addon just doesn't require any database changes
-		EE_Data_Migration_Manager::instance()->update_current_database_state_to(
-		    array(
-		        'slug' => $this->name(),
-                'version' => $this->version()
-            )
-        );
-	}
-
-
-
-	/**
-	 * If you want to setup default data for the addon, override this method, and call
-	 * parent::initialize_default_data() from within it. This is normally called
-	 * from EE_Addon::initialize_db_if_no_migrations_required(), just after EE_Addon::initialize_db()
-	 * and should verify default data is present (but this is also called
-	 * on reactivations and just after migrations, so please verify you actually want
-	 * to ADD default data, because it may already be present).
-	 * However, please call this parent (currently it just fires a hook which other
-	 * addons may be depending on)
-	 */
-	public function initialize_default_data() {
-		/**
-		 * Called when an addon is ensuring its default data is set (possibly called
-		 * on a reactivation, so first check for the absence of other data before setting
-		 * default data)
-		 * @param EE_Addon $addon the addon that called this
-		 */
-		do_action( 'AHEE__EE_Addon__initialize_default_data__begin', $this );
-		//override to insert default data. It is safe to use the models here
-		//because the site should not be in maintenance mode
-	}
-
-
 	/**
 	 * Gets the name of the wp option which is used to temporarily indicate that this addon was activated
 	 * @return string
@@ -387,17 +268,6 @@ abstract class EE_Addon extends EE_Configurable {
 	 */
 	public function get_activation_history_option_name(){
 		return self::ee_addon_version_history_option_prefix . $this->name();
-	}
-
-
-
-	/**
-	 * Gets the wp option which stores the activation history for this addon
-	 * @return array
-	 */
-	public function get_activation_history(){
-        $this->setup_activation_history();
-		return $this->activation_history->getVersionHistory();
 	}
 
 
@@ -475,7 +345,7 @@ abstract class EE_Addon extends EE_Configurable {
 	public function plugin_action_links( $links, $file ) {
 		if ( $file === $this->plugin_basename() && $this->plugin_action_slug() !== '' ) {
 			// before other links
-			array_unshift( $links, '<a href="admin.php?page=' . $this->plugin_action_slug() . '">' . __( 'Settings' ) . '</a>' );
+			array_unshift( $links, '<a href="admin.php?page=' . $this->plugin_action_slug() . '">' . esc_html__( 'Settings' ) . '</a>' );
 		}
 		return $links;
 	}
@@ -580,6 +450,7 @@ abstract class EE_Addon extends EE_Configurable {
      * ensures the activation history property is set
      *
      * @return void
+     * @throws InvalidDataTypeException
      */
     public function setup_activation_history()
     {
@@ -600,6 +471,7 @@ abstract class EE_Addon extends EE_Configurable {
      * Gets the ActivationHistory object for this addon
      *
      * @return ActivationHistory
+     * @throws InvalidDataTypeException
      */
     public function getActivationHistory()
     {
@@ -632,7 +504,7 @@ abstract class EE_Addon extends EE_Configurable {
     /**
      * @param RequestType $request_type
      */
-    public function setRequestType($request_type)
+    public function setRequestType(RequestType $request_type)
     {
         $this->request_type = $request_type;
     }
@@ -642,8 +514,22 @@ abstract class EE_Addon extends EE_Configurable {
     /******************************** DEPRECATED ***************************************/
 
 
+
     /**
-     * @deprecated 4.9.40
+     * @deprecated 4.9.44
+     * @return array
+     * @throws InvalidDataTypeException
+     */
+    public function get_activation_history()
+    {
+        $this->setup_activation_history();
+        return $this->activation_history->getVersionHistory();
+    }
+
+
+
+    /**
+     * @deprecated 4.9.44
      * @return void
      */
     public function new_install()
@@ -653,7 +539,7 @@ abstract class EE_Addon extends EE_Configurable {
 
 
     /**
-     * @deprecated 4.9.40
+     * @deprecated 4.9.44
      * @return void
      */
     public function reactivation()
@@ -663,7 +549,7 @@ abstract class EE_Addon extends EE_Configurable {
 
 
     /**
-     * @deprecated 4.9.40
+     * @deprecated 4.9.44
      * @return void
      */
     public function upgrade()
@@ -673,7 +559,7 @@ abstract class EE_Addon extends EE_Configurable {
 
 
     /**
-     * @deprecated 4.9.40
+     * @deprecated 4.9.44
      */
     public function downgrade()
     {
@@ -692,10 +578,12 @@ abstract class EE_Addon extends EE_Configurable {
     public function set_db_update_option_name()
     {
         EE_Error::doing_it_wrong(
-            __FUNCTION__, __(
-            'EE_Addon::set_db_update_option_name was renamed to EE_Addon::set_activation_indicator_option',
-            'event_espresso'
-        ), '4.3.0.alpha.016'
+            __FUNCTION__,
+            esc_html__(
+                'EE_Addon::set_db_update_option_name was renamed to EE_Addon::set_activation_indicator_option',
+                'event_espresso'
+            ), '4.3.0.alpha.016',
+            '5.0.0'
         );
         //let's just handle this on the next request, ok? right now we're just not really ready
         return $this->set_activation_indicator_option();
@@ -714,10 +602,13 @@ abstract class EE_Addon extends EE_Configurable {
     public function get_db_update_option_name()
     {
         EE_Error::doing_it_wrong(
-            __FUNCTION__, __(
-            'EE_Addon::get_db_update_option was renamed to EE_Addon::get_activation_indicator_option_name',
-            'event_espresso'
-        ), '4.3.0.alpha.016'
+            __FUNCTION__,
+            esc_html__(
+                'EE_Addon::get_db_update_option was renamed to EE_Addon::get_activation_indicator_option_name',
+                'event_espresso'
+            ),
+            '4.3.0.alpha.016',
+            '5.0.0'
         );
         return $this->get_activation_indicator_option_name();
     }
@@ -725,8 +616,9 @@ abstract class EE_Addon extends EE_Configurable {
 
 
     /**
-     * @deprecated 4.9.40
+     * @deprecated 4.9.44
      * @return bool
+     * @throws InvalidDataTypeException
      */
     public function set_activation_indicator_option()
     {
@@ -737,7 +629,7 @@ abstract class EE_Addon extends EE_Configurable {
 
 
     /**
-     * @deprecated 4.9.40
+     * @deprecated 4.9.44
      * @param int $req_type
      */
     public function set_req_type($req_type)
@@ -747,17 +639,17 @@ abstract class EE_Addon extends EE_Configurable {
 
 
     /**
-     * @deprecated 4.9.40
+     * @deprecated 4.9.44
      */
     public function detect_req_type()
     {
-        return $this->getRequestType()->requestType();
+        return $this->getRequestType()->getRequestType();
     }
 
 
 
     /**
-     * @deprecated 4.9.40
+     * @deprecated 4.9.44
      * @return void
      */
     public function detect_activation_or_upgrade()
@@ -767,15 +659,79 @@ abstract class EE_Addon extends EE_Configurable {
 
 
     /**
-     * @deprecated 4.9.40
+     * @deprecated 4.9.44
      * @param array  $version_history
      * @param string $current_version
      * @return boolean success
+     * @throws InvalidDataTypeException
      */
     public function update_list_of_installed_versions($version_history = null, $current_version = null)
     {
         $this->setup_activation_history();
-        return $this->activation_history->updateActivationHistory($version_history, $current_version);
+        return $this->activation_history->updateActivationHistory(
+            $version_history,
+            $current_version
+        );
+    }
+
+
+
+    /**
+     * @deprecated 4.9.44
+     * @param boolean $verify_schema
+     * @return void
+     * @throws EE_Error
+     */
+    public function initialize_db_if_no_migrations_required($verify_schema = true)
+    {
+        EE_Error::doing_it_wrong(
+            __FUNCTION__,
+            sprintf(
+                esc_html__('The logic in "%1$s" was moved to "%2$s"', 'event_espresso'),
+                __METHOD__ . '()',
+                'EventEspresso\core\services\activation\InitializeAddon::initialize'
+            ),
+            '4.9.44',
+            '5.0.0'
+        );
+    }
+
+
+
+    /**
+     * @deprecated 4.9.44
+     */
+    public function initialize_db()
+    {
+        EE_Error::doing_it_wrong(
+            __FUNCTION__,
+            sprintf(
+                esc_html__('The logic in "%1$s" was moved to "%2$s"', 'event_espresso'),
+                __METHOD__ . '()',
+                'EventEspresso\core\services\activation\InitializeAddon::initializeDatabase'
+            ),
+            '4.9.44',
+            '5.0.0'
+        );
+    }
+
+
+
+    /**
+     * @deprecated 4.9.44
+     */
+    public function initialize_default_data()
+    {
+        EE_Error::doing_it_wrong(
+            __FUNCTION__,
+            sprintf(
+                esc_html__('The logic in "%1$s" was moved to "%2$s"', 'event_espresso'),
+                __METHOD__.'()',
+                'EventEspresso\core\services\activation\InitializeAddon::initializeDefaultData'
+            ),
+            '4.9.44',
+            '5.0.0'
+        );
     }
 
 
