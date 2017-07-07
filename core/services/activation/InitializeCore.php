@@ -128,8 +128,9 @@ class InitializeCore implements InitializeInterface
             } else if ($request_type === RequestType::REACTIVATION) {
                 $query_params['reactivation'] = true;
             }
-            $url = add_query_arg($query_params, admin_url('admin.php'));
-            wp_safe_redirect($url);
+            wp_safe_redirect(
+                add_query_arg($query_params, admin_url('admin.php'))
+            );
         }
     }
 
