@@ -41,4 +41,4 @@ class RequestTypeTest extends EE_UnitTestCase
     }
 
 }
-// Location: testcases/core/services/request/RequestTypeTest.php
+// Location: testcases/core/services/activation/RequestTypeTest.php
