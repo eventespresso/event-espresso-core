@@ -94,6 +94,10 @@ class RequestTypeDetectorTest extends EE_UnitTestCase
             RequestType::NEW_ACTIVATION,
             false
         );
+        $activation_history->updateActivationHistory();
+        $version_history = get_option(ActivationHistoryExtendedMock::EE_ACTIVATION_HISTORY_OPTION_NAME, false);
+        PHPUnit_Framework_TestCase::assertNotFalse($version_history);
+        PHPUnit_Framework_TestCase::assertCount(1, $version_history);
     }
 
 
@@ -252,4 +256,4 @@ class RequestTypeDetectorTest extends EE_UnitTestCase
 
 
 }
-// Location: testcases/core/services/request/RequestTypeDetectorTest.php
+// Location: testcases/core/services/activation/RequestTypeDetectorTest.php
