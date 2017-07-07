@@ -517,8 +517,8 @@ class EEH_Debug_Tools
     public static function printr(
         $var,
         $var_name = '',
-        $file = __FILE__,
-        $line = __LINE__,
+        $file,
+        $line,
         $heading_tag = 5,
         $die = false
     ) {
