@@ -56,13 +56,10 @@ class EEH_Event_View extends EEH_Base {
         if ($EVT_ID || $post instanceof WP_Post) {
             //if the post type is for an event and it has a cached event and we don't have a different incoming $EVT_ID
             //then let's just use that cached event on the $post object.
-            if (($post instanceof WP_Post 
-                    && $post->post_type === 'espresso_events'
-                    )
+            if (
+                ($post instanceof WP_Post && $post->post_type === 'espresso_events')
                 && isset($post->EE_Event)
-                && ($EVT_ID === 0
-                    || $EVT_ID === $post->ID
-                    )
+                && ($EVT_ID === 0 || $EVT_ID === $post->ID)
             ) {
                 EEH_Event_View::$_event = $post->EE_Event;
             }
