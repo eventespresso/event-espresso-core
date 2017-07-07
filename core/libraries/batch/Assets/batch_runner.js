@@ -34,10 +34,13 @@ function EE_BatchRunner( continue_url, continue_data, continue_callback, cleanup
     this.cleanup_required = true;
 
     var thisBatchRunner = this;
-    window.onbeforeunload = function () {
-        thisBatchRunner.cleanup_job();
-    };
 
+    this.setup_clean_up_on_page_exit = function(){
+        window.onbeforeunload = function () {
+            thisBatchRunner.cleanup_job();
+        };
+    }
+    this.setup_clean_up_on_page_exit();
 
 
     /**
