@@ -498,7 +498,6 @@ final class EE_System implements ActivatableInterface, ResettableInterface
         ) {
             return;
         }
-        // \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
         $this->activations_and_upgrades_manager = $this->loader->getShared(
             'EventEspresso\core\services\activation\ActivationsAndUpgradesManager',
             array(
