@@ -142,11 +142,11 @@ http://demoee.org/wp-json/ee/v4.8.36/questions?order_by[Question_Group.QSG_order
 
 ## group_by
 
-This is a much more advanced querying filter. [Please read our section on resource querying for more info](../G--Model-System/model-querying.php).
+This is a much more advanced querying filter. [Please read our section on resource querying for more info](../G--Model-System/model-querying.md).
 
 ## having
 
-This is a much more advanced querying filter. [Please read our section on resource querying for more info](../G--Model-System/model-querying.php).
+This is a much more advanced querying filter. [Please read our section on resource querying for more info](../G--Model-System/model-querying.md).
 
 ## caps
 
