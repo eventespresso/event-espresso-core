@@ -2,12 +2,11 @@
 
 namespace EventEspresso\core\services\activation;
 
+use DomainException;
 use EE_Addon;
-use EE_Maintenance_Mode;
 use EE_System;
-use EEH_Activation;
 use EventEspresso\core\exceptions\InvalidEntityException;
-use EventEspresso\core\services\request\RequestType;
+use EventEspresso\core\services\loaders\Loader;
 use InvalidArgumentException;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
@@ -27,53 +26,29 @@ class ActivationsAndUpgradesManager
 {
 
     /**
-     * @var EE_System $core
+     * @var ActivatableInterface[] $activations
      */
-    private $core;
+    private $activations;
 
     /**
-     * @var ActivationHistory $core_activation_history
+     * @var Loader $loader
      */
-    private $core_activation_history;
-
-    /**
-     * @var RequestType $core_request_type
-     */
-    private $core_request_type;
-
-    /**
-     * @var EE_Maintenance_Mode $maintenance_mode
-     */
-    private $maintenance_mode;
-
-    /**
-     * @var EE_Addon[] $addons
-     */
-    private $addons;
+    private $loader;
 
 
 
     /**
      * ActivationsAndUpgradesManager constructor.
      *
-     * @param EE_System           $core
-     * @param ActivationHistory   $core_activation_history
-     * @param RequestType         $core_request_type
-     * @param EE_Maintenance_Mode $maintenance_mode
-     * @param EE_Addon[]          $addons
+     * @param ActivatableInterface[] $activations
+     * @param Loader                 $loader
      */
     public function __construct(
-        EE_System $core,
-        ActivationHistory $core_activation_history,
-        RequestType $core_request_type,
-        EE_Maintenance_Mode $maintenance_mode,
-        array $addons
+        array $activations,
+        Loader $loader
     ) {
-        $this->core = $core;
-        $this->core_activation_history = $core_activation_history;
-        $this->core_request_type = $core_request_type;
-        $this->maintenance_mode = $maintenance_mode;
-        $this->addons = $addons;
+        $this->activations = $activations;
+        $this->loader = $loader;
     }
 
 
@@ -81,46 +56,106 @@ class ActivationsAndUpgradesManager
     /**
      * @throws InvalidEntityException
      * @throws InvalidArgumentException
+     * @throws DomainException
      */
     public function detectActivationsAndUpgrades()
     {
-        $core_activation_handler = new DetectActivationsAndUpgrades(
-            $this->core,
-            $this->core_request_type,
-            $this->core_activation_history,
-            $this->maintenance_mode
-        );
-        $activation_detected = $core_activation_handler->handleActivationRequestTypes();
-        foreach ($this->addons as $addon) {
-            if ( ! $addon instanceof EE_Addon) {
-                throw new InvalidEntityException($addon, 'EE_Addon');
+        $activation_detected = false;
+        foreach ($this->activations as $key => $activation) {
+            if ( ! $activation instanceof ActivatableInterface) {
+                throw new InvalidEntityException(
+                    $activation,
+                    'EventEspresso\core\services\activation\ActivatableInterface'
+                );
             }
-            // get activation history for addon
-            $addon_activation_history = new ActivationHistory(
-                $addon->get_activation_history_option_name(),
-                $addon->get_activation_indicator_option_name(),
-                $addon->version()
+            $activation_history = $this->getActivationHistory($activation);
+            /** @var ActivationHandler $activation_handler */
+            $activation_handler = $this->loader->getNew(
+                'EventEspresso\core\services\activation\ActivationHandler',
+                array(
+                    $activation,
+                    $this->getRequestType($activation, $activation_history),
+                    $activation_history
+                )
             );
-            $addon->setActivationHistory($addon_activation_history);
-            // detect the request type for that addon
-            $addon_request_type = new RequestType($addon_activation_history);
-            $addon_request_type->resolveFromActivationHistory();
-            $addon_request_type->detectMajorVersionChange();
-            // handle activations or upgrades
-            $addon_activation_handler = new DetectActivationsAndUpgrades(
-                $addon,
-                $addon_request_type,
-                $addon_activation_history,
-                $this->maintenance_mode
-            );
-            $activation_detected = $addon_activation_handler->handleActivationRequestTypes()
-                ? true
-                : $activation_detected;
-            $addon->setRequestType($addon_request_type);
+            if ($activation_handler->detectActivations()) {
+                $activation_detected = true;
+            } else {
+                unset($this->activations[$key]);
+            }
         }
         if($activation_detected) {
-            add_action('init', array($this, 'performActivationsAndUpgrades'), 3);
+            add_action(
+                'AHEE__EE_System__perform_activations_upgrades_and_migrations',
+                array($this, 'performActivationsAndUpgrades')
+            );
         }
+        return $activation_detected;
+    }
+
+
+
+    /**
+     * @param ActivatableInterface $activation
+     * @return ActivationHistory
+     * @throws DomainException
+     */
+    private function getActivationHistory(ActivatableInterface $activation)
+    {
+        // get activation history and set arguments array based on activation type
+        $activation_history = $this->loader->getNew(
+            'EventEspresso\core\services\activation\ActivationHistory',
+            $activation instanceof EE_Addon
+                ? array(
+                    $activation->get_activation_history_option_name(),
+                    $activation->get_activation_indicator_option_name(),
+                    $activation->version()
+                )
+                : array()
+        );
+        if ($activation_history instanceof ActivationHistory) {
+            // convert EE Core activation history to the latest format
+            if ($activation instanceof EE_System) {
+                $migrate_activation_history = $this->loader->getNew(
+                    'EventEspresso\core\services\activation\MigrateActivationHistory'
+                );
+                $activation_history = $migrate_activation_history->updateFormat($activation_history);
+            }
+            $activation->setActivationHistory($activation_history);
+            return $activation_history;
+        }
+        throw new DomainException(
+            sprintf(
+                esc_html__(
+                    'Could not obtain an ActivationHistory for the "%1$s" Activatable class.',
+                    'event_espresso'
+                ),
+                get_class($activation)
+            )
+        );
+    }
+
+
+
+    /**
+     * @param ActivatableInterface $activation
+     * @param ActivationHistory    $activation_history
+     * @return RequestType
+     * @throws InvalidArgumentException
+     */
+    private function getRequestType(ActivatableInterface $activation, ActivationHistory $activation_history)
+    {
+        // detect the request type for the activation
+        /** @var RequestTypeDetector $request_type_detector */
+        $request_type_detector = $this->loader->getNew(
+            'EventEspresso\core\services\activation\RequestTypeDetector',
+            array($activation_history)
+        );
+        // determine whether current request is new activation, upgrade, etc
+        $request_type_detector->resolveFromActivationHistory();
+        $request_type = $request_type_detector->getRequestType();
+        $activation->setRequestType($request_type);
+        return $request_type;
     }
 
 
@@ -130,15 +165,52 @@ class ActivationsAndUpgradesManager
      */
     public function performActivationsAndUpgrades()
     {
-        // first check if we had previously attempted to setup EE's directories but failed
-        if (EEH_Activation::upload_directories_incomplete()) {
-            EEH_Activation::create_upload_directories();
+        foreach ($this->activations as $activation) {
+            $initializer = null;
+            if ($activation instanceof EE_System) {
+                $initializer = $this->loader->getNew(
+                    'EventEspresso\core\services\activation\InitializeCore',
+                    array($activation->getRequestType())
+                );
+            } else if ($activation instanceof EE_Addon) {
+                $initializer = $this->loader->getNew(
+                    'EventEspresso\core\services\activation\InitializeAddon',
+                    array($activation)
+                );
+            }
+            if($initializer instanceof InitializeInterface){
+                $initializer->initialize();
+            }
+            do_action(
+                'AHEE__EventEspresso_core_services_activation_ActivationsAndUpgradesManager__performActivationsAndUpgrades',
+                $activation,
+                $initializer
+            );
         }
-        do_action(
-            'AHEE__EventEspresso_core_services_activation_ActivationsAndUpgradesManager__performActivationsAndUpgrades'
-        );
+        $this->deactivateIncompatibleAddons();
     }
 
+
+
+    /**
+     * Using the information gathered in EE_System::_incompatible_addon_error,
+     * deactivates any addons considered incompatible with the current version of EE
+     */
+    private function deactivateIncompatibleAddons()
+    {
+        $incompatible_addons = get_option('ee_incompatible_addons', array());
+        if (! empty($incompatible_addons)) {
+            $active_plugins = get_option('active_plugins', array());
+            foreach ($active_plugins as $active_plugin) {
+                foreach ($incompatible_addons as $incompatible_addon) {
+                    if (strpos($active_plugin, $incompatible_addon) !== false) {
+                        unset($_GET['activate']);
+                        espresso_deactivate_plugin($active_plugin);
+                    }
+                }
+            }
+        }
+    }
 
 
 }
