@@ -127,7 +127,6 @@ class EE_Bootstrap {
 				'EE_Detect_Login',
 				'EE_Recommended_Versions',
 				'EE_Alpha_Banner_Warning',
-                'EventEspresso\core\domain\services\request\stack\middleware\DetectRequestType',
 			)
 		);
 		// load middleware onto stack : FILO (First In Last Out)
