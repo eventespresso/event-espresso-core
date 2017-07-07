@@ -5,7 +5,6 @@ namespace EventEspresso\core\services\activation;
 use EE_Addon;
 use EE_Maintenance_Mode;
 use EE_System;
-use EventEspresso\core\services\request\RequestType;
 use InvalidArgumentException;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
@@ -21,20 +20,13 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
  * @author        Michael Nelson, Brent Christensen
  * @since         4.9.40
  */
-class DetectActivationsAndUpgrades
+class ActivationHandler
 {
 
     /**
      * @var ActivationHistory $activation_history
      */
     private $activation_history;
-
-    /**
-     * callback method for initializing the db if no migrations are necessary
-     *
-     * @var callable $initialization_callback
-     */
-    private $initialization_callback;
 
     /**
      * @var EE_Maintenance_Mode $maintenance_mode
@@ -50,7 +42,7 @@ class DetectActivationsAndUpgrades
      * System object handling the activation or upgrade.
      * Either EE_System for Core, or an EE_Addon class
      *
-     * @var EE_System|EE_Addon $system_activated
+     * @var ActivatableInterface|EE_Addon $system_activated
      */
     private $system_activated;
 
@@ -62,36 +54,33 @@ class DetectActivationsAndUpgrades
 
 
     /**
-     * ActivationUpgradeHandler constructor.
+     * ActivationHandler constructor.
      *
-     * @param EE_System|EE_Addon $system_activated
-     * @param RequestType         $request_type
-     * @param ActivationHistory   $activation_history
-     * @param EE_Maintenance_Mode $maintenance_mode
-     * @param string              $initialization_callback
+     * @param ActivatableInterface $system_activated
+     * @param RequestType                   $request_type
+     * @param ActivationHistory             $activation_history
+     * @param EE_Maintenance_Mode           $maintenance_mode
      * @throws InvalidArgumentException
      */
     public function __construct(
-        $system_activated,
+        ActivatableInterface $system_activated,
         RequestType $request_type,
         ActivationHistory $activation_history,
-        EE_Maintenance_Mode $maintenance_mode,
-        $initialization_callback = 'initialize_db_if_no_migrations_required'
+        EE_Maintenance_Mode $maintenance_mode
     ) {
         $this->setSystemActivated($system_activated);
-        $this->setInitializationCallback($initialization_callback);
-        $this->request_type = $request_type;
+        $this->request_type       = $request_type;
         $this->activation_history = $activation_history;
-        $this->maintenance_mode = $maintenance_mode;
+        $this->maintenance_mode   = $maintenance_mode;
     }
 
 
 
     /**
-     * @param EE_Addon|EE_System $system_activated
+     * @param ActivatableInterface $system_activated
      * @throws InvalidArgumentException
      */
-    public function setSystemActivated($system_activated)
+    public function setSystemActivated(ActivatableInterface $system_activated)
     {
         $this->system_activated = $system_activated;
         if (! ($this->system_activated instanceof EE_System || $this->system_activated instanceof EE_Addon)) {
@@ -112,53 +101,6 @@ class DetectActivationsAndUpgrades
 
 
     /**
-     * @param callable $initialization_callback
-     * @throws InvalidArgumentException
-     */
-    public function setInitializationCallback($initialization_callback)
-    {
-        $this->initialization_callback = $initialization_callback;
-        if (! is_callable(array($this->system_activated, $this->initialization_callback))) {
-            throw new InvalidArgumentException(
-                sprintf(
-                    esc_html__(
-                        'The %1$s parameter must be the name of a valid callback method on %2$s.%3$sThe following was supplied: %3$s%4$s',
-                        'event_espresso'
-                    ),
-                    '$initialization_callback',
-                    $this->getSystemName(),
-                    '<br />',
-                    var_export($this->initialization_callback, true)
-                )
-            );
-        }
-    }
-
-
-
-
-
-    /**
-     * @return ActivationHistory
-     */
-    public function getActivationHistory()
-    {
-        return $this->activation_history;
-    }
-
-
-
-    /**
-     * @return RequestType
-     */
-    public function getRequestType()
-    {
-        return $this->request_type;
-    }
-
-
-
-    /**
      * @return string
      */
     public function getSystemName()
@@ -173,50 +115,37 @@ class DetectActivationsAndUpgrades
      *
      * @return boolean
      */
-    public function handleActivationRequestTypes()
+    public function detectActivations()
     {
         do_action(
-            'AHEE__EventEspresso_core_services_activation_ActivationUpgradeHandler__detect__before',
+            'AHEE__EventEspresso_core_services_activation_DetectActivationsAndUpgrades__handleActivationRequestTypes__detect__before',
             $this->system_activated,
             $this
         );
-        switch ($this->request_type->requestType()) {
-            case RequestType::REQUEST_TYPE_NEW_ACTIVATION:
+        switch ($this->request_type->getRequestType()) {
+            case RequestType::NEW_ACTIVATION:
                 $this->handleNewActivation();
                 break;
-            case RequestType::REQUEST_TYPE_REACTIVATION:
+            case RequestType::REACTIVATION:
                 $this->handleReactivation();
                 break;
-            case RequestType::REQUEST_TYPE_UPGRADE:
+            case RequestType::UPGRADE:
                 $this->handleUpgrade();
                 break;
-            case RequestType::REQUEST_TYPE_DOWNGRADE:
+            case RequestType::DOWNGRADE:
                 $this->handleDowngrade();
                 break;
-            case RequestType::REQUEST_TYPE_NORMAL:
+            case RequestType::NORMAL:
             default:
                 $this->handleNormalRequest();
             break;
         }
         do_action(
-            'AHEE__EventEspresso_core_services_activation_ActivationUpgradeHandler__detect__complete',
+            'AHEE__EventEspresso_core_services_activation_DetectActivationsAndUpgrades__handleActivationRequestTypes__detect__complete',
             $this->system_activated,
             $this
         );
         return $this->activation_detected;
-    }
-
-
-
-    /**
-     * @return void
-     */
-    private function setHookForInitializationCallback()
-    {
-        add_action(
-            'AHEE__EE_System__perform_activations_upgrades_and_migrations',
-            array($this->system_activated, $this->initialization_callback)
-        );
     }
 
 
@@ -234,7 +163,6 @@ class DetectActivationsAndUpgrades
             $this
         );
         $this->handleCoreVersionChange();
-        $this->setHookForInitializationCallback();
     }
 
 
@@ -252,7 +180,6 @@ class DetectActivationsAndUpgrades
             $this
         );
         $this->handleCoreVersionChange();
-        $this->setHookForInitializationCallback();
     }
 
 
@@ -271,7 +198,6 @@ class DetectActivationsAndUpgrades
         );
         $this->maintenance_mode->set_maintenance_mode_if_db_old();
         $this->handleCoreVersionChange();
-        $this->setHookForInitializationCallback();
     }
 
 
@@ -290,7 +216,6 @@ class DetectActivationsAndUpgrades
         );
         $this->maintenance_mode->set_maintenance_mode_if_db_old();
         $this->handleCoreVersionChange();
-        $this->setHookForInitializationCallback();
     }
 
 
@@ -322,4 +247,9 @@ class DetectActivationsAndUpgrades
         $this->activation_detected = true;
         $this->activation_history->updateActivationHistory();
     }
+
+
+
+
+
 }
