@@ -6,7 +6,7 @@ use DomainException;
 use EE_Addon;
 use EE_System;
 use EventEspresso\core\exceptions\InvalidEntityException;
-use EventEspresso\core\services\loaders\Loader;
+use EventEspresso\core\services\loaders\LoaderInterface;
 use InvalidArgumentException;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
@@ -31,7 +31,7 @@ class ActivationsAndUpgradesManager
     private $activations;
 
     /**
-     * @var Loader $loader
+     * @var LoaderInterface $loader
      */
     private $loader;
 
@@ -41,11 +41,11 @@ class ActivationsAndUpgradesManager
      * ActivationsAndUpgradesManager constructor.
      *
      * @param ActivatableInterface[] $activations
-     * @param Loader                 $loader
+     * @param LoaderInterface        $loader
      */
     public function __construct(
         array $activations,
-        Loader $loader
+        LoaderInterface $loader
     ) {
         $this->activations = $activations;
         $this->loader = $loader;
