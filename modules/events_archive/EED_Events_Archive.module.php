@@ -63,10 +63,24 @@ class EED_Events_Archive  extends EED_Module {
 	 *  @return 	void
 	 */
 	public static function set_hooks() {
-		EE_Config::register_route( EE_Registry::instance()->CFG->core->event_cpt_slug, 'Events_Archive', 'run' );
-		EE_Config::register_route( 'event_list', 'Events_Archive', 'event_list' );
-		EE_Config::register_route( 'iframe', 'Events_Archive', 'event_list_iframe', 'event_list' );
-		add_action( 'wp_loaded', array( 'EED_Events_Archive', 'set_definitions' ), 2 );
+        $custom_post_types = EE_Register_CPTs::get_CPTs();
+        EE_Config::register_route(
+            $custom_post_types['espresso_events']['plural_slug'],
+            'Events_Archive',
+            'run'
+        );
+        EE_Config::register_route(
+            'event_list',
+            'Events_Archive',
+            'event_list'
+        );
+        EE_Config::register_route(
+            'iframe',
+            'Events_Archive',
+            'event_list_iframe',
+            'event_list'
+        );
+        add_action( 'wp_loaded', array( 'EED_Events_Archive', 'set_definitions' ), 2 );
 	}
 
 	/**
