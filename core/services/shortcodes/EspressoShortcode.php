@@ -2,9 +2,11 @@
 namespace EventEspresso\core\services\shortcodes;
 
 use EE_Error;
+use EE_Event;
 use EEH_Event_View;
 use EventEspresso\core\domain\EnqueueAssetsInterface;
 use EventEspresso\core\services\cache\PostRelatedCacheManager;
+use WP_Post;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -137,13 +139,14 @@ abstract class EspressoShortcode implements ShortcodeInterface
         // try to get EE_Event any way we can
         $event = EEH_Event_View::get_event();
         // then get some kind of ID
-        if ($event instanceof \EE_Event) {
-            $post_ID = $event->ID();
-        } else {
-            global $post;
-            $post_ID = $post->ID;
+        if ($event instanceof EE_Event) {
+            return $event->ID();
         }
-        return $post_ID;
+        global $post;
+        if ($post instanceof WP_Post) {
+            return $post->ID;
+        }
+        return 0;
     }
 
 
