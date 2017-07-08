@@ -1,6 +1,7 @@
 <?php
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
 
 if (! defined('EVENT_ESPRESSO_VERSION')) {
@@ -325,12 +326,13 @@ class EE_Dependency_Map
      */
     public function class_loader($class_name)
     {
-        // don't use loaders for FQCNs
-        if(strpos($class_name, '\\') !== false){
+        $class_name = $this->get_alias($class_name);
+        $class_loader = isset($this->_class_loaders[$class_name]) ? $this->_class_loaders[$class_name] : '';
+        // don't use loaders for FQCNs unless a Closure is specified
+        if (! $class_loader instanceof Closure && strpos($class_name, '\\') !== false) {
             return '';
         }
-        $class_name = $this->get_alias($class_name);
-        return isset($this->_class_loaders[$class_name]) ? $this->_class_loaders[$class_name] : '';
+        return $class_loader;
     }
 
 
@@ -640,7 +642,7 @@ class EE_Dependency_Map
         //be used in a closure.
         $request = &$this->_request;
         $response = &$this->_response;
-        $loader = &$this->loader;
+        // $loader = &$this->loader;
         $this->_class_loaders = array(
             //load_core
             'EE_Capabilities'                      => 'load_core',
@@ -703,8 +705,8 @@ class EE_Dependency_Map
             'EE_Registration_Config'                   => function () {
                 return EE_Config::instance()->registration;
             },
-            'EventEspresso\core\services\loaders\Loader' => function () use (&$loader) {
-                return $loader;
+            'EventEspresso\core\services\loaders\Loader' => function () {
+                return LoaderFactory::getLoader();
             },
         );
     }
