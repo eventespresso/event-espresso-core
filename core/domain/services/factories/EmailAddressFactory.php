@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\domain\services\factories;
 
+use EventEspresso\core\domain\services\validation\email\EmailValidationException;
 use EventEspresso\core\domain\values\EmailAddress;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -25,15 +26,18 @@ class EmailAddressFactory implements FactoryInterface
     /**
      * @param string $email_address
      * @return EmailAddress
+     * @throws EmailValidationException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException
      */
-    public static function create($email_address = '')
+    public static function create($email_address)
     {
-        return LoaderFactory::getLoader()->getNew(
-            'EventEspresso\core\domain\values\EmailAddress',
-            array($email_address)
+        return new EmailAddress(
+            $email_address,
+            LoaderFactory::getLoader()->getNew(
+                'EventEspresso\core\domain\services\validation\email\EmailValidatorInterface'
+            )
         );
     }
 
