@@ -1,10 +1,8 @@
 <?php
-
-use EventEspresso\core\domain\services\validation\EmailValidationException;
+use EventEspresso\core\domain\services\factories\EmailAddressFactory;
+use EventEspresso\core\domain\services\validation\email\EmailValidationException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
-use EventEspresso\core\services\loaders\LoaderFactory;
-use EventEspresso\core\services\loaders\LoaderInterface;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 
@@ -19,41 +17,18 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 class EE_Email_Validation_Strategy extends EE_Text_Validation_Strategy
 {
 
-    /**
-     * @var LoaderInterface $loader
-     */
-    private static $loader;
-
-
 
     /**
      * @param string               $validation_error_message
-     * @param LoaderInterface|null $loader
      */
-    public function __construct($validation_error_message = '', LoaderInterface $loader = null)
+    public function __construct($validation_error_message = '')
     {
-        EE_Email_Validation_Strategy::$loader = $loader;
         if (! $validation_error_message) {
             $validation_error_message = esc_html__('Please enter a valid email address.', 'event_espresso');
         }
         parent::__construct($validation_error_message);
     }
 
-
-
-    /**
-     * @return LoaderInterface
-     * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
-     */
-    public function loader()
-    {
-        if (! EE_Email_Validation_Strategy::$loader instanceof LoaderInterface) {
-            EE_Email_Validation_Strategy::$loader = LoaderFactory::getLoader();
-        }
-        return EE_Email_Validation_Strategy::$loader;
-    }
 
 
     /**
@@ -99,11 +74,8 @@ class EE_Email_Validation_Strategy extends EE_Text_Validation_Strategy
      */
     private function _validate_email($email)
     {
-        $validation_service = $this->loader()->getShared(
-            'EventEspresso\core\domain\services\validation\EmailValidatorInterface'
-        );
         try {
-            $validation_service->validate($email);
+            EmailAddressFactory::create($email);
         } catch (EmailValidationException $e) {
             throw new EE_Validation_Error(
                 $e->getMessage(),
