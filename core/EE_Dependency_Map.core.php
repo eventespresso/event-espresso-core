@@ -597,23 +597,27 @@ class EE_Dependency_Map
             'EventEspresso\core\domain\entities\shortcodes\EspressoTxnPage'                                               => array(
                 'EventEspresso\core\services\cache\PostRelatedCacheManager' => EE_Dependency_Map::load_from_cache,
             ),
-            'EventEspresso\core\services\cache\BasicCacheManager'                                                         => array(
+            'EventEspresso\core\services\cache\BasicCacheManager'                        => array(
                 'EventEspresso\core\services\cache\TransientCacheStorage' => EE_Dependency_Map::load_from_cache,
             ),
-            'EventEspresso\core\services\cache\PostRelatedCacheManager'                                                   => array(
+            'EventEspresso\core\services\cache\PostRelatedCacheManager'                  => array(
                 'EventEspresso\core\services\cache\TransientCacheStorage' => EE_Dependency_Map::load_from_cache,
             ),
-            'EventEspresso\core\services\validation\EmailValidationService' => array(
+            'EventEspresso\core\domain\services\validation\email\EmailValidationService' => array(
                 'EE_Registration_Config'                                  => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\loaders\Loader'              => EE_Dependency_Map::load_from_cache,
             ),
-            'EEM_Attendee' => array(
+            'EEM_Attendee'                                                               => array(
                 null,
                 'EventEspresso\core\services\loaders\Loader'              => EE_Dependency_Map::load_from_cache,
             ),
-            'EEM_WP_User' => array(
+            'EEM_WP_User'                                                                => array(
                 null,
                 'EventEspresso\core\services\loaders\Loader'              => EE_Dependency_Map::load_from_cache,
+            ),
+            'EventEspresso\core\domain\values\EmailAddress'                              => array(
+                null,
+                'EventEspresso\core\domain\services\validation\email\EmailValidationService' => EE_Dependency_Map::load_from_cache,
             ),
         );
     }
@@ -746,11 +750,11 @@ class EE_Dependency_Map
             'EventEspresso\core\services\cache\CacheStorageInterface'                      => 'EventEspresso\core\services\cache\TransientCacheStorage',
             'LoaderInterface'                                                              => 'EventEspresso\core\services\loaders\LoaderInterface',
             'EventEspresso\core\services\loaders\LoaderInterface'                          => 'EventEspresso\core\services\loaders\Loader',
-            'CommandFactoryInterface'                                                      => 'EventEspresso\core\services\commands\CommandFactoryInterface',
-            'EventEspresso\core\services\commands\CommandFactoryInterface'                 => 'EventEspresso\core\services\commands\CommandFactory',
-            'EventEspresso\core\domain\services\session\SessionIdentifierInterface'        => 'EE_Session',
-            'EmailValidatorInterface'                                                      => 'EventEspresso\core\domain\services\validation\EmailValidatorInterface',
-            'EventEspresso\core\domain\services\validation\EmailValidatorInterface'        => 'EventEspresso\core\services\validation\EmailValidationService',
+            'CommandFactoryInterface'                                                     => 'EventEspresso\core\services\commands\CommandFactoryInterface',
+            'EventEspresso\core\services\commands\CommandFactoryInterface'                => 'EventEspresso\core\services\commands\CommandFactory',
+            'EventEspresso\core\domain\services\session\SessionIdentifierInterface'       => 'EE_Session',
+            'EmailValidatorInterface'                                                     => 'EventEspresso\core\domain\services\validation\email\EmailValidatorInterface',
+            'EventEspresso\core\domain\services\validation\email\EmailValidatorInterface' => 'EventEspresso\core\domain\services\validation\email\EmailValidationService',
         );
     }
 
