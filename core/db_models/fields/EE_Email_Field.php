@@ -1,8 +1,8 @@
 <?php
-use EventEspresso\core\domain\services\validation\EmailValidationException;
+use EventEspresso\core\domain\services\factories\EmailAddressFactory;
+use EventEspresso\core\domain\services\validation\email\EmailValidationException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
-use EventEspresso\core\services\loaders\Loader;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -15,26 +15,18 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 class EE_Email_Field extends EE_Text_Field_Base
 {
 
-    /**
-     * @var Loader $loader
-     */
-    private $loader;
-
-
 
     /**
      * @param string $table_column
      * @param string $nice_name
      * @param bool   $nullable
      * @param null   $default_value
-     * @param Loader $loader
      * @throws InvalidArgumentException
      */
-    public function __construct($table_column, $nice_name, $nullable, $default_value = null, Loader $loader)
+    public function __construct($table_column, $nice_name, $nullable, $default_value = null)
     {
         parent::__construct($table_column, $nice_name, $nullable, $default_value);
         $this->setSchemaFormat('email');
-        $this->loader = $loader;
     }
 
 
@@ -51,12 +43,9 @@ class EE_Email_Field extends EE_Text_Field_Base
      */
     public function prepare_for_set($email_address)
     {
-        $validation_service = $this->loader->getShared(
-            'EventEspresso\core\domain\services\validation\EmailValidatorInterface'
-        );
         try {
-            $validation_service->validate($email_address);
-            return $email_address;
+            $email_address = EmailAddressFactory::create($email_address);
+            return $email_address->get();
         } catch (EmailValidationException $e) {
             return '';
         }
