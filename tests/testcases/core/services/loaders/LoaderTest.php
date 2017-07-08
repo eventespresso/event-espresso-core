@@ -1,5 +1,6 @@
 <?php
-use EventEspresso\core\services\loaders\Loader;
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\loaders\LoaderInterface;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -18,7 +19,7 @@ class LoaderTest extends EE_UnitTestCase
 {
 
     /**
-     * @var Loader $loader
+     * @var LoaderInterface $loader
      */
     private static $loader;
 
@@ -27,7 +28,7 @@ class LoaderTest extends EE_UnitTestCase
 
     public function setUp()
     {
-        self::$loader = EE_Registry::instance()->create('EventEspresso\core\services\loaders\Loader');
+        self::$loader = LoaderFactory::getLoader();
         parent::setUp();
     }
 
