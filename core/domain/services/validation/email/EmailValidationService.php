@@ -1,10 +1,8 @@
 <?php
 
-namespace EventEspresso\core\services\validation;
+namespace EventEspresso\core\domain\services\validation\email;
 
 use EE_Registration_Config;
-use EventEspresso\core\domain\services\validation\EmailValidationException;
-use EventEspresso\core\domain\services\validation\EmailValidatorInterface;
 use EventEspresso\core\services\loaders\Loader;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
@@ -64,23 +62,23 @@ class EmailValidationService implements EmailValidatorInterface
         switch ($this->registration_config->email_validation_level) {
             case 'basic':
                 $validator = $this->loader->getShared(
-                    'EventEspresso\core\services\validation\strategies\Basic'
+                    'EventEspresso\core\domain\services\validation\email\strategies\Basic'
                 );
                 break;
             case 'i18n':
                 $validator = $this->loader->getShared(
-                    'EventEspresso\core\services\validation\strategies\International'
+                    'EventEspresso\core\domain\services\validation\email\strategies\International'
                 ) ;
                 break;
             case 'i18n_dns':
                 $validator = $this->loader->getShared(
-                    'EventEspresso\core\services\validation\strategies\InternationalDNS'
+                    'EventEspresso\core\domain\services\validation\email\strategies\InternationalDNS'
                 ) ;
                 break;
             case 'wp_default':
             default:
                 $validator = $this->loader->getShared(
-                    'EventEspresso\core\services\validation\strategies\WordPress'
+                    'EventEspresso\core\domain\services\validation\email\strategies\WordPress'
                 ) ;
                 break;
         }
