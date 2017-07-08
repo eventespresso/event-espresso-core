@@ -72,7 +72,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
      */
     // public static function setUpBeforeClass() {
     // 	parent::setUpBeforeClass();
-    // 	echo "\n\n" . get_called_class() . "\n";
+    // 	echo "\n" . get_called_class() . ' ';
     // }
 
 
@@ -104,7 +104,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
         add_filter('FHEE__EEH_Activation__drop_index__short_circuit', '__return_true');
 
         // turn off caching for any loaders in use
-        add_filter('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache', '__return_true');
+        add_filter('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache', '__return_true', 1);
 
         // load factories
         EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_TESTS_DIR . 'includes' . DS . 'factories');
