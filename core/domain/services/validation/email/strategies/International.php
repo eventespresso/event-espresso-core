@@ -1,8 +1,8 @@
 <?php
 
-namespace EventEspresso\core\services\validation\strategies;
+namespace EventEspresso\core\domain\services\validation\email\strategies;
 
-use EventEspresso\core\domain\services\validation\EmailValidationException;
+use EventEspresso\core\domain\services\validation\email\EmailValidationException;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 
@@ -23,7 +23,7 @@ class International extends Basic
     /**
      * @param string $email_address
      * @return bool
-     * @throws EmailValidationException
+     * @throws \EventEspresso\core\domain\services\validation\email\EmailValidationException
      */
     public function validate($email_address)
     {

@@ -1,9 +1,9 @@
 <?php
 
-namespace EventEspresso\core\services\validation\strategies;
+namespace EventEspresso\core\domain\services\validation\email\strategies;
 
-use EventEspresso\core\domain\services\validation\EmailValidationException;
-use EventEspresso\core\domain\services\validation\EmailValidatorInterface;
+use EventEspresso\core\domain\services\validation\email\EmailValidationException;
+use EventEspresso\core\domain\services\validation\email\EmailValidatorInterface;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 

@@ -1,5 +1,6 @@
 <?php
-use EventEspresso\core\domain\services\validation\EmailValidationException;
+use EventEspresso\core\domain\services\factories\EmailAddressFactory;
+use EventEspresso\core\domain\services\validation\email\EmailValidationException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\libraries\rest_api\CalculatedModelFields;
@@ -7,7 +8,6 @@ use EventEspresso\core\libraries\rest_api\controllers\model\Read as ModelRead;
 use EventEspresso\core\libraries\rest_api\changes\ChangesInBase;
 use EventEspresso\core\libraries\rest_api\ModelDataTranslator;
 use EventEspresso\core\libraries\rest_api\ModelVersionInfo;
-use EventEspresso\core\services\loaders\LoaderFactory;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -953,12 +953,8 @@ class EED_Core_Rest_Api extends \EED_Module
      * @throws InvalidDataTypeException
      */
     protected static function _validate_email($email){
-        $loader = LoaderFactory::getLoader();
-        $validation_service = $loader->getShared(
-            'EventEspresso\core\domain\services\validation\EmailValidatorInterface'
-        );
         try {
-            $validation_service->validate($email);
+            EmailAddressFactory::create($email);
             return true;
         } catch (EmailValidationException $e) {
             return false;

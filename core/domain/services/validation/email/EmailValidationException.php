@@ -1,6 +1,6 @@
 <?php
 
-namespace EventEspresso\core\domain\services\validation;
+namespace EventEspresso\core\domain\services\validation\email;
 
 use DomainException;
 
