@@ -20,29 +20,40 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 class ActivationHistory
 {
 
+    /**
+     * option name for recording the activation history for core
+     */
     const EE_ACTIVATION_HISTORY_OPTION_NAME = 'espresso_db_update';
 
     /**
-     * option name for recording the activation history for core
+     * option name for indicating that the current request is for activating core
      */
     const EE_ACTIVATION_INDICATOR_OPTION_NAME = 'ee_espresso_activation';
 
     /**
+     * stores the values for the activation history option name for core or an addon
+     *
      * @var string $activation_history_option_name
      */
     protected $activation_history_option_name;
 
     /**
+     * stores the values for the activation indicator option name for core or an addon
+     *
      * @var string $activation_indicator_option_name
      */
     protected $activation_indicator_option_name;
 
     /**
+     * the current version for core or an addon, like "1.2.3.p"
+     *
      * @var string $current_version
      */
     protected $current_version;
 
     /**
+     * array of activated versions and activation dates for core or an addon
+     *
      * @var array|bool $version_history
      */
     protected $version_history;
