@@ -41,15 +41,22 @@ class ActivationsAndUpgradesManager
      */
     private $activation_handler;
 
+    /**
+     * @var RequestTypeDetector $request_type_detector
+     */
+    private $request_type_detector;
+
 
 
     /**
      * ActivationsAndUpgradesManager constructor.
      *
-     * @param ActivationHandler     $activation_handler
+     * @param ActivationHandler   $activation_handler
+     * @param RequestTypeDetector $request_type_detector
      */
-    public function __construct(ActivationHandler $activation_handler) {
+    public function __construct(ActivationHandler $activation_handler, RequestTypeDetector $request_type_detector) {
         $this->activation_handler = $activation_handler;
+        $this->request_type_detector = $request_type_detector;
     }
 
 
@@ -140,10 +147,8 @@ class ActivationsAndUpgradesManager
      */
     private function getRequestType(ActivatableInterface $activation, ActivationHistory $activation_history)
     {
-        // detect the request type for the activation
-        $request_type_detector = ActivationsFactory::getRequestTypeDetector();
         // determine whether current request is new activation, upgrade, etc
-        $request_type = $request_type_detector->resolveRequestTypeFromActivationHistory(
+        $request_type = $this->request_type_detector->resolveRequestTypeFromActivationHistory(
             $activation_history
         );
         $activation->setRequestType($request_type);
