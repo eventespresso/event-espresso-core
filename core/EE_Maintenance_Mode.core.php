@@ -1,4 +1,7 @@
 <?php
+
+use EventEspresso\core\interfaces\ResettableInterface;
+
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 
 
@@ -11,7 +14,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
  * @subpackage  core
  * @author      Michael Nelson
  */
-class EE_Maintenance_Mode
+class EE_Maintenance_Mode implements ResettableInterface
 {
 
     /**
