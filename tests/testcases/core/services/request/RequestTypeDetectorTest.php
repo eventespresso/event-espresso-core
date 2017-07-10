@@ -1,6 +1,7 @@
 <?php
+use EventEspresso\core\services\activation\ActivationHistory;
 use EventEspresso\core\services\activation\RequestType;
-use EventEspresso\tests\includes\ActivationTestsHelper;
+use EventEspresso\tests\includes\AddonActivationTestsHelper;
 use EventEspresso\tests\mocks\core\services\activation\ActivationHistoryExtendedMock;
 use EventEspresso\tests\mocks\core\services\request\RequestTypeDetectorExtendedMock;
 
@@ -26,40 +27,10 @@ class RequestTypeDetectorTest extends EE_UnitTestCase
     public function setUp()
     {
         parent::setUp();
-        delete_option(ActivationHistoryExtendedMock::EE_ACTIVATION_HISTORY_OPTION_NAME);
-        delete_option(ActivationHistoryExtendedMock::EE_ACTIVATION_INDICATOR_OPTION_NAME);
+        delete_option(ActivationHistory::EE_ACTIVATION_HISTORY_OPTION_NAME);
+        delete_option(ActivationHistory::EE_ACTIVATION_INDICATOR_OPTION_NAME);
     }
 
-
-
-    /**
-     * RequestType isn't set until ActivationHistory::resolveFromActivationHistory() is called
-     * so confirm that no RequestType is set prior to that
-     */
-    public function testGetRequestTypeNotSet()
-    {
-        /** @var ActivationHistoryExtendedMock $activation_history */
-        $activation_history = ActivationTestsHelper::getActivationHistory();
-        $detector = new RequestTypeDetectorExtendedMock($activation_history);
-        PHPUnit_Framework_TestCase::assertNull($detector->getRequestType());
-    }
-
-
-
-    /**
-     * set RequestType manually then check getter
-     */
-    public function testGetRequestTypeGetter()
-    {
-        /** @var ActivationHistoryExtendedMock $activation_history */
-        $activation_history = ActivationTestsHelper::getActivationHistory();
-        $detector = new RequestTypeDetectorExtendedMock($activation_history);
-        $detector->setRequestType(new RequestType());
-        PHPUnit_Framework_TestCase::assertInstanceOf(
-            'EventEspresso\core\services\activation\RequestType',
-            $detector->getRequestType()
-        );
-    }
 
 
 
@@ -69,12 +40,12 @@ class RequestTypeDetectorTest extends EE_UnitTestCase
     public function testGetRequestTypeAfterResolveFromActivationHistoryCalled()
     {
         /** @var ActivationHistoryExtendedMock $activation_history */
-        $activation_history = ActivationTestsHelper::getActivationHistory();
-        $detector = new RequestTypeDetectorExtendedMock($activation_history);
-        $detector->resolveFromActivationHistory();
+        $activation_history = AddonActivationTestsHelper::getActivationHistory();
+        $detector = new RequestTypeDetectorExtendedMock();
+        $request_type = $detector->resolveRequestTypeFromActivationHistory($activation_history);
         PHPUnit_Framework_TestCase::assertInstanceOf(
             'EventEspresso\core\services\activation\RequestType',
-            $detector->getRequestType()
+            $request_type
         );
     }
 
@@ -86,16 +57,16 @@ class RequestTypeDetectorTest extends EE_UnitTestCase
     public function testResolveFromActivationHistoryNewActivation()
     {
         /** @var ActivationHistoryExtendedMock $activation_history */
-        $activation_history = ActivationTestsHelper::getActivationHistory();
-        $version_history = get_option(ActivationHistoryExtendedMock::EE_ACTIVATION_HISTORY_OPTION_NAME, false);
+        $activation_history = AddonActivationTestsHelper::getActivationHistory();
+        $version_history = get_option(ActivationHistoryExtendedMock::EE_ADDON_ACTIVATION_HISTORY_OPTION_NAME, false);
         PHPUnit_Framework_TestCase::assertFalse($version_history);
-        $this->assertActivationDetails(
-            ActivationTestsHelper::getAndDetectRequestType($activation_history),
+        RequestTypeDetectorTest::assertRequestTypeDetails(
+            AddonActivationTestsHelper::getAndDetectRequestType($activation_history),
             RequestType::NEW_ACTIVATION,
             false
         );
         $activation_history->updateActivationHistory();
-        $version_history = get_option(ActivationHistoryExtendedMock::EE_ACTIVATION_HISTORY_OPTION_NAME, false);
+        $version_history = get_option(ActivationHistoryExtendedMock::EE_ADDON_ACTIVATION_HISTORY_OPTION_NAME, false);
         PHPUnit_Framework_TestCase::assertNotFalse($version_history);
         PHPUnit_Framework_TestCase::assertCount(1, $version_history);
     }
@@ -107,9 +78,9 @@ class RequestTypeDetectorTest extends EE_UnitTestCase
      */
     public function testResolveFromActivationHistoryNormalRequest()
     {
-        $this->assertActivationDetails(
-            ActivationTestsHelper::getAndDetectRequestType(
-                ActivationTestsHelper::getActivationHistoryForNormalRequest()
+        RequestTypeDetectorTest::assertRequestTypeDetails(
+            AddonActivationTestsHelper::getAndDetectRequestType(
+                AddonActivationTestsHelper::getActivationHistoryForNormalRequest()
             ),
             RequestType::NORMAL,
             false
@@ -123,9 +94,9 @@ class RequestTypeDetectorTest extends EE_UnitTestCase
      */
     public function testResolveFromActivationHistoryUpgradeRequest()
     {
-        $this->assertActivationDetails(
-            ActivationTestsHelper::getAndDetectRequestType(
-                ActivationTestsHelper::getActivationHistoryForUpgradeRequest()
+        RequestTypeDetectorTest::assertRequestTypeDetails(
+            AddonActivationTestsHelper::getAndDetectRequestType(
+                AddonActivationTestsHelper::getActivationHistoryForUpgradeRequest()
             ),
             RequestType::UPGRADE,
             true
@@ -139,9 +110,9 @@ class RequestTypeDetectorTest extends EE_UnitTestCase
      */
     public function testResolveFromActivationHistoryDowngradeRequest()
     {
-        $this->assertActivationDetails(
-            ActivationTestsHelper::getAndDetectRequestType(
-                ActivationTestsHelper::getActivationHistoryForDowngradeRequest()
+        RequestTypeDetectorTest::assertRequestTypeDetails(
+            AddonActivationTestsHelper::getAndDetectRequestType(
+                AddonActivationTestsHelper::getActivationHistoryForDowngradeRequest()
             ),
             RequestType::DOWNGRADE,
             true
@@ -155,9 +126,9 @@ class RequestTypeDetectorTest extends EE_UnitTestCase
      */
     public function testResolveFromActivationHistoryReActivation()
     {
-        $this->assertActivationDetails(
-            ActivationTestsHelper::getAndDetectRequestType(
-                ActivationTestsHelper::getActivationHistoryForReActivation()
+        RequestTypeDetectorTest::assertRequestTypeDetails(
+            AddonActivationTestsHelper::getAndDetectRequestType(
+                AddonActivationTestsHelper::getActivationHistoryForReActivation()
             ),
             RequestType::REACTIVATION,
             false
@@ -171,9 +142,9 @@ class RequestTypeDetectorTest extends EE_UnitTestCase
      */
     public function testResolveFromActivationHistoryUpgradeActivation()
     {
-        $this->assertActivationDetails(
-            ActivationTestsHelper::getAndDetectRequestType(
-                ActivationTestsHelper::getActivationHistoryForUpgradeActivation()
+        RequestTypeDetectorTest::assertRequestTypeDetails(
+            AddonActivationTestsHelper::getAndDetectRequestType(
+                AddonActivationTestsHelper::getActivationHistoryForUpgradeActivation()
             ),
             RequestType::UPGRADE,
             true
@@ -187,9 +158,9 @@ class RequestTypeDetectorTest extends EE_UnitTestCase
      */
     public function testResolveFromActivationHistoryDowngradeActivation()
     {
-        $this->assertActivationDetails(
-            ActivationTestsHelper::getAndDetectRequestType(
-                ActivationTestsHelper::getActivationHistoryForDowngradeActivation()
+        RequestTypeDetectorTest::assertRequestTypeDetails(
+            AddonActivationTestsHelper::getAndDetectRequestType(
+                AddonActivationTestsHelper::getActivationHistoryForDowngradeActivation()
             ),
             RequestType::DOWNGRADE,
             true
@@ -203,9 +174,9 @@ class RequestTypeDetectorTest extends EE_UnitTestCase
      */
     public function testResolveFromActivationHistoryNewVersionUpgrade()
     {
-        $this->assertActivationDetails(
-            ActivationTestsHelper::getAndDetectRequestType(
-                ActivationTestsHelper::getActivationHistoryForNewVersionUpgrade()
+        RequestTypeDetectorTest::assertRequestTypeDetails(
+            AddonActivationTestsHelper::getAndDetectRequestType(
+                AddonActivationTestsHelper::getActivationHistoryForNewVersionUpgrade()
             ),
             RequestType::UPGRADE,
             true
@@ -219,9 +190,9 @@ class RequestTypeDetectorTest extends EE_UnitTestCase
      */
     public function testResolveFromActivationHistoryNewVersionDowngrade()
     {
-        $this->assertActivationDetails(
-            ActivationTestsHelper::getAndDetectRequestType(
-                ActivationTestsHelper::getActivationHistoryForNewVersionDowngrade()
+        RequestTypeDetectorTest::assertRequestTypeDetails(
+            AddonActivationTestsHelper::getAndDetectRequestType(
+                AddonActivationTestsHelper::getActivationHistoryForNewVersionDowngrade()
             ),
             RequestType::DOWNGRADE,
             true
@@ -238,7 +209,7 @@ class RequestTypeDetectorTest extends EE_UnitTestCase
      * @param bool        $isMajorVersionChange
      * @throws PHPUnit_Framework_Exception
      */
-    private function assertActivationDetails($request_type, $expected_request_type, $isMajorVersionChange)
+    public static function assertRequestTypeDetails($request_type, $expected_request_type, $isMajorVersionChange)
     {
         PHPUnit_Framework_TestCase::assertInstanceOf(
             'EventEspresso\core\services\activation\RequestType',
