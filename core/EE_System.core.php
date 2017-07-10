@@ -1,9 +1,12 @@
 <?php
 use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidEntityException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\activation\ActivatableInterface;
 use EventEspresso\core\services\activation\ActivationHistory;
 use EventEspresso\core\services\activation\ActivationsAndUpgradesManager;
+use EventEspresso\core\services\activation\ActivationsFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\activation\RequestType;
 use EventEspresso\core\services\shortcodes\ShortcodesManager;
@@ -20,7 +23,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
  * @subpackage     core/
  * @author         Brent Christensen, Michael Nelson
  */
-final class EE_System implements ActivatableInterface
+class EE_System implements ActivatableInterface
 {
 
 
@@ -308,6 +311,8 @@ final class EE_System implements ActivatableInterface
      * @throws DomainException
      * @throws InvalidArgumentException
      * @throws InvalidEntityException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      */
     public function detect_activations_or_upgrades()
     {
@@ -317,16 +322,13 @@ final class EE_System implements ActivatableInterface
         ) {
             return;
         }
-        $this->activations_and_upgrades_manager = $this->loader->getShared(
-            'EventEspresso\core\services\activation\ActivationsAndUpgradesManager',
-            array(
-                array_merge(
-                    array($this),
-                    get_object_vars($this->registry->addons)
-                )
+        $this->activations_and_upgrades_manager = ActivationsFactory::getActivationsAndUpgradesManager();
+        $this->activation_detected = $this->activations_and_upgrades_manager->detectActivationsAndVersionChanges(
+            array_merge(
+                array($this),
+                get_object_vars($this->registry->addons)
             )
         );
-        $this->activation_detected = $this->activations_and_upgrades_manager->detectActivationsAndUpgrades();
     }
 
 
