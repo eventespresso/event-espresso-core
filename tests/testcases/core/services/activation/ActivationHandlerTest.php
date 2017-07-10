@@ -3,7 +3,7 @@
 use EventEspresso\core\services\activation\ActivationHandler;
 use EventEspresso\core\services\activation\ActivationHistory;
 use EventEspresso\core\services\activation\RequestType;
-use EventEspresso\tests\includes\ActivationTestsHelper;
+use EventEspresso\tests\includes\AddonActivationTestsHelper;
 use EventEspresso\tests\mocks\core\MaintenanceModeMock;
 use EventEspresso\tests\mocks\core\services\activation\ActivationHistoryExtendedMock;
 
@@ -35,6 +35,15 @@ class ActivationHandlerTest extends EE_UnitTestCase
 
 
 
+    public function setUp()
+    {
+        parent::setUp();
+        $this->_pretend_addon_hook_time();
+        remove_all_filters('AHEE__EE_System__perform_activations_upgrades_and_migrations');
+    }
+
+
+
     public function tearDown()
     {
         if ($this->addon instanceof EE_Addon) {
@@ -46,76 +55,23 @@ class ActivationHandlerTest extends EE_UnitTestCase
 
 
 
-    public function registerAddon()
-    {
-        require_once EE_TESTS_DIR . 'mocks/addons/EE_NewAddonMock.class.php';
-        $this->_pretend_addon_hook_time();
-        EE_NewAddonMock::registerWithGivenOptions($this->addon_name);
-        $this->addon = EE_Registry::instance()->addons->{$this->addon_name};
-        $this->addon->setActivationIndicatorOptionName(
-            ActivationHistoryExtendedMock::EE_ACTIVATION_INDICATOR_OPTION_NAME
-        );
-        $this->addon->setActivationHistoryOptionName(
-            ActivationHistoryExtendedMock::EE_ACTIVATION_HISTORY_OPTION_NAME
-        );
-    }
-
-
-
     /**
-     * @param ActivationHistory $activation_history
-     * @param RequestType       $request_type
      * @return ActivationHandler
-     * @throws InvalidArgumentException
+     * @throws EE_Error
      */
-    protected function getActivationHandler(ActivationHistory $activation_history, RequestType $request_type)
+    protected function getActivationHandler()
     {
-        $this->registerAddon();
-        return new ActivationHandler(
-            $this->addon,
-            $request_type,
-            $activation_history,
-            MaintenanceModeMock::instance()
-        );
+        $this->addon = AddonActivationTestsHelper::registerAddon($this->addon_name);
+        return new ActivationHandler(MaintenanceModeMock::instance());
     }
 
 
 
     public function testConstructor()
     {
-        $activation_history = ActivationTestsHelper::getActivationHistoryForNormalRequest();
-        $request_type = ActivationTestsHelper::getAndDetectRequestType($activation_history);
         PHPUnit_Framework_TestCase::assertInstanceOf(
             'EventEspresso\core\services\activation\ActivationHandler',
-            $this->getActivationHandler($activation_history, $request_type)
-        );
-    }
-
-
-
-    public function testBadConstructor()
-    {
-        $activation_history = ActivationTestsHelper::getActivationHistoryForNormalRequest();
-        $request_type = ActivationTestsHelper::getAndDetectRequestType($activation_history);
-        $this->expectException('TypeError');
-        new ActivationHandler(
-            new stdClass(),
-            $request_type,
-            $activation_history,
-            MaintenanceModeMock::instance()
-        );
-    }
-
-
-
-    public function testGetSystemName()
-    {
-        $activation_history = ActivationTestsHelper::getActivationHistoryForNormalRequest();
-        $request_type = ActivationTestsHelper::getAndDetectRequestType($activation_history);
-        $activation_handler = $this->getActivationHandler($activation_history, $request_type);
-        PHPUnit_Framework_TestCase::assertEquals(
-            $this->addon_name,
-            $activation_handler->getSystemName()
+            $this->getActivationHandler()
         );
     }
 
@@ -124,7 +80,7 @@ class ActivationHandlerTest extends EE_UnitTestCase
     public function testDetectActivationsForNormalRequest()
     {
         $this->assertActivationDetection(
-            ActivationTestsHelper::getActivationHistoryForNormalRequest(),
+            AddonActivationTestsHelper::getActivationHistoryForNormalRequest(),
             RequestType::NORMAL,
             false,
             'AHEE__EventEspresso_core_services_activation_ActivationUpgradeHandler__handleNormalRequest'
@@ -136,7 +92,7 @@ class ActivationHandlerTest extends EE_UnitTestCase
     public function testDetectActivationsForNewActivation()
     {
         $this->assertActivationDetection(
-            ActivationTestsHelper::getActivationHistoryForNewActivation(),
+            AddonActivationTestsHelper::getActivationHistoryForNewActivation(),
             RequestType::NEW_ACTIVATION,
             true,
             'AHEE__EventEspresso_core_services_activation_ActivationUpgradeHandler__handleNewActivation'
@@ -148,7 +104,7 @@ class ActivationHandlerTest extends EE_UnitTestCase
     public function testDetectActivationsForReactivation()
     {
         $this->assertActivationDetection(
-            ActivationTestsHelper::getActivationHistoryForReActivation(),
+            AddonActivationTestsHelper::getActivationHistoryForReActivation(),
             RequestType::REACTIVATION,
             true,
             'AHEE__EventEspresso_core_services_activation_ActivationUpgradeHandler__handleReactivation'
@@ -160,7 +116,7 @@ class ActivationHandlerTest extends EE_UnitTestCase
     public function testDetectActivationsForUpgradeActivation()
     {
         $this->assertActivationDetection(
-            ActivationTestsHelper::getActivationHistoryForUpgradeActivation(),
+            AddonActivationTestsHelper::getActivationHistoryForUpgradeActivation(),
             RequestType::UPGRADE,
             true,
             'AHEE__EventEspresso_core_services_activation_ActivationUpgradeHandler__handleUpgrade'
@@ -172,7 +128,7 @@ class ActivationHandlerTest extends EE_UnitTestCase
     public function testDetectActivationsForUpgradeRequest()
     {
         $this->assertActivationDetection(
-            ActivationTestsHelper::getActivationHistoryForUpgradeRequest(),
+            AddonActivationTestsHelper::getActivationHistoryForUpgradeRequest(),
             RequestType::UPGRADE,
             true,
             'AHEE__EventEspresso_core_services_activation_ActivationUpgradeHandler__handleUpgrade'
@@ -184,7 +140,7 @@ class ActivationHandlerTest extends EE_UnitTestCase
     public function testDetectActivationsForNewVersionUpgrade()
     {
         $this->assertActivationDetection(
-            ActivationTestsHelper::getActivationHistoryForNewVersionUpgrade(),
+            AddonActivationTestsHelper::getActivationHistoryForNewVersionUpgrade(),
             RequestType::UPGRADE,
             true,
             'AHEE__EventEspresso_core_services_activation_ActivationUpgradeHandler__handleUpgrade'
@@ -196,7 +152,7 @@ class ActivationHandlerTest extends EE_UnitTestCase
     public function testDetectActivationsForDowngradeActivation()
     {
         $this->assertActivationDetection(
-            ActivationTestsHelper::getActivationHistoryForDowngradeActivation(),
+            AddonActivationTestsHelper::getActivationHistoryForDowngradeActivation(),
             RequestType::DOWNGRADE,
             true,
             'AHEE__EventEspresso_core_services_activation_ActivationUpgradeHandler__handleDowngrade'
@@ -208,7 +164,7 @@ class ActivationHandlerTest extends EE_UnitTestCase
     public function testDetectActivationsForDowngradeRequest()
     {
         $this->assertActivationDetection(
-            ActivationTestsHelper::getActivationHistoryForDowngradeRequest(),
+            AddonActivationTestsHelper::getActivationHistoryForDowngradeRequest(),
             RequestType::DOWNGRADE,
             true,
             'AHEE__EventEspresso_core_services_activation_ActivationUpgradeHandler__handleDowngrade'
@@ -220,7 +176,7 @@ class ActivationHandlerTest extends EE_UnitTestCase
     public function testDetectActivationsForNewVersionDowngrade()
     {
         $this->assertActivationDetection(
-            ActivationTestsHelper::getActivationHistoryForNewVersionDowngrade(),
+            AddonActivationTestsHelper::getActivationHistoryForNewVersionDowngrade(),
             RequestType::DOWNGRADE,
             true,
             'AHEE__EventEspresso_core_services_activation_ActivationUpgradeHandler__handleDowngrade'
@@ -232,7 +188,7 @@ class ActivationHandlerTest extends EE_UnitTestCase
     /**
      * @param ActivationHistory $activation_history
      * @param int               $expected_request_type
-     * @param bool              $activation_detected
+     * @param bool              $expected_activation_detected
      * @param string            $action
      * @throws InvalidArgumentException
      * @throws PHPUnit_Framework_AssertionFailedError
@@ -240,23 +196,29 @@ class ActivationHandlerTest extends EE_UnitTestCase
     public function assertActivationDetection(
         ActivationHistory $activation_history,
         $expected_request_type,
-        $activation_detected,
+        $expected_activation_detected,
         $action
     ) {
-        $request_type = ActivationTestsHelper::getAndDetectRequestType($activation_history);
+        $request_type = AddonActivationTestsHelper::getAndDetectRequestType($activation_history);
         PHPUnit_Framework_TestCase::assertEquals(
             $expected_request_type,
             $request_type->getRequestType()
         );
-        $activation_handler = $this->getActivationHandler($activation_history, $request_type);
-        if($activation_detected) {
+        $activation_handler = $this->getActivationHandler();
+        $activation_detected =  $activation_handler->detectActivationOrVersionChange(
+            $this->addon,
+            $request_type,
+            $activation_history
+        );
+
+        if($expected_activation_detected) {
             PHPUnit_Framework_TestCase::assertTrue(
-                $activation_handler->detectActivations(),
+                $activation_detected,
                 'An activation was not detected when it should have been'
             );
         } else {
             PHPUnit_Framework_TestCase::assertFalse(
-                $activation_handler->detectActivations(),
+                $activation_detected,
                 'An activation was detected when it should not have been'
             );
         }
