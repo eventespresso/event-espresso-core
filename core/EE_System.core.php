@@ -1,11 +1,5 @@
 <?php
 
-use EventEspresso\core\domain\Domain;
-use EventEspresso\core\domain\DomainFactory;
-use EventEspresso\core\domain\services\contexts\RequestTypeContextCheckerInterface;
-use EventEspresso\core\domain\values\FilePath;
-use EventEspresso\core\domain\values\FullyQualifiedName;
-use EventEspresso\core\domain\values\Version;
 use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
 use EventEspresso\core\exceptions\InvalidClassException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
@@ -16,9 +10,9 @@ use EventEspresso\core\interfaces\ResettableInterface;
 use EventEspresso\core\services\activation\ActivatableInterface;
 use EventEspresso\core\services\activation\ActivationsAndUpgradesManager;
 use EventEspresso\core\services\activation\ActivationHistory;
+use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\activation\RequestType;
 use EventEspresso\core\services\loaders\LoaderFactory;
-use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\core\services\shortcodes\ShortcodesManager;
 
@@ -120,7 +114,7 @@ final class EE_System implements ActivatableInterface, ResettableInterface
     private $activation_history;
 
     /**
-     * @var \EventEspresso\core\services\activation\RequestType $request_type
+     * @var RequestType $request_type
      */
     private $request_type;
 
@@ -489,6 +483,8 @@ final class EE_System implements ActivatableInterface, ResettableInterface
      * @throws DomainException
      * @throws InvalidArgumentException
      * @throws InvalidEntityException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      */
     public function detect_activations_or_upgrades()
     {
@@ -498,16 +494,13 @@ final class EE_System implements ActivatableInterface, ResettableInterface
         ) {
             return;
         }
-        $this->activations_and_upgrades_manager = $this->loader->getShared(
-            'EventEspresso\core\services\activation\ActivationsAndUpgradesManager',
-            array(
-                array_merge(
-                    array($this),
-                    get_object_vars($this->registry->addons)
-                )
+        $this->activations_and_upgrades_manager = ActivationsFactory::getActivationsAndUpgradesManager();
+        $this->activation_detected = $this->activations_and_upgrades_manager->detectActivationsAndVersionChanges(
+            array_merge(
+                array($this),
+                get_object_vars($this->registry->addons)
             )
         );
-        $this->activation_detected = $this->activations_and_upgrades_manager->detectActivationsAndUpgrades();
     }
 
 

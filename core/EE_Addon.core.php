@@ -341,6 +341,28 @@ abstract class EE_Addon extends EE_Configurable
 
 
     /**
+     * Gets the name of the wp option which is used to temporarily indicate that this addon was activated
+     *
+     * @return string
+     */
+    public function get_activation_indicator_option_name(): string
+    {
+        return 'ee_activation_' . $this->name();
+    }
+
+
+    /**
+     * @return bool
+     * @throws InvalidDataTypeException
+     */
+    public function set_activation_indicator_option(): bool
+    {
+        $this->setup_activation_history();
+        return $this->activation_history->setActivationIndicator();
+    }
+
+
+    /**
      * @param string $config_section
      */
     public function set_config_section($config_section = '')
@@ -675,30 +697,6 @@ abstract class EE_Addon extends EE_Configurable
             '5.0.0'
         );
         return $this->get_activation_indicator_option_name();
-    }
-
-
-    /**
-     * Gets the name of the wp option which is used to temporarily indicate that this addon was activated
-     *
-     * @return string
-     * @deprecated 4.3.0.alpha.016
-     */
-    public function get_activation_indicator_option_name(): string
-    {
-        return 'ee_activation_' . $this->name();
-    }
-
-
-    /**
-     * @return bool
-     * @throws InvalidDataTypeException
-     * @deprecated $VID:$
-     */
-    public function set_activation_indicator_option(): bool
-    {
-        $this->setup_activation_history();
-        return $this->activation_history->setActivationIndicator();
     }
 
 

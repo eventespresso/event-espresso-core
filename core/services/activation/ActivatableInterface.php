@@ -21,8 +21,7 @@ interface ActivatableInterface
      *
      * @return ActivationHistory
      */
-    public function getActivationHistory();
-
+    public function getActivationHistory(): ActivationHistory;
 
 
     /**
@@ -31,17 +30,14 @@ interface ActivatableInterface
     public function setActivationHistory(ActivationHistory $activation_history);
 
 
-
     /**
-     * @return RequestType
+     * @return ActivationType
      */
-    public function getRequestType();
-
+    public function getActivationType(): ActivationType;
 
 
     /**
-     * @param RequestType $request_type
+     * @param ActivationType $activation_type
      */
-    public function setRequestType(RequestType $request_type);
-
+    public function setActivationType(ActivationType $activation_type);
 }
