@@ -1179,7 +1179,6 @@ class EE_UnitTestCase extends WP_UnitTestCase
             }
             return $user;
         }
-        EE_Registry::instance()->CAP->init_caps(true);
         /** @type WP_User $user */
         $user = $this->factory->user->create_and_get(array('role' => 'administrator'));
         return $user;
