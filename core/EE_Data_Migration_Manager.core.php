@@ -1,4 +1,5 @@
 <?php
+use EventEspresso\core\interfaces\ResettableInterface;
 
 use EventEspresso\core\services\database\TableManager;
 use EventEspresso\core\services\database\TableAnalysis;
@@ -24,7 +25,7 @@ use EventEspresso\core\services\database\TableAnalysis;
  * to indicate it successfully migrate some data, and has nothing left to do; or EE_Data_Migration_Manager::status_fatal_error to indicate
  * an error occurred which means the ajax script should probably stop executing.
  */
-class EE_Data_Migration_Manager{
+class EE_Data_Migration_Manager implements ResettableInterface {
 
 	/**
 	 *
