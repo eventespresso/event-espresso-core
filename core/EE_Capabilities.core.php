@@ -407,11 +407,8 @@ final class EE_Capabilities extends EE_Base
                     'ee_delete_venue_category',
                     'ee_assign_venue_category',
                     //contacts
-                    'ee_read_contact',
                     'ee_read_contacts',
-                    'ee_edit_contact',
                     'ee_edit_contacts',
-                    'ee_delete_contact',
                     'ee_delete_contacts',
                     //registrations
                     'ee_read_registrations',
@@ -424,7 +421,6 @@ final class EE_Capabilities extends EE_Base
                     'ee_read_checkins',
                     'ee_edit_checkins',
                     'ee_edit_others_checkins',
-                    'ee_delete_checkin',
                     'ee_delete_checkins',
                     'ee_delete_others_checkins',
                     //transactions && payments
@@ -433,25 +429,21 @@ final class EE_Capabilities extends EE_Base
                     'ee_edit_payments',
                     'ee_delete_payments',
                     //messages
-                    'ee_read_message',
                     'ee_read_messages',
                     'ee_read_others_messages',
                     'ee_read_global_messages',
                     'ee_edit_global_messages',
                     'ee_edit_messages',
                     'ee_edit_others_messages',
-                    'ee_delete_message',
                     'ee_delete_messages',
                     'ee_delete_others_messages',
                     'ee_delete_global_messages',
                     'ee_send_message',
                     //tickets
-                    'ee_read_default_ticket',
                     'ee_read_default_tickets',
                     'ee_read_others_default_tickets',
                     'ee_edit_default_tickets',
                     'ee_edit_others_default_tickets',
-                    'ee_delete_default_ticket',
                     'ee_delete_default_tickets',
                     'ee_delete_others_default_tickets',
                     //prices
@@ -469,12 +461,10 @@ final class EE_Capabilities extends EE_Base
                     'ee_edit_questions',
                     'ee_edit_system_questions',
                     'ee_read_questions',
-                    'ee_delete_question',
                     'ee_delete_questions',
                     'ee_edit_question_groups',
                     'ee_read_question_groups',
                     'ee_edit_system_question_groups',
-                    'ee_delete_question_group',
                     'ee_delete_question_groups',
                     //event_type taxonomy
                     'ee_assign_event_type',
@@ -560,11 +550,8 @@ final class EE_Capabilities extends EE_Base
                     'ee_delete_venue_category',
                     'ee_assign_venue_category',
                     //contacts
-                    'ee_read_contact',
                     'ee_read_contacts',
-                    'ee_edit_contact',
                     'ee_edit_contacts',
-                    'ee_delete_contact',
                     'ee_delete_contacts',
                     //registrations
                     'ee_read_registrations',
@@ -577,7 +564,6 @@ final class EE_Capabilities extends EE_Base
                     //checkins
                     'ee_read_others_checkins',
                     'ee_read_checkins',
-                    'ee_edit_checkin',
                     'ee_edit_checkins',
                     'ee_edit_others_checkins',
                     'ee_delete_checkins',
@@ -592,7 +578,6 @@ final class EE_Capabilities extends EE_Base
                     'ee_read_others_messages',
                     'ee_read_global_messages',
                     'ee_edit_global_messages',
-                    'ee_edit_message',
                     'ee_edit_messages',
                     'ee_edit_others_messages',
                     'ee_delete_messages',
@@ -602,7 +587,6 @@ final class EE_Capabilities extends EE_Base
                     //tickets
                     'ee_read_default_tickets',
                     'ee_read_others_default_tickets',
-                    'ee_edit_default_ticket',
                     'ee_edit_default_tickets',
                     'ee_edit_others_default_tickets',
                     'ee_delete_default_tickets',
@@ -619,12 +603,10 @@ final class EE_Capabilities extends EE_Base
                     'ee_read_default_prices',
                     'ee_read_default_price_types',
                     //registration form
-                    'ee_edit_question',
                     'ee_edit_questions',
                     'ee_edit_system_questions',
                     'ee_read_questions',
                     'ee_delete_questions',
-                    'ee_edit_question_group',
                     'ee_edit_question_groups',
                     'ee_read_question_groups',
                     'ee_edit_system_question_groups',
