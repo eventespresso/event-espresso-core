@@ -604,7 +604,8 @@ class EE_Dependency_Map
                 'EventEspresso\core\services\cache\TransientCacheStorage' => EE_Dependency_Map::load_from_cache,
             ),
             'EventEspresso\core\services\activation\ActivationsAndUpgradesManager' => array(
-                'EventEspresso\core\services\activation\ActivationHandler' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\activation\ActivationHandler'   => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\activation\RequestTypeDetector' => EE_Dependency_Map::load_from_cache,
             ),
             'EventEspresso\core\services\activation\ActivationHandler'             => array(
                 'EE_Maintenance_Mode' => EE_Dependency_Map::load_from_cache,
