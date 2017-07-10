@@ -1,6 +1,6 @@
 <?php
 use EventEspresso\core\services\activation\ActivationHistory;
-use EventEspresso\tests\includes\ActivationTestsHelper;
+use EventEspresso\tests\includes\AddonActivationTestsHelper;
 use EventEspresso\tests\mocks\core\services\activation\ActivationHistoryExtendedMock;
 
 /**
@@ -21,8 +21,8 @@ class ActivationHistoryTest extends EE_UnitTestCase
     public function setUp()
     {
         parent::setUp();
-        delete_option(ActivationHistoryExtendedMock::EE_ACTIVATION_HISTORY_OPTION_NAME);
-        delete_option(ActivationHistoryExtendedMock::EE_ACTIVATION_INDICATOR_OPTION_NAME);
+        delete_option(ActivationHistoryExtendedMock::EE_ADDON_ACTIVATION_HISTORY_OPTION_NAME);
+        delete_option(ActivationHistoryExtendedMock::EE_ADDON_ACTIVATION_INDICATOR_OPTION_NAME);
     }
 
 
@@ -54,8 +54,8 @@ class ActivationHistoryTest extends EE_UnitTestCase
     {
         $test_version = '1.2.3.p';
         $activation_history = new ActivationHistoryExtendedMock(
-            ActivationHistoryExtendedMock::EE_ACTIVATION_HISTORY_OPTION_NAME,
-            ActivationHistoryExtendedMock::EE_ACTIVATION_INDICATOR_OPTION_NAME,
+            ActivationHistoryExtendedMock::EE_ADDON_ACTIVATION_HISTORY_OPTION_NAME,
+            ActivationHistoryExtendedMock::EE_ADDON_ACTIVATION_INDICATOR_OPTION_NAME,
             $test_version
         );
         PHPUnit_Framework_TestCase::assertInstanceOf(
@@ -63,11 +63,11 @@ class ActivationHistoryTest extends EE_UnitTestCase
             $activation_history
         );
         PHPUnit_Framework_TestCase::assertEquals(
-            ActivationHistoryExtendedMock::EE_ACTIVATION_HISTORY_OPTION_NAME,
+            ActivationHistoryExtendedMock::EE_ADDON_ACTIVATION_HISTORY_OPTION_NAME,
             $activation_history->getActivationHistoryOptionName()
         );
         PHPUnit_Framework_TestCase::assertEquals(
-            ActivationHistoryExtendedMock::EE_ACTIVATION_INDICATOR_OPTION_NAME,
+            ActivationHistoryExtendedMock::EE_ADDON_ACTIVATION_INDICATOR_OPTION_NAME,
             $activation_history->getActivationIndicatorOptionName()
         );
         PHPUnit_Framework_TestCase::assertEquals(
@@ -83,7 +83,7 @@ class ActivationHistoryTest extends EE_UnitTestCase
         $this->expectException('EventEspresso\core\exceptions\InvalidDataTypeException');
         new ActivationHistoryExtendedMock(
             1234657890,
-            ActivationHistoryExtendedMock::EE_ACTIVATION_INDICATOR_OPTION_NAME,
+            ActivationHistoryExtendedMock::EE_ADDON_ACTIVATION_INDICATOR_OPTION_NAME,
             '1.2.3.p'
         );
     }
@@ -94,7 +94,7 @@ class ActivationHistoryTest extends EE_UnitTestCase
     {
         $this->expectException('EventEspresso\core\exceptions\InvalidDataTypeException');
         new ActivationHistoryExtendedMock(
-            ActivationHistoryExtendedMock::EE_ACTIVATION_HISTORY_OPTION_NAME,
+            ActivationHistoryExtendedMock::EE_ADDON_ACTIVATION_HISTORY_OPTION_NAME,
             1234657890,
             '1.2.3.p'
         );
@@ -106,8 +106,8 @@ class ActivationHistoryTest extends EE_UnitTestCase
     {
         $this->expectException('EventEspresso\core\exceptions\InvalidDataTypeException');
         new ActivationHistoryExtendedMock(
-            ActivationHistoryExtendedMock::EE_ACTIVATION_HISTORY_OPTION_NAME,
-            ActivationHistoryExtendedMock::EE_ACTIVATION_INDICATOR_OPTION_NAME,
+            ActivationHistoryExtendedMock::EE_ADDON_ACTIVATION_HISTORY_OPTION_NAME,
+            ActivationHistoryExtendedMock::EE_ADDON_ACTIVATION_INDICATOR_OPTION_NAME,
             1.2
         );
     }
@@ -118,7 +118,7 @@ class ActivationHistoryTest extends EE_UnitTestCase
     {
         $current_version  = '2.3.4.p';
         /** @var ActivationHistoryExtendedMock $activation_history */
-        $activation_history = ActivationTestsHelper::getActivationHistory($current_version);
+        $activation_history = AddonActivationTestsHelper::getActivationHistory($current_version);
         PHPUnit_Framework_TestCase::assertEquals(
             $current_version,
             $activation_history->getCurrentVersion()
@@ -130,7 +130,7 @@ class ActivationHistoryTest extends EE_UnitTestCase
     public function testGetMostRecentActiveVersion()
     {
         /** @var ActivationHistoryExtendedMock $activation_history */
-        list($activation_history, $version_history) = ActivationTestsHelper::getActivationAndVersionHistory(
+        list($activation_history, $version_history) = AddonActivationTestsHelper::getActivationAndVersionHistory(
             '2.3.4.p'
         );
         PHPUnit_Framework_TestCase::assertEquals(
@@ -154,7 +154,7 @@ class ActivationHistoryTest extends EE_UnitTestCase
     {
         $current_version = '2.3.4.p';
         /** @var ActivationHistoryExtendedMock $activation_history */
-        list($activation_history, $version_history) = ActivationTestsHelper::getActivationAndVersionHistory(
+        list($activation_history, $version_history) = AddonActivationTestsHelper::getActivationAndVersionHistory(
             $current_version,
             1,
             2,
@@ -182,17 +182,17 @@ class ActivationHistoryTest extends EE_UnitTestCase
     public function testAddActivationHistory()
     {
         PHPUnit_Framework_TestCase::assertFalse(
-            get_option(ActivationHistoryExtendedMock::EE_ACTIVATION_HISTORY_OPTION_NAME, false)
+            get_option(ActivationHistoryExtendedMock::EE_ADDON_ACTIVATION_HISTORY_OPTION_NAME, false)
         );
         $current_version = '1.4.8.p';
         /** @var ActivationHistoryExtendedMock $activation_history */
-        list($activation_history, $version_history) = ActivationTestsHelper::getActivationAndVersionHistory(
+        list($activation_history, $version_history) = AddonActivationTestsHelper::getActivationAndVersionHistory(
             $current_version
         );
         $activation_history->addActivationHistory($version_history, $current_version);
         PHPUnit_Framework_TestCase::assertEquals(
             $version_history,
-            get_option(ActivationHistoryExtendedMock::EE_ACTIVATION_HISTORY_OPTION_NAME, false)
+            get_option(ActivationHistoryExtendedMock::EE_ADDON_ACTIVATION_HISTORY_OPTION_NAME, false)
         );
     }
 
@@ -201,12 +201,12 @@ class ActivationHistoryTest extends EE_UnitTestCase
     public function testGetActivationIndicator()
     {
         PHPUnit_Framework_TestCase::assertFalse(
-            get_option(ActivationHistoryExtendedMock::EE_ACTIVATION_INDICATOR_OPTION_NAME, false)
+            get_option(ActivationHistoryExtendedMock::EE_ADDON_ACTIVATION_INDICATOR_OPTION_NAME, false)
         );
         /** @var ActivationHistoryExtendedMock $activation_history */
-        $activation_history = ActivationTestsHelper::getActivationHistory();
+        $activation_history = AddonActivationTestsHelper::getActivationHistory();
         PHPUnit_Framework_TestCase::assertFalse($activation_history->getActivationIndicator());
-        update_option(ActivationHistoryExtendedMock::EE_ACTIVATION_INDICATOR_OPTION_NAME, true);
+        update_option(ActivationHistoryExtendedMock::EE_ADDON_ACTIVATION_INDICATOR_OPTION_NAME, true);
         PHPUnit_Framework_TestCase::assertTrue($activation_history->getActivationIndicator());
     }
 
@@ -215,10 +215,10 @@ class ActivationHistoryTest extends EE_UnitTestCase
     public function testSetActivationIndicator()
     {
         PHPUnit_Framework_TestCase::assertFalse(
-            get_option(ActivationHistoryExtendedMock::EE_ACTIVATION_INDICATOR_OPTION_NAME, false)
+            get_option(ActivationHistoryExtendedMock::EE_ADDON_ACTIVATION_INDICATOR_OPTION_NAME, false)
         );
         /** @var ActivationHistoryExtendedMock $activation_history */
-        $activation_history = ActivationTestsHelper::getActivationHistory();
+        $activation_history = AddonActivationTestsHelper::getActivationHistory();
         PHPUnit_Framework_TestCase::assertFalse($activation_history->getActivationIndicator());
         $activation_history->setActivationIndicator();
         PHPUnit_Framework_TestCase::assertTrue($activation_history->getActivationIndicator());
@@ -229,14 +229,14 @@ class ActivationHistoryTest extends EE_UnitTestCase
     public function testDeleteActivationIndicator()
     {
         PHPUnit_Framework_TestCase::assertFalse(
-            get_option(ActivationHistoryExtendedMock::EE_ACTIVATION_INDICATOR_OPTION_NAME, false)
+            get_option(ActivationHistoryExtendedMock::EE_ADDON_ACTIVATION_INDICATOR_OPTION_NAME, false)
         );
         /** @var ActivationHistoryExtendedMock $activation_history */
-        $activation_history = ActivationTestsHelper::getActivationHistory();
+        $activation_history = AddonActivationTestsHelper::getActivationHistory();
         PHPUnit_Framework_TestCase::assertFalse($activation_history->getActivationIndicator());
         $activation_history->deleteActivationIndicator();
         PHPUnit_Framework_TestCase::assertNull(
-            get_option(ActivationHistoryExtendedMock::EE_ACTIVATION_INDICATOR_OPTION_NAME, null)
+            get_option(ActivationHistoryExtendedMock::EE_ADDON_ACTIVATION_INDICATOR_OPTION_NAME, null)
         );
     }
 
