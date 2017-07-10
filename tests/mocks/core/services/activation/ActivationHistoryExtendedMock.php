@@ -12,6 +12,10 @@ class ActivationHistoryExtendedMock extends ActivationHistory
 
     const EE_ACTIVATION_INDICATOR_OPTION_NAME = 'ee_test_activation_option_name';
 
+    const EE_ADDON_ACTIVATION_HISTORY_OPTION_NAME = 'ee_addon_test_history_option_name';
+
+    const EE_ADDON_ACTIVATION_INDICATOR_OPTION_NAME = 'ee_addon_test_activation_option_name';
+
 
 
     /**
