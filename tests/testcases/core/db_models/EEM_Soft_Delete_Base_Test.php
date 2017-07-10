@@ -74,7 +74,7 @@ class EEM_Soft_Delete_Base_Test extends EE_UnitTestCase {
 		$att_id = $attendee->ID();
 
 		//reset model
-		EE_Registry::instance()->reset_model('Attendee');
+		EEM_Attendee::instance()->reset();
 
 		//verify not trashed.
 		$status = $attendee->status();
@@ -90,7 +90,7 @@ class EEM_Soft_Delete_Base_Test extends EE_UnitTestCase {
 		$this->assertTrue( $status == 'trash' );
 
 		//reset model again
-		EE_Registry::instance()->reset_model('Attendee');
+		EEM_Attendee::instance()->reset();
 
 		//now let's try to restore.
 		EEM_Attendee::instance()->restore_by_ID( $att_id );
@@ -109,15 +109,15 @@ class EEM_Soft_Delete_Base_Test extends EE_UnitTestCase {
 		//count using the default where conditions, which excludes the deleted one
 		$this->assertEquals(
 			1,
-			EEM_Registration::instance()->count() 
+			EEM_Registration::instance()->count()
 		);
 		//count using the MINIMUM where conditions, which INCLUDES the deleted one
-		$this->assertEquals( 
+		$this->assertEquals(
 			2,
 			EEM_Registration::instance()->count(
 				array(
 					'default_where_conditions' => 'minimum'
-				)) 
+				))
 		);
 	}
 

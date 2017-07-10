@@ -1,4 +1,6 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+<?php use EventEspresso\core\interfaces\InterminableInterface;
+
+if ( ! defined( 'EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 /**
  * Event Espresso
  *
@@ -23,7 +25,7 @@
  *
  * ------------------------------------------------------------------------
  */
-final class EE_Module_Request_Router {
+final class EE_Module_Request_Router implements InterminableInterface {
 
 	/**
 	 * 	@var 	array	$_previous_routes
