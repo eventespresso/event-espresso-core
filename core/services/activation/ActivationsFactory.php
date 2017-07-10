@@ -81,7 +81,7 @@ class ActivationsFactory
      * @throws InvalidInterfaceException
      */
     public static function getRequestTypeDetector() {
-        return LoaderFactory::getLoader()->getNew(
+        return LoaderFactory::getLoader()->getShared(
             'EventEspresso\core\services\activation\RequestTypeDetector'
         );
     }
