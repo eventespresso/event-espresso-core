@@ -20,7 +20,6 @@ use EE_Infinite_Integer_Field;
 use EE_Integer_Field;
 use EE_Maybe_Serialized_Simple_HTML_Field;
 use EE_Maybe_Serialized_Text_Field;
-use EE_Model_Field_Base;
 use EE_Money_Field;
 use EE_Plain_Text_Field;
 use EE_Post_Content_Field;
@@ -64,24 +63,6 @@ class ModelFieldFactory
     public function __construct(LoaderInterface $loader)
     {
         $this->loader = $loader;
-    }
-
-
-
-    /**
-     * @param string $field_type class name for the model field to be created
-     * @param string $table_column
-     * @param string $nice_name
-     * @param bool   $nullable
-     * @param null   $default_value
-     * @return EE_Model_Field_Base
-     */
-    public function create($field_type, $table_column, $nice_name, $nullable, $default_value = null)
-    {
-        return $this->loader->getNew(
-            $field_type,
-            array($table_column, $nice_name, $nullable, $default_value)
-        );
     }
 
 
