@@ -904,23 +904,23 @@ class EE_Registry
             if ($reflector->isAbstract()) {
                 // nothing to instantiate, loading file was enough
                 // does not throw an exception so $instantiation_mode is unused
-                // $instantiation_mode = "1) no constructor abstract class";
+                $instantiation_mode = '1) no constructor abstract class';
                 $class_obj = true;
             } else if ($reflector->getConstructor() === null && $reflector->isInstantiable() && empty($arguments)) {
                 // no constructor = static methods only... nothing to instantiate, loading file was enough
-                $instantiation_mode = "2) no constructor but instantiable";
+                $instantiation_mode = '2) no constructor but instantiable';
                 $class_obj = $reflector->newInstance();
             } else if ($from_db && method_exists($class_name, 'new_instance_from_db')) {
-                $instantiation_mode = "3) new_instance_from_db()";
+                $instantiation_mode = '3) new_instance_from_db()';
                 $class_obj = call_user_func_array(array($class_name, 'new_instance_from_db'), $arguments);
             } else if (method_exists($class_name, 'new_instance')) {
-                $instantiation_mode = "4) new_instance()";
+                $instantiation_mode = '4) new_instance()';
                 $class_obj = call_user_func_array(array($class_name, 'new_instance'), $arguments);
             } else if (method_exists($class_name, 'instance')) {
-                $instantiation_mode = "5) instance()";
+                $instantiation_mode = '5) instance()';
                 $class_obj = call_user_func_array(array($class_name, 'instance'), $arguments);
             } else if ($reflector->isInstantiable()) {
-                $instantiation_mode = "6) constructor";
+                $instantiation_mode = '6) constructor';
                 $class_obj = $reflector->newInstanceArgs($arguments);
             } else {
                 // heh ? something's not right !
@@ -1284,7 +1284,6 @@ class EE_Registry
         $instance->CFG = EE_Config::reset($hard, $reinstantiate);
         $instance->CART = null;
         $instance->MRM = null;
-        $instance->AssetsRegistry = null;
         $instance->AssetsRegistry = $instance->create('EventEspresso\core\services\assets\Registry');
         //messages reset
         EED_Messages::reset();
