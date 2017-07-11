@@ -58,27 +58,6 @@ class EEM_Event extends EEM_CPT_Base
 
 
 
-    /**
-     *  This function is a singleton method used to instantiate the EEM_Event object
-     *
-     * @param string            $timezone
-     * @param ModelFieldFactory $model_field_factory
-     * @return EEM_Event
-     */
-    public static function instance($timezone = null, ModelFieldFactory $model_field_factory)
-    {
-        // check if instance of EEM_Event already exists
-        if (! self::$_instance instanceof EEM_Event) {
-            // instantiate Espresso_model
-            self::$_instance = new self($timezone, $model_field_factory);
-        }
-        //we might have a timezone set, let set_timezone decide what to do with it
-        self::$_instance->set_timezone($timezone);
-        // EEM_Event object
-        return self::$_instance;
-    }
-
-
 
     /**
      * Adds a relationship to Term_Taxonomy for each CPT_Base
