@@ -1033,7 +1033,7 @@ class EE_Registry implements ResettableInterface
                 : $param_class;
             if (
                 // param is not even a class
-                empty($param_class)
+                $param_class === null
                 // and something already exists in the incoming arguments for this param
                 && isset($argument_keys[$index], $arguments[$argument_keys[$index]])
             ) {
@@ -1042,7 +1042,7 @@ class EE_Registry implements ResettableInterface
             }
             if (
                 // parameter is type hinted as a class, exists as an incoming argument, AND it's the correct class
-                ! empty($param_class)
+                $param_class !== null
                 && isset($argument_keys[$index], $arguments[$argument_keys[$index]])
                 && $arguments[$argument_keys[$index]] instanceof $param_class
             ) {
@@ -1051,13 +1051,15 @@ class EE_Registry implements ResettableInterface
             }
             if (
                 // parameter is type hinted as a class, and should be injected
-                ! empty($param_class)
+                $param_class !== null
                 && $this->_dependency_map->has_dependency_for_class($class_name, $param_class)
             ) {
                 $arguments = $this->_resolve_dependency($class_name, $param_class, $arguments, $index);
             } else {
                 try {
-                    $arguments[$index] = $param->getDefaultValue();
+                    $arguments[$index] = $param->isOptional()
+                        ? $param->getDefaultValue()
+                        : null;
                 } catch (ReflectionException $e) {
                     throw new ReflectionException(
                         sprintf(
@@ -1086,10 +1088,11 @@ class EE_Registry implements ResettableInterface
     {
         $dependency = null;
         // should dependency be loaded from cache ?
-        $cache_on = $this->_dependency_map->loading_strategy_for_class_dependency($class_name, $param_class)
-                    !== EE_Dependency_Map::load_new_object
-            ? true
-            : false;
+        $cache_on = $this->_dependency_map->loading_strategy_for_class_dependency(
+            $class_name,
+            $param_class
+            );
+        $cache_on = $cache_on !== EE_Dependency_Map::load_new_object;
         // we might have a dependency...
         // let's MAYBE try and find it in our cache if that's what's been requested
         $cached_class = $cache_on ? $this->_get_cached_class($param_class) : null;
