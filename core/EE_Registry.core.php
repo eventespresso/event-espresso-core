@@ -1029,7 +1029,8 @@ class EE_Registry
                 // param is not even a class
                 empty($param_class)
                 // and something already exists in the incoming arguments for this param
-                && isset($argument_keys[$index], $arguments[$argument_keys[$index]])
+                && array_key_exists($index, $argument_keys)
+                && array_key_exists($argument_keys[$index], $arguments)
             ) {
                 // so let's skip this argument and move on to the next
                 continue;
