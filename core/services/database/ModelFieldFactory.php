@@ -129,9 +129,9 @@ class ModelFieldFactory
     /**
      * @param string $table_column
      * @param string $nice_name
+     * @param string $timezone_string
      * @param bool   $nullable
      * @param string $default_value
-     * @param string $timezone_string
      * @param string $date_format
      * @param string $time_format
      * @param string $pretty_date_format
@@ -143,9 +143,9 @@ class ModelFieldFactory
     public function createDatetimeField(
         $table_column,
         $nice_name,
+        $timezone_string = '',
         $nullable = false,
         $default_value = EE_Datetime_Field::now,
-        $timezone_string = '',
         $date_format = '',
         $time_format = '',
         $pretty_date_format = '',
@@ -603,7 +603,7 @@ class ModelFieldFactory
         $nice_name,
         $nullable,
         $default_value = null,
-        array $values
+        array $values = array()
     ) {
         return $this->loader->getNew(
             'EE_WP_Post_Status_Field',
