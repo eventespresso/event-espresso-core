@@ -12,6 +12,7 @@ use EE_DB_Only_Text_Field;
 use EE_Email_Field;
 use EE_Enum_Integer_Field;
 use EE_Enum_Text_Field;
+use EE_Error;
 use EE_Float_Field;
 use EE_Foreign_Key_Int_Field;
 use EE_Foreign_Key_String_Field;
@@ -33,6 +34,7 @@ use EE_WP_Post_Status_Field;
 use EE_WP_Post_Type_Field;
 use EE_WP_User_Field;
 use EventEspresso\core\services\loaders\LoaderInterface;
+use InvalidArgumentException;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -128,14 +130,40 @@ class ModelFieldFactory
      * @param string $table_column
      * @param string $nice_name
      * @param bool   $nullable
-     * @param null   $default_value
+     * @param string $default_value
+     * @param string $timezone_string
+     * @param string $date_format
+     * @param string $time_format
+     * @param string $pretty_date_format
+     * @param string $pretty_time_format
+     * @throws EE_Error
+     * @throws InvalidArgumentException
      * @return EE_Datetime_Field
      */
-    public function createDatetimeField($table_column, $nice_name, $nullable, $default_value = null)
-    {
+    public function createDatetimeField(
+        $table_column,
+        $nice_name,
+        $nullable = false,
+        $default_value = EE_Datetime_Field::now,
+        $timezone_string = '',
+        $date_format = '',
+        $time_format = '',
+        $pretty_date_format = '',
+        $pretty_time_format = ''
+    ) {
         return $this->loader->getNew(
             'EE_Datetime_Field',
-            array($table_column, $nice_name, $nullable, $default_value)
+            array(
+                $table_column,
+                $nice_name,
+                $nullable,
+                $default_value,
+                $timezone_string,
+                $date_format,
+                $time_format,
+                $pretty_date_format,
+                $pretty_time_format,
+            )
         );
     }
 
@@ -148,7 +176,7 @@ class ModelFieldFactory
      * @param null   $default_value
      * @return EE_DB_Only_Float_Field
      */
-    public function createDBOnlyFloatField($table_column, $nice_name, $nullable, $default_value = null)
+    public function createDbOnlyFloatField($table_column, $nice_name, $nullable, $default_value = null)
     {
         return $this->loader->getNew(
             'EE_DB_Only_Float_Field',
@@ -165,7 +193,7 @@ class ModelFieldFactory
      * @param null   $default_value
      * @return EE_DB_Only_Int_Field
      */
-    public function createDBOnlyIntField($table_column, $nice_name, $nullable, $default_value = null)
+    public function createDbOnlyIntField($table_column, $nice_name, $nullable, $default_value = null)
     {
         return $this->loader->getNew(
             'EE_DB_Only_Int_Field',
@@ -182,7 +210,7 @@ class ModelFieldFactory
      * @param null   $default_value
      * @return EE_DB_Only_Text_Field
      */
-    public function createDBOnlyTextField($table_column, $nice_name, $nullable, $default_value = null)
+    public function createDbOnlyTextField($table_column, $nice_name, $nullable, $default_value = null)
     {
         return $this->loader->getNew(
             'EE_DB_Only_Text_Field',
@@ -196,10 +224,10 @@ class ModelFieldFactory
      * @param string $table_column
      * @param string $nice_name
      * @param bool   $nullable
-     * @param null   $default_value
+     * @param string $default_value
      * @return EE_Email_Field
      */
-    public function createEmailField($table_column, $nice_name, $nullable, $default_value = null)
+    public function createEmailField($table_column, $nice_name, $nullable = true, $default_value = '')
     {
         return $this->loader->getNew(
             'EE_Email_Field',
@@ -421,10 +449,10 @@ class ModelFieldFactory
      * @param string $table_column
      * @param string $nice_name
      * @param bool   $nullable
-     * @param null   $default_value
+     * @param string $default_value
      * @return EE_Plain_Text_Field
      */
-    public function createPlainTextField($table_column, $nice_name, $nullable, $default_value = null)
+    public function createPlainTextField($table_column, $nice_name, $nullable = true, $default_value = '')
     {
         return $this->loader->getNew(
             'EE_Plain_Text_Field',
@@ -516,7 +544,7 @@ class ModelFieldFactory
      * @param null   $default_value
      * @return EE_Slug_Field
      */
-    public function createSlugField($table_column, $nice_name, $nullable, $default_value = null)
+    public function createSlugField($table_column, $nice_name, $nullable = false, $default_value = null)
     {
         return $this->loader->getNew(
             'EE_Slug_Field',
@@ -547,7 +575,7 @@ class ModelFieldFactory
      * @param string $table_column
      * @param string $nice_name
      * @param bool   $nullable
-     * @param null   $default_value
+     * @param mixed  $default_value
      * @param array  $values        If additional stati are to be used other than the default WP statuses,
      *                              then they can be registered via this property.
      *                              The format of the array should be as follows:
