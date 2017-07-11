@@ -1,4 +1,6 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) {
+<?php use EventEspresso\core\services\database\ModelFieldFactory;
+
+if ( ! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
 require_once(EE_MODELS . 'EEM_Base.model.php');
@@ -75,7 +77,7 @@ class EEM_Transaction extends EEM_Base
      * @return EEM_Transaction
      * @throws \EE_Error
      */
-    protected function __construct($timezone)
+    protected function __construct($timezone, ModelFieldFactory $model_field_factory)
     {
         $this->singular_item = __('Transaction', 'event_espresso');
         $this->plural_item   = __('Transactions', 'event_espresso');
