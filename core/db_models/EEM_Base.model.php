@@ -1,5 +1,6 @@
 <?php
 use EventEspresso\core\interfaces\ResettableInterface;
+use EventEspresso\core\services\database\ModelFieldFactory;
 
 /**
  * Class EEM_Base
@@ -25,7 +26,7 @@ use EventEspresso\core\interfaces\ResettableInterface;
  * @author                Michael Nelson
  * @since                 EE4
  */
-abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces\ResettableInterface
+abstract class EEM_Base extends EE_Base implements ResettableInterface
 {
 
     //admin posty
@@ -510,7 +511,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      * do something similar.
      *
      * @param null $timezone
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     protected function __construct($timezone = null)
     {
@@ -697,21 +698,26 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
 
 
     /**
-     *        This function is a singleton method used to instantiate the Espresso_model object
+     * This function is a singleton method used to instantiate the Espresso_model object
      *
-     * @access public
-     * @param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any
-     *                         incoming timezone data that gets saved).  Note this just sends the timezone info to the
-     *                         date time model field objects.  Default is NULL (and will be assumed using the set
-     *                         timezone in the 'timezone_string' wp option)
+     * @param string            $timezone string representing the timezone we want to set for returned Date Time Strings
+     *                                    (and any incoming timezone data that gets saved).
+     *                                    Note this just sends the timezone info to the date time model field objects.
+     *                                    Default is NULL
+     *                                    (and will be assumed using the set timezone in the 'timezone_string' wp option)
+     * @param ModelFieldFactory $model_field_factory
      * @return static (as in the concrete child class)
+     * @throws EE_Error
      */
-    public static function instance($timezone = null)
+    public static function instance($timezone = null, ModelFieldFactory $model_field_factory = null)
     {
         // check if instance of Espresso_model already exists
         if (! static::$_instance instanceof static) {
+            $model_field_factory = $model_field_factory instanceof ModelFieldFactory
+                ? $model_field_factory
+                : LoaderFactory::getLoader()->getShared('EventEspresso\core\services\database\ModelFieldFactory');
             // instantiate Espresso_model
-            static::$_instance = new static($timezone);
+            static::$_instance = new static($timezone, $model_field_factory);
         }
         //we might have a timezone set, let set_timezone decide what to do with it
         static::$_instance->set_timezone($timezone);
@@ -759,7 +765,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      *
      * @param  boolean $translated return localized strings or JUST the array.
      * @return array
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function status_array($translated = false)
     {
@@ -923,7 +929,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      *                                        ),
      *                                        'order_by'=>array('ANS_value'=>'ASC')
      *                                        ));
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function get_all($query_params = array())
     {
@@ -1041,7 +1047,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      *                                  numerically-indexed arrays, where 0 is the selection and 1 is the data type.
      *                                  Eg, array('count'=>array('COUNT(REG_ID)','%d'))
      * @return array | stdClass[] like results of $wpdb->get_results($sql,OBJECT), (ie, output type is OBJECT)
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     protected function _get_all_wpdb_results($query_params = array(), $output = ARRAY_A, $columns_to_select = null)
     {
@@ -1075,7 +1081,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      *                                  numerically-indexed arrays, where 0 is the selection and 1 is the data type.
      *                                  Eg, array('count'=>array('COUNT(REG_ID)','%d'))
      * @return array|stdClass[] like results of $wpdb->get_results($sql,OBJECT), (ie, output type is OBJECT)
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function get_all_wpdb_results($query_params = array(), $output = ARRAY_A, $columns_to_select = null)
     {
@@ -1139,7 +1145,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      * Convenient wrapper for getting the primary key field's name. Eg, on Registration, this would be 'REG_ID'
      *
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function primary_key_name()
     {
@@ -1178,7 +1184,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      * @param int   $id
      * @param array $query_params
      * @return array of normal query params, @see EEM_Base::get_all
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function alter_query_params_to_restrict_by_ID($id, $query_params = array())
     {
@@ -1203,7 +1209,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      *
      * @param array $query_params like EEM_Base's $query_params variable.
      * @return EE_Base_Class|EE_Soft_Delete_Base_Class|NULL
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function get_one($query_params = array())
     {
@@ -1238,7 +1244,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      *                                      otherwise you can indicate just the
      *                                      columns you want returned.
      * @return EE_Base_Class[]|array
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function next_x(
         $current_field_value,
@@ -1267,7 +1273,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      *                                      otherwise you can indicate just the
      *                                      columns you want returned.
      * @return EE_Base_Class[]|array
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function previous_x(
         $current_field_value,
@@ -1296,7 +1302,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      *                                      want and a single array indexed by
      *                                      the columns will be returned.
      * @return EE_Base_Class|null|array()
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function next(
         $current_field_value,
@@ -1532,7 +1538,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      *                                format is
      *                                'U', this is ignored.
      * @return DateTime
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function convert_datetime_for_query($field_name, $timestring, $incoming_format, $timezone = '')
     {
@@ -1605,7 +1611,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      * @return int how many rows got updated or FALSE if something went wrong with the query (wp returns FALSE or num
      *                                         rows affected which *could* include 0 which DOES NOT mean the query was
      *                                         bad)
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function update($fields_n_values, $query_params, $keep_model_objs_in_sync = true)
     {
@@ -1751,7 +1757,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      * @param array  $query_params @see EEM_Base::get_all()
      * @param string $field_to_select
      * @return array just like $wpdb->get_col()
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function get_col($query_params = array(), $field_to_select = null)
     {
@@ -1777,7 +1783,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      * @param array  $query_params    @see EEM_Base::get_all()
      * @param string $field_to_select @see EEM_Base::get_col()
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function get_var($query_params = array(), $field_to_select = null)
     {
@@ -1801,7 +1807,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      * @param array $fields_n_values array keys are field names on this model, and values are what those fields should
      *                               be updated to in the DB
      * @return string of SQL
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function _construct_update_sql($fields_n_values)
     {
@@ -1830,7 +1836,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      *
      * @param mixed $id
      * @return boolean whether the row got deleted or not
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function delete_permanently_by_ID($id)
     {
@@ -1850,7 +1856,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      *
      * @param mixed $id
      * @return boolean whether the row got deleted or not
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function delete_by_ID($id)
     {
@@ -1873,7 +1879,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      * @param array   $query_params
      * @param boolean $allow_blocking
      * @return int how many rows got deleted
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function delete($query_params, $allow_blocking = true)
     {
@@ -1894,7 +1900,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      *                                advisable to always leave this as TRUE, otherwise you could easily corrupt your
      *                                DB
      * @return int how many rows got deleted
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function delete_permanently($query_params, $allow_blocking = true)
     {
@@ -1965,7 +1971,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      *                                                 but want to see if A has any other objects blocking its deletion
      *                                                 before removing the relation between A and B
      * @return boolean
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function delete_is_blocked_by_related_models($this_model_obj_or_id, $ignore_this_model_obj = null)
     {
@@ -2102,7 +2108,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      * @param bool   $distinct       if we want to only count the distinct values for the column then you can trigger
      *                               that by the setting $distinct to TRUE;
      * @return int
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function count($query_params = array(), $field_to_count = null, $distinct = false)
     {
@@ -2141,7 +2147,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      * @param array  $query_params like EEM_Base::get_all
      * @param string $field_to_sum name of field (array key in $_fields array)
      * @return float
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function sum($query_params, $field_to_sum = null)
     {
@@ -2391,7 +2397,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      *                                                 only acceptable query_params is strict "col" => "value" pairs
      *                                                 because these will be inserted in any new rows created as well.
      * @return EE_Base_Class which was added as a relation. Object referred to by $other_model_id_or_obj
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function add_relationship_to(
         $id_or_obj,
@@ -2418,7 +2424,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      * @param        EE_Base_Class /int $other_model_id_or_obj EE_Base_Class or ID of other Model Object
      * @param string $relationName key in EEM_Base::_relations
      * @return boolean of success
-     * @throws \EE_Error
+     * @throws EE_Error
      * @param array  $where_query  This allows you to enter further query params for the relation to for relation to
      *                             methods that allow you to further specify extra columns to join by (such as HABTM).
      *                             Keep in mind that the only acceptable query_params is strict "col" => "value" pairs
@@ -2438,7 +2444,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      * @param array           $where_query_params
      * @param EE_Base_Class[] objects to which relations were removed
      * @return \EE_Base_Class[]
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function remove_relations($id_or_obj, $relationName, $where_query_params = array())
     {
@@ -2457,7 +2463,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      * @param string $model_name   like 'Event', 'Registration', etc. always singular
      * @param array  $query_params like EEM_Base::get_all
      * @return EE_Base_Class[]
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function get_all_related($id_or_obj, $model_name, $query_params = null)
     {
@@ -2478,7 +2484,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      * @param string                   $model_name
      * @param array                    $query_params
      * @return int how many deleted
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function delete_related($id_or_obj, $model_name, $query_params = array())
     {
@@ -2499,7 +2505,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      * @param string                   $model_name
      * @param array                    $query_params
      * @return int how many deleted
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function delete_related_permanently($id_or_obj, $model_name, $query_params = array())
     {
@@ -2521,7 +2527,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      * @param bool   $distinct       if we want to only count the distinct values for the column then you can trigger
      *                               that by the setting $distinct to TRUE;
      * @return int
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function count_related(
         $id_or_obj,
@@ -2553,7 +2559,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      * @param array  $query_params like EEM_Base::get_all's
      * @param string $field_to_sum name of field to count by. By default, uses primary key
      * @return float
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function sum_related($id_or_obj, $model_name, $query_params, $field_to_sum = null)
     {
@@ -2585,7 +2591,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      * @param string              $other_model_name , key in $this->_relatedModels, eg 'Registration', or 'Events'
      * @param array               $query_params     like EEM_Base::get_all's
      * @return EE_Base_Class
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function get_first_related(EE_Base_Class $id_or_obj, $other_model_name, $query_params)
     {
@@ -2689,7 +2695,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      * @param array  $field_n_values
      * @param string $action
      * @return boolean
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     protected function _satisfies_unique_indexes($field_n_values, $action = 'insert')
     {
@@ -2783,7 +2789,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      *
      * @param array $query_params
      * @return boolean
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function exists($query_params)
     {
@@ -2798,7 +2804,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      *
      * @param int|string $id
      * @return boolean
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function exists_by_ID($id)
     {
@@ -2887,7 +2893,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      * @param EE_Model_Field_Base $field_obj
      * @param array               $fields_n_values
      * @return mixed string|int|float depending on what the table column will be expecting
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     protected function _prepare_value_or_use_default($field_obj, $fields_n_values)
     {
@@ -2962,7 +2968,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      * returns EE_Primary_Table table name
      *
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function table()
     {
@@ -3040,7 +3046,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      *
      * @param array $query_params like EEM_Base::get_all's $query_parameters['where']
      * @return EE_Model_Query_Info_Carrier
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function _extract_related_models_from_query($query_params)
     {
@@ -3399,7 +3405,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      *
      * @param string $context one of EEM_Base::valid_cap_contexts()
      * @return array like EEM_Base::get_all() 's $query_params[0]
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function caps_where_conditions($context = self::caps_read)
     {
@@ -3580,7 +3586,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      * @param EEM_Base $model
      * @param string   $model_relation_path like 'Transaction.Payment.'
      * @return array like EEM_Base::get_all's $query_params[0]
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     private function _override_defaults_or_make_null_friendly(
         $default_where_conditions,
@@ -3657,7 +3663,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      *
      * @param EE_Model_Query_Info_Carrier $model_query_info
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     private function _construct_default_select_sql(EE_Model_Query_Info_Carrier $model_query_info)
     {
@@ -3841,7 +3847,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      *                                                          params or in case it wants to rename tables (in case
      *                                                          there are multiple joins to the same table)
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     private function _add_join_to_model(
         $model_name,
@@ -3876,7 +3882,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      *
      * @param array $where_params like EEM_Base::get_all
      * @return string of SQL
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     private function _construct_where_clause($where_params)
     {
@@ -3896,7 +3902,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      *
      * @param array $having_params
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     private function _construct_having_clause($having_params)
     {
@@ -4163,7 +4169,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      * @param EE_Model_Field_Base|string $field_obj if string, it should be the datatype to be used when querying, eg
      *                                              '%s'
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function _construct_between_value($values, $field_obj)
     {
@@ -4186,7 +4192,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      * @param mixed                      $values    array or comma-separated string
      * @param EE_Model_Field_Base|string $field_obj if string, it should be a wpdb data type like '%s', or '%d'
      * @return string of SQL to follow an 'IN' or 'NOT IN' operator
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function _construct_in_value($values, $field_obj)
     {
@@ -4395,7 +4401,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      * Eg "wp_post AS Event" or "wp_post AS Event INNER JOIN wp_postmeta Event_Meta ON Event.ID = Event_Meta.post_id"
      *
      * @return string SQL
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function _construct_internal_join()
     {
@@ -4763,7 +4769,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      * @param        array $rows of results of $wpdb->get_results($query,ARRAY_A)
      * @return \EE_Base_Class[] array keys are primary keys (if there is a primary key on the model. if not,
      *                           numerically indexed)
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     protected function _create_objects($rows = array())
     {
@@ -4857,7 +4863,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      * @param mixed $cols_n_values either an array of where each key is the name of a field, and the value is its value
      *                             or an stdClass where each property is the name of a column,
      * @return EE_Base_Class
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function instantiate_class_from_array_or_object($cols_n_values)
     {
@@ -5064,7 +5070,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      *
      * @param int|string $id
      * @return EE_Base_Class
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function refresh_entity_map_from_db($id)
     {
@@ -5102,7 +5108,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      * @param int|string    $id
      * @param EE_Base_Class $replacing_model_obj
      * @return \EE_Base_Class
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function refresh_entity_map_with($id, $replacing_model_obj)
     {
@@ -5366,7 +5372,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      * on a primary index
      *
      * @return EE_Model_Field_Base[] indexed by the field's name
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function get_combined_primary_key_fields()
     {
@@ -5386,7 +5392,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      *
      * @param array $cols_n_values keys are field names, values are their values
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function get_index_primary_key_string($cols_n_values)
     {
@@ -5403,7 +5409,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      * @see EEM_Base::get_combined_primary_key_fields() and EEM_Base::get_index_primary_key_string()
      * @param string $index_primary_key_string
      * @return null|array
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function parse_index_primary_key_string($index_primary_key_string)
     {
@@ -5427,7 +5433,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      *
      * @param array $key_vals
      * @return boolean
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function has_all_combined_primary_key_fields($key_vals)
     {
@@ -5483,7 +5489,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      * @param       mixed EE_Base_Class | array        $model_object_or_attributes_array
      * @param array $query_params
      * @return EE_Base_Class
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function get_one_copy($model_object_or_attributes_array, $query_params = array())
     {
@@ -5511,7 +5517,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      * @param array      $fields_n_values keys are field names, values are their new values
      * @param int|string $id              the value of the primary key to update
      * @return int number of rows updated
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function update_by_ID($fields_n_values, $id)
     {
@@ -5551,7 +5557,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      *
      * @param array $query_params like get_all's
      * @return string[]
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function get_all_names($query_params = array())
     {
@@ -5575,7 +5581,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      * @param boolean          $filter_out_empty_ids if a model object has an ID of '' or 0, don't bother including it
      *                                               in the returned array
      * @return array
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function get_IDs($model_objects, $filter_out_empty_ids = false)
     {
@@ -5636,7 +5642,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      *
      * @param string $context
      * @return EE_Default_Where_Conditions[] indexed by associated capability
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function cap_restrictions($context = EEM_Base::caps_read)
     {
@@ -5681,7 +5687,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      *
      * @param string $context one of EEM_Base::caps_ constants
      * @return EE_Default_Where_Conditions[] indexed by capability name
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function caps_missing($context = EEM_Base::caps_read)
     {
@@ -5718,7 +5724,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      *
      * @param string $context
      * @return string one of EEM_Base::cap_contexts_to_cap_action_map() values
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function cap_action_for_context($context)
     {
@@ -5780,7 +5786,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      *
      * @param string $context
      * @return bool
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     static public function verify_is_valid_cap_context($context)
     {
