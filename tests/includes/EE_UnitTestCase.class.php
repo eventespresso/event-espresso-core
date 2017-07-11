@@ -125,7 +125,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
                 return $WP_User->allcaps;
             }, 10, 4);
         }
-        EE_Registry::reset(true);
+        do_action('AHEE__EventEspresso_core_services_loaders_CachingLoader__resetCache');
     }
 
 
@@ -149,7 +149,6 @@ class EE_UnitTestCase extends WP_UnitTestCase
     public function tearDown()
     {
         parent::tearDown();
-        EE_Registry::reset(true);
         global $wp_filter, $wp_actions, $merged_filters, $wp_current_filter, $current_user;
         $wp_filter = $this->wp_filters_saved['wp_filter'];
         $wp_actions = $this->wp_filters_saved['wp_actions'];

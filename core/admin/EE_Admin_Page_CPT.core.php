@@ -1202,13 +1202,15 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
     public function modify_delete_post_link($delete_link, $post_id, $force_delete)
     {
         $post = get_post($post_id);
-        if (! isset($this->_req_data['action'], $this->_req_data['post'])
-             || (isset($this->_cpt_routes[$this->_req_data['action']])
+
+        if (! isset($this->_req_data['action'])
+            || ! $post instanceof WP_Post
+            || (isset($this->_cpt_routes[$this->_req_data['action']])
                  && $post->post_type !== $this->_cpt_routes[$this->_req_data['action']])
         ) {
             return $delete_link;
         }
-        $this->_set_model_object($this->_req_data['post'], true);
+        $this->_set_model_object($post->ID, true);
         //returns something like `trash_event` or `trash_attendee` or `trash_venue`
         $action = 'trash_' . str_replace('ee_', '', strtolower(get_class($this->_cpt_model_obj)));
 
@@ -1217,7 +1219,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
                 'page' => $this->_req_data['page'],
                 'action' => $action,
                 $this->_cpt_model_obj->get_model()->get_primary_key_field()->get_name()
-                    => $this->_req_data['post']
+                    => $post->ID
             ),
             admin_url()
         );
