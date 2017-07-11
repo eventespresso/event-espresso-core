@@ -135,7 +135,7 @@ class EEM_Attendee extends EEM_CPT_Base
      * @param null              $timezone
      * @param ModelFieldFactory $model_field_factory
      * @throws EE_Error
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     protected function __construct($timezone = null, ModelFieldFactory $model_field_factory)
     {
@@ -173,7 +173,8 @@ class EEM_Attendee extends EEM_CPT_Base
                 ),
                 'ATT_created'   => $model_field_factory->createDatetimeField(
                     'post_date',
-                    esc_html__('Time Attendee Created', 'event_espresso')
+                    esc_html__('Time Attendee Created', 'event_espresso'),
+                    $timezone
                 ),
                 'ATT_short_bio' => $model_field_factory->createSimpleHtmlField(
                     'post_excerpt',
@@ -183,7 +184,8 @@ class EEM_Attendee extends EEM_CPT_Base
                 ),
                 'ATT_modified'  => $model_field_factory->createDatetimeField(
                     'post_modified',
-                    esc_html__('Time Attendee Last Modified', 'event_espresso')
+                    esc_html__('Time Attendee Last Modified', 'event_espresso'),
+                    $timezone
                 ),
                 'ATT_author'    => $model_field_factory->createWpUserField(
                     'post_author',
