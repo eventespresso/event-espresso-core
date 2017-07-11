@@ -878,79 +878,61 @@ class EE_Registry
      * @param array  $arguments
      * @param string $type
      * @param bool   $from_db
-     * @return null | object
+     * @return bool|null|object
+     * @throws \ReflectionException
      * @throws \EE_Error
      */
     protected function _create_object($class_name, $arguments = array(), $type = '', $from_db = false)
     {
-        $class_obj = null;
-        $instantiation_mode = '0) none';
-        // don't give up! you gotta...
-        try {
-            // create reflection
-            $reflector = $this->get_ReflectionClass($class_name);
-            // make sure arguments are an array
-            $arguments = is_array($arguments) ? $arguments : array($arguments);
-            // and if arguments array is numerically and sequentially indexed, then we want it to remain as is,
-            // else wrap it in an additional array so that it doesn't get split into multiple parameters
-            $arguments = $this->_array_is_numerically_and_sequentially_indexed($arguments)
-                ? $arguments
-                : array($arguments);
-            // attempt to inject dependencies ?
-            if ($this->_dependency_map->has($class_name)) {
-                $arguments = $this->_resolve_dependencies($reflector, $class_name, $arguments);
-            }
-            // instantiate the class if possible
-            if ($reflector->isAbstract()) {
-                // nothing to instantiate, loading file was enough
-                // does not throw an exception so $instantiation_mode is unused
-                // $instantiation_mode = "1) no constructor abstract class";
-                $class_obj = true;
-            } else if ($reflector->getConstructor() === null && $reflector->isInstantiable() && empty($arguments)) {
-                // no constructor = static methods only... nothing to instantiate, loading file was enough
-                $instantiation_mode = "2) no constructor but instantiable";
-                $class_obj = $reflector->newInstance();
-            } else if ($from_db && method_exists($class_name, 'new_instance_from_db')) {
-                $instantiation_mode = "3) new_instance_from_db()";
-                $class_obj = call_user_func_array(array($class_name, 'new_instance_from_db'), $arguments);
-            } else if (method_exists($class_name, 'new_instance')) {
-                $instantiation_mode = "4) new_instance()";
-                $class_obj = call_user_func_array(array($class_name, 'new_instance'), $arguments);
-            } else if (method_exists($class_name, 'instance')) {
-                $instantiation_mode = "5) instance()";
-                $class_obj = call_user_func_array(array($class_name, 'instance'), $arguments);
-            } else if ($reflector->isInstantiable()) {
-                $instantiation_mode = "6) constructor";
-                $class_obj = $reflector->newInstanceArgs($arguments);
-            } else {
-                // heh ? something's not right !
-                throw new EE_Error(
-                    sprintf(
-                        __('The %s file %s could not be instantiated.', 'event_espresso'),
-                        $type,
-                        $class_name
-                    )
-                );
-            }
-        } catch (Exception $e) {
-            //very counter-intuitively, catching the exception causes problems. It's because
-            //we kill the execution. Whereas if we let it ride, someone who knows how to handle
-            //the exception can catch it, and it might not be entirely unexpected for them
-            throw $e;
-            if ( ! $e instanceof EE_Error) {
-                $e = new EE_Error(
-                    sprintf(
-                        __('The following error occurred while attempting to instantiate "%1$s": %2$s %3$s %2$s instantiation mode : %4$s', 'event_espresso'),
-                        $class_name,
-                        '<br />',
-                        $e->getMessage(),
-                        $instantiation_mode
-                    )
-                );
-            }
-            $e->get_error();
+        // create reflection
+        $reflector = $this->get_ReflectionClass($class_name);
+        // make sure arguments are an array
+        $arguments = is_array($arguments) ? $arguments : array($arguments);
+        // and if arguments array is numerically and sequentially indexed, then we want it to remain as is,
+        // else wrap it in an additional array so that it doesn't get split into multiple parameters
+        $arguments = $this->_array_is_numerically_and_sequentially_indexed($arguments)
+            ? $arguments
+            : array($arguments);
+        // attempt to inject dependencies ?
+        if ($this->_dependency_map->has($class_name)) {
+            $arguments = $this->_resolve_dependencies($reflector, $class_name, $arguments);
         }
-        return $class_obj;
+        // instantiate the class if possible
+        if ($reflector->isAbstract()) {
+            // nothing to instantiate, loading file was enough
+            // does not throw an exception so $instantiation_mode is unused
+            // $instantiation_mode = "1) no constructor abstract class";
+            return true;
+        }
+        if ($reflector->getConstructor() === null && $reflector->isInstantiable() && empty($arguments)) {
+            // no constructor = static methods only... nothing to instantiate, loading file was enough
+            // $instantiation_mode = "2) no constructor but instantiable";
+            return $reflector->newInstance();
+        }
+        if ($from_db && method_exists($class_name, 'new_instance_from_db')) {
+            // $instantiation_mode = "3) new_instance_from_db()";
+            return call_user_func_array(array($class_name, 'new_instance_from_db'), $arguments);
+        }
+        if (method_exists($class_name, 'new_instance')) {
+            // $instantiation_mode = "4) new_instance()";
+            return call_user_func_array(array($class_name, 'new_instance'), $arguments);
+        }
+        if (method_exists($class_name, 'instance')) {
+            // $instantiation_mode = "5) instance()";
+            return call_user_func_array(array($class_name, 'instance'), $arguments);
+        }
+        if ($reflector->isInstantiable()) {
+            // $instantiation_mode = "6) constructor";
+            return $reflector->newInstanceArgs($arguments);
+        }
+        // heh ? something's not right !
+        throw new EE_Error(
+            sprintf(
+                __('The %s file %s could not be instantiated.', 'event_espresso'),
+                $type,
+                $class_name
+            )
+        );
     }
 
 
