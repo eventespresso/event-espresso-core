@@ -280,6 +280,10 @@ class EE_Dependency_Map
      */
     public function has($class_name = '')
     {
+        // all legacy models have the same dependencies
+        if (strpos($class_name, 'EEM_') === 0) {
+            $class_name = 'LEGACY_MODELS';
+        }
         return isset($this->_dependency_map[$class_name]) ? true : false;
     }
 
@@ -294,6 +298,10 @@ class EE_Dependency_Map
      */
     public function has_dependency_for_class($class_name = '', $dependency = '')
     {
+        // all legacy models have the same dependencies
+        if (strpos($class_name, 'EEM_') === 0) {
+            $class_name = 'LEGACY_MODELS';
+        }
         $dependency = $this->get_alias($dependency);
         return isset($this->_dependency_map[$class_name], $this->_dependency_map[$class_name][$dependency])
             ? true
@@ -311,6 +319,10 @@ class EE_Dependency_Map
      */
     public function loading_strategy_for_class_dependency($class_name = '', $dependency = '')
     {
+        // all legacy models have the same dependencies
+        if (strpos($class_name, 'EEM_') === 0) {
+            $class_name = 'LEGACY_MODELS';
+        }
         $dependency = $this->get_alias($dependency);
         return $this->has_dependency_for_class($class_name, $dependency)
             ? $this->_dependency_map[$class_name][$dependency]
@@ -325,6 +337,10 @@ class EE_Dependency_Map
      */
     public function class_loader($class_name)
     {
+        // all legacy models use load_model()
+        if(strpos($class_name, 'EEM_') === 0){
+            return 'load_model';
+        }
         // don't use loaders for FQCNs
         if(strpos($class_name, '\\') !== false){
             return '';
@@ -602,7 +618,11 @@ class EE_Dependency_Map
                 'EventEspresso\core\services\cache\TransientCacheStorage' => EE_Dependency_Map::load_from_cache,
             ),
             'EventEspresso\core\services\database\ModelFieldFactory'                                                   => array(
-                'EventEspresso\core\services\loaders\Loader' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\loaders\Loader'              => EE_Dependency_Map::load_from_cache,
+            ),
+            'LEGACY_MODELS'                                                   => array(
+                null,
+                'EventEspresso\core\services\database\ModelFieldFactory' => EE_Dependency_Map::load_from_cache,
             ),
         );
     }
@@ -675,8 +695,9 @@ class EE_Dependency_Map
                 );
             },
             //load_model
-            'EEM_Message_Template_Group'           => 'load_model',
-            'EEM_Message_Template'                 => 'load_model',
+            // 'EEM_Attendee'                         => 'load_model',
+            // 'EEM_Message_Template_Group'           => 'load_model',
+            // 'EEM_Message_Template'                 => 'load_model',
             //load_helper
             'EEH_Parse_Shortcodes'                 => function () {
                 if (EE_Registry::instance()->load_helper('Parse_Shortcodes')) {
