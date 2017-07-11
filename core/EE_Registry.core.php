@@ -933,6 +933,10 @@ class EE_Registry
                 );
             }
         } catch (Exception $e) {
+            //very counter-intuitively, catching the exception causes problems. It's because
+            //we kill the execution. Whereas if we let it ride, someone who knows how to handle
+            //the exception can catch it, and it might not be entirely unexpected for them
+            throw $e;
             if ( ! $e instanceof EE_Error) {
                 $e = new EE_Error(
                     sprintf(
