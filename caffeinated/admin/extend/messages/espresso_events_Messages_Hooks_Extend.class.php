@@ -14,8 +14,6 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
  */
 class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hooks
 {
-
-
     /**
      * espresso_events_Messages_Hooks_Extend constructor.
      *
@@ -37,6 +35,12 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
             array($this, 'caf_updates'),
             10
         );
+        add_action(
+            'AHEE__Extend_Events_Admin_Page___duplicate_event__after',
+            array($this, 'duplicate_custom_message_settings'),
+            10,
+            2
+        );
         parent::__construct($admin_page);
     }
 
@@ -49,7 +53,6 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
      */
     protected function _extend_properties()
     {
-
         define('EE_MSGS_EXTEND_ASSETS_URL', EE_CORE_CAF_ADMIN_EXTEND_URL . 'messages/assets/');
         $this->_ajax_func = array(
             'ee_msgs_create_new_custom' => 'create_new_custom',
@@ -218,7 +221,6 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
      */
     public function create_new_custom()
     {
-
         if (! EE_Registry::instance()->CAP->current_user_can('ee_edit_messages', 'create_new_custom_ajax')) {
             wp_die(__('You don\'t have privileges to do this action', 'event_espresso'));
         }
@@ -264,5 +266,24 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
         EEH_Template::display_template(
             EE_CORE_CAF_ADMIN_EXTEND . 'messages/templates/create_custom_template_form.template.php'
         );
+    }
+
+
+    /**
+     * Callback for AHEE__Extend_Events_Admin_Page___duplicate_event__after hook used to ensure new events duplicate
+     * the assigned custom message templates.
+     *
+     * @param EE_Event $new_event
+     * @param EE_Event $original_event
+     * @throws EE_Error
+     */
+    public function duplicate_custom_message_settings(EE_Event $new_event, EE_Event $original_event)
+    {
+        $message_template_groups = $original_event->get_many_related('Message_Template_Group');
+        foreach ($message_template_groups as $message_template_group) {
+            $new_event->_add_relation_to($message_template_group, 'Message_Template_Group');
+        }
+        //save new event
+        $new_event->save();
     }
 }
