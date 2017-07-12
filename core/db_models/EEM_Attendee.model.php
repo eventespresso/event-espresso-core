@@ -147,7 +147,7 @@ class EEM_Attendee extends EEM_CPT_Base
             ),
         );
         $this->_fields = array(
-            'Attendee_CPT'  => [
+            'Attendee_CPT'  => array(
                 'ATT_ID'        => new EE_Primary_Key_Int_Field(
                     'ID',
                     esc_html__('Attendee ID', 'event_espresso')
@@ -205,7 +205,7 @@ class EEM_Attendee extends EEM_CPT_Base
                     false,
                     'publish'
                 ),
-            ],
+            ),
             'Attendee_Meta' => array(
                 'ATTM_ID'      => new EE_DB_Only_Int_Field(
                     'ATTM_ID',
