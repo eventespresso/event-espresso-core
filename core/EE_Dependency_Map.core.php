@@ -325,10 +325,6 @@ class EE_Dependency_Map
      */
     public function class_loader($class_name)
     {
-        // don't use loaders for FQCNs
-        if(strpos($class_name, '\\') !== false){
-            return '';
-        }
         $class_name = $this->get_alias($class_name);
         return isset($this->_class_loaders[$class_name]) ? $this->_class_loaders[$class_name] : '';
     }
