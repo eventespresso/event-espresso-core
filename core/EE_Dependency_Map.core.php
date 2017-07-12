@@ -230,7 +230,7 @@ class EE_Dependency_Map
      */
     public static function register_class_loader($class_name, $loader = 'load_core')
     {
-        if (strpos($class_name, '\\') !== false) {
+        if (! $loader instanceof Closure && strpos($class_name, '\\') !== false) {
             throw new DomainException(
                 esc_html__('Don\'t use class loaders for FQCNs.', 'event_espresso')
             );
