@@ -58,7 +58,7 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
             0 => array(
                 'page_route' => array('edit', 'create_new'),
                 'func'       => 'messages_metabox',
-                'label'      => __('Notifications', 'event_espresso'),
+                'label'      => esc_html__('Notifications', 'event_espresso'),
                 'priority'   => 'high',
             ),
         );
@@ -145,7 +145,7 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
                 EE_MSG_ADMIN_URL
             );
             $error_msg        = sprintf(
-                __(
+                esc_html__(
                     'There are no active messengers. So no notifications will go out for %1$sany%2$s events.  You will want to %3$sActivate a Messenger%4$s.',
                     'event_espresso'
                 ),
@@ -191,7 +191,9 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
 
         $notices = '
 	<div id="espresso-ajax-loading" class="ajax-loader-grey">
-		<span class="ee-spinner ee-spin"></span><span class="hidden">' . __('loading...', 'event_espresso') . '</span>
+		<span class="ee-spinner ee-spin"></span><span class="hidden">'
+        . esc_html__('loading...', 'event_espresso')
+        . '</span>
 	</div>
 	<div class="ee-notices"></div>';
 
