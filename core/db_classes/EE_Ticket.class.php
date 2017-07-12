@@ -1397,4 +1397,14 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 	}
 
 
+    /**
+     * This simply returns whether a ticket can be permanently deleted or not.
+     * The criteria for determining this is whether the ticket has any related approved registrations.
+     * If there are none then it can be permanently deleted.
+     *
+     * @return bool
+     */
+	public function is_permanently_deleteable() {
+	    return $this->count_registrations(array(array('STS_ID' => EEM_Registration::status_id_approved))) === 0;
+    }
 } //end EE_Ticket class
