@@ -1524,7 +1524,9 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
             'ticket_archive_class'          => $ticket instanceof EE_Ticket && $ticket->get('TKT_deleted')
                 ? ' ticket-archived'
                 : '',
-            'trash_icon'                    => $ticket instanceof EE_Ticket && $ticket->get('TKT_deleted')
+            'trash_icon'                    => $ticket instanceof EE_Ticket
+                                               && $ticket->get('TKT_deleted')
+                                               && ! $ticket->is_permanently_deleteable()
                 ? 'ee-lock-icon '
                 : 'trash-icon dashicons dashicons-post-trash clickable',
             'clone_icon'                    => $ticket instanceof EE_Ticket && $ticket->get('TKT_deleted')
