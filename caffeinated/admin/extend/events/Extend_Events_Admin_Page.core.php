@@ -625,7 +625,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
                     }
 
                     do_action(
-                        'AHEE__Extend_Events_Admin_Page___duplicate_event__duplciate_ticket__after',
+                        'AHEE__Extend_Events_Admin_Page___duplicate_event__duplicate_ticket__after',
                         $orig_tkt,
                         $new_tkt,
                         $orig_prices,
