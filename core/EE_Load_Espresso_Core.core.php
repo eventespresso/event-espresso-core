@@ -2,7 +2,6 @@
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
-use EventEspresso\core\services\loaders\LoaderInterface;
 
 if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
@@ -96,8 +95,8 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_
                 apply_filters(
                     'FHEE__EE_Load_Espresso_Core__handle_request__CommandBus_middleware',
                     array(
-                        $loader->getShared('CapChecker'),
-                        $loader->getShared('AddActionHook'),
+                        $loader->getShared('EventEspresso\core\services\commands\middleware\CapChecker'),
+                        $loader->getShared('EventEspresso\core\services\commands\middleware\AddActionHook'),
                     )
                 ),
             )
@@ -110,7 +109,7 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_
         // deprecated functions
         espresso_load_required('EE_Deprecated', EE_CORE . 'EE_Deprecated.core.php');
         // WP cron jobs
-        $loader->getShared('Cron_Tasks');
+        $loader->getShared('EE_Cron_Tasks');
         $loader->getShared('EE_Request_Handler');
         $loader->getShared('EE_System');
         return $this->response;
