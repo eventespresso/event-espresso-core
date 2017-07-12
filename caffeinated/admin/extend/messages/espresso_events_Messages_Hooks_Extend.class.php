@@ -1,7 +1,6 @@
 <?php
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('NO direct script access allowed');
-}
+
+defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
 
 /**
  * espresso_events_Messages_Hooks_Extend
@@ -27,9 +26,10 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
         /**
          * Add cap restriction ... metaboxes should not show if user does not have the ability to edit_custom_messages
          */
-        if (
-        ! EE_Registry::instance()->CAP->current_user_can('ee_edit_messages', 'messages_events_editor_metabox')
-        ) {
+        if (! EE_Registry::instance()->CAP->current_user_can(
+            'ee_edit_messages',
+            'messages_events_editor_metabox'
+        )) {
             return;
         }
         add_filter(
@@ -95,7 +95,8 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
      *
      * @param  EE_Event $event EE event object
      * @param  array    $data  The request data from the form
-     * @return bool            success or fail
+     * @return bool success or fail
+     * @throws EE_Error
      */
     public function attach_evt_message_templates($event, $data)
     {
@@ -136,15 +137,18 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
         $tabs                     = array();
 
         //empty messengers?
-        //Note message types will always have at least one available because every messenger has a default message type associated with it (payment) if no other message types are selected.
+        //Note message types will always have at least one available because every messenger has a default message type
+        // associated with it (payment) if no other message types are selected.
         if (empty($active_messengers)) {
             $msg_activate_url = EE_Admin_Page::add_query_args_and_nonce(
                 array('action' => 'settings'),
                 EE_MSG_ADMIN_URL
             );
             $error_msg        = sprintf(
-                __('There are no active messengers. So no notifications will go out for %1$sany%2$s events.  You will want to %3$sActivate a Messenger%4$s.',
-                    'event_espresso'),
+                __(
+                    'There are no active messengers. So no notifications will go out for %1$sany%2$s events.  You will want to %3$sActivate a Messenger%4$s.',
+                    'event_espresso'
+                ),
                 '<strong>',
                 '</strong>',
                 '<a href="' . $msg_activate_url . '">',
@@ -198,7 +202,6 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
         do_action('AHEE__espresso_events_Messages_Hooks_Extend__messages_metabox__before_content');
         echo $notices . '<div class="messages-tabs-content">' . $tabbed_content . '</div>';
         do_action('AHEE__espresso_events_Messages_Hooks_Extend__messages_metabox__after_content');
-
     }
 
 
@@ -209,6 +212,7 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
      *
      * @access public
      * @return string either an html string will be returned or a success message
+     * @throws EE_Error
      */
     public function create_new_custom()
     {
@@ -250,7 +254,8 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
      * This is the dynamic method for this class
      * that will end up hooking into the 'admin_footer' hook on the 'edit_event' route in the events page.
      *
-     * @return string (admin_footer contents)
+     * @return string
+     * @throws DomainException
      */
     public function edit_admin_footer()
     {
@@ -258,5 +263,4 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
             EE_CORE_CAF_ADMIN_EXTEND . 'messages/templates/create_custom_template_form.template.php'
         );
     }
-
-} //end class espresso_events_Messages_Hooks_Extend
+}
