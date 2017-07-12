@@ -576,6 +576,7 @@ class EE_Registry implements ResettableInterface
      * @param bool        $load_only    if true, will only load the file, but will NOT instantiate an object
      * @param bool|string $addon        if true, will cache the object in the EE_Registry->$addons array
      * @return mixed                    null = failure to load or instantiate class object.
+     * @throws \EE_Error
      *                                  object = class loaded and instantiated successfully.
      *                                  bool = fail or success when $load_only is true
      */
@@ -612,8 +613,12 @@ class EE_Registry implements ResettableInterface
                 return $cached_class;
             }
         }
+        // obtain the loader method from the dependency map
+        $loader = $this->_dependency_map->class_loader($class_name);
         // instantiate the requested object
-        $class_obj = $this->_create_object($class_name, $arguments, $addon, $from_db);
+        $class_obj = $loader && method_exists($this, $loader)
+            ? $this->{$loader}($class_name, $arguments)
+            : $this->_create_object($class_name, $arguments, $addon, $from_db);
         if ($this->_cache_on && $cache) {
             // save it for later... kinda like gum  { : $
             $this->_set_cached_class($class_obj, $class_name, $addon, $from_db);
