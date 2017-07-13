@@ -1074,7 +1074,7 @@ class EE_Registry implements ResettableInterface
                 $arguments = $this->_resolve_dependency($class_name, $param_class, $arguments, $index);
             } else {
                 try {
-                    $arguments[$index] = $param->isOptional()
+                    $arguments[$index] = $param->isDefaultValueAvailable()
                         ? $param->getDefaultValue()
                         : null;
                 } catch (ReflectionException $e) {
