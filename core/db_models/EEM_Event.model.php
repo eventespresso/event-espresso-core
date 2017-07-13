@@ -1,4 +1,6 @@
-<?php if (! defined('EVENT_ESPRESSO_VERSION')) {
+<?php use EventEspresso\core\services\database\ModelFieldFactory;
+
+if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
 require_once(EE_MODELS . 'EEM_CPT_Base.model.php');
@@ -54,27 +56,6 @@ class EEM_Event extends EEM_CPT_Base
      */
     protected static $_instance;
 
-
-
-    /**
-     *  This function is a singleton method used to instantiate the EEM_Event object
-     *
-     * @param string $timezone
-     * @return EEM_Event
-     * @throws \EE_Error
-     */
-    public static function instance($timezone = null)
-    {
-        // check if instance of EEM_Event already exists
-        if (! self::$_instance instanceof EEM_Event) {
-            // instantiate Espresso_model
-            self::$_instance = new self($timezone);
-        }
-        //we might have a timezone set, let set_timezone decide what to do with it
-        self::$_instance->set_timezone($timezone);
-        // EEM_Event object
-        return self::$_instance;
-    }
 
 
 

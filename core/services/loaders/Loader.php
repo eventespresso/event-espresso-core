@@ -2,10 +2,8 @@
 
 namespace EventEspresso\core\services\loaders;
 
-use EE_Registry;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
-use EventEspresso\core\services\collections\LooseCollection;
 use InvalidArgumentException;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
@@ -46,47 +44,10 @@ class Loader implements LoaderInterface
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      */
-    public function __construct(LoaderDecoratorInterface $new_loader = null, LoaderDecoratorInterface $shared_loader = null)
+    public function __construct(LoaderDecoratorInterface $new_loader, LoaderDecoratorInterface $shared_loader)
     {
-        $this->new_loader = $this->setupNewLoader($new_loader);
-        $this->shared_loader = $this->setupSharedLoader($shared_loader);
-    }
-
-
-
-    /**
-     * @param LoaderDecoratorInterface|null $new_loader
-     * @return CoreLoader|LoaderDecoratorInterface
-     * @throws InvalidArgumentException
-     */
-    private function setupNewLoader(LoaderDecoratorInterface $new_loader = null)
-    {
-        // if not already generated, create a standard loader
-        if (! $new_loader instanceof LoaderDecoratorInterface) {
-            $new_loader = new CoreLoader(EE_Registry::instance());
-        }
-        return $new_loader;
-    }
-
-
-
-    /**
-     * @param LoaderDecoratorInterface|null $shared_loader
-     * @return CoreLoader|LoaderDecoratorInterface
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     * @throws InvalidArgumentException
-     */
-    private function setupSharedLoader(LoaderDecoratorInterface $shared_loader = null)
-    {
-        // if not already generated, create a caching loader
-        if (! $shared_loader instanceof LoaderDecoratorInterface) {
-            $shared_loader = new CachingLoader(
-                new CoreLoader(EE_Registry::instance()),
-                new LooseCollection('')
-            );
-        }
-        return $shared_loader;
+        $this->new_loader = $new_loader;
+        $this->shared_loader = $shared_loader;
     }
 
 
@@ -152,11 +113,13 @@ class Loader implements LoaderInterface
 
     /**
      * calls reset() on loaders if that method exists
+     *
+     * @param bool $hard
      */
-    public function reset()
+    public function reset($hard = true)
     {
         $this->new_loader->reset();
-        $this->shared_loader->reset();
+        $this->shared_loader->reset($hard);
     }
 
 }

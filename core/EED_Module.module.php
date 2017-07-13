@@ -1,4 +1,6 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+<?php use EventEspresso\core\interfaces\ResettableInterface;
+
+if ( ! defined( 'EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 /**
  * Event Espresso
  *
@@ -21,7 +23,7 @@
  *
  * ------------------------------------------------------------------------
  */
-abstract class EED_Module extends EE_Configurable {
+abstract class EED_Module extends EE_Configurable implements ResettableInterface {
 
 	/**
 	 * 	instance of the EED_Module object
@@ -44,6 +46,14 @@ abstract class EED_Module extends EE_Configurable {
 	 */
 	protected $theme = '';
 
+
+
+	/**
+	 * @return mixed
+	 */
+	public static function reset() {
+		static::$_instance = null;
+	}
 
 
 

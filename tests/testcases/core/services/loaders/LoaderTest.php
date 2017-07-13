@@ -41,7 +41,7 @@ class LoaderTest extends EE_UnitTestCase
     {
         // first turn caching on
         add_filter('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache', '__return_false');
-        $fqcn = '\EventEspresso\core\services\address\formatters\AddressFormatter';
+        $fqcn = 'EventEspresso\core\services\address\formatters\AddressFormatter';
         $object = self::$loader->load($fqcn, array(), false);
         $this->assertInstanceOf(
             $fqcn,
@@ -67,7 +67,7 @@ class LoaderTest extends EE_UnitTestCase
     {
         // first turn caching on
         add_filter('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache', '__return_false');
-        $fqcn = '\EventEspresso\core\services\address\formatters\AddressFormatter';
+        $fqcn = 'EventEspresso\core\services\address\formatters\AddressFormatter';
         $object3 = self::$loader->load($fqcn);
         $this->assertInstanceOf(
             $fqcn,

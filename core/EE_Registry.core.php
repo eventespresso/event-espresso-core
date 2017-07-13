@@ -1,5 +1,10 @@
 <?php
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\interfaces\InterminableInterface;
+use EventEspresso\core\interfaces\ResettableInterface;
 use EventEspresso\core\services\assets\Registry;
+use EventEspresso\core\services\loaders\LoaderFactory;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -13,7 +18,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  * @subpackage                core
  * @author                    Brent Christensen
  */
-class EE_Registry
+class EE_Registry implements ResettableInterface
 {
 
     /**
@@ -164,8 +169,12 @@ class EE_Registry
 
     /**
      * @singleton method used to instantiate class object
+     * @access    public
      * @param  EE_Dependency_Map $dependency_map
      * @return EE_Registry instance
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      */
     public static function instance(EE_Dependency_Map $dependency_map = null)
     {
@@ -182,7 +191,11 @@ class EE_Registry
      *protected constructor to prevent direct creation
      *
      * @Constructor
+     * @access protected
      * @param  EE_Dependency_Map $dependency_map
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
      */
     protected function __construct(EE_Dependency_Map $dependency_map)
     {
@@ -569,7 +582,7 @@ class EE_Registry
      *                                  and thus call a different method to instantiate
      * @param bool        $load_only    if true, will only load the file, but will NOT instantiate an object
      * @param bool|string $addon        if true, will cache the object in the EE_Registry->$addons array
-     * @return mixed null = failure to load or instantiate class object.
+     * @return mixed                    null = failure to load or instantiate class object.
      *                                  object = class loaded and instantiated successfully.
      *                                  bool = fail or success when $load_only is true
      * @throws EE_Error
@@ -612,8 +625,16 @@ class EE_Registry
                 return $cached_class;
             }
         }
+        // obtain the loader method from the dependency map
+        $loader = $this->_dependency_map->class_loader($class_name);
         // instantiate the requested object
-        $class_obj = $this->_create_object($class_name, $arguments, $addon, $from_db);
+        if($loader instanceof Closure) {
+            $class_obj = $loader($arguments);
+        } else if ($loader && method_exists($this, $loader)) {
+            $class_obj = $this->{$loader}($class_name, $arguments);
+        } else {
+            $class_obj = $this->_create_object($class_name, $arguments, $addon, $from_db);
+        }
         if ($this->_cache_on && $cache) {
             // save it for later... kinda like gum  { : $
             $this->_set_cached_class($class_obj, $class_name, $addon, $from_db);
@@ -719,6 +740,9 @@ class EE_Registry
      */
     protected function _get_cached_class($class_name, $class_prefix = '')
     {
+        if ($class_name === 'EE_Registry') {
+            return $this;
+        }
         // have to specify something, but not anything that will conflict
         $class_abbreviation = isset($this->_class_abbreviations[$class_name])
             ? $this->_class_abbreviations[$class_name]
@@ -1032,7 +1056,7 @@ class EE_Registry
                 : $param_class;
             if (
                 // param is not even a class
-                empty($param_class)
+                $param_class === null
                 // and something already exists in the incoming arguments for this param
                 && array_key_exists($index, $argument_keys)
                 && array_key_exists($argument_keys[$index], $arguments)
@@ -1042,7 +1066,7 @@ class EE_Registry
             }
             if (
                 // parameter is type hinted as a class, exists as an incoming argument, AND it's the correct class
-                ! empty($param_class)
+                $param_class !== null
                 && isset($argument_keys[$index], $arguments[$argument_keys[$index]])
                 && $arguments[$argument_keys[$index]] instanceof $param_class
             ) {
@@ -1051,13 +1075,15 @@ class EE_Registry
             }
             if (
                 // parameter is type hinted as a class, and should be injected
-                ! empty($param_class)
+                $param_class !== null
                 && $this->_dependency_map->has_dependency_for_class($class_name, $param_class)
             ) {
                 $arguments = $this->_resolve_dependency($class_name, $param_class, $arguments, $index);
             } else {
                 try {
-                    $arguments[$index] = $param->getDefaultValue();
+                    $arguments[$index] = $param->isDefaultValueAvailable()
+                        ? $param->getDefaultValue()
+                        : null;
                 } catch (ReflectionException $e) {
                     throw new ReflectionException(
                         sprintf(
@@ -1080,16 +1106,19 @@ class EE_Registry
      * @param array  $arguments
      * @param mixed  $index
      * @return array
-     * @throws EE_Error
-     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      */
     protected function _resolve_dependency($class_name, $param_class, $arguments, $index)
     {
         $dependency = null;
         // should dependency be loaded from cache ?
-        $cache_on = $this->_dependency_map
-                        ->loading_strategy_for_class_dependency($class_name, $param_class)
-                    !== EE_Dependency_Map::load_new_object;
+        $cache_on = $this->_dependency_map->loading_strategy_for_class_dependency(
+            $class_name,
+            $param_class
+        );
+        $cache_on = $cache_on !== EE_Dependency_Map::load_new_object;
         // we might have a dependency...
         // let's MAYBE try and find it in our cache if that's what's been requested
         $cached_class = $cache_on
@@ -1103,7 +1132,7 @@ class EE_Registry
             $loader = $this->_dependency_map->class_loader($param_class);
             // is loader a custom closure ?
             if ($loader instanceof Closure) {
-                $dependency = $loader();
+                $dependency = $loader($arguments);
             } else {
                 // set the cache on property for the recursive loading call
                 $this->_cache_on = $cache_on;
@@ -1111,18 +1140,18 @@ class EE_Registry
                 if ($loader && method_exists($this, $loader)) {
                     $dependency = $this->{$loader}($param_class);
                 } else {
-                    $dependency = $this->create($param_class, array(), $cache_on);
+                    $dependency = LoaderFactory::getLoader()->load(
+                        $param_class,
+                        array(),
+                        $cache_on
+                    );
                 }
             }
         }
         // did we successfully find the correct dependency ?
         if ($dependency instanceof $param_class) {
             // then let's inject it into the incoming array of arguments at the correct location
-            if (isset($argument_keys[$index])) {
-                $arguments[$argument_keys[$index]] = $dependency;
-            } else {
-                $arguments[$index] = $dependency;
-            }
+            $arguments[$index] = $dependency;
         }
         return $arguments;
     }
@@ -1146,7 +1175,7 @@ class EE_Registry
      */
     protected function _set_cached_class($class_obj, $class_name, $class_prefix = '', $from_db = false)
     {
-        if (empty($class_obj)) {
+        if ($class_name === 'EE_Registry' || empty($class_obj)) {
             return;
         }
         // return newly instantiated class
@@ -1297,22 +1326,56 @@ class EE_Registry
     public static function reset($hard = false, $reinstantiate = true, $reset_models = true)
     {
         $instance = self::instance();
-        EEH_Activation::reset();
-        //properties that get reset
         $instance->_cache_on = true;
-        $instance->CFG = EE_Config::reset($hard, $reinstantiate);
+        // reset some "special" classes
+        EEH_Activation::reset();
+        $instance->CFG = $instance->CFG->reset($hard, $reinstantiate);
         $instance->CART = null;
         $instance->MRM = null;
         $instance->AssetsRegistry = $instance->create('EventEspresso\core\services\assets\Registry');
         //messages reset
         EED_Messages::reset();
-        if ($reset_models) {
-            foreach (array_keys($instance->non_abstract_db_models) as $model_name) {
-                $instance->reset_model($model_name);
+        //handle of objects cached on LIB
+        foreach (array('LIB', 'modules', 'shortcodes') as $cache) {
+            foreach ($instance->{$cache} as $class_name => $class) {
+                if (EE_Registry::_reset_and_unset_object($class, $reset_models)) {
+                    unset($instance->{$cache}->{$class_name});
+                }
             }
         }
-        $instance->LIB = new stdClass();
         return $instance;
+    }
+
+
+
+    /**
+     * if passed object implements ResettableInterface, then call it's reset() method
+     * if passed object implements InterminableInterface, then return false,
+     * to indicate that it should NOT be cleared from the Registry cache
+     *
+     * @param      $object
+     * @param bool $reset_models
+     * @return bool returns true if cached object should be unset
+     */
+    private static function _reset_and_unset_object($object, $reset_models)
+    {
+        static $count = 0;
+        $count++;
+        if ($object instanceof ResettableInterface) {
+            if ($object instanceof EEM_Base) {
+                if ($reset_models) {
+                    $object->reset();
+                    return true;
+                }
+                return false;
+            }
+            $object->reset();
+            return true;
+        }
+        if ( ! $object instanceof InterminableInterface) {
+            return true;
+        }
+        return false;
     }
 
 

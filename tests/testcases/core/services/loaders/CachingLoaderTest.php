@@ -85,11 +85,12 @@ class CachingLoaderTest extends EE_UnitTestCase
      */
     public function testLoadCachingOn()
     {
-        // turn caching back on
+        //turn caching on.
         remove_all_filters('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache');
-        $object = self::$loader->load($this->getFqcnForTest());
-        $cached_object = self::$loader->load($this->getFqcnForTest());
-        $this->assertEquals(spl_object_hash($object), spl_object_hash($cached_object));
+        $this->assertEquals(
+            spl_object_hash(self::$loader->load($this->getFqcnForTest())),
+            spl_object_hash(self::$loader->load($this->getFqcnForTest()))
+        );
     }
 
 
@@ -124,6 +125,8 @@ class CachingLoaderTest extends EE_UnitTestCase
         $this->assertNotEquals(spl_object_hash($object9), spl_object_hash(self::$loader->load($fqcn9)));
         remove_all_filters('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache');
     }
+
+
 
 }
 // Location: testcases/core/services/loaders/CachingLoaderTest.php

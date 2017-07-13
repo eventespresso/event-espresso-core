@@ -1,8 +1,9 @@
 <?php
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\interfaces\ResettableInterface;
+use EventEspresso\core\services\database\ModelFieldFactory;
 use EventEspresso\core\services\loaders\LoaderFactory;
-use EventEspresso\core\services\loaders\LoaderInterface;
 
 /**
  * Class EEM_Base
@@ -28,7 +29,7 @@ use EventEspresso\core\services\loaders\LoaderInterface;
  * @author                Michael Nelson
  * @since                 EE4
  */
-abstract class EEM_Base extends EE_Base
+abstract class EEM_Base extends EE_Base implements ResettableInterface
 {
 
     /**
@@ -504,8 +505,7 @@ abstract class EEM_Base extends EE_Base
      * the array key ('Event_Post_Table'), instead of repeating it. The model fields and model relations
      * do something similar.
      *
-     * @param null                 $timezone
-     * @param LoaderInterface|null $loader
+     * @param null $timezone
      * @throws EE_Error
      */
     protected function __construct($timezone = null, LoaderInterface $loader = null)
@@ -672,25 +672,27 @@ abstract class EEM_Base extends EE_Base
 
 
     /**
-     *        This function is a singleton method used to instantiate the Espresso_model object
+     * This function is a singleton method used to instantiate the Espresso_model object
      *
-     * @access public
-     * @param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any
-     *                         incoming timezone data that gets saved).  Note this just sends the timezone info to the
-     *                         date time model field objects.  Default is NULL (and will be assumed using the set
-     *                         timezone in the 'timezone_string' wp option)
+     * @param string            $timezone string representing the timezone we want to set for returned Date Time Strings
+     *                                    (and any incoming timezone data that gets saved).
+     *                                    Note this just sends the timezone info to the date time model field objects.
+     *                                    Default is NULL
+     *                                    (and will be assumed using the set timezone in the 'timezone_string' wp option)
+     * @param ModelFieldFactory $model_field_factory
      * @return static (as in the concrete child class)
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public static function instance($timezone = null)
+    public static function instance($timezone = null, ModelFieldFactory $model_field_factory = null)
     {
         // check if instance of Espresso_model already exists
         if (! static::$_instance instanceof static) {
+            $model_field_factory = self::getModelFieldFactory($model_field_factory);
             // instantiate Espresso_model
-            static::$_instance = new static($timezone, EEM_Base::getLoader());
+            static::$_instance = new static($timezone, $model_field_factory);
         }
         //we might have a timezone set, let set_timezone decide what to do with it
         static::$_instance->set_timezone($timezone);
@@ -701,19 +703,34 @@ abstract class EEM_Base extends EE_Base
 
 
     /**
-     * resets the model
-     * if the model was already instantiated, returns it, with  all its properties reset;
-     * if it wasn't instantiated, returns null
+     * @param $model_field_factory
+     * @return ModelFieldFactory
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    private static function getModelFieldFactory($model_field_factory)
+    {
+        return $model_field_factory instanceof ModelFieldFactory
+            ? $model_field_factory
+            : ModelFieldFactory::getModelFieldFactory();
+    }
+
+
+
+    /**
+     * resets the model and returns it
      *
-     * @param null | string $timezone
-     * @return EEM_Base|null
-     * @throws ReflectionException
+     * @param null | string          $timezone
+     * @param ModelFieldFactory|null $model_field_factory
+     * @return EEM_Base|null (if the model was already instantiated, returns it, with
+     * all its properties reset; if it wasn't instantiated, returns null)
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public static function reset($timezone = null)
+    public static function reset($timezone = null, ModelFieldFactory $model_field_factory = null)
     {
         if (static::$_instance instanceof EEM_Base) {
             //let's try to NOT swap out the current instance for a new one
@@ -729,9 +746,9 @@ abstract class EEM_Base extends EE_Base
                     static::$_instance->{$property} = $value;
                 }
             }
-            //and then directly call its constructor again, like we would if we
-            //were creating a new one
-            static::$_instance->__construct($timezone, EEM_Base::getLoader());
+            //and then directly call its constructor again, like we would if we were creating a new one
+            $model_field_factory = self::getModelFieldFactory($model_field_factory);
+            static::$_instance->__construct($timezone, $model_field_factory);
             return self::instance();
         }
         return null;
@@ -760,9 +777,6 @@ abstract class EEM_Base extends EE_Base
      *
      * @param  boolean $translated return localized strings or JUST the array.
      * @return array
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws EE_Error
      */
     public function status_array($translated = false)
@@ -1220,9 +1234,8 @@ abstract class EEM_Base extends EE_Base
         $items = $this->get_all($query_params);
         if (empty($items)) {
             return null;
-        } else {
-            return array_shift($items);
         }
+        return array_shift($items);
     }
 
 
@@ -1250,8 +1263,14 @@ abstract class EEM_Base extends EE_Base
         $query_params = array(),
         $columns_to_select = null
     ) {
-        return $this->_get_consecutive($current_field_value, '>', $field_to_order_by, $limit, $query_params,
-            $columns_to_select);
+        return $this->_get_consecutive(
+            $current_field_value,
+            '>',
+            $field_to_order_by,
+            $limit,
+            $query_params,
+            $columns_to_select
+        );
     }
 
 
@@ -1279,8 +1298,14 @@ abstract class EEM_Base extends EE_Base
         $query_params = array(),
         $columns_to_select = null
     ) {
-        return $this->_get_consecutive($current_field_value, '<', $field_to_order_by, $limit, $query_params,
-            $columns_to_select);
+        return $this->_get_consecutive(
+            $current_field_value,
+            '<',
+            $field_to_order_by,
+            $limit,
+            $query_params,
+            $columns_to_select
+        );
     }
 
 
@@ -1307,8 +1332,14 @@ abstract class EEM_Base extends EE_Base
         $query_params = array(),
         $columns_to_select = null
     ) {
-        $results = $this->_get_consecutive($current_field_value, '>', $field_to_order_by, 1, $query_params,
-            $columns_to_select);
+        $results = $this->_get_consecutive(
+            $current_field_value,
+            '>',
+            $field_to_order_by,
+            1,
+            $query_params,
+            $columns_to_select
+        );
         return empty($results) ? null : reset($results);
     }
 
@@ -1336,8 +1367,14 @@ abstract class EEM_Base extends EE_Base
         $query_params = array(),
         $columns_to_select = null
     ) {
-        $results = $this->_get_consecutive($current_field_value, '<', $field_to_order_by, 1, $query_params,
-            $columns_to_select);
+        $results = $this->_get_consecutive(
+            $current_field_value,
+            '<',
+            $field_to_order_by,
+            1,
+            $query_params,
+            $columns_to_select
+        );
         return empty($results) ? null : reset($results);
     }
 
@@ -1395,10 +1432,9 @@ abstract class EEM_Base extends EE_Base
         //if $columns_to_select is empty then that means we're returning EE_Base_Class objects
         if (empty($columns_to_select)) {
             return $this->get_all($query_params);
-        } else {
-            //getting just the fields
-            return $this->_get_all_wpdb_results($query_params, ARRAY_A, $columns_to_select);
         }
+        //getting just the fields
+        return $this->_get_all_wpdb_results($query_params, ARRAY_A, $columns_to_select);
     }
 
 
@@ -1788,9 +1824,8 @@ abstract class EEM_Base extends EE_Base
         $col = $this->get_col($query_params, $field_to_select);
         if (! empty($col)) {
             return reset($col);
-        } else {
-            return null;
         }
+        return null;
     }
 
 
@@ -2118,12 +2153,17 @@ abstract class EEM_Base extends EE_Base
                 $ways_to_identify_a_row[] = "(" . implode(" AND ", $combined_primary_key_row_values) . ")";
             }
             return implode(" OR ", $ways_to_identify_a_row);
-        } else {
-            //so there's no primary key and no combined key...
-            //sorry, can't help you
-            throw new EE_Error(sprintf(__("Cannot delete objects of type %s because there is no primary key NOR combined key",
-                "event_espresso"), get_class($this)));
         }
+        //so there's no primary key and no combined key...
+        //sorry, can't help you
+        throw new EE_Error(
+            sprintf(
+                __(
+                    "Cannot delete objects of type %s because there is no primary key NOR combined key",
+                    "event_espresso"
+                ), get_class($this)
+            )
+        );
     }
 
 
@@ -2215,9 +2255,9 @@ abstract class EEM_Base extends EE_Base
         $data_type = $field_obj->get_wpdb_data_type();
         if ($data_type === '%d' || $data_type === '%s') {
             return (float)$return_value;
-        } else {//must be %f
-            return (float)$return_value;
         }
+        //must be %f
+        return (float)$return_value;
     }
 
 
@@ -2257,7 +2297,8 @@ abstract class EEM_Base extends EE_Base
             $wpdb->show_errors($old_show_errors_value);
             if (! empty($wpdb->last_error)) {
                 throw new EE_Error(sprintf(__('WPDB Error: "%s"', 'event_espresso'), $wpdb->last_error));
-            } elseif ($result === false) {
+            }
+            if ($result === false) {
                 throw new EE_Error(sprintf(__('WPDB Error occurred, but no error message was logged by wpdb! The wpdb method called was "%1$s" and the arguments were "%2$s"',
                     'event_espresso'), $wpdb_method, var_export($arguments_to_provide, true)));
             }
@@ -2651,9 +2692,8 @@ abstract class EEM_Base extends EE_Base
         $results = $this->get_all_related($id_or_obj, $other_model_name, $query_params);
         if ($results) {
             return array_shift($results);
-        } else {
-            return null;
         }
+        return null;
     }
 
 
@@ -2734,9 +2774,8 @@ abstract class EEM_Base extends EE_Base
              */
             do_action('AHEE__EEM_Base__insert__end', $this, $field_n_values, $new_id);
             return $new_id;
-        } else {
-            return false;
         }
+        return false;
     }
 
 
@@ -2829,9 +2868,8 @@ abstract class EEM_Base extends EE_Base
         //if there is nothing to base this search on, then we shouldn't find anything
         if (empty($query_params)) {
             return array();
-        } else {
-            return $this->get_one($query_params);
         }
+        return $this->get_one($query_params);
     }
 
 
@@ -2923,16 +2961,14 @@ abstract class EEM_Base extends EE_Base
         if ($this->has_primary_key_field()) {
             if ($this->get_primary_key_field()->is_auto_increment()) {
                 return $wpdb->insert_id;
-            } else {
-                //it's not an auto-increment primary key, so
-                //it must have been supplied
-                return $fields_n_values[$this->get_primary_key_field()->get_name()];
             }
-        } else {
-            //we can't return a  primary key because there is none. instead return
-            //a unique string indicating this model
-            return $this->get_index_primary_key_string($fields_n_values);
+            //it's not an auto-increment primary key, so
+            //it must have been supplied
+            return $fields_n_values[$this->get_primary_key_field()->get_name()];
         }
+        //we can't return a  primary key because there is none. instead return
+        //a unique string indicating this model
+        return $this->get_index_primary_key_string($fields_n_values);
     }
 
 
@@ -2984,14 +3020,14 @@ abstract class EEM_Base extends EE_Base
                     $value = $field->prepare_for_set($value);
                 //purposefully left out "return"
                 case self::prepared_by_model_object:
+                    /** @noinspection SuspiciousAssignmentsInspection */
                     $value = $field->prepare_for_use_in_db($value);
                 case self::prepared_for_use_in_db:
                     //leave the value alone
             }
             return $value;
-        } else {
-            return $value;
         }
+        return $value;
     }
 
 
@@ -3186,10 +3222,11 @@ abstract class EEM_Base extends EE_Base
                         throw new EE_Error(sprintf(__("You used a special where query param %s, but the value isn't an array of where query params, it's just %s'. It should be an array, eg array('EVT_ID'=>23,'OR'=>array('Venue.VNU_ID'=>32,'Venue.VNU_name'=>'monkey_land'))",
                             "event_espresso"),
                             $param, $possibly_array_of_params));
-                    } else {
-                        $this->_extract_related_models_from_sub_params_array_keys($possibly_array_of_params,
-                            $model_query_info_carrier, $query_param_type);
                     }
+                    $this->_extract_related_models_from_sub_params_array_keys(
+                        $possibly_array_of_params,
+                        $model_query_info_carrier, $query_param_type
+                    );
                 } elseif ($query_param_type === 0 //ie WHERE
                           && is_array($possibly_array_of_params)
                           && isset($possibly_array_of_params[2])
@@ -3489,10 +3526,15 @@ abstract class EEM_Base extends EE_Base
     {
         if (in_array($should_be_order_string, $this->_allowed_order_values)) {
             return $should_be_order_string;
-        } else {
-            throw new EE_Error(sprintf(__("While performing a query on '%s', tried to use '%s' as an order parameter. ",
-                "event_espresso"), get_class($this), $should_be_order_string));
         }
+        throw new EE_Error(
+            sprintf(
+                __(
+                    "While performing a query on '%s', tried to use '%s' as an order parameter. ",
+                    "event_espresso"
+                ), get_class($this), $should_be_order_string
+            )
+        );
     }
 
 
@@ -3813,39 +3855,47 @@ abstract class EEM_Base extends EE_Base
         if (array_key_exists($query_param, $this_model_fields)) {
             if ($allow_fields) {
                 return;
-            } else {
-                throw new EE_Error(sprintf(__("Using a field name (%s) on model %s is not allowed on this query param type '%s'. Original query param was %s",
-                    "event_espresso"),
-                    $query_param, get_class($this), $query_param_type, $original_query_param));
             }
-        } //check if this is a special logic query param
-        elseif (in_array($query_param, $this->_logic_query_param_keys, true)) {
+            throw new EE_Error(
+                sprintf(
+                    __(
+                        "Using a field name (%s) on model %s is not allowed on this query param type '%s'. Original query param was %s",
+                        "event_espresso"
+                    ),
+                    $query_param, get_class($this), $query_param_type, $original_query_param
+                )
+            );
+        }
+        //check if this is a special logic query param
+        if (in_array($query_param, $this->_logic_query_param_keys, true)) {
             if ($allow_logic_query_params) {
                 return;
-            } else {
-                throw new EE_Error(
-                    sprintf(
-                        __('Logic query params ("%1$s") are being used incorrectly with the following query param ("%2$s") on model %3$s. %4$sAdditional Info:%4$s%5$s',
-                            'event_espresso'),
-                        implode('", "', $this->_logic_query_param_keys),
-                        $query_param,
-                        get_class($this),
-                        '<br />',
-                        "\t"
-                        . ' $passed_in_query_info = <pre>'
-                        . print_r($passed_in_query_info, true)
-                        . '</pre>'
-                        . "\n\t"
-                        . ' $query_param_type = '
-                        . $query_param_type
-                        . "\n\t"
-                        . ' $original_query_param = '
-                        . $original_query_param
-                    )
-                );
             }
-        } //check if it's a custom selection
-        elseif (array_key_exists($query_param, $this->_custom_selections)) {
+            throw new EE_Error(
+                sprintf(
+                    __(
+                        'Logic query params ("%1$s") are being used incorrectly with the following query param ("%2$s") on model %3$s. %4$sAdditional Info:%4$s%5$s',
+                        'event_espresso'
+                    ),
+                    implode('", "', $this->_logic_query_param_keys),
+                    $query_param,
+                    get_class($this),
+                    '<br />',
+                    "\t"
+                    . ' $passed_in_query_info = <pre>'
+                    . print_r($passed_in_query_info, true)
+                    . '</pre>'
+                    . "\n\t"
+                    . ' $query_param_type = '
+                    . $query_param_type
+                    . "\n\t"
+                    . ' $original_query_param = '
+                    . $original_query_param
+                )
+            );
+        }
+        //check if it's a custom selection
+        if (array_key_exists($query_param, $this->_custom_selections)) {
             return;
         }
         //check if has a model name at the beginning
@@ -3861,13 +3911,15 @@ abstract class EEM_Base extends EE_Base
                     throw new EE_Error(sprintf(__("Query param '%s' (of type %s on model %s) shouldn't end on a period (.) ",
                         "event_espresso"),
                         $query_param, $query_param_type, get_class($this), $valid_related_model_name));
-                } else {
-                    $related_model_obj = $this->get_related_model_obj($valid_related_model_name);
-                    $related_model_obj->_extract_related_model_info_from_query_param($query_param,
-                        $passed_in_query_info, $query_param_type, $original_query_param);
-                    return;
                 }
-            } elseif ($query_param === $valid_related_model_name) {
+                $related_model_obj = $this->get_related_model_obj($valid_related_model_name);
+                $related_model_obj->_extract_related_model_info_from_query_param(
+                    $query_param,
+                    $passed_in_query_info, $query_param_type, $original_query_param
+                );
+                return;
+            }
+            if ($query_param === $valid_related_model_name) {
                 $this->_add_join_to_model($valid_related_model_name, $passed_in_query_info, $original_query_param);
                 return;
             }
@@ -3970,6 +4022,38 @@ abstract class EEM_Base extends EE_Base
 
 
     /**
+     * Gets the EE_Model_Field on the model indicated by $model_name and the $field_name.
+     * Eg, if called with _get_field_on_model('ATT_ID','Attendee'), it will return the EE_Primary_Key_Field on
+     * EEM_Attendee.
+     *
+     * @param string $field_name
+     * @param string $model_name
+     * @return EE_Model_Field_Base
+     * @throws EE_Error
+     */
+    protected function _get_field_on_model($field_name, $model_name)
+    {
+        $model_class = 'EEM_' . $model_name;
+        $model_filepath = $model_class . ".model.php";
+        if (is_readable($model_filepath)) {
+            require_once($model_filepath);
+            $model_instance = call_user_func($model_name . "::instance");
+            /* @var $model_instance EEM_Base */
+            return $model_instance->field_settings_for($field_name);
+        }
+        throw new EE_Error(
+            sprintf(
+                __(
+                    'No model named %s exists, with classname %s and filepath %s',
+                    'event_espresso'
+                ), $model_name, $model_class, $model_filepath
+            )
+        );
+    }
+
+
+
+    /**
      * Used for creating nested WHERE conditions. Eg "WHERE ! (Event.ID = 3 OR ( Event_Meta.meta_key = 'bob' AND
      * Event_Meta.meta_value = 'foo'))"
      *
@@ -4030,7 +4114,7 @@ abstract class EEM_Base extends EE_Base
     /**
      * Takes the input parameter and extract the table name (alias) and column name
      *
-     * @param array $query_param like Registration.Transaction.TXN_ID, Event.Datetime.start_time, or REG_ID
+     * @param string $query_param like Registration.Transaction.TXN_ID, Event.Datetime.start_time, or REG_ID
      * @throws EE_Error
      * @return string table alias and column name for SQL, eg "Transaction.TXN_ID"
      */
@@ -4041,14 +4125,20 @@ abstract class EEM_Base extends EE_Base
             $table_alias_prefix = EE_Model_Parser::extract_table_alias_model_relation_chain_from_query_param($field->get_model_name(),
                 $query_param);
             return $table_alias_prefix . $field->get_qualified_column();
-        } elseif (array_key_exists($query_param, $this->_custom_selections)) {
+        }
+        if (array_key_exists($query_param, $this->_custom_selections)) {
             //maybe it's custom selection item?
             //if so, just use it as the "column name"
             return $query_param;
-        } else {
-            throw new EE_Error(sprintf(__("%s is not a valid field on this model, nor a custom selection (%s)",
-                "event_espresso"), $query_param, implode(",", $this->_custom_selections)));
         }
+        throw new EE_Error(
+            sprintf(
+                __(
+                    "%s is not a valid field on this model, nor a custom selection (%s)",
+                    "event_espresso"
+                ), $query_param, implode(",", $this->_custom_selections)
+            )
+        );
     }
 
 
@@ -4067,10 +4157,9 @@ abstract class EEM_Base extends EE_Base
         $pos_of_star = strpos($condition_query_param_key, '*');
         if ($pos_of_star === false) {
             return $condition_query_param_key;
-        } else {
-            $condition_query_param_sans_star = substr($condition_query_param_key, 0, $pos_of_star);
-            return $condition_query_param_sans_star;
         }
+        $condition_query_param_sans_star = substr($condition_query_param_key, 0, $pos_of_star);
+        return $condition_query_param_sans_star;
     }
 
 
@@ -4110,13 +4199,15 @@ abstract class EEM_Base extends EE_Base
         //check to see if the value is actually another field
         if (is_array($op_and_value) && isset($op_and_value[2]) && $op_and_value[2] == true) {
             return $operator . SP . $this->_deduce_column_name_from_query_param($value);
-        } elseif (in_array($operator, $this->valid_in_style_operators()) && is_array($value)) {
+        }
+        if (in_array($operator, $this->_in_style_operators) && is_array($value)) {
             //in this case, the value should be an array, or at least a comma-separated list
             //it will need to handle a little differently
             $cleaned_value = $this->_construct_in_value($value, $field_obj);
             //note: $cleaned_value has already been run through $wpdb->prepare()
             return $operator . SP . $cleaned_value;
-        } elseif (in_array($operator, $this->valid_between_style_operators()) && is_array($value)) {
+        }
+        if (in_array($operator, $this->_between_style_operators) && is_array($value)) {
             //the value should be an array with count of two.
             if (count($value) !== 2) {
                 throw new EE_Error(
@@ -4131,7 +4222,8 @@ abstract class EEM_Base extends EE_Base
             }
             $cleaned_value = $this->_construct_between_value($value, $field_obj);
             return $operator . SP . $cleaned_value;
-        } elseif (in_array($operator, $this->valid_null_style_operators())) {
+        }
+        if (in_array($operator, $this->_null_style_operators)) {
             if ($value !== null) {
                 throw new EE_Error(
                     sprintf(
@@ -4145,13 +4237,16 @@ abstract class EEM_Base extends EE_Base
                 );
             }
             return $operator;
-        } elseif (in_array($operator, $this->valid_like_style_operators()) && ! is_array($value)) {
+        }
+        if ($operator === 'LIKE' && ! is_array($value)) {
             //if the operator is 'LIKE', we want to allow percent signs (%) and not
             //remove other junk. So just treat it as a string.
             return $operator . SP . $this->_wpdb_prepare_using_field($value, '%s');
-        } elseif (! in_array($operator, $this->valid_in_style_operators()) && ! is_array($value)) {
+        }
+        if (! in_array($operator, $this->_in_style_operators) && ! is_array($value)) {
             return $operator . SP . $this->_wpdb_prepare_using_field($value, $field_obj);
-        } elseif (in_array($operator, $this->valid_in_style_operators()) && ! is_array($value)) {
+        }
+        if (in_array($operator, $this->_in_style_operators) && ! is_array($value)) {
             throw new EE_Error(
                 sprintf(
                     __(
@@ -4162,7 +4257,8 @@ abstract class EEM_Base extends EE_Base
                     $operator
                 )
             );
-        } elseif (! in_array($operator, $this->valid_in_style_operators()) && is_array($value)) {
+        }
+        if (! in_array($operator, $this->_in_style_operators) && is_array($value)) {
             throw new EE_Error(
                 sprintf(
                     __(
@@ -4173,17 +4269,16 @@ abstract class EEM_Base extends EE_Base
                     $operator
                 )
             );
-        } else {
-            throw new EE_Error(
-                sprintf(
-                    __(
-                        "It appears you've provided some totally invalid query parameters. Operator and value were:'%s', which isn't right at all",
-                        "event_espresso"
-                    ),
-                    http_build_query($op_and_value)
-                )
-            );
         }
+        throw new EE_Error(
+            sprintf(
+                __(
+                    "It appears you've provided some totally invalid query parameters. Operator and value were:'%s', which isn't right at all",
+                    "event_espresso"
+                ),
+                http_build_query($op_and_value)
+            )
+        );
     }
 
 
@@ -4262,13 +4357,16 @@ abstract class EEM_Base extends EE_Base
         if ($field_obj instanceof EE_Model_Field_Base) {
             return $wpdb->prepare($field_obj->get_wpdb_data_type(),
                 $this->_prepare_value_for_use_in_db($value, $field_obj));
-        } else {//$field_obj should really just be a data type
-            if (! in_array($field_obj, $this->_valid_wpdb_data_types)) {
-                throw new EE_Error(sprintf(__("%s is not a valid wpdb datatype. Valid ones are %s", "event_espresso"),
-                    $field_obj, implode(",", $this->_valid_wpdb_data_types)));
-            }
-            return $wpdb->prepare($field_obj, $value);
+        } //$field_obj should really just be a data type
+        if (! in_array($field_obj, $this->_valid_wpdb_data_types)) {
+            throw new EE_Error(
+                sprintf(
+                    __("%s is not a valid wpdb datatype. Valid ones are %s", "event_espresso"),
+                    $field_obj, implode(",", $this->_valid_wpdb_data_types)
+                )
+            );
         }
+        return $wpdb->prepare($field_obj, $value);
     }
 
 
@@ -4322,10 +4420,15 @@ abstract class EEM_Base extends EE_Base
         $field = isset($all_fields[$field_name]) ? $all_fields[$field_name] : false;
         if ($field) {
             return $field->get_qualified_column();
-        } else {
-            throw new EE_Error(sprintf(__("There is no field titled %s on model %s. Either the query trying to use it is bad, or you need to add it to the list of fields on the model.",
-                'event_espresso'), $field_name, get_class($this)));
         }
+        throw new EE_Error(
+            sprintf(
+                __(
+                    "There is no field titled %s on model %s. Either the query trying to use it is bad, or you need to add it to the list of fields on the model.",
+                    'event_espresso'
+                ), $field_name, get_class($this)
+            )
+        );
     }
 
 
@@ -4602,9 +4705,8 @@ abstract class EEM_Base extends EE_Base
         $fieldSettings = $this->field_settings(true);
         if (isset($fieldSettings[$fieldName])) {
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
 
@@ -4620,9 +4722,8 @@ abstract class EEM_Base extends EE_Base
         $relations = $this->relation_settings();
         if (isset($relations[$relation_name])) {
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
 
@@ -4771,20 +4872,19 @@ abstract class EEM_Base extends EE_Base
                 }
             }
             return $this->_cached_fields;
-        } else {
-            if ($this->_cached_fields_non_db_only === null) {
-                $this->_cached_fields_non_db_only = array();
-                foreach ($this->_fields as $fields_corresponding_to_table) {
-                    foreach ($fields_corresponding_to_table as $field_name => $field_obj) {
-                        /** @var $field_obj EE_Model_Field_Base */
-                        if (! $field_obj->is_db_only_field()) {
-                            $this->_cached_fields_non_db_only[$field_name] = $field_obj;
-                        }
+        }
+        if ($this->_cached_fields_non_db_only === null) {
+            $this->_cached_fields_non_db_only = array();
+            foreach ($this->_fields as $fields_corresponding_to_table) {
+                foreach ($fields_corresponding_to_table as $field_name => $field_obj) {
+                    /** @var $field_obj EE_Model_Field_Base */
+                    if (! $field_obj->is_db_only_field()) {
+                        $this->_cached_fields_non_db_only[$field_name] = $field_obj;
                     }
                 }
             }
-            return $this->_cached_fields_non_db_only;
         }
+        return $this->_cached_fields_non_db_only;
     }
 
 
@@ -4983,10 +5083,9 @@ abstract class EEM_Base extends EE_Base
         $classInstance = $this->get_from_entity_map($object->ID());
         if ($classInstance) {
             return $classInstance;
-        } else {
-            $this->_entity_map[EEM_Base::$_model_query_blog_id][$object->ID()] = $object;
-            return $object;
         }
+        $this->_entity_map[EEM_Base::$_model_query_blog_id][$object->ID()] = $object;
+        return $object;
     }
 
 
@@ -5118,9 +5217,8 @@ abstract class EEM_Base extends EE_Base
             }
             $this->_entity_map[EEM_Base::$_model_query_blog_id][$id] = $obj_in_map;
             return $obj_in_map;
-        } else {
-            return $this->get_one_by_ID($id);
         }
+        return $this->get_one_by_ID($id);
     }
 
 
@@ -5154,10 +5252,9 @@ abstract class EEM_Base extends EE_Base
                 }
             }
             return $obj_in_map;
-        } else {
-            $this->add_to_entity_map($replacing_model_obj);
-            return $replacing_model_obj;
         }
+        $this->add_to_entity_map($replacing_model_obj);
+        return $replacing_model_obj;
     }
 
 
@@ -5530,9 +5627,8 @@ abstract class EEM_Base extends EE_Base
         $copies = $this->get_all_copies($model_object_or_attributes_array, $query_params);
         if (is_array($copies)) {
             return array_shift($copies);
-        } else {
-            return null;
         }
+        return null;
     }
 
 
@@ -5570,10 +5666,15 @@ abstract class EEM_Base extends EE_Base
             : null;
         if ($sql_operator) {
             return $sql_operator;
-        } else {
-            throw new EE_Error(sprintf(__("The operator '%s' is not in the list of valid operators: %s",
-                "event_espresso"), $operator_supplied, implode(",", array_keys($this->_valid_operators))));
         }
+        throw new EE_Error(
+            sprintf(
+                __(
+                    "The operator '%s' is not in the list of valid operators: %s",
+                    "event_espresso"
+                ), $operator_supplied, implode(",", array_keys($this->_valid_operators))
+            )
+        );
     }
 
 
@@ -5878,17 +5979,18 @@ abstract class EEM_Base extends EE_Base
         $valid_cap_contexts = EEM_Base::valid_cap_contexts();
         if (in_array($context, $valid_cap_contexts)) {
             return true;
-        } else {
-            throw new EE_Error(
-                sprintf(
-                    __('Context "%1$s" passed into model "%2$s" is not a valid context. They are: %3$s',
-                        'event_espresso'),
-                    $context,
-                    'EEM_Base',
-                    implode(',', $valid_cap_contexts)
-                )
-            );
         }
+        throw new EE_Error(
+            sprintf(
+                __(
+                    'Context "%1$s" passed into model "%2$s" is not a valid context. They are: %3$s',
+                    'event_espresso'
+                ),
+                $context,
+                'EEM_Base',
+                implode(',', $valid_cap_contexts)
+            )
+        );
     }
 
 
@@ -5921,7 +6023,7 @@ abstract class EEM_Base extends EE_Base
 
     /**
      * Determines whether or not the where query param array key is for a logic query param.
-     * Eg 'OR', 'not*', and 'and*because-i-say-so' shoudl all return true, whereas
+     * Eg 'OR', 'not*', and 'and*because-i-say-so' should all return true, whereas
      * 'ATT_fname', 'EVT_name*not-you-or-me', and 'ORG_name' should return false
      *
      * @param $query_param_key

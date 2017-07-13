@@ -68,11 +68,13 @@ class CoreLoader implements LoaderDecoratorInterface
 
     /**
      * calls reset() on generator if method exists
+     *
+     * @param bool $hard
      */
-    public function reset()
+    public function reset($hard = true)
     {
         if (method_exists($this->generator, 'reset')) {
-            $this->generator->reset();
+            $this->generator->reset($hard);
         }
     }
 
