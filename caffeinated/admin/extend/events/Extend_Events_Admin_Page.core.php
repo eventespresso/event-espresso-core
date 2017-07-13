@@ -623,6 +623,16 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
                         $new_tkt->_add_relation_to($new_price, 'Price');
                         $new_tkt->save();
                     }
+
+                    do_action(
+                        'AHEE__Extend_Events_Admin_Page___duplicate_event__duplicate_ticket__after',
+                        $orig_tkt,
+                        $new_tkt,
+                        $orig_prices,
+                        $orig_event,
+                        $orig_dtt,
+                        $new_dtt
+                    );
                 }
                 // k now we can add the new ticket as a relation to the new datetime
                 // and make sure its added to our cached $cloned_tickets array

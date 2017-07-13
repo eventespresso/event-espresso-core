@@ -116,7 +116,9 @@ class CachingLoader extends LoaderDecorator
             return $this->cache->get($identifier);
         }
         $object = $this->loader->load($fqcn, $arguments);
-        $this->cache->add($object, $identifier);
+        if($object instanceof $fqcn){
+            $this->cache->add($object, $identifier);
+        }
         return $object;
     }
 
@@ -124,11 +126,13 @@ class CachingLoader extends LoaderDecorator
 
     /**
      * empties cache and calls reset() on loader if method exists
+     *
+     * @param bool $hard
      */
-    public function reset()
+    public function reset($hard = true)
     {
         $this->cache->trashAndDetachAll();
-        $this->loader->reset();
+        $this->loader->reset($hard);
     }
 
 
