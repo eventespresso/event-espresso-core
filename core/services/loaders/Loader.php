@@ -58,6 +58,8 @@ class Loader implements LoaderInterface
      * @param LoaderDecoratorInterface|null $new_loader
      * @return CoreLoader|LoaderDecoratorInterface
      * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     private function setupNewLoader(LoaderDecoratorInterface $new_loader = null)
     {
