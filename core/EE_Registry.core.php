@@ -1,8 +1,10 @@
 <?php
-
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\interfaces\InterminableInterface;
 use EventEspresso\core\interfaces\ResettableInterface;
 use EventEspresso\core\services\assets\Registry;
+use EventEspresso\core\services\loaders\LoaderFactory;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -203,10 +205,13 @@ class EE_Registry implements ResettableInterface
     /**
      * @singleton method used to instantiate class object
      * @access    public
-     * @param  \EE_Dependency_Map $dependency_map
-     * @return \EE_Registry instance
+     * @param  EE_Dependency_Map $dependency_map
+     * @return EE_Registry instance
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      */
-    public static function instance(\EE_Dependency_Map $dependency_map = null)
+    public static function instance(EE_Dependency_Map $dependency_map = null)
     {
         // check if class object is instantiated
         if ( ! self::$_instance instanceof EE_Registry) {
@@ -222,9 +227,12 @@ class EE_Registry implements ResettableInterface
      *
      * @Constructor
      * @access protected
-     * @param  \EE_Dependency_Map $dependency_map
+     * @param  EE_Dependency_Map $dependency_map
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
      */
-    protected function __construct(\EE_Dependency_Map $dependency_map)
+    protected function __construct(EE_Dependency_Map $dependency_map)
     {
         $this->_dependency_map = $dependency_map;
         $this->LIB = new stdClass();
@@ -1083,6 +1091,9 @@ class EE_Registry implements ResettableInterface
      * @param array  $arguments
      * @param mixed  $index
      * @return array
+     * @throws \InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
      */
     protected function _resolve_dependency($class_name, $param_class, $arguments, $index)
     {
@@ -1104,7 +1115,7 @@ class EE_Registry implements ResettableInterface
             $loader = $this->_dependency_map->class_loader($param_class);
             // is loader a custom closure ?
             if ($loader instanceof Closure) {
-                $dependency = $loader();
+                $dependency = $loader($arguments);
             } else {
                 // set the cache on property for the recursive loading call
                 $this->_cache_on = $cache_on;
@@ -1112,18 +1123,18 @@ class EE_Registry implements ResettableInterface
                 if ($loader && method_exists($this, $loader)) {
                     $dependency = $this->{$loader}($param_class);
                 } else {
-                    $dependency = $this->create($param_class, array(), $cache_on);
+                    $dependency = LoaderFactory::getLoader()->load(
+                        $param_class,
+                        array(),
+                        $cache_on
+                    );
                 }
             }
         }
         // did we successfully find the correct dependency ?
         if ($dependency instanceof $param_class) {
             // then let's inject it into the incoming array of arguments at the correct location
-            if (isset($argument_keys[$index])) {
-                $arguments[$argument_keys[$index]] = $dependency;
-            } else {
-                $arguments[$index] = $dependency;
-            }
+            $arguments[$index] = $dependency;
         }
         return $arguments;
     }
@@ -1293,7 +1304,6 @@ class EE_Registry implements ResettableInterface
         $instance->CFG = $instance->CFG->reset($hard, $reinstantiate);
         $instance->CART = null;
         $instance->MRM = null;
-        $instance->AssetsRegistry = null;
         $instance->AssetsRegistry = $instance->create('EventEspresso\core\services\assets\Registry');
         //messages reset
         EED_Messages::reset();
