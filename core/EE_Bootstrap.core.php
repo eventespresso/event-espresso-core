@@ -90,6 +90,8 @@ class EE_Bootstrap {
 	protected function set_autoloaders_for_required_files() {
 		// load interfaces
 		espresso_load_required( 'EEI_Interfaces', EE_CORE . 'interfaces' . DS . 'EEI_Interfaces.php' );
+		espresso_load_required( 'InterminableInterface', EE_CORE . 'interfaces' . DS . 'InterminableInterface.php' );
+		espresso_load_required( 'ResettableInterface', EE_CORE . 'interfaces' . DS . 'ResettableInterface.php' );
 		// load helpers
 		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_HELPERS );
 		// load request stack
