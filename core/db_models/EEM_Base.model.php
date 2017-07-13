@@ -719,9 +719,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     {
         // check if instance of Espresso_model already exists
         if (! static::$_instance instanceof static) {
-            $model_field_factory = $model_field_factory instanceof ModelFieldFactory
-                ? $model_field_factory
-                : LoaderFactory::getLoader()->getShared('EventEspresso\core\services\database\ModelFieldFactory');
+            $model_field_factory = self::getModelFieldFactory($model_field_factory);
             // instantiate Espresso_model
             static::$_instance = new static($timezone, $model_field_factory);
         }
@@ -734,13 +732,34 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
 
 
     /**
+     * @param $model_field_factory
+     * @return ModelFieldFactory
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    private static function getModelFieldFactory($model_field_factory)
+    {
+        return $model_field_factory instanceof ModelFieldFactory
+            ? $model_field_factory
+            : ModelFieldFactory::getModelFieldFactory();
+    }
+
+
+
+    /**
      * resets the model and returns it
      *
-     * @param null | string $timezone
+     * @param null | string          $timezone
+     * @param ModelFieldFactory|null $model_field_factory
      * @return EEM_Base|null (if the model was already instantiated, returns it, with
      * all its properties reset; if it wasn't instantiated, returns null)
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
-    public static function reset($timezone = null)
+    public static function reset($timezone = null, ModelFieldFactory $model_field_factory = null)
     {
         if (static::$_instance instanceof EEM_Base) {
             //let's try to NOT swap out the current instance for a new one
@@ -756,9 +775,9 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                     static::$_instance->{$property} = $value;
                 }
             }
-            //and then directly call its constructor again, like we would if we
-            //were creating a new one
-            static::$_instance->__construct($timezone);
+            //and then directly call its constructor again, like we would if we were creating a new one
+            $model_field_factory = self::getModelFieldFactory($model_field_factory);
+            static::$_instance->__construct($timezone, $model_field_factory);
             return self::instance();
         }
         return null;
