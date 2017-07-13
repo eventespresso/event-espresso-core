@@ -97,9 +97,10 @@ class Benchmark
      *
      * @param string  $label      The label to show for this time eg "Start of calling Some_Class::some_function"
      * @param boolean $output_now whether to echo now, or wait until EEH_Debug_Tools::show_times() is called
+     * @param bool    $formatted
      * @return void
      */
-    public static function measureMemory($label, $output_now = false)
+    public static function measureMemory($label = 'memory usage', $output_now = false, $formatted = true)
     {
         if (Benchmark::doNotRun()) {
             return;
@@ -107,7 +108,9 @@ class Benchmark
         $memory_used = Benchmark::convert(memory_get_peak_usage(true));
         Benchmark::$memory_usage[$label] = $memory_used;
         if ($output_now) {
-            echo "\r\n<br>$label : $memory_used";
+            echo $formatted
+                ? "<br>{$label} : {$memory_used}"
+                : "\n {$label} : {$memory_used}";
         }
     }
 
@@ -134,9 +137,10 @@ class Benchmark
      * displayResults
      *
      * @param bool $echo
+     * @param bool $formatted
      * @return string
      */
-    public static function displayResults($echo = true)
+    public static function displayResults($echo = true, $formatted = true)
     {
         if (Benchmark::doNotRun()) {
             return '';
@@ -144,36 +148,45 @@ class Benchmark
         $output = '';
         if (! empty(Benchmark::$times)) {
             $total = 0;
-            $output .= '<span style="color:#999999; font-size:.8em;">( time in milliseconds )</span><br />';
+            $output .= $formatted
+                ? '<span style="color:#999999; font-size:.8em;">( time in milliseconds )</span><br />'
+                : '';
             foreach (Benchmark::$times as $timer_name => $total_time) {
-                $output .= Benchmark::formatTime($timer_name, $total_time) . '<br />';
+                $output .= Benchmark::formatTime($timer_name, $total_time, $formatted);
+                $output .= $formatted ? '<br />'  : "\n";
                 $total += $total_time;
             }
-            $output .= '<br />';
-            $output .= '<h4>TOTAL TIME</h4>';
-            $output .= Benchmark::formatTime('', $total);
-            $output .= '<span style="color:#999999; font-size:.8em;"> milliseconds</span><br />';
-            $output .= '<br />';
-            $output .= '<h5>Performance scale (from best to worse)</h5>';
-            $output .= '<span style="color:mediumpurple">Like wow! How about a Scooby snack?</span><br />';
-            $output .= '<span style="color:deepskyblue">Like...no way man!</span><br />';
-            $output .= '<span style="color:limegreen">Like...groovy!</span><br />';
-            $output .= '<span style="color:gold">Ruh Oh</span><br />';
-            $output .= '<span style="color:darkorange">Zoinks!</span><br />';
-            $output .= '<span style="color:red">Like...HEEELLLP</span><br />';
+            if($formatted) {
+                $output .= '<br />';
+                $output .= '<h4>TOTAL TIME</h4>';
+                $output .= Benchmark::formatTime('', $total);
+                $output .= '<span style="color:#999999; font-size:.8em;"> milliseconds</span><br />';
+                $output .= '<br />';
+                $output .= '<h5>Performance scale (from best to worse)</h5>';
+                $output .= '<span style="color:mediumpurple">Like wow! How about a Scooby snack?</span><br />';
+                $output .= '<span style="color:deepskyblue">Like...no way man!</span><br />';
+                $output .= '<span style="color:limegreen">Like...groovy!</span><br />';
+                $output .= '<span style="color:gold">Ruh Oh</span><br />';
+                $output .= '<span style="color:darkorange">Zoinks!</span><br />';
+                $output .= '<span style="color:red">Like...HEEELLLP</span><br />';
+            }
         }
         if (! empty(Benchmark::$memory_usage)) {
-            $output .= '<h5>Memory</h5>' . implode('<br />', Benchmark::$memory_usage);
+            $output .= $formatted
+                ? '<h5>Memory</h5>' . implode('<br />', Benchmark::$memory_usage)
+                : implode("\n", Benchmark::$memory_usage);
         }
         if (empty($output)) {
             return '';
         }
-        $output = '<div style="border:1px solid #dddddd; background-color:#ffffff;'
-                  . (is_admin() ? ' margin:2em 2em 2em 180px;' : ' margin:2em;')
-                  . ' padding:2em;">'
-                  . '<h4>BENCHMARKING</h4>'
-                  . $output
-                  . '</div>';
+        $output = $formatted
+            ? '<div style="border:1px solid #dddddd; background-color:#ffffff;'
+                . (is_admin() ? ' margin:2em 2em 2em 180px;' : ' margin:2em;')
+                . ' padding:2em;">'
+                . '<h4>BENCHMARKING</h4>'
+                . $output
+                . '</div>'
+            : $output;
         if ($echo) {
             echo $output;
             return '';
@@ -200,9 +213,10 @@ class Benchmark
     /**
      * @param string $timer_name
      * @param float  $total_time
+     * @param bool   $formatted
      * @return string
      */
-    public static function formatTime($timer_name, $total_time)
+    public static function formatTime($timer_name, $total_time, $formatted = true)
     {
         $total_time *= 1000;
         switch ($total_time) {
@@ -231,14 +245,16 @@ class Benchmark
                 $bold = 'normal';
                 break;
         }
-        return '<span style="min-width: 10px; margin:0 1em; color:'
+        return $formatted
+            ? '<span style="min-width: 10px; margin:0 1em; color:'
                . $color
                . '; font-weight:'
                . $bold
                . '; font-size:1.2em;">'
                . str_pad(number_format($total_time, 3), 9, '0', STR_PAD_LEFT)
                . '</span> '
-               . $timer_name;
+               . $timer_name
+            :  str_pad(number_format($total_time, 3), 9, '0', STR_PAD_LEFT);
     }
 
 
