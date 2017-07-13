@@ -1,7 +1,6 @@
 <?php
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
-use EventEspresso\core\services\loaders\LoaderInterface;
 
 if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
@@ -23,11 +22,6 @@ if (! defined('EVENT_ESPRESSO_VERSION')) {
  */
 class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_Core_App
 {
-
-    /**
-     * @type LoaderInterface $loader
-     */
-    protected $loader;
 
     /**
      * @var EE_Request $request
@@ -86,8 +80,6 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_
         // PSR4 Autoloaders
         $this->registry->load_core('EE_Psr4AutoloaderInit');
         do_action('EE_Load_Espresso_Core__handle_request__initialize_core_loading');
-        $this->loader = $this->registry->create('EventEspresso\core\services\loaders\Loader');
-        $this->dependency_map->setLoader($this->loader);
         // build DI container
         $OpenCoffeeShop = new EventEspresso\core\services\container\OpenCoffeeShop();
         $OpenCoffeeShop->addRecipes();
