@@ -44,13 +44,13 @@ class EE_Email_messenger extends EE_messenger
     {
         //set name and description properties
         $this->name                = 'email';
-        $this->description         = __(
+        $this->description         = esc_html__(
             'This messenger delivers messages via email using the built-in <code>wp_mail</code> function included with WordPress',
             'event_espresso'
         );
         $this->label               = array(
-            'singular' => __('email', 'event_espresso'),
-            'plural'   => __('emails', 'event_espresso'),
+            'singular' => esc_html__('email', 'event_espresso'),
+            'plural'   => esc_html__('emails', 'event_espresso'),
         );
         $this->activate_on_install = true;
 
@@ -209,7 +209,7 @@ class EE_Email_messenger extends EE_messenger
         $this->_test_settings_fields = array(
             'to'      => array(
                 'input'      => 'text',
-                'label'      => __('Send a test email to', 'event_espresso'),
+                'label'      => esc_html__('Send a test email to', 'event_espresso'),
                 'type'       => 'email',
                 'required'   => true,
                 'validation' => true,
@@ -252,7 +252,7 @@ class EE_Email_messenger extends EE_messenger
         $this->_template_fields = array(
             'to'      => array(
                 'input'      => 'text',
-                'label'      => __('To', 'event_espresso'),
+                'label'      => esc_html__('To', 'event_espresso'),
                 'type'       => 'string',
                 'required'   => true,
                 'validation' => true,
@@ -261,7 +261,7 @@ class EE_Email_messenger extends EE_messenger
             ),
             'from'    => array(
                 'input'      => 'text',
-                'label'      => __('From', 'event_espresso'),
+                'label'      => esc_html__('From', 'event_espresso'),
                 'type'       => 'string',
                 'required'   => true,
                 'validation' => true,
@@ -270,7 +270,7 @@ class EE_Email_messenger extends EE_messenger
             ),
             'subject' => array(
                 'input'      => 'text',
-                'label'      => __('Subject', 'event_espresso'),
+                'label'      => esc_html__('Subject', 'event_espresso'),
                 'type'       => 'string',
                 'required'   => true,
                 'validation' => true,
@@ -283,7 +283,7 @@ class EE_Email_messenger extends EE_messenger
                 'content' => array(
                     'main'          => array(
                         'input'      => 'wp_editor',
-                        'label'      => __('Main Content', 'event_espresso'),
+                        'label'      => esc_html__('Main Content', 'event_espresso'),
                         'type'       => 'string',
                         'required'   => true,
                         'validation' => true,
@@ -401,7 +401,7 @@ class EE_Email_messenger extends EE_messenger
         if (! $success) {
             EE_Error::add_error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'The email did not send successfully.%3$sThe WordPress wp_mail function is used for sending mails but does not give any useful information when an email fails to send.%3$sIt is possible the "to" address (%1$s) or "from" address (%2$s) is invalid.%3$s',
                         'event_espresso'
                     ),
