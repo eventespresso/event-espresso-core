@@ -116,6 +116,104 @@ class Model_Data_Translator_Test extends EE_UnitTestCase{
 			'Event.EVT_created',
 			Model_Data_Translator::remove_gmt_from_field_name( 'Event.EVT_created' ) );
 	}
+
+
+
+    /**
+     * @return array{
+     * @type mixed input
+     * @type mixed expected output
+     * @type EE_Model_Field_Base $field_obj
+     * @type string timezone string, optional
+     *              }
+     */
+	public function data_provider_for_prepare_field_value_for_json(){
+	    $field_obj = EEM_Datetime::instance()->field_settings_for('DTT_EVT_start');
+	    //datetime tests with the default timezone
+        $test_data = array(
+            'datetime_object_in_default_timezone' => array(
+                mysql_to_rfc3339(current_time('mysql')),
+                new DateTime('now'),
+                $field_obj
+            ),
+            'unix_timestamp_in_default_timezone' => array(
+                mysql_to_rfc3339(date( EE_Datetime_Field::mysql_timestamp_format, 946782245)),
+                946782245,
+                $field_obj
+            ),
+            'mysql_in_default_timezone' => array(
+                mysql_to_rfc3339('2000-01-02 03:04:05'),
+                '2000-01-02 03:04:05',
+                $field_obj
+            ),
+            'datetime_object_in_different_timezone' => array(
+                mysql_to_rfc3339('2000-01-02 03:04:05'),
+                new DateTime('2000-01-02 03:04:05', new DateTimeZone('America/Vancouver')),
+                $field_obj,
+                'America/Vancouver'
+            ),
+            //the input is a unix timestamp (in GMT)
+            //the result should be a RFC3339 string also in GMT
+            'unix_timestamp_in_different_timezone' => array(
+                mysql_to_rfc3339('2000-01-02 03:04:05'),
+                946782245,
+                $field_obj,
+                'America/Vancouver'
+            ),
+            //so the input is for 3am Vancouver time, and the output should be too
+            'mysql_datetime_in_different_timezone' => array(
+                mysql_to_rfc3339('2000-01-02 03:04:05'),
+                '2000-01-02 3:04:05',
+                $field_obj,
+                'America/Vancouver'
+            )
+        );
+	    return $test_data;
+    }
+
+
+
+    /**
+     * @dataProvider data_provider_for_prepare_field_value_for_json
+     */
+	public function test_prepare_field_value_for_json( $expected, $input, EE_Model_Field_Base $field_obj, $timezone = ''){
+        if($field_obj instanceof EE_Datetime_Field){
+            $field_obj->set_timezone($timezone);
+        }
+	    $this->assertEquals(
+            $expected,
+            Model_Data_Translator::prepare_field_value_for_json($field_obj,$input, '4.8.36')
+        );
+    }
+
+
+
+    /**
+     * Reproduced issue https://events.codebasehq.com/projects/event-espresso/tickets/10869
+     * and https://events.codebasehq.com/projects/event-espresso/tickets/10858 by changing
+     * the site date format to 'd/m/Y'
+     */
+    public function test_prepare_field_value_for_json__unusual_date_format(){
+	    $field_obj = EEM_Datetime::instance()->field_settings_for('DTT_EVT_start');
+	    if($field_obj instanceof EE_Datetime_Field){
+	        //change the date format because it used to make this not work
+	        $field_obj->set_date_format('d/m/Y');
+	        //the default time format excludes seconds,
+	        $field_obj->set_time_format('g:i a s');
+        }
+        $current_time_mysql = current_time('mysql');
+	    $datetime = new DateTime( $current_time_mysql );
+        $formats = EEM_Datetime::instance()->get_formats_for('DTT_EVT_start');
+        $date_in_site_format = $datetime->format(implode(' ', $formats));
+        $this->assertEquals(
+            mysql_to_rfc3339($current_time_mysql),
+            Model_Data_Translator::prepare_field_value_for_json(
+                $field_obj,
+                $date_in_site_format,
+                '4.8.36'
+            )
+        );
+    }
 }
 
 // Location: tests/testcases/core/libraries/rest_api/Model_Data_Translator_Test.php
