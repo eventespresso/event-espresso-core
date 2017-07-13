@@ -624,9 +624,13 @@ class EE_Registry implements ResettableInterface
         // obtain the loader method from the dependency map
         $loader = $this->_dependency_map->class_loader($class_name);
         // instantiate the requested object
-        $class_obj = $loader && method_exists($this, $loader)
-            ? $this->{$loader}($class_name, $arguments)
-            : $this->_create_object($class_name, $arguments, $addon, $from_db);
+        if($loader instanceof Closure) {
+            $class_obj = $loader($arguments);
+        } else if ($loader && method_exists($this, $loader)) {
+            $class_obj = $this->{$loader}($class_name, $arguments);
+        } else {
+            $class_obj = $this->_create_object($class_name, $arguments, $addon, $from_db);
+        }
         if ($this->_cache_on && $cache) {
             // save it for later... kinda like gum  { : $
             $this->_set_cached_class($class_obj, $class_name, $addon, $from_db);
