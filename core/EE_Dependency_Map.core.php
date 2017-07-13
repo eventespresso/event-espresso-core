@@ -1,6 +1,7 @@
 <?php
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
 
 if (! defined('EVENT_ESPRESSO_VERSION')) {
@@ -229,7 +230,7 @@ class EE_Dependency_Map
      */
     public static function register_class_loader($class_name, $loader = 'load_core')
     {
-        if (strpos($class_name, '\\') !== false) {
+        if (! $loader instanceof Closure && strpos($class_name, '\\') !== false) {
             throw new DomainException(
                 esc_html__('Don\'t use class loaders for FQCNs.', 'event_espresso')
             );
@@ -340,10 +341,6 @@ class EE_Dependency_Map
         // all legacy models use load_model()
         if(strpos($class_name, 'EEM_') === 0){
             return 'load_model';
-        }
-        // don't use loaders for FQCNs
-        if(strpos($class_name, '\\') !== false){
-            return '';
         }
         $class_name = $this->get_alias($class_name);
         return isset($this->_class_loaders[$class_name]) ? $this->_class_loaders[$class_name] : '';
@@ -644,6 +641,10 @@ class EE_Dependency_Map
      *        'Required_Interface' => function () {
      *            return new A_Class_That_Implements_Required_Interface();
      *        },
+     *
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidArgumentException
      */
     protected function _register_core_class_loaders()
     {
@@ -651,7 +652,6 @@ class EE_Dependency_Map
         //be used in a closure.
         $request = &$this->_request;
         $response = &$this->_response;
-        $loader = &$this->loader;
         $this->_class_loaders = array(
             //load_core
             'EE_Capabilities'                      => 'load_core',
@@ -711,8 +711,9 @@ class EE_Dependency_Map
             'EE_Currency_Config'                   => function () {
                 return EE_Config::instance()->currency;
             },
-            'EventEspresso\core\services\loaders\Loader' => function () use (&$loader) {
-                return $loader;
+            'EventEspresso\core\services\loaders\Loader' => function () {
+                echo "\n " . __LINE__ . ') ' . __METHOD__ . "() \n";
+                return LoaderFactory::getLoader();
             },
         );
     }
@@ -763,6 +764,10 @@ class EE_Dependency_Map
     /**
      * This is used to reset the internal map and class_loaders to their original default state at the beginning of the
      * request Primarily used by unit tests.
+     *
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
      */
     public function reset()
     {
