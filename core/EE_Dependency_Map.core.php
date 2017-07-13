@@ -652,6 +652,7 @@ class EE_Dependency_Map
         //be used in a closure.
         $request = &$this->_request;
         $response = &$this->_response;
+        $loader = &$this->loader;
         $this->_class_loaders = array(
             //load_core
             'EE_Capabilities'                      => 'load_core',
@@ -712,9 +713,8 @@ class EE_Dependency_Map
             'EE_Currency_Config'                   => function () {
                 return EE_Config::instance()->currency;
             },
-            'EventEspresso\core\services\loaders\Loader' => function () {
-                echo "\n " . __LINE__ . ') ' . __METHOD__ . "() \n";
-                return LoaderFactory::getLoader();
+            'EventEspresso\core\services\loaders\Loader' => function () use (&$loader) {
+                return $loader;
             },
         );
     }
