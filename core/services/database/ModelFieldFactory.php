@@ -33,6 +33,9 @@ use EE_Trashed_Flag_Field;
 use EE_WP_Post_Status_Field;
 use EE_WP_Post_Type_Field;
 use EE_WP_User_Field;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use InvalidArgumentException;
 
@@ -51,9 +54,30 @@ class ModelFieldFactory
 {
 
     /**
+     * @var ModelFieldFactory $instance
+     */
+    private static $instance;
+
+    /**
      * @var LoaderInterface $loader
      */
     private $loader;
+
+
+
+    /**
+     * @return ModelFieldFactory
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    public static function getModelFieldFactory()
+    {
+        if (! ModelFieldFactory::$instance instanceof ModelFieldFactory) {
+            ModelFieldFactory::$instance = new ModelFieldFactory(LoaderFactory::getLoader());
+        }
+        return ModelFieldFactory::$instance;
+    }
 
 
 
