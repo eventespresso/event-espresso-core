@@ -374,6 +374,28 @@ class EEM_Base_Test extends EE_UnitTestCase
 
 
     /**
+     * Of the site time format doesn't include seconds (which it doesn't, by default)
+     * then EEM_Base::current_time_for_query() truncates them
+     * @group 10869
+     */
+    public function test_current_time_for_query__ignore_minutes(){
+        $formats = EEM_Datetime::instance()->get_formats_for('DTT_EVT_start');
+        $this->assertEquals(
+            Datetime::createFromFormat(
+                'Y-m-d H:i:s',
+                current_time('mysql')
+            ),
+            DateTime::createFromFormat(
+                implode(' ', $formats
+                ),
+                EEM_Datetime::instance()->current_time_for_query('DTT_EVT_start')
+            )
+        );
+    }
+
+
+
+    /**
      * @since 4.6.x
      */
     function test_convert_datetime_for_query()
