@@ -179,7 +179,14 @@ class Model_Data_Translator
 
 
     /**
-     * Prepares a field's value for display in the API
+     * Prepares a field's value for display in the API.
+     * The $original_value should be in the model object's domain of values, see the explanation at the top of EEM_Base.
+     * However, for backward compatibility, we also attempt to handle $original_values from the
+     * model client-code domain, and from the database domain.
+     * E.g., when working with EE_Datetime_Fields, $original_value should be a DateTime or DbSafeDateTime
+     * (model object domain). However, for backward compatibility, we also accept a unix timestamp
+     * (old model object domain), MySQL datetime string (database domain) or string formatted according to the
+     * WP Datetime format (model client-code domain)
      *
      * @param \EE_Model_Field_Base $field_obj
      * @param mixed                $original_value
@@ -191,11 +198,22 @@ class Model_Data_Translator
         if ($original_value === EE_INF) {
             $new_value = Model_Data_Translator::ee_inf_in_rest;
         } elseif ($field_obj instanceof \EE_Datetime_Field) {
+            if(is_string($original_value)){
+                //first, check if its a MySQL timestamp in GMT
+                $datetime_obj = \DateTime::createFromFormat('Y-m-d H:i:s', $original_value);
+                if( ! $datetime_obj instanceof \DateTime) {
+                    //dang, well let's start guessing what format it might be in
+                    $datetime_obj = $field_obj->prepare_for_set($original_value);
+                }
+                $original_value = $datetime_obj;
+            }
             if ($original_value instanceof \DateTime) {
                 $new_value = $original_value->format('Y-m-d H:i:s');
             } elseif (is_int($original_value)) {
                 $new_value = date('Y-m-d H:i:s', $original_value);
             } else {
+                //weird, so they didn't pass in a date in the site's format, MySQL format, or a DateTime or a unix timestamp
+                //well, let's try it anyway
                 $new_value = $original_value;
             }
             $new_value = mysql_to_rfc3339($new_value);
