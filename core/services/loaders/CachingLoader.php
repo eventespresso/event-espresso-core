@@ -127,7 +127,7 @@ class CachingLoader extends LoaderDecorator
      */
     public function reset()
     {
-        $this->cache->detachAll();
+        $this->cache->trashAndDetachAll();
         $this->loader->reset();
     }
 
