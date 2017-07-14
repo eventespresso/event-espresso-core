@@ -128,7 +128,7 @@ class Model_Data_Translator_Test extends EE_UnitTestCase{
      *              }
      */
 	public function data_provider_for_prepare_field_value_for_json(){
-	    $field_obj = EEM_Datetime::instance()->field_settings_for('DTT_EVT_start');
+	    $field_obj = EE_Registry::instance()->load_model('Datetime')->field_settings_for('DTT_EVT_start');
 	    //datetime tests with the default timezone
         $test_data = array(
             'datetime_object_in_default_timezone' => array(
@@ -144,6 +144,11 @@ class Model_Data_Translator_Test extends EE_UnitTestCase{
             'unix_timestamp_STRING_in_default_timezone' => array(
                 mysql_to_rfc3339(date( EE_Datetime_Field::mysql_timestamp_format, 946782245)),
                 '946782245',
+                $field_obj
+            ),
+            'null' => array(
+                '',
+                null,
                 $field_obj
             ),
             'mysql_in_default_timezone' => array(
@@ -180,6 +185,7 @@ class Model_Data_Translator_Test extends EE_UnitTestCase{
 
     /**
      * @dataProvider data_provider_for_prepare_field_value_for_json
+     * @group 10869
      */
 	public function test_prepare_field_value_for_json( $expected, $input, EE_Model_Field_Base $field_obj, $timezone = ''){
         if($field_obj instanceof EE_Datetime_Field){
@@ -199,7 +205,7 @@ class Model_Data_Translator_Test extends EE_UnitTestCase{
      * the site date format to 'd/m/Y'
      */
     public function test_prepare_field_value_for_json__unusual_date_format(){
-	    $field_obj = EEM_Datetime::instance()->field_settings_for('DTT_EVT_start');
+	    $field_obj = EE_Registry::instance()->load_model('Datetime')->field_settings_for('DTT_EVT_start');
 	    if($field_obj instanceof EE_Datetime_Field){
 	        //change the date format because it used to make this not work
 	        $field_obj->set_date_format('d/m/Y');
@@ -208,13 +214,33 @@ class Model_Data_Translator_Test extends EE_UnitTestCase{
         }
         $current_time_mysql = current_time('mysql');
 	    $datetime = new DateTime( $current_time_mysql );
-        $formats = EEM_Datetime::instance()->get_formats_for('DTT_EVT_start');
+        $formats = EE_Registry::instance()->load_model('Datetime')->get_formats_for('DTT_EVT_start');
         $date_in_site_format = $datetime->format(implode(' ', $formats));
         $this->assertEquals(
             mysql_to_rfc3339($current_time_mysql),
             Model_Data_Translator::prepare_field_value_for_json(
                 $field_obj,
                 $date_in_site_format,
+                '4.8.36'
+            )
+        );
+    }
+
+
+
+    /**
+     * If you pass in an empty string, it's the same as using the current time in the field's timezone
+     * @group 10869
+     */
+    public function test_prepare_field_value_for_json__passing_in_empty_string(){
+        $field_obj = EE_Registry::instance()->load_model('Datetime')->field_settings_for('DTT_EVT_start');
+        $field_obj->set_timezone('America/Vancouver');
+        update_option('timezone_string', 'America/Vancouver');
+        $this->assertEquals(
+            mysql_to_rfc3339(current_time('mysql'), false),
+            Model_Data_Translator::prepare_field_value_for_json(
+                $field_obj,
+                '',
                 '4.8.36'
             )
         );
