@@ -9,11 +9,6 @@ class EE_Email_messenger extends EE_messenger
 {
 
     /**
-     * The meta key for storing a cc value on the meta attached to a EE_Message object.
-     */
-    const extra_meta_key_for_cc = '_ee_email_messenger_cc';
-
-    /**
      * To field for email
      * @var string
      */
@@ -635,25 +630,5 @@ class EE_Email_messenger extends EE_messenger
             $settings['subject'] = sprintf(__('Test email sent from %s', 'event_espresso'), get_bloginfo('name'));
         }
         return $settings;
-    }
-
-
-    /**
-     * Override parent method to set/retrieve any cc field value stored on the meta for the EE_Message object instance.
-     * @param EE_Message $message
-     * @throws EE_Error
-     */
-    protected function _validate_and_setup(EE_Message $message)
-    {
-        //call parent _validate_and_setup
-        parent::_validate_and_setup($message);
-        //if we're here then there could be a cc field value.  If there is, let's set it.
-        //if there ISN'T then let's see if there's already one attached to this message.
-        if (! empty($this->_cc)) {
-            $message->update_extra_meta(self::extra_meta_key_for_cc, $this->_cc);
-        } else {
-            $cc = $message->get_extra_meta(self::extra_meta_key_for_cc, true);
-            $this->_cc = $cc ? $cc : $this->_cc;
-        }
     }
 }
