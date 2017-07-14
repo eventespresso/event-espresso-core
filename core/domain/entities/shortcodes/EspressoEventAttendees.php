@@ -176,7 +176,7 @@ class EspressoEventAttendees extends EspressoShortcode
             }
         }
         //seems like is_espresso_event_single() isn't working as expected. So using alternate method.
-        if (is_single() && is_espresso_event()) {
+        if ( is_espresso_event()) {
             $event = EEH_Event_View::get_event();
             if ($event instanceof EE_Event) {
                 $this->query_params[0]['Registration.EVT_ID'] = $event->ID();
