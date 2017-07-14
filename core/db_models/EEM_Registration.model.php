@@ -865,6 +865,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base
                 esc_html__('An invalid Event ID was supplied.', 'event_espresso')
             );
         }
+        $statuses = is_array($statuses) ? $statuses : array($statuses);
         $statuses = ! empty($statuses) ? $statuses : array(EEM_Registration::status_id_approved);
         $valid_reg_statuses = EEM_Registration::reg_statuses();
         foreach ($statuses as $status) {
