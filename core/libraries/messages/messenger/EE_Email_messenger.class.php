@@ -9,10 +9,22 @@ class EE_Email_messenger extends EE_messenger
 {
 
     /**
+     * The meta key for storing a cc value on the meta attached to a EE_Message object.
+     */
+    const extra_meta_key_for_cc = '_ee_email_messenger_cc';
+
+    /**
      * To field for email
      * @var string
      */
     protected $_to = '';
+
+
+    /**
+     * CC field for email.
+     * @var string
+     */
+    protected $_cc = '';
 
     /**
      * From field for email
@@ -80,6 +92,7 @@ class EE_Email_messenger extends EE_messenger
         // message type.
         $this->_valid_shortcodes = array(
             'to'   => array('email', 'event_author', 'primary_registration_details', 'recipient_details'),
+            'cc' => array('email', 'event_author', 'primary_registration_details', 'recipient_details'),
             'from' => array('email', 'event_author', 'primary_registration_details', 'recipient_details'),
         );
     }
@@ -99,6 +112,10 @@ class EE_Email_messenger extends EE_messenger
             'to'            => array(
                 'shortcodes' => $valid_shortcodes['to'],
                 'type'       => 'email',
+            ),
+            'cc' => array(
+                'shortcodes' => $valid_shortcodes['to'],
+                'type' => 'email',
             ),
             'from'          => array(
                 'shortcodes' => $valid_shortcodes['from'],
@@ -255,6 +272,15 @@ class EE_Email_messenger extends EE_messenger
                 'label'      => esc_html__('To', 'event_espresso'),
                 'type'       => 'string',
                 'required'   => true,
+                'validation' => true,
+                'css_class'  => 'large-text',
+                'format'     => '%s',
+            ),
+            'cc'      => array(
+                'input'      => 'text',
+                'label'      => esc_html__('CC', 'event_espresso'),
+                'type'       => 'string',
+                'required'   => false,
                 'validation' => true,
                 'css_class'  => 'large-text',
                 'format'     => '%s',
@@ -448,6 +474,10 @@ class EE_Email_messenger extends EE_messenger
             'Content-Type:text/html; charset=utf-8',
         );
 
+        if (! empty($this->_cc)) {
+            $headers[] = 'cc: ' . $this->_cc;
+        }
+
         //but wait!  Header's for the from is NOT reliable because some plugins don't respect From: as set in the
         // header.
         add_filter('wp_mail_from', array($this, 'set_from_address'), 100);
@@ -605,5 +635,25 @@ class EE_Email_messenger extends EE_messenger
             $settings['subject'] = sprintf(__('Test email sent from %s', 'event_espresso'), get_bloginfo('name'));
         }
         return $settings;
+    }
+
+
+    /**
+     * Override parent method to set/retrieve any cc field value stored on the meta for the EE_Message object instance.
+     * @param EE_Message $message
+     * @throws EE_Error
+     */
+    protected function _validate_and_setup(EE_Message $message)
+    {
+        //call parent _validate_and_setup
+        parent::_validate_and_setup($message);
+        //if we're here then there could be a cc field value.  If there is, let's set it.
+        //if there ISN'T then let's see if there's already one attached to this message.
+        if (! empty($this->_cc)) {
+            $message->update_extra_meta(self::extra_meta_key_for_cc, $this->_cc);
+        } else {
+            $cc = $message->get_extra_meta(self::extra_meta_key_for_cc, true);
+            $this->_cc = $cc ? $cc : $this->_cc;
+        }
     }
 }
