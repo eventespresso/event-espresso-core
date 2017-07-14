@@ -374,7 +374,7 @@ class EEM_Base_Test extends EE_UnitTestCase
 
 
     /**
-     * Of the site time format doesn't include seconds (which it doesn't, by default)
+     * If the site time format doesn't include seconds (which it doesn't, by default)
      * then EEM_Base::current_time_for_query() truncates them
      * @group 10869
      */

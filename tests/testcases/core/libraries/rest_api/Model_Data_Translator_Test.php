@@ -141,6 +141,11 @@ class Model_Data_Translator_Test extends EE_UnitTestCase{
                 946782245,
                 $field_obj
             ),
+            'unix_timestamp_STRING_in_default_timezone' => array(
+                mysql_to_rfc3339(date( EE_Datetime_Field::mysql_timestamp_format, 946782245)),
+                '946782245',
+                $field_obj
+            ),
             'mysql_in_default_timezone' => array(
                 mysql_to_rfc3339('2000-01-02 03:04:05'),
                 '2000-01-02 03:04:05',
@@ -166,7 +171,7 @@ class Model_Data_Translator_Test extends EE_UnitTestCase{
                 '2000-01-02 3:04:05',
                 $field_obj,
                 'America/Vancouver'
-            )
+            ),
         );
 	    return $test_data;
     }

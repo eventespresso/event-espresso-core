@@ -198,11 +198,17 @@ class Model_Data_Translator
         if ($original_value === EE_INF) {
             $new_value = Model_Data_Translator::ee_inf_in_rest;
         } elseif ($field_obj instanceof \EE_Datetime_Field) {
-            if(is_string($original_value)){
-                //first, check if its a MySQL timestamp in GMT
-                $datetime_obj = \DateTime::createFromFormat('Y-m-d H:i:s', $original_value);
-                if( ! $datetime_obj instanceof \DateTime) {
-                    //dang, well let's start guessing what format it might be in
+            if (is_string($original_value)) {
+                //did they submit a string of a unix timestamp?
+                if (is_numeric($original_value)) {
+                    $datetime_obj = new \DateTime();
+                    $datetime_obj->setTimestamp((int)$original_value);
+                } else {
+                    //first, check if its a MySQL timestamp in GMT
+                    $datetime_obj = \DateTime::createFromFormat('Y-m-d H:i:s', $original_value);
+                }
+                if (! $datetime_obj instanceof \DateTime) {
+                    //so it's not a unix timestamp or a MySQL timestamp. Maybe its in the field's date/time format?
                     $datetime_obj = $field_obj->prepare_for_set($original_value);
                 }
                 $original_value = $datetime_obj;
@@ -211,16 +217,32 @@ class Model_Data_Translator
                 $new_value = $original_value->format('Y-m-d H:i:s');
             } elseif (is_int($original_value)) {
                 $new_value = date('Y-m-d H:i:s', $original_value);
+            } elseif($original_value === null || $original_value === '') {
+                $new_value = null;
             } else {
-                //weird, so they didn't pass in a date in the site's format, MySQL format, or a DateTime or a unix timestamp
-                //well, let's try it anyway
-                $new_value = $original_value;
+                //so it's not a datetime object, unix timestamp (as string or int),
+                //MySQL timestamp, or even a string in the field object's format. So no idea what it is
+                throw new \EE_Error(
+                    sprintf(
+                        esc_html__(
+                            // @codingStandardsIgnoreStart
+                            'The value "%1$s" for the field "%2$s" on model "%3$s" could not be understood. It should be a PHP DateTime, unix timestamp, MySQL date, or string in the format "%4$s".',
+                            // @codingStandardsIgnoreEnd
+                            'event_espressso'
+                        ),
+                        $original_value,
+                        $field_obj->get_name(),
+                        $field_obj->get_model_name(),
+                        $field_obj->get_time_format() . ' ' . $field_obj->get_time_format()
+                    )
+                );
             }
             $new_value = mysql_to_rfc3339($new_value);
         } else {
             $new_value = $original_value;
         }
-        return apply_filters('FHEE__EventEspresso\core\libraries\rest_api\Model_Data_Translator__prepare_field_for_rest_api',
+        return apply_filters(
+            'FHEE__EventEspresso\core\libraries\rest_api\Model_Data_Translator__prepare_field_for_rest_api',
             $new_value,
             $field_obj,
             $original_value,
