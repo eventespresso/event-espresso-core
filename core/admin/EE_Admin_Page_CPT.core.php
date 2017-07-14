@@ -1163,11 +1163,10 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
     {
         $post = get_post($post_id);
 
-        if (! empty($this->_req_data['action'])
+        if (empty($this->_req_data['action'])
+            || ! isset($this->_cpt_routes[$this->_req_data['action']])
             || ! $post instanceof WP_Post
-            || (isset($this->_cpt_routes[$this->_req_data['action']])
-                 && $post->post_type !== $this->_cpt_routes[$this->_req_data['action']]
-            )
+            || $post->post_type !== $this->_cpt_routes[$this->_req_data['action']]
         ) {
             return $delete_link;
         }
