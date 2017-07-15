@@ -1,22 +1,23 @@
 <?php
+
 use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
+use EventEspresso\core\interfaces\ResettableInterface;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\shortcodes\ShortcodesManager;
 
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
+defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 
 
 
 /**
  * EE_System
+ * The backbone of the core application that the rest of the system builds off of once bootstrapping is complete
  *
  * @package        Event Espresso
  * @subpackage     core/
  * @author         Brent Christensen, Michael Nelson
  */
-final class EE_System
+final class EE_System implements ResettableInterface
 {
 
 
@@ -101,14 +102,14 @@ final class EE_System
      * Stores which type of request this is, options being one of the constants on EE_System starting with req_type_*.
      * It can be a brand-new activation, a reactivation, an upgrade, a downgrade, or a normal request.
      *
-     * @var int
+     * @var int $_req_type
      */
     private $_req_type;
 
     /**
      * Whether or not there was a non-micro version change in EE core version during this request
      *
-     * @var boolean
+     * @var boolean $_major_version_change
      */
     private $_major_version_change = false;
 
@@ -350,9 +351,8 @@ final class EE_System
      * information about what versions of EE have been installed and activated,
      * NOT necessarily the state of the database
      *
-     * @param null $espresso_db_update
-     * @internal param array $espresso_db_update_value the value of the WordPress option. If not supplied, fetches it
-     *           from the options table
+     * @param mixed $espresso_db_update the value of the WordPress option.
+     *                                            If not supplied, fetches it from the options table
      * @return array the correct value of 'espresso_db_upgrade', after saving it, if it needed correction
      */
     private function fix_espresso_db_upgrade_option($espresso_db_update = null)
@@ -497,7 +497,7 @@ final class EE_System
             $espresso_db_update = ! empty($espresso_db_update)
                 ? $espresso_db_update
                 : $this->fix_espresso_db_upgrade_option();
-            $this->_req_type = self::detect_req_type_given_activation_history(
+            $this->_req_type = EE_System::detect_req_type_given_activation_history(
                 $espresso_db_update,
                 'ee_espresso_activation', espresso_version()
             );
@@ -652,10 +652,7 @@ final class EE_System
                     $times_activated = array($times_activated);
                 }
                 foreach ($times_activated as $an_activation) {
-                    if ($an_activation !== 'unknown-date'
-                        && $an_activation
-                           > $most_recently_active_version_activation
-                    ) {
+                    if ($an_activation !== 'unknown-date' && $an_activation > $most_recently_active_version_activation) {
                         $most_recently_active_version = $version;
                         $most_recently_active_version_activation = $an_activation === 'unknown-date'
                             ? '1970-01-01 00:00:00'
@@ -793,6 +790,7 @@ final class EE_System
      *
      * @access public
      * @return void
+     * @throws Exception
      */
     public function register_shortcodes_modules_and_widgets()
     {
@@ -806,7 +804,7 @@ final class EE_System
             new ExceptionStackTraceDisplay($exception);
         }
         do_action('AHEE__EE_System__register_shortcodes_modules_and_widgets');
-        // check for addons using old hookpoint
+        // check for addons using old hook point
         if (has_action('AHEE__EE_System__register_shortcodes_modules_and_addons')) {
             $this->_incompatible_addon_error();
         }
