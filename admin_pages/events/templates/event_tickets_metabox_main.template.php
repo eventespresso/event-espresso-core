@@ -40,6 +40,7 @@
 		</section>
 
 	</div> <!-- end .event-datetimes-container -->
+    <?php do_action('AHEE__event_tickets_metabox_main__after_datetime_fields'); ?>
 
 	<div class="event-tickets-container">
 		<h4 class="event-tickets-datetimes-title"><?php _e('Ticket Options', 'event_espresso'); ?></h4><?php echo $ticket_options_help_link; ?><br />
