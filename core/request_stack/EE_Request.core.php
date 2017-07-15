@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\interfaces\InterminableInterface;
+
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 
 
@@ -11,7 +13,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
  * @subpackage      /core/
  * @author          Brent Christensen
  */
-class EE_Request
+class EE_Request implements InterminableInterface
 {
 
     /**

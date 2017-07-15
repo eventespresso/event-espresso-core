@@ -1,8 +1,10 @@
 <?php
+
 use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\interfaces\ResettableInterface;
 use EventEspresso\core\services\activation\ActivatableInterface;
 use EventEspresso\core\services\activation\ActivationHistory;
 use EventEspresso\core\services\activation\ActivationsAndUpgradesManager;
@@ -18,12 +20,13 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 
 /**
  * EE_System
+ * The backbone of the core application that the rest of the system builds off of once bootstrapping is complete
  *
  * @package        Event Espresso
  * @subpackage     core/
  * @author         Brent Christensen, Michael Nelson
  */
-class EE_System implements ActivatableInterface
+class EE_System implements ActivatableInterface, ResettableInterface
 {
 
 
@@ -428,6 +431,7 @@ class EE_System implements ActivatableInterface
      *
      * @access public
      * @return void
+     * @throws Exception
      */
     public function register_shortcodes_modules_and_widgets()
     {

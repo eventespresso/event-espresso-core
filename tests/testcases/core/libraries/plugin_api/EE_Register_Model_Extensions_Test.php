@@ -47,9 +47,14 @@ class EE_Register_Model_Extensions_Test extends EE_UnitTestCase{
 		}
 	}
 
+
+
 	/**
 	 * Determines if the Attendee model has been extended by the mock extension
-	 * @return boolean
+	 *
+	 * @param bool $throw_error
+	 * @return bool
+	 * @throws \EE_Error
 	 */
 	private function _model_has_been_extended( $throw_error = FALSE){
 		try{
@@ -122,12 +127,12 @@ class EE_Register_Model_Extensions_Test extends EE_UnitTestCase{
 		$this->_pretend_addon_hook_time();
 
 		EE_Register_Model_Extensions::register($this->_model_group, $this->_reg_args);
-		$att_model = EE_Registry::instance()->reset_model('Attendee');
+		EEM_Attendee::instance()->reset();
 		//verify they still haven't been extended
 		$this->assertTrue( $this->_class_has_been_extended( TRUE ) );
 		$this->assertTrue( $this->_model_has_been_extended( TRUE ) );
 		//and that we can still use EEM_Attendee
-		$a = EE_Attendee::new_instance();
+		EE_Attendee::new_instance();
 		EEM_Attendee::instance()->get_all();
 		EE_Registry::instance()->load_model('Attendee')->get_all();
 
@@ -135,9 +140,9 @@ class EE_Register_Model_Extensions_Test extends EE_UnitTestCase{
 		EE_Register_Model_Extensions::deregister($this->_model_group);
 		$this->assertFalse( $this->_class_has_been_extended() );
 		$this->assertFalse( $this->_model_has_been_extended() );
-		EE_Registry::instance()->reset_model('Attendee');
+		EEM_Attendee::instance()->reset();
 		//and EEM_Attendee still works right? both ways of instantiating it?
-		$a2 = EE_Attendee::new_instance();
+		EE_Attendee::new_instance();
 		EEM_Attendee::instance()->get_all();
 		EE_Registry::instance()->load_model('Attendee')->get_all();
 
@@ -188,3 +193,4 @@ class EE_Register_Model_Extensions_Test extends EE_UnitTestCase{
 }
 
 // End of file EE_Register_Model_Test.php
+// Location: \tests\testcases\core\libraries\plugin_api\EE_Register_Model_Extensions_Test.php
