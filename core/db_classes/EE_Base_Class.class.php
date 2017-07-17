@@ -1561,7 +1561,7 @@ abstract class EE_Base_Class
     public function save($set_cols_n_values = array())
     {
         // no changes ? then don't do anything
-        if ( ! $this->_has_changes && empty($set_cols_n_values) && $this->ID()) {
+        if ( ! $this->_has_changes && empty($set_cols_n_values) && $this->ID() && is_int($this->ID())) {
             return 0;
         }
         /**
@@ -1664,6 +1664,7 @@ abstract class EE_Base_Class
          *                                    the new ID (or 0 if an error occurred and it wasn't updated)
          */
         do_action('AHEE__EE_Base_Class__save__end', $this, $results);
+        $this->_has_changes = false;
         return $results;
     }
 
