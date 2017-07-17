@@ -30,8 +30,14 @@ class EE_UnitTest_Factory_For_Status extends WP_UnitTest_Factory_For_Thing {
 	 * @return EE_Status|false
 	 */
 	public function create_object( $args ) {
-		$status = EE_Status::new_instance( $args );
-		$statusID = $status->save();
+	    //first see if we have an existing status (because EE creates a bunch on initial install)
+        $status = EEM_Status::instance()->get_one(array($args));
+        if (! $status instanceof EE_Status) {
+            $status = EE_Status::new_instance($args);
+            $statusID = $status->save();
+        } else {
+            $statusID = $status->ID();
+        }
 		return $statusID ? $status : false;
 	}
 
