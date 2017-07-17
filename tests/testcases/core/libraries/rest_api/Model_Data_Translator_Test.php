@@ -20,7 +20,7 @@ if( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 
 class Model_Data_Translator_Test extends EE_UnitTestCase{
 
-	public function setUp() {
+    public function setUp() {
 		parent::setUp();
 		if ( ! class_exists( 'WP_Rest_Request' ) ) {
 			$this->markTestSkipped(
@@ -128,6 +128,13 @@ class Model_Data_Translator_Test extends EE_UnitTestCase{
      *              }
      */
 	public function data_provider_for_prepare_field_value_for_json(){
+	    //if we don't have the WP API infrastructure, return a dummy array
+        //it doesn't have to work because all the tests will be skipped too
+        if ( ! class_exists( 'WP_Rest_Request' ) ) {
+           return array(
+               array()
+           );
+        }
 	    $field_obj = EE_Registry::instance()->load_model('Datetime')->field_settings_for('DTT_EVT_start');
 	    //datetime tests with the default timezone
         $test_data = array(
