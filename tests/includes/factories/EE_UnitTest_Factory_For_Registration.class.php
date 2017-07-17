@@ -41,15 +41,15 @@ class EE_UnitTest_Factory_For_Registration extends WP_UnitTest_Factory_For_Thing
     protected $_attendee;
 
     /**
-     * Registrations are related to an status.
+     * STS_ID for the Registration
      *
      * @since 4.3.0
-     * @var   EE_status
+     * @var string
      */
     protected $_status;
 
     /**
-     * Used to indicate whether the generated objects are chained in the EE Model Heirarchy or not.  Note that the only
+     * Used to indicate whether the generated objects are chained in the EE Model Hierarchy or not.  Note that the only
      * relations that are automatically generated and setup when the chained method is use are,  Registrations->Tickets
      * (which also means the EVT_ID is set), Registrations->transaction, Registrations->attendee,
      * Registrations->status.  Registrations to custom questions and answers are NOT set.  Also the transaction is just
