@@ -12,8 +12,8 @@
  * 2. the same is true for any help_tabs or screen_options you want to add to custom post type views.
  * 3. it is EXPECTED that $this->page_slug will be IDENTICAL to what slug/id was used when doing register_post_type().
  * So for instance, if you registered a "books" post type then $this->page_slug = 'espresso_books'  would NOT be valid.
- *  So the correct id for the new post type would be "espresso_books".  Remember, you can still use something totally
- *  different for front-end rewrite slugs in your configuration array for the register post type.
+ * So the correct id for the new post type would be "espresso_books".  Remember, you can still use something totally
+ * different for front-end rewrite slugs in your configuration array for the register post type.
  *
  * @package        Event Espresso
  * @subpackage     includes/core/admin/EE_Admin_Page.core.php
@@ -28,7 +28,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
      * This gets set in _setup_cpt
      * It will contain the object for the custom post type.
      *
-     * @var object
+     * @var EE_CPT_Base
      */
     protected $_cpt_object;
 
@@ -104,7 +104,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
      *
      * @var array
      */
-    protected $_pagenow_map = null;
+    protected $_pagenow_map;
 
 
 
@@ -118,7 +118,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
      * @access protected
      * @abstract
      * @param  string $post_id The ID of the cpt that was saved (so you can link relationally)
-     * @param  object $post    The post object of the cpt that was saved.
+     * @param  EE_CPT_Base $post    The post object of the cpt that was saved.
      * @return void
      */
     abstract protected function _insert_update_cpt_item($post_id, $post);
@@ -194,10 +194,10 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
             ? $this->_req_data['current_page']
             : $current_page;
         //autosave... make sure its only for the correct page
-        if ( ! empty($this->_current_page) && $this->_current_page == $this->page_slug) {
+        //if ( ! empty($this->_current_page) && $this->_current_page == $this->page_slug) {
             //setup autosave ajax hook
             //add_action('wp_ajax_ee-autosave', array( $this, 'do_extra_autosave_stuff' ), 10 ); //TODO reactivate when 4.2 autosave is implemented
-        }
+        //}
     }
 
 
@@ -255,9 +255,12 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         foreach ($current_metaboxes as $box_context) {
             foreach ($box_context as $box_details) {
                 foreach ($box_details as $box) {
-                    if (is_array($box['callback'])
-                        && ($box['callback'][0] instanceof EE_Admin_Page
-                            || $box['callback'][0] instanceof EE_Admin_Hooks)
+                    if (
+                        is_array($box['callback'])
+                        && (
+                            $box['callback'][0] instanceof EE_Admin_Page
+                            || $box['callback'][0] instanceof EE_Admin_Hooks
+                        )
                     ) {
                         $containers[] = $box['id'];
                     }
@@ -319,32 +322,50 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
             parent::_load_page_dependencies();
             return;
         }
-        //now let's do some automatic filters into the wp_system and we'll check to make sure the CHILD class automatically has the required methods in place.
-        //the following filters are for setting all the redirects on DEFAULT WP custom post type actions
-        //let's add a hidden input to the post-edit form so we know when we have to trigger our custom redirects!  Otherwise the redirects will happen on ALL post saves which wouldn't be good of course!
+        // now let's do some automatic filters into the wp_system
+        // and we'll check to make sure the CHILD class
+        // automatically has the required methods in place.
+        // the following filters are for setting all the redirects
+        // on DEFAULT WP custom post type actions
+        // let's add a hidden input to the post-edit form
+        // so we know when we have to trigger our custom redirects!
+        // Otherwise the redirects will happen on ALL post saves which wouldn't be good of course!
         add_action('edit_form_after_title', array($this, 'cpt_post_form_hidden_input'));
-        //inject our Admin page nav tabs...
-        //let's make sure the nav tabs are set if they aren't already
-        //if ( empty( $this->_nav_tabs ) ) $this->_set_nav_tabs();
+        // inject our Admin page nav tabs...
+        // let's make sure the nav tabs are set if they aren't already
+        // if ( empty( $this->_nav_tabs ) ) $this->_set_nav_tabs();
         add_action('post_edit_form_tag', array($this, 'inject_nav_tabs'));
-        //modify the post_updated messages array
+        // modify the post_updated messages array
         add_action('post_updated_messages', array($this, 'post_update_messages'), 10);
-        //add shortlink button to cpt edit screens.  We can do this as a universal thing BECAUSE, cpts use the same format for shortlinks as posts!
+        // add shortlink button to cpt edit screens.  We can do this as a universal thing BECAUSE,
+        // cpts use the same format for shortlinks as posts!
         add_filter('pre_get_shortlink', array($this, 'add_shortlink_button_to_editor'), 10, 4);
-        //This basically allows us to change the title of the "publish" metabox area on CPT pages by setting a 'publishbox' value in the $_labels property array in the child class.
+        // This basically allows us to change the title of the "publish" metabox area
+        // on CPT pages by setting a 'publishbox' value in the $_labels property array in the child class.
         if ( ! empty($this->_labels['publishbox'])) {
             $box_label = is_array($this->_labels['publishbox'])
                          && isset($this->_labels['publishbox'][$this->_req_action])
-                ? $this->_labels['publishbox'][$this->_req_action] : $this->_labels['publishbox'];
-            remove_meta_box('submitdiv', __('Publish'), 'post_submit_meta_box', $this->_cpt_routes[$this->_req_action],
-                'side', 'core');
-            add_meta_box('submitdiv', $box_label, 'post_submit_meta_box', $this->_cpt_routes[$this->_req_action],
-                'side', 'core');
+                    ? $this->_labels['publishbox'][$this->_req_action]
+                    : $this->_labels['publishbox'];
+            add_meta_box(
+                'submitdiv',
+                $box_label,
+                'post_submit_meta_box',
+                $this->_cpt_routes[$this->_req_action],
+                'side',
+                'core'
+            );
         }
         //let's add page_templates metabox if this cpt added support for it.
         if ($this->_supports_page_templates($this->_cpt_object->name)) {
-            add_meta_box('page_templates', __('Page Template', 'event_espresso'),
-                array($this, 'page_template_meta_box'), $this->_cpt_routes[$this->_req_action], 'side', 'default');
+            add_meta_box(
+                'page_templates',
+                __('Page Template', 'event_espresso'),
+                array($this, 'page_template_meta_box'),
+                $this->_cpt_routes[$this->_req_action],
+                'side',
+                'default'
+            );
         }
         //this is a filter that allows the addition of extra html after the permalink field on the wp post edit-form
         if (method_exists($this, 'extra_permalink_field_buttons')) {
@@ -358,7 +379,8 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         if (method_exists($this, 'extra_misc_actions_publish_box')) {
             add_action('post_submitbox_misc_actions', array($this, 'extra_misc_actions_publish_box'), 10);
         }
-        //This allows for adding additional stuff after the title field on the wp post edit form.  This is also before the wp_editor for post description field.
+        // This allows for adding additional stuff after the title field on the wp post edit form.
+        // This is also before the wp_editor for post description field.
         if (method_exists($this, 'edit_form_after_title')) {
             add_action('edit_form_after_title', array($this, 'edit_form_after_title'), 10);
         }
@@ -367,7 +389,10 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
          */
         add_filter('clean_url', array($this, 'switch_core_wp_urls_with_ours'), 10, 3);
         parent::_load_page_dependencies();
-        //notice we are ALSO going to load the pagenow hook set for this route (see _before_page_setup for the reset of the pagenow global ). This is for any plugins that are doing things properly and hooking into the load page hook for core wp cpt routes.
+        // notice we are ALSO going to load the pagenow hook set for this route
+        // (see _before_page_setup for the reset of the pagenow global ).
+        // This is for any plugins that are doing things properly
+        // and hooking into the load page hook for core wp cpt routes.
         global $pagenow;
         do_action('load-' . $pagenow);
         $this->modify_current_screen();
@@ -389,7 +414,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
      *
      * @param string $good_protocol_url The escaped url.
      * @param string $original_url      The original url.
-     * @param string $_context          The context sendt to the esc_url method.
+     * @param string $_context          The context sent to the esc_url method.
      * @return string possibly a new url for our route.
      */
     public function switch_core_wp_urls_with_ours($good_protocol_url, $original_url, $_context)
@@ -445,7 +470,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
      * Callback for the page_templates metabox selector.
      *
      * @since %VER%
-     * @return string html
+     * @return void
      */
     public function page_template_meta_box()
     {
@@ -487,7 +512,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
     public function preview_button_html($return, $id, $new_title, $new_slug)
     {
         $post = get_post($id);
-        if ('publish' != get_post_status($post)) {
+        if ('publish' !== get_post_status($post)) {
             //include shims for the `get_preview_post_link` function
             require_once( EE_CORE . 'wordpress-shims.php' );
             $return .= '<span_id="view-post-btn"><a target="_blank" href="'
@@ -505,7 +530,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
     /**
      * add our custom post stati dropdown on the wp post page for this cpt
      *
-     * @return string html for dropdown
+     * @return void
      */
     public function custom_post_stati_dropdown()
     {
@@ -521,7 +546,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
             'localized_status_save' => sprintf(__('Save %s', 'event_espresso'), $cur_status_label),
         );
         //we'll add a trash post status (WP doesn't add one for some reason)
-        if ($this->_cpt_model_obj->status() == 'trash') {
+        if ($this->_cpt_model_obj->status() === 'trash') {
             $template_args['cur_status_label'] = __('Trashed', 'event_espresso');
             $statuses['trash']                 = __('Trashed', 'event_espresso');
             $template_args['statuses']         = $statuses;
@@ -565,15 +590,18 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
     public function do_extra_autosave_stuff()
     {
         //next let's check for the autosave nonce (we'll use _verify_nonce )
-        $nonce = isset($this->_req_data['autosavenonce']) ? $this->_req_data['autosavenonce'] : null;
+        $nonce = isset($this->_req_data['autosavenonce'])
+                ? $this->_req_data['autosavenonce']
+                : null;
         $this->_verify_nonce($nonce, 'autosave');
         //make sure we define doing autosave (cause WP isn't triggering this we want to make sure we define it)
         if ( ! defined('DOING_AUTOSAVE')) {
             define('DOING_AUTOSAVE', true);
         }
         //if we made it here then the nonce checked out.  Let's run our methods and actions
-        if (method_exists($this, '_ee_autosave_' . $this->_current_view)) {
-            call_user_func(array($this, '_ee_autosave_' . $this->_current_view));
+        $autosave = "_ee_autosave_{$this->_current_view}";
+        if (method_exists($this, $autosave)) {
+            $this->$autosave();
         } else {
             $this->_template_args['success'] = true;
         }
@@ -597,7 +625,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
     protected function _extend_page_config_for_cpt()
     {
         //before doing anything we need to make sure this runs ONLY when the loaded page matches the set page_slug
-        if ((isset($this->_req_data['page']) && $this->_req_data['page'] != $this->page_slug)) {
+        if (isset($this->_req_data['page']) && $this->_req_data['page'] !== $this->page_slug) {
             return;
         }
         //set page routes and page config but ONLY if we're not viewing a custom setup cpt route as defined in _cpt_routes
@@ -652,8 +680,10 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
      * @access protected
      * @param int  $id The id to retrieve the model object for. If empty we set a default object.
      * @param bool $ignore_route_check
+     * @param string $req_type whether the current route is for inserting, updating, or deleting the CPT
+     * @throws EE_Error
      */
-    protected function _set_model_object($id = null, $ignore_route_check = false)
+    protected function _set_model_object($id = null, $ignore_route_check = false, $req_type = '')
     {
         $model = null;
         if (
@@ -682,7 +712,11 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         if ($model instanceof EEM_Base) {
             $this->_cpt_model_obj = ! empty($id) ? $model->get_one_by_ID($id) : $model->create_default_object();
         }
-        do_action('AHEE__EE_Admin_Page_CPT__set_model_object__after_set_object');
+        do_action(
+            'AHEE__EE_Admin_Page_CPT__set_model_object__after_set_object',
+            $this->_cpt_model_obj,
+            $req_type
+        );
     }
 
 
@@ -701,9 +735,11 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         //its possible this is a new save so let's catch that instead
         $post = isset($this->_req_data['post_ID']) ? get_post($this->_req_data['post_ID']) : $post;
         $post_type = $post ? $post->post_type : false;
-        $current_route = isset($this->_req_data['current_route']) ? $this->_req_data['current_route']
+        $current_route = isset($this->_req_data['current_route'])
+            ? $this->_req_data['current_route']
             : 'shouldneverwork';
-        $route_to_check = $post_type && isset($this->_cpt_routes[$current_route]) ? $this->_cpt_routes[$current_route]
+        $route_to_check = $post_type && isset($this->_cpt_routes[$current_route])
+            ? $this->_cpt_routes[$current_route]
             : '';
         add_filter('get_delete_post_link', array($this, 'modify_delete_post_link'), 10, 3);
         add_filter('get_edit_post_link', array($this, 'modify_edit_post_link'), 10, 3);
@@ -715,12 +751,12 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         if ( ! empty($revision)) {
             $action = isset($this->_req_data['action']) ? $this->_req_data['action'] : null;
             //doing a restore?
-            if ( ! empty($action) && $action == 'restore') {
+            if ( ! empty($action) && $action === 'restore') {
                 //get post for revision
                 $rev_post = get_post($revision);
                 $rev_parent = get_post($rev_post->post_parent);
                 //only do our redirect filter AND our restore revision action if the post_type for the parent is one of our cpts.
-                if ($rev_parent && $rev_parent->post_type == $this->page_slug) {
+                if ($rev_parent && $rev_parent->post_type === $this->page_slug) {
                     add_filter('wp_redirect', array($this, 'revision_redirect'), 10, 2);
                     //restores of revisions
                     add_action('wp_restore_post_revision', array($this, 'restore_revision'), 10, 2);
@@ -746,10 +782,11 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
      * Execute some basic checks before calling the trash_cpt_item declared in the child class.
      *
      * @param int $post_id
+     * @throws \EE_Error
      */
     public function before_trash_cpt_item($post_id)
     {
-        $this->_set_model_object($post_id, true);
+        $this->_set_model_object($post_id, true, 'trash');
         //if our cpt object isn't existent then get out immediately.
         if ( ! $this->_cpt_model_obj instanceof EE_CPT_Base || $this->_cpt_model_obj->ID() !== $post_id) {
             return;
@@ -764,10 +801,11 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
      * Execute some basic checks before calling the restore_cpt_method in the child class.
      *
      * @param $post_id
+     * @throws \EE_Error
      */
     public function before_restore_cpt_item($post_id)
     {
-        $this->_set_model_object($post_id, true);
+        $this->_set_model_object($post_id, true, 'restore');
         //if our cpt object isn't existent then get out immediately.
         if ( ! $this->_cpt_model_obj instanceof EE_CPT_Base || $this->_cpt_model_obj->ID() !== $post_id) {
             return;
@@ -782,10 +820,11 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
      * Execute some basic checks before calling the delete_cpt_item method in the child class.
      *
      * @param $post_id
+     * @throws \EE_Error
      */
     public function before_delete_cpt_item($post_id)
     {
-        $this->_set_model_object($post_id, true);
+        $this->_set_model_object($post_id, true, 'delete');
         //if our cpt object isn't existent then get out immediately.
         if ( ! $this->_cpt_model_obj instanceof EE_CPT_Base || $this->_cpt_model_obj->ID() !== $post_id) {
             return;
@@ -809,13 +848,13 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         // verify event object
         if ( ! $this->_cpt_model_obj instanceof EE_CPT_Base) {
             throw new EE_Error(sprintf(__('Something has gone wrong with the page load because we are unable to set up the object for the %1$s.  This usually happens when the given id for the page route is NOT for the correct custom post type for this page',
-                'event_espresso'), $label));
+                    'event_espresso'), $label));
         }
         //if auto-draft then throw an error
-        if ($this->_cpt_model_obj->get('status') == 'auto-draft') {
+        if ($this->_cpt_model_obj->get('status') === 'auto-draft') {
             EE_Error::overwrite_errors();
             EE_Error::add_error(sprintf(__('This %1$s was saved without a title, description, or excerpt which means that none of the extra details you added were saved properly.  All autodrafts will show up in the "draft" view of your event list table.  You can delete them from there. Please click the "Add %1$s" button to refresh and restart.'),
-                $label), __FILE__, __FUNCTION__, __LINE__);
+                    $label), __FILE__, __FUNCTION__, __LINE__);
         }
     }
 
@@ -874,6 +913,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
      * @param  WP_Post $post    Post object from WP
      * @param  bool    $update  Whether this is an update or a new save.
      * @return void
+     * @throws \EE_Error
      */
     public function insert_update($post_id, $post, $update)
     {
@@ -881,13 +921,13 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         if (
             isset($this->_req_data['action'])
             && (
-                $this->_req_data['action'] == 'restore'
-                || $this->_req_data['action'] == 'trash'
+                $this->_req_data['action'] === 'restore'
+                || $this->_req_data['action'] === 'trash'
             )
         ) {
             return;
         }
-        $this->_set_model_object($post_id, true);
+        $this->_set_model_object($post_id, true, 'insert_update');
         //if our cpt object is not instantiated and its NOT the same post_id as what is triggering this callback, then exit.
         if ($update
             && (
@@ -957,7 +997,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
     /**
      * This is a wrapper for the restore_cpt_revision route for cpt items so we can make sure that when a revision is
      * triggered that we restore related items.  In order to work cpt classes MUST have a restore_cpt_revision method
-     * in them.  We also have our OWN action in here so addons can hook into the restore process easily.
+     * in them. We also have our OWN action in here so addons can hook into the restore process easily.
      *
      * @param  int $post_id     ID of cpt item
      * @param  int $revision_id ID of revision being restored
@@ -1044,9 +1084,9 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
      */
     public function add_shortlink_button_to_editor($shortlink, $id, $context, $allow_slugs)
     {
-        if ( ! empty($id) && '' != get_option('permalink_structure')) {
+        if ( ! empty($id) && get_option('permalink_structure') !== '') {
             $post = get_post($id);
-            if (isset($post->post_type) && $this->page_slug == $post->post_type) {
+            if (isset($post->post_type) && $this->page_slug === $post->post_type) {
                 $shortlink = home_url('?p=' . $post->ID);
             }
         }
@@ -1078,7 +1118,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
     /**
      * Add a hidden form input to cpt core pages so that we know to do redirects to our routes on saves
      *
-     * @return string html
+     * @return void
      */
     public function cpt_post_form_hidden_input()
     {
@@ -1163,14 +1203,15 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
     {
         $post = get_post($post_id);
 
-        if (! isset($this->_req_data['action'])
+        if (empty($this->_req_data['action'])
+            || ! isset($this->_cpt_routes[$this->_req_data['action']])
             || ! $post instanceof WP_Post
-            || (isset($this->_cpt_routes[$this->_req_data['action']])
-                 && $post->post_type !== $this->_cpt_routes[$this->_req_data['action']])
+            || $post->post_type !== $this->_cpt_routes[$this->_req_data['action']]
         ) {
             return $delete_link;
         }
         $this->_set_model_object($post->ID, true);
+
         //returns something like `trash_event` or `trash_attendee` or `trash_venue`
         $action = 'trash_' . str_replace('ee_', '', strtolower(get_class($this->_cpt_model_obj)));
 
@@ -1219,7 +1260,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
                         $message = 6;
                 }
             } else {
-                $message = 'draft' == $status ? 10 : 1;
+                $message = 'draft' === $status ? 10 : 1;
             }
         } else if (isset($this->_req_data['addmeta']) && $this->_req_data['addmeta']) {
             $message = 2;
@@ -1227,7 +1268,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         } else if (isset($this->_req_data['deletemeta']) && $this->_req_data['deletemeta']) {
             $message = 3;
             //			$append = '#postcustom';
-        } elseif ($this->_req_data['action'] == 'post-quickpress-save-cont') {
+        } elseif ($this->_req_data['action'] === 'post-quickpress-save-cont') {
             $message = 7;
         } else {
             $message = 4;
@@ -1246,7 +1287,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
      * This method is called to inject nav tabs on core WP cpt pages
      *
      * @access public
-     * @return string html
+     * @return void
      */
     public function inject_nav_tabs()
     {
@@ -1329,10 +1370,11 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
      * For reference what to include in here, see wp-admin/post-new.php
      *
      * @access  protected
-     * @return string template for add new cpt form
+     * @return void
      */
     protected function _create_new_cpt_item()
     {
+        // gather template vars for WP_ADMIN_PATH . 'edit-form-advanced.php'
         global $post, $title, $is_IE, $post_type, $post_type_object;
         $post_type        = $this->_cpt_routes[$this->_req_action];
         $post_type_object = $this->_cpt_object;
@@ -1341,7 +1383,6 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         wp_enqueue_script('autosave');
         $post    = $post = get_default_post_to_edit($this->_cpt_routes[$this->_req_action], true);
         $post_ID = $post->ID;
-        $is_IE   = $is_IE;
         add_action('admin_print_styles', array($this, 'add_new_admin_page_global'));
         //modify the default editor title field with default title.
         add_filter('enter_title_here', array($this, 'add_custom_editor_default_title'), 10);
@@ -1383,7 +1424,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
             exit();
         }
 
-        // template vars
+        // template vars for WP_ADMIN_PATH . 'edit-form-advanced.php'
         $editing          = true;
         $post_ID          = $post_id;
         $post_type        = $this->_cpt_routes[$this->_req_action];

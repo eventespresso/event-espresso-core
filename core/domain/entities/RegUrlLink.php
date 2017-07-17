@@ -1,6 +1,11 @@
 <?php
 namespace EventEspresso\core\domain\entities;
 
+use EE_Error;
+use EE_Registration;
+use EventEspresso\core\exceptions\EntityNotFoundException;
+use InvalidArgumentException;
+
 if ( ! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
@@ -27,12 +32,13 @@ class RegUrlLink
 
     /**
      * @param string $reg_url_link
-     * @return \EventEspresso\core\domain\entities\RegUrlLink
+     * @return RegUrlLink
+     * @throws InvalidArgumentException
      */
     public static function fromRegUrlLinkString($reg_url_link)
     {
         if (empty($reg_url_link) || ! is_string($reg_url_link)) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 __(
                     'You must supply a valid non-empty string to generate a reg_url_link.',
                     'event_espresso'
@@ -45,10 +51,13 @@ class RegUrlLink
 
 
     /**
-     * @param \EE_Registration $registration
-     * @return \EventEspresso\core\domain\entities\RegUrlLink
+     * @param EE_Registration $registration
+     * @return RegUrlLink
+     * @throws EntityNotFoundException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
      */
-    public static function fromRegistration(\EE_Registration $registration)
+    public static function fromRegistration(EE_Registration $registration)
     {
         return new RegUrlLink(
             $registration->count(),
@@ -64,6 +73,7 @@ class RegUrlLink
      * @param int    $reg_count
      * @param mixed  $base_code
      * @param string $reg_url_link
+     * @throws InvalidArgumentException
      */
     public function __construct(
         $reg_count = 1,
@@ -80,17 +90,17 @@ class RegUrlLink
             );
             return;
         }
-        $reg_count = min(1, absint($reg_count));
+        $reg_count = max(1, absint($reg_count));
         $base_code = $base_code instanceof \EE_Line_Item ? $base_code->code() : $base_code;
         if (empty($base_code) || ! is_string($base_code)) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 __(
                     'You must supply a valid EE_Line_Item or a non-empty string to generate a reg_url_link.',
                     'event_espresso'
                 )
             );
         }
-        $this->reg_url_link = apply_filters(
+        $this->reg_url_link = (string) apply_filters(
             'FHEE__\EventEspresso\core\domain\entities\RegUrlLink__construct__reg_url_link',
             $reg_count . '-' . md5($base_code . microtime()),
             $reg_count,
