@@ -117,16 +117,9 @@ class EE_UnitTest_Factory_For_Registration extends WP_UnitTest_Factory_For_Thing
             : EEM_Attendee::instance()->get_one_by_ID($args['ATT_ID']);
         $this->_attendee = empty($this->_attendee) ? $this->factory->attendee->create() : $this->_attendee;
         //status
-        $this->_status = empty($arg['STS_ID']) ? $this->factory->status->create(array(
-            'STS_ID'   => EEM_Registration::status_id_pending_payment,
-            'STS_type' => 'registration',
-            'STS_code' => 'PENDING_PAYMENT',
-        )) : EEM_Status::instance()->get_one_by_ID($args['STS_ID']);
-        $this->_status = empty($this->_status) ? $this->factory->status->create(array(
-            'STS_ID'   => EEM_Registration::status_id_pending_payment,
-            'STS_type' => 'registration',
-            'STS_code' => 'PENDING_PAYMENT',
-        )) : $this->_status;
+        $this->_status = empty($arg['STS_ID'])
+            ? EEM_Registration::status_id_pending_payment
+            : $args['STS_ID'];
     }
 
 
@@ -138,6 +131,7 @@ class EE_UnitTest_Factory_For_Registration extends WP_UnitTest_Factory_For_Thing
      * @param array           $args incoming arguments from caller for specifying overrides.
      * @return EE_Registration
      * @throws EE_Error
+     * @throws RuntimeException
      */
     private function _maybe_chained(EE_Registration $registration, $args)
     {
@@ -158,8 +152,8 @@ class EE_UnitTest_Factory_For_Registration extends WP_UnitTest_Factory_For_Thing
             $registration->_add_relation_to($event, 'Event');
             //add relation to attendee
             $registration->_add_relation_to($this->_attendee, 'Attendee');
-            //add relation to status
-            $registration->_add_relation_to($this->_status, 'Status');
+            //add relation to status (just set the registration object to have the STS_ID)
+            $registration->set_status($this->_status);
             $registration->save();
             return $registration;
         }
