@@ -1805,14 +1805,14 @@ class Messages_Admin_Page extends EE_Admin_Page
             return null;
         }
     }
-    
-    
+
+
     /**
      * Retrieve and set the message preview for display.
      *
      * @param bool $send if TRUE then we are doing an actual TEST send with the results of the preview.
-     *
      * @return string
+     * @throws EE_Error
      */
     public function _preview_message($send = false)
     {
