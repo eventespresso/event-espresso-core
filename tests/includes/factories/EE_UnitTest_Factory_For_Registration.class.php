@@ -117,7 +117,7 @@ class EE_UnitTest_Factory_For_Registration extends WP_UnitTest_Factory_For_Thing
             : EEM_Attendee::instance()->get_one_by_ID($args['ATT_ID']);
         $this->_attendee = empty($this->_attendee) ? $this->factory->attendee->create() : $this->_attendee;
         //status
-        $this->_status = empty($arg['STS_ID'])
+        $this->_status = empty($args['STS_ID'])
             ? EEM_Registration::status_id_pending_payment
             : $args['STS_ID'];
     }
