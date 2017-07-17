@@ -236,13 +236,14 @@ class Model_Data_Translator_Test extends EE_UnitTestCase{
         $field_obj = EE_Registry::instance()->load_model('Datetime')->field_settings_for('DTT_EVT_start');
         $field_obj->set_timezone('America/Vancouver');
         update_option('timezone_string', 'America/Vancouver');
-        $this->assertEquals(
+        $this->assertDateWithinOneMinute(
             mysql_to_rfc3339(current_time('mysql'), false),
             Model_Data_Translator::prepare_field_value_for_json(
                 $field_obj,
                 '',
                 '4.8.36'
-            )
+            ),
+            'Y-m-d\TH:i:s'
         );
     }
 }
