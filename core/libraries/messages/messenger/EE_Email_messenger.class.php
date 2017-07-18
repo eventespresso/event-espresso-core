@@ -264,7 +264,11 @@ class EE_Email_messenger extends EE_messenger
         $this->_template_fields = array(
             'to'      => array(
                 'input'      => 'text',
-                'label'      => esc_html__('To', 'event_espresso'),
+                'label'      => esc_html_x(
+                    'To',
+                    'Label for the "To" field for email addresses',
+                    'event_espresso'
+                ),
                 'type'       => 'string',
                 'required'   => true,
                 'validation' => true,
@@ -273,7 +277,11 @@ class EE_Email_messenger extends EE_messenger
             ),
             'cc'      => array(
                 'input'      => 'text',
-                'label'      => esc_html__('CC', 'event_espresso'),
+                'label'      => esc_html_x(
+                    'CC',
+                    'Label for the "Carbon Copy" field used for additional email addresses',
+                    'event_espresso'
+                ),
                 'type'       => 'string',
                 'required'   => false,
                 'validation' => true,
@@ -282,7 +290,11 @@ class EE_Email_messenger extends EE_messenger
             ),
             'from'    => array(
                 'input'      => 'text',
-                'label'      => esc_html__('From', 'event_espresso'),
+                'label'      => esc_html_x(
+                    'From',
+                    'Label for the "From" field for email addresses.',
+                    'event_espresso'
+                ),
                 'type'       => 'string',
                 'required'   => true,
                 'validation' => true,
@@ -291,7 +303,11 @@ class EE_Email_messenger extends EE_messenger
             ),
             'subject' => array(
                 'input'      => 'text',
-                'label'      => esc_html__('Subject', 'event_espresso'),
+                'label'      => esc_html_x(
+                    'Subject',
+                    'Label for the "Subject" field (short description of contents) for emails.',
+                    'event_espresso'
+                ),
                 'type'       => 'string',
                 'required'   => true,
                 'validation' => true,
