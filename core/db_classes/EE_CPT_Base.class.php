@@ -58,12 +58,14 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class {
                 $this->_wp_post = get_post($this->ID());
             } else {
                 $simulated_db_result = new stdClass();
-                foreach($this->get_model()->field_settings() as $field_name => $field_obj){
+                foreach($this->get_model()->field_settings(true) as $field_name => $field_obj){
                     if ($this->get_model()->get_table_obj_by_alias($field_obj->get_table_alias())->get_table_name() === $wpdb->posts){
                         $column = $field_obj->get_table_column();
 
                         if($field_obj instanceof EE_Datetime_Field){
                             $value_on_model_obj = $this->get_DateTime_object($field_name);
+                        } elseif( $field_obj->is_db_only_field()){
+                            $value_on_model_obj = $field_obj->get_default_value();
                         } else {
                             $value_on_model_obj = $this->get_raw($field_name);
                         }
@@ -72,11 +74,47 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class {
                 }
                 $this->_wp_post = new WP_Post($simulated_db_result);
             }
+            //and let's make retrieving the EE CPT object easy too
+            $classname = get_class($this);
+            if (! isset($this->_wp_post->{$classname})) {
+                $this->_wp_post->{$classname} = $this;
+            }
         }
         return $this->_wp_post;
     }
 
-	/**
+    /**
+     * When fetching a new value for a post field that uses the global $post for rendering,
+     * set the global $post temporarily to be this model object; and afterwards restore it
+     * @param string $fieldname
+     * @param bool $pretty
+     * @param string $extra_cache_ref
+     * @return mixed
+     */
+    protected function _get_fresh_property($fieldname, $pretty = false, $extra_cache_ref = null)
+    {
+        global $post;
+
+        if ( $pretty
+            && (
+                ! (
+                       $post instanceof WP_Post
+                       && $post->ID
+                   )
+                || (int)$post->ID !== $this->ID()
+             )
+            && $this->get_model()->field_settings_for($fieldname) instanceof EE_Post_Content_Field ) {
+            $old_post = $post;
+            $post = $this->wp_post();
+            $return_value = parent::_get_fresh_property($fieldname, $pretty, $extra_cache_ref);
+            $post = $old_post;
+        } else {
+            $return_value = parent::_get_fresh_property($fieldname, $pretty, $extra_cache_ref);
+        }
+        return $return_value;
+    }
+
+    /**
 	 * Adds to the specified event category. If it category doesn't exist, creates it.
 	 * @param string $category_name
 	 * @param string $category_description    optional
@@ -358,4 +396,17 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class {
 	public function get_all_post_statuses() {
 		return $this->get_model()->get_status_array();
 	}
+
+
+
+    /**
+     * Don't serialize the WP Post. That's just duplicate data and we want to avoid recursion
+     * @return array
+     */
+    public function __sleep()
+    {
+        $properties_to_serialize = parent::__sleep();
+        $properties_to_serialize = array_diff( $properties_to_serialize, array('_wp_post'));
+        return $properties_to_serialize;
+    }
 }
