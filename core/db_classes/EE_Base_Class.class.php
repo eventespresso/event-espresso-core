@@ -569,22 +569,34 @@ abstract class EE_Base_Class
         if (isset($this->_cached_properties[$fieldname][$cache_type])) {
             return $this->_cached_properties[$fieldname][$cache_type];
         }
+        $value = $this->_get_fresh_property($fieldname, $pretty, $extra_cache_ref);
+        $this->_set_cached_property($fieldname, $value, $cache_type);
+        return $value;
+    }
+
+
+
+    /**
+     * If the cache didn't fetch the needed item, this fetches it.
+     * @param string $fieldname
+     * @param bool $pretty
+     * @param string $extra_cache_ref
+     * @return mixed
+     */
+    protected function _get_fresh_property($fieldname, $pretty = false, $extra_cache_ref = null)
+    {
         $field_obj = $this->get_model()->field_settings_for($fieldname);
-        if ($field_obj instanceof EE_Model_Field_Base) {
-            // If this is an EE_Datetime_Field we need to make sure timezone, formats, and output are correct
-            if ($field_obj instanceof EE_Datetime_Field) {
-                $this->_prepare_datetime_field($field_obj, $pretty, $extra_cache_ref);
-            }
-            if ( ! isset($this->_fields[$fieldname])) {
-                $this->_fields[$fieldname] = null;
-            }
-            $value = $pretty
-                ? $field_obj->prepare_for_pretty_echoing($this->_fields[$fieldname], $extra_cache_ref)
-                : $field_obj->prepare_for_get($this->_fields[$fieldname]);
-            $this->_set_cached_property($fieldname, $value, $cache_type);
-            return $value;
+        // If this is an EE_Datetime_Field we need to make sure timezone, formats, and output are correct
+        if ($field_obj instanceof EE_Datetime_Field) {
+            $this->_prepare_datetime_field($field_obj, $pretty, $extra_cache_ref);
         }
-        return null;
+        if ( ! isset($this->_fields[$fieldname])) {
+            $this->_fields[$fieldname] = null;
+        }
+        $value = $pretty
+            ? $field_obj->prepare_for_pretty_echoing($this->_fields[$fieldname], $extra_cache_ref)
+            : $field_obj->prepare_for_get($this->_fields[$fieldname]);
+        return $value;
     }
 
 
