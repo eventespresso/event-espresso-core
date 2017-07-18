@@ -1,4 +1,5 @@
-<?php
+<?php use EventEspresso\core\interfaces\InterminableInterface;
+
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 
 

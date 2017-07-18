@@ -143,6 +143,9 @@ abstract class EspressoShortcode implements ShortcodeInterface
             return $event->ID();
         }
         global $post;
+        if ($post instanceof EE_Event) {
+            return $post->ID();
+        }
         if ($post instanceof WP_Post) {
             return $post->ID;
         }
