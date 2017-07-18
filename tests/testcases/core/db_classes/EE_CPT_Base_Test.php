@@ -32,6 +32,50 @@ class EE_CPT_Base_Test extends EE_UnitTestCase{
 		$this->assertEquals($e->parent(),12);
 	}
 
+
+
+    /**
+     * @group 10851
+     */
+	function test_wp_post__saved_ee_model_obj()
+    {
+        $e = $this->new_model_obj_with_dependencies('Event');
+        $post = $e->wp_post();
+        $this->assertEquals(
+            $e->ID(),
+            $post->ID
+        );
+        $this->assertEquals(
+            $e->description(),
+            $post->post_content
+        );
+        $this->assertEquals(
+            $e->get_datetime('EVT_created','Y-m-d', 'H:i:s'),
+            $post->post_date
+        );
+    }
+
+
+    /**
+     * @group 10851
+     */
+    function testWpPostUnsavedModelObj()
+    {
+        $e = $this->new_model_obj_with_dependencies('Event',null,false);
+        $post = $e->wp_post();
+        $this->assertEquals(
+            $e->ID(),
+            $post->ID
+        );
+        $this->assertEquals(
+            $e->description(),
+            $post->post_content
+        );
+        $this->assertEquals(
+            $e->get_datetime('EVT_created','Y-m-d', 'H:i:s'),
+            $post->post_date
+        );
+    }
 }
 
 // End of file EE_CPT_Base_Test.php

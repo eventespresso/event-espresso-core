@@ -36,9 +36,45 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class {
 	 */
 	protected $_feature_image = array();
 
+    /**
+     * @var WP_Post the WP_Post that corresponds with this CPT model object
+     */
+	protected $_wp_post;
+
 
 	abstract public function wp_user();
 
+
+
+    /**
+     * Returns the WP post associated with this CPT model object. If this CPT is saved, fetches it
+     * from the DB. Otherwise, create an unsaved WP_POst object. Caches the post internally.
+     * @return WP_Post
+     */
+    public function wp_post(){
+        global $wpdb;
+        if (! $this->_wp_post instanceof WP_Post) {
+            if ($this->ID()) {
+                $this->_wp_post = get_post($this->ID());
+            } else {
+                $simulated_db_result = new stdClass();
+                foreach($this->get_model()->field_settings() as $field_name => $field_obj){
+                    if ($this->get_model()->get_table_obj_by_alias($field_obj->get_table_alias())->get_table_name() === $wpdb->posts){
+                        $column = $field_obj->get_table_column();
+
+                        if($field_obj instanceof EE_Datetime_Field){
+                            $value_on_model_obj = $this->get_DateTime_object($field_name);
+                        } else {
+                            $value_on_model_obj = $this->get_raw($field_name);
+                        }
+                        $simulated_db_result->{$column} = $field_obj->prepare_for_use_in_db($value_on_model_obj);
+                    }
+                }
+                $this->_wp_post = new WP_Post($simulated_db_result);
+            }
+        }
+        return $this->_wp_post;
+    }
 
 	/**
 	 * Adds to the specified event category. If it category doesn't exist, creates it.
