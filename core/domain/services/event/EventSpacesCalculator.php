@@ -133,18 +133,22 @@ class EventSpacesCalculator
      * @param EE_Ticket[] $active_tickets
      * @throws EE_Error
      */
-    public function setActiveTickets(array $active_tickets)
+    public function setActiveTickets(array $active_tickets = array())
     {
-        // sort incoming array by ticket quantity (asc)
-        usort(
-            $active_tickets,
-            function (EE_Ticket $a, EE_Ticket $b) {
-                if ($a->qty() === $b->qty()) {
-                    return 0;
+        if (! empty($active_tickets)){
+            // sort incoming array by ticket quantity (asc)
+            usort(
+                $active_tickets,
+                function (EE_Ticket $a, EE_Ticket $b) {
+                    if ($a->qty() === $b->qty()) {
+                        return 0;
+                    }
+                    return ($a->qty() < $b->qty())
+                        ? -1
+                        : 1;
                 }
-                return ($a->qty() < $b->qty()) ? -1 : 1;
-            }
-        );
+            );
+        }
         $this->active_tickets = $active_tickets;
     }
 
