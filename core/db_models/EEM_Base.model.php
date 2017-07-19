@@ -2894,13 +2894,17 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
     protected function _prepare_value_or_use_default($field_obj, $fields_n_values)
     {
         //if this field doesn't allow nullable, don't allow it
-        if (! $field_obj->is_nullable()
+        if (
+            ! $field_obj->is_nullable()
             && (
-                ! isset($fields_n_values[$field_obj->get_name()]) || $fields_n_values[$field_obj->get_name()] === null)
+                ! isset($fields_n_values[$field_obj->get_name()])
+                || $fields_n_values[$field_obj->get_name()] === null
+            )
         ) {
             $fields_n_values[$field_obj->get_name()] = $field_obj->get_default_value();
         }
-        $unprepared_value = isset($fields_n_values[$field_obj->get_name()]) ? $fields_n_values[$field_obj->get_name()]
+        $unprepared_value = isset($fields_n_values[$field_obj->get_name()])
+            ? $fields_n_values[$field_obj->get_name()]
             : null;
         return $this->_prepare_value_for_use_in_db($unprepared_value, $field_obj);
     }
