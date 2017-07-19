@@ -618,6 +618,25 @@ class Read extends Base
         $result = $model->deduce_fields_n_values_from_cols_n_values($db_row);
         $result = array_intersect_key($result,
             $this->get_model_version_info()->fields_on_model_in_this_version($model));
+        //if this is a CPT, we need to set the global $post to it,
+        //otherwise shortcodes etc won't work properly while rendering it
+        if ($model instanceof \EEM_CPT_Base) {
+            $do_chevy_shuffle = true;
+        } else {
+            $do_chevy_shuffle = false;
+        }
+        if ($do_chevy_shuffle) {
+            global $post;
+            $old_post = $post;
+            $post = get_post($result[$model->primary_key_name()]);
+            $model_object_classname = 'EE_' . $model->get_this_model_name();
+            $post->{$model_object_classname} = \EE_Registry::instance()->load_class(
+                $model_object_classname,
+                $result,
+                false,
+                false
+                );
+        }
         foreach ($result as $field_name => $raw_field_value) {
             $field_obj = $model->field_settings_for($field_name);
             $field_value = $field_obj->prepare_for_set_from_db($raw_field_value);
@@ -660,6 +679,9 @@ class Read extends Base
                     $this->get_model_version_info()->requested_version()
                 );
             }
+        }
+        if ($do_chevy_shuffle) {
+            $post = $old_post;
         }
         return $result;
     }
