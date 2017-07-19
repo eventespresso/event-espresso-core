@@ -1,4 +1,6 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) {
+<?php use EventEspresso\core\interfaces\InterminableInterface;
+
+if ( ! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
 /**
@@ -24,7 +26,7 @@
  * @author            Brent Christensen, Darren Ethier
  *                    ------------------------------------------------------------------------
  */
-abstract class EE_Admin_Page extends EE_Base
+abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
 {
 
 
@@ -2511,27 +2513,27 @@ abstract class EE_Admin_Page extends EE_Base
     }
 
 
-
     /**
-     * this is used whenever we're DOING_AJAX to return a formatted json array that our calling javascript can expect
+     * This is used whenever we're DOING_AJAX to return a formatted json array that our calling javascript can expect
+     * The returned json object is created from an array in the following format:
+     * array(
+     *  'error' => FALSE, //(default FALSE), contains any errors and/or exceptions (exceptions return json early),
+     *  'success' => FALSE, //(default FALSE) - contains any special success message.
+     *  'notices' => '', // - contains any EE_Error formatted notices
+     *  'content' => 'string can be html', //this is a string of formatted content (can be html)
+     *  'data' => array() //this can be any key/value pairs that a method returns for later json parsing by the js. We're also going to include the template args with every package (so js can pick out any
+     *  specific template args that might be included in here)
+     * )
+     * The json object is populated by whatever is set in the $_template_args property.
      *
-     * @param bool $sticky_notices Used to indicate whether you want to ensure notices are added to a transient instead of displayed.
-     *                             The returned json object is created from an array in the following format:
-     *                             array(
-     *                             'error' => FALSE, //(default FALSE), contains any errors and/or exceptions (exceptions return json early),
-     *                             'success' => FALSE, //(default FALSE) - contains any special success message.
-     *                             'notices' => '', // - contains any EE_Error formatted notices
-     *                             'content' => 'string can be html', //this is a string of formatted content (can be html)
-     *                             'data' => array() //this can be any key/value pairs that a method returns for later json parsing by the js. We're also going to include the template args with every package (so js can pick out any
-     *                             specific template args that might be included in here)
-     *                             )
-     *                             The json object is populated by whatever is set in the $_template_args property.
+     * @param bool  $sticky_notices Used to indicate whether you want to ensure notices are added to a transient instead of displayed.
+     * @param array $notices_arguments  Use this to pass any additional args on to the _process_notices.
      * @return void
      */
-    protected function _return_json($sticky_notices = false)
+    protected function _return_json($sticky_notices = false, $notices_arguments = array())
     {
         //make sure any EE_Error notices have been handled.
-        $this->_process_notices(array(), true, $sticky_notices);
+        $this->_process_notices($notices_arguments, true, $sticky_notices);
         $data = isset($this->_template_args['data']) ? $this->_template_args['data'] : array();
         unset($this->_template_args['data']);
         $json = array(

@@ -58,8 +58,18 @@ jQuery(document).ready(function() {
 		//once we're all done, download the file
 		if( response.data.status == 'complete' && response.data.file_url != '' ) {
 			jQuery('#message-area').html( ee_job_i18n.download_and_redirecting );
+            //tell the browser to download the file. But because the file gets downloaded,
+            //the user doesn't actually leave. So we don't need to clean up JUST yet
+            //first, let's just download the file
+			window.onbeforeunload = null;
 			window.location.href=response.data.file_url;
-			//and redirect a little later
+			//ok, once it's started downloading, we can restore the onbeforeunload callback
+            //it's possible someone might navigate away before the automatic redirect
+            setTimeout(function() {
+                runner.setup_clean_up_on_page_exit();
+            }, 500 );
+			//wait a few seconds for the file to download then start
+            //cleaning up and redirecting the user
 			setTimeout(function() {
 				runner.cleanup_job();
 			}, 2000 );

@@ -162,14 +162,13 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
             $transaction_payments = EE_Registry::instance()->load_class('Transaction_Payments');
             $transaction_payments->recalculate_transaction_total($this->transaction(), false);
             $this->transaction()->update_status_based_on_total_paid(true);
-            do_action('AHEE__EE_Registration__set_status__after_update', $this);
-            return true;
-        } else {
-            //even though the old value matches the new value, it's still good to
-            //allow the parent set method to have a say
-            parent::set('STS_ID', $new_STS_ID, $use_default);
+            do_action('AHEE__EE_Registration__set_status__after_update', $this, $old_STS_ID, $new_STS_ID);
             return true;
         }
+        //even though the old value matches the new value, it's still good to
+        //allow the parent set method to have a say
+        parent::set('STS_ID', $new_STS_ID, $use_default);
+        return true;
     }
 
 
