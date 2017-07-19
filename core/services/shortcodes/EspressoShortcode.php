@@ -113,7 +113,7 @@ abstract class EspressoShortcode implements ShortcodeInterface
             wp_json_encode($attributes),
             // Closure for generating content if cache is expired
             function () use ($shortcode, $attributes) {
-                if($shortcode->initialized === false){
+                if($shortcode->initialized() === false){
                     $shortcode->initializeShortcode();
                 }
                 return $shortcode->processShortcode($attributes);
@@ -239,6 +239,16 @@ abstract class EspressoShortcode implements ShortcodeInterface
             }
         }
         return $attributes;
+    }
+
+
+
+    /**
+     * Returns whether or not this shortcode has been initialized
+     * @return boolean
+     */
+    public function initialized(){
+        return $this->initialized;
     }
 
 
