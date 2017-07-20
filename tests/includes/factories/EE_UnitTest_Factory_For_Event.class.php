@@ -32,7 +32,7 @@ class EE_UnitTest_Factory_For_Event extends WP_UnitTest_Factory_For_Thing {
 	 * @return EE_Event|false
 	 */
 	public function create_object( $args ) {
-		$event = EE_Event::new_instance( $args );
+        $event = EE_Event::new_instance( $args );
 		$evtID = $event->save();
 		return $evtID ? $event : false;
 	}
@@ -81,4 +81,4 @@ class EE_UnitTest_Factory_For_Event extends WP_UnitTest_Factory_For_Thing {
 
 }
 // End of file EE_UnitTest_Factory_For_Event.class.php
-// Location: /EE_UnitTest_Factory_For_Event.class.php
+// Location: tests/includes/factories/EE_UnitTest_Factory_For_Event.class.php
