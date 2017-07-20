@@ -54,30 +54,9 @@ class ModelFieldFactory
 {
 
     /**
-     * @var ModelFieldFactory $instance
-     */
-    private static $instance;
-
-    /**
      * @var LoaderInterface $loader
      */
     private $loader;
-
-
-
-    /**
-     * @return ModelFieldFactory
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     */
-    public static function getModelFieldFactory()
-    {
-        if (! ModelFieldFactory::$instance instanceof ModelFieldFactory) {
-            ModelFieldFactory::$instance = new ModelFieldFactory(LoaderFactory::getLoader());
-        }
-        return ModelFieldFactory::$instance;
-    }
 
 
 
