@@ -1,7 +1,7 @@
 <?php
 
 use EventEspresso\core\domain\services\event\EventSpacesCalculator;
-
+use EventEspresso\core\exceptions\UnexpectedEntityException;
 
 if (!defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
@@ -845,6 +845,8 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
      * @param bool $filtered
      * @return int|float
      * @throws EE_Error
+     * @throws DomainException
+     * @throws UnexpectedEntityException
      */
     public function spaces_remaining($tickets = array(), $filtered = true)
     {
@@ -866,9 +868,10 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
      *    checks all of this events's datetime  reg_limit - sold values to determine if ANY datetimes have spaces available...
      *    if NOT, then the event status will get toggled to 'sold_out'
      *
-     * @access public
      * @return bool    return the ACTUAL sold out state.
      * @throws EE_Error
+     * @throws DomainException
+     * @throws UnexpectedEntityException
      */
     public function perform_sold_out_status_check()
     {
@@ -907,6 +910,8 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
      * @uses EE_Event::total_available_spaces()
      * @return float|int
      * @throws EE_Error
+     * @throws DomainException
+     * @throws UnexpectedEntityException
      */
     public function spaces_remaining_for_sale()
     {
@@ -927,8 +932,10 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
      *                              based on tickets sold.  Depending on setup and stage of sales, this
      *                              may appear to equal remaining tickets.  However, the more tickets are
      *                              sold out, the more accurate the "live" total is.
-     * @return  int|float  (Note: if EE_INF is returned its considered a float by PHP)
+     * @return float|int
      * @throws EE_Error
+     * @throws DomainException
+     * @throws UnexpectedEntityException
      */
     public function total_available_spaces($consider_sold = false)
     {
