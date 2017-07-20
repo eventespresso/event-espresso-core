@@ -629,10 +629,15 @@ class Read extends Base
             global $post;
             $old_post = $post;
             $post = get_post($result[$model->primary_key_name()]);
-            if ($post instanceof \WP_Post) {
-               throw new Rest_Exception('error_fetching_post_from_database_results',
-                   esc_html__('An item was retrieved from the database but it\'s not a WP_Post like it should be.', 'event_espresso')
-               );
+            if (! $post instanceof \WP_Post) {
+                //well that's weird, because $result is what we JUST fetched from the database
+                throw new Rest_Exception(
+                    'error_fetching_post_from_database_results',
+                    esc_html__(
+                        'An item was retrieved from the database but it\'s not a WP_Post like it should be.',
+                        'event_espresso'
+                    )
+                );
             }
             $model_object_classname = 'EE_' . $model->get_this_model_name();
             $post->{$model_object_classname} = \EE_Registry::instance()->load_class(
