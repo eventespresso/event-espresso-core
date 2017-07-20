@@ -1277,8 +1277,7 @@ class EE_Registry implements ResettableInterface
      * - $shortcodes
      * - $widgets
      *
-     * @param boolean $hard             whether to reset data in the database too, or just refresh
-     *                                  the Registry to its state at the beginning of the request
+     * @param boolean $hard             [deprecated]
      * @param boolean $reinstantiate    whether to create new instances of EE_Registry's singletons too,
      *                                  or just reset without re-instantiating (handy to set to FALSE if you're not sure if you CAN
      *                                  currently reinstantiate the singletons at the moment)
