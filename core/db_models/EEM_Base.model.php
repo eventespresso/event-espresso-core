@@ -742,7 +742,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     {
         return $model_field_factory instanceof ModelFieldFactory
             ? $model_field_factory
-            : ModelFieldFactory::getModelFieldFactory();
+            : LoaderFactory::getLoader()->load('EventEspresso\core\services\database\ModelFieldFactory');
     }
 
 
@@ -753,6 +753,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * @param null | string          $timezone
      * @param ModelFieldFactory|null $model_field_factory
      * @return EEM_Base|null (if the model was already instantiated, returns it, with
+     * @throws ReflectionException
      * all its properties reset; if it wasn't instantiated, returns null)
      * @throws EE_Error
      * @throws InvalidArgumentException
