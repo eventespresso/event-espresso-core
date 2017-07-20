@@ -1560,10 +1560,6 @@ abstract class EE_Base_Class
      */
     public function save($set_cols_n_values = array())
     {
-        // no changes ? then don't do anything
-        if ( ! $this->_has_changes && empty($set_cols_n_values) && $this->ID()) {
-            return 0;
-        }
         /**
          * Filters the fields we're about to save on the model object
          *
@@ -1575,6 +1571,10 @@ abstract class EE_Base_Class
         //set attributes as provided in $set_cols_n_values
         foreach ($set_cols_n_values as $column => $value) {
             $this->set($column, $value);
+        }
+        // no changes ? then don't do anything
+        if (! $this->_has_changes && $this->ID() && $this->get_model()->get_primary_key_field()->is_auto_increment()) {
+            return 0;
         }
         /**
          * Saving a model object.
@@ -1664,6 +1664,7 @@ abstract class EE_Base_Class
          *                                    the new ID (or 0 if an error occurred and it wasn't updated)
          */
         do_action('AHEE__EE_Base_Class__save__end', $this, $results);
+        $this->_has_changes = false;
         return $results;
     }
 
