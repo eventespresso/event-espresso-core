@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\services\loaders;
 
+use EE_Error;
 use EE_Registry;
 use EventEspresso\core\services\container\CoffeeShop;
 use EventEspresso\core\services\container\exceptions\ServiceNotFoundException;
@@ -55,6 +56,7 @@ class CoreLoader implements LoaderDecoratorInterface
      * @param string $fqcn
      * @param array  $arguments
      * @return mixed
+     * @throws EE_Error
      * @throws ServiceNotFoundException
      */
     public function load($fqcn, $arguments = array())
@@ -68,13 +70,11 @@ class CoreLoader implements LoaderDecoratorInterface
 
     /**
      * calls reset() on generator if method exists
-     *
-     * @param bool $hard
      */
-    public function reset($hard = true)
+    public function reset()
     {
         if (method_exists($this->generator, 'reset')) {
-            $this->generator->reset($hard);
+            $this->generator->reset();
         }
     }
 
