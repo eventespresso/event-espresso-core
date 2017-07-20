@@ -105,6 +105,11 @@ abstract class EE_Base_Class
      */
     protected $_allow_persist = true;
 
+    /**
+     * @var boolean indicating whether or not this model object's properties have changed since construction
+     */
+    protected $_has_changes = false;
+
 
 
     /**
@@ -255,6 +260,16 @@ abstract class EE_Base_Class
      */
     public function set($field_name, $field_value, $use_default = false)
     {
+        // if not using default and nothing has changed, and object has already been setup (has ID),
+        // then don't do anything
+        if (
+            ! $use_default
+            && $this->_fields[$field_name] === $field_value
+            && $this->ID()
+        ) {
+            return;
+        }
+        $this->_has_changes = true;
         $field_obj = $this->get_model()->field_settings_for($field_name);
         if ($field_obj instanceof EE_Model_Field_Base) {
             //			if ( method_exists( $field_obj, 'set_timezone' )) {
@@ -1557,6 +1572,10 @@ abstract class EE_Base_Class
         foreach ($set_cols_n_values as $column => $value) {
             $this->set($column, $value);
         }
+        // no changes ? then don't do anything
+        if (! $this->_has_changes && $this->ID() && $this->get_model()->get_primary_key_field()->is_auto_increment()) {
+            return 0;
+        }
         /**
          * Saving a model object.
          * Before we perform a save, this action is fired.
@@ -1645,6 +1664,7 @@ abstract class EE_Base_Class
          *                                    the new ID (or 0 if an error occurred and it wasn't updated)
          */
         do_action('AHEE__EE_Base_Class__save__end', $this, $results);
+        $this->_has_changes = false;
         return $results;
     }
 
@@ -2347,9 +2367,9 @@ abstract class EE_Base_Class
      * A $previous_value can be specified in case there are many meta rows with the same key
      *
      * @param string $meta_key
-     * @param string $meta_value
-     * @param string $previous_value
-     * @return int records updated (or BOOLEAN if we actually ended up inserting the extra meta row)
+     * @param mixed  $meta_value
+     * @param mixed  $previous_value
+     * @return bool|int # of records updated (or BOOLEAN if we actually ended up inserting the extra meta row)
      * @throws \EE_Error
      * NOTE: if the values haven't changed, returns 0
      */
@@ -2368,12 +2388,11 @@ abstract class EE_Base_Class
         $existing_rows_like_that = EEM_Extra_Meta::instance()->get_all($query_params);
         if ( ! $existing_rows_like_that) {
             return $this->add_extra_meta($meta_key, $meta_value);
-        } else {
-            foreach ($existing_rows_like_that as $existing_row) {
-                $existing_row->save(array('EXM_value' => $meta_value));
-            }
-            return count($existing_rows_like_that);
         }
+        foreach ($existing_rows_like_that as $existing_row) {
+            $existing_row->save(array('EXM_value' => $meta_value));
+        }
+        return count($existing_rows_like_that);
     }
 
 
