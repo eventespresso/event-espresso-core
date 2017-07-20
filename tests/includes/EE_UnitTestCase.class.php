@@ -78,7 +78,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
 
     public function setUp()
     {
-        // echo "\n\n" . strtoupper($this->getName()) . "()";
+        // echo "\n\n" . strtoupper($this->getName()) . '()';
         //save the hooks state before WP_UnitTestCase actually gets its hands on it...
         //as it immediately adds a few hooks we might not want to backup
         global $auto_made_thing_seed, $wp_filter, $wp_actions, $merged_filters, $wp_current_filter, $wpdb, $current_user;
@@ -170,7 +170,8 @@ class EE_UnitTestCase extends WP_UnitTestCase
         }
         // turn caching back on for any loaders in use
         remove_all_filters('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache');
-        do_action('AHEE__EventEspresso_core_services_loaders_CachingLoader__resetCache', true);
+        EE_Config::reset(true);
+        do_action('AHEE__EventEspresso_core_services_loaders_CachingLoader__resetCache');
     }
 
     /**
