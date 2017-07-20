@@ -103,7 +103,7 @@ class EE_CPT_Base_Test extends EE_UnitTestCase{
             'Ticket'
         );
 
-        //the shortcode each each should be different when rendered
+        //the shortcode for each event should be different when rendered
         $this->assertNotEquals(
             $event_with_registrations->get_pretty('EVT_desc'),
             $other_event->get_pretty('EVT_desc')
