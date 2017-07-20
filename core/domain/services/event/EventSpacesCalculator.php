@@ -16,11 +16,13 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 /**
  * Class EventSpacesCalculator
  * Calculates total available spaces for an event with no regard for sold tickets,
- * or spaces remaining based on "saleable" tickets
+ * or spaces remaining based on "saleable" tickets.
+ * This is done by looping through all of the tickets and datetimes for the event
+ * and simulating the sale of available tickets until each datetime reaches its maximum capacity.
  *
  * @package EventEspresso\core\domain\services\event
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.45
  */
 class EventSpacesCalculator
 {
@@ -288,7 +290,7 @@ class EventSpacesCalculator
                 $this->validateTicket($ticket);
                 // we need to index our data arrays using strings for the purpose of sorting,
                 // but we also need them to be unique, so  we'll just prepend a letter T to the ID
-                $TKT_ID = "T{$ticket->ID()}";
+                $ticket_identifier = "T{$ticket->ID()}";
                 // to start, we'll just consider the raw qty to be the maximum availability for this ticket
                 $max_tickets = $ticket->qty();
                 // but we'll adjust that after looping over each datetime for the ticket and checking reg limits
@@ -296,7 +298,7 @@ class EventSpacesCalculator
                 foreach ($ticket_datetimes as $datetime) {
                     // save all datetimes
                     $this->setDatetime($datetime);
-                    $DTT_ID = "D{$datetime->ID()}";
+                    $datetime_identifier = "D{$datetime->ID()}";
                     $reg_limit = $datetime->reg_limit();
                     // ticket quantity can not exceed datetime reg limit
                     $max_tickets = min($max_tickets, $reg_limit);
@@ -304,16 +306,16 @@ class EventSpacesCalculator
                     // we are going to move all of our data into the following arrays:
                     // datetime spaces initially represents the reg limit for each datetime,
                     // but this will get adjusted as tickets are accounted for
-                    $this->datetime_spaces[$DTT_ID] = $reg_limit;
+                    $this->datetime_spaces[$datetime_identifier] = $reg_limit;
                     // just an array of ticket IDs grouped by datetime
-                    $this->datetime_tickets[$DTT_ID][] = $TKT_ID;
+                    $this->datetime_tickets[$datetime_identifier][] = $ticket_identifier;
                     // and an array of datetime IDs grouped by ticket
-                    $this->ticket_datetimes[$TKT_ID][] = $DTT_ID;
+                    $this->ticket_datetimes[$ticket_identifier][] = $datetime_identifier;
                 }
                 // total quantity of sold and reserved for each ticket
-                $this->tickets_sold[$TKT_ID] = $ticket->sold() + $ticket->reserved();
+                $this->tickets_sold[$ticket_identifier] = $ticket->sold() + $ticket->reserved();
                 // and the maximum ticket quantities for each ticket (adjusted for reg limit)
-                $this->ticket_quantities[$TKT_ID] = $max_tickets;
+                $this->ticket_quantities[$ticket_identifier] = $max_tickets;
             }
         }
         // sort datetime spaces by reg limit, but maintain our string indexes
@@ -345,8 +347,8 @@ class EventSpacesCalculator
         if ($this->debug) {
             echo "\n\n" . __LINE__ . ') ' . strtoupper(__METHOD__) . '()';
         }
-        foreach ($this->datetime_tickets as $DTT_ID => $tickets) {
-            $this->trackAvailableSpacesForDatetimes($DTT_ID, $tickets);
+        foreach ($this->datetime_tickets as $datetime_identifier => $tickets) {
+            $this->trackAvailableSpacesForDatetimes($datetime_identifier, $tickets);
         }
         // total spaces available is just the sum of the spaces available for each datetime
         $spaces_remaining = array_sum($this->total_spaces);
@@ -365,44 +367,44 @@ class EventSpacesCalculator
 
 
     /**
-     * @param string $DTT_ID
+     * @param string $datetime_identifier
      * @param array  $tickets
      */
-    private function trackAvailableSpacesForDatetimes($DTT_ID, array $tickets)
+    private function trackAvailableSpacesForDatetimes($datetime_identifier, array $tickets)
     {
         // make sure a reg limit is set for the datetime
-        $reg_limit = isset($this->datetime_spaces[$DTT_ID])
-            ? $this->datetime_spaces[$DTT_ID]
+        $reg_limit = isset($this->datetime_spaces[$datetime_identifier])
+            ? $this->datetime_spaces[$datetime_identifier]
             : 0;
         // and bail if it is not
         if (! $reg_limit) {
             if ($this->debug) {
-                echo "\n . {$DTT_ID} AT CAPACITY";
+                echo "\n . {$datetime_identifier} AT CAPACITY";
             }
             return;
         }
         if ($this->debug) {
-            echo "\n\n{$DTT_ID}";
+            echo "\n\n{$datetime_identifier}";
             echo "\n . " . 'REG LIMIT: ' . $reg_limit;
         }
         // set default number of available spaces
-        $spaces = 0;
-        $this->total_spaces[$DTT_ID] = 0;
-        foreach ($tickets as $TKT_ID) {
-            $spaces = $this->calculateAvailableSpacesForTicket(
-                $DTT_ID,
+        $available_spaces = 0;
+        $this->total_spaces[$datetime_identifier] = 0;
+        foreach ($tickets as $ticket_identifier) {
+            $available_spaces = $this->calculateAvailableSpacesForTicket(
+                $datetime_identifier,
                 $reg_limit,
-                $TKT_ID,
-                $spaces
+                $ticket_identifier,
+                $available_spaces
             );
         }
         // spaces can't be negative
-        $spaces = max($spaces, 0);
-        if ($spaces) {
+        $available_spaces = max($available_spaces, 0);
+        if ($available_spaces) {
             // track any non-zero values
-            $this->total_spaces[$DTT_ID] += $spaces;
+            $this->total_spaces[$datetime_identifier] += $available_spaces;
             if ($this->debug) {
-                echo "\n . spaces: {$spaces}";
+                echo "\n . spaces: {$available_spaces}";
             }
         } else {
             if ($this->debug) {
@@ -410,7 +412,7 @@ class EventSpacesCalculator
             }
         }
         if ($this->debug) {
-            \EEH_Debug_Tools::printr($this->total_spaces[$DTT_ID], '$spaces_remaining', __FILE__, __LINE__);
+            \EEH_Debug_Tools::printr($this->total_spaces[$datetime_identifier], '$spaces_remaining', __FILE__, __LINE__);
             \EEH_Debug_Tools::printr($this->ticket_quantities, '$ticket_quantities', __FILE__, __LINE__);
             \EEH_Debug_Tools::printr($this->datetime_spaces, 'datetime_spaces', __FILE__, __LINE__);
         }
@@ -419,56 +421,56 @@ class EventSpacesCalculator
 
 
     /**
-     * @param string $DTT_ID
+     * @param string $datetime_identifier
      * @param int    $reg_limit
-     * @param string $TKT_ID
-     * @param int    $spaces
+     * @param string $ticket_identifier
+     * @param int    $available_spaces
      * @return int
      */
-    private function calculateAvailableSpacesForTicket($DTT_ID, $reg_limit,$TKT_ID, $spaces)
+    private function calculateAvailableSpacesForTicket($datetime_identifier, $reg_limit,$ticket_identifier, $available_spaces)
     {
         if ($this->debug) {
-            echo "\n . {$TKT_ID}";
+            echo "\n . {$ticket_identifier}";
         }
         // make sure ticket quantity is set
-        $ticket_quantity = isset($this->ticket_quantities[$TKT_ID])
-            ? $this->ticket_quantities[$TKT_ID]
+        $ticket_quantity = isset($this->ticket_quantities[$ticket_identifier])
+            ? $this->ticket_quantities[$ticket_identifier]
             : 0;
         if ($ticket_quantity) {
             if ($this->debug) {
-                echo "\n . . spaces ({$spaces}) <= reg_limit ({$reg_limit}) = ";
-                echo ($spaces <= $reg_limit)
+                echo "\n . . available_spaces ({$available_spaces}) <= reg_limit ({$reg_limit}) = ";
+                echo ($available_spaces <= $reg_limit)
                     ? 'true'
                     : 'false';
             }
             // if the datetime is NOT at full capacity yet
-            if ($spaces <= $reg_limit) {
+            if ($available_spaces <= $reg_limit) {
                 // then the maximum ticket quantity we can allocate is the lowest value of either:
                 //  the number of remaining spaces for the datetime, which is the limit - spaces already taken
                 //  or the maximum ticket quantity
-                $ticket_quantity = min(($reg_limit - $spaces), $ticket_quantity);
+                $ticket_quantity = min(($reg_limit - $available_spaces), $ticket_quantity);
                 // adjust the available quantity in our tracking array
-                $this->ticket_quantities[$TKT_ID] -= $ticket_quantity;
+                $this->ticket_quantities[$ticket_identifier] -= $ticket_quantity;
                 // and increment spaces allocated for this datetime
-                $spaces += $ticket_quantity;
+                $available_spaces += $ticket_quantity;
                 if ($this->debug) {
-                    echo "\n . . ticket quantity: {$ticket_quantity} ({$TKT_ID})";
-                    echo "\n . . . allocate {$ticket_quantity} tickets ({$TKT_ID})";
-                    if ($spaces >= $reg_limit) {
-                        echo "\n . {$DTT_ID} AT CAPACITY";
+                    echo "\n . . ticket quantity: {$ticket_quantity} ({$ticket_identifier})";
+                    echo "\n . . . allocate {$ticket_quantity} tickets ({$ticket_identifier})";
+                    if ($available_spaces >= $reg_limit) {
+                        echo "\n . {$datetime_identifier} AT CAPACITY";
                     }
                 }
                 // now adjust all other datetimes that allow access to this ticket
                 $this->adjustDatetimes(
-                    $DTT_ID,
-                    $spaces,
+                    $datetime_identifier,
+                    $available_spaces,
                     $reg_limit,
-                    $TKT_ID,
+                    $ticket_identifier,
                     $ticket_quantity
                 );
             }
         }
-        return $spaces;
+        return $available_spaces;
     }
 
 
@@ -479,17 +481,17 @@ class EventSpacesCalculator
      * because that ticket could be used
      * to attend any of the datetimes it has access to
      *
-     * @param string $DTT_ID
-     * @param int    $spaces
+     * @param string $datetime_identifier
+     * @param int    $available_spaces
      * @param int    $reg_limit
-     * @param string $TKT_ID
+     * @param string $ticket_identifier
      * @param int    $ticket_quantity
      */
-    private function adjustDatetimes($DTT_ID, $spaces, $reg_limit, $TKT_ID, $ticket_quantity)
+    private function adjustDatetimes($datetime_identifier, $available_spaces, $reg_limit, $ticket_identifier, $ticket_quantity)
     {
         foreach ($this->datetime_tickets as $datetime_ID => $datetime_tickets) {
             // if the supplied ticket has access to this datetime
-            if (in_array($TKT_ID, $datetime_tickets, true)) {
+            if (in_array($ticket_identifier, $datetime_tickets, true)) {
                 // and datetime has spaces available
                 if (isset($this->datetime_spaces[$datetime_ID])) {
                     // then decrement the available spaces for the datetime
@@ -501,11 +503,11 @@ class EventSpacesCalculator
                     );
                     if ($this->debug) {
                         echo "\n . . . " . $datetime_ID . " capacity reduced by {$ticket_quantity}";
-                        echo " because it allows access to {$TKT_ID}";
+                        echo " because it allows access to {$ticket_identifier}";
                     }
                 }
                 // if this datetime is at full capacity
-                if ($datetime_ID === $DTT_ID && $spaces >= $reg_limit) {
+                if ($datetime_ID === $datetime_identifier && $available_spaces >= $reg_limit) {
                     // then all of it's tickets are now unavailable
                     foreach ($datetime_tickets as $datetime_ticket) {
                         // so  set any tracked available quantities to zero
