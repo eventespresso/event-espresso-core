@@ -2,11 +2,13 @@
 
 namespace EventEspresso\core\domain\services\event;
 
+use DomainException;
 use EE_Datetime;
 use EE_Error;
 use EE_Event;
 use EE_Ticket;
 use EEM_Ticket;
+use EventEspresso\core\exceptions\UnexpectedEntityException;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -132,10 +134,15 @@ class EventSpacesCalculator
     /**
      * @param EE_Ticket[] $active_tickets
      * @throws EE_Error
+     * @throws DomainException
+     * @throws UnexpectedEntityException
      */
     public function setActiveTickets(array $active_tickets = array())
     {
         if (! empty($active_tickets)){
+            foreach ($active_tickets as $active_ticket) {
+                $this->validateTicket($active_ticket);
+            }
             // sort incoming array by ticket quantity (asc)
             usort(
                 $active_tickets,
@@ -155,6 +162,38 @@ class EventSpacesCalculator
 
 
     /**
+     * @param $ticket
+     * @throws DomainException
+     * @throws EE_Error
+     * @throws UnexpectedEntityException
+     */
+    private function validateTicket($ticket)
+    {
+        if (! $ticket instanceof EE_Ticket) {
+            throw new DomainException(
+                esc_html__(
+                    'Invalid Ticket. Only EE_Ticket objects can be used to calculate event space availability.',
+                    'event_espresso'
+                )
+            );
+        }
+        if ($ticket->get_event_ID() !== $this->event->ID()) {
+            throw new DomainException(
+                sprintf(
+                    esc_html__(
+                        'An EE_Ticket for Event %1$d was supplied while calculating event space availability for Event %2$d.',
+                        'event_espresso'
+                    ),
+                    $ticket->get_event_ID(),
+                    $this->event->ID()
+                )
+            );
+        }
+    }
+
+
+
+    /**
      * @return EE_Datetime[]
      */
     public function getDatetimes()
@@ -167,10 +206,22 @@ class EventSpacesCalculator
     /**
      * @param EE_Datetime $datetime
      * @throws EE_Error
-     *
+     * @throws DomainException
      */
     public function setDatetime(EE_Datetime $datetime)
     {
+        if ($datetime->event()->ID() !== $this->event->ID()) {
+            throw new DomainException(
+                sprintf(
+                    esc_html__(
+                        'An EE_Datetime for Event %1$d was supplied while calculating event space availability for Event %2$d.',
+                        'event_espresso'
+                    ),
+                    $datetime->event()->ID(),
+                    $this->event->ID()
+                )
+            );
+        }
         $this->datetimes[$datetime->ID()] = $datetime;
     }
 
@@ -179,8 +230,10 @@ class EventSpacesCalculator
     /**
      * calculate spaces remaining based on "saleable" tickets
      *
-     * @return int|float
+     * @return float|int
      * @throws EE_Error
+     * @throws DomainException
+     * @throws UnexpectedEntityException
      */
     public function spacesRemaining()
     {
@@ -195,6 +248,8 @@ class EventSpacesCalculator
      *
      * @return int|float
      * @throws EE_Error
+     * @throws DomainException
+     * @throws UnexpectedEntityException
      */
     public function totalSpacesAvailable()
     {
@@ -213,6 +268,8 @@ class EventSpacesCalculator
      * which is the entire reason for their existence.
      *
      * @throws EE_Error
+     * @throws DomainException
+     * @throws UnexpectedEntityException
      */
     private function initialize()
     {
@@ -228,21 +285,18 @@ class EventSpacesCalculator
         $active_tickets = $this->getActiveTickets();
         if (! empty($active_tickets)) {
             foreach ($active_tickets as $ticket) {
-                if (! $ticket instanceof EE_Ticket) {
-                    continue;
-                }
-                $TKT_ID = $ticket->name();
+                $this->validateTicket($ticket);
+                // we need to index our data arrays using strings for the purpose of sorting,
+                // but we also need them to be unique, so  we'll just prepend a letter T to the ID
+                $TKT_ID = "T{$ticket->ID()}";
                 // to start, we'll just consider the raw qty to be the maximum availability for this ticket
                 $max_tickets = $ticket->qty();
                 // but we'll adjust that after looping over each datetime for the ticket and checking reg limits
                 $ticket_datetimes = $ticket->datetimes($this->datetime_query_params);
                 foreach ($ticket_datetimes as $datetime) {
-                    if (! $datetime instanceof EE_Datetime) {
-                        continue;
-                    }
                     // save all datetimes
                     $this->setDatetime($datetime);
-                    $DTT_ID = $datetime->name();
+                    $DTT_ID = "D{$datetime->ID()}";
                     $reg_limit = $datetime->reg_limit();
                     // ticket quantity can not exceed datetime reg limit
                     $max_tickets = min($max_tickets, $reg_limit);
