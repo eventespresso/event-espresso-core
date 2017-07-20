@@ -901,7 +901,7 @@ class Read_Test extends \EE_REST_TestCase{
      * we don't accidentally cache the shortcode from one event to the other
      * @group 10851
      */
-    public function testShortcodesNOtCachede()
+    public function testShortcodesNotCachedForDifferentEvents()
     {
         $transaction = $this->new_typical_transaction();
         $event_with_registrations = $transaction->primary_registration()->event();
