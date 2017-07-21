@@ -1915,9 +1915,17 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
         //to get around this, we first do a SELECT, get all the IDs, and then run another query
         //to delete them
         $items_for_deletion = $this->_get_all_wpdb_results($query_params);
-        $deletion_where = $this->_setup_ids_for_delete($items_for_deletion, $allow_blocking);
-        if ($deletion_where) {
-            //echo "objects for deletion:";var_dump($objects_for_deletion);
+        $columns_and_ids_for_deleting = $this->_get_ids_for_delete($items_for_deletion, $allow_blocking);
+        $deletion_where_query_part = $this->_build_query_part_for_deleting_from_columns_and_values(
+            $columns_and_ids_for_deleting
+        );
+        do_action('AHEE__EEM_Base__delete__before_query',
+            $this,
+            $query_params,
+            $allow_blocking,
+            $columns_and_ids_for_deleting
+        );
+        if ($deletion_where_query_part) {
             $model_query_info = $this->_create_model_query_info_carrier($query_params);
             $table_aliases = array_keys($this->_tables);
             $SQL = "DELETE "
@@ -1925,14 +1933,15 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
                    . " FROM "
                    . $model_query_info->get_full_join_sql()
                    . " WHERE "
-                   . $deletion_where;
-            //		/echo "delete sql:$SQL";
+                   . $deletion_where_query_part;
             $rows_deleted = $this->_do_wpdb_query('query', array($SQL));
         } else {
             $rows_deleted = 0;
         }
-        //and lastly make sure those items are removed from the entity map; if they could be put into it at all
-        if ($this->has_primary_key_field()) {
+
+        //and lastly make sure those items are removed from the entity map; if they could be put into it at all; and if
+        //there was no error with the delete query.
+        if ($this->has_primary_key_field() && $rows_deleted !== false) {
             foreach ($items_for_deletion as $item_for_deletion_row) {
                 $pk_value = $item_for_deletion_row[$this->get_primary_key_field()->get_qualified_column()];
                 if (isset($this->_entity_map[EEM_Base::$_model_query_blog_id][$pk_value])) {
@@ -1948,7 +1957,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
          * @param array    $query_params @see EEM_Base::get_all()
          * @param int      $rows_deleted
          */
-        do_action('AHEE__EEM_Base__delete__end', $this, $query_params, $rows_deleted);
+        do_action('AHEE__EEM_Base__delete__end', $this, $query_params, $rows_deleted, $columns_and_ids_for_deleting);
         return $rows_deleted;//how many supposedly got deleted
     }
 
@@ -2006,91 +2015,86 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
     }
 
 
-
     /**
-     * This sets up our delete where sql and accounts for if we have secondary tables that will have rows deleted as
-     * well.
-     *
-     * @param  array  $objects_for_deletion This should be the values returned by $this->_get_all_wpdb_results()
-     * @param boolean $allow_blocking       if TRUE, matched objects will only be deleted if there is no related model
-     *                                      info that blocks it (ie, there' sno other data that depends on this data);
-     *                                      if false, deletes regardless of other objects which may depend on it. Its
-     *                                      generally advisable to always leave this as TRUE, otherwise you could
-     *                                      easily corrupt your DB
+     * Builds the columns and values for items to delete from the incoming $row_results_for_deleting array.
+     * @param array $row_results_for_deleting
+     * @param bool  $allow_blocking
+     * @return array
      * @throws EE_Error
-     * @return string    everything that comes after the WHERE statement.
      */
-    protected function _setup_ids_for_delete($objects_for_deletion, $allow_blocking = true)
+    protected function _get_ids_for_delete(array $row_results_for_deleting, $allow_blocking = true)
     {
+        $ids_to_delete_indexed_by_column = array();
         if ($this->has_primary_key_field()) {
             $primary_table = $this->_get_main_table();
             $other_tables = $this->_get_other_tables();
-            $deletes = $query = array();
-            foreach ($objects_for_deletion as $delete_object) {
-                //before we mark this object for deletion,
-                //make sure there's no related objects blocking its deletion (if we're checking)
+            $ids_to_delete_indexed_by_column = $query = array();
+            foreach ($row_results_for_deleting as $item_to_delete) {
+                //before we mark this item for deletion,
+                //make sure there's no related entities blocking its deletion (if we're checking)
                 if (
                     $allow_blocking
                     && $this->delete_is_blocked_by_related_models(
-                        $delete_object[$primary_table->get_fully_qualified_pk_column()]
+                        $item_to_delete[$primary_table->get_fully_qualified_pk_column()]
                     )
                 ) {
                     continue;
                 }
                 //primary table deletes
-                if (isset($delete_object[$primary_table->get_fully_qualified_pk_column()])) {
-                    $deletes[$primary_table->get_fully_qualified_pk_column()][] = $delete_object[$primary_table->get_fully_qualified_pk_column()];
-                }
-                //other tables
-                if (! empty($other_tables)) {
-                    foreach ($other_tables as $ot) {
-                        //first check if we've got the foreign key column here.
-                        if (isset($delete_object[$ot->get_fully_qualified_fk_column()])) {
-                            $deletes[$ot->get_fully_qualified_pk_column()][] = $delete_object[$ot->get_fully_qualified_fk_column()];
-                        }
-                        // wait! it's entirely possible that we'll have a the primary key
-                        // for this table in here, if it's a foreign key for one of the other secondary tables
-                        if (isset($delete_object[$ot->get_fully_qualified_pk_column()])) {
-                            $deletes[$ot->get_fully_qualified_pk_column()][] = $delete_object[$ot->get_fully_qualified_pk_column()];
-                        }
-                        // finally, it is possible that the fk for this table is found
-                        // in the fully qualified pk column for the fk table, so let's see if that's there!
-                        if (isset($delete_object[$ot->get_fully_qualified_pk_on_fk_table()])) {
-                            $deletes[$ot->get_fully_qualified_pk_column()][] = $delete_object[$ot->get_fully_qualified_pk_column()];
-                        }
-                    }
+                if (isset($item_to_delete[$primary_table->get_fully_qualified_pk_column()])) {
+                    $ids_to_delete_indexed_by_column[$primary_table->get_fully_qualified_pk_column()][] =
+                        $item_to_delete[$primary_table->get_fully_qualified_pk_column()];
                 }
             }
-            //we should have deletes now, so let's just go through and setup the where statement
-            foreach ($deletes as $column => $values) {
-                //make sure we have unique $values;
-                $values = array_unique($values);
-                $query[] = $column . ' IN(' . implode(",", $values) . ')';
-            }
-            return ! empty($query) ? implode(' AND ', $query) : '';
         } elseif (count($this->get_combined_primary_key_fields()) > 1) {
-            $ways_to_identify_a_row = array();
             $fields = $this->get_combined_primary_key_fields();
-            //note: because there' sno primary key, that means nothing else  can be pointing to this model, right?
-            foreach ($objects_for_deletion as $delete_object) {
-                $values_for_each_cpk_for_a_row = array();
+            foreach ($row_results_for_deleting as $item_to_delete) {
+                $ids_to_delete_indexed_by_column_for_row = array();
                 foreach ($fields as $cpk_field) {
                     if ($cpk_field instanceof EE_Model_Field_Base) {
-                        $values_for_each_cpk_for_a_row[] = $cpk_field->get_qualified_column()
-                                                           . "="
-                                                           . $delete_object[$cpk_field->get_qualified_column()];
+                        $ids_to_delete_indexed_by_column_for_row[$cpk_field->get_qualified_column()] =
+                            $item_to_delete[$cpk_field->get_qualified_column()];
                     }
                 }
-                $ways_to_identify_a_row[] = "(" . implode(" AND ", $values_for_each_cpk_for_a_row) . ")";
+                $ids_to_delete_indexed_by_column[] = $ids_to_delete_indexed_by_column_for_row;
             }
-            return implode(" OR ", $ways_to_identify_a_row);
         } else {
             //so there's no primary key and no combined key...
             //sorry, can't help you
             throw new EE_Error(sprintf(__("Cannot delete objects of type %s because there is no primary key NOR combined key",
                 "event_espresso"), get_class($this)));
         }
+        return $ids_to_delete_indexed_by_column;
     }
+
+
+
+    protected function _build_query_part_for_deleting_from_columns_and_values(array $ids_to_delete_indexed_by_column) {
+        $query_part = '';
+        if (empty($ids_to_delete_indexed_by_column)) {
+            return $query_part;
+        } elseif ($this->has_primary_key_field()) {
+            $query = array();
+            foreach ($ids_to_delete_indexed_by_column as $column => $ids) {
+                //make sure we have unique $ids
+                $ids = array_unique($ids);
+                $query[] = $column . ' IN(' . implode(',', $ids) . ')';
+            }
+            $query_part = ! empty($query) ? implode(' AND ', $query) : $query_part;
+        } elseif (count($this->get_combined_primary_key_fields()) > 1) {
+            $ways_to_identify_a_row = array();
+            foreach ($ids_to_delete_indexed_by_column as $ids_to_delete_indexed_by_column_for_each_row) {
+                $values_for_each_combined_primary_key_for_a_row = array();
+                foreach ($ids_to_delete_indexed_by_column_for_each_row as $column => $id) {
+                    $values_for_each_combined_primary_key_for_a_row[] = $column . '=' . $id;
+                }
+                $ways_to_identify_a_row[] = '(' . implode(' AND ', $values_for_each_combined_primary_key_for_a_row);
+            }
+            $query_part = implode(' OR ', $ways_to_identify_a_row);
+        }
+        return $query_part;
+    }
+    
 
 
 
