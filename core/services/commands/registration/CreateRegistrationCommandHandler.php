@@ -45,6 +45,10 @@ class CreateRegistrationCommandHandler extends CommandHandler
     /**
      * @param  CommandInterface $command
      * @return mixed
+     * @throws \OutOfRangeException
+     * @throws \EventEspresso\core\exceptions\UnexpectedEntityException
+     * @throws \EE_Error
+     * @throws \EventEspresso\core\exceptions\InvalidEntityException
      */
     public function handle(CommandInterface $command)
     {
@@ -59,7 +63,8 @@ class CreateRegistrationCommandHandler extends CommandHandler
             $command->ticket(),
             $command->ticketLineItem(),
             $command->regCount(),
-            $command->regGroupSize()
+            $command->regGroupSize(),
+            $command->regStatus()
         );
     }
 

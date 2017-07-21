@@ -37,8 +37,9 @@ class EE_Register_Capabilities_Test extends EE_UnitTestCase
      */
     protected $_meta_caps_before_registering_new_ones = array();
 
-    function __construct()
+    public function setUp()
     {
+        parent::setUp();
         $capabilities_array                         = array(
             'administrator' => array(
                 'test_reads',
@@ -81,7 +82,6 @@ class EE_Register_Capabilities_Test extends EE_UnitTestCase
             'capabilities'    => $capabilities_array,
             'capability_maps' => $numeric_cap_maps_array,
         );
-
     }
 
 
@@ -288,7 +288,7 @@ class EE_Register_Capabilities_Test extends EE_UnitTestCase
     }
 
 
-    function test_registering_capabilities_too_early()
+    public function test_registering_capabilities_too_early()
     {
 
         //test activating in the wrong spot.
@@ -301,7 +301,7 @@ class EE_Register_Capabilities_Test extends EE_UnitTestCase
     }
 
 
-    function test_registering_capabilities_and_they_are_assigned()
+    public function test_registering_capabilities_and_they_are_assigned()
     {
         $this->_pretend_capabilities_registered();
 
@@ -315,7 +315,7 @@ class EE_Register_Capabilities_Test extends EE_UnitTestCase
     }
 
 
-    function test_capability_maps_registered_non_numeric()
+    public function test_capability_maps_registered_non_numeric()
     {
         $this->_pretend_capabilities_registered();
         //the best way to test this is to ensure the registered maps work.  So let's author an event by the user.
@@ -344,7 +344,7 @@ class EE_Register_Capabilities_Test extends EE_UnitTestCase
     }
 
 
-    function test_capability_maps_registered_numeric()
+    public function test_capability_maps_registered_numeric()
     {
         $this->_pretend_capabilities_registered(false);
         //the best way to test this is to ensure the registered maps work.  So let's author an event by the user.
@@ -373,7 +373,7 @@ class EE_Register_Capabilities_Test extends EE_UnitTestCase
     }
 
 
-    function test_capability_maps_deregistered()
+    public function test_capability_maps_deregistered()
     {//setup registered caps first
         $this->_pretend_capabilities_registered();
 
