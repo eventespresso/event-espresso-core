@@ -1,8 +1,9 @@
-<?php use EventEspresso\core\services\shortcodes\LegacyShortcodesManager;
+<?php
 
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
+use EventEspresso\core\interfaces\ResettableInterface;
+use EventEspresso\core\services\shortcodes\LegacyShortcodesManager;
+
+defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 
 
 
@@ -13,7 +14,7 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) {
  * @subpackage  core/
  * @author      Brent Christensen
  */
-final class EE_Config
+final class EE_Config implements ResettableInterface
 {
 
     const OPTION_NAME        = 'ee_config';

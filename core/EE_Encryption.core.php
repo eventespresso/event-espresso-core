@@ -1,4 +1,5 @@
-<?php
+<?php use EventEspresso\core\interfaces\InterminableInterface;
+
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 
 
@@ -24,7 +25,12 @@ class EE_Encryption
     /**
      * the OPENSSL cipher method used
      */
-    const OPENSSL_CIPHER_METHOD = 'aes-256-ctr';
+    const OPENSSL_CIPHER_METHOD = 'AES-128-CBC';
+
+    /**
+     * WP "options_name" used to store a verified available cipher method
+     */
+    const OPENSSL_CIPHER_METHOD_OPTION_NAME = 'ee_openssl_cipher_method';
 
     /**
      * the OPENSSL digest method used
@@ -52,6 +58,21 @@ class EE_Encryption
      * @var string $_encryption_key
      */
     protected $_encryption_key;
+
+    /**
+     * @var string $cipher_method
+     */
+    private $cipher_method = '';
+
+    /**
+     * @var array $cipher_methods
+     */
+    private $cipher_methods = array();
+
+    /**
+     * @var array $digest_methods
+     */
+    private $digest_methods = array();
 
     /**
      * @var boolean $_use_openssl_encrypt
@@ -272,9 +293,13 @@ class EE_Encryption
         if (empty($text_string)) {
             return $text_string;
         }
+        $this->cipher_method = $this->getCipherMethod();
         // get initialization vector size
-        $iv_size = openssl_cipher_iv_length(EE_Encryption::OPENSSL_CIPHER_METHOD);
-        // generate initialization vector
+        $iv_size = openssl_cipher_iv_length($this->cipher_method);
+        // generate initialization vector.
+        // The second parameter ("crypto_strong") is passed by reference,
+        // and is used to determines if the algorithm used was "cryptographically strong"
+        // openssl_random_pseudo_bytes() will toggle it to either true or false
         $iv = openssl_random_pseudo_bytes($iv_size, $is_strong);
         if ($iv === false || $is_strong === false) {
             throw new RuntimeException(
@@ -284,8 +309,8 @@ class EE_Encryption
         // encrypt it
         $encrypted_text = openssl_encrypt(
             $text_string,
-            EE_Encryption::OPENSSL_CIPHER_METHOD,
-            openssl_digest($this->get_encryption_key(), EE_Encryption::OPENSSL_DIGEST_METHOD),
+            $this->cipher_method,
+            $this->getDigestHashValue(),
             0,
             $iv
         );
@@ -295,6 +320,76 @@ class EE_Encryption
         return $this->_use_base64_encode
             ? trim(base64_encode($encrypted_text))
             : trim($encrypted_text);
+    }
+
+
+
+    /**
+     * Returns a cipher method that has been verified to work.
+     * First checks if the cached cipher has been set already and if so, returns that.
+     * Then tests the incoming default and returns that if it's good.
+     * If not, then it retrieves the previously tested and saved cipher method.
+     * But if that doesn't exist, then calls getAvailableCipherMethod()
+     * to see what is available on the server, and returns the results.
+     *
+     * @param string $cipher_method
+     * @return string
+     * @throws RuntimeException
+     */
+    protected function getCipherMethod($cipher_method = EE_Encryption::OPENSSL_CIPHER_METHOD)
+    {
+        if($this->cipher_method !== ''){
+            return $this->cipher_method;
+        }
+        // verify that the default cipher method can produce an initialization vector
+        if (openssl_cipher_iv_length($cipher_method) === false) {
+            // nope? okay let's get what we found in the past to work
+            $cipher_method = get_option(EE_Encryption::OPENSSL_CIPHER_METHOD_OPTION_NAME, '');
+            // oops... haven't tested available cipher methods yet
+            if($cipher_method === '' || openssl_cipher_iv_length($cipher_method) === false) {
+                $cipher_method = $this->getAvailableCipherMethod($cipher_method);
+            }
+        }
+        return $cipher_method;
+    }
+
+
+
+    /**
+     * @param string $cipher_method
+     * @return string
+     * @throws \RuntimeException
+     */
+    protected function getAvailableCipherMethod($cipher_method)
+    {
+        // verify that the incoming cipher method can produce an initialization vector
+        if (openssl_cipher_iv_length($cipher_method) === false) {
+            // nope? then check the next cipher in the list of available cipher methods
+            $cipher_method = next($this->cipher_methods);
+            // what? there's no list? then generate that list and cache it,
+            if (empty($this->cipher_methods)) {
+                $this->cipher_methods = openssl_get_cipher_methods();
+                // then grab the first item from the list
+                $cipher_method = reset($this->cipher_methods);
+            }
+            if($cipher_method === false){
+                throw new RuntimeException(
+                    esc_html__(
+                        'OpenSSL support appears to be enabled on the server, but no cipher methods are available. Please contact the server administrator.',
+                        'event_espresso'
+                    )
+                );
+            }
+            // verify that the next cipher method works
+            return $this->getAvailableCipherMethod($cipher_method);
+        }
+        // if we've gotten this far, then we found an available cipher method that works
+        // so save that for next time
+        update_option(
+            EE_Encryption::OPENSSL_CIPHER_METHOD_OPTION_NAME,
+            $cipher_method
+        );
+        return $cipher_method;
     }
 
 
@@ -322,14 +417,14 @@ class EE_Encryption
             2
         );
         // check that iv exists, and if not, maybe text was encoded using mcrypt?
-        if (! isset($encrypted_components[1]) && $this->_use_mcrypt) {
+        if ($this->_use_mcrypt && ! isset($encrypted_components[1])) {
             return $this->m_decrypt($encrypted_text);
         }
         // decrypt it
         $decrypted_text = openssl_decrypt(
             $encrypted_components[0],
-            EE_Encryption::OPENSSL_CIPHER_METHOD,
-            openssl_digest($this->get_encryption_key(), EE_Encryption::OPENSSL_DIGEST_METHOD),
+            $this->getCipherMethod(),
+            $this->getDigestHashValue(),
             0,
             $encrypted_components[1]
         );
@@ -337,6 +432,51 @@ class EE_Encryption
         return $decrypted_text;
     }
 
+
+
+    /**
+     * Computes the digest hash value using the specified digest method.
+     * If that digest method fails to produce a valid hash value,
+     * then we'll grab the next digest method and recursively try again until something works.
+     *
+     * @param string $digest_method
+     * @return string
+     * @throws RuntimeException
+     */
+    protected function getDigestHashValue($digest_method = EE_Encryption::OPENSSL_DIGEST_METHOD){
+        $digest_hash_value = openssl_digest($this->get_encryption_key(), $digest_method);
+        if ($digest_hash_value === false) {
+            return $this->getDigestHashValue($this->getDigestMethod());
+        }
+        return $digest_hash_value;
+    }
+
+
+
+    /**
+     * Returns the NEXT element in the $digest_methods array.
+     * If the $digest_methods array is empty, then we populate it
+     * with the available values returned from openssl_get_md_methods().
+     *
+     * @return string
+     * @throws \RuntimeException
+     */
+    protected function getDigestMethod(){
+        $digest_method = prev($this->digest_methods);
+        if (empty($this->digest_methods)) {
+            $this->digest_methods = openssl_get_md_methods();
+            $digest_method = end($this->digest_methods);
+        }
+        if ($digest_method === false) {
+            throw new RuntimeException(
+                esc_html__(
+                    'OpenSSL support appears to be enabled on the server, but no digest methods are available. Please contact the server administrator.',
+                    'event_espresso'
+                )
+            );
+        }
+        return $digest_method;
+    }
 
 
     /**
@@ -353,7 +493,12 @@ class EE_Encryption
             return $text_string;
         }
         $key_bits = str_split(
-            str_pad('', strlen($text_string), $this->get_encryption_key(), STR_PAD_RIGHT)
+            str_pad(
+                '',
+                strlen($text_string),
+                $this->get_encryption_key(),
+                STR_PAD_RIGHT
+            )
         );
         $string_bits = str_split($text_string);
         foreach ($string_bits as $k => $v) {
@@ -375,6 +520,7 @@ class EE_Encryption
      * @see http://stackoverflow.com/questions/800922/how-to-encrypt-string-without-mcrypt-library-in-php
      * @param string $encrypted_text the text to be decrypted
      * @return string
+     * @throws RuntimeException
      */
     protected function acme_decrypt($encrypted_text = '')
     {
@@ -386,12 +532,20 @@ class EE_Encryption
         $encrypted_text = $this->valid_base_64($encrypted_text)
             ? base64_decode($encrypted_text)
             : $encrypted_text;
-        if (strpos($encrypted_text, EE_Encryption::ACME_ENCRYPTION_FLAG) === false && $this->_use_mcrypt) {
+        if (
+            $this->_use_mcrypt
+            && strpos($encrypted_text, EE_Encryption::ACME_ENCRYPTION_FLAG) === false
+        ){
             return $this->m_decrypt($encrypted_text);
         }
         $encrypted_text = substr($encrypted_text, 0, -4);
         $key_bits = str_split(
-            str_pad('', strlen($encrypted_text), $this->get_encryption_key(), STR_PAD_RIGHT)
+            str_pad(
+                '',
+                strlen($encrypted_text),
+                $this->get_encryption_key(),
+                STR_PAD_RIGHT
+            )
         );
         $string_bits = str_split($encrypted_text);
         foreach ($string_bits as $k => $v) {
