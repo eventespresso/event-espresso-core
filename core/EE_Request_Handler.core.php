@@ -1,4 +1,6 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed');}
+<?php use EventEspresso\core\interfaces\InterminableInterface;
+
+if ( ! defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed');}
 /**
  * class EE_Request_Handler
  *
@@ -6,7 +8,7 @@
  * @subpackage  /core/
  * @author      Brent Christensen
  */
-final class EE_Request_Handler {
+final class EE_Request_Handler implements InterminableInterface {
 
 	/**
 	 * 	@var 	array	$_params 	$_REQUEST parameters

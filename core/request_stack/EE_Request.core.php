@@ -1,4 +1,7 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) {
+<?php
+use EventEspresso\core\interfaces\InterminableInterface;
+
+if ( ! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
 
@@ -12,7 +15,7 @@
  * @author          Brent Christensen
  *                  ------------------------------------------------------------------------
  */
-class EE_Request
+class EE_Request implements InterminableInterface
 {
 
     /**
