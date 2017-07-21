@@ -422,6 +422,10 @@ div.TB-ee-frame a {
 	color: #E44064;
 }
 
+.ee-icon-color-ee-purple:before {
+    color: #8A549A;
+}
+
 .ee-icon-size-8:before { font-size: 8px !important; }
 .ee-icon-size-12:before { font-size: 12px !important; }
 .ee-icon-size-14:before { font-size: 14px !important; }

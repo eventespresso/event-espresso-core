@@ -65,7 +65,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         );
         add_action(
             'AHEE__EE_Admin_Page_CPT__set_model_object__after_set_object',
-            array($this, 'verify_event_edit')
+            array($this, 'verify_event_edit'), 10, 2
         );
     }
 
@@ -662,11 +662,17 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      * warning (via EE_Error::add_error());
      *
      * @param  EE_Event $event Event object
-     * @access public
+     * @param string    $req_type
      * @return void
+     * @throws EE_Error
+     * @access public
      */
-    public function verify_event_edit($event = null)
+    public function verify_event_edit($event = null, $req_type = '')
     {
+        // don't need to do this when processing
+        if(!empty($req_type)) {
+            return;
+        }
         // no event?
         if (empty($event)) {
             // set event
@@ -958,19 +964,19 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
 
 
     /**
-     * This is hooked into the WordPress do_action('save_post') hook and runs after the custom post type has been
-     * saved.  Child classes are required to declare this method.  Typically you would use this to save any additional
-     * data.
+     * This is hooked into the WordPress do_action('save_post') hook and runs after the custom post type has been saved.
+     * Typically you would use this to save any additional data.
      * Keep in mind also that "save_post" runs on EVERY post update to the database.
-     * ALSO very important.  When a post transitions from scheduled to published, the save_post action is fired but you
-     * will NOT have any _POST data containing any extra info you may have from other meta saves.  So MAKE sure that
-     * you handle this accordingly.
+     * ALSO very important.  When a post transitions from scheduled to published,
+     * the save_post action is fired but you will NOT have any _POST data containing any extra info you may have from other meta saves.
+     * So MAKE sure that you handle this accordingly.
      *
      * @access protected
      * @abstract
      * @param  string $post_id The ID of the cpt that was saved (so you can link relationally)
      * @param  object $post    The post object of the cpt that was saved.
      * @return void
+     * @throws \EE_Error
      */
     protected function _insert_update_cpt_item($post_id, $post)
     {
@@ -1000,18 +1006,29 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         //update event
         $success = $this->_event_model()->update_by_ID($event_values, $post_id);
         //get event_object for other metaboxes... though it would seem to make sense to just use $this->_event_model()->get_one_by_ID( $post_id ).. i have to setup where conditions to override the filters in the model that filter out autodraft and inherit statuses so we GET the inherit id!
-        $get_one_where = array($this->_event_model()->primary_key_name() => $post_id, 'status' => $post->post_status);
+        $get_one_where = array(
+            $this->_event_model()->primary_key_name() => $post_id,
+            'OR' => array(
+                'status' => $post->post_status,
+                // if trying to "Publish" a sold out event, it's status will get switched back to "sold_out" in the db,
+                // but the returned object here has a status of "publish", so use the original post status as well
+                'status*1' => $this->_req_data['original_post_status'],
+            )
+        );
         $event = $this->_event_model()->get_one(array($get_one_where));
         //the following are default callbacks for event attachment updates that can be overridden by caffeinated functionality and/or addons.
         $event_update_callbacks = apply_filters(
             'FHEE__Events_Admin_Page___insert_update_cpt_item__event_update_callbacks',
-            array(array($this, '_default_venue_update'), array($this, '_default_tickets_update'))
+            array(
+                array($this, '_default_venue_update'),
+                array($this, '_default_tickets_update')
+            )
         );
         $att_success = true;
         foreach ($event_update_callbacks as $e_callback) {
-            $_succ = call_user_func_array($e_callback, array($event, $this->_req_data));
-            $att_success = ! $att_success ? $att_success
-                : $_succ; //if ANY of these updates fail then we want the appropriate global error message
+            $_success = $e_callback($event, $this->_req_data);
+            //if ANY of these updates fail then we want the appropriate global error message
+            $att_success = ! $att_success ? $att_success : $_success;
         }
         //any errors?
         if ($success && false === $att_success) {

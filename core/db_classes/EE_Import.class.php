@@ -1,4 +1,6 @@
-<?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+<?php use EventEspresso\core\interfaces\ResettableInterface;
+
+if (!defined( 'EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 /**
  * EE_Import class
@@ -9,7 +11,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
  *
  * ------------------------------------------------------------------------
  */
- class EE_Import {
+ class EE_Import implements ResettableInterface {
 
 	const do_insert = 'insert';
 	const do_update = 'update';

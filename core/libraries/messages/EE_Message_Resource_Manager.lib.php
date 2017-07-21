@@ -636,12 +636,12 @@ class EE_Message_Resource_Manager
             $this->ensure_messenger_is_active($messenger_name, $update_option);
         }
 
-        if (! empty($not_installed_messenger)) {
+        if (! empty($not_installed)) {
             EE_Error::add_error(
                 sprintf(
                     __('The following messengers are either not installed or are invalid:%1$s %2$s', 'event_espresso'),
                     '<br />',
-                    implode(', ', $not_installed_messenger)
+                    implode(', ', $not_installed)
                 ),
                 __FILE__, __FUNCTION__, __LINE__
             );
