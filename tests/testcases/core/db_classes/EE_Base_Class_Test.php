@@ -491,7 +491,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$this->assertFalse( $att->in_entity_map() );
 		$att->save();
 		$this->assertTrue( $att->in_entity_map() );
-		EE_Registry::instance()->reset_model( 'Attendee' );
+		EEM_Attendee::instance()->reset();
 		//when we serialized it, it forgot if it was in the entity map or not
 		$this->assertFalse( $att->in_entity_map() );
 		try{
@@ -523,7 +523,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		}
 		$att->save();
 		$att->refresh_from_db();
-		EE_Registry::instance()->reset_model( 'Attendee' );
+		EEM_Attendee::instance()->reset();
 		try{
 			$att->refresh_from_db();
 		}catch( EE_Error $e ){

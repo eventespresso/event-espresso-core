@@ -1,44 +1,14 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+<?php use EventEspresso\core\interfaces\InterminableInterface;
+
+if ( ! defined( 'EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 /**
- * Event Espresso
- *
- * Event Registration and Management Plugin for WordPress
- *
- * @ package			Event Espresso
- * @ author			Seth Shoultes
- * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link					http://www.eventespresso.com
- * @ version		 	4.0
- *
- * ------------------------------------------------------------------------
- *
  * EE_PUE
  *
- * @package			Event Espresso
+ * @package		Event Espresso
  * @subpackage	includes/core/
- * @author				Darren Ethier
- *
- * ------------------------------------------------------------------------
+ * @author		Darren Ethier
  */
-class EE_PUE {
-
-	/**
-	 * 	EE_Registry Object
-	 *	@var 	object
-	 * 	@access 	protected
-	 */
-	protected $EE = NULL;
-
-	/**
-	 * This property is used to hold an array of EE_default_term objects assigned to a custom post type when the post for that post type is published with no terms set for the taxonomy.
-	  *
-	 * @var array of EE_Default_Term objects
-	 */
-	protected $_default_terms = array();
-
-
-
+class EE_PUE implements InterminableInterface {
 
 
 	/**
@@ -66,7 +36,7 @@ class EE_PUE {
 		//has optin been selected for data collection?
 		$espresso_data_optin = !empty($ueip_optin) ? $ueip_optin : NULL;
 
-		if ( empty($ueip_has_notified) && EE_Maintenance_Mode::instance()->level() != EE_Maintenance_mode::level_2_complete_maintenance ) {
+		if ( empty($ueip_has_notified) && EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance ) {
 			add_action('admin_notices', array( $this, 'espresso_data_collection_optin_notice' ), 10 );
 			add_action('admin_enqueue_scripts', array( $this, 'espresso_data_collection_enqueue_scripts' ), 10 );
 			add_action('wp_ajax_espresso_data_optin', array( $this, 'espresso_data_optin_ajax_handler' ), 10 );
@@ -182,24 +152,27 @@ class EE_PUE {
 				'extra_stats' => $extra_stats,
 				'turn_on_notices_saved' => true
 			);
-			$check_for_updates = new PluginUpdateEngineChecker($host_server_url, $plugin_slug, $options); //initiate the class and start the plugin update engine!
+			new PluginUpdateEngineChecker($host_server_url, $plugin_slug, $options); //initiate the class and start the plugin update engine!
 		}
 	}
 
 
 
 	/**
-	 * The purpose of this function is to display information about Event Espresso data collection and a optin selection for extra data collecting by users.
+	 * The purpose of this function is to display information about Event Espresso data collection
+	 * and a optin selection for extra data collecting by users.
+	 *
+	 * @param bool $extra
 	 * @return string html.
 	 */
-	 public static function espresso_data_collection_optin_text( $extra = TRUE ) {
+	 public static function espresso_data_collection_optin_text( $extra = true ) {
 	 	if ( ! $extra ) {
 			 echo '<h2 class="ee-admin-settings-hdr" '. (!$extra ? 'id="UXIP_settings"' : '').'>'.__('User eXperience Improvement Program (UXIP)', 'event_espresso').EEH_Template::get_help_tab_link('organization_logo_info').'</h2>';
 			 echo sprintf( __('%sPlease help us make Event Espresso better and vote for your favorite features.%s The %sUser eXperience Improvement Program (UXIP)%s, has been created so when you use Event Espresso you are voting for the features and settings that are important to you. The UXIP helps us understand how you use our products and services, track problems and in what context. If you opt-out of the UXIP you essentially elect for us to disregard how you use Event Espresso as we build new features and make changes. Participation in the program is completely voluntary but it is enabled by default. The end results of the UXIP are software improvements to better meet your needs. The data we collect will never be sold, traded, or misused in any way. %sPlease see our %sPrivacy Policy%s for more information.', 'event_espresso'), '<p><em>', '</em></p>','<a href="http://eventespresso.com/about/user-experience-improvement-program-uxip/" target="_blank">','</a>','<br><br>','<a href="http://eventespresso.com/about/privacy-policy/" target="_blank">','</a>' );
 		} else {
 			$settings_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'default'), admin_url( 'admin.php?page=espresso_general_settings') );
 			$settings_url .= '#UXIP_settings';
-			echo sprintf( __( 'The Event Espresso UXIP feature is active on your site. For %smore info%s and to opt-out %sclick here%s.', 'event_espresso' ), '<a href="http://eventespresso.com/about/user-experience-improvement-program-uxip/" traget="_blank">', '</a>', '<a href="' . $settings_url . '" target="_blank">', '</a>' );
+			echo sprintf( __( 'The Event Espresso UXIP feature is active on your site. For %smore info%s and to opt-out %sclick here%s.', 'event_espresso' ), '<a href="http://eventespresso.com/about/user-experience-improvement-program-uxip/" target="_blank">', '</a>', '<a href="' . $settings_url . '" target="_blank">', '</a>' );
 		}
 	}
 
@@ -209,8 +182,8 @@ class EE_PUE {
 	function espresso_data_collection_optin_notice() {
 		$ueip_has_notified = EE_Registry::instance()->CFG->core->ee_ueip_has_notified;
 		if ( $ueip_has_notified ) return;
-		$settings_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'default'), admin_url( 'admin.php?page=espresso_general_settings') );
-		$settings_url = $settings_url . '#UXIP_settings';
+		// $settings_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'default'), admin_url( 'admin.php?page=espresso_general_settings') );
+		// $settings_url = $settings_url . '#UXIP_settings';
 		?>
 		<div class="updated data-collect-optin" id="espresso-data-collect-optin-container">
 			<div id="data-collect-optin-options-container">
@@ -251,7 +224,7 @@ class EE_PUE {
 		if ( isset($_POST['nonce']) && !wp_verify_nonce($_POST['nonce'], 'ee-data-optin') ) exit();
 
 		//made it here so let's save the selection
-		$ueip_optin = isset( $_POST['selection'] ) ? $_POST['selection'] : 'no';
+		// $ueip_optin = isset( $_POST['selection'] ) ? $_POST['selection'] : 'no';
 
 		//update_option('ee_ueip_optin', $ueip_optin);
 		EE_Registry::instance()->CFG->core->ee_ueip_has_notified = 1;
@@ -263,7 +236,7 @@ class EE_PUE {
 
 	/**
 	 * This is a handy helper method for retrieving whether there is an update available for the given plugin.
-	 * @param  string  $basename Use the equivalent reulst from plugin_basename() for this param as WP uses that to identify plugins. Defaults to core update
+	 * @param  string  $basename Use the equivalent result from plugin_basename() for this param as WP uses that to identify plugins. Defaults to core update
 	 * @return boolean           True if update available, false if not.
 	 */
 	public static function is_update_available($basename = '') {
@@ -324,7 +297,8 @@ class EE_PUE {
 		//we only check this once every couple weeks.
 		if ( false === ( $transient = get_transient( 'ee4_event_info_check') ) ) {
 			//first let's get the number for ALL events
-			$EVT = EE_Registry::instance()->load_model('Event');
+			/** @var EEM_Event $EVT */
+			$EVT = EE_Registry::instance()->load_model( 'Event');
 			$DTT = EE_Registry::instance()->load_model('Datetime');
 			$TKT = EE_Registry::instance()->load_model('Ticket');
 			$count = $EVT->count();
