@@ -54,30 +54,9 @@ class ModelFieldFactory
 {
 
     /**
-     * @var ModelFieldFactory $instance
-     */
-    private static $instance;
-
-    /**
      * @var LoaderInterface $loader
      */
     private $loader;
-
-
-
-    /**
-     * @return ModelFieldFactory
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     */
-    public static function getModelFieldFactory()
-    {
-        if (! ModelFieldFactory::$instance instanceof ModelFieldFactory) {
-            ModelFieldFactory::$instance = new ModelFieldFactory(LoaderFactory::getLoader());
-        }
-        return ModelFieldFactory::$instance;
-    }
 
 
 
@@ -167,9 +146,9 @@ class ModelFieldFactory
     public function createDatetimeField(
         $table_column,
         $nice_name,
-        $timezone_string = '',
         $nullable = false,
         $default_value = EE_Datetime_Field::now,
+        $timezone_string = '',
         $date_format = '',
         $time_format = '',
         $pretty_date_format = '',
@@ -298,7 +277,7 @@ class ModelFieldFactory
         $table_column,
         $nice_name,
         $nullable,
-        $default_value = null,
+        $default_value,
         array $allowed_enum_values
     ) {
         return $this->loader->getNew(
@@ -334,7 +313,7 @@ class ModelFieldFactory
      * @param string $model_name
      * @return EE_Foreign_Key_Int_Field
      */
-    public function createForeignKeyIntField($table_column, $nice_name, $nullable, $default_value = null, $model_name)
+    public function createForeignKeyIntField($table_column, $nice_name, $nullable, $default_value, $model_name)
     {
         return $this->loader->getNew(
             'EE_Foreign_Key_Int_Field',
@@ -356,7 +335,7 @@ class ModelFieldFactory
         $table_column,
         $nice_name,
         $nullable,
-        $default_value = null,
+        $default_value,
         $model_name
     ) {
         return $this->loader->getNew(

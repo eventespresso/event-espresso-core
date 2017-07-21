@@ -742,7 +742,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     {
         return $model_field_factory instanceof ModelFieldFactory
             ? $model_field_factory
-            : ModelFieldFactory::getModelFieldFactory();
+            : LoaderFactory::getLoader()->load('EventEspresso\core\services\database\ModelFieldFactory');
     }
 
 
@@ -753,6 +753,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * @param null | string          $timezone
      * @param ModelFieldFactory|null $model_field_factory
      * @return EEM_Base|null (if the model was already instantiated, returns it, with
+     * @throws ReflectionException
      * all its properties reset; if it wasn't instantiated, returns null)
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -1535,7 +1536,9 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      *  - a formatted string in the timezone and format currently set on the EE_Datetime_Field for the given field for
      *  NOW
      *  - or a unix timestamp (equivalent to time())
-     *
+     * Note: When requesting a formatted string, if the date or time format doesn't include seconds, for example,
+     * the time returned, because it uses that format, will also NOT include seconds. For this reason, if you want
+     * the time returned to be the current time down to the exact second, set $timestamp to true.
      * @since 4.6.x
      * @param string $field_name       The field the current time is needed for.
      * @param bool   $timestamp        True means to return a unix timestamp. Otherwise a
@@ -2945,13 +2948,17 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     protected function _prepare_value_or_use_default($field_obj, $fields_n_values)
     {
         //if this field doesn't allow nullable, don't allow it
-        if (! $field_obj->is_nullable()
+        if (
+            ! $field_obj->is_nullable()
             && (
-                ! isset($fields_n_values[$field_obj->get_name()]) || $fields_n_values[$field_obj->get_name()] === null)
+                ! isset($fields_n_values[$field_obj->get_name()])
+                || $fields_n_values[$field_obj->get_name()] === null
+            )
         ) {
             $fields_n_values[$field_obj->get_name()] = $field_obj->get_default_value();
         }
-        $unprepared_value = isset($fields_n_values[$field_obj->get_name()]) ? $fields_n_values[$field_obj->get_name()]
+        $unprepared_value = isset($fields_n_values[$field_obj->get_name()])
+            ? $fields_n_values[$field_obj->get_name()]
             : null;
         return $this->_prepare_value_for_use_in_db($unprepared_value, $field_obj);
     }

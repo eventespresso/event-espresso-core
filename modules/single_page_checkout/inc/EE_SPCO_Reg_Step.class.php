@@ -89,8 +89,8 @@ abstract class EE_SPCO_Reg_Step
     protected $_success_message;
 
     /**
-     *    $_instructions - a brief description of how to complete the reg step. Usually displayed in conjunction with
-     *    the previous step's success message.
+     *    $_instructions - a brief description of how to complete the reg step.
+     *    Usually displayed in conjunction with the previous step's success message.
      *
      * @access private
      * @var string $_instructions
@@ -242,11 +242,15 @@ abstract class EE_SPCO_Reg_Step
             $this->_submit_button_text = $submit_button_text;
         } else if ($this->checkout->next_step instanceof EE_SPCO_Reg_Step) {
             if ($this->checkout->revisit) {
-                $this->_submit_button_text = sprintf(__('Update %s', 'event_espresso'),
-                    $this->checkout->current_step->name());
+                $this->_submit_button_text = sprintf(
+                    __('Update %s', 'event_espresso'),
+                    $this->checkout->current_step->name()
+                );
             } else {
-                $this->_submit_button_text = sprintf(__('Proceed to %s', 'event_espresso'),
-                    $this->checkout->next_step->name());
+                $this->_submit_button_text = sprintf(
+                    __('Proceed to %s', 'event_espresso'),
+                    $this->checkout->next_step->name()
+                );
             }
         }
         // filters the submit button text
@@ -470,7 +474,8 @@ abstract class EE_SPCO_Reg_Step
                                 'html_name' => 'next_step',
                                 'html_id'   => 'spco-' . $this->slug() . '-next-step',
                                 'default'   => $this->checkout->next_step instanceof EE_SPCO_Reg_Step
-                                    ? $this->checkout->next_step->slug() : '',
+                                    ? $this->checkout->next_step->slug()
+                                    : '',
                             )
                         ),
                     ),
@@ -502,7 +507,8 @@ abstract class EE_SPCO_Reg_Step
                                 'html_name' => 'next_step',
                                 'html_id'   => 'spco-' . $this->slug() . '-next-step',
                                 'default'   => $this->checkout->next_step instanceof EE_SPCO_Reg_Step
-                                    ? $this->checkout->next_step->slug() : '',
+                                    ? $this->checkout->next_step->slug()
+                                    : '',
                             )
                         ),
                         'e_reg_url_link' => new EE_Fixed_Hidden_Input(
@@ -541,7 +547,8 @@ abstract class EE_SPCO_Reg_Step
                 'display_spco_reg_step',
                 'process_reg_step',
                 'update_reg_step',
-            ), $actions
+            ),
+            $actions
         );
         $this->checkout->generate_reg_form = in_array($this->checkout->action, $actions, true) ? true : false;
     }
@@ -582,8 +589,12 @@ abstract class EE_SPCO_Reg_Step
             return '';
         }
         ob_start();
-        do_action('AHEE__before_spco_whats_next_buttons', $this->slug(), $this->checkout->next_step->slug(),
-            $this->checkout);
+        do_action(
+            'AHEE__before_spco_whats_next_buttons',
+            $this->slug(),
+            $this->checkout->next_step->slug(),
+            $this->checkout
+        );
         $html = ob_get_clean();
         // generate submit button
         $sbmt_btn = new EE_Submit_Input(array(
@@ -653,6 +664,8 @@ abstract class EE_SPCO_Reg_Step
         $this->checkout->transaction->set_total($this->checkout->cart->get_cart_grand_total());
         $this->checkout->stash_transaction_and_checkout();
     }
+
+
 
 
 

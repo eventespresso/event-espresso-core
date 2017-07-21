@@ -183,6 +183,7 @@ class EE_Dependency_Map
         array $dependencies,
         $overwrite = EE_Dependency_Map::KEEP_EXISTING_DEPENDENCIES
     ) {
+        $class = trim($class, '\\');
         $registered = false;
         if (empty(self::$_instance->_dependency_map[ $class ])) {
             self::$_instance->_dependency_map[ $class ] = array();
@@ -540,6 +541,9 @@ class EE_Dependency_Map
             'EventEspresso\core\domain\services\registration\CancelRegistrationService'                                   => array(
                 'EventEspresso\core\domain\services\ticket\CancelTicketLineItemService' => EE_Dependency_Map::load_from_cache,
             ),
+            'EventEspresso\core\services\commands\attendee\CreateAttendeeCommandHandler'                                  => array(
+                'EEM_Attendee' => EE_Dependency_Map::load_from_cache,
+            ),
             'EventEspresso\core\services\database\TableManager'                                                           => array(
                 'EventEspresso\core\services\database\TableAnalysis' => EE_Dependency_Map::load_from_cache,
             ),
@@ -748,6 +752,8 @@ class EE_Dependency_Map
             'CreateTicketLineItemCommandHandler'                                  => 'EventEspresso\core\services\commands\ticket\CreateTicketLineItemCommand',
             'TableManager'                                                        => 'EventEspresso\core\services\database\TableManager',
             'TableAnalysis'                                                       => 'EventEspresso\core\services\database\TableAnalysis',
+            'CreateTransactionCommandHandler'                                     => 'EventEspresso\core\services\commands\transaction\CreateTransactionCommandHandler',
+            'CreateAttendeeCommandHandler'                                        => 'EventEspresso\core\services\commands\attendee\CreateAttendeeCommandHandler',
             'EspressoShortcode'                                                   => 'EventEspresso\core\services\shortcodes\EspressoShortcode',
             'ShortcodeInterface'                                                  => 'EventEspresso\core\services\shortcodes\ShortcodeInterface',
             'EventEspresso\core\services\shortcodes\ShortcodeInterface'           => 'EventEspresso\core\services\shortcodes\EspressoShortcode',
@@ -757,6 +763,10 @@ class EE_Dependency_Map
             'CommandFactoryInterface'                                             => 'EventEspresso\core\services\commands\CommandFactoryInterface',
             'EventEspresso\core\services\commands\CommandFactoryInterface'        => 'EventEspresso\core\services\commands\CommandFactory',
             'EventEspresso\core\domain\services\session\SessionIdentifierInterface' => 'EE_Session',
+            'NoticeConverterInterface'                                            => 'EventEspresso\core\services\notices\NoticeConverterInterface',
+            'EventEspresso\core\services\notices\NoticeConverterInterface'        => 'EventEspresso\core\services\notices\ConvertNoticesToEeErrors',
+            'NoticesContainerInterface'                                            => 'EventEspresso\core\services\notices\NoticesContainerInterface',
+            'EventEspresso\core\services\notices\NoticesContainerInterface'        => 'EventEspresso\core\services\notices\NoticesContainer',
         );
     }
 
