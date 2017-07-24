@@ -1919,6 +1919,18 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
         $deletion_where_query_part = $this->_build_query_part_for_deleting_from_columns_and_values(
             $columns_and_ids_for_deleting
         );
+        /**
+         * Allows client code to act on the items being deleted before the query is actually executed.
+         *
+         * @param EEM_Base $this  The model instance being acted on.
+         * @param array    $query_params  The incoming array of query parameters influencing what gets deleted.
+         * @param bool     $allow_blocking @see param description in method phpdoc block.
+         * @param array $columns_and_ids_for_deleting       An array indicating what entities will get removed as
+         *                                                  derived from the incoming query parameters.
+         *                                                  @see details on the structure of this array in the phpdocs
+         *                                                  for the `_get_ids_for_delete_method`
+         *
+         */
         do_action('AHEE__EEM_Base__delete__before_query',
             $this,
             $query_params,
@@ -2019,7 +2031,23 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      * Builds the columns and values for items to delete from the incoming $row_results_for_deleting array.
      * @param array $row_results_for_deleting
      * @param bool  $allow_blocking
-     * @return array
+     * @return array   The shape of this array depends on whether the model `has_primary_key_field` or not.  If the
+     *                 model DOES have a primary_key_field, then the array will be a simple single dimension array where
+     *                 the key is the fully qualified primary key column and the value is an array of ids that will be
+     *                 deleted. Example:
+     *                      array('Event.EVT_ID' => array( 1,2,3))
+     *                 If the model DOES NOT have a primary_key_field, then the array will be a two dimensional array
+     *                 where each element is a group of columns and values that get deleted. Example:
+     *                      array(
+     *                          0 => array(
+     *                              'Term_Relationship.object_id' => 1
+     *                              'Term_Relationship.term_taxonomy_id' => 5
+     *                          ),
+     *                          1 => array(
+     *                              'Term_Relationship.object_id' => 1
+     *                              'Term_Relationship.term_taxonomy_id' => 6
+     *                          )
+     *                      )
      * @throws EE_Error
      */
     protected function _get_ids_for_delete(array $row_results_for_deleting, $allow_blocking = true)
@@ -2068,7 +2096,14 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
     }
 
 
-
+    /**
+     * This receives an array of columns and values set to be deleted (as prepared by _get_ids_for_delete) and prepares
+     * the corresponding query_part for the query performing the delete.
+     *
+     * @param array $ids_to_delete_indexed_by_column @see _get_ids_for_delete for how this array might be shaped.
+     * @return string
+     * @throws EE_Error
+     */
     protected function _build_query_part_for_deleting_from_columns_and_values(array $ids_to_delete_indexed_by_column) {
         $query_part = '';
         if (empty($ids_to_delete_indexed_by_column)) {
