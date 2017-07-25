@@ -1974,51 +1974,6 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
                     )
                 )
             ));
-
-            // delete any join table relations to the deleted entities.
-            // Note: We're only deleting join table entries not the relations.
-            // Note: The only entity ids that would have made it here are non blocked ids.  So only join table entries
-            // for non blocked relations are being deleted.
-            foreach ($this->relation_settings() as $relation) {
-                if ($relation instanceof EE_HABTM_Relation) {
-                    $relation_join_model = $relation->get_join_model();
-                    //now we need to find out what field on the join model corresponds with the id from this model.
-                    $foreign_key_field = $relation_join_model->get_foreign_key_to($this->get_this_model_name());
-                    //now we can construct our query for the delete.
-                    $relation_join_model->delete_permanently(array(
-                       array(
-                           $foreign_key_field->get_name() => array(
-                               'IN',
-                               $ids_for_removal
-                           )
-                       )
-                    ));
-                } elseif ($relation instanceof EE_HABTM_Any_Relation) {
-                    $relation_join_model = $relation->get_join_model();
-                    //so here we have a nifty condition for doing the delete
-                    $relation_join_model->delete_permanently(array(
-                       array(
-                           'OR' => array(
-                               'AND' => array(
-                                   'EXJ_first_model_ID' => array(
-                                       'IN',
-                                       $ids_for_removal
-                                   ),
-                                   'EXJ_first_model_name' => $this->get_this_model_name()
-                               ),
-                               'AND*second_condition' => array(
-                                   'EXJ_second_model_ID' => array(
-                                       'IN',
-                                       $ids_for_removal
-                                   ),
-                                   'EXJ_second_model_name' => $this->get_this_model_name()
-                               )
-                           )
-                       )
-                    ));
-                }
-
-            }
         }
 
         /**
