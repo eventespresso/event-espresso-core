@@ -1971,7 +1971,8 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
             //Note this can be skipped by using the provided filter and returning false.
             if (apply_filters(
                 'FHEE__EEM_Base__delete_permanently__dont_delete_extra_meta_for_extra_meta',
-                ! $this instanceof EEM_Extra_Meta
+                ! $this instanceof EEM_Extra_Meta,
+                $this
             )) {
                 EEM_Extra_Meta::instance()->delete_permanently(array(
                     0 => array(
