@@ -1951,7 +1951,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
             $rows_deleted = 0;
         }
 
-        //and lastly make sure those items are removed from the entity map; if they could be put into it at all; and if
+        //Next, make sure those items are removed from the entity map; if they could be put into it at all; and if
         //there was no error with the delete query.
         if ($this->has_primary_key_field() && $rows_deleted !== false) {
             foreach ($items_for_deletion as $item_for_deletion_row) {
@@ -1960,7 +1960,21 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
                     unset($this->_entity_map[EEM_Base::$_model_query_blog_id][$pk_value]);
                 }
             }
+
+            //also let's take care of deleting any Extra_Meta relations.
+            if (isset($columns_and_ids_for_deleting[$this->get_primary_key_field()->get_qualified_column()])) {
+                EEM_Extra_Meta::instance()->delete_permanently(array(
+                    0 => array(
+                        'EXM_type' => $this->get_this_model_name(),
+                        'OBJ_ID' => array(
+                            'IN',
+                            $columns_and_ids_for_deleting[$this->get_primary_key_field()->get_qualified_column()]
+                        )
+                    )
+                ));
+            }
         }
+
         /**
          * Action called just after performing a real deletion query. Although at this point the
          * items should have been deleted
