@@ -142,11 +142,13 @@ class TableManager extends \EE_Base
         foreach ($table_names as $table_name) {
             $table_name = $this->getTableAnalysis()->ensureTableNameHasPrefix($table_name);
             if ($this->getTableAnalysis()->tableExists($table_name)) {
-                $tables_to_delete[] = $table_name;
+                $tables_to_delete[$table_name] = $table_name;
             }
         }
         if( ! empty( $tables_to_delete ) ) {
             global $wpdb;
+            //make sure we only have a unique strings in the array.
+            $tables_to_delete = array_unique($tables_to_delete);
             $wpdb->query('DROP TABLE ' . implode(', ', $tables_to_delete));
         }
         return $tables_to_delete;

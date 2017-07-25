@@ -1,4 +1,7 @@
 <?php
+
+use EventEspresso\core\interfaces\InterminableInterface;
+use EventEspresso\core\interfaces\ResettableInterface;
 use EventEspresso\core\services\assets\Registry;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
@@ -13,7 +16,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  * @subpackage                core
  * @author                    Brent Christensen
  */
-class EE_Registry
+class EE_Registry implements ResettableInterface
 {
 
     /**
@@ -220,11 +223,15 @@ class EE_Registry
      * @Constructor
      * @access protected
      * @param  \EE_Dependency_Map $dependency_map
-     * @return \EE_Registry
      */
     protected function __construct(\EE_Dependency_Map $dependency_map)
     {
         $this->_dependency_map = $dependency_map;
+        $this->LIB = new stdClass();
+        $this->addons = new stdClass();
+        $this->modules = new stdClass();
+        $this->shortcodes = new stdClass();
+        $this->widgets = new stdClass();
         add_action('EE_Load_Espresso_Core__handle_request__initialize_core_loading', array($this, 'initialize'));
     }
 
@@ -246,14 +253,9 @@ class EE_Registry
                 'EE_Request_Handler'                              => 'REQ',
                 'EE_Message_Resource_Manager'                     => 'MRM',
                 'EventEspresso\core\services\commands\CommandBus' => 'BUS',
+                'EventEspresso\core\services\assets\Registry'     => 'AssetsRegistry',
             )
         );
-        // class library
-        $this->LIB = new stdClass();
-        $this->addons = new stdClass();
-        $this->modules = new stdClass();
-        $this->shortcodes = new stdClass();
-        $this->widgets = new stdClass();
         $this->load_core('Base', array(), true);
         // add our request and response objects to the cache
         $request_loader = $this->_dependency_map->class_loader('EE_Request');
@@ -279,7 +281,6 @@ class EE_Registry
      */
     public function init()
     {
-        $this->AssetsRegistry = new Registry();
         // Get current page protocol
         $protocol = isset($_SERVER['HTTPS']) ? 'https://' : 'http://';
         // Output admin-ajax.php URL with same protocol as current page
@@ -586,6 +587,7 @@ class EE_Registry
         $load_only = false,
         $addon = false
     ) {
+        $class_name = ltrim($class_name, '\\');
         $class_name = $this->_dependency_map->get_alias($class_name);
         if ( ! class_exists($class_name)) {
             // maybe the class is registered with a preceding \
@@ -648,6 +650,7 @@ class EE_Registry
         $cache = true,
         $load_only = false
     ) {
+        $class_name = ltrim($class_name, '\\');
         // strip php file extension
         $class_name = str_replace('.php', '', trim($class_name));
         // does the class have a prefix ?
@@ -697,6 +700,7 @@ class EE_Registry
 
 
 
+
     /**
      * _get_cached_class
      * attempts to find a cached version of the requested class
@@ -713,25 +717,65 @@ class EE_Registry
      */
     protected function _get_cached_class($class_name, $class_prefix = '')
     {
-        if (isset($this->_class_abbreviations[$class_name])) {
-            $class_abbreviation = $this->_class_abbreviations[$class_name];
-        } else {
-            // have to specify something, but not anything that will conflict
-            $class_abbreviation = 'FANCY_BATMAN_PANTS';
+        if ($class_name === 'EE_Registry') {
+            return $this;
         }
+        // have to specify something, but not anything that will conflict
+        $class_abbreviation = isset($this->_class_abbreviations[ $class_name ])
+            ? $this->_class_abbreviations[ $class_name ]
+            : 'FANCY_BATMAN_PANTS';
+        $class_name = str_replace('\\', '_', $class_name);
         // check if class has already been loaded, and return it if it has been
         if (isset($this->{$class_abbreviation}) && ! is_null($this->{$class_abbreviation})) {
             return $this->{$class_abbreviation};
-        } else if (isset ($this->{$class_name})) {
+        }
+        if (isset ($this->{$class_name})) {
             return $this->{$class_name};
-        } else if (isset ($this->LIB->{$class_name})) {
+        }
+        if (isset ($this->LIB->{$class_name})) {
             return $this->LIB->{$class_name};
-        } else if ($class_prefix == 'addon' && isset ($this->addons->{$class_name})) {
+        }
+        if ($class_prefix === 'addon' && isset ($this->addons->{$class_name})) {
             return $this->addons->{$class_name};
         }
         return null;
     }
 
+
+
+    /**
+     * removes a cached version of the requested class
+     *
+     * @param string $class_name
+     * @param boolean $addon
+     * @return boolean
+     */
+    public function clear_cached_class($class_name, $addon = false)
+    {
+        // have to specify something, but not anything that will conflict
+        $class_abbreviation = isset($this->_class_abbreviations[ $class_name ])
+            ? $this->_class_abbreviations[ $class_name ]
+            : 'FANCY_BATMAN_PANTS';
+        $class_name = str_replace('\\', '_', $class_name);
+        // check if class has already been loaded, and return it if it has been
+        if (isset($this->{$class_abbreviation}) && ! is_null($this->{$class_abbreviation})) {
+            $this->{$class_abbreviation} = null;
+            return true;
+        }
+        if (isset($this->{$class_name})) {
+            $this->{$class_name} = null;
+            return true;
+        }
+        if (isset($this->LIB->{$class_name})) {
+            unset($this->LIB->{$class_name});
+            return true;
+        }
+        if ($addon && isset($this->addons->{$class_name})) {
+            unset($this->addons->{$class_name});
+            return true;
+        }
+        return false;
+    }
 
 
     /**
@@ -983,6 +1027,10 @@ class EE_Registry
         foreach ($params as $index => $param) {
             // is this a dependency for a specific class ?
             $param_class = $param->getClass() ? $param->getClass()->name : null;
+            // BUT WAIT !!! This class may be an alias for something else (or getting replaced at runtime)
+            $param_class = $this->_dependency_map->has_alias($param_class, $class_name)
+                ? $this->_dependency_map->get_alias($param_class, $class_name)
+                : $param_class;
             if (
                 // param is not even a class
                 empty($param_class)
@@ -991,7 +1039,8 @@ class EE_Registry
             ) {
                 // so let's skip this argument and move on to the next
                 continue;
-            } else if (
+            }
+            if (
                 // parameter is type hinted as a class, exists as an incoming argument, AND it's the correct class
                 ! empty($param_class)
                 && isset($argument_keys[$index], $arguments[$argument_keys[$index]])
@@ -999,7 +1048,8 @@ class EE_Registry
             ) {
                 // skip this argument and move on to the next
                 continue;
-            } else if (
+            }
+            if (
                 // parameter is type hinted as a class, and should be injected
                 ! empty($param_class)
                 && $this->_dependency_map->has_dependency_for_class($class_name, $param_class)
@@ -1046,7 +1096,7 @@ class EE_Registry
         // and grab it if it exists
         if ($cached_class instanceof $param_class) {
             $dependency = $cached_class;
-        } else if ($param_class != $class_name) {
+        } else if ($param_class !== $class_name) {
             // obtain the loader method from the dependency map
             $loader = $this->_dependency_map->class_loader($param_class);
             // is loader a custom closure ?
@@ -1056,7 +1106,7 @@ class EE_Registry
                 // set the cache on property for the recursive loading call
                 $this->_cache_on = $cache_on;
                 // if not, then let's try and load it via the registry
-                if (method_exists($this, $loader)) {
+                if ($loader && method_exists($this, $loader)) {
                     $dependency = $this->{$loader}($param_class);
                 } else {
                     $dependency = $this->create($param_class, array(), $cache_on);
@@ -1095,18 +1145,25 @@ class EE_Registry
      */
     protected function _set_cached_class($class_obj, $class_name, $class_prefix = '', $from_db = false)
     {
-        if (empty($class_obj)) {
+        if ($class_name === 'EE_Registry' || empty($class_obj)) {
             return;
         }
         // return newly instantiated class
         if (isset($this->_class_abbreviations[$class_name])) {
             $class_abbreviation = $this->_class_abbreviations[$class_name];
             $this->{$class_abbreviation} = $class_obj;
-        } else if (property_exists($this, $class_name)) {
+            return;
+        }
+        $class_name = str_replace('\\', '_', $class_name);
+        if (property_exists($this, $class_name)) {
             $this->{$class_name} = $class_obj;
-        } else if ($class_prefix == 'addon') {
+            return;
+        }
+        if ($class_prefix === 'addon') {
             $this->addons->{$class_name} = $class_obj;
-        } else if ( ! $from_db) {
+            return;
+        }
+        if ( ! $from_db) {
             $this->LIB->{$class_name} = $class_obj;
         }
     }
@@ -1127,7 +1184,8 @@ class EE_Registry
         $loader = self::instance()->_dependency_map->class_loader($classname);
         if ($loader instanceof Closure) {
             return $loader($arguments);
-        } else if (method_exists(EE_Registry::instance(), $loader)) {
+        }
+        if (method_exists(EE_Registry::instance(), $loader)) {
             return EE_Registry::instance()->{$loader}($classname, $arguments);
         }
         return null;
@@ -1226,22 +1284,57 @@ class EE_Registry
     public static function reset($hard = false, $reinstantiate = true, $reset_models = true)
     {
         $instance = self::instance();
-        EEH_Activation::reset();
-        //properties that get reset
         $instance->_cache_on = true;
-        $instance->CFG = EE_Config::reset($hard, $reinstantiate);
+        // reset some "special" classes
+        EEH_Activation::reset();
+        $instance->CFG = $instance->CFG->reset($hard, $reinstantiate);
         $instance->CART = null;
         $instance->MRM = null;
-        $instance->AssetsRegistry = new Registry();
+        $instance->AssetsRegistry = null;
+        $instance->AssetsRegistry = $instance->create('EventEspresso\core\services\assets\Registry');
         //messages reset
         EED_Messages::reset();
-        if ($reset_models) {
-            foreach (array_keys($instance->non_abstract_db_models) as $model_name) {
-                $instance->reset_model($model_name);
+        //handle of objects cached on LIB
+        foreach (array('LIB', 'modules', 'shortcodes') as $cache) {
+            foreach ($instance->{$cache} as $class_name => $class) {
+                if (EE_Registry::_reset_and_unset_object($class, $reset_models)) {
+                    unset($instance->{$cache}->{$class_name});
+                }
             }
         }
-        $instance->LIB = new stdClass();
         return $instance;
+    }
+
+
+
+    /**
+     * if passed object implements ResettableInterface, then call it's reset() method
+     * if passed object implements InterminableInterface, then return false,
+     * to indicate that it should NOT be cleared from the Registry cache
+     *
+     * @param      $object
+     * @param bool $reset_models
+     * @return bool returns true if cached object should be unset
+     */
+    private static function _reset_and_unset_object($object, $reset_models)
+    {
+        static $count = 0;
+        $count++;
+        if ($object instanceof ResettableInterface) {
+            if ($object instanceof EEM_Base) {
+                if ($reset_models) {
+                    $object->reset();
+                    return true;
+                }
+                return false;
+            }
+            $object->reset();
+            return true;
+        }
+        if ( ! $object instanceof InterminableInterface) {
+            return true;
+        }
+        return false;
     }
 
 
@@ -1250,7 +1343,7 @@ class EE_Registry
      * @override magic methods
      * @return void
      */
-    final function __destruct()
+    public final function __destruct()
     {
     }
 
@@ -1260,7 +1353,7 @@ class EE_Registry
      * @param $a
      * @param $b
      */
-    final function __call($a, $b)
+    public final function __call($a, $b)
     {
     }
 
@@ -1269,7 +1362,7 @@ class EE_Registry
     /**
      * @param $a
      */
-    final function __get($a)
+    public final function __get($a)
     {
     }
 
@@ -1279,7 +1372,7 @@ class EE_Registry
      * @param $a
      * @param $b
      */
-    final function __set($a, $b)
+    public final function __set($a, $b)
     {
     }
 
@@ -1288,7 +1381,7 @@ class EE_Registry
     /**
      * @param $a
      */
-    final function __isset($a)
+    public final function __isset($a)
     {
     }
 
@@ -1297,7 +1390,7 @@ class EE_Registry
     /**
      * @param $a
      */
-    final function __unset($a)
+    public final function __unset($a)
     {
     }
 
@@ -1306,14 +1399,14 @@ class EE_Registry
     /**
      * @return array
      */
-    final function __sleep()
+    public final function __sleep()
     {
         return array();
     }
 
 
 
-    final function __wakeup()
+    public final function __wakeup()
     {
     }
 
@@ -1322,26 +1415,27 @@ class EE_Registry
     /**
      * @return string
      */
-    final function __toString()
+    public final function __toString()
     {
         return '';
     }
 
 
 
-    final function __invoke()
+    public final function __invoke()
     {
     }
 
 
 
-    final static function __set_state()
+    public final static function __set_state($array = array())
     {
+        return EE_Registry::instance();
     }
 
 
 
-    final function __clone()
+    public final function __clone()
     {
     }
 
@@ -1351,7 +1445,7 @@ class EE_Registry
      * @param $a
      * @param $b
      */
-    final static function __callStatic($a, $b)
+    public final static function __callStatic($a, $b)
     {
     }
 

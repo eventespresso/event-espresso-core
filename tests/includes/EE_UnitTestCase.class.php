@@ -103,6 +103,9 @@ class EE_UnitTestCase extends WP_UnitTestCase
         add_filter('FHEE__EEH_Activation__add_column_if_it_doesnt_exist__short_circuit', '__return_true');
         add_filter('FHEE__EEH_Activation__drop_index__short_circuit', '__return_true');
 
+        // turn off caching for any loaders in use
+        add_filter('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache', '__return_true');
+
         // load factories
         EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_TESTS_DIR . 'includes' . DS . 'factories');
         $this->factory = new EE_UnitTest_Factory();
@@ -122,7 +125,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
                 return $WP_User->allcaps;
             }, 10, 4);
         }
-        EE_Registry::reset(true);
+        do_action('AHEE__EventEspresso_core_services_loaders_CachingLoader__resetCache');
     }
 
 
@@ -146,7 +149,6 @@ class EE_UnitTestCase extends WP_UnitTestCase
     public function tearDown()
     {
         parent::tearDown();
-        EE_Registry::reset(true);
         global $wp_filter, $wp_actions, $merged_filters, $wp_current_filter, $current_user;
         $wp_filter = $this->wp_filters_saved['wp_filter'];
         $wp_actions = $this->wp_filters_saved['wp_actions'];
@@ -167,6 +169,8 @@ class EE_UnitTestCase extends WP_UnitTestCase
             // it won't be entirely accurate, but might help
             // throw new Exception( $error_message );
         }
+        // turn caching back on for any loaders in use
+        remove_all_filters('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache');
     }
 
     /**
@@ -841,14 +845,13 @@ class EE_UnitTestCase extends WP_UnitTestCase
         foreach ($model->relation_settings() as $related_model_name => $relation) {
             if ($relation instanceof EE_Belongs_To_Any_Relation) {
                 continue;
-            } elseif ($related_model_name === 'Country') {
+            }
+            if ($related_model_name === 'Country' && ! isset($args['CNT_ISO'])) {
                 //we already have lots of countries. lets not make any more
                 //what's more making them is tricky: the primary key needs to be a unique
                 //2-character string but not an integer (else it confuses the country
                 //form input validation)
-                if (!isset($args['CNT_ISO'])) {
-                    $args['CNT_ISO'] = 'US';
-                }
+                $args['CNT_ISO'] = 'US';
             } elseif ($related_model_name === 'Status') {
                 $fk = $model->get_foreign_key_to($related_model_name);
                 if (!isset($args[$fk->get_name()])) {
@@ -867,17 +870,23 @@ class EE_UnitTestCase extends WP_UnitTestCase
         //set any other fields which haven't yet been set
         foreach ($model->field_settings() as $field_name => $field) {
             $value = NULL;
-            if (in_array($field_name, array(
-                'EVT_timezone_string',
-                'PAY_redirect_url',
-                'PAY_redirect_args',
-                'TKT_reserved',
-                'DTT_reserved',
-                'parent'),
-                true
-            )) {
+            if (
+                in_array(
+                    $field_name,
+                    array(
+                        'EVT_timezone_string',
+                        'PAY_redirect_url',
+                        'PAY_redirect_args',
+                        'TKT_reserved',
+                        'DTT_reserved',
+                        'parent'
+                    ),
+                    true
+                )
+            ) {
                 $value = NULL;
-            } elseif ($field instanceof EE_Enum_Integer_Field ||
+            } elseif (
+                $field instanceof EE_Enum_Integer_Field ||
                 $field instanceof EE_Enum_Text_Field ||
                 $field instanceof EE_Boolean_Field ||
                 $field_name === 'PMD_type' ||
@@ -886,7 +895,8 @@ class EE_UnitTestCase extends WP_UnitTestCase
                 $field_name === 'CNT_tel_code'
             ) {
                 $value = $field->get_default_value();
-            } elseif ($field instanceof EE_Integer_Field ||
+            } elseif (
+                $field instanceof EE_Integer_Field ||
                 $field instanceof EE_Float_Field ||
                 $field instanceof EE_Foreign_Key_Field_Base ||
                 $field_name === 'STA_abbrev' ||
@@ -897,7 +907,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
             } elseif ($field instanceof EE_Primary_Key_String_Field) {
                 $value = "$auto_made_thing_seed";
             } elseif ($field instanceof EE_Text_Field_Base) {
-                $value = $auto_made_thing_seed . '_' . $field_name;
+                $value = $auto_made_thing_seed . "_" . $field_name;
             }
             if (!array_key_exists($field_name, $args) && $value !== NULL) {
                 $args[$field_name] = $value;
@@ -1004,67 +1014,96 @@ class EE_UnitTestCase extends WP_UnitTestCase
      * registrations, tickets, datetimes, events, attendees, questions, answers, etc).
      *
      * @param array $options         {
-     * @type int    $ticket_types    the number of different ticket types in this transaction. Default 1
-     * @type int    $taxable_tickets how many of those ticket types should be taxable. Default EE_INF
+     * 	@type int    $ticket_types    the number of different ticket types in this transaction. Default 1
+     * 	@type int    $taxable_tickets how many of those ticket types should be taxable. Default EE_INF
+     * }
      * @return EE_Transaction
      * @throws \EE_Error
      */
     protected function new_typical_transaction($options = array())
     {
-        // defaults
-        $ticket_types = 1;
-        $taxable_tickets = EE_INF;
-        $fixed_ticket_price_modifiers = 1;
         /** @var EE_Transaction $txn */
         $txn = $this->new_model_obj_with_dependencies('Transaction', array('TXN_paid' => 0));
         $total_line_item = EEH_Line_Item::create_total_line_item($txn->ID());
         $total_line_item->save_this_and_descendants_to_txn($txn->ID());
-        if (isset($options['ticket_types'])) {
-            $ticket_types = $options['ticket_types'];
-        }
-        if (isset($options['taxable_tickets'])) {
-            $taxable_tickets = $options['taxable_tickets'];
-        }
-        if (isset($options['fixed_ticket_price_modifiers'])) {
-            $fixed_ticket_price_modifiers = $options['fixed_ticket_price_modifiers'];
-        }
-        /** @var EE_Price[] $taxes */
+        $ticket_types = isset($options['ticket_types'])
+            ? $options['ticket_types']
+            : $ticket_types = 1;
+        $taxable_tickets = isset($options['taxable_tickets'])
+            ? $options['taxable_tickets']
+            : $taxable_tickets = EE_INF;
+        $fixed_ticket_price_modifiers = isset($options['fixed_ticket_price_modifiers'])
+            ? $options['fixed_ticket_price_modifiers']
+            : $fixed_ticket_price_modifiers = 1;
+        $reg_status = isset($options['reg_status'])
+            ? $options['reg_status']
+            : EEM_Registration::status_id_approved;
+        $setup_reg = isset($options['setup_reg'])
+            ? $options['setup_reg']
+            : true;
+        $tkt_qty = isset($options['tkt_qty'])
+            ? $options['tkt_qty']
+            : 1;
+        $ticket_types = isset($options['tickets'])
+            ? count($options['tickets'])
+            : $ticket_types;
         $taxes = EEM_Price::instance()->get_all_prices_that_are_taxes();
         for ($i = 1; $i <= $ticket_types; $i++) {
             /** @var EE_Ticket $ticket */
-            $ticket = $this->new_model_obj_with_dependencies('Ticket', array('TKT_price' => $i * 10, 'TKT_taxable' => $taxable_tickets-- > 0 ? true : false));
-            $sum_of_sub_prices = 0;
-            for ($j = 1; $j <= $fixed_ticket_price_modifiers; $j++) {
-                if ($j === $fixed_ticket_price_modifiers) {
-                    $price_amount = $ticket->price() - $sum_of_sub_prices;
-                } else {
-                    $price_amount = $i * 10 / $fixed_ticket_price_modifiers;
+            if(isset($options['tickets'], $options['tickets'][$i])){
+                $ticket = $options['tickets'][$i];
+                $reg_final_price = $ticket->price();
+                $datetime = $ticket->first_datetime();
+            } else {
+                $ticket = $this->new_model_obj_with_dependencies(
+                    'Ticket',
+                    array('TKT_price' => $i * 10, 'TKT_taxable' => $taxable_tickets-- > 0 ? true : false)
+                );
+                $sum_of_sub_prices = 0;
+                for ($j = 1; $j <= $fixed_ticket_price_modifiers; $j++) {
+                    if ($j === $fixed_ticket_price_modifiers) {
+                        $price_amount = $ticket->price() - $sum_of_sub_prices;
+                    } else {
+                        $price_amount = $i * 10 / $fixed_ticket_price_modifiers;
+                    }
+                    /** @var EE_Price $price */
+                    $price = $this->new_model_obj_with_dependencies(
+                        'Price',
+                        array('PRC_amount' => $price_amount, 'PRC_order' => $j)
+                    );
+                    $sum_of_sub_prices += $price->amount();
+                    $ticket->_add_relation_to($price, 'Price');
                 }
-                /** @var EE_Price $price */
-                $price = $this->new_model_obj_with_dependencies('Price', array('PRC_amount' => $price_amount, 'PRC_order' => $j));
-                $sum_of_sub_prices += $price->amount();
-                $ticket->_add_relation_to($price, 'Price');
-            }
-            $a_datetime = $this->new_model_obj_with_dependencies('Datetime');
-            $ticket->_add_relation_to($a_datetime, 'Datetime');
-            $this->assertInstanceOf('EE_Line_Item', EEH_Line_Item::add_ticket_purchase($total_line_item, $ticket));
-            $reg_final_price = $ticket->price();
-            foreach ($taxes as $taxes_at_priority) {
-                foreach ($taxes_at_priority as $tax) {
-                    /** @var EE_Price $tax */
-                    $reg_final_price += $reg_final_price * $tax->amount() / 100;
+                /** @var EE_Datetime $datetime */
+                $datetime = $this->new_model_obj_with_dependencies('Datetime');
+                $ticket->_add_relation_to($datetime, 'Datetime');
+                $reg_final_price = $ticket->price();
+                foreach ($taxes as $taxes_at_priority) {
+                    foreach ($taxes_at_priority as $tax) {
+                        /** @var EE_Price $tax */
+                        $reg_final_price += $reg_final_price * $tax->amount() / 100;
+                    }
                 }
             }
-            $this->new_model_obj_with_dependencies(
-                'Registration',
-                array(
-                    'TXN_ID' => $txn->ID(),
-                    'TKT_ID' => $ticket->ID(),
-                    'STS_ID' => EEM_Registration::status_id_approved,
-                    'EVT_ID' => $a_datetime->get('EVT_ID'),
-                    'REG_count' => 1,
-                    'REG_group_size' => 1,
-                    'REG_final_price' => $reg_final_price));
+            $line_item = EEH_Line_Item::add_ticket_purchase($total_line_item, $ticket, $tkt_qty);
+            $this->assertInstanceOf(
+                'EE_Line_Item',
+                $line_item
+            );
+            if ($setup_reg) {
+                $this->new_model_obj_with_dependencies(
+                    'Registration',
+                    array(
+                        'TXN_ID'          => $txn->ID(),
+                        'TKT_ID'          => $ticket->ID(),
+                        'STS_ID'          => $reg_status,
+                        'EVT_ID'          => $datetime->get('EVT_ID'),
+                        'REG_count'       => 1,
+                        'REG_group_size'  => 1,
+                        'REG_final_price' => $reg_final_price
+                    )
+                );
+            }
         }
         $txn->set_total($total_line_item->total());
         $txn->save();
@@ -1090,12 +1129,44 @@ class EE_UnitTestCase extends WP_UnitTestCase
      */
     public function new_ticket($options = array())
     {
-        // grab ticket price or set to default of 16.50
-        $ticket_price = isset($options['TKT_price']) && is_numeric($options['TKT_price']) ? $options['TKT_price'] : 16.5;
+        // copy incoming options to use for ticket args
+        $ticket_args = $options;
+        // make sure ticket price is set or use default of 16.50
+        $ticket_args['TKT_price'] = isset($options['TKT_price']) && is_numeric($options['TKT_price'])
+            ? $options['TKT_price']
+            : 16.5;
         // apply taxes? default = true
-        $ticket_taxable = isset($options['TKT_taxable']) ? filter_var($options['TKT_taxable'], FILTER_VALIDATE_BOOLEAN) : true;
+        $ticket_args['TKT_taxable'] = isset($options['TKT_taxable'])
+            ? filter_var($options['TKT_taxable'], FILTER_VALIDATE_BOOLEAN)
+            : true;
+        // now dump any other elements that came from the incoming options that are not ticket properties
+        $ticket_args = array_intersect_key(
+            $ticket_args,
+            array(
+                'TTM_ID' => 1,
+                'TKT_name' => 1,
+                'TKT_description' => 1,
+                'TKT_start_date' => 1,
+                'TKT_end_date' => 1,
+                'TKT_min' => 1,
+                'TKT_max' => 1,
+                'TKT_price' => 1,
+                'TKT_sold' => 1,
+                'TKT_qty' => 1,
+                'TKT_reserved' => 1,
+                'TKT_uses' => 1,
+                'TKT_required' => 1,
+                'TKT_taxable' => 1,
+                'TKT_is_default' => 1,
+                'TKT_order' => 1,
+                'TKT_row' => 1,
+                'TKT_deleted' => 1,
+                'TKT_wp_user' => 1,
+                'TKT_parent' => 1,
+            )
+        );
         /** @type EE_Ticket $ticket */
-        $ticket = $this->new_model_obj_with_dependencies('Ticket', array('TKT_price' => $ticket_price, 'TKT_taxable' => $ticket_taxable));
+        $ticket = $this->new_model_obj_with_dependencies('Ticket',$ticket_args);
         $base_price_type = EEM_Price_Type::instance()->get_one(array(array('PRT_name' => 'Base Price')));
         $this->assertInstanceOf('EE_Price_Type', $base_price_type);
 
@@ -1129,15 +1200,20 @@ class EE_UnitTestCase extends WP_UnitTestCase
         if (isset($options['TKT_taxable'])) {
             $ticket->set('TKT_taxable', $options['TKT_taxable']);
         }
-
-        // set datetimes, default = 1
-        $datetimes = isset($options['datetimes']) ? $options['datetimes'] : 1;
-
-        $event = $this->new_model_obj_with_dependencies('Event');
-        for ($i = 0; $i <= $datetimes; $i++) {
-            $ddt = $this->new_model_obj_with_dependencies('Datetime', array('EVT_ID' => $event->ID()));
-            $ticket->_add_relation_to($ddt, 'Datetime');
-            $this->assertArrayContains($ddt, $ticket->datetimes());
+        // were datetimes (and their related events) already setup?
+        if(!empty($options['datetime_objects']) && is_array($options['datetime_objects'])) {
+            foreach ($options['datetime_objects'] as $datetime_object) {
+                $ticket->_add_relation_to($datetime_object, 'Datetime');
+            }
+        } else {
+            // create new datetimes, default = 1
+            $datetimes = isset($options['datetimes']) ? $options['datetimes'] : 1;
+            $event = $this->new_model_obj_with_dependencies('Event');
+            for ($i = 0; $i <= $datetimes; $i++) {
+                $ddt = $this->new_model_obj_with_dependencies('Datetime', array('EVT_ID' => $event->ID()));
+                $ticket->_add_relation_to($ddt, 'Datetime');
+                $this->assertArrayContains($ddt, $ticket->datetimes());
+            }
         }
 
         //resave ticket to account for possible field value changes

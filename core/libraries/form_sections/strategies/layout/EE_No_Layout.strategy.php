@@ -1,6 +1,8 @@
 <?php
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
 
+
+
 /**
  * Template Layout strategy class for the EE Forms System that applies no layout.
  *
@@ -22,6 +24,7 @@ class EE_No_Layout extends EE_Div_Per_Section_Layout
     protected $_use_break_tags = true;
 
 
+
     /**
      * EE_No_Layout constructor.
      *
@@ -36,6 +39,8 @@ class EE_No_Layout extends EE_Div_Per_Section_Layout
         parent::__construct();
     }
 
+
+
     /**
      * Add line break at beginning of form
      *
@@ -45,6 +50,7 @@ class EE_No_Layout extends EE_Div_Per_Section_Layout
     {
         return EEH_HTML::nl(1);
     }
+
 
 
     /**
@@ -59,17 +65,17 @@ class EE_No_Layout extends EE_Div_Per_Section_Layout
         $html = '';
         if ($input instanceof EE_Hidden_Input) {
             $html .= EEH_HTML::nl() . $input->get_html_for_input();
-        } else if ($input instanceof EE_Submit_Input) {
+        } elseif ($input instanceof EE_Submit_Input) {
             $html .= $this->br();
             $html .= $input->get_html_for_input();
-        } else if ($input instanceof EE_Select_Input) {
+        } elseif ($input instanceof EE_Select_Input) {
             $html .= $this->br();
             $html .= EEH_HTML::nl(1) . $input->get_html_for_label();
             $html .= EEH_HTML::nl() . $input->get_html_for_errors();
             $html .= EEH_HTML::nl() . $input->get_html_for_input();
             $html .= EEH_HTML::nl() . $input->get_html_for_help();
             $html .= $this->br();
-        } else if ($input instanceof EE_Form_Input_With_Options_Base) {
+        } elseif ($input instanceof EE_Form_Input_With_Options_Base) {
             $html .= $this->br();
             $html .= EEH_HTML::nl() . $input->get_html_for_errors();
             $html .= EEH_HTML::nl() . $input->get_html_for_input();
@@ -86,6 +92,7 @@ class EE_No_Layout extends EE_Div_Per_Section_Layout
     }
 
 
+
     /**
      * Lays out a row for the subsection
      *
@@ -94,9 +101,10 @@ class EE_No_Layout extends EE_Div_Per_Section_Layout
      */
     public function layout_subsection($form_section)
     {
-//		d( $form_section );
+        //		d( $form_section );
         return EEH_HTML::nl(1) . $form_section->get_html() . EEH_HTML::nl(-1);
     }
+
 
 
     /**
@@ -108,6 +116,7 @@ class EE_No_Layout extends EE_Div_Per_Section_Layout
     {
         return EEH_HTML::nl(-1);
     }
+
 
 
     /**

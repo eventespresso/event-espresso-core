@@ -645,7 +645,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      */
     public function html_label_id()
     {
-        return ! empty($this->_html_label_id) ? $this->_html_label_id : $this->_html_id . '-lbl';
+        return ! empty($this->_html_label_id) ? $this->_html_label_id : $this->html_id() . '-lbl';
     }
 
 
@@ -909,6 +909,18 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
         return $this->_required_css_class;
     }
 
+
+
+    /**
+     * @param bool $add_required
+     * @return string
+     */
+    public function html_class($add_required = false)
+    {
+        return $add_required && $this->required()
+            ? $this->required_css_class() . ' ' . $this->_html_class
+            : $this->_html_class;
+    }
 
 
     /**

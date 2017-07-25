@@ -1,4 +1,7 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+<?php
+use EventEspresso\core\interfaces\InterminableInterface;
+
+if ( ! defined( 'EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 /**
  * Event Espresso
  *
@@ -21,7 +24,7 @@
  *
  * ------------------------------------------------------------------------
  */
-final class EE_Admin {
+final class EE_Admin implements InterminableInterface {
 
 	/**
 	 * @access private
@@ -49,6 +52,16 @@ final class EE_Admin {
 
 
 	/**
+	 * @return EE_Admin
+	 */
+	public static function reset() {
+		self::$_instance = null;
+		return self::instance();
+	}
+
+
+
+	/**
 	 * class constructor
 	 *
 	 * @throws \EE_Error
@@ -63,11 +76,6 @@ final class EE_Admin {
 		// load EE_Request_Handler early
 		add_action( 'AHEE__EE_System__core_loaded_and_ready', array( $this, 'get_request' ));
 		add_action( 'AHEE__EE_System__initialize_last', array( $this, 'init' ));
-		// post shortcode tracking
-		add_action(
-			'AHEE__EE_System__initialize_last',
-			array( 'EventEspresso\core\admin\PostShortcodeTracking', 'set_hooks_admin' )
-		);
 		add_action( 'AHEE__EE_Admin_Page__route_admin_request', array( $this, 'route_admin_request' ), 100, 2 );
 		add_action( 'wp_loaded', array( $this, 'wp_loaded' ), 100 );
 		add_action( 'admin_init', array( $this, 'admin_init' ), 100 );
@@ -95,11 +103,13 @@ final class EE_Admin {
 	 * @return void
 	 */
 	private function _define_all_constants() {
-		define( 'EE_ADMIN_URL', EE_PLUGIN_DIR_URL . 'core/admin/' );
-		define( 'EE_ADMIN_PAGES_URL', EE_PLUGIN_DIR_URL . 'admin_pages/' );
-		define( 'EE_ADMIN_TEMPLATE', EE_ADMIN . 'templates' . DS );
-		define( 'WP_ADMIN_PATH', ABSPATH . 'wp-admin/' );
-		define( 'WP_AJAX_URL', admin_url( 'admin-ajax.php' ));
+		if ( ! defined( 'EE_ADMIN_URL' ) ) {
+			define( 'EE_ADMIN_URL', EE_PLUGIN_DIR_URL . 'core/admin/' );
+			define( 'EE_ADMIN_PAGES_URL', EE_PLUGIN_DIR_URL . 'admin_pages/' );
+			define( 'EE_ADMIN_TEMPLATE', EE_ADMIN . 'templates' . DS );
+			define( 'WP_ADMIN_PATH', ABSPATH . 'wp-admin/' );
+			define( 'WP_AJAX_URL', admin_url( 'admin-ajax.php' ) );
+		}
 	}
 
 
@@ -528,11 +538,6 @@ final class EE_Admin {
 		wp_enqueue_script('ee-inject-wp', EE_ADMIN_URL . 'assets/ee-cpt-wp-injects.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE);
 		// register cookie script for future dependencies
 		wp_register_script('jquery-cookie', EE_THIRD_PARTY_URL . 'joyride/jquery.cookie.js', array('jquery'), '2.1', TRUE );
-		// jquery_validate loading is turned OFF by default, but prior to the admin_enqueue_scripts hook, can be turned back on again via:  add_filter( 'FHEE_load_jquery_validate', '__return_true' );
-		if ( apply_filters( 'FHEE_load_jquery_validate', FALSE ) ) {
-			// register jQuery Validate
-			wp_register_script('jquery-validate', EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.min.js', array('jquery'), '1.15.0', TRUE);
-		}
 		//joyride is turned OFF by default, but prior to the admin_enqueue_scripts hook, can be turned back on again vai: add_filter('FHEE_load_joyride', '__return_true' );
 		if ( apply_filters( 'FHEE_load_joyride', FALSE ) ) {
 			//joyride style
@@ -544,37 +549,6 @@ final class EE_Admin {
 			// wanna go for a joyride?
 			wp_enqueue_style('ee-joyride-css');
 			wp_enqueue_script('jquery-joyride');
-		}
-		//qtip is turned OFF by default, but prior to the admin_enqueue_scripts hook, can be turned back on again via: add_filter('FHEE_load_qtips', '__return_true' );
-		if ( apply_filters( 'FHEE_load_qtip', FALSE ) ) {
-			EEH_Qtip_Loader::instance()->register_and_enqueue();
-		}
-		//accounting.js library
-		// @link http://josscrowcroft.github.io/accounting.js/
-		if ( apply_filters( 'FHEE_load_accounting_js', FALSE ) ) {
-			wp_register_script( 'ee-accounting', EE_GLOBAL_ASSETS_URL . 'scripts/ee-accounting-config.js', array('ee-accounting-core'), EVENT_ESPRESSO_VERSION, TRUE );
-			wp_register_script( 'ee-accounting-core', EE_THIRD_PARTY_URL . 'accounting/accounting.js', array('underscore'), '0.3.2', TRUE );
-			wp_enqueue_script( 'ee-accounting' );
-			// array of settings to get converted to JSON array via wp_localize_script
-			$currency_config = array(
-				'currency' => array(
-					'symbol' => EE_Registry::instance()->CFG->currency->sign,
-					'format' => array(
-						'pos' => EE_Registry::instance()->CFG->currency->sign_b4 ? '%s%v' : '%v%s',
-						'neg' => EE_Registry::instance()->CFG->currency->sign_b4 ? '- %s%v' : '- %v%s',
-						'zero' => EE_Registry::instance()->CFG->currency->sign_b4 ? '%s--' : '--%s'
-						 ),
-					'decimal' => EE_Registry::instance()->CFG->currency->dec_mrk,
-					'thousand' => EE_Registry::instance()->CFG->currency->thsnds,
-					'precision' => EE_Registry::instance()->CFG->currency->dec_plc
-					),
-				'number' => array(
-					'precision' => EE_Registry::instance()->CFG->currency->dec_plc,
-					'thousand' => EE_Registry::instance()->CFG->currency->thsnds,
-					'decimal' => EE_Registry::instance()->CFG->currency->dec_mrk
-					)
-				);
-			wp_localize_script('ee-accounting', 'EE_ACCOUNTING_CFG', $currency_config);
 		}
 	}
 
@@ -773,13 +747,9 @@ final class EE_Admin {
 	public static function parse_post_content_on_save( $post_ID, $post ) {
 		EE_Error::doing_it_wrong(
 			__METHOD__,
-			__(
-				'Usage is deprecated. Use EventEspresso\core\admin\PostShortcodeTracking::parse_post_content_on_save() instead.',
-				'event_espresso'
-			),
+			__('Usage is deprecated', 'event_espresso'),
 			'4.8.41'
 		);
-		EventEspresso\core\admin\PostShortcodeTracking::parse_post_content_on_save( $post_ID, $post );
 	}
 
 
@@ -795,13 +765,9 @@ final class EE_Admin {
 	public function reset_page_for_posts_on_change( $option, $old_value, $value ) {
 		EE_Error::doing_it_wrong(
 			__METHOD__,
-			__(
-				'Usage is deprecated. Use EventEspresso\core\admin\PostShortcodeTracking::parse_post_content_on_save() instead.',
-				'event_espresso'
-			),
+			__('Usage is deprecated', 'event_espresso'),
 			'4.8.41'
 		);
-		EventEspresso\core\admin\PostShortcodeTracking::reset_page_for_posts_on_change( $option, $old_value, $value );
 	}
 
 }
