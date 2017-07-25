@@ -1964,16 +1964,25 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
                 }
             }
 
-            // delete any extra meta attached to the deleted entities
-            EEM_Extra_Meta::instance()->delete_permanently(array(
-                0 => array(
-                    'EXM_type' => $this->get_this_model_name(),
-                    'OBJ_ID' => array(
-                        'IN',
-                        $ids_for_removal
+            // delete any extra meta attached to the deleted entities but ONLY if this model is not an instance of
+            //`EEM_Extra_Meta`.  In other words we want to prevent recursion on EEM_Extra_Meta::delete_permanently calls
+            //unnecessarily.  It's very unlikely that users will have assigned Extra Meta to Extra Meta
+            // (although it is possible).
+            //Note this can be skipped by using the provided filter and returning false.
+            if (apply_filters(
+                'FHEE__EEM_Base__delete_permanently__dont_delete_extra_meta_for_extra_meta',
+                ! $this instanceof EEM_Extra_Meta
+            )) {
+                EEM_Extra_Meta::instance()->delete_permanently(array(
+                    0 => array(
+                        'EXM_type' => $this->get_this_model_name(),
+                        'OBJ_ID'   => array(
+                            'IN',
+                            $ids_for_removal
+                        )
                     )
-                )
-            ));
+                ));
+            }
         }
 
         /**
