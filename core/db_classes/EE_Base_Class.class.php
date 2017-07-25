@@ -110,6 +110,11 @@ abstract class EE_Base_Class
      */
     protected $_has_changes = false;
 
+    /**
+     * @var EEM_Base
+     */
+    protected $_model;
+
 
 
     /**
@@ -308,7 +313,7 @@ abstract class EE_Base_Class
                 //note: props_n_values_provided_in_constructor is only set at the END of the constructor
                 $this->_props_n_values_provided_in_constructor
                 && $field_value
-                && $field_name === self::_get_primary_key_name(get_class($this))
+                && $field_name === $this->get_model()->primary_key_name()
             ) {
                 //if so, we want all this object's fields to be filled either with
                 //what we've explicitly set on this model
@@ -1597,10 +1602,10 @@ abstract class EE_Base_Class
         if ($this->get_model()->has_primary_key_field()) {
             if ($this->get_model()->get_primary_key_field()->is_auto_increment()) {
                 //ok check if it's set, if so: update; if not, insert
-                if ( ! empty($save_cols_n_values[self::_get_primary_key_name(get_class($this))])) {
+                if ( ! empty($save_cols_n_values[$this->get_model()->primary_key_name()])) {
                     $results = $this->get_model()->update_by_ID($save_cols_n_values, $this->ID());
                 } else {
-                    unset($save_cols_n_values[self::_get_primary_key_name(get_class($this))]);
+                    unset($save_cols_n_values[$this->get_model()->primary_key_name()]);
                     $results = $this->get_model()->insert($save_cols_n_values);
                     if ($results) {
                         //if successful, set the primary key
@@ -1609,7 +1614,7 @@ abstract class EE_Base_Class
                         //will find it in the db (because we just added it) and THAT object
                         //will get added to the mapper before we can add this one!
                         //but if we just avoid using the SET method, all that headache can be avoided
-                        $pk_field_name = self::_get_primary_key_name(get_class($this));
+                        $pk_field_name = $this->get_model()->primary_key_name();
                         $this->_fields[$pk_field_name] = $results;
                         $this->_clear_cached_property($pk_field_name);
                         $this->get_model()->add_to_entity_map($this);
@@ -1758,8 +1763,12 @@ abstract class EE_Base_Class
      */
     public function get_model()
     {
-        $modelName = self::_get_model_classname(get_class($this));
-        return self::_get_model_instance_with_name($modelName, $this->_timezone);
+        if( ! $this->_model){
+            $modelName = self::_get_model_classname(get_class($this));
+            $this->_model = self::_get_model_instance_with_name($modelName, $this->_timezone);
+        }
+
+        return $this->_model;
     }
 
 
@@ -1800,16 +1809,17 @@ abstract class EE_Base_Class
     protected static function _check_for_object($props_n_values, $classname, $timezone = null, $date_formats = array())
     {
         $existing = null;
-        if (self::_get_model($classname)->has_primary_key_field()) {
+        $model = self::_get_model($classname, $timezone);
+        if ($model->has_primary_key_field()) {
             $primary_id_ref = self::_get_primary_key_name($classname);
             if (array_key_exists($primary_id_ref, $props_n_values)
                 && ! empty($props_n_values[$primary_id_ref])
             ) {
-                $existing = self::_get_model($classname, $timezone)->get_one_by_ID(
+                $existing = $model->get_one_by_ID(
                     $props_n_values[$primary_id_ref]
                 );
             }
-        } elseif (self::_get_model($classname, $timezone)->has_all_combined_primary_key_fields($props_n_values)) {
+        } elseif ($model->has_all_combined_primary_key_fields($props_n_values)) {
             //no primary key on this model, but there's still a matching item in the DB
             $existing = self::_get_model($classname, $timezone)->get_one_by_ID(
                 self::_get_model($classname, $timezone)->get_index_primary_key_string($props_n_values)
@@ -1936,7 +1946,7 @@ abstract class EE_Base_Class
     {
         //now that we know the name of the variable, use a variable variable to get its value and return its
         if ($this->get_model()->has_primary_key_field()) {
-            return $this->_fields[self::_get_primary_key_name(get_class($this))];
+            return $this->_fields[$this->get_model()->primary_key_name()];
         } else {
             return $this->get_model()->get_index_primary_key_string($this->_fields);
         }
@@ -2678,7 +2688,10 @@ abstract class EE_Base_Class
             }
         }
         $this->_props_n_values_provided_in_constructor = array();
-        return array_keys(get_object_vars($this));
+        $properties_to_serialize = get_object_vars($this);
+        //don't serialize the model. It's big and that risks recursion
+        unset($properties_to_serialize['_model']);
+        return array_keys($properties_to_serialize);
     }
 
 
