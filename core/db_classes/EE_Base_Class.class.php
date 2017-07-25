@@ -1007,6 +1007,12 @@ abstract class EE_Base_Class
     {
         $field_obj = $this->get_model()->field_settings_for($field_name);
         if ($field_obj instanceof EE_Model_Field_Base) {
+            //handle timezone wizardry
+            if ($field_obj instanceof EE_Datetime_Field) {
+                $field_obj->set_timezone($this->_timezone);
+                $field_obj->set_date_format($this->_dt_frmt);
+                $field_obj->set_time_format($this->_tm_frmt);
+            }
             //you would think the DB has no NULLs for non-null label fields right? wrong!
             //eg, a CPT model object could have an entry in the posts table, but no
             //entry in the meta table. Meaning that all its columns in the meta table
