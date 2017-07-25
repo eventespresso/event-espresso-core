@@ -1964,6 +1964,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
                 }
             }
 
+            // delete any extra meta attached to the deleted entities
             EEM_Extra_Meta::instance()->delete_permanently(array(
                 0 => array(
                     'EXM_type' => $this->get_this_model_name(),
