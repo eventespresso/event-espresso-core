@@ -1953,11 +1953,14 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
 
         //Next, make sure those items are removed from the entity map; if they could be put into it at all; and if
         //there was no error with the delete query.
-        if ($this->has_primary_key_field() && $rows_deleted !== false) {
-            foreach ($items_for_deletion as $item_for_deletion_row) {
-                $pk_value = $item_for_deletion_row[$this->get_primary_key_field()->get_qualified_column()];
-                if (isset($this->_entity_map[EEM_Base::$_model_query_blog_id][$pk_value])) {
-                    unset($this->_entity_map[EEM_Base::$_model_query_blog_id][$pk_value]);
+        if ($this->has_primary_key_field()
+            && $rows_deleted !== false
+            && isset($columns_and_ids_for_deleting[$this->get_primary_key_field()->get_qualified_column()])
+        ) {
+            $ids_for_removal = $columns_and_ids_for_deleting[$this->get_primary_key_field()->get_qualified_column()];
+            foreach ($ids_for_removal as $id) {
+                if (isset($this->_entity_map[EEM_Base::$_model_query_blog_id][$id])) {
+                    unset($this->_entity_map[EEM_Base::$_model_query_blog_id][$id]);
                 }
             }
 
