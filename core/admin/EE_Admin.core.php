@@ -1,4 +1,7 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+<?php
+use EventEspresso\core\interfaces\InterminableInterface;
+
+if ( ! defined( 'EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 /**
  * Event Espresso
  *
@@ -21,7 +24,7 @@
  *
  * ------------------------------------------------------------------------
  */
-final class EE_Admin {
+final class EE_Admin implements InterminableInterface {
 
 	/**
 	 * @access private
@@ -44,6 +47,16 @@ final class EE_Admin {
 			self::$_instance = new self();
 		}
 		return self::$_instance;
+	}
+
+
+
+	/**
+	 * @return EE_Admin
+	 */
+	public static function reset() {
+		self::$_instance = null;
+		return self::instance();
 	}
 
 
@@ -90,11 +103,13 @@ final class EE_Admin {
 	 * @return void
 	 */
 	private function _define_all_constants() {
-		define( 'EE_ADMIN_URL', EE_PLUGIN_DIR_URL . 'core/admin/' );
-		define( 'EE_ADMIN_PAGES_URL', EE_PLUGIN_DIR_URL . 'admin_pages/' );
-		define( 'EE_ADMIN_TEMPLATE', EE_ADMIN . 'templates' . DS );
-		define( 'WP_ADMIN_PATH', ABSPATH . 'wp-admin/' );
-		define( 'WP_AJAX_URL', admin_url( 'admin-ajax.php' ));
+		if ( ! defined( 'EE_ADMIN_URL' ) ) {
+			define( 'EE_ADMIN_URL', EE_PLUGIN_DIR_URL . 'core/admin/' );
+			define( 'EE_ADMIN_PAGES_URL', EE_PLUGIN_DIR_URL . 'admin_pages/' );
+			define( 'EE_ADMIN_TEMPLATE', EE_ADMIN . 'templates' . DS );
+			define( 'WP_ADMIN_PATH', ABSPATH . 'wp-admin/' );
+			define( 'WP_AJAX_URL', admin_url( 'admin-ajax.php' ) );
+		}
 	}
 
 

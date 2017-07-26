@@ -81,17 +81,17 @@ class CachingLoaderTest extends EE_UnitTestCase
     /**
      * This tests persistence with caching on.
      *
-     * @param string $object_hash hash provided of object loaded in previous test.
      * @throws InvalidEntityException
      * @throws ServiceNotFoundException
-     * @depends testLoadCachingOff
      */
-    public function testLoadCachingOn($object_hash)
+    public function testLoadCachingOn()
     {
         //turn caching on.
-        add_filter('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache', '__return_false', 10);
-        $new_object = self::$loader->load($this->getFqcnForTest());
-        $this->assertEquals($object_hash, spl_object_hash($new_object));
+        remove_all_filters('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache');
+        $this->assertEquals(
+            spl_object_hash(self::$loader->load($this->getFqcnForTest())),
+            spl_object_hash(self::$loader->load($this->getFqcnForTest()))
+        );
     }
 
 
@@ -125,4 +125,8 @@ class CachingLoaderTest extends EE_UnitTestCase
         $this->assertNotEquals(spl_object_hash($object8), spl_object_hash(self::$loader->load($fqcn8)));
         $this->assertNotEquals(spl_object_hash($object9), spl_object_hash(self::$loader->load($fqcn9)));
     }
+
+
+
 }
+// Location: testcases/core/services/loaders/CachingLoaderTest.php
