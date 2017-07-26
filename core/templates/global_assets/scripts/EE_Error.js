@@ -2,6 +2,7 @@ jQuery(document).ready(function($) {
 
 	var message = $('#ee-error-message');
 	var target;
+	var ee_dismiss = eei18n.ee_dismiss;
 
 	if ( message.length ) {
 		$('#ee-error-message').remove();

@@ -60,7 +60,7 @@ class CommandBus implements CommandBusInterface
      */
     public function __construct(
         CommandHandlerManagerInterface $command_handler_manager,
-        $command_bus_middleware = array()
+        array $command_bus_middleware = array()
     ) {
         $this->command_handler_manager = $command_handler_manager;
         $this->command_bus_middleware = is_array($command_bus_middleware)

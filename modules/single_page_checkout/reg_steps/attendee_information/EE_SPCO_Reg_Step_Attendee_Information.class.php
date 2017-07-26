@@ -1,4 +1,6 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
+<?php use EventEspresso\core\services\commands\attendee\CreateAttendeeCommand;
+
+if ( ! defined( 'EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
  /**
  *
  * Class EE_SPCO_Reg_Step_Attendee_Information
@@ -972,29 +974,19 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 						// just copy the primary registrant
 						$attendee = $this->checkout->primary_attendee_obj;
 					} else {
-						// have we met before?
-						$attendee = $this->_find_existing_attendee(
-							$registration,
-							$this->_attendee_data[ $reg_url_link ]
+						// ensure critical details are set for additional attendees
+						$this->_attendee_data[ $reg_url_link ] = $att_nmbr > 1
+							? $this->_copy_critical_attendee_details_from_primary_registrant(
+								$this->_attendee_data[ $reg_url_link ]
+							)
+							: $this->_attendee_data[ $reg_url_link ];
+						// execute create attendee command (which may return an existing attendee)
+						$attendee = EE_Registry::instance()->BUS->execute(
+							new CreateAttendeeCommand(
+								$this->_attendee_data[ $reg_url_link ],
+								$registration
+							)
 						);
-						// did we find an already existing record for this attendee ?
-						if ( $attendee instanceof EE_Attendee ) {
-							$attendee = $this->_update_existing_attendee_data(
-								$attendee,
-								$this->_attendee_data[ $reg_url_link ]
-							);
-						} else {
-							// ensure critical details are set for additional attendees
-							$this->_attendee_data[ $reg_url_link ] = $att_nmbr > 1
-								? $this->_copy_critical_attendee_details_from_primary_registrant(
-									$this->_attendee_data[ $reg_url_link ]
-								)
-								: $this->_attendee_data[ $reg_url_link ];
-							$attendee = $this->_create_new_attendee(
-								$registration,
-								$this->_attendee_data[ $reg_url_link ]
-							);
-						}
 						// who's #1 ?
 						if ( $att_nmbr === 1 ) {
 							$this->checkout->primary_attendee_obj = $attendee;
@@ -1177,77 +1169,6 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 
 
 	/**
-	 *    find_existing_attendee
-	 *
-	 * @param EE_Registration $registration
-	 * @param array           $attendee_data
-	 * @return boolean|EE_Attendee
-	 * @throws \EE_Error
-	 */
-	private function _find_existing_attendee( EE_Registration $registration, $attendee_data = array() ) {
-		$existing_attendee = null;
-		// if none of the critical properties are set in the incoming attendee data...
-		// then attempt to copy them from the primary attendee
-		if (
-			$this->checkout->primary_attendee_obj instanceof EE_Attendee
-            && ! isset( $attendee_data['ATT_fname'], $attendee_data['ATT_email'] )
-		) {
-			return $this->checkout->primary_attendee_obj;
-		}
-		// does this attendee already exist in the db ?
-		// we're searching using a combination of first name, last name, AND email address
-		$ATT_fname = isset( $attendee_data['ATT_fname'] ) && ! empty( $attendee_data['ATT_fname'] )
-			? $attendee_data['ATT_fname']
-			: '';
-		$ATT_lname = isset( $attendee_data['ATT_lname'] ) && ! empty( $attendee_data['ATT_lname'] )
-			? $attendee_data['ATT_lname']
-			: '';
-		$ATT_email = isset( $attendee_data['ATT_email'] ) && ! empty( $attendee_data['ATT_email'] )
-			? $attendee_data['ATT_email']
-			: '';
-		// but only if those have values
-		if ( $ATT_fname && $ATT_lname && $ATT_email ) {
-			$existing_attendee = EEM_Attendee::instance()->find_existing_attendee( array(
-				'ATT_fname' => $ATT_fname,
-				'ATT_lname' => $ATT_lname,
-				'ATT_email' => $ATT_email
-			));
-		}
-		return apply_filters(
-			'FHEE_EE_Single_Page_Checkout__save_registration_items__find_existing_attendee',
-			$existing_attendee,
-			$registration,
-			$attendee_data
-		);
-	}
-
-
-
-	/**
-	 *    _update_existing_attendee_data - in case it has changed since last time they registered for an event
-	 *
-	 * @param EE_Attendee $existing_attendee
-	 * @param array       $attendee_data
-	 * @return \EE_Attendee
-	 * @throws \EE_Error
-	 */
-	private function _update_existing_attendee_data( EE_Attendee $existing_attendee, $attendee_data = array() ) {
-		// first remove fname, lname, and email from attendee data
-		$dont_set = array( 'ATT_fname', 'ATT_lname', 'ATT_email' );
-		// now loop thru what's left and add to attendee CPT
-		foreach ( $attendee_data as $property_name => $property_value ) {
-			if ( ! in_array( $property_name, $dont_set ) && EEM_Attendee::instance()->has_field( $property_name )) {
-				$existing_attendee->set( $property_name, $property_value );
-			}
-		}
-		// better save that now
-		$existing_attendee->save();
-		return $existing_attendee;
-	}
-
-
-
-	/**
 	 *    _associate_attendee_with_registration
 	 *
 	 * @param EE_Registration $registration
@@ -1272,7 +1193,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	 * @throws \EE_Error
 	 */
 	private function _associate_registration_with_transaction( EE_Registration $registration ) {
-		// add relation to attendee
+		// add relation to registration
 		$this->checkout->transaction->_add_relation_to( $registration, 'Registration' );
 		$this->checkout->transaction->update_cache_after_object_save( 'Registration', $registration );
 	}
@@ -1316,25 +1237,6 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 			}
 		}
 		return $attendee_data;
-	}
-
-
-
-	/**
-	 *    create_new_attendee
-	 *
-	 * @param EE_Registration $registration
-	 * @param array           $attendee_data
-	 * @return \EE_Attendee
-	 * @throws \EE_Error
-	 */
-	private function _create_new_attendee( EE_Registration $registration, $attendee_data = array() ) {
-		// create new attendee object
-		$new_attendee = EE_Attendee::new_instance( $attendee_data );
-		// set author to event creator
-		$new_attendee->set( 'ATT_author', $registration->event()->wp_user() );
-		$new_attendee->save();
-		return $new_attendee;
 	}
 
 
