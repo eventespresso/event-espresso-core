@@ -91,6 +91,7 @@ class Messages_Template_List_Table extends EE_Admin_List_Table
 
     /**
      * @return array
+     * @throws EE_Error
      */
     protected function _get_table_filters()
     {
@@ -153,6 +154,7 @@ class Messages_Template_List_Table extends EE_Admin_List_Table
     /**
      * @param EE_Message_Template_Group $item
      * @return string
+     * @throws EE_Error
      */
     public function column_description($item)
     {
@@ -163,6 +165,7 @@ class Messages_Template_List_Table extends EE_Admin_List_Table
     /**
      * @param EE_Message_Template_Group $item
      * @return string
+     * @throws EE_Error
      */
     public function column_messenger($item)
     {
@@ -183,8 +186,9 @@ class Messages_Template_List_Table extends EE_Admin_List_Table
     /**
      * column_message_type
      *
-     * @param  EE_Message_Template_Group  $item message info for the row
-     * @return string       message_type name
+     * @param  EE_Message_Template_Group $item message info for the row
+     * @return string message_type name
+     * @throws EE_Error
      */
     public function column_message_type($item)
     {
@@ -214,8 +218,8 @@ class Messages_Template_List_Table extends EE_Admin_List_Table
 
         foreach ($active_message_template_groups_grouped_by_messenger as $active_message_template_group) {
             if ($active_message_template_group instanceof EE_Message_Template_Group) {
-                $messenger                                                      = $active_message_template_group->messenger_obj();
-                $messenger_label                                                = $messenger instanceof EE_messenger
+                $messenger                          = $active_message_template_group->messenger_obj();
+                $messenger_label                    = $messenger instanceof EE_messenger
                     ? $messenger->label['singular']
                     : $active_message_template_group->messenger();
                 $messenger_options[$active_message_template_group->messenger()] = ucwords($messenger_label);
@@ -247,8 +251,8 @@ class Messages_Template_List_Table extends EE_Admin_List_Table
 
         foreach ($active_message_template_groups_grouped_by_message_type as $active_message_template_group) {
             if ($active_message_template_group instanceof EE_Message_Template_Group) {
-                $message_type                                                         = $active_message_template_group->message_type_obj();
-                $message_type_label                                                   = $message_type instanceof EE_message_type
+                $message_type               = $active_message_template_group->message_type_obj();
+                $message_type_label         = $message_type instanceof EE_message_type
                     ? $message_type->label['singular']
                     : $active_message_template_group->message_type();
                 $message_type_options[$active_message_template_group->message_type()] = ucwords($message_type_label);
