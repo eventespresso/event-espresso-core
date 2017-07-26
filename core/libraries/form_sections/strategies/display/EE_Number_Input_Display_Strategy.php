@@ -57,7 +57,7 @@ class EE_Number_Input_Display_Strategy extends EE_Display_Strategy_Base
         $this->max = is_numeric($max) || $max === null
             ? $max
             : $this->throwValidationException('max', $max);
-        $this->step = $step === 'any' ? 1 : $step;
+        $step = $step === 'any' ? 1 : $step;
         $this->step = is_numeric($step) || $step === null
             ? $step
             : $this->throwValidationException('step', $step);
