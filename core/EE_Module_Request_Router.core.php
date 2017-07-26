@@ -1,68 +1,52 @@
-<?php use EventEspresso\core\interfaces\InterminableInterface;
+<?php
 
-if ( ! defined( 'EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+use EventEspresso\core\interfaces\InterminableInterface;
+
+
+defined( 'EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
+
 /**
- * Event Espresso
- *
- * Event Registration and Management Plugin for WordPress
- *
- * @ package			Event Espresso
- * @ author			    Event Espresso
- * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link					http://www.eventespresso.com
- * @ version		 	$VID:$
- *
- * ------------------------------------------------------------------------
- *
  *  Class EE_Module_Request_Router
  *
 * 	This class handles module instantiation, forward chaining, and obtaining views for the Front Controller. Basically a Module Factory.
  *
  * @package			Event Espresso
  * @subpackage  	/core/
- * @author				Brent Christensen
- *
- * ------------------------------------------------------------------------
+ * @author			Brent Christensen
  */
 final class EE_Module_Request_Router implements InterminableInterface {
 
 	/**
-	 * 	@var 	array	$_previous_routes
-	 *  @access 	private
+	 * @var array $_previous_routes
 	 */
 	private static $_previous_routes = array();
 
 	/**
-	 * 	@var 	WP_Query	$WP_Query
-	 *  @access 	public
+	 * @var WP_Query $WP_Query
 	 */
-	public $WP_Query = NULL;
+	public $WP_Query;
 
 
 
-	/**
-	 *    class constructor
-	 *
-	 * @access    public
-	 * @return \EE_Module_Request_Router
-	 */
-	public function __construct() {
+    /**
+     * EE_Module_Request_Router constructor.
+     */
+    public function __construct() {
 	}
 
 
 
-	/**
-	 *    get_route
-	 *
-	 *    on the first call  to this method, it checks the EE_Request_Handler for a "route"
-	 *    on subsequent calls to this method, instead of checking the EE_Request_Handler for a route,
-	 *    it checks the previous routes array, and checks if the last called route has any forwarding routes registered for it
-	 *
-	 * @access    public
-	 * @param WP_Query $WP_Query
-	 * @return    string | NULL
-	 */
+    /**
+     * on the first call  to this method, it checks the EE_Request_Handler for a "route"
+     * on subsequent calls to this method,
+     * instead of checking the EE_Request_Handler for a route, it checks the previous routes array,
+     * and checks if the last called route has any forwarding routes registered for it
+     *
+     * @param WP_Query $WP_Query
+     * @return NULL|string
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
 	public function get_route( WP_Query $WP_Query ) {
 		$this->WP_Query = $WP_Query;
 		// assume this if first route being called
@@ -95,7 +79,7 @@ final class EE_Module_Request_Router implements InterminableInterface {
 			// first route called
 			$current_route = NULL;
 			// grab all routes
-			$routes = EE_Registry::instance()->CFG->get_routes();
+			$routes = EE_Config::get_routes();
 			//d( $routes );
 			foreach( $routes as $key => $route ) {
 				// check request for module route
@@ -121,16 +105,15 @@ final class EE_Module_Request_Router implements InterminableInterface {
 
 
 
-	/**
-	 * 	resolve_route
-	*
-	 * 	this method simply takes a valid route, and resolves what module class method the route points to
-	 *
-	 *  @access 	public
-	 *  @param 	string		$key
-	 *  @param 	string		$current_route
-	 *  @return 	mixed		EED_Module | boolean
-	 */
+    /**
+     * this method simply takes a valid route, and resolves what module class method the route points to
+     *
+     * @param string $key
+     * @param string $current_route
+     * @return mixed EED_Module | boolean
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
 	public function resolve_route( $key, $current_route ) {
 		// get module method that route has been mapped to
 		$module_method = EE_Config::get_route( $current_route, $key );
@@ -175,17 +158,15 @@ final class EE_Module_Request_Router implements InterminableInterface {
 
 
 
-	/**
-	 *    module_factory
-	 *
-	 *    this method instantiates modules and calls the method that was defined when the route was registered
-	 *
-	 * @access    public
-	 * @param   string  $module_name
-	 * @return    EED_Module | NULL
-	 */
+    /**
+     * this method instantiates modules and calls the method that was defined when the route was registered
+     *
+     * @param string $module_name
+     * @return EED_Module|object|null
+     * @throws ReflectionException
+     */
 	public static function module_factory( $module_name ) {
-		if ( $module_name == 'EED_Module' ) {
+		if ( $module_name === 'EED_Module' ) {
 			EE_Error::add_error( sprintf( __( 'EED_Module is an abstract parent class an can not be instantiated. Please provide a proper module name.', 'event_espresso' ), $module_name ), __FILE__, __FUNCTION__, __LINE__ );
 			return NULL;
 		}
@@ -201,16 +182,16 @@ final class EE_Module_Request_Router implements InterminableInterface {
 	}
 
 
-	/**
-	 *    _module_router
-	 *
-	 *    this method instantiates modules and calls the method that was defined when the route was registered
-	 *
-	 * @access    private
-	 * @param   string  $module_name
-	 * @param   string  $method
-	 * @return    EED_Module | NULL
-	 */
+
+    /**
+     * this method instantiates modules and calls the method that was defined when the route was registered
+     *
+     * @param   string $module_name
+     * @param   string $method
+     * @return EED_Module|NULL
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
 	private function _module_router( $module_name, $method ) {
 		// instantiate module class
 		$module = EE_Module_Request_Router::module_factory( $module_name );
@@ -229,9 +210,6 @@ final class EE_Module_Request_Router implements InterminableInterface {
 
 
 	/**
-	 *    get_forward
-	 *
-	 * @access    public
 	 * @param $current_route
 	 * @return    string
 	 */
@@ -242,9 +220,6 @@ final class EE_Module_Request_Router implements InterminableInterface {
 
 
 	/**
-	 *    get_view
-	 *
-	 * @access    public
 	 * @param $current_route
 	 * @return    string
 	 */
@@ -288,23 +263,23 @@ final class EE_Module_Request_Router implements InterminableInterface {
 
 
 	/**
-	 * @return bool
+	 * @return void
 	 */
-	public function __clone() { return FALSE; }
+	public function __clone() {}
 
 
 
 	/**
-	 * @return bool
+	 * @return void
 	 */
-	public function __wakeup() { return FALSE; }
+	public function __wakeup() {}
 
 
 
 	/**
 	 *
 	 */
-	public function __destruct() { return FALSE; }
+	public function __destruct() {}
 
 }
 // End of file EE_Module_Request_Router.core.php
