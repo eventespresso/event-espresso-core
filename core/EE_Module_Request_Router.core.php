@@ -10,9 +10,9 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
  *    This class handles module instantiation, forward chaining, and obtaining views for the Front Controller.
  *    Basically a Module Factory.
  *
- * @package            Event Espresso
- * @subpackage         /core/
- * @author             Brent Christensen
+ * @package     Event Espresso
+ * @subpackage  /core/
+ * @author      Brent Christensen
  */
 final class EE_Module_Request_Router implements InterminableInterface
 {
@@ -212,9 +212,9 @@ final class EE_Module_Request_Router implements InterminableInterface
     /**
      * this method instantiates modules and calls the method that was defined when the route was registered
      *
-     * @param   string $module_name
-     * @param   string $method
-     * @return EED_Module|NULL
+     * @param string $module_name
+     * @param string $method
+     * @return EED_Module|null
      * @throws EE_Error
      * @throws ReflectionException
      */
@@ -238,7 +238,7 @@ final class EE_Module_Request_Router implements InterminableInterface
 
     /**
      * @param $current_route
-     * @return    string
+     * @return string
      */
     public function get_forward($current_route)
     {
@@ -249,7 +249,7 @@ final class EE_Module_Request_Router implements InterminableInterface
 
     /**
      * @param $current_route
-     * @return    string
+     * @return string
      */
     public function get_view($current_route)
     {
