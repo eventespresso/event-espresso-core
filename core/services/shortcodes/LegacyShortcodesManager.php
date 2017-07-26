@@ -248,7 +248,7 @@ class LegacyShortcodesManager
                     global $wpdb;
                     $page_on_front = $wpdb->get_var(
                         $wpdb->prepare(
-                            "SELECT post_name from {$wpdb->posts} WHERE post_type='page' AND post_status='publish' AND ID=%d",
+                            "SELECT post_name from {$wpdb->posts} WHERE post_type='page' AND post_status NOT IN ('auto-draft', 'inherit', 'trash') AND ID=%d",
                             $page_on_front
                         )
                     );
@@ -274,7 +274,7 @@ class LegacyShortcodesManager
             global $wpdb;
             $post_content = $wpdb->get_var(
                 $wpdb->prepare(
-                    "SELECT post_content from {$wpdb->posts} WHERE post_status='publish' AND post_name=%s",
+                    "SELECT post_content from {$wpdb->posts} WHERE post_status NOT IN ('auto-draft', 'inherit', 'trash') AND post_name=%s",
                     $current_post
                 )
             );
