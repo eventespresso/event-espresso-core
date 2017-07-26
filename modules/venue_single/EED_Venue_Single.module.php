@@ -30,16 +30,22 @@ class EED_Venue_Single  extends EED_Module {
 		return parent::get_instance( __CLASS__ );
 	}
 
-	/**
+
+
+    /**
 	 * 	set_hooks - for hooking into EE Core, other modules, etc
 	 *
 	 *  @access 	public
 	 *  @return 	void
 	 */
 	public static function set_hooks() {
-		EE_Config::register_route( 'venue', 'Venue_Single', 'run' );
-//		EE_Config::register_view( 'venue', 0, EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'single-espresso_venues.php' );
-	}
+        $custom_post_types = EE_Register_CPTs::get_CPTs();
+        EE_Config::register_route(
+            $custom_post_types['espresso_venues']['singular_slug'],
+            'Venue_Single',
+            'run'
+        );
+    }
 
 	/**
 	 * 	set_hooks_admin - for hooking into EE Admin Core, other modules, etc

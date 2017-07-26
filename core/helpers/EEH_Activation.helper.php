@@ -1,4 +1,7 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) {
+<?php
+use EventEspresso\core\interfaces\ResettableInterface;
+
+if ( ! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
 
@@ -11,7 +14,7 @@
  * @subpackage     /helpers/
  * @author         Brent Christensen
  */
-class EEH_Activation
+class EEH_Activation implements ResettableInterface
 {
 
     /**
