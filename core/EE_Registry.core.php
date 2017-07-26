@@ -309,7 +309,8 @@ class EE_Registry implements ResettableInterface
 
 
     /**
-     * @param mixed string | EED_Module $module
+     * @param $module
+     * @throws ReflectionException
      */
     public function add_module($module)
     {
@@ -320,7 +321,7 @@ class EE_Registry implements ResettableInterface
             if ( ! class_exists('EE_Module_Request_Router')) {
                 $this->load_core('Module_Request_Router');
             }
-            $this->modules->{$module} = EE_Module_Request_Router::module_factory($module);
+            EE_Module_Request_Router::module_factory($module);
         }
     }
 
