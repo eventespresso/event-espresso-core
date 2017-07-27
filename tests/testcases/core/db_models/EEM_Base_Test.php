@@ -22,6 +22,9 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) {
 class EEM_Base_Test extends EE_UnitTestCase
 {
 
+    /**
+     * @group current
+     */
     public function test_models_defined_ok()
     {
         foreach (EE_Registry::instance()->non_abstract_db_models as $model) {

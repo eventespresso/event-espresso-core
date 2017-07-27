@@ -1,6 +1,6 @@
 <?php
 
-namespace EventEspresso\core\services\database;
+namespace EventEspresso\core\services\orm;
 
 use EE_All_Caps_Text_Field;
 use EE_Any_Foreign_Model_Name_Field;

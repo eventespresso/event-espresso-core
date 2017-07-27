@@ -1,5 +1,5 @@
 <?php
-use EventEspresso\core\services\database\ModelFieldFactory;
+use EventEspresso\core\services\orm\ModelFieldFactory;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 

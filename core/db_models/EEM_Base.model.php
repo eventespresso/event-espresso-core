@@ -2,7 +2,7 @@
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\interfaces\ResettableInterface;
-use EventEspresso\core\services\database\ModelFieldFactory;
+use EventEspresso\core\services\orm\ModelFieldFactory;
 use EventEspresso\core\services\loaders\LoaderFactory;
 
 /**
@@ -742,7 +742,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     {
         return $model_field_factory instanceof ModelFieldFactory
             ? $model_field_factory
-            : LoaderFactory::getLoader()->load('EventEspresso\core\services\database\ModelFieldFactory');
+            : LoaderFactory::getLoader()->load('EventEspresso\core\services\orm\ModelFieldFactory');
     }
 
 

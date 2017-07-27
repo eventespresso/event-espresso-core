@@ -618,12 +618,12 @@ class EE_Dependency_Map
             'EventEspresso\core\services\cache\PostRelatedCacheManager'                                                   => array(
                 'EventEspresso\core\services\cache\TransientCacheStorage' => EE_Dependency_Map::load_from_cache,
             ),
-            'EventEspresso\core\services\database\ModelFieldFactory'                                                   => array(
+            'EventEspresso\core\services\orm\ModelFieldFactory'                                                   => array(
                 'EventEspresso\core\services\loaders\Loader'              => EE_Dependency_Map::load_from_cache,
             ),
             'LEGACY_MODELS'                                                   => array(
                 null,
-                'EventEspresso\core\services\database\ModelFieldFactory' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\orm\ModelFieldFactory' => EE_Dependency_Map::load_from_cache,
             ),
         );
     }
