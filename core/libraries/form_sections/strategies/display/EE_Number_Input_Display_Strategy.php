@@ -33,7 +33,7 @@ class EE_Number_Input_Display_Strategy extends EE_Display_Strategy_Base
      * This is used to set the "step" attribute for the html5 number input.
      * Controls the increments on the input when incrementing or decrementing the value.
      * Note:  Although the step attribute allows for the string "any" to be used, Firefox and Chrome will interpret that
-     * to increment by 1.  So we don't accept any as the value.
+     * to increment by 1.  So although "any" is accepted as a value, it is converted to 1.
      * @var float
      */
     protected $step;
