@@ -6,6 +6,7 @@ use EE_Error;
 use EE_Event;
 use EE_Registry;
 use EE_System;
+use EE_Ticket_Selector_Config;
 use EED_Events_Archive;
 use EEH_Event_View;
 use EEH_HTML;
@@ -337,7 +338,12 @@ class DisplayTicketSelector
                 'Datetime.DTT_EVT_start' => 'DESC',
             ),
         );
-        if ( ! EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector->show_expired_tickets) {
+        if (
+            ! (
+                EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector instanceof EE_Ticket_Selector_Config
+                && EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector->show_expired_tickets
+            )
+        ) {
             //use the correct applicable time query depending on what version of core is being run.
             $current_time = method_exists('EEM_Datetime', 'current_time_for_query')
                 ? time()
