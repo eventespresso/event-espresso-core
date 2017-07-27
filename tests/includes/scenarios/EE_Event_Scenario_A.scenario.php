@@ -15,8 +15,8 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  *      - TD - qty 10 	( D2, D3 )				<< can only sell 10 max due to TD qty
  *
  *  MAX SELLOUT:
- * 		- 5 TB tickets for D1 ( TB sold out + D1 sold out = TA & TC sold out as well )
- * 		- 10 TD tickets for D3 ( TD sold out + D3 sold out  = D2 sold out )
+ * 		- 5 TB tickets for D1 ( D1 sold out = TA, TB, & TC sold out )
+ * 		- 10 TD tickets for D3 ( D3 sold out = TD sold out = D2 sold out )
  *  	- ( D2 sold out due to TA, TB, & TD sell outs )
  *
  * @package    Event Espresso
