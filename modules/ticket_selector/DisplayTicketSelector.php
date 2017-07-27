@@ -591,7 +591,11 @@ class DisplayTicketSelector
                 $html .= EEH_Template::powered_by_event_espresso('', '', array('utm_content' => 'ticket_selector'));
             }
         }
-        return $html;
+	    return apply_filters(
+		    'FHEE__EventEspresso_modules_ticket_selector_DisplayTicketSelector__displaySubmitButton__html',
+		    $html,
+		    $this->event
+	    );
     }
 
 
