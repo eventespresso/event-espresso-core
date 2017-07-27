@@ -135,10 +135,6 @@ class ModelFieldFactory
      * @param string $timezone_string
      * @param bool   $nullable
      * @param string $default_value
-     * @param string $date_format
-     * @param string $time_format
-     * @param string $pretty_date_format
-     * @param string $pretty_time_format
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @return EE_Datetime_Field
@@ -147,12 +143,7 @@ class ModelFieldFactory
         $table_column,
         $nice_name,
         $nullable = false,
-        $default_value = EE_Datetime_Field::now,
-        $timezone_string = '',
-        $date_format = '',
-        $time_format = '',
-        $pretty_date_format = '',
-        $pretty_time_format = ''
+        $default_value = EE_Datetime_Field::now
     ) {
         return $this->loader->getNew(
             'EE_Datetime_Field',
@@ -160,12 +151,7 @@ class ModelFieldFactory
                 $table_column,
                 $nice_name,
                 $nullable,
-                $default_value,
-                $timezone_string,
-                $date_format,
-                $time_format,
-                $pretty_date_format,
-                $pretty_time_format,
+                $default_value
             )
         );
     }

@@ -173,8 +173,7 @@ class EEM_Attendee extends EEM_CPT_Base
                 ),
                 'ATT_created'   => $model_field_factory->createDatetimeField(
                     'post_date',
-                    esc_html__('Time Attendee Created', 'event_espresso'),
-                    $timezone
+                    esc_html__('Time Attendee Created', 'event_espresso')
                 ),
                 'ATT_short_bio' => $model_field_factory->createSimpleHtmlField(
                     'post_excerpt',
@@ -184,8 +183,7 @@ class EEM_Attendee extends EEM_CPT_Base
                 ),
                 'ATT_modified'  => $model_field_factory->createDatetimeField(
                     'post_modified',
-                    esc_html__('Time Attendee Last Modified', 'event_espresso'),
-                    $timezone
+                    esc_html__('Time Attendee Last Modified', 'event_espresso')
                 ),
                 'ATT_author'    => $model_field_factory->createWpUserField(
                     'post_author',
