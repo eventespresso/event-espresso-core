@@ -4800,12 +4800,12 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
 
 
     /**
-     * Gets the actual table for the table alias
+     * Gets the table name (including $wpdb->prefix) for the table alias
      *
      * @param string $table_alias eg Event, Event_Meta, Registration, Transaction, but maybe
      *                            a table alias with a model chain prefix, like 'Venue__Event_Venue___Event_Meta'.
      *                            Either one works
-     * @return EE_Table_Base
+     * @return string
      */
     public function get_table_for_alias($table_alias)
     {
