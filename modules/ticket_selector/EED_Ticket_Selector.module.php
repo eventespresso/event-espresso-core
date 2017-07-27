@@ -106,9 +106,15 @@ class EED_Ticket_Selector extends  EED_Module {
 	 *  @return 	void
 	 */
 	public static function set_definitions() {
+	    // don't do this twice
+	    if(defined('TICKET_SELECTOR_ASSETS_URL')) {
+	        return;
+        }
 		define( 'TICKET_SELECTOR_ASSETS_URL', plugin_dir_url( __FILE__ ) . 'assets' . DS );
-		define( 'TICKET_SELECTOR_TEMPLATES_PATH', str_replace( '\\', DS, plugin_dir_path( __FILE__ )) . 'templates' . DS );
-
+		define(
+		    'TICKET_SELECTOR_TEMPLATES_PATH',
+            str_replace( '\\', DS, plugin_dir_path( __FILE__ )) . 'templates' . DS
+        );
 		//if config is not set, initialize
 		if ( ! EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector instanceof EE_Ticket_Selector_Config ) {
             \EED_Ticket_Selector::instance()->set_config();
@@ -244,7 +250,7 @@ class EED_Ticket_Selector extends  EED_Module {
 		if ( apply_filters( 'FHEE__EED_Ticket_Selector__load_tckt_slctr_assets', FALSE ) ) {
             // add some style
             wp_register_style(
-                'ticket_selector', 
+                'ticket_selector',
                 TICKET_SELECTOR_ASSETS_URL . 'ticket_selector.css',
                 array(),
                 EVENT_ESPRESSO_VERSION
@@ -252,10 +258,10 @@ class EED_Ticket_Selector extends  EED_Module {
             wp_enqueue_style('ticket_selector');
             // make it dance
             wp_register_script(
-                'ticket_selector', 
-                TICKET_SELECTOR_ASSETS_URL . 'ticket_selector.js', 
-                array('espresso_core'), 
-                EVENT_ESPRESSO_VERSION, 
+                'ticket_selector',
+                TICKET_SELECTOR_ASSETS_URL . 'ticket_selector.js',
+                array('espresso_core'),
+                EVENT_ESPRESSO_VERSION,
                 TRUE
             );
 			wp_enqueue_script('ticket_selector');
