@@ -69,7 +69,7 @@ class DisplayTicketSelector
     /**
      *@var boolean $display_full_ui
      */
-    private $display_full_ui =  true;
+    private $display_full_ui;
 
 
 
@@ -160,6 +160,15 @@ class DisplayTicketSelector
 
 
 
+    private function display_full_ui()
+    {
+        if ($this->display_full_ui === null) {
+            $this->display_full_ui = ! is_admin() || (defined('DOING_AJAX') && DOING_AJAX);
+        }
+        return $this->display_full_ui;
+    }
+
+
     /**
      * creates buttons for selecting number of attendees for an event
      *
@@ -199,7 +208,6 @@ class DisplayTicketSelector
         if (EED_Events_Archive::is_iframe()){
             $this->setIframe();
         }
-        $this->display_full_ui = ! is_admin() || (defined('DOING_AJAX') && DOING_AJAX);
         // redirecting to another site for registration ??
         $external_url = (string) $this->event->external_url();
         // if redirecting to another site for registration, then we don't load the TS
@@ -207,11 +215,11 @@ class DisplayTicketSelector
             ? $this->externalEventRegistration()
             : $this->loadTicketSelector($tickets,$template_args);
         // now set up the form (but not for the admin)
-        $ticket_selector = $this->display_full_ui
+        $ticket_selector = $this->display_full_ui()
             ? $this->formOpen($this->event->ID(), $external_url) . $ticket_selector
             : $ticket_selector;
         // submit button and form close tag
-        $ticket_selector .= $this->display_full_ui ? $this->displaySubmitButton($external_url) : '';
+        $ticket_selector .= $this->display_full_ui() ? $this->displaySubmitButton($external_url) : '';
         return $ticket_selector;
     }
 
@@ -457,7 +465,7 @@ class DisplayTicketSelector
         // if not we still need to trigger the display of the submit button
         add_filter('FHEE__EE_Ticket_Selector__display_ticket_selector_submit', '__return_true');
         //display notice to admin that registration is external
-        return $this->display_full_ui
+        return $this->display_full_ui()
             ? esc_html__(
                 'Registration is at an external URL for this event.',
                 'event_espresso'
@@ -528,7 +536,7 @@ class DisplayTicketSelector
     public function displaySubmitButton($external_url = '')
     {
         $html = '';
-        if ($this->display_full_ui) {
+        if ($this->display_full_ui()) {
             // standard TS displayed with submit button, ie: "Register Now"
             if (apply_filters('FHEE__EE_Ticket_Selector__display_ticket_selector_submit', false)) {
                 $html .= $this->displayRegisterNowButton();
