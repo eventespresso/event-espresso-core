@@ -93,11 +93,12 @@ class CachingLoader extends LoaderDecorator
     /**
      * @param string $fqcn
      * @param array  $arguments
+     * @param bool   $shared
      * @return mixed
      * @throws InvalidEntityException
      * @throws ServiceNotFoundException
      */
-    public function load($fqcn, $arguments = array())
+    public function load($fqcn, $arguments = array(), $shared = true)
     {
         $fqcn = ltrim($fqcn, '\\');
         // caching can be turned off via the following code:
@@ -109,13 +110,15 @@ class CachingLoader extends LoaderDecorator
                 $this
             )
         ){
-            return $this->loader->load($fqcn, $arguments);
+            return $this->loader->load($fqcn, $arguments, false);
         }
         $identifier = md5($fqcn . serialize($arguments));
         if($this->cache->has($identifier)){
             return $this->cache->get($identifier);
         }
-        $object = $this->loader->load($fqcn, $arguments);
+        // even though $shared might be true, we don't want the core loader to  cache anything
+        // so we're  turning caching off, because  we will handle it here
+        $object = $this->loader->load($fqcn, $arguments, false);
         if($object instanceof $fqcn){
             $this->cache->add($object, $identifier);
         }
