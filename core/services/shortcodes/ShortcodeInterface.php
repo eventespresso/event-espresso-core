@@ -47,6 +47,14 @@ interface ShortcodeInterface
      */
     public function processShortcode($attributes = array());
 
+
+
+    /**
+     * Returns whether or not this shortcode class has already been initialized
+     * @return boolean
+     */
+    public function initialized();
+
 }
 // End of file ShortcodeInterface.php
 // Location: EventEspresso\core\services\shortcodes/ShortcodeInterface.php
