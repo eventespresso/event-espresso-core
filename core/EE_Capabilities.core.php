@@ -235,7 +235,7 @@ final class EE_Capabilities extends EE_Base
                 ),
                 new EE_Meta_Capability_Map_Read(
                     'ee_read_checkin',
-                    array('Registration', '', '', 'ee_read_others_checkins')
+                    array('Registration', '', 'ee_read_others_checkins', '')
                 ),
                 new EE_Meta_Capability_Map_Messages_Cap(
                     'ee_read_message',
@@ -243,11 +243,11 @@ final class EE_Capabilities extends EE_Base
                 ),
                 new EE_Meta_Capability_Map_Read(
                     'ee_read_default_ticket',
-                    array('Ticket', '', '', 'ee_read_others_default_tickets')
+                    array('Ticket', '', 'ee_read_others_default_tickets', '')
                 ),
                 new EE_Meta_Capability_Map_Read(
                     'ee_read_payment_method',
-                    array('Payment_Method', '', '', 'ee_read_others_payment_methods')
+                    array('Payment_Method', '', 'ee_read_others_payment_methods', '')
                 ),
                 //deletes
                 new EE_Meta_Capability_Map_Delete(
