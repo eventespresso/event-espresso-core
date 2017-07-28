@@ -193,18 +193,17 @@ final class EE_Module_Request_Router implements InterminableInterface
             );
             return null;
         }
-        // let's pause to reflect on this...
-        $mod_reflector = new ReflectionClass($module_name);
+        // instantiate module class
+        $module = new $module_name();
         // ensure that class is actually a module
-        if (! $mod_reflector->isSubclassOf('EED_Module')) {
+        if (! $module instanceof EED_Module) {
             EE_Error::add_error(
                 sprintf(__('The requested %s module is not of the class EED_Module.', 'event_espresso'), $module_name),
                 __FILE__, __FUNCTION__, __LINE__
             );
             return null;
         }
-        // instantiate and return module class
-        return $mod_reflector->newInstance();
+        return $module;
     }
 
 
@@ -256,77 +255,6 @@ final class EE_Module_Request_Router implements InterminableInterface
         return EE_Config::get_view($current_route);
     }
 
-
-
-    /**
-     * @param $a
-     * @param $b
-     * @return bool
-     */
-    public function __set($a, $b)
-    {
-        return false;
-    }
-
-
-
-    /**
-     * @param $a
-     * @return bool
-     */
-    public function __get($a)
-    {
-        return false;
-    }
-
-
-
-    /**
-     * @param $a
-     * @return bool
-     */
-    public function __isset($a)
-    {
-        return false;
-    }
-
-
-
-    /**
-     * @param $a
-     * @return bool
-     */
-    public function __unset($a)
-    {
-        return false;
-    }
-
-
-
-    /**
-     * @return void
-     */
-    public function __clone()
-    {
-    }
-
-
-
-    /**
-     * @return void
-     */
-    public function __wakeup()
-    {
-    }
-
-
-
-    /**
-     *
-     */
-    public function __destruct()
-    {
-    }
 
 }
 // End of file EE_Module_Request_Router.core.php
