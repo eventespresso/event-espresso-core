@@ -160,6 +160,11 @@ class DisplayTicketSelector
 
 
 
+    /**
+     * Returns whether or not the full ticket selector should be shown or not.
+     * Currently, it displays on the frontend (including ajax requests) but not the backend
+     * @return bool
+     */
     private function display_full_ui()
     {
         if ($this->display_full_ui === null) {
