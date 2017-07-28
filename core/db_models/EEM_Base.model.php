@@ -1,6 +1,5 @@
 <?php
-
-
+use EventEspresso\core\interfaces\ResettableInterface;
 
 /**
  * Class EEM_Base
@@ -26,20 +25,20 @@
  * @author                Michael Nelson
  * @since                 EE4
  */
-abstract class EEM_Base extends EE_Base
+abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces\ResettableInterface
 {
 
     //admin posty
     //basic -> grants access to mine -> if they don't have it, select none
-    //*_others -> grants access to others that arent private, and all mine -> if they don't have it, select mine
+    //*_others -> grants access to others that aren't private, and all mine -> if they don't have it, select mine
     //*_private -> grants full access -> if dont have it, select all mine and others' non-private
     //*_published -> grants access to published -> if they dont have it, select non-published
     //*_global/default/system -> grants access to global items -> if they don't have it, select non-global
     //publish_{thing} -> can change status TO publish; SPECIAL CASE
     //frontend posty
     //by default has access to published
-    //basic -> grants access to mine that arent published, and all published
-    //*_others ->grants access to others that arent private, all mine
+    //basic -> grants access to mine that aren't published, and all published
+    //*_others ->grants access to others that aren't private, all mine
     //*_private -> grants full access
     //frontend non-posty
     //like admin posty
@@ -1484,7 +1483,9 @@ abstract class EEM_Base extends EE_Base
      *  - a formatted string in the timezone and format currently set on the EE_Datetime_Field for the given field for
      *  NOW
      *  - or a unix timestamp (equivalent to time())
-     *
+     * Note: When requesting a formatted string, if the date or time format doesn't include seconds, for example,
+     * the time returned, because it uses that format, will also NOT include seconds. For this reason, if you want
+     * the time returned to be the current time down to the exact second, set $timestamp to true.
      * @since 4.6.x
      * @param string $field_name       The field the current time is needed for.
      * @param bool   $timestamp        True means to return a unix timestamp. Otherwise a
@@ -2893,13 +2894,17 @@ abstract class EEM_Base extends EE_Base
     protected function _prepare_value_or_use_default($field_obj, $fields_n_values)
     {
         //if this field doesn't allow nullable, don't allow it
-        if (! $field_obj->is_nullable()
+        if (
+            ! $field_obj->is_nullable()
             && (
-                ! isset($fields_n_values[$field_obj->get_name()]) || $fields_n_values[$field_obj->get_name()] === null)
+                ! isset($fields_n_values[$field_obj->get_name()])
+                || $fields_n_values[$field_obj->get_name()] === null
+            )
         ) {
             $fields_n_values[$field_obj->get_name()] = $field_obj->get_default_value();
         }
-        $unprepared_value = isset($fields_n_values[$field_obj->get_name()]) ? $fields_n_values[$field_obj->get_name()]
+        $unprepared_value = isset($fields_n_values[$field_obj->get_name()])
+            ? $fields_n_values[$field_obj->get_name()]
             : null;
         return $this->_prepare_value_for_use_in_db($unprepared_value, $field_obj);
     }
@@ -4705,12 +4710,12 @@ abstract class EEM_Base extends EE_Base
 
 
     /**
-     * Gets the actual table for the table alias
+     * Gets the table name (including $wpdb->prefix) for the table alias
      *
      * @param string $table_alias eg Event, Event_Meta, Registration, Transaction, but maybe
      *                            a table alias with a model chain prefix, like 'Venue__Event_Venue___Event_Meta'.
      *                            Either one works
-     * @return EE_Table_Base
+     * @return string
      */
     public function get_table_for_alias($table_alias)
     {

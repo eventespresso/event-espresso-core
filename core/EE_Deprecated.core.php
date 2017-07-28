@@ -1032,3 +1032,120 @@ add_filter(
 		);
 	}
 );
+add_filter(
+	'FHEE_EventEspresso_core_services_commands_attendee_CreateAttendeeCommandHandler__findExistingAttendee__existing_attendee',
+	function($existing_attendee, $registration, $attendee_data) {
+		if ( ! has_filter( 'FHEE_EE_Single_Page_Checkout__save_registration_items__find_existing_attendee' )) {
+			return $existing_attendee;
+		}
+		deprecated_espresso_action_or_filter_doing_it_wrong(
+			'FHEE_EE_Single_Page_Checkout__save_registration_items__find_existing_attendee',
+			'FHEE_EventEspresso_core_services_commands_attendee_CreateAttendeeCommandHandler__findExistingAttendee__existing_attendee',
+			'\EventEspresso\core\services\commands\attendee\CreateAttendeeCommandHandler::findExistingAttendee()',
+			'4.9.34',
+			'5.0.0',
+			'filter'
+		);
+		return apply_filters(
+            'FHEE_EE_Single_Page_Checkout__save_registration_items__find_existing_attendee',
+            $existing_attendee, $registration, $attendee_data
+        );
+	},
+    10,3
+);
+
+
+
+/**
+ * Class EE_Event_List_Query
+ *
+ * @deprecated 4.9.40
+ */
+class EE_Event_List_Query extends WP_Query
+{
+
+    private $title;
+
+    private $css_class;
+
+    private $category_slug;
+
+    /**
+     * EE_Event_List_Query constructor.
+     *
+     * @param array $args
+     */
+    public function __construct($args = array())
+    {
+        \EE_Error::doing_it_wrong(
+            __METHOD__,
+            __(
+                'Usage is deprecated. Please use \EventEspresso\core\domain\services\wp_queries\EventListQuery instead.',
+                'event_espresso'
+            ),
+            '4.9.27',
+            '5.0.0'
+        );
+        $this->title = isset($args['title']) ? $args['title'] : '';
+        $this->css_class = isset($args['css_class']) ? $args['css_class'] : '';
+        $this->category_slug = isset($args['category_slug']) ? $args['category_slug'] : '';
+        $limit = isset($args['limit']) && absint($args['limit']) ? $args['limit'] : 10;
+        // the current "page" we are viewing
+        $paged = max(1, get_query_var('paged'));
+        // Force these args
+        $args = array_merge(
+            $args, array(
+            'post_type'              => 'espresso_events',
+            'posts_per_page'         => $limit,
+            'update_post_term_cache' => false,
+            'update_post_meta_cache' => false,
+            'paged'                  => $paged,
+            'offset'                 => ($paged - 1) * $limit
+        )
+        );
+        // run the query
+        parent::__construct($args);
+    }
+
+
+
+    /**
+     * event_list_title
+     *
+     * @param string $event_list_title
+     * @return string
+     */
+    public function event_list_title($event_list_title = '')
+    {
+        if (! empty($this->title)) {
+            return $this->title;
+        }
+        return $event_list_title;
+    }
+
+
+
+    /**
+     * event_list_css
+     *
+     * @param string $event_list_css
+     * @return string
+     */
+    public function event_list_css($event_list_css = '')
+    {
+        $event_list_css .= ! empty($event_list_css)
+            ? ' '
+            : '';
+        $event_list_css .= ! empty($this->css_class)
+            ? $this->css_class
+            : '';
+        $event_list_css .= ! empty($event_list_css)
+            ? ' '
+            : '';
+        $event_list_css .= ! empty($this->category_slug)
+            ? $this->category_slug
+            : '';
+        return $event_list_css;
+    }
+
+}

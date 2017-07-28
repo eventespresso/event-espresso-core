@@ -1,4 +1,6 @@
 <?php
+
+use EventEspresso\core\interfaces\InterminableInterface;
 use EventEspresso\core\services\database\TableAnalysis;
 
 if ( ! defined('EVENT_ESPRESSO_VERSION')) {
@@ -24,7 +26,7 @@ define('EE_CAF_PAYMENT_METHODS', EE_CAFF_PATH . 'payment_methods' . DS);
  * @subpackage     /caffeinated/brewing_regular.php
  * @author         Darren Ethier
  */
-class EE_Brewing_Regular extends EE_BASE
+class EE_Brewing_Regular extends EE_BASE implements InterminableInterface
 {
 
     /**

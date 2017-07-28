@@ -198,6 +198,15 @@ trait MessagesAdmin
                 $number_in_set
             )
         );
+        $this->actor()->waitForElementVisible(
+            MessagesPage::messagesActivityListTableDeleteActionSelectorFor(
+                $message_type_label,
+                $message_status,
+                $messenger,
+                $context,
+                $number_in_set
+            )
+        );
         $this->actor()->click(
             MessagesPage::messagesActivityListTableDeleteActionSelectorFor(
                 $message_type_label,

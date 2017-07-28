@@ -1,4 +1,7 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) {
+<?php
+use EventEspresso\core\interfaces\ResettableInterface;
+
+if ( ! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
 
@@ -11,7 +14,7 @@
  * @subpackage     /helpers/
  * @author         Brent Christensen
  */
-class EEH_Activation
+class EEH_Activation implements ResettableInterface
 {
 
     /**
@@ -1562,7 +1565,7 @@ class EEH_Activation
                                 || ! $table->is_global()//not main site,but not global either. nuke it
                             )
                         ) {
-                            $tables[] = $table->get_table_name();
+                            $tables[$table->get_table_name()] = $table->get_table_name();
                         }
                     }
                 }
@@ -1579,7 +1582,7 @@ class EEH_Activation
             'esp_rule',
         );
         foreach ($tables_without_models as $table) {
-            $tables[] = $table;
+            $tables[$table] = $table;
         }
         return \EEH_Activation::getTableManager()->dropTables($tables);
     }

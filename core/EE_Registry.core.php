@@ -1,4 +1,7 @@
 <?php
+
+use EventEspresso\core\interfaces\InterminableInterface;
+use EventEspresso\core\interfaces\ResettableInterface;
 use EventEspresso\core\services\assets\Registry;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
@@ -13,7 +16,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  * @subpackage                core
  * @author                    Brent Christensen
  */
-class EE_Registry
+class EE_Registry implements ResettableInterface
 {
 
     /**
@@ -306,7 +309,8 @@ class EE_Registry
 
 
     /**
-     * @param mixed string | EED_Module $module
+     * @param $module
+     * @throws ReflectionException
      */
     public function add_module($module)
     {
@@ -317,7 +321,7 @@ class EE_Registry
             if ( ! class_exists('EE_Module_Request_Router')) {
                 $this->load_core('Module_Request_Router');
             }
-            $this->modules->{$module} = EE_Module_Request_Router::module_factory($module);
+            EE_Module_Request_Router::module_factory($module);
         }
     }
 
@@ -714,6 +718,9 @@ class EE_Registry
      */
     protected function _get_cached_class($class_name, $class_prefix = '')
     {
+        if ($class_name === 'EE_Registry') {
+            return $this;
+        }
         // have to specify something, but not anything that will conflict
         $class_abbreviation = isset($this->_class_abbreviations[ $class_name ])
             ? $this->_class_abbreviations[ $class_name ]
@@ -1139,7 +1146,7 @@ class EE_Registry
      */
     protected function _set_cached_class($class_obj, $class_name, $class_prefix = '', $from_db = false)
     {
-        if (empty($class_obj)) {
+        if ($class_name === 'EE_Registry' || empty($class_obj)) {
             return;
         }
         // return newly instantiated class
@@ -1278,23 +1285,64 @@ class EE_Registry
     public static function reset($hard = false, $reinstantiate = true, $reset_models = true)
     {
         $instance = self::instance();
-        EEH_Activation::reset();
-        //properties that get reset
         $instance->_cache_on = true;
-        $instance->CFG = EE_Config::reset($hard, $reinstantiate);
+        // reset some "special" classes
+        EEH_Activation::reset();
+        $instance->CFG = $instance->CFG->reset($hard, $reinstantiate);
         $instance->CART = null;
         $instance->MRM = null;
         $instance->AssetsRegistry = null;
         $instance->AssetsRegistry = $instance->create('EventEspresso\core\services\assets\Registry');
         //messages reset
         EED_Messages::reset();
-        if ($reset_models) {
-            foreach (array_keys($instance->non_abstract_db_models) as $model_name) {
-                $instance->reset_model($model_name);
+        //handle of objects cached on LIB
+        foreach (array('LIB', 'modules') as $cache) {
+            foreach ($instance->{$cache} as $class_name => $class) {
+                if (EE_Registry::_reset_and_unset_object($class, $reset_models)) {
+                    unset($instance->{$cache}->{$class_name});
+                }
             }
         }
-        $instance->LIB = new stdClass();
         return $instance;
+    }
+
+
+
+    /**
+     * if passed object implements ResettableInterface, then call it's reset() method
+     * if passed object implements InterminableInterface, then return false,
+     * to indicate that it should NOT be cleared from the Registry cache
+     *
+     * @param      $object
+     * @param bool $reset_models
+     * @return bool returns true if cached object should be unset
+     */
+    private static function _reset_and_unset_object($object, $reset_models)
+    {
+        if (! is_object($object)) {
+            // don't unset anything that's not an object
+            return false;
+        }
+        if ($object instanceof EED_Module) {
+            $object::reset();
+            // don't unset modules
+            return false;
+        }
+        if ($object instanceof ResettableInterface) {
+            if ($object instanceof EEM_Base) {
+                if ($reset_models) {
+                    $object->reset();
+                    return true;
+                }
+                return false;
+            }
+            $object->reset();
+            return true;
+        }
+        if ( ! $object instanceof InterminableInterface) {
+            return true;
+        }
+        return false;
     }
 
 
