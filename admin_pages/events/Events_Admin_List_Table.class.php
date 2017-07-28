@@ -35,8 +35,8 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
     protected function _set_properties()
     {
         $this->_wp_list_args = array(
-            'singular' => __('event', 'event_espresso'),
-            'plural'   => __('events', 'event_espresso'),
+            'singular' => esc_html__('event', 'event_espresso'),
+            'plural'   => esc_html__('events', 'event_espresso'),
             'ajax'     => true, //for now
             'screen'   => $this->_admin_page->get_current_screen()->id,
         );
@@ -44,16 +44,16 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
 
         $this->_columns = array(
             'cb'              => '<input type="checkbox" />',
-            'id'              => __('ID', 'event_espresso'),
-            'name'            => __('Name', 'event_espresso'),
-            'author'          => __('Author', 'event_espresso'),
-            'venue'           => __('Venue', 'event_espresso'),
-            'start_date_time' => __('Event Start', 'event_espresso'),
-            'reg_begins'      => __('On Sale', 'event_espresso'),
+            'id'              => esc_html__('ID', 'event_espresso'),
+            'name'            => esc_html__('Name', 'event_espresso'),
+            'author'          => esc_html__('Author', 'event_espresso'),
+            'venue'           => esc_html__('Venue', 'event_espresso'),
+            'start_date_time' => esc_html__('Event Start', 'event_espresso'),
+            'reg_begins'      => esc_html__('On Sale', 'event_espresso'),
             'attendees'       => '<span class="dashicons dashicons-groups ee-icon-color-ee-green ee-icon-size-20">'
                                  . '</span>',
-            //'tkts_sold' => __('Tickets Sold', 'event_espresso'),
-            'actions'         => __('Actions', 'event_espresso'),
+            //'tkts_sold' => esc_html__('Tickets Sold', 'event_espresso'),
+            'actions'         => esc_html__('Actions', 'event_espresso'),
         );
 
 
@@ -222,7 +222,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
             $edit_link       = EE_Admin_Page::add_query_args_and_nonce($edit_query_args, EVENTS_ADMIN_URL);
             $actions['edit'] = '<a href="' . $edit_link . '"'
                                . ' title="' . esc_attr__('Edit Event', 'event_espresso') . '">'
-                               . __('Edit', 'event_espresso')
+                               . esc_html__('Edit', 'event_espresso')
                                . '</a>';
 
         }
@@ -239,7 +239,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
             $attendees_link       = EE_Admin_Page::add_query_args_and_nonce($attendees_query_args, REG_ADMIN_URL);
             $actions['attendees'] = '<a href="' . $attendees_link . '"'
                                     . ' title="' . esc_attr__('View Registrations', 'event_espresso') . '">'
-                                    . __('Registrations', 'event_espresso')
+                                    . esc_html__('Registrations', 'event_espresso')
                                     . '</a>';
         }
 
@@ -292,7 +292,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
 
         $actions['view'] = '<a href="' . $view_link . '"'
                            . ' title="' . esc_attr__('View Event', 'event_espresso') . '">'
-                           . __('View', 'event_espresso')
+                           . esc_html__('View', 'event_espresso')
                            . '</a>';
 
         switch ($item->get('status')) {
@@ -305,7 +305,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
                     $actions['restore_from_trash'] = '<a href="' . $restore_event_link . '"'
                                                      . ' title="' . esc_attr__('Restore from Trash', 'event_espresso')
                                                      . '">'
-                                                     . __('Restore from Trash', 'event_espresso')
+                                                     . esc_html__('Restore from Trash', 'event_espresso')
                                                      . '</a>';
                 }
                 if ($item->count_related('Registration') === 0
@@ -316,7 +316,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
                     )) {
                     $actions['delete'] = '<a href="' . $delete_event_link . '"'
                                          . ' title="' . esc_attr__('Delete Permanently', 'event_espresso') . '">'
-                                         . __('Delete Permanently', 'event_espresso')
+                                         . esc_html__('Delete Permanently', 'event_espresso')
                                          . '</a>';
                 }
                 break;
@@ -328,7 +328,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
                 )) {
                     $actions['move to trash'] = '<a href="' . $trash_event_link . '"'
                                                 . ' title="' . esc_attr__('Trash Event', 'event_espresso') . '">'
-                                                . __('Trash', 'event_espresso')
+                                                . esc_html__('Trash', 'event_espresso')
                                                 . '</a>';
                 }
         }
@@ -379,7 +379,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
     {
         echo ! empty($this->_dtt)
             ? $this->_dtt->get_i18n_datetime('DTT_EVT_start')
-            : __('No Date was saved for this Event', 'event_espresso');
+            : esc_html__('No Date was saved for this Event', 'event_espresso');
         //display in user's timezone?
         echo ! empty($this->_dtt)
             ? $this->_dtt->display_in_my_timezone(
@@ -401,7 +401,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
         $reg_start = $item->get_ticket_with_earliest_start_time();
         echo ! empty($reg_start)
             ? $reg_start->get_i18n_datetime('TKT_start_date')
-            : __('No Tickets have been setup for this Event', 'event_espresso');
+            : esc_html__('No Tickets have been setup for this Event', 'event_espresso');
         //display in user's timezone?
         echo ! empty($reg_start)
             ? $reg_start->display_in_my_timezone(
