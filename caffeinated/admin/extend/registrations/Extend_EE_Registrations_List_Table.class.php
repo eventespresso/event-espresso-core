@@ -35,8 +35,8 @@ class Extend_EE_Registrations_List_Table extends EE_Registrations_List_Table
                   'The Check-In List allows you to easily toggle check-in status for this event',
                   'event_espresso'
               )
-              . '">' . __('View Check-ins', 'event_espresso') . '</a>'
-            : __('View Check-ins', 'event_espresso');
+              . '">' .  esc_html__('View Check-ins', 'event_espresso') . '</a>'
+            :  esc_html__('View Check-ins', 'event_espresso');
 
         $view_lnk_url = EE_Admin_Page::add_query_args_and_nonce(array(
             'action' => 'view_transaction',
@@ -116,7 +116,7 @@ class Extend_EE_Registrations_List_Table extends EE_Registrations_List_Table
                                                    ),
                                                    $datetime->name()
                                                ) . '">'
-                                               . __('View Registrations', 'event_espresso')
+                                               . esc_html__('View Registrations', 'event_espresso')
                                                . '</a>',
                 )
             );
