@@ -228,10 +228,15 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
         }
 
         if (EE_Registry::instance()->CAP->current_user_can(
-            'ee_read_registration',
+            'ee_read_event',
             'espresso_registrations_view_registration',
             $item->ID()
-        )) {
+        )
+            && EE_Registry::instance()->CAP->current_user_can(
+                'ee_read_registrations',
+                'espresso_registrations_view_registration'
+            )
+        ) {
             $attendees_query_args = array(
                 'action'   => 'default',
                 'event_id' => $item->ID(),
@@ -428,10 +433,14 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
         $attendees_link       = EE_Admin_Page::add_query_args_and_nonce($attendees_query_args, REG_ADMIN_URL);
         $registered_attendees = EEM_Registration::instance()->get_event_registration_count($item->ID());
         return EE_Registry::instance()->CAP->current_user_can(
-            'ee_read_registration',
+            'ee_read_event',
             'espresso_registrations_view_registration',
             $item->ID()
         )
+            && EE_Registry::instance()->CAP->current_user_can(
+                'ee_read_registrations',
+                'espresso_registrations_view_registration'
+            )
             ? '<a href="' . $attendees_link . '">' . $registered_attendees . '</a>'
             : $registered_attendees;
     }
@@ -484,10 +493,15 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
         }
 
         if (EE_Registry::instance()->CAP->current_user_can(
-            'ee_read_registration',
+            'ee_read_event',
             'espresso_registrations_view_registration',
             $item->ID()
-        )) {
+        )
+            && EE_Registry::instance()->CAP->current_user_can(
+                'ee_read_registrations',
+                'espresso_registrations_view_registration'
+            )
+        ) {
             $attendees_query_args = array(
                 'action'   => 'default',
                 'event_id' => $item->ID(),
