@@ -398,7 +398,13 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
         /** checkbox/lock **/
         $transaction = $item->get_first_related('Transaction');
         $payment_count = $transaction instanceof EE_Transaction ? $transaction->count_related('Payment') : 0;
-        return $payment_count > 0 ? sprintf('<input type="checkbox" name="_REG_ID[]" value="%1$s" />', $item->ID())
+        return $payment_count > 0
+            ||  ! EE_Registry::instance()->CAP->current_user_can(
+                'ee_edit_registration',
+                'registration_list_table_checkbox_input',
+                $item->ID()
+            )
+            ? sprintf('<input type="checkbox" name="_REG_ID[]" value="%1$s" />', $item->ID())
                                     . '<span class="ee-lock-icon"></span>'
             : sprintf('<input type="checkbox" name="_REG_ID[]" value="%1$s" />', $item->ID());
     }
