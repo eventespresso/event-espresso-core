@@ -231,7 +231,7 @@ final class EE_Capabilities extends EE_Base
                 ),
                 new EE_Meta_Capability_Map_Read(
                     'ee_read_registration',
-                    array('Registration', '', '', 'ee_edit_others_registrations')
+                    array('Registration', '', 'ee_read_others_registrations', '')
                 ),
                 new EE_Meta_Capability_Map_Read(
                     'ee_read_checkin',
@@ -1454,12 +1454,10 @@ class EE_Meta_Capability_Map_Registration_Form_Cap extends EE_Meta_Capability_Ma
      *
      * @since 4.5.0
      * @see   wp-includes/capabilities.php
-     *
      * @param array  $caps    actual users capabilities
      * @param string $cap     initial capability name that is being checked (the "map" key)
      * @param int    $user_id The user id
      * @param array  $args    Adds context to the cap. Typically the object ID.
-     *
      * @return array   actual users capabilities
      */
     protected function _map_meta_caps($caps, $cap, $user_id, $args)
@@ -1478,7 +1476,7 @@ class EE_Meta_Capability_Map_Registration_Form_Cap extends EE_Meta_Capability_Ma
             $caps[] = 'do_not_allow';
             return $caps;
         }
-        $caps[] = $cap . 's';
+        $caps[]    = $cap . 's';
         $is_system = $obj instanceof EE_Question_Group ? $obj->system_group() : false;
         $is_system = $obj instanceof EE_Question ? $obj->is_system_question() : $is_system;
         if ($is_system) {
@@ -1486,6 +1484,4 @@ class EE_Meta_Capability_Map_Registration_Form_Cap extends EE_Meta_Capability_Ma
         }
         return $caps;
     }
-
-
 }
