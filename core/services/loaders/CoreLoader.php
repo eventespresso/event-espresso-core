@@ -4,7 +4,6 @@ namespace EventEspresso\core\services\loaders;
 
 use EE_Error;
 use EE_Registry;
-use EventEspresso\core\services\container\CoffeeMaker;
 use EventEspresso\core\services\container\CoffeeShop;
 use EventEspresso\core\services\container\exceptions\ServiceNotFoundException;
 use InvalidArgumentException;
@@ -56,19 +55,15 @@ class CoreLoader implements LoaderDecoratorInterface
     /**
      * @param string $fqcn
      * @param array  $arguments
-     * @param bool   $shared
      * @return mixed
      * @throws EE_Error
      * @throws ServiceNotFoundException
      */
-    public function load($fqcn, $arguments = array(), $shared = true)
+    public function load($fqcn, $arguments = array())
     {
-        if($this->generator instanceof EE_Registry) {
-            return $this->generator->create($fqcn, $arguments, $shared);
-        }
-        $shared = $shared ? CoffeeMaker::BREW_SHARED : CoffeeMaker::BREW_NEW;
-        return $this->generator->brew($fqcn, $arguments, $shared);
-
+        return $this->generator instanceof EE_Registry
+            ? $this->generator->create($fqcn, $arguments)
+            : $this->generator->brew($fqcn, $arguments);
     }
 
 

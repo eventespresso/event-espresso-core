@@ -12,10 +12,9 @@ interface LoaderDecoratorInterface
     /**
      * @param string $fqcn
      * @param array  $arguments
-     * @param bool $shared
      * @return mixed
      */
-    public function load($fqcn, $arguments = array(), $shared = true);
+    public function load($fqcn, $arguments = array());
 
 
 
