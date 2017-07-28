@@ -1218,7 +1218,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
             global $current_user;
             // create new datetimes, default = 1
             $datetimes = isset($options['datetimes']) ? $options['datetimes'] : 1;
-            $event = $this->new_model_obj_with_dependencies('Event', array('EVT_wp_user' => $current_user->ID()));
+            $event = $this->new_model_obj_with_dependencies('Event', array('EVT_wp_user' => $current_user->ID));
             for ($i = 0; $i <= $datetimes; $i++) {
                 $ddt = $this->new_model_obj_with_dependencies('Datetime', array('EVT_ID' => $event->ID()));
                 $ticket->_add_relation_to($ddt, 'Datetime');
