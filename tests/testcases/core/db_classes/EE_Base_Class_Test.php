@@ -971,6 +971,25 @@ class EE_Base_Class_Test extends EE_UnitTestCase
     /**
      * @group 10751
      */
+    public function test_automatically_set_timezone_on_related_model_obj__no_model_reset()
+    {
+        $this->markTestSkipped( 'Known bug that this test doesn\'t work' );
+        //this is basically taken from https://github.com/eventespresso/event-espresso-core/blob/master/docs/F--Datetime-System/dates-times-timezones-in-models.md
+        $dtt = $this->new_model_obj_with_dependencies('Datetime');
+        $event = EEM_Event::instance()->get_one_by_ID($dtt->get('EVT_ID'));
+        $event->set_timezone('Europe/London');
+        $dtt = $event->get_first_related('Datetime');
+        //first check we haven't accidentally changed the event's timezone
+        $this->assertEquals( 'Europe/London', $event->get_timezone());
+        //then verify we successfully swapped the datetime's timezone
+        $this->assertEquals( 'Europe/London', $dtt->get_timezone());
+    }
+
+
+
+    /**
+     * @group 10751
+     */
     public function test_automatically_set_timezone_on_related_model_obj()
     {
         //this is basically taken from https://github.com/eventespresso/event-espresso-core/blob/master/docs/F--Datetime-System/dates-times-timezones-in-models.md
