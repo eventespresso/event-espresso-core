@@ -125,6 +125,9 @@ class EE_UnitTestCase extends WP_UnitTestCase
                 return $WP_User->allcaps;
             }, 10, 4);
         }
+        //tell EE_Registry to do a hard reset
+        add_filter( 'FHEE__EE_Registry__reset__hard', '__return_true');
+        do_action('AHEE__EventEspresso_core_services_loaders_CachingLoader__resetCache');
     }
 
 
@@ -170,9 +173,6 @@ class EE_UnitTestCase extends WP_UnitTestCase
         }
         // turn caching back on for any loaders in use
         remove_all_filters('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache');
-        //tell EE_Registry to do a hard reset
-        add_filter( 'FHEE__EE_Registry__reset__hard', '__return_true');
-        do_action('AHEE__EventEspresso_core_services_loaders_CachingLoader__resetCache');
     }
 
     /**
