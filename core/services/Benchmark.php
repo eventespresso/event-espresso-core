@@ -131,12 +131,28 @@ class Benchmark
 
 
     /**
-     * displayResults
+     * will display the benchmarking results at shutdown
      *
-     * @param bool $echo
+     * @param string $filepath
+     * @param bool   $append
+     * @return void
+     */
+    public static function writeResultsAtShutdown($filepath = '', $append = true)
+    {
+        add_action(
+            'shutdown',
+            function () use ($filepath, $append) {
+                Benchmark::writeResultsToFile($filepath, $append);
+            }
+        );
+    }
+
+
+
+    /**
      * @return string
      */
-    public static function displayResults($echo = true)
+    private static function generateResults()
     {
         if (Benchmark::doNotRun()) {
             return '';
@@ -174,11 +190,44 @@ class Benchmark
                   . '<h4>BENCHMARKING</h4>'
                   . $output
                   . '</div>';
-        if ($echo) {
-            echo $output;
-            return '';
-        }
         return $output;
+    }
+
+
+
+    /**
+     * @param bool $echo
+     * @return string
+     */
+    public static function displayResults($echo = true)
+    {
+        $results = Benchmark::generateResults();
+        if ($echo) {
+            echo $results;
+            $results = '';
+        }
+        return $results;
+    }
+
+
+
+    /**
+     * @param string $filepath
+     * @param bool   $append
+     */
+    public static function writeResultsToFile($filepath = '', $append = true)
+    {
+        $filepath = ! empty($filepath) && is_readable(dirname($filepath))
+            ? $filepath
+            : '';
+        if( empty($filepath)) {
+            $filepath = EVENT_ESPRESSO_UPLOAD_DIR . 'logs/benchmarking-' . date('Y-m-d') . '.html';
+        }
+        file_put_contents(
+            $filepath,
+            "\n" . date('Y-m-d H:i:s') . Benchmark::generateResults(),
+            $append ? FILE_APPEND | LOCK_EX : LOCK_EX
+        );
     }
 
 
