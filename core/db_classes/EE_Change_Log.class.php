@@ -1,19 +1,8 @@
 <?php
 
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
+defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
 
 /**
- * Event Espresso
- * Event Registration and Management Plugin for WordPress
- * @ package            Event Espresso
- * @ author            Seth Shoultes
- * @ copyright        (c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license            http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link                    http://www.eventespresso.com
- * @ version            4.3
- * ------------------------------------------------------------------------
  * EE_Change_Log
  *
  * @package               Event Espresso
@@ -30,7 +19,8 @@ class EE_Change_Log extends EE_Base_Class
      *                                        used.)
      * @param array  $date_formats            incoming date_formats in an array where the first value is the
      *                                        date_format and the second value is the time format
-     * @return EE_Attendee
+     * @return EE_Change_Log
+     * @throws EE_Error
      */
     public static function new_instance($props_n_values = array(), $timezone = null, $date_formats = array())
     {
@@ -43,7 +33,7 @@ class EE_Change_Log extends EE_Base_Class
      * @param array  $props_n_values  incoming values from the database
      * @param string $timezone        incoming timezone as set by the model.  If not set the timezone for
      *                                the website will be used.
-     * @return EE_Attendee
+     * @return EE_Change_Log
      */
     public static function new_instance_from_db($props_n_values = array(), $timezone = null)
     {
@@ -54,6 +44,7 @@ class EE_Change_Log extends EE_Base_Class
      * Gets message
      *
      * @return mixed
+     * @throws EE_Error
      */
     function message()
     {
@@ -64,6 +55,7 @@ class EE_Change_Log extends EE_Base_Class
      * Sets message
      *
      * @param mixed $message
+     * @throws EE_Error
      */
     function set_message($message)
     {
@@ -74,6 +66,7 @@ class EE_Change_Log extends EE_Base_Class
      * Gets time
      *
      * @return string
+     * @throws EE_Error
      */
     function time()
     {
@@ -84,6 +77,7 @@ class EE_Change_Log extends EE_Base_Class
      * Sets time
      *
      * @param string $time
+     * @throws EE_Error
      */
     function set_time($time)
     {
@@ -94,6 +88,7 @@ class EE_Change_Log extends EE_Base_Class
      * Gets log_type
      *
      * @return string
+     * @throws EE_Error
      */
     function log_type()
     {
@@ -104,6 +99,7 @@ class EE_Change_Log extends EE_Base_Class
      * Sets log_type
      *
      * @param string $log_type
+     * @throws EE_Error
      */
     function set_log_type($log_type)
     {
@@ -114,6 +110,7 @@ class EE_Change_Log extends EE_Base_Class
      * Gets type of the model object related to this log
      *
      * @return string
+     * @throws EE_Error
      */
     function OBJ_type()
     {
@@ -124,6 +121,7 @@ class EE_Change_Log extends EE_Base_Class
      * Sets type
      *
      * @param string $type
+     * @throws EE_Error
      */
     function set_OBJ_type($type)
     {
@@ -134,6 +132,7 @@ class EE_Change_Log extends EE_Base_Class
      * Gets OBJ_ID (the ID of the item related to this log)
      *
      * @return mixed
+     * @throws EE_Error
      */
     function OBJ_ID()
     {
@@ -144,6 +143,7 @@ class EE_Change_Log extends EE_Base_Class
      * Sets OBJ_ID
      *
      * @param mixed $OBJ_ID
+     * @throws EE_Error
      */
     function set_OBJ_ID($OBJ_ID)
     {
@@ -154,6 +154,7 @@ class EE_Change_Log extends EE_Base_Class
      * Gets wp_user
      *
      * @return int
+     * @throws EE_Error
      */
     function wp_user()
     {
@@ -164,6 +165,7 @@ class EE_Change_Log extends EE_Base_Class
      * Sets wp_user
      *
      * @param int $wp_user_id
+     * @throws EE_Error
      */
     function set_wp_user($wp_user_id)
     {
@@ -174,6 +176,7 @@ class EE_Change_Log extends EE_Base_Class
      * Gets the model object attached to this log
      *
      * @return EE_Base_Class
+     * @throws EE_Error
      */
     function object()
     {
@@ -193,7 +196,8 @@ class EE_Change_Log extends EE_Base_Class
      *
      * @param EE_Base_Class $object
      * @param boolean       $save
-     * @return boolean if $save=true, NULL is $save=false
+     * @return bool if $save=true, NULL is $save=false
+     * @throws EE_Error
      */
     function set_object($object, $save = true)
     {
@@ -211,5 +215,3 @@ class EE_Change_Log extends EE_Base_Class
         }
     }
 }
-
-// End of file EE_Change_Log.class.class.php
