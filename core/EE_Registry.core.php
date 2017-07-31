@@ -616,10 +616,14 @@ class EE_Registry implements ResettableInterface
         // obtain the loader method from the dependency map
         $loader = $this->_dependency_map->class_loader($class_name);
         // instantiate the requested object
-        $class_obj = $loader && method_exists($this, $loader)
-            ? $this->{$loader}($class_name, $arguments)
-            : $this->_create_object($class_name, $arguments, $addon, $from_db);
-        if ($this->_cache_on && $cache) {
+        if ($loader instanceof Closure) {
+            $class_obj = $loader($arguments);
+        } else if ($loader && method_exists($this, $loader)) {
+            $class_obj = $this->{$loader}($class_name, $arguments);
+        } else {
+            $class_obj = $this->_create_object($class_name, $arguments, $addon, $from_db);
+        }
+        if (($this->_cache_on && $cache) || $this->get_class_abbreviation($class_name, '')) {
             // save it for later... kinda like gum  { : $
             $this->_set_cached_class($class_obj, $class_name, $addon, $from_db);
         }
@@ -705,6 +709,17 @@ class EE_Registry implements ResettableInterface
 
 
 
+    /**
+     * @param string $class_name
+     * @param string $default have to specify something, but not anything that will conflict
+     * @return mixed|string
+     */
+    protected function get_class_abbreviation($class_name, $default = 'FANCY_BATMAN_PANTS')
+    {
+        return isset($this->_class_abbreviations[$class_name])
+            ? $this->_class_abbreviations[$class_name]
+            : $default;
+    }
 
     /**
      * _get_cached_class
@@ -725,10 +740,7 @@ class EE_Registry implements ResettableInterface
         if ($class_name === 'EE_Registry') {
             return $this;
         }
-        // have to specify something, but not anything that will conflict
-        $class_abbreviation = isset($this->_class_abbreviations[ $class_name ])
-            ? $this->_class_abbreviations[ $class_name ]
-            : 'FANCY_BATMAN_PANTS';
+        $class_abbreviation = $this->get_class_abbreviation($class_name);
         $class_name = str_replace('\\', '_', $class_name);
         // check if class has already been loaded, and return it if it has been
         if (isset($this->{$class_abbreviation}) && ! is_null($this->{$class_abbreviation})) {
@@ -757,10 +769,7 @@ class EE_Registry implements ResettableInterface
      */
     public function clear_cached_class($class_name, $addon = false)
     {
-        // have to specify something, but not anything that will conflict
-        $class_abbreviation = isset($this->_class_abbreviations[ $class_name ])
-            ? $this->_class_abbreviations[ $class_name ]
-            : 'FANCY_BATMAN_PANTS';
+        $class_abbreviation = $this->get_class_abbreviation($class_name);
         $class_name = str_replace('\\', '_', $class_name);
         // check if class has already been loaded, and return it if it has been
         if (isset($this->{$class_abbreviation}) && ! is_null($this->{$class_abbreviation})) {
@@ -1154,8 +1163,8 @@ class EE_Registry implements ResettableInterface
             return;
         }
         // return newly instantiated class
-        if (isset($this->_class_abbreviations[$class_name])) {
-            $class_abbreviation = $this->_class_abbreviations[$class_name];
+        $class_abbreviation = $this->get_class_abbreviation($class_name, '');
+        if ($class_abbreviation) {
             $this->{$class_abbreviation} = $class_obj;
             return;
         }
