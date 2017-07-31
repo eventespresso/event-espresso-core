@@ -218,4 +218,40 @@ class EEM_Change_Log extends EEM_Base
             )
         );
     }
+
+
+    /**
+     * Returns the map of type to pretty label for identifiers used for `LOG_type`.  Client code can register their own
+     * map vai the given filter.
+     *
+     * @return array
+     */
+    public static function get_pretty_label_map_for_registered_types()
+    {
+        return apply_filters(
+            'FHEE__EEM_Change_Log__get_pretty_label_map_for_registered_types',
+            array(
+                self::type_create=>  esc_html__("Create", "event_espresso"),
+                self::type_update=>  esc_html__("Update", "event_espresso"),
+                self::type_delete => esc_html__("Delete", "event_espresso"),
+                self::type_debug=>  esc_html__("Debug", "event_espresso"),
+                self::type_error=>  esc_html__("Error", "event_espresso"),
+                self::type_gateway=> esc_html__("Gateway Interaction (IPN or Direct Payment)", 'event_espresso')
+            )
+        );
+    }
+
+
+    /**
+     * Return the pretty (localized) label for the given log type identifier.
+     * @param string $type_identifier
+     * @return string
+     */
+    public static function get_pretty_label_for_type($type_identifier)
+    {
+        $type_identifier_map = self::get_pretty_label_map_for_registered_types();
+        return isset($type_identifier_map[$type_identifier])
+            ? $type_identifier_map[$type_identifier]
+            : esc_html__('Unknown Log Type', 'event_espresso');
+    }
 }
