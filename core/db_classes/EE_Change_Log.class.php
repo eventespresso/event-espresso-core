@@ -92,7 +92,7 @@ class EE_Change_Log extends EE_Base_Class
      */
     public function log_type()
     {
-        return $this->get('LOG_log_type');
+        return $this->get('LOG_type');
     }
 
 
@@ -114,7 +114,7 @@ class EE_Change_Log extends EE_Base_Class
      */
     public function set_log_type($log_type)
     {
-        $this->set('LOG_log_type', $log_type);
+        $this->set('LOG_type', $log_type);
     }
 
     /**
