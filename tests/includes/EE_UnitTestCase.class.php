@@ -110,9 +110,6 @@ class EE_UnitTestCase extends WP_UnitTestCase
         add_filter('FHEE__EEH_Activation__add_column_if_it_doesnt_exist__short_circuit', '__return_true');
         add_filter('FHEE__EEH_Activation__drop_index__short_circuit', '__return_true');
 
-        // turn off caching for any loaders in use
-        add_filter('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache', '__return_true');
-
         // load factories
         EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_TESTS_DIR . 'includes' . DS . 'factories');
         $this->factory = new EE_UnitTest_Factory();
@@ -135,6 +132,8 @@ class EE_UnitTestCase extends WP_UnitTestCase
         //tell EE_Registry to do a hard reset
         add_filter( 'FHEE__EE_Registry__reset__hard', '__return_true');
         do_action('AHEE__EventEspresso_core_services_loaders_CachingLoader__resetCache');
+        // turn off caching for any loaders in use during tests
+        add_filter('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache', '__return_true');
     }
 
 
