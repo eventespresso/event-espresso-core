@@ -749,33 +749,43 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             'batch_send_messages'
         );
         /** setup reg status bulk actions **/
-        $def_reg_status_actions['approve_registrations'] = __('Approve Registrations', 'event_espresso');
+        $def_reg_status_actions['approve_registrations'] = esc_html__('Approve Registrations', 'event_espresso');
         if ($can_send && in_array($match_array['approve_registrations'], $active_mts, true)) {
-                $def_reg_status_actions['approve_and_notify_registrations'] = __('Approve and Notify Registrations',
-                    'event_espresso');
+                $def_reg_status_actions['approve_and_notify_registrations'] = esc_html__(
+                    'Approve and Notify Registrations',
+                    'event_espresso'
+                );
         }
-        $def_reg_status_actions['decline_registrations'] = __('Decline Registrations', 'event_espresso');
+        $def_reg_status_actions['decline_registrations'] = esc_html__('Decline Registrations', 'event_espresso');
         if ($can_send && in_array($match_array['decline_registrations'], $active_mts, true)) {
-                $def_reg_status_actions['decline_and_notify_registrations'] = __('Decline and Notify Registrations',
-                    'event_espresso');
+                $def_reg_status_actions['decline_and_notify_registrations'] = esc_html__(
+                    'Decline and Notify Registrations',
+                    'event_espresso'
+                );
         }
-        $def_reg_status_actions['pending_registrations'] = __('Set Registrations to Pending Payment', 'event_espresso');
+        $def_reg_status_actions['pending_registrations'] = esc_html__(
+            'Set Registrations to Pending Payment',
+            'event_espresso'
+        );
         if ($can_send && in_array($match_array['pending_registrations'], $active_mts, true)) {
-                $def_reg_status_actions['pending_and_notify_registrations'] = __(
+                $def_reg_status_actions['pending_and_notify_registrations'] = esc_html__(
                     'Set Registrations to Pending Payment and Notify',
                     'event_espresso'
                 );
         }
-        $def_reg_status_actions['no_approve_registrations'] = __('Set Registrations to Not Approved', 'event_espresso');
+        $def_reg_status_actions['no_approve_registrations'] = esc_html__(
+            'Set Registrations to Not Approved',
+            'event_espresso'
+        );
         if ($can_send && in_array($match_array['no_approve_registrations'], $active_mts, true)) {
-                $def_reg_status_actions['no_approve_and_notify_registrations'] = __(
+                $def_reg_status_actions['no_approve_and_notify_registrations'] = esc_html__(
                     'Set Registrations to Not Approved and Notify',
                     'event_espresso'
                 );
         }
-        $def_reg_status_actions['cancel_registrations'] = __('Cancel Registrations', 'event_espresso');
+        $def_reg_status_actions['cancel_registrations'] = esc_html__('Cancel Registrations', 'event_espresso');
         if ($can_send && in_array($match_array['cancel_registrations'], $active_mts, true)) {
-                $def_reg_status_actions['cancel_and_notify_registrations'] = __(
+                $def_reg_status_actions['cancel_and_notify_registrations'] = esc_html__(
                     'Cancel Registrations and Notify',
                     'event_espresso'
                 );
