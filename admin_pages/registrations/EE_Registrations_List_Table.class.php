@@ -404,9 +404,9 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
                 'registration_list_table_checkbox_input',
                 $item->ID()
             )
-            ? sprintf('<input type="checkbox" name="_REG_ID[]" value="%1$s" />', $item->ID())
+            ? sprintf('<input type="checkbox" name="_REG_ID[]" value="%1$d" />', $item->ID())
                                     . '<span class="ee-lock-icon"></span>'
-            : sprintf('<input type="checkbox" name="_REG_ID[]" value="%1$s" />', $item->ID());
+            : sprintf('<input type="checkbox" name="_REG_ID[]" value="%1$d" />', $item->ID());
     }
 
 
