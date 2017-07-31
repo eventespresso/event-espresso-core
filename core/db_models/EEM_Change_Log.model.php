@@ -59,49 +59,49 @@ class EEM_Change_Log extends EEM_Base
     protected function __construct($timezone = null)
     {
         global $current_user;
-        $this->singular_item       = __('Log', 'event_espresso');
-        $this->plural_item         = __('Logs', 'event_espresso');
+        $this->singular_item       = esc_html__('Log', 'event_espresso');
+        $this->plural_item         = esc_html__('Logs', 'event_espresso');
         $this->_tables             = array(
             'Log' => new EE_Primary_Table('esp_log', 'LOG_ID'),
         );
         $models_this_can_attach_to = array_keys(EE_Registry::instance()->non_abstract_db_models);
         $this->_fields             = array(
             'Log' => array(
-                'LOG_ID'      => new EE_Primary_Key_Int_Field('LOG_ID', __('Log ID', 'event_espresso')),
+                'LOG_ID'      => new EE_Primary_Key_Int_Field('LOG_ID', esc_html__('Log ID', 'event_espresso')),
                 'LOG_time'    => new EE_Datetime_Field(
                     'LOG_time',
-                    __("Log Time", 'event_espresso'),
+                    esc_html__("Log Time", 'event_espresso'),
                     false,
                     EE_Datetime_Field::now
                 ),
                 'OBJ_ID'      => new EE_Foreign_Key_String_Field(
                     'OBJ_ID',
-                    __("Object ID (int or string)", 'event_espresso'),
+                    esc_html__("Object ID (int or string)", 'event_espresso'),
                     true,
                     null,
                     $models_this_can_attach_to
                 ),
                 'OBJ_type'    => new EE_Any_Foreign_Model_Name_Field(
                     'OBJ_type',
-                    __("Object Type", 'event_espresso'),
+                    esc_html__("Object Type", 'event_espresso'),
                     true,
                     null,
                     $models_this_can_attach_to
                 ),
                 'LOG_type'    => new EE_Plain_Text_Field(
                     'LOG_type',
-                    __("Type of log entry", "event_espresso"),
+                    esc_html__("Type of log entry", "event_espresso"),
                     false,
                     self::type_debug
                 ),
                 'LOG_message' => new EE_Maybe_Serialized_Text_Field(
                     'LOG_message',
-                    __("Log Message (body)", 'event_espresso'),
+                    esc_html__("Log Message (body)", 'event_espresso'),
                     true
                 ),
                 'LOG_wp_user' => new EE_WP_User_Field(
                     'LOG_wp_user',
-                    __("User who was logged in while this occurred", 'event_espresso'),
+                    esc_html__("User who was logged in while this occurred", 'event_espresso'),
                     true
                 ),
             ),
@@ -166,7 +166,7 @@ class EEM_Change_Log extends EEM_Base
         if (! EE_Registry::instance()->is_model_name($related_obj_type)) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         "'%s' is not a model name. A model name must be provided when making a gateway log. Eg, 'Payment', 'Payment_Method', etc",
                         "event_espresso"
                     ),
