@@ -110,15 +110,15 @@ class CachingLoader extends LoaderDecorator
                 $this
             )
         ){
+            // even though $shared might be true, caching should be bypassed for whatever reason,
+            // so we don't want the core loader to cache anything, therefore caching is turned off
             return $this->loader->load($fqcn, $arguments, false);
         }
         $identifier = md5($fqcn . serialize($arguments));
         if($this->cache->has($identifier)){
             return $this->cache->get($identifier);
         }
-        // even though $shared might be true, we don't want the core loader to  cache anything
-        // so we're  turning caching off, because  we will handle it here
-        $object = $this->loader->load($fqcn, $arguments, false);
+        $object = $this->loader->load($fqcn, $arguments, $shared);
         $this->cache->add($object, $identifier);
         return $object;
     }
