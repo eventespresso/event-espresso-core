@@ -1903,10 +1903,20 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
 
     /**
      * Callback for bulk action routes.
+     * Note: although we could just register the singular route callbacks for each bulk action route as well, this
+     * method was chosen so there is one central place all the registration status bulk actions are going through.
+     * Potentially, this provides an easier place to locate logic that is specific to these bulk actions (as opposed to
+     * when an action is happening on just a single registration).
      * @param      $action
      * @param bool $notify
      */
     protected function bulk_action_on_registrations($action, $notify = false) {
+        do_action(
+            'AHEE__Registrations_Admin_Page__bulk_action_on_registrations__before_execution',
+            $this,
+            $action,
+            $notify
+        );
         $method = $action . '_registration';
         if (method_exists($this, $method)) {
             $this->$method($notify);
