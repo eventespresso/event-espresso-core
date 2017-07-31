@@ -95,6 +95,17 @@ class EE_Change_Log extends EE_Base_Class
         return $this->get('LOG_log_type');
     }
 
+
+    /**
+     * Return the localized log type label.
+     * @return string
+     * @throws EE_Error
+     */
+    public function log_type_label()
+    {
+        return EEM_Change_Log::get_pretty_label_for_type($this->log_type());
+    }
+
     /**
      * Sets log_type
      *
