@@ -82,15 +82,7 @@ class EEM_Change_Log extends EEM_Base{
 				'LOG_time'=>new EE_Datetime_Field('LOG_time', __("Log Time", 'event_espresso'), false, EE_Datetime_Field::now ),
 				'OBJ_ID'=>new EE_Foreign_Key_String_Field('OBJ_ID', __("Object ID (int or string)", 'event_espresso'), true, NULL,$models_this_can_attach_to),
 				'OBJ_type'=>new EE_Any_Foreign_Model_Name_Field('OBJ_type', __("Object Type", 'event_espresso'), true, NULL, $models_this_can_attach_to),
-				'LOG_type'=>new EE_Enum_Text_Field('LOG_type', __("Type of log entry", "event_espresso"), false, self::type_debug,
-						array(
-							self::type_create=>  __("Create", "event_espresso"),
-							self::type_update=>  __("Update", "event_espresso"),
-							self::type_delete => __("Delete", "event_espresso"),
-							self::type_debug=>  __("Debug", "event_espresso"),
-							self::type_error=>  __("Error", "event_espresso"),
-							self::type_gateway=> __("Gateway Interaction (IPN or Direct Payment)", 'event_espresso'),
-							)),
+				'LOG_type'=>new EE_Plain_Text_Field('LOG_type', __("Type of log entry", "event_espresso"), false, self::type_debug),
 				'LOG_message'=>new EE_Maybe_Serialized_Text_Field('LOG_message', __("Log Message (body)", 'event_espresso'), true),
 				'LOG_wp_user' => new EE_WP_User_Field('LOG_wp_user', __("User who was logged in while this occurred", 'event_espresso'), true ),
 
