@@ -1,19 +1,8 @@
 <?php
 
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
+defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed');
 
 /**
- * Event Espresso
- * Event Registration and Management Plugin for WordPress
- * @ package            Event Espresso
- * @ author            Seth Shoultes
- * @ copyright        (c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license            http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link                    http://www.eventespresso.com
- * @ version            4.3
- * ------------------------------------------------------------------------
  * EEM_Change_Log
  *
  * @package               Event Espresso
@@ -64,7 +53,8 @@ class EEM_Change_Log extends EEM_Base
      * constructor
      *
      * @access protected
-     * @return EEM_Change_Log
+     * @param null $timezone
+     * @throws EE_Error
      */
     protected function __construct($timezone = null)
     {
@@ -78,19 +68,42 @@ class EEM_Change_Log extends EEM_Base
         $this->_fields             = array(
             'Log' => array(
                 'LOG_ID'      => new EE_Primary_Key_Int_Field('LOG_ID', __('Log ID', 'event_espresso')),
-                'LOG_time'    => new EE_Datetime_Field('LOG_time', __("Log Time", 'event_espresso'), false,
-                    EE_Datetime_Field::now),
-                'OBJ_ID'      => new EE_Foreign_Key_String_Field('OBJ_ID',
-                    __("Object ID (int or string)", 'event_espresso'), true, null, $models_this_can_attach_to),
-                'OBJ_type'    => new EE_Any_Foreign_Model_Name_Field('OBJ_type', __("Object Type", 'event_espresso'),
-                    true, null, $models_this_can_attach_to),
-                'LOG_type'    => new EE_Plain_Text_Field('LOG_type', __("Type of log entry", "event_espresso"), false,
-                    self::type_debug),
-                'LOG_message' => new EE_Maybe_Serialized_Text_Field('LOG_message',
-                    __("Log Message (body)", 'event_espresso'), true),
-                'LOG_wp_user' => new EE_WP_User_Field('LOG_wp_user',
-                    __("User who was logged in while this occurred", 'event_espresso'), true),
-
+                'LOG_time'    => new EE_Datetime_Field(
+                    'LOG_time',
+                    __("Log Time", 'event_espresso'),
+                    false,
+                    EE_Datetime_Field::now
+                ),
+                'OBJ_ID'      => new EE_Foreign_Key_String_Field(
+                    'OBJ_ID',
+                    __("Object ID (int or string)", 'event_espresso'),
+                    true,
+                    null,
+                    $models_this_can_attach_to
+                ),
+                'OBJ_type'    => new EE_Any_Foreign_Model_Name_Field(
+                    'OBJ_type',
+                    __("Object Type", 'event_espresso'),
+                    true,
+                    null,
+                    $models_this_can_attach_to
+                ),
+                'LOG_type'    => new EE_Plain_Text_Field(
+                    'LOG_type',
+                    __("Type of log entry", "event_espresso"),
+                    false,
+                    self::type_debug
+                ),
+                'LOG_message' => new EE_Maybe_Serialized_Text_Field(
+                    'LOG_message',
+                    __("Log Message (body)", 'event_espresso'),
+                    true
+                ),
+                'LOG_wp_user' => new EE_WP_User_Field(
+                    'LOG_wp_user',
+                    __("User who was logged in while this occurred", 'event_espresso'),
+                    true
+                ),
             ),
         );
         $this->_model_relations    = array();
@@ -105,7 +118,8 @@ class EEM_Change_Log extends EEM_Base
         $this->_cap_restriction_generators = false;
         //caps-wise this is all-or-nothing: if you have the default role you can access anything, otherwise nothing
         foreach ($this->_cap_contexts_to_cap_action_map as $cap_context => $action) {
-            $this->_cap_restrictions[$cap_context][EE_Restriction_Generator_Base::get_default_restrictions_cap()] = new EE_Return_None_Where_Conditions();
+            $this->_cap_restrictions[$cap_context][EE_Restriction_Generator_Base::get_default_restrictions_cap()]
+                = new EE_Return_None_Where_Conditions();
         }
         parent::__construct($timezone);
     }
@@ -115,6 +129,7 @@ class EEM_Change_Log extends EEM_Base
      * @param mixed         $message  array|string of the message you want to record
      * @param EE_Base_Class $related_model_obj
      * @return EE_Change_Log
+     * @throws EE_Error
      */
     public function log($log_type, $message, $related_model_obj)
     {
@@ -125,6 +140,7 @@ class EEM_Change_Log extends EEM_Base
             $obj_id   = null;
             $obj_type = null;
         }
+        /** @var EE_Change_Log $log */
         $log = EE_Change_Log::new_instance(array(
             'LOG_type'    => $log_type,
             'LOG_message' => $message,
@@ -148,9 +164,17 @@ class EEM_Change_Log extends EEM_Base
     public function gateway_log($message, $related_obj_id, $related_obj_type)
     {
         if (! EE_Registry::instance()->is_model_name($related_obj_type)) {
-            throw new EE_Error(sprintf(__("'%s' is not a model name. A model name must be provided when making a gateway log. Eg, 'Payment', 'Payment_Method', etc",
-                "event_espresso"), $related_obj_type));
+            throw new EE_Error(
+                sprintf(
+                    __(
+                        "'%s' is not a model name. A model name must be provided when making a gateway log. Eg, 'Payment', 'Payment_Method', etc",
+                        "event_espresso"
+                    ),
+                    $related_obj_type
+                )
+            );
         }
+        /** @var EE_Change_Log $log */
         $log = EE_Change_Log::new_instance(array(
             'LOG_type'    => EEM_Change_Log::type_gateway,
             'LOG_message' => $message,
@@ -167,6 +191,7 @@ class EEM_Change_Log extends EEM_Base
      *
      * @param array $query_params @see EEM_Base::get_all
      * @return array of arrays
+     * @throws EE_Error
      */
     public function get_all_efficiently($query_params)
     {
@@ -180,6 +205,7 @@ class EEM_Change_Log extends EEM_Base
      *
      * @param DateTime $datetime
      * @return false|int
+     * @throws EE_Error
      */
     public function delete_gateway_logs_older_than(DateTime $datetime)
     {
@@ -192,7 +218,4 @@ class EEM_Change_Log extends EEM_Base
             )
         );
     }
-
-
 }
-// End of file EEM_Change_Log.model.php
