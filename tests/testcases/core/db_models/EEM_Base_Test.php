@@ -66,7 +66,7 @@ class EEM_Base_Test extends EE_UnitTestCase
     /**
      * checks that EEM_Base::has_field works properly
      */
-    function test_has_field()
+    public function test_has_field()
     {
         $this->assertTrue(EEM_Question::instance()->has_field('QST_ID'));
         $this->assertTrue(EEM_QUestion::instance()->has_field('QST_admin_only'));
@@ -78,7 +78,7 @@ class EEM_Base_Test extends EE_UnitTestCase
     /**
      * checks that adding a LIKE in teh WHERE clauses works ok
      */
-    function test_where_like()
+    public function test_where_like()
     {
         $attendees_before = EEM_Attendee::instance()->get_all();
         $this->assertEmpty($attendees_before);
@@ -212,7 +212,7 @@ class EEM_Base_Test extends EE_UnitTestCase
     /**
      * @group 6767
      */
-    function test_two_joins()
+    public function test_two_joins()
     {
         EEM_Attendee::instance()->get_all(array(array('Registration.Event.EVT_name' => 'bob')));
         $this->assertTrue(true, 'No exception thrown');
@@ -223,7 +223,7 @@ class EEM_Base_Test extends EE_UnitTestCase
     /**
      * @group 7151
      */
-    function test_refresh_entity_map_from_db()
+    public function test_refresh_entity_map_from_db()
     {
         //get an object purposefully out-of-sync with the DB
         //call this and make sure it's wiped clean and
@@ -248,7 +248,7 @@ class EEM_Base_Test extends EE_UnitTestCase
     /**
      * @group 7151
      */
-    function test_refresh_entity_map_from_db__serialized_object()
+    public function test_refresh_entity_map_from_db__serialized_object()
     {
         //get an object purposefully out-of-sync with the DB
         //call this and make sure it's wiped clean and
@@ -282,7 +282,7 @@ class EEM_Base_Test extends EE_UnitTestCase
     /**
      * @group 7151
      */
-    function test_fresh_entity_map_with()
+    public function test_fresh_entity_map_with()
     {
         $p = $this->new_model_obj_with_dependencies('Payment', array('PAY_amount' => 25));
         $p->save();
@@ -315,7 +315,7 @@ class EEM_Base_Test extends EE_UnitTestCase
      *
      * @since 4.6.x
      */
-    function test_get_formats_for_with_exception()
+    public function test_get_formats_for_with_exception()
     {
         EEM_Datetime::reset();
         //test expected exception for invalid field
@@ -330,7 +330,7 @@ class EEM_Base_Test extends EE_UnitTestCase
      *
      * @since 4.6.x
      */
-    function test_get_formats_for_with_valid_field()
+    public function test_get_formats_for_with_valid_field()
     {
         EEM_Datetime::reset();
         //first test default field setup
@@ -349,7 +349,7 @@ class EEM_Base_Test extends EE_UnitTestCase
     /**
      * @since 4.6.x
      */
-    function test_current_time_for_query()
+    public function test_current_time_for_query()
     {
         EEM_Datetime::reset();
         //baseline DateTime object for testing
@@ -421,7 +421,7 @@ class EEM_Base_Test extends EE_UnitTestCase
     /**
      * @since 4.6.x
      */
-    function test_convert_datetime_for_query()
+    public function test_convert_datetime_for_query()
     {
         EEM_Datetime::reset();
         //baselines for testing with
@@ -859,7 +859,7 @@ class EEM_Base_Test extends EE_UnitTestCase
      *
      * @group 7634
      */
-    function test_get_all_if_related_model_blank_use_nulls()
+    public function test_get_all_if_related_model_blank_use_nulls()
     {
         $price_sans_price_type = EE_Price::new_instance(array(
             'PRC_name' => 'original',
@@ -881,7 +881,7 @@ class EEM_Base_Test extends EE_UnitTestCase
      *
      * @group 7791
      */
-    function test_create_question_options()
+    public function test_create_question_options()
     {
         foreach (EE_Registry::instance()->non_abstract_db_models as $model_name => $model_classname) {
             $model = EE_Registry::instance()->load_model($model_name);
@@ -897,7 +897,7 @@ class EEM_Base_Test extends EE_UnitTestCase
     /**
      * @since 4.6.x
      */
-    function test_next_x()
+    public function test_next_x()
     {
         //create 5 events for testing with.
         $events = $this->factory->event->create_many(5);
@@ -919,7 +919,7 @@ class EEM_Base_Test extends EE_UnitTestCase
     /**
      * @since 4.6.x
      */
-    function test_previous_x()
+    public function test_previous_x()
     {
         //create 5 events for testing with.
         $events = $this->factory->event->create_many(5);
@@ -941,7 +941,7 @@ class EEM_Base_Test extends EE_UnitTestCase
     /**
      * @since 4.6.x
      */
-    function test_next()
+    public function test_next()
     {
         //create 5 events for testing with.
         $events = $this->factory->event->create_many(5);
@@ -963,7 +963,7 @@ class EEM_Base_Test extends EE_UnitTestCase
     /**
      * @since 4.6.x
      */
-    function test_previous()
+    public function test_previous()
     {
         //create 5 events for testing with.
         $events = $this->factory->event->create_many(5);
@@ -987,7 +987,7 @@ class EEM_Base_Test extends EE_UnitTestCase
      *
      * @group 8187
      */
-    function test_get_all__between()
+    public function test_get_all__between()
     {
         EEM_Event::instance()->get_all(array(
             array(
@@ -1002,7 +1002,7 @@ class EEM_Base_Test extends EE_UnitTestCase
     /**
      * @group 8241
      */
-    function test_get_IDs__empty_ID()
+    public function test_get_IDs__empty_ID()
     {
         $e1 = $this->new_model_obj_with_dependencies('Event', array(), false);
         $e2 = $this->new_model_obj_with_dependencies('Event', array(), false);
@@ -1014,7 +1014,7 @@ class EEM_Base_Test extends EE_UnitTestCase
     /**
      * @group 8241
      */
-    function test_get_IDS()
+    public function test_get_IDS()
     {
         $e1 = $this->new_model_obj_with_dependencies('Event', array());
         $e2 = $this->new_model_obj_with_dependencies('Event', array());
@@ -1026,7 +1026,7 @@ class EEM_Base_Test extends EE_UnitTestCase
     /**
      * @group 9389
      */
-    function test_get_all__automatic_group_by()
+    public function test_get_all__automatic_group_by()
     {
         $this->assertEquals(2, EEM_Question_Group::instance()->count());
         $qsgs = EEM_Question_Group::instance()->get_all(

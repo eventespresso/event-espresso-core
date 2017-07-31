@@ -20,10 +20,8 @@ interface LoaderDecoratorInterface
 
     /**
      * calls reset() on loader if method exists
-     *
-     * @param bool $hard
      */
-    public function reset($hard = true);
+    public function reset();
 
 }
 // End of file LoaderInterface.php

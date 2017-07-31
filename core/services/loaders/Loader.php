@@ -113,13 +113,11 @@ class Loader implements LoaderInterface
 
     /**
      * calls reset() on loaders if that method exists
-     *
-     * @param bool $hard
      */
-    public function reset($hard = true)
+    public function reset()
     {
         $this->new_loader->reset();
-        $this->shared_loader->reset($hard);
+        $this->shared_loader->reset();
     }
 
 }
