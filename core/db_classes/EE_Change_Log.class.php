@@ -46,7 +46,7 @@ class EE_Change_Log extends EE_Base_Class
      * @return mixed
      * @throws EE_Error
      */
-    function message()
+    public function message()
     {
         return $this->get('LOG_message');
     }
@@ -57,7 +57,7 @@ class EE_Change_Log extends EE_Base_Class
      * @param mixed $message
      * @throws EE_Error
      */
-    function set_message($message)
+    public function set_message($message)
     {
         $this->set('LOG_message', $message);
     }
@@ -68,7 +68,7 @@ class EE_Change_Log extends EE_Base_Class
      * @return string
      * @throws EE_Error
      */
-    function time()
+    public function time()
     {
         return $this->get('LOG_time');
     }
@@ -79,7 +79,7 @@ class EE_Change_Log extends EE_Base_Class
      * @param string $time
      * @throws EE_Error
      */
-    function set_time($time)
+    public function set_time($time)
     {
         $this->set('LOG_time', $time);
     }
@@ -90,7 +90,7 @@ class EE_Change_Log extends EE_Base_Class
      * @return string
      * @throws EE_Error
      */
-    function log_type()
+    public function log_type()
     {
         return $this->get('LOG_log_type');
     }
@@ -101,7 +101,7 @@ class EE_Change_Log extends EE_Base_Class
      * @param string $log_type
      * @throws EE_Error
      */
-    function set_log_type($log_type)
+    public function set_log_type($log_type)
     {
         $this->set('LOG_log_type', $log_type);
     }
@@ -112,7 +112,7 @@ class EE_Change_Log extends EE_Base_Class
      * @return string
      * @throws EE_Error
      */
-    function OBJ_type()
+    public function OBJ_type()
     {
         return $this->get('OBJ_type');
     }
@@ -123,7 +123,7 @@ class EE_Change_Log extends EE_Base_Class
      * @param string $type
      * @throws EE_Error
      */
-    function set_OBJ_type($type)
+    public function set_OBJ_type($type)
     {
         $this->set('OBJ_type', $type);
     }
@@ -134,7 +134,7 @@ class EE_Change_Log extends EE_Base_Class
      * @return mixed
      * @throws EE_Error
      */
-    function OBJ_ID()
+    public function OBJ_ID()
     {
         return $this->get('OBJ_ID');
     }
@@ -145,7 +145,7 @@ class EE_Change_Log extends EE_Base_Class
      * @param mixed $OBJ_ID
      * @throws EE_Error
      */
-    function set_OBJ_ID($OBJ_ID)
+    public function set_OBJ_ID($OBJ_ID)
     {
         $this->set('OBJ_ID', $OBJ_ID);
     }
@@ -156,7 +156,7 @@ class EE_Change_Log extends EE_Base_Class
      * @return int
      * @throws EE_Error
      */
-    function wp_user()
+    public function wp_user()
     {
         return $this->get('LOG_wp_user');
     }
@@ -167,7 +167,7 @@ class EE_Change_Log extends EE_Base_Class
      * @param int $wp_user_id
      * @throws EE_Error
      */
-    function set_wp_user($wp_user_id)
+    public function set_wp_user($wp_user_id)
     {
         $this->set('LOG_wp_user', $wp_user_id);
     }
@@ -178,7 +178,7 @@ class EE_Change_Log extends EE_Base_Class
      * @return EE_Base_Class
      * @throws EE_Error
      */
-    function object()
+    public function object()
     {
         $model_name_of_related_obj = $this->OBJ_type();
         $is_model_name             = EE_Registry::instance()->is_model_name($model_name_of_related_obj);
@@ -199,7 +199,7 @@ class EE_Change_Log extends EE_Base_Class
      * @return bool if $save=true, NULL is $save=false
      * @throws EE_Error
      */
-    function set_object($object, $save = true)
+    public function set_object($object, $save = true)
     {
         if ($object instanceof EE_Base_Class) {
             $this->set_OBJ_type($object->get_model()->get_this_model_name());
