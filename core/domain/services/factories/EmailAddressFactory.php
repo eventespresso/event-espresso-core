@@ -33,11 +33,9 @@ class EmailAddressFactory implements FactoryInterface
      */
     public static function create($email_address)
     {
-        return new EmailAddress(
-            $email_address,
-            LoaderFactory::getLoader()->getNew(
-                'EventEspresso\core\domain\services\validation\email\EmailValidatorInterface'
-            )
+        return LoaderFactory::getLoader()->getNew(
+            'EventEspresso\core\domain\values\EmailAddress',
+            array($email_address)
         );
     }
 
