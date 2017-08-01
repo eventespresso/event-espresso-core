@@ -1,6 +1,6 @@
 <?php
 
-use EventEspresso\Tests\mocks\core\libraries\batch\JobHandlers\DatetimeOffsetFixMock;
+use EventEspresso\tests\mocks\core\libraries\batch\JobHandlers\DatetimeOffsetFixMock;
 
 
 /**
