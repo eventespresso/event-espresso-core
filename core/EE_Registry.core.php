@@ -650,7 +650,7 @@ class EE_Registry implements ResettableInterface
      *                                  and thus call a different method to instantiate
      * @param bool        $load_only    if true, will only load the file, but will NOT instantiate an object
      * @param bool|string $addon        if true, will cache the object in the EE_Registry->$addons array
-     * @return bool|null|object null = failure to load or instantiate class object.
+     * @return bool|null|mixed          null = failure to load or instantiate class object.
      *                                  object = class loaded and instantiated successfully.
      *                                  bool = fail or success when $load_only is true
      * @throws EE_Error
