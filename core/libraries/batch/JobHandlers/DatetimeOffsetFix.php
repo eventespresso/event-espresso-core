@@ -137,7 +137,7 @@ class DatetimeOffsetFix extends JobHandler
                 }
             }
             //k convert innerquery to string
-            $query .= 'SET ' . implode(',', $inner_query);
+            $query .= ' SET ' . implode(',', $inner_query);
             //execute query
             $wpdb->query($query);
             //record log
