@@ -122,15 +122,15 @@ final class EE_Admin implements InterminableInterface
             if (EE_Maintenance_Mode::instance()->level() === EE_Maintenance_Mode::level_2_complete_maintenance) {
                 $maintenance_link = '<a href="admin.php?page=espresso_maintenance_settings"'
                                     . ' title="Event Espresso is in maintenance mode.  Click this link to learn why.">'
-                                    . __('Maintenance Mode Active', 'event_espresso')
+                                    . esc_html__('Maintenance Mode Active', 'event_espresso')
                                     . '</a>';
                 array_unshift($links, $maintenance_link);
             } else {
                 $org_settings_link = '<a href="admin.php?page=espresso_general_settings">'
-                                     . __('Settings', 'event_espresso')
+                                     . esc_html__('Settings', 'event_espresso')
                                      . '</a>';
                 $events_link       = '<a href="admin.php?page=espresso_events">'
-                                     . __('Events', 'event_espresso')
+                                     . esc_html__('Events', 'event_espresso')
                                      . '</a>';
                 // add before other links
                 array_unshift($links, $org_settings_link, $events_link);
@@ -299,7 +299,7 @@ final class EE_Admin implements InterminableInterface
     {
         add_meta_box(
             'add-extra-nav-menu-pages',
-            __('Event Espresso Pages', 'event_espresso'),
+            esc_html__('Event Espresso Pages', 'event_espresso'),
             array($this, 'ee_cpt_archive_pages'),
             'nav-menus',
             'side',
@@ -429,9 +429,9 @@ final class EE_Admin implements InterminableInterface
     private function _get_extra_nav_menu_pages_items()
     {
         $menuitems[] = array(
-            'title'       => __('Event List', 'event_espresso'),
+            'title'       => esc_html__('Event List', 'event_espresso'),
             'url'         => get_post_type_archive_link('espresso_events'),
-            'description' => __('Archive page for all events.', 'event_espresso'),
+            'description' => esc_html__('Archive page for all events.', 'event_espresso'),
         );
         return apply_filters('FHEE__EE_Admin__get_extra_nav_menu_pages_items', $menuitems);
     }
@@ -456,7 +456,7 @@ final class EE_Admin implements InterminableInterface
             'post_parent'      => 0,
             'type'             => 'custom',
             'object'           => '',
-            'type_label'       => __('Extra Nav Menu Item', 'event_espresso'),
+            'type_label'       => esc_html__('Extra Nav Menu Item', 'event_espresso'),
             'title'            => '',
             'url'              => '',
             'target'           => '',
@@ -676,7 +676,7 @@ final class EE_Admin implements InterminableInterface
             admin_url('admin.php')
         );
         $items['events']['text']         = sprintf(_n('%s Event', '%s Events', $events), number_format_i18n($events));
-        $items['events']['title']        = __('Click to view all Events', 'event_espresso');
+        $items['events']['title']        = esc_html__('Click to view all Events', 'event_espresso');
         $registrations                   = EEM_Registration::instance()->count(
             array(
                 array(
@@ -692,7 +692,7 @@ final class EE_Admin implements InterminableInterface
             _n('%s Registration', '%s Registrations', $registrations),
             number_format_i18n($registrations)
         );
-        $items['registrations']['title'] = __('Click to view all registrations', 'event_espresso');
+        $items['registrations']['title'] = esc_html__('Click to view all registrations', 'event_espresso');
 
         $items = (array)apply_filters('FHEE__EE_Admin__dashboard_glance_items__items', $items);
 
@@ -739,7 +739,7 @@ final class EE_Admin implements InterminableInterface
             if (is_array($error_msg)) {
                 $msg = '<p>'
                        . sprintf(
-                           __(
+                           esc_html__(
                                'The following date time "%s" ( %s ) is difficult to be properly parsed by PHP for the following reasons:',
                                'event_espresso'
                            ),
@@ -755,7 +755,7 @@ final class EE_Admin implements InterminableInterface
 
                 $msg .= '</ul></p><p>'
                         . sprintf(
-                            __(
+                            esc_html__(
                                 '%sPlease note that your date and time formats have been reset to "F j, Y" and "g:i a" respectively.%s',
                                 'event_espresso'
                             ),
@@ -829,7 +829,7 @@ final class EE_Admin implements InterminableInterface
         EE_Error::doing_it_wrong(
             __METHOD__,
             sprintf(
-                __(
+                esc_html__(
                     'Usage is deprecated.  Use EE_Register_Admin_Page::register() for registering the %s admin page.',
                     'event_espresso'
                 ),
@@ -855,7 +855,7 @@ final class EE_Admin implements InterminableInterface
     {
         EE_Error::doing_it_wrong(
             __METHOD__,
-            __('Usage is deprecated', 'event_espresso'),
+            esc_html__('Usage is deprecated', 'event_espresso'),
             '4.8.41'
         );
     }
@@ -873,7 +873,7 @@ final class EE_Admin implements InterminableInterface
     {
         EE_Error::doing_it_wrong(
             __METHOD__,
-            __('Usage is deprecated', 'event_espresso'),
+            esc_html__('Usage is deprecated', 'event_espresso'),
             '4.8.41'
         );
     }
