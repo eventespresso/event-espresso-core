@@ -136,6 +136,9 @@ class DatetimeOffsetFix extends JobHandler
                     $fields_affected[] = $model_field;
                 }
             }
+            if (! $fields_affected) {
+                continue;
+            }
             //k convert innerquery to string
             $query .= ' SET ' . implode(',', $inner_query);
             //execute query
@@ -198,8 +201,10 @@ class DatetimeOffsetFix extends JobHandler
         }
 
         $all_non_abstract_models = EE_Registry::instance()->non_abstract_db_models;
-        /** @var \EEM_Base $non_abstract_model */
         foreach ($all_non_abstract_models as $non_abstract_model) {
+            //get model instance
+            /** @var EEM_Base $non_abstract_model */
+            $non_abstract_model = $non_abstract_model::instance();
             if ($non_abstract_model->get_a_field_of_type('EE_Datetime_Field') instanceof EE_Datetime_Field) {
                 $this->models_with_datetime_fields[] = get_class($non_abstract_model);
             }
