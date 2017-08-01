@@ -140,6 +140,12 @@ class Maintenance_Admin_Page extends EE_Admin_Page
             'datetime_tools' => array(
                 'func' => '_datetime_tools',
                 'capability' => 'manage_options'
+            ),
+            'run_datetime_offset_fix' => array(
+                'func' => '_apply_datetime_offset',
+                'noheader' => true,
+                'headers_sent_route' => 'datetime_tools',
+                'capability' => 'manage_options'
             )
         );
     }
@@ -738,6 +744,10 @@ class Maintenance_Admin_Page extends EE_Admin_Page
     }
 
 
+    /**
+     * Callback for the run_datetime_offset_fix route.
+     * @throws EE_Error
+     */
     protected function _apply_datetime_offset()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
