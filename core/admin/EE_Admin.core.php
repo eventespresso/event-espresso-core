@@ -624,6 +624,26 @@ final class EE_Admin implements InterminableInterface
      */
     public function display_admin_notices()
     {
+        //add non-dismissable notice for datetime changes.  Only valid if EE version is greater than 4.9.46.p and the
+        // site does not have a timezone_string set.
+        if (EE_Register_Addon::_meets_min_core_version_requirement(
+                '4.9.46.p'
+            )
+            && ! get_option('timezone_string')
+        ) {
+            EE_Error::add_attention(
+                sprintf(
+                    esc_html__(
+                        '%1$sImportant announcement related to your install of Event Espresso%2$s: There are some changes coming in a future version of EE that could affect your site.  Read more about it %3$shere%4$s.',
+                        'event_espresso'
+                    ),
+                    '<strong>',
+                    '</strong>',
+                    '<a href="https://eventespresso.com/2017/08/important-upcoming-changes-to-dates-and-times-in-ee">',
+                    '</a>'
+                )
+            );
+        }
         echo EE_Error::get_notices();
     }
 
