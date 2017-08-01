@@ -4,10 +4,10 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 
 /**
  * This scenario creates an event that has:
- * - Three Datetimes (in order of increasing reg limit)
- *      - D1 - reg limit 5  ( TA, TB, TC )  << can only sell 5 max (cuz ticket qty) : TA, TB, & TC sold out after 5 sales
- *      - D3 - reg limit 12 ( TA, TC, TD )  << can only sell 7 max (5 TA/TC sold already) : TD sold out after 7 sales
- *      - D2 - reg limit 20 ( TA, TB, TD )  << can't sell #$@!$ cuz all tickets are sold out
+ * - Three Datetimes
+ *      - D1 - reg limit 5
+ *      - D2 - reg limit 20
+ *      - D3 - reg limit 12
  * - Four Tickets
  *      - TA - qty 5 	( D1, D2, D3 )
  *      - TB - qty 5 	( D1, D2 )
@@ -16,8 +16,8 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  *
  *  MAX SELLOUT:
  *        5 TA tickets for D1 ( D1 sold out + TA, TB, & TC sold out )
- *        7 TD tickets for D3 ( TD sold out (cuz TA has access and sold 5))
- *        ( D2 sold out because ALL tickets sold out )
+ *        10 TD tickets for D3 ( TD sold out )
+ *        ( D2 + D3 sold out because ALL tickets sold out )
  *
  * @package    Event Espresso
  * @subpackage tests/scenarios
@@ -33,8 +33,8 @@ class EE_Event_Scenario_D extends EE_Test_Scenario {
 
 	protected function _set_up_expected(){
 		$this->_expected_values = array(
-			'total_available_spaces' => 12,
-			'total_remaining_spaces' => 12
+			'total_available_spaces' => 15,
+			'total_remaining_spaces' => 15
 		);
 	}
 

@@ -9,6 +9,11 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
  * @package               Event Espresso
  * @subpackage
  * @author                Mike Nelson
+ *
+ */
+
+
+/**
  * @group core/db_classes
  */
 class EE_Event_Test extends EE_UnitTestCase
@@ -187,28 +192,11 @@ class EE_Event_Test extends EE_UnitTestCase
         //grab test scenarios.
         $scenarios = $this->scenarios->get_scenarios_by_type('event');
         foreach ($scenarios as $scenario) {
-            $expected = $scenario->get_expected('total_available_spaces');
-            if ($expected) {
-                /** @type EE_Event $event */
-                $event = $scenario->get_scenario_object();
-                $calculator = new EventEspresso\core\domain\services\event\EventSpacesCalculator($event);
-                if (
-                    ! in_array(
-                        $scenario->name,
-                        array('Event Scenario D', 'Event Scenario F', 'Event Scenario G'),
-                        true
-                    )
-                ) {
-                    $this->assertEquals(
-                        $expected,
-                        $event->total_available_spaces(),
-                        'Testing ' . $scenario->name . ' for "total_available_spaces"'
-                    );
-                }
+            if ($scenario->get_expected('total_available_spaces')) {
                 $this->assertEquals(
-                    $expected,
-                    $calculator->totalSpacesAvailable(),
-                    'Testing ' . $scenario->name . ' for "totalSpacesAvailable"'
+                    $scenario->get_expected('total_available_spaces'),
+                    $scenario->get_scenario_object()->total_available_spaces(),
+                    'Testing ' . $scenario->name
                 );
             }
         }
@@ -229,26 +217,11 @@ class EE_Event_Test extends EE_UnitTestCase
             }
             /** @type EE_Event $event */
             $event = $scenario->get_scenario_object();
-            $calculator = new EventEspresso\core\domain\services\event\EventSpacesCalculator($event);
-            $expected = $scenario->get_expected('total_remaining_spaces');
-            if ($expected !== false) {
-                if (
-                    ! in_array(
-                        $scenario->name,
-                        array('Event Scenario D', 'Event Scenario F', 'Event Scenario G', 'Event Scenario J'),
-                        true
-                    )
-                ) {
-                    $this->assertEquals(
-                        $expected,
-                        $event->spaces_remaining_for_sale(),
-                        'Testing ' . $scenario->name . ' for "total_remaining_spaces"'
-                    );
-                }
+            if ($scenario->get_expected('total_remaining_spaces') !== false) {
                 $this->assertEquals(
-                    $expected,
-                    $calculator->spacesRemaining(),
-                    'Testing ' . $scenario->name . ' for "total_remaining_spaces"'
+                    $scenario->get_expected('total_remaining_spaces'),
+                    $event->spaces_remaining_for_sale(),
+                    'Testing ' . $scenario->name
                 );
             }
         }
@@ -275,18 +248,11 @@ class EE_Event_Test extends EE_UnitTestCase
         }
         /** @type EE_Event $event */
         $event = $scenario->get_scenario_object();
-        $calculator = new EventEspresso\core\domain\services\event\EventSpacesCalculator($event);
-        $expected = $scenario->get_expected('total_remaining_spaces');
-        if ($expected !== false) {
+        if ($scenario->get_expected('total_remaining_spaces') !== false) {
             $this->assertEquals(
-                $expected,
+                $scenario->get_expected('total_remaining_spaces'),
                 $event->spaces_remaining_for_sale(),
                 'Testing ' . $scenario->name
-            );
-            $this->assertEquals(
-                $expected,
-                $calculator->spacesRemaining(),
-                'Testing ' . $scenario->name . ' for "total_remaining_spaces"'
             );
         }
         $this->assertEquals(
@@ -296,16 +262,10 @@ class EE_Event_Test extends EE_UnitTestCase
         );
         // now sell 2 more tickets
         $scenario->run_additional_logic(array('qty' => 2));
-        $expected = $scenario->get_expected('total_remaining_spaces_4');
         $this->assertEquals(
-            $expected,
+            $scenario->get_expected('total_remaining_spaces_4'),
             $event->spaces_remaining_for_sale(),
             'Testing ' . $scenario->name . ' after selling an additional 2 tickets'
-        );
-        $this->assertEquals(
-            $expected,
-            $calculator->spacesRemaining(),
-            'Testing ' . $scenario->name . ' for "total_remaining_spaces" after selling an additional 2 tickets'
         );
         $this->assertEquals(
             EE_Datetime::upcoming,
@@ -314,16 +274,10 @@ class EE_Event_Test extends EE_UnitTestCase
         );
         // now sell the last 4 tickets
         $scenario->run_additional_logic(array('qty' => 4));
-        $expected = $scenario->get_expected('total_remaining_spaces_0');
         $this->assertEquals(
-            $expected,
+            $scenario->get_expected('total_remaining_spaces_0'),
             $event->spaces_remaining_for_sale(),
             'Testing ' . $scenario->name . ' after selling the last 4 tickets'
-        );
-        $this->assertEquals(
-            $expected,
-            $calculator->spacesRemaining(),
-            'Testing ' . $scenario->name . ' for "total_remaining_spaces" after selling the last 4 tickets'
         );
         $this->assertEquals(
             EE_Datetime::sold_out,
@@ -353,18 +307,11 @@ class EE_Event_Test extends EE_UnitTestCase
         }
         /** @type EE_Event $event */
         $event = $scenario->get_scenario_object();
-        $calculator = new EventEspresso\core\domain\services\event\EventSpacesCalculator($event);
-        $expected = $scenario->get_expected('total_remaining_spaces');
-        if ($expected !== false) {
+        if ($scenario->get_expected('total_remaining_spaces') !== false) {
             $this->assertEquals(
-                $expected,
+                $scenario->get_expected('total_remaining_spaces'),
                 $event->spaces_remaining_for_sale(),
                 'Testing ' . $scenario->name
-            );
-            $this->assertEquals(
-                $expected,
-                $calculator->spacesRemaining(),
-                'Testing ' . $scenario->name . ' for "total_remaining_spaces"'
             );
         }
         $this->assertEquals(
@@ -375,16 +322,10 @@ class EE_Event_Test extends EE_UnitTestCase
         // now sell first batch of tickets
         $scenario->run_additional_logic(array('tkt_id' => 1, 'qty' => 2));
         $scenario->run_additional_logic(array('tkt_id' => 2, 'qty' => 2));
-        $expected = $scenario->get_expected('total_remaining_spaces_20');
         $this->assertEquals(
-            $expected,
+            $scenario->get_expected('total_remaining_spaces_20'),
             $event->spaces_remaining_for_sale(),
             'Testing ' . $scenario->name . ' after selling first 4 tickets'
-        );
-        $this->assertEquals(
-            $expected,
-            $calculator->spacesRemaining(),
-            'Testing ' . $scenario->name . ' for "total_remaining_spaces" after selling first 4 tickets'
         );
         $this->assertEquals(
             EE_Datetime::upcoming,
@@ -395,16 +336,10 @@ class EE_Event_Test extends EE_UnitTestCase
         $scenario->run_additional_logic(array('tkt_id' => 1, 'qty' => 2));
         $scenario->run_additional_logic(array('tkt_id' => 3, 'qty' => 1));
         $scenario->run_additional_logic(array('tkt_id' => 4, 'qty' => 1));
-        $expected = $scenario->get_expected('total_remaining_spaces_16');
         $this->assertEquals(
-            $expected,
+            $scenario->get_expected('total_remaining_spaces_16'),
             $event->spaces_remaining_for_sale(),
             'Testing ' . $scenario->name . ' after selling 8 tickets'
-        );
-        $this->assertEquals(
-            $expected,
-            $calculator->spacesRemaining(),
-            'Testing ' . $scenario->name . ' for "total_remaining_spaces" after selling 8 tickets'
         );
         $this->assertEquals(
             EE_Datetime::upcoming,
@@ -415,16 +350,10 @@ class EE_Event_Test extends EE_UnitTestCase
         $scenario->run_additional_logic(array('tkt_id' => 1, 'qty' => 1));
         $scenario->run_additional_logic(array('tkt_id' => 2, 'qty' => 1));
         $scenario->run_additional_logic(array('tkt_id' => 3, 'qty' => 2));
-        $expected = $scenario->get_expected('total_remaining_spaces_12');
         $this->assertEquals(
-            $expected,
+            $scenario->get_expected('total_remaining_spaces_12'),
             $event->spaces_remaining_for_sale(),
             'Testing ' . $scenario->name . ' after selling 12 tickets'
-        );
-        $this->assertEquals(
-            $expected,
-            $calculator->spacesRemaining(),
-            'Testing ' . $scenario->name . ' for "total_remaining_spaces" after selling 12 tickets'
         );
         $this->assertEquals(
             EE_Datetime::upcoming,
@@ -436,16 +365,10 @@ class EE_Event_Test extends EE_UnitTestCase
         $scenario->run_additional_logic(array('tkt_id' => 2, 'qty' => 1));
         $scenario->run_additional_logic(array('tkt_id' => 3, 'qty' => 1));
         $scenario->run_additional_logic(array('tkt_id' => 4, 'qty' => 1));
-        $expected = $scenario->get_expected('total_remaining_spaces_8');
         $this->assertEquals(
-            $expected,
+            $scenario->get_expected('total_remaining_spaces_8'),
             $event->spaces_remaining_for_sale(),
             'Testing ' . $scenario->name . ' after selling 16 tickets'
-        );
-        $this->assertEquals(
-            $expected,
-            $calculator->spacesRemaining(),
-            'Testing ' . $scenario->name . ' for "total_remaining_spaces" after selling 16 tickets'
         );
         $this->assertEquals(
             EE_Datetime::upcoming,
@@ -456,16 +379,10 @@ class EE_Event_Test extends EE_UnitTestCase
         $scenario->run_additional_logic(array('tkt_id' => 2, 'qty' => 2));
         $scenario->run_additional_logic(array('tkt_id' => 3, 'qty' => 1));
         $scenario->run_additional_logic(array('tkt_id' => 4, 'qty' => 1));
-        $expected = $scenario->get_expected('total_remaining_spaces_4');
         $this->assertEquals(
-            $expected,
+            $scenario->get_expected('total_remaining_spaces_4'),
             $event->spaces_remaining_for_sale(),
             'Testing ' . $scenario->name . ' after selling 20 tickets'
-        );
-        $this->assertEquals(
-            $expected,
-            $calculator->spacesRemaining(),
-            'Testing ' . $scenario->name . ' for "total_remaining_spaces" after selling 20 tickets'
         );
         $this->assertEquals(
             EE_Datetime::upcoming,
@@ -475,16 +392,10 @@ class EE_Event_Test extends EE_UnitTestCase
         // last batch
         $scenario->run_additional_logic(array('tkt_id' => 3, 'qty' => 1));
         $scenario->run_additional_logic(array('tkt_id' => 4, 'qty' => 3));
-        $expected = $scenario->get_expected('total_remaining_spaces_0');
         $this->assertEquals(
-            $expected,
+            $scenario->get_expected('total_remaining_spaces_0'),
             $event->spaces_remaining_for_sale(),
             'Testing ' . $scenario->name . ' after selling all 24 tickets'
-        );
-        $this->assertEquals(
-            $expected,
-            $calculator->spacesRemaining(),
-            'Testing ' . $scenario->name . ' for "total_remaining_spaces" after selling all 24 tickets'
         );
         $this->assertEquals(
             EE_Datetime::sold_out,
