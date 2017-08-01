@@ -2,12 +2,16 @@
 
 namespace EventEspressoBatchRequest\JobHandlers;
 
+use EE_Model_Field_Base;
+use EE_Table_Base;
 use EventEspressoBatchRequest\JobHandlerBaseClasses\JobHandler;
 use EventEspressoBatchRequest\Helpers\BatchRequestException;
 use EventEspressoBatchRequest\Helpers\JobParameters;
 use EventEspressoBatchRequest\Helpers\JobStepResponse;
 use EE_Registry;
 use EE_Datetime_Field;
+use EEM_Base;
+use EE_Change_Log;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
 
@@ -19,11 +23,19 @@ class DatetimeOffsetFix extends JobHandler
      */
     const MODELS_TO_PROCESS_OPTION_KEY = 'ee_models_processed_for_datetime_offset_fix';
 
-
+    /**
+     * Key for the option used to track what the current offset is that will be applied when this tool is executed.
+     */
     const OFFSET_TO_APPLY_OPTION_KEY = 'ee_datetime_offset_fix_offset_to_apply';
 
+
     /**
-     * @var \EEM_Base[]
+     * String labelling the datetime offset fix type for changelog entries.
+     */
+    const DATETIME_OFFSET_FIX_CHANGELOG_TYPE = 'datetime_offset_fix';
+
+    /**
+     * @var EEM_Base[]
      */
     protected $models_with_datetime_fields = array();
 
@@ -54,7 +66,7 @@ class DatetimeOffsetFix extends JobHandler
      * @param JobParameters $job_parameters
      * @param int           $batch_size
      * @return JobStepResponse
-     * @throws BatchRequestException
+     * @throws \EE_Error
      */
     public function continue_job(JobParameters $job_parameters, $batch_size = 50)
     {
@@ -97,18 +109,23 @@ class DatetimeOffsetFix extends JobHandler
     }
 
 
-
-    private function processModel($model_class_name)
+    /**
+     * Contains the logic for processing a model and applying the datetime offset to affected fields on that model.
+     * @param string $model_class_name
+     * @throws \EE_Error
+     */
+    protected function processModel($model_class_name)
     {
         global $wpdb;
-        /** @var \EEM_Base $model */
+        /** @var EEM_Base $model */
         $model = $model_class_name::instance();
-        $offset = self::getOffset();
-        $sql_date_function = $offset > 0 ? 'DATE_ADD' : 'DATE_SUB';
-        $offset = abs($offset);
+        $original_offset = self::getOffset();
+        $sql_date_function = $original_offset > 0 ? 'DATE_ADD' : 'DATE_SUB';
+        $offset = abs($original_offset);
         //since some affected models might have two tables, we have to get our tables and set up a query for each table.
         foreach ($model->get_tables() as $table) {
             $query = 'UPDATE ' . $table->get_table_name();
+            $fields_affected = array();
             $inner_query = array();
             foreach ($model->_get_fields_for_table($table->get_table_alias()) as $model_field) {
                 if ($model_field instanceof EE_Datetime_Field) {
@@ -116,13 +133,55 @@ class DatetimeOffsetFix extends JobHandler
                                      . $sql_date_function . '('
                                      . $model_field->get_table_column()
                                      . ", INTERVAL $offset HOUR)";
+                    $fields_affected[] = $model_field;
                 }
             }
             //k convert innerquery to string
             $query .= 'SET ' . implode(',', $inner_query);
             //execute query
             $wpdb->query($query);
+            //record log
+            $this->recordChangeLog($model, $original_offset, $table, $fields_affected);
         }
+    }
+
+
+    /**
+     * Records a changelog entry using the given information.
+     * @param EEM_Base              $model
+     * @param float                 $offset
+     * @param EE_Table_Base         $table
+     * @param EE_Model_Field_Base[] $model_fields_affected
+     * @throws \EE_Error
+     */
+    private function recordChangeLog(EEM_Base $model, $offset, EE_Table_Base $table, $model_fields_affected)
+    {
+        //setup $fields list.
+        $fields = array();
+        /** @var EE_Datetime_Field $model_field */
+        foreach ($model_fields_affected as $model_field) {
+            if (! $model_field instanceof EE_Datetime_Field) {
+                continue;
+            }
+            $fields[] = $model_field->get_name();
+        }
+        //setup the message for the changelog entry.
+        $message = sprintf(
+            esc_html__(
+                'The %1$s table for the %2$s model has had the offset of %3$f applied to its following fields: %4$s',
+                'event_espresso'
+            ),
+            $table->get_table_name(),
+            $model->get_this_model_name(),
+            $offset,
+            implode(',', $fields)
+        );
+        //write to the log
+        $changelog = EE_Change_Log::new_instance(array(
+            'LOG_type' => self::DATETIME_OFFSET_FIX_CHANGELOG_TYPE,
+            'LOG_message' => $message
+        ));
+        $changelog->save();
     }
 
 
