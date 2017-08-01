@@ -814,8 +814,10 @@ class EEM_Event extends EEM_CPT_Base
     public function instantiate_class_from_array_or_object($cols_n_values)
     {
         $classInstance = parent::instantiate_class_from_array_or_object($cols_n_values);
-        //events have their timezone defined in the DB, so use it immediately
-        $this->set_timezone($classInstance->get_timezone());
+        if($classInstance instanceof EE_Event) {
+            //events have their timezone defined in the DB, so use it immediately
+            $this->set_timezone($classInstance->get_timezone());
+        }
         return $classInstance;
     }
 }
