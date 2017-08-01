@@ -1166,7 +1166,13 @@ class EE_Registry implements ResettableInterface
                 ! empty($param_class)
                 && $this->_dependency_map->has_dependency_for_class($class_name, $param_class)
             ) {
-                $arguments = $this->_resolve_dependency($class_name, $param_class, $arguments, $index);
+                $arguments = $this->_resolve_dependency(
+                    $class_name,
+                    $param_class,
+                    $arguments,
+                    $index,
+                    $argument_keys
+                );
             } else {
                 try {
                     $arguments[$index] = $param->getDefaultValue();
@@ -1191,11 +1197,12 @@ class EE_Registry implements ResettableInterface
      * @param string $param_class
      * @param array  $arguments
      * @param mixed  $index
+     * @param array  $argument_keys
      * @return array
      * @throws EE_Error
      * @throws ReflectionException
      */
-    protected function _resolve_dependency($class_name, $param_class, $arguments, $index)
+    protected function _resolve_dependency($class_name, $param_class, $arguments, $index, array $argument_keys)
     {
         $dependency = null;
         // should dependency be loaded from cache ?
@@ -1440,8 +1447,6 @@ class EE_Registry implements ResettableInterface
      */
     private static function _reset_and_unset_object($object, $reset_models)
     {
-        static $count = 0;
-        $count++;
         if ($object instanceof ResettableInterface) {
             if ($object instanceof EEM_Base) {
                 if ($reset_models) {
