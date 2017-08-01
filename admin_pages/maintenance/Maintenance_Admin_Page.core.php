@@ -1,8 +1,8 @@
 <?php
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('NO direct script access allowed');
-}
 
+defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
+
+use EventEspressoBatchRequest\JobHandlers\DatetimeOffsetFix;
 
 
 /**
@@ -28,10 +28,10 @@ class Maintenance_Admin_Page extends EE_Admin_Page
 {
 
 
-    public function __construct($routing = true)
-    {
-        parent::__construct($routing);
-    }
+    /**
+     * @var EE_Datetime_Offset_Fix_Form
+     */
+    protected $datetime_fix_offset_form;
 
 
 
@@ -137,6 +137,10 @@ class Maintenance_Admin_Page extends EE_Admin_Page
                 'capability' => 'manage_options',
                 'noheader'   => true,
             ),
+            'datetime_tools' => array(
+                'func' => '_datetime_tools',
+                'capability' => 'manage_options'
+            )
         );
     }
 
@@ -156,6 +160,13 @@ class Maintenance_Admin_Page extends EE_Admin_Page
                 'nav'           => array(
                     'label' => esc_html__('Reset/Delete Data', 'event_espresso'),
                     'order' => 20,
+                ),
+                'require_nonce' => false,
+            ),
+            'datetime_tools' => array(
+                'nav' => array(
+                    'label' => esc_html__('Datetime Utilities', 'event_espresso'),
+                    'order' => 25
                 ),
                 'require_nonce' => false,
             ),
@@ -660,5 +671,96 @@ class Maintenance_Admin_Page extends EE_Admin_Page
     }
 
 
+    protected function _datetime_tools()
+    {
+        $form_action = EE_Admin_Page::add_query_args_and_nonce(
+            array(
+                'action' => 'run_datetime_offset_fix',
+                'return_action' => $this->_req_action
+            ),
+            EE_MAINTENANCE_ADMIN_URL
+        );
+        $form = $this->_get_datetime_offset_fix_form();
+        $this->_admin_page_title = esc_html__('Datetime Utilities', 'event_espresso');
+        $this->_template_args['admin_page_content'] = $form->form_open($form_action, 'post')
+                                                      . $form->get_html_and_js()
+                                                      . $form->form_close();
+        $this->display_admin_page_with_no_sidebar();
+    }
 
+
+
+    protected function _get_datetime_offset_fix_form()
+    {
+        if (! $this->datetime_fix_offset_form instanceof EE_Form_Section_Proper) {
+            $this->datetime_fix_offset_form =  new EE_Form_Section_Proper(
+                array(
+                    'name' => 'datetime_offset_fix_option',
+                    'layout_strategy' => new EE_Admin_Two_Column_Layout(),
+                    'subsections' => array(
+                        'title' => new EE_Form_Section_HTML(
+                            EEH_HTML::h2(
+                                esc_html__('Datetime Offset Tool', 'event_espresso')
+                            )
+                        ),
+                        'explanation' => new EE_Form_Section_HTML(
+                            EEH_HTML::p(
+                                esc_html__(
+                                    'Use this tool to automatically apply the given offset to all EE_Datetime records in your database',
+                                    'event_espresso'
+                                )
+                            )
+                        ),
+                        'offset_input' => new EE_Float_Input(
+                            array(
+                                'html_name' => 'offset_for_datetimes',
+                                'html_label_text' => esc_html__(
+                                    'Offset to apply (in hours):',
+                                    'event_espresso'
+                                ),
+                                'min_value' => '-12',
+                                'max_value' => '14',
+                                'step_value' => '.25',
+                                'default' => DatetimeOffsetFix::getOffset()
+                            )
+                        ),
+                        'submit' => new EE_Submit_Input(
+                            array(
+                                'html_label_text' => '',
+                                'default' => esc_html__('Apply Offset', 'event_espresso')
+                            )
+                        )
+                    )
+                )
+            );
+        }
+        return $this->datetime_fix_offset_form;
+    }
+
+
+    protected function _apply_datetime_offset()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $form = $this->_get_datetime_offset_fix_form();
+            $form->receive_form_submission($this->_req_data);
+            if ($form->is_valid()) {
+                //save offset so batch processor can get it.
+                DatetimeOffsetFix::updateOffset($form->get_input_value('offset_input'));
+                //redirect to batch tool
+                wp_redirect(
+                    EE_Admin_Page::add_query_args_and_nonce(
+                        array(
+                            'page' => 'espresso_batch',
+                            'batch' => 'job',
+                            'label' => esc_html__('Applying Offset', 'event_espresso'),
+                            'job_handler' => urlencode('EventEspressoBatchRequest\JobHandlers\DatetimeOffsetFix'),
+                            'return_url' => urlencode("//{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}"),
+                        ),
+                        admin_url()
+                    )
+                );
+                exit;
+            }
+        }
+    }
 } //end Maintenance_Admin_Page class
