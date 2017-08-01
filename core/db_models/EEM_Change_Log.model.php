@@ -250,8 +250,9 @@ class EEM_Change_Log extends EEM_Base
     public static function get_pretty_label_for_type($type_identifier)
     {
         $type_identifier_map = self::get_pretty_label_map_for_registered_types();
+        //we fallback to the incoming type identifier if there is no localized label for it.
         return isset($type_identifier_map[$type_identifier])
             ? $type_identifier_map[$type_identifier]
-            : esc_html__('Unknown Log Type', 'event_espresso');
+            : $type_identifier;
     }
 }
