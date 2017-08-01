@@ -805,6 +805,19 @@ class EEM_Event extends EEM_CPT_Base
     }
 
 
+    /**
+     * @param mixed $cols_n_values either an array of where each key is the name of a field, and the value is its value
+     *                             or an stdClass where each property is the name of a column,
+     * @return EE_Base_Class
+     * @throws \EE_Error
+     */
+    public function instantiate_class_from_array_or_object($cols_n_values)
+    {
+        $classInstance = parent::instantiate_class_from_array_or_object($cols_n_values);
+        //events have their timezone defined in the DB, so use it immediately
+        $this->set_timezone($classInstance->get_timezone());
+        return $classInstance;
+    }
 }
 // End of file EEM_Event.model.php
 // Location: /includes/models/EEM_Event.model.php
