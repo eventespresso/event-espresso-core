@@ -160,6 +160,17 @@ class EE_Venue_Shortcodes extends EE_Shortcodes
                 break;
 
         }
+
+        if ( strpos( $shortcode, '[VENUE_META_*' ) !== false ) {
+            $shortcode = str_replace( '[VENUE_META_*', '', $shortcode );
+            $shortcode = trim( str_replace( ']', '', $shortcode ) );
+
+            //pull the meta value from the event post
+            $venue_meta = $this->_venue->get_post_meta( $shortcode, true );
+
+            return ! empty( $venue_meta ) ? $venue_meta : '';
+
+        }
     }
 
 
