@@ -647,6 +647,9 @@ final class EE_Admin implements InterminableInterface
         );
         $return_url = EE_Admin_Page::add_query_args_and_nonce($args, admin_url('admin.php'));
         //add dismissable notice for datetime changes.  Only valid if site does not have a timezone_string set.
+        //@todo This needs to stay in core for a bit to catch anyone upgrading from a version without this to a version
+        //with this.  But after enough time (indeterminate at this point) we can just remove this notice.
+        //this was added with https://events.codebasehq.com/projects/event-espresso/tickets/10626
         if (! get_option('timezone_string')) {
             EE_Error::add_persistent_admin_notice(
                 'datetime_fix_notice',
