@@ -191,64 +191,64 @@ class EE_Venue_Shortcodes extends EE_Shortcodes
 
         switch ($field) {
             case 'title':
-                return $venue->get('VNU_name');
+                return $this->_venue->get('VNU_name');
                 break;
 
             case 'description':
-                return $venue->get('VNU_desc');
+                return $this->_venue->get('VNU_desc');
                 break;
 
             case 'url':
-                $url = $venue->get('VNU_url');
-                return empty($url) ? $venue->get_permalink() : $url;
+                $url = $this->_venue->get('VNU_url');
+                return empty($url) ? $this->_venue->get_permalink() : $url;
                 break;
 
             case 'image':
-                return '<img src="' . $venue->feature_image_url(array(200, 200,))
+                return '<img src="' . $this->_venue->feature_image_url(array(200, 200,))
                        . '" alt="' . sprintf(
                            esc_attr__('%s Feature Image', 'event_espresso'),
-                           $venue->get('VNU_name')
+                           $this->_venue->get('VNU_name')
                        ) . '" />';
                 break;
 
             case 'phone':
-                return $venue->get('VNU_phone');
+                return $this->_venue->get('VNU_phone');
                 break;
 
             case 'address':
-                return $venue->get('VNU_address');
+                return $this->_venue->get('VNU_address');
                 break;
 
             case 'address2':
-                return $venue->get('VNU_address2');
+                return $this->_venue->get('VNU_address2');
                 break;
 
             case 'city':
-                return $venue->get('VNU_city');
+                return $this->_venue->get('VNU_city');
                 break;
 
             case 'state':
-                $state = $venue->state_obj();
+                $state = $this->_venue->state_obj();
                 return is_object($state) ? $state->get('STA_name') : '';
                 break;
 
             case 'country':
-                $country = $venue->country_obj();
+                $country = $this->_venue->country_obj();
                 return is_object($country) ? $country->get('CNT_name') : '';
                 break;
 
             case 'zip':
-                return $venue->get('VNU_zip');
+                return $this->_venue->get('VNU_zip');
                 break;
 
             case 'formatted_address':
-                return EEH_Address::format($venue);
+                return EEH_Address::format($this->_venue);
                 break;
 
             case 'gmap_link':
             case 'gmap_url':
             case 'gmap_link_img':
-                $atts = $this->get_map_attributes($venue, $field);
+                $atts = $this->get_map_attributes($this->_venue, $field);
                 return EEH_Maps::google_map_link($atts);
                 break;
         }
