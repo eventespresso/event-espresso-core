@@ -381,7 +381,6 @@ class Read_Test extends \EE_REST_TestCase
             unset($result[$property_name]);
         }
         $event_id = $event->ID();
-        $site_url = site_url();
         $this->assertEquals(
             array(
                 'EVT_ID'                          => $event->get('EVT_ID'),
@@ -420,24 +419,25 @@ class Read_Test extends \EE_REST_TestCase
                         array(
                             0 =>
                                 array(
-                                    'href' => $site_url . '/?rest_route=/ee/v4.8.29/events/' . $event_id,
+                                    'href' => rest_url('/?rest_route=/ee/v4.8.29/events/' . $event_id),
                                 ),
                         ),
                     'collection'                                            =>
                         array(
                             0 =>
                                 array(
-                                    'href' => $site_url . '/?rest_route=/ee/v4.8.29/events',
+                                    'href' => rest_url('/?rest_route=/ee/v4.8.29/events'),
                                 ),
                         ),
                     'https://api.eventespresso.com/registrations'           =>
                         array(
                             0 =>
                                 array(
-                                    'href'   => $site_url
+                                    'href'   => rest_url(
                                                 . '/?rest_route=/ee/v4.8.29/events/'
                                                 . $event_id
-                                                . '/registrations',
+                                                . '/registrations'
+                                                ),
                                     'single' => false,
                                 ),
                         ),
@@ -445,10 +445,11 @@ class Read_Test extends \EE_REST_TestCase
                         array(
                             0 =>
                                 array(
-                                    'href'   => $site_url
+                                    'href'   => rest_url(
                                                 . '/?rest_route=/ee/v4.8.29/events/'
                                                 . $event_id
-                                                . '/datetimes',
+                                                . '/datetimes'
+                                                ),
                                     'single' => false,
                                 ),
                         ),
@@ -456,10 +457,11 @@ class Read_Test extends \EE_REST_TestCase
                         array(
                             0 =>
                                 array(
-                                    'href'   => $site_url
+                                    'href'   => rest_url(
                                                 . '/?rest_route=/ee/v4.8.29/events/'
                                                 . $event_id
-                                                . '/question_groups',
+                                                . '/question_groups'
+                                                ),
                                     'single' => false,
                                 ),
                         ),
@@ -467,7 +469,7 @@ class Read_Test extends \EE_REST_TestCase
                         array(
                             0 =>
                                 array(
-                                    'href'   => $site_url . '/?rest_route=/ee/v4.8.29/events/' . $event_id . '/venues',
+                                    'href'   => rest_url( '/?rest_route=/ee/v4.8.29/events/' . $event_id . '/venues'),
                                     'single' => false,
                                 ),
                         ),
@@ -475,10 +477,11 @@ class Read_Test extends \EE_REST_TestCase
                         array(
                             0 =>
                                 array(
-                                    'href'   => $site_url
+                                    'href'   => rest_url(
                                                 . '/?rest_route=/ee/v4.8.29/events/'
                                                 . $event_id
-                                                . '/term_taxonomies',
+                                                . '/term_taxonomies'
+                                                ),
                                     'single' => false,
                                 ),
                         ),
@@ -486,10 +489,11 @@ class Read_Test extends \EE_REST_TestCase
                         array(
                             0 =>
                                 array(
-                                    'href'   => $site_url
+                                    'href'   => rest_url(
                                                 . '/?rest_route=/ee/v4.8.29/events/'
                                                 . $event_id
-                                                . '/message_template_groups',
+                                                . '/message_template_groups'
+                                                ),
                                     'single' => false,
                                 ),
                         ),
@@ -497,10 +501,11 @@ class Read_Test extends \EE_REST_TestCase
                         array(
                             0 =>
                                 array(
-                                    'href'   => $site_url
+                                    'href'   => rest_url(
                                                 . '/?rest_route=/ee/v4.8.29/events/'
                                                 . $event_id
-                                                . '/attendees',
+                                                . '/attendees'
+                                                ),
                                     'single' => false,
                                 ),
                         ),
@@ -508,7 +513,7 @@ class Read_Test extends \EE_REST_TestCase
                         array(
                             0 =>
                                 array(
-                                    'href'   => $site_url . '/?rest_route=/ee/v4.8.29/events/' . $event_id . '/wp_user',
+                                    'href'   => rest_url( '/?rest_route=/ee/v4.8.29/events/' . $event_id . '/wp_user'),
                                     'single' => true,
                                 ),
                         ),
@@ -516,10 +521,11 @@ class Read_Test extends \EE_REST_TestCase
                         array(
                             0 =>
                                 array(
-                                    'href'   => $site_url
+                                    'href'   => rest_url(
                                                 . '/?rest_route=/ee/v4.8.29/events/'
                                                 . $event_id
-                                                . '/post_metas',
+                                                . '/post_metas'
+                                                ),
                                     'single' => false,
                                 ),
                         ),
@@ -527,10 +533,11 @@ class Read_Test extends \EE_REST_TestCase
                         array(
                             0 =>
                                 array(
-                                    'href'   => $site_url
+                                    'href'   => rest_url(
                                                 . '/?rest_route=/ee/v4.8.29/events/'
                                                 . $event_id
-                                                . '/extra_metas',
+                                                . '/extra_metas'
+                                                ),
                                     'single' => false,
                                 ),
                         ),
@@ -538,10 +545,11 @@ class Read_Test extends \EE_REST_TestCase
                         array(
                             0 =>
                                 array(
-                                    'href'   => $site_url
+                                    'href'   =>rest_url(
                                                 . '/?rest_route=/ee/v4.8.29/events/'
                                                 . $event_id
-                                                . '/change_logs',
+                                                . '/change_logs'
+                                                ),
                                     'single' => false,
                                 ),
                         ),
@@ -549,10 +557,11 @@ class Read_Test extends \EE_REST_TestCase
                         array(
                             0 =>
                                 array(
-                                    'href'   => $site_url
+                                    'href'   => rest_url(
                                                 . '/?rest_route=/ee/v4.8.29/events/'
                                                 . $event_id
-                                                . '/term_relationships',
+                                                . '/term_relationships'
+                                                ),
                                     'single' => false,
                                 ),
                         ),
@@ -972,6 +981,7 @@ class Read_Test extends \EE_REST_TestCase
     }
 
 
+<<<<<<< HEAD
 
     /**
      * If someone specifies the same model field in a query parameter, which do we use? WP core uses the non-gmt field
@@ -1045,6 +1055,46 @@ class Read_Test extends \EE_REST_TestCase
         $response_data = $response->get_data();
         $this->assertTrue(empty($response_data['code']));
     }
+=======
+    /**
+     * Creates two events: one with registrations, the other without.
+     * Verify that if we loop over them and render their pretty content (which renders shortcodes)
+     * we don't accidentally cache the shortcode from one event to the other
+     * @group 10851
+     */
+    public function testShortcodesNotCachedForDifferentEvents()
+    {
+        $transaction = $this->new_typical_transaction();
+        $event_with_registrations = $transaction->primary_registration()->event();
+        $event_with_registrations->set_description('[ESPRESSO_EVENT_ATTENDEES]');
+        $event_with_registrations->set('status','publish');
+        $event_with_registrations->save();
+
+        $other_event = $this->new_model_obj_with_dependencies(
+            'Event',
+            array(
+                'EVT_desc' => '[ESPRESSO_EVENT_ATTENDEES]',
+                'status' => 'publish'
+            )
+        );
+        $dtt = $this->new_model_obj_with_dependencies('Datetime');
+        $other_event->_add_relation_to( $dtt, 'Datetime' );
+        $dtt->_add_relation_to(
+            $this->new_model_obj_with_dependencies('Ticket'),
+            'Ticket'
+        );
+
+        $request = new \WP_REST_Request( 'GET', '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events');
+        $response = rest_do_request($request);
+        $data = $response->get_data();
+        $this->assertEquals( 2, count($data));
+        $this->assertNotEquals(
+            $data[0]['EVT_desc']['rendered'],
+            $data[1]['EVT_desc']['rendered']
+        );
+    }
+
+>>>>>>> master
 }
 // End of file Read_Test.php
 // Location: testcases/core/libraries/rest_api/controllers/Read_Test.php

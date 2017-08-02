@@ -566,7 +566,7 @@ function dump(arr,level) {
  * @param  {*} value
  * @param  {boolean} spacer
  */
-function console_log( item_name, value, spacer ) {
+window.console_log = function( item_name, value, spacer ) {
 	if ( typeof value === 'object' ) {
 		console_log_object( item_name, value, 0 );
 	} else {
@@ -579,7 +579,7 @@ function console_log( item_name, value, spacer ) {
 			console.log( item_name );
 		}
 	}
-}
+};
 
 /**
  * @function console_log_object
@@ -588,7 +588,7 @@ function console_log( item_name, value, spacer ) {
  * @param  {object} obj
  * @param  {number} depth
  */
-function console_log_object( obj_name, obj, depth ) {
+window.console_log_object = function( obj_name, obj, depth ) {
 	depth      = typeof depth !== 'undefined' ? depth : 0;
 	var spacer = '';
 	for ( var i = 0; i < depth; i++ ) {

@@ -45,6 +45,9 @@ class CreateTicketLineItemCommandHandler extends CommandHandler
 	/**
 	 * @param \EventEspresso\core\services\commands\CommandInterface $command
 	 * @return \EE_Line_Item
+	 * @throws \EventEspresso\core\exceptions\InvalidEntityException
+	 * @throws \EventEspresso\core\exceptions\UnexpectedEntityException
+	 * @throws \EE_Error
 	 */
 	public function handle( CommandInterface $command ) {
 		/** @var CreateTicketLineItemCommand $command */

@@ -49,12 +49,10 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
     {
         $this->_name = 'pricing';
         //capability check
-        if (
-            ! EE_Registry::instance()->CAP->current_user_can(
-                'ee_read_default_prices',
-                'advanced_ticket_datetime_metabox'
-            )
-        ) {
+        if (! EE_Registry::instance()->CAP->current_user_can(
+            'ee_read_default_prices',
+            'advanced_ticket_datetime_metabox'
+        )) {
             return;
         }
         $this->_setup_metaboxes();
@@ -785,13 +783,13 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
         // AND has the new TKT_price associated with it.
         $new_ticket = clone $ticket;
         $new_ticket->set('TKT_ID', 0);
-        $new_ticket->set('TKT_deleted', 0);
-        $new_ticket->set('TKT_price', $ticket_price);
-        $new_ticket->set('TKT_sold', 0);
+        $new_ticket->set_deleted(0);
+        $new_ticket->set_price($ticket_price);
+        $new_ticket->set_sold(0);
         // let's get a new ID for this ticket
         $new_ticket->save();
         // we also need to make sure this new ticket gets the same datetime attachments as the archived ticket
-        $datetimes_on_existing = $ticket->get_many_related('Datetime');
+        $datetimes_on_existing = $ticket->datetimes();
         $new_ticket = $this->_update_ticket_datetimes(
             $new_ticket,
             $datetimes_on_existing,
@@ -1388,13 +1386,13 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
         // let's just make sure there are no cached default prices on the object.
         // This is done by not including any query_params.
         if ($ticket instanceof EE_Ticket && $ticket->is_default() && (count($prices) === 1 || empty($prices))) {
-            $prices = $ticket->get_many_related('Price');
+            $prices = $ticket->prices();
         }
         // check if we're dealing with a default ticket in which case
         // we don't want any starting_ticket_datetime_row values set
         // (otherwise there won't be any new relationships created for tickets based off of the default ticket).
         // This will future proof in case there is ever any behaviour change between what the primary_key defaults to.
-        $default_dtt = $default || ($ticket instanceof EE_Ticket && $ticket->get('TKT_is_default'));
+        $default_dtt = $default || ($ticket instanceof EE_Ticket && $ticket->is_default());
         $tkt_datetimes = $ticket instanceof EE_Ticket && isset($ticket_datetimes[$ticket->ID()])
             ? $ticket_datetimes[$ticket->ID()]
             : array();
@@ -1413,13 +1411,13 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
         if ($default) {
             $TKT_taxable = '';
         } else {
-            $TKT_taxable = $ticket->get('TKT_taxable')
+            $TKT_taxable = $ticket->taxable()
                 ? ' checked="checked"'
                 : '';
         }
         if ($default) {
             $TKT_status = EEH_Template::pretty_status(EE_Ticket::onsale, false, 'sentence');
-        } else if ($ticket->is_default()) {
+        } elseif ($ticket->is_default()) {
             $TKT_status = EEH_Template::pretty_status(EE_Ticket::onsale, false, 'sentence');
         } else {
             $TKT_status = $ticket->ticket_status(true);
@@ -1427,7 +1425,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
         if ($default) {
             $TKT_min = '';
         } else {
-            $TKT_min = $ticket->get('TKT_min');
+            $TKT_min = $ticket->min();
             if ($TKT_min === -1 || $TKT_min === 0) {
                 $TKT_min = '';
             }
@@ -1440,15 +1438,13 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
             'display_edit_tkt_row'          => ' style="display:none;"',
             'edit_tkt_expanded'             => '',
             'edit_tickets_name'             => $default ? 'TICKETNAMEATTR' : 'edit_tickets',
-            'TKT_name'                      => $default ? '' : $ticket->get('TKT_name'),
+            'TKT_name'                      => $default ? '' : $ticket->name(),
             'TKT_start_date'                => $default
                 ? ''
-                : $ticket->get_date('TKT_start_date',
-                    $this->_date_time_format),
+                : $ticket->get_date('TKT_start_date', $this->_date_time_format),
             'TKT_end_date'                  => $default
                 ? ''
-                : $ticket->get_date('TKT_end_date',
-                    $this->_date_time_format),
+                : $ticket->get_date('TKT_end_date', $this->_date_time_format),
             'TKT_status'                    => $TKT_status,
             'TKT_price'                     => $default
                 ? ''
@@ -1486,9 +1482,9 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
                         ),
                     )
                 ),
-            'TKT_ID'                        => $default ? 0 : $ticket->get('TKT_ID'),
-            'TKT_description'               => $default ? '' : $ticket->get('TKT_description'),
-            'TKT_is_default'                => $default ? 0 : $ticket->get('TKT_is_default'),
+            'TKT_ID'                        => $default ? 0 : $ticket->ID(),
+            'TKT_description'               => $default ? '' : $ticket->description(),
+            'TKT_is_default'                => $default ? 0 : $ticket->is_default(),
             'TKT_required'                  => $default ? 0 : $ticket->required(),
             'TKT_is_default_selector'       => '',
             'ticket_price_rows'             => '',
@@ -1501,7 +1497,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
                 : ' style="display:none;"',
             'show_price_mod_button'         => count($prices) > 1
                                                || ($default && $count_price_mods > 0)
-                                               || (! $default && $ticket->get('TKT_deleted'))
+                                               || (! $default && $ticket->deleted())
                 ? ' style="display:none;"'
                 : '',
             'total_price_rows'              => count($prices) > 1 ? count($prices) : 1,
@@ -1511,7 +1507,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
             'existing_ticket_price_ids'     => $default ? '' : implode(',', array_keys($prices)),
             'ticket_template_id'            => $default ? 0 : $ticket->get('TTM_ID'),
             'TKT_taxable'                   => $TKT_taxable,
-            'display_subtotal'              => $ticket instanceof EE_Ticket && $ticket->get('TKT_taxable')
+            'display_subtotal'              => $ticket instanceof EE_Ticket && $ticket->taxable()
                 ? ''
                 : ' style="display:none"',
             'price_currency_symbol'         => EE_Registry::instance()->CFG->currency->sign,
@@ -1522,14 +1518,16 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
             ),
             'TKT_subtotal_amount'           => $ticket_subtotal,
             'tax_rows'                      => $this->_get_tax_rows($ticket_row, $ticket),
-            'disabled'                      => $ticket instanceof EE_Ticket && $ticket->get('TKT_deleted'),
-            'ticket_archive_class'          => $ticket instanceof EE_Ticket && $ticket->get('TKT_deleted')
+            'disabled'                      => $ticket instanceof EE_Ticket && $ticket->deleted(),
+            'ticket_archive_class'          => $ticket instanceof EE_Ticket && $ticket->deleted()
                 ? ' ticket-archived'
                 : '',
-            'trash_icon'                    => $ticket instanceof EE_Ticket && $ticket->get('TKT_deleted')
+            'trash_icon'                    => $ticket instanceof EE_Ticket
+                                               && $ticket->deleted()
+                                               && ! $ticket->is_permanently_deleteable()
                 ? 'ee-lock-icon '
                 : 'trash-icon dashicons dashicons-post-trash clickable',
-            'clone_icon'                    => $ticket instanceof EE_Ticket && $ticket->get('TKT_deleted')
+            'clone_icon'                    => $ticket instanceof EE_Ticket && $ticket->deleted()
                 ? ''
                 : 'clone-icon ee-icon ee-icon-clone clickable',
         );
