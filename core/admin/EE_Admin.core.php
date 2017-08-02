@@ -660,7 +660,7 @@ final class EE_Admin implements InterminableInterface
                     ),
                     '<strong>',
                     '</strong>',
-                    '<a href="https://eventespresso.com/2017/08/important-upcoming-changes-to-dates-and-times-in-event-espresso">',
+                    '<a href="https://eventespresso.com/2017/08/important-upcoming-changes-dates-times">',
                     '</a>',
                     '<a href="' . EE_Admin_Page::add_query_args_and_nonce(
                         array(
