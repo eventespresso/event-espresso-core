@@ -656,8 +656,10 @@ class Read extends Base
     protected function createBareEntityFromWpdbResults(EEM_Base $model, $db_row)
     {
         $result = $model->deduce_fields_n_values_from_cols_n_values($db_row);
-        $result = array_intersect_key($result,
-            $this->get_model_version_info()->fields_on_model_in_this_version($model));
+        $result = array_intersect_key(
+            $result,
+            $this->getModelVersionInfo()->fieldsOnModelInThisVersion($model)
+        );
         //if this is a CPT, we need to set the global $post to it,
         //otherwise shortcodes etc won't work properly while rendering it
         if ($model instanceof \EEM_CPT_Base) {
@@ -671,7 +673,7 @@ class Read extends Base
             $post = get_post($result[$model->primary_key_name()]);
             if (! $post instanceof \WP_Post) {
                 //well that's weird, because $result is what we JUST fetched from the database
-                throw new Rest_Exception(
+                throw new RestException(
                     'error_fetching_post_from_database_results',
                     esc_html__(
                         'An item was retrieved from the database but it\'s not a WP_Post like it should be.',
