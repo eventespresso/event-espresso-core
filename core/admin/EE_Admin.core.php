@@ -634,7 +634,7 @@ final class EE_Admin implements InterminableInterface
             EE_Error::add_attention(
                 sprintf(
                     esc_html__(
-                        '%1$sImportant announcement related to your install of Event Espresso%2$s: There are some changes coming in a future version of EE that could affect your site.  Read more about it %3$shere%4$s.',
+                        '%1$sImportant%2$s: Please note some upcoming changes to dates and times in Event Espresso that may affect your website.  Read more about it %3$shere%4$s.',
                         'event_espresso'
                     ),
                     '<strong>',
