@@ -986,6 +986,28 @@ class EE_Base_Class_Test extends EE_UnitTestCase
     }
 
 
+
+    /**
+     * Verifies that when we set the timezone on a model object, related objects adopt that same timezone
+     * @group 10905
+     */
+    public function setTimezone()
+    {
+        $t = $this->new_typical_transaction();
+        $datetime = EEM_Datetime::instance()->get_one(array(array('EVT_ID'=>$t->primary_registration()->event_ID())));
+        //set the timezone on the datetime, which should also set it on the ticket
+        $datetime->set_timezone('Europe/London');
+        $ticket = $datetime->get_first_related('Ticket');
+        $this->assertEquals('Europe/London', $ticket->get_timezone());
+
+        //now verify that if we change the timezone on the datetime, the ticket will also get changed
+        $datetime->set_timezone('America/New_York');
+        $ticket = $datetime->get_first_related('Ticket');
+        $this->assertEquals('America/New_York', $ticket->get_timezone());
+
+    }
+
+
 }
 
 // End of file EE_Base_Class_Test.php
