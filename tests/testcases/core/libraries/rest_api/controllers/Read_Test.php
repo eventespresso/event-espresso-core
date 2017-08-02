@@ -324,7 +324,6 @@ class Read_Test extends \EE_REST_TestCase
      * DO change it, in which case this unit test will need to be updated to
      * include the known modifications).
      * This helps prevent accidental changes
-     * @group current
      */
     public function test_handle_request_get_one__event()
     {
