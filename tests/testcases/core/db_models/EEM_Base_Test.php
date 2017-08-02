@@ -142,6 +142,37 @@ class EEM_Base_Test extends EE_UnitTestCase
     }
 
 
+    /**
+     * Verifies permanent deletes will also remove any extra meta that might be present in the database for items
+     * deleted.
+     */
+    public function test_delete_with_extra_meta()
+    {
+        /** @var EE_Registration $registration_to_delete */
+        $registration_to_delete = $this->factory->registration->create();
+        //add extrameta
+        $registration_to_delete->update_extra_meta('test_registration_meta', 'value');
+
+        //get the extra meta so we have its ID for checking later.
+        $extra_meta = EEM_Extra_Meta::instance()->get_one(array(
+            array(
+                'OBJ_ID' => $registration_to_delete->ID(),
+                'EXM_type' => 'Registration',
+                'EXM_key' => 'test_registration_meta'
+            )
+        ));
+        $this->assertInstanceOf('EE_Extra_Meta', $extra_meta);
+
+        //delete the registration
+        $success = $registration_to_delete->delete_permanently();
+        $this->assertEquals(1, $success);
+
+        //assert the meta no longer exists in the db.
+        $extra_meta = EEM_Extra_Meta::instance()->get_one_by_ID($extra_meta->ID());
+        $this->assertNotInstanceOf('EE_Extra_Meta', $extra_meta);
+    }
+
+
 
     /**
      * @throws EE_Error
