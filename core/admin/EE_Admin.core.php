@@ -639,7 +639,7 @@ final class EE_Admin implements InterminableInterface
                     ),
                     '<strong>',
                     '</strong>',
-                    '<a href="https://eventespresso.com/2017/08/important-upcoming-changes-to-dates-and-times-in-ee">',
+                    '<a href="https://eventespresso.com/2017/08/important-upcoming-changes-to-dates-and-times-in-event-espresso">',
                     '</a>'
                 )
             );
