@@ -54,7 +54,7 @@ class EE_Venue_Shortcodes extends EE_Shortcodes
                 'event_espresso'
             ),
             '[VENUE_ZIP]'               => esc_html__('The zip code for the venue address', 'event_espresso'),
-            '[VENUE_META_*]'            => __(
+            '[VENUE_META_*]'            => esc_html__(
                 'This is a special dynamic shortcode. After the "*", add the exact name for your custom field, if there is a value set for that custom field within the venue then it will be output in place of this shortcode.', 
                 'event_espresso'
             ),
