@@ -2,7 +2,7 @@
 use EventEspresso\core\libraries\rest_api\ModelDataTranslator;
 
 /**
- * Class Model_Data_Translator_Test
+ * Class ModelDataTranslator_Test
  * Description here
  *
  * @package               Event Espresso
@@ -224,6 +224,13 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
      */
     public function dataProviderForTestPrepareFieldValuesForJson()
     {
+        //if we don't have the WP API infrastructure, return a dummy array
+        //it doesn't have to work because all the tests will be skipped too
+        if ( ! class_exists( 'WP_Rest_Request' ) ) {
+            return array(
+                array()
+            );
+        }
         $field = new EE_Maybe_Serialized_Simple_HTML_Field('whatever', 'whatever', true);
         $datetime_field = new EE_Datetime_Field('whatever2', 'whatever2', true, EE_Datetime_Field::now);
         $error_response = array(
@@ -233,21 +240,92 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
                 'event_espresso'
             )
         );
+        $datetime_field_obj = EE_Registry::instance()->load_model('Datetime')->field_settings_for('DTT_EVT_start');
         return array(
-            array(array('foo' => 'bar'), array('foo' => 'bar'), $field),
-            array(1, 1, $field),
-            array('stringy', 'stringy', $field),
+            array(
+                array('foo' => 'bar'),
+                array('foo' => 'bar'),
+                $field)
+            ,
+            array(
+                1,
+                1,
+                $field
+            ),
+            array(
+                'stringy',
+                'stringy',
+                $field
+            ),
             array(
                 '2016-01-03T00:00:00',
                 new \EventEspresso\core\domain\entities\DbSafeDateTime(
                     '2016-01-03 00:00:00',
                     new DateTimeZone('UTC')
                 ),
-                $datetime_field
+                $datetime_field,
             ),
-            array($error_response, new stdClass(), $field),
-            array(array('obj'=> $error_response), array('obj' => new stdClass()), $field),
-            array($error_response, @unserialize('O:6:"Foobar":0:{}'), $field)
+            array(
+                $error_response,
+                new stdClass(),
+                $field
+            ),
+            array(
+                array('obj' => $error_response),
+                array('obj' => new stdClass()),
+                $field
+            ),
+            array(
+                $error_response,
+                @unserialize('O:6:"Foobar":0:{}'),
+                $field
+            ),
+            'datetime_object_in_default_timezone'       => array(
+                mysql_to_rfc3339(current_time('mysql')),
+                new DateTime('now'),
+                $datetime_field_obj,
+            ),
+            'unix_timestamp_in_default_timezone'        => array(
+                mysql_to_rfc3339(date(EE_Datetime_Field::mysql_timestamp_format, 946782245)),
+                946782245,
+                $datetime_field_obj,
+            ),
+            'unix_timestamp_STRING_in_default_timezone' => array(
+                mysql_to_rfc3339(date(EE_Datetime_Field::mysql_timestamp_format, 946782245)),
+                '946782245',
+                $datetime_field_obj,
+            ),
+            'null_datetime'                             => array(
+                '',
+                null,
+                $datetime_field_obj,
+            ),
+            'mysql_in_default_timezone'                 => array(
+                mysql_to_rfc3339('2000-01-02 03:04:05'),
+                '2000-01-02 03:04:05',
+                $datetime_field_obj,
+            ),
+            'datetime_object_in_different_timezone'     => array(
+                mysql_to_rfc3339('2000-01-02 03:04:05'),
+                new DateTime('2000-01-02 03:04:05', new DateTimeZone('America/Vancouver')),
+                $datetime_field_obj,
+                'America/Vancouver',
+            ),
+            //the input is a unix timestamp (in GMT)
+            //the result should be a RFC3339 string also in GMT
+            'unix_timestamp_in_different_timezone'      => array(
+                mysql_to_rfc3339('2000-01-02 03:04:05'),
+                946782245,
+                $datetime_field_obj,
+                'America/Vancouver',
+            ),
+            //so the input is for 3am Vancouver time, and the output should be too
+            'mysql_datetime_in_different_timezone'      => array(
+                mysql_to_rfc3339('2000-01-02 03:04:05'),
+                '2000-01-02 3:04:05',
+                $datetime_field_obj,
+                'America/Vancouver',
+            ),
         );
     }
 
@@ -648,6 +726,54 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
         );
     }
 
+    /**
+     * Reproduced issue https://events.codebasehq.com/projects/event-espresso/tickets/10869
+     * and https://events.codebasehq.com/projects/event-espresso/tickets/10858 by changing
+     * the site date format to 'd/m/Y'
+     */
+    public function testPrepareFieldValueForJsonUnusualDateFormat(){
+        $field_obj = EE_Registry::instance()->load_model('Datetime')->field_settings_for('DTT_EVT_start');
+        if($field_obj instanceof EE_Datetime_Field){
+            //change the date format because it used to make this not work
+            $field_obj->set_date_format('d/m/Y');
+            //the default time format excludes seconds,
+            $field_obj->set_time_format('g:i a s');
+        }
+        $current_time_mysql = current_time('mysql');
+        $datetime = new DateTime( $current_time_mysql );
+        $formats = EE_Registry::instance()->load_model('Datetime')->get_formats_for('DTT_EVT_start');
+        $date_in_site_format = $datetime->format(implode(' ', $formats));
+        $this->assertEquals(
+            mysql_to_rfc3339($current_time_mysql),
+            ModelDataTranslator::prepareFieldValueForJson(
+                $field_obj,
+                $date_in_site_format,
+                '4.8.36'
+            )
+        );
+    }
+
+
+
+    /**
+     * If you pass in an empty string, it's the same as using the current time in the field's timezone
+     * @group 10869
+     */
+    public function testPrepareFieldValueForJsonPassingInEmptyString(){
+        $field_obj = EE_Registry::instance()->load_model('Datetime')->field_settings_for('DTT_EVT_start');
+        $field_obj->set_timezone('America/Vancouver');
+        update_option('timezone_string', 'America/Vancouver');
+        $this->assertDateWithinOneMinute(
+            mysql_to_rfc3339(current_time('mysql'), false),
+            ModelDataTranslator::prepareFieldValueForJson(
+                $field_obj,
+                '',
+                '4.8.36'
+            ),
+            'Y-m-d\TH:i:s'
+        );
+    }
+
 }
 
-// Location: tests/testcases/core/libraries/rest_api/Model_Data_Translator_Test.php
+// Location: tests/testcases/core/libraries/rest_api/ModelDataTranslator_Test.php
