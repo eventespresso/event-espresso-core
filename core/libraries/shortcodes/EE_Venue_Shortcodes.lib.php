@@ -75,34 +75,7 @@ class EE_Venue_Shortcodes extends EE_Shortcodes
      */
     protected function _parser($shortcode)
     {
-
-        //we need the EE_Event object to get the venue.
-        $this->_event = $this->_data instanceof EE_Event ? $this->_data : null;
-
-        //if no event, then let's see if there is a reg_obj.  If there IS, then we'll try and grab the event from the reg_obj instead.
-        if (empty($this->_event)) {
-            $aee = $this->_data instanceof EE_Messages_Addressee ? $this->_data : null;
-            $aee = $this->_extra_data instanceof EE_Messages_Addressee ? $this->_extra_data : $aee;
-
-            $this->_event = $aee instanceof EE_Messages_Addressee && $aee->reg_obj instanceof EE_Registration ? $aee->reg_obj->event() : null;
-
-            //if still empty do we have a ticket data item?
-            $this->_event = empty($this->_event)
-                            && $this->_data instanceof EE_Ticket
-                            && $this->_extra_data['data'] instanceof EE_Messages_Addressee
-                ? $this->_extra_data['data']->tickets[$this->_data->ID()]['EE_Event']
-                : $this->_event;
-
-            //if STILL empty event, let's try to get the first event in the list of events via EE_Messages_Addressee and use that.
-            $event        = $aee instanceof EE_Messages_Addressee ? reset($aee->events) : array();
-            $this->_event = empty($this->_event) && ! empty($events) ? $event : $this->_event;
-        }
-
-        //If we have an event object use it to pull the venue.
-        if ($this->_event instanceof EE_Event) {
-            $this->_venue = $this->_event->get_first_related('Venue');
-        }
-
+        $this->_venue = $this->_get_venue();
         //If there is no venue object by now then get out.
         if ( ! $this->_venue instanceof EE_Venue )
             return '';
@@ -181,7 +154,42 @@ class EE_Venue_Shortcodes extends EE_Shortcodes
 
         }
     }
+    /**
+     * This retrieves the EE_Venue from the available data object.
+     *
+     * @return EE_Venue|null
+     */
+    private function _get_venue() {
 
+        //we need the EE_Event object to get the venue.
+        $this->_event = $this->_data instanceof EE_Event ? $this->_data : null;
+
+        //if no event, then let's see if there is a reg_obj.  If there IS, then we'll try and grab the event from the reg_obj instead.
+        if (empty($this->_event)) {
+            $aee = $this->_data instanceof EE_Messages_Addressee ? $this->_data : null;
+            $aee = $this->_extra_data instanceof EE_Messages_Addressee ? $this->_extra_data : $aee;
+
+            $this->_event = $aee instanceof EE_Messages_Addressee && $aee->reg_obj instanceof EE_Registration ? $aee->reg_obj->event() : null;
+
+            //if still empty do we have a ticket data item?
+            $this->_event = empty($this->_event)
+                            && $this->_data instanceof EE_Ticket
+                            && $this->_extra_data['data'] instanceof EE_Messages_Addressee
+                ? $this->_extra_data['data']->tickets[$this->_data->ID()]['EE_Event']
+                : $this->_event;
+
+            //if STILL empty event, let's try to get the first event in the list of events via EE_Messages_Addressee and use that.
+            $event        = $aee instanceof EE_Messages_Addressee ? reset($aee->events) : array();
+            $this->_event = empty($this->_event) && ! empty($events) ? $event : $this->_event;
+        }
+
+        //If we have an event object use it to pull the venue.
+        if ($this->_event instanceof EE_Event) {
+            return $this->_event->get_first_related('Venue');
+        } 
+
+        return null;
+    }
 
     /**
      * This retrieves the specified venue information
