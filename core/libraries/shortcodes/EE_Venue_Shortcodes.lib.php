@@ -49,10 +49,19 @@ class EE_Venue_Shortcodes extends EE_Shortcodes
             '[VENUE_CITY]'              => esc_html__('The city the venue is in', 'event_espresso'),
             '[VENUE_STATE]'             => esc_html__('The state the venue is located in', 'event_espresso'),
             '[VENUE_COUNTRY]'           => esc_html__('The country the venue is located in', 'event_espresso'),
-            '[VENUE_FORMATTED_ADDRESS]' => esc_html__('This just outputs the venue address in a semantic address format.', 'event_espresso'),
+            '[VENUE_FORMATTED_ADDRESS]' => esc_html__(
+                'This just outputs the venue address in a semantic address format.',
+                'event_espresso'
+            ),
             '[VENUE_ZIP]'               => esc_html__('The zip code for the venue address', 'event_espresso'),
-            '[VENUE_META_*]'            => __('This is a special dynamic shortcode. After the "*", add the exact name for your custom field, if there is a value set for that custom field within the venue then it will be output in place of this shortcode.', 'event_espresso'),
-            '[GOOGLE_MAP_URL]'          => esc_html__('URL for the google map associated with the venue.', 'event_espresso'),
+            '[VENUE_META_*]'            => __(
+                'This is a special dynamic shortcode. After the "*", add the exact name for your custom field, if there is a value set for that custom field within the venue then it will be output in place of this shortcode.', 
+                'event_espresso'
+            ),
+            '[GOOGLE_MAP_URL]'          => esc_html__(
+                'URL for the google map associated with the venue.', 
+                'event_espresso'
+            ),
             '[GOOGLE_MAP_LINK]'         => esc_html__('Link to a google map for the venue', 'event_espresso'),
             '[GOOGLE_MAP_IMAGE]'        => esc_html__('Google map for venue wrapped in image tags', 'event_espresso'),
         );
