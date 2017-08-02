@@ -33,9 +33,15 @@ class DatetimeOffsetFix extends JobHandler
 
 
     /**
-     * String labelling the datetime offset fix type for changelog entries.
+     * String labelling the datetime offset fix type for change-log entries.
      */
     const DATETIME_OFFSET_FIX_CHANGELOG_TYPE = 'datetime_offset_fix';
+
+
+    /**
+     * String labelling a datetime offset fix error for change-log entries.
+     */
+    const DATETIME_OFFSET_FIX_CHANGELOG_ERROR_TYPE = 'datetime_offset_fix_error';
 
     /**
      * @var EEM_Base[]
@@ -147,23 +153,40 @@ class DatetimeOffsetFix extends JobHandler
             //k convert innerquery to string
             $query .= ' SET ' . implode(',', $inner_query);
             //execute query
-            $wpdb->query($query);
+            $result = $wpdb->query($query);
             //record log
-            $this->recordChangeLog($model, $original_offset, $table, $fields_affected);
+            if ($result !== false) {
+                $this->recordChangeLog($model, $original_offset, $table, $fields_affected);
+            } else {
+                //record error.
+                $error_message = $wpdb->last_error;
+                //handle the edgecases where last_error might be empty.
+                if (! $error_message) {
+                    $error_message = esc_html__('Unknown mysql error occured.', 'event_espresso');
+                }
+                $this->recordChangeLog($model, $original_offset, $table, $fields_affected, $error_message);
+            }
         }
     }
 
 
     /**
      * Records a changelog entry using the given information.
+     *
      * @param EEM_Base              $model
      * @param float                 $offset
      * @param EE_Table_Base         $table
      * @param EE_Model_Field_Base[] $model_fields_affected
+     * @param string                $error_message   If present then there was an error so let's record that instead.
      * @throws \EE_Error
      */
-    private function recordChangeLog(EEM_Base $model, $offset, EE_Table_Base $table, $model_fields_affected)
-    {
+    private function recordChangeLog(
+        EEM_Base $model,
+        $offset,
+        EE_Table_Base $table,
+        $model_fields_affected,
+        $error_message = ''
+    ) {
         //setup $fields list.
         $fields = array();
         /** @var EE_Datetime_Field $model_field */
@@ -174,19 +197,33 @@ class DatetimeOffsetFix extends JobHandler
             $fields[] = $model_field->get_name();
         }
         //setup the message for the changelog entry.
-        $message = sprintf(
-            esc_html__(
-                'The %1$s table for the %2$s model has had the offset of %3$f applied to its following fields: %4$s',
-                'event_espresso'
-            ),
-            $table->get_table_name(),
-            $model->get_this_model_name(),
-            $offset,
-            implode(',', $fields)
-        );
+        $message = $error_message
+            ? sprintf(
+                esc_html__(
+                    'The %1$s table for the %2$s model did not have the offset of %3$f applied to its fields (%4$s), because of the following error:%5$s',
+                    'event_espresso'
+                ),
+                $table->get_table_name(),
+                $model->get_this_model_name(),
+                $offset,
+                implode(',', $fields),
+                $error_message
+            )
+            : sprintf(
+                esc_html__(
+                    'The %1$s table for the %2$s model has had the offset of %3$f applied to its following fields: %4$s',
+                    'event_espresso'
+                ),
+                $table->get_table_name(),
+                $model->get_this_model_name(),
+                $offset,
+                implode(',', $fields)
+            );
         //write to the log
         $changelog = EE_Change_Log::new_instance(array(
-            'LOG_type' => self::DATETIME_OFFSET_FIX_CHANGELOG_TYPE,
+            'LOG_type' => $error_message
+                ? self::DATETIME_OFFSET_FIX_CHANGELOG_ERROR_TYPE
+                : self::DATETIME_OFFSET_FIX_CHANGELOG_TYPE,
             'LOG_message' => $message
         ));
         $changelog->save();
