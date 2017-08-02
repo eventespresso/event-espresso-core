@@ -324,6 +324,7 @@ class Read_Test extends \EE_REST_TestCase
      * DO change it, in which case this unit test will need to be updated to
      * include the known modifications).
      * This helps prevent accidental changes
+     * @group current
      */
     public function test_handle_request_get_one__event()
     {
@@ -419,14 +420,14 @@ class Read_Test extends \EE_REST_TestCase
                         array(
                             0 =>
                                 array(
-                                    'href' => rest_url('/?rest_route=/ee/v4.8.29/events/' . $event_id),
+                                    'href' => rest_url('/ee/v4.8.29/events/' . $event_id),
                                 ),
                         ),
                     'collection'                                            =>
                         array(
                             0 =>
                                 array(
-                                    'href' => rest_url('/?rest_route=/ee/v4.8.29/events'),
+                                    'href' => rest_url('/ee/v4.8.29/events'),
                                 ),
                         ),
                     'https://api.eventespresso.com/registrations'           =>
@@ -434,7 +435,7 @@ class Read_Test extends \EE_REST_TestCase
                             0 =>
                                 array(
                                     'href'   => rest_url(
-                                                '/?rest_route=/ee/v4.8.29/events/'
+                                                '/ee/v4.8.29/events/'
                                                 . $event_id
                                                 . '/registrations'
                                                 ),
@@ -446,7 +447,7 @@ class Read_Test extends \EE_REST_TestCase
                             0 =>
                                 array(
                                     'href'   => rest_url(
-                                                '/?rest_route=/ee/v4.8.29/events/'
+                                                '/ee/v4.8.29/events/'
                                                 . $event_id
                                                 . '/datetimes'
                                                 ),
@@ -458,7 +459,7 @@ class Read_Test extends \EE_REST_TestCase
                             0 =>
                                 array(
                                     'href'   => rest_url(
-                                                '/?rest_route=/ee/v4.8.29/events/'
+                                                '/ee/v4.8.29/events/'
                                                 . $event_id
                                                 . '/question_groups'
                                                 ),
@@ -469,7 +470,7 @@ class Read_Test extends \EE_REST_TestCase
                         array(
                             0 =>
                                 array(
-                                    'href'   => rest_url( '/?rest_route=/ee/v4.8.29/events/' . $event_id . '/venues'),
+                                    'href'   => rest_url( '/ee/v4.8.29/events/' . $event_id . '/venues'),
                                     'single' => false,
                                 ),
                         ),
@@ -478,7 +479,7 @@ class Read_Test extends \EE_REST_TestCase
                             0 =>
                                 array(
                                     'href'   => rest_url(
-                                                '/?rest_route=/ee/v4.8.29/events/'
+                                                '/ee/v4.8.29/events/'
                                                 . $event_id
                                                 . '/term_taxonomies'
                                                 ),
@@ -490,7 +491,7 @@ class Read_Test extends \EE_REST_TestCase
                             0 =>
                                 array(
                                     'href'   => rest_url(
-                                                '/?rest_route=/ee/v4.8.29/events/'
+                                                '/ee/v4.8.29/events/'
                                                 . $event_id
                                                 . '/message_template_groups'
                                                 ),
@@ -502,7 +503,7 @@ class Read_Test extends \EE_REST_TestCase
                             0 =>
                                 array(
                                     'href'   => rest_url(
-                                                '/?rest_route=/ee/v4.8.29/events/'
+                                                '/ee/v4.8.29/events/'
                                                 . $event_id
                                                 . '/attendees'
                                                 ),
@@ -513,7 +514,7 @@ class Read_Test extends \EE_REST_TestCase
                         array(
                             0 =>
                                 array(
-                                    'href'   => rest_url( '/?rest_route=/ee/v4.8.29/events/' . $event_id . '/wp_user'),
+                                    'href'   => rest_url( '/ee/v4.8.29/events/' . $event_id . '/wp_user'),
                                     'single' => true,
                                 ),
                         ),
@@ -522,7 +523,7 @@ class Read_Test extends \EE_REST_TestCase
                             0 =>
                                 array(
                                     'href'   => rest_url(
-                                                '/?rest_route=/ee/v4.8.29/events/'
+                                                '/ee/v4.8.29/events/'
                                                 . $event_id
                                                 . '/post_metas'
                                                 ),
@@ -534,7 +535,7 @@ class Read_Test extends \EE_REST_TestCase
                             0 =>
                                 array(
                                     'href'   => rest_url(
-                                                '/?rest_route=/ee/v4.8.29/events/'
+                                                '/ee/v4.8.29/events/'
                                                 . $event_id
                                                 . '/extra_metas'
                                                 ),
@@ -546,7 +547,7 @@ class Read_Test extends \EE_REST_TestCase
                             0 =>
                                 array(
                                     'href'   =>rest_url(
-                                                '/?rest_route=/ee/v4.8.29/events/'
+                                                '/ee/v4.8.29/events/'
                                                 . $event_id
                                                 . '/change_logs'
                                                 ),
@@ -558,7 +559,7 @@ class Read_Test extends \EE_REST_TestCase
                             0 =>
                                 array(
                                     'href'   => rest_url(
-                                                '/?rest_route=/ee/v4.8.29/events/'
+                                                '/ee/v4.8.29/events/'
                                                 . $event_id
                                                 . '/term_relationships'
                                                 ),
