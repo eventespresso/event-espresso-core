@@ -183,6 +183,7 @@ class EE_Dependency_Map
         array $dependencies,
         $overwrite = EE_Dependency_Map::KEEP_EXISTING_DEPENDENCIES
     ) {
+        $class = trim($class, '\\');
         $registered = false;
         if (empty(self::$_instance->_dependency_map[ $class ])) {
             self::$_instance->_dependency_map[ $class ] = array();
@@ -230,7 +231,7 @@ class EE_Dependency_Map
      */
     public static function register_class_loader($class_name, $loader = 'load_core')
     {
-        if (strpos($class_name, '\\') !== false) {
+        if (! $loader instanceof Closure && strpos($class_name, '\\') !== false) {
             throw new DomainException(
                 esc_html__('Don\'t use class loaders for FQCNs.', 'event_espresso')
             );
@@ -327,12 +328,7 @@ class EE_Dependency_Map
     public function class_loader($class_name)
     {
         $class_name = $this->get_alias($class_name);
-        $class_loader = isset($this->_class_loaders[$class_name]) ? $this->_class_loaders[$class_name] : '';
-        // don't use loaders for FQCNs unless a Closure is specified
-        if (! $class_loader instanceof Closure && strpos($class_name, '\\') !== false) {
-            return '';
-        }
-        return $class_loader;
+        return isset($this->_class_loaders[$class_name]) ? $this->_class_loaders[$class_name] : '';
     }
 
 
@@ -529,6 +525,9 @@ class EE_Dependency_Map
             'EventEspresso\core\domain\services\registration\CancelRegistrationService'                                   => array(
                 'EventEspresso\core\domain\services\ticket\CancelTicketLineItemService' => EE_Dependency_Map::load_from_cache,
             ),
+            'EventEspresso\core\services\commands\attendee\CreateAttendeeCommandHandler'                                  => array(
+                'EEM_Attendee' => EE_Dependency_Map::load_from_cache,
+            ),
             'EventEspresso\core\services\database\TableManager'                                                           => array(
                 'EventEspresso\core\services\database\TableAnalysis' => EE_Dependency_Map::load_from_cache,
             ),
@@ -662,7 +661,6 @@ class EE_Dependency_Map
             },
             'EE_Request_Handler'                   => 'load_core',
             'EE_Session'                           => 'load_core',
-            'EE_System'                            => 'load_core',
             //load_lib
             'EE_Message_Resource_Manager'          => 'load_lib',
             'EE_Message_Type_Collection'           => 'load_lib',
@@ -691,6 +689,7 @@ class EE_Dependency_Map
                 );
             },
             //load_model
+            'EEM_Attendee'                         => 'load_model',
             'EEM_Message_Template_Group'           => 'load_model',
             'EEM_Message_Template'                 => 'load_model',
             //load_helper
@@ -742,6 +741,8 @@ class EE_Dependency_Map
             'CancelRegistrationAndTicketLineItemCommandHandler'                            => 'EventEspresso\core\services\commands\registration\CancelRegistrationAndTicketLineItemCommandHandler',
             'UpdateRegistrationAndTransactionAfterChangeCommandHandler'                    => 'EventEspresso\core\services\commands\registration\UpdateRegistrationAndTransactionAfterChangeCommandHandler',
             'CreateTicketLineItemCommandHandler'                                           => 'EventEspresso\core\services\commands\ticket\CreateTicketLineItemCommand',
+            'CreateTransactionCommandHandler'                                     => 'EventEspresso\core\services\commands\transaction\CreateTransactionCommandHandler',
+            'CreateAttendeeCommandHandler'                                        => 'EventEspresso\core\services\commands\attendee\CreateAttendeeCommandHandler',
             'TableManager'                                                                 => 'EventEspresso\core\services\database\TableManager',
             'TableAnalysis'                                                                => 'EventEspresso\core\services\database\TableAnalysis',
             'EspressoShortcode'                                                            => 'EventEspresso\core\services\shortcodes\EspressoShortcode',
@@ -755,6 +756,10 @@ class EE_Dependency_Map
             'EventEspresso\core\domain\services\session\SessionIdentifierInterface'       => 'EE_Session',
             'EmailValidatorInterface'                                                     => 'EventEspresso\core\domain\services\validation\email\EmailValidatorInterface',
             'EventEspresso\core\domain\services\validation\email\EmailValidatorInterface' => 'EventEspresso\core\domain\services\validation\email\EmailValidationService',
+            'NoticeConverterInterface'                                            => 'EventEspresso\core\services\notices\NoticeConverterInterface',
+            'EventEspresso\core\services\notices\NoticeConverterInterface'        => 'EventEspresso\core\services\notices\ConvertNoticesToEeErrors',
+            'NoticesContainerInterface'                                            => 'EventEspresso\core\services\notices\NoticesContainerInterface',
+            'EventEspresso\core\services\notices\NoticesContainerInterface'        => 'EventEspresso\core\services\notices\NoticesContainer',
         );
     }
 

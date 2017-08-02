@@ -206,6 +206,7 @@ if ( ! function_exists( 'espresso_ticket_selector' )) {
 	function espresso_ticket_selector( $event = NULL ) {
 		if (  ! apply_filters( 'FHEE_disable_espresso_ticket_selector', FALSE ) ) {
 			espresso_load_ticket_selector();
+            \EED_Ticket_Selector::set_definitions();
 			echo EED_Ticket_Selector::display_ticket_selector( $event );
 		}
 	}

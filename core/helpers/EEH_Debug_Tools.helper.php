@@ -375,19 +375,19 @@ class EEH_Debug_Tools
 
 
     /**
-     * @param mixed  $var
-     * @param string $var_name
-     * @param string $file
-     * @param int    $line
-     * @param int    $heading_tag
-     * @param bool   $die
-     * @param string $margin
+     * @param mixed      $var
+     * @param string     $var_name
+     * @param string     $file
+     * @param int|string $line
+     * @param int        $heading_tag
+     * @param bool       $die
+     * @param string     $margin
      */
     public static function printv(
         $var,
         $var_name = '',
-        $file = __FILE__,
-        $line = __LINE__,
+        $file = '',
+        $line = '',
         $heading_tag = 5,
         $die = false,
         $margin = ''
@@ -435,7 +435,7 @@ class EEH_Debug_Tools
     protected static function headingX($heading_tag = 'h5')
     {
         if (defined('EE_TESTS_DIR')) {
-            return "\n";
+            return '';
         }
         return '</' . $heading_tag . '>';
     }
@@ -463,7 +463,7 @@ class EEH_Debug_Tools
      */
     protected static function file_and_line($file, $line)
     {
-        if($file === '') {
+        if ($file === '' || $line === '') {
             return '';
         }
         if (defined('EE_TESTS_DIR')) {
@@ -510,18 +510,18 @@ class EEH_Debug_Tools
 
 
     /**
-     * @param mixed  $var
-     * @param string $var_name
-     * @param string $file
-     * @param int    $line
-     * @param int    $heading_tag
-     * @param bool   $die
+     * @param mixed      $var
+     * @param string     $var_name
+     * @param string     $file
+     * @param int|string $line
+     * @param int        $heading_tag
+     * @param bool       $die
      */
     public static function printr(
         $var,
         $var_name = '',
         $file = '',
-        $line = 0,
+        $line = '',
         $heading_tag = 5,
         $die = false
     ) {
@@ -561,6 +561,9 @@ class EEH_Debug_Tools
 
 
     /******************** deprecated ********************/
+
+
+
     /**
      * @deprecated 4.9.39.rc.034
      */
