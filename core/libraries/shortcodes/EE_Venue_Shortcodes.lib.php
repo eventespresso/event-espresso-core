@@ -23,6 +23,13 @@ class EE_Venue_Shortcodes extends EE_Shortcodes
      */
     protected $_event;
 
+    /**
+     * Will hold the EE_Venue if available
+     *
+     * @var EE_Venue
+     */
+    protected $_venue;
+
 
     /**
      * Initialize properties
