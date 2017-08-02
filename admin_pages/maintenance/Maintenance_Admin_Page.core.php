@@ -764,7 +764,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page
                             'batch' => 'job',
                             'label' => esc_html__('Applying Offset', 'event_espresso'),
                             'job_handler' => urlencode('EventEspressoBatchRequest\JobHandlers\DatetimeOffsetFix'),
-                            'return_url' => urlencode("//{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}"),
+                            'return_url' => urlencode(home_url(add_query_arg(null, null))),
                         ),
                         admin_url()
                     )
