@@ -425,7 +425,6 @@ class EE_Email_messenger extends EE_messenger
         $this->_ensure_has_from_email_address();
         $from    = stripslashes_deep(html_entity_decode($this->_from, ENT_QUOTES, "UTF-8"));
         $headers = array(
-            'MIME-Version: 1.0',
             'From:' . $from,
             'Reply-To:' . $from,
             'Content-Type:text/html; charset=utf-8',
