@@ -23,6 +23,9 @@ class DatetimeOffsetFix extends JobHandler
      */
     const MODELS_TO_PROCESS_OPTION_KEY = 'ee_models_processed_for_datetime_offset_fix';
 
+
+    const COUNT_OF_MODELS_PROCESSED = 'ee_count_of_ee_models_processed_for_datetime_offset_fixed';
+
     /**
      * Key for the option used to track what the current offset is that will be applied when this tool is executed.
      */
@@ -76,7 +79,8 @@ class DatetimeOffsetFix extends JobHandler
         //update our record
         $this->setModelsToProcess($models_to_process);
         $this->processModel($model_to_process);
-        $job_parameters->set_units_processed(1);
+        $this->updateCountOfModelsProcessed();
+        $job_parameters->set_units_processed($this->getCountOfModelsProcessed());
         if (count($models_to_process) > 0) {
             $job_parameters->set_status(JobParameters::status_continue);
         } else {
@@ -102,6 +106,7 @@ class DatetimeOffsetFix extends JobHandler
     {
         //delete important saved options.
         delete_option(self::MODELS_TO_PROCESS_OPTION_KEY);
+        delete_option(self::COUNT_OF_MODELS_PROCESSED);
         return new JobStepResponse($job_parameters, esc_html__(
             'Offset has been applied to all affected fields.',
             'event_espresso'
@@ -221,6 +226,27 @@ class DatetimeOffsetFix extends JobHandler
     private function setModelsToProcess($models_to_set)
     {
         update_option(self::MODELS_TO_PROCESS_OPTION_KEY, $models_to_set);
+    }
+
+
+    /**
+     * Used to keep track of how many models have been processed for the batch
+     * @param $count
+     */
+    private function updateCountOfModelsProcessed($count = 1)
+    {
+        $count = $this->getCountOfModelsProcessed() + (int) $count;
+        update_option(self::COUNT_OF_MODELS_PROCESSED, $count);
+    }
+
+
+    /**
+     * Retrieve the tracked number of models processed between requests.
+     * @return int
+     */
+    private function getCountOfModelsProcessed()
+    {
+        return (int) get_option(self::COUNT_OF_MODELS_PROCESSED, 0);
     }
 
 
