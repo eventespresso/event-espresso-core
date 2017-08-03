@@ -1,4 +1,6 @@
-<?php use EventEspresso\core\services\loaders\Loader;
+<?php
+
+use EventEspresso\core\services\orm\ModelFieldFactory;
 
 if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
@@ -22,19 +24,19 @@ class EEM_WP_User extends EEM_Base
      *
      * @type EEM_WP_User
      */
-    protected static $_instance = null;
+    protected static $_instance;
 
 
 
     /**
      *    constructor
      *
-     * @param null   $timezone
-     * @param Loader $loader
+     * @param null              $timezone
+     * @param ModelFieldFactory $model_field_factory
      * @throws EE_Error
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
-    protected function __construct($timezone = null, Loader $loader)
+    protected function __construct($timezone = null, ModelFieldFactory $model_field_factory)
     {
         $this->singular_item = __('WP_User', 'event_espresso');
         $this->plural_item = __('WP_Users', 'event_espresso');
@@ -44,56 +46,49 @@ class EEM_WP_User extends EEM_Base
         );
         $this->_fields = array(
             'WP_User' => array(
-                'ID'                  => new EE_Primary_Key_Int_Field('ID', __('WP_User ID', 'event_espresso')),
-                'user_login'          => new EE_Plain_Text_Field(
+                'ID'                  => $model_field_factory->createPrimaryKeyIntField(
+                    'ID',
+                    __('WP_User ID', 'event_espresso')
+                ),
+                'user_login'          => $model_field_factory->createPlainTextField(
                     'user_login',
                     __('User Login', 'event_espresso'),
-                    false,
-                    ''
+                    false
                 ),
-                'user_pass'           => new EE_Plain_Text_Field(
+                'user_pass'           => $model_field_factory->createPlainTextField(
                     'user_pass',
                     __('User Password', 'event_espresso'),
-                    false,
-                    ''
+                    false
                 ),
-                'user_nicename'       => new EE_Plain_Text_Field(
+                'user_nicename'       => $model_field_factory->createPlainTextField(
                     'user_nicename',
                     __(' User Nice Name', 'event_espresso'),
-                    false,
-                    ''
+                    false
                 ),
-                'user_email'          => new EE_Email_Field(
+                'user_email'          => $model_field_factory->createEmailField(
                     'user_email',
                     __('User Email', 'event_espresso'),
                     false,
-                    null,
-                    $loader
+                    null
                 ),
-                'user_registered'     => new EE_Datetime_Field(
+                'user_registered'     => $model_field_factory->createDatetimeField(
                     'user_registered',
                     __('Date User Registered', 'event_espresso'),
-                    false,
-                    EE_Datetime_Field::now,
                     $timezone
                 ),
-                'user_activation_key' => new EE_Plain_Text_Field(
+                'user_activation_key' => $model_field_factory->createPlainTextField(
                     'user_activation_key',
                     __('User Activation Key', 'event_espresso'),
-                    false,
-                    ''
+                    false
                 ),
-                'user_status'         => new EE_Integer_Field(
+                'user_status'         => $model_field_factory->createIntegerField(
                     'user_status',
-                    __('User Status', 'event_espresso'),
-                    false,
-                    0
+                    __('User Status', 'event_espresso')
                 ),
-                'display_name'        => new EE_Plain_Text_Field(
+                'display_name'        => $model_field_factory->createPlainTextField(
                     'display_name',
                     __('Display Name', 'event_espresso'),
-                    false,
-                    ''
+                    false
                 ),
             ),
         );
@@ -120,7 +115,6 @@ class EEM_WP_User extends EEM_Base
         }
         //@todo: account for create_users controls whether they can create users at all
         parent::__construct($timezone);
-        $this->loader = $loader;
     }
 
 
@@ -129,6 +123,7 @@ class EEM_WP_User extends EEM_Base
      * We don't need a foreign key to the WP_User model, we just need its primary key
      *
      * @return string
+     * @throws EE_Error
      */
     public function wp_user_field_name()
     {
@@ -146,6 +141,9 @@ class EEM_WP_User extends EEM_Base
     {
         return true;
     }
+
+
+
 }
 // End of file EEM_WP_User.model.php
 // Location: /core/db_models/EEM_WP_User.model.php

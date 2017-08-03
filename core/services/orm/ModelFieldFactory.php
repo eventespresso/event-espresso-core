@@ -367,13 +367,13 @@ class ModelFieldFactory
 
 
     /**
-     * @param string $table_column
-     * @param string $nice_name
-     * @param bool   $nullable
-     * @param null   $default_value
+     * @param string  $table_column
+     * @param string  $nice_name
+     * @param bool    $nullable
+     * @param integer $default_value
      * @return EE_Integer_Field
      */
-    public function createIntegerField($table_column, $nice_name, $nullable, $default_value = null)
+    public function createIntegerField($table_column, $nice_name, $nullable = false, $default_value = 0)
     {
         return $this->loader->getNew(
             'EE_Integer_Field',
