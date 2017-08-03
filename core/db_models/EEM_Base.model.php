@@ -4214,14 +4214,14 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         if (is_array($op_and_value) && isset($op_and_value[2]) && $op_and_value[2] == true) {
             return $operator . SP . $this->_deduce_column_name_from_query_param($value);
         }
-        if (in_array($operator, $this->valid_in_style_operators) && is_array($value)) {
+        if (in_array($operator, $this->valid_in_style_operators()) && is_array($value)) {
             //in this case, the value should be an array, or at least a comma-separated list
             //it will need to handle a little differently
             $cleaned_value = $this->_construct_in_value($value, $field_obj);
             //note: $cleaned_value has already been run through $wpdb->prepare()
             return $operator . SP . $cleaned_value;
         }
-        if (in_array($operator, $this->valid_between_style_operators) && is_array($value)) {
+        if (in_array($operator, $this->valid_between_style_operators()) && is_array($value)) {
             //the value should be an array with count of two.
             if (count($value) !== 2) {
                 throw new EE_Error(
@@ -4237,7 +4237,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             $cleaned_value = $this->_construct_between_value($value, $field_obj);
             return $operator . SP . $cleaned_value;
         }
-        if (in_array($operator, $this->valid_null_style_operators)) {
+        if (in_array($operator, $this->valid_null_style_operators())) {
             if ($value !== null) {
                 throw new EE_Error(
                     sprintf(
@@ -4252,15 +4252,15 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             }
             return $operator;
         }
-        if (in_array($operator, $this->valid_like_style_operators() && ! is_array($value)) {
+        if (in_array($operator, $this->valid_like_style_operators()) && ! is_array($value)) {
             //if the operator is 'LIKE', we want to allow percent signs (%) and not
             //remove other junk. So just treat it as a string.
             return $operator . SP . $this->_wpdb_prepare_using_field($value, '%s');
         }
-        if (! in_array($operator, $this->valid_in_style_operators) && ! is_array($value)) {
+        if (! in_array($operator, $this->valid_in_style_operators()) && ! is_array($value)) {
             return $operator . SP . $this->_wpdb_prepare_using_field($value, $field_obj);
         }
-        if (in_array($operator, $this->valid_in_style_operators) && ! is_array($value)) {
+        if (in_array($operator, $this->valid_in_style_operators()) && ! is_array($value)) {
             throw new EE_Error(
                 sprintf(
                     __(
@@ -4272,7 +4272,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                 )
             );
         }
-        if (! in_array($operator, $this->valid_in_style_operators) && is_array($value)) {
+        if (! in_array($operator, $this->valid_in_style_operators()) && is_array($value)) {
             throw new EE_Error(
                 sprintf(
                     __(
