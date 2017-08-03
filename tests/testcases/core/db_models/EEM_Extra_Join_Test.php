@@ -59,18 +59,16 @@ class EEM_Extra_Join_Test extends EE_UnitTestCase
         return $pm_relations;
     }
 
-
     /**
-     * @group 9113
+     * @param $pm_relations
+     * @return mixed
      */
-    public function test_get_related()
+    public function relate_payment_methods_to_events($pm_relations)
     {
-        $e  = $this->new_model_obj_with_dependencies('Event');
-        $pm = $this->new_model_obj_with_dependencies('Payment_Method', array('PMD_type' => 'Invoice'));
-        //add a few extra events and payment methods, just to make sure we are
-        //only relating the things we intended
-        $this->new_model_obj_with_dependencies('Event');
-        $this->new_model_obj_with_dependencies('Payment_Method', array('PMD_type' => 'Invoice'));
+        $pm_relations['Event'] = new EE_HABTM_Any_Relation();
+        return $pm_relations;
+    }
+
 
         $this->new_model_obj_with_dependencies(
             'Extra_Join',
@@ -88,20 +86,47 @@ class EEM_Extra_Join_Test extends EE_UnitTestCase
     /**
      * @group 9113
      */
+    public function test_get_related()
+    {
+        $e = $this->new_model_obj_with_dependencies('Event');
+        $pm = $this->new_model_obj_with_dependencies('Payment_Method', array('PMD_type' => 'Invoice'));
+        //add a few extra events and payment methods, just to make sure we are
+        //only relating the things we intended
+        $this->new_model_obj_with_dependencies('Event');
+        $this->new_model_obj_with_dependencies('Payment_Method', array('PMD_type' => 'Invoice'));
+        $this->new_model_obj_with_dependencies(
+            'Extra_Join',
+            array(
+                'EXJ_first_model_ID'    => $e->ID(),
+                'EXJ_first_model_name'  => 'Event',
+                'EXJ_second_model_ID'   => $pm->ID(),
+                'EXJ_second_model_name' => 'Payment_Method',
+            )
+        );
+        $this->assertEquals(array($pm->ID() => $pm), $e->get_many_related('Payment_Method'));
+        $this->assertEquals(array($e->ID() => $e), $pm->get_many_related('Event'));
+    }
+
+
+    /**
+     * @group 9113
+     */
     public function test_add()
     {
-        $e  = $this->new_model_obj_with_dependencies('Event');
+        $e = $this->new_model_obj_with_dependencies('Event');
         $pm = $this->new_model_obj_with_dependencies('Payment_Method', array('PMD_type' => 'Invoice'));
         $e->_add_relation_to($pm, 'Payment_Method');
         $this->assertEquals(array($pm->ID() => $pm), $e->get_many_related('Payment_Method'));
     }
+
+
 
     /**
      * @group 9113
      */
     public function test_delete()
     {
-        $e  = $this->new_model_obj_with_dependencies('Event');
+        $e = $this->new_model_obj_with_dependencies('Event');
         $pm = $this->new_model_obj_with_dependencies('Payment_Method', array('PMD_type' => 'Invoice'));
         $e->_add_relation_to($pm, 'Payment_Method');
         $this->assertEquals(array($pm->ID() => $pm), $e->get_many_related('Payment_Method'));

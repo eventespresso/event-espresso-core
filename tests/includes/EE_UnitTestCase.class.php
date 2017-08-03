@@ -70,15 +70,22 @@ class EE_UnitTestCase extends WP_UnitTestCase
      *
      * @throws \EE_Error
      */
-    // public static function setUpBeforeClass() {
-    // 	parent::setUpBeforeClass();
-    // 	echo "\n" . get_called_class() . ' ';
-    // }
+    public static function setUpBeforeClass() {
+        // echo "\n\n\n" . get_called_class() . "\n\n";
+        parent::setUpBeforeClass();
+        \EventEspresso\core\services\Benchmark::startTimer(get_called_class());
+    }
+
+    public static function tearDownAfterClass() {
+        // echo "\n\n\n" . get_called_class() . "\n\n";
+        \EventEspresso\core\services\Benchmark::stopTimer(get_called_class());
+        parent::tearDownAfterClass();
+    }
 
 
     public function setUp()
     {
-        // echo ' ' . $this->getName() . "()\n";
+        // echo "\n\n" . strtoupper($this->getName()) . '()';
         //save the hooks state before WP_UnitTestCase actually gets its hands on it...
         //as it immediately adds a few hooks we might not want to backup
         global $auto_made_thing_seed, $wp_filter, $wp_actions, $merged_filters, $wp_current_filter, $wpdb, $current_user;
@@ -103,9 +110,6 @@ class EE_UnitTestCase extends WP_UnitTestCase
         add_filter('FHEE__EEH_Activation__add_column_if_it_doesnt_exist__short_circuit', '__return_true');
         add_filter('FHEE__EEH_Activation__drop_index__short_circuit', '__return_true');
 
-        // turn off caching for any loaders in use
-        add_filter('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache', '__return_true', 1);
-
         // load factories
         EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_TESTS_DIR . 'includes' . DS . 'factories');
         $this->factory = new EE_UnitTest_Factory();
@@ -125,7 +129,11 @@ class EE_UnitTestCase extends WP_UnitTestCase
                 return $WP_User->allcaps;
             }, 10, 4);
         }
+        //tell EE_Registry to do a hard reset
+        add_filter( 'FHEE__EE_Registry__reset__hard', '__return_true');
         do_action('AHEE__EventEspresso_core_services_loaders_CachingLoader__resetCache');
+        // turn off caching for any loaders in use during tests
+        add_filter('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache', '__return_true');
     }
 
 
@@ -868,25 +876,28 @@ class EE_UnitTestCase extends WP_UnitTestCase
         }
         //set any other fields which haven't yet been set
         foreach ($model->field_settings() as $field_name => $field) {
-            $value = null;
-            if (in_array(
-                $field_name,
-                array(
-                    'EVT_timezone_string',
-                    'PAY_redirect_url',
-                    'PAY_redirect_args',
-                    'TKT_reserved',
-                    'DTT_reserved',
-                    'parent',
-                    //don't make system questions etc
-                    'QST_system',
-                    'QSG_system',
-                    'QSO_system'
-                ),
-                true
-            )) {
-                $value = null;
-            } elseif ($field instanceof EE_Enum_Integer_Field ||
+            $value = NULL;
+            if (
+                in_array(
+                    $field_name,
+                    array(
+                        'EVT_timezone_string',
+                        'PAY_redirect_url',
+                        'PAY_redirect_args',
+                        'TKT_reserved',
+                        'DTT_reserved',
+                        'parent'
+                        //don't make system questions etc
+                        'QST_system',
+                        'QSG_system',
+                        'QSO_system'
+                    ),
+                    true
+                )
+            ) {
+                $value = NULL;
+            } elseif (
+                $field instanceof EE_Enum_Integer_Field ||
                 $field instanceof EE_Enum_Text_Field ||
                 $field instanceof EE_Boolean_Field ||
                 $field_name === 'PMD_type' ||
@@ -895,7 +906,8 @@ class EE_UnitTestCase extends WP_UnitTestCase
                 $field_name === 'CNT_tel_code'
             ) {
                 $value = $field->get_default_value();
-            } elseif ($field instanceof EE_Integer_Field ||
+            } elseif (
+                $field instanceof EE_Integer_Field ||
                 $field instanceof EE_Float_Field ||
                 $field instanceof EE_Foreign_Key_Field_Base ||
                 $field_name === 'STA_abbrev' ||

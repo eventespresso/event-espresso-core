@@ -687,7 +687,7 @@ class Read extends Base
                 $result,
                 false,
                 false
-                );
+            );
         }
         foreach ($result as $field_name => $field_value) {
             $field_obj = $model->field_settings_for($field_name);

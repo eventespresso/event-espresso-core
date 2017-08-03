@@ -1,10 +1,9 @@
 <?php
 use EventEspresso\core\services\loaders\Loader;
+use EventEspresso\core\services\orm\ModelFieldFactory;
 
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
+
 
 
 
@@ -133,14 +132,12 @@ class EEM_Attendee extends EEM_CPT_Base
     /**
      * EEM_Attendee constructor.
      *
-     * @Constructor
-     * @access protected
-     * @param null   $timezone
-     * @param Loader $loader
+     * @param null              $timezone
+     * @param ModelFieldFactory $model_field_factory
      * @throws EE_Error
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
-    protected function __construct($timezone = null, Loader $loader)
+    protected function __construct($timezone = null, ModelFieldFactory $model_field_factory)
     {
         $this->singular_item = esc_html__('Attendee', 'event_espresso');
         $this->plural_item = esc_html__('Attendees', 'event_espresso');
@@ -154,58 +151,53 @@ class EEM_Attendee extends EEM_CPT_Base
         );
         $this->_fields = array(
             'Attendee_CPT'  => array(
-                'ATT_ID'        => new EE_Primary_Key_Int_Field(
+                'ATT_ID'        => $model_field_factory->createPrimaryKeyIntField(
                     'ID',
                     esc_html__('Attendee ID', 'event_espresso')
                 ),
-                'ATT_full_name' => new EE_Plain_Text_Field(
+                'ATT_full_name' => $model_field_factory->createPlainTextField(
                     'post_title',
                     esc_html__('Attendee Full Name', 'event_espresso'),
                     false,
                     esc_html__('Unknown', 'event_espresso')
                 ),
-                'ATT_bio'       => new EE_Post_Content_Field(
+                'ATT_bio'       => $model_field_factory->createPostContentField(
                     'post_content',
                     esc_html__('Attendee Biography', 'event_espresso'),
                     false,
                     esc_html__('No Biography Provided', 'event_espresso')
                 ),
-                'ATT_slug'      => new EE_Slug_Field(
+                'ATT_slug'      => $model_field_factory->createSlugField(
                     'post_name',
-                    esc_html__('Attendee URL Slug', 'event_espresso'),
-                    false
+                    esc_html__('Attendee URL Slug', 'event_espresso')
                 ),
-                'ATT_created'   => new EE_Datetime_Field(
+                'ATT_created'   => $model_field_factory->createDatetimeField(
                     'post_date',
-                    esc_html__('Time Attendee Created', 'event_espresso'),
-                    false,
-                    EE_Datetime_Field::now
+                    esc_html__('Time Attendee Created', 'event_espresso')
                 ),
-                'ATT_short_bio' => new EE_Simple_HTML_Field(
+                'ATT_short_bio' => $model_field_factory->createSimpleHtmlField(
                     'post_excerpt',
                     esc_html__('Attendee Short Biography', 'event_espresso'),
                     true,
                     esc_html__('No Biography Provided', 'event_espresso')
                 ),
-                'ATT_modified'  => new EE_Datetime_Field(
+                'ATT_modified'  => $model_field_factory->createDatetimeField(
                     'post_modified',
-                    esc_html__('Time Attendee Last Modified', 'event_espresso'),
-                    false,
-                    EE_Datetime_Field::now
+                    esc_html__('Time Attendee Last Modified', 'event_espresso')
                 ),
-                'ATT_author'    => new EE_WP_User_Field(
+                'ATT_author'    => $model_field_factory->createWpUserField(
                     'post_author',
                     esc_html__('Creator ID of the first Event attended', 'event_espresso'),
                     false
                 ),
-                'ATT_parent'    => new EE_DB_Only_Int_Field(
+                'ATT_parent'    => $model_field_factory->createDbOnlyIntField(
                     'post_parent',
                     esc_html__('Parent Attendee (unused)', 'event_espresso'),
                     false,
                     0
                 ),
-                'post_type'     => new EE_WP_Post_Type_Field('espresso_attendees'),
-                'status'        => new EE_WP_Post_Status_Field(
+                'post_type'     => $model_field_factory->createWpPostTypeField('espresso_attendees'),
+                'status'        => $model_field_factory->createWpPostStatusField(
                     'post_status',
                     esc_html__('Attendee Status', 'event_espresso'),
                     false,
@@ -213,76 +205,61 @@ class EEM_Attendee extends EEM_CPT_Base
                 ),
             ),
             'Attendee_Meta' => array(
-                'ATTM_ID'      => new EE_DB_Only_Int_Field(
+                'ATTM_ID'      => $model_field_factory->createDbOnlyIntField(
                     'ATTM_ID',
                     esc_html__('Attendee Meta Row ID', 'event_espresso'),
                     false
                 ),
-                'ATT_ID_fk'    => new EE_DB_Only_Int_Field(
+                'ATT_ID_fk'    => $model_field_factory->createDbOnlyIntField(
                     'ATT_ID',
                     esc_html__('Foreign Key to Attendee in Post Table', 'event_espresso'),
                     false
                 ),
-                'ATT_fname'    => new EE_Plain_Text_Field(
+                'ATT_fname'    => $model_field_factory->createPlainTextField(
                     'ATT_fname',
-                    esc_html__('First Name', 'event_espresso'),
-                    true,
-                    ''
+                    esc_html__('First Name', 'event_espresso')
                 ),
-                'ATT_lname'    => new EE_Plain_Text_Field(
-                    'ATT_lname', esc_html__('Last Name', 'event_espresso'),
-                    true,
-                    ''
+                'ATT_lname'    => $model_field_factory->createPlainTextField(
+                    'ATT_lname',
+                    esc_html__('Last Name', 'event_espresso')
                 ),
-                'ATT_address'  => new EE_Plain_Text_Field(
+                'ATT_address'  => $model_field_factory->createPlainTextField(
                     'ATT_address',
-                    esc_html__('Address Part 1', 'event_espresso'),
-                    true,
-                    ''
+                    esc_html__('Address Part 1', 'event_espresso')
                 ),
-                'ATT_address2' => new EE_Plain_Text_Field(
+                'ATT_address2' => $model_field_factory->createPlainTextField(
                     'ATT_address2',
-                    esc_html__('Address Part 2', 'event_espresso'),
-                    true,
-                    ''
+                    esc_html__('Address Part 2', 'event_espresso')
                 ),
-                'ATT_city'     => new EE_Plain_Text_Field(
+                'ATT_city'     => $model_field_factory->createPlainTextField(
                     'ATT_city',
-                    esc_html__('City', 'event_espresso'),
-                    true,
-                    ''
+                    esc_html__('City', 'event_espresso')
                 ),
-                'STA_ID'       => new EE_Foreign_Key_Int_Field(
+                'STA_ID'       => $model_field_factory->createForeignKeyIntField(
                     'STA_ID',
                     esc_html__('State', 'event_espresso'),
                     true,
                     0,
                     'State'
                 ),
-                'CNT_ISO'      => new EE_Foreign_Key_String_Field(
+                'CNT_ISO'      => $model_field_factory->createForeignKeyStringField(
                     'CNT_ISO',
                     esc_html__('Country', 'event_espresso'),
                     true,
                     '',
                     'Country'
                 ),
-                'ATT_zip'      => new EE_Plain_Text_Field(
+                'ATT_zip'      => $model_field_factory->createPlainTextField(
                     'ATT_zip',
-                    esc_html__('ZIP/Postal Code', 'event_espresso'),
-                    true,
-                    ''
+                    esc_html__('ZIP/Postal Code', 'event_espresso')
                 ),
-                'ATT_email'    => new EE_Email_Field(
+                'ATT_email'    => $model_field_factory->createEmailField(
                     'ATT_email',
-                    esc_html__('Email Address', 'event_espresso'),
-                    true,
-                    null
+                    esc_html__('Email Address', 'event_espresso')
                 ),
-                'ATT_phone'    => new EE_Plain_Text_Field(
+                'ATT_phone'    => $model_field_factory->createPlainTextField(
                     'ATT_phone',
-                    esc_html__('Phone', 'event_espresso'),
-                    true,
-                    ''
+                    esc_html__('Phone', 'event_espresso')
                 ),
             ),
         );
