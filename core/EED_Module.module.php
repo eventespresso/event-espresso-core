@@ -39,12 +39,6 @@ abstract class EED_Module extends EE_Configurable implements ResettableInterface
         new $module_name();
     }
 
-	/**
-	 * @return mixed
-	 */
-	public static function reset() {
-		static::$_instance = null;
-	}
 
 
     /**
