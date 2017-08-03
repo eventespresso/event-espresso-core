@@ -21,10 +21,7 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) {
  */
 class EEM_Base_Test extends EE_UnitTestCase
 {
-
-    /**
-     * @group current
-     */
+    
     public function test_models_defined_ok()
     {
         foreach (EE_Registry::instance()->non_abstract_db_models as $model) {
@@ -118,6 +115,61 @@ class EEM_Base_Test extends EE_UnitTestCase
         $this->assertEmpty(EEM_Event::instance()->get_from_entity_map($e1->ID()));
         $this->assertEmpty(EEM_Event::instance()->get_from_entity_map($e2->ID()));
         $this->assertEquals(EEM_Event::instance()->get_from_entity_map($e3->ID()), $e3);
+    }
+
+
+    /**
+     * Verifies deletes still work properly, even when deleting a model object whose data is shared between two tables
+     */
+    public function test_delete__across_multiple_tables()
+    {
+        $event_to_delete = $this->new_model_obj_with_dependencies('Event');
+        $event_shouldnt_be_harmed = $this->new_model_obj_with_dependencies('Event');
+        global $wpdb;
+        $post_table_entries       = $wpdb->get_var('SELECT COUNT(*) FROM ' . EEM_Event::instance()->table());
+        $event_meta_table_entries = $wpdb->get_var('SELECT COUNT(*) FROM ' . EEM_Event::instance()->second_table());
+        //make sure when we delete this event, both the record from the posts table and the event meta table get deleted
+        $success = $event_to_delete->delete_permanently();
+        $this->assertEquals(2, $success);
+        $this->assertEquals(
+            $post_table_entries - 1,
+            $wpdb->get_var('SELECT COUNT(*) FROM ' . EEM_Event::instance()->table())
+        );
+        $this->assertEquals(
+            $event_meta_table_entries - 1,
+            $wpdb->get_var('SELECT COUNT(*) FROM ' . EEM_Event::instance()->second_table())
+        );
+    }
+
+
+    /**
+     * Verifies permanent deletes will also remove any extra meta that might be present in the database for items
+     * deleted.
+     */
+    public function test_delete_with_extra_meta()
+    {
+        /** @var EE_Registration $registration_to_delete */
+        $registration_to_delete = $this->factory->registration->create();
+        //add extrameta
+        $registration_to_delete->update_extra_meta('test_registration_meta', 'value');
+
+        //get the extra meta so we have its ID for checking later.
+        $extra_meta = EEM_Extra_Meta::instance()->get_one(array(
+            array(
+                'OBJ_ID' => $registration_to_delete->ID(),
+                'EXM_type' => 'Registration',
+                'EXM_key' => 'test_registration_meta'
+            )
+        ));
+        $this->assertInstanceOf('EE_Extra_Meta', $extra_meta);
+
+        //delete the registration
+        $success = $registration_to_delete->delete_permanently();
+        $this->assertEquals(1, $success);
+
+        //assert the meta no longer exists in the db.
+        $extra_meta = EEM_Extra_Meta::instance()->get_one_by_ID($extra_meta->ID());
+        $this->assertNotInstanceOf('EE_Extra_Meta', $extra_meta);
     }
 
 
