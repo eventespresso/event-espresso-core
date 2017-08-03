@@ -626,7 +626,7 @@ class EE_Dependency_Map
                 null,
                 'EventEspresso\core\domain\services\validation\email\EmailValidationService' => EE_Dependency_Map::load_from_cache,
             ),
-            'EventEspresso\core\services\database\ModelFieldFactory'                                                   => array(
+            'EventEspresso\core\services\orm\ModelFieldFactory' => array(
                 'EventEspresso\core\services\loaders\Loader'              => EE_Dependency_Map::load_from_cache,
             ),
             'LEGACY_MODELS'                                                   => array(
