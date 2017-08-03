@@ -4068,38 +4068,6 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
 
 
     /**
-     * Gets the EE_Model_Field on the model indicated by $model_name and the $field_name.
-     * Eg, if called with _get_field_on_model('ATT_ID','Attendee'), it will return the EE_Primary_Key_Field on
-     * EEM_Attendee.
-     *
-     * @param string $field_name
-     * @param string $model_name
-     * @return EE_Model_Field_Base
-     * @throws EE_Error
-     */
-    protected function _get_field_on_model($field_name, $model_name)
-    {
-        $model_class = 'EEM_' . $model_name;
-        $model_filepath = $model_class . ".model.php";
-        if (is_readable($model_filepath)) {
-            require_once($model_filepath);
-            $model_instance = call_user_func($model_name . "::instance");
-            /* @var $model_instance EEM_Base */
-            return $model_instance->field_settings_for($field_name);
-        }
-        throw new EE_Error(
-            sprintf(
-                __(
-                    'No model named %s exists, with classname %s and filepath %s',
-                    'event_espresso'
-                ), $model_name, $model_class, $model_filepath
-            )
-        );
-    }
-
-
-
-    /**
      * Used for creating nested WHERE conditions. Eg "WHERE ! (Event.ID = 3 OR ( Event_Meta.meta_key = 'bob' AND
      * Event_Meta.meta_value = 'foo'))"
      *
