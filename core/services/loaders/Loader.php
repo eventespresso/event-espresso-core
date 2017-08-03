@@ -82,7 +82,7 @@ class Loader implements LoaderInterface
     {
         return $shared
             ? $this->getSharedLoader()->load($fqcn, $arguments)
-            : $this->getNewLoader()->load($fqcn, $arguments);
+            : $this->getNewLoader()->load($fqcn, $arguments, false);
     }
 
 
@@ -94,7 +94,7 @@ class Loader implements LoaderInterface
      */
     public function getNew($fqcn, $arguments = array())
     {
-        return $this->getNewLoader()->load($fqcn, $arguments);
+        return $this->getNewLoader()->load($fqcn, $arguments, false);
     }
 
 
