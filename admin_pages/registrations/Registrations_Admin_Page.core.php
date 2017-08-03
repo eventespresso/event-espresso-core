@@ -399,6 +399,14 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 'capability' => 'ee_edit_contacts',
                 'obj_id'     => $att_id,
             ),
+            'trash_attendees' => array(
+                'func' => '_trash_or_restore_attendees',
+                'args' => array(
+                    'trash' => 'true'
+                ),
+                'noheader' => true,
+                'capability' => 'ee_delete_contacts'
+            ),
             'trash_attendee'                    => array(
                 'func'       => '_trash_or_restore_attendees',
                 'args'       => array(
