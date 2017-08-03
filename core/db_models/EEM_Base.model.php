@@ -1,9 +1,9 @@
 <?php
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
-use EventEspresso\core\services\loaders\LoaderFactory;
-use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\interfaces\ResettableInterface;
+use EventEspresso\core\services\orm\ModelFieldFactory;
+use EventEspresso\core\services\loaders\LoaderFactory;
 
 /**
  * Class EEM_Base
@@ -29,7 +29,7 @@ use EventEspresso\core\interfaces\ResettableInterface;
  * @author                Michael Nelson
  * @since                 EE4
  */
-abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces\ResettableInterface
+abstract class EEM_Base extends EE_Base implements ResettableInterface
 {
 
     /**
@@ -505,13 +505,11 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      * the array key ('Event_Post_Table'), instead of repeating it. The model fields and model relations
      * do something similar.
      *
-     * @param null                 $timezone
-     * @param LoaderInterface|null $loader
+     * @param null $timezone
      * @throws EE_Error
      */
-    protected function __construct($timezone = null, LoaderInterface $loader = null)
+    protected function __construct($timezone = null)
     {
-        EEM_Base::$loader = $loader;
         // check that the model has not been loaded too soon
         if (! did_action('AHEE__EE_System__load_espresso_addons')) {
             throw new EE_Error (
@@ -673,25 +671,27 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
 
 
     /**
-     *        This function is a singleton method used to instantiate the Espresso_model object
+     * This function is a singleton method used to instantiate the Espresso_model object
      *
-     * @access public
-     * @param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any
-     *                         incoming timezone data that gets saved).  Note this just sends the timezone info to the
-     *                         date time model field objects.  Default is NULL (and will be assumed using the set
-     *                         timezone in the 'timezone_string' wp option)
+     * @param string            $timezone string representing the timezone we want to set for returned Date Time Strings
+     *                                    (and any incoming timezone data that gets saved).
+     *                                    Note this just sends the timezone info to the date time model field objects.
+     *                                    Default is NULL
+     *                                    (and will be assumed using the set timezone in the 'timezone_string' wp option)
+     * @param ModelFieldFactory $model_field_factory
      * @return static (as in the concrete child class)
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public static function instance($timezone = null)
+    public static function instance($timezone = null, ModelFieldFactory $model_field_factory = null)
     {
         // check if instance of Espresso_model already exists
         if (! static::$_instance instanceof static) {
+            $model_field_factory = self::getModelFieldFactory($model_field_factory);
             // instantiate Espresso_model
-            static::$_instance = new static($timezone, EEM_Base::getLoader());
+            static::$_instance = new static($timezone, $model_field_factory);
         }
         //we might have a timezone set, let set_timezone decide what to do with it
         static::$_instance->set_timezone($timezone);
@@ -702,19 +702,35 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
 
 
     /**
-     * resets the model
-     * if the model was already instantiated, returns it, with  all its properties reset;
-     * if it wasn't instantiated, returns null
-     *
-     * @param null | string $timezone
-     * @return EEM_Base|null
-     * @throws ReflectionException
-     * @throws EE_Error
+     * @param $model_field_factory
+     * @return ModelFieldFactory
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public static function reset($timezone = null)
+    private static function getModelFieldFactory($model_field_factory)
+    {
+        return $model_field_factory instanceof ModelFieldFactory
+            ? $model_field_factory
+            : LoaderFactory::getLoader()->load('EventEspresso\core\services\orm\ModelFieldFactory');
+    }
+
+
+
+    /**
+     * resets the model and returns it
+     *
+     * @param null | string          $timezone
+     * @param ModelFieldFactory|null $model_field_factory
+     * @return EEM_Base|null (if the model was already instantiated, returns it, with
+     * all its properties reset; if it wasn't instantiated, returns null)
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    public static function reset($timezone = null, ModelFieldFactory $model_field_factory = null)
     {
         if (static::$_instance instanceof EEM_Base) {
             //let's try to NOT swap out the current instance for a new one
@@ -730,9 +746,9 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
                     static::$_instance->{$property} = $value;
                 }
             }
-            //and then directly call its constructor again, like we would if we
-            //were creating a new one
-            static::$_instance->__construct($timezone, EEM_Base::getLoader());
+            //and then directly call its constructor again, like we would if we were creating a new one
+            $model_field_factory = self::getModelFieldFactory($model_field_factory);
+            static::$_instance->__construct($timezone, $model_field_factory);
             return self::instance();
         }
         return null;
@@ -761,10 +777,10 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      *
      * @param  boolean $translated return localized strings or JUST the array.
      * @return array
+     * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
-     * @throws EE_Error
      */
     public function status_array($translated = false)
     {
@@ -1221,9 +1237,8 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
         $items = $this->get_all($query_params);
         if (empty($items)) {
             return null;
-        } else {
-            return array_shift($items);
         }
+        return array_shift($items);
     }
 
 
@@ -1251,8 +1266,14 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
         $query_params = array(),
         $columns_to_select = null
     ) {
-        return $this->_get_consecutive($current_field_value, '>', $field_to_order_by, $limit, $query_params,
-            $columns_to_select);
+        return $this->_get_consecutive(
+            $current_field_value,
+            '>',
+            $field_to_order_by,
+            $limit,
+            $query_params,
+            $columns_to_select
+        );
     }
 
 
@@ -1280,8 +1301,14 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
         $query_params = array(),
         $columns_to_select = null
     ) {
-        return $this->_get_consecutive($current_field_value, '<', $field_to_order_by, $limit, $query_params,
-            $columns_to_select);
+        return $this->_get_consecutive(
+            $current_field_value,
+            '<',
+            $field_to_order_by,
+            $limit,
+            $query_params,
+            $columns_to_select
+        );
     }
 
 
@@ -1308,8 +1335,14 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
         $query_params = array(),
         $columns_to_select = null
     ) {
-        $results = $this->_get_consecutive($current_field_value, '>', $field_to_order_by, 1, $query_params,
-            $columns_to_select);
+        $results = $this->_get_consecutive(
+            $current_field_value,
+            '>',
+            $field_to_order_by,
+            1,
+            $query_params,
+            $columns_to_select
+        );
         return empty($results) ? null : reset($results);
     }
 
@@ -1337,8 +1370,14 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
         $query_params = array(),
         $columns_to_select = null
     ) {
-        $results = $this->_get_consecutive($current_field_value, '<', $field_to_order_by, 1, $query_params,
-            $columns_to_select);
+        $results = $this->_get_consecutive(
+            $current_field_value,
+            '<',
+            $field_to_order_by,
+            1,
+            $query_params,
+            $columns_to_select
+        );
         return empty($results) ? null : reset($results);
     }
 
@@ -1396,10 +1435,9 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
         //if $columns_to_select is empty then that means we're returning EE_Base_Class objects
         if (empty($columns_to_select)) {
             return $this->get_all($query_params);
-        } else {
-            //getting just the fields
-            return $this->_get_all_wpdb_results($query_params, ARRAY_A, $columns_to_select);
         }
+        //getting just the fields
+        return $this->_get_all_wpdb_results($query_params, ARRAY_A, $columns_to_select);
     }
 
 
@@ -1791,9 +1829,8 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
         $col = $this->get_col($query_params, $field_to_select);
         if (! empty($col)) {
             return reset($col);
-        } else {
-            return null;
         }
+        return null;
     }
 
 
@@ -1923,9 +1960,29 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
         //to get around this, we first do a SELECT, get all the IDs, and then run another query
         //to delete them
         $items_for_deletion = $this->_get_all_wpdb_results($query_params);
-        $deletion_where = $this->_setup_ids_for_delete($items_for_deletion, $allow_blocking);
-        if ($deletion_where) {
-            //echo "objects for deletion:";var_dump($objects_for_deletion);
+        $columns_and_ids_for_deleting = $this->_get_ids_for_delete($items_for_deletion, $allow_blocking);
+        $deletion_where_query_part = $this->_build_query_part_for_deleting_from_columns_and_values(
+            $columns_and_ids_for_deleting
+        );
+        /**
+         * Allows client code to act on the items being deleted before the query is actually executed.
+         *
+         * @param EEM_Base $this  The model instance being acted on.
+         * @param array    $query_params  The incoming array of query parameters influencing what gets deleted.
+         * @param bool     $allow_blocking @see param description in method phpdoc block.
+         * @param array $columns_and_ids_for_deleting       An array indicating what entities will get removed as
+         *                                                  derived from the incoming query parameters.
+         *                                                  @see details on the structure of this array in the phpdocs
+         *                                                  for the `_get_ids_for_delete_method`
+         *
+         */
+        do_action('AHEE__EEM_Base__delete__before_query',
+            $this,
+            $query_params,
+            $allow_blocking,
+            $columns_and_ids_for_deleting
+        );
+        if ($deletion_where_query_part) {
             $model_query_info = $this->_create_model_query_info_carrier($query_params);
             $table_aliases = array_keys($this->_tables);
             $SQL = "DELETE "
@@ -1933,21 +1990,47 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
                    . " FROM "
                    . $model_query_info->get_full_join_sql()
                    . " WHERE "
-                   . $deletion_where;
-            //		/echo "delete sql:$SQL";
+                   . $deletion_where_query_part;
             $rows_deleted = $this->_do_wpdb_query('query', array($SQL));
         } else {
             $rows_deleted = 0;
         }
-        //and lastly make sure those items are removed from the entity map; if they could be put into it at all
-        if ($this->has_primary_key_field()) {
-            foreach ($items_for_deletion as $item_for_deletion_row) {
-                $pk_value = $item_for_deletion_row[$this->get_primary_key_field()->get_qualified_column()];
-                if (isset($this->_entity_map[EEM_Base::$_model_query_blog_id][$pk_value])) {
-                    unset($this->_entity_map[EEM_Base::$_model_query_blog_id][$pk_value]);
+
+        //Next, make sure those items are removed from the entity map; if they could be put into it at all; and if
+        //there was no error with the delete query.
+        if ($this->has_primary_key_field()
+            && $rows_deleted !== false
+            && isset($columns_and_ids_for_deleting[$this->get_primary_key_field()->get_qualified_column()])
+        ) {
+            $ids_for_removal = $columns_and_ids_for_deleting[$this->get_primary_key_field()->get_qualified_column()];
+            foreach ($ids_for_removal as $id) {
+                if (isset($this->_entity_map[EEM_Base::$_model_query_blog_id][$id])) {
+                    unset($this->_entity_map[EEM_Base::$_model_query_blog_id][$id]);
                 }
             }
+
+            // delete any extra meta attached to the deleted entities but ONLY if this model is not an instance of
+            //`EEM_Extra_Meta`.  In other words we want to prevent recursion on EEM_Extra_Meta::delete_permanently calls
+            //unnecessarily.  It's very unlikely that users will have assigned Extra Meta to Extra Meta
+            // (although it is possible).
+            //Note this can be skipped by using the provided filter and returning false.
+            if (apply_filters(
+                'FHEE__EEM_Base__delete_permanently__dont_delete_extra_meta_for_extra_meta',
+                ! $this instanceof EEM_Extra_Meta,
+                $this
+            )) {
+                EEM_Extra_Meta::instance()->delete_permanently(array(
+                    0 => array(
+                        'EXM_type' => $this->get_this_model_name(),
+                        'OBJ_ID'   => array(
+                            'IN',
+                            $ids_for_removal
+                        )
+                    )
+                ));
+            }
         }
+
         /**
          * Action called just after performing a real deletion query. Although at this point the
          * items should have been deleted
@@ -1956,7 +2039,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
          * @param array    $query_params @see EEM_Base::get_all()
          * @param int      $rows_deleted
          */
-        do_action('AHEE__EEM_Base__delete__end', $this, $query_params, $rows_deleted);
+        do_action('AHEE__EEM_Base__delete__end', $this, $query_params, $rows_deleted, $columns_and_ids_for_deleting);
         return $rows_deleted;//how many supposedly got deleted
     }
 
@@ -2014,120 +2097,116 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
     }
 
 
-
     /**
-     * This sets up our delete where sql and accounts for if we have secondary tables that will have rows deleted as
-     * well.
-     *
-     * @param  array  $objects_for_deletion This should be the values returned by $this->_get_all_wpdb_results()
-     * @param boolean $allow_blocking       if TRUE, matched objects will only be deleted if there is no related model
-     *                                      info that blocks it (ie, there' sno other data that depends on this data);
-     *                                      if false, deletes regardless of other objects which may depend on it. Its
-     *                                      generally advisable to always leave this as TRUE, otherwise you could
-     *                                      easily corrupt your DB
+     * Builds the columns and values for items to delete from the incoming $row_results_for_deleting array.
+     * @param array $row_results_for_deleting
+     * @param bool  $allow_blocking
+     * @return array   The shape of this array depends on whether the model `has_primary_key_field` or not.  If the
+     *                 model DOES have a primary_key_field, then the array will be a simple single dimension array where
+     *                 the key is the fully qualified primary key column and the value is an array of ids that will be
+     *                 deleted. Example:
+     *                      array('Event.EVT_ID' => array( 1,2,3))
+     *                 If the model DOES NOT have a primary_key_field, then the array will be a two dimensional array
+     *                 where each element is a group of columns and values that get deleted. Example:
+     *                      array(
+     *                          0 => array(
+     *                              'Term_Relationship.object_id' => 1
+     *                              'Term_Relationship.term_taxonomy_id' => 5
+     *                          ),
+     *                          1 => array(
+     *                              'Term_Relationship.object_id' => 1
+     *                              'Term_Relationship.term_taxonomy_id' => 6
+     *                          )
+     *                      )
      * @throws EE_Error
-     * @return string    everything that comes after the WHERE statement.
      */
-    protected function _setup_ids_for_delete($objects_for_deletion, $allow_blocking = true)
+    protected function _get_ids_for_delete(array $row_results_for_deleting, $allow_blocking = true)
     {
+        $ids_to_delete_indexed_by_column = array();
         if ($this->has_primary_key_field()) {
             $primary_table = $this->_get_main_table();
             $primary_table_pk_field = $this->get_field_by_column($primary_table->get_fully_qualified_pk_column());
             $other_tables = $this->_get_other_tables();
-            /**
-             * @var EE_Primary_Key_Field_Base[] $other_tables_pk_fields  keys are table aliases
-             */
-            $other_tables_pk_fields = array();
-            /**
-             * @var EE_Primary_Key_Field_Base[] $other_tables_fk_fields EE_Foreign_Key_Field_Base[] keys are table aliases
-             */
-            $other_tables_fk_fields = array();
-            foreach($other_tables as $other_table_alias => $other_table_obj){
-                $other_tables_pk_fields[$other_table_alias] = $this->get_field_by_column($other_table_obj->get_fully_qualified_pk_column());
-                $other_tables_fk_fields[$other_table_alias] = $this->get_field_by_column($other_table_obj->get_fully_qualified_fk_column());
-            }
-            $deletes = $query = array();
-            foreach ($objects_for_deletion as $delete_object) {
-                //before we mark this object for deletion,
-                //make sure there's no related objects blocking its deletion (if we're checking)
+            $ids_to_delete_indexed_by_column = $query = array();
+            foreach ($row_results_for_deleting as $item_to_delete) {
+                //before we mark this item for deletion,
+                //make sure there's no related entities blocking its deletion (if we're checking)
                 if (
                     $allow_blocking
                     && $this->delete_is_blocked_by_related_models(
-                        $delete_object[$primary_table->get_fully_qualified_pk_column()]
+                        $item_to_delete[$primary_table->get_fully_qualified_pk_column()]
                     )
                 ) {
                     continue;
                 }
                 //primary table deletes
-                if (isset($delete_object[$primary_table->get_fully_qualified_pk_column()])) {
-
-                    $deletes[$primary_table->get_fully_qualified_pk_column()][] = $this->_wpdb_prepare_using_field(
-                        $delete_object[$primary_table->get_fully_qualified_pk_column()],
-                        $primary_table_pk_field
-                    );
+                if (isset($item_to_delete[$primary_table->get_fully_qualified_pk_column()])) {
+                    $ids_to_delete_indexed_by_column[$primary_table->get_fully_qualified_pk_column()][] =
+                        $item_to_delete[$primary_table->get_fully_qualified_pk_column()];
                 }
-                //other tables
-                if (! empty($other_tables)) {
-                    foreach ($other_tables as $other_table_alias => $other_table_obj) {
-                        $other_table_pk_field = $other_tables_pk_fields[$other_table_alias];
-                        $other_table_fk_field = $other_tables_fk_fields[$other_table_alias];
-                        //first check if we've got the foreign key column here.
-                        if (isset($delete_object[$other_table_obj->get_fully_qualified_fk_column()])) {
-                            $deletes[$other_table_obj->get_fully_qualified_pk_column()][] = $this->_wpdb_prepare_using_field(
-                                $delete_object[$other_table_obj->get_fully_qualified_fk_column()],
-                                $other_table_fk_field
-                            );
-                        }
-                        // wait! it's entirely possible that we'll have a the primary key
-                        // for this table in here, if it's a foreign key for one of the other secondary tables
-                        if (isset($delete_object[$other_table_obj->get_fully_qualified_pk_column()])) {
-                            $deletes[$other_table_obj->get_fully_qualified_pk_column()][] = $this->_wpdb_prepare_using_field(
-                                $delete_object[$other_table_obj->get_fully_qualified_pk_column()],
-                                $other_table_pk_field
-                            );
-                        }
-                        // finally, it is possible that the fk for this table is found
-                        // in the fully qualified pk column for the fk table, so let's see if that's there!
-                        if (isset($delete_object[$other_table_obj->get_fully_qualified_pk_on_fk_table()])) {
-                            $deletes[$other_table_obj->get_fully_qualified_pk_column()][] = $this->_wpdb_prepare_using_field(
-                                $delete_object[$other_table_obj->get_fully_qualified_pk_column()],
-                                $other_table_pk_field
-                            );
-                        }
+            }
+        } elseif (count($this->get_combined_primary_key_fields()) > 1) {
+            $fields = $this->get_combined_primary_key_fields();
+            foreach ($row_results_for_deleting as $item_to_delete) {
+                $ids_to_delete_indexed_by_column_for_row = array();
+                foreach ($fields as $cpk_field) {
+                    if ($cpk_field instanceof EE_Model_Field_Base) {
+                        $ids_to_delete_indexed_by_column_for_row[$cpk_field->get_qualified_column()] =
+                            $item_to_delete[$cpk_field->get_qualified_column()];
                     }
                 }
+                $ids_to_delete_indexed_by_column[] = $ids_to_delete_indexed_by_column_for_row;
             }
-            //we should have deletes now, so let's just go through and setup the where statement
-            foreach ($deletes as $column => $values) {
-                //make sure we have unique $values;
-                $values = array_unique($values);
-                $query[] = $column . ' IN(' . implode(",", $values) . ')';
-            }
-            return ! empty($query) ? implode(' AND ', $query) : '';
-        }
-        $combined_primary_key_fields = $this->get_combined_primary_key_fields();
-        if (count($combined_primary_key_fields) > 1) {
-            $ways_to_identify_a_row = array();
-            //note: because there's no primary key, that means nothing else  can be pointing to this model, right?
-            foreach ($objects_for_deletion as $delete_object) {
-                $combined_primary_key_row_values = array();
-                foreach ($combined_primary_key_fields as $field_in_combined_primary_key) {
-                    if ($field_in_combined_primary_key instanceof EE_Model_Field_Base) {
-                        $combined_primary_key_row_values[] = $field_in_combined_primary_key->get_qualified_column()
-                                                           . "="
-                                                           . $delete_object[$field_in_combined_primary_key->get_qualified_column()];
-                    }
-                }
-                $ways_to_identify_a_row[] = "(" . implode(" AND ", $combined_primary_key_row_values) . ")";
-            }
-            return implode(" OR ", $ways_to_identify_a_row);
         } else {
             //so there's no primary key and no combined key...
             //sorry, can't help you
-            throw new EE_Error(sprintf(__("Cannot delete objects of type %s because there is no primary key NOR combined key",
-                "event_espresso"), get_class($this)));
-        }
+            throw new EE_Error(
+                sprintf(
+                    __(
+                        "Cannot delete objects of type %s because there is no primary key NOR combined key",
+                        "event_espresso"
+                    ), get_class($this)
+                )
+            );
+        }    
+        return $ids_to_delete_indexed_by_column;
     }
+
+
+    /**
+     * This receives an array of columns and values set to be deleted (as prepared by _get_ids_for_delete) and prepares
+     * the corresponding query_part for the query performing the delete.
+     *
+     * @param array $ids_to_delete_indexed_by_column @see _get_ids_for_delete for how this array might be shaped.
+     * @return string
+     * @throws EE_Error
+     */
+    protected function _build_query_part_for_deleting_from_columns_and_values(array $ids_to_delete_indexed_by_column) {
+        $query_part = '';
+        if (empty($ids_to_delete_indexed_by_column)) {
+            return $query_part;
+        } elseif ($this->has_primary_key_field()) {
+            $query = array();
+            foreach ($ids_to_delete_indexed_by_column as $column => $ids) {
+                //make sure we have unique $ids
+                $ids = array_unique($ids);
+                $query[] = $column . ' IN(' . implode(',', $ids) . ')';
+            }
+            $query_part = ! empty($query) ? implode(' AND ', $query) : $query_part;
+        } elseif (count($this->get_combined_primary_key_fields()) > 1) {
+            $ways_to_identify_a_row = array();
+            foreach ($ids_to_delete_indexed_by_column as $ids_to_delete_indexed_by_column_for_each_row) {
+                $values_for_each_combined_primary_key_for_a_row = array();
+                foreach ($ids_to_delete_indexed_by_column_for_each_row as $column => $id) {
+                    $values_for_each_combined_primary_key_for_a_row[] = $column . '=' . $id;
+                }
+                $ways_to_identify_a_row[] = '(' . implode(' AND ', $values_for_each_combined_primary_key_for_a_row);
+            }
+            $query_part = implode(' OR ', $ways_to_identify_a_row);
+        }
+        return $query_part;
+    }
+    
 
 
     /**
@@ -2218,9 +2297,9 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
         $data_type = $field_obj->get_wpdb_data_type();
         if ($data_type === '%d' || $data_type === '%s') {
             return (float)$return_value;
-        } else {//must be %f
-            return (float)$return_value;
         }
+        //must be %f
+        return (float)$return_value;
     }
 
 
@@ -2260,7 +2339,8 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
             $wpdb->show_errors($old_show_errors_value);
             if (! empty($wpdb->last_error)) {
                 throw new EE_Error(sprintf(__('WPDB Error: "%s"', 'event_espresso'), $wpdb->last_error));
-            } elseif ($result === false) {
+            }
+            if ($result === false) {
                 throw new EE_Error(sprintf(__('WPDB Error occurred, but no error message was logged by wpdb! The wpdb method called was "%1$s" and the arguments were "%2$s"',
                     'event_espresso'), $wpdb_method, var_export($arguments_to_provide, true)));
             }
@@ -2654,9 +2734,8 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
         $results = $this->get_all_related($id_or_obj, $other_model_name, $query_params);
         if ($results) {
             return array_shift($results);
-        } else {
-            return null;
         }
+        return null;
     }
 
 
@@ -2737,9 +2816,8 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
              */
             do_action('AHEE__EEM_Base__insert__end', $this, $field_n_values, $new_id);
             return $new_id;
-        } else {
-            return false;
         }
+        return false;
     }
 
 
@@ -2832,9 +2910,8 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
         //if there is nothing to base this search on, then we shouldn't find anything
         if (empty($query_params)) {
             return array();
-        } else {
-            return $this->get_one($query_params);
         }
+        return $this->get_one($query_params);
     }
 
 
@@ -2926,16 +3003,14 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
         if ($this->has_primary_key_field()) {
             if ($this->get_primary_key_field()->is_auto_increment()) {
                 return $wpdb->insert_id;
-            } else {
-                //it's not an auto-increment primary key, so
-                //it must have been supplied
-                return $fields_n_values[$this->get_primary_key_field()->get_name()];
             }
-        } else {
-            //we can't return a  primary key because there is none. instead return
-            //a unique string indicating this model
-            return $this->get_index_primary_key_string($fields_n_values);
+            //it's not an auto-increment primary key, so
+            //it must have been supplied
+            return $fields_n_values[$this->get_primary_key_field()->get_name()];
         }
+        //we can't return a  primary key because there is none. instead return
+        //a unique string indicating this model
+        return $this->get_index_primary_key_string($fields_n_values);
     }
 
 
@@ -2991,14 +3066,14 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
                     $value = $field->prepare_for_set($value);
                 //purposefully left out "return"
                 case self::prepared_by_model_object:
+                    /** @noinspection SuspiciousAssignmentsInspection */
                     $value = $field->prepare_for_use_in_db($value);
                 case self::prepared_for_use_in_db:
                     //leave the value alone
             }
             return $value;
-        } else {
-            return $value;
         }
+        return $value;
     }
 
 
@@ -3193,10 +3268,11 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
                         throw new EE_Error(sprintf(__("You used a special where query param %s, but the value isn't an array of where query params, it's just %s'. It should be an array, eg array('EVT_ID'=>23,'OR'=>array('Venue.VNU_ID'=>32,'Venue.VNU_name'=>'monkey_land'))",
                             "event_espresso"),
                             $param, $possibly_array_of_params));
-                    } else {
-                        $this->_extract_related_models_from_sub_params_array_keys($possibly_array_of_params,
-                            $model_query_info_carrier, $query_param_type);
                     }
+                    $this->_extract_related_models_from_sub_params_array_keys(
+                        $possibly_array_of_params,
+                        $model_query_info_carrier, $query_param_type
+                    );
                 } elseif ($query_param_type === 0 //ie WHERE
                           && is_array($possibly_array_of_params)
                           && isset($possibly_array_of_params[2])
@@ -3496,10 +3572,15 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
     {
         if (in_array($should_be_order_string, $this->_allowed_order_values)) {
             return $should_be_order_string;
-        } else {
-            throw new EE_Error(sprintf(__("While performing a query on '%s', tried to use '%s' as an order parameter. ",
-                "event_espresso"), get_class($this), $should_be_order_string));
         }
+        throw new EE_Error(
+            sprintf(
+                __(
+                    "While performing a query on '%s', tried to use '%s' as an order parameter. ",
+                    "event_espresso"
+                ), get_class($this), $should_be_order_string
+            )
+        );
     }
 
 
@@ -3820,39 +3901,47 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
         if (array_key_exists($query_param, $this_model_fields)) {
             if ($allow_fields) {
                 return;
-            } else {
-                throw new EE_Error(sprintf(__("Using a field name (%s) on model %s is not allowed on this query param type '%s'. Original query param was %s",
-                    "event_espresso"),
-                    $query_param, get_class($this), $query_param_type, $original_query_param));
             }
-        } //check if this is a special logic query param
-        elseif (in_array($query_param, $this->_logic_query_param_keys, true)) {
+            throw new EE_Error(
+                sprintf(
+                    __(
+                        "Using a field name (%s) on model %s is not allowed on this query param type '%s'. Original query param was %s",
+                        "event_espresso"
+                    ),
+                    $query_param, get_class($this), $query_param_type, $original_query_param
+                )
+            );
+        }
+        //check if this is a special logic query param
+        if (in_array($query_param, $this->_logic_query_param_keys, true)) {
             if ($allow_logic_query_params) {
                 return;
-            } else {
-                throw new EE_Error(
-                    sprintf(
-                        __('Logic query params ("%1$s") are being used incorrectly with the following query param ("%2$s") on model %3$s. %4$sAdditional Info:%4$s%5$s',
-                            'event_espresso'),
-                        implode('", "', $this->_logic_query_param_keys),
-                        $query_param,
-                        get_class($this),
-                        '<br />',
-                        "\t"
-                        . ' $passed_in_query_info = <pre>'
-                        . print_r($passed_in_query_info, true)
-                        . '</pre>'
-                        . "\n\t"
-                        . ' $query_param_type = '
-                        . $query_param_type
-                        . "\n\t"
-                        . ' $original_query_param = '
-                        . $original_query_param
-                    )
-                );
             }
-        } //check if it's a custom selection
-        elseif (array_key_exists($query_param, $this->_custom_selections)) {
+            throw new EE_Error(
+                sprintf(
+                    __(
+                        'Logic query params ("%1$s") are being used incorrectly with the following query param ("%2$s") on model %3$s. %4$sAdditional Info:%4$s%5$s',
+                        'event_espresso'
+                    ),
+                    implode('", "', $this->_logic_query_param_keys),
+                    $query_param,
+                    get_class($this),
+                    '<br />',
+                    "\t"
+                    . ' $passed_in_query_info = <pre>'
+                    . print_r($passed_in_query_info, true)
+                    . '</pre>'
+                    . "\n\t"
+                    . ' $query_param_type = '
+                    . $query_param_type
+                    . "\n\t"
+                    . ' $original_query_param = '
+                    . $original_query_param
+                )
+            );
+        }
+        //check if it's a custom selection
+        if (array_key_exists($query_param, $this->_custom_selections)) {
             return;
         }
         //check if has a model name at the beginning
@@ -3868,13 +3957,15 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
                     throw new EE_Error(sprintf(__("Query param '%s' (of type %s on model %s) shouldn't end on a period (.) ",
                         "event_espresso"),
                         $query_param, $query_param_type, get_class($this), $valid_related_model_name));
-                } else {
-                    $related_model_obj = $this->get_related_model_obj($valid_related_model_name);
-                    $related_model_obj->_extract_related_model_info_from_query_param($query_param,
-                        $passed_in_query_info, $query_param_type, $original_query_param);
-                    return;
                 }
-            } elseif ($query_param === $valid_related_model_name) {
+                $related_model_obj = $this->get_related_model_obj($valid_related_model_name);
+                $related_model_obj->_extract_related_model_info_from_query_param(
+                    $query_param,
+                    $passed_in_query_info, $query_param_type, $original_query_param
+                );
+                return;
+            }
+            if ($query_param === $valid_related_model_name) {
                 $this->_add_join_to_model($valid_related_model_name, $passed_in_query_info, $original_query_param);
                 return;
             }
@@ -3977,6 +4068,38 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
 
 
     /**
+     * Gets the EE_Model_Field on the model indicated by $model_name and the $field_name.
+     * Eg, if called with _get_field_on_model('ATT_ID','Attendee'), it will return the EE_Primary_Key_Field on
+     * EEM_Attendee.
+     *
+     * @param string $field_name
+     * @param string $model_name
+     * @return EE_Model_Field_Base
+     * @throws EE_Error
+     */
+    protected function _get_field_on_model($field_name, $model_name)
+    {
+        $model_class = 'EEM_' . $model_name;
+        $model_filepath = $model_class . ".model.php";
+        if (is_readable($model_filepath)) {
+            require_once($model_filepath);
+            $model_instance = call_user_func($model_name . "::instance");
+            /* @var $model_instance EEM_Base */
+            return $model_instance->field_settings_for($field_name);
+        }
+        throw new EE_Error(
+            sprintf(
+                __(
+                    'No model named %s exists, with classname %s and filepath %s',
+                    'event_espresso'
+                ), $model_name, $model_class, $model_filepath
+            )
+        );
+    }
+
+
+
+    /**
      * Used for creating nested WHERE conditions. Eg "WHERE ! (Event.ID = 3 OR ( Event_Meta.meta_key = 'bob' AND
      * Event_Meta.meta_value = 'foo'))"
      *
@@ -4037,7 +4160,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
     /**
      * Takes the input parameter and extract the table name (alias) and column name
      *
-     * @param array $query_param like Registration.Transaction.TXN_ID, Event.Datetime.start_time, or REG_ID
+     * @param string $query_param like Registration.Transaction.TXN_ID, Event.Datetime.start_time, or REG_ID
      * @throws EE_Error
      * @return string table alias and column name for SQL, eg "Transaction.TXN_ID"
      */
@@ -4048,14 +4171,20 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
             $table_alias_prefix = EE_Model_Parser::extract_table_alias_model_relation_chain_from_query_param($field->get_model_name(),
                 $query_param);
             return $table_alias_prefix . $field->get_qualified_column();
-        } elseif (array_key_exists($query_param, $this->_custom_selections)) {
+        }
+        if (array_key_exists($query_param, $this->_custom_selections)) {
             //maybe it's custom selection item?
             //if so, just use it as the "column name"
             return $query_param;
-        } else {
-            throw new EE_Error(sprintf(__("%s is not a valid field on this model, nor a custom selection (%s)",
-                "event_espresso"), $query_param, implode(",", $this->_custom_selections)));
         }
+        throw new EE_Error(
+            sprintf(
+                __(
+                    "%s is not a valid field on this model, nor a custom selection (%s)",
+                    "event_espresso"
+                ), $query_param, implode(",", $this->_custom_selections)
+            )
+        );
     }
 
 
@@ -4074,10 +4203,9 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
         $pos_of_star = strpos($condition_query_param_key, '*');
         if ($pos_of_star === false) {
             return $condition_query_param_key;
-        } else {
-            $condition_query_param_sans_star = substr($condition_query_param_key, 0, $pos_of_star);
-            return $condition_query_param_sans_star;
         }
+        $condition_query_param_sans_star = substr($condition_query_param_key, 0, $pos_of_star);
+        return $condition_query_param_sans_star;
     }
 
 
@@ -4117,13 +4245,15 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
         //check to see if the value is actually another field
         if (is_array($op_and_value) && isset($op_and_value[2]) && $op_and_value[2] == true) {
             return $operator . SP . $this->_deduce_column_name_from_query_param($value);
-        } elseif (in_array($operator, $this->valid_in_style_operators()) && is_array($value)) {
+        }
+        if (in_array($operator, $this->valid_in_style_operators) && is_array($value)) {
             //in this case, the value should be an array, or at least a comma-separated list
             //it will need to handle a little differently
             $cleaned_value = $this->_construct_in_value($value, $field_obj);
             //note: $cleaned_value has already been run through $wpdb->prepare()
             return $operator . SP . $cleaned_value;
-        } elseif (in_array($operator, $this->valid_between_style_operators()) && is_array($value)) {
+        }
+        if (in_array($operator, $this->valid_between_style_operators) && is_array($value)) {
             //the value should be an array with count of two.
             if (count($value) !== 2) {
                 throw new EE_Error(
@@ -4138,7 +4268,8 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
             }
             $cleaned_value = $this->_construct_between_value($value, $field_obj);
             return $operator . SP . $cleaned_value;
-        } elseif (in_array($operator, $this->valid_null_style_operators())) {
+        }
+        if (in_array($operator, $this->valid_null_style_operators)) {
             if ($value !== null) {
                 throw new EE_Error(
                     sprintf(
@@ -4152,13 +4283,16 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
                 );
             }
             return $operator;
-        } elseif (in_array($operator, $this->valid_like_style_operators()) && ! is_array($value)) {
+        }
+        if (in_array($operator, $this->valid_like_style_operators() && ! is_array($value)) {
             //if the operator is 'LIKE', we want to allow percent signs (%) and not
             //remove other junk. So just treat it as a string.
             return $operator . SP . $this->_wpdb_prepare_using_field($value, '%s');
-        } elseif (! in_array($operator, $this->valid_in_style_operators()) && ! is_array($value)) {
+        }
+        if (! in_array($operator, $this->valid_in_style_operators) && ! is_array($value)) {
             return $operator . SP . $this->_wpdb_prepare_using_field($value, $field_obj);
-        } elseif (in_array($operator, $this->valid_in_style_operators()) && ! is_array($value)) {
+        }
+        if (in_array($operator, $this->valid_in_style_operators) && ! is_array($value)) {
             throw new EE_Error(
                 sprintf(
                     __(
@@ -4169,7 +4303,8 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
                     $operator
                 )
             );
-        } elseif (! in_array($operator, $this->valid_in_style_operators()) && is_array($value)) {
+        }
+        if (! in_array($operator, $this->valid_in_style_operators) && is_array($value)) {
             throw new EE_Error(
                 sprintf(
                     __(
@@ -4180,17 +4315,16 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
                     $operator
                 )
             );
-        } else {
-            throw new EE_Error(
-                sprintf(
-                    __(
-                        "It appears you've provided some totally invalid query parameters. Operator and value were:'%s', which isn't right at all",
-                        "event_espresso"
-                    ),
-                    http_build_query($op_and_value)
-                )
-            );
         }
+        throw new EE_Error(
+            sprintf(
+                __(
+                    "It appears you've provided some totally invalid query parameters. Operator and value were:'%s', which isn't right at all",
+                    "event_espresso"
+                ),
+                http_build_query($op_and_value)
+            )
+        );
     }
 
 
@@ -4269,13 +4403,16 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
         if ($field_obj instanceof EE_Model_Field_Base) {
             return $wpdb->prepare($field_obj->get_wpdb_data_type(),
                 $this->_prepare_value_for_use_in_db($value, $field_obj));
-        } else {//$field_obj should really just be a data type
-            if (! in_array($field_obj, $this->_valid_wpdb_data_types)) {
-                throw new EE_Error(sprintf(__("%s is not a valid wpdb datatype. Valid ones are %s", "event_espresso"),
-                    $field_obj, implode(",", $this->_valid_wpdb_data_types)));
-            }
-            return $wpdb->prepare($field_obj, $value);
+        } //$field_obj should really just be a data type
+        if (! in_array($field_obj, $this->_valid_wpdb_data_types)) {
+            throw new EE_Error(
+                sprintf(
+                    __("%s is not a valid wpdb datatype. Valid ones are %s", "event_espresso"),
+                    $field_obj, implode(",", $this->_valid_wpdb_data_types)
+                )
+            );
         }
+        return $wpdb->prepare($field_obj, $value);
     }
 
 
@@ -4329,10 +4466,15 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
         $field = isset($all_fields[$field_name]) ? $all_fields[$field_name] : false;
         if ($field) {
             return $field->get_qualified_column();
-        } else {
-            throw new EE_Error(sprintf(__("There is no field titled %s on model %s. Either the query trying to use it is bad, or you need to add it to the list of fields on the model.",
-                'event_espresso'), $field_name, get_class($this)));
         }
+        throw new EE_Error(
+            sprintf(
+                __(
+                    "There is no field titled %s on model %s. Either the query trying to use it is bad, or you need to add it to the list of fields on the model.",
+                    'event_espresso'
+                ), $field_name, get_class($this)
+            )
+        );
     }
 
 
@@ -4609,9 +4751,8 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
         $fieldSettings = $this->field_settings(true);
         if (isset($fieldSettings[$fieldName])) {
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
 
@@ -4627,9 +4768,8 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
         $relations = $this->relation_settings();
         if (isset($relations[$relation_name])) {
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
 
@@ -4778,20 +4918,19 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
                 }
             }
             return $this->_cached_fields;
-        } else {
-            if ($this->_cached_fields_non_db_only === null) {
-                $this->_cached_fields_non_db_only = array();
-                foreach ($this->_fields as $fields_corresponding_to_table) {
-                    foreach ($fields_corresponding_to_table as $field_name => $field_obj) {
-                        /** @var $field_obj EE_Model_Field_Base */
-                        if (! $field_obj->is_db_only_field()) {
-                            $this->_cached_fields_non_db_only[$field_name] = $field_obj;
-                        }
+        }
+        if ($this->_cached_fields_non_db_only === null) {
+            $this->_cached_fields_non_db_only = array();
+            foreach ($this->_fields as $fields_corresponding_to_table) {
+                foreach ($fields_corresponding_to_table as $field_name => $field_obj) {
+                    /** @var $field_obj EE_Model_Field_Base */
+                    if (! $field_obj->is_db_only_field()) {
+                        $this->_cached_fields_non_db_only[$field_name] = $field_obj;
                     }
                 }
             }
-            return $this->_cached_fields_non_db_only;
         }
+        return $this->_cached_fields_non_db_only;
     }
 
 
@@ -4990,10 +5129,9 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
         $classInstance = $this->get_from_entity_map($object->ID());
         if ($classInstance) {
             return $classInstance;
-        } else {
-            $this->_entity_map[EEM_Base::$_model_query_blog_id][$object->ID()] = $object;
-            return $object;
         }
+        $this->_entity_map[EEM_Base::$_model_query_blog_id][$object->ID()] = $object;
+        return $object;
     }
 
 
@@ -5125,9 +5263,8 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
             }
             $this->_entity_map[EEM_Base::$_model_query_blog_id][$id] = $obj_in_map;
             return $obj_in_map;
-        } else {
-            return $this->get_one_by_ID($id);
         }
+        return $this->get_one_by_ID($id);
     }
 
 
@@ -5161,10 +5298,9 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
                 }
             }
             return $obj_in_map;
-        } else {
-            $this->add_to_entity_map($replacing_model_obj);
-            return $replacing_model_obj;
         }
+        $this->add_to_entity_map($replacing_model_obj);
+        return $replacing_model_obj;
     }
 
 
@@ -5537,9 +5673,8 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
         $copies = $this->get_all_copies($model_object_or_attributes_array, $query_params);
         if (is_array($copies)) {
             return array_shift($copies);
-        } else {
-            return null;
         }
+        return null;
     }
 
 
@@ -5577,10 +5712,15 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
             : null;
         if ($sql_operator) {
             return $sql_operator;
-        } else {
-            throw new EE_Error(sprintf(__("The operator '%s' is not in the list of valid operators: %s",
-                "event_espresso"), $operator_supplied, implode(",", array_keys($this->_valid_operators))));
         }
+        throw new EE_Error(
+            sprintf(
+                __(
+                    "The operator '%s' is not in the list of valid operators: %s",
+                    "event_espresso"
+                ), $operator_supplied, implode(",", array_keys($this->_valid_operators))
+            )
+        );
     }
 
 
@@ -5885,17 +6025,18 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
         $valid_cap_contexts = EEM_Base::valid_cap_contexts();
         if (in_array($context, $valid_cap_contexts)) {
             return true;
-        } else {
-            throw new EE_Error(
-                sprintf(
-                    __('Context "%1$s" passed into model "%2$s" is not a valid context. They are: %3$s',
-                        'event_espresso'),
-                    $context,
-                    'EEM_Base',
-                    implode(',', $valid_cap_contexts)
-                )
-            );
         }
+        throw new EE_Error(
+            sprintf(
+                __(
+                    'Context "%1$s" passed into model "%2$s" is not a valid context. They are: %3$s',
+                    'event_espresso'
+                ),
+                $context,
+                'EEM_Base',
+                implode(',', $valid_cap_contexts)
+            )
+        );
     }
 
 
@@ -5928,7 +6069,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
 
     /**
      * Determines whether or not the where query param array key is for a logic query param.
-     * Eg 'OR', 'not*', and 'and*because-i-say-so' shoudl all return true, whereas
+     * Eg 'OR', 'not*', and 'and*because-i-say-so' should all return true, whereas
      * 'ATT_fname', 'EVT_name*not-you-or-me', and 'ORG_name' should return false
      *
      * @param $query_param_key

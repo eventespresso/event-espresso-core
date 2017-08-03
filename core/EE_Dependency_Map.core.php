@@ -282,6 +282,10 @@ class EE_Dependency_Map
      */
     public function has($class_name = '')
     {
+        // all legacy models have the same dependencies
+        if (strpos($class_name, 'EEM_') === 0) {
+            $class_name = 'LEGACY_MODELS';
+        }
         return isset($this->_dependency_map[$class_name]) ? true : false;
     }
 
@@ -296,6 +300,10 @@ class EE_Dependency_Map
      */
     public function has_dependency_for_class($class_name = '', $dependency = '')
     {
+        // all legacy models have the same dependencies
+        if (strpos($class_name, 'EEM_') === 0) {
+            $class_name = 'LEGACY_MODELS';
+        }
         $dependency = $this->get_alias($dependency);
         return isset($this->_dependency_map[$class_name], $this->_dependency_map[$class_name][$dependency])
             ? true
@@ -313,6 +321,10 @@ class EE_Dependency_Map
      */
     public function loading_strategy_for_class_dependency($class_name = '', $dependency = '')
     {
+        // all legacy models have the same dependencies
+        if (strpos($class_name, 'EEM_') === 0) {
+            $class_name = 'LEGACY_MODELS';
+        }
         $dependency = $this->get_alias($dependency);
         return $this->has_dependency_for_class($class_name, $dependency)
             ? $this->_dependency_map[$class_name][$dependency]
@@ -327,6 +339,10 @@ class EE_Dependency_Map
      */
     public function class_loader($class_name)
     {
+        // all legacy models use load_model()
+        if(strpos($class_name, 'EEM_') === 0){
+            return 'load_model';
+        }
         $class_name = $this->get_alias($class_name);
         return isset($this->_class_loaders[$class_name]) ? $this->_class_loaders[$class_name] : '';
     }
@@ -602,16 +618,15 @@ class EE_Dependency_Map
             'EventEspresso\core\services\cache\PostRelatedCacheManager'                  => array(
                 'EventEspresso\core\services\cache\TransientCacheStorage' => EE_Dependency_Map::load_from_cache,
             ),
+            'EventEspresso\core\services\orm\ModelFieldFactory'                                                   => array(
+                'EventEspresso\core\services\loaders\Loader'              => EE_Dependency_Map::load_from_cache,
+            ),
+            'LEGACY_MODELS'                                                   => array(
+                null,
+                'EventEspresso\core\services\orm\ModelFieldFactory' => EE_Dependency_Map::load_from_cache,
+            ),
             'EventEspresso\core\domain\services\validation\email\EmailValidationService' => array(
                 'EE_Registration_Config'                                  => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\loaders\Loader'              => EE_Dependency_Map::load_from_cache,
-            ),
-            'EEM_Attendee'                                                               => array(
-                null,
-                'EventEspresso\core\services\loaders\Loader'              => EE_Dependency_Map::load_from_cache,
-            ),
-            'EEM_WP_User'                                                                => array(
-                null,
                 'EventEspresso\core\services\loaders\Loader'              => EE_Dependency_Map::load_from_cache,
             ),
             'EventEspresso\core\domain\values\EmailAddress'                              => array(
@@ -638,6 +653,10 @@ class EE_Dependency_Map
      *        'Required_Interface' => function () {
      *            return new A_Class_That_Implements_Required_Interface();
      *        },
+     *
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidArgumentException
      */
     protected function _register_core_class_loaders()
     {
@@ -661,6 +680,7 @@ class EE_Dependency_Map
             },
             'EE_Request_Handler'                   => 'load_core',
             'EE_Session'                           => 'load_core',
+            'EE_Cron_Tasks'                        => 'load_core',
             //load_lib
             'EE_Message_Resource_Manager'          => 'load_lib',
             'EE_Message_Type_Collection'           => 'load_lib',
@@ -689,9 +709,9 @@ class EE_Dependency_Map
                 );
             },
             //load_model
-            'EEM_Attendee'                         => 'load_model',
-            'EEM_Message_Template_Group'           => 'load_model',
-            'EEM_Message_Template'                 => 'load_model',
+            // 'EEM_Attendee'                         => 'load_model',
+            // 'EEM_Message_Template_Group'           => 'load_model',
+            // 'EEM_Message_Template'                 => 'load_model',
             //load_helper
             'EEH_Parse_Shortcodes'                 => function () {
                 if (EE_Registry::instance()->load_helper('Parse_Shortcodes')) {
@@ -768,6 +788,10 @@ class EE_Dependency_Map
     /**
      * This is used to reset the internal map and class_loaders to their original default state at the beginning of the
      * request Primarily used by unit tests.
+     *
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
      */
     public function reset()
     {
