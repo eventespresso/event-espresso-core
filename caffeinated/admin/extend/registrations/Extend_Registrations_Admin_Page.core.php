@@ -760,27 +760,52 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
                 ? ' (' . $datetime->get_dtt_display_name() . ')'
                 : $datetime->get_dtt_display_name();
         }
-        $go_back_url = ! empty($reg_id) ? EE_Admin_Page::add_query_args_and_nonce(
-            array(
-                'action'   => 'event_registrations',
-                'event_id' => $registration->event_ID(),
-                'DTT_ID'   => $dtt_id,
-            ),
-            $this->_admin_base_url
-        ) : '';
+        $datetime_link = ! empty($dtt_id) && $registration instanceof EE_Registration
+            ? EE_Admin_Page::add_query_args_and_nonce(
+                array(
+                    'action'   => 'event_registrations',
+                    'event_id' => $registration->event_ID(),
+                    'DTT_ID'   => $dtt_id,
+                ),
+                $this->_admin_base_url
+            )
+            : '';
+        $datetime_link = ! empty($datetime_link)
+            ? '<a href="' . $datetime_link . '">'
+              . '<span id="checkin-dtt">'
+              . $datetime_label
+              . '</span></a>'
+            : $datetime_label;
         $attendee_name = $attendee instanceof EE_Attendee
             ? $attendee->full_name()
             : '';
+        $attendee_link = $attendee instanceof EE_Attendee
+            ? $attendee->get_admin_details_link()
+            : '';
+        $attendee_link = ! empty($attendee_link)
+            ? '<a href="' . $attendee->get_admin_details_link() . '"'
+              . ' title="' . esc_html__('Click for attendee details', 'event_espresso') . '">'
+              . '<span id="checkin-attendee-name">'
+              . $attendee_name
+              . '</span></a>'
+            : '';
+        $event_link = $registration->event() instanceof EE_Event
+            ? $registration->event()->get_admin_details_link()
+            : '';
+        $event_link = ! empty($event_link)
+            ? '<a href="' . $event_link . '"'
+              . ' title="' . esc_html__('Click here to edit event.', 'event_espresso') . '">'
+              . '<span id="checkin-event-name">'
+              . $registration->event_name()
+              . '</span>'
+              . '</a>'
+            : '';
         $this->_template_args['before_list_table'] = ! empty($reg_id) && ! empty($dtt_id)
             ? '<h2>' . sprintf(
-                __("%s's check in records for %s at the event, %s", 'event_espresso'),
-                '<span id="checkin-attendee-name">'
-                . $attendee_name . '</span>',
-                '<span id="checkin-dtt"><a href="' . $go_back_url . '">'
-                . $datetime_label
-                . '</a></span>',
-                '<span id="checkin-event-name">'
-                . $registration->event_name() . '</span>'
+                esc_html__('Displaying check in records for %1$s for %2$s at the event, %3$s', 'event_espresso'),
+                $attendee_link,
+                $datetime_link,
+                $event_link
             ) . '</h2>'
             : '';
         $this->_template_args['list_table_hidden_fields'] = ! empty($reg_id)
