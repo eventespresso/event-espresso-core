@@ -12,18 +12,17 @@ interface LoaderDecoratorInterface
     /**
      * @param string $fqcn
      * @param array  $arguments
+     * @param bool   $shared
      * @return mixed
      */
-    public function load($fqcn, $arguments = array());
+    public function load($fqcn, $arguments = array(), $shared = true);
 
 
 
     /**
      * calls reset() on loader if method exists
-     *
-     * @param bool $hard
      */
-    public function reset($hard = true);
+    public function reset();
 
 }
 // End of file LoaderInterface.php

@@ -660,6 +660,35 @@ class Read extends Base
             $result,
             $this->getModelVersionInfo()->fieldsOnModelInThisVersion($model)
         );
+        //if this is a CPT, we need to set the global $post to it,
+        //otherwise shortcodes etc won't work properly while rendering it
+        if ($model instanceof \EEM_CPT_Base) {
+            $do_chevy_shuffle = true;
+        } else {
+            $do_chevy_shuffle = false;
+        }
+        if ($do_chevy_shuffle) {
+            global $post;
+            $old_post = $post;
+            $post = get_post($result[$model->primary_key_name()]);
+            if (! $post instanceof \WP_Post) {
+                //well that's weird, because $result is what we JUST fetched from the database
+                throw new RestException(
+                    'error_fetching_post_from_database_results',
+                    esc_html__(
+                        'An item was retrieved from the database but it\'s not a WP_Post like it should be.',
+                        'event_espresso'
+                    )
+                );
+            }
+            $model_object_classname = 'EE_' . $model->get_this_model_name();
+            $post->{$model_object_classname} = \EE_Registry::instance()->load_class(
+                $model_object_classname,
+                $result,
+                false,
+                false
+            );
+        }
         foreach ($result as $field_name => $field_value) {
             $field_obj = $model->field_settings_for($field_name);
             if ($this->isSubclassOfOne($field_obj, $this->getModelVersionInfo()->fieldsIgnored())) {
@@ -700,6 +729,9 @@ class Read extends Base
             } else {
                 $result[$field_name] = $this->prepareFieldObjValueForJson($field_obj, $field_value);
             }
+        }
+        if ($do_chevy_shuffle) {
+            $post = $old_post;
         }
         return $result;
     }

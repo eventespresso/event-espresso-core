@@ -1,6 +1,6 @@
 <?php
+use EventEspresso\core\services\loaders\Loader;
 use EventEspresso\core\services\loaders\LoaderFactory;
-use EventEspresso\core\services\loaders\LoaderInterface;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 

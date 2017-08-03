@@ -3,9 +3,7 @@
 namespace EventEspresso\core\services\loaders;
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;
-use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\services\collections\CollectionInterface;
-use EventEspresso\core\services\container\exceptions\ServiceNotFoundException;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -93,11 +91,10 @@ class CachingLoader extends LoaderDecorator
     /**
      * @param string $fqcn
      * @param array  $arguments
+     * @param bool   $shared
      * @return mixed
-     * @throws InvalidEntityException
-     * @throws ServiceNotFoundException
      */
-    public function load($fqcn, $arguments = array())
+    public function load($fqcn, $arguments = array(), $shared = true)
     {
         $fqcn = ltrim($fqcn, '\\');
         // caching can be turned off via the following code:
@@ -109,13 +106,15 @@ class CachingLoader extends LoaderDecorator
                 $this
             )
         ){
-            return $this->loader->load($fqcn, $arguments);
+            // even though $shared might be true, caching should be bypassed for whatever reason,
+            // so we don't want the core loader to cache anything, therefore caching is turned off
+            return $this->loader->load($fqcn, $arguments, false);
         }
         $identifier = md5($fqcn . serialize($arguments));
         if($this->cache->has($identifier)){
             return $this->cache->get($identifier);
         }
-        $object = $this->loader->load($fqcn, $arguments);
+        $object = $this->loader->load($fqcn, $arguments, $shared);
         if($object instanceof $fqcn){
             $this->cache->add($object, $identifier);
         }
@@ -126,13 +125,11 @@ class CachingLoader extends LoaderDecorator
 
     /**
      * empties cache and calls reset() on loader if method exists
-     *
-     * @param bool $hard
      */
-    public function reset($hard = true)
+    public function reset()
     {
         $this->cache->trashAndDetachAll();
-        $this->loader->reset($hard);
+        $this->loader->reset();
     }
 
 

@@ -1,6 +1,6 @@
 <?php
 
-use EventEspresso\core\services\database\ModelFieldFactory;
+use EventEspresso\core\services\orm\ModelFieldFactory;
 
 if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
 
@@ -168,10 +168,10 @@ interface EEMI_Payment {
      * Function that returns an instance of this class.
      *
      * @param null              $timezone
-     * @param ModelFieldFactory $model_field_factory
+     * @param ModelFieldFactory $model_field_factory If not provided, this class needs to find it itself
      * @return EEMI_Payment
      */
-	public static function instance($timezone = null, ModelFieldFactory $model_field_factory);
+	public static function instance($timezone = null, ModelFieldFactory $model_field_factory = null);
 
 	/**
 	 * Gets a payment by the transaction ID or cheque number

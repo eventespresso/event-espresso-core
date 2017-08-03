@@ -1,6 +1,6 @@
 <?php
 
-namespace EventEspresso\core\services\database;
+namespace EventEspresso\core\services\orm;
 
 use EE_All_Caps_Text_Field;
 use EE_Any_Foreign_Model_Name_Field;
@@ -54,30 +54,9 @@ class ModelFieldFactory
 {
 
     /**
-     * @var ModelFieldFactory $instance
-     */
-    private static $instance;
-
-    /**
      * @var LoaderInterface $loader
      */
     private $loader;
-
-
-
-    /**
-     * @return ModelFieldFactory
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     */
-    public static function getModelFieldFactory()
-    {
-        if (! ModelFieldFactory::$instance instanceof ModelFieldFactory) {
-            ModelFieldFactory::$instance = new ModelFieldFactory(LoaderFactory::getLoader());
-        }
-        return ModelFieldFactory::$instance;
-    }
 
 
 
@@ -156,10 +135,6 @@ class ModelFieldFactory
      * @param string $timezone_string
      * @param bool   $nullable
      * @param string $default_value
-     * @param string $date_format
-     * @param string $time_format
-     * @param string $pretty_date_format
-     * @param string $pretty_time_format
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @return EE_Datetime_Field
@@ -167,13 +142,8 @@ class ModelFieldFactory
     public function createDatetimeField(
         $table_column,
         $nice_name,
-        $timezone_string = '',
         $nullable = false,
-        $default_value = EE_Datetime_Field::now,
-        $date_format = '',
-        $time_format = '',
-        $pretty_date_format = '',
-        $pretty_time_format = ''
+        $default_value = EE_Datetime_Field::now
     ) {
         return $this->loader->getNew(
             'EE_Datetime_Field',
@@ -181,12 +151,7 @@ class ModelFieldFactory
                 $table_column,
                 $nice_name,
                 $nullable,
-                $default_value,
-                $timezone_string,
-                $date_format,
-                $time_format,
-                $pretty_date_format,
-                $pretty_time_format,
+                $default_value
             )
         );
     }
@@ -298,7 +263,7 @@ class ModelFieldFactory
         $table_column,
         $nice_name,
         $nullable,
-        $default_value = null,
+        $default_value,
         array $allowed_enum_values
     ) {
         return $this->loader->getNew(
@@ -334,7 +299,7 @@ class ModelFieldFactory
      * @param string $model_name
      * @return EE_Foreign_Key_Int_Field
      */
-    public function createForeignKeyIntField($table_column, $nice_name, $nullable, $default_value = null, $model_name)
+    public function createForeignKeyIntField($table_column, $nice_name, $nullable, $default_value, $model_name)
     {
         return $this->loader->getNew(
             'EE_Foreign_Key_Int_Field',
@@ -356,7 +321,7 @@ class ModelFieldFactory
         $table_column,
         $nice_name,
         $nullable,
-        $default_value = null,
+        $default_value,
         $model_name
     ) {
         return $this->loader->getNew(

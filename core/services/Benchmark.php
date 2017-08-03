@@ -119,14 +119,15 @@ class Benchmark
     /**
      * will display the benchmarking results at shutdown
      *
+     * @param bool $formatted
      * @return void
      */
-    public static function displayResultsAtShutdown()
+    public static function displayResultsAtShutdown($formatted = true)
     {
         add_action(
             'shutdown',
-            function () {
-                Benchmark::displayResults();
+            function () use ($formatted) {
+                Benchmark::displayResults(true, $formatted);
             }
         );
     }
@@ -134,13 +135,30 @@ class Benchmark
 
 
     /**
-     * displayResults
+     * will display the benchmarking results at shutdown
      *
-     * @param bool $echo
+     * @param string $filepath
+     * @param bool   $formatted
+     * @param bool   $append
+     * @return void
+     */
+    public static function writeResultsAtShutdown($filepath = '', $formatted = true, $append = true)
+    {
+        add_action(
+            'shutdown',
+            function () use ($filepath, $formatted, $append) {
+                Benchmark::writeResultsToFile($filepath, $formatted, $append);
+            }
+        );
+    }
+
+
+
+    /**
      * @param bool $formatted
      * @return string
      */
-    public static function displayResults($echo = true, $formatted = true)
+    private static function generateResults($formatted = true)
     {
         if (Benchmark::doNotRun()) {
             return '';
@@ -159,7 +177,7 @@ class Benchmark
             if($formatted) {
                 $output .= '<br />';
                 $output .= '<h4>TOTAL TIME</h4>';
-                $output .= Benchmark::formatTime('', $total);
+                $output .= Benchmark::formatTime('', $total, $formatted);
                 $output .= '<span style="color:#999999; font-size:.8em;"> milliseconds</span><br />';
                 $output .= '<br />';
                 $output .= '<h5>Performance scale (from best to worse)</h5>';
@@ -181,17 +199,54 @@ class Benchmark
         }
         $output = $formatted
             ? '<div style="border:1px solid #dddddd; background-color:#ffffff;'
-                . (is_admin() ? ' margin:2em 2em 2em 180px;' : ' margin:2em;')
-                . ' padding:2em;">'
-                . '<h4>BENCHMARKING</h4>'
-                . $output
-                . '</div>'
+              . (is_admin()
+                ? ' margin:2em 2em 2em 180px;'
+                : ' margin:2em;')
+              . ' padding:2em;">'
+              . '<h4>BENCHMARKING</h4>'
+              . $output
+              . '</div>'
             : $output;
-        if ($echo) {
-            echo $output;
-            return '';
-        }
         return $output;
+    }
+
+
+
+    /**
+     * @param bool $echo
+     * @param bool $formatted
+     * @return string
+     */
+    public static function displayResults($echo = true, $formatted = true)
+    {
+        $results = Benchmark::generateResults($formatted);
+        if ($echo) {
+            echo $results;
+            $results = '';
+        }
+        return $results;
+    }
+
+
+
+    /**
+     * @param string $filepath
+     * @param bool   $formatted
+     * @param bool   $append
+     */
+    public static function writeResultsToFile($filepath = '', $formatted = true, $append = true)
+    {
+        $filepath = ! empty($filepath) && is_readable(dirname($filepath))
+            ? $filepath
+            : '';
+        if( empty($filepath)) {
+            $filepath = EVENT_ESPRESSO_UPLOAD_DIR . 'logs/benchmarking-' . date('Y-m-d') . '.html';
+        }
+        file_put_contents(
+            $filepath,
+            "\n" . date('Y-m-d H:i:s') . Benchmark::generateResults($formatted),
+            $append ? FILE_APPEND | LOCK_EX : LOCK_EX
+        );
     }
 
 
@@ -205,7 +260,10 @@ class Benchmark
     public static function convert($size)
     {
         $unit = array('b', 'kb', 'mb', 'gb', 'tb', 'pb');
-        return round($size / pow(1024, $i = floor(log($size, 1024))), 2) . ' ' . $unit[absint($i)];
+        return round(
+            $size / pow(1024, $i = floor(log($size, 1024))),
+            2
+        ) . ' ' . $unit[absint($i)];
     }
 
 

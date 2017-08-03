@@ -576,8 +576,9 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
                 }
             }
         }
-        //now save
+
         $new_event->save();
+
         //k now that we have the new event saved we can loop through the datetimes and start adding relations.
         $cloned_tickets = array();
         foreach ($orig_datetimes as $orig_dtt) {
@@ -653,6 +654,20 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
         foreach ($orig_terms as $term) {
             wp_set_object_terms($new_event->ID(), $term->term_id, $term->taxonomy, true);
         }
+
+        //duplicate other core WP_Post items for this event.
+        //post thumbnail (feature image).
+        $feature_image_id = get_post_thumbnail_id($orig_event->ID());
+        if ($feature_image_id) {
+            update_post_meta($new_event->ID(), '_thumbnail_id', $feature_image_id);
+        }
+
+        //duplicate page_template setting
+        $page_template = get_post_meta($orig_event->ID(), '_wp_page_template', true);
+        if ($page_template) {
+            update_post_meta($new_event->ID(), '_wp_page_template', $page_template);
+        }
+
         do_action('AHEE__Extend_Events_Admin_Page___duplicate_event__after', $new_event, $orig_event);
         //now let's redirect to the edit page for this duplicated event if we have a new event id.
         if ($new_event->ID()) {

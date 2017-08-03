@@ -1,4 +1,4 @@
-<?php use EventEspresso\core\services\database\ModelFieldFactory;
+<?php use EventEspresso\core\services\orm\ModelFieldFactory;
 
 if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
