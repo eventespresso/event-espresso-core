@@ -89,24 +89,9 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_
         $this->loader = $this->registry->create('EventEspresso\core\services\loaders\Loader');
         $this->dependency_map->setLoader($this->loader);
         // build DI container
-        $OpenCoffeeShop = new EventEspresso\core\services\container\OpenCoffeeShop();
-        $OpenCoffeeShop->addRecipes();
+        // $OpenCoffeeShop = new EventEspresso\core\services\container\OpenCoffeeShop();
+        // $OpenCoffeeShop->addRecipes();
         // $CoffeeShop = $OpenCoffeeShop->CoffeeShop();
-        // create and cache the CommandBus, and also add middleware
-        $this->registry->create(
-            'CommandBusInterface',
-            array(
-                null,
-                apply_filters(
-                    'FHEE__EE_Load_Espresso_Core__handle_request__CommandBus_middleware',
-                    array(
-                        $this->registry->create('CapChecker'),
-                        $this->registry->create('AddActionHook'),
-                    )
-                ),
-            ),
-            true
-        );
         // workarounds for PHP < 5.3
         $this->_load_class_tools();
         // load interfaces
