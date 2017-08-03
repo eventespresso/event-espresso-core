@@ -3,9 +3,7 @@
 namespace EventEspresso\core\services\loaders;
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;
-use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\services\collections\CollectionInterface;
-use EventEspresso\core\services\container\exceptions\ServiceNotFoundException;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -93,11 +91,10 @@ class CachingLoader extends LoaderDecorator
     /**
      * @param string $fqcn
      * @param array  $arguments
+     * @param bool   $shared
      * @return mixed
-     * @throws InvalidEntityException
-     * @throws ServiceNotFoundException
      */
-    public function load($fqcn, $arguments = array())
+    public function load($fqcn, $arguments = array(), $shared = true)
     {
         $fqcn = ltrim($fqcn, '\\');
         // caching can be turned off via the following code:
