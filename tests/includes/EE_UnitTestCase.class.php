@@ -886,7 +886,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
                         'PAY_redirect_args',
                         'TKT_reserved',
                         'DTT_reserved',
-                        'parent'
+                        'parent',
                         //don't make system questions etc
                         'QST_system',
                         'QSG_system',
