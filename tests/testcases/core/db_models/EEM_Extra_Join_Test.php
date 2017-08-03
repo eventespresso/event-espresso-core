@@ -59,29 +59,7 @@ class EEM_Extra_Join_Test extends EE_UnitTestCase
         return $pm_relations;
     }
 
-    /**
-     * @param $pm_relations
-     * @return mixed
-     */
-    public function relate_payment_methods_to_events($pm_relations)
-    {
-        $pm_relations['Event'] = new EE_HABTM_Any_Relation();
-        return $pm_relations;
-    }
 
-
-        $this->new_model_obj_with_dependencies(
-            'Extra_Join',
-            array(
-                'EXJ_first_model_ID'    => $e->ID(),
-                'EXJ_first_model_name'  => 'Event',
-                'EXJ_second_model_ID'   => $pm->ID(),
-                'EXJ_second_model_name' => 'Payment_Method',
-            )
-        );
-        $this->assertEquals(array($pm->ID() => $pm), $e->get_many_related('Payment_Method'));
-        $this->assertEquals(array($e->ID() => $e), $pm->get_many_related('Event'));
-    }
 
     /**
      * @group 9113
