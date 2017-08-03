@@ -730,12 +730,13 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
     {
         do_action('AHEE_log', __FILE__, __FUNCTION__, '');
         $reg_id = isset($this->_req_data['_REGID']) ? $this->_req_data['_REGID'] : null;
-        /** @var EE_Registration $reg */
-        $reg = EEM_Registration::instance()->get_one_by_ID($reg_id);
+        /** @var EE_Registration $registration */
+        $registration = EEM_Registration::instance()->get_one_by_ID($reg_id);
+        $attendee = $registration->attendee();
         $this->_admin_page_title .= $this->get_action_link_or_button(
             'new_registration',
             'add-registrant',
-            array('event_id' => $reg->event_ID()),
+            array('event_id' => $registration->event_ID()),
             'add-new-h2'
         );
         $legend_items = array(
@@ -762,27 +763,24 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
         $go_back_url = ! empty($reg_id) ? EE_Admin_Page::add_query_args_and_nonce(
             array(
                 'action'   => 'event_registrations',
-                'event_id' => EEM_Registration::instance()->get_one_by_ID($reg_id)->get_first_related('Event')->ID(),
+                'event_id' => $registration->event_ID(),
                 'DTT_ID'   => $dtt_id,
             ),
             $this->_admin_base_url
         ) : '';
+        $attendee_name = $attendee instanceof EE_Attendee
+            ? $attendee->full_name()
+            : '';
         $this->_template_args['before_list_table'] = ! empty($reg_id) && ! empty($dtt_id)
             ? '<h2>' . sprintf(
                 __("%s's check in records for %s at the event, %s", 'event_espresso'),
                 '<span id="checkin-attendee-name">'
-                . EEM_Registration::instance()
-                                  ->get_one_by_ID($reg_id)
-                                  ->get_first_related('Attendee')
-                                  ->full_name() . '</span>',
+                . $attendee_name . '</span>',
                 '<span id="checkin-dtt"><a href="' . $go_back_url . '">'
                 . $datetime_label
                 . '</a></span>',
                 '<span id="checkin-event-name">'
-                . EEM_Datetime::instance()
-                              ->get_one_by_ID($dtt_id)
-                              ->get_first_related('Event')
-                              ->get('EVT_name') . '</span>'
+                . $registration->event_name() . '</span>'
             ) . '</h2>'
             : '';
         $this->_template_args['list_table_hidden_fields'] = ! empty($reg_id)
