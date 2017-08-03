@@ -750,6 +750,15 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
         );
         $this->_template_args['after_list_table'] = $this->_display_legend($legend_items);
         $dtt_id = isset($this->_req_data['DTT_ID']) ? $this->_req_data['DTT_ID'] : null;
+        /** @var EE_Datetime $datetime */
+        $datetime = EEM_Datetime::instance()->get_one_by_ID($dtt_id);
+        $datetime_label = '';
+        if ($datetime instanceof EE_Datetime) {
+            $datetime_label = $datetime->get_dtt_display_name(true);
+            $datetime_label .= ! empty($datetime_label)
+                ? ' (' . $datetime->get_dtt_display_name() . ')'
+                : $datetime->get_dtt_display_name();
+        }
         $go_back_url = ! empty($reg_id) ? EE_Admin_Page::add_query_args_and_nonce(
             array(
                 'action'   => 'event_registrations',
@@ -767,12 +776,8 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
                                   ->get_first_related('Attendee')
                                   ->full_name() . '</span>',
                 '<span id="checkin-dtt"><a href="' . $go_back_url . '">'
-                . EEM_Datetime::instance()
-                              ->get_one_by_ID($dtt_id)
-                              ->start_date_and_time() . ' - '
-                . EEM_Datetime::instance()
-                              ->get_one_by_ID($dtt_id)
-                              ->end_date_and_time() . '</a></span>',
+                . $datetime_label
+                . '</a></span>',
                 '<span id="checkin-event-name">'
                 . EEM_Datetime::instance()
                               ->get_one_by_ID($dtt_id)
