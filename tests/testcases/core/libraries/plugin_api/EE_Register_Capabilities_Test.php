@@ -14,6 +14,7 @@
  * @since          4.5.0
  * @package        Event Espresso
  * @subpackage     tests
+ * @group capabilities
  */
 class EE_Register_Capabilities_Test extends EE_UnitTestCase
 {
@@ -41,8 +42,8 @@ class EE_Register_Capabilities_Test extends EE_UnitTestCase
         parent::setUp();
         $capabilities_array                         = array(
             'administrator' => array(
-                'test_read',
-                'test_write',
+                'test_reads',
+                'test_writes',
                 'test_others_read',
                 'test_others_write',
                 'test_private_read',
@@ -52,24 +53,24 @@ class EE_Register_Capabilities_Test extends EE_UnitTestCase
         $non_numeric_cap_maps_array                 = array(
             'EE_Meta_Capability_Map_Read' => array(
                 'test_read',
-                array('Event', 'test_read', 'test_others_read', 'test_private_read'),
+                array('Event', 'test_published_read', 'test_others_read', 'test_private_read'),
             ),
             'EE_Meta_Capability_Map_Edit' => array(
                 'test_write',
-                array('Event', 'test_write', 'test_others_write', 'test_private_write'),
+                array('Event', 'test_published_write', 'test_others_write', 'test_private_write'),
             ),
         );
         $numeric_cap_maps_array                     = array(
             0 => array(
                 'EE_Meta_Capability_Map_Read' => array(
                     'test_read',
-                    array('Event', 'test_read', 'test_others_read', 'test_private_read'),
+                    array('Event', 'test_published_read', 'test_others_read', 'test_private_read'),
                 ),
             ),
             1 => array(
                 'EE_Meta_Capability_Map_Edit' => array(
                     'test_write',
-                    array('Event', 'test_write', 'test_others_write', 'test_private_write'),
+                    array('Event', 'test_published_write', 'test_others_write', 'test_private_write'),
                 ),
             ),
         );
@@ -121,20 +122,20 @@ class EE_Register_Capabilities_Test extends EE_UnitTestCase
         $this->_add_test_helper_filters();
 
         EE_Registry::instance()->load_core('Capabilities');
-        EE_Capabilities::instance()->init_caps();
+        EE_Capabilities::instance()->init_caps(true);
 
         //remove filters that were added to prevent pollution in other tests
         $this->_remove_test_helper_filters();
         //validate caps were registered and init saved.
         $admin_caps_init = EE_Capabilities::instance()->get_ee_capabilities('administrator');
-        $this->assertArrayContains('test_read', $admin_caps_init);
+        $this->assertArrayContains('test_reads', $admin_caps_init);
 
         //verify new caps are in the role
         $role = get_role('administrator');
         $this->assertContains($this->_valid_capabilities['capabilities']['administrator'], $role->capabilities);
 
         //make sure we didn't erase the existing capabilities (@see https://events.codebasehq.com/projects/event-espresso/tickets/6700)
-        $this->assertContains(array('ee_read_ee', 'ee_read_event'), $role->capabilities,
+        $this->assertContains(array('ee_read_ee', 'ee_read_events'), $role->capabilities,
             'Looks like registering capabilities is overwriting default capabilites, that will cause problems');
 
         //setup user
@@ -305,8 +306,8 @@ class EE_Register_Capabilities_Test extends EE_UnitTestCase
         $this->_pretend_capabilities_registered();
 
         //now capabilities *SHOULD* be set on the user.  Let's verify.
-        $this->assertTrue(user_can($this->_user, 'test_read'));
-        $this->assertTrue(user_can($this->_user, 'test_write'));
+        $this->assertTrue(user_can($this->_user, 'test_reads'));
+        $this->assertTrue(user_can($this->_user, 'test_writes'));
         $this->assertTrue(user_can($this->_user, 'test_others_read'));
         $this->assertTrue(user_can($this->_user, 'test_others_write'));
         $this->assertTrue(user_can($this->_user, 'test_private_read'));
