@@ -712,7 +712,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page
                         'explanation' => new EE_Form_Section_HTML(
                             EEH_HTML::p(
                                 esc_html__(
-                                    'Use this tool to automatically apply the given offset to all EE_Datetime records in your database',
+                                    'Use this tool to automatically apply the provided offset to all Event Espresso records in your database that involve dates and times.',
                                     'event_espresso'
                                 )
                             )
