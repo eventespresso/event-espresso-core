@@ -74,7 +74,7 @@ class EE_Request implements InterminableInterface
      * @param array $post
      * @param array $cookie
      */
-    public function __construct($get, $post, $cookie)
+    public function __construct(array $get, array $post, array $cookie)
     {
         // grab request vars
         $this->_get = (array)$get;
