@@ -1,17 +1,6 @@
-<?php if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-/**
- * Event Espresso
- * Event Registration and Ticketing Management Plugin for WordPress
- * @ package            Event Espresso
- * @ author                Event Espresso
- * @ copyright        (c) 2008-2014 Event Espresso  All Rights Reserved.
- * @ license            http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link                    http://www.eventespresso.com
- * @ version            $VID:$
- * ------------------------------------------------------------------------
- */
+<?php
+
+defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
 
 /**
  * Class EE_Register_Shortcode
@@ -51,8 +40,12 @@ class EE_Register_Shortcode implements EEI_Plugin_API
 
         //required fields MUST be present, so let's make sure they are.
         if (empty($shortcode_id) || ! is_array($setup_args) || empty($setup_args['shortcode_paths'])) {
-            throw new EE_Error(__('In order to register Modules with EE_Register_Shortcode::register(), you must include a "shortcode_id" (a unique identifier for this set of shortcodes), and an array containing the following keys: "shortcode_paths" (an array of full server paths to folders that contain shortcodes, or to the shortcode files themselves)',
-                'event_espresso'));
+            throw new EE_Error(
+                __(
+                    'In order to register Modules with EE_Register_Shortcode::register(), you must include a "shortcode_id" (a unique identifier for this set of shortcodes), and an array containing the following keys: "shortcode_paths" (an array of full server paths to folders that contain shortcodes, or to the shortcode files themselves)',
+                    'event_espresso'
+                )
+            );
         }
 
         //make sure we don't register twice
@@ -61,22 +54,30 @@ class EE_Register_Shortcode implements EEI_Plugin_API
         }
 
         //make sure this was called in the right place!
-        if (! did_action('AHEE__EE_System__load_espresso_addons') || did_action('AHEE__EE_System__register_shortcodes_modules_and_widgets')) {
+        if (! did_action('AHEE__EE_System__load_espresso_addons')
+            || did_action('AHEE__EE_System__register_shortcodes_modules_and_widgets')
+        ) {
             EE_Error::doing_it_wrong(
                 __METHOD__,
-                __('An attempt to register shortcodes has failed because it was not registered at the correct time.  Please use the "AHEE__EE_System__register_shortcodes_modules_and_widgets" hook to register shortcodes.',
-                    'event_espresso'),
+                __(
+                    'An attempt to register shortcodes has failed because it was not registered at the correct time.  Please use the "AHEE__EE_System__register_shortcodes_modules_and_widgets" hook to register shortcodes.',
+                    'event_espresso'
+                ),
                 '4.3.0'
             );
         }
         //setup $_settings array from incoming values.
         self::$_settings[$shortcode_id] = array(
             // array of full server paths to any EES_Shortcodes used by the shortcode
-            'shortcode_paths' => isset($setup_args['shortcode_paths']) ? (array)$setup_args['shortcode_paths'] : array(),
+            'shortcode_paths' => isset($setup_args['shortcode_paths'])
+                ? (array)$setup_args['shortcode_paths']
+                : array(),
         );
         // add to list of shortcodes to be registered
-        add_filter('FHEE__EE_Config__register_shortcodes__shortcodes_to_register',
-            array('EE_Register_Shortcode', 'add_shortcodes'));
+        add_filter(
+            'FHEE__EE_Config__register_shortcodes__shortcodes_to_register',
+            array('EE_Register_Shortcode', 'add_shortcodes')
+        );
     }
 
 
@@ -110,7 +111,4 @@ class EE_Register_Shortcode implements EEI_Plugin_API
             unset(self::$_settings[$shortcode_id]);
         }
     }
-
 }
-// End of file EE_Register_Shortcode.lib.php
-// Location: /core/libraries/plugin_api/EE_Register_Shortcode.lib.php
