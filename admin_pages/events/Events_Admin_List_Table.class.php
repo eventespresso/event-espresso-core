@@ -3,17 +3,15 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed');
 
 /**
  * Events_Admin_List_Table
- *
  * Class for preparing the table listing all the events
- *
  * note: anywhere there are no php docs it is because the docs are available in the parent class.
- *
- * @package		Events_Admin_List_Table
- * @subpackage	includes/core/admin/events/Events_Admin_List_Table.class.php
- * @author		Darren Ethier
- *
+ * @package         Events_Admin_List_Table
+ * @subpackage      includes/core/admin/events/Events_Admin_List_Table.class.php
+ * @author          Darren Ethier
  * ------------------------------------------------------------------------
  */
+class Events_Admin_List_Table extends EE_Admin_List_Table
+{
 
     /**
      * @var EE_Datetime
@@ -54,16 +52,6 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed');
             'screen'   => $this->_admin_page->get_current_screen()->id,
         );
 
-	/**
-	 * Set up of additional properties for the list table.
-	 */
-	protected function _set_properties() {
-		$this->_wp_list_args = array(
-			'singular' => __('event', 'event_espresso'),
-			'plural' => __('events', 'event_espresso'),
-			'ajax' => TRUE, //for now
-			'screen' => $this->_admin_page->get_current_screen()->id
-			);
 
         $this->_columns = array(
             'cb'              => '<input type="checkbox" />',
@@ -79,41 +67,30 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed');
             'actions'         => esc_html__('Actions', 'event_espresso'),
         );
 
-		$this->_columns = array(
-			'cb' => '<input type="checkbox" />',
-			'id' => __('ID', 'event_espresso'),
-			'name' => __('Name', 'event_espresso'),
-			'author' => __('Author', 'event_espresso'),
-			'venue' => __('Venue', 'event_espresso'),
-			'start_date_time' => __('Event Start', 'event_espresso'),
-			'reg_begins' => __('On Sale', 'event_espresso'),
-			'attendees' => '<span class="dashicons dashicons-groups ee-icon-color-ee-green ee-icon-size-20"></span>',
-			//'tkts_sold' => __('Tickets Sold', 'event_espresso'),
-			'actions' => __('Actions', 'event_espresso')
-			);
+
+        $this->_sortable_columns = array(
+            'id'              => array('EVT_ID' => true),
+            'name'            => array('EVT_name' => false),
+            'author'          => array('EVT_wp_user' => false),
+            'venue'           => array('Venue.VNU_name' => false),
+            'start_date_time' => array('Datetime.DTT_EVT_start' => false),
+            'reg_begins'      => array('Datetime.Ticket.TKT_start_date' => false),
+        );
+
+        $this->_primary_column = 'id';
+
+        $this->_hidden_columns = array('author');
+    }
 
 
-		$this->_sortable_columns = array(
-			'id' => array( 'EVT_ID' => true ),
-			'name' => array( 'EVT_name' => false ),
-			'author' => array( 'EVT_wp_user' => false ),
-			'venue' => array( 'Venue.VNU_name' => false ),
-			'start_date_time' => array('Datetime.DTT_EVT_start' => false),
-			'reg_begins' => array('Datetime.Ticket.TKT_start_date' => false),
-			);
+    /**
+     * @return array
+     */
+    protected function _get_table_filters()
+    {
+        return array(); //no filters with decaf
+    }
 
-		$this->_primary_column = 'id';
-
-		$this->_hidden_columns = array( 'author' );
-	}
-
-
-	/**
-	 * @return array
-	 */
-	protected function _get_table_filters() {
-		return array(); //no filters with decaf
-	}
 
     /**
      * Setup of views properties.
@@ -130,16 +107,6 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed');
         }
     }
 
-	/**
-	 * Setup of views properties.
-	 */
-	protected function _add_view_counts() {
-		$this->_views['all']['count'] = $this->_admin_page->total_events();
-		$this->_views['draft']['count'] = $this->_admin_page->total_events_draft();
-		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_events', 'espresso_events_trash_events' ) ) {
-			$this->_views['trash']['count'] = $this->_admin_page->total_trashed_events();
-		}
-	}
 
     /**
      * @param EE_Event $item
@@ -157,20 +124,6 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed');
         return $class;
     }
 
-	/**
-	 * @param EE_Event $item
-	 *
-	 * @return string
-	 */
-	protected function _get_row_class( $item ) {
-		$class = parent::_get_row_class( $item );
-		//add status class
-		$class .= $item instanceof EE_Event ? ' ee-status-strip event-status-' . $item->get_active_status() : '';
-		if ( $this->_has_checkbox_column ) {
-			$class .= ' has-checkbox-column';
-		}
-		return $class;
-	}
 
     /**
      * @param EE_Event $item
@@ -184,14 +137,6 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed');
                . '"></span>';
     }
 
-	/**
-	 * @param EE_Event $item
-	 *
-	 * @return string
-	 */
-	public function column_status( EE_Event $item ) {
-		return '<span class="ee-status-strip ee-status-strip-td event-status-' . $item->get_active_status() . '"></span>';
-	}/**/
 
     /**
      * @param  EE_Event $item
@@ -215,12 +160,6 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed');
             );
     }
 
-		//does event have any attached registrations?
-		$regs = $item->count_related( 'Registration' );
-		return $regs > 0 && $this->_view == 'trash' ? '<span class="ee-lock-icon"></span>' : sprintf(
-			'<input type="checkbox" name="EVT_IDs[]" value="%s" />', $item->ID()
-		);
-	}
 
     /**
      * @param EE_Event $item
@@ -234,16 +173,6 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed');
         return $content;
     }
 
-	/**
-	 * @param EE_Event $item
-	 *
-	 * @return mixed|string
-	 */
-	public function column_id( EE_Event $item ) {
-		$content = $item->ID();
-		$content .= '  <span class="show-on-mobile-view-only">' . $item->name() . '</span>';
-		return $content;
-	}
 
     /**
      * @param EE_Event $item
@@ -291,6 +220,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed');
             define('REG_ADMIN_URL', EVENTS_ADMIN_URL);
         }
 
+        $actions = array();
 
         if (EE_Registry::instance()->CAP->current_user_can(
             'ee_edit_event',
@@ -307,6 +237,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed');
                                . esc_html__('Edit', 'event_espresso')
                                . '</a>';
 
+        }
 
         if (EE_Registry::instance()->CAP->current_user_can(
             'ee_read_event',
@@ -374,14 +305,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed');
             );
         }
 
-		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_registration', 'espresso_registrations_view_registration', $item->ID() ) ) {
-			$attendees_query_args = array(
-					'action' => 'default',
-					'event_id' => $item->ID()
-				);
-			$attendees_link = EE_Admin_Page::add_query_args_and_nonce( $attendees_query_args, REG_ADMIN_URL );
-			$actions['attendees'] = '<a href="' . $attendees_link . '" title="' . esc_attr__('View Registrations', 'event_espresso') . '">' . __('Registrations', 'event_espresso') . '</a>';
-		}
+        $view_link = get_permalink($item->ID());
 
         $actions['view'] = '<a href="' . $view_link . '"'
                            . ' title="' . esc_attr__('View Event', 'event_espresso') . '">'
@@ -428,13 +352,6 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed');
         return $actions;
     }
 
-		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_event', 'espresso_events_delete_event', $item->ID() ) ) {
-			$delete_event_query_args = array(
-					'action' => 'delete_event',
-					'EVT_ID' => $item->ID()
-				);
-			$delete_event_link = EE_Admin_Page::add_query_args_and_nonce( $delete_event_query_args, EVENTS_ADMIN_URL );
-		}
 
     /**
      * @param EE_Event $item
@@ -458,7 +375,6 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed');
                . '</a>';
     }
 
-		$actions['view'] = '<a href="' . $view_link . '" title="' . esc_attr__('View Event', 'event_espresso') . '">' . __('View', 'event_espresso') . '</a>';
 
     /**
      * @param EE_Event $item
@@ -523,15 +439,6 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed');
             : '';
     }
 
-	/**
-	 * @param EE_Event $item
-	 *
-	 * @throws EE_Error
-	 */
-	public function column_start_date_time( EE_Event $item ) {
-		echo !empty( $this->_dtt ) ?  $this->_dtt->get_i18n_datetime('DTT_EVT_start') : __('No Date was saved for this Event', 'event_espresso');
-		//display in user's timezone?
-		echo !empty( $this->_dtt ) ? $this->_dtt->display_in_my_timezone('DTT_EVT_start', 'get_i18n_datetime', '', 'My Timezone: ' ) : '';
 
     /**
      * @param EE_Event $item
@@ -584,6 +491,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed');
         }
         $actionlinks = array();
 
+        $view_link = get_permalink($item->ID());
 
         $actionlinks[] = '<a href="' . $view_link . '"'
                          . ' title="' . esc_attr__('View Event', 'event_espresso') . '" target="_blank">';
