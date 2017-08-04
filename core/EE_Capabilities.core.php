@@ -148,6 +148,7 @@ final class EE_Capabilities extends EE_Base
 
 
 
+
     /**
      * This sets the meta caps property.
      *
@@ -692,6 +693,7 @@ final class EE_Capabilities extends EE_Base
         }
         // now let's just save the cap that has been set but only if there's been a change.
         $updated = $this->updateCapabilitiesMap($update_capabilities_map);
+        $this->flushWpUser($updated);
         do_action('AHEE__EE_Capabilities__addCaps__complete', $this->capabilities_map, $updated);
         return $updated;
     }
@@ -715,8 +717,7 @@ final class EE_Capabilities extends EE_Base
         foreach ($caps_map as $role => $caps_for_role) {
             if (is_array($caps_for_role)) {
                 foreach ($caps_for_role as $cap) {
-                    if (
-                        $this->capHasBeenAddedToRole($role, $cap)
+                    if ($this->capHasBeenAddedToRole($role, $cap)
                         && $this->remove_cap_from_role($role, $cap, false)
                     ) {
                         $update_capabilities_map = true;
@@ -725,7 +726,25 @@ final class EE_Capabilities extends EE_Base
             }
         }
         // maybe resave the caps
-        return $this->updateCapabilitiesMap($update_capabilities_map);
+        $updated = $this->updateCapabilitiesMap($update_capabilities_map);
+        $this->flushWpUser($updated);
+        return $updated;
+    }
+
+
+    /**
+     * This ensures that the WP User object cached on the $current_user global in WP has the latest role(s) from the
+     * database as opposed to what was cached in that object when it was first instantiated.
+     * @param bool $flush  Default is to flush the WP_User object.  If false, then this method effectively does nothing.
+     */
+    private function flushWpUser($flush = true)
+    {
+        if ($flush) {
+            $user = wp_get_current_user();
+            if ($user instanceof WP_User) {
+                $user->get_role_caps();
+            }
+        }
     }
 
 
