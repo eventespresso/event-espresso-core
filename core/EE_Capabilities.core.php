@@ -733,8 +733,9 @@ final class EE_Capabilities extends EE_Base
 
 
     /**
-     * This ensures that the WP User object cached on the $current_user global in WP has the latest role(s) from the
-     * database as opposed to what was cached in that object when it was first instantiated.
+     * This ensures that the WP User object cached on the $current_user global in WP has the latest capabilities from
+     * the roles on that user.
+     *
      * @param bool $flush  Default is to flush the WP_User object.  If false, then this method effectively does nothing.
      */
     private function flushWpUser($flush = true)
