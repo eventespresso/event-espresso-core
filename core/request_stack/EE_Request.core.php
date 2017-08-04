@@ -1,51 +1,51 @@
 <?php
 use EventEspresso\core\interfaces\InterminableInterface;
 
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
+defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 
 
 
 /**
  * class EE_Request
  *
- * @package         Event Espresso
- * @subpackage      /core/
- * @author          Brent Christensen
- *                  ------------------------------------------------------------------------
+ * @package     Event Espresso
+ * @subpackage  /core/
+ * @author      Brent Christensen
  */
 class EE_Request implements InterminableInterface
 {
 
     /**
-     * @access private
-     * @var    array $_get $_GET parameters
+     * $_GET parameters
+     *
+     * @var array $_get
      */
-    private $_get = array();
+    private $_get;
 
     /**
-     * @access private
-     * @var    array $_post $_POST parameters
+     * $_POST parameters
+     *
+     * @var    array $_post
      */
-    private $_post = array();
+    private $_post;
 
     /**
-     * @access private
-     * @var    array $_cookie $_COOKIE parameters
+     * $_COOKIE parameters
+     *
+     * @var array $_cookie
      */
-    private $_cookie = array();
+    private $_cookie;
 
     /**
-     * @access private
-     * @var    array $_params $_REQUEST parameters
+     * $_REQUEST parameters
+     *
+     * @var array $_params
      */
-    private $_params = array();
+    private $_params;
 
     /**
      * whether current request is via AJAX
      *
-     * @var    boolean
      * @access public
      */
     public $ajax = false;
@@ -53,7 +53,6 @@ class EE_Request implements InterminableInterface
     /**
      * whether current request is via AJAX from the frontend of the site
      *
-     * @var    boolean
      * @access public
      */
     public $front_ajax = false;
@@ -63,7 +62,7 @@ class EE_Request implements InterminableInterface
      *
      * @var string $_ip_address
      */
-    private $_ip_address = '';
+    private $_ip_address;
 
 
 
@@ -134,9 +133,6 @@ class EE_Request implements InterminableInterface
 
 
     /**
-     *    setter
-     *
-     * @access    public
      * @param      $key
      * @param      $value
      * @param bool $override_ee
@@ -157,9 +153,6 @@ class EE_Request implements InterminableInterface
 
 
     /**
-     *    getter
-     *
-     * @access    public
      * @param      $key
      * @param null $default
      * @return    mixed
@@ -172,9 +165,6 @@ class EE_Request implements InterminableInterface
 
 
     /**
-     *    check if param exists
-     *
-     * @access    public
      * @param $key
      * @return    boolean
      */
@@ -186,9 +176,7 @@ class EE_Request implements InterminableInterface
 
 
     /**
-     *    remove param
-     *
-     * @access    public
+     * remove param
      * @param      $key
      * @param bool $unset_from_global_too
      */
