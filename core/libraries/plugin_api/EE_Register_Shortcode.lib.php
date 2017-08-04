@@ -41,7 +41,7 @@ class EE_Register_Shortcode implements EEI_Plugin_API
         //required fields MUST be present, so let's make sure they are.
         if (empty($shortcode_id) || ! is_array($setup_args) || empty($setup_args['shortcode_paths'])) {
             throw new EE_Error(
-                __(
+                esc_html__(
                     'In order to register Modules with EE_Register_Shortcode::register(), you must include a "shortcode_id" (a unique identifier for this set of shortcodes), and an array containing the following keys: "shortcode_paths" (an array of full server paths to folders that contain shortcodes, or to the shortcode files themselves)',
                     'event_espresso'
                 )
@@ -59,7 +59,7 @@ class EE_Register_Shortcode implements EEI_Plugin_API
         ) {
             EE_Error::doing_it_wrong(
                 __METHOD__,
-                __(
+                esc_html__(
                     'An attempt to register shortcodes has failed because it was not registered at the correct time.  Please use the "AHEE__EE_System__register_shortcodes_modules_and_widgets" hook to register shortcodes.',
                     'event_espresso'
                 ),
