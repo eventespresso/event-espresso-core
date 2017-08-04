@@ -788,10 +788,19 @@ class EE_Register_Addon implements EEI_Plugin_API
      */
     private static function _register_shortcodes($addon_name)
     {
-        if (! empty(self::$_settings[$addon_name]['shortcode_paths'])) {
+        if (! empty(self::$_settings[$addon_name]['shortcode_paths'])
+            || ! empty(self::$_settings[$addon_name]['shortcode_fqcns'])
+        ) {
             EE_Register_Shortcode::register(
                 $addon_name,
-                array('shortcode_paths' => self::$_settings[$addon_name]['shortcode_paths'])
+                array(
+                    'shortcode_paths' => isset(self::$_settings[$addon_name]['shortcode_paths'])
+                        ? self::$_settings[$addon_name]['shortcode_paths']
+                        : array(),
+                    'shortcode_fqcns' => isset(self::$_settings[$addon_name]['shortcode_fqcns'])
+                        ? self::$_settings[$addon_name]['shortcode_fqcns']
+                        : array()
+                )
             );
         }
     }
