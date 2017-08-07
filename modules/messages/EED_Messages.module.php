@@ -1,4 +1,7 @@
 <?php
+
+use EventEspresso\core\exceptions\EntityNotFoundException;
+
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
 
 /**
@@ -433,6 +436,7 @@ class EED_Messages extends EED_Module
     }
 
 
+
     /**
      * Trigger for Registration messages
      * Note that what registration message type is sent depends on what the reg status is for the registrations on the
@@ -441,6 +445,8 @@ class EED_Messages extends EED_Module
      * @param EE_Registration $registration
      * @param array           $extra_details
      * @return void
+     * @throws EE_Error
+     * @throws EntityNotFoundException
      */
     public static function maybe_registration(EE_Registration $registration, $extra_details = array())
     {
@@ -450,10 +456,17 @@ class EED_Messages extends EED_Module
             return;
         }
 
-
-        //get all registrations so we make sure we send messages for the right status.
-        $all_registrations = $registration->transaction()->registrations();
-
+        // get all non-trashed registrations so we make sure we send messages for the right status.
+        $all_registrations = $registration->transaction()->registrations(
+            array(
+                array('REG_deleted' => false),
+                'order_by' => array(
+                    'Event.EVT_name'     => 'ASC',
+                    'Attendee.ATT_lname' => 'ASC',
+                    'Attendee.ATT_fname' => 'ASC'
+                )
+            )
+        );
         //cached array of statuses so we only trigger messages once per status.
         $statuses_sent = array();
         self::_load_controller();
