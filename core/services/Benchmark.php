@@ -163,7 +163,10 @@ class Benchmark
             $output .= '<span style="color:red">Like...HEEELLLP</span><br />';
         }
         if (! empty(Benchmark::$memory_usage)) {
-            $output .= '<h5>Memory</h5>' . implode('<br />', Benchmark::$memory_usage);
+            $output .= '<h5>Memory</h5>';
+            foreach (Benchmark::$memory_usage as $label => $memory_usage) {
+                $output .= "<br /> {$memory_usage} : {$label}";
+            }
         }
         if (empty($output)) {
             return '';
