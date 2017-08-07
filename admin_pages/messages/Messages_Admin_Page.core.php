@@ -471,7 +471,7 @@ class Messages_Admin_Page extends EE_Admin_Page
             ),
             'delete_ee_message'                => array(
                 'func'       => '_delete_ee_messages',
-                'capability' => 'ee_delete_message',
+                'capability' => 'ee_delete_messages',
                 'noheader'   => true
             ),
             'delete_ee_messages'               => array(
