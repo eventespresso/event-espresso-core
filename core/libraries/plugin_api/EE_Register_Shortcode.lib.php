@@ -68,16 +68,13 @@ class EE_Register_Shortcode implements EEI_Plugin_API
 
         //make sure this was called in the right place!
         if (! did_action('AHEE__EE_System__load_espresso_addons')
+            || did_action('AHEE__EE_System__register_shortcodes_modules_and_widgets')
         ) {
             EE_Error::doing_it_wrong(
                 __METHOD__,
-                sprintf(
-                    esc_html__(
-                        'An attempt to register shortcodes has failed because it was not registered at the correct time.  Please use either the "%1$s" hook to register legacy shortcodes, or the %2$s hook for the new shortcode system.',
-                        'event_espresso'
-                    ),
-                    'AHEE__EE_System__register_shortcodes_modules_and_widgets',
-                    'FHEE__EventEspresso_core_services_shortcodes_ShortcodesManager__registerShortcodes__shortcode_collection'
+                esc_html__(
+                    'An attempt to register shortcodes has failed because it was not registered at the correct time.  Please use the "AHEE__EE_System__register_shortcodes_modules_and_widgets" hook to register shortcodes.',
+                    'event_espresso'
                 ),
                 '4.3.0'
             );
