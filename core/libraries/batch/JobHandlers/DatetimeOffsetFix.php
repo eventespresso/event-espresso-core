@@ -132,7 +132,7 @@ class DatetimeOffsetFix extends JobHandler
         $model = $model_class_name::instance();
         $original_offset = self::getOffset();
         $sql_date_function = $original_offset > 0 ? 'DATE_ADD' : 'DATE_SUB';
-        $offset = abs($original_offset);
+        $offset = abs($original_offset) * 60;
         //since some affected models might have two tables, we have to get our tables and set up a query for each table.
         foreach ($model->get_tables() as $table) {
             $query = 'UPDATE ' . $table->get_table_name();
@@ -143,7 +143,7 @@ class DatetimeOffsetFix extends JobHandler
                     $inner_query[] = $model_field->get_table_column() . ' = '
                                      . $sql_date_function . '('
                                      . $model_field->get_table_column()
-                                     . ", INTERVAL $offset HOUR)";
+                                     . ", INTERVAL $offset MINUTE)";
                     $fields_affected[] = $model_field;
                 }
             }
