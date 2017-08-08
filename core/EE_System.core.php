@@ -9,6 +9,7 @@ use EventEspresso\core\services\activation\ActivatableInterface;
 use EventEspresso\core\services\activation\ActivationHistory;
 use EventEspresso\core\services\activation\ActivationsAndUpgradesManager;
 use EventEspresso\core\services\activation\ActivationsFactory;
+use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\activation\RequestType;
 use EventEspresso\core\services\shortcodes\ShortcodesManager;
@@ -154,6 +155,8 @@ class EE_System implements ActivatableInterface, ResettableInterface
      * resets the instance and returns it
      *
      * @return EE_System
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      * @throws DomainException
      * @throws InvalidArgumentException
      * @throws InvalidEntityException
@@ -254,15 +257,18 @@ class EE_System implements ActivatableInterface, ResettableInterface
      * load and setup EE_Capabilities
      *
      * @return void
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      * @throws EE_Error
      */
     public function loadCapabilities()
     {
-        $this->registry->load_core('EE_Capabilities');
+        $this->capabilities = $this->loader->getShared('EE_Capabilities');
         add_action(
             'AHEE__EE_Capabilities__init_caps__before_initialization',
             function() {
-                EE_Registry::instance()->load_lib('Payment_Method_Manager');
+                LoaderFactory::getLoader()->getShared('Payment_Method_Manager');
             }
         );
     }
@@ -279,19 +285,18 @@ class EE_System implements ActivatableInterface, ResettableInterface
      */
     public function loadCommandBus()
     {
-        $this->registry->create(
+        $this->loader->getShared(
             'CommandBusInterface',
             array(
                 null,
                 apply_filters(
                     'FHEE__EE_Load_Espresso_Core__handle_request__CommandBus_middleware',
                     array(
-                        $this->registry->create('CapChecker'),
-                        $this->registry->create('AddActionHook'),
+                        $this->loader->getShared('EventEspresso\core\services\commands\middleware\CapChecker'),
+                        $this->loader->getShared('EventEspresso\core\services\commands\middleware\AddActionHook'),
                     )
                 ),
-            ),
-            true
+            )
         );
     }
 
@@ -624,7 +629,7 @@ class EE_System implements ActivatableInterface, ResettableInterface
         do_action('AHEE__EE_System__set_hooks_for_core');
         //caps need to be initialized on every request so that capability maps are set.
         //@see https://events.codebasehq.com/projects/event-espresso/tickets/8674
-        $this->registry->CAP->init_caps();
+        $this->capabilities->init_caps();
     }
 
 
@@ -740,9 +745,9 @@ class EE_System implements ActivatableInterface, ResettableInterface
      */
     public function addEspressoToolbar()
     {
-        $this->registry->create(
+        $this->loader->getShared(
             'EventEspresso\core\domain\services\admin\AdminToolBar',
-            array($this->registry->CAP)
+            array($this->capabilities)
         );
     }
 
@@ -839,6 +844,8 @@ class EE_System implements ActivatableInterface, ResettableInterface
 
     /**
      * @deprecated 4.9.40
+     * @param null $version_history
+     * @param null $current_version_to_add
      * @return void
      */
     public function update_list_of_installed_versions($version_history = null, $current_version_to_add = null)
