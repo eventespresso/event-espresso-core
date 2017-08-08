@@ -18,11 +18,6 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
      */
     private $_dtt;
 
-	/**
-	 * @var EE_Datetime
-	 */
-	private $_dtt;
-
     /**
      * Initial setup of data properties for the list table.
      */
@@ -31,14 +26,6 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
         $this->_data           = $this->_admin_page->get_events($this->_per_page, $this->_current_page);
         $this->_all_data_count = $this->_admin_page->get_events(0, 0, true);
     }
-
-	/**
-	 * Initial setup of data properties for the list table.
-	 */
-	protected function _setup_data() {
-		$this->_data = $this->_admin_page->get_events($this->_per_page, $this->_current_page);
- 		$this->_all_data_count = $this->_admin_page->get_events(0,0, TRUE);
-	}
 
     /**
      * Set up of additional properties for the list table.
@@ -204,7 +191,6 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
         return $content;
     }
 
-	}
 
     /**
      * Just a method for setting up the actions for the name column
@@ -408,15 +394,6 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
             : '';
     }
 
-	/**
-	 * @param EE_Event $item
-	 *
-	 * @return string
-	 */
-	public function column_venue( EE_Event $item ) {
-		$venue = $item->get_first_related( 'Venue' );
-		return !empty( $venue ) ? $venue->name() : '';
-	}
 
     /**
      * @param EE_Event $item
