@@ -232,18 +232,17 @@ class EEH_URL
 
 
     /**
-     * Gets the current page's full URL
+     * Gets the current page's full URL.
      *
      * @return string
      */
     public static function current_url()
     {
+        $url = '';
         if (isset($_SERVER['HTTP_HOST'], $_SERVER['REQUEST_URI'])) {
             $url = is_ssl() ? 'https://' : 'http://';
             $url .= \EEH_URL::filter_input_server_url('HTTP_HOST');
             $url .= \EEH_URL::filter_input_server_url('REQUEST_URI');
-        } else {
-            $url = 'unknown';
         }
         return $url;
     }
