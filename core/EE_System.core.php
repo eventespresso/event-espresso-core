@@ -2,6 +2,7 @@
 
 use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
 use EventEspresso\core\interfaces\ResettableInterface;
+use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\shortcodes\ShortcodesManager;
 
 
@@ -829,9 +830,12 @@ final class EE_System implements ResettableInterface
     {
         try {
             // load, register, and add shortcodes the new way
-            new ShortcodesManager(
-            // and the old way, but we'll put it under control of the new system
-                EE_Config::getLegacyShortcodesManager()
+            LoaderFactory::getLoader()->getShared(
+                'EventEspresso\core\services\shortcodes\ShortcodesManager',
+                array(
+                    // and the old way, but we'll put it under control of the new system
+                    EE_Config::getLegacyShortcodesManager()
+                )
             );
         } catch (Exception $exception) {
             new ExceptionStackTraceDisplay($exception);
