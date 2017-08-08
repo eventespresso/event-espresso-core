@@ -184,20 +184,6 @@ class EEH_URL
 
 
     /**
-     * add_nocache_headers
-     *
-     * @return void
-     */
-    public static function add_nocache_headers()
-    {
-        // add no cache headers
-//		add_action( 'wp_head' , array( 'EED_Single_Page_Checkout', 'nocache_headers' ), 10 );
-        // plus a little extra for nginx
-//		add_filter( 'nocache_headers' , array( 'EED_Single_Page_Checkout', 'nocache_headers_nginx' ), 10, 1 );
-    }
-
-
-    /**
      * filter_input_server_url
      * uses filter_input() to sanitize one of the INPUT_SERVER URL values
      * but adds a backup in case filter_input() returns nothing, which can erringly happen on some servers
