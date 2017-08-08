@@ -716,6 +716,12 @@ class Maintenance_Admin_Page extends EE_Admin_Page
                                     'event_espresso'
                                 )
                             )
+                            . EEH_HTML::p(
+                                esc_html__(
+                                    'Note: If you enter 1.25, that will result in the offset of 1 hour 15 minutes being applied.  Decimals represent the fraction of hours, not minutes.',
+                                    'event_espresso'
+                                )
+                            )
                         ),
                         'offset_input' => new EE_Float_Input(
                             array(
