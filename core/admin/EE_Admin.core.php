@@ -2,20 +2,9 @@
 
 use EventEspresso\core\interfaces\InterminableInterface;
 
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
+defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
 
 /**
- * Event Espresso
- * Event Registration and Management Plugin for WordPress
- * @ package            Event Espresso
- * @ author            Seth Shoultes
- * @ copyright        (c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license            http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link                    http://www.eventespresso.com
- * @ version            4.0
- * ------------------------------------------------------------------------
  * EE_Admin
  *
  * @package               Event Espresso
@@ -52,6 +41,7 @@ final class EE_Admin implements InterminableInterface
 
     /**
      * @return EE_Admin
+     * @throws EE_Error
      */
     public static function reset()
     {
@@ -130,14 +120,18 @@ final class EE_Admin implements InterminableInterface
         if ($plugin === $main_file) {
             // compare current plugin to this one
             if (EE_Maintenance_Mode::instance()->level() === EE_Maintenance_Mode::level_2_complete_maintenance) {
-                $maintenance_link = '<a href="admin.php?page=espresso_maintenance_settings" title="Event Espresso is in maintenance mode.  Click this link to learn why.">' . __('Maintenance Mode Active',
-                        'event_espresso') . '</a>';
+                $maintenance_link = '<a href="admin.php?page=espresso_maintenance_settings"'
+                                    . ' title="Event Espresso is in maintenance mode.  Click this link to learn why.">'
+                                    . esc_html__('Maintenance Mode Active', 'event_espresso')
+                                    . '</a>';
                 array_unshift($links, $maintenance_link);
             } else {
-                $org_settings_link = '<a href="admin.php?page=espresso_general_settings">' . __('Settings',
-                        'event_espresso') . '</a>';
-                $events_link       = '<a href="admin.php?page=espresso_events">' . __('Events',
-                        'event_espresso') . '</a>';
+                $org_settings_link = '<a href="admin.php?page=espresso_general_settings">'
+                                     . esc_html__('Settings', 'event_espresso')
+                                     . '</a>';
+                $events_link       = '<a href="admin.php?page=espresso_events">'
+                                     . esc_html__('Events', 'event_espresso')
+                                     . '</a>';
                 // add before other links
                 array_unshift($links, $org_settings_link, $events_link);
             }
@@ -151,6 +145,8 @@ final class EE_Admin implements InterminableInterface
      *
      * @access public
      * @return void
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_request()
     {
@@ -182,6 +178,8 @@ final class EE_Admin implements InterminableInterface
      *
      * @access public
      * @return void
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function init()
     {
@@ -259,7 +257,8 @@ final class EE_Admin implements InterminableInterface
         }
 
         $hidden_meta_boxes  = get_user_option('metaboxhidden_nav-menus', $user->ID);
-        $initial_meta_boxes = apply_filters('FHEE__EE_Admin__enable_hidden_ee_nav_menu_boxes__initial_meta_boxes',
+        $initial_meta_boxes = apply_filters(
+            'FHEE__EE_Admin__enable_hidden_ee_nav_menu_boxes__initial_meta_boxes',
             array(
                 'nav-menu-theme-locations',
                 'add-page',
@@ -271,7 +270,8 @@ final class EE_Admin implements InterminableInterface
                 'add-espresso_venue_categories',
                 'add-post-type-post',
                 'add-post-type-page',
-            ));
+            )
+        );
 
         if (is_array($hidden_meta_boxes)) {
             foreach ($hidden_meta_boxes as $key => $meta_box_id) {
@@ -297,8 +297,14 @@ final class EE_Admin implements InterminableInterface
      */
     public function register_custom_nav_menu_boxes()
     {
-        add_meta_box('add-extra-nav-menu-pages', __('Event Espresso Pages', 'event_espresso'),
-            array($this, 'ee_cpt_archive_pages'), 'nav-menus', 'side', 'core');
+        add_meta_box(
+            'add-extra-nav-menu-pages',
+            esc_html__('Event Espresso Pages', 'event_espresso'),
+            array($this, 'ee_cpt_archive_pages'),
+            'nav-menus',
+            'side',
+            'core'
+        );
     }
 
 
@@ -320,7 +326,10 @@ final class EE_Admin implements InterminableInterface
                 'action' => 'edit_attendee',
                 'post'   => $id,
             );
-            return EEH_URL::add_query_args_and_nonce($query_args, admin_url('admin.php?page=espresso_registrations'));
+            return EEH_URL::add_query_args_and_nonce(
+                $query_args,
+                admin_url('admin.php?page=espresso_registrations')
+            );
         }
         return $link;
     }
@@ -353,25 +362,17 @@ final class EE_Admin implements InterminableInterface
                 <li <?php echo('event-archives' === $current_tab ? ' class="tabs"' : ''); ?>>
                     <a class="nav-tab-link" data-type="tabs-panel-posttype-extra-nav-menu-pages-event-archives"
                        href="<?php if ($nav_menu_selected_id) {
-                           echo esc_url(add_query_arg('extra-nav-menu-pages-tab', 'event-archives',
-                               remove_query_arg($removed_args)));
+                            echo esc_url(
+                                add_query_arg(
+                                    'extra-nav-menu-pages-tab',
+                                    'event-archives',
+                                    remove_query_arg($removed_args)
+                                )
+                            );
                        } ?>#tabs-panel-posttype-extra-nav-menu-pages-event-archives">
                         <?php _e('Event Archive Pages', 'event_espresso'); ?>
                     </a>
                 </li>
-                <?php /* // temporarily removing but leaving skeleton in place in case we ever decide to add more tabs.
-				<li <?php echo ( 'all' == $current_tab ? ' class="tabs"' : '' ); ?>>
-					<a class="nav-tab-link" data-type="<?php echo esc_attr( $post_type_name ); ?>-all" href="<?php if ( $nav_menu_selected_id ) echo esc_url(add_query_arg($post_type_name . '-tab', 'all', remove_query_arg($removed_args))); ?>#<?php echo $post_type_name; ?>-all">
-						<?php _e( 'View All' ); ?>
-					</a>
-				</li>
-				<li <?php echo ( 'search' == $current_tab ? ' class="tabs"' : '' ); ?>>
-					<a class="nav-tab-link" data-type="tabs-panel-posttype-extra-nav-menu-pages-search" href="<?php if ( $nav_menu_selected_id ) echo esc_url(add_query_arg('extra-nav-menu-pages-tab', 'search', remove_query_arg($removed_args))); ?>#tabs-panel-posttype-extra-nav-menu-pages-search">
-						<?php _e( 'Search'); ?>
-					</a>
-				</li> -->
-			</ul><!-- .posttype-tabs -->
- 			<?php */ ?>
 
                 <div id="tabs-panel-posttype-extra-nav-menu-pages-event-archives" class="tabs-panel <?php
                 echo('event-archives' === $current_tab ? 'tabs-panel-active' : 'tabs-panel-inactive');
@@ -380,15 +381,21 @@ final class EE_Admin implements InterminableInterface
                         <?php
                         $pages          = $this->_get_extra_nav_menu_pages_items();
                         $args['walker'] = $walker;
-                        echo walk_nav_menu_tree(array_map(array($this, '_setup_extra_nav_menu_pages_items'), $pages), 0,
-                            (object)$args);
+                        echo walk_nav_menu_tree(
+                            array_map(
+                                array($this, '_setup_extra_nav_menu_pages_items'),
+                                $pages
+                            ),
+                            0,
+                            (object) $args
+                        );
                         ?>
                     </ul>
                 </div><!-- /.tabs-panel -->
 
                 <p class="button-controls">
-				<span class="list-controls">
-					<a href="<?php
+                <span class="list-controls">
+                    <a href="<?php
                     echo esc_url(add_query_arg(
                         array(
                             'extra-nav-menu-pages-tab' => 'event-archives',
@@ -397,19 +404,17 @@ final class EE_Admin implements InterminableInterface
                         remove_query_arg($removed_args)
                     ));
                     ?>#posttype-extra-nav-menu-pages>" class="select-all"><?php _e('Select All'); ?></a>
-				</span>
-
-                    <span class="add-to-menu">
-					<input type="submit"<?php wp_nav_menu_disabled_check($nav_menu_selected_id); ?>
-                           class="button-secondary submit-add-to-menu right"
-                           value="<?php esc_attr_e(__('Add to Menu')); ?>" name="add-post-type-menu-item"
-                           id="<?php esc_attr_e('submit-posttype-extra-nav-menu-pages'); ?>"/>
-					<span class="spinner"></span>
-				</span>
+                </span>
+                <span class="add-to-menu">
+                    <input type="submit"<?php wp_nav_menu_disabled_check($nav_menu_selected_id); ?>
+                       class="button-secondary submit-add-to-menu right"
+                       value="<?php esc_attr_e(__('Add to Menu')); ?>" name="add-post-type-menu-item"
+                       id="<?php esc_attr_e('submit-posttype-extra-nav-menu-pages'); ?>"/>
+                    <span class="spinner"></span>
+                </span>
                 </p>
 
         </div><!-- /.posttypediv -->
-
         <?php
     }
 
@@ -424,9 +429,9 @@ final class EE_Admin implements InterminableInterface
     private function _get_extra_nav_menu_pages_items()
     {
         $menuitems[] = array(
-            'title'       => __('Event List', 'event_espresso'),
+            'title'       => esc_html__('Event List', 'event_espresso'),
             'url'         => get_post_type_archive_link('espresso_events'),
-            'description' => __('Archive page for all events.', 'event_espresso'),
+            'description' => esc_html__('Archive page for all events.', 'event_espresso'),
         );
         return apply_filters('FHEE__EE_Admin__get_extra_nav_menu_pages_items', $menuitems);
     }
@@ -451,7 +456,7 @@ final class EE_Admin implements InterminableInterface
             'post_parent'      => 0,
             'type'             => 'custom',
             'object'           => '',
-            'type_label'       => __('Extra Nav Menu Item', 'event_espresso'),
+            'type_label'       => esc_html__('Extra Nav Menu Item', 'event_espresso'),
             'title'            => '',
             'url'              => '',
             'target'           => '',
@@ -494,6 +499,8 @@ final class EE_Admin implements InterminableInterface
      *
      * @access public
      * @return void
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function admin_init()
     {
@@ -513,12 +520,11 @@ final class EE_Admin implements InterminableInterface
 
         /**
          * This code excludes EE critical pages anywhere `wp_dropdown_pages` is used to create a dropdown for selecting
-         * critical pages.  The only place critical pages need included in a generated dropdown is on the "Critical Pages"
-         * tab in the EE General Settings Admin page.
+         * critical pages.  The only place critical pages need included in a generated dropdown is on the "Critical
+         * Pages" tab in the EE General Settings Admin page.
          * This is for user-proofing.
          */
         add_filter('wp_dropdown_pages', array($this, 'modify_dropdown_pages'));
-
     }
 
 
@@ -560,23 +566,49 @@ final class EE_Admin implements InterminableInterface
     public function enqueue_admin_scripts()
     {
         // this javascript is loaded on every admin page to catch any injections ee needs to add to wp run js.
-        // Note: the intention of this script is to only do TARGETED injections.  I.E, only injecting on certain script calls.
-        wp_enqueue_script('ee-inject-wp', EE_ADMIN_URL . 'assets/ee-cpt-wp-injects.js', array('jquery'),
-            EVENT_ESPRESSO_VERSION, true);
+        // Note: the intention of this script is to only do TARGETED injections.  I.E, only injecting on certain script
+        // calls.
+        wp_enqueue_script(
+            'ee-inject-wp',
+            EE_ADMIN_URL . 'assets/ee-cpt-wp-injects.js',
+            array('jquery'),
+            EVENT_ESPRESSO_VERSION,
+            true
+        );
         // register cookie script for future dependencies
-        wp_register_script('jquery-cookie', EE_THIRD_PARTY_URL . 'joyride/jquery.cookie.js', array('jquery'), '2.1',
-            true);
-        //joyride is turned OFF by default, but prior to the admin_enqueue_scripts hook, can be turned back on again vai: add_filter('FHEE_load_joyride', '__return_true' );
+        wp_register_script(
+            'jquery-cookie',
+            EE_THIRD_PARTY_URL . 'joyride/jquery.cookie.js',
+            array('jquery'),
+            '2.1',
+            true
+        );
+        //joyride is turned OFF by default, but prior to the admin_enqueue_scripts hook, can be turned back on again
+        // via: add_filter('FHEE_load_joyride', '__return_true' );
         if (apply_filters('FHEE_load_joyride', false)) {
             //joyride style
             wp_register_style('joyride-css', EE_THIRD_PARTY_URL . 'joyride/joyride-2.1.css', array(), '2.1');
-            wp_register_style('ee-joyride-css', EE_GLOBAL_ASSETS_URL . 'css/ee-joyride-styles.css',
-                array('joyride-css'), EVENT_ESPRESSO_VERSION);
-            wp_register_script('joyride-modernizr', EE_THIRD_PARTY_URL . 'joyride/modernizr.mq.js', array(), '2.1',
-                true);
+            wp_register_style(
+                'ee-joyride-css',
+                EE_GLOBAL_ASSETS_URL . 'css/ee-joyride-styles.css',
+                array('joyride-css'),
+                EVENT_ESPRESSO_VERSION
+            );
+            wp_register_script(
+                'joyride-modernizr',
+                EE_THIRD_PARTY_URL . 'joyride/modernizr.mq.js',
+                array(),
+                '2.1',
+                true
+            );
             //joyride JS
-            wp_register_script('jquery-joyride', EE_THIRD_PARTY_URL . 'joyride/jquery.joyride-2.1.js',
-                array('jquery-cookie', 'joyride-modernizr'), '2.1', true);
+            wp_register_script(
+                'jquery-joyride',
+                EE_THIRD_PARTY_URL . 'joyride/jquery.joyride-2.1.js',
+                array('jquery-cookie', 'joyride-modernizr'),
+                '2.1',
+                true
+            );
             // wanna go for a joyride?
             wp_enqueue_style('ee-joyride-css');
             wp_enqueue_script('jquery-joyride');
@@ -592,6 +624,26 @@ final class EE_Admin implements InterminableInterface
      */
     public function display_admin_notices()
     {
+        //add non-dismissable notice for datetime changes.  Only valid if EE version is greater than 4.9.46.p and the
+        // site does not have a timezone_string set.
+        if (EE_Register_Addon::_meets_min_core_version_requirement(
+                '4.9.46.p'
+            )
+            && ! get_option('timezone_string')
+        ) {
+            EE_Error::add_attention(
+                sprintf(
+                    esc_html__(
+                        '%1$sImportant%2$s: Please note some upcoming changes to dates and times in Event Espresso that may affect your website.  Read more about it %3$shere%4$s.',
+                        'event_espresso'
+                    ),
+                    '<strong>',
+                    '</strong>',
+                    '<a href="https://eventespresso.com/2017/08/important-upcoming-changes-dates-times">',
+                    '</a>'
+                )
+            );
+        }
         echo EE_Error::get_notices();
     }
 
@@ -606,8 +658,12 @@ final class EE_Admin implements InterminableInterface
     {
         // http://www.example.com/wp-admin/admin.php?page=espresso_general_settings&action=critical_pages&critical_pages_nonce=2831ce0f30
         $args       = array(
-            'page'   => EE_Registry::instance()->REQ->is_set('page') ? EE_Registry::instance()->REQ->get('page') : '',
-            'action' => EE_Registry::instance()->REQ->is_set('action') ? EE_Registry::instance()->REQ->get('action') : '',
+            'page'   => EE_Registry::instance()->REQ->is_set('page')
+                ? EE_Registry::instance()->REQ->get('page')
+                : '',
+            'action' => EE_Registry::instance()->REQ->is_set('action')
+                ? EE_Registry::instance()->REQ->get('action')
+                : '',
         );
         $return_url = EE_Admin_Page::add_query_args_and_nonce($args, EE_ADMIN_URL);
         echo EE_Error::get_persistent_admin_notices($return_url);
@@ -635,10 +691,12 @@ final class EE_Admin implements InterminableInterface
     {
         $elements                        = is_array($elements) ? $elements : array($elements);
         $events                          = EEM_Event::instance()->count();
-        $items['events']['url']          = EE_Admin_Page::add_query_args_and_nonce(array('page' => 'espresso_events'),
-            admin_url('admin.php'));
+        $items['events']['url']          = EE_Admin_Page::add_query_args_and_nonce(
+            array('page' => 'espresso_events'),
+            admin_url('admin.php')
+        );
         $items['events']['text']         = sprintf(_n('%s Event', '%s Events', $events), number_format_i18n($events));
-        $items['events']['title']        = __('Click to view all Events', 'event_espresso');
+        $items['events']['title']        = esc_html__('Click to view all Events', 'event_espresso');
         $registrations                   = EEM_Registration::instance()->count(
             array(
                 array(
@@ -646,17 +704,25 @@ final class EE_Admin implements InterminableInterface
                 ),
             )
         );
-        $items['registrations']['url']   = EE_Admin_Page::add_query_args_and_nonce(array('page' => 'espresso_registrations'),
-            admin_url('admin.php'));
-        $items['registrations']['text']  = sprintf(_n('%s Registration', '%s Registrations', $registrations),
-            number_format_i18n($registrations));
-        $items['registrations']['title'] = __('Click to view all registrations', 'event_espresso');
+        $items['registrations']['url']   = EE_Admin_Page::add_query_args_and_nonce(
+            array('page' => 'espresso_registrations'),
+            admin_url('admin.php')
+        );
+        $items['registrations']['text']  = sprintf(
+            _n('%s Registration', '%s Registrations', $registrations),
+            number_format_i18n($registrations)
+        );
+        $items['registrations']['title'] = esc_html__('Click to view all registrations', 'event_espresso');
 
         $items = (array)apply_filters('FHEE__EE_Admin__dashboard_glance_items__items', $items);
 
         foreach ($items as $type => $item_properties) {
-            $elements[] = sprintf('<a class="ee-dashboard-link-' . $type . '" href="%s" title="%s">%s</a>',
-                $item_properties['url'], $item_properties['title'], $item_properties['text']);
+            $elements[] = sprintf(
+                '<a class="ee-dashboard-link-' . $type . '" href="%s" title="%s">%s</a>',
+                $item_properties['url'],
+                $item_properties['title'],
+                $item_properties['text']
+            );
         }
         return $elements;
     }
@@ -677,13 +743,13 @@ final class EE_Admin implements InterminableInterface
     {
         // check for date_format or time_format
         switch ($option) {
-            case 'date_format' :
+            case 'date_format':
                 $date_time_format = $value . ' ' . get_option('time_format');
                 break;
-            case 'time_format' :
+            case 'time_format':
                 $date_time_format = get_option('date_format') . ' ' . $value;
                 break;
-            default :
+            default:
                 $date_time_format = false;
         }
         // do we have a date_time format to check ?
@@ -691,16 +757,32 @@ final class EE_Admin implements InterminableInterface
             $error_msg = EEH_DTT_Helper::validate_format_string($date_time_format);
 
             if (is_array($error_msg)) {
-                $msg = '<p>' . sprintf(__('The following date time "%s" ( %s ) is difficult to be properly parsed by PHP for the following reasons:',
-                        'event_espresso'), date($date_time_format), $date_time_format) . '</p><p><ul>';
+                $msg = '<p>'
+                       . sprintf(
+                           esc_html__(
+                               'The following date time "%s" ( %s ) is difficult to be properly parsed by PHP for the following reasons:',
+                               'event_espresso'
+                           ),
+                           date($date_time_format),
+                           $date_time_format
+                       )
+                       . '</p><p><ul>';
 
 
                 foreach ($error_msg as $error) {
                     $msg .= '<li>' . $error . '</li>';
                 }
 
-                $msg .= '</ul></p><p>' . sprintf(__('%sPlease note that your date and time formats have been reset to "F j, Y" and "g:i a" respectively.%s',
-                        'event_espresso'), '<span style="color:#D54E21;">', '</span>') . '</p>';
+                $msg .= '</ul></p><p>'
+                        . sprintf(
+                            esc_html__(
+                                '%sPlease note that your date and time formats have been reset to "F j, Y" and "g:i a" respectively.%s',
+                                'event_espresso'
+                            ),
+                            '<span style="color:#D54E21;">',
+                            '</span>'
+                        )
+                        . '</p>';
 
                 // trigger WP settings error
                 add_settings_error(
@@ -711,10 +793,10 @@ final class EE_Admin implements InterminableInterface
 
                 // set format to something valid
                 switch ($option) {
-                    case 'date_format' :
+                    case 'date_format':
                         $value = 'F j, Y';
                         break;
-                    case 'time_format' :
+                    case 'time_format':
                         $value = 'g:i a';
                         break;
                 }
@@ -760,17 +842,25 @@ final class EE_Admin implements InterminableInterface
      * @param       $page_path
      * @param array $config
      * @return void
+     * @throws EE_Error
      */
     public static function register_ee_admin_page($page_basename, $page_path, $config = array())
     {
-        EE_Error::doing_it_wrong(__METHOD__,
-            sprintf(__('Usage is deprecated.  Use EE_Register_Admin_Page::register() for registering the %s admin page.',
-                'event_espresso'), $page_basename), '4.3');
+        EE_Error::doing_it_wrong(
+            __METHOD__,
+            sprintf(
+                esc_html__(
+                    'Usage is deprecated.  Use EE_Register_Admin_Page::register() for registering the %s admin page.',
+                    'event_espresso'
+                ),
+                $page_basename
+            ),
+            '4.3'
+        );
         if (class_exists('EE_Register_Admin_Page')) {
             $config['page_path'] = $page_path;
         }
         EE_Register_Admin_Page::register($page_basename, $config);
-
     }
 
 
@@ -785,7 +875,7 @@ final class EE_Admin implements InterminableInterface
     {
         EE_Error::doing_it_wrong(
             __METHOD__,
-            __('Usage is deprecated', 'event_espresso'),
+            esc_html__('Usage is deprecated', 'event_espresso'),
             '4.8.41'
         );
     }
@@ -803,11 +893,8 @@ final class EE_Admin implements InterminableInterface
     {
         EE_Error::doing_it_wrong(
             __METHOD__,
-            __('Usage is deprecated', 'event_espresso'),
+            esc_html__('Usage is deprecated', 'event_espresso'),
             '4.8.41'
         );
     }
-
 }
-// End of file EE_Admin.core.php
-// Location: /core/admin/EE_Admin.core.php

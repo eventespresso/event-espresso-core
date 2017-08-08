@@ -625,6 +625,9 @@ class EE_Dependency_Map
                 null,
                 'EventEspresso\core\services\orm\ModelFieldFactory' => EE_Dependency_Map::load_from_cache,
             ),
+            'EE_Module_Request_Router' => array(
+                'EE_Request' => EE_Dependency_Map::load_from_cache,
+            ),
         );
     }
 

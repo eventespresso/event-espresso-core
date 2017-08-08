@@ -14,11 +14,9 @@ final class EE_Request_Handler implements InterminableInterface
 {
 
     /**
-     * $_REQUEST parameters
-     *
-     * @var array $_params
+     * @var EE_Request $request
      */
-    private $_params;
+    private $request;
 
     /**
      * @var array $_notice
@@ -53,11 +51,9 @@ final class EE_Request_Handler implements InterminableInterface
      */
     public function __construct(EE_Request $request)
     {
-        // grab request vars
-        $this->_params = $request->params();
-        // AJAX ???
-        $this->ajax = defined('DOING_AJAX') && DOING_AJAX;
-        $this->front_ajax = defined('EE_FRONT_AJAX') && EE_FRONT_AJAX;
+        $this->request = $request;
+        $this->ajax = $this->request->ajax;
+        $this->front_ajax = $this->request->front_ajax;
         do_action('AHEE__EE_Request_Handler__construct__complete');
     }
 
@@ -90,11 +86,11 @@ final class EE_Request_Handler implements InterminableInterface
     {
         if (! is_admin()) {
             // set request post_id
-            $this->set('post_id', $this->get_post_id_from_request($wp));
+            $this->request->set('post_id', $this->get_post_id_from_request($wp));
             // set request post name
-            $this->set('post_name', $this->get_post_name_from_request($wp));
+            $this->request->set('post_name', $this->get_post_name_from_request($wp));
             // set request post_type
-            $this->set('post_type', $this->get_post_type_from_request($wp));
+            $this->request->set('post_type', $this->get_post_type_from_request($wp));
             // true or false ? is this page being used by EE ?
             $this->set_espresso_page();
         }
@@ -253,110 +249,6 @@ final class EE_Request_Handler implements InterminableInterface
         }
         return false;
     }
-
-
-
-    /**
-     * @param null|bool $value
-     * @return void
-     * @throws EE_Error
-     * @throws ReflectionException
-     */
-    public function set_espresso_page($value = null)
-    {
-        $this->_params['is_espresso_page'] = ! empty($value)
-            ? $value
-            : $this->test_for_espresso_page();
-    }
-
-
-
-    /**
-     * @return    mixed
-     */
-    public function is_espresso_page()
-    {
-        return isset($this->_params['is_espresso_page'])
-            ? $this->_params['is_espresso_page']
-            : false;
-    }
-
-
-
-    /**
-     * returns contents of $_REQUEST
-     *
-     * @return array
-     */
-    public function params()
-    {
-        return $this->_params;
-    }
-
-
-
-    /**
-     * @param      $key
-     * @param      $value
-     * @param bool $override_ee
-     * @return    void
-     */
-    public function set($key, $value, $override_ee = false)
-    {
-        // don't allow "ee" to be overwritten unless explicitly instructed to do so
-        if (
-            $key !== 'ee'
-            || ($key === 'ee' && empty($this->_params['ee']))
-            || ($key === 'ee' && ! empty($this->_params['ee']) && $override_ee)
-        ) {
-            $this->_params[$key] = $value;
-        }
-    }
-
-
-
-    /**
-     * @param      $key
-     * @param null $default
-     * @return    mixed
-     */
-    public function get($key, $default = null)
-    {
-        return isset($this->_params[$key])
-            ? $this->_params[$key]
-            : $default;
-    }
-
-
-
-    /**
-     * check if param exists
-     *
-     * @param $key
-     * @return    boolean
-     */
-    public function is_set($key)
-    {
-        return isset($this->_params[$key])
-            ? true
-            : false;
-    }
-
-
-
-    /**
-     * remove param
-     *
-     * @param $key
-     * @return    void
-     */
-    public function un_set($key)
-    {
-        unset($this->_params[$key]);
-    }
-
-
-
     /**
      * @param $key
      * @param $value
@@ -417,74 +309,94 @@ final class EE_Request_Handler implements InterminableInterface
 
 
     /**
-     * @param $a
-     * @param $b
-     * @return bool
-     */
-    public function __set($a, $b)
-    {
-        return false;
-    }
-
-
-
-    /**
-     * @param $a
-     * @return bool
-     */
-    public function __get($a)
-    {
-        return false;
-    }
-
-
-
-    /**
-     * @param $a
-     * @return bool
-     */
-    public function __isset($a)
-    {
-        return false;
-    }
-
-
-
-    /**
-     * @param $a
-     * @return bool
-     */
-    public function __unset($a)
-    {
-        return false;
-    }
-
-
-
-    /**
+     * @param null|bool $value
      * @return void
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function __clone()
+    public function set_espresso_page($value = null)
     {
+        $this->request->set(
+            'is_espresso_page',
+            ! empty($value)
+                ? $value
+                : $this->test_for_espresso_page()
+        );
     }
 
 
 
     /**
-     * @return void
+     * @return    mixed
      */
-    public function __wakeup()
+    public function is_espresso_page()
     {
+        return $this->request->is_set('is_espresso_page');
     }
 
 
 
     /**
+     * returns contents of $_REQUEST
      *
+     * @return array
      */
-    public function __destruct()
+    public function params()
     {
+        return $this->request->params();
     }
+
+
+
+    /**
+     * @param      $key
+     * @param      $value
+     * @param bool $override_ee
+     * @return    void
+     */
+    public function set($key, $value, $override_ee = false)
+    {
+        $this->request->set($key, $value, $override_ee);
+    }
+
+
+
+    /**
+     * @param      $key
+     * @param null $default
+     * @return    mixed
+     */
+    public function get($key, $default = null)
+    {
+        return $this->request->get($key, $default);
+    }
+
+
+
+    /**
+     * check if param exists
+     *
+     * @param $key
+     * @return    boolean
+     */
+    public function is_set($key)
+    {
+        return $this->request->is_set($key);
+    }
+
+
+
+    /**
+     * remove param
+     *
+     * @param $key
+     * @return    void
+     */
+    public function un_set($key)
+    {
+        $this->request->un_set($key);
+    }
+
 
 
 }
