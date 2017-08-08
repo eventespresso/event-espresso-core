@@ -223,7 +223,7 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
     private function _pretend_capabilities_registered()
     {
         EE_Registry::instance()->load_core('Capabilities');
-        EE_Capabilities::instance()->init_caps();
+        EE_Capabilities::instance()->init_caps(true);
         //validate caps were registered and init saved.
         $admin_caps_init = EE_Capabilities::instance()->get_ee_capabilities('administrator');
         $this->assertArrayContains('edit_thing', $admin_caps_init);
@@ -500,4 +500,4 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
 }
 
 // End of file EE_Register_Addon_Test.php
-// Location: \tests\testcases\core\libraries\plugin_api\EE_Register_Addon_Test.php
+// Location: testcases/core/libraries/plugin_api/EE_Register_Addon_Test.php

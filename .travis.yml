@@ -1,6 +1,8 @@
 sudo: false
 dist: trusty
 language: php
+services:
+  - mysql
 cache:
   apt: true
   directories:
@@ -45,7 +47,7 @@ before_script:
   - export PATH="$HOME/.composer/vendor/bin:$PATH"
   - |
     # Install the specified version of PHPUnit depending on the PHP version:
-    if [[ "$WP_TRAVISCI" == "travis:phpunit" ]]; then
+    if [[ -n "$TRAVIS_PHP_VERSION" ]]; then
       case "$TRAVIS_PHP_VERSION" in
         7.1|7.0|nightly)
           echo "Using PHPUnit 6.1"
