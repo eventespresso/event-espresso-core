@@ -10,6 +10,8 @@ use EventEspresso\core\interfaces\ResettableInterface;
 use EventEspresso\core\services\activation\ActivatableInterface;
 use EventEspresso\core\services\activation\ActivationsAndUpgradesManager;
 use EventEspresso\core\services\activation\ActivationHistory;
+use EventEspresso\core\services\activation\ActivationsFactory;
+use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\activation\RequestType;
 use EventEspresso\core\services\loaders\LoaderFactory;
@@ -166,6 +168,8 @@ final class EE_System implements ActivatableInterface, ResettableInterface
      * resets the instance and returns it
      *
      * @return EE_System
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      * @throws DomainException
      * @throws InvalidArgumentException
      * @throws InvalidEntityException
@@ -277,6 +281,9 @@ final class EE_System implements ActivatableInterface, ResettableInterface
      * load and setup EE_Capabilities
      *
      * @return void
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      * @throws EE_Error
      */
     public function loadCapabilities()
@@ -929,7 +936,7 @@ final class EE_System implements ActivatableInterface, ResettableInterface
     {
         $this->loader->getShared(
             'EventEspresso\core\domain\services\admin\AdminToolBar',
-            array($this->registry->CAP)
+            array($this->capabilities)
         );
     }
 
@@ -1034,6 +1041,8 @@ final class EE_System implements ActivatableInterface, ResettableInterface
 
     /**
      * @deprecated 4.9.40
+     * @param null $version_history
+     * @param null $current_version_to_add
      * @return void
      */
     public function update_list_of_installed_versions($version_history = null, $current_version_to_add = null)
