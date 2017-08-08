@@ -1,6 +1,6 @@
-<?php if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
+<?php
+
+defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed');
 
 /**
  * EEH_URL helper
@@ -27,23 +27,36 @@ class EEH_URL
     public static function add_query_args_and_nonce($args = array(), $url = '', $exclude_nonce = false)
     {
         if (empty($url)) {
-            $user_msg = __('An error occurred. A URL is a required parameter for the add_query_args_and_nonce method.',
-                'event_espresso');
-            $dev_msg  = $user_msg . "\n" . sprintf(
-                    __('In order to dynamically generate nonces for your actions, you need to supply a valid URL as a second parameter for the %s::add_query_args_and_nonce method.',
-                        'event_espresso'),
-                    __CLASS__
+            $user_msg = esc_html__(
+                'An error occurred. A URL is a required parameter for the add_query_args_and_nonce method.',
+                'event_espresso'
+            );
+            $dev_msg  = $user_msg . "\n"
+                . sprintf(
+                    esc_html__(
+                        'In order to dynamically generate nonces for your actions, you need to supply a valid URL as a second parameter for the %s method.',
+                        'event_espresso'
+                    ),
+                    __CLASS__ . '::add_query_args_and_nonce'
                 );
             EE_Error::add_error($user_msg . '||' . $dev_msg, __FILE__, __FUNCTION__, __LINE__);
         }
         // check that an action exists and add nonce
         if (! $exclude_nonce) {
             if (isset($args['action']) && ! empty($args['action'])) {
-                $args = array_merge($args,
-                    array($args['action'] . '_nonce' => wp_create_nonce($args['action'] . '_nonce')));
+                $args = array_merge(
+                    $args,
+                    array(
+                        $args['action'] . '_nonce' => wp_create_nonce($args['action'] . '_nonce')
+                    )
+                );
             } else {
-                $args = array_merge($args,
-                    array('action' => 'default', 'default_nonce' => wp_create_nonce('default_nonce')));
+                $args = array_merge(
+                    $args,
+                    array(
+                        'action' => 'default', 'default_nonce' => wp_create_nonce('default_nonce')
+                    )
+                );
             }
         }
 
@@ -53,7 +66,6 @@ class EEH_URL
             : $args;
 
         return add_query_arg($args, $url);
-
     }
 
 
@@ -62,15 +74,21 @@ class EEH_URL
      * Checking via GET because HEAD requests are blocked on some server configurations.
      *
      * @param string  $url
-     * @param boolean $sslverify whether we care if the SSL certificate for the requested site is setup properly
+     * @param array $args  the arguments that should be passed through to the wp_remote_request call.
      * @return boolean
      */
     public static function remote_file_exists($url, $args = array())
     {
-        $results = wp_remote_request($url, array_merge(array(
-            'method'      => 'GET',
-            'redirection' => 1,
-        ), $args));
+        $results = wp_remote_request(
+            $url,
+            array_merge(
+                array(
+                    'method'      => 'GET',
+                    'redirection' => 1,
+                ),
+                $args
+            )
+        );
         if (! $results instanceof WP_Error &&
             isset($results['response']) &&
             isset($results['response']['code']) &&
@@ -163,7 +181,8 @@ class EEH_URL
      */
     public static function prevent_prefetching()
     {
-        // prevent browsers from prefetching of the rel='next' link, because it may contain content that interferes with the registration process
+        // prevent browsers from prefetching of the rel='next' link, because it may contain content that interferes
+        // with the registration process
         remove_action('wp_head', 'adjacent_posts_rel_link_wp_head');
     }
 
@@ -180,20 +199,6 @@ class EEH_URL
     {
         $token = md5(uniqid() . mt_rand());
         return $prefix ? $prefix . '_' . $token : $token;
-    }
-
-
-    /**
-     * add_nocache_headers
-     *
-     * @return void
-     */
-    public static function add_nocache_headers()
-    {
-        // add no cache headers
-//		add_action( 'wp_head' , array( 'EED_Single_Page_Checkout', 'nocache_headers' ), 10 );
-        // plus a little extra for nginx
-//		add_filter( 'nocache_headers' , array( 'EED_Single_Page_Checkout', 'nocache_headers_nginx' ), 10, 1 );
     }
 
 
@@ -227,22 +232,31 @@ class EEH_URL
 
 
     /**
-     * Gets the current page's full URL
+     * Gets the current page's full URL.
      *
      * @return string
      */
     public static function current_url()
     {
+        $url = '';
         if (isset($_SERVER['HTTP_HOST'], $_SERVER['REQUEST_URI'])) {
             $url = is_ssl() ? 'https://' : 'http://';
             $url .= \EEH_URL::filter_input_server_url('HTTP_HOST');
             $url .= \EEH_URL::filter_input_server_url('REQUEST_URI');
-        } else {
-            $url = 'unknown';
         }
         return $url;
     }
 
 
+    /**
+     * Identical in functionality to EEH_current_url except it removes any provided query_parameters from it.
+     *
+     * @param array $query_parameters An array of query_parameters to remove from the current url.
+     * @since 4.9.46.rc.029
+     * @return string
+     */
+    public static function current_url_without_query_paramaters(array $query_parameters)
+    {
+        return remove_query_arg($query_parameters, EEH_URL::current_url());
+    }
 }
-// End of file EEH_URL.helper.php
