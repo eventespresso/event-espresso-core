@@ -622,6 +622,9 @@ class EE_Dependency_Map
                 'EE_Maintenance_Mode'       => EE_Dependency_Map::load_from_cache,
                 'EE_Registry'               => EE_Dependency_Map::load_from_cache,
             ),
+            'EE_Module_Request_Router' => array(
+                'EE_Request' => EE_Dependency_Map::load_from_cache,
+            ),
         );
     }
 
