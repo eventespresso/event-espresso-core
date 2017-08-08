@@ -247,4 +247,17 @@ class EEH_URL
         }
         return $url;
     }
+
+
+    /**
+     * Identical in functionality to EEH_current_url except it removes any provided query_parameters from it.
+     *
+     * @param array $query_parameters An array of query_parameters to remove from the current url.
+     * @since 4.9.46.rc.029
+     * @return string
+     */
+    public static function current_url_without_query_paramaters(array $query_parameters)
+    {
+        return remove_query_arg($query_parameters, EEH_URL::current_url());
+    }
 }
