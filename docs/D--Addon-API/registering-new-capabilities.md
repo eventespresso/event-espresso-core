@@ -124,7 +124,7 @@ $cap_maps = array(
 
 #### Step Five:  Putting it all together
 
-Now that we've worked out the capabilities and the cap_maps, it's time to use `EE_Register_Capabilities` to register our capabilities!  The important thing to remember with using this api, is it must be used before the `AHEE__EE_Capabilities__init_role_caps__complete` action fires.  The best place to do any EE plugin api calls is within a callback for the `AHEE__EE_System__load_espresso_addons` action hook.  So let's put everything together!
+Now that we've worked out the capabilities and the cap_maps, it's time to use `EE_Register_Capabilities` to register our capabilities!  The important thing to remember with using this api, is it must be used before the WordPress `init` action fires.  The best place to do any EE plugin api calls is within a callback for the `AHEE__EE_System__load_espresso_addons` action hook.  So let's put everything together!
 
 ```php
 add_action( 'AHEE__EE_System__load_espresso_addons', 'sponsor_addon_register_capabilities' );

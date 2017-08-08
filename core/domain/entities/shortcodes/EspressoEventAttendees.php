@@ -2,6 +2,7 @@
 namespace EventEspresso\core\domain\entities\shortcodes;
 
 use EE_Datetime;
+use EE_Error;
 use EE_Event;
 use EE_Ticket;
 use EEH_Event_View;
@@ -80,28 +81,48 @@ class EspressoEventAttendees extends EspressoShortcode
 
     /**
      * process_shortcode - ESPRESSO_EVENT_ATTENDEES - Returns a list of attendees to an event.
-     *  [ESPRESSO_EVENT_ATTENDEES] - defaults to attendees for earliest active event, or earliest upcoming event.
-     *  [ESPRESSO_EVENT_ATTENDEES event_id=123] - attendees for specific event.
-     *  [ESPRESSO_EVENT_ATTENDEES datetime_id=245] - attendees for a specific datetime.
-     *  [ESPRESSO_EVENT_ATTENDEES ticket_id=123] - attendees for a specific ticket.
-     *  [ESPRESSO_EVENT_ATTENDEES status=all] - specific registration status (use status id) or all for all attendees
-     *                                          regardless of status.  Note default is to only return approved attendees
-     *  [ESPRESSO_EVENT_ATTENDEES show_gravatar=true] - default is to not return gravatar.  Otherwise if this is set
-     *                                                  then return gravatar for email address given.
-     *  Note: because of the relationship between event_id, ticket_id, and datetime_id.
-     * If more than one of those params is included then preference is given to the following:
+     *  [ESPRESSO_EVENT_ATTENDEES]
+     *  - defaults to attendees for earliest active event, or earliest upcoming event.
+     *
+     *  [ESPRESSO_EVENT_ATTENDEES event_id=123]
+     *  - attendees for specific event.
+     *
+     *  [ESPRESSO_EVENT_ATTENDEES datetime_id=245]
+     *  - attendees for a specific datetime.
+     *
+     *  [ESPRESSO_EVENT_ATTENDEES ticket_id=123]
+     *  - attendees for a specific ticket.
+     *
+     *  [ESPRESSO_EVENT_ATTENDEES status=all]
+     *  - specific registration status (use status id) or all for all attendees regardless of status.
+     *  Note default is to only return approved attendees
+     *
+     *  [ESPRESSO_EVENT_ATTENDEES show_gravatar=true]
+     *  - default is to not return gravatar.  Otherwise if this is set then return gravatar for email address given.
+     *
+     *  [ESPRESSO_EVENT_ATTENDEES display_on_archives=true]
+     *  - default is to not display attendees list on archive pages.
+     *
+     * Note: because of the relationship between event_id, ticket_id, and datetime_id:
+     * If more than one of those params is included, then preference is given to the following:
      *  - event_id is used whenever its present and any others are ignored.
      *  - if no event_id then datetime is used whenever its present and any others are ignored.
      *  - otherwise ticket_id is used if present.
      *
      * @param array $attributes
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function processShortcode($attributes = array())
     {
         // grab attributes and merge with defaults
         $attributes = $this->getAttributes((array)$attributes);
+        $archive = is_archive();
+        $display_on_archives = filter_var($attributes['display_on_archives'], FILTER_VALIDATE_BOOLEAN);
+        // don't display on archives unless 'display_on_archives' is true
+        if($archive && ! $display_on_archives) {
+            return '';
+        }
         // add attributes to template args
         $this->template_args['show_gravatar'] = $attributes['show_gravatar'];
         // add required objects: event, datetime, and ticket
@@ -124,15 +145,18 @@ class EspressoEventAttendees extends EspressoShortcode
                        . esc_html__('The [ESPRESSO_EVENT_ATTENDEES] shortcode has been used incorrectly.  Please double check the arguments you used for any typos.  In the case of ID type arguments, its possible the given ID does not correspond to existing data in the database.',
                         'event_espresso')
                        . '</div>';
-            } else {
-                return '';
             }
+             return '';
         }
         $this->setAdditionalQueryParams($attributes);
         //get contacts!
         $this->template_args['contacts'] = EEM_Attendee::instance()->get_all($this->query_params);
         //all set let's load up the template and return.
-        return EEH_Template::locate_template('loop-espresso_event_attendees.php', $this->template_args, true, true);
+        return EEH_Template::locate_template(
+            'loop-espresso_event_attendees.php',
+            $this->template_args
+        );
+
     }
 
 
@@ -145,18 +169,16 @@ class EspressoEventAttendees extends EspressoShortcode
      */
     private function getAttributes(array $attributes)
     {
-        return array_merge(
-            (array) apply_filters(
-                'EES_Espresso_Event_Attendees__process_shortcode__default_shortcode_atts',
-                array(
-                    'event_id'      => null,
-                    'datetime_id'   => null,
-                    'ticket_id'     => null,
-                    'status'        => EEM_Registration::status_id_approved,
-                    'show_gravatar' => false
-                )
-            ),
-            $attributes
+        return (array) apply_filters(
+            'EES_Espresso_Event_Attendees__process_shortcode__default_shortcode_atts',
+            $attributes + array(
+                'event_id'            => null,
+                'datetime_id'         => null,
+                'ticket_id'           => null,
+                'status'              => EEM_Registration::status_id_approved,
+                'show_gravatar'       => false,
+                'display_on_archives' => false,
+            )
         );
     }
 
@@ -165,7 +187,7 @@ class EspressoEventAttendees extends EspressoShortcode
     /**
      * @param array $attributes
      * @return EE_Event|null
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     private function getEventAndQueryParams(array $attributes){
         if ( ! empty($attributes['event_id'])) {
@@ -175,8 +197,7 @@ class EspressoEventAttendees extends EspressoShortcode
                 return $event;
             }
         }
-        //seems like is_espresso_event_single() isn't working as expected. So using alternate method.
-        if (is_single() && is_espresso_event()) {
+        if (is_espresso_event()) {
             $event = EEH_Event_View::get_event();
             if ($event instanceof EE_Event) {
                 $this->query_params[0]['Registration.EVT_ID'] = $event->ID();
@@ -231,7 +252,7 @@ class EspressoEventAttendees extends EspressoShortcode
     /**
      * @param array $attributes
      * @return \EE_Base_Class|null
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     private function getTicketAndQueryParams(array $attributes)
     {
@@ -254,6 +275,7 @@ class EspressoEventAttendees extends EspressoShortcode
 
     /**
      * @param array $attributes
+     * @throws EE_Error
      */
     private function setAdditionalQueryParams(array $attributes)
     {
