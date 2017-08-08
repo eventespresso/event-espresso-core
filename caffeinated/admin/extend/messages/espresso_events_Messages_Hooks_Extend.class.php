@@ -1,7 +1,6 @@
 <?php
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('NO direct script access allowed');
-}
+
+defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
 
 /**
  * espresso_events_Messages_Hooks_Extend
@@ -15,8 +14,6 @@ if (! defined('EVENT_ESPRESSO_VERSION')) {
  */
 class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hooks
 {
-
-
     /**
      * espresso_events_Messages_Hooks_Extend constructor.
      *
@@ -27,15 +24,22 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
         /**
          * Add cap restriction ... metaboxes should not show if user does not have the ability to edit_custom_messages
          */
-        if (
-        ! EE_Registry::instance()->CAP->current_user_can('ee_edit_messages', 'messages_events_editor_metabox')
-        ) {
+        if (! EE_Registry::instance()->CAP->current_user_can(
+            'ee_edit_messages',
+            'messages_events_editor_metabox'
+        )) {
             return;
         }
         add_filter(
             'FHEE__Events_Admin_Page___insert_update_cpt_item__event_update_callbacks',
             array($this, 'caf_updates'),
             10
+        );
+        add_action(
+            'AHEE__Extend_Events_Admin_Page___duplicate_event__after',
+            array($this, 'duplicate_custom_message_settings'),
+            10,
+            2
         );
         parent::__construct($admin_page);
     }
@@ -49,7 +53,6 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
      */
     protected function _extend_properties()
     {
-
         define('EE_MSGS_EXTEND_ASSETS_URL', EE_CORE_CAF_ADMIN_EXTEND_URL . 'messages/assets/');
         $this->_ajax_func = array(
             'ee_msgs_create_new_custom' => 'create_new_custom',
@@ -58,7 +61,7 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
             0 => array(
                 'page_route' => array('edit', 'create_new'),
                 'func'       => 'messages_metabox',
-                'label'      => __('Notifications', 'event_espresso'),
+                'label'      => esc_html__('Notifications', 'event_espresso'),
                 'priority'   => 'high',
             ),
         );
@@ -95,7 +98,8 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
      *
      * @param  EE_Event $event EE event object
      * @param  array    $data  The request data from the form
-     * @return bool            success or fail
+     * @return bool success or fail
+     * @throws EE_Error
      */
     public function attach_evt_message_templates($event, $data)
     {
@@ -136,15 +140,18 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
         $tabs                     = array();
 
         //empty messengers?
-        //Note message types will always have at least one available because every messenger has a default message type associated with it (payment) if no other message types are selected.
+        //Note message types will always have at least one available because every messenger has a default message type
+        // associated with it (payment) if no other message types are selected.
         if (empty($active_messengers)) {
             $msg_activate_url = EE_Admin_Page::add_query_args_and_nonce(
                 array('action' => 'settings'),
                 EE_MSG_ADMIN_URL
             );
             $error_msg        = sprintf(
-                __('There are no active messengers. So no notifications will go out for %1$sany%2$s events.  You will want to %3$sActivate a Messenger%4$s.',
-                    'event_espresso'),
+                esc_html__(
+                    'There are no active messengers. So no notifications will go out for %1$sany%2$s events.  You will want to %3$sActivate a Messenger%4$s.',
+                    'event_espresso'
+                ),
                 '<strong>',
                 '</strong>',
                 '<a href="' . $msg_activate_url . '">',
@@ -187,7 +194,9 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
 
         $notices = '
 	<div id="espresso-ajax-loading" class="ajax-loader-grey">
-		<span class="ee-spinner ee-spin"></span><span class="hidden">' . __('loading...', 'event_espresso') . '</span>
+		<span class="ee-spinner ee-spin"></span><span class="hidden">'
+        . esc_html__('loading...', 'event_espresso')
+        . '</span>
 	</div>
 	<div class="ee-notices"></div>';
 
@@ -198,7 +207,6 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
         do_action('AHEE__espresso_events_Messages_Hooks_Extend__messages_metabox__before_content');
         echo $notices . '<div class="messages-tabs-content">' . $tabbed_content . '</div>';
         do_action('AHEE__espresso_events_Messages_Hooks_Extend__messages_metabox__after_content');
-
     }
 
 
@@ -209,10 +217,10 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
      *
      * @access public
      * @return string either an html string will be returned or a success message
+     * @throws EE_Error
      */
     public function create_new_custom()
     {
-
         if (! EE_Registry::instance()->CAP->current_user_can('ee_edit_messages', 'create_new_custom_ajax')) {
             wp_die(__('You don\'t have privileges to do this action', 'event_espresso'));
         }
@@ -250,7 +258,8 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
      * This is the dynamic method for this class
      * that will end up hooking into the 'admin_footer' hook on the 'edit_event' route in the events page.
      *
-     * @return string (admin_footer contents)
+     * @return string
+     * @throws DomainException
      */
     public function edit_admin_footer()
     {
@@ -259,4 +268,22 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
         );
     }
 
-} //end class espresso_events_Messages_Hooks_Extend
+
+    /**
+     * Callback for AHEE__Extend_Events_Admin_Page___duplicate_event__after hook used to ensure new events duplicate
+     * the assigned custom message templates.
+     *
+     * @param EE_Event $new_event
+     * @param EE_Event $original_event
+     * @throws EE_Error
+     */
+    public function duplicate_custom_message_settings(EE_Event $new_event, EE_Event $original_event)
+    {
+        $message_template_groups = $original_event->get_many_related('Message_Template_Group');
+        foreach ($message_template_groups as $message_template_group) {
+            $new_event->_add_relation_to($message_template_group, 'Message_Template_Group');
+        }
+        //save new event
+        $new_event->save();
+    }
+}

@@ -1026,7 +1026,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         );
         $att_success = true;
         foreach ($event_update_callbacks as $e_callback) {
-            $_success = $e_callback($event, $this->_req_data);
+            $_success = is_callable($e_callback)
+                ? call_user_func($e_callback, $event, $this->_req_data)
+                : false;
             //if ANY of these updates fail then we want the appropriate global error message
             $att_success = ! $att_success ? $att_success : $_success;
         }
