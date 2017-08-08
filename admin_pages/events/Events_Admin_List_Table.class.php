@@ -14,7 +14,6 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed');
  * @package         Events_Admin_List_Table
  * @subpackage      includes/core/admin/events/Events_Admin_List_Table.class.php
  * @author          Darren Ethier
- * ------------------------------------------------------------------------
  */
 class Events_Admin_List_Table extends EE_Admin_List_Table
 {
