@@ -183,31 +183,123 @@ final class EE_System implements ResettableInterface
         $this->request = $request;
         $this->maintenance_mode = $maintenance_mode;
         do_action('AHEE__EE_System__construct__begin', $this);
+        add_action(
+            'AHEE__EE_Bootstrap__load_espresso_addons',
+            array($this, 'loadCapabilities'),
+            5
+        );
+        add_action(
+            'AHEE__EE_Bootstrap__load_espresso_addons',
+            array($this, 'loadCommandBus'),
+            7
+        );
+        add_action(
+            'AHEE__EE_Bootstrap__load_espresso_addons',
+            array($this, 'loadPluginApi'),
+            9
+        );
         // allow addons to load first so that they can register autoloaders, set hooks for running DMS's, etc
-        add_action('AHEE__EE_Bootstrap__load_espresso_addons', array($this, 'load_espresso_addons'));
+        add_action(
+            'AHEE__EE_Bootstrap__load_espresso_addons',
+            array($this, 'load_espresso_addons')
+        );
         // when an ee addon is activated, we want to call the core hook(s) again
         // because the newly-activated addon didn't get a chance to run at all
         add_action('activate_plugin', array($this, 'load_espresso_addons'), 1);
         // detect whether install or upgrade
         add_action(
-            'AHEE__EE_Bootstrap__detect_activations_or_upgrades', array($this, 'detect_activations_or_upgrades'),
+            'AHEE__EE_Bootstrap__detect_activations_or_upgrades',
+            array($this, 'detect_activations_or_upgrades'),
             3
         );
         // load EE_Config, EE_Textdomain, etc
-        add_action('AHEE__EE_Bootstrap__load_core_configuration', array($this, 'load_core_configuration'), 5);
+        add_action(
+            'AHEE__EE_Bootstrap__load_core_configuration',
+            array($this, 'load_core_configuration'),
+            5
+        );
         // load EE_Config, EE_Textdomain, etc
         add_action(
             'AHEE__EE_Bootstrap__register_shortcodes_modules_and_widgets',
-            array($this, 'register_shortcodes_modules_and_widgets'), 7
+            array($this, 'register_shortcodes_modules_and_widgets'),
+            7
         );
         // you wanna get going? I wanna get going... let's get going!
-        add_action('AHEE__EE_Bootstrap__brew_espresso', array($this, 'brew_espresso'), 9);
+        add_action(
+            'AHEE__EE_Bootstrap__brew_espresso',
+            array($this, 'brew_espresso'),
+            9
+        );
         //other housekeeping
         //exclude EE critical pages from wp_list_pages
-        add_filter('wp_list_pages_excludes', array($this, 'remove_pages_from_wp_list_pages'), 10);
+        add_filter(
+            'wp_list_pages_excludes',
+            array($this, 'remove_pages_from_wp_list_pages'),
+            10
+        );
         // ALL EE Addons should use the following hook point to attach their initial setup too
         // it's extremely important for EE Addons to register any class autoloaders so that they can be available when the EE_Config loads
         do_action('AHEE__EE_System__construct__complete', $this);
+    }
+
+
+
+    /**
+     * load and setup EE_Capabilities
+     *
+     * @return void
+     * @throws EE_Error
+     */
+    public function loadCapabilities()
+    {
+        $this->registry->load_core('EE_Capabilities');
+        add_action(
+            'AHEE__EE_Capabilities__init_caps__before_initialization',
+            function() {
+                EE_Registry::instance()->load_lib('Payment_Method_Manager');
+            }
+        );
+    }
+
+
+
+    /**
+     * create and cache the CommandBus, and also add middleware
+     * The CapChecker middleware requires the use of EE_Capabilities
+     * which is why we need to load the CommandBus after Caps are set up
+     *
+     * @return void
+     * @throws EE_Error
+     */
+    public function loadCommandBus()
+    {
+        $this->registry->create(
+            'CommandBusInterface',
+            array(
+                null,
+                apply_filters(
+                    'FHEE__EE_Load_Espresso_Core__handle_request__CommandBus_middleware',
+                    array(
+                        $this->registry->create('CapChecker'),
+                        $this->registry->create('AddActionHook'),
+                    )
+                ),
+            ),
+            true
+        );
+    }
+
+
+
+    /**
+     * @return void
+     * @throws EE_Error
+     */
+    public function loadPluginApi()
+    {
+        // set autoloaders for all of the classes implementing EEI_Plugin_API
+        // which provide helpers for EE plugin authors to more easily register certain components with EE.
+        EEH_Autoloader::instance()->register_autoloaders_for_each_file_in_folder(EE_LIBRARIES . 'plugin_api');
     }
 
 
@@ -226,12 +318,6 @@ final class EE_System implements ResettableInterface
      */
     public function load_espresso_addons()
     {
-        // set autoloaders for all of the classes implementing EEI_Plugin_API
-        // which provide helpers for EE plugin authors to more easily register certain components with EE.
-        EEH_Autoloader::instance()->register_autoloaders_for_each_file_in_folder(EE_LIBRARIES . 'plugin_api');
-        //caps need to be initialized on every request so that capability maps are set.
-        //@see https://events.codebasehq.com/projects/event-espresso/tickets/8674
-        $this->capabilities->init_caps();
         do_action('AHEE__EE_System__load_espresso_addons');
         //if the WP API basic auth plugin isn't already loaded, load it now.
         //We want it for mobile apps. Just include the entire plugin
@@ -885,11 +971,15 @@ final class EE_System implements ResettableInterface
      *
      * @access public
      * @return    void
+     * @throws EE_Error
      */
     public function set_hooks_for_core()
     {
         $this->_deactivate_incompatible_addons();
         do_action('AHEE__EE_System__set_hooks_for_core');
+        //caps need to be initialized on every request so that capability maps are set.
+        //@see https://events.codebasehq.com/projects/event-espresso/tickets/8674
+        $this->registry->CAP->init_caps();
     }
 
 

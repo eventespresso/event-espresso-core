@@ -1483,7 +1483,9 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
      *  - a formatted string in the timezone and format currently set on the EE_Datetime_Field for the given field for
      *  NOW
      *  - or a unix timestamp (equivalent to time())
-     *
+     * Note: When requesting a formatted string, if the date or time format doesn't include seconds, for example,
+     * the time returned, because it uses that format, will also NOT include seconds. For this reason, if you want
+     * the time returned to be the current time down to the exact second, set $timestamp to true.
      * @since 4.6.x
      * @param string $field_name       The field the current time is needed for.
      * @param bool   $timestamp        True means to return a unix timestamp. Otherwise a
@@ -1913,9 +1915,29 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
         //to get around this, we first do a SELECT, get all the IDs, and then run another query
         //to delete them
         $items_for_deletion = $this->_get_all_wpdb_results($query_params);
-        $deletion_where = $this->_setup_ids_for_delete($items_for_deletion, $allow_blocking);
-        if ($deletion_where) {
-            //echo "objects for deletion:";var_dump($objects_for_deletion);
+        $columns_and_ids_for_deleting = $this->_get_ids_for_delete($items_for_deletion, $allow_blocking);
+        $deletion_where_query_part = $this->_build_query_part_for_deleting_from_columns_and_values(
+            $columns_and_ids_for_deleting
+        );
+        /**
+         * Allows client code to act on the items being deleted before the query is actually executed.
+         *
+         * @param EEM_Base $this  The model instance being acted on.
+         * @param array    $query_params  The incoming array of query parameters influencing what gets deleted.
+         * @param bool     $allow_blocking @see param description in method phpdoc block.
+         * @param array $columns_and_ids_for_deleting       An array indicating what entities will get removed as
+         *                                                  derived from the incoming query parameters.
+         *                                                  @see details on the structure of this array in the phpdocs
+         *                                                  for the `_get_ids_for_delete_method`
+         *
+         */
+        do_action('AHEE__EEM_Base__delete__before_query',
+            $this,
+            $query_params,
+            $allow_blocking,
+            $columns_and_ids_for_deleting
+        );
+        if ($deletion_where_query_part) {
             $model_query_info = $this->_create_model_query_info_carrier($query_params);
             $table_aliases = array_keys($this->_tables);
             $SQL = "DELETE "
@@ -1923,21 +1945,47 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
                    . " FROM "
                    . $model_query_info->get_full_join_sql()
                    . " WHERE "
-                   . $deletion_where;
-            //		/echo "delete sql:$SQL";
+                   . $deletion_where_query_part;
             $rows_deleted = $this->_do_wpdb_query('query', array($SQL));
         } else {
             $rows_deleted = 0;
         }
-        //and lastly make sure those items are removed from the entity map; if they could be put into it at all
-        if ($this->has_primary_key_field()) {
-            foreach ($items_for_deletion as $item_for_deletion_row) {
-                $pk_value = $item_for_deletion_row[$this->get_primary_key_field()->get_qualified_column()];
-                if (isset($this->_entity_map[EEM_Base::$_model_query_blog_id][$pk_value])) {
-                    unset($this->_entity_map[EEM_Base::$_model_query_blog_id][$pk_value]);
+
+        //Next, make sure those items are removed from the entity map; if they could be put into it at all; and if
+        //there was no error with the delete query.
+        if ($this->has_primary_key_field()
+            && $rows_deleted !== false
+            && isset($columns_and_ids_for_deleting[$this->get_primary_key_field()->get_qualified_column()])
+        ) {
+            $ids_for_removal = $columns_and_ids_for_deleting[$this->get_primary_key_field()->get_qualified_column()];
+            foreach ($ids_for_removal as $id) {
+                if (isset($this->_entity_map[EEM_Base::$_model_query_blog_id][$id])) {
+                    unset($this->_entity_map[EEM_Base::$_model_query_blog_id][$id]);
                 }
             }
+
+            // delete any extra meta attached to the deleted entities but ONLY if this model is not an instance of
+            //`EEM_Extra_Meta`.  In other words we want to prevent recursion on EEM_Extra_Meta::delete_permanently calls
+            //unnecessarily.  It's very unlikely that users will have assigned Extra Meta to Extra Meta
+            // (although it is possible).
+            //Note this can be skipped by using the provided filter and returning false.
+            if (apply_filters(
+                'FHEE__EEM_Base__delete_permanently__dont_delete_extra_meta_for_extra_meta',
+                ! $this instanceof EEM_Extra_Meta,
+                $this
+            )) {
+                EEM_Extra_Meta::instance()->delete_permanently(array(
+                    0 => array(
+                        'EXM_type' => $this->get_this_model_name(),
+                        'OBJ_ID'   => array(
+                            'IN',
+                            $ids_for_removal
+                        )
+                    )
+                ));
+            }
         }
+
         /**
          * Action called just after performing a real deletion query. Although at this point the
          * items should have been deleted
@@ -1946,7 +1994,7 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
          * @param array    $query_params @see EEM_Base::get_all()
          * @param int      $rows_deleted
          */
-        do_action('AHEE__EEM_Base__delete__end', $this, $query_params, $rows_deleted);
+        do_action('AHEE__EEM_Base__delete__end', $this, $query_params, $rows_deleted, $columns_and_ids_for_deleting);
         return $rows_deleted;//how many supposedly got deleted
     }
 
@@ -2004,91 +2052,109 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
     }
 
 
-
     /**
-     * This sets up our delete where sql and accounts for if we have secondary tables that will have rows deleted as
-     * well.
-     *
-     * @param  array  $objects_for_deletion This should be the values returned by $this->_get_all_wpdb_results()
-     * @param boolean $allow_blocking       if TRUE, matched objects will only be deleted if there is no related model
-     *                                      info that blocks it (ie, there' sno other data that depends on this data);
-     *                                      if false, deletes regardless of other objects which may depend on it. Its
-     *                                      generally advisable to always leave this as TRUE, otherwise you could
-     *                                      easily corrupt your DB
+     * Builds the columns and values for items to delete from the incoming $row_results_for_deleting array.
+     * @param array $row_results_for_deleting
+     * @param bool  $allow_blocking
+     * @return array   The shape of this array depends on whether the model `has_primary_key_field` or not.  If the
+     *                 model DOES have a primary_key_field, then the array will be a simple single dimension array where
+     *                 the key is the fully qualified primary key column and the value is an array of ids that will be
+     *                 deleted. Example:
+     *                      array('Event.EVT_ID' => array( 1,2,3))
+     *                 If the model DOES NOT have a primary_key_field, then the array will be a two dimensional array
+     *                 where each element is a group of columns and values that get deleted. Example:
+     *                      array(
+     *                          0 => array(
+     *                              'Term_Relationship.object_id' => 1
+     *                              'Term_Relationship.term_taxonomy_id' => 5
+     *                          ),
+     *                          1 => array(
+     *                              'Term_Relationship.object_id' => 1
+     *                              'Term_Relationship.term_taxonomy_id' => 6
+     *                          )
+     *                      )
      * @throws EE_Error
-     * @return string    everything that comes after the WHERE statement.
      */
-    protected function _setup_ids_for_delete($objects_for_deletion, $allow_blocking = true)
+    protected function _get_ids_for_delete(array $row_results_for_deleting, $allow_blocking = true)
     {
+        $ids_to_delete_indexed_by_column = array();
         if ($this->has_primary_key_field()) {
             $primary_table = $this->_get_main_table();
             $other_tables = $this->_get_other_tables();
-            $deletes = $query = array();
-            foreach ($objects_for_deletion as $delete_object) {
-                //before we mark this object for deletion,
-                //make sure there's no related objects blocking its deletion (if we're checking)
+            $ids_to_delete_indexed_by_column = $query = array();
+            foreach ($row_results_for_deleting as $item_to_delete) {
+                //before we mark this item for deletion,
+                //make sure there's no related entities blocking its deletion (if we're checking)
                 if (
                     $allow_blocking
                     && $this->delete_is_blocked_by_related_models(
-                        $delete_object[$primary_table->get_fully_qualified_pk_column()]
+                        $item_to_delete[$primary_table->get_fully_qualified_pk_column()]
                     )
                 ) {
                     continue;
                 }
                 //primary table deletes
-                if (isset($delete_object[$primary_table->get_fully_qualified_pk_column()])) {
-                    $deletes[$primary_table->get_fully_qualified_pk_column()][] = $delete_object[$primary_table->get_fully_qualified_pk_column()];
-                }
-                //other tables
-                if (! empty($other_tables)) {
-                    foreach ($other_tables as $ot) {
-                        //first check if we've got the foreign key column here.
-                        if (isset($delete_object[$ot->get_fully_qualified_fk_column()])) {
-                            $deletes[$ot->get_fully_qualified_pk_column()][] = $delete_object[$ot->get_fully_qualified_fk_column()];
-                        }
-                        // wait! it's entirely possible that we'll have a the primary key
-                        // for this table in here, if it's a foreign key for one of the other secondary tables
-                        if (isset($delete_object[$ot->get_fully_qualified_pk_column()])) {
-                            $deletes[$ot->get_fully_qualified_pk_column()][] = $delete_object[$ot->get_fully_qualified_pk_column()];
-                        }
-                        // finally, it is possible that the fk for this table is found
-                        // in the fully qualified pk column for the fk table, so let's see if that's there!
-                        if (isset($delete_object[$ot->get_fully_qualified_pk_on_fk_table()])) {
-                            $deletes[$ot->get_fully_qualified_pk_column()][] = $delete_object[$ot->get_fully_qualified_pk_column()];
-                        }
-                    }
+                if (isset($item_to_delete[$primary_table->get_fully_qualified_pk_column()])) {
+                    $ids_to_delete_indexed_by_column[$primary_table->get_fully_qualified_pk_column()][] =
+                        $item_to_delete[$primary_table->get_fully_qualified_pk_column()];
                 }
             }
-            //we should have deletes now, so let's just go through and setup the where statement
-            foreach ($deletes as $column => $values) {
-                //make sure we have unique $values;
-                $values = array_unique($values);
-                $query[] = $column . ' IN(' . implode(",", $values) . ')';
-            }
-            return ! empty($query) ? implode(' AND ', $query) : '';
         } elseif (count($this->get_combined_primary_key_fields()) > 1) {
-            $ways_to_identify_a_row = array();
             $fields = $this->get_combined_primary_key_fields();
-            //note: because there' sno primary key, that means nothing else  can be pointing to this model, right?
-            foreach ($objects_for_deletion as $delete_object) {
-                $values_for_each_cpk_for_a_row = array();
+            foreach ($row_results_for_deleting as $item_to_delete) {
+                $ids_to_delete_indexed_by_column_for_row = array();
                 foreach ($fields as $cpk_field) {
                     if ($cpk_field instanceof EE_Model_Field_Base) {
-                        $values_for_each_cpk_for_a_row[] = $cpk_field->get_qualified_column()
-                                                           . "="
-                                                           . $delete_object[$cpk_field->get_qualified_column()];
+                        $ids_to_delete_indexed_by_column_for_row[$cpk_field->get_qualified_column()] =
+                            $item_to_delete[$cpk_field->get_qualified_column()];
                     }
                 }
-                $ways_to_identify_a_row[] = "(" . implode(" AND ", $values_for_each_cpk_for_a_row) . ")";
+                $ids_to_delete_indexed_by_column[] = $ids_to_delete_indexed_by_column_for_row;
             }
-            return implode(" OR ", $ways_to_identify_a_row);
         } else {
             //so there's no primary key and no combined key...
             //sorry, can't help you
             throw new EE_Error(sprintf(__("Cannot delete objects of type %s because there is no primary key NOR combined key",
                 "event_espresso"), get_class($this)));
         }
+        return $ids_to_delete_indexed_by_column;
     }
+
+
+    /**
+     * This receives an array of columns and values set to be deleted (as prepared by _get_ids_for_delete) and prepares
+     * the corresponding query_part for the query performing the delete.
+     *
+     * @param array $ids_to_delete_indexed_by_column @see _get_ids_for_delete for how this array might be shaped.
+     * @return string
+     * @throws EE_Error
+     */
+    protected function _build_query_part_for_deleting_from_columns_and_values(array $ids_to_delete_indexed_by_column) {
+        $query_part = '';
+        if (empty($ids_to_delete_indexed_by_column)) {
+            return $query_part;
+        } elseif ($this->has_primary_key_field()) {
+            $query = array();
+            foreach ($ids_to_delete_indexed_by_column as $column => $ids) {
+                //make sure we have unique $ids
+                $ids = array_unique($ids);
+                $query[] = $column . ' IN(' . implode(',', $ids) . ')';
+            }
+            $query_part = ! empty($query) ? implode(' AND ', $query) : $query_part;
+        } elseif (count($this->get_combined_primary_key_fields()) > 1) {
+            $ways_to_identify_a_row = array();
+            foreach ($ids_to_delete_indexed_by_column as $ids_to_delete_indexed_by_column_for_each_row) {
+                $values_for_each_combined_primary_key_for_a_row = array();
+                foreach ($ids_to_delete_indexed_by_column_for_each_row as $column => $id) {
+                    $values_for_each_combined_primary_key_for_a_row[] = $column . '=' . $id;
+                }
+                $ways_to_identify_a_row[] = '(' . implode(' AND ', $values_for_each_combined_primary_key_for_a_row);
+            }
+            $query_part = implode(' OR ', $ways_to_identify_a_row);
+        }
+        return $query_part;
+    }
+    
 
 
 
@@ -4708,12 +4774,12 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
 
 
     /**
-     * Gets the actual table for the table alias
+     * Gets the table name (including $wpdb->prefix) for the table alias
      *
      * @param string $table_alias eg Event, Event_Meta, Registration, Transaction, but maybe
      *                            a table alias with a model chain prefix, like 'Venue__Event_Venue___Event_Meta'.
      *                            Either one works
-     * @return EE_Table_Base
+     * @return string
      */
     public function get_table_for_alias($table_alias)
     {

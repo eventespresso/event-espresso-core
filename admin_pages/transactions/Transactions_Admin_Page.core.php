@@ -480,6 +480,10 @@ class Transactions_Admin_Page extends EE_Admin_Page
                     'view_registration' => array(
                         'class' => 'dashicons dashicons-clipboard',
                         'desc'  => esc_html__('View Registration Details', 'event_espresso')
+                    ),
+                    'payment_overview_link' => array(
+                        'class' => 'dashicons dashicons-money',
+                        'desc' => esc_html__('Make Payment on Frontend', 'event_espresso')
                     )
                 )
             )

@@ -605,6 +605,9 @@ class EE_Dependency_Map
             'EventEspresso\core\services\cache\PostRelatedCacheManager'                                                   => array(
                 'EventEspresso\core\services\cache\TransientCacheStorage' => EE_Dependency_Map::load_from_cache,
             ),
+            'EE_Module_Request_Router' => array(
+                'EE_Request' => EE_Dependency_Map::load_from_cache,
+            ),
         );
     }
 
