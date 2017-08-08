@@ -1,6 +1,6 @@
-<?php if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
+<?php
+
+defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed');
 
 /**
  * EEH_URL helper
@@ -27,11 +27,16 @@ class EEH_URL
     public static function add_query_args_and_nonce($args = array(), $url = '', $exclude_nonce = false)
     {
         if (empty($url)) {
-            $user_msg = __('An error occurred. A URL is a required parameter for the add_query_args_and_nonce method.',
-                'event_espresso');
-            $dev_msg  = $user_msg . "\n" . sprintf(
-                    __('In order to dynamically generate nonces for your actions, you need to supply a valid URL as a second parameter for the %s::add_query_args_and_nonce method.',
-                        'event_espresso'),
+            $user_msg = __(
+                'An error occurred. A URL is a required parameter for the add_query_args_and_nonce method.',
+                'event_espresso'
+            );
+            $dev_msg  = $user_msg . "\n"
+                . sprintf(
+                    __(
+                        'In order to dynamically generate nonces for your actions, you need to supply a valid URL as a second parameter for the %s::add_query_args_and_nonce method.',
+                        'event_espresso'
+                    ),
                     __CLASS__
                 );
             EE_Error::add_error($user_msg . '||' . $dev_msg, __FILE__, __FUNCTION__, __LINE__);
@@ -39,11 +44,19 @@ class EEH_URL
         // check that an action exists and add nonce
         if (! $exclude_nonce) {
             if (isset($args['action']) && ! empty($args['action'])) {
-                $args = array_merge($args,
-                    array($args['action'] . '_nonce' => wp_create_nonce($args['action'] . '_nonce')));
+                $args = array_merge(
+                    $args,
+                    array(
+                        $args['action'] . '_nonce' => wp_create_nonce($args['action'] . '_nonce')
+                    )
+                );
             } else {
-                $args = array_merge($args,
-                    array('action' => 'default', 'default_nonce' => wp_create_nonce('default_nonce')));
+                $args = array_merge(
+                    $args,
+                    array(
+                        'action' => 'default', 'default_nonce' => wp_create_nonce('default_nonce')
+                    )
+                );
             }
         }
 
@@ -53,7 +66,6 @@ class EEH_URL
             : $args;
 
         return add_query_arg($args, $url);
-
     }
 
 
@@ -62,15 +74,21 @@ class EEH_URL
      * Checking via GET because HEAD requests are blocked on some server configurations.
      *
      * @param string  $url
-     * @param boolean $sslverify whether we care if the SSL certificate for the requested site is setup properly
+     * @param array $args  the arguments that should be passed through to the wp_remote_request call.
      * @return boolean
      */
     public static function remote_file_exists($url, $args = array())
     {
-        $results = wp_remote_request($url, array_merge(array(
-            'method'      => 'GET',
-            'redirection' => 1,
-        ), $args));
+        $results = wp_remote_request(
+            $url,
+            array_merge(
+                array(
+                    'method'      => 'GET',
+                    'redirection' => 1,
+                ),
+                $args
+            )
+        );
         if (! $results instanceof WP_Error &&
             isset($results['response']) &&
             isset($results['response']['code']) &&
@@ -163,7 +181,8 @@ class EEH_URL
      */
     public static function prevent_prefetching()
     {
-        // prevent browsers from prefetching of the rel='next' link, because it may contain content that interferes with the registration process
+        // prevent browsers from prefetching of the rel='next' link, because it may contain content that interferes
+        // with the registration process
         remove_action('wp_head', 'adjacent_posts_rel_link_wp_head');
     }
 
@@ -228,7 +247,4 @@ class EEH_URL
         }
         return $url;
     }
-
-
 }
-// End of file EEH_URL.helper.php
