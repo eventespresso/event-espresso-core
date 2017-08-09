@@ -182,7 +182,7 @@ class TicketSelectorRowStandard extends TicketSelectorRow
             if ($this->max_attendees === 1) {
                 // only ONE attendee is allowed to register at a time
                 $ticket_selector_row_html .= $this->onlyOneAttendeeCanRegister();
-            } else if ($this->max > 0) {
+            } elseif ($this->max > 0) {
                 $ticket_selector_row_html .= $this->ticketQuantitySelector();
             }
         }
