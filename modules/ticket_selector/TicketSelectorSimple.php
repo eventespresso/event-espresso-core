@@ -66,8 +66,7 @@ class TicketSelectorSimple extends TicketSelector
             $this->ticket,
             $this->max_attendees,
             $this->template_args['date_format'],
-            $this->template_args['event_status'],
-            1
+            $this->template_args['event_status']
         );
         $this->template_args['TKT_ID'] = $this->ticket->ID();
         $ticket_selector_row->setupTicketStatusDisplay();
