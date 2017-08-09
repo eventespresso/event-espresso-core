@@ -4,9 +4,7 @@ namespace EventEspresso\core\services\loaders;
 
 use Closure;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
-use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\services\collections\CollectionInterface;
-use EventEspresso\core\services\container\exceptions\ServiceNotFoundException;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -96,8 +94,6 @@ class CachingLoader extends LoaderDecorator
      * @param array  $arguments
      * @param bool   $shared
      * @return mixed
-     * @throws InvalidEntityException
-     * @throws ServiceNotFoundException
      */
     public function load($fqcn, $arguments = array(), $shared = true)
     {
@@ -120,7 +116,9 @@ class CachingLoader extends LoaderDecorator
             return $this->cache->get($identifier);
         }
         $object = $this->loader->load($fqcn, $arguments, $shared);
-        $this->cache->add($object, $identifier);
+        if($object instanceof $fqcn){
+            $this->cache->add($object, $identifier);
+        }
         return $object;
     }
 
@@ -131,7 +129,7 @@ class CachingLoader extends LoaderDecorator
      */
     public function reset()
     {
-        $this->cache->detachAll();
+        $this->cache->trashAndDetachAll();
         $this->loader->reset();
     }
 
