@@ -1588,7 +1588,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         if ($attendee instanceof EE_Attendee
             && EE_Registry::instance()->CAP->current_user_can(
                 'ee_edit_registration',
-                'edit-reg-questions-mbox'
+                'edit-reg-questions-mbox',
+                $this->_registration->ID()
             )
         ) {
             add_meta_box(
