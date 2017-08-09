@@ -115,7 +115,7 @@ abstract class TicketSelectorRow
         $date_format,
         $event_status,
         $required_ticket_sold_out = false,
-        $total_tickets
+        $total_tickets = 1
     ) {
         $this->ticket = $ticket;
         $this->max_attendees = $max_attendees;
@@ -151,35 +151,35 @@ abstract class TicketSelectorRow
         switch ($this->ticket_status_id) {
             // sold_out
             case EE_Ticket::sold_out :
-                $ticket_status = 'ticket-sales-sold-out';
+                $ticket_status_class = 'ticket-sales-sold-out';
                 $this->status_class = 'ticket-sales-sold-out lt-grey-text';
                 break;
             // expired
             case EE_Ticket::expired :
-                $ticket_status = 'ticket-sales-expired';
+                $ticket_status_class = 'ticket-sales-expired';
                 $this->status_class = 'ticket-sales-expired lt-grey-text';
                 break;
             // archived
             case EE_Ticket::archived :
-                $ticket_status = 'archived-ticket';
+                $ticket_status_class = 'archived-ticket';
                 $this->status_class = 'archived-ticket hidden';
                 break;
             // pending
             case EE_Ticket::pending :
-                $ticket_status = 'ticket-pending';
+                $ticket_status_class = 'ticket-pending';
                 $this->status_class = 'ticket-pending';
                 break;
             // on sale
             case EE_Ticket::onsale :
             default :
-                $ticket_status = 'ticket-on-sale';
+                $ticket_status_class = 'ticket-on-sale';
                 $this->status_class = 'ticket-on-sale';
                 break;
         }
         $this->ticket_status_html = EEH_HTML::span(
             $this->ticket->ticket_status(true, ($remaining > 0)),
-            "{$ticket_status}-{$this->ticket->ID()}",
-            $ticket_status
+            "{$ticket_status_class}-{$this->ticket->ID()}",
+            $ticket_status_class
         );
     }
 
@@ -206,16 +206,16 @@ abstract class TicketSelectorRow
         if ($this->max_attendees === 0) {
             // registration is CLOSED because admin set max attendees to ZERO
             $this->ticket_status_display = $this->registrationClosed();
-        } else if ($this->ticket_status_id === EE_Ticket::sold_out || $remaining === 0) {
+        } elseif ($this->ticket_status_id === EE_Ticket::sold_out || $remaining === 0) {
             // SOLD OUT - no tickets remaining
             $this->ticket_status_display = $this->ticketsSoldOut();
-        } else if ($this->ticket_status_id === EE_Ticket::expired || $this->ticket_status_id === EE_Ticket::archived) {
+        } elseif ($this->ticket_status_id === EE_Ticket::expired || $this->ticket_status_id === EE_Ticket::archived) {
             // expired or archived ticket
             $this->ticket_status_display = $this->ticket_status_html;
-        } else if ($this->ticket_status_id === EE_Ticket::pending) {
+        } elseif ($this->ticket_status_id === EE_Ticket::pending) {
             // ticket not on sale yet
             $this->ticket_status_display = $this->ticketsSalesPending();
-        } else if ($this->ticket->min() > $remaining) {
+        } elseif ($this->ticket->min() > $remaining) {
             // min qty purchasable is less than tickets available
             $this->ticket_status_display = $this->notEnoughTicketsAvailable();
         }
@@ -336,7 +336,7 @@ abstract class TicketSelectorRow
 
     /**
      * Allow plugins to hook in and abort the generation and display of this row to do
-     * something else if they want.
+     * something elseif they want.
      * For an addon to abort things, all they have to do is register a filter with this hook, and
      * return a value that is NOT false.  Whatever is returned gets echoed instead of the
      * current row.
@@ -354,7 +354,8 @@ abstract class TicketSelectorRow
             $this->ticket_price,
             $this->ticket_bundle,
             $this->ticket_status_html,
-            $this->status_class
+            $this->status_class,
+            $this
         );
     }
 
@@ -362,7 +363,7 @@ abstract class TicketSelectorRow
 
     /**
      * Allow plugins to hook in and abort the generation and display of the contents of this
-     * row to do something else if they want.
+     * row to do something elseif they want.
      * For an addon to abort things, all they have to do is register a filter with this hook, and
      * return a value that is NOT false.  Whatever is returned gets echoed instead of the
      * current row.
@@ -381,7 +382,8 @@ abstract class TicketSelectorRow
             $this->ticket_price,
             $this->ticket_bundle,
             $this->ticket_status_html,
-            $this->status_class
+            $this->status_class,
+            $this
         );
     }
 
