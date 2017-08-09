@@ -2,11 +2,13 @@
 
 namespace EventEspresso\core\services\loaders;
 
+use EE_Error;
 use EE_Registry;
 use EventEspresso\core\services\container\CoffeeMaker;
 use EventEspresso\core\services\container\CoffeeShop;
 use EventEspresso\core\services\container\exceptions\ServiceNotFoundException;
 use InvalidArgumentException;
+use ReflectionException;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -57,7 +59,9 @@ class CoreLoader implements LoaderDecoratorInterface
      * @param array  $arguments
      * @param bool   $shared
      * @return mixed
+     * @throws EE_Error
      * @throws ServiceNotFoundException
+     * @throws ReflectionException
      */
     public function load($fqcn, $arguments = array(), $shared = true)
     {
@@ -73,6 +77,9 @@ class CoreLoader implements LoaderDecoratorInterface
 
     /**
      * calls reset() on generator if method exists
+     *
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function reset()
     {
