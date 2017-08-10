@@ -3,7 +3,6 @@
 use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
 use EventEspresso\core\interfaces\ResettableInterface;
 use EventEspresso\core\services\loaders\LoaderInterface;
-use EventEspresso\core\services\shortcodes\ShortcodesManager;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 
@@ -252,11 +251,11 @@ final class EE_System implements ResettableInterface
      */
     public function loadCapabilities()
     {
-        $this->registry->load_core('EE_Capabilities');
+        $this->loader->getShared('EE_Capabilities');
         add_action(
             'AHEE__EE_Capabilities__init_caps__before_initialization',
             function() {
-                EE_Registry::instance()->load_lib('Payment_Method_Manager');
+                $this->loader->getShared('Payment_Method_Manager');
             }
         );
     }
@@ -273,19 +272,18 @@ final class EE_System implements ResettableInterface
      */
     public function loadCommandBus()
     {
-        $this->registry->create(
+        $this->loader->getShared(
             'CommandBusInterface',
             array(
                 null,
                 apply_filters(
                     'FHEE__EE_Load_Espresso_Core__handle_request__CommandBus_middleware',
                     array(
-                        $this->registry->create('CapChecker'),
-                        $this->registry->create('AddActionHook'),
+                        $this->loader->getShared('EventEspresso\core\services\commands\middleware\CapChecker'),
+                        $this->loader->getShared('EventEspresso\core\services\commands\middleware\AddActionHook'),
                     )
                 ),
-            ),
-            true
+            )
         );
     }
 
@@ -882,9 +880,12 @@ final class EE_System implements ResettableInterface
     {
         try {
             // load, register, and add shortcodes the new way
-            new ShortcodesManager(
-            // and the old way, but we'll put it under control of the new system
-                EE_Config::getLegacyShortcodesManager()
+            $this->loader->getShared(
+                'EventEspresso\core\services\shortcodes\ShortcodesManager',
+                array(
+                    // and the old way, but we'll put it under control of the new system
+                    EE_Config::getLegacyShortcodesManager()
+                )
             );
         } catch (Exception $exception) {
             new ExceptionStackTraceDisplay($exception);
@@ -1121,7 +1122,7 @@ final class EE_System implements ResettableInterface
      */
     public function addEspressoToolbar()
     {
-        $this->registry->create(
+        $this->loader->getShared(
             'EventEspresso\core\domain\services\admin\AdminToolBar',
             array($this->registry->CAP)
         );

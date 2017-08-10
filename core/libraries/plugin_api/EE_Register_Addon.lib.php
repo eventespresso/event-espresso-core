@@ -405,6 +405,9 @@ class EE_Register_Addon implements EEI_Plugin_API
             'shortcode_paths'       => isset($setup_args['shortcode_paths'])
                 ? (array)$setup_args['shortcode_paths']
                 : array(),
+            'shortcode_fqcns' => isset($setup_args['shortcode_fqcns'])
+                ? (array) $setup_args['shortcode_fqcns']
+                : array(),
             // array of full server paths to any WP_Widgets used by the addon
             'widget_paths'          => isset($setup_args['widget_paths'])
                 ? (array)$setup_args['widget_paths']
@@ -788,10 +791,19 @@ class EE_Register_Addon implements EEI_Plugin_API
      */
     private static function _register_shortcodes($addon_name)
     {
-        if (! empty(self::$_settings[$addon_name]['shortcode_paths'])) {
+        if (! empty(self::$_settings[$addon_name]['shortcode_paths'])
+            || ! empty(self::$_settings[$addon_name]['shortcode_fqcns'])
+        ) {
             EE_Register_Shortcode::register(
                 $addon_name,
-                array('shortcode_paths' => self::$_settings[$addon_name]['shortcode_paths'])
+                array(
+                    'shortcode_paths' => isset(self::$_settings[$addon_name]['shortcode_paths'])
+                        ? self::$_settings[$addon_name]['shortcode_paths']
+                        : array(),
+                    'shortcode_fqcns' => isset(self::$_settings[$addon_name]['shortcode_fqcns'])
+                        ? self::$_settings[$addon_name]['shortcode_fqcns']
+                        : array()
+                )
             );
         }
     }
@@ -1006,7 +1018,9 @@ class EE_Register_Addon implements EEI_Plugin_API
                 // add to list of modules to be registered
                 EE_Register_Module::deregister($addon_name);
             }
-            if (! empty(self::$_settings[$addon_name]['shortcode_paths'])) {
+            if (! empty(self::$_settings[$addon_name]['shortcode_paths'])
+                || ! empty(self::$_settings[$addon_name]['shortcode_fqcns'])
+            ) {
                 // add to list of shortcodes to be registered
                 EE_Register_Shortcode::deregister($addon_name);
             }
