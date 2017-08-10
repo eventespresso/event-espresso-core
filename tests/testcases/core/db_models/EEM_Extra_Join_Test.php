@@ -49,6 +49,7 @@ class EEM_Extra_Join_Test extends EE_UnitTestCase
     }
 
 
+
     /**
      * @param $pm_relations
      * @return mixed
@@ -60,18 +61,18 @@ class EEM_Extra_Join_Test extends EE_UnitTestCase
     }
 
 
+
     /**
      * @group 9113
      */
     public function test_get_related()
     {
-        $e  = $this->new_model_obj_with_dependencies('Event');
+        $e = $this->new_model_obj_with_dependencies('Event');
         $pm = $this->new_model_obj_with_dependencies('Payment_Method', array('PMD_type' => 'Invoice'));
         //add a few extra events and payment methods, just to make sure we are
         //only relating the things we intended
         $this->new_model_obj_with_dependencies('Event');
         $this->new_model_obj_with_dependencies('Payment_Method', array('PMD_type' => 'Invoice'));
-
         $this->new_model_obj_with_dependencies(
             'Extra_Join',
             array(
@@ -85,23 +86,26 @@ class EEM_Extra_Join_Test extends EE_UnitTestCase
         $this->assertEquals(array($e->ID() => $e), $pm->get_many_related('Event'));
     }
 
+
     /**
      * @group 9113
      */
     public function test_add()
     {
-        $e  = $this->new_model_obj_with_dependencies('Event');
+        $e = $this->new_model_obj_with_dependencies('Event');
         $pm = $this->new_model_obj_with_dependencies('Payment_Method', array('PMD_type' => 'Invoice'));
         $e->_add_relation_to($pm, 'Payment_Method');
         $this->assertEquals(array($pm->ID() => $pm), $e->get_many_related('Payment_Method'));
     }
+
+
 
     /**
      * @group 9113
      */
     public function test_delete()
     {
-        $e  = $this->new_model_obj_with_dependencies('Event');
+        $e = $this->new_model_obj_with_dependencies('Event');
         $pm = $this->new_model_obj_with_dependencies('Payment_Method', array('PMD_type' => 'Invoice'));
         $e->_add_relation_to($pm, 'Payment_Method');
         $this->assertEquals(array($pm->ID() => $pm), $e->get_many_related('Payment_Method'));
