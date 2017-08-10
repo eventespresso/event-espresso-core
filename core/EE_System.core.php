@@ -2,6 +2,7 @@
 
 use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
 use EventEspresso\core\interfaces\ResettableInterface;
+use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
@@ -255,7 +256,7 @@ final class EE_System implements ResettableInterface
         add_action(
             'AHEE__EE_Capabilities__init_caps__before_initialization',
             function() {
-                $this->loader->getShared('Payment_Method_Manager');
+                LoaderFactory::getLoader()->getShared('Payment_Method_Manager');
             }
         );
     }
