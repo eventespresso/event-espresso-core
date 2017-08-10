@@ -900,7 +900,8 @@ final class EE_System implements ResettableInterface
         add_action('init', array($this, 'initialize'), 10);
         add_action('init', array($this, 'initialize_last'), 100);
         add_action('admin_bar_menu', array($this, 'espresso_toolbar_items'), 100);
-        if (is_admin() && apply_filters('FHEE__EE_System__brew_espresso__load_pue', true)) {
+        // NOTE - WP_CLI is not officially supported, the following is only to allow basic updating and comes with no warranty
+        if ( ( is_admin() || ( defined('WP_CLI') && WP_CLI ) ) && apply_filters('FHEE__EE_System__brew_espresso__load_pue', true)) {
             // pew pew pew
             $this->registry->load_core('PUE');
             do_action('AHEE__EE_System__brew_espresso__after_pue_init');
