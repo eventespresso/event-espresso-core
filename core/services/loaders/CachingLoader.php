@@ -146,7 +146,7 @@ class CachingLoader extends LoaderDecorator
     {
         $identifier = '';
         foreach ($arguments as $argument) {
-            switch ($argument) {
+            switch (true) {
                 case is_object($argument) :
                 case $argument instanceof Closure :
                     $identifier .= spl_object_hash($argument);
