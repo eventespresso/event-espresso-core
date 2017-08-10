@@ -2439,7 +2439,7 @@ abstract class EE_Base_Class
      * extra meta row was entered, false if not
      *
      * @param string  $meta_key
-     * @param string  $meta_value
+     * @param mixed   $meta_value
      * @param boolean $unique
      * @return boolean
      * @throws \EE_Error
@@ -2479,7 +2479,7 @@ abstract class EE_Base_Class
      * is specified, only deletes extra meta records with that value.
      *
      * @param string $meta_key
-     * @param string $meta_value
+     * @param mixed  $meta_value
      * @return int number of extra meta rows deleted
      * @throws \EE_Error
      */

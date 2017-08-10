@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\services\loaders;
 
+use Closure;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\services\collections\CollectionInterface;
 
@@ -110,7 +111,7 @@ class CachingLoader extends LoaderDecorator
             // so we don't want the core loader to cache anything, therefore caching is turned off
             return $this->loader->load($fqcn, $arguments, false);
         }
-        $identifier = md5($fqcn . serialize($arguments));
+        $identifier = md5($fqcn . $this->getIdentifierForArgument($arguments));
         if($this->cache->has($identifier)){
             return $this->cache->get($identifier);
         }
@@ -130,6 +131,35 @@ class CachingLoader extends LoaderDecorator
     {
         $this->cache->trashAndDetachAll();
         $this->loader->reset();
+    }
+
+
+
+    /**
+     * build a string representation of a class' arguments
+     * (mostly because Closures can't be serialized)
+     *
+     * @param array $arguments
+     * @return string
+     */
+    private function getIdentifierForArgument(array $arguments)
+    {
+        $identifier = '';
+        foreach ($arguments as $argument) {
+            switch (true) {
+                case is_object($argument) :
+                case $argument instanceof Closure :
+                    $identifier .= spl_object_hash($argument);
+                    break;
+                case is_array($argument) :
+                    $identifier .= $this->getIdentifierForArgument($argument);
+                    break;
+                default :
+                    $identifier .= $argument;
+                    break;
+            }
+        }
+        return $identifier;
     }
 
 

@@ -329,6 +329,7 @@ class EE_Registry implements ResettableInterface
                 EE_ADMIN,
                 EE_CPTS,
                 EE_CORE . 'data_migration_scripts' . DS,
+                EE_CORE . 'capabilities' . DS,
                 EE_CORE . 'request_stack' . DS,
                 EE_CORE . 'middleware' . DS,
             )

@@ -65,13 +65,12 @@ class CoreLoader implements LoaderDecoratorInterface
      */
     public function load($fqcn, $arguments = array(), $shared = true)
     {
-        if ($this->generator instanceof EE_Registry) {
+        if($this->generator instanceof EE_Registry) {
             return $this->generator->create($fqcn, $arguments, $shared);
         }
-        $shared = $shared
-            ? CoffeeMaker::BREW_SHARED
-            : CoffeeMaker::BREW_NEW;
+        $shared = $shared ? CoffeeMaker::BREW_SHARED : CoffeeMaker::BREW_NEW;
         return $this->generator->brew($fqcn, $arguments, $shared);
+
     }
 
 
