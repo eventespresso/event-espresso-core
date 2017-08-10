@@ -703,25 +703,26 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     /**
      * This function is a singleton method used to instantiate the Espresso_model object
      *
-     * @param string            $timezone string representing the timezone we want to set for returned Date Time Strings
-     *                                    (and any incoming timezone data that gets saved).
-     *                                    Note this just sends the timezone info to the date time model field objects.
-     *                                    Default is NULL
-     *                                    (and will be assumed using the set timezone in the 'timezone_string' wp option)
-     * @param ModelFieldFactory $model_field_factory
+     * @param string $timezone string representing the timezone we want to set for returned Date Time Strings
+     *                                (and any incoming timezone data that gets saved).
+     *                                Note this just sends the timezone info to the date time model field objects.
+     *                                Default is NULL
+     *                                (and will be assumed using the set timezone in the 'timezone_string' wp option)
      * @return static (as in the concrete child class)
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public static function instance($timezone = null, ModelFieldFactory $model_field_factory = null)
+    public static function instance($timezone = null)
     {
         // check if instance of Espresso_model already exists
         if (! static::$_instance instanceof static) {
-            $model_field_factory = self::getModelFieldFactory($model_field_factory);
             // instantiate Espresso_model
-            static::$_instance = new static($timezone, $model_field_factory);
+            static::$_instance = new static(
+                $timezone,
+                LoaderFactory::getLoader()->load('EventEspresso\core\services\orm\ModelFieldFactory')
+            );
         }
         //we might have a timezone set, let set_timezone decide what to do with it
         static::$_instance->set_timezone($timezone);
@@ -732,26 +733,9 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
 
 
     /**
-     * @param $model_field_factory
-     * @return ModelFieldFactory
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     */
-    private static function getModelFieldFactory($model_field_factory)
-    {
-        return $model_field_factory instanceof ModelFieldFactory
-            ? $model_field_factory
-            : LoaderFactory::getLoader()->load('EventEspresso\core\services\orm\ModelFieldFactory');
-    }
-
-
-
-    /**
      * resets the model and returns it
      *
-     * @param null | string          $timezone
-     * @param ModelFieldFactory|null $model_field_factory
+     * @param null | string $timezone
      * @return EEM_Base|null (if the model was already instantiated, returns it, with
      * @throws ReflectionException
      * all its properties reset; if it wasn't instantiated, returns null)
@@ -760,7 +744,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public static function reset($timezone = null, ModelFieldFactory $model_field_factory = null)
+    public static function reset($timezone = null)
     {
         if (static::$_instance instanceof EEM_Base) {
             //let's try to NOT swap out the current instance for a new one
@@ -777,8 +761,10 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                 }
             }
             //and then directly call its constructor again, like we would if we were creating a new one
-            $model_field_factory = self::getModelFieldFactory($model_field_factory);
-            static::$_instance->__construct($timezone, $model_field_factory);
+            static::$_instance->__construct(
+                $timezone,
+                LoaderFactory::getLoader()->load('EventEspresso\core\services\orm\ModelFieldFactory')
+            );
             return self::instance();
         }
         return null;
@@ -2174,7 +2160,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                     ), get_class($this)
                 )
             );
-        }    
+        }
         return $ids_to_delete_indexed_by_column;
     }
 
@@ -2212,7 +2198,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         }
         return $query_part;
     }
-    
+
 
 
 
