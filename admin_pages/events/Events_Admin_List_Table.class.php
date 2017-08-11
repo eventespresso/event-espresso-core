@@ -1,4 +1,8 @@
 <?php
+
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed');
 
 
@@ -20,6 +24,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
     private $_dtt;
 
 
+
     /**
      * Initial setup of data properties for the list table.
      */
@@ -28,6 +33,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
         $this->_data = $this->_admin_page->get_events($this->_per_page, $this->_current_page);
         $this->_all_data_count = $this->_admin_page->get_events(0, 0, true);
     }
+
 
 
     /**
@@ -67,6 +73,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
     }
 
 
+
     /**
      * @return array
      */
@@ -76,8 +83,13 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
     }
 
 
+
     /**
      * Setup of views properties.
+     *
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
      */
     protected function _add_view_counts()
     {
@@ -90,6 +102,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
             $this->_views['trash']['count'] = $this->_admin_page->total_trashed_events();
         }
     }
+
 
 
     /**
@@ -111,6 +124,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
     }
 
 
+
     /**
      * @param EE_Event $item
      * @return string
@@ -122,6 +136,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
                . $item->get_active_status()
                . '"></span>';
     }
+
 
 
     /**
@@ -146,6 +161,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
     }
 
 
+
     /**
      * @param EE_Event $item
      * @return mixed|string
@@ -159,10 +175,14 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
     }
 
 
+
     /**
      * @param EE_Event $item
      * @return string
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function column_name(EE_Event $item)
     {
@@ -190,12 +210,16 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
     }
 
 
+
     /**
      * Just a method for setting up the actions for the name column
      *
      * @param EE_Event $item
      * @return array array of actions
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function _column_name_action_setup(EE_Event $item)
     {
@@ -204,6 +228,9 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
             define('REG_ADMIN_URL', EVENTS_ADMIN_URL);
         }
         $actions = array();
+        $restore_event_link = '';
+        $delete_event_link = '';
+        $trash_event_link = '';
         if (EE_Registry::instance()->CAP->current_user_can(
             'ee_edit_event',
             'espresso_events_edit',
@@ -219,14 +246,15 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
                                . esc_html__('Edit', 'event_espresso')
                                . '</a>';
         }
-        if (EE_Registry::instance()->CAP->current_user_can(
+        if (
+            EE_Registry::instance()->CAP->current_user_can(
+                'ee_read_registrations',
+                'espresso_registrations_view_registration'
+            )
+            && EE_Registry::instance()->CAP->current_user_can(
                 'ee_read_event',
                 'espresso_registrations_view_registration',
                 $item->ID()
-            )
-            && EE_Registry::instance()->CAP->current_user_can(
-                'ee_read_registrations',
-                'espresso_registrations_view_registration'
             )
         ) {
             $attendees_query_args = array(
@@ -239,11 +267,13 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
                                     . esc_html__('Registrations', 'event_espresso')
                                     . '</a>';
         }
-        if (EE_Registry::instance()->CAP->current_user_can(
+        if (
+        EE_Registry::instance()->CAP->current_user_can(
             'ee_delete_event',
             'espresso_events_trash_event',
             $item->ID()
-        )) {
+        )
+        ) {
             $trash_event_query_args = array(
                 'action' => 'trash_event',
                 'EVT_ID' => $item->ID(),
@@ -253,11 +283,13 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
                 EVENTS_ADMIN_URL
             );
         }
-        if (EE_Registry::instance()->CAP->current_user_can(
+        if (
+        EE_Registry::instance()->CAP->current_user_can(
             'ee_delete_event',
             'espresso_events_restore_event',
             $item->ID()
-        )) {
+        )
+        ) {
             $restore_event_query_args = array(
                 'action' => 'restore_event',
                 'EVT_ID' => $item->ID(),
@@ -267,11 +299,13 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
                 EVENTS_ADMIN_URL
             );
         }
-        if (EE_Registry::instance()->CAP->current_user_can(
+        if (
+        EE_Registry::instance()->CAP->current_user_can(
             'ee_delete_event',
             'espresso_events_delete_event',
             $item->ID()
-        )) {
+        )
+        ) {
             $delete_event_query_args = array(
                 'action' => 'delete_event',
                 'EVT_ID' => $item->ID(),
@@ -286,45 +320,48 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
                            . ' title="' . esc_attr__('View Event', 'event_espresso') . '">'
                            . esc_html__('View', 'event_espresso')
                            . '</a>';
-        switch ($item->get('status')) {
-            case 'trash':
-                if (EE_Registry::instance()->CAP->current_user_can(
+        if ($item->get('status') === 'trash') {
+            if (EE_Registry::instance()->CAP->current_user_can(
+                'ee_delete_event',
+                'espresso_events_restore_event',
+                $item->ID()
+            )) {
+                $actions['restore_from_trash'] = '<a href="' . $restore_event_link . '"'
+                                                 . ' title="' . esc_attr__('Restore from Trash', 'event_espresso')
+                                                 . '">'
+                                                 . esc_html__('Restore from Trash', 'event_espresso')
+                                                 . '</a>';
+            }
+            if (
+                $item->count_related('Registration') === 0
+                && EE_Registry::instance()->CAP->current_user_can(
                     'ee_delete_event',
-                    'espresso_events_restore_event',
+                    'espresso_events_delete_event',
                     $item->ID()
-                )) {
-                    $actions['restore_from_trash'] = '<a href="' . $restore_event_link . '"'
-                                                     . ' title="' . esc_attr__('Restore from Trash', 'event_espresso')
-                                                     . '">'
-                                                     . esc_html__('Restore from Trash', 'event_espresso')
-                                                     . '</a>';
-                }
-                if ($item->count_related('Registration') === 0
-                    && EE_Registry::instance()->CAP->current_user_can(
-                        'ee_delete_event',
-                        'espresso_events_delete_event',
-                        $item->ID()
-                    )) {
-                    $actions['delete'] = '<a href="' . $delete_event_link . '"'
-                                         . ' title="' . esc_attr__('Delete Permanently', 'event_espresso') . '">'
-                                         . esc_html__('Delete Permanently', 'event_espresso')
-                                         . '</a>';
-                }
-                break;
-            default:
-                if (EE_Registry::instance()->CAP->current_user_can(
+                )
+            ) {
+                $actions['delete'] = '<a href="' . $delete_event_link . '"'
+                                     . ' title="' . esc_attr__('Delete Permanently', 'event_espresso') . '">'
+                                     . esc_html__('Delete Permanently', 'event_espresso')
+                                     . '</a>';
+            }
+        } else {
+            if (
+                EE_Registry::instance()->CAP->current_user_can(
                     'ee_delete_event',
                     'espresso_events_trash_event',
                     $item->ID()
-                )) {
-                    $actions['move to trash'] = '<a href="' . $trash_event_link . '"'
-                                                . ' title="' . esc_attr__('Trash Event', 'event_espresso') . '">'
-                                                . esc_html__('Trash', 'event_espresso')
-                                                . '</a>';
-                }
+                )
+            ) {
+                $actions['move to trash'] = '<a href="' . $trash_event_link . '"'
+                                            . ' title="' . esc_attr__('Trash Event', 'event_espresso') . '">'
+                                            . esc_html__('Trash', 'event_espresso')
+                                            . '</a>';
+            }
         }
         return $actions;
     }
+
 
 
     /**
@@ -350,6 +387,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
     }
 
 
+
     /**
      * @param EE_Event $item
      * @return string
@@ -362,6 +400,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
             ? $venue->name()
             : '';
     }
+
 
 
     /**
@@ -383,6 +422,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
             )
             : '';
     }
+
 
 
     /**
@@ -407,10 +447,14 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
     }
 
 
+
     /**
      * @param EE_Event $item
      * @return int|string
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function column_attendees(EE_Event $item)
     {
@@ -434,10 +478,14 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
     }
 
 
+
     /**
      * @param EE_Event $item
      * @return float
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function column_tkts_sold(EE_Event $item)
     {
@@ -445,10 +493,14 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
     }
 
 
+
     /**
      * @param EE_Event $item
      * @return string
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function column_actions(EE_Event $item)
     {
@@ -456,11 +508,11 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
         if (! defined('REG_ADMIN_URL')) {
             define('REG_ADMIN_URL', EVENTS_ADMIN_URL);
         }
-        $actionlinks = array();
+        $action_links = array();
         $view_link = get_permalink($item->ID());
-        $actionlinks[] = '<a href="' . $view_link . '"'
+        $action_links[] = '<a href="' . $view_link . '"'
                          . ' title="' . esc_attr__('View Event', 'event_espresso') . '" target="_blank">';
-        $actionlinks[] = '<div class="dashicons dashicons-search"></div></a>';
+        $action_links[] = '<div class="dashicons dashicons-search"></div></a>';
         if (EE_Registry::instance()->CAP->current_user_can(
             'ee_edit_event',
             'espresso_events_edit',
@@ -471,19 +523,19 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
                 'post'   => $item->ID(),
             );
             $edit_link = EE_Admin_Page::add_query_args_and_nonce($edit_query_args, EVENTS_ADMIN_URL);
-            $actionlinks[] = '<a href="' . $edit_link . '"'
+            $action_links[] = '<a href="' . $edit_link . '"'
                              . ' title="' . esc_attr__('Edit Event', 'event_espresso') . '">'
                              . '<div class="ee-icon ee-icon-calendar-edit"></div>'
                              . '</a>';
         }
-        if (EE_Registry::instance()->CAP->current_user_can(
+        if (
+            EE_Registry::instance()->CAP->current_user_can(
+                'ee_read_registrations',
+                'espresso_registrations_view_registration'
+            ) && EE_Registry::instance()->CAP->current_user_can(
                 'ee_read_event',
                 'espresso_registrations_view_registration',
                 $item->ID()
-            )
-            && EE_Registry::instance()->CAP->current_user_can(
-                'ee_read_registrations',
-                'espresso_registrations_view_registration'
             )
         ) {
             $attendees_query_args = array(
@@ -491,16 +543,20 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
                 'event_id' => $item->ID(),
             );
             $attendees_link = EE_Admin_Page::add_query_args_and_nonce($attendees_query_args, REG_ADMIN_URL);
-            $actionlinks[] = '<a href="' . $attendees_link . '"'
+            $action_links[] = '<a href="' . $attendees_link . '"'
                              . ' title="' . esc_attr__('View Registrants', 'event_espresso') . '">'
                              . '<div class="dashicons dashicons-groups"></div>'
                              . '</a>';
         }
-        $actionlinks = apply_filters(
+        $action_links = apply_filters(
             'FHEE__Events_Admin_List_Table__column_actions__action_links',
-            $actionlinks,
+            $action_links,
             $item
         );
-        return $this->_action_string(implode("\n\t", $actionlinks), $item, 'div');
+        return $this->_action_string(
+            implode("\n\t", $action_links),
+            $item,
+            'div'
+        );
     }
 }
