@@ -1814,14 +1814,14 @@ class Messages_Admin_Page extends EE_Admin_Page
             return null;
         }
     }
-    
-    
+
+
     /**
      * Retrieve and set the message preview for display.
      *
      * @param bool $send if TRUE then we are doing an actual TEST send with the results of the preview.
-     *
      * @return string
+     * @throws EE_Error
      */
     public function _preview_message($send = false)
     {
@@ -2404,6 +2404,30 @@ class Messages_Admin_Page extends EE_Admin_Page
                                 );
                             } else {
                                 $success = 1;
+                            }
+                        } else {
+                            //only do this logic if we don't have a MTP_ID for this field
+                            if (empty($this->_req_data['MTP_template_fields'][$template_field]['MTP_ID'])) {
+                                //this has already been through the template field validator and sanitized, so it will be
+                                //safe to insert this field.  Why insert?  This typically happens when we introduce a new
+                                //message template field in a messenger/message type and existing users don't have the
+                                //default setup for it.
+                                //@link https://events.codebasehq.com/projects/event-espresso/tickets/9465
+                                $updated = $MTP->insert($message_template_fields);
+                                if (is_wp_error($updated) || ! $updated) {
+                                    EE_Error::add_error(
+                                        sprintf(
+                                            esc_html__('%s field could not be updated.', 'event_espresso'),
+                                            $template_field
+                                        ),
+                                        __FILE__,
+                                        __FUNCTION__,
+                                        __LINE__
+                                    );
+                                    $success = 0;
+                                } else {
+                                    $success = 1;
+                                }
                             }
                         }
                         $action_desc = 'updated';
