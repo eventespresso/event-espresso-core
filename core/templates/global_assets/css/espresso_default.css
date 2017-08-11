@@ -54,6 +54,24 @@
     top: -2px;
 }
 
+@media screen and (max-width: 782px) {
+    #wpadminbar li#wp-admin-bar-espresso-toolbar {
+        display: block;
+    }
+
+    #wpadminbar li#wp-admin-bar-espresso-toolbar .ee-icon-ee-cup-thick:before {
+        color: #a0a5aa;
+        color: rgba(240, 245, 250, .6);
+        font-size: 40px !important;
+        position: relative;
+        top: 3px;
+        left: 4px;
+    }
+
+    #wpadminbar li#wp-admin-bar-espresso-toolbar:hover .ee-icon-ee-cup-thick:before {
+        color: #00b9eb;
+    }
+}
 .ee-icon-venue:before {
     /*content: "\e600";*/
     content: "\79";
