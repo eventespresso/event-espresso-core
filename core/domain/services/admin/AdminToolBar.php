@@ -521,7 +521,7 @@ class AdminToolBar
                         array(
                             'action'     => 'default',
                             'status'     => 'today',
-                            'reg_status' => EEM_Registration::status_id_pending_payment,
+                            '_reg_status' => EEM_Registration::status_id_pending_payment,
                         ),
                         $this->reg_admin_url
                     ),
