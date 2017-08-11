@@ -264,9 +264,10 @@ div.TB-ee-frame a {
 	font-family: 'dashicons' !important;
 }
 
-#toplevel_page_espresso_events div.wp-menu-image:before,#toplevel_page_espresso_maintenance_settings div.wp-menu-image:before, #wpadminbar .ee-icon:before {
+#toplevel_page_espresso_events div.wp-menu-image:before,
+#toplevel_page_espresso_maintenance_settings div.wp-menu-image:before,
+#wpadminbar .ee-icon:before {
 	margin-left: 8px;
-	font-weight: 700 !important; /** using important b/c wp has dashicons setup with important  in wp-menu-image and I had to override **/
 	font-size: 18px;
 }
 
