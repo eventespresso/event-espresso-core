@@ -359,7 +359,7 @@ class EE_Registry_Test extends EE_UnitTestCase{
 	 */
 	public function test_create_object_singleton(){
 		// let's attempt to load the EE_Capabilities class file
-		require_once( EE_CORE . 'EE_Capabilities.core.php' );
+		require_once(EE_CORE . 'EE_Capabilities.core.php' );
 		$this->assertEquals( true, class_exists( 'EE_Capabilities' ) );
 		// now attempt instantiation
 		$class_object = EE_Registry_Mock::instance()->create_object( 'EE_Capabilities' );

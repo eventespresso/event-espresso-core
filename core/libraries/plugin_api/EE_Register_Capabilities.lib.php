@@ -61,7 +61,7 @@ class EE_Register_Capabilities implements EEI_Plugin_API
     public static function register($cap_reference = null, $setup_args = array())
     {
         //required fields MUST be present, so let's make sure they are.
-        if (! isset($cap_reference) || ! is_array($setup_args) || empty($setup_args['capabilities'])) {
+        if ($cap_reference === null || ! is_array($setup_args) || empty($setup_args['capabilities'])) {
             throw new EE_Error(
                 __('In order to register capabilities with EE_Register_Capabilities::register, you must include a unique name to reference the capabilities being registered, plus an array containing the following keys: "capabilities".',
                     'event_espresso')
@@ -78,21 +78,24 @@ class EE_Register_Capabilities implements EEI_Plugin_API
                     'event_espresso'), $cap_reference), '4.5.0');
         }
         //some preliminary sanitization and setting to the $_registry property
-        self::$_registry[$cap_reference] = array(
-            'caps'     => isset($setup_args['capabilities']) && is_array($setup_args['capabilities']) ? $setup_args['capabilities'] : array(),
-            'cap_maps' => isset($setup_args['capability_maps']) ? $setup_args['capability_maps'] : array(),
+        self::$_registry[ $cap_reference ] = array(
+            'caps'               => isset($setup_args['capabilities']) && is_array($setup_args['capabilities'])
+                ? $setup_args['capabilities']
+                : array(),
+            'cap_maps'           => isset($setup_args['capability_maps'])
+                ? $setup_args['capability_maps']
+                : array(),
         );
         //set initial caps (note that EE_Capabilities takes care of making sure that the caps get added only once)
-        add_filter('FHEE__EE_Capabilities__init_caps_map__caps',
-            array('EE_Register_Capabilities', 'register_capabilities'), 10);
+        add_filter(
+            'FHEE__EE_Capabilities__addCaps__capabilities_to_add',
+            array('EE_Register_Capabilities', 'register_capabilities')
+        );
         //add filter for cap maps
-        add_filter('FHEE__EE_Capabilities___set_meta_caps__meta_caps',
-            array('EE_Register_Capabilities', 'register_cap_maps'), 10);
-        //init_role_caps to register new capabilities
-        if (is_admin()) {
-            EE_Registry::instance()->load_core('Capabilities');
-            EE_Capabilities::instance()->init_caps();
-        }
+        add_filter(
+            'FHEE__EE_Capabilities___set_meta_caps__meta_caps',
+            array('EE_Register_Capabilities', 'register_cap_maps')
+        );
     }
 
 
@@ -106,7 +109,7 @@ class EE_Register_Capabilities implements EEI_Plugin_API
      */
     public static function register_capabilities($incoming_caps)
     {
-        foreach (self::$_registry as $ref => $caps_and_cap_map) {
+        foreach (self::$_registry as $cap_reference => $caps_and_cap_map) {
             $incoming_caps = array_merge_recursive($incoming_caps, $caps_and_cap_map['caps']);
         }
         return $incoming_caps;
@@ -174,13 +177,18 @@ class EE_Register_Capabilities implements EEI_Plugin_API
     }
 
 
-    public static function deregister($cap_reference = null)
+
+    /**
+     * @param string $cap_reference
+     * @throws EE_Error
+     */
+    public static function deregister($cap_reference = '')
     {
         if (! empty(self::$_registry[$cap_reference])) {
+            if (! empty(self::$_registry[ $cap_reference ]['caps'])) {
+                EE_Capabilities::instance()->removeCaps(self::$_registry[ $cap_reference ]['caps']);
+            }
             unset(self::$_registry[$cap_reference]);
         }
-
-        //re init caps to grab the changes due to removed caps.
-        EE_Capabilities::instance()->init_caps();
     }
 }
