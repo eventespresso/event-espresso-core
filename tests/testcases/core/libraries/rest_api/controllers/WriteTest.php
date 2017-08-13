@@ -284,7 +284,6 @@ class WriteTest extends \EE_REST_TestCase
 
     /**
      * @group 9222
-     * @grop current
      */
     public function testDeletePermanent()
     {
@@ -307,6 +306,32 @@ class WriteTest extends \EE_REST_TestCase
         $this->assertTrue(isset($response_data['deleted'], $response_data['previous']));
         $this->assertEquals($datetime->ID(), $response_data['previous']['DTT_ID']);
         $this->assertEquals($datetime_count_before_insertion, \EEM_Datetime::instance()->count_deleted_and_undeleted());
+    }
+
+    /**
+     * @group 9222
+     */
+    public function testDeleteCPTPermanent()
+    {
+        $this->authenticateAnAdmin();
+        $event_count_before_insertion = \EEM_Event::instance()->count_deleted_and_undeleted();
+        $event = $this->new_model_obj_with_dependencies('Event');
+        $req = new \WP_REST_Request(
+            'DELETE',
+            '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events/' . $event->ID()
+        );
+        $req->set_query_params(
+            array(
+                'force' => true,
+            )
+        );
+        $response = rest_do_request($req);
+        $response_data = $response->get_data();
+        //verify there was no error code
+        $this->assertTrue(empty($response_data['code']));
+        $this->assertTrue(isset($response_data['deleted'], $response_data['previous']));
+        $this->assertEquals($event->ID(), $response_data['previous']['EVT_ID']);
+        $this->assertEquals($event_count_before_insertion, \EEM_Event::instance()->count_deleted_and_undeleted());
     }
 
 
