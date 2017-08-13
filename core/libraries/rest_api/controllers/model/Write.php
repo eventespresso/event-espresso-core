@@ -272,10 +272,11 @@ class Write extends Base
         $requested_permanent_delete = filter_var($request->get_param('force'), FILTER_VALIDATE_BOOLEAN);
         $requested_allow_blocking = filter_var($request->get_param('allow_blocking'), FILTER_VALIDATE_BOOLEAN);
         if ($requested_permanent_delete) {
+            $previous = $this->returnModelObjAsJsonResponse($model_obj, $request);
             $deleted = (bool)$model->delete_permanently_by_ID($obj_id, $requested_allow_blocking);
             return array(
                 'deleted'  => $deleted,
-                'previous' => $this->returnModelObjAsJsonResponse($model_obj, $request),
+                'previous' => $previous,
             );
         } else {
             if ($model instanceof EEM_Soft_Delete_Base) {
