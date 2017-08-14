@@ -1,9 +1,11 @@
 <?php
-
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\interfaces\InterminableInterface;
 use EventEspresso\core\interfaces\ResettableInterface;
 use EventEspresso\core\services\assets\Registry;
 use EventEspresso\core\services\commands\CommandBusInterface;
+use EventEspresso\core\services\loaders\LoaderFactory;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -167,6 +169,9 @@ class EE_Registry implements ResettableInterface
      * @singleton method used to instantiate class object
      * @param  EE_Dependency_Map $dependency_map
      * @return EE_Registry instance
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      */
     public static function instance(EE_Dependency_Map $dependency_map = null)
     {
@@ -184,6 +189,9 @@ class EE_Registry implements ResettableInterface
      *
      * @Constructor
      * @param  EE_Dependency_Map $dependency_map
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
      */
     protected function __construct(EE_Dependency_Map $dependency_map)
     {
@@ -270,7 +278,7 @@ class EE_Registry implements ResettableInterface
 
 
     /**
-     * @param $module
+     * @param mixed string | EED_Module $module
      * @throws EE_Error
      * @throws ReflectionException
      */
@@ -667,16 +675,14 @@ class EE_Registry implements ResettableInterface
     ) {
         $class_name = ltrim($class_name, '\\');
         $class_name = $this->_dependency_map->get_alias($class_name);
-        if (! class_exists($class_name)) {
-            // maybe the class is registered with a preceding \
-            $class_name = strpos($class_name, '\\') !== 0
-                ? '\\' . $class_name
-                : $class_name;
-            // still doesn't exist ?
-            if (! class_exists($class_name)) {
-                return null;
-            }
+        $class_exists = $this->loadOrVerifyClassExists($class_name, $arguments);
+        // if a non-FQCN was passed, then verifyClassExists() might return an object
+        // or it could return null if the class just could not be found anywhere
+        if ($class_exists instanceof $class_name || $class_exists === null){
+            // either way, return the results
+            return $class_exists;
         }
+        $class_name = $class_exists;
         // if we're only loading the class and it already exists, then let's just return true immediately
         if ($load_only) {
             return true;
@@ -694,14 +700,58 @@ class EE_Registry implements ResettableInterface
                 return $cached_class;
             }
         }
+        // obtain the loader method from the dependency map
+        $loader = $this->_dependency_map->class_loader($class_name);
         // instantiate the requested object
-        $class_obj = $this->_create_object($class_name, $arguments, $addon, $from_db);
-        if ($this->_cache_on && $cache) {
+        if ($loader instanceof Closure) {
+            $class_obj = $loader($arguments);
+        } else if ($loader && method_exists($this, $loader)) {
+            $class_obj = $this->{$loader}($class_name, $arguments);
+        } else {
+            $class_obj = $this->_create_object($class_name, $arguments, $addon, $from_db);
+        }
+        if (($this->_cache_on && $cache) || $this->get_class_abbreviation($class_name, '')) {
             // save it for later... kinda like gum  { : $
             $this->_set_cached_class($class_obj, $class_name, $addon, $from_db);
         }
         $this->_cache_on = true;
         return $class_obj;
+    }
+
+
+
+    /**
+     * Recursively checks that a class exists and potentially attempts to load classes with non-FQCNs
+     *
+     * @param string $class_name
+     * @param array  $arguments
+     * @param int    $attempt
+     * @return mixed
+     */
+    private function loadOrVerifyClassExists($class_name, array $arguments, $attempt = 1) {
+        if (is_object($class_name) || class_exists($class_name)) {
+            return $class_name;
+        }
+        switch ($attempt) {
+            case 1:
+                // if it's a FQCN then maybe the class is registered with a preceding \
+                $class_name = strpos($class_name, '\\') !== false
+                    ? '\\' . ltrim($class_name, '\\')
+                    : $class_name;
+                break;
+            case 2:
+                //
+                $loader = $this->_dependency_map->class_loader($class_name);
+                if ($loader && method_exists($this, $loader)) {
+                    return $this->{$loader}($class_name, $arguments);
+                }
+                break;
+            case 3:
+            default;
+                return null;
+        }
+        $attempt++;
+        return $this->loadOrVerifyClassExists($class_name, $arguments, $attempt);
     }
 
 
@@ -787,6 +837,18 @@ class EE_Registry implements ResettableInterface
 
 
     /**
+     * @param string $class_name
+     * @param string $default have to specify something, but not anything that will conflict
+     * @return mixed|string
+     */
+    protected function get_class_abbreviation($class_name, $default = 'FANCY_BATMAN_PANTS')
+    {
+        return isset($this->_class_abbreviations[$class_name])
+            ? $this->_class_abbreviations[$class_name]
+            : $default;
+    }
+
+    /**
      * attempts to find a cached version of the requested class
      * by looking in the following places:
      *        $this->{$class_abbreviation}            ie:    $this->CART
@@ -803,10 +865,7 @@ class EE_Registry implements ResettableInterface
         if ($class_name === 'EE_Registry') {
             return $this;
         }
-        // have to specify something, but not anything that will conflict
-        $class_abbreviation = isset($this->_class_abbreviations[$class_name])
-            ? $this->_class_abbreviations[$class_name]
-            : 'FANCY_BATMAN_PANTS';
+        $class_abbreviation = $this->get_class_abbreviation($class_name);
         $class_name = str_replace('\\', '_', $class_name);
         // check if class has already been loaded, and return it if it has been
         if (isset($this->{$class_abbreviation})) {
@@ -835,10 +894,7 @@ class EE_Registry implements ResettableInterface
      */
     public function clear_cached_class($class_name, $addon = false)
     {
-        // have to specify something, but not anything that will conflict
-        $class_abbreviation = isset($this->_class_abbreviations[$class_name])
-            ? $this->_class_abbreviations[$class_name]
-            : 'FANCY_BATMAN_PANTS';
+        $class_abbreviation = $this->get_class_abbreviation($class_name);
         $class_name = str_replace('\\', '_', $class_name);
         // check if class has already been loaded, and return it if it has been
         if (isset($this->{$class_abbreviation})) {
@@ -1132,7 +1188,7 @@ class EE_Registry implements ResettableInterface
                 : $param_class;
             if (
                 // param is not even a class
-                empty($param_class)
+                $param_class === null
                 // and something already exists in the incoming arguments for this param
                 && isset($argument_keys[$index], $arguments[$argument_keys[$index]])
             ) {
@@ -1141,7 +1197,7 @@ class EE_Registry implements ResettableInterface
             }
             if (
                 // parameter is type hinted as a class, exists as an incoming argument, AND it's the correct class
-                ! empty($param_class)
+                $param_class !== null
                 && isset($argument_keys[$index], $arguments[$argument_keys[$index]])
                 && $arguments[$argument_keys[$index]] instanceof $param_class
             ) {
@@ -1150,13 +1206,21 @@ class EE_Registry implements ResettableInterface
             }
             if (
                 // parameter is type hinted as a class, and should be injected
-                ! empty($param_class)
+                $param_class !== null
                 && $this->_dependency_map->has_dependency_for_class($class_name, $param_class)
             ) {
-                $arguments = $this->_resolve_dependency($class_name, $param_class, $arguments, $index);
+                $arguments = $this->_resolve_dependency(
+                    $class_name,
+                    $param_class,
+                    $arguments,
+                    $index,
+                    $argument_keys
+                );
             } else {
                 try {
-                    $arguments[$index] = $param->getDefaultValue();
+                    $arguments[$index] = $param->isDefaultValueAvailable()
+                        ? $param->getDefaultValue()
+                        : null;
                 } catch (ReflectionException $e) {
                     throw new ReflectionException(
                         sprintf(
@@ -1178,16 +1242,23 @@ class EE_Registry implements ResettableInterface
      * @param string $param_class
      * @param array  $arguments
      * @param mixed  $index
+     * @param array  $argument_keys
      * @return array
      * @throws EE_Error
      * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      */
-    protected function _resolve_dependency($class_name, $param_class, $arguments, $index)
+    protected function _resolve_dependency($class_name, $param_class, $arguments, $index, array $argument_keys)
     {
         $dependency = null;
         // should dependency be loaded from cache ?
-        $cache_on = $this->_dependency_map->loading_strategy_for_class_dependency($class_name, $param_class)
-                    !== EE_Dependency_Map::load_new_object;
+        $cache_on = $this->_dependency_map->loading_strategy_for_class_dependency(
+            $class_name,
+            $param_class
+        );
+        $cache_on = $cache_on !== EE_Dependency_Map::load_new_object;
         // we might have a dependency...
         // let's MAYBE try and find it in our cache if that's what's been requested
         $cached_class = $cache_on
@@ -1201,7 +1272,7 @@ class EE_Registry implements ResettableInterface
             $loader = $this->_dependency_map->class_loader($param_class);
             // is loader a custom closure ?
             if ($loader instanceof Closure) {
-                $dependency = $loader();
+                $dependency = $loader($arguments);
             } else {
                 // set the cache on property for the recursive loading call
                 $this->_cache_on = $cache_on;
@@ -1209,18 +1280,18 @@ class EE_Registry implements ResettableInterface
                 if ($loader && method_exists($this, $loader)) {
                     $dependency = $this->{$loader}($param_class);
                 } else {
-                    $dependency = $this->create($param_class, array(), $cache_on);
+                    $dependency = LoaderFactory::getLoader()->load(
+                        $param_class,
+                        array(),
+                        $cache_on
+                    );
                 }
             }
         }
         // did we successfully find the correct dependency ?
         if ($dependency instanceof $param_class) {
             // then let's inject it into the incoming array of arguments at the correct location
-            if (isset($argument_keys[$index])) {
-                $arguments[$argument_keys[$index]] = $dependency;
-            } else {
-                $arguments[$index] = $dependency;
-            }
+            $arguments[$index] = $dependency;
         }
         return $arguments;
     }
@@ -1248,8 +1319,8 @@ class EE_Registry implements ResettableInterface
             return;
         }
         // return newly instantiated class
-        if (isset($this->_class_abbreviations[$class_name])) {
-            $class_abbreviation = $this->_class_abbreviations[$class_name];
+        $class_abbreviation = $this->get_class_abbreviation($class_name, '');
+        if ($class_abbreviation) {
             $this->{$class_abbreviation} = $class_obj;
             return;
         }
@@ -1378,8 +1449,7 @@ class EE_Registry implements ResettableInterface
      * - $shortcodes
      * - $widgets
      *
-     * @param boolean $hard             whether to reset data in the database too, or just refresh
-     *                                  the Registry to its state at the beginning of the request
+     * @param boolean $hard             [deprecated]
      * @param boolean $reinstantiate    whether to create new instances of EE_Registry's singletons too,
      *                                  or just reset without re-instantiating (handy to set to FALSE if you're not
      *                                  sure if you CAN currently reinstantiate the singletons at the moment)
@@ -1397,6 +1467,7 @@ class EE_Registry implements ResettableInterface
         $instance->_cache_on = true;
         // reset some "special" classes
         EEH_Activation::reset();
+        $hard = apply_filters( 'FHEE__EE_Registry__reset__hard', $hard);
         $instance->CFG = EE_Config::reset($hard, $reinstantiate);
         $instance->CART = null;
         $instance->MRM = null;

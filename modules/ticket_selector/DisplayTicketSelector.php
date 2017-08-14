@@ -109,10 +109,10 @@ class DisplayTicketSelector
         }
         if ( $event instanceof EE_Event ) {
             $this->event = $event;
-        } else if ( $event instanceof WP_Post ) {
+        } elseif ( $event instanceof WP_Post ) {
             if ( isset( $event->EE_Event ) && $event->EE_Event instanceof EE_Event ) {
                 $this->event = $event->EE_Event;
-            } else if ( $event->post_type === 'espresso_events' ) {
+            } elseif ( $event->post_type === 'espresso_events' ) {
                 $event->EE_Event = EEM_Event::instance()->instantiate_class_from_post_object( $event );
                 $this->event = $event->EE_Event;
             }
@@ -530,7 +530,7 @@ class DisplayTicketSelector
                     ? $this->ticketSelectorEndDiv()
                     : $this->clearTicketSelector();
                 $html .= '<br/>' . $this->formClose();
-            } else if ($this->getMaxAttendees() === 1) {
+            } elseif ($this->getMaxAttendees() === 1) {
                 // its a "Dude Where's my Ticket Selector?" (DWMTS) type event (ie: $_max_atndz === 1)
                 if ($this->event->is_sold_out()) {
                     // then instead of a View Details or Submit button, just display a "Sold Out" message
@@ -559,7 +559,7 @@ class DisplayTicketSelector
                     }
                     // sold out DWMTS event, no TS, no submit or view details button, but has additional content
                     $html .=  $this->ticketSelectorEndDiv();
-                } else if (
+                } elseif (
                     apply_filters('FHEE__EE_Ticket_Selector__hide_ticket_selector', false)
                     && ! is_single()
                 ) {
@@ -570,7 +570,7 @@ class DisplayTicketSelector
                 } else {
                     $html .= $this->ticketSelectorEndDiv();
                 }
-            } else if (is_archive()) {
+            } elseif (is_archive()) {
                 // event list, no tickets available so display event's "View Details" button
                 $html .= $this->ticketSelectorEndDiv();
                 $html .= $this->displayViewDetailsButton();
