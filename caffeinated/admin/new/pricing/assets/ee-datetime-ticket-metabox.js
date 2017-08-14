@@ -1580,7 +1580,7 @@ jQuery(document).ready(function($) {
 				}
 			});
 
-			totals.subtotal = accounting.formatNumber( accounting.toFixed( runningtotal ) );
+			totals.subtotal = accounting.formatNumber(runningtotal);
 
 			//apply taxes?
 			if ( dotaxes && $('#edit-ticket-TKT_taxable-' + this.ticketRow + ':checked').length > 0 ) {
@@ -1591,7 +1591,7 @@ jQuery(document).ready(function($) {
 				});
 			}
 
-			totals.finalTotal = accounting.formatNumber( accounting.toFixed( runningtotal ) );
+			totals.finalTotal = accounting.formatNumber(runningtotal);
 
 			return totals;
 		},
@@ -1643,8 +1643,8 @@ jQuery(document).ready(function($) {
 			$('.TKT-taxable-subtotal-amount', editTicketRow).val(subtotal);
 			$('.TKT-tax-percentage', editTicketRow ).each( function() {
 				id = $(this).attr('id').replace('TKT-tax-percentage-', '');
-				tax = accounting.unformat($(this).val());
-				tax = accounting.unformat(subtotal) * tax/100;
+				tax = accounting.toFixed(accounting.unformat($(this).val()));
+				tax = accounting.toFixed(accounting.unformat(subtotal)) * tax/100;
 				tax = accounting.formatNumber(tax);
 				$('#TKT-tax-amount-' + id).val(tax);
 				$('#TKT-tax-amount-display-' + id).text(accounting.formatMoney(tax));
@@ -1973,6 +1973,7 @@ jQuery(document).ready(function($) {
 	 */
 	$('.ticket-table').sortable({
 		cursor: 'move',
+		handle: '.sortable-drag-handle',
 		items: '.ee-ticket-sortable',
 		update: function(event,ui) {
 			tktHelper.changeTKTorder();
@@ -1982,6 +1983,7 @@ jQuery(document).ready(function($) {
 
 	$('#datetime-editing-dtts-table').sortable({
 		cursor: 'move',
+		handle: '.sortable-drag-handle',
 		items: '.ee-dtt-sortable',
 		update: function(event,ui) {
 			tktHelper.changeDTTorder();

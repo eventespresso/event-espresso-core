@@ -1,10 +1,10 @@
 === Event Espresso 4 Decaf - Event Registration Event Ticketing ===
-Contributors: eventespresso, sethshoultes, garthkoyle, pebblo, nerrad, mrjonwilson, mnelson4, lorenzocaum, charliespider, builtbynorthby
+Contributors: eventespresso, sethshoultes, garthkoyle, pebblo, nerrad, mnelson4, lorenzocaum, charliespider, builtbynorthby
 Donate link: https://eventespresso.com/pricing/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_donate_link&utm_content=Donate+link
 Tags: events, tickets, registration, event management, event manager, event booking, class booking, booking, class registration, conference registration, events calendar, events planner, event ticketing, online registration, registration, sports, training,  wordpress events, online event registration
 Requires at least: 4.1
-Tested up to: 4.7.3
-Stable tag: 4.9.19.decaf
+Tested up to: 4.8
+Stable tag: 4.9.40.decaf
 License: GPL2
 
 Manage online event registration and ticketing. Create event registration forms, sell tickets, collect money, send email, and SEO for events.

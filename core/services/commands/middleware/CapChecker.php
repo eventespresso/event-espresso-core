@@ -1,11 +1,14 @@
 <?php
 namespace EventEspresso\core\services\commands\middleware;
 
-use EventEspresso\core\domain\services\capabilities\CapabilitiesChecker;
+use Closure;
+use EventEspresso\core\domain\services\capabilities\CapabilitiesCheckerInterface;
+use EventEspresso\core\exceptions\InsufficientPermissionsException;
+use EventEspresso\core\exceptions\InvalidClassException;
 use EventEspresso\core\services\commands\CommandInterface;
 use EventEspresso\core\services\commands\CommandRequiresCapCheckInterface;
 
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
+if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
 
@@ -27,7 +30,7 @@ class CapChecker implements CommandBusMiddlewareInterface
 {
 
     /**
-     * @type CapabilitiesChecker $capabilities_checker
+     * @type CapabilitiesCheckerInterface $capabilities_checker
      */
     private $capabilities_checker;
 
@@ -36,9 +39,9 @@ class CapChecker implements CommandBusMiddlewareInterface
     /**
      * CapChecker constructor
      *
-     * @param CapabilitiesChecker $capabilities_checker
+     * @param CapabilitiesCheckerInterface $capabilities_checker
      */
-    public function __construct(CapabilitiesChecker $capabilities_checker)
+    public function __construct(CapabilitiesCheckerInterface $capabilities_checker)
     {
         $this->capabilities_checker = $capabilities_checker;
     }
@@ -47,12 +50,14 @@ class CapChecker implements CommandBusMiddlewareInterface
 
     /**
      * @param CommandInterface $command
-     * @param \Closure         $next
+     * @param Closure         $next
      * @return mixed
+     * @throws InvalidClassException
+     * @throws InsufficientPermissionsException
      */
-    public function handle(CommandInterface $command, \Closure $next)
+    public function handle(CommandInterface $command, Closure $next)
     {
-        if ( $command instanceof CommandRequiresCapCheckInterface) {
+        if ($command instanceof CommandRequiresCapCheckInterface) {
             $this->capabilities_checker->processCapCheck(
                 $command->getCapCheck()
             );

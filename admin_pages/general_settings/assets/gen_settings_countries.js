@@ -39,6 +39,12 @@ jQuery(document).ready(function($) {
 			EE_CNT_STA.set_listener_for_delete_state();
 			// get the ball rolling on page load
 			EE_CNT_STA.country.trigger( 'change' );
+			//if there was a notice displayed on this page from an update request, then lets display it.
+            if ($('#message').length) {
+                $('#message').show();
+                //because this was stopped by espresso_core.js midway through the fade out action, let's remove styles.
+                $('#message').removeAttr('style');
+            }
 		},
 
 

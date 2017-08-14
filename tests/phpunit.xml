@@ -15,6 +15,7 @@
         <exclude>
             <group>ignore</group>
 			<group>live</group>
+            <group>big_rest_tests</group>
         </exclude>
     </groups>
 	<listeners>
