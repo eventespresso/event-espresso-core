@@ -46,8 +46,8 @@ class EE_Div_Per_Section_Layout extends EE_Form_Section_Layout_Base
             ? (string)$input->html_id()
             : spl_object_hash($input);
         // and add a generic class
-        $html_class = $input->html_class() . '-' . get_class($input);
-        $html_class = sanitize_key(str_replace('_', '-', $html_class)) . '-dv';
+        $html_class = sanitize_key(str_replace('_', '-', get_class($input))) . '-dv';
+        $html_class = $input->html_class() . ' ' . $html_class;
         if ($input instanceof EE_Hidden_Input) {
             $html .= EEH_HTML::nl() . $input->get_html_for_input();
         } else if ($input instanceof EE_Submit_Input) {
