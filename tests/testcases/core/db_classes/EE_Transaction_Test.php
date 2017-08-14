@@ -211,7 +211,7 @@ class EE_Transaction_Test extends EE_UnitTestCase {
         //  should NOT return trashed registrations
         $this->assertCount(
             2,
-            $transaction->registrations(),
+            $transaction->registrations(array(array('REG_deleted' => false))),
             'There should only be two registrations returned'
         );
     }
