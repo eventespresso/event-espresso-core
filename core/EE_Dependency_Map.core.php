@@ -440,7 +440,11 @@ class EE_Dependency_Map
                 'EE_Request' => EE_Dependency_Map::load_from_cache,
             ),
             'EE_System'                                                                                                   => array(
-                'EE_Registry' => EE_Dependency_Map::load_from_cache,
+                'EE_Registry'                                => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\loaders\Loader' => EE_Dependency_Map::load_from_cache,
+                'EE_Capabilities'                            => EE_Dependency_Map::load_from_cache,
+                'EE_Request'                                 => EE_Dependency_Map::load_from_cache,
+                'EE_Maintenance_Mode'                        => EE_Dependency_Map::load_from_cache,
             ),
             'EE_Session'                                                                                                  => array(
                 'EventEspresso\core\services\cache\TransientCacheStorage' => EE_Dependency_Map::load_from_cache,
@@ -676,6 +680,10 @@ class EE_Dependency_Map
             'EE_Request_Handler'                   => 'load_core',
             'EE_Session'                           => 'load_core',
             'EE_Cron_Tasks'                        => 'load_core',
+            'EE_System'                            => 'load_core',
+            'EE_Maintenance_Mode'                  => 'load_core',
+            'EE_Register_CPTs'                     => 'load_core',
+            'EE_Admin'                             => 'load_core',
             //load_lib
             'EE_Message_Resource_Manager'          => 'load_lib',
             'EE_Message_Type_Collection'           => 'load_lib',
