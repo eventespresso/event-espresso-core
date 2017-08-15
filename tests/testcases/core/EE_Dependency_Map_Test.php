@@ -74,6 +74,7 @@ class EE_Dependency_Map_Test extends EE_UnitTestCase {
 
 	public function test_core_class_loaders() {
 		$skip = array(
+			'EE_Admin' => 'messes with other unit tests',
 			'EE_Session' => 'session doesn\'t load during unit tests',
 			'EE_Messages_Template_Defaults' => 'Closure has required arguments'
 		);

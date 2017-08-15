@@ -675,16 +675,14 @@ class EE_Registry implements ResettableInterface
     ) {
         $class_name = ltrim($class_name, '\\');
         $class_name = $this->_dependency_map->get_alias($class_name);
-        if (! class_exists($class_name)) {
-            // maybe the class is registered with a preceding \
-            $class_name = strpos($class_name, '\\') !== 0
-                ? '\\' . $class_name
-                : $class_name;
-            // still doesn't exist ?
-            if (! class_exists($class_name)) {
-                return null;
-            }
+        $class_exists = $this->loadOrVerifyClassExists($class_name, $arguments);
+        // if a non-FQCN was passed, then verifyClassExists() might return an object
+        // or it could return null if the class just could not be found anywhere
+        if ($class_exists instanceof $class_name || $class_exists === null){
+            // either way, return the results
+            return $class_exists;
         }
+        $class_name = $class_exists;
         // if we're only loading the class and it already exists, then let's just return true immediately
         if ($load_only) {
             return true;
@@ -718,6 +716,42 @@ class EE_Registry implements ResettableInterface
         }
         $this->_cache_on = true;
         return $class_obj;
+    }
+
+
+
+    /**
+     * Recursively checks that a class exists and potentially attempts to load classes with non-FQCNs
+     *
+     * @param string $class_name
+     * @param array  $arguments
+     * @param int    $attempt
+     * @return mixed
+     */
+    private function loadOrVerifyClassExists($class_name, array $arguments, $attempt = 1) {
+        if (is_object($class_name) || class_exists($class_name)) {
+            return $class_name;
+        }
+        switch ($attempt) {
+            case 1:
+                // if it's a FQCN then maybe the class is registered with a preceding \
+                $class_name = strpos($class_name, '\\') !== false
+                    ? '\\' . ltrim($class_name, '\\')
+                    : $class_name;
+                break;
+            case 2:
+                //
+                $loader = $this->_dependency_map->class_loader($class_name);
+                if ($loader && method_exists($this, $loader)) {
+                    return $this->{$loader}($class_name, $arguments);
+                }
+                break;
+            case 3:
+            default;
+                return null;
+        }
+        $attempt++;
+        return $this->loadOrVerifyClassExists($class_name, $arguments, $attempt);
     }
 
 

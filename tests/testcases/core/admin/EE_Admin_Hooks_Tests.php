@@ -13,6 +13,7 @@
  * @since 		4.3.0
  * @package 		Event Espresso
  * @subpackage 	tests
+ * @group admin
  */
 class EE_Admin_Hooks_Tests extends EE_UnitTestCase {
 

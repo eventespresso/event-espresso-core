@@ -1,0 +1,80 @@
+#wp-admin-bar-espresso-toolbar-events-add-edit .ab-empty-item,
+#wp-admin-bar-espresso-toolbar-registrations-today .ab-empty-item {
+    border-top: none !important;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+
+#wpadminbar .espresso_menu_item_class .ab-empty-item {
+    color: rgb(240, 245, 250) !important;
+    border-bottom: 1px solid rgba(240, 245, 250, .2);
+    border-top: 1px solid rgba(240, 245, 250, .2);
+    margin-top: 14px;
+    padding: 2px 10px 4px;
+}
+
+#wpadminbar .espresso_menu_item_class {
+    margin: 4px 4px 6px;
+}
+
+#wp-admin-bar-espresso-toolbar .ee-toolbar-icon::before {
+    background-image: none !important;
+    color: rgba(240, 245, 250, .6) !important;
+    font: 400 16px/1 dashicons;
+    /*margin-left: 6px;*/
+    margin-right: 6px;
+    padding: 4px 0;
+    position: relative;
+    speak: none;
+    top: 4px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+#wp-admin-bar-espresso-toolbar-events .ee-toolbar-icon::before {
+    content: "\f227";
+}
+
+#wp-admin-bar-espresso-toolbar-events-new .ee-toolbar-icon::before {
+    content: "\f132";
+}
+
+#wp-admin-bar-espresso-toolbar-events-edit .ee-toolbar-icon::before {
+    content: "\f464";
+}
+
+#wp-admin-bar-espresso-toolbar-events-all .ee-toolbar-icon::before {
+    content: "\f214";
+}
+
+#wp-admin-bar-espresso-toolbar-events-today .ee-toolbar-icon::before {
+    content: "\f469";
+}
+
+#wp-admin-bar-espresso-toolbar-events-month .ee-toolbar-icon::before {
+    content: "\f508";
+}
+
+#wp-admin-bar-espresso-toolbar-registrations .ee-toolbar-icon::before {
+    content: "\f481";
+}
+
+#wp-admin-bar-espresso-toolbar-registrations .ee-toolbar-icon-approved .ee-toolbar-icon::before {
+    content: "\f155";
+}
+
+#wp-admin-bar-espresso-toolbar-registrations .ee-toolbar-icon-pending .ee-toolbar-icon::before {
+    content: "\f154";
+}
+
+#wp-admin-bar-espresso-toolbar-registrations .ee-toolbar-icon-not-approved .ee-toolbar-icon::before {
+    content: "\f534";
+}
+
+#wp-admin-bar-espresso-toolbar-registrations .ee-toolbar-icon-cancelled .ee-toolbar-icon::before {
+    content: "\f153";
+}
+
+#wp-admin-bar-espresso-toolbar-extensions-and-services .ee-toolbar-icon::before {
+    content: "\f174";
+}
