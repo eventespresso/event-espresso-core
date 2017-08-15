@@ -589,8 +589,9 @@ class EED_Events_Archive_Filters  extends EED_Module {
 	 */
 	private function _load_assests() {
 		do_action( 'AHEE__EED_Events_Archive_Filters__before_load_assests' );
-		add_filter( 'FHEE_load_css', '__return_true' );
-		add_filter( 'FHEE_load_EE_Session', '__return_true' );
+        wp_enqueue_style('espresso_default');
+        wp_enqueue_style('espresso_custom_css');
+        add_filter( 'FHEE_load_EE_Session', '__return_true' );
 		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 10 );
 		if ( EE_Registry::instance()->CFG->map_settings->use_google_maps ) {
 			add_action('wp_enqueue_scripts', array( 'EEH_Maps', 'espresso_google_map_js' ), 11 );

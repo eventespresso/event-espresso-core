@@ -12,48 +12,47 @@ Event Espresso provides two useful kinds of utilities your Event Espresso add-on
 
 ### Event Espresso installation and Bootstrapping
 
-If your plugin depends on Event Espresso, then you'll need to make sure that Event Espresso is installed and running when running your tests.  Establishing the proper dependencies manually can be very tricky, because Event Espresso's setup routine requires the installation of custom tables and other important one-time configurations, and it all has to happen in a very specific order for a functioning version of Event Espresso.  Fortunately, you don't have to do this manually.  Just require `event-espresso-core/tests/includes/loader.php` in a callback function hooked to `muplugins_loaded` using` tests_add_filter()` - right before you manually load your own plugin - and this will ensure that Event Espresso gets installed correctly and is fully loaded before loading your plugin.
+If your plugin depends on Event Espresso, then you'll need to make sure that Event Espresso is installed and running when running your tests.  Establishing the proper dependencies manually can be very tricky, because Event Espresso's setup routine requires the installation of custom tables and other important one-time configurations, and it all has to happen in a very specific order for a functioning version of Event Espresso.  
+
+Event Espresso core provides a handy class for making it _really_ easy to bootstrap any add-on tests.  In your add-on's `bootstrap.php` file, simply include this:
+
+```php
+<?php
+/**
+ * Bootstrap for my Event Espresso add-on
+ */
+ use EETests\bootstrap\AddonLoader
+ //assuming your add-on is installed in the wp-content/plugins/my-addon folder
+ //and Event Espresso is installed in the same WordPress instance at wp-
+ //content/plugins/event-espresso-core.
+ $core_tests_dir = dirname(dirname(dirname(__FILE__))) . '/event-espresso-core/tests/';
+ require $core_tests_dir . 'includes/CoreLoader.php';
+ require $core_tests_dir . 'includes/AddonLoader.php';
+ 
+ $addon_path = dirname(dirname(__FILE__)) . '/';
+ 
+ $addon_loader = new AddonLoader(
+   $addon_path . 'tests', //path to the add-ons test directory,
+   $addon_path, //path to the add-ons main directory (i.e. ..wp-content/plugins/my-addon)
+   'my-addon.php', //path to your main addon file (the one that has the WordPress plugin header in it).
+ );
+ $addon_loader->init();
+```
+
+That's it!  The `EETests\bootstrap\AddonLoader` class will take care of all the bootstrapping needed for your add-on against the installed version of Event Espresso.  If you namespace your unit tests and you aren't doing any custom registering of autoloaders for the namespaces (via composer or some other method), this class also exposes a helper for registering a Psr4 Autoloader for your namespace.  Something like this (after the call to `$addon_loader->init()`:
+
+```php
+$addon_loader->registerPsr4Path(
+  array(
+   'MyNameSpace' => $addon_path .'tests' 
+  )
+);
+
+//the above will point namespace MyNameSpace to the tests directory for your add-on.
+```
 
 ### EE_UnitTestCase and Data Factories
 
 When you use `EE_UnitTestCase` class for your test cases, you have access to a number of helpful utility methods as well as the Event Espresso data factories for generating Events, Registrations, Tickets etc.  If your plugin has additional requirements for data factories, you might consider building your own `_UnitTestCase` that extends `EE_UnitTestCase`.
 
-## Sample Bootstrap File
-
-Below is an annotated version of the `bootstrap.php` we use for our Promotions add-on tests.  It's a great example of how to setup the bootstrap for EE add-ons.  The plugin in the example below can be found via our [github repo](https://github.com/eventespresso/event-espresso-core/tree/master/tests).  The code is from the file `espresso-promotions/tests/bootstrap.php`.  You should be able to copy and paste this code into your own `tests/bootstrap.php` file - just change the paths for your plugin loader file, and your optional `_UnitTestCase` class file.
-
-```php
-<?php
-/**
- * Bootstrap for EE4 Promotions Unit Tests
- *
- * @since 		1.0.0
- * @package 		EE4 Promotions
- * @subpackage 	Tests
- */
-
-// All constants used in here are defined in the `define-constants.php` file.  You can open up this file to see how
-// they are defined.  This allows for setups where Event Espresso tests may be installed in a non-standard location.
-require( dirname( __FILE__ ) . '/includes/define-constants.php' );
-
-// Check for the existence of the wp tests functions.php file.  It needs to be defined really early because of the
-// necessary filters (not to mention needing the WP Test case for running!~
-if ( ! file_exists( WP_TESTS_DIR . '/includes/functions.php' ) ) {
-	die( "The WordPress PHPUnit test suite could not be found.\n" );
-}
-require_once WP_TESTS_DIR . '/includes/functions.php';
-
-//Hooked into the `muplugins_loaded` filter, this callback function is responsible for bootstrapping Event Espresso
-//as well as your own plugin.
-function _install_and_load_core_and_ee_promos() {
-	require EE_TESTS_DIR . 'includes/loader.php';
-	require EEPRO_TESTS_DIR . 'includes/loader.php';
-}
-tests_add_filter( 'muplugins_loaded', '_install_and_load_core_and_ee_promos' );
-
-//starts up the WP testing environment.
-require WP_TESTS_DIR . '/includes/bootstrap.php';
-
-//Load the EE_specific testing tools.  If you have any custom UnitTestCase class for your addon, this is where you'd require it so its available when your testcases are loaded.
-require EE_TESTS_DIR . 'includes/EE_UnitTestCase.class.php';
-```
+There is also a `EE_REST_TestCase` class that you can use for any testcases you build that are working with REST endpoints in the EE REST API.

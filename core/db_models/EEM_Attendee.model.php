@@ -1,6 +1,8 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
+<?php
+use EventEspresso\core\services\orm\ModelFieldFactory;
+
+defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
+
 require_once(EE_MODELS . 'EEM_Base.model.php');
 
 
@@ -19,7 +21,7 @@ class EEM_Attendee extends EEM_CPT_Base
     protected static $_instance = null;
 
     /**
-     * QST_system for questions are strings not ints now,
+     * QST_system for questions are strings not integers now,
      * so these constants are deprecated.
      * Please instead use the EEM_Attendee::system_question_* constants
      *
@@ -85,25 +87,25 @@ class EEM_Attendee extends EEM_CPT_Base
      * look for the question with this QST_system value.
      * These replace the old constants like EEM_Attendee::*_question_id
      */
-    const system_question_fname    = 'fname';
+    const system_question_fname = 'fname';
 
-    const system_question_lname    = 'lname';
+    const system_question_lname = 'lname';
 
-    const system_question_email    = 'email';
+    const system_question_email = 'email';
 
-    const system_question_address  = 'address';
+    const system_question_address = 'address';
 
     const system_question_address2 = 'address2';
 
-    const system_question_city     = 'city';
+    const system_question_city = 'city';
 
-    const system_question_state    = 'state';
+    const system_question_state = 'state';
 
-    const system_question_country  = 'country';
+    const system_question_country = 'country';
 
-    const system_question_zip      = 'zip';
+    const system_question_zip = 'zip';
 
-    const system_question_phone    = 'phone';
+    const system_question_phone = 'phone';
 
     /**
      * Keys are all the EEM_Attendee::system_question_* constants, which are
@@ -128,63 +130,137 @@ class EEM_Attendee extends EEM_CPT_Base
 
 
     /**
-     *        private constructor to prevent direct creation
+     * EEM_Attendee constructor.
      *
-     * @Constructor
-     * @access protected
-     * @param null $timezone
+     * @param null              $timezone
+     * @param ModelFieldFactory $model_field_factory
+     * @throws EE_Error
+     * @throws InvalidArgumentException
      */
-    protected function __construct($timezone = null)
+    protected function __construct($timezone = null, ModelFieldFactory $model_field_factory)
     {
-        $this->singular_item = __('Attendee', 'event_espresso');
-        $this->plural_item = __('Attendees', 'event_espresso');
+        $this->singular_item = esc_html__('Attendee', 'event_espresso');
+        $this->plural_item = esc_html__('Attendees', 'event_espresso');
         $this->_tables = array(
             'Attendee_CPT'  => new EE_Primary_Table('posts', 'ID'),
-            'Attendee_Meta' => new EE_Secondary_Table('esp_attendee_meta', 'ATTM_ID', 'ATT_ID'),
+            'Attendee_Meta' => new EE_Secondary_Table(
+                'esp_attendee_meta',
+                'ATTM_ID',
+                'ATT_ID'
+            ),
         );
         $this->_fields = array(
             'Attendee_CPT'  => array(
-                'ATT_ID'        => new EE_Primary_Key_Int_Field('ID', __("Attendee ID", "event_espresso")),
-                'ATT_full_name' => new EE_Plain_Text_Field('post_title', __("Attendee Full Name", "event_espresso"),
-                    false, __("Unknown", "event_espresso")),
-                'ATT_bio'       => new EE_Post_Content_Field('post_content', __("Attendee Biography", "event_espresso"),
-                    false, __("No Biography Provided", "event_espresso")),
-                'ATT_slug'      => new EE_Slug_Field('post_name', __("Attendee URL Slug", "event_espresso"), false),
-                'ATT_created'   => new EE_Datetime_Field('post_date', __("Time Attendee Created", "event_espresso"),
-                    false, EE_Datetime_Field::now),
-                'ATT_short_bio' => new EE_Simple_HTML_Field('post_excerpt',
-                    __("Attendee Short Biography", "event_espresso"), true,
-                    __("No Biography Provided", "event_espresso")),
-                'ATT_modified'  => new EE_Datetime_Field('post_modified',
-                    __("Time Attendee Last Modified", "event_espresso"), false, EE_Datetime_Field::now),
-                'ATT_author'    => new EE_WP_User_Field('post_author',
-                    __("Creator ID of the first Event attended", "event_espresso"), false),
-                'ATT_parent'    => new EE_DB_Only_Int_Field('post_parent',
-                    __("Parent Attendee (unused)", "event_espresso"), false, 0),
-                'post_type'     => new EE_WP_Post_Type_Field('espresso_attendees'),
-                // EE_DB_Only_Text_Field('post_type', __("Post Type of Attendee", "event_espresso"), false,'espresso_attendees'),
-                'status'        => new EE_WP_Post_Status_Field('post_status', __('Attendee Status', 'event_espresso'),
-                    false, 'publish'),
+                'ATT_ID'        => $model_field_factory->createPrimaryKeyIntField(
+                    'ID',
+                    esc_html__('Attendee ID', 'event_espresso')
+                ),
+                'ATT_full_name' => $model_field_factory->createPlainTextField(
+                    'post_title',
+                    esc_html__('Attendee Full Name', 'event_espresso'),
+                    false,
+                    esc_html__('Unknown', 'event_espresso')
+                ),
+                'ATT_bio'       => $model_field_factory->createPostContentField(
+                    'post_content',
+                    esc_html__('Attendee Biography', 'event_espresso'),
+                    false,
+                    esc_html__('No Biography Provided', 'event_espresso')
+                ),
+                'ATT_slug'      => $model_field_factory->createSlugField(
+                    'post_name',
+                    esc_html__('Attendee URL Slug', 'event_espresso')
+                ),
+                'ATT_created'   => $model_field_factory->createDatetimeField(
+                    'post_date',
+                    esc_html__('Time Attendee Created', 'event_espresso')
+                ),
+                'ATT_short_bio' => $model_field_factory->createSimpleHtmlField(
+                    'post_excerpt',
+                    esc_html__('Attendee Short Biography', 'event_espresso'),
+                    true,
+                    esc_html__('No Biography Provided', 'event_espresso')
+                ),
+                'ATT_modified'  => $model_field_factory->createDatetimeField(
+                    'post_modified',
+                    esc_html__('Time Attendee Last Modified', 'event_espresso')
+                ),
+                'ATT_author'    => $model_field_factory->createWpUserField(
+                    'post_author',
+                    esc_html__('Creator ID of the first Event attended', 'event_espresso'),
+                    false
+                ),
+                'ATT_parent'    => $model_field_factory->createDbOnlyIntField(
+                    'post_parent',
+                    esc_html__('Parent Attendee (unused)', 'event_espresso'),
+                    false,
+                    0
+                ),
+                'post_type'     => $model_field_factory->createWpPostTypeField('espresso_attendees'),
+                'status'        => $model_field_factory->createWpPostStatusField(
+                    'post_status',
+                    esc_html__('Attendee Status', 'event_espresso'),
+                    false,
+                    'publish'
+                ),
             ),
             'Attendee_Meta' => array(
-                'ATTM_ID'      => new EE_DB_Only_Int_Field('ATTM_ID', __('Attendee Meta Row ID', 'event_espresso'),
-                    false),
-                'ATT_ID_fk'    => new EE_DB_Only_Int_Field('ATT_ID',
-                    __("Foreign Key to Attendee in Post Table", "event_espresso"), false),
-                'ATT_fname'    => new EE_Plain_Text_Field('ATT_fname', __('First Name', 'event_espresso'), true, ''),
-                'ATT_lname'    => new EE_Plain_Text_Field('ATT_lname', __('Last Name', 'event_espresso'), true, ''),
-                'ATT_address'  => new EE_Plain_Text_Field('ATT_address', __('Address Part 1', 'event_espresso'), true,
-                    ''),
-                'ATT_address2' => new EE_Plain_Text_Field('ATT_address2', __('Address Part 2', 'event_espresso'), true,
-                    ''),
-                'ATT_city'     => new EE_Plain_Text_Field('ATT_city', __('City', 'event_espresso'), true, ''),
-                'STA_ID'       => new EE_Foreign_Key_Int_Field('STA_ID', __('State', 'event_espresso'), true, 0,
-                    'State'),
-                'CNT_ISO'      => new EE_Foreign_Key_String_Field('CNT_ISO', __('Country', 'event_espresso'), true, '',
-                    'Country'),
-                'ATT_zip'      => new EE_Plain_Text_Field('ATT_zip', __('ZIP/Postal Code', 'event_espresso'), true, ''),
-                'ATT_email'    => new EE_Email_Field('ATT_email', __('Email Address', 'event_espresso'), true, ''),
-                'ATT_phone'    => new EE_Plain_Text_Field('ATT_phone', __('Phone', 'event_espresso'), true, ''),
+                'ATTM_ID'      => $model_field_factory->createDbOnlyIntField(
+                    'ATTM_ID',
+                    esc_html__('Attendee Meta Row ID', 'event_espresso'),
+                    false
+                ),
+                'ATT_ID_fk'    => $model_field_factory->createDbOnlyIntField(
+                    'ATT_ID',
+                    esc_html__('Foreign Key to Attendee in Post Table', 'event_espresso'),
+                    false
+                ),
+                'ATT_fname'    => $model_field_factory->createPlainTextField(
+                    'ATT_fname',
+                    esc_html__('First Name', 'event_espresso')
+                ),
+                'ATT_lname'    => $model_field_factory->createPlainTextField(
+                    'ATT_lname',
+                    esc_html__('Last Name', 'event_espresso')
+                ),
+                'ATT_address'  => $model_field_factory->createPlainTextField(
+                    'ATT_address',
+                    esc_html__('Address Part 1', 'event_espresso')
+                ),
+                'ATT_address2' => $model_field_factory->createPlainTextField(
+                    'ATT_address2',
+                    esc_html__('Address Part 2', 'event_espresso')
+                ),
+                'ATT_city'     => $model_field_factory->createPlainTextField(
+                    'ATT_city',
+                    esc_html__('City', 'event_espresso')
+                ),
+                'STA_ID'       => $model_field_factory->createForeignKeyIntField(
+                    'STA_ID',
+                    esc_html__('State', 'event_espresso'),
+                    true,
+                    0,
+                    'State'
+                ),
+                'CNT_ISO'      => $model_field_factory->createForeignKeyStringField(
+                    'CNT_ISO',
+                    esc_html__('Country', 'event_espresso'),
+                    true,
+                    '',
+                    'Country'
+                ),
+                'ATT_zip'      => $model_field_factory->createPlainTextField(
+                    'ATT_zip',
+                    esc_html__('ZIP/Postal Code', 'event_espresso')
+                ),
+                'ATT_email'    => $model_field_factory->createEmailField(
+                    'ATT_email',
+                    esc_html__('Email Address', 'event_espresso')
+                ),
+                'ATT_phone'    => $model_field_factory->createPlainTextField(
+                    'ATT_phone',
+                    esc_html__('Phone', 'event_espresso')
+                ),
             ),
         );
         $this->_model_relations = array(
@@ -214,16 +290,19 @@ class EEM_Attendee extends EEM_CPT_Base
     public function get_attendee_field_for_system_question($system_question_string)
     {
         return isset($this->_system_question_to_attendee_field_name[$system_question_string])
-            ? $this->_system_question_to_attendee_field_name[$system_question_string] : null;
+            ? $this->_system_question_to_attendee_field_name[$system_question_string]
+            : null;
     }
 
 
 
     /**
      * Gets mapping from esp_question.QST_system values to their corresponding attendee field names
+     *
      * @return array
      */
-    public function system_question_to_attendee_field_mapping(){
+    public function system_question_to_attendee_field_mapping()
+    {
         return $this->_system_question_to_attendee_field_name;
     }
 
@@ -233,26 +312,29 @@ class EEM_Attendee extends EEM_CPT_Base
      * Gets all the attendees for a transaction (by using the esp_registration as a join table)
      *
      * @param EE_Transaction /int $transaction_id_or_obj EE_Transaction or its ID
-     * @return EE_Attendee[]
+     * @return EE_Attendee[]|EE_Base_Class[]
+     * @throws EE_Error
      */
     public function get_attendees_for_transaction($transaction_id_or_obj)
     {
-        return $this->get_all(array(
+        return $this->get_all(
             array(
-                'Registration.Transaction.TXN_ID' => $transaction_id_or_obj instanceof EE_Transaction
-                    ? $transaction_id_or_obj->ID() : $transaction_id_or_obj,
-            ),
-        ));
+                array(
+                    'Registration.Transaction.TXN_ID' => $transaction_id_or_obj instanceof EE_Transaction
+                        ? $transaction_id_or_obj->ID()
+                        : $transaction_id_or_obj,
+                ),
+            )
+        );
     }
 
 
 
     /**
-     *        retrieve  a single attendee from db via their ID
+     * retrieve  a single attendee from db via their ID
      *
-     * @access        public
-     * @param        $ATT_ID
-     * @return        mixed        array on success, FALSE on fail
+     * @param $ATT_ID
+     * @return mixed array on success, FALSE on fail
      * @deprecated
      */
     public function get_attendee_by_ID($ATT_ID = false)
@@ -264,11 +346,11 @@ class EEM_Attendee extends EEM_CPT_Base
 
 
     /**
-     *        retrieve  a single attendee from db via their ID
+     * retrieve  a single attendee from db via their ID
      *
-     * @access        public
-     * @param        array $where_cols_n_values
-     * @return        mixed        array on success, FALSE on fail
+     * @param array $where_cols_n_values
+     * @return mixed array on success, FALSE on fail
+     * @throws EE_Error
      */
     public function get_attendee($where_cols_n_values = array())
     {
@@ -276,21 +358,20 @@ class EEM_Attendee extends EEM_CPT_Base
             return false;
         }
         $attendee = $this->get_all(array($where_cols_n_values));
-        if ( ! empty($attendee)) {
+        if (! empty($attendee)) {
             return array_shift($attendee);
-        } else {
-            return false;
         }
+        return false;
     }
 
 
 
     /**
-     *        Search for an existing Attendee record in the DB
+     * Search for an existing Attendee record in the DB
      *
-     * @access        public
      * @param array $where_cols_n_values
      * @return bool|mixed
+     * @throws EE_Error
      */
     public function find_existing_attendee($where_cols_n_values = null)
     {
@@ -301,16 +382,20 @@ class EEM_Attendee extends EEM_CPT_Base
             'ATT_email' => $this->_ATT_email,
         );
         // no search params means attendee object already exists.
-        $where_cols_n_values = is_array($where_cols_n_values) && ! empty($where_cols_n_values) ? $where_cols_n_values
+        $where_cols_n_values = is_array($where_cols_n_values) && ! empty($where_cols_n_values)
+            ? $where_cols_n_values
             : $attendee_data_keys;
         $valid_data = true;
         // check for required values
         $valid_data = isset($where_cols_n_values['ATT_fname']) && ! empty($where_cols_n_values['ATT_fname'])
-            ? $valid_data : false;
+            ? $valid_data
+            : false;
         $valid_data = isset($where_cols_n_values['ATT_lname']) && ! empty($where_cols_n_values['ATT_lname'])
-            ? $valid_data : false;
+            ? $valid_data
+            : false;
         $valid_data = isset($where_cols_n_values['ATT_email']) && ! empty($where_cols_n_values['ATT_email'])
-            ? $valid_data : false;
+            ? $valid_data
+            : false;
         if ($valid_data) {
             $attendee = $this->get_attendee($where_cols_n_values);
             if ($attendee instanceof EE_Attendee) {
@@ -323,12 +408,13 @@ class EEM_Attendee extends EEM_CPT_Base
 
 
     /**
-     * Takes an incoming array of EE_Registration ids and sends back a list of corresponding non duplicate
-     * EE_Attendee objects.
+     * Takes an incoming array of EE_Registration ids
+     * and sends back a list of corresponding non duplicate EE_Attendee objects.
      *
-     * @since    4.3.0
+     * @since  4.3.0
      * @param  array $ids array of EE_Registration ids
-     * @return  EE_Attendee[]
+     * @return EE_Attendee[]|EE_Base_Class[]
+     * @throws EE_Error
      */
     public function get_array_of_contacts_from_reg_ids($ids)
     {

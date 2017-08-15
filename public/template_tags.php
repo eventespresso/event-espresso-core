@@ -1,19 +1,6 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
-//echo '<br/><h6 style="color:#2EA2CC;">' . __FILE__ . ' &nbsp; <span style="font-weight:normal;color:#E76700"> Line #: ' . __LINE__ . '</span></h6>';
-/**
- * Event Espresso
- *
- * Event Registration and Ticketing Management Plugin for WordPress
- *
- * @ package			Event Espresso
- * @ author			    Event Espresso
- * @ copyright		(c) 2008-2014 Event Espresso  All Rights Reserved.
- * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link					http://www.eventespresso.com
- * @ version		 	$VID:$
- *
- * ------------------------------------------------------------------------
- */
+<?php
+defined('EVENT_ESPRESSO_VERSION') || exit();
+
 
 
 
@@ -187,7 +174,7 @@ if ( ! function_exists( 'espresso_get_events' )) {
 		// grab params and merge with defaults, then extract
 		$params = array_merge( $default_espresso_events_params, $params );
 		// run the query
-		$events_query = new EE_Event_List_Query( $params );
+		$events_query = new EventEspresso\core\domain\services\wp_queries\EventListQuery( $params );
 		// assign results to a variable so we can return it
 		$events = $events_query->have_posts() ? $events_query->posts : array();
 		// but first reset the query and postdata
@@ -219,6 +206,7 @@ if ( ! function_exists( 'espresso_ticket_selector' )) {
 	function espresso_ticket_selector( $event = NULL ) {
 		if (  ! apply_filters( 'FHEE_disable_espresso_ticket_selector', FALSE ) ) {
 			espresso_load_ticket_selector();
+            \EED_Ticket_Selector::set_definitions();
 			echo EED_Ticket_Selector::display_ticket_selector( $event );
 		}
 	}
@@ -1154,8 +1142,6 @@ if ( ! function_exists( 'espresso_edit_venue_link' )) {
 		return EEH_Venue_View::edit_venue_link( $VNU_ID );
 	}
 }
-
-
 
 
 

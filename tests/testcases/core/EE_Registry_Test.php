@@ -26,8 +26,11 @@ class EE_Registry_Test extends EE_UnitTestCase{
 		);
 		EE_Dependency_Map::register_dependencies(
 			'EE_Session_Mock',
-			array( 'EE_Encryption' => EE_Dependency_Map::load_from_cache )
-		);
+            array(
+                'EventEspresso\core\services\cache\TransientCacheStorage' => EE_Dependency_Map::load_from_cache,
+                'EE_Encryption'                                           => EE_Dependency_Map::load_from_cache
+            )
+        );
 		EE_Dependency_Map::register_dependencies(
 			'EE_Injector_Tester_With_Array_Session_Int_Constructor_Params',
 			array( 'EE_Session_Mock' => EE_Dependency_Map::load_from_cache )
@@ -356,7 +359,7 @@ class EE_Registry_Test extends EE_UnitTestCase{
 	 */
 	public function test_create_object_singleton(){
 		// let's attempt to load the EE_Capabilities class file
-		require_once( EE_CORE . 'EE_Capabilities.core.php' );
+		require_once(EE_CORE . 'EE_Capabilities.core.php' );
 		$this->assertEquals( true, class_exists( 'EE_Capabilities' ) );
 		// now attempt instantiation
 		$class_object = EE_Registry_Mock::instance()->create_object( 'EE_Capabilities' );

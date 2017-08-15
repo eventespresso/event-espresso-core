@@ -11,6 +11,7 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
  * @package			Event Espresso
  * @subpackage
  * @author				Mike Nelson
+ * @deprecated in 4.9.40 because the currency payment method table has been deprecated
  *
  */
 class EE_DMS_4_6_0_payment_method_currencies extends EE_Data_Migration_Script_Stage{

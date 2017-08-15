@@ -32,10 +32,11 @@ class EventsArchiveIframe extends Iframe
         \EE_Registry::instance()->REQ->set_espresso_page( true );
         add_filter('FHEE__EED_Events_Archive__event_list_iframe', '__return_true');
         $EED_Events_Archive->event_list();
-        $event_list = new \EES_Espresso_Events();
+        /** @var \EventEspresso\core\domain\entities\shortcodes\EspressoEvents $event_list */
+        $event_list = \EE_Registry::instance()->create('EventEspresso\core\domain\entities\shortcodes\EspressoEvents');
         parent::__construct(
             esc_html__( 'Event List', 'event_espresso' ),
-            $event_list->process_shortcode()
+            $event_list->processShortcode()
         );
         $this->addStylesheets(
             apply_filters(

@@ -1,44 +1,40 @@
+sudo: false
+dist: trusty
 language: php
+services:
+  - mysql
 cache:
   apt: true
+  directories:
+    - node_modules
+    - vendor
+    - $HOME/.composer/cache
 env:
-  - WP_VERSION=latest WP_MULTISITE=0
-  - WP_VERSION=latest WP_MULTISITE=1
-  - WP_VERSION=4.1 WP_MULTISITE=0
-  - WP_VERSION=4.1 WP_MULTISITE=1
-php:
-  - 5.3
-  - 5.4
-  - 5.5
-  - 5.6
-  - 7.0
-  - 7.1
+  global:
+    - WP_VERSION=latest WP_MULTISITE=0
 matrix:
-  exclude:
-    - php: 5.3
-      env: WP_VERSION=4.1 WP_MULTISITE=1
-    - php: 5.3
-      env: WP_VERSION=latest WP_MULTISITE=1
-    - php: 5.4
-      env: WP_VERSION=4.1 WP_MULTISITE=1
-    - php: 5.4
-      env: WP_VERSION=latest WP_MULTISITE=1
-    - php: 5.5
-      env: WP_VERSION=4.1 WP_MULTISITE=1
-    - php: 5.5
-      env: WP_VERSION=latest WP_MULTISITE=1
-    - php: 7.1
-      env: WP_VERSION=4.1 WP_MULTISITE=0
-    - php: 7.1
-      env: WP_VERSION=4.1 WP_MULTISITE=1
-    - php: 7.0
-      env: WP_VERSION=4.1 WP_MULTISITE=0
-    - php: 7.0
-      env: WP_VERSION=4.1 WP_MULTISITE=1
-    - php: hhvm
-      env: WP_VERSION=4.1 WP_MULTISITE=0
-    - php: hhvm
-      env: WP_VERSION=4.1 WP_MULTISITE=1
+  include:
+  - php: 5.3
+    dist: precise
+  - php: 5.4
+  - php: 5.5
+  - php: 5.6
+  - php: 5.6
+    env: WP_MULTISITE=1
+  - php: 5.6
+    env: WP_VERSION=4.1
+  - php: 5.6
+    env: WP_VERSION=4.1 WP_MULTISITE=1
+  - php: 7.0
+    env: WP_MULTISITE=1
+  - php: 7.0
+  - php: 7.1
+    env: WP_MULTISITE=1
+  - php: nightly
+  - php: nightly
+    env: WP_MULTISITE=1
+  allow_failures:
+  - php: nightly
   fast_finish: true
 before_install:
    - |
@@ -50,10 +46,26 @@ before_script:
   - bash tests/bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
   - export PATH="$HOME/.composer/vendor/bin:$PATH"
   - |
-    if [[ ${TRAVIS_PHP_VERSION:0:2} == "7." ]]; then
-      composer global require "phpunit/phpunit=5.7.*"
-    else
-      composer global require "phpunit/phpunit=4.8.*"
+    # Install the specified version of PHPUnit depending on the PHP version:
+    if [[ -n "$TRAVIS_PHP_VERSION" ]]; then
+      case "$TRAVIS_PHP_VERSION" in
+        7.1|7.0|nightly)
+          echo "Using PHPUnit 6.1"
+          composer global require "phpunit/phpunit=6.1.*"
+          ;;
+        5.6|5.5|5.4|5.3)
+          echo "Using PHPUnit 4.8"
+          composer global require "phpunit/phpunit=4.8.*"
+          ;;
+        5.2)
+          # Do nothing, use default PHPUnit 3.6.x
+          echo "Using default PHPUnit, hopefully 3.6"
+          ;;
+        *)
+          echo "No PHPUnit version handling for PHP version $TRAVIS_PHP_VERSION"
+          exit 1
+          ;;
+      esac
     fi
   - mysql --version
   - phpunit --version
@@ -66,3 +78,6 @@ notifications:
     on_success: change
     on_failure: always
     on_start: always
+    template:
+      - "Build <%{build_url}|#%{build_number}> (<%{compare_url}|%{commit}>) of %{repository}@%{branch} by %{author} %{result} in %{duration}"
+      - "%{commit_message}"
