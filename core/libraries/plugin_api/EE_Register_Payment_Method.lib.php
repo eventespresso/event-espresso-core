@@ -1,5 +1,9 @@
 <?php
 
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\loaders\LoaderFactory;
+
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 
 
@@ -41,7 +45,11 @@ class EE_Register_Payment_Method implements EEI_Plugin_API
      * @type array payment_method_paths    an array of full server paths to folders containing any EE_PMT_Base
      *                                      children, or to the EED_Module files themselves
      * @return void
+     * @throws InvalidDataTypeException
      * @throws DomainException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      */
     public static function register($payment_method_id = null, $setup_args = array())
     {
@@ -87,11 +95,13 @@ class EE_Register_Payment_Method implements EEI_Plugin_API
         // If EE_Payment_Method_Manager::register_payment_methods has already been called,
         // then we need to add our caps for this payment method manually
         if (did_action('FHEE__EE_Payment_Method_Manager__register_payment_methods__registered_payment_methods')) {
+            $payment_method_manager = LoaderFactory::getLoader()->getShared('EE_Payment_Method_Manager');
             // register payment methods directly
             foreach (self::$_settings[$payment_method_id]['payment_method_paths'] as $payment_method_path) {
-                EE_Payment_Method_Manager::instance()->register_payment_method($payment_method_path);
+                $payment_method_manager->register_payment_method($payment_method_path);
             }
-            EE_Capabilities::instance()->addCaps(
+            $capabilities = LoaderFactory::getLoader()->getShared('EE_Capabilities');
+            $capabilities->addCaps(
                 self::getPaymentMethodCapabilities(self::$_settings[$payment_method_id])
             );
         }
@@ -127,11 +137,15 @@ class EE_Register_Payment_Method implements EEI_Plugin_API
      * @return void
      * @throws DomainException
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      */
     public static function deregister($module_id = null)
     {
         if (isset(self::$_settings[$module_id])) {
-            EE_Capabilities::instance()->removeCaps(
+            $capabilities = LoaderFactory::getLoader()->getShared('EE_Capabilities');
+            $capabilities->removeCaps(
                 self::getPaymentMethodCapabilities(self::$_settings[$module_id])
             );
             unset(self::$_settings[$module_id]);
@@ -147,14 +161,17 @@ class EE_Register_Payment_Method implements EEI_Plugin_API
      * @return array
      * @throws DomainException
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      */
     private static function getPaymentMethodCapabilities(array $settings)
     {
-        require_once EE_LIBRARIES . 'payment_methods/EE_Payment_Method_Manager.lib.php';
+        $payment_method_manager = LoaderFactory::getLoader()->getShared('EE_Payment_Method_Manager');
         $payment_method_caps = array('administrator' => array());
         if (isset($settings['payment_method_paths'])) {
             foreach ($settings['payment_method_paths'] as $payment_method_path) {
-                $payment_method_caps = EE_Payment_Method_Manager::instance()->addPaymentMethodCap(
+                $payment_method_caps = $payment_method_manager->addPaymentMethodCap(
                     strtolower(basename($payment_method_path)),
                     $payment_method_caps
                 );
