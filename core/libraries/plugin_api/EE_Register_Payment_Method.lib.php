@@ -150,6 +150,7 @@ class EE_Register_Payment_Method implements EEI_Plugin_API
      */
     private static function getPaymentMethodCapabilities(array $settings)
     {
+        require_once EE_LIBRARIES . 'payment_methods/EE_Payment_Method_Manager.lib.php';
         $payment_method_caps = array('administrator' => array());
         if (isset($settings['payment_method_paths'])) {
             foreach ($settings['payment_method_paths'] as $payment_method_path) {
