@@ -879,7 +879,7 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 				$this->set_quantity( 1 );
 			}
 			if( ! $this->is_percent() ) {
-				$this->set_unit_price( $this->total() );
+                $this->set_unit_price( $total );
 			}
 		}
 
