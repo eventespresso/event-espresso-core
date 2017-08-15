@@ -360,6 +360,25 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 'capability' => 'ee_edit_registration',
                 'obj_id'     => $reg_id,
             ),
+            'wait_list_and_notify_registration' => array(
+                'func'       => 'wait_list_registration',
+                'noheader'   => true,
+                'args'       => array(true),
+                'capability' => 'ee_edit_registration',
+                'obj_id'     => $reg_id,
+            ),
+            'wait_list_registrations' => array(
+                'func'       => 'bulk_action_on_registrations',
+                'noheader'   => true,
+                'capability' => 'ee_edit_registrations',
+                'args'       => array('wait_list'),
+            ),
+            'wait_list_and_notify_registrations' => array(
+                'func'       => 'bulk_action_on_registrations',
+                'noheader'   => true,
+                'capability' => 'ee_edit_registrations',
+                'args'       => array('wait_list', true),
+            ),
             'contact_list'                       => array(
                 'func'       => '_attendee_contact_list_table',
                 'capability' => 'ee_read_contacts',
@@ -801,7 +820,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         $def_reg_status_actions = apply_filters(
             'FHEE__Registrations_Admin_Page___set_list_table_views_default__def_reg_status_actions_array',
             $def_reg_status_actions,
-            $active_mts
+            $active_mts,
+            $can_send
         );
 
         $this->_views = array(
