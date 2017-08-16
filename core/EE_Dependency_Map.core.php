@@ -695,6 +695,7 @@ class EE_Dependency_Map
             'EE_Messages_Queue'                    => 'load_lib',
             'EE_Messages_Data_Handler_Collection'  => 'load_lib',
             'EE_Message_Template_Group_Collection' => 'load_lib',
+            'EE_Payment_Method_Manager'            => 'load_lib',
             'EE_Messages_Generator'                => function () {
                 return EE_Registry::instance()->load_lib(
                     'Messages_Generator',
