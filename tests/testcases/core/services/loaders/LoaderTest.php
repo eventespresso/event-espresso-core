@@ -19,7 +19,7 @@ class LoaderTest extends EE_UnitTestCase
 {
 
     /**
-     * @var Loader $loader
+     * @var LoaderInterface $loader
      */
     private static $loader;
 
