@@ -117,8 +117,7 @@ $I->viewMessageInMessagesListTableFor(
     'Registrant'
 );
 $I->seeTextInViewMessageModal($custom_template_a_label);
-//closes view window
-$I->click('#espresso-admin-page-overlay-dv');
+$I->dismissMessageModal();
 $I->deleteMessageInMessagesListTableFor(
     'Registration Approved',
     MessagesAdmin::MESSAGE_STATUS_SENT,
@@ -131,7 +130,7 @@ $I->viewMessageInMessagesListTableFor(
     'Registration Approved'
 );
 $I->seeTextInViewMessageModal($custom_template_a_label);
-$I->click('#espresso-admin-page-overlay-dv');
+$I->dismissMessageModal();
 $I->deleteMessageInMessagesListTableFor('Registration Approved');
 
 $I->amGoingTo('Register for Event One and Event Three and verify that global template is used.');
@@ -165,8 +164,7 @@ $I->viewMessageInMessagesListTableFor(
 $I->waitForElementVisible(MessagesAdmin::MESSAGES_LIST_TABLE_VIEW_MESSAGE_DIALOG_CONTAINER_SELECTOR);
 $I->dontSeeTextInViewMessageModal($custom_template_a_label);
 $I->dontSeeTextInViewMessageModal($custom_template_b_label);
-//closes view window
-$I->click('#espresso-admin-page-overlay-dv');
+$I->dismissMessageModal();
 $I->deleteMessageInMessagesListTableFor(
     'Registration Approved',
     MessagesAdmin::MESSAGE_STATUS_SENT,
@@ -181,7 +179,7 @@ $I->viewMessageInMessagesListTableFor(
 $I->waitForElementVisible(MessagesAdmin::MESSAGES_LIST_TABLE_VIEW_MESSAGE_DIALOG_CONTAINER_SELECTOR);
 $I->dontSee($custom_template_a_label);
 $I->dontSee($custom_template_b_label);
-$I->click('#espresso-admin-page-overlay-dv');
+$I->dismissMessageModal();
 $I->deleteMessageInMessagesListTableFor('Registration Approved');
 
 
