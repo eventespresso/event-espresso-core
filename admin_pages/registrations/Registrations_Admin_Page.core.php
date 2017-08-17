@@ -367,18 +367,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 'capability' => 'ee_edit_registration',
                 'obj_id'     => $reg_id,
             ),
-            'wait_list_registrations' => array(
-                'func'       => 'bulk_action_on_registrations',
-                'noheader'   => true,
-                'capability' => 'ee_edit_registrations',
-                'args'       => array('wait_list'),
-            ),
-            'wait_list_and_notify_registrations' => array(
-                'func'       => 'bulk_action_on_registrations',
-                'noheader'   => true,
-                'capability' => 'ee_edit_registrations',
-                'args'       => array('wait_list', true),
-            ),
             'contact_list'                       => array(
                 'func'       => '_attendee_contact_list_table',
                 'capability' => 'ee_read_contacts',
