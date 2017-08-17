@@ -742,13 +742,13 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
         $legend_items = array(
             'checkin'  => array(
                 'class' => Extend_Registrations_Admin_Page::getCheckinStatusDashicon(
-                    $checkin_status = EE_Registration::checkin_status_in
+                    $checkin_status = EE_Checkin::status_checked_in
                 ),
                 'desc'  => __('This indicates the attendee has been checked in', 'event_espresso'),
             ),
             'checkout' => array(
                 'class' => Extend_Registrations_Admin_Page::getCheckinStatusDashicon(
-                    $checkin_status = EE_Registration::checkin_status_out
+                    $checkin_status = EE_Checkin::status_checked_out
                 ),
                 'desc'  => __('This indicates the attendee has been checked out', 'event_espresso'),
             ),
@@ -1042,19 +1042,19 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
             ),
             'checkin'          => array(
                 'class' => Extend_Registrations_Admin_Page::getCheckinStatusDashicon(
-                    $checkin_status = EE_Registration::checkin_status_in
+                    $checkin_status = EE_Checkin::status_checked_in
                 ),
                 'desc'  => __('This Registrant has been Checked In', 'event_espresso'),
             ),
             'checkout'         => array(
                 'class' => Extend_Registrations_Admin_Page::getCheckinStatusDashicon(
-                    $checkin_status = EE_Registration::checkin_status_out
+                    $checkin_status = EE_Checkin::status_checked_out
                 ),
                 'desc'  => __('This Registrant has been Checked Out', 'event_espresso'),
             ),
             'nocheckinrecord'  => array(
                 'class' => Extend_Registrations_Admin_Page::getCheckinStatusDashicon(
-                    $checkin_status = EE_Registration::checkin_status_never
+                    $checkin_status = EE_Checkin::status_checked_never
                 ),
                 'desc'  => __('No Check-in Record has been Created for this Registrant', 'event_espresso'),
             ),
@@ -1197,22 +1197,5 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
             : EEM_Registration::instance()->get_all($query_params);
     }
 
-
-    /**
-     * Will return the correct set of dashicon css classes for the given checkin status
-     *
-     * @param int $checkin_status
-     * @return string
-     */
-    public static function getCheckinStatusDashicon($checkin_status = EE_Registration::checkin_status_never)
-    {
-        if($checkin_status === EE_Registration::checkin_status_in) {
-            return "ee-dashicons ee-icon-check-in checkin-icons checkedin-status-{$checkin_status}";
-        }
-        if($checkin_status === EE_Registration::checkin_status_out) {
-            return "ee-dashicons ee-icon-check-out checkin-icons checkedin-status-{$checkin_status}";
-        }
-        return "dashicons dashicons-no checkin-icons checkedin-status-{$checkin_status}";
-    }
 
 } //end class Registrations Admin Page
