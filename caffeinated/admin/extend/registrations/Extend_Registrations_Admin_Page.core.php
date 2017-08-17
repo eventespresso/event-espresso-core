@@ -741,11 +741,15 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
         );
         $legend_items = array(
             'checkin'  => array(
-                'class' => 'ee-icon ee-icon-check-in',
+                'class' => Extend_Registrations_Admin_Page::getCheckinStatusDashicon(
+                    $checkin_status = EE_Registration::checkin_status_in
+                ),
                 'desc'  => __('This indicates the attendee has been checked in', 'event_espresso'),
             ),
             'checkout' => array(
-                'class' => 'ee-icon ee-icon-check-out',
+                'class' => Extend_Registrations_Admin_Page::getCheckinStatusDashicon(
+                    $checkin_status = EE_Registration::checkin_status_out
+                ),
                 'desc'  => __('This indicates the attendee has been checked out', 'event_espresso'),
             ),
         );
@@ -845,10 +849,11 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
         $nonce_ref = 'checkin_nonce';
         $this->_verify_nonce($nonce, $nonce_ref);
         //beautiful! Made it this far so let's get the status.
-        $new_status = $this->_toggle_checkin_status();
+        $new_status = Extend_Registrations_Admin_Page::getCheckinStatusDashicon(
+            $this->_toggle_checkin_status()
+        );
         //setup new class to return via ajax
-        $this->_template_args['admin_page_content'] = 'clickable trigger-checkin checkin-icons checkedin-status-'
-                                                      . $new_status;
+        $this->_template_args['admin_page_content'] = 'clickable trigger-checkin ' . $new_status;
         $this->_template_args['success'] = true;
         $this->_return_json();
     }
@@ -1036,15 +1041,21 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
                 'desc'  => __('This Registrant is the Primary Registrant', 'event_espresso'),
             ),
             'checkin'          => array(
-                'class' => 'ee-icon ee-icon-check-in',
+                'class' => Extend_Registrations_Admin_Page::getCheckinStatusDashicon(
+                    $checkin_status = EE_Registration::checkin_status_in
+                ),
                 'desc'  => __('This Registrant has been Checked In', 'event_espresso'),
             ),
             'checkout'         => array(
-                'class' => 'ee-icon ee-icon-check-out',
+                'class' => Extend_Registrations_Admin_Page::getCheckinStatusDashicon(
+                    $checkin_status = EE_Registration::checkin_status_out
+                ),
                 'desc'  => __('This Registrant has been Checked Out', 'event_espresso'),
             ),
             'nocheckinrecord'  => array(
-                'class' => 'dashicons dashicons-no',
+                'class' => Extend_Registrations_Admin_Page::getCheckinStatusDashicon(
+                    $checkin_status = EE_Registration::checkin_status_never
+                ),
                 'desc'  => __('No Check-in Record has been Created for this Registrant', 'event_espresso'),
             ),
             'view_details'     => array(
@@ -1184,6 +1195,24 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
             ? EEM_Registration::instance()->count($query_params)
             /** @type EE_Registration[] */
             : EEM_Registration::instance()->get_all($query_params);
+    }
+
+
+    /**
+     * Will return the correct set of dashicon css classes for the given checkin status
+     *
+     * @param int $checkin_status
+     * @return string
+     */
+    public static function getCheckinStatusDashicon($checkin_status = EE_Registration::checkin_status_never)
+    {
+        if($checkin_status === EE_Registration::checkin_status_in) {
+            return "ee-dashicons ee-icon-check-in checkin-icons checkedin-status-{$checkin_status}";
+        }
+        if($checkin_status === EE_Registration::checkin_status_out) {
+            return "ee-dashicons ee-icon-check-out checkin-icons checkedin-status-{$checkin_status}";
+        }
+        return "dashicons dashicons-no checkin-icons checkedin-status-{$checkin_status}";
     }
 
 } //end class Registrations Admin Page
