@@ -315,8 +315,9 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 				$this->_cur_dtt_id = $latest_related_datetime->ID();
 			}
 		}
-
-		$checkinstatus = $item->check_in_status_for_datetime( $this->_cur_dtt_id );
+		$checkinstatus = Extend_Registrations_Admin_Page::getCheckinStatusDashicon(
+            $item->check_in_status_for_datetime($this->_cur_dtt_id)
+        );
 		$nonce = wp_create_nonce( 'checkin_nonce' );
 		$toggle_active = ! empty ( $this->_cur_dtt_id )
 		                 && EE_Registry::instance()->CAP->current_user_can(
@@ -327,7 +328,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 			? ' clickable trigger-checkin'
 			: '';
 		$mobile_view_content = ' <span class="show-on-mobile-view-only">' . $attendee_name . '</span>';
-		return '<span class="checkin-icons checkedin-status-' . $checkinstatus . $toggle_active . '"'
+		return '<span class="' . $checkinstatus . $toggle_active . '"'
 		       . ' data-_regid="' . $item->ID() . '"'
 		       . ' data-dttid="' . $this->_cur_dtt_id . '"'
 		       . ' data-nonce="' . $nonce . '">'
@@ -407,7 +408,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 				// get the last timestamp
 				$last_timestamp = end( $timestamps );
 				// checked in or checked out?
-				$checkin_status = $last_timestamp->get( 'CHK_in' ) 
+				$checkin_status = $last_timestamp->get( 'CHK_in' )
 					? esc_html__( 'Checked In', 'event_espresso' )
 					: esc_html__( 'Checked Out', 'event_espresso' );
 				// get timestamp string
@@ -417,9 +418,9 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 						'event_espresso'
 					) . '">' . $checkin_status . ': ' . $timestamp_string . '</a>';
 			}
-		} 
-		return ( ! empty( $DTT_ID ) && ! empty( $timestamps ) ) 
-			? sprintf( '%1$s %2$s', $name_link, $this->row_actions( $actions, true ) ) 
+		}
+		return ( ! empty( $DTT_ID ) && ! empty( $timestamps ) )
+			? sprintf( '%1$s %2$s', $name_link, $this->row_actions( $actions, true ) )
 			: $name_link;
 	}
 
