@@ -34,7 +34,7 @@ class EE_Restriction_Generator_Reg_Form extends EE_Restriction_Generator_Base{
 
 	/**
 	 *
-	 * @return \EE_Default_Where_Conditions
+	 * @return \EE_Default_Where_Conditions[]
 	 * @throws EE_Error
 	 */
 	protected function _generate_restrictions() {
@@ -45,17 +45,22 @@ class EE_Restriction_Generator_Reg_Form extends EE_Restriction_Generator_Base{
 				EE_Restriction_Generator_Base::get_default_restrictions_cap() => new EE_Return_None_Where_Conditions()
 			);
 		}
-		return array(
+		$restrictions = array(
 			EE_Restriction_Generator_Base::get_cap_name( $this->model(), $this->action() ) => new EE_Return_None_Where_Conditions(),
-			EE_Restriction_Generator_Base::get_cap_name( $this->model(), $this->action() . '_system' ) => new EE_Default_Where_Conditions(
-				array(
-					'OR*no_' . EE_Restriction_Generator_Base::get_cap_name( $this->model(), $this->action() . '_system' ) => array(
-						$this->_system_field_name       => array( 'IN', array( '', 0 ) ),
-						$this->_system_field_name . '*' => array( 'IS_NULL' )
-					)
-				)
-			)
 		);
+		//there is no "ee_read_system_questions" cap; in order to read reg form items you only need "ee_read_{model_name}".
+        //there is also no "ee_delete_system_questions" cap. But folks shouldn't be deleting system questions anyway
+		if ($this->action() !== EEM_Base::caps_read) {
+            $restrictions[EE_Restriction_Generator_Base::get_cap_name($this->model(), $this->action() . '_system')] = new EE_Default_Where_Conditions(
+                array(
+                    'OR*no_' . EE_Restriction_Generator_Base::get_cap_name($this->model(), $this->action() . '_system') => array(
+                        $this->_system_field_name       => array('IN', array('', 0)),
+                        $this->_system_field_name . '*' => array('IS_NULL')
+                    )
+                )
+            );
+        }
+        return $restrictions;
 	}
 }
 

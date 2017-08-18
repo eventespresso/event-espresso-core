@@ -47,6 +47,36 @@ class EE_Line_Item_Test extends EE_UnitTestCase{
 		$this->assertEquals( $total_including_taxes, $total_line_item->total() );
 	}
 
+
+
+    /**
+     * @group 10654
+     * Verifies that when we recalculate an event's subtotal, we also update its unit price right away.
+     * Otherwise it can lead to issues like reported on 10654.
+     */
+	public function test_recalculate_pre_tax_total__dont_miss_updating_subtotal_unit_prices(){
+        $txn = $this->new_typical_transaction();
+        $total_line_item = $txn->total_line_item();
+        $event_subtotal_array = EEH_Line_Item::get_event_subtotals( $total_line_item );
+        $event_subtotal = reset($event_subtotal_array);
+        $original_event_subtotal_amount = $event_subtotal->total();
+        $original_event_subtotal_unit_price = $event_subtotal->unit_price();
+        EEH_Line_Item::visualize($total_line_item);
+        //ok now let's add a discount, under the event subtotal
+        EEH_Line_Item::add_percentage_based_item(
+            $event_subtotal,
+            'Some discount',
+            -50,
+            'should affect event subtotals unit price'
+        );
+        EEH_Line_Item::visualize($total_line_item);
+        $total_line_item->recalculate_pre_tax_total();
+        EEH_Line_Item::visualize($total_line_item);
+        //so that should have reduced the event subtotal's total by half, AND its unit price
+        $this->assertEquals($original_event_subtotal_amount / 2, $event_subtotal->total());
+        $this->assertEquals($original_event_subtotal_unit_price / 2, $event_subtotal->unit_price());
+    }
+
 	/**
 	 * @group 8964
 	 * Uses a particular number and quantity that has been shown to cause rounding problems
