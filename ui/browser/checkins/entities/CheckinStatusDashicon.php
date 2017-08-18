@@ -99,5 +99,23 @@ class CheckinStatusDashicon
         }
         return "dashicons dashicons-no checkin-icons checkedin-status-{$this->checkin_status}";
     }
+
+    /**
+     * returns a description for the Checkin Status Dashicon that can be used in List Table Legends
+     *
+     * @return string
+     */
+    public function legendLabel()
+    {
+        if ($this->checkin_status === EE_Checkin::status_checked_in) {
+            return esc_html__('This Registrant has been Checked In', 'event_espresso');
+        }
+        if ($this->checkin_status === EE_Checkin::status_checked_out) {
+            return esc_html__('This Registrant has been Checked Out', 'event_espresso');
+        }
+        return esc_html__('No Check-in Record has been Created for this Registrant', 'event_espresso');
+    }
+
+
 }
 // Location: ui/browser/checkins/entities/CheckinStatusDashicon.php
