@@ -1,6 +1,8 @@
 <?php
 namespace Page;
 
+use Codeception\Util\Locator;
+
 /**
  * MessagesAdmin
  * Selectors/References to elements in the Messages Admin Pages
@@ -169,7 +171,7 @@ class MessagesAdmin extends CoreAdmin
         $table_cell_content_for_field = '',
         $number_in_set = 1
     ) {
-        $selector = $number_in_set > 0 ? '(' : '';
+        $selector = "//tbody[@id='the-list']";
         $selector .= "//tr[contains(@class, 'msg-status-$message_status')]"
                      . "//td[contains(@class, 'message_type') and text()='$message_type_label']";
         if ($messenger) {
@@ -179,8 +181,7 @@ class MessagesAdmin extends CoreAdmin
         $selector .= $table_cell_content_for_field
             ? "/ancestor::tr/td[contains(@class, 'column-$field') and text()='$table_cell_content_for_field']"
             : "/ancestor::tr/td[contains(@class, 'column-$field')]";
-        $selector .= $number_in_set > 0 ? ")[$number_in_set]" : '';
-        return $selector;
+        return $number_in_set > 0 ? Locator::elementAt($selector, $number_in_set) : $selector;
     }
 
 

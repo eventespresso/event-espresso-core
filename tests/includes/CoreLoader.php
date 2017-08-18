@@ -59,6 +59,7 @@ class CoreLoader
                     ) . '/tests/phpunit'
                 );
             }
+            // define('EE_REST_API_DEBUG_MODE', true);
         }
     }
 
