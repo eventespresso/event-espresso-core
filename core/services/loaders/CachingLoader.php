@@ -48,7 +48,7 @@ class CachingLoader extends LoaderDecorator
         $this->setIdentifier($identifier);
         if ($this->identifier !== '') {
             // to only clear this cache, and assuming an identifier has been set, simply do the following:
-            // do_action('AHEE__EventEspresso\core\services\loaders\CachingLoader__resetCache__IDENTIFIER');
+            // do_action('AHEE__EventEspresso_core_services_loaders_CachingLoader__resetCache__IDENTIFIER');
             // where "IDENTIFIER" = the string that was set during construction
             add_action(
                 "AHEE__EventEspresso_core_services_loaders_CachingLoader__resetCache__{$identifier}",

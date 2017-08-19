@@ -51,9 +51,12 @@ class EE_Email_messenger extends EE_messenger
     {
         //set name and description properties
         $this->name                = 'email';
-        $this->description         = esc_html__(
-            'This messenger delivers messages via email using the built-in <code>wp_mail</code> function included with WordPress',
-            'event_espresso'
+        $this->description         = sprintf(
+            esc_html__(
+                'This messenger delivers messages via email using the built-in %s function included with WordPress',
+                'event_espresso'
+            ),
+            '<code>wp_mail</code>'
         );
         $this->label               = array(
             'singular' => esc_html__('email', 'event_espresso'),

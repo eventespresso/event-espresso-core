@@ -1,5 +1,5 @@
-<?php namespace EventEspresso\core\libraries\rest_api\controllers\rpc;
-
+<?php
+namespace EventEspresso\core\libraries\rest_api\controllers\rpc;
 
 use WP_Error;
 use WP_REST_Response;
@@ -33,23 +33,26 @@ class Checkin extends Base
 
     /**
      * @param WP_REST_Request $request
+     * @param string           $version
      * @return WP_Error|WP_REST_Response
      */
-    public static function handle_request_toggle_checkin(WP_REST_Request $request)
+    public static function handleRequestToggleCheckin(WP_REST_Request $request, $version)
     {
         $controller = new Checkin();
-        return $controller->_create_checkin_checkout_object($request);
+        return $controller->createCheckinCheckoutObject($request, $version);
     }
 
 
 
     /**
      * Toggles whether the user is checked in or not.
+
      *
      * @param WP_REST_Request $request
+     * @param string           $version
      * @return WP_Error|WP_REST_Response
      */
-    protected function _create_checkin_checkout_object(WP_REST_Request $request)
+    protected function createCheckinCheckoutObject(WP_REST_Request $request, $version)
     {
         $reg_id = $request->get_param('REG_ID');
         $dtt_id = $request->get_param('DTT_ID');
@@ -61,22 +64,22 @@ class Checkin extends Base
         }
         $reg = EEM_Registration::instance()->get_one_by_ID($reg_id);
         if (! $reg instanceof EE_Registration) {
-            return $this->send_response(
+            return $this->sendResponse(
                 new WP_Error(
                     'rest_registration_toggle_checkin_invalid_id',
                     sprintf(
-                        __('You cannot checkin registration with ID %1$s because it doesn\'t exist.',
-                            'event_espresso'),
+                        __(
+                            'You cannot checkin registration with ID %1$s because it doesn\'t exist.',
+                            'event_espresso'
+                        ),
                         $reg_id
                     ),
                     array('status' => 422)
                 )
             );
         }
-        if (! EE_Capabilities::instance()
-                             ->current_user_can('ee_edit_checkin', 'rest_api_checkin_endpoint', $reg_id)
-        ) {
-            return $this->send_response(
+        if (! EE_Capabilities::instance()->current_user_can('ee_edit_checkin', 'rest_api_checkin_endpoint', $reg_id)) {
+            return $this->sendResponse(
                 new WP_Error(
                     'rest_user_cannot_toggle_checkin',
                     sprintf(
@@ -92,15 +95,19 @@ class Checkin extends Base
             //check if we know they can't check in because they're not approved and we aren't forcing
             if (! $reg->is_approved() && ! $force) {
                 //rely on EE_Error::add_error messages to have been added to give more data about why it failed
-                return $this->send_response(
+                return $this->sendResponse(
                     new WP_Error(
                         'rest_toggle_checkin_failed',
-                        __('Registration check-in failed because the registration is not approved. You may attempt to force checking in though.',
-                            'event_espresso')
+                        __(
+                            // @codingStandardsIgnoreStart
+                            'Registration check-in failed because the registration is not approved. You may attempt to force checking in though.',
+                            // @codingStandardsIgnoreEnd
+                            'event_espresso'
+                        )
                     )
                 );
             }
-            return $this->send_response(
+            return $this->sendResponse(
                 new WP_Error(
                     'rest_toggle_checkin_failed_not_forceable',
                     __('Registration checkin failed. Please see additional error data.', 'event_espresso')
@@ -119,28 +126,31 @@ class Checkin extends Base
             )
         );
         if (! $checkin instanceof EE_Checkin) {
-            return $this->send_response(
+            return $this->sendResponse(
                 new WP_Error(
                     'rest_toggle_checkin_error',
                     sprintf(
-                        __('Supposedly we created a new checkin object for registration %1$s at datetime %2$s, but we can\'t find it.',
-                            'event_espresso'),
+                        __(
+                            // @codingStandardsIgnoreStart
+                            'Supposedly we created a new checkin object for registration %1$s at datetime %2$s, but we can\'t find it.',
+                            // @codingStandardsIgnoreEnd
+                            'event_espresso'
+                        ),
                         $reg_id,
                         $dtt_id
                     )
                 )
             );
         }
-        $requested_version = $this->get_requested_version($request->get_route());
         $get_request = new WP_REST_Request(
             'GET',
-            EED_Core_Rest_Api::ee_api_namespace . $requested_version . '/checkins/' . $checkin->ID()
+            '/' . EED_Core_Rest_Api::ee_api_namespace . 'v' . $version . '/checkins/' . $checkin->ID()
         );
         $get_request->set_url_params(
             array(
                 'id' => $checkin->ID(),
             )
         );
-        return Read::handle_request_get_one($get_request);
+        return Read::handleRequestGetOne($get_request, $version, 'Checkin');
     }
 }

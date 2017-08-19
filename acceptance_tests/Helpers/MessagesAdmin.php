@@ -187,6 +187,13 @@ trait MessagesAdmin
         $context = 'Event Admin',
         $number_in_set = 1
     ) {
+        $delete_action_selector = MessagesPage::messagesActivityListTableDeleteActionSelectorFor(
+            $message_type_label,
+            $message_status,
+            $messenger,
+            $context,
+            $number_in_set
+        );
         $this->actor()->moveMouseOver(
             MessagesPage::messagesActivityListTableCellSelectorFor(
                 'to',
@@ -196,25 +203,15 @@ trait MessagesAdmin
                 $context,
                 '',
                 $number_in_set
-            )
+            ),
+            5,
+            5
         );
         $this->actor()->waitForElementVisible(
-            MessagesPage::messagesActivityListTableDeleteActionSelectorFor(
-                $message_type_label,
-                $message_status,
-                $messenger,
-                $context,
-                $number_in_set
-            )
+            $delete_action_selector
         );
         $this->actor()->click(
-            MessagesPage::messagesActivityListTableDeleteActionSelectorFor(
-                $message_type_label,
-                $message_status,
-                $messenger,
-                $context,
-                $number_in_set
-            )
+            $delete_action_selector
         );
         $this->actor()->waitForText('successfully deleted');
     }
@@ -242,5 +239,13 @@ trait MessagesAdmin
     public function dontSeeTextInViewMessageModal($text_to_view)
     {
         $this->seeTextInViewMessageModal($text_to_view, true);
+    }
+
+
+    public function dismissMessageModal()
+    {
+        $this->actor()->click('#espresso-admin-page-overlay-dv');
+        //this is needed otherwise phantom js gets stuck in the wrong context and any future element events will fail.
+        $this->actor()->click('form#EE_Message_List_Table-table-frm');
     }
 }

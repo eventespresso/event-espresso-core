@@ -1,9 +1,9 @@
 <?php
+use EventEspresso\core\services\loaders\Loader;
 use EventEspresso\core\services\orm\ModelFieldFactory;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 
-require_once(EE_MODELS . 'EEM_Base.model.php');
 
 
 
