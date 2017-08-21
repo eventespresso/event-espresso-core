@@ -1,4 +1,3 @@
-
 <?php
 use EventEspresso\core\Psr4Autoloader;
 
