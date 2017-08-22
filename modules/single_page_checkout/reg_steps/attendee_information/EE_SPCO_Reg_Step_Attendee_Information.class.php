@@ -337,6 +337,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
                     ),
                 ),
                 $question_group,
+                $registration,
                 $this
             )
         );
