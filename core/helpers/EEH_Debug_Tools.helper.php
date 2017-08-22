@@ -467,7 +467,7 @@ class EEH_Debug_Tools
             return '';
         }
         if (defined('EE_TESTS_DIR')) {
-            return "\n (" . $file . ' line no: ' . $line . ' ) ';
+            return "\n\t(" . $file . ' line no: ' . $line . ' ) ';
         }
         return '<br /><span style="font-size:9px;font-weight:normal;color:#666;line-height: 12px;">'
                . $file

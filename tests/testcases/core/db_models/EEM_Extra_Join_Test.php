@@ -49,7 +49,6 @@ class EEM_Extra_Join_Test extends EE_UnitTestCase
     }
 
 
-
     /**
      * @param $pm_relations
      * @return mixed
