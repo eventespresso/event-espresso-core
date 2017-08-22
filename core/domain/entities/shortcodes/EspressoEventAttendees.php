@@ -130,6 +130,7 @@ class EspressoEventAttendees extends EspressoShortcode
                        . $e->getMessage()
                        . '</div>';
             }
+            return '';
         }
         $this->setAdditionalQueryParams($attributes);
         //get contacts!
