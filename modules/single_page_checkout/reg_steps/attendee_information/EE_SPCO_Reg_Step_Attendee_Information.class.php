@@ -46,43 +46,46 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
     public function __construct(EE_Checkout $checkout)
     {
         $this->_slug     = 'attendee_information';
-        $this->_name     = __('Attendee Information', 'event_espresso');
+        $this->_name     = esc_html__('Attendee Information', 'event_espresso');
         $this->_template = SPCO_REG_STEPS_PATH . $this->_slug . DS . 'attendee_info_main.template.php';
         $this->checkout  = $checkout;
         $this->_reset_success_message();
         $this->set_instructions(
-            __('Please answer the following registration questions before proceeding.', 'event_espresso')
+            esc_html__('Please answer the following registration questions before proceeding.', 'event_espresso')
         );
     }
 
 
     public function translate_js_strings()
     {
-        EE_Registry::$i18n_js_strings['required_field']            = __(' is a required question.', 'event_espresso');
-        EE_Registry::$i18n_js_strings['required_multi_field']      = __(
+        EE_Registry::$i18n_js_strings['required_field']            = esc_html__(
+            ' is a required question.',
+            'event_espresso'
+        );
+        EE_Registry::$i18n_js_strings['required_multi_field']      = esc_html__(
             ' is a required question. Please enter a value for at least one of the options.',
             'event_espresso'
         );
-        EE_Registry::$i18n_js_strings['answer_required_questions'] = __(
+        EE_Registry::$i18n_js_strings['answer_required_questions'] = esc_html__(
             'Please answer all required questions correctly before proceeding.',
             'event_espresso'
         );
         EE_Registry::$i18n_js_strings['attendee_info_copied']      = sprintf(
-            __(
+            esc_html__(
                 'The attendee information was successfully copied.%sPlease ensure the rest of the registration form is completed before proceeding.',
                 'event_espresso'
             ),
             '<br/>'
         );
-        EE_Registry::$i18n_js_strings['attendee_info_copy_error']  = __(
+        EE_Registry::$i18n_js_strings['attendee_info_copy_error']  = esc_html__(
             'An unknown error occurred on the server while attempting to copy the attendee information. Please refresh the page and try again.',
             'event_espresso'
         );
-        EE_Registry::$i18n_js_strings['enter_valid_email']         = __(
+        EE_Registry::$i18n_js_strings['enter_valid_email']         = esc_html__(
             'You must enter a valid email address.',
             'event_espresso'
         );
-        EE_Registry::$i18n_js_strings['valid_email_and_questions'] = __(
+        EE_Registry::$i18n_js_strings['valid_email_and_questions'] = esc_html__(
             'You must enter a valid email address and answer all other required questions before you can proceed.',
             'event_espresso'
         );
@@ -106,7 +109,10 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
     /**
      * @return EE_Form_Section_Proper
      * @throws EE_Error
+     * @throws InvalidArgumentException
      * @throws \EventEspresso\core\exceptions\EntityNotFoundException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
     public function generate_reg_form()
     {
@@ -203,7 +209,10 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
      * @param EE_Registration $registration
      * @return EE_Form_Section_Base
      * @throws EE_Error
+     * @throws InvalidArgumentException
      * @throws \EventEspresso\core\exceptions\EntityNotFoundException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
     private function _registrations_reg_form(EE_Registration $registration)
     {
@@ -497,7 +506,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
                     new EE_Checkbox_Multi_Input(
                         array(
                             $registration->ID() => sprintf(
-                                __('Attendee #%s', 'event_espresso'),
+                                esc_html__('Attendee #%s', 'event_espresso'),
                                 $registration->count()
                             ),
                         ),
@@ -742,6 +751,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
+     * @throws RuntimeException
      * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
      * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
@@ -755,7 +765,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
         // if we don't have any $valid_data then something went TERRIBLY WRONG !!!
         if (empty($valid_data)) {
             EE_Error::add_error(
-                __('No valid question responses were received.', 'event_espresso'),
+                esc_html__('No valid question responses were received.', 'event_espresso'),
                 __FILE__,
                 __FUNCTION__,
                 __LINE__
@@ -764,7 +774,10 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
         }
         if (! $this->checkout->transaction instanceof EE_Transaction || ! $this->checkout->continue_reg) {
             EE_Error::add_error(
-                __('A valid transaction could not be initiated for processing your registrations.', 'event_espresso'),
+                esc_html__(
+                    'A valid transaction could not be initiated for processing your registrations.',
+                    'event_espresso'
+                ),
                 __FILE__,
                 __FUNCTION__,
                 __LINE__
@@ -776,7 +789,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
         // verify we got the goods
         if (empty($registrations)) {
             EE_Error::add_error(
-                __('Your form data could not be applied to any valid registrations.', 'event_espresso'),
+                esc_html__('Your form data could not be applied to any valid registrations.', 'event_espresso'),
                 __FILE__,
                 __FUNCTION__,
                 __LINE__
@@ -794,7 +807,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
             // generate a correctly translated string for all possible singular/plural combinations
             if ($this->checkout->total_ticket_count === 1 && $registrations_processed !== 1) {
                 $error_msg = sprintf(
-                    __(
+                    esc_html__(
                         'There was %1$d ticket in the Event Queue, but %2$ds registrations were processed',
                         'event_espresso'
                     ),
@@ -803,7 +816,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
                 );
             } elseif ($this->checkout->total_ticket_count !== 1 && $registrations_processed === 1) {
                 $error_msg = sprintf(
-                    __(
+                    esc_html__(
                         'There was a total of %1$d tickets in the Event Queue, but only %2$ds registration was processed',
                         'event_espresso'
                     ),
@@ -812,7 +825,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
                 );
             } else {
                 $error_msg = sprintf(
-                    __(
+                    esc_html__(
                         'There was a total of %1$d tickets in the Event Queue, but %2$ds registrations were processed',
                         'event_espresso'
                     ),
@@ -826,7 +839,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
         // mark this reg step as completed
         $this->set_completed();
         $this->_set_success_message(
-            __('The Attendee Information Step has been successfully completed.', 'event_espresso')
+            esc_html__('The Attendee Information Step has been successfully completed.', 'event_espresso')
         );
         //do action in case a plugin wants to do something with the data submitted in step 1.
         //passes EE_Single_Page_Checkout, and it's posted data
@@ -872,7 +885,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
             // verify EE_Registration object
             if (! $registration instanceof EE_Registration) {
                 EE_Error::add_error(
-                    __(
+                    esc_html__(
                         'An invalid Registration object was discovered when attempting to process your registration information.',
                         'event_espresso'
                     ),
@@ -969,7 +982,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
                                     ) {
                                         EE_Error::add_error(
                                             sprintf(
-                                                __(
+                                                esc_html__(
                                                     'Unable to save registration form data for the form input: "%1$s" with the submitted value: "%2$s"',
                                                     'event_espresso'
                                                 ),
@@ -1020,7 +1033,10 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
                     if (! $registration->attendee() instanceof EE_Attendee) {
                         EE_Error::add_error(
                             sprintf(
-                                __('Registration %s has an invalid or missing Attendee object.', 'event_espresso'),
+                                esc_html__(
+                                    'Registration %s has an invalid or missing Attendee object.',
+                                    'event_espresso'
+                                ),
                                 $reg_url_link
                             ),
                             __FILE__,
@@ -1044,7 +1060,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
                 }
             } else {
                 EE_Error::add_error(
-                    __(
+                    esc_html__(
                         'An invalid or missing line item ID was encountered while attempting to process the registration form.',
                         'event_espresso'
                     ),
@@ -1174,7 +1190,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
             switch ($form_input) {
                 case 'fname':
                     EE_Error::add_error(
-                        __('First Name is a required value.', 'event_espresso'),
+                        esc_html__('First Name is a required value.', 'event_espresso'),
                         __FILE__,
                         __FUNCTION__,
                         __LINE__
@@ -1183,7 +1199,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
                     break;
                 case 'lname':
                     EE_Error::add_error(
-                        __('Last Name is a required value.', 'event_espresso'),
+                        esc_html__('Last Name is a required value.', 'event_espresso'),
                         __FILE__,
                         __FUNCTION__,
                         __LINE__
@@ -1192,7 +1208,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
                     break;
                 case 'email':
                     EE_Error::add_error(
-                        __('Please enter a valid email address.', 'event_espresso'),
+                        esc_html__('Please enter a valid email address.', 'event_espresso'),
                         __FILE__,
                         __FUNCTION__,
                         __LINE__
@@ -1288,6 +1304,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
+     * @throws RuntimeException
      * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
      * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
