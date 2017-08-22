@@ -1321,11 +1321,13 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
         if (empty($selected_method_of_payment) && $required) {
             EE_Error::add_error(
                 sprintf(
-                    esc_html__(
-                        'The selected method of payment could not be determined.%sPlease ensure that you have selected one before proceeding.%sIf you continue to experience difficulties, then refresh your browser and try again, or contact %s for assistance.',
-                        'event_espresso'
+                    apply_filters(
+                        'FHEE__EE_SPCO_Reg_Step_Payment_Options___get_selected_method_of_payment__error_message',
+                        esc_html__(
+                            'Sorry, you cannot complete your purchase becuase a payment method is not active.%1$s Please contact %2$s for assistance and provide a description of the problem.',
+                            'event_espresso'
+                        )
                     ),
-                    '<br/>',
                     '<br/>',
                     EE_Registry::instance()->CFG->organization->get_pretty('email')
                 ),
