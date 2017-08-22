@@ -1766,27 +1766,33 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 
     /**
-     * possibly toggle REG status
+     * possibly toggle Registration status based on comparison of REG_paid vs REG_final_price
      *
      * @param  boolean $trigger_set_status_logic EE_Registration::set_status() can trigger additional logic
      *                                           depending on whether the reg status changes to or from "Approved"
-     * @return boolean whether the TXN was saved
+     * @return boolean whether the Registration was saved
      * @throws EE_Error
      * @throws RuntimeException
      */
     public function updateStatusBasedOnTotalPaid($trigger_set_status_logic = true)
     {
-        // set transaction status based on comparison of TXN_paid vs TXN_total
-        if (EEH_Money::compare_floats($this->paid(), $this->final_price(), '>')) {
-            $new_status = EEM_Registration::status_id_approved;
-        } elseif (EEH_Money::compare_floats($this->paid(), $this->final_price())) {
-            $new_status = EEM_Registration::status_id_approved;
-        } elseif (EEH_Money::compare_floats($this->paid(), $this->final_price(), '<')) {
-            $new_status = EEM_Registration::status_id_pending_payment;
-        } else {
-            throw new RuntimeException(
-                esc_html__('The total paid calculation for this Registration is inaccurate.', 'event_espresso')
-            );
+        $paid = $this->paid();
+        $price = $this->final_price();
+        switch(true) {
+            // overpaid or paid
+            case EEH_Money::compare_floats($paid, $price, '>'):
+            case EEH_Money::compare_floats($paid, $price):
+                $new_status = EEM_Registration::status_id_approved;
+                break;
+            //  underpaid
+            case EEH_Money::compare_floats($paid, $price, '<'):
+                $new_status = EEM_Registration::status_id_pending_payment;
+                break;
+            // uhhh Houston...
+            default:
+                throw new RuntimeException(
+                    esc_html__('The total paid calculation for this registration is inaccurate.', 'event_espresso')
+                );
         }
         if ($new_status !== $this->status_ID()) {
             if ($trigger_set_status_logic) {
