@@ -86,6 +86,11 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
                 'capability' => 'ee_edit_checkin',
                 'obj_id'     => $reg_id,
             ),
+            'toggle_checkin_status_bulk' => array(
+                'func' => '_toggle_checkin_status',
+                'noheader' => true,
+                'capability' => 'ee_edit_checkins'
+            ),
             'event_registrations'      => array(
                 'func'       => '_event_registrations_list_table',
                 'capability' => 'ee_read_checkins',
@@ -245,8 +250,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
                 'bulk_action' => ! isset($this->_req_data['event_id'])
                     ? array()
                     : array(
-                        'toggle_checkin_status' => __('Toggle Check-In', 'event_espresso'),
-                        //'trash_registrations' => __('Trash Registrations', 'event_espresso')
+                        'toggle_checkin_status_bulk' => __('Toggle Check-In', 'event_espresso'),
                     ),
             ),
         );
