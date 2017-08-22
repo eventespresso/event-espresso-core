@@ -117,6 +117,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base
     protected $_blog_offset;
 
 
+
     /**
      * @param string $table_column
      * @param string $nice_name
@@ -127,7 +128,8 @@ class EE_Datetime_Field extends EE_Model_Field_Base
      * @param string $time_format
      * @param string $pretty_date_format
      * @param string $pretty_time_format
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidArgumentException
      */
     public function __construct(
         $table_column,
