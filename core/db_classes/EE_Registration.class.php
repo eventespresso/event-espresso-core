@@ -1770,7 +1770,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      *
      * @param  boolean $trigger_set_status_logic EE_Registration::set_status() can trigger additional logic
      *                                           depending on whether the reg status changes to or from "Approved"
-     * @return boolean whether the Registration was saved
+     * @return boolean whether the Registration status was updated
      * @throws EE_Error
      * @throws RuntimeException
      */
