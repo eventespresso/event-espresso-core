@@ -5,6 +5,7 @@ namespace EventEspresso\core\exceptions;
 use Exception;
 use ReflectionClass;
 use ReflectionException;
+use ReflectionMethod;
 
 if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
@@ -100,8 +101,8 @@ class ExceptionStackTraceDisplay
                         try {
                             //if $function is a closure, this throws an exception
                             $b = new ReflectionMethod($class, $function);
-                            $line = $b->getStartLine(); 
-                        }catch(Exception $closure_exception){
+                            $line = $b->getStartLine();
+                        } catch (Exception $closure_exception) {
                             $line = 'unknown';
                         }
                     }
