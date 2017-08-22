@@ -328,11 +328,16 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
         }
         $questions = $question_group->get_many_related(
             'Question',
-            array(
-                $query_params,
-                'order_by' => array(
-                    'Question_Group_Question.QGQ_order' => 'ASC',
+            apply_filters(
+                'FHEE__EE_SPCO_Reg_Step_Attendee_Information___question_group_reg_form__related_questions_query_params',
+                array(
+                    $query_params,
+                    'order_by' => array(
+                        'Question_Group_Question.QGQ_order' => 'ASC',
+                    ),
                 ),
+                $question_group,
+                $this
             )
         );
         // filter for additional content before questions
