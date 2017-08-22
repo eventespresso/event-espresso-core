@@ -192,7 +192,13 @@ class DisplayTicketSelector
         }
         // begin gathering template arguments by getting event status
         $template_args = array( 'event_status' => $this->event->get_active_status() );
-        if ( $this->activeEventAndShowTicketSelector($event, $template_args['event_status'], $view_details) ) {
+        if (
+            $this->activeEventAndShowTicketSelector(
+                $event,
+                $template_args['event_status'],
+                $view_details
+            )
+        ) {
             return ! is_single() ? $this->displayViewDetailsButton() : '';
         }
         // filter the maximum qty that can appear in the Ticket Selector qty dropdowns
@@ -243,7 +249,7 @@ class DisplayTicketSelector
     protected function activeEventAndShowTicketSelector($event, $_event_active_status, $view_details)
     {
         $event_post = $this->event instanceof EE_Event ? $this->event->ID() : $event;
-        return $this->display_full_ui
+        return $this->display_full_ui()
                && (
                    ! $this->event->display_ticket_selector()
                    || $view_details
