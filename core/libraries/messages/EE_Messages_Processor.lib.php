@@ -378,7 +378,7 @@ class EE_Messages_Processor {
 			if ( ! $generated_queue->get_message_repository()->valid() ) {
 				return $generated_queue;
 			}
-			return $generated_queue->get_message_repository()->is_test_send() ? true : $generated_queue;
+			return $generated_queue;
 		} else {
 			return false;
 		}

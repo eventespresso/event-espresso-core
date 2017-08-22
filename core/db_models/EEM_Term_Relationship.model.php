@@ -66,6 +66,7 @@ class EEM_Term_Relationship extends EEM_Base
         foreach ($models_this_can_attach_to as $model_name) {
             $this->_model_relations[$model_name] = new EE_Belongs_To_Relation();
         }
+        $this->_wp_core_model = true;
         $this->_indexes = array(
             'PRIMARY' => new EE_Primary_Key_Index(array('object_id', 'term_taxonomy_id')),
         );

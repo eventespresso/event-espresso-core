@@ -79,6 +79,7 @@ class EEM_Term_Taxonomy extends EEM_Base
         foreach ($cpt_models as $model_name) {
             $this->_model_relations[$model_name] = new EE_HABTM_Relation('Term_Relationship');
         }
+        $this->_wp_core_model = true;
         $this->_indexes = array(
             'term_id_taxonomy' => new EE_Unique_Index(array('term_id', 'taxonomy')),
         );

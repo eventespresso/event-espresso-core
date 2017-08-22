@@ -23,6 +23,13 @@ class EE_Venue_Shortcodes extends EE_Shortcodes
      */
     protected $_event;
 
+    /**
+     * Will hold the EE_Venue if available
+     *
+     * @var EE_Venue
+     */
+    protected $_venue;
+
 
     /**
      * Initialize properties
@@ -47,8 +54,12 @@ class EE_Venue_Shortcodes extends EE_Shortcodes
                 'event_espresso'
             ),
             '[VENUE_ZIP]'               => esc_html__('The zip code for the venue address', 'event_espresso'),
+            '[VENUE_META_*]'            => esc_html__(
+                'This is a special dynamic shortcode. After the "*", add the exact name for your custom field, if there is a value set for that custom field within the venue then it will be output in place of this shortcode.', 
+                'event_espresso'
+            ),
             '[GOOGLE_MAP_URL]'          => esc_html__(
-                'URL for the google map associated with the venue.',
+                'URL for the google map associated with the venue.', 
                 'event_espresso'
             ),
             '[GOOGLE_MAP_LINK]'         => esc_html__('Link to a google map for the venue', 'event_espresso'),
@@ -64,6 +75,10 @@ class EE_Venue_Shortcodes extends EE_Shortcodes
      */
     protected function _parser($shortcode)
     {
+        $this->_venue = $this->_get_venue();
+        //If there is no venue object by now then get out.
+        if ( ! $this->_venue instanceof EE_Venue )
+            return '';
 
         switch ($shortcode) {
             case '[VENUE_TITLE]':
@@ -127,19 +142,25 @@ class EE_Venue_Shortcodes extends EE_Shortcodes
                 break;
 
         }
+
+        if ( strpos( $shortcode, '[VENUE_META_*' ) !== false ) {
+            $shortcode = str_replace( '[VENUE_META_*', '', $shortcode );
+            $shortcode = trim( str_replace( ']', '', $shortcode ) );
+
+            //pull the meta value from the venue post
+            $venue_meta = $this->_venue->get_post_meta( $shortcode, true );
+
+            return ! empty( $venue_meta ) ? $venue_meta : '';
+
+        }
     }
-
-
     /**
-     * This retrieves the specified venue information
+     * This retrieves the EE_Venue from the available data object.
      *
-     * @param string $field  What Venue field to retrieve
-     * @return string What was retrieved!
-     * @throws EE_Error
-     * @throws \EventEspresso\core\exceptions\EntityNotFoundException
+     * @return EE_Venue|null
      */
-    private function _venue($field)
-    {
+    private function _get_venue() {
+
         //we need the EE_Event object to get the venue.
         $this->_event = $this->_data instanceof EE_Event ? $this->_data : null;
 
@@ -162,79 +183,89 @@ class EE_Venue_Shortcodes extends EE_Shortcodes
             $this->_event = empty($this->_event) && ! empty($events) ? $event : $this->_event;
         }
 
+        //If we have an event object use it to pull the venue.
+        if ($this->_event instanceof EE_Event) {
+            return $this->_event->get_first_related('Venue');
+        } 
 
-        //If there is no event objecdt by now then get out.
-        if (! $this->_event instanceof EE_Event) {
-            return '';
-        }
+        return null;
+    }
 
-        /** @var EE_Venue $venue */
-        $venue = $this->_event->get_first_related('Venue');
+    /**
+     * This retrieves the specified venue information
+     *
+     * @param string $field  What Venue field to retrieve
+     * @return string What was retrieved!
+     * @throws EE_Error
+     * @throws \EventEspresso\core\exceptions\EntityNotFoundException
+     */
+    private function _venue($field)
+    {
 
-        if (empty($venue)) {
+        if (empty($this->_venue)) {
             return '';
         } //no venue so get out.
 
         switch ($field) {
             case 'title':
-                return $venue->get('VNU_name');
+                return $this->_venue->get('VNU_name');
                 break;
 
             case 'description':
-                return $venue->get('VNU_desc');
+                return $this->_venue->get('VNU_desc');
                 break;
 
             case 'url':
-                $url = $venue->get('VNU_url');
-                return empty($url) ? $venue->get_permalink() : $url;
+                $url = $this->_venue->get('VNU_url');
+                return empty($url) ? $this->_venue->get_permalink() : $url;
                 break;
 
             case 'image':
-                return '<img src="' . $venue->feature_image_url(array(200, 200,))
+                return '<img src="' . $this->_venue->feature_image_url(array(200, 200,))
                        . '" alt="' . sprintf(
                            esc_attr__('%s Feature Image', 'event_espresso'),
-                           $venue->get('VNU_name')
+                           $this->_venue->get('VNU_name')
                        ) . '" />';
                 break;
 
             case 'phone':
-                return $venue->get('VNU_phone');
+                return $this->_venue->get('VNU_phone');
                 break;
 
             case 'address':
-                return $venue->get('VNU_address');
+                return $this->_venue->get('VNU_address');
                 break;
 
             case 'address2':
-                return $venue->get('VNU_address2');
+                return $this->_venue->get('VNU_address2');
                 break;
 
             case 'city':
-                return $venue->get('VNU_city');
+                return $this->_venue->get('VNU_city');
                 break;
 
             case 'state':
-                $state = $venue->state_obj();
+                $state = $this->_venue->state_obj();
                 return is_object($state) ? $state->get('STA_name') : '';
                 break;
 
             case 'country':
-                $country = $venue->country_obj();
+                $country = $this->_venue->country_obj();
                 return is_object($country) ? $country->get('CNT_name') : '';
                 break;
 
             case 'zip':
-                return $venue->get('VNU_zip');
+                return $this->_venue->get('VNU_zip');
                 break;
 
             case 'formatted_address':
-                return EEH_Address::format($venue);
+                return EEH_Address::format($this->_venue);
                 break;
 
             case 'gmap_link':
             case 'gmap_url':
             case 'gmap_link_img':
-                $atts = $this->get_map_attributes($venue, $field);
+                $atts = $this->get_map_attributes($this->_venue, $field);
                 return EEH_Maps::google_map_link($atts);
                 break;
         }

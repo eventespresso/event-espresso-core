@@ -6,6 +6,7 @@ namespace EventEspresso\core\libraries\rest_api\controllers\rpc;
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
+ * @group rest_api
  */
 class Checkin_Test extends \EE_UnitTestCase
 {
@@ -22,6 +23,8 @@ class Checkin_Test extends \EE_UnitTestCase
     }
 
 
+
+
     /*
      * we're doing stuff that we know will add error notices, so we don't care
      * if there are errors (that's part of these tests)
@@ -32,6 +35,9 @@ class Checkin_Test extends \EE_UnitTestCase
         parent::tearDown();
     }
 
+
+
+
     /**
      * @param int $reg_id
      * @param int $dtt_id
@@ -40,8 +46,8 @@ class Checkin_Test extends \EE_UnitTestCase
     protected function _create_checkin_request($reg_id, $dtt_id)
     {
         $req = new \WP_REST_Request(
-            'PUT',
-            \EED_Core_Rest_Api::ee_api_namespace . '4.8.33/registrations/' . $reg_id . '/toggle_checkin_for_datetime/' . $dtt_id . '/force'
+            'POST',
+            '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.33/registrations/' . $reg_id . '/toggle_checkin_for_datetime/' . $dtt_id
         );
         $req->set_url_params(
             array(
@@ -57,20 +63,22 @@ class Checkin_Test extends \EE_UnitTestCase
         return $req;
     }
 
+
+
+
     public function test_handle_checkin__success()
     {
         $checkins_before = \EEM_Checkin::instance()->count();
         global $current_user;
         $current_user = $this->wp_admin_with_ee_caps();
-        $reg          = $this->new_model_obj_with_dependencies('Registration',
-            array('STS_ID' => \EEM_Registration::status_id_approved));
-        $dtt          = $this->new_model_obj_with_dependencies('Datetime');
+        $reg = $this->new_model_obj_with_dependencies('Registration', array('STS_ID' => \EEM_Registration::status_id_approved));
+        $dtt = $this->new_model_obj_with_dependencies('Datetime');
         $dtt->_add_relation_to($reg->get('TKT_ID'), 'Ticket');
-
-        $response = Checkin::handle_request_toggle_checkin($this->_create_checkin_request($reg->ID(), $dtt->ID()));
-
-        $this->assertEquals($checkins_before + 1, \EEM_Checkin::instance()->count());
+        $response = rest_do_request($this->_create_checkin_request($reg->ID(), $dtt->ID()));
         $data = $response->get_data();
+        -
+        $this->assertEquals($checkins_before + 1, \EEM_Checkin::instance()->count());
+
         $this->assertTrue(isset($data['CHK_ID']));
         $checkin_obj = \EEM_Checkin::instance()->get_one_by_ID($data['CHK_ID']);
         $this->assertEquals($reg->ID(), $checkin_obj->get('REG_ID'));
@@ -83,18 +91,18 @@ class Checkin_Test extends \EE_UnitTestCase
         );
     }
 
+
+
+
     public function test_handle_checkin__fail_not_approved()
     {
         $checkins_before = \EEM_Checkin::instance()->count();
         global $current_user;
         $current_user = $this->wp_admin_with_ee_caps();
-        $reg          = $this->new_model_obj_with_dependencies('Registration',
-            array('STS_ID' => \EEM_Registration::status_id_incomplete));
-        $dtt          = $this->new_model_obj_with_dependencies('Datetime');
+        $reg = $this->new_model_obj_with_dependencies('Registration', array('STS_ID' => \EEM_Registration::status_id_incomplete));
+        $dtt = $this->new_model_obj_with_dependencies('Datetime');
         $dtt->_add_relation_to($reg->get('TKT_ID'), 'Ticket');
-
-        $response = Checkin::handle_request_toggle_checkin($this->_create_checkin_request($reg->ID(), $dtt->ID()));
-
+        $response = rest_do_request($this->_create_checkin_request($reg->ID(), $dtt->ID()));
         $this->assertEquals($checkins_before, \EEM_Checkin::instance()->count());
         $data = $response->get_data();
         $this->assertTrue(isset($data['code']));
@@ -103,38 +111,41 @@ class Checkin_Test extends \EE_UnitTestCase
         $this->assertFalse(empty($data['additional_errors'][0]['message']));
     }
 
+
+
+
     //doesnt have permission
     public function test_handle_checkin__fail_no_permitted()
     {
         //notice that we have NOT logged in!
         $checkins_before = \EEM_Checkin::instance()->count();
-        $reg             = $this->new_model_obj_with_dependencies('Registration',
-            array('STS_ID' => \EEM_Registration::status_id_incomplete));
-        $dtt             = $this->new_model_obj_with_dependencies('Datetime');
+        $reg = $this->new_model_obj_with_dependencies('Registration', array('STS_ID' => \EEM_Registration::status_id_incomplete));
+        $dtt = $this->new_model_obj_with_dependencies('Datetime');
         $dtt->_add_relation_to($reg->get('TKT_ID'), 'Ticket');
-
-        $response = Checkin::handle_request_toggle_checkin($this->_create_checkin_request($reg->ID(), $dtt->ID()));
-
+        $response = rest_do_request($this->_create_checkin_request($reg->ID(), $dtt->ID()));
         $this->assertEquals($checkins_before, \EEM_Checkin::instance()->count());
         $data = $response->get_data();
         $this->assertTrue(isset($data['code']));
         $this->assertEquals('rest_user_cannot_toggle_checkin', $data['code']);
     }
 
+
+
+
     //regsitered too many times
     public function test_handle_checkin__fail_checked_in_too_many_times()
     {
         global $current_user;
         $current_user = $this->wp_admin_with_ee_caps();
-        $tkt          = $this->new_model_obj_with_dependencies('Ticket', array('TKT_uses' => 1));
-        $reg          = $this->new_model_obj_with_dependencies(
+        $tkt = $this->new_model_obj_with_dependencies('Ticket', array('TKT_uses' => 1));
+        $reg = $this->new_model_obj_with_dependencies(
             'Registration',
             array(
                 'STS_ID' => \EEM_Registration::status_id_approved,
                 'TKT_ID' => $tkt->ID(),
             )
         );
-        $dtt          = $this->new_model_obj_with_dependencies('Datetime');
+        $dtt = $this->new_model_obj_with_dependencies('Datetime');
         $dtt->_add_relation_to($reg->get('TKT_ID'), 'Ticket');
         $dtt2 = $this->new_model_obj_with_dependencies('Datetime');
         $dtt2->_add_relation_to($reg->get('TKT_ID'), 'Ticket');
@@ -147,11 +158,8 @@ class Checkin_Test extends \EE_UnitTestCase
                 'CHK_in' => true,
             )
         );
-
         $checkins_before = \EEM_Checkin::instance()->count();
-
-        $response = Checkin::handle_request_toggle_checkin($this->_create_checkin_request($reg->ID(), $dtt2->ID()));
-
+        $response = rest_do_request($this->_create_checkin_request($reg->ID(), $dtt2->ID()));
         $this->assertEquals($checkins_before, \EEM_Checkin::instance()->count());
         $data = $response->get_data();
         $this->assertTrue(isset($data['code']));
@@ -160,12 +168,14 @@ class Checkin_Test extends \EE_UnitTestCase
         $this->assertFalse(empty($data['additional_errors'][0]['message']));
     }
 
+
+
+
     //registered too many times but force it
     public function test_handle_checkin__success_only_because_forced()
     {
         global $current_user;
         $current_user = $this->wp_admin_with_ee_caps();
-
         $reg = $this->new_model_obj_with_dependencies(
             'Registration',
             array(
@@ -174,12 +184,10 @@ class Checkin_Test extends \EE_UnitTestCase
         );
         $dtt = $this->new_model_obj_with_dependencies('Datetime');
         $dtt->_add_relation_to($reg->get('TKT_ID'), 'Ticket');
-
         $checkins_before = \EEM_Checkin::instance()->count();
-        $req             = $this->_create_checkin_request($reg->ID(), $dtt->ID());
+        $req = $this->_create_checkin_request($reg->ID(), $dtt->ID());
         $req->set_body_params(array('force' => "true"));
-        $response = Checkin::handle_request_toggle_checkin($req);
-
+        $response = rest_do_request($req);
         $this->assertEquals($checkins_before + 1, \EEM_Checkin::instance()->count());
     }
 }
