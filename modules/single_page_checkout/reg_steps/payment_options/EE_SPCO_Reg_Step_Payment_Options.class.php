@@ -964,6 +964,20 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
     {
         // load payment method classes
         $this->checkout->available_payment_methods = $this->_get_available_payment_methods();
+        if (empty($this->checkout->available_payment_methods)) {
+            EE_Error::add_error(
+                apply_filters(
+                    'FHEE__EE_SPCO_Reg_Step_Payment_Options___setup_payment_options__error_message_no_payment_methods',
+                    esc_html__(
+                        'Sorry, you cannot complete your purchase because a payment method is not active.%1$s Please contact %2$s for assistance and provide a description of the problem.',
+                        'event_espresso'
+                    )
+                ),
+                __FILE__,
+                __FUNCTION__,
+                __LINE__
+            );
+        }
         // switch up header depending on number of available payment methods
         $payment_method_header     = count($this->checkout->available_payment_methods) > 1
             ? apply_filters(
