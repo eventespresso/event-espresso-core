@@ -97,8 +97,13 @@ class ExceptionStackTraceDisplay
                     $a = new ReflectionClass($class);
                     $file = $a->getFileName();
                     if (empty($line) && ! empty($function)) {
-                        $b = new \ReflectionMethod($class, $function);
-                        $line = $b->getStartLine();
+                        try {
+                            //if $function is a closure, this throws an exception
+                            $b = new ReflectionMethod($class, $function);
+                            $line = $b->getStartLine(); 
+                        }catch(Exception $closure_exception){
+                            $line = 'unknown';
+                        }
                     }
                 }
                 if ($nmbr === $last_on_stack) {
