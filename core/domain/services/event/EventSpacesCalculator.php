@@ -8,7 +8,10 @@ use EE_Error;
 use EE_Event;
 use EE_Ticket;
 use EEM_Ticket;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
+use InvalidArgumentException;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -114,6 +117,9 @@ class EventSpacesCalculator
     /**
      * @return EE_Ticket[]
      * @throws EE_Error
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
      */
     public function getActiveTickets()
     {
@@ -236,6 +242,9 @@ class EventSpacesCalculator
      * @throws EE_Error
      * @throws DomainException
      * @throws UnexpectedEntityException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
      */
     public function spacesRemaining()
     {
@@ -252,6 +261,9 @@ class EventSpacesCalculator
      * @throws EE_Error
      * @throws DomainException
      * @throws UnexpectedEntityException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
      */
     public function totalSpacesAvailable()
     {
@@ -272,11 +284,14 @@ class EventSpacesCalculator
      * @throws EE_Error
      * @throws DomainException
      * @throws UnexpectedEntityException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
      */
     private function initialize()
     {
         if ($this->debug) {
-            echo "\n\n" . __LINE__ . ') ' . strtoupper(__METHOD__) . '()';
+            \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
         }
         $this->datetime_tickets = array();
         $this->datetime_spaces = array();
@@ -345,7 +360,7 @@ class EventSpacesCalculator
     private function calculate($consider_sold = true)
     {
         if ($this->debug) {
-            echo "\n\n" . __LINE__ . ') ' . strtoupper(__METHOD__) . '()';
+            \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
         }
         foreach ($this->datetime_tickets as $datetime_identifier => $tickets) {
             $this->trackAvailableSpacesForDatetimes($datetime_identifier, $tickets);
@@ -379,13 +394,13 @@ class EventSpacesCalculator
         // and bail if it is not
         if (! $reg_limit) {
             if ($this->debug) {
-                echo "\n . {$datetime_identifier} AT CAPACITY";
+                \EEH_Debug_Tools::printr('AT CAPACITY', " . {$datetime_identifier}", __FILE__, __LINE__);
             }
             return;
         }
         if ($this->debug) {
-            echo "\n\n{$datetime_identifier}";
-            echo "\n . " . 'REG LIMIT: ' . $reg_limit;
+            \EEH_Debug_Tools::printr($datetime_identifier, '$datetime_identifier', __FILE__, __LINE__, 1);
+            \EEH_Debug_Tools::printr((string)$reg_limit, 'REG LIMIT', __FILE__, __LINE__);
         }
         // set default number of available spaces
         $available_spaces = 0;
@@ -404,11 +419,11 @@ class EventSpacesCalculator
             // track any non-zero values
             $this->total_spaces[$datetime_identifier] += $available_spaces;
             if ($this->debug) {
-                echo "\n . spaces: {$available_spaces}";
+                \EEH_Debug_Tools::printr((string)$available_spaces, ' . spaces: ', __FILE__, __LINE__);
             }
         } else {
             if ($this->debug) {
-                echo "\n . NO TICKETS AVAILABLE FOR DATETIME";
+                \EEH_Debug_Tools::printr(' ', ' . NO TICKETS AVAILABLE FOR DATETIME', __FILE__, __LINE__);
             }
         }
         if ($this->debug) {
@@ -429,35 +444,39 @@ class EventSpacesCalculator
      */
     private function calculateAvailableSpacesForTicket($datetime_identifier, $reg_limit,$ticket_identifier, $available_spaces)
     {
-        if ($this->debug) {
-            echo "\n . {$ticket_identifier}";
-        }
         // make sure ticket quantity is set
-        $ticket_quantity = isset($this->ticket_quantities[$ticket_identifier])
-            ? $this->ticket_quantities[$ticket_identifier]
+        $ticket_quantity = isset($this->ticket_quantities[ $ticket_identifier ])
+            ? $this->ticket_quantities[ $ticket_identifier ]
             : 0;
+        if ($this->debug) {
+            \EEH_Debug_Tools::printr("{$ticket_quantity}", "ticket $ticket_identifier quantity: ",
+                __FILE__, __LINE__, 2);
+        }
         if ($ticket_quantity) {
             if ($this->debug) {
-                echo "\n . . available_spaces ({$available_spaces}) <= reg_limit ({$reg_limit}) = ";
-                echo ($available_spaces <= $reg_limit)
-                    ? 'true'
-                    : 'false';
+                \EEH_Debug_Tools::printr(
+                    ($available_spaces <= $reg_limit)
+                        ? 'true'
+                        : 'false',
+                    ' . available_spaces({$available_spaces}) <= reg_limit ({$reg_limit}) = ',
+                    __FILE__, __LINE__
+                );
             }
             // if the datetime is NOT at full capacity yet
             if ($available_spaces <= $reg_limit) {
                 // then the maximum ticket quantity we can allocate is the lowest value of either:
                 //  the number of remaining spaces for the datetime, which is the limit - spaces already taken
                 //  or the maximum ticket quantity
-                $ticket_quantity = min(($reg_limit - $available_spaces), $ticket_quantity);
+                $ticket_quantity = min($reg_limit - $available_spaces, $ticket_quantity);
                 // adjust the available quantity in our tracking array
                 $this->ticket_quantities[$ticket_identifier] -= $ticket_quantity;
                 // and increment spaces allocated for this datetime
                 $available_spaces += $ticket_quantity;
                 if ($this->debug) {
-                    echo "\n . . ticket quantity: {$ticket_quantity} ({$ticket_identifier})";
-                    echo "\n . . . allocate {$ticket_quantity} tickets ({$ticket_identifier})";
+                    \EEH_Debug_Tools::printr("{$ticket_quantity} tickets ({$ticket_identifier})", ' . . allocate ',
+                        __FILE__, __LINE__);
                     if ($available_spaces >= $reg_limit) {
-                        echo "\n . {$datetime_identifier} AT CAPACITY";
+                        \EEH_Debug_Tools::printr('AT CAPACITY', " . {$datetime_identifier}", __FILE__, __LINE__, 3);
                     }
                 }
                 // now adjust all other datetimes that allow access to this ticket
@@ -492,33 +511,66 @@ class EventSpacesCalculator
         foreach ($this->datetime_tickets as $datetime_ID => $datetime_tickets) {
             // if the supplied ticket has access to this datetime
             if (in_array($ticket_identifier, $datetime_tickets, true)) {
+                $datetime_at_capacity = $datetime_ID === $datetime_identifier && $available_spaces >= $reg_limit;
                 // and datetime has spaces available
-                if (isset($this->datetime_spaces[$datetime_ID])) {
-                    // then decrement the available spaces for the datetime
-                    $this->datetime_spaces[$datetime_ID] -= $ticket_quantity;
-                    // but don't let quantities go below zero
-                    $this->datetime_spaces[$datetime_ID] = max(
-                        $this->datetime_spaces[$datetime_ID],
-                        0
-                    );
-                    if ($this->debug) {
-                        echo "\n . . . " . $datetime_ID . " capacity reduced by {$ticket_quantity}";
-                        echo " because it allows access to {$ticket_identifier}";
-                    }
-                }
+                $this->adjustDatetimeSpaces(
+                    $datetime_identifier,
+                    $ticket_quantity,
+                    $ticket_identifier
+                );
                 // if this datetime is at full capacity
-                if ($datetime_ID === $datetime_identifier && $available_spaces >= $reg_limit) {
+                if ($datetime_at_capacity) {
                     // then all of it's tickets are now unavailable
                     foreach ($datetime_tickets as $datetime_ticket) {
+                        if ($this->debug) {
+                            \EEH_Debug_Tools::printr($datetime_ticket, ' . . . $datetime_ticket', __FILE__, __LINE__);
+                        }
                         // so  set any tracked available quantities to zero
                         if (isset($this->ticket_quantities[$datetime_ticket])) {
                             $this->ticket_quantities[$datetime_ticket] = 0;
                         }
+                        // but we also need to adjust spaces for any other datetimes this ticket has access to
+                        if($datetime_ticket !== $ticket_identifier) {
+                            if (isset($this->ticket_datetimes[ $datetime_ticket ])
+                                && is_array($this->ticket_datetimes[ $datetime_ticket ])
+                            ) {
+                                foreach ($this->ticket_datetimes[ $datetime_ticket ] as $datetime) {
+                                    // don't adjust the current datetime twice
+                                    if($datetime !== $datetime_identifier) {
+                                        $this->adjustDatetimeSpaces(
+                                            $datetime,
+                                            $ticket_quantity,
+                                            $datetime_ticket
+                                        );
+                                    }
+                                }
+                            }
+                        }
                         if ($this->debug) {
-                            echo "\n . . . " . $datetime_ticket . ' unavailable: ';
+                            \EEH_Debug_Tools::printr("quantity set to 0 because Datetime {$datetime_identifier} is at capacity", " . . . . datetime ticket {$datetime_ticket}", __FILE__, __LINE__);
                         }
                     }
                 }
+            }
+        }
+    }
+
+    private function adjustDatetimeSpaces($datetime_identifier, $ticket_quantity = 0, $ticket_identifier = '')
+    {
+        if (isset($this->datetime_spaces[ $datetime_identifier ])) {
+            if ($this->debug) {
+                \EEH_Debug_Tools::printr($datetime_identifier, ' . . adjust Datetime Spaces for', __FILE__, __LINE__);
+            }
+            // then decrement the available spaces for the datetime
+            $this->datetime_spaces[ $datetime_identifier ] -= $ticket_quantity;
+            // but don't let quantities go below zero
+            $this->datetime_spaces[ $datetime_identifier ] = max(
+                $this->datetime_spaces[ $datetime_identifier ],
+                0
+            );
+            if ($this->debug) {
+                \EEH_Debug_Tools::printr($ticket_quantity . " because it allows access to {$ticket_identifier}",
+                    " . . . {$datetime_identifier} capacity reduced by", __FILE__, __LINE__);
             }
         }
     }
