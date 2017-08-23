@@ -18,6 +18,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     /**
      * Used to reference when a registration has never been checked in.
      *
+     * @deprecated use \EE_Checkin::status_checked_never instead
      * @type int
      */
     const checkin_status_never = 2;
@@ -25,6 +26,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     /**
      * Used to reference when a registration has been checked in.
      *
+     * @deprecated use \EE_Checkin::status_checked_in instead
      * @type int
      */
     const checkin_status_in = 1;
@@ -33,6 +35,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     /**
      * Used to reference when a registration has been checked out.
      *
+     * @deprecated use \EE_Checkin::status_checked_out instead
      * @type int
      */
     const checkin_status_out = 0;
@@ -1338,16 +1341,16 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
             return false;
         }
         $status_paths = array(
-            EE_Registration::checkin_status_never => EE_Registration::checkin_status_in,
-            EE_Registration::checkin_status_in    => EE_Registration::checkin_status_out,
-            EE_Registration::checkin_status_out   => EE_Registration::checkin_status_in,
+            EE_Checkin::status_checked_never => EE_Checkin::status_checked_in,
+            EE_Checkin::status_checked_in    => EE_Checkin::status_checked_out,
+            EE_Checkin::status_checked_out   => EE_Checkin::status_checked_in,
         );
         //start by getting the current status so we know what status we'll be changing to.
         $cur_status = $this->check_in_status_for_datetime($DTT_ID, null);
         $status_to  = $status_paths[$cur_status];
         // database only records true for checked IN or false for checked OUT
         // no record ( null ) means checked in NEVER, but we obviously don't save that
-        $new_status = $status_to === EE_Registration::checkin_status_in ? true : false;
+        $new_status = $status_to === EE_Checkin::status_checked_in ? true : false;
         // add relation - note Check-ins are always creating new rows
         // because we are keeping track of Check-ins over time.
         // Eventually we'll probably want to show a list table
@@ -1449,11 +1452,11 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
             : $this->get_first_related('Checkin', $checkin_query_params);
         if ($checkin instanceof EE_Checkin) {
             if ($checkin->get('CHK_in')) {
-                return EE_Registration::checkin_status_in; //checked in
+                return EE_Checkin::status_checked_in; //checked in
             }
-            return EE_Registration::checkin_status_out; //had checked in but is now checked out.
+            return EE_Checkin::status_checked_out; //had checked in but is now checked out.
         }
-        return EE_Registration::checkin_status_never; //never been checked in
+        return EE_Checkin::status_checked_never; //never been checked in
     }
 
 
@@ -1478,14 +1481,14 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
             $cur_status = $this->check_in_status_for_datetime($DTT_ID);
             //what is the status message going to be?
             switch ($cur_status) {
-                case EE_Registration::checkin_status_never:
+                case EE_Checkin::status_checked_never:
                     return sprintf(__("%s has been removed from Check-in records", "event_espresso"),
                         $attendee->full_name());
                     break;
-                case EE_Registration::checkin_status_in:
+                case EE_Checkin::status_checked_in:
                     return sprintf(__('%s has been checked in', 'event_espresso'), $attendee->full_name());
                     break;
-                case EE_Registration::checkin_status_out:
+                case EE_Checkin::status_checked_out:
                     return sprintf(__('%s has been checked out', 'event_espresso'), $attendee->full_name());
                     break;
             }
