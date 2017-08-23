@@ -221,12 +221,17 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
         // verify that registration has valid event
         if ($registration->event() instanceof EE_Event) {
             $question_groups = $registration->event()->question_groups(
-                array(
+                apply_filters(
+                    'FHEE__EE_SPCO_Reg_Step_Attendee_Information___registrations_reg_form__question_groups_query_parameters',
                     array(
-                        'Event.EVT_ID'                     => $registration->event()->ID(),
-                        'Event_Question_Group.EQG_primary' => $registration->count() === 1 ? true : false,
+                        array(
+                            'Event.EVT_ID'                     => $registration->event()->ID(),
+                            'Event_Question_Group.EQG_primary' => $registration->count() === 1 ? true : false,
+                        ),
+                        'order_by' => array('QSG_order' => 'ASC'),
                     ),
-                    'order_by' => array('QSG_order' => 'ASC'),
+                    $registration,
+                    $this
                 )
             );
             if ($question_groups) {
