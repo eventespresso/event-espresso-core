@@ -381,6 +381,11 @@ div.TB-ee-frame a {
 	/*content: "\e614";*/
 	content: "\74";
 }
+.checkedin-status-2:before {
+	font-family: 'dashicons' !important;
+	/* ! **using important b / c wp has dashicons setup with important and I had to override **!*/
+	content: "\f158";
+}
 .ee-icon-cash:before {
 	/*content: "\e615";*/
 	content: "\73";
