@@ -12,6 +12,7 @@ use EEM_Datetime;
 use EEM_Event;
 use EEM_Registration;
 use EEM_Ticket;
+use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\services\shortcodes\EspressoShortcode;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
@@ -78,31 +79,23 @@ class EspressoEventAttendees extends EspressoShortcode
     }
 
 
-
     /**
      * process_shortcode - ESPRESSO_EVENT_ATTENDEES - Returns a list of attendees to an event.
      *  [ESPRESSO_EVENT_ATTENDEES]
      *  - defaults to attendees for earliest active event, or earliest upcoming event.
-     *
      *  [ESPRESSO_EVENT_ATTENDEES event_id=123]
      *  - attendees for specific event.
-     *
      *  [ESPRESSO_EVENT_ATTENDEES datetime_id=245]
      *  - attendees for a specific datetime.
-     *
      *  [ESPRESSO_EVENT_ATTENDEES ticket_id=123]
      *  - attendees for a specific ticket.
-     *
      *  [ESPRESSO_EVENT_ATTENDEES status=all]
      *  - specific registration status (use status id) or all for all attendees regardless of status.
      *  Note default is to only return approved attendees
-     *
      *  [ESPRESSO_EVENT_ATTENDEES show_gravatar=true]
      *  - default is to not return gravatar.  Otherwise if this is set then return gravatar for email address given.
-     *
      *  [ESPRESSO_EVENT_ATTENDEES display_on_archives=true]
      *  - default is to not display attendees list on archive pages.
-     *
      * Note: because of the relationship between event_id, ticket_id, and datetime_id:
      * If more than one of those params is included, then preference is given to the following:
      *  - event_id is used whenever its present and any others are ignored.
@@ -112,6 +105,9 @@ class EspressoEventAttendees extends EspressoShortcode
      * @param array $attributes
      * @return string
      * @throws EE_Error
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \InvalidArgumentException
      */
     public function processShortcode($attributes = array())
     {
@@ -120,33 +116,21 @@ class EspressoEventAttendees extends EspressoShortcode
         $archive = is_archive();
         $display_on_archives = filter_var($attributes['display_on_archives'], FILTER_VALIDATE_BOOLEAN);
         // don't display on archives unless 'display_on_archives' is true
-        if($archive && ! $display_on_archives) {
+        if ($archive && ! $display_on_archives) {
             return '';
         }
-        // add attributes to template args
-        $this->template_args['show_gravatar'] = $attributes['show_gravatar'];
-        // add required objects: event, datetime, and ticket
-        $this->template_args['event'] = $this->getEventAndQueryParams($attributes);
-        $this->template_args['datetime'] = $this->getDatetimeAndQueryParams($attributes);
-        $this->template_args['ticket'] = $this->getTicketAndQueryParams($attributes);
 
-        // if any of the above objects is invalid or missing,
-        // then there was an invalid parameter or the shortcode was used incorrectly
-        // so when WP_DEBUG is set and true, we'll show a message,
-        // otherwise we'll just return an empty string.
-         if (
-            ! $this->template_args['event'] instanceof EE_Event
-            || empty($this->query_params[0])
-            || ($attributes['datetime_id'] && ! $this->template_args['datetime'] instanceof EE_Datetime)
-            || ($attributes['ticket_id'] && ! $this->template_args['ticket'] instanceof EE_Ticket)
-        ) {
+        try {
+            $this->setBaseTemplateArguments($attributes);
+            $this->validateEntities($attributes);
+            $this->setBaseQueryParams();
+        } catch (EntityNotFoundException $e) {
             if (WP_DEBUG) {
-                return '<div class="important-notice ee-attention">'
-                       . esc_html__('The [ESPRESSO_EVENT_ATTENDEES] shortcode has been used incorrectly.  Please double check the arguments you used for any typos.  In the case of ID type arguments, its possible the given ID does not correspond to existing data in the database.',
-                        'event_espresso')
+                return '<div class="important-notice ee-error">'
+                       . $e->getMessage()
                        . '</div>';
             }
-             return '';
+            return '';
         }
         $this->setAdditionalQueryParams($attributes);
         //get contacts!
@@ -156,7 +140,6 @@ class EspressoEventAttendees extends EspressoShortcode
             'loop-espresso_event_attendees.php',
             $this->template_args
         );
-
     }
 
 
@@ -183,64 +166,159 @@ class EspressoEventAttendees extends EspressoShortcode
     }
 
 
+    /**
+     * Set all the base template arguments from the incoming attributes.
+     *
+     * * Note: because of the relationship between event_id, ticket_id, and datetime_id:
+     * If more than one of those params is included, then preference is given to the following:
+     *  - event_id is used whenever its present and any others are ignored.
+     *  - if no event_id then datetime is used whenever its present and any others are ignored.
+     *  - otherwise ticket_id is used if present.
+     *
+     * @param array $attributes
+     * @throws EE_Error
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \InvalidArgumentException
+     */
+    private function setBaseTemplateArguments(array $attributes)
+    {
+        $this->template_args['show_gravatar'] = $attributes['show_gravatar'];
+        $this->template_args['event'] = $this->getEvent($attributes);
+        $this->template_args['datetime'] = empty($attributes['event_id'])
+            ? $this->getDatetime($attributes)
+            : null;
+        $this->template_args['ticket'] = empty($attributes['datetime_id']) && empty($attributes['event_id'])
+            ? $this->getTicket($attributes)
+            : null;
+    }
+
+
+    /**
+     * Validates the presence of entities for the given attribute values.
+     * @param array $attributes
+     * @throws EntityNotFoundException
+     */
+    private function validateEntities(array $attributes)
+    {
+        if (! $this->template_args['event'] instanceof EE_Event
+            || (
+                empty($attributes['event_id'])
+                && $attributes['datetime_id']
+                && ! $this->template_args['datetime'] instanceof EE_Datetime
+            )
+            || (
+                empty($attributes['event_id'])
+                && empty($attributes['datetime_id'])
+                && $attributes['ticket_id']
+                && ! $this->template_args['ticket'] instanceof EE_Ticket
+            )
+        ) {
+            throw new EntityNotFoundException(
+                '',
+                '',
+                esc_html__(
+                    'The [ESPRESSO_EVENT_ATTENDEES] shortcode has been used incorrectly.  Please double check the arguments you used for any typos.  In the case of ID type arguments, its possible the given ID does not correspond to existing data in the database.',
+                    'event_espresso'
+                )
+            );
+        }
+    }
+
+
+    /**
+     * Sets the query params for the base query elements.
+     */
+    private function setBaseQueryParams()
+    {
+        switch (true) {
+            case $this->template_args['datetime'] instanceof EE_Datetime:
+                $this->query_params = array(
+                    0 => array(
+                        'Registration.Ticket.Datetime.DTT_ID' => $this->template_args['datetime']->ID()
+                    ),
+                    'default_where_conditions' => 'this_model_only'
+                );
+                break;
+            case $this->template_args['ticket'] instanceof EE_Ticket:
+                $this->query_params[0] = array(
+                    'Registration.TKT_ID' => $this->template_args['ticket']->ID()
+                );
+                break;
+            case $this->template_args['event'] instanceof EE_Event:
+                $this->query_params[0] = array(
+                    'Registration.EVT_ID' => $this->template_args['event']->ID()
+                );
+                break;
+        }
+    }
+
 
     /**
      * @param array $attributes
      * @return EE_Event|null
      * @throws EE_Error
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \InvalidArgumentException
      */
-    private function getEventAndQueryParams(array $attributes){
-        if ( ! empty($attributes['event_id'])) {
-            $event = EEM_Event::instance()->get_one_by_ID($attributes['event_id']);
-            if ($event instanceof EE_Event) {
-                $this->query_params[0]['Registration.EVT_ID'] = $attributes['event_id'];
-                return $event;
-            }
+    private function getEvent(array $attributes)
+    {
+        switch (true) {
+            case ! empty($attributes['event_id']):
+                $event = EEM_Event::instance()->get_one_by_ID($attributes['event_id']);
+                break;
+            case ! empty($attributes['datetime_id']):
+                $event = EEM_Event::instance()->get_one(array(
+                    array(
+                        'Datetime.DTT_ID' => $attributes['datetime_id']
+                    )
+                ));
+                break;
+            case ! empty($attributes['ticket_id']):
+                $event = EEM_Event::instance()->get_one(array(
+                    array(
+                        'Datetime.Ticket.TKT_ID' => $attributes['ticket_id']
+                    )
+                ));
+                break;
+            case is_espresso_event():
+                $event = EEH_Event_View::get_event();
+                break;
+            default:
+                // one last shot...
+                // try getting the earliest active event
+                $events = EEM_Event::instance()->get_active_events(array(
+                    'limit'    => 1,
+                    'order_by' => array('Datetime.DTT_EVT_start' => 'ASC')
+                ));
+                //  if none then get the next upcoming
+                $events = empty($events)
+                    ? EEM_Event::instance()->get_upcoming_events(array(
+                        'limit'    => 1,
+                        'order_by' => array('Datetime.DTT_EVT_start' => 'ASC')
+                    ))
+                    : $events;
+                $event = reset($events);
         }
-        if (is_espresso_event()) {
-            $event = EEH_Event_View::get_event();
-            if ($event instanceof EE_Event) {
-                $this->query_params[0]['Registration.EVT_ID'] = $event->ID();
-                return $event;
-            }
-        }
-        // one last shot...
-        // try getting the earliest active event
-        $events = EEM_Event::instance()->get_active_events(array(
-            'limit'    => 1,
-            'order_by' => array('Datetime.DTT_EVT_start' => 'ASC')
-        ));
-        //  if none then get the next upcoming
-        $events = empty($events)
-            ? EEM_Event::instance()->get_upcoming_events(array(
-                'limit'    => 1,
-                'order_by' => array('Datetime.DTT_EVT_start' => 'ASC')
-            ))
-            : $events;
-        $event = reset($events);
-        if ($event instanceof EE_Event) {
-            $this->query_params[0]['Registration.EVT_ID'] = $event->ID();
-            return $event;
-        }
-        return null;
+
+        return $event instanceof EE_Event ? $event : null;
     }
 
 
-
     /**
-     * @param array $attributes
+     * @param array         $attributes
      * @return EE_Datetime|null
+     * @throws EE_Error
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \InvalidArgumentException
      */
-    private function getDatetimeAndQueryParams(array $attributes)
+    private function getDatetime(array $attributes)
     {
-        if ( ! empty($attributes['datetime_id'])) {
+        if (! empty($attributes['datetime_id'])) {
             $datetime = EEM_Datetime::instance()->get_one_by_ID($attributes['datetime_id']);
             if ($datetime instanceof EE_Datetime) {
-                $this->query_params[0]['Registration.Ticket.Datetime.DTT_ID'] = $attributes['datetime_id'];
-                $this->query_params['default_where_conditions'] = 'this_model_only';
-                if ( ! $this->template_args['event'] instanceof EE_Event) {
-                    $this->template_args['event'] = $datetime->event();
-                }
                 return $datetime;
             }
         }
@@ -248,23 +326,19 @@ class EspressoEventAttendees extends EspressoShortcode
     }
 
 
-
     /**
      * @param array $attributes
-     * @return \EE_Base_Class|null
+     * @return \EE_Base_Class|EE_Ticket|null
      * @throws EE_Error
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \InvalidArgumentException
      */
-    private function getTicketAndQueryParams(array $attributes)
+    private function getTicket(array $attributes)
     {
-        if ( ! empty($attributes['ticket_id']) && empty($attributes['event_id']) && empty($attributes['datetime_id'])) {
+        if (! empty($attributes['ticket_id'])) {
             $ticket = EEM_Ticket::instance()->get_one_by_ID($attributes['ticket_id']);
             if ($ticket instanceof EE_Ticket) {
-                $this->query_params[0]['Registration.TKT_ID'] = $attributes['ticket_id'];
-                if ( ! $this->template_args['event'] instanceof EE_Event) {
-                    $this->template_args['event'] = $ticket->first_datetime() instanceof EE_Datetime
-                        ? $ticket->first_datetime()->event()
-                        : null;
-                }
                 return $ticket;
             }
         }
