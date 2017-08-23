@@ -6,17 +6,17 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * This scenario creates an event that has:
  * - Three Datetimes
  *      - D1 - reg limit 5 		( TA, TB, TC ) 	<< can only sell 5 max : Tickets A, B, C sold out after 5 sales
- *      - D2 - reg limit 20 	( TA, TB, TD )	<< can only sell 15 max : 10 TD + 5 (TA or TB)
- *      - D3 - reg limit 12    	( TA, TD )    		<< can only sell 12 max : 10 TD + 2 TA ( or 5 TA + 7 TD )
+ *      - D2 - reg limit 20 	( TA, TB, TD )	<< can only sell 15 max : 10 TD + 5 (TA/TB)
+ *      - D3 - reg limit 12    	( TA, TD )    	<< can only sell 12 max : 10 TD + 2 TA ( or 5 TA + 7 TD )
  * - Four Tickets
  *      - TA - qty 30 	( D1, D2, D3 ) 		<< can only sell 5 max due to D1 reg limit ( which sells out Tickets A, B, C )
  *      - TB - qty 5 	( D1, D2 )         	<< can only sell 5 max due to D1 reg limit ( which sells out Tickets A, B, C )
- *      - TC - qty 15 	( D1 )					<< can only sell 5 max due to D1 reg limit ( which sells out Tickets A, B, C )
- *      - TD - qty 10 	( D2, D3 )				<< can only sell 10 max due to TD qty
+ *      - TC - qty 15 	( D1 )				<< can only sell 5 max due to D1 reg limit ( which sells out Tickets A, B, C )
+ *      - TD - qty 10 	( D2, D3 )			<< can only sell 10 max due to TD qty
  *
  *  MAX SELLOUT:
  * 		- 5 TB tickets for D1 ( D1 sold out = TA, TB, & TC sold out )
- * 		- 10 TD tickets for D3 ( D3 sold out = TD sold out = D2 sold out )
+ * 		- 7 TD tickets for D3 + 5 TA previously sold ( D3 sold out = TD sold out = D2 sold out )
  *  	- ( D2 sold out due to TA, TB, & TD sell outs )
  *
  * @package    Event Espresso
@@ -33,8 +33,8 @@ class EE_Event_Scenario_A extends EE_Test_Scenario {
 
 	protected function _set_up_expected(){
 		$this->_expected_values = array(
-			'total_available_spaces' => 15,
-			'total_remaining_spaces' => 15,
+			'total_available_spaces' => 12,
+			'total_remaining_spaces' => 12,
 		);
 	}
 
