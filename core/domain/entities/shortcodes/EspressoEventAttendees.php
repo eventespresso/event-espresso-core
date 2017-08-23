@@ -232,11 +232,6 @@ class EspressoEventAttendees extends EspressoShortcode
     private function setBaseQueryParams()
     {
         switch (true) {
-            case $this->template_args['event'] instanceof EE_Event:
-                $this->query_params[0] = array(
-                    'Registration.EVT_ID' => $this->template_args['event']
-                );
-                break;
             case $this->template_args['datetime'] instanceof EE_Datetime:
                 $this->query_params = array(
                     0 => array(
@@ -248,6 +243,11 @@ class EspressoEventAttendees extends EspressoShortcode
             case $this->template_args['ticket'] instanceof EE_Ticket:
                 $this->query_params[0] = array(
                     'Registration.TKT_ID' => $this->template_args['ticket']->ID()
+                );
+                break;
+            case $this->template_args['event'] instanceof EE_Event:
+                $this->query_params[0] = array(
+                    'Registration.EVT_ID' => $this->template_args['event']
                 );
                 break;
         }
