@@ -247,7 +247,7 @@ class EspressoEventAttendees extends EspressoShortcode
                 break;
             case $this->template_args['event'] instanceof EE_Event:
                 $this->query_params[0] = array(
-                    'Registration.EVT_ID' => $this->template_args['event']
+                    'Registration.EVT_ID' => $this->template_args['event']->ID()
                 );
                 break;
         }
