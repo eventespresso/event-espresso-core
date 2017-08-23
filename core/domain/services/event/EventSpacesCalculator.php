@@ -420,7 +420,7 @@ class EventSpacesCalculator
             // track any non-zero values
             $this->total_spaces[ $datetime_identifier ] += $available_spaces;
             if ($this->debug) {
-                \EEH_Debug_Tools::printr((string)$available_spaces, ' . spaces: ', __FILE__, __LINE__);
+                \EEH_Debug_Tools::printr((string)$available_spaces, ' . available spaces: ', __FILE__, __LINE__);
             }
         } else {
             if ($this->debug) {
@@ -428,7 +428,7 @@ class EventSpacesCalculator
             }
         }
         if ($this->debug) {
-            \EEH_Debug_Tools::printr($this->total_spaces[ $datetime_identifier ], '$spaces_remaining', __FILE__,
+            \EEH_Debug_Tools::printr($this->total_spaces[ $datetime_identifier ], '$total_spaces', __FILE__,
                 __LINE__);
             \EEH_Debug_Tools::printr($this->ticket_quantities, '$ticket_quantities', __FILE__, __LINE__);
             \EEH_Debug_Tools::printr($this->datetime_spaces, 'datetime_spaces', __FILE__, __LINE__);
@@ -526,8 +526,7 @@ class EventSpacesCalculator
                 // and datetime has spaces available
                 $this->adjustDatetimeSpaces(
                     $datetime_identifier,
-                    $ticket_quantity,
-                    $ticket_identifier
+                    $ticket_quantity
                 );
                 // if this datetime is at full capacity
                 if ($datetime_at_capacity) {
@@ -567,7 +566,7 @@ class EventSpacesCalculator
         }
     }
 
-    private function adjustDatetimeSpaces($datetime_identifier, $ticket_quantity = 0, $ticket_identifier = '')
+    private function adjustDatetimeSpaces($datetime_identifier, $ticket_quantity = 0)
     {
         if (isset($this->datetime_spaces[ $datetime_identifier ])) {
             if ($this->debug) {
@@ -581,7 +580,7 @@ class EventSpacesCalculator
                 0
             );
             if ($this->debug) {
-                \EEH_Debug_Tools::printr($ticket_quantity . " because it allows access to {$ticket_identifier}",
+                \EEH_Debug_Tools::printr("{$ticket_quantity}",
                     " . . . {$datetime_identifier} capacity reduced by", __FILE__, __LINE__);
             }
         }
