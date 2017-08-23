@@ -1,6 +1,7 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api\calculations;
 
+use EE_Checkin;
 use EventEspresso\core\libraries\rest_api\calculations\Base as Calculations_Base;
 use EventEspresso\core\libraries\rest_api\controllers\model\Base;
 use EEM_Registration;
@@ -67,13 +68,13 @@ class Registration extends Calculations_Base
         foreach ($datetime_ids as $datetime_id) {
             $status = $reg->check_in_status_for_datetime($datetime_id);
             switch ($status) {
-                case EE_Registration::checkin_status_out:
+                case EE_Checkin::status_checked_out:
                     $status_pretty = 'OUT';
                     break;
-                case EE_Registration::checkin_status_in:
+                case EE_Checkin::status_checked_in:
                     $status_pretty = 'IN';
                     break;
-                case EE_Registration::checkin_status_never:
+                case EE_Checkin::status_checked_never:
                 default:
                     $status_pretty = 'NEVER';
                     break;
