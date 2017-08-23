@@ -372,7 +372,7 @@ class EE_Error extends Exception
                                 //if $function is a closure, this throws an exception
                                 $b = new ReflectionMethod($class, $function);
                                 $line = $b->getStartLine();
-                            }catch(Exception $closure_exception){
+                            } catch (Exception $closure_exception) {
                                 $line = 'unknown';
                             }
                         }
