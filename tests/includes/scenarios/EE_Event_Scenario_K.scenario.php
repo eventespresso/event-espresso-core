@@ -21,7 +21,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  * @subpackage tests/scenarios
  * @author     Brent Christensen
  */
-class EE_Event_Scenario_K
+class EE_Event_Scenario_K extends EE_Test_Scenario
 {
 
     public function __construct(EE_UnitTestCase $eetest)
