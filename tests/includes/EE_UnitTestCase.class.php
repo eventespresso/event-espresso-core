@@ -70,17 +70,17 @@ class EE_UnitTestCase extends WP_UnitTestCase
      *
      * @throws \EE_Error
      */
-    public static function setUpBeforeClass() {
-        // echo "\n\n\n" . get_called_class() . "\n\n";
-        parent::setUpBeforeClass();
-        \EventEspresso\core\services\Benchmark::startTimer(get_called_class());
-    }
+    // public static function setUpBeforeClass() {
+    //     echo "\n\n\n" . get_called_class() . "\n\n";
+    //     parent::setUpBeforeClass();
+    //     \EventEspresso\core\services\Benchmark::startTimer(get_called_class());
+    // }
 
-    public static function tearDownAfterClass() {
-        // echo "\n\n\n" . get_called_class() . "\n\n";
-        \EventEspresso\core\services\Benchmark::stopTimer(get_called_class());
-        parent::tearDownAfterClass();
-    }
+    // public static function tearDownAfterClass() {
+    //     // echo "\n\n\n" . get_called_class() . "\n\n";
+    //     \EventEspresso\core\services\Benchmark::stopTimer(get_called_class());
+    //     parent::tearDownAfterClass();
+    // }
 
 
     public function setUp()
