@@ -680,11 +680,15 @@ class EE_Messages_Generator
         $mt_shortcodes = $this->_current_message_type->get_valid_shortcodes();
         $m_shortcodes  = $this->_current_messenger->get_valid_shortcodes();
 
-        //if the 'to' field is empty (messages will ALWAYS have a "to" field, then we get out because that means this
-        //context is turned off) EXCEPT if we're previewing
-        if (empty($templates['to'][$context])
+        //if the 'to' field is empty or the context is inactive we skip EXCEPT if we're previewing
+        if ((
+                (
+                    empty($templates['to'][$context])
+                    && ! $this->_current_messenger->allow_empty_to_field()
+                )
+                || ! $message_template_group->is_context_active($context)
+            )
             && ! $this->_generation_queue->get_message_repository()->is_preview()
-            && ! $this->_current_messenger->allow_empty_to_field()
         ) {
             //we silently exit here and do NOT record a fail because the message is "turned off" by having no "to"
             //field.
