@@ -144,10 +144,9 @@ abstract class EE_Test_Scenario {
 	 * @return mixed
 	 */
 	public function get_scenario_object() {
-		if ( ! empty( $this->_scenario_object) ) {
-			return $this->_scenario_object;
-		}
-		$this->_scenario_object = $this->_get_scenario_object();
+		if (empty( $this->_scenario_object) ) {
+            $this->_scenario_object = $this->_get_scenario_object();
+        }
 		return $this->_scenario_object;
 	}
 
@@ -382,15 +381,15 @@ class EE_Test_Scenario_Factory {
 	 */
 	public function get_scenarios_by_type( $type, $initialize = true ) {
 		$this->get_collection();
-		$scenarios = $this->_collection->get_scenarios_by_type( $type );
-		if ( $scenarios && $initialize) {
+        $scenarios = $this->_collection->get_scenarios_by_type( $type );
+        if ( $scenarios && $initialize) {
 			foreach ( $scenarios as $scenario ) {
 				if ( $scenario instanceof EE_Test_Scenario ) {
 					$scenario->initialize();
 				}
 			}
 		}
-		return $scenarios;
+        return $scenarios;
 	}
 
 
