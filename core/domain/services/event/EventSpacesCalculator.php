@@ -363,21 +363,44 @@ class EventSpacesCalculator
         if ($this->debug) {
             \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
         }
+        if ($consider_sold) {
+            // subtract amounts sold from all ticket quantities and datetime spaces
+            $this->adjustTicketQuantitiesDueToSales();
+        }
         foreach ($this->datetime_tickets as $datetime_identifier => $tickets) {
             $this->trackAvailableSpacesForDatetimes($datetime_identifier, $tickets);
         }
         // total spaces available is just the sum of the spaces available for each datetime
         $spaces_remaining = array_sum($this->total_spaces);
-        if ($consider_sold) {
-            // less the sum of all tickets sold for these datetimes
-            $spaces_remaining -= array_sum($this->tickets_sold);
-        }
         if ($this->debug) {
             \EEH_Debug_Tools::printr($this->total_spaces, '$this->total_spaces', __FILE__, __LINE__);
             \EEH_Debug_Tools::printr($this->tickets_sold, '$this->tickets_sold', __FILE__, __LINE__);
             \EEH_Debug_Tools::printr($spaces_remaining, '$spaces_remaining', __FILE__, __LINE__);
         }
         return $spaces_remaining;
+    }
+
+
+    /**
+     * subtracts amount of  tickets sold from ticket quantities and datetime spaces
+     */
+    private function adjustTicketQuantitiesDueToSales()
+    {
+        foreach ($this->tickets_sold as $ticket_identifier => $tickets_sold) {
+            if (isset($this->ticket_quantities[ $ticket_identifier ])){
+                $this->ticket_quantities[ $ticket_identifier ] -= $tickets_sold;
+            }
+            if (
+                isset($this->ticket_datetimes[ $ticket_identifier ])
+                && is_array($this->ticket_datetimes[ $ticket_identifier ])
+            ){
+                foreach ($this->ticket_datetimes[ $ticket_identifier ] as $ticket_datetime) {
+                    if (isset($this->ticket_quantities[ $ticket_identifier ])) {
+                        $this->datetime_spaces[ $ticket_datetime ] -= $tickets_sold;
+                    }
+                }
+            }
+        }
     }
 
 
