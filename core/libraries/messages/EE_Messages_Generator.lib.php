@@ -119,6 +119,7 @@ class EE_Messages_Generator
      * @param   bool $save Whether to save the EE_Message objects in the new queue or just return.
      * @return EE_Messages_Queue The new queue for holding generated EE_Message objects.
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function generate($save = true)
     {
@@ -250,6 +251,9 @@ class EE_Messages_Generator
      *
      * @return bool Whether the message was successfully generated or not.
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
     protected function _generate()
     {
@@ -317,6 +321,9 @@ class EE_Messages_Generator
      *
      * @return EE_Message_Template_Group|null
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
     protected function _get_message_template_group()
     {
@@ -733,7 +740,9 @@ class EE_Messages_Generator
      * This verifies that the incoming array has a EE_messenger object and a EE_message_type object and sets appropriate
      * error message if either is missing.
      *
-     * @return bool         true means there were no errors, false means there were errors.
+     * @return bool true means there were no errors, false means there were errors.
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _verify()
     {
