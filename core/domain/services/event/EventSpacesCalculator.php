@@ -386,9 +386,15 @@ class EventSpacesCalculator
      */
     private function adjustTicketQuantitiesDueToSales()
     {
+        if ($this->debug) {
+            \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
+        }
         foreach ($this->tickets_sold as $ticket_identifier => $tickets_sold) {
             if (isset($this->ticket_quantities[ $ticket_identifier ])){
                 $this->ticket_quantities[ $ticket_identifier ] -= $tickets_sold;
+                if ($this->debug) {
+                    \EEH_Debug_Tools::printr("{$tickets_sold} sales for ticket {$ticket_identifier} ", 'subtracting', __FILE__, __LINE__);
+                }
             }
             if (
                 isset($this->ticket_datetimes[ $ticket_identifier ])
@@ -397,6 +403,10 @@ class EventSpacesCalculator
                 foreach ($this->ticket_datetimes[ $ticket_identifier ] as $ticket_datetime) {
                     if (isset($this->ticket_quantities[ $ticket_identifier ])) {
                         $this->datetime_spaces[ $ticket_datetime ] -= $tickets_sold;
+                        if ($this->debug) {
+                            \EEH_Debug_Tools::printr("{$tickets_sold} sales for datetime {$ticket_datetime} ",
+                                'subtracting', __FILE__, __LINE__);
+                        }
                     }
                 }
             }
