@@ -968,9 +968,13 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
             EE_Error::add_error(
                 apply_filters(
                     'FHEE__EE_SPCO_Reg_Step_Payment_Options___setup_payment_options__error_message_no_payment_methods',
-                    esc_html__(
-                        'Sorry, you cannot complete your purchase because a payment method is not active.%1$s Please contact %2$s for assistance and provide a description of the problem.',
-                        'event_espresso'
+                    sprintf(
+                        esc_html__(
+                            'Sorry, you cannot complete your purchase because a payment method is not active.%1$s Please contact %2$s for assistance and provide a description of the problem.',
+                            'event_espresso'
+                        ),
+                        '<br>',
+                        EE_Registry::instance()->CFG->organization->get_pretty('email')
                     )
                 ),
                 __FILE__,
