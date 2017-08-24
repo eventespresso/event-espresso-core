@@ -50,6 +50,7 @@ class EE_Event_Scenario_G extends EE_Test_Scenario {
 					'fields' => array(
 						'DTT_name' => 'Datetime 1',
 						'DTT_reg_limit' => 3,
+                        'DTT_sold' => 2,
 					),
 					'relations' => array(
 						'Event' => array( 1 )
@@ -59,6 +60,7 @@ class EE_Event_Scenario_G extends EE_Test_Scenario {
 					'fields' => array(
 						'DTT_name' => 'Datetime 2',
 						'DTT_reg_limit' => 2,
+                        'DTT_sold' => 2,
 					),
 					'relations' => array(
 						'Event' => array( 1 )
@@ -97,6 +99,7 @@ class EE_Event_Scenario_G extends EE_Test_Scenario {
 					'fields' => array(
 						'TKT_name' => 'Ticket 3',
 						'TKT_qty' => 2,
+						'TKT_sold' => 2,
 					),
 					'relations' => array(
 						'Datetime' => array( 1, 2 )
@@ -115,16 +118,6 @@ class EE_Event_Scenario_G extends EE_Test_Scenario {
 		);
 
 		$build_objects = $this->_eeTest->factory->complex_factory->build( $build_artifact );
-		// simulate two sales for ticket 3, which will also increase sold qty for D1 & D2
-		if (
-			isset( $build_objects['Ticket'], $build_objects['Ticket'][3] )
-			&& $build_objects['Ticket'][3] instanceof EE_Ticket
-		) {
-			/** @type EE_Ticket $ticket */
-			$ticket = $build_objects['Ticket'][3];
-			$ticket->increase_sold( 2 );
-		}
-		//EEH_Debug_Tools::printr( $build_objects['Datetime'], 'Datetimes', __FILE__, __LINE__ );
 		//assign the event object as the scenario object
 		$this->_scenario_object = reset( $build_objects['Event'] );
 	}
