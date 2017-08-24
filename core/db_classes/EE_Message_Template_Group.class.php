@@ -13,6 +13,11 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class
 {
 
     /**
+     * Extra Meta key prefix for whether a given context for this message tmeplate group is active or not.
+     */
+    const ACTIVE_CONTEXT_RECORD_META_KEY_PREFIX = 'active_context_';
+
+    /**
      * @param array  $props_n_values
      * @param string $timezone
      * @return EE_Message_Template_Group|mixed
@@ -410,5 +415,49 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class
     public function set_template_pack_variation($variation)
     {
         return $this->update_extra_meta('MTP_variation', $variation);
+    }
+
+
+    /**
+     * Deactivates the given context.
+     * @param $context
+     * @return bool|int
+     * @throws EE_Error
+     */
+    public function deactivate_context($context)
+    {
+        return $this->update_extra_meta(self::ACTIVE_CONTEXT_RECORD_META_KEY_PREFIX . $context, false);
+    }
+
+
+    /**
+     * Activates the given context.
+     * @param $context
+     * @return bool|int
+     * @throws EE_Error
+     */
+    public function activate_context($context)
+    {
+        return $this->update_extra_meta(self::ACTIVE_CONTEXT_RECORD_META_KEY_PREFIX . $context, true);
+    }
+
+
+    /**
+     * Returns whether the context is active or not.
+     * Note, this will default to true if the extra meta record doesn't exist.
+     * Also, this does NOT account for whether the "To" field is empty or not. Some messengers may allow the to field
+     * to be empty (@see EE_Messenger::allow_empty_to_field()) so an empty to field is not always an indicator of
+     * whether a context is "active" or not.
+     *
+     * @param $context
+     * @return bool
+     * @throws EE_Error
+     */
+    public function is_context_active($context)
+    {
+        return filter_var(
+            $this->get_extra_meta(self::ACTIVE_CONTEXT_RECORD_META_KEY_PREFIX . $context, true, true),
+            FILTER_VALIDATE_BOOLEAN
+        );
     }
 }
