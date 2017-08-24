@@ -43,7 +43,7 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class
     public function set_message_type($message_type = false)
     {
         if (! $message_type) {
-            throw new EE_Error(__('Missing required value for the message_type parameter', 'event_espresso'));
+            throw new EE_Error(esc_html__('Missing required value for the message_type parameter', 'event_espresso'));
         }
         $this->set('MTP_message_type', $message_type);
     }
@@ -56,7 +56,7 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class
     public function set_messenger($messenger = false)
     {
         if (! $messenger) {
-            throw new EE_Error(__('Missing required value for the messenger parameter', 'event_espresso'));
+            throw new EE_Error(esc_html__('Missing required value for the messenger parameter', 'event_espresso'));
         }
         $this->set('MTP_messenger', $messenger);
     }
@@ -69,7 +69,12 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class
     public function set_group_template_id($GRP_ID = false)
     {
         if (! $GRP_ID) {
-            throw new EE_Error(__('Missing required value for the message template group id', 'event_espresso'));
+            throw new EE_Error(
+                esc_html__(
+                    'Missing required value for the message template group id',
+                    'event_espresso'
+                )
+            );
         }
         $this->set('GRP_ID', $GRP_ID);
     }
