@@ -14,7 +14,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *      - TC - qty 10 (D1, D2)
  *  MAX SELLOUT:
  *        D1 :  10 TA tickets ( D1 sold out + TA & TC sold out )
- *        D2 :   2 TB tickets ( TB sold out )
+ *        D2 :  12 TB tickets ( TB sold out )
  *
  * @package    Event Espresso
  * @subpackage tests/scenarios
@@ -33,8 +33,8 @@ class EE_Event_Scenario_K extends EE_Test_Scenario
     protected function _set_up_expected()
     {
         $this->_expected_values = array(
-            'total_available_spaces' => 12,
-            'total_remaining_spaces' => 12,
+            'total_available_spaces' => 22,
+            'total_remaining_spaces' => 1,
         );
     }
 
@@ -52,6 +52,7 @@ class EE_Event_Scenario_K extends EE_Test_Scenario
                     'fields'    => array(
                         'DTT_name'      => 'Datetime 1',
                         'DTT_reg_limit' => 10,
+                        'DTT_sold'      => 10,
                     ),
                     'relations' => array(
                         'Event' => array(0),
@@ -61,6 +62,7 @@ class EE_Event_Scenario_K extends EE_Test_Scenario
                     'fields'    => array(
                         'DTT_name'      => 'Datetime 2',
                         'DTT_reg_limit' => 12,
+                        'DTT_sold'      => 11,
                     ),
                     'relations' => array(
                         'Event' => array(0),
@@ -72,6 +74,7 @@ class EE_Event_Scenario_K extends EE_Test_Scenario
                     'fields'    => array(
                         'TKT_name' => 'Ticket A',
                         'TKT_qty'  => 10,
+                        'TKT_sold' => 0,
                     ),
                     'relations' => array(
                         'Datetime' => array(0),
@@ -81,6 +84,7 @@ class EE_Event_Scenario_K extends EE_Test_Scenario
                     'fields'    => array(
                         'TKT_name' => 'Ticket B',
                         'TKT_qty'  => 12,
+                        'TKT_sold' => 1,
                     ),
                     'relations' => array(
                         'Datetime' => array(1),
@@ -90,6 +94,7 @@ class EE_Event_Scenario_K extends EE_Test_Scenario
                     'fields'    => array(
                         'TKT_name' => 'Ticket C',
                         'TKT_qty'  => 10,
+                        'TKT_sold' => 10,
                     ),
                     'relations' => array(
                         'Datetime' => array(0, 1),
