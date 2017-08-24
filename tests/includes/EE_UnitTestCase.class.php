@@ -114,10 +114,6 @@ class EE_UnitTestCase extends WP_UnitTestCase
         EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_TESTS_DIR . 'includes' . DS . 'factories');
         $this->factory = new EE_UnitTest_Factory();
 
-        // load scenarios
-        require_once EE_TESTS_DIR . 'includes/scenarios/EE_Test_Scenario_Classes.php';
-        $this->scenarios = new EE_Test_Scenario_Factory($this);
-
         //IF we detect we're running tests on WP4.1, then we need to make sure current_user_can tests pass by implementing
         //updating all_caps when `WP_User::add_cap` is run (which is fixed in later wp versions).  So we hook into the
         // 'user_has_cap' filter to do this
@@ -179,6 +175,13 @@ class EE_UnitTestCase extends WP_UnitTestCase
         }
         // turn caching back on for any loaders in use
         remove_all_filters('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache');
+    }
+
+    protected function loadTestScenarios()
+    {
+        // load scenarios
+        require_once EE_TESTS_DIR . 'includes/scenarios/EE_Test_Scenario_Classes.php';
+        $this->scenarios = new EE_Test_Scenario_Factory($this);
     }
 
     /**
