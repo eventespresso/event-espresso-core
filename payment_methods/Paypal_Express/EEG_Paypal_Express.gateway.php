@@ -147,85 +147,9 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway {
 		);
 
 		// Show itemized list.
-		if ( $this->_money->compare_floats( $payment->amount(), $transaction->total(), '==' ) ) {
-			$item_num = 0;
-			$itemized_sum = 0;
-			$total_line_items = $transaction->total_line_item();
-			// Go through each item in the list.
-			foreach ( $total_line_items->get_items() as $line_item ) {
-				if ( $line_item instanceof EE_Line_Item ) {
-					// PayPal doesn't like line items with 0.00 amount, so we may skip those.
-					if ( EEH_Money::compare_floats( $line_item->total(), '0.00', '==' ) ) {
-						continue;
-					}
+		$itemized_list = $this->itemize_list($payment, $transaction);
+		$token_request_dtls = array_merge($token_request_dtls, $itemized_list);
 
-					$unit_price = $line_item->unit_price();
-					$line_item_quantity = $line_item->quantity();
-					// This is a discount.
-					if ( $line_item->is_percent() ) {
-						$unit_price = $line_item->total();
-						$line_item_quantity = 1;
-					}
-					// Item Name.
-					$token_request_dtls['L_PAYMENTREQUEST_0_NAME'.$item_num] = substr($this->_format_line_item_name( $line_item, $payment), 0, 127);
-					// Item description.
-					$token_request_dtls['L_PAYMENTREQUEST_0_DESC'.$item_num] = substr($this->_format_line_item_desc( $line_item, $payment), 0, 127);
-					// Cost of individual item.
-					$token_request_dtls['L_PAYMENTREQUEST_0_AMT'.$item_num] = $this->format_currency( $unit_price );
-					// Item Number.
-					$token_request_dtls['L_PAYMENTREQUEST_0_NUMBER'.$item_num] = $item_num + 1;
-					// Item quantity.
-					$token_request_dtls['L_PAYMENTREQUEST_0_QTY'.$item_num] = $line_item_quantity;
-					// Digital item is sold.
-					$token_request_dtls['L_PAYMENTREQUEST_0_ITEMCATEGORY'.$item_num] = 'Physical';
-					$itemized_sum += $line_item->total();
-					++$item_num;
-				}
-			}
-			// Item's sales S/H and tax amount.
-			$token_request_dtls['PAYMENTREQUEST_0_ITEMAMT'] = $total_line_items->get_items_total();
-			$token_request_dtls['PAYMENTREQUEST_0_TAXAMT'] = $total_line_items->get_total_tax();
-			$token_request_dtls['PAYMENTREQUEST_0_SHIPPINGAMT'] = '0';
-			$token_request_dtls['PAYMENTREQUEST_0_HANDLINGAMT'] = '0';
-
-			$itemized_sum_diff_from_txn_total = round( $transaction->total() - $itemized_sum - $total_line_items->get_total_tax(), 2 );
-			// If we were not able to recognize some item like promotion, surcharge or cancellation,
-			// add the difference as an extra line item.
-			if ( $this->_money->compare_floats( $itemized_sum_diff_from_txn_total, 0, '!=' ) ) {
-				// Item Name.
-				$token_request_dtls['L_PAYMENTREQUEST_0_NAME'.$item_num] = substr( __( 'Other (promotion/surcharge/cancellation)', 'event_espresso' ), 0, 127 );
-				// Item description.
-				$token_request_dtls['L_PAYMENTREQUEST_0_DESC'.$item_num] = '';
-				// Cost of individual item.
-				$token_request_dtls['L_PAYMENTREQUEST_0_AMT'.$item_num] = $this->format_currency( $itemized_sum_diff_from_txn_total );
-				// Item Number.
-				$token_request_dtls['L_PAYMENTREQUEST_0_NUMBER'.$item_num] = $item_num + 1;
-				// Item quantity.
-				$token_request_dtls['L_PAYMENTREQUEST_0_QTY'.$item_num] = 1;
-                // Digital item is sold.
-                $token_request_dtls['L_PAYMENTREQUEST_0_ITEMCATEGORY'.$item_num] = 'Physical';
-                $item_num++;
-			}
-		} else {
-			// Just one Item.
-			// Item Name.
-			$token_request_dtls['L_PAYMENTREQUEST_0_NAME0'] = substr( $this->_format_partial_payment_line_item_name($payment), 0, 127 );
-			// Item description.
-			$token_request_dtls['L_PAYMENTREQUEST_0_DESC0'] = substr( $this->_format_partial_payment_line_item_desc($payment), 0, 127 );
-			// Cost of individual item.
-			$token_request_dtls['L_PAYMENTREQUEST_0_AMT0'] = $this->format_currency( $payment->amount() );
-			// Item Number.
-			$token_request_dtls['L_PAYMENTREQUEST_0_NUMBER0'] = 1;
-			// Item quantity.
-			$token_request_dtls['L_PAYMENTREQUEST_0_QTY0'] = 1;
-			// Digital item is sold.
-			$token_request_dtls['L_PAYMENTREQUEST_0_ITEMCATEGORY0'] = 'Physical';
-			// Item's sales S/H and tax amount.
-			$token_request_dtls['PAYMENTREQUEST_0_ITEMAMT'] = $this->format_currency( $payment->amount() );
-			$token_request_dtls['PAYMENTREQUEST_0_TAXAMT'] = '0';
-			$token_request_dtls['PAYMENTREQUEST_0_SHIPPINGAMT'] = '0';
-			$token_request_dtls['PAYMENTREQUEST_0_HANDLINGAMT'] = '0';
-		}
 		// Automatically filling out shipping and contact information.
 		if ( $this->_request_shipping_addr && $primary_attendee instanceof EEI_Attendee ) {
 			$token_request_dtls['NOSHIPPING'] = '2';	//  If you do not pass the shipping address, PayPal obtains it from the buyer's account profile.
@@ -276,8 +200,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway {
 	}
 
 
-	/**
-
+    /**
 	 *  @param array $update_info {
 	 *	  @type string $gateway_txn_id
 	 *	  @type string status an EEMI_Payment status
@@ -322,6 +245,11 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway {
 					'PAYMENTREQUEST_0_AMT' => $payment->amount(),
 					'PAYMENTREQUEST_0_CURRENCYCODE' => $payment->currency_code()
 				);
+
+				// Include itemized list.
+				$itemized_list = $this->itemize_list($payment, $transaction);
+				$docheckout_request_dtls = array_merge($docheckout_request_dtls, $itemized_list);
+
 				// Payment Checkout/Capture.
 				$docheckout_request_response = $this->_ppExpress_request( $docheckout_request_dtls, 'Do Payment', $payment );
 				$docheckout_rstatus = $this->_ppExpress_check_response( $docheckout_request_response );
@@ -360,6 +288,98 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway {
 
 		return $payment;
 	}
+
+
+    /**
+	 *  Make a list of items that are in the giver transaction.
+	 *
+	 *  @param EEI_Payment      $payment
+	 *	@param EEI_Transaction  $transaction
+	 *	@return array
+	 */
+    public function itemize_list($payment, $transaction) {
+        $itemized_list = array();
+        if ( $this->_money->compare_floats( $payment->amount(), $transaction->total(), '==' ) ) {
+			$item_num = 0;
+			$itemized_sum = 0;
+			$total_line_items = $transaction->total_line_item();
+			// Go through each item in the list.
+			foreach ( $total_line_items->get_items() as $line_item ) {
+				if ( $line_item instanceof EE_Line_Item ) {
+					// PayPal doesn't like line items with 0.00 amount, so we may skip those.
+					if ( EEH_Money::compare_floats( $line_item->total(), '0.00', '==' ) ) {
+						continue;
+					}
+
+					$unit_price = $line_item->unit_price();
+					$line_item_quantity = $line_item->quantity();
+					// This is a discount.
+					if ( $line_item->is_percent() ) {
+						$unit_price = $line_item->total();
+						$line_item_quantity = 1;
+					}
+					// Item Name.
+					$itemized_list['L_PAYMENTREQUEST_0_NAME'.$item_num] = substr($this->_format_line_item_name( $line_item, $payment), 0, 127);
+					// Item description.
+					$itemized_list['L_PAYMENTREQUEST_0_DESC'.$item_num] = substr($this->_format_line_item_desc( $line_item, $payment), 0, 127);
+					// Cost of individual item.
+					$itemized_list['L_PAYMENTREQUEST_0_AMT'.$item_num] = $this->format_currency( $unit_price );
+					// Item Number.
+					$itemized_list['L_PAYMENTREQUEST_0_NUMBER'.$item_num] = $item_num + 1;
+					// Item quantity.
+					$itemized_list['L_PAYMENTREQUEST_0_QTY'.$item_num] = $line_item_quantity;
+					// Digital item is sold.
+					$itemized_list['L_PAYMENTREQUEST_0_ITEMCATEGORY'.$item_num] = 'Physical';
+					$itemized_sum += $line_item->total();
+					++$item_num;
+				}
+			}
+			// Item's sales S/H and tax amount.
+			$itemized_list['PAYMENTREQUEST_0_ITEMAMT'] = $total_line_items->get_items_total();
+			$itemized_list['PAYMENTREQUEST_0_TAXAMT'] = $total_line_items->get_total_tax();
+			$itemized_list['PAYMENTREQUEST_0_SHIPPINGAMT'] = '0';
+			$itemized_list['PAYMENTREQUEST_0_HANDLINGAMT'] = '0';
+
+			$itemized_sum_diff_from_txn_total = round( $transaction->total() - $itemized_sum - $total_line_items->get_total_tax(), 2 );
+			// If we were not able to recognize some item like promotion, surcharge or cancellation,
+			// add the difference as an extra line item.
+			if ( $this->_money->compare_floats( $itemized_sum_diff_from_txn_total, 0, '!=' ) ) {
+				// Item Name.
+				$itemized_list['L_PAYMENTREQUEST_0_NAME'.$item_num] = substr( __( 'Other (promotion/surcharge/cancellation)', 'event_espresso' ), 0, 127 );
+				// Item description.
+				$itemized_list['L_PAYMENTREQUEST_0_DESC'.$item_num] = '';
+				// Cost of individual item.
+				$itemized_list['L_PAYMENTREQUEST_0_AMT'.$item_num] = $this->format_currency( $itemized_sum_diff_from_txn_total );
+				// Item Number.
+				$itemized_list['L_PAYMENTREQUEST_0_NUMBER'.$item_num] = $item_num + 1;
+				// Item quantity.
+				$itemized_list['L_PAYMENTREQUEST_0_QTY'.$item_num] = 1;
+                // Digital item is sold.
+                $itemized_list['L_PAYMENTREQUEST_0_ITEMCATEGORY'.$item_num] = 'Physical';
+                $item_num++;
+			}
+		} else {
+			// Just one Item.
+			// Item Name.
+			$itemized_list['L_PAYMENTREQUEST_0_NAME0'] = substr( $this->_format_partial_payment_line_item_name($payment), 0, 127 );
+			// Item description.
+			$itemized_list['L_PAYMENTREQUEST_0_DESC0'] = substr( $this->_format_partial_payment_line_item_desc($payment), 0, 127 );
+			// Cost of individual item.
+			$itemized_list['L_PAYMENTREQUEST_0_AMT0'] = $this->format_currency( $payment->amount() );
+			// Item Number.
+			$itemized_list['L_PAYMENTREQUEST_0_NUMBER0'] = 1;
+			// Item quantity.
+			$itemized_list['L_PAYMENTREQUEST_0_QTY0'] = 1;
+			// Digital item is sold.
+			$itemized_list['L_PAYMENTREQUEST_0_ITEMCATEGORY0'] = 'Physical';
+			// Item's sales S/H and tax amount.
+			$itemized_list['PAYMENTREQUEST_0_ITEMAMT'] = $this->format_currency( $payment->amount() );
+			$itemized_list['PAYMENTREQUEST_0_TAXAMT'] = '0';
+			$itemized_list['PAYMENTREQUEST_0_SHIPPINGAMT'] = '0';
+			$itemized_list['PAYMENTREQUEST_0_HANDLINGAMT'] = '0';
+		}
+        return $itemized_list;
+    }
 
 
 	/**
