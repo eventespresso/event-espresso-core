@@ -342,6 +342,7 @@ class Messages_Admin_Page extends EE_Admin_Page
         add_action('wp_ajax_ee_msgs_save_settings', array($this, 'save_settings'));
         add_action('wp_ajax_ee_msgs_update_mt_form', array($this, 'update_mt_form'));
         add_action('wp_ajax_switch_template_pack', array($this, 'switch_template_pack'));
+        add_action('wp_ajax_toggle_context_template', array($this, 'toggle_context_template'));
     }
     
     
@@ -1735,6 +1736,11 @@ class Messages_Admin_Page extends EE_Admin_Page
         
         
         $this->_template_args['before_admin_page_content'] = $this->add_context_switcher();
+        $this->_template_args['before_admin_page_content'] .= $this->add_active_context_element(
+            $message_template_group,
+            $context,
+            $context_label
+        );
         $this->_template_args['before_admin_page_content'] .= $this->_add_form_element_before();
         $this->_template_args['after_admin_page_content'] = $this->_add_form_element_after();
         
@@ -1775,6 +1781,106 @@ class Messages_Admin_Page extends EE_Admin_Page
     {
         return $this->_context_switcher;
     }
+
+
+    /**
+     * Adds the activation/deactivation toggle for the message template context.
+     *
+     * @param EE_Message_Template_Group $message_template_group
+     * @param string                    $context
+     * @param string                    $context_label
+     * @return string
+     * @throws DomainException
+     * @throws EE_Error
+     */
+    protected function add_active_context_element(
+        EE_Message_Template_Group $message_template_group,
+        $context,
+        $context_label
+    ) {
+        $template_args = array(
+            'context' => $context,
+            'nonce' => wp_create_nonce('activate_' . $context . '_toggle_nonce'),
+            'is_active' => $message_template_group->is_context_active($context),
+            'on_off_action' => $message_template_group->is_context_active($context)
+                ? 'context-off'
+                : 'context-on',
+            'context_label' => str_replace(array('(', ')'), '', $context_label),
+            'message_template_group_id' => $message_template_group->ID()
+        );
+        return EEH_Template::display_template(
+          EE_MSG_TEMPLATE_PATH . 'ee_msg_editor_active_context_element.template.php',
+          $template_args,
+          true
+        );
+    }
+
+
+    /**
+     * Ajax callback for `toggle_context_template` ajax action.
+     * Handles toggling the message context on or off.
+     */
+    public function toggle_context_template()
+    {
+        $success = true;
+        //check for required data
+        if (!isset(
+            $this->_req_data['message_template_group_id'],
+            $this->_req_data['context'],
+            $this->_req_data['status']
+        )) {
+            EE_Error::add_error(
+                esc_html__('Required data for doing this action is not available.', 'event_espresso'),
+                __FILE__,
+                __FUNCTION__,
+                __LINE__
+            );
+            $success = false;
+        }
+
+        $nonce = isset($this->_req_data['toggle_context_nonce'])
+            ? sanitize_text_field($this->_req_data['toggle_context_nonce'])
+            : '';
+        $nonce_ref = 'activate_' . $this->_req_data['context'] . '_toggle_nonce';
+        $this->_verify_nonce($nonce, $nonce_ref);
+        $status = $this->_req_data['status'];
+        if ($status !== 'off' && $status !=='on') {
+            EE_Error::add_error(
+                sprintf(
+                    esc_html__('The given status (%s) is not valid. Must be "off" or "on"', 'event_espresso'),
+                    $this->_req_data['status']
+                ),
+                __FILE__,
+                __FUNCTION__,
+                __LINE__
+            );
+            $success = false;
+        }
+        $message_template_group = EEM_Message_Template_Group::instance()->get_one_by_ID(
+            $this->_req_data['message_template_group_id']
+        );
+        if (! $message_template_group instanceof EE_Message_Template_Group) {
+            EE_Error::add_error(
+                sprintf(
+                    esc_html__('Unable to change the active state because the given id does not match a valid %s', 'event_espresso'),
+                    'EE_Message_Template_Group'
+                ),
+                __FILE__,
+                __FUNCTION__,
+                __LINE__
+            );
+            $success = false;
+        }
+        if ($success) {
+            $success = $status === 'off'
+                ? $message_template_group->deactivate_context($this->_req_data['context'])
+                : $message_template_group->activate_context($this->_req_data['context']);
+        }
+        $this->_template_args['success'] = $success;
+        $this->_return_json();
+    }
+
+
     
     public function _add_form_element_before()
     {

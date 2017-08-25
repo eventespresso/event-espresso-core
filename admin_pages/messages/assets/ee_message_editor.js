@@ -35,6 +35,64 @@ jQuery(document).ready(function($) {
 			return false;
 		},
 
+        context_toggle: function(context, status, message_template_group_id, event) {
+            var data = {
+                    message_template_group_id: message_template_group_id,
+                    context: context,
+                    status: status,
+                    action: 'toggle_context_template',
+                    page: 'espresso_messages',
+                    ee_admin_ajax: true,
+                    toggle_context_nonce: $('#on-off-nonce-' + context).text()
+                },
+                switchLabel = status === 'on'
+                    ? $('.js-data .ee-active-message').html()
+                    : $('.js-data .ee-inactive-message').html();
+            $( '.context-active-control-container .spinner' ).addClass( 'is-active' );
+
+            $.ajax({
+                type: "POST",
+                url: ajaxurl,
+                data: data,
+                success: function(response, status, xhr) {
+                    var ct = xhr.getResponseHeader("content-type") || "",
+                        setup = {
+                            where: '#ajax-notices-container',
+                            what: 'clear'
+                        };
+                    if (ct.indexOf('html') > -1) {
+                        MessageEditorHelper.display_content(response, setup.where, setup.what);
+                    }
+
+                    if (ct.indexOf('json') > -1 ) {
+                        MessageEditorHelper.display_notices(response.notices);
+                        //let's handle toggling all the elements if we had a successful switch!
+                        if ( response.success ) {
+                            $( '.context-active-control-container .spinner' ).removeClass( 'is-active' );
+                            $('.ee-on-off-toggle-label').html(switchLabel);
+                            return true;
+                        } else {
+                            event.preventDefault();
+                        }
+                    }
+                }
+            });
+        },
+
+        display_content: function(content, where, what) {
+            if ( typeof(where) === 'undefined' || typeof(what) === 'undefined' ) {
+                console.log('content is not displayed because we need where or what');
+                return false;
+            }
+            if ( what == 'clear' ) {
+                $(where).html(content);
+            } else if ( what == 'append' ) {
+                $(where).append(content);
+            } else if ( what == 'prepend' ) {
+                $(where).prepend(content);
+            }
+        },
+
 
 		display_notices: function(content) {
 			$('.ajax-loader-grey').hide();
@@ -64,6 +122,17 @@ jQuery(document).ready(function($) {
 			$(this).val(original_val);
 		}
 	});
+
+    /**
+     * Context Template Activation/Deactivation
+     */
+    $('.activate_context_on_off_toggle_container').on('click', '.ee-on-off-toggle', function(e){
+        var context = $(this).attr('id').replace('ee-on-off-toggle-', ''),
+            status = $(this).prop('checked') ? 'on' : 'off',
+            message_template_group_id = $(this).data('grpid');
+        e.stopPropagation();
+        MessageEditorHelper.context_toggle(context, status, message_template_group_id, e);
+    });
 
 
 	/**
