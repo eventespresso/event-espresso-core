@@ -87,7 +87,7 @@ class MessagesAdmin extends CoreAdmin
      * Returns the selector for the on/off toggle for context on the message template editor.
      */
     const MESSAGES_CONTEXT_ACTIVE_STATE_TOGGLE =
-        "/div[@class='activate_context_on_off_toggle_container']//input[@class='ee-on-off-toggle']";
+        "//div[@class='activate_context_on_off_toggle_container']/div[@class='switch']/label";
 
 
 
@@ -285,7 +285,7 @@ class MessagesAdmin extends CoreAdmin
      */
     public static function messageInputFieldSelectorFor($field)
     {
-        return "/div[@id='post-body-content']//input[@id='$field-content']";
+        return "//div[@id='post-body']//input[@id='$field-content']";
     }
 
 
