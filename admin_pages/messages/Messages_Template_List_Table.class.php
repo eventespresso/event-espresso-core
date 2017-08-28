@@ -318,8 +318,11 @@ class Messages_Template_List_Table extends EE_Admin_List_Table
                              && $context_templates[$context]['to'] instanceof EE_Message_Template
                 ? $context_templates[$context]['to']->get('MTP_content')
                 : null;
-            $inactive      = empty($mtp_to)
-                             && ! empty($context_templates[$context]['to'])
+            $inactive      = (
+                empty($mtp_to)
+                && ! empty($context_templates[$context]['to'])
+            )
+            || ! $item->is_context_active($context)
                 ? ' class="mtp-inactive"'
                 : '';
             $context_title = ucwords($c_configs[$context]['label']);
