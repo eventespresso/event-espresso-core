@@ -295,6 +295,11 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
                 '946782245',
                 $datetime_field_obj,
             ),
+            'unix_timestamp_FLOAT_in_default_timezone' => array(
+                mysql_to_rfc3339(date(EE_Datetime_Field::mysql_timestamp_format, 946782245)),
+                (float)946782245,
+                $datetime_field_obj,
+            ),
             'null_datetime'                             => array(
                 '',
                 null,

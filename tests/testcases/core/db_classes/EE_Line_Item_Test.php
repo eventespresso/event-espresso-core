@@ -61,7 +61,7 @@ class EE_Line_Item_Test extends EE_UnitTestCase{
         $event_subtotal = reset($event_subtotal_array);
         $original_event_subtotal_amount = $event_subtotal->total();
         $original_event_subtotal_unit_price = $event_subtotal->unit_price();
-        EEH_Line_Item::visualize($total_line_item);
+        // EEH_Line_Item::visualize($total_line_item);
         //ok now let's add a discount, under the event subtotal
         EEH_Line_Item::add_percentage_based_item(
             $event_subtotal,
@@ -69,9 +69,9 @@ class EE_Line_Item_Test extends EE_UnitTestCase{
             -50,
             'should affect event subtotals unit price'
         );
-        EEH_Line_Item::visualize($total_line_item);
+        // EEH_Line_Item::visualize($total_line_item);
         $total_line_item->recalculate_pre_tax_total();
-        EEH_Line_Item::visualize($total_line_item);
+        // EEH_Line_Item::visualize($total_line_item);
         //so that should have reduced the event subtotal's total by half, AND its unit price
         $this->assertEquals($original_event_subtotal_amount / 2, $event_subtotal->total());
         $this->assertEquals($original_event_subtotal_unit_price / 2, $event_subtotal->unit_price());

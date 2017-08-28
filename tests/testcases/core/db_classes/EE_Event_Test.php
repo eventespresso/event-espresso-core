@@ -184,6 +184,7 @@ class EE_Event_Test extends EE_UnitTestCase
      */
     public function test_total_available_spaces()
     {
+        $this->loadTestScenarios();
         //grab test scenarios.
         $scenarios = $this->scenarios->get_scenarios_by_type('event');
         foreach ($scenarios as $scenario) {
@@ -192,19 +193,11 @@ class EE_Event_Test extends EE_UnitTestCase
                 /** @type EE_Event $event */
                 $event = $scenario->get_scenario_object();
                 $calculator = new EventEspresso\core\domain\services\event\EventSpacesCalculator($event);
-                if (
-                    ! in_array(
-                        $scenario->name,
-                        array('Event Scenario D', 'Event Scenario F', 'Event Scenario G'),
-                        true
-                    )
-                ) {
                     $this->assertEquals(
                         $expected,
                         $event->total_available_spaces(),
                         'Testing ' . $scenario->name . ' for "total_available_spaces"'
                     );
-                }
                 $this->assertEquals(
                     $expected,
                     $calculator->totalSpacesAvailable(),
@@ -221,30 +214,23 @@ class EE_Event_Test extends EE_UnitTestCase
      */
     public function test_spaces_remaining_for_sale()
     {
+        $this->loadTestScenarios();
         //grab test scenarios
         $scenarios = $this->scenarios->get_scenarios_by_type('event');
         foreach ($scenarios as $scenario) {
             if ($scenario->skip()) {
                 continue;
             }
-            /** @type EE_Event $event */
-            $event = $scenario->get_scenario_object();
-            $calculator = new EventEspresso\core\domain\services\event\EventSpacesCalculator($event);
             $expected = $scenario->get_expected('total_remaining_spaces');
             if ($expected !== false) {
-                if (
-                    ! in_array(
-                        $scenario->name,
-                        array('Event Scenario D', 'Event Scenario F', 'Event Scenario G', 'Event Scenario J'),
-                        true
-                    )
-                ) {
+                /** @type EE_Event $event */
+                $event = $scenario->get_scenario_object();
+                $calculator = new EventEspresso\core\domain\services\event\EventSpacesCalculator($event);
                     $this->assertEquals(
                         $expected,
                         $event->spaces_remaining_for_sale(),
                         'Testing ' . $scenario->name . ' for "total_remaining_spaces"'
                     );
-                }
                 $this->assertEquals(
                     $expected,
                     $calculator->spacesRemaining(),
@@ -261,6 +247,7 @@ class EE_Event_Test extends EE_UnitTestCase
      */
     public function test_spaces_remaining_for_sale_for_Event_Scenario_H()
     {
+        $this->loadTestScenarios();
         //grab test scenario
         $scenario = $this->scenarios->get_scenario_by_name('Event Scenario H - Two Classes');
         // verify
@@ -339,6 +326,7 @@ class EE_Event_Test extends EE_UnitTestCase
      */
     public function test_spaces_remaining_for_sale_for_Event_Scenario_I()
     {
+        $this->loadTestScenarios();
         //grab test scenario
         $scenario = $this->scenarios->get_scenario_by_name('Event Scenario I - Four Tickets One Date');
         // verify
