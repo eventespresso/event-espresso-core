@@ -4,6 +4,7 @@ use Page\EventsAdmin;
 use Page\TicketSelector;
 use Page\MessagesAdmin;
 
+$I = new EventEspressoAcceptanceTester($scenario, false);
 $event_label = 'Testing Context Deactivation';
 
 $I->wantTo(
@@ -12,11 +13,12 @@ $I->wantTo(
 );
 
 $I->loginAsAdmin();
+
 $I->amGoingTo('Verify the toggle for toggling state on context is visible.');
 $I->amOnDefaultMessageTemplateListTablePage();
-$I->clickToEditMessageTemplateByMessageType('registration');
+$I->clickToEditMessageTemplateByMessageType('registration', 'admin');
 $I->see('The template for Event Admin Recipient is currently active.');
-$I->switchContextTo('primary_attendee');
+$I->switchContextTo('Primary Registrant');
 $I->see('The template for Primary Registrant Recipient is currently active.');
 
 $I->amGoingTo('Make sure the "To" field for Primary Registrant has content');
@@ -26,10 +28,10 @@ $I->saveMessageTemplate();
 $I->seeInField(MessagesAdmin::messageTemplateToFieldSelector(), '[PRIMARY_REGISTRANT_EMAIL]');
 
 $I->amGoingTo('Disable the primary registrant context.');
-$this->toggleContextState('Primary Registrant Recipient', false);
+$I->toggleContextState('Primary Registrant Recipient', false);
 //save and verify it stuck
 $I->saveMessageTemplate();
-$this->see('The template for Primary Registrant Recipient is inactive.');
+$I->see('The template for Primary Registrant Recipient is currently inactive.');
 
 $I->amGoingTo(
     'Trigger Registration Approved Messages and verify primary registrant context is excluded from sent messages.'
@@ -59,12 +61,6 @@ $I->waitForText('Congratulations', 15);
 //go to messages list table and verify
 $I->loginAsAdmin();
 $I->amOnMessagesActivityListTablePage();
-$I->viewMessageInMessagesListTableFor(
-    'Registration Approved',
-    MessagesAdmin::MESSAGE_STATUS_SENT,
-    'Email',
-    'Registrant'
-);
 //verify registrant context
 $I->see(
     $test_registration_details['email'],
@@ -130,12 +126,6 @@ $I->waitForText('Congratulations', 15);
 //go to messages list table and verify
 $I->loginAsAdmin();
 $I->amOnMessagesActivityListTablePage();
-$I->viewMessageInMessagesListTableFor(
-    'Registration Approved',
-    MessagesAdmin::MESSAGE_STATUS_SENT,
-    'Email',
-    'Registrant'
-);
 //verify registrant context
 $I->see(
     $test_registration_details['email'],
