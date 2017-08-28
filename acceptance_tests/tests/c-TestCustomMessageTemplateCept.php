@@ -1,7 +1,6 @@
 <?php
 
 use Page\EventsAdmin;
-use Page\RegistrationsAdmin;
 use Page\TicketSelector;
 use Page\MessagesAdmin;
 
