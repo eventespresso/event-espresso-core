@@ -247,7 +247,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway {
 				);
 
 				// Include itemized list.
-				$itemized_list = $this->itemize_list($payment, $transaction);
+				$itemized_list = $this->itemize_list($payment, $transaction, $cdata_response_args);
 				$docheckout_request_dtls = array_merge($docheckout_request_dtls, $itemized_list);
 
 				// Payment Checkout/Capture.
@@ -295,10 +295,32 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway {
 	 *
 	 *  @param EEI_Payment      $payment
 	 *	@param EEI_Transaction  $transaction
+	 *	@param array            $request_response_args  Data from a previous communication with PP.
 	 *	@return array
 	 */
-    public function itemize_list($payment, $transaction) {
+    public function itemize_list(EEI_Payment $payment, EEI_Transaction $transaction, $request_response_args = array()) {
         $itemized_list = array();
+        // If we have data from a previous communication with PP (on this transaction) we may use that for our list...
+        if (
+            ! empty($request_response_args)
+            && array_key_exists('L_PAYMENTREQUEST_0_AMT0', $request_response_args)
+            && array_key_exists('PAYMENTREQUEST_0_ITEMAMT', $request_response_args)
+        ) {
+            foreach ($request_response_args as $arg_key => $arg_val) {
+                if (
+                    strpos($arg_key, 'PAYMENTREQUEST_') !== false
+                    && strpos($arg_key, 'NOTIFYURL') === false
+                ) {
+                    $itemized_list[$arg_key] = $arg_val;
+                }
+            }
+            // If we got only a few Items then something is not right.
+            if (count($itemized_list) > 2) {
+                return $itemized_list;
+            }
+        }
+
+        // ...otherwise we generate a new list for this transaction.
         if ( $this->_money->compare_floats( $payment->amount(), $transaction->total(), '==' ) ) {
 			$item_num = 0;
 			$itemized_sum = 0;
