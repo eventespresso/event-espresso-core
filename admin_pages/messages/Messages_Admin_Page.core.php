@@ -123,7 +123,7 @@ class Messages_Admin_Page extends EE_Admin_Page
                     'This method is no longer in use.  There is no replacement for it. The method was used to generate a set of values for use in creating a messenger filter dropdown which is now generated differently via %s',
                     'event_espresso'
                 ),
-                'Messages_Admin_Page::get_messengers_select_input'
+                'Messages_Admin_Page::get_messengers_select_input()'
             ),
             '4.9.9.rc.014'
         );
@@ -161,7 +161,7 @@ class Messages_Admin_Page extends EE_Admin_Page
                     'This method is no longer in use.  There is no replacement for it. The method was used to generate a set of values for use in creating a message type filter dropdown which is now generated differently via %s',
                     'event_espresso'
                 ),
-                'Messages_Admin_Page::get_message_types_select_input'
+                'Messages_Admin_Page::get_message_types_select_input()'
             ),
             '4.9.9.rc.014'
         );
@@ -198,7 +198,7 @@ class Messages_Admin_Page extends EE_Admin_Page
                     'This method is no longer in use.  There is no replacement for it. The method was used to generate a set of values for use in creating a message type context filter dropdown which is now generated differently via %s',
                     'event_espresso'
                 ),
-                'Messages_Admin_Page::get_contexts_for_message_types_select_input'
+                'Messages_Admin_Page::get_contexts_for_message_types_select_input()'
             ),
             '4.9.9.rc.014'
         );
