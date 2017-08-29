@@ -989,6 +989,6 @@ if ( ! function_exists('espresso_pagination')) {
                 'add_fragment' => '',
             )
         );
-        echo ! empty($pagination) ? '<div class="ee-pagination-dv ee-clearfix">' . $pagination . '</div>' : '';
+        echo ! empty($pagination) ? '<div class="ee-pagination-dv ee-clear-float">' . $pagination . '</div>' : '';
     }
 }
