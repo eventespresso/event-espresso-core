@@ -22,6 +22,7 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase
     public function setUp()
     {
         parent::setUp();
+        $this->loadTestScenarios();
         //setup events etc for previewer to use
         $this->scenarios->get_scenarios_by_type('event');
     }
@@ -220,10 +221,11 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase
          */
         $this->assertEquals(1, $generated_queue->count_STS_in_queue(EEM_Message::status_idle));
 
-        //messages in queue should NOT be saved.
+        //messages in queue should be saved - this is because the cc field for email messages is extra meta and when
+        //that's added it saves the object to get an ID for the extra meta relation.
         $generated_queue->get_message_repository()->rewind();
         $msg = $generated_queue->get_message_repository()->current();
-        $this->assertEquals(0, $msg->ID());
+        $this->assertGreaterThan(0, $msg->ID());
     }
 
 
@@ -285,8 +287,9 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase
         $this->assertContains('Luke Skywalker', $msg->content());
         $this->assertContains('Test Scenario EVT A', $msg->content());
 
-        //also verify not persisted!
-        $this->assertEquals(0, $msg->ID());
+        //messages in queue should be saved - this is because the cc field for email messages is extra meta and when
+        //that's added it saves the object to get an ID for the extra meta relation.
+        $this->assertGreaterThan(0, $msg->ID());
 
         //verify sent!
         $this->assertEquals(EEM_Message::status_sent, $msg->STS_ID());

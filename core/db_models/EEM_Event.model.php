@@ -1,4 +1,6 @@
-<?php if (! defined('EVENT_ESPRESSO_VERSION')) {
+<?php use EventEspresso\core\services\orm\ModelFieldFactory;
+
+if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
 require_once(EE_MODELS . 'EEM_CPT_Base.model.php');
@@ -54,27 +56,6 @@ class EEM_Event extends EEM_CPT_Base
      */
     protected static $_instance;
 
-
-
-    /**
-     *  This function is a singleton method used to instantiate the EEM_Event object
-     *
-     * @param string $timezone
-     * @return EEM_Event
-     * @throws \EE_Error
-     */
-    public static function instance($timezone = null)
-    {
-        // check if instance of EEM_Event already exists
-        if (! self::$_instance instanceof EEM_Event) {
-            // instantiate Espresso_model
-            self::$_instance = new self($timezone);
-        }
-        //we might have a timezone set, let set_timezone decide what to do with it
-        self::$_instance->set_timezone($timezone);
-        // EEM_Event object
-        return self::$_instance;
-    }
 
 
 
@@ -177,11 +158,11 @@ class EEM_Event extends EEM_CPT_Base
                 'EVT_member_only'                 => new EE_Boolean_Field('EVT_member_only',
                     esc_html__('Member-Only Event Flag', 'event_espresso'), false, false),
                 'EVT_phone'                       => new EE_Plain_Text_Field('EVT_phone',
-                    esc_html__('Event Phone Number', 'event_espresso'), false),
+                    esc_html__('Event Phone Number', 'event_espresso'), false,''),
                 'EVT_allow_overflow'              => new EE_Boolean_Field('EVT_allow_overflow',
                     esc_html__('Allow Overflow on Event', 'event_espresso'), false, false),
                 'EVT_timezone_string'             => new EE_Plain_Text_Field('EVT_timezone_string',
-                    esc_html__('Timezone (name) for Event times', 'event_espresso'), false),
+                    esc_html__('Timezone (name) for Event times', 'event_espresso'), false,''),
                 'EVT_external_URL'                => new EE_Plain_Text_Field('EVT_external_URL',
                     esc_html__('URL of Event Page if hosted elsewhere', 'event_espresso'), true),
                 'EVT_donations'                   => new EE_Boolean_Field('EVT_donations',

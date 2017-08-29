@@ -1032,6 +1032,26 @@ add_filter(
 		);
 	}
 );
+add_action(
+	'AHEE__EE_Capabilities__addCaps__complete',
+	function($capabilities_map) {
+		if ( ! has_action( 'AHEE__EE_Capabilities__init_role_caps__complete' )) {
+			return;
+		}
+		deprecated_espresso_action_or_filter_doing_it_wrong(
+			'AHEE__EE_Capabilities__init_role_caps__complete',
+			'AHEE__EE_Capabilities__addCaps__complete',
+			'\EE_Capabilities::addCaps()',
+			'4.9.42',
+			'5.0.0'
+		);
+		do_action(
+			'AHEE__EE_Capabilities__init_role_caps__complete',
+            $capabilities_map
+		);
+	}
+);
+
 add_filter(
 	'FHEE_EventEspresso_core_services_commands_attendee_CreateAttendeeCommandHandler__findExistingAttendee__existing_attendee',
 	function($existing_attendee, $registration, $attendee_data) {
@@ -1051,10 +1071,8 @@ add_filter(
             $existing_attendee, $registration, $attendee_data
         );
 	},
-    10,3
+	10,3
 );
-
-
 
 /**
  * Class EE_Event_List_Query
