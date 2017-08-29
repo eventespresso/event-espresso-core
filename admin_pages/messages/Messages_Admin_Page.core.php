@@ -1862,7 +1862,11 @@ class Messages_Admin_Page extends EE_Admin_Page
         if (! $message_template_group instanceof EE_Message_Template_Group) {
             EE_Error::add_error(
                 sprintf(
-                    esc_html__('Unable to change the active state because the given id does not match a valid %s', 'event_espresso'),
+                    esc_html__(
+                        'Unable to change the active state because the given id "%1$d" does not match a valid "%2$s"',
+                        'event_espresso'
+                    ),
+                    $this->_req_data['message_template_group_id'],
                     'EE_Message_Template_Group'
                 ),
                 __FILE__,
