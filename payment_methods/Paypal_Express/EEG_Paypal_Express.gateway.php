@@ -318,21 +318,23 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway {
             if (count($itemized_list) > 2) {
                 return $itemized_list;
             } else {
-                // Reset the list and log an error, maybe allow to try and generate a new list (below).
-                $itemized_list = array();
-                if (defined('WP_DEBUG') && WP_DEBUG) {
+                if ( WP_DEBUG) {
                     throw new EE_Error(
-                        esc_html__(
-                            'Unable to continue with the checkout because a proper purchase list could not be generated',
-                            'event_espresso'
+                        sprintf(
+                            esc_html__(
+                                'Unable to continue with the checkout because a proper purchase list could not be generated. The purchased list we could have sent was %1$s',
+                                'event_espresso'
+                            ),
+                            wp_json_encode($itemized_list)
                         )
                     );
-                } else {
-                    $this->log(
-                        array(__('Could not generate a proper item list with:', 'event_espresso') => $request_response_args),
-                        $payment
-                    );
                 }
+                // Reset the list and log an error, maybe allow to try and generate a new list (below).
+                $itemized_list = array();
+                $this->log(
+                    array(__('Could not generate a proper item list with:', 'event_espresso') => $request_response_args),
+                    $payment
+                );
             }
         }
 
