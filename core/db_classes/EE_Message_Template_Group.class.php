@@ -1,4 +1,7 @@
 <?php
+
+use EventEspresso\core\exceptions\InvalidIdentifierException;
+
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
 
 /**
@@ -420,24 +423,30 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class
 
     /**
      * Deactivates the given context.
+     *
      * @param $context
      * @return bool|int
      * @throws EE_Error
+     * @throws InvalidIdentifierException
      */
     public function deactivate_context($context)
     {
+        $this->validate_context($context);
         return $this->update_extra_meta(self::ACTIVE_CONTEXT_RECORD_META_KEY_PREFIX . $context, false);
     }
 
 
     /**
      * Activates the given context.
+     *
      * @param $context
      * @return bool|int
      * @throws EE_Error
+     * @throws InvalidIdentifierException
      */
     public function activate_context($context)
     {
+        $this->validate_context($context);
         return $this->update_extra_meta(self::ACTIVE_CONTEXT_RECORD_META_KEY_PREFIX . $context, true);
     }
 
@@ -452,12 +461,40 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class
      * @param $context
      * @return bool
      * @throws EE_Error
+     * @throws InvalidIdentifierException
      */
     public function is_context_active($context)
     {
+        $this->validate_context($context);
         return filter_var(
             $this->get_extra_meta(self::ACTIVE_CONTEXT_RECORD_META_KEY_PREFIX . $context, true, true),
             FILTER_VALIDATE_BOOLEAN
         );
+    }
+
+
+    /**
+     * Validates the incoming context to verify it matches a registered context for the related message type.
+     * @param string $context
+     * @throws EE_Error
+     * @throws InvalidIdentifierException
+     */
+    public function validate_context($context)
+    {
+        $contexts = $this->contexts_config();
+        if (! isset($contexts[$context])) {
+            throw new InvalidIdentifierException(
+                '',
+                '',
+                sprintf(
+                    esc_html__(
+                        'An invalid string identifying a context was provided.  "%1$s" was received, and one of "%2$s" was expected.',
+                        'event_espresso'
+                    ),
+                    $context,
+                    implode(',', array_keys($contexts))
+                )
+            );
+        }
     }
 }
