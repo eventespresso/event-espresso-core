@@ -317,6 +317,13 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway {
             // If we got only a few Items then something is not right.
             if (count($itemized_list) > 2) {
                 return $itemized_list;
+            } else {
+                // Reset the list and log an error but allow to try and generate a new list (below).
+                $itemized_list = array();
+                $this->log(
+                    array(__('Could not generate a proper item list with:', 'event_espresso') => $request_response_args),
+                    $payment
+                );
             }
         }
 
