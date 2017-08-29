@@ -56,7 +56,7 @@ class EEM_Status extends EEM_Base
                         'email'        => __("Email", "event_espresso"),
                         'message'      => __("Message", "event_espresso"),
                     )),
-                'STS_can_edit' => new EE_Boolean_Field('STS_can_edit', __('Editable?', 'event_espresso'), false),
+                'STS_can_edit' => new EE_Boolean_Field('STS_can_edit', __('Editable?', 'event_espresso'), false, false),
                 'STS_desc'     => new EE_Simple_HTML_Field('STS_desc', __("Description", "event_espresso"), false, ''),
                 'STS_open'     => new EE_Boolean_Field('STS_open', __("Open?", "event_espresso"), false, false),
             ),

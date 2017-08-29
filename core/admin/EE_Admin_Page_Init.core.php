@@ -153,27 +153,19 @@ abstract class EE_Admin_Page_Init extends EE_Base {
 
 
 	/**
-	 * This loads scripts and styles for the EE_Admin system that must be available on ALL WP admin pages (i.e. EE_menu items)
+     * This loads scripts and styles for the EE_Admin system
+     * that must be available on ALL WP admin pages (i.e. EE_menu items)
+     *
 	 * @return void
 	 */
 	public function load_wp_global_scripts_styles() {
-		/** STYLES **/
-		//register
-		wp_register_style('espresso_menu', EE_ADMIN_URL . 'assets/admin-menu-styles.css');
-
-
-
-		//enqueue
+		wp_register_style(
+		    'espresso_menu',
+            EE_ADMIN_URL . 'assets/admin-menu-styles.css',
+            array('dashicons'),
+            EVENT_ESPRESSO_VERSION
+        );
 		wp_enqueue_style('espresso_menu');
-
-
-		/** SCRIPTS **/
-		//register
-
-
-
-		//enqueue
-
 	}
 
 

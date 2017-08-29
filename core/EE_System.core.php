@@ -256,7 +256,7 @@ final class EE_System implements ResettableInterface
         add_action(
             'AHEE__EE_Capabilities__init_caps__before_initialization',
             function() {
-                LoaderFactory::getLoader()->getShared('Payment_Method_Manager');
+                LoaderFactory::getLoader()->getShared('EE_Payment_Method_Manager');
             }
         );
     }
