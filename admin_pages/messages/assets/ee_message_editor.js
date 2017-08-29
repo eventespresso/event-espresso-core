@@ -79,6 +79,7 @@ jQuery(document).ready(function($) {
                 },
                 error: function()
                 {
+                    $( '.context-active-control-container .spinner' ).removeClass( 'is-active' );
                     event.preventDefault();
                 }
             });
