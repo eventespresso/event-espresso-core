@@ -1,4 +1,10 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) {
+<?php
+
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidIdentifierException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+
+if ( ! defined('EVENT_ESPRESSO_VERSION')) {
     exit('NO direct script access allowed');
 }
 
@@ -111,8 +117,8 @@ class Messages_Admin_Page extends EE_Admin_Page
      * @return array
      * @throws EE_Error
      * @throws InvalidArgumentException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function get_messengers_for_list_table()
     {
@@ -149,8 +155,8 @@ class Messages_Admin_Page extends EE_Admin_Page
      * @return array
      * @throws EE_Error
      * @throws InvalidArgumentException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function get_message_types_for_list_table()
     {
@@ -186,8 +192,8 @@ class Messages_Admin_Page extends EE_Admin_Page
      * @return array
      * @throws EE_Error
      * @throws InvalidArgumentException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function get_contexts_for_message_types_for_list_table()
     {
@@ -1112,8 +1118,8 @@ class Messages_Admin_Page extends EE_Admin_Page
      * @return array
      * @throws EE_Error
      * @throws InvalidArgumentException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function get_message_templates(
         $perpage = 10,
@@ -1255,8 +1261,8 @@ class Messages_Admin_Page extends EE_Admin_Page
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function _edit_message_template()
     {
@@ -1792,6 +1798,7 @@ class Messages_Admin_Page extends EE_Admin_Page
      * @return string
      * @throws DomainException
      * @throws EE_Error
+     * @throws InvalidIdentifierException
      */
     protected function add_active_context_element(
         EE_Message_Template_Group $message_template_group,
@@ -1975,8 +1982,8 @@ class Messages_Admin_Page extends EE_Admin_Page
      * @return array|null
      * @throws EE_Error
      * @throws InvalidArgumentException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function _reset_to_default_template()
     {
@@ -2067,8 +2074,8 @@ class Messages_Admin_Page extends EE_Admin_Page
      * @return string
      * @throws EE_Error
      * @throws InvalidArgumentException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function _preview_message($send = false)
     {
@@ -2189,8 +2196,8 @@ class Messages_Admin_Page extends EE_Admin_Page
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function template_pack_meta_box()
     {
@@ -2271,7 +2278,7 @@ class Messages_Admin_Page extends EE_Admin_Page
      *
      * @access  public
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function extra_actions_meta_box()
     {
@@ -2359,8 +2366,8 @@ class Messages_Admin_Page extends EE_Admin_Page
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function _get_shortcode_selector($field, $linked_input_id)
     {
@@ -2387,8 +2394,8 @@ class Messages_Admin_Page extends EE_Admin_Page
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function shortcode_meta_box()
     {
@@ -2424,8 +2431,8 @@ class Messages_Admin_Page extends EE_Admin_Page
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function _set_shortcodes()
     {
@@ -2452,8 +2459,8 @@ class Messages_Admin_Page extends EE_Admin_Page
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function _get_shortcodes($fields = array(), $merged = true)
     {
@@ -2479,8 +2486,8 @@ class Messages_Admin_Page extends EE_Admin_Page
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function _set_message_template_group()
     {
@@ -2856,8 +2863,8 @@ class Messages_Admin_Page extends EE_Admin_Page
      * @param  string $message_type message type being tested
      * @throws EE_Error
      * @throws InvalidArgumentException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function _do_test_send($context, $messenger, $message_type)
     {
@@ -2913,7 +2920,7 @@ class Messages_Admin_Page extends EE_Admin_Page
      *
      * @return array|bool array of data required for the redirect to the correct edit page or bool if
      *                               encountering problems.
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     protected function _generate_new_templates($messenger, $message_types, $GRP_ID = 0, $global = false)
     {
@@ -2937,8 +2944,8 @@ class Messages_Admin_Page extends EE_Admin_Page
      * @return void
      * @throws EE_Error
      * @throws InvalidArgumentException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function _trash_or_restore_message_template($trash = true, $all = false)
     {
@@ -3001,8 +3008,8 @@ class Messages_Admin_Page extends EE_Admin_Page
      * @return void
      * @throws EE_Error
      * @throws InvalidArgumentException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function _delete_message_template()
     {
@@ -3036,8 +3043,8 @@ class Messages_Admin_Page extends EE_Admin_Page
      * @return bool boolean to indicate the success of the deletes or not.
      * @throws EE_Error
      * @throws InvalidArgumentException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     private function _delete_mtp_permanently($GRP_ID, $include_group = true)
     {
@@ -3396,8 +3403,8 @@ class Messages_Admin_Page extends EE_Admin_Page
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function global_messages_settings_metabox_content()
     {
@@ -3418,8 +3425,8 @@ class Messages_Admin_Page extends EE_Admin_Page
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function _generate_global_settings_form()
     {
@@ -3487,7 +3494,7 @@ class Messages_Admin_Page extends EE_Admin_Page
     
     /**
      * This handles updating the global settings set on the admin page.
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     protected function _update_global_settings()
     {
@@ -3811,8 +3818,8 @@ class Messages_Admin_Page extends EE_Admin_Page
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function _activate_messenger($messenger_name)
     {
@@ -3857,8 +3864,8 @@ class Messages_Admin_Page extends EE_Admin_Page
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function _deactivate_messenger($messenger_name)
     {
@@ -3880,8 +3887,8 @@ class Messages_Admin_Page extends EE_Admin_Page
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function _activate_message_type_for_messenger($messenger_name, $message_type_name)
     {
@@ -3918,8 +3925,8 @@ class Messages_Admin_Page extends EE_Admin_Page
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function _deactivate_message_type_for_messenger($messenger_name, $message_type_name)
     {
@@ -3954,8 +3961,8 @@ class Messages_Admin_Page extends EE_Admin_Page
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function _setup_response_message_for_activating_messenger_with_message_types(
         $messenger,
@@ -4057,8 +4064,8 @@ class Messages_Admin_Page extends EE_Admin_Page
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function _setup_response_message_for_deactivating_messenger_with_message_types(
         $messenger,
