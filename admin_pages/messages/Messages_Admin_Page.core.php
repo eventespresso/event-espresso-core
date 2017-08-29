@@ -98,13 +98,16 @@ class Messages_Admin_Page extends EE_Admin_Page
         $this->_active_messenger = isset($this->_req_data['messenger']) ? $this->_req_data['messenger'] : null;
         $this->_load_message_resource_manager();
     }
-    
-    
+
+
     /**
      * loads messenger objects into the $_active_messengers property (so we can access the needed methods)
      *
-     *
      * @throws EE_Error
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
      */
     protected function _load_message_resource_manager()
     {
@@ -817,7 +820,7 @@ class Messages_Admin_Page extends EE_Admin_Page
     public function wp_editor_css($mce_css)
     {
         //if we're on the edit_message_template route
-        if ($this->_req_action == 'edit_message_template' && $this->_active_messenger instanceof EE_messenger) {
+        if ($this->_req_action === 'edit_message_template' && $this->_active_messenger instanceof EE_messenger) {
             $message_type_name = $this->_active_message_type_name;
             
             //we're going to REPLACE the existing mce css
@@ -928,10 +931,16 @@ class Messages_Admin_Page extends EE_Admin_Page
                 'trash_message_template' => esc_html__('Move to Trash', 'event_espresso')
         );
     }
-    
-    
+
+
     /**
      * set views array for message queue list table
+     *
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function _set_list_table_views_default()
     {
@@ -1156,7 +1165,6 @@ class Messages_Admin_Page extends EE_Admin_Page
                 break;
             default:
                 $templates = $MTP->get_all_trashed_grouped_message_templates($orderby, $order, $limit, $count, $global);
-            
         }
         
         return $templates;
@@ -1257,6 +1265,7 @@ class Messages_Admin_Page extends EE_Admin_Page
      *
      * @access protected
      * @return void
+     * @throws InvalidIdentifierException
      * @throws DomainException
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -1364,7 +1373,7 @@ class Messages_Admin_Page extends EE_Admin_Page
             foreach ($template_field_structure[$context] as $template_field => $field_setup_array) {
                 //if this is an 'extra' template field then we need to remove any existing fields that are keyed up in
                 // the extra array and reset them.
-                if ($template_field == 'extra') {
+                if ($template_field === 'extra') {
                     $this->_template_args['is_extra_fields'] = true;
                     foreach ($field_setup_array as $reference_field => $new_fields_array) {
                         $message_template = $message_templates[$context][$reference_field];
@@ -1399,7 +1408,7 @@ class Messages_Admin_Page extends EE_Admin_Page
                                 : '';
                             
                             $template_form_fields[$field_id]['css_class'] = ! empty($v_fields)
-                                && in_array($extra_field, $v_fields)
+                                && in_array($extra_field, $v_fields, true)
                                 &&
                                 (
                                     is_array($validators[$extra_field])
@@ -1422,7 +1431,7 @@ class Messages_Admin_Page extends EE_Admin_Page
                             $template_form_fields[$field_id]['db-col'] = 'MTP_content';
                             
                             //shortcode selector
-                            $field_name_to_use                                 = $extra_field == 'main'
+                            $field_name_to_use                                 = $extra_field === 'main'
                                 ? 'content'
                                 : $extra_field;
                             $template_form_fields[$field_id]['append_content'] = $this->_get_shortcode_selector(
@@ -1430,7 +1439,7 @@ class Messages_Admin_Page extends EE_Admin_Page
                                 $field_id
                             );
                             
-                            if (isset($extra_array['input']) && $extra_array['input'] == 'wp_editor') {
+                            if (isset($extra_array['input']) && $extra_array['input'] === 'wp_editor') {
                                 //we want to decode the entities
                                 $template_form_fields[$field_id]['value'] = stripslashes(
                                     html_entity_decode(
@@ -1495,7 +1504,7 @@ class Messages_Admin_Page extends EE_Admin_Page
                         ? $field_setup_array['css_class']
                         : '';
                     $template_form_fields[$field_id]['css_class'] = ! empty($v_fields)
-                                                                    && in_array($template_field, $v_fields)
+                                                                    && in_array($template_field, $v_fields, true)
                                                                     && isset($validators[$template_field]['msg'])
                         ? 'validate-error ' . $css_class
                         : $css_class;
@@ -1826,6 +1835,11 @@ class Messages_Admin_Page extends EE_Admin_Page
     /**
      * Ajax callback for `toggle_context_template` ajax action.
      * Handles toggling the message context on or off.
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidIdentifierException
+     * @throws InvalidInterfaceException
      */
     public function toggle_context_template()
     {
@@ -1904,13 +1918,17 @@ class Messages_Admin_Page extends EE_Admin_Page
     {
         return '</form>';
     }
-    
-    
+
+
     /**
      * This executes switching the template pack for a message template.
      *
      * @since 4.5.0
-     *
+     * @throws EE_Error
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
      */
     public function switch_template_pack()
     {
@@ -2061,7 +2079,7 @@ class Messages_Admin_Page extends EE_Admin_Page
             return $query_args;
         } else {
             $this->_redirect_after_action(false, '', '', $query_args, true);
-            
+
             return null;
         }
     }
@@ -2214,7 +2232,8 @@ class Messages_Admin_Page extends EE_Admin_Page
                 ! isset($supports[$this->_message_template_group->messenger()])
                 || ! in_array(
                     $this->_message_template_group->message_type(),
-                    $supports[$this->_message_template_group->messenger()]
+                    $supports[$this->_message_template_group->messenger()],
+                    true
                 )
             ) {
                 //not supported
@@ -2342,7 +2361,9 @@ class Messages_Admin_Page extends EE_Admin_Page
         }
         
         //and button
-        $test_settings_html .= '<p>' . esc_html__('Need to reset this message type and start over?', 'event_espresso') . '</p>';
+        $test_settings_html .= '<p>'
+                               . esc_html__('Need to reset this message type and start over?', 'event_espresso')
+                               . '</p>';
         $test_settings_html .= '<div class="publishing-action alignright resetbutton">';
         $test_settings_html .= $this->get_action_link_or_button(
             'reset_to_default',
@@ -2532,7 +2553,7 @@ class Messages_Admin_Page extends EE_Admin_Page
             <form method="get" action="<?php echo EE_MSG_ADMIN_URL; ?>" id="ee-msg-context-switcher-frm">
                 <?php
                 foreach ($args as $name => $value) {
-                    if ($name == 'context' || empty($value) || $name == 'extra') {
+                    if ($name === 'context' || empty($value) || $name === 'extra') {
                         continue;
                     }
                     ?>
@@ -2547,7 +2568,7 @@ class Messages_Admin_Page extends EE_Admin_Page
                     $context_templates = $template_group_object->context_templates();
                     if (is_array($context_templates)) :
                         foreach ($context_templates as $context => $template_fields) :
-                            $checked = ($context == $args['context']) ? 'selected="selected"' : '';
+                            $checked = ($context === $args['context']) ? 'selected="selected"' : '';
                             ?>
                             <option value="<?php echo $context; ?>" <?php echo $checked; ?>>
                                 <?php echo $context_details[$context]['label']; ?>
@@ -2648,7 +2669,8 @@ class Messages_Admin_Page extends EE_Admin_Page
         $edit_array  = array();
         $action_desc = '';
         
-        //if this is "new" then we need to generate the default contexts for the selected messenger/message_type for user to edit.
+        //if this is "new" then we need to generate the default contexts for the selected messenger/message_type for
+        // user to edit.
         if ($new) {
             $GRP_ID = ! empty($this->_req_data['GRP_ID']) ? $this->_req_data['GRP_ID'] : 0;
             if ($edit_array = $this->_generate_new_templates($messenger_slug, $message_type_slug, $GRP_ID)) {
@@ -2742,7 +2764,7 @@ class Messages_Admin_Page extends EE_Admin_Page
                                 //default setup for it.
                                 //@link https://events.codebasehq.com/projects/event-espresso/tickets/9465
                                 $updated = $MTP->insert($message_template_fields);
-                                if (is_wp_error($updated) || ! $updated) {
+                                if (! $updated || is_wp_error($updated)) {
                                     EE_Error::add_error(
                                         sprintf(
                                             esc_html__('%s field could not be updated.', 'event_espresso'),
@@ -2784,7 +2806,10 @@ class Messages_Admin_Page extends EE_Admin_Page
                     if ($updated === false) {
                         EE_Error::add_error(
                             sprintf(
-                                esc_html__('The Message Template Group (%d) was NOT updated for some reason', 'event_espresso'),
+                                esc_html__(
+                                    'The Message Template Group (%d) was NOT updated for some reason',
+                                    'event_espresso'
+                                ),
                                 $set_column_values['GRP_ID']
                             ),
                             __FILE__,
@@ -3155,7 +3180,7 @@ class Messages_Admin_Page extends EE_Admin_Page
             foreach ($message_types as $message_type) {
                 //first we need to verify that this message type is valid with this messenger. Cause if it isn't then
                 // it shouldn't show in either the inactive OR active metabox.
-                if ( ! in_array($message_type->name, $message_types_for_messenger)) {
+                if ( ! in_array($message_type->name, $message_types_for_messenger, true)) {
                     continue;
                 }
                 
@@ -3172,14 +3197,14 @@ class Messages_Admin_Page extends EE_Admin_Page
                     'slug_id'  => $message_type->name . '-messagetype-' . $messenger->name,
                     'mt_nonce' => wp_create_nonce($message_type->name . '_nonce'),
                     'href'     => 'espresso_' . $message_type->name . '_message_type_settings',
-                    'title'    => $a_or_i == 'active'
+                    'title'    => $a_or_i === 'active'
                         ? esc_html__('Drag this message type to the Inactive window to deactivate', 'event_espresso')
                         : esc_html__('Drag this message type to the messenger to activate', 'event_espresso'),
-                    'content'  => $a_or_i == 'active'
+                    'content'  => $a_or_i === 'active'
                         ? $this->_message_type_settings_content($message_type, $messenger, true)
                         : $this->_message_type_settings_content($message_type, $messenger),
                     'slug'     => $message_type->name,
-                    'active'   => $a_or_i == 'active' ? true : false,
+                    'active'   => $a_or_i === 'active',
                     'obj'      => $message_type
                 );
             }
@@ -3190,8 +3215,8 @@ class Messages_Admin_Page extends EE_Admin_Page
     /**
      * This just prepares the content for the message type settings
      *
-     * @param  object  $message_type The message type object
-     * @param  object  $messenger    The messenger object
+     * @param  EE_message_type  $message_type The message type object
+     * @param  EE_messenger  $messenger    The messenger object
      * @param  boolean $active       Whether the message type is active or not
      * @return string html output for the content
      * @throws DomainException
@@ -3294,7 +3319,7 @@ class Messages_Admin_Page extends EE_Admin_Page
                 $hide_on_message  = $this->_message_resource_manager->is_messenger_active($messenger) ? '' : 'hidden';
                 $hide_off_message = $this->_message_resource_manager->is_messenger_active($messenger) ? 'hidden' : '';
                 //messenger meta boxes
-                $active                                 = $selected_messenger == $messenger ? true : false;
+                $active                                 = $selected_messenger === $messenger;
                 $active_mt_tabs                         = isset(
                     $this->_m_mt_settings['message_type_tabs'][$messenger]['active']
                 )
@@ -3347,8 +3372,11 @@ class Messages_Admin_Page extends EE_Admin_Page
                 'espresso_' . $msgr . '_settings',
                 $label,
                 function ($post, $metabox) {
-                    echo EEH_Template::display_template($metabox["args"]["template_path"],
-                        $metabox["args"]["template_args"], true);
+                    echo EEH_Template::display_template(
+                            $metabox["args"]["template_path"],
+                            $metabox["args"]["template_args"],
+                            true
+                    );
                 },
                 $this->_current_screen->id,
                 'normal',
@@ -3369,8 +3397,11 @@ class Messages_Admin_Page extends EE_Admin_Page
                 'espresso_' . $mt . '_inactive_mts',
                 $label,
                 function ($post, $metabox) {
-                    echo EEH_Template::display_template($metabox["args"]["template_path"],
-                        $metabox["args"]["template_args"], true);
+                    echo EEH_Template::display_template(
+                            $metabox["args"]["template_path"],
+                            $metabox["args"]["template_args"],
+                            true
+                    );
                 },
                 $this->_current_screen->id,
                 'side',
@@ -3490,11 +3521,16 @@ class Messages_Admin_Page extends EE_Admin_Page
             )
         );
     }
-    
-    
+
+
     /**
      * This handles updating the global settings set on the admin page.
+     *
      * @throws EE_Error
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
      */
     protected function _update_global_settings()
     {
@@ -3653,10 +3689,17 @@ class Messages_Admin_Page extends EE_Admin_Page
         
         return $content;
     }
-    
-    
+
+
     /**
      * used by ajax on the messages settings page to activate|deactivate the messenger
+     *
+     * @throws DomainException
+     * @throws EE_Error
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
      */
     public function activate_messenger_toggle()
     {
@@ -3698,7 +3741,7 @@ class Messages_Admin_Page extends EE_Admin_Page
         //do check to verify we have a valid status.
         $status = $this->_req_data['status'];
         
-        if ($status != 'off' && $status != 'on') {
+        if ($status !== 'off' && $status !== 'on') {
             EE_Error::add_error(
                 sprintf(
                     esc_html__('The given status (%s) is not valid. Must be "off" or "on"', 'event_espresso'),
@@ -3713,7 +3756,7 @@ class Messages_Admin_Page extends EE_Admin_Page
         
         if ($success) {
             //made it here?  Stop dawdling then!!
-            $success = $status == 'off'
+            $success = $status === 'off'
                 ? $this->_deactivate_messenger($this->_req_data['messenger'])
                 : $this->_activate_messenger($this->_req_data['messenger']);
         }
@@ -3724,11 +3767,17 @@ class Messages_Admin_Page extends EE_Admin_Page
         $this->_return_json();
         
     }
-    
-    
+
+
     /**
      * used by ajax from the messages settings page to activate|deactivate a message type
      *
+     * @throws DomainException
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
      */
     public function activate_mt_toggle()
     {
@@ -3771,7 +3820,7 @@ class Messages_Admin_Page extends EE_Admin_Page
         //do check to verify we have a valid status.
         $status = $this->_req_data['status'];
         
-        if ($status != 'activate' && $status != 'deactivate') {
+        if ($status !== 'activate' && $status !== 'deactivate') {
             EE_Error::add_error(
                 sprintf(
                     esc_html__('The given status (%s) is not valid. Must be "active" or "inactive"', 'event_espresso'),
@@ -3793,7 +3842,7 @@ class Messages_Admin_Page extends EE_Admin_Page
         
         if ($success) {
             //made it here? um, what are you waiting for then?
-            $success = $status == 'deactivate'
+            $success = $status === 'deactivate'
                 ? $this->_deactivate_message_type_for_messenger(
                     $this->_req_data['messenger'],
                     $this->_req_data['message_type']
@@ -3993,7 +4042,7 @@ class Messages_Admin_Page extends EE_Admin_Page
                 );
                 
                 //if message type was invoice then let's make sure we activate the invoice payment method.
-                if ($message_type->name == 'invoice') {
+                if ($message_type->name === 'invoice') {
                     EE_Registry::instance()->load_lib('Payment_Method_Manager');
                     $pm = EE_Payment_Method_Manager::instance()->activate_a_payment_method_of_type('Invoice');
                     if ($pm instanceof EE_Payment_Method) {
@@ -4105,11 +4154,11 @@ class Messages_Admin_Page extends EE_Admin_Page
         }
         
         //if messenger was html or message type was invoice then let's make sure we deactivate invoice payment method.
-        if ($messenger->name == 'html' || $message_type_name == 'invoice') {
+        if ($messenger->name === 'html' || $message_type_name === 'invoice') {
             EE_Registry::instance()->load_lib('Payment_Method_Manager');
             $count_updated = EE_Payment_Method_Manager::instance()->deactivate_payment_method('invoice');
             if ($count_updated > 0) {
-                $msg = $message_type_name == 'invoice'
+                $msg = $message_type_name === 'invoice'
                     ? esc_html__(
                         'Deactivating the invoice message type also automatically deactivates the invoice payment method. In order for invoices to be generated the invoice message type must be active. If you completed this action by mistake, simply reactivate the invoice message type and then visit the payment methods admin page to reactivate the invoice payment method.',
                         'event_espresso'
@@ -4124,10 +4173,12 @@ class Messages_Admin_Page extends EE_Admin_Page
         
         return true;
     }
-    
-    
+
+
     /**
      * handles updating a message type form on messenger activation IF the message type has settings fields. (via ajax)
+     *
+     * @throws DomainException
      */
     public function update_mt_form()
     {
@@ -4178,7 +4229,7 @@ class Messages_Admin_Page extends EE_Admin_Page
         }
         
         
-        if ($this->_req_data['type'] == 'messenger') {
+        if ($this->_req_data['type'] === 'messenger') {
             //this should be an array.
             $settings  = $this->_req_data['messenger_settings'];
             $messenger = $settings['messenger'];
@@ -4197,7 +4248,7 @@ class Messages_Admin_Page extends EE_Admin_Page
                 }
             }
             $this->_message_resource_manager->add_settings_for_messenger($messenger, $settings);
-        } elseif ($this->_req_data['type'] == 'message_type') {
+        } elseif ($this->_req_data['type'] === 'message_type') {
             $settings     = $this->_req_data['message_type_settings'];
             $messenger    = $settings['messenger'];
             $message_type = $settings['message_type'];
@@ -4299,12 +4350,16 @@ class Messages_Admin_Page extends EE_Admin_Page
         EED_Messages::send_now($msg_ids);
         $this->_redirect_after_action(false, '', '', array(), true);
     }
-    
-    
+
+
     /**
      * Deletes EE_messages for IDs in the request.
      *
      * @since 4.9.0
+     * @throws EE_Error
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
      */
     protected function _delete_ee_messages()
     {
