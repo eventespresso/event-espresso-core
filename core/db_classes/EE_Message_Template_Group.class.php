@@ -445,8 +445,8 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class
     /**
      * Returns whether the context is active or not.
      * Note, this will default to true if the extra meta record doesn't exist.
-     * Also, this does NOT account for whether the "To" field is empty or not. Some messengers may allow the to field
-     * to be empty (@see EE_Messenger::allow_empty_to_field()) so an empty to field is not always an indicator of
+     * Also, this does NOT account for whether the "To" field is empty or not. Some messengers may allow the "To" field
+     * to be empty (@see EE_Messenger::allow_empty_to_field()) so an empty "To" field is not always an indicator of
      * whether a context is "active" or not.
      *
      * @param $context
