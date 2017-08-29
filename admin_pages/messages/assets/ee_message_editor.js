@@ -60,7 +60,9 @@ jQuery(document).ready(function($) {
                             where: '#ajax-notices-container',
                             what: 'clear'
                         };
+                    $( '.context-active-control-container .spinner' ).removeClass( 'is-active' );
                     if (ct.indexOf('html') > -1) {
+                        event.preventDefault();
                         MessageEditorHelper.display_content(response, setup.where, setup.what);
                     }
 
@@ -68,13 +70,16 @@ jQuery(document).ready(function($) {
                         MessageEditorHelper.display_notices(response.notices);
                         //let's handle toggling all the elements if we had a successful switch!
                         if ( response.success ) {
-                            $( '.context-active-control-container .spinner' ).removeClass( 'is-active' );
                             $('.ee-on-off-toggle-label').html(switchLabel);
                             return true;
                         } else {
                             event.preventDefault();
                         }
                     }
+                },
+                error: function()
+                {
+                    event.preventDefault();
                 }
             });
         },
