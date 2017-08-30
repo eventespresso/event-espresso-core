@@ -1,4 +1,7 @@
 <?php
+
+use EventEspresso\core\exceptions\EntityNotFoundException;
+
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
 
 /**
@@ -55,11 +58,11 @@ class EE_Venue_Shortcodes extends EE_Shortcodes
             ),
             '[VENUE_ZIP]'               => esc_html__('The zip code for the venue address', 'event_espresso'),
             '[VENUE_META_*]'            => esc_html__(
-                'This is a special dynamic shortcode. After the "*", add the exact name for your custom field, if there is a value set for that custom field within the venue then it will be output in place of this shortcode.', 
+                'This is a special dynamic shortcode. After the "*", add the exact name for your custom field, if there is a value set for that custom field within the venue then it will be output in place of this shortcode.',
                 'event_espresso'
             ),
             '[GOOGLE_MAP_URL]'          => esc_html__(
-                'URL for the google map associated with the venue.', 
+                'URL for the google map associated with the venue.',
                 'event_espresso'
             ),
             '[GOOGLE_MAP_LINK]'         => esc_html__('Link to a google map for the venue', 'event_espresso'),
@@ -70,15 +73,19 @@ class EE_Venue_Shortcodes extends EE_Shortcodes
 
     /**
      * Parse incoming shortcode
+     *
      * @param string $shortcode
      * @return string
+     * @throws EE_Error
+     * @throws EntityNotFoundException
      */
     protected function _parser($shortcode)
     {
         $this->_venue = $this->_get_venue();
         //If there is no venue object by now then get out.
-        if ( ! $this->_venue instanceof EE_Venue )
+        if (! $this->_venue instanceof EE_Venue) {
             return '';
+        }
 
         switch ($shortcode) {
             case '[VENUE_TITLE]':
@@ -143,33 +150,40 @@ class EE_Venue_Shortcodes extends EE_Shortcodes
 
         }
 
-        if ( strpos( $shortcode, '[VENUE_META_*' ) !== false ) {
-            $shortcode = str_replace( '[VENUE_META_*', '', $shortcode );
-            $shortcode = trim( str_replace( ']', '', $shortcode ) );
+        if (strpos($shortcode, '[VENUE_META_*') !== false) {
+            $shortcode = str_replace('[VENUE_META_*', '', $shortcode);
+            $shortcode = trim(str_replace(']', '', $shortcode));
 
             //pull the meta value from the venue post
-            $venue_meta = $this->_venue->get_post_meta( $shortcode, true );
+            $venue_meta = $this->_venue->get_post_meta($shortcode, true);
 
-            return ! empty( $venue_meta ) ? $venue_meta : '';
+            return ! empty($venue_meta) ? $venue_meta : '';
 
         }
     }
+
     /**
      * This retrieves the EE_Venue from the available data object.
      *
      * @return EE_Venue|null
+     * @throws EE_Error
+     * @throws EntityNotFoundException
      */
-    private function _get_venue() {
+    private function _get_venue()
+    {
 
         //we need the EE_Event object to get the venue.
         $this->_event = $this->_data instanceof EE_Event ? $this->_data : null;
 
-        //if no event, then let's see if there is a reg_obj.  If there IS, then we'll try and grab the event from the reg_obj instead.
+        //if no event, then let's see if there is a reg_obj.  If there IS, then we'll try and grab the event from the
+        // reg_obj instead.
         if (empty($this->_event)) {
             $aee = $this->_data instanceof EE_Messages_Addressee ? $this->_data : null;
             $aee = $this->_extra_data instanceof EE_Messages_Addressee ? $this->_extra_data : $aee;
 
-            $this->_event = $aee instanceof EE_Messages_Addressee && $aee->reg_obj instanceof EE_Registration ? $aee->reg_obj->event() : null;
+            $this->_event = $aee instanceof EE_Messages_Addressee && $aee->reg_obj instanceof EE_Registration
+                ? $aee->reg_obj->event()
+                : null;
 
             //if still empty do we have a ticket data item?
             $this->_event = empty($this->_event)
@@ -178,7 +192,8 @@ class EE_Venue_Shortcodes extends EE_Shortcodes
                 ? $this->_extra_data['data']->tickets[$this->_data->ID()]['EE_Event']
                 : $this->_event;
 
-            //if STILL empty event, let's try to get the first event in the list of events via EE_Messages_Addressee and use that.
+            //if STILL empty event, let's try to get the first event in the list of events via EE_Messages_Addressee
+            // and use that.
             $event        = $aee instanceof EE_Messages_Addressee ? reset($aee->events) : array();
             $this->_event = empty($this->_event) && ! empty($events) ? $event : $this->_event;
         }
@@ -186,7 +201,7 @@ class EE_Venue_Shortcodes extends EE_Shortcodes
         //If we have an event object use it to pull the venue.
         if ($this->_event instanceof EE_Event) {
             return $this->_event->get_first_related('Venue');
-        } 
+        }
 
         return null;
     }
@@ -194,10 +209,10 @@ class EE_Venue_Shortcodes extends EE_Shortcodes
     /**
      * This retrieves the specified venue information
      *
-     * @param string $field  What Venue field to retrieve
+     * @param string $field What Venue field to retrieve
      * @return string What was retrieved!
      * @throws EE_Error
-     * @throws \EventEspresso\core\exceptions\EntityNotFoundException
+     * @throws EntityNotFoundException
      */
     private function _venue($field)
     {
@@ -275,6 +290,7 @@ class EE_Venue_Shortcodes extends EE_Shortcodes
 
     /**
      * Generates the attributes for retrieving a google_map artifact.
+     *
      * @param EE_Venue $venue
      * @param string   $field
      * @return array
