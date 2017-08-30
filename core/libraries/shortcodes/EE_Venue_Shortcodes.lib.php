@@ -45,6 +45,13 @@ class EE_Venue_Shortcodes extends EE_Shortcodes
             '[VENUE_TITLE]'             => esc_html__('The title for the event venue', 'event_espresso'),
             '[VENUE_DESCRIPTION]'       => esc_html__('The description for the event venue', 'event_espresso'),
             '[VENUE_URL]'               => esc_html__('A url to a webpage for the venue', 'event_espresso'),
+            '[VENUE_DETAILS_URL]'       => sprintf(
+                esc_html__(
+                    'The url to the venue details page on this site.  This differs from %s in that shortcode parses to what is entered in the "url" field for the venue settings whereas this shortcode parses to the url for the venue details page on your website.',
+                    'event_espresso'
+                ),
+                '[VENUE_URL]'
+            ),
             '[VENUE_IMAGE]'             => esc_html__('An image representing the event venue', 'event_espresso'),
             '[VENUE_PHONE]'             => esc_html__('The phone number for the venue', 'event_espresso'),
             '[VENUE_ADDRESS]'           => esc_html__('The address for the venue', 'event_espresso'),
@@ -148,6 +155,10 @@ class EE_Venue_Shortcodes extends EE_Shortcodes
                 return $this->_venue('gmap_link_img');
                 break;
 
+            case '[VENUE_DETAILS_URL]':
+                return $this->_venue('permalink');
+                break;
+
         }
 
         if (strpos($shortcode, '[VENUE_META_*') !== false) {
@@ -234,6 +245,10 @@ class EE_Venue_Shortcodes extends EE_Shortcodes
             case 'url':
                 $url = $this->_venue->get('VNU_url');
                 return empty($url) ? $this->_venue->get_permalink() : $url;
+                break;
+
+            case 'permalink':
+                return $this->_venue->get_permalink();
                 break;
 
             case 'image':
