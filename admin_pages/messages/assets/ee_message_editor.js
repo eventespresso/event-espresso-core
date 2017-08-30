@@ -30,7 +30,12 @@ jQuery(document).ready(function($) {
 							return true;
 						}
 					}
-				}
+				},
+                error: function()
+                {
+                    $('.ajax-loader-grey').hide();
+                    MessageEditorHelper.handle_ajax_errors(eei18n.server_error, setup.where);
+                }
 			});
 			return false;
 		},
@@ -81,6 +86,7 @@ jQuery(document).ready(function($) {
                 {
                     $( '.context-active-control-container .spinner' ).removeClass( 'is-active' );
                     event.preventDefault();
+                    MessageEditorHelper.handle_ajax_errors(eei18n.server_error, setup.where);
                 }
             });
         },
@@ -104,7 +110,15 @@ jQuery(document).ready(function($) {
 			$('.ajax-loader-grey').hide();
 			$('#ajax-notices-container').html(content);
 			$('.espresso-notices').show();
-		}
+		},
+
+		handle_ajax_errors: function(error_message, content_container) {
+            MessageEditorHelper.display_content(
+                '<div class="error fade-away">' + error_message + '</div>',
+                content_container,
+                'clear'
+            );
+        }
 	};
 
 

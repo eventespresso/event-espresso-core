@@ -850,6 +850,10 @@ class Messages_Admin_Page extends EE_Admin_Page
             'Switching the template pack for a messages template will reset the content for the template so the new layout is loaded.  Any custom content in the existing template will be lost. Are you sure you wish to do this?',
             'event_espresso'
         );
+        EE_Registry::$i18n_js_strings['server_error'] = esc_html__(
+            'An unknown error occurred on the server while attempting to process your request. Please refresh the page and try again or contact support.',
+            'event_espresso'
+        );
         
         wp_register_script(
             'ee_msgs_edit_js',
