@@ -177,7 +177,7 @@ class EE_Venue_Shortcodes extends EE_Shortcodes
 
         //if no event, then let's see if there is a reg_obj.  If there IS, then we'll try and grab the event from the
         // reg_obj instead.
-        if (empty($this->_event)) {
+        if (! $this->_event instanceof EE_Event) {
             $aee = $this->_data instanceof EE_Messages_Addressee ? $this->_data : null;
             $aee = $this->_extra_data instanceof EE_Messages_Addressee ? $this->_extra_data : $aee;
 
@@ -186,7 +186,7 @@ class EE_Venue_Shortcodes extends EE_Shortcodes
                 : null;
 
             //if still empty do we have a ticket data item?
-            $this->_event = empty($this->_event)
+            $this->_event = ! $this->_event instanceof EE_Event
                             && $this->_data instanceof EE_Ticket
                             && $this->_extra_data['data'] instanceof EE_Messages_Addressee
                 ? $this->_extra_data['data']->tickets[$this->_data->ID()]['EE_Event']
@@ -194,8 +194,9 @@ class EE_Venue_Shortcodes extends EE_Shortcodes
 
             //if STILL empty event, let's try to get the first event in the list of events via EE_Messages_Addressee
             // and use that.
-            $event        = $aee instanceof EE_Messages_Addressee ? reset($aee->events) : array();
-            $this->_event = empty($this->_event) && ! empty($events) ? $event : $this->_event;
+            $this->_event       = ! $this->_event instanceof EE_Event && $aee instanceof EE_Messages_Addressee
+                ? reset($aee->events)
+                : $this->_event;
         }
 
         //If we have an event object use it to pull the venue.
@@ -217,7 +218,7 @@ class EE_Venue_Shortcodes extends EE_Shortcodes
     private function _venue($field)
     {
 
-        if (empty($this->_venue)) {
+        if (! $this->_venue instanceof EE_Venue) {
             return '';
         } //no venue so get out.
 
