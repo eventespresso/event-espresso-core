@@ -192,7 +192,7 @@ class EE_Maintenance_Mode implements ResettableInterface
      */
     public static function disable_frontend_for_maintenance()
     {
-        return EE_Maintenance_Mode::instance()->level();
+        return (! is_admin() && EE_Maintenance_Mode::instance()->level());
     }
 
 
@@ -275,7 +275,10 @@ class EE_Maintenance_Mode implements ResettableInterface
     {
         // check if M-mode is engaged and for EE shortcode
         if (
-            $this->level()
+            ! (defined('DOING_AJAX') && DOING_AJAX)
+            && $this->real_level()
+            && ! is_admin()
+            && current_user_can('administrator')
             && EE_Registry::instance()->REQ->is_espresso_page()
         ) {
             printf(
