@@ -152,7 +152,7 @@ class Event extends Calculations_Base
      */
     public static function spotsTaken($wpdb_row, $request, $controller)
     {
-        if (is_array($wpdb_row) && isset($wpdb_row['Event_CPT.ID']) && absint($wpdb_row['Event_CPT.ID'])) {
+        if (! (is_array($wpdb_row) && isset($wpdb_row['Event_CPT.ID']) && absint($wpdb_row['Event_CPT.ID']))) {
             throw new EE_Error(
                 sprintf(
                     __(
