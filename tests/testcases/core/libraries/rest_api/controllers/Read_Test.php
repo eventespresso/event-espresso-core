@@ -283,6 +283,7 @@ class Read_Test extends \EE_REST_TestCase
         );
         // NOW set status to  approved  which  will  increment the corresponding ticket and datetime sold values
         $registration->set_status(\EEM_Registration::status_id_approved);
+        $registration->save();
         $this->assertEquals(
             \EEM_Registration::status_id_approved,
             $registration->status_ID()
