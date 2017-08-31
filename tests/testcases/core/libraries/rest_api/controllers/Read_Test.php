@@ -1,6 +1,7 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api\controllers\model;
 
+use EventEspresso\core\domain\services\event\EventSpacesCalculator;
 use EventEspresso\core\libraries\rest_api\controllers\Base as Controller_Base;
 use \EEM_Question_Group;
 
@@ -242,6 +243,7 @@ class Read_Test extends \EE_REST_TestCase
 
     /**
      * @group 9406
+     * @group 10976
      */
     public function test_handle_request_get_one__event_calculate_stuff()
     {
@@ -270,13 +272,36 @@ class Read_Test extends \EE_REST_TestCase
             )
         );
         $tkt->_add_relation_to($dtt, 'Datetime');
-        $this->new_model_obj_with_dependencies(
+        /** @var \EE_Registration $registration */
+        $registration = $this->new_model_obj_with_dependencies(
             'Registration',
             array(
                 'EVT_ID' => $event->ID(),
                 'TKT_ID' => $tkt->ID(),
-                'STS_ID' => \EEM_Registration::status_id_approved,
+                'STS_ID' => \EEM_Registration::status_id_incomplete,
             )
+        );
+        // NOW set status to  approved  which  will  increment the corresponding ticket and datetime sold values
+        $registration->set_status(\EEM_Registration::status_id_approved);
+        $this->assertEquals(
+            \EEM_Registration::status_id_approved,
+            $registration->status_ID()
+        );
+        // also confirm relation to event
+        $this->assertEquals(
+            $event->ID(),
+            $registration->event_ID()
+        );
+        $calculator = new EventSpacesCalculator($event);
+        $this->assertEquals(
+            $limit_on_ticket,
+            $calculator->totalSpacesAvailable(),
+            'Testing REST API event for "Total Spaces Available"'
+        );
+        $this->assertEquals(
+            $limit_on_ticket - 1,
+            $calculator->spacesRemaining(),
+            'Testing REST API event for "Spaces Remaining"'
         );
         $req = new \WP_REST_Request('GET',
             '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events/' . $event->ID());
@@ -288,7 +313,7 @@ class Read_Test extends \EE_REST_TestCase
         $req->set_query_params(
             array(
                 'include'   => 'Datetime',
-                'calculate' => 'optimum_sales_at_start,spots_taken,Datetime.registrations_checked_in_count',
+                'calculate' => 'optimum_sales_at_start,spots_taken,spaces_remaining,Datetime.registrations_checked_in_count',
             )
         );
         $response = rest_do_request($req);
@@ -301,8 +326,9 @@ class Read_Test extends \EE_REST_TestCase
         $this->assertTrue(isset($result['_calculated_fields']));
         $this->assertEquals(
             (object)array(
-                'optimum_sales_at_start' => min(array($limit_on_datetime, $limit_on_ticket)),
+                'optimum_sales_at_start' => $limit_on_ticket,
                 'spots_taken'            => 1,
+                'spaces_remaining'       => $limit_on_ticket - 1,
             ),
             $result['_calculated_fields']
         );
