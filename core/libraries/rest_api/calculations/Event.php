@@ -40,7 +40,7 @@ class Event extends Calculations_Base
      */
     public static function optimumSalesAtStart($wpdb_row, $request, $controller)
     {
-        if (is_array($wpdb_row) && isset($wpdb_row['Event_CPT.ID'])) {
+        if (is_array($wpdb_row) && isset($wpdb_row['Event_CPT.ID']) && absint($wpdb_row['Event_CPT.ID'])) {
             $event_obj = EEM_Event::instance()->get_one_by_ID($wpdb_row['Event_CPT.ID']);
         } else {
             $event_obj = null;
@@ -78,7 +78,7 @@ class Event extends Calculations_Base
      */
     public static function optimumSalesNow($wpdb_row, $request, $controller)
     {
-        if (is_array($wpdb_row) && isset($wpdb_row['Event_CPT.ID'])) {
+        if (is_array($wpdb_row) && isset($wpdb_row['Event_CPT.ID']) && absint($wpdb_row['Event_CPT.ID'])) {
             $event_obj = EEM_Event::instance()->get_one_by_ID($wpdb_row['Event_CPT.ID']);
         } else {
             $event_obj = null;
@@ -115,7 +115,7 @@ class Event extends Calculations_Base
      */
     public static function spacesRemaining($wpdb_row, $request, $controller)
     {
-        if (is_array($wpdb_row) && isset($wpdb_row['Event_CPT.ID'])) {
+        if (is_array($wpdb_row) && isset($wpdb_row['Event_CPT.ID']) && absint($wpdb_row['Event_CPT.ID'])) {
             $event_obj = EEM_Event::instance()->get_one_by_ID($wpdb_row['Event_CPT.ID']);
         } else {
             $event_obj = null;
@@ -152,12 +152,12 @@ class Event extends Calculations_Base
      */
     public static function spotsTaken($wpdb_row, $request, $controller)
     {
-        if (! is_array($wpdb_row) || ! isset($wpdb_row['Event_CPT.ID'])) {
+        if (is_array($wpdb_row) && isset($wpdb_row['Event_CPT.ID']) && absint($wpdb_row['Event_CPT.ID'])) {
             throw new EE_Error(
                 sprintf(
                     __(
                         // @codingStandardsIgnoreStart
-                        'Cannot calculate spots_taken because the database row %1$s does not have an entry for "Event_CPT.ID"',
+                        'Cannot calculate spots_taken because the database row %1$s does not have a valid entry for "Event_CPT.ID"',
                         // @codingStandardsIgnoreEnd
                         'event_espresso'
                     ),
