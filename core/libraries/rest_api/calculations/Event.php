@@ -40,27 +40,25 @@ class Event extends Calculations_Base
      */
     public static function optimumSalesAtStart($wpdb_row, $request, $controller)
     {
-        if (is_array($wpdb_row) && isset($wpdb_row['Event_CPT.ID']) && absint($wpdb_row['Event_CPT.ID'])) {
+        $event_obj = null;
+        if (Event::wpdbRowHasEventId($wpdb_row)) {
             $event_obj = EEM_Event::instance()->get_one_by_ID($wpdb_row['Event_CPT.ID']);
-        } else {
-            $event_obj = null;
         }
         if ($event_obj instanceof EE_Event) {
             return $event_obj->total_available_spaces();
-        } else {
-            throw new EE_Error(
-                sprintf(
-                    __(
-                        // @codingStandardsIgnoreStart
-                        'Cannot calculate optimum_sales_at_start because the event with ID %1$s (from database row %2$s) was not found',
-                        // @codingStandardsIgnoreEnd
-                        'event_espresso'
-                    ),
-                    $wpdb_row['Event_CPT.ID'],
-                    print_r($wpdb_row, true)
-                )
-            );
         }
+        throw new EE_Error(
+            sprintf(
+                __(
+                    // @codingStandardsIgnoreStart
+                    'Cannot calculate optimum_sales_at_start because the event with ID %1$s (from database row %2$s) was not found',
+                    // @codingStandardsIgnoreEnd
+                    'event_espresso'
+                ),
+                $wpdb_row['Event_CPT.ID'],
+                print_r($wpdb_row, true)
+            )
+        );
     }
 
 
@@ -78,27 +76,25 @@ class Event extends Calculations_Base
      */
     public static function optimumSalesNow($wpdb_row, $request, $controller)
     {
-        if (is_array($wpdb_row) && isset($wpdb_row['Event_CPT.ID']) && absint($wpdb_row['Event_CPT.ID'])) {
+        $event_obj = null;
+        if (Event::wpdbRowHasEventId($wpdb_row)) {
             $event_obj = EEM_Event::instance()->get_one_by_ID($wpdb_row['Event_CPT.ID']);
-        } else {
-            $event_obj = null;
         }
         if ($event_obj instanceof EE_Event) {
             return $event_obj->total_available_spaces(true);
-        } else {
-            throw new EE_Error(
-                sprintf(
-                    __(
-                        // @codingStandardsIgnoreStart
-                        'Cannot calculate optimum_sales_now because the event with ID %1$s (from database row %2$s) was not found',
-                        // @codingStandardsIgnoreEnd
-                        'event_espresso'
-                    ),
-                    $wpdb_row['Event_CPT.ID'],
-                    print_r($wpdb_row, true)
-                )
-            );
         }
+        throw new EE_Error(
+            sprintf(
+                __(
+                    // @codingStandardsIgnoreStart
+                    'Cannot calculate optimum_sales_now because the event with ID %1$s (from database row %2$s) was not found',
+                    // @codingStandardsIgnoreEnd
+                    'event_espresso'
+                ),
+                $wpdb_row['Event_CPT.ID'],
+                print_r($wpdb_row, true)
+            )
+        );
     }
 
 
@@ -115,27 +111,25 @@ class Event extends Calculations_Base
      */
     public static function spacesRemaining($wpdb_row, $request, $controller)
     {
-        if (is_array($wpdb_row) && isset($wpdb_row['Event_CPT.ID']) && absint($wpdb_row['Event_CPT.ID'])) {
+        $event_obj = null;
+        if (Event::wpdbRowHasEventId($wpdb_row)) {
             $event_obj = EEM_Event::instance()->get_one_by_ID($wpdb_row['Event_CPT.ID']);
-        } else {
-            $event_obj = null;
         }
         if ($event_obj instanceof EE_Event) {
             return $event_obj->spaces_remaining_for_sale();
-        } else {
-            throw new EE_Error(
-                sprintf(
-                    __(
-                        // @codingStandardsIgnoreStart
-                        'Cannot calculate spaces_remaining because the event with ID %1$s (from database row %2$s) was not found',
-                        // @codingStandardsIgnoreEnd
-                        'event_espresso'
-                    ),
-                    $wpdb_row['Event_CPT.ID'],
-                    print_r($wpdb_row, true)
-                )
-            );
         }
+        throw new EE_Error(
+            sprintf(
+                __(
+                    // @codingStandardsIgnoreStart
+                    'Cannot calculate spaces_remaining because the event with ID %1$s (from database row %2$s) was not found',
+                    // @codingStandardsIgnoreEnd
+                    'event_espresso'
+                ),
+                $wpdb_row['Event_CPT.ID'],
+                print_r($wpdb_row, true)
+            )
+        );
     }
 
 
@@ -152,7 +146,7 @@ class Event extends Calculations_Base
      */
     public static function spotsTaken($wpdb_row, $request, $controller)
     {
-        if (! (is_array($wpdb_row) && isset($wpdb_row['Event_CPT.ID']) && absint($wpdb_row['Event_CPT.ID']))) {
+        if (! Event::wpdbRowHasEventId($wpdb_row)) {
             throw new EE_Error(
                 sprintf(
                     __(
@@ -192,7 +186,7 @@ class Event extends Calculations_Base
      */
     public static function spotsTakenPendingPayment($wpdb_row, $request, $controller)
     {
-        if (! is_array($wpdb_row) || ! isset($wpdb_row['Event_CPT.ID'])) {
+        if (! Event::wpdbRowHasEventId($wpdb_row)) {
             throw new EE_Error(
                 sprintf(
                     __(
@@ -233,7 +227,7 @@ class Event extends Calculations_Base
      */
     public static function registrationsCheckedInCount($wpdb_row, $request, $controller)
     {
-        if (! is_array($wpdb_row) || ! isset($wpdb_row['Event_CPT.ID'])) {
+        if (! Event::wpdbRowHasEventId($wpdb_row)) {
             throw new EE_Error(
                 sprintf(
                     __(
@@ -265,7 +259,7 @@ class Event extends Calculations_Base
      */
     public static function registrationsCheckedOutCount($wpdb_row, $request, $controller)
     {
-        if (! is_array($wpdb_row) || ! isset($wpdb_row['Event_CPT.ID'])) {
+        if (! Event::wpdbRowHasEventId($wpdb_row)) {
             throw new EE_Error(
                 sprintf(
                     __(
@@ -291,10 +285,11 @@ class Event extends Calculations_Base
      * @param \WP_REST_Request $request
      * @param Base             $controller
      * @return array
+     * @throws EE_Error
      */
     public static function imageThumbnail($wpdb_row, $request, $controller)
     {
-        return self::calculateImageData($wpdb_row['Event_CPT.ID'], 'thumbnail');
+        return self::calculateImageData($wpdb_row, 'thumbnail');
     }
 
 
@@ -306,10 +301,11 @@ class Event extends Calculations_Base
      * @param \WP_REST_Request $request
      * @param Base             $controller
      * @return array
+     * @throws EE_Error
      */
     public static function imageMedium($wpdb_row, $request, $controller)
     {
-        return self::calculateImageData($wpdb_row['Event_CPT.ID'], 'medium');
+        return self::calculateImageData($wpdb_row, 'medium');
     }
 
 
@@ -321,10 +317,11 @@ class Event extends Calculations_Base
      * @param \WP_REST_Request $request
      * @param Base             $controller
      * @return array
+     * @throws EE_Error
      */
     public static function imageMediumLarge($wpdb_row, $request, $controller)
     {
-        return self::calculateImageData($wpdb_row['Event_CPT.ID'], 'medium_large');
+        return self::calculateImageData($wpdb_row, 'medium_large');
     }
 
 
@@ -336,10 +333,11 @@ class Event extends Calculations_Base
      * @param \WP_REST_Request $request
      * @param Base             $controller
      * @return array
+     * @throws EE_Error
      */
     public static function imageLarge($wpdb_row, $request, $controller)
     {
-        return self::calculateImageData($wpdb_row['Event_CPT.ID'], 'large');
+        return self::calculateImageData($wpdb_row, 'large');
     }
 
 
@@ -351,10 +349,11 @@ class Event extends Calculations_Base
      * @param \WP_REST_Request $request
      * @param Base             $controller
      * @return array
+     * @throws EE_Error
      */
     public static function imagePostThumbnail($wpdb_row, $request, $controller)
     {
-        return self::calculateImageData($wpdb_row['Event_CPT.ID'], 'post-thumbnail');
+        return self::calculateImageData($wpdb_row, 'post-thumbnail');
     }
 
 
@@ -366,10 +365,11 @@ class Event extends Calculations_Base
      * @param \WP_REST_Request $request
      * @param Base             $controller
      * @return array
+     * @throws EE_Error
      */
     public static function imageFull($wpdb_row, $request, $controller)
     {
-        return self::calculateImageData($wpdb_row['Event_CPT.ID'], 'full');
+        return self::calculateImageData($wpdb_row, 'full');
     }
 
 
@@ -378,21 +378,35 @@ class Event extends Calculations_Base
      * Gets image specs and formats them for the display in the API,
      * according to the image size requested
      *
-     * @param int    $EVT_ID
+     * @param array    $wpdb_row
      * @param string $image_size one of these: thumbnail, medium, medium_large, large, post-thumbnail, full
      * @return array|false if no such image exists. If array it will have keys 'url', 'width', 'height' and 'original'
+     * @throws EE_Error
      */
-    protected static function calculateImageData($EVT_ID, $image_size)
+    protected static function calculateImageData($wpdb_row, $image_size)
     {
+        if (! Event::wpdbRowHasEventId($wpdb_row)) {
+            throw new EE_Error(
+                sprintf(
+                    __(
+                    // @codingStandardsIgnoreStart
+                        'Cannot calculate image because the database row %1$s does not have an entry for "Event_CPT.ID"',
+                        // @codingStandardsIgnoreEnd
+                        'event_espresso'
+                    ),
+                    print_r($wpdb_row, true)
+                )
+            );
+        }
+        $EVT_ID = $wpdb_row['Event_CPT.ID'];
         $attachment_id = get_post_thumbnail_id($EVT_ID);
         $data = wp_get_attachment_image_src($attachment_id, $image_size);
         if (! $data) {
             return null;
         }
+        $generated = true;
         if (isset($data[3])) {
             $generated = $data[3];
-        } else {
-            $generated = true;
         }
         return array(
             'url'       => $data[0],
@@ -400,5 +414,17 @@ class Event extends Calculations_Base
             'height'    => $data[2],
             'generated' => $generated,
         );
+    }
+
+
+
+    /**
+     * Returns true if the array of data contains 'Event_CPT.ID'. False otherwise
+     * @param array $wpdb_row
+     * @return bool
+     */
+    protected static function wpdbRowHasEventId($wpdb_row)
+    {
+        return (is_array($wpdb_row) && isset($wpdb_row['Event_CPT.ID']) && absint($wpdb_row['Event_CPT.ID']));
     }
 }
