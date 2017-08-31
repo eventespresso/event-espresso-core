@@ -46,7 +46,7 @@ class Event extends Calculations_Base
             $event_obj = null;
         }
         if ($event_obj instanceof EE_Event) {
-            return $event_obj->total_available_spaces(true);
+            return $event_obj->total_available_spaces();
         } else {
             throw new EE_Error(
                 sprintf(
@@ -84,7 +84,7 @@ class Event extends Calculations_Base
             $event_obj = null;
         }
         if ($event_obj instanceof EE_Event) {
-            return $event_obj->total_available_spaces(false);
+            return $event_obj->total_available_spaces(true);
         } else {
             throw new EE_Error(
                 sprintf(
