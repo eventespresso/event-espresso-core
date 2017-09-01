@@ -1,8 +1,8 @@
 <?php
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('NO direct script access allowed');
-}
 
+defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
+
+use EventEspressoBatchRequest\JobHandlers\DatetimeOffsetFix;
 
 
 /**
@@ -28,10 +28,10 @@ class Maintenance_Admin_Page extends EE_Admin_Page
 {
 
 
-    public function __construct($routing = true)
-    {
-        parent::__construct($routing);
-    }
+    /**
+     * @var EE_Datetime_Offset_Fix_Form
+     */
+    protected $datetime_fix_offset_form;
 
 
 
@@ -58,6 +58,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page
         $this->_admin_page_title = EE_MAINTENANCE_LABEL;
         $this->_labels = array(
             'buttons' => array(
+                'reset_reservations' => esc_html__('Reset Ticket and Datetime Reserved Counts', 'event_espresso'),
                 'reset_capabilities' => esc_html__('Reset Event Espresso Capabilities', 'event_espresso'),
             ),
         );
@@ -80,6 +81,11 @@ class Maintenance_Admin_Page extends EE_Admin_Page
             'system_status'                       => array(
                 'func'       => '_system_status',
                 'capability' => 'manage_options',
+            ),
+            'download_system_status' => array(
+                'func'       => '_download_system_status',
+                'capability' => 'manage_options',
+                'noheader'   => true,
             ),
             'send_migration_crash_report'         => array(
                 'func'       => '_send_migration_crash_report',
@@ -116,6 +122,11 @@ class Maintenance_Admin_Page extends EE_Admin_Page
                 'capability' => 'manage_options',
                 'noheader'   => true,
             ),
+            'reset_reservations'                  => array(
+                'func'       => '_reset_reservations',
+                'capability' => 'manage_options',
+                'noheader'   => true,
+            ),
             'reset_capabilities'                  => array(
                 'func'       => '_reset_capabilities',
                 'capability' => 'manage_options',
@@ -126,6 +137,16 @@ class Maintenance_Admin_Page extends EE_Admin_Page
                 'capability' => 'manage_options',
                 'noheader'   => true,
             ),
+            'datetime_tools' => array(
+                'func' => '_datetime_tools',
+                'capability' => 'manage_options'
+            ),
+            'run_datetime_offset_fix' => array(
+                'func' => '_apply_datetime_offset',
+                'noheader' => true,
+                'headers_sent_route' => 'datetime_tools',
+                'capability' => 'manage_options'
+            )
         );
     }
 
@@ -145,6 +166,13 @@ class Maintenance_Admin_Page extends EE_Admin_Page
                 'nav'           => array(
                     'label' => esc_html__('Reset/Delete Data', 'event_espresso'),
                     'order' => 20,
+                ),
+                'require_nonce' => false,
+            ),
+            'datetime_tools' => array(
+                'nav' => array(
+                    'label' => esc_html__('Datetime Utilities', 'event_espresso'),
+                    'order' => 25
                 ),
                 'require_nonce' => false,
             ),
@@ -265,6 +293,9 @@ class Maintenance_Admin_Page extends EE_Admin_Page
                     'next_db_state'    => isset($current_script) ? sprintf(__("EE%s (%s)", 'event_espresso'),
                         $new_version, $plugin_slug) : null,
                 ));
+            } else {
+                $this->_template_args['current_db_state'] = null;
+                $this->_template_args['next_db_state'] = null;
             }
             $this->_template_path = EE_MAINTENANCE_TEMPLATE_PATH . 'ee_migration_page.template.php';
             $this->_template_args = array_merge(
@@ -345,11 +376,11 @@ class Maintenance_Admin_Page extends EE_Admin_Page
 
 
     /**
-     * changes the maintenance level, provided there are still no migration scripts that shoudl run
+     * changes the maintenance level, provided there are still no migration scripts that should run
      */
     public function _change_maintenance_level()
     {
-        $new_level = intval($this->_req_data['maintenance_mode_level']);
+        $new_level = absint($this->_req_data['maintenance_mode_level']);
         if ( ! EE_Data_Migration_Manager::instance()->check_for_applicable_data_migration_scripts()) {
             EE_Maintenance_Mode::instance()->set_maintenance_level($new_level);
             $success = true;
@@ -366,10 +397,19 @@ class Maintenance_Admin_Page extends EE_Admin_Page
      * a tab with options for resetting and/or deleting EE data
      *
      * @throws \EE_Error
+     * @throws \DomainException
      */
     public function _data_reset_and_delete()
     {
         $this->_template_path = EE_MAINTENANCE_TEMPLATE_PATH . 'ee_data_reset_and_delete.template.php';
+        $this->_template_args['reset_reservations_button'] = $this->get_action_link_or_button(
+            'reset_reservations',
+            'reset_reservations',
+            array(),
+            'button button-primary',
+            '',
+            false
+        );
         $this->_template_args['reset_capabilities_button'] = $this->get_action_link_or_button(
             'reset_capabilities',
             'reset_capabilities',
@@ -392,6 +432,28 @@ class Maintenance_Admin_Page extends EE_Admin_Page
             true
         );
         $this->display_admin_page_with_sidebar();
+    }
+
+
+
+    protected function _reset_reservations()
+    {
+        if(\EED_Ticket_Sales_Monitor::reset_reservation_counts()) {
+            EE_Error::add_success(
+                __(
+                    'Ticket and datetime reserved counts have been successfully reset.',
+                    'event_espresso'
+                )
+            );
+        } else {
+            EE_Error::add_success(
+                __(
+                    'Ticket and datetime reserved counts were correct and did not need resetting.',
+                    'event_espresso'
+                )
+            );
+        }
+        $this->_redirect_after_action(true, '', '', array('action' => 'data_reset'), true);
     }
 
 
@@ -426,9 +488,29 @@ class Maintenance_Admin_Page extends EE_Admin_Page
     {
         $this->_template_path = EE_MAINTENANCE_TEMPLATE_PATH . 'ee_system_stati_page.template.php';
         $this->_template_args['system_stati'] = EEM_System_Status::instance()->get_system_stati();
+        $this->_template_args['download_system_status_url'] = EE_Admin_Page::add_query_args_and_nonce(
+            array(
+                'action' => 'download_system_status',
+            ),
+            EE_MAINTENANCE_ADMIN_URL
+        );
         $this->_template_args['admin_page_content'] = EEH_Template::display_template($this->_template_path,
             $this->_template_args, true);
         $this->display_admin_page_with_sidebar();
+    }
+
+    /**
+     * Downloads an HTML file of the system status that can be easily stored or emailed
+     */
+    public function _download_system_status()
+    {
+        $status_info = EEM_System_Status::instance()->get_system_stati();
+        header( 'Content-Disposition: attachment' );
+        header( "Content-Disposition: attachment; filename=system_status_" . sanitize_key( site_url() ) . ".html" );
+        echo "<style>table{border:1px solid darkgrey;}td{vertical-align:top}</style>";
+        echo "<h1>System Information for " . site_url() . "</h1>";
+        echo EEH_Template::layout_array_as_table( $status_info );
+        die;
     }
 
 
@@ -595,5 +677,106 @@ class Maintenance_Admin_Page extends EE_Admin_Page
     }
 
 
+    protected function _datetime_tools()
+    {
+        $form_action = EE_Admin_Page::add_query_args_and_nonce(
+            array(
+                'action' => 'run_datetime_offset_fix',
+                'return_action' => $this->_req_action
+            ),
+            EE_MAINTENANCE_ADMIN_URL
+        );
+        $form = $this->_get_datetime_offset_fix_form();
+        $this->_admin_page_title = esc_html__('Datetime Utilities', 'event_espresso');
+        $this->_template_args['admin_page_content'] = $form->form_open($form_action, 'post')
+                                                      . $form->get_html_and_js()
+                                                      . $form->form_close();
+        $this->display_admin_page_with_no_sidebar();
+    }
 
+
+
+    protected function _get_datetime_offset_fix_form()
+    {
+        if (! $this->datetime_fix_offset_form instanceof EE_Form_Section_Proper) {
+            $this->datetime_fix_offset_form =  new EE_Form_Section_Proper(
+                array(
+                    'name' => 'datetime_offset_fix_option',
+                    'layout_strategy' => new EE_Admin_Two_Column_Layout(),
+                    'subsections' => array(
+                        'title' => new EE_Form_Section_HTML(
+                            EEH_HTML::h2(
+                                esc_html__('Datetime Offset Tool', 'event_espresso')
+                            )
+                        ),
+                        'explanation' => new EE_Form_Section_HTML(
+                            EEH_HTML::p(
+                                esc_html__(
+                                    'Use this tool to automatically apply the provided offset to all Event Espresso records in your database that involve dates and times.',
+                                    'event_espresso'
+                                )
+                            )
+                            . EEH_HTML::p(
+                                esc_html__(
+                                    'Note: If you enter 1.25, that will result in the offset of 1 hour 15 minutes being applied.  Decimals represent the fraction of hours, not minutes.',
+                                    'event_espresso'
+                                )
+                            )
+                        ),
+                        'offset_input' => new EE_Float_Input(
+                            array(
+                                'html_name' => 'offset_for_datetimes',
+                                'html_label_text' => esc_html__(
+                                    'Offset to apply (in hours):',
+                                    'event_espresso'
+                                ),
+                                'min_value' => '-12',
+                                'max_value' => '14',
+                                'step_value' => '.25',
+                                'default' => DatetimeOffsetFix::getOffset()
+                            )
+                        ),
+                        'submit' => new EE_Submit_Input(
+                            array(
+                                'html_label_text' => '',
+                                'default' => esc_html__('Apply Offset', 'event_espresso')
+                            )
+                        )
+                    )
+                )
+            );
+        }
+        return $this->datetime_fix_offset_form;
+    }
+
+
+    /**
+     * Callback for the run_datetime_offset_fix route.
+     * @throws EE_Error
+     */
+    protected function _apply_datetime_offset()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $form = $this->_get_datetime_offset_fix_form();
+            $form->receive_form_submission($this->_req_data);
+            if ($form->is_valid()) {
+                //save offset so batch processor can get it.
+                DatetimeOffsetFix::updateOffset($form->get_input_value('offset_input'));
+                //redirect to batch tool
+                wp_redirect(
+                    EE_Admin_Page::add_query_args_and_nonce(
+                        array(
+                            'page' => 'espresso_batch',
+                            'batch' => 'job',
+                            'label' => esc_html__('Applying Offset', 'event_espresso'),
+                            'job_handler' => urlencode('EventEspressoBatchRequest\JobHandlers\DatetimeOffsetFix'),
+                            'return_url' => urlencode(home_url(add_query_arg(null, null))),
+                        ),
+                        admin_url()
+                    )
+                );
+                exit;
+            }
+        }
+    }
 } //end Maintenance_Admin_Page class

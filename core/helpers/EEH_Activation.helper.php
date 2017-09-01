@@ -1,9 +1,10 @@
-<?php use EventEspresso\core\domain\entities\notifications\PersistentAdminNotice;
-use EventEspresso\core\exceptions\InvalidDataTypeException;
+<?php 
 
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
+use EventEspresso\core\domain\entities\notifications\PersistentAdminNotice;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\interfaces\ResettableInterface;
+
+defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 
 
 
@@ -14,7 +15,7 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) {
  * @subpackage     /helpers/
  * @author         Brent Christensen
  */
-class EEH_Activation
+class EEH_Activation implements ResettableInterface
 {
 
     /**
@@ -150,7 +151,6 @@ class EEH_Activation
         EEH_Activation::insert_default_status_codes();
         EEH_Activation::generate_default_message_templates();
         EEH_Activation::create_no_ticket_prices_array();
-        EE_Registry::instance()->CAP->init_caps();
 
         EEH_Activation::validate_messages_system();
         EEH_Activation::insert_default_payment_methods();
@@ -187,6 +187,7 @@ class EEH_Activation
 //				'AHEE__EE_Cron_Tasks__finalize_abandoned_transactions' => EEH_Activation::cron_task_no_longer_in_use, actually this is still in use
                 'AHEE__EE_Cron_Tasks__update_transaction_with_payment' => EEH_Activation::cron_task_no_longer_in_use,
                 //there may have been a bug which prevented from these cron tasks from getting unscheduled, so we might want to remove these for a few updates
+                'AHEE_EE_Cron_Tasks__clean_out_old_gateway_logs'       => 'daily',
             )
         );
         if ($which_to_include === 'old') {
@@ -223,7 +224,19 @@ class EEH_Activation
 
         foreach (EEH_Activation::get_cron_tasks('current') as $hook_name => $frequency) {
             if (! wp_next_scheduled($hook_name)) {
-                wp_schedule_event(time(), $frequency, $hook_name);
+                /**
+                 * This allows client code to define the initial start timestamp for this schedule.
+                 */
+                if (is_array($frequency)
+                    && count($frequency) === 2
+                    && isset($frequency[0], $frequency[1])
+                ) {
+                    $start_timestamp = $frequency[0];
+                    $frequency = $frequency[1];
+                } else {
+                    $start_timestamp = time();
+                }
+                wp_schedule_event($start_timestamp, $frequency, $hook_name);
             }
         }
 
@@ -468,10 +481,6 @@ class EEH_Activation
                     }
                 }
             }
-            // track post_shortcodes
-            if ($critical_page['post']) {
-                EEH_Activation::_track_critical_page_post_shortcodes($critical_page);
-            }
             // check that Post ID matches critical page ID in config
             if (
                 isset($critical_page['post']->ID)
@@ -579,56 +588,6 @@ class EEH_Activation
 
     }
 
-
-
-
-
-    /**
-     *    This function adds a critical page's shortcode to the post_shortcodes array
-     *
-     * @access private
-     * @static
-     * @param array $critical_page
-     * @return void
-     */
-    private static function _track_critical_page_post_shortcodes($critical_page = array())
-    {
-        // check the goods
-        if ( ! $critical_page['post'] instanceof WP_Post) {
-            $msg = sprintf(
-                __(
-                    'The Event Espresso critical page shortcode for the page %s can not be tracked because it is not a WP_Post object.',
-                    'event_espresso'
-                ),
-                $critical_page['name']
-            );
-            EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
-            return;
-        }
-        $EE_Core_Config = EE_Registry::instance()->CFG->core;
-        // map shortcode to post
-        $EE_Core_Config->post_shortcodes[$critical_page['post']->post_name][$critical_page['code']] = $critical_page['post']->ID;
-        // and make sure it's NOT added to the WP "Posts Page"
-        // name of the WP Posts Page
-        $posts_page = EE_Config::get_page_for_posts();
-        if (isset($EE_Core_Config->post_shortcodes[$posts_page])) {
-            unset($EE_Core_Config->post_shortcodes[$posts_page][$critical_page['code']]);
-        }
-        if ($posts_page !== 'posts' && isset($EE_Core_Config->post_shortcodes['posts'])) {
-            unset($EE_Core_Config->post_shortcodes['posts'][$critical_page['code']]);
-        }
-        // update post_shortcode CFG
-        if ( ! EE_Config::instance()->update_espresso_config(false, false)) {
-            $msg = sprintf(
-                __(
-                    'The Event Espresso critical page shortcode for the %s page could not be configured properly.',
-                    'event_espresso'
-                ),
-                $critical_page['name']
-            );
-            EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
-        }
-    }
 
 
 
@@ -1605,7 +1564,7 @@ class EEH_Activation
                                 || ! $table->is_global()//not main site,but not global either. nuke it
                             )
                         ) {
-                            $tables[] = $table->get_table_name();
+                            $tables[$table->get_table_name()] = $table->get_table_name();
                         }
                     }
                 }
@@ -1622,7 +1581,7 @@ class EEH_Activation
             'esp_rule',
         );
         foreach ($tables_without_models as $table) {
-            $tables[] = $table;
+            $tables[$table] = $table;
         }
         return \EEH_Activation::getTableManager()->dropTables($tables);
     }

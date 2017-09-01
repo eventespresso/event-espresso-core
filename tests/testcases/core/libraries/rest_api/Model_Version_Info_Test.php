@@ -33,8 +33,8 @@ class Model_Version_Info_Test extends \EE_UnitTestCase{
 	 */
 	function test_get_all_model_changes_between_requested_version_and_current__req_46_cur_49() {
 		$this->_pretend_current_version_49();
-		$model_info = new Model_Version_Info( '4.8.29' );
-		$changes = $model_info->model_changes_between_requested_version_and_current();
+		$model_info = new ModelVersionInfo( '4.8.29' );
+		$changes = $model_info->modelChangesBetweenRequestedVersionAndCurrent();
 		$this->assertArrayNotHasKey( '4.8.29', $changes );
 	}
 
@@ -45,8 +45,8 @@ class Model_Version_Info_Test extends \EE_UnitTestCase{
 	function test_fields_on_model_in_this_version__no_reg_paid_in_46() {
 		$this->_pretend_added_field_onto_registration_model();
 		$this->_pretend_current_version_49();
-		$model_info = new Model_Version_Info( '4.6' );
-		$fields_on_reg = $model_info->fields_on_model_in_this_version( \EEM_Registration::instance() );
+		$model_info = new ModelVersionInfo( '4.6' );
+		$fields_on_reg = $model_info->fieldsOnModelInThisVersion( \EEM_Registration::instance() );
 		$this->assertArrayNotHasKey( 'REG_paid', $fields_on_reg );
 	}
 
@@ -57,8 +57,8 @@ class Model_Version_Info_Test extends \EE_UnitTestCase{
 	function test_fields_on_model_in_this_version__has_reg_paid_in_47() {
 		$this->_pretend_added_field_onto_registration_model();
 		$this->_pretend_current_version_49();
-		$model_info = new Model_Version_Info( '4.7' );
-		$fields_on_reg = $model_info->fields_on_model_in_this_version( \EEM_Registration::instance() );
+		$model_info = new ModelVersionInfo( '4.7' );
+		$fields_on_reg = $model_info->fieldsOnModelInThisVersion( \EEM_Registration::instance() );
 		$this->assertArrayHasKey( 'REG_paid', $fields_on_reg );
 	}
 	

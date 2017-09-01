@@ -32,10 +32,11 @@ class EventsArchiveIframe extends Iframe
         \EE_Registry::instance()->REQ->set_espresso_page( true );
         add_filter('FHEE__EED_Events_Archive__event_list_iframe', '__return_true');
         $EED_Events_Archive->event_list();
-        $event_list = new \EES_Espresso_Events();
+        /** @var \EventEspresso\core\domain\entities\shortcodes\EspressoEvents $event_list */
+        $event_list = \EE_Registry::instance()->create('EventEspresso\core\domain\entities\shortcodes\EspressoEvents');
         parent::__construct(
             esc_html__( 'Event List', 'event_espresso' ),
-            $event_list->process_shortcode()
+            $event_list->processShortcode()
         );
         $this->addStylesheets(
             apply_filters(
@@ -44,9 +45,6 @@ class EventsArchiveIframe extends Iframe
                     'espresso_default'           => is_readable( EVENT_ESPRESSO_UPLOAD_DIR . 'css/style.css' )
                         ? EVENT_ESPRESSO_UPLOAD_DIR . 'css/espresso_default.css?ver=' . EVENT_ESPRESSO_VERSION
                         : EE_GLOBAL_ASSETS_URL . 'css/espresso_default.css?ver=' . EVENT_ESPRESSO_VERSION,
-                    $EED_Events_Archive->theme() => get_stylesheet_directory_uri()
-                                                    . $EED_Events_Archive->theme() . DS
-                                                    . 'style.css?ver=' . EVENT_ESPRESSO_VERSION,
                 ),
                 $this
             )

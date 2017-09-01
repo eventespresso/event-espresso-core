@@ -124,7 +124,7 @@ class EEM_Payment_Method extends EEM_Base {
 	 */
 	public function get_all_active( $scope = NULL, $query_params = array() ) {
 		if( ! isset( $query_params[ 'order_by' ] ) && ! isset( $query_params[ 'order' ] ) ) {
-			$query_params = array( 'order_by' => array( 'PMD_order' => 'ASC', 'PMD_ID' => 'ASC' ) );
+			$query_params['order_by'] = array( 'PMD_order' => 'ASC', 'PMD_ID' => 'ASC' );
 		}
 		return $this->get_all( $this->_get_query_params_for_all_active( $scope, $query_params ) );
 	}
@@ -349,15 +349,10 @@ class EEM_Payment_Method extends EEM_Base {
 	 * @return EE_Payment_Method[]
 	 */
 	public function get_all_for_transaction( $transaction, $scope ) {
-		//@todo take relations between events and payment methods into account, once that relation exists
-		if ( $transaction instanceof EE_Transaction ) {
-			//@todo take the relation between transaction and currencies into account
-		}
-		$currencies_for_events = array( EE_Config::instance()->currency->code );
 		//give addons a chance to override what payment methods are chosen based on the transaction
 		return apply_filters(
 			'FHEE__EEM_Payment_Method__get_all_for_transaction__payment_methods',
-			$this->get_all_active( $scope, array( array( 'Currency.CUR_code' => array( 'IN', $currencies_for_events ) ) ) ),
+			$this->get_all_active( $scope, array( 'group_by' => 'PMD_type' ) ),
 			$transaction,
 			$scope
 		);

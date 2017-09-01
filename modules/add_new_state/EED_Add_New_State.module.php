@@ -32,7 +32,7 @@ class EED_Add_New_State extends EED_Module
 
 
     /**
-     *  set_hooks - for hooking into EE Core, other modules, etc
+     * set_hooks - for hooking into EE Core, other modules, etc
      *
      * @return void
      */
@@ -207,7 +207,7 @@ class EED_Add_New_State extends EED_Module
                 array(
                     'name'            => 'new_state_micro_form',
                     'html_id'         => 'new_state_micro_form',
-                    'layout_strategy' => new EE_No_Layout(),
+                    'layout_strategy' => new EE_Div_Per_Section_Layout(),
                     'subsections'     => array(
                         // add hidden input to indicate that a new state is being added
                         'add_new_state'               => new EE_Hidden_Input(
@@ -247,8 +247,8 @@ class EED_Add_New_State extends EED_Module
                                 EEH_HTML::div('', $input->html_id() . '-dv', 'ee-form-add-new-state-dv',
                                     'display: none;') .
                                 EEH_HTML::h6(
-                                   esc_html__(
-                                        'If your State/Province does not appear in the list above, you can easily add it by doing the following:',
+                                    esc_html__(
+                                        'Is your state/province missing from the dropdown menu above? You can add it by completing the following steps:',
                                         'event_espresso'
                                     )
                                 ) .
@@ -313,7 +313,7 @@ class EED_Add_New_State extends EED_Module
                                 'html_label_text'       => esc_html__(
                                                                'New State/Province Abbreviation',
                                                                'event_espresso'
-                                                           ),
+                                                           ) . ' *',
                                 'html_other_attributes' => 'size="24"',
                                 'default'               => EE_Registry::instance()->REQ->get($abbrv_name, ''),
                                 'required'              => false,
@@ -344,6 +344,7 @@ class EED_Add_New_State extends EED_Module
                                 EEH_HTML::div('', '', 'small-text')
                                 .
                                 EEH_HTML::strong(
+                                    '* ' .
                                     esc_html__(
                                         'Don\'t know your State/Province Abbreviation?',
                                         'event_espresso'
@@ -362,7 +363,9 @@ class EED_Add_New_State extends EED_Module
                                         'http://en.wikipedia.org/wiki/ISO_3166-2',
                                         '',
                                         '',
-                                        'ee-form-add-new-state-wiki-lnk'
+                                        'ee-form-add-new-state-wiki-lnk',
+                                        '',
+                                        'target="_blank"'
                                     )
                                 )
                                 .
@@ -370,9 +373,15 @@ class EED_Add_New_State extends EED_Module
                                 .
                                 EEH_HTML::br()
                                 .
-                                EEH_HTML::link('', esc_html__('cancel new state/province', 'event_espresso'), '',
-                                    'hide-' . $input->html_id(), 'ee-form-cancel-new-state-lnk smaller-text', '',
-                                    'data-target="' . $input->html_id() . '"')
+                                EEH_HTML::link(
+                                    '',
+                                    esc_html__('cancel new State/Province', 'event_espresso'),
+                                    '',
+                                    'hide-' . $input->html_id(),
+                                    'ee-form-cancel-new-state-lnk smaller-text',
+                                    '',
+                                    'data-target="' . $input->html_id() . '"'
+                                )
                                 .
                                 EEH_HTML::divx()
                                 .
@@ -406,10 +415,7 @@ class EED_Add_New_State extends EED_Module
     public static function add_new_state()
     {
         $REQ = EE_Registry::instance()->load_core('Request_Handler');
-        if (
-            $REQ->is_set('nsmf_add_new_state')
-            && $REQ->get('nsmf_add_new_state') === 1
-        ) {
+        if (absint($REQ->get('nsmf_add_new_state')) === 1) {
             EE_Registry::instance()->load_model('State');
             // grab country ISO code, new state name, and new state abbreviation
             $state_country = $REQ->is_set('nsmf_new_state_country')
@@ -651,11 +657,11 @@ class EED_Add_New_State extends EED_Module
 
 
     /**
-     * @param EE_Country[]                           $country_options
-     * @param EE_SPCO_Reg_Step_Attendee_Information  $reg_step
-     * @param EE_Registration                        $registration
-     * @param EE_Question                            $question
-     * @param                                        $answer
+     * @param EE_Country[]                          $country_options
+     * @param EE_SPCO_Reg_Step_Attendee_Information $reg_step
+     * @param EE_Registration                       $registration
+     * @param EE_Question                           $question
+     * @param                                       $answer
      * @return array
      * @throws EE_Error
      * @throws InvalidArgumentException

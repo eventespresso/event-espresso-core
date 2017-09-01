@@ -90,4 +90,4 @@ class CapCheck implements CapCheckInterface
 
 }
 // End of file CapCheck.php
-// Location: /CapCheck.php
+// Location: /core/domain/services/capabilities/CapCheck.php

@@ -217,7 +217,7 @@ jQuery(document).ready(function($) {
             EENewsletterTrigger.displayForm();
     });
 
-    $('.wp-list-table').on('click', 'input[type="checkbox"]', function(e) {
+    $('.wp-list-table').on('change', 'input[type="checkbox"]', function(e) {
         //count all checkboxes that are checked.
         var checkCount = $('#the-list input[type=checkbox]:checked').length;
         $('.send-selected-newsletter-count', '#selected-batch-send-trigger').text(checkCount);

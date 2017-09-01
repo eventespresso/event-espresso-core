@@ -34,7 +34,7 @@ class EEM_Event_Test extends EE_UnitTestCase {
 
 
 	/**
-	 * This just setsup some events in the db for running certain tests that query getting events back.
+	 * This just sets up some events in the db for running certain tests that query getting events back.
 	 * @since 4.6.x
 	 */
 	protected function _setup_events() {
@@ -57,7 +57,8 @@ class EEM_Event_Test extends EE_UnitTestCase {
 			);
 
 		//setup some events
-		$events = $this->factory->event->create_many( '4' );
+        /** @var EE_Event[] $events */
+        $events = $this->factory->event->create_many( '4' );
 
 		//add datetimes to the events.
 		$events[0]->_add_relation_to( $datetimes['expired_datetime'], 'Datetime' );
@@ -75,7 +76,8 @@ class EEM_Event_Test extends EE_UnitTestCase {
 		}
 
 		//one more event that is just going to be inactive
-		$final_event = $this->factory->event->create();
+        /** @var EE_Event $final_event */
+        $final_event = $this->factory->event->create();
 		$final_event->_add_relation_to( $datetimes['inactive_datetime'], 'Datetime' );
 		$final_event->save();
 
@@ -113,6 +115,12 @@ class EEM_Event_Test extends EE_UnitTestCase {
 		$this->assertEquals( 1, EEM_Event::instance()->get_inactive_events( array(), true ) );
 	}
 
+	public function test_get_active_and_upcoming_events() {
+		$this->_setup_events();
+		//now do our tests
+		$this->assertEquals( 3, EEM_Event::instance()->get_active_and_upcoming_events( array(), true ) );
+	}
+
 
 	/**
 	 * @see https://events.codebasehq.com/projects/event-espresso/tickets/8799
@@ -143,4 +151,6 @@ class EEM_Event_Test extends EE_UnitTestCase {
 		$event = EEM_Event::instance()->create_default_object();
 		$this->assertEquals( EEM_Registration::status_id_approved, $event->default_registration_status() );
 	}
+
 }
+// Location: testcases/core/db_models/EEM_Event_Test.php

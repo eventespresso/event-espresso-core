@@ -20,10 +20,16 @@ class EEH_Schema {
     /**
      * generates JSON-based linked data for an event
      *
-     * @param \EE_Event $event
+     * @param EE_Event $event
+     * @throws EE_Error
      */
-    public static function add_json_linked_data_for_event(\EE_Event $event)
+    public static function add_json_linked_data_for_event(EE_Event $event)
     {
+    	//Check we have a valid datetime for the event
+    	if(! $event->primary_datetime() instanceof EE_Datetime) {
+    		return;
+    	}
+
         $template_args = array(
             'event_permalink' => '',
             'event_name' => '',
@@ -40,11 +46,16 @@ class EEH_Schema {
         );
         $template_args['event_permalink'] = $event->get_permalink();
         $template_args['event_name'] = $event->name();
-        $template_args['event_description'] = $event->description();
-        $template_args['event_start'] = $event->primary_datetime()->start_date(DateTime::ATOM);
-        $template_args['event_end'] = $event->primary_datetime()->end_date(DateTime::ATOM);
+        $template_args['event_description'] = wp_strip_all_tags($event->short_description(200));
+        // clone datetime so that date formats don't override those for the original datetime
+        $primary_datetime = clone $event->primary_datetime();
+        $template_args['event_start'] = $primary_datetime->start_date(DateTime::ATOM);
+        $template_args['event_end'] = $primary_datetime->end_date(DateTime::ATOM);
+        unset($primary_datetime);
         $template_args['currency'] = EE_Registry::instance()->CFG->currency->code;
-        foreach ($event->tickets() as $ticket) {
+        foreach ($event->tickets() as $original_ticket) {
+            // clone tickets so that date formats don't override those for the original ticket
+            $ticket= clone $original_ticket;
             $ID = $ticket->ID();
             $template_args['event_tickets'][$ID]['start_date'] = $ticket->start_date(DateTime::ATOM, null);
             $template_args['event_tickets'][$ID]['end_date'] = $ticket->end_date(DateTime::ATOM, null);
@@ -54,6 +65,7 @@ class EEH_Schema {
                 EE_Registry::instance()->CFG->currency->dec_mrk,
                 EE_Registry::instance()->CFG->currency->thsnds
             );
+            unset($ticket);
         }
         $VNU_ID = espresso_venue_id();
         if ( ! empty($VNU_ID) && ! espresso_is_venue_private($VNU_ID)) {
@@ -239,6 +251,12 @@ class EEH_Schema {
 	 * @return string (link)
 	 */
 	public static function url( $url = null, $text = null, $attributes = array() ) {
+		//Check the URL includes a scheme
+		$parsed_url = parse_url($url);
+		if ( empty($parsed_url['scheme']) ) {
+		    $url = 'http://' . ltrim($url, '/');
+		}
+
 		$atts = '';
 		foreach ( $attributes as $attribute => $value ) {
 			$atts .= ' ' . $attribute . '="' . $value . '"';

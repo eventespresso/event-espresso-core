@@ -603,7 +603,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 	 * This just returns the context label for a given context (as set in $_context_label property)
 	 *
 	 * @access public
-	 * @return string
+	 * @return array
 	 */
 	public function get_context_label() {
 		return $this->_context_label;

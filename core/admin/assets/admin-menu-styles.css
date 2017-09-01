@@ -102,16 +102,131 @@ div.TB-ee-frame a {
 	width: 80%;
 }
 
+.feature-section.col.three-col.about-updates > div {
+	float: left;
+	margin: 20px;
+	width: 300px;
+}
+
+.feature-section.col.two-col > div {
+	float: left;
+	margin: 20px;
+	width: 400px;
+}
+
+.about-wrap .feature-section {
+	padding-bottom: 0;
+}
+/**** ee decaf reviews *****/
+.review-user-nicename {
+    float: right;
+    padding: 10px;
+    text-align: center;
+}
+
+@media screen and (max-width : 1260px) {
+	.col-3 {
+	    clear: left;
+	}
+}
+
+/**** ee decaf vs regular *****/
+.featured-section.features .row {
+    display: inline-block;
+    width: 97%;
+    padding: 15px;
+    border-bottom: 1px solid rgba(0, 0, 0, .06);
+}
+
+.featured-section.features .row .dashicons-yes {
+    color: #2cbe4e;
+}
+
+.featured-section.features .row .dashicons-no-alt {
+    color: #FF3D2E;
+}
+
+.featured-section.features .row > div {
+    display: inline-block;
+    float: left;
+    width: 15%;
+    text-align: center;
+}
+
+.featured-section.features .row > .feature {
+    width: 70%;
+    text-align: left;
+}
+
+.featured-section .decaf-regular-table {
+    border-spacing: 0;
+    width: 100%;
+    margin-top:40px;
+}
+
+.featured-section .decaf-regular-table th {
+    padding-bottom: 20px;
+}
+
+.featured-section .decaf-regular-table td {
+    border-top: 1px solid #ccc;
+    padding: 20px 0px 25px 10px;
+}
+
+.featured-section .decaf-regular-table h3 {
+    margin: 0;
+}
+
+.featured-section .decaf-regular-table td p {
+    margin: 0;
+}
+
+.featured-section .decaf-regular-table .decaf-feature,
+.featured-section .decaf-regular-table .regular-feature{
+    text-align: center;
+    width: 15%;
+}
+
+.featured-section .decaf-regular-table .dashicons-yes {
+    color: #00A878;
+    font-size: 1.4em;
+}
+
+.featured-section .decaf-regular-table .dashicons-no-alt {
+    color: #ff3439;
+    font-size: 1.4em;
+}
+
+.featured-section .decaf-regular-table .dashicons-before:before,
+.featured-section .decaf-regular-table .dashicons-before:before {
+    font-size: 35px;
+    height: 35px;
+    width: 35px;
+}
+.featured-section .button-hero .dashicons{
+    font-size:16px;
+    vertical-align:middle;
+}
+
+.featured-section .ti-about-page-text-center {
+    text-align: center;
+}
+.decaf-regular-table .text-right {
+    text-align: right;
+}
+.about-wrap .feature-section.two-col .col {
+    margin-top: 40px;
+}
 
 /******************* DASHICONS ****************** */
 
 @font-face {
-	font-family: 'ee_dashicons';
-	src:url('../../templates/global_assets/fonts/ee_dashicons.eot');
-	src:url('../../templates/global_assets/fonts/ee_dashicons.eot?#iefix') format('embedded-opentype'),
-		url('../../templates/global_assets/fonts/ee_dashicons.ttf') format('truetype'),
-		url('../../templates/global_assets/fonts/ee_dashicons.woff') format('woff'),
-		url('../../templates/global_assets/fonts/ee_dashicons.svg#ee_dashicons') format('svg');
+	font-family: 'ee-dashicons';
+	src:url('../../templates/global_assets/fonts/ee-dashicons.eot');
+	src:url('../../templates/global_assets/fonts/ee-dashicons.eot?#iefix') format('embedded-opentype'),
+		url('../../templates/global_assets/fonts/ee-dashicons.ttf') format('truetype'),
+		url('../../templates/global_assets/fonts/ee-dashicons.woff') format('woff'),
+		url('../../templates/global_assets/fonts/ee-dashicons.svg#ee-dashicons') format('svg');
 	font-weight: normal;
 	font-style: normal;
 }
@@ -128,7 +243,7 @@ div.TB-ee-frame a {
 
 .ee-icon:before, .ee-dashicons, .checkin-icons:before, #wpadminbar .ee-icon:before, #toplevel_page_espresso_events div.wp-menu-image:before,#toplevel_page_espresso_maintenance_settings div.wp-menu-image:before {
 	display: inline-block;
-	font-family: 'ee_dashicons' !important; /** using important b/c wp has dashicons setup with important for wp-menu-image and I had to override **/
+	font-family: 'ee-dashicons' !important; /** using important b/c wp has dashicons setup with important for wp-menu-image and I had to override **/
  	font-style: normal;
 	font-weight: 400;
 	font-variant: normal;
@@ -142,6 +257,21 @@ div.TB-ee-frame a {
 	-moz-osx-font-smoothing: grayscale;
 }
 
+@media screen and (max-width: 782px) {
+    #wpadminbar li#wp-admin-bar-espresso-toolbar {
+        display: block;
+    }
+
+    #wpadminbar li#wp-admin-bar-espresso-toolbar .ee-icon-ee-cup-thick:before {
+        font-size: 40px !important;
+        color: #a0a5aa;
+        color: rgba(240, 245, 250, .6);
+    }
+    #wpadminbar li#wp-admin-bar-espresso-toolbar:hover .ee-icon-ee-cup-thick:before {
+        color: #00b9eb;
+    }
+}
+
 /**
  * used for those times when want to use the default dashicons font but not inherit any styles that may be assigned in in a particular location
  */
@@ -149,89 +279,132 @@ div.TB-ee-frame a {
 	font-family: 'dashicons' !important;
 }
 
-#toplevel_page_espresso_events div.wp-menu-image:before,#toplevel_page_espresso_maintenance_settings div.wp-menu-image:before, #wpadminbar .ee-icon:before {
-	margin-left: 8px;
-	font-weight: 700 !important; /** using important b/c wp has dashicons setup with important  in wp-menu-image and I had to override **/
-	font-size: 18px;
+#toplevel_page_espresso_events div.wp-menu-image:before,
+#toplevel_page_espresso_maintenance_settings div.wp-menu-image:before {
+	font-size: 28px;
+    top: -5px;
+    left: 4px;
+}
+
+#wp-admin-bar-espresso-toolbar .ee-icon-ee-cup-thick:before {
+    content: "\e60e";
+    font-size: 24px !important;
+    left: 8px;
+    top: -2px;
+}
+
+#toplevel_page_espresso_events div.wp-menu-image:before,
+#toplevel_page_espresso_maintenance_settings div.wp-menu-image:before {
+    /*content: "\e60f";*/
+    content: "\e60e";
 }
 
 .ee-icon-venue:before {
-	content: "\e600";
+	/*content: "\e600";*/
+	content: "\79";
 }
 .ee-icon-user-edit:before {
-	content: "\e601";
+	/*content: "\e601";*/
+	content: "\62";
 }
 .ee-icon-user-delete:before {
-	content: "\e602";
+	/*content: "\e602";*/
+	content: "\64";
 }
 .ee-icon-user-add-new:before {
-	content: "\e603";
+	/*content: "\e603";*/
+	content: "\65";
 }
 .ee-icon-tickets:before {
-	content: "\e604";
+	/*content: "\e604";*/
+	content: "\66";
 }
 .ee-icon-tickets-download:before {
-	content: "\e605";
+	/*content: "\e605";*/
+	content: "\67";
 }
+.ee-icon-pdf-file-type:before,
 .ee-icon-PDF-file-type:before {
-	content: "\e606";
+	/*content: "\e606";*/
+	content: "\68";
 }
 .ee-icon-payment-reminder:before {
-	content: "\e607";
+	/*content: "\e607";*/
+	content: "\69";
 }
 .ee-icon-external-link:before {
-	content: "\e608";
+	/*content: "\e608";*/
+	content: "\6a";
 }
 .ee-icon-event:before {
-	content: "\e609";
+	/*content: "\e609";*/
+	content: "\6b";
 }
 .ee-icon-event-list-grid:before {
-	content: "\e60a";
+	/*content: "\e60a";*/
+	content: "\6c";
 }
 .ee-icon-event-list-dates:before {
-	content: "\e60b";
+	/*content: "\e60b";*/
+	content: "\6d";
 }
 .ee-icon-email:before {
-	content: "\e60c";
+	/*content: "\e60c";*/
+	content: "\6e";
 }
 .ee-icon-email-send:before {
-	content: "\e60d";
+	/*content: "\e60d";*/
+	content: "\63";
 }
+
 .ee-icon-ee-cup:before {
-	content: "\e60e";
-}
-.ee-icon-ee-cup-thick:before, #toplevel_page_espresso_events div.wp-menu-image:before,#toplevel_page_espresso_maintenance_settings div.wp-menu-image:before {
-	content: "\e60f";
+    content: "\e60e";
+    /*content: "\61";*/
 }
 .ee-icon-clone:before {
-	content: "\e610";
+	/*content: "\e610";*/
+	content: "\77";
 }
 .ee-icon-clock:before {
-	content: "\e611";
+	/*content: "\e611";*/
+	content: "\78";
 }
 .ee-icon-arrow-move:before {
-	content: "\e612";
+	/*content: "\e612";*/
+	content: "\76";
 }
 .ee-icon-check-out:before {
-	content: "\e613";
+	/*content: "\e613";*/
+	content: "\75";
 }
 .ee-icon-check-in:before {
-	content: "\e614";
+	/*content: "\e614";*/
+	content: "\74";
+}
+.checkedin-status-2:before {
+	font-family: 'dashicons' !important;
+	/* ! **using important b / c wp has dashicons setup with important and I had to override **!*/
+	content: "\f158";
 }
 .ee-icon-cash:before {
-	content: "\e615";
+	/*content: "\e615";*/
+	content: "\73";
 }
 .ee-icon-cash-remove:before {
-	content: "\e616";
+	/*content: "\e616";*/
+	content: "\72";
 }
 .ee-icon-cash-edit:before {
-	content: "\e617";
+	/*content: "\e617";*/
+	content: "\71";
 }
 .ee-icon-cash-add:before {
-	content: "\e618";
+	/*content: "\e618";*/
+	content: "\70";
 }
 .ee-icon-calendar-edit:before {
-	content: "\e619";
+	/*content: "\e619";*/
+    content: "\6f";
 }
 
 
@@ -305,6 +478,10 @@ div.TB-ee-frame a {
 
 .ee-icon-color-ee-red:before {
 	color: #E44064;
+}
+
+.ee-icon-color-ee-purple:before {
+    color: #8A549A;
 }
 
 .ee-icon-size-8:before { font-size: 8px !important; }

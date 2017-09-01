@@ -1,4 +1,6 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) {
+<?php
+
+if ( ! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
 require_once(EE_MODELS . 'EEM_Base.model.php');
@@ -14,24 +16,24 @@ require_once(EE_MODELS . 'EEM_Base.model.php');
  */
 class EEM_Transaction extends EEM_Base
 {
-    
+
     // private instance of the Transaction object
     protected static $_instance;
-    
+
     /**
      * Status ID(STS_ID on esp_status table) to indicate the transaction is complete,
      * but payment is pending. This is the state for transactions where payment is promised
      * from an offline gateway.
      */
     //	const open_status_code = 'TPN';
-    
+
     /**
      * Status ID(STS_ID on esp_status table) to indicate the transaction failed,
      * either due to a technical reason (server or computer crash during registration),
      *  or some other reason that prevent the collection of any useful contact information from any of the registrants
      */
     const failed_status_code = 'TFL';
-    
+
     /**
      * Status ID(STS_ID on esp_status table) to indicate the transaction was abandoned,
      * either due to a technical reason (server or computer crash during registration),
@@ -41,26 +43,26 @@ class EEM_Transaction extends EEM_Base
      * registrant
      */
     const abandoned_status_code = 'TAB';
-    
+
     /**
      * Status ID(STS_ID on esp_status table) to indicate an incomplete transaction,
      * meaning that monies are still owing: TXN_paid < TXN_total
      */
     const incomplete_status_code = 'TIN';
-    
+
     /**
      * Status ID (STS_ID on esp_status table) to indicate a complete transaction.
      * meaning that NO monies are owing: TXN_paid == TXN_total
      */
     const complete_status_code = 'TCM';
-    
+
     /**
      *  Status ID(STS_ID on esp_status table) to indicate the transaction is overpaid.
      *  This is the same as complete, but site admins actually owe clients the moneys!  TXN_paid > TXN_total
      */
     const overpaid_status_code = 'TOP';
-    
-    
+
+
     /**
      *    private constructor to prevent direct creation
      *
@@ -79,7 +81,7 @@ class EEM_Transaction extends EEM_Base
     {
         $this->singular_item = __('Transaction', 'event_espresso');
         $this->plural_item   = __('Transactions', 'event_espresso');
-        
+
         $this->_tables                 = array(
             'TransactionTable' => new EE_Primary_Table('esp_transaction', 'TXN_ID')
         );
@@ -116,10 +118,10 @@ class EEM_Transaction extends EEM_Base
         );
         $this->_model_chain_to_wp_user = 'Registration.Event';
         parent::__construct($timezone);
-        
+
     }
-    
-    
+
+
     /**
      *    txn_status_array
      * get list of transaction statuses
@@ -140,7 +142,7 @@ class EEM_Transaction extends EEM_Base
             )
         );
     }
-    
+
     /**
      *        get the revenue per day  for the Transaction Admin page Reports Tab
      *
@@ -154,9 +156,9 @@ class EEM_Transaction extends EEM_Base
     {
         $sql_date = $this->convert_datetime_for_query('TXN_timestamp', date('Y-m-d H:i:s', strtotime($period)),
             'Y-m-d H:i:s', 'UTC');
-        
+
         $query_interval = EEH_DTT_Helper::get_sql_query_interval_for_offset($this->get_timezone(), 'TXN_timestamp');
-        
+
         return $this->_get_all_wpdb_results(
             array(
                 array(
@@ -172,8 +174,8 @@ class EEM_Transaction extends EEM_Base
             )
         );
     }
-    
-    
+
+
     /**
      *        get the revenue per event  for the Transaction Admin page Reports Tab
      *
@@ -187,44 +189,52 @@ class EEM_Transaction extends EEM_Base
     public function get_revenue_per_event_report($period = '-1 month')
     {
         global $wpdb;
-        $transaction_table       = $wpdb->prefix . 'esp_transaction';
-        $registration_table      = $wpdb->prefix . 'esp_registration';
-        $event_table             = $wpdb->posts;
-        $payment_table           = $wpdb->prefix . 'esp_payment';
-        $sql_date                = date('Y-m-d H:i:s', strtotime($period));
-        $approved_payment_status = EEM_Payment::status_id_approved;
-        $extra_event_on_join     = '';
+        $transaction_table          = $wpdb->prefix . 'esp_transaction';
+        $registration_table         = $wpdb->prefix . 'esp_registration';
+        $registration_payment_table = $wpdb->prefix . 'esp_registration_payment';
+        $event_table                = $wpdb->posts;
+        $payment_table              = $wpdb->prefix . 'esp_payment';
+        $sql_date                   = date('Y-m-d H:i:s', strtotime($period));
+        $approved_payment_status    = EEM_Payment::status_id_approved;
+        $extra_event_on_join        = '';
         //exclude events not authored by user if permissions in effect
         if ( ! EE_Registry::instance()->CAP->current_user_can('ee_read_others_registrations', 'reg_per_event_report')) {
             $extra_event_on_join = ' AND Event.post_author = ' . get_current_user_id();
         }
-        
+
         return $wpdb->get_results(
             "SELECT
 			Transaction_Event.event_name AS event_name,
 			SUM(Transaction_Event.paid) AS revenue
 			FROM
 				(
-					SELECT
-						DISTINCT Payment.TXN_ID,
-						Event.post_title AS event_name,
-						Payment.PAY_amount AS paid
-					FROM $transaction_table AS TransactionTable
-						JOIN $registration_table AS Registration
-							ON Registration.TXN_ID = TransactionTable.TXN_ID
-						JOIN $payment_table AS Payment
-							ON Payment.TXN_ID = Registration.TXN_ID
-							AND Payment.PAY_timestamp > '$sql_date'
-							AND Payment.STS_ID = '$approved_payment_status'
-						JOIN $event_table AS Event ON Registration.EVT_ID = Event.ID
-							$extra_event_on_join
+				    SELECT
+                        Event.post_title AS event_name,
+                        Registration_Payment.RPY_amount AS paid
+                    FROM
+                        $registration_payment_table as Registration_Payment
+                    JOIN
+                        $registration_table as Registration
+                            ON Registration.REG_ID = Registration_Payment.REG_ID
+                    JOIN
+                        $transaction_table as TransactionTable
+                            ON Registration.TXN_ID = TransactionTable.TXN_ID
+                    JOIN
+                        $payment_table as Payment
+                            ON Payment.TXN_ID = Registration.TXN_ID
+                            AND Payment.PAY_timestamp > '$sql_date'
+                            AND Payment.STS_ID = '$approved_payment_status'
+                    JOIN
+                        $event_table AS Event
+                            ON Registration.EVT_ID = Event.ID
+					$extra_event_on_join
 				) AS Transaction_Event
 			GROUP BY event_name",
             OBJECT
         );
     }
-    
-    
+
+
     /**
      * Gets the current transaction given the reg_url_link, or assumes the reg_url_link is in the
      * $_REQUEST global variable. Either way, tries to find the current transaction (through
@@ -243,8 +253,8 @@ class EEM_Transaction extends EEM_Base
             )
         ));
     }
-    
-    
+
+
     /**
      * Updates the provided EE_Transaction with all the applicable payments
      * (or fetch the EE_Transaction from its ID)
@@ -267,12 +277,12 @@ class EEM_Transaction extends EEM_Base
         );
         /** @type EE_Transaction_Processor $transaction_processor */
         $transaction_processor = EE_Registry::instance()->load_class('Transaction_Processor');
-        
+
         return $transaction_processor->update_transaction_and_registrations_after_checkout_or_payment(
             $this->ensure_is_obj($transaction_obj_or_id)
         );
     }
-    
+
     /**
      * Deletes "junk" transactions that were probably added by bots. There might be TONS
      * of these, so we are very careful to NOT select (which the models do even when deleting),
@@ -296,8 +306,8 @@ class EEM_Transaction extends EEM_Base
             'FHEE__EEM_Transaction__delete_junk_transactions__time_to_leave_alone'
             , WEEK_IN_SECONDS
         );
-        
-        
+
+
         /**
          * This allows code to filter the query arguments used for retrieving the transaction IDs to delete.
          * Useful for plugins that want to exclude transactions matching certain query parameters.
@@ -314,8 +324,8 @@ class EEM_Transaction extends EEM_Base
             ),
             $time_to_leave_alone
         );
-        
-        
+
+
         /**
          * This filter is for when code needs to filter the list of transaction ids that represent transactions
          * about to be deleted based on some other criteria that isn't easily done via the query args filter.
@@ -346,11 +356,11 @@ class EEM_Transaction extends EEM_Base
              */
             do_action('AHEE__EEM_Transaction__delete_junk_transactions__successful_deletion', $txn_ids);
         }
-        
+
         return $deleted;
     }
-    
-    
+
+
     /**
      * @param array $transaction_IDs
      *
@@ -369,11 +379,38 @@ class EEM_Transaction extends EEM_Base
         if ($update) {
             update_option('ee_locked_transactions', $locked_transactions);
         }
-        
+
         return $update;
     }
-    
-    
+
+
+
+    /**
+     * returns an array of EE_Transaction objects whose timestamp is less than
+     * the current time minus the session lifespan, which defaults to 60 minutes
+     *
+     * @return EE_Base_Class[]|EE_Transaction[]
+     * @throws \EE_Error
+     */
+    public function get_transactions_in_progress()
+    {
+        return $this->get_all(
+            array(
+                array(
+                    'TXN_timestamp' => array(
+                        '>',
+                        time() - EE_Registry::instance()->SSN->lifespan()
+                    ),
+                    'STS_ID' => array(
+                        '!=',
+                        EEM_Transaction::complete_status_code
+                    ),
+                )
+            )
+        );
+    }
+
+
 }
 // End of file EEM_Transaction.model.php
 // Location: /includes/models/EEM_Transaction.model.php

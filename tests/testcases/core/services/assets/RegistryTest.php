@@ -21,7 +21,10 @@ class RegistryTest extends EE_UnitTestCase
 
     public function setUp()
     {
-        $this->registry = new Registry();
+        $this->registry = new Registry(
+            EE_Config::instance()->template_settings,
+            EE_Config::instance()->currency
+        );
         parent::setUp();
     }
 
@@ -66,5 +69,25 @@ class RegistryTest extends EE_UnitTestCase
     {
         $this->registry->addData('test', 'initial_value');
         $this->registry->addData('test', 'cause_exception');
+    }
+
+	/**
+     * @expectedException InvalidArgumentException
+     * @group 10304
+     */
+    public function test_addTemplate_no_overwrite()
+    {
+        $this->registry->addTemplate('test', 'some_test_content');
+        $this->registry->addTemplate('test', 'cause exception');
+    }
+
+
+    /**
+     * @group 10304
+     */
+    public function test_getTemplate()
+    {
+        $this->registry->addTemplate('test', 'some test content');
+        $this->assertEquals('some test content', $this->registry->getTemplate('test'));
     }
 }

@@ -1,7 +1,10 @@
-<?php if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
-	exit( 'No direct script access allowed' );
-}
+<?php
 
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\ui\browser\checkins\entities\CheckinStatusDashicon;
+
+defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 
 
 /**
@@ -31,7 +34,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 	/**
 	 * The DTT_ID if the current view has a specified datetime.
 	 *
-	 * @var int
+	 * @var int $_cur_dtt_id
 	 */
 	protected $_cur_dtt_id = 0;
 
@@ -127,8 +130,21 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
             ),
         );
 		$this->_sortable_columns = array(
-			//true means its already sorted
-			'ATT_name' => array( 'ATT_name' => true ),
+            /**
+             * Allows users to change the default sort if they wish.
+             * Returning a falsey on this filter will result in the default sort to be by firstname rather than last name.
+             *
+             * Note: usual naming conventions for filters aren't followed here so that just one filter can be used to
+             * change the sorts on any list table involving registration contacts.  If you want to only change the filter
+             * for a specific list table you can use the provided reference to this object instance.
+             */
+			'ATT_name' => array(
+                    'FHEE__EE_Registrations_List_Table___set_properties__default_sort_by_registration_last_name',
+                    true,
+                    $this
+                )
+                ? array( 'ATT_lname' => true )
+                : array( 'ATT_fname' => true ),
 			'Event'    => array( 'Event.EVT.Name' => false ),
 		);
 		$this->_hidden_columns = array();
@@ -187,9 +203,9 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 				if ( ! $evt->get_count_of_all_registrations() ) {
 					continue;
 				}
-				$evts[] = array(
+                                $evts[] = array(
 					'id'    => $evt->ID(),
-					'text'  => $evt->get( 'EVT_name' ),
+					'text'  => apply_filters('FHEE__EE_Event_Registrations___get_table_filters__event_name', $evt->get( 'EVT_name' ), $evt),
 					'class' => $evt->is_expired() ? 'ee-expired-event' : '',
 				);
 				if ( $evt->ID() === $current_EVT_ID && $evt->is_expired() ) {
@@ -285,13 +301,16 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 
 
 
-	/**
-	 * column_REG_att_checked_in
-	 *
-	 * @param \EE_Registration $item
-	 * @return string
-	 * @throws \EE_Error
-	 */
+    /**
+     * column_REG_att_checked_in
+     *
+     * @param EE_Registration $item
+     * @return string
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
 	public function column__REG_att_checked_in( EE_Registration $item ) {
 		$attendee = $item->attendee();
 		$attendee_name = $attendee instanceof EE_Attendee ? $attendee->full_name() : '';
@@ -302,8 +321,10 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 				$this->_cur_dtt_id = $latest_related_datetime->ID();
 			}
 		}
-
-		$checkinstatus = $item->check_in_status_for_datetime( $this->_cur_dtt_id );
+        $checkin_status_dashicon = CheckinStatusDashicon::fromRegistrationAndDatetimeId(
+		    $item,
+            $this->_cur_dtt_id
+        );
 		$nonce = wp_create_nonce( 'checkin_nonce' );
 		$toggle_active = ! empty ( $this->_cur_dtt_id )
 		                 && EE_Registry::instance()->CAP->current_user_can(
@@ -314,7 +335,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 			? ' clickable trigger-checkin'
 			: '';
 		$mobile_view_content = ' <span class="show-on-mobile-view-only">' . $attendee_name . '</span>';
-		return '<span class="checkin-icons checkedin-status-' . $checkinstatus . $toggle_active . '"'
+		return '<span class="' . $checkin_status_dashicon->cssClasses() . $toggle_active . '"'
 		       . ' data-_regid="' . $item->ID() . '"'
 		       . ' data-dttid="' . $this->_cur_dtt_id . '"'
 		       . ' data-nonce="' . $nonce . '">'
@@ -343,7 +364,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 			'ee_edit_contacts',
 			'espresso_registrations_edit_attendee'
 		)
-			? '<a href="' . $edit_lnk_url . '" title="' . esc_attr__( 'Edit Contact', 'event_espresso' ) . '">'
+			? '<a href="' . $edit_lnk_url . '" title="' . esc_attr__( 'View Registration Details', 'event_espresso' ) . '">'
 			    . $item->attendee()->full_name()
 			    . '</a>'
 			: $item->attendee()->full_name();
@@ -388,12 +409,26 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 			$checkin_list_url = EE_Admin_Page::add_query_args_and_nonce(
 				array( 'action' => 'registration_checkins', '_REGID' => $item->ID(), 'DTT_ID' => $DTT_ID )
 			);
-			$actions['checkin'] = '<a href="' . $checkin_list_url . '" title="' . esc_attr__(
-					'View all the check-ins/checkouts for this registrant',
-					'event_espresso'
-				) . '">' . __( 'View', 'event_espresso' ) . '</a>';
+			// get the timestamps for this registration's checkins, related to the selected datetime
+			$timestamps = $item->get_many_related( 'Checkin', array( array( 'DTT_ID' => $DTT_ID ) ) );
+			if( ! empty( $timestamps ) ) {
+				// get the last timestamp
+				$last_timestamp = end( $timestamps );
+				// checked in or checked out?
+				$checkin_status = $last_timestamp->get( 'CHK_in' )
+					? esc_html__( 'Checked In', 'event_espresso' )
+					: esc_html__( 'Checked Out', 'event_espresso' );
+				// get timestamp string
+				$timestamp_string = $last_timestamp->get_datetime( 'CHK_timestamp' );
+				$actions['checkin'] = '<a href="' . $checkin_list_url . '" title="' . esc_attr__(
+						'View this registrant\'s check-ins/checkouts for the datetime',
+						'event_espresso'
+					) . '">' . $checkin_status . ': ' . $timestamp_string . '</a>';
+			}
 		}
-		return ! empty( $DTT_ID ) ? sprintf( '%1$s %2$s', $name_link, $this->row_actions( $actions ) ) : $name_link;
+		return ( ! empty( $DTT_ID ) && ! empty( $timestamps ) )
+			? sprintf( '%1$s %2$s', $name_link, $this->row_actions( $actions, true ) )
+			: $name_link;
 	}
 
 

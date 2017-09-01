@@ -5,9 +5,13 @@
 * and open the template in the editor.
 */
 
-function ee_resurse_into_array($data) {
+/**
+ * Recurses through an array to output strings for display.  Considers elements that may be objects as well.
+ * @param $data
+ */
+function ee_recurse_into_array_for_display($data) {
 	if (is_object($data) || $data instanceof __PHP_Incomplete_Class) {//is_object($incomplete_class) actually returns false, hence why we check for it
-		$data = (array)$data;
+        $data = json_decode(json_encode($data), true);
 	}
 	if (is_array($data)) {
 		if (EEH_Array::is_associative_array($data)) {
@@ -22,7 +26,7 @@ function ee_resurse_into_array($data) {
 								<?php echo $data_key;?>
 							</td>
 							<td>
-								<?php ee_resurse_into_array($data_values);?>
+								<?php ee_recurse_into_array_for_display($data_values);?>
 							</td>
 						</tr>
 						<?php
@@ -36,7 +40,7 @@ function ee_resurse_into_array($data) {
 			<ul>
 				<?php
 				foreach ($data as $datum) {
-					echo "<li>";ee_resurse_into_array($datum);echo "</li>";
+					echo "<li>";ee_recurse_into_array_for_display($datum);echo "</li>";
 				}?>
 			</ul>
 			<?php
@@ -48,25 +52,21 @@ function ee_resurse_into_array($data) {
 }
 ?>
 <h1>
-	<?php _e("System Information", "event_espresso");?>
+	<?php _e("System Information", "event_espresso");?> <a href="<?php echo $download_system_status_url;?>" class="button-secondary"><?php esc_html_e( 'Download to File', 'event_espresso' );?></a>
 </h1>
 <div class="padding">
-	<h2><?php _e("Raw System Data", "event_espresso");?></h2>
-	<textarea class="system_status_info">
-		<?php print_r($system_stati)?>
-	</textarea>
-	<h2><?php _e("System Data (formatted)", "event_espresso");?></h2>
+
 	<table class="widefat">
 		<?php
 		foreach ($system_stati as $status_category_slug => $data) {
 			if (is_object($data)) {
-				$data = (array)$data;
+				$data = json_decode(json_encode($data), true);
 			}
 			?>
 			<thead>
 				<tr>
 					<th colspan=2>
-						<?php echo $status_category_slug?>
+						<?php echo $status_category_slug; ?>
 					</th>
 				</tr>
 			</thead>
@@ -80,7 +80,7 @@ function ee_resurse_into_array($data) {
 							<?php echo $data_key?>
 						</td>
 						<td>
-							<?php ee_resurse_into_array($data_values)?>
+							<?php ee_recurse_into_array_for_display($data_values)?>
 						</td>
 					</tr>
 					<?php
@@ -93,7 +93,7 @@ function ee_resurse_into_array($data) {
 				<tbody>
 					<tr>
 						<td colspan=2>
-							<?php echo $data?>
+							<?php echo $data; ?>
 						</td>
 					</tr>
 				</tbody>

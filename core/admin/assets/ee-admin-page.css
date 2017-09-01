@@ -13,6 +13,9 @@
     #espresso-default-admin #post-body.columns-2 {
         margin: 0;
     }
+    #espresso-default-admin {
+        min-width: 0;
+    }
 }
 
 .espresso-admin .add-new-h2,
