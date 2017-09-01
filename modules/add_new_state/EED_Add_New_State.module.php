@@ -3,6 +3,7 @@
 use EventEspresso\core\domain\entities\notifications\PersistentAdminNotice;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\notifications\PersistentAdminNoticeManager;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
@@ -573,6 +574,7 @@ class EED_Add_New_State extends EED_Module
      * @param string $STA_ID
      * @param array  $cols_n_values
      * @return void
+     * @throws DomainException
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -605,7 +607,7 @@ class EED_Add_New_State extends EED_Module
             );
         }
         /** @var PersistentAdminNoticeManager $persistent_admin_notice_manager */
-        $persistent_admin_notice_manager = LoaderFactory::getShared(
+        $persistent_admin_notice_manager = LoaderFactory::getLoader()->getShared(
             'EventEspresso\core\services\notifications\PersistentAdminNoticeManager'
         );
         $persistent_admin_notice_manager->dismissNotice($CNT_ISO . '-' . $STA_abbrev, true, true);
