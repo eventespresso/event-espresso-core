@@ -10,6 +10,7 @@ use EventEspresso\core\services\notifications\PersistentAdminNoticeManager;
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 
 
+
 /**
  * EED_Add_New_State class
  *
@@ -29,6 +30,7 @@ class EED_Add_New_State extends EED_Module
     {
         return parent::get_instance(__CLASS__);
     }
+
 
 
     /**
@@ -93,7 +95,7 @@ class EED_Add_New_State extends EED_Module
 
 
     /**
-      * @return void
+     * @return void
      */
     public static function set_definitions()
     {
