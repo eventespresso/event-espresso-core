@@ -1,6 +1,10 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
+<?php
+
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+
+defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
+
 
 
 /**
@@ -1743,21 +1747,37 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      *
      * @param bool $status REG status given for changing registrations to.
      * @param bool $notify Whether to send messages notifications or not.
-     * @return array  (array with reg_id(s) updated and whether update was successful.
-     * @throws \EE_Error
+     * @return array (array with reg_id(s) updated and whether update was successful.
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws RuntimeException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function _set_registration_status_from_request($status = false, $notify = false)
     {
         if (isset($this->_req_data['reg_status_change_form'])) {
             $REG_IDs = isset($this->_req_data['reg_status_change_form']['REG_ID'])
-                ? (array)$this->_req_data['reg_status_change_form']['REG_ID'] : array();
+                ? (array)$this->_req_data['reg_status_change_form']['REG_ID']
+                : array();
         } else {
-            $REG_IDs = isset($this->_req_data['_REG_ID']) ? (array)$this->_req_data['_REG_ID'] : array();
+            $REG_IDs = isset($this->_req_data['_REG_ID'])
+                ? (array)$this->_req_data['_REG_ID']
+                : array();
         }
+        // sanitize $REG_IDs
+        $REG_IDs = array_map('absint', $REG_IDs);
+        // and remove empty entries
+        $REG_IDs = array_filter($REG_IDs);
         $success = $this->_set_registration_status($REG_IDs, $status);
         //notify?
         if ($success
-            && $notify
+            && apply_filters(
+                'FHEE__Registrations_Admin_Page___set_registration_status_from_request__notify',
+                $notify,
+                $REG_IDs,
+                $success
+            )
             && EE_Registry::instance()->CAP->current_user_can(
                 'ee_send_message',
                 'espresso_registrations_resend_registration'
@@ -1774,16 +1794,16 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * Set the registration status for the given reg_id (which may or may not be an array, it gets typecast to an
      * array). Note, this method does NOT take care of possible notifications.  That is required by calling code.
      *
-     * @param array $REG_IDs
-     * @param bool  $status
+     * @param array  $REG_IDs
+     * @param string $status
      * @return array (an array with 'success' key representing whether status change was successful, and 'REG_ID' as
-     * @throws \RuntimeException
-     * @throws \EE_Error
-     *               the array of updated registrations).
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      * @throws RuntimeException
      */
-    protected function _set_registration_status($REG_IDs = array(), $status = false)
+    protected function _set_registration_status($REG_IDs = array(), $status = '')
     {
         $success = false;
         // typecast $REG_IDs
@@ -1792,8 +1812,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             $success = true;
             // set default status if none is passed
             $status = $status ? $status : EEM_Registration::status_id_pending_payment;
-            // sanitize $REG_IDs
-            $REG_IDs = array_filter($REG_IDs, 'absint');
             //loop through REG_ID's and change status
             foreach ($REG_IDs as $REG_ID) {
                 $registration = EEM_Registration::instance()->get_one_by_ID($REG_ID);
