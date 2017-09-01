@@ -734,7 +734,7 @@ abstract class EE_Addon extends EE_Configurable
             $link_url         = isset($plugins_page_row['link_url']) ? $plugins_page_row['link_url'] : '';
             $description      = isset($plugins_page_row['description'])
                 ? $plugins_page_row['description']
-                : $plugins_page_row;
+                : '';
             if (! empty($link_text) && ! empty($link_url) && ! empty($description)) {
                 $after_plugin_row .= '<tr id="' . sanitize_title($plugin_file) . '-ee-addon" class="' . $class . '">';
                 $after_plugin_row .= '<th class="check-column" scope="row"></th>';
