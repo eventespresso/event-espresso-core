@@ -450,7 +450,7 @@ abstract class EE_Addon extends EE_Configurable
     {
         EE_Error::doing_it_wrong(
             __FUNCTION__,
-            __(
+            esc_html__(
                 'EE_Addon::set_db_update_option_name was renamed to EE_Addon::set_activation_indicator_option',
                 'event_espresso'
             ),
@@ -472,7 +472,7 @@ abstract class EE_Addon extends EE_Configurable
     {
         EE_Error::doing_it_wrong(
             __FUNCTION__,
-            __(
+            esc_html__(
                 'EE_Addon::get_db_update_option was renamed to EE_Addon::get_activation_indicator_option_name',
                 'event_espresso'
             ),
@@ -705,7 +705,9 @@ abstract class EE_Addon extends EE_Configurable
             // before other links
             array_unshift(
                 $links,
-                '<a href="admin.php?page=' . $this->plugin_action_slug() . '">' . __('Settings') . '</a>'
+                '<a href="admin.php?page=' . $this->plugin_action_slug() . '">'
+                . esc_html__('Settings', 'event_espresso')
+                . '</a>'
             );
         }
         return $links;
