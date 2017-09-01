@@ -1729,7 +1729,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         // is registration for free event? This will determine whether to display the pending payment option
         if (
             $current_status !== EEM_Registration::status_id_pending_payment
-            && $this->_registration->transaction()->is_free()
+            && EEH_Money::compare_floats($this->_registration->ticket()->price(), 0.00)
         ) {
             unset($reg_status_array[EEM_Registration::status_id_pending_payment]);
         }
