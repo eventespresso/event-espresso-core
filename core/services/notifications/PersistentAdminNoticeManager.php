@@ -305,7 +305,8 @@ class PersistentAdminNoticeManager
         }
         if ($return) {
             return;
-        } else if ($this->request->ajax) {
+        }
+        if ($this->request->ajax) {
             // grab any notices and concatenate into string
             echo wp_json_encode(
                 array(
@@ -313,15 +314,14 @@ class PersistentAdminNoticeManager
                 )
             );
             exit();
-        } else {
-            // save errors to a transient to be displayed on next request (after redirect)
-            EE_Error::get_notices(false, true);
-            wp_safe_redirect(
-                urldecode(
-                    $this->request->get('return_url', '')
-                )
-            );
         }
+        // save errors to a transient to be displayed on next request (after redirect)
+        EE_Error::get_notices(false, true);
+        wp_safe_redirect(
+            urldecode(
+                $this->request->get('return_url', '')
+            )
+        );
     }
 
 
