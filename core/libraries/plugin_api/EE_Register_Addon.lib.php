@@ -1080,7 +1080,7 @@ class EE_Register_Addon implements EEI_Plugin_API
             //remove `after_registration` call
             remove_action(
                 'AHEE__EE_System__load_espresso_addons__complete',
-                array(EE_Registry::instance()->addons{$class_name}, 'after_registration'),
+                array(EE_Registry::instance()->addons->{$class_name}, 'after_registration'),
                 999
             );
 
