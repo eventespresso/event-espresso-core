@@ -288,7 +288,7 @@ class EE_Registry implements ResettableInterface
             $module_class = get_class($module);
             $this->modules->{$module_class} = $module;
         } else {
-            if (! class_exists('EE_Module_Request_Router')) {
+            if ( ! class_exists('EE_Module_Request_Router', false)) {
                 $this->load_core('Module_Request_Router');
             }
             EE_Module_Request_Router::module_factory($module);
@@ -494,6 +494,7 @@ class EE_Registry implements ResettableInterface
             EE_LIBRARIES . 'shortcodes' . DS,
             EE_LIBRARIES . 'qtips' . DS,
             EE_LIBRARIES . 'payment_methods' . DS,
+            EE_LIBRARIES . 'messages' . DS . 'defaults' . DS,
         );
         // retrieve instantiated class
         return $this->_load(
@@ -795,7 +796,7 @@ class EE_Registry implements ResettableInterface
             $class_name = $class_prefix . str_replace($class_prefix, '', $class_name);
         }
         $class_name = $this->_dependency_map->get_alias($class_name);
-        $class_exists = class_exists($class_name);
+        $class_exists = class_exists($class_name, false);
         // if we're only loading the class and it already exists, then let's just return true immediately
         if ($load_only && $class_exists) {
             return true;
@@ -970,6 +971,7 @@ class EE_Registry implements ResettableInterface
      */
     protected function _require_file($path, $class_name, $type = '', $file_paths = array())
     {
+        $this->resolve_legacy_class_parent($class_name);
         // don't give up! you gotta...
         try {
             //does the file exist and can it be read ?
@@ -1006,6 +1008,29 @@ class EE_Registry implements ResettableInterface
             return false;
         }
         return true;
+    }
+
+
+
+    /**
+     * Some of our legacy classes that extended a parent class would simply use a require() statement
+     * before their class declaration in order to ensure that the parent class was loaded.
+     * This is not ideal, but it's nearly impossible to determine the parent class of a non-namespaced class,
+     * without triggering a fatal error because the parent class has yet to be loaded and therefore doesn't exist.
+     *
+     * @param string $class_name
+     */
+    protected function resolve_legacy_class_parent($class_name = '')
+    {
+        try {
+            $legacy_parent_class_map = array(
+                'EE_Payment_Processor' => 'core/business/EE_Processor_Base.class.php'
+            );
+            if(isset($legacy_parent_class_map[$class_name])) {
+                require_once EE_PLUGIN_DIR_PATH . $legacy_parent_class_map[$class_name];
+            }
+        } catch (Exception $exception) {
+        }
     }
 
 

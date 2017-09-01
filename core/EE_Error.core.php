@@ -339,8 +339,10 @@ class EE_Error extends Exception
             $error_code = '';
             // process trace info
             if (empty($ex['trace'])) {
-                $trace_details .= __('Sorry, but no trace information was available for this exception.',
-                    'event_espresso');
+                $trace_details .= __(
+                    'Sorry, but no trace information was available for this exception.',
+                    'event_espresso'
+                );
             } else {
                 $trace_details .= '
 			<div id="ee-trace-details">
@@ -716,13 +718,16 @@ class EE_Error extends Exception
     {
         $has_notices = 0;
         // check for success messages
-        $has_notices = self::$_espresso_notices['success'] && ! empty(self::$_espresso_notices['success']) ? 3
+        $has_notices = self::$_espresso_notices['success'] && ! empty(self::$_espresso_notices['success']) 
+            ? 3
             : $has_notices;
         // check for attention messages
-        $has_notices = self::$_espresso_notices['attention'] && ! empty(self::$_espresso_notices['attention']) ? 2
+        $has_notices = self::$_espresso_notices['attention'] && ! empty(self::$_espresso_notices['attention']) 
+            ? 2
             : $has_notices;
         // check for error messages
-        $has_notices = self::$_espresso_notices['errors'] && ! empty(self::$_espresso_notices['errors']) ? 1
+        $has_notices = self::$_espresso_notices['errors'] && ! empty(self::$_espresso_notices['errors']) 
+            ? 1
             : $has_notices;
         return $has_notices;
     }
@@ -737,10 +742,15 @@ class EE_Error extends Exception
     public static function get_vanilla_notices()
     {
         return array(
-            'success'   => isset(self::$_espresso_notices['success']) ? self::$_espresso_notices['success'] : array(),
-            'attention' => isset(self::$_espresso_notices['attention']) ? self::$_espresso_notices['attention']
+            'success'   => isset(self::$_espresso_notices['success'])
+                ? self::$_espresso_notices['success']
                 : array(),
-            'errors'    => isset(self::$_espresso_notices['errors']) ? self::$_espresso_notices['errors'] : array(),
+            'attention' => isset(self::$_espresso_notices['attention'])
+                ? self::$_espresso_notices['attention']
+                : array(),
+            'errors'    => isset(self::$_espresso_notices['errors'])
+                ? self::$_espresso_notices['errors']
+                : array(),
         );
     }
 
