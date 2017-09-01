@@ -3,8 +3,8 @@
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\interfaces\InterminableInterface;
-use EventEspresso\core\services\container\CoffeeMill;
 use EventEspresso\core\services\container\exceptions\ServiceNotFoundException;
+use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\notifications\PersistentAdminNoticeManager;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
@@ -60,7 +60,10 @@ final class EE_Admin implements InterminableInterface
     /**
      * class constructor
      *
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
      */
     protected function __construct()
     {
@@ -149,6 +152,9 @@ final class EE_Admin implements InterminableInterface
      *
      * @return void
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function get_request()
@@ -182,15 +188,18 @@ final class EE_Admin implements InterminableInterface
      *
      * @return void
      * @throws EE_Error
-     * @throws ServiceNotFoundException
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      * @throws ReflectionException
+     * @throws ServiceNotFoundException
      */
     public function init()
     {
         //only enable most of the EE_Admin IF we're not in full maintenance mode
         if (EE_Maintenance_Mode::instance()->models_can_query()) {
             //ok so we want to enable the entire admin
-            $this->persistent_admin_notice_manager = CoffeeMill::getService(
+            $this->persistent_admin_notice_manager = LoaderFactory::getLoader()->getShared(
                 'EventEspresso\core\services\notifications\PersistentAdminNoticeManager',
                 array(
                     EE_Admin_Page::add_query_args_and_nonce(
@@ -235,6 +244,9 @@ final class EE_Admin implements InterminableInterface
      *
      * @param WP_Post $post_type WP post type object
      * @return WP_Post
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function remove_pages_from_nav_menu($post_type)
     {
@@ -288,7 +300,7 @@ final class EE_Admin implements InterminableInterface
 
         if (is_array($hidden_meta_boxes)) {
             foreach ($hidden_meta_boxes as $key => $meta_box_id) {
-                if (in_array($meta_box_id, $initial_meta_boxes)) {
+                if (in_array($meta_box_id, $initial_meta_boxes, true)) {
                     unset($hidden_meta_boxes[$key]);
                 }
             }
@@ -354,7 +366,7 @@ final class EE_Admin implements InterminableInterface
         global $nav_menu_selected_id;
         $db_fields   = false;
         $walker      = new Walker_Nav_Menu_Checklist($db_fields);
-        $current_tab = 'event-archives'
+        $current_tab = 'event-archives';
         $removed_args = array(
             'action',
             'customlink-tab',
@@ -380,8 +392,9 @@ final class EE_Admin implements InterminableInterface
                         <?php _e('Event Archive Pages', 'event_espresso'); ?>
                     </a>
                 </li>
+            </ul><!-- .posttype-tabs -->
 
-                <div id="tabs-panel-posttype-extra-nav-menu-pages-event-archives" class="tabs-panel <?php
+            <div id="tabs-panel-posttype-extra-nav-menu-pages-event-archives" class="tabs-panel <?php
                 echo('event-archives' === $current_tab ? 'tabs-panel-active' : 'tabs-panel-inactive');
                 ?>">
                     <ul id="extra-nav-menu-pageschecklist-event-archives" class="categorychecklist form-no-clear">
@@ -506,6 +519,9 @@ final class EE_Admin implements InterminableInterface
      *
      * @return void
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function admin_init()
@@ -539,6 +555,9 @@ final class EE_Admin implements InterminableInterface
      *
      * @param string $output Current output.
      * @return string
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function modify_dropdown_pages($output)
     {
@@ -557,7 +576,6 @@ final class EE_Admin implements InterminableInterface
                 }
             }
         }
-
         //replace output with the new contents
         return implode("\n", $split_output);
     }
@@ -624,7 +642,7 @@ final class EE_Admin implements InterminableInterface
     /**
      * display_admin_notices
      *
-     * @return    string
+     * @return void
      */
     public function display_admin_notices()
     {
@@ -656,7 +674,10 @@ final class EE_Admin implements InterminableInterface
     /**
      * @param array $elements
      * @return array
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function dashboard_glance_items($elements)
     {
