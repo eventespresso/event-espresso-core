@@ -249,7 +249,10 @@ class EE_Checkout {
 		$this->cancel_page_url = EE_Registry::instance()->CFG->core->cancel_page_url();
 		$this->continue_reg = apply_filters( 'FHEE__EE_Checkout___construct___continue_reg', TRUE );
 		$this->admin_request = is_admin() && ! EE_Registry::instance()->REQ->ajax;
-		$this->reg_cache_where_params = array( 'order_by' => array( 'REG_count' => 'ASC' ));
+		$this->reg_cache_where_params = array(
+		    0 => array( 'REG_deleted' => false ),
+		    'order_by' => array( 'REG_count' => 'ASC' )
+        );
 	}
 
 
