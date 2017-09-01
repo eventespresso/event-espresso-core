@@ -3,8 +3,6 @@
 use EventEspresso\core\domain\entities\notifications\PersistentAdminNotice;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
-use EventEspresso\core\services\container\CoffeeMill;
-use EventEspresso\core\services\container\exceptions\ServiceNotFoundException;
 use EventEspresso\core\services\notifications\PersistentAdminNoticeManager;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
@@ -501,7 +499,6 @@ class EED_Add_New_State extends EED_Module
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws DomainException
-     * @throws ServiceNotFoundException
      */
     public static function update_country_settings($CNT_ISO = '', $STA_ID = '', $cols_n_values = array())
     {
@@ -523,7 +520,7 @@ class EED_Add_New_State extends EED_Module
                 __FILE__, __FUNCTION__, __LINE__);
         }
         /** @var PersistentAdminNoticeManager $persistent_admin_notice_manager */
-        $persistent_admin_notice_manager = CoffeeMill::getService(
+        $persistent_admin_notice_manager = LoaderFactory::getShared(
             'EventEspresso\core\services\notifications\PersistentAdminNoticeManager'
         );
         $persistent_admin_notice_manager->dismissNotice($CNT_ISO . '-' . $STA_abbrev, true, true);
