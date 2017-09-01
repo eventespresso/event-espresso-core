@@ -798,9 +798,22 @@ abstract class EE_Addon extends EE_Configurable
 
 
     /**
-     * a safe space for addons to add additional logic like setting hooks
-     * that will run immediately after addon registration
-     * making this a great place for code that needs to be "omnipresent"
+     * A safe space for addons to add additional logic like setting hooks that need to be set early in the request.
+     * Child classes that have logic like that to run can override this method declaration.  This was not made abstract
+     * for back compat reasons.
+     *
+     * This will fire on the `AHEE__EE_System__load_espresso_addons__complete` hook at priority 999.
+     *
+     * It is recommended, if client code is `de-registering` an add-on, then do it on the
+     * `AHEE__EE_System__load_espresso_addons__complete` hook before priority 999 so as to ensure any code logic in this
+     * callback does not get run/set in that request.
+     *
+     * Also, keep in mind that if a registered add-on happens to be deactivated via
+     * EE_System::_deactivate_incompatible_addons() because its incompatible, any code executed in this method
+     * (including setting hooks etc) will have executed before the plugin was deactivated.  If you use
+     * `after_registration` to set any filter and/or action hooks and want to ensure they are removed on this add-on's
+     * deactivation, you can override `EE_Addon::deactivation` and unset your hooks and filters there.  Just remember
+     * to call `parent::deactivation`.
      *
      * @since 4.9.26
      */
