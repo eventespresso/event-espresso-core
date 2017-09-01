@@ -4,10 +4,6 @@ define('EVENT_ESPRESSO_VERSION', espresso_version());
 define('EE_MIN_WP_VER_REQUIRED', '4.1');
 define('EE_MIN_WP_VER_RECOMMENDED', '4.4.2');
 define('EE_MIN_PHP_VER_RECOMMENDED', '5.4.44');
-// define the plugin directory and URL
-define('EE_PLUGIN_BASENAME', plugin_basename(EVENT_ESPRESSO_MAIN_FILE));
-define('EE_PLUGIN_DIR_PATH', plugin_dir_path(EVENT_ESPRESSO_MAIN_FILE));
-define('EE_PLUGIN_DIR_URL', plugin_dir_url(EVENT_ESPRESSO_MAIN_FILE));
 define('EE_SUPPORT_EMAIL', 'support@eventespresso.com');
 //used to be DIRECTORY_SEPARATOR, but that caused issues on windows
 if ( ! defined('DS')) {
@@ -22,6 +18,10 @@ if ( ! defined('SP')) {
 if ( ! defined('EENL')) {
     define('EENL', "\n");
 }
+// define the plugin directory and URL
+define('EE_PLUGIN_BASENAME', plugin_basename(EVENT_ESPRESSO_MAIN_FILE));
+define('EE_PLUGIN_DIR_PATH', dirname(EVENT_ESPRESSO_MAIN_FILE) . DS);
+define('EE_PLUGIN_DIR_URL', plugin_dir_url(EVENT_ESPRESSO_MAIN_FILE));
 // main root folder paths
 define('EE_ADMIN_PAGES', EE_PLUGIN_DIR_PATH . 'admin_pages' . DS);
 define('EE_CORE', EE_PLUGIN_DIR_PATH . 'core' . DS);
@@ -68,18 +68,18 @@ define('EVENT_ESPRESSO_GATEWAY_URL', $uploads['baseurl'] . DS . 'espresso' . DS 
 // languages folder/path
 define('EE_LANGUAGES_SAFE_LOC', '..' . DS . 'uploads' . DS . 'espresso' . DS . 'languages' . DS);
 define('EE_LANGUAGES_SAFE_DIR', EVENT_ESPRESSO_UPLOAD_DIR . 'languages' . DS);
-//check for dompdf fonts in uploads
+//check for DOMPDF fonts in uploads
 if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . 'fonts' . DS)) {
     define('DOMPDF_FONT_DIR', EVENT_ESPRESSO_UPLOAD_DIR . 'fonts' . DS);
 }
 //ajax constants
 define(
     'EE_FRONT_AJAX',
-    isset($_REQUEST['ee_front_ajax']) || isset($_REQUEST['data']['ee_front_ajax']) ? true : false
+    isset($_REQUEST['ee_front_ajax']) || isset($_REQUEST['data']['ee_front_ajax'])
 );
 define(
     'EE_ADMIN_AJAX',
-    isset($_REQUEST['ee_admin_ajax']) || isset($_REQUEST['data']['ee_admin_ajax']) ? true : false
+    isset($_REQUEST['ee_admin_ajax']) || isset($_REQUEST['data']['ee_admin_ajax'])
 );
 //just a handy constant occasionally needed for finding values representing infinity in the DB
 //you're better to use this than its straight value (currently -1) in case you ever
