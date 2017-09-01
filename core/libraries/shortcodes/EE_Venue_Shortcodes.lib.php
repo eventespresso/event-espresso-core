@@ -47,7 +47,7 @@ class EE_Venue_Shortcodes extends EE_Shortcodes
             '[VENUE_URL]'               => esc_html__('A url to a webpage for the venue', 'event_espresso'),
             '[VENUE_DETAILS_URL]'       => sprintf(
                 esc_html__(
-                    'The url to the venue details page on this site.  This differs from %s in that shortcode parses to what is entered in the "url" field for the venue settings whereas this shortcode parses to the url for the venue details page on your website.',
+                    'This shortcode outputs the url or website address to the venue details page on this website. This differs from %s which outputs what is entered in the "url" field in the venue details page.',
                     'event_espresso'
                 ),
                 '[VENUE_URL]'
