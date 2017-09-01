@@ -3,8 +3,8 @@
 use EventEspresso\core\domain\entities\notifications\PersistentAdminNotice;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
-use EventEspresso\core\services\container\CoffeeMill;
 use EventEspresso\core\services\container\exceptions\ServiceNotFoundException;
+use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\notifications\PersistentAdminNoticeManager;
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 
@@ -522,7 +522,6 @@ class EE_Error extends Exception
     }
 
 
-                if (! empty($arg)) {
 
     /**
      *    add error message
@@ -595,73 +594,6 @@ class EE_Error extends Exception
     }
 
 
-
-    /**
-     *    add success message
-     *
-     * @param        string $type whether the message is for a success or error notification
-     * @param        string $msg  the message to display to users or developers - adding a double pipe || (OR) creates
-     *                            separate messages for user || dev
-     * @param        string $file the file that the error occurred in - just use __FILE__
-     * @param        string $func the function/method that the error occurred in - just use __FUNCTION__
-     * @param        string $line the line number where the error occurred - just use __LINE__
-     * @return        void
-     */
-    private static function _add_notice($type = 'success', $msg = null, $file = null, $func = null, $line = null)
-    {
-        if (empty($msg)) {
-            EE_Error::doing_it_wrong(
-                'EE_Error::add_' . $type . '()',
-                sprintf(
-                    __('Notifications are not much use without a message! Please add a message to the EE_Error::add_%s() call made in %s on line %d',
-                        'event_espresso'),
-                    $type,
-                    $file,
-                    $line
-                ),
-                EVENT_ESPRESSO_VERSION
-            );
-        }
-        if ($type === 'errors' && (empty($file) || empty($func) || empty($line))) {
-            EE_Error::doing_it_wrong(
-                'EE_Error::add_error()',
-                __('You need to provide the file name, function name, and line number that the error occurred on in order to better assist with debugging.',
-                    'event_espresso'),
-                EVENT_ESPRESSO_VERSION
-            );
-        }
-        // get separate user and developer messages if they exist
-        $msg = explode('||', $msg);
-        $user_msg = $msg[0];
-        $dev_msg = isset($msg[1]) ? $msg[1] : $msg[0];
-        /**
-         * Do an action so other code can be triggered when a notice is created
-         *
-         * @param string $type     can be 'errors', 'attention', or 'success'
-         * @param string $user_msg message displayed to user when WP_DEBUG is off
-         * @param string $user_msg message displayed to user when WP_DEBUG is on
-         * @param string $file     file where error was generated
-         * @param string $func     function where error was generated
-         * @param string $line     line where error was generated
-         */
-        do_action('AHEE__EE_Error___add_notice', $type, $user_msg, $dev_msg, $file, $func, $line);
-        $msg = WP_DEBUG ? $dev_msg : $user_msg;
-        // add notice if message exists
-        if (! empty($msg)) {
-            // get error code
-            $notice_code = EE_Error::generate_error_code($file, $func, $line);
-            if (WP_DEBUG && $type === 'errors') {
-                $msg .= '<br/><span class="tiny-text">' . $notice_code . '</span>';
-            }
-            // add notice. Index by code if it's not blank
-            if ($notice_code) {
-                self::$_espresso_notices[$type][$notice_code] = $msg;
-            } else {
-                self::$_espresso_notices[$type][] = $msg;
-            }
-            add_action('wp_footer', array('EE_Error', 'enqueue_error_scripts'), 1);
-        }
-    }
 
     /**
      * @param string $type whether the message is for a success or error notification
@@ -813,133 +745,6 @@ class EE_Error extends Exception
     }
 
 
-
-    /**
-     *    compile all error or success messages into one string
-     *
-     * @see EE_Error::get_raw_notices if you want the raw notices without any preparations made to them
-     * @param        boolean $format_output     whether or not to format the messages for display in the WP admin
-     * @param        boolean $save_to_transient whether or not to save notices to the db for retrieval on next request
-     *                                          - ONLY do this just before redirecting
-     * @param        boolean $remove_empty      whether or not to unset empty messages
-     * @return        array
-     */
-    public static function get_notices($format_output = true, $save_to_transient = false, $remove_empty = true)
-    {
-        do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-        $success_messages = '';
-        $attention_messages = '';
-        $error_messages = '';
-        $print_scripts = false;
-        // either save notices to the db
-        if ($save_to_transient) {
-            update_option('ee_notices', self::$_espresso_notices);
-            return array();
-        }
-        // grab any notices that have been previously saved
-        if ($notices = get_option('ee_notices', false)) {
-            foreach ($notices as $type => $notice) {
-                if (is_array($notice) && ! empty($notice)) {
-                    // make sure that existing notice type is an array
-                    self::$_espresso_notices[$type] = is_array(self::$_espresso_notices[$type])
-                                                      && ! empty(self::$_espresso_notices[$type])
-                        ? self::$_espresso_notices[$type] : array();
-                    // merge stored notices with any newly created ones
-                    self::$_espresso_notices[$type] = array_merge(self::$_espresso_notices[$type], $notice);
-                    $print_scripts = true;
-                }
-            }
-            // now clear any stored notices
-            update_option('ee_notices', false);
-        }
-        // check for success messages
-        if (self::$_espresso_notices['success'] && ! empty(self::$_espresso_notices['success'])) {
-            // combine messages
-            $success_messages .= implode(self::$_espresso_notices['success'], '<br /><br />');
-            $print_scripts = true;
-        }
-        // check for attention messages
-        if (self::$_espresso_notices['attention'] && ! empty(self::$_espresso_notices['attention'])) {
-            // combine messages
-            $attention_messages .= implode(self::$_espresso_notices['attention'], '<br /><br />');
-            $print_scripts = true;
-        }
-        // check for error messages
-        if (self::$_espresso_notices['errors'] && ! empty(self::$_espresso_notices['errors'])) {
-            $error_messages .= count(self::$_espresso_notices['errors']) > 1
-                ? __('The following errors have occurred:<br />', 'event_espresso')
-                : __('An error has occurred:<br />', 'event_espresso');
-            // combine messages
-            $error_messages .= implode(self::$_espresso_notices['errors'], '<br /><br />');
-            $print_scripts = true;
-        }
-        if ($format_output) {
-            $notices = '<div id="espresso-notices">';
-            $close = is_admin() ? ''
-                : '<a class="close-espresso-notice hide-if-no-js"><span class="dashicons dashicons-no"></span></a>';
-            if ($success_messages !== '') {
-                $css_id = is_admin() ? 'message' : 'espresso-notices-success';
-                $css_class = is_admin() ? 'updated fade' : 'success fade-away';
-                //showMessage( $success_messages );
-                $notices .= '<div id="'
-                            . $css_id
-                            . '" class="espresso-notices '
-                            . $css_class
-                            . '" style="display:none;"><p>'
-                            . $success_messages
-                            . '</p>'
-                            . $close
-                            . '</div>';
-            }
-            if ($attention_messages !== '') {
-                $css_id = is_admin() ? 'message' : 'espresso-notices-attention';
-                $css_class = is_admin() ? 'updated ee-notices-attention' : 'attention fade-away';
-                //showMessage( $error_messages, TRUE );
-                $notices .= '<div id="'
-                            . $css_id
-                            . '" class="espresso-notices '
-                            . $css_class
-                            . '" style="display:none;"><p>'
-                            . $attention_messages
-                            . '</p>'
-                            . $close
-                            . '</div>';
-            }
-            if ($error_messages !== '') {
-                $css_id = is_admin() ? 'message' : 'espresso-notices-error';
-                $css_class = is_admin() ? 'error' : 'error fade-away';
-                //showMessage( $error_messages, TRUE );
-                $notices .= '<div id="'
-                            . $css_id
-                            . '" class="espresso-notices '
-                            . $css_class
-                            . '" style="display:none;"><p>'
-                            . $error_messages
-                            . '</p>'
-                            . $close
-                            . '</div>';
-            }
-            $notices .= '</div>';
-        } else {
-            $notices = array(
-                'success'   => $success_messages,
-                'attention' => $attention_messages,
-                'errors'    => $error_messages,
-            );
-            if ($remove_empty) {
-                // remove empty notices
-                foreach ($notices as $type => $notice) {
-                    if (empty($notice)) {
-                        unset($notices[$type]);
-                    }
-                }
-            }
-        }
-        if ($print_scripts) {
-            self::_print_scripts();
-        }
-        return $notices;
-    }
 
     /**
      * compile all error or success messages into one string
@@ -1275,11 +1080,12 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws ServiceNotFoundException
+     * @throws InvalidArgumentException
      */
     public static function dismiss_persistent_admin_notice($pan_name = '', $purge = false, $return = false)
     {
         /** @var PersistentAdminNoticeManager $persistent_admin_notice_manager */
-        $persistent_admin_notice_manager = CoffeeMill::getService(
+        $persistent_admin_notice_manager = LoaderFactory::getLoader()->getShared(
             'EventEspresso\core\services\notifications\PersistentAdminNoticeManager'
         );
         $persistent_admin_notice_manager->dismissNotice($pan_name, $purge, $return);
