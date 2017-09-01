@@ -35,6 +35,7 @@ class UpdateRegistrationService extends DomainService
         $transaction->update_status_based_on_total_paid();
         /** @type \EE_Registration_Processor $registration_processor */
         $registration_processor = \EE_Registry::instance()->load_class('Registration_Processor');
+        $registration_processor->update_registration_final_prices($transaction);
         $registration_processor->update_registration_status_and_trigger_notifications($registration);
         return true;
     }

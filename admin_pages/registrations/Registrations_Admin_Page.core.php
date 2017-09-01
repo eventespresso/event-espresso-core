@@ -321,13 +321,13 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 'func'       => 'bulk_action_on_registrations',
                 'noheader'   => true,
                 'capability' => 'ee_edit_registrations',
-                'args' => array('no_approve')
+                'args' => array('not_approve')
             ),
             'no_approve_and_notify_registrations' => array(
                 'func'       => 'bulk_action_on_registrations',
                 'noheader'   => true,
                 'capability' => 'ee_edit_registrations',
-                'args' => array('no_approve', true)
+                'args' => array('not_approve', true)
             ),
             'cancel_registration'                => array(
                 'func'       => 'cancel_registration',
@@ -1737,7 +1737,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         // is registration for free event? This will determine whether to display the pending payment option
         if (
             $current_status !== EEM_Registration::status_id_pending_payment
-            && $this->_registration->transaction()->is_free()
+            && EEH_Money::compare_floats($this->_registration->ticket()->price(), 0.00)
         ) {
             unset($reg_status_array[EEM_Registration::status_id_pending_payment]);
         }
