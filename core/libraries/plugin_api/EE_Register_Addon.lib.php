@@ -1076,6 +1076,14 @@ class EE_Register_Addon implements EEI_Plugin_API
                 array(EE_Registry::instance()->addons->{$class_name}, 'initialize_db_if_no_migrations_required')
             );
             unset(EE_Registry::instance()->addons->{$class_name}, self::$_settings[$addon_name]);
+
+            //remove `after_registration` call
+            remove_action(
+                'AHEE__EE_System__load_espresso_addons__complete',
+                array(EE_Registry::instance()->addons{$class_name}, 'after_registration'),
+                999
+            );
+
             do_action('AHEE__EE_Register_Addon__deregister__after', $addon_name);
         }
     }
