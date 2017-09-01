@@ -128,12 +128,12 @@ if (function_exists('espresso_version')) {
             }
             // load debugging tools
             if (WP_DEBUG === true && is_readable(EE_HELPERS . 'EEH_Debug_Tools.helper.php')) {
-                require_once(EE_HELPERS . 'EEH_Debug_Tools.helper.php');
+                require_once   EE_HELPERS . 'EEH_Debug_Tools.helper.php';
                 \EEH_Debug_Tools::instance();
             }
             // load error handling
             if (is_readable(EE_CORE . 'EE_Error.core.php')) {
-                require_once(EE_CORE . 'EE_Error.core.php');
+                require_once EE_CORE . 'EE_Error.core.php';
             } else {
                 wp_die(esc_html__('The EE_Error core class could not be loaded.', 'event_espresso'));
             }
@@ -151,7 +151,7 @@ if (function_exists('espresso_version')) {
         function espresso_load_required($classname, $full_path_to_file)
         {
             if (is_readable($full_path_to_file)) {
-                require_once($full_path_to_file);
+                require_once $full_path_to_file;
             } else {
                 throw new \EE_Error (
                     sprintf(
@@ -179,7 +179,7 @@ if (function_exists('espresso_version')) {
          */
         function bootstrap_espresso()
         {
-            require_once(plugin_dir_path(EVENT_ESPRESSO_MAIN_FILE) . 'core/espresso_definitions.php');
+            require_once __DIR__ . '/core/espresso_definitions.php';
             try {
                 espresso_load_error_handling();
                 espresso_load_required(
@@ -227,7 +227,7 @@ if (function_exists('espresso_version')) {
                     new EE_Response()
                 );
             } catch (Exception $e) {
-                require_once EE_CORE . 'exceptions.' . DS . 'ExceptionStackTraceDisplay.php';
+                require_once EE_CORE . 'exceptions' . DS . 'ExceptionStackTraceDisplay.php';
                 new EventEspresso\core\exceptions\ExceptionStackTraceDisplay($e);
             }
         }
@@ -246,7 +246,7 @@ if (! function_exists('espresso_deactivate_plugin')) {
     function espresso_deactivate_plugin($plugin_basename = '')
     {
         if (! function_exists('deactivate_plugins')) {
-            require_once(ABSPATH . 'wp-admin/includes/plugin.php');
+            require_once ABSPATH . 'wp-admin/includes/plugin.php';
         }
         unset($_GET['activate'], $_REQUEST['activate']);
         deactivate_plugins($plugin_basename);
