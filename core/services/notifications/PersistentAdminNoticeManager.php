@@ -205,6 +205,7 @@ class PersistentAdminNoticeManager
      * @throws InvalidClassException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws InvalidEntityException
      */
     public function displayNotices()
     {
