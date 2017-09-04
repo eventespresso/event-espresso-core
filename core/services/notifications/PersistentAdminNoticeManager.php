@@ -278,7 +278,7 @@ class PersistentAdminNoticeManager
      *
      * @param  PersistentAdminNotice $persistent_admin_notice
      */
-    public function displayPersistentAdminNotice(PersistentAdminNotice $persistent_admin_notice)
+    protected function displayPersistentAdminNotice(PersistentAdminNotice $persistent_admin_notice)
     {
         // used in template
         $persistent_admin_notice_name    = $persistent_admin_notice->getName();
