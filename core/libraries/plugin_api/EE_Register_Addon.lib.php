@@ -267,7 +267,9 @@ class EE_Register_Addon implements EEI_Plugin_API
         \EE_Register_Addon::_register_payment_methods($addon_name);
         // load and instantiate main addon class
         $addon = \EE_Register_Addon::_load_and_init_addon_class($addon_name);
-        $addon->after_registration();
+
+        //delay calling after_registration hook on each addon until after all add-ons have been registered.
+        add_action('AHEE__EE_System__load_espresso_addons__complete', array($addon, 'after_registration'), 999);
     }
 
 
@@ -1073,7 +1075,14 @@ class EE_Register_Addon implements EEI_Plugin_API
                 'AHEE__EE_System__perform_activations_upgrades_and_migrations',
                 array(EE_Registry::instance()->addons->{$class_name}, 'initialize_db_if_no_migrations_required')
             );
+            //remove `after_registration` call
+            remove_action(
+                'AHEE__EE_System__load_espresso_addons__complete',
+                array(EE_Registry::instance()->addons->{$class_name}, 'after_registration'),
+                999
+            );
             unset(EE_Registry::instance()->addons->{$class_name}, self::$_settings[$addon_name]);
+
             do_action('AHEE__EE_Register_Addon__deregister__after', $addon_name);
         }
     }
