@@ -1,4 +1,5 @@
 <?php
+
 namespace EventEspresso\core\services\notifications;
 
 use DomainException;
@@ -9,8 +10,10 @@ use EventEspresso\core\domain\services\capabilities\CapabilitiesChecker;
 use EventEspresso\core\exceptions\InsufficientPermissionsException;
 use EventEspresso\core\exceptions\InvalidClassException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\collections\Collection;
+use Exception;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -35,6 +38,9 @@ class PersistentAdminNoticeManager
     private $notice_collection;
 
     /**
+     * if AJAX is not enabled, then the return URL will be used for redirecting back to the admin page where the
+     * persistent admin notice was displayed, and ultimately dismissed from.
+     *
      * @type string $return_url
      */
     private $return_url;
@@ -54,7 +60,7 @@ class PersistentAdminNoticeManager
     /**
      * CapChecker constructor
      *
-     * @param string $return_url
+     * @param string              $return_url  where to  redirect to after dismissing notices
      * @param CapabilitiesChecker $capabilities_checker
      * @param EE_Request          $request
      * @throws InvalidDataTypeException
@@ -63,8 +69,9 @@ class PersistentAdminNoticeManager
     {
         $this->setReturnUrl($return_url);
         $this->capabilities_checker = $capabilities_checker;
-        $this->request = $request;
-        //ok so we want to enable the entire admin
+        $this->request              = $request;
+        // setup up notices at priority 9 because `EE_Admin::display_admin_notices()` runs at priority 10,
+        // and we want to retrieve and generate any nag notices at the last possible moment
         add_action('admin_notices', array($this, 'displayNotices'), 9);
         add_action('network_admin_notices', array($this, 'displayNotices'), 9);
         add_action('wp_ajax_dismiss_ee_nag_notice', array($this, 'dismissNotice'));
@@ -79,7 +86,7 @@ class PersistentAdminNoticeManager
      */
     private function setReturnUrl($return_url)
     {
-        if ( ! is_string($return_url)) {
+        if (! is_string($return_url)) {
             throw new InvalidDataTypeException('$return_url', $return_url, 'string');
         }
         $this->return_url = $return_url;
@@ -89,15 +96,16 @@ class PersistentAdminNoticeManager
 
     /**
      * @return Collection
+     * @throws InvalidEntityException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws DomainException
      */
     protected function getPersistentAdminNoticeCollection()
     {
-        if ( ! $this->notice_collection instanceof Collection) {
+        if (! $this->notice_collection instanceof Collection) {
             $this->notice_collection = new Collection(
-                '\EventEspresso\core\domain\entities\notifications\PersistentAdminNotice'
+                'EventEspresso\core\domain\entities\notifications\PersistentAdminNotice'
             );
             $this->retrieveStoredNotices();
             $this->registerNotices();
@@ -111,23 +119,24 @@ class PersistentAdminNoticeManager
      * generates PersistentAdminNotice objects for all non-dismissed notices saved to the db
      *
      * @return void
+     * @throws InvalidEntityException
      * @throws DomainException
      * @throws InvalidDataTypeException
      */
-    public function retrieveStoredNotices()
+    protected function retrieveStoredNotices()
     {
         $persistent_admin_notices = get_option(PersistentAdminNoticeManager::WP_OPTION_KEY, array());
         // \EEH_Debug_Tools::printr($persistent_admin_notices, '$persistent_admin_notices', __FILE__, __LINE__);
-        if ( ! empty($persistent_admin_notices)) {
+        if (! empty($persistent_admin_notices)) {
             foreach ($persistent_admin_notices as $name => $details) {
-                if (is_array($details)){
+                if (is_array($details)) {
                     if (
-                        ! isset(
-                            $details['message'],
-                            $details['capability'],
-                            $details['cap_context'],
-                            $details['dismissed']
-                        )
+                    ! isset(
+                        $details['message'],
+                        $details['capability'],
+                        $details['cap_context'],
+                        $details['dismissed']
+                    )
                     ) {
                         throw new DomainException(
                             sprintf(
@@ -140,26 +149,32 @@ class PersistentAdminNoticeManager
                         );
                     }
                     // new format for nag notices
-                    new PersistentAdminNotice(
-                        $name,
-                        $details['message'],
-                        false,
-                        $details['capability'],
-                        $details['cap_context'],
-                        $details['dismissed']
+                    $this->notice_collection->add(
+                        new PersistentAdminNotice(
+                            $name,
+                            $details['message'],
+                            false,
+                            $details['capability'],
+                            $details['cap_context'],
+                            $details['dismissed']
+                        ),
+                        $name
                     );
                 } else {
                     try {
                         // old nag notices, that we want to convert to the new format
-                        new PersistentAdminNotice(
-                            $name,
-                            (string)$details,
-                            false,
-                            '',
-                            '',
-                            empty($details)
+                        $this->notice_collection->add(
+                            new PersistentAdminNotice(
+                                $name,
+                                (string)$details,
+                                false,
+                                '',
+                                '',
+                                empty($details)
+                            ),
+                            $name
                         );
-                    } catch (\Exception $e) {
+                    } catch (Exception $e) {
                         EE_Error::add_error($e->getMessage(), __FILE__, __FUNCTION__, __LINE__);
                     }
                 }
@@ -175,7 +190,7 @@ class PersistentAdminNoticeManager
      * so that PersistentAdminNotice objects can be added and/or removed
      * without compromising the actual collection like a filter would
      */
-    public function registerNotices()
+    protected function registerNotices()
     {
         do_action(
             'AHEE__EventEspresso_core_services_notifications_PersistentAdminNoticeManager__registerNotices',
@@ -213,6 +228,7 @@ class PersistentAdminNoticeManager
                 }
                 $this->displayPersistentAdminNotice($persistent_admin_notice);
             }
+            $this->enqueueAssets();
         }
     }
 
@@ -221,14 +237,10 @@ class PersistentAdminNoticeManager
     /**
      * does what it's named
      *
-     * @return bool
+     * @return void
      */
     public function enqueueAssets()
     {
-        static $print_scripts = true;
-        if (! $print_scripts) {
-            return $print_scripts;
-        }
         wp_register_script(
             'espresso_core',
             EE_GLOBAL_ASSETS_URL . 'scripts/espresso_core.js',
@@ -243,11 +255,20 @@ class PersistentAdminNoticeManager
             EVENT_ESPRESSO_VERSION,
             true
         );
+        wp_localize_script(
+            'ee_error_js',
+            'ee_dismiss',
+            array(
+                'return_url'    => urlencode($this->return_url),
+                'ajax_url'      => WP_AJAX_URL,
+                'unknown_error' => esc_html__(
+                    'An unknown error has occurred on the server while attempting to dismiss this notice.',
+                    'event_espresso'
+                ),
+            )
+        );
         wp_enqueue_script('ee_error_js');
-        $print_scripts = true;
-        return $print_scripts;
     }
-
 
 
 
@@ -258,23 +279,8 @@ class PersistentAdminNoticeManager
      */
     public function displayPersistentAdminNotice(PersistentAdminNotice $persistent_admin_notice)
     {
-        // used in template for printing css
-        $print_styles = $this->enqueueAssets();
-        wp_localize_script(
-            'espresso_core',
-            'ee_dismiss',
-            array(
-                'nag_notice'    => $persistent_admin_notice->getName(),
-                'return_url'    => urlencode($this->return_url),
-                'ajax_url'      => WP_AJAX_URL,
-                'unknown_error' => esc_html__(
-                    'An unknown error has occurred on the server while attempting to dismiss this notice.',
-                    'event_espresso'
-                )
-            )
-        );
         // used in template
-        $persistent_admin_notice_name = $persistent_admin_notice->getName();
+        $persistent_admin_notice_name    = $persistent_admin_notice->getName();
         $persistent_admin_notice_message = $persistent_admin_notice->getMessage();
         require EE_TEMPLATES . DS . 'notifications' . DS . 'persistent_admin_notice.template.php';
     }
@@ -288,15 +294,16 @@ class PersistentAdminNoticeManager
      * @param bool   $purge    if true, then delete it from the db
      * @param bool   $return   forget all of this AJAX or redirect nonsense, and just return
      * @return void
+     * @throws InvalidEntityException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws DomainException
      */
     public function dismissNotice($pan_name = '', $purge = false, $return = false)
     {
-        $pan_name = $this->request->get('ee_nag_notice', $pan_name);
+        $pan_name                = $this->request->get('ee_nag_notice', $pan_name);
         $this->notice_collection = $this->getPersistentAdminNoticeCollection();
-        if ( ! empty($pan_name) && $this->notice_collection->has($pan_name)){
+        if (! empty($pan_name) && $this->notice_collection->has($pan_name)) {
             /** @var PersistentAdminNotice $persistent_admin_notice */
             $persistent_admin_notice = $this->notice_collection->get($pan_name);
             $persistent_admin_notice->setDismissed(true);
@@ -310,7 +317,7 @@ class PersistentAdminNoticeManager
             // grab any notices and concatenate into string
             echo wp_json_encode(
                 array(
-                    'errors' => implode('<br />', EE_Error::get_notices(false))
+                    'errors' => implode('<br />', EE_Error::get_notices(false)),
                 )
             );
             exit();
@@ -332,6 +339,7 @@ class PersistentAdminNoticeManager
      * @throws DomainException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws InvalidEntityException
      */
     public function saveNotices()
     {
