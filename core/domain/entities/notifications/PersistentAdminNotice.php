@@ -1,4 +1,5 @@
 <?php
+
 namespace EventEspresso\core\domain\entities\notifications;
 
 use DomainException;
@@ -79,7 +80,6 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
 
     /**
      * PersistentAdminNotice constructor
-
      *
      * @param string $name         [required] the name, or key of the Persistent Admin Notice to be stored
      * @param string $message      [required] the message to be stored persistently until dismissed
@@ -128,7 +128,7 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
      */
     private function setName($name)
     {
-        if ( ! is_string($name)) {
+        if (! is_string($name)) {
             throw new InvalidDataTypeException('$name', $name, 'string');
         }
         $this->name = sanitize_key($name);
@@ -152,14 +152,12 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
      */
     private function setMessage($message)
     {
-        // \EEH_Debug_Tools::printr($this->name, '$this->name', __FILE__, __LINE__);
-        // \EEH_Debug_Tools::printr($message, '$message', __FILE__, __LINE__);
-        if ( ! is_string($message)) {
+        if (! is_string($message)) {
             throw new InvalidDataTypeException('$message', $message, 'string');
         }
         global $allowedtags;
         $allowedtags['br'] = array();
-        $this->message = wp_kses($message, $allowedtags);
+        $this->message     = wp_kses($message, $allowedtags);
     }
 
 
@@ -200,7 +198,7 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
      */
     private function setCapability($capability)
     {
-        if ( ! is_string($capability)) {
+        if (! is_string($capability)) {
             throw new InvalidDataTypeException('$capability', $capability, 'string');
         }
         $this->capability = $capability;
@@ -224,7 +222,7 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
      */
     private function setCapContext($cap_context)
     {
-        if ( ! is_string($cap_context)) {
+        if (! is_string($cap_context)) {
             throw new InvalidDataTypeException('$cap_context', $cap_context, 'string');
         }
         $this->cap_context = $cap_context;
@@ -258,7 +256,7 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
      */
     public function getCapCheck()
     {
-        if ( ! $this->cap_check instanceof CapCheckInterface) {
+        if (! $this->cap_check instanceof CapCheckInterface) {
             $this->setCapCheck(
                 new CapCheck(
                     $this->capability,
@@ -313,6 +311,9 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
      */
     public function registerPersistentAdminNotice(Collection $persistent_admin_notice_collection)
     {
+        if ($this->registered) {
+            return;
+        }
         // first check if this notice has already been added to the collection
         if ($persistent_admin_notice_collection->has($this->name)) {
             /** @var PersistentAdminNotice $existing */
@@ -337,7 +338,7 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
      */
     public function confirmRegistered()
     {
-        if( ! $this->registered && WP_DEBUG) {
+        if (! $this->registered && WP_DEBUG) {
             throw new DomainException(
                 sprintf(
                     esc_html__(
