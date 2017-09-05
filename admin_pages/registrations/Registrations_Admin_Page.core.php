@@ -1831,9 +1831,15 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             }
         }
         //reset _req_data['_REG_ID'] for any potential future messages notifications
-        $this->_req_data['_REG_ID'] = $REG_IDs;
+        $this->_req_data['_REG_ID'] = apply_filters(
+            'FHEE__Registrations_Admin_Page___set_registration_status__REG_IDs',
+            $REG_IDs,
+            $status,
+            $success,
+            $this
+        );
         //return $success and processed registrations
-        return array('REG_ID' => $REG_IDs, 'success' => $success);
+        return array('REG_ID' => $this->req_data['_REG_ID'], 'success' => $success);
     }
 
 
