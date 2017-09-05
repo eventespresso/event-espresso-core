@@ -1770,15 +1770,13 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         $REG_IDs = array_map('absint', $REG_IDs);
         // and remove empty entries
         $REG_IDs = array_filter($REG_IDs);
-        $success = $this->_set_registration_status($REG_IDs, $status);
+
+        $result = $this->_set_registration_status($REG_IDs, $status);
+
         //notify?
-        if ($success
-            && apply_filters(
-                'FHEE__Registrations_Admin_Page___set_registration_status_from_request__notify',
-                $notify,
-                $REG_IDs,
-                $success
-            )
+        if ($notify
+            && $result['success']
+            && ! empty($result['REG_ID'])
             && EE_Registry::instance()->CAP->current_user_can(
                 'ee_send_message',
                 'espresso_registrations_resend_registration'
@@ -1786,9 +1784,17 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         ) {
             $this->_process_resend_registration();
         }
-        return $success;
-    }
 
+        do_action(
+            'AHEE__Registrations_Admin_Page___set_registration_status_from_request__end',
+            $result['REG_ID'],
+            $notify,
+            $status,
+            $result['success'],
+            $this
+        );
+        return $result;
+    }
 
 
     /**
