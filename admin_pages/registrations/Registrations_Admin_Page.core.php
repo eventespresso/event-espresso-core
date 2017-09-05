@@ -805,7 +805,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         $def_reg_status_actions = apply_filters(
             'FHEE__Registrations_Admin_Page___set_list_table_views_default__def_reg_status_actions_array',
             $def_reg_status_actions,
-            $active_mts
+            $active_mts,
+            $can_send
         );
 
         $this->_views = array(
