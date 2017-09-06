@@ -1074,7 +1074,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     private function _set_registration_object()
     {
         //get out if we've already set the object
-        if (is_object($this->_registration)) {
+        if ($this->_registration instanceof EE_Registration) {
             return true;
         }
         $REG    = EEM_Registration::instance();
