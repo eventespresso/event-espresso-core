@@ -1773,10 +1773,27 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
 
         $result = $this->_set_registration_status($REG_IDs, $status);
 
+        /**
+         * Set and filter $_req_data['_REG_ID'] for any potential future messages notifications.
+         * Currently this value is used downstream by the _process_resend_registration method.
+         *
+         * @param int|array                $registration_ids The registration ids that have had their status changed successfully.
+         * @param bool                     $status           The status registrations were changed to.
+         * @param bool                     $success          If the status was changed successfully for all registrations.
+         * @param Registrations_Admin_Page $admin_page_object
+         */
+        $this->_req_data['_REG_ID'] = apply_filters(
+            'FHEE__Registrations_Admin_Page___set_registration_status_from_request__REG_IDs',
+            $result['REG_ID'],
+            $status,
+            $result['success'],
+            $this
+        );
+
         //notify?
         if ($notify
             && $result['success']
-            && ! empty($result['REG_ID'])
+            && ! empty($this->_req_data['_REG_ID'])
             && EE_Registry::instance()->CAP->current_user_can(
                 'ee_send_message',
                 'espresso_registrations_resend_registration'
@@ -1785,9 +1802,25 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             $this->_process_resend_registration();
         }
 
+        /**
+         * Action that fires at the end of this method.
+         *
+         * @param int|array $registration_ids                         Registration id(s) that successuflly had their
+         *                                                            status changed.
+         * @param int|array                $filtered_registration_ids Registration id(s) that were filtered by
+         *                                                            'FHEE__Registrations_Admin_Page___set_registration_status_from_request__REG_IDs'
+         * @param bool $notify                                        Indicates explicit request for notification
+         *                                                            (true).
+         * @param string $status                                      Status that registration(s) were requested to be
+         *                                                            changed to.
+         * @param bool $success                                       Whether the status was successfully changed for
+         *                                                            any of the given registrations.
+         * @param Registrations_Admin_Page $admin_page_object
+         */
         do_action(
             'AHEE__Registrations_Admin_Page___set_registration_status_from_request__end',
             $result['REG_ID'],
+            $this->_req_data['_REG_ID'],
             $notify,
             $status,
             $result['success'],
@@ -1830,16 +1863,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 }
             }
         }
-        //reset _req_data['_REG_ID'] for any potential future messages notifications
-        $this->_req_data['_REG_ID'] = apply_filters(
-            'FHEE__Registrations_Admin_Page___set_registration_status__REG_IDs',
-            $REG_IDs,
-            $status,
-            $success,
-            $this
-        );
+
         //return $success and processed registrations
-        return array('REG_ID' => $this->req_data['_REG_ID'], 'success' => $success);
+        return array('REG_ID' => $REG_IDs, 'success' => $success);
     }
 
 
