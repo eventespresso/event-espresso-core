@@ -2,6 +2,7 @@
 
 use EventEspresso\core\domain\Domain;
 use EventEspresso\core\domain\entities\Context;
+use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 
@@ -1488,7 +1489,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @return void
      * @throws DomainException
      * @throws EE_Error
-     * @throws \EventEspresso\core\exceptions\EntityNotFoundException
+     * @throws EntityNotFoundException
      */
     protected function _registration_details()
     {
@@ -1725,7 +1726,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      *
      * @return array
      * @throws EE_Error
-     * @throws \EventEspresso\core\exceptions\EntityNotFoundException
+     * @throws EntityNotFoundException
      */
     protected function _get_reg_statuses()
     {
@@ -1744,7 +1745,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     }
 
 
-
     /**
      * This method is used when using _REG_ID from request which may or may not be an array of reg_ids.
      *
@@ -1753,9 +1753,11 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @return array (array with reg_id(s) updated and whether update was successful.
      * @throws EE_Error
      * @throws InvalidArgumentException
-     * @throws RuntimeException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @throws RuntimeException
+     * @throws EntityNotFoundException
      */
     protected function _set_registration_status_from_request($status = false, $notify = false)
     {
@@ -1773,7 +1775,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         // and remove empty entries
         $REG_IDs = array_filter($REG_IDs);
 
-        $result = $this->_set_registration_status($REG_IDs, $status);
+        $result = $this->_set_registration_status($REG_IDs, $status, $notify);
 
         /**
          * Set and filter $_req_data['_REG_ID'] for any potential future messages notifications.
@@ -1838,6 +1840,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      *
      * @param array  $REG_IDs
      * @param string $status
+     * @param bool   $notify  Used to indicate whether notification was requested or not.  This determines the context
+     *                        slug sent with setting the registration status.
      * @return array (an array with 'success' key representing whether status change was successful, and 'REG_ID' as
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -1845,9 +1849,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      * @throws RuntimeException
-     * @throws \EventEspresso\core\exceptions\EntityNotFoundException
+     * @throws EntityNotFoundException
      */
-    protected function _set_registration_status($REG_IDs = array(), $status = '')
+    protected function _set_registration_status($REG_IDs = array(), $status = '', $notify = false)
     {
         $success = false;
         // typecast $REG_IDs
@@ -1856,6 +1860,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             $success = true;
             // set default status if none is passed
             $status = $status ? $status : EEM_Registration::status_id_pending_payment;
+            $status_context = $notify
+                ? Domain::MANUAL_STATUS_CHANGE_FROM_REGISTRATION_ADMIN_UI_AND_NOTIFY_CONTEXT
+                : Domain::MANUAL_STATUS_CHANGE_FROM_REGISTRATION_ADMIN_UI_CONTEXT;
             //loop through REG_ID's and change status
             foreach ($REG_IDs as $REG_ID) {
                 $registration = EEM_Registration::instance()->get_one_by_ID($REG_ID);
@@ -1864,7 +1871,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                         $status,
                         false,
                         new Context(
-                            Domain::MANUAL_STATUS_CHANGE_FROM_REGISTRATION_ADMIN_UI_CONTEXT,
+                            $status_context,
                             esc_html__(
                                 'Manually triggered status change on a Registration Admin Page route.',
                                 'event_espresso'
@@ -2089,7 +2096,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @return void
      * @throws DomainException
      * @throws EE_Error
-     * @throws \EventEspresso\core\exceptions\EntityNotFoundException
+     * @throws EntityNotFoundException
      */
     public function _reg_details_meta_box()
     {
