@@ -46,11 +46,14 @@ class EE_Email_Field_Test extends EE_UnitTestCase
             'basic'      => true,
             'wp_default' => false,
             'i18n'       => true,
-            'i18n_dns'   => true,
         );
+        //only add `i18n_dns` validation check if mailcatcher isn't detected.  Mailcatcher hijacks that dns checks.
+        if (strpos(ini_get('sendmail_path'), 'catchmail') === false) {
+            $email_validation_levels['i18n_dns'] = true;
+        }
         foreach ($email_validation_levels as $email_validation_level => $test_should_pass) {
             EE_Registry::instance()->CFG->registration->email_validation_level = $email_validation_level;
-            $this->set_email_field_value($test_should_pass);
+            $this->set_email_field_value($email_validation_level, $test_should_pass);
         }
     }
 
@@ -59,7 +62,7 @@ class EE_Email_Field_Test extends EE_UnitTestCase
      * @param bool $test_should_pass
      * @throws \EE_Error
      */
-    public function set_email_field_value($test_should_pass = true)
+    public function set_email_field_value($validation_being_tested, $test_should_pass = true)
     {
         $international_email_address = 'jägerjürgen@deutschland.com';
         /** @var \EE_Email_Field $email_field */
@@ -70,9 +73,10 @@ class EE_Email_Field_Test extends EE_UnitTestCase
                 $international_email_address,
                 $actual_email_address,
                 sprintf(
-                    'Was ist das? Die E-Mail-Adresse des Teilnehmers sollte "%1$s", nicht "%2$s" sein!',
+                    'Was ist das? Die E-Mail-Adresse des Teilnehmers sollte "%1$s", nicht "%2$s" sein (Validation Level: %3$s)!',
                     $international_email_address,
-                    $actual_email_address
+                    $actual_email_address,
+                    $validation_being_tested
                 )
             // translation:
             // What is this? The attendee's email address should be "jägerjürgen@deutschland.com", not "{actual result}"
@@ -82,8 +86,9 @@ class EE_Email_Field_Test extends EE_UnitTestCase
                 $international_email_address,
                 $actual_email_address,
                 sprintf(
-                    'Was ist das? Die E-Mail-Adresse des Teilnehmers sollte "", nicht "%1$s" sein!',
-                    $actual_email_address
+                    'Was ist das? Die E-Mail-Adresse des Teilnehmers sollte "", nicht "%1$s" sein (Validation Level: %2$s!',
+                    $actual_email_address,
+                    $validation_being_tested
                 )
             // translation:
             // What is this? The attendee's email address should be "", not "{actual result}"
