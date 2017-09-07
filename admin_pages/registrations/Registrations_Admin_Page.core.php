@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\Domain;
 use EventEspresso\core\domain\entities\Context;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -1863,14 +1864,10 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                         $status,
                         false,
                         new Context(
-                            $this->page_slug . '_' . $this->_req_action,
-                            sprintf(
-                                esc_html__(
-                                    'Manually triggering status change on the %1$s page, and %2$ss route.',
-                                    'event_espresso'
-                                ),
-                                $this->page_slug,
-                                $this->_req_action
+                            Domain::MANUAL_STATUS_CHANGE_FROM_REGISTRATION_ADMIN_UI_CONTEXT,
+                            esc_html__(
+                                'Manually triggered status change on a Registration Admin Page route.',
+                                'event_espresso'
                             )
                         )
                     );
