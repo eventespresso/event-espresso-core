@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\entities\Context;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 
@@ -1841,7 +1842,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      * @throws RuntimeException
+     * @throws \EventEspresso\core\exceptions\EntityNotFoundException
      */
     protected function _set_registration_status($REG_IDs = array(), $status = '')
     {
@@ -1856,7 +1859,21 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             foreach ($REG_IDs as $REG_ID) {
                 $registration = EEM_Registration::instance()->get_one_by_ID($REG_ID);
                 if ($registration instanceof EE_Registration) {
-                    $registration->set_status($status);
+                    $registration->set_status(
+                        $status,
+                        false,
+                        new Context(
+                            $this->page_slug . '_' . $this->_req_action,
+                            sprintf(
+                                esc_html__(
+                                    'Manually triggering status change on the %1$s page, and %2$ss route.',
+                                    'event_espresso'
+                                ),
+                                $this->page_slug,
+                                $this->_req_action
+                            )
+                        )
+                    );
                     $result = $registration->save();
                     // verifying explicit fails because update *may* just return 0 for 0 rows affected
                     $success = $result !== false ? $success : false;
