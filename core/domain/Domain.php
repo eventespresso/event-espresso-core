@@ -21,4 +21,7 @@ class Domain extends DomainBase
      */
     const MANUAL_STATUS_CHANGE_FROM_REGISTRATION_ADMIN_UI_CONTEXT
         = 'manual_registration_status_change_from_registration_admin';
+
+    const MANUAL_STATUS_CHANGE_FROM_REGISTRATION_ADMIN_UI_AND_NOTIFY_CONTEXT
+        = 'manual_registration_status_change_from_registration_admin_and_notify';
 }
