@@ -1805,31 +1805,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         ) {
             $this->_process_resend_registration();
         }
-
-        /**
-         * Action that fires at the end of this method.
-         *
-         * @param int|array $registration_ids                         Registration id(s) that successuflly had their
-         *                                                            status changed.
-         * @param int|array                $filtered_registration_ids Registration id(s) that were filtered by
-         *                                                            'FHEE__Registrations_Admin_Page___set_registration_status_from_request__REG_IDs'
-         * @param bool $notify                                        Indicates explicit request for notification
-         *                                                            (true).
-         * @param string $status                                      Status that registration(s) were requested to be
-         *                                                            changed to.
-         * @param bool $success                                       Whether the status was successfully changed for
-         *                                                            any of the given registrations.
-         * @param Registrations_Admin_Page $admin_page_object
-         */
-        do_action(
-            'AHEE__Registrations_Admin_Page___set_registration_status_from_request__end',
-            $result['REG_ID'],
-            $this->_req_data['_REG_ID'],
-            $notify,
-            $status,
-            $result['success'],
-            $this
-        );
         return $result;
     }
 
