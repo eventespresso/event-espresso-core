@@ -83,6 +83,13 @@ class MessagesAdmin extends CoreAdmin
     const MESSAGES_LIST_TABLE_VIEW_MESSAGE_DIALOG_CONTAINER_SELECTOR = '.ee-admin-dialog-container-inner-content';
 
 
+    /**
+     * Returns the selector for the on/off toggle for context on the message template editor.
+     */
+    const MESSAGES_CONTEXT_ACTIVE_STATE_TOGGLE =
+        "//div[@class='activate_context_on_off_toggle_container']/div[@class='switch']/label";
+
+
 
     /**
      * @param string $additional_params Any additional request parameters for the generated url should be included as
@@ -161,6 +168,7 @@ class MessagesAdmin extends CoreAdmin
      *                                This allows you to indicate which item from the set to match.  If this is set to 0
      *                                then all matches for the locator will be returned.
      * @return string
+     * @throws \InvalidArgumentException
      */
     public static function messagesActivityListTableCellSelectorFor(
         $field,
@@ -211,6 +219,7 @@ class MessagesAdmin extends CoreAdmin
      * @param int    $number_in_set         It's possible that the given parameters could match multiple items in the
      *                                      view. This allows you to indicate which item from the set to match.
      * @return string
+     * @throws \InvalidArgumentException
      */
     public static function messagesActivityListTableViewButtonSelectorFor(
         $message_type_label,
@@ -234,16 +243,17 @@ class MessagesAdmin extends CoreAdmin
     }
 
 
-
     /**
      * Locator for the delete action link for a message item in the message activity list table.
      * Note: The link is not visible by default, so the column would need hovered over for the link to appear.
+     *
      * @param        $message_type_label
      * @param string $message_status
      * @param string $messenger
      * @param string $context
      * @param int    $number_in_set
      * @return string
+     * @throws \InvalidArgumentException
      */
     public static function messagesActivityListTableDeleteActionSelectorFor(
         $message_type_label,
@@ -263,5 +273,27 @@ class MessagesAdmin extends CoreAdmin
         );
         $selector .= "/div/span[@class='delete']/a";
         return $selector;
+    }
+
+
+
+    /**
+     * Returns the input selector for a given field in the message template editor.
+     * Assumes one is already viewing the Message Template Editor.
+     * @param string     $field
+     * @return string
+     */
+    public static function messageInputFieldSelectorFor($field)
+    {
+        return "//div[@id='post-body']//input[@id='$field-content']";
+    }
+
+
+    /**
+     * Wrapper for self::messageInputFieldSelectorFor('to') that takes care of getting the input for the To field.
+     */
+    public static function messageTemplateToFieldSelector()
+    {
+        return self::messageInputFieldSelectorFor('to');
     }
 }
