@@ -15,5 +15,10 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  */
 class Domain extends DomainBase
 {
-
+    /**
+     * Slug used for the context where a registration status is changed from a manual trigger in the Registration Admin
+     * Page ui.
+     */
+    const MANUAL_STATUS_CHANGE_FROM_REGISTRATION_ADMIN_UI_CONTEXT
+        = 'manual_registration_status_change_from_registration_admin';
 }
