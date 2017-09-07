@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\entities\Context;
 use EventEspresso\core\exceptions\EntityNotFoundException;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed');
@@ -131,13 +132,19 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * calls reserve_registration_space() if the reg status changes TO approved from any other reg status
      * calls release_registration_space() if the reg status changes FROM approved to any other reg status
      *
-     * @param string  $new_STS_ID
-     * @param boolean $use_default
+     * @param string       $new_STS_ID
+     * @param boolean      $use_default
+     * @param Context|null $context
      * @return bool
-     * @throws \RuntimeException
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws EntityNotFoundException
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws RuntimeException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
-    public function set_status($new_STS_ID = null, $use_default = false)
+    public function set_status($new_STS_ID = null, $use_default = false, Context $context = null)
     {
         // get current REG_Status
         $old_STS_ID = $this->status_ID();
@@ -151,12 +158,18 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
             if ($new_STS_ID === EEM_Registration::status_id_approved) {
                 // reserve a space by incrementing ticket and datetime sold values
                 $this->_reserve_registration_space();
-                do_action('AHEE__EE_Registration__set_status__to_approved', $this, $old_STS_ID, $new_STS_ID);
+                do_action('AHEE__EE_Registration__set_status__to_approved', $this, $old_STS_ID, $new_STS_ID, $context);
                 // OR FROM  approved
             } elseif ($old_STS_ID === EEM_Registration::status_id_approved) {
                 // release a space by decrementing ticket and datetime sold values
                 $this->_release_registration_space();
-                do_action('AHEE__EE_Registration__set_status__from_approved', $this, $old_STS_ID, $new_STS_ID);
+                do_action(
+                    'AHEE__EE_Registration__set_status__from_approved',
+                    $this,
+                    $old_STS_ID,
+                    $new_STS_ID,
+                    $context
+                );
             }
             // update status
             parent::set('STS_ID', $new_STS_ID, $use_default);
@@ -165,7 +178,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
             $transaction_payments = EE_Registry::instance()->load_class('Transaction_Payments');
             $transaction_payments->recalculate_transaction_total($this->transaction(), false);
             $this->transaction()->update_status_based_on_total_paid(true);
-            do_action('AHEE__EE_Registration__set_status__after_update', $this, $old_STS_ID, $new_STS_ID);
+            do_action('AHEE__EE_Registration__set_status__after_update', $this, $old_STS_ID, $new_STS_ID, $context);
             return true;
         }
         //even though the old value matches the new value, it's still good to
