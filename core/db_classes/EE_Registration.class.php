@@ -173,7 +173,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
             }
             // update status
             parent::set('STS_ID', $new_STS_ID, $use_default);
-            $this->_update_if_canceled_or_declined($new_STS_ID, $old_STS_ID);
+            $this->_update_if_canceled_or_declined($new_STS_ID, $old_STS_ID, $context);
             /** @type EE_Transaction_Payments $transaction_payments */
             $transaction_payments = EE_Registry::instance()->load_class('Transaction_Payments');
             $transaction_payments->recalculate_transaction_total($this->transaction(), false);
@@ -191,11 +191,16 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     /**
      * update REGs and TXN when cancelled or declined registrations involved
      *
-     * @param string $new_STS_ID
-     * @param string $old_STS_ID
-     * @throws \EE_Error
+     * @param string       $new_STS_ID
+     * @param string       $old_STS_ID
+     * @param Context|null $context
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
-    private function _update_if_canceled_or_declined($new_STS_ID, $old_STS_ID)
+    private function _update_if_canceled_or_declined($new_STS_ID, $old_STS_ID, Context $context = null)
     {
         // these reg statuses should not be considered in any calculations involving monies owing
         $closed_reg_statuses = EEM_Registration::closed_reg_statuses();
@@ -217,7 +222,13 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
                 $closed_reg_statuses,
                 false
             );
-            do_action('AHEE__EE_Registration__set_status__canceled_or_declined', $this, $old_STS_ID, $new_STS_ID);
+            do_action(
+                'AHEE__EE_Registration__set_status__canceled_or_declined',
+                $this,
+                $old_STS_ID,
+                $new_STS_ID,
+                $context
+            );
             return;
         }
         // true if reinstating cancelled or declined registration
@@ -238,7 +249,13 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
                 $closed_reg_statuses,
                 false
             );
-            do_action('AHEE__EE_Registration__set_status__after_reinstated', $this, $old_STS_ID, $new_STS_ID);
+            do_action(
+                'AHEE__EE_Registration__set_status__after_reinstated',
+                $this,
+                $old_STS_ID,
+                $new_STS_ID,
+                $context
+            );
         }
     }
 
