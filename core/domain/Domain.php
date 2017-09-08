@@ -19,9 +19,9 @@ class Domain extends DomainBase
      * Slug used for the context where a registration status is changed from a manual trigger in the Registration Admin
      * Page ui.
      */
-    const CONTEXT_REGISTRATION_STATUS_CHANGE_REGISTRATION
+    const CONTEXT_REGISTRATION_STATUS_CHANGE_REGISTRATION_ADMIN
         = 'manual_registration_status_change_from_registration_admin';
 
-    const CONTEXT_REGISTRATION_STATUS_CHANGE_REGISTRATION_NOTIFY
+    const CONTEXT_REGISTRATION_STATUS_CHANGE_REGISTRATION_ADMIN_NOTIFY
         = 'manual_registration_status_change_from_registration_admin_and_notify';
 }

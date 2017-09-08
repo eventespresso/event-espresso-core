@@ -1836,8 +1836,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             // set default status if none is passed
             $status = $status ? $status : EEM_Registration::status_id_pending_payment;
             $status_context = $notify
-                ? Domain::CONTEXT_REGISTRATION_STATUS_CHANGE_REGISTRATION_NOTIFY
-                : Domain::CONTEXT_REGISTRATION_STATUS_CHANGE_REGISTRATION;
+                ? Domain::CONTEXT_REGISTRATION_STATUS_CHANGE_REGISTRATION_ADMIN_NOTIFY
+                : Domain::CONTEXT_REGISTRATION_STATUS_CHANGE_REGISTRATION_ADMIN;
             //loop through REG_ID's and change status
             foreach ($REG_IDs as $REG_ID) {
                 $registration = EEM_Registration::instance()->get_one_by_ID($REG_ID);
