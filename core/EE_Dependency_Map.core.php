@@ -440,7 +440,11 @@ class EE_Dependency_Map
                 'EE_Request' => EE_Dependency_Map::load_from_cache,
             ),
             'EE_System'                                                                                                   => array(
-                'EE_Registry' => EE_Dependency_Map::load_from_cache,
+                'EE_Registry'                                => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\loaders\Loader' => EE_Dependency_Map::load_from_cache,
+                'EE_Capabilities'                            => EE_Dependency_Map::load_from_cache,
+                'EE_Request'                                 => EE_Dependency_Map::load_from_cache,
+                'EE_Maintenance_Mode'                        => EE_Dependency_Map::load_from_cache,
             ),
             'EE_Session'                                                                                                  => array(
                 'EventEspresso\core\services\cache\TransientCacheStorage' => EE_Dependency_Map::load_from_cache,
@@ -612,18 +616,26 @@ class EE_Dependency_Map
             'EventEspresso\core\domain\entities\shortcodes\EspressoTxnPage'                                               => array(
                 'EventEspresso\core\services\cache\PostRelatedCacheManager' => EE_Dependency_Map::load_from_cache,
             ),
-            'EventEspresso\core\services\cache\BasicCacheManager'                                                         => array(
+            'EventEspresso\core\services\cache\BasicCacheManager'                        => array(
                 'EventEspresso\core\services\cache\TransientCacheStorage' => EE_Dependency_Map::load_from_cache,
             ),
-            'EventEspresso\core\services\cache\PostRelatedCacheManager'                                                   => array(
+            'EventEspresso\core\services\cache\PostRelatedCacheManager'                  => array(
                 'EventEspresso\core\services\cache\TransientCacheStorage' => EE_Dependency_Map::load_from_cache,
             ),
-            'EventEspresso\core\services\orm\ModelFieldFactory'                                                   => array(
+            'EventEspresso\core\domain\services\validation\email\EmailValidationService' => array(
+                'EE_Registration_Config'                                  => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\loaders\Loader'              => EE_Dependency_Map::load_from_cache,
+            ),
+            'EventEspresso\core\domain\values\EmailAddress'                              => array(
+                null,
+                'EventEspresso\core\domain\services\validation\email\EmailValidationService' => EE_Dependency_Map::load_from_cache,
+            ),
+            'EventEspresso\core\services\orm\ModelFieldFactory' => array(
                 'EventEspresso\core\services\loaders\Loader'              => EE_Dependency_Map::load_from_cache,
             ),
             'LEGACY_MODELS'                                                   => array(
                 null,
-                'EventEspresso\core\services\orm\ModelFieldFactory' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\database\ModelFieldFactory' => EE_Dependency_Map::load_from_cache,
             ),
             'EE_Module_Request_Router' => array(
                 'EE_Request' => EE_Dependency_Map::load_from_cache,
@@ -659,7 +671,7 @@ class EE_Dependency_Map
         //be used in a closure.
         $request = &$this->_request;
         $response = &$this->_response;
-        $loader = &$this->loader;
+        // $loader = &$this->loader;
         $this->_class_loaders = array(
             //load_core
             'EE_Capabilities'                      => 'load_core',
@@ -676,6 +688,10 @@ class EE_Dependency_Map
             'EE_Request_Handler'                   => 'load_core',
             'EE_Session'                           => 'load_core',
             'EE_Cron_Tasks'                        => 'load_core',
+            'EE_System'                            => 'load_core',
+            'EE_Maintenance_Mode'                  => 'load_core',
+            'EE_Register_CPTs'                     => 'load_core',
+            'EE_Admin'                             => 'load_core',
             //load_lib
             'EE_Message_Resource_Manager'          => 'load_lib',
             'EE_Message_Type_Collection'           => 'load_lib',
@@ -687,6 +703,7 @@ class EE_Dependency_Map
             'EE_Messages_Queue'                    => 'load_lib',
             'EE_Messages_Data_Handler_Collection'  => 'load_lib',
             'EE_Message_Template_Group_Collection' => 'load_lib',
+            'EE_Payment_Method_Manager'            => 'load_lib',
             'EE_Messages_Generator'                => function () {
                 return EE_Registry::instance()->load_lib(
                     'Messages_Generator',
@@ -720,8 +737,11 @@ class EE_Dependency_Map
             'EE_Currency_Config'                   => function () {
                 return EE_Config::instance()->currency;
             },
-            'EventEspresso\core\services\loaders\Loader' => function () use (&$loader) {
-                return $loader;
+            'EE_Registration_Config'                   => function () {
+                return EE_Config::instance()->registration;
+            },
+            'EventEspresso\core\services\loaders\Loader' => function () {
+                return LoaderFactory::getLoader();
             },
         );
     }
@@ -735,37 +755,39 @@ class EE_Dependency_Map
     protected function _register_core_aliases()
     {
         $this->_aliases = array(
-            'CommandBusInterface'                                                 => 'EventEspresso\core\services\commands\CommandBusInterface',
-            'EventEspresso\core\services\commands\CommandBusInterface'            => 'EventEspresso\core\services\commands\CommandBus',
-            'CommandHandlerManagerInterface'                                      => 'EventEspresso\core\services\commands\CommandHandlerManagerInterface',
-            'EventEspresso\core\services\commands\CommandHandlerManagerInterface' => 'EventEspresso\core\services\commands\CommandHandlerManager',
-            'CapChecker'                                                          => 'EventEspresso\core\services\commands\middleware\CapChecker',
-            'AddActionHook'                                                       => 'EventEspresso\core\services\commands\middleware\AddActionHook',
-            'CapabilitiesChecker'                                                 => 'EventEspresso\core\domain\services\capabilities\CapabilitiesChecker',
-            'CapabilitiesCheckerInterface'                                        => 'EventEspresso\core\domain\services\capabilities\CapabilitiesCheckerInterface',
+            'CommandBusInterface'                                                          => 'EventEspresso\core\services\commands\CommandBusInterface',
+            'EventEspresso\core\services\commands\CommandBusInterface'                     => 'EventEspresso\core\services\commands\CommandBus',
+            'CommandHandlerManagerInterface'                                               => 'EventEspresso\core\services\commands\CommandHandlerManagerInterface',
+            'EventEspresso\core\services\commands\CommandHandlerManagerInterface'          => 'EventEspresso\core\services\commands\CommandHandlerManager',
+            'CapChecker'                                                                   => 'EventEspresso\core\services\commands\middleware\CapChecker',
+            'AddActionHook'                                                                => 'EventEspresso\core\services\commands\middleware\AddActionHook',
+            'CapabilitiesChecker'                                                          => 'EventEspresso\core\domain\services\capabilities\CapabilitiesChecker',
+            'CapabilitiesCheckerInterface'                                                 => 'EventEspresso\core\domain\services\capabilities\CapabilitiesCheckerInterface',
             'EventEspresso\core\domain\services\capabilities\CapabilitiesCheckerInterface' => 'EventEspresso\core\domain\services\capabilities\CapabilitiesChecker',
-            'CreateRegistrationService'                                           => 'EventEspresso\core\domain\services\registration\CreateRegistrationService',
-            'CreateRegCodeCommandHandler'                                         => 'EventEspresso\core\services\commands\registration\CreateRegCodeCommand',
-            'CreateRegUrlLinkCommandHandler'                                      => 'EventEspresso\core\services\commands\registration\CreateRegUrlLinkCommand',
-            'CreateRegistrationCommandHandler'                                    => 'EventEspresso\core\services\commands\registration\CreateRegistrationCommand',
-            'CopyRegistrationDetailsCommandHandler'                               => 'EventEspresso\core\services\commands\registration\CopyRegistrationDetailsCommand',
-            'CopyRegistrationPaymentsCommandHandler'                              => 'EventEspresso\core\services\commands\registration\CopyRegistrationPaymentsCommand',
-            'CancelRegistrationAndTicketLineItemCommandHandler'                   => 'EventEspresso\core\services\commands\registration\CancelRegistrationAndTicketLineItemCommandHandler',
-            'UpdateRegistrationAndTransactionAfterChangeCommandHandler'           => 'EventEspresso\core\services\commands\registration\UpdateRegistrationAndTransactionAfterChangeCommandHandler',
-            'CreateTicketLineItemCommandHandler'                                  => 'EventEspresso\core\services\commands\ticket\CreateTicketLineItemCommand',
-            'TableManager'                                                        => 'EventEspresso\core\services\database\TableManager',
-            'TableAnalysis'                                                       => 'EventEspresso\core\services\database\TableAnalysis',
+            'CreateRegistrationService'                                                    => 'EventEspresso\core\domain\services\registration\CreateRegistrationService',
+            'CreateRegCodeCommandHandler'                                                  => 'EventEspresso\core\services\commands\registration\CreateRegCodeCommand',
+            'CreateRegUrlLinkCommandHandler'                                               => 'EventEspresso\core\services\commands\registration\CreateRegUrlLinkCommand',
+            'CreateRegistrationCommandHandler'                                             => 'EventEspresso\core\services\commands\registration\CreateRegistrationCommand',
+            'CopyRegistrationDetailsCommandHandler'                                        => 'EventEspresso\core\services\commands\registration\CopyRegistrationDetailsCommand',
+            'CopyRegistrationPaymentsCommandHandler'                                       => 'EventEspresso\core\services\commands\registration\CopyRegistrationPaymentsCommand',
+            'CancelRegistrationAndTicketLineItemCommandHandler'                            => 'EventEspresso\core\services\commands\registration\CancelRegistrationAndTicketLineItemCommandHandler',
+            'UpdateRegistrationAndTransactionAfterChangeCommandHandler'                    => 'EventEspresso\core\services\commands\registration\UpdateRegistrationAndTransactionAfterChangeCommandHandler',
+            'CreateTicketLineItemCommandHandler'                                           => 'EventEspresso\core\services\commands\ticket\CreateTicketLineItemCommand',
             'CreateTransactionCommandHandler'                                     => 'EventEspresso\core\services\commands\transaction\CreateTransactionCommandHandler',
             'CreateAttendeeCommandHandler'                                        => 'EventEspresso\core\services\commands\attendee\CreateAttendeeCommandHandler',
-            'EspressoShortcode'                                                   => 'EventEspresso\core\services\shortcodes\EspressoShortcode',
-            'ShortcodeInterface'                                                  => 'EventEspresso\core\services\shortcodes\ShortcodeInterface',
-            'EventEspresso\core\services\shortcodes\ShortcodeInterface'           => 'EventEspresso\core\services\shortcodes\EspressoShortcode',
-            'EventEspresso\core\services\cache\CacheStorageInterface'             => 'EventEspresso\core\services\cache\TransientCacheStorage',
-            'LoaderInterface'                                                     => 'EventEspresso\core\services\loaders\LoaderInterface',
-            'EventEspresso\core\services\loaders\LoaderInterface'                 => 'EventEspresso\core\services\loaders\Loader',
-            'CommandFactoryInterface'                                             => 'EventEspresso\core\services\commands\CommandFactoryInterface',
-            'EventEspresso\core\services\commands\CommandFactoryInterface'        => 'EventEspresso\core\services\commands\CommandFactory',
-            'EventEspresso\core\domain\services\session\SessionIdentifierInterface' => 'EE_Session',
+            'TableManager'                                                                 => 'EventEspresso\core\services\database\TableManager',
+            'TableAnalysis'                                                                => 'EventEspresso\core\services\database\TableAnalysis',
+            'EspressoShortcode'                                                            => 'EventEspresso\core\services\shortcodes\EspressoShortcode',
+            'ShortcodeInterface'                                                           => 'EventEspresso\core\services\shortcodes\ShortcodeInterface',
+            'EventEspresso\core\services\shortcodes\ShortcodeInterface'                    => 'EventEspresso\core\services\shortcodes\EspressoShortcode',
+            'EventEspresso\core\services\cache\CacheStorageInterface'                      => 'EventEspresso\core\services\cache\TransientCacheStorage',
+            'LoaderInterface'                                                              => 'EventEspresso\core\services\loaders\LoaderInterface',
+            'EventEspresso\core\services\loaders\LoaderInterface'                          => 'EventEspresso\core\services\loaders\Loader',
+            'CommandFactoryInterface'                                                     => 'EventEspresso\core\services\commands\CommandFactoryInterface',
+            'EventEspresso\core\services\commands\CommandFactoryInterface'                => 'EventEspresso\core\services\commands\CommandFactory',
+            'EventEspresso\core\domain\services\session\SessionIdentifierInterface'       => 'EE_Session',
+            'EmailValidatorInterface'                                                     => 'EventEspresso\core\domain\services\validation\email\EmailValidatorInterface',
+            'EventEspresso\core\domain\services\validation\email\EmailValidatorInterface' => 'EventEspresso\core\domain\services\validation\email\EmailValidationService',
             'NoticeConverterInterface'                                            => 'EventEspresso\core\services\notices\NoticeConverterInterface',
             'EventEspresso\core\services\notices\NoticeConverterInterface'        => 'EventEspresso\core\services\notices\ConvertNoticesToEeErrors',
             'NoticesContainerInterface'                                            => 'EventEspresso\core\services\notices\NoticesContainerInterface',

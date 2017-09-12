@@ -14,6 +14,10 @@ abstract class EE_REST_TestCase extends EE_UnitTestCase
 
     public function setUp()
     {
+        //let's know about any errors
+        if (!defined('EE_REST_API_DEBUG_MODE')) {
+            define('EE_REST_API_DEBUG_MODE', true);
+        }
         parent::setUp();
         if (! class_exists('WP_Rest_Request')
             || ! class_exists('Spy_REST_Server')) {
@@ -34,7 +38,7 @@ abstract class EE_REST_TestCase extends EE_UnitTestCase
         remove_filter('rest_url', array($this, 'test_rest_url_for_leading_slash'), 10, 2);
         /** @var WP_REST_Server $wp_rest_server */
         global $wp_rest_server;
-        $wp_rest_server = null;
+        $this->server = $wp_rest_server = null;
     }
 
     public function filter_rest_url_for_leading_slash($url, $path)
@@ -47,5 +51,18 @@ abstract class EE_REST_TestCase extends EE_UnitTestCase
         $this->assertTrue(0 === strpos($path, '/'), 'REST API URL should have a leading slash.');
 
         return $url;
+    }
+
+    /**
+     * Creates a new wp admin user and sets them to the new current user
+     *
+     * @global \WP_User $current_user
+     * @return \WP_User
+     */
+    public function authenticate_as_admin()
+    {
+        global $current_user;
+        $current_user = $this->wp_admin_with_ee_caps();
+        return $current_user;
     }
 }

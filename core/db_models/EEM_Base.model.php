@@ -32,26 +32,6 @@ use EventEspresso\core\services\loaders\LoaderFactory;
 abstract class EEM_Base extends EE_Base implements ResettableInterface
 {
 
-    //admin posty
-    //basic -> grants access to mine -> if they don't have it, select none
-    //*_others -> grants access to others that aren't private, and all mine -> if they don't have it, select mine
-    //*_private -> grants full access -> if dont have it, select all mine and others' non-private
-    //*_published -> grants access to published -> if they dont have it, select non-published
-    //*_global/default/system -> grants access to global items -> if they don't have it, select non-global
-    //publish_{thing} -> can change status TO publish; SPECIAL CASE
-    //frontend posty
-    //by default has access to published
-    //basic -> grants access to mine that aren't published, and all published
-    //*_others ->grants access to others that aren't private, all mine
-    //*_private -> grants full access
-    //frontend non-posty
-    //like admin posty
-    //category-y
-    //assign -> grants access to join-table
-    //(delete, edit)
-    //payment-method-y
-    //for each registered payment method,
-    //ee_payment_method_{pmttype} -> if they don't have it, select all where they aren't of that type
     /**
      * Flag to indicate whether the values provided to EEM_Base have already been prepared
      * by the model object or not (ie, the model object has used the field's _prepare_for_set function on the values).
@@ -98,7 +78,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * and the value is an array. Each of those sub-arrays have keys of field names (eg 'ATT_ID', which should also be
      * variable names on the model objects (eg, EE_Attendee), and the keys should be children of EE_Model_Field
      *
-     * @var \EE_Model_Field_Base[] $_fields
+     * @var \EE_Model_Field_Base[][] $_fields
      */
     protected $_fields;
 
@@ -275,7 +255,11 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     /**
      * Whether or not this model is based off a table in WP core only (CPTs should set
      * this to FALSE, but if we were to make an EE_WP_Post model, it should set this to true).
-     *
+     * This should be true for models that deal with data that should exist independent of EE.
+     * For example, if the model can read and insert data that isn't used by EE, this should be true.
+     * It would be false, however, if you could guarantee the model would only interact with EE data,
+     * even if it uses a WP core table (eg event and venue models set this to false for that reason:
+     * they can only read and insert events and venues custom post types, not arbitrary post types)
      * @var boolean
      */
     protected $_wp_core_model = false;
@@ -340,6 +324,11 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     protected $_between_style_operators = array('BETWEEN');
 
     /**
+     * Operators that work like SQL's like: input should be assumed to be a string, already prepared for a LIKE query.
+     * @var array
+     */
+    protected $_like_style_operators = array('LIKE', 'NOT LIKE');
+    /**
      * operators that are used for handling NUll and !NULL queries.  Typically used for when checking if a row exists
      * on a join table.
      *
@@ -389,10 +378,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     private $_valid_wpdb_data_types = array('%d', '%s', '%f');
 
     /**
-     *    EE_Registry Object
-     *
-     * @var    object
-     * @access    protected
+     * @var EE_Registry $EE
      */
     protected $EE = null;
 
@@ -419,6 +405,12 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * @var array
      */
     protected $_entity_map;
+
+    /**
+     * @var LoaderInterface $loader
+     */
+    private static $loader;
+
 
     /**
      * constant used to show EEM_Base has not yet verified the db on this http request
@@ -540,7 +532,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
          *
          * @var EE_Table_Base[] $_tables
          */
-        $this->_tables = apply_filters('FHEE__' . get_class($this) . '__construct__tables', $this->_tables);
+        $this->_tables = (array)apply_filters('FHEE__' . get_class($this) . '__construct__tables', $this->_tables);
         foreach ($this->_tables as $table_alias => $table_obj) {
             /** @var $table_obj EE_Table_Base */
             $table_obj->_construct_finalize_with_alias($table_alias);
@@ -555,7 +547,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
          *
          * @param EE_Model_Field_Base[] $_fields
          */
-        $this->_fields = apply_filters('FHEE__' . get_class($this) . '__construct__fields', $this->_fields);
+        $this->_fields = (array)apply_filters('FHEE__' . get_class($this) . '__construct__fields', $this->_fields);
         $this->_invalidate_field_caches();
         foreach ($this->_fields as $table_alias => $fields_for_table) {
             if (! array_key_exists($table_alias, $this->_tables)) {
@@ -586,7 +578,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
          *
          * @param EE_Model_Relation_Base[] $_model_relations
          */
-        $this->_model_relations = apply_filters('FHEE__' . get_class($this) . '__construct__model_relations',
+        $this->_model_relations = (array)apply_filters('FHEE__' . get_class($this) . '__construct__model_relations',
             $this->_model_relations);
         foreach ($this->_model_relations as $model_name => $relation_obj) {
             /** @var $relation_obj EE_Model_Relation_Base */
@@ -654,28 +646,6 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
 
 
     /**
-     * Generates the cap restrictions for the given context, or if they were
-     * already generated just gets what's cached
-     *
-     * @param string $context one of EEM_Base::valid_cap_contexts()
-     * @return EE_Default_Where_Conditions[]
-     */
-    protected function _generate_cap_restrictions($context)
-    {
-        if (isset($this->_cap_restriction_generators[$context])
-            && $this->_cap_restriction_generators[$context]
-               instanceof
-               EE_Restriction_Generator_Base
-        ) {
-            return $this->_cap_restriction_generators[$context]->generate_restrictions();
-        } else {
-            return array();
-        }
-    }
-
-
-
-    /**
      * Used to set the $_model_query_blog_id static property.
      *
      * @param int $blog_id  If provided then will set the blog_id for the models to this id.  If not provided then the
@@ -709,10 +679,10 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      *                                Default is NULL
      *                                (and will be assumed using the set timezone in the 'timezone_string' wp option)
      * @return static (as in the concrete child class)
-     * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public static function instance($timezone = null)
     {
@@ -737,9 +707,9 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      *
      * @param null | string $timezone
      * @return EEM_Base|null (if the model was already instantiated, returns it, with
-     * @throws ReflectionException
      * all its properties reset; if it wasn't instantiated, returns null)
      * @throws EE_Error
+     * @throws ReflectionException
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
@@ -773,11 +743,30 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
 
 
     /**
+     * @return LoaderInterface
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    private static function getLoader()
+    {
+        if(! EEM_Base::$loader instanceof LoaderInterface) {
+            EEM_Base::$loader = LoaderFactory::getLoader();
+        }
+        return EEM_Base::$loader;
+    }
+
+
+
+    /**
      * retrieve the status details from esp_status table as an array IF this model has the status table as a relation.
      *
      * @param  boolean $translated return localized strings or JUST the array.
      * @return array
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function status_array($translated = false)
     {
@@ -1120,30 +1109,30 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                         sprintf(
                             __(
                                 "Custom selection %s (alias %s) needs to be an array like array('COUNT(REG_ID)','%%d')",
-                                "event_espresso"
+                                'event_espresso'
                             ),
                             $selection_and_datatype,
                             $alias
                         )
                     );
                 }
-                if (! in_array($selection_and_datatype[1], $this->_valid_wpdb_data_types)) {
+                if (! in_array($selection_and_datatype[1], $this->_valid_wpdb_data_types, true)) {
                     throw new EE_Error(
                         sprintf(
-                            __(
+                            esc_html__(
                                 "Datatype %s (for selection '%s' and alias '%s') is not a valid wpdb datatype (eg %%s)",
-                                "event_espresso"
+                                'event_espresso'
                             ),
                             $selection_and_datatype[1],
                             $selection_and_datatype[0],
                             $alias,
-                            implode(",", $this->_valid_wpdb_data_types)
+                            implode(', ', $this->_valid_wpdb_data_types)
                         )
                     );
                 }
                 $select_sql_array[] = "{$selection_and_datatype[0]} AS $alias";
             }
-            $columns_to_select_string = implode(", ", $select_sql_array);
+            $columns_to_select_string = implode(', ', $select_sql_array);
         } else {
             $columns_to_select_string = $columns_to_select;
         }
@@ -1869,16 +1858,18 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * Wrapper for EEM_Base::delete_permanently()
      *
      * @param mixed $id
-     * @return boolean whether the row got deleted or not
+     * @param boolean $allow_blocking
+     * @return int the number of rows deleted
      * @throws EE_Error
      */
-    public function delete_permanently_by_ID($id)
+    public function delete_permanently_by_ID($id, $allow_blocking = true)
     {
         return $this->delete_permanently(
             array(
                 array($this->get_primary_key_field()->get_name() => $id),
                 'limit' => 1,
-            )
+            ),
+            $allow_blocking
         );
     }
 
@@ -1889,16 +1880,18 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * Wrapper for EEM_Base::delete()
      *
      * @param mixed $id
-     * @return boolean whether the row got deleted or not
+     * @param boolean $allow_blocking
+     * @return int the number of rows deleted
      * @throws EE_Error
      */
-    public function delete_by_ID($id)
+    public function delete_by_ID($id, $allow_blocking = true)
     {
         return $this->delete(
             array(
                 array($this->get_primary_key_field()->get_name() => $id),
                 'limit' => 1,
-            )
+            ),
+            $allow_blocking
         );
     }
 
@@ -2118,6 +2111,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         $ids_to_delete_indexed_by_column = array();
         if ($this->has_primary_key_field()) {
             $primary_table = $this->_get_main_table();
+            $primary_table_pk_field = $this->get_field_by_column($primary_table->get_fully_qualified_pk_column());
             $other_tables = $this->_get_other_tables();
             $ids_to_delete_indexed_by_column = $query = array();
             foreach ($row_results_for_deleting as $item_to_delete) {
@@ -2199,6 +2193,28 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         return $query_part;
     }
 
+
+
+    /**
+     * Gets the model field by the fully qualified name
+     * @param string $qualified_column_name eg 'Event_CPT.post_name' or $field_obj->get_qualified_column()
+     * @return EE_Model_Field_Base
+     */
+    public function get_field_by_column($qualified_column_name)
+    {
+       foreach($this->field_settings(true) as $field_name => $field_obj){
+           if($field_obj->get_qualified_column() === $qualified_column_name){
+               return $field_obj;
+           }
+       }
+        throw new EE_Error(
+            sprintf(
+                esc_html__('Could not find a field on the model "%1$s" for qualified column "%2$s"', 'event_espresso'),
+                $this->get_this_model_name(),
+                $qualified_column_name
+            )
+        );
+    }
 
 
 
@@ -3983,16 +3999,20 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             //replace the model specified with the join model for this relation chain, whi
             $relation_chain_to_join_model = EE_Model_Parser::replace_model_name_with_join_model_name_in_model_relation_chain($model_name,
                 $join_model_obj->get_this_model_name(), $model_relation_chain);
-            $new_query_info = new EE_Model_Query_Info_Carrier(
-                array($relation_chain_to_join_model => $join_model_obj->get_this_model_name()),
-                $relation_obj->get_join_to_intermediate_model_statement($relation_chain_to_join_model));
-            $passed_in_query_info->merge($new_query_info);
+            $passed_in_query_info->merge(
+                new EE_Model_Query_Info_Carrier(
+                    array($relation_chain_to_join_model => $join_model_obj->get_this_model_name()),
+                    $relation_obj->get_join_to_intermediate_model_statement($relation_chain_to_join_model)
+                )
+            );
         }
         //now just join to the other table pointed to by the relation object, and add its data types
-        $new_query_info = new EE_Model_Query_Info_Carrier(
-            array($model_relation_chain => $model_name),
-            $relation_obj->get_join_statement($model_relation_chain));
-        $passed_in_query_info->merge($new_query_info);
+        $passed_in_query_info->merge(
+            new EE_Model_Query_Info_Carrier(
+                array($model_relation_chain => $model_name),
+                $relation_obj->get_join_statement($model_relation_chain)
+            )
+        );
     }
 
 
@@ -4031,39 +4051,6 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         }
         return '';
     }
-
-
-
-    /**
-     * Gets the EE_Model_Field on the model indicated by $model_name and the $field_name.
-     * Eg, if called with _get_field_on_model('ATT_ID','Attendee'), it will return the EE_Primary_Key_Field on
-     * EEM_Attendee.
-     *
-     * @param string $field_name
-     * @param string $model_name
-     * @return EE_Model_Field_Base
-     * @throws EE_Error
-     */
-    protected function _get_field_on_model($field_name, $model_name)
-    {
-        $model_class = 'EEM_' . $model_name;
-        $model_filepath = $model_class . ".model.php";
-        if (is_readable($model_filepath)) {
-            require_once($model_filepath);
-            $model_instance = call_user_func($model_name . "::instance");
-            /* @var $model_instance EEM_Base */
-            return $model_instance->field_settings_for($field_name);
-        }
-        throw new EE_Error(
-            sprintf(
-                __(
-                    'No model named %s exists, with classname %s and filepath %s',
-                    'event_espresso'
-                ), $model_name, $model_class, $model_filepath
-            )
-        );
-    }
-
 
 
     /**
@@ -4213,14 +4200,14 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         if (is_array($op_and_value) && isset($op_and_value[2]) && $op_and_value[2] == true) {
             return $operator . SP . $this->_deduce_column_name_from_query_param($value);
         }
-        if (in_array($operator, $this->_in_style_operators) && is_array($value)) {
+        if (in_array($operator, $this->valid_in_style_operators()) && is_array($value)) {
             //in this case, the value should be an array, or at least a comma-separated list
             //it will need to handle a little differently
             $cleaned_value = $this->_construct_in_value($value, $field_obj);
             //note: $cleaned_value has already been run through $wpdb->prepare()
             return $operator . SP . $cleaned_value;
         }
-        if (in_array($operator, $this->_between_style_operators) && is_array($value)) {
+        if (in_array($operator, $this->valid_between_style_operators()) && is_array($value)) {
             //the value should be an array with count of two.
             if (count($value) !== 2) {
                 throw new EE_Error(
@@ -4236,7 +4223,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             $cleaned_value = $this->_construct_between_value($value, $field_obj);
             return $operator . SP . $cleaned_value;
         }
-        if (in_array($operator, $this->_null_style_operators)) {
+        if (in_array($operator, $this->valid_null_style_operators())) {
             if ($value !== null) {
                 throw new EE_Error(
                     sprintf(
@@ -4251,15 +4238,15 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             }
             return $operator;
         }
-        if ($operator === 'LIKE' && ! is_array($value)) {
+        if (in_array($operator, $this->valid_like_style_operators()) && ! is_array($value)) {
             //if the operator is 'LIKE', we want to allow percent signs (%) and not
             //remove other junk. So just treat it as a string.
             return $operator . SP . $this->_wpdb_prepare_using_field($value, '%s');
         }
-        if (! in_array($operator, $this->_in_style_operators) && ! is_array($value)) {
+        if (! in_array($operator, $this->valid_in_style_operators()) && ! is_array($value)) {
             return $operator . SP . $this->_wpdb_prepare_using_field($value, $field_obj);
         }
-        if (in_array($operator, $this->_in_style_operators) && ! is_array($value)) {
+        if (in_array($operator, $this->valid_in_style_operators()) && ! is_array($value)) {
             throw new EE_Error(
                 sprintf(
                     __(
@@ -4271,7 +4258,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                 )
             );
         }
-        if (! in_array($operator, $this->_in_style_operators) && is_array($value)) {
+        if (! in_array($operator, $this->valid_in_style_operators()) && is_array($value)) {
             throw new EE_Error(
                 sprintf(
                     __(
@@ -4691,12 +4678,13 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * fields
      *
      * @param string $fieldName
+     * @param boolean $include_db_only_fields
      * @throws EE_Error
      * @return EE_Model_Field_Base
      */
-    public function field_settings_for($fieldName)
+    public function field_settings_for($fieldName, $include_db_only_fields = true)
     {
-        $fieldSettings = $this->field_settings(true);
+        $fieldSettings = $this->field_settings($include_db_only_fields);
         if (! array_key_exists($fieldName, $fieldSettings)) {
             throw new EE_Error(sprintf(__("There is no field/column '%s' on '%s'", 'event_espresso'), $fieldName,
                 get_class($this)));
@@ -5043,8 +5031,6 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                                         ->load_class($className, array($this_model_fields_n_values, $this->_timezone),
                                             true, false);
         }
-        //it is entirely possible that the instantiated class object has a set timezone_string db field and has set it's internal _timezone property accordingly (see new_instance_from_db in model objects particularly EE_Event for example).  In this case, we want to make sure the model object doesn't have its timezone string overwritten by any timezone property currently set here on the model so, we intentionally override the model _timezone property with the model_object timezone property.
-        $this->set_timezone($classInstance->get_timezone());
         return $classInstance;
     }
 
@@ -5690,6 +5676,64 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     }
 
 
+
+    /**
+     * Gets the valid operators
+     * @return array keys are accepted strings, values are the SQL they are converted to
+     */
+    public function valid_operators(){
+        return $this->_valid_operators;
+    }
+
+
+
+    /**
+     * Gets the between-style operators (take 2 arguments).
+     * @return array keys are accepted strings, values are the SQL they are converted to
+     */
+    public function valid_between_style_operators()
+    {
+        return array_intersect(
+            $this->valid_operators(),
+            $this->_between_style_operators
+        );
+    }
+
+    /**
+     * Gets the "like"-style operators (take a single argument, but it may contain wildcards)
+     * @return array keys are accepted strings, values are the SQL they are converted to
+     */
+    public function valid_like_style_operators()
+    {
+        return array_intersect(
+            $this->valid_operators(),
+            $this->_like_style_operators
+        );
+    }
+
+    /**
+     * Gets the "in"-style operators
+     * @return array keys are accepted strings, values are the SQL they are converted to
+     */
+    public function valid_in_style_operators()
+    {
+        return array_intersect(
+            $this->valid_operators(),
+            $this->_in_style_operators
+        );
+    }
+
+    /**
+     * Gets the "null"-style operators (accept no arguments)
+     * @return array keys are accepted strings, values are the SQL they are converted to
+     */
+    public function valid_null_style_operators()
+    {
+        return array_intersect(
+            $this->valid_operators(),
+            $this->_null_style_operators
+        );
+    }
 
     /**
      * Gets an array where keys are the primary keys and values are their 'names'

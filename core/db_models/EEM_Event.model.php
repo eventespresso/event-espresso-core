@@ -158,11 +158,11 @@ class EEM_Event extends EEM_CPT_Base
                 'EVT_member_only'                 => new EE_Boolean_Field('EVT_member_only',
                     esc_html__('Member-Only Event Flag', 'event_espresso'), false, false),
                 'EVT_phone'                       => new EE_Plain_Text_Field('EVT_phone',
-                    esc_html__('Event Phone Number', 'event_espresso'), false),
+                    esc_html__('Event Phone Number', 'event_espresso'), false,''),
                 'EVT_allow_overflow'              => new EE_Boolean_Field('EVT_allow_overflow',
                     esc_html__('Allow Overflow on Event', 'event_espresso'), false, false),
                 'EVT_timezone_string'             => new EE_Plain_Text_Field('EVT_timezone_string',
-                    esc_html__('Timezone (name) for Event times', 'event_espresso'), false),
+                    esc_html__('Timezone (name) for Event times', 'event_espresso'), false,''),
                 'EVT_external_URL'                => new EE_Plain_Text_Field('EVT_external_URL',
                     esc_html__('URL of Event Page if hosted elsewhere', 'event_espresso'), true),
                 'EVT_donations'                   => new EE_Boolean_Field('EVT_donations',
@@ -786,6 +786,21 @@ class EEM_Event extends EEM_CPT_Base
     }
 
 
+    /**
+     * @param mixed $cols_n_values either an array of where each key is the name of a field, and the value is its value
+     *                             or an stdClass where each property is the name of a column,
+     * @return EE_Base_Class
+     * @throws \EE_Error
+     */
+    public function instantiate_class_from_array_or_object($cols_n_values)
+    {
+        $classInstance = parent::instantiate_class_from_array_or_object($cols_n_values);
+        if($classInstance instanceof EE_Event) {
+            //events have their timezone defined in the DB, so use it immediately
+            $this->set_timezone($classInstance->get_timezone());
+        }
+        return $classInstance;
+    }
 }
 // End of file EEM_Event.model.php
 // Location: /includes/models/EEM_Event.model.php
