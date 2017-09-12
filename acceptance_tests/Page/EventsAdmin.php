@@ -49,7 +49,7 @@ class EventsAdmin extends CoreAdmin
      * Selector for the view link after publishing an event.
      * @var string
      */
-    const EVENT_EDITOR_VIEW_LINK_AFTER_PUBLISH_SELECTOR = "//div[@id='message']/p/a";
+    const EVENT_EDITOR_VIEW_LINK_AFTER_PUBLISH_SELECTOR = "//span[@id='sample-permalink']/a";
 
 
     /**
