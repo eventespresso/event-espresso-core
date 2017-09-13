@@ -176,10 +176,20 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
             // update status
             parent::set('STS_ID', $new_STS_ID, $use_default);
             $this->_update_if_canceled_or_declined($new_STS_ID, $old_STS_ID, $context);
-            /** @type EE_Transaction_Payments $transaction_payments */
-            $transaction_payments = EE_Registry::instance()->load_class('Transaction_Payments');
-            $transaction_payments->recalculate_transaction_total($this->transaction(), false);
-            $this->transaction()->update_status_based_on_total_paid(true);
+            $contexts_that_do_not_update_transaction = array(
+                'spco_reg_step_attendee_information_process_registrations'
+            );
+            if(
+                ! (
+                    $context instanceof Context
+                    && in_array($context->slug(), $contexts_that_do_not_update_transaction, true)
+                )
+            ) {
+                /** @type EE_Transaction_Payments $transaction_payments */
+                $transaction_payments = EE_Registry::instance()->load_class('Transaction_Payments');
+                $transaction_payments->recalculate_transaction_total($this->transaction(), false);
+                $this->transaction()->update_status_based_on_total_paid(true);
+            }
             do_action('AHEE__EE_Registration__set_status__after_update', $this, $old_STS_ID, $new_STS_ID, $context);
             return true;
         }
