@@ -18,7 +18,7 @@ class EE_Admin_Two_Column_Layout extends EE_Two_Column_Layout
      */
     public function layout_form_begin($additional_args = array())
     {
-        $this->_form_section->set_html_class('form-table');
+        $this->_form_section->set_html_class($this->_form_section->html_class() . ' form-table');
         return parent::layout_form_begin($additional_args);
     }
 
@@ -56,7 +56,7 @@ class EE_Admin_Two_Column_Layout extends EE_Two_Column_Layout
             || $input->get_display_strategy() instanceof EE_Text_Input_Display_Strategy
             || $input->get_display_strategy() instanceof EE_Admin_File_Uploader_Display_Strategy
         ) {
-            $input->set_html_class($input->html_class() . ' large-text');
+            $input->set_html_class($input->html_class() /*. ' large-text'*/);
         }
         if ($input instanceof EE_Text_Area_Input) {
             $input->set_rows(4);

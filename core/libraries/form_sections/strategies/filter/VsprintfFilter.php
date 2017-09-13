@@ -43,7 +43,7 @@ class VsprintfFilter extends FormHtmlFilter
      * @param string $format
      * @param array  $args
      */
-    public function __construct($format, array $args)
+    public function __construct($format, array $args = array())
     {
         $this->format = $format;
         $this->args   = $args;

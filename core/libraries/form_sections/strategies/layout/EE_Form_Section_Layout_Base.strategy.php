@@ -182,7 +182,8 @@ abstract class EE_Form_Section_Layout_Base
         $label_text = $input->required()
             ? $input->html_label_text() . '<span class="ee-asterisk">*</span>'
             : $input->html_label_text();
-        return '<label id="'
+        return $label_text !== ''
+            ? '<label id="'
                . $input->html_label_id()
                . '" class="'
                . $class
@@ -191,7 +192,8 @@ abstract class EE_Form_Section_Layout_Base
                . '" for="' . $input->html_name()
                . '">'
                . $label_text
-               . '</label>';
+               . '</label>'
+            : '';
     }
 
 

@@ -24,7 +24,10 @@ class EE_Checkbox_Display_Strategy extends EE_Compound_Input_Display_Strategy
         $input = $this->get_input();
         $multi = count($input->options()) > 1;
         $input->set_label_sizes();
-        $label_size_class = $input->get_label_size_class();
+        $label_class = $input->get_label_size_class();
+        $label_class = $label_class !== ''
+            ? $label_class . ' ' . $input->html_label_class()
+            : $input->html_label_class();
         $html             = '';
         if (! is_array($input->raw_value()) && $input->raw_value() !== null) {
             EE_Error::doing_it_wrong(
@@ -46,13 +49,8 @@ class EE_Checkbox_Display_Strategy extends EE_Compound_Input_Display_Strategy
             $value = $input->get_normalization_strategy()->unnormalize_one($value);
             $html_id = $this->get_sub_input_id($value);
             $html .= EEH_HTML::nl(0, 'checkbox');
-            $html .= '<label for="'
-                     . $html_id
-                     . '" id="'
-                     . $html_id
-                     . '-lbl" class="ee-checkbox-label-after'
-                     . $label_size_class
-                     . '">';
+			$html .= '<label for="' . $html_id . '" id="' . $html_id . '-lbl" ';
+			$html .= 'class="ee-checkbox-label-after' . $label_class . '">';
             $html .= EEH_HTML::nl(1, 'checkbox');
             $html .= '<input type="checkbox"';
             $html .= ' name="' . $input->html_name() . '[]"';
