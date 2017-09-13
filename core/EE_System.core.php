@@ -268,7 +268,7 @@ class EE_System implements ActivatableInterface, ResettableInterface
         add_action(
             'AHEE__EE_Capabilities__init_caps__before_initialization',
             function() {
-                LoaderFactory::getLoader()->getShared('Payment_Method_Manager');
+                LoaderFactory::getLoader()->getShared('EE_Payment_Method_Manager');
             }
         );
     }
@@ -535,9 +535,12 @@ class EE_System implements ActivatableInterface, ResettableInterface
         do_action('AHEE__EE_System__register_shortcodes_modules_and_widgets');
         try {
             // load, register, and add shortcodes the new way
-            new ShortcodesManager(
-            // and the old way, but we'll put it under control of the new system
-                EE_Config::getLegacyShortcodesManager()
+            $this->loader->getShared(
+                'EventEspresso\core\services\shortcodes\ShortcodesManager',
+                array(
+                    // and the old way, but we'll put it under control of the new system
+                    EE_Config::getLegacyShortcodesManager()
+                )
             );
         } catch (Exception $exception) {
             new ExceptionStackTraceDisplay($exception);

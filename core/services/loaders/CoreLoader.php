@@ -8,6 +8,7 @@ use EventEspresso\core\services\container\CoffeeMaker;
 use EventEspresso\core\services\container\CoffeeShop;
 use EventEspresso\core\services\container\exceptions\ServiceNotFoundException;
 use InvalidArgumentException;
+use ReflectionException;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -60,6 +61,7 @@ class CoreLoader implements LoaderDecoratorInterface
      * @return mixed
      * @throws EE_Error
      * @throws ServiceNotFoundException
+     * @throws ReflectionException
      */
     public function load($fqcn, $arguments = array(), $shared = true)
     {
@@ -75,6 +77,9 @@ class CoreLoader implements LoaderDecoratorInterface
 
     /**
      * calls reset() on generator if method exists
+     *
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function reset()
     {

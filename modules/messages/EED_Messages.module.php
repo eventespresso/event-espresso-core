@@ -824,7 +824,8 @@ class EED_Messages extends EED_Module
      * @param  string $messenger This should correspond with a valid messenger.
      * @param bool    $send      true we will do a test send using the messenger delivery, false we just do a regular
      *                           preview
-     * @return string|bool          The body of the message or if send is requested, sends.
+     * @return bool|string The body of the message or if send is requested, sends.
+     * @throws EE_Error
      */
     public static function preview_message($type, $context, $messenger, $send = false)
     {
@@ -838,7 +839,15 @@ class EED_Messages extends EED_Module
         );
         $generated_preview_queue = self::$_MSG_PROCESSOR->generate_for_preview($mtg, $send);
         if ($generated_preview_queue instanceof EE_Messages_Queue) {
-            return $generated_preview_queue->get_message_repository()->current()->content();
+            $content = $generated_preview_queue->get_message_repository()->current()->content();
+            //if the current message was persisted to the db (which will happen with any extra fields on a message) then
+            //let's delete it because we don't need previews cluttering up the db.
+            if ($generated_preview_queue->get_message_repository()->current()->ID() > 0
+                && $generated_preview_queue->get_message_repository()->current()->STS_ID() !== EEM_Message::status_failed
+            ) {
+                $generated_preview_queue->get_message_repository()->delete();
+            }
+            return $content;
         } else {
             return $generated_preview_queue;
         }

@@ -21,8 +21,9 @@ class EE_Messages_Data_Handler_Collection_Test extends EE_UnitTestCase {
 	/**
 	 * @return EE_Messages_Data_Handler_Collection
 	 */
-	function test_add() {
-		//need to add some events for previewer to use... we'll just use the event scenarios
+	public function test_add() {
+        $this->loadTestScenarios();
+        //need to add some events for previewer to use... we'll just use the event scenarios
 		$this->scenarios->get_scenarios_by_type( 'event' );
 
 		$data_handler = new EE_Messages_Preview_incoming_data();

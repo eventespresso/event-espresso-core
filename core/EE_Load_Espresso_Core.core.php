@@ -1,7 +1,7 @@
 <?php
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
-use EventEspresso\core\services\loaders\LoaderInterface;
+use EventEspresso\core\services\loaders\LoaderFactory;
 
 if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
@@ -23,11 +23,6 @@ if (! defined('EVENT_ESPRESSO_VERSION')) {
  */
 class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_Core_App
 {
-
-    /**
-     * @type LoaderInterface $loader
-     */
-    protected $loader;
 
     /**
      * @var EE_Request $request
@@ -84,8 +79,8 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_
         // central repository for classes
         $this->registry = $this->_load_registry();
         do_action('EE_Load_Espresso_Core__handle_request__initialize_core_loading');
-        $this->loader = $this->registry->create('EventEspresso\core\services\loaders\Loader');
-        $this->dependency_map->setLoader($this->loader);
+        $loader = LoaderFactory::getLoader($this->registry);
+        $this->dependency_map->setLoader($loader);
         // build DI container
         // $OpenCoffeeShop = new EventEspresso\core\services\container\OpenCoffeeShop();
         // $OpenCoffeeShop->addRecipes();
@@ -98,9 +93,9 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_
         // deprecated functions
         espresso_load_required('EE_Deprecated', EE_CORE . 'EE_Deprecated.core.php');
         // WP cron jobs
-        $this->registry->load_core('Cron_Tasks');
-        $this->registry->load_core('EE_Request_Handler');
-        $this->registry->load_core('EE_System');
+        $loader->getShared('EE_Cron_Tasks');
+        $loader->getShared('EE_Request_Handler');
+        $loader->getShared('EE_System');
         return $this->response;
     }
 

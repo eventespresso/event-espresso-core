@@ -6,3 +6,5 @@
 | [Custom Templates for Multiple Events in Message](custom-templates-multiple-events.md)| ✅ |
 | [Verify calculations done by js for totals in ticket editor are correct](test-ticket-editor-subtotal-calcs.md) | ✅ |
 | [Capabilities](capabilities.md) | |
+| [Verifying CC field for Email messages work](verifying-cc-in-email-messages.md) | |
+| [Verifying Disabling Message Context works](verifying-disabling-message-context-works.md) | |

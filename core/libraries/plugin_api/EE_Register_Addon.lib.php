@@ -267,7 +267,9 @@ class EE_Register_Addon implements EEI_Plugin_API
         \EE_Register_Addon::_register_payment_methods($addon_name);
         // load and instantiate main addon class
         $addon = \EE_Register_Addon::_load_and_init_addon_class($addon_name);
-        add_action('AHEE__EE_System__set_hooks_for_core', array($addon, 'after_registration'));
+
+        //delay calling after_registration hook on each addon until after all add-ons have been registered.
+        add_action('AHEE__EE_System__load_espresso_addons__complete', array($addon, 'after_registration'), 999);
     }
 
 
@@ -404,6 +406,9 @@ class EE_Register_Addon implements EEI_Plugin_API
             // array of full server paths to any EES_Shortcodes used by the addon
             'shortcode_paths'       => isset($setup_args['shortcode_paths'])
                 ? (array)$setup_args['shortcode_paths']
+                : array(),
+            'shortcode_fqcns' => isset($setup_args['shortcode_fqcns'])
+                ? (array) $setup_args['shortcode_fqcns']
                 : array(),
             // array of full server paths to any WP_Widgets used by the addon
             'widget_paths'          => isset($setup_args['widget_paths'])
@@ -789,10 +794,19 @@ class EE_Register_Addon implements EEI_Plugin_API
      */
     private static function _register_shortcodes($addon_name)
     {
-        if (! empty(self::$_settings[$addon_name]['shortcode_paths'])) {
+        if (! empty(self::$_settings[$addon_name]['shortcode_paths'])
+            || ! empty(self::$_settings[$addon_name]['shortcode_fqcns'])
+        ) {
             EE_Register_Shortcode::register(
                 $addon_name,
-                array('shortcode_paths' => self::$_settings[$addon_name]['shortcode_paths'])
+                array(
+                    'shortcode_paths' => isset(self::$_settings[$addon_name]['shortcode_paths'])
+                        ? self::$_settings[$addon_name]['shortcode_paths']
+                        : array(),
+                    'shortcode_fqcns' => isset(self::$_settings[$addon_name]['shortcode_fqcns'])
+                        ? self::$_settings[$addon_name]['shortcode_fqcns']
+                        : array()
+                )
             );
         }
     }
@@ -1007,7 +1021,9 @@ class EE_Register_Addon implements EEI_Plugin_API
                 // add to list of modules to be registered
                 EE_Register_Module::deregister($addon_name);
             }
-            if (! empty(self::$_settings[$addon_name]['shortcode_paths'])) {
+            if (! empty(self::$_settings[$addon_name]['shortcode_paths'])
+                || ! empty(self::$_settings[$addon_name]['shortcode_fqcns'])
+            ) {
                 // add to list of shortcodes to be registered
                 EE_Register_Shortcode::deregister($addon_name);
             }
@@ -1060,7 +1076,14 @@ class EE_Register_Addon implements EEI_Plugin_API
                 'AHEE__EE_System__perform_activations_upgrades_and_migrations',
                 array(EE_Registry::instance()->addons->{$class_name}, 'initialize_db_if_no_migrations_required')
             );
+            //remove `after_registration` call
+            remove_action(
+                'AHEE__EE_System__load_espresso_addons__complete',
+                array(EE_Registry::instance()->addons->{$class_name}, 'after_registration'),
+                999
+            );
             unset(EE_Registry::instance()->addons->{$class_name}, self::$_settings[$addon_name]);
+
             do_action('AHEE__EE_Register_Addon__deregister__after', $addon_name);
         }
     }

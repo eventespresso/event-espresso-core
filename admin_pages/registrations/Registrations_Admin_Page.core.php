@@ -321,13 +321,13 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 'func'       => 'bulk_action_on_registrations',
                 'noheader'   => true,
                 'capability' => 'ee_edit_registrations',
-                'args' => array('no_approve')
+                'args' => array('not_approve')
             ),
             'no_approve_and_notify_registrations' => array(
                 'func'       => 'bulk_action_on_registrations',
                 'noheader'   => true,
                 'capability' => 'ee_edit_registrations',
-                'args' => array('no_approve', true)
+                'args' => array('not_approve', true)
             ),
             'cancel_registration'                => array(
                 'func'       => 'cancel_registration',
@@ -1588,7 +1588,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         if ($attendee instanceof EE_Attendee
             && EE_Registry::instance()->CAP->current_user_can(
                 'ee_edit_registration',
-                'edit-reg-questions-mbox'
+                'edit-reg-questions-mbox',
+                $this->_registration->ID()
             )
         ) {
             add_meta_box(
