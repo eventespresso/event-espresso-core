@@ -207,7 +207,7 @@ class EE_Registration_Processor extends EE_Processor_Base {
      */
 	public function toggle_incomplete_registration_status_to_default(
 	    EE_Registration $registration,
-        $save = TRUE,
+        $save = true,
         Context $context = null
     ) {
 		$existing_reg_status = $registration->status_ID();
