@@ -36,10 +36,9 @@ class CoreLoader
         $this->requireTestCaseParents();
         $this->bootstrapMockAddon();
         $this->onShutdown();
-        Benchmark::writeResultsAtShutdown(
-            EVENT_ESPRESSO_UPLOAD_DIR . 'logs/benchmarking-master.html',
-            false
-        );
+        // Benchmark::writeResultsAtShutdown(
+        //     EVENT_ESPRESSO_UPLOAD_DIR . 'logs/benchmarking-master.html',  false
+        // );
     }
 
 
