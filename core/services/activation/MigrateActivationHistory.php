@@ -46,7 +46,7 @@ class MigrateActivationHistory
                 }
             }
             $version_history = $corrected_db_update;
-            $activation_history->updateActivationHistory($corrected_db_update);
+            $activation_history->updateActivationHistory($corrected_db_update, '', false);
         } else {
             // if option is FALSE, then it never existed
             if ($version_history === false) {
@@ -56,7 +56,7 @@ class MigrateActivationHistory
             } else {
                 // option is NOT FALSE but also is NOT an array, so make it an array and save it
                 $version_history = array($version_history => array());
-                $activation_history->updateActivationHistory($version_history);
+                $activation_history->updateActivationHistory($version_history, '', false);
             }
         }
         do_action(
