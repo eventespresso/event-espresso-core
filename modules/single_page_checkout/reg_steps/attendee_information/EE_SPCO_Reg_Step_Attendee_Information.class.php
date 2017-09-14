@@ -1067,7 +1067,10 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
                         false,
                         new Context(
                             'spco_reg_step_attendee_information_process_registrations',
-                            'Finished populating registration with details from the registration form after submitting the Attendee Information Reg Step.'
+                            esc_html__(
+                                'Finished populating registration with details from the registration form after submitting the Attendee Information Reg Step.',
+                                'event_espresso'
+                            )
                         )
                     );
                     // we can also consider the TXN to not have been failed, so temporarily upgrade it's status to
