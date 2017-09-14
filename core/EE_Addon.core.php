@@ -249,44 +249,6 @@ abstract class EE_Addon extends EE_Configurable implements ActivatableInterface
 
 
     /**
-     * Called when EE core detects this addon has been activated for the first time.
-     * If the site isn't in maintenance mode, should setup the addon's database
-     *
-     * @return void
-     */
-    public function new_install()
-    {
-        $classname = get_class($this);
-        do_action("AHEE__{$classname}__new_install");
-        do_action('AHEE__EE_Addon__new_install', $this);
-        EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
-        add_action(
-            'AHEE__EE_System__perform_activations_upgrades_and_migrations',
-            array($this, 'initialize_db_if_no_migrations_required')
-        );
-    }
-
-
-    /**
-     * Called when EE core detects this addon has been reactivated. When this happens,
-     * it's good to just check that your data is still intact
-     *
-     * @return void
-     */
-    public function reactivation()
-    {
-        $classname = get_class($this);
-        do_action("AHEE__{$classname}__reactivation");
-        do_action('AHEE__EE_Addon__reactivation', $this);
-        EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
-        add_action(
-            'AHEE__EE_System__perform_activations_upgrades_and_migrations',
-            array($this, 'initialize_db_if_no_migrations_required')
-        );
-    }
-
-
-    /**
      * Called when the registered deactivation hook for this addon fires.
      * @throws EE_Error
      */
@@ -299,32 +261,6 @@ abstract class EE_Addon extends EE_Configurable implements ActivatableInterface
         EE_Register_Addon::deregister($this->name());
         EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
     }
-
-
-
-
-	/**
-	 * @param array|string $plugins_page_row
-	 */
-	public function set_plugins_page_row( $plugins_page_row = array() ) {
-		// sigh.... check for example content that I stupidly merged to master and remove it if found
-		if ( ! is_array( $plugins_page_row ) && strpos( $plugins_page_row, '<h3>Promotions Addon Upsell Info</h3>' ) !== false ) {
-			$plugins_page_row = '';
-		}
-		$this->_plugins_page_row = $plugins_page_row;
-	}
-
-
-
-	public function deactivation(){
-		$classname = get_class($this);
-//		echo "Deactivating $classname";die;
-		do_action("AHEE__{$classname}__deactivation");
-		do_action('AHEE__EE_Addon__deactivation', $this);
-		//check if the site no longer needs to be in maintenance mode
-		EE_Register_Addon::deregister( $this->name() );
-		EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
-	}
 
 
 
@@ -348,15 +284,6 @@ abstract class EE_Addon extends EE_Configurable implements ActivatableInterface
 	}
 
 
-    /**
-     * Gets the wp option which stores the activation history for this addon
-     *
-     * @return array
-     */
-    public function get_activation_history()
-    {
-        return get_option($this->get_activation_history_option_name(), null);
-    }
 
 	/**
 	 * @param string $config_section
@@ -369,6 +296,18 @@ abstract class EE_Addon extends EE_Configurable implements ActivatableInterface
 	 * @type string
 	 */
 	protected $_main_plugin_file;
+
+
+    /**
+     * gets the filepath to the main file
+     *
+     * @return string
+     */
+    public function get_main_plugin_file()
+    {
+        return $this->_main_plugin_file;
+    }
+
 
     /**
      * Gets the filename (no path) of the main file (the main file loaded
@@ -429,22 +368,7 @@ abstract class EE_Addon extends EE_Configurable implements ActivatableInterface
         return $links;
     }
 
-	/**
-	 * plugin_actions
-	 *
-	 * Add a settings link to the Plugins page, so people can go straight from the plugin page to the settings page.
-	 *
-	 * @param $links
-	 * @param $file
-	 * @return array
-	 */
-	public function plugin_action_links( $links, $file ) {
-		if ( $file === $this->plugin_basename() && $this->plugin_action_slug() !== '' ) {
-			// before other links
-			array_unshift( $links, '<a href="admin.php?page=' . $this->plugin_action_slug() . '">' . esc_html__( 'Settings' ) . '</a>' );
-		}
-		return $links;
-	}
+
 
     /**
      * after_plugin_row
