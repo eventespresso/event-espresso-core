@@ -54,7 +54,7 @@ class ActivationHistory
     /**
      * array of activated versions and activation dates for core or an addon
      *
-     * @var array|bool $version_history
+     * @var array $version_history
      */
     protected $version_history;
 
@@ -76,7 +76,7 @@ class ActivationHistory
         $this->setActivationHistoryOptionName($activation_history_option_name);
         $this->setActivationIndicatorOptionName($activation_indicator_option_name);
         $this->setCurrentVersion($current_version);
-        $this->version_history = get_option($this->activation_history_option_name);
+        $this->version_history = (array) get_option($this->activation_history_option_name, array());
     }
 
 
@@ -174,7 +174,7 @@ class ActivationHistory
     {
         $most_recently_active_version_activation = '1970-01-01 00:00:00';
         $most_recently_active_version = '0.0.0.dev.000';
-        if (is_array($this->version_history)) {
+        if (is_array($this->version_history) && count($this->version_history)) {
             foreach ($this->version_history as $version => $times_activated) {
                 // check there is a record of when this version was activated.
                 // Otherwise, mark it as unknown
@@ -207,9 +207,10 @@ class ActivationHistory
      *
      * @param array|null $version_history
      * @param string     $current_version
-     * @return boolean success
+     * @param bool       $add_current
+     * @return bool success
      */
-    public function updateActivationHistory($version_history = null, $current_version = '')
+    public function updateActivationHistory($version_history = null, $current_version = '', $add_current  = true)
     {
         if ($version_history !== null) {
             $this->version_history = $version_history;
@@ -220,7 +221,9 @@ class ActivationHistory
         if(! isset($this->version_history[$this->current_version])) {
             $this->version_history[$this->current_version] =   array();
         }
-        $this->version_history[ $this->current_version ][] = date('Y-m-d H:i:s', time());
+        if($add_current) {
+            $this->version_history[$this->current_version][] = date('Y-m-d H:i:s', time());
+        }
         return update_option(
             $this->activation_history_option_name,
             $this->version_history
@@ -280,6 +283,18 @@ class ActivationHistory
     public function deleteActivationIndicator()
     {
         return delete_option($this->activation_indicator_option_name);
+    }
+
+
+
+    /**
+     * DANGER!!! HOPE YOU KNOW WHAT YOU ARE DOING !!!
+     *
+     * @return bool
+     */
+    public function deleteActivationHistory()
+    {
+        return delete_option($this->activation_history_option_name);
     }
 
 
