@@ -121,7 +121,7 @@ class RequestTypeDetector
      * @param ActivationHistory $activation_history
      * @return int
      */
-    private function versionChange(ActivationHistory $activation_history)
+    protected function versionChange(ActivationHistory $activation_history)
     {
         return version_compare(
             $activation_history->getCurrentVersion(),
