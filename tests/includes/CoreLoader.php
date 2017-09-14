@@ -6,6 +6,7 @@ use EE_Dependency_Map;
 use EE_Registry;
 use EEH_Activation;
 use EE_Psr4AutoloaderInit;
+use EventEspresso\core\services\Benchmark;
 
 class CoreLoader
 {
@@ -18,9 +19,9 @@ class CoreLoader
         $this->requireTestCaseParents();
         $this->bootstrapMockAddon();
         $this->onShutdown();
-        \EventEspresso\core\services\Benchmark::writeResultsAtShutdown(
-            EVENT_ESPRESSO_UPLOAD_DIR . 'logs/benchmarking-master.html',  false
-        );
+        // Benchmark::writeResultsAtShutdown(
+        //     EVENT_ESPRESSO_UPLOAD_DIR . 'logs/benchmarking-master.html',  false
+        // );
     }
 
     protected function setConstants()
@@ -30,7 +31,7 @@ class CoreLoader
                 define('EE_TESTS_DIR', getenv('EE_TESTS_DIR'));
                 define('EE_PLUGIN_DIR', dirname(dirname(EE_TESTS_DIR)) . '/');
             } else {
-                define('EE_PLUGIN_DIR', dirname(dirname(dirname(__FILE__))) . '/');
+                define('EE_PLUGIN_DIR', dirname(dirname(__DIR__)) . '/');
                 define('EE_TESTS_DIR', EE_PLUGIN_DIR . 'tests/');
             }
 
@@ -194,7 +195,7 @@ class CoreLoader
     public function registerPsr4Path(array $maps)
     {
         foreach ($maps as $prefix => $base_dir) {
-            EE_Psr4AutoloaderInit::psr4_loader()->addNameSpace(
+            EE_Psr4AutoloaderInit::psr4_loader()->addNamespace(
                 $prefix,
                 $base_dir
             );
