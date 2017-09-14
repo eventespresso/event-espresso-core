@@ -31,6 +31,16 @@ class ActivationHistoryExtendedMock extends ActivationHistory
 
 
     /**
+     * @return array
+     */
+    public function getMockVersionHistoryOption()
+    {
+        return (array)get_option($this->activation_history_option_name, array());
+    }
+
+
+
+    /**
      * @param array|bool $version_history
      */
     public function setMockVersionHistory($version_history)
