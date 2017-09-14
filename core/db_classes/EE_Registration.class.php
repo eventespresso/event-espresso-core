@@ -108,8 +108,13 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @param string $field_name
      * @param mixed  $field_value
      * @param bool   $use_default
-     * @throws \EE_Error
-     * @throws \RuntimeException
+     * @throws EE_Error
+     * @throws EntityNotFoundException
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @throws RuntimeException
      */
     public function set($field_name, $field_value, $use_default = false)
     {
@@ -176,19 +181,8 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
             // update status
             parent::set('STS_ID', $new_STS_ID, $use_default);
             $this->_update_if_canceled_or_declined($new_STS_ID, $old_STS_ID, $context);
-            $contexts_that_do_not_update_transaction = array(
-                'spco_reg_step_attendee_information_process_registrations'
-            );
-            if(
-                ! (
-                    $context instanceof Context
-                    && in_array($context->slug(), $contexts_that_do_not_update_transaction, true)
-                )
-            ) {
-                /** @type EE_Transaction_Payments $transaction_payments */
-                $transaction_payments = EE_Registry::instance()->load_class('Transaction_Payments');
-                $transaction_payments->recalculate_transaction_total($this->transaction(), false);
-                $this->transaction()->update_status_based_on_total_paid(true);
+            if($this->statusChangeUpdatesTransaction($context)) {
+                $this->updateTransactionAfterStatusChange();
             }
             do_action('AHEE__EE_Registration__set_status__after_update', $this, $old_STS_ID, $new_STS_ID, $context);
             return true;
@@ -217,6 +211,37 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
         // these reg statuses should not be considered in any calculations involving monies owing
         $closed_reg_statuses = EEM_Registration::closed_reg_statuses();
         // true if registration has been cancelled or declined
+        $this->updateIfCanceled(
+            $closed_reg_statuses,
+            $new_STS_ID,
+            $old_STS_ID,
+            $context
+        );
+        $this->updateIfDeclined(
+            $closed_reg_statuses,
+            $new_STS_ID,
+            $old_STS_ID,
+            $context
+        );
+    }
+
+
+    /**
+     * update REGs and TXN when cancelled or declined registrations involved
+     *
+     * @param array        $closed_reg_statuses
+     * @param string       $new_STS_ID
+     * @param string       $old_STS_ID
+     * @param Context|null $context
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     */
+    private function updateIfCanceled(array $closed_reg_statuses, $new_STS_ID, $old_STS_ID, Context $context = null)
+    {
+        // true if registration has been cancelled or declined
         if (in_array($new_STS_ID, $closed_reg_statuses, true)
             && ! in_array($old_STS_ID, $closed_reg_statuses, true)
         ) {
@@ -243,6 +268,24 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
             );
             return;
         }
+    }
+
+
+    /**
+     * update REGs and TXN when cancelled or declined registrations involved
+     *
+     * @param array        $closed_reg_statuses
+     * @param string       $new_STS_ID
+     * @param string       $old_STS_ID
+     * @param Context|null $context
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     */
+    private function updateIfDeclined(array $closed_reg_statuses, $new_STS_ID, $old_STS_ID, Context $context = null)
+    {
         // true if reinstating cancelled or declined registration
         if (in_array($old_STS_ID, $closed_reg_statuses, true)
             && ! in_array($new_STS_ID, $closed_reg_statuses, true)
@@ -269,6 +312,43 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
                 $context
             );
         }
+    }
+
+
+    /**
+     * @param Context|null $context
+     * @return bool
+     */
+    private function statusChangeUpdatesTransaction(Context $context = null)
+    {
+        $contexts_that_do_not_update_transaction = (array) apply_filters(
+            'AHEE__EE_Registration__statusChangeUpdatesTransaction__contexts_that_do_not_update_transaction',
+            array('spco_reg_step_attendee_information_process_registrations'),
+            $context,
+            $this
+        );
+        return ! (
+            $context instanceof Context
+            && in_array($context->slug(), $contexts_that_do_not_update_transaction, true)
+        );
+    }
+
+
+    /**
+     * @throws EE_Error
+     * @throws EntityNotFoundException
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @throws RuntimeException
+     */
+    private function updateTransactionAfterStatusChange()
+    {
+        /** @type EE_Transaction_Payments $transaction_payments */
+        $transaction_payments = EE_Registry::instance()->load_class('Transaction_Payments');
+        $transaction_payments->recalculate_transaction_total($this->transaction(), false);
+        $this->transaction()->update_status_based_on_total_paid(true);
     }
 
 
