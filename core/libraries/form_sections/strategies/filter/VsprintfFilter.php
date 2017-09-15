@@ -1,4 +1,5 @@
 <?php
+
 namespace EventEspresso\core\libraries\form_sections\strategies\filter;
 
 use EE_Form_Section_Proper;
@@ -37,7 +38,7 @@ class VsprintfFilter extends FormHtmlFilter
 
 
     /**
-     * SprintfFormHtmlParser constructor.
+     * VsprintfFilter constructor.
      *
      * @param string $format
      * @param array  $args
@@ -45,13 +46,13 @@ class VsprintfFilter extends FormHtmlFilter
     public function __construct($format, array $args)
     {
         $this->format = $format;
-        $this->args = $args;
+        $this->args   = $args;
     }
 
 
 
     /**
-     * @param                        $html
+     * @param                             $html
      * @param EE_Form_Section_Validatable $form_section
      * @return string
      */
@@ -71,4 +72,4 @@ class VsprintfFilter extends FormHtmlFilter
 
 }
 // End of file VsprintfFormHtmlParser.php
-// Location: EventEspresso\core\libraries\form_sections\strategies\filter\VsprintfFormHtmlParser.php
+// Location: EventEspresso\core\libraries\form_sections\strategies\filter\VsprintfFilter.php
