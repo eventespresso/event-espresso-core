@@ -86,14 +86,7 @@ class EE_Cron_Tasks extends EE_Base
             10,
             2
         );
-        // FINALIZE ABANDONED TRANSACTIONS
-        add_action(
-            'AHEE__EE_Cron_Tasks__finalize_abandoned_transactions',
-            array('EE_Cron_Tasks', 'check_for_abandoned_transactions'),
-            10,
-            1
-        );
-        // EXPIRED TRANSACTION CHECK
+        // ABANDONED / EXPIRED TRANSACTION CHECK
         add_action(
             'AHEE__EE_Cron_Tasks__expired_transaction_check',
             array('EE_Cron_Tasks', 'expired_transaction_check'),
@@ -324,134 +317,6 @@ class EE_Cron_Tasks extends EE_Base
 
 
     /************  END OF UPDATE TRANSACTION WITH PAYMENT  ************/
-    /*****************  FINALIZE ABANDONED TRANSACTIONS *****************/
-    /**
-     * array of TXN IDs
-     *
-     * @var array
-     */
-    protected static $_abandoned_transactions = array();
-
-
-    /**
-     * schedule_finalize_abandoned_transactions_check
-     * sets a wp_schedule_single_event() for finalizing any TXNs that may
-     * have been abandoned during the registration process
-     *
-     * @param int $timestamp
-     * @param int $TXN_ID
-     */
-    public static function schedule_finalize_abandoned_transactions_check(
-        $timestamp,
-        $TXN_ID
-    ) {
-        // validate $TXN_ID and $timestamp
-        $TXN_ID    = absint($TXN_ID);
-        $timestamp = absint($timestamp);
-        do_action('AHEE_log', __CLASS__, __FUNCTION__, $TXN_ID, '$TXN_ID');
-        if ($TXN_ID && $timestamp) {
-            wp_schedule_single_event(
-                $timestamp,
-                'AHEE__EE_Cron_Tasks__finalize_abandoned_transactions',
-                array($TXN_ID)
-            );
-        }
-    }
-
-
-    /**
-     * check_for_abandoned_transactions
-     * this is the callback for the action hook:
-     * 'AHEE__EE_Cron_Tasks__espresso_finalize_abandoned_transactions'
-     * which is utilized by wp_schedule_single_event()
-     * in EE_SPCO_Reg_Step_Payment_Options::_post_payment_processing().
-     * The passed TXN_ID gets added to an array, and then the
-     * espresso_finalize_abandoned_transactions() function is hooked into
-     * 'AHEE__EE_System__core_loaded_and_ready' which will actually handle the
-     * processing of any abandoned transactions, because doing so now would be
-     * too early and the required resources may not be available
-     *
-     * @param int $TXN_ID
-     */
-    public static function check_for_abandoned_transactions($TXN_ID = 0)
-    {
-        do_action('AHEE_log', __CLASS__, __FUNCTION__, $TXN_ID, '$TXN_ID');
-        if (absint($TXN_ID)) {
-            self::$_abandoned_transactions[] = $TXN_ID;
-            add_action(
-                'shutdown',
-                array('EE_Cron_Tasks', 'finalize_abandoned_transactions'),
-                5
-            );
-        }
-    }
-
-
-    /**
-     * finalize_abandoned_transactions
-     * loops through the self::$_abandoned_transactions array
-     * and attempts to finalize any TXNs that have not been completed
-     * but have had their sessions expired, most likely due to a user not
-     * returning from an off-site payment gateway
-     *
-     * @throws \EE_Error
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \InvalidArgumentException
-     * @throws \ReflectionException
-     * @throws \DomainException
-     */
-    public static function finalize_abandoned_transactions()
-    {
-        do_action('AHEE_log', __CLASS__, __FUNCTION__);
-        if (
-            // are there any TXNs that need cleaning up ?
-            empty(self::$_abandoned_transactions)
-            // reschedule the cron if we can't hit the db right now
-            || EE_Cron_Tasks::reschedule_cron_for_transactions_if_maintenance_mode(
-                'schedule_finalize_abandoned_transactions_check',
-                self::$_abandoned_transactions
-            )
-        ) {
-            return;
-        }
-        /** @type EE_Transaction_Processor $transaction_processor */
-        $transaction_processor = EE_Registry::instance()->load_class('Transaction_Processor');
-        // set revisit flag for txn processor
-        $transaction_processor->set_revisit();
-        /** @type EE_Payment_Processor $payment_processor */
-        $payment_processor = EE_Registry::instance()->load_core('Payment_Processor');
-        // load EEM_Transaction
-        EE_Registry::instance()->load_model('Transaction');
-        foreach (self::$_abandoned_transactions as $TXN_ID) {
-            do_action('AHEE_log', __CLASS__, __FUNCTION__, $TXN_ID, '$TXN_ID');
-            // reschedule the cron if we can't hit the db right now
-            if (! EE_Maintenance_Mode::instance()->models_can_query()) {
-                // reset cron job for finalizing the TXN
-                EE_Cron_Tasks::schedule_finalize_abandoned_transactions_check(
-                    time() + EE_Cron_Tasks::reschedule_timeout,
-                    $TXN_ID
-                );
-                continue;
-            }
-            $transaction = EEM_Transaction::instance()->get_one_by_ID($TXN_ID);
-            // verify transaction
-            if ($transaction instanceof EE_Transaction) {
-                // don't finalize the TXN if it has already been completed
-                if ($transaction->all_reg_steps_completed() === true) {
-                    continue;
-                }
-                // let's simulate an IPN here which will trigger any notifications that need to go out
-                $payment_processor->update_txn_based_on_payment($transaction, $transaction->last_payment(), true, true);
-                do_action('AHEE__EE_Cron_Tasks__finalize_abandoned_transactions__abandoned_transaction', $transaction);
-            }
-            unset(self::$_abandoned_transactions[$TXN_ID]);
-        }
-    }
-
-
-
-    /*************  END OF FINALIZE ABANDONED TRANSACTIONS  *************/
     /*****************  EXPIRED TRANSACTION CHECK *****************/
     /**
      * array of TXN IDs
@@ -570,8 +435,26 @@ class EE_Cron_Tasks extends EE_Base
                             'AHEE__EE_Cron_Tasks__process_expired_transactions__incomplete_transaction',
                             $transaction
                         );
-                        // todo : merge the finalize_abandoned_transactions cron into this one...
                         // todo : move business logic into EE_Transaction_Processor for finalizing abandoned transactions
+                        break;
+                    // Abandoned TXNs
+                    case EEM_Transaction::abandoned_status_code :
+                        // don't finalize the TXN if it has already been completed
+                        if ($transaction->all_reg_steps_completed() !== true) {
+                            /** @type EE_Payment_Processor $payment_processor */
+                            $payment_processor = EE_Registry::instance()->load_core('Payment_Processor');
+                            // let's simulate an IPN here which will trigger any notifications that need to go out
+                            $payment_processor->update_txn_based_on_payment(
+                                $transaction,
+                                $transaction->last_payment(),
+                                true,
+                                true
+                            );
+                        }
+                        do_action(
+                            'AHEE__EE_Cron_Tasks__process_expired_transactions__abandoned_transaction',
+                            $transaction
+                        );
                         break;
                     // Failed TXNs
                     case EEM_Transaction::failed_status_code :
@@ -649,6 +532,66 @@ class EE_Cron_Tasks extends EE_Base
     }
 
 
+    /*****************  FINALIZE ABANDONED TRANSACTIONS *****************/
+    /**
+     * @var array
+     */
+    protected static $_abandoned_transactions = array();
+
+
+    /**
+     * @deprecated
+     * @param int $timestamp
+     * @param int $TXN_ID
+     */
+    public static function schedule_finalize_abandoned_transactions_check($timestamp, $TXN_ID)
+    {
+        EE_Cron_Tasks::schedule_expired_transaction_check($timestamp, $TXN_ID);
+    }
+
+
+    /**
+     * @deprecated
+     * @param int $TXN_ID
+     */
+    public static function check_for_abandoned_transactions($TXN_ID = 0)
+    {
+        EE_Cron_Tasks::expired_transaction_check($TXN_ID);
+    }
+
+
+    /**
+     * @deprecated
+     * @throws \EE_Error
+     * @throws \DomainException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \InvalidArgumentException
+     * @throws \ReflectionException
+     */
+    public static function finalize_abandoned_transactions()
+    {
+        do_action('AHEE_log', __CLASS__, __FUNCTION__);
+        if (
+            // are there any TXNs that need cleaning up ?
+            empty(self::$_abandoned_transactions)
+            // reschedule the cron if we can't hit the db right now
+            || EE_Cron_Tasks::reschedule_cron_for_transactions_if_maintenance_mode(
+                'schedule_expired_transaction_check',
+                self::$_abandoned_transactions
+            )
+        ) {
+            return;
+        }
+        // combine our arrays of transaction IDs
+        self::$_expired_transactions = self::$_abandoned_transactions + self::$_expired_transactions;
+        // and deal with abandoned transactions here now...
+        EE_Cron_Tasks::process_expired_transactions();
+    }
+
+
+
+    /*************  END OF FINALIZE ABANDONED TRANSACTIONS  *************/
 }
 // End of file EE_Cron_Tasks.core.php
 // Location: /EE_Cron_Tasks.core.php
