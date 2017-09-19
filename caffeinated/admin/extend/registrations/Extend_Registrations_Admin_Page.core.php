@@ -531,20 +531,24 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
                                                                            ->get_latest_registration_for_each_of_given_contacts($ids);
                     break;
             }
-            do_action(
+            do_action_ref_array(
                 'AHEE__Extend_Registrations_Admin_Page___newsletter_selected_send__with_registrations',
-                $registrations_used_for_contact_data,
-                $Message_Template_Group->ID()
+                array(
+                    $registrations_used_for_contact_data,
+                    $Message_Template_Group->ID()
+                )
             );
             //kept for backward compat, internally we no longer use this action.
             //@deprecated 4.8.36.rc.002
             $contacts = $id_type === 'registration'
                 ? EEM_Attendee::instance()->get_array_of_contacts_from_reg_ids($ids)
                 : EEM_Attendee::instance()->get_all(array(array('ATT_ID' => array('in', $ids))));
-            do_action(
+            do_action_ref_array(
                 'AHEE__Extend_Registrations_Admin_Page___newsletter_selected_send',
-                $contacts,
-                $Message_Template_Group->ID()
+                array(
+                    $contacts,
+                    $Message_Template_Group->ID()
+                )
             );
         }
         $query_args = array(
