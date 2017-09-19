@@ -439,6 +439,12 @@ class EE_Cron_Tasks extends EE_Base
                         break;
                     // Abandoned TXNs
                     case EEM_Transaction::abandoned_status_code :
+                        // run hook before updating transaction, primarily so
+                        // EED_Ticket_Sales_Monitor::process_abandoned_transactions() can release reserved tickets
+                        do_action(
+                            'AHEE__EE_Cron_Tasks__process_expired_transactions__abandoned_transaction',
+                            $transaction
+                        );
                         // don't finalize the TXN if it has already been completed
                         if ($transaction->all_reg_steps_completed() !== true) {
                             /** @type EE_Payment_Processor $payment_processor */
@@ -451,10 +457,6 @@ class EE_Cron_Tasks extends EE_Base
                                 true
                             );
                         }
-                        do_action(
-                            'AHEE__EE_Cron_Tasks__process_expired_transactions__abandoned_transaction',
-                            $transaction
-                        );
                         break;
                     // Failed TXNs
                     case EEM_Transaction::failed_status_code :
