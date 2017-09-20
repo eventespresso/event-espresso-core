@@ -206,7 +206,7 @@ jQuery(document).ready( function($) {
 				errorClass: 'ee-required-text',
 
 				errorPlacement: function( error, element ) {
-                    error.appendTo(element.parent("div"));
+                    error.appendTo(element.closest("div"));
 					SPCO.invalid_input_errors.push( error.text() );
 					SPCO.track_validation_error( element.attr('id') );
 				},
@@ -440,7 +440,9 @@ jQuery(document).ready( function($) {
 		 */
 		set_listener_for_input_validation_value_change : function() {
 			SPCO.form_inputs.focusout( function() {
+				if ( this.type != 'file' ) {
                 $(this).val( $.trim( $(this).val() ) );
+				}	
 				$(this).valid();
             });
 		},
