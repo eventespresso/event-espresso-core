@@ -117,7 +117,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
         );
         // cron tasks
         add_action(
-            'AHEE__EE_Cron_Tasks__finalize_abandoned_transactions__abandoned_transaction',
+            'AHEE__EE_Cron_Tasks__process_expired_transactions__abandoned_transaction',
             array('EED_Ticket_Sales_Monitor', 'process_abandoned_transactions'),
             10,
             1
