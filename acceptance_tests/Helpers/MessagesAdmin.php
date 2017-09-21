@@ -146,6 +146,40 @@ trait MessagesAdmin
 
 
     /**
+     * Toggles Context so its turned off or on (depending on where it started) and verifies the expected state after
+     * toggling.
+     *
+     * @param string $context_string           What context is being switched (used for the expected state text)
+     * @param bool   $expected_state_is_active Used to indicate whether the expected state is active (true) or inactive
+     *                                         (false)
+     */
+    public function toggleContextState($context_string, $expected_state_is_active = true)
+    {
+        $this->actor()->click(MessagesPage::MESSAGES_CONTEXT_ACTIVE_STATE_TOGGLE);
+        if ($expected_state_is_active) {
+            $this->actor()->waitForText("The template for $context_string is currently active.");
+        } else {
+            $this->actor()->waitForText("The template for $context_string is currently inactive");
+        }
+    }
+
+
+    /**
+     * Triggers saving the message template.
+     * @param bool $and_close   Use to indicate to click the Save and Close button.
+     */
+    public function saveMessageTemplate($and_close = false)
+    {
+        if ($and_close) {
+            $this->actor()->click('Save and Close');
+        } else {
+            $this->actor()->click('Save');
+        }
+        $this->actor()->waitForText('successfully updated');
+    }
+
+
+    /**
      * This takes care of clicking the View Message icon for the given parameters.
      * Assumes you are already viewing the messages activity list table.
      * @param        $message_type_label

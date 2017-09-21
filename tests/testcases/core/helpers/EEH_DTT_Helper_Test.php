@@ -185,6 +185,46 @@ class EEH_DTT_Helper_Test extends EE_UnitTestCase
 
 
     /**
+     * If the WordPress database has a timezone_string set in the database, then when this method is called with no
+     * arguments, it is EXPECTED that it will return the actual tiemzone_string set in the database unless gmt_offset is
+     * provided.
+     * @group 10626
+     */
+    public function test_get_timezone_string_from_gmt_offset_when_timezone_string_set()
+    {
+        $original_tz = get_option('timezone_string');
+        update_option('timezone_string', 'America/New_York');
+        $actual = EEH_DTT_Helper::get_timezone_string_from_gmt_offset();
+        $this->assertEquals('America/New_York', $actual);
+
+        //let's provide 0 as offset - expect UTC back
+        $actual = EEH_DTT_Helper::get_timezone_string_from_gmt_offset(0);
+        $this->assertEquals('UTC', $actual);
+
+        //let's provide an offset THAT IS A KNOWN OFFSET WITH A MATCHING VALID TIMEZONE, whatever timezone string that gets
+        //returned should have a matching offset.
+        $actual = EEH_DTT_Helper::get_timezone_string_from_gmt_offset(-5);
+        $actual = new DateTimeZone($actual);
+        $now = new DateTime('now', $actual);
+        $actual = $actual->getOffset($now);
+        $this->assertEquals(-5*HOUR_IN_SECONDS, $actual);
+
+        //let's provide an offset THAT IS A KNOWN OFFSET WITH NO MATCHING VALID TIMEZONE, whatever timezone string that
+        //gets returned should have a matching offset.
+        //first we need to get our expected offset based on the invalid offset we provide.
+        $expected = EEH_DTT_Helper::adjust_invalid_gmt_offsets(-11.5*HOUR_IN_SECONDS);
+
+        $actual = EEH_DTT_Helper::get_timezone_string_from_gmt_offset(-11.5);
+        $actual = new DateTimeZone($actual);
+        $now = new DateTime('now', $actual);
+        $actual = $actual->getOffset($now);
+        $this->assertEquals($expected, $actual);
+
+        update_option('timezone_string', $original_tz);
+    }
+
+
+    /**
      *  setup_DateTime_object
      *
      * @param string $timezone_string

@@ -641,6 +641,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 		//override _data
 		$this->_data = $data;
 		$addressees = array();
+		$original_contexts = $this->_contexts;
 		//if incoming context then limit to that context
 		if ( ! empty( $context ) ) {
 			$cntxt = ! empty( $this->_contexts[ $context ] ) ? $this->_contexts[ $context ] : '';
@@ -653,6 +654,10 @@ abstract class EE_message_type extends EE_Messages_Base {
 		if ( $this->_process_data() ) {
 			$addressees = $this->_addressees;
 		}
+
+		//reset contexts and addressees
+        $this->_contexts = $original_contexts;
+        $this->_addressees = array();
 		return $addressees;
 	}
 

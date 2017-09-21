@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\entities\Context;
 use EventEspresso\core\services\commands\attendee\CreateAttendeeCommand;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed');
@@ -865,6 +866,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
      * @param EE_Registration[] $registrations
      * @param array             $valid_data
      * @return bool|int
+     * @throws \EventEspresso\core\exceptions\EntityNotFoundException
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
@@ -1060,7 +1062,17 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
                     $registration_processor = EE_Registry::instance()->load_class('Registration_Processor');
                     // at this point, we should have enough details about the registrant to consider the registration
                     // NOT incomplete
-                    $registration_processor->toggle_incomplete_registration_status_to_default($registration, false);
+                    $registration_processor->toggle_incomplete_registration_status_to_default(
+                        $registration,
+                        false,
+                        new Context(
+                            'spco_reg_step_attendee_information_process_registrations',
+                            esc_html__(
+                                'Finished populating registration with details from the registration form after submitting the Attendee Information Reg Step.',
+                                'event_espresso'
+                            )
+                        )
+                    );
                     // we can also consider the TXN to not have been failed, so temporarily upgrade it's status to
                     // abandoned
                     $this->checkout->transaction->toggle_failed_transaction_status();
