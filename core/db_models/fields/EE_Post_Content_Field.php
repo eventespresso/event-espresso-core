@@ -7,7 +7,6 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  */
 class EE_Post_Content_Field extends EE_Text_Field_Base
 {
-    static protected $_added_the_content_basic_filters = false;
 
     /**
      * @param string $table_column
@@ -81,14 +80,19 @@ class EE_Post_Content_Field extends EE_Text_Field_Base
                 );
             case 'the_content_wp_core_only':
             default:
-                self::_ensure_filters_setup();
-                return apply_filters(
+                self::_setup_the_content_wp_core_only_filters();
+                $return_value = apply_filters(
                     'the_content_wp_core_only',
                     parent::prepare_for_pretty_echoing(
                         $value_on_field_to_be_outputted,
                         $schema
                     )
                 );
+                //ya know what? adding these filters is super fast. Let's just
+                //avoid needing to maintain global state and set this up as-needed
+                remove_all_filters('the_content_wp_core_only');
+                do_action( 'AHEE__EE_Post_Content_Field__prepare_for_pretty_echoing__the_content_wp_core_only__done');
+                return $return_value;
         }
     }
 
@@ -97,22 +101,19 @@ class EE_Post_Content_Field extends EE_Text_Field_Base
     /**
      * Verifies we've setup the standard WP core filters on  'the_content_wp_core_only' filter
      */
-    protected static function _ensure_filters_setup()
+    protected static function _setup_the_content_wp_core_only_filters()
     {
-        if( !self::$_added_the_content_basic_filters){
-            add_filter('the_content_wp_core_only', array( $GLOBALS['wp_embed'], 'run_shortcode'), 8);
-            add_filter('the_content_wp_core_only', array( $GLOBALS['wp_embed'], 'autoembed'), 8);
-            add_filter('the_content_wp_core_only', 'wptexturize', 10);
-            add_filter('the_content_wp_core_only', 'wpautop', 10);
-            add_filter('the_content_wp_core_only', 'shortcode_unautop', 10);
-            add_filter('the_content_wp_core_only', 'prepend_attachment', 10);
-            if(function_exists('wp_make_content_images_responsive')) {
-                add_filter('the_content_wp_core_only', 'wp_make_content_images_responsive', 10);
-            }
-            add_filter('the_content_wp_core_only', 'do_shortcode', 11);
-            add_filter('the_content_wp_core_only', 'convert_smilies', 20);
-            self::$_added_the_content_basic_filters = true;
+        add_filter('the_content_wp_core_only', array( $GLOBALS['wp_embed'], 'run_shortcode'), 8);
+        add_filter('the_content_wp_core_only', array( $GLOBALS['wp_embed'], 'autoembed'), 8);
+        add_filter('the_content_wp_core_only', 'wptexturize', 10);
+        add_filter('the_content_wp_core_only', 'wpautop', 10);
+        add_filter('the_content_wp_core_only', 'shortcode_unautop', 10);
+        add_filter('the_content_wp_core_only', 'prepend_attachment', 10);
+        if(function_exists('wp_make_content_images_responsive')) {
+            add_filter('the_content_wp_core_only', 'wp_make_content_images_responsive', 10);
         }
+        add_filter('the_content_wp_core_only', 'do_shortcode', 11);
+        add_filter('the_content_wp_core_only', 'convert_smilies', 20);
     }
 
 

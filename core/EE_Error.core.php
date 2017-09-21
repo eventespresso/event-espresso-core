@@ -368,8 +368,13 @@ class EE_Error extends Exception
                         $a = new ReflectionClass($class);
                         $file = $a->getFileName();
                         if (empty($line) && ! empty($function)) {
-                            $b = new ReflectionMethod($class, $function);
-                            $line = $b->getStartLine();
+                            try {
+                                //if $function is a closure, this throws an exception
+                                $b = new ReflectionMethod($class, $function);
+                                $line = $b->getStartLine();
+                            } catch (Exception $closure_exception) {
+                                $line = 'unknown';
+                            }
                         }
                     }
                     if ($nmbr === $last_on_stack) {
@@ -965,10 +970,15 @@ class EE_Error extends Exception
                 'nag_notice'    => $pan_name,
                 'return_url'    => urlencode($return_url),
                 'ajax_url'      => WP_AJAX_URL,
-                'unknown_error' => __('An unknown error has occurred on the server while attempting to dismiss this notice.',
-                    'event_espresso'),
+                'unknown_error' => esc_html__(
+                    'An unknown error has occurred on the server while attempting to dismiss this notice.',
+                    'event_espresso'
+                ),
             );
-            wp_localize_script('espresso_core', 'ee_dismiss', $args);
+            EE_Registry::$i18n_js_strings = array_merge(
+                EE_Registry::$i18n_js_strings,
+                array('ee_dismiss' => $args)
+            );
             return '
 			<div id="'
                    . $pan_name

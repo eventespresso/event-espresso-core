@@ -36,35 +36,42 @@ class EE_Div_Per_Section_Layout extends EE_Form_Section_Layout_Base
      *
      * @param EE_Form_Input_Base $input
      * @return string
+     * @throws \EE_Error
      */
     public function layout_input($input)
     {
         $html = '';
+        // set something unique for the id
+        $html_id = (string)$input->html_id() !== ''
+            ? (string)$input->html_id()
+            : spl_object_hash($input);
+        // and add a generic input type class
+        $html_class = sanitize_key(str_replace('_', '-', get_class($input))) . '-dv';
         if ($input instanceof EE_Hidden_Input) {
             $html .= EEH_HTML::nl() . $input->get_html_for_input();
-        } elseif ($input instanceof EE_Submit_Input) {
+        } else if ($input instanceof EE_Submit_Input) {
             $html .= EEH_HTML::div(
                 $input->get_html_for_input(),
-                $input->html_id() . '-submit-dv',
-                $input->html_class() . '-submit-dv'
+                $html_id . '-submit-dv',
+                "{$input->html_class()}-submit-dv {$html_class}"
             );
-        } elseif ($input instanceof EE_Select_Input) {
+        } else if ($input instanceof EE_Select_Input) {
             $html .= EEH_HTML::div(
                 EEH_HTML::nl(1) . $input->get_html_for_label() .
                 EEH_HTML::nl() . $input->get_html_for_errors() .
                 EEH_HTML::nl() . $input->get_html_for_input() .
                 EEH_HTML::nl() . $input->get_html_for_help(),
-                $input->html_id() . '-input-dv',
-                $input->html_class() . '-input-dv'
+                $html_id . '-input-dv',
+                "{$input->html_class()}-input-dv {$html_class}"
             );
-        } elseif ($input instanceof EE_Form_Input_With_Options_Base) {
+        } else if ($input instanceof EE_Form_Input_With_Options_Base) {
             $html .= EEH_HTML::div(
                 EEH_HTML::nl() . $this->_display_label_for_option_type_question($input) .
                 EEH_HTML::nl() . $input->get_html_for_errors() .
                 EEH_HTML::nl() . $input->get_html_for_input() .
                 EEH_HTML::nl() . $input->get_html_for_help(),
-                $input->html_id() . '-input-dv',
-                $input->html_class() . '-input-dv'
+                $html_id . '-input-dv',
+                "{$input->html_class()}-input-dv {$html_class}"
             );
         } else {
             $html .= EEH_HTML::div(
@@ -72,8 +79,8 @@ class EE_Div_Per_Section_Layout extends EE_Form_Section_Layout_Base
                 EEH_HTML::nl() . $input->get_html_for_errors() .
                 EEH_HTML::nl() . $input->get_html_for_input() .
                 EEH_HTML::nl() . $input->get_html_for_help(),
-                $input->html_id() . '-input-dv',
-                $input->html_class() . '-input-dv'
+                $html_id . '-input-dv',
+                "{$input->html_class()}-input-dv {$html_class}"
             );
         }
         return $html;
@@ -82,6 +89,7 @@ class EE_Div_Per_Section_Layout extends EE_Form_Section_Layout_Base
 
 
     /**
+     *
      * _display_label_for_option_type_question
      * Gets the HTML for the 'label', which is just text for this (because labels
      * should be for each input)
@@ -91,21 +99,20 @@ class EE_Div_Per_Section_Layout extends EE_Form_Section_Layout_Base
      */
     protected function _display_label_for_option_type_question(EE_Form_Input_With_Options_Base $input)
     {
-        if ($input->display_html_label_text() != '') {
-            $class = $input->required()
-                ? 'ee-required-label ' . $input->html_label_class()
-                : $input->html_label_class();
-            $label_text = $input->required()
-                ? $input->html_label_text() . '<span class="ee-asterisk">*</span>'
-                : $input->html_label_text();
-            $html = '<div id="' . $input->html_label_id() . '"';
-            $html .= ' class="' . $class . '"';
-            $html .= ' style="' . $input->html_label_style() . '">';
-            $html .= $label_text . '</div>';
-            return $html;
-        } else {
-            return '';
+        if ($input->display_html_label_text()) {
+            return EEH_HTML::div(
+                $input->required()
+                    ? $input->html_label_text() . EEH_HTML::span('*', '', 'ee-asterisk')
+                    : $input->html_label_text(),
+                $input->html_label_id(),
+                $input->required()
+                    ? 'ee-required-label ' . $input->html_label_class()
+                    : $input->html_label_class(),
+                $input->html_label_style(),
+                $input->html_other_attributes()
+            );
         }
+        return '';
     }
 
 
@@ -133,4 +140,7 @@ class EE_Div_Per_Section_Layout extends EE_Form_Section_Layout_Base
     {
         return EEH_HTML::divx($this->_form_section->html_id(), $this->_form_section->html_class());
     }
+
+
+
 }

@@ -442,6 +442,8 @@ class EE_Register_CPTs
         $labels = array(
             'name'               => $plural_name,
             'singular_name'      => $singular_name,
+            'singular_slug'      => $singular_slug,
+            'plural_slug'        => $plural_slug,
             'add_new'            => sprintf(__("Add %s", "event_espresso"), $singular_name),
             'add_new_item'       => sprintf(__("Add New %s", "event_espresso"), $singular_name),
             'edit_item'          => sprintf(__("Edit %s", "event_espresso"), $singular_name),

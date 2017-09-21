@@ -2,6 +2,7 @@
 /** @var int $EVT_ID */
 /** @var int $TKT_ID */
 /** @var string $hidden_inputs */
+/** @var string $ticket_description */
 /** @var string $ticket_status_display */
 /** @var \EE_Event $event */
 /** @var \EE_Ticket $ticket */
@@ -12,7 +13,6 @@
 <?php
 if ( $ticket instanceof EE_Ticket ) {
     do_action( 'AHEE__ticket_selector_chart__template__before_ticket_selector', $event );
-    $ticket_description = $ticket->description();
     $ticket_description .= ! empty( $ticket_description )
         ? '<br />' . $ticket_status_display
         : $ticket_status_display;

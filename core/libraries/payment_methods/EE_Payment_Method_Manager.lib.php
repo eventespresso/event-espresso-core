@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\interfaces\ResettableInterface;
+
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 
 
@@ -14,8 +16,13 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
  * @author        Michael Nelson
  * @since         4.5
  */
-class EE_Payment_Method_Manager
+class EE_Payment_Method_Manager implements ResettableInterface
 {
+
+    /**
+     * prefix added to all payment method capabilities names
+     */
+    const   CAPABILITIES_PREFIX= 'ee_payment_method_';
 
     /**
      * @var EE_Payment_Method_Manager $_instance
@@ -23,23 +30,58 @@ class EE_Payment_Method_Manager
     private static $_instance;
 
     /**
+     * @var boolean
+     */
+    protected $payment_method_caps_initialized = false;
+
+    /**
      * @var array keys are class names without 'EE_PMT_', values are their filepaths
      */
     protected $_payment_method_types = array();
+
+    /**
+     * @var EE_PMT_Base[]
+     */
+    protected $payment_method_objects = array();
+
+
+
+    /**
+     * EE_Payment_Method_Manager constructor.
+     *
+     * @throws EE_Error
+     * @throws DomainException
+     */
+    public function __construct()
+    {
+        // if in admin lets ensure caps are set.
+        if (is_admin()) {
+            $this->_register_payment_methods();
+            // set them immediately
+            $this->initializePaymentMethodCaps();
+            // plus any time they get reset
+            add_filter(
+                'FHEE__EE_Capabilities__addCaps__capabilities_to_add',
+                array($this, 'addPaymentMethodCapsDuringReset')
+            );
+        }
+    }
 
 
 
     /**
      * @singleton method used to instantiate class object
      * @return EE_Payment_Method_Manager instance
+     * @throws DomainException
+     * @throws EE_Error
      */
     public static function instance()
     {
         // check if class object is instantiated, and instantiated properly
         if (! self::$_instance instanceof EE_Payment_Method_Manager) {
+            EE_Registry::instance()->load_lib('PMT_Base');
             self::$_instance = new self();
         }
-        EE_Registry::instance()->load_lib('PMT_Base');
         return self::$_instance;
     }
 
@@ -49,6 +91,8 @@ class EE_Payment_Method_Manager
      * Resets the instance and returns a new one
      *
      * @return EE_Payment_Method_Manager
+     * @throws DomainException
+     * @throws EE_Error
      */
     public static function reset()
     {
@@ -69,11 +113,6 @@ class EE_Payment_Method_Manager
     {
         if (! $this->_payment_method_types || $force_recheck) {
             $this->_register_payment_methods();
-            //if in admin lets ensure caps are set.
-            if (is_admin()) {
-                add_filter('FHEE__EE_Capabilities__init_caps_map__caps', array($this, 'add_payment_method_caps'));
-                EE_Registry::instance()->CAP->init_caps();
-            }
         }
     }
 
@@ -93,6 +132,8 @@ class EE_Payment_Method_Manager
             'FHEE__EE_Payment_Method_Manager__register_payment_methods__payment_methods_to_register',
             $pm_to_register
         );
+        // remove any duplicates if that should happen for some reason
+        $pm_to_register = array_unique($pm_to_register);
         // loop through folders
         foreach ($pm_to_register as $pm_path) {
             $this->register_payment_method($pm_path);
@@ -123,7 +164,7 @@ class EE_Payment_Method_Manager
         $payment_method_path = rtrim(str_replace('/\\', DS, $payment_method_path), DS);
         // grab and sanitize module name
         $module_dir = basename($payment_method_path);
-        // create classname from module directory name
+        // create class name from module directory name
         $module = str_replace(array('_', ' '), array(' ', '_'), $module_dir);
         // add class prefix
         $module_class = 'EE_PMT_' . $module;
@@ -159,7 +200,7 @@ class EE_Payment_Method_Manager
     /**
      * Checks if a payment method has been registered, and if so includes it
      *
-     * @param string  $payment_method_name like 'PayPal_Pro', (ie classname without the prefix 'EEPM_')
+     * @param string  $payment_method_name like 'PayPal_Pro', (ie class name without the prefix 'EEPM_')
      * @param boolean $force_recheck       whether to force re-checking for new payment method types
      * @return boolean
      */
@@ -214,18 +255,21 @@ class EE_Payment_Method_Manager
      */
     public function payment_method_types($force_recheck = false)
     {
-        $this->maybe_register_payment_methods($force_recheck);
-        $payment_method_objects = array();
-        foreach ($this->payment_method_type_names(true) as $classname) {
-            $payment_method_objects[] = new $classname;
+        if ($force_recheck || empty($this->payment_method_objects)) {
+            $this->maybe_register_payment_methods($force_recheck);
+            foreach ($this->payment_method_type_names(true) as $classname) {
+                if (! isset($this->payment_method_objects[$classname])) {
+                    $this->payment_method_objects[$classname] = new $classname;
+                }
+            }
         }
-        return $payment_method_objects;
+        return $this->payment_method_objects;
     }
 
 
 
     /**
-     * Changes the payment method's classname into the payment method type's name
+     * Changes the payment method's class name into the payment method type's name
      * (as used on the payment method's table's PMD_type field)
      *
      * @param string $classname
@@ -246,7 +290,6 @@ class EE_Payment_Method_Manager
      */
     public function payment_method_class_from_type($type)
     {
-        $this->maybe_register_payment_methods();
         return 'EE_PMT_' . $type;
     }
 
@@ -261,6 +304,7 @@ class EE_Payment_Method_Manager
      */
     public function activate_a_payment_method_of_type($payment_method_type)
     {
+        $this->maybe_register_payment_methods();
         $payment_method = EEM_Payment_Method::instance()->get_one_of_type($payment_method_type);
         if (! $payment_method instanceof EE_Payment_Method) {
             $pm_type_class = $this->payment_method_class_from_type($payment_method_type);
@@ -422,32 +466,124 @@ class EE_Payment_Method_Manager
 
 
     /**
-     * callback for FHEE__EE_Capabilities__init_caps_map__caps filter to add dynamic payment method
-     * access caps.
+     * initializes payment method access caps via EE_Capabilities::init_role_caps()
+     * upon EE_Payment_Method_Manager construction
      *
-     * @param array $caps capabilities being filtered
-     * @return array
+     * @throws EE_Error
+     * @throws DomainException
      */
-    public function add_payment_method_caps($caps)
+    protected function initializePaymentMethodCaps()
     {
-        /* add dynamic caps from payment methods
-         * at the time of writing, october 20 2014, these are the caps added:
-         * ee_payment_method_admin_only
-         * ee_payment_method_aim
-         * ee_payment_method_bank
-         * ee_payment_method_check
-         * ee_payment_method_invoice
-         * ee_payment_method_mijireh
-         * ee_payment_method_paypal_pro
-         * ee_payment_method_paypal_standard
-         * Any other payment methods added to core or via addons will also get
-         * their related capability automatically added too, so long as they are
-         * registered properly using EE_Register_Payment_Method::register()
-         */
-        foreach ($this->payment_method_types() as $payment_method_type_obj) {
-            $caps['administrator'][] = $payment_method_type_obj->cap_name();
+        // don't do this twice
+        if ($this->payment_method_caps_initialized) {
+            return;
+        }
+        EE_Capabilities::instance()->addCaps(
+            $this->getPaymentMethodCaps()
+        );
+        $this->payment_method_caps_initialized = true;
+    }
+
+
+
+    /**
+     * array  of dynamic payment method access caps.
+     * at the time of writing, october 20 2014, these are the caps added:
+     *  ee_payment_method_admin_only
+     *  ee_payment_method_aim
+     *  ee_payment_method_bank
+     *  ee_payment_method_check
+     *  ee_payment_method_invoice
+     *  ee_payment_method_mijireh
+     *  ee_payment_method_paypal_pro
+     *  ee_payment_method_paypal_standard
+     * Any other payment methods added to core or via addons will also get
+     * their related capability automatically added too, so long as they are
+     * registered properly using EE_Register_Payment_Method::register()
+     *
+     * @return array
+     * @throws DomainException
+     */
+    protected function getPaymentMethodCaps()
+    {
+        $caps = array();
+        foreach ($this->payment_method_type_names() as $payment_method_name) {
+            $caps = $this->addPaymentMethodCap($payment_method_name,$caps);
         }
         return $caps;
     }
+
+
+
+    /**
+     * @param string $payment_method_name
+     * @param array  $payment_method_caps
+     * @param string $role
+     * @return array
+     * @throws DomainException
+     */
+    public function addPaymentMethodCap($payment_method_name, array $payment_method_caps, $role = 'administrator')
+    {
+        if (empty($payment_method_name)) {
+            throw new DomainException(
+                esc_html__(
+                    'The name of a payment method must be specified to add capabilities.',
+                    'event_espresso'
+                )
+            );
+        }
+        if (empty($role)) {
+            throw new DomainException(
+                sprintf(
+                    esc_html__(
+                        'No role was supplied while trying to add capabilities for the %1$s payment method.',
+                        'event_espresso'
+                    ),
+                    $payment_method_name
+                )
+            );
+        }
+        if(! isset($payment_method_caps[$role])) {
+            $payment_method_caps[$role] = array();
+        }
+        $payment_method_caps[$role][] = EE_Payment_Method_Manager::CAPABILITIES_PREFIX
+                                                  . strtolower($payment_method_name);
+        return $payment_method_caps;
+    }
+
+
+
+    /**
+     * callback for FHEE__EE_Capabilities__init_role_caps__caps_map filter
+     * to add dynamic payment method access caps when capabilities are reset
+     * (or if that filter is called and PM caps are not already set)
+     *
+     * @param array $caps capabilities being filtered
+     * @param bool  $reset
+     * @return array
+     * @throws DomainException
+     */
+    public function addPaymentMethodCapsDuringReset(array $caps, $reset = false)
+    {
+        if ($reset || ! $this->payment_method_caps_initialized) {
+            $this->payment_method_caps_initialized = true;
+            $caps = array_merge_recursive($caps, $this->getPaymentMethodCaps());
+        }
+        return $caps;
+    }
+
+
+
+    /**
+     * @deprecated 4.9.42
+     * @param $caps
+     * @return mixed
+     */
+    public function add_payment_method_caps($caps)
+    {
+        return $caps;
+    }
+
+
 
 }

@@ -375,19 +375,19 @@ class EEH_Debug_Tools
 
 
     /**
-     * @param mixed  $var
-     * @param string $var_name
-     * @param string $file
-     * @param int    $line
-     * @param int    $heading_tag
-     * @param bool   $die
-     * @param string $margin
+     * @param mixed      $var
+     * @param string     $var_name
+     * @param string     $file
+     * @param int|string $line
+     * @param int        $heading_tag
+     * @param bool       $die
+     * @param string     $margin
      */
     public static function printv(
         $var,
         $var_name = '',
-        $file = __FILE__,
-        $line = __LINE__,
+        $file = '',
+        $line = '',
         $heading_tag = 5,
         $die = false,
         $margin = ''
@@ -420,7 +420,7 @@ class EEH_Debug_Tools
     protected static function heading($var_name = '', $heading_tag = 'h5', $margin = '')
     {
         if (defined('EE_TESTS_DIR')) {
-            return "\n\n{$var_name}";
+            return "\n{$var_name}";
         }
         $margin = "25px 0 0 {$margin}";
         return '<' . $heading_tag . ' style="color:#2EA2CC; margin:' . $margin . ';"><b>' . $var_name . '</b>';
@@ -435,7 +435,7 @@ class EEH_Debug_Tools
     protected static function headingX($heading_tag = 'h5')
     {
         if (defined('EE_TESTS_DIR')) {
-            return "\n";
+            return '';
         }
         return '</' . $heading_tag . '>';
     }
@@ -463,8 +463,11 @@ class EEH_Debug_Tools
      */
     protected static function file_and_line($file, $line)
     {
+        if ($file === '' || $line === '') {
+            return '';
+        }
         if (defined('EE_TESTS_DIR')) {
-            return "\n (" . $file . ' line no: ' . $line . ' ) ';
+            return "\n\t(" . $file . ' line no: ' . $line . ' ) ';
         }
         return '<br /><span style="font-size:9px;font-weight:normal;color:#666;line-height: 12px;">'
                . $file
@@ -507,18 +510,18 @@ class EEH_Debug_Tools
 
 
     /**
-     * @param mixed  $var
-     * @param string $var_name
-     * @param string $file
-     * @param int    $line
-     * @param int    $heading_tag
-     * @param bool   $die
+     * @param mixed      $var
+     * @param string     $var_name
+     * @param string     $file
+     * @param int|string $line
+     * @param int        $heading_tag
+     * @param bool       $die
      */
     public static function printr(
         $var,
         $var_name = '',
-        $file = __FILE__,
-        $line = __LINE__,
+        $file = '',
+        $line = '',
         $heading_tag = 5,
         $die = false
     ) {
@@ -558,6 +561,9 @@ class EEH_Debug_Tools
 
 
     /******************** deprecated ********************/
+
+
+
     /**
      * @deprecated 4.9.39.rc.034
      */

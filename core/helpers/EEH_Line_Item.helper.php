@@ -102,7 +102,7 @@ class EEH_Line_Item {
 			'FHEE__EEH_Line_Item__add_percentage_based_item__line_item',
 			$line_item
 		);
-		return self::add_item( $parent_line_item, $line_item );
+		return $parent_line_item->add_child_line_item($line_item, false);
 	}
 
 
@@ -1519,6 +1519,7 @@ class EEH_Line_Item {
 			$ticket_line_item->ID()
 		);
 		if ( WP_DEBUG ) {
+			$message .= '<br>' . print_r( $final_prices_per_ticket_line_item, true );
 			throw new \OutOfRangeException( $message );
 		} else {
 			EE_Log::instance()->log( __CLASS__, __FUNCTION__, $message );
