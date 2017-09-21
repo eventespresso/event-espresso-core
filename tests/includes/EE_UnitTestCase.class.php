@@ -71,14 +71,21 @@ class EE_UnitTestCase extends WP_UnitTestCase
      * @throws \EE_Error
      */
     // public static function setUpBeforeClass() {
-    // 	parent::setUpBeforeClass();
-    // 	echo "\n\n" . get_called_class() . "\n";
+    //     echo "\n\n\n" . get_called_class() . "\n\n";
+    //     parent::setUpBeforeClass();
+    //     \EventEspresso\core\services\Benchmark::startTimer(get_called_class());
+    // }
+
+    // public static function tearDownAfterClass() {
+    //     // echo "\n\n\n" . get_called_class() . "\n\n";
+    //     \EventEspresso\core\services\Benchmark::stopTimer(get_called_class());
+    //     parent::tearDownAfterClass();
     // }
 
 
     public function setUp()
     {
-        // echo ' ' . $this->getName() . "()\n";
+        // echo "\n\n" . strtoupper($this->getName()) . '()';
         //save the hooks state before WP_UnitTestCase actually gets its hands on it...
         //as it immediately adds a few hooks we might not want to backup
         global $auto_made_thing_seed, $wp_filter, $wp_actions, $merged_filters, $wp_current_filter, $wpdb, $current_user;
@@ -103,16 +110,9 @@ class EE_UnitTestCase extends WP_UnitTestCase
         add_filter('FHEE__EEH_Activation__add_column_if_it_doesnt_exist__short_circuit', '__return_true');
         add_filter('FHEE__EEH_Activation__drop_index__short_circuit', '__return_true');
 
-        // turn off caching for any loaders in use
-        add_filter('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache', '__return_true');
-
         // load factories
         EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_TESTS_DIR . 'includes' . DS . 'factories');
         $this->factory = new EE_UnitTest_Factory();
-
-        // load scenarios
-        require_once EE_TESTS_DIR . 'includes/scenarios/EE_Test_Scenario_Classes.php';
-        $this->scenarios = new EE_Test_Scenario_Factory($this);
 
         //IF we detect we're running tests on WP4.1, then we need to make sure current_user_can tests pass by implementing
         //updating all_caps when `WP_User::add_cap` is run (which is fixed in later wp versions).  So we hook into the
@@ -125,7 +125,11 @@ class EE_UnitTestCase extends WP_UnitTestCase
                 return $WP_User->allcaps;
             }, 10, 4);
         }
+        //tell EE_Registry to do a hard reset
+        add_filter( 'FHEE__EE_Registry__reset__hard', '__return_true');
         do_action('AHEE__EventEspresso_core_services_loaders_CachingLoader__resetCache');
+        // turn off caching for any loaders in use during tests
+        add_filter('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache', '__return_true');
     }
 
 
@@ -171,6 +175,13 @@ class EE_UnitTestCase extends WP_UnitTestCase
         }
         // turn caching back on for any loaders in use
         remove_all_filters('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache');
+    }
+
+    protected function loadTestScenarios()
+    {
+        // load scenarios
+        require_once EE_TESTS_DIR . 'includes/scenarios/EE_Test_Scenario_Classes.php';
+        $this->scenarios = new EE_Test_Scenario_Factory($this);
     }
 
     /**
@@ -845,8 +856,13 @@ class EE_UnitTestCase extends WP_UnitTestCase
         foreach ($model->relation_settings() as $related_model_name => $relation) {
             if ($relation instanceof EE_Belongs_To_Any_Relation) {
                 continue;
-            }
-            if ($related_model_name === 'Country' && ! isset($args['CNT_ISO'])) {
+            } elseif ($related_model_name === 'WP_User' && get_current_user_id()) {
+                $fk = $model->get_foreign_key_to($related_model_name);
+                if (! isset($args[$fk->get_name()])) {
+                    $obj = \EEM_WP_User::instance()->get_one_by_ID(get_current_user_id());
+                    $args[$fk->get_name()] = $obj->ID();
+                }
+            } elseif ($related_model_name === 'Country' && ! isset($args['CNT_ISO'])) {
                 //we already have lots of countries. lets not make any more
                 //what's more making them is tricky: the primary key needs to be a unique
                 //2-character string but not an integer (else it confuses the country
@@ -864,7 +880,6 @@ class EE_UnitTestCase extends WP_UnitTestCase
                 if (!isset($args[$fk->get_name()])) {
                     $args[$fk->get_name()] = $obj->ID();
                 }
-
             }
         }
         //set any other fields which haven't yet been set
@@ -879,7 +894,11 @@ class EE_UnitTestCase extends WP_UnitTestCase
                         'PAY_redirect_args',
                         'TKT_reserved',
                         'DTT_reserved',
-                        'parent'
+                        'parent',
+                        //don't make system questions etc
+                        'QST_system',
+                        'QSG_system',
+                        'QSO_system'
                     ),
                     true
                 )
@@ -906,6 +925,8 @@ class EE_UnitTestCase extends WP_UnitTestCase
                 $value = $auto_made_thing_seed;
             } elseif ($field instanceof EE_Primary_Key_String_Field) {
                 $value = "$auto_made_thing_seed";
+            } elseif ($field instanceof EE_Email_Field) {
+                $value = $auto_made_thing_seed . 'ee@ee' . $auto_made_thing_seed . '.dev';
             } elseif ($field instanceof EE_Text_Field_Base) {
                 $value = $auto_made_thing_seed . "_" . $field_name;
             }
@@ -1200,15 +1221,21 @@ class EE_UnitTestCase extends WP_UnitTestCase
         if (isset($options['TKT_taxable'])) {
             $ticket->set('TKT_taxable', $options['TKT_taxable']);
         }
+
         // were datetimes (and their related events) already setup?
         if(!empty($options['datetime_objects']) && is_array($options['datetime_objects'])) {
             foreach ($options['datetime_objects'] as $datetime_object) {
                 $ticket->_add_relation_to($datetime_object, 'Datetime');
             }
         } else {
+            /**
+             * Set the author to the current user. This is done in case a running test switched the current user global
+             * after models were instantiated.
+             */
+            global $current_user;
             // create new datetimes, default = 1
             $datetimes = isset($options['datetimes']) ? $options['datetimes'] : 1;
-            $event = $this->new_model_obj_with_dependencies('Event');
+            $event = $this->new_model_obj_with_dependencies('Event', array('EVT_wp_user' => $current_user->ID));
             for ($i = 0; $i <= $datetimes; $i++) {
                 $ddt = $this->new_model_obj_with_dependencies('Datetime', array('EVT_ID' => $event->ID()));
                 $ticket->_add_relation_to($ddt, 'Datetime');
@@ -1224,21 +1251,24 @@ class EE_UnitTestCase extends WP_UnitTestCase
 
     /**
      * Creates a WP user with standard admin caps PLUS all EE CAPS (default)
+     *
      * @param array $ee_capabilities array of EE CAPS if you don't want the user to have ALL EE CAPS
      * @return WP_User
+     * @throws EE_Error
      */
     public function wp_admin_with_ee_caps($ee_capabilities = array())
     {
+        //if caps were provided then just add the caps to a default user role (non admin user).
+        if ($ee_capabilities) {
+            /** @type WP_User $user */
+            $user = $this->factory->user->create_and_get();
+            foreach ($ee_capabilities as $cap) {
+                $user->add_cap($cap);
+            }
+            return $user;
+        }
         /** @type WP_User $user */
         $user = $this->factory->user->create_and_get(array('role' => 'administrator'));
-        $ee_capabilities = (array)$ee_capabilities;
-        if (empty($ee_capabilities)) {
-            EE_Registry::instance()->load_core('Capabilities');
-            $ee_capabilities = EE_Capabilities::instance()->get_ee_capabilities();
-        }
-        foreach ($ee_capabilities as $ee_capability) {
-            $user->add_cap($ee_capability);
-        }
         return $user;
     }
 

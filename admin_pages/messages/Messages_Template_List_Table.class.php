@@ -318,9 +318,12 @@ class Messages_Template_List_Table extends EE_Admin_List_Table
                              && $context_templates[$context]['to'] instanceof EE_Message_Template
                 ? $context_templates[$context]['to']->get('MTP_content')
                 : null;
-            $inactive      = empty($mtp_to)
-                             && ! empty($context_templates[$context]['to'])
-                ? ' class="mtp-inactive"'
+            $inactive_class      = (
+                empty($mtp_to)
+                && ! empty($context_templates[$context]['to'])
+            )
+            || ! $item->is_context_active($context)
+                ? ' mtp-inactive'
                 : '';
             $context_title = ucwords($c_configs[$context]['label']);
             $edit_link     = EE_Admin_Page::add_query_args_and_nonce(array(
@@ -328,9 +331,9 @@ class Messages_Template_List_Table extends EE_Admin_List_Table
                 'id'      => $item->GRP_ID(),
                 'context' => $context,
             ), EE_MSG_ADMIN_URL);
-            $ctxt[]        =  '<a' . $inactive
+            $ctxt[]        =  '<a'
                   . ' href="' . $edit_link . '"'
-                  . ' class="' . $item->message_type() . '-' . $context . '-edit-link"'
+                  . ' class="' . $item->message_type() . '-' . $context . '-edit-link' .$inactive_class . '"'
                   . ' title="' . esc_attr__('Edit Context', 'event_espresso') . '">'
                   . $context_title
                   . '</a>';

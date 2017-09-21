@@ -45,7 +45,7 @@ class EE_Messages_Data_Handler_Collection extends EE_Object_Collection {
 	 * @return  string      md5 hash using provided info.
 	 */
 	public function get_key( $classname, $data ) {
-		return md5( $classname . print_r( $data, true ) );
+		return md5( $classname . serialize( $data ) );
 	}
 
 

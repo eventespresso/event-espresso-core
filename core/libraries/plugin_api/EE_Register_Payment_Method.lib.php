@@ -1,5 +1,9 @@
 <?php
 
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\loaders\LoaderFactory;
+
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 
 
@@ -39,8 +43,13 @@ class EE_Register_Payment_Method implements EEI_Plugin_API
      *                                      }
      * @throws EE_Error
      * @type array payment_method_paths    an array of full server paths to folders containing any EE_PMT_Base
-     *       children, or to the EED_Module files themselves
+     *                                      children, or to the EED_Module files themselves
      * @return void
+     * @throws InvalidDataTypeException
+     * @throws DomainException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      */
     public static function register($payment_method_id = null, $setup_args = array())
     {
@@ -83,18 +92,18 @@ class EE_Register_Payment_Method implements EEI_Plugin_API
             'FHEE__EE_Payment_Method_Manager__register_payment_methods__payment_methods_to_register',
             array('EE_Register_Payment_Method', 'add_payment_methods')
         );
-        /**
-         * If EE_Payment_Method_Manager::register_payment_methods has already been called,
-         * we need it to be called again (because it's missing the payment method we JUST registered here).
-         * We are assuming EE_Register_payment_method::register() will be called only once
-         * per payment method from an addon, so going with that assumption we should always do this.
-         * If that assumption is false, we should verify this newly-registered payment method
-         * isn't on the EE_Payment_Method_Manager::_payment_method_types array before calling this
-         * (this code should be changed to improve performance)
-         */
+        // If EE_Payment_Method_Manager::register_payment_methods has already been called,
+        // then we need to add our caps for this payment method manually
         if (did_action('FHEE__EE_Payment_Method_Manager__register_payment_methods__registered_payment_methods')) {
-            EE_Registry::instance()->load_lib('Payment_Method_Manager');
-            EE_Payment_Method_Manager::instance()->maybe_register_payment_methods(true);
+            $payment_method_manager = LoaderFactory::getLoader()->getShared('EE_Payment_Method_Manager');
+            // register payment methods directly
+            foreach (self::$_settings[$payment_method_id]['payment_method_paths'] as $payment_method_path) {
+                $payment_method_manager->register_payment_method($payment_method_path);
+            }
+            $capabilities = LoaderFactory::getLoader()->getShared('EE_Capabilities');
+            $capabilities->addCaps(
+                self::getPaymentMethodCapabilities(self::$_settings[$payment_method_id])
+            );
         }
     }
 
@@ -110,10 +119,9 @@ class EE_Register_Payment_Method implements EEI_Plugin_API
     public static function add_payment_methods($payment_method_folders)
     {
         foreach (self::$_settings as $settings) {
-            $payment_method_folders = array_merge(
-                $payment_method_folders,
-                $settings['payment_method_paths']
-            );
+            foreach ($settings['payment_method_paths'] as $payment_method_path) {
+                $payment_method_folders[] = $payment_method_path;
+            }
         }
         return $payment_method_folders;
     }
@@ -127,12 +135,49 @@ class EE_Register_Payment_Method implements EEI_Plugin_API
      *
      * @param string $module_id the name for the module that was previously registered
      * @return void
+     * @throws DomainException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      */
     public static function deregister($module_id = null)
     {
         if (isset(self::$_settings[$module_id])) {
+            $capabilities = LoaderFactory::getLoader()->getShared('EE_Capabilities');
+            $capabilities->removeCaps(
+                self::getPaymentMethodCapabilities(self::$_settings[$module_id])
+            );
             unset(self::$_settings[$module_id]);
         }
+    }
+
+
+
+    /**
+     * returns an array of the caps that get added when a Payment Method is registered
+     *
+     * @param array $settings
+     * @return array
+     * @throws DomainException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     */
+    private static function getPaymentMethodCapabilities(array $settings)
+    {
+        $payment_method_manager = LoaderFactory::getLoader()->getShared('EE_Payment_Method_Manager');
+        $payment_method_caps = array('administrator' => array());
+        if (isset($settings['payment_method_paths'])) {
+            foreach ($settings['payment_method_paths'] as $payment_method_path) {
+                $payment_method_caps = $payment_method_manager->addPaymentMethodCap(
+                    strtolower(basename($payment_method_path)),
+                    $payment_method_caps
+                );
+            }
+        }
+        return $payment_method_caps;
     }
 
 }
