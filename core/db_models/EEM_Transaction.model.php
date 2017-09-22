@@ -1,4 +1,6 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) {
+<?php
+
+if ( ! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
 require_once(EE_MODELS . 'EEM_Base.model.php');
@@ -207,6 +209,7 @@ class EEM_Transaction extends EEM_Base
 			FROM
 				(
 				    SELECT
+				        DISTINCT(Registration.REG_ID),
                         Event.post_title AS event_name,
                         Registration_Payment.RPY_amount AS paid
                     FROM

@@ -480,6 +480,10 @@ class Transactions_Admin_Page extends EE_Admin_Page
                     'view_registration' => array(
                         'class' => 'dashicons dashicons-clipboard',
                         'desc'  => esc_html__('View Registration Details', 'event_espresso')
+                    ),
+                    'payment_overview_link' => array(
+                        'class' => 'dashicons dashicons-money',
+                        'desc' => esc_html__('Make Payment on Frontend', 'event_espresso')
                     )
                 )
             )
@@ -1984,7 +1988,12 @@ class Transactions_Admin_Page extends EE_Admin_Page
             $_where['STS_ID*'] = array('!=', EEM_Transaction::abandoned_status_code);
         }
 
-        $query_params = array($_where, 'order_by' => array($orderby => $sort), 'limit' => $limit);
+        $query_params = array(
+            $_where,
+            'order_by' => array($orderby => $sort),
+            'limit' => $limit,
+            'default_where_conditions' => EEM_Base::default_where_conditions_this_only
+        );
 
         $transactions = $count ? $TXN->count(array($_where), 'TXN_ID', true) : $TXN->get_all($query_params);
 

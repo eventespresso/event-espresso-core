@@ -5,16 +5,22 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 /**
  * This scenario creates an event that has:
  * - Four Datetimes
- *      - D1 - reg limit 55
- *      - D2 - reg limit 20
- *      - D3 - reg limit 12
- *      - D4 - reg limit 30
+ *      - D1 - reg limit 55  ( TA, TB, TC, TD ) << can only sell 5 max : TA, TB, & TC sold out after 5 sales
+ *      - D2 - reg limit 20  ( TA, TB )         << can only sell 8 max : TA, TB, & TC sold out after 5 sales
+ *      - D3 - reg limit 12  ( TA, TD )         << can only sell 12 max : TA & TD sold out after 12 sales
+ *      - D4 - reg limit 30  ( TB, TC, TD, TE ) << can only sell 5 max : TA, TB, & TC sold out after 5 sales
  * - Five Tickets
  *      - TA - qty 12 (D1, D2, D3)
  *      - TB - qty 20 (D1,D2,D4)
  *      - TC - qty 30 (D1, D4)
  *      - TD - qty 12 (D1, D3, D4)
  *      - TE - qty 30 (D4)
+ *
+ *  MAX SELLOUT:
+ *        D3 : 12 TA tickets  ( D3 sold out + TA & TD sold out )
+ *        D2 : 20 TB tickets ( D2 sold out + TB sold out )
+ *        D1 : 30 TC tickets ( D2 & TB sold out )
+ *        D4 : 30 TC tickets ( D2 & TB sold out )
  *
  * @package    Event Espresso
  * @subpackage tests/scenarios

@@ -18,6 +18,11 @@ final class EE_Module_Request_Router implements InterminableInterface
 {
 
     /**
+     * @var EE_Request $request
+     */
+    private $request;
+
+    /**
      * @var array $_previous_routes
      */
     private static $_previous_routes = array();
@@ -31,9 +36,12 @@ final class EE_Module_Request_Router implements InterminableInterface
 
     /**
      * EE_Module_Request_Router constructor.
+     *
+     * @param EE_Request $request
      */
-    public function __construct()
+    public function __construct(EE_Request $request)
     {
+        $this->request = $request;
     }
 
 
@@ -89,12 +97,10 @@ final class EE_Module_Request_Router implements InterminableInterface
             //d( $routes );
             foreach ($routes as $key => $route) {
                 // check request for module route
-                if (EE_Registry::instance()->REQ->is_set($key)) {
-                    //echo '<b style="color:#2EA2CC;">key : <span style="color:#E76700">' . $key . '</span></b><br />';
-                    $current_route = sanitize_text_field(EE_Registry::instance()->REQ->get($key));
+                if ($this->request->is_set($key)) {
+                    $current_route = sanitize_text_field($this->request->get($key));
                     if ($current_route) {
                         $current_route = array($key, $current_route);
-                        //echo '<b style="color:#2EA2CC;">current_route : <span style="color:#E76700">' . $current_route . '</span></b><br />';
                         break;
                     }
                 }
@@ -124,7 +130,6 @@ final class EE_Module_Request_Router implements InterminableInterface
     {
         // get module method that route has been mapped to
         $module_method = EE_Config::get_route($current_route, $key);
-        //EEH_Debug_Tools::printr( $module_method, '$module_method  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
         // verify result was returned
         if (empty($module_method)) {
             $msg = sprintf(
@@ -193,18 +198,17 @@ final class EE_Module_Request_Router implements InterminableInterface
             );
             return null;
         }
-        // let's pause to reflect on this...
-        $mod_reflector = new ReflectionClass($module_name);
+        // instantiate module class
+        $module = new $module_name();
         // ensure that class is actually a module
-        if (! $mod_reflector->isSubclassOf('EED_Module')) {
+        if (! $module instanceof EED_Module) {
             EE_Error::add_error(
                 sprintf(__('The requested %s module is not of the class EED_Module.', 'event_espresso'), $module_name),
                 __FILE__, __FUNCTION__, __LINE__
             );
             return null;
         }
-        // instantiate and return module class
-        return $mod_reflector->newInstance();
+        return $module;
     }
 
 
@@ -256,77 +260,6 @@ final class EE_Module_Request_Router implements InterminableInterface
         return EE_Config::get_view($current_route);
     }
 
-
-
-    /**
-     * @param $a
-     * @param $b
-     * @return bool
-     */
-    public function __set($a, $b)
-    {
-        return false;
-    }
-
-
-
-    /**
-     * @param $a
-     * @return bool
-     */
-    public function __get($a)
-    {
-        return false;
-    }
-
-
-
-    /**
-     * @param $a
-     * @return bool
-     */
-    public function __isset($a)
-    {
-        return false;
-    }
-
-
-
-    /**
-     * @param $a
-     * @return bool
-     */
-    public function __unset($a)
-    {
-        return false;
-    }
-
-
-
-    /**
-     * @return void
-     */
-    public function __clone()
-    {
-    }
-
-
-
-    /**
-     * @return void
-     */
-    public function __wakeup()
-    {
-    }
-
-
-
-    /**
-     *
-     */
-    public function __destruct()
-    {
-    }
 
 }
 // End of file EE_Module_Request_Router.core.php
