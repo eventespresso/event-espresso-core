@@ -45,7 +45,7 @@ class EE_Div_Per_Section_Layout extends EE_Form_Section_Layout_Base
         $html_id = (string)$input->html_id() !== ''
             ? (string)$input->html_id()
             : spl_object_hash($input);
-        // and add a generic class
+        // and add a generic input type class
         $html_class = sanitize_key(str_replace('_', '-', get_class($input))) . '-dv';
         if ($input instanceof EE_Hidden_Input) {
             $html .= EEH_HTML::nl() . $input->get_html_for_input();
@@ -53,7 +53,7 @@ class EE_Div_Per_Section_Layout extends EE_Form_Section_Layout_Base
             $html .= EEH_HTML::div(
                 $input->get_html_for_input(),
                 $html_id . '-submit-dv',
-                $html_class
+                "{$input->html_class()}-submit-dv {$html_class}"
             );
         } else if ($input instanceof EE_Select_Input) {
             $html .= EEH_HTML::div(
@@ -62,7 +62,7 @@ class EE_Div_Per_Section_Layout extends EE_Form_Section_Layout_Base
                 EEH_HTML::nl() . $input->get_html_for_input() .
                 EEH_HTML::nl() . $input->get_html_for_help(),
                 $html_id . '-input-dv',
-                $html_class
+                "{$input->html_class()}-input-dv {$html_class}"
             );
         } else if ($input instanceof EE_Form_Input_With_Options_Base) {
             $html .= EEH_HTML::div(
@@ -71,7 +71,7 @@ class EE_Div_Per_Section_Layout extends EE_Form_Section_Layout_Base
                 EEH_HTML::nl() . $input->get_html_for_input() .
                 EEH_HTML::nl() . $input->get_html_for_help(),
                 $html_id . '-input-dv',
-                $html_class
+                "{$input->html_class()}-input-dv {$html_class}"
             );
         } else {
             $html .= EEH_HTML::div(
@@ -80,7 +80,7 @@ class EE_Div_Per_Section_Layout extends EE_Form_Section_Layout_Base
                 EEH_HTML::nl() . $input->get_html_for_input() .
                 EEH_HTML::nl() . $input->get_html_for_help(),
                 $html_id . '-input-dv',
-                $html_class
+                "{$input->html_class()}-input-dv {$html_class}"
             );
         }
         return $html;
@@ -99,7 +99,7 @@ class EE_Div_Per_Section_Layout extends EE_Form_Section_Layout_Base
      */
     protected function _display_label_for_option_type_question(EE_Form_Input_With_Options_Base $input)
     {
-        if ($input->display_html_label_text() !== '') {
+        if ($input->display_html_label_text()) {
             return EEH_HTML::div(
                 $input->required()
                     ? $input->html_label_text() . EEH_HTML::span('*', '', 'ee-asterisk')

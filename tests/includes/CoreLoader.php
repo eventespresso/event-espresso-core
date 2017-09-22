@@ -18,6 +18,9 @@ class CoreLoader
         $this->requireTestCaseParents();
         $this->bootstrapMockAddon();
         $this->onShutdown();
+        \EventEspresso\core\services\Benchmark::writeResultsAtShutdown(
+            EVENT_ESPRESSO_UPLOAD_DIR . 'logs/benchmarking-master.html',  false
+        );
     }
 
     protected function setConstants()
@@ -56,6 +59,7 @@ class CoreLoader
                     ) . '/tests/phpunit'
                 );
             }
+            // define('EE_REST_API_DEBUG_MODE', true);
         }
     }
 

@@ -5,12 +5,12 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 /**
  * This scenario creates an event that has:
  * - Two Datetimes
- *      - D1 - reg limit 15 	( TA, TB ) 			<< can only sell 15 max : Tickets A & B sold out after 15 sales
- *      - D2 - reg limit 17    	( TA, TB, TC ) 	<< can only sell 15 max : Tickets A & B sold out after 15 sales
+ *      - D1 - reg limit 15 ( TA, TB )      << can only sell 15 max : A & B sold out after 15 sales
+ *      - D2 - reg limit 17 ( TA, TB, TC ) 	<< can only sell 2 max : C sold out after 2 sales (A & B already sold out)
  * - Three Tickets
- *      - TA - qty 23 	( D1, D2 )    << can only sell 15 max due to D1 reg limit ( which sells out Tickets A & B )
- *      - TB - qty 5 	( D1, D2 ) 	<< can only sell 5 max due to TB qty ( which sells out Tickets A & B )
- *      - TC - qty 15 	( D2 ) 			<< can only sell 15 max due to TC qty
+ *      - TA - qty 23 	( D1, D2 )  << can only sell 15 max due to D1 reg limit ( which sells out Tickets A & B )
+ *      - TB - qty 5 	( D1, D2 )  << can only sell 5 max due to TB qty ( which sells out Tickets A & B )
+ *      - TC - qty 15 	( D2 )      << can only sell 15 max due to TC qty
  *
  *  MAX SELLOUT:
  *    	5 TB tickets for D1 ( TB sold out )

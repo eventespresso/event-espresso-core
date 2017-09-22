@@ -1,26 +1,6 @@
 <?php
 
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('NO direct script access allowed');
-}
-
-/**
- * Event Espresso
- * Event Registration and Management Plugin for WordPress
- * @ package            Event Espresso
- * @ author                Seth Shoultes
- * @ copyright            (c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license            http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link                http://www.eventespresso.com
- * @ version            4.0
- * ------------------------------------------------------------------------
- * Messenger class
- *
- * @package            Event Espresso
- * @subpackage         includes/core/messages
- * @author             Darren Ethier, Brent Christensen
- * ------------------------------------------------------------------------
- */
+defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
 
 /**
  * This sets up the email messenger for the EE_messages (notifications) subsystem in EE.
@@ -29,12 +9,37 @@ class EE_Email_messenger extends EE_messenger
 {
 
     /**
-     * The following are the properties that email requires for the message going out.
+     * To field for email
+     * @var string
      */
-    protected $_to;
-    protected $_from;
-    protected $_subject;
-    protected $_content;
+    protected $_to = '';
+
+
+    /**
+     * CC field for email.
+     * @var string
+     */
+    protected $_cc = '';
+
+    /**
+     * From field for email
+     * @var string
+     */
+    protected $_from = '';
+
+
+    /**
+     * Subject field for email
+     * @var string
+     */
+    protected $_subject = '';
+
+
+    /**
+     * Content field for email
+     * @var string
+     */
+    protected $_content = '';
 
 
     /**
@@ -46,15 +51,21 @@ class EE_Email_messenger extends EE_messenger
     {
         //set name and description properties
         $this->name                = 'email';
-        $this->description         = __('This messenger delivers messages via email using the built-in <code>wp_mail</code> function included with WordPress',
-            'event_espresso');
+        $this->description         = sprintf(
+            esc_html__(
+                'This messenger delivers messages via email using the built-in %s function included with WordPress',
+                'event_espresso'
+            ),
+            '<code>wp_mail</code>'
+        );
         $this->label               = array(
-            'singular' => __('email', 'event_espresso'),
-            'plural'   => __('emails', 'event_espresso'),
+            'singular' => esc_html__('email', 'event_espresso'),
+            'plural'   => esc_html__('emails', 'event_espresso'),
         );
         $this->activate_on_install = true;
 
-        //we're using defaults so let's call parent constructor that will take care of setting up all the other properties
+        //we're using defaults so let's call parent constructor that will take care of setting up all the other
+        // properties
         parent::__construct();
     }
 
@@ -75,9 +86,11 @@ class EE_Email_messenger extends EE_messenger
      */
     protected function _set_valid_shortcodes()
     {
-        //remember by leaving the other fields not set, those fields will inherit the valid shortcodes from the message type.
+        //remember by leaving the other fields not set, those fields will inherit the valid shortcodes from the
+        // message type.
         $this->_valid_shortcodes = array(
             'to'   => array('email', 'event_author', 'primary_registration_details', 'recipient_details'),
+            'cc' => array('email', 'event_author', 'primary_registration_details', 'recipient_details'),
             'from' => array('email', 'event_author', 'primary_registration_details', 'recipient_details'),
         );
     }
@@ -97,6 +110,10 @@ class EE_Email_messenger extends EE_messenger
             'to'            => array(
                 'shortcodes' => $valid_shortcodes['to'],
                 'type'       => 'email',
+            ),
+            'cc' => array(
+                'shortcodes' => $valid_shortcodes['to'],
+                'type' => 'email',
             ),
             'from'          => array(
                 'shortcodes' => $valid_shortcodes['from'],
@@ -207,7 +224,7 @@ class EE_Email_messenger extends EE_messenger
         $this->_test_settings_fields = array(
             'to'      => array(
                 'input'      => 'text',
-                'label'      => __('Send a test email to', 'event_espresso'),
+                'label'      => esc_html__('Send a test email to', 'event_espresso'),
                 'type'       => 'email',
                 'required'   => true,
                 'validation' => true,
@@ -239,20 +256,48 @@ class EE_Email_messenger extends EE_messenger
      */
     protected function _set_template_fields()
     {
-        // any extra template fields that are NOT used by the messenger but will get used by a messenger field for shortcode replacement get added to the 'extra' key in an associated array indexed by the messenger field they relate to.  This is important for the Messages_admin to know what fields to display to the user.  Also, notice that the "values" are equal to the field type that messages admin will use to know what kind of field to display. The values ALSO have one index labeled "shortcode".  the values in that array indicate which ACTUAL SHORTCODE (i.e. [SHORTCODE]) is required in order for this extra field to be displayed.  If the required shortcode isn't part of the shortcodes array then the field is not needed and will not be displayed/parsed.
+        // any extra template fields that are NOT used by the messenger but will get used by a messenger field for
+        // shortcode replacement get added to the 'extra' key in an associated array indexed by the messenger field
+        // they relate to.  This is important for the Messages_admin to know what fields to display to the user.
+        //  Also, notice that the "values" are equal to the field type that messages admin will use to know what
+        // kind of field to display. The values ALSO have one index labeled "shortcode".  the values in that array
+        // indicate which ACTUAL SHORTCODE (i.e. [SHORTCODE]) is required in order for this extra field to be
+        // displayed.  If the required shortcode isn't part of the shortcodes array then the field is not needed and
+        // will not be displayed/parsed.
         $this->_template_fields = array(
             'to'      => array(
                 'input'      => 'text',
-                'label'      => __('To', 'event_espresso'),
+                'label'      => esc_html_x(
+                    'To',
+                    'Label for the "To" field for email addresses',
+                    'event_espresso'
+                ),
                 'type'       => 'string',
                 'required'   => true,
                 'validation' => true,
                 'css_class'  => 'large-text',
                 'format'     => '%s',
             ),
+            'cc'      => array(
+                'input'      => 'text',
+                'label'      => esc_html_x(
+                    'CC',
+                    'Label for the "Carbon Copy" field used for additional email addresses',
+                    'event_espresso'
+                ),
+                'type'       => 'string',
+                'required'   => false,
+                'validation' => true,
+                'css_class'  => 'large-text',
+                'format'     => '%s',
+            ),
             'from'    => array(
                 'input'      => 'text',
-                'label'      => __('From', 'event_espresso'),
+                'label'      => esc_html_x(
+                    'From',
+                    'Label for the "From" field for email addresses.',
+                    'event_espresso'
+                ),
                 'type'       => 'string',
                 'required'   => true,
                 'validation' => true,
@@ -261,7 +306,11 @@ class EE_Email_messenger extends EE_messenger
             ),
             'subject' => array(
                 'input'      => 'text',
-                'label'      => __('Subject', 'event_espresso'),
+                'label'      => esc_html_x(
+                    'Subject',
+                    'Label for the "Subject" field (short description of contents) for emails.',
+                    'event_espresso'
+                ),
                 'type'       => 'string',
                 'required'   => true,
                 'validation' => true,
@@ -274,7 +323,7 @@ class EE_Email_messenger extends EE_messenger
                 'content' => array(
                     'main'          => array(
                         'input'      => 'wp_editor',
-                        'label'      => __('Main Content', 'event_espresso'),
+                        'label'      => esc_html__('Main Content', 'event_espresso'),
                         'type'       => 'string',
                         'required'   => true,
                         'validation' => true,
@@ -376,8 +425,10 @@ class EE_Email_messenger extends EE_messenger
     /**
      * We just deliver the messages don't kill us!!
      *
-     * @return bool | WP_Error  true if message delivered, false if it didn't deliver OR bubble up any error object if
+     * @return bool|WP_Error true if message delivered, false if it didn't deliver OR bubble up any error object if
      *              present.
+     * @throws EE_Error
+     * @throws \TijsVerkoyen\CssToInlineStyles\Exception
      */
     protected function _send_message()
     {
@@ -390,13 +441,17 @@ class EE_Email_messenger extends EE_messenger
         if (! $success) {
             EE_Error::add_error(
                 sprintf(
-                    __('The email did not send successfully.%3$sThe WordPress wp_mail function is used for sending mails but does not give any useful information when an email fails to send.%3$sIt is possible the "to" address (%1$s) or "from" address (%2$s) is invalid.%3$s',
-                        'event_espresso'),
+                    esc_html__(
+                        'The email did not send successfully.%3$sThe WordPress wp_mail function is used for sending mails but does not give any useful information when an email fails to send.%3$sIt is possible the "to" address (%1$s) or "from" address (%2$s) is invalid.%3$s',
+                        'event_espresso'
+                    ),
                     $this->_to,
                     $this->_from,
                     '<br />'
                 ),
-                __FILE__, __FUNCTION__, __LINE__
+                __FILE__,
+                __FUNCTION__,
+                __LINE__
             );
         }
         return $success;
@@ -407,6 +462,8 @@ class EE_Email_messenger extends EE_messenger
      * see parent for definition
      *
      * @return string html body of the message content and the related css.
+     * @throws EE_Error
+     * @throws \TijsVerkoyen\CssToInlineStyles\Exception
      */
     protected function _preview()
     {
@@ -425,13 +482,17 @@ class EE_Email_messenger extends EE_messenger
         $this->_ensure_has_from_email_address();
         $from    = stripslashes_deep(html_entity_decode($this->_from, ENT_QUOTES, "UTF-8"));
         $headers = array(
-            'MIME-Version: 1.0',
             'From:' . $from,
             'Reply-To:' . $from,
             'Content-Type:text/html; charset=utf-8',
         );
 
-        //but wait!  Header's for the from is NOT reliable because some plugins don't respect From: as set in the header.
+        if (! empty($this->_cc)) {
+            $headers[] = 'cc: ' . $this->_cc;
+        }
+
+        //but wait!  Header's for the from is NOT reliable because some plugins don't respect From: as set in the
+        // header.
         add_filter('wp_mail_from', array($this, 'set_from_address'), 100);
         add_filter('wp_mail_from_name', array($this, 'set_from_name'), 100);
         return apply_filters('FHEE__EE_Email_messenger___headers', $headers, $this->_incoming_message_type, $this);
@@ -483,12 +544,15 @@ class EE_Email_messenger extends EE_messenger
      *
      * @since 4.3.1
      * @param string $from_email What the original from_email is.
+     * @return string
      */
     public function set_from_address($from_email)
     {
         $parsed_from = $this->_parse_from();
         //includes fallback if the parsing failed.
-        $from_email = is_array($parsed_from) && ! empty($parsed_from[1]) ? $parsed_from[1] : get_bloginfo('admin_email');
+        $from_email = is_array($parsed_from) && ! empty($parsed_from[1])
+            ? $parsed_from[1]
+            : get_bloginfo('admin_email');
         return $from_email;
     }
 
@@ -498,6 +562,7 @@ class EE_Email_messenger extends EE_messenger
      *
      * @since 4.3.1
      * @param string $from_name The original from_name.
+     * @return string
      */
     public function set_from_name($from_name)
     {
@@ -518,6 +583,8 @@ class EE_Email_messenger extends EE_messenger
      *
      * @param bool $preview will determine whether this is preview template or not.
      * @return string formatted body for email.
+     * @throws EE_Error
+     * @throws \TijsVerkoyen\CssToInlineStyles\Exception
      */
     protected function _body($preview = false)
     {
@@ -525,7 +592,11 @@ class EE_Email_messenger extends EE_messenger
         $this->_template_args = array(
             'subject'   => $this->_subject,
             'from'      => $this->_from,
-            'main_body' => wpautop(stripslashes_deep(html_entity_decode($this->_content, ENT_QUOTES, "UTF-8"))),
+            'main_body' => wpautop(
+                stripslashes_deep(
+                    html_entity_decode($this->_content, ENT_QUOTES, "UTF-8")
+                )
+            ),
         );
         $body                 = $this->_get_main_template($preview);
 
@@ -536,18 +607,26 @@ class EE_Email_messenger extends EE_messenger
          * @return  bool    true  indicates to use the inliner, false bypasses it.
          */
         if (apply_filters('FHEE__EE_Email_messenger__apply_CSSInliner ', true, $preview)) {
-
             //require CssToInlineStyles library and its dependencies via composer autoloader
             require_once EE_THIRD_PARTY . 'cssinliner/vendor/autoload.php';
 
             //now if this isn't a preview, let's setup the body so it has inline styles
             if (! $preview || ($preview && defined('DOING_AJAX'))) {
-                $style = file_get_contents($this->get_variation($this->_tmp_pack, $this->_incoming_message_type->name,
-                    false, 'main', $this->_variation), true);
+                $style = file_get_contents(
+                    $this->get_variation(
+                        $this->_tmp_pack,
+                        $this->_incoming_message_type->name,
+                        false,
+                        'main',
+                        $this->_variation
+                    ),
+                    true
+                );
                 $CSS   = new TijsVerkoyen\CssToInlineStyles\CssToInlineStyles($body, $style);
-                $body  = ltrim($CSS->convert(true),
-                    ">\n"); //for some reason the library has a bracket and new line at the beginning.  This takes care of that.
-                $body  = ltrim($body, "<?"); //see https://events.codebasehq.com/projects/event-espresso/tickets/8609
+                //for some reason the library has a bracket and new line at the beginning.  This takes care of that.
+                $body  = ltrim($CSS->convert(true), ">\n");
+                //see https://events.codebasehq.com/projects/event-espresso/tickets/8609
+                $body  = ltrim($body, "<?");
             }
 
         }
@@ -570,8 +649,4 @@ class EE_Email_messenger extends EE_messenger
         }
         return $settings;
     }
-
-
 }
-
-// end of file:	includes/core/messages/messengers/EE_Email_messenger.class.php
