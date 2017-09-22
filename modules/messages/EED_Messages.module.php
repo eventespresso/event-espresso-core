@@ -839,13 +839,13 @@ class EED_Messages extends EED_Module
         );
         $generated_preview_queue = self::$_MSG_PROCESSOR->generate_for_preview($mtg, $send);
         if ($generated_preview_queue instanceof EE_Messages_Queue) {
-            $content = $generated_preview_queue->get_message_repository()->current()->content();
-            //if the current message was persisted to the db (which will happen with any extra fields on a message) then
-            //let's delete it because we don't need previews cluttering up the db.
-            if ($generated_preview_queue->get_message_repository()->current()->ID() > 0
-                && $generated_preview_queue->get_message_repository()->current()->STS_ID() !== EEM_Message::status_failed
-            ) {
-                $generated_preview_queue->get_message_repository()->delete();
+            //loop through all content for the preview and remove any persisted records.
+            $content = '';
+            foreach ($generated_preview_queue->get_message_repository() as $message) {
+                $content = $message->content();
+                if ($message->ID() > 0 && $message->STS_ID() !== EEM_Message::status_failed) {
+                    $message->delete();
+                }
             }
             return $content;
         } else {

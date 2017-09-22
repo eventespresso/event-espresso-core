@@ -99,7 +99,7 @@ class EE_Div_Per_Section_Layout extends EE_Form_Section_Layout_Base
      */
     protected function _display_label_for_option_type_question(EE_Form_Input_With_Options_Base $input)
     {
-        if ($input->display_html_label_text() !== '') {
+        if ($input->display_html_label_text()) {
             return EEH_HTML::div(
                 $input->required()
                     ? $input->html_label_text() . EEH_HTML::span('*', '', 'ee-asterisk')
