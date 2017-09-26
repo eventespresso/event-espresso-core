@@ -578,7 +578,7 @@ class EE_Registration_Processor extends EE_Processor_Base
                 )
             );
             return $a_reg instanceof EE_Registration
-                ? $a_reg->save(array('REG_final_price' => $a_reg->final_price() + $diff))
+                ? (bool) $a_reg->save(array('REG_final_price' => $a_reg->final_price() + $diff))
                 : false;
         }
         return true;
