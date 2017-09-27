@@ -4,7 +4,6 @@ namespace EventEspresso\core\services\context;
 
 use Closure;
 use EventEspresso\core\domain\entities\Context;
-use InvalidArgumentException;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
