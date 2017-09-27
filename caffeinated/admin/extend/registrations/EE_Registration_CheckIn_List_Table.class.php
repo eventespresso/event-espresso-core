@@ -1,4 +1,6 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+<?php use EventEspresso\ui\browser\checkins\entities\CheckinStatusDashicon;
+
+if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 /**
  * Event Espresso
  *
@@ -87,10 +89,9 @@ class EE_Registration_CheckIn_List_Table extends EE_Admin_List_Table {
 	}
 
 
-	function column_CHK_in( EE_Checkin $item ) {
-		$checkinstatus = $item->get('CHK_in');
-		$checkinstatus = $checkinstatus ? EE_Registration::checkin_status_in : EE_Registration::checkin_status_out;
-		return '<span class="checkin-icons checkedin-status-' . $checkinstatus . '"></span><span class="show-on-mobile-view-only">' . $item->get_datetime('CHK_timestamp') . '</span>';
+	public function column_CHK_in( EE_Checkin $item ) {
+        $checkin_status_dashicon = CheckinStatusDashicon::fromCheckin($item);
+        return '<span class="' . $checkin_status_dashicon->cssClasses() . '"></span><span class="show-on-mobile-view-only">' . $item->get_datetime('CHK_timestamp') . '</span>';
 	}
 
 

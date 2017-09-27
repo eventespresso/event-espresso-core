@@ -165,6 +165,13 @@ interface CollectionInterface {
      */
     public function detachAll();
 
+
+
+    /**
+     * unsets and detaches ALL objects from the Collection
+     */
+    public function trashAndDetachAll();
+
 }
 // End of file CollectionInterface.php
 // Location: /CollectionInterface.php

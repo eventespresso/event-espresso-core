@@ -117,6 +117,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base
     protected $_blog_offset;
 
 
+
     /**
      * @param string $table_column
      * @param string $nice_name
@@ -127,7 +128,8 @@ class EE_Datetime_Field extends EE_Model_Field_Base
      * @param string $time_format
      * @param string $pretty_date_format
      * @param string $pretty_time_format
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidArgumentException
      */
     public function __construct(
         $table_column,
@@ -530,9 +532,14 @@ class EE_Datetime_Field extends EE_Model_Field_Base
         //we allow an empty value or DateTime object, but nothing else.
         if (! empty($datetime_value) && ! $datetime_value instanceof DateTime) {
             throw new EE_Error(
-                __(
-                    'The incoming value being prepared for setting in the database must either be empty or a php DateTime object',
-                    'event_espresso'
+            	sprintf(
+            	    __(
+            		    'The incoming value being prepared for setting in the database must either be empty or a php 
+            		    DateTime object, instead of: %1$s %2$s',
+                        'event_espresso'
+	                ),
+                    '<br />',
+                    print_r($datetime_value, true)
                 )
             );
         }
@@ -701,10 +708,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base
      */
     public function get_timezone_transitions(DateTimeZone $DateTimeZone, $time = null, $first_only = true)
     {
-        $time = is_int($time) || $time === null ? $time : strtotime($time);
-        $time = preg_match(EE_Datetime_Field::unix_timestamp_regex, $time) ? $time : time();
-        $transitions = $DateTimeZone->getTransitions($time);
-        return $first_only && ! isset($transitions['ts']) ? reset($transitions) : $transitions;
+        return EEH_DTT_Helper::get_timezone_transitions($DateTimeZone, $time, $first_only);
     }
 
 
@@ -719,11 +723,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base
      */
     public function get_timezone_offset(DateTimeZone $DateTimeZone, $time = null)
     {
-        $transitions = $this->get_timezone_transitions($DateTimeZone, $time);
-        if ( ! isset($transitions['offset'])) {
-            throw new DomainException();
-        }
-        return $transitions['offset'];
+        return EEH_DTT_Helper::get_timezone_offset($DateTimeZone, $time);
     }
 
 

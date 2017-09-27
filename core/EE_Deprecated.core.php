@@ -1032,7 +1032,47 @@ add_filter(
 		);
 	}
 );
+add_action(
+	'AHEE__EE_Capabilities__addCaps__complete',
+	function($capabilities_map) {
+		if ( ! has_action( 'AHEE__EE_Capabilities__init_role_caps__complete' )) {
+			return;
+		}
+		deprecated_espresso_action_or_filter_doing_it_wrong(
+			'AHEE__EE_Capabilities__init_role_caps__complete',
+			'AHEE__EE_Capabilities__addCaps__complete',
+			'\EE_Capabilities::addCaps()',
+			'4.9.42',
+			'5.0.0'
+		);
+		do_action(
+			'AHEE__EE_Capabilities__init_role_caps__complete',
+            $capabilities_map
+		);
+	}
+);
 
+add_filter(
+	'FHEE_EventEspresso_core_services_commands_attendee_CreateAttendeeCommandHandler__findExistingAttendee__existing_attendee',
+	function($existing_attendee, $registration, $attendee_data) {
+		if ( ! has_filter( 'FHEE_EE_Single_Page_Checkout__save_registration_items__find_existing_attendee' )) {
+			return $existing_attendee;
+		}
+		deprecated_espresso_action_or_filter_doing_it_wrong(
+			'FHEE_EE_Single_Page_Checkout__save_registration_items__find_existing_attendee',
+			'FHEE_EventEspresso_core_services_commands_attendee_CreateAttendeeCommandHandler__findExistingAttendee__existing_attendee',
+			'\EventEspresso\core\services\commands\attendee\CreateAttendeeCommandHandler::findExistingAttendee()',
+			'4.9.34',
+			'5.0.0',
+			'filter'
+		);
+		return apply_filters(
+            'FHEE_EE_Single_Page_Checkout__save_registration_items__find_existing_attendee',
+            $existing_attendee, $registration, $attendee_data
+        );
+	},
+	10,3
+);
 
 /**
  * Class EE_Event_List_Query

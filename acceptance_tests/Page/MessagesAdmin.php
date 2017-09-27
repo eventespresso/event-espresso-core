@@ -1,6 +1,8 @@
 <?php
 namespace Page;
 
+use Codeception\Util\Locator;
+
 /**
  * MessagesAdmin
  * Selectors/References to elements in the Messages Admin Pages
@@ -14,20 +16,23 @@ class MessagesAdmin extends CoreAdmin
 
     /**
      * Context slug for the admin messages context.
-     * @var string
      */
     const ADMIN_CONTEXT_SLUG = 'admin';
 
     /**
      * Context slug for the primary attendee messages context
-     * @var string
      */
     const PRIMARY_ATTENDEE_CONTEXT_SLUG = 'primary_attendee';
 
 
     /**
+     * Context slug for the attendee messages context
+     */
+    const ATTENDEE_CONTEXT_SLUG = 'attendee';
+
+
+    /**
      * Status reference for the EEM_Message::status_sent status.
-     * @var string
      */
     const MESSAGE_STATUS_SENT = 'MSN';
 
@@ -40,7 +45,6 @@ class MessagesAdmin extends CoreAdmin
 
     /**
      * Selector for the Global Messages "Send on same request" field in the Messages Settings tab.
-     * @var string
      */
     const GLOBAL_MESSAGES_SETTINGS_ON_REQUEST_SELECTION_SELECTOR =
         '#global_messages_settings-do-messages-on-same-request';
@@ -48,37 +52,39 @@ class MessagesAdmin extends CoreAdmin
 
     /**
      * Selector for the Global Messages Settings submit button in the Messages Settings tab.
-     * @var string
      */
     const GLOBAL_MESSAGES_SETTINGS_SUBMIT_SELECTOR = '#global_messages_settings-update-settings-submit';
 
 
     /**
      * This is the container where active message types for a messenger are found/dragged to.
-     * @var string
      */
     const MESSAGES_SETTINGS_ACTIVE_MESSAGE_TYPES_CONTAINER_SELECTOR = '#active-message-types';
 
 
     /**
      * Locator for the context switcher selector on the Message Template Editor page.
-     * @var string
      */
     const MESSAGES_CONTEXT_SWITCHER_SELECTOR = "//form[@id='ee-msg-context-switcher-frm']/select";
 
 
     /**
      * Locator for the context switcher submit button in the Message Template Editor page.
-     * @var string
      */
     const MESSAGES_CONTEXT_SWITCHER_BUTTON_SELECTOR = "#submit-msg-context-switcher-sbmt";
 
 
     /**
      * Locator for the dialog container used for housing viewed messages in the message activity list table.
-     * @var string
      */
     const MESSAGES_LIST_TABLE_VIEW_MESSAGE_DIALOG_CONTAINER_SELECTOR = '.ee-admin-dialog-container-inner-content';
+
+
+    /**
+     * Returns the selector for the on/off toggle for context on the message template editor.
+     */
+    const MESSAGES_CONTEXT_ACTIVE_STATE_TOGGLE =
+        "//div[@class='activate_context_on_off_toggle_container']/div[@class='switch']/label";
 
 
 
@@ -159,6 +165,7 @@ class MessagesAdmin extends CoreAdmin
      *                                This allows you to indicate which item from the set to match.  If this is set to 0
      *                                then all matches for the locator will be returned.
      * @return string
+     * @throws \InvalidArgumentException
      */
     public static function messagesActivityListTableCellSelectorFor(
         $field,
@@ -169,7 +176,7 @@ class MessagesAdmin extends CoreAdmin
         $table_cell_content_for_field = '',
         $number_in_set = 1
     ) {
-        $selector = $number_in_set > 0 ? '(' : '';
+        $selector = "//tbody[@id='the-list']";
         $selector .= "//tr[contains(@class, 'msg-status-$message_status')]"
                      . "//td[contains(@class, 'message_type') and text()='$message_type_label']";
         if ($messenger) {
@@ -179,8 +186,7 @@ class MessagesAdmin extends CoreAdmin
         $selector .= $table_cell_content_for_field
             ? "/ancestor::tr/td[contains(@class, 'column-$field') and text()='$table_cell_content_for_field']"
             : "/ancestor::tr/td[contains(@class, 'column-$field')]";
-        $selector .= $number_in_set > 0 ? ")[$number_in_set]" : '';
-        return $selector;
+        return $number_in_set > 0 ? Locator::elementAt($selector, $number_in_set) : $selector;
     }
 
 
@@ -210,6 +216,7 @@ class MessagesAdmin extends CoreAdmin
      * @param int    $number_in_set         It's possible that the given parameters could match multiple items in the
      *                                      view. This allows you to indicate which item from the set to match.
      * @return string
+     * @throws \InvalidArgumentException
      */
     public static function messagesActivityListTableViewButtonSelectorFor(
         $message_type_label,
@@ -233,16 +240,17 @@ class MessagesAdmin extends CoreAdmin
     }
 
 
-
     /**
      * Locator for the delete action link for a message item in the message activity list table.
      * Note: The link is not visible by default, so the column would need hovered over for the link to appear.
+     *
      * @param        $message_type_label
      * @param string $message_status
      * @param string $messenger
      * @param string $context
      * @param int    $number_in_set
      * @return string
+     * @throws \InvalidArgumentException
      */
     public static function messagesActivityListTableDeleteActionSelectorFor(
         $message_type_label,
@@ -262,5 +270,27 @@ class MessagesAdmin extends CoreAdmin
         );
         $selector .= "/div/span[@class='delete']/a";
         return $selector;
+    }
+
+
+
+    /**
+     * Returns the input selector for a given field in the message template editor.
+     * Assumes one is already viewing the Message Template Editor.
+     * @param string     $field
+     * @return string
+     */
+    public static function messageInputFieldSelectorFor($field)
+    {
+        return "//div[@id='post-body']//input[@id='$field-content']";
+    }
+
+
+    /**
+     * Wrapper for self::messageInputFieldSelectorFor('to') that takes care of getting the input for the To field.
+     */
+    public static function messageTemplateToFieldSelector()
+    {
+        return self::messageInputFieldSelectorFor('to');
     }
 }

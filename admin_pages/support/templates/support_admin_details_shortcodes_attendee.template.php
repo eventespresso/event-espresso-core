@@ -48,5 +48,13 @@
 				</p>
 				<br>
 			</li>
-		</ul>
+        <li>
+            <strong>[ESPRESSO_EVENT_ATTENDEES display_on_archives=true]</strong><br>
+            <p class="description">
+                <?php _e('Will display the attendees list when events are viewed on archive pages.', 'event_espresso'); ?>
+            </p>
+            <br>
+        </li>
+
+    </ul>
 </div>
