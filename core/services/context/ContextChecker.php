@@ -53,7 +53,6 @@ class ContextChecker
      * @param string       $identifier
      * @param array        $acceptable_values
      * @param Closure|null $evaluation_callback [optional]
-     * @throws InvalidArgumentException
      */
     public function __construct($identifier, array $acceptable_values, Closure $evaluation_callback = null)
     {
@@ -74,21 +73,9 @@ class ContextChecker
 
     /**
      * @param array $acceptable_values
-     * @throws InvalidArgumentException
      */
     private function setAcceptableValues(array $acceptable_values)
     {
-        if(array_filter($acceptable_values) === array()) {
-            throw new InvalidArgumentException(
-                sprintf(
-                    esc_html__(
-                        'The "acceptable values" array for the "%1$s" ContextChecker must not be empty',
-                        'event_espresso'
-                    ),
-                    $this->identifier
-                )
-            );
-        }
         $this->acceptable_values = $acceptable_values;
     }
 
@@ -100,7 +87,7 @@ class ContextChecker
     {
         $this->evaluation_callback = $evaluation_callback instanceof Closure
             ? $evaluation_callback
-            : function(Context $context, $acceptable_values) {
+            : function (Context $context, $acceptable_values) {
                 return in_array($context->slug(), $acceptable_values, true);
             };
     }
@@ -156,12 +143,15 @@ class ContextChecker
             apply_filters(
                 "FHEE__ContextChecker__{$this->identifier}__isAllowed",
                 $evaluation_callback($context, $this->acceptableValues()),
-                $this,
-                $context
+                $context,
+                $this
             ),
             FILTER_VALIDATE_BOOLEAN
         );
     }
 
 }
+
+
+
 // Location: ContextChecker.php
