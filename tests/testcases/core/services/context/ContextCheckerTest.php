@@ -101,6 +101,7 @@ class ContextCheckerTest extends EE_UnitTestCase
 
     public function testIsAllowedWithFilter()
     {
+        $context_five = new Context('context-five', 'for testing if context-five is valid');
         // hook into existing ContextChecker using default built-in evaluation callback,
         // and add custom detection for the word "five"
         add_filter(
@@ -115,11 +116,7 @@ class ContextCheckerTest extends EE_UnitTestCase
             10,
             2
         );
-        $this->assertTrue(
-            $this->context_checker->isAllowed(
-                new Context('context-five', 'for testing if context-five is valid')
-            )
-        );
+        $this->assertTrue($this->context_checker->isAllowed($context_five));
         remove_all_filters('FHEE__ContextChecker__this-is-a-test__isAllowed');
         // now do it again, but looking for a value that will not be within the context slug
         add_filter(
@@ -134,11 +131,7 @@ class ContextCheckerTest extends EE_UnitTestCase
             10,
             2
         );
-        $this->assertFalse(
-            $this->context_checker->isAllowed(
-                new Context('context-five', 'for testing if context-five is valid')
-            )
-        );
+        $this->assertFalse($this->context_checker->isAllowed($context_five));
     }
 
 
