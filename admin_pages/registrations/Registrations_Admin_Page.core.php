@@ -1,4 +1,10 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) {
+<?php
+
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\domain\services\attendee\forms\AttendeeContactDetailsMetaboxFormHandler;
+
+if ( ! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
 
@@ -3310,9 +3316,11 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     protected function _insert_update_cpt_item($post_id, $post)
     {
         $success  = true;
-        $attendee = EEM_Attendee::instance()->get_one_by_ID($post_id);
+        $attendee = $post instanceof WP_Post && $post->post_type === 'espresso_attendees'
+            ? EEM_Attendee::instance()->get_one_by_ID($post_id)
+            : null;
         //for attendee updates
-        if ($post->post_type = 'espresso_attendees' && ! empty($attendee)) {
+        if ($attendee instanceof EE_Attendee) {
             //note we should only be UPDATING attendees at this point.
             $updated_fields = array(
                 'ATT_fname'     => $this->_req_data['ATT_fname'],
@@ -3324,13 +3332,15 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 'STA_ID'        => isset($this->_req_data['STA_ID']) ? $this->_req_data['STA_ID'] : '',
                 'CNT_ISO'       => isset($this->_req_data['CNT_ISO']) ? $this->_req_data['CNT_ISO'] : '',
                 'ATT_zip'       => isset($this->_req_data['ATT_zip']) ? $this->_req_data['ATT_zip'] : '',
-                'ATT_email'     => isset($this->_req_data['ATT_email']) ? $this->_req_data['ATT_email'] : '',
-                'ATT_phone'     => isset($this->_req_data['ATT_phone']) ? $this->_req_data['ATT_phone'] : '',
             );
             foreach ($updated_fields as $field => $value) {
                 $attendee->set($field, $value);
             }
-            $success                   = $attendee->save();
+
+            //process contact details metabox form handler (which will also save the attendee)
+            $contact_details_form = $this->getAttendeeContactDetailsMetaboxFormHandler($attendee);
+            $success = $contact_details_form->process($this->_req_data);
+
             $attendee_update_callbacks = apply_filters(
                 'FHEE__Registrations_Admin_Page__insert_update_cpt_item__attendee_update',
                 array()
@@ -3349,6 +3359,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 }
             }
         }
+
         if ($success === false) {
             EE_Error::add_error(
                 esc_html__(
@@ -3444,14 +3455,35 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      *
      * @param  WP_Post $post wp post object
      * @return string attendee contact info ( and form )
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws LogicException
      * @throws DomainException
      */
     public function attendee_contact_info($post)
     {
         //get attendee object ( should already have it )
-        $this->_template_args['attendee'] = $this->_cpt_model_obj;
-        $template                         = REG_TEMPLATE_PATH . 'attendee_contact_info_metabox_content.template.php';
-        EEH_Template::display_template($template, $this->_template_args);
+        $form = $this->getAttendeeContactDetailsMetaboxFormHandler($this->_cpt_model_obj);
+        $form->enqueueStylesAndScripts();
+        echo $form->display();
+    }
+
+
+    /**
+     * Return form handler for the contact details metabox
+     *
+     * @param EE_Attendee $attendee
+     * @return AttendeeContactDetailsMetaboxFormHandler
+     * @throws DomainException
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    protected function getAttendeeContactDetailsMetaboxFormHandler(EE_Attendee $attendee)
+    {
+        return new AttendeeContactDetailsMetaboxFormHandler($attendee, EE_Registry::instance());
     }
 
 
