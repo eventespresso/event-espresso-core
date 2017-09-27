@@ -55,6 +55,18 @@ class CoreAdmin
 
 
     /**
+     * Selector for bulk action select field on list tables.
+     */
+    const SELECTOR_LIST_TABLE_BULK_ACTION_FIELD = '#bulk-action-selector-';
+
+
+    /**
+     * Selector for applying a bulk action.
+     */
+    const SELECTOR_LIST_TABLE_BULK_ACTTION_APPLY = '#doaction';
+
+
+    /**
      * Get the EE admin url for the given properties.
      * Note, this is JUST the endpoint for the admin route.  It is expected that the actor/test would be calling this
      * with `amOnAdminPage` action.

@@ -124,30 +124,66 @@ class EventsAdmin extends CoreAdmin
     }
 
 
+    /**
+     * Selector for the TKT_base_price field for the given display row in the event editor.
+     * @param int $row_number
+     * @return string
+     */
     public static function eventEditorTicketPriceFieldSelector($row_number = 1)
     {
         return self::eventEditorTicketFieldSelectorForFieldInDisplayRow('TKT_base_price', $row_number);
     }
 
 
+    /**
+     * Selector for the TKT_qty field for the given display row in the event editor.
+     * @param int $row_number
+     * @return string
+     */
+    public static function eventEditorTicketQuantityFieldSelector($row_number = 1)
+    {
+        return self::eventEditorTicketFieldSelectorForFieldInDisplayRow('TKT_qty', $row_number);
+    }
+
+
+    /**
+     * Selector for the advanced details toggle for the ticket for the given display row in the event editor.
+     * @param int $row_number
+     * @return string
+     */
     public static function eventEditorTicketAdvancedDetailsSelector($row_number = 1)
     {
         return "//tr[@id='display-ticketrow-$row_number']//span[contains(@class, 'gear-icon')]";
     }
 
 
+    /**
+     * Selector for the subtotal amount for the given display row of the ticket in the event editor.
+     * @param int $row_number
+     * @return string
+     */
     public static function eventEditorTicketAdvancedDetailsSubtotalSelector($row_number = 1)
     {
         return "//span[@id='price-total-amount-$row_number']";
     }
 
 
+    /**
+     * Selector for the Total element for the given display row of the ticket in the event editor.
+     * @param int $row_number
+     * @return string
+     */
     public static function eventEditorTicketAdvancedDetailsTotalSelector($row_number = 1)
     {
         return "//span[@id='price-total-amount-$row_number']";
     }
 
 
+    /**
+     * Selector for the taxable selector for the ticket for the given display row in the event editor.
+     * @param int $row_number
+     * @return string
+     */
     public static function eventEditorTicketTaxableCheckboxSelector($row_number = 1)
     {
         return "//input[@id='edit-ticket-TKT_taxable-$row_number']";
