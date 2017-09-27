@@ -44,6 +44,12 @@ class MessagesAdmin extends CoreAdmin
 
 
     /**
+     * Message type slug for the Registration Pending Payment message type
+     */
+    const MESSAGE_TYPE_PENDING_PAYMENT = 'pending_approval';
+
+
+    /**
      * Selector for the Global Messages "Send on same request" field in the Messages Settings tab.
      */
     const GLOBAL_MESSAGES_SETTINGS_ON_REQUEST_SELECTION_SELECTOR =

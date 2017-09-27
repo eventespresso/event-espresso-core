@@ -363,7 +363,11 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links
     {
         $label_type   = $plural ? 'plural' : 'singular';
         $message_type = $this->message_type_object();
-        return $message_type instanceof EE_message_type ? $message_type->label[$label_type] : $this->message_type();
+        return $message_type instanceof EE_message_type ? $message_type->label[$label_type] : str_replace(
+            '_',
+            ' ',
+            $this->message_type()
+        );
     }
 
 
