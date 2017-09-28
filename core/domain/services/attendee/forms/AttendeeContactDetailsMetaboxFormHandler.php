@@ -4,7 +4,6 @@ namespace EventEspresso\core\domain\services\attendee\forms;
 
 use DomainException;
 use EE_Admin_One_Column_Layout;
-use EE_Admin_Two_Column_Layout;
 use EE_Attendee;
 use EE_Email_Input;
 use EE_Error;
