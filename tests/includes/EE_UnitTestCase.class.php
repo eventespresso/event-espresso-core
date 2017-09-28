@@ -1324,7 +1324,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
      */
     protected function refreshRolesForUser(WP_User $user)
     {
-        if (method_exists('for_site', $user)) {
+        if (method_exists($user, 'for_site')) {
             $user->for_site();
         } else {
             $user->_init_caps();
