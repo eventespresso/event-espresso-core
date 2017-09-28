@@ -144,9 +144,7 @@ class ContextCheckerTest extends EE_UnitTestCase
             {
                 $acceptable_values[] = 'context-six';
                 return $acceptable_values;
-            },
-            10,
-            2
+            }
         );
         $this->assertTrue(
             $this->context_checker->isAllowed(
