@@ -2186,7 +2186,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                 foreach ($ids_to_delete_indexed_by_column_for_each_row as $column => $id) {
                     $values_for_each_combined_primary_key_for_a_row[] = $column . '=' . $id;
                 }
-                $ways_to_identify_a_row[] = '(' . implode(' AND ', $values_for_each_combined_primary_key_for_a_row) . ')';
+                $ways_to_identify_a_row[] = '(' . implode(' AND ', $values_for_each_combined_primary_key_for_a_row);
             }
             $query_part = implode(' OR ', $ways_to_identify_a_row);
         }
