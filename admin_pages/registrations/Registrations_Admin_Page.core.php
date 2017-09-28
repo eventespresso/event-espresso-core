@@ -1,6 +1,7 @@
 <?php
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidFormSubmissionException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\domain\services\attendee\forms\AttendeeContactDetailsMetaboxFormHandler;
 
@@ -3380,7 +3381,18 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     }
 
 
-    //related to cpt routes
+    /**
+     * Callback invoked by parent EE_Admin_CPT class hooked in on `save_post` wp hook.
+     * @param int      $post_id
+     * @param WP_POST $post
+     * @throws DomainException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws LogicException
+     * @throws InvalidFormSubmissionException
+     */
     protected function _insert_update_cpt_item($post_id, $post)
     {
         $success  = true;
