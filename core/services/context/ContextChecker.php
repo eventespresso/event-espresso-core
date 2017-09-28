@@ -39,7 +39,8 @@ class ContextChecker
 
     /**
      * Closure that will be called to perform the evaluation within isAllowed().
-     * If none is provided,
+     * If none is provided, then a simple type sensitive in_array() check will be used
+     * and return true if the incoming Context::slug() is found within the array of $acceptable_values.
      *
      * @var Closure $evaluation_callback
      */
@@ -95,7 +96,7 @@ class ContextChecker
     /**
      * @return string
      */
-    public function identifier()
+    protected function identifier()
     {
         return $this->identifier;
     }
@@ -104,16 +105,19 @@ class ContextChecker
     /**
      * @return array
      */
-    public function acceptableValues()
+    protected function acceptableValues()
     {
-        return $this->acceptable_values;
+        return apply_filters(
+            "FHEE__EventEspresso_core_domain_entities_context_ContextChecker__{$this->identifier}__acceptableValues",
+            $this->acceptable_values
+        );
     }
 
 
     /**
      * @return Closure
      */
-    public function evaluationCallback()
+    protected function evaluationCallback()
     {
         return $this->evaluation_callback;
     }
@@ -125,12 +129,25 @@ class ContextChecker
      * The result is filterable using the identifier for this ContextChecker.
      * example:
      * If this ContextChecker's $identifier was set to "registration-checkout-type",
-     * then the filter here would be named: "FHEE__ContextChecker__registration-checkout-type__isAllowed".
+     * then the filter here would be named:
+     *  "FHEE__EventEspresso_core_domain_entities_context_ContextChecker__registration-checkout-type__isAllowed".
      * Other code could hook into the filter in isAllowed() using the above name
      * and test for additional acceptable values.
      * So if the set of $acceptable_values was: [ "initial-visit",  "revisit" ]
-     * then adding a filter to "FHEE__ContextChecker__registration-checkout-type__isAllowed",
-     * would allow you to also allow "wait-list-checkout" as an acceptable value
+     * then adding a filter to
+     *  "FHEE__EventEspresso_core_domain_entities_context_ContextChecker__registration-checkout-type__isAllowed",
+     * would allow you to perform your own conditional and allow "wait-list-checkout" as an acceptable value.
+     *  example:
+     *      add_filter(
+     *          'FHEE__EventEspresso_core_domain_entities_context_ContextChecker__registration-checkout-type__isAllowed',
+     *          function ($is_allowed, Context $context) {
+     *              return $context->slug() === 'wait-list-checkout'
+     *                  ? true
+     *                  : $is_allowed;
+     *          },
+     *          10,
+     *          2
+     *      );
      *
      * @param Context $context
      * @return boolean
@@ -140,7 +157,7 @@ class ContextChecker
         $evaluation_callback = $this->evaluationCallback();
         return filter_var(
             apply_filters(
-                "FHEE__ContextChecker__{$this->identifier}__isAllowed",
+                "FHEE__EventEspresso_core_domain_entities_context_ContextChecker__{$this->identifier}__isAllowed",
                 $evaluation_callback($context, $this->acceptableValues()),
                 $context,
                 $this
@@ -150,7 +167,3 @@ class ContextChecker
     }
 
 }
-
-
-
-// Location: ContextChecker.php
