@@ -15,7 +15,7 @@ class EE_Admin_One_Column_Layout extends EE_Form_Section_Layout_Base
         return EEH_HTML::table(
             '',
             $this->_form_section->html_id(),
-            'form-table',
+            $this->_form_section->html_class() . ' form-table',
             $this->_form_section->html_style()
         ) . EEH_HTML::tbody();
     }

@@ -18,7 +18,7 @@ class EE_Admin_Two_Column_Layout extends EE_Two_Column_Layout
      */
     public function layout_form_begin($additional_args = array())
     {
-        $this->_form_section->set_html_class('form-table');
+        $this->_form_section->set_html_class($this->_form_section->html_class() . ' form-table');
         return parent::layout_form_begin($additional_args);
     }
 
