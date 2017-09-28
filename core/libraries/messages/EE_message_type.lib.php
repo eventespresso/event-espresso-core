@@ -883,11 +883,11 @@ abstract class EE_message_type extends EE_Messages_Base
                 $this->_data,
                 $this
             )
-                && in_array($details['attendee_email'], $already_processed, true)
+                && in_array($att_id, $already_processed, true)
             ) {
                 continue;
             }
-            $already_processed[] = $details['attendee_email'];
+            $already_processed[] = $att_id;
             foreach ($details as $item => $value) {
                 $aee[$item] = $value;
                 if ($item === 'line_ref') {
