@@ -48,10 +48,6 @@ class EE_Admin_One_Column_Layout extends EE_Form_Section_Layout_Base
         ) {
             $input->set_html_class($input->html_class() . ' large-text');
         }
-        if ($input instanceof EE_Text_Area_Input) {
-            $input->set_rows(4);
-            $input->set_cols(60);
-        }
         $input_html = $input->get_html_for_input();
         // maybe add errors and help text ?
         $input_html .= $input->get_html_for_errors() !== ''
