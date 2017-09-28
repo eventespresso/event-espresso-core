@@ -19,6 +19,10 @@ class Checkout
      */
     const NEXT_STEP_BUTTON_SELECTOR = '.spco-next-step-btn';
 
+
+    const PAYMENT_METHOD_STEP_FORM = '#ee-spco-payment_options-reg-step-form';
+
+
     /**
      * @param int $attendee_number
      * @return string
@@ -56,5 +60,15 @@ class Checkout
     public static function fieldSelectorForAttendeeNumber($field_name, $attendee_number = 1)
     {
         return "//div[starts-with(@id, 'spco-attendee-panel-dv-$attendee_number')]//input[contains(@class, 'ee-reg-qstn-$field_name')]";
+    }
+
+
+    /**
+     * @param string $payment_method_slug Slug for the payment method.
+     * @return string
+     */
+    public static function fieldSelectorForPaymentOption($payment_method_slug)
+    {
+        return "#ee-available-payment-method-inputs-{$payment_method_slug}";
     }
 }

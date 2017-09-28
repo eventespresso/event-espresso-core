@@ -5,5 +5,6 @@ core:
   - MessagesAdmin
   - TicketSelector
   - CountrySettingsAdmin
+  - RegistrationsAdmin
 external_plugins:
   - https://github.com/eventespresso/ee4-mer/archive/master.zip
