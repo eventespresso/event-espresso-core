@@ -1316,4 +1316,19 @@ class EE_UnitTestCase extends WP_UnitTestCase
         }
     }
 
+
+
+    /**
+     * Calls the WordPress version specific method for refreshing user roles during tests
+     * @param WP_User $user
+     */
+    protected function refreshRolesForUser(WP_User $user)
+    {
+        if (method_exists('for_site', $user)) {
+            $user->for_site();
+        } else {
+            $user->_init_caps();
+        }
+    }
+
 }
