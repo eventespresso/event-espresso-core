@@ -117,7 +117,9 @@ class EE_Messages_Generator
      *  for the caller to decide what to do with it.
      *
      * @param   bool $save Whether to save the EE_Message objects in the new queue or just return.
-     * @return EE_Messages_Queue  The new queue for holding generated EE_Message objects.
+     * @return EE_Messages_Queue The new queue for holding generated EE_Message objects.
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function generate($save = true)
     {
@@ -249,6 +251,9 @@ class EE_Messages_Generator
      *
      * @return bool Whether the message was successfully generated or not.
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
     protected function _generate()
     {
@@ -316,6 +321,9 @@ class EE_Messages_Generator
      *
      * @return EE_Message_Template_Group|null
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
     protected function _get_message_template_group()
     {
@@ -344,7 +352,8 @@ class EE_Messages_Generator
 
         //okay made it here, so let's get the global group first for this messenger and message type to ensure
         //there is no override set.
-        $global_message_template_group = $this->_get_global_message_template_group_for_current_messenger_and_message_type();
+        $global_message_template_group =
+            $this->_get_global_message_template_group_for_current_messenger_and_message_type();
 
         if ($global_message_template_group instanceof EE_Message_Template_Group
             && $global_message_template_group->get('MTP_is_override')
@@ -384,6 +393,10 @@ class EE_Messages_Generator
      * requested for that message.
      *
      * @return EE_Message_Template_Group|null
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
     protected function _specific_message_template_group_from_queue()
     {
@@ -417,6 +430,9 @@ class EE_Messages_Generator
      * @param array $event_ids
      * @return bool true means they DO share the same message template group, false means they don't.
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
     protected function _queue_shares_same_message_template_group_for_events(array $event_ids)
     {
@@ -445,6 +461,9 @@ class EE_Messages_Generator
      * @param array $event_ids
      * @return EE_Message_Template_Group|null
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
     protected function _get_shared_message_template_for_events(array $event_ids)
     {
@@ -478,6 +497,9 @@ class EE_Messages_Generator
      *
      * @return EE_Message_Template_Group|null
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
     protected function _get_global_message_template_group_for_current_messenger_and_message_type()
     {
@@ -565,12 +587,13 @@ class EE_Messages_Generator
      *                                               context.
      * @param array                     $templates   formatted array of templates used for parsing data.
      * @param EE_Message_Template_Group $message_template_group
-     * @return bool   true if message generation went a-ok.  false if some sort of exception occurred.  Note: The
+     * @return bool true if message generation went a-ok.  false if some sort of exception occurred.  Note: The
      *                                               method will attempt to generate ALL EE_Message objects and add to
      *                                               the _ready_queue.  Successfully generated messages get added to the
      *                                               queue with EEM_Message::status_idle, unsuccessfully generated
      *                                               messages will get added to the queue as EEM_Message::status_failed.
      *                                               Very rarely should "false" be returned from this method.
+     * @throws EE_Error
      */
     protected function _assemble_messages($addressees, $templates, EE_Message_Template_Group $message_template_group)
     {
@@ -600,7 +623,8 @@ class EE_Messages_Generator
                     $generated_count++;
                 }
 
-                //if the current MSG being generated is for a test send then we'll only use ONE message in the generation.
+                //if the current MSG being generated is for a test send then we'll only use ONE message in the
+                // generation.
                 if ($this->_generation_queue->get_message_repository()->is_test_send()) {
                     break 2;
                 }
@@ -656,11 +680,15 @@ class EE_Messages_Generator
         $mt_shortcodes = $this->_current_message_type->get_valid_shortcodes();
         $m_shortcodes  = $this->_current_messenger->get_valid_shortcodes();
 
-        //if the 'to' field is empty (messages will ALWAYS have a "to" field, then we get out because that means this
-        //context is turned off) EXCEPT if we're previewing
-        if (empty($templates['to'][$context])
+        //if the 'to' field is empty or the context is inactive we skip EXCEPT if we're previewing
+        if ((
+                (
+                    empty($templates['to'][$context])
+                    && ! $this->_current_messenger->allow_empty_to_field()
+                )
+                || ! $message_template_group->is_context_active($context)
+            )
             && ! $this->_generation_queue->get_message_repository()->is_preview()
-            && ! $this->_current_messenger->allow_empty_to_field()
         ) {
             //we silently exit here and do NOT record a fail because the message is "turned off" by having no "to"
             //field.
@@ -716,7 +744,9 @@ class EE_Messages_Generator
      * This verifies that the incoming array has a EE_messenger object and a EE_message_type object and sets appropriate
      * error message if either is missing.
      *
-     * @return bool         true means there were no errors, false means there were errors.
+     * @return bool true means there were no errors, false means there were errors.
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _verify()
     {
@@ -812,6 +842,8 @@ class EE_Messages_Generator
      * data handler.
      *
      * @return bool true means there are no errors.  false means there were errors (and handler did not get setup).
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _validate_and_setup_data()
     {
@@ -824,7 +856,7 @@ class EE_Messages_Generator
 
         $generation_data = $this->_generation_queue->get_message_repository()->get_generation_data();
 
-        /** @type EE_Messages_incoming_data $data_handler_class_name - well not really... just the class name actually */
+        /** @type EE_Messages_incoming_data $data_handler_class_name - well not really... just the class name actually*/
         $data_handler_class_name = $this->_generation_queue->get_message_repository()->get_data_handler()
             ? $this->_generation_queue->get_message_repository()->get_data_handler()
             : 'EE_Messages_' . $this->_current_message_type->get_data_handler($generation_data) . '_incoming_data';
@@ -916,6 +948,9 @@ class EE_Messages_Generator
      *
      * @param EE_Message_To_Generate $message_to_generate
      * @param bool                   $test_send Whether this is just a test send or not.  Typically used for previews.
+     * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
     public function create_and_add_message_to_queue(EE_Message_To_Generate $message_to_generate, $test_send = false)
     {

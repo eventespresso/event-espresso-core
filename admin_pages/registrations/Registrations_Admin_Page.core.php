@@ -1,6 +1,13 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
+<?php
+
+use EventEspresso\core\domain\Domain;
+use EventEspresso\core\domain\entities\Context;
+use EventEspresso\core\exceptions\EntityNotFoundException;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+
+defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
+
 
 
 /**
@@ -321,13 +328,13 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 'func'       => 'bulk_action_on_registrations',
                 'noheader'   => true,
                 'capability' => 'ee_edit_registrations',
-                'args' => array('no_approve')
+                'args' => array('not_approve')
             ),
             'no_approve_and_notify_registrations' => array(
                 'func'       => 'bulk_action_on_registrations',
                 'noheader'   => true,
                 'capability' => 'ee_edit_registrations',
-                'args' => array('no_approve', true)
+                'args' => array('not_approve', true)
             ),
             'cancel_registration'                => array(
                 'func'       => 'cancel_registration',
@@ -1077,7 +1084,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     private function _set_registration_object()
     {
         //get out if we've already set the object
-        if (is_object($this->_registration)) {
+        if ($this->_registration instanceof EE_Registration) {
             return true;
         }
         $REG    = EEM_Registration::instance();
@@ -1444,6 +1451,11 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             (array) $orderby_field,
             array_fill(0, count($orderby_field), $order)
         );
+        //because there are many registrations with the same date, define
+        //a secondary way to order them, otherwise MySQL seems to be a bit random
+        if (empty($order['REG_ID'])) {
+            $orderby_field['REG_ID'] = $order;
+        }
         return array('order_by' => $orderby_field);
     }
 
@@ -1489,7 +1501,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @return void
      * @throws DomainException
      * @throws EE_Error
-     * @throws \EventEspresso\core\exceptions\EntityNotFoundException
+     * @throws EntityNotFoundException
      */
     protected function _registration_details()
     {
@@ -1726,7 +1738,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      *
      * @return array
      * @throws EE_Error
-     * @throws \EventEspresso\core\exceptions\EntityNotFoundException
+     * @throws EntityNotFoundException
      */
     protected function _get_reg_statuses()
     {
@@ -1737,7 +1749,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         // is registration for free event? This will determine whether to display the pending payment option
         if (
             $current_status !== EEM_Registration::status_id_pending_payment
-            && $this->_registration->transaction()->is_free()
+            && EEH_Money::compare_floats($this->_registration->ticket()->price(), 0.00)
         ) {
             unset($reg_status_array[EEM_Registration::status_id_pending_payment]);
         }
@@ -1745,27 +1757,59 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     }
 
 
-
     /**
      * This method is used when using _REG_ID from request which may or may not be an array of reg_ids.
      *
      * @param bool $status REG status given for changing registrations to.
      * @param bool $notify Whether to send messages notifications or not.
-     * @return array  (array with reg_id(s) updated and whether update was successful.
-     * @throws \EE_Error
+     * @return array (array with reg_id(s) updated and whether update was successful.
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @throws RuntimeException
+     * @throws EntityNotFoundException
      */
     protected function _set_registration_status_from_request($status = false, $notify = false)
     {
         if (isset($this->_req_data['reg_status_change_form'])) {
             $REG_IDs = isset($this->_req_data['reg_status_change_form']['REG_ID'])
-                ? (array)$this->_req_data['reg_status_change_form']['REG_ID'] : array();
+                ? (array)$this->_req_data['reg_status_change_form']['REG_ID']
+                : array();
         } else {
-            $REG_IDs = isset($this->_req_data['_REG_ID']) ? (array)$this->_req_data['_REG_ID'] : array();
+            $REG_IDs = isset($this->_req_data['_REG_ID'])
+                ? (array)$this->_req_data['_REG_ID']
+                : array();
         }
-        $success = $this->_set_registration_status($REG_IDs, $status);
+        // sanitize $REG_IDs
+        $REG_IDs = array_map('absint', $REG_IDs);
+        // and remove empty entries
+        $REG_IDs = array_filter($REG_IDs);
+
+        $result = $this->_set_registration_status($REG_IDs, $status, $notify);
+
+        /**
+         * Set and filter $_req_data['_REG_ID'] for any potential future messages notifications.
+         * Currently this value is used downstream by the _process_resend_registration method.
+         *
+         * @param int|array                $registration_ids The registration ids that have had their status changed successfully.
+         * @param bool                     $status           The status registrations were changed to.
+         * @param bool                     $success          If the status was changed successfully for all registrations.
+         * @param Registrations_Admin_Page $admin_page_object
+         */
+        $this->_req_data['_REG_ID'] = apply_filters(
+            'FHEE__Registrations_Admin_Page___set_registration_status_from_request__REG_IDs',
+            $result['REG_ID'],
+            $status,
+            $result['success'],
+            $this
+        );
+
         //notify?
-        if ($success
-            && $notify
+        if ($notify
+            && $result['success']
+            && ! empty($this->_req_data['_REG_ID'])
             && EE_Registry::instance()->CAP->current_user_can(
                 'ee_send_message',
                 'espresso_registrations_resend_registration'
@@ -1773,25 +1817,28 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         ) {
             $this->_process_resend_registration();
         }
-        return $success;
+        return $result;
     }
-
 
 
     /**
      * Set the registration status for the given reg_id (which may or may not be an array, it gets typecast to an
      * array). Note, this method does NOT take care of possible notifications.  That is required by calling code.
      *
-     * @param array $REG_IDs
-     * @param bool  $status
+     * @param array  $REG_IDs
+     * @param string $status
+     * @param bool   $notify  Used to indicate whether notification was requested or not.  This determines the context
+     *                        slug sent with setting the registration status.
      * @return array (an array with 'success' key representing whether status change was successful, and 'REG_ID' as
-     * @throws \RuntimeException
-     * @throws \EE_Error
-     *               the array of updated registrations).
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      * @throws RuntimeException
+     * @throws EntityNotFoundException
      */
-    protected function _set_registration_status($REG_IDs = array(), $status = false)
+    protected function _set_registration_status($REG_IDs = array(), $status = '', $notify = false)
     {
         $success = false;
         // typecast $REG_IDs
@@ -1800,21 +1847,31 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             $success = true;
             // set default status if none is passed
             $status = $status ? $status : EEM_Registration::status_id_pending_payment;
-            // sanitize $REG_IDs
-            $REG_IDs = array_filter($REG_IDs, 'absint');
+            $status_context = $notify
+                ? Domain::CONTEXT_REGISTRATION_STATUS_CHANGE_REGISTRATION_ADMIN_NOTIFY
+                : Domain::CONTEXT_REGISTRATION_STATUS_CHANGE_REGISTRATION_ADMIN;
             //loop through REG_ID's and change status
             foreach ($REG_IDs as $REG_ID) {
                 $registration = EEM_Registration::instance()->get_one_by_ID($REG_ID);
                 if ($registration instanceof EE_Registration) {
-                    $registration->set_status($status);
+                    $registration->set_status(
+                        $status,
+                        false,
+                        new Context(
+                            $status_context,
+                            esc_html__(
+                                'Manually triggered status change on a Registration Admin Page route.',
+                                'event_espresso'
+                            )
+                        )
+                    );
                     $result = $registration->save();
                     // verifying explicit fails because update *may* just return 0 for 0 rows affected
                     $success = $result !== false ? $success : false;
                 }
             }
         }
-        //reset _req_data['_REG_ID'] for any potential future messages notifications
-        $this->_req_data['_REG_ID'] = $REG_IDs;
+
         //return $success and processed registrations
         return array('REG_ID' => $REG_IDs, 'success' => $success);
     }
@@ -2026,7 +2083,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @return void
      * @throws DomainException
      * @throws EE_Error
-     * @throws \EventEspresso\core\exceptions\EntityNotFoundException
+     * @throws EntityNotFoundException
      */
     public function _reg_details_meta_box()
     {
