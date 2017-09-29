@@ -4324,8 +4324,8 @@ class Messages_Admin_Page extends EE_Admin_Page
      */
     protected function _generate_and_send_now()
     {
-        $this->_generate_now();
-        $this->_send_now();
+        $msg_ids = $this->_get_msg_ids_from_request();
+        EED_Messages::generate_and_send_now($msg_ids);
         $this->_redirect_after_action(false, '', '', array(), true);
     }
     
