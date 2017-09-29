@@ -4309,8 +4309,7 @@ class Messages_Admin_Page extends EE_Admin_Page
      */
     protected function _generate_now()
     {
-        $msg_ids = $this->_get_msg_ids_from_request();
-        EED_Messages::generate_now($msg_ids);
+        EED_Messages::generate_now($this->_get_msg_ids_from_request());
         $this->_redirect_after_action(false, '', '', array(), true);
     }
     
@@ -4324,8 +4323,7 @@ class Messages_Admin_Page extends EE_Admin_Page
      */
     protected function _generate_and_send_now()
     {
-        $msg_ids = $this->_get_msg_ids_from_request();
-        EED_Messages::generate_and_send_now($msg_ids);
+        EED_Messages::generate_and_send_now($this->_get_msg_ids_from_request());
         $this->_redirect_after_action(false, '', '', array(), true);
     }
     
@@ -4350,8 +4348,7 @@ class Messages_Admin_Page extends EE_Admin_Page
      */
     protected function _send_now()
     {
-        $msg_ids = $this->_get_msg_ids_from_request();
-        EED_Messages::send_now($msg_ids);
+        EED_Messages::send_now($this->_get_msg_ids_from_request());
         $this->_redirect_after_action(false, '', '', array(), true);
     }
 
