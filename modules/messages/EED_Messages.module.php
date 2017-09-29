@@ -1104,6 +1104,7 @@ class EED_Messages extends EED_Module
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public static function generate_and_send_now(array $message_ids)
     {
@@ -1112,14 +1113,16 @@ class EED_Messages extends EED_Module
         $messages_sent = $generated_queue->execute();
         if ($messages_sent) {
             EE_Error::add_success(
-                sprintf(
-                    _n(
-                        'There was %d message successfully generated and sent.',
-                        'There were %d messages successfully generated and sent.',
-                        $messages_sent,
-                        'event_espresso'
-                    ),
-                    $messages_sent
+                esc_html(
+                    sprintf(
+                        _n(
+                            'There was %d message successfully generated and sent.',
+                            'There were %d messages successfully generated and sent.',
+                            $messages_sent,
+                            'event_espresso'
+                        ),
+                        $messages_sent
+                    )
                 )
             );
             //errors would be added via the generate_now method.
