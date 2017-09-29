@@ -431,28 +431,27 @@ jQuery(document).ready(function($) {
 
 			//next let's do the spans
 			newDTTrow.find('span').each( function() {
-				curclass = $(this).attr('class');
-				tktHelper.itemdata = $(this).data();
+			    var $el = $(this);
+				curclass = $el.attr('class');
+				tktHelper.itemdata = $el.data();
 
 				//handle data-datetime-row properties
 				if ( typeof(tktHelper.itemdata) !== 'undefined' && typeof(tktHelper.itemdata.datetimeRow) !== 'undefined' ) {
-					$(this).attr( 'data-datetime-row', newrownum ); //not using jquery .data() to set the value because that doesn't change the actual data attribute.
-					$(this).data('datetimeRow', newrownum); //we still need to change the data on the element otherwise it remains as the value set on the previous element.
+					$el.attr( 'data-datetime-row', newrownum ); //not using jquery .data() to set the value because that doesn't change the actual data attribute.
+					$el.data('datetimeRow', newrownum); //we still need to change the data on the element otherwise it remains as the value set on the previous element.
 				}
 
-				//handle ticket counts!
-				if ( curclass == 'datetime-tickets-sold' ) {
-					ticketsold = $(this).text().replace(/[0-9]/g,'') + '0';
-					$(this).text(ticketsold);
-				}
+				if (curclass.indexOf('datetime-tickets-sold') !== -1 || curclass.indexOf('datetime-tickets-reserved') !== -1) {
+				    $el.text('0');
+                }
 
-				if ( curclass == 'ticket-list-ticket-name' ) {
+				if ( curclass.indexOf('ticket-list-ticket-name') !== -1) {
 					//find out what ticket we are looking at.
-					var parentdata = $(this).parent().data();
+					var parentdata = $el.parent().data();
 
 					//now we can get the ticket title from the tickets list and simply replace what's in the datetime ticket with it.  Why do we do this instead of just replacing the numbers?  Because the ticket title may have a number in it.
 					tickettitle = tktHelper.getTicketTitle( parentdata.ticketRow );
-					$(this).text(tickettitle);
+					$el.text(tickettitle);
 				}
 
 			});
