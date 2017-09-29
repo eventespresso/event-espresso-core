@@ -1030,13 +1030,17 @@ jQuery(document).ready(function($) {
 		 * @return void.
 		 */
 		updateDTTsoldValues: function( itemdata, selecting ) {
-			var dttSoldProps = this.getDTTsoldinfo( itemdata );
-			var newDTTsold = 0;
-
-			newDTTsold = selecting ? dttSoldProps.dttSold + dttSoldProps.tktSold : dttSoldProps.dttSold - dttSoldProps.tktSold;
-
+			var dttSoldProps = this.getDTTsoldinfo( itemdata ),
+			    newDTTsold = selecting
+                    ? dttSoldProps.dttSold + dttSoldProps.tktSold
+                    : dttSoldProps.dttSold - dttSoldProps.tktSold,
+                newDTTreserved = selecting
+                    ? dttSoldProps.dttReserved + dttSoldProps.tktReserved
+                    : dttSoldProps.dttReserved - dttSoldProps.tktReserved;
 			//update dttSold for datetime!
 			$('.datetime-tickets-sold', '#event-datetime-' + itemdata.datetimeRow ).text( newDTTsold );
+			//update dttReserved for datetime!
+            $('.datetime-tickets-reserved', '#event-datetime-' + itemdata.datetimeRow).text(newDTTreserved)
 		},
 
 
@@ -1054,6 +1058,10 @@ jQuery(document).ready(function($) {
 			dttSoldProps.tktSold = accounting.unformat($('.ticket-display-row-TKT_sold', '#display-ticketrow-' + itemdata.ticketRow ).text());
 			dttSoldProps.dttSold = accounting.unformat( $('.datetime-tickets-sold', '#event-datetime-' + itemdata.datetimeRow ).text() );
 			dttSoldProps.dttRem = dttSoldProps.dttLimit - dttSoldProps.dttSold;
+
+			//TKT_reserved
+            dttSoldProps.tktReserved = accounting.unformat($('.ticket-display-row-TKT_reserved', '#display-ticketrow-' + itemdata.ticketRow).text());
+            dttSoldProps.dttReserved = accounting.unformat($('.datetime-tickets-reserved', '#event-datetime-' + itemdata.datetimeRow).text());
 			return dttSoldProps;
 		},
 
