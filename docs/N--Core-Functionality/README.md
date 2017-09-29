@@ -13,3 +13,4 @@ Below you will find descriptions and examples of new changes that are beginning 
 - [Dependency Injection and the CoffeeShop DI container](dependency-injection-coffeepot.md)
 - [Middleware Request Stack](middleware-request-stack.md)
 - [Command Bus and Hexagonal Architecture](command-bus-hexagonal-architecture.md)
+- [Contexts and Context Checkers.md](contexts-and-context-checkers.md)
