@@ -1,4 +1,8 @@
 <?php
+
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
 
 /**
@@ -137,6 +141,11 @@ class EED_Messages extends EED_Module
      *
      * @since 4.9.0
      * @param WP $WP
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function browser_trigger($WP)
     {
@@ -163,6 +172,10 @@ class EED_Messages extends EED_Module
      *
      * @since 4.9.0
      * @param $WP
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function browser_error_trigger($WP)
     {
@@ -211,7 +224,10 @@ class EED_Messages extends EED_Module
      * @since 4.5.0
      * @param WP $WP
      * @throws EE_Error
-     * @return    void
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function run($WP)
     {
@@ -259,7 +275,8 @@ class EED_Messages extends EED_Module
         //now let's verify transient, if not valid exit immediately
         if (! get_transient($transient_key)) {
             /**
-             * trigger error so this gets in the error logs.  This is important because it happens on a non-user request.
+             * trigger error so this gets in the error logs.  This is important because it happens on a non-user
+             * request.
              */
             trigger_error(esc_attr__('Invalid Request (Transient does not exist)', 'event_espresso'));
         }
@@ -275,7 +292,8 @@ class EED_Messages extends EED_Module
             } else {
                 //no matching task
                 /**
-                 * trigger error so this gets in the error logs.  This is important because it happens on a non user request.
+                 * trigger error so this gets in the error logs.  This is important because it happens on a non user
+                 * request.
                  */
                 trigger_error(esc_attr(sprintf(__('There is no task corresponding to this route %s', 'event_espresso'),
                     $cron_type)));
@@ -295,6 +313,11 @@ class EED_Messages extends EED_Module
      * @param string $template_pack_name This should correspond to the dbref of the template pack (which is also used
      *                                   in generating the Pack class name).
      * @return EE_Messages_Template_Pack
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public static function get_template_pack($template_pack_name)
     {
@@ -309,6 +332,11 @@ class EED_Messages extends EED_Module
      *
      * @deprecated 4.9.0  @see EEH_MSG_Template_Pack::get_template_pack_collection
      * @return EE_Messages_Template_Pack[]
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public static function get_template_packs()
     {
@@ -331,6 +359,7 @@ class EED_Messages extends EED_Module
      *
      * @since 4.5.0
      * @return void
+     * @throws EE_Error
      */
     public static function set_autoloaders()
     {
@@ -379,6 +408,11 @@ class EED_Messages extends EED_Module
      *
      * @since 4.5.0
      * @return void
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected static function _load_controller()
     {
@@ -394,6 +428,11 @@ class EED_Messages extends EED_Module
 
     /**
      * @param EE_Transaction $transaction
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public static function payment_reminder(EE_Transaction $transaction)
     {
@@ -406,9 +445,14 @@ class EED_Messages extends EED_Module
     /**
      * Any messages triggers for after successful gateway payments should go in here.
      *
-     * @param  EE_Transaction object
-     * @param  EE_Payment     object
+     * @param EE_Transaction $transaction object
+     * @param EE_Payment     $payment     object
      * @return void
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public static function payment(EE_Transaction $transaction, EE_Payment $payment)
     {
@@ -424,6 +468,11 @@ class EED_Messages extends EED_Module
 
     /**
      * @param EE_Transaction $transaction
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public static function cancelled_registration(EE_Transaction $transaction)
     {
@@ -441,6 +490,12 @@ class EED_Messages extends EED_Module
      * @param EE_Registration $registration
      * @param array           $extra_details
      * @return void
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @throws \EventEspresso\core\exceptions\EntityNotFoundException
      */
     public static function maybe_registration(EE_Registration $registration, $extra_details = array())
     {
@@ -556,6 +611,11 @@ class EED_Messages extends EED_Module
      *                    or EEH_MSG_Template::convert_reg_status_to_message_type
      * @param string $reg_status
      * @return array
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected static function _get_reg_status_array($reg_status = '')
     {
@@ -572,7 +632,12 @@ class EED_Messages extends EED_Module
      * @deprecated 4.9.0 Use EEH_MSG_Template::payment_status_to_message_type_array
      *                   or EEH_MSG_Template::convert_payment_status_to_message_type
      * @param string $payment_status The payment status being matched.
-     * @return string|bool The payment message type slug matching the status or false if no match.
+     * @return bool|string The payment message type slug matching the status or false if no match.
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected static function _get_payment_message_type($payment_status)
     {
@@ -588,7 +653,12 @@ class EED_Messages extends EED_Module
      *
      * @access public
      * @param array $req_data This is the $_POST & $_GET data sent from EE_Admin Pages
-     * @return bool          success/fail
+     * @return bool success/fail
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public static function process_resend($req_data)
     {
@@ -627,6 +697,11 @@ class EED_Messages extends EED_Module
      * Message triggers for a resending already sent message(s) (via EE_Message list table)
      *
      * @return bool
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public static function resend_message()
     {
@@ -660,7 +735,12 @@ class EED_Messages extends EED_Module
      * Message triggers for manual payment applied by admin
      *
      * @param  EE_Payment $payment EE_payment object
-     * @return bool              success/fail
+     * @return bool success/fail
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public static function process_admin_payment(EE_Payment $payment)
     {
@@ -730,6 +810,11 @@ class EED_Messages extends EED_Module
      * @param  EE_Registration[] $registrations an array of EE_Registration objects
      * @param  int               $grp_id        a specific message template group id.
      * @return void
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public static function send_newsletter_message($registrations, $grp_id)
     {
@@ -748,7 +833,11 @@ class EED_Messages extends EED_Module
      * @param    EE_Registration $registration
      * @param string             $messenger
      * @param string             $message_type
-     * @return    string
+     * @return string
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public static function registration_message_trigger_url(
         $registration_message_trigger_url,
@@ -826,6 +915,10 @@ class EED_Messages extends EED_Module
      *                           preview
      * @return bool|string The body of the message or if send is requested, sends.
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public static function preview_message($type, $context, $messenger, $send = false)
     {
@@ -868,7 +961,12 @@ class EED_Messages extends EED_Module
      * @param EE_Messages_Queue $queue
      * @param string            $custom_subject       Can be used to set what the custom subject string will be on the
      *                                                aggregate EE_Message object.
-     * @return bool          success or fail.
+     * @return bool success or fail.
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public static function send_message_with_messenger_only(
         $messenger,
@@ -896,8 +994,13 @@ class EED_Messages extends EED_Module
      *
      * @since 4.9.0
      * @param array $message_ids An array of message ids
-     * @return bool | EE_Messages_Queue     false if nothing was generated, EE_Messages_Queue containing generated
-     *              messages.
+     * @return bool|EE_Messages_Queue false if nothing was generated, EE_Messages_Queue containing generated
+     *                           messages.
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public static function generate_now($message_ids)
     {
@@ -932,7 +1035,12 @@ class EED_Messages extends EED_Module
      *
      * @since 4.9.0
      * @param $message_ids
-     * @return bool | EE_Messages_Queue  false if no messages sent.
+     * @return bool|EE_Messages_Queue false if no messages sent.
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public static function send_now($message_ids)
     {
@@ -990,7 +1098,12 @@ class EED_Messages extends EED_Module
 
     /**
      * Generate and send immediately from the given $message_ids
-     * @param array $message_ids  EE_Message entity ids.
+     *
+     * @param array $message_ids EE_Message entity ids.
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public static function generate_and_send_now(array $message_ids)
     {
@@ -1020,8 +1133,13 @@ class EED_Messages extends EED_Module
      *
      * @since 4.9.0
      * @param array $message_ids An array of EE_Message IDs
-     * @return bool  true means messages were successfully queued for resending, false means none were queued for
-     *               resending.
+     * @return bool true means messages were successfully queued for resending, false means none were queued for
+     *                           resending.
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public static function queue_for_resending($message_ids)
     {
@@ -1092,6 +1210,8 @@ class EED_Messages extends EED_Module
      * @param \EE_Transaction $transaction
      * @param array           $info
      * @param bool            $display_request
+     * @throws EE_Error
+     * @throws \EventEspresso\core\exceptions\InvalidSessionDataException
      */
     protected static function log(
         $class = '',
@@ -1101,7 +1221,7 @@ class EED_Messages extends EED_Module
         $info = array(),
         $display_request = false
     ) {
-        if (WP_DEBUG && false) {
+        if (defined('EE_DEBUG') && EE_DEBUG) {
             if ($transaction instanceof EE_Transaction) {
                 // don't serialize objects
                 $info                  = EEH_Debug_Tools::strip_objects($info);
