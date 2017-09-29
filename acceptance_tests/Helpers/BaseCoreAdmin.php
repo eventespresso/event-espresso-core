@@ -67,4 +67,18 @@ trait BaseCoreAdmin
         $this->actor()->click(CoreAdmin::wpEditorTextTabSelector($field_reference));
         $this->actor()->appendField(CoreAdmin::wpEditorTextAreaSelector($field_reference), $value);
     }
+
+
+    /**
+     * Use to select and submit the given bulk action.
+     * @param string $bulk_action_option
+     */
+    public function submitBulkActionOnListTable($bulk_action_option)
+    {
+        $this->actor()->selectOption(
+            CoreAdmin::SELECTOR_LIST_TABLE_BULK_ACTION_FIELD,
+            $bulk_action_option
+        );
+        $this->actor()->click(CoreAdmin::SELECTOR_LIST_TABLE_BULK_ACTTION_APPLY);
+    }
 }

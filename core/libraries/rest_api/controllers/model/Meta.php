@@ -76,7 +76,7 @@ class Meta extends Base
                 );
                 $field_json = array(
                     'name'                => $field_name,
-                    'nicename'            => $field_obj->get_nicename(),
+                    'nicename'            => wp_specialchars_decode($field_obj->get_nicename(), ENT_QUOTES),
                     'has_rendered_format' => $this->getModelVersionInfo()->fieldHasRenderedFormat($field_obj),
                     'has_pretty_format'   => $this->getModelVersionInfo()->fieldHasPrettyFormat($field_obj),
                     'type'                => str_replace('EE_', '', get_class($field_obj)),
