@@ -1,6 +1,6 @@
-<?php if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
+<?php
+
+defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
 
 
 /**
@@ -108,6 +108,9 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      *
      * @access public
      * @return array
+     * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
     public static function bypass_recaptcha_for_load_payment_method()
     {
@@ -128,12 +131,12 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
     public function __construct(EE_Checkout $checkout)
     {
         $this->_slug     = 'payment_options';
-        $this->_name     = __('Payment Options', 'event_espresso');
+        $this->_name     = esc_html__('Payment Options', 'event_espresso');
         $this->_template = SPCO_REG_STEPS_PATH . $this->_slug . DS . 'payment_options_main.template.php';
         $this->checkout  = $checkout;
         $this->_reset_success_message();
         $this->set_instructions(
-            __(
+            esc_html__(
                 'Please select a method of payment and provide any necessary billing information before proceeding.',
                 'event_espresso'
             )
@@ -184,15 +187,15 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      */
     public function translate_js_strings()
     {
-        EE_Registry::$i18n_js_strings['no_payment_method']      = __(
+        EE_Registry::$i18n_js_strings['no_payment_method']      = esc_html__(
             'Please select a method of payment in order to continue.',
             'event_espresso'
         );
-        EE_Registry::$i18n_js_strings['invalid_payment_method'] = __(
+        EE_Registry::$i18n_js_strings['invalid_payment_method'] = esc_html__(
             'A valid method of payment could not be determined. Please refresh the page and try again.',
             'event_espresso'
         );
-        EE_Registry::$i18n_js_strings['forwarding_to_offsite']  = __(
+        EE_Registry::$i18n_js_strings['forwarding_to_offsite']  = esc_html__(
             'Forwarding to Secure Payment Provider.',
             'event_espresso'
         );
@@ -203,6 +206,10 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      * enqueue_styles_and_scripts
      *
      * @return void
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
     public function enqueue_styles_and_scripts()
     {
@@ -211,10 +218,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
         if (! $transaction instanceof EE_Transaction || EEH_Money::compare_floats($transaction->remaining(), 0)) {
             return;
         }
-        foreach (
-            EEM_Payment_Method::instance()->get_all_for_transaction($transaction,
-                EEM_Payment_Method::scope_cart) as $payment_method
-        ) {
+        foreach (EEM_Payment_Method::instance()->get_all_for_transaction($transaction, EEM_Payment_Method::scope_cart) as $payment_method) {
             $type_obj = $payment_method->type_obj();
             if ($type_obj instanceof EE_PMT_Base) {
                 $billing_form = $type_obj->generate_new_billing_form($transaction);
@@ -229,14 +233,17 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
     /**
      * initialize_reg_step
      *
-     * @return boolean
-     * @throws \EE_Error
+     * @return bool
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
     public function initialize_reg_step()
     {
         // TODO: if /when we implement donations, then this will need overriding
-        if (
-            // don't need payment options for:
+        if (// don't need payment options for:
             // 	registrations made via the admin
             // 	completed transactions
             // 	overpaid transactions
@@ -267,8 +274,14 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
 
 
     /**
-     * @return \EE_Form_Section_Proper
-     * @throws \EE_Error
+     * @return EE_Form_Section_Proper
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws \EventEspresso\core\exceptions\EntityNotFoundException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \EventEspresso\core\exceptions\InvalidStatusException
      */
     public function generate_reg_form()
     {
@@ -306,10 +319,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                 );
                 continue;
             }
-            if (
-                // returning registrant
-                $this->checkout->revisit
-                // anything other than Approved
+            if ($this->checkout->revisit
                 && $registration->status_ID() !== EEM_Registration::status_id_approved
                 && (
                     $registration->event()->is_sold_out()
@@ -333,8 +343,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                     $registration->event(),
                     $this
                 );
-            } else if (
-                ! $this->checkout->revisit
+            } elseif (! $this->checkout->revisit
                 && $registration->status_ID() !== EEM_Registration::status_id_not_approved
                 && $registration->ticket()->is_free()
             ) {
@@ -413,8 +422,14 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      *        filter collection by passing that instead of instantiating a new collection
      *
      * @param \EE_Line_Item_Filter_Collection $line_item_filter_collection
-     * @return \EE_Line_Item_Filter_Collection
-     * @throws \EE_Error
+     * @return EE_Line_Item_Filter_Collection
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws \EventEspresso\core\exceptions\EntityNotFoundException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \EventEspresso\core\exceptions\InvalidStatusException
      */
     public static function add_spco_line_item_filters(EE_Line_Item_Filter_Collection $line_item_filter_collection)
     {
@@ -447,8 +462,14 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      * then this method removes them from the list of registrations being paid for during this request
      *
      * @param \EE_Registration[] $registrations
-     * @return \EE_Registration[]
-     * @throws \EE_Error
+     * @return EE_Registration[]
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws \EventEspresso\core\exceptions\EntityNotFoundException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \EventEspresso\core\exceptions\InvalidStatusException
      */
     public static function remove_ejected_registrations(array $registrations)
     {
@@ -478,7 +499,13 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      * @param \EE_Registration[] $registrations
      * @param bool               $revisit
      * @return array
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws \EventEspresso\core\exceptions\EntityNotFoundException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \EventEspresso\core\exceptions\InvalidStatusException
      */
     public static function find_registrations_that_lost_their_space(array $registrations, $revisit = false)
     {
@@ -491,8 +518,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
         // registrations that have lost their space
         $ejected_registrations = array();
         foreach ($registrations as $REG_ID => $registration) {
-            if (
-                $registration->status_ID() === EEM_Registration::status_id_approved
+            if ($registration->status_ID() === EEM_Registration::status_id_approved
                 || apply_filters(
                     'FHEE__EE_SPCO_Reg_Step_Payment_Options__find_registrations_that_lost_their_space__allow_reg_payment',
                     false,
@@ -516,10 +542,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                     $event_spaces_remaining[$EVT_ID] = $registration->event()->spaces_remaining_for_sale();
                 }
             }
-            if (
-                $revisit
-                && (
-                    $tickets_remaining[$ticket->ID()] === 0
+            if ($revisit
+                && ($tickets_remaining[$ticket->ID()] === 0
                     || $event_reg_count[$EVT_ID] > $event_spaces_remaining[$EVT_ID]
                 )
             ) {
@@ -527,13 +551,13 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                 if ($registration->status_ID() !== EEM_Registration::status_id_wait_list) {
                     /** @type EE_Registration_Processor $registration_processor */
                     $registration_processor = EE_Registry::instance()->load_class('Registration_Processor');
-                    // at this point, we should have enough details about the registrant to consider the registration NOT incomplete
+                    // at this point, we should have enough details about the registrant to consider the registration
+                    // NOT incomplete
                     $registration_processor->manually_update_registration_status(
                         $registration,
                         EEM_Registration::status_id_wait_list
                     );
                 }
-
             }
         }
         return $ejected_registrations;
@@ -582,8 +606,11 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
         $sold_out_events                            = '';
         foreach ($sold_out_events_array as $sold_out_event) {
             $sold_out_events .= EEH_HTML::li(
-                EEH_HTML::span('  ' . $sold_out_event->name(), '',
-                    'dashicons dashicons-marker ee-icon-size-16 pink-text')
+                EEH_HTML::span(
+                    '  ' . $sold_out_event->name(),
+                    '',
+                    'dashicons dashicons-marker ee-icon-size-16 pink-text'
+                )
             );
         }
         return new EE_Form_Section_Proper(
@@ -601,8 +628,10 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                                 'sold_out_events_msg' => apply_filters(
                                     'FHEE__EE_SPCO_Reg_Step_Payment_Options___sold_out_events__sold_out_events_msg',
                                     sprintf(
-                                        __('It appears that the event you were about to make a payment for has sold out since you first registered. If you have already made a partial payment towards this event, please contact the event administrator for a refund.%3$s%3$s%1$sPlease note that availability can change at any time due to cancellations, so please check back again later if registration for this event(s) is important to you.%2$s',
-                                            'event_espresso'),
+                                        esc_html__(
+                                            'It appears that the event you were about to make a payment for has sold out since you first registered. If you have already made a partial payment towards this event, please contact the event administrator for a refund.%3$s%3$s%1$sPlease note that availability can change at any time due to cancellations, so please check back again later if registration for this event(s) is important to you.%2$s',
+                                            'event_espresso'
+                                        ),
                                         '<strong>',
                                         '</strong>',
                                         '<br />'
@@ -656,7 +685,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                                 'sold_out_events'     => $insufficient_space_events,
                                 'sold_out_events_msg' => apply_filters(
                                     'FHEE__EE_SPCO_Reg_Step_Payment_Options___insufficient_spaces_available__insufficient_space_msg',
-                                    __(
+                                    esc_html__(
                                         'It appears that the event you were about to make a payment for has sold additional tickets since you first registered, and there are no longer enough spaces left to accommodate your selections. You may continue to pay and secure the available space(s) remaining, or simply cancel if you no longer wish to purchase. If you have already made a partial payment towards this event, please contact the event administrator for a refund.',
                                         'event_espresso'
                                     )
@@ -674,8 +703,9 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      * registrations_requiring_pre_approval
      *
      * @param array $registrations_requiring_pre_approval
-     * @return \EE_Form_Section_Proper
-     * @throws \EE_Error
+     * @return EE_Form_Section_Proper
+     * @throws EE_Error
+     * @throws \EventEspresso\core\exceptions\EntityNotFoundException
      */
     private function _registrations_requiring_pre_approval($registrations_requiring_pre_approval = array())
     {
@@ -706,7 +736,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                                 'events_requiring_pre_approval'     => implode('', $events_requiring_pre_approval),
                                 'events_requiring_pre_approval_msg' => apply_filters(
                                     'FHEE__EE_SPCO_Reg_Step_Payment_Options___events_requiring_pre_approval__events_requiring_pre_approval_msg',
-                                    __(
+                                    esc_html__(
                                         'The following events do not require payment at this time and will not be billed during this transaction. Billing will only occur after the attendee has been approved by the event organizer. You will be notified when your registration has been processed. If this is a free event, then no billing will occur.',
                                         'event_espresso'
                                     )
@@ -748,7 +778,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                                 'ticket_count'                  => array(),
                                 'registrations_for_free_events' => $registrations_for_free_events,
                                 'no_payment_required_msg'       => EEH_HTML::p(
-                                    __('This is a free event, so no billing will occur.', 'event_espresso')
+                                    esc_html__('This is a free event, so no billing will occur.', 'event_espresso')
                                 ),
                             )
                         ),
@@ -763,8 +793,11 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      * _display_payment_options
      *
      * @param string $transaction_details
-     * @return \EE_Form_Section_Proper
-     * @throws \EE_Error
+     * @return EE_Form_Section_Proper
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
     private function _display_payment_options($transaction_details = '')
     {
@@ -850,6 +883,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      *
      * @access protected
      * @param array $registrations
+     * @throws EE_Error
      */
     protected function _apply_registration_payments_to_amount_owing(array $registrations)
     {
@@ -874,7 +908,10 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      *
      * @access    private
      * @param    bool $force_reset
-     * @return    void
+     * @return void
+     * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
     private function _reset_selected_method_of_payment($force_reset = false)
     {
@@ -897,7 +934,10 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      *
      * @access        private
      * @param string $selected_method_of_payment
-     * @return  void
+     * @return void
+     * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
     private function _save_selected_method_of_payment($selected_method_of_payment = '')
     {
@@ -913,22 +953,44 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
     /**
      * _setup_payment_options
      *
-     * @return \EE_Form_Section_Proper
-     * @throws \EE_Error
+     * @return EE_Form_Section_Proper
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
     public function _setup_payment_options()
     {
         // load payment method classes
         $this->checkout->available_payment_methods = $this->_get_available_payment_methods();
+        if (empty($this->checkout->available_payment_methods)) {
+            EE_Error::add_error(
+                apply_filters(
+                    'FHEE__EE_SPCO_Reg_Step_Payment_Options___setup_payment_options__error_message_no_payment_methods',
+                    sprintf(
+                        esc_html__(
+                            'Sorry, you cannot complete your purchase because a payment method is not active.%1$s Please contact %2$s for assistance and provide a description of the problem.',
+                            'event_espresso'
+                        ),
+                        '<br>',
+                        EE_Registry::instance()->CFG->organization->get_pretty('email')
+                    )
+                ),
+                __FILE__,
+                __FUNCTION__,
+                __LINE__
+            );
+        }
         // switch up header depending on number of available payment methods
         $payment_method_header     = count($this->checkout->available_payment_methods) > 1
             ? apply_filters(
                 'FHEE__registration_page_payment_options__method_of_payment_hdr',
-                __('Please Select Your Method of Payment', 'event_espresso')
+                esc_html__('Please Select Your Method of Payment', 'event_espresso')
             )
             : apply_filters(
                 'FHEE__registration_page_payment_options__method_of_payment_hdr',
-                __('Method of Payment', 'event_espresso')
+                esc_html__('Method of Payment', 'event_espresso')
             );
         $available_payment_methods = array(
             // display the "Payment Method" header
@@ -955,9 +1017,9 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                     'spco-payment-method-btn-img'
                 );
                 // check if any payment methods are set as default
-                // if payment method is already selected OR nothing is selected and this payment method should be open_by_default
-                if (
-                    ($this->checkout->selected_method_of_payment === $payment_method->slug())
+                // if payment method is already selected OR nothing is selected and this payment method should be
+                // open_by_default
+                if (($this->checkout->selected_method_of_payment === $payment_method->slug())
                     || (! $this->checkout->selected_method_of_payment && $payment_method->open_by_default())
                 ) {
                     $this->checkout->selected_method_of_payment = $payment_method->slug();
@@ -966,13 +1028,13 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                 } else {
                     $available_payment_method_options[$payment_method->slug()] = $payment_method_button;
                 }
-                $payment_methods_billing_info[$payment_method->slug()
-                                              . '-info'] = $this->_payment_method_billing_info(
+                $payment_methods_billing_info[$payment_method->slug() . '-info'] = $this->_payment_method_billing_info(
                     $payment_method
                 );
             }
         }
-        // prepend available_payment_method_options with default_payment_method_option so that it appears first in list of PMs
+        // prepend available_payment_method_options with default_payment_method_option so that it appears first in list
+        // of PMs
         $available_payment_method_options = $default_payment_method_option + $available_payment_method_options;
         // now generate the actual form  inputs
         $available_payment_methods['available_payment_methods'] = $this->_available_payment_method_inputs(
@@ -994,6 +1056,11 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      * _get_available_payment_methods
      *
      * @return EE_Payment_Method[]
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
     protected function _get_available_payment_methods()
     {
@@ -1034,7 +1101,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                 'html_id'         => 'ee-available-payment-method-inputs',
                 'layout_strategy' => new EE_Div_Per_Section_Layout(),
                 'subsections'     => array(
-                    '' => new EE_Radio_Button_Input (
+                    '' => new EE_Radio_Button_Input(
                         $available_payment_method_options,
                         array(
                             'html_name'          => 'selected_method_of_payment',
@@ -1055,8 +1122,11 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      *
      * @access    private
      * @param    EE_Payment_Method $payment_method
-     * @return    \EE_Form_Section_Proper
-     * @throws \EE_Error
+     * @return EE_Form_Section_Proper
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
     private function _payment_method_billing_info(EE_Payment_Method $payment_method)
     {
@@ -1072,7 +1142,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
             : $this->checkout->billing_form;
         // it's all in the details
         $info_html = EEH_HTML::h3(
-            __('Important information regarding your payment', 'event_espresso'),
+            esc_html__('Important information regarding your payment', 'event_espresso'),
             '',
             'spco-payment-method-hdr'
         );
@@ -1082,7 +1152,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
             $payment_method_info = $payment_method->description();
         } elseif ($billing_form instanceof EE_Billing_Info_Form) {
             $payment_method_info = sprintf(
-                __(
+                esc_html__(
                     'Please provide the following billing information, then click the "%1$s" button below in order to proceed.',
                     'event_espresso'
                 ),
@@ -1090,7 +1160,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
             );
         } else {
             $payment_method_info = sprintf(
-                __('Please click the "%1$s" button below in order to proceed.', 'event_espresso'),
+                esc_html__('Please click the "%1$s" button below in order to proceed.', 'event_espresso'),
                 $this->submit_button_text()
             );
         }
@@ -1123,7 +1193,11 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      *
      * @access public
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
     public function get_billing_form_html_for_payment_method()
     {
@@ -1141,7 +1215,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                 apply_filters(
                     'FHEE__Single_Page_Checkout__registration_checkout__selected_payment_method',
                     sprintf(
-                        __(
+                        esc_html__(
                             'You have selected "%s" as your method of payment. Please note the important payment information below.',
                             'event_espresso'
                         ),
@@ -1153,8 +1227,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
         // now generate billing form for selected method of payment
         $payment_method_billing_form = $this->_get_billing_form_for_payment_method($this->checkout->payment_method);
         // fill form with attendee info if applicable
-        if (
-            $payment_method_billing_form instanceof EE_Billing_Attendee_Info_Form
+        if ($payment_method_billing_form instanceof EE_Billing_Attendee_Info_Form
             && $this->checkout->transaction_has_primary_registrant()
         ) {
             $payment_method_billing_form->populate_from_attendee(
@@ -1162,13 +1235,13 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
             );
         }
         // and debug content
-        if (
-            $payment_method_billing_form instanceof EE_Billing_Info_Form
+        if ($payment_method_billing_form instanceof EE_Billing_Info_Form
             && $this->checkout->payment_method->type_obj() instanceof EE_PMT_Base
         ) {
-            $payment_method_billing_form = $this->checkout->payment_method->type_obj()->apply_billing_form_debug_settings(
-                $payment_method_billing_form
-            );
+            $payment_method_billing_form =
+                $this->checkout->payment_method->type_obj()->apply_billing_form_debug_settings(
+                    $payment_method_billing_form
+                );
         }
         $billing_info = $payment_method_billing_form instanceof EE_Form_Section_Proper
             ? $payment_method_billing_form->get_html()
@@ -1186,8 +1259,11 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      *
      * @access private
      * @param EE_Payment_Method $payment_method
-     * @return \EE_Billing_Info_Form|\EE_Form_Section_HTML
-     * @throws \EE_Error
+     * @return EE_Billing_Info_Form|EE_Form_Section_HTML
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
     private function _get_billing_form_for_payment_method(EE_Payment_Method $payment_method)
     {
@@ -1196,18 +1272,17 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
             array('amount_owing' => $this->checkout->amount_owing)
         );
         if ($billing_form instanceof EE_Billing_Info_Form) {
-            if (
-                apply_filters(
-                    'FHEE__EE_SPCO_Reg_Step_Payment_Options__registration_checkout__selected_payment_method__display_success',
-                    false
-                )
+            if (apply_filters(
+                'FHEE__EE_SPCO_Reg_Step_Payment_Options__registration_checkout__selected_payment_method__display_success',
+                false
+            )
                 && EE_Registry::instance()->REQ->is_set('payment_method')
             ) {
                 EE_Error::add_success(
                     apply_filters(
                         'FHEE__Single_Page_Checkout__registration_checkout__selected_payment_method',
                         sprintf(
-                            __(
+                            esc_html__(
                                 'You have selected "%s" as your method of payment. Please note the important payment information below.',
                                 'event_espresso'
                             ),
@@ -1235,7 +1310,10 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      *                          is not found in the incoming request
      * @param string  $request_param
      * @return NULL|string
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
     private function _get_selected_method_of_payment(
         $required = false,
@@ -1261,7 +1339,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
         if (empty($selected_method_of_payment) && $required) {
             EE_Error::add_error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'The selected method of payment could not be determined.%sPlease ensure that you have selected one before proceeding.%sIf you continue to experience difficulties, then refresh your browser and try again, or contact %s for assistance.',
                         'event_espresso'
                     ),
@@ -1291,7 +1369,10 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      *
      * @access public
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
     public function switch_payment_method()
     {
@@ -1306,7 +1387,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                 apply_filters(
                     'FHEE__Single_Page_Checkout__registration_checkout__selected_payment_method',
                     sprintf(
-                        __(
+                        esc_html__(
                             'You have selected "%s" as your method of payment. Please note the important payment information below.',
                             'event_espresso'
                         ),
@@ -1322,8 +1403,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
             );
         }
         // fill form with attendee info if applicable
-        if (
-        apply_filters(
+        if (apply_filters(
             'FHEE__populate_billing_form_fields_from_attendee',
             (
                 $this->checkout->billing_form instanceof EE_Billing_Attendee_Info_Form
@@ -1341,9 +1421,10 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
         if ($this->checkout->billing_form instanceof EE_Billing_Info_Form
             && $this->checkout->payment_method->type_obj() instanceof EE_PMT_Base
         ) {
-            $this->checkout->billing_form = $this->checkout->payment_method->type_obj()->apply_billing_form_debug_settings(
-                $this->checkout->billing_form
-            );
+            $this->checkout->billing_form =
+                $this->checkout->payment_method->type_obj()->apply_billing_form_debug_settings(
+                    $this->checkout->billing_form
+                );
         }
         // get html and validation rules for form
         if ($this->checkout->billing_form instanceof EE_Form_Section_Proper) {
@@ -1365,8 +1446,12 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
     /**
      * _verify_payment_method_is_set
      *
-     * @return boolean
-     * @throws \EE_Error
+     * @return bool
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
     protected function _verify_payment_method_is_set()
     {
@@ -1381,8 +1466,10 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                     EE_Error::add_attention(
                         apply_filters(
                             'FHEE__EE_SPCO_Reg_Step_Payment_Options___verify_payment_method_is_set__sold_out_events_msg',
-                            __('It appears that the event you were about to make a payment for has sold out since this form first loaded. Please contact the event administrator if you believe this is an error.',
-                                'event_espresso')
+                            esc_html__(
+                                'It appears that the event you were about to make a payment for has sold out since this form first loaded. Please contact the event administrator if you believe this is an error.',
+                                'event_espresso'
+                            )
                         ),
                         __FILE__, __FUNCTION__, __LINE__
                     );
@@ -1392,8 +1479,10 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                     EE_Error::add_attention(
                         apply_filters(
                             'FHEE__EE_SPCO_Reg_Step_Payment_Options___verify_payment_method_is_set__payments_closed_msg',
-                            __('It appears that the event you were about to make a payment for is not accepting payments at this time. Please contact the event administrator if you believe this is an error.',
-                                'event_espresso')
+                            esc_html__(
+                                'It appears that the event you were about to make a payment for is not accepting payments at this time. Please contact the event administrator if you believe this is an error.',
+                                'event_espresso'
+                            )
                         ),
                         __FILE__, __FUNCTION__, __LINE__
                     );
@@ -1403,8 +1492,10 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                     EE_Error::add_attention(
                         apply_filters(
                             'FHEE__EE_SPCO_Reg_Step_Payment_Options___verify_payment_method_is_set__no_payment_required_msg',
-                            __('It appears that the event you were about to make a payment for does not require payment. Please contact the event administrator if you believe this is an error.',
-                                'event_espresso')
+                            esc_html__(
+                                'It appears that the event you were about to make a payment for does not require payment. Please contact the event administrator if you believe this is an error.',
+                                'event_espresso'
+                            )
                         ),
                         __FILE__, __FUNCTION__, __LINE__
                     );
@@ -1430,7 +1521,12 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      * save_payer_details_via_ajax
      *
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws RuntimeException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
     public function save_payer_details_via_ajax()
     {
@@ -1464,8 +1560,12 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      * create_attendee_from_request_data
      * uses info from alternate GET or POST data (such as AJAX) to create a new attendee
      *
-     * @return \EE_Attendee
-     * @throws \EE_Error
+     * @return EE_Attendee
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
     protected function _create_attendee_from_request_data()
     {
@@ -1504,13 +1604,14 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
         // validate the email address since it is the most important piece of info
         if (empty($attendee_data['ATT_email']) || $attendee_data['ATT_email'] !== $_REQUEST['email']) {
             EE_Error::add_error(
-                __('An invalid email address was submitted.', 'event_espresso'),
+                esc_html__('An invalid email address was submitted.', 'event_espresso'),
                 __FILE__,
                 __FUNCTION__,
                 __LINE__
             );
         }
-        // does this attendee already exist in the db ? we're searching using a combination of first name, last name, AND email address
+        // does this attendee already exist in the db ? we're searching using a combination of first name, last name,
+        // AND email address
         if (! empty($attendee_data['ATT_fname'])
             && ! empty($attendee_data['ATT_lname'])
             && ! empty($attendee_data['ATT_email'])
@@ -1527,7 +1628,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
             }
         }
         // no existing attendee? kk let's create a new one
-        // kinda lame, but we need a first and last name to create an attendee, so use the email address if those don't exist
+        // kinda lame, but we need a first and last name to create an attendee, so use the email address if those
+        // don't exist
         $attendee_data['ATT_fname'] = ! empty($attendee_data['ATT_fname'])
             ? $attendee_data['ATT_fname']
             : $attendee_data['ATT_email'];
@@ -1545,8 +1647,14 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
     /**
      * process_reg_step
      *
-     * @return boolean
-     * @throws \EE_Error
+     * @return bool
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws \EventEspresso\core\exceptions\EntityNotFoundException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \EventEspresso\core\exceptions\InvalidStatusException
      */
     public function process_reg_step()
     {
@@ -1572,7 +1680,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                     false
                 )) {
                     EE_Error::add_success(
-                        __('no payment required at this time.', 'event_espresso'),
+                        esc_html__('no payment required at this time.', 'event_espresso'),
                         __FILE__,
                         __FUNCTION__,
                         __LINE__
@@ -1589,7 +1697,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                     false
                 )) {
                     EE_Error::add_success(
-                        __('no payment required.', 'event_espresso'),
+                        esc_html__('no payment required.', 'event_espresso'),
                         __FILE__,
                         __FUNCTION__,
                         __LINE__
@@ -1622,7 +1730,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                     $this->checkout->continue_reg = false;
                 }
                 return $payment_successful;
-
         }
     }
 
@@ -1671,8 +1778,14 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      *    update_reg_step
      *    this is the final step after a user  revisits the site to retry a payment
      *
-     * @return boolean
-     * @throws \EE_Error
+     * @return bool
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws \EventEspresso\core\exceptions\EntityNotFoundException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \EventEspresso\core\exceptions\InvalidStatusException
      */
     public function update_reg_step()
     {
@@ -1704,8 +1817,13 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      *    _process_payment
      *
      * @access private
-     * @return    bool
-     * @throws \EE_Error
+     * @return bool
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws RuntimeException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
     private function _process_payment()
     {
@@ -1716,7 +1834,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
         // ya gotta make a choice man
         if (empty($this->checkout->selected_method_of_payment)) {
             $this->checkout->json_response->set_plz_select_method_of_payment(
-                __('Please select a method of payment before proceeding.', 'event_espresso')
+                esc_html__('Please select a method of payment before proceeding.', 'event_espresso')
             );
             return false;
         }
@@ -1745,8 +1863,11 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
         }
         /** @type EE_Transaction_Processor $transaction_processor */
         //$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
-        // in case a registrant leaves to an Off-Site Gateway and never returns, we want to approve any registrations for events with a default reg status of Approved
-        //$transaction_processor->toggle_registration_statuses_for_default_approved_events( $this->checkout->transaction, $this->checkout->reg_cache_where_params );
+        // in case a registrant leaves to an Off-Site Gateway and never returns, we want to approve any registrations
+        // for events with a default reg status of Approved
+        // $transaction_processor->toggle_registration_statuses_for_default_approved_events(
+        //      $this->checkout->transaction, $this->checkout->reg_cache_where_params
+        // );
         // attempt payment
         $payment = $this->_attempt_payment($this->checkout->payment_method);
         // process results
@@ -1783,6 +1904,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      *
      * @access public
      * @return bool
+     * @throws EE_Error
      */
     protected function _last_second_ticket_verifications()
     {
@@ -1802,8 +1924,10 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                         apply_filters(
                             'FHEE__EE_SPCO_Reg_Step_Payment_Options___last_second_ticket_verifications__sold_out_events_msg',
                             sprintf(
-                                __('It appears that the %1$s event that you were about to make a payment for has sold out since you first registered and/or arrived at this page. Please refresh the page and try again. If you have already made a partial payment towards this event, please contact the event administrator for a refund.',
-                                    'event_espresso'),
+                                esc_html__(
+                                    'It appears that the %1$s event that you were about to make a payment for has sold out since you first registered and/or arrived at this page. Please refresh the page and try again. If you have already made a partial payment towards this event, please contact the event administrator for a refund.',
+                                    'event_espresso'
+                                ),
                                 $event->name()
                             )
                         ),
@@ -1824,7 +1948,11 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      *
      * @access public
      * @return bool
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
     public function redirect_form()
     {
@@ -1866,14 +1994,14 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                         } elseif ($form_section instanceof EE_Form_Section_Base) {
                             $label = $form_section->name();
                         } else {
-                            $label = __('Validation Error', 'event_espresso');
+                            $label = esc_html__('Validation Error', 'event_espresso');
                         }
                         $error_strings[] = sprintf('%1$s: %2$s', $label, $validation_error->getMessage());
                     }
                 }
                 EE_Error::add_error(
                     sprintf(
-                        __(
+                        esc_html__(
                             'One or more billing form inputs are invalid and require correction before proceeding. %1$s %2$s',
                             'event_espresso'
                         ),
@@ -1886,7 +2014,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                 );
             } else {
                 EE_Error::add_error(
-                    __(
+                    esc_html__(
                         'The billing form was not submitted or something prevented it\'s submission.',
                         'event_espresso'
                     ),
@@ -1897,7 +2025,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
             }
         } else {
             EE_Error::add_error(
-                __('The submitted billing form is invalid possibly due to a technical reason.', 'event_espresso'),
+                esc_html__('The submitted billing form is invalid possibly due to a technical reason.', 'event_espresso'),
                 __FILE__,
                 __FUNCTION__,
                 __LINE__
@@ -1916,7 +2044,12 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      *
      * @access private
      * @return bool
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws RuntimeException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
     private function _setup_primary_registrant_prior_to_payment()
     {
@@ -1949,7 +2082,11 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      *
      * @access private
      * @return bool
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
     private function _capture_primary_registration_data_from_billing_form()
     {
@@ -1958,7 +2095,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
         if (! $this->checkout->primary_attendee_obj instanceof EE_Attendee) {
             EE_Error::add_error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'The billing form details could not be used for attendee details due to a technical issue.%sPlease try again or contact %s for assistance.',
                         'event_espresso'
                     ),
@@ -1975,7 +2112,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
         if (! $primary_registration instanceof EE_Registration) {
             EE_Error::add_error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'The primary registrant for this transaction could not be determined due to a technical issue.%sPlease try again or contact %s for assistance.',
                         'event_espresso'
                     ),
@@ -1994,7 +2131,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
         ) {
             EE_Error::add_error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'The primary registrant could not be associated with this transaction due to a technical issue.%sPlease try again or contact %s for assistance.',
                         'event_espresso'
                     ),
@@ -2020,8 +2157,12 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      * retrieves a valid payment method
      *
      * @access public
-     * @return \EE_Payment_Method
-     * @throws \EE_Error
+     * @return EE_Payment_Method
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
     private function _get_payment_method_for_selected_method_of_payment()
     {
@@ -2044,7 +2185,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
             // not a payment
             EE_Error::add_error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'The selected method of payment could not be determined due to a technical issue.%sPlease try again or contact %s for assistance.',
                         'event_espresso'
                     ),
@@ -2062,7 +2203,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
             // not a payment
             EE_Error::add_error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'A valid payment method could not be determined due to a technical issue.%sPlease try again or contact %s for assistance.',
                         'event_espresso'
                     ),
@@ -2084,8 +2225,12 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      *
      * @access    private
      * @type    EE_Payment_Method $payment_method
-     * @return    mixed    EE_Payment | boolean
-     * @throws \EE_Error
+     * @return mixed EE_Payment | boolean
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
     private function _attempt_payment(EE_Payment_Method $payment_method)
     {
@@ -2122,13 +2267,16 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      * @access protected
      * @param \Exception $e
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
     protected function _handle_payment_processor_exception(Exception $e)
     {
         EE_Error::add_error(
             sprintf(
-                __(
+                esc_html__(
                     'The payment could not br processed due to a technical issue.%1$sPlease try again or contact %2$s for assistance.||The following Exception was thrown in %4$s on line %5$s:%1$s%3$s',
                     'event_espresso'
                 ),
@@ -2181,8 +2329,11 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      *
      * @access private
      * @param EE_Payment $payment
-     * @return EE_Payment | FALSE
-     * @throws \EE_Error
+     * @return EE_Payment|FALSE
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
     private function _validate_payment($payment = null)
     {
@@ -2194,7 +2345,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
             // not a payment
             EE_Error::add_error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'A valid payment was not generated due to a technical issue.%1$sPlease try again or contact %2$s for assistance.',
                         'event_espresso'
                     ),
@@ -2217,7 +2368,10 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      * @access private
      * @param EE_Payment|bool $payment
      * @return bool
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
     private function _post_payment_processing($payment = null)
     {
@@ -2241,12 +2395,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                 $this->checkout->redirect_url  = $this->reg_step_url('redirect_form');
                 // set JSON response
                 $this->checkout->json_response->set_redirect_form($this->checkout->redirect_form);
-                // set cron job for finalizing the TXN
-                // in case the user does not return from the off-site gateway
-                EE_Cron_Tasks::schedule_finalize_abandoned_transactions_check(
-                    EE_Registry::instance()->SSN->expiration() + 1,
-                    $this->checkout->transaction->ID()
-                );
                 // and lastly, let's bump the payment status to pending
                 $payment->set_status(EEM_Payment::status_id_pending);
                 $payment->save();
@@ -2255,7 +2403,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                 $this->checkout->continue_reg = false;
                 EE_Error::add_error(
                     sprintf(
-                        __(
+                        esc_html__(
                             'It appears the Off Site Payment Method was not configured properly.%sPlease try again or contact %s for assistance.',
                             'event_espresso'
                         ),
@@ -2276,19 +2424,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
     }
 
 
-
-    /**
-     *    _setup_redirect_for_next_step
-     *
-     * @access private
-     * @return    void
-     */
-    //private function _setup_redirect_for_next_step() {
-    //$this->checkout->redirect = TRUE;
-    //$this->checkout->redirect_url = $this->checkout->next_step->reg_step_url();
-    // set JSON response
-    //$this->checkout->json_response->set_redirect_url( $this->checkout->redirect_url );
-    //}
     /**
      *    _process_payment_status
      *
@@ -2296,7 +2431,10 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      * @type    EE_Payment $payment
      * @param string       $payment_occurs
      * @return bool
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
     private function _process_payment_status($payment, $payment_occurs = EE_PMT_Base::offline)
     {
@@ -2313,7 +2451,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                 // good payment
                 case EEM_Payment::status_id_approved :
                     EE_Error::add_success(
-                        __('Your payment was processed successfully.', 'event_espresso'),
+                        esc_html__('Your payment was processed successfully.', 'event_espresso'),
                         __FILE__,
                         __FUNCTION__,
                         __LINE__
@@ -2323,7 +2461,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                 // slow payment
                 case EEM_Payment::status_id_pending :
                     if (empty($msg)) {
-                        $msg = __(
+                        $msg = esc_html__(
                             'Your payment appears to have been processed successfully, but the Instant Payment Notification has not yet been received. It should arrive shortly.',
                             'event_espresso'
                         );
@@ -2374,7 +2512,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
         }
         EE_Error::add_error(
             sprintf(
-                __(
+                esc_html__(
                     'Your payment could not be processed successfully due to a technical issue.%sPlease try again or contact %s for assistance.',
                     'event_espresso'
                 ),
@@ -2406,8 +2544,13 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      *        or present the payment options again
      *
      * @access private
-     * @return EE_Payment | FALSE
-     * @throws \EE_Error
+     * @return EE_Payment|FALSE
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \EventEspresso\core\exceptions\InvalidSessionDataException
      */
     public function process_gateway_response()
     {
@@ -2469,8 +2612,11 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      *
      * @access private
      * @return void
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      * @throws \EventEspresso\core\exceptions\InvalidSessionDataException
-     * @throws \EE_Error
      */
     private function _validate_offsite_return()
     {
@@ -2540,7 +2686,10 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      * @access private
      * @param \EE_Registration|null $primary_registrant
      * @return bool
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
     private function _redirect_wayward_request(EE_Registration $primary_registrant)
     {
@@ -2553,7 +2702,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
         if (! $primary_registrant instanceof EE_Registration) {
             EE_Error::add_error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'Invalid information was received from the Off-Site Payment Processor and your Transaction details could not be retrieved from the database.%1$sPlease try again or contact %2$s for assistance.',
                         'event_espresso'
                     ),
@@ -2585,8 +2734,11 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      *
      * @access private
      * @param \EE_Offsite_Gateway $gateway
-     * @return \EE_Payment
-     * @throws \EE_Error
+     * @return EE_Payment
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
     private function _process_off_site_payment(EE_Offsite_Gateway $gateway)
     {
@@ -2660,8 +2812,12 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      *    get_transaction_details_for_gateways
      *
      * @access    public
-     * @return    int
-     * @throws \EE_Error
+     * @return int
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
     public function get_transaction_details_for_gateways()
     {
@@ -2669,7 +2825,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
         // ya gotta make a choice man
         if (empty($this->checkout->selected_method_of_payment)) {
             $txn_details = array(
-                'error' => __('Please select a method of payment before proceeding.', 'event_espresso'),
+                'error' => esc_html__('Please select a method of payment before proceeding.', 'event_espresso'),
             );
         }
         // get EE_Payment_Method object
@@ -2680,7 +2836,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
         ) {
             $txn_details = array(
                 'selected_method_of_payment' => $this->checkout->selected_method_of_payment,
-                'error'                      => __(
+                'error'                      => esc_html__(
                     'A valid Payment Method could not be determined.',
                     'event_espresso'
                 ),
@@ -2725,8 +2881,4 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
         // remove the reg form and the checkout
         return array_diff(array_keys(get_object_vars($this)), array('reg_form', 'checkout', 'line_item_display'));
     }
-
-
 }
-// End of file EE_SPCO_Reg_Step_Payment_Options.class.php
-// Location: /EE_SPCO_Reg_Step_Payment_Options.class.php

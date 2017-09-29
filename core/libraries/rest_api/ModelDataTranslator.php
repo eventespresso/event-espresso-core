@@ -269,7 +269,7 @@ class ModelDataTranslator
             }
             if ($original_value instanceof \DateTime) {
                 $new_value = $original_value->format('Y-m-d H:i:s');
-            } elseif (is_int($original_value)) {
+            } elseif (is_int($original_value) || is_float($original_value)) {
                 $new_value = date('Y-m-d H:i:s', $original_value);
             } elseif($original_value === null || $original_value === '') {
                 $new_value = null;

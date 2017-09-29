@@ -70,17 +70,17 @@ class EE_UnitTestCase extends WP_UnitTestCase
      *
      * @throws \EE_Error
      */
-    public static function setUpBeforeClass() {
-        // echo "\n\n\n" . get_called_class() . "\n\n";
-        parent::setUpBeforeClass();
-        \EventEspresso\core\services\Benchmark::startTimer(get_called_class());
-    }
+    // public static function setUpBeforeClass() {
+    //     echo "\n\n\n" . get_called_class() . "\n\n";
+    //     parent::setUpBeforeClass();
+    //     \EventEspresso\core\services\Benchmark::startTimer(get_called_class());
+    // }
 
-    public static function tearDownAfterClass() {
-        // echo "\n\n\n" . get_called_class() . "\n\n";
-        \EventEspresso\core\services\Benchmark::stopTimer(get_called_class());
-        parent::tearDownAfterClass();
-    }
+    // public static function tearDownAfterClass() {
+    //     // echo "\n\n\n" . get_called_class() . "\n\n";
+    //     \EventEspresso\core\services\Benchmark::stopTimer(get_called_class());
+    //     parent::tearDownAfterClass();
+    // }
 
 
     public function setUp()
@@ -113,10 +113,6 @@ class EE_UnitTestCase extends WP_UnitTestCase
         // load factories
         EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_TESTS_DIR . 'includes' . DS . 'factories');
         $this->factory = new EE_UnitTest_Factory();
-
-        // load scenarios
-        require_once EE_TESTS_DIR . 'includes/scenarios/EE_Test_Scenario_Classes.php';
-        $this->scenarios = new EE_Test_Scenario_Factory($this);
 
         //IF we detect we're running tests on WP4.1, then we need to make sure current_user_can tests pass by implementing
         //updating all_caps when `WP_User::add_cap` is run (which is fixed in later wp versions).  So we hook into the
@@ -179,6 +175,13 @@ class EE_UnitTestCase extends WP_UnitTestCase
         }
         // turn caching back on for any loaders in use
         remove_all_filters('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache');
+    }
+
+    protected function loadTestScenarios()
+    {
+        // load scenarios
+        require_once EE_TESTS_DIR . 'includes/scenarios/EE_Test_Scenario_Classes.php';
+        $this->scenarios = new EE_Test_Scenario_Factory($this);
     }
 
     /**
@@ -1310,6 +1313,21 @@ class EE_UnitTestCase extends WP_UnitTestCase
                     $datetime->save();
                 }
             }
+        }
+    }
+
+
+
+    /**
+     * Calls the WordPress version specific method for refreshing user roles during tests
+     * @param WP_User $user
+     */
+    protected function refreshRolesForUser(WP_User $user)
+    {
+        if (method_exists($user, 'for_site')) {
+            $user->for_site();
+        } else {
+            $user->_init_caps();
         }
     }
 

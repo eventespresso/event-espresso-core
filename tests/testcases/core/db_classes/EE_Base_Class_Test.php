@@ -966,16 +966,14 @@ class EE_Base_Class_Test extends EE_UnitTestCase
         $this->assertTrue(empty($pays_on_r));
     }
 
-
-
     /**
      * Tests that if you create a model object and immediately change its timezone, the related model
      * objects timezones should be changed too. But currently that isn't the case.
      * @group 10751
+     * @group 10905
      */
     public function test_automatically_set_timezone_on_related_model_obj__same_request()
     {
-        $this->markTestSkipped('Known bug that this test doesn\'t work');
         //this is basically taken from https://github.com/eventespresso/event-espresso-core/blob/master/docs/F--Datetime-System/dates-times-timezones-in-models.md
         $dtt = $this->new_model_obj_with_dependencies('Datetime');
         $event = EEM_Event::instance()->get_one_by_ID($dtt->get('EVT_ID'));
@@ -987,6 +985,27 @@ class EE_Base_Class_Test extends EE_UnitTestCase
         $this->assertEquals('Europe/London', $dtt->get_timezone());
     }
 
+
+
+    /**
+     * Verifies that when we set the timezone on a model object, related objects adopt that same timezone
+     * @group 10905
+     */
+    public function setTimezone()
+    {
+        $t = $this->new_typical_transaction();
+        $datetime = EEM_Datetime::instance()->get_one(array(array('EVT_ID'=>$t->primary_registration()->event_ID())));
+        //set the timezone on the datetime, which should also set it on the ticket
+        $datetime->set_timezone('Europe/London');
+        $ticket = $datetime->get_first_related('Ticket');
+        $this->assertEquals('Europe/London', $ticket->get_timezone());
+
+        //now verify that if we change the timezone on the datetime, the ticket will also get changed
+        $datetime->set_timezone('America/New_York');
+        $ticket = $datetime->get_first_related('Ticket');
+        $this->assertEquals('America/New_York', $ticket->get_timezone());
+
+    }
 
 
     /**

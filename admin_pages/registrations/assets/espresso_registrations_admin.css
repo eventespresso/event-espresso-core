@@ -219,21 +219,7 @@
 	padding-left : 20px;
 }
 
-/* never-checked-in */
-.checkedin-status-2:before {
-	font-family    : 'dashicons' !important; /** using important b/c wp has dashicons setup with important and I had to override **/
-	content : "\f158";
-}
 
-/**checked in**/
-.checkedin-status-1:before {
-	content : "\e614";
-}
-
-/**checked out**/
-.checkedin-status-0:before {
-	content : "\e613";
-}
 
 /**
  * attendee edit page stuff
@@ -433,7 +419,7 @@
 .status-RWL { color : #8A549A; }
 
 #admin-primary-mbox-reg-details-dv .secondary-button {
-	margin-left : 10px;
+	margin:0 0 10px 10px;
 }
 
 #reg_status_change_form {

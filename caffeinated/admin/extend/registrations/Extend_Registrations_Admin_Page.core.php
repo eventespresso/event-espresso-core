@@ -1,4 +1,7 @@
 <?php
+
+use EventEspresso\ui\browser\checkins\entities\CheckinStatusDashicon;
+
 if ( ! defined('EVENT_ESPRESSO_VERSION')) {
     exit('NO direct script access allowed');
 }
@@ -528,20 +531,24 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
                                                                            ->get_latest_registration_for_each_of_given_contacts($ids);
                     break;
             }
-            do_action(
+            do_action_ref_array(
                 'AHEE__Extend_Registrations_Admin_Page___newsletter_selected_send__with_registrations',
-                $registrations_used_for_contact_data,
-                $Message_Template_Group->ID()
+                array(
+                    $registrations_used_for_contact_data,
+                    $Message_Template_Group->ID()
+                )
             );
             //kept for backward compat, internally we no longer use this action.
             //@deprecated 4.8.36.rc.002
             $contacts = $id_type === 'registration'
                 ? EEM_Attendee::instance()->get_array_of_contacts_from_reg_ids($ids)
                 : EEM_Attendee::instance()->get_all(array(array('ATT_ID' => array('in', $ids))));
-            do_action(
+            do_action_ref_array(
                 'AHEE__Extend_Registrations_Admin_Page___newsletter_selected_send',
-                $contacts,
-                $Message_Template_Group->ID()
+                array(
+                    $contacts,
+                    $Message_Template_Group->ID()
+                )
             );
         }
         $query_args = array(
@@ -743,14 +750,16 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
             array('event_id' => $registration->event_ID()),
             'add-new-h2'
         );
+        $checked_in = new CheckinStatusDashicon(EE_Checkin::status_checked_in);
+        $checked_out = new CheckinStatusDashicon(EE_Checkin::status_checked_out);
         $legend_items = array(
             'checkin'  => array(
-                'class' => 'ee-icon ee-icon-check-in',
-                'desc'  => __('This indicates the attendee has been checked in', 'event_espresso'),
+                'class' => $checked_in->cssClasses(),
+                'desc'  => $checked_in->legendLabel(),
             ),
             'checkout' => array(
-                'class' => 'ee-icon ee-icon-check-out',
-                'desc'  => __('This indicates the attendee has been checked out', 'event_espresso'),
+                'class' => $checked_out->cssClasses(),
+                'desc'  => $checked_out->legendLabel(),
             ),
         );
         $this->_template_args['after_list_table'] = $this->_display_legend($legend_items);
@@ -849,10 +858,9 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
         $nonce_ref = 'checkin_nonce';
         $this->_verify_nonce($nonce, $nonce_ref);
         //beautiful! Made it this far so let's get the status.
-        $new_status = $this->_toggle_checkin_status();
+        $new_status = new CheckinStatusDashicon($this->_toggle_checkin_status());
         //setup new class to return via ajax
-        $this->_template_args['admin_page_content'] = 'clickable trigger-checkin checkin-icons checkedin-status-'
-                                                      . $new_status;
+        $this->_template_args['admin_page_content'] = 'clickable trigger-checkin ' . $new_status->cssClasses();
         $this->_template_args['success'] = true;
         $this->_return_json();
     }
@@ -1034,22 +1042,25 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
                 false
             )
             : '';
+        $checked_in = new CheckinStatusDashicon(EE_Checkin::status_checked_in);
+        $checked_out = new CheckinStatusDashicon(EE_Checkin::status_checked_out);
+        $checked_never = new CheckinStatusDashicon(EE_Checkin::status_checked_never);
         $legend_items = array(
             'star-icon'        => array(
                 'class' => 'dashicons dashicons-star-filled lt-blue-icon ee-icon-size-8',
                 'desc'  => __('This Registrant is the Primary Registrant', 'event_espresso'),
             ),
             'checkin'          => array(
-                'class' => 'ee-icon ee-icon-check-in',
-                'desc'  => __('This Registrant has been Checked In', 'event_espresso'),
+                'class' => $checked_in->cssClasses(),
+                'desc'  => $checked_in->legendLabel(),
             ),
             'checkout'         => array(
-                'class' => 'ee-icon ee-icon-check-out',
-                'desc'  => __('This Registrant has been Checked Out', 'event_espresso'),
+                'class' => $checked_out->cssClasses(),
+                'desc'  => $checked_out->legendLabel(),
             ),
             'nocheckinrecord'  => array(
-                'class' => 'dashicons dashicons-no',
-                'desc'  => __('No Check-in Record has been Created for this Registrant', 'event_espresso'),
+                'class' => $checked_never->cssClasses(),
+                'desc'  => $checked_never->legendLabel(),
             ),
             'view_details'     => array(
                 'class' => 'dashicons dashicons-search',
@@ -1189,5 +1200,6 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
             /** @type EE_Registration[] */
             : EEM_Registration::instance()->get_all($query_params);
     }
+
 
 } //end class Registrations Admin Page
