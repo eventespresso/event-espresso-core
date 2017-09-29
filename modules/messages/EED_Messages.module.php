@@ -989,6 +989,32 @@ class EED_Messages extends EED_Module
 
 
     /**
+     * Generate and send immediately from the given $message_ids
+     * @param array $message_ids  EE_Message entity ids.
+     */
+    public static function generate_and_send_now(array $message_ids)
+    {
+        $generated_queue = self::generate_now($message_ids);
+        //now let's just trigger sending immediately from this queue.
+        $messages_sent = $generated_queue->execute();
+        if ($messages_sent) {
+            EE_Error::add_success(
+                sprintf(
+                    _n(
+                        'There was %d message successfully generated and sent.',
+                        'There were %d messages successfully generated and sent.',
+                        $messages_sent,
+                        'event_espresso'
+                    ),
+                    $messages_sent
+                )
+            );
+            //errors would be added via the generate_now method.
+        }
+    }
+
+
+    /**
      * This will queue the incoming message ids for resending.
      * Note, only message_ids corresponding to messages with the status of EEM_Message::sent will be queued.
      *
