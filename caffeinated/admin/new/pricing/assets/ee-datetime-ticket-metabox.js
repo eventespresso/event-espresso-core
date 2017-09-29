@@ -613,23 +613,30 @@ jQuery(document).ready(function($) {
 
 			//spans
 			newTKTrow.find('span').each( function() {
-				curclass = $(this).attr('class');
-				curid = $(this).attr('id');
-				tktHelper.itemdata = $(this).data();
+			    var $el = $(this);
+				curclass = $el.attr('class');
+				curid = $el.attr('id');
+				tktHelper.itemdata = $el.data();
 
-				if ( curclass === 'ticket-display-row-TKT_sold' )
-					$(this).text('0');
+				if ( curclass === 'ticket-display-row-TKT_sold' ) {
+                    $el.text('0');
+                }
 
-				if( curclass === 'ticket-display-row-TKT_registrations' )
-					$(this).text('0');
+				if( curclass === 'ticket-display-row-TKT_registrations' ) {
+                    $el.text('0');
+                }
+
+                if (curclass === 'ticket-display-row-TKT_reserved') {
+				    $el.text('0');
+                }
 
 				if ( typeof(tktHelper.itemdata) !== 'undefined' && typeof(tktHelper.itemdata.ticketRow) !== 'undefined' ) {
-					$(this).attr('data-ticket-row', newrownum);
-					$(this).data('ticketRow', newrownum);
+					$el.attr('data-ticket-row', newrownum);
+					$el.data('ticketRow', newrownum);
 				}
 
 				if ( typeof(curid) !== 'undefined' )
-					$(this).attr('id', curid.replace(row, newrownum) );
+					$el.attr('id', curid.replace(row, newrownum) );
 			});
 
 			//fieldset
