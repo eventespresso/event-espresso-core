@@ -1,11 +1,8 @@
 <?php
 
-use EE_Error;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidIdentifierException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
-use InvalidArgumentException;
-use ReflectionException;
 
 if ( ! defined('EVENT_ESPRESSO_VERSION')) {
     exit('NO direct script access allowed');
