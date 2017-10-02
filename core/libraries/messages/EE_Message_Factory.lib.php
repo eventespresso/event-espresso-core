@@ -66,7 +66,7 @@ class EE_Message_Factory {
 	/**
 	 * @access public
 	 * @param  array $props_n_values
-	 * @return EE_Message
+	 * @return mixed
 	 */
 	public static function create( $props_n_values = array() ) {
 		/** @type EE_Message_Factory $Message_Factory */

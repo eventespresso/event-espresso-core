@@ -419,7 +419,7 @@
 .status-RWL { color : #8A549A; }
 
 #admin-primary-mbox-reg-details-dv .secondary-button {
-	margin:0 0 10px 10px;
+	margin-left : 10px;
 }
 
 #reg_status_change_form {

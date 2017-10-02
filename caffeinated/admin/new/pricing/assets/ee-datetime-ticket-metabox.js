@@ -431,27 +431,28 @@ jQuery(document).ready(function($) {
 
 			//next let's do the spans
 			newDTTrow.find('span').each( function() {
-			    var $el = $(this);
-				curclass = $el.attr('class');
-				tktHelper.itemdata = $el.data();
+				curclass = $(this).attr('class');
+				tktHelper.itemdata = $(this).data();
 
 				//handle data-datetime-row properties
 				if ( typeof(tktHelper.itemdata) !== 'undefined' && typeof(tktHelper.itemdata.datetimeRow) !== 'undefined' ) {
-					$el.attr( 'data-datetime-row', newrownum ); //not using jquery .data() to set the value because that doesn't change the actual data attribute.
-					$el.data('datetimeRow', newrownum); //we still need to change the data on the element otherwise it remains as the value set on the previous element.
+					$(this).attr( 'data-datetime-row', newrownum ); //not using jquery .data() to set the value because that doesn't change the actual data attribute.
+					$(this).data('datetimeRow', newrownum); //we still need to change the data on the element otherwise it remains as the value set on the previous element.
 				}
 
-				if (curclass.indexOf('datetime-tickets-sold') !== -1 || curclass.indexOf('datetime-tickets-reserved') !== -1) {
-				    $el.text('0');
-                }
+				//handle ticket counts!
+				if ( curclass == 'datetime-tickets-sold' ) {
+					ticketsold = $(this).text().replace(/[0-9]/g,'') + '0';
+					$(this).text(ticketsold);
+				}
 
-				if ( curclass.indexOf('ticket-list-ticket-name') !== -1) {
+				if ( curclass == 'ticket-list-ticket-name' ) {
 					//find out what ticket we are looking at.
-					var parentdata = $el.parent().data();
+					var parentdata = $(this).parent().data();
 
 					//now we can get the ticket title from the tickets list and simply replace what's in the datetime ticket with it.  Why do we do this instead of just replacing the numbers?  Because the ticket title may have a number in it.
 					tickettitle = tktHelper.getTicketTitle( parentdata.ticketRow );
-					$el.text(tickettitle);
+					$(this).text(tickettitle);
 				}
 
 			});
@@ -613,30 +614,23 @@ jQuery(document).ready(function($) {
 
 			//spans
 			newTKTrow.find('span').each( function() {
-			    var $el = $(this);
-				curclass = $el.attr('class');
-				curid = $el.attr('id');
-				tktHelper.itemdata = $el.data();
+				curclass = $(this).attr('class');
+				curid = $(this).attr('id');
+				tktHelper.itemdata = $(this).data();
 
-				if ( curclass === 'ticket-display-row-TKT_sold' ) {
-                    $el.text('0');
-                }
+				if ( curclass === 'ticket-display-row-TKT_sold' )
+					$(this).text('0');
 
-				if( curclass === 'ticket-display-row-TKT_registrations' ) {
-                    $el.text('0');
-                }
-
-                if (curclass === 'ticket-display-row-TKT_reserved') {
-				    $el.text('0');
-                }
+				if( curclass === 'ticket-display-row-TKT_registrations' )
+					$(this).text('0');
 
 				if ( typeof(tktHelper.itemdata) !== 'undefined' && typeof(tktHelper.itemdata.ticketRow) !== 'undefined' ) {
-					$el.attr('data-ticket-row', newrownum);
-					$el.data('ticketRow', newrownum);
+					$(this).attr('data-ticket-row', newrownum);
+					$(this).data('ticketRow', newrownum);
 				}
 
 				if ( typeof(curid) !== 'undefined' )
-					$el.attr('id', curid.replace(row, newrownum) );
+					$(this).attr('id', curid.replace(row, newrownum) );
 			});
 
 			//fieldset
@@ -1030,17 +1024,13 @@ jQuery(document).ready(function($) {
 		 * @return void.
 		 */
 		updateDTTsoldValues: function( itemdata, selecting ) {
-			var dttSoldProps = this.getDTTsoldinfo( itemdata ),
-			    newDTTsold = selecting
-                    ? dttSoldProps.dttSold + dttSoldProps.tktSold
-                    : dttSoldProps.dttSold - dttSoldProps.tktSold,
-                newDTTreserved = selecting
-                    ? dttSoldProps.dttReserved + dttSoldProps.tktReserved
-                    : dttSoldProps.dttReserved - dttSoldProps.tktReserved;
+			var dttSoldProps = this.getDTTsoldinfo( itemdata );
+			var newDTTsold = 0;
+
+			newDTTsold = selecting ? dttSoldProps.dttSold + dttSoldProps.tktSold : dttSoldProps.dttSold - dttSoldProps.tktSold;
+
 			//update dttSold for datetime!
 			$('.datetime-tickets-sold', '#event-datetime-' + itemdata.datetimeRow ).text( newDTTsold );
-			//update dttReserved for datetime!
-            $('.datetime-tickets-reserved', '#event-datetime-' + itemdata.datetimeRow).text(newDTTreserved)
 		},
 
 
@@ -1058,10 +1048,6 @@ jQuery(document).ready(function($) {
 			dttSoldProps.tktSold = accounting.unformat($('.ticket-display-row-TKT_sold', '#display-ticketrow-' + itemdata.ticketRow ).text());
 			dttSoldProps.dttSold = accounting.unformat( $('.datetime-tickets-sold', '#event-datetime-' + itemdata.datetimeRow ).text() );
 			dttSoldProps.dttRem = dttSoldProps.dttLimit - dttSoldProps.dttSold;
-
-			//TKT_reserved
-            dttSoldProps.tktReserved = accounting.unformat($('.ticket-display-row-TKT_reserved', '#display-ticketrow-' + itemdata.ticketRow).text());
-            dttSoldProps.dttReserved = accounting.unformat($('.datetime-tickets-reserved', '#event-datetime-' + itemdata.datetimeRow).text());
 			return dttSoldProps;
 		},
 

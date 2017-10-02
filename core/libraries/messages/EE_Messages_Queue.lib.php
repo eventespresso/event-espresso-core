@@ -592,7 +592,7 @@ class EE_Messages_Queue
      * After a caller calls the "EE_Message_Queue::execute()" method, the caller can check if there were any failed
      * sends by calling $queue->count_STS_in_queue( EEM_Message_Queue::status_failed ).
      *
-     * @param array|string $status Stati to check for in queue
+     * @param array $status Stati to check for in queue
      * @return int  Count of EE_Message's matching the given status.
      */
     public function count_STS_in_queue($status)

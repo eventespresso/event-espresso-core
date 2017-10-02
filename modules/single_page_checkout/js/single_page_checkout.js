@@ -120,9 +120,9 @@ jQuery(document).ready( function($) {
 		// pixel position from top of form to scroll to after errors
 		offset_from_top : 0,
 		// modifier for offset_from_top
-		offset_from_top_modifier : -100,
+		offset_from_top_modifier : -50,
 		// the first invalid input in a form
-		invalid_input_to_scroll_to : null,
+		invalid_input_to_scroll_to : {},
 		// display debugging info in console?
 		display_debug : eei18n.wp_debug,
 		// allow submit buttons to be enabled?
@@ -147,10 +147,6 @@ jQuery(document).ready( function($) {
 		notice_fadeout_attention : 18000,
 		notice_fadeout_errors : 12000,
 		notice_fadeout_min : 4000,
-        // array of inputs representing the primary registrant questions
-        primary_reg_questions :  [],
-        // tracking whether the  primary registrant questions have been validated or not
-        primary_registrant_questions_validated :  false,
 
 
 
@@ -210,7 +206,7 @@ jQuery(document).ready( function($) {
 				errorClass: 'ee-required-text',
 
 				errorPlacement: function( error, element ) {
-                    error.appendTo(element.closest('div'));
+                    error.appendTo(element.parent("div"));
 					SPCO.invalid_input_errors.push( error.text() );
 					SPCO.track_validation_error( element.attr('id') );
 				},
@@ -254,19 +250,17 @@ jQuery(document).ready( function($) {
 		 */
 		track_validation_error : function( invalid_input_id ) {
             // convert to jQuery object
-			var $invalid_input = $( '#' + invalid_input_id );
-			var $invalid_input_label = $( '#' + invalid_input_id + '-lbl' );
-			SPCO.invalid_input_to_scroll_to = SPCO.invalid_input_to_scroll_to === null
-                ? $invalid_input
-                : SPCO.invalid_input_to_scroll_to;
-            // grab input label && remove "required" asterisk
-			var input_label_text = $invalid_input_label.text().replace( '*', '' );
+			var invalid_input = $( '#' + invalid_input_id );
+			var invalid_input_label = $( '#' + invalid_input_id + '-lbl' );
+			SPCO.invalid_input_to_scroll_to = SPCO.invalid_input_to_scroll_to === null ? $( invalid_input_label ) : SPCO.invalid_input_to_scroll_to;
+			// grab input label && remove "required" asterisk
+			var input_label_text = $( invalid_input_label ).text().replace( '*', '' );
 			// add to invalid input array
 			SPCO.require_values.push( input_label_text );
 			// add to list of validation errors
-			if ($invalid_input.hasClass('email') ) {
+			if ( $(invalid_input).hasClass('email') ) {
 				SPCO.error_msgs.push( eei18n.enter_valid_email );
-			} else if ($invalid_input.is(':radio') || $invalid_input.is(':checkbox') ) {
+			} else if ( $(invalid_input).is(':radio') || $(invalid_input).is(':checkbox') ) {
 				SPCO.error_msgs.push( input_label_text + eei18n.required_multi_field );
 			} else {
 				SPCO.error_msgs.push( input_label_text + eei18n.required_field );
@@ -303,10 +297,8 @@ jQuery(document).ready( function($) {
 				// concatenate and tag error messages
 				var error_msg = SPCO.tag_message_for_debugging( 'display_validation_errors', error_msgs.join( '<br/>' ));
 				// scroll to top of form or to the first invalid input?
-				SPCO.invalid_input_to_scroll_to = SPCO.invalid_input_to_scroll_to === null
-                    ? SPCO.main_container
-                    : SPCO.invalid_input_to_scroll_to;
-                // display error_msg
+				SPCO.invalid_input_to_scroll_to = SPCO.invalid_input_to_scroll_to.length === 0 ? SPCO.main_container : SPCO.invalid_input_to_scroll_to;
+				// display error_msg
 				SPCO.scroll_to_top_and_display_messages( SPCO.invalid_input_to_scroll_to, SPCO.generate_message_object( '', error_msg, '' ), true );
 			}
 		},
@@ -364,8 +356,7 @@ jQuery(document).ready( function($) {
 						});
 						SPCO.display_messages( SPCO.generate_message_object( eei18n.attendee_info_copied, '', '' ), true );
 					}
-                    SPCO.primary_registrant_questions_validated = false;
-                }
+				}
 			});
 		},
 
@@ -375,18 +366,14 @@ jQuery(document).ready( function($) {
 		 * @function
 		 */
 		validate_primary_registrant_questions : function() {
-		    if (SPCO.primary_registrant_questions_validated){
-		        return SPCO.primary_reg_questions;
-            }
 			// get all form inputs for the primary attendee
-			SPCO.primary_reg_questions = SPCO.get_primary_reg_questions();
-			$(SPCO.primary_reg_questions).each( function() {
+			var primary_reg_questions = SPCO.get_primary_reg_questions();
+			$( primary_reg_questions ).each( function() {
 				if( ! $(this).valid() ) {
 					SPCO.track_validation_error( $(this ).attr('id') );
 				}
 			});
-            SPCO.primary_registrant_questions_validated = true;
-			return SPCO.primary_reg_questions;
+			return primary_reg_questions;
 		},
 
 
@@ -397,7 +384,7 @@ jQuery(document).ready( function($) {
 		 */
 		set_listener_for_individual_copy_attendee_checkboxes : function() {
 			$('#spco-copy-attendee-dv').on( 'click', '.spco-copy-attendee-chk', function() {
-                var primary_reg_questions = SPCO.validate_primary_registrant_questions();
+				var primary_reg_questions = SPCO.validate_primary_registrant_questions();
 				SPCO.copy_primary_registrant_information( $(this), primary_reg_questions );
 			});
 		},
@@ -411,7 +398,7 @@ jQuery(document).ready( function($) {
 		set_listener_for_process_next_reg_step_button : function() {
 			//console.log( JSON.stringify( '**set_listener_for_process_next_reg_step_button**', null, 4 ) );
 			SPCO.main_container.on( 'click', '.spco-next-step-btn', function( e ) {
-                // console_log('**', 'SPCO spco-next-step-btn  >CLICK <  **', true);
+				//console.log( JSON.stringify( 'SPCO spco-next-step-btn  >CLICK <', null, 4 ) );
 				SPCO.current_form_to_validate = $(this).parents('form:first');
 				SPCO.form_is_valid = SPCO.current_form_to_validate.valid();
 				SPCO.main_container.trigger( 'process_next_step_button_click', [ $( this ) ] );
@@ -420,8 +407,7 @@ jQuery(document).ready( function($) {
 				//console.log( JSON.stringify( 'SPCO eei18n.ajax_submit: ' + eei18n.ajax_submit, null, 4 ) );
 				if ( ! SPCO.form_is_valid ){
 					SPCO.display_validation_errors();
-                    SPCO.invalid_input_to_scroll_to = null;
-                } else if ( eei18n.ajax_submit ) {
+				} else if ( eei18n.ajax_submit ) {
 					SPCO.process_next_step( this );
 				}
 				if ( eei18n.ajax_submit ) {
@@ -454,9 +440,7 @@ jQuery(document).ready( function($) {
 		 */
 		set_listener_for_input_validation_value_change : function() {
 			SPCO.form_inputs.focusout( function() {
-				if ( this.type !== 'file' ) {
-                    $(this).val( $.trim( $(this).val() ) );
-				}
+                $(this).val( $.trim( $(this).val() ) );
 				$(this).valid();
             });
 		},
@@ -549,7 +533,7 @@ jQuery(document).ready( function($) {
 			SPCO.success_msgs = [];
 			SPCO.error_msgs = [];
 			SPCO.offset_from_top = 0;
-			SPCO.primary_registrant_questions_validated = false;
+			SPCO.invalid_input_to_scroll_to = null;
 		},
 
 
@@ -1181,12 +1165,12 @@ jQuery(document).ready( function($) {
 
 		/**
 		 * @function
-		 * @param  {object} $item
+		 * @param  {object} item
 		 * @param  {number} extra
 		 */
-		set_offset_from_top : function($item, extra ) {
+		set_offset_from_top : function( item, extra ) {
 			extra = typeof extra !== 'undefined' ? extra : SPCO.offset_from_top_modifier;
-			SPCO.offset_from_top = $item.offset().top + extra;
+			SPCO.offset_from_top = $( item ).offset().top + extra;
 			SPCO.offset_from_top = Math.max( 0, SPCO.offset_from_top );
 		},
 
@@ -1194,21 +1178,21 @@ jQuery(document).ready( function($) {
 
 		/**
 		 * @function
-		 * @param  {object} $item
+		 * @param  {object} item
 		 * @param  {object} msg
 		 * @param  {boolean} end_ajax
 		 */
-		scroll_to_top_and_display_messages : function( $item, msg, end_ajax ) {
+		scroll_to_top_and_display_messages : function( item, msg, end_ajax ) {
 			//SPCO.console_log_object( 'scroll_to_top_and_display_messages msg', msg.success, 0 );
 			// is message display being overridden by some other JS ?
 			if ( SPCO.override_messages ) {
 				return;
 			}
 			SPCO.hide_notices();
-			//SPCO.console_log_object( 'scroll_to_top_and_display_messages $item.offset()', $item.offset(), 0 );
-			if ( typeof $item !== 'undefined' && typeof $item.offset() !== 'undefined' ) {
-				if ( $item.offset().top + SPCO.offset_from_top_modifier !== SPCO.offset_from_top ) {
-					SPCO.set_offset_from_top($item, SPCO.offset_from_top_modifier );
+			//SPCO.console_log_object( 'scroll_to_top_and_display_messages $( item ).offset()', $( item ).offset(), 0 );
+			if ( typeof $( item ) !== 'undefined' && typeof $( item ).offset() !== 'undefined' ) {
+				if ( $( item ).offset().top + SPCO.offset_from_top_modifier !== SPCO.offset_from_top ) {
+					SPCO.set_offset_from_top( item, SPCO.offset_from_top_modifier );
 					var messages_displayed = false;
 					$('body, html').animate({ scrollTop: SPCO.offset_from_top }, 'normal', function() {
 						if ( ! messages_displayed ) {

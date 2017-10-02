@@ -155,12 +155,6 @@ class EE_Newsletter_message_type extends EE_message_type {
 
 			//merge in the primary attendee data
 			$aee = array_merge( $this->_default_addressee_data, $aee );
-
-			//make sure txn is set
-            if (empty($aee['txn']) && $aee['reg_obj'] instanceof EE_Registration) {
-                $aee['txn'] = $aee['reg_obj']->transaction();
-            }
-
 			$addressee[] = new EE_Messages_Addressee( $aee );
 		}
 		return $addressee;
