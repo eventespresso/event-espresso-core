@@ -66,9 +66,15 @@ class espresso_events_Registration_Form_Hooks_Extend extends espresso_events_Reg
 
     /**
      * Call back hooked into revision restores.
+     *
      * @param $post_id
      * @param $revision_id
      * @return EE_Base_Class|void
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function restore_revision($post_id, $revision_id)
     {
@@ -115,7 +121,10 @@ class espresso_events_Registration_Form_Hooks_Extend extends espresso_events_Reg
             <?php
 
             $qsg_where['QSG_deleted'] = false;
-            $query_params             = array($qsg_where, 'order_by' => array('QSG_order' => 'ASC'));
+            $query_params             = apply_filters(
+                'FHEE__espresso_events_Registration_Form_Hooks_Extend__additional_questions__question_group_query_parameters',
+                array($qsg_where, 'order_by' => array('QSG_order' => 'ASC'))
+            );
             $QSGs                     = EEM_Question_Group::instance()->get_all($query_params);
             $EQGs                     = ! empty($event_id)
                 ? $this->_event->get_many_related(

@@ -121,7 +121,10 @@ class espresso_events_Registration_Form_Hooks extends EE_Admin_Hooks
             <?php
 
             $qsg_where['QSG_deleted'] = false;
-            $query_params             = array($qsg_where, 'order_by' => array('QSG_order' => 'ASC'));
+            $query_params             = apply_filters(
+                'FHEE__espresso_events_Registration_Form_Hooks__primary_questions__question_group_query_parameters',
+                array($qsg_where, 'order_by' => array('QSG_order' => 'ASC'))
+            );
             $QSGs                     = EEM_Question_Group::instance()->get_all($query_params);
             $EQGs                     = ! empty($event_id)
                 ? $this->_event->get_many_related(
