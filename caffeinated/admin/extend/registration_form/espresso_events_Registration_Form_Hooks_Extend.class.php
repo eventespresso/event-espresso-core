@@ -65,7 +65,7 @@ class espresso_events_Registration_Form_Hooks_Extend extends espresso_events_Reg
 
 
     /**
-     * Method currently not in use.
+     * Call back hooked into revision restores.
      * @param $post_id
      * @param $revision_id
      * @return EE_Base_Class|void
