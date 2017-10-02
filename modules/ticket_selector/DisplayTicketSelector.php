@@ -89,6 +89,15 @@ class DisplayTicketSelector
     }
 
 
+    /**
+     * @return bool
+     */
+    public function isIframe()
+    {
+        return $this->iframe;
+    }
+
+
 
     /**
      * @param boolean $iframe
@@ -619,7 +628,8 @@ class DisplayTicketSelector
 	    return apply_filters(
 		    'FHEE__EventEspresso_modules_ticket_selector_DisplayTicketSelector__displaySubmitButton__html',
 		    $html,
-		    $this->event
+		    $this->event,
+            $this
 	    );
     }
 
