@@ -101,11 +101,16 @@ class espresso_events_Registration_Form_Hooks_Extend extends espresso_events_Reg
             <p><strong>
                     <?php _e('Question Groups', 'event_espresso'); ?>
                 </strong><br/>
-                <?php _e('Add a pre-populated', 'event_espresso'); ?>
-                <a href="admin.php?page=espresso_registration_form" target="_blank">
-                    <?php _e('group of questions', 'event_espresso'); ?>
-                </a>
-                <?php _e('to your event.', 'event_espresso'); ?>
+                <?php
+                    printf(
+                        esc_html__(
+                            'Add a pre-populated %1$sgroup of questions%2$s to your event.',
+                            'event_espresso'
+                        ),
+                        '<a href="admin.php?page=espresso_registration_form" target="_blank">',
+                        '</a>'
+                    );
+                ?>
             </p>
             <?php
 
