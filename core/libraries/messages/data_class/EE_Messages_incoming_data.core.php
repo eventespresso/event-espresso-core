@@ -1,19 +1,8 @@
 <?php
 
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('NO direct script access allowed');
-}
+defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
 
 /**
- * Event Espresso
- * Event Registration and Management Plugin for WordPress
- * @ package        Event Espresso
- * @ author            Seth Shoultes
- * @ copyright        (c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license        http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link            http://www.eventespresso.com
- * @ version        4.0
- * ------------------------------------------------------------------------
  * EE_Messages_incoming_data
  * This is the parent class for all incoming data to EE_messages objects.  We create different data handlers for
  * different incoming data depending on the message types set requirements.
@@ -174,8 +163,9 @@ abstract class EE_Messages_incoming_data
 
     /**
      * holds the grand total price object
+     * currently not used.
      *
-     * @var object $grand_total_price_object
+     * @var null $grand_total_price_object
      */
     public $grand_total_price_object;
 
@@ -233,14 +223,14 @@ abstract class EE_Messages_incoming_data
     /**
      * This is just an internal object used for passing around the incoming data.
      *
-     * @var object $_data
+     * @var mixed $_data
      */
     protected $_data;
 
     /**
      * This is just an internal object used for passing around the incoming data.
      *
-     * @var object $incoming_data
+     * @var mixed $incoming_data
      */
     public $incoming_data;
 
@@ -279,7 +269,7 @@ abstract class EE_Messages_incoming_data
      * @param mixed $data The incoming data to be prepped.
      * @return mixed   The prepped data for db
      */
-    static public function convert_data_for_persistent_storage($data)
+    public static function convert_data_for_persistent_storage($data)
     {
         return $data;
     }
@@ -292,7 +282,7 @@ abstract class EE_Messages_incoming_data
      * @param $data
      * @return mixed
      */
-    static public function convert_data_from_persistent_storage($data)
+    public static function convert_data_from_persistent_storage($data)
     {
         return $data;
     }
@@ -302,7 +292,7 @@ abstract class EE_Messages_incoming_data
      * only purpose is to return the data
      *
      * @access public
-     * @return object the formatted data object!
+     * @return mixed the formatted data object!
      */
     public function data()
     {
@@ -314,17 +304,16 @@ abstract class EE_Messages_incoming_data
      * This helper method can be used by any incoming data handlers to setup the data correctly.  All that is required
      * is that $this->reg_objs be set.
      *
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     protected function _assemble_data()
     {
         //verify that reg_objs is set
-        if (
-            ! is_array($this->reg_objs)
+        if (! is_array($this->reg_objs)
             && ! reset($this->reg_objs) instanceof EE_Registration
         ) {
             throw new EE_Error(
-                __(
+                esc_html__(
                     'In order to assemble the data correctly, the "reg_objs" property must be an array of EE_Registration objects',
                     'event_espresso'
                 )
@@ -338,10 +327,9 @@ abstract class EE_Messages_incoming_data
 
         if (! empty($this->reg_objs)) {
             $event_attendee_count = array();
+            /** @var EE_Registration $reg */
             foreach ($this->reg_objs as $reg) {
-
-                if (
-                $this->_skip_registration_for_processing($reg)
+                if ($this->_skip_registration_for_processing($reg)
                 ) {
                     continue;
                 }
@@ -413,6 +401,7 @@ abstract class EE_Messages_incoming_data
 
             if (! empty($eventsetup)) {
                 foreach ($eventsetup as $evt_id => $items) {
+                    $ticket_line_items_for_event = array();
                     if ($this->txn instanceof EE_Transaction) {
                         $ticket_line_items_for_event = EEM_Line_Item::instance()->get_all(
                             array(
@@ -423,8 +412,6 @@ abstract class EE_Messages_incoming_data
                                 'default_where_conditions' => 'none',
                             )
                         );
-                    } else {
-                        $ticket_line_items_for_event = array();
                     }
                     $events[$evt_id] = array(
                         'ID'              => $evt_id,
@@ -477,10 +464,8 @@ abstract class EE_Messages_incoming_data
             $primary_reg = $this->txn->primary_registration();
             // verify
             if ($primary_reg instanceof EE_Registration) {
-
                 // get attendee object
                 if ($primary_reg->attendee() instanceof EE_Attendee) {
-
                     //now we can setup the primary_attendee_data array
                     $this->primary_attendee_data = array(
                         'registration_id' => $primary_reg->ID(),
@@ -492,7 +477,7 @@ abstract class EE_Messages_incoming_data
 
                 } else {
                     EE_Error::add_error(
-                        __(
+                        esc_html__(
                             'Incoming data does not have a valid Attendee object for the primary registrant.',
                             'event_espresso'
                         ),
@@ -503,7 +488,7 @@ abstract class EE_Messages_incoming_data
                 }
             } else {
                 EE_Error::add_error(
-                    __(
+                    esc_html__(
                         'Incoming data does not have a valid Registration object for the primary registrant.',
                         'event_espresso'
                     ),
@@ -534,4 +519,4 @@ abstract class EE_Messages_incoming_data
     }
 
 
-} //end EE_Messages_incoming_data class
+}
