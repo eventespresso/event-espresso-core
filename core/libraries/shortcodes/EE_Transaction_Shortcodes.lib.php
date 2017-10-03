@@ -239,6 +239,10 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes
                 '<code>[INVOICE_RECEIPT_SWITCHER_URL]',
                 '</code>'
             ),
+            '[LAST_PAYMENT_TRANSACTION_ID]' => esc_html__(
+                'This will output the value of the payment transaction id for the last payment made on the transaction. Note, if a specific payment was included for message generation, that will be used when parsing the shortcode.',
+                'event_espresso'
+            ),
         );
     }
 
@@ -384,6 +388,16 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes
                 break;
             case '[INVOICE_RECEIPT_SWITCHER_BUTTON]':
                 return $this->_get_invoice_receipt_switcher();
+                break;
+            case '[LAST_PAYMENT_TRANSACTION_ID]':
+                $id = '';
+                $payment = $payment instanceof EE_Payment
+                    ? $payment
+                    : $transaction->last_payment();
+                if ($payment instanceof EE_Payment) {
+                    $id = $payment->txn_id_chq_nmbr();
+                }
+                return $id;
                 break;
         }
         if (strpos($shortcode, '[OWING_STATUS_MESSAGE_*') !== false) {
