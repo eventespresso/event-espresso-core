@@ -216,8 +216,8 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes
                     'The total number of all tickets purchased in a transaction. %1$sNOTE: This shortcode is good to use in the "[TICKET_LIST]" field but has been deprecated from all other contexts in favor of the more explicit [TXN_TOTAL_TICKETS] shortcode.%2$s',
                     'event_espresso'
                 ),
-
-                 '</strong>'
+                '<strong>',
+                '</strong>'
             ),
             '[TRANSACTION_ADMIN_URL]'           => esc_html__(
                 'The url to the admin page for this transaction',
