@@ -150,7 +150,7 @@ class EED_Ticket_Selector extends EED_Module
     public static function ticketSelector()
     {
         if (! EED_Ticket_Selector::$ticket_selector instanceof DisplayTicketSelector) {
-            EED_Ticket_Selector::$ticket_selector = new DisplayTicketSelector();
+            EED_Ticket_Selector::$ticket_selector = new DisplayTicketSelector(EED_Events_Archive::is_iframe());
         }
         return EED_Ticket_Selector::$ticket_selector;
     }
