@@ -1,4 +1,6 @@
-<?php use EventEspresso\modules\ticket_selector\DisplayTicketSelector;
+<?php use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\modules\ticket_selector\DisplayTicketSelector;
 use EventEspresso\modules\ticket_selector\ProcessTicketSelector;
 use EventEspresso\modules\ticket_selector\TicketSelectorIframe;
 use EventEspresso\modules\ticket_selector\TicketSelectorIframeEmbedButton;
@@ -35,15 +37,18 @@ class EED_Ticket_Selector extends  EED_Module {
 
 
 	/**
-	 * @return EED_Ticket_Selector
-	 */
+	 * @return EED_Module|EED_Ticket_Selector
+     */
 	public static function instance() {
 		return parent::get_instance( __CLASS__ );
 	}
 
 
 
-	protected function set_config(){
+    /**
+     * @return void
+     */
+    protected function set_config(){
 		$this->set_config_section( 'template_settings' );
 		$this->set_config_class( 'EE_Ticket_Selector_Config' );
 		$this->set_config_name( 'EED_Ticket_Selector' );
@@ -54,8 +59,7 @@ class EED_Ticket_Selector extends  EED_Module {
 	/**
 	 * 	set_hooks - for hooking into EE Core, other modules, etc
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @return void
 	 */
 	public static function set_hooks() {
 		// routing
@@ -74,9 +78,8 @@ class EED_Ticket_Selector extends  EED_Module {
 	/**
 	 * 	set_hooks_admin - for hooking into EE Admin Core, other modules, etc
 	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
+     * @return void
+     */
 	public static function set_hooks_admin() {
 		// hook into the end of the \EE_Admin_Page::_load_page_dependencies()
 		// to load assets for "espresso_events" page on the "edit" route (action)
@@ -99,12 +102,14 @@ class EED_Ticket_Selector extends  EED_Module {
 
 
 
-	/**
-	 * 	set_definitions
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
+    /**
+     *    set_definitions
+     *
+     * @return void
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
 	public static function set_definitions() {
 	    // don't do this twice
 	    if(defined('TICKET_SELECTOR_ASSETS_URL')) {
@@ -125,7 +130,7 @@ class EED_Ticket_Selector extends  EED_Module {
 
 
 	/**
-     * @return \EventEspresso\modules\ticket_selector\DisplayTicketSelector
+     * @return DisplayTicketSelector
      */
     public static function ticketSelector()
     {
@@ -139,7 +144,6 @@ class EED_Ticket_Selector extends  EED_Module {
 	/**
 	 * 	gets the ball rolling
 	 *
-	 *	@access public
 	 * 	@param	WP $WP
 	 * 	@return void
 	 */
@@ -148,7 +152,7 @@ class EED_Ticket_Selector extends  EED_Module {
 
 
 	/**
-	 * @return \EventEspresso\modules\ticket_selector\TicketSelectorIframeEmbedButton
+	 * @return TicketSelectorIframeEmbedButton
 	 */
 	public static function getIframeEmbedButton() {
 		if ( ! self::$iframe_embed_button instanceof TicketSelectorIframeEmbedButton ) {
@@ -162,8 +166,8 @@ class EED_Ticket_Selector extends  EED_Module {
 	/**
 	 * ticket_selector_iframe_embed_button
 	 *
-	 * @return    void
-	 * @throws \EE_Error
+	 * @return void
+	 * @throws EE_Error
 	 */
 	public static function ticket_selector_iframe_embed_button() {
 		$iframe_embed_button = \EED_Ticket_Selector::getIframeEmbedButton();
@@ -175,9 +179,9 @@ class EED_Ticket_Selector extends  EED_Module {
 	/**
 	 * ticket_selector_iframe
 	 *
-	 * @return    void
+	 * @return void
 	 * @throws \DomainException
-	 * @throws \EE_Error
+	 * @throws EE_Error
 	 */
 	public function ticket_selector_iframe() {
 		$ticket_selector_iframe = new TicketSelectorIframe();
@@ -187,13 +191,12 @@ class EED_Ticket_Selector extends  EED_Module {
 
 
     /**
-     *    creates buttons for selecting number of attendees for an event
+     * creates buttons for selecting number of attendees for an event
      *
-     * @access    public
-     * @param    WP_Post|int $event
-     * @param    bool        $view_details
-     * @return    string
-     * @throws \EE_Error
+     * @param  WP_Post|int $event
+     * @param  bool        $view_details
+     * @return string
+     * @throws EE_Error
      */
 	public static function display_ticket_selector( $event = NULL, $view_details = FALSE ) {
 		return EED_Ticket_Selector::ticketSelector()->display( $event, $view_details );
@@ -204,9 +207,8 @@ class EED_Ticket_Selector extends  EED_Module {
 	/**
 	 * process_ticket_selections
 	 *
-	 * @access        public
-	 * @return        array  or FALSE
-	 * @throws \EE_Error
+	 * @return array  or FALSE
+	 * @throws EE_Error
 	 */
 	public function process_ticket_selections() {
 		$form = new ProcessTicketSelector();
@@ -218,8 +220,7 @@ class EED_Ticket_Selector extends  EED_Module {
     /**
      * cancel_ticket_selections
      *
-     * @access        public
-     * @return        string
+     * @return string
      */
     public static function cancel_ticket_selections()
     {
@@ -241,10 +242,9 @@ class EED_Ticket_Selector extends  EED_Module {
 
 
 	/**
-	* 	load js
+	* load js
 	*
-	* 	@access 		public
-	* 	@return 		void
+	* @return void
 	*/
 	public static function load_tckt_slctr_assets() {
 		if ( apply_filters( 'FHEE__EED_Ticket_Selector__load_tckt_slctr_assets', FALSE ) ) {
@@ -333,7 +333,7 @@ class EED_Ticket_Selector extends  EED_Module {
     /**
      * @deprecated
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public static function display_view_details_btn()
     {
@@ -346,7 +346,7 @@ class EED_Ticket_Selector extends  EED_Module {
     /**
      * @deprecated
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public static function display_ticket_selector_submit()
     {
@@ -363,6 +363,9 @@ class EED_Ticket_Selector extends  EED_Module {
      * @param string $new_title
      * @param string $new_slug
      * @return string
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public static function iframe_code_button($permalink_string, $id, $new_title = '', $new_slug = '')
     {
