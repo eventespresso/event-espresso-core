@@ -132,7 +132,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
     ) {
         if (! $payment instanceof EEI_Payment) {
             $payment->set_gateway_response(
-                __(
+                esc_html__(
                     'Error. No associated payment was found.',
                     'event_espresso'
                 )
@@ -143,7 +143,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
         $transaction = $payment->transaction();
         if (! $transaction instanceof EEI_Transaction) {
             $payment->set_gateway_response(
-                __(
+                esc_html__(
                     'Could not process this payment because it has no associated transaction.',
                     'event_espresso'
                 )
@@ -231,7 +231,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
             if ($this->_money->compare_floats($itemized_sum_diff_from_txn_total, 0, '!=')) {
                 // Item Name.
                 $token_request_dtls['L_PAYMENTREQUEST_0_NAME' . $item_num] = substr(
-                    __(
+                    esc_html__(
                         'Other (promotion/surcharge/cancellation)',
                         'event_espresso'
                     ),
@@ -356,7 +356,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
             $transaction = $payment->transaction();
             if (! $transaction instanceof EEI_Transaction) {
                 $payment->set_gateway_response(
-                    __(
+                    esc_html__(
                         'Could not process this payment because it has no associated transaction.',
                         'event_espresso'
                     )
@@ -433,7 +433,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
                         );
                     } else {
                         $payment->set_gateway_response(
-                            __(
+                            esc_html__(
                                 'Error occurred while trying to Capture the funds.',
                                 'event_espresso'
                             )
@@ -451,7 +451,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
                     );
                 } else {
                     $payment->set_gateway_response(
-                        __(
+                        esc_html__(
                             'Error occurred while trying to get payment Details from PayPal.',
                             'event_espresso'
                         )
@@ -461,7 +461,12 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
                 $payment->set_status($this->_pay_model->failed_status());
             }
         } else {
-            $payment->set_gateway_response(__('Error occurred while trying to process the payment.', 'event_espresso'));
+            $payment->set_gateway_response(
+                esc_html__(
+                    'Error occurred while trying to process the payment.',
+                    'event_espresso'
+                )
+            );
             $payment->set_status($this->_pay_model->failed_status());
         }
         return $payment;
