@@ -7,7 +7,6 @@ use EE_Event;
 use EE_Registry;
 use EE_System;
 use EE_Ticket_Selector_Config;
-use EED_Events_Archive;
 use EEH_Event_View;
 use EEH_HTML;
 use EEH_Template;
@@ -75,9 +74,12 @@ class DisplayTicketSelector
 
     /**
      * DisplayTicketSelector constructor.
+     *
+     * @param bool $iframe
      */
-    public function __construct()
+    public function __construct($iframe = false)
     {
+        $this->iframe = $iframe;
         $this->date_format = apply_filters(
             'FHEE__EED_Ticket_Selector__display_ticket_selector__date_format',
             get_option('date_format')
@@ -224,9 +226,6 @@ class DisplayTicketSelector
         $tickets = $this->getTickets();
         if (count($tickets) < 1) {
             return $this->noTicketAvailableMessage();
-        }
-        if (EED_Events_Archive::is_iframe()){
-            $this->setIframe();
         }
         // redirecting to another site for registration ??
         $external_url = (string) $this->event->external_url();
@@ -510,7 +509,8 @@ class DisplayTicketSelector
             // open link in new window ?
             $html .= apply_filters(
                 'FHEE__EventEspresso_modules_ticket_selector_DisplayTicketSelector__formOpen__external_url_target_blank',
-                EED_Events_Archive::is_iframe()
+                $this->isIframe(),
+                $this
             )
                 ? ' target="_blank"'
                 : '';
@@ -692,7 +692,8 @@ class DisplayTicketSelector
         // open link in new window ?
         $view_details_btn .= apply_filters(
             'FHEE__EventEspresso_modules_ticket_selector_DisplayTicketSelector__displayViewDetailsButton__url_target_blank',
-            EED_Events_Archive::is_iframe()
+            $this->isIframe(),
+            $this
         )
             ? ' target="_blank"'
             : '';
