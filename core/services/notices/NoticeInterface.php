@@ -49,4 +49,12 @@ interface NoticeInterface
      * @return string
      */
     public function line();
+
+
+
+    /**
+     * @return bool
+     */
+    public function isDismissible();
+
 }
