@@ -239,7 +239,12 @@ class EED_Single_Page_Checkout extends EED_Module
             '</h4>',
             '<br />',
             '<p>',
-            '<a href="' . get_post_type_archive_link('espresso_events') . '" title="',
+            '<a href="'
+            . apply_filters(
+                'FHEE__EE_SPCO_Reg_Step_Attendee_Information__process_reg_step__no_regs_link_to_event_list',
+                get_post_type_archive_link('espresso_events')
+            )
+            . '" title="',
             '">',
             '</a>',
             '</p>'
