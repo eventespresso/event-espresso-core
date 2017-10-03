@@ -18,45 +18,45 @@ interface NoticesContainerInterface
 
     /**
      * @param string $notice
+     * @param bool   $dismissible
      * @param string $file
      * @param string $func
      * @param string $line
-     * @param bool   $dismissible
      */
-    public function addInformation($notice, $file = '', $func = '', $line = '', $dismissible = true);
+    public function addInformation($notice, $dismissible = true, $file = '', $func = '', $line = '');
 
 
     /**
      * @param string $notice
+     * @param bool   $dismissible
      * @param string $file
      * @param string $func
      * @param string $line
-     * @param bool   $dismissible
      * @return
      */
-    public function addAttention($notice, $file = '', $func = '', $line = '', $dismissible = true);
+    public function addAttention($notice, $dismissible = true, $file = '', $func = '', $line = '');
 
 
 
     /**
      * @param string $notice
+     * @param bool   $dismissible
      * @param string $file
      * @param string $func
      * @param string $line
-     * @param bool   $dismissible
      */
-    public function addError($notice, $file, $func, $line, $dismissible = true);
+    public function addError($notice, $dismissible = true, $file, $func, $line);
 
 
 
     /**
      * @param string $notice
+     * @param bool   $dismissible
      * @param string $file
      * @param string $func
      * @param string $line
-     * @param bool   $dismissible
      */
-    public function addSuccess($notice, $file = '', $func = '', $line = '', $dismissible = true);
+    public function addSuccess($notice, $dismissible = true, $file = '', $func = '', $line = '');
 
 
 

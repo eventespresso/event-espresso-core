@@ -69,20 +69,20 @@ class Notice implements NoticeInterface
      *
      * @param string $type
      * @param string $message
+     * @param bool   $dismissible
      * @param string $file
      * @param string $func
      * @param string $line
-     * @param bool   $dismissible
      * @throws InvalidDataTypeException
      */
-    public function __construct($type, $message, $file = '', $func = '', $line = '', $dismissible = true)
+    public function __construct($type, $message, $dismissible = true, $file = '', $func = '', $line = '')
     {
         $this->setType($type);
         $this->setMessage($message);
+        $this->setDismissible($dismissible);
         $this->setFile($file);
         $this->setFunc($func);
         $this->setLine($line);
-        $this->setDismissible($dismissible);
     }
 
 
@@ -96,7 +96,6 @@ class Notice implements NoticeInterface
             'FHEE__EventEspresso_core_services_notices_Notice__types',
             array(
                 Notice::ERROR,
-                Notice::WARNING,
                 Notice::SUCCESS,
                 Notice::ATTENTION,
                 Notice::INFORMATION,

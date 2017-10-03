@@ -46,21 +46,21 @@ class NoticesContainer implements NoticesContainerInterface
 
     /**
      * @param string $notice
+     * @param bool   $dismissible
      * @param string $file
      * @param string $func
      * @param string $line
-     * @param bool   $dismissible
      * @throws InvalidDataTypeException
      */
-    public function addInformation($notice, $file = '', $func = '', $line = '', $dismissible = true)
+    public function addInformation($notice, $dismissible = true, $file = '', $func = '', $line = '')
     {
         $this->information[] = new Notice(
             Notice::INFORMATION,
             $notice,
+            $dismissible,
             $file,
             $func,
-            $line,
-            $dismissible
+            $line
         );
     }
 
@@ -68,21 +68,21 @@ class NoticesContainer implements NoticesContainerInterface
 
     /**
      * @param string $notice
+     * @param bool   $dismissible
      * @param string $file
      * @param string $func
      * @param string $line
-     * @param bool   $dismissible
      * @throws InvalidDataTypeException
      */
-    public function addAttention($notice, $file = '', $func = '', $line = '', $dismissible = true)
+    public function addAttention($notice, $dismissible = true, $file = '', $func = '', $line = '')
     {
         $this->attention[] = new Notice(
             Notice::ATTENTION,
             $notice,
+            $dismissible,
             $file,
             $func,
-            $line,
-            $dismissible
+            $line
         );
     }
 
@@ -90,21 +90,21 @@ class NoticesContainer implements NoticesContainerInterface
 
     /**
      * @param string $notice
+     * @param bool   $dismissible
      * @param string $file
      * @param string $func
      * @param string $line
-     * @param bool   $dismissible
      * @throws InvalidDataTypeException
      */
-    public function addError($notice, $file, $func, $line, $dismissible = true)
+    public function addError($notice, $dismissible = true, $file, $func, $line)
     {
         $this->error[] = new Notice(
             Notice::ERROR,
             $notice,
+            $dismissible,
             $file,
             $func,
-            $line,
-            $dismissible
+            $line
         );
     }
 
@@ -112,21 +112,21 @@ class NoticesContainer implements NoticesContainerInterface
 
     /**
      * @param string $notice
+     * @param bool   $dismissible
      * @param string $file
      * @param string $func
      * @param string $line
-     * @param bool   $dismissible
      * @throws InvalidDataTypeException
      */
-    public function addSuccess($notice, $file = '', $func = '', $line = '', $dismissible = true)
+    public function addSuccess($notice, $dismissible = true, $file = '', $func = '', $line = '')
     {
         $this->success[] = new Notice(
             Notice::SUCCESS,
             $notice,
+            $dismissible,
             $file,
             $func,
-            $line,
-            $dismissible
+            $line
         );
     }
 
