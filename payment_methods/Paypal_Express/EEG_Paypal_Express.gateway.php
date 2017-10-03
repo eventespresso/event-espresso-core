@@ -394,6 +394,8 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
                     'PAYMENTREQUEST_0_PAYMENTACTION' => 'Sale',
                     'PAYMENTREQUEST_0_AMT'           => $payment->amount(),
                     'PAYMENTREQUEST_0_CURRENCYCODE'  => $payment->currency_code(),
+                    //EE will blow up if you change this
+                    'BUTTONSOURCE'                   => 'EventEspresso_SP',
                 );
                 // Payment Checkout/Capture.
                 $docheckout_request_response = $this->_ppExpress_request(
