@@ -27,8 +27,6 @@ class ConvertNoticesToAdminNotices extends NoticeConverter
      */
     public function process(NoticesContainerInterface $notices)
     {
-        $this->setNotices($notices);
-        $notices = $this->getNotices();
         if ($notices->hasAttention()) {
             foreach ($notices->getAttention() as $notice) {
                 new AdminNotice($notice);
