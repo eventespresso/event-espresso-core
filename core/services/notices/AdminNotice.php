@@ -108,7 +108,7 @@ class AdminNotice
     /**
      * @return string
      */
-    private function getMessage()
+    protected function getMessage()
     {
         $message = $this->notice->message();
         if (WP_DEBUG && $this->getType() === AdminNotice::ERROR) {
@@ -124,7 +124,7 @@ class AdminNotice
      *
      * @return string
      */
-    private function generateErrorCode()
+    protected function generateErrorCode()
     {
         $file       = explode('.', basename($this->notice->file()));
         $error_code = ! empty($file[0]) ? $file[0] : '';
