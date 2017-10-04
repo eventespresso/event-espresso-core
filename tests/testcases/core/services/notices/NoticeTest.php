@@ -48,7 +48,7 @@ class NoticeTest extends EE_UnitTestCase
         );
         foreach ($types as $type => $valid) {
             if (! $valid) {
-                $this->expectException('EventEspresso\core\exceptions\InvalidDataTypeException');
+                $this->setExceptionExpected('EventEspresso\core\exceptions\InvalidDataTypeException');
             }
             $notice = $this->createNotice($type);
             $this->assertEquals($type, $notice->type());
@@ -65,21 +65,21 @@ class NoticeTest extends EE_UnitTestCase
 
     public function testMessageWithArray()
     {
-        $this->expectException('EventEspresso\core\exceptions\InvalidDataTypeException');
+        $this->setExceptionExpected('EventEspresso\core\exceptions\InvalidDataTypeException');
         $this->createNotice(Notice::SUCCESS, array('invalid message'));
     }
 
 
     public function testMessageWithObject()
     {
-        $this->expectException('EventEspresso\core\exceptions\InvalidDataTypeException');
+        $this->setExceptionExpected('EventEspresso\core\exceptions\InvalidDataTypeException');
         $this->createNotice(Notice::SUCCESS, new stdClass());
     }
 
 
     public function testMessageWithInteger()
     {
-        $this->expectException('EventEspresso\core\exceptions\InvalidDataTypeException');
+        $this->setExceptionExpected('EventEspresso\core\exceptions\InvalidDataTypeException');
         $this->createNotice(Notice::SUCCESS, 12345);
     }
 
@@ -122,7 +122,7 @@ class NoticeTest extends EE_UnitTestCase
         foreach ($files as $file => $type) {
             // file is only required for Notice::ERROR types
             if ($file === 4) {
-                $this->expectException('EventEspresso\core\exceptions\InvalidDataTypeException');
+                $this->setExceptionExpected('EventEspresso\core\exceptions\InvalidDataTypeException');
             }
             $notice = new Notice(
                 $type,
@@ -149,7 +149,7 @@ class NoticeTest extends EE_UnitTestCase
         foreach ($functions as $function => $type) {
             // file is only required for Notice::ERROR types
             if ($function === 4) {
-                $this->expectException('EventEspresso\core\exceptions\InvalidDataTypeException');
+                $this->setExceptionExpected('EventEspresso\core\exceptions\InvalidDataTypeException');
             }
             $notice = new Notice(
                 $type,
@@ -176,7 +176,7 @@ class NoticeTest extends EE_UnitTestCase
         foreach ($lines as $line => $type) {
             // file is only required for Notice::ERROR types
             if ($line === 'number') {
-                $this->expectException('EventEspresso\core\exceptions\InvalidDataTypeException');
+                $this->setExceptionExpected('EventEspresso\core\exceptions\InvalidDataTypeException');
             }
             $notice = new Notice(
                 $type,

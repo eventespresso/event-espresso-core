@@ -1340,7 +1340,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
      * @param string $exception
      * @throws \PHPUnit\Framework\Exception
      */
-    public function expectException($exception)
+    public function setExceptionExpected($exception)
     {
         if (method_exists($this, 'expectException')) {
             parent::expectException($exception);
