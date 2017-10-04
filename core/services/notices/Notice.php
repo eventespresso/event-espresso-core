@@ -90,7 +90,7 @@ class Notice implements NoticeInterface
     /**
      * @return array
      */
-    protected function types()
+    private function types()
     {
         return (array)apply_filters(
             'FHEE__EventEspresso_core_services_notices_Notice__types',
@@ -167,10 +167,14 @@ class Notice implements NoticeInterface
      * @param string $type
      * @throws InvalidDataTypeException
      */
-    public function setType($type)
+    private function setType($type)
     {
         if (! in_array($type, $this->types(), true)) {
-            throw new InvalidDataTypeException($type, '$type', $this->invalidTypeMessage());
+            throw new InvalidDataTypeException(
+                '$type',
+                $type,
+                $this->invalidTypeMessage()
+            );
         }
         $this->type = $type;
     }
@@ -180,13 +184,17 @@ class Notice implements NoticeInterface
     /**
      * gets the $invalid_type_message string
      */
-    public function invalidTypeMessage()
+    private function invalidTypeMessage()
     {
         return apply_filters(
             'FHEE__EventEspresso_core_services_notices_Notice__invalidTypeMessage',
-            esc_html__(
-                ' one of the EventEspresso\core\services\notices\Notice class constants was expected.',
-                'event_espresso'
+            sprintf(
+                esc_html__(
+                    ' one of the following notice types was expected: %1$s %2$s',
+                    'event_espresso'
+                ),
+                '<br />',
+                var_export($this->types(), true)
             )
         );
     }
@@ -197,12 +205,12 @@ class Notice implements NoticeInterface
      * @param string $message
      * @throws InvalidDataTypeException
      */
-    public function setMessage($message)
+    private function setMessage($message)
     {
         if (empty($message) || ! is_string($message)) {
             throw new InvalidDataTypeException(
-                $message,
                 '$message',
+                $message,
                 esc_html__('non empty string', 'event_espresso')
             );
         }
@@ -215,12 +223,12 @@ class Notice implements NoticeInterface
      * @param string $file
      * @throws InvalidDataTypeException
      */
-    public function setFile($file)
+    private function setFile($file)
     {
         if ($this->type === Notice::ERROR && (empty($file) || ! is_string($file))) {
             throw new InvalidDataTypeException(
-                $file,
                 '$file',
+                $file,
                 esc_html__('non empty string', 'event_espresso')
             );
         }
@@ -233,12 +241,12 @@ class Notice implements NoticeInterface
      * @param string $func
      * @throws InvalidDataTypeException
      */
-    public function setFunc($func)
+    private function setFunc($func)
     {
         if ($this->type === Notice::ERROR && (empty($func) || ! is_string($func))) {
             throw new InvalidDataTypeException(
-                $func,
                 '$func',
+                $func,
                 esc_html__('non empty string', 'event_espresso')
             );
         }
@@ -251,13 +259,13 @@ class Notice implements NoticeInterface
      * @param int $line
      * @throws InvalidDataTypeException
      */
-    public function setLine($line)
+    private function setLine($line)
     {
         $line = absint($line);
         if ($this->type === Notice::ERROR && $line === 0) {
             throw new InvalidDataTypeException(
-                $line,
                 '$line',
+                $line,
                 esc_html__('integer', 'event_espresso')
             );
         }
@@ -268,7 +276,7 @@ class Notice implements NoticeInterface
     /**
      * @param boolean $dismissible
      */
-    public function setDismissible($dismissible = true)
+    private function setDismissible($dismissible = true)
     {
         $this->dismissible = filter_var($dismissible, FILTER_VALIDATE_BOOLEAN);
     }
