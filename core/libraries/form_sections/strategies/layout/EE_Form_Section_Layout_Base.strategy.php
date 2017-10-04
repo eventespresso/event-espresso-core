@@ -1,4 +1,5 @@
 <?php
+defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
 
@@ -26,7 +27,7 @@ abstract class EE_Form_Section_Layout_Base
     /**
      *  __construct
      */
-    function __construct()
+    public function __construct()
     {
     }
 
@@ -45,7 +46,7 @@ abstract class EE_Form_Section_Layout_Base
 
 
     /**
-     * @return \EE_Form_Section_Proper
+     * @return EE_Form_Section_Proper
      */
     public function form_section()
     {
@@ -62,6 +63,7 @@ abstract class EE_Form_Section_Layout_Base
      * Returns the HTML
      *
      * @return string HTML for displaying
+     * @throws EE_Error
      */
     public function layout_form()
     {
@@ -92,6 +94,7 @@ abstract class EE_Form_Section_Layout_Base
 
     /**
      * @return string
+     * @throws EE_Error
      */
     public function layout_form_loop()
     {
@@ -99,14 +102,16 @@ abstract class EE_Form_Section_Layout_Base
         foreach ($this->_form_section->subsections() as $name => $subsection) {
             if ($subsection instanceof EE_Form_Input_Base) {
                 $html .= apply_filters(
-                    'FHEE__EE_Form_Section_Layout_Base__layout_form__loop_for_input_' . $name . '__in_' . $this->_form_section->name(),
+                    'FHEE__EE_Form_Section_Layout_Base__layout_form__loop_for_input_'
+                    . $name . '__in_' . $this->_form_section->name(),
                     $this->layout_input($subsection),
                     $this->_form_section,
                     $subsection
                 );
             } elseif ($subsection instanceof EE_Form_Section_Base) {
                 $html .= apply_filters(
-                    'FHEE__EE_Form_Section_Layout_Base__layout_form__loop_for_non_input_' . $name . '__in_' . $this->_form_section->name(),
+                    'FHEE__EE_Form_Section_Layout_Base__layout_form__loop_for_non_input_'
+                    . $name . '__in_' . $this->_form_section->name(),
                     $this->layout_subsection($subsection),
                     $this->_form_section,
                     $subsection
@@ -171,7 +176,9 @@ abstract class EE_Form_Section_Layout_Base
      */
     public function display_label($input)
     {
-        $class = $input->required() ? 'ee-required-label ' . $input->html_label_class() : $input->html_label_class();
+        $class = $input->required()
+            ? 'ee-required-label ' . $input->html_label_class()
+            : $input->html_label_class();
         $label_text = $input->required()
             ? $input->html_label_text() . '<span class="ee-asterisk">*</span>'
             : $input->html_label_text();
@@ -205,10 +212,9 @@ abstract class EE_Form_Section_Layout_Base
                    . $input->html_id()
                    . "-error' class='error' for='{$input->html_name()}'>"
                    . $input->get_validation_error_string()
-                   . "</label>";
-        } else {
-            return '';
+                   . '</label>';
         }
+        return '';
     }
 
 
@@ -221,7 +227,7 @@ abstract class EE_Form_Section_Layout_Base
      */
     public function display_help_text($input)
     {
-        if ($input->html_help_text() != '') {
+        if ($input->html_help_text() !== '') {
             $tag = is_admin() ? 'p' : 'span';
             return '<'
                    . $tag
@@ -253,7 +259,11 @@ abstract class EE_Form_Section_Layout_Base
         // replace dashes and spaces with underscores
         $hook_name = str_replace(array('-', ' '), '_', $this->_form_section->html_id());
         do_action('AHEE__Form_Section_Layout__' . $hook_name, $this->_form_section);
-        $html = apply_filters('AFEE__Form_Section_Layout__' . $hook_name . '__html', $html, $this->_form_section);
+        $html = (string) apply_filters(
+            'AFEE__Form_Section_Layout__' . $hook_name . '__html',
+            $html,
+            $this->_form_section
+        );
         $html .= EEH_HTML::nl() . '<!-- AHEE__Form_Section_Layout__' . $hook_name . '__html -->';
         $html .= EEH_HTML::nl() . '<!-- AFEE__Form_Section_Layout__' . $hook_name . ' -->';
         return $html;

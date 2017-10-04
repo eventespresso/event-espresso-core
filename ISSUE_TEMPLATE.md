@@ -15,6 +15,9 @@ When submitting an issue, please follow this rough guideline for your report.
 ### What version of WordPress is on the site this issue happened?
 
 
+### If you were directed to create an issue here by the EE support team, what is the link to your original EE support forum thread?
+
+
 ### Outline the steps to reproduce
 
 
@@ -24,5 +27,6 @@ When submitting an issue, please follow this rough guideline for your report.
 
 
 ### Please include any links to the page(s) demonstrating this issue (if possible).
+
 
 

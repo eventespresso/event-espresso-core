@@ -560,10 +560,14 @@ class EE_Messages_Processor {
 
 		foreach ( $regs_to_send as $status_group ) {
 			foreach ( $status_group as $status_id => $registrations ) {
+			    $message_type = EEH_MSG_Template::convert_reg_status_to_message_type($status_id);
+			    if (! $message_type) {
+			        continue;
+                }
 				$messages_to_generate = array_merge(
 					$messages_to_generate,
 					$this->setup_mtgs_for_all_active_messengers(
-						EEH_MSG_Template::convert_reg_status_to_message_type( $status_id ),
+						$message_type,
 						array( $registrations, $status_id )
 					)
 				);

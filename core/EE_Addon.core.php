@@ -1,17 +1,6 @@
-<?php if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-/**
- * Event Espresso
- * Event Registration and Ticketing Management Plugin for WordPress
- * @ package        Event Espresso
- * @ author        Event Espresso
- * @ copyright    (c) 2008-2014 Event Espresso  All Rights Reserved.
- * @ license        http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link                http://www.eventespresso.com
- * @ since            4.3
- */
+<?php
 
+defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
 
 /**
  * Class EE_Addon
@@ -85,6 +74,15 @@ abstract class EE_Addon extends EE_Configurable
      * @type array $_plugins_page_row
      */
     protected $_plugins_page_row = array();
+
+
+
+    /**
+     *    filepath to the main file, which can be used for register_activation_hook, register_deactivation_hook, etc.
+     *
+     * @type string
+     */
+    protected $_main_plugin_file;
 
 
     /**
@@ -235,11 +233,12 @@ abstract class EE_Addon extends EE_Configurable
     public function set_plugins_page_row($plugins_page_row = array())
     {
         // sigh.... check for example content that I stupidly merged to master and remove it if found
-        if (! is_array($plugins_page_row) && strpos($plugins_page_row,
-                '<h3>Promotions Addon Upsell Info</h3>') !== false) {
-            $plugins_page_row = '';
+        if (! is_array($plugins_page_row)
+            && strpos($plugins_page_row, '<h3>Promotions Addon Upsell Info</h3>') !== false
+        ) {
+            $plugins_page_row = array();
         }
-        $this->_plugins_page_row = $plugins_page_row;
+        $this->_plugins_page_row = (array) $plugins_page_row;
     }
 
 
@@ -255,8 +254,10 @@ abstract class EE_Addon extends EE_Configurable
         do_action("AHEE__{$classname}__new_install");
         do_action('AHEE__EE_Addon__new_install', $this);
         EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
-        add_action('AHEE__EE_System__perform_activations_upgrades_and_migrations',
-            array($this, 'initialize_db_if_no_migrations_required'));
+        add_action(
+            'AHEE__EE_System__perform_activations_upgrades_and_migrations',
+            array($this, 'initialize_db_if_no_migrations_required')
+        );
     }
 
 
@@ -272,15 +273,20 @@ abstract class EE_Addon extends EE_Configurable
         do_action("AHEE__{$classname}__reactivation");
         do_action('AHEE__EE_Addon__reactivation', $this);
         EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
-        add_action('AHEE__EE_System__perform_activations_upgrades_and_migrations',
-            array($this, 'initialize_db_if_no_migrations_required'));
+        add_action(
+            'AHEE__EE_System__perform_activations_upgrades_and_migrations',
+            array($this, 'initialize_db_if_no_migrations_required')
+        );
     }
 
 
+    /**
+     * Called when the registered deactivation hook for this addon fires.
+     * @throws EE_Error
+     */
     public function deactivation()
     {
         $classname = get_class($this);
-//		echo "Deactivating $classname";die;
         do_action("AHEE__{$classname}__deactivation");
         do_action('AHEE__EE_Addon__deactivation', $this);
         //check if the site no longer needs to be in maintenance mode
@@ -292,7 +298,7 @@ abstract class EE_Addon extends EE_Configurable
     /**
      * Takes care of double-checking that we're not in maintenance mode, and then
      * initializing this addon's necessary initial data. This is called by default on new activations
-     * and reactivations
+     * and reactivations.
      *
      * @param boolean $verify_schema whether to verify the database's schema for this addon, or just its data.
      *                               This is a resource-intensive job so we prefer to only do it when necessary
@@ -426,8 +432,10 @@ abstract class EE_Addon extends EE_Configurable
         do_action("AHEE__{$classname}__downgrade");
         do_action('AHEE__EE_Addon__downgrade', $this);
         //it's possible there's old default data that needs to be double-checked
-        add_action('AHEE__EE_System__perform_activations_upgrades_and_migrations',
-            array($this, 'initialize_db_if_no_migrations_required'));
+        add_action(
+            'AHEE__EE_System__perform_activations_upgrades_and_migrations',
+            array($this, 'initialize_db_if_no_migrations_required')
+        );
     }
 
 
@@ -440,9 +448,14 @@ abstract class EE_Addon extends EE_Configurable
      */
     public function set_db_update_option_name()
     {
-        EE_Error::doing_it_wrong(__FUNCTION__,
-            __('EE_Addon::set_db_update_option_name was renamed to EE_Addon::set_activation_indicator_option',
-                'event_espresso'), '4.3.0.alpha.016');
+        EE_Error::doing_it_wrong(
+            __FUNCTION__,
+            esc_html__(
+                'EE_Addon::set_db_update_option_name was renamed to EE_Addon::set_activation_indicator_option',
+                'event_espresso'
+            ),
+            '4.3.0.alpha.016'
+        );
         //let's just handle this on the next request, ok? right now we're just not really ready
         return $this->set_activation_indicator_option();
     }
@@ -457,9 +470,14 @@ abstract class EE_Addon extends EE_Configurable
      */
     public function get_db_update_option_name()
     {
-        EE_Error::doing_it_wrong(__FUNCTION__,
-            __('EE_Addon::get_db_update_option was renamed to EE_Addon::get_activation_indicator_option_name',
-                'event_espresso'), '4.3.0.alpha.016');
+        EE_Error::doing_it_wrong(
+            __FUNCTION__,
+            esc_html__(
+                'EE_Addon::get_db_update_option was renamed to EE_Addon::get_activation_indicator_option_name',
+                'event_espresso'
+            ),
+            '4.3.0.alpha.016'
+        );
         return $this->get_activation_indicator_option_name();
     }
 
@@ -523,8 +541,11 @@ abstract class EE_Addon extends EE_Configurable
     {
         $activation_history_for_addon = $this->get_activation_history();
 //		d($activation_history_for_addon);
-        $request_type = EE_System::detect_req_type_given_activation_history($activation_history_for_addon,
-            $this->get_activation_indicator_option_name(), $this->version());
+        $request_type = EE_System::detect_req_type_given_activation_history(
+            $activation_history_for_addon,
+            $this->get_activation_indicator_option_name(),
+            $this->version()
+        );
         $this->set_req_type($request_type);
         $classname = get_class($this);
         switch ($request_type) {
@@ -614,13 +635,6 @@ abstract class EE_Addon extends EE_Configurable
     }
 
     /**
-     *    filepath to the main file, which can be used for register_activation_hook, register_deactivation_hook, etc.
-     *
-     * @type string
-     */
-    protected $_main_plugin_file;
-
-    /**
      * Sets the filepath to the main plugin file
      *
      * @param string $filepath
@@ -689,8 +703,12 @@ abstract class EE_Addon extends EE_Configurable
     {
         if ($file === $this->plugin_basename() && $this->plugin_action_slug() !== '') {
             // before other links
-            array_unshift($links,
-                '<a href="admin.php?page=' . $this->plugin_action_slug() . '">' . __('Settings') . '</a>');
+            array_unshift(
+                $links,
+                '<a href="admin.php?page=' . $this->plugin_action_slug() . '">'
+                . esc_html__('Settings', 'event_espresso')
+                . '</a>'
+            );
         }
         return $links;
     }
@@ -708,14 +726,15 @@ abstract class EE_Addon extends EE_Configurable
      */
     public function after_plugin_row($plugin_file, $plugin_data, $status)
     {
-
         $after_plugin_row = '';
-        if ($plugin_file === $this->plugin_basename() && $this->get_plugins_page_row() !== '') {
+        $plugins_page_row = $this->get_plugins_page_row();
+        if (! empty($plugins_page_row) && $plugin_file === $this->plugin_basename()) {
             $class            = $status ? 'active' : 'inactive';
-            $plugins_page_row = $this->get_plugins_page_row();
             $link_text        = isset($plugins_page_row['link_text']) ? $plugins_page_row['link_text'] : '';
             $link_url         = isset($plugins_page_row['link_url']) ? $plugins_page_row['link_url'] : '';
-            $description      = isset($plugins_page_row['description']) ? $plugins_page_row['description'] : $plugins_page_row;
+            $description      = isset($plugins_page_row['description'])
+                ? $plugins_page_row['description']
+                : '';
             if (! empty($link_text) && ! empty($link_url) && ! empty($description)) {
                 $after_plugin_row .= '<tr id="' . sanitize_title($plugin_file) . '-ee-addon" class="' . $class . '">';
                 $after_plugin_row .= '<th class="check-column" scope="row"></th>';
@@ -759,7 +778,10 @@ abstract class EE_Addon extends EE_Configurable
 </style>';
                 $after_plugin_row .= '
 <p class="ee-addon-upsell-info-dv">
-	<a class="ee-button" href="' . $link_url . '">' . $link_text . ' &nbsp;<span class="dashicons dashicons-arrow-right-alt2" style="margin:0;"></span></a>
+	<a class="ee-button" href="' . $link_url . '">'
+                . $link_text
+                . ' &nbsp;<span class="dashicons dashicons-arrow-right-alt2" style="margin:0;"></span>'
+                . '</a>
 </p>';
                 $after_plugin_row .= '</td>';
                 $after_plugin_row .= '<td class="ee-addon-upsell-info-desc-td column-description desc">';
@@ -776,9 +798,22 @@ abstract class EE_Addon extends EE_Configurable
 
 
     /**
-     * a safe space for addons to add additional logic like setting hooks
-     * that will run immediately after addon registration
-     * making this a great place for code that needs to be "omnipresent"
+     * A safe space for addons to add additional logic like setting hooks that need to be set early in the request.
+     * Child classes that have logic like that to run can override this method declaration.  This was not made abstract
+     * for back compat reasons.
+     *
+     * This will fire on the `AHEE__EE_System__load_espresso_addons__complete` hook at priority 999.
+     *
+     * It is recommended, if client code is `de-registering` an add-on, then do it on the
+     * `AHEE__EE_System__load_espresso_addons__complete` hook before priority 999 so as to ensure any code logic in this
+     * callback does not get run/set in that request.
+     *
+     * Also, keep in mind that if a registered add-on happens to be deactivated via
+     * EE_System::_deactivate_incompatible_addons() because its incompatible, any code executed in this method
+     * (including setting hooks etc) will have executed before the plugin was deactivated.  If you use
+     * `after_registration` to set any filter and/or action hooks and want to ensure they are removed on this add-on's
+     * deactivation, you can override `EE_Addon::deactivation` and unset your hooks and filters there.  Just remember
+     * to call `parent::deactivation`.
      *
      * @since 4.9.26
      */
@@ -786,8 +821,4 @@ abstract class EE_Addon extends EE_Configurable
     {
         // cricket chirp... cricket chirp...
     }
-
-
 }
-// End of file EE_Addon.core.php
-// Location: /core/EE_Addon.core.php
