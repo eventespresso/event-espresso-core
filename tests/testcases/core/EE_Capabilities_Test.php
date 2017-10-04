@@ -298,7 +298,7 @@ class EE_Capabilities_Test extends EE_UnitTestCase
         // but it appears caps are only added when the role is assigned
         // (that's really clever WordPress </sarcasm> what's the point of having roles then?)
         // turns out we can call the protected _init_caps() method, to reset the caps
-        $user->_init_caps();
+        $this->refreshRolesForUser($user);
         // then verify the user also has the cap
         $this->assertTrue(
             $this->CAPS->user_can($user, $mock_onsite_capability, 'test'),
@@ -311,7 +311,7 @@ class EE_Capabilities_Test extends EE_UnitTestCase
             $administrator_role->has_cap($mock_onsite_capability),
             'The admin user should NOT have the "' . $mock_onsite_capability . '" capability!'
         );
-        $user->_init_caps();
+        $this->refreshRolesForUser($user);
         // then verify the user also has also lost the cap
         $this->assertFalse(
             $this->CAPS->user_can($user, $mock_onsite_capability, 'test'),
@@ -333,8 +333,6 @@ class EE_Capabilities_Test extends EE_UnitTestCase
         $jedi_master_role = get_role($jedi_master);
         $this->assertInstanceOf('WP_Role', $jedi_master_role);
     }
-
-
 }
 // end EE_Capabilities_Test class
 // Location: testcases/core/EE_Capabilities_Test.php
