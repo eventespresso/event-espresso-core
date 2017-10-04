@@ -642,6 +642,10 @@ class EED_Single_Page_Checkout extends EED_Module
         $this->checkout->uts = EE_Registry::instance()->REQ->get('uts', 0);
         // returning to edit ?
         $this->checkout->reg_url_link = EE_Registry::instance()->REQ->get('e_reg_url_link', '');
+        // add reg url link to registration query params
+        if ($this->checkout->reg_url_link && strpos($this->checkout->reg_url_link, '1-') !== 0) {
+            $this->checkout->reg_cache_where_params[0]['REG_url_link'] = $this->checkout->reg_url_link;
+        }
         // or some other kind of revisit ?
         $this->checkout->revisit = filter_var(
             EE_Registry::instance()->REQ->get('revisit', false),
@@ -1042,7 +1046,8 @@ class EED_Single_Page_Checkout extends EED_Module
     private function _get_registrations(EE_Transaction $transaction)
     {
         // first step: grab the registrants  { : o
-        $registrations = $transaction->registrations($this->checkout->reg_cache_where_params, true);
+        $registrations = $transaction->registrations($this->checkout->reg_cache_where_params, false);
+        $this->checkout->total_ticket_count = count($registrations);
         // verify registrations have been set
         if (empty($registrations)) {
             // if no cached registrations, then check the db
@@ -1066,11 +1071,10 @@ class EED_Single_Page_Checkout extends EED_Module
                     $this->checkout->primary_revisit = true;
                     break;
                 }
-                if ($this->checkout->revisit
-                           && $this->checkout->reg_url_link !== $registration->reg_url_link()
-                ) {
+                if ($this->checkout->revisit && $this->checkout->reg_url_link !== $registration->reg_url_link()) {
                     // but hide info if it doesn't belong to you
                     $transaction->clear_cache('Registration', $registration->ID());
+                    $this->checkout->total_ticket_count--;
                 }
                 $this->checkout->set_reg_status_updated($registration->ID(), false);
             }

@@ -1,6 +1,8 @@
-<?php if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
+<?php
+
+use EventEspresso\core\exceptions\InvalidIdentifierException;
+
+defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
 
 /**
  * EE_Message_Template_Group class
@@ -14,9 +16,15 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class
 {
 
     /**
+     * Extra Meta key prefix for whether a given context for this message tmeplate group is active or not.
+     */
+    const ACTIVE_CONTEXT_RECORD_META_KEY_PREFIX = 'active_context_';
+
+    /**
      * @param array  $props_n_values
      * @param string $timezone
      * @return EE_Message_Template_Group|mixed
+     * @throws EE_Error
      */
     public static function new_instance($props_n_values = array(), $timezone = '')
     {
@@ -43,7 +51,7 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class
     public function set_message_type($message_type = false)
     {
         if (! $message_type) {
-            throw new EE_Error(__('Missing required value for the message_type parameter', 'event_espresso'));
+            throw new EE_Error(esc_html__('Missing required value for the message_type parameter', 'event_espresso'));
         }
         $this->set('MTP_message_type', $message_type);
     }
@@ -56,7 +64,7 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class
     public function set_messenger($messenger = false)
     {
         if (! $messenger) {
-            throw new EE_Error(__('Missing required value for the messenger parameter', 'event_espresso'));
+            throw new EE_Error(esc_html__('Missing required value for the messenger parameter', 'event_espresso'));
         }
         $this->set('MTP_messenger', $messenger);
     }
@@ -69,7 +77,12 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class
     public function set_group_template_id($GRP_ID = false)
     {
         if (! $GRP_ID) {
-            throw new EE_Error(__('Missing required value for the message template group id', 'event_espresso'));
+            throw new EE_Error(
+                esc_html__(
+                    'Missing required value for the message template group id',
+                    'event_espresso'
+                )
+            );
         }
         $this->set('GRP_ID', $GRP_ID);
     }
@@ -80,6 +93,7 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class
      *
      * @access public
      * @return int
+     * @throws EE_Error
      */
     public function GRP_ID()
     {
@@ -92,6 +106,7 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class
      *
      * @access public
      * @return int
+     * @throws EE_Error
      */
     public function user()
     {
@@ -105,6 +120,7 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class
      *
      * @since  4.5.0
      * @return int
+     * @throws EE_Error
      */
     public function wp_user()
     {
@@ -127,6 +143,7 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class
      * returns the name saved in the db for this template
      *
      * @return string
+     * @throws EE_Error
      */
     public function name()
     {
@@ -138,6 +155,7 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class
      * Returns the description saved in the db for this template group
      *
      * @return string
+     * @throws EE_Error
      */
     public function description()
     {
@@ -150,6 +168,7 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class
      *
      * @param  array $query_params like EEM_Base::get_all()
      * @return EE_Message_Template[]
+     * @throws EE_Error
      */
     public function message_templates($query_params = array())
     {
@@ -162,6 +181,7 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class
      *
      * @access public
      * @return string
+     * @throws EE_Error
      */
     public function messenger()
     {
@@ -176,6 +196,7 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class
      * appropriately.
      *
      * @return EE_messenger
+     * @throws EE_Error
      */
     public function messenger_obj()
     {
@@ -183,7 +204,8 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class
         try {
             $messenger = EEH_MSG_Template::messenger_obj($messenger);
         } catch (EE_Error $e) {
-            //if an exception was thrown then let's deactivate this message template group because it means there is no class for this messenger in this group.
+            //if an exception was thrown then let's deactivate this message template group because it means there is no
+            // class for this messenger in this group.
             $this->set('MTP_is_active', false);
             $this->save();
             return null;
@@ -197,6 +219,7 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class
      *
      * @access public
      * @return string
+     * @throws EE_Error
      */
     public function message_type()
     {
@@ -219,7 +242,8 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class
         try {
             $message_type = EEH_MSG_Template::message_type_obj($message_type);
         } catch (EE_Error $e) {
-            //if an exception was thrown then let's deactivate this message template group because it means there is no class for the message type in this group.
+            //if an exception was thrown then let's deactivate this message template group because it means there is no
+            // class for the message type in this group.
             $this->set('MTP_is_active', false);
             $this->save();
             return null;
@@ -230,6 +254,7 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class
 
     /**
      * @return array
+     * @throws EE_Error
      */
     public function contexts_config()
     {
@@ -243,6 +268,7 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class
      *
      * @access public
      * @return array labels for "context"
+     * @throws EE_Error
      */
     public function context_label()
     {
@@ -254,7 +280,8 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class
     /**
      * This returns an array of EE_Message_Template objects indexed by context and field.
      *
-     * @return array()
+     * @return array ()
+     * @throws EE_Error
      */
     public function context_templates()
     {
@@ -274,7 +301,8 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class
     /**
      * this returns if the template group this template belongs to is global
      *
-     * @return boolean true if it is, false if it isn't
+     * @return bool true if it is, false if it isn't
+     * @throws EE_Error
      */
     public function is_global()
     {
@@ -285,7 +313,8 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class
     /**
      * this returns if the template group this template belongs to is active (i.e. turned "on" or not)
      *
-     * @return boolean true if it is, false if it isn't
+     * @return bool true if it is, false if it isn't
+     * @throws EE_Error
      */
     public function is_active()
     {
@@ -305,7 +334,8 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class
      * @param bool   $merged  If TRUE then we don't return shortcodes indexed by field but instead an array of the
      *                        unique shortcodes for all the given (or all) fields.
      * @return mixed (array|bool) an array of shortcodes in the format array( '[shortcode] => 'label') OR FALSE if no
-     *               shortcodes found.
+     *                        shortcodes found.
+     * @throws EE_Error
      */
     public function get_shortcodes($context, $fields = array(), $merged = false)
     {
@@ -315,40 +345,13 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class
     }
 
 
-
-    /**
-     * this just returns and array of instantiated shortcode objects given an array of object refs
-     *
-     * @access private
-     * @param $sc_refs
-     * @throws EE_Error
-     * @return array    an array of EE_Shortcode objects
-     */
-    //private function _get_shortcode_objects( $sc_refs ) {
-    //	$sc_objs = array();
-    //	EED_Messages::set_autoloaders();
-    //	foreach ( $sc_refs as $shortcode_ref ) {
-    //		$ref = ucwords( str_replace( '_', ' ', $shortcode_ref ) );
-    //		$ref = str_replace( ' ', '_', $ref );
-    //		$classname = 'EE_' . $ref . '_Shortcodes';
-    //		if ( ! class_exists( $classname ) ) {
-    //			$msg[ ] = __( 'Shortcode library loading fail.', 'event_espresso' );
-    //			$msg[ ] = sprintf( __( 'The class name checked was "%s". Please check the spelling and case of this reference and make sure it matches the appropriate shortcode library file name (minus the extension) in the "/library/shortcodes/" directory', 'event_espresso' ), $classname );
-    //			throw new EE_Error( implode( '||', $msg ) );
-    //		}
-    //		$a = new ReflectionClass( $classname );
-    //		$sc_objs[ ] = $a->newInstance();
-    //	}
-    //	return $sc_objs;
-    //}
-
-
     /**
      * This just gets the template pack name assigned to this message template group.  If it's not set, then we just
      * use the default template pack.
      *
      * @since 4.5.0
      * @return string
+     * @throws EE_Error
      */
     public function get_template_pack_name()
     {
@@ -362,6 +365,11 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class
      *
      * @since 4.5.0
      * @return EE_Messages_Template_Pack
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
     public function get_template_pack()
     {
@@ -377,6 +385,7 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class
      *
      * @since 4.5.0
      * @return string
+     * @throws EE_Error
      */
     public function get_template_pack_variation()
     {
@@ -390,6 +399,7 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class
      * @since 4.5.0
      * @param string $template_pack_name What message template pack is assigned.
      * @return int
+     * @throws EE_Error
      */
     public function set_template_pack_name($template_pack_name)
     {
@@ -403,10 +413,88 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class
      * @since 4.5.0
      * @param string $variation What variation is being set on the message template group.
      * @return int
+     * @throws EE_Error
      */
     public function set_template_pack_variation($variation)
     {
         return $this->update_extra_meta('MTP_variation', $variation);
     }
+
+
+    /**
+     * Deactivates the given context.
+     *
+     * @param $context
+     * @return bool|int
+     * @throws EE_Error
+     * @throws InvalidIdentifierException
+     */
+    public function deactivate_context($context)
+    {
+        $this->validate_context($context);
+        return $this->update_extra_meta(self::ACTIVE_CONTEXT_RECORD_META_KEY_PREFIX . $context, false);
+    }
+
+
+    /**
+     * Activates the given context.
+     *
+     * @param $context
+     * @return bool|int
+     * @throws EE_Error
+     * @throws InvalidIdentifierException
+     */
+    public function activate_context($context)
+    {
+        $this->validate_context($context);
+        return $this->update_extra_meta(self::ACTIVE_CONTEXT_RECORD_META_KEY_PREFIX . $context, true);
+    }
+
+
+    /**
+     * Returns whether the context is active or not.
+     * Note, this will default to true if the extra meta record doesn't exist.
+     * Also, this does NOT account for whether the "To" field is empty or not. Some messengers may allow the "To" field
+     * to be empty (@see EE_Messenger::allow_empty_to_field()) so an empty "To" field is not always an indicator of
+     * whether a context is "active" or not.
+     *
+     * @param $context
+     * @return bool
+     * @throws EE_Error
+     * @throws InvalidIdentifierException
+     */
+    public function is_context_active($context)
+    {
+        $this->validate_context($context);
+        return filter_var(
+            $this->get_extra_meta(self::ACTIVE_CONTEXT_RECORD_META_KEY_PREFIX . $context, true, true),
+            FILTER_VALIDATE_BOOLEAN
+        );
+    }
+
+
+    /**
+     * Validates the incoming context to verify it matches a registered context for the related message type.
+     * @param string $context
+     * @throws EE_Error
+     * @throws InvalidIdentifierException
+     */
+    public function validate_context($context)
+    {
+        $contexts = $this->contexts_config();
+        if (! isset($contexts[$context])) {
+            throw new InvalidIdentifierException(
+                '',
+                '',
+                sprintf(
+                    esc_html__(
+                        'An invalid string identifying a context was provided.  "%1$s" was received, and one of "%2$s" was expected.',
+                        'event_espresso'
+                    ),
+                    $context,
+                    implode(',', array_keys($contexts))
+                )
+            );
+        }
+    }
 }
-//end EE_Message_Template_Group class
