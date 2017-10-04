@@ -172,6 +172,51 @@ class EE_Transaction_Test extends EE_UnitTestCase {
 	}
 
 
+
+    /**
+     * @see https://events.codebasehq.com/projects/event-espresso/tickets/10920
+     * @group 10920
+     */
+    public function testTrashedRegistrationLoading()
+    {
+        /** @type EE_Transaction $transaction */
+        $transaction = $this->new_model_obj_with_dependencies('Transaction', null);
+        /** @type EE_Registration[] $registrations */
+        $registrations = array();
+        for($x = 1; $x < 5; $x++) {
+            $registrations[$x] = $this->new_model_obj_with_dependencies(
+                'Registration',
+                array(
+                    'REG_count' => $x,
+                    'STS_ID' => $x > 2 // true for registrations 3 && 4
+                        ? EEM_Registration::status_id_cancelled
+                        : EEM_Registration::status_id_pending_payment,
+                    'REG_deleted' => $x > 2 // true for registrations 3 && 4
+                )
+            );
+            $transaction->_add_relation_to($registrations[$x], 'Registration');
+        }
+        // confirm setup worked correctly
+        for ($x = 1; $x < 5; $x++) {
+            $this->assertEquals(
+                $registrations[$x]->is_cancelled(),
+                $x > 2 // true for registrations 3 && 4
+            );
+            $this->assertEquals(
+                $registrations[$x]->deleted(),
+                $x > 2 // true for registrations 3 && 4
+            );
+        }
+        $this->assertCount(4, $registrations);
+        //  should NOT return trashed registrations
+        $this->assertCount(
+            2,
+            $transaction->registrations(array(array('REG_deleted' => false))),
+            'There should only be two registrations returned'
+        );
+    }
+
+
 }
 // End of file EE_Transaction_Test.php
 // Location:/tests/testcases/core/db_classes/EE_Transaction_Test.php

@@ -1,45 +1,36 @@
 <?php
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
-
-
-/**
- * Like the standard two-column form section layout, but this one adds css classes
- * specific to the WP Admin
- */
-class EE_Admin_Two_Column_Layout extends EE_Two_Column_Layout
+class EE_Admin_One_Column_Layout extends EE_Form_Section_Layout_Base
 {
 
     /**
-     * Overriding the parent table layout to include <tbody> tags
+     * Starts the form section
      *
      * @param array $additional_args
      * @return string
      */
     public function layout_form_begin($additional_args = array())
     {
-        $this->_form_section->set_html_class($this->_form_section->html_class() . ' form-table');
-        return parent::layout_form_begin($additional_args);
+        return EEH_HTML::table(
+            '',
+            $this->_form_section->html_id(),
+            $this->_form_section->html_class() . ' form-table',
+            $this->_form_section->html_style()
+        ) . EEH_HTML::tbody();
     }
-
 
 
     /**
-     * Lays out a row for the subsection
+     * Ends the form section
      *
-     * @param EE_Form_Section_Proper $form_section
+     * @param array $additional_args
      * @return string
      */
-    public function layout_subsection($form_section)
+    public function layout_form_end($additional_args = array())
     {
-        if ($form_section instanceof EE_Form_Section_Proper
-            || $form_section instanceof EE_Form_Section_HTML
-        ) {
-            return EEH_HTML::no_row($form_section->get_html());
-        }
-        return '';
+        return EEH_HTML::tbodyx() . EEH_HTML::tablex($this->_form_section->html_id());
     }
-
 
 
     /**
@@ -57,10 +48,6 @@ class EE_Admin_Two_Column_Layout extends EE_Two_Column_Layout
         ) {
             $input->set_html_class($input->html_class() . ' large-text');
         }
-        if ($input instanceof EE_Text_Area_Input) {
-            $input->set_rows(4);
-            $input->set_cols(60);
-        }
         $input_html = $input->get_html_for_input();
         // maybe add errors and help text ?
         $input_html .= $input->get_html_for_errors() !== ''
@@ -75,15 +62,30 @@ class EE_Admin_Two_Column_Layout extends EE_Two_Column_Layout
             $html .= EEH_HTML::no_row($input->get_html_for_input());
         } else {
             $html .= EEH_HTML::tr(
-                EEH_HTML::th(
-                    $input->get_html_for_label(),
-                    '',
-                    '',
-                    '',
-                    'scope="row"'
-                ) . EEH_HTML::td($input_html)
+                EEH_HTML::td(
+                    $input->get_html_for_label()
+                    . EEH_HTML::nl()
+                    . $input_html
+                )
             );
         }
         return $html;
+    }
+
+
+    /**
+     * Lays out a row for the subsection
+     *
+     * @param EE_Form_Section_Proper $form_section
+     * @return string
+     */
+    public function layout_subsection($form_section)
+    {
+        if ($form_section instanceof EE_Form_Section_Proper
+            || $form_section instanceof EE_Form_Section_HTML
+        ) {
+            return EEH_HTML::no_row($form_section->get_html());
+        }
+        return '';
     }
 }
