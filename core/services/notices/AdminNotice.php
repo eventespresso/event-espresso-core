@@ -108,7 +108,7 @@ class AdminNotice
     /**
      * @return string
      */
-    public function getMessage()
+    private function getMessage()
     {
         $message = $this->notice->message();
         if (WP_DEBUG && $this->getType() === AdminNotice::ERROR) {
