@@ -227,7 +227,8 @@ abstract class EE_Form_Section_Layout_Base
      */
     public function display_help_text($input)
     {
-        if ($input->html_help_text() !== '') {
+        $help_text  = $input->html_help_text();
+        if ($help_text !== '' && $help_text !== null) {
             $tag = is_admin() ? 'p' : 'span';
             return '<'
                    . $tag
@@ -238,7 +239,7 @@ abstract class EE_Form_Section_Layout_Base
                    . '" style="'
                    . $input->html_help_style()
                    . '">'
-                   . $input->html_help_text()
+                   . $help_text
                    . '</'
                    . $tag
                    . '>';
