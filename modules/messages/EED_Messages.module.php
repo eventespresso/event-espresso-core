@@ -1,4 +1,7 @@
 <?php
+
+use EventEspresso\core\exceptions\EntityNotFoundException;
+
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
 
 /**
@@ -433,6 +436,7 @@ class EED_Messages extends EED_Module
     }
 
 
+
     /**
      * Trigger for Registration messages
      * Note that what registration message type is sent depends on what the reg status is for the registrations on the
@@ -441,6 +445,8 @@ class EED_Messages extends EED_Module
      * @param EE_Registration $registration
      * @param array           $extra_details
      * @return void
+     * @throws EE_Error
+     * @throws EntityNotFoundException
      */
     public static function maybe_registration(EE_Registration $registration, $extra_details = array())
     {
@@ -450,10 +456,17 @@ class EED_Messages extends EED_Module
             return;
         }
 
-
-        //get all registrations so we make sure we send messages for the right status.
-        $all_registrations = $registration->transaction()->registrations();
-
+        // get all non-trashed registrations so we make sure we send messages for the right status.
+        $all_registrations = $registration->transaction()->registrations(
+            array(
+                array('REG_deleted' => false),
+                'order_by' => array(
+                    'Event.EVT_name'     => 'ASC',
+                    'Attendee.ATT_lname' => 'ASC',
+                    'Attendee.ATT_fname' => 'ASC'
+                )
+            )
+        );
         //cached array of statuses so we only trigger messages once per status.
         $statuses_sent = array();
         self::_load_controller();
@@ -839,13 +852,13 @@ class EED_Messages extends EED_Module
         );
         $generated_preview_queue = self::$_MSG_PROCESSOR->generate_for_preview($mtg, $send);
         if ($generated_preview_queue instanceof EE_Messages_Queue) {
-            $content = $generated_preview_queue->get_message_repository()->current()->content();
-            //if the current message was persisted to the db (which will happen with any extra fields on a message) then
-            //let's delete it because we don't need previews cluttering up the db.
-            if ($generated_preview_queue->get_message_repository()->current()->ID() > 0
-                && $generated_preview_queue->get_message_repository()->current()->STS_ID() !== EEM_Message::status_failed
-            ) {
-                $generated_preview_queue->get_message_repository()->delete();
+            //loop through all content for the preview and remove any persisted records.
+            $content = '';
+            foreach ($generated_preview_queue->get_message_repository() as $message) {
+                $content = $message->content();
+                if ($message->ID() > 0 && $message->STS_ID() !== EEM_Message::status_failed) {
+                    $message->delete();
+                }
             }
             return $content;
         } else {

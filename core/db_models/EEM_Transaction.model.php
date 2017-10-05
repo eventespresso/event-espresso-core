@@ -209,6 +209,7 @@ class EEM_Transaction extends EEM_Base
 			FROM
 				(
 				    SELECT
+				        DISTINCT(Registration.REG_ID),
                         Event.post_title AS event_name,
                         Registration_Payment.RPY_amount AS paid
                     FROM
