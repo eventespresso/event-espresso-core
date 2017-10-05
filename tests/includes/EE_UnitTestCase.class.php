@@ -1331,4 +1331,24 @@ class EE_UnitTestCase extends WP_UnitTestCase
         }
     }
 
+
+    /**
+     * \PHPUnit\Framework\TestCase::expectException() only exists in PHPUnit version 5.7+
+     * but on Travis-CI we test using PHPUnit 4.8 because it supports PHP versions < 5.6
+     * This should call the appropriate method regardless of version
+     *
+     * @param string $exception
+     * @throws \PHPUnit\Framework\Exception
+     */
+    public function setExceptionExpected($exception)
+    {
+        if (method_exists($this, 'expectException')) {
+            parent::expectException($exception);
+        } elseif (method_exists($this, 'setExpectedException')) {
+            $this->setExpectedException($exception);
+        }
+    }
+
+
+
 }
