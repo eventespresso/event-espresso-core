@@ -21,7 +21,21 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) {
  */
 class EEM_Base_Test extends EE_UnitTestCase
 {
-    
+
+    /**
+     * @group 11043
+     */
+    public function test_insert__funky_characters()
+    {
+        $string_of_multibyte_chracters = 'event’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’';
+        $string_with_a_chopped_multibyte_character = substr($string_of_multibyte_chracters,0,127);
+        $id = EEM_Change_Log::instance()->insert(
+            array(
+                'LOG_message' => $string_with_a_chopped_multibyte_character
+            )
+        );
+        $this->assertNotFalse($id);
+    }
     public function test_models_defined_ok()
     {
         foreach (EE_Registry::instance()->non_abstract_db_models as $model) {
