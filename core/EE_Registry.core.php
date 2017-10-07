@@ -494,7 +494,6 @@ class EE_Registry implements ResettableInterface
             EE_LIBRARIES . 'shortcodes' . DS,
             EE_LIBRARIES . 'qtips' . DS,
             EE_LIBRARIES . 'payment_methods' . DS,
-            EE_LIBRARIES . 'messages' . DS . 'defaults' . DS,
         );
         // retrieve instantiated class
         return $this->_load(
