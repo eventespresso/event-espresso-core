@@ -976,6 +976,14 @@ class EE_Registry implements ResettableInterface
         try {
             //does the file exist and can it be read ?
             if (! $path) {
+                // just in case the file has already been autoloaded,
+                // but discrepancies in the naming schema are preventing it from
+                // being loaded via one of the EE_Registry::load_*() methods,
+                // then let's try one last hail mary before throwing an exception
+                // and call class_exists() again, but with autoloading turned ON
+                if(class_exists($class_name)) {
+                    return true;
+                }
                 // so sorry, can't find the file
                 throw new EE_Error (
                     sprintf(
