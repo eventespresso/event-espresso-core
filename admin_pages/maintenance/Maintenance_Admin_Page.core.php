@@ -324,17 +324,6 @@ class Maintenance_Admin_Page extends EE_Admin_Page
                 )
             );
             //make sure we have the form fields helper available. It usually is, but sometimes it isn't
-            //localize script stuff
-            wp_localize_script('ee-maintenance', 'ee_maintenance', array(
-                'migrating'                        => esc_html__("Updating Database...", "event_espresso"),
-                'next'                             => esc_html__("Next", "event_espresso"),
-                'fatal_error'                      => esc_html__("A Fatal Error Has Occurred", "event_espresso"),
-                'click_next_when_ready'            => esc_html__("The current Database Update has ended. Click 'next' when ready to proceed",
-                    "event_espresso"),
-                'status_no_more_migration_scripts' => EE_Data_Migration_Manager::status_no_more_migration_scripts,
-                'status_fatal_error'               => EE_Data_Migration_Manager::status_fatal_error,
-                'status_completed'                 => EE_Data_Migration_Manager::status_completed,
-            ));
         }
         $this->_template_args['most_recent_migration'] = $most_recent_migration;//the actual most recently ran migration
         //now render the migration options part, and put it in a variable
@@ -406,7 +395,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page
             'reset_reservations',
             'reset_reservations',
             array(),
-            'button button-primary',
+            'button button-primary ee-confirm',
             '',
             false
         );
@@ -414,7 +403,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page
             'reset_capabilities',
             'reset_capabilities',
             array(),
-            'button button-primary',
+            'button button-primary ee-confirm',
             '',
             false
         );
@@ -664,6 +653,23 @@ class Maintenance_Admin_Page extends EE_Admin_Page
         wp_register_style('espresso_maintenance', EE_MAINTENANCE_ASSETS_URL . 'ee-maintenance.css', array(),
             EVENT_ESPRESSO_VERSION);
         wp_enqueue_style('espresso_maintenance');
+        //localize script stuff
+        wp_localize_script('ee-maintenance', 'ee_maintenance', array(
+            'migrating'                        => esc_html__("Updating Database...", "event_espresso"),
+            'next'                             => esc_html__("Next", "event_espresso"),
+            'fatal_error'                      => esc_html__("A Fatal Error Has Occurred", "event_espresso"),
+            'click_next_when_ready'            => esc_html__(
+                "The current Database Update has ended. Click 'next' when ready to proceed",
+                "event_espresso"
+            ),
+            'status_no_more_migration_scripts' => EE_Data_Migration_Manager::status_no_more_migration_scripts,
+            'status_fatal_error'               => EE_Data_Migration_Manager::status_fatal_error,
+            'status_completed'                 => EE_Data_Migration_Manager::status_completed,
+            'confirm'                          => esc_html__(
+                'Are you sur you want to do this? It CANNOT be undone!',
+                'event_espresso'
+            )
+        ));
     }
 
 
