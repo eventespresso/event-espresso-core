@@ -23,12 +23,16 @@ interface NoticeInterface
     public function type();
 
 
-
     /**
      * @return string
      */
     public function message();
 
+
+    /**
+     * @return bool
+     */
+    public function isDismissible();
 
 
     /**
@@ -37,16 +41,17 @@ interface NoticeInterface
     public function file();
 
 
-
     /**
      * @return string
      */
     public function func();
 
 
-
     /**
      * @return string
      */
     public function line();
+
+
+
 }

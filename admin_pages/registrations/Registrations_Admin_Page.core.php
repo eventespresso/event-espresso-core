@@ -1,6 +1,13 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
+<?php
+
+use EventEspresso\core\domain\Domain;
+use EventEspresso\core\domain\entities\Context;
+use EventEspresso\core\exceptions\EntityNotFoundException;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidFormSubmissionException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\domain\services\attendee\forms\AttendeeContactDetailsMetaboxFormHandler;
+defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 
 
 /**
@@ -360,6 +367,13 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 'capability' => 'ee_edit_registration',
                 'obj_id'     => $reg_id,
             ),
+            'wait_list_and_notify_registration' => array(
+                'func'       => 'wait_list_registration',
+                'noheader'   => true,
+                'args'       => array(true),
+                'capability' => 'ee_edit_registration',
+                'obj_id'     => $reg_id,
+            ),
             'contact_list'                       => array(
                 'func'       => '_attendee_contact_list_table',
                 'capability' => 'ee_read_contacts',
@@ -627,6 +641,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      *
      * @access private
      * @return void
+     * @throws EE_Error
      */
     private function _get_registration_status_array()
     {
@@ -801,7 +816,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         $def_reg_status_actions = apply_filters(
             'FHEE__Registrations_Admin_Page___set_list_table_views_default__def_reg_status_actions_array',
             $def_reg_status_actions,
-            $active_mts
+            $active_mts,
+            $can_send
         );
 
         $this->_views = array(
@@ -1065,11 +1081,15 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      *
      * @access private
      * @return bool
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     private function _set_registration_object()
     {
         //get out if we've already set the object
-        if (is_object($this->_registration)) {
+        if ($this->_registration instanceof EE_Registration) {
             return true;
         }
         $REG    = EEM_Registration::instance();
@@ -1100,6 +1120,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @param bool $today
      * @return EE_Registration[]|int
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function get_registrations(
         $per_page = 10,
@@ -1128,15 +1151,15 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     }
 
 
-
     /**
      * Retrieves the query parameters to be used by the Registration model for getting registrations.
      * Note: this listens to values on the request for some of the query parameters.
      *
      * @param array $request
-     * @param int    $per_page
-     * @param bool   $count
+     * @param int   $per_page
+     * @param bool  $count
      * @return array
+     * @throws EE_Error
      */
     protected function _get_registration_query_parameters(
         $request = array(),
@@ -1255,6 +1278,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @param array $request usually the same as $this->_req_data but not necessarily
      * @return array
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function _add_date_to_where_conditions(array $request)
     {
@@ -1486,7 +1512,10 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @return void
      * @throws DomainException
      * @throws EE_Error
-     * @throws \EventEspresso\core\exceptions\EntityNotFoundException
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws EntityNotFoundException
      */
     protected function _registration_details()
     {
@@ -1651,10 +1680,13 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     }
 
 
-
     /**
      * @return EE_Form_Section_Proper
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws \EventEspresso\core\exceptions\EntityNotFoundException
      */
     protected function _generate_reg_status_change_form()
     {
@@ -1723,7 +1755,10 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      *
      * @return array
      * @throws EE_Error
-     * @throws \EventEspresso\core\exceptions\EntityNotFoundException
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws EntityNotFoundException
      */
     protected function _get_reg_statuses()
     {
@@ -1734,7 +1769,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         // is registration for free event? This will determine whether to display the pending payment option
         if (
             $current_status !== EEM_Registration::status_id_pending_payment
-            && $this->_registration->transaction()->is_free()
+            && EEH_Money::compare_floats($this->_registration->ticket()->price(), 0.00)
         ) {
             unset($reg_status_array[EEM_Registration::status_id_pending_payment]);
         }
@@ -1742,27 +1777,59 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     }
 
 
-
     /**
      * This method is used when using _REG_ID from request which may or may not be an array of reg_ids.
      *
      * @param bool $status REG status given for changing registrations to.
      * @param bool $notify Whether to send messages notifications or not.
-     * @return array  (array with reg_id(s) updated and whether update was successful.
-     * @throws \EE_Error
+     * @return array (array with reg_id(s) updated and whether update was successful.
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @throws RuntimeException
+     * @throws EntityNotFoundException
      */
     protected function _set_registration_status_from_request($status = false, $notify = false)
     {
         if (isset($this->_req_data['reg_status_change_form'])) {
             $REG_IDs = isset($this->_req_data['reg_status_change_form']['REG_ID'])
-                ? (array)$this->_req_data['reg_status_change_form']['REG_ID'] : array();
+                ? (array)$this->_req_data['reg_status_change_form']['REG_ID']
+                : array();
         } else {
-            $REG_IDs = isset($this->_req_data['_REG_ID']) ? (array)$this->_req_data['_REG_ID'] : array();
+            $REG_IDs = isset($this->_req_data['_REG_ID'])
+                ? (array)$this->_req_data['_REG_ID']
+                : array();
         }
-        $success = $this->_set_registration_status($REG_IDs, $status);
+        // sanitize $REG_IDs
+        $REG_IDs = array_map('absint', $REG_IDs);
+        // and remove empty entries
+        $REG_IDs = array_filter($REG_IDs);
+
+        $result = $this->_set_registration_status($REG_IDs, $status, $notify);
+
+        /**
+         * Set and filter $_req_data['_REG_ID'] for any potential future messages notifications.
+         * Currently this value is used downstream by the _process_resend_registration method.
+         *
+         * @param int|array                $registration_ids The registration ids that have had their status changed successfully.
+         * @param bool                     $status           The status registrations were changed to.
+         * @param bool                     $success          If the status was changed successfully for all registrations.
+         * @param Registrations_Admin_Page $admin_page_object
+         */
+        $this->_req_data['_REG_ID'] = apply_filters(
+            'FHEE__Registrations_Admin_Page___set_registration_status_from_request__REG_IDs',
+            $result['REG_ID'],
+            $status,
+            $result['success'],
+            $this
+        );
+
         //notify?
-        if ($success
-            && $notify
+        if ($notify
+            && $result['success']
+            && ! empty($this->_req_data['_REG_ID'])
             && EE_Registry::instance()->CAP->current_user_can(
                 'ee_send_message',
                 'espresso_registrations_resend_registration'
@@ -1770,25 +1837,28 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         ) {
             $this->_process_resend_registration();
         }
-        return $success;
+        return $result;
     }
-
 
 
     /**
      * Set the registration status for the given reg_id (which may or may not be an array, it gets typecast to an
      * array). Note, this method does NOT take care of possible notifications.  That is required by calling code.
      *
-     * @param array $REG_IDs
-     * @param bool  $status
+     * @param array  $REG_IDs
+     * @param string $status
+     * @param bool   $notify  Used to indicate whether notification was requested or not.  This determines the context
+     *                        slug sent with setting the registration status.
      * @return array (an array with 'success' key representing whether status change was successful, and 'REG_ID' as
-     * @throws \RuntimeException
-     * @throws \EE_Error
-     *               the array of updated registrations).
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      * @throws RuntimeException
+     * @throws EntityNotFoundException
      */
-    protected function _set_registration_status($REG_IDs = array(), $status = false)
+    protected function _set_registration_status($REG_IDs = array(), $status = '', $notify = false)
     {
         $success = false;
         // typecast $REG_IDs
@@ -1797,21 +1867,31 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             $success = true;
             // set default status if none is passed
             $status = $status ? $status : EEM_Registration::status_id_pending_payment;
-            // sanitize $REG_IDs
-            $REG_IDs = array_filter($REG_IDs, 'absint');
+            $status_context = $notify
+                ? Domain::CONTEXT_REGISTRATION_STATUS_CHANGE_REGISTRATION_ADMIN_NOTIFY
+                : Domain::CONTEXT_REGISTRATION_STATUS_CHANGE_REGISTRATION_ADMIN;
             //loop through REG_ID's and change status
             foreach ($REG_IDs as $REG_ID) {
                 $registration = EEM_Registration::instance()->get_one_by_ID($REG_ID);
                 if ($registration instanceof EE_Registration) {
-                    $registration->set_status($status);
+                    $registration->set_status(
+                        $status,
+                        false,
+                        new Context(
+                            $status_context,
+                            esc_html__(
+                                'Manually triggered status change on a Registration Admin Page route.',
+                                'event_espresso'
+                            )
+                        )
+                    );
                     $result = $registration->save();
                     // verifying explicit fails because update *may* just return 0 for 0 rows affected
                     $success = $result !== false ? $success : false;
                 }
             }
         }
-        //reset _req_data['_REG_ID'] for any potential future messages notifications
-        $this->_req_data['_REG_ID'] = $REG_IDs;
+
         //return $success and processed registrations
         return array('REG_ID' => $REG_IDs, 'success' => $success);
     }
@@ -1823,6 +1903,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @param  string $STS_ID status id for the registration changed to
      * @param   bool  $notify indicates whether the _set_registration_status_from_request does notifications or not.
      * @return void
+     * @throws EE_Error
      */
     protected function _reg_status_change_return($STS_ID, $notify = false)
     {
@@ -2023,7 +2104,11 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @return void
      * @throws DomainException
      * @throws EE_Error
-     * @throws \EventEspresso\core\exceptions\EntityNotFoundException
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @throws EntityNotFoundException
      */
     public function _reg_details_meta_box()
     {
@@ -2334,6 +2419,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @param int $REG_ID
      * @return EE_Registration_Custom_Questions_Form
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function _get_reg_custom_questions_form($REG_ID)
     {
@@ -2355,6 +2443,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @param bool $REG_ID
      * @return bool
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     private function _save_reg_custom_questions_form($REG_ID = false)
     {
@@ -2403,6 +2494,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @return void
      * @throws DomainException
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function _reg_attendees_meta_box()
     {
@@ -2470,6 +2564,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @return void
      * @throws DomainException
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function _reg_registrant_side_meta_box()
     {
@@ -2522,6 +2619,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @param  boolean $trash whether to archive or restore
      * @return void
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      * @throws RuntimeException
      * @access protected
      */
@@ -2603,6 +2703,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      *
      * @return void
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function _delete_registrations()
     {
@@ -2780,6 +2883,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @return string html
      * @throws DomainException
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function _get_registration_step_content()
     {
@@ -2880,6 +2986,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @access private
      * @return bool
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     private function _set_reg_event()
     {
@@ -2902,6 +3011,10 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @return string
      * @throws DomainException
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      * @throws RuntimeException
      */
     public function process_reg_step()
@@ -3014,6 +3127,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @access public
      * @return void
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function redirect_to_txn()
     {
@@ -3061,6 +3177,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @param bool $trash
      * @return array
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      * @access public
      */
     public function get_attendees($per_page, $count = false, $trash = false)
@@ -3268,6 +3387,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      *
      * @return void
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function _duplicate_attendee()
     {
@@ -3306,13 +3428,26 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     }
 
 
-    //related to cpt routes
+    /**
+     * Callback invoked by parent EE_Admin_CPT class hooked in on `save_post` wp hook.
+     * @param int      $post_id
+     * @param WP_POST $post
+     * @throws DomainException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws LogicException
+     * @throws InvalidFormSubmissionException
+     */
     protected function _insert_update_cpt_item($post_id, $post)
     {
         $success  = true;
-        $attendee = EEM_Attendee::instance()->get_one_by_ID($post_id);
+        $attendee = $post instanceof WP_Post && $post->post_type === 'espresso_attendees'
+            ? EEM_Attendee::instance()->get_one_by_ID($post_id)
+            : null;
         //for attendee updates
-        if ($post->post_type = 'espresso_attendees' && ! empty($attendee)) {
+        if ($attendee instanceof EE_Attendee) {
             //note we should only be UPDATING attendees at this point.
             $updated_fields = array(
                 'ATT_fname'     => $this->_req_data['ATT_fname'],
@@ -3324,13 +3459,15 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 'STA_ID'        => isset($this->_req_data['STA_ID']) ? $this->_req_data['STA_ID'] : '',
                 'CNT_ISO'       => isset($this->_req_data['CNT_ISO']) ? $this->_req_data['CNT_ISO'] : '',
                 'ATT_zip'       => isset($this->_req_data['ATT_zip']) ? $this->_req_data['ATT_zip'] : '',
-                'ATT_email'     => isset($this->_req_data['ATT_email']) ? $this->_req_data['ATT_email'] : '',
-                'ATT_phone'     => isset($this->_req_data['ATT_phone']) ? $this->_req_data['ATT_phone'] : '',
             );
             foreach ($updated_fields as $field => $value) {
                 $attendee->set($field, $value);
             }
-            $success                   = $attendee->save();
+
+            //process contact details metabox form handler (which will also save the attendee)
+            $contact_details_form = $this->getAttendeeContactDetailsMetaboxFormHandler($attendee);
+            $success = $contact_details_form->process($this->_req_data);
+
             $attendee_update_callbacks = apply_filters(
                 'FHEE__Registrations_Admin_Page__insert_update_cpt_item__attendee_update',
                 array()
@@ -3349,6 +3486,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 }
             }
         }
+
         if ($success === false) {
             EE_Error::add_error(
                 esc_html__(
@@ -3444,14 +3582,35 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      *
      * @param  WP_Post $post wp post object
      * @return string attendee contact info ( and form )
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws LogicException
      * @throws DomainException
      */
     public function attendee_contact_info($post)
     {
         //get attendee object ( should already have it )
-        $this->_template_args['attendee'] = $this->_cpt_model_obj;
-        $template                         = REG_TEMPLATE_PATH . 'attendee_contact_info_metabox_content.template.php';
-        EEH_Template::display_template($template, $this->_template_args);
+        $form = $this->getAttendeeContactDetailsMetaboxFormHandler($this->_cpt_model_obj);
+        $form->enqueueStylesAndScripts();
+        echo $form->display();
+    }
+
+
+    /**
+     * Return form handler for the contact details metabox
+     *
+     * @param EE_Attendee $attendee
+     * @return AttendeeContactDetailsMetaboxFormHandler
+     * @throws DomainException
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    protected function getAttendeeContactDetailsMetaboxFormHandler(EE_Attendee $attendee)
+    {
+        return new AttendeeContactDetailsMetaboxFormHandler($attendee, EE_Registry::instance());
     }
 
 
@@ -3459,7 +3618,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * Metabox for attendee details
      *
      * @param  WP_Post $post wp post object
-     * @return string attendee address details (and form)
      * @throws DomainException
      */
     public function attendee_address_details($post)
@@ -3560,6 +3718,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @param boolean $trash - whether to move item to trash (TRUE) or restore it (FALSE)
      * @return void
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      * @access protected
      */
     protected function _trash_or_restore_attendees($trash = true)
