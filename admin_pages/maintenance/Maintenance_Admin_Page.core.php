@@ -666,7 +666,11 @@ class Maintenance_Admin_Page extends EE_Admin_Page
             'status_fatal_error'               => EE_Data_Migration_Manager::status_fatal_error,
             'status_completed'                 => EE_Data_Migration_Manager::status_completed,
             'confirm'                          => esc_html__(
-                'Are you sur you want to do this? It CANNOT be undone!',
+                'Are you sure you want to do this? It CANNOT be undone!',
+                'event_espresso'
+            ),
+            'confirm_skip_migration' => esc_html__(
+                'You have chosen to NOT migrate your existing data. Are you sure you want to continue?',
                 'event_espresso'
             )
         ));

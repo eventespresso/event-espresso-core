@@ -236,21 +236,13 @@ jQuery(function() {
 	
 	//confirm users want to not migrate
 	jQuery('#do-not-migrate').click(function(){
-		if ( confirm( 'You have chosen to NOT migrate your existing data.\nAre you sure you want to continue?' )) {
-			return true;
-		}else{
-			return false;
-		}
+		return confirm( ee_maintenance.confirm_skip_migration );
 	});
 
 
     //confirm users want to reset everything
     jQuery('.ee-confirm').click(function(){
-        if ( confirm( ee_maintenance.confirm )) {
-            return true;
-        } else {
-            return false;
-        }
+        return confirm( ee_maintenance.confirm );
     });
 	
 });
