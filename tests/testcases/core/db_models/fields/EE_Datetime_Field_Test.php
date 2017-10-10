@@ -136,8 +136,8 @@ class EE_Datetime_Field_Test extends EE_UnitTestCase
         $this->assertEquals($this->_datetime_field->get_property('_pretty_date_format'), 'F j, Y');
         $this->assertEquals($this->_datetime_field->get_property('_pretty_time_format'), 'g:i a');
 
-        //verify timezone
-        $this->assertEquals($this->_datetime_field->get_timezone(), 'Africa/Abidjan');
+        //verify timezone. By default wp has the gmt_offset set to 0.  So this means we convert that to UTC.
+        $this->assertEquals($this->_datetime_field->get_timezone(), 'UTC');
     }
 
 

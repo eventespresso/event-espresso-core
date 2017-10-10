@@ -203,20 +203,16 @@ abstract class FormHandler implements FormHandlerInterface
      */
     public function formIsValid()
     {
-        if (! $this->form instanceof EE_Form_Section_Proper) {
-            static $generated = false;
-            if (! $generated) {
-                $generated = true;
-                $form = apply_filters(
-                    'FHEE__EventEspresso_core_libraries_form_sections_form_handlers_FormHandler__formIsValid__generated_form_object',
-                    $this->generate(),
-                    $this
-                );
-                if ($form instanceof EE_Form_Section_Proper) {
-                    $this->setForm($form);
-                }
-            }
-            return $this->verifyForm();
+        if ($this->form instanceof EE_Form_Section_Proper) {
+            return true;
+        }
+        $form = apply_filters(
+            'FHEE__EventEspresso_core_libraries_form_sections_form_handlers_FormHandler__formIsValid__generated_form_object',
+            $this->generate(),
+            $this
+        );
+        if ($this->verifyForm($form)) {
+            $this->setForm($form);
         }
         return true;
     }
@@ -224,18 +220,21 @@ abstract class FormHandler implements FormHandlerInterface
 
 
     /**
-     * @return boolean
+     * @param EE_Form_Section_Proper|null $form
+     * @return bool
      * @throws LogicException
      */
-    public function verifyForm()
+    public function verifyForm(EE_Form_Section_Proper $form = null)
     {
-        if ($this->form instanceof EE_Form_Section_Proper) {
+        $form = $form !== null ? $form : $this->form;
+        if ($form instanceof EE_Form_Section_Proper) {
             return true;
         }
         throw new LogicException(
             sprintf(
-                esc_html__('The "%1$s" form is invalid or missing', 'event_espresso'),
-                $this->form_name
+                esc_html__('The "%1$s" form is invalid or missing. %2$s', 'event_espresso'),
+                $this->form_name,
+                var_export($form, true)
             )
         );
     }
@@ -497,7 +496,7 @@ abstract class FormHandler implements FormHandlerInterface
      */
     public function enqueueStylesAndScripts()
     {
-        $this->form(false)->enqueue_js();
+        $this->form()->enqueue_js();
     }
 
 

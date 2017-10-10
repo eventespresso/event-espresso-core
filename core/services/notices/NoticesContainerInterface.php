@@ -18,31 +18,52 @@ interface NoticesContainerInterface
 
     /**
      * @param string $notice
+     * @param bool   $dismissible
      * @param string $file
      * @param string $func
      * @param string $line
      */
-    public function addAttention($notice, $file = '', $func = '', $line = '');
+    public function addInformation($notice, $dismissible = true, $file = '', $func = '', $line = '');
+
+
+    /**
+     * @param string $notice
+     * @param bool   $dismissible
+     * @param string $file
+     * @param string $func
+     * @param string $line
+     * @return
+     */
+    public function addAttention($notice, $dismissible = true, $file = '', $func = '', $line = '');
 
 
 
     /**
      * @param string $notice
+     * @param bool   $dismissible
      * @param string $file
      * @param string $func
      * @param string $line
      */
-    public function addError($notice, $file, $func, $line);
+    public function addError($notice, $dismissible = true, $file, $func, $line);
 
 
 
     /**
      * @param string $notice
+     * @param bool   $dismissible
      * @param string $file
      * @param string $func
      * @param string $line
      */
-    public function addSuccess($notice, $file = '', $func = '', $line = '');
+    public function addSuccess($notice, $dismissible = true, $file = '', $func = '', $line = '');
+
+
+
+    /**
+     * @return boolean
+     */
+    public function hasInformation();
 
 
 
@@ -70,6 +91,13 @@ interface NoticesContainerInterface
     /**
      * @return int
      */
+    public function countInformation();
+
+
+
+    /**
+     * @return int
+     */
     public function countAttention();
 
 
@@ -85,6 +113,13 @@ interface NoticesContainerInterface
      * @return int
      */
     public function countSuccess();
+
+
+
+    /**
+     * @return NoticeInterface[]
+     */
+    public function getInformation();
 
 
 
