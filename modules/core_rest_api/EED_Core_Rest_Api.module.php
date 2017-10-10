@@ -777,6 +777,10 @@ class EED_Core_Rest_Api extends \EED_Module
                     'required' => false,
                     'default'  => array(),
                     'type'     => 'object',
+                    //because we accept a CSV'd list of the enumerated strings, WP core validation and sanitization
+                    //freaks out. We'll just validate this argument while handling the request
+                    'validate_callback' => null,
+                    'sanitize_callback' => null,
                 ),
                 'limit'    => array(
                     'required' => false,
@@ -786,6 +790,10 @@ class EED_Core_Rest_Api extends \EED_Module
                         'string',
                         'integer',
                     ),
+                    //because we accept a CSV'd list of the enumerated strings, WP core validation and sanitization
+                    //freaks out. We'll just validate this argument while handling the request
+                    'validate_callback' => null,
+                    'sanitize_callback' => null,
                 ),
                 'order_by' => array(
                     'required' => false,
@@ -793,7 +801,10 @@ class EED_Core_Rest_Api extends \EED_Module
                     'type'     => array(
                         'object',
                         'string',
-                    ),
+                    ),//because we accept a CSV'd list of the enumerated strings, WP core validation and sanitization
+                    //freaks out. We'll just validate this argument while handling the request
+                    'validate_callback' => null,
+                    'sanitize_callback' => null,
                 ),
                 'group_by' => array(
                     'required' => false,
@@ -802,11 +813,19 @@ class EED_Core_Rest_Api extends \EED_Module
                         'object',
                         'string',
                     ),
+                    //because we accept a CSV'd list of the enumerated strings, WP core validation and sanitization
+                    //freaks out. We'll just validate this argument while handling the request
+                    'validate_callback' => null,
+                    'sanitize_callback' => null,
                 ),
                 'having'   => array(
                     'required' => false,
                     'default'  => null,
                     'type'     => 'object',
+                    //because we accept a CSV'd list of the enumerated strings, WP core validation and sanitization
+                    //freaks out. We'll just validate this argument while handling the request
+                    'validate_callback' => null,
+                    'sanitize_callback' => null,
                 ),
                 'caps'     => array(
                     'required' => false,
