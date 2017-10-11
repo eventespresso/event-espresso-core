@@ -814,8 +814,9 @@ final class EE_Capabilities extends EE_Base
         if (! $this->setupCapabilitiesMap()) {
             return false;
         }
-        $role = $role instanceof WP_Role ? $role :get_role($role);
-        if ($index = $this->capHasBeenAddedToRole($role->name, $cap, true)) {
+
+        $role = $role instanceof WP_Role ? $role : get_role($role);
+        if ($role instanceof WP_Role && $index = $this->capHasBeenAddedToRole($role->name, $cap, true)) {
             $role->remove_cap($cap);
             unset($this->capabilities_map[ $role->name ][ $index ]);
             $this->updateCapabilitiesMap($update_capabilities_map);
@@ -1243,8 +1244,8 @@ class EE_Meta_Capability_Map_Edit extends EE_Meta_Capability_Map
             $has_cap = false;
             try {
                 $has_cap = method_exists($obj, 'wp_user')
-                    && $obj->wp_user()
-                    && $obj->wp_user() === $user_id;
+                           && $obj->wp_user()
+                           && $obj->wp_user() === $user_id;
             } catch (Exception $e) {
                 if (WP_DEBUG) {
                     EE_Error::add_error($e->getMessage(), __FILE__, __FUNCTION__, __LINE__);
