@@ -1,4 +1,5 @@
 <?php
+
 use EventEspresso\core\interfaces\InterminableInterface;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
@@ -44,16 +45,23 @@ class EE_Request implements InterminableInterface
     private $_params;
 
     /**
+     * whether current request is for the admin but NOT via AJAX
+     *
+     * @var boolean $admin
+     */
+    public $admin = false;
+
+    /**
      * whether current request is via AJAX
      *
-     * @access public
+     * @var boolean $ajax
      */
     public $ajax = false;
 
     /**
      * whether current request is via AJAX from the frontend of the site
      *
-     * @access public
+     * @var boolean $front_ajax
      */
     public $front_ajax = false;
 
@@ -77,13 +85,16 @@ class EE_Request implements InterminableInterface
     public function __construct(array $get, array $post, array $cookie)
     {
         // grab request vars
-        $this->_get = (array)$get;
-        $this->_post = (array)$post;
-        $this->_cookie = (array)$cookie;
+        $this->_get    = $get;
+        $this->_post   = $post;
+        $this->_cookie = $cookie;
         $this->_params = array_merge($this->_get, $this->_post);
         // AJAX ???
-        $this->ajax = defined('DOING_AJAX') ? true : false;
-        $this->front_ajax = $this->is_set('ee_front_ajax') && (int)$this->get('ee_front_ajax') === 1;
+        $this->ajax       = defined('DOING_AJAX') && DOING_AJAX;
+        $this->front_ajax = $this->ajax
+                            && $this->is_set('ee_front_ajax')
+                            && filter_var($this->get('ee_front_ajax'), FILTER_VALIDATE_BOOLEAN);
+        $this->admin      = is_admin() && ! $this->ajax;
         // grab user IP
         $this->_ip_address = $this->_visitor_ip();
     }
@@ -168,6 +179,7 @@ class EE_Request implements InterminableInterface
 
     /**
      * check if param exists
+     *
      * @param       $key
      * @return bool
      */
@@ -213,9 +225,9 @@ class EE_Request implements InterminableInterface
         // does incoming key represent an array like 'first[second][third]'  ?
         if (strpos($key, '[') !== false) {
             // turn it into an actual array
-            $key = str_replace(']', '', $key);
+            $key  = str_replace(']', '', $key);
             $keys = explode('[', $key);
-            $key = array_shift($keys);
+            $key  = array_shift($keys);
             // check if top level key exists
             if (isset($request_params[$key])) {
                 // build a new key to pass along like: 'second[third]'
@@ -244,6 +256,7 @@ class EE_Request implements InterminableInterface
 
     /**
      * remove param
+     *
      * @param      $key
      * @param bool $unset_from_global_too
      */
@@ -266,6 +279,33 @@ class EE_Request implements InterminableInterface
     }
 
 
+    /**
+     * @return bool
+     */
+    public function isAdmin()
+    {
+        return $this->admin;
+    }
+
+
+    /**
+     * @return mixed
+     */
+    public function isAjax()
+    {
+        return $this->ajax;
+    }
+
+
+    /**
+     * @return mixed
+     */
+    public function isFrontAjax()
+    {
+        return $this->front_ajax;
+    }
+
+
 
     /**
      * _visitor_ip
@@ -277,7 +317,7 @@ class EE_Request implements InterminableInterface
      */
     private function _visitor_ip()
     {
-        $visitor_ip = '0.0.0.0';
+        $visitor_ip  = '0.0.0.0';
         $server_keys = array(
             'HTTP_CLIENT_IP',
             'HTTP_X_FORWARDED_FOR',
