@@ -1,5 +1,4 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
-require_once ( EE_MODELS . 'EEM_Base.model.php' );
 /**
  *
  * Payment Model

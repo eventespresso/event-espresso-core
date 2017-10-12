@@ -132,7 +132,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
     ) {
         if (! $payment instanceof EEI_Payment) {
             $payment->set_gateway_response(
-                __(
+                esc_html__(
                     'Error. No associated payment was found.',
                     'event_espresso'
                 )
@@ -143,7 +143,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
         $transaction = $payment->transaction();
         if (! $transaction instanceof EEI_Transaction) {
             $payment->set_gateway_response(
-                __(
+                esc_html__(
                     'Could not process this payment because it has no associated transaction.',
                     'event_espresso'
                 )
@@ -151,7 +151,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
             $payment->set_status($this->_pay_model->failed_status());
             return $payment;
         }
-        $order_description = substr($this->_format_order_description($payment), 0, 127);
+        $order_description = mb_strcut($this->_format_order_description($payment), 0, 127);
         $primary_registration = $transaction->primary_registration();
         $primary_attendee = $primary_registration instanceof EE_Registration
             ? $primary_registration->attendee()
@@ -194,13 +194,13 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
                         $line_item_quantity = 1;
                     }
                     // Item Name.
-                    $token_request_dtls['L_PAYMENTREQUEST_0_NAME' . $item_num] = substr(
+                    $token_request_dtls['L_PAYMENTREQUEST_0_NAME' . $item_num] = mb_strcut(
                         $this->_format_line_item_name($line_item, $payment),
                         0,
                         127
                     );
                     // Item description.
-                    $token_request_dtls['L_PAYMENTREQUEST_0_DESC' . $item_num] = substr(
+                    $token_request_dtls['L_PAYMENTREQUEST_0_DESC' . $item_num] = mb_strcut(
                         $this->_format_line_item_desc($line_item, $payment),
                         0,
                         127
@@ -230,8 +230,8 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
             // add the difference as an extra line item.
             if ($this->_money->compare_floats($itemized_sum_diff_from_txn_total, 0, '!=')) {
                 // Item Name.
-                $token_request_dtls['L_PAYMENTREQUEST_0_NAME' . $item_num] = substr(
-                    __(
+                $token_request_dtls['L_PAYMENTREQUEST_0_NAME' . $item_num] = mb_strcut(
+                    esc_html__(
                         'Other (promotion/surcharge/cancellation)',
                         'event_espresso'
                     ),
@@ -255,13 +255,13 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
         } else {
             // Just one Item.
             // Item Name.
-            $token_request_dtls['L_PAYMENTREQUEST_0_NAME0'] = substr(
+            $token_request_dtls['L_PAYMENTREQUEST_0_NAME0'] = mb_strcut(
                 $this->_format_partial_payment_line_item_name($payment),
                 0,
                 127
             );
             // Item description.
-            $token_request_dtls['L_PAYMENTREQUEST_0_DESC0'] = substr(
+            $token_request_dtls['L_PAYMENTREQUEST_0_DESC0'] = mb_strcut(
                 $this->_format_partial_payment_line_item_desc($payment),
                 0,
                 127
@@ -356,7 +356,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
             $transaction = $payment->transaction();
             if (! $transaction instanceof EEI_Transaction) {
                 $payment->set_gateway_response(
-                    __(
+                    esc_html__(
                         'Could not process this payment because it has no associated transaction.',
                         'event_espresso'
                     )
@@ -394,6 +394,8 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
                     'PAYMENTREQUEST_0_PAYMENTACTION' => 'Sale',
                     'PAYMENTREQUEST_0_AMT'           => $payment->amount(),
                     'PAYMENTREQUEST_0_CURRENCYCODE'  => $payment->currency_code(),
+                    //EE will blow up if you change this
+                    'BUTTONSOURCE'                   => 'EventEspresso_SP',
                 );
                 // Payment Checkout/Capture.
                 $docheckout_request_response = $this->_ppExpress_request(
@@ -431,7 +433,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
                         );
                     } else {
                         $payment->set_gateway_response(
-                            __(
+                            esc_html__(
                                 'Error occurred while trying to Capture the funds.',
                                 'event_espresso'
                             )
@@ -449,7 +451,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
                     );
                 } else {
                     $payment->set_gateway_response(
-                        __(
+                        esc_html__(
                             'Error occurred while trying to get payment Details from PayPal.',
                             'event_espresso'
                         )
@@ -459,7 +461,12 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
                 $payment->set_status($this->_pay_model->failed_status());
             }
         } else {
-            $payment->set_gateway_response(__('Error occurred while trying to process the payment.', 'event_espresso'));
+            $payment->set_gateway_response(
+                esc_html__(
+                    'Error occurred while trying to process the payment.',
+                    'event_espresso'
+                )
+            );
             $payment->set_status($this->_pay_model->failed_status());
         }
         return $payment;
