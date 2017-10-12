@@ -1,6 +1,8 @@
 <?php
 
 use EventEspresso\core\services\cache\PostRelatedCacheManager;
+use EventEspresso\tests\mocks\core\services\cache\CacheStorageMock;
+use EventEspresso\tests\mocks\core\services\cache\PostRelatedCacheManagerMock;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -19,7 +21,7 @@ class PostRelatedCacheManagerTest extends EE_UnitTestCase
 
 
     /**
-     * @var PostRelatedCacheManager $cache_manager
+     * @var PostRelatedCacheManagerMock $cache_manager
      */
     protected $cache_manager;
 
@@ -28,8 +30,8 @@ class PostRelatedCacheManagerTest extends EE_UnitTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->cache_manager = new EventEspresso\core\services\cache\PostRelatedCacheManager(
-            new EventEspresso\tests\mocks\core\services\cache\CacheStorageMock()
+        $this->cache_manager = new PostRelatedCacheManagerMock(
+            new CacheStorageMock()
         );
     }
 
@@ -49,6 +51,35 @@ class PostRelatedCacheManagerTest extends EE_UnitTestCase
     public function testCachePrefix()
     {
         $this->assertEquals('ee_cache_post_', $this->cache_manager->cachePrefix());
+    }
+
+
+    public function testGetPostRelatedCache()
+    {
+        $this->updatePostRelatedCache(array(123 => array('MOCK_CACHE')));
+        $mock_cache = $this->cache_manager->getPostRelatedCache();
+        $this->assertCount(1, $mock_cache);
+        $this->assertArrayHasKey(123, $mock_cache);
+        $this->assertCount(1, $mock_cache[123]);
+        $this->assertArrayContains('MOCK_CACHE', $mock_cache[123]);
+        // now test what happens if the cache is corrupted (need to update option directly)
+        update_option(PostRelatedCacheManager::POST_CACHE_OPTIONS_KEY, 'i am not serialized data');
+        $this->assertEmpty($this->cache_manager->getPostRelatedCache());
+    }
+
+
+    public function testUpdatePostRelatedCache()
+    {
+        // first save nothing to the cache
+        $this->updatePostRelatedCache();
+        $this->assertEmpty($this->getPostRelatedCache());
+        //  then add our mock cache and verify
+        $this->cache_manager->updatePostRelatedCache(array(123 => array('MOCK_CACHE')));
+        $mock_cache = $this->getPostRelatedCache();
+        $this->assertCount(1, $mock_cache);
+        $this->assertArrayHasKey(123, $mock_cache);
+        $this->assertCount(1, $mock_cache[123]);
+        $this->assertArrayContains('MOCK_CACHE', $mock_cache[123]);
     }
 
 
