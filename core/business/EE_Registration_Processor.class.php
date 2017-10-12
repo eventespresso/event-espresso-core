@@ -7,6 +7,7 @@ use EventEspresso\core\domain\services\registration\CreateRegistrationService;
 use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\loaders\LoaderFactory;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 
@@ -75,11 +76,17 @@ class EE_Registration_Processor extends EE_Processor_Base
      * @singleton method used to instantiate class object
      * @param EE_Request|null $request
      * @return EE_Registration_Processor instance
+     * @throws \InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
      */
     public static function instance(EE_Request $request = null)
     {
         // check if class object is instantiated
         if (! self::$_instance instanceof EE_Registration_Processor) {
+            if(! $request instanceof EE_Request) {
+                $request = LoaderFactory::getLoader()->getShared('EE_Request');
+            }
             self::$_instance = new self($request);
         }
         return self::$_instance;
