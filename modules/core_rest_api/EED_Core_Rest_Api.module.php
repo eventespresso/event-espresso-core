@@ -777,15 +777,24 @@ class EED_Core_Rest_Api extends \EED_Module
                     'required' => false,
                     'default'  => array(),
                     'type'     => 'object',
+                    //because we accept an almost infinite list of possible where conditions, WP
+                    // core validation and sanitization freaks out. We'll just validate this argument
+                    // while handling the request
+                    'validate_callback' => null,
+                    'sanitize_callback' => null,
                 ),
                 'limit'    => array(
                     'required' => false,
                     'default'  => EED_Core_Rest_Api::get_default_query_limit(),
                     'type'     => array(
-                        'object',
+                        'array',
                         'string',
                         'integer',
                     ),
+                    //because we accept a variety of types, WP core validation and sanitization
+                    //freaks out. We'll just validate this argument while handling the request
+                    'validate_callback' => null,
+                    'sanitize_callback' => null,
                 ),
                 'order_by' => array(
                     'required' => false,
@@ -793,7 +802,10 @@ class EED_Core_Rest_Api extends \EED_Module
                     'type'     => array(
                         'object',
                         'string',
-                    ),
+                    ),//because we accept a variety of types, WP core validation and sanitization
+                    //freaks out. We'll just validate this argument while handling the request
+                    'validate_callback' => null,
+                    'sanitize_callback' => null,
                 ),
                 'group_by' => array(
                     'required' => false,
@@ -802,16 +814,32 @@ class EED_Core_Rest_Api extends \EED_Module
                         'object',
                         'string',
                     ),
+                    //because we accept  an almost infinite list of possible groupings,
+                    // WP core validation and sanitization
+                    //freaks out. We'll just validate this argument while handling the request
+                    'validate_callback' => null,
+                    'sanitize_callback' => null,
                 ),
                 'having'   => array(
                     'required' => false,
                     'default'  => null,
                     'type'     => 'object',
+                    //because we accept an almost infinite list of possible where conditions, WP
+                    // core validation and sanitization freaks out. We'll just validate this argument
+                    // while handling the request
+                    'validate_callback' => null,
+                    'sanitize_callback' => null,
                 ),
                 'caps'     => array(
                     'required' => false,
                     'default'  => EEM_Base::caps_read,
                     'type'     => 'string',
+                    'enum'     => array(
+                        EEM_Base::caps_read,
+                        EEM_Base::caps_read_admin,
+                        EEM_Base::caps_edit,
+                        EEM_Base::caps_delete
+                    )
                 ),
             )
         );
