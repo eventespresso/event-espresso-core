@@ -1,7 +1,6 @@
 <?php
 namespace EventEspresso\core\services\cache;
 
-use EventEspresso\core\domain\services\session\SessionIdentifierInterface;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -99,8 +98,8 @@ class PostRelatedCacheManager extends BasicCacheManager
         $post_related_cache = (array)get_option(PostRelatedCacheManager::POST_CACHE_OPTIONS_KEY, array());
         // if post is not being tracked
         if ( ! isset($post_related_cache[$post_ID])) {
-            // let's clean up some of the duplicate keys that were getting added
-            foreach ($post_related_cache as $other_post_ID => $cache_keys) {
+            // let's clean up some of the duplicate IDs that were getting added
+            foreach ($post_related_cache as $other_post_ID => $cache_IDs) {
                 //remove duplicates
                 $post_related_cache[$other_post_ID] = array_unique($post_related_cache[$other_post_ID]);
             }
