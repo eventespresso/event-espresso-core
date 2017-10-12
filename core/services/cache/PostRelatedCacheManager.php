@@ -67,7 +67,7 @@ class PostRelatedCacheManager extends BasicCacheManager
             $this->clear(PostRelatedCacheManager::CACHE_PREFIX);
             // then update the post related cache tracking option
             $post_related_cache = array();
-            update_option(PostRelatedCacheManager::POST_CACHE_OPTIONS_KEY, $post_related_cache);
+            $this->updatePostRelatedCache($post_related_cache);
         }
         return $post_related_cache;
     }
