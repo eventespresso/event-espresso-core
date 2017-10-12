@@ -3,9 +3,8 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
 
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
+
+defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
 
@@ -49,9 +48,10 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_
     /**
      * EE_Load_Espresso_Core constructor
      */
-    public function __construct()
-    {
-        espresso_load_required('EventEspresso\core\Factory', EE_CORE . 'Factory.php');
+	public function __construct() {
+        // deprecated functions
+        espresso_load_required('EE_Base', EE_CORE . 'EE_Base.core.php');
+        espresso_load_required('EE_Deprecated', EE_CORE . 'EE_Deprecated.core.php');
     }
 
 
@@ -78,8 +78,6 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_
         $this->dependency_map = $this->_load_dependency_map();
         // central repository for classes
         $this->registry = $this->_load_registry();
-        // PSR4 Autoloaders
-        $this->registry->load_core('EE_Psr4AutoloaderInit');
         do_action('EE_Load_Espresso_Core__handle_request__initialize_core_loading');
         $loader = LoaderFactory::getLoader($this->registry);
         $this->dependency_map->setLoader($loader);
@@ -89,9 +87,6 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_
         // $CoffeeShop = $OpenCoffeeShop->CoffeeShop();
         // workarounds for PHP < 5.3
         $this->_load_class_tools();
-        // load interfaces
-        espresso_load_required('EEI_Payment_Method_Interfaces',
-            EE_LIBRARIES . 'payment_methods' . DS . 'EEI_Payment_Method_Interfaces.php');
         // deprecated functions
         espresso_load_required('EE_Deprecated', EE_CORE . 'EE_Deprecated.core.php');
         // WP cron jobs
