@@ -527,7 +527,7 @@ class EED_Events_Archive_Filters  extends EED_Module {
 	 *  	@return 		void
 	 */
 	public function event_list_pagination() {
-		echo '<div class="ee-pagination-dv clear">' . espresso_event_list_pagination() . '</div>';
+		echo '<div class="ee-pagination-dv ee-clear-float">' . espresso_event_list_pagination() . '</div>';
 	}
 
 

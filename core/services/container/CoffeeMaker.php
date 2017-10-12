@@ -70,11 +70,12 @@ abstract class CoffeeMaker implements CoffeeMakerInterface
 
     /**
      * @param $type
+     * @throws \EventEspresso\core\exceptions\InvalidIdentifierException
      */
     public static function validateType($type)
     {
         $types = CoffeeMaker::getTypes();
-        if ( ! in_array($type, $types)) {
+        if ( ! in_array($type, $types, true)) {
             throw new InvalidIdentifierException(
                 is_object($type) ? get_class($type) : gettype($type),
                 __(
@@ -127,6 +128,7 @@ abstract class CoffeeMaker implements CoffeeMakerInterface
      *
      * @param \ReflectionClass $reflector
      * @return mixed
+     * @throws InstantiationException
      */
     protected function resolveInstantiationMethod(\ReflectionClass $reflector)
     {
@@ -152,6 +154,7 @@ abstract class CoffeeMaker implements CoffeeMakerInterface
      * and then verifies that classes exist where applicable
      *
      * @param RecipeInterface $recipe
+     * @return bool
      * @throws InvalidClassException
      */
     protected function resolveClassAndFilepath(RecipeInterface $recipe)
@@ -174,6 +177,7 @@ abstract class CoffeeMaker implements CoffeeMakerInterface
         if ($recipe->type() !== CoffeeMaker::BREW_LOAD_ONLY && ! class_exists($recipe->fqcn(), false)) {
             throw new InvalidClassException($recipe->identifier());
         }
+        return true;
     }
 
 
