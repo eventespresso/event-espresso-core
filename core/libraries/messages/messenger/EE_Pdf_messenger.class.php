@@ -353,6 +353,8 @@ class EE_Pdf_messenger extends EE_messenger  {
 		if (defined('DOMPDF_DEFAULT_PAPER_SIZE')) {
 			$dompdf->set_paper(DOMPDF_DEFAULT_PAPER_SIZE);
 		}
+		//Remove all spaces between HTML tags
+		$content = preg_replace('/>\s+</', '><', $content);
 		$dompdf->load_html($content);
 		$dompdf->render();
 		//forcing the browser to open a download dialog.
