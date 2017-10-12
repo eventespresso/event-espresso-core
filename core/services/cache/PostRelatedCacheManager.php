@@ -79,8 +79,10 @@ class PostRelatedCacheManager extends BasicCacheManager
             // add array to add cache ids to
             $post_related_cache[$post_ID] = array();
         }
-        // add cache id to be tracked
-        $post_related_cache[$post_ID][] = $id_prefix;
+        if( ! in_array($id_prefix, $post_related_cache[$post_ID], true)) {
+            // add cache id to be tracked
+            $post_related_cache[$post_ID][] = $id_prefix;
+        }
         update_option(PostRelatedCacheManager::POST_CACHE_OPTIONS_KEY, $post_related_cache);
     }
 
@@ -97,6 +99,12 @@ class PostRelatedCacheManager extends BasicCacheManager
         $post_related_cache = (array)get_option(PostRelatedCacheManager::POST_CACHE_OPTIONS_KEY, array());
         // if post is not being tracked
         if ( ! isset($post_related_cache[$post_ID])) {
+            // let's clean up some of the duplicate keys that were getting added
+            foreach ($post_related_cache as $other_post_ID => $cache_keys) {
+                //remove duplicates
+                $post_related_cache[$other_post_ID] = array_unique($post_related_cache[$other_post_ID]);
+            }
+            update_option(PostRelatedCacheManager::POST_CACHE_OPTIONS_KEY, $post_related_cache);
             return;
         }
         // get cache id prefixes for post, and delete their corresponding transients
