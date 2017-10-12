@@ -81,8 +81,8 @@ class PostRelatedCacheManager extends BasicCacheManager
         if( ! in_array($id_prefix, $post_related_cache[$post_ID], true)) {
             // add cache id to be tracked
             $post_related_cache[$post_ID][] = $id_prefix;
+            update_option(PostRelatedCacheManager::POST_CACHE_OPTIONS_KEY, $post_related_cache);
         }
-        update_option(PostRelatedCacheManager::POST_CACHE_OPTIONS_KEY, $post_related_cache);
     }
 
 
