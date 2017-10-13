@@ -73,10 +73,11 @@ class Messages_Admin_Page extends EE_Admin_Page
      * @var string
      */
     protected $_variation;
-    
-    
+
+
     /**
      * @param bool $routing
+     * @throws EE_Error
      */
     public function __construct($routing = true)
     {
@@ -2094,6 +2095,7 @@ class Messages_Admin_Page extends EE_Admin_Page
      *
      * @param bool $send if TRUE then we are doing an actual TEST send with the results of the preview.
      * @return string
+     * @throws ReflectionException
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -4299,59 +4301,74 @@ class Messages_Admin_Page extends EE_Admin_Page
     
     
     /**  EE MESSAGE PROCESSING ACTIONS **/
-    
-    
+
+
     /**
      * This immediately generates any EE_Message ID's that are selected that are EEM_Message::status_incomplete
      * However, this does not send immediately, it just queues for sending.
      *
      * @since 4.9.0
+     * @throws EE_Error
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
      */
     protected function _generate_now()
     {
-        $msg_ids = $this->_get_msg_ids_from_request();
-        EED_Messages::generate_now($msg_ids);
+        EED_Messages::generate_now($this->_get_msg_ids_from_request());
         $this->_redirect_after_action(false, '', '', array(), true);
     }
-    
-    
+
+
     /**
      * This immediately generates AND sends any EE_Message's selected that are EEM_Message::status_incomplete or that
      * are EEM_Message::status_resend or EEM_Message::status_idle
      *
      * @since 4.9.0
-     *
+     * @throws EE_Error
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
      */
     protected function _generate_and_send_now()
     {
-        $this->_generate_now();
-        $this->_send_now();
+        EED_Messages::generate_and_send_now($this->_get_msg_ids_from_request());
         $this->_redirect_after_action(false, '', '', array(), true);
     }
-    
-    
+
+
     /**
      * This queues any EEM_Message::status_sent EE_Message ids in the request for resending.
      *
      * @since 4.9.0
+     * @throws EE_Error
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
      */
     protected function _queue_for_resending()
     {
-        $msg_ids = $this->_get_msg_ids_from_request();
-        EED_Messages::queue_for_resending($msg_ids);
+        EED_Messages::queue_for_resending($this->_get_msg_ids_from_request());
         $this->_redirect_after_action(false, '', '', array(), true);
     }
-    
-    
+
+
     /**
      *  This sends immediately any EEM_Message::status_idle or EEM_Message::status_resend messages in the queue
      *
      * @since 4.9.0
+     * @throws EE_Error
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
      */
     protected function _send_now()
     {
-        $msg_ids = $this->_get_msg_ids_from_request();
-        EED_Messages::send_now($msg_ids);
+        EED_Messages::send_now($this->_get_msg_ids_from_request());
         $this->_redirect_after_action(false, '', '', array(), true);
     }
 
