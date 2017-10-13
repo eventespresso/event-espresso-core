@@ -391,7 +391,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes
                 break;
             case '[LAST_PAYMENT_TRANSACTION_ID]':
                 $id = '';
-                $payment = $payment instanceof EE_Payment
+                $payment = $payment instanceof EE_Payment && $payment->ID() !== 0
                     ? $payment
                     : $transaction->last_payment();
                 if ($payment instanceof EE_Payment) {
