@@ -14,6 +14,21 @@
  * @version            $VID:$
  * ----------------------------------------------
  */
+//Quickfix to address https://events.codebasehq.com/projects/event-espresso/tickets/11089 ASAP
+if (! function_exists('mb_strcut')) {
+    /**
+     * Very simple mimic of mb_substr. Still has all the problems of substr
+     * (which, however, came up very infrequently, so this is a good band-aid, but nothing more)
+     * @param $string
+     * @param $start
+     * @param $length
+     * @return bool|string
+     */
+    function mb_strcut($string, $start, $length = null)
+    {
+        return substr($string, $start, $length);
+    }
+}
 class EEG_Paypal_Express extends EE_Offsite_Gateway
 {
 
