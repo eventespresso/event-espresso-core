@@ -86,7 +86,7 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase
      * @group agg
      * @group 8328
      */
-    function test_detect_activations_or_upgrades__new_install()
+    public function test_detect_activations_or_upgrades__new_install()
     {
         global $wp_actions;
 
@@ -119,7 +119,7 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase
      *
      * @group agg
      */
-    function test_detect_activations_or_upgrades__new_install_on_core_and_addon_simultaneously()
+    public function test_detect_activations_or_upgrades__new_install_on_core_and_addon_simultaneously()
     {
 
         global $wp_actions, $wpdb;
@@ -388,29 +388,38 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase
         $this->assertWPOptionDoesNotExist($this->_addon->get_activation_indicator_option_name());
     }
 
+
     /**
      * Registers the mock addon so it can be used for testing
+     *
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \InvalidArgumentException
+     * @throws \EE_Error
      */
     public function setUp()
     {
         parent::setUp();
         $this->_pretend_addon_hook_time();
         $mock_addon_path = EE_TESTS_DIR . 'mocks/addons/eea-new-addon/';
-        EE_Register_Addon::register($this->_addon_name, array(
-            'version'          => '1.0.0.dev.000',
-            'min_core_version' => '4.0.0',
-            'main_file_path'   => $mock_addon_path . 'eea-new-addon.php',
-            'dms_paths'        => $mock_addon_path . 'core/data_migration_scripts',
-        ));
+        EE_Register_Addon::register(
+            $this->_addon_name,
+            array(
+                'version'          => '1.0.0.dev.000',
+                'min_core_version' => '4.0.0',
+                'main_file_path'   => $mock_addon_path . 'eea-new-addon.php',
+                'dms_paths'        => $mock_addon_path . 'core/data_migration_scripts',
+            )
+        );
         //double-check that worked fine
         $this->assertAttributeNotEmpty('EE_New_Addon', EE_Registry::instance()->addons);
         $DMSs_available = EE_Data_Migration_Manager::reset()->get_all_data_migration_scripts_available();
         $this->assertArrayHasKey('EE_DMS_New_Addon_1_0_0', $DMSs_available);
 
         //ensure this is the only addon
-        $this->assertEquals(1, count(EE_Registry::instance()->addons));
+        $this->assertCount(1, EE_Registry::instance()->addons);
         $this->_addon = EE_Registry::instance()->addons->EE_New_Addon;
-        $this->assertTrue($this->_addon instanceof EE_New_Addon);
+        $this->assertInstanceOf('EE_New_Addon',$this->_addon);
         $this->_addon_classname          = get_class($this->_addon);
         $this->_addon_activation_history = $this->_addon->get_activation_history();
         $this->_current_db_state         = get_option(EE_Data_Migration_Manager::current_database_state);
@@ -424,11 +433,11 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase
      * OK's the creation of the esp_new_addon table, because this hooks in AFTER EE_UNitTestCase's callback on this
      * same hook
      *
-     * @global type   $wpdb
+     * @global wpdb   $wpdb
      * @param boolean $short_circuit whether or not to short-circuit
      * @param string  $table_name    name we're about to create. Should NOT have the $wpdb->prefix on it
      * @param string  $create_sql
-     * @return array
+     * @return array|bool
      */
     public function dont_short_circuit_new_addon_table($short_circuit = false, $table_name = '', $create_sql = '')
     {
@@ -436,12 +445,11 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase
         //implicit commits. But I like allowing re-defining the tables on test
         //test_detect_activations_or_upgrades__new_install_on_core_and_addon_simultaneously
         //so we can confirm a notices are sent when attempting to redefine an addon table
-        if (in_array($table_name, $this->_temp_tables_added_by_addon)) {
+        if (in_array($table_name, $this->_temp_tables_added_by_addon, true)) {
             //it's not altering. it's ok to allow this
             return false;
-        } else {
-            return $short_circuit;
         }
+        return $short_circuit;
     }
 
 
