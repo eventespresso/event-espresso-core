@@ -106,12 +106,15 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase
      * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      * @throws \InvalidArgumentException
      * @throws \EE_Error
+     * @throws \DomainException
+     * @throws \ReflectionException
      */
     public function setUp()
     {
         parent::setUp();
         $this->_pretend_addon_hook_time();
         $mock_addon_path = EE_TESTS_DIR . 'mocks/addons/eea-new-addon/';
+        EE_Registry::instance()->addons = new \EventEspresso\core\services\container\RegistryContainer();
         EE_Register_Addon::register(
             $this->_addon_name,
             array(
@@ -121,15 +124,19 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase
                 'dms_paths'        => $mock_addon_path . 'core/data_migration_scripts',
             )
         );
+        // now verify that this is the only addon
+        $this->assertCount(1, EE_Registry::instance()->addons);
         //double-check that worked fine
-        $this->assertAttributeNotEmpty(
+        $this->assertArrayHasKey(
             'EE_New_Addon',
             EE_Registry::instance()->addons
         );
+        $this->assertInstanceOf(
+            'EE_New_Addon',
+            EE_Registry::instance()->addons->EE_New_Addon
+        );
         $DMSs_available = EE_Data_Migration_Manager::reset()->get_all_data_migration_scripts_available();
         $this->assertArrayHasKey('EE_DMS_New_Addon_1_0_0', $DMSs_available);
-        //ensure this is the only addon
-        $this->assertCount(1, EE_Registry::instance()->addons);
         $this->_addon = EE_Registry::instance()->addons->EE_New_Addon;
         $this->assertInstanceOf('EE_New_Addon', $this->_addon);
         $this->_addon_classname          = get_class($this->_addon);
@@ -188,8 +195,8 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase
             try {
                 EE_Registry::instance()->addons->EE_New_Addon;
                 $this->fail('EE_New_Addon is still registered. Deregister failed');
-            } catch (PHPUnit_Framework_Error_Notice $e) {
-                $this->assertEquals(EE_UnitTestCase::error_code_undefined_property, $e->getCode());
+            } catch (Exception $e) {
+                $this->assertInstanceOf('OutOfBoundsException', $e);
             }
             //verify DMSs deregistered
             $DMSs_available = EE_Data_Migration_Manager::reset()->get_all_data_migration_scripts_available();
@@ -271,7 +278,6 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase
      */
     public function test_detect_activations_or_upgrades__new_install_on_core_and_addon_simultaneously()
     {
-
         global $wp_actions, $wpdb;
         //pretend core was just activated
         delete_option('espresso_db_update');
@@ -599,3 +605,4 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase
 }
 
 // End of file EE_System_Test_With_Addons.php
+// Location:  tests/testcases/core/EE_System_Test_With_Addons.php
