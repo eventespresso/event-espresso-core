@@ -212,7 +212,7 @@ class EE_PUE implements InterminableInterface
             echo '<h2 class="ee-admin-settings-hdr" '
                  . (! $extra ? 'id="UXIP_settings"' : '')
                  . '>'
-                 . __('User eXperience Improvement Program (UXIP)', 'event_espresso')
+                 . esc_html__('User eXperience Improvement Program (UXIP)', 'event_espresso')
                  . EEH_Template::get_help_tab_link('organization_logo_info')
                  . '</h2>';
             printf(
