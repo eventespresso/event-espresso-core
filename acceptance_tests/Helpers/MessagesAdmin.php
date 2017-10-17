@@ -269,11 +269,13 @@ trait MessagesAdmin
      * This returns the value for the link at the given selector in the message modal.
      * @param string $selector (any selector string accepted by WebDriver)
      */
-    public function observeLinkAtInMessageModal($selector)
+    public function observeLinkAtSelectorInMessageModal($selector)
     {
         $this->actor()->waitForElementVisible('.ee-admin-dialog-container-inner-content');
         $this->actor()->switchToIframe('message-view-window');
-        return $this->actor()->observeLinkUrlAt($selector);
+        $link = $this->actor()->observeLinkUrlAt($selector);
+        $this->actor()->switchToIframe();
+        return $link;
     }
 
 
