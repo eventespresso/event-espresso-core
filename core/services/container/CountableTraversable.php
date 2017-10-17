@@ -2,6 +2,9 @@
 
 namespace EventEspresso\core\services\container;
 
+use Countable;
+use Traversable;
+
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
@@ -14,7 +17,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  * @author  Brent Christensen
  * @since   $VID:$
  */
-interface CountableTraversable
+interface CountableTraversable extends Countable, Traversable
 {
 
 }
