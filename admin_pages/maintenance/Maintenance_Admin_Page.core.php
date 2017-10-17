@@ -2,6 +2,7 @@
 
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
 
+use EventEspresso\core\domain\entities\DbSafeDateTime;
 use EventEspressoBatchRequest\JobHandlers\DatetimeOffsetFix;
 
 
@@ -677,6 +678,15 @@ class Maintenance_Admin_Page extends EE_Admin_Page
     }
 
 
+    /**
+     * Enqueue scripts and styles for the datetime tools page.
+     */
+    public function load_scripts_styles_datetime_tools()
+    {
+        EE_Datepicker_Input::enqueue_styles_and_scripts();
+    }
+
+
     protected function _datetime_tools()
     {
         $form_action = EE_Admin_Page::add_query_args_and_nonce(
@@ -736,12 +746,46 @@ class Maintenance_Admin_Page extends EE_Admin_Page
                                 'default' => DatetimeOffsetFix::getOffset()
                             )
                         ),
+                        'date_range_explanation' => new EE_Form_Section_HTML(
+                            EEH_HTML::p(
+                                esc_html__(
+                                    'Leave the following fields blank if you want the offset to be applied to all dates. If however, you want to just apply the offset to a specific range of dates you can restrict the offset application using these fields.',
+                                    'event_espresso'
+                                )
+                            )
+                            . EEH_HTML::p(
+                                EEH_HTML::strong(
+                                    esc_html__(
+                                        'Note: please enter the dates in UTC+0',
+                                        'event_espresso'
+                                    )
+                                )
+                            )
+                        ),
+                        'date_range_start_date' => new EE_Datepicker_Input(
+                            array(
+                                'html_name' => 'offset_date_start_range',
+                                'html_label_text' => esc_html__(
+                                    'Start Date for dates the offset applied to:',
+                                    'event_espresso'
+                                )
+                            )
+                        ),
+                        'date_range_end_date' => new EE_Datepicker_Input(
+                            array(
+                                'html_name' => 'offset_date_end_range',
+                                'html_label_text' => esc_html(
+                                    'End Date for dates the offset is applied to:',
+                                    'event_espresso'
+                                )
+                            )
+                        ),
                         'submit' => new EE_Submit_Input(
                             array(
                                 'html_label_text' => '',
                                 'default' => esc_html__('Apply Offset', 'event_espresso')
                             )
-                        )
+                        ),
                     )
                 )
             );
@@ -760,8 +804,25 @@ class Maintenance_Admin_Page extends EE_Admin_Page
             $form = $this->_get_datetime_offset_fix_form();
             $form->receive_form_submission($this->_req_data);
             if ($form->is_valid()) {
-                //save offset so batch processor can get it.
+                //save offset data so batch processor can get it.
                 DatetimeOffsetFix::updateOffset($form->get_input_value('offset_input'));
+                $utc_timezone = new DateTimeZone('UTC');
+                $date_range_start_date = DbSafeDateTime::createFromFormat(
+                    'm/d/Y H:i:s',
+                    $form->get_input_value('date_range_start_date') . ' 00:00:00',
+                    $utc_timezone
+                );
+                $date_range_end_date = DbSafeDateTime::createFromFormat(
+                        'm/d/Y H:i:s',
+                        $form->get_input_value('date_range_end_date') . ' 23:59:59',
+                        $utc_timezone
+                );
+                if ($date_range_start_date instanceof DateTime) {
+                    DatetimeOffsetFix::updateStartDateRange(DbSafeDateTime::createFromDateTime($date_range_start_date));
+                }
+                if ($date_range_end_date instanceof DateTime) {
+                    DatetimeOffsetFix::updateEndDateRange(DbSafeDateTime::createFromDateTime($date_range_end_date));
+                }
                 //redirect to batch tool
                 wp_redirect(
                     EE_Admin_Page::add_query_args_and_nonce(
