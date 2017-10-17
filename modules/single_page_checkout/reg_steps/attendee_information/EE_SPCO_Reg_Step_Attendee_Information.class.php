@@ -801,21 +801,13 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
         // verify we got the goods
         if (empty($registrations)) {
             //combine the old translated string with a new one, in order to not break translations
-
-            // @codingStandardsIgnoreStart
             $error_message = esc_html__( 'Your form data could not be applied to any valid registrations.', 'event_espresso' )
                              . sprintf(
                                  esc_html__('%3$sThis can sometimes happen if too much time has been taken to complete the registration process.%3$sPlease return to the %1$sEvent List%2$s and reselect your tickets. If the problem continues, please contact the site administrator.', 'event_espresso'),
-                                 '<a href="'
-                                 . apply_filters(
-                                     'FHEE__EE_SPCO_Reg_Step_Attendee_Information__process_reg_step__no_regs_link_to_event_list',
-                                     get_post_type_archive_link('espresso_events')
-                                 )
-                                 . '" >',
+                                 '<a href="' . get_post_type_archive_link('espresso_events') . '" >',
                                  '</a>',
                                  '<br />'
                              );
-            // @codingStandardsIgnoreEnd
             EE_Error::add_error(
                 $error_message,
                 __FILE__,
