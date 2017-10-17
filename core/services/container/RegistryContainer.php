@@ -12,11 +12,11 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 
 /**
  * Class RegistryContainer
- * Description
+ * Object for storing data that behaves as an array
  *
  * @package EventEspresso\core\services\container
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.49
  */
 class RegistryContainer implements ArrayAccess, CountableTraversableAggregate
 {
@@ -28,15 +28,14 @@ class RegistryContainer implements ArrayAccess, CountableTraversableAggregate
 
     /**
      * RegistryContainer constructor.
+     * Container data can be seeded by passing parameters to constructor.
+     * Each parameter will become its own element in the container
      */
     public function __construct()
     {
         $this->container = func_get_args();
-        $arg_count = func_num_args();
-        if ($arg_count === 0) {
+        if (func_num_args() === 0) {
             $this->container = array();
-        } else if ($arg_count === 1 && is_array($this->container[0])) {
-            $this->container = $this->container[0];
         }
     }
 
