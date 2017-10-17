@@ -340,35 +340,34 @@ class EE_Admin_Page_Loader
                 //skip if in full maintenance mode and maintenance_mode_parent is set
                 $maintenance_mode_parent = $this->_installed_pages[$page]->get_menu_map()->maintenance_mode_parent;
                 if (empty($maintenance_mode_parent)
-                    && EE_Maintenance_Mode::instance()->level()
-                       == EE_Maintenance_Mode::level_2_complete_maintenance) {
+                    && EE_Maintenance_Mode::instance()->level() === EE_Maintenance_Mode::level_2_complete_maintenance
+                ) {
                     unset($installed_refs[$page]);
                     continue;
                 }
-                $this->_menu_slugs[$this->_installed_pages[$page]->get_menu_map()->menu_slug] = $page;
+                $menu_slug = $this->_installed_pages[$page]->get_menu_map()->menu_slug;
+                $this->_menu_slugs[$menu_slug] = $page;
                 //flag for register hooks on extended pages b/c extended pages use the default INIT.
                 $extend = false;
                 //now that we've got the admin_init objects... lets see if there are any caffeinated pages extending the originals.  If there are then let's hook into the init admin filter and load our extend instead.
                 if (isset($this->_caffeinated_extends[$page])) {
                     $this->_current_caf_extend_slug = $page;
-                    $path_hook                      = 'FHEE__EE_Admin_Page_Init___initialize_admin_page__path_to_file__'
-                                                      . $this->_installed_pages[$page]->get_menu_map()->menu_slug
-                                                      . '_'
-                                                      . $this->_installed_pages[$page]->get_admin_page_name();
-                    $path_runtime                   = 'return "'
-                                                      . $this->_caffeinated_extends[$this->_current_caf_extend_slug]["path"]
-                                                      . '";';
-                    $page_hook                      = 'FHEE__EE_Admin_Page_Init___initialize_admin_page__admin_page__'
-                                                      . $this->_installed_pages[$page]->get_menu_map()->menu_slug
-                                                      . '_'
-                                                      . $this->_installed_pages[$page]->get_admin_page_name();
-                    $page_runtime                   = 'return "'
-                                                      . $this->_caffeinated_extends[$this->_current_caf_extend_slug]["admin_page"]
-                                                      . '";';
-                    $hook_function_path = create_function('$path_to_file', $path_runtime);
-                    $hook_function_page = create_function('$admin_page', $page_runtime);
-                    add_filter($path_hook, $hook_function_path);
-                    add_filter($page_hook, $hook_function_page);
+                    $admin_page_name = $this->_installed_pages[$page]->get_admin_page_name();
+                    $caf_path = $this->_caffeinated_extends[$this->_current_caf_extend_slug]['path'];
+                    $caf_admin_page = $this->_caffeinated_extends[$this->_current_caf_extend_slug]['admin_page'];
+                    add_filter(
+                        "FHEE__EE_Admin_Page_Init___initialize_admin_page__path_to_file__{$menu_slug}_{$admin_page_name}",
+                        function($path_to_file) use ($caf_path) {
+                            return $caf_path;
+                        }
+                    );
+                    add_filter(
+                        "FHEE__EE_Admin_Page_Init___initialize_admin_page__admin_page__{$menu_slug}_{$admin_page_name}",
+                        function ($admin_page) use ($caf_admin_page)
+                        {
+                            return $caf_admin_page;
+                        }
+                    );
                     $extend = true;
                 }
                 //let's do the registered hooks
