@@ -441,7 +441,19 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
             false
         );
         foreach ($shortcodes as $field => $shortcode_array) {
-            $codes[$field] = implode(', ', array_keys($shortcode_array));
+            $available_shortcodes = array();
+            foreach ($shortcode_array as $shortcode => $shortcode_details) {
+                $field_id = $field === '[NEWSLETTER_CONTENT]'
+                    ? 'content'
+                    : $field;
+                $field_id = 'batch-message-' . strtolower($field_id);
+                $available_shortcodes[] = '<span class="js-shortcode-selection" data-value="'
+                                          . $shortcode
+                                          . '" data-linked-input-id="' . $field_id . '">'
+                                          . $shortcode
+                                          . '</span>';
+            }
+            $codes[$field] = implode(', ', $available_shortcodes);
         }
         $shortcodes = $codes;
         $form_template = REG_CAF_TEMPLATE_PATH . 'newsletter-send-form.template.php';

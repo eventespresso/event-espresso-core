@@ -39,7 +39,7 @@
                     <section>
                         <label for="batch-message-from"><?php _e('From:', 'event_espresso'); ?></label>
                         <span id="shortcode-toggle-from" class="alignright dashicons dashicons-menu shortcodes-info ee-icon-size-22 clickable"></span><br>
-                        <div id="shortcode-container-from" class="shortcodes-info-container" style="display:none">
+                        <div id="shortcode-container-from" class="shortcodes-info-container ee_shortcode_chooser_container" style="display:none">
                              <p><?php _e('The following shortcodes can be used in the from field:', 'event_espresso'); ?></p>
                              <p><?php echo $shortcodes['From']; ?></p>
                         </div>
@@ -48,7 +48,7 @@
                     <section>
                         <label for="batch-message-subject"><?php _e('Subject:', 'event_espresso'); ?></label>
                         <span id="shortcode-toggle-subject" class="alignright dashicons dashicons-menu shortcodes-info ee-icon-size-22 clickable"></span><br>
-                        <div id="shortcode-container-subject"class="shortcodes-info-container" style="display:none">
+                        <div id="shortcode-container-subject"class="shortcodes-info-container ee_shortcode_chooser_container" style="display:none">
                              <p><?php _e('The following shortcodes can be used in the subject field:', 'event_espresso'); ?></p>
                              <p><?php echo $shortcodes['Subject']; ?></p>
                         </div>
@@ -57,7 +57,7 @@
                     <section>
                         <label for="batch-message-content"><?php _e('Message Content:', 'event_espresso'); ?></label>
                         <span id="shortcode-toggle-content" class="alignright dashicons dashicons-menu shortcodes-info ee-icon-size-22 clickable"></span><br>
-                        <div id="shortcode-container-content" class="shortcodes-info-container" style="display:none">
+                        <div id="shortcode-container-content" class="shortcodes-info-container ee_shortcode_chooser_container" style="display:none">
                              <p><?php _e('The following shortcodes can be used in the content area:', 'event_espresso'); ?></p>
                              <p><?php echo $shortcodes['[NEWSLETTER_CONTENT]']; ?></p>
                         </div>
