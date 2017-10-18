@@ -1431,43 +1431,41 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             : '';
         switch ($orderby_field) {
             case '_REG_ID':
-                $orderby_field = 'REG_ID';
+                $orderby = array('REG_ID');
                 break;
             case '_Reg_status':
-                $orderby_field = 'STS_ID';
+                $orderby = array('STS_ID');
                 break;
             case 'ATT_fname':
-                $orderby_field = array('Attendee.ATT_fname', 'Attendee.ATT_lname');
+                $orderby = array('Attendee.ATT_fname', 'Attendee.ATT_lname');
                 break;
             case 'ATT_lname':
-                $orderby_field = array('Attendee.ATT_lname', 'Attendee.ATT_fname');
+                $orderby = array('Attendee.ATT_lname', 'Attendee.ATT_fname');
                 break;
             case 'event_name':
-                $orderby_field = 'Event.EVT_name';
+                $orderby = array('Event.EVT_name');
                 break;
             case 'DTT_EVT_start':
-                $orderby_field = 'Event.Datetime.DTT_EVT_start';
+                $orderby = array('Event.Datetime.DTT_EVT_start');
                 break;
             default: //'REG_date'
-                $orderby_field = 'REG_date';
+                $orderby = array('REG_date');
         }
 
         //order
         $order = ! empty($this->_req_data['order'])
             ? sanitize_text_field($this->_req_data['order'])
             : 'DESC';
-
-        //mutate orderby_field
-        $orderby_field = array_combine(
-            (array) $orderby_field,
-            array_fill(0, strlen($orderby_field), $order)
+        $orderby = array_combine(
+            $orderby,
+            array_fill(0, count($orderby), $order)
         );
         //because there are many registrations with the same date, define
         //a secondary way to order them, otherwise MySQL seems to be a bit random
-        if (empty($order['REG_ID'])) {
-            $orderby_field['REG_ID'] = $order;
+        if (empty($orderby['REG_ID'])) {
+            $orderby['REG_ID'] = $order;
         }
-        return array('order_by' => $orderby_field);
+        return array('order_by' => $orderby);
     }
 
 
