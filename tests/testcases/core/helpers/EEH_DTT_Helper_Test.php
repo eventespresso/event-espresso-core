@@ -189,10 +189,12 @@ class EEH_DTT_Helper_Test extends EE_UnitTestCase
                 $this->fail(
                     sprintf(
                         __(
-                            'The WP GMT offset setting %1$s has thrown an Exception, but should not have!',
+                            'The WP GMT offset setting %1$s has thrown the following Exception, but should not have! %2$s %3$s',
                             'event_espresso'
                         ),
-                        $gmt_offset
+                        $gmt_offset,
+                        '<br />',
+                        $e->getMessage()
                     )
                 );
                 unset($gmt_offset);
@@ -476,4 +478,4 @@ class EEH_DTT_Helper_Test extends EE_UnitTestCase
 
 }
 // End of file EEH_DTT_Helper_Test.php
-// Location: /EEH_DTT_Helper_Test.php
+// Location: tests/testcases/core/helpers/EEH_DTT_Helper_Test.php
