@@ -75,10 +75,14 @@ class Extend_Support_Admin_Page extends Support_Admin_Page
         add_meta_box(
             'espresso_additional_information_support',
             esc_html__('Additional Information', 'event_espresso'),
-            create_function(
-                '$post, $metabox',
-                'echo EEH_Template::display_template( $metabox["args"]["template_path"], "", TRUE);'
-            ),
+            function ($post, $metabox)
+            {
+                echo EEH_Template::display_template(
+                    $metabox['args']['template_path'],
+                    '',
+                    true
+                );
+            },
             $this->_current_screen->id,
             'normal',
             'high',
