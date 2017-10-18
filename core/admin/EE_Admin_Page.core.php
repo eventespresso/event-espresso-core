@@ -2796,10 +2796,17 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             );
         }
         //if $create_func is true (default) then we automatically create the function for displaying the actual meta box.  If false then we take the $callback reference passed through and use it instead (so callers can define their own callback function/method if they wish)
-        $call_back_func = $create_func ? create_function(
-            '$post, $metabox',
-            'do_action( "AHEE_log", __FILE__, __FUNCTION__, ""); echo EEH_Template::display_template( $metabox["args"]["template_path"], $metabox["args"]["template_args"], TRUE );'
-        ) : $callback;
+        $call_back_func = $create_func
+            ? function ($post, $metabox)
+            {
+                do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+                echo EEH_Template::display_template(
+                    $metabox['args']['template_path'],
+                    $metabox['args']['template_args'],
+                    true
+                );
+            }
+            : $callback;
         add_meta_box(
             str_replace('_', '-', $action) . '-mbox',
             $title,
