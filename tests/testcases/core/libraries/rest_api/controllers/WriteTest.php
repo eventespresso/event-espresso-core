@@ -76,8 +76,8 @@ class WriteTest extends \EE_REST_TestCase
         );
         $response = rest_do_request($req);
         $response_data = $response->get_data();
-        $this->assertEmpty(
-            $response_data['code'],
+        $this->assertTrue(
+            empty($response_data['code']),
             '$response_data[\'code\'] was not empty and actually contained: ' . $response_data['code']
             . "\n" . ' The full response was: ' . var_export($response_data, true)
         );
@@ -112,8 +112,8 @@ class WriteTest extends \EE_REST_TestCase
         );
         $response = rest_do_request($req);
         $response_data = $response->get_data();
-        $this->assertEmpty(
-            $response_data['code'],
+        $this->assertTrue(
+            empty($response_data['code']),
             '$response_data[\'code\'] was not empty and actually contained: ' . $response_data['code']
             . "\n" . ' The full response was: ' . var_export($response_data, true)
         );
