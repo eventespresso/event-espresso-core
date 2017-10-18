@@ -1460,7 +1460,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         //mutate orderby_field
         $orderby_field = array_combine(
             (array) $orderby_field,
-            array_fill(0, count($orderby_field), $order)
+            array_fill(0, strlen($orderby_field), $order)
         );
         //because there are many registrations with the same date, define
         //a secondary way to order them, otherwise MySQL seems to be a bit random
