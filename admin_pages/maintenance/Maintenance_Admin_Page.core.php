@@ -755,9 +755,13 @@ class Maintenance_Admin_Page extends EE_Admin_Page
                             )
                             . EEH_HTML::p(
                                 EEH_HTML::strong(
-                                    esc_html__(
-                                        'Note: please enter the dates in UTC+0',
-                                        'event_espresso'
+                                    sprintf(
+                                        esc_html__(
+                                            'Note: please enter the dates in UTC (You can use %1$sthis online tool%2$s to assist with conversions).',
+                                            'event_espresso'
+                                        ),
+                                        '<a href="https://www.timeanddate.com/worldclock/converter.html">',
+                                        '</a>'
                                     )
                                 )
                             )
