@@ -1119,7 +1119,9 @@ class EED_Messages extends EED_Module
     {
         $generated_queue = self::generate_now($message_ids);
         //now let's just trigger sending immediately from this queue.
-        $messages_sent = $generated_queue->execute();
+        $messages_sent = $generated_queue instanceof EE_Messages_Queue
+            ? $generated_queue->execute()
+            : 0;
         if ($messages_sent) {
             EE_Error::add_success(
                 esc_html(
