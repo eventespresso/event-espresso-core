@@ -155,8 +155,7 @@ jQuery(document).ready(function($) {
             var $shortcodeContainer = $('.ee_shortcode_chooser_container', '.batch-message-edit-fields');
             if (! this.shortcodeClickEventRegistered) {
                 this.shortcodeClickEventRegistered = true;
-                $('.js-shortcode-selection', $shortcodeContainer).bind('click.shortcodeClick', function(e){
-                    e.stopPropagation();
+                $('.js-shortcode-selection', $shortcodeContainer).on('click.shortcodeClick', function(e){
                     EENewsletterTrigger.shortCodePickerClickEvent(this);
                 })
             }
