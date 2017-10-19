@@ -20,7 +20,6 @@ use EEM_Base;
 use EE_Change_Log;
 use Exception;
 use InvalidArgumentException;
-use No3x\WPML\ORM\Query;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
 
@@ -223,11 +222,11 @@ class DatetimeOffsetFix extends JobHandler
             $where_conditions = array();
             $query_to_run .= ' SET ' . $field_query;
             if ($start_date_range instanceof DbSafeDateTime) {
-                $start_date = $start_date_range->format('Y-m-d H:i:s');
+                $start_date = $start_date_range->format(EE_Datetime_Field::mysql_timestamp_format);
                 $where_conditions[] = "{$field_name} > '{$start_date}'";
             }
             if ($end_date_range instanceof DbSafeDateTime) {
-                $end_date = $end_date_range->format('Y-m-d H:i:s');
+                $end_date = $end_date_range->format(EE_Datetime_Field::mysql_timestamp_format);
                 $where_conditions[] = "{$field_name} < '{$end_date}'";
             }
             if ($where_conditions) {
