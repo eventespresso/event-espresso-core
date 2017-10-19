@@ -811,12 +811,12 @@ class Maintenance_Admin_Page extends EE_Admin_Page
                 //save offset data so batch processor can get it.
                 DatetimeOffsetFix::updateOffset($form->get_input_value('offset_input'));
                 $utc_timezone = new DateTimeZone('UTC');
-                $date_range_start_date = DbSafeDateTime::createFromFormat(
+                $date_range_start_date = DateTime::createFromFormat(
                     'm/d/Y H:i:s',
                     $form->get_input_value('date_range_start_date') . ' 00:00:00',
                     $utc_timezone
                 );
-                $date_range_end_date = DbSafeDateTime::createFromFormat(
+                $date_range_end_date = DateTime::createFromFormat(
                         'm/d/Y H:i:s',
                         $form->get_input_value('date_range_end_date') . ' 23:59:59',
                         $utc_timezone

@@ -439,7 +439,7 @@ class DatetimeOffsetFix extends JobHandler
     {
         $start_date = get_option(self::OPTION_KEY_OFFSET_RANGE_START_DATE, null);
         try {
-            $datetime = DbSafeDateTime::createFromFormat('U', $start_date, new DateTimeZone('UTC'));
+            $datetime = DateTime::createFromFormat('U', $start_date, new DateTimeZone('UTC'));
             $start_date = $datetime instanceof DateTime
                 ? DbSafeDateTime::createFromDateTime($datetime)
                 : null;
@@ -473,7 +473,7 @@ class DatetimeOffsetFix extends JobHandler
     {
         $end_date = get_option(self::OPTION_KEY_OFFSET_RANGE_END_DATE, null);
         try {
-            $datetime = DbSafeDateTime::createFromFormat('U', $end_date, new DateTimeZone('UTC'));
+            $datetime = DateTime::createFromFormat('U', $end_date, new DateTimeZone('UTC'));
             $end_date = $datetime instanceof Datetime
                 ? DbSafeDateTime::createFromDateTime($datetime)
                 : null;
