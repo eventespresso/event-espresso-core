@@ -114,13 +114,16 @@ class EEH_DTT_Helper
             // although we don't know the TZ abbreviation, we know the UTC offset
             $timezone_string = timezone_name_from_abbr(null, $gmt_offset);
             //only use this timezone_string IF it's current offset matches the given offset
-            try {
-                $offset = self::get_timezone_offset(new DateTimeZone($timezone_string));
-                if ($offset !== $gmt_offset) {
+            if(! empty($timezone_string)) {
+                $offset  = null;
+                try {
+                    $offset = self::get_timezone_offset(new DateTimeZone($timezone_string));
+                    if ($offset !== $gmt_offset) {
+                        $timezone_string = false;
+                    }
+                } catch (Exception $e) {
                     $timezone_string = false;
                 }
-            } catch (Exception $e) {
-                $timezone_string = false;
             }
         }
         // better have a valid timezone string by now, but if not, sigh... loop thru  the timezone_abbreviations_list()...
@@ -270,17 +273,18 @@ class EEH_DTT_Helper
      */
     public static function get_timezone_string_from_abbreviations_list($gmt_offset = 0, $coerce = true)
     {
+        $gmt_offset =  (int) $gmt_offset;
         /** @var array[] $abbreviations */
-        $abbreviations = timezone_abbreviations_list();
+        $abbreviations = DateTimeZone::listAbbreviations();
         foreach ($abbreviations as $abbreviation) {
-            foreach ($abbreviation as $city) {
-                if ($city['offset'] === $gmt_offset && $city['dst'] === false) {
+            foreach ($abbreviation as $timezone) {
+                if ((int) $timezone['offset'] === $gmt_offset && (bool) $timezone['dst'] === false) {
                     try {
-                        $offset = self::get_timezone_offset(new DateTimeZone($city['timezone_id']));
+                        $offset = self::get_timezone_offset(new DateTimeZone($timezone['timezone_id']));
                         if ($offset !== $gmt_offset) {
                             continue;
                         }
-                        return $city['timezone_id'];
+                        return $timezone['timezone_id'];
                     } catch (Exception $e) {
                         continue;
                     }
@@ -303,7 +307,7 @@ class EEH_DTT_Helper
                     'The provided GMT offset (%1$s), is invalid, please check with %2$sthis list%3$s for what valid timezones can be used',
                     'event_espresso'
                 ),
-                $gmt_offset,
+                $gmt_offset / HOUR_IN_SECONDS,
                 '<a href="http://www.php.net/manual/en/timezones.php">',
                 '</a>'
             )
