@@ -179,6 +179,9 @@ jQuery(document).ready(function($) {
          * @param {string} shortcodeRequested
          */
         addShortcodeToInput: function(inputId, shortcodeRequested) {
+            if (typeof inputId !== 'string' || typeof shortcodeRequested !== 'string') {
+                return;
+            }
             var input = document.getElementById(inputId);
             var $input = $(input);
 
