@@ -110,6 +110,7 @@ class EEH_DTT_Helper_Test extends EE_UnitTestCase
         $orig_gmt_offset      = get_option('gmt_offset');
         // set timezone string to empty string
         update_option('timezone_string', '');
+        $this->assertEmpty(get_option('timezone_string'));
         $gmt_offsets = array(
             -12,
             -11.5,
@@ -171,17 +172,16 @@ class EEH_DTT_Helper_Test extends EE_UnitTestCase
             update_option('gmt_offset', $gmt_offset);
             try {
                 $timezone_string = EEH_DTT_Helper::get_valid_timezone_string();
-                if (empty($timezone_string)) {
-                    $this->fail(
-                        sprintf(
-                            __(
-                                'The WP GMT offset setting %1$s has resulted in an invalid timezone_string!',
-                                'event_espresso'
-                            ),
-                            $gmt_offset
-                        )
-                    );
-                }
+                $this->assertNotEmpty(
+                    $timezone_string,
+                    sprintf(
+                        __(
+                            'The WP GMT offset setting %1$s has resulted in an invalid timezone_string!',
+                            'event_espresso'
+                        ),
+                        $gmt_offset
+                    )
+                );
             } catch (EE_Error $e) {
                 $gmt_offset = $gmt_offset >= 0 ? '+' . (string)$gmt_offset : (string)$gmt_offset;
                 $gmt_offset = str_replace(array('.25', '.5', '.75'), array(':15', ':30', ':45'), $gmt_offset);
