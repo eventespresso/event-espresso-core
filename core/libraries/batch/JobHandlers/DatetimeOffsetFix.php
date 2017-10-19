@@ -167,7 +167,7 @@ class DatetimeOffsetFix extends JobHandler
                     $inner_query[$model_field->get_table_column()] = $model_field->get_table_column() . ' = '
                                      . $sql_date_function . '('
                                      . $model_field->get_table_column()
-                                     . ", INTERVAL $offset MINUTE)";
+                                     . ", INTERVAL {$offset} MINUTE)";
                     $fields_affected[] = $model_field;
                 }
             }
