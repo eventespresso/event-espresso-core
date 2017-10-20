@@ -14,6 +14,9 @@ class EE_Submit_Input extends EE_Form_Input_Base{
 	 * @param array $options
 	 */
 	public function __construct($options = array()){
+        $options['html_label_text'] = ! empty($options['html_label_text'])
+            ? $options['html_label_text']
+            : $options['default'];
 		$this->_set_display_strategy(new EE_Submit_Input_Display_Strategy());
 		$this->_set_normalization_strategy(new EE_Text_Normalization());
 		$this->_add_validation_strategy( new EE_Plaintext_Validation_Strategy() );
