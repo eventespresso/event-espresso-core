@@ -1,4 +1,6 @@
 <?php
+/** @type array $registrations_for_free_events */
+
 if( is_array( $registrations_for_free_events ) && ! empty( $registrations_for_free_events ) ) {
 	echo apply_filters(
 		'FHEE__registration_page_payment_options__no_payment_required_hdr',
@@ -27,6 +29,4 @@ if( is_array( $registrations_for_free_events ) && ! empty( $registrations_for_fr
 		}
 	}
 }
-echo $default_hidden_inputs;
-echo $extra_hidden_inputs;
 ?>

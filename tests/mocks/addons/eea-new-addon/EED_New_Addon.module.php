@@ -54,7 +54,7 @@ class EED_New_Addon extends EED_Module {
 	 }
 
 	 public static function get_new_addon(){
-		 echo json_encode( array( 'response' => 'ok', 'details' => 'you have made an ajax request!') );
+		 echo wp_json_encode( array( 'response' => 'ok', 'details' => 'you have made an ajax request!') );
 		 die;
 	 }
 

@@ -104,10 +104,14 @@ class AttendeesReport extends JobHandlerFile {
 					$country_name_field = \EEM_Country::instance()->field_settings_for( 'CNT_name' );
 					$csv_row[ __( 'Country', 'event_espresso' ) ] = $attendee_row[ $country_name_field->get_qualified_column() ];
 				}else{
-					$csv_row[ $field_obj->get_nicename() ] = $attendee_row[ $field_obj->get_qualified_column() ];
+					$csv_row[ wp_specialchars_decode($field_obj->get_nicename(), ENT_QUOTES) ] = $attendee_row[ $field_obj->get_qualified_column() ];
 				}
 			}
-			$csv_data[] = $csv_row;
+			$csv_data[] = apply_filters(
+			    'FHEE___EventEspresso_core_libraries_batch_JobHandlers_AttendeesReport__get_csv_data__row',
+                $csv_row,
+                $attendee_row
+            );
 		}
 		return $csv_data;
 	}

@@ -1,4 +1,7 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) {
+<?php
+use EventEspresso\core\interfaces\ResettableInterface;
+
+if ( ! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
 do_action('AHEE_log', __FILE__, __FUNCTION__, '');
@@ -11,12 +14,13 @@ do_action('AHEE_log', __FILE__, __FUNCTION__, '');
  * This data is used for generating the Transaction and Registrations, and the
  * Line Items on cart are themselves saved for creating a persistent snapshot of
  * what was purchased and for how much.
+ * @ version        2.0
  *
  * @version        2.0
  * @subpackage     includes/core/EE_Cart.core.php
  * @author         Mike Nelson, Brent Christensen
  */
-class EE_Cart
+class EE_Cart implements ResettableInterface
 {
 
     /**
@@ -98,7 +102,7 @@ class EE_Cart
     {
         do_action('AHEE_log', __FILE__, __FUNCTION__, '');
         $this->set_session($session);
-        if ($grand_total instanceof EE_Line_Item) {
+        if ($grand_total instanceof EE_Line_Item && $grand_total->is_total()) {
             $this->set_grand_total_line_item($grand_total);
         }
     }
@@ -202,6 +206,9 @@ class EE_Cart
      */
     public function get_tickets()
     {
+        if ($this->_grand_total === null ) {
+            return array();
+        }
         return EEH_Line_Item::get_ticket_line_items($this->_grand_total);
     }
 

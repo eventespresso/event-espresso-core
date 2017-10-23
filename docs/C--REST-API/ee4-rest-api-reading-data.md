@@ -7,7 +7,7 @@ This article gives an overview of how to read data from the EE4 REST API include
 Send an HTTP GET request to the resource's base URI to get ALL the results, eg an HTTP GET request to
 
 ```
-http://demoee.org/demo/wp-json/ee/v4.8.29/events
+http://demoee.org/wp-json/ee/v4.8.29/events
 ```
 
 will request a collection events, and will return a response something like this:
@@ -136,10 +136,48 @@ will request a collection events, and will return a response something like this
 
 Some fields in Event Espresso can represent infinity, which isn't part of the JSON specification. So when fields have this value, they will instead return the special value: -1 for any requests to EE namespaces before 4.8.36, and NULL for requests to EE namespace 4.8.36 or later (this change was made because -1 can be ambiguous).
 
+###Serialized PHP Objects in Responses Are Removed
+
+There are some database columns where we store serialized PHP objects, but when reading that data over the EE4 REST 
+API, we replace these values with a JSON "error" object containing keys "error_code", and "error_message".
+E.g., normally answer entities look like this
+
+```json
+{
+  "ANS_ID": 1,
+  "ANS_value": [
+    "b",
+    "c"
+  ],
+...
+}
+```
+or
+```json
+{
+  "ANS_ID": 2,
+  "ANS_value": "foobar",
+...
+}
+```
+
+but if the answer somehow contains a serialized PHP object in the database in its "ANS_value" column, "ANS_value" will be 
+replaced with a JSON error object, like this
+```json
+{
+"ANS_ID": 3,
+  "ANS_value": {
+    "error_code": "php_object_not_return",
+    "error_message": "The value of this field in the database is a PHP object, which can&#039;t be represented in JSON."
+  },
+  ...
+}
+```
+
 ### Datetimes and Timezones
 Since 4.9.0, all datetimes returned in the EE4 REST API are in the site's default timezone (see the [site_info endpoint](https://github.com/eventespresso/event-espresso-core/blob/master/docs/C--REST-API/ee4-rest-api-introduction.md#site-info)  to find which timezone that is). This is usually the timezone you want to display to users, and their input to you will usually be in this timezone too.
 
-However, if you want more control of how times are displayed (eg you want to display datetimes in the current user's timezone, or the timezone of an event's venue), you'd probably prefer to retrieve the times in UTC. Since 4.9.9, all local datetimes properties have a corresponding datetiem property in UTC. These corresponding properties have the same name, but with `_gmt` appended onto the end (similar to how WP API's posts have `post_date` and `post_date_gmt`). When sending data to the EE4 REST API, you can use either the local datetime properties, or the UTC datetime properties. Eg, `http://demoee.org/demo/wp-json/ee/v4.8.29/events?where[EVT_created]=2016-08-19T08:00:00` works (retrives all events created on August 19th 2016 at exactly 8am in the site's local time, which can be found on the [site_info endpoint](https://github.com/eventespresso/event-espresso-core/blob/master/docs/C--REST-API/ee4-rest-api-introduction.md#site-info)), as does `http://demoee.org/demo/wp-json/ee/v4.8.29/events?where[EVT_created_gmt]=2016-08-19T16:00:00` (which retrieves all events created at exactly 4pm UTC).
+However, if you want more control of how times are displayed (eg you want to display datetimes in the current user's timezone, or the timezone of an event's venue), you'd probably prefer to retrieve the times in UTC. Since 4.9.9, all local datetimes properties have a corresponding datetiem property in UTC. These corresponding properties have the same name, but with `_gmt` appended onto the end (similar to how WP API's posts have `post_date` and `post_date_gmt`). When sending data to the EE4 REST API, you can use either the local datetime properties, or the UTC datetime properties. Eg, `http://demoee.org/wp-json/ee/v4.8.29/events?where[EVT_created]=2016-08-19T08:00:00` works (retrives all events created on August 19th 2016 at exactly 8am in the site's local time, which can be found on the [site_info endpoint](https://github.com/eventespresso/event-espresso-core/blob/master/docs/C--REST-API/ee4-rest-api-introduction.md#site-info)), as does `http://demoee.org/wp-json/ee/v4.8.29/events?where[EVT_created_gmt]=2016-08-19T16:00:00` (which retrieves all events created at exactly 4pm UTC).
 
 ### featured_image_url removed in 4.8.36
 
@@ -270,7 +308,7 @@ The EE4 JSON REST API is very extendible by addons, so client code should expect
 ]
 ```
 
-Also, it is planned to maintain the API for each version of core from 4.8.29 onwards. This means that although EE core might be on version 4.10.34, you should still be able to send requests to `http://demoee.org/demo/wp-json/ee/v4.8.29/events` and expect to see the same data in the same format as when EE core was at version 4.8.29 (although that versioned route might have additional properties added in future versions; eg version 4.9.9 adds `EVT_created_gmt` to all events listed on `http://demoee.org/wp-json/ee/v4.8.27/events`). To get data in it's true format as stored in the database, however, you would send your requests the version of the EE4 REST API with the highest version number. You can find out which versions are supported by looking at the index page's "ee", "served_core_versions" parameter. Here is a sample value:
+Also, it is planned to maintain the API for each version of core from 4.8.29 onwards. This means that although EE core might be on version 4.10.34, you should still be able to send requests to `http://demoee.org/wp-json/ee/v4.8.29/events` and expect to see the same data in the same format as when EE core was at version 4.8.29 (although that versioned route might have additional properties added in future versions; eg version 4.9.9 adds `EVT_created_gmt` to all events listed on `http://demoee.org/wp-json/ee/v4.8.27/events`). To get data in it's true format as stored in the database, however, you would send your requests the version of the EE4 REST API with the highest version number. You can find out which versions are supported by looking at the index page's "ee", "served_core_versions" parameter. Here is a sample value:
 
 ```json
 "ee": {

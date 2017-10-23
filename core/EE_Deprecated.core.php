@@ -15,7 +15,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  *
  * This file contains all deprecated actions, filters, functions, and classes in EE.
  * DO NOT ADD NEW CODE TO THE TOP OF THIS FILE !!!
- * PLEASE ADD ALL NEW CODE TO THE BOTTOM THIS FILE !!!
+ * PLEASE ADD ALL NEW CODE TO THE BOTTOM OF THIS FILE !!!
  * IF YOU ADD CODE TO THIS FILE, WHY NOT TRY ADDING IT TO THE BOTTOM ?
  * THE WHITE ZONE IS FOR LOADING AND UNLOADING ONLY,
  * IF YOU HAVE TO LOAD OR UNLOAD, GO TO THE WHITE ZONE !!!
@@ -24,6 +24,43 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @subpackage  helpers
  * @since       4.5.0
  */
+/**
+ * this function can be used to simplify generating a DIW notice for a deprecated action or filter
+ *
+ * @param string $deprecated_filter
+ * @param string $replacement
+ * @param string $replacement_location
+ * @param string $version_deprecated
+ * @param string $version_applies
+ * @param string $action_or_filter
+ */
+function deprecated_espresso_action_or_filter_doing_it_wrong(
+	$deprecated_filter,
+	$replacement,
+	$replacement_location,
+	$version_deprecated,
+	$version_applies,
+	$action_or_filter = 'action'
+) {
+	$action_or_filter = $action_or_filter === 'action'
+		? esc_html__( 'action', 'event_espresso' )
+		: esc_html__( 'filter', 'event_espresso' );
+	EE_Error::doing_it_wrong(
+		$deprecated_filter,
+		sprintf(
+			__(
+				'This %1$s is deprecated.  It *may* work as an attempt to build in backwards compatibility.  However, it is recommended to use the following new %1$s: %4$s"%2$s" found in "%3$s"',
+				'event_espresso'
+			),
+			$action_or_filter,
+			$replacement,
+			$replacement_location,
+			'<br />'
+		),
+		$version_deprecated,
+		$version_applies
+	);
+}
 /**
  * ee_deprecated__registration_checkout__button_text
  *
@@ -953,3 +990,180 @@ class EE_Null_Address_Formatter extends \EventEspresso\core\services\address\for
 class EE_Generic_Address extends \EventEspresso\core\domain\entities\GenericAddress {}
 
 
+
+
+add_filter(
+	'FHEE__EventEspresso_modules_events_archive_EventsArchiveIframe__display__css',
+	function($event_list_iframe_css) {
+		if ( ! has_filter( 'FHEE__EventsArchiveIframe__event_list_iframe__css' )) {
+			return $event_list_iframe_css;
+		}
+		deprecated_espresso_action_or_filter_doing_it_wrong(
+			'FHEE__EventsArchiveIframe__event_list_iframe__css',
+			'FHEE__EventEspresso_modules_events_archive_EventsArchiveIframe__display__css',
+			'\EventEspresso\modules\events_archive\EventsArchiveIframe::display()',
+			'4.9.14',
+			'5.0.0',
+			'filter'
+		);
+		return apply_filters(
+			'FHEE__EventsArchiveIframe__event_list_iframe__css',
+			$event_list_iframe_css
+		);
+	}
+);
+add_filter(
+	'FHEE__EventEspresso_modules_events_archive_EventsArchiveIframe__display__js',
+	function($event_list_iframe_js) {
+		if ( ! has_filter( 'FHEE__EED_Ticket_Selector__ticket_selector_iframe__js' )) {
+			return $event_list_iframe_js;
+		}
+		deprecated_espresso_action_or_filter_doing_it_wrong(
+			'FHEE__EED_Ticket_Selector__ticket_selector_iframe__js',
+			'FHEE__EventEspresso_modules_events_archive_EventsArchiveIframe__display__js',
+			'\EventEspresso\modules\events_archive\EventsArchiveIframe::display()',
+			'4.9.14',
+			'5.0.0',
+			'filter'
+		);
+		return apply_filters(
+			'FHEE__EED_Ticket_Selector__ticket_selector_iframe__js',
+			$event_list_iframe_js
+		);
+	}
+);
+add_action(
+	'AHEE__EE_Capabilities__addCaps__complete',
+	function($capabilities_map) {
+		if ( ! has_action( 'AHEE__EE_Capabilities__init_role_caps__complete' )) {
+			return;
+		}
+		deprecated_espresso_action_or_filter_doing_it_wrong(
+			'AHEE__EE_Capabilities__init_role_caps__complete',
+			'AHEE__EE_Capabilities__addCaps__complete',
+			'\EE_Capabilities::addCaps()',
+			'4.9.42',
+			'5.0.0'
+		);
+		do_action(
+			'AHEE__EE_Capabilities__init_role_caps__complete',
+            $capabilities_map
+		);
+	}
+);
+
+add_filter(
+	'FHEE_EventEspresso_core_services_commands_attendee_CreateAttendeeCommandHandler__findExistingAttendee__existing_attendee',
+	function($existing_attendee, $registration, $attendee_data) {
+		if ( ! has_filter( 'FHEE_EE_Single_Page_Checkout__save_registration_items__find_existing_attendee' )) {
+			return $existing_attendee;
+		}
+		deprecated_espresso_action_or_filter_doing_it_wrong(
+			'FHEE_EE_Single_Page_Checkout__save_registration_items__find_existing_attendee',
+			'FHEE_EventEspresso_core_services_commands_attendee_CreateAttendeeCommandHandler__findExistingAttendee__existing_attendee',
+			'\EventEspresso\core\services\commands\attendee\CreateAttendeeCommandHandler::findExistingAttendee()',
+			'4.9.34',
+			'5.0.0',
+			'filter'
+		);
+		return apply_filters(
+            'FHEE_EE_Single_Page_Checkout__save_registration_items__find_existing_attendee',
+            $existing_attendee, $registration, $attendee_data
+        );
+	},
+	10,3
+);
+
+/**
+ * Class EE_Event_List_Query
+ *
+ * @deprecated 4.9.40
+ */
+class EE_Event_List_Query extends WP_Query
+{
+
+    private $title;
+
+    private $css_class;
+
+    private $category_slug;
+
+    /**
+     * EE_Event_List_Query constructor.
+     *
+     * @param array $args
+     */
+    public function __construct($args = array())
+    {
+        \EE_Error::doing_it_wrong(
+            __METHOD__,
+            __(
+                'Usage is deprecated. Please use \EventEspresso\core\domain\services\wp_queries\EventListQuery instead.',
+                'event_espresso'
+            ),
+            '4.9.27',
+            '5.0.0'
+        );
+        $this->title = isset($args['title']) ? $args['title'] : '';
+        $this->css_class = isset($args['css_class']) ? $args['css_class'] : '';
+        $this->category_slug = isset($args['category_slug']) ? $args['category_slug'] : '';
+        $limit = isset($args['limit']) && absint($args['limit']) ? $args['limit'] : 10;
+        // the current "page" we are viewing
+        $paged = max(1, get_query_var('paged'));
+        // Force these args
+        $args = array_merge(
+            $args, array(
+            'post_type'              => 'espresso_events',
+            'posts_per_page'         => $limit,
+            'update_post_term_cache' => false,
+            'update_post_meta_cache' => false,
+            'paged'                  => $paged,
+            'offset'                 => ($paged - 1) * $limit
+        )
+        );
+        // run the query
+        parent::__construct($args);
+    }
+
+
+
+    /**
+     * event_list_title
+     *
+     * @param string $event_list_title
+     * @return string
+     */
+    public function event_list_title($event_list_title = '')
+    {
+        if (! empty($this->title)) {
+            return $this->title;
+        }
+        return $event_list_title;
+    }
+
+
+
+    /**
+     * event_list_css
+     *
+     * @param string $event_list_css
+     * @return string
+     */
+    public function event_list_css($event_list_css = '')
+    {
+        $event_list_css .= ! empty($event_list_css)
+            ? ' '
+            : '';
+        $event_list_css .= ! empty($this->css_class)
+            ? $this->css_class
+            : '';
+        $event_list_css .= ! empty($event_list_css)
+            ? ' '
+            : '';
+        $event_list_css .= ! empty($this->category_slug)
+            ? $this->category_slug
+            : '';
+        return $event_list_css;
+    }
+
+}

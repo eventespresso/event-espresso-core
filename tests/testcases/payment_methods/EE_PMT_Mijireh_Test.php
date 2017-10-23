@@ -237,7 +237,7 @@ class EE_PMT_Mijireh_Test extends EE_UnitTestCase{
 				  'x-runtime' => '0.008036',
 				  'x-rack-cache' => 'invalidate, pass',
 				),
-				'body' => json_encode( $missing_keys ),
+				'body' => wp_json_encode( $missing_keys ),
 				'response' => array (
 				  'code' => 400,
 				  'message' => 'Bad Request',
@@ -276,7 +276,7 @@ class EE_PMT_Mijireh_Test extends EE_UnitTestCase{
 			'meta_data' => array(),
 		);
 		$response_body = array_merge( $response_body, $req_body );
-		$response_body_encoded = json_encode( $response_body );
+		$response_body_encoded = wp_json_encode( $response_body );
 		return array (
 			'headers' => array (
 			  'server' => 'nginx/1.6.2',

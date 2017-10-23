@@ -34,10 +34,13 @@ function EE_BatchRunner( continue_url, continue_data, continue_callback, cleanup
     this.cleanup_required = true;
 
     var thisBatchRunner = this;
-    window.onbeforeunload = function () {
-        thisBatchRunner.cleanup_job();
-    };
 
+    this.setup_clean_up_on_page_exit = function(){
+        window.onbeforeunload = function () {
+            thisBatchRunner.cleanup_job();
+        };
+    }
+    this.setup_clean_up_on_page_exit();
 
 
     /**
@@ -206,20 +209,35 @@ function EE_BatchRunner( continue_url, continue_data, continue_callback, cleanup
             data: data,
             success: function (response, status, xhr) {
                 var ct = xhr.getResponseHeader("content-type") || "";
-                if (ct.indexOf('html') > -1) {
-                    if (typeof( batch_runner.progress_area ) !== 'undefined') {
-                        batch_runner.update_progress(response);
-                    }
-                }
-
+                //make sure the response is valid json or we don't know what to do with it
                 if (ct.indexOf('json') > -1) {
                     if (typeof(callback) !== 'undefined') {
                         callback(response, status, xhr);
                     }
+                } else {
+                    batch_runner.handle_error(response);
                 }
+            },
+            error: function(xhr,status,error_thrown) {
+                batch_runner.handle_error(error_thrown);
             }
         });
         return false;
+    };
+
+    /**
+     * Handles when an error occurs
+     * @param error_message
+     */
+    this.handle_error = function(error_message){
+        //if client code has been good enough to provide us with an internationalized error message, add that
+        //especially nice if there is no pre-filled error_message
+        if (typeof(eei18n)!=='undefined'){
+            error_message += '<br>' + eei18n.error_message;
+        }
+        if (typeof( this.progress_area ) !== 'undefined') {
+            this.update_progress(error_message);
+        }
     };
 
 

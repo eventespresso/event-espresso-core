@@ -366,7 +366,12 @@ class CoffeeShopTest extends EE_UnitTestCase
         );
         $this->assertTrue($added);
         // attempt to brew EE_Session_Mock class which type hints for EE_Encryption
-        $session = $this->CoffeeShop->brew('EE_Session_Mock', array());
+        // but first add alias for interface
+        $this->CoffeeShop->addAliases(
+            'EventEspresso\core\services\cache\TransientCacheStorage',
+            'EventEspresso\core\services\cache\CacheStorageInterface'
+        );
+        $session = $this->CoffeeShop->brew('EE_Session_Mock');
         $this->assertInstanceOf('EE_Session_Mock', $session);
         $this->assertInstanceOf('EE_Encryption', $session->encryption());
     }

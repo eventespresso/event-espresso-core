@@ -23,11 +23,9 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 	 *
 	 * @since 4.3.0
 	 */
-	function test_loading_admin() {
-		EE_Registry::instance()->load_core('Admin');
-		$this->assertTrue( class_exists('EE_Admin') );
-
-		$admin_instance = EE_Admin::instance();
+	public function test_loading_admin() {
+        $admin_instance = EE_Registry::instance()->load_core('EE_Admin');
+        $this->assertInstanceOf('EE_Admin', $admin_instance);
 
 		//tests filters have been added that are expected here.  Remember the has_{filter/action} returns the priority set by the caller.
 		$this->assertEquals( has_filter('plugin_action_links', array($admin_instance, 'filter_plugin_actions') ), 10 );
@@ -48,7 +46,7 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 	 *
 	 * @depends test_loading_admin
 	 */
-	function test_define_all_constants() {
+	public function test_define_all_constants() {
 		$this->assertTrue( defined('EE_ADMIN_URL') );
 		$this->assertTrue( defined('EE_ADMIN_PAGES_URL') );
 		$this->assertTrue( defined('EE_ADMIN_TEMPLATE') );
@@ -65,7 +63,7 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 	 *
 	 * @depends test_loading_admin
 	 */
-	function test_filter_plugin_actions() {
+	public function test_filter_plugin_actions() {
 		//make sure maintenance class is loaded and set to 0
 		$this->setMaintenanceMode();
 		$main_file = EE_PLUGIN_BASENAME;
@@ -106,7 +104,7 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 	 *
 	 * @depends test_loading_admin
 	 */
-	function test_get_request() {
+	public function test_get_request() {
 		EE_Admin::instance()->get_request();
 		$this->assertTrue( class_exists('EE_Request_Handler') );
 		$this->assertTrue( class_exists('EE_CPT_Strategy') );
@@ -123,7 +121,7 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 	 *
 	 * @depends test_loading_admin
 	 */
-	function test_init() {
+	public function test_init() {
 		$admin = EE_Admin::instance();
 
 		//test when maintenance mode is set at level 2
@@ -170,7 +168,7 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 	 * @since 4.3.0
 	 * @depends test_loading_admin
 	 */
-	function test_remove_pages_from_nav_menu() {
+	public function test_remove_pages_from_nav_menu() {
 		//test non page post type object
 		$posttypeStub = new stdClass();
 		$posttypeStub->name = 'non_page';
@@ -194,7 +192,7 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 	 * @since 4.3.0
 	 * @depends test_loading_admin
 	 */
-	function test_enable_hidden_ee_nav_menu_metaboxes() {
+	public function test_enable_hidden_ee_nav_menu_metaboxes() {
 
 		//first we'll add dummy metabox to simulate our metaboxes.
 		add_meta_box( 'add-espresso_events', __('Event Espresso Pages', 'event_espresso'), '__return_true', 'nav-menus', 'side', 'core' );
@@ -226,7 +224,7 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 	 * @since 4.3.0
 	 * @depends test_loading_admin
 	 */
-	function test_dashboard_glance_items() {
+	public function test_dashboard_glance_items() {
 		//add some events and registrations
 		$this->factory->event->create_many(10);
 		$this->factory->registration->create_many(5, array( 'STS_ID' => EEM_Registration::status_id_not_approved ) );
@@ -244,12 +242,16 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 		$xpct_registration_title = __('Click to view all registrations', 'event_espresso');
 		$xpct_registration_assembled = sprintf( '<a class="ee-dashboard-link-registrations" href="%s" title="%s">%s</a>', $xpct_registration_url, $xpct_registration_title, $xpct_registration_text );
 
-		$generated_items = EE_Admin::instance()->dashboard_glance_items( '' );
+		$generated_items = EE_Admin::instance()->dashboard_glance_items( array() );
 		//first assert the elements are an array.
 		$this->assertInternalType('array', $generated_items);
 
 		//assert the count for the array is two
-		$this->assertcount( 2, $generated_items);
+		$this->assertCount(
+		    2,
+            $generated_items,
+            sprintf('$generated_items should have 2 elements: ', print_r($generated_items, true))
+        );
 
 		//assert that the first item matches the xpctd event string.
 		$this->assertEquals( $xpct_event_assembled, $generated_items[0] );
@@ -270,7 +272,7 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 	 * @since 4.3.0
 	 * @depends test_loading_admin
 	 */
-	function test_its_eSpresso() {
+	public function test_its_eSpresso() {
 		//test works as expected with string to correct.
 		$expected = '[ESPRESSO_CONTENT]';
 		$test = '[EXPRESSO_CONTENT]';
@@ -292,7 +294,7 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 	 * @since 4.3.0
 	 * @depends test_loading_admin
 	 */
-	function test_espresso_admin_footer() {
+	public function test_espresso_admin_footer() {
 		$actual = EE_Admin::instance()->espresso_admin_footer();
 		//assert contains powered by text.
 		$this->assertContains('Online event registration and ticketing powered by ', $actual);
@@ -308,7 +310,7 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 	 * @since 4.3.0
 	 * @depends test_loading_admin
 	 */
-	function test_modify_edit_post_link() {
+	public function test_modify_edit_post_link() {
 		//add contact post
 		$attendee = EE_Attendee::new_instance( array( 'ATT_full_name' => 'Test Dude' ) );
 		$attendee->save();

@@ -1,4 +1,7 @@
 <?php
+
+use EventEspresso\ui\browser\checkins\entities\CheckinStatusDashicon;
+
 if ( ! defined('EVENT_ESPRESSO_VERSION')) {
     exit('NO direct script access allowed');
 }
@@ -83,9 +86,19 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
                 'capability' => 'ee_edit_checkin',
                 'obj_id'     => $reg_id,
             ),
+            'toggle_checkin_status_bulk' => array(
+                'func' => '_toggle_checkin_status',
+                'noheader' => true,
+                'capability' => 'ee_edit_checkins'
+            ),
             'event_registrations'      => array(
                 'func'       => '_event_registrations_list_table',
                 'capability' => 'ee_read_checkins',
+            ),
+            'registrations_checkin_report' => array(
+                'func'       => '_registrations_checkin_report',
+                'noheader'   => true,
+                'capability' => 'ee_read_registrations',
             ),
         );
         $this->_page_routes = array_merge($this->_page_routes, $new_page_routes);
@@ -237,8 +250,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
                 'bulk_action' => ! isset($this->_req_data['event_id'])
                     ? array()
                     : array(
-                        'toggle_checkin_status' => __('Toggle Check-In', 'event_espresso'),
-                        //'trash_registrations' => __('Trash Registrations', 'event_espresso')
+                        'toggle_checkin_status_bulk' => __('Toggle Check-In', 'event_espresso'),
                     ),
             ),
         );
@@ -519,20 +531,24 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
                                                                            ->get_latest_registration_for_each_of_given_contacts($ids);
                     break;
             }
-            do_action(
+            do_action_ref_array(
                 'AHEE__Extend_Registrations_Admin_Page___newsletter_selected_send__with_registrations',
-                $registrations_used_for_contact_data,
-                $Message_Template_Group->ID()
+                array(
+                    $registrations_used_for_contact_data,
+                    $Message_Template_Group->ID()
+                )
             );
             //kept for backward compat, internally we no longer use this action.
             //@deprecated 4.8.36.rc.002
             $contacts = $id_type === 'registration'
                 ? EEM_Attendee::instance()->get_array_of_contacts_from_reg_ids($ids)
                 : EEM_Attendee::instance()->get_all(array(array('ATT_ID' => array('in', $ids))));
-            do_action(
+            do_action_ref_array(
                 'AHEE__Extend_Registrations_Admin_Page___newsletter_selected_send',
-                $contacts,
-                $Message_Template_Group->ID()
+                array(
+                    $contacts,
+                    $Message_Template_Group->ID()
+                )
             );
         }
         $query_args = array(
@@ -725,54 +741,84 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
     {
         do_action('AHEE_log', __FILE__, __FUNCTION__, '');
         $reg_id = isset($this->_req_data['_REGID']) ? $this->_req_data['_REGID'] : null;
-        /** @var EE_Registration $reg */
-        $reg = EEM_Registration::instance()->get_one_by_ID($reg_id);
+        /** @var EE_Registration $registration */
+        $registration = EEM_Registration::instance()->get_one_by_ID($reg_id);
+        $attendee = $registration->attendee();
         $this->_admin_page_title .= $this->get_action_link_or_button(
             'new_registration',
             'add-registrant',
-            array('event_id' => $reg->event_ID()),
+            array('event_id' => $registration->event_ID()),
             'add-new-h2'
         );
+        $checked_in = new CheckinStatusDashicon(EE_Checkin::status_checked_in);
+        $checked_out = new CheckinStatusDashicon(EE_Checkin::status_checked_out);
         $legend_items = array(
             'checkin'  => array(
-                'class' => 'ee-icon ee-icon-check-in',
-                'desc'  => __('This indicates the attendee has been checked in', 'event_espresso'),
+                'class' => $checked_in->cssClasses(),
+                'desc'  => $checked_in->legendLabel(),
             ),
             'checkout' => array(
-                'class' => 'ee-icon ee-icon-check-out',
-                'desc'  => __('This indicates the attendee has been checked out', 'event_espresso'),
+                'class' => $checked_out->cssClasses(),
+                'desc'  => $checked_out->legendLabel(),
             ),
         );
         $this->_template_args['after_list_table'] = $this->_display_legend($legend_items);
         $dtt_id = isset($this->_req_data['DTT_ID']) ? $this->_req_data['DTT_ID'] : null;
-        $go_back_url = ! empty($reg_id) ? EE_Admin_Page::add_query_args_and_nonce(
-            array(
-                'action'   => 'event_registrations',
-                'event_id' => EEM_Registration::instance()->get_one_by_ID($reg_id)->get_first_related('Event')->ID(),
-                'DTT_ID'   => $dtt_id,
-            ),
-            $this->_admin_base_url
-        ) : '';
+        /** @var EE_Datetime $datetime */
+        $datetime = EEM_Datetime::instance()->get_one_by_ID($dtt_id);
+        $datetime_label = '';
+        if ($datetime instanceof EE_Datetime) {
+            $datetime_label = $datetime->get_dtt_display_name(true);
+            $datetime_label .= ! empty($datetime_label)
+                ? ' (' . $datetime->get_dtt_display_name() . ')'
+                : $datetime->get_dtt_display_name();
+        }
+        $datetime_link = ! empty($dtt_id) && $registration instanceof EE_Registration
+            ? EE_Admin_Page::add_query_args_and_nonce(
+                array(
+                    'action'   => 'event_registrations',
+                    'event_id' => $registration->event_ID(),
+                    'DTT_ID'   => $dtt_id,
+                ),
+                $this->_admin_base_url
+            )
+            : '';
+        $datetime_link = ! empty($datetime_link)
+            ? '<a href="' . $datetime_link . '">'
+              . '<span id="checkin-dtt">'
+              . $datetime_label
+              . '</span></a>'
+            : $datetime_label;
+        $attendee_name = $attendee instanceof EE_Attendee
+            ? $attendee->full_name()
+            : '';
+        $attendee_link = $attendee instanceof EE_Attendee
+            ? $attendee->get_admin_details_link()
+            : '';
+        $attendee_link = ! empty($attendee_link)
+            ? '<a href="' . $attendee->get_admin_details_link() . '"'
+              . ' title="' . esc_html__('Click for attendee details', 'event_espresso') . '">'
+              . '<span id="checkin-attendee-name">'
+              . $attendee_name
+              . '</span></a>'
+            : '';
+        $event_link = $registration->event() instanceof EE_Event
+            ? $registration->event()->get_admin_details_link()
+            : '';
+        $event_link = ! empty($event_link)
+            ? '<a href="' . $event_link . '"'
+              . ' title="' . esc_html__('Click here to edit event.', 'event_espresso') . '">'
+              . '<span id="checkin-event-name">'
+              . $registration->event_name()
+              . '</span>'
+              . '</a>'
+            : '';
         $this->_template_args['before_list_table'] = ! empty($reg_id) && ! empty($dtt_id)
             ? '<h2>' . sprintf(
-                __("%s's check in records for %s at the event, %s", 'event_espresso'),
-                '<span id="checkin-attendee-name">'
-                . EEM_Registration::instance()
-                                  ->get_one_by_ID($reg_id)
-                                  ->get_first_related('Attendee')
-                                  ->full_name() . '</span>',
-                '<span id="checkin-dtt"><a href="' . $go_back_url . '">'
-                . EEM_Datetime::instance()
-                              ->get_one_by_ID($dtt_id)
-                              ->start_date_and_time() . ' - '
-                . EEM_Datetime::instance()
-                              ->get_one_by_ID($dtt_id)
-                              ->end_date_and_time() . '</a></span>',
-                '<span id="checkin-event-name">'
-                . EEM_Datetime::instance()
-                              ->get_one_by_ID($dtt_id)
-                              ->get_first_related('Event')
-                              ->get('EVT_name') . '</span>'
+                esc_html__('Displaying check in records for %1$s for %2$s at the event, %3$s', 'event_espresso'),
+                $attendee_link,
+                $datetime_link,
+                $event_link
             ) . '</h2>'
             : '';
         $this->_template_args['list_table_hidden_fields'] = ! empty($reg_id)
@@ -812,10 +858,9 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
         $nonce_ref = 'checkin_nonce';
         $this->_verify_nonce($nonce, $nonce_ref);
         //beautiful! Made it this far so let's get the status.
-        $new_status = $this->_toggle_checkin_status();
+        $new_status = new CheckinStatusDashicon($this->_toggle_checkin_status());
         //setup new class to return via ajax
-        $this->_template_args['admin_page_content'] = 'clickable trigger-checkin checkin-icons checkedin-status-'
-                                                      . $new_status;
+        $this->_template_args['admin_page_content'] = 'clickable trigger-checkin ' . $new_status->cssClasses();
         $this->_template_args['success'] = true;
         $this->_return_json();
     }
@@ -997,22 +1042,25 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
                 false
             )
             : '';
+        $checked_in = new CheckinStatusDashicon(EE_Checkin::status_checked_in);
+        $checked_out = new CheckinStatusDashicon(EE_Checkin::status_checked_out);
+        $checked_never = new CheckinStatusDashicon(EE_Checkin::status_checked_never);
         $legend_items = array(
             'star-icon'        => array(
                 'class' => 'dashicons dashicons-star-filled lt-blue-icon ee-icon-size-8',
                 'desc'  => __('This Registrant is the Primary Registrant', 'event_espresso'),
             ),
             'checkin'          => array(
-                'class' => 'ee-icon ee-icon-check-in',
-                'desc'  => __('This Registrant has been Checked In', 'event_espresso'),
+                'class' => $checked_in->cssClasses(),
+                'desc'  => $checked_in->legendLabel(),
             ),
             'checkout'         => array(
-                'class' => 'ee-icon ee-icon-check-out',
-                'desc'  => __('This Registrant has been Checked Out', 'event_espresso'),
+                'class' => $checked_out->cssClasses(),
+                'desc'  => $checked_out->legendLabel(),
             ),
             'nocheckinrecord'  => array(
-                'class' => 'dashicons dashicons-no',
-                'desc'  => __('No Check-in Record has been Created for this Registrant', 'event_espresso'),
+                'class' => $checked_never->cssClasses(),
+                'desc'  => $checked_never->legendLabel(),
             ),
             'view_details'     => array(
                 'class' => 'dashicons dashicons-search',
@@ -1082,155 +1130,76 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
         $this->display_admin_list_table_page_with_no_sidebar();
     }
 
-
+    /**
+     * Download the registrations check-in report (same as the normal registration report, but with different where
+     * conditions)
+     *
+     * @return void ends the request by a redirect or download
+     */
+    public function _registrations_checkin_report()
+    {
+        $this->_registrations_report_base('_get_checkin_query_params_from_request');
+    }
 
     /**
-     * get_attendees
+     * Gets the query params from the request, plus adds a where condition for the registration status,
+     * because on the checkin page we only ever want to see approved and pending-approval registrations
      *
-     * @param int    $per_page
-     * @param bool   $count whether to return count or data.
-     * @param bool   $trash
-     * @param string $orderby
+     * @param array     $request
+     * @param int  $per_page
+     * @param bool $count
      * @return array
-     * @throws \EE_Error
-     * @access public
      */
-    public function get_event_attendees($per_page = 10, $count = false, $trash = false, $orderby = '')
-    {
-        do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-        require_once(EE_MODELS . 'EEM_Attendee.model.php');
-        //$ATT_MDL = EEM_Attendee::instance();
-        $EVT_ID = isset($this->_req_data['event_id']) ? absint($this->_req_data['event_id']) : false;
-        $CAT_ID = isset($this->_req_data['category_id']) ? absint($this->_req_data['category_id']) : false;
-        $DTT_ID = isset($this->_req_data['DTT_ID']) ? $this->_req_data['DTT_ID'] : null;
-        $this->_req_data['orderby'] = ! empty($this->_req_data['orderby']) ? $this->_req_data['orderby'] : $orderby;
-        switch ($this->_req_data['orderby']) {
-            case '_REG_date':
-                $orderby = 'REG_date';
-                break;
-            default :
-                $orderby = 'Attendee.ATT_lname';
-//				$orderby = 'reg.REG_final_price';
-        }
-        $sort = (isset($this->_req_data['order']) && ! empty($this->_req_data['order']))
-            ? $this->_req_data['order'] : 'ASC';
-        $current_page = isset($this->_req_data['paged']) && ! empty($this->_req_data['paged'])
-            ? $this->_req_data['paged'] : 1;
-        $per_page = isset($this->_req_data['perpage']) && ! empty($this->_req_data['perpage'])
-            ? $this->_req_data['perpage'] : $per_page;
-        $offset = ($current_page - 1) * $per_page;
-        $limit = $count ? null : array($offset, $per_page);
-        $query_params = array(
-            array(
-                'Event.status' => array(
-                    'IN',
-                    array_keys(EEM_Event::instance()->get_status_array()),
-                ),
-            ),
-        );
-        if ($EVT_ID) {
-            $query_params[0]['EVT_ID'] = $EVT_ID;
-        }
-        if ($CAT_ID) {
-            throw new EE_Error(
-                "You specified a Category Id for this query. Thats odd because we are now using terms and taxonomies. So did you mean the term taxonomy id o rthe term id?"
-            );
-        }
-        //if DTT is included we do multiple datetimes.
-        if ($DTT_ID) {
-            $query_params[0]['Ticket.Datetime.DTT_ID'] = $DTT_ID;
-        }
-        //make sure we only have default where on the current regs
-        $query_params['default_where_conditions'] = 'this_model_only';
+    protected function _get_checkin_query_params_from_request(
+        $request,
+        $per_page = 10,
+        $count = false
+    ) {
+        $query_params = $this->_get_registration_query_parameters($request, $per_page, $count);
+        //unlike the regular registrations list table,
         $status_ids_array = apply_filters(
             'FHEE__Extend_Registrations_Admin_Page__get_event_attendees__status_ids_array',
             array(EEM_Registration::status_id_pending_payment, EEM_Registration::status_id_approved)
         );
         $query_params[0]['STS_ID'] = array('IN', $status_ids_array);
-        if ($trash) {
-            $query_params[0]['Attendee.status'] = EEM_CPT_Base::post_status_trashed;
-        }
-        if (isset($this->_req_data['s'])) {
-            $sstr = '%' . $this->_req_data['s'] . '%';
-            $query_params[0]['OR'] = array(
-                'Event.EVT_name'         => array('LIKE', $sstr),
-                'Event.EVT_desc'         => array('LIKE', $sstr),
-                'Event.EVT_short_desc'   => array('LIKE', $sstr),
-                'Attendee.ATT_fname'     => array('LIKE', $sstr),
-                'Attendee.ATT_lname'     => array('LIKE', $sstr),
-                'Attendee.ATT_short_bio' => array('LIKE', $sstr),
-                'Attendee.ATT_email'     => array('LIKE', $sstr),
-                'Attendee.ATT_address'   => array('LIKE', $sstr),
-                'Attendee.ATT_address2'  => array('LIKE', $sstr),
-                'Attendee.ATT_city'      => array('LIKE', $sstr),
-                'REG_final_price'        => array('LIKE', $sstr),
-                'REG_code'               => array('LIKE', $sstr),
-                'REG_count'              => array('LIKE', $sstr),
-                'REG_group_size'         => array('LIKE', $sstr),
-                'Ticket.TKT_name'        => array('LIKE', $sstr),
-                'Ticket.TKT_description' => array('LIKE', $sstr),
-            );
-        }
-        $query_params['order_by'][$orderby] = $sort;
-        $query_params['limit'] = $limit;
-        $query_params['force_join'] = array('Attendee');//force join to attendee model so that it gets cached, because we're going to need the attendee for each registration
-        if ($count) {
-            $registrations = EEM_Registration::instance()->count(
-                array($query_params[0], 'default_where_conditions' => 'this_model_only')
-            );
-        } else {
-            $registrations = EEM_Registration::instance()->get_all($query_params);
-            //		$registrations = EEM_Registration::instance();
-            //		$all_attendees = EEM_Attendee::instance()->get_event_attendees( $EVT_ID, $CAT_ID, $reg_status, $trash, $orderby, $sort, $limit, $output );
-            if (isset($registrations[0]) && $registrations[0] instanceof EE_Registration) {
-                //EEH_Debug_Tools::printr( $all_attendees[0], '$all_attendees[0]  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-                // name
-                /** @var EE_Registration $first_registration */
-                $first_registration = $registrations[0];
-                $event_obj = $first_registration->event_obj();
-                if ($event_obj) {
-                    $event_name = $first_registration->event_obj()->name();
-                    $event_date = 'TODO: we need to get date from earliest price date or should this be the actual event date?';//$first_registration->date_obj()->reg_start_date_and_time('l F j, Y,', ' g:i:s a');// isset( $registrations[0]->DTT_EVT_start ) ? date( 'l F j, Y,    g:i:s a', $registrations[0]->DTT_EVT_start ) : '';
-                    // edit event link
-                    if ($event_name !== '') {
-                        $edit_event_url = self::add_query_args_and_nonce(
-                            array('action' => 'edit_event', 'EVT_ID' => $EVT_ID),
-                            EVENTS_ADMIN_URL
-                        );
-                        $edit_event_lnk = '<a href="' . $edit_event_url . '" title="' . esc_attr__(
-                                'Edit ',
-                                'event_espresso'
-                            ) . $event_name . '">' . __('Edit Event', 'event_espresso') . '</a>';
-                        $event_name .= ' <span class="admin-page-header-edit-lnk not-bold">'
-                                       . $edit_event_lnk
-                                       . '</span>';
-                    }
-                    $back_2_reg_url = self::add_query_args_and_nonce(array('action' => 'default'), REG_ADMIN_URL);
-                    $back_2_reg_lnk = '<a href="' . $back_2_reg_url . '" title="' . esc_attr__(
-                            'click to return to viewing all registrations ',
-                            'event_espresso'
-                        ) . '">&laquo; ' . __('Back to All Registrations', 'event_espresso') . '</a>';
-                    $this->_template_args['before_admin_page_content'] = '
-				<div id="admin-page-header">
-					<h1><span class="small-text not-bold">'
-                                                                         . __('Event: ', 'event_espresso')
-                                                                         . '</span>'
-                                                                         . $event_name
-                                                                         . '</h1>
-					<h3><span class="small-text not-bold">'
-                                                                         . __('Date: ', 'event_espresso')
-                                                                         . '</span>'
-                                                                         . $event_date
-                                                                         . '</h3>
-					<span class="admin-page-header-go-back-lnk not-bold">'
-                                                                         . $back_2_reg_lnk
-                                                                         . '</span>
-				</div>
-				';
-                }
-            }
-        }
-        return $registrations;
+        return $query_params;
     }
+
+
+
+
+    /**
+     * Gets registrations for an event
+     *
+     * @param int    $per_page
+     * @param bool   $count whether to return count or data.
+     * @param bool   $trash
+     * @param string $orderby
+     * @return EE_Registration[]|int
+     * @throws \EE_Error
+     */
+    public function get_event_attendees($per_page = 10, $count = false, $trash = false, $orderby = 'ATT_fname')
+    {
+        //normalize some request params that get setup by the parent `get_registrations` method.
+        $request = $this->_req_data;
+        $request['orderby'] = ! empty($this->_req_data['orderby']) ? $this->_req_data['orderby'] : $orderby;
+        $request['order'] =  ! empty($this->_req_data['order']) ? $this->_req_data['order'] : 'ASC';
+        if($trash){
+            $request['status'] = 'trash';
+        }
+        $query_params = $this->_get_checkin_query_params_from_request( $request, $per_page, $count );
+        /**
+         * Override the default groupby added by EEM_Base so that sorts with multiple order bys work as expected
+         * @link https://events.codebasehq.com/projects/event-espresso/tickets/10093
+         * @see EEM_Base::get_all()
+         */
+        $query_params['group_by'] = '';
+
+        return $count
+            ? EEM_Registration::instance()->count($query_params)
+            /** @type EE_Registration[] */
+            : EEM_Registration::instance()->get_all($query_params);
+    }
+
 
 } //end class Registrations Admin Page

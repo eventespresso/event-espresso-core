@@ -21,7 +21,16 @@ $no_attendees_message =  apply_filters( 'FHEE__loop-espresso_attendees-shortcode
 ?>
 
 <div class="event-attendees">
-	<?php do_action( 'AHEE__loop-espresso_event_attendees__before', $contacts, $event, $datetime, $ticket, $show_gravatar ); ?>
+    <?php do_action_ref_array(
+        'AHEE__loop-espresso_event_attendees__before',
+        array(
+            $contacts,
+            $event,
+            $datetime,
+            $ticket,
+            $show_gravatar,
+        )
+    ); ?>
 	<?php if ( $contacts ) : ?>
 		<ul class="event-attendees-list">
 			<?php foreach( $contacts as $contact ) :
@@ -37,5 +46,14 @@ $no_attendees_message =  apply_filters( 'FHEE__loop-espresso_attendees-shortcode
 	<?php else : ?>
 		<p><?php echo $no_attendees_message; ?></p>
 	<?php endif; ?>
-	<?php do_action( 'AHEE__loop-espresso_event_attendees__after', $contacts, $event, $datetime, $ticket, $show_gravatar ); ?>
+    <?php do_action_ref_array(
+        'AHEE__loop-espresso_event_attendees__after',
+        array(
+            $contacts,
+            $event,
+            $datetime,
+            $ticket,
+            $show_gravatar,
+        )
+    ); ?>
 </div>

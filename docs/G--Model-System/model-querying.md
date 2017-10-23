@@ -133,7 +133,7 @@ Here are a few other examples to give you a taste for what the `EEM_Base::get_al
 EEM_Event::instance()->get_all(
     array(
        'limit' => 10,
-       'order_by' => array( 'EVT_visible_on' => 'DESC' )
+       'order_by' => array( 'EVT_visible_on' => 'DESC' ),
         array( 
             'EVT_visible_on' => array( '>', current_time() )
         )
@@ -391,3 +391,92 @@ WHERE
     Payment.PAY_amount > 1.000000 
 LIMIT 40,10
 ```
+
+## Querying Datetime Fields
+
+Querying datetime fields (e.g., an Event's `EVT_created`, or an Event's Datetime's `DTT_EVT_start`) requires a bit of explaining.
+
+When passing in a value for one of those fields, you can can in either a `DbSafeDateTime` object (which extends the standard `DateTime`), a unix timestamp integer, or a string in the site's WordPress date and time format.
+
+### Providing DbSafeDateTime objects for Datetime Fields in Queries
+The recommended way to pass a time into a query is as a `DbSafeDatetime` object. These objects are autoloaded by Event Espresso, and extend PHP's standard `DateTime` object, so you can use them anywhere just like a normal `DateTime` object. (The only reason we don't recommend passing in a standard `DateTime` object is because they don't serialize well.) This format is best when you want to use a specific timezone and known date.
+
+
+Here is an example that gets all events created before the start of 2017, who have an event that started over a year from the current time
+
+```
+$events = EEM_Event::instance()->get_all(
+                array(
+                    array(
+                        'EVT_created' => array('<', new \EventEspresso\core\domain\entities\DbSafeDateTime('2017-01-01', new DateTimeZone('America/New_York'))),
+                        'Datetime.DTT_EVT_start' => array('>', new \EventEspresso\core\domain\entities\DbSafeDateTime('1 year ago', new DateTimeZone('America/New_York')))
+                    )
+                )
+            );
+```
+
+### Providing a Unix Timestamp for Datetime Fields in Queries
+You can also pass in a unix timestamp while querying datetime fields. This format is probably the simplest to use, but you must ensure the times are in UTC (part of the definition of a unix timestamp). 
+
+Here is an example that fetches all registrations between two dates defined by unix timestamps
+```
+$registrations = EEM_Registration::instance()->get_all(
+                array(
+                    array(
+                        'REG_date' => array(
+                            'BETWEEN',
+                            array(
+                                //October 10th, 2017 @ 21:10:38 GMT
+                                1507756239,
+                                //November 11th, 2017 @ 21:12:28 GMT
+                                1510434638
+
+                            ))
+                    )
+                )
+            );
+```
+
+Also, if you want to query for events with a future start date, you can use `EEM_Base::current_time_for_query()` function in queries as follows:
+
+```
+ $events = EEM_Event::instance()->get_all(
+                array(
+                    array(
+                        'Datetime.DTT_EVT_start' => array(
+                            '>',
+                            EEM_Datetime::instance()->current_time_for_query('DTT_EVT_start')
+                        )
+                    )
+                )
+            );
+```
+
+Note that `current_time_for_query` is called on which ever model has the specified field. In this case, because `DTT_EVT_start` is on `EEM_Datetime`, we used `EEM_Datetime::instance()->current_time_for_query('DTT_EVT_start')`. Had we used the model `EEM_Event`, there would have been an error because there is no field named `DTT_EVT_start` on that model.
+
+
+
+
+### Providing a String in the WordPress Date and Time format for Datetime Fields in Queries
+Lastly, you can pass in a string for a datetime field's value, but you must ensure it is in the WordPress timezone, and matches the WordPress Date/Time formats. This is most convenient when you have user input coming in that's already in the WordPress timezone and Date/Time formats.
+
+Here is an example where we get all payments between March 1st at 11PM and March 20th at 11PM in the site's timezone (whatever it may be) ASSUMING the site's Date format is `F jS, Y,` and its Time format is `H:i`. E.g. https://s.nimbus.everhelper.me/share/1172792/07uc2y8f9e5tfhg0nv63
+```
+$payments = EEM_Payment::instance()->get_all(
+                array(
+                    array(
+                        'PAY_timestamp' => array(
+                            'BETWEEN',
+                            array(
+                                'March 1st, 2016, 23:00',
+                                'March 20th, 2016, 23:00'
+                            )
+                        )
+                    )
+                )
+            );
+```
+	
+
+
+Please read [the documentation specifically about dates and times in Event Espresso](https://github.com/eventespresso/event-espresso-core/blob/master/docs/F--Datetime-System/dates-times-timezones-in-models.md) for related information on dealing with datetime fields on model objects, and see ]our developer blog post](http://developer.eventespresso.com/important-changes-to-ee-datetime-system-coming-to-ee/) about helper functions for working with datetimes.

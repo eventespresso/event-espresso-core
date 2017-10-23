@@ -136,8 +136,8 @@
 }
 
 #Custom_Messages_Template_List_Table-table-frm .column-events {
-	width: 10%;
-	text-align: center;
+    width: 10%;
+    text-align: center;
 }
 
 
@@ -167,6 +167,15 @@
 }
 .ee-status-legend-MFL {
     background-color: #E44064;
+}
+
+/** status failed **/
+.msg-status-MEX,
+.msg-status-MEX .check-column {
+    border-left-color: #ff6faa;
+}
+.ee-status-legend-MEX {
+    background-color: #ff6faa;
 }
 
 .msg-status-MDO,
@@ -242,4 +251,24 @@ h4 + .ee-messages-shortcodes-chooser {
 
 #ee-msg-edit-frm #to-content {
     width: 90%
+}
+
+/** context toggle **/
+.context-active-control-container {
+    max-width: 550px;
+}
+.context-active-control-container .spinner {
+    margin-top: 15px;
+
+}
+.activate_context_on_off_toggle_container {
+    background: white;
+    margin-top: 10px;
+    padding: 15px;
+    width: auto;
+    max-width: 500px;
+}
+.activate_context_on_off_toggle_container .switch {
+    float:right;
+    margin-top: -5px;
 }

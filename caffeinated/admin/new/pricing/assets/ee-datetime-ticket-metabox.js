@@ -331,10 +331,6 @@ jQuery(document).ready(function($) {
 						$(this).val(DTT_name);
 						break;
 
-					case 'event-datetime-DTT_is_primary' :
-						$(this).val(row === 1 ? '1' : '0');
-						break;
-
 					case 'event-datetime-DTT_EVT_start' :
 						DTT_start_time = $('#add-new-' + inputid, '#add-event-datetime').val();
 						DTT_start_time = DTT_start_time === '' ? tktHelper.eemoment().add(1, 'weeks').hours(8).minutes(0).format(DTT_CONVERTED_FORMATS.moment) : DTT_start_time;
@@ -435,28 +431,27 @@ jQuery(document).ready(function($) {
 
 			//next let's do the spans
 			newDTTrow.find('span').each( function() {
-				curclass = $(this).attr('class');
-				tktHelper.itemdata = $(this).data();
+			    var $el = $(this);
+				curclass = $el.attr('class');
+				tktHelper.itemdata = $el.data();
 
 				//handle data-datetime-row properties
 				if ( typeof(tktHelper.itemdata) !== 'undefined' && typeof(tktHelper.itemdata.datetimeRow) !== 'undefined' ) {
-					$(this).attr( 'data-datetime-row', newrownum ); //not using jquery .data() to set the value because that doesn't change the actual data attribute.
-					$(this).data('datetimeRow', newrownum); //we still need to change the data on the element otherwise it remains as the value set on the previous element.
+					$el.attr( 'data-datetime-row', newrownum ); //not using jquery .data() to set the value because that doesn't change the actual data attribute.
+					$el.data('datetimeRow', newrownum); //we still need to change the data on the element otherwise it remains as the value set on the previous element.
 				}
 
-				//handle ticket counts!
-				if ( curclass == 'datetime-tickets-sold' ) {
-					ticketsold = $(this).text().replace(/[0-9]/g,'') + '0';
-					$(this).text(ticketsold);
-				}
+				if (curclass.indexOf('datetime-tickets-sold') !== -1 || curclass.indexOf('datetime-tickets-reserved') !== -1) {
+				    $el.text('0');
+                }
 
-				if ( curclass == 'ticket-list-ticket-name' ) {
+				if ( curclass.indexOf('ticket-list-ticket-name') !== -1) {
 					//find out what ticket we are looking at.
-					var parentdata = $(this).parent().data();
+					var parentdata = $el.parent().data();
 
 					//now we can get the ticket title from the tickets list and simply replace what's in the datetime ticket with it.  Why do we do this instead of just replacing the numbers?  Because the ticket title may have a number in it.
 					tickettitle = tktHelper.getTicketTitle( parentdata.ticketRow );
-					$(this).text(tickettitle);
+					$el.text(tickettitle);
 				}
 
 			});
@@ -520,7 +515,6 @@ jQuery(document).ready(function($) {
 
 				switch ( curclass ) {
 					case 'event-datetime-DTT_ID' :
-					case 'event-datetime-DTT_is_primary' :
 						$(this).attr('name', newname);
 						$(this).val('0');
 						if ( newid !== '' )
@@ -619,23 +613,30 @@ jQuery(document).ready(function($) {
 
 			//spans
 			newTKTrow.find('span').each( function() {
-				curclass = $(this).attr('class');
-				curid = $(this).attr('id');
-				tktHelper.itemdata = $(this).data();
+			    var $el = $(this);
+				curclass = $el.attr('class');
+				curid = $el.attr('id');
+				tktHelper.itemdata = $el.data();
 
-				if ( curclass === 'ticket-display-row-TKT_sold' )
-					$(this).text('0');
+				if ( curclass === 'ticket-display-row-TKT_sold' ) {
+                    $el.text('0');
+                }
 
-				if( curclass === 'ticket-display-row-TKT_registrations' )
-					$(this).text('0');
+				if( curclass === 'ticket-display-row-TKT_registrations' ) {
+                    $el.text('0');
+                }
+
+                if (curclass === 'ticket-display-row-TKT_reserved') {
+				    $el.text('0');
+                }
 
 				if ( typeof(tktHelper.itemdata) !== 'undefined' && typeof(tktHelper.itemdata.ticketRow) !== 'undefined' ) {
-					$(this).attr('data-ticket-row', newrownum);
-					$(this).data('ticketRow', newrownum);
+					$el.attr('data-ticket-row', newrownum);
+					$el.data('ticketRow', newrownum);
 				}
 
 				if ( typeof(curid) !== 'undefined' )
-					$(this).attr('id', curid.replace(row, newrownum) );
+					$el.attr('id', curid.replace(row, newrownum) );
 			});
 
 			//fieldset
@@ -1029,13 +1030,17 @@ jQuery(document).ready(function($) {
 		 * @return void.
 		 */
 		updateDTTsoldValues: function( itemdata, selecting ) {
-			var dttSoldProps = this.getDTTsoldinfo( itemdata );
-			var newDTTsold = 0;
-
-			newDTTsold = selecting ? dttSoldProps.dttSold + dttSoldProps.tktSold : dttSoldProps.dttSold - dttSoldProps.tktSold;
-
+			var dttSoldProps = this.getDTTsoldinfo( itemdata ),
+			    newDTTsold = selecting
+                    ? dttSoldProps.dttSold + dttSoldProps.tktSold
+                    : dttSoldProps.dttSold - dttSoldProps.tktSold,
+                newDTTreserved = selecting
+                    ? dttSoldProps.dttReserved + dttSoldProps.tktReserved
+                    : dttSoldProps.dttReserved - dttSoldProps.tktReserved;
 			//update dttSold for datetime!
 			$('.datetime-tickets-sold', '#event-datetime-' + itemdata.datetimeRow ).text( newDTTsold );
+			//update dttReserved for datetime!
+            $('.datetime-tickets-reserved', '#event-datetime-' + itemdata.datetimeRow).text(newDTTreserved)
 		},
 
 
@@ -1053,6 +1058,10 @@ jQuery(document).ready(function($) {
 			dttSoldProps.tktSold = accounting.unformat($('.ticket-display-row-TKT_sold', '#display-ticketrow-' + itemdata.ticketRow ).text());
 			dttSoldProps.dttSold = accounting.unformat( $('.datetime-tickets-sold', '#event-datetime-' + itemdata.datetimeRow ).text() );
 			dttSoldProps.dttRem = dttSoldProps.dttLimit - dttSoldProps.dttSold;
+
+			//TKT_reserved
+            dttSoldProps.tktReserved = accounting.unformat($('.ticket-display-row-TKT_reserved', '#display-ticketrow-' + itemdata.ticketRow).text());
+            dttSoldProps.dttReserved = accounting.unformat($('.datetime-tickets-reserved', '#event-datetime-' + itemdata.datetimeRow).text());
 			return dttSoldProps;
 		},
 
@@ -1087,28 +1096,33 @@ jQuery(document).ready(function($) {
 			//get all ticket rows that have this dtt active on them.
 			var tktrow,
 				tktdata,
+                ticketsSelectedinRow = {},
+			    tktName = '',
 				singleDTTTKTs = [],
 				dttisactive = false,
-				activeTKTs = $('.ticket-selected', '#advanced-edit-' + row);
+				activeTKTs = $('.ticket-selected', '#advanced-dtt-edit-row-' + row);
 
 			//foreach of these tickets lets check if this datetime is the ONLY dtt active.
 			activeTKTs.each( function() {
 				tktdata = $(this).data();
 				tktrow = tktdata.ticketRow;
-
-				if ( $('.ticket-selected', '#edit-ticketrow-' + tktrow).length === 1 && $('.ticket-selected', '#edit-ticketrow-' + tktrow ).data('datetimeRow') == row )
-					singleDTTTKTs[tktrow] = $('.edit-ticket-TKT_name', '#edit-ticketrow-' + tktrow).val();
-				});
+				ticketsSelectedinRow = $('.ticket-selected', '#edit-ticketrow-' + tktrow);
 
 
-			if ( singleDTTTKTs.length === 0 )
-				return true; //we're okay
+
+				if ( ticketsSelectedinRow.length === 1 && ticketsSelectedinRow.data('datetimeRow') === row ) {
+                    singleDTTTKTs.push( $('.edit-ticket-TKT_name', '#display-ticketrow-'+tktrow).val() );
+                }
+            });
+			if ( singleDTTTKTs.length === 0 ) {
+                return true; //we're okay
+            }
 
 			//make sure that the checkbox is still checked (cause if user clicked the checkbox input instead of the li item then it will have toggled.)
 			//
 
 			//otherwise let's throw up the dialog and prompt
-			var htmlcontent = '<p>' + DTT_TRASH_BLOCK.main_warning + ' <strong>' + singleDTTTKTs.join('</strong>, <strong>') + '</strong></p>' + '<p>' + DTT_TRASH_BLOCK.after_warning + '</p><div class="save-cancel-button-container">' + DTT_TRASH_BLOCK.cancel_button + '</div>';
+			var htmlcontent = '<p>' + DTT_TRASH_BLOCK.main_warning + ' <strong>' + singleDTTTKTs.join('</strong>, <strong>') + '</strong></p>' + '<p>' + DTT_TRASH_BLOCK.after_warning + '</p><div class="save-cancel-button-container">' + DTT_TRASH_BLOCK.close_button + '</div>';
 
 
 			dialogHelper.displayModal().addContent(htmlcontent);
@@ -1580,7 +1594,7 @@ jQuery(document).ready(function($) {
 				}
 			});
 
-			totals.subtotal = accounting.formatNumber( accounting.toFixed( runningtotal ) );
+			totals.subtotal = accounting.formatNumber(runningtotal);
 
 			//apply taxes?
 			if ( dotaxes && $('#edit-ticket-TKT_taxable-' + this.ticketRow + ':checked').length > 0 ) {
@@ -1591,7 +1605,7 @@ jQuery(document).ready(function($) {
 				});
 			}
 
-			totals.finalTotal = accounting.formatNumber( accounting.toFixed( runningtotal ) );
+			totals.finalTotal = accounting.formatNumber(runningtotal);
 
 			return totals;
 		},
@@ -1643,8 +1657,8 @@ jQuery(document).ready(function($) {
 			$('.TKT-taxable-subtotal-amount', editTicketRow).val(subtotal);
 			$('.TKT-tax-percentage', editTicketRow ).each( function() {
 				id = $(this).attr('id').replace('TKT-tax-percentage-', '');
-				tax = accounting.unformat($(this).val());
-				tax = accounting.unformat(subtotal) * tax/100;
+				tax = accounting.toFixed(accounting.unformat($(this).val()));
+				tax = accounting.toFixed(accounting.unformat(subtotal)) * tax/100;
 				tax = accounting.formatNumber(tax);
 				$('#TKT-tax-amount-' + id).val(tax);
 				$('#TKT-tax-amount-display-' + id).text(accounting.formatMoney(tax));
@@ -1973,6 +1987,7 @@ jQuery(document).ready(function($) {
 	 */
 	$('.ticket-table').sortable({
 		cursor: 'move',
+		handle: '.sortable-drag-handle',
 		items: '.ee-ticket-sortable',
 		update: function(event,ui) {
 			tktHelper.changeTKTorder();
@@ -1982,6 +1997,7 @@ jQuery(document).ready(function($) {
 
 	$('#datetime-editing-dtts-table').sortable({
 		cursor: 'move',
+		handle: '.sortable-drag-handle',
 		items: '.ee-dtt-sortable',
 		update: function(event,ui) {
 			tktHelper.changeDTTorder();

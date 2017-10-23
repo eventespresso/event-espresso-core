@@ -1,4 +1,4 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) {
+<?php if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
 /**
@@ -11,7 +11,6 @@
  * @ link                    {@link http://www.eventespresso.com}
  * @ since                4.0
  */
-
 
 
 /**
@@ -34,21 +33,20 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      */
     protected function __construct($fieldValues = null, $bydb = false, $timezone = null, $date_formats = array())
     {
-        if ( ! isset($fieldValues['ATT_full_name'])) {
-            $fname = isset($fieldValues['ATT_fname']) ? $fieldValues['ATT_fname'] . ' ' : '';
-            $lname = isset($fieldValues['ATT_lname']) ? $fieldValues['ATT_lname'] : '';
+        if (! isset($fieldValues['ATT_full_name'])) {
+            $fname                        = isset($fieldValues['ATT_fname']) ? $fieldValues['ATT_fname'] . ' ' : '';
+            $lname                        = isset($fieldValues['ATT_lname']) ? $fieldValues['ATT_lname'] : '';
             $fieldValues['ATT_full_name'] = $fname . $lname;
         }
-        if ( ! isset($fieldValues['ATT_slug'])) {
+        if (! isset($fieldValues['ATT_slug'])) {
             //			$fieldValues['ATT_slug'] = sanitize_key(wp_generate_password(20));
             $fieldValues['ATT_slug'] = sanitize_title($fieldValues['ATT_full_name']);
         }
-        if ( ! isset($fieldValues['ATT_short_bio']) && isset($fieldValues['ATT_bio'])) {
+        if (! isset($fieldValues['ATT_short_bio']) && isset($fieldValues['ATT_bio'])) {
             $fieldValues['ATT_short_bio'] = substr($fieldValues['ATT_bio'], 0, 50);
         }
         parent::__construct($fieldValues, $bydb, $timezone, $date_formats);
     }
-
 
 
     /**
@@ -66,7 +64,6 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
     }
 
 
-
     /**
      * @param array  $props_n_values  incoming values from the database
      * @param string $timezone        incoming timezone as set by the model.  If not set the timezone for
@@ -77,7 +74,6 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
     {
         return new self($props_n_values, true, $timezone);
     }
-
 
 
     /**
@@ -92,7 +88,6 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
     }
 
 
-
     /**
      *        Set Attendee Last Name
      *
@@ -103,7 +98,6 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
     {
         $this->set('ATT_lname', $lname);
     }
-
 
 
     /**
@@ -118,7 +112,6 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
     }
 
 
-
     /**
      *        Set Attendee Address2
      *
@@ -129,7 +122,6 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
     {
         $this->set('ATT_address2', $address2);
     }
-
 
 
     /**
@@ -144,7 +136,6 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
     }
 
 
-
     /**
      *        Set Attendee State ID
      *
@@ -155,7 +146,6 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
     {
         $this->set('STA_ID', $STA_ID);
     }
-
 
 
     /**
@@ -170,7 +160,6 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
     }
 
 
-
     /**
      *        Set Attendee Zip/Postal Code
      *
@@ -181,7 +170,6 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
     {
         $this->set('ATT_zip', $zip);
     }
-
 
 
     /**
@@ -196,7 +184,6 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
     }
 
 
-
     /**
      *        Set Attendee Phone
      *
@@ -207,7 +194,6 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
     {
         $this->set('ATT_phone', $phone);
     }
-
 
 
     /**
@@ -222,7 +208,6 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
     }
 
 
-
     /**
      * Returns the value for the post_author id saved with the cpt
      *
@@ -233,7 +218,6 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
     {
         return $this->get('ATT_author');
     }
-
 
 
     /**
@@ -248,7 +232,6 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
     }
 
 
-
     /**
      * echoes out the attendee's first name
      *
@@ -260,7 +243,6 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
     }
 
 
-
     /**
      * Returns the first and last name concatenated together with a space.
      *
@@ -269,10 +251,30 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      */
     public function full_name($apply_html_entities = false)
     {
-        $full_name = $this->fname() . ' ' . $this->lname();
+        $full_name = array(
+            $this->fname(),
+            $this->lname()
+        );
+        $full_name = array_filter($full_name);
+        $full_name = implode(' ', $full_name);
         return $apply_html_entities ? htmlentities($full_name, ENT_QUOTES, 'UTF-8') : $full_name;
     }
 
+
+    /**
+     * This returns the value of the `ATT_full_name` field which is usually equivalent to calling `full_name()` unless
+     * the post_title field has been directly modified in the db for the post (espresso_attendees post type) for this
+     * attendee.
+     *
+     * @param bool $apply_html_entities
+     * @return string
+     */
+    public function ATT_full_name($apply_html_entities = false)
+    {
+        return $apply_html_entities
+            ? htmlentities($this->get('ATT_full_name'), ENT_QUOTES, 'UTF-8')
+            : $this->get('ATT_full_name');
+    }
 
 
     /**
@@ -287,7 +289,6 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
     }
 
 
-
     /**
      * Gets the attendee's full address as an array so client code can decide hwo to display it
      *
@@ -298,31 +299,30 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      */
     public function full_address_as_array()
     {
-        $full_address_array = array();
+        $full_address_array     = array();
         $initial_address_fields = array('ATT_address', 'ATT_address2', 'ATT_city',);
         foreach ($initial_address_fields as $address_field_name) {
             $address_fields_value = $this->get($address_field_name);
-            if ( ! empty($address_fields_value)) {
+            if (! empty($address_fields_value)) {
                 $full_address_array[] = $address_fields_value;
             }
         }
         //now handle state and country
         $state_obj = $this->state_obj();
-        if ( ! empty($state_obj)) {
+        if (! empty($state_obj)) {
             $full_address_array[] = $state_obj->name();
         }
         $country_obj = $this->country_obj();
-        if ( ! empty($country_obj)) {
+        if (! empty($country_obj)) {
             $full_address_array[] = $country_obj->name();
         }
         //lastly get the xip
         $zip_value = $this->zip();
-        if ( ! empty($zip_value)) {
+        if (! empty($zip_value)) {
             $full_address_array[] = $zip_value;
         }
         return $full_address_array;
     }
-
 
 
     /**
@@ -336,7 +336,6 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
     }
 
 
-
     /**
      *        get Attendee Address2
      *
@@ -346,7 +345,6 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
     {
         return $this->get('ATT_address2');
     }
-
 
 
     /**
@@ -360,7 +358,6 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
     }
 
 
-
     /**
      *        get Attendee State ID
      *
@@ -372,7 +369,6 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
     }
 
 
-
     /**
      * @return string
      */
@@ -380,7 +376,6 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
     {
         return $this->state_obj() instanceof EE_State ? $this->state_obj()->abbrev() : '';
     }
-
 
 
     /**
@@ -392,7 +387,6 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
     {
         return $this->get_first_related('State');
     }
-
 
 
     /**
@@ -408,7 +402,6 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
             return '';
         }
     }
-
 
 
     /**
@@ -428,7 +421,6 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
     }
 
 
-
     /**
      *    get Attendee Country ISO Code
      *
@@ -440,7 +432,6 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
     }
 
 
-
     /**
      * Gets country set for this attendee
      *
@@ -450,7 +441,6 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
     {
         return $this->get_first_related('Country');
     }
-
 
 
     /**
@@ -466,7 +456,6 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
             return '';
         }
     }
-
 
 
     /**
@@ -486,7 +475,6 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
     }
 
 
-
     /**
      *        get Attendee Zip/Postal Code
      *
@@ -496,7 +484,6 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
     {
         return $this->get('ATT_zip');
     }
-
 
 
     /**
@@ -510,7 +497,6 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
     }
 
 
-
     /**
      *        get Attendee Phone #
      *
@@ -522,7 +508,6 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
     }
 
 
-
     /**
      *    get deleted
      *
@@ -532,7 +517,6 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
     {
         return $this->get('ATT_deleted');
     }
-
 
 
     /**
@@ -547,7 +531,6 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
     }
 
 
-
     /**
      * Gets the most recent registration of this attendee
      *
@@ -558,7 +541,6 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
         return $this->get_first_related('Registration',
             array('order_by' => array('REG_date' => 'DESC'))); //null, 'REG_date', 'DESC', '=', 'OBJECT_K');
     }
-
 
 
     /**
@@ -574,7 +556,6 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
     }
 
 
-
     /**
      * returns any events attached to this attendee ($_Event property);
      *
@@ -584,7 +565,6 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
     {
         return $this->get_many_related('Event');
     }
-
 
 
     /**
@@ -598,11 +578,11 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
     public function billing_info_for_payment_method($payment_method)
     {
         $pm_type = $payment_method->type_obj();
-        if ( ! $pm_type instanceof EE_PMT_Base) {
+        if (! $pm_type instanceof EE_PMT_Base) {
             return null;
         }
         $billing_info = $this->get_post_meta($this->get_billing_info_postmeta_name($payment_method), true);
-        if ( ! $billing_info) {
+        if (! $billing_info) {
             return null;
         }
         $billing_form = $pm_type->billing_form();
@@ -611,7 +591,6 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
         }
         return $billing_form;
     }
-
 
 
     /**
@@ -631,7 +610,6 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
     }
 
 
-
     /**
      * Saves the billing info to the attendee. @see EE_Attendee::billing_info_for_payment_method() which is used to
      * retrieve it
@@ -642,7 +620,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      */
     public function save_and_clean_billing_info_for_payment_method($billing_form, $payment_method)
     {
-        if ( ! $billing_form instanceof EE_Billing_Attendee_Info_Form) {
+        if (! $billing_form instanceof EE_Billing_Attendee_Info_Form) {
             EE_Error::add_error(__('Cannot save billing info because there is none.', 'event_espresso'));
             return false;
         }
@@ -650,7 +628,6 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
         return update_post_meta($this->ID(), $this->get_billing_info_postmeta_name($payment_method),
             $billing_form->input_values(true));
     }
-
 
 
     /**
@@ -662,7 +639,6 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
     {
         return $this->get_admin_edit_link();
     }
-
 
 
     /**
@@ -684,7 +660,6 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
     }
 
 
-
     /**
      * Returns the link to a settings page for the object.
      *
@@ -694,7 +669,6 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
     {
         return $this->get_admin_edit_link();
     }
-
 
 
     /**

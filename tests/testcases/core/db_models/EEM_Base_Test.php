@@ -22,6 +22,21 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) {
 class EEM_Base_Test extends EE_UnitTestCase
 {
 
+    /**
+     * @group 11043
+     */
+    public function test_insert__funky_characters()
+    {
+        $this->markTestSkipped('If a multi-byte character gets chopped in half, EEM_Base::insert and update simply dont work. Avoid it by using mb_strcut instead of substr');
+        $string_of_multibyte_chracters = 'event’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’’';
+        $string_with_a_chopped_multibyte_character = substr($string_of_multibyte_chracters,0,127);
+        $id = EEM_Change_Log::instance()->insert(
+            array(
+                'LOG_message' => $string_with_a_chopped_multibyte_character
+            )
+        );
+        $this->assertNotFalse($id);
+    }
     public function test_models_defined_ok()
     {
         foreach (EE_Registry::instance()->non_abstract_db_models as $model) {
@@ -63,7 +78,7 @@ class EEM_Base_Test extends EE_UnitTestCase
     /**
      * checks that EEM_Base::has_field works properly
      */
-    function test_has_field()
+    public function test_has_field()
     {
         $this->assertTrue(EEM_Question::instance()->has_field('QST_ID'));
         $this->assertTrue(EEM_QUestion::instance()->has_field('QST_admin_only'));
@@ -75,7 +90,7 @@ class EEM_Base_Test extends EE_UnitTestCase
     /**
      * checks that adding a LIKE in teh WHERE clauses works ok
      */
-    function test_where_like()
+    public function test_where_like()
     {
         $attendees_before = EEM_Attendee::instance()->get_all();
         $this->assertEmpty($attendees_before);
@@ -118,6 +133,61 @@ class EEM_Base_Test extends EE_UnitTestCase
     }
 
 
+    /**
+     * Verifies deletes still work properly, even when deleting a model object whose data is shared between two tables
+     */
+    public function test_delete__across_multiple_tables()
+    {
+        $event_to_delete = $this->new_model_obj_with_dependencies('Event');
+        $event_shouldnt_be_harmed = $this->new_model_obj_with_dependencies('Event');
+        global $wpdb;
+        $post_table_entries       = $wpdb->get_var('SELECT COUNT(*) FROM ' . EEM_Event::instance()->table());
+        $event_meta_table_entries = $wpdb->get_var('SELECT COUNT(*) FROM ' . EEM_Event::instance()->second_table());
+        //make sure when we delete this event, both the record from the posts table and the event meta table get deleted
+        $success = $event_to_delete->delete_permanently();
+        $this->assertEquals(2, $success);
+        $this->assertEquals(
+            $post_table_entries - 1,
+            $wpdb->get_var('SELECT COUNT(*) FROM ' . EEM_Event::instance()->table())
+        );
+        $this->assertEquals(
+            $event_meta_table_entries - 1,
+            $wpdb->get_var('SELECT COUNT(*) FROM ' . EEM_Event::instance()->second_table())
+        );
+    }
+
+
+    /**
+     * Verifies permanent deletes will also remove any extra meta that might be present in the database for items
+     * deleted.
+     */
+    public function test_delete_with_extra_meta()
+    {
+        /** @var EE_Registration $registration_to_delete */
+        $registration_to_delete = $this->factory->registration->create();
+        //add extrameta
+        $registration_to_delete->update_extra_meta('test_registration_meta', 'value');
+
+        //get the extra meta so we have its ID for checking later.
+        $extra_meta = EEM_Extra_Meta::instance()->get_one(array(
+            array(
+                'OBJ_ID' => $registration_to_delete->ID(),
+                'EXM_type' => 'Registration',
+                'EXM_key' => 'test_registration_meta'
+            )
+        ));
+        $this->assertInstanceOf('EE_Extra_Meta', $extra_meta);
+
+        //delete the registration
+        $success = $registration_to_delete->delete_permanently();
+        $this->assertEquals(1, $success);
+
+        //assert the meta no longer exists in the db.
+        $extra_meta = EEM_Extra_Meta::instance()->get_one_by_ID($extra_meta->ID());
+        $this->assertNotInstanceOf('EE_Extra_Meta', $extra_meta);
+    }
+
+
 
     /**
      * @throws EE_Error
@@ -141,10 +211,10 @@ class EEM_Base_Test extends EE_UnitTestCase
         $att3 = EEM_Attendee::instance()->insert(array('ATT_fname' => 'three'));
         $att4 = EEM_Attendee::instance()->insert(array('ATT_fname' => 'four'));
         $all = EEM_Attendee::instance()->get_col();
-        $this->assertArrayContains($att1, $all);
-        $this->assertArrayContains($att2, $all);
-        $this->assertArrayContains($att3, $all);
-        $this->assertArrayContains($att4, $all);
+        $this->assertArrayContains((string)$att1, $all);
+        $this->assertArrayContains((string)$att2, $all);
+        $this->assertArrayContains((string)$att3, $all);
+        $this->assertArrayContains((string)$att4, $all);
         $just_two_and_threes_names = EEM_Attendee::instance()->get_col(array(
             array(
                 'ATT_fname' => array(
@@ -209,7 +279,7 @@ class EEM_Base_Test extends EE_UnitTestCase
     /**
      * @group 6767
      */
-    function test_two_joins()
+    public function test_two_joins()
     {
         EEM_Attendee::instance()->get_all(array(array('Registration.Event.EVT_name' => 'bob')));
         $this->assertTrue(true, 'No exception thrown');
@@ -220,7 +290,7 @@ class EEM_Base_Test extends EE_UnitTestCase
     /**
      * @group 7151
      */
-    function test_refresh_entity_map_from_db()
+    public function test_refresh_entity_map_from_db()
     {
         //get an object purposefully out-of-sync with the DB
         //call this and make sure it's wiped clean and
@@ -245,7 +315,7 @@ class EEM_Base_Test extends EE_UnitTestCase
     /**
      * @group 7151
      */
-    function test_refresh_entity_map_from_db__serialized_object()
+    public function test_refresh_entity_map_from_db__serialized_object()
     {
         //get an object purposefully out-of-sync with the DB
         //call this and make sure it's wiped clean and
@@ -279,7 +349,7 @@ class EEM_Base_Test extends EE_UnitTestCase
     /**
      * @group 7151
      */
-    function test_fresh_entity_map_with()
+    public function test_fresh_entity_map_with()
     {
         $p = $this->new_model_obj_with_dependencies('Payment', array('PAY_amount' => 25));
         $p->save();
@@ -312,7 +382,7 @@ class EEM_Base_Test extends EE_UnitTestCase
      *
      * @since 4.6.x
      */
-    function test_get_formats_for_with_exception()
+    public function test_get_formats_for_with_exception()
     {
         EEM_Datetime::reset();
         //test expected exception for invalid field
@@ -327,7 +397,7 @@ class EEM_Base_Test extends EE_UnitTestCase
      *
      * @since 4.6.x
      */
-    function test_get_formats_for_with_valid_field()
+    public function test_get_formats_for_with_valid_field()
     {
         EEM_Datetime::reset();
         //first test default field setup
@@ -346,7 +416,7 @@ class EEM_Base_Test extends EE_UnitTestCase
     /**
      * @since 4.6.x
      */
-    function test_current_time_for_query()
+    public function test_current_time_for_query()
     {
         EEM_Datetime::reset();
         //baseline DateTime object for testing
@@ -368,7 +438,49 @@ class EEM_Base_Test extends EE_UnitTestCase
         $formatted_string = EEM_Datetime::instance()->current_time_for_query('DTT_EVT_start');
         $this->assertDateWithinOneMinute($timezoneTest->format('Y-m-d H:i:s'), $formatted_string, 'Y-m-d H:i:s');
         $unix_timestamp = EEM_Datetime::instance()->current_time_for_query('DTT_EVT_start', true);
-        $this->assertEquals($timezoneTest->format('U'), $unix_timestamp);
+        $this->assertDateWithinOneMinute($timezoneTest->format('U'), $unix_timestamp, 'U');
+    }
+
+
+
+    /**
+     * If the site time format doesn't include seconds (which it doesn't, by default)
+     * then EEM_Base::current_time_for_query() truncates them
+     * @group 10869
+     */
+    public function test_current_time_for_query__ignore_minutes(){
+        $formats = EE_Registry::instance()->load_model('Datetime')->get_formats_for('DTT_EVT_start');
+        $this->assertEquals(
+            Datetime::createFromFormat(
+                'Y-m-d H:i',
+                gmdate( 'Y-m-d H:i' )
+            ),
+            DateTime::createFromFormat(
+                implode(' ', $formats
+                ),
+                EEM_Datetime::instance()->current_time_for_query('DTT_EVT_start')
+            )
+        );
+    }
+
+    /**
+     * If the site time format doesn't include seconds (which it doesn't, by default)
+     * then EEM_Base::current_time_for_query() truncates them
+     * @group 10869
+     */
+    public function test_current_time_for_query__timestamp(){
+        $formats = EE_Registry::instance()->load_model('Datetime')->get_formats_for('DTT_EVT_start');
+        $datetime = new DateTime();
+        $datetime->setTimestamp(
+            EEM_Datetime::instance()->current_time_for_query('DTT_EVT_start', true)
+        );
+        $this->assertEquals(
+            Datetime::createFromFormat(
+                'Y-m-d H:i:s',
+                current_time('mysql')
+            ),
+            $datetime
+        );
     }
 
 
@@ -376,7 +488,7 @@ class EEM_Base_Test extends EE_UnitTestCase
     /**
      * @since 4.6.x
      */
-    function test_convert_datetime_for_query()
+    public function test_convert_datetime_for_query()
     {
         EEM_Datetime::reset();
         //baselines for testing with
@@ -814,7 +926,7 @@ class EEM_Base_Test extends EE_UnitTestCase
      *
      * @group 7634
      */
-    function test_get_all_if_related_model_blank_use_nulls()
+    public function test_get_all_if_related_model_blank_use_nulls()
     {
         $price_sans_price_type = EE_Price::new_instance(array(
             'PRC_name' => 'original',
@@ -836,7 +948,7 @@ class EEM_Base_Test extends EE_UnitTestCase
      *
      * @group 7791
      */
-    function test_create_question_options()
+    public function test_create_question_options()
     {
         foreach (EE_Registry::instance()->non_abstract_db_models as $model_name => $model_classname) {
             $model = EE_Registry::instance()->load_model($model_name);
@@ -852,7 +964,7 @@ class EEM_Base_Test extends EE_UnitTestCase
     /**
      * @since 4.6.x
      */
-    function test_next_x()
+    public function test_next_x()
     {
         //create 5 events for testing with.
         $events = $this->factory->event->create_many(5);
@@ -874,7 +986,7 @@ class EEM_Base_Test extends EE_UnitTestCase
     /**
      * @since 4.6.x
      */
-    function test_previous_x()
+    public function test_previous_x()
     {
         //create 5 events for testing with.
         $events = $this->factory->event->create_many(5);
@@ -896,7 +1008,7 @@ class EEM_Base_Test extends EE_UnitTestCase
     /**
      * @since 4.6.x
      */
-    function test_next()
+    public function test_next()
     {
         //create 5 events for testing with.
         $events = $this->factory->event->create_many(5);
@@ -918,7 +1030,7 @@ class EEM_Base_Test extends EE_UnitTestCase
     /**
      * @since 4.6.x
      */
-    function test_previous()
+    public function test_previous()
     {
         //create 5 events for testing with.
         $events = $this->factory->event->create_many(5);
@@ -942,7 +1054,7 @@ class EEM_Base_Test extends EE_UnitTestCase
      *
      * @group 8187
      */
-    function test_get_all__between()
+    public function test_get_all__between()
     {
         EEM_Event::instance()->get_all(array(
             array(
@@ -957,7 +1069,7 @@ class EEM_Base_Test extends EE_UnitTestCase
     /**
      * @group 8241
      */
-    function test_get_IDs__empty_ID()
+    public function test_get_IDs__empty_ID()
     {
         $e1 = $this->new_model_obj_with_dependencies('Event', array(), false);
         $e2 = $this->new_model_obj_with_dependencies('Event', array(), false);
@@ -969,7 +1081,7 @@ class EEM_Base_Test extends EE_UnitTestCase
     /**
      * @group 8241
      */
-    function test_get_IDS()
+    public function test_get_IDS()
     {
         $e1 = $this->new_model_obj_with_dependencies('Event', array());
         $e2 = $this->new_model_obj_with_dependencies('Event', array());
@@ -981,7 +1093,7 @@ class EEM_Base_Test extends EE_UnitTestCase
     /**
      * @group 9389
      */
-    function test_get_all__automatic_group_by()
+    public function test_get_all__automatic_group_by()
     {
         $this->assertEquals(2, EEM_Question_Group::instance()->count());
         $qsgs = EEM_Question_Group::instance()->get_all(
@@ -1019,6 +1131,20 @@ class EEM_Base_Test extends EE_UnitTestCase
         EEM_Base::set_model_query_blog_id(1);
     }
 
+
+
+    /**
+     * @group 9566
+     */
+    public function test_is_logic_query_param_key(){
+        $this->assertTrue( EEM_Answer::instance()->is_logic_query_param_key( 'OR' ) );
+        $this->assertTrue( EEM_Answer::instance()->is_logic_query_param_key( 'NOT*' ) );
+        $this->assertTrue( EEM_Answer::instance()->is_logic_query_param_key( 'AND*other-condition' ) );
+        $this->assertFalse( EEM_Answer::instance()->is_logic_query_param_key( 'ATT_fname' ) );
+        $this->assertFalse( EEM_Answer::instance()->is_logic_query_param_key( 'Registration.REG_date' ) );
+        $this->assertFalse( EEM_Answer::instance()->is_logic_query_param_key( 'ORG_name' ) );
+
+    }
 
 }
 

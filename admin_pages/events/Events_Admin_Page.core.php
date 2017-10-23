@@ -1,7 +1,5 @@
 <?php
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('NO direct script access allowed');
-}
+defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
 
 
 
@@ -42,13 +40,16 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     protected $_event_model;
 
 
+
     /**
      * @var EE_Event
      */
     protected $_cpt_model_obj = false;
 
 
-
+    /**
+     * Initialize page props for this admin page group.
+     */
     protected function _init_page_props()
     {
         $this->page_slug = EVENTS_PG_SLUG;
@@ -64,19 +65,23 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         );
         add_action(
             'AHEE__EE_Admin_Page_CPT__set_model_object__after_set_object',
-            array($this, 'verify_event_edit')
+            array($this, 'verify_event_edit'), 10, 2
         );
     }
 
 
-
+    /**
+     * Sets the ajax hooks used for this admin page group.
+     */
     protected function _ajax_hooks()
     {
-        //todo: all hooks for events ajax goes in here.
+        add_action('wp_ajax_ee_save_timezone_setting', array($this, 'save_timezonestring_setting'));
     }
 
 
-
+    /**
+     * Sets the page properties for this admin page group.
+     */
     protected function _define_page_props()
     {
         $this->_admin_page_title = EVENTS_LABEL;
@@ -103,14 +108,17 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     }
 
 
-
+    /**
+     * Sets the page routes property for this admin page group.
+     */
     protected function _set_page_routes()
     {
         //load formatter helper
         //load field generator helper
         //is there a evt_id in the request?
         $evt_id = ! empty($this->_req_data['EVT_ID']) && ! is_array($this->_req_data['EVT_ID'])
-            ? $this->_req_data['EVT_ID'] : 0;
+            ? $this->_req_data['EVT_ID']
+            : 0;
         $evt_id = ! empty($this->_req_data['post']) ? $this->_req_data['post'] : $evt_id;
         $this->_page_routes = array(
             'default'                       => array(
@@ -227,7 +235,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     }
 
 
-
+    /**
+     * Set the _page_config property for this admin page group.
+     */
     protected function _set_page_config()
     {
         $this->_page_config = array(
@@ -402,6 +412,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                         'title'    => esc_html__('Default Registration Status', 'event_espresso'),
                         'filename' => 'events_default_settings_status',
                     ),
+                    'default_maximum_tickets_help_tab' => array(
+                        'title' => esc_html__('Default Maximum Tickets Per Order', 'event_espresso'),
+                        'filename' => 'events_default_settings_max_tickets',
+                    )
                 ),
                 'help_tour'     => array('Event_Default_Settings_Help_Tour'),
                 'require_nonce' => false,
@@ -495,21 +509,26 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     }
 
 
-
+    /**
+     * Used to register any global screen options if necessary for every route in this admin page group.
+     */
     protected function _add_screen_options()
     {
-        //todo
     }
 
 
-
+    /**
+     * Implementing the screen options for the 'default' route.
+     */
     protected function _add_screen_options_default()
     {
         $this->_per_page_screen_option();
     }
 
 
-
+    /**
+     * Implementing screen options for the category list route.
+     */
     protected function _add_screen_options_category_list()
     {
         $page_title = $this->_admin_page_title;
@@ -519,14 +538,17 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     }
 
 
-
+    /**
+     * Used to register any global feature pointers for the admin page group.
+     */
     protected function _add_feature_pointers()
     {
-        //todo
     }
 
 
-
+    /**
+     * Registers and enqueues any global scripts and styles for the entire admin page group.
+     */
     public function load_scripts_styles()
     {
         wp_register_style(
@@ -553,9 +575,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
 
 
     /**
-     * enqueuing scripts and styles specific to this view
-     *
-     * @return void
+     * Enqueuing scripts and styles specific to this view
      */
     public function load_scripts_styles_create_new()
     {
@@ -565,9 +585,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
 
 
     /**
-     * enqueuing scripts and styles specific to this view
-     *
-     * @return void
+     * Enqueuing scripts and styles specific to this view
      */
     public function load_scripts_styles_edit()
     {
@@ -591,20 +609,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     }
 
 
-
-    public function load_scripts_styles_add_category()
-    {
-        $this->load_scripts_styles_edit_category();
-    }
-
-
-
-    public function load_scripts_styles_edit_category()
-    {
-    }
-
-
-
+    /**
+     * Populating the _views property for the category list table view.
+     */
     protected function _set_list_table_views_category_list()
     {
         $this->_views = array(
@@ -620,7 +627,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     }
 
 
-
+    /**
+     * For adding anything that fires on the admin_init hook for any route within this admin page group.
+     */
     public function admin_init()
     {
         EE_Registry::$i18n_js_strings['image_confirm'] = esc_html__(
@@ -630,14 +639,18 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     }
 
 
-
-    //nothing needed for events with these methods.
+    /**
+     * For adding anything that should be triggered on the admin_notices hook for any route within this admin page group.
+     */
     public function admin_notices()
     {
     }
 
 
-
+    /**
+     * For adding anything that should be triggered on the `admin_print_footer_scripts` hook for any route within
+     * this admin page group.
+     */
     public function admin_footer_scripts()
     {
     }
@@ -649,18 +662,24 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      * warning (via EE_Error::add_error());
      *
      * @param  EE_Event $event Event object
-     * @access public
+     * @param string    $req_type
      * @return void
+     * @throws EE_Error
+     * @access public
      */
-    public function verify_event_edit($event = null)
+    public function verify_event_edit($event = null, $req_type = '')
     {
+        // don't need to do this when processing
+        if(!empty($req_type)) {
+            return;
+        }
         // no event?
         if (empty($event)) {
             // set event
             $event = $this->_cpt_model_obj;
         }
         // STILL no event?
-        if (empty ($event)) {
+        if (! $event instanceof EE_Event) {
             return;
         }
         $orig_status = $event->status();
@@ -740,17 +759,21 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      */
     protected function _create_new_cpt_item()
     {
-        $gmt_offset = get_option('gmt_offset');
+        $has_timezone_string = get_option('timezone_string');
         //only nag them about setting their timezone if it's their first event, and they haven't already done it
-        if ($gmt_offset === '0' && ! EEM_Event::instance()->exists(array())) {
+        if (! $has_timezone_string && ! EEM_Event::instance()->exists(array())) {
             EE_Error::add_attention(
                 sprintf(
                     __(
-                        'Your website\'s timezone is currently set to UTC + 0. We recommend updating your timezone to a city or region near you before you create an event. Your timezone can be updated through the %1$sGeneral Settings%2$s page.',
+                        'Your website\'s timezone is currently set to a UTC offset. We recommend updating your timezone to a city or region near you before you create an event. Change your timezone now:%1$s%2$s%3$sChange Timezone%4$s',
                         'event_espresso'
                     ),
-                    '<a href="' . admin_url('options-general.php') . '">',
-                    '</a>'
+                    '<br>',
+                    '<select id="timezone_string" name="timezone_string" aria-describedby="timezone-description">'
+                    . EEH_DTT_Helper::wp_timezone_choice('', EEH_DTT_Helper::get_user_locale())
+                    . '</select>',
+                    '<button class="button button-secondary timezone-submit">',
+                    '</button><span class="spinner"></span>'
                 ),
                 __FILE__,
                 __FUNCTION__,
@@ -761,7 +784,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     }
 
 
-
+    /**
+     * Sets the _views property for the default route in this admin page group.
+     */
     protected function _set_list_table_views_default()
     {
         $this->_views = array(
@@ -798,6 +823,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
 
 
     /**
+     * Provides the legend item array for the default list table view.
      * @return array
      */
     protected function _event_legend_items()
@@ -854,8 +880,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
 
 
     /**
-     * _event_model
-     *
      * @return EEM_Event
      */
     private function _event_model()
@@ -901,16 +925,21 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      *
      * @access protected
      * @return void
+     * @throws \EE_Error
      */
     protected function _events_overview_list_table()
     {
         do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-        $this->_template_args['after_list_table'] = EEH_Template::get_button_or_link(
-            get_post_type_archive_link('espresso_events'),
-            esc_html__("View Event Archive Page", "event_espresso"),
-            'button'
-        );
-        $this->_template_args['after_list_table'] .= $this->_display_legend($this->_event_legend_items());
+        $this->_template_args['after_list_table'] = ! empty($this->_template_args['after_list_table'])
+            ? (array)$this->_template_args['after_list_table']
+            : array();
+        $this->_template_args['after_list_table']['view_event_list_button'] = EEH_HTML::br()
+                                                                              . EEH_Template::get_button_or_link(
+                get_post_type_archive_link('espresso_events'),
+                esc_html__("View Event Archive Page", "event_espresso"),
+                'button'
+            );
+        $this->_template_args['after_list_table']['legend'] = $this->_display_legend($this->_event_legend_items());
         $this->_admin_page_title .= ' ' . $this->get_action_link_or_button(
                 'create_new',
                 'add',
@@ -935,8 +964,19 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
 
 
     /**
-     * @param string $post_id
-     * @param object $post
+     * This is hooked into the WordPress do_action('save_post') hook and runs after the custom post type has been saved.
+     * Typically you would use this to save any additional data.
+     * Keep in mind also that "save_post" runs on EVERY post update to the database.
+     * ALSO very important.  When a post transitions from scheduled to published,
+     * the save_post action is fired but you will NOT have any _POST data containing any extra info you may have from other meta saves.
+     * So MAKE sure that you handle this accordingly.
+     *
+     * @access protected
+     * @abstract
+     * @param  string $post_id The ID of the cpt that was saved (so you can link relationally)
+     * @param  object $post    The post object of the cpt that was saved.
+     * @return void
+     * @throws \EE_Error
      */
     protected function _insert_update_cpt_item($post_id, $post)
     {
@@ -966,18 +1006,31 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         //update event
         $success = $this->_event_model()->update_by_ID($event_values, $post_id);
         //get event_object for other metaboxes... though it would seem to make sense to just use $this->_event_model()->get_one_by_ID( $post_id ).. i have to setup where conditions to override the filters in the model that filter out autodraft and inherit statuses so we GET the inherit id!
-        $get_one_where = array($this->_event_model()->primary_key_name() => $post_id, 'status' => $post->post_status);
+        $get_one_where = array(
+            $this->_event_model()->primary_key_name() => $post_id,
+            'OR' => array(
+                'status' => $post->post_status,
+                // if trying to "Publish" a sold out event, it's status will get switched back to "sold_out" in the db,
+                // but the returned object here has a status of "publish", so use the original post status as well
+                'status*1' => $this->_req_data['original_post_status'],
+            )
+        );
         $event = $this->_event_model()->get_one(array($get_one_where));
         //the following are default callbacks for event attachment updates that can be overridden by caffeinated functionality and/or addons.
         $event_update_callbacks = apply_filters(
             'FHEE__Events_Admin_Page___insert_update_cpt_item__event_update_callbacks',
-            array(array($this, '_default_venue_update'), array($this, '_default_tickets_update'))
+            array(
+                array($this, '_default_venue_update'),
+                array($this, '_default_tickets_update')
+            )
         );
         $att_success = true;
         foreach ($event_update_callbacks as $e_callback) {
-            $_succ = call_user_func_array($e_callback, array($event, $this->_req_data));
-            $att_success = ! $att_success ? $att_success
-                : $_succ; //if ANY of these updates fail then we want the appropriate global error message
+            $_success = is_callable($e_callback)
+                ? call_user_func($e_callback, $event, $this->_req_data)
+                : false;
+            //if ANY of these updates fail then we want the appropriate global error message
+            $att_success = ! $att_success ? $att_success : $_success;
         }
         //any errors?
         if ($success && false === $att_success) {
@@ -1341,15 +1394,15 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     /**
      * Add in our autosave ajax handlers
      *
-     * @return void
      */
     protected function _ee_autosave_create_new()
     {
-        // $this->_ee_autosave_edit();
     }
 
 
-
+    /**
+     * More autosave handlers.
+     */
     protected function _ee_autosave_edit()
     {
         return; //TEMPORARILY EXITING CAUSE THIS IS A TODO
@@ -1359,9 +1412,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
 
     /**
      *    _generate_publish_box_extra_content
-     *
-     * @access private
-     * @return void
      */
     private function _generate_publish_box_extra_content()
     {
@@ -1427,13 +1477,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 'FHEE_Events_Admin_Page___generate_publish_box_extra_content__misc_pub_section_class',
                 'misc-pub-section'
             ),
-            //'email_attendees_url' => add_query_arg(
-            //	array(
-            //		'event_admin_reports' => 'event_newsletter',
-            //		'event_id' => $this->_cpt_model_obj->id
-            //	),
-            //	'admin.php?page=espresso_registrations'
-            //),
         );
         ob_start();
         do_action(
@@ -1451,10 +1494,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
 
 
     /**
-     * This just returns whatever is set as the _event object property
-     * //todo this will become obsolete once the models are in place
-     *
-     * @return object
+     * @return EE_Event
      */
     public function get_event_object()
     {
@@ -1497,7 +1537,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     }
 
 
-
+    /**
+     * @throws DomainException
+     * @throws EE_Error
+     */
     public function ticket_metabox()
     {
         $existing_datetime_ids = $existing_ticket_ids = array();
@@ -1650,7 +1693,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     }
 
 
-
+    /**
+     * @throws DomainException
+     */
     public function registration_options_meta_box()
     {
         $yes_no_values = array(
@@ -1723,7 +1768,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         $order = isset($this->_req_data['order']) ? $this->_req_data['order'] : "DESC";
         if (isset($this->_req_data['month_range'])) {
             $pieces = explode(' ', $this->_req_data['month_range'], 3);
-            $month_r = ! empty($pieces[0]) ? date('m', strtotime($pieces[0])) : '';
+            //simulate the FIRST day of the month, that fixes issues for months like February
+            //where PHP doesn't know what to assume for date.
+            //@see https://events.codebasehq.com/projects/event-espresso/tickets/10437
+            $month_r = ! empty($pieces[0]) ? date('m', \EEH_DTT_Helper::first_of_month_timestamp($pieces[0])) : '';
             $year_r = ! empty($pieces[1]) ? $pieces[1] : '';
         }
         $where = array();
@@ -2230,46 +2278,90 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     }
 
 
-
     /**
      *    _default_event_settings
      *    This generates the Default Settings Tab
      *
      * @return void
+     * @throws EE_Error
      */
     protected function _default_event_settings()
     {
-        $this->_template_args['values'] = $this->_yes_no_values;
-        $this->_template_args['reg_status_array'] = EEM_Registration::reg_status_array(
-        // exclude array
+        $this->_set_add_edit_form_tags('update_default_event_settings');
+        $this->_set_publish_post_box_vars(null, false, false, null, false);
+        $this->_template_args['admin_page_content'] = $this->_default_event_settings_form()->get_html();
+        $this->display_admin_page_with_sidebar();
+    }
+
+
+    /**
+     * Return the form for event settings.
+     * @return EE_Form_Section_Proper
+     */
+    protected function _default_event_settings_form()
+    {
+        $registration_config = EE_Registry::instance()->CFG->registration;
+        $registration_stati_for_selection = EEM_Registration::reg_status_array(
+        //exclude
             array(
                 EEM_Registration::status_id_cancelled,
                 EEM_Registration::status_id_declined,
                 EEM_Registration::status_id_incomplete,
                 EEM_Registration::status_id_wait_list,
             ),
-            // translated
             true
         );
-        $this->_template_args['default_reg_status'] = isset(
-                                                          EE_Registry::instance()->CFG->registration->default_STS_ID
-                                                      )
-                                                      && array_key_exists(
-                                                          EE_Registry::instance()->CFG->registration->default_STS_ID,
-                                                          $this->_template_args['reg_status_array']
-                                                      )
-            ? sanitize_text_field(EE_Registry::instance()->CFG->registration->default_STS_ID)
-            : EEM_Registration::status_id_pending_payment;
-        $this->_set_add_edit_form_tags('update_default_event_settings');
-        $this->_set_publish_post_box_vars(null, false, false, null, false);
-        $this->_template_args['admin_page_content'] = EEH_Template::display_template(
-            EVENTS_TEMPLATE_PATH . 'event_settings.template.php',
-            $this->_template_args,
-            true
+        return new EE_Form_Section_Proper(
+            array(
+                'name' => 'update_default_event_settings',
+                'html_id' => 'update_default_event_settings',
+                'html_class' => 'form-table',
+                'layout_strategy' => new EE_Admin_Two_Column_Layout(),
+                'subsections' => apply_filters(
+                    'FHEE__Events_Admin_Page___default_event_settings_form__form_subsections',
+                    array(
+                        'default_reg_status' => new EE_Select_Input(
+                            $registration_stati_for_selection,
+                            array(
+                                'default' => isset($registration_config->default_STS_ID)
+                                             && array_key_exists(
+                                                $registration_config->default_STS_ID,
+                                                $registration_stati_for_selection
+                                             )
+                                            ? sanitize_text_field($registration_config->default_STS_ID)
+                                            : EEM_Registration::status_id_pending_payment,
+                                'html_label_text' => esc_html__('Default Registration Status', 'event_espresso')
+                                                    . EEH_Template::get_help_tab_link(
+                                                        'default_settings_status_help_tab'
+                                                    ),
+                                'html_help_text' => esc_html__(
+                                    'This setting allows you to preselect what the default registration status setting is when creating an event.  Note that changing this setting does NOT retroactively apply it to existing events.',
+                                    'event_espresso'
+                                )
+                            )
+                        ),
+                        'default_max_tickets' => new EE_Integer_Input(
+                            array(
+                                'default' => isset($registration_config->default_maximum_number_of_tickets)
+                                    ? $registration_config->default_maximum_number_of_tickets
+                                    : EEM_Event::get_default_additional_limit(),
+                                'html_label_text' => esc_html__(
+                                    'Default Maximum Tickets Allowed Per Order:',
+                                    'event_espresso'
+                                ) . EEH_Template::get_help_tab_link(
+                                    'default_maximum_tickets_help_tab"'
+                                    ),
+                                'html_help_text' => esc_html__(
+                                    'This setting allows you to indicate what will be the default for the maximum number of tickets per order when creating new events.',
+                                    'event_espresso'
+                                )
+                            )
+                        )
+                    )
+                )
+            )
         );
-        $this->display_admin_page_with_sidebar();
     }
-
 
 
     /**
@@ -2277,21 +2369,31 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      *
      * @access protected
      * @return void
+     * @throws EE_Error
      */
     protected function _update_default_event_settings()
     {
-        EE_Config::instance()->registration->default_STS_ID = isset($this->_req_data['default_reg_status'])
-            ? sanitize_text_field($this->_req_data['default_reg_status'])
-            : EEM_Registration::status_id_pending_payment;
-        $what = 'Default Event Settings';
-        $success = $this->_update_espresso_configuration(
-            $what,
-            EE_Config::instance(),
-            __FILE__,
-            __FUNCTION__,
-            __LINE__
-        );
-        $this->_redirect_after_action($success, $what, 'updated', array('action' => 'default_event_settings'));
+        $registration_config = EE_Registry::instance()->CFG->registration;
+        $form = $this->_default_event_settings_form();
+        if ($form->was_submitted()) {
+            $form->receive_form_submission();
+            if ($form->is_valid()) {
+                $valid_data = $form->valid_data();
+                if (isset($valid_data['default_reg_status'])) {
+                    $registration_config->default_STS_ID = $valid_data['default_reg_status'];
+                }
+                if (isset($valid_data['default_max_tickets'])) {
+                    $registration_config->default_maximum_number_of_tickets = $valid_data['default_max_tickets'];
+                }
+                //update because data was valid!
+                EE_Registry::instance()->CFG->update_espresso_config();
+                EE_Error::overwrite_success();
+                EE_Error::add_success(
+                    __('Default Event Settings were updated', 'event_espresso')
+                );
+            }
+        }
+        $this->_redirect_after_action(0, '', '', array('action' => 'default_event_settings'), true);
     }
 
 
@@ -2309,7 +2411,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                                                . esc_attr__('Template Settings Preview screenshot', 'event_espresso')
                                                . '" />';
         $this->_template_args['preview_text'] = '<strong>' . esc_html__(
-                'Template Settings is a feature that is only available in the Caffeinated version of Event Espresso. Template Settings allow you to configure some of the appearance options for both the Event List and Event Details pages.',
+                'Template Settings is a feature that is only available in the premium version of Event Espresso 4 which is available with a support license purchase on EventEspresso.com. Template Settings allow you to configure some of the appearance options for both the Event List and Event Details pages.',
                 'event_espresso'
             ) . '</strong>';
         $this->display_admin_caf_preview_page('template_settings_tab');
@@ -2346,7 +2448,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     }
 
 
-
+    /**
+     * Clears out category properties.
+     */
     private function _set_empty_category_object()
     {
         $this->_category = new stdClass();
@@ -2355,7 +2459,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     }
 
 
-
+    /**
+     * @throws EE_Error
+     */
     protected function _category_list_table()
     {
         do_action('AHEE_log', __FILE__, __FUNCTION__, '');
@@ -2372,7 +2478,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
 
 
     /**
-     * @param $view
+     * Output category details view.
      */
     protected function _category_details($view)
     {
@@ -2397,7 +2503,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
 
 
     /**
-     * @return mixed
+     * Output category details content.
      */
     protected function _category_details_content()
     {
@@ -2441,7 +2547,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     }
 
 
-
+    /**
+     * Handles deleting categories.
+     */
     protected function _delete_categories()
     {
         $cat_ids = isset($this->_req_data['EVT_CAT_ID']) ? (array)$this->_req_data['EVT_CAT_ID']
@@ -2459,7 +2567,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
 
 
     /**
-     * @param $cat_id
+     * Handles deleting specific category.
+     * @param int $cat_id
      */
     protected function _delete_category($cat_id)
     {
@@ -2470,7 +2579,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
 
 
     /**
-     * @param $new_category
+     * Handles triggering the update or insertion of a new category.
+     * @param bool $new_category  true means we're triggering the insert of a new category.
      */
     protected function _insert_or_update_category($new_category)
     {
@@ -2490,7 +2600,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
 
 
     /**
-     * @param bool $update
+     * Inserts or updates category
+     * @param bool $update (true indicates we're updating a category).
      * @return bool|mixed|string
      */
     private function _insert_category($update = false)
@@ -2533,10 +2644,11 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
 
 
     /**
+     * Gets categories or count of categories matching the arguments in the request.
      * @param int  $per_page
      * @param int  $current_page
      * @param bool $count
-     * @return \EE_Base_Class[]|int
+     * @return EE_Base_Class[]|EE_Term_Taxonomy[]|int
      */
     public function get_categories($per_page = 10, $current_page = 1, $count = false)
     {
@@ -2564,9 +2676,35 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         return $categories;
     }
 
-
-
     /* end category stuff */
     /**************/
+
+
+    /**
+     * Callback for the `ee_save_timezone_setting` ajax action.
+     * @throws EE_Error
+     */
+    public function save_timezonestring_setting()
+    {
+        $timezone_string = isset($this->_req_data['timezone_selected'])
+            ? $this->_req_data['timezone_selected']
+            : '';
+        if  (empty($timezone_string) || ! EEH_DTT_Helper::validate_timezone($timezone_string, false))
+        {
+            EE_Error::add_error(
+                esc_html('An invalid timezone string submitted.', 'event_espresso'),
+                __FILE__, __FUNCTION__, __LINE__
+            );
+            $this->_template_args['error'] = true;
+            $this->_return_json();
+        }
+
+        update_option('timezone_string', $timezone_string);
+        EE_Error::add_success(
+            esc_html__('Your timezone string was updated.', 'event_espresso')
+        );
+        $this->_template_args['success'] = true;
+        $this->_return_json(true, array('action' => 'create_new'));
+    }
 }
 //end class Events_Admin_Page
