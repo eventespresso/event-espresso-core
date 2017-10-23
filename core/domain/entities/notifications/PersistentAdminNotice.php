@@ -107,7 +107,7 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
             'AHEE__EventEspresso_core_services_notifications_PersistentAdminNoticeManager__registerNotices',
             array($this, 'registerPersistentAdminNotice')
         );
-        add_action('admin_footer', array($this, 'confirmRegistered'));
+        add_action('shutdown', array($this, 'confirmRegistered'), 999);
     }
 
 
