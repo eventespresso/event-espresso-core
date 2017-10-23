@@ -1,6 +1,8 @@
 <?php
 
 use EventEspresso\core\domain\services\session\SessionIdentifierInterface;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\InvalidSessionDataException;
 use EventEspresso\core\services\cache\CacheStorageInterface;
 
@@ -98,7 +100,7 @@ class EE_Session implements SessionIdentifierInterface
      *
      * @var bool
      */
-    private $_use_encryption = false;
+    private $_use_encryption;
 
     /**
      * well... according to the server...
@@ -149,10 +151,11 @@ class EE_Session implements SessionIdentifierInterface
     /**
      * @singleton method used to instantiate class object
      * @param CacheStorageInterface $cache_storage
-     * @param \EE_Encryption        $encryption
+     * @param EE_Encryption         $encryption
      * @return EE_Session
-     * @throws InvalidSessionDataException
-     * @throws \EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public static function instance(
         CacheStorageInterface $cache_storage = null,
@@ -173,9 +176,10 @@ class EE_Session implements SessionIdentifierInterface
      * protected constructor to prevent direct creation
      *
      * @param CacheStorageInterface $cache_storage
-     * @param \EE_Encryption        $encryption
-     * @throws \EE_Error
-     * @throws \EventEspresso\core\exceptions\InvalidSessionDataException
+     * @param EE_Encryption         $encryption
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function __construct(CacheStorageInterface $cache_storage, EE_Encryption $encryption = null)
     {
@@ -234,8 +238,11 @@ class EE_Session implements SessionIdentifierInterface
 
     /**
      * @return void
-     * @throws \EventEspresso\core\exceptions\InvalidSessionDataException
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidSessionDataException
      */
     public function open_session()
     {
@@ -282,7 +289,7 @@ class EE_Session implements SessionIdentifierInterface
      */
     public function extension()
     {
-        return apply_filters('FHEE__EE_Session__extend_expiration__seconds_added', (10 * MINUTE_IN_SECONDS));
+        return apply_filters('FHEE__EE_Session__extend_expiration__seconds_added', 10 * MINUTE_IN_SECONDS);
     }
 
 
@@ -413,7 +420,7 @@ class EE_Session implements SessionIdentifierInterface
     /**
      * @param \EE_Transaction $transaction
      * @return bool
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function set_transaction(EE_Transaction $transaction)
     {
@@ -466,9 +473,8 @@ class EE_Session implements SessionIdentifierInterface
         }
         if (! empty($key)) {
             return isset($this->_session_data[ $key ]) ? $this->_session_data[ $key ] : null;
-        } else {
-            return $this->_session_data;
         }
+        return $this->_session_data;
     }
 
 
@@ -494,9 +500,8 @@ class EE_Session implements SessionIdentifierInterface
                 EE_Error::add_error(sprintf(__('Sorry! %s is a default session datum and can not be reset.',
                     'event_espresso'), $key), __FILE__, __FUNCTION__, __LINE__);
                 return false;
-            } else {
-                $this->_session_data[ $key ] = $value;
             }
+            $this->_session_data[ $key ] = $value;
         }
         return true;
     }
@@ -507,8 +512,11 @@ class EE_Session implements SessionIdentifierInterface
      * @initiate session
      * @access   private
      * @return TRUE on success, FALSE on fail
-     * @throws \EventEspresso\core\exceptions\InvalidSessionDataException
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidSessionDataException
      */
     private function _espresso_session()
     {
@@ -528,7 +536,7 @@ class EE_Session implements SessionIdentifierInterface
         $session_data = $this->_retrieve_session_data();
         if (! empty($session_data)) {
             // get the current time in UTC
-            $this->_time = isset($this->_time) ? $this->_time : time();
+            $this->_time = $this->_time !== null ? $this->_time : time();
             // and reset the session expiration
             $this->_expiration = isset($session_data['expiration'])
                 ? $session_data['expiration']
@@ -567,7 +575,11 @@ class EE_Session implements SessionIdentifierInterface
      * databases
      *
      * @return array
-     * @throws \EventEspresso\core\exceptions\InvalidSessionDataException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidSessionDataException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function _retrieve_session_data()
     {
@@ -733,11 +745,14 @@ class EE_Session implements SessionIdentifierInterface
      * @access public
      * @param bool $new_session
      * @return TRUE on success, FALSE on fail
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function update($new_session = false)
     {
-        $this->_session_data = isset($this->_session_data)
+        $this->_session_data = $this->_session_data !== null
                                && is_array($this->_session_data)
                                && isset($this->_session_data['id'])
             ? $this->_session_data
@@ -812,7 +827,10 @@ class EE_Session implements SessionIdentifierInterface
      * @create session data array
      * @access public
      * @return bool
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     private function _create_espresso_session()
     {
@@ -828,7 +846,10 @@ class EE_Session implements SessionIdentifierInterface
      *
      * @access public
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     private function _save_session_to_db()
     {
@@ -974,7 +995,10 @@ class EE_Session implements SessionIdentifierInterface
      * @param string $class
      * @param string $function
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function clear_session($class = '', $function = '')
     {
@@ -995,8 +1019,8 @@ class EE_Session implements SessionIdentifierInterface
     /**
      * @resets all non-default session vars
      * @access public
-     * @param array $data_to_reset
-     * @param bool  $show_all_notices
+     * @param array|mixed $data_to_reset
+     * @param bool        $show_all_notices
      * @return TRUE on success, FALSE on fail
      */
     public function reset_data($data_to_reset = array(), $show_all_notices = false)
@@ -1025,7 +1049,6 @@ class EE_Session implements SessionIdentifierInterface
                         EE_Error::add_success(sprintf(__('The session variable %s was removed.', 'event_espresso'),
                             $reset), __FILE__, __FUNCTION__, __LINE__);
                     }
-                    $return_value = ! isset($return_value) ? true : $return_value;
                 } else {
                     // yeeeeeeeeerrrrrrrrrrr OUT !!!!
                     if ($show_all_notices) {
@@ -1050,11 +1073,17 @@ class EE_Session implements SessionIdentifierInterface
      *   wp_loaded
      *
      * @access public
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
      */
     public function wp_loaded()
     {
-        if (isset(EE_Registry::instance()->REQ) && EE_Registry::instance()->REQ->is_set('clear_session')) {
+        if (
+            EE_Registry::instance()->REQ instanceof EE_Request_Handler
+            && EE_Registry::instance()->REQ->is_set('clear_session')
+        ) {
             $this->clear_session(__CLASS__, __FUNCTION__);
         }
     }
@@ -1065,7 +1094,10 @@ class EE_Session implements SessionIdentifierInterface
      * Used to reset the entire object (for tests).
      *
      * @since 4.3.0
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
      */
     public function reset_instance()
     {
