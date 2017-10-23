@@ -650,6 +650,7 @@ class EE_Session implements SessionIdentifierInterface
                       . '</pre><br>'
                       . $this->find_serialize_error($session_data)
                     : '';
+                $this->cache_storage->delete(EE_Session::session_id_prefix . $this->_sid);
                 throw new InvalidSessionDataException($msg, 0, $e);
             }
         }
@@ -663,6 +664,7 @@ class EE_Session implements SessionIdentifierInterface
             $msg .= WP_DEBUG
                 ? '<br><pre>' . print_r($session_data, true) . '</pre><br>' . $this->find_serialize_error($session_data)
                 : '';
+            $this->cache_storage->delete(EE_Session::session_id_prefix . $this->_sid);
             throw new InvalidSessionDataException($msg);
         }
         if (isset($session_data['transaction']) && absint($session_data['transaction']) !== 0) {
