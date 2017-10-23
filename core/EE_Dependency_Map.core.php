@@ -640,6 +640,9 @@ class EE_Dependency_Map
             'EE_Module_Request_Router' => array(
                 'EE_Request' => EE_Dependency_Map::load_from_cache,
             ),
+            'EE_Registration_Processor' => array(
+                'EE_Request' => EE_Dependency_Map::load_from_cache,
+            ),
             'EventEspresso\core\services\notifications\PersistentAdminNoticeManager' => array(
                 null,
                 'EventEspresso\core\domain\services\capabilities\CapabilitiesChecker' => EE_Dependency_Map::load_from_cache,
