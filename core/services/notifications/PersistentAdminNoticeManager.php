@@ -75,7 +75,7 @@ class PersistentAdminNoticeManager
         add_action('admin_notices', array($this, 'displayNotices'), 9);
         add_action('network_admin_notices', array($this, 'displayNotices'), 9);
         add_action('wp_ajax_dismiss_ee_nag_notice', array($this, 'dismissNotice'));
-        add_action('shutdown', array($this, 'saveNotices'));
+        add_action('shutdown', array($this, 'registerAndSaveNotices'), 998);
     }
 
 
@@ -131,12 +131,12 @@ class PersistentAdminNoticeManager
             foreach ($persistent_admin_notices as $name => $details) {
                 if (is_array($details)) {
                     if (
-                    ! isset(
-                        $details['message'],
-                        $details['capability'],
-                        $details['cap_context'],
-                        $details['dismissed']
-                    )
+                        ! isset(
+                            $details['message'],
+                            $details['capability'],
+                            $details['cap_context'],
+                            $details['dismissed']
+                        )
                     ) {
                         throw new DomainException(
                             sprintf(
@@ -369,6 +369,19 @@ class PersistentAdminNoticeManager
         }
     }
 
+
+
+    /**
+     * @throws DomainException
+     * @throws InvalidDataTypeException
+     * @throws InvalidEntityException
+     * @throws InvalidInterfaceException
+     */
+    public function registerAndSaveNotices()
+    {
+        $this->registerNotices();
+        $this->saveNotices();
+    }
 
 
 }
