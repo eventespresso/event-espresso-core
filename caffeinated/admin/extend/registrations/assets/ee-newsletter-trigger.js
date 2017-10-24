@@ -147,6 +147,7 @@ jQuery(document).ready(function($) {
          },
 
 
+
         /**
          * Sets the namespaced click event for the shortcode picker.
          * @param {boolean} bind whether to bind or unbind the click event
@@ -154,16 +155,15 @@ jQuery(document).ready(function($) {
         setClickEventForShortcodePicker: function(bind)
         {
             var $shortcodeContainer = $('.ee_shortcode_chooser_container', '.batch-message-edit-fields'),
-                bind = typeof bind === 'undefined' || typeof bind !== 'boolean';
+                bind = typeof bind === 'undefined' || typeof bind !== 'boolean',
+                clickHandler = function(e) {
+                    EENewsletterTrigger.shortCodePickerClickEvent(this);
+                };
 
             if (bind) {
-                $('.js-shortcode-selection', $shortcodeContainer).on('click.shortcodeClick', function(e){
-                    EENewsletterTrigger.shortCodePickerClickEvent(this);
-                })
+                $('.js-shortcode-selection', $shortcodeContainer).on('click.shortcodeClick', clickHandler)
             } else {
-                $('.js-shortcode-selection', $shortcodeContainer).off('click.shortcodeClick', function(e){
-                    EENewsletterTrigger.shortCodePickerClickEvent(this);
-                })
+                $('.js-shortcode-selection', $shortcodeContainer).off('click.shortcodeClick', clickHandler)
             }
         },
 
