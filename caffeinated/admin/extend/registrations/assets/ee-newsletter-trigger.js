@@ -5,7 +5,6 @@ jQuery(document).ready(function($) {
         //used to hold whatever the selected MTP is in the selector.
         selectedMTP: 0,
         formContent: '',
-        shortcodeClickEventRegistered: false,
 
         /**
          * this retrieves the form from the page if not already cached in the internal var
@@ -92,6 +91,7 @@ jQuery(document).ready(function($) {
            this.resetFormInputs();
             $('.batch-message-edit-fields').hide();
             dialogHelper.closeModal();
+            this.setClickEventForShortcodePicker(false);
          },
 
 
@@ -149,13 +149,19 @@ jQuery(document).ready(function($) {
 
         /**
          * Sets the namespaced click event for the shortcode picker.
+         * @param {boolean} bind whether to bind or unbind the click event
          */
-        setClickEventForShortcodePicker: function()
+        setClickEventForShortcodePicker: function(bind)
         {
-            var $shortcodeContainer = $('.ee_shortcode_chooser_container', '.batch-message-edit-fields');
-            if (! this.shortcodeClickEventRegistered) {
-                this.shortcodeClickEventRegistered = true;
+            var $shortcodeContainer = $('.ee_shortcode_chooser_container', '.batch-message-edit-fields'),
+                bind = typeof bind === 'undefined' || typeof bind !== 'boolean';
+
+            if (bind) {
                 $('.js-shortcode-selection', $shortcodeContainer).on('click.shortcodeClick', function(e){
+                    EENewsletterTrigger.shortCodePickerClickEvent(this);
+                })
+            } else {
+                $('.js-shortcode-selection', $shortcodeContainer).off('click.shortcodeClick', function(e){
                     EENewsletterTrigger.shortCodePickerClickEvent(this);
                 })
             }
