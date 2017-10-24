@@ -379,6 +379,7 @@ class PersistentAdminNoticeManager
      */
     public function registerAndSaveNotices()
     {
+        $this->getPersistentAdminNoticeCollection();
         $this->registerNotices();
         $this->saveNotices();
     }
