@@ -1,7 +1,6 @@
 <?php
 namespace EventEspresso\core\services\cache;
 
-use EventEspresso\core\domain\services\session\SessionIdentifierInterface;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -56,6 +55,32 @@ class PostRelatedCacheManager extends BasicCacheManager
     }
 
 
+    /**
+     * @return array
+     */
+    protected function getPostRelatedCache()
+    {
+        $post_related_cache = get_option(PostRelatedCacheManager::POST_CACHE_OPTIONS_KEY, array());
+        // verify that cached data was not truncated or corrupted and no longer an array
+        if (! is_array($post_related_cache))  {
+            // uh-oh... let's get rid of any transients using our cache prefix
+            $this->clear(PostRelatedCacheManager::CACHE_PREFIX);
+            // then update the post related cache tracking option
+            $post_related_cache = array();
+            $this->updatePostRelatedCache($post_related_cache);
+        }
+        return $post_related_cache;
+    }
+
+
+    /**
+     * @param array $post_related_cache
+     */
+    protected function updatePostRelatedCache(array $post_related_cache = array())
+    {
+        update_option(PostRelatedCacheManager::POST_CACHE_OPTIONS_KEY, $post_related_cache);
+    }
+
 
     /**
      * If you are caching content that pertains to a Post of any type,
@@ -73,15 +98,17 @@ class PostRelatedCacheManager extends BasicCacheManager
      */
     public function clearPostRelatedCacheOnUpdate($post_ID, $id_prefix)
     {
-        $post_related_cache = (array)get_option(PostRelatedCacheManager::POST_CACHE_OPTIONS_KEY, array());
+        $post_related_cache = $this->getPostRelatedCache();
         // if post is not already being tracked
         if ( ! isset($post_related_cache[$post_ID])) {
             // add array to add cache ids to
             $post_related_cache[$post_ID] = array();
         }
-        // add cache id to be tracked
-        $post_related_cache[$post_ID][] = $id_prefix;
-        update_option(PostRelatedCacheManager::POST_CACHE_OPTIONS_KEY, $post_related_cache);
+        if( ! in_array($id_prefix, $post_related_cache[$post_ID], true)) {
+            // add cache id to be tracked
+            $post_related_cache[$post_ID][] = $id_prefix;
+            $this->updatePostRelatedCache($post_related_cache);
+        }
     }
 
 
@@ -94,15 +121,21 @@ class PostRelatedCacheManager extends BasicCacheManager
      */
     public function clearPostRelatedCache($post_ID)
     {
-        $post_related_cache = (array)get_option(PostRelatedCacheManager::POST_CACHE_OPTIONS_KEY, array());
+        $post_related_cache = $this->getPostRelatedCache();
         // if post is not being tracked
         if ( ! isset($post_related_cache[$post_ID])) {
+            // let's clean up some of the duplicate IDs that were getting added
+            foreach ($post_related_cache as $other_post_ID => $cache_IDs) {
+                //remove duplicates
+                $post_related_cache[$other_post_ID] = array_unique($post_related_cache[$other_post_ID]);
+            }
+            $this->updatePostRelatedCache($post_related_cache);
             return;
         }
         // get cache id prefixes for post, and delete their corresponding transients
         $this->clear($post_related_cache[$post_ID]);
         unset($post_related_cache[$post_ID]);
-        update_option(PostRelatedCacheManager::POST_CACHE_OPTIONS_KEY, $post_related_cache);
+        $this->updatePostRelatedCache($post_related_cache);
     }
 
 

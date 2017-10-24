@@ -648,7 +648,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page
         wp_enqueue_script('ee_admin_js');
 //		wp_enqueue_media();
 //		wp_enqueue_script('media-upload');
-        wp_enqueue_script('ee-maintenance', EE_MAINTENANCE_ASSETS_URL . '/ee-maintenance.js', array('jquery'),
+        wp_enqueue_script('ee-maintenance', EE_MAINTENANCE_ASSETS_URL . 'ee-maintenance.js', array('jquery'),
             EVENT_ESPRESSO_VERSION, true);
         wp_register_style('espresso_maintenance', EE_MAINTENANCE_ASSETS_URL . 'ee-maintenance.css', array(),
             EVENT_ESPRESSO_VERSION);
