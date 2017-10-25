@@ -235,14 +235,18 @@ class TransientCacheStorage implements CacheStorageInterface
      * delete multiple transients and remove tracking
      *
      * @param array $transient_keys [required] array of full or partial transient keys to be deleted
+     * @param bool  $force_delete   [optional] if true, then will not check incoming keys against those being tracked
+     *                              and proceed directly to deleting those entries from the cache storage
      */
-    public function deleteMany(array $transient_keys)
+    public function deleteMany(array $transient_keys, $force_delete = false)
     {
-        $full_transient_keys = array();
-        foreach ($this->transients as $transient_key => $expiration) {
-            foreach ($transient_keys as $transient_key_to_delete) {
-                if (strpos($transient_key, $transient_key_to_delete) !== false) {
-                    $full_transient_keys[] = $transient_key;
+        $full_transient_keys = $force_delete ? $transient_keys : array();
+        if(empty($full_transient_keys)){
+            foreach ($this->transients as $transient_key => $expiration) {
+                foreach ($transient_keys as $transient_key_to_delete) {
+                    if (strpos($transient_key, $transient_key_to_delete) !== false) {
+                        $full_transient_keys[] = $transient_key;
+                    }
                 }
             }
         }
@@ -368,12 +372,21 @@ class TransientCacheStorage implements CacheStorageInterface
             if($counter === $limit){
                 break;
             }
-            delete_transient($transient_key);
-            unset($this->transients[$transient_key]);
-            $counter++;
+            // remove any transient prefixes
+            $transient_key = strpos($transient_key,  '_transient_timeout_') === 0
+                ? str_replace('_transient_timeout_', '', $transient_key)
+                : $transient_key;
+            $transient_key = strpos($transient_key,  '_transient_') === 0
+                ? str_replace('_transient_', '', $transient_key)
+                : $transient_key;
+            if(delete_transient($transient_key)){
+                unset($this->transients[$transient_key]);
+                $counter++;
+            }
         }
         return $counter > 0;
     }
+
 
 
 }
