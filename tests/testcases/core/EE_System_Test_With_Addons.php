@@ -1,5 +1,8 @@
 <?php
 
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\container\RegistryContainer;
 use EventEspresso\core\services\database\TableAnalysis;
 use EventEspresso\core\services\database\TableManager;
 
@@ -85,36 +88,23 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase
 
 
     /**
-     * EE_System_Test_With_Addons constructor.
-     *
-     * @param null   $name
-     * @param array  $data
-     * @param string $dataName
-     */
-    public function __construct($name = null, array $data = array(), $dataName = '')
-    {
-        $this->_table_analysis = new TableAnalysis();
-        $this->_table_manager  = new TableManager($this->_table_analysis);
-        parent::__construct($name, $data, $dataName);
-    }
-
-
-    /**
      * Registers the mock addon so it can be used for testing
      *
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \InvalidArgumentException
-     * @throws \EE_Error
-     * @throws \DomainException
-     * @throws \ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
+     * @throws EE_Error
+     * @throws DomainException
+     * @throws ReflectionException
      */
     public function setUp()
     {
         parent::setUp();
+        $this->_table_analysis = new TableAnalysis();
+        $this->_table_manager  = new TableManager($this->_table_analysis);
         $this->_pretend_addon_hook_time();
         $mock_addon_path = EE_TESTS_DIR . 'mocks/addons/eea-new-addon/';
-        EE_Registry::instance()->addons = new \EventEspresso\core\services\container\RegistryContainer();
+        EE_Registry::instance()->addons = new RegistryContainer();
         EE_Register_Addon::register(
             $this->_addon_name,
             array(
@@ -156,29 +146,6 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase
     }
 
 
-    /**
-     * OK's the creation of the esp_new_addon table, because this hooks in AFTER EE_UNitTestCase's callback on this
-     * same hook
-     *
-     * @global wpdb   $wpdb
-     * @param boolean $short_circuit whether or not to short-circuit
-     * @param string  $table_name    name we're about to create. Should NOT have the $wpdb->prefix on it
-     * @return array|bool
-     */
-    public function dont_short_circuit_new_addon_table($short_circuit = false, $table_name = '')
-    {
-        //allow creation of new_addon tables. Unfortunately, this also allows their modification, which causes
-        //implicit commits. But I like allowing re-defining the tables on test
-        //test_detect_activations_or_upgrades__new_install_on_core_and_addon_simultaneously
-        //so we can confirm a notices are sent when attempting to redefine an addon table
-        if (in_array($table_name, $this->_temp_tables_added_by_addon, true)) {
-            //it's not altering. it's ok to allow this
-            return false;
-        }
-        return $short_circuit;
-    }
-
-
     public function tearDown()
     {
         //if somehow $this->_addon isn't set, we don't need to worry about deregistering it right?
@@ -207,6 +174,29 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase
             $this->_table_manager->dropTables($this->_temp_tables_added_by_addon);
         }
         parent::tearDown();
+    }
+
+
+    /**
+     * OK's the creation of the esp_new_addon table, because this hooks in AFTER EE_UNitTestCase's callback on this
+     * same hook
+     *
+     * @global wpdb   $wpdb
+     * @param boolean $short_circuit whether or not to short-circuit
+     * @param string  $table_name    name we're about to create. Should NOT have the $wpdb->prefix on it
+     * @return array|bool
+     */
+    public function dont_short_circuit_new_addon_table($short_circuit = false, $table_name = '')
+    {
+        //allow creation of new_addon tables. Unfortunately, this also allows their modification, which causes
+        //implicit commits. But I like allowing re-defining the tables on test
+        //test_detect_activations_or_upgrades__new_install_on_core_and_addon_simultaneously
+        //so we can confirm a notices are sent when attempting to redefine an addon table
+        if (in_array($table_name, $this->_temp_tables_added_by_addon, true)) {
+            //it's not altering. it's ok to allow this
+            return false;
+        }
+        return $short_circuit;
     }
 
 
