@@ -707,7 +707,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         $this->_add_screen_options();
         $add_screen_options  = "_add_screen_options_{$this->_current_view}";
         if (method_exists($this, $add_screen_options )) {
-            $this->{$add_screen_options};
+            $this->{$add_screen_options}();
         }
         //add help tab(s) and tours- set via page_config and qtips.
         $this->_add_help_tour();
@@ -718,7 +718,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         $this->_add_global_feature_pointers();
         $add_feature_pointer = "_add_feature_pointer_{$this->_current_view}";
         if (method_exists($this, $add_feature_pointer )) {
-            $this->{$add_feature_pointer};
+            $this->{$add_feature_pointer}();
         }
         //enqueue scripts/styles - global, page class, and view specific
         add_action('admin_enqueue_scripts', array($this, 'load_global_scripts_styles'), 5);
@@ -1226,7 +1226,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                 }
                 $content = apply_filters(
                     'FHEE__' . get_class($this) . '__add_help_tabs__help_sidebar',
-                    $this->{$config['help_sidebar']}
+                    $this->{$config['help_sidebar']}()
                 );
                 $content .= $tour_buttons; //add help tour buttons.
                 //do we have any help tours setup?  Cause if we do we want to add the buttons
@@ -1476,8 +1476,10 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                 ! is_array($config)
                 || (
                     is_array($config)
-                    && (isset($config['nav']) && ! $config['nav'])
-                    || ! isset($config['nav'])
+                    && (
+                        (isset($config['nav']) && ! $config['nav'])
+                        || ! isset($config['nav'])
+                    )
                 )
             ) {
                 continue;
@@ -1682,7 +1684,8 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * Anything triggered by the wp 'admin_footer' wp hook should be put in here. This particular method will apply on
      * ALL EE_Admin Pages.
      *
-     * @return  void
+     * @return void
+     * @throws EE_Error
      */
     public function admin_footer_global()
     {
@@ -1879,6 +1882,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * The scripts and styles enqueued in here will be loaded on every EE Admin page
      *
      * @return void
+     * @throws EE_Error
      */
     public function load_global_scripts_styles()
     {
@@ -2018,6 +2022,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                 EVENT_ESPRESSO_VERSION,
                 true
             );
+            $tours = array();
             //setup tours for the js tour object
             foreach ($this->_help_tour['tours'] as $tour) {
                 if ($tour instanceof EE_Help_Tour) {
@@ -2114,9 +2119,9 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         if (! isset($this->_route_config['list_table'])) {
             return;
         } //not a list_table view so get out.
-        // list table functions are per view specific (because some admin pages might have more than one listtable!)
+        // list table functions are per view specific (because some admin pages might have more than one list table!)
         $list_table_view = '_set_list_table_views_' . $this->_req_action;
-        if ($this->{$list_table_view} === false) {
+        if ($this->{$list_table_view}() === false) {
             //user error msg
             $error_msg = esc_html__(
                 'An error occurred. The requested list table views could not be found.',
@@ -2777,6 +2782,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @param string  $priority      give this metabox a priority (using accepted priorities for wp meta boxes)
      * @param boolean $create_func   default is true.  Basically we can say we don't WANT to have the runtime function
      *                               created but just set our own callback for wp's add_meta_box.
+     * @throws \DomainException
      */
     public function _add_admin_page_meta_box(
         $action,
