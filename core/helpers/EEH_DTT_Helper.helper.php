@@ -345,15 +345,12 @@ class EEH_DTT_Helper
     {
         $transition = self::get_timezone_transitions($date_time_zone, $time);
         if (! isset($transition['offset'])) {
-            $transition['offset'] = 0;
-            if (! isset($transition['ts'])) {
-                throw new DomainException(
-                    sprintf(
-                        esc_html__('An invalid timezone transition was received %1$s', 'event_espresso'),
-                        print_r($transition, true)
-                    )
-                );
-            }
+            throw new DomainException(
+                sprintf(
+                    esc_html__('An invalid timezone transition was received %1$s', 'event_espresso'),
+                    print_r($transition, true)
+                )
+            );
         }
         return $transition['offset'];
     }
