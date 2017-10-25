@@ -77,9 +77,11 @@ class CacheStorageMock implements CacheStorageInterface
     /**
      * delete multiple cached items
      *
-     * @param array $keys [required] array of full or partial cache keys to be deleted
+     * @param array $keys           [required] array of full or partial cache keys to be deleted
+     * @param bool  $force_delete   [optional] if true, then will not check incoming keys against those being tracked
+     *                              and proceed directly to deleting those entries from the cache storage
      */
-    public function deleteMany(array $keys)
+    public function deleteMany(array $keys, $force_delete = false)
     {
         foreach ($keys as $key) {
             $this->delete($key);
