@@ -385,8 +385,9 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * Gets the ticket this registration is for
      *
      * @param boolean $include_archived whether to include archived tickets or not.
+     *
      * @return EE_Ticket|EE_Base_Class
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function ticket($include_archived = true)
     {
@@ -438,7 +439,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * decrements (subtracts) this registration's related ticket sold and corresponding datetime sold values
      *
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     private function _release_registration_space()
     {
@@ -453,8 +454,9 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * and can increment related ticket reserved and corresponding datetime reserved values
      *
      * @param bool $update_ticket if true, will increment ticket and datetime reserved count
+     *
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function reserve_ticket($update_ticket = false)
     {
@@ -475,8 +477,9 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * decrements (subtracts) related ticket reserved and corresponding datetime reserved values
      *
      * @param bool $update_ticket if true, will decrement ticket and datetime reserved count
+     *
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function release_reserved_ticket($update_ticket = false)
     {
@@ -835,7 +838,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      *
      * @access public
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function reg_url_link()
     {
@@ -1512,7 +1515,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * "Latest" is defined by the `DTT_EVT_start` column.
      *
      * @return EE_Datetime|null
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function get_latest_related_datetime()
     {
@@ -1531,7 +1534,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * Returns the earliest datetime related to this registration (via the ticket attached to the registration).
      * "Earliest" is defined by the `DTT_EVT_start` column.
      *
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function get_earliest_related_datetime()
     {
@@ -1555,8 +1558,9 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      *                            (if empty we'll get the primary datetime for
      *                            this registration (via event) and use it's ID);
      * @param EE_Checkin $checkin If present, we use the given checkin object rather than the dtt_id.
+     *
      * @return int                Integer representing Check-in status.
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function check_in_status_for_datetime($DTT_ID = 0, $checkin = null)
     {
@@ -1780,8 +1784,9 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
     /**
      * @param array $query_params
+     *
      * @return \EE_Registration[]
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function payments($query_params = array())
     {
@@ -1791,8 +1796,9 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
     /**
      * @param array $query_params
+     *
      * @return \EE_Registration_Payment[]
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function registration_payments($query_params = array())
     {
@@ -1815,7 +1821,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     /**
      * @return \EE_Line_Item
      * @throws EntityNotFoundException
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function ticket_line_item()
     {
@@ -1848,8 +1854,8 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * Soft Deletes this model object.
      *
      * @return boolean | int
-     * @throws \RuntimeException
-     * @throws \EE_Error
+     * @throws RuntimeException
+     * @throws EE_Error
      */
     public function delete()
     {
@@ -1863,8 +1869,8 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     /**
      * Restores whatever the previous status was on a registration before it was trashed (if possible)
      *
-     * @throws \EE_Error
-     * @throws \RuntimeException
+     * @throws EE_Error
+     * @throws RuntimeException
      */
     public function restore()
     {
@@ -1880,6 +1886,45 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
         return parent::restore();
     }
 
+
+    /**
+     * possibly toggle Registration status based on comparison of REG_paid vs REG_final_price
+     *
+     * @param  boolean $trigger_set_status_logic EE_Registration::set_status() can trigger additional logic
+     *                                           depending on whether the reg status changes to or from "Approved"
+     * @return boolean whether the Registration status was updated
+     * @throws EE_Error
+     * @throws RuntimeException
+     */
+    public function updateStatusBasedOnTotalPaid($trigger_set_status_logic = true)
+    {
+        $paid = $this->paid();
+        $price = $this->final_price();
+        switch(true) {
+            // overpaid or paid
+            case EEH_Money::compare_floats($paid, $price, '>'):
+            case EEH_Money::compare_floats($paid, $price):
+                $new_status = EEM_Registration::status_id_approved;
+                break;
+            //  underpaid
+            case EEH_Money::compare_floats($paid, $price, '<'):
+                $new_status = EEM_Registration::status_id_pending_payment;
+                break;
+            // uhhh Houston...
+            default:
+                throw new RuntimeException(
+                    esc_html__('The total paid calculation for this registration is inaccurate.', 'event_espresso')
+                );
+        }
+        if ($new_status !== $this->status_ID()) {
+            if ($trigger_set_status_logic) {
+                return $this->set_status($new_status);
+            }
+            parent::set('STS_ID', $new_status);
+            return true;
+        }
+        return false;
+    }
 
 
     /*************************** DEPRECATED ***************************/

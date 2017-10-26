@@ -266,6 +266,20 @@ trait MessagesAdmin
 
 
     /**
+     * This returns the value for the link at the given selector in the message modal.
+     * @param string $selector (any selector string accepted by WebDriver)
+     */
+    public function observeLinkAtSelectorInMessageModal($selector)
+    {
+        $this->actor()->waitForElementVisible('.ee-admin-dialog-container-inner-content');
+        $this->actor()->switchToIframe('message-view-window');
+        $link = $this->actor()->observeLinkUrlAt($selector);
+        $this->actor()->switchToIframe();
+        return $link;
+    }
+
+
+    /**
      * Assuming you have already triggered the view modal for a single message from the context of the message activity
      * list table, this will take care of validating the given text is NOT that window.
      * @param string $text_to_view

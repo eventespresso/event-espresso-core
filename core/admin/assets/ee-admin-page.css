@@ -1128,3 +1128,8 @@ input.ee-register-button {
         vertical-align: middle;
     }
 }
+.ee-form-wide-errors{
+    display: block;
+    color: #FE2a00;
+    vertical-align: middle;
+}
