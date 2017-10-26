@@ -1,5 +1,8 @@
 <?php
 
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+
 if ( ! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
@@ -387,19 +390,57 @@ class EEM_Transaction extends EEM_Base
 
 
     /**
+     * returns an array of EE_Transaction objects whose timestamp is greater than
+     * the current time minus the session lifespan, which defaults to 60 minutes
+     *
+     * @return EE_Base_Class[]|EE_Transaction[]
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    public function get_transactions_in_progress()
+    {
+        return $this->_get_transactions_in_progress();
+    }
+
+
+
+    /**
      * returns an array of EE_Transaction objects whose timestamp is less than
      * the current time minus the session lifespan, which defaults to 60 minutes
      *
      * @return EE_Base_Class[]|EE_Transaction[]
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
-    public function get_transactions_in_progress()
+    public function get_transactions_not_in_progress()
     {
+        return $this->_get_transactions_in_progress('<=');
+    }
+
+
+
+    /**
+     * @param string $comparison
+     * @return EE_Base_Class[]|EE_Transaction[]
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    private function _get_transactions_in_progress($comparison = '>=')
+    {
+        $comparison = $comparison === '>=' || $comparison === '<='
+            ? $comparison
+            : '>=';
         return $this->get_all(
             array(
                 array(
                     'TXN_timestamp' => array(
-                        '>',
+                        $comparison,
                         time() - EE_Registry::instance()->SSN->lifespan()
                     ),
                     'STS_ID' => array(
