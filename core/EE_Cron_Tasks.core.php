@@ -1,6 +1,9 @@
-<?php if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
+<?php
+
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+
+defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 
 
 
@@ -29,11 +32,11 @@ class EE_Cron_Tasks extends EE_Base
 
     /**
      * @return EE_Cron_Tasks
-     * @throws \ReflectionException
-     * @throws \EE_Error
-     * @throws \InvalidArgumentException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws ReflectionException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      */
     public static function instance()
     {
@@ -46,11 +49,11 @@ class EE_Cron_Tasks extends EE_Base
 
     /**
      * @access private
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \InvalidArgumentException
-     * @throws \EE_Error
-     * @throws \ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     private function __construct()
     {
@@ -123,15 +126,16 @@ class EE_Cron_Tasks extends EE_Base
             'AHEE__EE_Cron_Tasks__finalize_abandoned_transactions',
             'AHEE__EE_Cron_Tasks__clean_up_junk_transactions',
         );
-        $crons    = (array)get_option('cron');
+        $crons    = (array) get_option('cron');
         if (! is_array($crons)) {
             return;
         }
         foreach ($crons as $timestamp => $cron) {
+            /** @var array[] $cron */
             foreach ($ee_crons as $ee_cron) {
-                if (isset($cron[$ee_cron]) && is_array($cron[$ee_cron])) {
+                if (isset($cron[ $ee_cron ]) && is_array($cron[ $ee_cron ])) {
                     do_action('AHEE_log', __CLASS__, __FUNCTION__, $ee_cron, 'scheduled EE cron');
-                    foreach ($cron[$ee_cron] as $ee_cron_details) {
+                    foreach ($cron[ $ee_cron ] as $ee_cron_details) {
                         if (! empty($ee_cron_details['args'])) {
                             do_action(
                                 'AHEE_log',
@@ -156,12 +160,12 @@ class EE_Cron_Tasks extends EE_Base
      * @param string $cron_task
      * @param array  $TXN_IDs
      * @return bool
-     * @throws \DomainException
+     * @throws DomainException
      */
     public static function reschedule_cron_for_transactions_if_maintenance_mode($cron_task, array $TXN_IDs)
     {
         if (! method_exists('EE_Cron_Tasks', $cron_task)) {
-            throw new \DomainException(
+            throw new DomainException(
                 sprintf(
                     __('"%1$s" is not valid method on EE_Cron_Tasks.', 'event_espresso'),
                     $cron_task
@@ -194,6 +198,9 @@ class EE_Cron_Tasks extends EE_Base
 
 
     /****************  UPDATE TRANSACTION WITH PAYMENT ****************/
+
+
+
     /**
      * array of TXN IDs and the payment
      *
@@ -248,7 +255,7 @@ class EE_Cron_Tasks extends EE_Base
     {
         do_action('AHEE_log', __CLASS__, __FUNCTION__, $TXN_ID, '$TXN_ID');
         if (absint($TXN_ID)) {
-            self::$_update_transactions_with_payment[$TXN_ID] = $PAY_ID;
+            self::$_update_transactions_with_payment[ $TXN_ID ] = $PAY_ID;
             add_action(
                 'shutdown',
                 array('EE_Cron_Tasks', 'update_transaction_with_payment'),
@@ -265,12 +272,13 @@ class EE_Cron_Tasks extends EE_Base
      * but have had their sessions expired, most likely due to a user not
      * returning from an off-site payment gateway
      *
-     * @throws \EE_Error
-     * @throws \DomainException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \InvalidArgumentException
-     * @throws \ReflectionException
+     * @throws EE_Error
+     * @throws DomainException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws RuntimeException
      */
     public static function update_transaction_with_payment()
     {
@@ -310,14 +318,20 @@ class EE_Cron_Tasks extends EE_Base
                 // now try to update the TXN with any payments
                 $payment_processor->update_txn_based_on_payment($transaction, $payment, true, true);
             }
-            unset(self::$_update_transactions_with_payment[$TXN_ID]);
+            unset(self::$_update_transactions_with_payment[ $TXN_ID ]);
         }
     }
 
 
 
     /************  END OF UPDATE TRANSACTION WITH PAYMENT  ************/
+
+
+
     /*****************  EXPIRED TRANSACTION CHECK *****************/
+
+
+
     /**
      * array of TXN IDs
      *
@@ -369,7 +383,7 @@ class EE_Cron_Tasks extends EE_Base
     public static function expired_transaction_check($TXN_ID = 0)
     {
         if (absint($TXN_ID)) {
-            self::$_expired_transactions[$TXN_ID] = $TXN_ID;
+            self::$_expired_transactions[ $TXN_ID ] = $TXN_ID;
             add_action(
                 'shutdown',
                 array('EE_Cron_Tasks', 'process_expired_transactions'),
@@ -384,12 +398,13 @@ class EE_Cron_Tasks extends EE_Base
      * process_expired_transactions
      * loops through the self::$_expired_transactions array and processes any failed TXNs
      *
-     * @throws \EE_Error
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \InvalidArgumentException
-     * @throws \ReflectionException
-     * @throws \DomainException
+     * @throws EE_Error
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws DomainException
+     * @throws RuntimeException
      */
     public static function process_expired_transactions()
     {
@@ -483,25 +498,29 @@ class EE_Cron_Tasks extends EE_Base
                         break;
                 }
             }
-            unset(self::$_expired_transactions[$TXN_ID]);
+            unset(self::$_expired_transactions[ $TXN_ID ]);
         }
     }
 
 
 
     /*************  END OF EXPIRED TRANSACTION CHECK  *************/
+
+
+
     /************* START CLEAN UP BOT TRANSACTIONS **********************/
 
 
 
     /**
-     * when a transaction is initially made, schedule this check.
-     * if it has NO REG data by the time it has expired, forget about it
+     * callback for 'AHEE__EE_Cron_Tasks__clean_up_junk_transactions'
+     * which is setup during activation to run on an hourly cron
      *
      * @throws EE_Error
      * @throws InvalidArgumentException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws DomainException
      */
     public static function clean_out_junk_transactions()
     {
@@ -517,10 +536,10 @@ class EE_Cron_Tasks extends EE_Base
     /**
      * Deletes old gateway logs. After about a week we usually don't need them for debugging. But folks can filter that.
      *
-     * @throws \EE_Error
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \InvalidArgumentException
+     * @throws EE_Error
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
      */
     public static function clean_out_old_gateway_logs()
     {
@@ -535,6 +554,9 @@ class EE_Cron_Tasks extends EE_Base
 
 
     /*****************  FINALIZE ABANDONED TRANSACTIONS *****************/
+
+
+
     /**
      * @var array
      */
@@ -564,12 +586,13 @@ class EE_Cron_Tasks extends EE_Base
 
     /**
      * @deprecated
-     * @throws \EE_Error
-     * @throws \DomainException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \InvalidArgumentException
-     * @throws \ReflectionException
+     * @throws EE_Error
+     * @throws DomainException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws RuntimeException
      */
     public static function finalize_abandoned_transactions()
     {
