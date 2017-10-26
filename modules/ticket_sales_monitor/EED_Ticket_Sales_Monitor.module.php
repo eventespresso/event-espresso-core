@@ -865,7 +865,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
     {
         /** @var EE_Line_Item[] $valid_reserved_tickets */
         $valid_reserved_tickets   = array();
-        $transactions_in_progress = EEM_Transaction::instance()->get_transactions_in_progress();
+        $transactions_in_progress = EEM_Transaction::instance()->get_transactions_not_in_progress();
         foreach ($transactions_in_progress as $transaction_in_progress) {
             // if this TXN has been fully completed, then skip it
             if ($transaction_in_progress->reg_step_completed('finalize_registration')) {
