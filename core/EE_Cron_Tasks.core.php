@@ -525,6 +525,7 @@ class EE_Cron_Tasks extends EE_Base
     public static function clean_out_junk_transactions()
     {
         if (EE_Maintenance_Mode::instance()->models_can_query()) {
+            EED_Ticket_Sales_Monitor::reset_reservation_counts();
             EEM_Transaction::instance('')->delete_junk_transactions();
             EEM_Registration::instance('')->delete_registrations_with_no_transaction();
             EEM_Line_Item::instance('')->delete_line_items_with_no_transaction();
