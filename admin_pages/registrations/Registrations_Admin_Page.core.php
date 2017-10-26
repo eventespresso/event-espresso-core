@@ -321,13 +321,13 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 'func'       => 'bulk_action_on_registrations',
                 'noheader'   => true,
                 'capability' => 'ee_edit_registrations',
-                'args' => array('no_approve')
+                'args' => array('not_approve')
             ),
             'no_approve_and_notify_registrations' => array(
                 'func'       => 'bulk_action_on_registrations',
                 'noheader'   => true,
                 'capability' => 'ee_edit_registrations',
-                'args' => array('no_approve', true)
+                'args' => array('not_approve', true)
             ),
             'cancel_registration'                => array(
                 'func'       => 'cancel_registration',
@@ -1436,6 +1436,11 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             (array) $orderby_field,
             array_fill(0, count($orderby_field), $order)
         );
+        //because there are many registrations with the same date, define
+        //a secondary way to order them, otherwise MySQL seems to be a bit random
+        if (empty($order['REG_ID'])) {
+            $orderby_field['REG_ID'] = $order;
+        }
         return array('order_by' => $orderby_field);
     }
 

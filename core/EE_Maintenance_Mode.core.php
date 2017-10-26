@@ -104,7 +104,7 @@ class EE_Maintenance_Mode implements ResettableInterface
      */
     public function real_level()
     {
-        return get_option(self::option_name_maintenance_mode, EE_Maintenance_Mode::level_0_not_in_maintenance);
+        return (int) get_option(self::option_name_maintenance_mode, EE_Maintenance_Mode::level_0_not_in_maintenance);
     }
 
 
