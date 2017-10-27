@@ -95,7 +95,11 @@ class DbSafeDateTime extends \DateTime {
         // We'll replace those with "0000-00-00" which will allow a valid DateTime object to be created,
         // but still result in the internal date for that object being set to "-0001-11-30 10:00:00.000000".
         // so we're no better off, but at least things won't go fatal on us.
-        $this->_datetime_string = str_replace('-0001-11-30', '0000-00-00', $this->_datetime_string);
+        $this->_datetime_string = str_replace(
+            array('-0001-11-29', '-0001-11-30'),
+            '0000-00-00',
+            $this->_datetime_string
+        );
 		$date = \DateTime::createFromFormat( DbSafeDateTime::db_safe_timestamp_format, $this->_datetime_string );
 		if ( ! $date instanceof \DateTime) {
             $this->writeToErrorLog(
