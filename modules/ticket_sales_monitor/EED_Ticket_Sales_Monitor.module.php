@@ -1,10 +1,11 @@
 <?php
 
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\exceptions\InvalidSessionDataException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
 
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
+defined('EVENT_ESPRESSO_VERSION') || exit('NO direct script access allowed');
 
 
 
@@ -183,8 +184,8 @@ class EED_Ticket_Sales_Monitor extends EED_Module
      * @return void
      * @throws EE_Error
      * @throws InvalidArgumentException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public static function release_tickets_for_expired_carts()
     {
@@ -203,9 +204,9 @@ class EED_Ticket_Sales_Monitor extends EED_Module
                     continue;
                 }
                 if ($total_line_item->timestamp(true) <= $expired) {
-                    $expired_ticket_IDs[$ticket_line_item->OBJ_ID()] = $ticket_line_item->OBJ_ID();
+                    $expired_ticket_IDs[ $ticket_line_item->OBJ_ID() ] = $ticket_line_item->OBJ_ID();
                 } else {
-                    $valid_ticket_line_items[$ticket_line_item->OBJ_ID()] = $ticket_line_item;
+                    $valid_ticket_line_items[ $ticket_line_item->OBJ_ID() ] = $ticket_line_item;
                 }
             }
         }
@@ -419,8 +420,8 @@ class EED_Ticket_Sales_Monitor extends EED_Module
      * @return void
      * @throws EE_Error
      * @throws InvalidArgumentException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public static function ticket_quantity_updated(EE_Line_Item $line_item, $quantity = 1)
     {
@@ -460,8 +461,8 @@ class EED_Ticket_Sales_Monitor extends EED_Module
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public static function post_notices()
     {
@@ -475,8 +476,8 @@ class EED_Ticket_Sales_Monitor extends EED_Module
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function _post_notices()
     {
@@ -548,7 +549,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
      * @param    EE_Transaction $transaction
      * @return int
      * @throws EE_Error
-     * @throws \EventEspresso\core\exceptions\InvalidSessionDataException
+     * @throws InvalidSessionDataException
      */
     protected function _release_all_reserved_tickets_for_transaction(EE_Transaction $transaction)
     {
@@ -600,10 +601,10 @@ class EED_Ticket_Sales_Monitor extends EED_Module
      * releases reserved tickets for an EE_Registration
      * by default, will NOT release tickets for APPROVED registrations
      *
-     * @param    EE_Registration $registration
-     * @param    EE_Transaction  $transaction
-     * @return    int
-     * @throws    EE_Error
+     * @param EE_Registration $registration
+     * @param EE_Transaction  $transaction
+     * @return int
+     * @throws EE_Error
      */
     protected function _release_reserved_ticket_for_registration(
         EE_Registration $registration,
@@ -643,13 +644,13 @@ class EED_Ticket_Sales_Monitor extends EED_Module
     /**
      * callback hooked into 'AHEE__EE_Session__reset_cart__before_reset'
      *
-     * @param    EE_Session $session
+     * @param EE_Session $session
      * @return void
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public static function session_cart_reset(EE_Session $session)
     {
@@ -675,13 +676,13 @@ class EED_Ticket_Sales_Monitor extends EED_Module
     /**
      * releases reserved tickets in the EE_Cart
      *
-     * @param    EE_Cart $cart
+     * @param EE_Cart $cart
      * @return void
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function _session_cart_reset(EE_Cart $cart)
     {
@@ -725,10 +726,10 @@ class EED_Ticket_Sales_Monitor extends EED_Module
     /**
      * callback hooked into 'AHEE__EE_Session__reset_checkout__before_reset'
      *
-     * @param    EE_Session $session
+     * @param EE_Session $session
      * @return void
      * @throws EE_Error
-     * @throws \EventEspresso\core\exceptions\InvalidSessionDataException
+     * @throws InvalidSessionDataException
      */
     public static function session_checkout_reset(EE_Session $session)
     {
@@ -743,10 +744,10 @@ class EED_Ticket_Sales_Monitor extends EED_Module
     /**
      * releases reserved tickets for the EE_Checkout->transaction
      *
-     * @param    EE_Checkout $checkout
+     * @param EE_Checkout $checkout
      * @return void
      * @throws EE_Error
-     * @throws \EventEspresso\core\exceptions\InvalidSessionDataException
+     * @throws InvalidSessionDataException
      */
     protected function _session_checkout_reset(EE_Checkout $checkout)
     {
@@ -784,10 +785,10 @@ class EED_Ticket_Sales_Monitor extends EED_Module
      * releases reserved tickets for all registrations of an ABANDONED EE_Transaction
      * by default, will NOT release tickets for free transactions, or any that have received a payment
      *
-     * @param    EE_Transaction $transaction
+     * @param EE_Transaction $transaction
      * @return void
      * @throws EE_Error
-     * @throws \EventEspresso\core\exceptions\InvalidSessionDataException
+     * @throws InvalidSessionDataException
      */
     public static function process_abandoned_transactions(EE_Transaction $transaction)
     {
@@ -837,10 +838,10 @@ class EED_Ticket_Sales_Monitor extends EED_Module
     /**
      * releases reserved tickets for absolutely ALL registrations of a FAILED EE_Transaction
      *
-     * @param    EE_Transaction $transaction
+     * @param EE_Transaction $transaction
      * @return void
      * @throws EE_Error
-     * @throws \EventEspresso\core\exceptions\InvalidSessionDataException
+     * @throws InvalidSessionDataException
      */
     public static function process_failed_transactions(EE_Transaction $transaction)
     {
@@ -851,20 +852,23 @@ class EED_Ticket_Sales_Monitor extends EED_Module
 
 
     /********************************** RESET RESERVATION COUNTS  *********************************/
+
+
+
     /**
      * Resets all ticket and datetime reserved counts to zero
      * Tickets that are currently associated with a Transaction that is in progress
      *
-     * @throws \EE_Error
-     * @throws \DomainException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \InvalidArgumentException
+     * @throws EE_Error
+     * @throws DomainException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
      */
     public static function reset_reservation_counts()
     {
         /** @var EE_Line_Item[] $valid_reserved_tickets */
-        $valid_reserved_tickets   = array();
+        $valid_reserved_tickets = array();
         /** @var EE_Transaction[] $transactions_not_in_progress */
         $transactions_not_in_progress = EEM_Transaction::instance()->get_transactions_not_in_progress();
         foreach ($transactions_not_in_progress as $transaction) {
@@ -923,11 +927,11 @@ class EED_Ticket_Sales_Monitor extends EED_Module
      * @param EE_Ticket[]    $tickets_with_reservations
      * @param EE_Line_Item[] $valid_reserved_ticket_line_items
      * @return int
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     private static function release_reservations_for_tickets(
         array $tickets_with_reservations,
-        $valid_reserved_ticket_line_items = array()
+        array $valid_reserved_ticket_line_items = array()
     ) {
         $total_tickets_released = 0;
         foreach ($tickets_with_reservations as $ticket_with_reservations) {
@@ -962,8 +966,8 @@ class EED_Ticket_Sales_Monitor extends EED_Module
      * @return false|int
      * @throws EE_Error
      * @throws InvalidArgumentException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public static function clear_expired_line_items_with_no_transaction()
     {
