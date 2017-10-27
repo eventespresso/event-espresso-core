@@ -135,6 +135,10 @@ class EventSpacesCalculator
         add_action( 'AHEE__EE_Ticket__decrease_sold', array($this, 'clearResults'));
         add_action( 'AHEE__EE_Datetime__increase_sold', array($this, 'clearResults'));
         add_action( 'AHEE__EE_Datetime__decrease_sold', array($this, 'clearResults'));
+        add_action( 'AHEE__EE_Ticket__increase_reserved', array($this, 'clearResults'));
+        add_action( 'AHEE__EE_Ticket__decrease_reserved', array($this, 'clearResults'));
+        add_action( 'AHEE__EE_Datetime__increase_reserved', array($this, 'clearResults'));
+        add_action( 'AHEE__EE_Datetime__decrease_reserved', array($this, 'clearResults'));
     }
 
 
