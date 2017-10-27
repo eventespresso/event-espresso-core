@@ -743,6 +743,12 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 		$this->decrease_reserved( $qty, false );
 		$this->_increase_sold_for_datetimes( $qty );
 		$this->set_sold( $sold );
+		do_action(
+		    'AHEE__EE_Ticket__increase_sold',
+            $this,
+            $qty,
+            $sold
+        );
 	}
 
 
@@ -779,7 +785,13 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 		$sold = $this->sold() - $qty;
 		$this->_decrease_sold_for_datetimes( $qty );
 		$this->set_sold( $sold );
-	}
+        do_action(
+            'AHEE__EE_Ticket__decrease_sold',
+            $this,
+            $qty,
+            $sold
+        );
+    }
 
 
 
