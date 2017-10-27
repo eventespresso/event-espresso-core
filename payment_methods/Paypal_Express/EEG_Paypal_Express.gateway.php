@@ -194,7 +194,8 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
         $token_request_dtls = array_merge($token_request_dtls, $itemized_list);
         // Automatically filling out shipping and contact information.
         if ($this->_request_shipping_addr && $primary_attendee instanceof EEI_Attendee) {
-            $token_request_dtls['NOSHIPPING'] = '2';    //  If you do not pass the shipping address, PayPal obtains it from the buyer's account profile.
+            // If you do not pass the shipping address, PayPal obtains it from the buyer's account profile.
+            $token_request_dtls['NOSHIPPING'] = '2';
             $token_request_dtls['PAYMENTREQUEST_0_SHIPTOSTREET'] = $primary_attendee->address();
             $token_request_dtls['PAYMENTREQUEST_0_SHIPTOSTREET2'] = $primary_attendee->address2();
             $token_request_dtls['PAYMENTREQUEST_0_SHIPTOCITY'] = $primary_attendee->city();
@@ -425,7 +426,9 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
                     throw new EE_Error(
                         sprintf(
                             esc_html__(
+                                // @codingStandardsIgnoreStart
                                 'Unable to continue with the checkout because a proper purchase list could not be generated. The purchased list we could have sent was %1$s',
+                                // @codingStandardsIgnoreEnd
                                 'event_espresso'
                             ),
                             wp_json_encode($itemized_list)
@@ -435,7 +438,12 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
                 // Reset the list and log an error, maybe allow to try and generate a new list (below).
                 $itemized_list = array();
                 $this->log(
-                    array(__('Could not generate a proper item list with:', 'event_espresso') => $request_response_args),
+                    array(
+                        esc_html__(
+                            'Could not generate a proper item list with:',
+                            'event_espresso'
+                        ) => $request_response_args
+                    ),
                     $payment
                 );
             }
@@ -460,9 +468,17 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
                         $line_item_quantity = 1;
                     }
                     // Item Name.
-                    $itemized_list['L_PAYMENTREQUEST_0_NAME' . $item_num] = mb_strcut($this->_format_line_item_name($line_item, $payment), 0, 127);
+                    $itemized_list['L_PAYMENTREQUEST_0_NAME' . $item_num] = mb_strcut(
+                        $this->_format_line_item_name($line_item, $payment),
+                        0,
+                        127
+                    );
                     // Item description.
-                    $itemized_list['L_PAYMENTREQUEST_0_DESC' . $item_num] = mb_strcut($this->_format_line_item_desc($line_item, $payment), 0, 127);
+                    $itemized_list['L_PAYMENTREQUEST_0_DESC' . $item_num] = mb_strcut(
+                        $this->_format_line_item_desc($line_item, $payment),
+                        0,
+                        127
+                    );
                     // Cost of individual item.
                     $itemized_list['L_PAYMENTREQUEST_0_AMT' . $item_num] = $this->format_currency($unit_price);
                     // Item Number.
@@ -480,16 +496,28 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
             $itemized_list['PAYMENTREQUEST_0_TAXAMT'] = $total_line_items->get_total_tax();
             $itemized_list['PAYMENTREQUEST_0_SHIPPINGAMT'] = '0';
             $itemized_list['PAYMENTREQUEST_0_HANDLINGAMT'] = '0';
-            $itemized_sum_diff_from_txn_total = round($transaction->total() - $itemized_sum - $total_line_items->get_total_tax(), 2);
+            $itemized_sum_diff_from_txn_total = round(
+                $transaction->total() - $itemized_sum - $total_line_items->get_total_tax(),
+                2
+            );
             // If we were not able to recognize some item like promotion, surcharge or cancellation,
             // add the difference as an extra line item.
             if ($this->_money->compare_floats($itemized_sum_diff_from_txn_total, 0, '!=')) {
                 // Item Name.
-                $itemized_list['L_PAYMENTREQUEST_0_NAME' . $item_num] = mb_strcut(__('Other (promotion/surcharge/cancellation)', 'event_espresso'), 0, 127);
+                $itemized_list['L_PAYMENTREQUEST_0_NAME' . $item_num] = mb_strcut(
+                    esc_html__(
+                        'Other (promotion/surcharge/cancellation)',
+                        'event_espresso'
+                    ),
+                    0,
+                    127
+                );
                 // Item description.
                 $itemized_list['L_PAYMENTREQUEST_0_DESC' . $item_num] = '';
                 // Cost of individual item.
-                $itemized_list['L_PAYMENTREQUEST_0_AMT' . $item_num] = $this->format_currency($itemized_sum_diff_from_txn_total);
+                $itemized_list['L_PAYMENTREQUEST_0_AMT' . $item_num] = $this->format_currency(
+                    $itemized_sum_diff_from_txn_total
+                );
                 // Item Number.
                 $itemized_list['L_PAYMENTREQUEST_0_NUMBER' . $item_num] = $item_num + 1;
                 // Item quantity.
@@ -501,9 +529,17 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
         } else {
             // Just one Item.
             // Item Name.
-            $itemized_list['L_PAYMENTREQUEST_0_NAME0'] = mb_strcut($this->_format_partial_payment_line_item_name($payment), 0, 127);
+            $itemized_list['L_PAYMENTREQUEST_0_NAME0'] = mb_strcut(
+                $this->_format_partial_payment_line_item_name($payment),
+                0,
+                127
+            );
             // Item description.
-            $itemized_list['L_PAYMENTREQUEST_0_DESC0'] = mb_strcut($this->_format_partial_payment_line_item_desc($payment), 0, 127);
+            $itemized_list['L_PAYMENTREQUEST_0_DESC0'] = mb_strcut(
+                $this->_format_partial_payment_line_item_desc($payment),
+                0,
+                127
+            );
             // Cost of individual item.
             $itemized_list['L_PAYMENTREQUEST_0_AMT0'] = $this->format_currency($payment->amount());
             // Item Number.
