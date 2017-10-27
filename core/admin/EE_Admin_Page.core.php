@@ -2121,7 +2121,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         } //not a list_table view so get out.
         // list table functions are per view specific (because some admin pages might have more than one list table!)
         $list_table_view = '_set_list_table_views_' . $this->_req_action;
-        if ($this->{$list_table_view}() === false) {
+        if (! method_exists($this, $list_table_view) || $this->{$list_table_view}() === false) {
             //user error msg
             $error_msg = esc_html__(
                 'An error occurred. The requested list table views could not be found.',
