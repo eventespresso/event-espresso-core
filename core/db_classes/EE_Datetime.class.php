@@ -210,7 +210,13 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 		// remove ticket reservation
 		$this->decrease_reserved( $qty );
 		$this->set_sold( $sold );
-	}
+        do_action(
+            'AHEE__EE_Datetime__increase_sold',
+            $this,
+            $qty,
+            $sold
+        );
+    }
 
 
 
@@ -221,7 +227,13 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	public function decrease_sold( $qty = 1 ) {
 		$sold = $this->sold() - $qty;
 		$this->set_sold( $sold );
-	}
+        do_action(
+            'AHEE__EE_Datetime__decrease_sold',
+            $this,
+            $qty,
+            $sold
+        );
+    }
 
 
 
