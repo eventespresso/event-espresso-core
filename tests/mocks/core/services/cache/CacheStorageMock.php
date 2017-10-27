@@ -1,19 +1,30 @@
 <?php
-namespace EventEspresso\core\services\cache;
+
+namespace EventEspresso\tests\mocks\core\services\cache;
+
+use EventEspresso\core\services\cache\CacheStorageInterface;
+use stdClass;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
 
 /**
- * Manages the creation and deletion of cached data
+ * Class CacheStorageMock
+ * Description
  *
- * @package       Event Espresso
- * @author        Brent Christensen
- * @since         4.9.31
+ * @package EventEspresso\tests\mocks\core\services\cache
+ * @author  Brent Christensen
+ * @since   $VID:$
  */
-interface CacheStorageInterface
+class CacheStorageMock implements CacheStorageInterface
 {
+
+    /**
+     * @var stdClass[] $storage
+     */
+    private $storage = array();
+
 
     /**
      * Saves supplied data
@@ -24,8 +35,13 @@ interface CacheStorageInterface
      * @param int    $expiration number of seconds until the cache expires
      * @return bool
      */
-    public function add($key, $data, $expiration = 0);
-
+    public function add($key, $data, $expiration = 0)
+    {
+        $this->storage[$key] = new stdClass();
+        $this->storage[$key]->data = $data;
+        $this->storage[$key]->expiration = $expiration;
+        return true;
+    }
 
 
     /**
@@ -39,8 +55,12 @@ interface CacheStorageInterface
      * @param bool   $standard_cache
      * @return mixed
      */
-    public function get($key, $standard_cache = true);
-
+    public function get($key, $standard_cache = true)
+    {
+        return $this->storage[$key]->expiration > time()
+            ? $this->storage[$key]->data
+            : null;
+    }
 
 
     /**
@@ -48,8 +68,10 @@ interface CacheStorageInterface
      *
      * @param string $key [required] full or partial cache key to be deleted
      */
-    public function delete($key);
-
+    public function delete($key)
+    {
+        unset($this->storage[$key]);
+    }
 
 
     /**
@@ -58,10 +80,14 @@ interface CacheStorageInterface
      * @param array $keys           [required] array of full or partial cache keys to be deleted
      * @param bool  $force_delete   [optional] if true, then will not check incoming keys against those being tracked
      *                              and proceed directly to deleting those entries from the cache storage
-     * @return
      */
-    public function deleteMany(array $keys, $force_delete = false);
+    public function deleteMany(array $keys, $force_delete = false)
+    {
+        foreach ($keys as $key) {
+            $this->delete($key);
+        }
+    }
+
 
 }
-// End of file CacheStorageInterface.php
-// Location: core/services/database/CacheStorageInterface.php
+// Location: CacheStorageMock.php

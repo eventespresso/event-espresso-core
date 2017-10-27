@@ -14,6 +14,21 @@
  * @version            $VID:$
  * ----------------------------------------------
  */
+//Quickfix to address https://events.codebasehq.com/projects/event-espresso/tickets/11089 ASAP
+if (! function_exists('mb_strcut')) {
+    /**
+     * Very simple mimic of mb_substr (which WP ensures exists in wp-includes/compat.php). Still has all the problems of mb_substr
+     * (namely, that we might send too many characters to PayPal; however in this case they just issue a warning but nothing breaks)
+     * @param $string
+     * @param $start
+     * @param $length
+     * @return bool|string
+     */
+    function mb_strcut($string, $start, $length = null)
+    {
+        return mb_substr($string, $start, $length);
+    }
+}
 class EEG_Paypal_Express extends EE_Offsite_Gateway
 {
 
@@ -151,7 +166,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
             $payment->set_status($this->_pay_model->failed_status());
             return $payment;
         }
-        $order_description = substr($this->_format_order_description($payment), 0, 127);
+        $order_description = mb_strcut($this->_format_order_description($payment), 0, 127);
         $primary_registration = $transaction->primary_registration();
         $primary_attendee = $primary_registration instanceof EE_Registration
             ? $primary_registration->attendee()
@@ -194,13 +209,13 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
                         $line_item_quantity = 1;
                     }
                     // Item Name.
-                    $token_request_dtls['L_PAYMENTREQUEST_0_NAME' . $item_num] = substr(
+                    $token_request_dtls['L_PAYMENTREQUEST_0_NAME' . $item_num] = mb_strcut(
                         $this->_format_line_item_name($line_item, $payment),
                         0,
                         127
                     );
                     // Item description.
-                    $token_request_dtls['L_PAYMENTREQUEST_0_DESC' . $item_num] = substr(
+                    $token_request_dtls['L_PAYMENTREQUEST_0_DESC' . $item_num] = mb_strcut(
                         $this->_format_line_item_desc($line_item, $payment),
                         0,
                         127
@@ -230,7 +245,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
             // add the difference as an extra line item.
             if ($this->_money->compare_floats($itemized_sum_diff_from_txn_total, 0, '!=')) {
                 // Item Name.
-                $token_request_dtls['L_PAYMENTREQUEST_0_NAME' . $item_num] = substr(
+                $token_request_dtls['L_PAYMENTREQUEST_0_NAME' . $item_num] = mb_strcut(
                     esc_html__(
                         'Other (promotion/surcharge/cancellation)',
                         'event_espresso'
@@ -255,13 +270,13 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
         } else {
             // Just one Item.
             // Item Name.
-            $token_request_dtls['L_PAYMENTREQUEST_0_NAME0'] = substr(
+            $token_request_dtls['L_PAYMENTREQUEST_0_NAME0'] = mb_strcut(
                 $this->_format_partial_payment_line_item_name($payment),
                 0,
                 127
             );
             // Item description.
-            $token_request_dtls['L_PAYMENTREQUEST_0_DESC0'] = substr(
+            $token_request_dtls['L_PAYMENTREQUEST_0_DESC0'] = mb_strcut(
                 $this->_format_partial_payment_line_item_desc($payment),
                 0,
                 127
