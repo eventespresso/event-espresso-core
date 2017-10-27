@@ -269,7 +269,13 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	 */
 	public function increase_reserved( $qty = 1 ) {
 		$reserved = $this->reserved() + absint( $qty );
-		return $this->set_reserved( $reserved );
+        do_action(
+            'AHEE__EE_Datetime__increase_reserved',
+            $this,
+            $qty,
+            $reserved
+        );
+        return $this->set_reserved( $reserved );
 	}
 
 
@@ -282,7 +288,13 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	 */
 	public function decrease_reserved( $qty = 1 ) {
 		$reserved = $this->reserved() - absint( $qty );
-		return $this->set_reserved( $reserved );
+        do_action(
+            'AHEE__EE_Datetime__decrease_reserved',
+            $this,
+            $qty,
+            $reserved
+        );
+        return $this->set_reserved( $reserved );
 	}
 
 
