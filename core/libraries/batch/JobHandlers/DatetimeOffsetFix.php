@@ -133,6 +133,8 @@ class DatetimeOffsetFix extends JobHandler
         //delete important saved options.
         delete_option(self::MODELS_TO_PROCESS_OPTION_KEY);
         delete_option(self::COUNT_OF_MODELS_PROCESSED);
+        delete_option(self::OPTION_KEY_OFFSET_RANGE_START_DATE);
+        delete_option(self::OPTION_KEY_OFFSET_RANGE_END_DATE);
         return new JobStepResponse($job_parameters, esc_html__(
             'Offset has been applied to all affected fields.',
             'event_espresso'
