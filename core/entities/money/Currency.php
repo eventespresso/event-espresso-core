@@ -6,6 +6,8 @@ use EE_Country;
 use EE_Error;
 use EEM_Country;
 use EventEspresso\core\entities\Label;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use InvalidArgumentException;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
@@ -88,13 +90,13 @@ class Currency
      */
     private function __construct($code, Label $label, $sign, $sign_b4, $decimal_places, $decimal_mark, $thousands)
     {
-        $this->code = $code;
-        $this->label = $label;
-        $this->sign = $sign;
-        $this->sign_b4 = $sign_b4;
+        $this->code           = $code;
+        $this->label          = $label;
+        $this->sign           = $sign;
+        $this->sign_b4        = $sign_b4;
         $this->decimal_places = $decimal_places;
-        $this->decimal_mark = $decimal_mark;
-        $this->thousands = $thousands;
+        $this->decimal_mark   = $decimal_mark;
+        $this->thousands      = $thousands;
     }
 
 
@@ -104,13 +106,16 @@ class Currency
      *
      * @param string $CNT_ISO
      * @return Currency
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws EE_Error
      * @throws InvalidArgumentException
      */
     public static function createFromCountryCode($CNT_ISO)
     {
         /** @var EE_Country $country */
         $country = EEM_Country::instance()->get_one_by_ID($CNT_ISO);
-        if (! $country instanceof EE_Country){
+        if (! $country instanceof EE_Country) {
             throw new InvalidArgumentException(
                 sprintf(
                     esc_html__(
@@ -144,6 +149,8 @@ class Currency
      *
      * @param string $code
      * @return Currency
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      * @throws InvalidArgumentException
      * @throws EE_Error
      */
@@ -184,7 +191,8 @@ class Currency
      * @param Currency $other
      * @return bool
      */
-    public function equals(Currency $other){
+    public function equals(Currency $other)
+    {
         return $this->code() === $other->code();
     }
 
