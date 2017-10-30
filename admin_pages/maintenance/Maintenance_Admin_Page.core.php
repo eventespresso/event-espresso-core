@@ -1,8 +1,8 @@
 <?php
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('NO direct script access allowed');
-}
 
+defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
+
+use EventEspressoBatchRequest\JobHandlers\DatetimeOffsetFix;
 
 
 /**
@@ -28,10 +28,10 @@ class Maintenance_Admin_Page extends EE_Admin_Page
 {
 
 
-    public function __construct($routing = true)
-    {
-        parent::__construct($routing);
-    }
+    /**
+     * @var EE_Datetime_Offset_Fix_Form
+     */
+    protected $datetime_fix_offset_form;
 
 
 
@@ -137,6 +137,16 @@ class Maintenance_Admin_Page extends EE_Admin_Page
                 'capability' => 'manage_options',
                 'noheader'   => true,
             ),
+            'datetime_tools' => array(
+                'func' => '_datetime_tools',
+                'capability' => 'manage_options'
+            ),
+            'run_datetime_offset_fix' => array(
+                'func' => '_apply_datetime_offset',
+                'noheader' => true,
+                'headers_sent_route' => 'datetime_tools',
+                'capability' => 'manage_options'
+            )
         );
     }
 
@@ -156,6 +166,13 @@ class Maintenance_Admin_Page extends EE_Admin_Page
                 'nav'           => array(
                     'label' => esc_html__('Reset/Delete Data', 'event_espresso'),
                     'order' => 20,
+                ),
+                'require_nonce' => false,
+            ),
+            'datetime_tools' => array(
+                'nav' => array(
+                    'label' => esc_html__('Datetime Utilities', 'event_espresso'),
+                    'order' => 25
                 ),
                 'require_nonce' => false,
             ),
@@ -276,6 +293,9 @@ class Maintenance_Admin_Page extends EE_Admin_Page
                     'next_db_state'    => isset($current_script) ? sprintf(__("EE%s (%s)", 'event_espresso'),
                         $new_version, $plugin_slug) : null,
                 ));
+            } else {
+                $this->_template_args['current_db_state'] = null;
+                $this->_template_args['next_db_state'] = null;
             }
             $this->_template_path = EE_MAINTENANCE_TEMPLATE_PATH . 'ee_migration_page.template.php';
             $this->_template_args = array_merge(
@@ -304,17 +324,6 @@ class Maintenance_Admin_Page extends EE_Admin_Page
                 )
             );
             //make sure we have the form fields helper available. It usually is, but sometimes it isn't
-            //localize script stuff
-            wp_localize_script('ee-maintenance', 'ee_maintenance', array(
-                'migrating'                        => esc_html__("Updating Database...", "event_espresso"),
-                'next'                             => esc_html__("Next", "event_espresso"),
-                'fatal_error'                      => esc_html__("A Fatal Error Has Occurred", "event_espresso"),
-                'click_next_when_ready'            => esc_html__("The current Database Update has ended. Click 'next' when ready to proceed",
-                    "event_espresso"),
-                'status_no_more_migration_scripts' => EE_Data_Migration_Manager::status_no_more_migration_scripts,
-                'status_fatal_error'               => EE_Data_Migration_Manager::status_fatal_error,
-                'status_completed'                 => EE_Data_Migration_Manager::status_completed,
-            ));
         }
         $this->_template_args['most_recent_migration'] = $most_recent_migration;//the actual most recently ran migration
         //now render the migration options part, and put it in a variable
@@ -386,7 +395,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page
             'reset_reservations',
             'reset_reservations',
             array(),
-            'button button-primary',
+            'button button-primary ee-confirm',
             '',
             false
         );
@@ -394,7 +403,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page
             'reset_capabilities',
             'reset_capabilities',
             array(),
-            'button button-primary',
+            'button button-primary ee-confirm',
             '',
             false
         );
@@ -639,11 +648,32 @@ class Maintenance_Admin_Page extends EE_Admin_Page
         wp_enqueue_script('ee_admin_js');
 //		wp_enqueue_media();
 //		wp_enqueue_script('media-upload');
-        wp_enqueue_script('ee-maintenance', EE_MAINTENANCE_ASSETS_URL . '/ee-maintenance.js', array('jquery'),
+        wp_enqueue_script('ee-maintenance', EE_MAINTENANCE_ASSETS_URL . 'ee-maintenance.js', array('jquery'),
             EVENT_ESPRESSO_VERSION, true);
         wp_register_style('espresso_maintenance', EE_MAINTENANCE_ASSETS_URL . 'ee-maintenance.css', array(),
             EVENT_ESPRESSO_VERSION);
         wp_enqueue_style('espresso_maintenance');
+        //localize script stuff
+        wp_localize_script('ee-maintenance', 'ee_maintenance', array(
+            'migrating'                        => esc_html__("Updating Database...", "event_espresso"),
+            'next'                             => esc_html__("Next", "event_espresso"),
+            'fatal_error'                      => esc_html__("A Fatal Error Has Occurred", "event_espresso"),
+            'click_next_when_ready'            => esc_html__(
+                "The current Database Update has ended. Click 'next' when ready to proceed",
+                "event_espresso"
+            ),
+            'status_no_more_migration_scripts' => EE_Data_Migration_Manager::status_no_more_migration_scripts,
+            'status_fatal_error'               => EE_Data_Migration_Manager::status_fatal_error,
+            'status_completed'                 => EE_Data_Migration_Manager::status_completed,
+            'confirm'                          => esc_html__(
+                'Are you sure you want to do this? It CANNOT be undone!',
+                'event_espresso'
+            ),
+            'confirm_skip_migration' => esc_html__(
+                'You have chosen to NOT migrate your existing data. Are you sure you want to continue?',
+                'event_espresso'
+            )
+        ));
     }
 
 
@@ -657,5 +687,106 @@ class Maintenance_Admin_Page extends EE_Admin_Page
     }
 
 
+    protected function _datetime_tools()
+    {
+        $form_action = EE_Admin_Page::add_query_args_and_nonce(
+            array(
+                'action' => 'run_datetime_offset_fix',
+                'return_action' => $this->_req_action
+            ),
+            EE_MAINTENANCE_ADMIN_URL
+        );
+        $form = $this->_get_datetime_offset_fix_form();
+        $this->_admin_page_title = esc_html__('Datetime Utilities', 'event_espresso');
+        $this->_template_args['admin_page_content'] = $form->form_open($form_action, 'post')
+                                                      . $form->get_html_and_js()
+                                                      . $form->form_close();
+        $this->display_admin_page_with_no_sidebar();
+    }
 
+
+
+    protected function _get_datetime_offset_fix_form()
+    {
+        if (! $this->datetime_fix_offset_form instanceof EE_Form_Section_Proper) {
+            $this->datetime_fix_offset_form =  new EE_Form_Section_Proper(
+                array(
+                    'name' => 'datetime_offset_fix_option',
+                    'layout_strategy' => new EE_Admin_Two_Column_Layout(),
+                    'subsections' => array(
+                        'title' => new EE_Form_Section_HTML(
+                            EEH_HTML::h2(
+                                esc_html__('Datetime Offset Tool', 'event_espresso')
+                            )
+                        ),
+                        'explanation' => new EE_Form_Section_HTML(
+                            EEH_HTML::p(
+                                esc_html__(
+                                    'Use this tool to automatically apply the provided offset to all Event Espresso records in your database that involve dates and times.',
+                                    'event_espresso'
+                                )
+                            )
+                            . EEH_HTML::p(
+                                esc_html__(
+                                    'Note: If you enter 1.25, that will result in the offset of 1 hour 15 minutes being applied.  Decimals represent the fraction of hours, not minutes.',
+                                    'event_espresso'
+                                )
+                            )
+                        ),
+                        'offset_input' => new EE_Float_Input(
+                            array(
+                                'html_name' => 'offset_for_datetimes',
+                                'html_label_text' => esc_html__(
+                                    'Offset to apply (in hours):',
+                                    'event_espresso'
+                                ),
+                                'min_value' => '-12',
+                                'max_value' => '14',
+                                'step_value' => '.25',
+                                'default' => DatetimeOffsetFix::getOffset()
+                            )
+                        ),
+                        'submit' => new EE_Submit_Input(
+                            array(
+                                'html_label_text' => '',
+                                'default' => esc_html__('Apply Offset', 'event_espresso')
+                            )
+                        )
+                    )
+                )
+            );
+        }
+        return $this->datetime_fix_offset_form;
+    }
+
+
+    /**
+     * Callback for the run_datetime_offset_fix route.
+     * @throws EE_Error
+     */
+    protected function _apply_datetime_offset()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $form = $this->_get_datetime_offset_fix_form();
+            $form->receive_form_submission($this->_req_data);
+            if ($form->is_valid()) {
+                //save offset so batch processor can get it.
+                DatetimeOffsetFix::updateOffset($form->get_input_value('offset_input'));
+                //redirect to batch tool
+                wp_redirect(
+                    EE_Admin_Page::add_query_args_and_nonce(
+                        array(
+                            'page' => 'espresso_batch',
+                            'batch' => 'job',
+                            'label' => esc_html__('Applying Offset', 'event_espresso'),
+                            'job_handler' => urlencode('EventEspressoBatchRequest\JobHandlers\DatetimeOffsetFix'),
+                            'return_url' => urlencode(home_url(add_query_arg(null, null))),
+                        ),
+                        admin_url()
+                    )
+                );
+                exit;
+            }
+        }
+    }
 } //end Maintenance_Admin_Page class

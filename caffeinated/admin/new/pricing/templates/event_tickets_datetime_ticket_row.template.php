@@ -32,12 +32,12 @@
 			<input type="hidden" class="edit-ticket-TKT_qty ee-small-text-inp ee-numeric" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_qty]" value="<?php echo $TKT_qty_for_input; ?>">
 			<input type="text" class="edit-ticket-TKT_qty ee-small-text-inp ee-numeric" name="archived_ticket[<?php echo $tkt_row; ?>][TKT_qty]" value="<?php echo $TKT_qty_for_input; ?>" disabled>
 		<?php else : ?>
-			<input type="text" id="edit-ticket-TKT_qty-<?php echo $tkt_row; ?>"class="edit-ticket-TKT_qty ee-small-text-inp ee-numeric" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_qty]" value="<?php echo $TKT_qty_for_input; ?>">
+			<input type="text" id="edit-ticket-TKT_qty-<?php echo $tkt_row; ?>" class="edit-ticket-TKT_qty ee-small-text-inp ee-numeric" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_qty]" value="<?php echo $TKT_qty_for_input; ?>">
 		<?php endif; ?>
 	</td>
 	<!--<td><span class="ticket-display-row-TKT_price"><?php //echo $TKT_price; ?></span></td>-->
 	<td><span class="ticket-display-row-TKT_sold"><?php echo $TKT_sold; ?></span></td>
-    <?php if(WP_DEBUG):  // for now we are only showing reserved counts if WP_DEBUG is on?>
+    <?php if (apply_filters('FHEE__event_tickets_metabox__tkt_reserved', true)): ?>
 	<td><span class="ticket-display-row-TKT_reserved"><?php echo $TKT_reserved; ?></span></td>
     <?php endif; ?>
     <td><span class="ticket-display-row-TKT_registrations"><?php echo $TKT_registrations; ?></span></td>
@@ -46,7 +46,7 @@
 	</td>
 </tr>
 <tr id="edit-ticketrow-<?php echo $tkt_row; ?>" class="edit-ticket-row">
-    <?php if (WP_DEBUG) {  // for now we are only showing reserved counts if WP_DEBUG is on ?>
+    <?php if (apply_filters('FHEE__event_tickets_metabox__tkt_reserved', true)) { ?>
     <td colspan="10">
     <?php } else {?>
     <td colspan="9">

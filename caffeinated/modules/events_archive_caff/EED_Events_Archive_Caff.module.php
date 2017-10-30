@@ -85,25 +85,53 @@ class EED_Events_Archive_Caff  extends EED_Events_Archive {
 		// grab general settings admin page and remove the existing hook callback
 		$gen_set_admin = EE_Registry::instance()->LIB->EE_Admin_Page_Loader->get_admin_page_object( 'general_settings' );
 		if ( $gen_set_admin instanceof General_Settings_Admin_Page ) {
-			remove_action( 'AHEE__template_settings__template__before_settings_form', array( $gen_set_admin, 'template_settings_caff_features' ), 100 );
+			remove_action(
+			    'AHEE__template_settings__template__before_settings_form',
+                array( $gen_set_admin, 'template_settings_caff_features' ),
+                100
+            );
 		}
 		// first just grab the template settings
 		$config = EE_Registry::instance()->CFG->template_settings;
 		// then if the Event Archive config is valid, use that, else create a new one
-		$config = isset( $config->EED_Events_Archive ) && $config->EED_Events_Archive instanceof EE_Events_Archive_Config ? $config->EED_Events_Archive : new EE_Events_Archive_Config();
+		$config = isset( $config->EED_Events_Archive ) && $config->EED_Events_Archive instanceof EE_Events_Archive_Config
+            ? $config->EED_Events_Archive
+            : new EE_Events_Archive_Config();
 		$config = apply_filters( 'FHEE__EED_Events_Archive__template_settings_form__event_list_config', $config );
-		$config->display_status_banner = isset( $config->display_status_banner ) ? $config->display_status_banner : 0;
-		$config->display_description = isset( $config->display_description ) ? $config->display_description : 1;
-		$config->display_ticket_selector = isset( $config->display_ticket_selector ) ? $config->display_ticket_selector : 0;
-		$config->display_datetimes = isset( $config->display_datetimes ) ? $config->display_datetimes : 1;
-		$config->display_venue = isset( $config->display_venue ) ? $config->display_venue : 0;
-		$config->display_expired_events = isset( $config->display_expired_events ) ? $config->display_expired_events : 0;
+		$config->display_status_banner = isset( $config->display_status_banner )
+            ? $config->display_status_banner
+            : 0;
+		$config->display_description = isset( $config->display_description )
+            ? $config->display_description
+            : 1;
+		$config->display_ticket_selector = isset( $config->display_ticket_selector )
+            ? $config->display_ticket_selector
+            : 0;
+		$config->display_datetimes = isset( $config->display_datetimes )
+            ? $config->display_datetimes
+            : 1;
+		$config->display_venue = isset( $config->display_venue )
+            ? $config->display_venue
+            : 0;
+		$config->display_expired_events = isset( $config->display_expired_events )
+            ? $config->display_expired_events
+            : 0;
 		// display order options
-		$config->use_sortable_display_order = isset( $config->use_sortable_display_order  )? $config->use_sortable_display_order : false;
-		$config->display_order_tickets = isset( $config->display_order_tickets  )? $config->display_order_tickets : 100;
-		$config->display_order_datetimes = isset( $config->display_order_datetimes  )? $config->display_order_datetimes : 110;
-		$config->display_order_event = isset( $config->display_order_event  )? $config->display_order_event : 120;
-		$config->display_order_venue = isset( $config->display_order_venue  )? $config->display_order_venue : 130;
+		$config->use_sortable_display_order = isset( $config->use_sortable_display_order  )
+            ? $config->use_sortable_display_order
+            : false;
+		$config->display_order_tickets = isset( $config->display_order_tickets  )
+            ? $config->display_order_tickets
+            : 120;
+		$config->display_order_datetimes = isset( $config->display_order_datetimes  )
+            ? $config->display_order_datetimes
+            : 110;
+		$config->display_order_event = isset( $config->display_order_event  )
+            ? $config->display_order_event
+            : 100;
+		$config->display_order_venue = isset( $config->display_order_venue  )
+            ? $config->display_order_venue
+            : 130;
 		// get template parts
 		$template_parts = EED_Events_Archive::instance()->initialize_template_parts( $config );
 		// convert to array so that we can add more properties
@@ -136,10 +164,18 @@ class EED_Events_Archive_Caff  extends EED_Events_Archive {
 			$config->display_venue = isset( $REQ['EED_Events_Archive_display_venue'] ) ? absint( $REQ['EED_Events_Archive_display_venue'] ) : 0;
 			$config->display_expired_events = isset( $REQ['EED_Events_Archive_display_expired_events'] ) ? absint( $REQ['EED_Events_Archive_display_expired_events'] ) : 0;
 			$config->use_sortable_display_order = isset( $REQ['EED_Events_Archive_use_sortable_display_order'] ) ? absint( $REQ['EED_Events_Archive_use_sortable_display_order'] ) : 0;
-			$config->display_order_tickets = isset( $CFG->EED_Events_Archive->display_order_tickets ) && $config->use_sortable_display_order ? $CFG->EED_Events_Archive->display_order_tickets : 100;
-			$config->display_order_datetimes = isset( $CFG->EED_Events_Archive->display_order_datetimes ) && $config->use_sortable_display_order ? $CFG->EED_Events_Archive->display_order_datetimes : 110;
-			$config->display_order_event = isset( $CFG->EED_Events_Archive->display_order_event ) && $config->use_sortable_display_order ? $CFG->EED_Events_Archive->display_order_event : 120;
-			$config->display_order_venue = isset( $CFG->EED_Events_Archive->display_order_venue ) && $config->use_sortable_display_order ? $CFG->EED_Events_Archive->display_order_venue : 130;
+			$config->display_order_event = isset( $CFG->EED_Events_Archive->display_order_event ) && $config->use_sortable_display_order
+                ? $CFG->EED_Events_Archive->display_order_event
+                : EED_Events_Archive::EVENT_DETAILS_PRIORITY;
+			$config->display_order_datetimes = isset( $CFG->EED_Events_Archive->display_order_datetimes ) && $config->use_sortable_display_order
+                ? $CFG->EED_Events_Archive->display_order_datetimes
+                : EED_Events_Archive::EVENT_DATETIMES_PRIORITY;
+			$config->display_order_tickets = isset( $CFG->EED_Events_Archive->display_order_tickets ) && $config->use_sortable_display_order
+                ? $CFG->EED_Events_Archive->display_order_tickets
+                : EED_Events_Archive::EVENT_TICKETS_PRIORITY;
+			$config->display_order_venue = isset( $CFG->EED_Events_Archive->display_order_venue ) && $config->use_sortable_display_order
+                ? $CFG->EED_Events_Archive->display_order_venue
+                : EED_Events_Archive::EVENT_VENUES_PRIORITY;
 		}
 		$CFG->EED_Events_Archive = $config;
 		do_action( 'AHEE__EED_Events_Archive__update_template_settings__after_update', $CFG, $REQ );
@@ -161,7 +197,7 @@ class EED_Events_Archive_Caff  extends EED_Events_Archive {
 			$template_parts = explode( ',', trim( $template_parts, ',' ) );
 			foreach ( $template_parts as $key => $template_part ) {
 				$template_part = "display_order_$template_part";
-				$priority = ( $key * 10 ) + 100;
+				$priority = ( $key * 10 ) + EED_Events_Archive::EVENT_DETAILS_PRIORITY;
 				if (
 					property_exists(
 						EE_Registry::instance()->CFG->template_settings->EED_Events_Archive,

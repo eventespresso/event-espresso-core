@@ -1,4 +1,6 @@
 <?php
+use EventEspresso\core\libraries\form_sections\strategies\filter\FormHtmlFilter;
+
 if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
@@ -71,12 +73,19 @@ abstract class EE_Form_Section_Base
 
     /**
      * flag indicating that _construct_finalize has been called.
-     * If it hasn't been called and we try to use functions which require it, we call it
+     * If it has not been called and we try to use functions which require it, we call it
      * with no parameters. But normally, _construct_finalize should be called by the instantiating class
      *
      * @var boolean
      */
     protected $_construction_finalized;
+
+    /**
+     * Strategy for parsing the form HTML upon display
+     *
+     * @var FormHtmlFilter
+     */
+    protected $_form_html_filter;
 
 
 
@@ -94,6 +103,10 @@ abstract class EE_Form_Section_Base
             if (property_exists($this, $key) && empty($this->{$key})) {
                 $this->{$key} = $value;
             }
+        }
+        // set parser which allows the form section's rendered HTML to be filtered
+        if (isset($options_array['form_html_filter']) && $options_array['form_html_filter'] instanceof FormHtmlFilter) {
+            $this->_form_html_filter = $options_array['form_html_filter'];
         }
     }
 
@@ -366,11 +379,29 @@ abstract class EE_Form_Section_Base
             $this->set_method($method);
         }
         $html = EEH_HTML::nl(1, 'form') . '<form';
-        $html .= $this->html_id() !== '' ? ' id="' . $this->html_id() . '"' : '';
+        $html .= $this->html_id() !== '' ? ' id="' . $this->get_html_id_for_form($this->html_id()) . '"' : '';
         $html .= ' action="' . $this->action() . '"';
         $html .= ' method="' . $this->method() . '"';
         $html .= $other_attributes . '>';
         return $html;
+    }
+
+
+
+    /**
+     * ensures that html id for form either ends in "-form" or "-frm"
+     * so that id doesn't conflict/collide with other elements
+     *
+     * @param string $html_id
+     * @return string
+     */
+    protected function get_html_id_for_form($html_id)
+    {
+        $strlen = strlen($html_id);
+        $html_id = strpos($html_id, '-form') === $strlen-5 || strpos($html_id, '-frm') === $strlen - 4
+            ? $html_id
+            : $html_id . '-frm';
+        return $html_id;
     }
 
 

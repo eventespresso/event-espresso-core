@@ -1,6 +1,9 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
+<?php
+
+use EventEspresso\core\interfaces\ResettableInterface;
+use EventEspresso\core\services\shortcodes\LegacyShortcodesManager;
+
+defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 
 
 
@@ -11,7 +14,7 @@
  * @subpackage  core/
  * @author      Brent Christensen
  */
-final class EE_Config
+final class EE_Config implements ResettableInterface
 {
 
     const OPTION_NAME        = 'ee_config';
@@ -35,6 +38,11 @@ final class EE_Config
      * @var boolean $_logging_enabled
      */
     private static $_logging_enabled = false;
+
+    /**
+     * @var LegacyShortcodesManager $legacy_shortcodes_manager
+     */
+    private $legacy_shortcodes_manager;
 
     /**
      * An StdClass whose property names are addon slugs,
@@ -167,6 +175,7 @@ final class EE_Config
     {
         if (self::$_instance instanceof EE_Config) {
             if ($hard_reset) {
+                self::$_instance->legacy_shortcodes_manager = null;
                 self::$_instance->_addon_option_names = array();
                 self::$_instance->_initialize_config();
                 self::$_instance->update_espresso_config();
@@ -320,8 +329,10 @@ final class EE_Config
         $this->organization = $this->organization instanceof EE_Organization_Config
             ? $this->organization
             : new EE_Organization_Config();
-        $this->organization = apply_filters('FHEE__EE_Config___initialize_config__organization',
-            $this->organization);
+        $this->organization = apply_filters(
+            'FHEE__EE_Config___initialize_config__organization',
+            $this->organization
+        );
         $this->currency = $this->currency instanceof EE_Currency_Config
             ? $this->currency
             : new EE_Currency_Config();
@@ -329,8 +340,10 @@ final class EE_Config
         $this->registration = $this->registration instanceof EE_Registration_Config
             ? $this->registration
             : new EE_Registration_Config();
-        $this->registration = apply_filters('FHEE__EE_Config___initialize_config__registration',
-            $this->registration);
+        $this->registration = apply_filters(
+            'FHEE__EE_Config___initialize_config__registration',
+            $this->registration
+        );
         $this->admin = $this->admin instanceof EE_Admin_Config
             ? $this->admin
             : new EE_Admin_Config();
@@ -365,6 +378,7 @@ final class EE_Config
             ? $this->gateway
             : new EE_Gateway_Config();
         $this->gateway = apply_filters('FHEE__EE_Config___initialize_config__gateway', $this->gateway);
+        $this->legacy_shortcodes_manager = null;
     }
 
 
@@ -463,8 +477,12 @@ final class EE_Config
         // hook into update_option because that happens AFTER the ( $value === $old_value ) conditional
         // but BEFORE the actual update occurs
         add_action('update_option', array($this, 'double_check_config_comparison'), 1, 3);
+        // don't want to persist legacy_shortcodes_manager, but don't want to lose it either
+        $legacy_shortcodes_manager = $this->legacy_shortcodes_manager;
+        $this->legacy_shortcodes_manager = null;
         // now update "ee_config"
         $saved = update_option(EE_Config::OPTION_NAME, $this);
+        $this->legacy_shortcodes_manager = $legacy_shortcodes_manager;
         EE_Config::log(EE_Config::OPTION_NAME);
         // if not saved... check if the hook we just added still exists;
         // if it does, it means one of two things:
@@ -987,8 +1005,6 @@ final class EE_Config
      */
     public function register_shortcodes_and_modules()
     {
-        // allow shortcodes to register with WP and to set hooks for the rest of the system
-        EE_Registry::instance()->shortcodes = $this->_register_shortcodes();
         // allow modules to set hooks for the rest of the system
         EE_Registry::instance()->modules = $this->_register_modules();
     }
@@ -1004,8 +1020,6 @@ final class EE_Config
      */
     public function initialize_shortcodes_and_modules()
     {
-        // allow shortcodes to set hooks for the rest of the system
-        $this->_initialize_shortcodes();
         // allow modules to set hooks for the rest of the system
         $this->_initialize_modules();
     }
@@ -1117,108 +1131,6 @@ final class EE_Config
 
 
     /**
-     *        _register_shortcodes
-     *
-     * @access private
-     * @return array
-     */
-    private function _register_shortcodes()
-    {
-        // grab list of installed shortcodes
-        $shortcodes_to_register = glob(EE_SHORTCODES . '*', GLOB_ONLYDIR);
-        // filter list of modules to register
-        $shortcodes_to_register = apply_filters(
-            'FHEE__EE_Config__register_shortcodes__shortcodes_to_register',
-            $shortcodes_to_register
-        );
-        if (! empty($shortcodes_to_register)) {
-            // cycle thru shortcode folders
-            foreach ($shortcodes_to_register as $shortcode_path) {
-                // add to list of installed shortcode modules
-                EE_Config::register_shortcode($shortcode_path);
-            }
-        }
-        // filter list of installed modules
-        return apply_filters(
-            'FHEE__EE_Config___register_shortcodes__installed_shortcodes',
-            EE_Registry::instance()->shortcodes
-        );
-    }
-
-
-
-    /**
-     *    register_shortcode - makes core aware of this shortcode
-     *
-     * @access    public
-     * @param    string $shortcode_path - full path up to and including shortcode folder
-     * @return    bool
-     */
-    public static function register_shortcode($shortcode_path = null)
-    {
-        do_action('AHEE__EE_Config__register_shortcode__begin', $shortcode_path);
-        $shortcode_ext = '.shortcode.php';
-        // make all separators match
-        $shortcode_path = str_replace(array('\\', '/'), DS, $shortcode_path);
-        // does the file path INCLUDE the actual file name as part of the path ?
-        if (strpos($shortcode_path, $shortcode_ext) !== false) {
-            // grab shortcode file name from directory name and break apart at dots
-            $shortcode_file = explode('.', basename($shortcode_path));
-            // take first segment from file name pieces and remove class prefix if it exists
-            $shortcode = strpos($shortcode_file[0], 'EES_') === 0
-                ? substr($shortcode_file[0], 4)
-                : $shortcode_file[0];
-            // sanitize shortcode directory name
-            $shortcode = sanitize_key($shortcode);
-            // now we need to rebuild the shortcode path
-            $shortcode_path = explode(DS, $shortcode_path);
-            // remove last segment
-            array_pop($shortcode_path);
-            // glue it back together
-            $shortcode_path = implode(DS, $shortcode_path) . DS;
-        } else {
-            // we need to generate the filename based off of the folder name
-            // grab and sanitize shortcode directory name
-            $shortcode = sanitize_key(basename($shortcode_path));
-            $shortcode_path = rtrim($shortcode_path, DS) . DS;
-        }
-        // create classname from shortcode directory or file name
-        $shortcode = str_replace(' ', '_', ucwords(str_replace('_', ' ', $shortcode)));
-        // add class prefix
-        $shortcode_class = 'EES_' . $shortcode;
-        // does the shortcode exist ?
-        if (! is_readable($shortcode_path . DS . $shortcode_class . $shortcode_ext)) {
-            $msg = sprintf(
-                __(
-                    'The requested %s shortcode file could not be found or is not readable due to file permissions. It should be in %s',
-                    'event_espresso'
-                ),
-                $shortcode_class,
-                $shortcode_path . DS . $shortcode_class . $shortcode_ext
-            );
-            EE_Error::add_error($msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__);
-            return false;
-        }
-        // load the shortcode class file
-        require_once($shortcode_path . $shortcode_class . $shortcode_ext);
-        // verify that class exists
-        if (! class_exists($shortcode_class)) {
-            $msg = sprintf(
-                __('The requested %s shortcode class does not exist.', 'event_espresso'),
-                $shortcode_class
-            );
-            EE_Error::add_error($msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__);
-            return false;
-        }
-        $shortcode = strtoupper($shortcode);
-        // add to array of registered shortcodes
-        EE_Registry::instance()->shortcodes->{$shortcode} = $shortcode_path . $shortcode_class . $shortcode_ext;
-        return true;
-    }
-
-
-
-    /**
      *        _register_modules
      *
      * @access private
@@ -1322,43 +1234,6 @@ final class EE_Config
             EE_Registry::instance()->modules->{$module_class}
         );
         return true;
-    }
-
-
-
-    /**
-     *    _initialize_shortcodes
-     *    allow shortcodes to set hooks for the rest of the system
-     *
-     * @access private
-     * @return void
-     */
-    private function _initialize_shortcodes()
-    {
-        // cycle thru shortcode folders
-        foreach (EE_Registry::instance()->shortcodes as $shortcode => $shortcode_path) {
-            // add class prefix
-            $shortcode_class = 'EES_' . $shortcode;
-            // fire the shortcode class's set_hooks methods in case it needs to hook into other parts of the system
-            // which set hooks ?
-            if (is_admin()) {
-                // fire immediately
-                call_user_func(array($shortcode_class, 'set_hooks_admin'));
-            } else {
-                // delay until other systems are online
-                add_action(
-                    'AHEE__EE_System__set_hooks_for_shortcodes_modules_and_addons',
-                    array($shortcode_class, 'set_hooks')
-                );
-                // convert classname to UPPERCASE and create WP shortcode.
-                $shortcode_tag = strtoupper($shortcode);
-                // but first check if the shortcode has already been added before assigning 'fallback_shortcode_processor'
-                if (! shortcode_exists($shortcode_tag)) {
-                    // NOTE: this shortcode declaration will get overridden if the shortcode is successfully detected in the post content in EE_Front_Controller->_initialize_shortcodes()
-                    add_shortcode($shortcode_tag, array($shortcode_class, 'fallback_shortcode_processor'));
-                }
-            }
-        }
     }
 
 
@@ -1628,6 +1503,45 @@ final class EE_Config
     }
 
 
+
+    /**
+     * @return LegacyShortcodesManager
+     */
+    public static function getLegacyShortcodesManager()
+    {
+
+        if ( ! EE_Config::instance()->legacy_shortcodes_manager instanceof LegacyShortcodesManager) {
+            EE_Config::instance()->legacy_shortcodes_manager = new LegacyShortcodesManager(
+                EE_Registry::instance()
+            );
+        }
+        return EE_Config::instance()->legacy_shortcodes_manager;
+    }
+
+
+
+    /**
+     * register_shortcode - makes core aware of this shortcode
+     *
+     * @deprecated 4.9.26
+     * @param    string $shortcode_path - full path up to and including shortcode folder
+     * @return    bool
+     */
+    public static function register_shortcode($shortcode_path = null)
+    {
+        EE_Error::doing_it_wrong(
+            __METHOD__,
+            __(
+                'Usage is deprecated. Use \EventEspresso\core\services\shortcodes\LegacyShortcodesManager::registerShortcode() as direct replacement, or better yet, please see the new \EventEspresso\core\services\shortcodes\ShortcodesManager class.',
+                'event_espresso'
+            ),
+            '4.9.26'
+        );
+        return EE_Config::instance()->getLegacyShortcodesManager()->registerShortcode($shortcode_path);
+    }
+
+
+
 }
 
 
@@ -1687,12 +1601,7 @@ class EE_Config_Base
     }
 
 
-    /**
-     *        @ override magic methods
-     *        @ return void
-     */
-    //	public function __get($a) { return apply_filters('FHEE__'.get_class($this).'__get__'.$a,$this->{$a}); }
-    //	public function __set($a,$b) { return apply_filters('FHEE__'.get_class($this).'__set__'.$a, $this->{$a} = $b ); }
+
     /**
      *        __isset
      *
@@ -2337,6 +2246,15 @@ class EE_Registration_Config extends EE_Config_Base
      */
     public $default_STS_ID;
 
+
+    /**
+     * For new events, this will be the default value for the maximum number of tickets (equivalent to maximum number of
+     * registrations)
+     * @var int
+     */
+    public $default_maximum_number_of_tickets;
+
+
     /**
      * level of validation to apply to email addresses
      *
@@ -2477,6 +2395,7 @@ class EE_Registration_Config extends EE_Config_Base
         $this->recaptcha_publickey = null;
         $this->recaptcha_privatekey = null;
         $this->recaptcha_width = 500;
+        $this->default_maximum_number_of_tickets = 10;
     }
 
 
@@ -2489,16 +2408,28 @@ class EE_Registration_Config extends EE_Config_Base
     public function do_hooks()
     {
         add_action('AHEE__EE_Config___load_core_config__end', array($this, 'set_default_reg_status_on_EEM_Event'));
+        add_action('AHEE__EE_Config___load_core_config__end', array($this, 'set_default_max_ticket_on_EEM_Event'));
     }
 
 
 
     /**
-     * @return void
+     * Hooked into `AHEE__EE_Config___load_core_config__end` to ensure the default for the EVT_default_registration_status
+     * field matches the config setting for default_STS_ID.
      */
     public function set_default_reg_status_on_EEM_Event()
     {
         EEM_Event::set_default_reg_status($this->default_STS_ID);
+    }
+
+
+    /**
+     * Hooked into `AHEE__EE_Config___load_core_config__end` to ensure the default for the EVT_additional_limit field
+     * for Events matches the config setting for default_maximum_number_of_tickets
+     */
+    public function set_default_max_ticket_on_EEM_Event()
+    {
+        EEM_Event::set_default_additional_limit($this->default_maximum_number_of_tickets);
     }
 
 
@@ -2523,6 +2454,7 @@ class EE_Registration_Config extends EE_Config_Base
             FILTER_VALIDATE_BOOLEAN
         );
     }
+
 
 
 }
@@ -2689,6 +2621,7 @@ class EE_Admin_Config extends EE_Config_Base
     {
         $this->encode_session_data = filter_var($encode_session_data, FILTER_VALIDATE_BOOLEAN);
     }
+
 
 
 }
@@ -3124,6 +3057,7 @@ class EE_Ticket_Selector_Config extends EE_Config_Base
 
 
 
+
     /**
      * @param int $datetime_selector_threshold
      */
@@ -3132,6 +3066,7 @@ class EE_Ticket_Selector_Config extends EE_Config_Base
         $datetime_selector_threshold = absint($datetime_selector_threshold);
         $this->datetime_selector_threshold = $datetime_selector_threshold ? $datetime_selector_threshold : 3;
     }
+
 
 
 }
@@ -3227,6 +3162,7 @@ class EE_Environment_Config extends EE_Config_Base
     {
         $this->_set_php_values();
     }
+
 
 
 }

@@ -27,7 +27,6 @@ class AsciiOnlyTest extends \EE_UnitTestCase
 
 
     /**
-     * @group current
      */
     public function test_format(){
         //array keys are the strings, values are arrays containign each emoji in that string

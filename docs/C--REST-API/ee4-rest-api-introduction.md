@@ -12,9 +12,21 @@ Example applications of the EE4 REST API could include:
 
 If you'd like a more hands-on tutorial, checkout [Building an EE4 Addon that uses Angular.js and the EE4 REST API](building-an-ee4-addon-that-uses-angular-js-and-the-ee4-json-rest-api.md).
 
+## Development
+While developing with the EE4 REST API, it is recommended you define the following inside WordPress's `wp-config.php` file:
+
+```php
+define('EE_REST_API_DEBUG_MODE',true);
+```
+
+This will help make sure you are made aware of any warnings or errors that happen, and it will also ensure that if you add any new endpoints, they will be made available immediately (otherwise we 
+cache our registered routes, and only refresh the cache on updates or reactivations of EE). 
+
+Live sites, on the other hand, should set this to `false`, to improve speed, and avoid showing error messages to site visitors.
+
 ## Authentication
 
-Some of the EE4 REST API data is public and requires no authentication, but much of it is protected and requires authentication. Because the EE4 REST API is built on the WP REST API, the authentication process is identical: once you authenticate with the WP JSON REST API, you are also authenticated with the EE4 JSON REST API. So we suggest you [read their documentation on authentication](http://v2.wp-api.org/guide/authentication/).
+Some of the EE4 REST API data is public and requires no authentication, but much of it is protected and requires authentication. Because the EE4 REST API is built on the WP REST API, the authentication process is identical: once you authenticate with the WP JSON REST API, you are also authenticated with the EE4 JSON REST API. So we suggest you [read their documentation on authentication](https://developer.wordpress.org/rest-api/using-the-rest-api/authentication/).
 
 Currently, Event Espresso also comes bundled with a [customized version of WP API Basic Auth](https://github.com/eventespresso/Basic-Auth/), primarily used in our mobile apps. However, we do not guarantee we will continue to bundle it with Event Espresso, and so recommend 3rd party applications instead use other authentication methods.
 
@@ -30,7 +42,7 @@ Want to see what the current EE4 REST API looks like? Go ahead and send a reques
 
 Note: throughout the rest of this article you will see URIs to a particular server that's setup to use the EE4 REST API: demoee.org, where the WP JSON API works at demoee.org/wp-json. This is just for ease of learning about the EE4 REST API, obviously your application will want to use data from your server. So for example, if your site's url is mygreatthing.com, the WP JSON API would work at mygreatthing.com/wp-json.
 
-##Event Espresso Data in the WP API Index
+## Event Espresso Data in the WP API Index
 
 The WP API index page contains all the EE4 routes, as well some meta information in the "ee" property. Currently it contains: 
 
@@ -70,7 +82,7 @@ Here is an example:
   
   ```
 
-##Site Info
+## Site Info
 
 This is an extra endpoint with site meta information. Currently it contains the following properties:
 
@@ -113,7 +125,7 @@ This route is expected to contain more information in the future, as required.
 
 ## Resources (Models)
 
-The "resources" in the Event Espresso REST API are built around the [EE4 models](../G--Model-System/model-querying). In the REST APIs we talk about "resources", but in PHP code we talk about models, but they represent the same thing. Each resource/model has fields and relations to other resources.
+The "resources" in the Event Espresso REST API are built around the [EE4 models](../G--Model-System/model-querying.md). In the REST APIs we talk about "resources", but in PHP code we talk about models, but they represent the same thing. Each resource/model has fields and relations to other resources.
 
 Resources are the protoypes, and entities are the specific instances (just like models are the prototype, and model objects specific instances). Eg, "events" is a resource queryable on http://demoee.org/wp-json/ee/v4.8.29/events which returns specific "event" entities.
 

@@ -962,28 +962,31 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
                 'name'            => 'email_validation_settings',
                 'html_id'         => 'email_validation_settings',
                 'layout_strategy' => new EE_Admin_Two_Column_Layout(),
-                'subsections'     => array(
-                    'email_validation_hdr'   => new EE_Form_Section_HTML(
-                        EEH_HTML::h2(esc_html__('Email Validation Settings', 'event_espresso'))
-                    ),
-                    'email_validation_level' => new EE_Select_Input(
-                        array(
-                            'basic'      => esc_html__('Basic', 'event_espresso'),
-                            'wp_default' => esc_html__('WordPress Default', 'event_espresso'),
-                            'i18n'       => esc_html__('International', 'event_espresso'),
-                            'i18n_dns'   => esc_html__('International + DNS Check', 'event_espresso'),
+                'subsections'     => apply_filters(
+                    'FHEE__Extend_Registration_Form_Admin_Page___email_validation_settings_form__form_subsections',
+                    array(
+                        'email_validation_hdr'   => new EE_Form_Section_HTML(
+                            EEH_HTML::h2(esc_html__('Email Validation Settings', 'event_espresso'))
                         ),
-                        array(
-                            'html_label_text' => esc_html__('Email Validation Level', 'event_espresso')
-                                                 . EEH_Template::get_help_tab_link('email_validation_info'),
-                            'html_help_text'  => esc_html__('These levels range from basic validation ( ie: text@text.text ) to more advanced checks against international email addresses (ie: üñîçøðé@example.com ) with additional MX and A record checks to confirm the domain actually exists. More information on on each level can be found within the help section.',
-                                'event_espresso'),
-                            'default'         => isset(EE_Registry::instance()->CFG->registration->email_validation_level)
-                                ? EE_Registry::instance()->CFG->registration->email_validation_level
-                                : 'wp_default',
-                            'required'        => false,
-                        )
-                    ),
+                        'email_validation_level' => new EE_Select_Input(
+                            array(
+                                'basic'      => esc_html__('Basic', 'event_espresso'),
+                                'wp_default' => esc_html__('WordPress Default', 'event_espresso'),
+                                'i18n'       => esc_html__('International', 'event_espresso'),
+                                'i18n_dns'   => esc_html__('International + DNS Check', 'event_espresso'),
+                            ),
+                            array(
+                                'html_label_text' => esc_html__('Email Validation Level', 'event_espresso')
+                                                     . EEH_Template::get_help_tab_link('email_validation_info'),
+                                'html_help_text'  => esc_html__('These levels range from basic validation ( ie: text@text.text ) to more advanced checks against international email addresses (ie: üñîçøðé@example.com ) with additional MX and A record checks to confirm the domain actually exists. More information on on each level can be found within the help section.',
+                                    'event_espresso'),
+                                'default'         => isset(EE_Registry::instance()->CFG->registration->email_validation_level)
+                                    ? EE_Registry::instance()->CFG->registration->email_validation_level
+                                    : 'wp_default',
+                                'required'        => false,
+                            )
+                        ),
+                    )
                 ),
             )
         );

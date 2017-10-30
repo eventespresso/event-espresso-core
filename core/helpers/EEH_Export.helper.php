@@ -31,7 +31,9 @@ class EEH_Export {
 	 * @return string
 	 */
 	public static function get_column_name_for_field(EE_Model_Field_Base $field){
-		return $field->get_nicename()."[".$field->get_name()."]";
+	    return wp_specialchars_decode($field->get_nicename(), ENT_QUOTES)
+               . "[" . wp_specialchars_decode($field->get_name(), ENT_QUOTES)
+               . "]";
 	}
 
 	/**
