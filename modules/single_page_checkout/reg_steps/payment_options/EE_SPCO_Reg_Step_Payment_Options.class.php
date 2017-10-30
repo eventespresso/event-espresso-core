@@ -304,11 +304,11 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
         foreach ($registrations as $REG_ID => $registration) {
             /** @var $registration EE_Registration */
             // has this registration lost it's space ?
-            if (isset($ejected_registrations[$REG_ID])) {
-                if($registration->event()->is_sold_out() || $registration->event()->is_sold_out(true)){
-                    $sold_out_events[$registration->event()->ID()] = $registration->event();
-                }  else {
-                    $insufficient_spaces_available[$registration->event()->ID()] = $registration->event();
+            if (isset($ejected_registrations[ $REG_ID ])) {
+                if ($registration->event()->is_sold_out() || $registration->event()->is_sold_out(true)) {
+                    $sold_out_events[ $registration->event()->ID() ] = $registration->event();
+                } else {
+                    $insufficient_spaces_available[ $registration->event()->ID() ] = $registration->event();
                 }
                 continue;
             }
