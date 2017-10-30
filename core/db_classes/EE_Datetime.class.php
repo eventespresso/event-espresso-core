@@ -265,7 +265,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	 * increments reserved by amount passed by $qty
 	 *
 	 * @param int $qty
-	 * @return boolean
+	 * @return void
 	 */
 	public function increase_reserved( $qty = 1 ) {
 		$reserved = $this->reserved() + absint( $qty );
@@ -275,7 +275,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
             $qty,
             $reserved
         );
-        return $this->set_reserved( $reserved );
+        $this->set_reserved( $reserved );
 	}
 
 
@@ -284,7 +284,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	 * decrements (subtracts) reserved by amount passed by $qty
 	 *
 	 * @param int $qty
-	 * @return boolean
+	 * @return void
 	 */
 	public function decrease_reserved( $qty = 1 ) {
 		$reserved = $this->reserved() - absint( $qty );
@@ -294,7 +294,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
             $qty,
             $reserved
         );
-        return $this->set_reserved( $reserved );
+        $this->set_reserved( $reserved );
 	}
 
 
