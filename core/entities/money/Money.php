@@ -63,8 +63,8 @@ class Money
      */
     public function __construct($amount, Currency $currency, Calculator $calculator, array $formatters)
     {
-        $this->currency = $currency;
-        $this->amount = (string)$this->parseAmount($amount);
+        $this->currency   = $currency;
+        $this->amount     = (string) $this->parseAmount($amount);
         $this->calculator = $calculator;
         $this->formatters = $formatters;
     }
@@ -104,7 +104,7 @@ class Money
             case 'integer' :
             case 'double' :
             case 'string' :
-            break;
+                break;
             default  :
                 throw new InvalidDataTypeException(
                     '$amount',
@@ -117,23 +117,23 @@ class Money
             $amount = str_replace(
                 array(
                     $this->currency->thousands(),
-                    $this->currency->decimalMark()
+                    $this->currency->decimalMark(),
                 ),
                 array(
                     '',
-                    '.'
+                    '.',
                 ),
                 $amount
             );
         }
         // remove any non numeric values but leave the decimal
-        $amount = (float)preg_replace('/([^0-9\\.])/i', '', $amount);
+        $amount = (float) preg_replace('/([^0-9\\.])/', '', $amount);
         // shift the decimal position by the number of decimal places used internally
         // ex: 12.5 for a currency using 2 decimal places, would become 1250
         // then if our extra internal precision was 3, it would become 1250000
         $amount *= pow(10, $this->precision());
         // then round up the remaining value if there is still a fractional amount left
-        $amount = round($amount, 0, PHP_ROUND_HALF_UP);
+        $amount = round($amount);
         return $amount;
     }
 
@@ -148,7 +148,7 @@ class Money
     private function precision($positive = true)
     {
         $sign = $positive ? 1 : -1;
-        return ((int)$this->currency->decimalPlaces() + Money::EXTRA_PRECISION) * $sign;
+        return ((int) $this->currency->decimalPlaces() + Money::EXTRA_PRECISION) * $sign;
     }
 
 
@@ -163,7 +163,7 @@ class Money
     {
         // shift the decimal position BACK by the number of decimal places used internally
         // ex: 1250 for a currency using 2 decimal places, would become 12.5
-        $amount = (string)$this->amount * pow(10, $this->precision(false));
+        $amount = (string) $this->amount * pow(10, $this->precision(false));
         // then shave off our extra internal precision using the number of decimal places for the currency
         $amount = round($amount, $this->currency->decimalPlaces());
         return $amount;
@@ -181,15 +181,15 @@ class Money
     public function format($formatting_level = MoneyFormatter::ADD_THOUSANDS)
     {
         $formatted_amount = $this->amount();
-        $formatters = $this->formatters();
+        $formatters       = $this->formatters();
         // if we are applying thousands formatting...
         if ($formatting_level >= MoneyFormatter::ADD_THOUSANDS) {
             // then let's remove decimal formatting since it's included in thousands formatting
-            unset($formatters[MoneyFormatter::DECIMAL_ONLY]);
+            unset($formatters[ MoneyFormatter::DECIMAL_ONLY ]);
         }
         for ($x = 1; $x <= $formatting_level; $x++) {
-            if (isset($formatters[$x]) && $formatters[$x] instanceof MoneyFormatter) {
-                $formatted_amount = $formatters[$x]->format($formatted_amount, $this->currency);
+            if (isset($formatters[ $x ]) && $formatters[ $x ] instanceof MoneyFormatter) {
+                $formatted_amount = $formatters[ $x ]->format($formatted_amount, $this->currency);
             }
         }
         return $formatted_amount;
