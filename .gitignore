@@ -1,5 +1,5 @@
 core/third_party_libs/dompdf/lib/fonts/log.htm
-.mo
+*.mo
 .idea
 node_modules
 .DS_Store
