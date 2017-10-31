@@ -527,13 +527,12 @@ class EEH_Event_Query {
 	 * @param    boolean $event_category_slug
 	 * @return    string
 	 */
-	public static function posts_where_sql_for_event_category_slug( $event_category_slug = NULL ) {
-		global $wpdb;
-		$event_category_slug = esc_sql($event_category_slug);
-		return ! empty( $event_category_slug )
-            ? " AND {$wpdb->terms}.slug = '{$event_category_slug}' "
+    public static function posts_where_sql_for_event_category_slug( $event_category_slug = NULL ) {
+        global $wpdb;
+        return ! empty( $event_category_slug )
+            ? $wpdb->prepare(" AND {$wpdb->terms}.slug = %s ", $event_category_slug)
             : '';
-	}
+    }
 
 
 
