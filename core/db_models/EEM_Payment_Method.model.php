@@ -329,9 +329,7 @@ class EEM_Payment_Method extends EEM_Base {
                         '<a href="' . admin_url('plugins.php') . '">',
                         '</a>'
                     ),
-                    true,
-                    '',
-                    ''
+                    true
                 );
 			}
 		}
