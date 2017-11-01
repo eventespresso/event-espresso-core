@@ -203,7 +203,7 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
         if (! is_string($capability)) {
             throw new InvalidDataTypeException('$capability', $capability, 'string');
         }
-        $this->capability = $capability;
+        $this->capability = ! empty($capability) ? $capability : 'manage_options';
     }
 
 
@@ -227,7 +227,7 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
         if (! is_string($cap_context)) {
             throw new InvalidDataTypeException('$cap_context', $cap_context, 'string');
         }
-        $this->cap_context = $cap_context;
+        $this->cap_context = ! empty($cap_context) ? $cap_context : 'view persistent admin notice';
     }
 
 
