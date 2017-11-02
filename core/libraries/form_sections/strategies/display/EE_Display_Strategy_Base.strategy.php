@@ -209,6 +209,7 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
      */
     protected function _attribute($attribute, $value = '')
     {
+        $value = esc_attr($value);
         return $value !== null ? " {$attribute}=\"{$value}\"" : '';
     }
 
@@ -224,6 +225,7 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
      */
     protected function _data_attribute($attribute, $value = '')
     {
+        $value = esc_attr($value);
         return $value !== null ? " data-{$attribute}=\"{$value}\"" : '';
     }
 
