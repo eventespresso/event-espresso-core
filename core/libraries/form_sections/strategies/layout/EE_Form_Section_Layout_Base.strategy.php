@@ -199,6 +199,33 @@ abstract class EE_Form_Section_Layout_Base
 
 
     /**
+     * Gets the HTML for all the form's form-wide errors (ie, errors which
+     * are not for specific inputs. E.g., if two inputs somehow disagree,
+     * those errors would probably be on the form section, not one of its inputs)
+     * @return string
+     */
+    public function display_form_wide_errors()
+    {
+        $html = '';
+        if ($this->_form_section->get_validation_errors()) {
+            $html .= "<div class='ee-form-wide-errors'>";
+            //get all the errors on THIS form section (errors which aren't
+            //for specific inputs, but instead for the entire form section)
+            foreach ($this->_form_section->get_validation_errors() as $error) {
+                $html .= $error->getMessage() . '<br>';
+            }
+            $html .= '</div>';
+        }
+        return apply_filters(
+            'FHEE__EE_Form_Section_Layout_Base__display_form_wide_errors',
+            $html,
+            $this
+        );
+    }
+
+
+
+    /**
      * returns the HTML for the server-side validation errors for the specified input
      * Note that if JS is enabled, it should remove these and instead
      * populate the form's errors in the jquery validate fashion
@@ -229,7 +256,8 @@ abstract class EE_Form_Section_Layout_Base
      */
     public function display_help_text($input)
     {
-        if ($input->html_help_text() !== '') {
+        $help_text  = $input->html_help_text();
+        if ($help_text !== '' && $help_text !== null) {
             $tag = is_admin() ? 'p' : 'span';
             return '<'
                    . $tag
@@ -240,7 +268,7 @@ abstract class EE_Form_Section_Layout_Base
                    . '" style="'
                    . $input->html_help_style()
                    . '">'
-                   . $input->html_help_text()
+                   . $help_text
                    . '</'
                    . $tag
                    . '>';

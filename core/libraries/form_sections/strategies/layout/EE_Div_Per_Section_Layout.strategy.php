@@ -99,11 +99,12 @@ class EE_Div_Per_Section_Layout extends EE_Form_Section_Layout_Base
      */
     protected function _display_label_for_option_type_question(EE_Form_Input_With_Options_Base $input)
     {
-        if ($input->display_html_label_text() !== '') {
-            return EEH_HTML::div(
+        if ($input->display_html_label_text()) {
+            $html_label_text = $input->html_label_text();
+            $label_html = EEH_HTML::div(
                 $input->required()
-                    ? $input->html_label_text() . EEH_HTML::span('*', '', 'ee-asterisk')
-                    : $input->html_label_text(),
+                    ? $html_label_text . EEH_HTML::span('*', '', 'ee-asterisk')
+                    : $html_label_text,
                 $input->html_label_id(),
                 $input->required()
                     ? 'ee-required-label ' . $input->html_label_class()
@@ -111,6 +112,12 @@ class EE_Div_Per_Section_Layout extends EE_Form_Section_Layout_Base
                 $input->html_label_style(),
                 $input->html_other_attributes()
             );
+            // if no content was provided to EEH_HTML::div() above (ie: an empty label),
+            // then we need to close the div manually
+            if(empty($html_label_text)){
+                $label_html .= EEH_HTML::divx($input->html_label_id(), $input->html_label_class());
+            }
+            return $label_html;
         }
         return '';
     }

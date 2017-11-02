@@ -211,7 +211,7 @@ class Read extends Base
             //modify the description
             $schema['properties'][$field_name . '_gmt']['description'] = sprintf(
                 esc_html__('%s - the value for this field is in GMT.', 'event_espresso'),
-                $field->get_nicename()
+                wp_specialchars_decode($field->get_nicename(), ENT_QUOTES)
             );
         }
         return $schema;

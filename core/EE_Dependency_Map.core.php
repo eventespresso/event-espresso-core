@@ -640,6 +640,9 @@ class EE_Dependency_Map
             'EE_Module_Request_Router' => array(
                 'EE_Request' => EE_Dependency_Map::load_from_cache,
             ),
+            'EE_Registration_Processor' => array(
+                'EE_Request' => EE_Dependency_Map::load_from_cache,
+            ),
         );
     }
 
@@ -793,6 +796,9 @@ class EE_Dependency_Map
             'NoticesContainerInterface'                                            => 'EventEspresso\core\services\notices\NoticesContainerInterface',
             'EventEspresso\core\services\notices\NoticesContainerInterface'        => 'EventEspresso\core\services\notices\NoticesContainer',
         );
+        if (! (defined('DOING_AJAX') && DOING_AJAX) && is_admin()) {
+            $this->_aliases['EventEspresso\core\services\notices\NoticeConverterInterface'] = 'EventEspresso\core\services\notices\ConvertNoticesToAdminNotices';
+        }
     }
 
 

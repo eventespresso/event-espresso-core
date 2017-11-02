@@ -304,8 +304,12 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
         foreach ($registrations as $REG_ID => $registration) {
             /** @var $registration EE_Registration */
             // has this registration lost it's space ?
-            if (isset($ejected_registrations[$REG_ID])) {
-                $insufficient_spaces_available[$registration->event()->ID()] = $registration->event();
+            if (isset($ejected_registrations[ $REG_ID ])) {
+                if ($registration->event()->is_sold_out() || $registration->event()->is_sold_out(true)) {
+                    $sold_out_events[ $registration->event()->ID() ] = $registration->event();
+                } else {
+                    $insufficient_spaces_available[ $registration->event()->ID() ] = $registration->event();
+                }
                 continue;
             }
             // event requires admin approval
@@ -2395,12 +2399,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                 $this->checkout->redirect_url  = $this->reg_step_url('redirect_form');
                 // set JSON response
                 $this->checkout->json_response->set_redirect_form($this->checkout->redirect_form);
-                // set cron job for finalizing the TXN
-                // in case the user does not return from the off-site gateway
-                EE_Cron_Tasks::schedule_finalize_abandoned_transactions_check(
-                    EE_Registry::instance()->SSN->expiration() + 1,
-                    $this->checkout->transaction->ID()
-                );
                 // and lastly, let's bump the payment status to pending
                 $payment->set_status(EEM_Payment::status_id_pending);
                 $payment->save();

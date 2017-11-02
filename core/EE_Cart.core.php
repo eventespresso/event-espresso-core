@@ -102,7 +102,7 @@ class EE_Cart implements ResettableInterface
     {
         do_action('AHEE_log', __FILE__, __FUNCTION__, '');
         $this->set_session($session);
-        if ($grand_total instanceof EE_Line_Item) {
+        if ($grand_total instanceof EE_Line_Item && $grand_total->is_total()) {
             $this->set_grand_total_line_item($grand_total);
         }
     }

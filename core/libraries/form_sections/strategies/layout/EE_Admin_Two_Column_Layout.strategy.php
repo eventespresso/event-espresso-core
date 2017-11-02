@@ -32,10 +32,9 @@ class EE_Admin_Two_Column_Layout extends EE_Two_Column_Layout
      */
     public function layout_subsection($form_section)
     {
-        if ($form_section instanceof EE_Form_Section_Proper) {
-            return EEH_HTML::no_row($form_section->get_html());
-        }
-        if ($form_section instanceof EE_Form_Section_HTML) {
+        if ($form_section instanceof EE_Form_Section_Proper
+            || $form_section instanceof EE_Form_Section_HTML
+        ) {
             return EEH_HTML::no_row($form_section->get_html());
         }
         return '';
