@@ -30,7 +30,7 @@ class EE_Button_Input_Display_Strategy_Test extends EE_UnitTestCase{
         );
         $input->_construct_finalize(null, 'brent-on-skateboard');
         $output = $input->get_display_strategy()->display();
-        $expected = '<button name="brent-on-skateboard" id="brent-on-skateboard" class="" style="" value="brent-skateboard">' . $button_content . '</button>';
+        $expected = '<button name="brent-on-skateboard" id="brent-on-skateboard" value="brent-skateboard">' . $button_content . '</button>';
         $this->assertHTMLEquals($expected,$output);
     }
 }
