@@ -23,45 +23,45 @@ abstract class DomainBase
      *
      * @var string
      */
-    private static $plugin_file = '';
+    private $plugin_file;
 
     /**
      * String indicating version for plugin
      *
      * @var string
      */
-    private static $version = '';
+    private $version;
 
     /**
      * @var string $plugin_basename
      */
-    private static $plugin_basename = '';
+    private $plugin_basename;
 
     /**
      * @var string $plugin_path
      */
-    private static $plugin_path = '';
+    private $plugin_path;
 
     /**
      * @var string $plugin_url
      */
-    private static $plugin_url = '';
+    private $plugin_url;
 
 
 
     /**
-     * Initializes internal static properties.
+     * Initializes internal properties.
      *
      * @param string $plugin_file
      * @param string $version
      */
-    public static function init($plugin_file, $version)
+    public function __construct($plugin_file, $version)
     {
-        self::$plugin_file = $plugin_file;
-        self::$version = $version;
-        self::$plugin_basename = plugin_basename($plugin_file);
-        self::$plugin_path = plugin_dir_path($plugin_file);
-        self::$plugin_url = plugin_dir_url($plugin_file);
+        $this->plugin_file = $plugin_file;
+        $this->version = $version;
+        $this->plugin_basename = plugin_basename($plugin_file);
+        $this->plugin_path = plugin_dir_path($plugin_file);
+        $this->plugin_url = plugin_dir_url($plugin_file);
     }
 
 
@@ -70,10 +70,9 @@ abstract class DomainBase
      * @return string
      * @throws DomainException
      */
-    public static function pluginFile()
+    public function pluginFile()
     {
-        self::verifyInitialized(__METHOD__);
-        return self::$plugin_file;
+        return $this->plugin_file;
     }
 
 
@@ -82,10 +81,19 @@ abstract class DomainBase
      * @return string
      * @throws DomainException
      */
-    public static function pluginBasename()
+    public function pluginBasename()
     {
-        self::verifyInitialized(__METHOD__);
-        return self::$plugin_basename;
+        return $this->plugin_basename;
+    }
+
+
+
+    /**
+     * @return string
+     */
+    public function pluginPath()
+    {
+        return $this->plugin_path;
     }
 
 
@@ -94,10 +102,9 @@ abstract class DomainBase
      * @return string
      * @throws DomainException
      */
-    public static function pluginPath()
+    public function pluginUrl()
     {
-        self::verifyInitialized(__METHOD__);
-        return self::$plugin_path;
+        return $this->plugin_url;
     }
 
 
@@ -106,44 +113,10 @@ abstract class DomainBase
      * @return string
      * @throws DomainException
      */
-    public static function pluginUrl()
+    public function version()
     {
-        self::verifyInitialized(__METHOD__);
-        return self::$plugin_url;
+        return $this->version;
     }
 
-
-
-    /**
-     * @return string
-     * @throws DomainException
-     */
-    public static function version()
-    {
-        self::verifyInitialized(__METHOD__);
-        return self::$version;
-    }
-
-
-
-    /**
-     * @param string $method
-     * @throws DomainException
-     */
-    private static function verifyInitialized($method)
-    {
-        if (self::$plugin_file === '') {
-            throw new DomainException(
-                sprintf(
-                    esc_html__(
-                        '%1$s needs to be called before %2$s can return a value.',
-                        'event_espresso'
-                    ),
-                    get_called_class() . '::init()',
-                    "{$method}()"
-                )
-            );
-        }
-    }
 
 }
