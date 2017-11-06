@@ -99,7 +99,7 @@ class EE_Messages_Registrations_incoming_data extends EE_Messages_incoming_data
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    static public function convert_data_for_persistent_storage($registrations)
+    static public function convert_data_for_persistent_storage(array $registrations)
     {
         if (! self::validateRegistrationsForConversion($registrations)) {
             return array();
@@ -157,6 +157,7 @@ class EE_Messages_Registrations_incoming_data extends EE_Messages_incoming_data
                 return $count_for_ids === count($registrations);
             }
         }
+        return false;
     }
 
 
