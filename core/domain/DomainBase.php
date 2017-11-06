@@ -15,7 +15,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed');
  * @author  Darren Ethier
  * @since   4.9.38
  */
-abstract class DomainBase
+abstract class DomainBase implements DomainInterface
 {
 
     /**
