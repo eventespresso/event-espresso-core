@@ -3,6 +3,7 @@
 namespace EventEspresso\core\domain;
 
 use DomainException;
+use InvalidArgumentException;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed');
 
@@ -54,16 +55,68 @@ abstract class DomainBase implements DomainInterface
      *
      * @param string $plugin_file
      * @param string $version
+     * @throws InvalidArgumentException
      */
     public function __construct($plugin_file, $version)
     {
-        $this->plugin_file = $plugin_file;
-        $this->version = $version;
+        $this->setPluginFile($plugin_file);
+        $this->setVersion($version);
         $this->plugin_basename = plugin_basename($plugin_file);
         $this->plugin_path = plugin_dir_path($plugin_file);
         $this->plugin_url = plugin_dir_url($plugin_file);
     }
 
+
+    /**
+     * @param string $plugin_file
+     * @throws InvalidArgumentException
+     */
+    private function setPluginFile($plugin_file)
+    {
+        if(empty($plugin_file) || ! is_string($plugin_file)){
+            throw new InvalidArgumentException(
+                esc_html__(
+                    'You need to supply a path to the addon plugin file in order to generate a Domain class',
+                    'event_espresso'
+                )
+            );
+        }
+        if(! is_readable($plugin_file)){
+            throw new InvalidArgumentException(
+                esc_html__(
+                    'You need to supply a valid path to the addon plugin file in order to generate a Domain class',
+                    'event_espresso'
+                )
+            );
+        }
+        $this->plugin_file = $plugin_file;
+    }
+
+
+    /**
+     * @param string $version
+     * @throws InvalidArgumentException
+     */
+    private function setVersion($version)
+    {
+        if (empty($version) || ! is_string($version)) {
+            throw new InvalidArgumentException(
+                esc_html__(
+                    'You need to supply a version string in order to generate a Domain class',
+                    'event_espresso'
+                )
+            );
+        }
+        if (strpos($version, '.') === false) {
+            throw new InvalidArgumentException(
+                esc_html__(
+                    'You need to supply a valid version string in order to generate a Domain class',
+                    'event_espresso'
+                )
+            );
+        }
+        $this->version = $version;
+    }
 
 
     /**
