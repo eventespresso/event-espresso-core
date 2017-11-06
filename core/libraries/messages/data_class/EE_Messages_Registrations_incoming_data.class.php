@@ -1,4 +1,8 @@
 <?php
+
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+
 if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
@@ -79,19 +83,25 @@ class EE_Messages_Registrations_incoming_data extends EE_Messages_incoming_data
      * Returns database safe representation of the data later used to when instantiating this object.
      *
      * @param array $registrations The incoming data to be prepped.
-     * @return EE_Registration[]   The data being prepared for the db
+     * @return EE_Registration[] The data being prepared for the db
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     static public function convert_data_for_persistent_storage($registrations)
     {
-        if (
-            ! is_array($registrations)
-            || ! reset($registrations) instanceof EE_Registration
-        ) {
+        if (! self::validateRegistrationsForConversion($registrations)) {
             return array();
         }
 
-        $registration_ids = array();
+        //is this an array of ints?
+        $first_item = reset($registrations);
+        if (is_int($first_item)) {
+            return $registrations;
+        }
 
+        //k nope so let's pull from the registrations
         $registration_ids = array_filter(
             array_map(
                 function ($registration) {
@@ -106,6 +116,41 @@ class EE_Messages_Registrations_incoming_data extends EE_Messages_incoming_data
 
         return $registration_ids;
     }
+
+
+    /**
+     * This validates incoming registrations (considers whether they are ids or EE_Registration objects.
+     *
+     * @param array $registrations Could be EE_Registration[] or int[]
+     * @return bool
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    protected static function validateRegistrationsForConversion($registrations)
+    {
+        if (is_array($registrations)) {
+            $first_item = reset($registrations);
+            if ($first_item instanceof EE_Registration) {
+                return true;
+            }
+            if (is_int($first_item)) {
+                //k let's some basic validation here.  This isn't foolproof but better than nothing.
+                $count_for_ids = EEM_Registration::instance()->count(
+                    array(
+                        array(
+                            'REG_ID' => array('IN', $registrations)
+                        )
+                    )
+                );
+                return $count_for_ids === count($registrations);
+            }
+        }
+    }
+
+
+
 
 
     /**
