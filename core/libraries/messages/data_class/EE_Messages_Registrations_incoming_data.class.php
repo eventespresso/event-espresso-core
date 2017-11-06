@@ -99,7 +99,7 @@ class EE_Messages_Registrations_incoming_data extends EE_Messages_incoming_data
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    static public function convert_data_for_persistent_storage(array $registrations)
+    public static  function convert_data_for_persistent_storage(array $registrations)
     {
         if (! self::validateRegistrationsForConversion($registrations)) {
             return array();
@@ -172,7 +172,7 @@ class EE_Messages_Registrations_incoming_data extends EE_Messages_incoming_data
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    static public function convert_data_from_persistent_storage($data)
+    public static function convert_data_from_persistent_storage($data)
     {
         //since this was added later, we need to account of possible back compat issues where data already queued for
         // generation is in the old format, which is an array of EE_Registration objects.  So if that's the case, then
