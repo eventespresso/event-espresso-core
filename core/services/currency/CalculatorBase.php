@@ -92,4 +92,4 @@ abstract class CalculatorBase implements Calculator
 
 
 // End of file CalculatorBase.php
-// Location: EventEspresso\core\entities\money/CalculatorBase.php
+// Location: EventEspresso\core\domain\values\money/CalculatorBase.php

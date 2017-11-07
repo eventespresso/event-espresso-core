@@ -2,7 +2,7 @@
 
 namespace EventEspresso\core\services\currency;
 
-use EventEspresso\core\entities\money\Currency;
+use EventEspresso\core\domain\values\currency\Currency;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -37,5 +37,3 @@ class InternationalMoneyFormatter implements MoneyFormatter
 
 
 }
-// End of file CurrencyCodeMoneyFormatter.php
-// Location: core/services/currency/InternationalMoneyFormatter.php
