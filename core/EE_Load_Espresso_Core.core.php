@@ -1,4 +1,6 @@
 <?php
+
+use EventEspresso\core\domain\DomainFactory;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
@@ -82,7 +84,7 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_
         $loader = LoaderFactory::getLoader($this->registry);
         $this->dependency_map->setLoader($loader);
         // instantiate core Domain class
-        EventEspresso\core\domain\DomainFactory::create(
+        DomainFactory::create(
             'EventEspresso\core\domain\Domain',
             array(
                 EVENT_ESPRESSO_MAIN_FILE,
