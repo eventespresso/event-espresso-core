@@ -1,6 +1,7 @@
 <?php
-use EventEspresso\core\entities\money\Currency;
-use EventEspresso\core\entities\money\Money;
+use EventEspresso\core\domain\values\currency\Currency;
+use EventEspresso\core\domain\values\currency\Money;
+use EventEspresso\core\services\currency\CreateCurrency;
 use EventEspresso\core\services\currency\CreateMoney;
 use EventEspresso\tests\mocks\core\services\currency\MoneyMock;
 
@@ -22,11 +23,31 @@ class CreateMoneyTest extends \EE_UnitTestCase
     /**
      * @param string $CNT_ISO
      * @return Currency
+     * @throws EE_Error
      * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
     protected function currency($CNT_ISO = 'US')
     {
-        return Currency::createFromCountryCode($CNT_ISO);
+        return CreateCurrency::fromCountryCode($CNT_ISO);
+    }
+
+    /**
+     * @group Money
+     */
+    public function test_fromSubUnits()
+    {
+        $money = CreateMoney::fromSubUnits(123456, 'USD');
+        $this->assertInstanceOf('\EventEspresso\core\domain\values\currency\Money', $money);
+        $this->assertEquals('1234.56', $money->amount());
+        $this->assertInstanceOf('\EventEspresso\core\domain\values\currency\Currency', $money->currency());
+        $CNT_ISO       = isset(EE_Registry::instance()->CFG->organization)
+                         && EE_Registry::instance()->CFG->organization instanceof EE_Organization_Config
+            ? EE_Registry::instance()->CFG->organization->CNT_ISO
+            : 'US';
+        $site_currency = $this->currency($CNT_ISO);
+        $this->assertTrue($site_currency->equals($money->currency()));
     }
 
     /**
@@ -35,9 +56,9 @@ class CreateMoneyTest extends \EE_UnitTestCase
     public function test_forSite()
     {
         $money = CreateMoney::forSite(1234.56789);
-        $this->assertInstanceOf('\EventEspresso\core\entities\money\Money', $money);
+        $this->assertInstanceOf('\EventEspresso\core\domain\values\currency\Money', $money);
         $this->assertEquals('1234.57', $money->amount());
-        $this->assertInstanceOf('\EventEspresso\core\entities\money\Currency', $money->currency());
+        $this->assertInstanceOf('\EventEspresso\core\domain\values\currency\Currency', $money->currency());
         $CNT_ISO = isset(EE_Registry::instance()->CFG->organization)
                    && EE_Registry::instance()->CFG->organization instanceof EE_Organization_Config
             ? EE_Registry::instance()->CFG->organization->CNT_ISO
@@ -52,9 +73,9 @@ class CreateMoneyTest extends \EE_UnitTestCase
     public function test_forCountry()
     {
         $money = CreateMoney::forCountry(1234.56789, 'US');
-        $this->assertInstanceOf('\EventEspresso\core\entities\money\Money', $money);
+        $this->assertInstanceOf('\EventEspresso\core\domain\values\currency\Money', $money);
         $this->assertEquals('1234.57', $money->amount());
-        $this->assertInstanceOf('\EventEspresso\core\entities\money\Currency', $money->currency());
+        $this->assertInstanceOf('\EventEspresso\core\domain\values\currency\Currency', $money->currency());
         $USD = $this->currency();
         $this->assertTrue($USD->equals($money->currency()));
     }
@@ -65,9 +86,9 @@ class CreateMoneyTest extends \EE_UnitTestCase
     public function test_forCurrency()
     {
         $money = CreateMoney::forCurrency(1234.56789, 'USD');
-        $this->assertInstanceOf('\EventEspresso\core\entities\money\Money', $money);
+        $this->assertInstanceOf('\EventEspresso\core\domain\values\currency\Money', $money);
         $this->assertEquals('1234.57', $money->amount());
-        $this->assertInstanceOf('\EventEspresso\core\entities\money\Currency', $money->currency());
+        $this->assertInstanceOf('\EventEspresso\core\domain\values\currency\Currency', $money->currency());
         $USD = $this->currency();
         $this->assertTrue($USD->equals($money->currency()));
     }
@@ -78,10 +99,10 @@ class CreateMoneyTest extends \EE_UnitTestCase
     public function test_callStatic()
     {
         /** @var Money $money */
-        $money = CreateMoney::USD(1234.56789);
-        $this->assertInstanceOf('\EventEspresso\core\entities\money\Money', $money);
+        $money = Money::USD(1234.56789);
+        $this->assertInstanceOf('\EventEspresso\core\domain\values\currency\Money', $money);
         $this->assertEquals('1234.57', $money->amount());
-        $this->assertInstanceOf('\EventEspresso\core\entities\money\Currency', $money->currency());
+        $this->assertInstanceOf('\EventEspresso\core\domain\values\currency\Currency', $money->currency());
         $USD = $this->currency();
         $this->assertTrue($USD->equals($money->currency()));
     }
