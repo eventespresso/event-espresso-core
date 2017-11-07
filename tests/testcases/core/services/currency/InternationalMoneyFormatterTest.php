@@ -1,5 +1,5 @@
 <?php
-use EventEspresso\core\entities\money\Currency;
+use EventEspresso\core\services\currency\CreateCurrency;
 use EventEspresso\core\services\currency\InternationalMoneyFormatter;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
@@ -23,7 +23,7 @@ class InternationalMoneyFormatterTest extends \EE_UnitTestCase
     public function test_format()
     {
         $formatter = new InternationalMoneyFormatter();
-        $currency = Currency::createFromCountryCode('US');
+        $currency = CreateCurrency::fromCountryCode('US');
         $this->assertEquals(
             $formatter->format(1234.5, $currency),
             '1234.5 <span class="currency-code">(USD)</span>'

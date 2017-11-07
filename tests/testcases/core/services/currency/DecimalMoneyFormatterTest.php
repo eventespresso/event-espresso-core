@@ -1,5 +1,5 @@
 <?php
-use EventEspresso\core\entities\money\Currency;
+use EventEspresso\core\services\currency\CreateCurrency;
 use EventEspresso\core\services\currency\DecimalMoneyFormatter;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
@@ -22,7 +22,7 @@ class DecimalMoneyFormatterTest extends \EE_UnitTestCase
     public function test_format()
     {
         $formatter= new DecimalMoneyFormatter();
-        $currency = Currency::createFromCountryCode('US');
+        $currency = CreateCurrency::fromCountryCode('US');
         $this->assertEquals(
             $formatter->format(1234.5, $currency),
             '1234.50'

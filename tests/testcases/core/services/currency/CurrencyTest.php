@@ -1,5 +1,5 @@
 <?php
-use EventEspresso\core\entities\money\Currency;
+use EventEspresso\core\services\currency\CreateCurrency;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -22,8 +22,8 @@ class CurrencyTest extends \EE_UnitTestCase
     public function test_createFromCountryCode()
     {
         $this->assertInstanceOf(
-            'EventEspresso\core\entities\money\Currency',
-            Currency::createFromCountryCode('US')
+            'EventEspresso\core\domain\values\currency\Currency',
+            CreateCurrency::fromCountryCode('US')
         );
     }
 
@@ -33,8 +33,8 @@ class CurrencyTest extends \EE_UnitTestCase
     public function test_createFromCode()
     {
         $this->assertInstanceOf(
-            'EventEspresso\core\entities\money\Currency',
-            Currency::createFromCode('USD')
+            'EventEspresso\core\domain\values\currency\Currency',
+            CreateCurrency::fromCode('USD')
         );
     }
 
@@ -43,8 +43,8 @@ class CurrencyTest extends \EE_UnitTestCase
      */
     public function test_equals()
     {
-        $US1 = Currency::createFromCountryCode('US');
-        $US2 = Currency::createFromCode('USD');
+        $US1 = CreateCurrency::fromCountryCode('US');
+        $US2 = CreateCurrency::fromCode('USD');
         $this->assertTrue( $US1->equals($US2) );
     }
 
@@ -53,7 +53,7 @@ class CurrencyTest extends \EE_UnitTestCase
      */
     public function test_all_getters()
     {
-        $USD = Currency::createFromCountryCode('US');
+        $USD = CreateCurrency::fromCountryCode('US');
         $this->assertEquals('USD', $USD->code());
         $this->assertEquals('USD', $USD->code());
         $this->assertEquals('Dollar', $USD->name());
@@ -70,7 +70,7 @@ class CurrencyTest extends \EE_UnitTestCase
      */
     public function test_toString()
     {
-        $USD = Currency::createFromCountryCode('US');
+        $USD = CreateCurrency::fromCountryCode('US');
         $this->assertEquals('USD', (string) $USD);
     }
 
