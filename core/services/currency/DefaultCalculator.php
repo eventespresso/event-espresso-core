@@ -76,7 +76,7 @@ class DefaultCalculator extends CalculatorBase
      */
     public function multiply($amount, $multiplier, $precision = 3, $rounding_mode = Calculator::ROUND_HALF_UP)
     {
-        return $this->round(($amount * $multiplier), $precision, $rounding_mode);
+        return $this->round($amount * $multiplier, $precision, $rounding_mode);
     }
 
 
@@ -95,11 +95,9 @@ class DefaultCalculator extends CalculatorBase
     public function divide($amount, $divisor, $precision = 3, $rounding_mode = Calculator::ROUND_HALF_UP)
     {
         $this->validateDivisor($divisor);
-        return $this->round(($amount / $divisor), $precision, $rounding_mode);
+        return $this->round($amount / $divisor, $precision, $rounding_mode);
     }
 
 
 
 }
-// End of file DefaultCalculator.php
-// Location: EventEspresso\core\entities\money/DefaultCalculator.php
