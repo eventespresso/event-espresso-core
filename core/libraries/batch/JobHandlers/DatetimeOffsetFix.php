@@ -2,8 +2,14 @@
 
 namespace EventEspressoBatchRequest\JobHandlers;
 
+use DateTime;
+use DateTimeZone;
+use EE_Error;
 use EE_Model_Field_Base;
 use EE_Table_Base;
+use EventEspresso\core\domain\entities\DbSafeDateTime;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspressoBatchRequest\JobHandlerBaseClasses\JobHandler;
 use EventEspressoBatchRequest\Helpers\BatchRequestException;
 use EventEspressoBatchRequest\Helpers\JobParameters;
@@ -12,6 +18,8 @@ use EE_Registry;
 use EE_Datetime_Field;
 use EEM_Base;
 use EE_Change_Log;
+use Exception;
+use InvalidArgumentException;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
 
@@ -30,6 +38,12 @@ class DatetimeOffsetFix extends JobHandler
      * Key for the option used to track what the current offset is that will be applied when this tool is executed.
      */
     const OFFSET_TO_APPLY_OPTION_KEY = 'ee_datetime_offset_fix_offset_to_apply';
+
+
+    const OPTION_KEY_OFFSET_RANGE_START_DATE = 'ee_datetime_offset_start_date_range';
+
+
+    const OPTION_KEY_OFFSET_RANGE_END_DATE = 'ee_datetime_offset_end_date_range';
 
 
     /**
@@ -55,8 +69,11 @@ class DatetimeOffsetFix extends JobHandler
      * when continue_job will be called
      *
      * @param JobParameters $job_parameters
-     * @throws BatchRequestException
      * @return JobStepResponse
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function create_job(JobParameters $job_parameters)
     {
@@ -75,7 +92,10 @@ class DatetimeOffsetFix extends JobHandler
      * @param JobParameters $job_parameters
      * @param int           $batch_size
      * @return JobStepResponse
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function continue_job(JobParameters $job_parameters, $batch_size = 50)
     {
@@ -113,6 +133,8 @@ class DatetimeOffsetFix extends JobHandler
         //delete important saved options.
         delete_option(self::MODELS_TO_PROCESS_OPTION_KEY);
         delete_option(self::COUNT_OF_MODELS_PROCESSED);
+        delete_option(self::OPTION_KEY_OFFSET_RANGE_START_DATE);
+        delete_option(self::OPTION_KEY_OFFSET_RANGE_END_DATE);
         return new JobStepResponse($job_parameters, esc_html__(
             'Offset has been applied to all affected fields.',
             'event_espresso'
@@ -123,7 +145,7 @@ class DatetimeOffsetFix extends JobHandler
     /**
      * Contains the logic for processing a model and applying the datetime offset to affected fields on that model.
      * @param string $model_class_name
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     protected function processModel($model_class_name)
     {
@@ -131,8 +153,11 @@ class DatetimeOffsetFix extends JobHandler
         /** @var EEM_Base $model */
         $model = $model_class_name::instance();
         $original_offset = self::getOffset();
+        $start_date_range = self::getStartDateRange();
+        $end_date_range = self::getEndDateRange();
         $sql_date_function = $original_offset > 0 ? 'DATE_ADD' : 'DATE_SUB';
         $offset = abs($original_offset) * 60;
+        $date_ranges = array();
         //since some affected models might have two tables, we have to get our tables and set up a query for each table.
         foreach ($model->get_tables() as $table) {
             $query = 'UPDATE ' . $table->get_table_name();
@@ -140,33 +165,102 @@ class DatetimeOffsetFix extends JobHandler
             $inner_query = array();
             foreach ($model->_get_fields_for_table($table->get_table_alias()) as $model_field) {
                 if ($model_field instanceof EE_Datetime_Field) {
-                    $inner_query[] = $model_field->get_table_column() . ' = '
+                    $inner_query[$model_field->get_table_column()] = $model_field->get_table_column() . ' = '
                                      . $sql_date_function . '('
                                      . $model_field->get_table_column()
-                                     . ", INTERVAL $offset MINUTE)";
+                                     . ", INTERVAL {$offset} MINUTE)";
                     $fields_affected[] = $model_field;
                 }
             }
             if (! $fields_affected) {
                 continue;
             }
-            //k convert innerquery to string
-            $query .= ' SET ' . implode(',', $inner_query);
-            //execute query
-            $result = $wpdb->query($query);
-            //record log
-            if ($result !== false) {
-                $this->recordChangeLog($model, $original_offset, $table, $fields_affected);
+            //do we do one query per column/field or one query for all fields on the model? It all depends on whether
+            //there is a date range applied or not.
+            if ($start_date_range instanceof DbSafeDateTime || $end_date_range instanceof DbSafeDateTime) {
+                $result = $this->doQueryForEachField($query, $inner_query, $start_date_range, $end_date_range);
             } else {
+                $result = $this->doQueryForAllFields($query, $inner_query);
+            }
+
+            //record appropriate logs for the query
+            switch (true) {
+                case $result === false:
+                    //record error.
+                    $error_message = $wpdb->last_error;
+                    //handle the edgecases where last_error might be empty.
+                    if (! $error_message) {
+                        $error_message = esc_html__('Unknown mysql error occured.', 'event_espresso');
+                    }
+                    $this->recordChangeLog($model, $original_offset, $table, $fields_affected, $error_message);
+                    break;
+                case is_array($result) && ! empty($result):
+                    foreach ($result as $field_name => $error_message) {
+                        $this->recordChangeLog($model, $original_offset, $table, array($field_name), $error_message);
+                    }
+                    break;
+                default:
+                    $this->recordChangeLog($model, $original_offset, $table, $fields_affected);
+            }
+        }
+    }
+
+
+    /**
+     * Does the query on each $inner_query individually.
+     *
+     * @param string              $query
+     * @param array               $inner_query
+     * @param DbSafeDateTime|null $start_date_range
+     * @param DbSafeDateTime|null $end_date_range
+     * @return array  An array of any errors encountered and the fields they were for.
+     */
+    private function doQueryForEachField($query, array $inner_query, $start_date_range, $end_date_range)
+    {
+        global $wpdb;
+        $errors = array();
+        foreach ($inner_query as $field_name => $field_query) {
+            $query_to_run = $query;
+            $where_conditions = array();
+            $query_to_run .= ' SET ' . $field_query;
+            if ($start_date_range instanceof DbSafeDateTime) {
+                $start_date = $start_date_range->format(EE_Datetime_Field::mysql_timestamp_format);
+                $where_conditions[] = "{$field_name} > '{$start_date}'";
+            }
+            if ($end_date_range instanceof DbSafeDateTime) {
+                $end_date = $end_date_range->format(EE_Datetime_Field::mysql_timestamp_format);
+                $where_conditions[] = "{$field_name} < '{$end_date}'";
+            }
+            if ($where_conditions) {
+                $query_to_run .= ' WHERE ' . implode(' AND ', $where_conditions);
+            }
+            $result = $wpdb->query($query_to_run);
+            if ($result === false) {
                 //record error.
                 $error_message = $wpdb->last_error;
                 //handle the edgecases where last_error might be empty.
                 if (! $error_message) {
                     $error_message = esc_html__('Unknown mysql error occured.', 'event_espresso');
                 }
-                $this->recordChangeLog($model, $original_offset, $table, $fields_affected, $error_message);
+                $errors[$field_name] = $error_message;
             }
         }
+        return $errors;
+    }
+
+
+    /**
+     * Performs the query for all fields within the inner_query
+     *
+     * @param string $query
+     * @param array  $inner_query
+     * @return false|int
+     */
+    private function doQueryForAllFields($query, array $inner_query)
+    {
+        global $wpdb;
+        $query .= ' SET ' . implode(',', $inner_query);
+        return $wpdb->query($query);
     }
 
 
@@ -178,7 +272,7 @@ class DatetimeOffsetFix extends JobHandler
      * @param EE_Table_Base         $table
      * @param EE_Model_Field_Base[] $model_fields_affected
      * @param string                $error_message   If present then there was an error so let's record that instead.
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     private function recordChangeLog(
         EEM_Base $model,
@@ -233,7 +327,12 @@ class DatetimeOffsetFix extends JobHandler
     /**
      * Returns an array of models that have datetime fields.
      * This array is added to a short lived transient cache to keep having to build this list to a minimum.
-     * @return array  an array of model class names.
+     *
+     * @return array an array of model class names.
+     * @throws EE_Error
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
      */
     private function getModelsWithDatetimeFields()
     {
@@ -318,5 +417,71 @@ class DatetimeOffsetFix extends JobHandler
     public static function getOffset()
     {
         return (float) get_option(self::OFFSET_TO_APPLY_OPTION_KEY, 0);
+    }
+
+
+    /**
+     * Used to set the saved offset range start date.
+     * @param DbSafeDateTime|null $start_date
+     */
+    public static function updateStartDateRange(DbSafeDateTime $start_date = null)
+    {
+        $date_to_save = $start_date instanceof DbSafeDateTime
+            ? $start_date->format('U')
+            : '';
+        update_option(self::OPTION_KEY_OFFSET_RANGE_START_DATE, $date_to_save);
+    }
+
+
+    /**
+     * Used to get the saved offset range start date.
+     * @return DbSafeDateTime|null
+     */
+    public static function getStartDateRange()
+    {
+        $start_date = get_option(self::OPTION_KEY_OFFSET_RANGE_START_DATE, null);
+        try {
+            $datetime = DateTime::createFromFormat('U', $start_date, new DateTimeZone('UTC'));
+            $start_date = $datetime instanceof DateTime
+                ? DbSafeDateTime::createFromDateTime($datetime)
+                : null;
+
+        } catch (Exception $e) {
+            $start_date = null;
+        }
+        return $start_date;
+    }
+
+
+
+    /**
+     * Used to set the saved offset range end date.
+     * @param DbSafeDateTime|null $end_date
+     */
+    public static function updateEndDateRange(DbSafeDateTime $end_date = null)
+    {
+        $date_to_save = $end_date instanceof DbSafeDateTime
+            ? $end_date->format('U')
+            : '';
+        update_option(self::OPTION_KEY_OFFSET_RANGE_END_DATE, $date_to_save);
+    }
+
+
+    /**
+     * Used to get the saved offset range end date.
+     * @return DbSafeDateTime|null
+     */
+    public static function getEndDateRange()
+    {
+        $end_date = get_option(self::OPTION_KEY_OFFSET_RANGE_END_DATE, null);
+        try {
+            $datetime = DateTime::createFromFormat('U', $end_date, new DateTimeZone('UTC'));
+            $end_date = $datetime instanceof Datetime
+                ? DbSafeDateTime::createFromDateTime($datetime)
+                : null;
+        } catch (Exception $e) {
+            $end_date = null;
+        }
+        return $end_date;
     }
 }
