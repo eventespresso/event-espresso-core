@@ -1,9 +1,13 @@
 <?php
 
-namespace EventEspresso\core\entities\money;
+namespace EventEspresso\core\domain\values\currency;
 
+use EE_Error;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\currency\Calculator;
+use EventEspresso\core\services\currency\CreateCurrency;
+use EventEspresso\core\services\currency\CreateMoney;
 use EventEspresso\core\services\currency\MoneyFormatter;
 use InvalidArgumentException;
 
@@ -162,10 +166,29 @@ class Money
     public function amount()
     {
         // shift the decimal position BACK by the number of decimal places used internally
-        // ex: 1250 for a currency using 2 decimal places, would become 12.5
+        // ex: 1250 for a currency using 2 decimal places, would become 12.50
         $amount = (string) $this->amount * pow(10, $this->precision(false));
         // then shave off our extra internal precision using the number of decimal places for the currency
         $amount = round($amount, $this->currency->decimalPlaces());
+        return $amount;
+    }
+
+
+
+    /**
+     * Returns the money SUBUNITS amount as an INTEGER
+     *
+     * @return integer
+     */
+    public function amountInSubunits()
+    {
+        // shift the decimal position BACK
+        // by the number of decimal places used internally by the extra internal precision
+        // ex: if our extra internal precision was 3,
+        // then 1250000 would become 1250
+        $amount = (string) $this->amount * pow(10, Money::EXTRA_PRECISION * -1);
+        // then shave off anything after the decimal
+        $amount = round($amount);
         return $amount;
     }
 
@@ -335,6 +358,31 @@ class Money
         return $this->format(MoneyFormatter::DECIMAL_ONLY);
     }
 
+
+
+    /**
+     * factory method that returns a Money object for the currency specified as if it were a class method
+     * example: Money::USD(12.5);
+     * money amount IN THE STANDARD UNIT FOR THE CURRENCY ie: dollars, Euros, etc
+     * example: $12.5 USD would equate to a value amount of 12.50
+     *
+     * @param string $currency_code
+     * @param array  $arguments
+     * @return Money
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     * @throws InvalidInterfaceException
+     */
+    public static function __callStatic($currency_code, $arguments)
+    {
+        return new Money(
+            $arguments[0],
+            CreateCurrency::fromCode($currency_code),
+            CreateMoney::calculator(),
+            CreateMoney::formatters()
+        );
+    }
 
 
 }
