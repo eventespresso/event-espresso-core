@@ -3,11 +3,9 @@
 namespace EventEspresso\core\services\currency;
 
 use EE_Error;
-use EE_Organization_Config;
-use EE_Registry;
-use EventEspresso\core\entities\money\Currency;
-use EventEspresso\core\entities\money\Money;
+use EventEspresso\core\domain\values\currency\Money;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use InvalidArgumentException;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
@@ -26,11 +24,6 @@ class CreateMoney
 {
 
     /**
-     * @var string $site_country_iso
-     */
-    protected static $site_country_iso;
-
-    /**
      * @var Calculator $calculator
      */
     protected static $calculator;
@@ -43,19 +36,25 @@ class CreateMoney
 
 
     /**
-     * factory method that returns a Money object using the currency corresponding to the site's country
-     * example: Money::forSite(12.5)
+     * factory method that returns a Money object using amount specified in the currency's subunits
+     * example: for $12.50 USD use CreateMoney::fromSubUnits(1250, 'USD')
      *
-     * @param float|int|string $amount money amount IN THE STANDARD UNIT FOR THE CURRENCY ie: dollars, Euros, etc
-     *                                 example: $12.5 USD would equate to a value amount of 12.50
+     * @param int    $subunits_amount money amount IN THE SUBUNITS FOR THE CURRENCY ie: cents
+     *                                example: $12.50 USD would equate to a subunits amount of 1250
+     * @param string $currency_code
      * @return Money
+     * @throws EE_Error
      * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
-    public static function forSite($amount)
+    public static function fromSubUnits($subunits_amount, $currency_code = '')
     {
+        $currency = CreateCurrency::fromCode($currency_code);
         return new Money(
-            $amount,
-            Currency::createFromCountryCode(CreateMoney::getSiteCurrency()),
+            // shift decimal BACK by number of places for currency
+            $subunits_amount * pow(10, $currency->decimalPlaces() * -1),
+            $currency,
             CreateMoney::calculator(),
             CreateMoney::formatters()
         );
@@ -64,36 +63,47 @@ class CreateMoney
 
 
     /**
-     * @return string
+     * factory method that returns a Money object using the currency corresponding to the site's country
+     * example: CreateMoney::forSite(12.5)
+     *
+     * @param float|int|string $amount money amount IN THE STANDARD UNIT FOR THE CURRENCY ie: dollars, Euros, etc
+     *                                 example: $12.5 USD would equate to a standard amount of 12.50
+     * @return Money
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
-    protected static function getSiteCurrency()
+    public static function forSite($amount)
     {
-        if (empty(self::$site_country_iso)) {
-            self::$site_country_iso = isset(EE_Registry::instance()->CFG->organization)
-                       && EE_Registry::instance()->CFG->organization instanceof EE_Organization_Config
-                ? EE_Registry::instance()->CFG->organization->CNT_ISO
-                : 'US';
-        }
-        return self::$site_country_iso;
+        return new Money(
+            $amount,
+            CreateCurrency::fromCountryCode(),
+            CreateMoney::calculator(),
+            CreateMoney::formatters()
+        );
     }
 
 
 
     /**
      * factory method that returns a Money object using the currency as specified by the supplied ISO country code
-     * example: Money::forCountry(12.5,'US')
+     * example: CreateMoney::forCountry(12.5,'US')
      *
      * @param float|int|string $amount money amount IN THE STANDARD UNIT FOR THE CURRENCY ie: dollars, Euros, etc
      *                                 example: $12.5 USD would equate to a value amount of 12.50
      * @param string           $CNT_ISO
      * @return Money
+     * @throws EE_Error
      * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public static function forCountry($amount, $CNT_ISO)
     {
         return new Money(
             $amount,
-            Currency::createFromCountryCode($CNT_ISO),
+            CreateCurrency::fromCountryCode($CNT_ISO),
             CreateMoney::calculator(),
             CreateMoney::formatters()
         );
@@ -103,51 +113,27 @@ class CreateMoney
 
     /**
      * factory method that returns a Money object using the currency as specified by the supplied currency code
-     * example: Money::forCurrency(12.5, 'USD')
+     * example: CreateMoney::forCurrency(12.5, 'USD')
      *
      * @param float|int|string $amount money amount IN THE STANDARD UNIT FOR THE CURRENCY ie: dollars, Euros, etc
      *                                 example: $12.5 USD would equate to a value amount of 12.50
      * @param string           $currency_code
      * @return Money
-     * @throws InvalidDataTypeException
      * @throws EE_Error
      * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public static function forCurrency($amount, $currency_code)
     {
         return new Money(
             $amount,
-            Currency::createFromCode($currency_code),
+            CreateCurrency::fromCode($currency_code),
             CreateMoney::calculator(),
             CreateMoney::formatters()
         );
     }
 
-
-
-    /**
-     * factory method that returns a Money object for the currency specified as if it were a class method
-     * example: Money::USD(12.5);
-     * money amount IN THE STANDARD UNIT FOR THE CURRENCY ie: dollars, Euros, etc
-     * example: $12.5 USD would equate to a value amount of 12.50
-     *
-     * @param string $currency_code
-     * @param array  $arguments
-     * @return Money
-     * @throws \EE_Error
-     * @throws InvalidDataTypeException
-     * @throws EE_Error
-     * @throws InvalidArgumentException
-     */
-    public static function __callStatic($currency_code, $arguments)
-    {
-        return new Money(
-            $arguments[0],
-            Currency::createFromCode($currency_code),
-            CreateMoney::calculator(),
-            CreateMoney::formatters()
-        );
-    }
 
 
 
@@ -157,7 +143,7 @@ class CreateMoney
     public static function calculator()
     {
         CreateMoney::initializeCalculators();
-        return self::$calculator;
+        return CreateMoney::$calculator;
     }
 
 
@@ -168,7 +154,7 @@ class CreateMoney
      */
     protected static function initializeCalculators()
     {
-        if (self::$calculator instanceof Calculator) {
+        if (CreateMoney::$calculator instanceof Calculator) {
             return;
         }
         $calculators = apply_filters(
@@ -183,7 +169,7 @@ class CreateMoney
             }
             $calculator = new $calculator();
             if ($calculator instanceof Calculator && $calculator->isSupported()) {
-                self::$calculator = $calculator;
+                CreateMoney::$calculator = $calculator;
                 break;
             }
         }
@@ -197,7 +183,7 @@ class CreateMoney
     public static function formatters()
     {
         CreateMoney::initializeFormatters();
-        return self::$formatters;
+        return CreateMoney::$formatters;
     }
 
 
@@ -207,10 +193,10 @@ class CreateMoney
      */
     protected static function initializeFormatters()
     {
-        if (! empty(self::$formatters)) {
+        if (! empty(CreateMoney::$formatters)) {
             return;
         }
-        self::$formatters = apply_filters(
+        CreateMoney::$formatters = apply_filters(
             'FHEE__EventEspresso\core\services\currency\MoneyFactory__initializeFormatters__MoneyFormatters_array',
             array(
                 1 => new DecimalMoneyFormatter(),
