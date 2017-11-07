@@ -82,7 +82,13 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_
         $loader = LoaderFactory::getLoader($this->registry);
         $this->dependency_map->setLoader($loader);
         // instantiate core Domain class
-        $loader->getShared('EventEspresso\core\domain\Domain');
+        EventEspresso\core\domain\DomainFactory::create(
+            'EventEspresso\core\domain\Domain',
+            array(
+                EVENT_ESPRESSO_MAIN_FILE,
+                espresso_version()
+            )
+        );
         // build DI container
         // $OpenCoffeeShop = new EventEspresso\core\services\container\OpenCoffeeShop();
         // $OpenCoffeeShop->addRecipes();
