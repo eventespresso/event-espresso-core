@@ -129,6 +129,9 @@ class EE_Register_Addon implements EEI_Plugin_API
      *                                                                  "1.0.0.rc.043" for a version in progress
      * @type string                   $main_file_path                   the full server path to the main file
      *                                                                  loaded directly by WP
+     * @type string                   $domain_fqcn                      Fully Qualified Class Name
+     *                                                                  for the addon's Domain class
+     *                                                                  (see EventEspresso\core\domain\Domain)
      * @type string                   $admin_path                       full server path to the folder where the
      *                                                                  addon\'s admin files reside
      * @type string                   $admin_callback                   a method to be called when the EE Admin is
@@ -385,6 +388,10 @@ class EE_Register_Addon implements EEI_Plugin_API
             // full server path to main file (file loaded directly by WP)
             'main_file_path'        => isset($setup_args['main_file_path'])
                 ? (string) $setup_args['main_file_path']
+                : '',
+            // Fully Qualified Class Name for the addon's Domain class
+            'domain_fqcn'           => isset($setup_args['domain_fqcn'])
+                ? (string) $setup_args['domain_fqcn']
                 : '',
             // path to folder containing files for integrating with the EE core admin and/or setting up EE admin pages
             'admin_path'            => isset($setup_args['admin_path'])
@@ -937,9 +944,23 @@ class EE_Register_Addon implements EEI_Plugin_API
      */
     private static function _load_and_init_addon_class($addon_name)
     {
-        $addon = EE_Registry::instance()->load_addon(
-            dirname(self::$_settings[ $addon_name ]['main_file_path']),
-            self::$_settings[ $addon_name ]['class_name']
+        $loader = EventEspresso\core\services\loaders\LoaderFactory::getLoader();
+        $addon = $loader->getShared(
+            self::$_settings[ $addon_name ]['class_name'],
+            array(
+                $loader->getShared('EE_Dependency_Map'),
+                // if a domain_fqcn is specified, then load that class
+                self::$_settings[ $addon_name ]['domain_fqcn'] !== ''
+                    ? $loader->getShared(
+                        self::$_settings[ $addon_name ]['domain_fqcn'],
+                        array(
+                            self::$_settings[ $addon_name ]['main_file_path'],
+                            self::$_settings[ $addon_name ]['version']
+                        )
+                    )
+                    : null,
+                'EE_Registry::create(addon)' => true
+            )
         );
         $addon->set_name($addon_name);
         $addon->set_plugin_slug(self::$_settings[ $addon_name ]['plugin_slug']);
