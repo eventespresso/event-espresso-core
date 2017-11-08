@@ -1,6 +1,6 @@
 <?php
-use EventEspresso\core\services\currency\CreateCurrency;
 use EventEspresso\core\services\currency\CurrencyCodeMoneyFormatter;
+use EventEspresso\core\services\loaders\LoaderFactory;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -22,15 +22,14 @@ class CurrencyCodeMoneyFormatterTest extends \EE_UnitTestCase
      */
     public function test_format()
     {
+        $currency_factory = LoaderFactory::getLoader()->getShared(
+            'EventEspresso\core\services\currency\CurrencyFactory'
+        );
+        $currency = $currency_factory->createFromCountryCode('US');
         $formatter = new CurrencyCodeMoneyFormatter();
-        $currency = CreateCurrency::fromCountryCode('US');
         $this->assertEquals(
             $formatter->format(1234.5, $currency),
             '1234.5 USD'
         );
     }
 }
-// End of file DecimalMoneyFormatterTest.php
-// Location: tests/testcases/core/services/currency/CurrencyCodeMoneyFormatterTest.php
-
-//Method EventEspresso\core\domain\values\money\Money::__toString() must not throw an exception, caught Error: Class 'EventEspresso\core\services\currency\CurrencyCodeMoneyFormatter' not found in /vagrant/www/wordpress-default/wp-content/plugins/event-espresso-core/tests/testcases/core/services/currency/MoneyTest.php on line 0
