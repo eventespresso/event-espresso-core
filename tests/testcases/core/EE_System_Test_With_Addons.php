@@ -388,20 +388,33 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase
         $this->assertWPOptionDoesNotExist($this->_addon->get_activation_indicator_option_name());
     }
 
+
     /**
      * Registers the mock addon so it can be used for testing
+     *
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \InvalidArgumentException
+     * @throws \EE_Error
+     * @throws \DomainException
+     * @throws \ReflectionException
      */
     public function setUp()
     {
         parent::setUp();
         $this->_pretend_addon_hook_time();
         $mock_addon_path = EE_TESTS_DIR . 'mocks/addons/eea-new-addon/';
-        EE_Register_Addon::register($this->_addon_name, array(
-            'version'          => '1.0.0.dev.000',
-            'min_core_version' => '4.0.0',
-            'main_file_path'   => $mock_addon_path . 'eea-new-addon.php',
-            'dms_paths'        => $mock_addon_path . 'core/data_migration_scripts',
-        ));
+        // addon class should be loaded prior to registration
+        require_once $mock_addon_path . 'EE_New_Addon.class.php';
+        EE_Register_Addon::register(
+            $this->_addon_name,
+            array(
+                'version'          => '1.0.0.dev.000',
+                'min_core_version' => '4.0.0',
+                'main_file_path'   => $mock_addon_path . 'eea-new-addon.php',
+                'dms_paths'        => $mock_addon_path . 'core/data_migration_scripts',
+            )
+        );
         //double-check that worked fine
         $this->assertAttributeNotEmpty('EE_New_Addon', EE_Registry::instance()->addons);
         $DMSs_available = EE_Data_Migration_Manager::reset()->get_all_data_migration_scripts_available();
