@@ -501,7 +501,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
             $question = EE_Question::new_instance($set_column_values);
             $action_desc = 'added';
         } else {
-            $ID     = EEM_Question::instance()->get_one_by_ID(absint($this->_req_data['QST_ID']));
+            $question     = EEM_Question::instance()->get_one_by_ID(absint($this->_req_data['QST_ID']));
             $action_desc = 'updated';
         }
         $success = $question->save();
