@@ -264,6 +264,20 @@ class EEM_Question extends EEM_Soft_Delete_Base {
         return array();
     }
 
+
+
+    /**
+     * Returns all the question types that should have question options
+     * @return array
+     */
+    public function question_types_with_options()
+    {
+        return array_merge(
+            $this->question_types_in_category('single-answer-enum'),
+            $this->question_types_in_category('multi-answer-enum')
+        );
+    }
+
 	/**
 	 * Returns the question type categories 2d array
 	 * @return array see EEM_Question::_question_type_categories
