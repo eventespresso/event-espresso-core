@@ -2,12 +2,8 @@
 
 namespace EventEspresso\core\domain\values\currency;
 
-use EE_Error;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
-use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\currency\Calculator;
-use EventEspresso\core\services\currency\CreateCurrency;
-use EventEspresso\core\services\currency\CreateMoney;
 use EventEspresso\core\services\currency\MoneyFormatter;
 use InvalidArgumentException;
 
@@ -358,31 +354,6 @@ class Money
         return $this->format(MoneyFormatter::DECIMAL_ONLY);
     }
 
-
-
-    /**
-     * factory method that returns a Money object for the currency specified as if it were a class method
-     * example: Money::USD(12.5);
-     * money amount IN THE STANDARD UNIT FOR THE CURRENCY ie: dollars, Euros, etc
-     * example: $12.5 USD would equate to a value amount of 12.50
-     *
-     * @param string $currency_code
-     * @param array  $arguments
-     * @return Money
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws EE_Error
-     * @throws InvalidInterfaceException
-     */
-    public static function __callStatic($currency_code, $arguments)
-    {
-        return new Money(
-            $arguments[0],
-            CreateCurrency::fromCode($currency_code),
-            CreateMoney::calculator(),
-            CreateMoney::formatters()
-        );
-    }
 
 
 }
