@@ -13,25 +13,48 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
 /**
- * Class CreateMoney
+ * Class MoneyFactory
  * Factory class for creating Money objects
  *
  * @package       Event Espresso
  * @author        Brent Christensen
  * @since         $VID:$
  */
-class CreateMoney
+class MoneyFactory
 {
+
+    /**
+     * @var CurrencyFactory $currency_factory
+     */
+    protected $currency_factory;
 
     /**
      * @var Calculator $calculator
      */
-    protected static $calculator;
+    protected $calculator;
 
     /**
      * @var MoneyFormatter[] $formatters
      */
-    protected static $formatters;
+    protected $formatters;
+
+
+    /**
+     * CreateMoney constructor.
+     *
+     * @param CurrencyFactory  $currency_factory
+     * @param Calculator       $calculator
+     * @param MoneyFormatter[] $formatters
+     */
+    public function __construct(
+        CurrencyFactory $currency_factory,
+        Calculator $calculator = null,
+        array $formatters = array()
+    ) {
+        $this->calculator = $calculator;
+        $this->formatters = $formatters;
+        $this->currency_factory = $currency_factory;
+    }
 
 
 
@@ -48,15 +71,15 @@ class CreateMoney
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public static function fromSubUnits($subunits_amount, $currency_code = '')
+    public function createFromSubUnits($subunits_amount, $currency_code = '')
     {
-        $currency = CreateCurrency::fromCode($currency_code);
+        $currency = $this->currency_factory->createFromCode($currency_code);
         return new Money(
             // shift decimal BACK by number of places for currency
             $subunits_amount * pow(10, $currency->decimalPlaces() * -1),
             $currency,
-            CreateMoney::calculator(),
-            CreateMoney::formatters()
+            $this->calculator(),
+            $this->formatters()
         );
     }
 
@@ -74,13 +97,13 @@ class CreateMoney
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public static function forSite($amount)
+    public function createForSite($amount)
     {
         return new Money(
             $amount,
-            CreateCurrency::fromCountryCode(),
-            CreateMoney::calculator(),
-            CreateMoney::formatters()
+            $this->currency_factory->createFromCountryCode(),
+            $this->calculator(),
+            $this->formatters()
         );
     }
 
@@ -99,13 +122,13 @@ class CreateMoney
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public static function forCountry($amount, $CNT_ISO)
+    public function createForCountry($amount, $CNT_ISO)
     {
         return new Money(
             $amount,
-            CreateCurrency::fromCountryCode($CNT_ISO),
-            CreateMoney::calculator(),
-            CreateMoney::formatters()
+            $this->currency_factory->createFromCountryCode($CNT_ISO),
+            $this->calculator(),
+            $this->formatters()
         );
     }
 
@@ -124,13 +147,13 @@ class CreateMoney
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public static function forCurrency($amount, $currency_code)
+    public function createForCurrency($amount, $currency_code)
     {
         return new Money(
             $amount,
-            CreateCurrency::fromCode($currency_code),
-            CreateMoney::calculator(),
-            CreateMoney::formatters()
+            $this->currency_factory->createFromCode($currency_code),
+            $this->calculator(),
+            $this->formatters()
         );
     }
 
@@ -140,10 +163,10 @@ class CreateMoney
     /**
      * @return Calculator
      */
-    public static function calculator()
+    public function calculator()
     {
-        CreateMoney::initializeCalculators();
-        return CreateMoney::$calculator;
+        $this->initializeCalculators();
+        return $this->calculator;
     }
 
 
@@ -152,13 +175,13 @@ class CreateMoney
      * loops through a filterable array of Calculator services
      * and selects the first one that is supported by the current server
      */
-    protected static function initializeCalculators()
+    protected function initializeCalculators()
     {
-        if (CreateMoney::$calculator instanceof Calculator) {
+        if ($this->calculator instanceof Calculator) {
             return;
         }
         $calculators = apply_filters(
-            'FHEE__EventEspresso\core\services\currency\MoneyFactory__initializeCalculators__Calculator_array',
+            'FHEE__EventEspresso_core_services_currency_MoneyFactory__initializeCalculators__Calculators_array',
             array(
                 '\EventEspresso\core\services\currency\DefaultCalculator',
             )
@@ -169,7 +192,7 @@ class CreateMoney
             }
             $calculator = new $calculator();
             if ($calculator instanceof Calculator && $calculator->isSupported()) {
-                CreateMoney::$calculator = $calculator;
+                $this->calculator = $calculator;
                 break;
             }
         }
@@ -180,10 +203,10 @@ class CreateMoney
     /**
      * @return MoneyFormatter[]
      */
-    public static function formatters()
+    public function formatters()
     {
-        CreateMoney::initializeFormatters();
-        return CreateMoney::$formatters;
+        $this->initializeFormatters();
+        return $this->formatters;
     }
 
 
@@ -191,13 +214,13 @@ class CreateMoney
     /**
      * initializes a filterable array of MoneyFormatter services
      */
-    protected static function initializeFormatters()
+    protected function initializeFormatters()
     {
-        if (! empty(CreateMoney::$formatters)) {
+        if (! empty($this->formatters)) {
             return;
         }
-        CreateMoney::$formatters = apply_filters(
-            'FHEE__EventEspresso\core\services\currency\MoneyFactory__initializeFormatters__MoneyFormatters_array',
+        $this->formatters = apply_filters(
+            'FHEE__EventEspresso_core_services_currency_MoneyFactory__initializeFormatters__MoneyFormatters_array',
             array(
                 1 => new DecimalMoneyFormatter(),
                 2 => new ThousandsMoneyFormatter(),
