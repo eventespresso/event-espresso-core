@@ -643,6 +643,15 @@ class EE_Dependency_Map
             'EE_Registration_Processor' => array(
                 'EE_Request' => EE_Dependency_Map::load_from_cache,
             ),
+            'EventEspresso\core\services\currency\CurrencyFactory' => array(
+                'EEM_Country' => EE_Dependency_Map::load_from_cache,
+                'EE_Organization_Config' => EE_Dependency_Map::load_from_cache,
+            ),
+            'EventEspresso\core\services\currency\MoneyFactory' => array(
+                'EventEspresso\core\services\currency\CurrencyFactory'  => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\currency\Calculator'       => EE_Dependency_Map::load_from_cache,
+                array(),
+            ),
         );
     }
 
@@ -743,6 +752,9 @@ class EE_Dependency_Map
             'EE_Registration_Config'                   => function () {
                 return EE_Config::instance()->registration;
             },
+            'EE_Organization_Config'                   => function () {
+                return EE_Config::instance()->organization;
+            },
             'EventEspresso\core\services\loaders\Loader' => function () {
                 return LoaderFactory::getLoader();
             },
@@ -791,10 +803,11 @@ class EE_Dependency_Map
             'EventEspresso\core\domain\services\session\SessionIdentifierInterface'       => 'EE_Session',
             'EmailValidatorInterface'                                                     => 'EventEspresso\core\domain\services\validation\email\EmailValidatorInterface',
             'EventEspresso\core\domain\services\validation\email\EmailValidatorInterface' => 'EventEspresso\core\domain\services\validation\email\EmailValidationService',
-            'NoticeConverterInterface'                                            => 'EventEspresso\core\services\notices\NoticeConverterInterface',
-            'EventEspresso\core\services\notices\NoticeConverterInterface'        => 'EventEspresso\core\services\notices\ConvertNoticesToEeErrors',
-            'NoticesContainerInterface'                                            => 'EventEspresso\core\services\notices\NoticesContainerInterface',
-            'EventEspresso\core\services\notices\NoticesContainerInterface'        => 'EventEspresso\core\services\notices\NoticesContainer',
+            'NoticeConverterInterface'                                                    => 'EventEspresso\core\services\notices\NoticeConverterInterface',
+            'EventEspresso\core\services\notices\NoticeConverterInterface'                => 'EventEspresso\core\services\notices\ConvertNoticesToEeErrors',
+            'NoticesContainerInterface'                                                   => 'EventEspresso\core\services\notices\NoticesContainerInterface',
+            'EventEspresso\core\services\notices\NoticesContainerInterface'               => 'EventEspresso\core\services\notices\NoticesContainer',
+            'EventEspresso\core\services\currency\Calculator'                             => 'EventEspresso\core\services\currency\DefaultCalculator',
         );
         if (! (defined('DOING_AJAX') && DOING_AJAX) && is_admin()) {
             $this->_aliases['EventEspresso\core\services\notices\NoticeConverterInterface'] = 'EventEspresso\core\services\notices\ConvertNoticesToAdminNotices';
