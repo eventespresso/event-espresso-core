@@ -1,5 +1,6 @@
 <?php
-use EventEspresso\core\services\currency\CreateCurrency;
+use EventEspresso\core\services\currency\CurrencyFactory;
+use EventEspresso\core\services\loaders\LoaderFactory;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -17,13 +18,28 @@ class CurrencyTest extends \EE_UnitTestCase
 {
 
     /**
+     * @var CurrencyFactory $currency_factory
+     */
+    protected $currency_factory;
+
+
+    public function setUp()
+    {
+        parent::setUp();
+        $this->currency_factory = LoaderFactory::getLoader()->getShared(
+            'EventEspresso\core\services\currency\CurrencyFactory'
+        );
+    }
+
+
+    /**
      * @group Money
      */
     public function test_createFromCountryCode()
     {
         $this->assertInstanceOf(
             'EventEspresso\core\domain\values\currency\Currency',
-            CreateCurrency::fromCountryCode('US')
+            $this->currency_factory->createFromCountryCode('US')
         );
     }
 
@@ -34,7 +50,7 @@ class CurrencyTest extends \EE_UnitTestCase
     {
         $this->assertInstanceOf(
             'EventEspresso\core\domain\values\currency\Currency',
-            CreateCurrency::fromCode('USD')
+            $this->currency_factory->createFromCode('USD')
         );
     }
 
@@ -43,8 +59,8 @@ class CurrencyTest extends \EE_UnitTestCase
      */
     public function test_equals()
     {
-        $US1 = CreateCurrency::fromCountryCode('US');
-        $US2 = CreateCurrency::fromCode('USD');
+        $US1 = $this->currency_factory->createFromCountryCode('US');
+        $US2 = $this->currency_factory->createFromCode('USD');
         $this->assertTrue( $US1->equals($US2) );
     }
 
@@ -53,7 +69,7 @@ class CurrencyTest extends \EE_UnitTestCase
      */
     public function test_all_getters()
     {
-        $USD = CreateCurrency::fromCountryCode('US');
+        $USD = $this->currency_factory->createFromCountryCode('US');
         $this->assertEquals('USD', $USD->code());
         $this->assertEquals('USD', $USD->code());
         $this->assertEquals('Dollar', $USD->name());
@@ -70,7 +86,7 @@ class CurrencyTest extends \EE_UnitTestCase
      */
     public function test_toString()
     {
-        $USD = CreateCurrency::fromCountryCode('US');
+        $USD = $this->currency_factory->createFromCountryCode('US');
         $this->assertEquals('USD', (string) $USD);
     }
 
