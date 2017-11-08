@@ -1,9 +1,10 @@
 <?php
 use EventEspresso\core\domain\values\currency\Currency;
 use EventEspresso\core\domain\values\currency\Money;
-use EventEspresso\core\services\currency\CreateCurrency;
-use EventEspresso\core\services\currency\CreateMoney;
+use EventEspresso\core\services\currency\CurrencyFactory;
+use EventEspresso\core\services\currency\MoneyFactory;
 use EventEspresso\core\services\currency\MoneyFormatter;
+use EventEspresso\core\services\loaders\LoaderFactory;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -21,6 +22,35 @@ class MoneyTest extends \EE_UnitTestCase
 {
 
     /**
+     * @var MoneyFactory $money_factory
+     */
+    protected $money_factory;
+
+    /**
+     * @var CurrencyFactory $currency_factory
+     */
+    protected $currency_factory;
+
+    /**
+     * @var EE_Organization_Config $organization_config
+     */
+    protected $organization_config;
+
+
+    public function setUp()
+    {
+        parent::setUp();
+        $this->money_factory       = LoaderFactory::getLoader()->getShared(
+            'EventEspresso\core\services\currency\MoneyFactory'
+        );
+        $this->currency_factory    = LoaderFactory::getLoader()->getShared(
+            'EventEspresso\core\services\currency\CurrencyFactory'
+        );
+        $this->organization_config = LoaderFactory::getLoader()->getShared('EE_Organization_Config');
+    }
+
+
+    /**
      * @param string $CNT_ISO
      * @return Currency
      * @throws EE_Error
@@ -30,7 +60,7 @@ class MoneyTest extends \EE_UnitTestCase
      */
     protected function currency($CNT_ISO = 'US')
     {
-        return CreateCurrency::fromCountryCode($CNT_ISO);
+        return $this->currency_factory->createFromCountryCode($CNT_ISO);
     }
 
     /**
@@ -40,8 +70,8 @@ class MoneyTest extends \EE_UnitTestCase
     {
         $USD = $this->currency();
         $money = new Money(1234.56789, $USD,
-            CreateMoney::calculator(),
-            CreateMoney::formatters()
+            $this->money_factory->calculator(),
+            $this->money_factory->formatters()
         );
         $this->assertInstanceOf('\EventEspresso\core\domain\values\currency\Money', $money);
         $this->assertEquals('1234.57', $money->amount());
@@ -50,8 +80,8 @@ class MoneyTest extends \EE_UnitTestCase
         $money = new Money(
             0.56789,
                 $USD,
-            CreateMoney::calculator(),
-            CreateMoney::formatters()
+            $this->money_factory->calculator(),
+            $this->money_factory->formatters()
         );
         $this->assertInstanceOf('\EventEspresso\core\domain\values\currency\Money', $money);
         $this->assertEquals('0.57', $money->amount());
@@ -60,8 +90,8 @@ class MoneyTest extends \EE_UnitTestCase
         $money = new Money(
             1234.56789,
             $BHD,
-            CreateMoney::calculator(),
-            CreateMoney::formatters()
+            $this->money_factory->calculator(),
+            $this->money_factory->formatters()
         );
         $this->assertInstanceOf('\EventEspresso\core\domain\values\currency\Money', $money);
         $this->assertEquals('1234.568', $money->amount());
@@ -92,7 +122,7 @@ class MoneyTest extends \EE_UnitTestCase
             'руб1.234.567,89 RUB' => array('1234567.89', 'RU'),
         );
         foreach ($wonky_values as $wonky_value => $currency) {
-            $money = CreateMoney::forCountry($wonky_value, $currency[1]);
+            $money = $this->money_factory->createForCountry($wonky_value, $currency[1]);
             $this->assertInstanceOf('\EventEspresso\core\domain\values\currency\Money', $money);
             $this->assertEquals($currency[0], $money->amount());
         }
@@ -109,8 +139,8 @@ class MoneyTest extends \EE_UnitTestCase
         new Money(
             new stdClass(),
             $this->currency(),
-            CreateMoney::calculator(),
-            CreateMoney::formatters()
+            $this->money_factory->calculator(),
+            $this->money_factory->formatters()
         );
         $this->fail('InvalidArgumentException should have been thrown when object was used for amount.');
     }
@@ -123,8 +153,8 @@ class MoneyTest extends \EE_UnitTestCase
     {
         $USD   = $this->currency();
         $money = new Money(1234.56789, $USD,
-            CreateMoney::calculator(),
-            CreateMoney::formatters()
+            $this->money_factory->calculator(),
+            $this->money_factory->formatters()
         );
         $this->assertInstanceOf('\EventEspresso\core\domain\values\currency\Money', $money);
         $this->assertEquals('1234.57', $money->amount());
@@ -142,14 +172,14 @@ class MoneyTest extends \EE_UnitTestCase
         $money1 = new Money(
             10,
             $USD,
-            CreateMoney::calculator(),
-            CreateMoney::formatters()
+            $this->money_factory->calculator(),
+            $this->money_factory->formatters()
         );
         $money2 = new Money(
             15,
             $USD,
-            CreateMoney::calculator(),
-            CreateMoney::formatters()
+            $this->money_factory->calculator(),
+            $this->money_factory->formatters()
         );
         $money = $money1->add($money2);
         $this->assertInstanceOf('\EventEspresso\core\domain\values\currency\Money', $money);
@@ -158,14 +188,14 @@ class MoneyTest extends \EE_UnitTestCase
         $money1 = new Money(
             10.75,
             $USD,
-            CreateMoney::calculator(),
-            CreateMoney::formatters()
+            $this->money_factory->calculator(),
+            $this->money_factory->formatters()
         );
         $money2 = new Money(
             15.50,
             $USD,
-            CreateMoney::calculator(),
-            CreateMoney::formatters()
+            $this->money_factory->calculator(),
+            $this->money_factory->formatters()
         );
         $money = $money1->add($money2);
         $this->assertInstanceOf('\EventEspresso\core\domain\values\currency\Money', $money);
@@ -183,14 +213,14 @@ class MoneyTest extends \EE_UnitTestCase
         $money_USD = new Money(
             10,
             $this->currency(),
-            CreateMoney::calculator(),
-            CreateMoney::formatters()
+            $this->money_factory->calculator(),
+            $this->money_factory->formatters()
         );
         $money_CAD = new Money(
             10,
             $this->currency('CA'),
-            CreateMoney::calculator(),
-            CreateMoney::formatters()
+            $this->money_factory->calculator(),
+            $this->money_factory->formatters()
         );
         $money_USD->add($money_CAD);
         $this->fail('InvalidArgumentException should have been thrown when attempting to add CAD to USD');
@@ -207,14 +237,14 @@ class MoneyTest extends \EE_UnitTestCase
         $money1 = new Money(
             15,
             $USD,
-            CreateMoney::calculator(),
-            CreateMoney::formatters()
+            $this->money_factory->calculator(),
+            $this->money_factory->formatters()
         );
         $money2 = new Money(
             10,
             $USD,
-            CreateMoney::calculator(),
-            CreateMoney::formatters()
+            $this->money_factory->calculator(),
+            $this->money_factory->formatters()
         );
         $money = $money1->subtract($money2);
         $this->assertInstanceOf('\EventEspresso\core\domain\values\currency\Money', $money);
@@ -223,14 +253,14 @@ class MoneyTest extends \EE_UnitTestCase
         $money1 = new Money(
             20.75,
             $USD,
-            CreateMoney::calculator(),
-            CreateMoney::formatters()
+            $this->money_factory->calculator(),
+            $this->money_factory->formatters()
         );
         $money2 = new Money(
             15.50,
             $USD,
-            CreateMoney::calculator(),
-            CreateMoney::formatters()
+            $this->money_factory->calculator(),
+            $this->money_factory->formatters()
         );
         $money = $money1->subtract($money2);
         $this->assertInstanceOf('\EventEspresso\core\domain\values\currency\Money', $money);
@@ -248,14 +278,14 @@ class MoneyTest extends \EE_UnitTestCase
         $money_USD = new Money(
             10,
             $this->currency(),
-            CreateMoney::calculator(),
-            CreateMoney::formatters()
+            $this->money_factory->calculator(),
+            $this->money_factory->formatters()
         );
         $money_CAD = new Money(
             10,
             $this->currency('CA'),
-            CreateMoney::calculator(),
-            CreateMoney::formatters()
+            $this->money_factory->calculator(),
+            $this->money_factory->formatters()
         );
         $money_USD->subtract($money_CAD);
         $this->fail('InvalidArgumentException should have been thrown when attempting to subtract CAD from USD');
@@ -272,8 +302,8 @@ class MoneyTest extends \EE_UnitTestCase
         $money = new Money(
             15.25,
             $USD,
-            CreateMoney::calculator(),
-            CreateMoney::formatters()
+            $this->money_factory->calculator(),
+            $this->money_factory->formatters()
         );
         $money = $money->multiply(2);
         $this->assertInstanceOf('\EventEspresso\core\domain\values\currency\Money', $money);
@@ -282,8 +312,8 @@ class MoneyTest extends \EE_UnitTestCase
         $money = new Money(
             3.333,
             $USD,
-            CreateMoney::calculator(),
-            CreateMoney::formatters()
+            $this->money_factory->calculator(),
+            $this->money_factory->formatters()
         );
         $money = $money->multiply(3);
         $this->assertInstanceOf('\EventEspresso\core\domain\values\currency\Money', $money);
@@ -301,8 +331,8 @@ class MoneyTest extends \EE_UnitTestCase
         $money = new Money(
             15,
             $USD,
-            CreateMoney::calculator(),
-            CreateMoney::formatters()
+            $this->money_factory->calculator(),
+            $this->money_factory->formatters()
         );
         $money = $money->divide(2);
         $this->assertInstanceOf('\EventEspresso\core\domain\values\currency\Money', $money);
@@ -311,8 +341,8 @@ class MoneyTest extends \EE_UnitTestCase
         $money = new Money(
             10,
             $USD,
-            CreateMoney::calculator(),
-            CreateMoney::formatters()
+            $this->money_factory->calculator(),
+            $this->money_factory->formatters()
         );
         $money = $money->divide(3);
         $this->assertInstanceOf('\EventEspresso\core\domain\values\currency\Money', $money);
@@ -331,8 +361,8 @@ class MoneyTest extends \EE_UnitTestCase
         $money = new Money(
             10,
             $USD,
-            CreateMoney::calculator(),
-            CreateMoney::formatters()
+            $this->money_factory->calculator(),
+            $this->money_factory->formatters()
         );
         $money->divide(0);
     }
@@ -348,14 +378,15 @@ class MoneyTest extends \EE_UnitTestCase
         $money = new Money(
             1234.5,
             $USD,
-            CreateMoney::calculator(),
-            CreateMoney::formatters()
+            $this->money_factory->calculator(),
+            $this->money_factory->formatters()
         );
         $this->assertInstanceOf('\EventEspresso\core\domain\values\currency\Money', $money);
         $this->assertEquals('1234.5', $money->amount());
         $this->assertEquals('1234.5', $money->format(MoneyFormatter::RAW));
         $this->assertEquals('1234.50', $money->format(MoneyFormatter::DECIMAL_ONLY));
-        $this->assertEquals('1,234.50', $money->format(MoneyFormatter::ADD_THOUSANDS));
+        // now with default MoneyFormatter::ADD_THOUSANDS format
+        $this->assertEquals('1,234.50', $money->format());
         $this->assertEquals('$1,234.50', $money->format(MoneyFormatter::ADD_CURRENCY_SIGN));
         $this->assertEquals('$1,234.50 USD', $money->format(MoneyFormatter::ADD_CURRENCY_CODE));
         $this->assertEquals(
@@ -375,8 +406,8 @@ class MoneyTest extends \EE_UnitTestCase
         $money = new Money(
             1234.5,
             $USD,
-            CreateMoney::calculator(),
-            CreateMoney::formatters()
+            $this->money_factory->calculator(),
+            $this->money_factory->formatters()
         );
         $this->assertInstanceOf('\EventEspresso\core\domain\values\currency\Money', $money);
         $this->assertEquals('1234.5', $money->amount());
