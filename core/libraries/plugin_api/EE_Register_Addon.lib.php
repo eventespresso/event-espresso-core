@@ -344,7 +344,10 @@ class EE_Register_Addon implements EEI_Plugin_API
         } else {
             $class_name = $setup_args['class_name'];
         }
-        return strpos($class_name, 'EE_') === 0 ? $class_name : 'EE_' . $class_name;
+        // check if classname is fully  qualified or is a legacy classname already prefixed with 'EE_'
+        return strpos($class_name, '\\') || strpos($class_name, 'EE_') === 0
+            ? $class_name
+            : 'EE_' . $class_name;
     }
 
 
