@@ -92,19 +92,23 @@ class CoreLoader implements LoaderDecoratorInterface
             // check if additional EE_Registry::create() arguments have been passed
             // from_db
             $from_db = isset($arguments['EE_Registry::create(from_db)'])
-                ? $arguments['EE_Registry::create(from_db)']
-                : null;
-            unset($arguments['EE_Registry::create(from_db)']);
+                ? (bool)$arguments['EE_Registry::create(from_db)']
+                : false;
             // load_only
             $load_only = isset($arguments['EE_Registry::create(load_only)'])
-                ? $arguments['EE_Registry::create(load_only)']
-                : null;
-            unset($arguments['EE_Registry::create(load_only)']);
+                ? (bool)$arguments['EE_Registry::create(load_only)']
+                : false;
             // addon
             $addon = isset($arguments['EE_Registry::create(addon)'])
-                ? $arguments['EE_Registry::create(addon)']
-                : null;
-            unset($arguments['EE_Registry::create(addon)']);
+                ? (bool)$arguments['EE_Registry::create(addon)']
+                : false;
+            unset(
+                $arguments['EE_Registry::create(from_db)'],
+                $arguments['EE_Registry::create(load_only)'],
+                $arguments['EE_Registry::create(addon)']
+            );
+            // addons need to be cached on EE_Registry
+            $shared = $addon ? true : $shared;
             return $this->generator->create(
                 $fqcn,
                 $arguments,
