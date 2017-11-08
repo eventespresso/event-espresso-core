@@ -10,7 +10,8 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 
 /**
  * Interface RequiresDependencyMap
- * Indicates a class that utilizes the EE_Dependency_Map class and provides a setter for injecting it
+ * Indicates a class that utilizes the EE_Dependency_Map class
+ * and provides a getter plus a setter for injecting it
  *
  * @package EventEspresso\core\domain
  * @author  Brent Christensen
@@ -23,6 +24,11 @@ interface RequiresDependencyMapInterface
      * @param EE_Dependency_Map $dependency_map
      */
     public function setDependencyMap($dependency_map);
+
+    /**
+     * @return EE_Dependency_Map
+     */
+    public function dependencyMap();
 
 }
 // Location: RequiresDependencyMap.php
