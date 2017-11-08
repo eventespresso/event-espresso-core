@@ -1396,12 +1396,12 @@ class EE_Registry implements ResettableInterface
      * removes the addon from the internal cache
      *
      * @param string $class_name
-     * @return EE_Addon
+     * @return void
      */
     public function removeAddon($class_name)
     {
         $class_name = str_replace('\\', '_', $class_name);
-        $this->addons->{$class_name} = null;
+        unset($this->addons->{$class_name});
     }
 
 
