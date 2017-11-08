@@ -498,24 +498,18 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
         do_action('AHEE_log', __FILE__, __FUNCTION__, '');
         $set_column_values = $this->_set_column_values_for($this->_question_model);
         if ($new_question) {
-            $ID          = $this->_question_model->insert($set_column_values);
-            $success     = $ID ? true : false;
+            $question = EE_Question::new_instance($set_column_values);
             $action_desc = 'added';
         } else {
-            $ID     = absint($this->_req_data['QST_ID']);
-            $pk     = $this->_question_model->primary_key_name();
-            $wheres = array($pk => $ID);
-            unset($set_column_values[$pk]);
-            $success     = $this->_question_model->update($set_column_values, array($wheres));
+            $ID     = EEM_Question::instance()->get_one_by_ID(absint($this->_req_data['QST_ID']));
             $action_desc = 'updated';
         }
-
-        if ($ID) {
+        $success = $question->save();
+        $ID = $question->ID();
+        if ($ID && $question->should_have_question_options()) {
             //save the related options
             //trash removed options, save old ones
             //get list of all options
-            /** @type EE_Question $question */
-            $question = $this->_question_model->get_one_by_ID($ID);
             $options  = $question->options();
             if (! empty($options)) {
                 foreach ($options as $option_ID => $option) {
