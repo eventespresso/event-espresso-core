@@ -10,7 +10,6 @@ use EventEspresso\core\domain\values\currency\Currency;
 use EventEspresso\core\entities\Label;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
-use EventEspresso\core\services\loaders\LoaderFactory;
 use InvalidArgumentException;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
@@ -18,41 +17,52 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
 /**
- * Class CreateCurrency
+ * Class CurrencyFactory
  * Factory class for creating Currency objects
  *
  * @package EventEspresso\core\services\currency
  * @author  Brent Christensen
  * @since   $VID:$
  */
-class CreateCurrency
+class CurrencyFactory
 {
 
     /**
-     * @var EE_Country[] $countries
+     * @var EEM_Country $country_model
      */
-    protected static $countries_by_iso_code;
+    protected $country_model;
 
     /**
      * @var EE_Country[] $countries
      */
-    protected static $countries_by_currency;
+    protected $countries_by_iso_code;
+
+    /**
+     * @var EE_Country[] $countries
+     */
+    protected $countries_by_currency;
+
+    /**
+     * @var EE_Organization_Config $organization_config
+     */
+    protected $organization_config;
 
     /**
      * @var string $site_country_iso
      */
-    protected static $site_country_iso;
+    protected $site_country_iso;
 
 
     /**
-     * @return EEM_Country
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
+     * CurrencyFactory constructor.
+     *
+     * @param EEM_Country            $country_model
+     * @param EE_Organization_Config $organization_config
      */
-    private static function countryModel()
+    public function __construct(EEM_Country $country_model, EE_Organization_Config $organization_config)
     {
-        return LoaderFactory::getLoader()->getShared('EEM_Country');
+        $this->country_model = $country_model;
+        $this->organization_config = $organization_config;
     }
 
 
@@ -66,14 +76,14 @@ class CreateCurrency
      * @throws EE_Error
      * @throws InvalidArgumentException
      */
-    public static function fromCountryCode($CNT_ISO = null)
+    public function createFromCountryCode($CNT_ISO = null)
     {
-        $CNT_ISO = $CNT_ISO !== null ? $CNT_ISO : CreateCurrency::getSiteCountryIso();
-        if(isset(CreateCurrency::$countries_by_iso_code[$CNT_ISO])) {
-            $country = CreateCurrency::$countries_by_iso_code[ $CNT_ISO ];
+        $CNT_ISO = $CNT_ISO !== null ? $CNT_ISO : $this->organization_config->CNT_ISO;
+        if(isset($this->countries_by_iso_code[ $CNT_ISO])) {
+            $country = $this->countries_by_iso_code[ $CNT_ISO ];
         } else {
             /** @var EE_Country $country */
-            $country = CreateCurrency::countryModel()->get_one_by_ID($CNT_ISO);
+            $country = $this->country_model->get_one_by_ID($CNT_ISO);
             if (! $country instanceof EE_Country) {
                 throw new InvalidArgumentException(
                     sprintf(
@@ -85,8 +95,8 @@ class CreateCurrency
                     )
                 );
             }
-            CreateCurrency::$countries_by_iso_code[ $CNT_ISO ] = $country;
-            CreateCurrency::$countries_by_currency[ $country->currency_code() ] = $country;
+            $this->countries_by_iso_code[ $CNT_ISO ]                  = $country;
+            $this->countries_by_currency[ $country->currency_code() ] = $country;
         }
         return new Currency(
             $country->currency_code(),
@@ -116,13 +126,13 @@ class CreateCurrency
      * @throws InvalidArgumentException
      * @throws EE_Error
      */
-    public static function fromCode($code)
+    public function createFromCode($code)
     {
-        if (isset(CreateCurrency::$countries_by_currency[ $code ])) {
-            $country = CreateCurrency::$countries_by_currency[ $code ];
+        if (isset($this->countries_by_currency[ $code ])) {
+            $country = $this->countries_by_currency[ $code ];
         } else {
             /** @var EE_Country $country */
-            $country = CreateCurrency::countryModel()->get_one(array(array('CNT_cur_code' => $code)));
+            $country = $this->country_model->get_one(array(array('CNT_cur_code' => $code)));
             if (! $country instanceof EE_Country) {
                 throw new InvalidArgumentException(
                     sprintf(
@@ -134,8 +144,8 @@ class CreateCurrency
                     )
                 );
             }
-            CreateCurrency::$countries_by_iso_code[ $country->ID() ] = $country;
-            CreateCurrency::$countries_by_currency[$code ] = $country;
+            $this->countries_by_iso_code[ $country->ID() ] = $country;
+            $this->countries_by_currency[ $code ]          = $country;
         }
         return new Currency(
             $country->currency_code(),
@@ -151,25 +161,6 @@ class CreateCurrency
         );
     }
 
-
-
-    /**
-     * @return string
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     */
-    public static function getSiteCountryIso()
-    {
-        if (empty(CreateCurrency::$site_country_iso)) {
-            $config = LoaderFactory::getLoader()->getShared('EE_Config');
-            CreateCurrency::$site_country_iso = $config->organization !== null
-                                             && $config->organization instanceof EE_Organization_Config
-                ? $config->organization->CNT_ISO
-                : 'US';
-        }
-        return CreateCurrency::$site_country_iso;
-    }
 
 
 
