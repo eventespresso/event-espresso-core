@@ -46,8 +46,8 @@ class CapCheck implements CapCheckInterface
      */
     public function __construct($capability, $context, $ID = 0)
     {
-        if ( ! is_string($capability)) {
-            throw new InvalidDataTypeException('$capability', $capability, 'string');
+        if ( ! (is_string($capability) || is_array($capability))) {
+            throw new InvalidDataTypeException('$capability', $capability, 'string or array');
         }
         if ( ! is_string($context)) {
             throw new InvalidDataTypeException('$context', $context, 'string');
