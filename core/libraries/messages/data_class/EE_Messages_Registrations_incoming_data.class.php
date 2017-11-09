@@ -99,7 +99,7 @@ class EE_Messages_Registrations_incoming_data extends EE_Messages_incoming_data
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public static  function convert_data_for_persistent_storage(array $registrations)
+    public static  function convert_data_for_persistent_storage($registrations)
     {
         if (! self::validateRegistrationsForConversion($registrations)) {
             return array();
