@@ -88,19 +88,20 @@ class CoreLoader implements LoaderDecoratorInterface
      */
     public function load($fqcn, $arguments = array(), $shared = true)
     {
+        $shared = filter_var($shared, FILTER_VALIDATE_BOOLEAN);
         if($this->generator instanceof EE_Registry) {
             // check if additional EE_Registry::create() arguments have been passed
             // from_db
             $from_db = isset($arguments['EE_Registry::create(from_db)'])
-                ? (bool)$arguments['EE_Registry::create(from_db)']
+                ? filter_var($arguments['EE_Registry::create(from_db)'], FILTER_VALIDATE_BOOLEAN)
                 : false;
             // load_only
             $load_only = isset($arguments['EE_Registry::create(load_only)'])
-                ? (bool)$arguments['EE_Registry::create(load_only)']
+                ? filter_var($arguments['EE_Registry::create(load_only)'], FILTER_VALIDATE_BOOLEAN)
                 : false;
             // addon
             $addon = isset($arguments['EE_Registry::create(addon)'])
-                ? (bool)$arguments['EE_Registry::create(addon)']
+                ? filter_var($arguments['EE_Registry::create(addon)'], FILTER_VALIDATE_BOOLEAN)
                 : false;
             unset(
                 $arguments['EE_Registry::create(from_db)'],
