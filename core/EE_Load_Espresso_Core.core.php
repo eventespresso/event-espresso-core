@@ -1,6 +1,9 @@
 <?php
 
 use EventEspresso\core\domain\DomainFactory;
+use EventEspresso\core\domain\values\FilePath;
+use EventEspresso\core\domain\values\FullyQualifiedName;
+use EventEspresso\core\domain\values\Version;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
@@ -67,6 +70,8 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_
      * @param EE_Request  $request
      * @param EE_Response $response
      * @return EE_Response
+     * @throws \EventEspresso\core\exceptions\InvalidFilePathException
+     * @throws \EventEspresso\core\exceptions\InvalidClassException
      * @throws EE_Error
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
@@ -84,11 +89,13 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_
         $loader = LoaderFactory::getLoader($this->registry);
         $this->dependency_map->setLoader($loader);
         // instantiate core Domain class
-        DomainFactory::create(
-            'EventEspresso\core\domain\Domain',
+        DomainFactory::getShared(
+            new FullyQualifiedName(
+                'EventEspresso\core\domain\Domain'
+            ),
             array(
-                EVENT_ESPRESSO_MAIN_FILE,
-                espresso_version()
+                new FilePath(EVENT_ESPRESSO_MAIN_FILE),
+                Version::fromString(espresso_version())
             )
         );
         // build DI container
@@ -186,6 +193,9 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_
 
     /**
      * @return EE_Registry
+     * @throws \InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
      */
     private function _load_registry()
     {
