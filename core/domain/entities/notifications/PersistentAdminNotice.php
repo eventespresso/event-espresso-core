@@ -326,6 +326,8 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
                 // then toggle the notice's dismissed state to true
                 // so that it gets displayed again
                 $existing->setDismissed(false);
+                // and make sure the message is set
+                $existing->setMessage($this->message);
             }
         } else {
             $persistent_admin_notice_collection->add($this, $this->name);
