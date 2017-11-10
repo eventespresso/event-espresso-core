@@ -205,7 +205,11 @@ class Money
                 $formatted_amount = $formatters[ $x ]->format($formatted_amount, $this->currency);
             }
         }
-        return $formatted_amount;
+        return (string) apply_filters(
+            'FHEE__EventEspresso_core_domain_values_currency_Money__format__formatted_amount',
+            $formatted_amount,
+            $this
+        );
     }
 
 
