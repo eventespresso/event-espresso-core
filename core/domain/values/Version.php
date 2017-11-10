@@ -63,7 +63,7 @@ class Version
      * @throws InvalidDataTypeException
      * @throws InvalidArgumentException
      */
-    public function __construct($major, $minor, $patch, $release, $build)
+    public function __construct($major, $minor, $patch, $release = Version::RELEASE_TYPE_PROD, $build = 0)
     {
         $this->setMajor($major);
         $this->setMinor($minor);
@@ -89,8 +89,19 @@ class Version
                 )
             );
         }
-        list($major, $minor, $patch, $release, $build) = explode('.', $version_string);
-        return new Version($major, $minor, $patch, $release, $build);
+        // break apart incoming version string
+        $version_parts = explode('.', $version_string);
+        // add defaults for missing pieces
+        $version_parts += array(0,0,0,'p',0);
+        // reassign to individual variables
+        list($major, $minor, $patch, $release, $build) = $version_parts;
+        return new Version(
+            (int) $major,
+            (int) $minor,
+            (int) $patch,
+            $release,
+            (int) $build
+        );
     }
 
 
@@ -107,9 +118,9 @@ class Version
      * @param int|string $major
      * @throws InvalidDataTypeException
      */
-    public function setMajor($major)
+    private function setMajor($major)
     {
-        if (! is_int($major) && ! is_string($major)) {
+        if (! is_int($major)) {
             throw new InvalidDataTypeException(
                 '$major',
                 $major,
@@ -133,9 +144,9 @@ class Version
      * @param int|string $minor
      * @throws InvalidDataTypeException
      */
-    public function setMinor($minor)
+    private function setMinor($minor)
     {
-        if (! is_int($minor) && ! is_string($minor)) {
+        if (! is_int($minor)) {
             throw new InvalidDataTypeException(
                 '$minor',
                 $minor,
@@ -149,7 +160,7 @@ class Version
     /**
      * @return int
      */
-    public function getPatch()
+    public function patch()
     {
         return $this->patch;
     }
@@ -159,9 +170,9 @@ class Version
      * @param int|string $patch
      * @throws InvalidDataTypeException
      */
-    public function setPatch($patch)
+    private function setPatch($patch)
     {
-        if (! is_int($patch) && ! is_string($patch)) {
+        if (! is_int($patch)) {
             throw new InvalidDataTypeException(
                 '$patch',
                 $patch,
@@ -175,7 +186,7 @@ class Version
     /**
      * @return string
      */
-    public function getRelease()
+    public function release()
     {
         return $this->release;
     }
@@ -185,7 +196,7 @@ class Version
      * @param string $release
      * @throws InvalidArgumentException
      */
-    public function setRelease($release)
+    private function setRelease($release)
     {
         $valid_release_types = array(
             Version::RELEASE_TYPE_RC,
@@ -211,7 +222,7 @@ class Version
     /**
      * @return int
      */
-    public function getBuild()
+    public function build()
     {
         return $this->build;
     }
@@ -221,9 +232,9 @@ class Version
      * @param int|string $build
      * @throws InvalidDataTypeException
      */
-    public function setBuild($build)
+    private function setBuild($build)
     {
-        if (! is_int($build) && ! is_string($build)) {
+        if (! is_int($build)) {
             throw new InvalidDataTypeException(
                 '$build',
                 $build,
@@ -279,8 +290,10 @@ class Version
      */
     public function __toString()
     {
-        $version_string = "{$this->major}.{$this->minor}.{$this->patch}.{$this->release}.";
-        $version_string .= str_pad($this->build, 3, '0', STR_PAD_LEFT);
+        $version_string = "{$this->major}.{$this->minor}.{$this->patch}.{$this->release}";
+        if($this->release !== Version::RELEASE_TYPE_PROD) {
+            $version_string .= '.' . str_pad($this->build, 3, '0', STR_PAD_LEFT);
+        }
         return $version_string;
     }
 
