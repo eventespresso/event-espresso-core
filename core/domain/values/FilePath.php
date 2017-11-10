@@ -4,7 +4,6 @@ namespace EventEspresso\core\domain\values;
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidFilePathException;
-use InvalidArgumentException;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -31,20 +30,16 @@ class FilePath
      * FilePath constructor.
      *
      * @param string $file_path
+     * @throws InvalidDataTypeException
      * @throws InvalidFilePathException
-     * @throws \InvalidArgumentException
      */
     public function __construct($file_path)
     {
-        if (empty($file_path) || ! is_string($file_path)) {
-            throw new InvalidArgumentException(
-                sprintf(
-                    esc_html__(
-                        '"%1$s" is not a valid filepath.',
-                        'event_espresso'
-                    ),
-                    $file_path
-                )
+        if (! is_string($file_path)) {
+            throw new InvalidDataTypeException(
+                '$file_path',
+                $file_path,
+                'string'
             );
         }
         if (! is_readable($file_path)) {
