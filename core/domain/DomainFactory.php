@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\domain;
 
+use DomainException;
 use EventEspresso\core\domain\values\FullyQualifiedName;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -24,14 +25,15 @@ class DomainFactory
 {
 
     /**
-     * @param FullyQualifiedName $domain_fqcn [required] Fully Qualified Class Name for the Domain class
-     * @param array              $arguments   [required] array of arguments to be passed to the Domain class
-     *                                        constructor. must include the following two elements as a minimum:
-     *                                        array(
-     *                                          $plugin_file, // full server path to the addon main file (__FILE__)
-     *                                          $version, // standard version string like #.#.#
-     *                                        )
+     * @param FullyQualifiedName $domain_fqcn   [required] Fully Qualified Class Name for the Domain class
+     * @param array              $arguments     [required] array of arguments to be passed to the Domain class
+     *                                          constructor. must include the following two elements as a minimum:
+     *                                          array(
+     *                                              $plugin_file, // full server path to the addon main file (__FILE__)
+     *                                              $version, // standard version string like #.#.#
+     *                                          )
      * @return mixed
+     * @throws DomainException
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
@@ -46,8 +48,23 @@ class DomainFactory
                 )
             );
         }
-        return LoaderFactory::getLoader()->getShared($domain_fqcn, $arguments);
+        $domain = LoaderFactory::getLoader()->getShared($domain_fqcn, $arguments);
+        if (! $domain instanceof $domain_fqcn && ! $domain instanceof DomainBase) {
+            throw new DomainException(
+                sprintf(
+                    esc_html__(
+                        'The requested Domain class "%1$s" could not be loaded.',
+                        'event_espresso'
+                    ),
+                    $domain_fqcn
+                )
+            );
+        }
+        return $domain;
     }
 
 }
+
+
+
 // Location: DomainFactory.php
