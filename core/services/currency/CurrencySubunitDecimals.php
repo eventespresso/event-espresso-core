@@ -9,23 +9,27 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 
 
 /**
- * Class CurrencySubunitOrderOfMagnitudeDiff
- * Class for retrieving the difference in order of magnitude between a currency's
- *
+ * Class CurrencySubunitDecimals
+ * Class for retrieving a currency's decimal fractions,
+ * or difference in order of magnitude between a currency's
+ * super unit and subunit. For example, for USD, 1 penny is 1/100th of a dollar.
+ * So the order of magnitude, or decimal fractions is 2
  *
  * @package        Event Espresso
  * @author         Mike Nelson
  * @since          4.9.52.p
  */
-class CurrencySubunitOrderOfMagnitudeDiff
+class CurrencySubunitDecimals
 {
 
     /**
-     * @var array keys are currency codes, values is the order of magnitude difference
-     *            between that currency's main units and subunits.
-     *            E.g., USD the order of magnitude difference is 2.
+     * array keys are currency codes, values is the decimal fraction,
+     * or order of magnitude difference, between that currency's main units and subunits.
+     * E.g., USD the order of magnitude difference is 2.
+     *
+     * @var array $currency_decimals
      */
-    private $diffs;
+    private $currency_decimals;
 
 
 
@@ -37,7 +41,7 @@ class CurrencySubunitOrderOfMagnitudeDiff
     public function getDiffs()
     {
         $this->ensureInitialized();
-        return $this->diffs;
+        return $this->currency_decimals;
     }
 
 
@@ -52,8 +56,8 @@ class CurrencySubunitOrderOfMagnitudeDiff
     public function getDiff($currency_code)
     {
         $this->ensureInitialized();
-        if (isset($this->diffs[$currency_code])) {
-            return $this->diffs[$currency_code];
+        if (isset($this->currency_decimals[$currency_code])) {
+            return $this->currency_decimals[$currency_code];
         }
         throw new InvalidIdentifierException(
             '',
@@ -71,10 +75,10 @@ class CurrencySubunitOrderOfMagnitudeDiff
      */
     private function ensureInitialized()
     {
-        if ($this->diffs === null) {
-            $this->diffs = json_decode(
+        if ($this->currency_decimals === null) {
+            $this->currency_decimals = json_decode(
                 file_get_contents(
-                    __DIR__ . DS . 'currency-subunit-order-of-magnitude-diff.json'
+                    __DIR__ . DS . 'currency-subunit-decimals.json'
                 ),
                 true
             );
