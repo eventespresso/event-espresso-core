@@ -211,6 +211,7 @@ class PersistentAdminNoticeManager
     {
         $this->notice_collection = $this->getPersistentAdminNoticeCollection();
         if ($this->notice_collection->hasObjects()) {
+            $enqueue_assets = false;
             // and display notices
             foreach ($this->notice_collection as $persistent_admin_notice) {
                 /** @var PersistentAdminNotice $persistent_admin_notice */
@@ -227,9 +228,15 @@ class PersistentAdminNoticeManager
                     // and just eat the exception - nom nom nom nom
                     continue;
                 }
+                if ($persistent_admin_notice->getMessage() === '') {
+                    continue;
+                }
                 $this->displayPersistentAdminNotice($persistent_admin_notice);
+                $enqueue_assets = true;
             }
-            $this->enqueueAssets();
+            if ($enqueue_assets) {
+                $this->enqueueAssets();
+            }
         }
     }
 
