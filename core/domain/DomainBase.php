@@ -58,20 +58,20 @@ abstract class DomainBase implements DomainInterface
      * @param FilePath $plugin_file
      * @param Version  $version
      * @throws InvalidArgumentException
+     * @throws DomainException
      */
     public function __construct(FilePath $plugin_file, Version $version)
     {
         $this->plugin_file = $plugin_file;
         $this->version = $version;
-        $this->plugin_basename = plugin_basename($this->plugin_file);
-        $this->plugin_path = plugin_dir_path($this->plugin_file);
-        $this->plugin_url = plugin_dir_url($this->plugin_file);
+        $this->plugin_basename = plugin_basename($this->pluginFile());
+        $this->plugin_path = plugin_dir_path($this->pluginFile());
+        $this->plugin_url = plugin_dir_url($this->pluginFile());
     }
 
 
     /**
      * @return string
-     * @throws DomainException
      */
     public function pluginFile()
     {
@@ -82,7 +82,6 @@ abstract class DomainBase implements DomainInterface
 
     /**
      * @return string
-     * @throws DomainException
      */
     public function pluginBasename()
     {
@@ -103,7 +102,6 @@ abstract class DomainBase implements DomainInterface
 
     /**
      * @return string
-     * @throws DomainException
      */
     public function pluginUrl()
     {
@@ -114,11 +112,20 @@ abstract class DomainBase implements DomainInterface
 
     /**
      * @return string
-     * @throws DomainException
      */
     public function version()
     {
         return (string) $this->version;
+    }
+
+
+
+    /**
+     * @return Version
+     */
+    public function versionValueObject()
+    {
+        return $this->version;
     }
 
 
