@@ -94,12 +94,12 @@ class Money
     /**
      * @param float|int|string $amount money amount IN THE STANDARD UNIT FOR THE CURRENCY ie: dollars, Euros, etc
      *                                 example: $12.5 USD would equate to a value amount of 12.50
-     * @return float|int|number|string
+     * @return float in the curency's standard unit also
      * @throws InvalidDataTypeException
      */
     private function parseAmount($amount)
     {
-        if (! in_array(gettype($amount), array('integer', 'double', 'string'),true)) {
+        if (! in_array(gettype($amount), array('integer', 'double', 'string'), true)) {
             throw new InvalidDataTypeException(
                 '$amount',
                 $amount,
@@ -128,7 +128,7 @@ class Money
         $amount *= pow(10, $this->precision());
         // then round up the remaining value if there is still a fractional amount left
         $amount = round($amount);
-        return $amount;
+        return (float)$amount;
     }
 
 
@@ -142,7 +142,7 @@ class Money
     private function precision($positive = true)
     {
         $sign = $positive ? 1 : -1;
-        return ((int) $this->currency->decimalPlaces() + Money::EXTRA_PRECISION) * $sign;
+        return ((int) $this->currency->subunitOrderOfMagnitudeDiff() + Money::EXTRA_PRECISION) * $sign;
     }
 
 
@@ -150,6 +150,7 @@ class Money
     /**
      * Returns the money amount as an unformatted string
      * IF YOU REQUIRE A FORMATTED STRING, THEN USE Money::format()
+     * In the currency's standard units
      *
      * @return string
      */
@@ -159,7 +160,7 @@ class Money
         // ex: 1250 for a currency using 2 decimal places, would become 12.50
         $amount = (string) $this->amount * pow(10, $this->precision(false));
         // then shave off our extra internal precision using the number of decimal places for the currency
-        $amount = round($amount, $this->currency->decimalPlaces());
+        $amount = round($amount, $this->currency->subunitOrderOfMagnitudeDiff());
         return $amount;
     }
 
@@ -351,9 +352,6 @@ class Money
     {
         return $this->format(MoneyFormatter::DECIMAL_ONLY);
     }
-
-
-
 }
 // End of file Money.php
 // Location: core/entities/money/Money.php

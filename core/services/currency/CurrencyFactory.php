@@ -52,18 +52,29 @@ class CurrencyFactory
      */
     protected $site_country_iso;
 
+    /**
+     * @var CurrencySubunitOrderOfMagnitudeDiff
+     */
+    protected $subunit_diff;
+
 
     /**
      * CurrencyFactory constructor.
      *
      * @param EEM_Country            $country_model
      * @param EE_Organization_Config $organization_config
+     * @param CurrencySubunitOrderOfMagnitudeDiff $subunit_diff
      */
-    public function __construct(EEM_Country $country_model, EE_Organization_Config $organization_config)
-    {
+    public function __construct(
+        EEM_Country $country_model,
+        EE_Organization_Config$organization_config,
+        CurrencySubunitOrderOfMagnitudeDiff $subunit_diff
+    ) {
         $this->country_model = $country_model;
         $this->organization_config = $organization_config;
+        $this->subunit_diff = $subunit_diff;
     }
+
 
 
     /**
@@ -71,6 +82,7 @@ class CurrencyFactory
      *
      * @param string $CNT_ISO
      * @return Currency
+     * @throws \EventEspresso\core\exceptions\InvalidIdentifierException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws EE_Error
@@ -108,7 +120,8 @@ class CurrencyFactory
             $country->currency_sign_before(),
             $country->currency_decimal_places(),
             $country->currency_decimal_mark(),
-            $country->currency_thousands_separator()
+            $country->currency_thousands_separator(),
+            $this->subunit_diff->getDiff($country->currency_code())
         );
     }
 
@@ -157,12 +170,9 @@ class CurrencyFactory
             $country->currency_sign_before(),
             $country->currency_decimal_places(),
             $country->currency_decimal_mark(),
-            $country->currency_thousands_separator()
+            $country->currency_thousands_separator(),
+            $this->subunit_diff->getDiff($code)
         );
     }
-
-
-
-
 }
 // Location: CreateCurrency.php

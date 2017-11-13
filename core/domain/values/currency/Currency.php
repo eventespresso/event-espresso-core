@@ -69,6 +69,13 @@ class Currency
      */
     private $thousands;
 
+    /**
+     * Used to convert between the currency's units and subunits.
+     * subunits = units * 10 to-the-power-of $subunits_ratio
+     * @var int
+     */
+    private $subunit_order_of_mag_diff;
+
 
 
     /**
@@ -78,12 +85,23 @@ class Currency
      * @param Label  $label
      * @param string $sign
      * @param bool   $sign_b4
-     * @param int    $decimal_places
+     * @param int    $decimal_places            the number of decimal places to use when
+     *                               DISPLAYING the currency
      * @param string $decimal_mark
      * @param string $thousands
+     * @param int    $subunit_order_of_mag_diff the difference between units and subunits
+     *                               is 10 to-the-power-of-this
      */
-    public function __construct($code, Label $label, $sign, $sign_b4, $decimal_places, $decimal_mark, $thousands)
-    {
+    public function __construct(
+        $code,
+        Label $label,
+        $sign,
+        $sign_b4,
+        $decimal_places,
+        $decimal_mark,
+        $thousands,
+        $subunit_order_of_mag_diff
+    ) {
         $this->code           = $code;
         $this->label          = $label;
         $this->sign           = $sign;
@@ -91,6 +109,7 @@ class Currency
         $this->decimal_places = $decimal_places;
         $this->decimal_mark   = $decimal_mark;
         $this->thousands      = $thousands;
+        $this->subunit_order_of_mag_diff = $subunit_order_of_mag_diff;
     }
 
 
@@ -184,6 +203,19 @@ class Currency
     public function thousands()
     {
         return $this->thousands;
+    }
+
+
+
+    /**
+     * The difference between currency units and subunits
+     * is 10-to-the-power-of-this.
+     * DecimalMark is used for display, this is used for calculations
+     * @return int
+     */
+    public function subunitOrderOfMagnitudeDiff()
+    {
+        return $this->subunit_order_of_mag_diff;
     }
 
 
