@@ -26,11 +26,11 @@ class DomainFactory
 
     /**
      * @param FullyQualifiedName $domain_fqcn   [required] Fully Qualified Class Name for the Domain class
-     * @param array              $arguments     [required] array of arguments to be passed to the Domain class
-     *                                          constructor. must include the following two elements as a minimum:
+     * @param array $arguments                  [required] array of arguments to be passed to the Domain class
+     *                                          constructor. Must at least include the following two value objects:
      *                                          array(
-     *                                              $plugin_file, // full server path to the addon main file (__FILE__)
-     *                                              $version, // standard version string like #.#.#
+     *                                              EventEspresso\core\domain\values\FilePath $plugin_file
+     *                                              EventEspresso\core\domain\values\Version $version
      *                                          )
      * @return mixed
      * @throws DomainException
