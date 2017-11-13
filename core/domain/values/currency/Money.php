@@ -99,18 +99,12 @@ class Money
      */
     private function parseAmount($amount)
     {
-        $type = gettype($amount);
-        switch ($type) {
-            case 'integer' :
-            case 'double' :
-            case 'string' :
-                break;
-            default  :
-                throw new InvalidDataTypeException(
-                    '$amount',
-                    $amount,
-                    'integer (or float or string)'
-                );
+        if (! in_array(gettype($amount), array('integer', 'double', 'string'),true)) {
+            throw new InvalidDataTypeException(
+                '$amount',
+                $amount,
+                'integer (or float or string)'
+            );
         }
         if ($this->currency->decimalMark() !== '.') {
             // remove thousands separator and replace decimal place with standard decimal.
@@ -178,10 +172,10 @@ class Money
      */
     public function amountInSubunits()
     {
-        // shift the decimal position BACK
-        // by the number of decimal places used internally by the extra internal precision
-        // ex: if our extra internal precision was 3,
-        // then 1250000 would become 1250
+        // shift the decimal position BACK by the number of decimal places used internally
+        // for extra internal precision, but NOT for the number of decimals used by the currency
+        // ex: if our extra internal precision was 3, then 1250000 would become 1250
+        // and even if the currency used 2 decimal places, we would return 1250 and NOT 12.50
         $amount = (string) $this->amount * pow(10, Money::EXTRA_PRECISION * -1);
         // then shave off anything after the decimal
         $amount = round($amount);
@@ -211,7 +205,11 @@ class Money
                 $formatted_amount = $formatters[ $x ]->format($formatted_amount, $this->currency);
             }
         }
-        return $formatted_amount;
+        return (string) apply_filters(
+            'FHEE__EventEspresso_core_domain_values_currency_Money__format__formatted_amount',
+            $formatted_amount,
+            $this
+        );
     }
 
 
