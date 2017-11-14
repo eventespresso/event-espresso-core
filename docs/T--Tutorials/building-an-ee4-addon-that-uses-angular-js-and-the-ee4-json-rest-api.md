@@ -14,7 +14,8 @@ The EE4 REST API (in EE4 core since version 4.8.29) can be used to fetch nearly 
 
 First you'll want to make sure you have the Event Espresso 4 Core version 4.8.29 or higher, and Wordpress 4.4 or higher.
 
-First off, you can either start your addon from scratch, or start with the EE4 skeleton addon contained in event-espresso-core/tests/mocks/addons/eea-new-addon, and then use the renamer.php file in event-espresso-core/tests/utilities/renamer.php to rename it to whatever you're wanting (it does an intelligent search-and-replace). [Click here for more information on using the skeleton addon](../D--Addon-API/registering-addons.md). To follow along with this tutorial, use the renamer.php file to search for the default string ("New_Addon") and replace it with "Rest_Api_Client". There's a LOT of things in there you might want eventually, but for the purpose of this tutorial you can remove:
+First off, you can either start your addon from scratch, or start with the EE4 skeleton addon contained in event-espresso-core/tests/mocks/addons/eea-new-addon, and then use the renamer.php file in
+ [the renamer repository]()https://github.com/eventespresso/eea-renamer) to rename it to whatever you're wanting (it does an intelligent search-and-replace). [Click here for more information on using the skeleton addon](../D--Addon-API/registering-addons.md). To follow along with this tutorial, use the renamer.php file to search for the default string ("New_Addon") and replace it with "Rest_Api_Client". There's a LOT of things in there you might want eventually, but for the purpose of this tutorial you can remove:
 
 * EEW_Rest_Api_Client.widget.php
 * EED_Rest_Api_Client.module.php
