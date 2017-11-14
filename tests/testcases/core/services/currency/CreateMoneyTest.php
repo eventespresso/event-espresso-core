@@ -155,7 +155,7 @@ class CreateMoneyTest extends \EE_UnitTestCase
         $formatters = $this->money_factory->formatters();
         foreach ($formatters as $formatter) {
             $this->assertInstanceOf(
-                '\EventEspresso\core\services\currency\MoneyFormatter',
+                '\EventEspresso\core\services\currency\formatters\MoneyFormatter',
                 $formatter
             );
         }
@@ -173,7 +173,7 @@ class CreateMoneyTest extends \EE_UnitTestCase
         $formatters = $money_mock->getFormatters();
         $this->assertNotEmpty($formatters);
         $this->assertInstanceOf(
-            '\EventEspresso\core\services\currency\MoneyFormatter',
+            '\EventEspresso\core\services\currency\formatters\MoneyFormatter',
             reset($formatters)
         );
     }

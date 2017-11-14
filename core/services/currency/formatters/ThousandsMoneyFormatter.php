@@ -1,6 +1,6 @@
 <?php
 
-namespace EventEspresso\core\services\currency;
+namespace EventEspresso\core\services\currency\formatters;
 
 use EventEspresso\core\domain\values\currency\Currency;
 
@@ -9,14 +9,14 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
 /**
- * Class DecimalMoneyFormatter
- * adds decimal mark to supplied amount
+ * Class ThousandsMoneyFormatter
+ * adds thousands separator to supplied amount
  *
  * @package       Event Espresso
  * @author        Brent Christensen
  * @since         $VID:$
  */
-class DecimalMoneyFormatter implements MoneyFormatter
+class ThousandsMoneyFormatter implements MoneyFormatter
 {
 
 
@@ -28,7 +28,12 @@ class DecimalMoneyFormatter implements MoneyFormatter
      */
     public function format($money_amount, Currency $currency)
     {
-        return (string)round($money_amount, $currency->decimalPlaces());
+        return number_format(
+            $money_amount,
+            $currency->decimalPlaces(),
+            $currency->decimalMark(),
+            $currency->thousands()
+        );
     }
 
 

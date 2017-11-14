@@ -3,7 +3,7 @@ use EventEspresso\core\domain\values\currency\Currency;
 use EventEspresso\core\domain\values\currency\Money;
 use EventEspresso\core\services\currency\CurrencyFactory;
 use EventEspresso\core\services\currency\MoneyFactory;
-use EventEspresso\core\services\currency\MoneyFormatter;
+use EventEspresso\core\services\currency\formatters\MoneyFormatter;
 use EventEspresso\core\services\loaders\LoaderFactory;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;

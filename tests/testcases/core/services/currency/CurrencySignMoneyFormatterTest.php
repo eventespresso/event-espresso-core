@@ -1,5 +1,5 @@
 <?php
-use EventEspresso\core\services\currency\CurrencySignMoneyFormatter;
+use EventEspresso\core\services\currency\formatters\CurrencySignMoneyFormatter;
 use EventEspresso\core\services\loaders\LoaderFactory;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;

@@ -1,5 +1,5 @@
 <?php
-use EventEspresso\core\services\currency\DecimalMoneyFormatter;
+use EventEspresso\core\services\currency\formatters\DecimalMoneyFormatter;
 use EventEspresso\core\services\loaders\LoaderFactory;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
