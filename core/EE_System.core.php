@@ -1,5 +1,6 @@
 <?php
 
+use \EventEspresso\core\domain\services\contexts\RequestTypeContextChecker;
 use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
 use EventEspresso\core\interfaces\ResettableInterface;
 use EventEspresso\core\services\loaders\LoaderFactory;
@@ -113,6 +114,13 @@ final class EE_System implements ResettableInterface
      */
     private $_major_version_change = false;
 
+    /**
+     * A Context DTO dedicated solely to identifying the current request type.
+     *
+     * @var RequestTypeContextChecker $request_type
+     */
+    private $request_type;
+
 
 
     /**
@@ -212,6 +220,11 @@ final class EE_System implements ResettableInterface
             array($this, 'detect_activations_or_upgrades'),
             3
         );
+        add_action(
+            'AHEE__EE_Bootstrap__detect_activations_or_upgrades',
+            array($this, 'setRequestTypeContext'),
+            4
+        );
         // load EE_Config, EE_Textdomain, etc
         add_action(
             'AHEE__EE_Bootstrap__load_core_configuration',
@@ -241,7 +254,6 @@ final class EE_System implements ResettableInterface
         // it's extremely important for EE Addons to register any class autoloaders so that they can be available when the EE_Config loads
         do_action('AHEE__EE_System__construct__complete', $this);
     }
-
 
 
     /**
@@ -405,9 +417,9 @@ final class EE_System implements ResettableInterface
                 break;
             case EE_System::req_type_normal:
             default:
-                //				$this->_maybe_redirect_to_ee_about();
                 break;
         }
+
         do_action('AHEE__EE_System__detect_if_activation_or_upgrade__complete');
     }
 
@@ -761,9 +773,9 @@ final class EE_System implements ResettableInterface
         $notices = EE_Error::get_notices(false);
         //if current user is an admin and it's not an ajax or rest request
         if (
-            ! (defined('DOING_AJAX') && DOING_AJAX)
-            && ! (defined('REST_REQUEST') && REST_REQUEST)
-            && ! isset($notices['errors'])
+            ! isset($notices['errors'])
+            && ! $this->request_type->isAjax()
+            && ! $this->request_type->isApi()
             && apply_filters(
                 'FHEE__EE_System__redirect_to_about_ee__do_redirect',
                 $this->capabilities->current_user_can('manage_options', 'espresso_about_default')
@@ -780,6 +792,38 @@ final class EE_System implements ResettableInterface
             wp_safe_redirect($url);
             exit();
         }
+    }
+
+
+    /**
+     * Generates a Context DTO for identifying the current request type
+     *
+     * @throws InvalidArgumentException
+     */
+    public function setRequestTypeContext()
+    {
+        /** @var EventEspresso\core\domain\services\contexts\RequestTypeContextDetector $request_type_context_detector */
+        $request_type_context_detector = $this->loader->getShared(
+            'EventEspresso\core\domain\services\contexts\RequestTypeContextDetector',
+            array(
+                $this->loader,
+                $this->request,
+                $this->_req_type !== EE_System::req_type_normal
+            )
+        );
+        $this->request_type = $this->loader->getShared(
+            'EventEspresso\core\domain\services\contexts\RequestTypeContextChecker',
+            array(
+                $request_type_context_detector->detectRequestTypeContext()
+            )
+        );
+        $slug = $this->request_type->slug();
+        add_action(
+            'shutdown',
+            function() use ($slug) {
+                \EEH_Debug_Tools::printr($slug, '$this->request_type->slug()', __FILE__, __LINE__);
+            }
+        );
     }
 
 
@@ -879,17 +923,19 @@ final class EE_System implements ResettableInterface
      */
     public function register_shortcodes_modules_and_widgets()
     {
-        try {
-            // load, register, and add shortcodes the new way
-            $this->loader->getShared(
-                'EventEspresso\core\services\shortcodes\ShortcodesManager',
-                array(
-                    // and the old way, but we'll put it under control of the new system
-                    EE_Config::getLegacyShortcodesManager()
-                )
-            );
-        } catch (Exception $exception) {
-            new ExceptionStackTraceDisplay($exception);
+        if($this->request_type->isFrontend() || $this->request_type->isIframe()){
+            try {
+                // load, register, and add shortcodes the new way
+                $this->loader->getShared(
+                    'EventEspresso\core\services\shortcodes\ShortcodesManager',
+                    array(
+                        // and the old way, but we'll put it under control of the new system
+                        EE_Config::getLegacyShortcodesManager()
+                    )
+                );
+            } catch (Exception $exception) {
+                new ExceptionStackTraceDisplay($exception);
+            }
         }
         do_action('AHEE__EE_System__register_shortcodes_modules_and_widgets');
         // check for addons using old hook point
@@ -1054,10 +1100,13 @@ final class EE_System implements ResettableInterface
     {
         do_action('AHEE__EE_System__load_controllers__start');
         // let's get it started
-        if (! is_admin() && ! $this->maintenance_mode->level()) {
+        if (
+            ! $this->maintenance_mode->level()
+            && ($this->request_type->isFrontend() || $this->request_type->isFrontAjax())
+        ) {
             do_action('AHEE__EE_System__load_controllers__load_front_controllers');
             $this->loader->getShared('EE_Front_Controller');
-        } else if (! EE_FRONT_AJAX) {
+        } else if ($this->request_type->isAdmin() || $this->request_type->isAdminAjax()) {
             do_action('AHEE__EE_System__load_controllers__load_admin_controllers');
             $this->loader->getShared('EE_Admin');
         }
@@ -1075,14 +1124,21 @@ final class EE_System implements ResettableInterface
      */
     public function core_loaded_and_ready()
     {
-        $this->loader->getShared('EE_Session');
+        if (! ($this->request_type->isApi() || $this->request_type->isFeed())) {
+            $this->loader->getShared('EE_Session');
+        }
         do_action('AHEE__EE_System__core_loaded_and_ready');
         // load_espresso_template_tags
-        if (is_readable(EE_PUBLIC . 'template_tags.php')) {
-            require_once(EE_PUBLIC . 'template_tags.php');
+        if (
+            is_readable(EE_PUBLIC . 'template_tags.php')
+            && ($this->request_type->isFrontend() || $this->request_type->isIframe())
+        ) {
+            require_once EE_PUBLIC . 'template_tags.php';
         }
         do_action('AHEE__EE_System__set_hooks_for_shortcodes_modules_and_addons');
-        $this->loader->getShared('EventEspresso\core\services\assets\Registry');
+        if($this->request_type->isFrontend())  {
+            $this->loader->getShared('EventEspresso\core\services\assets\Registry');
+        }
     }
 
 
