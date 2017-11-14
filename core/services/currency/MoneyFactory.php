@@ -5,7 +5,14 @@ namespace EventEspresso\core\services\currency;
 use EE_Error;
 use EventEspresso\core\domain\values\currency\Money;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidIdentifierException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\currency\formatters\CurrencyCodeMoneyFormatter;
+use EventEspresso\core\services\currency\formatters\CurrencySignMoneyFormatter;
+use EventEspresso\core\services\currency\formatters\DecimalMoneyFormatter;
+use EventEspresso\core\services\currency\formatters\InternationalMoneyFormatter;
+use EventEspresso\core\services\currency\formatters\MoneyFormatter;
+use EventEspresso\core\services\currency\formatters\ThousandsMoneyFormatter;
 use InvalidArgumentException;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
@@ -69,6 +76,7 @@ class MoneyFactory
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
+     * @throws InvalidIdentifierException
      * @throws InvalidInterfaceException
      */
     public function createFromSubUnits($subunits_amount, $currency_code = '')
@@ -95,6 +103,7 @@ class MoneyFactory
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
+     * @throws InvalidIdentifierException
      * @throws InvalidInterfaceException
      */
     public function createForSite($amount)
@@ -120,6 +129,7 @@ class MoneyFactory
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
+     * @throws InvalidIdentifierException
      * @throws InvalidInterfaceException
      */
     public function createForCountry($amount, $CNT_ISO)
@@ -145,6 +155,7 @@ class MoneyFactory
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
+     * @throws InvalidIdentifierException
      * @throws InvalidInterfaceException
      */
     public function createForCurrency($amount, $currency_code)
