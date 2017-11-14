@@ -1,4 +1,8 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
+<?php
+defined('EVENT_ESPRESSO_VERSION') || exit;
+
+
+
 /**
  * Class EE_Request_Stack_Builder
  *
@@ -15,7 +19,6 @@ class EE_Request_Stack_Builder {
 	/**
 	 * Stack of middleware objects
 	 *
-	 * @access    protected
 	 * @type array $_middleware_stack
 	 */
 	protected $_middleware_stack;
@@ -76,12 +79,11 @@ class EE_Request_Stack_Builder {
 
 
     /**
-     *    builds decorated middleware stack
+     * builds decorated middleware stack
      * by continuously injecting previous middleware app into the next
      *
      * @param EEI_Request_Decorator $application
      * @return EE_Request_Stack
-     * @throws ReflectionException
      */
 	public function resolve( EEI_Request_Decorator $application ) {
 		$middlewares = array( $application );
@@ -91,9 +93,9 @@ class EE_Request_Stack_Builder {
 				$application = $class_name( $application );
 			} else {
 				array_unshift( $middleware_args, $application );
-				$reflection = new ReflectionClass( $class_name );
-				$application = $reflection->newInstanceArgs( $middleware_args );
-			}
+                $reflection = new ReflectionClass($class_name);
+                $application = $reflection->newInstanceArgs($middleware_args);
+            }
 			array_unshift( $middlewares, $application );
 		}
 		return new EE_Request_Stack( $application, $middlewares );

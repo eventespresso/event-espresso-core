@@ -28,6 +28,12 @@ class EE_Checkbox_Dropdown_Selector_Display_Strategy extends EE_Compound_Input_D
             array('espresso_default'),
             EVENT_ESPRESSO_VERSION
         );
+        wp_register_style(
+            'espresso_default',
+            EE_GLOBAL_ASSETS_URL . 'css/espresso_default.css',
+            array('dashicons'),
+            EVENT_ESPRESSO_VERSION
+        );
         wp_enqueue_style('checkbox_dropdown_selector');
         wp_register_script(
             'checkbox_dropdown_selector',

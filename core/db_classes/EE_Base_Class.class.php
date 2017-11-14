@@ -2517,8 +2517,6 @@ abstract class EE_Base_Class
             $result = $this->get_first_related('Extra_Meta', array(array('EXM_key' => $meta_key)));
             if ($result instanceof EE_Extra_Meta) {
                 return $result->value();
-            } else {
-                return $default;
             }
         } else {
             $results = $this->get_many_related('Extra_Meta', array(array('EXM_key' => $meta_key)));
@@ -2530,10 +2528,16 @@ abstract class EE_Base_Class
                     }
                 }
                 return $values;
-            } else {
-                return $default;
             }
         }
+        //if nothing discovered yet return default.
+        return apply_filters(
+            'FHEE__EE_Base_Class__get_extra_meta__default_value',
+            $default,
+            $meta_key,
+            $single,
+            $this
+            );
     }
 
 

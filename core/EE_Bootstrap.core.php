@@ -92,10 +92,7 @@ class EE_Bootstrap
             $this->request_stack         = $this->request_stack_builder->resolve(
                 new EE_Load_Espresso_Core()
             );
-            $this->request_stack->handle_request(
-                new EE_Request($_GET, $_POST, $_COOKIE),
-                new EE_Response()
-            );
+        $this->request_stack->handle_request($this->request, $this->response);
             $this->request_stack->handle_response();
         } catch (Exception $exception) {
             new ExceptionStackTraceDisplay($exception);
@@ -110,7 +107,10 @@ class EE_Bootstrap
     protected function load_autoloader()
     {
         // load interfaces
-        espresso_load_required('EEH_Autoloader', EE_CORE . 'helpers' . DS . 'EEH_Autoloader.helper.php');
+        espresso_load_required(
+            'EEH_Autoloader',
+            EE_CORE . 'helpers' . DS . 'EEH_Autoloader.helper.php'
+        );
         EEH_Autoloader::instance();
     }
 
@@ -124,9 +124,7 @@ class EE_Bootstrap
     protected function set_autoloaders_for_required_files()
     {
         // load interfaces
-        espresso_load_required('EEI_Interfaces', EE_CORE . 'interfaces' . DS . 'EEI_Interfaces.php');
-        espresso_load_required('InterminableInterface', EE_CORE . 'interfaces' . DS . 'InterminableInterface.php');
-        espresso_load_required('ResettableInterface', EE_CORE . 'interfaces' . DS . 'ResettableInterface.php');
+        EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_CORE . 'interfaces', true);
         // load helpers
         EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_HELPERS);
         // load request stack

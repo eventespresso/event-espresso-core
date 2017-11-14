@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\entities\Context;
 use EventEspresso\core\services\commands\attendee\CreateAttendeeCommand;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed');
@@ -799,8 +800,16 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
         $registrations = $this->checkout->transaction->registrations($this->checkout->reg_cache_where_params);
         // verify we got the goods
         if (empty($registrations)) {
+            //combine the old translated string with a new one, in order to not break translations
+            $error_message = esc_html__( 'Your form data could not be applied to any valid registrations.', 'event_espresso' )
+                             . sprintf(
+                                 esc_html__('%3$sThis can sometimes happen if too much time has been taken to complete the registration process.%3$sPlease return to the %1$sEvent List%2$s and reselect your tickets. If the problem continues, please contact the site administrator.', 'event_espresso'),
+                                 '<a href="' . get_post_type_archive_link('espresso_events') . '" >',
+                                 '</a>',
+                                 '<br />'
+                             );
             EE_Error::add_error(
-                esc_html__('Your form data could not be applied to any valid registrations.', 'event_espresso'),
+                $error_message,
                 __FILE__,
                 __FUNCTION__,
                 __LINE__
@@ -865,6 +874,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
      * @param EE_Registration[] $registrations
      * @param array             $valid_data
      * @return bool|int
+     * @throws \EventEspresso\core\exceptions\EntityNotFoundException
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
@@ -1060,7 +1070,17 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
                     $registration_processor = EE_Registry::instance()->load_class('Registration_Processor');
                     // at this point, we should have enough details about the registrant to consider the registration
                     // NOT incomplete
-                    $registration_processor->toggle_incomplete_registration_status_to_default($registration, false);
+                    $registration_processor->toggle_incomplete_registration_status_to_default(
+                        $registration,
+                        false,
+                        new Context(
+                            'spco_reg_step_attendee_information_process_registrations',
+                            esc_html__(
+                                'Finished populating registration with details from the registration form after submitting the Attendee Information Reg Step.',
+                                'event_espresso'
+                            )
+                        )
+                    );
                     // we can also consider the TXN to not have been failed, so temporarily upgrade it's status to
                     // abandoned
                     $this->checkout->transaction->toggle_failed_transaction_status();

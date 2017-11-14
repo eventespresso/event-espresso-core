@@ -635,7 +635,10 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
      */
     public function verify_db_collations()
     {
-        if (get_option('ee_verified_db_collations', false)) {
+        global $wpdb;
+        //double-check we haven't already done it or that that the DB doesn't support utf8mb4
+        if ('utf8mb4' !== $wpdb->charset
+            || get_option('ee_verified_db_collations', false)) {
             return;
         }
         // grab tables from each model
@@ -691,7 +694,11 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
      * @return void
      */
     public function verify_db_collations_again(){
-        if (get_option('ee_verified_db_collations_again', false)) {
+        global $wpdb;
+        //double-check we haven't already done this or that the DB doesn't support it
+        //compare to how WordPress' upgrade_430() function does this check
+        if ('utf8mb4' !== $wpdb->charset
+            || get_option('ee_verified_db_collations_again', false)) {
             return;
         }
         $tables_to_check = array(

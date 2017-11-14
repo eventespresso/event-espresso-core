@@ -4,6 +4,7 @@ namespace EventEspresso\core\services\container;
 use EventEspresso\core\exceptions\InvalidClassException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidIdentifierException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use RuntimeException;
 
 if ( ! defined('EVENT_ESPRESSO_VERSION')) {
@@ -217,6 +218,9 @@ class Recipe implements RecipeInterface
      *  therefore you should always call Recipe::setPaths() before Recipe::setFqcn()
      *
      * @param string $fqcn
+     * @throws InvalidDataTypeException
+     * @throws InvalidClassException
+     * @throws InvalidInterfaceException
      */
     public function setFqcn($fqcn)
     {
@@ -233,7 +237,7 @@ class Recipe implements RecipeInterface
             $fqcn !== Recipe::DEFAULT_ID
             && ! empty($fqcn)
             && empty($this->paths)
-            && ! class_exists($fqcn)
+            && ! (class_exists($fqcn) || interface_exists($fqcn))
         ) {
             throw new InvalidClassException($fqcn);
         }

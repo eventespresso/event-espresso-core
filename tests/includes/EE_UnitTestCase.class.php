@@ -1316,4 +1316,39 @@ class EE_UnitTestCase extends WP_UnitTestCase
         }
     }
 
+
+
+    /**
+     * Calls the WordPress version specific method for refreshing user roles during tests
+     * @param WP_User $user
+     */
+    protected function refreshRolesForUser(WP_User $user)
+    {
+        if (method_exists($user, 'for_site')) {
+            $user->for_site();
+        } else {
+            $user->_init_caps();
+        }
+    }
+
+
+    /**
+     * \PHPUnit\Framework\TestCase::expectException() only exists in PHPUnit version 5.7+
+     * but on Travis-CI we test using PHPUnit 4.8 because it supports PHP versions < 5.6
+     * This should call the appropriate method regardless of version
+     *
+     * @param string $exception
+     * @throws \PHPUnit\Framework\Exception
+     */
+    public function setExceptionExpected($exception)
+    {
+        if (method_exists($this, 'expectException')) {
+            parent::expectException($exception);
+        } elseif (method_exists($this, 'setExpectedException')) {
+            $this->setExpectedException($exception);
+        }
+    }
+
+
+
 }

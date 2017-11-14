@@ -16,20 +16,23 @@ class MessagesAdmin extends CoreAdmin
 
     /**
      * Context slug for the admin messages context.
-     * @var string
      */
     const ADMIN_CONTEXT_SLUG = 'admin';
 
     /**
      * Context slug for the primary attendee messages context
-     * @var string
      */
     const PRIMARY_ATTENDEE_CONTEXT_SLUG = 'primary_attendee';
 
 
     /**
+     * Context slug for the attendee messages context
+     */
+    const ATTENDEE_CONTEXT_SLUG = 'attendee';
+
+
+    /**
      * Status reference for the EEM_Message::status_sent status.
-     * @var string
      */
     const MESSAGE_STATUS_SENT = 'MSN';
 
@@ -41,8 +44,13 @@ class MessagesAdmin extends CoreAdmin
 
 
     /**
+     * Message type slug for the Registration Pending Payment message type
+     */
+    const MESSAGE_TYPE_PENDING_PAYMENT = 'pending_approval';
+
+
+    /**
      * Selector for the Global Messages "Send on same request" field in the Messages Settings tab.
-     * @var string
      */
     const GLOBAL_MESSAGES_SETTINGS_ON_REQUEST_SELECTION_SELECTOR =
         '#global_messages_settings-do-messages-on-same-request';
@@ -50,35 +58,30 @@ class MessagesAdmin extends CoreAdmin
 
     /**
      * Selector for the Global Messages Settings submit button in the Messages Settings tab.
-     * @var string
      */
     const GLOBAL_MESSAGES_SETTINGS_SUBMIT_SELECTOR = '#global_messages_settings-update-settings-submit';
 
 
     /**
      * This is the container where active message types for a messenger are found/dragged to.
-     * @var string
      */
     const MESSAGES_SETTINGS_ACTIVE_MESSAGE_TYPES_CONTAINER_SELECTOR = '#active-message-types';
 
 
     /**
      * Locator for the context switcher selector on the Message Template Editor page.
-     * @var string
      */
     const MESSAGES_CONTEXT_SWITCHER_SELECTOR = "//form[@id='ee-msg-context-switcher-frm']/select";
 
 
     /**
      * Locator for the context switcher submit button in the Message Template Editor page.
-     * @var string
      */
     const MESSAGES_CONTEXT_SWITCHER_BUTTON_SELECTOR = "#submit-msg-context-switcher-sbmt";
 
 
     /**
      * Locator for the dialog container used for housing viewed messages in the message activity list table.
-     * @var string
      */
     const MESSAGES_LIST_TABLE_VIEW_MESSAGE_DIALOG_CONTAINER_SELECTOR = '.ee-admin-dialog-container-inner-content';
 
@@ -88,6 +91,9 @@ class MessagesAdmin extends CoreAdmin
      */
     const MESSAGES_CONTEXT_ACTIVE_STATE_TOGGLE =
         "//div[@class='activate_context_on_off_toggle_container']/div[@class='switch']/label";
+
+
+    const SELECTOR_LINK_FINALIZE_PAYMENT_PENDING_PAYMENT_MESSAGE = "//td/p[@class='callout']/a";
 
 
 

@@ -627,4 +627,18 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable 
 	}
 
 
+
+    /**
+     * Returns whether or not this question type should have question option entries
+     * @return bool
+     */
+	public function should_have_question_options()
+    {
+        return in_array(
+            $this->type(),
+            $this->_model->question_types_with_options(),
+            true
+        );
+    }
+
 }
