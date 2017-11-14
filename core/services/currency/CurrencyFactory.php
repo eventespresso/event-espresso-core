@@ -54,26 +54,26 @@ class CurrencyFactory
     protected $site_country_iso;
 
     /**
-     * @var CurrencySubunitDecimals $currency_subunit_decimals
+     * @var CurrencySubunits $currency_subunits
      */
-    protected $currency_subunit_decimals;
+    protected $currency_subunits;
 
 
     /**
      * CurrencyFactory constructor.
      *
-     * @param EEM_Country             $country_model
-     * @param EE_Organization_Config  $organization_config
-     * @param CurrencySubunitDecimals $currency_subunit_decimals
+     * @param EEM_Country            $country_model
+     * @param EE_Organization_Config $organization_config
+     * @param CurrencySubunits       $currency_subunits
      */
     public function __construct(
         EEM_Country $country_model,
         EE_Organization_Config$organization_config,
-        CurrencySubunitDecimals $currency_subunit_decimals
+        CurrencySubunits $currency_subunits
     ) {
         $this->country_model = $country_model;
         $this->organization_config = $organization_config;
-        $this->currency_subunit_decimals = $currency_subunit_decimals;
+        $this->currency_subunits = $currency_subunits;
     }
 
 
@@ -122,7 +122,7 @@ class CurrencyFactory
             $country->currency_decimal_places(),
             $country->currency_decimal_mark(),
             $country->currency_thousands_separator(),
-            $this->currency_subunit_decimals->forCode($country->currency_code())
+            $this->currency_subunits->decimalsForCode($country->currency_code())
         );
     }
 
@@ -173,7 +173,7 @@ class CurrencyFactory
             $country->currency_decimal_places(),
             $country->currency_decimal_mark(),
             $country->currency_thousands_separator(),
-            $this->currency_subunit_decimals->forCode($code)
+            $this->currency_subunits->decimalsForCode($code)
         );
     }
 }
