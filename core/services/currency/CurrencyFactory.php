@@ -9,6 +9,7 @@ use EEM_Country;
 use EventEspresso\core\domain\values\currency\Currency;
 use EventEspresso\core\entities\Label;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidIdentifierException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use InvalidArgumentException;
 
@@ -53,9 +54,9 @@ class CurrencyFactory
     protected $site_country_iso;
 
     /**
-     * @var CurrencySubunitOrderOfMagnitudeDiff
+     * @var CurrencySubunits $currency_subunits
      */
-    protected $subunit_diff;
+    protected $currency_subunits;
 
 
     /**
@@ -63,16 +64,16 @@ class CurrencyFactory
      *
      * @param EEM_Country            $country_model
      * @param EE_Organization_Config $organization_config
-     * @param CurrencySubunitOrderOfMagnitudeDiff $subunit_diff
+     * @param CurrencySubunits       $currency_subunits
      */
     public function __construct(
         EEM_Country $country_model,
         EE_Organization_Config$organization_config,
-        CurrencySubunitOrderOfMagnitudeDiff $subunit_diff
+        CurrencySubunits $currency_subunits
     ) {
         $this->country_model = $country_model;
         $this->organization_config = $organization_config;
-        $this->subunit_diff = $subunit_diff;
+        $this->currency_subunits = $currency_subunits;
     }
 
 
@@ -82,7 +83,7 @@ class CurrencyFactory
      *
      * @param string $CNT_ISO
      * @return Currency
-     * @throws \EventEspresso\core\exceptions\InvalidIdentifierException
+     * @throws InvalidIdentifierException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws EE_Error
@@ -121,7 +122,7 @@ class CurrencyFactory
             $country->currency_decimal_places(),
             $country->currency_decimal_mark(),
             $country->currency_thousands_separator(),
-            $this->subunit_diff->getDiff($country->currency_code())
+            $this->currency_subunits->decimalsForCode($country->currency_code())
         );
     }
 
@@ -134,6 +135,7 @@ class CurrencyFactory
      *
      * @param string $code
      * @return Currency
+     * @throws InvalidIdentifierException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws InvalidArgumentException
@@ -171,7 +173,7 @@ class CurrencyFactory
             $country->currency_decimal_places(),
             $country->currency_decimal_mark(),
             $country->currency_thousands_separator(),
-            $this->subunit_diff->getDiff($code)
+            $this->currency_subunits->decimalsForCode($code)
         );
     }
 }
