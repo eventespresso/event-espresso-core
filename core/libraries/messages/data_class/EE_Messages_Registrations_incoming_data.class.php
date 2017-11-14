@@ -147,6 +147,8 @@ class EE_Messages_Registrations_incoming_data extends EE_Messages_incoming_data
             }
             if (is_int($first_item)) {
                 //k let's some basic validation here.  This isn't foolproof but better than nothing.
+                //the purpose of this validation is to verify that the ids sent in match valid registrations existing
+                //in the db.  If the count is different, then we know they aren't valid.
                 $count_for_ids = EEM_Registration::instance()->count(
                     array(
                         array(
