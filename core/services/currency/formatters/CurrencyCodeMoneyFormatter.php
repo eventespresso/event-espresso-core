@@ -1,6 +1,6 @@
 <?php
 
-namespace EventEspresso\core\services\currency;
+namespace EventEspresso\core\services\currency\formatters;
 
 use EventEspresso\core\domain\values\currency\Currency;
 

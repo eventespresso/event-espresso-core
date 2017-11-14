@@ -4,7 +4,7 @@ namespace EventEspresso\core\domain\values\currency;
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\services\currency\Calculator;
-use EventEspresso\core\services\currency\MoneyFormatter;
+use EventEspresso\core\services\currency\formatters\MoneyFormatter;
 use InvalidArgumentException;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
@@ -64,7 +64,7 @@ class Money
     public function __construct($amount, Currency $currency, Calculator $calculator, array $formatters)
     {
         $this->currency   = $currency;
-        $this->amount     = (string) $this->parseAmount($amount);
+        $this->amount     = $this->parseAmount($amount);
         $this->calculator = $calculator;
         $this->formatters = $formatters;
     }
@@ -92,9 +92,11 @@ class Money
 
 
     /**
+     * Convert's a standard unit amount into the subunits of the currency
+     *
      * @param float|int|string $amount money amount IN THE STANDARD UNIT FOR THE CURRENCY ie: dollars, Euros, etc
      *                                 example: $12.5 USD would equate to a value amount of 12.50
-     * @return float in the curency's standard unit also
+     * @return integer                 in the currency's subunit
      * @throws InvalidDataTypeException
      */
     private function parseAmount($amount)
@@ -128,7 +130,7 @@ class Money
         $amount *= pow(10, $this->precision());
         // then round up the remaining value if there is still a fractional amount left
         $amount = round($amount);
-        return (float)$amount;
+        return (int)$amount;
     }
 
 
@@ -137,7 +139,7 @@ class Money
      * adds or subtracts additional decimal places based on the value of the Money::EXTRA_PRECISION constant
      *
      * @param bool $positive
-     * @return int
+     * @return integer
      */
     private function precision($positive = true)
     {
@@ -161,7 +163,7 @@ class Money
         $amount = (string) $this->amount * pow(10, $this->precision(false));
         // then shave off our extra internal precision using the number of decimal places for the currency
         $amount = round($amount, $this->currency->subunitOrderOfMagnitudeDiff());
-        return $amount;
+        return (string) $amount;
     }
 
 
@@ -180,14 +182,14 @@ class Money
         $amount = (string) $this->amount * pow(10, Money::EXTRA_PRECISION * -1);
         // then shave off anything after the decimal
         $amount = round($amount);
-        return $amount;
+        return (int) $amount;
     }
 
 
 
     /**
      * applies formatting based on the specified formatting level
-     * corresponding to one of the constants on \EventEspresso\core\services\currency\MoneyFormatter
+     * corresponding to one of the constants on MoneyFormatter
      *
      * @param int $formatting_level
      * @return string

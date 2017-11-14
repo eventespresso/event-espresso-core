@@ -1,5 +1,5 @@
 <?php
-use EventEspresso\core\services\currency\InternationalMoneyFormatter;
+use EventEspresso\core\services\currency\formatters\InternationalMoneyFormatter;
 use EventEspresso\core\services\loaders\LoaderFactory;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
