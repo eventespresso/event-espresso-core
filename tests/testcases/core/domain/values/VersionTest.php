@@ -32,6 +32,7 @@ class VersionTest extends EE_UnitTestCase
         return array(
             array(1, 2, 3, 'rc', 4),
             array(1, 2, 3, 'beta', 4),
+            array(1, 2, 3, 'decaf', 4),
             array(1, 2, 3, 'p', 4),
             array(1, 2, 3, 'p'),
             array(1, 2, 3),
@@ -67,6 +68,7 @@ class VersionTest extends EE_UnitTestCase
             array(1, 2, 'three', 'rc', 4),
             array(1, 2, 3, 3.5, 4, 'InvalidArgumentException'),
             array(1, 2, 3, 'release', 4, 'InvalidArgumentException'),
+            array(1, 2, 3, 'decaff', 4, 'InvalidArgumentException'),
             array(1, 2, 3, 'rc', 4.1),
             array(1, 2, 3, 'rc', '001'),
         );
@@ -106,6 +108,9 @@ class VersionTest extends EE_UnitTestCase
             array(espresso_version(), espresso_version()),
             array('1.2.3.rc.4', '1.2.3.rc.004'),
             array('1.2.3.beta', '1.2.3.beta.000'),
+            array('1.2.3.decaf.123', '1.2.3.decaf'),
+            array('1.2.3.decaf', '1.2.3.decaf'),
+            array('1.2.3.p.123', '1.2.3.p'),
             array('1.2.3.p', '1.2.3.p'),
             array('1.2.3', '1.2.3.p'),
         );
@@ -164,6 +169,7 @@ class VersionTest extends EE_UnitTestCase
         return array(
             array(1, 2, 3, 'rc', 4),
             array(1, 2, 3, 'beta', 4),
+            array(1, 2, 3, 'decaf', 4),
             array(1, 2, 3, 'p', 4),
             array(1, 2, 3, 'p'),
             array(1, 2, 3),
@@ -325,6 +331,8 @@ class VersionTest extends EE_UnitTestCase
         return array(
             array('1.2.3.rc.004', 1, 2, 3, 'rc', 4),
             array('1.2.3.beta.004', 1, 2, 3, 'beta', 4),
+            array('1.2.3.decaf', 1, 2, 3, 'decaf', 4),
+            array('1.2.3.decaf', 1, 2, 3, 'decaf'),
             array('1.2.3.p', 1, 2, 3, 'p', 4),
             array('1.2.3.p', 1, 2, 3, 'p'),
             array('1.2.3.p', 1, 2, 3),
