@@ -29,7 +29,17 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 
 class EE_Bootstrap {
 
-	/**
+    /**
+     * @var EE_Request $request
+     */
+    protected $request;
+
+    /**
+     * @var EE_Response $response
+     */
+    protected $response;
+
+    /**
 	 * @access 	protected
 	 * @type 	EE_Request_Stack_Builder $_request_stack_builder
 	 */
@@ -43,7 +53,15 @@ class EE_Bootstrap {
 
 
 
-	public function __construct() {
+    /**
+     * EE_Bootstrap constructor.
+     *
+     * @param EE_Request  $request
+     * @param EE_Response $response
+     */
+    public function __construct(EE_Request $request, EE_Response $response) {
+        $this->request  = $request;
+        $this->response = $response;
         // construct request stack and run middleware apps as soon as all WP plugins are loaded
 		add_action( 'plugins_loaded', array( $this, 'run_request_stack' ), 0 );
 		// set framework for the rest of EE to hook into when loading
@@ -52,7 +70,7 @@ class EE_Bootstrap {
 		add_action( 'plugins_loaded', array( 'EE_Bootstrap', 'load_core_configuration' ), 5 );
 		add_action( 'plugins_loaded', array( 'EE_Bootstrap', 'register_shortcodes_modules_and_widgets' ), 7 );
 		add_action( 'plugins_loaded', array( 'EE_Bootstrap', 'brew_espresso' ), 9 );
-	}
+    }
 
 
 
