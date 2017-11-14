@@ -1124,7 +1124,11 @@ final class EE_System implements ResettableInterface
      */
     public function core_loaded_and_ready()
     {
-        if (! ($this->request_type->isApi() || $this->request_type->isFeed())) {
+        if (
+            $this->request_type->isAdmin()
+            || $this->request_type->isAjax()
+            || $this->request_type->isFrontend()
+        ) {
             $this->loader->getShared('EE_Session');
         }
         do_action('AHEE__EE_System__core_loaded_and_ready');
