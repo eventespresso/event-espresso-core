@@ -71,6 +71,15 @@ class RequestTypeContextChecker extends ContextChecker
     /**
      * @return bool
      */
+    public function isAjax()
+    {
+        return $this->isAdminAjax() || $this->isFrontAjax();
+    }
+
+
+    /**
+     * @return bool
+     */
     public function isApi()
     {
         return $this->request_type->slug() === RequestTypeContext::API;
@@ -110,6 +119,15 @@ class RequestTypeContextChecker extends ContextChecker
     public function isIframe()
     {
         return $this->request_type->slug() === RequestTypeContext::IFRAME;
+    }
+
+
+    /**
+     * @return string
+     */
+    public function slug()
+    {
+        return $this->request_type->slug();
     }
 
 }
