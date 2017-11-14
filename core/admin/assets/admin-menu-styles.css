@@ -613,3 +613,25 @@ input.ee-toggle-round-flat:checked + label:after {
 #dashboard_right_now li a.ee-dashboard-link-registrations:before {
 	content: "\f307"
 }
+
+/** persistent admin (nag) notices **/
+.espresso-notices.ee-nag-notice {
+    border-left: 4px solid #fcb93c;
+}
+
+.dismiss-ee-nag-notice-btn {
+    cursor: pointer;
+    float: right;
+    margin: .25em 0 !important;
+}
+
+.dismiss-ee-nag-notice-btn a {
+    color: #787878;
+    text-decoration: none;
+}
+
+.dismiss-ee-nag-notice-btn a .dashicons {
+    position: relative;
+    top: -1px;
+    margin-right: .25em;
+}

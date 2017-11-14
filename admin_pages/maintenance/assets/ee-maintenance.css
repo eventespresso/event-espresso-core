@@ -8,76 +8,81 @@ Styling the progress bar and migration page
 
 /* GENERAL DISPLAY STUFF */
 .espresso-header {
-	padding:.75em 1.5em .5em;
-	background: #fff;
-	color: #444;
+    padding:.75em 1.5em .5em;
+    background: #fff;
+    color: #444;
 }
 
 
 #migration-options-dv {
-	margin: 3em 0 0;
+    margin: 3em 0 0;
 }
 
 #start-migration {
-	display: inline-block;
-	float: left;
-	margin-left: 1em;
+    display: inline-block;
+    float: left;
+    margin-left: 1em;
 }
 
 /* PROGRESS BAR STUFF */
 
 #progress-responsive {
-	width: 70%;
-	float: left;
+    width: 70%;
+    float: left;
 
 }
 /* Progress bar containers */
 figure {
-	position: relative;
-	height: 25px;
-	border: 2px solid #A39D9C;
-	border-radius: 3px;
-	background: #fff;
-	margin: 0 0 1em;
+    position: relative;
+    height: 25px;
+    border: 2px solid #A39D9C;
+    border-radius: 3px;
+    background: #fff;
+    margin: 0 0 1em;
 }
 
 /* blue bar */
 #progress-responsive__bar {
-	background: #2EA2CC;
-	width: 0;
-	height: 25px;
-	border-radius: 2px;
+    background: #2EA2CC;
+    width: 0;
+    height: 25px;
+    border-radius: 2px;
 }
 
 /* Percent text */
 #progress-responsive__percent {
-	position: absolute;
-	top: 5px;
-	right: 10px;
-	font-size: 15px;
-	line-height: 15px;
-	font-weight: normal;
-	font-family: sans-serif;
-	color: #59595B;
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    font-size: 15px;
+    line-height: 15px;
+    font-weight: normal;
+    font-family: sans-serif;
+    color: #59595B;
 }
 
 table.widefat tbody>tr>td:first-child{
-	width: 20%;
+    width: 20%;
 }
 
 textarea.system_status_info{
-	width: 80%;
-	height: 100px;
-	overflow-y: scroll;
+    width: 80%;
+    height: 100px;
+    overflow-y: scroll;
 }
 
 #migration-options-dv table td {
 }
 #migration-options-dv .display-the-hidden,
 #migration-options-dv .hide-the-displayed {
-	float: right;
-	margin: .5em 0 0;
+    float: right;
+    margin: .5em 0 0;
 }
 #migration-risks {
-	cursor: pointer;
+    cursor: pointer;
+}
+
+/** Datetime Tools Styling **/
+#datetime-offset-fix-option input.large-text {
+    max-width: 200px;
 }

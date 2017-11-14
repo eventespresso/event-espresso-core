@@ -210,7 +210,13 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 		// remove ticket reservation
 		$this->decrease_reserved( $qty );
 		$this->set_sold( $sold );
-	}
+        do_action(
+            'AHEE__EE_Datetime__increase_sold',
+            $this,
+            $qty,
+            $sold
+        );
+    }
 
 
 
@@ -221,7 +227,13 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	public function decrease_sold( $qty = 1 ) {
 		$sold = $this->sold() - $qty;
 		$this->set_sold( $sold );
-	}
+        do_action(
+            'AHEE__EE_Datetime__decrease_sold',
+            $this,
+            $qty,
+            $sold
+        );
+    }
 
 
 
@@ -253,11 +265,17 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	 * increments reserved by amount passed by $qty
 	 *
 	 * @param int $qty
-	 * @return boolean
+	 * @return void
 	 */
 	public function increase_reserved( $qty = 1 ) {
 		$reserved = $this->reserved() + absint( $qty );
-		return $this->set_reserved( $reserved );
+        do_action(
+            'AHEE__EE_Datetime__increase_reserved',
+            $this,
+            $qty,
+            $reserved
+        );
+        $this->set_reserved( $reserved );
 	}
 
 
@@ -266,11 +284,17 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	 * decrements (subtracts) reserved by amount passed by $qty
 	 *
 	 * @param int $qty
-	 * @return boolean
+	 * @return void
 	 */
 	public function decrease_reserved( $qty = 1 ) {
 		$reserved = $this->reserved() - absint( $qty );
-		return $this->set_reserved( $reserved );
+        do_action(
+            'AHEE__EE_Datetime__decrease_reserved',
+            $this,
+            $qty,
+            $reserved
+        );
+        $this->set_reserved( $reserved );
 	}
 
 
