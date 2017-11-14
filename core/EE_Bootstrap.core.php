@@ -40,16 +40,14 @@ class EE_Bootstrap {
     protected $response;
 
     /**
-	 * @access 	protected
-	 * @type 	EE_Request_Stack_Builder $_request_stack_builder
-	 */
-	protected $_request_stack_builder;
+     * @var EE_Request_Stack_Builder $request_stack_builder
+     */
+    protected $request_stack_builder;
 
-	/**
-	 * @access 	protected
-	 * @type 	EE_Request_Stack $_request_stack
-	 */
-	protected $_request_stack;
+    /**
+     * @var EE_Request_Stack $request_stack
+     */
+    protected $request_stack;
 
 
 
@@ -86,15 +84,15 @@ class EE_Bootstrap {
         try {
             $this->load_autoloader();
             $this->set_autoloaders_for_required_files();
-            $this->_request_stack_builder = $this->build_request_stack();
-            $this->_request_stack = $this->_request_stack_builder->resolve(
+            $this->request_stack_builder = $this->build_request_stack();
+            $this->request_stack = $this->request_stack_builder->resolve(
                 new EE_Load_Espresso_Core()
             );
-            $this->_request_stack->handle_request(
+            $this->request_stack->handle_request(
                 new EE_Request($_GET, $_POST, $_COOKIE),
                 new EE_Response()
             );
-            $this->_request_stack->handle_response();
+            $this->request_stack->handle_response();
         } catch (Exception $exception) {
             new ExceptionStackTraceDisplay($exception);
         }
