@@ -11,7 +11,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 
 
 /**
- * Class CurrencySubunitDecimals
+ * Class CurrencySubunits
  * Class for retrieving a currency's decimal fractions,
  * or difference in order of magnitude between a currency's
  * super unit and subunit. For example, for USD, 1 penny is 1/100th of a dollar.
@@ -21,23 +21,23 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
  * @author         Mike Nelson
  * @since          4.9.52.p
  */
-class CurrencySubunitDecimals
+class CurrencySubunits
 {
 
     /**
-     * array keys are currency codes, values is the decimal fraction,
-     * or order of magnitude difference, between that currency's main units and subunits.
-     * E.g., USD the order of magnitude difference is 2.
+     * array keys are currency codes, values are a sub-array with the  following values:
+     *      "decimals" : the decimal fraction, or order of magnitude difference,
+     *                   between that currency's main units and subunits.
+     *                   E.g. for USD the decimal fraction is 2.
      *
-     * @var array $currency_decimals
+     * @var array $currency_subunits
      */
-    private $currency_decimals;
+    private $currency_subunits;
 
 
 
     /**
-     * Returns all the order of magnitude differences between currency main units
-     * and subunits
+     * Returns all the currency subunit data
      *
      * @return array
      * @throws EE_Error
@@ -45,24 +45,24 @@ class CurrencySubunitDecimals
     public function getAll()
     {
         $this->ensureInitialized();
-        return $this->currency_decimals;
+        return $this->currency_subunits;
     }
 
 
 
     /**
-     * Gets the order of magnitude difference between the currency's main units and subunits.
+     * Gets the decimal fraction, or order of magnitude difference between the currency's main units and subunits.
      *
      * @param $currency_code
      * @return mixed
      * @throws EE_Error
      * @throws InvalidIdentifierException
      */
-    public function forCode($currency_code)
+    public function decimalsForCode($currency_code)
     {
         $this->ensureInitialized();
-        if (isset($this->currency_decimals[$currency_code])) {
-            return $this->currency_decimals[$currency_code];
+        if (isset($this->currency_subunits[ $currency_code]['decimals'])) {
+            return $this->currency_subunits[ $currency_code]['decimals'];
         }
         throw new InvalidIdentifierException(
             '',
@@ -82,13 +82,13 @@ class CurrencySubunitDecimals
      */
     private function ensureInitialized()
     {
-        if ($this->currency_decimals === null) {
-            $this->currency_decimals = json_decode(
-                EEH_File::get_file_contents(__DIR__ . DS . 'currency-subunit-decimals.json'),
+        if ($this->currency_subunits === null) {
+            $this->currency_subunits = json_decode(
+                EEH_File::get_file_contents(__DIR__ . DS . 'currency-subunits.json'),
                 true
             );
         }
     }
+
+
 }
-// End of file CurrencySubunitOrderOfMagnitudeDiff.php
-// Location: core\services\currency/CurrencySubunitOrderOfMagnitudeDiff.php
