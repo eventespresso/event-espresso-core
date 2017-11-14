@@ -21,7 +21,7 @@ class EE_CPT_Base_Test extends EE_UnitTestCase{
 		$this->assertEquals('espresso_events',$e->post_type());
 		$e->save();
 		$this->assertEquals('espresso_events',$e->post_type());
-		
+
 		$a = EE_Attendee::new_instance( array( 'ATT_fname' => 'mr', 'ATT_lname' => 'perfect' ) );
 		$this->assertEquals('espresso_attendees',$a->post_type());
 		$a->save();
@@ -102,11 +102,14 @@ class EE_CPT_Base_Test extends EE_UnitTestCase{
             $this->new_model_obj_with_dependencies('Ticket'),
             'Ticket'
         );
+        $event_with_reg_desc = $event_with_registrations->get_pretty('EVT_desc');
+        $other_event_desc = $other_event->get_pretty('EVT_desc');
 
         //the shortcode for each event should be different when rendered
         $this->assertNotEquals(
-            $event_with_registrations->get_pretty('EVT_desc'),
-            $other_event->get_pretty('EVT_desc')
+            $event_with_reg_desc,
+            $other_event_desc,
+            "'{$event_with_reg_desc}' should not be the same as '{$other_event_desc}'"
         );
     }
 }
