@@ -20,11 +20,13 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 class Version
 {
 
-    const RELEASE_TYPE_RC   = 'rc';
+    const RELEASE_TYPE_RC    = 'rc';
 
-    const RELEASE_TYPE_BETA = 'beta';
+    const RELEASE_TYPE_BETA  = 'beta';
 
-    const RELEASE_TYPE_PROD = 'p';
+    const RELEASE_TYPE_DECAF = 'decaf';
+
+    const RELEASE_TYPE_PROD  = 'p';
 
     /**
      * @var int $major
@@ -213,6 +215,7 @@ class Version
         $valid_release_types = array(
             Version::RELEASE_TYPE_RC,
             Version::RELEASE_TYPE_BETA,
+            Version::RELEASE_TYPE_DECAF,
             Version::RELEASE_TYPE_PROD,
         );
         if (! in_array($release, $valid_release_types, true)) {
@@ -303,7 +306,7 @@ class Version
     public function __toString()
     {
         $version_string = "{$this->major}.{$this->minor}.{$this->patch}.{$this->release}";
-        if($this->release !== Version::RELEASE_TYPE_PROD) {
+        if($this->release !== Version::RELEASE_TYPE_PROD && $this->release !== Version::RELEASE_TYPE_DECAF) {
             $version_string .= '.' . str_pad($this->build, 3, '0', STR_PAD_LEFT);
         }
         return $version_string;
