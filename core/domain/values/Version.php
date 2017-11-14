@@ -91,6 +91,18 @@ class Version
         }
         // break apart incoming version string
         $version_parts = explode('.', $version_string);
+        // verify that version string at least contains {major}.{minor}.{patch}
+        if (count($version_parts) < 3) {
+            throw new InvalidArgumentException(
+                sprintf(
+                    esc_html__(
+                        'At minimum, a version string needs to be in a "{major}.{minor}.{patch}" format, therefore "%1$s" is not valid',
+                        'event_espresso'
+                    ),
+                    $version_string
+                )
+            );
+        }
         // add defaults for missing pieces
         $version_parts += array(0,0,0,'p',0);
         // reassign to individual variables
