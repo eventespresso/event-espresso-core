@@ -1,6 +1,6 @@
 <?php
 
-use EventEspresso\core\domain\entities\Context;
+use EventEspresso\core\domain\entities\contexts\Context;
 use EventEspresso\core\services\commands\attendee\CreateAttendeeCommand;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed');
