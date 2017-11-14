@@ -92,7 +92,7 @@ class EE_Bootstrap
             $this->request_stack         = $this->request_stack_builder->resolve(
                 new EE_Load_Espresso_Core()
             );
-        $this->request_stack->handle_request($this->request, $this->response);
+            $this->request_stack->handle_request($this->request, $this->response);
             $this->request_stack->handle_response();
         } catch (Exception $exception) {
             new ExceptionStackTraceDisplay($exception);
