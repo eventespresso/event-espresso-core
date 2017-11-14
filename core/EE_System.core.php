@@ -817,13 +817,6 @@ final class EE_System implements ResettableInterface
                 $request_type_context_detector->detectRequestTypeContext()
             )
         );
-        $slug = $this->request_type->slug();
-        add_action(
-            'shutdown',
-            function() use ($slug) {
-                \EEH_Debug_Tools::printr($slug, '$this->request_type->slug()', __FILE__, __LINE__);
-            }
-        );
     }
 
 
