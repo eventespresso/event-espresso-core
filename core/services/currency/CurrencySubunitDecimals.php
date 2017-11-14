@@ -2,6 +2,8 @@
 
 namespace EventEspresso\core\services\currency;
 
+use EE_Error;
+use EEH_File;
 use EventEspresso\core\exceptions\InvalidIdentifierException;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
@@ -36,9 +38,11 @@ class CurrencySubunitDecimals
     /**
      * Returns all the order of magnitude differences between currency main units
      * and subunits
+     *
      * @return array
+     * @throws EE_Error
      */
-    public function getDiffs()
+    public function getAll()
     {
         $this->ensureInitialized();
         return $this->currency_decimals;
@@ -47,13 +51,14 @@ class CurrencySubunitDecimals
 
 
     /**
-     * Gets the order of magnitude difference between the currency's main units
-     * and subunits.
+     * Gets the order of magnitude difference between the currency's main units and subunits.
+     *
      * @param $currency_code
      * @return mixed
+     * @throws EE_Error
      * @throws InvalidIdentifierException
      */
-    public function getDiff($currency_code)
+    public function forCode($currency_code)
     {
         $this->ensureInitialized();
         if (isset($this->currency_decimals[$currency_code])) {
@@ -71,15 +76,15 @@ class CurrencySubunitDecimals
 
 
     /**
-     * Just verifies this object\s data from the filesystem has been loaded
+     * Just verifies this object's data from the filesystem has been loaded
+     *
+     * @throws EE_Error
      */
     private function ensureInitialized()
     {
         if ($this->currency_decimals === null) {
             $this->currency_decimals = json_decode(
-                file_get_contents(
-                    __DIR__ . DS . 'currency-subunit-decimals.json'
-                ),
+                EEH_File::get_file_contents(__DIR__ . DS . 'currency-subunit-decimals.json'),
                 true
             );
         }
