@@ -4,6 +4,7 @@ namespace EventEspresso\core\domain\services\contexts;
 
 use EE_Request;
 use EventEspresso\core\domain\entities\contexts\RequestTypeContext;
+use EventEspresso\core\services\loaders\LoaderInterface;
 use InvalidArgumentException;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
@@ -22,6 +23,16 @@ class RequestTypeContextDetector
 {
 
     /**
+     * @var boolean $is_activation_request
+     */
+    private $is_activation_request;
+
+    /**
+     * @var LoaderInterface $loader
+     */
+    private $loader;
+
+    /**
      * @var EE_Request $request
      */
     private $request;
@@ -30,11 +41,15 @@ class RequestTypeContextDetector
     /**
      * RequestTypeContextDetector constructor.
      *
-     * @param EE_Request $request
+     * @param LoaderInterface $loader
+     * @param EE_Request      $request
+     * @param bool            $is_activation_request
      */
-    public function __construct(EE_Request $request)
+    public function __construct(LoaderInterface $loader, EE_Request $request, $is_activation_request = false)
     {
-        $this->request = $request;
+        $this->loader                = $loader;
+        $this->request               = $request;
+        $this->is_activation_request = filter_var($is_activation_request, FILTER_VALIDATE_BOOLEAN);
     }
 
 
@@ -44,66 +59,88 @@ class RequestTypeContextDetector
      */
     public function detectRequestTypeContext()
     {
+        // Detect Activations
+        if ($this->is_activation_request) {
+            return $this->loader->getShared(
+                'EventEspresso\core\domain\entities\contexts\RequestTypeContext',
+                array(
+                    RequestTypeContext::ACTIVATION,
+                    esc_html__('The current request is for some form of activation', 'event_espresso')
+                )
+            );
+        }
         // Detect REST API
-        if(defined('REST_REQUEST') && REST_REQUEST) {
-            return new RequestTypeContext(
-                RequestTypeContext::API,
-                esc_html__('The current request is for the REST API', 'event_espresso')
+        if (defined('REST_REQUEST') && REST_REQUEST) {
+            return $this->loader->getShared(
+                'EventEspresso\core\domain\entities\contexts\RequestTypeContext',
+                array(
+                    RequestTypeContext::API,
+                    esc_html__('The current request is for the REST API', 'event_espresso'),
+                )
             );
         }
         // Detect AJAX
         if (defined('DOING_AJAX') && DOING_AJAX) {
             if (filter_var($this->request->get('ee_front_ajax'), FILTER_VALIDATE_BOOLEAN)) {
-                return new RequestTypeContext(
-                    RequestTypeContext::FRONT_AJAX,
-                    esc_html__('The current request is for the frontend via AJAX', 'event_espresso')
+                return $this->loader->getShared(
+                    'EventEspresso\core\domain\entities\contexts\RequestTypeContext',
+                    array(
+                        RequestTypeContext::FRONT_AJAX,
+                        esc_html__('The current request is for the frontend via AJAX', 'event_espresso'),
+                    )
                 );
             }
-            return new RequestTypeContext(
-                RequestTypeContext::ADMIN_AJAX,
-                esc_html__('The current request is for the admin via AJAX', 'event_espresso')
+            return $this->loader->getShared(
+                'EventEspresso\core\domain\entities\contexts\RequestTypeContext',
+                array(
+                    RequestTypeContext::ADMIN_AJAX,
+                    esc_html__('The current request is for the admin via AJAX', 'event_espresso'),
+                )
             );
         }
-        if(is_admin()){
-            return new RequestTypeContext(
-                RequestTypeContext::ADMIN,
-                esc_html__('The current request is for the admin', 'event_espresso')
+        if (is_admin()) {
+            return $this->loader->getShared(
+                'EventEspresso\core\domain\entities\contexts\RequestTypeContext',
+                array(
+                    RequestTypeContext::ADMIN,
+                    esc_html__('The current request is for the admin', 'event_espresso'),
+                )
             );
         }
         // Detect iFrames
         if (
-            apply_filters(
-                'FHEE__EventEspresso_core_domain_services_contexts_RequestTypeContextDetector__detectRequestTypeContext__iframe_route',
-                $this->request->get('event_list', '') === 'iframe'
-                || $this->request->get('ticket_selector', '') === 'iframe'
-                || $this->request->get('calendar', '') === 'iframe'
-            )
+        apply_filters(
+            'FHEE__EventEspresso_core_domain_services_contexts_RequestTypeContextDetector__detectRequestTypeContext__iframe_route',
+            $this->request->get('event_list', '') === 'iframe'
+            || $this->request->get('ticket_selector', '') === 'iframe'
+            || $this->request->get('calendar', '') === 'iframe'
+        )
         ) {
-            return new RequestTypeContext(
-                RequestTypeContext::IFRAME,
-                esc_html__('The current request is for an iframe', 'event_espresso')
+            return $this->loader->getShared(
+                'EventEspresso\core\domain\entities\contexts\RequestTypeContext',
+                array(
+                    RequestTypeContext::IFRAME,
+                    esc_html__('The current request is for an iframe', 'event_espresso'),
+                )
             );
         }
         // Detect Feeds
         if ($this->request->get('feed', false)) {
-            return new RequestTypeContext(
-                RequestTypeContext::FEED,
-                esc_html__('The current request is for a feed (ie: RSS)', 'event_espresso')
+            return $this->loader->getShared(
+                'EventEspresso\core\domain\entities\contexts\RequestTypeContext',
+                array(
+                    RequestTypeContext::FEED,
+                    esc_html__('The current request is for a feed (ie: RSS)', 'event_espresso'),
+                )
             );
         }
-        // Detect Activations
-        // todo: determine if this is an activation
-        // todo: (which will be easy if/when FET-10766-extract-activation-detection gets merged into master)
-        // if ( ??? ) {
-        //     return new RequestTypeContext(
-        //         RequestTypeContext::ACTIVATION,
-        //         esc_html__('The current request is for some form of activation', 'event_espresso')
-        //     );
-        // }
         // and by process of elimination...
-        return new RequestTypeContext(
-            RequestTypeContext::FRONTEND,
-            esc_html__('The current request is for the frontend', 'event_espresso')
+        return $this->loader->getShared(
+            'EventEspresso\core\domain\entities\contexts\RequestTypeContext',
+            array(
+                RequestTypeContext::FRONTEND,
+                esc_html__('The current request is for the frontend', 'event_espresso'),
+            )
         );
     }
 
