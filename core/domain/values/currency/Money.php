@@ -123,7 +123,7 @@ class Money
             );
         }
         // remove any non numeric values but leave the decimal
-        $amount = (float) preg_replace('/([^0-9\\.])/', '', $amount);
+        $amount = (float) preg_replace('/([^0-9\\.-])/', '', $amount);
         // shift the decimal position by the number of decimal places used internally
         // ex: 12.5 for a currency using 2 decimal places, would become 1250
         // then if our extra internal precision was 3, it would become 1250000
