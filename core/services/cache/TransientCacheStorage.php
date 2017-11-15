@@ -213,6 +213,14 @@ class TransientCacheStorage implements CacheStorageInterface
             $this->updateTransients();
             return null;
         }
+
+        // for non standard cache items, remove the key from our tracking,
+        // but proceed to retrieve the transient so that it also gets removed from the db
+        if($this->transients[ $transient_key ] <= time()){
+            unset($this->transients[ $transient_key ]);
+            $this->updateTransients();
+        }
+
         $content = get_transient($transient_key);
         return $content !== false ? $content : null;
     }
