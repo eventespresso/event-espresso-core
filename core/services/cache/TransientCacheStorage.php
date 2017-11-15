@@ -387,10 +387,8 @@ class TransientCacheStorage implements CacheStorageInterface
             $transient_key = strpos($transient_key,  '_transient_') === 0
                 ? str_replace('_transient_', '', $transient_key)
                 : $transient_key;
-            if(delete_transient($transient_key)){
-                unset($this->transients[$transient_key]);
-                $counter++;
-            }
+            unset($this->transients[$transient_key]);
+            $counter++;
         }
         return $counter > 0;
     }
