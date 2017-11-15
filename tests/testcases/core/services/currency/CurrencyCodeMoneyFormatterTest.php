@@ -1,5 +1,5 @@
 <?php
-use EventEspresso\core\services\currency\CurrencyCodeMoneyFormatter;
+use EventEspresso\core\services\currency\formatters\CurrencyCodeMoneyFormatter;
 use EventEspresso\core\services\loaders\LoaderFactory;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
@@ -13,6 +13,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  * @package       Event Espresso
  * @author        Brent Christensen
  * @since         $VID:$
+ * @group 10619
  */
 class CurrencyCodeMoneyFormatterTest extends \EE_UnitTestCase
 {

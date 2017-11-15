@@ -655,6 +655,17 @@ class EEH_File extends EEH_Base implements EEHI_File {
 		$wp_filesystem = EEH_File::_get_wp_filesystem( $local_filepath );
 		return str_replace( WP_CONTENT_DIR . DS, $wp_filesystem->wp_content_dir(), $local_filepath );
 	}
+
+
+
+    /**
+     * Resets the file helper's state. Useful between tests that may have used a mock
+     * filesystem.
+     */
+	public static function reset()
+    {
+        self::$_wp_filesystem_direct = null;
+    }
 }
 // End of file EEH_File.helper.php
 // Location: /helpers/EEH_File.helper.php

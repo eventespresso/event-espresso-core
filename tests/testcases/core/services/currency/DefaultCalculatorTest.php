@@ -12,6 +12,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  * @package       Event Espresso
  * @author        Brent Christensen
  * @since         $VID:$
+ * @group 10619
  */
 class DefaultCalculatorTest extends \EE_UnitTestCase
 {
