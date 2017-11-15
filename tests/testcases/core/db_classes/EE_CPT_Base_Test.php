@@ -16,7 +16,8 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * @group core/db_classes
  */
 class EE_CPT_Base_Test extends EE_UnitTestCase{
-	function test_post_type(){
+
+    public  function test_post_type(){
 		$e = EE_Event::new_instance(array('EVT_name'=>'e1'));
 		$this->assertEquals('espresso_events',$e->post_type());
 		$e->save();
@@ -27,7 +28,9 @@ class EE_CPT_Base_Test extends EE_UnitTestCase{
 		$a->save();
 		$this->assertEquals('espresso_attendees',$a->post_type());
 	}
-	function test_parent(){
+
+
+	public function test_parent(){
 		$e = EE_Event::new_instance(array('parent'=>12));
 		$this->assertEquals($e->parent(),12);
 	}
@@ -39,6 +42,7 @@ class EE_CPT_Base_Test extends EE_UnitTestCase{
      */
 	public function testWpPostSavedModelObj()
     {
+        /** @var EE_Event $e */
         $e = $this->new_model_obj_with_dependencies('Event');
         $post = $e->wp_post();
         $this->assertEquals(
@@ -61,7 +65,8 @@ class EE_CPT_Base_Test extends EE_UnitTestCase{
      */
     public function testWpPostUnsavedModelObj()
     {
-        $e = $this->new_model_obj_with_dependencies('Event',null,false);
+        /** @var EE_Event $e */
+        $e    = $this->new_model_obj_with_dependencies('Event',null,false);
         $post = $e->wp_post();
         $this->assertEquals(
             $e->ID(),
@@ -86,6 +91,7 @@ class EE_CPT_Base_Test extends EE_UnitTestCase{
      */
     public function testGetPrettyCurrentPostRemainingTheSame()
     {
+        $this->loadShortcodesManagerAndShortcodes();
         $transaction = $this->new_typical_transaction();
         $event_with_registrations = $transaction->primary_registration()->event();
         $event_with_registrations->set_description('[ESPRESSO_EVENT_ATTENDEES]');
