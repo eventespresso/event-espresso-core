@@ -198,27 +198,28 @@ class TransientCacheStorage implements CacheStorageInterface
      */
     public function get($transient_key, $standard_cache = true)
     {
-        // to avoid cache stampedes (AKA:dogpiles) for standard cache items,
-        // check if known cache expires within the next minute,
-        // and if so, remove it from our tracking and and return nothing.
-        // this should trigger the cache content to be regenerated during this request,
-        // while allowing any following requests to still access the existing cache
-        // until it gets replaced with the refreshed content
-        if (
-            $standard_cache
-            && isset($this->transients[$transient_key])
-            && $this->transients[$transient_key] - time() <= MINUTE_IN_SECONDS
-        ) {
-            unset($this->transients[$transient_key]);
-            $this->updateTransients();
-            return null;
-        }
+        if (isset($this->transients[ $transient_key ])) {
+            // to avoid cache stampedes (AKA:dogpiles) for standard cache items,
+            // check if known cache expires within the next minute,
+            // and if so, remove it from our tracking and and return nothing.
+            // this should trigger the cache content to be regenerated during this request,
+            // while allowing any following requests to still access the existing cache
+            // until it gets replaced with the refreshed content
+            if (
+                $standard_cache
+                && $this->transients[$transient_key] - time() <= MINUTE_IN_SECONDS
+            ) {
+                unset($this->transients[$transient_key]);
+                $this->updateTransients();
+                return null;
+            }
 
-        // for non standard cache items, remove the key from our tracking,
-        // but proceed to retrieve the transient so that it also gets removed from the db
-        if($this->transients[ $transient_key ] <= time()){
-            unset($this->transients[ $transient_key ]);
-            $this->updateTransients();
+            // for non standard cache items, remove the key from our tracking,
+            // but proceed to retrieve the transient so that it also gets removed from the db
+            if ($this->transients[$transient_key] <= time()) {
+                unset($this->transients[$transient_key]);
+                $this->updateTransients();
+            }
         }
 
         $content = get_transient($transient_key);
@@ -387,6 +388,7 @@ class TransientCacheStorage implements CacheStorageInterface
             $transient_key = strpos($transient_key,  '_transient_') === 0
                 ? str_replace('_transient_', '', $transient_key)
                 : $transient_key;
+            delete_transient($transient_key);
             unset($this->transients[$transient_key]);
             $counter++;
         }
