@@ -16,6 +16,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  * @package       Event Espresso
  * @author        Brent Christensen
  * @since         $VID:$
+ * @group 10619
  */
 class CreateMoneyTest extends \EE_UnitTestCase
 {

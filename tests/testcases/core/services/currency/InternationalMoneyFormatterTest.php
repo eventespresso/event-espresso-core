@@ -13,6 +13,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  * @package       Event Espresso
  * @author        Brent Christensen
  * @since         $VID:$
+ * @group 10619
  */
 class InternationalMoneyFormatterTest extends \EE_UnitTestCase
 {

@@ -10,13 +10,14 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @package			Event Espresso
  * @subpackage
  * @author				Mike Nelson
+ * @group 10619
  *
  * Based off wp core's tests/phpunit/tests/filesystem/base.php
  * 
  *
  */
 class EEH_File_Test extends EE_UnitTestCase {
-	function setUp() {
+	public function setUp() {
 		parent::setUp();
 		add_filter( 'filesystem_method_file', array( $this, 'filter_abstraction_file' ) );
 		add_filter( 'filesystem_method', array( $this, 'filter_fs_method' ) );
@@ -26,11 +27,13 @@ class EEH_File_Test extends EE_UnitTestCase {
 		$wp_filesystem->init('/');
 	}
 
-	function tearDown() {
+	public function tearDown() {
 		global $wp_filesystem;
 		remove_filter( 'filesystem_method_file', array( $this, 'filter_abstraction_file' ) );
 		remove_filter( 'filesystem_method', array( $this, 'filter_fs_method' ) );
+		$wp_filesystem = null;
 		unset( $wp_filesystem );
+		EEH_File::reset();
 
 		parent::tearDown();
 	}
