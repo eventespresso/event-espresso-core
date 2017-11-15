@@ -75,7 +75,7 @@ class EE_Money_Field_Test extends EE_UnitTestCase
             'money' => array(
                 1.23,
                 LoaderFactory::getLoader()->getShared(
-                    MoneyFactory::class
+                    'EventEspresso\core\services\currency\MoneyFactory'
                 )->createForSite(1.23)
             ),
         );
@@ -105,7 +105,7 @@ class EE_Money_Field_Test extends EE_UnitTestCase
     public function dataProviderForPrepareForSet()
     {
         $factory = LoaderFactory::getLoader()->getShared(
-            MoneyFactory::class
+            'EventEspresso\core\services\currency\MoneyFactory'
         );
         return array(
             'float'       => array($factory->createForSite(1.23), 1.23),
@@ -149,7 +149,7 @@ class EE_Money_Field_Test extends EE_UnitTestCase
     public function dataProviderForPrepareForSetFromDb()
     {
         $factory = LoaderFactory::getLoader()->getShared(
-            MoneyFactory::class
+            'EventEspresso\core\services\currency\MoneyFactory'
         );
         return array(
             'basic'           => array(
@@ -191,7 +191,7 @@ class EE_Money_Field_Test extends EE_UnitTestCase
     public function dataProviderForPrepareForUseInDb()
     {
         $factory = LoaderFactory::getLoader()->getShared(
-            MoneyFactory::class
+            'EventEspresso\core\services\currency\MoneyFactory'
         );
         return array(
             'money'           => array(
@@ -239,7 +239,7 @@ class EE_Money_Field_Test extends EE_UnitTestCase
     public function dataProviderForPrettyEchoing()
     {
         $factory = LoaderFactory::getLoader()->getShared(
-            MoneyFactory::class
+            'EventEspresso\core\services\currency\MoneyFactory'
         );
         return array(
             'legacy_basic'           => array(

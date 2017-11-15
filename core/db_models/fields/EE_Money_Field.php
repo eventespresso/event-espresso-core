@@ -40,7 +40,7 @@ class EE_Money_Field extends EE_Float_Field
         MoneyFactory $factory = null
     ) {
         if (! $factory instanceof MoneyFactory) {
-            $factory = LoaderFactory::getLoader()->getShared(MoneyFactory::class);
+            $factory = LoaderFactory::getLoader()->getShared('EventEspresso\core\services\currency\MoneyFactory');
         }
         $this->money_factory = $factory;
         parent::__construct($table_column, $nicename, $nullable, $default_value);
