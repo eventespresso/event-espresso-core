@@ -414,6 +414,21 @@ class MoneyTest extends \EE_UnitTestCase
         $this->assertEquals('1234.5', $money->amount());
         $this->assertEquals('1234.5', (string)$money);
     }
+
+    /**
+     * @group 10619
+     */
+    public function testCreateNegativeAmount()
+    {
+        $USD = $this->currency();
+        $money = new Money(
+            -5,
+            $USD,
+            $this->money_factory->calculator(),
+            $this->money_factory->formatters()
+        );
+        $this->assertEquals(-5, $money->amount());
+    }
 }
 // End of file MoneyTest.php
 // Location: tests/testcases/core/services/currency/MoneyTest.php
