@@ -15,7 +15,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package EventEspresso\core\domain\entities\contexts
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.51
  */
 class RequestTypeContext extends Context
 {
@@ -28,7 +28,7 @@ class RequestTypeContext extends Context
     /**
      * indicates that the current request is for the admin but is not being made via AJAX
      */
-    const ADMIN      = 'non-ajax-admin-request';
+    const ADMIN = 'non-ajax-admin-request';
 
     /**
      * indicates that the current request is for the admin AND is being made via AJAX
@@ -38,7 +38,17 @@ class RequestTypeContext extends Context
     /**
      * indicates that the current request is for the EE REST API
      */
-    const API        = 'rest-api';
+    const API = 'rest-api';
+
+    /**
+     * indicates that the current request is from the command line
+     */
+    const CLI = 'command-line';
+
+    /**
+     * indicates that the current request is for a WP_Cron
+     */
+    const CRON = 'wp-cron';
 
     /**
      * indicates that the current request is for a feed (ie: RSS)
@@ -48,7 +58,7 @@ class RequestTypeContext extends Context
     /**
      * indicates that the current request is for the frontend but is not being made via AJAX
      */
-    const FRONTEND   = 'non-ajax-frontend-request';
+    const FRONTEND = 'non-ajax-frontend-request';
 
     /**
      * indicates that the current request is for the frontend AND is being made via AJAX
@@ -58,12 +68,12 @@ class RequestTypeContext extends Context
     /**
      * indicates that the current request is for content that is to be displayed within an iframe
      */
-    const IFRAME     = 'iframe-request';
+    const IFRAME = 'iframe-request';
 
     /**
      * @var array $valid_request_types
      */
-    private $valid_request_types =  array();
+    private $valid_request_types = array();
 
 
     /**
@@ -76,7 +86,7 @@ class RequestTypeContext extends Context
     public function __construct($slug, $description)
     {
         parent::__construct($slug, $description);
-        if(! in_array($this->slug(), $this->validRequestTypes(), true)){
+        if (! in_array($this->slug(), $this->validRequestTypes(), true)) {
             throw new InvalidArgumentException(
                 sprintf(
                     esc_html__(
@@ -95,7 +105,7 @@ class RequestTypeContext extends Context
      */
     public function validRequestTypes()
     {
-        if(empty($this->valid_request_types)) {
+        if (empty($this->valid_request_types)) {
             $this->valid_request_types = apply_filters(
                 'FHEE__EventEspresso_core_domain_entities_contexts_RequestTypeContext__validRequestTypes',
                 array(
@@ -103,6 +113,8 @@ class RequestTypeContext extends Context
                     RequestTypeContext::ADMIN,
                     RequestTypeContext::ADMIN_AJAX,
                     RequestTypeContext::API,
+                    RequestTypeContext::CLI,
+                    RequestTypeContext::CRON,
                     RequestTypeContext::FEED,
                     RequestTypeContext::FRONTEND,
                     RequestTypeContext::FRONT_AJAX,
@@ -112,8 +124,6 @@ class RequestTypeContext extends Context
         }
         return $this->valid_request_types;
     }
-
-
 
 
 
