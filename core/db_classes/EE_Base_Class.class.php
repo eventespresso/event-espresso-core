@@ -1,4 +1,9 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) {
+<?php
+
+use EventEspresso\core\domain\values\currency\Money;
+use EventEspresso\core\exceptions\InvalidEntityException;
+
+if ( ! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
 do_action('AHEE_log', __FILE__, ' FILE LOADED', '');
@@ -1111,6 +1116,43 @@ abstract class EE_Base_Class
             return false;
         }
         return $this->_fields[$field_name];
+    }
+
+
+
+    /**
+     * Gets a Money object for the specified field. Please note that this should only be
+     * used for fields corresponding to EE_Money_Fields, and it will always return a money object,
+     * or else it will throw an exception.
+     *
+     * @param $field_name
+     * @return mixed
+     * @throws InvalidEntityException
+     * @throws EE_Error
+     */
+    public function getMoneyObject($field_name)
+    {
+        $field = $this->get_model()->field_settings_for($field_name);
+        $value = isset($this->_fields[$field_name]) ? $this->_fields[$field_name] : null;
+        if (! $field instanceof EE_Money_Field
+            || ! $value instanceof Money) {
+            throw new InvalidEntityException(
+                get_class($value),
+                'Money',
+                sprintf(
+                    esc_html__(
+                        // @codingStandardsIgnoreStart
+                        'Tried to retrieve money value from %1$s with ID %2$s from field %3$s but no money object present.',
+                        // @codingStandardsIgnoreEnd
+                        'event_espresso'
+                    ),
+                    get_class($this),
+                    $this->ID(),
+                    $field_name
+                )
+            );
+        }
+        return $value;
     }
 
 

@@ -1,4 +1,7 @@
 <?php
+
+use EventEspresso\core\domain\values\currency\Money;
+
 if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
@@ -1032,6 +1035,26 @@ class EE_Base_Class_Test extends EE_UnitTestCase
         $this->assertEquals('Europe/London', $event->get_timezone());
         //then verify we successfully swapped the datetime's timezone
         $this->assertEquals('Europe/London', $dtt->get_timezone());
+    }
+
+    public function testGetMoneyObjectNormal()
+    {
+        $ticket = $this->new_model_obj_with_dependencies('Ticket');
+        $this->assertTrue(
+            $ticket->getMoneyObject('TKT_price')
+            instanceof Money
+        );
+    }
+
+
+
+    /**
+     * @expectedException EE_Error
+     */
+    public function getMoneyObjectNotMoney()
+    {
+        $t = $this->new_model_obj_with_dependencies('Ticket');
+        $t->getMoneyObject('TKT_name');
     }
 }
 
