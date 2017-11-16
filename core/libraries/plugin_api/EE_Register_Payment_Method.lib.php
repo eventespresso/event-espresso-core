@@ -172,8 +172,11 @@ class EE_Register_Payment_Method implements EEI_Plugin_API
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
+     * @access private  Developers do NOT use this method.  It's only public for PHP5.3 closure support (see deregister)
+     *                  When we drop support for PHP5.3 this will be made private again.  You have been warned.
+     *
      */
-    private static function getPaymentMethodCapabilities(array $settings)
+    public static function getPaymentMethodCapabilities(array $settings)
     {
         $payment_method_manager = LoaderFactory::getLoader()->getShared('EE_Payment_Method_Manager');
         $payment_method_caps = array('administrator' => array());
