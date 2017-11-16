@@ -46,7 +46,7 @@ class RequestTypeContextChecker extends ContextChecker
      */
     public function isActivation()
     {
-        return $this->request_type->slug() === RequestTypeContext::ACTIVATION;
+        return $this->request_type->isActivation();
     }
 
 
@@ -83,6 +83,24 @@ class RequestTypeContextChecker extends ContextChecker
     public function isApi()
     {
         return $this->request_type->slug() === RequestTypeContext::API;
+    }
+
+
+    /**
+     * @return bool
+     */
+    public function isCli()
+    {
+        return $this->request_type->slug() === RequestTypeContext::CLI;
+    }
+
+
+    /**
+     * @return bool
+     */
+    public function isCron()
+    {
+        return $this->request_type->slug() === RequestTypeContext::CRON;
     }
 
 
