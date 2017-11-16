@@ -122,6 +122,10 @@ class EE_Money_Field_Test extends EE_UnitTestCase
                 $factory->createForSite(3200.32),
                 '$3,200.32 USD'
             ),
+            'null' => array(
+                $factory->createForSite(0),
+                null
+            )
         );
     }
 
