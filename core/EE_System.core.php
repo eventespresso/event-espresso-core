@@ -774,8 +774,7 @@ final class EE_System implements ResettableInterface
         //if current user is an admin and it's not an ajax or rest request
         if (
             ! isset($notices['errors'])
-            && ! $this->request_type->isAjax()
-            && ! $this->request_type->isApi()
+            && ! $this->request_type->isAdmin()
             && apply_filters(
                 'FHEE__EE_System__redirect_to_about_ee__do_redirect',
                 $this->capabilities->current_user_can('manage_options', 'espresso_about_default')
