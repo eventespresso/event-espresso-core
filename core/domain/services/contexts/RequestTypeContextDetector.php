@@ -22,11 +22,6 @@ class RequestTypeContextDetector
 {
 
     /**
-     * @var boolean $is_activation_request
-     */
-    private $is_activation_request;
-
-    /**
      * @var RequestTypeContextFactory $factory
      */
     private $factory;
@@ -41,14 +36,12 @@ class RequestTypeContextDetector
      * RequestTypeContextDetector constructor.
      *
      * @param EE_Request                $request
-     * @param bool                      $is_activation_request
      * @param RequestTypeContextFactory $factory
      */
-    public function __construct(EE_Request $request, $is_activation_request = false, RequestTypeContextFactory $factory)
+    public function __construct(EE_Request $request, RequestTypeContextFactory $factory)
     {
-        $this->request               = $request;
-        $this->is_activation_request = filter_var($is_activation_request, FILTER_VALIDATE_BOOLEAN);
-        $this->factory               = $factory;
+        $this->request = $request;
+        $this->factory = $factory;
     }
 
 
@@ -58,10 +51,6 @@ class RequestTypeContextDetector
      */
     public function detectRequestTypeContext()
     {
-        // Detect Activations
-        if ($this->is_activation_request) {
-            return $this->factory->create(RequestTypeContext::ACTIVATION);
-        }
         // Detect REST API
         if (defined('REST_REQUEST') && REST_REQUEST) {
             return $this->factory->create(RequestTypeContext::API);
@@ -87,12 +76,12 @@ class RequestTypeContextDetector
         }
         // Detect iFrames
         if (
-            apply_filters(
-                'FHEE__EventEspresso_core_domain_services_contexts_RequestTypeContextDetector__detectRequestTypeContext__iframe_route',
-                $this->request->get('event_list', '') === 'iframe'
-                || $this->request->get('ticket_selector', '') === 'iframe'
-                || $this->request->get('calendar', '') === 'iframe'
-            )
+        apply_filters(
+            'FHEE__EventEspresso_core_domain_services_contexts_RequestTypeContextDetector__detectRequestTypeContext__iframe_route',
+            $this->request->get('event_list', '') === 'iframe'
+            || $this->request->get('ticket_selector', '') === 'iframe'
+            || $this->request->get('calendar', '') === 'iframe'
+        )
         ) {
             return $this->factory->create(RequestTypeContext::IFRAME);
         }
