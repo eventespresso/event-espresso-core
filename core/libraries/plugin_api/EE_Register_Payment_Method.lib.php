@@ -144,15 +144,17 @@ class EE_Register_Payment_Method implements EEI_Plugin_API
     public static function deregister($module_id = null)
     {
         if (isset(self::$_settings[$module_id])) {
+
             //set action for just this module id to delay deregistration until core is loaded and ready.
+            $module_settings = self::$_settings[$module_id];
+            unset(self::$_settings[$module_id]);
             add_action(
                 'AHEE__EE_System__core_loaded_and_ready',
-                function () use ($module_id) {
+                function () use ($module_settings) {
                     $capabilities = LoaderFactory::getLoader()->getShared('EE_Capabilities');
                     $capabilities->removeCaps(
-                        self::getPaymentMethodCapabilities(self::$_settings[$module_id])
+                        EE_Register_Payment_Method::getPaymentMethodCapabilities($module_settings)
                     );
-                    unset(self::$_settings[$module_id]);
                 }
             );
         }
