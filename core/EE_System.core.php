@@ -806,9 +806,12 @@ final class EE_System implements ResettableInterface
         $request_type_context_detector = $this->loader->getShared(
             'EventEspresso\core\domain\services\contexts\RequestTypeContextDetector',
             array(
-                $this->loader,
                 $this->request,
-                $this->_req_type !== EE_System::req_type_normal
+                $this->_req_type !== EE_System::req_type_normal,
+                $this->loader->getShared(
+                    'EventEspresso\core\domain\services\contexts\RequestTypeContextFactory',
+                    array($this->loader)
+                )
             )
         );
         $this->request_type = $this->loader->getShared(
