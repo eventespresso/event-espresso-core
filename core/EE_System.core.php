@@ -807,18 +807,17 @@ final class EE_System implements ResettableInterface
             'EventEspresso\core\domain\services\contexts\RequestTypeContextDetector',
             array(
                 $this->request,
-                $this->_req_type !== EE_System::req_type_normal,
                 $this->loader->getShared(
                     'EventEspresso\core\domain\services\contexts\RequestTypeContextFactory',
                     array($this->loader)
                 )
             )
         );
+        $request_type_context = $request_type_context_detector->detectRequestTypeContext();
+        $request_type_context->setIsActivation($this->_req_type !== EE_System::req_type_normal);
         $this->request_type = $this->loader->getShared(
             'EventEspresso\core\domain\services\contexts\RequestTypeContextChecker',
-            array(
-                $request_type_context_detector->detectRequestTypeContext()
-            )
+            array($request_type_context)
         );
     }
 
@@ -1059,7 +1058,7 @@ final class EE_System implements ResettableInterface
     public function perform_activations_upgrades_and_migrations()
     {
         //first check if we had previously attempted to setup EE's directories but failed
-        if (EEH_Activation::upload_directories_incomplete()) {
+        if ($this->request_type->isActivation() && EEH_Activation::upload_directories_incomplete()) {
             EEH_Activation::create_upload_directories();
         }
         do_action('AHEE__EE_System__perform_activations_upgrades_and_migrations');
@@ -1136,7 +1135,7 @@ final class EE_System implements ResettableInterface
             require_once EE_PUBLIC . 'template_tags.php';
         }
         do_action('AHEE__EE_System__set_hooks_for_shortcodes_modules_and_addons');
-        if($this->request_type->isFrontend())  {
+        if($this->request_type->isFrontend() || $this->request_type->isIframe())  {
             $this->loader->getShared('EventEspresso\core\services\assets\Registry');
         }
     }
