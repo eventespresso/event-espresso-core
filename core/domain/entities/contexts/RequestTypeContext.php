@@ -71,6 +71,11 @@ class RequestTypeContext extends Context
     const IFRAME = 'iframe-request';
 
     /**
+     * @var boolean $is_activation
+     */
+    private $is_activation = false;
+
+    /**
      * @var array $valid_request_types
      */
     private $valid_request_types = array();
@@ -123,6 +128,24 @@ class RequestTypeContext extends Context
             );
         }
         return $this->valid_request_types;
+    }
+
+
+    /**
+     * @return bool
+     */
+    public function isActivation()
+    {
+        return $this->is_activation;
+    }
+
+
+    /**
+     * @param bool $is_activation
+     */
+    public function setIsActivation($is_activation)
+    {
+        $this->is_activation = filter_var($is_activation, FILTER_VALIDATE_BOOLEAN);
     }
 
 
