@@ -223,7 +223,7 @@ if (function_exists('espresso_version')) {
                 );
                 // bootstrap EE and the request stack
                 new EE_Bootstrap(
-                    new EE_Request($_GET, $_POST, $_COOKIE),
+                    new EE_Request($_GET, $_POST, $_COOKIE, $_SERVER),
                     new EE_Response()
                 );
             } catch (Exception $e) {
