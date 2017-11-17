@@ -1129,12 +1129,12 @@ final class EE_System implements ResettableInterface
         // load_espresso_template_tags
         if (
             is_readable(EE_PUBLIC . 'template_tags.php')
-            && ($this->request_type->isFrontend() || $this->request_type->isIframe())
+            && ($this->request_type->isFrontend() || $this->request_type->isIframe() || $this->request_type->isFeed())
         ) {
             require_once EE_PUBLIC . 'template_tags.php';
         }
         do_action('AHEE__EE_System__set_hooks_for_shortcodes_modules_and_addons');
-        if ($this->request_type->isFrontend() || $this->request_type->isIframe()) {
+        if ($this->request_type->isAdmin() || $this->request_type->isFrontend() || $this->request_type->isIframe()) {
             $this->loader->getShared('EventEspresso\core\services\assets\Registry');
         }
     }
