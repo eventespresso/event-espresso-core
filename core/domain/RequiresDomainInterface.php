@@ -21,7 +21,7 @@ interface RequiresDomainInterface
     /**
      * @param DomainInterface $domain
      */
-    public function setDomain(DomainInterface $domain = null);
+    public function setDomain(DomainInterface $domain);
 
 
     /**
