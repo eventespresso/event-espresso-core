@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\domain\RequiresDependencyMapInterface;
+use EventEspresso\core\domain\RequiresDomainInterface;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 
@@ -947,21 +949,29 @@ class EE_Register_Addon implements EEI_Plugin_API
         $loader = EventEspresso\core\services\loaders\LoaderFactory::getLoader();
         $addon = $loader->getShared(
             self::$_settings[ $addon_name ]['class_name'],
-            array(
-                $loader->getShared('EE_Dependency_Map'),
-                // if a domain_fqcn is specified, then load that class
-                self::$_settings[ $addon_name ]['domain_fqcn'] !== ''
-                    ? $loader->getShared(
-                        self::$_settings[ $addon_name ]['domain_fqcn'],
-                        array(
-                            self::$_settings[ $addon_name ]['main_file_path'],
-                            self::$_settings[ $addon_name ]['version']
-                        )
-                    )
-                    : null,
-                'EE_Registry::create(addon)' => true
-            )
+            array('EE_Registry::create(addon)' => true)
         );
+        // setter inject dep map if required
+        if($addon instanceof RequiresDependencyMapInterface && $addon->dependencyMap() === null){
+            $addon->setDependencyMap($loader->getShared('EE_Dependency_Map'));
+        }
+        // setter inject domain if required
+        if(
+            $addon instanceof RequiresDomainInterface
+            && self::$_settings[ $addon_name ]['domain_fqcn'] !== ''
+            && $addon->domain() === null
+        ){
+            $addon->setDomain(
+                $loader->getShared(
+                    self::$_settings[ $addon_name ]['domain_fqcn'],
+                    array(
+                        self::$_settings[ $addon_name ]['main_file_path'],
+                        self::$_settings[ $addon_name ]['version']
+                    )
+                )
+            );
+        }
+
         $addon->set_name($addon_name);
         $addon->set_plugin_slug(self::$_settings[ $addon_name ]['plugin_slug']);
         $addon->set_plugin_basename(self::$_settings[ $addon_name ]['plugin_basename']);
