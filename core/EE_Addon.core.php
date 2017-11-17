@@ -102,13 +102,17 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
 
 
     /**
-     * @param DomainInterface   $domain
-     * @param EE_Dependency_Map $dependency_map
+     * @param EE_Dependency_Map $dependency_map [optional]
+     * @param DomainInterface   $domain         [optional]
      */
-    public function __construct(EE_Dependency_Map $dependency_map, DomainInterface $domain = null)
+    public function __construct(EE_Dependency_Map $dependency_map = null, DomainInterface $domain = null)
     {
-        $this->setDependencyMap($dependency_map);
-        $this->setDomain($domain);
+        if($dependency_map instanceof EE_Dependency_Map) {
+            $this->setDependencyMap($dependency_map);
+        }
+        if ($domain instanceof DomainInterface) {
+            $this->setDomain($domain);
+        }
         add_action('AHEE__EE_System__load_controllers__load_admin_controllers', array($this, 'admin_init'));
     }
 
@@ -134,7 +138,7 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
     /**
      * @param DomainInterface $domain
      */
-    public function setDomain(DomainInterface $domain = null)
+    public function setDomain(DomainInterface $domain)
     {
         $this->domain = $domain;
     }
