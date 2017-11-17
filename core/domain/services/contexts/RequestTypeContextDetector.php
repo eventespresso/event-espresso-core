@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\domain\services\contexts;
 
+use EE_Recommended_Versions;
 use EE_Request;
 use EventEspresso\core\domain\Domain;
 use InvalidArgumentException;
@@ -93,7 +94,9 @@ class RequestTypeContextDetector
      */
     private function isEspressoRestApiRequest()
     {
-        $ee_rest_url_prefix = trim(rest_get_url_prefix(), '/');
+        $ee_rest_url_prefix = EE_Recommended_Versions::check_wp_version('4.4.0')
+            ?  trim(rest_get_url_prefix(), '/')
+            : 'wp-json';
         $ee_rest_url_prefix .= '/' . Domain::API_NAMESPACE;
         return $this->uriPathMatches($ee_rest_url_prefix);
     }
