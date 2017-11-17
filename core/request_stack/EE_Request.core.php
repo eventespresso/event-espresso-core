@@ -90,13 +90,13 @@ class EE_Request implements InterminableInterface
      * @param array $cookie
      * @param array $server
      */
-    public function __construct(array $get, array $post, array $cookie, array $server)
+    public function __construct(array $get, array $post, array $cookie, array $server = array())
     {
         // grab request vars
         $this->_get    = $get;
         $this->_post   = $post;
         $this->_cookie = $cookie;
-        $this->_server  = $server;
+        $this->_server  = ! empty($server) ? $server : $_SERVER;
         $this->_params = array_merge($this->_get, $this->_post);
         // AJAX ???
         $this->ajax       = defined('DOING_AJAX') && DOING_AJAX;

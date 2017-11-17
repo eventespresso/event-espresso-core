@@ -486,7 +486,7 @@ class CoffeeShopTest extends EE_UnitTestCase
             'CoffeeFactory',
             function() use ($coffee_shop) {
                 /** @var EE_Request $request */
-                $request = $coffee_shop->brew('EE_Request', array($_GET, $_POST, $_COOKIE));
+                $request = $coffee_shop->brew('EE_Request', array($_GET, $_POST, $_COOKIE, $_SERVER));
                 $bean_type = $request->get('bean_type', 'Honduran');
                 $bean_type = in_array($bean_type, array('Honduran', 'Kenyan'))
                     ? $bean_type
