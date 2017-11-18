@@ -29,8 +29,8 @@ class DetectLogin extends Middleware
      */
     public function handle_request(EE_Request $request, EE_Response $response)
     {
-        $this->_request  = $request;
-        $this->_response = $response;
+        $this->request  = $request;
+        $this->response = $response;
         global $pagenow;
         if (
             in_array(
@@ -40,10 +40,10 @@ class DetectLogin extends Middleware
             )
             && ! $request->get('ee_load_on_login')
         ) {
-            $this->_response->terminate_request();
+            $this->response->terminate_request();
         }
-        $this->_response = $this->process_request_stack($this->_request, $this->_response);
-        return $this->_response;
+        $this->response = $this->process_request_stack($this->request, $this->response);
+        return $this->response;
     }
 
 

@@ -33,21 +33,21 @@ class RecommendedVersions extends Middleware
      */
     public function handle_request(EE_Request $request, EE_Response $response)
     {
-        $this->_request  = $request;
-        $this->_response = $response;
+        $this->request  = $request;
+        $this->response = $response;
         // check required WP version
         if (! $this->minimumWordPressVersionRequired()) {
-            $this->_request->un_set('activate', true);
+            $this->request->un_set('activate', true);
             add_action('admin_notices', array($this, 'minimum_wp_version_error'), 1);
-            $this->_response->terminate_request();
-            $this->_response->deactivate_plugin();
+            $this->response->terminate_request();
+            $this->response->deactivate_plugin();
         }
         // check recommended PHP version
         if (! $this->minimumPhpVersionRecommended()) {
             $this->displayMinimumRecommendedPhpVersionNotice();
         }
-        $this->_response = $this->process_request_stack($this->_request, $this->_response);
-        return $this->_response;
+        $this->response = $this->process_request_stack($this->request, $this->response);
+        return $this->response;
     }
 
 
@@ -143,7 +143,7 @@ class RecommendedVersions extends Middleware
      */
     private function displayMinimumRecommendedPhpVersionNotice()
     {
-        if ($this->_request->isAdmin()) {
+        if ($this->request->isAdmin()) {
             new PersistentAdminNotice(
                 'php_version_' . str_replace('.', '-', EE_MIN_PHP_VER_RECOMMENDED) . '_recommended',
                 sprintf(

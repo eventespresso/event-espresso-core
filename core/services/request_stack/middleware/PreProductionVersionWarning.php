@@ -31,11 +31,11 @@ class PreProductionVersionWarning extends Middleware
      */
     public function handle_request(EE_Request $request, EE_Response $response)
     {
-        $this->_request  = $request;
-        $this->_response = $response;
+        $this->request  = $request;
+        $this->response = $response;
         $this->displayPreProductionVersionWarning();
-        $this->_response = $this->process_request_stack($this->_request, $this->_response);
-        return $this->_response;
+        $this->response = $this->process_request_stack($this->request, $this->response);
+        return $this->response;
     }
 
 
@@ -77,7 +77,7 @@ class PreProductionVersionWarning extends Middleware
      */
     public function preProductionVersionAdminNotice()
     {
-        if ($this->_request->isAdmin()) {
+        if ($this->request->isAdmin()) {
             new PersistentAdminNotice(
                 'preProductionVersionAdminNotice_' . EVENT_ESPRESSO_VERSION,
                 $this->warningNotice()

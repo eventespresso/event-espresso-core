@@ -34,14 +34,14 @@ abstract class Middleware implements EEI_Request_Decorator
     protected $request_stack;
 
     /**
-     * @type    EE_Request $_request
+     * @type    EE_Request $request
      */
-    protected $_request;
+    protected $request;
 
     /**
-     * @type    EE_Response $_response
+     * @type    EE_Response $response
      */
-    protected $_response;
+    protected $response;
 
 
 
@@ -64,12 +64,12 @@ abstract class Middleware implements EEI_Request_Decorator
      */
     protected function process_request_stack(EE_Request $request, EE_Response $response)
     {
-        $this->_request  = $request;
-        $this->_response = $response;
-        if (! $this->_response->request_terminated()) {
-            $this->_response = $this->request_stack->handle_request($this->_request, $this->_response);
+        $this->request  = $request;
+        $this->response = $response;
+        if (! $this->response->request_terminated()) {
+            $this->response = $this->request_stack->handle_request($this->request, $this->response);
         }
-        return $this->_response;
+        return $this->response;
     }
 
 
