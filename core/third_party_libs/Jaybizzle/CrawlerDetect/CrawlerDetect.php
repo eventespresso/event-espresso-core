@@ -8,11 +8,11 @@
  * with this source code in the file LICENSE.
  */
 
-namespace Jaybizzle\CrawlerDetect;
+namespace EventEspressoVendor\Jaybizzle\CrawlerDetect;
 
-use Jaybizzle\CrawlerDetect\Fixtures\Headers;
-use Jaybizzle\CrawlerDetect\Fixtures\Crawlers;
-use Jaybizzle\CrawlerDetect\Fixtures\Exclusions;
+use EventEspressoVendor\Jaybizzle\CrawlerDetect\Fixtures\Headers;
+use EventEspressoVendor\Jaybizzle\CrawlerDetect\Fixtures\Crawlers;
+use EventEspressoVendor\Jaybizzle\CrawlerDetect\Fixtures\Exclusions;
 
 /**
  * Class CrawlerDetect

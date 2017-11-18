@@ -8,7 +8,7 @@
  * with this source code in the file LICENSE.
  */
 
-namespace Jaybizzle\CrawlerDetect\Fixtures;
+namespace EventEspressoVendor\Jaybizzle\CrawlerDetect\Fixtures;
 
 /**
  * Class Headers
