@@ -146,7 +146,6 @@ class CrawlerDetect
      * Set the user agent.
      *
      * @param string $userAgent
-     * @return string
      */
     public function setUserAgent($userAgent)
     {
@@ -157,7 +156,7 @@ class CrawlerDetect
                 }
             }
         }
-        return $userAgent;
+        $this->userAgent = $userAgent;
     }
 
 
@@ -169,7 +168,8 @@ class CrawlerDetect
      */
     public function isCrawler($userAgent = null)
     {
-        $agent = $userAgent !== null ? $userAgent : $this->userAgent;
+        $this->setUserAgent($userAgent);
+        $agent = $this->userAgent();
         $agent = preg_replace('/' . $this->compiledExclusions . '/i', '', $agent);
         if (trim($agent) === '') {
             return false;
@@ -191,4 +191,15 @@ class CrawlerDetect
     {
         return isset($this->matches[0]) ? $this->matches[0] : null;
     }
+
+
+    /**
+     * @return null
+     */
+    public function userAgent()
+    {
+        return $this->userAgent;
+    }
+
+
 }
