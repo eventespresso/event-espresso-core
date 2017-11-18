@@ -41,6 +41,7 @@ class EE_Psr4AutoloaderInit {
             // register the base directories for the namespace prefix
             EE_Psr4AutoloaderInit::$psr4_loader->addNamespace('EventEspresso', EE_PLUGIN_DIR_PATH);
             EE_Psr4AutoloaderInit::$psr4_loader->addNamespace('EventEspressoBatchRequest', EE_LIBRARIES . 'batch');
+            EE_Psr4AutoloaderInit::$psr4_loader->addNamespace('EventEspressoVendor', EE_THIRD_PARTY);
             $initialized = true;
         }
     }
