@@ -52,7 +52,7 @@ class PreProductionVersionWarning extends Middleware
             return;
         }
         // skip stable releases
-        if (substr(EVENT_ESPRESSO_VERSION, -2) === '.p') {
+        if (substr(EVENT_ESPRESSO_VERSION, -5) !== '.beta') {
             return;
         }
         // site admin has authorized use of non-stable release candidate for production
