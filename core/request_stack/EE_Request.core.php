@@ -72,6 +72,13 @@ class EE_Request implements InterminableInterface
      */
     private $_ip_address;
 
+    /**
+     * true if current user appears to be some kind of bot
+     *
+     * @var bool $is_bot
+     */
+    private $is_bot;
+
 
 
     /**
@@ -337,6 +344,24 @@ class EE_Request implements InterminableInterface
             }
         }
         return $visitor_ip;
+    }
+
+
+    /**
+     * @return bool
+     */
+    public function isBot()
+    {
+        return $this->is_bot;
+    }
+
+
+    /**
+     * @param bool $is_bot
+     */
+    public function setIsBot($is_bot)
+    {
+        $this->is_bot = $is_bot;
     }
 
 
