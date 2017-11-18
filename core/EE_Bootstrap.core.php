@@ -134,9 +134,10 @@ class EE_Bootstrap
         $stack_apps = apply_filters(
             'FHEE__EE_Bootstrap__build_request_stack__stack_apps',
             array(
-                'EE_Detect_Login',
-                'EE_Recommended_Versions',
-                'EE_Alpha_Banner_Warning',
+                'EventEspresso\core\services\request_stack\middleware\DetectLogin',
+                'EventEspresso\core\services\request_stack\middleware\RecommendedVersions',
+                'EventEspresso\core\services\request_stack\middleware\PreProductionVersionWarning',
+                'EventEspresso\core\services\request_stack\middleware\BotDetector',
             )
         );
         // load middleware onto stack : FILO (First In Last Out)
