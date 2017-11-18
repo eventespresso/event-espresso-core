@@ -146,11 +146,17 @@ class EE_Session implements SessionIdentifierInterface
      */
     private $_last_gc;
 
+    /**
+     * @var EE_Request
+     */
+    private $request;
+
 
 
     /**
      * @singleton method used to instantiate class object
      * @param CacheStorageInterface $cache_storage
+     * @param EE_Request            $request
      * @param EE_Encryption         $encryption
      * @return EE_Session
      * @throws InvalidArgumentException
@@ -159,13 +165,14 @@ class EE_Session implements SessionIdentifierInterface
      */
     public static function instance(
         CacheStorageInterface $cache_storage = null,
+        EE_Request $request,
         EE_Encryption $encryption = null
     ) {
         // check if class object is instantiated
         // session loading is turned ON by default, but prior to the init hook, can be turned back OFF via:
         // add_filter( 'FHEE_load_EE_Session', '__return_false' );
         if (! self::$_instance instanceof EE_Session && apply_filters('FHEE_load_EE_Session', true)) {
-            self::$_instance = new self($cache_storage, $encryption);
+            self::$_instance = new self($cache_storage, $request, $encryption);
         }
         return self::$_instance;
     }
@@ -176,18 +183,22 @@ class EE_Session implements SessionIdentifierInterface
      * protected constructor to prevent direct creation
      *
      * @param CacheStorageInterface $cache_storage
+     * @param EE_Request            $request
      * @param EE_Encryption         $encryption
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    protected function __construct(CacheStorageInterface $cache_storage, EE_Encryption $encryption = null)
-    {
-
+    protected function __construct(
+        CacheStorageInterface $cache_storage,
+        EE_Request $request,
+        EE_Encryption $encryption = null
+    ) {
         // session loading is turned ON by default, but prior to the init hook, can be turned back OFF via: add_filter( 'FHEE_load_EE_Session', '__return_false' );
         if (! apply_filters('FHEE_load_EE_Session', true)) {
             return;
         }
+        $this->request = $request;
         do_action('AHEE_log', __FILE__, __FUNCTION__, '');
         if (! defined('ESPRESSO_SESSION')) {
             define('ESPRESSO_SESSION', true);
@@ -529,9 +540,9 @@ class EE_Session implements SessionIdentifierInterface
         // get our modified session ID
         $this->_sid = $this->_generate_session_id();
         // and the visitors IP
-        $this->_ip_address = $this->_visitor_ip();
+        $this->_ip_address = $this->request->ip_address();
         // set the "user agent"
-        $this->_user_agent = isset($_SERVER['HTTP_USER_AGENT']) ? esc_attr($_SERVER['HTTP_USER_AGENT']) : false;
+        $this->_user_agent = $this->request->userAgent();
         // now let's retrieve what's in the db
         $session_data = $this->_retrieve_session_data();
         if (! empty($session_data)) {
@@ -773,7 +784,7 @@ class EE_Session implements SessionIdentifierInterface
                     break;
                 case 'ip_address' :
                     // visitor ip address
-                    $session_data['ip_address'] = $this->_visitor_ip();
+                    $session_data['ip_address'] = $this->request->ip_address();
                     break;
                 case 'user_agent' :
                     // visitor user_agent
@@ -856,21 +867,22 @@ class EE_Session implements SessionIdentifierInterface
     private function _save_session_to_db()
     {
         if (
+            $this->request->isBot()
             // if the current request is NOT one of the following
-        ! (
-            // an an AJAX request from the frontend
-            EE_Registry::instance()->REQ->front_ajax
-            || (
-                // OR an admin request that is NOT AJAX
-                ! (defined('DOING_AJAX') && DOING_AJAX)
-                && is_admin()
+            || ! (
+                // an an AJAX request from the frontend
+                EE_Registry::instance()->REQ->front_ajax
+                || (
+                    // OR an admin request that is NOT AJAX
+                    ! (defined('DOING_AJAX') && DOING_AJAX)
+                    && is_admin()
+                )
+                || (
+                    // OR an espresso page
+                    EE_Registry::instance()->REQ instanceof EE_Request_Handler
+                    && EE_Registry::instance()->REQ->is_espresso_page()
+                )
             )
-            || (
-                // OR an espresso page
-                EE_Registry::instance()->REQ instanceof EE_Request_Handler
-                && EE_Registry::instance()->REQ->is_espresso_page()
-            )
-        )
         ) {
             return false;
         }
@@ -902,41 +914,6 @@ class EE_Session implements SessionIdentifierInterface
             $this->_lifespan
         );
     }
-
-
-
-    /**
-     * _visitor_ip
-     *    attempt to get IP address of current visitor from server
-     * plz see: http://stackoverflow.com/a/2031935/1475279
-     *
-     * @access public
-     * @return string
-     */
-    private function _visitor_ip()
-    {
-        $visitor_ip  = '0.0.0.0';
-        $server_keys = array(
-            'HTTP_CLIENT_IP',
-            'HTTP_X_FORWARDED_FOR',
-            'HTTP_X_FORWARDED',
-            'HTTP_X_CLUSTER_CLIENT_IP',
-            'HTTP_FORWARDED_FOR',
-            'HTTP_FORWARDED',
-            'REMOTE_ADDR',
-        );
-        foreach ($server_keys as $key) {
-            if (isset($_SERVER[ $key ])) {
-                foreach (array_map('trim', explode(',', $_SERVER[ $key ])) as $ip) {
-                    if ($ip === '127.0.0.1' || filter_var($ip, FILTER_VALIDATE_IP) !== false) {
-                        $visitor_ip = $ip;
-                    }
-                }
-            }
-        }
-        return $visitor_ip;
-    }
-
 
 
     /**
@@ -1004,7 +981,6 @@ class EE_Session implements SessionIdentifierInterface
      */
     public function clear_session($class = '', $function = '')
     {
-        //echo '<h3 style="color:#999;line-height:.9em;"><span style="color:#2EA2CC">' . __CLASS__ . '</span>::<span style="color:#E76700">' . __FUNCTION__ . '( ' . $class . '::' . $function . '() )</span><br/><span style="font-size:9px;font-weight:normal;">' . __FILE__ . '</span>    <b style="font-size:10px;">  ' . __LINE__ . ' </b></h3>';
         do_action('AHEE_log', __FILE__, __FUNCTION__, 'session cleared by : ' . $class . '::' . $function . '()');
         $this->reset_cart();
         $this->reset_checkout();
@@ -1082,10 +1058,7 @@ class EE_Session implements SessionIdentifierInterface
      */
     public function wp_loaded()
     {
-        if (
-            EE_Registry::instance()->REQ instanceof EE_Request_Handler
-            && EE_Registry::instance()->REQ->is_set('clear_session')
-        ) {
+        if ($this->request->is_set('clear_session')) {
             $this->clear_session(__CLASS__, __FUNCTION__);
         }
     }
