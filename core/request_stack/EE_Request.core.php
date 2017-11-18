@@ -73,6 +73,11 @@ class EE_Request implements InterminableInterface
     private $_ip_address;
 
     /**
+     * @var string $user_agent
+     */
+    private $user_agent;
+
+    /**
      * true if current user appears to be some kind of bot
      *
      * @var bool $is_bot
@@ -348,6 +353,27 @@ class EE_Request implements InterminableInterface
 
 
     /**
+     * @return string
+     */
+    public function userAgent()
+    {
+        return $this->user_agent;
+    }
+
+
+    /**
+     * @param string $user_agent
+     */
+    public function setUserAgent($user_agent = '')
+    {
+        if ($user_agent === '' || ! is_string($user_agent)) {
+            $user_agent = isset($_SERVER['HTTP_USER_AGENT']) ? esc_attr($_SERVER['HTTP_USER_AGENT']) : '';
+        }
+        $this->user_agent = $user_agent;
+    }
+
+
+    /**
      * @return bool
      */
     public function isBot()
@@ -361,7 +387,7 @@ class EE_Request implements InterminableInterface
      */
     public function setIsBot($is_bot)
     {
-        $this->is_bot = $is_bot;
+        $this->is_bot = filter_var($is_bot, FILTER_VALIDATE_BOOLEAN);
     }
 
 
