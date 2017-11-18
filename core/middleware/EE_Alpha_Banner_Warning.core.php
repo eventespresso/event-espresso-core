@@ -1,22 +1,20 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
 /**
  * Class EE_Alpha_Banner_Warning
- *
  * Displays a warning banner if an ALPHA version of EE is being run
  *
+ * @deprecated
  * @package 	Event Espresso
  * @subpackage 	core
  * @author 		Brent Christensen
  * @since 		4.8.20
- *
  */
 
 class EE_Alpha_Banner_Warning extends EE_Middleware {
 
 
 	/**
-	 * converts a Request to a Response
-	 *
+     * @deprecated
 	 * @param 	EE_Request 	$request
 	 * @param 	EE_Response $response
 	 * @return 	EE_Response
@@ -32,72 +30,56 @@ class EE_Alpha_Banner_Warning extends EE_Middleware {
 
 
 	/**
-	 *    display_alpha_banner_warning
-	 *
-	 *    displays message on frontend of site notifying admin that EE has been temporarily placed into maintenance mode
-	 *
-	 * @access    public
-	 * @return    string
+     * @deprecated
+     * @return    string
 	 */
 	public function display_alpha_banner_warning() {
-		// skip AJAX requests
-		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
-			return;
-		}
-		// skip stable releases
-		if ( strpos( EVENT_ESPRESSO_VERSION, '.alpha' ) === false ) {
-			return;
-		}
-		// post release candidate warning
-		if ( is_admin() ) {
-			add_action( 'admin_notices', array( $this, 'alpha_banner_admin_notice' ), -999 );
-		} else {
-			// site admin has authorized use of non-stable release candidate for production
-			if ( defined( 'ALLOW_NON_STABLE_RELEASE_ON_LIVE_SITE' ) && ALLOW_NON_STABLE_RELEASE_ON_LIVE_SITE ) {
-				return;
-			}
-			add_action( 'shutdown', array( $this, 'alpha_banner_warning_notice' ), 10 );
-		}
-	}
+        EE_Error::doing_it_wrong(
+            __METHOD__,
+            esc_html__(
+                'This method is deprecated. Please use EventEspresso\core\services\request_stack\middleware\PreProductionVersionWarning::displayPreProductionVersionWarning() instead. All Event Espresso request stack classes have been moved to \core\services\request_stack  and are now under the EventEspresso\core\services\request_stack namespace',
+                'event_espresso'
+            ),
+            '4.9.52',
+            '4.10.0'
+        );
+    }
 
 
 
 	/**
-	 *    alpha_banner_admin_notice
-	 *    displays admin notice that current version of EE is not a stable release
-	 *
-	 * @access public
-	 * @return void
+     * @deprecated
+     * @return void
 	 */
 	public function alpha_banner_admin_notice() {
-		EE_Error::add_attention(
-			sprintf(
-				__( 'This version of Event Espresso is for testing and/or evaluation purposes only. It is %1$snot%2$s considered a stable release and should therefore %1$snot%2$s be activated on a live or production website.', 'event_espresso' ),
-				'<strong>',
-				'</strong>'
-			),
-			__FILE__, __FUNCTION__, __LINE__
-		);
-	}
+        EE_Error::doing_it_wrong(
+            __METHOD__,
+            esc_html__(
+                'This method is deprecated. Please use EventEspresso\core\services\request_stack\middleware\PreProductionVersionWarning::preProductionVersionAdminNotice() instead. All Event Espresso request stack classes have been moved to \core\services\request_stack  and are now under the EventEspresso\core\services\request_stack namespace',
+                'event_espresso'
+            ),
+            '4.9.52',
+            '4.10.0'
+        );
+    }
 
 
 
 	/**
-	 *    alpha_banner_warning_notice
-	 *    displays message on frontend of site notifying admin that current version of EE is not a stable release
-	 *
-	 * @access public
-	 * @return void
+     * @deprecated
+     * @return void
 	 */
 	public function alpha_banner_warning_notice() {
-		printf(
-			__( '%1$sThis version of Event Espresso is for testing and/or evaluation purposes only. It is %2$snot%3$s considered a stable release and should therefore %2$snot%3$s be activated on a live or production website.%4$s', 'event_espresso' ),
-			'<div id="ee-release-candidate-notice-dv" class="ee-really-important-notice-dv"><p>',
-			'<strong>',
-			'</strong>',
-			'</p></div>'
-		);
-	}
+        EE_Error::doing_it_wrong(
+            __METHOD__,
+            esc_html__(
+                'This method is deprecated. Please use EventEspresso\core\services\request_stack\middleware\PreProductionVersionWarning::preProductionVersionWarningNotice() instead. All Event Espresso request stack classes have been moved to \core\services\request_stack  and are now under the EventEspresso\core\services\request_stack namespace',
+                'event_espresso'
+            ),
+            '4.9.52',
+            '4.10.0'
+        );
+    }
 
 
 }
