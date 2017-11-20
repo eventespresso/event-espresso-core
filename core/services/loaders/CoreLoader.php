@@ -4,10 +4,16 @@ namespace EventEspresso\core\services\loaders;
 
 use EE_Error;
 use EE_Registry;
+use EventEspresso\core\exceptions\InvalidClassException;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidIdentifierException;
 use EventEspresso\core\services\container\CoffeeMaker;
 use EventEspresso\core\services\container\CoffeeShop;
+use EventEspresso\core\services\container\exceptions\InstantiationException;
+use EventEspresso\core\services\container\exceptions\ServiceExistsException;
 use EventEspresso\core\services\container\exceptions\ServiceNotFoundException;
 use InvalidArgumentException;
+use OutOfBoundsException;
 use ReflectionException;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
@@ -59,6 +65,12 @@ class CoreLoader implements LoaderDecoratorInterface
      * @param array  $arguments
      * @param bool   $shared
      * @return mixed
+     * @throws OutOfBoundsException
+     * @throws ServiceExistsException
+     * @throws InstantiationException
+     * @throws InvalidIdentifierException
+     * @throws InvalidDataTypeException
+     * @throws InvalidClassException
      * @throws EE_Error
      * @throws ServiceNotFoundException
      * @throws ReflectionException
@@ -68,8 +80,11 @@ class CoreLoader implements LoaderDecoratorInterface
         if($this->generator instanceof EE_Registry) {
             return $this->generator->create($fqcn, $arguments, $shared);
         }
-        $shared = $shared ? CoffeeMaker::BREW_SHARED : CoffeeMaker::BREW_NEW;
-        return $this->generator->brew($fqcn, $arguments, $shared);
+        return $this->generator->brew(
+            $fqcn,
+            $arguments,
+            $shared ? CoffeeMaker::BREW_SHARED : CoffeeMaker::BREW_NEW
+        );
 
     }
 
@@ -83,8 +98,8 @@ class CoreLoader implements LoaderDecoratorInterface
      */
     public function reset()
     {
-        if (method_exists($this->generator, 'reset')) {
-            $this->generator->reset();
+        if ($this->generator instanceof EE_Registry) {
+            EE_Registry::reset();
         }
     }
 
