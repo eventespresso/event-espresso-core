@@ -138,6 +138,7 @@ class CoreLoader
             'EE_Session_Mock',
             array(
                 'EventEspresso\core\services\cache\TransientCacheStorage' => EE_Dependency_Map::load_from_cache,
+                'EE_Request'                                              => EE_Dependency_Map::load_from_cache,
                 'EE_Encryption'                                           => EE_Dependency_Map::load_from_cache,
             )
         );
