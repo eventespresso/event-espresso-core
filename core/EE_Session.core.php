@@ -149,7 +149,7 @@ class EE_Session implements SessionIdentifierInterface
     /**
      * @var EE_Request
      */
-    private $request;
+    protected $request;
 
 
 
@@ -165,7 +165,7 @@ class EE_Session implements SessionIdentifierInterface
      */
     public static function instance(
         CacheStorageInterface $cache_storage = null,
-        EE_Request $request,
+        EE_Request $request = null,
         EE_Encryption $encryption = null
     ) {
         // check if class object is instantiated
