@@ -42,6 +42,7 @@ class CoffeeShopTest extends EE_UnitTestCase
      */
     public function setUp()
     {
+        $this->markTestIncomplete();
     	parent::setUp();
         // instantiate the container
         $this->CoffeeShop = new CoffeeShop();
