@@ -8,14 +8,15 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  * @subpackage tests
  * @author     Darren Ethier
  * @since      4.9.26.rc.000
- * @group   model_fields
- * @group   models
+ * @group      model_fields
+ * @group      models
  */
 class EE_Post_Content_Field_Test extends EE_UnitTestCase
 {
 
     /**
      * holds the field being tested
+     *
      * @var EE_Post_Content_Field
      */
     protected $_field;
@@ -46,15 +47,15 @@ class EE_Post_Content_Field_Test extends EE_UnitTestCase
     }
 
 
-
     /**
      * @group 8405
      */
-    public function test_prepare_for_pretty_echoing(){
+    public function test_prepare_for_pretty_echoing()
+    {
         //use a simple mock shortcode to verify it gets replaced
         add_shortcode(
             'mock',
-            function(){
+            function () {
                 return 'replacement';
             }
         );
@@ -69,11 +70,12 @@ class EE_Post_Content_Field_Test extends EE_UnitTestCase
     /**
      * @group 8405
      */
-    public function test_prepare_for_get(){
+    public function test_prepare_for_get()
+    {
         //use a simple mock shortcode to verify it DOESN'T get replaced
         add_shortcode(
             'mock',
-            function(){
+            function () {
                 return 'replacement';
             }
         );
