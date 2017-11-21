@@ -1,6 +1,10 @@
 <?php
 namespace EventEspresso\core\services\container;
 
+use EEH_Array;
+use ReflectionClass;
+use ReflectionMethod;
+use ReflectionParameter;
 use UnexpectedValueException;
 
 if ( ! defined('EVENT_ESPRESSO_VERSION')) {
@@ -28,22 +32,22 @@ class DependencyInjector implements InjectorInterface
     private $coffee_pot;
 
     /**
-     * @var \EEH_Array $array_helper
+     * @var EEH_Array $array_helper
      */
     private $array_helper;
 
     /**
-     * @var \ReflectionClass[] $reflectors
+     * @var ReflectionClass[] $reflectors
      */
     private $reflectors;
 
     /**
-     * @var \ReflectionMethod[] $constructors
+     * @var ReflectionMethod[] $constructors
      */
     private $constructors;
 
     /**
-     * @var \ReflectionParameter[] $parameters
+     * @var ReflectionParameter[] $parameters
      */
     private $parameters;
 
@@ -53,9 +57,9 @@ class DependencyInjector implements InjectorInterface
      * DependencyInjector constructor
      *
      * @param CoffeePotInterface $coffee_pot
-     * @param \EEH_Array         $array_helper
+     * @param EEH_Array         $array_helper
      */
-    public function __construct(CoffeePotInterface $coffee_pot, \EEH_Array $array_helper)
+    public function __construct(CoffeePotInterface $coffee_pot, EEH_Array $array_helper)
     {
         $this->coffee_pot = $coffee_pot;
         $this->array_helper = $array_helper;
@@ -69,15 +73,15 @@ class DependencyInjector implements InjectorInterface
      * and returns that instead of creating a new one
      *
      * @param string $class_name
-     * @return \ReflectionClass
+     * @return ReflectionClass
      */
     public function getReflectionClass($class_name)
     {
         if (
             ! isset($this->reflectors[$class_name])
-            || ! $this->reflectors[$class_name] instanceof \ReflectionClass
+            || ! $this->reflectors[$class_name] instanceof ReflectionClass
         ) {
-            $this->reflectors[$class_name] = new \ReflectionClass($class_name);
+            $this->reflectors[$class_name] = new ReflectionClass($class_name);
         }
         return $this->reflectors[$class_name];
     }
@@ -89,14 +93,14 @@ class DependencyInjector implements InjectorInterface
      * checks if a ReflectionMethod object has already been generated for the class constructor
      * and returns that instead of creating a new one
      *
-     * @param \ReflectionClass $reflector
-     * @return \ReflectionMethod
+     * @param ReflectionClass $reflector
+     * @return ReflectionMethod
      */
-    protected function getConstructor(\ReflectionClass $reflector)
+    protected function getConstructor(ReflectionClass $reflector)
     {
         if (
             ! isset($this->constructors[$reflector->getName()])
-            || ! $this->constructors[$reflector->getName()] instanceof \ReflectionMethod
+            || ! $this->constructors[$reflector->getName()] instanceof ReflectionMethod
         ) {
             $this->constructors[$reflector->getName()] = $reflector->getConstructor();
         }
@@ -110,10 +114,10 @@ class DependencyInjector implements InjectorInterface
      * checks if an array of ReflectionParameter objects has already been generated for the class constructor
      * and returns that instead of creating a new one
      *
-     * @param \ReflectionMethod $constructor
-     * @return \ReflectionParameter[]
+     * @param ReflectionMethod $constructor
+     * @return ReflectionParameter[]
      */
-    protected function getParameters(\ReflectionMethod $constructor)
+    protected function getParameters(ReflectionMethod $constructor)
     {
         if ( ! isset($this->parameters[$constructor->class])) {
             $this->parameters[$constructor->class] = $constructor->getParameters();
@@ -136,12 +140,13 @@ class DependencyInjector implements InjectorInterface
      *        but only IF they are NOT already present in the incoming arguments array,
      *        and the correct classes can be loaded
      *
-     * @param RecipeInterface   $recipe
-     * @param \ReflectionClass  $reflector
-     * @param array             $arguments
+     * @param RecipeInterface  $recipe
+     * @param ReflectionClass $reflector
+     * @param array            $arguments
      * @return array
+     * @throws UnexpectedValueException
      */
-    public function resolveDependencies(RecipeInterface $recipe, \ReflectionClass $reflector, $arguments = array())
+    public function resolveDependencies(RecipeInterface $recipe, ReflectionClass $reflector, $arguments = array())
     {
         // if arguments array is numerically and sequentially indexed, then we want it to remain as is,
         // else wrap it in an additional array so that it doesn't get split into multiple parameters
@@ -166,12 +171,19 @@ class DependencyInjector implements InjectorInterface
         $argument_keys = array_keys($arguments);
         // now loop thru all of the constructors expected parameters
         foreach ($params as $index => $param) {
-            if ( ! $param instanceof \ReflectionParameter) {
+            if ( ! $param instanceof ReflectionParameter) {
                 continue;
             }
             // is this a dependency for a specific class ?
-            $param_class = $param->getClass() ? $param->getClass()->name : null;
+            $param_class = $param->getClass() ? $param->getClass()->name : '';
+            $param_name = $param->getName() ? $param->getName() : '';
             if (
+                // param is not a class but is specified in the list of ingredients for this Recipe
+                is_string($param_name) && isset($ingredients[$param_name])
+            ) {
+                // attempt to inject the dependency
+                $resolved_parameters[$index] = $ingredients[ $param_name ];
+            } else if (
                 // param is specified in the list of ingredients for this Recipe
                 isset($ingredients[$param_class])
             ) {
@@ -195,7 +207,7 @@ class DependencyInjector implements InjectorInterface
                 $resolved_parameters[$index] = $arguments[$argument_keys[$index]];
             } else if (
                 // parameter is type hinted as a class, and should be injected
-            ! empty($param_class)
+                ! empty($param_class)
             ) {
                 // attempt to inject the dependency
                 $resolved_parameters[$index] = $this->injectDependency($param_class);
@@ -213,6 +225,7 @@ class DependencyInjector implements InjectorInterface
     /**
      * @param string $param_class
      * @return mixed
+     * @throws UnexpectedValueException
      */
     private function injectDependency($param_class)
     {
