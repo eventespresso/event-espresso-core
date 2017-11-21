@@ -8,16 +8,41 @@ require_once(EE_MODELS . 'fields/EE_Text_Field_Base.php');
  */
 class EE_Simple_HTML_Field extends EE_Text_Field_Base
 {
+
+
+
     /**
-     * removes all tags when setting
+     * removes all tags which a WP Post wouldn't allow in its content normally
      *
-     * @param string $value_inputted_for_field_on_model_object
+     * @param string $value
      * @return string
      */
-    function prepare_for_set($value_inputted_for_field_on_model_object)
+    function prepare_for_set($value)
     {
-        $value_with_select_tags = wp_kses("$value_inputted_for_field_on_model_object", EEH_HTML::get_simple_tags());
-        return parent::prepare_for_set($value_with_select_tags);
+        return $this->sanitize($value);
     }
+
+
+
+    /**
+     * For users with unfiltered_html, just leaves it as-is. They're allowed to post HTML
+     * (yes, even harmful HTML, so be careful who you give this to). But for
+     * others, removes harmful HTML.
+     * @param string $value
+     * @return string
+     */
+    protected function sanitize($value)
+    {
+        $value = wp_kses("$value", EEH_HTML::get_simple_tags());
+        return $value;
+    }
+
+    function prepare_for_set_from_db($value_found_in_db_for_model_object)
+    {
+        //it's possible that harmful content could have made it into the DB, so remove it
+        return $this->sanitize($value_found_in_db_for_model_object);
+    }
+
+
 
 }
