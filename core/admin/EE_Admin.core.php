@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\entities\notifications\PersistentAdminNotice;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\interfaces\InterminableInterface;
@@ -211,6 +212,7 @@ final class EE_Admin implements InterminableInterface
                     ),
                 )
             );
+            $this->maybeSetDatetimeWarningNotice();
             //at a glance dashboard widget
             add_filter('dashboard_glance_items', array($this, 'dashboard_glance_items'), 10);
             //filter for get_edit_post_link used on comments for custom post types
@@ -231,6 +233,50 @@ final class EE_Admin implements InterminableInterface
         add_action('admin_head', array($this, 'register_custom_nav_menu_boxes'), 10);
         //exclude EE critical pages from all nav menus and wp_list_pages
         add_filter('nav_menu_meta_box_object', array($this, 'remove_pages_from_nav_menu'), 10);
+    }
+
+
+    /**
+     *    get_persistent_admin_notices
+     *
+     * @access    public
+     * @return void
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    public function maybeSetDatetimeWarningNotice()
+    {
+        //add dismissable notice for datetime changes.  Only valid if site does not have a timezone_string set.
+        //@todo This needs to stay in core for a bit to catch anyone upgrading from a version without this to a version
+        //with this.  But after enough time (indeterminate at this point) we can just remove this notice.
+        //this was added with https://events.codebasehq.com/projects/event-espresso/tickets/10626
+        if (! get_option('timezone_string') && EEM_Event::instance()->count() > 0) {
+            new PersistentAdminNotice(
+                'datetime_fix_notice',
+                sprintf(
+                    esc_html__(
+                        '%1$sImportant announcement related to your install of Event Espresso%2$s: There are some changes made to your site that could affect how dates display for your events and other related items with dates and times.  Read more about it %3$shere%4$s. If your dates and times are displaying incorrectly (incorrect offset), you can fix it using the tool on %5$sthis page%4$s.',
+                        'event_espresso'
+                    ),
+                    '<strong>',
+                    '</strong>',
+                    '<a href="https://eventespresso.com/2017/08/important-upcoming-changes-dates-times">',
+                    '</a>',
+                    '<a href="' . EE_Admin_Page::add_query_args_and_nonce(
+                        array(
+                            'page' => 'espresso_maintenance_settings',
+                            'action' => 'datetime_tools'
+                        ),
+                        admin_url('admin.php')
+                    ) . '">'
+                ),
+                false,
+                'manage_options',
+                'datetime_fix_persistent_notice'
+            );
+        }
     }
 
 
