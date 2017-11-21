@@ -49,12 +49,6 @@ class EE_Post_Content_Field extends EE_Text_Field_Base
         return $value;
     }
 
-    function prepare_for_set_from_db($value_found_in_db_for_model_object)
-    {
-        //it's possible that harmful content could have made it into the DB, so remove it
-        return $this->sanitize($value_found_in_db_for_model_object);
-    }
-
 
 
     /**
