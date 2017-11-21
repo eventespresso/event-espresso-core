@@ -17,23 +17,8 @@ class EE_Simple_HTML_Field extends EE_Text_Field_Base
      * @param string $value
      * @return string
      */
-    function prepare_for_set($value)
+    public function prepare_for_set($value)
     {
-        return $this->sanitize($value);
-    }
-
-
-
-    /**
-     * For users with unfiltered_html, just leaves it as-is. They're allowed to post HTML
-     * (yes, even harmful HTML, so be careful who you give this to). But for
-     * others, removes harmful HTML.
-     * @param string $value
-     * @return string
-     */
-    protected function sanitize($value)
-    {
-        $value = wp_kses("$value", EEH_HTML::get_simple_tags());
-        return $value;
+        return wp_kses("$value", EEH_HTML::get_simple_tags());;
     }
 }

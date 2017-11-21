@@ -27,21 +27,7 @@ class EE_Post_Content_Field extends EE_Text_Field_Base
      * @param string $value
      * @return string
      */
-    function prepare_for_set($value)
-    {
-        return $this->sanitize($value);
-    }
-
-
-
-    /**
-     * For users with unfiltered_html, just leaves it as-is. They're allowed to post HTML
-     * (yes, even harmful HTML, so be careful who you give this to). But for
-     * others, removes harmful HTML.
-     * @param string $value
-     * @return string
-     */
-    protected function sanitize($value)
+    public function prepare_for_set($value)
     {
         if (! current_user_can('unfiltered_html')) {
             $value = wp_kses("$value", wp_kses_allowed_html('post'));
