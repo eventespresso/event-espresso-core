@@ -29,15 +29,30 @@ class EE_Post_Content_Field extends EE_Text_Field_Base
      */
     function prepare_for_set($value)
     {
+        return $this->sanitize($value);
+    }
+
+
+
+    /**
+     * For users with unfiltered_html, just leaves it as-is. They're allowed to post HTML
+     * (yes, even harmful HTML, so be careful who you give this to). But for
+     * others, removes harmful HTML.
+     * @param string $value
+     * @return string
+     */
+    protected function sanitize($value)
+    {
         if (! current_user_can('unfiltered_html')) {
             $value = wp_kses("$value", wp_kses_allowed_html('post'));
         }
-        return parent::prepare_for_set($value);
+        return $value;
     }
 
     function prepare_for_set_from_db($value_found_in_db_for_model_object)
     {
-        return $value_found_in_db_for_model_object;
+        //it's possible that harmful content could have made it into the DB, so remove it
+        return $this->sanitize($value_found_in_db_for_model_object);
     }
 
 
