@@ -1,6 +1,6 @@
 <?php
 
-defined('EVENT_ESPRESSO_CORE') || exit('No direct access allowed.');
+defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
 
 /**
  * EE_Messages_Validator class
