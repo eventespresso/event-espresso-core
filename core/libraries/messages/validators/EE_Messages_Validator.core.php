@@ -1,8 +1,6 @@
 <?php
 
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('NO direct script access allowed');
-}
+defined('EVENT_ESPRESSO_CORE') || exit('No direct access allowed.');
 
 /**
  * EE_Messages_Validator class
@@ -45,7 +43,7 @@ abstract class EE_Messages_Validator extends EE_Base
     /**
      * holds an array of fields being validated
      *
-     * @var string
+     * @var array
      */
     protected $_fields;
 
@@ -108,7 +106,8 @@ abstract class EE_Messages_Validator extends EE_Base
      *
      * @param array $fields The fields sent by the EEM object.
      * @param       $context
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function __construct($fields, $context)
     {
@@ -189,7 +188,6 @@ abstract class EE_Messages_Validator extends EE_Base
         }
 
         $this->_message_type = new $message_type();
-
     }
 
 
@@ -198,6 +196,7 @@ abstract class EE_Messages_Validator extends EE_Base
      *
      * @access private
      * @return void
+     * @throws ReflectionException
      */
     private function _set_validators()
     {
@@ -272,16 +271,16 @@ abstract class EE_Messages_Validator extends EE_Base
                     $codes_from_objs
                 );
             } //if we have specific shortcodes for a field then we need to use them
-            else if (isset($groups_per_field[$field])) {
+            elseif (isset($groups_per_field[$field])) {
                 $this->_validators[$field]['shortcodes'] = $this->_reassemble_valid_shortcodes_from_group(
                     $groups_per_field[$field],
                     $codes_from_objs
                 );
             } //if empty config then we're assuming we're just going to use the shortcodes from the message type context
-            else if (empty($config)) {
+            elseif (empty($config)) {
                 $this->_validators[$field]['shortcodes'] = $mt_codes;
             } //if we have specific shortcodes then we need to use them
-            else if (isset($config['specific_shortcodes'])) {
+            elseif (isset($config['specific_shortcodes'])) {
                 $this->_validators[$field]['shortcodes'] = $config['specific_shortcodes'];
             } //otherwise the shortcodes are what is set by the messenger for that field
             else {
@@ -397,8 +396,7 @@ abstract class EE_Messages_Validator extends EE_Base
             }
 
             //field is present. Let's validate shortcodes first (but only if shortcodes present).
-            if (
-                isset($this->_validators[$field]['shortcodes'])
+            if (isset($this->_validators[$field]['shortcodes'])
                 && ! empty($this->_validators[$field]['shortcodes'])
             ) {
                 $invalid_shortcodes = $this->_invalid_shortcodes($value, $this->_validators[$field]['shortcodes']);
@@ -428,7 +426,7 @@ abstract class EE_Messages_Validator extends EE_Base
             //if there's a "type" to be validated then let's do that too.
             if (isset($this->_validators[$field]['type']) && ! empty($this->_validators[$field]['type'])) {
                 switch ($this->_validators[$field]['type']) {
-                    case 'number' :
+                    case 'number':
                         if (! is_numeric($value)) {
                             $err_msg .= sprintf(
                                 __(
@@ -442,7 +440,7 @@ abstract class EE_Messages_Validator extends EE_Base
                             );
                         }
                         break;
-                    case 'email' :
+                    case 'email':
                         $valid_email = $this->_validate_email($value);
                         if (! $valid_email) {
                             $err_msg .= htmlentities(
@@ -456,7 +454,7 @@ abstract class EE_Messages_Validator extends EE_Base
                             );
                         }
                         break;
-                    default :
+                    default:
                         break;
                 }
             }
@@ -596,21 +594,18 @@ abstract class EE_Messages_Validator extends EE_Base
             //either its of type "bob@whatever.com", or its of type "fname lname <few@few.few>"
             if (is_email($email)) {
                 continue;
-            } else {
-                $matches  = array();
-                $validate = preg_match('/(.*)<(.+)>/', $email, $matches) ? true : false;
-                if ($validate && is_email($matches[2])) {
-                    continue;
-                } else {
-                    return false;
-                }
             }
+            $matches  = array();
+            $validate = preg_match('/(.*)<(.+)>/', $email, $matches) ? true : false;
+            if ($validate && is_email($matches[2])) {
+                continue;
+            }
+            return false;
         }
 
         $validate = $empty && ! $has_shortcodes ? false : $validate;
 
         return $validate;
-
     }
 
 
@@ -647,5 +642,4 @@ abstract class EE_Messages_Validator extends EE_Base
             )
         );
     }
-
 }
