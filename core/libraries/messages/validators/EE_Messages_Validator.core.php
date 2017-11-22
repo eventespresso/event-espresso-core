@@ -379,16 +379,16 @@ abstract class EE_Messages_Validator extends EE_Base
 
             // if field label is empty OR is equal to the current field
             // then we need to loop through the 'extra' fields in the template_fields config (if present)
-            if (isset($template_fields['extra']) && (empty($field_label)) || $field_label == $field) {
+            if (isset($template_fields['extra']) && (empty($field_label) || $field_label === $field)) {
                 foreach ($template_fields['extra'] as $main_field => $secondary_field) {
                     foreach ($secondary_field as $name => $values) {
-                        if ($name == $field) {
+                        if ($name === $field) {
                             $field_label = $values['label'];
                         }
 
                         // if we've got a 'main' secondary field, let's see if that matches what field we're on
                         // which means it contains the label for this field.
-                        if ($name == 'main' && $main_field == $field_label) {
+                        if ($name === 'main' && $main_field === $field_label) {
                             $field_label = $values['label'];
                         }
                     }
