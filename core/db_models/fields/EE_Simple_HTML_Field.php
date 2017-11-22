@@ -19,6 +19,6 @@ class EE_Simple_HTML_Field extends EE_Text_Field_Base
      */
     public function prepare_for_set($value)
     {
-        return wp_kses("$value", EEH_HTML::get_simple_tags());;
+        return parent::prepare_for_set(wp_kses("$value", EEH_HTML::get_simple_tags()));
     }
 }

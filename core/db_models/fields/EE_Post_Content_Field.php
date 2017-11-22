@@ -32,7 +32,7 @@ class EE_Post_Content_Field extends EE_Text_Field_Base
         if (! current_user_can('unfiltered_html')) {
             $value = wp_kses("$value", wp_kses_allowed_html('post'));
         }
-        return $value;
+        return parent::prepare_for_set($value);
     }
 
 

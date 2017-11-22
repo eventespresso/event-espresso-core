@@ -28,15 +28,17 @@ abstract class EE_Text_Field_Base extends EE_Model_Field_Base
     }
 
     /**
-     * In form inputs, we should have called htmlentities and addslashes on form inputs,
-     * so we need to undo that on setting of these fields
+     * Data received from the user should be exactly as they hope to save it in the DB, with the exception that
+     * quotes need to have slashes added to it. (We used to call html_entity_decode on the value here,
+     * because we called htmlentities when in EE_Text_Field_Base::prepare_for_pretty_echoing, but that's not necessary
+     * because web browsers always decode HTML entities once. So if we do it again here, we'll be removing
+     * HTML entities the user intended to have.)
      *
      * @param string $value_inputted_for_field_on_model_object
      * @return string
      */
     function prepare_for_set($value_inputted_for_field_on_model_object)
     {
-        return stripslashes(html_entity_decode(parent::prepare_for_set($value_inputted_for_field_on_model_object),
-            ENT_QUOTES, 'UTF-8'));
+        return stripslashes(parent::prepare_for_set($value_inputted_for_field_on_model_object));
     }
 }
