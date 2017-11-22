@@ -114,7 +114,7 @@ abstract class EE_Messages_Validator extends EE_Base
         //check that _m_name and _mt_name have been set by child class otherwise we get out.
         if (empty($this->_m_name) || empty($this->_mt_name)) {
             throw new EE_Error(
-                __(
+                esc_html__(
                     'EE_Messages_Validator child classes MUST set the $_m_name and $_mt_name property.  Check that the child class is doing this',
                     'event_espresso'
                 )
@@ -165,7 +165,7 @@ abstract class EE_Messages_Validator extends EE_Base
         if (! class_exists($messenger)) {
             throw new EE_Error(
                 sprintf(
-                    __('There is no messenger class for the given string (%s)', 'event_espresso'),
+                    esc_html__('There is no messenger class for the given string (%s)', 'event_espresso'),
                     $this->_m_name
                 )
             );
@@ -181,7 +181,7 @@ abstract class EE_Messages_Validator extends EE_Base
         if (! class_exists($message_type)) {
             throw new EE_Error(
                 sprintf(
-                    __('There is no message type class for the given string (%s)', 'event_espresso'),
+                    esc_html__('There is no message type class for the given string (%s)', 'event_espresso'),
                     $this->_mt_name
                 )
             );
@@ -405,7 +405,7 @@ abstract class EE_Messages_Validator extends EE_Base
                 if ($invalid_shortcodes) {
                     $v_s     = array_keys($this->_validators[$field]['shortcodes']);
                     $err_msg = sprintf(
-                        __(
+                        esc_html__(
                             '%3$sThe following shortcodes were found in the "%1$s" field that ARE not valid: %2$s%4$s',
                             'event_espresso'
                         ),
@@ -415,7 +415,7 @@ abstract class EE_Messages_Validator extends EE_Base
                         '</p >'
                     );
                     $err_msg .= sprintf(
-                        __('%2$sValid shortcodes for this field are: %1$s%3$s', 'event_espresso'),
+                        esc_html__('%2$sValid shortcodes for this field are: %1$s%3$s', 'event_espresso'),
                         implode(', ', $v_s),
                         '<strong>',
                         '</strong>'
@@ -429,7 +429,7 @@ abstract class EE_Messages_Validator extends EE_Base
                     case 'number':
                         if (! is_numeric($value)) {
                             $err_msg .= sprintf(
-                                __(
+                                esc_html__(
                                     '%3$sThe %1$s field is supposed to be a number. The value given (%2$s)  is not.  Please double-check and make sure the field contains a number%4$s',
                                     'event_espresso'
                                 ),
@@ -445,7 +445,7 @@ abstract class EE_Messages_Validator extends EE_Base
                         if (! $valid_email) {
                             $err_msg .= htmlentities(
                                 sprintf(
-                                    __(
+                                    esc_html__(
                                         'The %1$s field has at least one string that is not a valid email address record.  Valid emails are in the format: "Name <email@something.com>" or "email@something.com" and multiple emails can be separated by a comma.'
                                     ),
                                     $field_label
@@ -636,7 +636,7 @@ abstract class EE_Messages_Validator extends EE_Base
 
         throw new Exception(
             sprintf(
-                __('The property %1$s being requested on %2$s does not exist', 'event_espresso'),
+                esc_html__('The property %1$s being requested on %2$s does not exist', 'event_espresso'),
                 $property,
                 get_class($this)
             )
