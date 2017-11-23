@@ -87,8 +87,6 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_
         // $CoffeeShop = $OpenCoffeeShop->CoffeeShop();
         // workarounds for PHP < 5.3
         $this->_load_class_tools();
-        // deprecated functions
-        espresso_load_required('EE_Deprecated', EE_CORE . 'EE_Deprecated.core.php');
         // WP cron jobs
         $loader->getShared('EE_Cron_Tasks');
         $loader->getShared('EE_Request_Handler');
@@ -168,7 +166,7 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_
             );
             wp_die(EE_Error::get_notices());
         }
-        require_once(EE_CORE . 'EE_Dependency_Map.core.php');
+        require_once EE_CORE . 'EE_Dependency_Map.core.php';
         return EE_Dependency_Map::instance($this->request, $this->response);
     }
 
@@ -176,6 +174,9 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_
 
     /**
      * @return EE_Registry
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      */
     private function _load_registry()
     {
@@ -186,7 +187,7 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_
             );
             wp_die(EE_Error::get_notices());
         }
-        require_once(EE_CORE . 'EE_Registry.core.php');
+        require_once EE_CORE . 'EE_Registry.core.php';
         return EE_Registry::instance($this->dependency_map);
     }
 
@@ -203,7 +204,7 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_
                 __FILE__, __FUNCTION__, __LINE__
             );
         }
-        require_once(EE_HELPERS . 'EEH_Class_Tools.helper.php');
+        require_once EE_HELPERS . 'EEH_Class_Tools.helper.php';
     }
 
 

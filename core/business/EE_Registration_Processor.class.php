@@ -1,6 +1,6 @@
 <?php
 
-use EventEspresso\core\domain\entities\Context;
+use EventEspresso\core\domain\entities\contexts\Context;
 use EventEspresso\core\domain\entities\RegCode;
 use EventEspresso\core\domain\entities\RegUrlLink;
 use EventEspresso\core\domain\services\registration\CreateRegistrationService;

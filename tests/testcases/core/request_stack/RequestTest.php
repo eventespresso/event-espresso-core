@@ -19,7 +19,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 class RequestTest extends PHPUnit_Framework_TestCase
 {
 
-    public function getParams($params = array())
+    public function getParams(array $params = array())
     {
         return $params + array(
             'action' => 'edit',
@@ -27,7 +27,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
         );
     }
 
-    public function postParams($params = array())
+    public function postParams(array $params = array())
     {
         return $params + array(
             'input-a' => 'A',
@@ -43,7 +43,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
         );
     }
 
-    public function cookieParams($params = array())
+    public function cookieParams(array $params = array())
     {
         return $params + array(
             'PHPSESSID'   => 'abcdefghijklmnopqrstuvwxyz',
@@ -55,6 +55,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
     {
         $request = new EE_Request(
             $this->getParams(),
+            array(),
             array(),
             array()
         );
@@ -69,6 +70,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
         $request = new EE_Request(
             array(),
             $this->postParams(),
+            array(),
             array()
         );
         $this->assertEquals(
@@ -82,7 +84,8 @@ class RequestTest extends PHPUnit_Framework_TestCase
         $request = new EE_Request(
             array(),
             array(),
-            $this->cookieParams()
+            $this->cookieParams(),
+            array()
         );
         $this->assertEquals(
             $this->cookieParams(),
@@ -95,6 +98,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
         $request = new EE_Request(
             $this->getParams(),
             $this->postParams(),
+            array(),
             array()
         );
         $this->assertEquals(
@@ -107,6 +111,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
     {
         $request = new EE_Request(
             $this->getParams(),
+            array(),
             array(),
             array()
         );
@@ -123,6 +128,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
         $request = new EE_Request(
             $this->getParams(),
             array(),
+            array(),
             array()
         );
         $request->set('ee', 'module-route');
@@ -135,6 +141,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
     {
         $request = new EE_Request(
             $this->getParams(array('ee' => 'existing-route')),
+            array(),
             array(),
             array()
         );
@@ -150,6 +157,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
         $request = new EE_Request(
             $this->getParams(array('ee' => 'existing-route')),
             array(),
+            array(),
             array()
         );
         $request->set('ee', 'module-route', true);
@@ -164,6 +172,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
     {
         $request = new EE_Request(
             $this->getParams(),
+            array(),
             array(),
             array()
         );
@@ -190,6 +199,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
         $request = new EE_Request(
             array(),
             $this->postParams(),
+            array(),
             array()
         );
         // our post data looks like this:
@@ -227,6 +237,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
         $request = new EE_Request(
             $this->getParams(),
             array(),
+            array(),
             array()
         );
         $this->assertTrue($request->is_set('action'));
@@ -240,6 +251,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
         $request = new EE_Request(
             array(),
             $this->postParams(),
+            array(),
             array()
         );
         // our post data looks like this:
@@ -280,6 +292,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
         $_REQUEST = $this->getParams();
         $request = new EE_Request(
             $_REQUEST,
+            array(),
             array(),
             array()
         );
@@ -323,7 +336,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
             $ip_address = long2ip(mt_rand() + mt_rand() + mt_rand(0, 1));
             // then randomly populate one of the $_SERVER keys used to determine the IP
             $_SERVER[$server_keys[mt_rand(0, 6)]] = $ip_address;
-            $request = new EE_Request(array(), array(), array());
+            $request = new EE_Request(array(), array(), array(), array());
             $this->assertEquals($ip_address, $request->ip_address());
             unset($request);
             $x++;

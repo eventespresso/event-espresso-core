@@ -80,7 +80,7 @@ class CoffeeShopTest extends EE_UnitTestCase
                 'EE_Request',
                 'EE_Request',
                 array(),
-                array('get' => $_GET, 'post' => $_POST, 'cookie' => $_COOKIE),
+                array('get' => $_GET, 'post' => $_POST, 'cookie' => $_COOKIE, 'server' => $_SERVER),
                 CoffeeMaker::BREW_SHARED,
                 array(EE_CORE . 'request_stack/EE_Request.core.php')
             )

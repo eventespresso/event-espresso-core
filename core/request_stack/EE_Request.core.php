@@ -38,6 +38,13 @@ class EE_Request implements InterminableInterface
     private $_cookie;
 
     /**
+     * $_SERVER parameters
+     *
+     * @var array $_server
+     */
+    private $_server;
+
+    /**
      * $_REQUEST parameters
      *
      * @var array $_params
@@ -93,13 +100,15 @@ class EE_Request implements InterminableInterface
      * @param array $get
      * @param array $post
      * @param array $cookie
+     * @param array $server
      */
-    public function __construct(array $get, array $post, array $cookie)
+    public function __construct(array $get, array $post, array $cookie, array $server = array())
     {
         // grab request vars
         $this->_get    = $get;
         $this->_post   = $post;
         $this->_cookie = $cookie;
+        $this->_server  = ! empty($server) ? $server : $_SERVER;
         $this->_params = array_merge($this->_get, $this->_post);
         // AJAX ???
         $this->ajax       = defined('DOING_AJAX') && DOING_AJAX;
@@ -139,6 +148,15 @@ class EE_Request implements InterminableInterface
     public function cookie_params()
     {
         return $this->_cookie;
+    }
+
+
+    /**
+     * @return array
+     */
+    public function server_params()
+    {
+        return $this->_server;
     }
 
 
@@ -340,8 +358,8 @@ class EE_Request implements InterminableInterface
             'REMOTE_ADDR',
         );
         foreach ($server_keys as $key) {
-            if (isset($_SERVER[$key])) {
-                foreach (array_map('trim', explode(',', $_SERVER[$key])) as $ip) {
+            if (isset($this->_server[$key])) {
+                foreach (array_map('trim', explode(',', $this->_server[$key])) as $ip) {
                     if ($ip === '127.0.0.1' || filter_var($ip, FILTER_VALIDATE_IP) !== false) {
                         $visitor_ip = $ip;
                     }
@@ -349,6 +367,25 @@ class EE_Request implements InterminableInterface
             }
         }
         return $visitor_ip;
+    }
+
+
+    /**
+     * @return mixed|string
+     */
+    public function requestUri()
+    {
+        $request_uri = filter_input(
+            INPUT_SERVER,
+            'REQUEST_URI',
+            FILTER_SANITIZE_URL,
+            FILTER_NULL_ON_FAILURE
+        );
+        if (empty($request_uri)) {
+            // fallback sanitization if the above fails
+            $request_uri = wp_sanitize_redirect($this->_server['REQUEST_URI' ]);
+        }
+        return $request_uri;
     }
 
 

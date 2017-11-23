@@ -10,7 +10,7 @@ For example, in Event Espresso, we use status IDs to identify the state of an ob
 The Context class is a simple Data Transfer Object (DTO) for conveying the background details about why some other logic is being performed, that can assist with the decision making process or simply enhance logging. In order to create one, you need to provide a "slug" and a "description". 
 
 ```php
-$context = new EventEspresso\core\domain\entities\Context(
+$context = new EventEspresso\core\domain\entities\contexts\Context(
     'context-slug',
     'description of this context'
 );
@@ -19,7 +19,7 @@ $context = new EventEspresso\core\domain\entities\Context(
  The context slug will be used by other systems for identifying the current context, and the description will likely only be used for logging purposes. This however can allow us to make better decisions in other places in our code.
  
  ```php
-$context = new EventEspresso\core\domain\entities\Context(
+$context = new EventEspresso\core\domain\entities\contexts\Context(
     'admin-registration-status-change',
     'Registration status was changed by an admin'
 );
