@@ -1050,7 +1050,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase
         );
         ob_start();
         $t->f('TKT_description');
-        $output = ob_get_flush();
+        $output = ob_get_clean();
         $this->assertEquals(
             '&quot;&lt;/textarea&gt;haha I echo this outside a form!',
             $output
