@@ -22,7 +22,7 @@ abstract class EE_Text_Field_Base extends EE_Model_Field_Base
     function prepare_for_pretty_echoing($value_on_field_to_be_outputted, $schema = null)
     {
         if ($schema == 'form_input') {
-            $value_on_field_to_be_outputted = htmlentities($value_on_field_to_be_outputted, ENT_QUOTES, 'UTF-8');
+            $value_on_field_to_be_outputted = esc_attr($value_on_field_to_be_outputted);
         }
         return parent::prepare_for_pretty_echoing($value_on_field_to_be_outputted, $schema);
     }
