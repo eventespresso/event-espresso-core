@@ -17,7 +17,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  * @author  Brent Christensen
  * @since   $VID:$
  */
-class RequestTypeContextChecker extends ContextChecker
+class RequestTypeContextChecker extends ContextChecker implements RequestTypeContextCheckerInterface
 {
 
     /**
@@ -47,6 +47,16 @@ class RequestTypeContextChecker extends ContextChecker
     public function isActivation()
     {
         return $this->request_type->isActivation();
+    }
+
+
+    /**
+     * @param $is_activation
+     * @return bool
+     */
+    public function setIsActivation($is_activation)
+    {
+        return $this->request_type->setIsActivation($is_activation);
     }
 
 
