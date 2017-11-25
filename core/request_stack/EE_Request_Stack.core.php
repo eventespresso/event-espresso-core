@@ -22,7 +22,7 @@ class EE_Request_Stack {
         EE_Error::doing_it_wrong(
             __METHOD__,
             esc_html__(
-                'This class is deprecated. Please use EventEspresso\core\services\request_stack\RequestStack instead. All Event Espresso request stack classes have been moved to \core\services\request_stack and are now under the EventEspresso\core\services\request_stack namespace',
+                'This class is deprecated. Please use EventEspresso\core\services\request\RequestStack instead. All Event Espresso request stack classes have been moved to \core\services\request and are now under the EventEspresso\core\services\request_stack namespace',
                 'event_espresso'
             ),
             '4.9.53'
