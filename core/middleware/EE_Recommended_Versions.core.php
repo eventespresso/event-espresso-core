@@ -1,6 +1,6 @@
 <?php
 
-use EventEspresso\core\services\request_stack\middleware\RecommendedVersions;
+use EventEspresso\core\services\request\middleware\RecommendedVersions;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 
@@ -23,8 +23,8 @@ class EE_Recommended_Versions extends EE_Middleware
 
     /**
      * @deprecated
-     * @param EE_Request  $request
-     * @param EE_Response $response
+     * @param EE_Request $request
+     * @param EE_Response   $response
      * @return EE_Response
      */
     public function handle_request(EE_Request $request, EE_Response $response)
@@ -56,7 +56,7 @@ class EE_Recommended_Versions extends EE_Middleware
                 'event_espresso'
             ),
             '4.9.52',
-            '4.10.0'
+            '5.0.0'
         );
         return RecommendedVersions::compareWordPressVersion($version_to_check, $operator);
     }

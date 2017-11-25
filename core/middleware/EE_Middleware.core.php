@@ -20,9 +20,9 @@ abstract class EE_Middleware implements EEI_Request_Decorator {
 
 	/**
      * @deprecated
-	 * @param 	EE_Request  $request
-	 * @param 	EE_Response $response
-	 * @return 	EE_Response
+	 * @param 	EE_Request $request
+	 * @param    EE_Response   $response
+	 * @return    EE_Response
 	 */
 	protected function process_request_stack( EE_Request $request, EE_Response $response ) {
         EE_Error::doing_it_wrong(

@@ -14,10 +14,10 @@ class EE_Alpha_Banner_Warning extends EE_Middleware {
 
 
 	/**
-     * @deprecated
-	 * @param 	EE_Request 	$request
-	 * @param 	EE_Response $response
-	 * @return 	EE_Response
+     * @deprecated 4.9.53
+	 * @param 	EE_Request $request
+	 * @param    EE_Response   $response
+	 * @return    EE_Response
 	 */
 	public function handle_request( EE_Request $request, EE_Response $response ) {
 		$this->_request = $request;
