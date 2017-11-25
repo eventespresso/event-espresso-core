@@ -1,10 +1,12 @@
 <?php
 
 use \EventEspresso\core\domain\services\contexts\RequestTypeContextChecker;
+use EventEspresso\core\domain\services\contexts\RequestTypeContextCheckerInterface;
 use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
 use EventEspresso\core\interfaces\ResettableInterface;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
+use EventEspresso\core\services\request\RequestInterface;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 
@@ -90,7 +92,7 @@ final class EE_System implements ResettableInterface
     private $capabilities;
 
     /**
-     * @var EE_Request $request
+     * @var RequestInterface $request
      */
     private $request;
 
@@ -117,7 +119,7 @@ final class EE_System implements ResettableInterface
     /**
      * A Context DTO dedicated solely to identifying the current request type.
      *
-     * @var RequestTypeContextChecker $request_type
+     * @var RequestTypeContextCheckerInterface $request_type
      */
     private $request_type;
 
@@ -127,21 +129,19 @@ final class EE_System implements ResettableInterface
      * @singleton method used to instantiate class object
      * @param EE_Registry|null         $registry
      * @param LoaderInterface|null     $loader
-     * @param EE_Capabilities|null     $capabilities
-     * @param EE_Request|null          $request
+     * @param RequestInterface|null          $request
      * @param EE_Maintenance_Mode|null $maintenance_mode
      * @return EE_System
      */
     public static function instance(
         EE_Registry $registry = null,
         LoaderInterface $loader = null,
-        EE_Capabilities $capabilities = null,
-        EE_Request $request = null,
+        RequestInterface $request = null,
         EE_Maintenance_Mode $maintenance_mode = null
     ) {
         // check if class object is instantiated
         if (! self::$_instance instanceof EE_System) {
-            self::$_instance = new self($registry, $loader, $capabilities, $request, $maintenance_mode);
+            self::$_instance = new self($registry, $loader, $request, $maintenance_mode);
         }
         return self::$_instance;
     }
@@ -174,20 +174,17 @@ final class EE_System implements ResettableInterface
      *
      * @param EE_Registry         $registry
      * @param LoaderInterface     $loader
-     * @param EE_Capabilities     $capabilities
-     * @param EE_Request          $request
+     * @param RequestInterface          $request
      * @param EE_Maintenance_Mode $maintenance_mode
      */
     private function __construct(
         EE_Registry $registry,
         LoaderInterface $loader,
-        EE_Capabilities $capabilities,
-        EE_Request $request,
+        RequestInterface $request,
         EE_Maintenance_Mode $maintenance_mode
     ) {
         $this->registry         = $registry;
         $this->loader           = $loader;
-        $this->capabilities     = $capabilities;
         $this->request          = $request;
         $this->maintenance_mode = $maintenance_mode;
         do_action('AHEE__EE_System__construct__begin', $this);
@@ -219,11 +216,6 @@ final class EE_System implements ResettableInterface
             'AHEE__EE_Bootstrap__detect_activations_or_upgrades',
             array($this, 'detect_activations_or_upgrades'),
             3
-        );
-        add_action(
-            'AHEE__EE_Bootstrap__detect_activations_or_upgrades',
-            array($this, 'setRequestTypeContext'),
-            4
         );
         // load EE_Config, EE_Textdomain, etc
         add_action(
@@ -312,6 +304,7 @@ final class EE_System implements ResettableInterface
         // set autoloaders for all of the classes implementing EEI_Plugin_API
         // which provide helpers for EE plugin authors to more easily register certain components with EE.
         EEH_Autoloader::instance()->register_autoloaders_for_each_file_in_folder(EE_LIBRARIES . 'plugin_api');
+        $this->loader->getShared('EE_Request_Handler');
     }
 
 
@@ -337,11 +330,11 @@ final class EE_System implements ResettableInterface
         //it could be the basic auth plugin, and it doesn't check if its methods are already defined
         //and causes a fatal error
         if (
-            $this->request->get('activate') !== 'true'
+            $this->request->getRequestParam('activate') !== 'true'
             && ! function_exists('json_basic_auth_handler')
             && ! function_exists('json_basic_auth_error')
             && ! in_array(
-                $this->request->get('action'),
+                $this->request->getRequestParam('action'),
                 array('activate', 'activate-selected'),
                 true
             )
@@ -597,6 +590,7 @@ final class EE_System implements ResettableInterface
                 'ee_espresso_activation', espresso_version()
             );
             $this->_major_version_change = $this->_detect_major_version_change($espresso_db_update);
+            $this->request->setIsActivation($this->_req_type !== EE_System::req_type_normal);
         }
         return $this->_req_type;
     }
@@ -774,7 +768,7 @@ final class EE_System implements ResettableInterface
         //if current user is an admin and it's not an ajax or rest request
         if (
             ! isset($notices['errors'])
-            && $this->request_type->isAdmin()
+            && $this->request->isAdmin()
             && apply_filters(
                 'FHEE__EE_System__redirect_to_about_ee__do_redirect',
                 $this->capabilities->current_user_can('manage_options', 'espresso_about_default')
@@ -791,33 +785,6 @@ final class EE_System implements ResettableInterface
             wp_safe_redirect($url);
             exit();
         }
-    }
-
-
-    /**
-     * Generates a Context DTO for identifying the current request type
-     *
-     * @throws InvalidArgumentException
-     */
-    public function setRequestTypeContext()
-    {
-        /** @var EventEspresso\core\domain\services\contexts\RequestTypeContextDetector $request_type_context_detector */
-        $request_type_context_detector = $this->loader->getShared(
-            'EventEspresso\core\domain\services\contexts\RequestTypeContextDetector',
-            array(
-                $this->request,
-                $this->loader->getShared(
-                    'EventEspresso\core\domain\services\contexts\RequestTypeContextFactory',
-                    array($this->loader)
-                ),
-            )
-        );
-        $request_type_context          = $request_type_context_detector->detectRequestTypeContext();
-        $request_type_context->setIsActivation($this->_req_type !== EE_System::req_type_normal);
-        $this->request_type = $this->loader->getShared(
-            'EventEspresso\core\domain\services\contexts\RequestTypeContextChecker',
-            array($request_type_context)
-        );
     }
 
 
@@ -917,7 +884,7 @@ final class EE_System implements ResettableInterface
      */
     public function register_shortcodes_modules_and_widgets()
     {
-        if ($this->request_type->isFrontend() || $this->request_type->isIframe()) {
+        if ($this->request->isFrontend() || $this->request->isIframe()) {
             try {
                 // load, register, and add shortcodes the new way
                 $this->loader->getShared(
@@ -1057,7 +1024,7 @@ final class EE_System implements ResettableInterface
     public function perform_activations_upgrades_and_migrations()
     {
         //first check if we had previously attempted to setup EE's directories but failed
-        if ($this->request_type->isActivation() && EEH_Activation::upload_directories_incomplete()) {
+        if ($this->request->isActivation() && EEH_Activation::upload_directories_incomplete()) {
             EEH_Activation::create_upload_directories();
         }
         do_action('AHEE__EE_System__perform_activations_upgrades_and_migrations');
@@ -1096,11 +1063,11 @@ final class EE_System implements ResettableInterface
         // let's get it started
         if (
             ! $this->maintenance_mode->level()
-            && ($this->request_type->isFrontend() || $this->request_type->isFrontAjax())
+            && ($this->request->isFrontend() || $this->request->isFrontAjax())
         ) {
             do_action('AHEE__EE_System__load_controllers__load_front_controllers');
             $this->loader->getShared('EE_Front_Controller');
-        } elseif ($this->request_type->isAdmin() || $this->request_type->isAdminAjax()) {
+        } elseif ($this->request->isAdmin() || $this->request->isAdminAjax()) {
             do_action('AHEE__EE_System__load_controllers__load_admin_controllers');
             $this->loader->getShared('EE_Admin');
         }
@@ -1119,9 +1086,9 @@ final class EE_System implements ResettableInterface
     public function core_loaded_and_ready()
     {
         if (
-            $this->request_type->isAdmin()
-            || $this->request_type->isAjax()
-            || $this->request_type->isFrontend()
+            $this->request->isAdmin()
+            || $this->request->isAjax()
+            || $this->request->isFrontend()
         ) {
             $this->loader->getShared('EE_Session');
         }
@@ -1129,12 +1096,12 @@ final class EE_System implements ResettableInterface
         // load_espresso_template_tags
         if (
             is_readable(EE_PUBLIC . 'template_tags.php')
-            && ($this->request_type->isFrontend() || $this->request_type->isIframe() || $this->request_type->isFeed())
+            && ($this->request->isFrontend() || $this->request->isIframe() || $this->request->isFeed())
         ) {
             require_once EE_PUBLIC . 'template_tags.php';
         }
         do_action('AHEE__EE_System__set_hooks_for_shortcodes_modules_and_addons');
-        if ($this->request_type->isAdmin() || $this->request_type->isFrontend() || $this->request_type->isIframe()) {
+        if ($this->request->isAdmin() || $this->request->isFrontend() || $this->request->isIframe()) {
             $this->loader->getShared('EventEspresso\core\services\assets\Registry');
         }
     }
