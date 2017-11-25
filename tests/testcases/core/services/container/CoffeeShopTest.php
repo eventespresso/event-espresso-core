@@ -74,17 +74,36 @@ class CoffeeShopTest extends EE_UnitTestCase
 
     public function addRecipeForRequest()
     {
-        // add recipe for EE_Request, since we're going to need it
         $this->CoffeeShop->addRecipe(
             new Recipe(
                 'EE_Request',
                 'EE_Request',
                 array(),
-                array('get' => $_GET, 'post' => $_POST, 'cookie' => $_COOKIE, 'server' => $_SERVER),
+                array(
+                    'get'=> array(),
+                    'post' => array(),
+                    'cookie' => array(),
+                    'server' => array()
+                ),
                 CoffeeMaker::BREW_SHARED,
                 array(EE_CORE . 'request_stack/EE_Request.core.php')
             )
         );
+        // add recipe for Request, since we're going to need it
+        $this->CoffeeShop->brew(
+            'EventEspresso\core\services\request\Request',
+            array($_GET, $_POST, $_COOKIE, $_SERVER),
+            CoffeeMaker::BREW_SHARED
+        );
+        $this->CoffeeShop->addAliases(
+            'EventEspresso\core\services\request\Request',
+            array('Request')
+        );
+        /** @var EventEspresso\core\services\request\Request $request */
+        $request = $this->CoffeeShop->brew('Request');
+        /** @var \EE_Request $legacy_request */
+        $legacy_request = $this->CoffeeShop->brew('EE_Request');
+        $legacy_request->setRequest($request);
     }
 
 
@@ -505,9 +524,9 @@ class CoffeeShopTest extends EE_UnitTestCase
             'CoffeeFactory',
             function () use ($coffee_shop)
             {
-                /** @var EE_Request $request */
-                $request   = $coffee_shop->brew('EE_Request');
-                $bean_type = $request->get('bean_type', 'Honduran');
+                /** @var EventEspresso\core\services\request\Request $request */
+                $request   = $coffee_shop->brew('Request');
+                $bean_type = $request->getRequestParam('bean_type', 'Honduran');
                 $bean_type = in_array($bean_type, array('Honduran', 'Kenyan'), true)
                     ? "{$bean_type}Bean"
                     : 'HonduranBean';
