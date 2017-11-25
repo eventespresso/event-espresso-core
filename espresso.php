@@ -209,23 +209,7 @@ if (function_exists('espresso_version')) {
                 );
                 $AutoloaderInit = new EE_Psr4AutoloaderInit();
                 $AutoloaderInit->initializeAutoloader();
-                espresso_load_required(
-                    'EE_Request',
-                    EE_CORE . 'request_stack' . DS . 'EE_Request.core.php'
-                );
-                espresso_load_required(
-                    'EE_Response',
-                    EE_CORE . 'request_stack' . DS . 'EE_Response.core.php'
-                );
-                espresso_load_required(
-                    'EE_Bootstrap',
-                    EE_CORE . 'EE_Bootstrap.core.php'
-                );
-                // bootstrap EE and the request stack
-                new EE_Bootstrap(
-                    new EE_Request($_GET, $_POST, $_COOKIE, $_SERVER),
-                    new EE_Response()
-                );
+                new EventEspresso\core\services\bootstrap\BootstrapCore();
             } catch (Exception $e) {
                 require_once EE_CORE . 'exceptions' . DS . 'ExceptionStackTraceDisplay.php';
                 new EventEspresso\core\exceptions\ExceptionStackTraceDisplay($e);
