@@ -871,11 +871,10 @@ class EE_Session implements SessionIdentifierInterface
             // if the current request is NOT one of the following
             || ! (
                 // an an AJAX request from the frontend
-                EE_Registry::instance()->REQ->front_ajax
+                $this->request->isFrontAjax()
                 || (
                     // OR an admin request that is NOT AJAX
-                    ! (defined('DOING_AJAX') && DOING_AJAX)
-                    && is_admin()
+                    ! $this->request->isAdmin()
                 )
                 || (
                     // OR an espresso page
