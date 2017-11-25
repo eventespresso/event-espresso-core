@@ -1,9 +1,9 @@
 <?php
 
-namespace EventEspresso\core\services\request_stack\middleware;
+namespace EventEspresso\core\services\request\middleware;
 
-use EE_Request;
-use EE_Response;
+use EventEspresso\core\services\request\RequestInterface;
+use EventEspresso\core\services\request\ResponseInterface;
 use EventEspresso\core\domain\entities\notifications\PersistentAdminNotice;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 
@@ -16,7 +16,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  * checks required and recommended versions for both WP and PHP
  * terminates the request if minimum required versions are not met
  *
- * @package EventEspresso\core\services\request_stack\middleware
+ * @package EventEspresso\core\services\request\middleware
  * @author  Brent Christensen
  * @since   4.9.52
  */
@@ -26,27 +26,27 @@ class RecommendedVersions extends Middleware
     /**
      * converts a Request to a Response
      *
-     * @param EE_Request  $request
-     * @param EE_Response $response
-     * @return EE_Response
+     * @param RequestInterface $request
+     * @param ResponseInterface      $response
+     * @return ResponseInterface
      * @throws InvalidDataTypeException
      */
-    public function handle_request(EE_Request $request, EE_Response $response)
+    public function handleRequest(RequestInterface $request, ResponseInterface $response)
     {
         $this->request  = $request;
         $this->response = $response;
         // check required WP version
         if (! $this->minimumWordPressVersionRequired()) {
-            $this->request->un_set('activate', true);
+            $this->request->unSetRequestParam('activate', true);
             add_action('admin_notices', array($this, 'minimum_wp_version_error'), 1);
-            $this->response->terminate_request();
-            $this->response->deactivate_plugin();
+            $this->response->terminateRequest();
+            $this->response->deactivatePlugin();
         }
         // check recommended PHP version
         if (! $this->minimumPhpVersionRecommended()) {
             $this->displayMinimumRecommendedPhpVersionNotice();
         }
-        $this->response = $this->process_request_stack($this->request, $this->response);
+        $this->response = $this->processRequestStack($this->request, $this->response);
         return $this->response;
     }
 

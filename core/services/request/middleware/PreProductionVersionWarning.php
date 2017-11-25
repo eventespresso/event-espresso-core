@@ -1,9 +1,9 @@
 <?php
 
-namespace EventEspresso\core\services\request_stack\middleware;
+namespace EventEspresso\core\services\request\middleware;
 
-use EE_Request;
-use EE_Response;
+use EventEspresso\core\services\request\RequestInterface;
+use EventEspresso\core\services\request\ResponseInterface;
 use EventEspresso\core\domain\entities\notifications\PersistentAdminNotice;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 
@@ -15,7 +15,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  * Class NonProductionReadyVersionWarning
  * Displays a warning banner if a non-production version of EE is being run
  *
- * @package EventEspresso\core\services\request_stack\middleware
+ * @package EventEspresso\core\services\request\middleware
  * @author  Brent Christensen
  * @since   4.9.52
  */
@@ -25,16 +25,16 @@ class PreProductionVersionWarning extends Middleware
     /**
      * converts a Request to a Response
      *
-     * @param    EE_Request  $request
-     * @param    EE_Response $response
-     * @return    EE_Response
+     * @param RequestInterface $request
+     * @param ResponseInterface      $response
+     * @return ResponseInterface
      */
-    public function handle_request(EE_Request $request, EE_Response $response)
+    public function handleRequest(RequestInterface $request, ResponseInterface $response)
     {
         $this->request  = $request;
         $this->response = $response;
         $this->displayPreProductionVersionWarning();
-        $this->response = $this->process_request_stack($this->request, $this->response);
+        $this->response = $this->processRequestStack($this->request, $this->response);
         return $this->response;
     }
 
@@ -48,7 +48,7 @@ class PreProductionVersionWarning extends Middleware
     public function displayPreProductionVersionWarning()
     {
         // skip AJAX requests
-        if (defined('DOING_AJAX') && DOING_AJAX) {
+        if ($this->request->isAjax()) {
             return;
         }
         // skip stable releases
@@ -60,7 +60,7 @@ class PreProductionVersionWarning extends Middleware
             return;
         }
         // post release candidate warning
-        if (is_admin()) {
+        if ($this->request->isAdmin()) {
             add_action('admin_notices', array($this, 'preProductionVersionAdminNotice'), -999);
         } else {
             add_action('shutdown', array($this, 'preProductionVersionWarningNotice'), 10);
@@ -77,12 +77,10 @@ class PreProductionVersionWarning extends Middleware
      */
     public function preProductionVersionAdminNotice()
     {
-        if ($this->request->isAdmin()) {
-            new PersistentAdminNotice(
-                'preProductionVersionAdminNotice_' . EVENT_ESPRESSO_VERSION,
-                $this->warningNotice()
-            );
-        }
+        new PersistentAdminNotice(
+            'preProductionVersionAdminNotice_' . EVENT_ESPRESSO_VERSION,
+            $this->warningNotice()
+        );
     }
 
 
