@@ -3,6 +3,7 @@
 namespace EventEspresso\tests\testcases\core\request_stack;
 
 use EE_Request;
+use EventEspresso\core\services\request\Request;
 use PHPUnit_Framework_TestCase;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
@@ -51,9 +52,26 @@ class RequestTest extends PHPUnit_Framework_TestCase
         );
     }
 
+
+    /**
+     * @param array $get
+     * @param array $post
+     * @param array $cookie
+     * @param array $server
+     * @return EE_Request
+     */
+    private function getLegacyRequest(array $get, array $post, array $cookie, array $server)
+    {
+        $request = new Request($get, $post, $cookie, $server);
+        $legacy_request = new EE_Request(array(), array(), array());
+        $legacy_request->setRequest($request);
+        return $legacy_request;
+    }
+
+
     public function testGetParams()
     {
-        $request = new EE_Request(
+        $request = $this->getLegacyRequest(
             $this->getParams(),
             array(),
             array(),
@@ -67,7 +85,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
 
     public function testPostParams()
     {
-        $request = new EE_Request(
+        $request = $this->getLegacyRequest(
             array(),
             $this->postParams(),
             array(),
@@ -81,7 +99,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
 
     public function testCookieParams()
     {
-        $request = new EE_Request(
+        $request = $this->getLegacyRequest(
             array(),
             array(),
             $this->cookieParams(),
@@ -95,7 +113,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
 
     public function testParams()
     {
-        $request = new EE_Request(
+        $request = $this->getLegacyRequest(
             $this->getParams(),
             $this->postParams(),
             array(),
@@ -109,7 +127,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
 
     public function testSet()
     {
-        $request = new EE_Request(
+        $request = $this->getLegacyRequest(
             $this->getParams(),
             array(),
             array(),
@@ -125,7 +143,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
 
     public function testSetEE()
     {
-        $request = new EE_Request(
+        $request = $this->getLegacyRequest(
             $this->getParams(),
             array(),
             array(),
@@ -139,7 +157,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
 
     public function testAlreadySetEE()
     {
-        $request = new EE_Request(
+        $request = $this->getLegacyRequest(
             $this->getParams(array('ee' => 'existing-route')),
             array(),
             array(),
@@ -154,7 +172,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
 
     public function testOverrideAlreadySetEE()
     {
-        $request = new EE_Request(
+        $request = $this->getLegacyRequest(
             $this->getParams(array('ee' => 'existing-route')),
             array(),
             array(),
@@ -170,7 +188,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
 
     public function testGet()
     {
-        $request = new EE_Request(
+        $request = $this->getLegacyRequest(
             $this->getParams(),
             array(),
             array(),
@@ -196,7 +214,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
 
     public function testGetWithDrillDown()
     {
-        $request = new EE_Request(
+        $request = $this->getLegacyRequest(
             array(),
             $this->postParams(),
             array(),
@@ -234,7 +252,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
 
     public function testIsSet()
     {
-        $request = new EE_Request(
+        $request = $this->getLegacyRequest(
             $this->getParams(),
             array(),
             array(),
@@ -248,7 +266,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
 
     public function testIsSetWithDrillDown()
     {
-        $request = new EE_Request(
+        $request = $this->getLegacyRequest(
             array(),
             $this->postParams(),
             array(),
@@ -290,7 +308,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
         // in case it's needed by other tests
         $EXISTING_REQUEST = $_REQUEST;
         $_REQUEST = $this->getParams();
-        $request = new EE_Request(
+        $request = $this->getLegacyRequest(
             $_REQUEST,
             array(),
             array(),
@@ -336,7 +354,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
             $ip_address = long2ip(mt_rand() + mt_rand() + mt_rand(0, 1));
             // then randomly populate one of the $_SERVER keys used to determine the IP
             $_SERVER[$server_keys[mt_rand(0, 6)]] = $ip_address;
-            $request = new EE_Request(array(), array(), array(), array());
+            $request = $this->getLegacyRequest(array(), array(), array(), $_SERVER);
             $this->assertEquals($ip_address, $request->ip_address());
             unset($request);
             $x++;
