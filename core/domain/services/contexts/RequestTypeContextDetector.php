@@ -2,9 +2,9 @@
 
 namespace EventEspresso\core\domain\services\contexts;
 
-use EE_Recommended_Versions;
-use EE_Request;
 use EventEspresso\core\domain\Domain;
+use EventEspresso\core\services\request\middleware\RecommendedVersions;
+use EventEspresso\core\services\request\RequestInterface;
 use InvalidArgumentException;
 use EventEspresso\core\domain\entities\contexts\RequestTypeContext;
 
@@ -29,7 +29,7 @@ class RequestTypeContextDetector
     private $factory;
 
     /**
-     * @var EE_Request $request
+     * @var RequestInterface $request
      */
     private $request;
 
@@ -37,10 +37,10 @@ class RequestTypeContextDetector
     /**
      * RequestTypeContextDetector constructor.
      *
-     * @param EE_Request                $request
+     * @param RequestInterface          $request
      * @param RequestTypeContextFactory $factory
      */
-    public function __construct(EE_Request $request, RequestTypeContextFactory $factory)
+    public function __construct(RequestInterface $request, RequestTypeContextFactory $factory)
     {
         $this->request = $request;
         $this->factory = $factory;
@@ -58,8 +58,8 @@ class RequestTypeContextDetector
             return $this->factory->create(RequestTypeContext::API);
         }
         // Detect AJAX
-        if ($this->request->isAjax()) {
-            if ($this->request->isFrontAjax()) {
+        if (defined('DOING_AJAX') && DOING_AJAX) {
+            if (filter_var($this->request->getRequestParam('ee_front_ajax'), FILTER_VALIDATE_BOOLEAN)) {
                 return $this->factory->create(RequestTypeContext::FRONT_AJAX);
             }
             return $this->factory->create(RequestTypeContext::ADMIN_AJAX);
@@ -94,7 +94,7 @@ class RequestTypeContextDetector
      */
     private function isEspressoRestApiRequest()
     {
-        $ee_rest_url_prefix = EE_Recommended_Versions::check_wp_version('4.4.0')
+        $ee_rest_url_prefix = RecommendedVersions::compareWordPressVersion('4.4.0')
             ?  trim(rest_get_url_prefix(), '/')
             : 'wp-json';
         $ee_rest_url_prefix .= '/' . Domain::API_NAMESPACE;
@@ -140,9 +140,9 @@ class RequestTypeContextDetector
     {
         $is_iframe_route = apply_filters(
             'FHEE__EventEspresso_core_domain_services_contexts_RequestTypeContextDetector__isIframeRoute',
-            $this->request->get('event_list', '') === 'iframe'
-            || $this->request->get('ticket_selector', '') === 'iframe'
-            || $this->request->get('calendar', '') === 'iframe',
+            $this->request->getRequestParam('event_list', '') === 'iframe'
+            || $this->request->getRequestParam('ticket_selector', '') === 'iframe'
+            || $this->request->getRequestParam('calendar', '') === 'iframe',
             $this
         );
         return filter_var($is_iframe_route, FILTER_VALIDATE_BOOLEAN);
