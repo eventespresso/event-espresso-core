@@ -188,7 +188,7 @@ class DependencyInjector implements InjectorInterface
                 isset($ingredients[$param_class])
             ) {
                 // attempt to inject the dependency
-                $resolved_parameters[$index] = $this->injectDependency($ingredients[$param_class]);
+                $resolved_parameters[$index] = $this->injectDependency($reflector, $ingredients[$param_class]);
             } else if (
                 // param is not even a class
                 empty($param_class)
@@ -210,7 +210,7 @@ class DependencyInjector implements InjectorInterface
                 ! empty($param_class)
             ) {
                 // attempt to inject the dependency
-                $resolved_parameters[$index] = $this->injectDependency($param_class);
+                $resolved_parameters[$index] = $this->injectDependency($reflector, $param_class);
             } else if ($param->isOptional()) {
                 $resolved_parameters[$index] = $param->getDefaultValue();
             } else {
@@ -223,21 +223,23 @@ class DependencyInjector implements InjectorInterface
 
 
     /**
-     * @param string $param_class
+     * @param ReflectionClass $reflector
+     * @param string          $param_class
      * @return mixed
      * @throws UnexpectedValueException
      */
-    private function injectDependency($param_class)
+    private function injectDependency(ReflectionClass $reflector, $param_class)
     {
         $dependency = $this->coffee_pot->brew($param_class);
         if ( ! $dependency instanceof $param_class) {
             throw new UnexpectedValueException(
                 sprintf(
-                    __(
+                    esc_html__(
                         'Could not resolve dependency for "%1$s" for the "%2$s" class constructor.',
                         'event_espresso'
                     ),
-                    $param_class
+                    $param_class,
+                    $reflector->getName()
                 )
             );
         }
