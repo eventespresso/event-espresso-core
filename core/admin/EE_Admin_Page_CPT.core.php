@@ -1,4 +1,6 @@
-<?php use EventEspresso\core\services\request_stack\middleware\RecommendedVersions;
+<?php
+
+use EventEspresso\core\services\request\middleware\RecommendedVersions;
 
 if ( ! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
