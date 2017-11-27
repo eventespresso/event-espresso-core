@@ -5,6 +5,7 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\InvalidSessionDataException;
 use EventEspresso\core\services\cache\CacheStorageInterface;
+use EventEspresso\core\services\request\RequestInterface;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('NO direct script access allowed');
 
@@ -147,7 +148,7 @@ class EE_Session implements SessionIdentifierInterface
     private $_last_gc;
 
     /**
-     * @var EE_Request
+     * @var RequestInterface $request
      */
     protected $request;
 
@@ -156,7 +157,7 @@ class EE_Session implements SessionIdentifierInterface
     /**
      * @singleton method used to instantiate class object
      * @param CacheStorageInterface $cache_storage
-     * @param EE_Request            $request
+     * @param RequestInterface      $request
      * @param EE_Encryption         $encryption
      * @return EE_Session
      * @throws InvalidArgumentException
@@ -165,7 +166,7 @@ class EE_Session implements SessionIdentifierInterface
      */
     public static function instance(
         CacheStorageInterface $cache_storage = null,
-        EE_Request $request = null,
+        RequestInterface $request = null,
         EE_Encryption $encryption = null
     ) {
         // check if class object is instantiated
@@ -183,7 +184,7 @@ class EE_Session implements SessionIdentifierInterface
      * protected constructor to prevent direct creation
      *
      * @param CacheStorageInterface $cache_storage
-     * @param EE_Request            $request
+     * @param RequestInterface      $request
      * @param EE_Encryption         $encryption
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -191,7 +192,7 @@ class EE_Session implements SessionIdentifierInterface
      */
     protected function __construct(
         CacheStorageInterface $cache_storage,
-        EE_Request $request,
+        RequestInterface $request,
         EE_Encryption $encryption = null
     ) {
         // session loading is turned ON by default, but prior to the init hook, can be turned back OFF via: add_filter( 'FHEE_load_EE_Session', '__return_false' );
@@ -540,7 +541,7 @@ class EE_Session implements SessionIdentifierInterface
         // get our modified session ID
         $this->_sid = $this->_generate_session_id();
         // and the visitors IP
-        $this->_ip_address = $this->request->ip_address();
+        $this->_ip_address = $this->request->ipAddress();
         // set the "user agent"
         $this->_user_agent = $this->request->userAgent();
         // now let's retrieve what's in the db
@@ -784,7 +785,7 @@ class EE_Session implements SessionIdentifierInterface
                     break;
                 case 'ip_address' :
                     // visitor ip address
-                    $session_data['ip_address'] = $this->request->ip_address();
+                    $session_data['ip_address'] = $this->request->ipAddress();
                     break;
                 case 'user_agent' :
                     // visitor user_agent
@@ -872,10 +873,8 @@ class EE_Session implements SessionIdentifierInterface
             || ! (
                 // an an AJAX request from the frontend
                 $this->request->isFrontAjax()
-                || (
-                    // OR an admin request that is NOT AJAX
-                    ! $this->request->isAdmin()
-                )
+                // OR a non-AJAX admin request
+                || $this->request->isAdmin()
                 || (
                     // OR an espresso page
                     EE_Registry::instance()->REQ instanceof EE_Request_Handler
@@ -1057,7 +1056,7 @@ class EE_Session implements SessionIdentifierInterface
      */
     public function wp_loaded()
     {
-        if ($this->request->is_set('clear_session')) {
+        if ($this->request->requestParamIsSet('clear_session')) {
             $this->clear_session(__CLASS__, __FUNCTION__);
         }
     }
