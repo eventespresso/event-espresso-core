@@ -3,6 +3,7 @@
 namespace EventEspresso\core\services\bootstrap;
 
 use EE_Dependency_Map;
+use EE_Error;
 use EE_Request;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\request\LegacyRequestInterface;
@@ -10,8 +11,7 @@ use EventEspresso\core\services\request\Request;
 use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\core\services\request\Response;
 use EventEspresso\core\services\request\ResponseInterface;
-
-
+use InvalidArgumentException;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -24,7 +24,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package EventEspresso\core\services\bootstrap
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.53
  */
 class BootstrapRequestResponseObjects
 {
@@ -61,6 +61,9 @@ class BootstrapRequestResponseObjects
     }
 
 
+    /**
+     * @return void
+     */
     public function buildRequestResponse()
     {
         // load our Request and Response objects
@@ -69,6 +72,10 @@ class BootstrapRequestResponseObjects
     }
 
 
+    /**
+     * @return void
+     * @throws InvalidArgumentException
+     */
     public function shareRequestResponse()
     {
         $this->loader->share('EventEspresso\core\services\request\Request', $this->request);
@@ -78,7 +85,11 @@ class BootstrapRequestResponseObjects
     }
 
 
-
+    /**
+     * @return void
+     * @throws InvalidArgumentException
+     * @throws EE_Error
+     */
     public function setupLegacyRequest()
     {
         espresso_load_required(
@@ -87,13 +98,12 @@ class BootstrapRequestResponseObjects
         );
         $this->legacy_request = new EE_Request($_GET, $_POST, $_COOKIE, $_SERVER);
         $this->legacy_request->setRequest($this->request);
-        $this->legacy_request->admin = $this->request->isAdmin();
-        $this->legacy_request->ajax = $this->request->isAjax();
+        $this->legacy_request->admin      = $this->request->isAdmin();
+        $this->legacy_request->ajax       = $this->request->isAjax();
         $this->legacy_request->front_ajax = $this->request->isFrontAjax();
         EE_Dependency_Map::instance()->setLegacyRequest($this->legacy_request);
         $this->loader->share('EE_Request', $this->legacy_request);
         $this->loader->share('EventEspresso\core\services\request\LegacyRequestInterface', $this->legacy_request);
     }
-
 }
-// Location: BootstrapRequestResponseObjects.php
+
