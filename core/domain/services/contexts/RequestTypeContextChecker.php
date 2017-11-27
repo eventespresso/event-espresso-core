@@ -115,7 +115,7 @@ class RequestTypeContextChecker extends ContextChecker implements RequestTypeCon
 
 
     /**
-     * @return mixed
+     * @return bool
      */
     public function isFeed()
     {
@@ -124,7 +124,7 @@ class RequestTypeContextChecker extends ContextChecker implements RequestTypeCon
 
 
     /**
-     * @return mixed
+     * @return bool
      */
     public function isFrontend()
     {
@@ -133,7 +133,7 @@ class RequestTypeContextChecker extends ContextChecker implements RequestTypeCon
 
 
     /**
-     * @return mixed
+     * @return bool
      */
     public function isFrontAjax()
     {
@@ -142,7 +142,7 @@ class RequestTypeContextChecker extends ContextChecker implements RequestTypeCon
 
 
     /**
-     * @return mixed
+     * @return bool
      */
     public function isIframe()
     {

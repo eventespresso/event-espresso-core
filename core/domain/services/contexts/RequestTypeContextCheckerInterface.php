@@ -64,25 +64,25 @@ interface RequestTypeContextCheckerInterface
 
 
     /**
-     * @return mixed
+     * @return bool
      */
     public function isFeed();
 
 
     /**
-     * @return mixed
+     * @return bool
      */
     public function isFrontend();
 
 
     /**
-     * @return mixed
+     * @return bool
      */
     public function isFrontAjax();
 
 
     /**
-     * @return mixed
+     * @return bool
      */
     public function isIframe();
 
