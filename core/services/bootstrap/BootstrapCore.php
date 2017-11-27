@@ -199,16 +199,17 @@ class BootstrapCore
         $stack_apps            = apply_filters(
             'FHEE__EE_Bootstrap__build_request_stack__stack_apps',
             array(
-                'EventEspresso\core\services\request\middleware\DetectLogin',
-                'EventEspresso\core\services\request\middleware\SetRequestTypeContextChecker',
-                'EventEspresso\core\services\request\middleware\RecommendedVersions',
+                'EventEspresso\core\services\request\middleware\PreProductionVersionWarning', // first in last out
                 'EventEspresso\core\services\request\middleware\BotDetector',
-                'EventEspresso\core\services\request\middleware\PreProductionVersionWarning',
+                'EventEspresso\core\services\request\middleware\RecommendedVersions',
+                'EventEspresso\core\services\request\middleware\SetRequestTypeContextChecker',
+                'EventEspresso\core\services\request\middleware\DetectLogin', // last in first out
             )
         );
-        // load middleware onto stack : FILO (First In First Out)
+        // load middleware onto stack : FILO (First In Last Out)
+        // items at the beginning of the $stack_apps array will run last
         foreach ((array) $stack_apps as $stack_app) {
-            $request_stack_builder->unshift($stack_app);
+            $request_stack_builder->push($stack_app);
         }
         return apply_filters(
             'FHEE__EE_Bootstrap__build_request_stack__request_stack_builder',

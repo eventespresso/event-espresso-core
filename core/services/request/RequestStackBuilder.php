@@ -45,7 +45,8 @@ class RequestStackBuilder
 
     /**
      * Add a Middleware class to the beginning of the middleware stack
-     * ! IMPORTANT ! middleware stack operates  FIRST IN LAST OUT
+     * ! IMPORTANT ! middleware stack operates FIRST IN LAST OUT
+     * so items at the beginning of the final middleware array will run last
      * First parameter is the middleware classname,
      * any number of arguments can also be passed, and detected via func_get_args()
      * @ param $class_name
@@ -69,7 +70,8 @@ class RequestStackBuilder
 
     /**
      * Add a Middleware class to the end of the middleware stack
-     * ! IMPORTANT ! middleware stack operates  FIRST IN LAST OUT
+     * ! IMPORTANT ! middleware stack operates FIRST IN LAST OUT
+     * so items at the beginning of the final middleware array will run last
      * First parameter is the middleware classname,
      * any number of arguments can also be passed, and detected via func_get_args()
      * @ param $class_name
