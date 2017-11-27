@@ -36,9 +36,14 @@ class EE_Alpha_Banner_Warning extends EE_Middleware {
 	public function display_alpha_banner_warning() {
         EE_Error::doing_it_wrong(
             __METHOD__,
-            esc_html__(
-                'This method is deprecated. Please use EventEspresso\core\services\request_stack\middleware\PreProductionVersionWarning::displayPreProductionVersionWarning() instead. All Event Espresso request stack classes have been moved to \core\services\request_stack  and are now under the EventEspresso\core\services\request_stack namespace',
-                'event_espresso'
+            sprintf(
+                esc_html__(
+                    'This method is deprecated. Please use %1$s instead. All Event Espresso request stack classes have been moved to %2$s and are now under the %3$s namespace',
+                    'event_espresso'
+                ),
+                'EventEspresso\core\services\request\middleware\PreProductionVersionWarning::displayPreProductionVersionWarning()',
+                '\core\services\request',
+                'EventEspresso\core\services\request'
             ),
             '4.9.52',
             '4.10.0'
@@ -54,9 +59,14 @@ class EE_Alpha_Banner_Warning extends EE_Middleware {
 	public function alpha_banner_admin_notice() {
         EE_Error::doing_it_wrong(
             __METHOD__,
-            esc_html__(
-                'This method is deprecated. Please use EventEspresso\core\services\request_stack\middleware\PreProductionVersionWarning::preProductionVersionAdminNotice() instead. All Event Espresso request stack classes have been moved to \core\services\request_stack  and are now under the EventEspresso\core\services\request_stack namespace',
-                'event_espresso'
+            sprintf(
+                esc_html__(
+                    'This method is deprecated. Please use %1$s instead. All Event Espresso request stack classes have been moved to %2$s and are now under the %3$s namespace',
+                    'event_espresso'
+                ),
+                'EventEspresso\core\services\request\middleware\PreProductionVersionWarning::preProductionVersionAdminNotice()',
+                '\core\services\request',
+                'EventEspresso\core\services\request'
             ),
             '4.9.52',
             '4.10.0'
@@ -72,9 +82,14 @@ class EE_Alpha_Banner_Warning extends EE_Middleware {
 	public function alpha_banner_warning_notice() {
         EE_Error::doing_it_wrong(
             __METHOD__,
-            esc_html__(
-                'This method is deprecated. Please use EventEspresso\core\services\request_stack\middleware\PreProductionVersionWarning::preProductionVersionWarningNotice() instead. All Event Espresso request stack classes have been moved to \core\services\request_stack  and are now under the EventEspresso\core\services\request_stack namespace',
-                'event_espresso'
+            sprintf(
+                esc_html__(
+                    'This method is deprecated. Please use %1$s instead. All Event Espresso request stack classes have been moved to %2$s and are now under the %3$s namespace',
+                    'event_espresso'
+                ),
+                'EventEspresso\core\services\request\middleware\PreProductionVersionWarning::preProductionVersionWarningNotice()',
+                '\core\services\request',
+                'EventEspresso\core\services\request'
             ),
             '4.9.52',
             '4.10.0'

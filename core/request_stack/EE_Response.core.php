@@ -54,9 +54,14 @@ class EE_Response
         $this->terminate_request(false);
         EE_Error::doing_it_wrong(
             __METHOD__,
-            esc_html__(
-                'This class is deprecated. Please use EventEspresso\core\services\request\Response instead. All Event Espresso request stack classes have been moved to \core\services\request and are now under the EventEspresso\core\services\request_stack namespace',
-                'event_espresso'
+            sprintf(
+                esc_html__(
+                    'This class is deprecated. Please use %1$s instead. All Event Espresso request stack classes have been moved to %2$s and are now under the %3$s namespace',
+                    'event_espresso'
+                ),
+                'EventEspresso\core\services\request\Response',
+                '\core\services\request',
+                'EventEspresso\core\services\request'
             ),
             '4.9.53'
         );
