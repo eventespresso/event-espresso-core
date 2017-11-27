@@ -1067,7 +1067,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase
      */
     public function testFThenSetRoundTrip()
     {
-        $original_value = '<b>my bold text "with quotes!"</b>';
+        $original_value = '<b>my bold text "with quotes!"</b> and &quot;html entities&quot; like';
         $t = $this->new_model_obj_with_dependencies(
             'Ticket',
             array(
