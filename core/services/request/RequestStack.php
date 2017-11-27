@@ -20,7 +20,7 @@ class RequestStack
 {
 
     /**
-     * @var RequestDecorator $application
+     * @var RequestDecoratorInterface $application
      */
     protected $application;
 
@@ -42,10 +42,10 @@ class RequestStack
 
 
     /**
-     * @param    RequestDecorator $application
-     * @param    array            $middlewares
+     * @param    RequestDecoratorInterface $application
+     * @param    array                     $middlewares
      */
-    public function __construct(RequestDecorator $application, array $middlewares = array())
+    public function __construct(RequestDecoratorInterface $application, array $middlewares = array())
     {
         $this->application = $application;
         $this->middlewares = $middlewares;

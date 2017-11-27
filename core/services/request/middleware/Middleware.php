@@ -3,7 +3,7 @@
 namespace EventEspresso\core\services\request\middleware;
 
 use EventEspresso\core\services\loaders\LoaderInterface;
-use EventEspresso\core\services\request\RequestDecorator;
+use EventEspresso\core\services\request\RequestDecoratorInterface;
 use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\core\services\request\ResponseInterface;
 
@@ -26,11 +26,11 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  * @author  Brent Christensen
  * @since   4.9.52
  */
-abstract class Middleware implements RequestDecorator
+abstract class Middleware implements RequestDecoratorInterface
 {
 
     /**
-     * @var RequestDecorator $request_stack
+     * @var RequestDecoratorInterface $request_stack
      */
     protected $request_stack;
 
@@ -52,10 +52,10 @@ abstract class Middleware implements RequestDecorator
 
 
     /**
-     * @param RequestDecorator $request_stack
-     * @param LoaderInterface  $loader
+     * @param RequestDecoratorInterface $request_stack
+     * @param LoaderInterface           $loader
      */
-    public function __construct(RequestDecorator $request_stack, LoaderInterface $loader)
+    public function __construct(RequestDecoratorInterface $request_stack, LoaderInterface $loader)
     {
         $this->request_stack = $request_stack;
         $this->loader = $loader;

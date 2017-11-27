@@ -95,14 +95,14 @@ class RequestStackBuilder
      * builds decorated middleware stack
      * by continuously injecting previous middleware app into the next
      *
-     * @param RequestDecorator $application
+     * @param RequestDecoratorInterface $application
      * @return RequestStack
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws ReflectionException
      */
-    public function resolve(RequestDecorator $application)
+    public function resolve(RequestDecoratorInterface $application)
     {
         $core_app = $application;
         $loader = LoaderFactory::getLoader();
@@ -113,7 +113,7 @@ class RequestStackBuilder
                 $application = $middleware_app_class($application);
             } else {
                 $reflection  = new ReflectionClass($middleware_app_class);
-                /** @var RequestDecorator $application */
+                /** @var RequestDecoratorInterface $application */
                 $application = $reflection->newInstanceArgs($middleware_app_args);
             }
             $middleware_stack[] = $application;

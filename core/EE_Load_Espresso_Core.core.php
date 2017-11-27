@@ -2,7 +2,7 @@
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
-use EventEspresso\core\services\request\RequestDecorator;
+use EventEspresso\core\services\request\RequestDecoratorInterface;
 use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\core\services\request\RequestStackCoreAppInterface;
 use EventEspresso\core\services\request\ResponseInterface;
@@ -23,7 +23,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  * @author         Brent Christensen, Michael Nelson
  * ------------------------------------------------------------------------
  */
-class EE_Load_Espresso_Core implements RequestDecorator, RequestStackCoreAppInterface
+class EE_Load_Espresso_Core implements RequestDecoratorInterface, RequestStackCoreAppInterface
 {
 
     /**

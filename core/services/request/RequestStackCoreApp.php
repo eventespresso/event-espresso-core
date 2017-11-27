@@ -24,7 +24,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  * @author  Brent Christensen
  * @since   $VID:$
  */
-class RequestStackCoreApp implements RequestDecorator, RequestStackCoreAppInterface
+class RequestStackCoreApp implements RequestDecoratorInterface, RequestStackCoreAppInterface
 {
 
     /**
