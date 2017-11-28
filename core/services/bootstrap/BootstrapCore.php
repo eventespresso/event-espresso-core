@@ -202,8 +202,8 @@ class BootstrapCore
                 'EventEspresso\core\services\request\middleware\PreProductionVersionWarning', // first in last out
                 'EventEspresso\core\services\request\middleware\BotDetector',
                 'EventEspresso\core\services\request\middleware\RecommendedVersions',
-                'EventEspresso\core\services\request\middleware\SetRequestTypeContextChecker',
-                'EventEspresso\core\services\request\middleware\DetectLogin', // last in first out
+                'EventEspresso\core\services\request\middleware\DetectLogin',
+                'EventEspresso\core\services\request\middleware\SetRequestTypeContextChecker', // last in first out
             )
         );
         // load middleware onto stack : FILO (First In Last Out)
