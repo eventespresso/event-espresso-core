@@ -2,6 +2,8 @@
 
 namespace EventEspresso\core\services\request;
 
+use EventEspresso\core\services\request\middleware\Middleware;
+
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
@@ -25,7 +27,7 @@ class RequestStack
     protected $application;
 
     /**
-     * @var array $middlewares
+     * @var Middleware[] $middlewares
      */
     protected $middlewares;
 
@@ -43,7 +45,7 @@ class RequestStack
 
     /**
      * @param    RequestDecoratorInterface $application
-     * @param    array                     $middlewares
+     * @param    Middleware[]              $middlewares
      */
     public function __construct(RequestDecoratorInterface $application, array $middlewares = array())
     {
