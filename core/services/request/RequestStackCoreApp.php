@@ -63,7 +63,12 @@ class RequestStackCoreApp implements RequestDecoratorInterface, RequestStackCore
         espresso_load_required('EE_Deprecated', EE_CORE . 'EE_Deprecated.core.php');
         // workarounds for PHP < 5.3
         espresso_load_required('EEH_Class_Tools', EE_HELPERS . 'EEH_Class_Tools.helper.php');
+        do_action(
+            'EE_EventEspresso_core_services_request_RequestStackCoreApp__handle_request__initialize_core_loading'
+        );
+        // legacy action for backwards compatibility
         do_action('EE_Load_Espresso_Core__handle_request__initialize_core_loading');
+        $this->setupFramework();
         $loader = LoaderFactory::getLoader();
         // WP cron jobs
         $loader->getShared('EE_Cron_Tasks');
@@ -71,6 +76,24 @@ class RequestStackCoreApp implements RequestDecoratorInterface, RequestStackCore
         return $this->response;
     }
 
+
+    /**
+     * set framework for the rest of EE to hook into when loading
+     *
+     * @throws EE_Error
+     */
+    private function setupFramework()
+    {
+        espresso_load_required(
+            'EE_Bootstrap',
+            EE_CORE . 'EE_Bootstrap.core.php'
+        );
+        add_action('plugins_loaded', array('EE_Bootstrap', 'load_espresso_addons'), 1);
+        add_action('plugins_loaded', array('EE_Bootstrap', 'detect_activations_or_upgrades'), 3);
+        add_action('plugins_loaded', array('EE_Bootstrap', 'load_core_configuration'), 5);
+        add_action('plugins_loaded', array('EE_Bootstrap', 'register_shortcodes_modules_and_widgets'), 7);
+        add_action('plugins_loaded', array('EE_Bootstrap', 'brew_espresso'), 9);
+    }
 
 
     /**
