@@ -2,8 +2,6 @@
 
 namespace EventEspresso\core\services\request;
 
-use EventEspresso\core\services\request\middleware\Middleware;
-
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
@@ -22,14 +20,14 @@ class RequestStack
 {
 
     /**
-     * @var RequestDecoratorInterface $application
+     * @var RequestDecoratorInterface $request_stack_app
      */
-    protected $application;
+    protected $request_stack_app;
 
     /**
-     * @var Middleware[] $middlewares
+     * @var RequestStackCoreAppInterface $core_app
      */
-    protected $middlewares;
+    protected $core_app;
 
     /**
      * @var RequestInterface $request
@@ -42,31 +40,28 @@ class RequestStack
     protected $response;
 
 
-
     /**
-     * @param    RequestDecoratorInterface $application
-     * @param    Middleware[]              $middlewares
+     * @param RequestDecoratorInterface    $request_stack_app
+     * @param RequestStackCoreAppInterface $core_app
      */
-    public function __construct(RequestDecoratorInterface $application, array $middlewares = array())
+    public function __construct(RequestDecoratorInterface $request_stack_app, RequestStackCoreAppInterface $core_app)
     {
-        $this->application = $application;
-        $this->middlewares = $middlewares;
+        $this->request_stack_app = $request_stack_app;
+        $this->core_app      = $core_app;
     }
 
 
-
     /**
-     * @param RequestInterface $request
-     * @param ResponseInterface      $response
+     * @param RequestInterface  $request
+     * @param ResponseInterface $response
      * @return ResponseInterface
      */
     public function handleRequest(RequestInterface $request, ResponseInterface $response)
     {
         $this->request  = $request;
         $this->response = $response;
-        return $this->application->handleRequest($request, $response);
+        return $this->request_stack_app->handleRequest($request, $response);
     }
-
 
 
     /**
@@ -76,15 +71,7 @@ class RequestStack
      */
     public function handleResponse()
     {
-        foreach ($this->middlewares as $middleware) {
-            if ($middleware instanceof RequestStackCoreAppInterface) {
-                $middleware->handleResponse($this->request, $this->response);
-                // exit loop since we should be done
-                // (also in case someone has accidentally labeled multiple apps as the EEI_Request_Stack_Core_App )
-                break;
-            }
-        }
+        $this->core_app->handleResponse($this->request, $this->response);
     }
-
 }
 // Location: RequestStack.php
