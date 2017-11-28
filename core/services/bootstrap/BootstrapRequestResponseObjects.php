@@ -99,7 +99,7 @@ class BootstrapRequestResponseObjects
         $this->legacy_request = new EE_Request($_GET, $_POST, $_COOKIE, $_SERVER);
         $this->legacy_request->setRequest($this->request);
         $this->legacy_request->admin      = $this->request->isAdmin();
-        $this->legacy_request->ajax       = $this->request->isEeAjax();
+        $this->legacy_request->ajax       = $this->request->isAjax();
         $this->legacy_request->front_ajax = $this->request->isFrontAjax();
         EE_Dependency_Map::instance()->setLegacyRequest($this->legacy_request);
         $this->loader->share('EE_Request', $this->legacy_request);

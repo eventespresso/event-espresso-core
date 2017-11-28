@@ -48,7 +48,7 @@ class PreProductionVersionWarning extends Middleware
     public function displayPreProductionVersionWarning()
     {
         // skip AJAX requests
-        if ($this->request->isOtherAjax()) {
+        if ($this->request->isAjax()) {
             return;
         }
         // skip stable releases
