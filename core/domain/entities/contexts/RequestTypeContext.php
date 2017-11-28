@@ -33,7 +33,17 @@ class RequestTypeContext extends Context
     /**
      * indicates that the current request is for the admin AND is being made via AJAX
      */
-    const ADMIN_AJAX = 'admin-ajax-request';
+    const AJAX_ADMIN = 'admin-ajax-request';
+
+    /**
+     * indicates that the current request is for the frontend AND is being made via AJAX
+     */
+    const AJAX_FRONT = 'frontend-ajax-request';
+
+    /**
+     * indicates that the current request is being made via AJAX, but is NOT for EE
+     */
+    const AJAX_OTHER = 'other-ajax-request';
 
     /**
      * indicates that the current request is for the EE REST API
@@ -59,11 +69,6 @@ class RequestTypeContext extends Context
      * indicates that the current request is for the frontend but is not being made via AJAX
      */
     const FRONTEND = 'non-ajax-frontend-request';
-
-    /**
-     * indicates that the current request is for the frontend AND is being made via AJAX
-     */
-    const FRONT_AJAX = 'frontend-ajax-request';
 
     /**
      * indicates that the current request is for content that is to be displayed within an iframe
@@ -116,13 +121,14 @@ class RequestTypeContext extends Context
                 array(
                     RequestTypeContext::ACTIVATION,
                     RequestTypeContext::ADMIN,
-                    RequestTypeContext::ADMIN_AJAX,
+                    RequestTypeContext::AJAX_ADMIN,
+                    RequestTypeContext::AJAX_FRONT,
+                    RequestTypeContext::AJAX_OTHER,
                     RequestTypeContext::API,
                     RequestTypeContext::CLI,
                     RequestTypeContext::CRON,
                     RequestTypeContext::FEED,
                     RequestTypeContext::FRONTEND,
-                    RequestTypeContext::FRONT_AJAX,
                     RequestTypeContext::IFRAME,
                 )
             );
