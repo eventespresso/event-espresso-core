@@ -427,6 +427,15 @@ class Request implements InterminableInterface, RequestInterface
     /**
      * @return mixed
      */
+    public function isAjax()
+    {
+        return $this->request_type->isAjax();
+    }
+
+
+    /**
+     * @return mixed
+     */
     public function isEeAjax()
     {
         return $this->request_type->isEeAjax();
