@@ -473,7 +473,7 @@ class EE_Dependency_Map
             ),
             'EE_Session'                                                                                                  => array(
                 'EventEspresso\core\services\cache\TransientCacheStorage' => EE_Dependency_Map::load_from_cache,
-                'EE_Request'                                              => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\request\Request'             => EE_Dependency_Map::load_from_cache,
                 'EE_Encryption'                                           => EE_Dependency_Map::load_from_cache,
             ),
             'EE_Cart'                                                                                                     => array(
