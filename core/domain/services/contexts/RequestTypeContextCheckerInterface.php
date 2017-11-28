@@ -42,12 +42,6 @@ interface RequestTypeContextCheckerInterface
     /**
      * @return bool
      */
-    public function isAjax();
-
-
-    /**
-     * @return bool
-     */
     public function isApi();
 
 
@@ -61,6 +55,12 @@ interface RequestTypeContextCheckerInterface
      * @return bool
      */
     public function isCron();
+
+
+    /**
+     * @return bool
+     */
+    public function isEeAjax();
 
 
     /**
@@ -85,6 +85,12 @@ interface RequestTypeContextCheckerInterface
      * @return bool
      */
     public function isIframe();
+
+
+    /**
+     * @return bool
+     */
+    public function isOtherAjax();
 
 
     /**
