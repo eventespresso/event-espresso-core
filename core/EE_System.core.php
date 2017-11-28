@@ -1087,7 +1087,7 @@ final class EE_System implements ResettableInterface
     {
         if (
             $this->request->isAdmin()
-            || $this->request->isAjax()
+            || $this->request->isEeAjax()
             || $this->request->isFrontend()
         ) {
             $this->loader->getShared('EE_Session');

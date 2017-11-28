@@ -263,7 +263,7 @@ class EE_Request implements LegacyRequestInterface, InterminableInterface
      */
     public function isAjax()
     {
-        return $this->request()->isAjax();
+        return $this->request()->isEeAjax();
     }
 
 
