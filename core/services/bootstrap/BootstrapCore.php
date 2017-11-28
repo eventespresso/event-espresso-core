@@ -84,7 +84,6 @@ class BootstrapCore
         $bootstrap_request = $this->bootstrapRequestResponseObjects();
         $this->runRequestStack();
         $bootstrap_request->setupLegacyRequest();
-        $this->setupFramework();
     }
 
 
@@ -112,6 +111,7 @@ class BootstrapCore
      * sets up the request and response objects
      *
      * @return BootstrapRequestResponseObjects
+     * @throws InvalidArgumentException
      */
     private function bootstrapRequestResponseObjects()
     {
@@ -141,9 +141,9 @@ class BootstrapCore
      */
     public function runRequestStack()
     {
-        $this->load_autoloader();
-        $this->set_autoloaders_for_required_files();
-        $this->request_stack_builder = $this->build_request_stack();
+        $this->loadAutoloader();
+        $this->setAutoloadersForRequiredFiles();
+        $this->request_stack_builder = $this->buildRequestStack();
         $this->request_stack         = $this->request_stack_builder->resolve(
             new RequestStackCoreApp()
         );
@@ -156,7 +156,7 @@ class BootstrapCore
     /**
      * load_autoloader
      */
-    protected function load_autoloader()
+    protected function loadAutoloader()
     {
         // load interfaces
         espresso_load_required(
@@ -173,7 +173,7 @@ class BootstrapCore
      *
      * @throws EE_Error
      */
-    protected function set_autoloaders_for_required_files()
+    protected function setAutoloadersForRequiredFiles()
     {
         // load interfaces
         EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_CORE . 'interfaces', true);
@@ -193,23 +193,39 @@ class BootstrapCore
      * @return RequestStackBuilder
      * @throws InvalidArgumentException
      */
-    public function build_request_stack()
+    public function buildRequestStack()
     {
-        $request_stack_builder = new RequestStackBuilder();
+        $request_stack_builder = new RequestStackBuilder($this->loader);
+        /**
+         * ! IMPORTANT ! middleware stack operates FILO : FIRST IN LAST OUT
+         * so items at the beginning of the final middleware stack will run last
+         * First parameter is the middleware classname, second is an array of arguments
+         */
+        $stack_apps            = apply_filters(
+            'FHEE__EventEspresso_core_services_bootstrap_BootstrapCore__buildRequestStack__stack_apps',
+            array(
+                // first in last out
+                'EventEspresso\core\services\request\middleware\PreProductionVersionWarning' => array(),
+                'EventEspresso\core\services\request\middleware\BotDetector' => array(),
+                'EventEspresso\core\services\request\middleware\RecommendedVersions' => array(),
+                // last in first out
+                'EventEspresso\core\services\request\middleware\DetectLogin' => array(),
+            )
+        );
+        // legacy filter for backwards compatibility
         $stack_apps            = apply_filters(
             'FHEE__EE_Bootstrap__build_request_stack__stack_apps',
-            array(
-                'EventEspresso\core\services\request\middleware\PreProductionVersionWarning', // first in last out
-                'EventEspresso\core\services\request\middleware\BotDetector',
-                'EventEspresso\core\services\request\middleware\RecommendedVersions',
-                'EventEspresso\core\services\request\middleware\DetectLogin',
-                'EventEspresso\core\services\request\middleware\SetRequestTypeContextChecker', // last in first out
-            )
+            $stack_apps
+        );
+        // first we'll add this on its own because we need it to always be part of the stack
+        // and we also need it to always run first because the rest of the system relies on it
+        $request_stack_builder->push(
+            array('EventEspresso\core\services\request\middleware\SetRequestTypeContextChecker', array())
         );
         // load middleware onto stack : FILO (First In Last Out)
         // items at the beginning of the $stack_apps array will run last
-        foreach ((array) $stack_apps as $stack_app) {
-            $request_stack_builder->push($stack_app);
+        foreach ((array) $stack_apps as $stack_app => $stack_app_args) {
+            $request_stack_builder->push(array($stack_app, $stack_app_args));
         }
         return apply_filters(
             'FHEE__EE_Bootstrap__build_request_stack__request_stack_builder',
@@ -217,24 +233,6 @@ class BootstrapCore
         );
     }
 
-
-    /**
-     * set framework for the rest of EE to hook into when loading
-     *
-     * @throws EE_Error
-     */
-    private function setupFramework()
-    {
-        espresso_load_required(
-            'EE_Bootstrap',
-            EE_CORE . 'EE_Bootstrap.core.php'
-        );
-        add_action('plugins_loaded', array('EE_Bootstrap', 'load_espresso_addons'), 1);
-        add_action('plugins_loaded', array('EE_Bootstrap', 'detect_activations_or_upgrades'), 3);
-        add_action('plugins_loaded', array('EE_Bootstrap', 'load_core_configuration'), 5);
-        add_action('plugins_loaded', array('EE_Bootstrap', 'register_shortcodes_modules_and_widgets'), 7);
-        add_action('plugins_loaded', array('EE_Bootstrap', 'brew_espresso'), 9);
-    }
 
 }
 // Location: BootstrapCore.php
