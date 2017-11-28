@@ -97,7 +97,7 @@ class CoffeeShopTest extends EE_UnitTestCase
         );
         $this->CoffeeShop->addAliases(
             'EventEspresso\core\services\request\Request',
-            array('Request')
+            array('Request', 'EventEspresso\core\services\request\RequestInterface')
         );
         /** @var EventEspresso\core\services\request\Request $request */
         $request = $this->CoffeeShop->brew('Request');
