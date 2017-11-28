@@ -60,9 +60,12 @@ class RequestTypeContextDetector
         // Detect AJAX
         if (defined('DOING_AJAX') && DOING_AJAX) {
             if (filter_var($this->request->getRequestParam('ee_front_ajax'), FILTER_VALIDATE_BOOLEAN)) {
-                return $this->factory->create(RequestTypeContext::FRONT_AJAX);
+                return $this->factory->create(RequestTypeContext::AJAX_FRONT);
             }
-            return $this->factory->create(RequestTypeContext::ADMIN_AJAX);
+            if (filter_var($this->request->getRequestParam('ee_admin_ajax'), FILTER_VALIDATE_BOOLEAN)) {
+                return $this->factory->create(RequestTypeContext::AJAX_ADMIN);
+            }
+            return $this->factory->create(RequestTypeContext::AJAX_OTHER);
         }
         // Detect WP_Cron
         if ($this->isCronRequest()) {
