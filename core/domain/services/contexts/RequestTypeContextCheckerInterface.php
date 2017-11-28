@@ -15,6 +15,8 @@ interface RequestTypeContextCheckerInterface
 {
 
     /**
+     * true if the current request involves some form of activation
+     *
      * @return bool
      */
     public function isActivation();
@@ -28,48 +30,72 @@ interface RequestTypeContextCheckerInterface
 
 
     /**
+     * true if the current request is for the admin and is not being made via AJAX
+     *
      * @return bool
      */
     public function isAdmin();
 
 
     /**
+     * true if the current request is for the admin AND is being made via AJAX
+     *
      * @return bool
      */
     public function isAdminAjax();
 
 
     /**
+     * true if the current request is being made via AJAX... any AJAX
+     *
+     * @return bool
+     */
+    public function isAjax();
+
+
+    /**
+     * true if the current request is for the EE REST API
+     *
      * @return bool
      */
     public function isApi();
 
 
     /**
+     * true if the current request is from the command line
+     *
      * @return bool
      */
     public function isCli();
 
 
     /**
+     * true if the current request is for a WP_Cron
+     *
      * @return bool
      */
     public function isCron();
 
 
     /**
+     * true if the current request is for either the EE admin or EE frontend AND is being made via AJAX
+     *
      * @return bool
      */
     public function isEeAjax();
 
 
     /**
+     * true if the current request is for a feed (ie: RSS)
+     *
      * @return bool
      */
     public function isFeed();
 
 
     /**
+     * true if the current request is for the frontend and is not being made via AJAX
+     *
      * @return bool
      */
     public function isFrontend();
@@ -88,6 +114,8 @@ interface RequestTypeContextCheckerInterface
 
 
     /**
+     * true if the current request is being made via AJAX but is NOT for EE related logic
+     *
      * @return bool
      */
     public function isOtherAjax();
