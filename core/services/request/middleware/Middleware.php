@@ -30,9 +30,9 @@ abstract class Middleware implements RequestDecoratorInterface
 {
 
     /**
-     * @var RequestDecoratorInterface $request_stack
+     * @var RequestDecoratorInterface $request_stack_app
      */
-    protected $request_stack;
+    protected $request_stack_app;
 
     /**
      * @var RequestInterface $request
@@ -52,12 +52,12 @@ abstract class Middleware implements RequestDecoratorInterface
 
 
     /**
-     * @param RequestDecoratorInterface $request_stack
+     * @param RequestDecoratorInterface $request_stack_app
      * @param LoaderInterface           $loader
      */
-    public function __construct(RequestDecoratorInterface $request_stack, LoaderInterface $loader)
+    public function __construct(RequestDecoratorInterface $request_stack_app, LoaderInterface $loader)
     {
-        $this->request_stack = $request_stack;
+        $this->request_stack_app = $request_stack_app;
         $this->loader = $loader;
     }
 
@@ -75,7 +75,7 @@ abstract class Middleware implements RequestDecoratorInterface
         $this->request  = $request;
         $this->response = $response;
         if (! $this->response->requestTerminated()) {
-            $this->response = $this->request_stack->handleRequest($this->request, $this->response);
+            $this->response = $this->request_stack_app->handleRequest($this->request, $this->response);
         }
         return $this->response;
     }
