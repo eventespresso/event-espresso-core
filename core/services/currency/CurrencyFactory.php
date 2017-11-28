@@ -2,10 +2,9 @@
 
 namespace EventEspresso\core\services\currency;
 
-use EE_Country;
 use EE_Error;
 use EE_Organization_Config;
-use EEM_Country;
+use EEH_File;
 use EventEspresso\core\domain\values\currency\Currency;
 use EventEspresso\core\entities\Label;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
@@ -29,51 +28,87 @@ class CurrencyFactory
 {
 
     /**
-     * @var EEM_Country $country_model
+     * @var array[] $country_currency_data
      */
-    protected $country_model;
+    private $country_currency_data;
 
     /**
-     * @var EE_Country[] $countries
+     * @var array[] $country_currencies_by_iso_code
      */
-    protected $countries_by_iso_code;
+    private $country_currencies_by_iso_code;
 
     /**
-     * @var EE_Country[] $countries
+     * @var array[] $country_currencies_by_currency
      */
-    protected $countries_by_currency;
-
-    /**
-     * @var EE_Organization_Config $organization_config
-     */
-    protected $organization_config;
+    private $country_currencies_by_currency;
 
     /**
      * @var string $site_country_iso
      */
-    protected $site_country_iso;
-
-    /**
-     * @var CurrencySubunits $currency_subunits
-     */
-    protected $currency_subunits;
+    private $site_country_iso;
 
 
     /**
      * CurrencyFactory constructor.
      *
-     * @param EEM_Country            $country_model
      * @param EE_Organization_Config $organization_config
-     * @param CurrencySubunits       $currency_subunits
      */
-    public function __construct(
-        EEM_Country $country_model,
-        EE_Organization_Config$organization_config,
-        CurrencySubunits $currency_subunits
-    ) {
-        $this->country_model = $country_model;
-        $this->organization_config = $organization_config;
-        $this->currency_subunits = $currency_subunits;
+    public function __construct(EE_Organization_Config  $organization_config) {
+        $this->site_country_iso = $organization_config->CNT_ISO;
+    }
+
+
+    /**
+     * @return array[]
+     * @throws InvalidArgumentException
+     * @throws EE_Error
+     */
+    private function getCountryCurrencyData()
+    {
+        if ($this->country_currency_data === null) {
+            $country_currency_data = json_decode(
+                EEH_File::get_file_contents(__DIR__ . DS . 'country-currencies.json'),
+                true
+            );
+            $this->parseCountryCurrencyData($country_currency_data);
+        }
+        return $this->country_currency_data;
+    }
+
+
+    /**
+     * @param array[] $country_currency_data
+     * @throws InvalidArgumentException
+     */
+    private function parseCountryCurrencyData($country_currency_data)
+    {
+        foreach ($country_currency_data as $country_currency) {
+            $this->country_currencies_by_iso_code[ $country_currency['CountryISO'] ] = $country_currency;
+            $this->country_currencies_by_currency[ $country_currency['CurrencyCode'] ] = $country_currency;
+        }
+        $this->country_currency_data = $country_currency_data;
+    }
+
+
+    /**
+     * @param array $country_currency
+     * @return Currency
+     */
+    private function createCurrencyFromCountryCurrency(array $country_currency)
+    {
+        return new Currency(
+            $country_currency['CurrencyCode'],
+            new Label(
+                $country_currency['CurrencyNameSingle'],
+                $country_currency['CurrencyNamePlural']
+            ),
+            $country_currency['CurrencySign'],
+            $country_currency['CurrencySignB4'],
+            $country_currency['CurrencyDecimalPlaces'],
+            $country_currency['CurrencyDecimalMark'],
+            $country_currency['CurrencyThousands'],
+            $country_currency['CurrencySubunits']
+        );
     }
 
 
@@ -91,38 +126,21 @@ class CurrencyFactory
      */
     public function createFromCountryCode($CNT_ISO = null)
     {
-        $CNT_ISO = $CNT_ISO !== null ? $CNT_ISO : $this->organization_config->CNT_ISO;
-        if(isset($this->countries_by_iso_code[ $CNT_ISO])) {
-            $country = $this->countries_by_iso_code[ $CNT_ISO ];
-        } else {
-            /** @var EE_Country $country */
-            $country = $this->country_model->get_one_by_ID($CNT_ISO);
-            if (! $country instanceof EE_Country) {
-                throw new InvalidArgumentException(
-                    sprintf(
-                        esc_html__(
-                            'A valid country could not be found for the "%1$s" country code;',
-                            'event_espresso'
-                        ),
-                        $CNT_ISO
-                    )
-                );
-            }
-            $this->countries_by_iso_code[ $CNT_ISO ]                  = $country;
-            $this->countries_by_currency[ $country->currency_code() ] = $country;
+        $this->getCountryCurrencyData();
+        $CNT_ISO = $CNT_ISO !== null ? $CNT_ISO : $this->site_country_iso;
+        if(! isset($this->country_currencies_by_iso_code[ $CNT_ISO ])) {
+            throw new InvalidArgumentException(
+                sprintf(
+                    esc_html__(
+                        'Valid country currency data could not be found for the "%1$s" country code;',
+                        'event_espresso'
+                    ),
+                    $CNT_ISO
+                )
+            );
         }
-        return new Currency(
-            $country->currency_code(),
-            new Label(
-                $country->currency_name_single(),
-                $country->currency_name_plural()
-            ),
-            $country->currency_sign(),
-            $country->currency_sign_before(),
-            $country->currency_decimal_places(),
-            $country->currency_decimal_mark(),
-            $country->currency_thousands_separator(),
-            $this->currency_subunits->decimalsForCode($country->currency_code())
+        return $this->createCurrencyFromCountryCurrency(
+            $this->country_currencies_by_iso_code[ $CNT_ISO ]
         );
     }
 
@@ -143,37 +161,20 @@ class CurrencyFactory
      */
     public function createFromCode($code)
     {
-        if (isset($this->countries_by_currency[ $code ])) {
-            $country = $this->countries_by_currency[ $code ];
-        } else {
-            /** @var EE_Country $country */
-            $country = $this->country_model->get_one(array(array('CNT_cur_code' => $code)));
-            if (! $country instanceof EE_Country) {
-                throw new InvalidArgumentException(
-                    sprintf(
-                        esc_html__(
-                            'A valid currency could not be found for the "%1$s" currency code;',
-                            'event_espresso'
-                        ),
-                        $code
-                    )
-                );
-            }
-            $this->countries_by_iso_code[ $country->ID() ] = $country;
-            $this->countries_by_currency[ $code ]          = $country;
+        $this->getCountryCurrencyData();
+        if (! isset($this->country_currencies_by_currency[ $code ])) {
+            throw new InvalidArgumentException(
+                sprintf(
+                    esc_html__(
+                        'A valid currency could not be found for the "%1$s" currency code;',
+                        'event_espresso'
+                    ),
+                    $code
+                )
+            );
         }
-        return new Currency(
-            $country->currency_code(),
-            new Label(
-                $country->currency_name_single(),
-                $country->currency_name_plural()
-            ),
-            $country->currency_sign(),
-            $country->currency_sign_before(),
-            $country->currency_decimal_places(),
-            $country->currency_decimal_mark(),
-            $country->currency_thousands_separator(),
-            $this->currency_subunits->decimalsForCode($code)
+        return $this->createCurrencyFromCountryCurrency(
+            $this->country_currencies_by_currency[ $code ]
         );
     }
 }
