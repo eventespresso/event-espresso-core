@@ -70,7 +70,11 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 	 * aren't in this array, it is assumed they AREN'T interchangeable with any other question types.
 	 *
 	 * @access protected
-	 * @var array $_question_type_categories
+	 * @var array $_question_type_categories {
+     * @type string $text
+     * @type string $single-answer-enum
+     * @type string $multi-answer-enum
+     *                    }
 	 */
 	protected $_question_type_categories = array();
 
@@ -152,12 +156,14 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 				'text' => array(
 					EEM_Question::QST_type_text,
 					EEM_Question::QST_type_textarea,
+                    EEM_Question::QST_type_date,
 					EEM_Question::QST_type_html_textarea,
 					EEM_Question::QST_type_email,
 					EEM_Question::QST_type_us_phone,
-					EEM_Question::QST_type_int,
 					EEM_Question::QST_type_decimal,
+                    EEM_Question::QST_type_int,
 					EEM_Question::QST_type_url,
+                    EEM_Question::QST_type_year
 					),
 				'single-answer-enum' => array(
 					EEM_Question::QST_type_radio,
@@ -242,6 +248,35 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 		}
 		return in_array( $question_type, $this->_question_type_categories[ $category ] );
 	}
+
+
+
+    /**
+     * Returns all the question types in the given category
+     * @param string $category
+     * @return array|mixed
+     */
+	public function question_types_in_category($category)
+    {
+        if( isset($this->_question_type_categories[$category])) {
+            return $this->_question_type_categories[$category];
+        }
+        return array();
+    }
+
+
+
+    /**
+     * Returns all the question types that should have question options
+     * @return array
+     */
+    public function question_types_with_options()
+    {
+        return array_merge(
+            $this->question_types_in_category('single-answer-enum'),
+            $this->question_types_in_category('multi-answer-enum')
+        );
+    }
 
 	/**
 	 * Returns the question type categories 2d array

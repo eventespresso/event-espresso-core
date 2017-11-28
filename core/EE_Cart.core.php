@@ -378,12 +378,15 @@ class EE_Cart implements ResettableInterface
      */
     public function delete_cart()
     {
-        $deleted = EEH_Line_Item::delete_all_child_items($this->_grand_total);
-        if ($deleted) {
-            $deleted += $this->_grand_total->delete();
-            $this->_grand_total = null;
+        if ($this->_grand_total instanceof EE_Line_Item) {
+            $deleted = EEH_Line_Item::delete_all_child_items($this->_grand_total);
+            if ($deleted) {
+                $deleted += $this->_grand_total->delete();
+                $this->_grand_total = null;
+                return true;
+            }
         }
-        return $deleted;
+        return false;
     }
 
 

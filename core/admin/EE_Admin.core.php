@@ -1,8 +1,16 @@
 <?php
 
+use EventEspresso\core\domain\entities\notifications\PersistentAdminNotice;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\interfaces\InterminableInterface;
+use EventEspresso\core\services\container\exceptions\ServiceNotFoundException;
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\notifications\PersistentAdminNoticeManager;
 
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
+defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
+
+
 
 /**
  * EE_Admin
@@ -10,24 +18,24 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
  * @package               Event Espresso
  * @subpackage            /core/admin/
  * @author                Brent Christensen
- * ------------------------------------------------------------------------
  */
 final class EE_Admin implements InterminableInterface
 {
 
     /**
-     * @access private
      * @var EE_Admin $_instance
      */
     private static $_instance;
 
+    /**
+     * @var PersistentAdminNoticeManager $persistent_admin_notice_manager
+     */
+    private $persistent_admin_notice_manager;
 
     /**
-     *@ singleton method used to instantiate class object
-     *@ access public
-     *@ return class instance
-     *
-     * @throws \EE_Error
+     * @singleton method used to instantiate class object
+     * @return EE_Admin
+     * @throws EE_Error
      */
     public static function instance()
     {
@@ -53,7 +61,10 @@ final class EE_Admin implements InterminableInterface
     /**
      * class constructor
      *
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
      */
     protected function __construct()
     {
@@ -74,19 +85,17 @@ final class EE_Admin implements InterminableInterface
         add_action('network_admin_notices', array($this, 'display_admin_notices'), 10);
         add_filter('pre_update_option', array($this, 'check_for_invalid_datetime_formats'), 100, 2);
         add_filter('admin_footer_text', array($this, 'espresso_admin_footer'));
-
         //reset Environment config (we only do this on admin page loads);
         EE_Registry::instance()->CFG->environment->recheck_values();
-
         do_action('AHEE__EE_Admin__loaded');
     }
+
 
 
     /**
      * _define_all_constants
      * define constants that are set globally for all admin pages
      *
-     * @access private
      * @return void
      */
     private function _define_all_constants()
@@ -102,9 +111,8 @@ final class EE_Admin implements InterminableInterface
 
 
     /**
-     *    filter_plugin_actions - adds links to the Plugins page listing
+     * filter_plugin_actions - adds links to the Plugins page listing
      *
-     * @access    public
      * @param    array  $links
      * @param    string $plugin
      * @return    array
@@ -141,11 +149,13 @@ final class EE_Admin implements InterminableInterface
 
 
     /**
-     *    _get_request
+     * _get_request
      *
-     * @access public
      * @return void
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function get_request()
@@ -155,10 +165,10 @@ final class EE_Admin implements InterminableInterface
     }
 
 
+
     /**
-     *    hide_admin_pages_except_maintenance_mode
+     * hide_admin_pages_except_maintenance_mode
      *
-     * @access public
      * @param array $admin_page_folder_names
      * @return array
      */
@@ -172,23 +182,37 @@ final class EE_Admin implements InterminableInterface
     }
 
 
+
     /**
      * init- should fire after shortcode, module,  addon, other plugin (default priority), and even
      * EE_Front_Controller's init phases have run
      *
-     * @access public
      * @return void
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      * @throws ReflectionException
+     * @throws ServiceNotFoundException
      */
     public function init()
     {
         //only enable most of the EE_Admin IF we're not in full maintenance mode
         if (EE_Maintenance_Mode::instance()->models_can_query()) {
             //ok so we want to enable the entire admin
-            add_action('wp_ajax_dismiss_ee_nag_notice', array($this, 'dismiss_ee_nag_notice_callback'));
-            add_action('admin_notices', array($this, 'get_persistent_admin_notices'), 9);
-            add_action('network_admin_notices', array($this, 'get_persistent_admin_notices'), 9);
+            $this->persistent_admin_notice_manager = LoaderFactory::getLoader()->getShared(
+                'EventEspresso\core\services\notifications\PersistentAdminNoticeManager',
+                array(
+                    EE_Admin_Page::add_query_args_and_nonce(
+                        array(
+                            'page'   => EE_Registry::instance()->REQ->get('page', ''),
+                            'action' => EE_Registry::instance()->REQ->get('action', ''),
+                        ),
+                        EE_ADMIN_URL
+                    ),
+                )
+            );
+            $this->maybeSetDatetimeWarningNotice();
             //at a glance dashboard widget
             add_filter('dashboard_glance_items', array($this, 'dashboard_glance_items'), 10);
             //filter for get_edit_post_link used on comments for custom post types
@@ -213,14 +237,62 @@ final class EE_Admin implements InterminableInterface
 
 
     /**
+     *    get_persistent_admin_notices
+     *
+     * @access    public
+     * @return void
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    public function maybeSetDatetimeWarningNotice()
+    {
+        //add dismissable notice for datetime changes.  Only valid if site does not have a timezone_string set.
+        //@todo This needs to stay in core for a bit to catch anyone upgrading from a version without this to a version
+        //with this.  But after enough time (indeterminate at this point) we can just remove this notice.
+        //this was added with https://events.codebasehq.com/projects/event-espresso/tickets/10626
+        if (! get_option('timezone_string') && EEM_Event::instance()->count() > 0) {
+            new PersistentAdminNotice(
+                'datetime_fix_notice',
+                sprintf(
+                    esc_html__(
+                        '%1$sImportant announcement related to your install of Event Espresso%2$s: There are some changes made to your site that could affect how dates display for your events and other related items with dates and times.  Read more about it %3$shere%4$s. If your dates and times are displaying incorrectly (incorrect offset), you can fix it using the tool on %5$sthis page%4$s.',
+                        'event_espresso'
+                    ),
+                    '<strong>',
+                    '</strong>',
+                    '<a href="https://eventespresso.com/2017/08/important-upcoming-changes-dates-times">',
+                    '</a>',
+                    '<a href="' . EE_Admin_Page::add_query_args_and_nonce(
+                        array(
+                            'page' => 'espresso_maintenance_settings',
+                            'action' => 'datetime_tools'
+                        ),
+                        admin_url('admin.php')
+                    ) . '">'
+                ),
+                false,
+                'manage_options',
+                'datetime_fix_persistent_notice'
+            );
+        }
+    }
+
+
+
+    /**
      * this simply hooks into the nav menu setup of pages metabox and makes sure that we remove EE critical pages from
      * the list of options. the wp function "wp_nav_menu_item_post_type_meta_box" found in
      * wp-admin/includes/nav-menu.php looks for the "_default_query" property on the post_type object and it uses that
      * to override any queries found in the existing query for the given post type.  Note that _default_query is not a
      * normal property on the post_type object.  It's found ONLY in this particular context.
      *
-     * @param  object $post_type WP post type object
-     * @return object            WP post type object
+     * @param WP_Post $post_type WP post type object
+     * @return WP_Post
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function remove_pages_from_nav_menu($post_type)
     {
@@ -229,7 +301,6 @@ final class EE_Admin implements InterminableInterface
             return $post_type;
         }
         $critical_pages = EE_Registry::instance()->CFG->core->get_critical_pages_array();
-
         $post_type->_default_query = array(
             'post__not_in' => $critical_pages,
         );
@@ -237,11 +308,11 @@ final class EE_Admin implements InterminableInterface
     }
 
 
+
     /**
      * WP by default only shows three metaboxes in "nav-menus.php" for first times users.  We want to make sure our
      * metaboxes get shown as well
      *
-     * @access public
      * @return void
      */
     public function enable_hidden_ee_nav_menu_metaboxes()
@@ -275,15 +346,15 @@ final class EE_Admin implements InterminableInterface
 
         if (is_array($hidden_meta_boxes)) {
             foreach ($hidden_meta_boxes as $key => $meta_box_id) {
-                if (in_array($meta_box_id, $initial_meta_boxes)) {
+                if (in_array($meta_box_id, $initial_meta_boxes, true)) {
                     unset($hidden_meta_boxes[$key]);
                 }
             }
         }
-
         update_user_option($user->ID, 'metaboxhidden_nav-menus', $hidden_meta_boxes, true);
         update_user_option($user->ID, 'ee_nav_menu_initialized', 1, true);
     }
+
 
 
     /**
@@ -292,7 +363,6 @@ final class EE_Admin implements InterminableInterface
      *
      * @todo   modify this so its more dynamic and automatic for all ee CPTs and setups and can also be hooked into by
      *         addons etc.
-     * @access public
      * @return void
      */
     public function register_custom_nav_menu_boxes()
@@ -306,6 +376,7 @@ final class EE_Admin implements InterminableInterface
             'core'
         );
     }
+
 
 
     /**
@@ -335,18 +406,13 @@ final class EE_Admin implements InterminableInterface
     }
 
 
+
     public function ee_cpt_archive_pages()
     {
         global $nav_menu_selected_id;
-
         $db_fields   = false;
         $walker      = new Walker_Nav_Menu_Checklist($db_fields);
         $current_tab = 'event-archives';
-
-        /*if ( ! empty( $_REQUEST['quick-search-posttype-' . $post_type_name] ) ) {
-            $current_tab = 'search';
-        }/**/
-
         $removed_args = array(
             'action',
             'customlink-tab',
@@ -355,7 +421,6 @@ final class EE_Admin implements InterminableInterface
             'page-tab',
             '_wpnonce',
         );
-
         ?>
         <div id="posttype-extra-nav-menu-pages" class="posttypediv">
             <ul id="posttype-extra-nav-menu-pages-tabs" class="posttype-tabs add-menu-item-tabs">
@@ -373,8 +438,9 @@ final class EE_Admin implements InterminableInterface
                         <?php _e('Event Archive Pages', 'event_espresso'); ?>
                     </a>
                 </li>
+            </ul><!-- .posttype-tabs -->
 
-                <div id="tabs-panel-posttype-extra-nav-menu-pages-event-archives" class="tabs-panel <?php
+            <div id="tabs-panel-posttype-extra-nav-menu-pages-event-archives" class="tabs-panel <?php
                 echo('event-archives' === $current_tab ? 'tabs-panel-active' : 'tabs-panel-inactive');
                 ?>">
                     <ul id="extra-nav-menu-pageschecklist-event-archives" class="categorychecklist form-no-clear">
@@ -497,9 +563,11 @@ final class EE_Admin implements InterminableInterface
     /**
      * admin_init
      *
-     * @access public
      * @return void
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function admin_init()
@@ -533,6 +601,9 @@ final class EE_Admin implements InterminableInterface
      *
      * @param string $output Current output.
      * @return string
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function modify_dropdown_pages($output)
     {
@@ -551,7 +622,6 @@ final class EE_Admin implements InterminableInterface
                 }
             }
         }
-
         //replace output with the new contents
         return implode("\n", $split_output);
     }
@@ -560,7 +630,6 @@ final class EE_Admin implements InterminableInterface
     /**
      * enqueue all admin scripts that need loaded for admin pages
      *
-     * @access public
      * @return void
      */
     public function enqueue_admin_scripts()
@@ -617,10 +686,9 @@ final class EE_Admin implements InterminableInterface
 
 
     /**
-     *    display_admin_notices
+     * display_admin_notices
      *
-     * @access    public
-     * @return    string
+     * @return void
      */
     public function display_admin_notices()
     {
@@ -628,70 +696,14 @@ final class EE_Admin implements InterminableInterface
     }
 
 
-    /**
-     *    get_persistent_admin_notices
-     *
-     * @access    public
-     * @return        void
-     */
-    public function get_persistent_admin_notices()
-    {
-        // http://www.example.com/wp-admin/admin.php?page=espresso_general_settings&action=critical_pages&critical_pages_nonce=2831ce0f30
-        $args       = array(
-            'page'   => EE_Registry::instance()->REQ->is_set('page')
-                ? EE_Registry::instance()->REQ->get('page')
-                : '',
-            'action' => EE_Registry::instance()->REQ->is_set('action')
-                ? EE_Registry::instance()->REQ->get('action')
-                : '',
-        );
-        $return_url = EE_Admin_Page::add_query_args_and_nonce($args, admin_url('admin.php'));
-        //add dismissable notice for datetime changes.  Only valid if site does not have a timezone_string set.
-        //@todo This needs to stay in core for a bit to catch anyone upgrading from a version without this to a version
-        //with this.  But after enough time (indeterminate at this point) we can just remove this notice.
-        //this was added with https://events.codebasehq.com/projects/event-espresso/tickets/10626
-        if (! get_option('timezone_string')) {
-            EE_Error::add_persistent_admin_notice(
-                'datetime_fix_notice',
-                sprintf(
-                    esc_html__(
-                        '%1$sImportant announcement related to your install of Event Espresso%2$s: There are some changes made to your site that could affect how dates display for your events and other related items with dates and times.  Read more about it %3$shere%4$s. If your dates and times are displaying incorrectly (incorrect offset), you can fix it using the tool on %5$sthis page%4$s.',
-                        'event_espresso'
-                    ),
-                    '<strong>',
-                    '</strong>',
-                    '<a href="https://eventespresso.com/2017/08/important-upcoming-changes-dates-times">',
-                    '</a>',
-                    '<a href="' . EE_Admin_Page::add_query_args_and_nonce(
-                        array(
-                            'page' => 'espresso_maintenance_settings',
-                            'action' => 'datetime_tools'
-                        ),
-                        admin_url('admin.php')
-                    ) . '">'
-                )
-            );
-        }
-        echo EE_Error::get_persistent_admin_notices($return_url);
-    }
-
-
-    /**
-     *    dismiss_persistent_admin_notice
-     *
-     * @access    public
-     * @return        void
-     */
-    public function dismiss_ee_nag_notice_callback()
-    {
-        EE_Error::dismiss_persistent_admin_notice();
-    }
-
 
     /**
      * @param array $elements
      * @return array
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function dashboard_glance_items($elements)
     {
@@ -735,11 +747,10 @@ final class EE_Admin implements InterminableInterface
 
 
     /**
-     *    check_for_invalid_datetime_formats
-     *    if an admin changes their date or time format settings on the WP General Settings admin page, verify that
-     *    their selected format can be parsed by PHP
+     * check_for_invalid_datetime_formats
+     * if an admin changes their date or time format settings on the WP General Settings admin page, verify that
+     * their selected format can be parsed by PHP
      *
-     * @access    public
      * @param    $value
      * @param    $option
      * @throws EE_Error
@@ -813,9 +824,8 @@ final class EE_Admin implements InterminableInterface
 
 
     /**
-     *    its_eSpresso - converts the less commonly used spelling of "Expresso" to "Espresso"
+     * its_eSpresso - converts the less commonly used spelling of "Expresso" to "Espresso"
      *
-     * @access    public
      * @param $content
      * @return    string
      */
@@ -826,9 +836,8 @@ final class EE_Admin implements InterminableInterface
 
 
     /**
-     *    espresso_admin_footer
+     * espresso_admin_footer
      *
-     * @access    public
      * @return    string
      */
     public function espresso_admin_footer()
@@ -872,7 +881,6 @@ final class EE_Admin implements InterminableInterface
 
     /**
      * @deprecated 4.8.41
-     * @access     public
      * @param  int      $post_ID
      * @param  \WP_Post $post
      * @return void
@@ -889,7 +897,6 @@ final class EE_Admin implements InterminableInterface
 
     /**
      * @deprecated 4.8.41
-     * @access     public
      * @param  $option
      * @param  $old_value
      * @param  $value
@@ -902,5 +909,44 @@ final class EE_Admin implements InterminableInterface
             esc_html__('Usage is deprecated', 'event_espresso'),
             '4.8.41'
         );
+    }
+
+
+
+    /**
+     * @deprecated 4.9.27
+     * @return void
+     */
+    public function get_persistent_admin_notices()
+    {
+        EE_Error::doing_it_wrong(
+            __METHOD__,
+            sprintf(
+                __('Usage is deprecated. Use "%1$s" instead.', 'event_espresso'),
+                '\EventEspresso\core\services\notifications\PersistentAdminNoticeManager'
+            ),
+            '4.9.27'
+        );
+    }
+
+
+
+    /**
+     * @deprecated 4.9.27
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws DomainException
+     */
+    public function dismiss_ee_nag_notice_callback()
+    {
+        EE_Error::doing_it_wrong(
+            __METHOD__,
+            sprintf(
+                __('Usage is deprecated. Use "%1$s" instead.', 'event_espresso'),
+                '\EventEspresso\core\services\notifications\PersistentAdminNoticeManager'
+            ),
+            '4.9.27'
+        );
+        $this->persistent_admin_notice_manager->dismissNotice();
     }
 }
