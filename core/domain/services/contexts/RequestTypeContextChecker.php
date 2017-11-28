@@ -42,6 +42,8 @@ class RequestTypeContextChecker extends ContextChecker implements RequestTypeCon
 
 
     /**
+     * true if the current request involves some form of activation
+     *
      * @return bool
      */
     public function isActivation()
@@ -61,6 +63,8 @@ class RequestTypeContextChecker extends ContextChecker implements RequestTypeCon
 
 
     /**
+     * true if the current request is for the admin and is not being made via AJAX
+     *
      * @return bool
      */
     public function isAdmin()
@@ -70,24 +74,40 @@ class RequestTypeContextChecker extends ContextChecker implements RequestTypeCon
 
 
     /**
+     * true if the current request is for the admin AND is being made via AJAX
+     *
      * @return bool
      */
     public function isAdminAjax()
     {
-        return $this->request_type->slug() === RequestTypeContext::ADMIN_AJAX;
+        return $this->request_type->slug() === RequestTypeContext::AJAX_ADMIN;
     }
 
 
     /**
+     * true if the current request is for either the EE admin or EE frontend AND is being made via AJAX
+     *
      * @return bool
      */
-    public function isAjax()
+    public function isEeAjax()
     {
         return $this->isAdminAjax() || $this->isFrontAjax();
     }
 
 
     /**
+     * true if the current request is being made via AJAX but is NOT for EE related logic
+     *
+     * @return bool
+     */
+    public function isOtherAjax()
+    {
+        return $this->request_type->slug() === RequestTypeContext::AJAX_OTHER;
+    }
+
+    /**
+     * true if the current request is for the EE REST API
+     *
      * @return bool
      */
     public function isApi()
@@ -97,6 +117,8 @@ class RequestTypeContextChecker extends ContextChecker implements RequestTypeCon
 
 
     /**
+     * true if the current request is from the command line
+     *
      * @return bool
      */
     public function isCli()
@@ -106,6 +128,8 @@ class RequestTypeContextChecker extends ContextChecker implements RequestTypeCon
 
 
     /**
+     * true if the current request is for a WP_Cron
+     *
      * @return bool
      */
     public function isCron()
@@ -115,6 +139,8 @@ class RequestTypeContextChecker extends ContextChecker implements RequestTypeCon
 
 
     /**
+     * true if the current request is for a feed (ie: RSS)
+     *
      * @return bool
      */
     public function isFeed()
@@ -124,6 +150,8 @@ class RequestTypeContextChecker extends ContextChecker implements RequestTypeCon
 
 
     /**
+     * true if the current request is for the frontend and is not being made via AJAX
+     *
      * @return bool
      */
     public function isFrontend()
@@ -133,15 +161,19 @@ class RequestTypeContextChecker extends ContextChecker implements RequestTypeCon
 
 
     /**
+     * true if
+     *
      * @return bool
      */
     public function isFrontAjax()
     {
-        return $this->request_type->slug() === RequestTypeContext::FRONT_AJAX;
+        return $this->request_type->slug() === RequestTypeContext::AJAX_FRONT;
     }
 
 
     /**
+     * true if the current request is for content that is to be displayed within an iframe
+     *
      * @return bool
      */
     public function isIframe()
