@@ -85,6 +85,17 @@ class RequestTypeContextChecker extends ContextChecker implements RequestTypeCon
 
 
     /**
+     * true if the current request is being made via AJAX... any AJAX
+     *
+     * @return bool
+     */
+    public function isAjax()
+    {
+        return $this->isEeAjax() || $this->isOtherAjax();
+    }
+
+
+    /**
      * true if the current request is for either the EE admin or EE frontend AND is being made via AJAX
      *
      * @return bool
@@ -161,7 +172,7 @@ class RequestTypeContextChecker extends ContextChecker implements RequestTypeCon
 
 
     /**
-     * true if
+     * true if the current request is for the frontend AND is being made via AJAX
      *
      * @return bool
      */
