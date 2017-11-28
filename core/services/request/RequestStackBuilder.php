@@ -5,9 +5,11 @@ namespace EventEspresso\core\services\request;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\loaders\LoaderInterface;
 use InvalidArgumentException;
 use ReflectionClass;
 use ReflectionException;
+use SplStack;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -16,114 +18,54 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 /**
  * Class RequestStackBuilder
  * Assembles the EventEspresso RequestStack
+ * ! IMPORTANT ! middleware stack operates FIRST IN LAST OUT
+ * so items at the beginning of the final middleware array will run last
  *
  * @package EventEspresso\core\services\request
  * @author  Brent Christensen
  * @since   4.9.53
  */
-class RequestStackBuilder
+class RequestStackBuilder extends SplStack
 {
 
     /**
-     * Stack of middleware objects
-     *
-     * @type array $middleware_stack
+     * @type LoaderInterface $loader
      */
-    protected $middleware_stack;
-
+    private $loader;
 
 
     /**
-     * RequestStackBuilder
-     */
-    public function __construct()
-    {
-        $this->middleware_stack = array();
-    }
-
-
-
-    /**
-     * Add a Middleware class to the beginning of the middleware stack
-     * ! IMPORTANT ! middleware stack operates FIRST IN LAST OUT
-     * so items at the beginning of the final middleware array will run last
-     * First parameter is the middleware classname,
-     * any number of arguments can also be passed, and detected via func_get_args()
-     * @ param $class_name
-     * @ param $args
+     * RequestStackBuilder constructor.
      *
-     * @return RequestStackBuilder
-     * @throws InvalidArgumentException
+     * @param LoaderInterface $loader
      */
-    public function unshift( /*$class_name, $args*/)
+    public function __construct(LoaderInterface $loader)
     {
-        if (func_num_args() === 0) {
-            throw new InvalidArgumentException('Missing argument(s) when calling unshift');
-        }
-        $middleware_args = func_get_args();
-        $middleware_app_class = array_shift($middleware_args);
-        $this->middleware_stack = array($middleware_app_class => $middleware_args) + $this->middleware_stack;
-        return $this;
+        $this->loader = $loader;
     }
-
-
-
-    /**
-     * Add a Middleware class to the end of the middleware stack
-     * ! IMPORTANT ! middleware stack operates FIRST IN LAST OUT
-     * so items at the beginning of the final middleware array will run last
-     * First parameter is the middleware classname,
-     * any number of arguments can also be passed, and detected via func_get_args()
-     * @ param $class_name
-     * @ param $args
-     *
-     * @return RequestStackBuilder
-     * @throws InvalidArgumentException
-     */
-    public function push( /*$class_name, $args...*/)
-    {
-        if (func_num_args() === 0) {
-            throw new InvalidArgumentException('Missing argument(s) when calling push');
-        }
-        $middleware_args = func_get_args();
-        $middleware_app_class = array_shift($middleware_args);
-        $this->middleware_stack[ $middleware_app_class] = $middleware_args;
-        return $this;
-    }
-
 
 
     /**
      * builds decorated middleware stack
      * by continuously injecting previous middleware app into the next
      *
-     * @param RequestDecoratorInterface $application
+     * @param RequestStackCoreAppInterface $application
      * @return RequestStack
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws ReflectionException
      */
-    public function resolve(RequestDecoratorInterface $application)
+    public function resolve(RequestStackCoreAppInterface $application)
     {
         $core_app = $application;
-        $loader = LoaderFactory::getLoader();
-        $middleware_stack = array();
-        foreach ($this->middleware_stack as $middleware_app_class => $middleware_app_args) {
-            $middleware_app_args = array($application, $loader) + $middleware_app_args;
-            if (is_callable($middleware_app_class)) {
-                $application = $middleware_app_class($application);
-            } else {
-                $reflection  = new ReflectionClass($middleware_app_class);
-                /** @var RequestDecoratorInterface $application */
-                $application = $reflection->newInstanceArgs($middleware_app_args);
-            }
-            $middleware_stack[] = $application;
+        for ($this->rewind(); $this->valid(); $this->next()) {
+            $middleware_app       = $this->current();
+            $middleware_app_class = array_shift($middleware_app);
+            $middleware_app_args  = is_array($middleware_app) ? $middleware_app : array();
+            $middleware_app_args  = array($application, $this->loader) + $middleware_app_args;
+            $application = $this->loader->getShared($middleware_app_class, $middleware_app_args);
         }
-        $middleware_stack[] = $core_app;
-        return new RequestStack($application, $middleware_stack);
+        return new RequestStack($application, $core_app);
     }
-
-
 }
-// Location: RequestStackBuilder.php
