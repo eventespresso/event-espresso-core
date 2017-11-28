@@ -57,15 +57,21 @@ class RequestTypeContextFactory
                     'event_espresso'
                 );
                 break;
-            case RequestTypeContext::FRONT_AJAX :
+            case RequestTypeContext::AJAX_FRONT :
                 $description = esc_html__(
                     'The current request is for the frontend via AJAX',
                     'event_espresso'
                 );
                 break;
-            case RequestTypeContext::ADMIN_AJAX :
+            case RequestTypeContext::AJAX_ADMIN :
                 $description = esc_html__(
                     'The current request is for the admin via AJAX',
+                    'event_espresso'
+                );
+                break;
+            case RequestTypeContext::AJAX_OTHER :
+                $description = esc_html__(
+                    'The current request is for non-EE related code via AJAX',
                     'event_espresso'
                 );
                 break;
