@@ -38,7 +38,7 @@ class DetectLogin extends Middleware
                 array('wp-login.php', 'wp-register.php'),
                 true
             )
-            && ! $request->getRequestParam('ee_load_on_login')
+            && ! filter_var($request->getRequestParam('ee_load_on_login'), FILTER_VALIDATE_BOOLEAN)
         ) {
             $this->response->terminateRequest();
         }
