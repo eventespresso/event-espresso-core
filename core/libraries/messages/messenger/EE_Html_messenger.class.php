@@ -469,15 +469,11 @@ class EE_Html_messenger extends EE_messenger
             ),
             'main_body' => wpautop(
                 stripslashes_deep(
-                    html_entity_decode(
-                        apply_filters(
-                            'FHEE__EE_Html_messenger___send_message__main_body',
-                            $this->_content,
-                            $this->_content,
-                            $this->_incoming_message_type
-                        ),
-                        ENT_QUOTES,
-                        "UTF-8"
+                    apply_filters(
+                        'FHEE__EE_Html_messenger___send_message__main_body',
+                        $this->_content,
+                        $this->_content,
+                        $this->_incoming_message_type
                     )
                 )
             ),
