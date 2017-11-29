@@ -1424,7 +1424,7 @@ class Messages_Admin_Page extends EE_Admin_Page
                             
                             $template_form_fields[$field_id]['value'] = ! empty($message_templates)
                                                                         && isset($content[$extra_field])
-                                ? stripslashes(html_entity_decode($content[$extra_field], ENT_QUOTES, "UTF-8"))
+                                ? stripslashes($content[$extra_field])
                                 : '';
                             
                             //do we have a validation error?  if we do then let's use that value instead
@@ -1446,12 +1446,7 @@ class Messages_Admin_Page extends EE_Admin_Page
                             
                             if (isset($extra_array['input']) && $extra_array['input'] === 'wp_editor') {
                                 //we want to decode the entities
-                                $template_form_fields[$field_id]['value'] = stripslashes(
-                                    html_entity_decode(
-                                        $template_form_fields[$field_id]['value'],
-                                        ENT_QUOTES,
-                                        "UTF-8")
-                                );
+                                $template_form_fields[$field_id]['value'] = stripslashes($template_form_fields[$field_id]['value']);
                                 
                             }/**/
                         }
