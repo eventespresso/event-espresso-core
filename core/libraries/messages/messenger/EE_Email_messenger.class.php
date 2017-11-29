@@ -433,8 +433,8 @@ class EE_Email_messenger extends EE_messenger
     protected function _send_message()
     {
         $success = wp_mail(
-            html_entity_decode($this->_to, ENT_QUOTES, "UTF-8"),
-            stripslashes(html_entity_decode($this->_subject, ENT_QUOTES, "UTF-8")),
+            $this->_to,,
+            stripslashes($this->_subject),
             $this->_body(),
             $this->_headers()
         );
@@ -480,7 +480,7 @@ class EE_Email_messenger extends EE_messenger
     protected function _headers()
     {
         $this->_ensure_has_from_email_address();
-        $from    = stripslashes_deep(html_entity_decode($this->_from, ENT_QUOTES, "UTF-8"));
+        $from    = stripslashes_deep($this->_from, ENT_QUOTES, "UTF-8");
         $headers = array(
             'From:' . $from,
             'Reply-To:' . $from,
@@ -574,7 +574,7 @@ class EE_Email_messenger extends EE_messenger
         //if from name is "WordPress" let's sub in the site name instead (more friendly!)
         $from_name = $from_name == 'WordPress' ? get_bloginfo() : $from_name;
 
-        return stripslashes_deep(html_entity_decode($from_name, ENT_QUOTES, "UTF-8"));
+        return stripslashes_deep($from_name);
     }
 
 
@@ -594,7 +594,7 @@ class EE_Email_messenger extends EE_messenger
             'from'      => $this->_from,
             'main_body' => wpautop(
                 stripslashes_deep(
-                    html_entity_decode($this->_content, ENT_QUOTES, "UTF-8")
+                    $this->_content
                 )
             ),
         );
