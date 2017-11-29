@@ -433,7 +433,7 @@ class EE_Email_messenger extends EE_messenger
     protected function _send_message()
     {
         $success = wp_mail(
-            $this->_to,,
+            $this->_to,
             stripslashes($this->_subject),
             $this->_body(),
             $this->_headers()
