@@ -264,12 +264,12 @@ class EE_Pdf_messenger extends EE_messenger
     protected function _send_message()
     {
         $this->_template_args = array(
-            'page_title' => html_entity_decode(stripslashes($this->_subject), ENT_QUOTES, "UTF-8"),
+            'page_title' => stripslashes($this->_subject),
             'base_css' => $this->get_variation($this->_tmp_pack, $this->_incoming_message_type->name, TRUE, 'base', $this->_variation),
             'print_css' => $this->get_variation($this->_tmp_pack, $this->_incoming_message_type->name, TRUE, 'print', $this->_variation),
             'main_css' => $this->get_variation($this->_tmp_pack, $this->_incoming_message_type->name, TRUE, 'main', $this->_variation),
             'extra_css' => EE_LIBRARIES_URL . 'messages/defaults/default/variations/pdf_base_default.css',
-            'main_body' => apply_filters('FHEE__EE_Pdf_messenger___send_message__main_body', wpautop(stripslashes_deep(html_entity_decode($this->_content, ENT_QUOTES, "UTF-8"))), $this->_content)
+            'main_body' => apply_filters('FHEE__EE_Pdf_messenger___send_message__main_body', wpautop(stripslashes_deep($this->_content)), $this->_content)
         );
         $this->_deregister_wp_hooks();
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts_styles'));
@@ -329,7 +329,7 @@ class EE_Pdf_messenger extends EE_messenger
      */
     protected function _do_pdf($content = '')
     {
-        $invoice_name = html_entity_decode($this->_subject, ENT_QUOTES, "UTF-8");
+        $invoice_name = $this->_subject;
 
         //only load dompdf if nobody else has yet...
         if (!defined('DOMPDF_DIR')) {
