@@ -253,6 +253,10 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base
      */
     private function _set_label_size($value = '')
     {
+        // don't change label size if it has already been set and is being enforced
+        if($this->_enforce_label_size && $this->_label_size >  0) {
+            return;
+        }
         // determine length of option value
         $val_size = is_int($value) ? $value : strlen($value);
         // use new value if bigger than existing

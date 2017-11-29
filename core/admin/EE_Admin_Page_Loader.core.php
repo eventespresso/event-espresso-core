@@ -1,7 +1,9 @@
 <?php
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('NO direct script access allowed');
-}
+use EventEspresso\core\domain\entities\notifications\PersistentAdminNotice;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+
+if (!defined('EVENT_ESPRESSO_VERSION') )
+	exit('NO direct script access allowed');
 
 
 
@@ -542,7 +544,7 @@ class EE_Admin_Page_Loader
                 $page_map = $page->get_menu_map();
                 //if we've got an array then the menu map is in the old format so let's throw a persistent notice that the admin system isn't setup correctly for this item.
                 if (is_array($page_map) || empty($page_map)) {
-                    EE_Error::add_persistent_admin_notice(
+                      new PersistentAdminNotice(
                         'menu_map_warning_' . str_replace(' ', '_', $page->label) . '_' . EVENT_ESPRESSO_VERSION,
                         sprintf(
                             __(
@@ -600,7 +602,6 @@ class EE_Admin_Page_Loader
             }
         }/**/
     }
-
 
 
     /**

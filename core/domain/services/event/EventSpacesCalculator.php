@@ -68,7 +68,7 @@ class EventSpacesCalculator
     /**
      * Array of Datetime IDs grouped by Ticket
      *
-     * @var array $ticket_datetimes
+     * @var array[] $ticket_datetimes
      */
     private $ticket_datetimes = array();
 
@@ -98,6 +98,16 @@ class EventSpacesCalculator
      */
     private $debug = false;
 
+    /**
+     * @var null|int $spaces_remaining
+     */
+    private $spaces_remaining;
+
+    /**
+     * @var null|int $total_spaces_available
+     */
+    private $total_spaces_available;
+
 
 
     /**
@@ -111,6 +121,35 @@ class EventSpacesCalculator
     {
         $this->event                 = $event;
         $this->datetime_query_params = $datetime_query_params + array('order_by' => array('DTT_reg_limit' => 'ASC'));
+        $this->setHooks();
+    }
+
+
+
+    /**
+     * @return void
+     */
+    private function setHooks()
+    {
+        add_action( 'AHEE__EE_Ticket__increase_sold', array($this, 'clearResults'));
+        add_action( 'AHEE__EE_Ticket__decrease_sold', array($this, 'clearResults'));
+        add_action( 'AHEE__EE_Datetime__increase_sold', array($this, 'clearResults'));
+        add_action( 'AHEE__EE_Datetime__decrease_sold', array($this, 'clearResults'));
+        add_action( 'AHEE__EE_Ticket__increase_reserved', array($this, 'clearResults'));
+        add_action( 'AHEE__EE_Ticket__decrease_reserved', array($this, 'clearResults'));
+        add_action( 'AHEE__EE_Datetime__increase_reserved', array($this, 'clearResults'));
+        add_action( 'AHEE__EE_Datetime__decrease_reserved', array($this, 'clearResults'));
+    }
+
+
+
+    /**
+     * @return void
+     */
+    public function clearResults()
+    {
+        $this->spaces_remaining = null;
+        $this->total_spaces_available = null;
     }
 
 
@@ -249,8 +288,11 @@ class EventSpacesCalculator
      */
     public function spacesRemaining()
     {
-        $this->initialize();
-        return $this->calculate();
+        if ($this->spaces_remaining === null) {
+            $this->initialize();
+            $this->spaces_remaining = $this->calculate();
+        }
+        return $this->spaces_remaining;
     }
 
 
@@ -268,8 +310,11 @@ class EventSpacesCalculator
      */
     public function totalSpacesAvailable()
     {
-        $this->initialize();
-        return $this->calculate(false);
+        if($this->total_spaces_available === null) {
+            $this->initialize();
+            $this->total_spaces_available = $this->calculate(false);
+        }
+        return $this->total_spaces_available;
     }
 
 
@@ -551,6 +596,7 @@ class EventSpacesCalculator
         $ticket_quantity,
         $at_capacity
     ) {
+        /** @var array $datetime_tickets */
         foreach ($this->datetime_tickets as $datetime_ID => $datetime_tickets) {
             if ($datetime_ID !== $datetime_identifier || ! is_array($datetime_tickets)) {
                 continue;
