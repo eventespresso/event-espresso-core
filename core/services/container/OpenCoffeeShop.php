@@ -161,8 +161,6 @@ class OpenCoffeeShop {
 					EE_ADMIN . '*.core.php',
 					EE_CPTS . '*.core.php',
 					EE_CORE . 'data_migration_scripts' . DS . '*.core.php',
-					EE_CORE . 'request_stack' . DS . '*.core.php',
-					EE_CORE . 'middleware' . DS . '*.core.php',
 				)
 			)
 		);
@@ -207,8 +205,11 @@ class OpenCoffeeShop {
      */
     public function firstBrew()
     {
-        $this->CoffeeShop->brew('EE_Request', array($_GET, $_POST, $_COOKIE));
-        $this->CoffeeShop->brew('EE_Response');
+        $this->CoffeeShop->brew(
+            'EventEspresso\core\services\request\Request',
+            array($_GET, $_POST, $_COOKIE, $_SERVER)
+        );
+        $this->CoffeeShop->brew('EventEspresso\core\services\request\Response');
         $this->CoffeeShop->brew('EE_Bootstrap');
     }
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace EventEspresso\core\domain\entities;
+namespace EventEspresso\core\domain\entities\contexts;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -54,7 +54,7 @@ class Context
     /**
      * @param string $slug
      */
-    private function setSlug($slug)
+    protected function setSlug($slug)
     {
         $this->slug = sanitize_key($slug);
     }
@@ -72,7 +72,7 @@ class Context
     /**
      * @param string $description
      */
-    private function setDescription($description)
+    protected function setDescription($description)
     {
         $this->description = sanitize_text_field($description);
     }

@@ -1,4 +1,8 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) {
+<?php
+
+use EventEspresso\core\services\request\middleware\RecommendedVersions;
+
+if ( ! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
 
@@ -454,7 +458,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         $cpt_has_support = ! empty($cpt_args['page_templates']);
 
         //if the installed version of WP is > 4.7 we do some additional checks.
-        if (EE_Recommended_Versions::check_wp_version('4.7','>=')) {
+        if (RecommendedVersions::compareWordPressVersion('4.7','>=')) {
             $post_templates = wp_get_theme()->get_post_templates();
             //if there are $post_templates for this cpt, then we return false for this method because
             //that means we aren't going to load our page template manager and leave that up to the native
@@ -477,7 +481,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         global $post;
         $template = '';
 
-        if (EE_Recommended_Versions::check_wp_version('4.7','>=')) {
+        if (RecommendedVersions::compareWordPressVersion('4.7','>=')) {
             $page_template_count = count(get_page_templates());
         } else {
             $page_template_count = count(get_page_templates($post));
@@ -951,7 +955,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         //take care of updating any selected page_template IF this cpt supports it.
         if ($this->_supports_page_templates($post->post_type) && ! empty($this->_req_data['page_template'])) {
             //wp version aware.
-            if (EE_Recommended_Versions::check_wp_version('4.7', '>=')) {
+            if (RecommendedVersions::compareWordPressVersion('4.7', '>=')) {
                 $page_templates = wp_get_theme()->get_page_templates();
             } else {
                 $post->page_template = $this->_req_data['page_template'];

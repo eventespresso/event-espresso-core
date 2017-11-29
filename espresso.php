@@ -3,7 +3,7 @@
   Plugin Name:		Event Espresso
   Plugin URI:  		http://eventespresso.com/pricing/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=wordpress_plugins_page&utm_content=support_link
   Description: 		Manage events, sell tickets, and receive payments from your WordPress website. Reduce event administration time, cut-out ticketing fees, and own your customer data. | <a href="https://eventespresso.com/add-ons/?utm_source=plugin_activation_screen&utm_medium=link&utm_campaign=plugin_description">Extensions</a> | <a href="https://eventespresso.com/pricing/?utm_source=plugin_activation_screen&utm_medium=link&utm_campaign=plugin_description">Sales</a> | <a href="admin.php?page=espresso_support">Support</a>
-  Version:			4.9.53.rc.004
+  Version:			4.9.53.rc.005
   Author:			Event Espresso
   Author URI: 		http://eventespresso.com/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=wordpress_plugins_page&utm_content=support_link
   License: 		     GPLv2
@@ -103,7 +103,7 @@ if (function_exists('espresso_version')) {
          */
         function espresso_version()
         {
-            return apply_filters('FHEE__espresso__espresso_version', '4.9.53.rc.004');
+            return apply_filters('FHEE__espresso__espresso_version', '4.9.53.rc.005');
         }
 
         /**
@@ -209,23 +209,7 @@ if (function_exists('espresso_version')) {
                 );
                 $AutoloaderInit = new EE_Psr4AutoloaderInit();
                 $AutoloaderInit->initializeAutoloader();
-                espresso_load_required(
-                    'EE_Request',
-                    EE_CORE . 'request_stack' . DS . 'EE_Request.core.php'
-                );
-                espresso_load_required(
-                    'EE_Response',
-                    EE_CORE . 'request_stack' . DS . 'EE_Response.core.php'
-                );
-                espresso_load_required(
-                    'EE_Bootstrap',
-                    EE_CORE . 'EE_Bootstrap.core.php'
-                );
-                // bootstrap EE and the request stack
-                new EE_Bootstrap(
-                    new EE_Request($_GET, $_POST, $_COOKIE),
-                    new EE_Response()
-                );
+                new EventEspresso\core\services\bootstrap\BootstrapCore();
             } catch (Exception $e) {
                 require_once EE_CORE . 'exceptions' . DS . 'ExceptionStackTraceDisplay.php';
                 new EventEspresso\core\exceptions\ExceptionStackTraceDisplay($e);

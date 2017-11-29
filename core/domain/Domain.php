@@ -15,6 +15,12 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  */
 class Domain extends DomainBase
 {
+
+    /**
+     * URL path component used to denote an API request
+     */
+    const API_NAMESPACE = 'ee/v';
+
     /**
      * Slug used for the context where a registration status is changed from a manual trigger in the Registration Admin
      * Page ui.
