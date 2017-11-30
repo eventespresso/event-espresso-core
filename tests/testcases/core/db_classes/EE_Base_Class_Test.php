@@ -1033,6 +1033,62 @@ class EE_Base_Class_Test extends EE_UnitTestCase
         //then verify we successfully swapped the datetime's timezone
         $this->assertEquals('Europe/London', $dtt->get_timezone());
     }
+
+
+
+    /**
+     * Tests that the f() function correctly escapes the value for display in a form input's value.
+     * @group 11195
+     */
+    public function testF()
+    {
+        $t = $this->new_model_obj_with_dependencies(
+            'Ticket',
+            array(
+                'TKT_description' => '"</textarea>haha I echo this outside a form!'
+            )
+        );
+        ob_start();
+        $t->f('TKT_description');
+        $output = ob_get_clean();
+        $this->assertEquals(
+            '&quot;&lt;/textarea&gt;haha I echo this outside a form!',
+            $output
+        );
+    }
+
+
+
+    /**
+     * Tests if we prepare a model field with f(), then put in a form input,
+     * and the browser does it usual converting of HTML entities into what they represent
+     * when the form is submitted, that we end up with the same content that we started with.
+     * @group 11195
+     */
+    public function testFThenSetRoundTrip()
+    {
+        $original_value = '<b>my bold text "with quotes!"</b> and &quot;html entities&quot; like';
+        $t = $this->new_model_obj_with_dependencies(
+            'Ticket',
+            array(
+                'TKT_description' => $original_value
+            )
+        );
+        $value_in_form = $t->get_pretty('TKT_description', 'form_input');
+        //when it's rendered in the browser, they decode HTML entities.
+        // and the DECODED HTML entities get submitted in the form data
+        $submitted_value = html_entity_decode($value_in_form);
+        $t2 = EE_Ticket::new_instance(
+            array(
+                'TKT_description' => $submitted_value
+            )
+        );
+        $this->assertEquals(
+            $original_value,
+            $t2->get('TKT_description')
+        );
+
+    }
 }
 
 // End of file EE_Base_Class_Test.php

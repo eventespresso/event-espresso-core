@@ -30,7 +30,7 @@ class Request implements InterminableInterface, RequestInterface
     /**
      * $_POST parameters
      *
-     * @var    array $post
+     * @var array $post
      */
     private $post;
 
@@ -224,9 +224,9 @@ class Request implements InterminableInterface, RequestInterface
      *  )
      * would return true
      *
-     * @param string $is_set_or_get
      * @param        $key
      * @param null   $default
+     * @param string $is_set_or_get
      * @param array  $request_params
      * @return bool|mixed|null
      */
@@ -297,8 +297,7 @@ class Request implements InterminableInterface, RequestInterface
 
 
     /**
-     * _visitor_ip
-     *    attempt to get IP address of current visitor from server
+     * attempt to get IP address of current visitor from server
      * plz see: http://stackoverflow.com/a/2031935/1475279
      *
      * @access public
@@ -425,7 +424,7 @@ class Request implements InterminableInterface, RequestInterface
 
 
     /**
-     * @return mixed
+     * @return bool
      */
     public function isAjax()
     {
@@ -434,7 +433,7 @@ class Request implements InterminableInterface, RequestInterface
 
 
     /**
-     * @return mixed
+     * @return bool
      */
     public function isEeAjax()
     {
@@ -443,7 +442,7 @@ class Request implements InterminableInterface, RequestInterface
 
 
     /**
-     * @return mixed
+     * @return bool
      */
     public function isOtherAjax()
     {
@@ -479,7 +478,7 @@ class Request implements InterminableInterface, RequestInterface
 
 
     /**
-     * @return mixed
+     * @return bool
      */
     public function isFeed()
     {
@@ -488,7 +487,7 @@ class Request implements InterminableInterface, RequestInterface
 
 
     /**
-     * @return mixed
+     * @return bool
      */
     public function isFrontend()
     {
@@ -497,7 +496,7 @@ class Request implements InterminableInterface, RequestInterface
 
 
     /**
-     * @return mixed
+     * @return bool
      */
     public function isFrontAjax()
     {
@@ -507,7 +506,7 @@ class Request implements InterminableInterface, RequestInterface
 
 
     /**
-     * @return mixed
+     * @return bool
      */
     public function isIframe()
     {

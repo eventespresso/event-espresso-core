@@ -78,6 +78,13 @@ class BootstrapCore
     }
 
 
+    /**
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     */
     public function initialize()
     {
         $this->bootstrapDependencyInjectionContainer();
@@ -152,9 +159,10 @@ class BootstrapCore
     }
 
 
-
     /**
      * load_autoloader
+     *
+     * @throws EE_Error
      */
     protected function loadAutoloader()
     {
@@ -191,22 +199,21 @@ class BootstrapCore
      * build_request_stack
      *
      * @return RequestStackBuilder
-     * @throws InvalidArgumentException
      */
     public function buildRequestStack()
     {
         $request_stack_builder = new RequestStackBuilder($this->loader);
         /**
-         * ! IMPORTANT ! middleware stack operates FILO : FIRST IN LAST OUT
-         * so items at the beginning of the final middleware stack will run last
+         * ! IMPORTANT ! The middleware stack operates FILO : FIRST IN LAST OUT
+         * so items at the beginning of the final middleware stack will run last.
          * First parameter is the middleware classname, second is an array of arguments
          */
         $stack_apps            = apply_filters(
             'FHEE__EventEspresso_core_services_bootstrap_BootstrapCore__buildRequestStack__stack_apps',
             array(
                 // first in last out
-                'EventEspresso\core\services\request\middleware\PreProductionVersionWarning' => array(),
                 'EventEspresso\core\services\request\middleware\BotDetector' => array(),
+                'EventEspresso\core\services\request\middleware\PreProductionVersionWarning' => array(),
                 'EventEspresso\core\services\request\middleware\RecommendedVersions' => array(),
                 // last in first out
                 'EventEspresso\core\services\request\middleware\DetectLogin' => array(),
@@ -217,16 +224,16 @@ class BootstrapCore
             'FHEE__EE_Bootstrap__build_request_stack__stack_apps',
             $stack_apps
         );
-        // first we'll add this on its own because we need it to always be part of the stack
-        // and we also need it to always run first because the rest of the system relies on it
-        $request_stack_builder->push(
-            array('EventEspresso\core\services\request\middleware\SetRequestTypeContextChecker', array())
-        );
-        // load middleware onto stack : FILO (First In Last Out)
+        // load middleware onto stack : FIFO (First In First Out)
         // items at the beginning of the $stack_apps array will run last
         foreach ((array) $stack_apps as $stack_app => $stack_app_args) {
             $request_stack_builder->push(array($stack_app, $stack_app_args));
         }
+        // finally, we'll add this on its own because we need it to always be part of the stack
+        // and we also need it to always run first because the rest of the system relies on it
+        $request_stack_builder->push(
+            array('EventEspresso\core\services\request\middleware\SetRequestTypeContextChecker', array())
+        );
         return apply_filters(
             'FHEE__EE_Bootstrap__build_request_stack__request_stack_builder',
             $request_stack_builder
