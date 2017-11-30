@@ -445,7 +445,7 @@ class EE_Html_messenger extends EE_messenger
     protected function _send_message()
     {
         $this->_template_args = array(
-            'page_title' => html_entity_decode(stripslashes($this->_subject), ENT_QUOTES, "UTF-8"),
+            'page_title' => $this->_subject,
             'base_css' => $this->get_variation(
                 $this->_tmp_pack,
                 $this->_incoming_message_type->name,
@@ -468,15 +468,13 @@ class EE_Html_messenger extends EE_messenger
                 $this->_variation
             ),
             'main_body' => wpautop(
-                stripslashes_deep(
-                    apply_filters(
-                        'FHEE__EE_Html_messenger___send_message__main_body',
-                        $this->_content,
-                        $this->_content,
-                        $this->_incoming_message_type
-                    )
+                apply_filters(
+                    'FHEE__EE_Html_messenger___send_message__main_body',
+                    $this->_content,
+                    $this->_content,
+                    $this->_incoming_message_type
                 )
-            ),
+            )
         );
         $this->_deregister_wp_hooks();
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts_styles'));
