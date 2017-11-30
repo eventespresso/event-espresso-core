@@ -48,6 +48,11 @@ class Currency
 
     /**
      * How many digits should come after the decimal place
+     * Although not theoretically true, it can effectively
+     * be considered that all currencies are decimal based.
+     * Therefore the number of decimal places can be used
+     * to calculate number of subunits like so:
+     *  subunits = pow( 10, decimal places  )
      *
      * @var int $decimal_places
      */
@@ -70,11 +75,17 @@ class Currency
     private $thousands;
 
     /**
-     * Used to convert between the currency's units and subunits.
-     * subunits = units * 10 to-the-power-of $subunits_ratio
+     * The number of fractional divisions of a currency's main unit
+     * Can be used to determine the number of decimal places used.
+     * Because
+     *  subunits = pow( 10, decimal places )
+     * then
+     *  decimal places = log( subunits )
+     * except that a result of 1 means there are zero decimal places
+     *
      * @var int
      */
-    private $subunit_order_of_mag_diff;
+    private $subunits;
 
 
 
@@ -85,12 +96,10 @@ class Currency
      * @param Label  $label
      * @param string $sign
      * @param bool   $sign_b4
-     * @param int    $decimal_places            the number of decimal places to use when
-     *                               DISPLAYING the currency
+     * @param int    $decimal_places the number of decimal places to use when DISPLAYING the currency
      * @param string $decimal_mark
      * @param string $thousands
-     * @param int    $subunit_order_of_mag_diff the difference between units and subunits
-     *                               is 10 to-the-power-of-this
+     * @param int    $subunits number of fractional divisions of a currency's main unit
      */
     public function __construct(
         $code,
@@ -100,7 +109,7 @@ class Currency
         $decimal_places,
         $decimal_mark,
         $thousands,
-        $subunit_order_of_mag_diff
+        $subunits
     ) {
         $this->code           = $code;
         $this->label          = $label;
@@ -109,7 +118,7 @@ class Currency
         $this->decimal_places = $decimal_places;
         $this->decimal_mark   = $decimal_mark;
         $this->thousands      = $thousands;
-        $this->subunit_order_of_mag_diff = $subunit_order_of_mag_diff;
+        $this->subunits       = $subunits;
     }
 
 
@@ -213,9 +222,9 @@ class Currency
      * DecimalMark is used for display, this is used for calculations
      * @return int
      */
-    public function subunitOrderOfMagnitudeDiff()
+    public function subunits()
     {
-        return $this->subunit_order_of_mag_diff;
+        return $this->subunits;
     }
 
 

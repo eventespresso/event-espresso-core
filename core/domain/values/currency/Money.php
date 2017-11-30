@@ -124,9 +124,11 @@ class Money
         }
         // remove any non numeric values but leave the decimal
         $amount = (float) preg_replace('/([^0-9\\.-])/', '', $amount);
-        // shift the decimal position by the number of decimal places used internally
-        // ex: 12.5 for a currency using 2 decimal places, would become 1250
-        // then if our extra internal precision was 3, it would become 1250000
+        // convert the incoming  decimal amount to the currencies subunits
+        // ex: 12.5 for a currency with 100 subunits would become 1250
+        $amount *= $this->currency()->subunits();
+        // then shift the decimal position by the number of decimal places used internally
+        // so if our extra internal precision was 3, it would become 1250000
         $amount *= pow(10, $this->precision());
         // then round up the remaining value if there is still a fractional amount left
         $amount = round($amount);
@@ -138,13 +140,14 @@ class Money
     /**
      * adds or subtracts additional decimal places based on the value of the Money::EXTRA_PRECISION constant
      *
-     * @param bool $positive
+     * @param bool $adding_precision if true, will move the decimal to the right (increase amount)
+     *                               if false, will move the decimal to the left (decrease amount)
      * @return integer
      */
-    private function precision($positive = true)
+    private function precision($adding_precision = true)
     {
-        $sign = $positive ? 1 : -1;
-        return ((int) $this->currency->subunitOrderOfMagnitudeDiff() + Money::EXTRA_PRECISION) * $sign;
+        $sign = $adding_precision ? 1 : -1;
+        return Money::EXTRA_PRECISION * $sign;
     }
 
 
@@ -159,10 +162,13 @@ class Money
     public function amount()
     {
         // shift the decimal position BACK by the number of decimal places used internally
-        // ex: 1250 for a currency using 2 decimal places, would become 12.50
-        $amount = (string) $this->amount * pow(10, $this->precision(false));
+        // ex: if our extra internal precision was 3, then 1250000 would become 1250
+        $amount = $this->amount * pow(10, $this->precision(false));
+        // then adjust for the currencies subunits
+        // ex: 1250 for a currency with 100 subunits would become 12.50
+        $amount /= $this->currency()->subunits();
         // then shave off our extra internal precision using the number of decimal places for the currency
-        $amount = round($amount, $this->currency->subunitOrderOfMagnitudeDiff());
+        $amount = round($amount, $this->currency->decimalPlaces());
         return (string) $amount;
     }
 
@@ -178,8 +184,8 @@ class Money
         // shift the decimal position BACK by the number of decimal places used internally
         // for extra internal precision, but NOT for the number of decimals used by the currency
         // ex: if our extra internal precision was 3, then 1250000 would become 1250
-        // and even if the currency used 2 decimal places, we would return 1250 and NOT 12.50
-        $amount = (string) $this->amount * pow(10, Money::EXTRA_PRECISION * -1);
+        // and even if the currency used 100 subunits, we would return 1250 and NOT 12.50
+        $amount = (string) $this->amount * pow(10, $this->precision(false));
         // then shave off anything after the decimal
         $amount = round($amount);
         return (int) $amount;
