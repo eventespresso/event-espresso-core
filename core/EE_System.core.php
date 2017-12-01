@@ -267,6 +267,8 @@ final class EE_System implements ResettableInterface
      * create and cache the CommandBus, and also add middleware
      * The CapChecker middleware requires the use of EE_Capabilities
      * which is why we need to load the CommandBus after Caps are set up
+     * CommandBus middleware operate FIFO - First In First Out
+     * so LocateMovedCommands will run first in order to return any new commands
      *
      * @return void
      * @throws EE_Error
@@ -280,6 +282,7 @@ final class EE_System implements ResettableInterface
                 apply_filters(
                     'FHEE__EE_Load_Espresso_Core__handle_request__CommandBus_middleware',
                     array(
+                        $this->loader->getShared('EventEspresso\core\services\commands\middleware\LocateMovedCommands'),
                         $this->loader->getShared('EventEspresso\core\services\commands\middleware\CapChecker'),
                         $this->loader->getShared('EventEspresso\core\services\commands\middleware\AddActionHook'),
                     )
