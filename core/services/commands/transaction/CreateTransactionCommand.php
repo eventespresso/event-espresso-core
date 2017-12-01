@@ -14,6 +14,7 @@ use EventEspresso\core\services\commands\CommandRequiresCapCheckInterface;
  * Class CreateTransactionCommand
  * DTO for passing data to a CreateTransactionCommandHandler
  *
+ * @deprecated 4.9.54
  * @package       Event Espresso
  * @author        Brent Christensen
  */
