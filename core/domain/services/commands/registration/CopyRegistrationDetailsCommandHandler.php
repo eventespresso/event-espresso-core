@@ -62,5 +62,3 @@ class CopyRegistrationDetailsCommandHandler extends CommandHandler
 
 
 }
-// End of file CopyRegistrationDetailsCommandHandler.php
-// Location: /CopyRegistrationDetailsCommandHandler.php
