@@ -46,6 +46,10 @@ class CancelTicketLineItemCommandHandler extends CommandHandler
      */
     public function handle(CommandInterface $command)
     {
+        /** @var CancelTicketLineItemCommand $command */
+        if (! $command instanceof CancelTicketLineItemCommand) {
+            throw new InvalidEntityException(get_class($command), 'CancelTicketLineItemCommand');
+        }
         return $this->cancel_ticket_line_item_service->cancel(
             $command->transaction(),
             $command->ticket(),

@@ -46,6 +46,10 @@ class CreateTicketLineItemCommandHandler extends CommandHandler
      */
     public function handle(CommandInterface $command)
     {
+        /** @var CreateTicketLineItemCommand $command */
+        if (! $command instanceof CreateTicketLineItemCommand) {
+            throw new InvalidEntityException(get_class($command), 'CreateTicketLineItemCommand');
+        }
         // create new line item for ticket
         return $this->factory->create(
             $command->transaction(),

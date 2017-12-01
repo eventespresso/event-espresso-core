@@ -1,11 +1,16 @@
 <?php
+
 namespace EventEspresso\core\domain\services\commands\ticket;
 
+use EE_Error;
+use EE_Line_Item;
+use EE_Registration;
+use EE_Ticket;
+use EE_Transaction;
+use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\services\commands\Command;
 
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
+defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
 
@@ -20,19 +25,18 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) {
 class CancelTicketLineItemCommand extends Command
 {
 
-
     /**
-     * @var \EE_Transaction $transaction
+     * @var EE_Transaction $transaction
      */
     private $transaction;
 
     /**
-     * @var \EE_Ticket $ticket
+     * @var EE_Ticket $ticket
      */
     private $ticket;
 
     /**
-     * @var \EE_Line_Item $ticket_line_item
+     * @var EE_Line_Item $ticket_line_item
      */
     protected $ticket_line_item;
 
@@ -42,12 +46,13 @@ class CancelTicketLineItemCommand extends Command
     protected $quantity;
 
 
-
     /**
-     * @param \EE_Registration $registration
-     * @param int              $quantity
+     * @param EE_Registration $registration
+     * @param int             $quantity
+     * @throws EE_Error
+     * @throws EntityNotFoundException
      */
-    public static function fromRegistration(\EE_Registration $registration, $quantity = 1)
+    public static function fromRegistration(EE_Registration $registration, $quantity = 1)
     {
         new self(
             $registration->transaction(),
@@ -58,13 +63,13 @@ class CancelTicketLineItemCommand extends Command
     }
 
 
-
     /**
-     * @param \EE_Line_Item $ticket_line_item
-     * @param int           $quantity
+     * @param EE_Line_Item $ticket_line_item
+     * @param int          $quantity
+     * @throws EE_Error
      */
     public static function fromTicketLineItem(
-        \EE_Line_Item $ticket_line_item,
+        EE_Line_Item $ticket_line_item,
         $quantity = 1
     ) {
         new self(
@@ -76,31 +81,29 @@ class CancelTicketLineItemCommand extends Command
     }
 
 
-
     /**
      * CancelTicketLineItemCommand constructor.
      *
-     * @param \EE_Transaction $transaction
-     * @param \EE_Ticket      $ticket
-     * @param int             $quantity
-     * @param \EE_Line_Item   $ticket_line_item
+     * @param EE_Transaction $transaction
+     * @param EE_Ticket      $ticket
+     * @param int            $quantity
+     * @param EE_Line_Item   $ticket_line_item
      */
     public function __construct(
-        \EE_Transaction $transaction,
-        \EE_Ticket $ticket,
+        EE_Transaction $transaction,
+        EE_Ticket $ticket,
         $quantity = 1,
-        \EE_Line_Item $ticket_line_item = null
+        EE_Line_Item $ticket_line_item = null
     ) {
-        $this->transaction = $transaction;
-        $this->ticket = $ticket;
-        $this->quantity = min(1, absint($quantity));
+        $this->transaction      = $transaction;
+        $this->ticket           = $ticket;
+        $this->quantity         = min(1, absint($quantity));
         $this->ticket_line_item = $ticket_line_item;
     }
 
 
-
     /**
-     * @return \EE_Transaction
+     * @return EE_Transaction
      */
     public function transaction()
     {
@@ -108,9 +111,8 @@ class CancelTicketLineItemCommand extends Command
     }
 
 
-
     /**
-     * @return \EE_Ticket
+     * @return EE_Ticket
      */
     public function ticket()
     {
@@ -118,15 +120,13 @@ class CancelTicketLineItemCommand extends Command
     }
 
 
-
     /**
-     * @return \EE_Line_Item
+     * @return EE_Line_Item
      */
     public function ticketLineItem()
     {
         return $this->ticket_line_item;
     }
-
 
 
     /**
@@ -136,6 +136,4 @@ class CancelTicketLineItemCommand extends Command
     {
         return $this->quantity;
     }
-
-
 }

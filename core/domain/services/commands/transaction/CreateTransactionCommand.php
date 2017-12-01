@@ -1,4 +1,5 @@
 <?php
+
 namespace EventEspresso\core\domain\services\commands\transaction;
 
 use EE_Checkout;
@@ -35,7 +36,6 @@ class CreateTransactionCommand extends Command implements CommandRequiresCapChec
     protected $transaction_details;
 
 
-
     /**
      * CreateTransactionCommand constructor.
      *
@@ -44,10 +44,9 @@ class CreateTransactionCommand extends Command implements CommandRequiresCapChec
      */
     public function __construct(EE_Checkout $checkout = null, array $transaction_details = array())
     {
-        $this->checkout = $checkout;
+        $this->checkout            = $checkout;
         $this->transaction_details = $transaction_details;
     }
-
 
 
     /**
@@ -66,7 +65,6 @@ class CreateTransactionCommand extends Command implements CommandRequiresCapChec
     }
 
 
-
     /**
      * @return EE_Checkout
      */
@@ -76,7 +74,6 @@ class CreateTransactionCommand extends Command implements CommandRequiresCapChec
     }
 
 
-
     /**
      * @return array
      */
@@ -84,7 +81,4 @@ class CreateTransactionCommand extends Command implements CommandRequiresCapChec
     {
         return $this->transaction_details;
     }
-
-
-
 }
