@@ -1,5 +1,5 @@
 <?php
-namespace EventEspresso\core\services\commands\registration;
+namespace EventEspresso\core\domain\services\commands\registration;
 
 use EventEspresso\core\domain\services\registration\UpdateRegistrationService;
 use EventEspresso\core\exceptions\InvalidEntityException;
@@ -63,5 +63,3 @@ class UpdateRegistrationAndTransactionAfterChangeCommandHandler extends CommandH
 
 
 }
-// End of file UpdateRegistrationAndTransactionAfterChangeCommandHandler.php
-// Location: /UpdateRegistrationAndTransactionAfterChangeCommandHandler.php
