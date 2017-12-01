@@ -1,5 +1,5 @@
 <?php
-namespace EventEspresso\core\services\commands\registration;
+namespace EventEspresso\core\domain\services\commands\registration;
 
 use EventEspresso\core\domain\services\ticket\CancelTicketLineItemService;
 use EventEspresso\core\exceptions\InvalidEntityException;
@@ -64,5 +64,3 @@ class CancelRegistrationAndTicketLineItemCommandHandler extends CommandHandler
 
 
 }
-// End of file CancelRegistrationAndTicketLineItemCommandHandler.php
-// Location: /CancelRegistrationAndTicketLineItemCommandHandler.php
