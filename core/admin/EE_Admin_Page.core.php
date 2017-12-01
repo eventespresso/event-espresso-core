@@ -517,15 +517,15 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             return;
         }
         // becuz WP List tables have two duplicate select inputs for choosing bulk actions, we need to copy the action from the second to the first
-        if (isset($this->_req_data['action2']) && $this->_req_data['action'] === -1) {
-            $this->_req_data['action'] = ! empty($this->_req_data['action2']) && $this->_req_data['action2'] !== -1
+        if (isset($this->_req_data['action2']) && $this->_req_data['action'] === '-1') {
+            $this->_req_data['action'] = ! empty($this->_req_data['action2']) && $this->_req_data['action2'] !== '-1'
                 ? $this->_req_data['action2']
                 : $this->_req_data['action'];
         }
         // then set blank or -1 action values to 'default'
         $this->_req_action = isset($this->_req_data['action'])
                              && ! empty($this->_req_data['action'])
-                             && $this->_req_data['action'] !== -1
+                             && $this->_req_data['action'] !== '-1'
             ? sanitize_key($this->_req_data['action'])
             : 'default';
         // if action is 'default' after the above BUT we have  'route' var set, then let's use the route as the action.
