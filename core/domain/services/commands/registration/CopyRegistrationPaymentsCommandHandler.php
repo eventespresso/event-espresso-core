@@ -44,10 +44,10 @@ class CopyRegistrationPaymentsCommandHandler extends CommandHandler
     }
 
 
-
     /**
-     * @param \EventEspresso\core\services\commands\CommandInterface $command
+     * @param CommandInterface $command
      * @return boolean
+     * @throws InvalidEntityException
      */
     public function handle(CommandInterface $command)
     {

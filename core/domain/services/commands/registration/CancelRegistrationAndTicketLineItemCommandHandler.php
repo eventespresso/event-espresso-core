@@ -1,12 +1,20 @@
 <?php
+
 namespace EventEspresso\core\domain\services\commands\registration;
 
+use EE_Error;
 use EventEspresso\core\domain\services\ticket\CancelTicketLineItemService;
+use EventEspresso\core\exceptions\EntityNotFoundException;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidEntityException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\commands\CommandHandler;
 use EventEspresso\core\services\commands\CommandInterface;
+use InvalidArgumentException;
+use ReflectionException;
+use RuntimeException;
 
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
+if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
 
@@ -23,12 +31,10 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) {
 class CancelRegistrationAndTicketLineItemCommandHandler extends CommandHandler
 {
 
-
     /**
      * @var CancelTicketLineItemService $cancel_ticket_line_item_service
      */
     private $cancel_ticket_line_item_service;
-
 
 
     /**
@@ -42,15 +48,22 @@ class CancelRegistrationAndTicketLineItemCommandHandler extends CommandHandler
     }
 
 
-
     /**
-     * @param \EventEspresso\core\services\commands\CommandInterface $command
+     * @param CommandInterface $command
      * @return boolean
+     * @throws InvalidEntityException
+     * @throws EE_Error
+     * @throws EntityNotFoundException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws RuntimeException
      */
     public function handle(CommandInterface $command)
     {
         /** @var CancelRegistrationAndTicketLineItemCommand $command */
-        if ( ! $command instanceof CancelRegistrationAndTicketLineItemCommand) {
+        if (! $command instanceof CancelRegistrationAndTicketLineItemCommand) {
             throw new InvalidEntityException(get_class($command), 'CancelRegistrationAndTicketLineItemCommand');
         }
         $registration = $command->registration();
@@ -60,7 +73,4 @@ class CancelRegistrationAndTicketLineItemCommandHandler extends CommandHandler
         $registration->save();
         return true;
     }
-
-
-
 }

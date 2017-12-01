@@ -1,8 +1,9 @@
 <?php
+
 namespace EventEspresso\core\domain\services\commands\registration;
 
-if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
-	exit( 'No direct script access allowed' );
+if (! defined('EVENT_ESPRESSO_VERSION')) {
+    exit('No direct script access allowed');
 }
 
 
@@ -19,5 +20,3 @@ class CopyRegistrationPaymentsCommand extends CopyRegistrationDetailsCommand
 {
 
 }
-// End of file CopyRegistrationPaymentsCommand.php
-// Location: /CopyRegistrationPaymentsCommand.php
