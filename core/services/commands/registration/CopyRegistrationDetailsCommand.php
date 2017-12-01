@@ -13,6 +13,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * Class CopyRegistrationDetailsCommand
  * DTO for passing data to a CopyRegistrationDetailsCommandHandler
  *
+ * @deprecated 4.9.54
  * @package       Event Espresso
  * @author        Brent Christensen
  * @since         4.9.0

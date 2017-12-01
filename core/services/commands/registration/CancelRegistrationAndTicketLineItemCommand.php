@@ -12,13 +12,14 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * Class CancelRegistrationAndTicketLineItemCommand
  * DTO for passing data to a CancelRegistrationAndTicketLineItemCommandHandler
  *
+ * @deprecated 4.9.54
  * @package       Event Espresso
  * @author        Brent Christensen
  * @since         4.9.0
  */
 class CancelRegistrationAndTicketLineItemCommand extends SingleRegistrationCommand
 {
-	
+
 }
 // End of file CancelRegistrationAndTicketLineItemCommand.php
 // Location: /CancelRegistrationAndTicketLineItemCommand.php
