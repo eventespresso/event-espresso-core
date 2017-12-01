@@ -1,5 +1,5 @@
 <?php
-namespace EventEspresso\core\services\commands\transaction;
+namespace EventEspresso\core\domain\services\commands\transaction;
 
 use EE_Checkout;
 use EE_Error;
@@ -67,5 +67,3 @@ class CreateTransactionCommandHandler extends CommandHandler
 
 
 }
-// End of file CreateTransactionCommandHandler.php
-// Location: EventEspresso\core\services\commands\transaction/CreateTransactionCommandHandler.php
