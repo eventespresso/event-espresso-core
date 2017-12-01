@@ -31,6 +31,7 @@ class UpdateRegistrationAndTransactionAfterChangeCommandHandler extends CommandH
     public function __construct(
         UpdateRegistrationService $update_registration_service
     ) {
+        defined('EVENT_ESPRESSO_VERSION') || exit;
         $this->update_registration_service = $update_registration_service;
     }
 

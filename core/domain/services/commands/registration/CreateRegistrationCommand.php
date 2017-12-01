@@ -15,12 +15,6 @@ use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\services\commands\Command;
 use EventEspresso\core\services\commands\CommandRequiresCapCheckInterface;
 
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
-
 /**
  * Class CreateRegistrationCommand
  * DTO for passing data to a CreateRegistrationCommandHandler
@@ -31,7 +25,6 @@ if (! defined('EVENT_ESPRESSO_VERSION')) {
  */
 class CreateRegistrationCommand extends Command implements CommandRequiresCapCheckInterface
 {
-
     /**
      * @var EE_Transaction $transaction
      */
@@ -88,6 +81,7 @@ class CreateRegistrationCommand extends Command implements CommandRequiresCapChe
         $reg_status = EEM_Registration::status_id_incomplete,
         EE_Ticket $ticket = null
     ) {
+        defined('EVENT_ESPRESSO_VERSION') || exit;
         $this->transaction      = $transaction;
         $this->ticket_line_item = $ticket_line_item;
         $this->reg_count        = absint($reg_count);
@@ -183,4 +177,3 @@ class CreateRegistrationCommand extends Command implements CommandRequiresCapChe
         return $this->registration;
     }
 }
-

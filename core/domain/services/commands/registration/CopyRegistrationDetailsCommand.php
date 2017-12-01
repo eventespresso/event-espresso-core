@@ -5,12 +5,6 @@ namespace EventEspresso\core\domain\services\commands\registration;
 use EE_Registration;
 use EventEspresso\core\services\commands\Command;
 
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
-
 /**
  * Class CopyRegistrationDetailsCommand
  * DTO for passing data to a CopyRegistrationDetailsCommandHandler
@@ -21,7 +15,6 @@ if (! defined('EVENT_ESPRESSO_VERSION')) {
  */
 class CopyRegistrationDetailsCommand extends Command
 {
-
     /**
      * @var EE_Registration $target_registration
      */
@@ -44,6 +37,7 @@ class CopyRegistrationDetailsCommand extends Command
         EE_Registration $target_registration,
         EE_Registration $registration_to_copy
     ) {
+        defined('EVENT_ESPRESSO_VERSION') || exit;
         $this->target_registration  = $target_registration;
         $this->registration_to_copy = $registration_to_copy;
     }

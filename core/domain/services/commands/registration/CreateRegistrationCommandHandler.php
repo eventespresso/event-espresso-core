@@ -33,6 +33,7 @@ class CreateRegistrationCommandHandler extends CommandHandler
      */
     public function __construct(CreateRegistrationService $registration_service)
     {
+        defined('EVENT_ESPRESSO_VERSION') || exit;
         $this->registration_service = $registration_service;
     }
 
