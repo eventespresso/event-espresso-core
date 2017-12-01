@@ -30,6 +30,7 @@ class EEG_Mijireh extends EE_Offsite_Gateway{
 	public function set_redirection_info($payment, $billing_info = array(), $return_url = NULL, $notify_url = NULL, $cancel_url = NULL) {
 		/* @var $transaction EE_Transaction */
 		$transaction = $payment->transaction();
+        $gateway_formatter = $this->_get_gateway_formatter();
 
 		//get any of the current registrations,
 		$primary_registrant = $transaction->primary_registration();
@@ -44,12 +45,12 @@ class EEG_Mijireh extends EE_Offsite_Gateway{
 				$items[] = array(
 					'name'=>apply_filters(
 						'FHEE__EEG_Mijireh__set_redirection_info__full_amount_line_item_name',
-						$this->_format_line_item_name( $line_item, $payment ),
+						$gateway_formatter->formatLineItemName($line_item, $payment),
 						$line_item,
 						$payment,
 						$primary_registrant
 					),
-					'price'=>$this->format_currency($line_item->unit_price()),
+					'price'=>$gateway_formatter->formatCurrency($line_item->unit_price()),
 					'sku'=>$line_item->code(),
 					'quantity'=>$line_item->quantity()
 				);
@@ -60,23 +61,23 @@ class EEG_Mijireh extends EE_Offsite_Gateway{
 			$items[] = array(
 				'name'=> apply_filters(
 					'FHEE__EEG_Mijireh__set_redirection_info__partial_amount_line_item_name',
-					$this->_format_partial_payment_line_item_name( $payment ),
+					$gateway_formatter->formatPartialPaymentLineItemName($payment),
 					$payment,
 					$primary_registrant
 				),
-				'price'=> $this->format_currency($payment->amount()),
+				'price'=> $gateway_formatter->formatCurrency($payment->amount()),
 				'sku'=>$primary_registrant->reg_code(),
 				'quantity'=>1
 			);
 		}
 		$order = array(
-			'total'=>$this->format_currency($payment->amount()),
+			'total'=>$gateway_formatter->formatCurrency($payment->amount()),
 			'return_url'=>$return_url,
 			'items'=>$this->_prepare_for_mijireh( $items ),
 			'email'=>$primary_attendee->email(),
 			'first_name'=>$primary_attendee->fname(),
 			'last_name'=>$primary_attendee->lname(),
-			'tax'=>$this->format_currency($tax_total),
+			'tax'=>$gateway_formatter->formatCurrency($tax_total),
 			'partner_id'=>'ee');
 		//setup address?
 		if(		$primary_attendee->address()  &&
@@ -142,7 +143,7 @@ class EEG_Mijireh extends EE_Offsite_Gateway{
 		}else{
                     $problems_string = implode( ",", $response->get_error_messages() );
 		}
-                
+
                 if( $problems_string ) {
                     $payment->set_gateway_response( sprintf( __( 'Errors occurred communicating with Mijireh: %1$s', 'event_espresso'), $problems_string ) );
                     $payment->set_details( $response );
