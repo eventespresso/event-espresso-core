@@ -1,6 +1,6 @@
 <?php
 
-namespace EventEspresso\core\services\commands\registration;
+namespace EventEspresso\core\domain\services\commands\registration;
 
 use DomainException;
 use EE_Error;
