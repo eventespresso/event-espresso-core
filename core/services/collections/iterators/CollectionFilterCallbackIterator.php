@@ -45,6 +45,7 @@ class CollectionFilterCallbackIterator extends FilterIterator
 
     /**
      * Returns a filtered array of objects from the collection using the provided acceptance callback
+     * @return array
      */
     public function getFiltered()
     {
