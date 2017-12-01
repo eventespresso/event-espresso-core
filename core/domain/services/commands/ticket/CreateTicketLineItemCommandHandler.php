@@ -1,5 +1,5 @@
 <?php
-namespace EventEspresso\core\services\commands\ticket;
+namespace EventEspresso\core\domain\services\commands\ticket;
 
 use EventEspresso\core\domain\services\ticket\CreateTicketLineItemService;
 use EventEspresso\core\exceptions\InvalidEntityException;
@@ -65,5 +65,3 @@ class CreateTicketLineItemCommandHandler extends CommandHandler
 
 
 }
-// End of file CreateTicketLineItemCommandHandler.php
-// Location: /CreateTicketLineItemCommandHandler.php
