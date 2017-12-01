@@ -36,7 +36,7 @@ class CollectionFilterCallbackIteratorTest extends EE_UnitTestCase
         $this->loose_collection = null;
     }
 
-    
+
     public function testGetFiltered(){
         $ints = array(1,2,6,10,5,4,7,9,3,8);
         foreach ($ints as $int) {

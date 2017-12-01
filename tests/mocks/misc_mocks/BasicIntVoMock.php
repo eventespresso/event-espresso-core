@@ -7,7 +7,7 @@ namespace EventEspresso\tests\mocks\misc_mocks;
  *
  * @package EventEspresso\tests\mocks\misc_mocks
  * @author  Darren Ethier
- * @since   1.0.0
+ * @since   4.9.53.rc
  */
 class BasicIntVoMock
 {
