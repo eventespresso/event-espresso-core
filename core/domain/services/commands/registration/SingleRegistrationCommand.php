@@ -4,10 +4,7 @@ namespace EventEspresso\core\domain\services\commands\registration;
 
 use EventEspresso\core\services\commands\Command;
 
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
+defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
 /**
