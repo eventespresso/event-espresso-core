@@ -1,6 +1,6 @@
 <?php
 
-namespace EventEspresso\core\services\commands\ticket;
+namespace EventEspresso\core\domain\services\commands\ticket;
 
 use EE_Error;
 use EE_Line_Item;
