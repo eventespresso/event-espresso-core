@@ -189,7 +189,8 @@ class EEG_Aim extends EE_Onsite_Gateway{
 
 			$item_num = 1;
 			$transaction = $payment->transaction();
-			$order_description = $this->_format_order_description( $payment );
+            $gateway_formatter = $this->_get_gateway_formatter();
+			$order_description = $gateway_formatter->formatOrderDescription($payment);
 			$primary_registrant = $transaction->primary_registration();
 			//if we're are charging for the full amount, show the normal line items
 			//and the itemized total adds up properly
@@ -200,11 +201,11 @@ class EEG_Aim extends EE_Onsite_Gateway{
 						continue;
 					}
 					$this->addLineItem(
-						$item_num++, 
-						$this->_format_line_item_name( $line_item, $payment ), 
-						$this->_format_line_item_desc( $line_item, $payment ), 
+						$item_num++,
+						$gateway_formatter->formatLineItemName($line_item, $payment),
+						$gateway_formatter->formatLineItemDesc($line_item, $payment),
 						$line_item->quantity(),
-						$line_item->unit_price(), 
+						$line_item->unit_price(),
 						'N');
 					$order_description .= $line_item->desc().', ';
 				}
@@ -220,7 +221,7 @@ class EEG_Aim extends EE_Onsite_Gateway{
 			//if in debug mode, use authorize.net's sandbox id; otherwise use the Event Espresso partner id
 			$partner_id = $this->_debug_mode ? 'AAA100302' : 'AAA105363';
 			$this->setField( 'solution_id', $partner_id );
-			$this->setField('amount', $this->format_currency($payment->amount()));
+			$this->setField('amount', $gateway_formatter->formatCurrency($payment->amount()));
 			$this->setField('description',substr(rtrim($order_description, ', '), 0, 255));
 			$this->_set_sensitive_billing_data( $billing_info );
 			$this->setField('first_name', $billing_info['first_name']);
