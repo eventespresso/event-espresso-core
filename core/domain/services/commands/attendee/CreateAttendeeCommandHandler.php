@@ -1,6 +1,6 @@
 <?php
 
-namespace EventEspresso\core\services\commands\attendee;
+namespace EventEspresso\core\domain\services\commands\attendee;
 
 use EE_Attendee;
 use EE_Error;
@@ -94,6 +94,7 @@ class CreateAttendeeCommandHandler extends CommandHandler
                 )
             );
         }
+        // FHEE_EventEspresso_core_domain_services_commands_attendee_CreateAttendeeCommandHandler__findExistingAttendee__existing_attendee
         return apply_filters(
             'FHEE_EventEspresso_core_services_commands_attendee_CreateAttendeeCommandHandler__findExistingAttendee__existing_attendee',
             $existing_attendee,
