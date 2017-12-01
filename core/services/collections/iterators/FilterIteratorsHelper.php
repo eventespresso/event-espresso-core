@@ -20,7 +20,7 @@ class FilterIteratorsHelper
     /**
      * Uses CollectionFilterCallbackIterator on a provided collection with provided Closure for filtering each object
      * in the collection.
-     * The closure recieves an instance of the object and should return false if it is not "valid" and true if it is.
+     * The closure receives an instance of the object and should return false if it is not "valid" and true if it is.
      *
      * @param Collection $collection
      * @param Closure    $acceptance_callback
