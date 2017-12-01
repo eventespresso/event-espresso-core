@@ -166,7 +166,8 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
             $payment->set_status($this->_pay_model->failed_status());
             return $payment;
         }
-        $order_description = mb_strcut($this->_format_order_description($payment), 0, 127);
+        $gateway_formatter = $this->_get_gateway_formatter();
+        $order_description = mb_strcut($gateway_formatter->formatOrderDescription($payment), 0, 127);
         $primary_registration = $transaction->primary_registration();
         $primary_attendee = $primary_registration instanceof EE_Registration
             ? $primary_registration->attendee()
@@ -404,6 +405,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
     public function itemize_list(EEI_Payment $payment, EEI_Transaction $transaction, $request_response_args = array())
     {
         $itemized_list = array();
+        $gateway_formatter = $this->_get_gateway_formatter();
         // If we have data from a previous communication with PP (on this transaction) we may use that for our list...
         if (
             ! empty($request_response_args)
@@ -469,18 +471,18 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
                     }
                     // Item Name.
                     $itemized_list['L_PAYMENTREQUEST_0_NAME' . $item_num] = mb_strcut(
-                        $this->_format_line_item_name($line_item, $payment),
+                        $gateway_formatter->formatLineItemName($line_item, $payment),
                         0,
                         127
                     );
                     // Item description.
                     $itemized_list['L_PAYMENTREQUEST_0_DESC' . $item_num] = mb_strcut(
-                        $this->_format_line_item_desc($line_item, $payment),
+                        $gateway_formatter->formatLineItemDesc($line_item, $payment),
                         0,
                         127
                     );
                     // Cost of individual item.
-                    $itemized_list['L_PAYMENTREQUEST_0_AMT' . $item_num] = $this->format_currency($unit_price);
+                    $itemized_list['L_PAYMENTREQUEST_0_AMT' . $item_num] = $gateway_formatter->formatCurrency($unit_price);
                     // Item Number.
                     $itemized_list['L_PAYMENTREQUEST_0_NUMBER' . $item_num] = $item_num + 1;
                     // Item quantity.
@@ -515,7 +517,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
                 // Item description.
                 $itemized_list['L_PAYMENTREQUEST_0_DESC' . $item_num] = '';
                 // Cost of individual item.
-                $itemized_list['L_PAYMENTREQUEST_0_AMT' . $item_num] = $this->format_currency(
+                $itemized_list['L_PAYMENTREQUEST_0_AMT' . $item_num] = $gateway_formatter->formatCurrency(
                     $itemized_sum_diff_from_txn_total
                 );
                 // Item Number.
@@ -530,18 +532,18 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
             // Just one Item.
             // Item Name.
             $itemized_list['L_PAYMENTREQUEST_0_NAME0'] = mb_strcut(
-                $this->_format_partial_payment_line_item_name($payment),
+                $gateway_formatter->formatPartialPaymentLineItemName($payment),
                 0,
                 127
             );
             // Item description.
             $itemized_list['L_PAYMENTREQUEST_0_DESC0'] = mb_strcut(
-                $this->_format_partial_payment_line_item_desc($payment),
+                $gateway_formatter->formatPartialPaymentLineItemDesc($payment),
                 0,
                 127
             );
             // Cost of individual item.
-            $itemized_list['L_PAYMENTREQUEST_0_AMT0'] = $this->format_currency($payment->amount());
+            $itemized_list['L_PAYMENTREQUEST_0_AMT0'] = $gateway_formatter->formatCurrency($payment->amount());
             // Item Number.
             $itemized_list['L_PAYMENTREQUEST_0_NUMBER0'] = 1;
             // Item quantity.
@@ -549,7 +551,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
             // Digital item is sold.
             $itemized_list['L_PAYMENTREQUEST_0_ITEMCATEGORY0'] = 'Physical';
             // Item's sales S/H and tax amount.
-            $itemized_list['PAYMENTREQUEST_0_ITEMAMT'] = $this->format_currency($payment->amount());
+            $itemized_list['PAYMENTREQUEST_0_ITEMAMT'] = $gateway_formatter->formatCurrency($payment->amount());
             $itemized_list['PAYMENTREQUEST_0_TAXAMT'] = '0';
             $itemized_list['PAYMENTREQUEST_0_SHIPPINGAMT'] = '0';
             $itemized_list['PAYMENTREQUEST_0_HANDLINGAMT'] = '0';
