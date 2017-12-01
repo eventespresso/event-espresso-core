@@ -1424,7 +1424,7 @@ class Messages_Admin_Page extends EE_Admin_Page
                             
                             $template_form_fields[$field_id]['value'] = ! empty($message_templates)
                                                                         && isset($content[$extra_field])
-                                ? stripslashes($content[$extra_field])
+                                ? $content[$extra_field]
                                 : '';
                             
                             //do we have a validation error?  if we do then let's use that value instead
@@ -1446,7 +1446,7 @@ class Messages_Admin_Page extends EE_Admin_Page
                             
                             if (isset($extra_array['input']) && $extra_array['input'] === 'wp_editor') {
                                 //we want to decode the entities
-                                $template_form_fields[$field_id]['value'] = stripslashes($template_form_fields[$field_id]['value']);
+                                $template_form_fields[$field_id]['value'] = $template_form_fields[$field_id]['value'];
                                 
                             }/**/
                         }
@@ -2151,7 +2151,7 @@ class Messages_Admin_Page extends EE_Admin_Page
         );
         //setup display of preview.
         $this->_admin_page_title                    = $preview_title;
-        $this->_template_args['admin_page_content'] = $preview_button . '<br />' . stripslashes($preview);
+        $this->_template_args['admin_page_content'] = $preview_button . '<br />' . $preview;
         $this->_template_args['data']['force_json'] = true;
         
         return '';
