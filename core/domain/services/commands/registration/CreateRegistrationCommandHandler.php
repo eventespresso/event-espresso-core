@@ -1,5 +1,5 @@
 <?php
-namespace EventEspresso\core\services\commands\registration;
+namespace EventEspresso\core\domain\services\commands\registration;
 
 use EventEspresso\core\domain\services\registration\CreateRegistrationService;
 use EventEspresso\core\exceptions\InvalidEntityException;
@@ -71,5 +71,3 @@ class CreateRegistrationCommandHandler extends CommandHandler
 
 
 }
-// End of file CreateRegistrationCommandHandler.php
-// Location: /CreateRegistrationCommandHandler.php
