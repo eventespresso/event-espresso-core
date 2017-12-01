@@ -108,6 +108,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 	) {
 		$redirect_args = array();
 		$transaction = $payment->transaction();
+        $gateway_formatter = $this->_get_gateway_formatter();
 		$item_num = 1;
 		/** @type EE_Line_Item $total_line_item */
 		$total_line_item = $transaction->total_line_item();
@@ -135,7 +136,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 						continue;
 					}
 					$redirect_args[ 'item_name_' . $item_num ] = substr(
-						$this->_format_line_item_name( $line_item, $payment ),
+						$gateway_formatter->formatLineItemName($line_item, $payment),
 						0, 127
 					);
 					$redirect_args[ 'amount_' . $item_num ] = $line_item->unit_price();
@@ -165,12 +166,16 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			} elseif( $itemized_sum_diff_from_txn_total > 0 ) {
 				$redirect_args[ 'item_name_' . $item_num ] = substr(
 						__( 'Other charges', 'event_espresso' ), 0, 127 );
-				$redirect_args[ 'amount_' . $item_num ] = $this->format_currency( $itemized_sum_diff_from_txn_total );
+				$redirect_args['amount_' . $item_num] = $gateway_formatter->formatCurrency(
+                    $itemized_sum_diff_from_txn_total
+                );
 				$redirect_args[ 'quantity_' . $item_num ] = 1;
 				$item_num++;
 			}
 			if( $total_discounts_to_cart_total > 0 ) {
-				$redirect_args[ 'discount_amount_cart' ] = $this->format_currency( $total_discounts_to_cart_total );
+				$redirect_args['discount_amount_cart'] = $gateway_formatter->formatCurrency(
+                    $total_discounts_to_cart_total
+                );
 			}
 			//add our taxes to the order if we're NOT using PayPal's
 			if( ! $this->_paypal_taxes ){
@@ -180,7 +185,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			$payment->update_extra_meta( EEG_Paypal_Standard::itemized_payment_option_name, false );
 			//partial payment that's not for the remaining amount, so we can't send an itemized list
 			$redirect_args['item_name_' . $item_num] = substr(
-				$this->_format_partial_payment_line_item_name( $payment ),
+				$gateway_formatter->formatPartialPaymentLineItemName($payment),
 				0, 127
 			);
 			$redirect_args['amount_' . $item_num] = $payment->amount();
