@@ -38,7 +38,7 @@ class CreateTransactionCommand extends Command implements CommandRequiresCapChec
      */
     public function __construct(EE_Checkout $checkout = null, array $transaction_details = array())
     {
-        $this->checkout = $checkout;
+        $this->checkout            = $checkout;
         $this->transaction_details = $transaction_details;
     }
 

@@ -42,6 +42,13 @@ class UpdateRegistrationAndTransactionAfterChangeCommandHandler extends CommandH
      */
     public function handle(CommandInterface $command)
     {
+        /** @var UpdateRegistrationAndTransactionAfterChangeCommand $command */
+        if (! $command instanceof UpdateRegistrationAndTransactionAfterChangeCommand) {
+            throw new InvalidEntityException(
+                get_class($command),
+                'UpdateRegistrationAndTransactionAfterChangeCommand'
+            );
+        }
         return $this->update_registration_service->updateRegistrationAndTransaction($command->registration());
     }
 }

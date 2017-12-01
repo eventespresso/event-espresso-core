@@ -1,4 +1,5 @@
 <?php
+
 namespace EventEspresso\core\domain\services\commands\attendee;
 
 use EE_Registration;
@@ -39,19 +40,17 @@ class CreateAttendeeCommand extends Command implements CommandRequiresCapCheckIn
     protected $registration;
 
 
-
     /**
      * CreateAttendeeCommand constructor.
      *
-     * @param array            $attendee_details
+     * @param array           $attendee_details
      * @param EE_Registration $registration
      */
     public function __construct(array $attendee_details, EE_Registration $registration)
     {
         $this->attendee_details = $attendee_details;
-        $this->registration = $registration;
+        $this->registration     = $registration;
     }
-
 
 
     /**
@@ -63,7 +62,6 @@ class CreateAttendeeCommand extends Command implements CommandRequiresCapCheckIn
     }
 
 
-
     /**
      * @return EE_Registration
      */
@@ -71,7 +69,6 @@ class CreateAttendeeCommand extends Command implements CommandRequiresCapCheckIn
     {
         return $this->registration;
     }
-
 
 
     /**
@@ -86,7 +83,4 @@ class CreateAttendeeCommand extends Command implements CommandRequiresCapCheckIn
         }
         return new PublicCapabilities('', 'create_new_contact');
     }
-
-
-
 }

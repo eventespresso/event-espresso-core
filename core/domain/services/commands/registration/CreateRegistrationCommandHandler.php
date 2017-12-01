@@ -47,6 +47,10 @@ class CreateRegistrationCommandHandler extends CommandHandler
      */
     public function handle(CommandInterface $command)
     {
+        /** @var CreateRegistrationCommand $command */
+        if (! $command instanceof CreateRegistrationCommand) {
+            throw new InvalidEntityException(get_class($command), 'CreateRegistrationCommand');
+        }
         // now create a new registration for the ticket
         return $this->registration_service->create(
             $command->ticket()->get_related_event(),

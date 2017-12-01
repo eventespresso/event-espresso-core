@@ -6,6 +6,7 @@ use EE_Attendee;
 use EE_Error;
 use EE_Registration;
 use EEM_Attendee;
+use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\services\commands\CommandHandler;
 use EventEspresso\core\services\commands\CommandInterface;
@@ -42,6 +43,10 @@ class CreateAttendeeCommandHandler extends CommandHandler
      */
     public function handle(CommandInterface $command)
     {
+        /** @var CreateAttendeeCommand $command */
+        if (! $command instanceof CreateAttendeeCommand) {
+            throw new InvalidEntityException(get_class($command), 'CreateAttendeeCommand');
+        }
         // have we met before?
         $attendee = $this->findExistingAttendee(
             $command->registration(),
@@ -69,6 +74,7 @@ class CreateAttendeeCommandHandler extends CommandHandler
      * @param EE_Registration $registration
      * @param  array          $attendee_data
      * @return EE_Attendee
+     * @throws EE_Error
      */
     private function findExistingAttendee(EE_Registration $registration, array $attendee_data)
     {
@@ -94,9 +100,8 @@ class CreateAttendeeCommandHandler extends CommandHandler
                 )
             );
         }
-        // FHEE_EventEspresso_core_domain_services_commands_attendee_CreateAttendeeCommandHandler__findExistingAttendee__existing_attendee
         return apply_filters(
-            'FHEE_EventEspresso_core_services_commands_attendee_CreateAttendeeCommandHandler__findExistingAttendee__existing_attendee',
+            'FHEE_EventEspresso_core_domain_services_commands_attendee_CreateAttendeeCommandHandler__findExistingAttendee__existing_attendee',
             $existing_attendee,
             $registration,
             $attendee_data
@@ -141,6 +146,7 @@ class CreateAttendeeCommandHandler extends CommandHandler
      * @param  array          $attendee_data
      * @return EE_Attendee
      * @throws EE_Error
+     * @throws EntityNotFoundException
      */
     private function createNewAttendee(EE_Registration $registration, array $attendee_data)
     {
