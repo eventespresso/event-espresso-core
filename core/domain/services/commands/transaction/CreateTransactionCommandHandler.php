@@ -1,4 +1,5 @@
 <?php
+
 namespace EventEspresso\core\domain\services\commands\transaction;
 
 use EE_Checkout;
@@ -6,9 +7,12 @@ use EE_Error;
 use EE_Line_Item;
 use EE_Transaction;
 use EEH_Line_Item;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidEntityException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\commands\CommandHandler;
 use EventEspresso\core\services\commands\CommandInterface;
+use InvalidArgumentException;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -25,12 +29,14 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 class CreateTransactionCommandHandler extends CommandHandler
 {
 
-
     /**
      * @param CommandInterface $command
      * @return mixed
      * @throws EE_Error
      * @throws InvalidEntityException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
      */
     public function handle(CommandInterface $command)
     {
@@ -39,14 +45,14 @@ class CreateTransactionCommandHandler extends CommandHandler
             throw new InvalidEntityException(get_class($command), 'CreateTransactionCommand');
         }
         $transaction_details = $command->transactionDetails();
-        $cart_total = null;
+        $cart_total          = null;
         if ($command->checkout() instanceof EE_Checkout) {
             // ensure cart totals have been calculated
             $command->checkout()->cart->get_grand_total()->recalculate_total_including_taxes();
             // grab the cart grand total
-            $cart_total = $command->checkout()->cart->get_cart_grand_total();
+            $cart_total                           = $command->checkout()->cart->get_cart_grand_total();
             $transaction_details['TXN_reg_steps'] = $command->checkout()->initialize_txn_reg_steps_array();
-            $transaction_details['TXN_total'] = $cart_total > 0 ? $cart_total : 0;
+            $transaction_details['TXN_total']     = $cart_total > 0 ? $cart_total : 0;
         }
         // create new TXN and save it so it has an ID
         $transaction = EE_Transaction::new_instance($transaction_details);
@@ -64,6 +70,4 @@ class CreateTransactionCommandHandler extends CommandHandler
         $cart_total->save_this_and_descendants_to_txn($transaction->ID());
         return $transaction;
     }
-
-
 }
