@@ -1,6 +1,6 @@
 <?php
 
-namespace EventEspresso\core\services\commands\transaction;
+namespace EventEspresso\core\domain\services\commands\transaction;
 
 use EE_Checkout;
 use EE_Error;
