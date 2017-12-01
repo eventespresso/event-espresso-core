@@ -1,6 +1,6 @@
 <?php
 
-namespace EventEspresso\core\services\commands\ticket;
+namespace EventEspresso\core\domain\services\commands\ticket;
 
 use EventEspresso\core\domain\services\ticket\CancelTicketLineItemService;
 use EventEspresso\core\exceptions\InvalidEntityException;
