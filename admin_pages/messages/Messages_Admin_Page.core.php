@@ -2735,7 +2735,22 @@ class Messages_Admin_Page extends EE_Admin_Page
                         $where_cols_n_values = array(
                             'MTP_ID' => $this->_req_data['MTP_template_fields'][$template_field]['MTP_ID']
                         );
-                        
+                        //if they aren't allowed to use all JS, restrict them to just posty-y tags
+                        if (! current_user_can('unfiltered_html')){
+                            if (is_array($set_column_values['MTP_content'])){
+                                 foreach($set_column_values['MTP_content'] as $key => $value) {
+                                     $set_column_values['MTP_content'][$key] = wp_kses(
+                                         $value,
+                                         wp_kses_allowed_html('post')
+                                     );
+                                 }
+                            } else {
+                                $set_column_values['MTP_content'] = wp_kses(
+                                    $set_column_values['MTP_content'],
+                                    wp_kses_allowed_html('post')
+                                );
+                            }
+                        }
                         $message_template_fields = array(
                             'GRP_ID'             => $set_column_values['GRP_ID'],
                             'MTP_template_field' => $set_column_values['MTP_template_field'],
