@@ -6,69 +6,87 @@ use EE_Error;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
-
-
 /**
  * Class ConvertNoticesToEeErrors
  * Converts notifications in a NoticesContainer into EE_Error notifications
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * @since         $VID:$
+ * @since         4.9.53.rc
  */
 class ConvertNoticesToEeErrors extends NoticeConverter
 {
 
     /**
      * Converts Notice objects into EE_Error notifications
+     * This converter only allows notices to be processed once in a request.  So any notices that have already been
+     * processed won't be processed.
      *
-     * @param NoticesContainerInterface $notices
+     * @param array $notices
+     * @param bool  $throw_exceptions
      * @throws EE_Error
      */
-    public function process(NoticesContainerInterface $notices)
+    public function process(array $notices = array(), $throw_exceptions = false)
     {
-        $this->setNotices($notices);
-        $notices = $this->getNotices();
-        if ($notices->hasAttention()) {
-            foreach ($notices->getAttention() as $notice) {
-                EE_Error::add_attention(
-                    $notice->message(),
-                    $notice->file(),
-                    $notice->func(),
-                    $notice->line()
-                );
+        /** @noinspection CallableParameterUseCaseInTypeContextInspection */
+        $notices = empty($notices) ? $this->getNotices() : $notices;
+        $error_string = '';
+        foreach ($notices as $notice) {
+            if (! $notice instanceof NoticeInterface
+                || ! $this->useNotice($notice)
+            ) {
+                continue;
             }
-        }
-        if ($notices->hasError()) {
-            $error_string = esc_html__('The following errors occurred:', 'event_espresso');
-            foreach ($notices->getError() as $notice) {
-                if ($this->getThrowExceptions()) {
-                    $error_string .= '<br />' . $notice->message();
-                } else {
-                    EE_Error::add_error(
+            switch ($notice->type()) {
+                case Notice::SUCCESS:
+                    EE_Error::add_success(
                         $notice->message(),
                         $notice->file(),
                         $notice->func(),
                         $notice->line()
                     );
-                }
+                    break;
+                case Notice::ATTENTION:
+                    EE_Error::add_attention(
+                        $notice->message(),
+                        $notice->file(),
+                        $notice->func(),
+                        $notice->line()
+                    );
+                    break;
+                case Notice::ERROR:
+                    if ($throw_exceptions) {
+                        $error_string .= '<br />' . $notice->message();
+                    } else {
+                        EE_Error::add_error(
+                            $notice->message(),
+                            $notice->file(),
+                            $notice->func(),
+                            $notice->line()
+                        );
+                    }
+                    break;
+                default:
+                    //no matches so let's just continue the loop (2 because we want to continue the foreach loop)
+                    continue 2;
+                    break;
             }
-            if ($this->getThrowExceptions()) {
-                throw new EE_Error($error_string);
-            }
+            $notice->setProcessed();
         }
-        if ($notices->hasSuccess()) {
-            foreach ($notices->getSuccess() as $notice) {
-                EE_Error::add_success(
-                    $notice->message(),
-                    $notice->file(),
-                    $notice->func(),
-                    $notice->line()
-                );
-            }
+        if ($throw_exceptions && ! empty($error_string)) {
+            throw new EE_Error(esc_html__('The following errors occurred:', 'event_espresso') . $error_string);
         }
-        $this->clearNotices();
     }
 
 
+    /**
+     * @param NoticeInterface $notice
+     * @return bool
+     */
+    public function useNotice(NoticeInterface $notice)
+    {
+        return $this->canUseByCapability($notice)
+               && ! $notice->isDismissed()
+               && ! $notice->isProcessed();
+    }
 }
