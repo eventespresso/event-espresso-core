@@ -44,7 +44,10 @@ class AdminNotice
     public function __construct(NoticeInterface $notice, $display_now = true)
     {
         $this->notice = $notice;
-        if (! did_action('admin_notices')) {
+
+        if (! did_action('network_admin_notices') && $notice->isPersistent()) {
+            add_action('network_admin_notices', array($this, 'displayNotice'));
+        } elseif (! did_action('admin_notices')) {
             add_action('admin_notices', array($this, 'displayNotice'));
         } elseif ($display_now) {
             $this->displayNotice();
