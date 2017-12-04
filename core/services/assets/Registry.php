@@ -329,6 +329,14 @@ class Registry
             EVENT_ESPRESSO_VERSION,
             true
         );
+        //error_js
+        wp_register_script(
+            'ee_error_js',
+            EE_GLOBAL_ASSETS_URL . 'scripts/EE_Error.js',
+            array('espresso_core'),
+            EVENT_ESPRESSO_VERSION,
+            true
+        );
     }
 
 
