@@ -2,133 +2,125 @@
 
 namespace EventEspresso\core\services\notices;
 
-use EventEspresso\core\exceptions\InvalidDataTypeException;
+use Closure;
+use EventEspresso\core\exceptions\InvalidEntityException;
+use EventEspresso\core\exceptions\InvalidIdentifierException;
+use EventEspresso\core\services\collections\FilterIteratorsHelper\FilterIteratorsHelper;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
-
 /**
  * Class NoticesContainer
- * Container for holding multiple Notice objects until they can be processed
+ * Container for holding multiple Notice objects until they can be processed.
+ * Notices REQUIRE an identifier and the current behaviour is if there is already a notice in the system, then the
+ * existing notice is returned after adding.
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * @since         $VID:$
+ * @since         4.9.53.rc
  */
-class NoticesContainer implements NoticesContainerInterface
+final class NoticesContainer implements NoticesContainerInterface
 {
 
 
     /**
-     * @var NoticeInterface[] $information
+     * @var NoticesCollection
      */
-    private $information = array();
+    private $notices;
 
 
     /**
-     * @var NoticeInterface[] $attention
+     * @var NoticeConverterManager
      */
-    private $attention = array();
-
+    private $notice_converter;
 
     /**
-     * @var NoticeInterface[] $error
+     * NoticesContainer constructor.
+     *
+     * @param NoticesCollection      $notices
+     * @param NoticeConverterManager $notice_converter
      */
-    private $error = array();
-
-
-    /**
-     * @var NoticeInterface[] $success
-     */
-    private $success = array();
-
-
-    /**
-     * @param string $notice
-     * @param bool   $dismissible
-     * @param string $file
-     * @param string $func
-     * @param string $line
-     * @throws InvalidDataTypeException
-     */
-    public function addInformation($notice, $dismissible = true, $file = '', $func = '', $line = '')
+    public function __construct(NoticesCollection $notices, NoticeConverterManager $notice_converter)
     {
-        $this->information[] = new Notice(
-            Notice::INFORMATION,
-            $notice,
-            $dismissible,
-            $file,
-            $func,
-            $line
-        );
+        $this->notices = $notices;
+        $this->notice_converter = $notice_converter;
     }
 
 
-
     /**
-     * @param string $notice
-     * @param bool   $dismissible
-     * @param string $file
-     * @param string $func
-     * @param string $line
-     * @throws InvalidDataTypeException
+     * Generic Notice adder where the caller provides the type.  Note if the type is not a registered type then this
+     * will throw an exception.
+     *
+     * @param string $type
+     * @param string $identifier
+     * @param string $message
+     * @return NoticeInterface
+     * @throws InvalidEntityException
      */
-    public function addAttention($notice, $dismissible = true, $file = '', $func = '', $line = '')
+    public function addNotice($type, $identifier, $message)
     {
-        $this->attention[] = new Notice(
-            Notice::ATTENTION,
-            $notice,
-            $dismissible,
-            $file,
-            $func,
-            $line
-        );
+        //check if the notice already exists in the collection.
+        $notice = $this->notices->get($identifier);
+        if (! $notice instanceof NoticeInterface) {
+            $notice = new Notice($type, $identifier, $message);
+            $this->notices->add(
+                $notice,
+                $identifier
+            );
+        }
+        return $notice;
     }
 
 
-
     /**
-     * @param string $notice
-     * @param bool   $dismissible
-     * @param string $file
-     * @param string $func
-     * @param string $line
-     * @throws InvalidDataTypeException
+     * @param string $identifier
+     * @param string $message
+     * @return NoticeInterface
+     * @throws InvalidEntityException
      */
-    public function addError($notice, $dismissible = true, $file, $func, $line)
+    public function addInformation($identifier, $message)
     {
-        $this->error[] = new Notice(
-            Notice::ERROR,
-            $notice,
-            $dismissible,
-            $file,
-            $func,
-            $line
-        );
+        return $this->addNotice(Notice::INFORMATION, $identifier, $message);
     }
 
 
+    /**
+     * @param string $identifier
+     * @param string $message
+     * @return NoticeInterface
+     * @throws InvalidEntityException
+     */
+    public function addAttention($identifier, $message)
+    {
+        return $this->addNotice(Notice::ATTENTION, $identifier, $message);
+    }
+
 
     /**
-     * @param string $notice
-     * @param bool   $dismissible
-     * @param string $file
-     * @param string $func
-     * @param string $line
-     * @throws InvalidDataTypeException
+     * @param string $identifier
+     * @param string $message
+     * @return NoticeInterface
+     * @throws InvalidEntityException
      */
-    public function addSuccess($notice, $dismissible = true, $file = '', $func = '', $line = '')
+    public function addError($identifier, $message)
     {
-        $this->success[] = new Notice(
-            Notice::SUCCESS,
-            $notice,
-            $dismissible,
-            $file,
-            $func,
-            $line
-        );
+        return $this->addNotice(Notice::ERROR, $identifier, $message);
     }
+
+
+    /**
+     * @param string $identifier
+     * @param string $message
+     * @return NoticeInterface
+     * @throws InvalidEntityException
+     */
+    public function addSuccess($identifier, $message)
+    {
+        return $this->addNotice(Notice::SUCCESS, $identifier, $message);
+    }
+
+
 
 
     /**
@@ -136,7 +128,7 @@ class NoticesContainer implements NoticesContainerInterface
      */
     public function hasInformation()
     {
-        return ! empty($this->information);
+        return $this->hasForType(Notice::INFORMATION);
     }
 
 
@@ -146,7 +138,7 @@ class NoticesContainer implements NoticesContainerInterface
      */
     public function hasAttention()
     {
-        return ! empty($this->attention);
+        return $this->hasForType(Notice::ATTENTION);
     }
 
 
@@ -156,7 +148,7 @@ class NoticesContainer implements NoticesContainerInterface
      */
     public function hasError()
     {
-        return ! empty($this->error);
+        return $this->hasForType(Notice::ERROR);
     }
 
 
@@ -166,7 +158,17 @@ class NoticesContainer implements NoticesContainerInterface
      */
     public function hasSuccess()
     {
-        return ! empty($this->success);
+        return $this->hasForType(Notice::SUCCESS);
+    }
+
+
+    /**
+     * @param string $type
+     * @return bool
+     */
+    public function hasForType($type)
+    {
+        return $this->notices->hasForType($type);
     }
 
 
@@ -175,7 +177,7 @@ class NoticesContainer implements NoticesContainerInterface
      */
     public function countInformation()
     {
-        return count($this->information);
+        return $this->countForType(Notice::INFORMATION);
     }
 
 
@@ -185,7 +187,7 @@ class NoticesContainer implements NoticesContainerInterface
      */
     public function countAttention()
     {
-        return count($this->attention);
+        return $this->countForType(Notice::ATTENTION);
     }
 
 
@@ -195,7 +197,7 @@ class NoticesContainer implements NoticesContainerInterface
      */
     public function countError()
     {
-        return count($this->error);
+        return $this->countForType(Notice::ERROR);
     }
 
 
@@ -205,7 +207,17 @@ class NoticesContainer implements NoticesContainerInterface
      */
     public function countSuccess()
     {
-        return count($this->success);
+        return $this->countForType(Notice::SUCCESS);
+    }
+
+
+    /**
+     * @param string $type
+     * @return int
+     */
+    public function countForType($type)
+    {
+        return $this->notices->countForType($type);
     }
 
 
@@ -214,7 +226,7 @@ class NoticesContainer implements NoticesContainerInterface
      */
     public function getInformation()
     {
-        return $this->information;
+        return $this->getNoticesForType(Notice::INFORMATION);
     }
 
 
@@ -224,7 +236,7 @@ class NoticesContainer implements NoticesContainerInterface
      */
     public function getAttention()
     {
-        return $this->attention;
+        return $this->getNoticesForType(Notice::ATTENTION);
     }
 
 
@@ -234,7 +246,7 @@ class NoticesContainer implements NoticesContainerInterface
      */
     public function getError()
     {
-        return $this->error;
+        return $this->getNoticesForType(Notice::ERROR);
     }
 
 
@@ -244,8 +256,99 @@ class NoticesContainer implements NoticesContainerInterface
      */
     public function getSuccess()
     {
-        return $this->success;
+        return $this->getNoticesForType(Notice::SUCCESS);
     }
 
 
+    /**
+     * @param $type
+     * @return NoticeInterface[]
+     */
+    public function getNoticesForType($type)
+    {
+        return $this->notices->getForType($type);
+    }
+
+
+    /**
+     * Returns all persistent notices stored in the container.
+     *
+     * @param NoticeInterface[] $notices Optionally can only get the persistent notices from the provided array of
+     *                                   NoticeInterface objects
+     * @return NoticeInterface[]
+     */
+    public function getPersistentNotices(array $notices = array())
+    {
+        return $this->getFilteredNotices(
+            function (NoticeInterface $notice) {
+                return $notice->isPersistent();
+            },
+            $notices
+        );
+    }
+
+
+    /**
+     * Returns the specific notice matching the given identifier
+     *
+     * @param string $identifier
+     * @return NoticeInterface
+     */
+    public function getNotice($identifier)
+    {
+        return $this->notices->get($identifier);
+    }
+
+    /**
+     * Returns all notices flagged for showing on the next request stored in the container.
+     *
+     * @param array NoticeInterface $notices Optionally will get the notices flagged for showing on the next request
+     *                                       from the provided array of NoticeInterface objects.
+     * @return NoticeInterface[]
+     */
+    public function getNoticesShownOnNextRequest(array $notices = array())
+    {
+        return $this->getFilteredNotices(
+            function (NoticeInterface $notice) {
+                return $notice->showOnNextRequest();
+            },
+            $notices
+        );
+    }
+
+
+    /**
+     * Used for filtering notices by the provided callback
+     *
+     * @param Closure           $callback
+     * @param NoticeInterface[] $notices If not provided then the entire internal collection is used.
+     * @return NoticeInterface[]
+     */
+    private function getFilteredNotices(Closure $callback, array $notices = array())
+    {
+        /** @noinspection CallableParameterUseCaseInTypeContextInspection */
+        $notices         = ! empty($notices) && is_array($notices) ? $notices : $this->notices;
+        return $notices instanceof NoticesCollection
+            ? FilterIteratorsHelper::getFilteredObjectsFromCollection($this->notices, $callback)
+            : array_filter($notices, $callback);
+    }
+
+
+
+    /**
+     * Runs the given converter on all the notices in the container.  If its a converter that returns the processed
+     * notices, this will return them (i.e. jsonified notices).
+     *
+     * @param string            $notice_converter_identifier
+     * @param NoticeInterface[] $notices   Optionally a specific provided array of notices can be converted.  If not
+     *                                     provided then all unprocessed notices in the container will be processed by
+     *                                     the converter.
+     * @return NoticeInterface[]|void
+     * @throws InvalidIdentifierException
+     */
+    public function convertNotices($notice_converter_identifier, array $notices = array())
+    {
+        /** @noinspection PhpInconsistentReturnPointsInspection */
+        return $this->notice_converter->getNoticeConverter($notice_converter_identifier)->process($notices);
+    }
 }

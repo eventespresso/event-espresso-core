@@ -17,48 +17,53 @@ interface NoticesContainerInterface
 {
 
     /**
-     * @param string $notice
-     * @param bool   $dismissible
-     * @param string $file
-     * @param string $func
-     * @param string $line
+     * For adding a generic notice type.
+     * @param $type
+     * @param $identifier
+     * @param $message
+     * @return Notice
      */
-    public function addInformation($notice, $dismissible = true, $file = '', $func = '', $line = '');
+    public function addNotice($type, $identifier, $message);
+
+    /**
+     * @param string $identifier
+     * @param string $message
+     * @return Notice
+     */
+    public function addInformation($identifier, $message);
 
 
     /**
-     * @param string $notice
-     * @param bool   $dismissible
-     * @param string $file
-     * @param string $func
-     * @param string $line
-     * @return
+     * @param string $identifier
+     * @param string $message
+     * @return Notice
      */
-    public function addAttention($notice, $dismissible = true, $file = '', $func = '', $line = '');
-
-
-
-    /**
-     * @param string $notice
-     * @param bool   $dismissible
-     * @param string $file
-     * @param string $func
-     * @param string $line
-     */
-    public function addError($notice, $dismissible = true, $file, $func, $line);
+    public function addAttention($identifier, $message);
 
 
 
     /**
-     * @param string $notice
-     * @param bool   $dismissible
-     * @param string $file
-     * @param string $func
-     * @param string $line
+     * @param string $identifier
+     * @param string $message
+     * @return Notice
      */
-    public function addSuccess($notice, $dismissible = true, $file = '', $func = '', $line = '');
+    public function addError($identifier, $message);
 
 
+
+    /**
+     * @param string $identifier
+     * @param string $message
+     * @return Notice
+     */
+    public function addSuccess($identifier, $message);
+
+
+    /**
+     * @param $type
+     * @return bool
+     */
+    public function hasForType($type);
 
     /**
      * @return boolean
@@ -87,6 +92,11 @@ interface NoticesContainerInterface
     public function hasSuccess();
 
 
+    /**
+     * @param $type
+     * @return int
+     */
+    public function countForType($type);
 
     /**
      * @return int
@@ -115,6 +125,12 @@ interface NoticesContainerInterface
     public function countSuccess();
 
 
+    /**
+     * @param $type
+     * @return NoticeInterface[]
+     */
+    public function getNoticesForType($type);
+
 
     /**
      * @return NoticeInterface[]
@@ -141,4 +157,47 @@ interface NoticesContainerInterface
      * @return NoticeInterface[]
      */
     public function getSuccess();
+
+
+    /**
+     * Returns all persistent notices stored in the container.
+     *
+     * @param NoticeInterface[] $notices Optionally can only get the persistent notices from the provided array of
+     *                                   NoticeInterface objects
+     * @return NoticeInterface[]
+     */
+    public function getPersistentNotices(array $notices = array());
+
+
+
+    /**
+     * Returns the specific notice matching the given identifier
+     *
+     * @param string $identifier
+     * @return NoticeInterface
+     */
+    public function getNotice($identifier);
+
+
+    /**
+     * Returns all notices flagged for showing on the next request stored in the container.
+     *
+     * @param array NoticeInterface $notices Optionally will get the notices flagged for showing on the next request
+     *                                       from the provided array of NoticeInterface objects.
+     * @return NoticeInterface[]
+     */
+    public function getNoticesShownOnNextRequest(array $notices = array());
+
+
+    /**
+     * Runs the given converter on all the notices in the container.  If its a converter that returns the processed
+     * notices, this will return them (i.e. jsonified notices).
+     *
+     * @param string $notice_converter_identifier
+     * @param NoticeInterface[]  $notices  Optionally a specific provided array of notices can be converted.  If not
+     *                                     provided then all unprocessed notices in the container will be processed by
+     *                                     the converter.
+     * @return NoticeInterface[]|void
+     */
+    public function convertNotices($notice_converter_identifier, array $notices = array());
 }
