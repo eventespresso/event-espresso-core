@@ -24,7 +24,7 @@ class EE_Text_Area_Display_Strategy extends EE_Display_Strategy_Base{
 		$html .= ' style="' . $input->html_style() . '"';
 		$html .= $input->other_html_attributes();
 		$html .= ' rows= "' . $rows . '" cols="' . $cols . '">';
-		$html .= $raw_value;
+		$html .= esc_textarea($raw_value);
 		$html .= '</textarea>';
 		foreach ( $this->_input->get_validation_strategies() as $validation_strategy ) {
 			if (
