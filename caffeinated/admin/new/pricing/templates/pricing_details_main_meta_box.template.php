@@ -18,14 +18,14 @@
 			<tr valign="top">
 				<th><label for="PRC_name"><?php _e('Name', 'event_espresso'); ?></label> <?php echo EEH_Template::get_help_tab_link('name_field_info');?></th>
 				<td>
-					<input class="regular-text" type="text" id="PRC_name" name="PRC_name" value="<?php echo htmlentities($price->name()); ?>"/>
+					<input class="regular-text" type="text" id="PRC_name" name="PRC_name" value="<?php $price->f('PRC_name'); ?>"/>
 				</td>
 			</tr>
 			<tr valign="top">
 				<th><label for="PRC_desc"><?php _e('Description', 'event_espresso'); ?></label> <?php echo EEH_Template::get_help_tab_link('description_field_info');?></th>
 				<td>
 					<textarea class="regular-text" id="PRC_desc" name="PRC_desc" rows="5" ><?php
-					 echo $price->desc(); 
+					 $price->f('PRC_desc');
 					?></textarea><br/>
 				</td>							
 			</tr>
