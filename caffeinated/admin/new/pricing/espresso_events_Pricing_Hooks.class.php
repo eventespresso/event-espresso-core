@@ -1438,7 +1438,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
             'display_edit_tkt_row'          => ' style="display:none;"',
             'edit_tkt_expanded'             => '',
             'edit_tickets_name'             => $default ? 'TICKETNAMEATTR' : 'edit_tickets',
-            'TKT_name'                      => $default ? '' : $ticket->name(),
+            'TKT_name'                      => $default ? '' : $ticket->get_f('TKT_name'),
             'TKT_start_date'                => $default
                 ? ''
                 : $ticket->get_date('TKT_start_date', $this->_date_time_format),
@@ -1483,7 +1483,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
                     )
                 ),
             'TKT_ID'                        => $default ? 0 : $ticket->ID(),
-            'TKT_description'               => $default ? '' : $ticket->get_pretty('TKT_description', 'form_input'),
+            'TKT_description'               => $default ? '' : $ticket->get_f('TKT_description'),
             'TKT_is_default'                => $default ? 0 : $ticket->is_default(),
             'TKT_required'                  => $default ? 0 : $ticket->required(),
             'TKT_is_default_selector'       => '',
