@@ -15,7 +15,7 @@
 						</label>
 					</th>
 					<td>
-						<input name="site_license_key" id="site_license_key" size="10" class="regular-text" type="text" value="<?php echo $site_license_key; ?>" /><?php echo $site_license_key_verified; ?><br/>
+						<input name="site_license_key" id="site_license_key" size="10" class="regular-text" type="text" value="<?php echo esc_attr($site_license_key); ?>" /><?php echo $site_license_key_verified; ?><br/>
 						<p class="description">
 							<?php printf( __('Adding a valid Support License Key will enable automatic update notifications and backend updates for Event Espresso Core and any installed add-ons. If this is a Development or Test site, %sDO NOT%s enter your Support License Key.', 'event_espresso'), '<strong>', '</strong>' ); ?>
 						</p>
@@ -42,7 +42,7 @@
 					</label>
 				</th>
 				<td>
-					<input class="regular-text" type="text" name="organization_name" value="<?php echo $organization_name; ?>" />
+					<input class="regular-text" type="text" name="organization_name" value="<?php echo esc_textarea($organization_name); ?>" />
 					<p class="description">
 						<?php echo __('Displayed on all emails and invoices.', 'event_espresso'); ?>
 					</p>
@@ -55,7 +55,7 @@
 					</label>
 				</th>
 				<td>
-					<input class="regular-text" type="text" name="organization_address_1" value="<?php echo $organization_address_1; ?>" />
+					<input class="regular-text" type="text" name="organization_address_1" value="<?php echo esc_textarea($organization_address_1); ?>" />
 				</td>
 			</tr>
 			<tr>
@@ -65,7 +65,7 @@
 					</label>
 				</th>
 				<td>
-					<input class="regular-text" type="text" name="organization_address_2" value="<?php echo $organization_address_2; ?>" />
+					<input class="regular-text" type="text" name="organization_address_2" value="<?php echo esc_textarea($organization_address_2); ?>" />
 				</td>
 			</tr>
 			<tr>
@@ -75,7 +75,7 @@
 					</label>
 				</th>
 				<td>
-					<input id="organization_city" class="regular-text" type="text" name="organization_city" value="<?php echo $organization_city; ?>" />
+					<input id="organization_city" class="regular-text" type="text" name="organization_city" value="<?php echo esc_textarea($organization_city); ?>" />
 				</td>
 			</tr>
 			<?php echo EEH_Form_Fields::generate_form_input( $states ); ?>
@@ -87,7 +87,7 @@
 					</label>
 				</th>
 				<td>
-					<input class="regular-text" type="text" name="organization_zip" size="10" value="<?php echo $organization_zip; ?>" />
+					<input class="regular-text" type="text" name="organization_zip" size="10" value="<?php echo esc_textarea($organization_zip); ?>" />
 				</td>
 			</tr>
 			<tr>
@@ -97,7 +97,7 @@
 					</label>
 				</th>
 				<td>
-					<input class="regular-text" type="text" name="organization_email" value="<?php echo $organization_email; ?>" />
+					<input class="regular-text" type="text" name="organization_email" value="<?php echo esc_textarea($organization_email); ?>" />
 					<p class="description">
 						<?php echo sprintf( esc_html__('This is where notifications go to when you use the %1$s and %2$s shortcodes in the message templates.', 'event_espresso'), '<code>[CO_FORMATTED_EMAIL]</code>', '<code>[CO_EMAIL]</code>' ); ?>
 					</p>
@@ -110,7 +110,7 @@
 					</label>
 				</th>
 				<td>
-					<input class="regular-text" type="text" name="organization_phone" value="<?php echo $organization_phone; ?>" />
+					<input class="regular-text" type="text" name="organization_phone" value="<?php echo esc_textarea($organization_phone); ?>" />
 					<p class="description">
 						<?php _e('The phone number for your organization.', 'event_espresso'); ?>
 					</p>
@@ -123,7 +123,7 @@
 					</label>
 				</th>
 				<td>
-					<input class="regular-text" type="text" name="organization_vat" value="<?php echo $organization_vat; ?>" />
+					<input class="regular-text" type="text" name="organization_vat" value="<?php echo esc_textarea($organization_vat); ?>" />
 					<p class="description">
 						<?php _e('The VAT/Tax Number may be displayed on invoices and receipts.', 'event_espresso'); ?>
 					</p>
@@ -145,7 +145,7 @@
 					</label>
 				</th>
 				<td>
-					<input id="upload_image" type="text" class="regular-text" name="organization_logo_url" value="<?php echo $organization_logo_url ?>" />
+					<input id="upload_image" type="text" class="regular-text" name="organization_logo_url" value="<?php echo esc_textarea($organization_logo_url) ?>" />
 					<input id="upload_image_button" type="button" value="<?php _e('Upload Image', 'event_espresso'); ?>" />
 					<p class="description">
 						<?php _e('Your logo will be used on custom invoices, tickets, certificates, and payment templates.', 'event_espresso'); ?>
@@ -164,7 +164,7 @@
 					if ( $organization_logo_url ) {
 						?>
 						<p id="default-logo-thumb">
-							<img id="current-image-thumb" src="<?php echo $organization_logo_url ?>" alt="" /><br />
+							<img id="current-image-thumb" src="<?php echo esc_url($organization_logo_url) ?>" alt="" /><br />
 							<a id='remove-image' href='#' title='<?php esc_attr_e('Remove Image', 'event_espresso'); ?>' onclick='return false;'>
 								<?php _e('Remove Image', 'event_espresso'); ?>
 							</a>
@@ -192,7 +192,7 @@
 					</label>
 				</th>
 				<td>
-					<input placeholder="facebook.com/profile.name" id="organization_facebook" type="text" class="regular-text" name="organization_facebook" value="<?php echo $organization_facebook ?>" />
+					<input placeholder="facebook.com/profile.name" id="organization_facebook" type="text" class="regular-text" name="organization_facebook" value="<?php echo esc_url($organization_facebook) ?>" />
 				</td>
 			</tr>
 
@@ -203,7 +203,7 @@
 					</label>
 				</th>
 				<td>
-					<input placeholder="twitter.com/twitterhandle" id="organization_twitter" type="text" class="regular-text" name="organization_twitter" value="<?php echo $organization_twitter ?>" />
+					<input placeholder="twitter.com/twitterhandle" id="organization_twitter" type="text" class="regular-text" name="organization_twitter" value="<?php echo esc_url($organization_twitter) ?>" />
 				</td>
 			</tr>
 
@@ -214,7 +214,7 @@
 					</label>
 				</th>
 				<td>
-					<input placeholder="linkedin.com/in/profilename" id="organization_linkedin" type="text" class="regular-text" name="organization_linkedin" value="<?php echo $organization_linkedin ?>" />
+					<input placeholder="linkedin.com/in/profilename" id="organization_linkedin" type="text" class="regular-text" name="organization_linkedin" value="<?php echo esc_url($organization_linkedin) ?>" />
 				</td>
 			</tr>
 
@@ -225,7 +225,7 @@
 					</label>
 				</th>
 				<td>
-					<input placeholder="pinterest.com/profilename" id="organization_pinterest" type="text" class="regular-text" name="organization_pinterest" value="<?php echo $organization_pinterest ?>" />
+					<input placeholder="pinterest.com/profilename" id="organization_pinterest" type="text" class="regular-text" name="organization_pinterest" value="<?php echo esc_url($organization_pinterest) ?>" />
 				</td>
 			</tr>
 
@@ -236,7 +236,7 @@
 					</label>
 				</th>
 				<td>
-					<input placeholder="google.com/+profileName" id="organization_google" type="text" class="regular-text" name="organization_google" value="<?php echo $organization_google ?>" />
+					<input placeholder="google.com/+profileName" id="organization_google" type="text" class="regular-text" name="organization_google" value="<?php echo esc_url($organization_google) ?>" />
 				</td>
 			</tr>
 
@@ -247,7 +247,7 @@
 					</label>
 				</th>
 				<td>
-					<input placeholder="instagram.com/handle" id="organization_instagram" type="text" class="regular-text" name="organization_instagram" value="<?php echo $organization_instagram ?>" />
+					<input placeholder="instagram.com/handle" id="organization_instagram" type="text" class="regular-text" name="organization_instagram" value="<?php echo esc_url($organization_instagram) ?>" />
 				</td>
 			</tr>
 
