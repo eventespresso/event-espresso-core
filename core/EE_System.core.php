@@ -256,7 +256,7 @@ final class EE_System implements ResettableInterface
      */
     public function loadCapabilities()
     {
-        $this->loader->getShared('EE_Capabilities');
+        $this->capabilities = $this->loader->getShared('EE_Capabilities');
         add_action(
             'AHEE__EE_Capabilities__init_caps__before_initialization',
             function ()
