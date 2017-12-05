@@ -5,7 +5,6 @@ use EventEspresso\core\interfaces\InterminableInterface;
 use EventEspresso\core\interfaces\ResettableInterface;
 use EventEspresso\core\services\assets\Registry;
 use EventEspresso\core\services\commands\CommandBusInterface;
-use EventEspresso\core\services\container\RegistryContainer;
 use EventEspresso\core\services\loaders\LoaderFactory;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
@@ -197,12 +196,11 @@ class EE_Registry implements ResettableInterface
     protected function __construct(EE_Dependency_Map $dependency_map)
     {
         $this->_dependency_map = $dependency_map;
-        // $registry_container = new RegistryContainer();
-        $this->LIB = new RegistryContainer();
-        $this->addons = new RegistryContainer();
-        $this->modules = new RegistryContainer();
-        $this->shortcodes = new RegistryContainer();
-        $this->widgets = new RegistryContainer();
+        $this->LIB = new stdClass();
+        $this->addons = new stdClass();
+        $this->modules = new stdClass();
+        $this->shortcodes = new stdClass();
+        $this->widgets = new stdClass();
         add_action('EE_Load_Espresso_Core__handle_request__initialize_core_loading', array($this, 'initialize'));
     }
 

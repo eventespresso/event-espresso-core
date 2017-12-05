@@ -27,12 +27,17 @@ class EE_Post_Content_Field extends EE_Text_Field_Base
      * @param string $value
      * @return string
      */
-    public function prepare_for_set($value)
+    function prepare_for_set($value)
     {
         if (! current_user_can('unfiltered_html')) {
             $value = wp_kses("$value", wp_kses_allowed_html('post'));
         }
         return parent::prepare_for_set($value);
+    }
+
+    function prepare_for_set_from_db($value_found_in_db_for_model_object)
+    {
+        return $value_found_in_db_for_model_object;
     }
 
 

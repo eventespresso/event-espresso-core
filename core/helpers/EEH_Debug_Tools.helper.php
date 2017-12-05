@@ -463,8 +463,11 @@ class EEH_Debug_Tools
      */
     protected static function file_and_line($file, $line)
     {
-        if ($file === '' || $line === '' || defined('EE_TESTS_DIR')) {
+        if ($file === '' || $line === '') {
             return '';
+        }
+        if (defined('EE_TESTS_DIR')) {
+            return "\n\t(" . $file . ' line no: ' . $line . ' ) ';
         }
         return '<br /><span style="font-size:9px;font-weight:normal;color:#666;line-height: 12px;">'
                . $file

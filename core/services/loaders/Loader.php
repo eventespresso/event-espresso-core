@@ -116,6 +116,7 @@ class Loader implements LoaderInterface
      */
     public function reset()
     {
+        $this->new_loader->reset();
         $this->shared_loader->reset();
     }
 

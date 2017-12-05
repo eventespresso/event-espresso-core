@@ -8,17 +8,16 @@ require_once(EE_MODELS . 'fields/EE_Text_Field_Base.php');
  */
 class EE_Simple_HTML_Field extends EE_Text_Field_Base
 {
-
-
-
     /**
-     * removes all tags which a WP Post wouldn't allow in its content normally
+     * removes all tags when setting
      *
-     * @param string $value
+     * @param string $value_inputted_for_field_on_model_object
      * @return string
      */
-    public function prepare_for_set($value)
+    function prepare_for_set($value_inputted_for_field_on_model_object)
     {
-        return parent::prepare_for_set(wp_kses("$value", EEH_HTML::get_simple_tags()));
+        $value_with_select_tags = wp_kses("$value_inputted_for_field_on_model_object", EEH_HTML::get_simple_tags());
+        return parent::prepare_for_set($value_with_select_tags);
     }
+
 }

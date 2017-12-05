@@ -1,7 +1,6 @@
 <?php
+
 defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 
 /**
  * EEH_DTT_Helper_Test
@@ -20,6 +19,15 @@ class EEH_DTT_Helper_Test extends EE_UnitTestCase
      * @var EE_Datetime_Field
      */
     protected $_datetime_field;
+
+
+    /**
+     *    setUp
+     */
+    public function setUp()
+    {
+        parent::setUp();
+    }
 
 
     /**
@@ -49,49 +57,36 @@ class EEH_DTT_Helper_Test extends EE_UnitTestCase
         $pretty_time_format = null
     ) {
         $this->loadModelFieldMocks(array('EE_Datetime_Field'));
-        $this->_datetime_field = new EE_Datetime_Field_Mock(
-            $table_column,
-            $nice_name,
-            $nullable,
-            $default_value,
-            $timezone,
-            $date_format,
-            $time_format,
-            $pretty_date_format,
-            $pretty_time_format
-        );
+        $this->_datetime_field = new EE_Datetime_Field_Mock($table_column, $nice_name, $nullable, $default_value,
+            $timezone, $date_format, $time_format, $pretty_date_format, $pretty_time_format);
     }
 
 
     /**
      *    test_get_valid_timezone_string
      */
-    public function test_get_valid_timezone_string()
+    function test_get_valid_timezone_string()
     {
 
         $original_timezone_string = get_option('timezone_string');
+
         // TEST 1: retrieval of WP timezone string
         $expected_timezone_string = 'UTC';
         update_option('timezone_string', $expected_timezone_string);
         $timezone_string = EEH_DTT_Helper::get_valid_timezone_string();
         $this->assertEquals($timezone_string, $expected_timezone_string);
+
         // TEST 2: retrieval of specific timezone string
         $expected_timezone_string = 'America/Vancouver';
         update_option('timezone_string', $expected_timezone_string);
         $timezone_string = EEH_DTT_Helper::get_valid_timezone_string($expected_timezone_string);
         $this->assertEquals($timezone_string, $expected_timezone_string);
+
         // TEST 3: bogus timezone string
         try {
             $timezone_string = EEH_DTT_Helper::get_valid_timezone_string('me got funky pants and like to dance');
-            $this->fail(
-                sprintf(
-                    __(
-                        'The timezone string %1$s should have thrown an Exception, but did not!',
-                        'event_espresso'
-                    ),
-                    $timezone_string
-                )
-            );
+            $this->fail(sprintf(__('The timezone string %1$s should have thrown an Exception, but did not!',
+                'event_espresso'), $timezone_string));
         } catch (EE_Error $e) {
             $this->assertTrue(true);
         }
@@ -103,14 +98,13 @@ class EEH_DTT_Helper_Test extends EE_UnitTestCase
     /**
      *    test_get_timezone_string_from_gmt_offset
      */
-    public function test_get_timezone_string_from_gmt_offset()
+    function test_get_timezone_string_from_gmt_offset()
     {
         // TEST 4: gmt offsets
         $orig_timezone_string = get_option('timezone_string');
         $orig_gmt_offset      = get_option('gmt_offset');
         // set timezone string to empty string
         update_option('timezone_string', '');
-        $this->assertEmpty(get_option('timezone_string'));
         $gmt_offsets = array(
             -12,
             -11.5,
@@ -172,31 +166,16 @@ class EEH_DTT_Helper_Test extends EE_UnitTestCase
             update_option('gmt_offset', $gmt_offset);
             try {
                 $timezone_string = EEH_DTT_Helper::get_valid_timezone_string();
-                $this->assertNotEmpty(
-                    $timezone_string,
-                    sprintf(
-                        __(
-                            'The WP GMT offset setting %1$s has resulted in an invalid timezone_string!',
-                            'event_espresso'
-                        ),
-                        $gmt_offset
-                    )
-                );
+                if (empty($timezone_string)) {
+                    $this->fail(sprintf(__('The WP GMT offset setting %1$s has resulted in an invalid timezone_string!',
+                        'event_espresso'), $gmt_offset));
+                }
             } catch (EE_Error $e) {
                 $gmt_offset = $gmt_offset >= 0 ? '+' . (string)$gmt_offset : (string)$gmt_offset;
                 $gmt_offset = str_replace(array('.25', '.5', '.75'), array(':15', ':30', ':45'), $gmt_offset);
                 $gmt_offset = 'UTC' . $gmt_offset;
-                $this->fail(
-                    sprintf(
-                        __(
-                            'The WP GMT offset setting %1$s has thrown the following Exception, but should not have! %2$s %3$s',
-                            'event_espresso'
-                        ),
-                        $gmt_offset,
-                        '<br />',
-                        $e->getMessage()
-                    )
-                );
+                $this->fail(sprintf(__('The WP GMT offset setting %1$s has thrown an Exception, but should not have!',
+                    'event_espresso'), $gmt_offset));
                 unset($gmt_offset);
             }
         }
@@ -207,9 +186,8 @@ class EEH_DTT_Helper_Test extends EE_UnitTestCase
 
     /**
      * If the WordPress database has a timezone_string set in the database, then when this method is called with no
-     * arguments, it is EXPECTED that it will return the actual timezone_string set in the database unless gmt_offset is
+     * arguments, it is EXPECTED that it will return the actual tiemzone_string set in the database unless gmt_offset is
      * provided.
-     *
      * @group 10626
      */
     public function test_get_timezone_string_from_gmt_offset_when_timezone_string_set()
@@ -218,27 +196,30 @@ class EEH_DTT_Helper_Test extends EE_UnitTestCase
         update_option('timezone_string', 'America/New_York');
         $actual = EEH_DTT_Helper::get_timezone_string_from_gmt_offset();
         $this->assertEquals('America/New_York', $actual);
+
         //let's provide 0 as offset - expect UTC back
         $actual = EEH_DTT_Helper::get_timezone_string_from_gmt_offset(0);
         $this->assertEquals('UTC', $actual);
-        // let's provide an offset THAT IS A KNOWN OFFSET WITH A MATCHING VALID TIMEZONE,
-        // whatever timezone string that gets
-        // returned should have a matching offset.
+
+        //let's provide an offset THAT IS A KNOWN OFFSET WITH A MATCHING VALID TIMEZONE, whatever timezone string that gets
+        //returned should have a matching offset.
         $actual = EEH_DTT_Helper::get_timezone_string_from_gmt_offset(-5);
         $actual = new DateTimeZone($actual);
-        $now    = new DateTime('now', $actual);
+        $now = new DateTime('now', $actual);
         $actual = $actual->getOffset($now);
-        $this->assertEquals(-5 * HOUR_IN_SECONDS, $actual);
-        // let's provide an offset THAT IS A KNOWN OFFSET WITH NO MATCHING VALID TIMEZONE,
-        // whatever timezone string that
-        // gets returned should have a matching offset.
-        // first we need to get our expected offset based on the invalid offset we provide.
-        $expected = EEH_DTT_Helper::adjust_invalid_gmt_offsets(-11.5 * HOUR_IN_SECONDS);
+        $this->assertEquals(-5*HOUR_IN_SECONDS, $actual);
+
+        //let's provide an offset THAT IS A KNOWN OFFSET WITH NO MATCHING VALID TIMEZONE, whatever timezone string that
+        //gets returned should have a matching offset.
+        //first we need to get our expected offset based on the invalid offset we provide.
+        $expected = EEH_DTT_Helper::adjust_invalid_gmt_offsets(-11.5*HOUR_IN_SECONDS);
+
         $actual = EEH_DTT_Helper::get_timezone_string_from_gmt_offset(-11.5);
         $actual = new DateTimeZone($actual);
-        $now    = new DateTime('now', $actual);
+        $now = new DateTime('now', $actual);
         $actual = $actual->getOffset($now);
         $this->assertEquals($expected, $actual);
+
         update_option('timezone_string', $original_tz);
     }
 
@@ -250,7 +231,7 @@ class EEH_DTT_Helper_Test extends EE_UnitTestCase
      * @param int    $time
      * @return \DateTime
      */
-    public function setup_DateTime_object($timezone_string = 'Africa/Abidjan', $time = 0)
+    function setup_DateTime_object($timezone_string = 'Africa/Abidjan', $time = 0)
     {
         $timezone_string = empty($timezone_string) ? 'Africa/Abidjan' : $timezone_string;
         $DateTime        = new DateTime('now', new DateTimeZone($timezone_string));
@@ -265,7 +246,7 @@ class EEH_DTT_Helper_Test extends EE_UnitTestCase
     /**
      *    test_date_time_add
      */
-    public function test_date_time_add()
+    function test_date_time_add()
     {
         $this->_date_time_modifier_tests();
     }
@@ -274,17 +255,16 @@ class EEH_DTT_Helper_Test extends EE_UnitTestCase
     /**
      *    test_date_time_subtract
      */
-    public function test_date_time_subtract()
+    function test_date_time_subtract()
     {
         $this->_date_time_modifier_tests(false);
     }
 
 
     /**
-     * _date_time_modifier_tests
+     *     _date_time_modifier_tests
      *
      * @param bool $increment_datetimes
-     * @throws EE_Error
      */
     protected function _date_time_modifier_tests($increment_datetimes = true)
     {
@@ -316,47 +296,37 @@ class EEH_DTT_Helper_Test extends EE_UnitTestCase
             foreach ($periods as $period => $designator) {
                 foreach ($intervals as $interval) {
                     // don't bother adding more than 5 years
-                    if ($period === 'years' && $interval > 5) {
+                    if ($period == 'years' && $interval > 5) {
                         continue;
                     }
                     // TEST: add $interval $period ( ie: add 1 year...  add 3 months...  add 34 seconds )
                     // setup some objects used for testing
                     $expected_datetime = $this->setup_DateTime_object();
                     $actual_datetime   = EE_Datetime::new_instance(array('DTT_EVT_start' => time()));
-                    $expected_datetime->setTimezone(new DateTimeZone($actual_datetime->get_timezone()));
+                    $expected_datetime->setTimeZone(new DateTimeZone($actual_datetime->get_timezone()));
                     $period_interval = str_replace('%', $interval, $designator);
                     // apply conditions to both objects
                     if ($increment_datetimes) {
                         $expected_datetime->add(new DateInterval($period_interval));
-                        $actual_datetime = EEH_DTT_Helper::date_time_add(
-                            $actual_datetime,
-                            'DTT_EVT_start',
-                            $period,
-                            $interval
-                        );
+                        $actual_datetime = EEH_DTT_Helper::date_time_add($actual_datetime, 'DTT_EVT_start', $period,
+                            $interval);
                     } else {
                         $expected_datetime->sub(new DateInterval($period_interval));
-                        $actual_datetime = EEH_DTT_Helper::date_time_subtract(
-                            $actual_datetime,
-                            'DTT_EVT_start',
-                            $period,
-                            $interval
-                        );
+                        $actual_datetime = EEH_DTT_Helper::date_time_subtract($actual_datetime, 'DTT_EVT_start',
+                            $period, $interval);
                     }
-                    $expected = $expected_datetime->format(EE_Datetime_Field::mysql_timestamp_format);
-                    $actual   = $actual_datetime->get_DateTime_object('DTT_EVT_start')
-                                                ->format(EE_Datetime_Field::mysql_timestamp_format);
+                    $expected = $expected_datetime->format('Y-m-d H:i:s');
+                    $actual   = $actual_datetime->get_DateTime_object('DTT_EVT_start')->format('Y-m-d H:i:s');
                     $this->assertDateWithinOneMinute(
                         $expected,
                         $actual,
-                        EE_Datetime_Field::mysql_timestamp_format,
+                        'Y-m-d H:i:s',
                         sprintf(
                             __(
                                 'The %1$s method failed to produce correct results for the the period interval %2$s for timezone "%6$s" and UTC offset "%7$s" .%3$sExpected value: %4$s%3$sActual value: %5$s%3$s',
                                 'event_espresso'
                             ),
-                            $increment_datetimes
-                                ? 'EEH_DTT_Helper::date_time_add()'
+                            $increment_datetimes ? 'EEH_DTT_Helper::date_time_add()'
                                 : 'EEH_DTT_Helper::date_time_subtract()',
                             $period_interval,
                             "\n",
@@ -366,7 +336,8 @@ class EEH_DTT_Helper_Test extends EE_UnitTestCase
                             $gmt_offset
                         )
                     );
-                    unset($expected_datetime, $actual_datetime);
+                    unset($expected_datetime);
+                    unset($actual_datetime);
                 }
             }
         }
@@ -382,24 +353,20 @@ class EEH_DTT_Helper_Test extends EE_UnitTestCase
     {
         //now in timezone currently set.
         $default_timezone = new DateTimeZone(EEH_DTT_Helper::get_timezone());
-        $now              = new DateTime('now', $default_timezone);
+        $now              = new DateTime("now", $default_timezone);
         $expected_offset  = (int)$now->format('U') + (int)timezone_offset_get($default_timezone, $now);
-        $this->assertEquals(
-            $expected_offset,
-            EEH_DTT_Helper::get_timestamp_with_offset($now->format('U'))
-        );
+
+        $this->assertEquals($expected_offset, EEH_DTT_Helper::get_timestamp_with_offset($now->format('U')));
+
         //this might fail because of execution time.
         $this->assertEquals(current_time('timestamp'), EEH_DTT_Helper::get_timestamp_with_offset());
+
         //now let's test with a different timezone for the incoming timestamp.
-        $now->setTimezone(new DateTimeZone('America/Toronto'));
-        $expected_timestamp = (int)$now->format('U') + (int)timezone_offset_get(
-            new DateTimeZone('America/Toronto'),
-            $now
-        );
-        $this->assertEquals(
-            $expected_timestamp,
-            EEH_DTT_Helper::get_timestamp_with_offset($now->format('U'), 'America/Toronto')
-        );
+        $now->setTimeZone(new DateTimeZone('America/Toronto'));
+        $expected_timestamp = (int)$now->format('U') + (int)timezone_offset_get(new DateTimeZone('America/Toronto'),
+                $now);
+        $this->assertEquals($expected_timestamp,
+            EEH_DTT_Helper::get_timestamp_with_offset($now->format('U'), 'America/Toronto'));
     }
 
 
@@ -413,16 +380,21 @@ class EEH_DTT_Helper_Test extends EE_UnitTestCase
         $midday_start      = new DateTime('2015-01-25 12:00:00');
         $midday_end        = new DateTime('2015-01-26 12:00:00');
         $midnight_next_day = new DateTime('2015-01-27 00:00:00');
+
         //first test nulls
         $this->assertFalse(EEH_DTT_Helper::dates_represent_one_24_hour_date(null, $midnight_end));
         $this->assertFalse(EEH_DTT_Helper::dates_represent_one_24_hour_date($midnight_start, null));
+
         //test non midnights
         $this->assertFalse(EEH_DTT_Helper::dates_represent_one_24_hour_date($midnight_start, $midday_end));
         $this->assertFalse(EEH_DTT_Helper::dates_represent_one_24_hour_date($midday_start, $midnight_end));
+
         //test midnights but not 24 hours difference
         $this->assertFalse(EEH_DTT_Helper::dates_represent_one_24_hour_date($midnight_start, $midnight_next_day));
+
         //test correct range
         $this->assertTrue(EEH_DTT_Helper::dates_represent_one_24_hour_date($midnight_start, $midnight_end));
+
     }
 
 
@@ -442,12 +414,14 @@ class EEH_DTT_Helper_Test extends EE_UnitTestCase
         //first test when there is an actual timezone_string
         update_option('timezone_string', 'America/New_York');
         $this->assertEquals('New York', EEH_DTT_Helper::get_timezone_string_for_display());
+
         //clear out timezone string and do offset tests
         update_option('timezone_string', '');
         foreach ($offsets_to_test as $offset => $expected) {
             update_option('gmt_offset', $offset);
             $this->assertEquals($expected, EEH_DTT_Helper::get_timezone_string_for_display());
         }
+
         //restore original timezone_string and offset
         update_option('gmt_offset', $original_offset);
         update_option('timezone_string', $original_timezone_string);
@@ -460,22 +434,22 @@ class EEH_DTT_Helper_Test extends EE_UnitTestCase
      */
     public function test_tomorrow()
     {
-        $original_offset          = get_option('gmt_offset');
+        $original_offset = get_option('gmt_offset');
         $original_timezone_string = get_option('timezone_string');
-        //set timezone offset to -5 and timezone_string to ''
+        //set timezone offset to -5 and timezonestring to ''
         update_option('gmt_offset', '-5');
         update_option('timezone_string', '');
+
         //the `5` is not a typo here.  You may be thinking expected should be `-5` but the method we're testing converts
         //offsets from negative to positive and from positive to negative so that the timestamp accurately represents
         //midnight in that sites timezone as it exists in UTC+0 time.
-        $expected = strtotime('tomorrow') + (5 * 60 * 60);
+        $expected = strtotime('tomorrow') + (5*60*60);
         $this->assertEquals($expected, EEH_DTT_Helper::tomorrow());
+
         //restore
         update_option('gmt_offset', $original_offset);
         update_option('timezone_string', $original_timezone_string);
     }
-
-
 }
 // End of file EEH_DTT_Helper_Test.php
-// Location: tests/testcases/core/helpers/EEH_DTT_Helper_Test.php
+// Location: /EEH_DTT_Helper_Test.php

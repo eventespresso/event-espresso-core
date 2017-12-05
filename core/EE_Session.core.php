@@ -846,17 +846,32 @@ class EE_Session implements SessionIdentifierInterface
     /**
      * _save_session_to_db
      *
-     * @param bool $clear_session
+     * @access public
      * @return string
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    private function _save_session_to_db($clear_session = false)
+    private function _save_session_to_db()
     {
-        // unless we're deleting the session data, don't save anything if there isn't a cart
-        if (! $clear_session && ! $this->cart() instanceof EE_Cart) {
+        if (
+            // if the current request is NOT one of the following
+        ! (
+            // an an AJAX request from the frontend
+            EE_Registry::instance()->REQ->front_ajax
+            || (
+                // OR an admin request that is NOT AJAX
+                ! (defined('DOING_AJAX') && DOING_AJAX)
+                && is_admin()
+            )
+            || (
+                // OR an espresso page
+                EE_Registry::instance()->REQ instanceof EE_Request_Handler
+                && EE_Registry::instance()->REQ->is_espresso_page()
+            )
+        )
+        ) {
             return false;
         }
         $transaction = $this->transaction();
@@ -998,7 +1013,7 @@ class EE_Session implements SessionIdentifierInterface
         $this->reset_data(array_keys($this->_session_data));
         // reset initial site access time and the session expiration
         $this->_set_init_access_and_expiration();
-        $this->_save_session_to_db(true);
+        $this->_save_session_to_db();
     }
 
 

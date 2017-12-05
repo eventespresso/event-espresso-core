@@ -17,7 +17,7 @@ class EEM_Transaction_Test extends EE_UnitTestCase
      * @group 7965
      * @group 8853
      */
-    public function test_delete_junk_transactions()
+    function test_delete_junk_transactions()
     {
         $pretend_bot_creations    = 9;
         $pretend_real_recent_txns = 3;
@@ -39,15 +39,12 @@ class EEM_Transaction_Test extends EE_UnitTestCase
             array('STS_ID' => EEM_Transaction::abandoned_status_code)
         );
         $failed_transaction_with_real_payment = $this->factory->transaction->create(
-            array(
-                'TXN_timestamp' => time() - WEEK_IN_SECONDS * 2,
-                'STS_ID' => EEM_Transaction::failed_status_code
-            )
+            array( 'TXN_timestamp' => time() - WEEK_IN_SECONDS * 2, 'STS_ID' => EEM_Transaction::failed_status_code )
         );
         $transaction_count = EEM_Transaction::instance()->count();
 
         $this->assertEquals(
-            $pretend_bot_creations + $pretend_real_recent_txns + $pretend_real_good_txns + 1,
+            $pretend_bot_creations + $pretend_real_recent_txns + $pretend_real_good_txns + count($failed_transaction_with_real_payment),
             $transaction_count
         );
         $failed_transaction_count = EEM_Transaction::instance()->count(
@@ -56,7 +53,7 @@ class EEM_Transaction_Test extends EE_UnitTestCase
             )
         );
         $this->assertEquals(
-            $pretend_bot_creations + $pretend_real_recent_txns + 1,
+            $pretend_bot_creations + $pretend_real_recent_txns + count($failed_transaction_with_real_payment),
             $failed_transaction_count
         );
         $this->factory->payment->create(array('TXN_ID' => $failed_transaction_with_real_payment->ID()));

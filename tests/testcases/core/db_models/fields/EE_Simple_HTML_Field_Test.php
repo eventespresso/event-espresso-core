@@ -44,26 +44,4 @@ class EE_Simple_HTML_Field_Test extends EE_UnitTestCase
     {
         $this->assertEquals('%s', $this->_field->get_wpdb_data_type());
     }
-
-    public function test_prepare_for_set_with_valid_html()
-    {
-        $valid_html = 'Hey! <a href="">This should stay.</a>';
-        $this->assertEquals($valid_html, $this->_field->prepare_for_set($valid_html));
-    }
-
-
-    public function test_prepare_for_set_with_invalid_partial_html_tag()
-    {
-        $invalid_html = 'Hey! <img onload=prompt(document.domain)//';
-        $expected_result = 'Hey! &lt;img onload=prompt(document.domain)//';
-        $this->assertEquals($expected_result, $this->_field->prepare_for_set($invalid_html));
-    }
-
-
-    public function test_prepare_for_set_with_invalid_full_html_tag()
-    {
-        $invalid_html = 'Hey! <img onload=prompt(document.domain)></img>';
-        $expected_result = 'Hey! ';
-        $this->assertEquals($expected_result, $this->_field->prepare_for_set($invalid_html));
-    }
 }

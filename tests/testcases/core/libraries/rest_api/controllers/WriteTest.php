@@ -76,14 +76,7 @@ class WriteTest extends \EE_REST_TestCase
         );
         $response = rest_do_request($req);
         $response_data = $response->get_data();
-        if (! isset($response_data['code'])) {
-            $response_data['code'] = null;
-        }
-        $this->assertEmpty(
-            $response_data['code'],
-            '$response_data[\'code\'] was not empty and actually contained: ' . $response_data['code']
-            . "\n" . ' The full response was: ' . var_export($response_data, true)
-        );
+        $this->assertTrue(empty($response_data['code']));
         $this->assertEquals('2016-01-02T00:00:00', $response_data['DTT_EVT_start_gmt']);
         $this->assertEquals('2016-01-01T23:00:00', $response_data['DTT_EVT_start']);
         $this->assertEquals('2016-01-03T01:00:00', $response_data['DTT_EVT_end_gmt']);
@@ -115,14 +108,7 @@ class WriteTest extends \EE_REST_TestCase
         );
         $response = rest_do_request($req);
         $response_data = $response->get_data();
-        if (! isset($response_data['code'])) {
-            $response_data['code'] = null;
-        }
-        $this->assertEmpty(
-            $response_data['code'],
-            '$response_data[\'code\'] was not empty and actually contained: ' . $response_data['code']
-            . "\n" . ' The full response was: ' . var_export($response_data, true)
-        );
+        $this->assertTrue(empty($response_data['code']));
         $this->assertEquals('2016-01-03T00:00:00', $response_data['DTT_EVT_start']);
     }
 
