@@ -4,8 +4,10 @@ namespace EventEspresso\core\domain\services\registration;
 
 use EE_Answer;
 use EE_Error;
+use EE_Payment;
 use EE_Question;
 use EE_Registration;
+use EE_Registration_Payment;
 use EventEspresso\core\domain\services\DomainService;
 use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
@@ -140,32 +142,42 @@ class CopyRegistrationService extends DomainService
         EE_Registration $target_registration,
         EE_Registration $registration_to_copy
     ) {
-        $previous_payments = $registration_to_copy->registration_payments();
-        foreach ($previous_payments as $previous_payment) {
+        $save = false;
+        $previous_registration_payments = $registration_to_copy->registration_payments();
+        $new_registration_payment_total = 0;
+        $registration_to_copy_total = $registration_to_copy->paid();
+        foreach ($previous_registration_payments as $previous_registration_payment) {
             if (
-                $previous_payment instanceof \EE_Registration_Payment
-                && $previous_payment->payment() instanceof \EE_Payment
-                && $previous_payment->payment()->is_approved()
+                $previous_registration_payment instanceof EE_Registration_Payment
+                && $previous_registration_payment->payment() instanceof EE_Payment
+                && $previous_registration_payment->payment()->is_approved()
             ) {
-                $new_registration_payment = \EE_Registration_Payment::new_instance(
+                $payment_amount = $previous_registration_payment->amount();
+                $new_registration_payment = EE_Registration_Payment::new_instance(
                     array(
                         'REG_ID'     => $target_registration->ID(),
-                        'PAY_ID'     => $previous_payment->ID(),
-                        'RPY_amount' => $previous_payment->amount(),
+                        'PAY_ID'     => $previous_registration_payment->payment()->ID(),
+                        'RPY_amount' => $payment_amount,
                     )
                 );
-                if ( ! $new_registration_payment instanceof \EE_Registration_Payment) {
+                if ( ! $new_registration_payment instanceof EE_Registration_Payment) {
                     throw new UnexpectedEntityException($new_registration_payment, 'EE_Registration_Payment');
                 }
                 $new_registration_payment->save();
-                $target_registration->set_paid($previous_payment->amount());
-                $target_registration->save();
                 // if new reg payment is good, then set old reg payment amount to zero
-                $previous_payment->set_amount(0);
-                $previous_payment->save();
-                $registration_to_copy->set_paid(0);
-                $registration_to_copy->save();
+                $previous_registration_payment->set_amount(0);
+                $previous_registration_payment->save();
+                // now  increment/decrement payment amounts
+                $new_registration_payment_total += $payment_amount;
+                $registration_to_copy_total -= $payment_amount;
+                $save = true;
             }
+        }
+        if($save){
+            $target_registration->set_paid($new_registration_payment_total);
+            $target_registration->save();
+            $registration_to_copy->set_paid($registration_to_copy_total);
+            $registration_to_copy->save();
         }
         return true;
     }
