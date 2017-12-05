@@ -562,9 +562,9 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 	public function extra_misc_actions_publish_box() {
 		$extra_rows = array(
-			'vnu_capacity' => $this->_cpt_model_obj->get_pretty('VNU_capacity', 'input'),
-			'vnu_url' => $this->_cpt_model_obj->venue_url(),
-			'vnu_phone' => $this->_cpt_model_obj->phone()
+			'vnu_capacity' => $this->_cpt_model_obj->get_f('VNU_capacity'),
+			'vnu_url' => $this->_cpt_model_obj->get_f('VNU_url'),
+			'vnu_phone' => $this->_cpt_model_obj->get_f('VNU_phone')
 			);
 		$template = EE_VENUES_TEMPLATE_PATH . 'venue_publish_box_extras.template.php';
 		EEH_Template::display_template( $template, $extra_rows );
