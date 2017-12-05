@@ -46,7 +46,7 @@ $id =  ! empty( $QST_system ) ? '_disabled' : '';
 					</label>
 				</th>
 				<td>
-					<input id="QSG_identifier" name="QSG_identifier<?php echo $id; ?>" value="<?php echo $question_group->identifier()?>" type="text" class="regular-text"<?php echo $disabled; ?>>
+					<input id="QSG_identifier" name="QSG_identifier<?php echo $id; ?>" value="<?php $question_group->f('QSG_identifier')?>" type="text" class="regular-text"<?php echo $disabled; ?>>
 					<?php if ( ! empty( $QSG_system )) { ?>
 					<p><span class="description" style="color:#D54E21;">
 							<?php _e('System question group! This field cannot be changed.','event_espresso')?>
@@ -62,7 +62,7 @@ $id =  ! empty( $QST_system ) ? '_disabled' : '';
 					</label>
 				</th>
 				<td>
-					<textarea id="QSG_desc" name="QSG_desc"  class="regular-text" rows="2" cols="40"><?php echo $question_group->desc()?></textarea>
+					<textarea id="QSG_desc" name="QSG_desc"  class="regular-text" rows="2" cols="40"><?php $question_group->f('QSG_desc')?></textarea>
 				</td>
 			</tr>
 
