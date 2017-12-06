@@ -523,7 +523,7 @@ class EEH_Template
     /**
      * This helper just returns a button or link for the given parameters
      *
-     * @param  string $url   the url for the link
+     * @param  string $url   the url for the link, note that `esc_url` will be called on it
      * @param  string $label What is the label you want displayed for the button
      * @param  string $class what class is used for the button (defaults to 'button-primary')
      * @param string  $icon
@@ -545,7 +545,7 @@ class EEH_Template
             $icon_html .= $count > 1 ? '</span>' : '';
         }
         $label  = ! empty($icon) ? $icon_html . $label : $label;
-        $button = '<a id="' . sanitize_title_with_dashes($label) . '" href="' . $url . '" class="' . $class . '" title="' . $title . '">' . $label . '</a>';
+        $button = '<a id="' . sanitize_title_with_dashes($label) . '" href="' . esc_url($url) . '" class="' . $class . '" title="' . $title . '">' . $label . '</a>';
         return $button;
     }
 
