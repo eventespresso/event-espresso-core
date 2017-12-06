@@ -1,4 +1,9 @@
 <?php
+
+use EventEspresso\core\domain\DomainFactory;
+use EventEspresso\core\domain\values\FilePath;
+use EventEspresso\core\domain\values\FullyQualifiedName;
+use EventEspresso\core\domain\values\Version;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;

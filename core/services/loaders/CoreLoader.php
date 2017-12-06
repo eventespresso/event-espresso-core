@@ -62,6 +62,17 @@ class CoreLoader implements LoaderDecoratorInterface
 
 
     /**
+     * Calls the appropriate loading method from the installed generator;
+     * If EE_Registry is being used, then the additional parameters for the EE_Registry::create() method
+     * can be added to the $arguments array and they will be extracted and passed to EE_Registry::create(),
+     * but NOT to the class being instantiated.
+     * This is done by adding the parameters to the $arguments array as follows:
+     *  array(
+     *      'EE_Registry::create(from_db)'   => true, // boolean value, default = false
+     *      'EE_Registry::create(load_only)' => true, // boolean value, default = false
+     *      'EE_Registry::create(addon)'     => true, // boolean value, default = false
+     *  )
+     *
      * @param string $fqcn
      * @param array  $arguments
      * @param bool   $shared
@@ -78,8 +89,36 @@ class CoreLoader implements LoaderDecoratorInterface
      */
     public function load($fqcn, $arguments = array(), $shared = true)
     {
+        $shared = filter_var($shared, FILTER_VALIDATE_BOOLEAN);
         if($this->generator instanceof EE_Registry) {
-            return $this->generator->create($fqcn, $arguments, $shared);
+            // check if additional EE_Registry::create() arguments have been passed
+            // from_db
+            $from_db = isset($arguments['EE_Registry::create(from_db)'])
+                ? filter_var($arguments['EE_Registry::create(from_db)'], FILTER_VALIDATE_BOOLEAN)
+                : false;
+            // load_only
+            $load_only = isset($arguments['EE_Registry::create(load_only)'])
+                ? filter_var($arguments['EE_Registry::create(load_only)'], FILTER_VALIDATE_BOOLEAN)
+                : false;
+            // addon
+            $addon = isset($arguments['EE_Registry::create(addon)'])
+                ? filter_var($arguments['EE_Registry::create(addon)'], FILTER_VALIDATE_BOOLEAN)
+                : false;
+            unset(
+                $arguments['EE_Registry::create(from_db)'],
+                $arguments['EE_Registry::create(load_only)'],
+                $arguments['EE_Registry::create(addon)']
+            );
+            // addons need to be cached on EE_Registry
+            $shared = $addon ? true : $shared;
+            return $this->generator->create(
+                $fqcn,
+                $arguments,
+                $shared,
+                $from_db,
+                $load_only,
+                $addon
+            );
         }
         return $this->generator->brew(
             $fqcn,
