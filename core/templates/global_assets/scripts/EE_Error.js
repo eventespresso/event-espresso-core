@@ -53,7 +53,8 @@ jQuery(document).ready(function($) {
 					action : 'dismiss_ee_nag_notice',
 					ee_nag_notice: nag_notice,
 					return_url: ee_dismiss.return_url,
-					noheader : 'true'
+					noheader : 'true',
+                    ee_admin_ajax: true
 				},
 				beforeSend: function() {
 					window.do_before_admin_page_ajax();
