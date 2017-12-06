@@ -5,6 +5,7 @@ use EE_UnitTestCase;
 use EE_Addon;
 use EE_Data_Migration_Manager;
 use EE_Register_Addon;
+use Exception;
 use PHPUnit_Framework_Error_notice;
 use EE_Registry;
 use EE_Maintenance_Mode;
@@ -66,7 +67,7 @@ class EeAddonTestCase extends EE_UnitTestCase
         require_once EE_TESTS_DIR . 'mocks/addons/EE_NewAddonMock.class.php';
         $this->pretendAddonHookTime();
         $this->registerAddon();
-        $this->current_db_state         = get_option(EE_Data_Migration_Manager::current_database_state);
+        $this->current_db_state = get_option(EE_Data_Migration_Manager::current_database_state);
         delete_option(EE_Data_Migration_Manager::current_database_state);
         update_option(EE_Data_Migration_Manager::current_database_state, array('Core' => espresso_version()));
     }
@@ -83,8 +84,8 @@ class EeAddonTestCase extends EE_UnitTestCase
             try {
                 EE_Registry::instance()->addons->{EE_NewAddonMock::getCurrentName()};
                 $this->fail('The addon is still registered. Deregistering the addon failed.');
-            } catch (PHPUnit_Framework_Error_notice $e) {
-                $this->assertEquals(EE_UnitTestCase::error_code_undefined_property, $e->getCode());
+            } catch (Exception $e) {
+                $this->assertInstanceOf('OutOfBoundsException', $e);
             }
             $this->stopPretendingAddonHookTime();
         }
@@ -97,9 +98,10 @@ class EeAddonTestCase extends EE_UnitTestCase
         //register addon with default options.
         EE_NewAddonMock::registerWithGivenOptions($addon_name, $options);
         //ensure the addon has been registered
-        $this->assertAttributeNotEmpty($addon_name, EE_Registry::instance()->addons);
+        $this->assertArrayHasKey($addon_name, EE_Registry::instance()->addons);
+        $this->assertInstanceOf($addon_name, EE_Registry::instance()->addons->{$addon_name});
         //assert is the only addon setup
-        $this->assertEquals(1, count(EE_Registry::instance()->addons));
+        $this->assertCount(1, EE_Registry::instance()->addons);
         $this->addon                    = EE_Registry::instance()->addons->{$addon_name};
         $this->addon_activation_history = $this->addon->get_activation_history();
     }

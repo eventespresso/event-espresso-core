@@ -5,6 +5,7 @@ use EventEspresso\core\interfaces\InterminableInterface;
 use EventEspresso\core\interfaces\ResettableInterface;
 use EventEspresso\core\services\assets\Registry;
 use EventEspresso\core\services\commands\CommandBusInterface;
+use EventEspresso\core\services\container\RegistryContainer;
 use EventEspresso\core\services\loaders\LoaderFactory;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
@@ -196,11 +197,12 @@ class EE_Registry implements ResettableInterface
     protected function __construct(EE_Dependency_Map $dependency_map)
     {
         $this->_dependency_map = $dependency_map;
-        $this->LIB = new stdClass();
-        $this->addons = new stdClass();
-        $this->modules = new stdClass();
-        $this->shortcodes = new stdClass();
-        $this->widgets = new stdClass();
+        // $registry_container = new RegistryContainer();
+        $this->LIB = new RegistryContainer();
+        $this->addons = new RegistryContainer();
+        $this->modules = new RegistryContainer();
+        $this->shortcodes = new RegistryContainer();
+        $this->widgets = new RegistryContainer();
         add_action('EE_Load_Espresso_Core__handle_request__initialize_core_loading', array($this, 'initialize'));
     }
 
@@ -1380,8 +1382,35 @@ class EE_Registry implements ResettableInterface
 
 
     /**
+     * Gets the addon by its class name
+     *
+     * @param string $class_name
+     * @return EE_Addon
+     */
+    public function getAddon($class_name)
+    {
+        $class_name = str_replace('\\', '_', $class_name);
+        return $this->addons->{$class_name};
+    }
+
+
+    /**
+     * removes the addon from the internal cache
+     *
+     * @param string $class_name
+     * @return void
+     */
+    public function removeAddon($class_name)
+    {
+        $class_name = str_replace('\\', '_', $class_name);
+        unset($this->addons->{$class_name});
+    }
+
+
+
+    /**
      * Gets the addon by its name/slug (not classname. For that, just
-     * use the classname as the property name on EE_Config::instance()->addons)
+     * use the get_addon() method above
      *
      * @param string $name
      * @return EE_Addon
@@ -1399,10 +1428,17 @@ class EE_Registry implements ResettableInterface
 
 
     /**
-     * Gets an array of all the registered addons, where the keys are their names. (ie, what each returns for their
-     * name() function) They're already available on EE_Config::instance()->addons as properties, where each property's
-     * name is the addon's classname. So if you just want to get the addon by classname, use
-     * EE_Config::instance()->addons->{classname}
+     * Gets an array of all the registered addons, where the keys are their names.
+     * (ie, what each returns for their name() function)
+     * They're already available on EE_Registry::instance()->addons as properties,
+     * where each property's name is the addon's classname,
+     * So if you just want to get the addon by classname,
+     * OR use the get_addon() method above.
+     * PLEASE  NOTE:
+     * addons with Fully Qualified Class Names
+     * have had the namespace separators converted to underscores,
+     * so a classname like Fully\Qualified\ClassName
+     * would have been converted to Fully_Qualified_ClassName
      *
      * @return EE_Addon[] where the KEYS are the addon's name()
      */
@@ -1414,7 +1450,6 @@ class EE_Registry implements ResettableInterface
         }
         return $addons;
     }
-
 
 
     /**

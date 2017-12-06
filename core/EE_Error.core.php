@@ -718,15 +718,15 @@ class EE_Error extends Exception
     {
         $has_notices = 0;
         // check for success messages
-        $has_notices = self::$_espresso_notices['success'] && ! empty(self::$_espresso_notices['success']) 
+        $has_notices = self::$_espresso_notices['success'] && ! empty(self::$_espresso_notices['success'])
             ? 3
             : $has_notices;
         // check for attention messages
-        $has_notices = self::$_espresso_notices['attention'] && ! empty(self::$_espresso_notices['attention']) 
+        $has_notices = self::$_espresso_notices['attention'] && ! empty(self::$_espresso_notices['attention'])
             ? 2
             : $has_notices;
         // check for error messages
-        $has_notices = self::$_espresso_notices['errors'] && ! empty(self::$_espresso_notices['errors']) 
+        $has_notices = self::$_espresso_notices['errors'] && ! empty(self::$_espresso_notices['errors'])
             ? 1
             : $has_notices;
         return $has_notices;
@@ -768,14 +768,20 @@ class EE_Error extends Exception
      */
     public static function get_notices($format_output = true, $save_to_transient = false, $remove_empty = true)
     {
-        do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+        // do_action('AHEE_log', __FILE__, __FUNCTION__, '');
         $success_messages   = '';
         $attention_messages = '';
         $error_messages     = '';
         $print_scripts      = false;
         // EEH_Debug_Tools::printr( self::$_espresso_notices, 'espresso_notices  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
         // either save notices to the db
-        if ($save_to_transient) {
+        if ($save_to_transient || isset($_REQUEST['activate-selected'])) {
+            $existing_notices  = get_option('ee_notices', array());
+            $existing_notices = $existing_notices !== '' ? $existing_notices : array();
+            self::$_espresso_notices = array_merge(
+                $existing_notices,
+                self::$_espresso_notices
+            );
             update_option('ee_notices', self::$_espresso_notices);
             return array();
         }
@@ -786,7 +792,8 @@ class EE_Error extends Exception
                     // make sure that existing notice type is an array
                     self::$_espresso_notices[$type] = is_array(self::$_espresso_notices[$type])
                                                       && ! empty(self::$_espresso_notices[$type])
-                        ? self::$_espresso_notices[$type] : array();
+                        ? self::$_espresso_notices[$type]
+                        : array();
                     // merge stored notices with any newly created ones
                     self::$_espresso_notices[$type] = array_merge(self::$_espresso_notices[$type], $notice);
                     $print_scripts                  = true;
