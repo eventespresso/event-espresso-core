@@ -962,6 +962,7 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
 
     /**
      * write exception details to log file
+     * Since 4.9.53.rc.006 this writes to the standard PHP log file, not EE's custom log file
      *
      * @param int   $time
      * @param array $ex
@@ -988,20 +989,7 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
         $exception_log .= '----------------------------------------------------------------------------------------'
                           . PHP_EOL;
         try {
-            EEH_File::ensure_file_exists_and_is_writable(EVENT_ESPRESSO_UPLOAD_DIR
-                                                         . 'logs'
-                                                         . DS
-                                                         . self::$_exception_log_file);
-            EEH_File::add_htaccess_deny_from_all(EVENT_ESPRESSO_UPLOAD_DIR . 'logs');
-            if (! $clear) {
-                //get existing log file and append new log info
-                $exception_log = EEH_File::get_file_contents(EVENT_ESPRESSO_UPLOAD_DIR
-                                                             . 'logs'
-                                                             . DS
-                                                             . self::$_exception_log_file) . $exception_log;
-            }
-            EEH_File::write_to_file(EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS . self::$_exception_log_file,
-                $exception_log);
+            error_log($exception_log);
         } catch (EE_Error $e) {
             EE_Error::add_error(sprintf(__('Event Espresso error logging could not be setup because: %s',
                 'event_espresso'), $e->getMessage()));
