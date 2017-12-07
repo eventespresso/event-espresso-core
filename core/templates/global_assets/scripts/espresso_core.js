@@ -17,10 +17,6 @@ jQuery( document ).ready( function ( $ ) {
                 container_width  = this.outerWidth(),
                 element_top      = 0,
                 element_left     = 0;
-            console_log('window_height', window_height, true);
-            console_log('window_width', window_width, false);
-            console_log('container_height', container_height, false);
-            console_log('container_width', container_width, false);
             //  top
             if(container_height < window_height) {
                 element_top = (( window_height / 2 ) - container_height ) / 2;
@@ -30,7 +26,6 @@ jQuery( document ).ready( function ( $ ) {
             } else if (container_height !== window_height) {
                 element_top= $(window).scrollTop
             }
-            console_log('element_top', element_top, false);
 
             // left
             if (container_width < window_width) {
@@ -41,7 +36,6 @@ jQuery( document ).ready( function ( $ ) {
             } else if (container_width !== window_width) {
                 element_left = $(window).scrollLeft;
             }
-            console_log('element_left', element_left, false);
 
             this.css({
                 'position': position,
@@ -648,7 +642,7 @@ window.console_log_object = function( obj_name, obj, depth ) {
 	} else {
 		console_log( spacer + obj_name, obj, true );
 	}
-}
+};
 
 
 /**
