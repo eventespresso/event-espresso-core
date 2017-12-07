@@ -1,9 +1,9 @@
 <?php
 namespace EventEspresso\core\exceptions;
 
-if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
-	exit( 'No direct script access allowed' );
-}
+use InvalidArgumentException;
+
+defined('EVENT_ESPRESSO_VERSION') || exit('NO direct script access allowed');
 
 
 
@@ -15,7 +15,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @author        Brent Christensen
  * @since         4.9.0
  */
-class InvalidFilePathException extends \InvalidArgumentException {
+class InvalidFilePathException extends InvalidArgumentException {
 
 	/**
 	 * InvalidClassException constructor.

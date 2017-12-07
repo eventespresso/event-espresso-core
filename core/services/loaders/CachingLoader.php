@@ -107,7 +107,7 @@ class CachingLoader extends LoaderDecorator
                 $this
             )
         ){
-            // even though $shared might be true, caching should be bypassed for whatever reason,
+            // even though $shared might be true, caching could be bypassed for whatever reason,
             // so we don't want the core loader to cache anything, therefore caching is turned off
             return $this->loader->load($fqcn, $arguments, false);
         }

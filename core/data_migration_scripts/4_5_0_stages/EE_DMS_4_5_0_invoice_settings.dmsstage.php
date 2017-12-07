@@ -1,4 +1,7 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
+<?php use EventEspresso\core\domain\entities\notifications\PersistentAdminNotice;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+
+if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
 /**
  * Event Espresso
  *
@@ -48,14 +51,15 @@ class EE_DMS_4_5_0_invoice_settings extends EE_Data_Migration_Script_Stage {
 
 
 
-	/**
-	 *	_migration_step
-	 *
-	 * @access protected
-	 * @param int $num_items
-	 * @throws EE_Error
-	 * @return int number of items ACTUALLY migrated
-	 */
+    /**
+     *    _migration_step
+     *
+     * @access protected
+     * @param int $num_items
+     * @throws EE_Error
+     * @return int number of items ACTUALLY migrated
+     * @throws InvalidDataTypeException
+     */
 	protected function _migration_step( $num_items = 1 ){
 		// if this isn't set then something is really wrong
 		if ( ! EE_Config::instance()->gateway instanceof EE_Gateway_Config ) {
@@ -82,13 +86,29 @@ class EE_DMS_4_5_0_invoice_settings extends EE_Data_Migration_Script_Stage {
 			//update them from a DMS, we'd need to have the DMS create the message templates which is quite a lot of code;
 			//also we don't want to build a dependency on the messages code because it is likely to change soon
 			if( ! in_array( $invoice_settings[ 'invoice_css' ], array( '', 'simple.css' ) ) ){
-				EE_Error::add_persistent_admin_notice( 'invoice_css_not_updated', sprintf( __( 'You had previously set your Invoice Payment Method\'s stylesheet to be %1$s, but that setting has moved. PDF and HTML Invoices and Receipts are now Messages, which means you can easily modify them from your Wordpress Dashboard instead of using filters or uploading template files. Please visit Messages -> Receipt and Messages -> Invoice to change their stylesheets.', 'event_espresso'), $invoice_settings[ 'invoice_css' ] ), FALSE );
+                new PersistentAdminNotice(
+                    'invoice_css_not_updated',
+                    sprintf(
+                        esc_html__(
+                            'You had previously set your Invoice Payment Method\'s stylesheet to be %1$s, but that setting has moved. PDF and HTML Invoices and Receipts are now Messages, which means you can easily modify them from your Wordpress Dashboard instead of using filters or uploading template files. Please visit Messages -> Receipt and Messages -> Invoice to change their stylesheets.',
+                            'event_espresso'
+                        ),
+                        $invoice_settings['invoice_css']
+                    )
+                );
 			}
 			$templates_relative_path = 'modules/gateways/Invoice/lib/templates/';
 			$overridden_invoice_body = EEH_Template::locate_template( $templates_relative_path . 'invoice_body.template.php', NULL, FALSE, FALSE, TRUE );
 			$overridden_receipt_body= EEH_Template::locate_template( $templates_relative_path . 'receipt_body.template.php', NULL, FALSE, FALSE, TRUE );
 			if( $overridden_invoice_body || $overridden_receipt_body ) {
-				EE_Error::add_persistent_admin_notice( 'invoice_overriding_templates', sprintf( __( 'Note: in this version of Event Espresso, PDF and HTML Invoices and Receipts are now Messages and can be changed just like any other messages; however we noticed you had previously overriden the old default Invoice/Receipt templates. Because of this, your old Invoice/Receipt templates will continue to be used INSTEAD of the new Invoice/Receipt message equivalents. We recommend deleting your old Invoice/Receipt templates and modifying the new Invoice and Receipt messages\'s content in Messages -> Invoice and Messages -> Receipt.')), TRUE );
+                new PersistentAdminNotice(
+                    'invoice_overriding_templates',
+                    esc_html__(
+                        'Note: in this version of Event Espresso, PDF and HTML Invoices and Receipts are now Messages and can be changed just like any other messages; however we noticed you had previously overridden the old default Invoice/Receipt templates. Because of this, your old Invoice/Receipt templates will continue to be used INSTEAD of the new Invoice/Receipt message equivalents. We recommend deleting your old Invoice/Receipt templates and modifying the new Invoice and Receipt messages\'s content in Messages -> Invoice and Messages -> Receipt.',
+                        'event_espresso'
+                    ),
+                    true
+                );
 			}
 
 		}
