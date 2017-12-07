@@ -3,6 +3,9 @@
 namespace EventEspresso\core\domain;
 
 use DomainException;
+use EventEspresso\core\domain\values\FilePath;
+use EventEspresso\core\domain\values\Version;
+use InvalidArgumentException;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed');
 
@@ -15,135 +18,115 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed');
  * @author  Darren Ethier
  * @since   4.9.38
  */
-abstract class DomainBase
+abstract class DomainBase implements DomainInterface
 {
 
     /**
      * Equivalent to `__FILE__` for main plugin file.
      *
-     * @var string
+     * @var FilePath
      */
-    private static $plugin_file = '';
+    private $plugin_file;
 
     /**
      * String indicating version for plugin
      *
      * @var string
      */
-    private static $version = '';
+    private $version;
 
     /**
      * @var string $plugin_basename
      */
-    private static $plugin_basename = '';
+    private $plugin_basename;
 
     /**
      * @var string $plugin_path
      */
-    private static $plugin_path = '';
+    private $plugin_path;
 
     /**
      * @var string $plugin_url
      */
-    private static $plugin_url = '';
+    private $plugin_url;
 
 
 
     /**
-     * Initializes internal static properties.
+     * Initializes internal properties.
      *
-     * @param string $plugin_file
-     * @param string $version
+     * @param FilePath $plugin_file
+     * @param Version  $version
+     * @throws InvalidArgumentException
+     * @throws DomainException
      */
-    public static function init($plugin_file, $version)
+    public function __construct(FilePath $plugin_file, Version $version)
     {
-        self::$plugin_file = $plugin_file;
-        self::$version = $version;
-        self::$plugin_basename = plugin_basename($plugin_file);
-        self::$plugin_path = plugin_dir_path($plugin_file);
-        self::$plugin_url = plugin_dir_url($plugin_file);
+        $this->plugin_file = $plugin_file;
+        $this->version = $version;
+        $this->plugin_basename = plugin_basename($this->pluginFile());
+        $this->plugin_path = plugin_dir_path($this->pluginFile());
+        $this->plugin_url = plugin_dir_url($this->pluginFile());
+    }
+
+
+    /**
+     * @return string
+     */
+    public function pluginFile()
+    {
+        return (string) $this->plugin_file;
     }
 
 
 
     /**
      * @return string
-     * @throws DomainException
      */
-    public static function pluginFile()
+    public function pluginBasename()
     {
-        self::verifyInitialized(__METHOD__);
-        return self::$plugin_file;
+        return $this->plugin_basename;
     }
 
 
 
     /**
      * @return string
-     * @throws DomainException
      */
-    public static function pluginBasename()
+    public function pluginPath()
     {
-        self::verifyInitialized(__METHOD__);
-        return self::$plugin_basename;
+        return $this->plugin_path;
     }
 
 
 
     /**
      * @return string
-     * @throws DomainException
      */
-    public static function pluginPath()
+    public function pluginUrl()
     {
-        self::verifyInitialized(__METHOD__);
-        return self::$plugin_path;
+        return $this->plugin_url;
     }
 
 
 
     /**
      * @return string
-     * @throws DomainException
      */
-    public static function pluginUrl()
+    public function version()
     {
-        self::verifyInitialized(__METHOD__);
-        return self::$plugin_url;
+        return (string) $this->version;
     }
 
 
 
     /**
-     * @return string
-     * @throws DomainException
+     * @return Version
      */
-    public static function version()
+    public function versionValueObject()
     {
-        self::verifyInitialized(__METHOD__);
-        return self::$version;
+        return $this->version;
     }
 
-
-
-    /**
-     * @param string $method
-     * @throws DomainException
-     */
-    private static function verifyInitialized($method)
-    {
-        if (self::$plugin_file === '') {
-            throw new DomainException(
-                sprintf(
-                    esc_html__(
-                        '%1$s needs to be called before %2$s can return a value.',
-                        'event_espresso'
-                    ),
-                    get_called_class() . '::init()',
-                    "{$method}()"
-                )
-            );
-        }
-    }
 
 }

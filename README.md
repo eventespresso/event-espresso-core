@@ -59,8 +59,8 @@ This is the Core for Event Espresso 4. This README.md file is targeted for displ
 ## Event Espresso Releases
 At Event Espresso we follow a set pattern for releases:
 
-1. Active development for new features happens on a **FET-{ticket-number}** branch.  We continually merge master into the feature branch while its in development.  Once its complete, then testing is done on it and its merged back to master ready for release.
-2. Bug fixes etc. are done on a **BUG-{ticket-number}** branch.  Same methodology is used as with Feature branches.
+1. Active development for new features happens on a **FET/{ticket-number}/{description}** branch.  We continually merge master into the feature branch while its in development.  Once its complete, then testing is done on it and its merged back to master ready for release.
+2. Bug fixes etc. are done on a **BUG/{ticket-number}/{description}** branch.  Same methodology is used as with Feature branches.
 3. Stable releases are tagged both with a tests folder and without the tests folder.
 4. Master is technically always production ready and release ready but may not be equal to what the current stable release is (that is what tags are for).
 

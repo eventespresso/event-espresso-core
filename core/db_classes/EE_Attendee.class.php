@@ -253,7 +253,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
     {
         $full_name = array(
             $this->fname(),
-            $this->lname()
+            $this->lname(),
         );
         $full_name = array_filter($full_name);
         $full_name = implode(' ', $full_name);
