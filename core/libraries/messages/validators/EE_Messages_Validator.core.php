@@ -1,8 +1,6 @@
 <?php
 
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('NO direct script access allowed');
-}
+defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
 
 /**
  * EE_Messages_Validator class
@@ -45,7 +43,7 @@ abstract class EE_Messages_Validator extends EE_Base
     /**
      * holds an array of fields being validated
      *
-     * @var string
+     * @var array
      */
     protected $_fields;
 
@@ -108,14 +106,15 @@ abstract class EE_Messages_Validator extends EE_Base
      *
      * @param array $fields The fields sent by the EEM object.
      * @param       $context
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function __construct($fields, $context)
     {
         //check that _m_name and _mt_name have been set by child class otherwise we get out.
         if (empty($this->_m_name) || empty($this->_mt_name)) {
             throw new EE_Error(
-                __(
+                esc_html__(
                     'EE_Messages_Validator child classes MUST set the $_m_name and $_mt_name property.  Check that the child class is doing this',
                     'event_espresso'
                 )
@@ -166,7 +165,7 @@ abstract class EE_Messages_Validator extends EE_Base
         if (! class_exists($messenger)) {
             throw new EE_Error(
                 sprintf(
-                    __('There is no messenger class for the given string (%s)', 'event_espresso'),
+                    esc_html__('There is no messenger class for the given string (%s)', 'event_espresso'),
                     $this->_m_name
                 )
             );
@@ -182,14 +181,13 @@ abstract class EE_Messages_Validator extends EE_Base
         if (! class_exists($message_type)) {
             throw new EE_Error(
                 sprintf(
-                    __('There is no message type class for the given string (%s)', 'event_espresso'),
+                    esc_html__('There is no message type class for the given string (%s)', 'event_espresso'),
                     $this->_mt_name
                 )
             );
         }
 
         $this->_message_type = new $message_type();
-
     }
 
 
@@ -198,6 +196,7 @@ abstract class EE_Messages_Validator extends EE_Base
      *
      * @access private
      * @return void
+     * @throws ReflectionException
      */
     private function _set_validators()
     {
@@ -272,16 +271,16 @@ abstract class EE_Messages_Validator extends EE_Base
                     $codes_from_objs
                 );
             } //if we have specific shortcodes for a field then we need to use them
-            else if (isset($groups_per_field[$field])) {
+            elseif (isset($groups_per_field[$field])) {
                 $this->_validators[$field]['shortcodes'] = $this->_reassemble_valid_shortcodes_from_group(
                     $groups_per_field[$field],
                     $codes_from_objs
                 );
             } //if empty config then we're assuming we're just going to use the shortcodes from the message type context
-            else if (empty($config)) {
+            elseif (empty($config)) {
                 $this->_validators[$field]['shortcodes'] = $mt_codes;
             } //if we have specific shortcodes then we need to use them
-            else if (isset($config['specific_shortcodes'])) {
+            elseif (isset($config['specific_shortcodes'])) {
                 $this->_validators[$field]['shortcodes'] = $config['specific_shortcodes'];
             } //otherwise the shortcodes are what is set by the messenger for that field
             else {
@@ -380,16 +379,16 @@ abstract class EE_Messages_Validator extends EE_Base
 
             // if field label is empty OR is equal to the current field
             // then we need to loop through the 'extra' fields in the template_fields config (if present)
-            if (isset($template_fields['extra']) && (empty($field_label)) || $field_label == $field) {
+            if (isset($template_fields['extra']) && (empty($field_label) || $field_label === $field)) {
                 foreach ($template_fields['extra'] as $main_field => $secondary_field) {
                     foreach ($secondary_field as $name => $values) {
-                        if ($name == $field) {
+                        if ($name === $field) {
                             $field_label = $values['label'];
                         }
 
                         // if we've got a 'main' secondary field, let's see if that matches what field we're on
                         // which means it contains the label for this field.
-                        if ($name == 'main' && $main_field == $field_label) {
+                        if ($name === 'main' && $main_field === $field_label) {
                             $field_label = $values['label'];
                         }
                     }
@@ -397,8 +396,7 @@ abstract class EE_Messages_Validator extends EE_Base
             }
 
             //field is present. Let's validate shortcodes first (but only if shortcodes present).
-            if (
-                isset($this->_validators[$field]['shortcodes'])
+            if (isset($this->_validators[$field]['shortcodes'])
                 && ! empty($this->_validators[$field]['shortcodes'])
             ) {
                 $invalid_shortcodes = $this->_invalid_shortcodes($value, $this->_validators[$field]['shortcodes']);
@@ -407,7 +405,7 @@ abstract class EE_Messages_Validator extends EE_Base
                 if ($invalid_shortcodes) {
                     $v_s     = array_keys($this->_validators[$field]['shortcodes']);
                     $err_msg = sprintf(
-                        __(
+                        esc_html__(
                             '%3$sThe following shortcodes were found in the "%1$s" field that ARE not valid: %2$s%4$s',
                             'event_espresso'
                         ),
@@ -417,7 +415,7 @@ abstract class EE_Messages_Validator extends EE_Base
                         '</p >'
                     );
                     $err_msg .= sprintf(
-                        __('%2$sValid shortcodes for this field are: %1$s%3$s', 'event_espresso'),
+                        esc_html__('%2$sValid shortcodes for this field are: %1$s%3$s', 'event_espresso'),
                         implode(', ', $v_s),
                         '<strong>',
                         '</strong>'
@@ -428,10 +426,10 @@ abstract class EE_Messages_Validator extends EE_Base
             //if there's a "type" to be validated then let's do that too.
             if (isset($this->_validators[$field]['type']) && ! empty($this->_validators[$field]['type'])) {
                 switch ($this->_validators[$field]['type']) {
-                    case 'number' :
+                    case 'number':
                         if (! is_numeric($value)) {
                             $err_msg .= sprintf(
-                                __(
+                                esc_html__(
                                     '%3$sThe %1$s field is supposed to be a number. The value given (%2$s)  is not.  Please double-check and make sure the field contains a number%4$s',
                                     'event_espresso'
                                 ),
@@ -442,12 +440,12 @@ abstract class EE_Messages_Validator extends EE_Base
                             );
                         }
                         break;
-                    case 'email' :
+                    case 'email':
                         $valid_email = $this->_validate_email($value);
                         if (! $valid_email) {
                             $err_msg .= htmlentities(
                                 sprintf(
-                                    __(
+                                    esc_html__(
                                         'The %1$s field has at least one string that is not a valid email address record.  Valid emails are in the format: "Name <email@something.com>" or "email@something.com" and multiple emails can be separated by a comma.'
                                     ),
                                     $field_label
@@ -456,7 +454,7 @@ abstract class EE_Messages_Validator extends EE_Base
                             );
                         }
                         break;
-                    default :
+                    default:
                         break;
                 }
             }
@@ -596,21 +594,18 @@ abstract class EE_Messages_Validator extends EE_Base
             //either its of type "bob@whatever.com", or its of type "fname lname <few@few.few>"
             if (is_email($email)) {
                 continue;
-            } else {
-                $matches  = array();
-                $validate = preg_match('/(.*)<(.+)>/', $email, $matches) ? true : false;
-                if ($validate && is_email($matches[2])) {
-                    continue;
-                } else {
-                    return false;
-                }
             }
+            $matches  = array();
+            $validate = preg_match('/(.*)<(.+)>/', $email, $matches) ? true : false;
+            if ($validate && is_email($matches[2])) {
+                continue;
+            }
+            return false;
         }
 
         $validate = $empty && ! $has_shortcodes ? false : $validate;
 
         return $validate;
-
     }
 
 
@@ -641,11 +636,10 @@ abstract class EE_Messages_Validator extends EE_Base
 
         throw new Exception(
             sprintf(
-                __('The property %1$s being requested on %2$s does not exist', 'event_espresso'),
+                esc_html__('The property %1$s being requested on %2$s does not exist', 'event_espresso'),
                 $property,
                 get_class($this)
             )
         );
     }
-
 }
