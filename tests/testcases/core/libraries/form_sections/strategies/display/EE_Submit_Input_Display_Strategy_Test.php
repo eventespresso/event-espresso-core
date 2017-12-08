@@ -64,7 +64,7 @@ class EE_Submit_Input_Display_Strategy_Test extends EE_UnitTestCase{
             $submit_input->normalized_value()
         );
         $output = $submit_input->get_display_strategy()->display();
-        $expected = '<input name="myform[apply]" id="myform-apply" type="submit" value="Apply"/>';
+        $expected = '<input name="myform[apply]" id="myform-apply-submit" class=" button button-primary" type="submit" value="Apply"/>';
         $this->assertHTMLEquals($expected,$output);
     }
 }
