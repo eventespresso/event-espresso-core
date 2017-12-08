@@ -6,6 +6,7 @@ use EE_Dependency_Map;
 use EE_Registry;
 use EEH_Activation;
 use EE_Psr4AutoloaderInit;
+use EventEspresso\core\services\loaders\LoaderFactory;
 
 class CoreLoader
 {
@@ -118,6 +119,15 @@ class CoreLoader
         if (! defined('SAVEQUERIES')) {
             define('SAVEQUERIES', true);
         }
+        add_action(
+            'AHEE__EE_System__core_loaded_and_ready',
+            function ()
+            {
+                LoaderFactory::getLoader()->getShared(
+                    'EventEspresso\core\services\notifications\PersistentAdminNoticeManager'
+                );
+            }
+        );
     }
 
 

@@ -447,7 +447,7 @@ class EED_Messages extends EED_Module
      * Any messages triggers for after successful gateway payments should go in here.
      *
      * @param EE_Transaction $transaction object
-     * @param EE_Payment     $payment     object
+     * @param EE_Payment|null     $payment     object
      * @return void
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -455,8 +455,12 @@ class EED_Messages extends EED_Module
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public static function payment(EE_Transaction $transaction, EE_Payment $payment)
+    public static function payment(EE_Transaction $transaction, EE_Payment $payment = null)
     {
+        //if there's no payment object, then we cannot do a payment type message!
+        if (! $payment instanceof EE_Payment) {
+            return;
+        }
         self::_load_controller();
         $data = array($transaction, $payment);
         EE_Registry::instance()->load_helper('MSG_Template');

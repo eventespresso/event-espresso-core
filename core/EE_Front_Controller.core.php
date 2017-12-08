@@ -1,4 +1,9 @@
 <?php
+
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\notifications\PersistentAdminNoticeManager;
 use EventEspresso\core\services\shortcodes\LegacyShortcodesManager;
 use EventEspresso\widgets\EspressoWidget;
 
@@ -51,6 +56,11 @@ final class EE_Front_Controller
      */
     protected $Module_Request_Router;
 
+    /**
+     * @var PersistentAdminNoticeManager $persistent_admin_notice_manager
+     */
+    private $persistent_admin_notice_manager;
+
 
     /**
      *    class constructor
@@ -71,6 +81,8 @@ final class EE_Front_Controller
         $this->Module_Request_Router = $Module_Request_Router;
         // determine how to integrate WP_Query with the EE models
         add_action('AHEE__EE_System__initialize', array($this, 'employ_CPT_Strategy'));
+        // just in case any nag notices are created during the request
+        add_action('AHEE__EE_System__initialize_last', array($this, 'loadPersistentAdminNoticeManager'));
         // load other resources and begin to actually run shortcodes and modules
         add_action('wp_loaded', array($this, 'wp_loaded'), 5);
         // analyse the incoming WP request
@@ -159,16 +171,29 @@ final class EE_Front_Controller
 
 
     /**
-     *    employ_CPT_Strategy
-     *
-     * @access    public
-     * @return    void
+     * @return void
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function employ_CPT_Strategy()
     {
         if (apply_filters('FHEE__EE_Front_Controller__employ_CPT_Strategy', true)) {
             $this->Registry->load_core('CPT_Strategy');
         }
+    }
+
+
+    /**
+     * @return void
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    public function loadPersistentAdminNoticeManager()
+    {
+        $this->persistent_admin_notice_manager = LoaderFactory::getLoader()->getShared(
+            'EventEspresso\core\services\notifications\PersistentAdminNoticeManager'
+        );
     }
 
 
