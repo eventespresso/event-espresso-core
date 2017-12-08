@@ -2739,9 +2739,16 @@ class Messages_Admin_Page extends EE_Admin_Page
                         if (! current_user_can('unfiltered_html')){
                             if (is_array($set_column_values['MTP_content'])){
                                  foreach($set_column_values['MTP_content'] as $key => $value) {
-                                     $set_column_values['MTP_content'][$key] = wp_kses(
-                                         $value,
-                                         wp_kses_allowed_html('post')
+                                     //remove slashes so wp_kses works properly (its wp_kses_stripslashes() function
+                                     //only removes slashes from double-quotes, so attributes using single quotes always
+                                     //appear invalid.) But currently the models expect slashed data, so after wp_kses
+                                     //runs we need to re-slash the data. Sheesh. See
+                                     //https://events.codebasehq.com/projects/event-espresso/tickets/11211#update-47321587
+                                     $set_column_values['MTP_content'][$key] = addslashes(
+                                             wp_kses(
+                                                 stripslashes($value),
+                                                 wp_kses_allowed_html('post')
+                                             )
                                      );
                                  }
                             } else {
