@@ -24,7 +24,7 @@ class EE_Submit_Input_Display_Strategy_Test extends EE_UnitTestCase{
         $input = new EE_Submit_Input();
         $input->_construct_finalize(null, 'search');
         $output = $input->get_display_strategy()->display();
-        $expected = '<input name="search" id="search" type="submit" value="Submit"/>';
+        $expected = '<input name="search" id="search-submit" class=" button button-primary" type="submit" value="Submit"/>';
         $this->assertHTMLEquals($expected,$output);
     }
 
