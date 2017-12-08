@@ -77,16 +77,15 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
     {
         $table_analysis = EE_Registry::instance()->create('TableAnalysis', array(), true);
         if (
-            in_array($table_name, array('esp_new_addon_thing', 'esp_new_addon_attendee_meta'))
+            in_array($table_name, array('esp_new_addon_thing', 'esp_new_addon_attendee_meta'), true)
             && ! $table_analysis->tableExists($table_name)
         ) {
             // echo "\r\n\r\nDONT short circuit $sql";
             // it's not altering. it's ok to allow this
             return false;
-        } else {
-            // echo "3\r\n\r\n short circuit:$sql";
-            return $short_circuit;
         }
+        // echo "3\r\n\r\n short circuit:$sql";
+        return $short_circuit;
     }
 
 
@@ -104,12 +103,7 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
             $this->assertTrue(true);
         }
         //check that we didn't actually register the addon
-        try {
-            EE_Registry::instance()->addons->EE_New_Addon;
-            $this->fail('The addon New_Addon should not have been registered because its called at the wrong time');
-        } catch (PHPUnit_Framework_Error_Notice $e) {
-            $this->assertEquals(EE_UnitTestCase::error_code_undefined_property, $e->getCode());
-        }
+        $this->assertArrayNotHasKey('EE_New_Addon', EE_Registry::instance()->addons);
         //check DMSs weren't setup either
         $DMSs_available = EE_Data_Migration_Manager::reset()->get_all_data_migration_scripts_available();
         $this->assertArrayNotHasKey('EE_DMS_New_Addon_1_0_0', $DMSs_available);
@@ -136,18 +130,13 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
             	)
             );
             $this->fail(
-                'We should have received a warning that the \'plugin_main_file\' is a required argument when registerign an addon'
+                'We should have received a warning that the "main_file_path" is a required argument when registering an addon'
             );
         } catch (EE_Error $e) {
             $this->assertTrue(true);
         }
         //check that we didn't actually register the addon
-        try {
-            EE_Registry::instance()->addons->EE_New_Addon;
-            $this->fail('The addon New_Addon should not have been registered because its called at the wrong time');
-        } catch (RuntimeException $e) {
-            $this->assertEquals(EE_UnitTestCase::error_code_undefined_property, $e->getCode());
-        }
+        $this->assertArrayNotHasKey('EE_New_Addon', EE_Registry::instance()->addons);
         //check DMSs weren't setup either
         $DMSs_available = EE_Data_Migration_Manager::reset()->get_all_data_migration_scripts_available();
         $this->assertArrayNotHasKey('EE_DMS_New_Addon_1_0_0', $DMSs_available);
@@ -166,13 +155,20 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
         if (did_action('activate_plugin')) {
             $this->assertTrue(false);
         }
-        $this->assertFalse(property_exists(EE_Registry::instance()->addons, 'EE_New_Addon'));
+        $this->assertArrayNotHasKey('EE_New_Addon', EE_Registry::instance()->addons);
         //just to make this test truly test the "eea-new-addon", use its own addon params
         //this way we're more likely to keep the EE_New_Addon up-to-date
         require_once(EE_TESTS_DIR . 'mocks/addons/eea-new-addon/eea-new-addon.php');
         require_once(EE_TESTS_DIR . 'mocks/addons/eea-new-addon/EE_New_Addon.class.php');
         EE_New_Addon::register_addon();
-        $this->assertAttributeNotEmpty('EE_New_Addon', EE_Registry::instance()->addons);
+        $this->assertArrayHasKey(
+            'EE_New_Addon',
+            EE_Registry::instance()->addons
+        );
+        $this->assertInstanceOf(
+            'EE_New_Addon',
+            EE_Registry::instance()->addons->EE_New_Addon
+        );
         //check DMSs were setup properly too
         $DMSs_available = EE_Data_Migration_Manager::reset()->get_all_data_migration_scripts_available();
         $this->assertArrayHasKey('EE_DMS_New_Addon_1_0_0', $DMSs_available);
@@ -287,7 +283,14 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
     {
         $this->_pretend_after_plugin_activation();
         EE_Register_Addon::register($this->_addon_name, $this->_reg_args);
-        $this->assertAttributeNotEmpty('EE_New_Addon', EE_Registry::instance()->addons);
+        $this->assertArrayHasKey(
+            'EE_New_Addon',
+            EE_Registry::instance()->addons
+        );
+        $this->assertInstanceOf(
+            'EE_New_Addon',
+            EE_Registry::instance()->addons->EE_New_Addon
+        );
         $this->assertWPOptionExists(
             EE_Registry::instance()->addons->EE_New_Addon->get_activation_indicator_option_name()
         );
@@ -311,7 +314,14 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
         }
         $this->assertFalse(property_exists(EE_Registry::instance()->addons, 'EE_New_Addon'));
         EE_Register_Addon::register($this->_addon_name, $this->_reg_args);
-        $this->assertAttributeNotEmpty('EE_New_Addon', EE_Registry::instance()->addons);
+        $this->assertArrayHasKey(
+            'EE_New_Addon',
+            EE_Registry::instance()->addons
+        );
+        $this->assertInstanceOf(
+            'EE_New_Addon',
+            EE_Registry::instance()->addons->EE_New_Addon
+        );
         global $wp_actions;
         $times_load_addons_fired = $wp_actions['AHEE__EE_System__load_espresso_addons'];
         do_action('activate_plugin');
@@ -328,12 +338,7 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
             										->EE_New_Addon
             										->get_main_plugin_file_basename();
             EE_Register_Addon::deregister($this->_addon_name);
-            try {
-                EE_Registry::instance()->addons->EE_New_Addon;
-                $this->fail('EE_New_Addon is still registered. Deregister failed');
-            } catch (RuntimeException $e) {
-                $this->assertEquals(EE_UnitTestCase::error_code_undefined_property, $e->getCode());
-            }
+            $this->assertArrayNotHasKey('EE_New_Addon', EE_Registry::instance()->addons);
             //verify the de-activation hook was removed
             $this->assertFalse(has_action('deactivate_' . $main_file_path_before_deregistration));
             //verify the models were deregistered
