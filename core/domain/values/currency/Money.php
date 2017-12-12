@@ -124,9 +124,11 @@ class Money
         }
         // remove any non numeric values but leave the decimal
         $amount = (float) preg_replace('/([^0-9\\.-])/', '', $amount);
-        // convert the incoming  decimal amount to the currencies subunits
+        // maybe convert the incoming  decimal amount to the currencies subunits
         // ex: 12.5 for a currency with 100 subunits would become 1250
-        $amount *= $this->currency()->subunits();
+        if ($this->currency()->subunits()) {
+            $amount *= $this->currency()->subunits();
+        }
         // then shift the decimal position by the number of decimal places used internally
         // so if our extra internal precision was 3, it would become 1250000
         $amount *= pow(10, $this->precision());
@@ -164,9 +166,11 @@ class Money
         // shift the decimal position BACK by the number of decimal places used internally
         // ex: if our extra internal precision was 3, then 1250000 would become 1250
         $amount = $this->amount * pow(10, $this->precision(false));
-        // then adjust for the currencies subunits
+        // then maybe adjust for the currencies subunits
         // ex: 1250 for a currency with 100 subunits would become 12.50
-        $amount /= $this->currency()->subunits();
+        if ($this->currency()->subunits()) {
+            $amount /= $this->currency()->subunits();
+        }
         // then shave off our extra internal precision using the number of decimal places for the currency
         $amount = round($amount, $this->currency->decimalPlaces());
         return (string) $amount;
