@@ -7,9 +7,6 @@ use EE_Organization_Config;
 use EEH_File;
 use EventEspresso\core\domain\values\currency\Currency;
 use EventEspresso\core\entities\Label;
-use EventEspresso\core\exceptions\InvalidDataTypeException;
-use EventEspresso\core\exceptions\InvalidIdentifierException;
-use EventEspresso\core\exceptions\InvalidInterfaceException;
 use InvalidArgumentException;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
@@ -60,7 +57,6 @@ class CurrencyFactory
 
     /**
      * @return array[]
-     * @throws InvalidArgumentException
      * @throws EE_Error
      */
     private function getCountryCurrencyData()
@@ -78,7 +74,6 @@ class CurrencyFactory
 
     /**
      * @param array[] $country_currency_data
-     * @throws InvalidArgumentException
      */
     private function parseCountryCurrencyData($country_currency_data)
     {
@@ -118,9 +113,6 @@ class CurrencyFactory
      *
      * @param string $CNT_ISO
      * @return Currency
-     * @throws InvalidIdentifierException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws EE_Error
      * @throws InvalidArgumentException
      */
@@ -153,9 +145,6 @@ class CurrencyFactory
      *
      * @param string $code
      * @return Currency
-     * @throws InvalidIdentifierException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
      * @throws InvalidArgumentException
      * @throws EE_Error
      */
