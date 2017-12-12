@@ -215,11 +215,15 @@ class Currency
     }
 
 
-
     /**
-     * The difference between currency units and subunits
-     * is 10-to-the-power-of-this.
-     * DecimalMark is used for display, this is used for calculations
+     * The number of divisions of the currency's main unit that comprises the smallest units
+     * ex: 1 US Dollar has 100 Pennies, so USD subunits = 100
+     * **WARNING**
+     * Some currencies, such as the Japanese Yen have no subunits,
+     * ie: the main unit is the smallest division
+     * so you need to always check that subunits is not zero
+     * before performing multiplication or division with it
+     *
      * @return int
      */
     public function subunits()
