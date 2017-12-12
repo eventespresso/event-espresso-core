@@ -4,7 +4,6 @@ namespace EventEspresso\core\domain\values\currency;
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\services\currency\Calculator;
-use EventEspresso\core\services\currency\formatters\MoneyFormatter;
 use InvalidArgumentException;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
@@ -44,11 +43,6 @@ class Money
      */
     protected $calculator;
 
-    /**
-     * @var MoneyFormatter[] $formatters
-     */
-    protected $formatters;
-
 
 
     /**
@@ -58,15 +52,13 @@ class Money
      *                                 example: $12.5 USD would equate to a value amount of 12.50
      * @param Currency         $currency
      * @param Calculator       $calculator
-     * @param MoneyFormatter[] $formatters
      * @throws InvalidDataTypeException
      */
-    public function __construct($amount, Currency $currency, Calculator $calculator, array $formatters)
+    public function __construct($amount, Currency $currency, Calculator $calculator)
     {
         $this->currency   = $currency;
         $this->amount     = $this->parseAmount($amount);
         $this->calculator = $calculator;
-        $this->formatters = $formatters;
     }
 
 
@@ -77,16 +69,6 @@ class Money
     protected function calculator()
     {
         return $this->calculator;
-    }
-
-
-
-    /**
-     * @return MoneyFormatter[]
-     */
-    protected function formatters()
-    {
-        return $this->formatters;
     }
 
 
@@ -198,36 +180,6 @@ class Money
 
 
     /**
-     * applies formatting based on the specified formatting level
-     * corresponding to one of the constants on MoneyFormatter
-     *
-     * @param int $formatting_level
-     * @return string
-     */
-    public function format($formatting_level = MoneyFormatter::ADD_THOUSANDS)
-    {
-        $formatted_amount = $this->amount();
-        $formatters       = $this->formatters();
-        // if we are applying thousands formatting...
-        if ($formatting_level >= MoneyFormatter::ADD_THOUSANDS) {
-            // then let's remove decimal formatting since it's included in thousands formatting
-            unset($formatters[ MoneyFormatter::DECIMAL_ONLY ]);
-        }
-        for ($x = 1; $x <= $formatting_level; $x++) {
-            if (isset($formatters[ $x ]) && $formatters[ $x ] instanceof MoneyFormatter) {
-                $formatted_amount = $formatters[ $x ]->format($formatted_amount, $this->currency);
-            }
-        }
-        return (string) apply_filters(
-            'FHEE__EventEspresso_core_domain_values_currency_Money__format__formatted_amount',
-            $formatted_amount,
-            $this
-        );
-    }
-
-
-
-    /**
      * Returns the Currency object for this money
      *
      * @return Currency
@@ -256,8 +208,7 @@ class Money
                 $other->amount()
             ),
             $this->currency(),
-            $this->calculator(),
-            $this->formatters()
+            $this->calculator()
         );
     }
 
@@ -280,11 +231,9 @@ class Money
                 $other->amount()
             ),
             $this->currency(),
-            $this->calculator(),
-            $this->formatters()
+            $this->calculator()
         );
     }
-
 
 
     /**
@@ -306,11 +255,9 @@ class Money
                 $rounding_mode
             ),
             $this->currency(),
-            $this->calculator(),
-            $this->formatters()
+            $this->calculator()
         );
     }
-
 
 
     /**
@@ -332,8 +279,7 @@ class Money
                 $rounding_mode
             ),
             $this->currency(),
-            $this->calculator(),
-            $this->formatters()
+            $this->calculator()
         );
     }
 
@@ -362,8 +308,6 @@ class Money
      */
     public function __toString()
     {
-        return $this->format(MoneyFormatter::DECIMAL_ONLY);
+        return $this->amount();
     }
 }
-// End of file Money.php
-// Location: core/entities/money/Money.php
