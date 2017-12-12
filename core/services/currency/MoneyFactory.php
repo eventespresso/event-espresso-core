@@ -40,26 +40,18 @@ class MoneyFactory
      */
     protected $calculator;
 
-    /**
-     * @var MoneyFormatter[] $formatters
-     */
-    protected $formatters;
-
 
     /**
      * CreateMoney constructor.
      *
      * @param CurrencyFactory  $currency_factory
      * @param Calculator       $calculator
-     * @param MoneyFormatter[] $formatters
      */
     public function __construct(
         CurrencyFactory $currency_factory,
-        Calculator $calculator = null,
-        array $formatters = array()
+        Calculator $calculator = null
     ) {
         $this->calculator = $calculator;
-        $this->formatters = $formatters;
         $this->currency_factory = $currency_factory;
     }
 
@@ -86,8 +78,7 @@ class MoneyFactory
             // shift decimal BACK by number of places for currency
             $subunits_amount * pow(10, $currency->decimalPlaces() * -1),
             $currency,
-            $this->calculator(),
-            $this->formatters()
+            $this->calculator()
         );
     }
 
@@ -111,8 +102,7 @@ class MoneyFactory
         return new Money(
             $amount,
             $this->currency_factory->createFromCountryCode(),
-            $this->calculator(),
-            $this->formatters()
+            $this->calculator()
         );
     }
 
@@ -137,8 +127,7 @@ class MoneyFactory
         return new Money(
             $amount,
             $this->currency_factory->createFromCountryCode($CNT_ISO),
-            $this->calculator(),
-            $this->formatters()
+            $this->calculator()
         );
     }
 
@@ -163,8 +152,7 @@ class MoneyFactory
         return new Money(
             $amount,
             $this->currency_factory->createFromCode($currency_code),
-            $this->calculator(),
-            $this->formatters()
+            $this->calculator()
         );
     }
 
@@ -207,39 +195,6 @@ class MoneyFactory
                 break;
             }
         }
-    }
-
-
-
-    /**
-     * @return MoneyFormatter[]
-     */
-    public function formatters()
-    {
-        $this->initializeFormatters();
-        return $this->formatters;
-    }
-
-
-
-    /**
-     * initializes a filterable array of MoneyFormatter services
-     */
-    protected function initializeFormatters()
-    {
-        if (! empty($this->formatters)) {
-            return;
-        }
-        $this->formatters = apply_filters(
-            'FHEE__EventEspresso_core_services_currency_MoneyFactory__initializeFormatters__MoneyFormatters_array',
-            array(
-                1 => new DecimalMoneyFormatter(),
-                2 => new ThousandsMoneyFormatter(),
-                3 => new CurrencySignMoneyFormatter(),
-                4 => new CurrencyCodeMoneyFormatter(),
-                5 => new InternationalMoneyFormatter(),
-            )
-        );
     }
 
 
