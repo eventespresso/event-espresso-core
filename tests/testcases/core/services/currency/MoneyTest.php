@@ -163,6 +163,42 @@ class MoneyTest extends \EE_UnitTestCase
     }
 
 
+    /**
+     * Tests a currency that has 1000 subunits
+     *
+     * @group Money
+     */
+    public function test_amountInSubunitsForBHD()
+    {
+        $BHD   = $this->currency('BH');
+        $money = new Money(1234.56789, $BHD,
+            $this->money_factory->calculator(),
+            $this->money_factory->formatters()
+        );
+        $this->assertInstanceOf('\EventEspresso\core\domain\values\currency\Money', $money);
+        $this->assertEquals('1234.568', $money->amount());
+        $this->assertEquals('1234568', $money->amountInSubunits());
+    }
+
+
+    /**
+     * Tests a currency that has 0 subunits
+     *
+     * @group Money
+     */
+    public function test_amountInSubunitsForJPY()
+    {
+        $JPY   = $this->currency('JP');
+        $money = new Money(123456.789, $JPY,
+            $this->money_factory->calculator(),
+            $this->money_factory->formatters()
+        );
+        $this->assertInstanceOf('\EventEspresso\core\domain\values\currency\Money', $money);
+        $this->assertEquals('123457', $money->amount());
+        $this->assertEquals('123457', $money->amountInSubunits());
+    }
+
+
 
     /**
      * @group Money
