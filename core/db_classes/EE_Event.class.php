@@ -876,12 +876,24 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     public function perform_sold_out_status_check()
     {
         // get all unexpired untrashed tickets
-        $tickets = $this->active_tickets();
+        $tickets = $this->tickets(
+            array(
+                array('TKT_deleted' => false),
+                'order_by' => array('TKT_qty' => 'ASC'),
+            )
+        );
+        $all_expired = true;
+        foreach ($tickets as $ticket) {
+            if(!$ticket->is_expired()){
+                $all_expired = false;
+                break;
+            }
+        }
         // if all the tickets are just expired, then don't update the event status to sold out
-        if (empty($tickets)) {
+        if ($all_expired) {
             return true;
         }
-        $spaces_remaining = $this->spaces_remaining($tickets);
+        $spaces_remaining = $this->spaces_remaining();
         if ($spaces_remaining < 1) {
             $this->set_status(EEM_Event::sold_out);
             $this->save();
