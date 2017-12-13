@@ -66,6 +66,7 @@ if (function_exists('espresso_version')) {
     if (! version_compare(PHP_VERSION, EE_MIN_PHP_VER_REQUIRED, '>=')) {
         /**
          * espresso_minimum_php_version_error
+         *
          * @return void
          */
         function espresso_minimum_php_version_error()
