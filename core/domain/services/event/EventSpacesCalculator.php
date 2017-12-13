@@ -7,7 +7,6 @@ use EE_Datetime;
 use EE_Error;
 use EE_Event;
 use EE_Ticket;
-use EEM_Ticket;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
@@ -436,6 +435,11 @@ class EventSpacesCalculator
         foreach ($this->tickets_sold as $ticket_identifier => $tickets_sold) {
             if (isset($this->ticket_quantities[ $ticket_identifier ])){
                 $this->ticket_quantities[ $ticket_identifier ] -= $tickets_sold;
+                // don't let values go below zero
+                $this->ticket_quantities[ $ticket_identifier ] = max(
+                    $this->ticket_quantities[ $ticket_identifier ],
+                    0
+                );
                 if ($this->debug) {
                     \EEH_Debug_Tools::printr("{$tickets_sold} sales for ticket {$ticket_identifier} ", 'subtracting', __FILE__, __LINE__);
                 }
@@ -447,6 +451,11 @@ class EventSpacesCalculator
                 foreach ($this->ticket_datetimes[ $ticket_identifier ] as $ticket_datetime) {
                     if (isset($this->ticket_quantities[ $ticket_identifier ])) {
                         $this->datetime_spaces[ $ticket_datetime ] -= $tickets_sold;
+                        // don't let values go below zero
+                        $this->datetime_spaces[ $ticket_datetime ] = max(
+                            $this->datetime_spaces[ $ticket_datetime ],
+                            0
+                        );
                         if ($this->debug) {
                             \EEH_Debug_Tools::printr("{$tickets_sold} sales for datetime {$ticket_datetime} ",
                                 'subtracting', __FILE__, __LINE__);
