@@ -10,7 +10,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  * @package               Event Espresso
  * @subpackage            core
  * @author                Mike Nelson, Brent Christensen
- * @since                 $VID:$
+ * @since                 4.9.51
  */
 class EE_Radio_Button_Input extends EE_Form_Input_With_Options_Base
 {

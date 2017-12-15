@@ -1,4 +1,7 @@
-<?php if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
+<?php use EventEspresso\core\domain\entities\notifications\PersistentAdminNotice;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+
+if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
 }
 /**
@@ -291,13 +294,15 @@ class EEM_Payment_Method extends EEM_Base {
 
 
 
-	/**
-	 * Overrides parent to not only turn wpdb results into EE_Payment_Method objects,
-	 * but also verifies the payment method type of each is a usable object. If not,
-	 * deactivate it, sets a notification, and deactivates it
-	 * @param array $rows
-	 * @return EE_Payment_Method[]
-	 */
+    /**
+     * Overrides parent to not only turn wpdb results into EE_Payment_Method objects,
+     * but also verifies the payment method type of each is a usable object. If not,
+     * deactivate it, sets a notification, and deactivates it
+     *
+     * @param array $rows
+     * @return EE_Payment_Method[]
+     * @throws InvalidDataTypeException
+     */
 	protected function _create_objects( $rows = array() ) {
 		EE_Registry::instance()->load_lib( 'Payment_Method_Manager' );
 		$payment_methods = parent::_create_objects( $rows );
@@ -310,21 +315,22 @@ class EEM_Payment_Method extends EEM_Base {
 				//which is kinda a no-no (just because it's being constructed doesn't mean we need to enqueue
 				//its scripts). but for backwards-compat we should continue to do that
 				$payment_method->type_obj();
-			} elseif( $payment_method->active() ) {				
+			} elseif( $payment_method->active() ) {
 				//only deactivate and notify the admin if the payment is active somewhere
 				$payment_method->deactivate();
 				$payment_method->save();
-				EE_Error::add_persistent_admin_notice(
-					'auto-deactivated-' . $payment_method->type(),
-					sprintf(
-						__( 'The payment method %1$s was automatically deactivated because it appears its associated Event Espresso Addon was recently deactivated.%2$sIt can be reactivated on the %3$sPlugins admin page%4$s, then you can reactivate the payment method.', 'event_espresso' ),
-						$payment_method->admin_name(),
-						'<br />',
-						'<a href="' . admin_url('plugins.php') . '">',
-						'</a>'
-					),
-					true
-				);
+                new PersistentAdminNotice(
+                    'auto-deactivated-' . $payment_method->type(),
+                    sprintf(
+                        __('The payment method %1$s was automatically deactivated because it appears its associated Event Espresso Addon was recently deactivated.%2$sIt can be reactivated on the %3$sPlugins admin page%4$s, then you can reactivate the payment method.',
+                            'event_espresso'),
+                        $payment_method->admin_name(),
+                        '<br />',
+                        '<a href="' . admin_url('plugins.php') . '">',
+                        '</a>'
+                    ),
+                    true
+                );
 			}
 		}
 		return $usable_payment_methods;

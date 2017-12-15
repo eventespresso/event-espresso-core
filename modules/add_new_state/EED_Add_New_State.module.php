@@ -1,7 +1,10 @@
 <?php
 
+use EventEspresso\core\domain\entities\notifications\PersistentAdminNotice;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\notifications\PersistentAdminNoticeManager;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 
@@ -529,25 +532,34 @@ class EED_Add_New_State extends EED_Module
         }
         $new_state = EE_State::new_instance($props_n_values);
         if ($new_state instanceof EE_State) {
-            // if not non-ajax admin
-            $new_state_key    = 'new-state-added-' . $new_state->country_iso() . '-' . $new_state->abbrev();
-            $new_state_notice = sprintf(
-                esc_html__(
-                    'A new State named "%1$s (%2$s)" was dynamically added from an Event Espresso form for the Country of "%3$s".%5$sTo verify, edit, and/or delete this new State, please go to the %4$s and update the States / Provinces section.%5$sCheck "Yes" to have this new State added to dropdown select lists in forms.',
-                    'event_espresso'
-                ),
-                '<b>' . $new_state->name() . '</b>',
-                '<b>' . $new_state->abbrev() . '</b>',
-                '<b>' . $new_state->country()->name() . '</b>',
-                '<a href="' . add_query_arg(array(
+            $country_settings_url = add_query_arg(
+                array(
                     'page'    => 'espresso_general_settings',
                     'action'  => 'country_settings',
                     'country' => $new_state->country_iso(),
-                ), admin_url('admin.php')) . '">' . esc_html__('Event Espresso - General Settings > Countries Tab',
-                    'event_espresso') . '</a>',
-                '<br />'
+                ),
+                admin_url('admin.php')
             );
-            EE_Error::add_persistent_admin_notice($new_state_key, $new_state_notice);
+            // if not non-ajax admin
+            new PersistentAdminNotice(
+                'new-state-added-' . $new_state->country_iso() . '-' . $new_state->abbrev(),
+                sprintf(
+                    esc_html__(
+                        'A new State named "%1$s (%2$s)" was dynamically added from an Event Espresso form for the Country of "%3$s".%5$sTo verify, edit, and/or delete this new State, please go to the %4$s and update the States / Provinces section.%5$sCheck "Yes" to have this new State added to dropdown select lists in forms.',
+                        'event_espresso'
+                    ),
+                    '<b>' . $new_state->name() . '</b>',
+                    '<b>' . $new_state->abbrev() . '</b>',
+                    '<b>' . $new_state->country()->name() . '</b>',
+                    '<a href="'
+                    . $country_settings_url
+                    . '">'
+                    . esc_html__('Event Espresso - General Settings > Countries Tab',
+                        'event_espresso')
+                    . '</a>',
+                    '<br />'
+                )
+            );
             $new_state->save();
             EEM_State::instance()->reset_cached_states();
             return $new_state;
@@ -562,6 +574,7 @@ class EED_Add_New_State extends EED_Module
      * @param string $STA_ID
      * @param array  $cols_n_values
      * @return void
+     * @throws DomainException
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -593,7 +606,11 @@ class EED_Add_New_State extends EED_Module
                 __LINE__
             );
         }
-        EE_Error::dismiss_persistent_admin_notice($CNT_ISO . '-' . $STA_abbrev, true, true);
+        /** @var PersistentAdminNoticeManager $persistent_admin_notice_manager */
+        $persistent_admin_notice_manager = LoaderFactory::getLoader()->getShared(
+            'EventEspresso\core\services\notifications\PersistentAdminNoticeManager'
+        );
+        $persistent_admin_notice_manager->dismissNotice($CNT_ISO . '-' . $STA_abbrev, true, true);
     }
 
 

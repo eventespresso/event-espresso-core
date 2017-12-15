@@ -407,7 +407,8 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 			)
 		) {
 			$checkin_list_url = EE_Admin_Page::add_query_args_and_nonce(
-				array( 'action' => 'registration_checkins', '_REGID' => $item->ID(), 'DTT_ID' => $DTT_ID )
+				array( 'action' => 'registration_checkins', '_REGID' => $item->ID(), 'DTT_ID' => $DTT_ID ),
+                REG_ADMIN_URL
 			);
 			// get the timestamps for this registration's checkins, related to the selected datetime
 			$timestamps = $item->get_many_related( 'Checkin', array( array( 'DTT_ID' => $DTT_ID ) ) );

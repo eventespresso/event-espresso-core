@@ -171,6 +171,32 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 
 
 	 /**
+	  * hasObjects
+      * returns true if there are objects within the Collection, and false if it is empty
+      *
+      * @access public
+	  * @return bool
+	  */
+	 public function hasObjects() {
+		 return $this->count() !== 0;
+	 }
+
+
+
+	 /**
+	  * isEmpty
+	  * returns true if there are no objects within the Collection, and false if there are
+	  *
+	  * @access public
+	  * @return bool
+	  */
+	 public function isEmpty() {
+		 return $this->count() === 0;
+	 }
+
+
+
+	 /**
 	  * remove
 	  * detaches an object from the Collection
 	  *

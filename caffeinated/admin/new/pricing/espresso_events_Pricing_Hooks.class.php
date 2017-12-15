@@ -1483,7 +1483,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
                     )
                 ),
             'TKT_ID'                        => $default ? 0 : $ticket->ID(),
-            'TKT_description'               => $default ? '' : $ticket->description(),
+            'TKT_description'               => $default ? '' : $ticket->get_pretty('TKT_description', 'form_input'),
             'TKT_is_default'                => $default ? 0 : $ticket->is_default(),
             'TKT_required'                  => $default ? 0 : $ticket->required(),
             'TKT_is_default_selector'       => '',

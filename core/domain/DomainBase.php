@@ -3,6 +3,9 @@
 namespace EventEspresso\core\domain;
 
 use DomainException;
+use EventEspresso\core\domain\values\FilePath;
+use EventEspresso\core\domain\values\Version;
+use InvalidArgumentException;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed');
 
@@ -15,13 +18,13 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed');
  * @author  Darren Ethier
  * @since   4.9.38
  */
-abstract class DomainBase
+abstract class DomainBase implements DomainInterface
 {
 
     /**
      * Equivalent to `__FILE__` for main plugin file.
      *
-     * @var string
+     * @var FilePath
      */
     private $plugin_file;
 
@@ -52,34 +55,33 @@ abstract class DomainBase
     /**
      * Initializes internal properties.
      *
-     * @param string $plugin_file
-     * @param string $version
+     * @param FilePath $plugin_file
+     * @param Version  $version
+     * @throws InvalidArgumentException
+     * @throws DomainException
      */
-    public function __construct($plugin_file, $version)
+    public function __construct(FilePath $plugin_file, Version $version)
     {
         $this->plugin_file = $plugin_file;
         $this->version = $version;
-        $this->plugin_basename = plugin_basename($plugin_file);
-        $this->plugin_path = plugin_dir_path($plugin_file);
-        $this->plugin_url = plugin_dir_url($plugin_file);
+        $this->plugin_basename = plugin_basename($this->pluginFile());
+        $this->plugin_path = plugin_dir_path($this->pluginFile());
+        $this->plugin_url = plugin_dir_url($this->pluginFile());
     }
-
 
 
     /**
      * @return string
-     * @throws DomainException
      */
     public function pluginFile()
     {
-        return $this->plugin_file;
+        return (string) $this->plugin_file;
     }
 
 
 
     /**
      * @return string
-     * @throws DomainException
      */
     public function pluginBasename()
     {
@@ -100,7 +102,6 @@ abstract class DomainBase
 
     /**
      * @return string
-     * @throws DomainException
      */
     public function pluginUrl()
     {
@@ -111,9 +112,18 @@ abstract class DomainBase
 
     /**
      * @return string
-     * @throws DomainException
      */
     public function version()
+    {
+        return (string) $this->version;
+    }
+
+
+
+    /**
+     * @return Version
+     */
+    public function versionValueObject()
     {
         return $this->version;
     }
