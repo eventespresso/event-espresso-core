@@ -37,6 +37,7 @@
   "awsbucket": "",
   "awsregion": "",
   "remoteNamesToPushTo": [
-    "demoee"
+    "demoee",
+    "ee4mhub"
   ]
 }
