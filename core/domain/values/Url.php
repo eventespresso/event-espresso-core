@@ -53,7 +53,7 @@ class Url
      */
     public function __construct($url)
     {
-        if (! filter_var($url,FILTER_VALIDATE_URL, FILTER_FLAG_HOST_REQUIRED)) {
+        if (! filter_var($url, FILTER_VALIDATE_URL, FILTER_FLAG_HOST_REQUIRED)) {
             throw new InvalidArgumentException(esc_html__('Invalid URL', 'event_espresso'));
         }
         $url = parse_url($url);
@@ -79,7 +79,7 @@ class Url
      */
     private function setScheme($url)
     {
-        if(isset($url['scheme'])) {
+        if (isset($url['scheme'])) {
             $this->scheme = $url['scheme'] . '://';
             return;
         }
@@ -128,7 +128,7 @@ class Url
      */
     public function queryString()
     {
-        return $this->query_string;
+        return $this->query_string !== '' ? '?' . $this->query_string : '';
     }
 
 
@@ -146,7 +146,7 @@ class Url
      */
     public function fragment()
     {
-        return $this->fragment;
+        return $this->fragment !== '' ? '#' . $this->fragment : '';
     }
 
 
@@ -164,7 +164,7 @@ class Url
      */
     public function getFullUrl()
     {
-        return "{$this->scheme()}{$this->host()}{$this->path()}{$this->queryString()}{$this->fragment()}";
+        return $this->scheme() . $this->host() . $this->path() . $this->queryString() . $this->fragment();
     }
 
 
