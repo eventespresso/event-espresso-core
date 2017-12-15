@@ -144,11 +144,19 @@ class EE_Register_Payment_Method implements EEI_Plugin_API
     public static function deregister($module_id = null)
     {
         if (isset(self::$_settings[$module_id])) {
-            $capabilities = LoaderFactory::getLoader()->getShared('EE_Capabilities');
-            $capabilities->removeCaps(
-                self::getPaymentMethodCapabilities(self::$_settings[$module_id])
-            );
+
+            //set action for just this module id to delay deregistration until core is loaded and ready.
+            $module_settings = self::$_settings[$module_id];
             unset(self::$_settings[$module_id]);
+            add_action(
+                'AHEE__EE_System__core_loaded_and_ready',
+                function () use ($module_settings) {
+                    $capabilities = LoaderFactory::getLoader()->getShared('EE_Capabilities');
+                    $capabilities->removeCaps(
+                        EE_Register_Payment_Method::getPaymentMethodCapabilities($module_settings)
+                    );
+                }
+            );
         }
     }
 
@@ -164,8 +172,11 @@ class EE_Register_Payment_Method implements EEI_Plugin_API
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
+     * @access private  Developers do NOT use this method.  It's only public for PHP5.3 closure support (see deregister)
+     *                  When we drop support for PHP5.3 this will be made private again.  You have been warned.
+     *
      */
-    private static function getPaymentMethodCapabilities(array $settings)
+    public static function getPaymentMethodCapabilities(array $settings)
     {
         $payment_method_manager = LoaderFactory::getLoader()->getShared('EE_Payment_Method_Manager');
         $payment_method_caps = array('administrator' => array());

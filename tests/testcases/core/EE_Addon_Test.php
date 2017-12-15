@@ -43,14 +43,20 @@ class EE_Addon_Test extends EE_UnitTestCase{
 	public function setUp(){
 		parent::setUp();
 		//let's just make a generic addon, but not bother registering it
-		$this->_addon = EE_Registry::instance()->load_addon( dirname( $this->_main_file_path ), 'EE_New_Addon' );
+        $loader = EventEspresso\core\services\loaders\LoaderFactory::getLoader();
+        require_once dirname($this->_main_file_path) . '/EE_New_Addon.class.php';
+        $this->_addon = $loader->getShared(
+            'EE_New_Addon',
+            array(
+                $loader->getShared('EE_Dependency_Map'),
+                null,
+                'EE_Registry::create(addon)' => true
+            )
+        );
 		$this->_addon->set_name( 'New_Addon' );
 		$this->_addon->set_main_plugin_file( $this->_main_file_path );
 		$this->_addon->set_version( '1.0.0' );
 		$this->_addon->set_min_core_version( '4.0.0' );
-//		$addon->set_config_section( self::$_settings[ $addon_name ]['config_section'] );
-//		$addon->set_config_class( self::$_settings[ $addon_name ]['config_class'] );
-//		$addon->set_config_name( self::$_settings[ $addon_name ]['config_name'] );
 		add_filter( 'FHEE__EEH_Activation__create_table__short_circuit', array( $this, 'dont_short_circuit_new_addon_table' ), 20, 3 );
 	}
 
