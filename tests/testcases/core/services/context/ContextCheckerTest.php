@@ -1,6 +1,6 @@
 <?php
 
-use EventEspresso\core\domain\entities\Context;
+use EventEspresso\core\domain\entities\contexts\Context;
 use EventEspresso\tests\mocks\core\services\context\ContextCheckerMock;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;

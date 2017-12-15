@@ -3,7 +3,7 @@
 namespace EventEspresso\core\services\context;
 
 use Closure;
-use EventEspresso\core\domain\entities\Context;
+use EventEspresso\core\domain\entities\contexts\Context;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 

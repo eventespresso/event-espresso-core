@@ -38,13 +38,13 @@ class Loader implements LoaderInterface
     /**
      * Loader constructor.
      *
-     * @param LoaderDecoratorInterface|null $new_loader
-     * @param LoaderDecoratorInterface|null $shared_loader
+     * @param LoaderDecoratorInterface $new_loader
+     * @param CachingLoaderDecoratorInterface $shared_loader
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      */
-    public function __construct(LoaderDecoratorInterface $new_loader, LoaderDecoratorInterface $shared_loader)
+    public function __construct(LoaderDecoratorInterface $new_loader, CachingLoaderDecoratorInterface $shared_loader)
     {
         $this->new_loader = $new_loader;
         $this->shared_loader = $shared_loader;
@@ -63,7 +63,7 @@ class Loader implements LoaderInterface
 
 
     /**
-     * @return LoaderDecoratorInterface
+     * @return CachingLoaderDecoratorInterface
      */
     public function getSharedLoader()
     {
@@ -106,7 +106,19 @@ class Loader implements LoaderInterface
      */
     public function getShared($fqcn, $arguments = array())
     {
-        return $this->getSharedLoader()->load($fqcn, $arguments, true);
+        return $this->getSharedLoader()->load($fqcn, $arguments);
+    }
+
+
+    /**
+     * @param string $fqcn
+     * @param mixed  $object
+     * @return bool
+     * @throws InvalidArgumentException
+     */
+    public function share($fqcn, $object)
+    {
+        return $this->getSharedLoader()->share($fqcn, $object);
     }
 
 

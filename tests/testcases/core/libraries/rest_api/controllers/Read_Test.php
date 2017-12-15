@@ -3,7 +3,6 @@ namespace EventEspresso\core\libraries\rest_api\controllers\model;
 
 use EventEspresso\core\domain\services\event\EventSpacesCalculator;
 use EventEspresso\core\libraries\rest_api\controllers\Base as Controller_Base;
-use \EEM_Question_Group;
 
 if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
@@ -1089,6 +1088,7 @@ class Read_Test extends \EE_REST_TestCase
      */
     public function testShortcodesNotCachedForDifferentEvents()
     {
+        $this->loadShortcodesManagerAndShortcodes();
         $transaction = $this->new_typical_transaction();
         $event_with_registrations = $transaction->primary_registration()->event();
         $event_with_registrations->set_description('[ESPRESSO_EVENT_ATTENDEES]');
