@@ -1097,6 +1097,7 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
         if ($my_children === null) {
             $my_children = $this->children();
         }
+        $subtotal_quantity  =  0;
         //get the total of all its children
         foreach ($my_children as $child_line_item) {
             if ($child_line_item instanceof EE_Line_Item && ! $child_line_item->is_cancellation()) {
@@ -1119,12 +1120,16 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
                         $child_line_item->set_quantity($this->quantity());
                     }
                     $calculated_total_so_far += $child_line_item->recalculate_pre_tax_total();
+                    $subtotal_quantity += $child_line_item->quantity();
                 }
             }
         }
         if ($this->is_sub_total()) {
             // no negative totals plz
             $calculated_total_so_far = max($calculated_total_so_far, 0);
+            $subtotal_quantity =  max($subtotal_quantity, 0);
+            $this->set_quantity($subtotal_quantity);
+            $this->save();
         }
         return $calculated_total_so_far;
     }
@@ -1206,6 +1211,7 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
             $total_on_this_tax = $taxable_total * $tax->percent() / 100;
             //remember the total on this line item
             $tax->set_total($total_on_this_tax);
+            $tax->save();
             $tax_total += $tax->total();
         }
         $this->_recalculate_tax_sub_total();
@@ -1234,6 +1240,7 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
             }
             $this->set_total($total);
             $this->set_percent($total_percent);
+            $this->save();
         } elseif ($this->is_total()) {
             foreach ($this->children() as $maybe_tax_subtotal) {
                 if ($maybe_tax_subtotal instanceof EE_Line_Item) {
