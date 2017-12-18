@@ -6,6 +6,9 @@
  * @subpackage      plugin api, capabilities
  * @since           4.5.0
  */
+
+use EventEspresso\core\services\loaders\LoaderFactory;
+
 if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
@@ -177,16 +180,31 @@ class EE_Register_Capabilities implements EEI_Plugin_API
     }
 
 
-
     /**
      * @param string $cap_reference
      * @throws EE_Error
+     * @throws \InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
     public static function deregister($cap_reference = '')
     {
         if (! empty(self::$_registry[$cap_reference])) {
             if (! empty(self::$_registry[ $cap_reference ]['caps'])) {
-                EE_Capabilities::instance()->removeCaps(self::$_registry[ $cap_reference ]['caps']);
+                //if it's too early to remove capabilities, wait to do this until core is loaded and ready
+                $caps_to_remove = self::$_registry[ $cap_reference ]['caps'];
+                if (did_action('AHEE__EE_System__core_loaded_and_ready')) {
+                    $capabilities = LoaderFactory::getLoader()->getShared('EE_Capabilities');
+                    $capabilities->removeCaps($caps_to_remove);
+                } else {
+                    add_action(
+                        'AHEE__EE_System__core_loaded_and_ready',
+                        function () use ($caps_to_remove) {
+                            $capabilities = LoaderFactory::getLoader()->getShared('EE_Capabilities');
+                            $capabilities->removeCaps($caps_to_remove);
+                        }
+                    );
+                }
             }
             unset(self::$_registry[$cap_reference]);
         }
