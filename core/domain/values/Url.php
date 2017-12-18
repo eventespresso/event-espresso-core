@@ -10,7 +10,9 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 
 /**
  * Class Url
- * Immutable Value Object representing a URL (really simple representation)
+ * Immutable Value Object representing a URL
+ * But just a really simple representation
+ * ie: does not handle FTP or authority (username, password, port)
  *
  * @package EventEspresso\core\domain\values
  * @author  Brent Christensen
@@ -53,8 +55,15 @@ class Url
      */
     public function __construct($url)
     {
-        if (! filter_var($url, FILTER_VALIDATE_URL, FILTER_FLAG_HOST_REQUIRED)) {
-            throw new InvalidArgumentException(esc_html__('Invalid URL', 'event_espresso'));
+        if (
+            ! filter_var(
+                $url,
+                FILTER_VALIDATE_URL,
+                array(FILTER_FLAG_SCHEME_REQUIRED, FILTER_FLAG_HOST_REQUIRED)
+            )
+        ) {
+            throw new InvalidArgumentException(esc_html__('Invalid URL. Both the "Scheme" and "Host" are required.',
+                'event_espresso'));
         }
         $url = parse_url($url);
         $this->setScheme($url);
@@ -79,11 +88,7 @@ class Url
      */
     private function setScheme($url)
     {
-        if (isset($url['scheme'])) {
-            $this->scheme = $url['scheme'] . '://';
-            return;
-        }
-        $this->scheme = is_ssl() ? 'https://' : 'http://';
+        $this->scheme = $url['scheme'] . '://';
     }
 
 
