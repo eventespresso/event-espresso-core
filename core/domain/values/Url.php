@@ -12,7 +12,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  * Class Url
  * Immutable Value Object representing a URL
  * But just a really simple representation
- * ie: does not handle FTP or authority (username, password, port)
+ * ie: does not fully support FTP or authority (username, password, port)
  *
  * @package EventEspresso\core\domain\values
  * @author  Brent Christensen
