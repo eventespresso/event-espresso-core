@@ -135,6 +135,8 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
                 $this->delete_post_meta('_previous_event_status');
                 do_action('AHEE__EE_Event__set_status__from_sold_out', $this, $old_status, $new_status);
             }
+            //clear out the active status so that it gets reset the next time it is requested
+            $this->_active_status = null;
             // update status
             parent::set('status', $new_status, $use_default);
             do_action('AHEE__EE_Event__set_status__after_update', $this);
@@ -893,7 +895,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
         if ($all_expired) {
             return true;
         }
-        $spaces_remaining = $this->spaces_remaining();
+        $spaces_remaining = $this->spaces_remaining($tickets);
         if ($spaces_remaining < 1) {
             $this->set_status(EEM_Event::sold_out);
             $this->save();
