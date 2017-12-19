@@ -114,7 +114,8 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway
                 )
             );
         }
-        $order_description = substr($this->_format_order_description($payment), 0, 127);
+        $gateway_formatter = $this->_get_gateway_formatter();
+        $order_description = substr($gateway_formatter->formatOrderDescription($payment), 0, 127);
         //charge for the full amount. Show itemized list
         if ($this->_can_easily_itemize_transaction_for($payment)) {
             $item_num = 1;
@@ -128,13 +129,13 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway
                 $item = array(
                     // Item Name.  127 char max.
                     'l_name'                 => substr(
-                        $this->_format_line_item_name($line_item, $payment),
+                        $gateway_formatter->formatLineItemName($line_item, $payment),
                         0,
                         127
                     ),
                     // Item description.  127 char max.
                     'l_desc'                 => substr(
-                        $this->_format_line_item_desc($line_item, $payment),
+                        $gateway_formatter->formatLineItemDesc($line_item, $payment),
                         0,
                         127
                     ),
@@ -165,13 +166,13 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway
             array_push($order_items, array(
                 // Item Name.  127 char max.
                 'l_name'   => substr(
-                    $this->_format_partial_payment_line_item_name($payment),
+                    $gateway_formatter->formatPartialPaymentLineItemName($payment),
                     0,
                     127
                 ),
                 // Item description.  127 char max.
                 'l_desc'   => substr(
-                    $this->_format_partial_payment_line_item_desc($payment),
+                    $gateway_formatter->formatPartialPaymentLineItemDesc($payment),
                     0,
                     127
                 ),
@@ -278,19 +279,19 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway
         );
         $PaymentDetails = array(
             // Required.  Total amount of order, including shipping, handling, and tax.
-            'amt'          => $this->format_currency($payment->amount()),
+            'amt'          => $gateway_formatter->formatCurrency($payment->amount()),
             // Required.  Three-letter currency code.  Default is USD.
             'currencycode' => $payment->currency_code(),
             // Required if you include itemized cart details. (L_AMTn, etc.)
             //Subtotal of items not including S&H, or tax.
-            'itemamt'      => $this->format_currency($item_amount),//
+            'itemamt'      => $gateway_formatter->formatCurrency($item_amount),//
             // Total shipping costs for the order.  If you specify shippingamt, you must also specify itemamt.
             'shippingamt'  => '',
             // Total handling costs for the order.  If you specify handlingamt, you must also specify itemamt.
             'handlingamt'  => '',
             // Required if you specify itemized cart tax details.
             // Sum of tax for all items on the order.  Total sales tax.
-            'taxamt'       => $this->format_currency($tax_amount),
+            'taxamt'       => $gateway_formatter->formatCurrency($tax_amount),
             // Description of the order the customer is purchasing.  127 char max.
             'desc'         => $order_description,
             // Free-form field for your own use.  256 char max.
