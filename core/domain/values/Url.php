@@ -138,6 +138,15 @@ class Url
 
 
     /**
+     * @return array
+     */
+    public function queryStringArray()
+    {
+        return wp_parse_args($this->query_string);
+    }
+
+
+    /**
      * @param array $url
      */
     private function setQueryString($url)
