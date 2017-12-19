@@ -1,5 +1,7 @@
 <?php
 use EventEspresso\core\domain\entities\DbSafeDateTime;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -242,7 +244,9 @@ class EE_Datetime_Field extends EE_Model_Field_Base
      * @param string $timezone_string A valid timezone string as described by @link
      *                                http://www.php.net/manual/en/timezones.php
      * @return void
-     * @throws \EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function set_timezone($timezone_string)
     {
@@ -263,7 +267,9 @@ class EE_Datetime_Field extends EE_Model_Field_Base
      * @access protected
      * @param string $timezone_string
      * @return \DateTimeZone
-     * @throws \EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function _create_timezone_object_from_timezone_string($timezone_string = '')
     {
