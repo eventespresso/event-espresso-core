@@ -1211,7 +1211,7 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
             $total_on_this_tax = $taxable_total * $tax->percent() / 100;
             //remember the total on this line item
             $tax->set_total($total_on_this_tax);
-            $tax->save();
+            $tax->maybe_save();
             $tax_total += $tax->total();
         }
         $this->_recalculate_tax_sub_total();
@@ -1240,7 +1240,7 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
             }
             $this->set_total($total);
             $this->set_percent($total_percent);
-            $this->save();
+            $this->maybe_save();
         } elseif ($this->is_total()) {
             foreach ($this->children() as $maybe_tax_subtotal) {
                 if ($maybe_tax_subtotal instanceof EE_Line_Item) {
