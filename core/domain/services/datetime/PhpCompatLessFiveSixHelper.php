@@ -172,7 +172,7 @@ class PhpCompatLessFiveSixHelper extends AbstractHelper
      * @param int $gmt_offset
      * @return int
      */
-    public function adjustInvalidGmtOffset($gmt_offset = 0)
+    public function adjustInvalidGmtOffsets($gmt_offset = 0)
     {
         //make sure $gmt_offset is int
         $gmt_offset = (int) $gmt_offset;
