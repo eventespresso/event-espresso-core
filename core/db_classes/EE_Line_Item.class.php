@@ -1195,7 +1195,8 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
 
     /**
      * Recalculates the total on each individual tax (based on a recalculation of the pre-tax total), sets
-     * the totals on each tax calculated, and returns the final tax total
+     * the totals on each tax calculated, and returns the final tax total. Re-saves tax line items
+     * and tax sub-total if already in the DB
      *
      * @return float
      * @throws EE_Error
