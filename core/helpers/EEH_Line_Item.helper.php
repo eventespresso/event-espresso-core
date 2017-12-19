@@ -89,7 +89,7 @@ class EEH_Line_Item {
 			'LIN_desc' => $description,
 			'LIN_unit_price' => 0,
 			'LIN_percent' => $percentage_amount,
-			'LIN_quantity' => NULL,
+			'LIN_quantity' => 1,
 			'LIN_is_taxable' => $taxable,
 			'LIN_total' => (float) ( $percentage_amount * ( $parent_line_item->total() / 100 ) ),
 			'LIN_type'=>  EEM_Line_Item::type_line_item,
