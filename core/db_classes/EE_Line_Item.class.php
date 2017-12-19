@@ -1127,9 +1127,9 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
         if ($this->is_sub_total()) {
             // no negative totals plz
             $calculated_total_so_far = max($calculated_total_so_far, 0);
-            $subtotal_quantity =  max($subtotal_quantity, 0);
+            $subtotal_quantity =  $subtotal_quantity > 0 ? 1 : 0;
             $this->set_quantity($subtotal_quantity);
-            $this->save();
+            $this->maybe_save();
         }
         return $calculated_total_so_far;
     }
