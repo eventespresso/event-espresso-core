@@ -142,7 +142,7 @@ class PhpCompatLessFiveSixHelper extends AbstractHelper
         //if $coerce is true, let's see if we can get a timezone string after the offset is adjusted
         if ($coerce === true) {
             $timezone_string = $this->getTimezoneStringFromAbbreviationsList(
-                $this->adjustInvalidGmtOffset($gmt_offset),
+                $this->adjustInvalidGmtOffsets($gmt_offset),
                 false
             );
             if ($timezone_string) {
