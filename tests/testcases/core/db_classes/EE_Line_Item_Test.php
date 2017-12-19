@@ -77,7 +77,48 @@ class EE_Line_Item_Test extends EE_UnitTestCase{
         $this->assertEquals($original_event_subtotal_unit_price / 2, $event_subtotal->unit_price());
     }
 
-	/**
+    /**
+     * Verifies that after we update a line item and recalculate the total, the tax subtotal also gets updated
+     * @group 11126
+     */
+    public function testRecalculatePreTaxTotalAndUpdateTaxesToo()
+    {
+        $txn = $this->new_typical_transaction();
+        $old_grant_total = $txn->total_line_item()->total();
+        //make sure it has a tax on it
+        $taxes_subtotal_li = EEH_Line_Item::get_taxes_subtotal($txn->total_line_item());
+        $old_taxes_subtotal_total = $taxes_subtotal_li->total();
+        $taxes = $taxes_subtotal_li->children();
+        $this->assertCount(1, $taxes);
+        $tax_li = reset($taxes);
+        $old_tax_li_total = $tax_li->total();
+        $this->assertGreaterThan(0, $taxes_subtotal_li->total());
+        //take note of the current ticket price
+        $ticket_lis = EEH_Line_Item::get_ticket_line_items($txn->total_line_item());
+        $this->assertCount(1, $ticket_lis);
+        $ticket_li = reset($ticket_lis);
+        $ticket_li->set_quantity(2);
+        $old_ticket_li_total = $ticket_li->total();
+        //modify the ticket price and recalculate the total
+        $subitem_lis = $ticket_li->children();
+        $this->assertCount(1, $subitem_lis);
+        $txn->total_line_item()->recalculate_total_including_taxes();
+        //ok now pretend it's a new request
+        EEM_Line_Item::reset();
+        $ticket_li_from_db = EEM_Line_Item::instance()->get_one_by_ID($ticket_li->ID());
+        $total_li_from_db = EEM_Line_Item::instance()->get_one_by_ID($txn->total_line_item()->ID());
+        $tax_li_from_db = EEM_Line_Item::instance()->get_one_by_ID($tax_li->ID());
+        $tax_subtotal_li_from_db = EEM_Line_Item::instance()->get_one_by_ID($taxes_subtotal_li->ID());
+        //verify the total was changed
+        $this->assertEquals($old_ticket_li_total*2, $ticket_li_from_db->total());
+        $this->assertEquals($old_grant_total*2, $total_li_from_db->total());
+        //lastly, verify the tax and tax subtotals got updated
+        $this->assertEquals($old_tax_li_total*2, $tax_li_from_db->total());
+        $this->assertEquals($old_taxes_subtotal_total*2, $tax_subtotal_li_from_db->total());
+    }
+
+
+    /**
 	 * @group 8964
 	 * Uses a particular number and quantity that has been shown to cause rounding problems
 	 * prior to the work on 8964 (specifically, if you had 2 transactions for 1 ticket purchase each
