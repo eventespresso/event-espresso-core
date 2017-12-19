@@ -78,6 +78,64 @@ class EE_Line_Item_Test extends EE_UnitTestCase{
     }
 
     /**
+     * @group 11126
+     */
+    public function testRecaculatePreTaxTotalUpdatesLineItemSubtotalQuantitiesToZeroForNextRequest()
+    {
+        //verify that if we decrement the total of a li, and its subtotal li becomes 0
+        $txn = $this->new_typical_transaction();
+        $total_li = $txn->total_line_item();
+        $event_subtotals = EEH_Line_Item::get_event_subtotals($total_li);
+        $event_subtotal = reset($event_subtotals);
+        $line_items = $event_subtotal->children();
+        $ticket_li = reset($line_items);
+        $this->assertEquals(1, $event_subtotal->quantity());
+        $this->assertEquals(1, $ticket_li->quantity());
+        EEH_Line_Item::decrement_quantity($ticket_li);
+        $total_li->recalculate_total_including_taxes();
+        $this->assertEquals(0,$ticket_li->quantity());
+        $this->assertEquals(0, $event_subtotal->quantity());
+        //pretend it's the next request and double-check the changes stuck
+        EEM_Line_Item::reset();
+        $event_subtotal_from_db = EEM_Line_Item::instance()->get_one_by_ID($event_subtotal->ID());
+        $ticket_li_from_db = EEM_Line_Item::instance()->get_one_by_ID($ticket_li->ID());
+        $this->assertEquals(0, $event_subtotal_from_db->quantity());
+        $this->assertEquals(0, $ticket_li_from_db->quantity());
+    }
+
+
+    /**
+     * @group 11126
+     */
+    public function testRecaculatePreTaxTotalUpdatesLineItemSubtotalQuantitiesFromZero()
+    {
+        //verify that if we decrement the total of a li, and its subtotal li becomes 0
+        $txn = $this->new_typical_transaction();
+        $total_li = $txn->total_line_item();
+        $event_subtotals = EEH_Line_Item::get_event_subtotals($total_li);
+        $event_subtotal = reset($event_subtotals);
+        $line_items = $event_subtotal->children();
+        $ticket_li = reset($line_items);
+        $this->assertEquals(1, $event_subtotal->quantity());
+        $this->assertEquals(1, $ticket_li->quantity());
+        EEH_Line_Item::decrement_quantity($ticket_li);
+        $total_li->recalculate_total_including_taxes();
+        $this->assertEquals(0,$ticket_li->quantity());
+        $this->assertEquals(0, $event_subtotal->quantity());
+        //ok now re-increase the quantity
+        EEH_Line_Item::increment_quantity($ticket_li);
+        $total_li->recalculate_total_including_taxes();
+        $this->assertEquals(1, $ticket_li->quantity());
+        $this->assertEquals(1, $event_subtotal->quantity());
+        //ok bump it up again. But only events' quantity should increase (that's the current behaviour so may as well keep it)
+        EEH_Line_Item::increment_quantity($ticket_li);
+        $total_li->recalculate_total_including_taxes();
+        $this->assertEquals(2, $ticket_li->quantity());
+        $this->assertEquals(1, $event_subtotal->quantity());
+
+    }
+
+    /**
      * Verifies that after we update a line item and recalculate the total, the tax subtotal also gets updated
      * @group 11126
      */
