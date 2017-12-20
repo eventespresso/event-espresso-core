@@ -2,6 +2,8 @@
 
 namespace EventEspresso\core\domain\entities;
 
+use EventEspresso\core\domain\entities\contexts\ContextInterface;
+
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
@@ -15,7 +17,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  * @author  Brent Christensen
  * @since   4.9.46.rc.076
  */
-class Context
+class Context implements ContextInterface
 {
 
     /**
