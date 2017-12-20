@@ -1,6 +1,6 @@
 <?php
 
-namespace EventEspresso\core\domain\services\datetime;
+namespace EventEspresso\core\services\helpers\datetime;
 
 use DateTimeZone;
 

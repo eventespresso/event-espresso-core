@@ -1,5 +1,5 @@
 <?php
-namespace EventEspresso\core\domain\services\datetime;
+namespace EventEspresso\core\services\helpers\datetime;
 
 use DateTime;
 use DateTimeZone;
@@ -10,6 +10,27 @@ use Exception;
 
 abstract class AbstractHelper implements HelperInterface
 {
+
+
+    /**
+     * Ensures that a valid timezone string is returned.
+     *
+     * @param string $timezone_string  When not provided then attempt to use the timezone_string set in the WP Time
+     *                                 settings (or derive from set UTC offset).
+     * @return string
+     * @throws EE_Error
+     */
+    public function getValidTimezoneString($timezone_string = '')
+    {
+        $timezone_string = ! empty($timezone_string) ? $timezone_string : (string) get_option('timezone_string');
+        $timezone_string = ! empty($timezone_string)
+            ? $timezone_string
+            : $this->getTimezoneStringFromGmtOffset();
+        $this->validateTimezone($timezone_string);
+        return $timezone_string;
+    }
+
+
 
     /**
      * The only purpose for this static method is to validate that the incoming timezone is a valid php timezone.
@@ -204,6 +225,7 @@ abstract class AbstractHelper implements HelperInterface
      * @param string $timezone_string timezone_string. If empty, then the current set timezone for the
      *                                site will be used.
      * @return int      unix_timestamp value with the offset applied for the given timezone.
+     * @throws EE_Error
      */
     public function getTimestampWithOffset($unix_timestamp = 0, $timezone_string = '')
     {
@@ -230,5 +252,48 @@ abstract class AbstractHelper implements HelperInterface
         $time        = preg_match(EE_Datetime_Field::unix_timestamp_regex, $time) ? $time : time();
         $transitions = $date_time_zone->getTransitions($time);
         return $first_only && ! isset($transitions['ts']) ? reset($transitions) : $transitions;
+    }
+
+
+
+    /**
+     * Default to just returning the provided $gmt_offset.  Children can override if adjustment needed.
+     *
+     * @param int $gmt_offset
+     * @return int
+     */
+    public function adjustInvalidGmtOffsets($gmt_offset = 0)
+    {
+        return $gmt_offset;
+    }
+
+
+
+    /**
+     * This receives an incoming gmt_offset and santizes it.  If the provide value is an empty string, then this will
+     * attempt to get the offset from the timezone string.  If this returns a string, then a timezone string was
+     * successfully derived from existing timezone_string in the db.  If not, then a float is returned for the provided
+     * offset.
+     * @param  float|string $gmt_offset
+     * @return float|string
+     */
+    protected function sanitizeInitialIncomingGmtOffsetForGettingTimezoneString($gmt_offset)
+    {
+        //if there is no incoming gmt_offset, then because WP hooks in on timezone_string, we need to see if that is
+        //set because it will override `gmt_offset` via `pre_get_option` filter.  If that's set, then let's just use
+        //that!  Otherwise we'll leave timezone_string at the default of 'UTC' before doing other logic.
+        if ($gmt_offset === '') {
+            //autoloaded so no need to set to a variable.  There will not be multiple hits to the db.
+            if (get_option('timezone_string')) {
+                return (string) get_option('timezone_string');
+            }
+        }
+        $gmt_offset = $gmt_offset !== '' ? $gmt_offset : (string) get_option('gmt_offset');
+        $gmt_offset = (float) $gmt_offset;
+        //if $gmt_offset is 0 or is still an empty string, then just return UTC
+        if ($gmt_offset === (float) 0) {
+            return 'UTC';
+        }
+        return $gmt_offset;
     }
 }

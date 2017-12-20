@@ -1,11 +1,10 @@
 <?php
-namespace EventEspresso\core\domain\services\datetime;
+namespace EventEspresso\core\services\helpers\datetime;
 
 use DateTime;
 use DateTimeZone;
 use DomainException;
 use EE_Datetime_Field;
-use EE_Error;
 
 class PhpCompatGreaterFiveSixHelper extends AbstractHelper
 {
@@ -24,28 +23,10 @@ class PhpCompatGreaterFiveSixHelper extends AbstractHelper
                         'event_espresso'
                     ),
                     __CLASS__,
-                    'EventEspresso\core\domain\services\datetime\PhpCompatLessFiveSixHelper'
+                    'EventEspresso\core\services\helpers\datetime\PhpCompatLessFiveSixHelper'
                 )
             );
         }
-    }
-
-    /**
-     * Ensures that a valid timezone string is returned.
-     *
-     * @param string $timezone_string  When not provided then attempt to use the timezone_string set in the WP Time
-     *                                 settings (or derive from set UTC offset).
-     * @return string
-     * @throws EE_Error
-     */
-    public function getValidTimezoneString($timezone_string = '')
-    {
-        $timezone_string = ! empty($timezone_string) ? $timezone_string : (string) get_option('timezone_string');
-        $timezone_string = ! empty($timezone_string)
-            ? $timezone_string
-            : $this->getTimezoneStringFromGmtOffset();
-        $this->validateTimezone($timezone_string);
-        return $timezone_string;
     }
 
     /**
@@ -57,24 +38,12 @@ class PhpCompatGreaterFiveSixHelper extends AbstractHelper
      */
     public function getTimezoneStringFromGmtOffset($gmt_offset = '')
     {
-        //if none provided then let's see of there's already a timezone_string set for WP, if there is we can just use
-        //that.
-        if ($gmt_offset === '') {
-            //autoloaded so no need to set to a variable.  There will not be multiple hits to the db.
-            if (get_option('timezone_string')) {
-                return (string) get_option('timezone_string');
-            }
-        }
-        $gmt_offset = $gmt_offset !== '' ? $gmt_offset : (string) get_option('gmt_offset');
-        //convert to float
-        $gmt_offset = (float) $gmt_offset;
-
-        //if $gmt_offset is 0 or is still an empty string, then just return UTC
-        if ($gmt_offset === (float) 0) {
-            return 'UTC';
-        }
-        return $this->convertWpGmtOffsetForDateTimeZone($gmt_offset);
+        $gmt_offset_or_timezone_string = $this->sanitizeInitialIncomingGmtOffsetForGettingTimezoneString($gmt_offset);
+        return is_float($gmt_offset_or_timezone_string)
+            ? $this->convertWpGmtOffsetForDateTimeZone($gmt_offset_or_timezone_string)
+            : $gmt_offset_or_timezone_string;
     }
+
 
 
     /**
@@ -110,19 +79,6 @@ class PhpCompatGreaterFiveSixHelper extends AbstractHelper
         $second_part = substr($offset, 2, 2);
         $second_part = str_replace(array('25', '50', '75'), array('15', '30', '45'), $second_part);
         return $first_part . $second_part;
-    }
-
-    /**
-     * This returns the given gmt offset as is because no adjustment is needed in a post PHP5.6 world.
-     *
-     * @deprecated 4.9.54.rc    Developers this was always meant to only be an internally used method.  This will be
-     *                          removed in a future version of EE.
-     * @param int $gmt_offset
-     * @return int
-     */
-    public function adjustInvalidGmtOffsets($gmt_offset)
-    {
-        return $gmt_offset;
     }
 
 

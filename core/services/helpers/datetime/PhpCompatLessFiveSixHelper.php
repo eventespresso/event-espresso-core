@@ -1,10 +1,9 @@
 <?php
-namespace EventEspresso\core\domain\services\datetime;
+namespace EventEspresso\core\services\helpers\datetime;
 
 use DateTimeZone;
 use DomainException;
 use EE_Error;
-use EEH_DTT_Helper;
 use Exception;
 
 /**
@@ -14,7 +13,7 @@ use Exception;
  *
  * @package EventEspresso\core\domain\datetime
  * @author  Darren Ethier
- * @since   1.0.0
+ * @since   4.9.54.rc
  */
 class PhpCompatLessFiveSixHelper extends AbstractHelper
 {
@@ -34,30 +33,10 @@ class PhpCompatLessFiveSixHelper extends AbstractHelper
                         'event_espresso'
                     ),
                     __CLASS__,
-                    'EventEspresso\core\domain\services\datetime\PhpCompatGreaterFiveSixHelper'
+                    'EventEspresso\core\services\helpers\datetime\PhpCompatGreaterFiveSixHelper'
                 )
             );
         }
-    }
-
-    /**
-     * Ensures that a valid timezone string is returned.
-     *
-     * @param string $timezone_string  When not provided then attempt to use the timezone_string set in the WP Time
-     *                                 settings (or derive from set UTC offset).
-     * @return string
-     * @throws EE_Error
-     */
-    public function getValidTimezoneString($timezone_string = '')
-    {
-        // if passed a value, then use that, else get WP option
-        $timezone_string = ! empty($timezone_string) ? $timezone_string : (string) get_option('timezone_string');
-        // value from above exists, use that, else get timezone string from gmt_offset
-        $timezone_string = ! empty($timezone_string)
-            ? $timezone_string
-            : $this->getTimezoneStringFromGmtOffset();
-        $this->validateTimezone($timezone_string);
-        return $timezone_string;
     }
 
     /**
@@ -69,38 +48,24 @@ class PhpCompatLessFiveSixHelper extends AbstractHelper
      */
     public function getTimezoneStringFromGmtOffset($gmt_offset = '')
     {
-        $timezone_string = 'UTC';
-        //if there is no incoming gmt_offset, then because WP hooks in on timezone_string, we need to see if that is
-        //set because it will override `gmt_offset` via `pre_get_option` filter.  If that's set, then let's just use
-        //that!  Otherwise we'll leave timezone_string at the default of 'UTC' before doing other logic.
-        if ($gmt_offset === '') {
-            //autoloaded so no need to set to a variable.  There will not be multiple hits to the db.
-            if (get_option('timezone_string')) {
-                return (string) get_option('timezone_string');
-            }
+        $gmt_offset_or_timezone_string = $this->sanitizeInitialIncomingGmtOffsetForGettingTimezoneString($gmt_offset);
+        if (is_string($gmt_offset_or_timezone_string)) {
+            return $gmt_offset_or_timezone_string;
         }
-        $gmt_offset = $gmt_offset !== '' ? $gmt_offset : (string) get_option('gmt_offset');
-        $gmt_offset = (float) $gmt_offset;
-        //if $gmt_offset is 0, then just return UTC
-        if ($gmt_offset === (float) 0) {
-            return $timezone_string;
-        }
-        if ($gmt_offset !== '') {
-            // convert GMT offset to seconds
-            $gmt_offset *= HOUR_IN_SECONDS;
-            // although we don't know the TZ abbreviation, we know the UTC offset
-            $timezone_string = timezone_name_from_abbr(null, $gmt_offset);
-            //only use this timezone_string IF it's current offset matches the given offset
-            if (! empty($timezone_string)) {
-                $offset = null;
-                try {
-                    $offset = $this->getTimezoneOffset(new DateTimeZone($timezone_string));
-                    if ($offset !== $gmt_offset) {
-                        $timezone_string = false;
-                    }
-                } catch (Exception $e) {
+        // convert GMT offset to seconds
+        $gmt_offset *= HOUR_IN_SECONDS;
+        // although we don't know the TZ abbreviation, we know the UTC offset
+        $timezone_string = timezone_name_from_abbr(null, $gmt_offset);
+        //only use this timezone_string IF it's current offset matches the given offset
+        if (! empty($timezone_string)) {
+            $offset = null;
+            try {
+                $offset = $this->getTimezoneOffset(new DateTimeZone($timezone_string));
+                if ($offset !== $gmt_offset) {
                     $timezone_string = false;
                 }
+            } catch (Exception $e) {
+                $timezone_string = false;
             }
         }
         // better have a valid timezone string by now, but if not, sigh... loop thru  the timezone_abbreviations_list()
