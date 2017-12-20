@@ -52,6 +52,8 @@ class PhpCompatLessFiveSixHelper extends AbstractHelper
         if (is_string($gmt_offset_or_timezone_string)) {
             return $gmt_offset_or_timezone_string;
         }
+        //well we know its a float, so let's roll with it.
+        $gmt_offset = $gmt_offset_or_timezone_string;
         // convert GMT offset to seconds
         $gmt_offset *= HOUR_IN_SECONDS;
         // although we don't know the TZ abbreviation, we know the UTC offset
