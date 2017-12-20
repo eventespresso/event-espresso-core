@@ -602,7 +602,10 @@ class EE_Datetime_Field extends EE_Model_Field_Base
         }
         // THEN apply the field's set DateTimeZone
         $DateTime->setTimezone($this->_DateTimeZone);
-
+        //apparently in PHP5.6 this is needed to ensure the correct timestamp is internal on this object.  This fixes
+        //failing tests against PHP5.6 for the `Read_Test::test_handle_request_get_one__event` test.
+        //@see https://events.codebasehq.com/projects/event-espresso/tickets/11233
+        $DateTime->getTimestamp();
         return $DateTime;
     }
 
