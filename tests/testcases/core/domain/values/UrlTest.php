@@ -183,7 +183,7 @@ class UrlTest extends EE_UnitTestCase
     /**
      * @return array
      */
-    public function queryStringProvider()
+    public function queryProvider()
     {
         return array(
             array(
@@ -203,27 +203,25 @@ class UrlTest extends EE_UnitTestCase
             array(
                 'abc://username:password@example.com:123/path/data?key=value#fragid1',
                 '?key=value',
-                array(
-                    'key' => 'value',
-                ),
+                array('key' => 'value'),
             ),
         );
     }
 
 
     /**
-     * @dataProvider queryStringProvider
+     * @dataProvider queryProvider
      * @param string $url_string
-     * @param string $query
-     * @param array  $query_string_array
+     * @param string $query_string
+     * @param array $query_params
      * @throws Exception
      */
-    public function testQueryString($url_string, $query, array $query_string_array)
+    public function testQueryStringAndQueryParams($url_string, $query_string, array $query_params)
     {
         $url = new Url($url_string);
         $this->assertInstanceOf('EventEspresso\core\domain\values\Url', $url);
-        $this->assertEquals($query, $url->queryString());
-        $this->assertEquals($query_string_array, $url->queryStringArray());
+        $this->assertEquals($query_string, $url->queryString());
+        $this->assertEquals($query_params, $url->queryParams());
     }
 
 
