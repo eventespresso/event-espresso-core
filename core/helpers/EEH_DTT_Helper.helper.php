@@ -1,6 +1,6 @@
 <?php
 
-use EventEspresso\core\domain\services\datetime\HelperInterface;
+use EventEspresso\core\services\helpers\datetime\HelperInterface;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
@@ -210,15 +210,16 @@ class EEH_DTT_Helper
 
 
     /**
+     * Prints a select input for the given timezone string.
      * @param string $timezone_string
-     * @return string
+     * @deprecatd 4.9.54.rc   Soft deprecation.  Consider using \EEH_DTT_Helper::wp_timezone_choice instead.
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
     public static function timezone_select_input($timezone_string = '')
     {
-        return self::getHelperAdapter()->timezoneSelectInput($timezone_string);
+        self::getHelperAdapter()->timezoneSelectInput($timezone_string);
     }
 
 
@@ -1018,6 +1019,7 @@ class EEH_DTT_Helper
 
     /**
      * Return the appropriate helper adapter for DTT related things.
+     *
      * @return HelperInterface
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -1025,8 +1027,8 @@ class EEH_DTT_Helper
      */
     private static function getHelperAdapter() {
         $dtt_helper_fqcn = PHP_VERSION_ID < 50600
-            ? 'EventEspresso\core\domain\services\datetime\PhpCompatLessFiveSixHelper'
-            : 'EventEspresso\core\domain\services\datetime\PhpCompatGreaterFiveSixHelper';
+            ? 'EventEspresso\core\services\helpers\datetime\PhpCompatLessFiveSixHelper'
+            : 'EventEspresso\core\services\helpers\datetime\PhpCompatGreaterFiveSixHelper';
         return LoaderFactory::getLoader()->getShared($dtt_helper_fqcn);
     }
 }
