@@ -37,9 +37,9 @@ class Url
     private $path;
 
     /**
-     * @var string $query_string
+     * @var string $query
      */
-    private $query_string;
+    private $query;
 
     /**
      * @var string $fragment
@@ -69,12 +69,15 @@ class Url
         $this->setScheme($url);
         $this->setHost($url);
         $this->setPath($url);
-        $this->setQueryString($url);
+        $this->setQuery($url);
         $this->setFragment($url);
     }
 
 
     /**
+     * For a URL like: abc://username:password@example.com:123/path/data?key=value#id
+     * will return a string like: 'abc://'
+     *
      * @return string
      */
     public function scheme()
@@ -93,6 +96,9 @@ class Url
 
 
     /**
+     * For a URL like: abc://username:password@example.com:123/path/data?key=value#id
+     * will return a string like: 'example.com'
+     *
      * @return string
      */
     public function host()
@@ -111,6 +117,9 @@ class Url
 
 
     /**
+     * For a URL like: abc://username:password@example.com:123/path/data?key=value#id
+     * will return a string like: '/path/data'
+     *
      * @return string
      */
     public function path()
@@ -129,33 +138,42 @@ class Url
 
 
     /**
+     * For a URL like: abc://username:password@example.com:123/path/data?key=value#id
+     * will return a string like: '?key=value'
+     *
      * @return string
      */
     public function queryString()
     {
-        return $this->query_string !== '' ? '?' . $this->query_string : '';
+        return $this->query !== '' ? '?' . $this->query : '';
     }
 
 
     /**
+     * For a URL like: abc://username:password@example.com:123/path/data?key=value#id
+     * will return an array like: array('key' => 'value')
+     *
      * @return array
      */
-    public function queryStringArray()
+    public function queryParams()
     {
-        return wp_parse_args($this->query_string);
+        return wp_parse_args($this->query);
     }
 
 
     /**
      * @param array $url
      */
-    private function setQueryString($url)
+    private function setQuery($url)
     {
-        $this->query_string = isset($url['query']) ? $url['query'] : '';
+        $this->query = isset($url['query']) ? $url['query'] : '';
     }
 
 
     /**
+     * For a URL like: abc://username:password@example.com:123/path/data?key=value#id
+     * will return a string like: '#id'
+     *
      * @return string
      */
     public function fragment()
@@ -174,6 +192,9 @@ class Url
 
 
     /**
+     * For a URL like: abc://username:password@example.com:123/path/data?key=value#id
+     * will return a string like: 'abc://example.com/path/data?key=value#id'
+     *
      * @return string
      */
     public function getFullUrl()
@@ -183,6 +204,9 @@ class Url
 
 
     /**
+     * For a URL like: abc://username:password@example.com:123/path/data?key=value#id
+     * will return a string like: 'abc://example.com/path/data?key=value#id'
+     *
      * @return string
      */
     public function __toString()
