@@ -360,6 +360,7 @@ class Read_Test extends \EE_REST_TestCase
         $this->authenticate_as_admin();
         $current_time_mysql_gmt = current_time('Y-m-d\TH:i:s', true);
         $current_time_mysql = current_time('Y-m-d\TH:i:s');
+
         //these model objects were instantiated when the tests started, so their
         //default time is actually quite old now (at least a few seconds, possibly a minute or two)
         //so make sure we're creating the event with the CURRENT current time
@@ -382,12 +383,12 @@ class Read_Test extends \EE_REST_TestCase
         $result = $response->get_data();
         $this->assertTrue(is_array($result));
         //compare all the times, realizing that _gmt times should be in UTC, others in the site's timezone
-        $this->assertDateWithinOneMinute($result['EVT_created'], $current_time_mysql, 'Y-m-d\TH:i:s');
-        $this->assertDateWithinOneMinute($result['EVT_modified'], $current_time_mysql, 'Y-m-d\TH:i:s');
-        $this->assertDateWithinOneMinute($result['EVT_visible_on'], $current_time_mysql, 'Y-m-d\TH:i:s');
-        $this->assertDateWithinOneMinute($result['EVT_created_gmt'], $current_time_mysql_gmt, 'Y-m-d\TH:i:s');
-        $this->assertDateWithinOneMinute($result['EVT_modified_gmt'], $current_time_mysql_gmt, 'Y-m-d\TH:i:s');
-        $this->assertDateWithinOneMinute($result['EVT_visible_on_gmt'], $current_time_mysql_gmt, 'Y-m-d\TH:i:s');
+        $this->assertDateWithinOneMinute($current_time_mysql, $result['EVT_created'], 'Y-m-d\TH:i:s');
+        $this->assertDateWithinOneMinute($current_time_mysql, $result['EVT_modified'], 'Y-m-d\TH:i:s');
+        $this->assertDateWithinOneMinute($current_time_mysql, $result['EVT_visible_on'], 'Y-m-d\TH:i:s');
+        $this->assertDateWithinOneMinute($current_time_mysql_gmt, $result['EVT_created_gmt'], 'Y-m-d\TH:i:s');
+        $this->assertDateWithinOneMinute($current_time_mysql_gmt, $result['EVT_modified_gmt'],'Y-m-d\TH:i:s');
+        $this->assertDateWithinOneMinute($current_time_mysql_gmt, $result['EVT_visible_on_gmt'], 'Y-m-d\TH:i:s');
         //and let's just double-check the site's timezone isn't UTC, which would make it impossible to know if timezone offsets
         //are being applied properly or not
         $this->assertNotEquals(
