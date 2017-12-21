@@ -198,6 +198,9 @@
 	color: #666;
 }
 
+.tckt-slctr-tkt-sale-dates-sctn > * {
+	display: block;
+}
 
 .tckt-slctr-tkt-details-dv {
 	position: relative;
