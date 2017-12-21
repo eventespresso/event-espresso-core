@@ -419,7 +419,10 @@ class EEH_Template
 
             }
         }
-        return $prefix . $class . $suffix;
+        
+        $class_string = $prefix . $class . $suffix;
+        
+        return do_filter('FHEE__EEH_Template__get_object_css_class__class_string', $class_string, $object, $prefix, $suffix);
     }
 
 
