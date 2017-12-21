@@ -479,7 +479,7 @@ if ( ! function_exists( 'espresso_list_of_event_dates' )) {
 					}
 					
 					$html .= '<span class="ee-event-datetime-date">';
-					$html .= '<span class="dashicons dashicons-calendar"></span><span class="ee-event-datetimes-li-daterange">' . $datetime->date_range( $date_format ) . '</span><br/>';
+					$html .= '<span class="dashicons dashicons-calendar"></span><span class="ee-event-datetimes-li-daterange">' . $datetime->date_range( $date_format ) . '</span>';
 					$html .= '</span>';
 					
 					$html .= '<span class="ee-event-datetime-time">';

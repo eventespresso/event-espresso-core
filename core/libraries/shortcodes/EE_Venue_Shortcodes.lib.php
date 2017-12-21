@@ -69,11 +69,23 @@ class EE_Venue_Shortcodes extends EE_Shortcodes
                 'event_espresso'
             ),
             '[GOOGLE_MAP_URL]'          => esc_html__(
-                'URL for the google map associated with the venue.',
+                'URL for the google map associated with the venue (optionally add custom width and height).',
                 'event_espresso'
-            ),
-            '[GOOGLE_MAP_LINK]'         => esc_html__('Link to a google map for the venue', 'event_espresso'),
-            '[GOOGLE_MAP_IMAGE]'        => esc_html__('Google map for venue wrapped in image tags', 'event_espresso'),
+                ).
+                '<p><ul>' .
+                '<li><strong>h</strong>:' . __('Height of the Image in px.', 'event_espresso') . '</li>' .
+                '<li><strong>w</strong>:' . __('Width of the Image in px.', 'event_espresso' ) . '</li>' .
+                '</ul></p>',
+            '[GOOGLE_MAP_LINK]'         => esc_html__('Link to a google map for the venue (optionally add custom width and height).', 'event_espresso').
+                '<p><ul>' .
+                '<li><strong>h</strong>:' . __('Height of the Image in px.', 'event_espresso') . '</li>' .
+                '<li><strong>w</strong>:' . __('Width of the Image in px.', 'event_espresso' ) . '</li>' .
+                '</ul></p>',
+            '[GOOGLE_MAP_IMAGE]'        => esc_html__('Google map for venue wrapped in image tags  (optionally add custom width and height).', 'event_espresso').
+                '<p><ul>' .
+                '<li><strong>h</strong>:' . __('Height of the Image in px.', 'event_espresso') . '</li>' .
+                '<li><strong>w</strong>:' . __('Width of the Image in px.', 'event_espresso' ) . '</li>' .
+                '</ul></p>',
         );
     }
 
@@ -143,22 +155,23 @@ class EE_Venue_Shortcodes extends EE_Shortcodes
                 return $this->_venue('formatted_address');
                 break;
 
-            case '[GOOGLE_MAP_URL]':
-                return $this->_venue('gmap_url');
-                break;
-
-            case '[GOOGLE_MAP_LINK]':
-                return $this->_venue('gmap_link');
-                break;
-
-            case '[GOOGLE_MAP_IMAGE]':
-                return $this->_venue('gmap_link_img');
-                break;
-
             case '[VENUE_DETAILS_URL]':
                 return $this->_venue('permalink');
                 break;
 
+        }
+        
+        if ( preg_match('/^\[GOOGLE_MAP_(LINK|IMAGE|URL)(_)?/', $shortcode, $matches) ) {
+            $field = 'gmap_';
+            if ($matches[1] == 'URL') {
+                $field .= 'url';
+            } else {
+                $field .= 'link';
+                if ($matches[1] == 'IMAGE') {
+                    $field .= '_img';
+                }
+            }
+            return $this->_venue($field, $this->_get_shortcode_attrs( $shortcode ));
         }
 
         if (strpos($shortcode, '[VENUE_META_*') !== false) {
@@ -226,7 +239,7 @@ class EE_Venue_Shortcodes extends EE_Shortcodes
      * @throws EE_Error
      * @throws EntityNotFoundException
      */
-    private function _venue($field)
+    private function _venue($field, $args = array())
     {
 
         if (! $this->_venue instanceof EE_Venue) {
@@ -296,7 +309,7 @@ class EE_Venue_Shortcodes extends EE_Shortcodes
             case 'gmap_link':
             case 'gmap_url':
             case 'gmap_link_img':
-                $atts = $this->get_map_attributes($this->_venue, $field);
+                $atts = $this->get_map_attributes($this->_venue, $field, $args);
                 return EEH_Maps::google_map_link($atts);
                 break;
         }
@@ -312,7 +325,7 @@ class EE_Venue_Shortcodes extends EE_Shortcodes
      * @return array
      * @throws EE_Error
      */
-    protected function get_map_attributes(EE_Venue $venue, $field = 'gmap_link')
+    protected function get_map_attributes(EE_Venue $venue, $field = 'gmap_link', $args = array())
     {
         $state   = $venue->state_obj();
         $country = $venue->country_obj();
@@ -324,8 +337,8 @@ class EE_Venue_Shortcodes extends EE_Shortcodes
             'zip'     => $venue->get('VNU_zip'),
             'country' => is_object($country) ? $country->get('CNT_name') : '',
             'type'    => $field === 'gmap_link' ? 'url' : 'map',
-            'map_w'   => 200,
-            'map_h'   => 200,
+            'map_w'   => !empty($args['w']) ? abs((int) $args['w']) : 200,
+            'map_h'   => !empty($args['h']) ? abs((int) $args['h']) : 200
         );
         if ($field === 'gmap_url') {
             $atts['type'] = 'url_only';
