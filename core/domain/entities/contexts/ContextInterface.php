@@ -13,7 +13,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package EventEspresso\core\domain\entities
  * @author  Brent Christensen
- * @since   4.9.46.rc.076
+ * @since   4.9.54
  */
 interface ContextInterface
 {
