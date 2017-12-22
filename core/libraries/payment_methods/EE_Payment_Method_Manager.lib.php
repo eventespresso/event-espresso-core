@@ -1,5 +1,7 @@
-<?php
+<?php 
 
+use EventEspresso\core\domain\entities\notifications\PersistentAdminNotice;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\interfaces\ResettableInterface;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
@@ -300,6 +302,7 @@ class EE_Payment_Method_Manager implements ResettableInterface
      *
      * @param string $payment_method_type the PMT_type; for EE_PMT_Invoice this would be 'Invoice'
      * @return EE_Payment_Method
+     * @throws InvalidDataTypeException
      * @throws EE_Error
      */
     public function activate_a_payment_method_of_type($payment_method_type)
@@ -336,7 +339,7 @@ class EE_Payment_Method_Manager implements ResettableInterface
             $message_resource_manager = EE_Registry::instance()->load_lib('Message_Resource_Manager');
             $message_resource_manager->ensure_message_type_is_active('invoice', 'html');
             $message_resource_manager->ensure_messenger_is_active('pdf');
-            EE_Error::add_persistent_admin_notice(
+            new PersistentAdminNotice(
                 'invoice_pm_requirements_notice',
                 sprintf(
                     esc_html__(
