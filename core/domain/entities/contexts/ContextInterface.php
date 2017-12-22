@@ -11,7 +11,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  * Simple DTO for conveying the background details about why some other logic is being performed,
  * that can assist with the decision making process or simply enhance logging.
  *
- * @package EventEspresso\core\domain\entities
+ * @package EventEspresso\core\domain\entities\contexts
  * @author  Brent Christensen
  * @since   4.9.54
  */
