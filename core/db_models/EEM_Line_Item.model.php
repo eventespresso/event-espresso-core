@@ -104,7 +104,7 @@ class EEM_Line_Item extends EEM_Base
      * to teh payment model object which actually refunded the payment.
      * Cancellations should NOT have any children line items; the should NOT affect
      * any calculations, and are only meant as a record that cancellations have occurred.
-     * Their LIN_percent should be 0.3
+     * Their LIN_percent should be 0.
      */
     const type_cancellation = 'cancellation';
 
