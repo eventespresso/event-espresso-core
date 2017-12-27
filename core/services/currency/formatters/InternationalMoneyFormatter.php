@@ -16,7 +16,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  * @author        Brent Christensen
  * @since         $VID:$
  */
-class InternationalMoneyFormatter implements MoneyFormatter
+class InternationalMoneyFormatter implements MoneyFormatterInterface
 {
 
 

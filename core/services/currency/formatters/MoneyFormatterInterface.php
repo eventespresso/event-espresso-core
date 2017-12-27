@@ -9,24 +9,21 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
 /**
- * Class CurrencyCodeMoneyFormatter
- * appends the currency code to the supplied amount
+ * Class MoneyFormatter
+ * simple interface for classes that format money amounts according to a specific currency's rules
  *
  * @package       Event Espresso
  * @author        Brent Christensen
  * @since         $VID:$
  */
-class CurrencyCodeMoneyFormatter implements MoneyFormatterInterface
+interface MoneyFormatterInterface
 {
-
     /**
      * @param string   $money_amount
      * @param Currency $currency
      * @return string
      */
-    public function format($money_amount, Currency $currency)
-    {
-        return $money_amount . ' ' . $currency->code();
-    }
+    public function format($money_amount, Currency $currency);
+
 
 }

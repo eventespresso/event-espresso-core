@@ -11,7 +11,7 @@ use EventEspresso\core\services\currency\formatters\CurrencyCodeMoneyFormatter;
 use EventEspresso\core\services\currency\formatters\CurrencySignMoneyFormatter;
 use EventEspresso\core\services\currency\formatters\DecimalMoneyFormatter;
 use EventEspresso\core\services\currency\formatters\InternationalMoneyFormatter;
-use EventEspresso\core\services\currency\formatters\MoneyFormatter;
+use EventEspresso\core\services\currency\formatters\MoneyFormatterInterface;
 use EventEspresso\core\services\currency\formatters\ThousandsMoneyFormatter;
 use InvalidArgumentException;
 
