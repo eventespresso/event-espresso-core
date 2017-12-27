@@ -1,4 +1,10 @@
 <?php
+
+use EventEspresso\core\services\helpers\datetime\HelperInterface;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\loaders\LoaderFactory;
+
 defined('EVENT_ESPRESSO_VERSION') || exit('NO direct script access allowed');
 
 
@@ -19,7 +25,9 @@ class EEH_DTT_Helper
      * return the timezone set for the WP install
      *
      * @return string valid timezone string for PHP DateTimeZone() class
-     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public static function get_timezone()
     {
@@ -33,18 +41,13 @@ class EEH_DTT_Helper
      *
      * @param string $timezone_string
      * @return string
-     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public static function get_valid_timezone_string($timezone_string = '')
     {
-        // if passed a value, then use that, else get WP option
-        $timezone_string = ! empty($timezone_string) ? $timezone_string : (string) get_option('timezone_string');
-        // value from above exists, use that, else get timezone string from gmt_offset
-        $timezone_string = ! empty($timezone_string)
-            ? $timezone_string
-            : EEH_DTT_Helper::get_timezone_string_from_gmt_offset();
-        EEH_DTT_Helper::validate_timezone($timezone_string);
-        return $timezone_string;
+        return self::getHelperAdapter()->getValidTimezoneString($timezone_string);
     }
 
 
@@ -55,31 +58,13 @@ class EEH_DTT_Helper
      * @param  string $timezone_string Timezone string to check
      * @param bool    $throw_error
      * @return bool
-     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public static function validate_timezone($timezone_string, $throw_error = true)
     {
-        // easiest way to test a timezone string is just see if it throws an error when you try to create a DateTimeZone object with it
-        try {
-            new DateTimeZone($timezone_string);
-        } catch (Exception $e) {
-            // sometimes we take exception to exceptions
-            if (! $throw_error) {
-                return false;
-            }
-            throw new EE_Error(
-                sprintf(
-                    esc_html__(
-                        'The timezone given (%1$s), is invalid, please check with %2$sthis list%3$s for what valid timezones can be used',
-                        'event_espresso'
-                    ),
-                    $timezone_string,
-                    '<a href="http://www.php.net/manual/en/timezones.php">',
-                    '</a>'
-                )
-            );
-        }
-        return true;
+        return self::getHelperAdapter()->validateTimezone($timezone_string, $throw_error);
     }
 
 
@@ -88,49 +73,13 @@ class EEH_DTT_Helper
      *
      * @param float|string $gmt_offset
      * @return string
-     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public static function get_timezone_string_from_gmt_offset($gmt_offset = '')
     {
-        $timezone_string = 'UTC';
-        //if there is no incoming gmt_offset, then because WP hooks in on timezone_string, we need to see if that is
-        //set because it will override `gmt_offset` via `pre_get_option` filter.  If that's set, then let's just use
-        //that!  Otherwise we'll leave timezone_string at the default of 'UTC' before doing other logic.
-        if ($gmt_offset === '') {
-            //autoloaded so no need to set to a variable.  There will not be multiple hits to the db.
-            if (get_option('timezone_string')) {
-                return (string) get_option('timezone_string');
-            }
-        }
-        $gmt_offset = $gmt_offset !== '' ? $gmt_offset : (string) get_option('gmt_offset');
-        $gmt_offset = (float) $gmt_offset;
-        //if $gmt_offset is 0, then just return UTC
-        if ($gmt_offset === (float) 0) {
-            return $timezone_string;
-        }
-        if ($gmt_offset !== '') {
-            // convert GMT offset to seconds
-            $gmt_offset *= HOUR_IN_SECONDS;
-            // although we don't know the TZ abbreviation, we know the UTC offset
-            $timezone_string = timezone_name_from_abbr(null, $gmt_offset);
-            //only use this timezone_string IF it's current offset matches the given offset
-            if(! empty($timezone_string)) {
-                $offset  = null;
-                try {
-                    $offset = self::get_timezone_offset(new DateTimeZone($timezone_string));
-                    if ($offset !== $gmt_offset) {
-                        $timezone_string = false;
-                    }
-                } catch (Exception $e) {
-                    $timezone_string = false;
-                }
-            }
-        }
-        // better have a valid timezone string by now, but if not, sigh... loop thru  the timezone_abbreviations_list()...
-        $timezone_string = $timezone_string !== false
-            ? $timezone_string
-            : EEH_DTT_Helper::get_timezone_string_from_abbreviations_list($gmt_offset);
-        return $timezone_string;
+        return self::getHelperAdapter()->getTimezoneStringFromGmtOffset($gmt_offset);
     }
 
 
@@ -140,19 +89,13 @@ class EEH_DTT_Helper
      * observance of daylight savings time) or the gmt_offset wp option
      *
      * @return int seconds offset
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public static function get_site_timezone_gmt_offset()
     {
-        $timezone_string = (string) get_option('timezone_string');
-        if ($timezone_string) {
-            try {
-                $timezone = new DateTimeZone($timezone_string);
-                return $timezone->getOffset(new DateTime()); //in WordPress DateTime defaults to UTC
-            } catch (Exception $e) {
-            }
-        }
-        $offset = get_option('gmt_offset');
-        return (int) ($offset * HOUR_IN_SECONDS);
+        return self::getHelperAdapter()->getSiteTimezoneGmtOffset();
     }
 
 
@@ -162,114 +105,32 @@ class EEH_DTT_Helper
      * To get around that, for these fringe timezones we bump them to a known valid offset.
      * This method should ONLY be called after first verifying an timezone_string cannot be retrieved for the offset.
      *
+     * @deprecated 4.9.54.rc    Developers this was always meant to only be an internally used method.  This will be
+     *                          removed in a future version of EE.
      * @param int $gmt_offset
      * @return int
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public static function adjust_invalid_gmt_offsets($gmt_offset = 0)
     {
-        //make sure $gmt_offset is int
-        $gmt_offset = (int) $gmt_offset;
-        switch ($gmt_offset) {
-            //-12
-            case -43200:
-                $gmt_offset = -39600;
-                break;
-            //-11.5
-            case -41400:
-                $gmt_offset = -39600;
-                break;
-            //-10.5
-            case -37800:
-                $gmt_offset = -39600;
-                break;
-            //-8.5
-            case -30600:
-                $gmt_offset = -28800;
-                break;
-            //-7.5
-            case -27000:
-                $gmt_offset = -25200;
-                break;
-            //-6.5
-            case -23400:
-                $gmt_offset = -21600;
-                break;
-            //-5.5
-            case -19800:
-                $gmt_offset = -18000;
-                break;
-            //-4.5
-            case -16200:
-                $gmt_offset = -14400;
-                break;
-            //-3.5
-            case -12600:
-                $gmt_offset = -10800;
-                break;
-            //-2.5
-            case -9000:
-                $gmt_offset = -7200;
-                break;
-            //-1.5
-            case -5400:
-                $gmt_offset = -3600;
-                break;
-            //-0.5
-            case -1800:
-                $gmt_offset = 0;
-                break;
-            //.5
-            case 1800:
-                $gmt_offset = 3600;
-                break;
-            //1.5
-            case 5400:
-                $gmt_offset = 7200;
-                break;
-            //2.5
-            case 9000:
-                $gmt_offset = 10800;
-                break;
-            //3.5
-            case 12600:
-                $gmt_offset = 14400;
-                break;
-            //7.5
-            case 27000:
-                $gmt_offset = 28800;
-                break;
-            //8.5
-            case 30600:
-                $gmt_offset = 31500;
-                break;
-            //10.5
-            case 37800:
-                $gmt_offset = 39600;
-                break;
-            //11.5
-            case 41400:
-                $gmt_offset = 43200;
-                break;
-            //12.75
-            case 45900:
-                $gmt_offset = 46800;
-                break;
-            //13.75
-            case 49500:
-                $gmt_offset = 50400;
-                break;
-        }
-        return $gmt_offset;
+        return self::getHelperAdapter()->adjustInvalidGmtOffsets($gmt_offset);
     }
 
 
     /**
      * get_timezone_string_from_abbreviations_list
      *
+     * @deprecated 4.9.54.rc  Developers, this was never intended to be public.  This is a soft deprecation for now.
+     *                        If you are using this, you'll want to work out an alternate way of getting the value.
      * @param int  $gmt_offset
      * @param bool $coerce If true, we attempt to coerce with our adjustment table @see self::adjust_invalid_gmt_offset.
      * @return string
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public static function get_timezone_string_from_abbreviations_list($gmt_offset = 0, $coerce = true)
     {
@@ -315,21 +176,20 @@ class EEH_DTT_Helper
     }
 
 
-
     /**
      * Get Timezone Transitions
      *
      * @param DateTimeZone $date_time_zone
      * @param int|null     $time
      * @param bool         $first_only
-     * @return array|mixed
+     * @return array
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public static function get_timezone_transitions(DateTimeZone $date_time_zone, $time = null, $first_only = true)
     {
-        $time        = is_int($time) || $time === null ? $time : (int) strtotime($time);
-        $time        = preg_match(EE_Datetime_Field::unix_timestamp_regex, $time) ? $time : time();
-        $transitions = $date_time_zone->getTransitions($time);
-        return $first_only && ! isset($transitions['ts']) ? reset($transitions) : $transitions;
+        return self::getHelperAdapter()->getTimezoneTransitions($date_time_zone, $time, $first_only);
     }
 
 
@@ -339,121 +199,27 @@ class EEH_DTT_Helper
      * @param DateTimeZone $date_time_zone
      * @param null         $time
      * @return mixed
-     * @throws DomainException
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public static function get_timezone_offset(DateTimeZone $date_time_zone, $time = null)
     {
-        $transition = self::get_timezone_transitions($date_time_zone, $time);
-        if (! isset($transition['offset'])) {
-            throw new DomainException(
-                sprintf(
-                    esc_html__('An invalid timezone transition was received %1$s', 'event_espresso'),
-                    print_r($transition, true)
-                )
-            );
-        }
-        return $transition['offset'];
+        return self::getHelperAdapter()->getTimezoneOffset($date_time_zone, $time);
     }
 
 
     /**
+     * Prints a select input for the given timezone string.
      * @param string $timezone_string
-     * @throws EE_Error
+     * @deprecatd 4.9.54.rc   Soft deprecation.  Consider using \EEH_DTT_Helper::wp_timezone_choice instead.
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public static function timezone_select_input($timezone_string = '')
     {
-        // get WP date time format
-        $datetime_format = get_option('date_format') . ' ' . get_option('time_format');
-        // if passed a value, then use that, else get WP option
-        $timezone_string = ! empty($timezone_string) ? $timezone_string : (string) get_option('timezone_string');
-        // check if the timezone is valid but don't throw any errors if it isn't
-        $timezone_string = EEH_DTT_Helper::validate_timezone($timezone_string, false)
-            ? $timezone_string
-            : '';
-        $gmt_offset      = get_option('gmt_offset');
-        $check_zone_info = true;
-        if (empty($timezone_string)) {
-            // Create a UTC+- zone if no timezone string exists
-            $timezone_string = 'UTC';
-            $check_zone_info = false;
-            if ($gmt_offset > 0) {
-                $timezone_string = 'UTC+' . $gmt_offset;
-            } elseif ($gmt_offset < 0) {
-                $timezone_string = 'UTC' . $gmt_offset;
-            }
-        }
-        ?>
-
-        <p>
-            <label for="timezone_string"><?php _e('timezone'); ?></label>
-            <select id="timezone_string" name="timezone_string">
-                <?php echo wp_timezone_choice($timezone_string); ?>
-            </select>
-            <br/>
-            <span class="description"><?php _e('Choose a city in the same timezone as the event.'); ?></span>
-        </p>
-
-        <p>
-        <span><?php
-            printf(
-                __('%1$sUTC%2$s time is %3$s'),
-                '<abbr title="Coordinated Universal Time">',
-                '</abbr>',
-                '<code>' . date_i18n($datetime_format, false, true) . '</code>'
-            );
-            ?></span>
-        <?php if (! empty($timezone_string) || ! empty($gmt_offset)) : ?>
-        <br/><span><?php printf(__('Local time is %1$s'), '<code>' . date_i18n($datetime_format) . '</code>'); ?></span>
-    <?php endif; ?>
-
-        <?php if ($check_zone_info && $timezone_string) : ?>
-        <br/>
-        <span>
-					<?php
-                    // Set TZ so localtime works.
-                    date_default_timezone_set($timezone_string);
-                    $now = localtime(time(), true);
-                    if ($now['tm_isdst']) {
-                        _e('This timezone is currently in daylight saving time.');
-                    } else {
-                        _e('This timezone is currently in standard time.');
-                    }
-                    ?>
-            <br/>
-            <?php
-            if (function_exists('timezone_transitions_get')) {
-                $found                   = false;
-                $date_time_zone_selected = new DateTimeZone($timezone_string);
-                $tz_offset               = timezone_offset_get($date_time_zone_selected, date_create());
-                $right_now               = time();
-                $tr['isdst']             = false;
-                foreach (timezone_transitions_get($date_time_zone_selected) as $tr) {
-                    if ($tr['ts'] > $right_now) {
-                        $found = true;
-                        break;
-                    }
-                }
-                if ($found) {
-                    $message = $tr['isdst']
-                        ?
-                        __(' Daylight saving time begins on: %s.')
-                        :
-                        __(' Standard time begins  on: %s.');
-                    // Add the difference between the current offset and the new offset to ts to get the correct transition time from date_i18n().
-                    printf(
-                        $message,
-                        '<code >' . date_i18n($datetime_format, $tr['ts'] + ($tz_offset - $tr['offset'])) . '</code >'
-                    );
-                } else {
-                    _e('This timezone does not observe daylight saving time.');
-                }
-            }
-            // Set back to UTC.
-            date_default_timezone_set('UTC');
-            ?>
-				</span></p>
-        <?php
-    endif;
+        self::getHelperAdapter()->timezoneSelectInput($timezone_string);
     }
 
 
@@ -468,16 +234,13 @@ class EEH_DTT_Helper
      * @param string $timezone_string                 timezone_string. If empty, then the current set timezone for the
      *                                                site will be used.
      * @return int $unix_timestamp with the offset applied for the given timezone.
-     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public static function get_timestamp_with_offset($unix_timestamp = 0, $timezone_string = '')
     {
-        $unix_timestamp  = $unix_timestamp === 0 ? time() : (int) $unix_timestamp;
-        $timezone_string = self::get_valid_timezone_string($timezone_string);
-        $TimeZone        = new DateTimeZone($timezone_string);
-        $DateTime        = new DateTime('@' . $unix_timestamp, $TimeZone);
-        $offset          = timezone_offset_get($TimeZone, $DateTime);
-        return (int) $DateTime->format('U') + (int) $offset;
+        return self::getHelperAdapter()->getTimestampWithOffset($unix_timestamp, $timezone_string);
     }
 
 
@@ -1253,4 +1016,19 @@ class EEH_DTT_Helper
         return get_locale();
     }
 
+
+    /**
+     * Return the appropriate helper adapter for DTT related things.
+     *
+     * @return HelperInterface
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    private static function getHelperAdapter() {
+        $dtt_helper_fqcn = PHP_VERSION_ID < 50600
+            ? 'EventEspresso\core\services\helpers\datetime\PhpCompatLessFiveSixHelper'
+            : 'EventEspresso\core\services\helpers\datetime\PhpCompatGreaterFiveSixHelper';
+        return LoaderFactory::getLoader()->getShared($dtt_helper_fqcn);
+    }
 }
