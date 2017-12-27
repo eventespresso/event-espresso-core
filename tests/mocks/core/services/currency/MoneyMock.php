@@ -4,7 +4,7 @@ namespace EventEspresso\tests\mocks\core\services\currency;
 
 use EventEspresso\core\domain\values\currency\Money;
 use EventEspresso\core\services\currency\Calculator;
-use EventEspresso\core\services\currency\formatters\MoneyFormatter;
+use EventEspresso\core\services\currency\formatters\MoneyFormatterInterface;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -31,7 +31,7 @@ class MoneyMock extends Money
 
 
     /**
-     * @return MoneyFormatter[]
+     * @return MoneyFormatterInterface[]
      */
     public function getFormatters()
     {
