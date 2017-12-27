@@ -23,7 +23,6 @@ class EEH_Activation_Test extends EE_UnitTestCase {
 	 * The purpose of this test is to ensure that generation of default templates works as expected.
 	 *
 	 * @since 4.5.0
-	 * @group failing
 	 */
 	public function test_generate_default_message_templates() {
 		/**
