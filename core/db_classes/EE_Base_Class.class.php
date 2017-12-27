@@ -1146,6 +1146,16 @@ abstract class EE_Base_Class
         $this->e($field_name, 'form_input');
     }
 
+    /**
+     * Same as `f()` but just returns the value instead of echoing it
+     * @param string $field_name
+     * @return string
+     */
+    public function get_f($field_name)
+    {
+        return (string)$this->get_pretty($field_name,'form_input');
+    }
+
 
 
     /**
