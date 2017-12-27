@@ -125,7 +125,7 @@ class EEH_Form_Fields {
 				// text inputs
 				case 'text' :
 					$output .= "\n\t\t\t" . '<label for="' . $field_id . '">' . $input_value['label'] . $required . '</label>';
-					$output .= "\n\t\t\t" . '<input id="' . $field_id . '" class="' . $styles . '" type="text" value="' . $input_value['value'] . '" name="' . $input_value['name'] . '"' . $tabindex . '>';
+					$output .= "\n\t\t\t" . '<input id="' . $field_id . '" class="' . $styles . '" type="text" value="' . esc_textarea($input_value['value']) . '" name="' . $input_value['name'] . '"' . $tabindex . '>';
 					break;
 
 				// dropdowns
@@ -152,7 +152,7 @@ class EEH_Form_Fields {
 				case 'textarea' :
 
 					$output .= "\n\t\t\t" . '<label for="' . $field_id . '">' . $input_value['label'] . $required . '</label>';
-					$output .= "\n\t\t\t" . '<textarea id="' . $field_id . '" class="' . $styles . '" rows="'.$rows.'" cols="'.$cols.'" name="' . $input_value['name'] . '"' . $tabindex . '>' . $input_value['value'] . '</textarea>';
+					$output .= "\n\t\t\t" . '<textarea id="' . $field_id . '" class="' . $styles . '" rows="'.$rows.'" cols="'.$cols.'" name="' . $input_value['name'] . '"' . $tabindex . '>' . esc_textarea($input_value['value']) . '</textarea>';
 					break;
 
 				case 'hidden' :

@@ -1,9 +1,10 @@
 <?php
 namespace EventEspresso\core\exceptions;
 
-if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
-	exit( 'No direct script access allowed' );
-}
+use Exception;
+use InvalidArgumentException;
+
+defined('EVENT_ESPRESSO_VERSION') || exit('NO direct script access allowed');
 
 
 
@@ -15,7 +16,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @author        Brent Christensen
  * @since         4.9.0
  */
-class InvalidDataTypeException extends \InvalidArgumentException {
+class InvalidDataTypeException extends InvalidArgumentException {
 
 	/**
 	 * InvalidDataTypeException constructor
@@ -26,9 +27,9 @@ class InvalidDataTypeException extends \InvalidArgumentException {
 	 *                             or an entire rewrite of: "{something something} was expected."
 	 * @param string     $message
 	 * @param int        $code
-	 * @param \Exception $previous
+	 * @param Exception $previous
 	 */
-	public function __construct( $var_name, $variable, $expected, $message = '', $code = 0, \Exception $previous = null ) {
+	public function __construct( $var_name, $variable, $expected, $message = '', $code = 0, Exception $previous = null ) {
 		if ( empty( $message ) ) {
 			$expected = strpos( ' was expected.', $expected ) === false
 				? $this->addIndefiniteArticle( $expected ) . ' was expected.'

@@ -259,7 +259,6 @@ class EE_Capabilities_Test extends EE_UnitTestCase
     }
 
 
-
     public function testPaymentMethodCaps()
     {
         // we're going to fake the activation of the Mock_Onsite payment method
@@ -306,6 +305,9 @@ class EE_Capabilities_Test extends EE_UnitTestCase
         );
         // now deactivate the Mock Onsite PM
         EE_Register_Payment_Method::deregister('onsite');
+        //deregister will just set the hook to run on `AHEE__EE_System__core_loaded_and_ready` so we need to call that
+        //hook
+        do_action('AHEE__EE_System__core_loaded_and_ready');
         // and confirm that the admin role now has lost that cap
         $this->assertFalse(
             $administrator_role->has_cap($mock_onsite_capability),

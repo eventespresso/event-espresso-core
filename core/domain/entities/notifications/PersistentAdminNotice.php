@@ -343,15 +343,13 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
     public function confirmRegistered()
     {
         if (! $this->registered && WP_DEBUG) {
-            new ExceptionStackTraceDisplay(
-                new DomainException(
-                    sprintf(
-                        esc_html__(
-                            'The "%1$s" PersistentAdminNotice was not successfully registered. Please ensure that it is being created prior to either the "admin_notices" or "network_admin_notices" hooks being triggered.',
-                            'event_espresso'
-                        ),
-                        $this->name
-                    )
+            throw new DomainException(
+                sprintf(
+                    esc_html__(
+                        'The "%1$s" PersistentAdminNotice was not successfully registered. Please ensure that it is being created prior to either the "admin_notices" or "network_admin_notices" hooks being triggered.',
+                        'event_espresso'
+                    ),
+                    $this->name
                 )
             );
         }

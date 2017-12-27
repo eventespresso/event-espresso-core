@@ -9,17 +9,42 @@ jQuery( document ).ready( function ( $ ) {
 		*	center elements on screen
 		 * @param {string}  position // relative, absolute or fixed (default)
 		*/
-		eeCenter : function( position ) {
-			position = typeof position !== 'undefined' && position !== '' ? position : 'fixed';
-			var element_top = (( $( window ).height() / 2 ) - this.outerHeight() ) / 2;
-			element_top = position === 'fixed' ? element_top + $( window ).height() / 8 : element_top + $( window ).scrollTop;
-			element_top = Math.max( 0, element_top );
-			var element_left = ( $( window ).width() - this.outerWidth() ) / 2;
-			element_left = position === 'fixed' ? element_left : element_left + $( window ).scrollLeft;
-			element_left = Math.max( 0, element_left );
-			this.css({ 'position' : position, 'top' : element_top + 'px', 'left' : element_left + 'px' , 'margin' : 0 });
-			return this;
-		},
+        eeCenter: function(position) {
+            position             = typeof position !== 'undefined' && position !== '' ? position : 'fixed';
+            var window_height    = $(window).height(),
+                window_width     = $(window).width(),
+                container_height = this.outerHeight(),
+                container_width  = this.outerWidth(),
+                element_top      = 0,
+                element_left     = 0;
+            //  top
+            if(container_height < window_height) {
+                element_top = (( window_height / 2 ) - container_height ) / 2;
+                element_top = position === 'fixed'
+                    ? element_top + window_height / 8
+                    : element_top + $(window).scrollTop;
+            } else if (container_height !== window_height) {
+                element_top= $(window).scrollTop
+            }
+
+            // left
+            if (container_width < window_width) {
+                element_left = ( window_width - container_width ) / 2;
+                element_left = position === 'fixed'
+                    ? element_left
+                    : element_left + $(window).scrollLeft;
+            } else if (container_width !== window_width) {
+                element_left = $(window).scrollLeft;
+            }
+
+            this.css({
+                'position': position,
+                'top':      Math.max(1, element_top) + 'px',
+                'left':     Math.max(0, element_left) + 'px',
+                'margin':   0
+            });
+            return this;
+        },
 
 
 		/**
@@ -617,7 +642,7 @@ window.console_log_object = function( obj_name, obj, depth ) {
 	} else {
 		console_log( spacer + obj_name, obj, true );
 	}
-}
+};
 
 
 /**

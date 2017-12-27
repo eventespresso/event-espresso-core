@@ -18,6 +18,13 @@
  * @package			Event Espresso
  * @subpackage	includes/models/
  * @author				Brent Christensen
+ * Since 4.9.54.p, this model should only be used to query for information on how to display countries and currencies,
+ * not to perform calculations or run other business logic using currencies.
+ * You should probably consider instead using EventEspresso\core\services\currency\CurrencyFactory.
+ * The reason for this is because the database entries can be modified by site admins, usually in order to change
+ * how the currencies are displayed. However, when dealing with other web services etc, we need to have accurate information
+ * in which case the currency factory, which uses core/services/currency/country-currencies.json, which is easily
+ * modified during a code update.
  *
  * ------------------------------------------------------------------------
  */
