@@ -244,9 +244,9 @@ class ProcessTicketSelector
                     'event_espresso'), __FILE__, __FUNCTION__, __LINE__);
             }
             
-        } elseif ( ! EE_Error::has_error() && ! EE_Error::has_error(true, 'attention')) {
+        } elseif ( ! \EE_Error::has_error() && ! \EE_Error::has_error(true, 'attention')) {
             // nothing added to cart
-            EE_Error::add_attention(__('There was an error adding your tickets to the cart', 'event_espresso'), __FILE__,
+            \EE_Error::add_attention(__('There was an error adding your tickets to the cart', 'event_espresso'), __FILE__,
                 __FUNCTION__, __LINE__);
         }
         
