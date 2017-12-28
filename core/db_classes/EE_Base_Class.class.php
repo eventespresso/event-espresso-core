@@ -1078,9 +1078,17 @@ abstract class EE_Base_Class
     public function get_raw($field_name)
     {
         $field_settings = $this->get_model()->field_settings_for($field_name);
-        return $field_settings instanceof EE_Datetime_Field && $this->_fields[$field_name] instanceof DateTime
-            ? $this->_fields[$field_name]->format('U')
-            : $this->_fields[$field_name];
+        switch(true){
+            case $field_settings instanceof EE_Datetime_Field && $this->_fields[$field_name] instanceof DateTime:
+                $value = $this->_fields[$field_name]->format('U');
+                break;
+            case $field_settings instanceof EE_Money_Field && $this->_fields[$field_name] instanceof Money:
+                $value = $this->_fields[$field_name]->floatAmount();
+                break;
+            default:
+                $value = $this->_fields[$field_name];
+        }
+        return $value;
     }
 
 
@@ -1186,6 +1194,16 @@ abstract class EE_Base_Class
     public function f($field_name)
     {
         $this->e($field_name, 'form_input');
+    }
+
+    /**
+     * Same as `f()` but just returns the value instead of echoing it
+     * @param string $field_name
+     * @return string
+     */
+    public function get_f($field_name)
+    {
+        return (string)$this->get_pretty($field_name,'form_input');
     }
 
 

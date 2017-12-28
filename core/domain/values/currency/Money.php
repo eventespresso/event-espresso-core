@@ -4,7 +4,6 @@ namespace EventEspresso\core\domain\values\currency;
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\services\currency\Calculator;
-use EventEspresso\core\services\currency\formatters\MoneyFormatter;
 use InvalidArgumentException;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
@@ -44,11 +43,6 @@ class Money
      */
     protected $calculator;
 
-    /**
-     * @var MoneyFormatter[] $formatters
-     */
-    protected $formatters;
-
 
 
     /**
@@ -58,15 +52,13 @@ class Money
      *                                 example: $12.5 USD would equate to a value amount of 12.50
      * @param Currency         $currency
      * @param Calculator       $calculator
-     * @param MoneyFormatter[] $formatters
      * @throws InvalidDataTypeException
      */
-    public function __construct($amount, Currency $currency, Calculator $calculator, array $formatters)
+    public function __construct($amount, Currency $currency, Calculator $calculator)
     {
         $this->currency   = $currency;
         $this->amount     = $this->parseAmount($amount);
         $this->calculator = $calculator;
-        $this->formatters = $formatters;
     }
 
 
@@ -77,16 +69,6 @@ class Money
     protected function calculator()
     {
         return $this->calculator;
-    }
-
-
-
-    /**
-     * @return MoneyFormatter[]
-     */
-    protected function formatters()
-    {
-        return $this->formatters;
     }
 
 
@@ -124,9 +106,13 @@ class Money
         }
         // remove any non numeric values but leave the decimal
         $amount = (float) preg_replace('/([^0-9\\.-])/', '', $amount);
-        // shift the decimal position by the number of decimal places used internally
-        // ex: 12.5 for a currency using 2 decimal places, would become 1250
-        // then if our extra internal precision was 3, it would become 1250000
+        // maybe convert the incoming  decimal amount to the currencies subunits
+        // ex: 12.5 for a currency with 100 subunits would become 1250
+        if ($this->currency()->subunits()) {
+            $amount *= $this->currency()->subunits();
+        }
+        // then shift the decimal position by the number of decimal places used internally
+        // so if our extra internal precision was 3, it would become 1250000
         $amount *= pow(10, $this->precision());
         // then round up the remaining value if there is still a fractional amount left
         $amount = round($amount);
@@ -138,13 +124,32 @@ class Money
     /**
      * adds or subtracts additional decimal places based on the value of the Money::EXTRA_PRECISION constant
      *
-     * @param bool $positive
+     * @param bool $adding_precision if true, will move the decimal to the right (increase amount)
+     *                               if false, will move the decimal to the left (decrease amount)
      * @return integer
      */
-    private function precision($positive = true)
+    private function precision($adding_precision = true)
     {
-        $sign = $positive ? 1 : -1;
-        return ((int) $this->currency->subunitOrderOfMagnitudeDiff() + Money::EXTRA_PRECISION) * $sign;
+        $sign = $adding_precision ? 1 : -1;
+        return Money::EXTRA_PRECISION * $sign;
+    }
+
+    /**
+     * Returns the money amount as an unformatted float
+     * @return float
+     */
+    public function floatAmount()
+    {
+        // shift the decimal position BACK by the number of decimal places used internally
+        // ex: if our extra internal precision was 3, then 1250000 would become 1250
+        $amount = $this->amount * pow(10, $this->precision(false));
+        // then maybe adjust for the currencies subunits
+        // ex: 1250 for a currency with 100 subunits would become 12.50
+        if ($this->currency()->subunits()) {
+            $amount /= $this->currency()->subunits();
+        }
+        // then shave off our extra internal precision using the number of decimal places for the currency
+        return $this->currency()->decimalPlaces();
     }
 
 
@@ -158,12 +163,7 @@ class Money
      */
     public function amount()
     {
-        // shift the decimal position BACK by the number of decimal places used internally
-        // ex: 1250 for a currency using 2 decimal places, would become 12.50
-        $amount = (string) $this->amount * pow(10, $this->precision(false));
-        // then shave off our extra internal precision using the number of decimal places for the currency
-        $amount = round($amount, $this->currency->subunitOrderOfMagnitudeDiff());
-        return (string) $amount;
+        return (string) round($this->floatAmount(), $this->currency()->decimalPlaces());
     }
 
 
@@ -178,41 +178,11 @@ class Money
         // shift the decimal position BACK by the number of decimal places used internally
         // for extra internal precision, but NOT for the number of decimals used by the currency
         // ex: if our extra internal precision was 3, then 1250000 would become 1250
-        // and even if the currency used 2 decimal places, we would return 1250 and NOT 12.50
-        $amount = (string) $this->amount * pow(10, Money::EXTRA_PRECISION * -1);
+        // and even if the currency used 100 subunits, we would return 1250 and NOT 12.50
+        $amount = (string) $this->amount * pow(10, $this->precision(false));
         // then shave off anything after the decimal
         $amount = round($amount);
         return (int) $amount;
-    }
-
-
-
-    /**
-     * applies formatting based on the specified formatting level
-     * corresponding to one of the constants on MoneyFormatter
-     *
-     * @param int $formatting_level
-     * @return string
-     */
-    public function format($formatting_level = MoneyFormatter::ADD_THOUSANDS)
-    {
-        $formatted_amount = $this->amount();
-        $formatters       = $this->formatters();
-        // if we are applying thousands formatting...
-        if ($formatting_level >= MoneyFormatter::ADD_THOUSANDS) {
-            // then let's remove decimal formatting since it's included in thousands formatting
-            unset($formatters[ MoneyFormatter::DECIMAL_ONLY ]);
-        }
-        for ($x = 1; $x <= $formatting_level; $x++) {
-            if (isset($formatters[ $x ]) && $formatters[ $x ] instanceof MoneyFormatter) {
-                $formatted_amount = $formatters[ $x ]->format($formatted_amount, $this->currency);
-            }
-        }
-        return (string) apply_filters(
-            'FHEE__EventEspresso_core_domain_values_currency_Money__format__formatted_amount',
-            $formatted_amount,
-            $this
-        );
     }
 
 
@@ -246,8 +216,7 @@ class Money
                 $other->amount()
             ),
             $this->currency(),
-            $this->calculator(),
-            $this->formatters()
+            $this->calculator()
         );
     }
 
@@ -270,11 +239,9 @@ class Money
                 $other->amount()
             ),
             $this->currency(),
-            $this->calculator(),
-            $this->formatters()
+            $this->calculator()
         );
     }
-
 
 
     /**
@@ -296,11 +263,9 @@ class Money
                 $rounding_mode
             ),
             $this->currency(),
-            $this->calculator(),
-            $this->formatters()
+            $this->calculator()
         );
     }
-
 
 
     /**
@@ -322,8 +287,7 @@ class Money
                 $rounding_mode
             ),
             $this->currency(),
-            $this->calculator(),
-            $this->formatters()
+            $this->calculator()
         );
     }
 
@@ -352,8 +316,6 @@ class Money
      */
     public function __toString()
     {
-        return $this->format(MoneyFormatter::DECIMAL_ONLY);
+        return $this->amount();
     }
 }
-// End of file Money.php
-// Location: core/entities/money/Money.php

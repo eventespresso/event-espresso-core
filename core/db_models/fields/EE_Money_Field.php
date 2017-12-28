@@ -20,6 +20,10 @@ class EE_Money_Field extends EE_Float_Field
      */
     protected $money_factory;
 
+    /**
+     * @var $money_formatter MoneyFormatter
+     */
+    protected $money_formatter;
 
 
     /**
@@ -28,6 +32,7 @@ class EE_Money_Field extends EE_Float_Field
      * @param bool         $nullable
      * @param null         $default_value
      * @param MoneyFactory $factory
+     * @param MoneyFormatter $money_formatter
      * @throws \InvalidArgumentException
      * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
@@ -37,12 +42,17 @@ class EE_Money_Field extends EE_Float_Field
         $nicename,
         $nullable,
         $default_value = null,
-        MoneyFactory $factory = null
+        MoneyFactory $factory = null,
+        MoneyFormatter $money_formatter = null
     ) {
         if (! $factory instanceof MoneyFactory) {
             $factory = LoaderFactory::getLoader()->getShared('EventEspresso\core\services\currency\MoneyFactory');
         }
         $this->money_factory = $factory;
+        if (! $money_formatter instanceof MoneyFormatter) {
+            $money_formatter = LoaderFactory::getLoader()->getShared('EventEspresso\core\services\currency\formatters\MoneyFormatter');
+        }
+        $this->money_formatter = $money_formatter;
         parent::__construct($table_column, $nicename, $nullable, $default_value);
         $this->setSchemaType('object');
     }
@@ -50,10 +60,15 @@ class EE_Money_Field extends EE_Float_Field
 
 
     /**
+     * Formats the value for pretty output, according to $schema.
+     * If legacy filters are being used, uses EEH_Template::format_currency() to format it;
+     * otherwise uses MoneyFormatter.
      * Schemas:
-     *    'localized_float': "3,023.00"
-     *    'no_currency_code': "$3,023.00"
-     *    null: "$3,023.00<span>USD</span>"
+     *    MoneyFormatter::RAW: "3023.0000"
+     *    MoneyFormatter::DECIMAL_ONLY: "3023.00"
+     *    MoneyFormatter::ADD THOUSANDS/'localized_float': "3,023.00"
+     *    MoneyFormatter::ADD_CURRENCY_SIGN/'no_currency_code': "$3,023.00"
+     *    MoneyFormatter::ADD_CURRENCY_CODE/null: "$3,023.00<span>USD</span>"
      *
      * @param string|Money $value_on_field_to_be_outputted
      * @param string       $schema
@@ -78,36 +93,41 @@ class EE_Money_Field extends EE_Float_Field
             if ($schema === 'localized_float') {
                 return $pretty_float;
             }
+            $display_code = true;
             if ($schema === 'no_currency_code') {
                 //			echo "schema no currency!";
                 $display_code = false;
-            } else {
-                $display_code = true;
             }
+
             //we don't use the $pretty_float because format_currency will take care of it.
             return EEH_Template::format_currency($value_on_field_to_be_outputted, false, $display_code);
         }
         //ok let's just use the new formatting code then
+        $schema = (string)$schema;
         switch ($schema) {
-            case MoneyFormatter::ADD_CURRENCY_CODE:
+            case (string)MoneyFormatter::ADD_CURRENCY_CODE:
                 $formatting_level = MoneyFormatter::ADD_CURRENCY_CODE;
                 break;
             case 'no_currency_code':
-            case MoneyFormatter::ADD_CURRENCY_SIGN:
+            case (string)MoneyFormatter::ADD_CURRENCY_SIGN:
                 $formatting_level = MoneyFormatter::ADD_CURRENCY_SIGN;
                 break;
-            case MoneyFormatter::ADD_THOUSANDS:
+            case (string)MoneyFormatter::ADD_THOUSANDS:
             case 'localized_float':
                 $formatting_level = MoneyFormatter::ADD_THOUSANDS;
                 break;
-            case MoneyFormatter::DECIMAL_ONLY:
+            case (string)MoneyFormatter::DECIMAL_ONLY:
                 $formatting_level = MoneyFormatter::DECIMAL_ONLY;
                 break;
             default:
                 $formatting_level = MoneyFormatter::INTERNATIONAL;
         }
         $value_on_field_to_be_outputted = $this->ensureMoney($value_on_field_to_be_outputted);
-        return $value_on_field_to_be_outputted->format($formatting_level);
+        return $this->money_formatter->format(
+            $value_on_field_to_be_outputted->amount(),
+            $value_on_field_to_be_outputted->currency(),
+            $formatting_level
+        );
     }
 
 
@@ -152,7 +172,7 @@ class EE_Money_Field extends EE_Float_Field
      * Also, interprets periods and commas according to the country's currency settings.
      * So if you want to pass in a string that NEEDS to interpret periods as decimal marks, call floatval() on it first.
      *
-     * @param string|Money $value_inputted_for_field_on_model_object
+     * @param string|float|int|Money $value_inputted_for_field_on_model_object
      * @return Money
      */
     public function prepare_for_set($value_inputted_for_field_on_model_object)
@@ -183,12 +203,12 @@ class EE_Money_Field extends EE_Float_Field
     }
 
 
-
     /**
      * Takes the incoming float and create a money entity for the model object
      *
-     * @param mixed $value_found_in_db_for_model_object
+     * @param string|float|int $value_found_in_db_for_model_object
      * @return Money
+     * @throws \EventEspresso\core\exceptions\InvalidIdentifierException
      * @throws \InvalidArgumentException
      * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      * @throws \EventEspresso\core\exceptions\InvalidDataTypeException

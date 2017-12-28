@@ -1,10 +1,12 @@
 <?php
 use EventEspresso\core\domain\values\currency\Currency;
 use EventEspresso\core\domain\values\currency\Money;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\currency\CurrencyFactory;
 use EventEspresso\core\services\currency\MoneyFactory;
-use EventEspresso\core\services\currency\formatters\MoneyFormatter;
 use EventEspresso\core\services\loaders\LoaderFactory;
+use PHPUnit\Framework\Exception;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -38,6 +40,12 @@ class MoneyTest extends \EE_UnitTestCase
     protected $organization_config;
 
 
+    /**
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
     public function setUp()
     {
         parent::setUp();
@@ -56,23 +64,28 @@ class MoneyTest extends \EE_UnitTestCase
      * @return Currency
      * @throws EE_Error
      * @throws InvalidArgumentException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function currency($CNT_ISO = 'US')
     {
         return $this->currency_factory->createFromCountryCode($CNT_ISO);
     }
 
+
     /**
      * @group Money
+     * @throws EE_Error
+     * @throws Exception
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function test_construct()
     {
         $USD = $this->currency();
         $money = new Money(1234.56789, $USD,
-            $this->money_factory->calculator(),
-            $this->money_factory->formatters()
+            $this->money_factory->calculator()
         );
         $this->assertInstanceOf('\EventEspresso\core\domain\values\currency\Money', $money);
         $this->assertEquals('1234.57', $money->amount());
@@ -81,8 +94,7 @@ class MoneyTest extends \EE_UnitTestCase
         $money = new Money(
             0.56789,
                 $USD,
-            $this->money_factory->calculator(),
-            $this->money_factory->formatters()
+            $this->money_factory->calculator()
         );
         $this->assertInstanceOf('\EventEspresso\core\domain\values\currency\Money', $money);
         $this->assertEquals('0.57', $money->amount());
@@ -91,17 +103,21 @@ class MoneyTest extends \EE_UnitTestCase
         $money = new Money(
             1234.56789,
             $BHD,
-            $this->money_factory->calculator(),
-            $this->money_factory->formatters()
+            $this->money_factory->calculator()
         );
         $this->assertInstanceOf('\EventEspresso\core\domain\values\currency\Money', $money);
         $this->assertEquals('1234.568', $money->amount());
     }
 
 
-
     /**
      * @group MoneyConvert
+     * @throws EE_Error
+     * @throws Exception
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidIdentifierException
+     * @throws InvalidInterfaceException
      */
     public function test_construct_with_wonky_values()
     {
@@ -130,18 +146,21 @@ class MoneyTest extends \EE_UnitTestCase
     }
 
 
-
     /**
      * @group Money
      * @expectedException InvalidArgumentException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws \PHPUnit\Framework\AssertionFailedError
      */
     public function test_construct_with_bad_amount()
     {
         new Money(
             new stdClass(),
             $this->currency(),
-            $this->money_factory->calculator(),
-            $this->money_factory->formatters()
+            $this->money_factory->calculator()
         );
         $this->fail('InvalidArgumentException should have been thrown when object was used for amount.');
     }
@@ -149,13 +168,17 @@ class MoneyTest extends \EE_UnitTestCase
 
     /**
      * @group Money
+     * @throws EE_Error
+     * @throws Exception
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function test_amountInSubunits()
     {
         $USD   = $this->currency();
         $money = new Money(1234.56789, $USD,
-            $this->money_factory->calculator(),
-            $this->money_factory->formatters()
+            $this->money_factory->calculator()
         );
         $this->assertInstanceOf('\EventEspresso\core\domain\values\currency\Money', $money);
         $this->assertEquals('1234.57', $money->amount());
@@ -163,9 +186,57 @@ class MoneyTest extends \EE_UnitTestCase
     }
 
 
+    /**
+     * Tests a currency that has 1000 subunits
+     *
+     * @group Money
+     * @throws EE_Error
+     * @throws Exception
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    public function test_amountInSubunitsForBHD()
+    {
+        $BHD   = $this->currency('BH');
+        $money = new Money(1234.56789, $BHD,
+            $this->money_factory->calculator()
+        );
+        $this->assertInstanceOf('\EventEspresso\core\domain\values\currency\Money', $money);
+        $this->assertEquals('1234.568', $money->amount());
+        $this->assertEquals('1234568', $money->amountInSubunits());
+    }
+
+
+    /**
+     * Tests a currency that has 0 subunits
+     *
+     * @group Money
+     * @throws EE_Error
+     * @throws Exception
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    public function test_amountInSubunitsForJPY()
+    {
+        $JPY   = $this->currency('JP');
+        $money = new Money(123456.789, $JPY,
+            $this->money_factory->calculator()
+        );
+        $this->assertInstanceOf('\EventEspresso\core\domain\values\currency\Money', $money);
+        $this->assertEquals('123457', $money->amount());
+        $this->assertEquals('123457', $money->amountInSubunits());
+    }
+
 
     /**
      * @group Money
+     * @throws EE_Error
+     * @throws Exception
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function test_add()
     {
@@ -173,14 +244,12 @@ class MoneyTest extends \EE_UnitTestCase
         $money1 = new Money(
             10,
             $USD,
-            $this->money_factory->calculator(),
-            $this->money_factory->formatters()
+            $this->money_factory->calculator()
         );
         $money2 = new Money(
             15,
             $USD,
-            $this->money_factory->calculator(),
-            $this->money_factory->formatters()
+            $this->money_factory->calculator()
         );
         $money = $money1->add($money2);
         $this->assertInstanceOf('\EventEspresso\core\domain\values\currency\Money', $money);
@@ -189,14 +258,12 @@ class MoneyTest extends \EE_UnitTestCase
         $money1 = new Money(
             10.75,
             $USD,
-            $this->money_factory->calculator(),
-            $this->money_factory->formatters()
+            $this->money_factory->calculator()
         );
         $money2 = new Money(
             15.50,
             $USD,
-            $this->money_factory->calculator(),
-            $this->money_factory->formatters()
+            $this->money_factory->calculator()
         );
         $money = $money1->add($money2);
         $this->assertInstanceOf('\EventEspresso\core\domain\values\currency\Money', $money);
@@ -204,33 +271,39 @@ class MoneyTest extends \EE_UnitTestCase
     }
 
 
-
     /**
      * @group Money
      * @expectedException InvalidArgumentException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws \PHPUnit\Framework\AssertionFailedError
      */
     public function test_add_mismatched_currencies()
     {
         $money_USD = new Money(
             10,
             $this->currency(),
-            $this->money_factory->calculator(),
-            $this->money_factory->formatters()
+            $this->money_factory->calculator()
         );
         $money_CAD = new Money(
             10,
             $this->currency('CA'),
-            $this->money_factory->calculator(),
-            $this->money_factory->formatters()
+            $this->money_factory->calculator()
         );
         $money_USD->add($money_CAD);
         $this->fail('InvalidArgumentException should have been thrown when attempting to add CAD to USD');
     }
 
 
-
     /**
      * @group Money
+     * @throws EE_Error
+     * @throws Exception
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function test_subtract()
     {
@@ -238,14 +311,12 @@ class MoneyTest extends \EE_UnitTestCase
         $money1 = new Money(
             15,
             $USD,
-            $this->money_factory->calculator(),
-            $this->money_factory->formatters()
+            $this->money_factory->calculator()
         );
         $money2 = new Money(
             10,
             $USD,
-            $this->money_factory->calculator(),
-            $this->money_factory->formatters()
+            $this->money_factory->calculator()
         );
         $money = $money1->subtract($money2);
         $this->assertInstanceOf('\EventEspresso\core\domain\values\currency\Money', $money);
@@ -254,14 +325,12 @@ class MoneyTest extends \EE_UnitTestCase
         $money1 = new Money(
             20.75,
             $USD,
-            $this->money_factory->calculator(),
-            $this->money_factory->formatters()
+            $this->money_factory->calculator()
         );
         $money2 = new Money(
             15.50,
             $USD,
-            $this->money_factory->calculator(),
-            $this->money_factory->formatters()
+            $this->money_factory->calculator()
         );
         $money = $money1->subtract($money2);
         $this->assertInstanceOf('\EventEspresso\core\domain\values\currency\Money', $money);
@@ -269,33 +338,39 @@ class MoneyTest extends \EE_UnitTestCase
     }
 
 
-
     /**
      * @group Money
      * @expectedException InvalidArgumentException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws \PHPUnit\Framework\AssertionFailedError
      */
     public function test_subtract_mismatched_currencies()
     {
         $money_USD = new Money(
             10,
             $this->currency(),
-            $this->money_factory->calculator(),
-            $this->money_factory->formatters()
+            $this->money_factory->calculator()
         );
         $money_CAD = new Money(
             10,
             $this->currency('CA'),
-            $this->money_factory->calculator(),
-            $this->money_factory->formatters()
+            $this->money_factory->calculator()
         );
         $money_USD->subtract($money_CAD);
         $this->fail('InvalidArgumentException should have been thrown when attempting to subtract CAD from USD');
     }
 
 
-
     /**
      * @group Money
+     * @throws EE_Error
+     * @throws Exception
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function test_multiply()
     {
@@ -303,8 +378,7 @@ class MoneyTest extends \EE_UnitTestCase
         $money = new Money(
             15.25,
             $USD,
-            $this->money_factory->calculator(),
-            $this->money_factory->formatters()
+            $this->money_factory->calculator()
         );
         $money = $money->multiply(2);
         $this->assertInstanceOf('\EventEspresso\core\domain\values\currency\Money', $money);
@@ -313,8 +387,7 @@ class MoneyTest extends \EE_UnitTestCase
         $money = new Money(
             3.333,
             $USD,
-            $this->money_factory->calculator(),
-            $this->money_factory->formatters()
+            $this->money_factory->calculator()
         );
         $money = $money->multiply(3);
         $this->assertInstanceOf('\EventEspresso\core\domain\values\currency\Money', $money);
@@ -322,9 +395,13 @@ class MoneyTest extends \EE_UnitTestCase
     }
 
 
-
     /**
      * @group Money
+     * @throws EE_Error
+     * @throws Exception
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function test_divide()
     {
@@ -332,8 +409,7 @@ class MoneyTest extends \EE_UnitTestCase
         $money = new Money(
             15,
             $USD,
-            $this->money_factory->calculator(),
-            $this->money_factory->formatters()
+            $this->money_factory->calculator()
         );
         $money = $money->divide(2);
         $this->assertInstanceOf('\EventEspresso\core\domain\values\currency\Money', $money);
@@ -342,8 +418,7 @@ class MoneyTest extends \EE_UnitTestCase
         $money = new Money(
             10,
             $USD,
-            $this->money_factory->calculator(),
-            $this->money_factory->formatters()
+            $this->money_factory->calculator()
         );
         $money = $money->divide(3);
         $this->assertInstanceOf('\EventEspresso\core\domain\values\currency\Money', $money);
@@ -351,10 +426,13 @@ class MoneyTest extends \EE_UnitTestCase
     }
 
 
-
     /**
      * @group Money
      * @expectedException InvalidArgumentException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function test_divide_by_zero()
     {
@@ -362,8 +440,7 @@ class MoneyTest extends \EE_UnitTestCase
         $money = new Money(
             10,
             $USD,
-            $this->money_factory->calculator(),
-            $this->money_factory->formatters()
+            $this->money_factory->calculator()
         );
         $money->divide(0);
     }
@@ -372,34 +449,11 @@ class MoneyTest extends \EE_UnitTestCase
 
     /**
      * @group Money
-     */
-    public function test_format()
-    {
-        $USD = $this->currency();
-        $money = new Money(
-            1234.5,
-            $USD,
-            $this->money_factory->calculator(),
-            $this->money_factory->formatters()
-        );
-        $this->assertInstanceOf('\EventEspresso\core\domain\values\currency\Money', $money);
-        $this->assertEquals('1234.5', $money->amount());
-        $this->assertEquals('1234.5', $money->format(MoneyFormatter::RAW));
-        $this->assertEquals('1234.50', $money->format(MoneyFormatter::DECIMAL_ONLY));
-        // now with default MoneyFormatter::ADD_THOUSANDS format
-        $this->assertEquals('1,234.50', $money->format());
-        $this->assertEquals('$1,234.50', $money->format(MoneyFormatter::ADD_CURRENCY_SIGN));
-        $this->assertEquals('$1,234.50 USD', $money->format(MoneyFormatter::ADD_CURRENCY_CODE));
-        $this->assertEquals(
-            '$1,234.50 <span class="currency-code">(USD)</span>',
-            $money->format(MoneyFormatter::INTERNATIONAL)
-        );
-    }
-
-
-
-    /**
-     * @group Money
+     * @throws EE_Error
+     * @throws Exception
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function test_toString()
     {
@@ -407,8 +461,7 @@ class MoneyTest extends \EE_UnitTestCase
         $money = new Money(
             1234.5,
             $USD,
-            $this->money_factory->calculator(),
-            $this->money_factory->formatters()
+            $this->money_factory->calculator()
         );
         $this->assertInstanceOf('\EventEspresso\core\domain\values\currency\Money', $money);
         $this->assertEquals('1234.5', $money->amount());
@@ -417,6 +470,10 @@ class MoneyTest extends \EE_UnitTestCase
 
     /**
      * @group 10619
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function testCreateNegativeAmount()
     {
@@ -424,8 +481,7 @@ class MoneyTest extends \EE_UnitTestCase
         $money = new Money(
             -5,
             $USD,
-            $this->money_factory->calculator(),
-            $this->money_factory->formatters()
+            $this->money_factory->calculator()
         );
         $this->assertEquals(-5, $money->amount());
     }

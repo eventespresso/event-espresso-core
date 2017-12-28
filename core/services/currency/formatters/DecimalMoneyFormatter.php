@@ -16,7 +16,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  * @author        Brent Christensen
  * @since         $VID:$
  */
-class DecimalMoneyFormatter implements MoneyFormatter
+class DecimalMoneyFormatter implements MoneyFormatterInterface
 {
 
 

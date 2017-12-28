@@ -87,17 +87,20 @@ class Read
         } else {
             $warning = '';
         }
-        return array(
-            'default_timezone' => array(
-                'pretty' => EEH_DTT_Helper::get_timezone_string_for_display(),
-                'string' => get_option('timezone_string'),
-                'offset' => EEH_DTT_Helper::get_site_timezone_gmt_offset(),
-            ),
-            'default_currency' => EE_Config::instance()->currency,
-            'authentication'   => array(
-                'received_basic_auth_data'     => (bool)$wp_json_basic_auth_received_data,
-                'insecure_usage_of_basic_auth' => (bool)$insecure_usage_of_basic_auth,
-                'warning'                      => $warning
+        return apply_filters(
+            'FHEE__EventEspresso_core_libraries_rest_api_controllers_config__handleRequestSiteInfo__return_val',
+            array(
+                'default_timezone' => array(
+                    'pretty' => EEH_DTT_Helper::get_timezone_string_for_display(),
+                    'string' => get_option('timezone_string'),
+                    'offset' => EEH_DTT_Helper::get_site_timezone_gmt_offset(),
+                ),
+                'default_currency' => EE_Config::instance()->currency,
+                'authentication'   => array(
+                    'received_basic_auth_data'     => (bool)$wp_json_basic_auth_received_data,
+                    'insecure_usage_of_basic_auth' => (bool)$insecure_usage_of_basic_auth,
+                    'warning'                      => $warning
+                )
             )
         );
     }
