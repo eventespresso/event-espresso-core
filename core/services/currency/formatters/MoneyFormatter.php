@@ -117,8 +117,8 @@ class MoneyFormatter
             unset($formatters[ MoneyFormatter::DECIMAL_ONLY ]);
         }
         for ($x = 1; $x <= $formatting_level; $x++) {
-            if (isset($formatters[ $x ]) && $formatters[ $x ] instanceof MoneyFormatter) {
-                $amount = $formatters[ $x ]->format($amount, $this->currency);
+            if (isset($formatters[ $x ]) && $formatters[ $x ] instanceof MoneyFormatterInterface) {
+                $amount = $formatters[ $x ]->format($amount, $currency);
             }
         }
         return (string) apply_filters(
