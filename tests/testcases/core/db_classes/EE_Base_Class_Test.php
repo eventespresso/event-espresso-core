@@ -635,6 +635,20 @@ class EE_Base_Class_Test extends EE_UnitTestCase
         $this->assertTrue(1 == $l2_from_db->get_raw('LIN_quantity'));
     }
 
+    /**
+     * @group 11170
+     */
+    public function testGetRawMoney()
+    {
+        $l = $this->new_model_obj_with_dependencies(
+            'Line_Item',
+            array(
+                'LIN_total' => 12.34
+            )
+        );
+        $this->assertTrue(is_float($l->get_raw('LIN_total')));
+    }
+
 
 
     /**
