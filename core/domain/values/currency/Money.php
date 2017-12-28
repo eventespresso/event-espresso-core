@@ -134,6 +134,24 @@ class Money
         return Money::EXTRA_PRECISION * $sign;
     }
 
+    /**
+     * Returns the money amount as an unformatted float
+     * @return float
+     */
+    public function floatAmount()
+    {
+        // shift the decimal position BACK by the number of decimal places used internally
+        // ex: if our extra internal precision was 3, then 1250000 would become 1250
+        $amount = $this->amount * pow(10, $this->precision(false));
+        // then maybe adjust for the currencies subunits
+        // ex: 1250 for a currency with 100 subunits would become 12.50
+        if ($this->currency()->subunits()) {
+            $amount /= $this->currency()->subunits();
+        }
+        // then shave off our extra internal precision using the number of decimal places for the currency
+        return $this->currency()->decimalPlaces();
+    }
+
 
 
     /**
@@ -145,17 +163,7 @@ class Money
      */
     public function amount()
     {
-        // shift the decimal position BACK by the number of decimal places used internally
-        // ex: if our extra internal precision was 3, then 1250000 would become 1250
-        $amount = $this->amount * pow(10, $this->precision(false));
-        // then maybe adjust for the currencies subunits
-        // ex: 1250 for a currency with 100 subunits would become 12.50
-        if ($this->currency()->subunits()) {
-            $amount /= $this->currency()->subunits();
-        }
-        // then shave off our extra internal precision using the number of decimal places for the currency
-        $amount = round($amount, $this->currency->decimalPlaces());
-        return (string) $amount;
+        return (string) round($this->floatAmount(), $this->currency()->decimalPlaces());
     }
 
 
