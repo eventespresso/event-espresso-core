@@ -82,9 +82,6 @@ class MoneyFormatter
      */
     protected function initializeFormatters()
     {
-        if (! empty($this->formatters)) {
-            return;
-        }
         $this->formatters = apply_filters(
             'FHEE__EventEspresso_core_services_currency_formatters_MoneyFormatter__initializeFormatters__MoneyFormatters_array',
             array(
@@ -110,6 +107,7 @@ class MoneyFormatter
      */
     public function format($amount, $currency, $formatting_level = MoneyFormatter::ADD_THOUSANDS)
     {
+
         $formatters = $this->formatters();
         // if we are applying thousands formatting...
         if ($formatting_level >= MoneyFormatter::ADD_THOUSANDS) {
@@ -117,8 +115,8 @@ class MoneyFormatter
             unset($formatters[ MoneyFormatter::DECIMAL_ONLY ]);
         }
         for ($x = 1; $x <= $formatting_level; $x++) {
-            if (isset($formatters[ $x ]) && $formatters[ $x ] instanceof MoneyFormatter) {
-                $amount = $formatters[ $x ]->format($amount, $this->currency);
+            if (isset($formatters[ $x ]) && $formatters[ $x ] instanceof MoneyFormatterInterface) {
+                $amount = $formatters[ $x ]->format($amount, $currency);
             }
         }
         return (string) apply_filters(
