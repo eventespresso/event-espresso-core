@@ -86,7 +86,9 @@ class EE_Money_Field extends EE_Float_Field
             || has_filter('FHEE__EEH_Template__format_currency__amount')
             || has_filter('FHEE__EEH_Template__format_currency__display_code')
             || has_filter('FHEE__EEH_Template__format_currency__amount_formatted'),
-            $this
+            $this,
+            $value_on_field_to_be_outputted,
+            $schema
         )) {
             $pretty_float = parent::prepare_for_pretty_echoing($value_on_field_to_be_outputted);
 
