@@ -60,10 +60,15 @@ class EE_Money_Field extends EE_Float_Field
 
 
     /**
+     * Formats the value for pretty output, according to $schema.
+     * If legacy filters are being used, uses EEH_Template::format_currency() to format it;
+     * otherwise uses MoneyFormatter.
      * Schemas:
-     *    'localized_float': "3,023.00"
-     *    'no_currency_code': "$3,023.00"
-     *    null: "$3,023.00<span>USD</span>"
+     *    MoneyFormatter::RAW: "3023.0000"
+     *    MoneyFormatter::DECIMAL_ONLY: "3023.00"
+     *    MoneyFormatter::ADD THOUSANDS/'localized_float': "3,023.00"
+     *    MoneyFormatter::ADD_CURRENCY_SIGN/'no_currency_code': "$3,023.00"
+     *    MoneyFormatter::ADD_CURRENCY_CODE/null: "$3,023.00<span>USD</span>"
      *
      * @param string|Money $value_on_field_to_be_outputted
      * @param string       $schema
@@ -88,11 +93,10 @@ class EE_Money_Field extends EE_Float_Field
             if ($schema === 'localized_float') {
                 return $pretty_float;
             }
+            $display_code = true;
             if ($schema === 'no_currency_code') {
                 //			echo "schema no currency!";
                 $display_code = false;
-            } else {
-                $display_code = true;
             }
 
             //we don't use the $pretty_float because format_currency will take care of it.
@@ -168,7 +172,7 @@ class EE_Money_Field extends EE_Float_Field
      * Also, interprets periods and commas according to the country's currency settings.
      * So if you want to pass in a string that NEEDS to interpret periods as decimal marks, call floatval() on it first.
      *
-     * @param string|Money $value_inputted_for_field_on_model_object
+     * @param string|float|int|Money $value_inputted_for_field_on_model_object
      * @return Money
      */
     public function prepare_for_set($value_inputted_for_field_on_model_object)
@@ -199,12 +203,12 @@ class EE_Money_Field extends EE_Float_Field
     }
 
 
-
     /**
      * Takes the incoming float and create a money entity for the model object
      *
-     * @param mixed $value_found_in_db_for_model_object
+     * @param string|float|int $value_found_in_db_for_model_object
      * @return Money
+     * @throws \EventEspresso\core\exceptions\InvalidIdentifierException
      * @throws \InvalidArgumentException
      * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
