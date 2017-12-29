@@ -566,6 +566,18 @@ if ( ! function_exists( 'espresso_event_date_range' )) {
 	}
 }
 
+if ( ! function_exists( 'espresso_next_upcoming_datetime_obj' )) {
+	/**
+	 * espresso_next_upcoming_datetime_obj
+	 * returns the next upcoming datetime object for an event
+	 *
+	 * @param bool $EVT_ID
+	 * @return object|array
+	 */
+	function espresso_next_upcoming_datetime_obj( $EVT_ID = FALSE ) {
+		return EEH_Event_View::get_next_upcoming_date_obj( $EVT_ID );
+	}
+}
 
 if ( ! function_exists( 'espresso_event_date_as_calendar_page' )) {
 	/**
