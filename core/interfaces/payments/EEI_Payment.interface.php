@@ -137,6 +137,22 @@ interface EEI_Payment extends EEI_Base
      */
     public function set_extra_accntng($extra_accounting_info);
 
+
+
+    /**
+     * Returns the payment's amount in subunits (and if the currency has no subunits, then it will be in the main units)
+     * @return int
+     */
+    public function amountInSubunits();
+
+    /**
+     * Sets the payment's amount based on the incoming monetary subunits (eg pennies). If the currency has no subunits,
+     * the amount is actually assumed to be in the currency's main units
+     * @param int $amount_in_subunits
+     * @return void
+     */
+    public function setAmountInSubunits($amount_in_subunits);
+
 }
 // End of file EEI_Payment.interface.php
 // Location: EventEspresso\core\libraries\payment_methods/EEI_Payment.interface.php
