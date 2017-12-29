@@ -579,6 +579,37 @@ if ( ! function_exists( 'espresso_next_upcoming_datetime_obj' )) {
 	}
 }
 
+if ( ! function_exists( 'espresso_next_upcoming_datetime' ) ) {
+	/**
+	 * espresso_next_upcoming_datetime
+	 * returns the start date and time for the next upcoming event.
+	 *
+	 * @param bool $EVT_ID
+	 * @return string
+	 */
+	function espresso_next_upcoming_datetime( $date_format = '', $time_format = '', $EVT_ID = FALSE, $echo = TRUE ) {
+
+		$date_format = ! empty( $date_format ) ? $date_format : get_option( 'date_format' );
+		$date_format = apply_filters( 'FHEE__espresso_event_date_range__date_format', $date_format );
+
+		$time_format = ! empty( $time_format ) ? $time_format : get_option( 'time_format' );
+		$time_format = apply_filters( 'FHEE__espresso_event_date_range__time_format', $time_format );
+
+		$datetime_format = trim( $date_format . ' ' . $time_format);
+
+		$datetime = espresso_next_upcoming_datetime_obj( $EVT_ID );
+
+		if( ! $datetime instanceof EE_Datetime ) {
+			return '';
+		}
+		if ( $echo ){
+			echo $datetime->get_i18n_datetime( 'DTT_EVT_start', $datetime_format );
+			return '';
+		}
+		return $datetime->get_i18n_datetime( 'DTT_EVT_start', $datetime_format );
+	}
+}
+
 if ( ! function_exists( 'espresso_event_date_as_calendar_page' )) {
 	/**
 	 * espresso_event_date_as_calendar_page
