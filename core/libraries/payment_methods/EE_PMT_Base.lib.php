@@ -3,6 +3,9 @@ EE_Registry::instance()->load_lib('Gateway');
 EE_Registry::instance()->load_lib('Onsite_Gateway');
 EE_Registry::instance()->load_lib('Offsite_Gateway');
 
+use EventEspresso\core\services\currency\CurrencyFactory;
+use EventEspresso\core\services\currency\MoneyFactory;
+use EventEspresso\core\services\loaders\LoaderFactory;
 use \EventEspresso\core\services\payment_methods\gateways\GatewayDataFormatter;
 use \EventEspresso\core\services\formatters\AsciiOnly;
 
@@ -92,15 +95,37 @@ abstract class EE_PMT_Base
      */
     protected $_default_description = NULL;
 
+    /**
+     * @var MoneyFactory
+     */
+    protected $money_factory;
+
+    /**
+     * @var CurrencyFactory
+     */
+    protected $currency_factory;
+
 
     /**
      *
      * @param EE_Payment_Method $pm_instance
+     * @param MoneyFactory|null $money_factory
+     * @param CurrencyFactory $currency_factory
      * @throws EE_Error
-     * @return EE_PMT_Base
      */
-    function __construct($pm_instance = NULL)
-    {
+    public function __construct(
+        $pm_instance = NULL,
+        MoneyFactory $money_factory = null,
+        CurrencyFactory $currency_factory = null
+    ) {
+        if (! $money_factory instanceof  MoneyFactory) {
+            $money_factory = LoaderFactory::getLoader()->getShared('EventEspresso\core\services\currency\MoneyFactory');
+        }
+        if (! $currency_factory instanceof  CurrencyFactory) {
+            $currency_factory = LoaderFactory::getLoader()->getShared('EventEspresso\core\services\currency\CurrencyFactory');
+        }
+        $this->currency_factory = $currency_factory;
+        $this->money_factory = $money_factory;
         if ($pm_instance instanceof EE_Payment_Method) {
             $this->set_instance($pm_instance);
         }
