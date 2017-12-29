@@ -571,8 +571,8 @@ if ( ! function_exists( 'espresso_next_upcoming_datetime_obj' )) {
 	 * espresso_next_upcoming_datetime_obj
 	 * returns the next upcoming datetime object for an event
 	 *
-	 * @param bool $EVT_ID
-	 * @return object|array
+	 * @param int $EVT_ID
+	 * @return EE_Datetime|null
 	 */
 	function espresso_next_upcoming_datetime_obj( $EVT_ID = FALSE ) {
 		return EEH_Event_View::get_next_upcoming_date_obj( $EVT_ID );
