@@ -2,6 +2,7 @@
 
 use EventEspresso\core\domain\values\currency\Money;
 use EventEspresso\core\exceptions\InvalidEntityException;
+use EventEspresso\core\services\currency\MoneyFactory;
 
 if ( ! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
@@ -120,6 +121,11 @@ abstract class EE_Base_Class
      */
     protected $_model;
 
+    /**
+     * @var MoneyFactory
+     */
+    protected $money_factory;
+
 
 
     /**
@@ -138,8 +144,17 @@ abstract class EE_Base_Class
      *                                                         format.
      * @throws EE_Error
      */
-    protected function __construct($fieldValues = array(), $bydb = false, $timezone = '', $date_formats = array())
+    protected function __construct(
+        $fieldValues = array(),
+        $bydb = false,
+        $timezone = '',
+        $date_formats = array(),
+        MoneyFactory $money_factory = null)
     {
+        if (! $money_factory instanceof MoneyFactory) {
+            $money_factory = \EventEspresso\core\services\loaders\LoaderFactory::getLoader()->getShared('EventEspresso\core\services\currency\MoneyFactory');
+        }
+        $this->money_factory = $money_factory;
         $className = get_class($this);
         do_action("AHEE__{$className}__construct", $this, $fieldValues);
         $model = $this->get_model();
@@ -1134,7 +1149,7 @@ abstract class EE_Base_Class
      * or else it will throw an exception.
      *
      * @param $field_name
-     * @return mixed
+     * @return Money
      * @throws InvalidEntityException
      * @throws EE_Error
      */
@@ -2714,6 +2729,36 @@ abstract class EE_Base_Class
                 );
             }
         }
+    }
+
+    /**
+     * Gets the money field's amount in subunits (and if the currency has no subunits, gets it in the main units)
+     * @param string $money_field_name
+     * @return int
+     */
+    public function moneyInSubunits($money_field_name)
+    {
+        return $this->getMoneyObject($money_field_name)->amountInSubunits();
+    }
+
+    /**
+     * Sets the money field's amount based on the incoming monetary subunits (eg pennies). If the currency has no subunits,
+     * the amount is actually assumed to be in the currency's main units
+     * @param string $money_field_name
+     * @param int $amount_in_subunits
+     * @throws \InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \EventEspresso\core\exceptions\InvalidIdentifierException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EE_Error
+     */
+    public function setMoneySubunits($money_field_name,$amount_in_subunits)
+    {
+        $money = $this->money_factory->createFromSubUnits(
+            $amount_in_subunits,
+            EE_Config::instance()->currency->code
+        );
+        $this->set($money_field_name, $money);
     }
 
 
