@@ -264,6 +264,9 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
         $this->load_scripts_styles_question_details();
     }
 
+    /**
+     * Loads the JS required for adding or editing a question
+     */
     protected function load_scripts_styles_question_details()
     {
         $this->load_scripts_styles_forms();
@@ -356,6 +359,19 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
         //if QST_admin_only, then no matter what QST_required is we disable.
         if (! empty($this->_req_data['QST_admin_only'])) {
             $this->_req_data['QST_required'] = 0;
+        }
+        //if the question shouldn't have a max length, don't let them set one
+        if (! isset(
+            $this->_req_data['QST_type'],
+                $this->_req_data['QST_max']
+            )
+            || ! in_array(
+            $this->_req_data['QST_type'],
+            EEM_Question::instance()->questionTypesWithMaxLength(),
+            true)
+        ) {
+            //they're not allowed to set the max
+            $this->_req_data['QST_max'] = null;
         }
         foreach ($model->field_settings() as $fieldName => $settings) {
             // basically if QSG_identifier is empty or not set
