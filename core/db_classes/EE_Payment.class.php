@@ -445,14 +445,16 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment {
 	}
 
 
-
-	/**
-	 * returns a pretty version of the status, good for displaying to users
-	 *
-	 * @param bool $show_icons
-	 * @return string
-	 * @throws \EE_Error
-	 */
+    /**
+     * returns a pretty version of the status, good for displaying to users
+     *
+     * @param bool $show_icons
+     * @return string
+     * @throws \InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EE_Error
+     */
 	public function pretty_status( $show_icons = false ) {
 		$status = EEM_Status::instance()->localized_status(
 			array( $this->STS_ID() => __( 'unknown', 'event_espresso' ) ),
@@ -805,11 +807,11 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment {
 	}
 
 
-
     /**
      * Gets the first event for this payment (it's possible that it could be for multiple)
      *
      * @return EE_Event|null
+     * @throws \EE_Error
      */
     public function get_first_event()
     {
@@ -824,11 +826,11 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment {
     }
 
 
-
     /**
      * Gets the name of the first event for which is being paid
      *
      * @return string
+     * @throws \EE_Error
      */
     public function get_first_event_name()
     {
@@ -837,10 +839,10 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment {
     }
 
 
-
     /**
      * Returns the payment's transaction's primary registration
      * @return EE_Registration|null
+     * @throws \EE_Error
      */
     public function get_primary_registration()
     {
@@ -851,10 +853,10 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment {
     }
 
 
-
     /**
      * Gets the payment's transaction's primary registration's attendee, or null
      * @return EE_Attendee|null
+     * @throws \EE_Error
      */
     public function get_primary_attendee()
     {
@@ -863,6 +865,27 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment {
             return $primary_reg->attendee();
         }
         return null;
+    }
+
+    /**
+     * Returns the payment's amount in subunits (if the currency has subunits; otherwise this will actually be
+     * in the currency's main units)
+     * @return int
+     */
+    public function amountInSubunits()
+    {
+        return $this->moneyInSubunits('PAY_amount');
+    }
+
+    /**
+     * Sets the payment's amount based on the incoming monetary subunits (eg pennies). If the currency has no subunits,
+     * the amount is actually assumed to be in the currency's main units
+     * @param int $amount_in_subunits
+     * @return void
+     */
+    public function setAmountInSubunits($amount_in_subunits)
+    {
+        $this->setMoneySubunits('PAY_amount', $amount_in_subunits);
     }
 }
 /* End of file EE_Payment.class.php */
