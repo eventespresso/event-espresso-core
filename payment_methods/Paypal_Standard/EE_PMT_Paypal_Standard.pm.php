@@ -7,7 +7,7 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowe
  * @package 			Event Espresso
  * @subpackage 	core
  * @author 				Mike Nelson
- * @since 				$VID:$
+ * 
  *
  */
 class EE_PMT_Paypal_Standard extends EE_PMT_Base{
