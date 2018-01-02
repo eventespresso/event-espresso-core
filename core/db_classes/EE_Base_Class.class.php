@@ -3,6 +3,7 @@
 use EventEspresso\core\domain\values\currency\Money;
 use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\services\currency\MoneyFactory;
+use EventEspresso\core\services\loaders\LoaderFactory;
 
 if ( ! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
@@ -127,21 +128,24 @@ abstract class EE_Base_Class
     protected $money_factory;
 
 
-
     /**
      * basic constructor for Event Espresso classes, performs any necessary initialization, and verifies it's children
      * play nice
      *
-     * @param array   $fieldValues                             where each key is a field (ie, array key in the 2nd
+     * @param array $fieldValues where each key is a field (ie, array key in the 2nd
      *                                                         layer of the model's _fields array, (eg, EVT_ID,
      *                                                         TXN_amount, QST_name, etc) and values are their values
-     * @param boolean $bydb                                    a flag for setting if the class is instantiated by the
+     * @param boolean $bydb a flag for setting if the class is instantiated by the
      *                                                         corresponding db model or not.
-     * @param string  $timezone                                indicate what timezone you want any datetime fields to
+     * @param string $timezone indicate what timezone you want any datetime fields to
      *                                                         be in when instantiating a EE_Base_Class object.
-     * @param array   $date_formats                            An array of date formats to set on construct where first
+     * @param array $date_formats An array of date formats to set on construct where first
      *                                                         value is the date_format and second value is the time
      *                                                         format.
+     * @param MoneyFactory|null $money_factory
+     * @throws \InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
      * @throws EE_Error
      */
     protected function __construct(
@@ -149,10 +153,10 @@ abstract class EE_Base_Class
         $bydb = false,
         $timezone = '',
         $date_formats = array(),
-        MoneyFactory $money_factory = null)
-    {
+        MoneyFactory $money_factory = null
+    ) {
         if (! $money_factory instanceof MoneyFactory) {
-            $money_factory = \EventEspresso\core\services\loaders\LoaderFactory::getLoader()->getShared('EventEspresso\core\services\currency\MoneyFactory');
+            $money_factory = LoaderFactory::getLoader()->getShared('EventEspresso\core\services\currency\MoneyFactory');
         }
         $this->money_factory = $money_factory;
         $className = get_class($this);
@@ -273,14 +277,16 @@ abstract class EE_Base_Class
     }
 
 
-
     /**
      * Overrides parent because parent expects old models.
      * This also doesn't do any validation, and won't work for serialized arrays
      *
      * @param    string $field_name
-     * @param    mixed  $field_value
-     * @param bool      $use_default
+     * @param    mixed $field_value
+     * @param bool $use_default
+     * @throws \InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
      * @throws \EE_Error
      */
     public function set($field_name, $field_value, $use_default = false)
@@ -413,7 +419,6 @@ abstract class EE_Base_Class
     }
 
 
-
     /**
      * See $_timezone property for description of what the timezone property is for.  This SETS the timezone internally
      * for being able to reference what timezone we are running conversions on when converting TO the internal timezone
@@ -423,6 +428,9 @@ abstract class EE_Base_Class
      * @access public
      * @param string $timezone A valid timezone string as described by @link http://www.php.net/manual/en/timezones.php
      * @return void
+     * @throws \InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
      * @throws \EE_Error
      */
     public function set_timezone($timezone = '')
@@ -617,13 +625,13 @@ abstract class EE_Base_Class
     }
 
 
-
     /**
      * If the cache didn't fetch the needed item, this fetches it.
      * @param string $fieldname
      * @param bool $pretty
      * @param string $extra_cache_ref
      * @return mixed
+     * @throws \EE_Error
      */
     protected function _get_fresh_property($fieldname, $pretty = false, $extra_cache_ref = null)
     {
@@ -642,14 +650,16 @@ abstract class EE_Base_Class
     }
 
 
-
     /**
      * set timezone, formats, and output for EE_Datetime_Field objects
      *
      * @param \EE_Datetime_Field $datetime_field
-     * @param bool               $pretty
+     * @param bool $pretty
      * @param null $date_or_time
      * @return void
+     * @throws \InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
      * @throws \EE_Error
      */
     protected function _prepare_datetime_field(
@@ -879,12 +889,15 @@ abstract class EE_Base_Class
     }
 
 
-
     /**
      * Fetches a single EE_Base_Class on that relation. (If the relation is of type
      * BelongsTo, it will only ever have 1 object. However, other relations could have an array of objects)
      *
      * @param string $relationName
+     * @throws \ReflectionException
+     * @throws \InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
      * @throws \EE_Error
      * @return EE_Base_Class[] NOT necessarily indexed by primary keys
      */
@@ -1215,6 +1228,7 @@ abstract class EE_Base_Class
      * Same as `f()` but just returns the value instead of echoing it
      * @param string $field_name
      * @return string
+     * @throws \EE_Error
      */
     public function get_f($field_name)
     {
@@ -1362,14 +1376,16 @@ abstract class EE_Base_Class
     }
 
 
-
     /**
      * Get the i8ln value for a date using the WordPress @see date_i18n function.
      *
      * @param string $field_name The EE_Datetime_Field reference for the date being retrieved.
-     * @param string $format     PHP valid date/time string format.  If none is provided then the internal set format
+     * @param string $format PHP valid date/time string format.  If none is provided then the internal set format
      *                           on the object will be used.
      * @return string Date and time string in set locale or false if no field exists for the given
+     * @throws \InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
      * @throws \EE_Error
      *                           field name.
      */
@@ -1444,16 +1460,18 @@ abstract class EE_Base_Class
     }
 
 
-
     /**
      * This takes care of setting a date or time independently on a given model object property. This method also
      * verifies that the given fieldname matches a model object property and is for a EE_Datetime_Field field
      *
      * @access protected
-     * @param string          $what           "T" for time, 'B' for both, 'D' for Date.
+     * @param string $what "T" for time, 'B' for both, 'D' for Date.
      * @param string|DateTime $datetime_value A valid Date or Time string (or DateTime object)
-     * @param string          $fieldname      the name of the field the date OR time is being set on (must match a
+     * @param string $fieldname the name of the field the date OR time is being set on (must match a
      *                                        EE_Datetime_Field property)
+     * @throws \InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
      * @throws \EE_Error
      */
     protected function _set_date_time($what = 'T', $datetime_value, $fieldname)
@@ -1483,7 +1501,6 @@ abstract class EE_Base_Class
     }
 
 
-
     /**
      * This will return a timestamp for the website timezone but ONLY when the current website timezone is different
      * than the timezone set for the website. NOTE, this currently only works well with methods that return values.  If
@@ -1491,12 +1508,15 @@ abstract class EE_Base_Class
      * that could lead to some unexpected results!
      *
      * @access public
-     * @param string               $field_name This is the name of the field on the object that contains the date/time
+     * @param string $field_name This is the name of the field on the object that contains the date/time
      *                                         value being returned.
-     * @param string               $callback   must match a valid method in this class (defaults to get_datetime)
+     * @param string $callback must match a valid method in this class (defaults to get_datetime)
      * @param mixed (array|string) $args       This is the arguments that will be passed to the callback.
-     * @param string               $prepend    You can include something to prepend on the timestamp
-     * @param string               $append     You can include something to append on the timestamp
+     * @param string $prepend You can include something to prepend on the timestamp
+     * @param string $append You can include something to append on the timestamp
+     * @throws \InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
      * @throws EE_Error
      * @return string timestamp
      */
@@ -1972,13 +1992,17 @@ abstract class EE_Base_Class
     }
 
 
-
     /**
      * Gets the model instance (eg instance of EEM_Attendee) given its classname (eg EE_Attendee)
      *
      * @param string $model_classname
-     * @param null   $timezone
+     * @param null $timezone
      * @return EEM_Base
+     * @throws \ReflectionException
+     * @throws \InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EE_Error
      */
     protected static function _get_model_instance_with_name($model_classname, $timezone = null)
     {
@@ -2230,17 +2254,17 @@ abstract class EE_Base_Class
     }
 
 
-
     /**
      * Instead of getting the related model objects, simply counts them. Ignores default_where_conditions by default,
      * unless otherwise specified in the $query_params
      *
-     * @param string $relation_name  model_name like 'Event', or 'Registration'
-     * @param array  $query_params   like EEM_Base::get_all's
+     * @param string $relation_name model_name like 'Event', or 'Registration'
+     * @param array $query_params like EEM_Base::get_all's
      * @param string $field_to_count name of field to count by. By default, uses primary key
-     * @param bool   $distinct       if we want to only count the distinct values for the column then you can trigger
+     * @param bool $distinct if we want to only count the distinct values for the column then you can trigger
      *                               that by the setting $distinct to TRUE;
      * @return int
+     * @throws \EE_Error
      */
     public function count_related($relation_name, $query_params = array(), $field_to_count = null, $distinct = false)
     {
@@ -2248,17 +2272,17 @@ abstract class EE_Base_Class
     }
 
 
-
     /**
      * Instead of getting the related model objects, simply sums up the values of the specified field.
      * Note: ignores default_where_conditions by default, unless otherwise specified in the $query_params
      *
      * @param string $relation_name model_name like 'Event', or 'Registration'
-     * @param array  $query_params  like EEM_Base::get_all's
-     * @param string $field_to_sum  name of field to count by.
+     * @param array $query_params like EEM_Base::get_all's
+     * @param string $field_to_sum name of field to count by.
      *                              By default, uses primary key (which doesn't make much sense, so you should probably
      *                              change it)
      * @return int
+     * @throws \EE_Error
      */
     public function sum_related($relation_name, $query_params = array(), $field_to_sum = null)
     {
@@ -2472,15 +2496,17 @@ abstract class EE_Base_Class
     }
 
 
-
     /**
      * Similar to insert_post_meta, adds a record in the Extra_Meta model's table with the given key and value.
      * A $previous_value can be specified in case there are many meta rows with the same key
      *
      * @param string $meta_key
-     * @param mixed  $meta_value
-     * @param mixed  $previous_value
+     * @param mixed $meta_value
+     * @param mixed $previous_value
      * @return bool|int # of records updated (or BOOLEAN if we actually ended up inserting the extra meta row)
+     * @throws \InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
      * @throws \EE_Error
      * NOTE: if the values haven't changed, returns 0
      */
@@ -2507,16 +2533,18 @@ abstract class EE_Base_Class
     }
 
 
-
     /**
      * Adds a new extra meta record. If $unique is set to TRUE, we'll first double-check
      * no other extra meta for this model object have the same key. Returns TRUE if the
      * extra meta row was entered, false if not
      *
-     * @param string  $meta_key
-     * @param mixed   $meta_value
+     * @param string $meta_key
+     * @param mixed $meta_value
      * @param boolean $unique
      * @return boolean
+     * @throws \InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
      * @throws \EE_Error
      */
     public function add_extra_meta($meta_key, $meta_value, $unique = false)
@@ -2548,14 +2576,16 @@ abstract class EE_Base_Class
     }
 
 
-
     /**
      * Deletes all the extra meta rows for this record as specified by key. If $meta_value
      * is specified, only deletes extra meta records with that value.
      *
      * @param string $meta_key
-     * @param mixed  $meta_value
+     * @param mixed $meta_value
      * @return int number of extra meta rows deleted
+     * @throws \InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
      * @throws \EE_Error
      */
     public function delete_extra_meta($meta_key, $meta_value = null)
@@ -2735,6 +2765,8 @@ abstract class EE_Base_Class
      * Gets the money field's amount in subunits (and if the currency has no subunits, gets it in the main units)
      * @param string $money_field_name
      * @return int
+     * @throws \EventEspresso\core\exceptions\InvalidEntityException
+     * @throws \EE_Error
      */
     public function moneyInSubunits($money_field_name)
     {
