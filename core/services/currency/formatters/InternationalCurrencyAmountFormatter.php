@@ -9,14 +9,14 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
 /**
- * Class InternationalMoneyFormatter
+ * Class InternationalCurrencyAmountFormatter
  * appends the currency code wrapped in a span tag to the end of the supplied amount
  *
  * @package       Event Espresso
  * @author        Brent Christensen
  * @since         $VID:$
  */
-class InternationalMoneyFormatter implements MoneyFormatterInterface
+class InternationalCurrencyAmountFormatter implements CurrencyAmountFormatterInterface
 {
 
 
