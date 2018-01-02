@@ -9,14 +9,14 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
 /**
- * Class ThousandsMoneyFormatter
+ * Class ThousandsCurrencyAmountFormatter
  * adds thousands separator to supplied amount
  *
  * @package       Event Espresso
  * @author        Brent Christensen
  * @since         $VID:$
  */
-class ThousandsMoneyFormatter implements MoneyFormatterInterface
+class ThousandsCurrencyAmountFormatter implements CurrencyAmountFormatterInterface
 {
 
 
