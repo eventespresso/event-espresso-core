@@ -13,7 +13,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @package 	Event Espresso
  * @subpackage 	core
  * @author 		Brent Christensen
- * @since 		$VID:$
+ * 
  *
  */
 class EE_Injector_Tester_With_Array_Session_Int_Constructor_Params {

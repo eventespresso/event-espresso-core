@@ -8,6 +8,7 @@ use Page\MessagesAdmin;
  * Test behaviour of custom message template usage when multiple events are registered for.
  */
 $I = new EventEspressoAcceptanceTester($scenario, false);
+// include 'a-CoreActivationCept.php';
 $custom_template_a_label = 'Custom Template A';
 $custom_template_b_label = 'Custom Template B';
 $event_one_label = 'Event A - CT A';
@@ -33,23 +34,23 @@ $I->amGoingTo('Create two custom registration approved templates');
 $I->amGoingTo('Create first custom registration approved template.');
 $I->createCustomMessageTemplateFromDefaultFor('Registration Approved', 'Email');
 $I->appendToWPEditorField('main', $custom_template_a_label);
-$I->click('Save');
+$I->saveMessageTemplate();
 $I->waitForText('successfully updated');
 $I->switchContextTo('Registrant');
 $I->fillField('#title', $custom_template_a_label);
 $I->appendToWPEditorField('main', $custom_template_a_label);
-$I->click('Save');
+$I->saveMessageTemplate();
 $I->waitForText('successfully updated');
 
 $I->amGoingTo('Create second custom registration approved template.');
 $I->createCustomMessageTemplateFromDefaultFor('Registration Approved', 'Email');
 $I->fillField('#title', $custom_template_b_label);
 $I->appendToWPEditorField('main', $custom_template_b_label);
-$I->click('Save');
+$I->saveMessageTemplate();
 $I->waitForText('successfully updated');
 $I->switchContextTo('Registrant');
 $I->appendToWPEditorField('main', $custom_template_b_label);
-$I->click('Save');
+$I->saveMessageTemplate();
 $I->waitForText('successfully updated');
 
 $I->amGoingTo('Create three events for testing with.');
@@ -58,7 +59,6 @@ $I->click(EventsAdmin::ADD_NEW_EVENT_BUTTON_SELECTOR);
 $I->fillField(EventsAdmin::EVENT_EDITOR_TITLE_FIELD_SELECTOR, $event_one_label);
 $I->selectCustomTemplateFor('Registration Approved', 'email', $custom_template_a_label);
 $I->publishEvent();
-$I->waitForText('Event published.');
 $event_one_link = $I->observeLinkUrlAt(EventsAdmin::EVENT_EDITOR_VIEW_LINK_AFTER_PUBLISH_SELECTOR);
 $event_one_id = $I->observeValueFromInputAt(EventsAdmin::EVENT_EDITOR_EVT_ID_SELECTOR);
 
@@ -67,7 +67,6 @@ $I->click(EventsAdmin::ADD_NEW_EVENT_BUTTON_SELECTOR);
 $I->fillField(EventsAdmin::EVENT_EDITOR_TITLE_FIELD_SELECTOR, $event_two_label);
 $I->selectCustomTemplateFor('Registration Approved', 'email', $custom_template_a_label);
 $I->publishEvent();
-$I->waitForText('Event published.');
 $event_two_link = $I->observeLinkUrlAt(EventsAdmin::EVENT_EDITOR_VIEW_LINK_AFTER_PUBLISH_SELECTOR);
 $event_two_id = $I->observeValueFromInputAt(EventsAdmin::EVENT_EDITOR_EVT_ID_SELECTOR);
 
@@ -76,7 +75,6 @@ $I->click(EventsAdmin::ADD_NEW_EVENT_BUTTON_SELECTOR);
 $I->fillField(EventsAdmin::EVENT_EDITOR_TITLE_FIELD_SELECTOR, $event_three_label);
 $I->selectCustomTemplateFor('Registration Approved', 'email', $custom_template_b_label);
 $I->publishEvent();
-$I->waitForText('Event published.');
 $event_three_link = $I->observeLinkUrlAt(EventsAdmin::EVENT_EDITOR_VIEW_LINK_AFTER_PUBLISH_SELECTOR);
 $event_three_id = $I->observeValueFromInputAt(EventsAdmin::EVENT_EDITOR_EVT_ID_SELECTOR);
 
@@ -186,5 +184,5 @@ $I->deleteMessageInMessagesListTableFor('Registration Approved');
 //deactivate MER plugin so its not active for future tests
 $I->ensurePluginDeactivated(
     'event-espresso-mer-multi-event-registration',
-    'Plugin deactivated'
+    'plugins deactivated'
 );

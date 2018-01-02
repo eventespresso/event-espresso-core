@@ -15,7 +15,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package EventEspresso\tests\mocks\core\services\context
  * @author  Brent Christensen
- * @since   $VID:$
+ * 
  */
 class ContextCheckerMock extends ContextChecker
 {
