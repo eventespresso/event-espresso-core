@@ -170,7 +170,7 @@ Also remove trailing spaces at the end of each line of code.
 
 ### Space between functions/methods
 
-For readability, put 5 lines of white space between functions/methods.
+For readability, put 2 lines of white space between functions/methods.
 
 ### Inline Spaces
 
