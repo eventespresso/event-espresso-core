@@ -1,8 +1,6 @@
 <?php
 
-use EE_Error;
-use EEM_Base;
-use EEM_CPT_Base;
+
 use EventEspresso\core\domain\values\currency\Money;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidEntityException;
@@ -10,7 +8,6 @@ use EventEspresso\core\exceptions\InvalidIdentifierException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\currency\MoneyFactory;
 use EventEspresso\core\services\loaders\LoaderFactory;
-use InvalidArgumentException;
 
 if ( ! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
