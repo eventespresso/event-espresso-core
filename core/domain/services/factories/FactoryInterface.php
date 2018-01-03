@@ -10,7 +10,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package EventEspresso\core\domain\services\factories
  * @author  Brent Christensen
- * @since   $VID:$
+ * 
  */
 interface FactoryInterface
 {

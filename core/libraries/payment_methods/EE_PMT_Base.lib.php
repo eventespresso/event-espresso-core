@@ -15,7 +15,7 @@ use \EventEspresso\core\services\formatters\AsciiOnly;
  * @package            Event Espresso
  * @subpackage    core
  * @author                Mike Nelson
- * @since                $VID:$
+ * 
  *
  */
 abstract class EE_PMT_Base

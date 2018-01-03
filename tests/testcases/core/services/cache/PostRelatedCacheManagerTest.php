@@ -14,7 +14,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package EventEspresso\tests\testcases\core\services\cache
  * @author  Brent Christensen
- * @since   $VID:$
+ * 
  */
 class PostRelatedCacheManagerTest extends EE_UnitTestCase
 {
