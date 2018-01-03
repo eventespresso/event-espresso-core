@@ -14,7 +14,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @package       Event Espresso
  * @subpackage    core
  * @author        Brent Christensen
- * @since         $VID:$
+ * 
  */
 class CptQueryModifier {
 

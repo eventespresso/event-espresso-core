@@ -13,7 +13,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package EventEspresso\tests\testcases\core\services\context
  * @author  Brent Christensen
- * @since   $VID:$
+ * 
  * @group   11040
  */
 class ContextCheckerTest extends EE_UnitTestCase

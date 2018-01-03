@@ -65,7 +65,7 @@ And we should also have an `EE_Rest_Api_Client.class.php` file which actually re
  * @package			Event Espresso
  * @subpackage		eea-rest-api-client
  * @author			    Brent Christensen
- * @ version		 	$VID:$
+ * 
  *
  * ------------------------------------------------------------------------
  */
@@ -136,7 +136,7 @@ This mostly just informs EE core about our shortcode. Here's the shortcode's cod
  * @package			Event Espresso
  * @subpackage		eea-rest-api-client
  * @author 				Brent Christensen
- * @ version		 	$VID:$
+ * 
  *
  * ------------------------------------------------------------------------
  */

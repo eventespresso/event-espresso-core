@@ -14,7 +14,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package EventEspresso\core\services\container
  * @author  Brent Christensen
- * @since   $VID:$
+ * 
  */
 interface CountableTraversableAggregate extends CountableTraversable, IteratorAggregate
 {
