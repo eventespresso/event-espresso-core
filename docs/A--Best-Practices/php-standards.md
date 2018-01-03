@@ -26,7 +26,7 @@ All new classes and files will follow modern day best practices, including names
 ### Formatting Overview
 
  * all files are formatted according to the PSR specifications
- * names for classes and interfaces follow StudlyCaps formatting (unless a legacy system requires a different naming convention)
+ * names for classes and interfaces follow StudlyCaps formatting (unless a legacy system requires a different naming convention). Interfaces should include the word "Interface" at the end
  * names for methods and functions follow camelCase formatting (unless a legacy system required a different naming convention)
  * names for variables follow snake_case formatting
  * classes and interfaces have phpdoc comment blocks that contain:
