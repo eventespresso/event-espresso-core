@@ -55,11 +55,11 @@ class MoneyFormatter implements MoneyFormatterInterface
         $this->formatters = apply_filters(
             'FHEE__EventEspresso_core_services_currency_formatters_MoneyFormatter__initializeFormatters__MoneyFormatters_array',
             array(
-                1 => new DecimalCurrencyAmountFormatter(),
-                2 => new ThousandsCurrencyAmountFormatter(),
-                3 => new CurrencySignCurrencyAmountFormatter(),
-                4 => new CurrencyCodeCurrencyAmountFormatter(),
-                5 => new InternationalCurrencyAmountFormatter(),
+                CurrencyAmountFormatterInterface::DECIMAL_ONLY => new DecimalCurrencyAmountFormatter(),
+                CurrencyAmountFormatterInterface::ADD_THOUSANDS => new ThousandsCurrencyAmountFormatter(),
+                CurrencyAmountFormatterInterface::ADD_CURRENCY_SIGN => new CurrencySignCurrencyAmountFormatter(),
+                CurrencyAmountFormatterInterface::ADD_CURRENCY_CODE => new CurrencyCodeCurrencyAmountFormatter(),
+                CurrencyAmountFormatterInterface::INTERNATIONAL => new InternationalCurrencyAmountFormatter(),
             )
         );
     }
