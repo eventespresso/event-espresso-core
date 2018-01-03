@@ -158,54 +158,7 @@ Widgets | .widget.php | Contains a widget class. | EEW_Upcoming_Events.widget.ph
 
 ## White Space
 
-### Indentation
-
-Your indentation should always reflect logical structure. Use spaces for spacing, not tabs, for PSR-2 compliance.
-
-### Remove Trailing Spaces
-
-> Make sure you remove trailing whitespace after closing PHP tags
-
-Also remove trailing spaces at the end of each line of code.
-
-### Space between functions/methods
-
-For readability, put 2 lines of white space between functions/methods.
-
-### Inline Spaces
-
-Always put spaces after commas and on both sides of logical and assignment operators.
-
-```php
-$x === 23
-$foo && $bar
-! $foo
-array( 1, 2, 3 )
-```
-
-Put spaces on both sides of the opening and closing parenthesis of `if`, `else if`, `foreach`, `for`, and `switch` blocks.
-
-```php
-foreach ( $foo as $bar ) { 
-      ...
-}
-```
-
-When defining a function, do it like so:
-
-`function myfunction( $param1, $param2 = 'bar'  ) { ... }`
-
-When calling a function, do it like so:
-
-`myfunction( $param1, funcparam( $param2 ) );`
-
-When performing logical comparisons:
-
-`if ( ! $foo ) { ... }`
-
-When type casting:
-
-`foreach ( (array) $foo as $bar { ... }`
+Please refer to the [PSR-2 Coding Standards](http://www.php-fig.org/psr/psr-2/) and use the [PSR Code Sniffer](https://github.com/squizlabs/PHP_CodeSniffer) to verify your code meets our coding standards.
 
 ## PHP In Templates
 
