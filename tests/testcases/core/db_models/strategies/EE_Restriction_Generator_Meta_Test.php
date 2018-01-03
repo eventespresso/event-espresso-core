@@ -9,7 +9,7 @@
  * @package         Event Espresso
  * @subpackage    
  * @author				Mike Nelson
- * @since		 	   $VID:$
+ * 
  *
  */
 class EE_Restriction_Generator_Meta_Test extends EE_UnitTestCase{

@@ -8,7 +8,7 @@
  * @package 			Event Espresso
  * @subpackage 	core
  * @author 				Brent Christensen
- * @since 				$VID:$
+ * 
  *
  */
 class EE_Country_Select_Input extends EE_Select_Input{

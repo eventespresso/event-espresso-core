@@ -11,7 +11,7 @@
  * @package            Event Espresso
  * @subpackage         eea-paypal-express
  * @author             Event Espresso
- * @version            $VID:$
+ *
  * ----------------------------------------------
  */
 class EE_PMT_Paypal_Express extends EE_PMT_Base
