@@ -36,6 +36,7 @@
  * @see         Plugin Licensing
  * @link        {@link http://www.eventespresso.com}
  * @since       4.0
+ * @vidtest     $VID:$
  */
 if (function_exists('espresso_version')) {
     if (! function_exists('espresso_duplicate_plugin_error')) {
