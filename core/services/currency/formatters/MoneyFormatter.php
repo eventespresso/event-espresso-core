@@ -1,73 +1,43 @@
 <?php
 
 namespace EventEspresso\core\services\currency\formatters;
-use EventEspresso\core\domain\values\currency\Currency;
+
+use EventEspresso\core\domain\values\currency\Money;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 
 /**
  * Class MoneyFormatter
+ * Facilitates formatting a Money object amount for display. Uses the CurrencyAmountFormatter classes in this folder.
  *
- * Faciliates formatting a money amount for display. Uses the other money formatter classes in this folder.
- *
- * @package     Event Espresso
- * @author         Mike Nelson
- * @since         $VID:$
- *
+ * @package Event Espresso
+ * @author  Mike Nelson
+ * @since   $VID:$
  */
-class MoneyFormatter
+class MoneyFormatter implements MoneyFormatterInterface
 {
 
     /**
-     * do NOT apply any formatting
-     * eg: 123456
-     */
-    const RAW = 0;
-
-    /**
-     * only format money amount by adding the decimal mark
-     * eg: 1234.56
-     */
-    const DECIMAL_ONLY = 1;
-
-    /**
-     * format money amount by adding decimal mark and thousands separator
-     * eg: 1,234.56
-     */
-    const ADD_THOUSANDS = 2;
-
-    /**
-     * format money amount by adding decimal mark, thousands separator, and currency sign
-     * eg: $1,234.56
-     */
-    const ADD_CURRENCY_SIGN = 3;
-
-    /**
-     * format money amount by adding decimal mark, thousands separator, currency sign, and currency code
-     * eg: $1,234.56 USD
-     */
-    const ADD_CURRENCY_CODE = 4;
-
-    /**
-     * format money amount by adding decimal mark, thousands separator, currency sign,
-     * and currency code wrapped in HTML span tag with HTML class
-     * eg: $1,234.56 <span class="currency-code">(USD)</span>
-     */
-    const INTERNATIONAL = 5;
-
-
-
-    /**
-     * @var MoneyFormatterInterface[] $formatters
+     * @var CurrencyAmountFormatterInterface[] $formatters
      */
     protected $formatters;
 
 
+    /**
+     * MoneyFormatter constructor.
+     *
+     * @param CurrencyAmountFormatterInterface[] $formatters
+     */
+    public function __construct(array $formatters = array())
+    {
+        $this->formatters = $formatters;
+    }
+
 
     /**
-     * @return MoneyFormatterInterface[]
+     * @return CurrencyAmountFormatterInterface[]
      */
-    public function formatters()
+    protected function formatters()
     {
         if (empty($this->formatters)) {
             $this->initializeFormatters();
@@ -78,18 +48,18 @@ class MoneyFormatter
 
 
     /**
-     * initializes a filterable array of MoneyFormatter services
+     * initializes a filterable array of CurrencyAmountFormatterInterface services
      */
     protected function initializeFormatters()
     {
         $this->formatters = apply_filters(
             'FHEE__EventEspresso_core_services_currency_formatters_MoneyFormatter__initializeFormatters__MoneyFormatters_array',
             array(
-                1 => new DecimalMoneyFormatter(),
-                2 => new ThousandsMoneyFormatter(),
-                3 => new CurrencySignMoneyFormatter(),
-                4 => new CurrencyCodeMoneyFormatter(),
-                5 => new InternationalMoneyFormatter(),
+                CurrencyAmountFormatterInterface::DECIMAL_ONLY => new DecimalCurrencyAmountFormatter(),
+                CurrencyAmountFormatterInterface::ADD_THOUSANDS => new ThousandsCurrencyAmountFormatter(),
+                CurrencyAmountFormatterInterface::ADD_CURRENCY_SIGN => new CurrencySignCurrencyAmountFormatter(),
+                CurrencyAmountFormatterInterface::ADD_CURRENCY_CODE => new CurrencyCodeCurrencyAmountFormatter(),
+                CurrencyAmountFormatterInterface::INTERNATIONAL => new InternationalCurrencyAmountFormatter(),
             )
         );
     }
@@ -100,28 +70,23 @@ class MoneyFormatter
      * applies formatting based on the specified formatting level
      * corresponding to one of the constants on MoneyFormatter
      *
-     * @param float $amount
-     * @param Currency $currency
+     * @param Money $money
      * @param int $formatting_level
      * @return string
      */
-    public function format($amount, $currency, $formatting_level = MoneyFormatter::ADD_THOUSANDS)
+    public function format(Money $money, $formatting_level = CurrencyAmountFormatterInterface::ADD_THOUSANDS)
     {
-
+        $amount = $money->amountInSubunits();
         $formatters = $this->formatters();
-        // if we are applying thousands formatting...
-        if ($formatting_level >= MoneyFormatter::ADD_THOUSANDS) {
-            // then let's remove decimal formatting since it's included in thousands formatting
-            unset($formatters[ MoneyFormatter::DECIMAL_ONLY ]);
-        }
         for ($x = 1; $x <= $formatting_level; $x++) {
-            if (isset($formatters[ $x ]) && $formatters[ $x ] instanceof MoneyFormatterInterface) {
-                $amount = $formatters[ $x ]->format($amount, $currency);
+            if (isset($formatters[ $x ]) && $formatters[ $x ] instanceof CurrencyAmountFormatterInterface) {
+                $amount = $formatters[ $x ]->format($amount, $money->currency());
             }
         }
         return (string) apply_filters(
             'FHEE__EventEspresso_core_domain_values_currency_formatters_MoneyFormatter__format__formatted_amount',
             $amount,
+            $money,
             $this
         );
     }

@@ -8,7 +8,7 @@ use EventEspresso\core\libraries\rest_api\ModelDataTranslator;
  * @package               Event Espresso
  * @subpackage
  * @author                Mike Nelson
- * @since                 $VID:$
+ * 
  * @group                 rest_api
  */
 if (! defined('EVENT_ESPRESSO_VERSION')) {

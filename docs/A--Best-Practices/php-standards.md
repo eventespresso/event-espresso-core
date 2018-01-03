@@ -2,9 +2,10 @@
 
 Previously, our php coding standards closely mirrored the [WordPress PHP Coding Standards](http://make.wordpress.org/core/handbook/coding-standards/php/).  We won't repeat all those here but emphasis, modifications, and additions are listed below. There is still some really old code in Event Espresso 4 that does not conform to these standards.
 
-We have recently decided however to deviate from the above to follow coding standards, methodologies, and guidelines that comply with the greater PHP community. This means following [PHP Standards Recommendations](http://www.php-fig.org/psr/) and pursuing [modern day best practices](http://www.phptherightway.com/)
+We have recently decided however to deviate from the above to follow coding standards, methodologies, and guidelines that comply with the greater PHP community. This means following [PHP Standards Recommendations](http://www.php-fig.org/psr/) and pursuing [modern day best practices](http://www.phptherightway.com/). We recommend using [the PHP Code Sniffer](https://github.com/squizlabs/PHP_CodeSniffer) during development.
 
-All code following the previous WordPress methodologies is now considered legacy code and will continue to follow those particular guidelines until it is replaced. All new classes and files will follow modern day best practices, including namespacing and PSR compliance.
+
+All new classes and files will follow modern day best practices, including namespacing and PSR compliance. New methods, class properties, and class constants will follow the new standards UNLESS legacy coding styles (e.g. naming) are required in order to function or maintain backward compatibility.
 
 
 ## General Code Guidelines
@@ -24,9 +25,9 @@ All code following the previous WordPress methodologies is now considered legacy
     
 ### Formatting Overview
 
- * all non-legacy files are formatted according to the PSR specifications
- * names for non-legacy classes and interfaces follow StudlyCaps formatting
- * names for non-legacy methods and functions follow camelCase formatting
+ * all files are formatted according to the PSR specifications
+ * names for classes and interfaces follow StudlyCaps formatting (unless a legacy system requires a different naming convention). Interfaces should include the word "Interface" at the end (see: [PSR Naming Conventions](http://www.php-fig.org/bylaws/psr-naming-conventions/))
+ * names for methods and functions follow camelCase formatting (unless a legacy system required a different naming convention)
  * names for variables follow snake_case formatting
  * classes and interfaces have phpdoc comment blocks that contain:
      * a brief description of their purpose
@@ -35,7 +36,7 @@ All code following the previous WordPress methodologies is now considered legacy
      * an @since tag listing the version that the code was first added
  * methods and functions have phpdoc comment blocks that contain:
      * a brief description of their purpose (not always necessary for really simple/small blocks of code)
-     * a list of all parameters and their datatypes
+     * a list of all parameters and their data types
      * an @return tag if applicable
      * an @throws tag for each exception type that could be thrown as a result of calling the function
      
@@ -47,7 +48,8 @@ All code following the previous WordPress methodologies is now considered legacy
  * optional dependencies can be injected into the constructor or via setters
  * static state should be avoided like the plague
  * non-legacy classes should follow PSR-4 compatible namespacing
- * use `use` statements for all classnames in a file and simplify namespaces in phpdocs 
+ * folders are named using snake_case
+ * use `use` statements for all classnames in a file and simplify namespaces in phpdocs. These should be before all other code except a `namespace` statement, if there is one. Do not add leading slashes to indicate global namespace.
  * can design patterns be utilized to provide a more eloquent versatile solution?
  * code should be DRY and not duplicate existing code
  * code should strive to follow the S.O.L.I.D. principles:
@@ -104,7 +106,9 @@ One of the major decisions made early in the development of Event Espresso 4, wa
 
 Any functions not found in a class should be prefixed with `espresso_`.  An example of this in use is the `espresso_version()` function.
 
-Class Naming
+# Legacy Class Naming
+
+> This only applies to legacy class naming- all new classes should follow [Formatting Overview](#formatting-overview).
 
 All classes for Event Espresso should be prefixed with `EE_`.  An example of this in use is the `EE_Base_Class`.  Note, there are some other important naming schemas related to classes:
 
@@ -128,11 +132,15 @@ Widgets | EEW_{Widget_Name} | These classes define and implement various EE Widg
 
 ### Class Property Method and Property Schema
 
+> This only applies to legacy method and property naming- all new methods and properties should follow [Formatting Overview](#formatting-overview).
+
 All private or protected properties or methods are prefixed with an underscore.  Example Property: `$this->_property`.  Example method: `function _method()`.
 
 All public properties or methods are not prefixed with an underscore.  Example property: `$this->property`.  Example method: `function method() {}`.
 
 ### File Naming Schema
+
+> This only applies to legacy file naming- all new classes should be the class' name followed with `.php`.
 
 File Type | Schema | Description | Example 
 --------- | ------ | ----------- | ------- 
@@ -151,54 +159,7 @@ Widgets | .widget.php | Contains a widget class. | EEW_Upcoming_Events.widget.ph
 
 ## White Space
 
-### Indentation
-
-Your indentation should always reflect logical structure. Use real tabs (1 tab = 4 spaces) and not spaces, as this allows the most flexibility across clients.
-
-### Remove Trailing Spaces
-
-> Make sure you remove trailing whitespace after closing PHP tags
-
-Also remove trailing spaces at the end of each line of code.
-
-### Space between functions/methods
-
-For readability, put 5 lines of white space between functions/methods.
-
-### Inline Spaces
-
-Always put spaces after commas and on both sides of logical and assignment operators.
-
-```php
-$x === 23
-$foo && $bar
-! $foo
-array( 1, 2, 3 )
-```
-
-Put spaces on both sides of the opening and closing parenthesis of `if`, `else if`, `foreach`, `for`, and `switch` blocks.
-
-```php
-foreach ( $foo as $bar ) { 
-      ...
-}
-```
-
-When defining a function, do it like so:
-
-`function myfunction( $param1, $param2 = 'bar'  ) { ... }`
-
-When calling a function, do it like so:
-
-`myfunction( $param1, funcparam( $param2 ) );`
-
-When performing logical comparisons:
-
-`if ( ! $foo ) { ... }`
-
-When type casting:
-
-`foreach ( (array) $foo as $bar { ... }`
+Please refer to the [PSR-2 Coding Standards](http://www.php-fig.org/psr/psr-2/) and use the [PSR Code Sniffer](https://github.com/squizlabs/PHP_CodeSniffer) to verify your code meets our coding standards.
 
 ## PHP In Templates
 
@@ -208,15 +169,12 @@ In general, try to restrict usage of PHP code in templates to only using: `if`, 
 <?php
 /**
  * Example template to show php usage
- *
  * Template: includes/template/example_template.template.php
- */
-
-/**
+ *
  * Template vars in use
- * @var $event 	   An EE_Event object
- * @var $tickets   An array of EE_Ticket objects
- * @var $datetimes An array of EE_Datetime objects
+ * @var EE_Event $event          An EE_Event object
+ * @var EE_Ticket[] $tickets     An array of EE_Ticket objects
+ * @var EE_Datetime[] $datetimes An array of EE_Datetime objects
  */
 ?>
 <div class="container">

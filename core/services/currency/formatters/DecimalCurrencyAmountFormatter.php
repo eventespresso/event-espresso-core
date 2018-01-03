@@ -9,14 +9,14 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
 /**
- * Class DecimalMoneyFormatter
+ * Class DecimalCurrencyAmountFormatter
  * adds decimal mark to supplied amount
  *
  * @package       Event Espresso
  * @author        Brent Christensen
  * @since         $VID:$
  */
-class DecimalMoneyFormatter implements MoneyFormatterInterface
+class DecimalCurrencyAmountFormatter implements CurrencyAmountFormatterInterface
 {
 
 

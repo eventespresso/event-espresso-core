@@ -51,7 +51,7 @@ namespace EventEspresso\core;
  * @subpackage 	core
  * @author 				php-fig.org
  * @see                    http://www.php-fig.org/psr/psr-4/examples/
- * @since 				$VID:$
+ * 
  *
  */
 class Psr4Autoloader {

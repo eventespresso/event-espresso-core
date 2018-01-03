@@ -25,19 +25,19 @@ class EventsAdmin extends CoreAdmin
      * Selector for the Event Title field in the event editor
      * @var string
      */
-    const EVENT_EDITOR_TITLE_FIELD_SELECTOR = "//input[@id='title']";
+    const EVENT_EDITOR_TITLE_FIELD_SELECTOR = ['xpath' => "//input[@id='title']"];
 
     /**
      * Selector for the publish submit button in the event editor.
      * @var string
      */
-    const EVENT_EDITOR_PUBLISH_BUTTON_SELECTOR = "#publish";
+    const EVENT_EDITOR_PUBLISH_BUTTON_SELECTOR = ['xpath'=>"//div[@id='major-publishing-actions']//input[@id='publish']"];
 
 
     /**
      * Selector for the save button in the event editor
      */
-    const EVENT_EDITOR_SAVE_BUTTON_SELECTOR = "#save-post";
+    const EVENT_EDITOR_SAVE_BUTTON_SELECTOR = ['xpath' => "//div[@id='minor-publishing-actions']//input[@id='save-post']"];
 
 
     /**
