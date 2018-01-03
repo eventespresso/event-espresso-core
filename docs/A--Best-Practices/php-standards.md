@@ -48,7 +48,7 @@ All new classes and files will follow modern day best practices, including names
  * optional dependencies can be injected into the constructor or via setters
  * static state should be avoided like the plague
  * non-legacy classes should follow PSR-4 compatible namespacing
- * use `use` statements for all classnames in a file and simplify namespaces in phpdocs. These should before all other code exception a `namespace` statement, if there is one 
+ * use `use` statements for all classnames in a file and simplify namespaces in phpdocs. These should before all other code exception a `namespace` statement, if there is one. Do not add leading slashes to indicate global namespace.
  * can design patterns be utilized to provide a more eloquent versatile solution?
  * code should be DRY and not duplicate existing code
  * code should strive to follow the S.O.L.I.D. principles:
