@@ -21,7 +21,7 @@ We use [phpdoc](http://phpdoc.org) commenting extensively through our plugin cod
 
 **Descriptions:** Generally the short descriptions should be clear, simply and brief.  Describe "what" and "when" not "why" (unless absolutely necessary).  The important thing is to get across the intent for the particular bit of the code being documented quickly.  For example, in the case of classes, your short description should be very clear about the purpose of the class in a way that makes it easy for future developers to not only determine what the intent of the class is, but also whether a method they want to add even belongs in that class.  Long descriptions should always be used where extra clarity is needed to explain the functionality of the code being documented.  But again, be clear, concise and as brief as possible.
 
-**@since:** We consider this an important tag to identify when a bit of code was added.  If documenting code that doesn't have this,  you can use  the git blame tool to attempt to discover that or if that fails use the keyword "unknown."
+**@since:** We consider this an important tag to identify when a bit of code was added.  If documenting code that doesn't have this,  you can use  the git blame tool to attempt to discover that or if that fails use the keyword "unknown." All new code should use the string `$VID$` in place of a concrete version, as that will be replaced with the released version as part of the release build.
 
 **@package:**  Generally speaking this tag will always reference the plugin.  In other words if the code is in Event Espresso, then it will be `@package Event Espresso` .  If the code was in the Event Espresso Calendar addon then it will be `@package Espresso Calendar` .
 
@@ -112,7 +112,7 @@ The PHPDoc file header block is used to give an overview of what is contained in
 * Long Description. (include what is found in the file)
 *
 * @link URL
-* @since x.x.x (if available, unknown if not)
+* @since x.x.x (if available, unknown if not), `$VID$` for new code
 *
 * @package Event Espresso
 * @subpackage Component (e.g. Admin Pages)
@@ -127,7 +127,7 @@ Class headers are very similar to file headers in structure except of course the
 * **Long Description:**  if needed, used to articulate specifics on the functionality of the class.  Usage of long description should be rare.
 * **@abstract:** If this is a abstract class, then use this tag to indicate that
 * **@author:** Who is the developer primarily responsible for the creation and maintenance of the class.
-* **@since x.x.x:** Should always be 3-digit (e.g. `@since 4.1.0` )
+* **@since x.x.x:** Should always be 3-digit (e.g. `@since 4.1.0` ), `$VID$` for new code
 
 ```php
 /**
@@ -137,7 +137,7 @@ Class headers are very similar to file headers in structure except of course the
  *
  * @abstract (if abstract include this tag otherwise not needed)
  * @author   First Last
- * @since x.x.x (if available, unknown if not)
+ * @since x.x.x (if available, unknown if not), `$VID$` for new code
  *
  * @package Event Espresso
  * @subpackage Component (e.g. Admin Pages)
@@ -153,7 +153,7 @@ Functions and class methods should be formatted as follows.
 
 * **Short description:** A brief, one line explanation of the purpose of the function. Use a period at the end.
 * **Long description:** A supplement to the short description, providing a more detailed description. Use a period at the end.
-* **@since x.x.x:** Should always be 3-digit (e.g. `@since 4.1.0` ).
+* **@since x.x.x:** Should always be 3-digit (e.g. `@since 4.1.0` ), `$VID$` for new code.
 * **@see:** The function, method, or class relied on.
 * **@link:** URL that provides more information.
 * **@throws**: If any exceptions are possibly thrown indicate that here.
@@ -166,7 +166,7 @@ Functions and class methods should be formatted as follows.
  *
  * Long description.
  *
- * @since x.x.x
+ * @since x.x.x ($VID$ for new code)
  * @access (for functions: only use if private or protected)
  *
  * @see Function/method/class relied on
@@ -211,7 +211,7 @@ Here's an example of usage for the params that are arrays:
  *
  * Long description.
  *
- * @since x.x.x 
+ * @since x.x.x. (`$VID$` for new code)
  * @access (for functions: only use if private or protected)
  *
  * @param type $var Description.
@@ -237,8 +237,8 @@ If the function is deprecated and should not be used any longer, the `@deprecate
  *
  * Long description.
  *
- * @since x.x.x
- * @deprecated x.x.x Use new_function_name() instead.
+ * @since x.x.x ($VID$ for new code)
+ * @deprecated $VID$ Use new_function_name() instead.
  * @see new_function_name()
  *
  * @param type $var Optional. Description.
@@ -252,7 +252,7 @@ If the function is deprecated and should not be used any longer, the `@deprecate
 Class properties should be formatted as follows:
 
 * **Short description:** Use a period at the end.
-* **@since x.x.x:** Should always be 3-digit (e.g. `@since 3.6.0` ).
+* **@since x.x.x:** Should always be 3-digit (e.g. `@since 3.6.0` ), `$VID$` for new code.
 * **@access:** If the property is private, protected or public. Private properties are intended for internal use only.
 * **@var:** Formatted the same way as `@param` .
 
@@ -260,7 +260,7 @@ Class properties should be formatted as follows:
 /**
  * Short description. (use period)
  *
- * @since x.x.x
+ * @since $VID$
  * @access (private, protected, or public)
  * @var type $var Description.
  */
@@ -283,7 +283,7 @@ Both action and filter hooks should be documented on the line immediately preced
 
 * **Short description:** A brief, one line explanation of the purpose of the hook. Use a period at the end.
 * **Long description:** A supplemental description to the short description, if warranted.
-* **@since x.x.x:** Should always be 3-digit (e.g. `@since 4.1.0` ).
+* **@since x.x.x:** Should always be 3-digit (e.g. `@since 4.1.0` ), `$VID$` for new code.
 * **@param:** If the parameter is an array of arguments, document each argument using the PHPDoc [hash notation](https://github.com/phpDocumentor/fig-standards/blob/master/proposed/phpdoc.md#7-describing-hashes), include a period at the end of each line.
 
 Note that `@return` is not used for hook documentation, because action hooks return nothing, and filter hooks always return their first parameter.
@@ -294,7 +294,7 @@ Note that `@return` is not used for hook documentation, because action hooks ret
  *
  * Long description.
  *
- * @since x.x.x
+ * @since x.x.x ($VID$ for new code)
  *
  * @param type $var Description.
  * @param array $args {
@@ -346,14 +346,14 @@ The PHPDoc constant block is used to give a description of the constant for bett
 Constants should be formatted as follows:
 
 * **Short description:** Use a period at the end.
-* **@since x.x.x:** Should always be 3-digit (e.g. @since 4.1.0 ).
+* **@since x.x.x:** Should always be 3-digit (e.g. @since 4.1.0 ), `$VID$` for new code.
 * **@var:** Formatted the same way as @param.
 
 ```php
 /**
  * Short Description. (use period)
  *
- * @since x.x.x (if available)
+ * @since x.x.x ($VID$ for new code)
  * @var type $var Description.
  */
 ```
@@ -364,7 +364,7 @@ Constants should be formatted as follows:
 | Tag | Usage | Description |
 | ----- | ------- | ------------- |
 @access | public|private|protected | Indicates access control for a function/method. Used directly above the `@since` line in block. Typically not used because access can be declared in the method definition.
-@deprecated | version x.x.x  replacement_function_name | What version of WordPress the function/method was deprecated. Use 3-digit version number.
+@deprecated | version x.x.x  replacement_function_name | What version of WordPress the function/method was deprecated. Use 3-digit version number.`$VID$` for new code
 @throws | Exception_Type | If an exception (or multiple exceptions) are thrown indicate using this tag. Type should be the classname for the exception (e.g. EE_Error)
 @internal | information string | Typically used for adding notes for internal use only
 @link | URL | Link to additional information for the function/method. For an external script/library, links to source. Not to be used for related functions/methods; use @see instead.
@@ -375,6 +375,6 @@ Constants should be formatted as follows:
 @return | datatype description | Document the return value of functions or methods (or void).
 @see | element name | References another function/method/class the function/method relies on.
 @since | version x.x.x | Documents release version function/method was added. Use 3-digit version number - this is to aid with version searches, and for use when comparing versions in code.
-@todo | information string | Documents planned changes to an element that have not been implemented.
+@todo | information string | Documents planned changes to an element that have not been implemented. `$VID$` for new code
 @type | datatype description  | description for an argument array value
 @var | datatype description | Data type for a class variable and short description.
