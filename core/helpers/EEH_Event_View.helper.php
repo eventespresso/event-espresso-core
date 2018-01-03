@@ -459,7 +459,7 @@ class EEH_Event_View extends EEH_Base {
 	 * @return    EE_Datetime|null
 	 */
 	public static function get_next_upcoming_date_obj( $EVT_ID = 0 ) {
-		$datetime = EEM_Datetime::instance()->get_datetimes_for_event_ordered_by_start_time( $EVT_ID, FALSE, FALSE, 1 );
+		$datetime = EEM_Datetime::instance()->get_datetimes_for_event_ordered_by_start_time( $EVT_ID, false, false, 1 );
 		
 		return ! empty($datetime) ? reset($datetime) : null;
 	}

@@ -590,7 +590,7 @@ if ( ! function_exists( 'espresso_next_upcoming_datetime' ) ) {
 	 * @param bool $echo
 	 * @return string
 	 */
-	function espresso_next_upcoming_datetime( $date_format = '', $time_format = '', $EVT_ID = FALSE, $echo = TRUE ) {
+	function espresso_next_upcoming_datetime( $date_format = '', $time_format = '', $EVT_ID = 0, $echo = true ) {
 
 		$date_format = ! empty( $date_format ) ? $date_format : get_option( 'date_format' );
 		$date_format = apply_filters( 'FHEE__espresso_next_upcoming_datetime__date_format', $date_format );
