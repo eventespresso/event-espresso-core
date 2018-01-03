@@ -4,7 +4,8 @@ Previously, our php coding standards closely mirrored the [WordPress PHP Coding 
 
 We have recently decided however to deviate from the above to follow coding standards, methodologies, and guidelines that comply with the greater PHP community. This means following [PHP Standards Recommendations](http://www.php-fig.org/psr/) and pursuing [modern day best practices](http://www.phptherightway.com/)
 
-All code following the previous WordPress methodologies is now considered legacy code and will continue to follow those particular guidelines until it is replaced. All new classes and files will follow modern day best practices, including namespacing and PSR compliance.
+
+All new classes and files will follow modern day best practices, including namespacing and PSR compliance. New methods, class properties, and class constants will follow the new standards UNLESS legacy coding styles (e.g. naming) are required in order to function or maintain backward compatibility.
 
 
 ## General Code Guidelines
