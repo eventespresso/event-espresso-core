@@ -2,7 +2,7 @@
 
 Previously, our php coding standards closely mirrored the [WordPress PHP Coding Standards](http://make.wordpress.org/core/handbook/coding-standards/php/).  We won't repeat all those here but emphasis, modifications, and additions are listed below. There is still some really old code in Event Espresso 4 that does not conform to these standards.
 
-We have recently decided however to deviate from the above to follow coding standards, methodologies, and guidelines that comply with the greater PHP community. This means following [PHP Standards Recommendations](http://www.php-fig.org/psr/) and pursuing [modern day best practices](http://www.phptherightway.com/)
+We have recently decided however to deviate from the above to follow coding standards, methodologies, and guidelines that comply with the greater PHP community. This means following [PHP Standards Recommendations](http://www.php-fig.org/psr/) and pursuing [modern day best practices](http://www.phptherightway.com/). We recommend using [the PHP Code Sniffer](https://github.com/squizlabs/PHP_CodeSniffer) during development.
 
 
 All new classes and files will follow modern day best practices, including namespacing and PSR compliance. New methods, class properties, and class constants will follow the new standards UNLESS legacy coding styles (e.g. naming) are required in order to function or maintain backward compatibility.
