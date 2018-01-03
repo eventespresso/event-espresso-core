@@ -48,7 +48,7 @@ All new classes and files will follow modern day best practices, including names
  * optional dependencies can be injected into the constructor or via setters
  * static state should be avoided like the plague
  * non-legacy classes should follow PSR-4 compatible namespacing
- * use `use` statements for all classnames in a file and simplify namespaces in phpdocs 
+ * use `use` statements for all classnames in a file and simplify namespaces in phpdocs. These should before all other code exception a `namespace` statement, if there is one 
  * can design patterns be utilized to provide a more eloquent versatile solution?
  * code should be DRY and not duplicate existing code
  * code should strive to follow the S.O.L.I.D. principles:
@@ -105,7 +105,9 @@ One of the major decisions made early in the development of Event Espresso 4, wa
 
 Any functions not found in a class should be prefixed with `espresso_`.  An example of this in use is the `espresso_version()` function.
 
-Class Naming
+#Legacy Class Naming
+
+Note: this only applies to legacy class naming- all new classes should follow [Formatting Overview](#Formatting Overview).
 
 All classes for Event Espresso should be prefixed with `EE_`.  An example of this in use is the `EE_Base_Class`.  Note, there are some other important naming schemas related to classes:
 
@@ -129,11 +131,15 @@ Widgets | EEW_{Widget_Name} | These classes define and implement various EE Widg
 
 ### Class Property Method and Property Schema
 
+Note: this only applies to legacy method and property naming- all new methods and properties should follow [Formatting Overview](#Formatting Overview).
+
 All private or protected properties or methods are prefixed with an underscore.  Example Property: `$this->_property`.  Example method: `function _method()`.
 
 All public properties or methods are not prefixed with an underscore.  Example property: `$this->property`.  Example method: `function method() {}`.
 
 ### File Naming Schema
+
+Note: this only applies to legacy file naming- all new classes should be the class' name followith `.php`.
 
 File Type | Schema | Description | Example 
 --------- | ------ | ----------- | ------- 
