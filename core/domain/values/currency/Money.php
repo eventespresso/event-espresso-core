@@ -149,7 +149,7 @@ class Money
             $amount /= $this->currency()->subunits();
         }
         // then shave off our extra internal precision using the number of decimal places for the currency
-        return $this->currency()->decimalPlaces();
+        return $amount;
     }
 
 

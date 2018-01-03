@@ -1,5 +1,5 @@
 <?php
-use EventEspresso\core\services\currency\formatters\ThousandsMoneyFormatter;
+use EventEspresso\core\services\currency\formatters\ThousandsCurrencyAmountFormatter;
 use EventEspresso\core\services\loaders\LoaderFactory;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
@@ -27,7 +27,7 @@ class ThousandsMoneyFormatterTest extends \EE_UnitTestCase
             'EventEspresso\core\services\currency\CurrencyFactory'
         );
         $currency = $currency_factory->createFromCountryCode('US');
-        $formatter = new ThousandsMoneyFormatter();
+        $formatter = new ThousandsCurrencyAmountFormatter();
         $this->assertEquals(
             $formatter->format(1234.5, $currency),
             '1,234.50'

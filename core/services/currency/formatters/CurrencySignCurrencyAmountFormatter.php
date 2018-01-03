@@ -9,14 +9,14 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
 /**
- * Class CurrencySignMoneyFormatter
+ * Class CurrencySignCurrencyAmountFormatter
  * adds currency sign to the supplied amount
  *
  * @package       Event Espresso
  * @author        Brent Christensen
  * @since         $VID:$
  */
-class CurrencySignMoneyFormatter implements MoneyFormatterInterface
+class CurrencySignCurrencyAmountFormatter implements CurrencyAmountFormatterInterface
 {
 
 

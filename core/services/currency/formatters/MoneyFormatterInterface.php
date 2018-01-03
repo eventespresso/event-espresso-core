@@ -2,28 +2,26 @@
 
 namespace EventEspresso\core\services\currency\formatters;
 
-use EventEspresso\core\domain\values\currency\Currency;
-
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
+use EventEspresso\core\domain\values\currency\Money;
 
 /**
- * Class MoneyFormatter
- * simple interface for classes that format money amounts according to a specific currency's rules
+ * MoneyFormatterInterface
+ * Facilitates formatting a Money object amount for display.
  *
- * @package       Event Espresso
- * @author        Brent Christensen
- * @since         $VID:$
+ * @package Event Espresso
+ * @author  Mike Nelson
+ * @since   $VID:$
  */
 interface MoneyFormatterInterface
 {
+
     /**
-     * @param string   $money_amount
-     * @param Currency $currency
+     * applies formatting based on the specified formatting level
+     * corresponding to one of the constants on MoneyFormatter
+     *
+     * @param Money $money
+     * @param int   $formatting_level
      * @return string
      */
-    public function format($money_amount, Currency $currency);
-
-
+    public function format(Money $money, $formatting_level = CurrencyAmountFormatterInterface::ADD_THOUSANDS);
 }
