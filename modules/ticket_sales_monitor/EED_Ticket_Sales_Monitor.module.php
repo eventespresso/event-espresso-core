@@ -182,10 +182,12 @@ class EED_Ticket_Sales_Monitor extends EED_Module
      * We're going to release the tickets for these line items before attempting to add more to the cart.
      *
      * @return void
+     * @throws DomainException
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws UnexpectedEntityException
      */
     public static function release_tickets_for_expired_carts()
     {
@@ -864,6 +866,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException
+     * @throws UnexpectedEntityException
      */
     public static function reset_reservation_counts()
     {
@@ -927,6 +930,8 @@ class EED_Ticket_Sales_Monitor extends EED_Module
      * @param EE_Ticket[]    $tickets_with_reservations
      * @param EE_Line_Item[] $valid_reserved_ticket_line_items
      * @return int
+     * @throws UnexpectedEntityException
+     * @throws DomainException
      * @throws EE_Error
      */
     private static function release_reservations_for_tickets(
@@ -934,6 +939,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
         array $valid_reserved_ticket_line_items = array()
     ) {
         $total_tickets_released = 0;
+        $sold_out_events = array();
         foreach ($tickets_with_reservations as $ticket_with_reservations) {
             if (! $ticket_with_reservations instanceof EE_Ticket) {
                 continue;
@@ -951,6 +957,18 @@ class EED_Ticket_Sales_Monitor extends EED_Module
                 $ticket_with_reservations->decrease_reserved($reserved_qty);
                 $ticket_with_reservations->save();
                 $total_tickets_released += $reserved_qty;
+                $event = $ticket_with_reservations->get_related_event();
+                // track sold out events
+                if ($event instanceof EE_Event && $event->is_sold_out()) {
+                    $sold_out_events[] = $event;
+                }
+            }
+        }
+        // double check whether sold out events should remain sold out after releasing tickets
+        if($sold_out_events !== array()){
+            foreach ($sold_out_events as $sold_out_event) {
+                /** @var EE_Event $sold_out_event */
+                $sold_out_event->perform_sold_out_status_check();
             }
         }
         return $total_tickets_released;
