@@ -127,8 +127,7 @@ class EE_Money_Field extends EE_Float_Field
         }
         $value_on_field_to_be_outputted = $this->ensureMoney($value_on_field_to_be_outputted);
         return $this->money_formatter->format(
-            $value_on_field_to_be_outputted->amount(),
-            $value_on_field_to_be_outputted->currency(),
+            $value_on_field_to_be_outputted,
             $formatting_level
         );
     }
