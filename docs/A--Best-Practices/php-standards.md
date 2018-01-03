@@ -106,9 +106,9 @@ One of the major decisions made early in the development of Event Espresso 4, wa
 
 Any functions not found in a class should be prefixed with `espresso_`.  An example of this in use is the `espresso_version()` function.
 
-#Legacy Class Naming
+# Legacy Class Naming
 
-Note: this only applies to legacy class naming- all new classes should follow [Formatting Overview](#Formatting Overview).
+> This only applies to legacy class naming- all new classes should follow [Formatting Overview](Formatting Overview).
 
 All classes for Event Espresso should be prefixed with `EE_`.  An example of this in use is the `EE_Base_Class`.  Note, there are some other important naming schemas related to classes:
 
@@ -132,7 +132,7 @@ Widgets | EEW_{Widget_Name} | These classes define and implement various EE Widg
 
 ### Class Property Method and Property Schema
 
-Note: this only applies to legacy method and property naming- all new methods and properties should follow [Formatting Overview](#Formatting Overview).
+> This only applies to legacy method and property naming- all new methods and properties should follow [Formatting Overview](Formatting Overview).
 
 All private or protected properties or methods are prefixed with an underscore.  Example Property: `$this->_property`.  Example method: `function _method()`.
 
@@ -140,7 +140,7 @@ All public properties or methods are not prefixed with an underscore.  Example p
 
 ### File Naming Schema
 
-Note: this only applies to legacy file naming- all new classes should be the class' name followith `.php`.
+> This only applies to legacy file naming- all new classes should be the class' name followed with `.php`.
 
 File Type | Schema | Description | Example 
 --------- | ------ | ----------- | ------- 
