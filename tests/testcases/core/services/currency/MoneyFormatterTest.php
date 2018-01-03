@@ -8,22 +8,21 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 
 /**
  * Class MoneyFormatterTest
- *
  * Description
  *
  * @package     Event Espresso
  * @author         Mike Nelson
  * @since         $VID:$
- * @group current
- *
+ * @group 10619
  */
 class MoneyFormatterTest extends EE_UnitTestCase
 {
     public function testFormat()
     {
         $formatter = LoaderFactory::getLoader()->getShared('EventEspresso\core\services\currency\formatters\MoneyFormatter');
+        /** @var \EventEspresso\core\services\currency\MoneyFactory $money_factory */
         $money_factory = LoaderFactory::getLoader()->getShared('EventEspresso\core\services\currency\MoneyFactory');
-        $money = $money_factory->createForSite(10);
+        $money         = $money_factory->createForSite(10);
         $this->assertEquals(
              $money->amount(),
             $formatter->format($money, CurrencyAmountFormatterInterface::RAW)
