@@ -76,7 +76,7 @@ class MoneyFormatter implements MoneyFormatterInterface
      */
     public function format(Money $money, $formatting_level = CurrencyAmountFormatterInterface::ADD_THOUSANDS)
     {
-        $amount = $money->amountInSubunits();
+        $amount = $money->floatAmount();
         $formatters = $this->formatters();
         for ($x = 1; $x <= $formatting_level; $x++) {
             if (isset($formatters[ $x ]) && $formatters[ $x ] instanceof CurrencyAmountFormatterInterface) {
