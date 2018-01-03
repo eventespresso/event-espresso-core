@@ -9,7 +9,7 @@ use EventEspresso\core\services\formatters\AsciiOnly;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\payment_methods\gateways\GatewayDataFormatter;
 
-//prevents a fatal error because somehow these aren't autoloaded elsewhere
+//prevents a fatal error because somehow these aren't autoloaded elsewhere and are required in this class
 EE_Registry::instance()->load_lib('Gateway');
 EE_Registry::instance()->load_lib('Onsite_Gateway');
 EE_Registry::instance()->load_lib('Offsite_Gateway');
