@@ -160,7 +160,7 @@ Widgets | .widget.php | Contains a widget class. | EEW_Upcoming_Events.widget.ph
 
 ### Indentation
 
-Your indentation should always reflect logical structure. Use real tabs (1 tab = 4 spaces) and not spaces, as this allows the most flexibility across clients.
+Your indentation should always reflect logical structure. Use spaces for spacing, not tabs, for PSR-2 compliance.
 
 ### Remove Trailing Spaces
 
