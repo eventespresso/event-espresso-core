@@ -32,6 +32,14 @@ class MoneyFormatterTest extends EE_UnitTestCase
             $money->amount() . '.00',
             $formatter->format($money, CurrencyAmountFormatterInterface::DECIMAL_ONLY)
         );
+        $this->assertEquals(
+            $money->amount() . '.00',
+            $formatter->format($money, CurrencyAmountFormatterInterface::ADD_THOUSANDS)
+        );
+        $this->assertEquals(
+            '$' . $money->amount() . '.00',
+            $formatter->format($money, CurrencyAmountFormatterInterface::ADD_CURRENCY_SIGN)
+        );
     }
 
 }
