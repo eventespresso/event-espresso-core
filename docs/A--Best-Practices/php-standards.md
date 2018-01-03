@@ -26,7 +26,7 @@ All new classes and files will follow modern day best practices, including names
 ### Formatting Overview
 
  * all files are formatted according to the PSR specifications
- * names for classes and interfaces follow StudlyCaps formatting (unless a legacy system requires a different naming convention). Interfaces should include the word "Interface" at the end
+ * names for classes and interfaces follow StudlyCaps formatting (unless a legacy system requires a different naming convention). Interfaces should include the word "Interface" at the end (see: [PSR Naming Conventions](http://www.php-fig.org/bylaws/psr-naming-conventions/))
  * names for methods and functions follow camelCase formatting (unless a legacy system required a different naming convention)
  * names for variables follow snake_case formatting
  * classes and interfaces have phpdoc comment blocks that contain:
@@ -36,7 +36,7 @@ All new classes and files will follow modern day best practices, including names
      * an @since tag listing the version that the code was first added
  * methods and functions have phpdoc comment blocks that contain:
      * a brief description of their purpose (not always necessary for really simple/small blocks of code)
-     * a list of all parameters and their datatypes
+     * a list of all parameters and their data types
      * an @return tag if applicable
      * an @throws tag for each exception type that could be thrown as a result of calling the function
      
@@ -49,7 +49,7 @@ All new classes and files will follow modern day best practices, including names
  * static state should be avoided like the plague
  * non-legacy classes should follow PSR-4 compatible namespacing
  * folders are named using snake_case
- * use `use` statements for all classnames in a file and simplify namespaces in phpdocs. These should before all other code exception a `namespace` statement, if there is one. Do not add leading slashes to indicate global namespace.
+ * use `use` statements for all classnames in a file and simplify namespaces in phpdocs. These should be before all other code except a `namespace` statement, if there is one. Do not add leading slashes to indicate global namespace.
  * can design patterns be utilized to provide a more eloquent versatile solution?
  * code should be DRY and not duplicate existing code
  * code should strive to follow the S.O.L.I.D. principles:
@@ -169,15 +169,12 @@ In general, try to restrict usage of PHP code in templates to only using: `if`, 
 <?php
 /**
  * Example template to show php usage
- *
  * Template: includes/template/example_template.template.php
- */
-
-/**
+ *
  * Template vars in use
- * @var $event 	   An EE_Event object
- * @var $tickets   An array of EE_Ticket objects
- * @var $datetimes An array of EE_Datetime objects
+ * @var EE_Event $event          An EE_Event object
+ * @var EE_Ticket[] $tickets     An array of EE_Ticket objects
+ * @var EE_Datetime[] $datetimes An array of EE_Datetime objects
  */
 ?>
 <div class="container">
