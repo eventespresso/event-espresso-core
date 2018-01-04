@@ -2,12 +2,12 @@
 
 
 use EventEspresso\core\domain\values\currency\Money;
+use EventEspresso\core\domain\values\currency\UsesMoneyInterface;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\exceptions\InvalidIdentifierException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\currency\MoneyFactory;
-use EventEspresso\core\services\loaders\LoaderFactory;
 
 if ( ! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
@@ -17,21 +17,11 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '');
 
 
 /**
- * Event Espresso
- * Event Registration and Management Plugin for WordPress
- * @ package            Event Espresso
- * @ author                Seth Shoultes
- * @ copyright        (c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license            http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link                    http://www.eventespresso.com
- * @ version            4.0
- * ------------------------------------------------------------------------
  * EE_Base_Class class
  *
- * @package                   Event Espresso
- * @subpackage                includes/classes/EE_Base_Class.class.php
- * @author                    Michael Nelson
- *                            ------------------------------------------------------------------------
+ * @package     Event Espresso
+ * @subpackage  includes/classes/EE_Base_Class.class.php
+ * @author      Michael Nelson
  */
 abstract class EE_Base_Class
 {
@@ -146,7 +136,6 @@ abstract class EE_Base_Class
      * @param array $date_formats An array of date formats to set on construct where first
      *                                                         value is the date_format and second value is the time
      *                                                         format.
-     * @param MoneyFactory|null $money_factory
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
@@ -156,13 +145,8 @@ abstract class EE_Base_Class
         $fieldValues = array(),
         $bydb = false,
         $timezone = '',
-        $date_formats = array(),
-        MoneyFactory $money_factory = null
+        $date_formats = array()
     ) {
-        if (! $money_factory instanceof MoneyFactory) {
-            $money_factory = LoaderFactory::getLoader()->getShared('EventEspresso\core\services\currency\MoneyFactory');
-        }
-        $this->money_factory = $money_factory;
         $className = get_class($this);
         do_action("AHEE__{$className}__construct", $this, $fieldValues);
         $model = $this->get_model();
@@ -1159,7 +1143,6 @@ abstract class EE_Base_Class
     }
 
 
-
     /**
      * Gets a Money object for the specified field. Please note that this should only be
      * used for fields corresponding to EE_Money_Fields, and it will always return a money object,
@@ -1169,9 +1152,11 @@ abstract class EE_Base_Class
      * @return Money
      * @throws InvalidEntityException
      * @throws EE_Error
+     * @throws DomainException
      */
     public function getMoneyObject($field_name)
     {
+        $this->verifyUsesMoney(__FUNCTION__);
         $field = $this->get_model()->field_settings_for($field_name);
         $value = isset($this->_fields[$field_name]) ? $this->_fields[$field_name] : null;
         if (! $field instanceof EE_Money_Field
@@ -2765,36 +2750,67 @@ abstract class EE_Base_Class
         }
     }
 
+
     /**
      * Gets the money field's amount in subunits (and if the currency has no subunits, gets it in the main units)
+     *
      * @param string $money_field_name
      * @return int
      * @throws InvalidEntityException
      * @throws EE_Error
+     * @throws DomainException
      */
     public function moneyInSubunits($money_field_name)
     {
+        $this->verifyUsesMoney(__FUNCTION__);
         return $this->getMoneyObject($money_field_name)->amountInSubunits();
     }
 
+
     /**
-     * Sets the money field's amount based on the incoming monetary subunits (eg pennies). If the currency has no subunits,
-     * the amount is actually assumed to be in the currency's main units
+     * Sets the money field's amount based on the incoming monetary subunits (eg pennies). If the currency has no
+     * subunits, the amount is actually assumed to be in the currency's main units
+     *
      * @param string $money_field_name
-     * @param int $amount_in_subunits
+     * @param int    $amount_in_subunits
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidIdentifierException
      * @throws InvalidDataTypeException
      * @throws EE_Error
+     * @throws DomainException
      */
     public function setMoneySubunits($money_field_name,$amount_in_subunits)
     {
+        $this->verifyUsesMoney(__FUNCTION__);
         $money = $this->money_factory->createFromSubUnits(
             $amount_in_subunits,
             EE_Config::instance()->currency->code
         );
         $this->set($money_field_name, $money);
+    }
+
+
+    /**
+     * @param string $function
+     * @throws DomainException
+     * @throws EE_Error
+     */
+    private function verifyUsesMoney($function)
+    {
+        if (! $this instanceof UsesMoneyInterface) {
+            throw new DomainException(
+                sprintf(
+                    esc_html__(
+                        '%1$s does not use an %2$s object for representing money values, therefore the %3$s method can not be called.',
+                        'event_espresso'
+                    ),
+                    $this->name(),
+                    'EventEspresso\core\domain\values\currency\Money',
+                    "{$function}()"
+                )
+            );
+        }
     }
 
 
