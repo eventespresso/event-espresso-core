@@ -20,7 +20,7 @@ class DecimalMoneyFormatterTest extends \EE_UnitTestCase
     /**
      * @group Money
      */
-    public function test_format()
+    public function test_format_with_float_val()
     {
         $currency_factory = LoaderFactory::getLoader()->getShared(
             'EventEspresso\core\services\currency\CurrencyFactory'
@@ -36,7 +36,7 @@ class DecimalMoneyFormatterTest extends \EE_UnitTestCase
     /**
      * @group Money
      */
-    public function test_format_with_no_decimals()
+    public function test_format_with_int_val()
     {
         $currency_factory = LoaderFactory::getLoader()->getShared(
             'EventEspresso\core\services\currency\CurrencyFactory'
@@ -45,6 +45,26 @@ class DecimalMoneyFormatterTest extends \EE_UnitTestCase
         $formatter= new DecimalCurrencyAmountFormatter();
         $this->assertEquals(
             $formatter->format(1234, $currency),
+            '1234.00'
+        );
+    }
+
+    /**
+     * @group Money
+     */
+    public function test_format_with_string_vals()
+    {
+        $currency_factory = LoaderFactory::getLoader()->getShared(
+            'EventEspresso\core\services\currency\CurrencyFactory'
+        );
+        $currency = $currency_factory->createFromCountryCode('US');
+        $formatter= new DecimalCurrencyAmountFormatter();
+        $this->assertEquals(
+            $formatter->format('1234.5', $currency),
+            '1234.50'
+        );
+        $this->assertEquals(
+            $formatter->format('1234', $currency),
             '1234.00'
         );
     }
