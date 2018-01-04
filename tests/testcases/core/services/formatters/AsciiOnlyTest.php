@@ -13,7 +13,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package        Event Espresso
  * @author         Mike Nelson
- * @since          $VID:$
+ * 
  */
 class AsciiOnlyTest extends \EE_UnitTestCase
 {

@@ -8,7 +8,7 @@
  * @package         Event Espresso
  * @subpackage    core
  * @author				Brent Christensen
- * @since		 	   $VID:$
+ * 
  *
  */
 class EE_SPCO_JSON_Response {

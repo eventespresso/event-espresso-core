@@ -713,7 +713,10 @@ class EE_Messages_Generator
                         $this->_current_messenger,
                         $message
                     );
-                    $message->set_field_or_extra_meta($column_name, $content);
+                    //the model field removes slashes when setting (usually necessary when the input is from the
+                    //request) but this value is from another model and has no slashes. So add them so it matchces
+                    //what the field expected (otherwise slashes will have been stripped from this an extra time)
+                    $message->set_field_or_extra_meta($column_name, addslashes($content));
                 } catch (EE_Error $e) {
                     $error_msg[] = sprintf(
                         esc_html__(

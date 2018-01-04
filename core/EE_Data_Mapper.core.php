@@ -10,7 +10,7 @@
  * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
  * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
  * @ link					http://www.eventespresso.com
- * @ version		 	$VID:$
+ *
  *
  * ------------------------------------------------------------------------
  *
