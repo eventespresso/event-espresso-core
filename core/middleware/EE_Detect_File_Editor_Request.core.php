@@ -38,7 +38,7 @@ class EE_Detect_File_Editor_Request extends EE_Middleware
         if (! $this->isFileEditorRequest()) {
             return;
         }
-        add_filter('FHEE_load_EE_Session', '__return_false');
+        add_filter('FHEE_load_EE_Session', '__return_false', 999);
     }
 
 
