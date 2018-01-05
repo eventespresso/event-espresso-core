@@ -1,6 +1,12 @@
 <?php
+
+use EventEspresso\core\domain\values\currency\UsesMoneyInterface;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidEntityException;
+use EventEspresso\core\exceptions\InvalidIdentifierException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\currency\MoneyFactory;
+use EventEspresso\core\services\loaders\LoaderFactory;
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
@@ -13,38 +19,107 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @subpackage  includes/classes/EE_Payment.class.php
  * @author      Brent Christensen
  */
-class EE_Payment extends EE_Base_Class implements EEI_Payment {
+class EE_Payment extends EE_Base_Class implements EEI_Payment, UsesMoneyInterface {
 
-	/**
-	 * @param array  $props_n_values          incoming values
-	 * @param string $timezone                incoming timezone (if not set the timezone set for the website will be
-	 *                                        used.)
-	 * @param array  $date_formats            incoming date_formats in an array where the first value is the
-	 *                                        date_format and the second value is the time format
-	 * @return EE_Payment
-	 * @throws EE_Error
-	 */
-	public static function new_instance( $props_n_values = array(), $timezone = null, $date_formats = array() ) {
-		$has_object = parent::_check_for_object( $props_n_values, __CLASS__, $timezone, $date_formats );
-		return $has_object ? $has_object : new self( $props_n_values, false, $timezone, $date_formats );
-	}
+    /**
+     * @param array        $props_n_values      incoming values
+     * @param string       $timezone            incoming timezone (if not set the timezone set for the website will be
+     *                                          used.)
+     * @param array        $date_formats        incoming date_formats in an array where the first value is the
+     *                                          date_format and the second value is the time format
+     * @param MoneyFactory $money_factory
+     * @return EE_Payment
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     */
+    public static function new_instance(
+        $props_n_values = array(),
+        $timezone = null,
+        $date_formats = array(),
+        MoneyFactory $money_factory = null
+    ) {
+        $has_object = parent::_check_for_object(
+            $props_n_values,
+            __CLASS__,
+            $timezone,
+            $date_formats
+        );
+        return $has_object
+            ? $has_object
+            : new self(
+                $props_n_values,
+                false,
+                $timezone,
+                $date_formats,
+                $money_factory
+            );
+    }
 
 
+    /**
+     * @param array        $props_n_values      incoming values from the database
+     * @param string       $timezone            incoming timezone as set by the model.  If not set the timezone for
+     *                                          the website will be used.
+     * @param MoneyFactory $money_factory
+     * @return EE_Payment
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     */
+    public static function new_instance_from_db(
+        $props_n_values = array(),
+        $timezone = null,
+        MoneyFactory $money_factory = null
+    ) {
+        return new self(
+            $props_n_values,
+            true,
+            $timezone,
+            array(),
+            $money_factory
+        );
+    }
 
-	/**
-	 * @param array  $props_n_values  incoming values from the database
-	 * @param string $timezone        incoming timezone as set by the model.  If not set the timezone for
-	 *                                the website will be used.
-	 * @return EE_Payment
-	 * @throws EE_Error
-	 */
-	public static function new_instance_from_db( $props_n_values = array(), $timezone = null ) {
-		return new self( $props_n_values, true, $timezone );
-	}
+
+    /**
+     * basic constructor for Event Espresso classes, performs any necessary initialization, and verifies it's children
+     * play nice
+     *
+     * @param array        $fieldValues  where each key is a field (ie, array key in the 2nd layer of the model's
+     *                                   _fields array, (eg, EVT_ID, TXN_amount, QST_name, etc) and values are their
+     *                                   values
+     * @param boolean      $bydb         a flag for setting if the class is instantiated by the corresponding db model
+     *                                   or not.
+     * @param string       $timezone     indicate what timezone you want any datetime fields to be in when
+     *                                   instantiating
+     *                                   a EE_Base_Class object.
+     * @param array        $date_formats An array of date formats to set on construct where first value is the
+     *                                   date_format and second value is the time format.
+     * @param MoneyFactory $money_factory
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     */
+    protected function __construct(
+        array $fieldValues = array(),
+        $bydb = false,
+        $timezone = '',
+        array $date_formats = array(),
+        MoneyFactory $money_factory = null
+    ) {
+        if (! $money_factory instanceof MoneyFactory) {
+            $money_factory = LoaderFactory::getLoader()->getShared('EventEspresso\core\services\currency\MoneyFactory');
+        }
+        $this->money_factory = $money_factory;
+        parent::__construct($fieldValues, $bydb, $timezone, $date_formats);
+    }
 
 
-
-	/**
+    /**
 	 * Set Transaction ID
 	 *
 	 * @access public
@@ -871,21 +946,34 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment {
         return null;
     }
 
+
     /**
      * Returns the payment's amount in subunits (if the currency has subunits; otherwise this will actually be
      * in the currency's main units)
+     *
      * @return int
+     * @throws EE_Error
+     * @throws InvalidEntityException
+     * @throws DomainException
      */
     public function amountInSubunits()
     {
         return $this->moneyInSubunits('PAY_amount');
     }
 
+
     /**
      * Sets the payment's amount based on the incoming monetary subunits (eg pennies). If the currency has no subunits,
      * the amount is actually assumed to be in the currency's main units
+     *
      * @param int $amount_in_subunits
      * @return void
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidIdentifierException
+     * @throws InvalidDataTypeException
+     * @throws DomainException
      */
     public function setAmountInSubunits($amount_in_subunits)
     {
