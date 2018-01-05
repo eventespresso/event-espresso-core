@@ -644,14 +644,12 @@ class EE_Dependency_Map
                 'EE_Request' => EE_Dependency_Map::load_from_cache,
             ),
             'EventEspresso\core\services\currency\CurrencyFactory' => array(
-                'EEM_Country'                                           => EE_Dependency_Map::load_from_cache,
-                'EE_Organization_Config'                                => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\currency\CurrencySubunits' => EE_Dependency_Map::load_from_cache
+                'EventEspresso\core\services\currency\CountryCurrencyDao' => EE_Dependency_Map::load_from_cache,
+                'EE_Organization_Config'                                  => EE_Dependency_Map::load_from_cache,
             ),
             'EventEspresso\core\services\currency\MoneyFactory' => array(
                 'EventEspresso\core\services\currency\CurrencyFactory'  => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\currency\Calculator'       => EE_Dependency_Map::load_from_cache,
-                array()
             ),
             'EventEspresso\core\services\notifications\PersistentAdminNoticeManager' => array(
                 null,
