@@ -2227,34 +2227,23 @@ class EE_Currency_Config extends EE_Config_Base
 
 
     /**
-     * @param string $CNT_ISO
+     * @param EE_Country $country
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function setFromCountryModel($CNT_ISO)
+    public function setFromCountry(EE_Country $country)
     {
-        /** @var \EventEspresso\core\services\database\TableAnalysis $table_analysis */
-        $table_analysis = EE_Registry::instance()->create('TableAnalysis', array(), true);
-        if (
-            ! EE_Maintenance_Mode::instance()->models_can_query()
-            || ! $table_analysis->tableExists(EE_Registry::instance()->load_model('Country')->table())
-        ) {
-            return;
-        }
-        $country = EE_Registry::instance()->load_model('Country')->get_one_by_ID($CNT_ISO);
-        if ($country instanceof EE_Country) {
-            $this->code    = $country->currency_code();    // currency code: USD, CAD, EUR
-            $this->name    = $country->currency_name_single();    // Dollar
-            $this->plural  = $country->currency_name_plural();    // Dollars
-            $this->sign    = $country->currency_sign();            // currency sign: $
-            $this->sign_b4 = $country->currency_sign_before();        // currency sign before or after: $TRUE  or  FALSE$
-            $this->dec_plc = $country->currency_decimal_places();    // decimal places: 2 = 0.00  3 = 0.000
-            $this->dec_mrk = $country->currency_decimal_mark();    // decimal mark: (comma) ',' = 0,01   or (decimal) '.' = 0.01
-            $this->thsnds  = $country->currency_thousands_separator();    // thousands separator: (comma) ',' = 1,000   or (decimal) '.' = 1.000
-        }
+        $this->code    = $country->currency_code();    // currency code: USD, CAD, EUR
+        $this->name    = $country->currency_name_single();    // Dollar
+        $this->plural  = $country->currency_name_plural();    // Dollars
+        $this->sign    = $country->currency_sign();            // currency sign: $
+        $this->sign_b4 = $country->currency_sign_before();        // currency sign before or after: $TRUE  or  FALSE$
+        $this->dec_plc = $country->currency_decimal_places();    // decimal places: 2 = 0.00  3 = 0.000
+        $this->dec_mrk = $country->currency_decimal_mark();    // decimal mark: (comma) ',' = 0,01   or (decimal) '.' = 0.01
+        $this->thsnds  = $country->currency_thousands_separator();    // thousands separator: (comma) ',' = 1,000   or (decimal) '.' = 1.000
     }
 }
 
