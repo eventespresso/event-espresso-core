@@ -4,7 +4,6 @@ namespace EventEspresso\core\services\currency;
 
 use EE_Error;
 use EE_Organization_Config;
-use EEH_File;
 use EventEspresso\core\domain\values\currency\Currency;
 use EventEspresso\core\entities\Label;
 use InvalidArgumentException;
@@ -25,63 +24,26 @@ class CurrencyFactory
 {
 
     /**
-     * @var array[] $country_currency_data
-     */
-    private $country_currency_data;
-
-    /**
-     * @var array[] $country_currencies_by_iso_code
-     */
-    private $country_currencies_by_iso_code;
-
-    /**
-     * @var array[] $country_currencies_by_currency
-     */
-    private $country_currencies_by_currency;
-
-    /**
      * @var string $site_country_iso
      */
     private $site_country_iso;
+
+    /**
+     * @var CountryCurrencyDao $country_currencies
+     */
+    private $country_currencies;
 
 
     /**
      * CurrencyFactory constructor.
      *
+     * @param CountryCurrencyDao     $country_currencies
      * @param EE_Organization_Config $organization_config
      */
-    public function __construct(EE_Organization_Config  $organization_config) {
-        $this->site_country_iso = $organization_config->CNT_ISO;
-    }
-
-
-    /**
-     * @return array[]
-     * @throws EE_Error
-     */
-    private function getCountryCurrencyData()
+    public function __construct(CountryCurrencyDao $country_currencies, EE_Organization_Config $organization_config)
     {
-        if ($this->country_currency_data === null) {
-            $country_currency_data = json_decode(
-                EEH_File::get_file_contents(__DIR__ . DS . 'country-currencies.json'),
-                true
-            );
-            $this->parseCountryCurrencyData($country_currency_data);
-        }
-        return $this->country_currency_data;
-    }
-
-
-    /**
-     * @param array[] $country_currency_data
-     */
-    private function parseCountryCurrencyData($country_currency_data)
-    {
-        foreach ($country_currency_data as $country_currency) {
-            $this->country_currencies_by_iso_code[ $country_currency['CountryISO'] ] = $country_currency;
-            $this->country_currencies_by_currency[ $country_currency['CurrencyCode'] ] = $country_currency;
-        }
-        $this->country_currency_data = $country_currency_data;
+        $this->country_currencies = $country_currencies;
+        $this->site_country_iso   = $organization_config->CNT_ISO;
     }
 
 
@@ -107,7 +69,6 @@ class CurrencyFactory
     }
 
 
-
     /**
      * returns a Currency object for the supplied country code
      *
@@ -118,24 +79,11 @@ class CurrencyFactory
      */
     public function createFromCountryCode($CNT_ISO = null)
     {
-        $this->getCountryCurrencyData();
         $CNT_ISO = $CNT_ISO !== null ? $CNT_ISO : $this->site_country_iso;
-        if(! isset($this->country_currencies_by_iso_code[ $CNT_ISO ])) {
-            throw new InvalidArgumentException(
-                sprintf(
-                    esc_html__(
-                        'Valid country currency data could not be found for the "%1$s" country code;',
-                        'event_espresso'
-                    ),
-                    $CNT_ISO
-                )
-            );
-        }
         return $this->createCurrencyFromCountryCurrency(
-            $this->country_currencies_by_iso_code[ $CNT_ISO ]
+            $this->country_currencies->getCountryCurrencyByIsoCode($CNT_ISO)
         );
     }
-
 
 
     /**
@@ -150,20 +98,8 @@ class CurrencyFactory
      */
     public function createFromCode($code)
     {
-        $this->getCountryCurrencyData();
-        if (! isset($this->country_currencies_by_currency[ $code ])) {
-            throw new InvalidArgumentException(
-                sprintf(
-                    esc_html__(
-                        'A valid currency could not be found for the "%1$s" currency code;',
-                        'event_espresso'
-                    ),
-                    $code
-                )
-            );
-        }
         return $this->createCurrencyFromCountryCurrency(
-            $this->country_currencies_by_currency[ $code ]
+            $this->country_currencies->getCountryCurrencyByCurrencyCode($code)
         );
     }
 }
