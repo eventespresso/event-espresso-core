@@ -339,7 +339,7 @@ final class EE_Config implements ResettableInterface
         );
         $this->currency = $this->currency instanceof EE_Currency_Config
             ? $this->currency
-            : new EE_Currency_Config();
+            : new EE_Currency_Config($this->organization->CNT_ISO);
         $this->currency = apply_filters('FHEE__EE_Config___initialize_config__currency', $this->currency);
         $this->registration = $this->registration instanceof EE_Registration_Config
             ? $this->registration
@@ -2197,12 +2197,6 @@ class EE_Currency_Config extends EE_Config_Base
     {
         if(! $country_currencies instanceof CountryCurrencyDao){
             $country_currencies = new CountryCurrencyDao();
-        }
-        // get country code from organization settings if nothing provided
-        if(empty($CNT_ISO)){
-            $CNT_ISO = EE_Registry::instance()->CFG->organization instanceof EE_Organization_Config
-                ? EE_Registry::instance()->CFG->organization->CNT_ISO
-                : '';
         }
         // so if that all went well, and we are not in M-Mode (cuz you can't query the db in M-Mode) and double-check the countries table exists
         if (! empty($CNT_ISO)) {
