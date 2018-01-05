@@ -12,7 +12,9 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 
 /**
  * Class CountryCurrencyDao
- * Description
+ * retrieves country currency data from the country-currencies.json
+ * in order to provide an accurate and uneditable data source
+ * For user configurable currency details, use EE_Currency_Config
  *
  * @package EventEspresso\core\services\currency
  * @author  Brent Christensen
