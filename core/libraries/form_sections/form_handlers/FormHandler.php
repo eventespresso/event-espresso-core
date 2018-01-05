@@ -669,7 +669,6 @@ abstract class FormHandler implements FormHandlerInterface
         return apply_filters(
             'FHEE__EventEspresso_core_libraries_form_sections_form_handlers_FormHandler__process__valid_data',
             $this->form()->valid_data(),
-            $this->slug(),
             $this
         );
     }
