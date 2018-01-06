@@ -78,6 +78,8 @@ class MoneyFormatter implements MoneyFormatterInterface
     {
         $amount = $money->floatAmount();
         $formatters = $this->formatters();
+        // if applying thousands formatting or more, skip decimal formatting
+        // because thousands formatting takes care of decimal places too
         $start = $formatting_level > CurrencyAmountFormatterInterface::DECIMAL_ONLY
             ? CurrencyAmountFormatterInterface::ADD_THOUSANDS
             : CurrencyAmountFormatterInterface::DECIMAL_ONLY;
