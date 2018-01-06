@@ -28,8 +28,8 @@ class DecimalMoneyFormatterTest extends \EE_UnitTestCase
         $currency = $currency_factory->createFromCountryCode('US');
         $formatter= new DecimalCurrencyAmountFormatter();
         $this->assertEquals(
-            $formatter->format(1234.5, $currency),
-            '1234.50'
+            '1234.50',
+            $formatter->format(1234.5, $currency)
         );
     }
 
@@ -44,8 +44,8 @@ class DecimalMoneyFormatterTest extends \EE_UnitTestCase
         $currency = $currency_factory->createFromCountryCode('US');
         $formatter= new DecimalCurrencyAmountFormatter();
         $this->assertEquals(
-            $formatter->format(1234, $currency),
-            '1234.00'
+            '1234.00',
+            $formatter->format(1234, $currency)
         );
     }
 
@@ -60,12 +60,12 @@ class DecimalMoneyFormatterTest extends \EE_UnitTestCase
         $currency = $currency_factory->createFromCountryCode('US');
         $formatter= new DecimalCurrencyAmountFormatter();
         $this->assertEquals(
-            $formatter->format('1234.5', $currency),
-            '1234.50'
+            '1234.50',
+            $formatter->format('1234.5', $currency)
         );
         $this->assertEquals(
-            $formatter->format('1234', $currency),
-            '1234.00'
+            '1234.00',
+            $formatter->format('1234', $currency)
         );
     }
 }
