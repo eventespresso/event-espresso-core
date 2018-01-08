@@ -1,5 +1,8 @@
 <?php
 
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+
 defined('EVENT_ESPRESSO_VERSION') || exit('NO direct script access allowed');
 
 
@@ -208,15 +211,26 @@ class EEH_Money extends EEH_Base
 
     /**
      * @param string $CNT_ISO
-     * @return EE_Currency_Config|null
+     * @param bool   $from_db
+     * @return EE_Currency_Config
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
-    public static function get_currency_config($CNT_ISO = '')
+    public static function get_currency_config($CNT_ISO = '', $from_db = false)
     {
         //if CNT_ISO passed lets try to get currency settings for it.
         $currency_config = $CNT_ISO !== ''
             ? new EE_Currency_Config($CNT_ISO)
             : null;
+        if ($from_db) {
+            $country = EEM_Country::instance()->get_one_by_ID($CNT_ISO);
+            if ($country instanceof EE_Country) {
+                $currency_config->setFromCountry($country);
+            }
+        }
         //default currency settings for site if not set
         if (! $currency_config instanceof EE_Currency_Config) {
             $currency_config = EE_Registry::instance()->CFG->currency instanceof EE_Currency_Config
@@ -225,4 +239,4 @@ class EEH_Money extends EEH_Base
         }
         return $currency_config;
     }
-} //end class EEH_Money
+}
