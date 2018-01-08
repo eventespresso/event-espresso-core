@@ -1,6 +1,9 @@
 <?php
 
 use EventEspresso\core\domain\values\currency\Money;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidIdentifierException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\currency\MoneyFactory;
 use EventEspresso\core\services\currency\formatters\MoneyFormatter;
 use EventEspresso\core\services\loaders\LoaderFactory;
@@ -33,9 +36,9 @@ class EE_Money_Field extends EE_Float_Field
      * @param null         $default_value
      * @param MoneyFactory $factory
      * @param MoneyFormatter $money_formatter
-     * @throws \InvalidArgumentException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      */
     public function __construct(
         $table_column,
@@ -58,7 +61,6 @@ class EE_Money_Field extends EE_Float_Field
     }
 
 
-
     /**
      * Formats the value for pretty output, according to $schema.
      * If legacy filters are being used, uses EEH_Template::format_currency() to format it;
@@ -73,23 +75,30 @@ class EE_Money_Field extends EE_Float_Field
      * @param string|Money $value_on_field_to_be_outputted
      * @param string       $schema
      * @return string
-     * @throws \EE_Error
+     * @throws InvalidIdentifierException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function prepare_for_pretty_echoing($value_on_field_to_be_outputted, $schema = null)
     {
         //has someone hooked into the old currency formatter helper's filters?
         //if so, we had better stick with it
-        if (apply_filters(
-            'FHEE__EE_Money_Field__prpeare_for_pretty_echoing',
-            has_filter('FHEE__EEH_Template__format_currency__raw_amount')
-            || has_filter('FHEE__EEH_Template__format_currency__CNT_ISO')
-            || has_filter('FHEE__EEH_Template__format_currency__amount')
-            || has_filter('FHEE__EEH_Template__format_currency__display_code')
-            || has_filter('FHEE__EEH_Template__format_currency__amount_formatted'),
-            $this,
-            $value_on_field_to_be_outputted,
-            $schema
-        )) {
+        if (
+            apply_filters(
+                'FHEE__EE_Money_Field__prepare_for_pretty_echoing',
+                has_filter('FHEE__EEH_Template__format_currency__raw_amount')
+                || has_filter('FHEE__EEH_Template__format_currency__CNT_ISO')
+                || has_filter('FHEE__EEH_Template__format_currency__amount')
+                || has_filter('FHEE__EEH_Template__format_currency__display_code')
+                || has_filter('FHEE__EEH_Template__format_currency__amount_formatted'),
+                $this,
+                $value_on_field_to_be_outputted,
+                $schema
+            )
+        ) {
             $pretty_float = parent::prepare_for_pretty_echoing($value_on_field_to_be_outputted);
 
             if ($schema === 'localized_float') {
@@ -102,7 +111,7 @@ class EE_Money_Field extends EE_Float_Field
             }
 
             //we don't use the $pretty_float because format_currency will take care of it.
-            return EEH_Template::format_currency($value_on_field_to_be_outputted, false, $display_code);
+            return EEH_Money::format_currency($value_on_field_to_be_outputted, false, $display_code);
         }
         //ok let's just use the new formatting code then
         $schema = (string)$schema;
@@ -133,16 +142,16 @@ class EE_Money_Field extends EE_Float_Field
     }
 
 
-
     /**
      * Make sure this value is a money object
      *
      * @param string|float|int|Money $value
      * @return Money
-     * @throws \InvalidArgumentException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EE_Error
+     * @throws InvalidIdentifierException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     private function ensureMoney($value)
     {
@@ -168,14 +177,21 @@ class EE_Money_Field extends EE_Float_Field
         return $value;
     }
 
+
     /**
      * If provided with a string, strips out money-related formatting to turn it into a proper float.
      * Rounds the float to the correct number of decimal places for this country's currency.
      * Also, interprets periods and commas according to the country's currency settings.
-     * So if you want to pass in a string that NEEDS to interpret periods as decimal marks, call floatval() on it first.
+     * So if you want to pass in a string that NEEDS to interpret periods as decimal marks,
+     * type cast it to a float first.
      *
      * @param string|float|int|Money $value_inputted_for_field_on_model_object
      * @return Money
+     * @throws InvalidInterfaceException
+     * @throws InvalidIdentifierException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
      */
     public function prepare_for_set($value_inputted_for_field_on_model_object)
     {
@@ -193,9 +209,9 @@ class EE_Money_Field extends EE_Float_Field
     /**
      * @param string|float|int|Money $value_of_field_on_model_object
      * @return float
-     * @throws \InvalidArgumentException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      */
     public function prepare_for_get($value_of_field_on_model_object)
     {
@@ -210,11 +226,11 @@ class EE_Money_Field extends EE_Float_Field
      *
      * @param string|float|int $value_found_in_db_for_model_object
      * @return Money
-     * @throws \EventEspresso\core\exceptions\InvalidIdentifierException
-     * @throws \InvalidArgumentException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EE_Error
+     * @throws InvalidIdentifierException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function prepare_for_set_from_db($value_found_in_db_for_model_object)
     {
