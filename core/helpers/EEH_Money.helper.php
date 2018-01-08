@@ -6,6 +6,7 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
 defined('EVENT_ESPRESSO_VERSION') || exit('NO direct script access allowed');
 
 
+
 /**
  * Money helper class.
  * This class has helper methods that help with money related conversions and calculations.
@@ -28,6 +29,10 @@ class EEH_Money extends EEH_Base
      * @param string           $CNT_ISO
      * @return float
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public static function strip_localized_money_formatting($money_value, $CNT_ISO = '')
     {
@@ -62,6 +67,10 @@ class EEH_Money extends EEH_Base
      * @param int|string $money_value
      * @return float
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public static function convert_to_float_from_localized_money($money_value)
     {
@@ -87,57 +96,61 @@ class EEH_Money extends EEH_Base
     {
         // Check numbers to 5 digits of precision
         $epsilon = 0.00001;
-        $float1 = (float) $float1;
-        $float2 = (float) $float2;
+        $float1  = (float) $float1;
+        $float2  = (float) $float2;
         switch ($operator) {
             // equal
-            case "=":
-            case "==":
-            case "===":
-            case "eq":
+            case '=':
+            case '==':
+            case '===':
+            case 'eq':
                 if (abs($float1 - $float2) < $epsilon) {
                     return true;
                 }
                 break;
             // less than
-            case "<":
-            case "lt":
+            case '<':
+            case 'lt':
                 if (abs($float1 - $float2) < $epsilon) {
                     return false;
-                } else {
-                    if ($float1 < $float2) {
-                        return true;
-                    }
+                }
+                if ($float1 < $float2) {
+                    return true;
                 }
                 break;
             // less than or equal
-            case "<=":
-            case "lte":
-                if (self::compare_floats($float1, $float2, '<') || self::compare_floats($float1, $float2, '=')) {
+            case '<=':
+            case 'lte':
+                if (
+                    self::compare_floats($float1, $float2, '<')
+                    || self::compare_floats($float1, $float2)
+                ) {
                     return true;
                 }
                 break;
             // greater than
-            case ">":
-            case "gt":
+            case '>':
+            case 'gt':
                 if (abs($float1 - $float2) < $epsilon) {
                     return false;
-                } else {
-                    if ($float1 > $float2) {
-                        return true;
-                    }
                 }
-                break;
-            // greater than or equal
-            case ">=":
-            case "gte":
-                if (self::compare_floats($float1, $float2, '>') || self::compare_floats($float1, $float2, '=')) {
+                if ($float1 > $float2) {
                     return true;
                 }
                 break;
-            case "<>":
-            case "!=":
-            case "ne":
+            // greater than or equal
+            case '>=':
+            case 'gte':
+                if (
+                    self::compare_floats($float1, $float2, '>')
+                    || self::compare_floats($float1, $float2)
+                ) {
+                    return true;
+                }
+                break;
+            case '<>':
+            case '!=':
+            case 'ne':
                 if (abs($float1 - $float2) > $epsilon) {
                     return true;
                 }
@@ -151,12 +164,16 @@ class EEH_Money extends EEH_Base
 
 
     /**
-     * This returns a localized format string suitable for jQplot.
+     * This returns a localized format string suitable for jqPlot.
      *
      * @param string $CNT_ISO  If this is provided, then will attempt to get the currency settings for the country.
      *                         Otherwise will use currency settings for current active country on site.
      * @return string
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public static function get_format_for_jqplot($CNT_ISO = '')
     {
@@ -178,8 +195,12 @@ class EEH_Money extends EEH_Base
      *                         Otherwise will use currency settings for current active country on site.
      *                         Note: GoogleCharts uses ICU pattern set
      *                         (@see http://icu-project.org/apiref/icu4c/classDecimalFormat.html#_details)
-     * @return string
+     * @return array
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public static function get_format_for_google_charts($CNT_ISO = '')
     {
