@@ -9,7 +9,7 @@
  * @package 			Event Espresso
  * @subpackage 	core
  * @author 				Mike Nelson
- * @since 				$VID:$
+ * 
  *
  */
 class EE_Select2_Display_Strategy extends EE_Select_Display_Strategy{

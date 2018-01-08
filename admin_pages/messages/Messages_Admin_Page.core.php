@@ -4409,10 +4409,13 @@ class Messages_Admin_Page extends EE_Admin_Page
             }
         }
         if ($deleted_count) {
+            EE_Error::add_success(esc_html(_n('Message successfully deleted', 'Messages successfully deleted', $deleted_count, 'event_espresso')));
             $this->_redirect_after_action(
-                true,
-                _n('message', 'messages', $deleted_count, 'event_espresso'),
-                esc_html__('deleted', 'event_espresso')
+                false,
+                '',
+                '',
+                array(),
+                true
             );
         } else {
             EE_Error::add_error(

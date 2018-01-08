@@ -20,10 +20,9 @@ EE_Registry::instance()->load_lib('Offsite_Gateway');
  *
  * Description
  *
- * @package            Event Espresso
+ * @package       Event Espresso
  * @subpackage    core
- * @author                Mike Nelson
- * @since                $VID:$
+ * @author        Mike Nelson
  *
  */
 abstract class EE_PMT_Base
