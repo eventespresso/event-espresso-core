@@ -38,5 +38,7 @@ trait RegistrationsAdmin
         $this->actor()->amOnAdminPage(
             RegistrationsAdminPage::registrationsDefaultAdminListTableUrl($additional_params)
         );
+        //wait for page to fully load
+        $this->actor()->wait(5);
     }
 }
