@@ -61,6 +61,7 @@ trait Checkout
     public function selectPaymentOptionFor($payment_method_slug = 'invoice', $verify_selected = true)
     {
         $this->waitForElementVisible(CheckoutPage::SELECTOR_PAYMENT_OPTIONS_CONTAINER);
+        $this->wait(5);
         $this->actor()->selectOption(
             CheckoutPage::PAYMENT_METHOD_STEP_FORM,
             $payment_method_slug
