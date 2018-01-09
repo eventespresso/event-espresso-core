@@ -656,6 +656,9 @@ class EE_Dependency_Map
                 'EventEspresso\core\domain\services\capabilities\CapabilitiesChecker' => EE_Dependency_Map::load_from_cache,
                 'EE_Request' => EE_Dependency_Map::load_from_cache,
             ),
+            'EventEspresso\core\services\currency\MoneyFactory' => array(
+                'EventEspresso\core\services\currency\CurrencyFactory' => EE_Dependency_Map::load_from_cache
+            )
         );
     }
 
