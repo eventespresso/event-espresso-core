@@ -29,6 +29,9 @@ class RegistrationsAdmin extends CoreAdmin
     const REGISTRATION_STATUS_PENDING_PAYMENT = 'RPP';
 
 
+    const SEARCH_INPUT_SELECTOR_LIST_TABLE_REGISTRATION = '#event-espresso_page_espresso_registrations-search-input';
+
+
 
     /**
      * @param string $additional_params
