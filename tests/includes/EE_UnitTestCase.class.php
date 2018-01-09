@@ -1160,6 +1160,13 @@ class EE_UnitTestCase extends WP_UnitTestCase
         $ticket_args['TKT_taxable'] = isset($options['TKT_taxable'])
             ? filter_var($options['TKT_taxable'], FILTER_VALIDATE_BOOLEAN)
             : true;
+        //  make sure ticket start and end dates are set else they will default to NOW !!!
+        $ticket_args['TKT_start_date'] = isset($options['TKT_start_date'])
+            ? $options['TKT_start_date']
+            : time() + MONTH_IN_SECONDS;
+        $ticket_args['TKT_end_date'] = isset($options['TKT_end_date'])
+            ? $options['TKT_end_date']
+            : time() + MONTH_IN_SECONDS + DAY_IN_SECONDS;
         // now dump any other elements that came from the incoming options that are not ticket properties
         $ticket_args = array_intersect_key(
             $ticket_args,
@@ -1237,7 +1244,14 @@ class EE_UnitTestCase extends WP_UnitTestCase
             $datetimes = isset($options['datetimes']) ? $options['datetimes'] : 1;
             $event = $this->new_model_obj_with_dependencies('Event', array('EVT_wp_user' => $current_user->ID));
             for ($i = 0; $i <= $datetimes; $i++) {
-                $ddt = $this->new_model_obj_with_dependencies('Datetime', array('EVT_ID' => $event->ID()));
+                $ddt = $this->new_model_obj_with_dependencies(
+                    'Datetime',
+                    array(
+                        'EVT_ID' => $event->ID(),
+                        'DTT_EVT_start' => time() + MONTH_IN_SECONDS,
+                        'DTT_EVT_end'   => time() + MONTH_IN_SECONDS + DAY_IN_SECONDS,
+                    )
+                );
                 $ticket->_add_relation_to($ddt, 'Datetime');
                 $this->assertArrayContains($ddt, $ticket->datetimes());
             }

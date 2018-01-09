@@ -23,6 +23,9 @@ class Checkout
     const PAYMENT_METHOD_STEP_FORM = '#ee-spco-payment_options-reg-step-form';
 
 
+    const SELECTOR_PAYMENT_OPTIONS_CONTAINER = '#spco-available-methods-of-payment-dv';
+
+
     /**
      * @param int $attendee_number
      * @return string
