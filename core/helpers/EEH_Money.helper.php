@@ -276,6 +276,10 @@ class EEH_Money extends EEH_Base
      * @param  boolean $display_code whether to display the country code (USD). Default = TRUE
      * @param string   $CNT_ISO      2 letter ISO code for a country
      * @param string   $cur_code_span_class
+     * @param boolean  $from_db whether to fetch configuration data from the database (which a site admin can change)
+     *                          or from our JSON file, which admins can't change. Setting to true is usually better
+     *                          if the value will be displayed to a user; but if communicating with another server,
+     *                          setting to false will return more reliable formatting.
      * @since $VID:$
      * @return string        the html output for the formatted money value
      * @throws EE_Error
@@ -289,7 +293,8 @@ class EEH_Money extends EEH_Base
         $return_raw = false,
         $display_code = true,
         $CNT_ISO = '',
-        $cur_code_span_class = 'currency-code'
+        $cur_code_span_class = 'currency-code',
+        $from_db = true
     ) {
         // ensure amount was received
         if ($amount === null) {
@@ -309,7 +314,7 @@ class EEH_Money extends EEH_Base
         // still a number or was amount converted to a string like "free" ?
         if (is_float($amount_formatted)) {
             // get currency config object for that country
-            $mny = EEH_Money::get_currency_config($CNT_ISO, true);
+            $mny = EEH_Money::get_currency_config($CNT_ISO, $from_db);
             // format float
             $amount_formatted = number_format($amount, $mny->dec_plc, $mny->dec_mrk, $mny->thsnds);
             // add formatting ?
