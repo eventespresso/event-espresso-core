@@ -63,14 +63,19 @@ class EE_Money_Field extends EE_Float_Field
 
     /**
      * Formats the value for pretty output, according to $schema.
-     * If legacy filters are being used, uses EEH_Template::format_currency() to format it;
-     * otherwise uses MoneyFormatter.
-     * Schemas:
+     * If legacy filters are being used, uses EEH_Money::format_currency() to format it and currency data from the database
+     * (which admins can change), otherwise uses MoneyFormatter which takes currency information from a JSON file
+     * (which admins CANNOT change).
+     * Legacy Schemas (use the admin-editable currency data from the database):
+     *    'localized_float': "3,023.00"
+     *    'no_currency_code': "$3,023.00"
+     *    null: "$3,023.00<span>USD</span>"
+     * New Schemas (use the currency data from a JSON file that we control):
      *    MoneyFormatter::RAW: "3023.0000"
      *    MoneyFormatter::DECIMAL_ONLY: "3023.00"
-     *    MoneyFormatter::ADD THOUSANDS/'localized_float': "3,023.00"
-     *    MoneyFormatter::ADD_CURRENCY_SIGN/'no_currency_code': "$3,023.00"
-     *    MoneyFormatter::ADD_CURRENCY_CODE/null: "$3,023.00<span>USD</span>"
+     *    MoneyFormatter::ADD THOUSANDS/: "3,023.00"
+     *    MoneyFormatter::ADD_CURRENCY_SIGN: "$3,023.00"
+     *    MoneyFormatter::ADD_CURRENCY_CODE: "$3,023.00<span>USD</span>"
      *
      * @param string|Money $value_on_field_to_be_outputted
      * @param string       $schema
@@ -84,21 +89,17 @@ class EE_Money_Field extends EE_Float_Field
      */
     public function prepare_for_pretty_echoing($value_on_field_to_be_outputted, $schema = null)
     {
-        //has someone hooked into the old currency formatter helper's filters?
-        //if so, we had better stick with it
-        if (
-            apply_filters(
-                'FHEE__EE_Money_Field__prepare_for_pretty_echoing',
-                has_filter('FHEE__EEH_Template__format_currency__raw_amount')
-                || has_filter('FHEE__EEH_Template__format_currency__CNT_ISO')
-                || has_filter('FHEE__EEH_Template__format_currency__amount')
-                || has_filter('FHEE__EEH_Template__format_currency__display_code')
-                || has_filter('FHEE__EEH_Template__format_currency__amount_formatted'),
-                $this,
-                $value_on_field_to_be_outputted,
-                $schema
-            )
-        ) {
+        //using the default or old schemas? Use the legacy formatting (which uses the database's currency data,
+        //whereas the new code uses the JSON file's currency data
+        if (in_array(
+            $schema,
+            array(
+                'localized_float',
+                'no_currency_code',
+                null
+            ),
+            true
+        )) {
             $value_on_field_to_be_outputted = $this->ensureNotMoney($value_on_field_to_be_outputted);
             $pretty_float = parent::prepare_for_pretty_echoing($value_on_field_to_be_outputted);
 
@@ -107,7 +108,7 @@ class EE_Money_Field extends EE_Float_Field
             }
             $display_code = true;
             if ($schema === 'no_currency_code') {
-                //			echo "schema no currency!";
+                //          echo "schema no currency!";
                 $display_code = false;
             }
 
@@ -117,27 +118,24 @@ class EE_Money_Field extends EE_Float_Field
         //ok let's just use the new formatting code then
         $schema = (string)$schema;
         switch ($schema) {
-            case (string)MoneyFormatter::ADD_CURRENCY_CODE:
-                $formatting_level = MoneyFormatter::ADD_CURRENCY_CODE;
+            case (string)CurrencyAmountFormatterInterface::ADD_CURRENCY_CODE:
+                $formatting_level = CurrencyAmountFormatterInterface::ADD_CURRENCY_CODE;
                 break;
-            case 'no_currency_code':
-            case (string)MoneyFormatter::ADD_CURRENCY_SIGN:
-                $formatting_level = MoneyFormatter::ADD_CURRENCY_SIGN;
+            case (string)CurrencyAmountFormatterInterface::ADD_CURRENCY_SIGN:
+                $formatting_level = CurrencyAmountFormatterInterface::ADD_CURRENCY_SIGN;
                 break;
-            case (string)MoneyFormatter::ADD_THOUSANDS:
-            case 'localized_float':
-                $formatting_level = MoneyFormatter::ADD_THOUSANDS;
+            case (string)CurrencyAmountFormatterInterface::ADD_THOUSANDS:
+                $formatting_level = CurrencyAmountFormatterInterface::ADD_THOUSANDS;
                 break;
-            case (string)MoneyFormatter::DECIMAL_ONLY:
-                $formatting_level = MoneyFormatter::DECIMAL_ONLY;
+            case (string)CurrencyAmountFormatterInterface::DECIMAL_ONLY:
+                $formatting_level = CurrencyAmountFormatterInterface::DECIMAL_ONLY;
                 break;
             default:
-                $formatting_level = MoneyFormatter::INTERNATIONAL;
+                $formatting_level = CurrencyAmountFormatterInterface::INTERNATIONAL;
         }
         $value_on_field_to_be_outputted = $this->ensureMoney($value_on_field_to_be_outputted);
         return $this->money_formatter->format(
-            $value_on_field_to_be_outputted->amount(),
-            $value_on_field_to_be_outputted->currency(),
+            $value_on_field_to_be_outputted,
             $formatting_level
         );
     }
