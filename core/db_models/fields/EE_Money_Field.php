@@ -99,6 +99,7 @@ class EE_Money_Field extends EE_Float_Field
                 $schema
             )
         ) {
+            $value_on_field_to_be_outputted = $this->ensureNotMoney($value_on_field_to_be_outputted);
             $pretty_float = parent::prepare_for_pretty_echoing($value_on_field_to_be_outputted);
 
             if ($schema === 'localized_float') {
