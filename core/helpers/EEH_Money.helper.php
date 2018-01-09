@@ -298,7 +298,7 @@ class EEH_Money extends EEH_Base
             return '';
         }
         //ensure amount is float
-        $amount  = filter_var(
+        $amount  = (float)filter_var(
             apply_filters('FHEE__EEH_Template__format_currency__raw_amount', $amount),
             FILTER_SANITIZE_NUMBER_FLOAT,
             FILTER_FLAG_ALLOW_FRACTION
