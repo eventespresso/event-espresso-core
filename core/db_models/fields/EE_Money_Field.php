@@ -4,6 +4,7 @@ use EventEspresso\core\domain\values\currency\Money;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidIdentifierException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\currency\formatters\CurrencyAmountFormatterInterface;
 use EventEspresso\core\services\currency\MoneyFactory;
 use EventEspresso\core\services\currency\formatters\MoneyFormatter;
 use EventEspresso\core\services\loaders\LoaderFactory;
@@ -66,11 +67,11 @@ class EE_Money_Field extends EE_Float_Field
      * If legacy filters are being used, uses EEH_Template::format_currency() to format it;
      * otherwise uses MoneyFormatter.
      * Schemas:
-     *    MoneyFormatter::RAW: "3023.0000"
-     *    MoneyFormatter::DECIMAL_ONLY: "3023.00"
-     *    MoneyFormatter::ADD THOUSANDS/'localized_float': "3,023.00"
-     *    MoneyFormatter::ADD_CURRENCY_SIGN/'no_currency_code': "$3,023.00"
-     *    MoneyFormatter::ADD_CURRENCY_CODE/null: "$3,023.00<span>USD</span>"
+     *    CurrencyAmountFormatterInterface::RAW: "3023.0000"
+     *    CurrencyAmountFormatterInterface::DECIMAL_ONLY: "3023.00"
+     *    CurrencyAmountFormatterInterface::ADD THOUSANDS/'localized_float': "3,023.00"
+     *    CurrencyAmountFormatterInterface::ADD_CURRENCY_SIGN/'no_currency_code': "$3,023.00"
+     *    CurrencyAmountFormatterInterface::ADD_CURRENCY_CODE/null: "$3,023.00<span>USD</span>"
      *
      * @param string|Money $value_on_field_to_be_outputted
      * @param string       $schema
@@ -117,27 +118,26 @@ class EE_Money_Field extends EE_Float_Field
         //ok let's just use the new formatting code then
         $schema = (string)$schema;
         switch ($schema) {
-            case (string)MoneyFormatter::ADD_CURRENCY_CODE:
-                $formatting_level = MoneyFormatter::ADD_CURRENCY_CODE;
+            case (string)CurrencyAmountFormatterInterface::ADD_CURRENCY_CODE:
+                $formatting_level = CurrencyAmountFormatterInterface::ADD_CURRENCY_CODE;
                 break;
             case 'no_currency_code':
-            case (string)MoneyFormatter::ADD_CURRENCY_SIGN:
-                $formatting_level = MoneyFormatter::ADD_CURRENCY_SIGN;
+            case (string)CurrencyAmountFormatterInterface::ADD_CURRENCY_SIGN:
+                $formatting_level = CurrencyAmountFormatterInterface::ADD_CURRENCY_SIGN;
                 break;
-            case (string)MoneyFormatter::ADD_THOUSANDS:
+            case (string)CurrencyAmountFormatterInterface::ADD_THOUSANDS:
             case 'localized_float':
-                $formatting_level = MoneyFormatter::ADD_THOUSANDS;
+                $formatting_level = CurrencyAmountFormatterInterface::ADD_THOUSANDS;
                 break;
-            case (string)MoneyFormatter::DECIMAL_ONLY:
-                $formatting_level = MoneyFormatter::DECIMAL_ONLY;
+            case (string)CurrencyAmountFormatterInterface::DECIMAL_ONLY:
+                $formatting_level = CurrencyAmountFormatterInterface::DECIMAL_ONLY;
                 break;
             default:
-                $formatting_level = MoneyFormatter::INTERNATIONAL;
+                $formatting_level = CurrencyAmountFormatterInterface::INTERNATIONAL;
         }
         $value_on_field_to_be_outputted = $this->ensureMoney($value_on_field_to_be_outputted);
         return $this->money_formatter->format(
-            $value_on_field_to_be_outputted->amount(),
-            $value_on_field_to_be_outputted->currency(),
+            $value_on_field_to_be_outputted,
             $formatting_level
         );
     }
