@@ -236,7 +236,7 @@ class EEH_Money extends EEH_Base
 
     /**
      * @param string $CNT_ISO
-     * @param bool   $from_db
+     * @param bool   $from_db whether to fetch currency data from the admin editable DB, or the immutable JSON file
      * @return EE_Currency_Config
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -244,7 +244,7 @@ class EEH_Money extends EEH_Base
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public static function get_currency_config($CNT_ISO = '', $from_db = false)
+    public static function get_currency_config($CNT_ISO = '', $from_db = true)
     {
         //if CNT_ISO passed lets try to get currency settings for it.
         $currency_config = $CNT_ISO !== ''
