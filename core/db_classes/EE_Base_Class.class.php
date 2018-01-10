@@ -8,6 +8,7 @@ use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\exceptions\InvalidIdentifierException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\currency\MoneyFactory;
+use EventEspresso\core\services\loaders\LoaderFactory;
 
 if ( ! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
@@ -2752,8 +2753,9 @@ abstract class EE_Base_Class
 
 
     /**
-     * Gets the money field's amount in subunits (and if the currency has no subunits, gets it in the main units)
-     *
+     * Gets the money field's amount in subunits (and if the currency has no subunits, gets it in the main units).
+     * If you want to use this method, the class must implement UsesMoneyInterface and injected a MoneyFactory in
+     * its constructor
      * @param string $money_field_name
      * @return int
      * @throws InvalidEntityException
@@ -2769,7 +2771,9 @@ abstract class EE_Base_Class
 
     /**
      * Sets the money field's amount based on the incoming monetary subunits (eg pennies). If the currency has no
-     * subunits, the amount is actually assumed to be in the currency's main units
+     * subunits, the amount is actually assumed to be in the currency's main units.
+     * If you want to use this method, the class must implement UsesMoneyInterface and injected a MoneyFactory in
+     * its constructor
      *
      * @param string $money_field_name
      * @param int    $amount_in_subunits
@@ -2792,6 +2796,7 @@ abstract class EE_Base_Class
 
 
     /**
+     * Checks this class has implemented UsesMoneyInterface
      * @param string $function
      * @throws DomainException
      * @throws EE_Error
@@ -2879,9 +2884,11 @@ abstract class EE_Base_Class
         $properties_to_serialize = get_object_vars($this);
         //don't serialize the model. It's big and that risks recursion
         unset($properties_to_serialize['_model']);
+        if( isset($properties_to_serialize['money_factory'])) {
+            unset($properties_to_serialize['money_factory']);
+        }
         return array_keys($properties_to_serialize);
     }
-
 
 
     /**
@@ -2889,10 +2896,15 @@ abstract class EE_Base_Class
      * PLZ NOTE: this will reset the array to whatever fields values were present prior to serialization,
      * and therefore should NOT be used to determine if state change has occurred since initial construction.
      * At best, you would only be able to detect if state change has occurred during THIS request.
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      */
     public function __wakeup()
     {
         $this->_props_n_values_provided_in_constructor = $this->_fields;
+        if( $this instanceof UsesMoneyInterface) {
+            $this->money_factory = LoaderFactory::getLoader()->getShared('EventEspresso\core\services\currency\MoneyFactory');
+        }
     }
 
 
