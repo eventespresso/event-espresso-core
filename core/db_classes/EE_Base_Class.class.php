@@ -2883,10 +2883,10 @@ abstract class EE_Base_Class
         $this->_props_n_values_provided_in_constructor = array();
         $properties_to_serialize = get_object_vars($this);
         //don't serialize the model. It's big and that risks recursion
-        unset($properties_to_serialize['_model']);
-        if( isset($properties_to_serialize['money_factory'])) {
-            unset($properties_to_serialize['money_factory']);
-        }
+        unset(
+            $properties_to_serialize['_model'],
+            $properties_to_serialize['money_factory']
+        );
         return array_keys($properties_to_serialize);
     }
 
