@@ -905,6 +905,16 @@ class EE_UnitTestCase extends WP_UnitTestCase
             ) {
                 $value = NULL;
             } elseif (
+                $field_name === 'TKT_start_date' ||
+                $field_name === 'DTT_EVT_start'
+            ) {
+                $value = time() + MONTH_IN_SECONDS;
+            } elseif (
+                $field_name === 'TKT_end_date' ||
+                $field_name === 'DTT_EVT_end'
+            ) {
+                $value = time() + MONTH_IN_SECONDS + DAY_IN_SECONDS;
+            } elseif (
                 $field instanceof EE_Enum_Integer_Field ||
                 $field instanceof EE_Enum_Text_Field ||
                 $field instanceof EE_Boolean_Field ||
