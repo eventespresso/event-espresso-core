@@ -11,26 +11,15 @@ namespace Page;
  */
 class RegistrationsAdmin extends CoreAdmin
 {
-    /**
-     * @var string
-     */
+
     const REGISTRATION_STATUS_NOT_APPROVED = 'RNA';
-
-
-    /**
-     * @var string
-     */
     const REGISTRATION_STATUS_APPROVED = 'RAP';
-
-
-    /**
-     * @var string
-     */
     const REGISTRATION_STATUS_PENDING_PAYMENT = 'RPP';
-
-
     const SEARCH_INPUT_SELECTOR_LIST_TABLE_REGISTRATION = '#event-espresso_page_espresso_registrations-search-input';
-
+    const BUTTON_ADD_NEW_REGISTRATION = '#add-new-registration';
+    const DROPDOWN_REGISTRATION_STATUS = '#reg-status-change-form-reg-status';
+    const BUTTON_UPDATE_REGISTRATION_STATUS = '#reg-status-change-form-submit-submit';
+    const DROPDOWN_SEND_RELATED_MESSAGES = '#reg-status-change-form-send-notifications';
 
 
     /**
@@ -45,12 +34,25 @@ class RegistrationsAdmin extends CoreAdmin
 
     /**
      * Given a registration id, this will return the selector for all the checkbox for that id.
-     * Assumes the view is a Registration list table.
+     * Assumes the view is the default registrations list table.
      * @param int $registration_id
      * @return string
      */
     public static function listTableCheckBoxSelectorForRegistrationId($registration_id)
     {
         return "//input[@name='_REG_ID[]' and @value='{$registration_id}']";
+    }
+
+
+    /**
+     * Given a registration id, this will return the selector for the link to the registration details.
+     * Assumes the view is the default registrations list table.
+     * @param int $registration_id
+     * @return string
+     */
+    public static function viewDetailsLinkSelectorForRegistrationId($registration_id)
+    {
+        return "//tbody[@id='the-list']/tr/td[contains(@class, 'column-_REG_ID') and contains(., $registration_id)]"
+            . "//ancestor::tr/td[contains(@class, 'column-ATT_fname')]/a[1]";
     }
 }

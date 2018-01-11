@@ -28,41 +28,47 @@ class Checkout
 
     /**
      * @param int $attendee_number
+     * @param bool  $admin  Used to indicate whether we're retrieving the selector from the context of the admin or not.
      * @return string
      */
-    public static function firstNameFieldSelectorForAttendeeNumber($attendee_number = 1)
+    public static function firstNameFieldSelectorForAttendeeNumber($attendee_number = 1, $admin = false)
     {
-        return self::fieldSelectorForAttendeeNumber('fname', $attendee_number);
+        return self::fieldSelectorForAttendeeNumber('fname', $attendee_number, $admin);
     }
 
 
     /**
      * @param int $attendee_number
+     * @param bool  $admin  Used to indicate whether we're retrieving the selector from the context of the admin or not.
      * @return string
      */
-    public static function lastNameFieldSelectorForAttendeeNumber($attendee_number = 1)
+    public static function lastNameFieldSelectorForAttendeeNumber($attendee_number = 1, $admin = false)
     {
-        return self::fieldSelectorForAttendeeNumber('lname', $attendee_number);
+        return self::fieldSelectorForAttendeeNumber('lname', $attendee_number, $admin);
     }
 
 
     /**
      * @param int $attendee_number
+     * @param bool  $admin  Used to indicate whether we're retrieving the selector from the context of the admin or not.
      * @return string
      */
-    public static function emailFieldSelectorForAttendeeNumber($attendee_number = 1)
+    public static function emailFieldSelectorForAttendeeNumber($attendee_number = 1, $admin = false)
     {
-        return self::fieldSelectorForAttendeeNumber('email', $attendee_number);
+        return self::fieldSelectorForAttendeeNumber('email', $attendee_number, $admin);
     }
 
     /**
-     * @param     $field_name
+     * @param string    $field_name
      * @param int $attendee_number
+     * @param bool  $admin  Used to indicate whether we're retrieving the selector from the context of the admin or not.
      * @return string
      */
-    public static function fieldSelectorForAttendeeNumber($field_name, $attendee_number = 1)
+    public static function fieldSelectorForAttendeeNumber($field_name, $attendee_number = 1, $admin = false)
     {
-        return "//div[starts-with(@id, 'spco-attendee-panel-dv-$attendee_number')]//input[contains(@class, 'ee-reg-qstn-$field_name')]";
+        return $admin
+                ? "//fieldset[starts-with(@id, 'ee-registration-$attendee_number')]//input[contains(@class, 'ee-reg-qstn-$field_name')]"
+                : "//div[starts-with(@id, 'spco-attendee-panel-dv-$attendee_number')]//input[contains(@class, 'ee-reg-qstn-$field_name')]";
     }
 
 
