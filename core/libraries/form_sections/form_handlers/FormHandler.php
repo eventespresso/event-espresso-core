@@ -538,7 +538,6 @@ abstract class FormHandler implements FormHandlerInterface
      *
      * @param string $text
      * @return void
-     * @throws LogicException
      * @throws EE_Error
      */
     public function appendSubmitButton($text = '')
@@ -667,7 +666,11 @@ abstract class FormHandler implements FormHandlerInterface
                 )
             );
         }
-        return $this->form()->valid_data();
+        return apply_filters(
+            'FHEE__EventEspresso_core_libraries_form_sections_form_handlers_FormHandler__process__valid_data',
+            $this->form()->valid_data(),
+            $this
+        );
     }
 
 
