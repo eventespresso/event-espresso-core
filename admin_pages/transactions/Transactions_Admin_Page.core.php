@@ -451,22 +451,29 @@ class Transactions_Admin_Page extends EE_Admin_Page
      */
     private function _set_transaction_object()
     {
-        if (is_object($this->_transaction)) {
+        if ($this->_transaction instanceof EE_Transaction) {
             return;
         } //get out we've already set the object
 
-        $TXN = EEM_Transaction::instance();
-
-        $TXN_ID = (! empty($this->_req_data['TXN_ID'])) ? absint($this->_req_data['TXN_ID']) : false;
+        $TXN_ID = ! empty($this->_req_data['TXN_ID'])
+            ? absint($this->_req_data['TXN_ID'])
+            : false;
 
         //get transaction object
-        $this->_transaction = $TXN->get_one_by_ID($TXN_ID);
-        $this->_session     = ! empty($this->_transaction) ? $this->_transaction->get('TXN_session_data') : null;
+        $this->_transaction = EEM_Transaction::instance()->get_one_by_ID($TXN_ID);
+        $this->_session     = $this->_transaction instanceof EE_Transaction
+            ? $this->_transaction->get('TXN_session_data')
+            : null;
         $this->_transaction->verify_abandoned_transaction_status();
 
-        if (empty($this->_transaction)) {
-            $error_msg = esc_html__('An error occurred and the details for Transaction ID #',
-                    'event_espresso') . $TXN_ID . esc_html__(' could not be retrieved.', 'event_espresso');
+        if (! $this->_transaction instanceof EE_Transaction) {
+            $error_msg = sprintf(
+                esc_html__(
+                    'An error occurred and the details for the transaction with the ID # %d could not be retrieved.',
+                    'event_espresso'
+                ),
+                $TXN_ID
+            );
             EE_Error::add_error($error_msg, __FILE__, __FUNCTION__, __LINE__);
         }
     }
