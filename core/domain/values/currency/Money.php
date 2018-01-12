@@ -148,7 +148,6 @@ class Money
         if ($this->currency()->subunits()) {
             $amount /= $this->currency()->subunits();
         }
-        // then shave off our extra internal precision using the number of decimal places for the currency
         return $amount;
     }
 
@@ -163,6 +162,7 @@ class Money
      */
     public function amount()
     {
+        // shave off our extra internal precision using the number of decimal places for the currency
         return (string) round($this->floatAmount(), $this->currency()->decimalPlaces());
     }
 
