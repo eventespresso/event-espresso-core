@@ -1473,9 +1473,11 @@ class Transactions_Admin_Page extends EE_Admin_Page
     {
         $json_response_data = array('return_data' => false);
         $valid_data         = $this->_validate_payment_request_data();
-        if (! empty($valid_data)
-
-        ) {
+        $has_access = EE_Registry::instance()->CAP->current_user_can(
+            'ee_edit_payments',
+            'apply_payment_or_refund_from_registration_details'
+        );
+        if (! empty($valid_data) && $has_access) {
             $PAY_ID = $valid_data['PAY_ID'];
             //save  the new payment
             $payment = $this->_create_payment_from_request_data($valid_data);
@@ -1514,17 +1516,28 @@ class Transactions_Admin_Page extends EE_Admin_Page
                 );
             }
         } else {
-            EE_Error::add_error(
-                esc_html__(
-                    'The payment form data could not be processed. Please try again.',
-                    'event_espresso'
-                ),
-                __FILE__,
-                __FUNCTION__,
-                __LINE__
-            );
+            if ($has_access) {
+                EE_Error::add_error(
+                    esc_html__(
+                        'The payment form data could not be processed. Please try again.',
+                        'event_espresso'
+                    ),
+                    __FILE__,
+                    __FUNCTION__,
+                    __LINE__
+                );
+            } else {
+                EE_Error::add_error(
+                    esc_html__(
+                        'You do not have access to apply payments or refunds to a registration.',
+                        'event_espresso'
+                    ),
+                    __FILE__,
+                    __FUNCTION__,
+                    __LINE__
+                );
+            }
         }
-
         $notices              = EE_Error::get_notices(
             false,
             false,
@@ -2047,7 +2060,11 @@ class Transactions_Admin_Page extends EE_Admin_Page
         $PAY_ID             = isset($this->_req_data['delete_txn_admin_payment']['PAY_ID'])
             ? absint($this->_req_data['delete_txn_admin_payment']['PAY_ID'])
             : 0;
-        if ($PAY_ID) {
+        $can_delete = EE_Registry::instance()->CAP->current_user_can(
+            'ee_delete_payments',
+            'delete_payment_from_registration_details'
+        );
+        if ($PAY_ID && $can_delete) {
             $delete_txn_reg_status_change = isset($this->_req_data['delete_txn_reg_status_change'])
                 ? $this->_req_data['delete_txn_reg_status_change']
                 : false;
@@ -2078,13 +2095,25 @@ class Transactions_Admin_Page extends EE_Admin_Page
                 );
             }
         } else {
-            EE_Error::add_error(
-                esc_html__(
-                    'A valid Payment ID was not received, therefore payment form data could not be loaded.',
-                    'event_espresso'
-                ),
-                __FILE__, __FUNCTION__, __LINE__
-            );
+            if ($can_delete) {
+                EE_Error::add_error(
+                    esc_html__(
+                        'A valid Payment ID was not received, therefore payment form data could not be loaded.',
+                        'event_espresso'
+                    ),
+                    __FILE__, __FUNCTION__, __LINE__
+                );
+            } else {
+                EE_Error::add_error(
+                    esc_html__(
+                        'You do not have access to delete a payment.',
+                        'event_espresso'
+                    ),
+                    __FILE__,
+                    __FUNCTION__,
+                    __LINE__
+                );
+            }
         }
         $notices              = EE_Error::get_notices(false, false, false);
         $this->_template_args = array(
