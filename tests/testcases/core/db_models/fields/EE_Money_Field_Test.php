@@ -282,12 +282,6 @@ class EE_Money_Field_Test extends EE_UnitTestCase
                 'no_currency_code',
                 false
             ),
-            'new_other_formatting_option'=>array(
-                '1234.56',
-                1234.56,
-                MoneyFormatter::DECIMAL_ONLY,
-                false
-            )
         );
     }
 

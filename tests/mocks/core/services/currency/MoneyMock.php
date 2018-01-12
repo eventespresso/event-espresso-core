@@ -27,19 +27,6 @@ class MoneyMock extends Money
     {
         return $this->calculator();
     }
-
-
-
-    /**
-     * @return CurrencyAmountFormatterInterface[]
-     */
-    public function getFormatters()
-    {
-        return $this->formatters();
-    }
-
-
-
 }
 // End of file MoneyMock.php
 // Location: EventEspresso\tests\mocks\core\services\currency/MoneyFactoryMock.php
