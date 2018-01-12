@@ -4,7 +4,9 @@ use EventEspresso\core\domain\values\currency\Money;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidIdentifierException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\currency\formatters\CurrencyAmountFormatterInterface;
 use EventEspresso\core\services\currency\MoneyFactory;
+use EventEspresso\core\services\currency\formatters\MoneyFormatter;
 use EventEspresso\core\services\loaders\LoaderFactory;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
@@ -22,6 +24,11 @@ class EE_Money_Field extends EE_Float_Field
      */
     protected $money_factory;
 
+    /**
+     * @var $money_formatter MoneyFormatter
+     */
+    protected $money_formatter;
+
 
     /**
      * @param string       $table_column
@@ -29,6 +36,7 @@ class EE_Money_Field extends EE_Float_Field
      * @param bool         $nullable
      * @param null         $default_value
      * @param MoneyFactory $factory
+     * @param MoneyFormatter $money_formatter
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
@@ -38,12 +46,17 @@ class EE_Money_Field extends EE_Float_Field
         $nicename,
         $nullable,
         $default_value = null,
-        MoneyFactory $factory = null
+        MoneyFactory $factory = null,
+        MoneyFormatter $money_formatter = null
     ) {
         if (! $factory instanceof MoneyFactory) {
             $factory = LoaderFactory::getLoader()->getShared('EventEspresso\core\services\currency\MoneyFactory');
         }
         $this->money_factory = $factory;
+        if (! $money_formatter instanceof MoneyFormatter) {
+            $money_formatter = LoaderFactory::getLoader()->getShared('EventEspresso\core\services\currency\formatters\MoneyFormatter');
+        }
+        $this->money_formatter = $money_formatter;
         parent::__construct($table_column, $nicename, $nullable, $default_value);
         $this->setSchemaType('object');
     }
@@ -77,6 +90,17 @@ class EE_Money_Field extends EE_Float_Field
      */
     public function prepare_for_pretty_echoing($value_on_field_to_be_outputted, $schema = null)
     {
+        //using the default or old schemas? Use the legacy formatting (which uses the database's currency data,
+        //whereas the new code uses the JSON file's currency data
+        if (in_array(
+            $schema,
+            array(
+                'localized_float',
+                'no_currency_code',
+                null
+            ),
+            true
+        )) {
             $value_on_field_to_be_outputted = $this->ensureNotMoney($value_on_field_to_be_outputted);
             $pretty_float = parent::prepare_for_pretty_echoing($value_on_field_to_be_outputted);
 
@@ -91,7 +115,30 @@ class EE_Money_Field extends EE_Float_Field
 
             //we don't use the $pretty_float because format_currency will take care of it.
             return EEH_Money::format_currency($value_on_field_to_be_outputted, false, $display_code);
-
+        }
+        //ok let's just use the new formatting code then
+        $schema = (string)$schema;
+        switch ($schema) {
+            case (string)CurrencyAmountFormatterInterface::ADD_CURRENCY_CODE:
+                $formatting_level = CurrencyAmountFormatterInterface::ADD_CURRENCY_CODE;
+                break;
+            case (string)CurrencyAmountFormatterInterface::ADD_CURRENCY_SIGN:
+                $formatting_level = CurrencyAmountFormatterInterface::ADD_CURRENCY_SIGN;
+                break;
+            case (string)CurrencyAmountFormatterInterface::ADD_THOUSANDS:
+                $formatting_level = CurrencyAmountFormatterInterface::ADD_THOUSANDS;
+                break;
+            case (string)CurrencyAmountFormatterInterface::DECIMAL_ONLY:
+                $formatting_level = CurrencyAmountFormatterInterface::DECIMAL_ONLY;
+                break;
+            default:
+                $formatting_level = CurrencyAmountFormatterInterface::INTERNATIONAL;
+        }
+        $value_on_field_to_be_outputted = $this->ensureMoney($value_on_field_to_be_outputted);
+        return $this->money_formatter->format(
+            $value_on_field_to_be_outputted,
+            $formatting_level
+        );
     }
 
 
