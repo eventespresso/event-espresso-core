@@ -22,7 +22,7 @@
 #spco-steps-display-dv {
 	width:99%;
 	padding: 5px .5%;
-	margin:0 0 1em;
+	margin:0 0 2em;
 	border-top:1px solid #eee;
 	border-bottom:1px solid #eee;
 }
@@ -94,7 +94,20 @@
 	color:#ddd;
 }
 
+/*** SMALL SCREENS ***/
+/*** INPUTS ***/
+@media screen and (max-width: 500px) {
 
+    .spco-step-display-dv {
+        text-align: left;
+        width: 100% !important;
+    }
+
+    #ee-single-page-checkout-dv .spco-step-arrow-dv {
+        display: none;
+    }
+
+}
 
 /***** whats-next-buttons *****/
 .spco-whats-next-buttons {
@@ -280,7 +293,7 @@
 .ee-radio-label-after,
 .ee-checkbox-label-after {
 	display: inline-block !important;
-	padding: .25em 1em .2em 20px;
+	padding: .25em 0 .2em 20px;
 	text-indent: -20px;
 	cursor: pointer;
 	font-size: .9em;
@@ -291,22 +304,22 @@
 }
 
 #ee-single-page-checkout-dv .nano-lbl {
-	width: 3.1%; min-width:60px; max-width:100%;
+	width: 3.1%; min-width:67px; max-width:100%;
 }
 #ee-single-page-checkout-dv .micro-lbl {
-	width: 6.2%; min-width:120px; max-width:100%;
+	width: 6.2%; min-width:133px; max-width:100%;
 }
 #ee-single-page-checkout-dv .tiny-lbl {
-	width: 12.4%; min-width:180px; max-width:100%;
+	width: 12.4%; min-width:200px; max-width:100%;
 }
 #ee-single-page-checkout-dv .small-lbl {
-	width: 24.4%; min-width:240px; max-width:100%;
+	width: 24.4%; min-width:267px; max-width:100%;
 }
 #ee-single-page-checkout-dv .medium-lbl {
-	width: 49%; min-width:360px; max-width:100%;
+	width: 49%; min-width:400px; max-width:100%;
 }
 #ee-single-page-checkout-dv .big-lbl {
-	width:99%; min-width:360px; max-width:100%;
+	width:99%; min-width:400px; max-width:100%;
 }
 
 .ee-question-desc,
@@ -369,7 +382,7 @@
 #ee-single-page-checkout-dv  .spco-payment-method-input-dv label {
 	display:inline;
 	float: left;
-    margin:0 38px 0 0;
+    margin:0 30px 0 0;
 	min-height: 90px;
 }
 #ee-single-page-checkout-dv  .spco-payment-method-input-dv label + label {
@@ -393,7 +406,7 @@
 
 .spco-payment-method-btn-img {
 	vertical-align:middle;
-	max-width:100px !important;
+	max-width:160px !important;
 	padding:0;
 	margin:auto;
 	box-shadow: none !important;
@@ -403,7 +416,7 @@
 
 .spco-payment-method-dv img {
 	vertical-align:middle;
-	max-width:140px !important;
+	max-width:160px !important;
 	padding:0;
 	margin:auto;
 	box-shadow: none !important;
