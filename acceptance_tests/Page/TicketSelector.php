@@ -26,10 +26,13 @@ class TicketSelector
     /**
      * Return the selector for the submit button for the ticket selector for the given event id.
      * @param int|string $event_id
+     * @param bool       $admin     Used to return the selector from the context of the admin (true) or frontend (false)
      * @return string
      */
-    public static function ticketSelectionSubmitSelectorByEventId($event_id)
+    public static function ticketSelectionSubmitSelectorByEventId($event_id, $admin = false)
     {
-        return "#ticket-selector-submit-$event_id-btn";
+        return $admin
+            ? "#ee-new-registration-step-button"
+            : "#ticket-selector-submit-$event_id-btn";
     }
 }
