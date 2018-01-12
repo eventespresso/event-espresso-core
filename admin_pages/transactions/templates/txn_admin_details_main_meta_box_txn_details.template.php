@@ -101,18 +101,28 @@
                             <td class=" jst-cntr">
                                 <ul class="txn-overview-actions-ul">
                                     <li>
+                                        <?php if (EE_Registry::instance()->CAP->current_user_can(
+                                            'ee_edit_payments',
+                                            'apply_payment_or_refund_from_registration_details'
+                                        )) : ?>
                                         <a class="txn-admin-payment-action-edit-lnk"
                                            title="<?php esc_attr_e('Edit Payment', 'event_espresso'); ?>"
                                            data-payment-id="<?php echo $PAY_ID; ?>">
                                             <div class="dashicons dashicons-edit" style="margin: 0;"></div>
                                         </a>
+                                        <?php endif; ?>
                                     </li>
                                     <li>
+                                        <?php if (EE_Registry::instance()->CAP->current_user_can(
+                                            'ee_delete_payments',
+                                            'delete_payment_from_registration_details'
+                                        )) : ?>
                                         <a class="txn-admin-payment-action-delete-lnk"
                                            title="<?php esc_attr_e('Delete Payment', 'event_espresso'); ?>"
                                            data-payment-id="<?php echo $PAY_ID; ?>">
                                             <div class="dashicons dashicons-trash" style="margin: 0;"></div>
                                         </a>
+                                        <?php endif; ?>
                                     </li>
                                 </ul>
                             </td>
