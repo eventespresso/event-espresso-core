@@ -215,6 +215,11 @@
 	</div>
 
 	<ul id="txn-admin-payment-options-ul">
+    <?php if (EE_Registry::instance()->CAP->current_user_can(
+            'ee_edit_payments',
+             'apply_payment_or_refund_from_registration_details'
+             )) :
+    ?>
 		<li>
 			<a id="display-txn-admin-apply-payment" class="button-primary no-icon no-hide" rel="txn-admin-apply-payment" > <!--display-the-hidden -->
 				<?php _e( 'Apply Payment', 'event_espresso' );?>
@@ -225,6 +230,11 @@
 				<?php _e( 'Apply Refund', 'event_espresso' );?>
 			</a>
 		</li>
+    <?php else : ?>
+        <li>
+            <p><?php esc_html__('You do not have access to apply payments or refunds.', 'event_espresso'); ?></p>
+        </li>
+    <?php endif; ?>
 	</ul>
 	<br class="clear"/>
 
