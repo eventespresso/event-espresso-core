@@ -1154,6 +1154,7 @@ abstract class EE_Base_Class
      * @throws InvalidEntityException
      * @throws EE_Error
      * @throws DomainException
+     * @since $VID:$
      */
     public function getMoneyObject($field_name)
     {
@@ -2761,6 +2762,7 @@ abstract class EE_Base_Class
      * @throws InvalidEntityException
      * @throws EE_Error
      * @throws DomainException
+     * @since $VID:$
      */
     public function moneyInSubunits($money_field_name)
     {
@@ -2783,6 +2785,7 @@ abstract class EE_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      * @throws DomainException
+     * @since $VID:$
      */
     public function setMoneySubunits($money_field_name,$amount_in_subunits)
     {
@@ -2800,6 +2803,7 @@ abstract class EE_Base_Class
      * @param string $function
      * @throws DomainException
      * @throws EE_Error
+     * @since $VID:$
      */
     private function verifyUsesMoney($function)
     {

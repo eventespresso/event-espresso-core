@@ -955,6 +955,7 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment, UsesMoneyInterfac
      * @throws EE_Error
      * @throws InvalidEntityException
      * @throws DomainException
+     * @since $VID:$
      */
     public function amountInSubunits()
     {
@@ -974,6 +975,7 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment, UsesMoneyInterfac
      * @throws InvalidIdentifierException
      * @throws InvalidDataTypeException
      * @throws DomainException
+     * @since $VID:$
      */
     public function setAmountInSubunits($amount_in_subunits)
     {
